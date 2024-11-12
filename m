@@ -1,176 +1,102 @@
-Return-Path: <linux-kernel+bounces-405795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495A49C58AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:12:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929FB9C5797
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:22:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 796DFB2EA4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:53:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14F1AB2FEB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D571CD1EC;
-	Tue, 12 Nov 2024 11:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10751CD1F6;
+	Tue, 12 Nov 2024 11:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0pLP32P"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nn8BqYV0"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4132309A9;
-	Tue, 12 Nov 2024 11:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4416A2309AC;
+	Tue, 12 Nov 2024 11:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731412398; cv=none; b=AJeLx5uJlQ/LAh3kp+d70gSjafc9DAMkM3DhxVts1Pzo8Ou7DKewQfTXJA957G4v5KnF9drqNFHQiKrUc6JmxHCB3x+IDSFYW31Rr66BWN3hdsXPcTztxqQT25aDR3NnrkFwzqNHuwPTjgQdL+8kEIgo8+xBSv3DioXllNi21QQ=
+	t=1731412638; cv=none; b=gZqMukpnkOBLkPKJkRnIqk1ClEFZW382tW9RYd1CermapOEnMkCsVMFHjHrlIPyLajhLXZPeeUCxzAaZSmWVj9P+WOGSlWiR4v+J982604G2vw7U7MYBNQZxDmnqQpnVUHVH3CyfN6vexnqY2ds6Ga3au/52qspYNtfn6WoJau4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731412398; c=relaxed/simple;
-	bh=TnqPipQg2CpmZLQ4wcu28TkzNcF6HV7w2kDzb759YOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ytt9CWF3rAoHWeOMBfjkZ4T2XCqLQ9TxLqe+eVeY+TSnu/U/GxhPKccVQSlzMc8Te1bOmodiZlyitQKVGYrj35NghC5p2ls24SLne0wxt9CLjT+32h3MmD4DRki+B/1bJSWSuvAS+99o66MQ8pgABZlpCf4mcYqtxQPj/KFs5DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f0pLP32P; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ee11ff7210so4149882a12.1;
-        Tue, 12 Nov 2024 03:53:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731412396; x=1732017196; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=77BPT0TV3A11R+sNVa9I1JVGIl/YUnzmNjHt+0y5/uY=;
-        b=f0pLP32P6GFCHKpHjWzUNp1pHX+tefhqniTl0vhhXrKDgCSF4q5UsisUZmiApcnQBT
-         PQA74EQTv4IF3ThnX4/PILbBYcNyw+//4xYJzuWmj/dWIaHW7mkyXTLDgi5NOw7+Lo6w
-         nwT0PpzGyx/spzpveRFh3Gr51FjQhQYOyH+etVLK4K6mC2p5fWEHUEo779QeVR8rBTci
-         2lhlzmb7Yzz5IiGPiJ+g5y4aoCDIIj4nxxvVqfFNI6HFn3YQB3TM5HJ9YGNfQ7m0ATXE
-         VGyxvDSUyYp40wtzojLqrrjQCVjmDyHo4vQDwXyrRfdu4RIiX3Ngnoo0OqXReI2u5DAN
-         DTJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731412396; x=1732017196;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=77BPT0TV3A11R+sNVa9I1JVGIl/YUnzmNjHt+0y5/uY=;
-        b=kHh9QlV6bEFu2E7kiy/GXTOJJF38YQEMqdUG2h6fhIFjsy0exib8cApl/fOxn9gi+W
-         ifTZEzIxmFawk1w6/cg0sQ4cc7HKmwm3ffKXpCcBTqZ0bNeWLdMVUJC1Q6KLlsDVy0JZ
-         HgPQw5WDn7fJ46P2Nayzmoq8toaU+oh88kzYx1mnHsq5mR6QBIaSAE43gSVkN9cuAx/o
-         tO+znRwQ0bcD2KS669qgAH67Lu2iO1FVlv7gIvyrGeg30GbU9ZrlhLglIbWR5PxWGyrG
-         O8W/rloqM4K7tZCzL7bLNu2ky3opZJoZtLW4TjhihT/sAkbxIm2QX8WHqEwNlIu1D6Ha
-         0Cyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZT53bF+NGCXRZz+x+jpQNETdP7d7FklWvVYyAZtHplsqYGoO2At0mPBl4qsnrPQcddOoIqXCL7vwGsT0p@vger.kernel.org, AJvYcCVKaNT5gzaKqjU7CjNXafGKyW03WB8FQCh7TTezr0pNViwL069BPZ23Yxh0qRCbEzqGsplpt+gGTiJzA3c=@vger.kernel.org, AJvYcCVeeOsJioq+uBWAoeAOlX9LElLZXmy51wBZdrJjrOAAFIrWuvLtPCkuwD5jyiG7o9p9O96dAezdkfZs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3TD1OaqY//AvnxVaSmz+vfZWQ5G9Sl88MCkny9l8GLB4RlK/A
-	0AfYiPDB6x3PZ7q2NGe1ZV0lCxTtu+jP6B9Z671BHn/ew2VVJqh1
-X-Google-Smtp-Source: AGHT+IGMAZvN6QZA0lKlxIqEWgUYkYo2wgb3l4Uv9em6gzdM5DvG1g7/whPF59nG27HiAoRwyRtHrg==
-X-Received: by 2002:a17:90b:2ece:b0:2e2:d33b:cc with SMTP id 98e67ed59e1d1-2e9b172e0bemr21513271a91.21.1731412396371;
-        Tue, 12 Nov 2024 03:53:16 -0800 (PST)
-Received: from ux-UP-WHL01 (mailgw01.gttektw.com. [45.117.96.243])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9b50dcd9bsm8080210a91.21.2024.11.12.03.53.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 03:53:15 -0800 (PST)
-Date: Tue, 12 Nov 2024 19:53:10 +0800
-From: Charles Wang <charles.goodix@gmail.com>
-To: Doug Anderson <dianders@chromium.org>
-Cc: robh@kernel.org, krzk@kernel.org, hbarnor@chromium.org,
-	conor.dooley@microchip.com, dmitry.torokhov@gmail.com,
-	jikos@kernel.org, bentiss@kernel.org, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] HID: hid-goodix: Add OF supports
-Message-ID: <ZzNBpkwDLgutPJq8@ux-UP-WHL01>
-References: <20241111075000.111509-1-charles.goodix@gmail.com>
- <20241111075000.111509-3-charles.goodix@gmail.com>
- <CAD=FV=WKU2Wwfwg1EACYgJtUKJjYH2OOQn6ELXbBK=B-jzbTZQ@mail.gmail.com>
+	s=arc-20240116; t=1731412638; c=relaxed/simple;
+	bh=orUQtSJ4knm3lokWfEk2Zsb4juDgP2iLRaTspmG7OjI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oJX3KtFwv3Ja8GbnVd/QdySGZG6qMqJnNQkvU9X47kdl29A3CkFE1aXGAUM+0V7ElaJjkQ1mdjju2s1lCUamM71bDa7GxjBn8j7vqgjaXYsKgk/+S4ZxMVhdqXpr4ivPpT1KkgdjCtzTCVFU91cQ6B4FMx/JdGUYPsrZI/6kBiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nn8BqYV0; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4ACButEs086213;
+	Tue, 12 Nov 2024 05:56:55 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731412615;
+	bh=yy4PybiVlNbq7dsGXxtyTPs9DF2nDGpUaK/GmkktZNs=;
+	h=From:To:CC:Subject:Date;
+	b=nn8BqYV0bvXkCGlmWFENXgHMDHBTz6IK9EGjlU2TqKRCX9qa1FT4vSfOZ4NVENNQh
+	 C0/vbUsKHI/CNBQAEbiF/C+Sfy0XRju3iPnX3QiTZoAxrn/AwYohedVoeF7zx2IN81
+	 DVw5HO9nMMGX8/YwSss38pI7aGuIr6d2QkxD8fdk=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4ACBusPU016210
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 12 Nov 2024 05:56:54 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 12
+ Nov 2024 05:56:54 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 12 Nov 2024 05:56:54 -0600
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4ACBuo5S116685;
+	Tue, 12 Nov 2024 05:56:51 -0600
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: [PATCH 0/2] Add Deep Sleep pinmux macros for TI's K3 SoCs
+Date: Tue, 12 Nov 2024 17:26:48 +0530
+Message-ID: <20241112115650.988943-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=WKU2Wwfwg1EACYgJtUKJjYH2OOQn6ELXbBK=B-jzbTZQ@mail.gmail.com>
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Doug,
+Hello,
 
-On Mon, Nov 11, 2024 at 09:24:39AM -0800, Doug Anderson wrote:
-> Hi,
-> 
-> On Sun, Nov 10, 2024 at 11:50 PM Charles Wang <charles.goodix@gmail.com> wrote:
-> >
-> > This patch introduces the following changes:
-> > - Adds OF match table.
-> > - Hardcodes hid-report-addr in the driver rather than fetching it
-> >   from the device property.
-> >
-> > Signed-off-by: Charles Wang <charles.goodix@gmail.com>
-> > ---
-> >  drivers/hid/hid-goodix-spi.c | 17 +++++++++++------
-> >  1 file changed, 11 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/hid/hid-goodix-spi.c b/drivers/hid/hid-goodix-spi.c
-> > index 6ae2300a6..80c0288a3 100644
-> > --- a/drivers/hid/hid-goodix-spi.c
-> > +++ b/drivers/hid/hid-goodix-spi.c
-> > @@ -20,6 +20,7 @@
-> >  #define GOODIX_HID_REPORT_DESC_ADDR    0x105AA
-> >  #define GOODIX_HID_SIGN_ADDR           0x10D32
-> >  #define GOODIX_HID_CMD_ADDR            0x10364
-> > +#define GOODIX_HID_REPORT_ADDR         0x22C8C
-> >
-> >  #define GOODIX_HID_GET_REPORT_CMD      0x02
-> >  #define GOODIX_HID_SET_REPORT_CMD      0x03
-> > @@ -701,12 +702,7 @@ static int goodix_spi_probe(struct spi_device *spi)
-> >                 return dev_err_probe(dev, PTR_ERR(ts->reset_gpio),
-> >                                      "failed to request reset gpio\n");
-> >
-> > -       error = device_property_read_u32(dev, "goodix,hid-report-addr",
-> > -                                        &ts->hid_report_addr);
-> > -       if (error)
-> > -               return dev_err_probe(dev, error,
-> > -                                    "failed get hid report addr\n");
-> > -
-> > +       ts->hid_report_addr = GOODIX_HID_REPORT_ADDR;
-> >         error = goodix_dev_confirm(ts);
-> >         if (error)
-> >                 return error;
-> > @@ -790,6 +786,14 @@ static const struct acpi_device_id goodix_spi_acpi_match[] = {
-> >  MODULE_DEVICE_TABLE(acpi, goodix_spi_acpi_match);
-> >  #endif
-> >
-> > +#ifdef CONFIG_OF
-> > +static const struct of_device_id goodix_spi_of_match[] = {
-> > +       { .compatible = "goodix,gt7986u-spifw", },
-> > +       { }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, goodix_spi_of_match);
-> > +#endif
-> > +
-> >  static const struct spi_device_id goodix_spi_ids[] = {
-> >         { "gt7986u" },
-> >         { },
-> > @@ -800,6 +804,7 @@ static struct spi_driver goodix_spi_driver = {
-> >         .driver = {
-> >                 .name = "goodix-spi-hid",
-> >                 .acpi_match_table = ACPI_PTR(goodix_spi_acpi_match),
-> > +               .of_match_table = of_match_ptr(goodix_spi_of_match),
-> 
-> I can never quite remember what the current preference is in regards
-> to "OF" tables (whether to use #ifdef like you've done or mark them
-> `__maybe_unused`), so maybe someone will request you change it. ...but
-> IMO what you have is fine and looks to be properly guarded with
-> of_match_ptr(). As far as I'm concerned, this patch looks OK.
-> 
-> Oh, I guess the one "nit" is that I would have put "spi" in the
-> subject, making it "HID: hid-goodix-spi: Add OF supports". It might be
-> worth sending a v5 for that (after waiting a day or two) unless a
-> maintainer tells you not to.
->
+This series introduces deep sleep macros which are common to TI's K3
+SoCs and can be used to configure the behavior of SoC pins during Deep
+Sleep mode. Additionally, support for SoC wakeup with USB1 on AM62x
+based SoCs is added with the help of the newly introduced deep sleep
+macros.
 
-Ack,
+Series is based on linux-next tagged next-20241112.
 
-> In any case:
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Regards,
+Siddharth.
 
-Thanks,
-Charles
+Siddharth Vadapalli (2):
+  arm64: dts: ti: k3-pinctrl: Introduce deep sleep macros
+  arm64: dts: ti: k3-am62x-sk-common: Support SoC wakeup using USB1
+    wakeup
+
+ .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi |  2 +-
+ arch/arm64/boot/dts/ti/k3-pinctrl.h           | 19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
+
+-- 
+2.40.1
+
 
