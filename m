@@ -1,149 +1,145 @@
-Return-Path: <linux-kernel+bounces-405343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52DF29C500E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:58:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A1E9C5041
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:04:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92A48B2700A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:56:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B712B2CA9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D637820B7FA;
-	Tue, 12 Nov 2024 07:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EMot6XBg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DDC20A5EB;
+	Tue, 12 Nov 2024 07:55:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E82205E37;
-	Tue, 12 Nov 2024 07:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135B220A5F7
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731398081; cv=none; b=upwve5aAPwj0DnZ+YrX4x4Yg0ZPQHgLEVq+O5G2CAuy+L/lMy1bo8tbxzHNXo6krEfFQprg5W55eOBdhxFDEo3hUpliFIa0bvH2UJUHVYwwWiRFk+mqfzpz+xh0pwxHtLJkVIIfL0VLQidj/8eF/VB1hvfJMXkf7ZPk3ooIc7ZA=
+	t=1731398138; cv=none; b=KMlffyHbsIYcDsT0/KB0v0tasTCeycG49qbF7ixHnpmAXrojbLbbPh6LUQjjwj+ycQkSJhI1CNbO2Rkx3YwopjEm6lgkHVYAQp+WtN4/ygsrj0PpyczvSZuy7L8WzuFBDp9VaOx5KQ0aMNKnxu9EmV9L941Ba/ymGmEK2swQY7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731398081; c=relaxed/simple;
-	bh=B7T6rH98Pun81Q0J4vmg63UTyhk1+HV6gmwVAT5X4lA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u0mMh4mriddiWZOPFkqlys0sfHLAwEIH0Zcovel+eZ11ZZrjcuzoGs2/swpAJjWSzP0KSYMMyKyvCXPyZ5+EjbQr8GkptTiSSbP1pphj9nuwGq6jVQygnDYdn3DbiaUlyDFBh84iEM92DjnGgyXunws4fk5r39VfUqTi3bTx43s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EMot6XBg; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731398079; x=1762934079;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=B7T6rH98Pun81Q0J4vmg63UTyhk1+HV6gmwVAT5X4lA=;
-  b=EMot6XBgDLKD9mG+HUr+tgGk3qab+2uw1K/qxqA6OMfiWl4vzUuPk4ET
-   ZT7WMsutKHG3NbdHMA6JupBK9+Xj0GMWVxxvXK+s0MoN+XRx1p9NWOX3M
-   kEyrjXlNYfG2Y81m/m8Yfs5egxDkas47TRWS4qHYkge3MRbQp80FPDsna
-   IOzIJXPoaAJC5whca9VUPXjnxbczo/ZmZiwb+2FDf2s85ok2e0dhVupw/
-   RfIA+1kyt07xTUK9wj5seyKpX61fhnW0GJnuRzfDkgIwTK3WXZYGFsYo9
-   v/fm39u9ed8kqsgvXBKPO/enIjjGrukT5s87wpP0P50NYpd6kGG0lEtjw
-   w==;
-X-CSE-ConnectionGUID: jM7UVzOuR7mZFyRDSfmzOA==
-X-CSE-MsgGUID: qx9catwkQ9CdwMvB8hRRfQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="30623719"
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="30623719"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:54:39 -0800
-X-CSE-ConnectionGUID: tXNP3PGQS0COdAds28Ow1A==
-X-CSE-MsgGUID: L1iUEA27Q9OltbTQbXvQSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="92272960"
-Received: from mtkaczyk-mobl.ger.corp.intel.com (HELO localhost) ([10.246.20.233])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:54:37 -0800
-Date: Tue, 12 Nov 2024 08:54:31 +0100
-From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-To: Song Liu <song@kernel.org>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH md-6.13] md: remove bitmap file support
-Message-ID: <20241112085327.00007de3@linux.intel.com>
-In-Reply-To: <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
-References: <20241107125911.311347-1-yukuai1@huaweicloud.com>
- <CAPhsuW7Ry0iUs6X7P4jL5CX3+8EGfb5uL=g-q_8jVR-g19ummQ@mail.gmail.com>
- <ef4dcb9e-a2fa-d9dc-70c1-e58af6e71227@huaweicloud.com>
- <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1731398138; c=relaxed/simple;
+	bh=jqfH88goHxUWmGs0ZtcBrBheyTBZFV5qaRxeqIF0nDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eO1yXGaRANmury72hTmp4jKUaH3sCB41aJqoTf+N6MlrYwNE69D+HMSdDRpAx9YriEd01AOz1VFzGDDixMoPFZqCDcd90SSCvckuRW4O3NTLmXuvZoWJriWf1SDaKln7TRnCjTiDXujUDoIVQodb9+sVCv4DBUcXmIh7Adz4Jmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tAljt-000840-0J; Tue, 12 Nov 2024 08:55:05 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tAljp-000NFm-0Y;
+	Tue, 12 Nov 2024 08:55:01 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id A90A23712AA;
+	Tue, 12 Nov 2024 07:55:00 +0000 (UTC)
+Date: Tue, 12 Nov 2024 08:55:00 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Vladimir Oltean <olteanv@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Pantelis Antoniou <pantelis.antoniou@gmail.com>, Marcin Wojtas <marcin.s.wojtas@gmail.com>, 
+	Byungho An <bh74.an@samsung.com>, Kevin Brace <kevinbrace@bracecomputerlab.com>, 
+	Francois Romieu <romieu@fr.zoreil.com>, Michal Simek <michal.simek@amd.com>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Zhao Qiang <qiang.zhao@nxp.com>, "open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, 
+	"open list:FREESCALE SOC FS_ENET DRIVER" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCHv2 net-next] net: use pdev instead of OF funcs
+Message-ID: <20241112-lush-beneficial-chicken-9a31f5-mkl@pengutronix.de>
+References: <20241111210316.15357-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wiafd67i2wzywtxu"
+Content-Disposition: inline
+In-Reply-To: <20241111210316.15357-1-rosenp@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--wiafd67i2wzywtxu
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCHv2 net-next] net: use pdev instead of OF funcs
+MIME-Version: 1.0
 
-On Thu, 7 Nov 2024 17:28:43 -0800
-Song Liu <song@kernel.org> wrote:
-
-> On Thu, Nov 7, 2024 at 5:03=E2=80=AFPM Yu Kuai <yukuai1@huaweicloud.com> =
-wrote:
-> >
-> > Hi,
-> >
-> > =E5=9C=A8 2024/11/08 7:41, Song Liu =E5=86=99=E9=81=93: =20
-> > > On Thu, Nov 7, 2024 at 5:02=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.c=
-om> wrote: =20
-> > >>
-> > >> From: Yu Kuai <yukuai3@huawei.com>
-> > >>
-> > >> The bitmap file has been marked as deprecated for more than a year n=
-ow,
-> > >> let's remove it, and we don't need to care about this case in the new
-> > >> bitmap.
-> > >>
-> > >> Signed-off-by: Yu Kuai <yukuai3@huawei.com> =20
-> > >
-> > > What happens when an old array with bitmap file boots into a kernel
-> > > without bitmap file support? =20
-> >
-> > If mdadm is used with bitmap file support, then kenel will just ignore
-> > the bitmap, the same as none bitmap. Perhaps it's better to leave a
-> > error message? =20
+On 11.11.2024 13:03:16, Rosen Penev wrote:
+> np here is the node coming from platform_device. No children are used.
 >=20
-> Yes, we should print some error message before assembling the array.
+> I changed irq_of_parse_and_map to platform_get_irq to pass it directly.
 >=20
-> > And if mdadm is updated, reassemble will fail. =20
-
-I would be great if mdadm can just ignore it too. It comes from config file=
-, so
-simply you can ignore bitmap entry if it is different than "internal" or
-"clustered". You can print error however you must do it somewhere else (out=
-side
-config.c), otherwise user would be always prompted about that on every conf=
-ig
-read - probably we don't need to make it such noise but maybe we should (us=
-er
-may not notice change if we are not screaming it loud). I have no opinion h=
-ere.
-
-The first rule is always data access- we should not break that if possible.=
- I
-think case I think it is possible to keep them assembled.
-
+> I changed of_address_to_resource to platform_get_resource for the same
+> reason.
 >=20
-> I think we should ship this with 6.14 (not 6.13), so that we have
-> more time testing different combinations of old/new mdadm
-> and kernel. WDYT?
+> It ends up being the same.
 
-Later is better because it decreases possibility that someone would met the
-case with new kernel and old mdadm, where probably some ioctl/sysfs writes
-fails will be observed.
+You should describe in an imperative way your changes. Something like:
 
-I would say that we should wait around one year after removing it from mdad=
-m.
-That is preferred by me.
+Modernize IRQ resource acquisition.
 
-I will merge Kuai changes soon, before the release. I think it is valuable =
-to
-have it blocked in new mdadm release.
+Replace irq_of_parse_and_map() by platform_get_irq()
 
-Mariusz
+=2E..and list the other changes, too.
+
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  v2: fixed compilation errors. Also removed non devm transformations.
+>  Those will be handled separately. Also reworded description.
+>  drivers/net/can/grcan.c                          |  2 +-
+>  drivers/net/can/mscan/mpc5xxx_can.c              |  2 +-
+
+Reviewed by: Marc Kleine-Budde <mkl@pengutronix.de> # for CAN
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--wiafd67i2wzywtxu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmczCdEACgkQKDiiPnot
+vG9P5Qf9GHBDogv141w23Ql4QYhPyQNOFBbAjfAmSaXZJQjwjI2/PT9uMOtwx1N3
+xkyyFSufM0a+sr9Mn7vC+liJrlzO9Xmqq+53eTAvq2e2RPKAdVT/aPa21s05sWUI
+u1r/6bgaTgg9stZMDtivo6HAYr69FexPGYKdk9bAcm4gANpW/Ih+NpLB4IwzqKv6
+EHXEtt4AfiBCLNkq4BUwBO4D1CHsDbICmSZbC2RRZ5Jc85R9u+YYqwj7RN3EbDfL
+fWarhFuRuoGubmHPg8gaauKa5/Cxjo9fsjn93QTzRbgEgLJEsii3Y85oI0LaN0U8
+e9/zBSWu8p/gXjqOGAwOOYQ1WVxswA==
+=3yO+
+-----END PGP SIGNATURE-----
+
+--wiafd67i2wzywtxu--
 
