@@ -1,240 +1,188 @@
-Return-Path: <linux-kernel+bounces-406741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EDC9C6315
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:09:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE9D9C6321
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:13:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 796731F2260F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:09:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4D17283B6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EEB21745E;
-	Tue, 12 Nov 2024 21:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED90E21A4B4;
+	Tue, 12 Nov 2024 21:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZNeNq5So"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2049.outbound.protection.outlook.com [40.107.93.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="cqVJz9Sp"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE58A13FD99;
-	Tue, 12 Nov 2024 21:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731445733; cv=fail; b=qxdPmPZaVFQjiisCvwiaxiUP2PhhiBAlyvFmDgGTrjpX7/6jxF9rli8J6txBlEyrHXEa2kbeFQmW+Po6tspOZavyJ7T+LVpSwL3g80cLq7cWpxW1SxQh+4Nt5xPtPKoJQ2+w+ekTnZ0dtEx0OdeGDsocYWDEto7lGHVD8FA1Vms=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731445733; c=relaxed/simple;
-	bh=/vLLQHzDRA5DSnUp97fpDm8BEbmZgz2uRSwlJPir8TE=;
-	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
-	 Content-Type:MIME-Version; b=a5QmY0caddco7vyJRLs71gn0McgfscUjWOCfxhUjRUH7Ey1dHMK3mxsPWcocLXhrysgxjlIMnER+p0mUWAcCADCHL43ooFuw4gvMkKLnB+7i1yM/RaCTo7XLsBpuZi7KESajx9/Sd8WIN1CcyDdpRF+YZsIszX4tvpFPiXs9FEA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZNeNq5So; arc=fail smtp.client-ip=40.107.93.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HoHbxN7wdh+9g44AXUVdE7Okr46U+v19nB9QTrD242AgZcwr/2B2on2a6b05jystAqMANzDey/4tJBj3XwhvCgQugwCtxtbHzWHymlzCQ1NY67L/a4QkMTlvyrjUNEm7Mip16GOUFgeqnMxHd194s2rN+Lrp/YKMancZHgEal5Gq1R9oJiR5iEZ8impj2AkTpCo7evg0ZFNQXUD7K+Ap1ZlM4bFErAzoe1JEFAohVgJixPO/lA1FXzywosJ0MBErbVhNQVfuR6yrQimjmC9lIhl7c3aeQMYZt5NrKG40P72pQCiQ8J19SUfIUN0A0qfQEsTe3Hus0ftR9coCscKfrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bSxxyCuvmMjzY8t2lpi9sAbTuI3kY4uaa7G7fjMeNZs=;
- b=BLY4chmZmAttSkNHDAuaEKSUqBHONgURKAGBc0iPpGByfPAef3UVVxEUNu+XbEl4PTmpTl0NjqQIHvOa/Z/l/BwAJsXWvHiPsY3/Yx/rNN9Bhul9+SRkGoXyK7FVNfnHDY/o9AsMNwTuukeeu7utmg6PcY+gLNzyCDH7hs8oRCZJH4Yb1pP5kmUXXKBd904rMmQyWEFseS3gI4qnhKNwCRPUQd3yhTtBOYzD8/Jnv5EiJ9hdqU20Xmnp81jcaLdLgKqllTOHJSiq3fQUz9XggLnYrjtHdGSBE2MFiqJJnX+Bl70FQnUzsi3vEEuqgIRJt1DxR2OpwoxZwaOAv+2dbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bSxxyCuvmMjzY8t2lpi9sAbTuI3kY4uaa7G7fjMeNZs=;
- b=ZNeNq5SoMddclojrcIgzIb5X4702KvDJXUUQ+MgtyIFC+bIQNm8IlMFikp28v/a2r6+DuHrG3AJ4vj+YsGYrRGrb92J0tB6IU9z2Z0YvMwahTn9xOhgDfZfNc6s7a2AN/ciM2swDN0Z3oPZXHBUMkgkdSD8ywTh9137/kTQaOQM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by SJ0PR12MB6712.namprd12.prod.outlook.com (2603:10b6:a03:44e::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27; Tue, 12 Nov
- 2024 21:08:48 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 21:08:47 +0000
-Message-ID: <5212b2a8-a20a-3702-de07-7c3e3b7e8dcc@amd.com>
-Date: Tue, 12 Nov 2024 15:08:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To: Dionna Amalie Glaze <dionnaglaze@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- Ashish Kalra <ashish.kalra@amd.com>, John Allen <john.allen@amd.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>, linux-coco@lists.linux.dev,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Michael Roth <michael.roth@amd.com>, Luis Chamberlain <mcgrof@kernel.org>,
- Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Tianfei zhang <tianfei.zhang@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
- linux-crypto@vger.kernel.org
-References: <20241107232457.4059785-1-dionnaglaze@google.com>
- <20241107232457.4059785-8-dionnaglaze@google.com>
- <4ec6b73f-4707-c93a-f046-213ac4d4549d@amd.com>
- <CAAH4kHaAqh1R6CGBKXNsO+uQnscwGo0Y06MTny8CebSWK9QMaw@mail.gmail.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH v5 07/10] crypto: ccp: Add preferred access checking
- method
-In-Reply-To: <CAAH4kHaAqh1R6CGBKXNsO+uQnscwGo0Y06MTny8CebSWK9QMaw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA0PR12CA0009.namprd12.prod.outlook.com
- (2603:10b6:806:6f::14) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B92215018;
+	Tue, 12 Nov 2024 21:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731445985; cv=none; b=iufw+OHWQ+0IJlsdAaQH60dxxzZeawciYVSm4FnF7Dt5qOJf4lmFC6GHlqPcUAbEiNm+sWC0Bgkx/vpQs1ULoNL3ZPoHpe9f6riLfgJNk+lhnNlbeJYlyJHt3l30k12BoNzlVlcXmRML7LanpTAnW0T+4+Df2s0E2eFXhYXAnSY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731445985; c=relaxed/simple;
+	bh=CICNCBgnyRhQK5xuFr8zp2dBym62Bvb2VTXd/tkk8CA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hkleim5ote4s1h7uCtpuWtr9CurEejHpx45+w3T9lGKElzm8JW3782ovJDuFVQiTW+UQ4tnHHwjhn+dTT/tMrPJeEoSGv/g4v9/nRWPOHHS7tGLxMjH9GyCFnn4hGjOKisPiZErH9nqHQFtrK6dNXQ8QsYMv48s5Vt3Tn+YFot4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=cqVJz9Sp; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id AyButuY9CdVBsAyButCxb1; Tue, 12 Nov 2024 22:12:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731445974;
+	bh=fvwwuU9U+8o+dVu3obevxV4lHk/tNdRynX56ecSAero=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=cqVJz9Sp9DGwouxtEcsJJTmeeeT19GrxbYPm7ogocl53riTJ0t3ojDFj3SXfH0gOD
+	 tis/wel3G91VmJLN/hiQDkDCiED65Z52x5HaTM2sq+diQ2PPANzp8wHywrdXmiPYTT
+	 FvPNkSRURwePIPz7KzvFXHi5yZ0WoJNHaj1KPfANzne77w5MJwlpsrmkQv+PbLEoHK
+	 6zYxf7IciIRQtO0Zc2GGUfPk5dMQOweRH7xyjqS2R+j+PMRaFaZiQ3E0G/lTa+jHBb
+	 shmQ8FMbTjb5GDgCJedJsg2MuXERL2MivVugFhYJkXRxBETSVC24lIfnlFSA1alzQv
+	 AazrXt6mmvgvw==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 12 Nov 2024 22:12:54 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Jagan Teki <jagan@amarulasolutions.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Douglas Anderson <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/bridge: Constify struct i2c_device_id
+Date: Tue, 12 Nov 2024 22:12:25 +0100
+Message-ID: <bdba1f49b4b48e22628482b49ce81f8e1f0d97b1.1731445901.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|SJ0PR12MB6712:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b7971ab-5a39-48df-0e08-08dd035e32be
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RUdOUFZveUFHNEpid1BoZ2NvNXJXbVB0ZkErbWdTUUhDTnhiU1dVS2lHMWE0?=
- =?utf-8?B?a2dZTEsySXpFTW0wOWZvZ0NkNExPamRiRVdXMDdIUGJ1cUxwN1U4S0d4b0ZN?=
- =?utf-8?B?QWZPVWdud0ZTRjlEdXR1R1dVQjRqMWxPZG1rVXJ3NXUyQkpJVkFiWFhjd0tm?=
- =?utf-8?B?MDM4SEZFandyY0ZyUkpEWkYxT21VVjZBSmRuY0N2YzZoRUtvRmwrYWZPODBN?=
- =?utf-8?B?ak02QjYzVk85ZDRIM25GbUI2TythM0I1dHYyM0hVa3ZFVHZzVDd6NTlOblBO?=
- =?utf-8?B?TjNxVTh0VFFEbGJSUXBsa0lEUzczZHZudEJtcXdObDJLVzFNSkFaU3RCdTRV?=
- =?utf-8?B?dnVkVDVCcEtLVTV1YUM1KzkzN2d3NmhVNk1vbGdMeXdkejZGUm9vTEhxb3BW?=
- =?utf-8?B?cEMvaWw0aVJyN0JsVXRrcFlEenRWSXRrZHBDamdBRXpxUVRSb0U5ZW5Uamlm?=
- =?utf-8?B?SlpVcU5EYjRoa2tTZFlpREprM3hxUU9XYUxYZGgzaWt3OEE3Tzk5TkcrbFVp?=
- =?utf-8?B?cUs4eDUwQ05ZeW9pQzBkczNhU3pYVjRCd2E3VnB4VDl4c1UyTVZEc2djNi9S?=
- =?utf-8?B?WDFxSFdKSiszaTdGSDVoazBjNlJxQzNHNGtuemF0Ti94WHdKSTZweXVUV2pi?=
- =?utf-8?B?QW5MVmhhNWhpTnpoRDZtTzNpS0l3UHpQKzZHbVpibmhkVGt0Ym9NMCtFUVJX?=
- =?utf-8?B?NWNOMkJqRWROQW9jNU5rZUxkeFdkdWhyNFh2UUZpTGRvK2ppY2RONWMzL2Q5?=
- =?utf-8?B?SVY3QU9rL28yZkdzcGVRSlFVSi92dUVtOEhlMUxEYmlCZFIyUXVhYTl4YW9r?=
- =?utf-8?B?SXRRNDZJcXNhaXJCcnBNMTBWT0x4cVNZY2RJOWxEdGhCcDJudHljektNZmx4?=
- =?utf-8?B?OHV2a2ZLYTBRYnpyT09MelVicFh2NnZKRXdLTjJjbFRFTWZkY0JBTWx0VGZW?=
- =?utf-8?B?OVIwTC9Sd1ozZUZJM3Z3MmZFRlNlcXdubTNkWjUwejZWMGRwU3ZjOFZpSGVZ?=
- =?utf-8?B?MHBqa2pRMThsaHNKSjQ1UHEzb09laUxPeFg4TEpJd3F5MllVZ0V3NzJhVmJP?=
- =?utf-8?B?M0VLbGpqb1JMYWNGOFk3UjZhcjNoZFRNVm1rSlhNU3lNM0loRkdrVjhpYkNx?=
- =?utf-8?B?d29IOEw0UkxKUlp5V0tObjdrdkM3TU56RTV2UGVxSlVBWTcwSGdDMWtjdk14?=
- =?utf-8?B?VCtBQjViRWZBby9aMnZBVmV0U1BOd0JJS3NvL1JZMElKVU9FVDg4QldaeXpv?=
- =?utf-8?B?d21OOEQ5MEhpKzRJSzRZVEtGTHd0QjZLRlh0dUdkRzBqZ3NIMUFqL25WWGlW?=
- =?utf-8?B?T2h3ajdwRjRNVDkwVG45YVA4djRVQ21ZYmwrZlJ3b0pDWDBDZmdvZ3FrVFFE?=
- =?utf-8?B?KzJvMjIwWkMrOGtKcHJ5M1U2VWthNktLWWJKQkZpQThGK3Zud2ZFVmFxMStv?=
- =?utf-8?B?VVBZSGFGemZjMjgxNXFQcnlhWDRyMnAwV3B0bGZ5VEpweEpQN0pGbXY2bStp?=
- =?utf-8?B?UkYvK1A2am5aMmFtaUt0dTBFcUNzOCtHU29uUVJ3bkN5cnZOTFlCYzN6aFM0?=
- =?utf-8?B?dGRtdy9BeVRrRXpYWEdDL1o0L21ubHkwRmQ2aWVGNkx3bmJXU1N4K1QraE1n?=
- =?utf-8?B?Nk1wQnlUc0FEN3pjSUJ6Nm85dHkyRnJYQWhZRTVNSmVIYkVrMGhBZXYyMUxH?=
- =?utf-8?B?NFZzU0lRMWdwWFV1eko5elFJU2VaSktSajlYekNFWVhVM0JrT3lGQnhRN0NN?=
- =?utf-8?Q?Wa3MD+flumdGaZyFwCQGHXAyAgP5JY7lQw4WiA1?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WXAwTGhVUS96VlBKb2Nxall5a1NmVjdDYjE5bDlMQ0FIUzM3Ymo2MVFWR09S?=
- =?utf-8?B?NkpBcEIyNFdOS2Y3YjNsRmJPU3RoS2tuN01rMmVoUnJpWjBJa0pqNjhKVXdq?=
- =?utf-8?B?eVRvVXZQM05vTWM4bS9DZkJHaExRRmlOeGNmQ3NSMzZYOXQvamNDMXhML2Vp?=
- =?utf-8?B?Ky9RakljQW85ZlBxbWdhc3JjTWZ2aG4vdmZEcitoVlZmYnNZOEwzWmFVaUtI?=
- =?utf-8?B?U09aZzQ3RW1pZGJTNEcyeVNNeVZhUWg5bUJBRThqZk11Mjd1bXBoRmdWV0NF?=
- =?utf-8?B?aWtzWHpNOEYwaVJ6R2tOcjBkRzFhMVpZTXNqaFhCT09LQTR4Y09xSTd3dVAx?=
- =?utf-8?B?a0lqZXNDU3ZGRHRCRTFUek5KQTZ3ZzE1dWJuWjVib052T1RvcVhmdlhlclNK?=
- =?utf-8?B?ME4yWFNZSlNvcThaUDRrQklEOFhQcThwVjJTRWVnUTZlT3pJNVJFcTRzTUh6?=
- =?utf-8?B?NFhFeW1TWVJpNmt4TVhkZ2RzcTVGVUIwZWhqVFR0TWpxMnM1RmtWYkNXUnNx?=
- =?utf-8?B?MjltdlNJNVZLUjIyZUNrZTl6QkRFdFZLNW1EK0hRc3I5Qjg4VXhXazRTV3NF?=
- =?utf-8?B?dFNRUEl6THhsbExSVTRsbFJRaDdrdWptOExTMG8wUUZWWURLMDJuVk5CaWlC?=
- =?utf-8?B?SzVrcHNFV2l0Qk1XWDJqOVYrRkhqMnQzRWcwWFBZcWlGNi84NmVGcG95NzNv?=
- =?utf-8?B?dDVuZFZSa3dUVlZHNFdCaSt6ZVYzNEIrOU42cDFyOC9aTVJuZHN3SVR3UDBP?=
- =?utf-8?B?VHBDd3pRSXBTSkRrcitnb0JsYklyanBjajRieUg4TmoxMTBZdGlaM2NPWWFZ?=
- =?utf-8?B?V1ZHVVZTZFR4c2Y0dHpIc1R1OC9PR1hiWTdXOUIzRjNyU2NDZGZjSDNodzRu?=
- =?utf-8?B?UGVGRzJ6eThzQWRuQ1JXcnh4SEo4cXFudlhTT2VJcWVkRXJTVk9wVWFIVUg3?=
- =?utf-8?B?SVpEdTRBc2tDbk1yZ2RxdUZpeEhROHkvQmpVOFU0TVRBN0pXM0NNT3BJR3ZJ?=
- =?utf-8?B?RFZYYW82bHhWcmY4SUxGSXNKNWR1dkkzVi82cVRZOEdTZWRyZzZybzNZMHYx?=
- =?utf-8?B?TmxJTE90cG43bFI3ZUlDaEtMbkJCdklUekprbDJiUlhPbTBkWkRYVFBKemlS?=
- =?utf-8?B?ejRUZUFmaVVPTDZGMXhNWms2RGRPVndtY2lDTXI2VXpJYmEybCtVa3NuSHc5?=
- =?utf-8?B?REZOeXowVkJ3S2dYOUMrVWttaFFMb0RFNDBsRlZrWC9CQ2NQNEFUTm5kTGxr?=
- =?utf-8?B?bnY4cDNHeTNIVTg3M1F5OUpwNWlCWWNLa3VhcDdYMWN2YzhNbGVqY1JDVlNw?=
- =?utf-8?B?RUhMcS9ST0I5UC9EYzdtbWRLOWduVmROWjkvMG12RGJBbytyaXFxclpEdUhh?=
- =?utf-8?B?SE9mZFRxaTc5cHNTbWtZeE5pZG1wVTJYZ2VVVWdUVFpUOWt5bmpVV2NqWHFF?=
- =?utf-8?B?ZG40SWV5MjdpNzV1S0x4dnJRZ3Vvd2M2TjZXc0tjVGxoSWVIUHU5dFlVakZK?=
- =?utf-8?B?bER1T1ZvQkNBNTdZdVRGQXdVbWh5UkZ4c0xVOFRRNFlLZzJhclpTTGczd0U3?=
- =?utf-8?B?aGJ5WFJlWUtTM2djRFBKOTZaa0ZEaGZsQVgxalZpWXJXZklXRTJtUWQ4WjIw?=
- =?utf-8?B?OTJvRmd6V0tSMndORHUxYzBtR0dNV2RYeThLTmREYndSSWRrTHB5aTh0R0xG?=
- =?utf-8?B?OTlHRGRIYnI5a1UwTjJiZjM3aGt2MHFwWHE3YmpidkY3VFk5NTBRV0pwN3RQ?=
- =?utf-8?B?b3V2L3NkV1o4TndyTkN4SWttL01BSU13Tm8weU5tdk1xaWYrM0FrclpvbnF3?=
- =?utf-8?B?bDJxajFSdVBDa1ZaYWd4TlRjWUpDcW1rWnBzNnloM2R6RWtzZVZRSm1ic0tO?=
- =?utf-8?B?cnpkbHRGK0FYNnVONUcxSzI3ZjI2K0FVUEhFLzNGa1llcVVKWTI2N3VZYjlV?=
- =?utf-8?B?S3lZZ3JQT040UVBiNlZUZU5tMXZ2NXFyYTdxNloxdU9qRk1aWGtRdVlpVlN6?=
- =?utf-8?B?azVGTmRYdUtpVitrdTlVQjdRYjlIOXd3d2tLQjZ1RkN3Smc4T1N5T2JlM3NN?=
- =?utf-8?B?UjBvOHJnUnE5TXFhMzhLakJSNW5tTUJUQlMxV1pWY0o2M3BSWVZ1amJMVkRC?=
- =?utf-8?Q?/G+e3FUKQi5sWZnjUq3Nh2NtL?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b7971ab-5a39-48df-0e08-08dd035e32be
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 21:08:47.1893
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Mfe8jqXvwPWICnBN1QcDZc8ZatrAno7zzTAvyROp7qJOFw1cPThZwzvv2CbCc2KmrTCcyLc/E8PuJ9rBJycXug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6712
+Content-Transfer-Encoding: 8bit
 
-On 11/12/24 13:47, Dionna Amalie Glaze wrote:
-> On Mon, Nov 11, 2024 at 2:46 PM Tom Lendacky <thomas.lendacky@amd.com> wrote:
->>
->> On 11/7/24 17:24, Dionna Glaze wrote:
->>> sev_issue_cmd_external_user is the only function that checks permissions
->>> before performing its task. With the new GCTX API, it's important to
->>> establish permission once and have that determination dominate later API
->>> uses. This is implicitly how ccp has been used by dominating uses of
->>> sev_do_cmd by a successful sev_issue_cmd_external_user call.
->>>
->>> Consider sev_issue_cmd_external_user deprecated by
->>> checking if a held file descriptor passes file_is_sev, similar to the
->>> file_is_kvm function.
->>>
->>> This also fixes the header comment that the bad file error code is
->>> -%EINVAL when in fact it is -%EBADF.
->>
->> Same comment as before. This commit merely creates a helper function, so
->> this commit message is not appropriate.
->>
-> 
-> Is this a meta-comment about how the commit presupposes being in a
-> series with a goal, but should have a self-contained commit message? I
-> don't know what "same comment as before" you're referring to.
+'struct i2c_device_id' is not modified in these drivers.
 
-I made the same comment in your previous series.
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-> How about this:
-> 
-> crypto: ccp: Add file_is_sev to identify access
-> 
-> Access to the ccp driver only needs to be determined once, so
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  15566	    987	     32	  16585	   40c9	drivers/gpu/drm/bridge/chipone-icn6211.o
 
-once per KVM ioctl invocation
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  15630	    923	     32	  16585	   40c9	drivers/gpu/drm/bridge/chipone-icn6211.o
 
-> sev_issue_cmd_external_user called in a loop (e.g. for
-> SNP_LAUNCH_UPDATE) does more than it needs to.
-> 
-> The file_is_sev function allows the caller to determine access before using
-> sev_do_cmd or other API methods multiple times without extra access
-> checking.
-> 
-> This also fixes the header comment that the bad file error code is
-> -%EINVAL when in fact it is -%EBADF.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ drivers/gpu/drm/bridge/chipone-icn6211.c   | 2 +-
+ drivers/gpu/drm/bridge/lontium-lt9211.c    | 2 +-
+ drivers/gpu/drm/bridge/lontium-lt9611.c    | 2 +-
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c | 2 +-
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c      | 2 +-
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c      | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-Yes, I like this better.
+diff --git a/drivers/gpu/drm/bridge/chipone-icn6211.c b/drivers/gpu/drm/bridge/chipone-icn6211.c
+index 9eecac457dcf..d47703559b0d 100644
+--- a/drivers/gpu/drm/bridge/chipone-icn6211.c
++++ b/drivers/gpu/drm/bridge/chipone-icn6211.c
+@@ -785,7 +785,7 @@ static struct mipi_dsi_driver chipone_dsi_driver = {
+ 	},
+ };
+ 
+-static struct i2c_device_id chipone_i2c_id[] = {
++static const struct i2c_device_id chipone_i2c_id[] = {
+ 	{ "chipone,icn6211" },
+ 	{},
+ };
+diff --git a/drivers/gpu/drm/bridge/lontium-lt9211.c b/drivers/gpu/drm/bridge/lontium-lt9211.c
+index c8881796fba4..999ddebb832d 100644
+--- a/drivers/gpu/drm/bridge/lontium-lt9211.c
++++ b/drivers/gpu/drm/bridge/lontium-lt9211.c
+@@ -773,7 +773,7 @@ static void lt9211_remove(struct i2c_client *client)
+ 	drm_bridge_remove(&ctx->bridge);
+ }
+ 
+-static struct i2c_device_id lt9211_id[] = {
++static const struct i2c_device_id lt9211_id[] = {
+ 	{ "lontium,lt9211" },
+ 	{},
+ };
+diff --git a/drivers/gpu/drm/bridge/lontium-lt9611.c b/drivers/gpu/drm/bridge/lontium-lt9611.c
+index 1b31fdebe164..8f25b338a8d8 100644
+--- a/drivers/gpu/drm/bridge/lontium-lt9611.c
++++ b/drivers/gpu/drm/bridge/lontium-lt9611.c
+@@ -1235,7 +1235,7 @@ static void lt9611_remove(struct i2c_client *client)
+ 	of_node_put(lt9611->dsi0_node);
+ }
+ 
+-static struct i2c_device_id lt9611_id[] = {
++static const struct i2c_device_id lt9611_id[] = {
+ 	{ "lontium,lt9611", 0 },
+ 	{}
+ };
+diff --git a/drivers/gpu/drm/bridge/lontium-lt9611uxc.c b/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
+index 4d1d40e1f1b4..f89af8203c9d 100644
+--- a/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
++++ b/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
+@@ -913,7 +913,7 @@ static void lt9611uxc_remove(struct i2c_client *client)
+ 	of_node_put(lt9611uxc->dsi0_node);
+ }
+ 
+-static struct i2c_device_id lt9611uxc_id[] = {
++static const struct i2c_device_id lt9611uxc_id[] = {
+ 	{ "lontium,lt9611uxc", 0 },
+ 	{ /* sentinel */ }
+ };
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+index 57a7ed13f996..00d3bfa645f5 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+@@ -732,7 +732,7 @@ static void sn65dsi83_remove(struct i2c_client *client)
+ 	drm_bridge_remove(&ctx->bridge);
+ }
+ 
+-static struct i2c_device_id sn65dsi83_id[] = {
++static const struct i2c_device_id sn65dsi83_id[] = {
+ 	{ "ti,sn65dsi83", MODEL_SN65DSI83 },
+ 	{ "ti,sn65dsi84", MODEL_SN65DSI84 },
+ 	{},
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+index 9e31f750fd88..ce4c026b064f 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+@@ -1970,7 +1970,7 @@ static int ti_sn65dsi86_probe(struct i2c_client *client)
+ 	return ti_sn65dsi86_add_aux_device(pdata, &pdata->aux_aux, "aux");
+ }
+ 
+-static struct i2c_device_id ti_sn65dsi86_id[] = {
++static const struct i2c_device_id ti_sn65dsi86_id[] = {
+ 	{ "ti,sn65dsi86", 0},
+ 	{},
+ };
+-- 
+2.47.0
 
-Thanks,
-Tom
-
-> 
-> 
-> 
-> 
 
