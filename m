@@ -1,119 +1,93 @@
-Return-Path: <linux-kernel+bounces-406669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EDF9C6208
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:59:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE3F59C61DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:52:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DD11F24969
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:59:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A83001F236D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2B3219CAB;
-	Tue, 12 Nov 2024 19:59:38 +0000 (UTC)
-Received: from smtp-out.kfki.hu (smtp-out.kfki.hu [148.6.0.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F897219E4A;
+	Tue, 12 Nov 2024 19:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQhkcw8t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D5920B218;
-	Tue, 12 Nov 2024 19:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.6.0.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07F820ADEC;
+	Tue, 12 Nov 2024 19:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731441578; cv=none; b=vEbUWnCwc0lmHWFWGOGdNdx697YNUiYTq7RFaUAYsNAc9OVeESo1oQ1MS+lww+RuJlYqZ7In8fgdHQTXIrl13fiUacnuDk5YVtiHUi2AbGxYEcOzdshIIwO9+MPqI65P38RYF56tzihSb3SjBR/VfSCHvcxbLyT90SLHVQx6ZIg=
+	t=1731441050; cv=none; b=MyMbzHvaxw4lBvm1YFOm6BhbUkI4KeKTxfmnsdRiw1BASUnGlAquK2AmAKK6POjpayhDtDpUkIc5r217Cfz4H8hjAjTNVMhz9IFyHUVq3jKREYShLO2DHZZThXt27kotv1n/Q1jRy2gh8YutrojYFvhe05MxH5lfmkO1PWpH6K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731441578; c=relaxed/simple;
-	bh=rC+0ugHNvw01z7Q9STlYyR40J3xB/OsK/Djp3RNVyos=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gba/tHTmyP82ppiqIDekJA3hML+b7cXYTfJtZPzRf7kFBWTKUUBgeZ9SleC2EbnEZh0bWXrf5QNiCDq8B/PfISQDrq2V8VDxcwXL5ciqXliXv7rzqF9WwCWiIDvWywt7HYgaQPQqYwtLqoABT1powfmVhX7DMF45NYaJ9A0zcrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; arc=none smtp.client-ip=148.6.0.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
-Received: from localhost (localhost [127.0.0.1])
-	by smtp2.kfki.hu (Postfix) with ESMTP id B5C8432E01CF;
-	Tue, 12 Nov 2024 20:50:23 +0100 (CET)
-X-Virus-Scanned: Debian amavis at smtp2.kfki.hu
-Received: from smtp2.kfki.hu ([127.0.0.1])
- by localhost (smtp2.kfki.hu [127.0.0.1]) (amavis, port 10026) with ESMTP
- id ytOsMQz8XMno; Tue, 12 Nov 2024 20:50:21 +0100 (CET)
-Received: from mentat.rmki.kfki.hu (94-21-33-116.pool.digikabel.hu [94.21.33.116])
-	(Authenticated sender: kadlecsik.jozsef@wigner.hu)
-	by smtp2.kfki.hu (Postfix) with ESMTPSA id 5FB7E32E01CD;
-	Tue, 12 Nov 2024 20:50:21 +0100 (CET)
-Received: by mentat.rmki.kfki.hu (Postfix, from userid 1000)
-	id F05421428C3; Tue, 12 Nov 2024 20:50:20 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by mentat.rmki.kfki.hu (Postfix) with ESMTP id ECDFC1401AE;
-	Tue, 12 Nov 2024 20:50:20 +0100 (CET)
-Date: Tue, 12 Nov 2024 20:50:20 +0100 (CET)
-From: Jozsef Kadlecsik <kadlec@netfilter.org>
-To: Jeongjun Park <aha310510@gmail.com>
-cc: pablo@netfilter.org, davem@davemloft.net, edumazet@google.com, 
-    kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, kaber@trash.net, 
-    netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-    netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    stable@vger.kernel.org, 
-    syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
-Subject: Re: [PATCH net] netfilter: ipset: add missing range check in
- bitmap_ip_uadt
-In-Reply-To: <20241112113434.58975-1-aha310510@gmail.com>
-Message-ID: <85b3a08c-f148-ef3c-6489-e34aadc4e735@netfilter.org>
-References: <20241112113434.58975-1-aha310510@gmail.com>
+	s=arc-20240116; t=1731441050; c=relaxed/simple;
+	bh=rJgZSYSkG7dh0RVAe8u1Z+Bh6JGYOaaERx2tsZG25kA=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=MTWvQ4CQd8xojLMniB4aUQvGvcAFX8uf6mjLL2OVEApMDjvfDy+lUBuKksgaKKKwlziJvwPTgTI/5qsybXqLqdEVlNC8YhGdsUfqayBToYP9dUwWJg8X7rGI+wkgynXa1WobMtdLhPUixhQ04Fncm7MBuIRKnYWUCBQlIwURx60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQhkcw8t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2444AC4CECD;
+	Tue, 12 Nov 2024 19:50:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731441050;
+	bh=rJgZSYSkG7dh0RVAe8u1Z+Bh6JGYOaaERx2tsZG25kA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=CQhkcw8trB32nAcmYqrDVMDPLyRF3dlktwJv7EIWXgCKJcdl+uXS77b9/GjrHLqaR
+	 DtvcbsUd8YvfQbg0sNv5tFIZM/jIK+Vhq3iR+bXWkkGIRw4pvHvhTWbov39X1TNVKA
+	 QtlXVar3nCOB8r/xX2hw9CWiGCmbSUyjqG1ykocYH1H2lBDQFZ16MxAw93As4jz3We
+	 5j4Mf4zmBupGR1OmV2wayYjrtUis2GKcDw8Qm0D6p20ScK/vHQWBC7iev9K3FdrxHe
+	 x9acF+29ILhb6WGm5cxw2t4jUOZ4hVFk3dgJ2O0BRgXMDiJPCzM7/8ZIhrLBwBY1Vn
+	 vZ+s61S29QBZA==
+Message-ID: <8b6d74e31161c8fadad926fe1c20ce1d.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-deepspam: ham 1%
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241108165532.GA2411452-robh@kernel.org>
+References: <20241016212016.887552-1-sboyd@kernel.org> <20241017203810.GA814469-robh@kernel.org> <38153cbf2616a4a6706412952778eec1.sboyd@kernel.org> <CAMuHMdWp84u66Y-ELtbbRmySYwQch_=2qQiXzWJzrSkGeLZYBA@mail.gmail.com> <20241108165532.GA2411452-robh@kernel.org>
+Subject: Re: [PATCH] of: Allow overlay kunit tests to run CONFIG_OF_OVERLAY=n
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>, linux-kernel@vger.kernel.org, patches@lists.linux.dev, devicetree@vger.kernel.org, kunit-dev@googlegroups.com
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh@kernel.org>
+Date: Tue, 12 Nov 2024 11:50:48 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Hello Jeongjun,
+Quoting Rob Herring (2024-11-08 08:55:32)
+> On Fri, Nov 08, 2024 at 09:56:15AM +0100, Geert Uytterhoeven wrote:
+> > > > > Fixes: 5c9dd72d8385 ("of: Add a KUnit test for overlays and test =
+managed APIs")
+> > > >
+> > > > Doesn't really seem like a fix.
+> > >
+> > > Ok. Feel free to drop the tag.
+> > >
+> > > > Does this need to go into 6.12?
+> > >
+> > > It's only important for 6.12 if kernel configurators want to build the
+> > > kernel with OF_OVERLAY_KUNIT_TEST enabled and not be forced to enable
+> > > CONFIG_OF_OVERLAY. I don't mind if it waits a while.
+> >=20
+> > I'd say it's a fix, so please keep at last the Fixes tag. Merely
+> > enabling kunit tests (which can be modular) should not increase the
+> > possible attack vector on a product by enabling extra unneeded code.
+>=20
+> Not sure I buy that that is an actual problem. However, not worth=20
+> arguing over. I only really care because if there's a Fixes, then this=20
+> really should go to Linus for 6.12 rather than eventually get=20
+> auto-selected from 6.13 to go to stable. So I moved it to send to Linus, =
 
-On Tue, 12 Nov 2024, Jeongjun Park wrote:
+> but I found that CONFIG_OF_OVERLAY is still selected with this patch.=20
+> That's because the clock kunit tests also select CONFIG_OF_OVERLAY.=20
+> That's fixed in next, but it's not queued up for 6.12.
+>=20
 
-> In the bitmap_ip_uadt function, if ip is greater than ip_to, they are swapped.
-> However, there is no check to see if ip is smaller than map->first, which
-> causes an out-of-bounds vulnerability. Therefore, you need to add a missing
-> bounds check to prevent out-of-bounds.
-
-It's a good catch, thanks! However, with the patch below the 
-
-                        if (ip < map->first_ip)
-                                return -IPSET_ERR_BITMAP_RANGE;
-
-lines in the branch just after swapping the from/to addresses becomes 
-unnecessary. Could you send a second version of the patch with the lines
-above removed?
-
-Best regards,
-Jozsef
-
-> Cc: <stable@vger.kernel.org>
-> Reported-by: syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
-> Fixes: 72205fc68bd1 ("netfilter: ipset: bitmap:ip set type support")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->  net/netfilter/ipset/ip_set_bitmap_ip.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/netfilter/ipset/ip_set_bitmap_ip.c b/net/netfilter/ipset/ip_set_bitmap_ip.c
-> index e4fa00abde6a..705c316b001a 100644
-> --- a/net/netfilter/ipset/ip_set_bitmap_ip.c
-> +++ b/net/netfilter/ipset/ip_set_bitmap_ip.c
-> @@ -178,7 +178,7 @@ bitmap_ip_uadt(struct ip_set *set, struct nlattr *tb[],
->  		ip_to = ip;
->  	}
->  
-> -	if (ip_to > map->last_ip)
-> +	if (ip < map->first_ip || ip_to > map->last_ip)
->  		return -IPSET_ERR_BITMAP_RANGE;
->  
->  	for (; !before(ip_to, ip); ip += map->hosts) {
-> --
-> 
-
--- 
-E-mail : kadlec@netfilter.org, kadlec@blackhole.kfki.hu, kadlecsik.jozsef@wigner.hu
-Address: Wigner Research Centre for Physics
-         H-1525 Budapest 114, POB. 49, Hungary
+I was planning to send the clk patch in the next merge window. Are you
+sending the fix now? If you want you can also send the clk side patch
+and I can drop it from the clk tree.
 
