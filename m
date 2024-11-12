@@ -1,145 +1,206 @@
-Return-Path: <linux-kernel+bounces-406710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE5D9C6285
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:26:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 777BC9C6284
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:26:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51593284B8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:26:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 371B8284996
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6645A21A4DB;
-	Tue, 12 Nov 2024 20:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730BE2194B7;
+	Tue, 12 Nov 2024 20:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ss2WasX8"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIIZgmbw"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024D2219CB2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C88E219CAB;
 	Tue, 12 Nov 2024 20:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731443173; cv=none; b=OrvaJ7f0yk94f7RoYnDhOom3B2pX8hYz5MzHKVdbXckuGoxbvmn7eRzUUWmxfEPTqeQyLM5fziqUCSOI1l3ngwfSr9R4To63AVvRZ8/Ym02kkQGiIR9GLGi4s2rQLvAisP7dib66NGfIJVXMeZUB46q0rfuZoGz1BfLRtq6+Yts=
+	t=1731443172; cv=none; b=LLQ6G5aTMho713Kd32DqsWcBwFwwD/wc7Zch19iq3RiGSsRPTcJ5Jx4cj0OaOoCq9E4S7kUwb23SWHR8IcmJobb8PT9Fu6KhvkogiOk3/aVUOlXiznLY+6qIDlTFRs8gYeCSXybbSp95SMII5CH5BxM6PO3JWL85xABqhEtWR/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731443173; c=relaxed/simple;
-	bh=V3OkAFsxYbVBbmhzE2X3EXG4muf5JyI5ukKdSjG9AD0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kamq98GOLYNaka4cXFZWVWEwPTk5AVyV5FlY5o4lTyM0g79OEUduoTGOZin+22eZnudcnedyzifcwRZExuUSoHKrjonuns9njoFH4nqLezzxiJOUMeQ6HwiEC/DC/t2N6h20j3uZ/FijO9Ogj7pnnlt2w3GvfdSoPYHDzbNKx6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ss2WasX8; arc=none smtp.client-ip=209.85.208.179
+	s=arc-20240116; t=1731443172; c=relaxed/simple;
+	bh=lpSX9AQd8tnAf/7uAuKcKFncAOMu9HHCLxUafBbmHUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sHHETz5Ce5RF5hlB8JKIQ1DbTn21DDcJRTEDpNUSDZXSeL7DEfI8Kqw9YnI2kpreiKV9+V4yP0m/sH8kT2wMjhRwMn+VuTv+b6e5dnvP+SebxOi4Cvqqssav3xsdHNtJ4OUMrRI+B1aRJck6rWE6PI0SwLli22w+1gpKQI1UVDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dIIZgmbw; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb4fa17044so64653241fa.3;
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cdbe608b3so62962685ad.1;
         Tue, 12 Nov 2024 12:26:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731443170; x=1732047970; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XQWs6oDLhqhN+YcZsnW1nwP0EE615D1OAGENrXVm4Lk=;
-        b=Ss2WasX8Osrv+F3yu2xmb9dd8etg/9ikoYSHFs/FD+qyJNyrbUTPjNj7cwIGSq4vLh
-         dPvKPJx12HSi6I1TXIJkXNSV6wVN/X4cPljlcWm6rSApHwbj0CQ1oeta6pdU8Y8z7En+
-         W0OAHWmcoS9w0wfZ+Xwprrt1AITBErZpwd8PVNss9v2sQaeQSVRrN993LHM9KmEk7hff
-         Qqi1x4C+wZRpxr2fC8AAZQH5XLIqp3SDFYEPZjyq0OsppbOIHt3eR2MRTboUYoYX4G/n
-         MPa/9SfteAKyMxjCK53BUYQ4pCjmScDTHe41qCMZiMv3Lo6iap7xSw9hnKquo8K0/XdG
-         lkGw==
+        d=gmail.com; s=20230601; t=1731443171; x=1732047971; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GkM/qEq4y9oAmuugOBzErq6qYUQUI6HO1Srs3ZPkn7A=;
+        b=dIIZgmbwW/kBuviZiBOUP/cx7/bqlijGWlam3HDF40sY1lzgBKJ6sTlDEH9KUxA1v3
+         ciZgvR/5xYvuWBDFEs5EXSZfSVKphPvNaARg0HgBSdzH7C1sp1vTJes6p6mntkYX1dey
+         E8dkrNMTc/zEgKalsL1JF4QL0Ix3UWxvduysw8oXebV2w1kuwufRVDEEJjqBk4X9IW5G
+         m24wgXjZRel7RC/577UD5CBTkq8sbglGh26GBd24pdi5vtnPHN6FkQA0lP4J2eDOemMQ
+         EPdQVyLDGVOotSgB+tMqP4Qi3tzro1ekc7l4PXHqL4GyvvS6YYuFbiy4du8NcoV/PdVO
+         PL9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731443170; x=1732047970;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XQWs6oDLhqhN+YcZsnW1nwP0EE615D1OAGENrXVm4Lk=;
-        b=ZRlfB/MVfidBEqQrS/pJmI99yfZfXiJafhKR0IOaaVko65TLYp8jxQLVeWaqAYgx8M
-         pC+zyNlEFh8tqBlU6XCmdm3Liiyzekh+C2vsXQ88QzJrCfQ8tQZWlrdX3is6C6AcQaLZ
-         EBCjJ1ZDoJFXm752kj5BXtY5ToCN5xk4zkFZR9Q+nrMjA2BCWIdvKRCC1/6DDpKliBdp
-         69zHO12kU/vn9iajxR+t31KErzsuzN7R2vYe/5gS8QINTeM7yXpzr+siBIb4sAR/cc/U
-         gw/x+qaOt+ohjABty6zXeaHlWcj5JBucEAfrT4gqUDaUMQ2fJiWSmpXQgH+RwKyaqwnL
-         enSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDqno1ffDFjIW6DgxHsSw3yr1FtiFGg3HjJPAyy5FeCRjEfYYsR6qWb2qNzXus4HZuUuOwd9F+C3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvkMzGz6kWA9I8WPiAXaKK89eu2Qr2hSU4G/lWkke/cZY1MAk1
-	U5Zu79SChbboPxzsgahdNX51xYoOPHF2HPjIJiK/UC2jqP42XowepW/qlQJ1X4oUxjT53xc/7y7
-	70VUT7k3O7+re80CQHlqa0ihYjrONzHLDzgA=
-X-Google-Smtp-Source: AGHT+IGhFEyZsGdDiKAEB7l4LMDTpccrTrNYfH0j0Yt1GQB8YtQF7Yd4YMwqHKeXrwKyQjtiZblxCO0PehHo8Ynuuz4=
-X-Received: by 2002:a05:651c:1542:b0:2f1:a30c:cd15 with SMTP id
- 38308e7fff4ca-2ff202ad40fmr91194841fa.36.1731443169732; Tue, 12 Nov 2024
- 12:26:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731443171; x=1732047971;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GkM/qEq4y9oAmuugOBzErq6qYUQUI6HO1Srs3ZPkn7A=;
+        b=t9dz8Q9apcrxDk6mqQexeiteifth4y0YJlIg0Gi/i6qeR+f0euwqtZwdAzZ4C0zDmE
+         Gqe83XKuhWUB6dl2iqoi6X2aHTYSHLKW2xOIsd1nsemM6+Q4/VkgiRWD8rz4CcEUVFaG
+         VXJ9rkjF5uiRbADmeN9BEObD2ErvJQLWb6iI/O61ONot/FhfEwEgC1BSkXpwSbAeW0Yb
+         6RRNbkxQXUxfEOVRn6/4duGZXzgipbYl1EF6EbKdKeRgh0rJ6qsNX/IO/4QBlp/di6KG
+         s3ImC5dzou+1Ta2xF03X5Ndw/7Y64p28cljWLZsOu3qlJtZu/S3kwj0osuC1AkdjqavP
+         lgqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIselxEq/7X67aCIivazCnurR83FqRLbHGD2Wo8x6LOv656A5sgrpB7GB9drQSqh/Ip8H+IoeimSSFgCM=@vger.kernel.org, AJvYcCVrllNXN406cRlaXqX41bMo7YdVIEsLdBWpS68cHauhJVwR/VcI1/u92UgGlPi8R40MDcNypQgJPRrCJCXb@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFkwfHy8wnQmb+mD2WfKtIR4Ena7J0qqZwoAKgBnzGj93Tl5eA
+	cDTvKKWe1A1Cu0D28w7HaNpgmA6yUzBe3ycyudqYVOkSzELKJJ0L
+X-Google-Smtp-Source: AGHT+IFjeJp9WEWS9DcHgCU8gu4UzPOW6aZMIRJ/trd0B4BxoLvXv8tv1cW+1kX3L5m/kYsXbGYblw==
+X-Received: by 2002:a17:903:22ce:b0:20f:ab4a:db2e with SMTP id d9443c01a7336-211ab980431mr47372805ad.29.1731443170569;
+        Tue, 12 Nov 2024 12:26:10 -0800 (PST)
+Received: from localhost ([216.228.127.131])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc7cf8sm97026755ad.34.2024.11.12.12.26.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 12:26:10 -0800 (PST)
+Date: Tue, 12 Nov 2024 12:26:07 -0800
+From: Yury Norov <yury.norov@gmail.com>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org,
+	Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Subject: Re: [RESEND PATCH v3 1/2] compiler.h: add _static_assert()
+Message-ID: <ZzO5390yVTqNbgJl@yury-ThinkPad>
+References: <20241112190840.601378-4-mailhol.vincent@wanadoo.fr>
+ <20241112190840.601378-5-mailhol.vincent@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105045535.84071-1-yesanishhere@gmail.com> <875xosqk3u.fsf@trenco.lwn.net>
-In-Reply-To: <875xosqk3u.fsf@trenco.lwn.net>
-From: anish kumar <yesanishhere@gmail.com>
-Date: Tue, 12 Nov 2024 12:25:57 -0800
-Message-ID: <CABCoZhDb4u=Gj=CPrjH+6tS+W8YENu9Oa2ymNhAegdhEM=ZHww@mail.gmail.com>
-Subject: Re: [PATCH] drivers: core: Clarify EPROBE_DEFER retry mechanism
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112190840.601378-5-mailhol.vincent@wanadoo.fr>
 
-On Tue, Nov 12, 2024 at 12:21=E2=80=AFPM Jonathan Corbet <corbet@lwn.net> w=
-rote:
->
-> anish kumar <yesanishhere@gmail.com> writes:
->
-> > The existing documentation for EPROBE_DEFER explains its purpose
-> > and usage, but does not specify when deferred probes are retried.
-> > This patch adds information about the retry mechanism to provide
-> > a more complete explanation of how EPROBE_DEFER works.
-> >
-> > Specifically, it clarifies that:
-> >
-> > 1. Deferred probes are added to a pending list
-> > 2. A successful probe of any device triggers moving all devices
-> >    from the pending list to an active list
-> > 3. A workqueue processes the active list to retry deferred probes
-> >
-> > This additional context helps developers better understand the
-> > behavior and implications of using EPROBE_DEFER in their drivers.
-> >
-> > Signed-off-by: anish kumar <yesanishhere@gmail.com>
-> > ---
-> >  Documentation/driver-api/driver-model/driver.rst | 11 +++++++----
-> >  1 file changed, 7 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/Documentation/driver-api/driver-model/driver.rst b/Documen=
-tation/driver-api/driver-model/driver.rst
-> > index 06f818b1d622..c86b948d0dfe 100644
-> > --- a/Documentation/driver-api/driver-model/driver.rst
-> > +++ b/Documentation/driver-api/driver-model/driver.rst
-> > @@ -171,10 +171,13 @@ released all resources it allocated.
-> >  Optionally, probe() may return -EPROBE_DEFER if the driver depends on
-> >  resources that are not yet available (e.g., supplied by a driver that
-> >  hasn't initialized yet).  The driver core will put the device onto the
-> > -deferred probe list and will try to call it again later. If a driver
-> > -must defer, it should return -EPROBE_DEFER as early as possible to
-> > -reduce the amount of time spent on setup work that will need to be
-> > -unwound and reexecuted at a later time.
-> > +deferred probe list and will retry again as and when a device or drive=
-r
-> > +gets added to the system. A successful probe of any device will trigge=
-r
-> > +moving all devices from pending list to active list. A workqueue proce=
-sses
-> > +the active list to retry deferred probes. If a driver must defer, it
-> > +should return -EPROBE_DEFER as early as possible to reduce the amount
-> > +of time spent on setup work that will need to be unwound and reexecute=
-d
-> > +at a later time.
->
-> Honestly, I don't see how this improves the situation?  How does this
-> improve a driver developer's work?
+On Wed, Nov 13, 2024 at 04:08:39AM +0900, Vincent Mailhol wrote:
+> __builtin_constant_p() is known for not always being able to produce
+> constant expression [1] which lead to the introduction of
+> __is_constexpr() [2]. Because of its dependency on
+> __builtin_constant_p(), statically_true() suffers from the same
+> issues.
+> 
+> For example:
+> 
+>   void foo(int a)
+>   {
+>   	 /* fail on GCC */
+>   	BUILD_BUG_ON_ZERO(statically_true(a));
+> 
+>   	 /* fail both clang and GCC */
+>   	static char arr[statically_true(a) ? 1 : 2];
+>   }
+> 
+> For the same reasons why __is_constexpr() was created to cover
+> __builtin_constant_p() edge cases, __is_constexpr() can be used to
+> resolve statically_true() limitations.
+> 
+> Note that, somehow, GCC is not always able to fold this:
+> 
+>   __is_constexpr(x) && (x)
+> 
+> It is OK in BUILD_BUG_ON_ZERO() but not in array declarations or in
+> static_assert():
+> 
+>   void bar(int a)
+>   {
+>   	/* success */
+>   	BUILD_BUG_ON_ZERO(__is_constexpr(a) && (a));
+> 
+>   	/* fail on GCC */
+>   	static char arr[__is_constexpr(a) && (a) ? 1 : 2];
+> 
+>   	/* fail on GCC */
+>   	static_assert(__is_constexpr(a) && (a));
+>   }
+> 
+> Encapsulating the expression in a __builtin_choose_expr() switch
+> resolves all these failed test.
+> 
+> Declare a new _statically_true() macro which, by making use of the
+> __builtin_choose_expr() and __is_constexpr(x) combo, always produces a
+> constant expression.
 
-It talks about when the retry mechanism executes. In my workplace we
-had the discussion about this and some of the developers were assuming
-EPROBE_DEFER gets called a fixed number of times which is not the case.
-This explains when EPROBE_DEFER gets called and the mechanism for the
-same.
+So, maybe name it const_true() then?
+ 
+> It should be noted that statically_true() still produces better
+> folding:
+> 
+>   statically_true(!(var * 8 % 8))
+> 
+> always evaluates to true even if var is unknown, whereas
+> 
+>   _statically_true(!(var * 8 % 8))
+> 
+> fails to fold the expression and return false.
+> 
+> For this reason, usage of _statically_true() be should the exception.
+> Reflect in the documentation that _statically_true() is less powerful
+> and that statically_true() is the overall preferred solution.
+> 
+> [1] __builtin_constant_p cannot resolve to const when optimizing
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=19449
+> 
+> [2] commit 3c8ba0d61d04 ("kernel.h: Retain constant expression output for max()/min()")
+> 
+> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> ---
+> Bonuses:
+> 
+>   - above examples, and a bit more:
+> 
+>       https://godbolt.org/z/zzqM1ajPj
+> 
+>   - a proof that statically_true() does better constant folding than _statically_true()
+> 
+>       https://godbolt.org/z/vK6KK4hMG
+> ---
+>  include/linux/compiler.h | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> index 4d4e23b6e3e7..c76db8b50202 100644
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -308,6 +308,20 @@ static inline void *offset_to_ptr(const int *off)
+>   */
+>  #define statically_true(x) (__builtin_constant_p(x) && (x))
+>  
+> +/*
+> + * Similar to statically_true() but produces a constant expression
+> + *
+> + * To be used in conjunction with macros, such as BUILD_BUG_ON_ZERO(),
+> + * which require their input to be a constant expression and for which
+> + * statically_true() would otherwise fail.
+> + *
+> + * This is a tradeoff: _statically_true() is less efficient at
+> + * constant folding and will fail to optimize any expressions in which
+> + * at least one of the subcomponent is not constant. For the general
+> + * case, statically_true() is better.
 
->
-> jon
+I agree with Rasmus. Would be nice to have examples where should I use
+one vs another right here in the comment.
+
+> + */
+> +#define _statically_true(x) __builtin_choose_expr(__is_constexpr(x), x, false)
+> +
+>  /*
+>   * This is needed in functions which generate the stack canary, see
+>   * arch/x86/kernel/smpboot.c::start_secondary() for an example.
+> -- 
+> 2.45.2
 
