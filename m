@@ -1,107 +1,114 @@
-Return-Path: <linux-kernel+bounces-405224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1FB9C4EBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:22:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 467B29C4EC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:30:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82AE91F22DA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:22:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF4828820C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A27420A5D9;
-	Tue, 12 Nov 2024 06:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3B7209F2A;
+	Tue, 12 Nov 2024 06:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="G5utOPbN"
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VIAME+0S"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC8819EED4;
-	Tue, 12 Nov 2024 06:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886F45234;
+	Tue, 12 Nov 2024 06:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731392520; cv=none; b=SVExE+r1fTy+ruFCUEkiMKzOCte7ZoS/6Z7ro5QcLkO2cllMuWa2WWn2LO5zZpPVxph4dvLWhnYApvwVlKnbiQB8mcYq2ImuxxboXiaIlgdSaqQQfrNAzCL4MnpGG9QhZ5lcq/Nd+RJiG2veB3U6zzjQRgjOrTFMTRC44fLGexI=
+	t=1731393038; cv=none; b=fUarVSd7nZdyy/09ist1uUmITglg6nEf2piOTQhCioLroqzuVyApJ7tSJl6f7sMxpcorN2Aea2/Hv0YphLgVzzySq7t7j9TmLvfJaLMEyQ0skncY8OnLij6ZpwLrJfbXP64U3Eo+q/h8KP+AucaDfsyj2hmvEME548LyBCoASZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731392520; c=relaxed/simple;
-	bh=r2QCV0892MPtZWYZl539dJKThx3xuUvps7cOqsg/zi4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cv4oE9xHl0KHYak9baMTJkptZGqEg6UYbvjMz1BmQzL+fsOTLFm1xnc+dHwIYMZb10hHblqdgvORZ+O332iFXNJVqp5DvQZyFDz8Q44espqBJnkbINkRazZRa3MAnuBDL+Olc3mFJyNbQPriZjh/cpiA/IWyYSQND9D3ivUjzdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=G5utOPbN; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id AkHitiEQVSqkGAkHjt2eYJ; Tue, 12 Nov 2024 07:21:55 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731392515;
-	bh=1uiG7k/zawHrJQJxDGDleKSXD1C3nsDmTYzQhxgWjX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=G5utOPbNY/SBfuwz1mH8ZkOzAMXnnfsUz8/+uYi+2hl4d0yvwSmP7qucjW2ST8iQ8
-	 2u37G7F0lRfdndEHQ5l3+lQODynQc+934DAuv94quLiiad3yiwX3cUf8oKNit+B547
-	 R/1oODiK7N/MKmiZvfMsR3AYq6b4khuiX+K1PM0o/Z6vLcHM5yg7qxBFV/qGn4KmJk
-	 P5nPweircKOyXDVAEeY/UCBYXDWt0t1JPrJBdBF5Uz4yQSuHrfBSLrNHrQpNlZSQOy
-	 Xln74cz8vGA792HcosMI2eUhR/IHHQPrvj/yqjn4zAiOwvTDkBD5JZ5cbzZQfuehFR
-	 rbd8f6LwiAgJw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 12 Nov 2024 07:21:55 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <8fef8eab-cd82-4e05-ad9b-1bb8b5fe974b@wanadoo.fr>
-Date: Tue, 12 Nov 2024 07:21:54 +0100
+	s=arc-20240116; t=1731393038; c=relaxed/simple;
+	bh=ZamXW1gOCoJT7299mt7TjY0oZlhR+DtytP5GXkfobT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=swA6B85brmavrlxMqMniM937qLJ4dfzBt/ccqtC1UkQKLCUIOB5SDgPmjJEmPk2uyBzmvOvJRAOrp75+r1Or7hXMWkNmqumkGT9P/VtM0b6uyqfeVYeLbngprCPnC4M1ZnKKWEbpJVEMCbciieLlNnfBh1D+1W0qeAEOKb6PThs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VIAME+0S; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731393029;
+	bh=ZamXW1gOCoJT7299mt7TjY0oZlhR+DtytP5GXkfobT4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VIAME+0SFPNmDw6F3RWVElW2DTXlkvpPJ1l5NdmewntS4Mgbim0aZS/seNnFpsUAD
+	 DI2FQLS5BTs3p4T97/ScZwZjlBBAtGQkJIdSym/3Oq+wq8gtkvFy7fsUUllTe/yKHd
+	 3ohh0Fl412lzjWRA/oCG3WLTxsyBLoDGeWHQgTpWxO72cWtTAt5Dj+us5sMd5tKhvn
+	 jPD3WgfnpK1a4OnYQCwghb4Et6wrFukywwgH/7he0irh2Y+UbOSu3XnStrIxgMD0mk
+	 mtNsN9/XysoguTVa5/RPLEi4+QgIe65NyfzLwEExzuTcQpP6+lR+ycOGstLa5w3mME
+	 ns4U/7vNdCoog==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xnc3n3Gpqz4x2J;
+	Tue, 12 Nov 2024 17:30:29 +1100 (AEDT)
+Date: Tue, 12 Nov 2024 17:30:26 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the rust tree
+Message-ID: <20241112172920.6aedc927@canb.auug.org.au>
+In-Reply-To: <CANiq72mYq-53xB9WFTH3H78WLrQuJze-nEybjwyLqnrSbv8UqA@mail.gmail.com>
+References: <20241111175842.550fc29d@canb.auug.org.au>
+	<CANiq72=JhmDJJCgcG5ex2A1gvBxCg3wzzutUc3L1HLPrPsHeyA@mail.gmail.com>
+	<CANiq72nyWAhyORsDij6P6U7Ww=eCp6S=LzPWZN4wxGD8JiK+RQ@mail.gmail.com>
+	<CANiq72mYq-53xB9WFTH3H78WLrQuJze-nEybjwyLqnrSbv8UqA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Use strscpy() instead of strcpy()
-To: Abdul Rahim <abdul.rahim@myyahoo.com>, xiubli@redhat.com,
- idryomov@gmail.com
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241111221037.92853-1-abdul.rahim.ref@myyahoo.com>
- <20241111221037.92853-1-abdul.rahim@myyahoo.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241111221037.92853-1-abdul.rahim@myyahoo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/=99vlNttIZwjw_HnFWa+GvR";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Le 11/11/2024 à 23:10, Abdul Rahim a écrit :
-> strcpy() is generally considered unsafe and use of strscpy() is
-> recommended [1]
-> 
-> this fixes checkpatch warning:
->      WARNING: Prefer strscpy over strcpy
-> 
-> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
-> Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
-> ---
->   fs/ceph/export.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> index 44451749c544..0e5b3c7b3756 100644
-> --- a/fs/ceph/export.c
-> +++ b/fs/ceph/export.c
-> @@ -452,7 +452,7 @@ static int __get_snap_name(struct dentry *parent, char *name,
->   		goto out;
->   	if (ceph_snap(inode) == CEPH_SNAPDIR) {
->   		if (ceph_snap(dir) == CEPH_NOSNAP) {
-> -			strcpy(name, fsc->mount_options->snapdir_name);
-> +			strscpy(name, fsc->mount_options->snapdir_name);
+--Sig_/=99vlNttIZwjw_HnFWa+GvR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This does not compile because when the size of 'name' is not known at 
-compilation time, you need to use the 3-argument version of strscpy().
+Hi Miguel,
 
-Please always compile test your patches before sending them. Even, when 
-the change looks trivial.
+On Tue, 12 Nov 2024 00:58:47 +0100 Miguel Ojeda <miguel.ojeda.sandonis@gmai=
+l.com> wrote:
+>
+> Stephen: I went with this, since unless I did something wrong, you
+> should see those build failures are gone, i.e. your build resolutions
+> were fine.
+>=20
+> The hashes didn't change, I just dropped the top two commits.
+>=20
+> You should be able to reuse the resolutions from yesterday.
+>=20
+> If needed, we may simplify further, but let's see if this way works.
 
-CJ
+Its all good, no build failures and conflicts still there (but rerere
+took care of those).
 
->   			err = 0;
->   		}
->   		goto out;
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/=99vlNttIZwjw_HnFWa+GvR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcy9gIACgkQAVBC80lX
+0GxL7AgApNQT+WgM6k+ao3utScRunxuPJjtYCCw3xoH1nCEXIfWhdtmJWeOs2Fa2
+fjL4W0hG18jIgKuMxZ6fT/zXIEdCHBL5pEQWNMNLyK/HIsSkvPNkLUQAs9Ulamgs
+BLp5DcMpvLKvNf/jZIHY76Iqf7Nkwpiix0OB2QXyP6oyJkuArnLucAg9ymkARbJZ
+dHetLqWMKR7xF3PsssWaNIdzMFW6SWmfdw1Gi3yZeykOaqQp7q1CzDEOU+eT93zM
+tBV6rl1eT07ob95TD2YzWQOTXVQhK/hGQiBqEALByrXyfqCje+mAmXXw8ENzvDRV
+5KT3/ryk7FfNZQ7OiYrhkY0eY5LUNg==
+=Ug1Y
+-----END PGP SIGNATURE-----
+
+--Sig_/=99vlNttIZwjw_HnFWa+GvR--
 
