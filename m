@@ -1,147 +1,119 @@
-Return-Path: <linux-kernel+bounces-406662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0689C61E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:53:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8EDF9C6208
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:59:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B05AD1F23778
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:53:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DD11F24969
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E234219CAB;
-	Tue, 12 Nov 2024 19:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b="XdDW8jpf"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2B3219CAB;
+	Tue, 12 Nov 2024 19:59:38 +0000 (UTC)
+Received: from smtp-out.kfki.hu (smtp-out.kfki.hu [148.6.0.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3891219485
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731441127; cv=pass; b=gJj+C9QLCOWAo9vOwNnSsrIintyKPufegbUpyUJdP25t3d0PuR2E8araauTOHoKEnmh4LHHQVP209asmEJ49cSaPk6Z9P4FD4i7xMlhKHKxbcwCvN08MtHiHA1dyJOpG0MCwOqWKxAVXJCjak80boq3tsobPpvJecgaOsxqBCGg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731441127; c=relaxed/simple;
-	bh=UEChvOmoTx535X0vTzOrF/1jVXlSzMADwiLAPfR2Crs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s9eRefSA8c8K5GFUZged7rd7BViVkPBNWV6YpCtls5Vmr9tCOLQNlP+1ziO+udBYDoXU/MlEJGVambOz7uFvoEoOulxZN9rMK+AfDOkqhIPiVmcetDuRFU/mllfeEELEwHzKDHKWlTpaFX516BWxDL0ozXk0fVibANVREQlEadU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b=XdDW8jpf; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1731441112; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=aRtgj7mr2WNC/5zk/fp43UyVx8wy31cxZ/1Dp4vSKbS1DhkwoLHEhQpGkRa9g48VSlj4tmZXWxb/Bogrsby4m8IpUM2lWnTTbAT5MOqBF92y1fzag/V4crhWU2iWxT2t7BELeSVhr9Ro2TFIlxQaewyytvaQrWe+Bz04SIdm5B8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1731441112; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=nooNrk0pdLGb6HpWRiivYxPtImtREYw4ohNgd/wPIVM=; 
-	b=jqTblEQgIDj7cq0oGMLfJbrAkKU+v1Yq+bP7zoc+liUK04wySJ/GICZoKNHCjESMChYHI40sbgJTA2PcFuH5JYkYOKyPxG/NNO7D0NNwOVODKSiWQEmQBQcIvfOhFefgQp1MuyOdTJi3cbF3nnzZFoTeVyvDDp72cHSOJjWdzDY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=bob.beckett@collabora.com;
-	dmarc=pass header.from=<bob.beckett@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731441112;
-	s=zohomail; d=collabora.com; i=bob.beckett@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=nooNrk0pdLGb6HpWRiivYxPtImtREYw4ohNgd/wPIVM=;
-	b=XdDW8jpfXsigiE8D60e0eWVpedR5DrKMIMmaVF4nHSRy+Bdka0zRh4DxG5BZWfDo
-	TlBbtn19fSzuXyS4RoVAR24IS9bQ+B0M8B/+6gSfQ+SdewD9ojOw4v+CydAwEz+3Up+
-	AiJhFcoiI5ql2JrqSMEguCj043pX1v6z5A/oFPNo=
-Received: by mx.zohomail.com with SMTPS id 1731441109569554.7931799757025;
-	Tue, 12 Nov 2024 11:51:49 -0800 (PST)
-From: Bob Beckett <bob.beckett@collabora.com>
-To: Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>
-Cc: kernel@collabora.com,
-	Robert Beckett <bob.beckett@collabora.com>,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
-Date: Tue, 12 Nov 2024 19:50:00 +0000
-Message-ID: <20241112195053.3939762-1-bob.beckett@collabora.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D5920B218;
+	Tue, 12 Nov 2024 19:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.6.0.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731441578; cv=none; b=vEbUWnCwc0lmHWFWGOGdNdx697YNUiYTq7RFaUAYsNAc9OVeESo1oQ1MS+lww+RuJlYqZ7In8fgdHQTXIrl13fiUacnuDk5YVtiHUi2AbGxYEcOzdshIIwO9+MPqI65P38RYF56tzihSb3SjBR/VfSCHvcxbLyT90SLHVQx6ZIg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731441578; c=relaxed/simple;
+	bh=rC+0ugHNvw01z7Q9STlYyR40J3xB/OsK/Djp3RNVyos=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gba/tHTmyP82ppiqIDekJA3hML+b7cXYTfJtZPzRf7kFBWTKUUBgeZ9SleC2EbnEZh0bWXrf5QNiCDq8B/PfISQDrq2V8VDxcwXL5ciqXliXv7rzqF9WwCWiIDvWywt7HYgaQPQqYwtLqoABT1powfmVhX7DMF45NYaJ9A0zcrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; arc=none smtp.client-ip=148.6.0.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: from localhost (localhost [127.0.0.1])
+	by smtp2.kfki.hu (Postfix) with ESMTP id B5C8432E01CF;
+	Tue, 12 Nov 2024 20:50:23 +0100 (CET)
+X-Virus-Scanned: Debian amavis at smtp2.kfki.hu
+Received: from smtp2.kfki.hu ([127.0.0.1])
+ by localhost (smtp2.kfki.hu [127.0.0.1]) (amavis, port 10026) with ESMTP
+ id ytOsMQz8XMno; Tue, 12 Nov 2024 20:50:21 +0100 (CET)
+Received: from mentat.rmki.kfki.hu (94-21-33-116.pool.digikabel.hu [94.21.33.116])
+	(Authenticated sender: kadlecsik.jozsef@wigner.hu)
+	by smtp2.kfki.hu (Postfix) with ESMTPSA id 5FB7E32E01CD;
+	Tue, 12 Nov 2024 20:50:21 +0100 (CET)
+Received: by mentat.rmki.kfki.hu (Postfix, from userid 1000)
+	id F05421428C3; Tue, 12 Nov 2024 20:50:20 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by mentat.rmki.kfki.hu (Postfix) with ESMTP id ECDFC1401AE;
+	Tue, 12 Nov 2024 20:50:20 +0100 (CET)
+Date: Tue, 12 Nov 2024 20:50:20 +0100 (CET)
+From: Jozsef Kadlecsik <kadlec@netfilter.org>
+To: Jeongjun Park <aha310510@gmail.com>
+cc: pablo@netfilter.org, davem@davemloft.net, edumazet@google.com, 
+    kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, kaber@trash.net, 
+    netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    stable@vger.kernel.org, 
+    syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
+Subject: Re: [PATCH net] netfilter: ipset: add missing range check in
+ bitmap_ip_uadt
+In-Reply-To: <20241112113434.58975-1-aha310510@gmail.com>
+Message-ID: <85b3a08c-f148-ef3c-6489-e34aadc4e735@netfilter.org>
+References: <20241112113434.58975-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=US-ASCII
+X-deepspam: ham 1%
 
-From: Robert Beckett <bob.beckett@collabora.com>
+Hello Jeongjun,
 
-We initially put in a quick fix of limiting the queue depth to 1
-as experimentation showed that it fixed data corruption on 64GB
-steamdecks.
+On Tue, 12 Nov 2024, Jeongjun Park wrote:
 
-After further experimentation, it appears that the corruption
-is fixed by aligning the small dma pool segments to 512 bytes.
-Testing via desync image verification shows that it now passes
-thousands of verification loops, where previously
-it never managed above 7.
+> In the bitmap_ip_uadt function, if ip is greater than ip_to, they are swapped.
+> However, there is no check to see if ip is smaller than map->first, which
+> causes an out-of-bounds vulnerability. Therefore, you need to add a missing
+> bounds check to prevent out-of-bounds.
 
-Currently it is not known why this fixes the corruption.
-Perhaps it is doing something nasty like using an mmc page
-as a cache for the prp lists (mmc min. page size is 512 bytes)
-and not invalidating properly, so that the dma pool change to
-treats segment list as a stack ends up giving a previous
-segment in the same cached page.
+It's a good catch, thanks! However, with the patch below the 
 
-This fixes the previous queue depth limitation as it fixes
-the corruption without incurring a 37% tested performance
-degredation.
+                        if (ip < map->first_ip)
+                                return -IPSET_ERR_BITMAP_RANGE;
 
-Fixes: 83bdfcbdbe5d ("nvme-pci: qdepth 1 quirk")
-Signed-off-by: Robert Beckett <bob.beckett@collabora.com>
----
- drivers/nvme/host/nvme.h | 5 +++++
- drivers/nvme/host/pci.c  | 6 +++---
- 2 files changed, 8 insertions(+), 3 deletions(-)
+lines in the branch just after swapping the from/to addresses becomes 
+unnecessary. Could you send a second version of the patch with the lines
+above removed?
 
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 093cb423f536..61bba5513de0 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -173,6 +173,11 @@ enum nvme_quirks {
- 	 * MSI (but not MSI-X) interrupts are broken and never fire.
- 	 */
- 	NVME_QUIRK_BROKEN_MSI			= (1 << 21),
-+
-+	/*
-+	 * Align dma pool segment size to 512 bytes
-+	 */
-+	NVME_QUIRK_DMAPOOL_ALIGN_512		= (1 << 22),
- };
- 
- /*
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 4b9fda0b1d9a..6fcd3bb413c4 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2700,8 +2700,8 @@ static int nvme_setup_prp_pools(struct nvme_dev *dev)
- 		return -ENOMEM;
- 
- 	/* Optimisation for I/Os between 4k and 128k */
--	dev->prp_small_pool = dma_pool_create("prp list 256", dev->dev,
--						256, 256, 0);
-+	dev->prp_small_pool = dma_pool_create("prp list 256", dev->dev,256,
-+				       dev->ctrl.quirks & NVME_QUIRK_DMAPOOL_ALIGN_512 ? 512 : 256, 0);
- 	if (!dev->prp_small_pool) {
- 		dma_pool_destroy(dev->prp_page_pool);
- 		return -ENOMEM;
-@@ -3449,7 +3449,7 @@ static const struct pci_device_id nvme_id_table[] = {
- 	{ PCI_VDEVICE(REDHAT, 0x0010),	/* Qemu emulated controller */
- 		.driver_data = NVME_QUIRK_BOGUS_NID, },
- 	{ PCI_DEVICE(0x1217, 0x8760), /* O2 Micro 64GB Steam Deck */
--		.driver_data = NVME_QUIRK_QDEPTH_ONE },
-+		.driver_data = NVME_QUIRK_DMAPOOL_ALIGN_512, },
- 	{ PCI_DEVICE(0x126f, 0x2262),	/* Silicon Motion generic */
- 		.driver_data = NVME_QUIRK_NO_DEEPEST_PS |
- 				NVME_QUIRK_BOGUS_NID, },
+Best regards,
+Jozsef
+
+> Cc: <stable@vger.kernel.org>
+> Reported-by: syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
+> Fixes: 72205fc68bd1 ("netfilter: ipset: bitmap:ip set type support")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+>  net/netfilter/ipset/ip_set_bitmap_ip.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/netfilter/ipset/ip_set_bitmap_ip.c b/net/netfilter/ipset/ip_set_bitmap_ip.c
+> index e4fa00abde6a..705c316b001a 100644
+> --- a/net/netfilter/ipset/ip_set_bitmap_ip.c
+> +++ b/net/netfilter/ipset/ip_set_bitmap_ip.c
+> @@ -178,7 +178,7 @@ bitmap_ip_uadt(struct ip_set *set, struct nlattr *tb[],
+>  		ip_to = ip;
+>  	}
+>  
+> -	if (ip_to > map->last_ip)
+> +	if (ip < map->first_ip || ip_to > map->last_ip)
+>  		return -IPSET_ERR_BITMAP_RANGE;
+>  
+>  	for (; !before(ip_to, ip); ip += map->hosts) {
+> --
+> 
+
 -- 
-2.45.2
-
+E-mail : kadlec@netfilter.org, kadlec@blackhole.kfki.hu, kadlecsik.jozsef@wigner.hu
+Address: Wigner Research Centre for Physics
+         H-1525 Budapest 114, POB. 49, Hungary
 
