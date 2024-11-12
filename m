@@ -1,193 +1,209 @@
-Return-Path: <linux-kernel+bounces-406555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6109C60B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:47:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33EE19C60BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:48:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3923F281A8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:47:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B79081F22FD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C052185BB;
-	Tue, 12 Nov 2024 18:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBB621790F;
+	Tue, 12 Nov 2024 18:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqfOgf+d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="caSx4oKt"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9048217476;
-	Tue, 12 Nov 2024 18:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F26230994
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731437131; cv=none; b=MpzWE6epy5aA+QmZbaW4v2gAxbXqYVb0VGW6m1clk98bHboncSw9bgX7JeFudXnpggKP7bVw3VXbagxNfKjzvGYXOa9yMvLIXBWdteZgLw89amw/71Q9tftHKrJb93H2Ce7zIeNHdnju94E/pkcDPlvAGKPD45cNoyppO0HJUcc=
+	t=1731437283; cv=none; b=q+cVB5NrI9flM87x6LiiB0CAAmU4bg9GXywBG2Z0FAea7g91ftZGwg512cUDC8AfOQBs0HyV9PPpRWl5pteL2BLh6CXU2rKT76BoMdAagmWQRn+5Yy68FCwsgbXeBZchNGJAp0hahw0oyktdfH1LqYYF0b86q0+XTKVRnYHzG4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731437131; c=relaxed/simple;
-	bh=wCXJF4/5quDEP4F6qG1v7jSbleUiRWK2iEYLSUjTZPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BlsXxx5MGGuHOe/cW06saf3qXQnTpzzQ79l+xlKonsrIPyHblYWhCh3fOzKap8/bXwJFCMY8N4OofXq0ukzGi+0TYACM530p60/qHaVXz2BZDYSDyFyHsmAlcaQFWCTm/fxA7x45JC1HAnSEAU4n0m1WUEF2TimJVUJGPTweRCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqfOgf+d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB9E7C4CECD;
-	Tue, 12 Nov 2024 18:45:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731437130;
-	bh=wCXJF4/5quDEP4F6qG1v7jSbleUiRWK2iEYLSUjTZPQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jqfOgf+dYhrkzneeZkWksvX30rmB1BmKC2+jNVBNOZHz3sDYVd1lbsk1WwjI0eUR0
-	 rKjq0bzNBJkPMQvjvKFY/cRI+GzPIeyF226omTKNgTnF5TVh6NHQJvvs1rAvfiTtYR
-	 cB/REsuUsWKUAAvFk+CUj+ZN89VeG+cdxPmNOtljdAkHcfBW7qoQt6KQqgz6aWQ7/f
-	 Epi9h3b8xOMoRMbMCpaTSu7R4RdZcCO8FBtMqBcH2eMh6nC3X2ZbFskWSrbfrjLBBU
-	 BoPH7b7YByjbp+JtHLIikSlg0a7b0ooLzte/iv2E7rVU2yHbQmtTPgm5BiTfVs9API
-	 l3xCxrjpP+6vA==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	HONG Yifan <elsk@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	linux-kbuild@vger.kernel.org,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH v3] kbuild: rust: add PROCMACROLDFLAGS
-Date: Tue, 12 Nov 2024 19:44:55 +0100
-Message-ID: <20241112184455.855133-1-ojeda@kernel.org>
+	s=arc-20240116; t=1731437283; c=relaxed/simple;
+	bh=AYu6tM5ynIawKqMjM+E4hN+OaSd/oaQv1ZLr8hqDLcw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b8i2G3pW0WQ9fGnFxHla3X5bq1PKa3ylgzneYZ7CAgBlQJmUCYvUp2xURSbzFDd/H5ZkHEuxUYcCH9B05tB7M20HLCyAQpzlsD9XUJ+ltytY7svrfl5EcoAzmtSq5EraJ8GpljG/8XEhm61bJmL/uCfy/Chd4w1bbeZbLUD1ZCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=caSx4oKt; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-290d8d53893so2525009fac.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:48:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731437279; x=1732042079; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NEKWtbV5azCN1LS/TrOFInpSTESMK9RCRhSvphgR+zE=;
+        b=caSx4oKtmrQnPiyw17x0o0KCIcSdXPDLG5uPL1f0G2zGbUKsz71wdhVPXAf+DwOG/4
+         AVfqb6MtbcIxM3YRR/u2DvQ+fbR+FgOLuOh2h9ZibBLeB8r8couIsGtWpqE67aTJrWZ0
+         cuwuKPW/Ks+iiSNBp9P82kI10kVc8uVYTfKLPck84BBte2nT+Yq6L5I6mF8zraChgP/N
+         HiZnHX/bp3rqReJBJg16vs+0XDEiKjoYIIBo0g1gaqO9UW1a8YkIZZhbg8Td+fq9+cHA
+         WhkyNBYK0UyxntaaQ+feaGPvIXlX1zDLuU6AFPh1aXkbt7lwQdUL4YzNhhqPkwDQYu9X
+         vhmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731437279; x=1732042079;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NEKWtbV5azCN1LS/TrOFInpSTESMK9RCRhSvphgR+zE=;
+        b=ZIVbi2UdafzX0zlJoABCu2TDkPIXF/Blh9EW4D3s8U9X+bFgfKPs/7UNjbDN29C9ah
+         2XLd5fhvfX5IMg2nGaxxwqG0ZRedUBtEwQxzw32op+czIYXACdDuVuSGKdA65zjYh3kb
+         SCH+KS4cks1bFbuCf7r1gW2pdvuNtDzuWY+DXr7LOZxyNDict/NP4YqXtPjXGpzy4LOP
+         ZD0cJoQaWWr9haIq5HPaCW6iasMkoNCaFtGAUUhY6I8kmced8IjldlSJhecMQPTq4zT+
+         Tl+W9M5mMgclsd5/Kx0yTLkoRxP/yaGBM/G4jOz3CjsWoAfeA14McqtVbmbCJ9Oq5VPL
+         3b7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV8x9aPyMwZiCOZiNKWDJ24sDXJo54h4r/fUIVSZSaXqZb34O101qdKAsmxWfJnnvwwSWXCU3UtWJBuIiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyddMs6qynyElWD5Ct1IFyvxjESlWccTgEUnFRd8BYwnJwyEi+X
+	7KLetaAuT1IPCRnll/zL5RTuROSA0rdYge1IvCR5295S+y+39HaE/iiU5854E+vNJ+4Oa8iM3jS
+	3CTw=
+X-Google-Smtp-Source: AGHT+IEbUQIAv8rwvNy1b5k48spMrO6qHPjvfMhK8WTkm9KlJBHwjMMwhaZ9S+HNwCgrodi6AerXxg==
+X-Received: by 2002:a05:6870:20a:b0:25a:eca3:6b5e with SMTP id 586e51a60fabf-2956004793fmr13932152fac.9.1731437279605;
+        Tue, 12 Nov 2024 10:47:59 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-295e8eb8c53sm14182fac.8.2024.11.12.10.47.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 10:47:59 -0800 (PST)
+Message-ID: <58ebc5a8-941b-4c3d-a3b2-3985d7eeea30@kernel.dk>
+Date: Tue, 12 Nov 2024 11:47:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/16] ext4: add RWF_UNCACHED write support
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+ clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+ kirill@shutemov.name, linux-btrfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-13-axboe@kernel.dk> <ZzOD_qV5tpv9nbw7@bfoster>
+ <df2b9a81-3ebd-48fe-a205-2d4007fe73d1@kernel.dk> <ZzOaaInUHOmlAL-o@bfoster>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZzOaaInUHOmlAL-o@bfoster>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: HONG Yifan <elsk@google.com>
+On 11/12/24 11:11 AM, Brian Foster wrote:
+> On Tue, Nov 12, 2024 at 10:13:12AM -0700, Jens Axboe wrote:
+>> On 11/12/24 9:36 AM, Brian Foster wrote:
+>>> On Mon, Nov 11, 2024 at 04:37:39PM -0700, Jens Axboe wrote:
+>>>> IOCB_UNCACHED IO needs to prune writeback regions on IO completion,
+>>>> and hence need the worker punt that ext4 also does for unwritten
+>>>> extents. Add an io_end flag to manage that.
+>>>>
+>>>> If foliop is set to foliop_uncached in ext4_write_begin(), then set
+>>>> FGP_UNCACHED so that __filemap_get_folio() will mark newly created
+>>>> folios as uncached. That in turn will make writeback completion drop
+>>>> these ranges from the page cache.
+>>>>
+>>>> Now that ext4 supports both uncached reads and writes, add the fop_flag
+>>>> FOP_UNCACHED to enable it.
+>>>>
+>>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>> ---
+>>>>  fs/ext4/ext4.h    |  1 +
+>>>>  fs/ext4/file.c    |  2 +-
+>>>>  fs/ext4/inline.c  |  7 ++++++-
+>>>>  fs/ext4/inode.c   | 18 ++++++++++++++++--
+>>>>  fs/ext4/page-io.c | 28 ++++++++++++++++------------
+>>>>  5 files changed, 40 insertions(+), 16 deletions(-)
+>>>>
+>>> ...
+>>>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>>>> index 54bdd4884fe6..afae3ab64c9e 100644
+>>>> --- a/fs/ext4/inode.c
+>>>> +++ b/fs/ext4/inode.c
+>>>> @@ -1138,6 +1138,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+>>>>  	int ret, needed_blocks;
+>>>>  	handle_t *handle;
+>>>>  	int retries = 0;
+>>>> +	fgf_t fgp_flags;
+>>>>  	struct folio *folio;
+>>>>  	pgoff_t index;
+>>>>  	unsigned from, to;
+>>>> @@ -1164,6 +1165,15 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+>>>>  			return 0;
+>>>>  	}
+>>>>  
+>>>> +	/*
+>>>> +	 * Set FGP_WRITEBEGIN, and FGP_UNCACHED if foliop contains
+>>>> +	 * foliop_uncached. That's how generic_perform_write() informs us
+>>>> +	 * that this is an uncached write.
+>>>> +	 */
+>>>> +	fgp_flags = FGP_WRITEBEGIN;
+>>>> +	if (*foliop == foliop_uncached)
+>>>> +		fgp_flags |= FGP_UNCACHED;
+>>>> +
+>>>>  	/*
+>>>>  	 * __filemap_get_folio() can take a long time if the
+>>>>  	 * system is thrashing due to memory pressure, or if the folio
+>>>> @@ -1172,7 +1182,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+>>>>  	 * the folio (if needed) without using GFP_NOFS.
+>>>>  	 */
+>>>>  retry_grab:
+>>>> -	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
+>>>> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
+>>>>  					mapping_gfp_mask(mapping));
+>>>>  	if (IS_ERR(folio))
+>>>>  		return PTR_ERR(folio);
+>>>
+>>> JFYI, I notice that ext4 cycles the folio lock here in this path and
+>>> thus follows up with a couple checks presumably to accommodate that. One
+>>> is whether i_mapping has changed, which I assume means uncached state
+>>> would have been handled/cleared externally somewhere..? I.e., if an
+>>> uncached folio is somehow truncated/freed without ever having been
+>>> written back?
+>>>
+>>> The next is a folio_wait_stable() call "in case writeback began ..."
+>>> It's not immediately clear to me if that is possible here, but taking
+>>> that at face value, is it an issue if we were to create an uncached
+>>> folio, drop the folio lock, then have some other task dirty and
+>>> writeback the folio (due to a sync write or something), then have
+>>> writeback completion invalidate the folio before we relock it here?
+>>
+>> I don't either of those are an issue. The UNCACHED flag will only be set
+>> on a newly created folio, it does not get inherited for folios that
+>> already exist.
+>>
+> 
+> Right.. but what I was wondering for that latter case is if the folio is
+> created here by ext4, so uncached is set before it is unlocked.
+> 
+> On second look I guess the uncached completion invalidation should clear
+> mapping and thus trigger the retry logic here. That seems reasonable
+> enough, but is it still possible to race with writeback?
+> 
+> Maybe this is a better way to ask.. what happens if a write completes to
+> an uncached folio that is already under writeback? For example, uncached
+> write 1 completes, submits for writeback and returns to userspace. Then
+> write 2 begins and redirties the same folio before the uncached
+> writeback completes.
+> 
+> If I follow correctly, if write 2 is also uncached, it eventually blocks
+> in writeback submission (folio_prepare_writeback() ->
+> folio_wait_writeback()). It looks like folio lock is held there, so
+> presumably that would bypass the completion time invalidation in
+> folio_end_uncached(). But what if write 2 was not uncached or perhaps
+> writeback completion won the race for folio lock vs. the write side
+> (between locking the folio for dirtying and later for writeback
+> submission)? Does anything prevent invalidation of the folio before the
+> second write is submitted for writeback?
+> 
+> IOW, I'm wondering if the uncached completion time invalidation also
+> needs a folio dirty check..?
 
-These are flags to be passed when linking proc macros for the Rust
-toolchain. If unset, it defaults to $(KBUILD_HOSTLDFLAGS).
+Ah ok, I see what you mean. If the folio is dirty, the unmapping will
+fail. But I guess with the recent change, we'll actually unmap it first.
+I'll add the folio dirty check, thanks!
 
-This is needed because the list of flags to link hostprogs is not
-necessarily the same as the list of flags used to link libmacros.so.
-When we build proc macros, we need the latter, not the former (e.g. when
-using a Rust compiler binary linked to a different C library than host
-programs).
-
-To distinguish between the two, introduce this new variable to stand
-out from KBUILD_HOSTLDFLAGS used to link other host progs.
-
-Signed-off-by: HONG Yifan <elsk@google.com>
-Link: https://lore.kernel.org/r/20241017210430.2401398-2-elsk@google.com
-[ v3:
-
-  - `export`ed the variable. Otherwise it would not be visible in
-    `rust/Makefile`.
-
-  - Removed "additional" from the documentation and commit message,
-    since this actually replaces the other flags, unlike other cases.
-
-  - Added example of use case to documentation and commit message.
-    Thanks Alice for the details on what Google needs!
-
-  - Instead of `HOSTLDFLAGS`, used `KBUILD_HOSTLDFLAGS` as the fallback
-    to preserve the previous behavior as much as possible, as discussed
-    with Alice/Yifan. Thus moved the variable down too (currently we
-    do not modify `KBUILD_HOSTLDFLAGS` elsewhere) and avoided
-    mentioning `HOSTLDFLAGS` directly in the documentation.
-
-  - Fixed documentation header formatting.
-
-  - Reworded slightly.
-
-         - Miguel ]
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
-Masahiro: if Kbuild wants to pick this up, that is great. Otherwise, I am happy
-picking this up early next cycle, if you give an `Acked-by` since this is
-changing the interface for Kbuild users given we are introducing a new
-environment variable. Thanks!
-
-Note that the `or` means if the string is empty, we will use the default rather
-than nothing. I didn't change that from Yifan's version, but maybe we want to do
-otherwise. Users can still provide e.g. an empty space to avoid any flag.
-
-Yifan/Alice: please double-check the changes. Thanks!
-
-v3: see changes above.
-v2: https://lore.kernel.org/rust-for-linux/20241017210430.2401398-2-elsk@google.com/
-v1: https://lore.kernel.org/rust-for-linux/20241017200138.2390077-2-elsk@google.com/
-
- Documentation/kbuild/kbuild.rst | 11 +++++++++++
- Makefile                        |  3 ++-
- rust/Makefile                   |  2 +-
- 3 files changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/kbuild/kbuild.rst b/Documentation/kbuild/kbuild.rst
-index 1796b3eba37b..9cb876ccc363 100644
---- a/Documentation/kbuild/kbuild.rst
-+++ b/Documentation/kbuild/kbuild.rst
-@@ -91,6 +91,17 @@ HOSTRUSTFLAGS
- -------------
- Additional flags to be passed to $(HOSTRUSTC) when building host programs.
-
-+PROCMACROLDFLAGS
-+----------------
-+Flags to be passed when linking Rust proc macros. Since proc macros are loaded
-+by rustc at build time, they must be linked in a way that is compatible with
-+the rustc toolchain being used.
-+
-+For instance, it can be useful when rustc uses a different C library than
-+the one the user wants to use for host programs.
-+
-+If unset, it defaults to the flags passed when linking host programs.
-+
- HOSTLDFLAGS
- -----------
- Additional flags to be passed when linking host programs.
-diff --git a/Makefile b/Makefile
-index a9e723cb0596..3efb001bada5 100644
---- a/Makefile
-+++ b/Makefile
-@@ -471,6 +471,7 @@ KBUILD_HOSTRUSTFLAGS := $(rust_common_flags) -O -Cstrip=debuginfo \
- 			-Zallow-features= $(HOSTRUSTFLAGS)
- KBUILD_HOSTLDFLAGS  := $(HOST_LFS_LDFLAGS) $(HOSTLDFLAGS)
- KBUILD_HOSTLDLIBS   := $(HOST_LFS_LIBS) $(HOSTLDLIBS)
-+KBUILD_PROCMACROLDFLAGS := $(or $(PROCMACROLDFLAGS),$(KBUILD_HOSTLDFLAGS))
-
- # Make variables (CC, etc...)
- CPP		= $(CC) -E
-@@ -595,7 +596,7 @@ export HOSTRUSTC KBUILD_HOSTRUSTFLAGS
- export CPP AR NM STRIP OBJCOPY OBJDUMP READELF PAHOLE RESOLVE_BTFIDS LEX YACC AWK INSTALLKERNEL
- export PERL PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
- export KGZIP KBZIP2 KLZOP LZMA LZ4 XZ ZSTD
--export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS LDFLAGS_MODULE
-+export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS KBUILD_PROCMACROLDFLAGS LDFLAGS_MODULE
- export KBUILD_USERCFLAGS KBUILD_USERLDFLAGS
-
- export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS KBUILD_LDFLAGS
-diff --git a/rust/Makefile b/rust/Makefile
-index f349e7b067ea..9f55c470aa2c 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -344,7 +344,7 @@ quiet_cmd_rustc_procmacro = $(RUSTC_OR_CLIPPY_QUIET) P $@
-       cmd_rustc_procmacro = \
- 	$(RUSTC_OR_CLIPPY) $(rust_common_flags) \
- 		-Clinker-flavor=gcc -Clinker=$(HOSTCC) \
--		-Clink-args='$(call escsq,$(KBUILD_HOSTLDFLAGS))' \
-+		-Clink-args='$(call escsq,$(KBUILD_PROCMACROLDFLAGS))' \
- 		--emit=dep-info=$(depfile) --emit=link=$@ --extern proc_macro \
- 		--crate-type proc-macro \
- 		--crate-name $(patsubst lib%.so,%,$(notdir $@)) $<
-
-base-commit: d072acda4862f095ec9056979b654cc06a22cc68
---
-2.47.0
+-- 
+Jens Axboe
 
