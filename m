@@ -1,133 +1,100 @@
-Return-Path: <linux-kernel+bounces-406408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED9F9C5EA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:19:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DC39C5EA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8447F28251F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4CE28335C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9199F213127;
-	Tue, 12 Nov 2024 17:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468A22123D9;
+	Tue, 12 Nov 2024 17:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="oAjCIijy"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DYeiuo2/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590AF2123F3
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A4020D51A;
+	Tue, 12 Nov 2024 17:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731431774; cv=none; b=rLRjShRk6390OB1TKFxceCIuNCkhnZLEoIzST0oBW7imwIIvQjjYGWNTeis9I5ZM/clE4o645n9jt+PwcR1zfjb03AcgGw6K6+WICLDritSXP+RkeBGjoJiMugJy3QmbJSxkyo3oHCc6RJHLOXkpRMZczIpK5XpbRfEaGVyVLoU=
+	t=1731431840; cv=none; b=HjYx0RoyHawfNfIiK9LyCU+FhiQ7onD/HSWzgyF1QDgx9h0BjVax40abrSwG4Xyv7QnanMUcNGA8wUN23cfUKiiU1BC/CsxwsbouJU3TeP9fSMWKCycWpVYE5h4DrHVGCjHy+OslYzFn9hktbmYxSH54aSdTLqqBZ9g1i/NYDew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731431774; c=relaxed/simple;
-	bh=WElPdD8LZYryTigGCKIJr1x7hPyk/0fp60+PcfErbm4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uPOWF35VD9RFUyWJTf/n55vcYL666+7r22XZ0dzclX1dhBU76YYb9fD+hmoWFa/Sh05BGybw6TXyE+Zb85o+wi1oeRe25PaKOd3DnvjSOPd4Vs2uYsJpmrRqgjN+zlY+bUv2E8bFm1eI83Qv3cXT72xQiakgsLP/eKYM0ipRz2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=oAjCIijy; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5ebc52deca0so2952576eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:16:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731431772; x=1732036572; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tnwYJHTHAIT7NhrPIR59Xh9wM+nrsn1VWuRs7Z2BGss=;
-        b=oAjCIijytabdM5gECO8+BuZ4Jqs/uZmzyfwftew4kiT4b9OMzcSAhy5StU1kxXA+mY
-         paUUrFjsq1d7/6SqzetFMqv4FZzuwg+HBElvj6XQh1lvA46bghdn4HaN1mpRcms2Ri/o
-         zmVrHZwMh6q6EM12J2iIYAMU+Og0HAXrkHESC2ewc/Ll3xaXwqC4LqMmZ4tInelY+dPS
-         CfMicufONUT5KN9x0Vfvt5hu6oJt3MRDKBW/Od48G9daj4aTh2ZobRFsfyJhszxv+ZMw
-         mkiyXQVWvgtC/HLatTrB75Hra0UaKA3/9N3TDCmQzxUsmvagV0GfGPyrNGFS+jX/ceqi
-         DdBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731431772; x=1732036572;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tnwYJHTHAIT7NhrPIR59Xh9wM+nrsn1VWuRs7Z2BGss=;
-        b=J8hqhw06H+8BPxOfnscZn2Rgidqz7y6velBKX11+JobLsWi0IuedO2YB3C6Rt9IvDP
-         /prPcDfq/NmTqyjJAbdAfn9XFUOePXTqpmpms3wsug4q1qEm0AhWH12wfLybovu7otdM
-         /SLnTrwKCqFBMGQCkwYeUbFAUDZnbaeQxI+luH0Tunx8Qp/GIZUZZrDs9uqBAzDuMVBo
-         VFum8FmzKBmd3mWVapxIZCVnaQvA9yGTBlHYXkKfap9ctujGaDLjgYDZ1qoHLdeUwqpR
-         AG9KyLsukpEsyEzOvX33nHMqFul3xf78nkiRhWlYG8b1m9uQPwVd3C9e43vw1NHDYMWv
-         9Dgw==
-X-Forwarded-Encrypted: i=1; AJvYcCXHjr7xuTOIxoFXNKMg75IxNwNbuFRkf4savlen43+xQ1PXoEcfqLWo/48QlJXrUrhxJxNVHZ+8baUpTRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMI0caE0S9Wk9RrQA1i+lmj3jrCw7zztnoaf/AOF5jZ/zDxAQe
-	fg5PjDPr0SCWV/6FCPyEuU69AWwsMHvpiqx2FRdjt+qTnvjrVo3Zw3DfL8ImQPo=
-X-Google-Smtp-Source: AGHT+IG7wz2TGObI3XCZLc6czEW3NEVtcJxYLSH6bVzUApdp4Zu/FDc4eOSHYLi8nQ/yqwWNP9VyFg==
-X-Received: by 2002:a05:6820:4c85:b0:5eb:6c26:1ca0 with SMTP id 006d021491bc7-5ee57b9d3f9mr11631558eaf.1.1731431772373;
-        Tue, 12 Nov 2024 09:16:12 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a1080fb77sm2816311a34.20.2024.11.12.09.16.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 09:16:11 -0800 (PST)
-Message-ID: <aeb58f3d-67b2-4df3-abc7-49a2e9bb8270@kernel.dk>
-Date: Tue, 12 Nov 2024 10:16:10 -0700
+	s=arc-20240116; t=1731431840; c=relaxed/simple;
+	bh=HGzPPuT/0kXFNgvNGXBwULpCnuRiJXROhPsz7b7L/9M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=W+FrdTh3C2Kxr9tCXIuaGWAw+wIko9UfrL0584hyAAs3tUoZ4KIGPHbMvzLpsJxSblQ9e+HzookxPhvQTS0226L8mwU2jN5aKNDdzkFyG7dCN0meqWAdiCEKmnj92TPGINNS07SjC0BMOJfLqn3xv9I20hPDA/4eXdhxtn/jQR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DYeiuo2/; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731431839; x=1762967839;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=HGzPPuT/0kXFNgvNGXBwULpCnuRiJXROhPsz7b7L/9M=;
+  b=DYeiuo2/Ub7wz3LdP0Akj9o9H6llSLVPzNuEN61Hm3bRBY2ZnHOPbU8R
+   4P+F6jdnC6XcgGXwkKOdaNNW1ynqJY0ILLZZe2I4u3Y4fb/hcBTlDkmEp
+   WPFEeFBnT6I5A75UpXv6WrMaKnEaY6g6ThBhqjlupMmPLZE+MzDTiNat/
+   TQx+qx5l5zYbqSfDLrEKGhXkSv6EvMy+D5o4kbUTBqQz5GCk/ReUpJpso
+   NQ2fnvZuWVjj8XBGChS1WIbzFLrWx+CT/W/lO9Hvcxbb6N3TpicLac2m+
+   G6zptUkLiyRJAO3agMJfBuR3qBp5xPBw30pEr4k44la6uA7v7/wQoGcZN
+   A==;
+X-CSE-ConnectionGUID: 43P38NNUR0CTPfLyEKovGQ==
+X-CSE-MsgGUID: 6uHEAdKVSgiWu2CuCcPpgA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31157121"
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="31157121"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 09:17:19 -0800
+X-CSE-ConnectionGUID: pFiGNtS5Qui19BuzzUxlnA==
+X-CSE-MsgGUID: IKwhAHedTWeFE8hhQKAj/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="87141262"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 09:17:17 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: hdegoede@redhat.com, 
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241111185456.331071-1-srinivas.pandruvada@linux.intel.com>
+References: <20241111185456.331071-1-srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH] MAINTAINERS: Update ISHTP ECLITE maintainer entry
+Message-Id: <173143183174.3180.10471321140800311706.b4-ty@linux.intel.com>
+Date: Tue, 12 Nov 2024 19:17:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/16] iomap: make buffered writes work with RWF_UNCACHED
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
- kirill@shutemov.name, linux-btrfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
-References: <20241111234842.2024180-1-axboe@kernel.dk>
- <20241111234842.2024180-14-axboe@kernel.dk> <ZzOEVwWpGEaq6wE7@bfoster>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZzOEVwWpGEaq6wE7@bfoster>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On 11/12/24 9:37 AM, Brian Foster wrote:
-> On Mon, Nov 11, 2024 at 04:37:40PM -0700, Jens Axboe wrote:
->> Add iomap buffered write support for RWF_UNCACHED. If RWF_UNCACHED is
->> set for a write, mark the folios being written with drop_writeback. Then
+On Mon, 11 Nov 2024 10:54:56 -0800, Srinivas Pandruvada wrote:
+
+> Sumesh K Naduvalath doesn't work for Intel anymore. Adding myself as
+> maintainer as this is related to Intel Integrated Sensor Hub, which I
+> maintain.
 > 
-> s/drop_writeback/uncached/ ?
-
-Ah indeed, guess that never got changed. Thanks, will fix that in the
-commit message.
-
-> BTW, this might be getting into wonky "don't care that much" territory,
-> but something else to be aware of is that certain writes can potentially
-> change pagecache state as a side effect outside of the actual buffered
-> write itself.
 > 
-> For example, xfs calls iomap_zero_range() on write extension (i.e. pos >
-> isize), which uses buffered writes and thus could populate a pagecache
-> folio without setting it uncached, even if done on behalf of an uncached
-> write.
-> 
-> I've only made a first pass and could be missing some details, but IIUC
-> I _think_ this means something like writing out a stream of small,
-> sparse and file extending uncached writes could actually end up behaving
-> more like sync I/O. Again, not saying that's something we really care
-> about, just raising it in case it's worth considering or documenting..
 
-No that's useful info, I'm not really surprised that there would still
-be cases where UNCACHED goes unnoticed. In other words, I'd be surprised
-if the current patches for eg xfs/ext4 cover all the cases where new
-folios are created and should be marked as UNCACHED of IOCB_UNCACHED is
-set in the iocb.
 
-I think those can be sorted out or documented as we move forward.
-UNCACHED is really just a hint - the kernel should do its best to not
-have permanent folios for this IO, but there are certainly cases where
-it won't be honored if you're racing with regular buffered IO or mmap.
-For the case above, sounds like we could cover that, however, and
-probably should.
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
 
--- 
-Jens Axboe
+The list of commits applied:
+[1/1] MAINTAINERS: Update ISHTP ECLITE maintainer entry
+      commit: a8e03d821d6a72a72fdc0ea1809a21e815a3fd19
+
+--
+ i.
+
 
