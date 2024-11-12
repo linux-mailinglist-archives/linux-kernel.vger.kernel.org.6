@@ -1,160 +1,94 @@
-Return-Path: <linux-kernel+bounces-405143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D949C4D6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:41:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9821E9C4D6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:40:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A64828A385
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:41:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14786289F9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BAF208206;
-	Tue, 12 Nov 2024 03:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF3C208982;
+	Tue, 12 Nov 2024 03:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H1PfCg8F"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nh1oay6a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2789B4C91;
-	Tue, 12 Nov 2024 03:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C8B208220;
+	Tue, 12 Nov 2024 03:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731382850; cv=none; b=P32kGxeZDq3BMuwCIyu5kdYcjkDBrMqNcSZH3Wzyj1j2s1VKJuUGII97GAxm9R2Y336vpu16CDQsf6A0r8qlJVWhj5OFYEzbA6Vcy38bXJkQPxkoJKg536i0GHnAIfTJBt1RTLvOV3J3EQgZPHyG8RnvWo5OADCSmWqLpqxWL2o=
+	t=1731382825; cv=none; b=njLJvXZ1p0+2aSwyagn3mSBTolfvJMkLcX17PmyFhrTcpzCWYh8SF+3kDs1CdRzj5N0DBrl4TnPGZ7mRgfYBY1bIoBilNy/6DwTT1Aor015FpOWIg1O92Xm5nnTYpFMxlVaGx5UZn78zWXeKRFSFwZloQSUr/Bqs4kByjmbtKxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731382850; c=relaxed/simple;
-	bh=p9LGtQqR3jcc+w3YxRxDTy5mk7uAvROjyVNvaiXkojo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kL3I8Tq3Ir34r6L+Ocq6Jz7tD2eFDHxEId53A3HSI7BhM676Akm5Z6j52v3GhzfXdfJBBCiUxB3cYwu8hSX5x5nDHq6CQhjbwfLfg0oR905ruO8Ciu4/HuvvuQ4RF+PmDDDM3xBOF1Naa9uLnqitMfWBLYWPKe20es5WN7UUj1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H1PfCg8F; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC2d4PT030151;
-	Tue, 12 Nov 2024 03:40:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qDV6Br3AMrbjvxFdKKLvSuzYxf22QMrVm+rwMcLAlVQ=; b=H1PfCg8FSPeeZkZO
-	5AzICf8+/rQzCWOMWgt4kaLXC5kj3shUWuQ4qUKGCYhDHs89qi9NCW7uH1fHwfPi
-	7/eQHFyWU226HWFBjg8LqW5C88h0UmAdB4wNx2saa7h+odbifOsj5ZCgkuFP7nyE
-	SJzvSkS0aSPwdufth0BPBWop4w0h2Z6I8KSd1CJkoKcO5NwnY28uHUDVBBxHZ5L8
-	nUdbMEV1+UzPIDE2w2JF5kLes5L3uek+2lnHGaohN/mbvT+eXUbaXXqQDJ7qBF49
-	wqedWDqjICyesjcsJo45/eyui3DBVbfunW6o00fbjufRphiimo5q9nevXRgd8iLM
-	aSqD2Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0gkwxq3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 03:40:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC3eVq5027413
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 03:40:31 GMT
-Received: from [10.71.110.107] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 11 Nov
- 2024 19:40:30 -0800
-Message-ID: <643d2935-65ce-4d86-9be6-c2faa1956365@quicinc.com>
-Date: Mon, 11 Nov 2024 19:40:03 -0800
+	s=arc-20240116; t=1731382825; c=relaxed/simple;
+	bh=JtmczOi8pvJiKpG31qVAYrUOVOu5b2F3sEl1LBsri/0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=FDK0CAuUjYQkjq5xNyphrdSFP7Yp2CwcA5muvBqMQVY1N9ybGOC3Uo0BVhnonvdvCyEyPSOenRDiT3ufcNQVc4V7M/vS2jDsuAPBdhLSlzRk0dA7ftpgEldtMocRdQX1x2C1Il99Lou4CoOyvv/nPfEUOUl+9INFqrHnLQ/fgdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nh1oay6a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D7A1C4CECD;
+	Tue, 12 Nov 2024 03:40:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731382825;
+	bh=JtmczOi8pvJiKpG31qVAYrUOVOu5b2F3sEl1LBsri/0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Nh1oay6ayEQ7wglDqD/umqe6cVG+DN5YXId19rPSlI0R95ZbEMUhEQ/m1LVKTQYTg
+	 2SJGZqAkZ1yTSCkl8guy902I9fZk7OuE42gzZAa8D4W0vcR6t0MmZMtEBKJvJeAjTg
+	 6u9PR7eC/EUpF/ZiTSahJodtGI5NgJ1st3FJdrHIXe6GqGp4igoO1sFkrsR69MrKcI
+	 hb2MwQ2QhMTYHX/TW1Dv2vbBKKq7Stcl8PpHYcxrLQIDyU3EJpwIubaG7axGgRuJCj
+	 uTZm4Pa8tG79F4Wch4sHvmAmOnEswHLylndaFngWeI7jR1CFqw1Ff8L8jgptyK4pV+
+	 4a7yT6Nzv//tQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0903809A80;
+	Tue, 12 Nov 2024 03:40:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: display/msm: qcom,sa8775p-mdss: fix the
- example
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Mahadevan <quic_mahap@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241112-fd-dp-fux-warning-v2-1-8cc4960094bd@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241112-fd-dp-fux-warning-v2-1-8cc4960094bd@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mzxbhvWPXFCAow0UpZEQhjyXgRtnjbvJ
-X-Proofpoint-GUID: mzxbhvWPXFCAow0UpZEQhjyXgRtnjbvJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- spamscore=0 clxscore=1011 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411120029
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: netconsole: selftests: Check if netdevsim is
+ available
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173138283550.71105.1842004842601301984.git-patchwork-notify@kernel.org>
+Date: Tue, 12 Nov 2024 03:40:35 +0000
+References: <20241108-netcon_selftest_deps-v1-1-1789cbf3adcd@debian.org>
+In-Reply-To: <20241108-netcon_selftest_deps-v1-1-1789cbf3adcd@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Hello:
 
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 11/11/2024 7:21 PM, Dmitry Baryshkov wrote:
-> Add p1 region to the list of DP registers in the SA8775p example. This
-> fixes the following warning:
+On Fri, 08 Nov 2024 06:59:25 -0800 you wrote:
+> The netconsole selftest relies on the availability of the netdevsim module.
+> To ensure the test can run correctly, we need to check if the netdevsim
+> module is either loaded or built-in before proceeding.
 > 
-> Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.example.dtb: displayport-controller@af54000: reg: [[183844864, 260], [183845376, 192], [183848960, 1904], [183853056, 156]] is too short
+> Update the netconsole selftest to check for the existence of
+> the /sys/bus/netdevsim/new_device file before running the test. If the
+> file is not found, the test is skipped with an explanation that the
+> CONFIG_NETDEVSIM kernel config option may not be enabled.
 > 
-> Fixes: 409685915f00 ("dt-bindings: display/msm: Document MDSS on SA8775P")
-> Reported-by: Rob Herring <robh@kernel.org>
-> Closes: https://lore.kernel.org/dri-devel/CAL_JsqJ0zoyaZAgZtyJ8xMsPY+YzrbF-YG1vPN6tFoFXQaW09w@mail.gmail.com/c
+> [...]
 
-Thanks for the patch.
+Here is the summary with links:
+  - [net-next] net: netconsole: selftests: Check if netdevsim is available
+    https://git.kernel.org/netdev/net-next/c/43271bb5bf67
 
-I think this link has an extra 'c' at the end.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-With that fixed,
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-> Changes in v2:
-> - EDITME: describe what is new in this series revision.
-> - EDITME: use bulletpoints and terse descriptions.
-> - Link to v1: https://lore.kernel.org/r/20241112-fd-dp-fux-warning-v1-1-705b527f5a63@linaro.org
-> ---
->   Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-> index 58f8a01f29c7aaa9dc943c232363075686c06a7c..4536bb2f971f3b7173b8807f90c9af3e460bb01c 100644
-> --- a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-> @@ -168,7 +168,8 @@ examples:
->               reg = <0xaf54000 0x104>,
->                     <0xaf54200 0x0c0>,
->                     <0xaf55000 0x770>,
-> -                  <0xaf56000 0x09c>;
-> +                  <0xaf56000 0x09c>,
-> +                  <0xaf57000 0x09c>;
->   
->               interrupt-parent = <&mdss0>;
->               interrupts = <12>;
-> 
-> ---
-> base-commit: ff2ce06d5e28be5ee399a2ff894d6a551c70a318
-> change-id: 20241112-fd-dp-fux-warning-c8764c93f787
-> 
-> Best regards,
 
