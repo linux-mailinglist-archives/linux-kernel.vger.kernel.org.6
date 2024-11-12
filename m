@@ -1,111 +1,185 @@
-Return-Path: <linux-kernel+bounces-406511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA569C6029
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:18:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C93C9C6042
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:20:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 563B51F2183B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B80B281B53
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A16215C62;
-	Tue, 12 Nov 2024 18:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A44215C4F;
+	Tue, 12 Nov 2024 18:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Fmr2/4Es"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A6F213154;
-	Tue, 12 Nov 2024 18:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="S5+hUPug"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99CF1FC7F8
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731435472; cv=none; b=P7IsxynDL0JYRAdnsl8U4aOrhaDV0eldYjvrKuS4/kAZgjpw3xQgg08czXBR2cZe187t4tcApjfpk54vWBUeFK73ZbWVjXwAhOPahMkcbp4FhxiF7JBeVU4Zu1/b0wavkLH86CPnI61wqwIJxA92NP1lFSE28r5H1VoyAQdISBI=
+	t=1731435621; cv=none; b=KIYOCN5r1jT6B4d8tQQV0Q7dSdp/tKijAjJnHxgoGGIXyLDjexkYjvOTMLduEW78WgXnVWv7exjJqBr0QKng7dOSlkf/pm4pTtVNdoBYU4ZLlGzktpQPUV+8wktUFsWAZXsMOkax0QhBABi33jRyXUciREPMpU9ecWUbFCKPG6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731435472; c=relaxed/simple;
-	bh=BR/BpzuLNMVngjfjWXUx9mQxB5t8dbtYD/styFjdNlM=;
+	s=arc-20240116; t=1731435621; c=relaxed/simple;
+	bh=CLxSHmzSf+YmZT578sV24Yddau8UHmWqIZztKVilakQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RzarPAvjxWvXkGa+Hm06kAQ6Rfm7PxPHJ1HjuOPaJ9gzijnvfjACCGt/pxtzqAa6MxKDHBGmiL3leBQ1KUFLfXptV3EtPJPIo7+b8xuQZVdxmmvFpzUn7L7UcC6i8Qmb4vZX4VqeIS/weJGZSjXeNPQ0/oC8fJJJU2HQA0hAgl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Fmr2/4Es; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from skinsburskii. (unknown [20.236.10.163])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 350712383EC7;
-	Tue, 12 Nov 2024 10:17:50 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 350712383EC7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1731435470;
-	bh=WlNxYSWDvmbDv43LIYnQKNLWXfGngSKyXNx/SnFV2CA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fmr2/4EsX9yXd9kYOgQ5k1wzaSB2VdT0K3Rg1XM7iiIvK5PyVFEyOBS+ZLW+87y2p
-	 +RjJuYUQ/3VDMoDs4v+Yzyx2OXfIpjya4/ioCPSCT0xzFeVsU8XUwJokvDAN40qJeH
-	 2FI3CanPqHMPxX62l4gtWMIVAiF3dXznkAo/d2JU=
-Date: Tue, 12 Nov 2024 10:17:47 -0800
-From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-To: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, x86@kernel.org, hpa@zytor.com,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] TFrom: Stanislav Kinsburskii
- <skinsburskii@linux.microsoft.com0
-Message-ID: <20241112181747.GA21568@skinsburskii.>
-References: <173143538271.3312.9979026785015274168.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ogS/8NbKOJFlU1gy7ei4ITu2Iwp/RRNu1jhuYn4ZFjXQXAVtC91OfjP7tTxXxI/0kuhApYEX2YB/78rVnZXju9dTajARHzWWZe/rqIRvwo2KGcWCnESpkHAisGQOs+8tS0yYTUDZ1ZHIUndJ3PzyZZzra+p/Nh/IJk7Gw5ep6fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=S5+hUPug; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a6bc0600f9so22105195ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:20:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google; t=1731435618; x=1732040418; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cbgHmJ4Gkoa5mlbvbFyvZJofKbNS5nmsA8PherQHRCQ=;
+        b=S5+hUPugKqeync/ghYe9aNzaOk0nL/qHwonbH1tWAFxt1OrIvlQyfkVoJy2MDIqtYu
+         e7sevtJQhe3r6ZfBQi/V10MWoG3K0bIpC0iWCACcl8ub4AsmmEAzGcIDrzPraV5Kw5Pm
+         7OsUiW9vUhohy6g9YY47SXMduz5pe8oZ4R+zQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731435618; x=1732040418;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cbgHmJ4Gkoa5mlbvbFyvZJofKbNS5nmsA8PherQHRCQ=;
+        b=ehmyts/ySatXttrJilzMjFOQ5w0hYDBy60vjDB9nA553faLG54mJ6QUvrE0QD3jbOT
+         8D9CWBuieFjfXmIFgTu5UIhsf8pezSu9TbUYf0Vm82wfGegr94RIa21ZVctiL4ehIV6o
+         F3XAb34D1rJcVKXKL6wG2LckkRHsIhSGLYNY5h5c9cGbl6LTroXcNlETBI87M8teQAMF
+         lxgy8pvX4eqPvQWIRivAVELJvKGta6wt3ZmhR3b03GM2pv3fPM6IZj+n5lXa6mzIBewr
+         ggnzYCRHYnKrvDK7wIxpyZ4aarAh9+uJYDB7ow6mO/ulhPmq0+kKCxUtsCvZwbd5gWqD
+         WMxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUmjRBi12YnL73aNJA2qNlPi4nfTPGYo9BhqOAe0fHpyP9IfNhnSDo+dmM59VzRxwx4CGU/yifG1sh9hY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya6o+Mm6vIbd/XGCczTqUng5JSLXXGl3Hn0F+QXPpw7xhTeqWQ
+	/YugM0o3VO7jqA0ffMvjCjrXBNWMG3eTaM/O4Dr6tYLNyQf0bVIrRuyaDMFbxYE=
+X-Google-Smtp-Source: AGHT+IEMCaOCoDJ0ynINun1IJWZ3XqXIpriEuBjl6UXx6tqM7krrQJvHFKH2KmtJuObqBgs9li4ofg==
+X-Received: by 2002:a05:6e02:1f0e:b0:3a7:afb:7b36 with SMTP id e9e14a558f8ab-3a70c8975a0mr41007805ab.22.1731435617878;
+        Tue, 12 Nov 2024 10:20:17 -0800 (PST)
+Received: from localhost (222.121.121.34.bc.googleusercontent.com. [34.121.121.222])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de78763435sm2149548173.70.2024.11.12.10.20.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 10:20:17 -0800 (PST)
+Date: Tue, 12 Nov 2024 18:20:16 +0000
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>, linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [RFC 1/3] tick-sched: Remove last_tick and calculate next tick
+ from now
+Message-ID: <20241112182016.GA2057531@google.com>
+References: <20241108174839.1016424-1-joel@joelfernandes.org>
+ <20241108174839.1016424-2-joel@joelfernandes.org>
+ <ZzKWvislBnjV9kpf@pavilion.home>
+ <874j4co98w.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <173143538271.3312.9979026785015274168.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <874j4co98w.ffs@tglx>
 
-Please disregard.
+On Tue, Nov 12, 2024 at 02:46:23PM +0100, Thomas Gleixner wrote:
+> On Tue, Nov 12 2024 at 00:43, Frederic Weisbecker wrote:
+> > Le Fri, Nov 08, 2024 at 05:48:34PM +0000, Joel Fernandes (Google) a écrit :
+> 
+> >> During tick restart, we use last_tick and forward it past now.
+> >>
+> >> Since we are forwarding past now, we can simply use now as a reference
+> >> instead of last_tick. This patch removes last_tick and does so.
+> >>
+> >> This patch potentially does more mul/imul than the existing code,
+> >> as sometimes forwarding past now need not be done if last_tick > now.
+> >> However, the patch is a cleanup which reduces LOC and reduces the size
+> >> of struct tick_sched.
+> 
+> May I politely ask you to read and follow the Documentation
+> vs. changelogs?
+> 
+>   https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+> 
+> Also
+> 
+> git grep 'This patch' Documentation/process
+> 
+> might give you a hint.
 
-Stanislav
+Oops, sorry. I will go read that again. My bad.
 
-On Tue, Nov 12, 2024 at 06:16:26PM +0000, Stanislav Kinsburskii wrote:
-> x86/hyperv: Set X86_FEATURE_TSC_RELIABLE unconditionally
+> >> -	/* Forward the time to expire in the future */
+> >> -	hrtimer_forward(&ts->sched_timer, now, TICK_NSEC);
+> >> +	hrtimer_set_expires(&ts->sched_timer, DIV_ROUND_UP_ULL(now, TICK_NSEC) * TICK_NSEC);
 > 
-> Enable X86_FEATURE_TSC_RELIABLE by default as X86_FEATURE_TSC_RELIABLE is
-> independent from invariant TSC and should have never been gated by the
-> HV_ACCESS_TSC_INVARIANT privilege.
+> How is a division and multiplication in this hotpath helpful? That's
+> awfully slow on 32-bit machines and pointless on 64-bit too.
+
+Yes, I was afraid of that but also hrtimer_forward() already does div and
+mult:
+
+        if (unlikely(delta >= interval)) {
+                s64 incr = ktime_to_ns(interval);
+
+                orun = ktime_divns(delta, incr);
+                hrtimer_add_expires_ns(timer, incr * orun);
+
+I am not fully sure if I am doing division and multiplication more often than
+existing code (I'll go count that), because tick should not be stopped at a
+distance of just 1 tick I think (otherwise why stop it in the first place..).
+
+> Using now is also wrong as it breaks the sched_skew_tick distribution by
+> aligning the tick on all CPUs again.
+
+I am not very familiar with that so I'll do some research on it, thanks!
+
+> IOW, this "cleanup" is making things worse.
+
+Sorry and thanks for filling me in on the drawbacks of this. One of the goal
+of this particular change I posted is to learn "why not" and this really
+helped, thanks!
+
+> > We don't want to rewrite hrtimer_forward() but, after all, the current expiry is
+> > enough a relevant information.
+> >
+> > How about just this? It's worth it as it now forwards after the real last programmed
+> > tick, which should be close enough from @now with a delta below TICK_NSEC, or even
+> > better @now is below the expiry. Therefore it should resume as just a no-op
+> > or at worst an addition within hrtimer_forward():
+> >
+> > diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+> > index 753a184c7090..ffd0c026a248 100644
+> > --- a/kernel/time/tick-sched.c
+> > +++ b/kernel/time/tick-sched.c
+> > @@ -838,7 +838,6 @@ EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
+> >  static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
+> >  {
+> >  	hrtimer_cancel(&ts->sched_timer);
+> > -	hrtimer_set_expires(&ts->sched_timer, ts->last_tick);
+> >  
+> >  	/* Forward the time to expire in the future */
+> >  	hrtimer_forward(&ts->sched_timer, now, TICK_NSEC);
 > 
-> To elaborate, the HV_ACCESS_TSC_INVARIANT privilege allows certain types of
-> guests to opt-in to invariant TSC by writing the
-> HV_X64_MSR_TSC_INVARIANT_CONTROL register. Not all guests will have this
-> privilege and the hypervisor will automatically opt-in certain types of
-> guests (e.g. EXO partitions) to invariant TSC, but this functionality is
-> unrelated to the TSC reliability.
+> That's just wrong. ts->sched_timer.expires contains a tick in the
+> future. If tick_nohz_stop_tick() set it to 10 ticks in the future and
+> the CPU goes out of idle due to a device interrupt before the timer
+> expires, then hrtimer_forward() will do nothing because expires is ahead
+> of now.
 > 
-> Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-> ---
->  arch/x86/kernel/cpu/mshyperv.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-> index d18078834ded..14412afcc398 100644
-> --- a/arch/x86/kernel/cpu/mshyperv.c
-> +++ b/arch/x86/kernel/cpu/mshyperv.c
-> @@ -515,7 +515,7 @@ static void __init ms_hyperv_init_platform(void)
->  	machine_ops.crash_shutdown = hv_machine_crash_shutdown;
->  #endif
->  #endif
-> -	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) {
-> +	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT)
->  		/*
->  		 * Writing to synthetic MSR 0x40000118 updates/changes the
->  		 * guest visible CPUIDs. Setting bit 0 of this MSR  enables
-> @@ -526,8 +526,8 @@ static void __init ms_hyperv_init_platform(void)
->  		 * is called.
->  		 */
->  		wrmsrl(HV_X64_MSR_TSC_INVARIANT_CONTROL, HV_EXPOSE_INVARIANT_TSC);
-> -		setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
-> -	}
-> +
-> +	setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
->  
->  	/*
->  	 * Generation 2 instances don't support reading the NMI status from
-> 
+> Which means the CPU is not idle and has no tick until the delayed tick
+> which was set by tick_nohz_stop_tick() expires. Not really correct.
+
+I agree, Frederic's suggestion will break as we have to reset the hrtimer back
+to reality.
+
+thanks,
+
+ - Joel
+
 
