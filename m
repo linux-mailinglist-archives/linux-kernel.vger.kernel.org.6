@@ -1,135 +1,101 @@
-Return-Path: <linux-kernel+bounces-406158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A9F9C5B91
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:13:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D13599C5B9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:15:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0E81F212DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:13:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887FA1F2334E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10802003A2;
-	Tue, 12 Nov 2024 15:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18E32003CA;
+	Tue, 12 Nov 2024 15:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gN8R0y5r"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yRPrsOW+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1BF1FF053;
-	Tue, 12 Nov 2024 15:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D451FF056;
+	Tue, 12 Nov 2024 15:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731424344; cv=none; b=pCYWuglR8RAsS75avrHmcjChcC87nMiHFiR2eQgiXTDQ/Ww6g85nCifuxX4BHy6JvGt3+cKzWlVrscVDnbnCvi3ps380hIrR+cxI8XnxRLnU4DuDydAP+vmq9XfdmFHEtpcHe73gO2RFhLACNkPO81ZW3312uyVhEXS+t55kMYI=
+	t=1731424461; cv=none; b=JhL4zMVr/CyBAowL8IsSNo+eptLEveAPThPN4dLei/gA3RiJuuPJbR9M0+pU6LJRpAM2FWZHrlb5n0bgJIkwwbPbZRqRPQVN8xP6IxR4WkYpOLy+dYvJsN9B5gVPqeAaCHuDhuoRS7qnt2GwNlwSFgeAsV553dufziVFQ2cvGp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731424344; c=relaxed/simple;
-	bh=FvYDxemAYWoX77GN8sFeA7OVWjIqbPCJa5r4+zu85Rg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U591I1JSHk12rAWW9ctAYHwxo6F0aP3/glU0tVudP243BZCXAF5tGw/cJfzv/VYhu9WBT8VKWtT0aWP02h4AEE9kDMgnsN1awVjXNvXUWu+xSNuXJ3pFKhkyMDm8VEt3fdR2pFWBydDbr7TC8HqOkvFKFDHMh4fU6I+pyduJ1FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gN8R0y5r; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5AAF7240006;
-	Tue, 12 Nov 2024 15:12:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731424339;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7/ZZ+GzA9JnknmCSiZ4KAoFAxIWZALm0qPy9dvBIJSk=;
-	b=gN8R0y5rBADWu+wo+lGHeMRwjS1282FydlI9vD3kgvpHQWTYsItwv0ODr3pyxeUUL9/IZL
-	szxsyvU9qROe3EZH29OPtqpzNY1CGgw47LbshgwpkgUVX6VO2bWsajgC4TmMcGHH7r9LlY
-	G33EvbRmjGx8br4vfR0EeyZkdPYjWhhRewSY/WUDxk+ZEvI08pmAojF8qfmADEABnJxIG+
-	qoyc+4hqVEjd2XnEyLTv/JnKdPv8cfU++ryF0rzS0cTh8FTuDEnlZfczRSAd+U2jb3EZf+
-	mfFl/EYf15RQtHk91p5j5TX+qAfHgPZIWoTiawRO5TblLOHnhgPxrTSLqjvRdg==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: cathycai0714@gmail.com, Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Giuseppe Cavallaro <peppe.cavallaro@st.com>,
- Avi Fishman <avifishman70@gmail.com>
-Cc: cathy.cai@unisoc.com, cixi.geng1@unisoc.com,
- David Miller <davem@davemloft.net>, edumazet@google.com, kuba@kernel.org,
- Linux ARM <linux-arm-kernel@lists.infradead.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-stm32@st-md-mailman.stormreply.com, mcoquelin.stm32@gmail.com,
- Network Development <netdev@vger.kernel.org>, pabeni@redhat.com,
- wade.shu@unisoc.com, xuewen.yan94@gmail.com, zhiguo.niu@unisoc.com,
- Alexandre Torgue <alexandre.torgue@st.com>,
- Murali <murali.somarouthu@dell.com>, Tomer Maimon <tmaimon77@gmail.com>,
- "Silva, L Antonio" <Luis.A.Silva@dell.com>,
- Arias Pablo <Pablo_Arias@dell.com>,
- Somarouthu Murali <Murali_Somarouthu@dell.com>, uri.trichter@nuvoton.com
-Subject: Re: [RFC PATCH] net: stmmac: Fix the problem about interrupt storm
-Date: Tue, 12 Nov 2024 16:12:17 +0100
-Message-ID: <7732873.EvYhyI6sBW@fw-rgant>
-In-Reply-To:
- <CAKKbWA6zRee9Rzee-ebLnEAvwLqnmsPswGaUo_ineyzw-b=EgQ@mail.gmail.com>
-References:
- <CAKKbWA7e0TmU4z4O8tHfwE=dvqPFaZbSPjxR-==fQSsNq6ELCQ@mail.gmail.com>
- <CAKKbWA6zRee9Rzee-ebLnEAvwLqnmsPswGaUo_ineyzw-b=EgQ@mail.gmail.com>
+	s=arc-20240116; t=1731424461; c=relaxed/simple;
+	bh=BOt1n5cNm6RK271T1p/QXRcLB6NfdzPBBt9542rWDio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJV3xjCjeVtMmKjLwo/cSWq9jbyVzQpqdCXvK/5KO/+dyXZfjmfKwy5jDPFm2FAw3jCHH3/wjxJJONLdPZ2G1fWe7irfy7gxNWqXx5nKo5qoZ8cpXh82gwf2CWlExYAFlKOOcUzpyeNqUM9gq86PrBmjUrLLFDUtBt7JXpMK3JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yRPrsOW+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B31FC4CED5;
+	Tue, 12 Nov 2024 15:14:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731424460;
+	bh=BOt1n5cNm6RK271T1p/QXRcLB6NfdzPBBt9542rWDio=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yRPrsOW+s8DkCgtkwh0SepWEkAvGYzR3m+gROrG44hIJo13pj3EGK1XKL4vs5XULg
+	 ReGEGIruZVP7OkDQIl1QwHbBtHbAXDIIjrjZ3/KJ4SIdAqaz3lpskSjwilTxc/OlZH
+	 MTTAhLUFv0pPsa+KyWbkQwyQpHtLRQ5aGYTONIjw=
+Date: Tue, 12 Nov 2024 16:14:17 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: linux-usb@vger.kernel.org, andreyknvl@gmail.com,
+	stern@rowland.harvard.edu, b-liu@ti.com, johan@kernel.org,
+	oneukum@suse.com, linux-kernel@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net
+Subject: Re: [PATCH] drivers/usb: refactor min(), max() with min_t(), max_t()
+Message-ID: <2024111251-spill-hatchback-72da@gregkh>
+References: <20241112150437.3508388-1-snovitoll@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112150437.3508388-1-snovitoll@gmail.com>
 
-Hello,
+On Tue, Nov 12, 2024 at 08:04:37PM +0500, Sabyrzhan Tasbolatov wrote:
+> Scanned the current drivers/usb code with `max\(.*\(` and `min\(.*\(`
+> regexp queries to find casting inside of min() and max() which
+> may lead to subtle bugs or even security vulnerabilities,
+> especially if negative values are involved.
+> 
+> Let's refactor to min_t() and max_t() specifying the data type
+> to ensure it's applicable for the both compareable arguments.
+> It should address potential type promotion issues and improves type safety.
+> 
+> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+> ---
+>  drivers/usb/core/config.c                    |  2 +-
+>  drivers/usb/gadget/composite.c               | 12 ++++++------
+>  drivers/usb/gadget/configfs.c                |  2 +-
+>  drivers/usb/gadget/function/f_fs.c           |  6 +++---
+>  drivers/usb/gadget/function/f_mass_storage.c |  8 ++++----
+>  drivers/usb/gadget/function/uvc_video.c      |  4 ++--
+>  drivers/usb/gadget/legacy/raw_gadget.c       |  4 ++--
+>  drivers/usb/gadget/udc/omap_udc.c            |  4 ++--
+>  drivers/usb/gadget/usbstring.c               |  2 +-
+>  drivers/usb/host/ehci-hcd.c                  |  2 +-
+>  drivers/usb/host/oxu210hp-hcd.c              |  4 ++--
+>  drivers/usb/host/r8a66597-hcd.c              |  2 +-
+>  drivers/usb/misc/usbtest.c                   |  3 ++-
+>  drivers/usb/mon/mon_bin.c                    |  2 +-
+>  drivers/usb/musb/musb_core.c                 |  2 +-
+>  drivers/usb/musb/musb_gadget_ep0.c           |  2 +-
+>  drivers/usb/musb/musb_host.c                 |  5 ++---
+>  drivers/usb/serial/io_edgeport.c             |  2 +-
+>  drivers/usb/serial/sierra.c                  |  2 +-
+>  drivers/usb/storage/sddr09.c                 |  4 ++--
+>  drivers/usb/storage/sddr55.c                 |  8 ++++----
+>  21 files changed, 41 insertions(+), 41 deletions(-)
 
-On dimanche 3 novembre 2024 20:00:54 heure normale d=E2=80=99Europe central=
-e Avi=20
-=46ishman wrote:
-> Hi all,
->=20
-=2E..
-> >  Yes. It could also happen between the dev_open() and
-> >=20
-> > clear_bit(STMMAC_DOWN) calls.
-> > Although we did not reproduce this scenario, it should have happened
-> > if we had increased
-> > the number of test samples. In addition, I found that other people had
-> > similar problems before.
-> > The link is:
-> > https://lore.kernel.org/all/20210208140820.10410-11-Sergey.Semin@baikal=
-ele
-> > ctronics.ru/>=20
-> > > Moreover, it seems strange to me that stmmac_interrupt()
-> > > unconditionnally
-> > > ignores interrupts when the driver is in STMMAC_DOWN state. This seems
-> > > like
-> > > dangerous behaviour, since it could cause IRQ storm issues whenever
-> > > something in the driver sets this state. I'm not too familiar with the
-> > > interrupt handling in this driver, but maybe stmmac_interrupt() could
-> > > clear interrupts unconditionnally in the STMMAC_DOWN state?
-> >=20
-> > Clear interrupts unconditionally in the STMMAC_DOWN state directly
-> > certainly won't cause this problem.
-> > This may be too rough, maybe this design has other considerations.
->=20
-> But then after the dev_open() you might miss interrupt, no?
+Can you break these up to at least "one per drivers/usb/*" subdirectory
+to make it easier to review and apply?
 
-Indeed, but in any case, unconditionally returning from an IRQ handler with=
-out=20
-clearing any interrupt flags seems like very strange behavior to me.
+thanks,
 
-Disabling and reenabling interrupts as you suggested does seem like a
-good solution for this particular scenario, but it doesn't solve the more
-general issue of the dangerous way stmmac_interrupt handles this.
-
-Maybe the setting and clearing of this STMMAC_DOWN bit should
-be wrapped in some kind of handler which also disables all interrupts?
-
-Best Regards
-
-=2D-=20
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
-
+greg k-h
 
