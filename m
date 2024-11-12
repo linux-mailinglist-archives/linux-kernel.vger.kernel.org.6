@@ -1,119 +1,98 @@
-Return-Path: <linux-kernel+bounces-406601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE419C6143
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:21:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E89E9C613A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:20:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3284B281B1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:21:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34FBA285EC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3551421B45B;
-	Tue, 12 Nov 2024 19:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C3F219E55;
+	Tue, 12 Nov 2024 19:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9y5NWEC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A71PAE1O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F35219E47;
-	Tue, 12 Nov 2024 19:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B378B219E34;
+	Tue, 12 Nov 2024 19:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439140; cv=none; b=sw2B52P1tan6P3J6kf1ooKe5Q6XttcM66qsxOn52QP8RDng4NV/ujxJc3rJzy9YQ8xL1yXMaGQR3Ayz/qSBC6FsTFy7DnFMJM0pYAazi2Bd0mgbYXgXVG9/dyvikCM7g0XLU820XPBptXlyuPpeD9XGJITPTP/fy3rKG+bD09gA=
+	t=1731439131; cv=none; b=DXsVqvEFArMZ3VymjfbylZbAJSpKHQ0CnZa0SnHn6RgB479Z97Q3B1YEmUlT1LA37TO2P29wz+FWVqKezxo6L5BBo7Uafqp0hV4HtjU/YPRaWKWgIKUvMGDWLMjez0k7H5nC/+QVIaBmJzfJrYLddOGkhx5LAktN+aee5f066io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439140; c=relaxed/simple;
-	bh=g/gbsWd8fhwoyqT2FxBJClkryyLXaAzRPJ4kz1+rAQs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f3jKLc027CNxmdUu4lL6tncuVD8JBFfF1K3VwUkF6jSxBUs8TzBrC6R9LL2J7iats0faBReJZP0ha7oTNi71odobZtKpEqCD/e/mLYgh7ScUInm/mya/QlCu8/aoJbrXdHS2Wfw4nd1NhUUctRz9toTSiP49P34TBdtKF73ZwCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9y5NWEC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5074CC4CECD;
-	Tue, 12 Nov 2024 19:18:57 +0000 (UTC)
+	s=arc-20240116; t=1731439131; c=relaxed/simple;
+	bh=1H1g579p36XBsBnjA+xloBTJou1BmGuLy6WYc1tQyc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMZVbbRaacn3z9cZGLJvyVC+1yqVnQMd09sTZu52Fi36rwIax/FKJI9mkT/QXs4GIWGA8RbFhitNrk5dcKiDTCH6dZINyZk//FIf5ChAq/1sAzbcybG0Er0YsKqrQjzP6PqKy3ykBmJWxooX2g1JWpyeIc0IEqVGf3NX3pFZcfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A71PAE1O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55C27C4CED5;
+	Tue, 12 Nov 2024 19:18:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731439140;
-	bh=g/gbsWd8fhwoyqT2FxBJClkryyLXaAzRPJ4kz1+rAQs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=c9y5NWECVt36S1pJfBpPMEgQ4r6v24VWQqWiQCh1gjGgYOJtgHXP173JqLIJFUxyR
-	 rnMaku86UVgZ29QODrrqjblg3G81yN0cJxfIAVSf7mQPXZ1JLb8LGU3oVZ1pbh0EaC
-	 mdWR6nZUYvrF+KDCHutWiAZavyj6xwiRmCo7cS0n2oELX8kCYcIY41lS95AZXUMpAs
-	 a3bO+inqETiJdzJBhywr4zRqIVvrLG4xuScnzcLPP+5Czt6KO4rMY2ydo/KP8oeta6
-	 AMFMeEMQSZ8gDu9S4hNVNPkosPj5qkgGcsl8E014jjbrmBaP305nfdMGzKAZFCQFaY
-	 PrHb3roZ1Qp+A==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Tue, 12 Nov 2024 20:18:35 +0100
-Subject: [PATCH net 3/3] mptcp: pm: use _rcu variant under rcu_read_lock
+	s=k20201202; t=1731439131;
+	bh=1H1g579p36XBsBnjA+xloBTJou1BmGuLy6WYc1tQyc0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A71PAE1OST6/q8RBvFI73yACeKJcbn4sTg/z3AEGvDD/WamMpcclK/ocJayd/Ut1R
+	 ZpXRV5S94OuHw/RHWhQOpjIcI1YSBEHzDywAeINMk0G5U4rc89vVLUCnOoYO+9+yiw
+	 MKl6wJ29H00/4Qjfl4OmLmKx1aMAjRu8T8537nB8fcX0d4xcbvItMSpweZU2WE1C1h
+	 Esvs4qMVyRdCm3ITbKgRNzg/RHhfvi5v1oaFrYbnPl4hz24CHXk1uN++lU9LbIBTrB
+	 YFbcBVCN1HMOyNCf8NWC/3ciGq8ILXi8l1NeoGJDe4NoBnZq4hn9ROWTmnjwjWXqmB
+	 bEU033QycuxlA==
+Date: Tue, 12 Nov 2024 16:18:45 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, namhyung@kernel.org, irogers@google.com,
+	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 00/10] perf record --off-cpu: Dump off-cpu samples
+ directly
+Message-ID: <ZzOqFTfgY_9CJfHb@x1>
+References: <20241108204137.2444151-1-howardchu95@gmail.com>
+ <ZzOg3Xlq2jsG85XQ@x1>
+ <ZzOpvzN-OTLZPyFh@x1>
+ <ZzOp_b3Wm_kM7b0V@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241112-net-mptcp-misc-6-12-pm-v1-3-b835580cefa8@kernel.org>
-References: <20241112-net-mptcp-misc-6-12-pm-v1-0-b835580cefa8@kernel.org>
-In-Reply-To: <20241112-net-mptcp-misc-6-12-pm-v1-0-b835580cefa8@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Kishen Maloor <kishen.maloor@intel.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1565; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=g/gbsWd8fhwoyqT2FxBJClkryyLXaAzRPJ4kz1+rAQs=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnM6oVWI78RYZjhBSzAJ9i43Zzj6B5XBHtI+8u7
- jRX8SWKoV6JAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZzOqFQAKCRD2t4JPQmmg
- c/DTEACPJSoP9uUyllHdYQNBOBZ5L87YTE9Uw76HQCk3yT2kV6najF7R8gd4edofctVsmIZ09j1
- 7FGtDWFgvMAFZU/KWBA0zZcz4vgJuaIyDwdBCZn6tsLN4ivym3lc+Exwvwy0l3ffUyCkyiBNV+h
- bEhgT0GfR8i2qDi5k+jNSWWMZZX7dAqoWH0IM5mgwvS7kRdENi6YG4BN5oSzBw0ViqcAXdebCo5
- 7fuoZRFS8DY3w4dBDDj6QM3MWZOJNuUryhoCp96q5hNShz6yf5K1V0+DKZPbb8LWlCUWwxQ73wK
- VgIzJla0pCqqqO4VgKG/4TRgjAsboWlGWDbAhqvyu0FbgG/r9QD93FQUq+8GLv7pHcDovTnr5D/
- XD3KpeS1kw0xN3l2UGrC4ycaOiFuSJrebxYCjCfhUkNra5VkVoOlI/f33FlCStmZcNJz9HAGivC
- dktMkSY1uaktqbHzw1IeQIly6Joku7ZWCC6YShBwoE+LmBRNqsG1SmI9naJETFtG9DY7hRtyJwr
- yhDkGrS+HkmX0sz4T8IPVLmxnEmAZhYjdGNtnN1gy+qdy/fSeEKKAXlH6dkflIB0dJ2j8LhTpnN
- Bb6oXqhvpwpsSYUljx3BjobnamLs1vRfJ7D9KF2jCv0IVw+hJo22L2bFy16C3nWh6wqE2FjoG05
- DV18/19kehirnBg==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZzOp_b3Wm_kM7b0V@x1>
 
-In mptcp_pm_create_subflow_or_signal_addr(), rcu_read_(un)lock() are
-used as expected to iterate over the list of local addresses, but
-list_for_each_entry() was used instead of list_for_each_entry_rcu() in
-__lookup_addr(). It is important to use this variant which adds the
-required READ_ONCE() (and diagnostic checks if enabled).
+On Tue, Nov 12, 2024 at 04:18:27PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, Nov 12, 2024 at 04:17:24PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Tue, Nov 12, 2024 at 03:39:25PM -0300, Arnaldo Carvalho de Melo wrote:
+> > make: *** [Makefile:119: install-bin] Error 2
+> > make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+> > ⬢ [acme@toolbox perf-tools-next]$
+> > 
+> > I squashed the patch below and I'm trying to apply the other patches to do some
+> > minimal testing on the feature itself, but the organization of the
+> > patches needs some work.
+> 
+> Fails a few patches later, trying to fix it.
 
-Because __lookup_addr() is also used in mptcp_pm_nl_set_flags() where it
-is called under the pernet->lock and not rcu_read_lock(), an extra
-condition is then passed to help the diagnostic checks making sure
-either the associated spin lock or the RCU lock is held.
+Sorry, forgot to add it:
 
-Fixes: 86e39e04482b ("mptcp: keep track of local endpoint still available for each msk")
-Cc: stable@vger.kernel.org
-Reviewed-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- net/mptcp/pm_netlink.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-index db586a5b3866f66a24431d7f2cab566f89102885..45a2b5f05d38b0e7f334578f5ee6923a8ff8f7b2 100644
---- a/net/mptcp/pm_netlink.c
-+++ b/net/mptcp/pm_netlink.c
-@@ -524,7 +524,8 @@ __lookup_addr(struct pm_nl_pernet *pernet, const struct mptcp_addr_info *info)
- {
- 	struct mptcp_pm_addr_entry *entry;
- 
--	list_for_each_entry(entry, &pernet->local_addr_list, list) {
-+	list_for_each_entry_rcu(entry, &pernet->local_addr_list, list,
-+				lockdep_is_held(&pernet->lock)) {
- 		if (mptcp_addresses_equal(&entry->addr, info, entry->addr.port))
- 			return entry;
- 	}
-
--- 
-2.45.2
-
+⬢ [acme@toolbox perf-tools-next]$        git am ./v7_20241108_howardchu95_perf_record_off_cpu_dump_off_cpu_samples_directly.mbx
+Applying: perf evsel: Assemble offcpu samples
+Applying: perf record --off-cpu: Disable perf_event's callchain collection
+Applying: perf script: Display off-cpu samples correctly
+Applying: perf record --off-cpu: Dump the remaining samples in BPF's stack trace map
+error: patch failed: tools/perf/util/bpf_off_cpu.c:61
+error: tools/perf/util/bpf_off_cpu.c: patch does not apply
+Patch failed at 0004 perf record --off-cpu: Dump the remaining samples in BPF's stack trace map
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+hint: When you have resolved this problem, run "git am --continue".
+hint: If you prefer to skip this patch, run "git am --skip" instead.
+hint: To restore the original branch and stop patching, run "git am --abort".
+hint: Disable this message with "git config advice.mergeConflict false"
+⬢ [acme@toolbox perf-tools-next]$
 
