@@ -1,152 +1,167 @@
-Return-Path: <linux-kernel+bounces-406172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0CE9C5BAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:19:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C22B9C5BAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:20:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0C51F22826
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:19:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AF22284F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141092003C9;
-	Tue, 12 Nov 2024 15:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8883E2003D2;
+	Tue, 12 Nov 2024 15:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Rfn8N77g"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="r880ZjN1"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26CC1FF046;
-	Tue, 12 Nov 2024 15:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CAE2003AE
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731424735; cv=none; b=VC2LskgDez8dFjEDyMinCZ6sqW9s/latmYj0mG2bS8uL8RiL8utk6Fdg+I85kJmCLU+hN4ghcvtaPM7DH7a0mspqqEGT3LtKttDRO0UUETPk1XwU096PLhADv1LwB1UJyyCQExa+cXY414BWZ68frNMc53Wyt8Z251jdgTc9q9M=
+	t=1731424785; cv=none; b=TSymPQo8RaCPfj8BUAhmuRRLzxSMO95+goKcQeWIGETRW+Zf9bFCrdHQBzzd8g1P5umeDkMbxMSx7ornUm6oC3Z7khNh8/I3KpjuyZFZSqT5GJTCEci5G/mqoCac+BIo46JtMYe9rqNchB4p27GjXOM3xd22Vl17/DZolo3KrDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731424735; c=relaxed/simple;
-	bh=afmbmlqFcLrOAU7ve7A4Q8S3Gx5MaqFvD1hecGB7rZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QMuCMmHc9DWCUBMQt9oV8VbKYvxwCsMzMEVMiUapoxHr3MlXRjI/RgD8pBPEuy+/avSEXae5AOHv0sgdSALIdRSx6a6AeijVqmfuu9RKTDYM3HxSxL9FrJYcRRvIzq1TxoHeQAO4Fd+zGxtBkD5CLeOwOqGg0kSpgAwPKLZcwrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Rfn8N77g; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACEex09008433;
-	Tue, 12 Nov 2024 15:18:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=MOb0mH
-	pw2LkyIaErpZMtj9sw/+stYEKTQoIOJtGWeOw=; b=Rfn8N77gOfrVLnIdVkcnLe
-	rPHVkaS3y65RelUbvTpSrRq6fqvp3NHR01MymySIaJetL91S/C9bdrPse7y7Jqc8
-	ohfnZjHjL83uqxktPto6mWecKAhXvC1US3m4iXOsPxvZYCij2mxJgFaMZcSnnFZV
-	OK9tmhI6AYQyAmPqfrroF/G0VOu/1P8ByB0D8NdqSZOJlSSC+I9CKRncNGTSr/I0
-	c+mhfGZPjQPPnCtAHtPzEoAl5KQ1xT+k8LvMLUPtB/ZVto0g8eDOqyDWPF4X5s5K
-	5UdDZmY7JF10/r45loiG7wqADTWSnlMZQ6iwKCIhs5Q2zMyCpzvFE0exZn12XbDw
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42v9020755-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 15:18:49 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACE607V029698;
-	Tue, 12 Nov 2024 15:18:49 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tkjkt62t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 15:18:49 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ACFImLI55902522
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Nov 2024 15:18:48 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5DE6C58056;
-	Tue, 12 Nov 2024 15:18:48 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 30A9158060;
-	Tue, 12 Nov 2024 15:18:48 +0000 (GMT)
-Received: from [9.41.105.143] (unknown [9.41.105.143])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 12 Nov 2024 15:18:48 +0000 (GMT)
-Message-ID: <20ebaf65-503f-40a3-b8f3-ac1e649e2fac@linux.ibm.com>
-Date: Tue, 12 Nov 2024 09:18:48 -0600
+	s=arc-20240116; t=1731424785; c=relaxed/simple;
+	bh=VcST2DUlRpkwQVHrrTYbdpK9dzUETeVrbngBLMBL+yk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=lGoZl4K93YjcoRfdH2vSDuBbngxCYxggoV8QH85o++n+FdFsxqwajk53fwCThb54xhDAL7DQMkWFBC+pFzAUC8j0ow/VVqiGU6qjkSCz/ixf1j1Xyk1PSs9xV/8j+LuXnUEF59kW1ee5N1xNqYgpS0saHSWoDtQn7+/lIM2vPKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=r880ZjN1; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d5689eea8so3417002f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:19:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1731424781; x=1732029581; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MVQ8k1+GJHVS0OPZNtSMzBKEyDSg8j47tQMzgymLCow=;
+        b=r880ZjN1vVgsjG4doC37tDg7m8yT/362tcO+drf3LMAGtU+W4Zw4XuLTPqe+30iT8y
+         rkprgGMXMhjVJqm+ifrMmo3W1fHcC26cDmk048ZUCUthCAKZilzuFiVd+jFCMPZqa5d4
+         opPATqnd1NVq/OdFOtUKn4nNcg4nqc4DoOJtG0EoJZ21uXhCVf9OqGJG/NPZw4oZoz3W
+         qyTvPDnZHXhbHsU3gZxrLpnOGidJvErwnURij7oQW6xFfzYpxm60wu79Hvmm9jzBW7wj
+         QSGmrw+rrebi5zrA+7GWhsp8RtE2GPVHhTGvA/178oqI9tjPFv+98cuUGbAd0j+6tt6V
+         HwaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731424781; x=1732029581;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MVQ8k1+GJHVS0OPZNtSMzBKEyDSg8j47tQMzgymLCow=;
+        b=K8qGxwH1+Q31z6RG2uxdYL+LbjVFGBBDnduDpiJHKbs/4EGFaRUsZkL/adyiCOY668
+         4KAcQ7NwW14uIRw/XsNLhThQuCyoPnL1xy82AMRQvr7TSmKHH6BJsTcNUjFEcYcUGXcG
+         2k/NYJR8ySKnSo/STYzAmCIye0fNPPAb39k5l9mxX5pngmQFoAvxRXUG/TGfQvO83Ffu
+         lQqI5zSmaNHJMNRnwyZwbdjOQ+7PKK/SR7QZ+EXxK9jLJ86f81j4GlzLNtqnmTFGRkV2
+         0dPEagBieXem8hC/XEHzMylJKOJt4x7PRpwi7jvkAgtr4iRCb8Q1DcPaVp7KdH86iq8f
+         hW+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVBE9jywWg/mX9zzWUk1Ju73heGYILMJMi9LAEI/ljVu5BnmkgfiDcePjqhEoHyKQIFoycDOsXWGqZ7IvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2wFWf7YHZJfKROc8nX4jJjMU/4ZLjf2P6n3uVkL/lpxvdwDXf
+	zfDjV5r84VFNgpGtjye1jkG1Szj+pQ7B3kTIs4a9bx1hRQLv4hwuUTJ362o7Q5s=
+X-Google-Smtp-Source: AGHT+IHMf24WTrO4WpyXzvZV8UKgh3y3VTD5Esq4U79Ud4jGOPxTux5xkh61tHoiAx1XCvZY9wi66Q==
+X-Received: by 2002:a05:6000:1ac9:b0:374:c640:8596 with SMTP id ffacd0b85a97d-381f186fc60mr14314412f8f.32.1731424781413;
+        Tue, 12 Nov 2024 07:19:41 -0800 (PST)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381fbf416c6sm7330352f8f.54.2024.11.12.07.19.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 07:19:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] vsock/test: verify socket options after setting
- them
-Content-Language: en-US
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
-References: <20241108011726.213948-1-kshk@linux.ibm.com>
- <20241108011726.213948-4-kshk@linux.ibm.com>
- <bltkmoxf6xsknimf6ccrxuritfc3ipxhbqkibq7jzddg6yewcv@ijcc44qmqsm3>
-From: Konstantin Shkolnyy <kshk@linux.ibm.com>
-In-Reply-To: <bltkmoxf6xsknimf6ccrxuritfc3ipxhbqkibq7jzddg6yewcv@ijcc44qmqsm3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ZHas1wz7eyCTrodpZGt3KSa4wFbzx7el
-X-Proofpoint-GUID: ZHas1wz7eyCTrodpZGt3KSa4wFbzx7el
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 mlxscore=0 bulkscore=0 clxscore=1015 priorityscore=1501
- phishscore=0 suspectscore=0 spamscore=0 malwarescore=0 adultscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120121
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 12 Nov 2024 16:19:40 +0100
+Message-Id: <D5KAUZHYJHFS.1NXF5SVWYL03G@fairphone.com>
+To: "Vedang Nagar" <quic_vnagar@quicinc.com>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@linaro.org>
+Cc: <cros-qcom-dts-watchers@chromium.org>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Konrad Dybcio" <konrad.dybcio@linaro.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: qcom: sc7280: enable venus node
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241004-venus_sc7280-v1-1-4d7d8fd7e95b@quicinc.com>
+ <kezh3lmysij56g2tjwwuas5r26ro5i777yxxitsdcjeg7zp67v@oknrdbkzison>
+ <78e6ff6b-efe1-496c-a1fb-c9a0a4aba2d2@quicinc.com>
+ <CAA8EJpqqZL7xybcbJMsbTQB+ht5-A+ocNs+Sq30j=v1zM3JL9g@mail.gmail.com>
+ <fbba794a-ba04-4790-b5e9-b4df3cba35b2@quicinc.com>
+In-Reply-To: <fbba794a-ba04-4790-b5e9-b4df3cba35b2@quicinc.com>
 
-On 11/12/2024 02:58, Stefano Garzarella wrote:
-> On Thu, Nov 07, 2024 at 07:17:26PM -0600, Konstantin Shkolnyy wrote:
->> Replace setsockopt() calls with calls to functions that follow
->> setsockopt() with getsockopt() and check that the returned value and its
->> size are the same as have been set.
->>
->> Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
->> ---
->> tools/testing/vsock/Makefile              |   8 +-
->> tools/testing/vsock/control.c             |   8 +-
->> tools/testing/vsock/msg_zerocopy_common.c |   8 +-
->> tools/testing/vsock/util_socket.c         | 149 ++++++++++++++++++++++
->> tools/testing/vsock/util_socket.h         |  19 +++
->> tools/testing/vsock/vsock_perf.c          |  24 ++--
->> tools/testing/vsock/vsock_test.c          |  40 +++---
->> 7 files changed, 208 insertions(+), 48 deletions(-)
->> create mode 100644 tools/testing/vsock/util_socket.c
->> create mode 100644 tools/testing/vsock/util_socket.h
->>
->> diff --git a/tools/testing/vsock/Makefile b/tools/testing/vsock/Makefile
->> index 6e0b4e95e230..1ec0b3a67aa4 100644
->> --- a/tools/testing/vsock/Makefile
->> +++ b/tools/testing/vsock/Makefile
->> @@ -1,12 +1,12 @@
->> # SPDX-License-Identifier: GPL-2.0-only
->> all: test vsock_perf
->> test: vsock_test vsock_diag_test vsock_uring_test
->> -vsock_test: vsock_test.o vsock_test_zerocopy.o timeout.o control.o 
->> util.o msg_zerocopy_common.o
->> -vsock_diag_test: vsock_diag_test.o timeout.o control.o util.o
->> -vsock_perf: vsock_perf.o msg_zerocopy_common.o
->> +vsock_test: vsock_test.o vsock_test_zerocopy.o timeout.o control.o 
->> util.o msg_zerocopy_common.o util_socket.o
->> +vsock_diag_test: vsock_diag_test.o timeout.o control.o util.o 
->> util_socket.o
->> +vsock_perf: vsock_perf.o msg_zerocopy_common.o util_socket.o
-> 
-> I would add the new functions to check setsockopt in util.c
-> 
-> vsock_perf is more of a tool to measure performance than a test, so
-> we can avoid calling these checks there, tests should cover all
-> cases regardless of vsock_perf.
+Hi Vedang,
 
-The problem is that vsock_perf calls enable_so_zerocopy() which has to
-call the new setsockopt_int_check() because it's also called by 
-vsock_test. Do you prefer to give vsock_perf its own version of
-enable_so_zerocopy() which doesn't call setsockopt_int_check()?
+On Tue Nov 12, 2024 at 3:39 PM CET, Vedang Nagar wrote:
+>
+>
+> On 11/12/2024 6:43 PM, Dmitry Baryshkov wrote:
+> > On Tue, 12 Nov 2024 at 08:17, Vedang Nagar <quic_vnagar@quicinc.com> wr=
+ote:
+> >>
+> >>
+> >>
+> >> On 10/7/2024 1:20 AM, Dmitry Baryshkov wrote:
+> >>> On Fri, Oct 04, 2024 at 04:22:31PM GMT, Vedang Nagar wrote:
+> >>>> Enable the venus node on Qualcomm sc7280. It was made disabled
+> >>>> earlier to avoid bootup crash, which is fixed now with [1].
+> >>>
+> >>> NAK, there might be other reasons to keep venus disabled, like the la=
+ck
+> >>> of the vendor-signed firmware for the particular device.
+> >> Can you pls elaborate more on this? Any device with sc7280 SOC can use
+> >> venus.mbn which is already present in linux-firmware git.
+> >=20
+> > Can it though if the device is fused to use vendor keys and to check
+> > the trust chain?
+> Yes, infact the existing ones are signed and works with trustzone authent=
+ication.
+
+No, the venus firmware from linux-firmware does not work on a device
+with secure boot on, like the (QCM6490) Fairphone 5 smartphone.
+
+$ rm /lib/firmware/qcom/qcm6490/fairphone5/venus.mbn
+$ cp /lib/firmware/qcom/vpu-2.0/venus.mbn.zst /lib/firmware/qcom/qcm6490/fa=
+irphone5/venus.mbn.zst
+
+leads to
+
+[   10.848191] qcom-venus aa00000.video-codec: Adding to iommu group 13
+[   10.863062] qcom-venus aa00000.video-codec: non legacy binding
+[   10.909555] qcom-venus aa00000.video-codec: error -22 initializing firmw=
+are qcom/qcm6490/fairphone5/venus.mbn
+[   10.910099] qcom-venus aa00000.video-codec: fail to load video firmware
+[   10.910849] qcom-venus aa00000.video-codec: probe with driver qcom-venus=
+ failed with error -22
+
+It's the same with e.g. adsp firmware, modem firmware, etc.
+
+With secure boot off, yes, the hardware will load any firmware
+regardless of the signature.
+
+Regards
+Luca
+
+> >=20
+> >>
+> >> Regards,
+> >> Vedang Nagar
+> >>>
+> >>>>
+> >>>> [1]
+> >>>> https://lore.kernel.org/linux-media/20231201-sc7280-venus-pas-v3-2-b=
+c132dc5fc30@fairphone.com/
+> >>>>
+> >>>> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+> >>>> ---
+> >>>>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 2 --
+> >>>>  1 file changed, 2 deletions(-)
+> >>>
+> >=20
+> >=20
+> >=20
 
 
