@@ -1,125 +1,149 @@
-Return-Path: <linux-kernel+bounces-406872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B089C65B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:05:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566BD9C6562
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:44:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B0AEB3896C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:43:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6C81F26A7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D3921C18F;
-	Tue, 12 Nov 2024 23:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5429E21C18F;
+	Tue, 12 Nov 2024 23:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URFA3fSM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1ZNhDxJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F7921B42A;
-	Tue, 12 Nov 2024 23:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A1E1CDFBD;
+	Tue, 12 Nov 2024 23:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731455015; cv=none; b=j8dbDqVdufa5P3CjkKl6Ga9m9Qj+IkALooOO/XJXEvH11PnPzQvgYhuMZuZU9Ro9oJ3mkHMCk+cAix+GlF3YQ/uQAPvFs7UDZJesgiHZzpRW93n5zMfmg7u9EhJo+TUSSm3TGpkbRftMWh/xnMXB5ZxtSCz9bUhSWfkpLoqmf08=
+	t=1731455075; cv=none; b=aTsm2NaxsvgaEg2tcyXVX2nRoCgg+ATFOvDLdAtrCSxXWko6+35ZFJolbMgTM21U/eb/FYxCMyc1FSAeVy6QIEt1oF/uYeDys8WXFa02sDwyRZxRtwqE/kiFdwXDzRqiQlnILNPW51ginM9MeNd57i6rQFkGUIXNDa168t/9rrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731455015; c=relaxed/simple;
-	bh=hb1Htn+5sDXBHE+CTAnltprKQkxsZPkpf1Cx8nA+0gE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=pBulwNb+pcxRZcRXusbTpg9apV43f4tpYufQu1jncve/zhVKln6Qdz9pB8BZ1yIeFBezaTZFroQUBnz3aHDgIyJFyLUwo6cpYB3vzjlkR4hL4IxEBXULu3zO/3KZDCL91K+6Ka93wgWa/gCy2o062IHHtdOAhR+1C3Sw9HSQSL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URFA3fSM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60632C4CECD;
-	Tue, 12 Nov 2024 23:43:27 +0000 (UTC)
+	s=arc-20240116; t=1731455075; c=relaxed/simple;
+	bh=UZCb9fS+hhkL+JEKJ9NO1EcmESMvQfEetmouChM+sds=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=f7H4I7srXgyvwFrx0/tmaE/qJJ3MVvGDCwadehbJrveS0DyBE8YzQZv1i5bw9h7w+Mn3PstyTELI8VQcWbLFlBw3sgRDApTbsXHykvKDDfkg1iF0D0wfp1NxfrPv7KWEC+LP87LcLzpPkviT8fKDoKcVUJKyYQBa4I92T6JWVYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1ZNhDxJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FAE1C4CECD;
+	Tue, 12 Nov 2024 23:44:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731455014;
-	bh=hb1Htn+5sDXBHE+CTAnltprKQkxsZPkpf1Cx8nA+0gE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=URFA3fSMK8EIXeMZ0vESdJGmupyx9D8vAPUB2v7VtD4SV3JlPsmGkiFYDVfe0HMji
-	 dr9JJqLtxB5bvSYy06WtXI3pQmfjizEUnvtj7Ykc8X3P38HQr9HUD3ftqn/PmQMVlk
-	 aP/kjOUUuRH8Al20dwBf3TzGKszrhzLYAGnBQ0mZRZQ5vfFPCF+QBcyJGfFXOHbDLi
-	 wKv0beyyMkHH2s9Sl58ock67+jA6Ujo0pKFBULkpn0xbSu48ARN5croBQpLE4OGn6c
-	 Xj9Beedm7j8H1lBw09yxfHshaUidSi8UTNK0q3WehymSJqjEeYxZ8gMM4j9SvJNtOX
-	 vJn3V8okTmEsg==
-Date: Wed, 13 Nov 2024 08:43:25 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
- <mark.rutland@arm.com>, linux-arch@vger.kernel.org, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
- <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, Christian
- Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v18 12/17] fprobe: Add fprobe_header encoding feature
-Message-Id: <20241113084325.86ce3d6bb44e7d67f5008825@kernel.org>
-In-Reply-To: <20241112094437.59848631@gandalf.local.home>
-References: <172991731968.443985.4558065903004844780.stgit@devnote2>
-	<172991747946.443985.11014834036464028393.stgit@devnote2>
-	<20241101102212.5e9d74d9@gandalf.local.home>
-	<20241110001054.b0a5afb2d7bb1c09b4bd6b0b@kernel.org>
-	<20241112094437.59848631@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1731455074;
+	bh=UZCb9fS+hhkL+JEKJ9NO1EcmESMvQfEetmouChM+sds=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=o1ZNhDxJXEmxRM8biQl6+CgCrq0SZXFtzfdxz6TZkf6DVzK1ukp5fpuifm5toup8b
+	 A2fO0wjA28nsV0jV7mH5RUEe/pDgETnDXQQVQ2NB6rLrsVwHJn1kkZ5pHIuDZqOHms
+	 XLYoPAZNHy6ZKdvT06cBA8P9BCFGco/QnYJ6wQ87AVWpZA0UrC9JfUxnzEr/pHJnt0
+	 gUFbQz9RWPrGG1Dev0o81RunTyRk5zABaSP8+YCVI+0N+BmNw9RKaKQj4SXVE2EOLC
+	 Wl9z2e2H2UkWPGlbcaV9jLpsIMT/+XK1w6XgkunBCEHxSGv9qsHauSdhnX+jRsGVoZ
+	 NFzImbUJit/VQ==
+Date: Tue, 12 Nov 2024 17:44:32 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: Kevin Xie <kevin.xie@starfivetech.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Markus.Elfring@web.de, quic_mrana@quicinc.com, rafael@kernel.org,
+	m.szyprowski@samsung.com, linux-pm@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/2] PCI: Enable runtime pm of the host bridge
+Message-ID: <20241112234432.GA1868852@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111-runtime_pm-v7-0-9c164eefcd87@quicinc.com>
 
-On Tue, 12 Nov 2024 09:44:37 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Sun, 10 Nov 2024 00:10:54 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+On Mon, Nov 11, 2024 at 02:11:51PM +0530, Krishna chaitanya chundru wrote:
+> It is a property of the runtime PM framework that it can only
+> follow continuous dependency chains.  That is, if there is a device
+> with runtime PM disabled in a dependency chain, runtime PM cannot be
+> enabled for devices below it and above it in that chain both at the
+> same time.
 > 
-> > > > +++ b/arch/x86/include/asm/fprobe.h
-> > > > @@ -0,0 +1,9 @@
-> > > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > > +#ifndef _ASM_X86_FPROBE_H
-> > > > +#define _ASM_X86_FPROBE_H
-> > > > +
-> > > > +#ifdef CONFIG_64BIT
-> > > > +#include <asm-generic/fprobe.h>
-> > > > +#endif
-> > > > +
-> > > > +#endif /* _ASM_X86_FPROBE_H */
-> > > > \ No newline at end of file  
-> > > 
-> > > Same for the above.  
-> > 
-> > OK, but x86 and riscv, we need this default template on 64bit only.
-> > So those may keep it, right?
+> Since runtime PM is disabled for host bridge, the state of the child
+> devices under the host bridge is not taken into account by PM framework
+> for the top level parent, PCIe controller. So PM framework, allows
+> the controller driver to enter runtime PM irrespective of the state
+> of the devices under the host bridge.
 > 
-> Hmm, I wonder if we could just add:
+> So enable runtime pm of the host bridge device, so that dependency
+> chain in maintained between endpoint devices and the controller driver.
 > 
->   generic-$(CONFIG_X86_32)
+> PM framework expectes parent runtime pm enabled before enabling runtime
+> pm of the child. As PCIe starfive device is enabling runtime pm after
+> the pci_host_probe which enables runtime pm of the child device i.e for
+> the bridge device a warning is shown saying "pcie-starfive 940000000.pcie:
+> Enabling runtime PM for inactive device with active children" and also
+> shows possible circular locking dependency detected message.
 > 
-> But since I don't see that used anywhere, we may need this for archs that
-> partially have it.
-
-Since this mask is not available on 32bit (since 32-4 = 28bit is 256MB,
-which is too small for kernel space), I checked CONFIG_64BIT in 
-asm-generic header in v19. So now I can use generic-y for most
-architecture.
-
-Thank you,
-
+> As it is must to enable parent device's runtime PM before enabling child's
+> runtime pm as the pcie-starfive device runtime pm is enabled after child
+> runtime starfive device is seeing the warning.
 > 
-> -- Steve
+> In the first patch fix the pcie-starfive driver by enabling runtime
+> pm before calling pci_host_probe().
+> 
+> All other PCIe controller drivers are enabling runtime pm before
+> calling pci_host_probe() which is as expected so don't require any
+> fix like pcie-starfive driver.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 
+Provisionally applied to pci/pm for v6.13.  I see a typo or two, so
+the commit logs will likely be updated, but I pushed the branch to get
+build testing started.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+> Changes in v7:
+> - Bring the cover letter details to commit message as suggested by bjorn.
+> - Add a comment in the driver to ensure pm_runtime_enable is called
+>   before host bridge pm_runtime_enable().
+> - Link to v6: https://lore.kernel.org/r/20241017-runtime_pm-v6-0-55eab5c2c940@quicinc.com
+> Changes in v6:
+> - include the patch by mayank which fixes runtime pm enable order for
+>   pcie starfive driver.
+> Changes in v5:
+> - call pm_runtime_no_callbacks() as suggested by Rafael.
+> - include the commit texts as suggested by Rafael.
+> - Link to v4: https://lore.kernel.org/linux-pci/20240708-runtime_pm-v4-1-c02a3663243b@quicinc.com/
+> Changes in v4:
+> - Changed pm_runtime_enable() to devm_pm_runtime_enable() (suggested by mayank)
+> - Link to v3: https://lore.kernel.org/lkml/20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com/
+> Changes in v3:
+> - Moved the runtime API call's from the dwc driver to PCI framework
+>   as it is applicable for all (suggested by mani)
+> - Updated the commit message.
+> - Link to v2: https://lore.kernel.org/all/20240305-runtime_pm_enable-v2-1-a849b74091d1@quicinc.com
+> Changes in v2:
+> - Updated commit message as suggested by mani.
+> - Link to v1: https://lore.kernel.org/r/20240219-runtime_pm_enable-v1-1-d39660310504@quicinc.com
+> 
+> ---
+> Krishna chaitanya chundru (1):
+>       PCI: Enable runtime pm of the host bridge
+> 
+> Mayank Rana (1):
+>       PCI: starfive: Enable PCIe controller's runtime PM before probing host bridge
+> 
+>  drivers/pci/controller/plda/pcie-starfive.c | 10 +++++++---
+>  drivers/pci/probe.c                         | 11 +++++++++++
+>  2 files changed, 18 insertions(+), 3 deletions(-)
+> ---
+> base-commit: 2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2
+> change-id: 20241016-runtime_pm-d3dbf41736b6
+> 
+> Best regards,
+> -- 
+> Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> 
 
