@@ -1,86 +1,147 @@
-Return-Path: <linux-kernel+bounces-405482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B23C9C51EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:27:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07E29C51F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:27:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3B341F252BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:27:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F4C285D15
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1412620D4F5;
-	Tue, 12 Nov 2024 09:27:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6E720D518;
+	Tue, 12 Nov 2024 09:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SHuwT8Is"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5390D20ADF7
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD0020D4E2;
+	Tue, 12 Nov 2024 09:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731403625; cv=none; b=dEKpqDUiRwNRKdPgGZAPyNrQxN1E1+IgfagHObMHQNg6qVW0aLe4Ydlqwhndl9bOwjMfPTnghEDCDWwvEgywfda/Di+ugha2nqEvFRTNocFE042UFnzkQzqfGw0Jny9HCsDFwxtAbIsAKXvbVCxonkuypd2S7ZGHJ8+8wfv5nQs=
+	t=1731403654; cv=none; b=kbPwjh7yyywHUknX7vi5OmOjElLWl/U112iZrsS4zFbP4HdqmBaPPwOFMGXxNxuzmpV4ZCDwBAmYCP8bCmofV5cGJwPEQnfq8yIQnX6LSp5i71bMb8yh/vPn6SqriXbYNJJUSuog/MxXVDkdthPQXxH7TquLp/4MLDc63WOVvSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731403625; c=relaxed/simple;
-	bh=w+X74amanGMF9/gAnXqBIjC+4aGYnL7254O3ycVdopo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PsPUh7jvgF/GC9SWmBhMUwWbrgqt1v5CZPvNPezjSaT1mOPFtXTu/riD3JIurrbiGJgC8j+PzCRKWXT9YWU9peE5QnxAJzBuLcrnr5H60vLArs5EWcEco2199Cp6whyXnB0tD+rU9oFgfZSAX21QZu/y5U/EGHoZyrZqdQ3l9iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6c355b3f5so62233705ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 01:27:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731403623; x=1732008423;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nCfnoruo4doolQHp1lAwf+3efWtE18izd/R+7bj9TZs=;
-        b=KFFBjCFfGd6zffkKvP73l+0iNsuiifRCwd0+eSPdaLWviJ7J/DiJIgEOtE6TtOHV+B
-         J9j1MZ2Z6xu5Y7PzWUXocVQSKnPLbgGymqZGWB2Xtm1WXbBlqjCgOsxm5DMFRoegkZgy
-         lyM9qOwPtQjLNztBM/qMI3lt5lpJ2LT8uLfXKpv5IIB3qPZA4EFvA2uiXqAVJmqz4Q1k
-         OOABkL329TRp8mcCPka//bXrHyWkp3jKJ7n5k/BeIb8euD5ng+P5eBJEkiISUC+ptcBU
-         WobR8zmmNEbXwOnmgs0/EN3YkSoRPMqYGI8gP+d7AP/qjedw9Xv6aSfZnXZVpp4or5GS
-         HjNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDJSENiJNvdGWTKj6fuqU76C4QE9obu9a4oICO7h1nqClcDlbO0aFwsgVWCp/Vuo/F2gq93mrPIh4/0cM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy/ajdD9h+SahPkh0xQhfL5ZBSm9EmO0DUJ1UbWbYgsAUnef6Y
-	2dP0BINMQlRgVC1h4p+FFWTvMrOKzPprg0M90gPk4MfYqp05bYN7vmIj3rhG3HsIz9jRjJbKjkx
-	dZOfeWjqf9KBWEBj847Vv73Nr0ZCej9IsXBu9oy9StuQ1P8Aq8lmxae0=
-X-Google-Smtp-Source: AGHT+IElsoWabF/0QQv82QY+XPfWIHJETQBe2x+K46MH0oGcev6HBJYG1xig5dUNGsy8jTu8sTC18DO2bISeo8lVN9V79dowjJgi
+	s=arc-20240116; t=1731403654; c=relaxed/simple;
+	bh=EqnM+7FL0yn+HvbkRWyqN7c9diesHq9nhHxNr1Rx69s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s6FXdPp2FA6NvY6D/heYGSlE+cRFvIxUPdS6KXqwIdo5wHzu8HYupAVWkQgRb4iNh1P7wevcDOcvFnROot5ndKVoqO0mJfQSpJosjcdNgJi1DL9BHentSANnOSFzS9PkNdSA6qrTXIIBiiQyxfFWULIdosc4bGayC3dm4xB9xLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SHuwT8Is; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kD9qEzfplfmLiXHQ9sBzJfK1Ug1PQoTYDFewlNPE1Qs=; b=SHuwT8IsjB29F93FDYiQv0VvCM
+	HM8qHD9ZJtDj5nmaYzILLErRN2bRTR65KPh25w9HvVuovyZbG8bMan5ejEQbQlujqC85rxAJ8WBHm
+	3mLJobw+XEw61SsnwUMi6NixXmLeQB9eZgv/17+s54XLy9f6pwdu6canvzHAlZ9eouYXvrWZJcumh
+	F+kWXppPfanRrBr3+XA7Js0GKHLEcr6HaH5fl7Z0IoniFdP4VA1PLtR//uF6kXhXgpHd0FBsCnl6z
+	tdsLpMj7zAN9K1tIEtJ5Eh4XavI4GanD/9iFzIKdiv/YGwWkFLA7g20oZmS3s/86fajt0pu7IhZxI
+	yEeucr+g==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tAnB5-0000000D2Wo-3DG9;
+	Tue, 12 Nov 2024 09:27:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1B610300478; Tue, 12 Nov 2024 10:27:15 +0100 (CET)
+Date: Tue, 12 Nov 2024 10:27:15 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Han Shen <shenhan@google.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Rong Xu <xur@google.com>
+Subject: Re: linux-next: manual merge of the tip tree with the kbuild tree
+Message-ID: <20241112092715.GM22801@noisy.programming.kicks-ass.net>
+References: <20241112130136.52ffc457@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26d:0:b0:3a5:e1f5:157c with SMTP id
- e9e14a558f8ab-3a6f1a21eadmr163420115ab.15.1731403623592; Tue, 12 Nov 2024
- 01:27:03 -0800 (PST)
-Date: Tue, 12 Nov 2024 01:27:03 -0800
-In-Reply-To: <tencent_3DDDF3704370896A63A8845A977C3767A605@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67331f67.050a0220.5088e.000d.GAE@google.com>
-Subject: Re: [syzbot] [netfilter?] KASAN: slab-out-of-bounds Read in
- bitmap_ip_add (2)
-From: syzbot <syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-net/netfilter/ipset/ip_set_bitmap_ip.c:186:125: error: use of undeclared identifier 'ei'
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sPYZrYCvCExDYJF4"
+Content-Disposition: inline
+In-Reply-To: <20241112130136.52ffc457@canb.auug.org.au>
 
 
-Tested on:
+--sPYZrYCvCExDYJF4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-commit:         2d5404ca Linux 6.12-rc7
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=64aa0d9945bd5c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=58c872f7790a4d2ac951
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=128178c0580000
+On Tue, Nov 12, 2024 at 01:01:36PM +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the tip tree got a conflict in:
+>=20
+>   tools/objtool/check.c
+>=20
+> between commits:
+>=20
+>   315ad8780a12 ("kbuild: Add AutoFDO support for Clang build")
+>   0dcc2d106615 ("kbuild: Add Propeller configuration for kernel build")
+>=20
+> from the kbuild tree and commit:
+>=20
+>   d5173f753750 ("objtool: Exclude __tracepoints data from ENDBR checks")
+>=20
+> from the tip tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc tools/objtool/check.c
+> index 05a0fb4a3d1a,f7586f82b967..000000000000
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@@ -4557,8 -4573,7 +4573,9 @@@ static int validate_ibt(struct objtool_
+>   		    !strcmp(sec->name, "__jump_table")			||
+>   		    !strcmp(sec->name, "__mcount_loc")			||
+>   		    !strcmp(sec->name, ".kcfi_traps")			||
+>  +		    !strcmp(sec->name, ".llvm.call-graph-profile")	||
+>  +		    !strcmp(sec->name, ".llvm_bb_addr_map")		||
+> + 		    !strcmp(sec->name, "__tracepoints")			||
+>   		    strstr(sec->name, "__patchable_function_entries"))
+>   			continue;
 
+
+Yeah, that is the correct resolution. Thanks!
+
+
+--sPYZrYCvCExDYJF4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAmczH2gACgkQdkfhpEvA
+5LpSIBAAmE9tyicFcJvOok3WwJCW8CBqWZzqUWhoTIVynrAeLiPCxCc4pCxTt8mu
+RFBCVCCeybUv0PZH/+aqM3vHjmVg2tC8zKW+rE7i92ckY22s2oslIQvf4SCqIB1f
+Ewjsh1ykyVoenU9/3iyN/DId7lpg6ZgbvFv0/sJJhV9MqXuHBfMyyg3bPkMgP+/y
++6jrYWya3HyMzL2H29Cb7ySG7EdT2/+wImtNPWCjxVcgjRAHmysa7Q3MbCm3IaR7
+V0p1lf9mNAdqos3OlJScrzIKdZO5AsNY6uCckism+eLLWfIgnMJbUTwd4Onj0ZD7
+WaJTuQJVg4CKK6nCrtPza31LVS4zhivVvRkJTApUAlUeh8x4CPqAlccDaE/BSBD+
+rlY1BgSJcmpmyAamINwzOIiEpWm1qiE96AA63to5Nrz43UaM7sjsro9qWZk60Fu+
+udZpPPrOOuubtfoHTLGD8tlTOzihaFd0b0aBqcrOpNbsSjA133mvZ1P0qJrn6DYF
+Aa5gBayaZt0+0YohlNCTkiboReeSblKu2ufg8+INQHCVMhGu2QCaH6En5H9NANRE
+BPDW0WU+TcoeavhX6rqMdEGj0KcYMKawNaFSO18bFbsoBKUuIgxWroGy4Q0x7f/X
+lw76ls1569+e5rIBjZvuLjpHxIrKYqeKGutK2NiAm/2lSu2poj0=
+=jI/I
+-----END PGP SIGNATURE-----
+
+--sPYZrYCvCExDYJF4--
 
