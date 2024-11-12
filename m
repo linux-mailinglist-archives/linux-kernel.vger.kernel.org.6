@@ -1,168 +1,118 @@
-Return-Path: <linux-kernel+bounces-406001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4975C9C59E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:06:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFB8E9C59ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:07:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D817A28141D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:06:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81E601F2462F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B33E1FC7D1;
-	Tue, 12 Nov 2024 14:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBC01FC7F8;
+	Tue, 12 Nov 2024 14:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rl0XCa7e"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Q581Fl3C"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA581F9EDE;
-	Tue, 12 Nov 2024 14:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50E91FBF5F
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731420377; cv=none; b=S0tRQe1vfVqTx9rQTfqimAjcUpjEnvo/wfUU8g29pOdiqitYs9g/WNH9fB3mWKlIn3KjLtCJGqtjqKHVMM0b/9zXCsMzV4U3KU6Wuy8fJp38kF335MFseRDG/4MOOp7PioFSlWqbSlvVAVDWJEWEk/2d894asB0P2aA8mdzzU7M=
+	t=1731420442; cv=none; b=gMus9kXln9kkhRv8RMdlg6b3iyE/Bbi00/JUt9Ih5JzeuImaV3FOoboIjAiqsIV9QQhzYIJYiAWkcEUG2OVh2lQE/r5SHuugdMGs/3yQwOPS5jf3tZ38RTLuTjnn+2wnfEuh90lEfxp16h/l86G30YNM6stm3tJcyCuzEx0HLHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731420377; c=relaxed/simple;
-	bh=oVsMU3QmHZ+sJijB8fbDvpdSD5+M7ndL9P1tPmn4pJk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=if8u99nsNDsfkD+8CsD+I5Dbf4UOfyIXWxDgKVtb4wKmCuQ3UQhXb/0WRRAoRPMTkQxfpWO6QrHjl+R3WkBS29KFVnJ+Z1RhpB8b52vgY20JntfcDJ8N05Xef/oaQsySpYGGI9E+Nv9gIfkeY6SRPQkY0I5Mexi2IxNVDMsHTRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rl0XCa7e; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 66E994000F;
-	Tue, 12 Nov 2024 14:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731420372;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KV24EEa2szz4nlZ+Kb2p6Idt2RnaoZ6yTZvKtgvN9BI=;
-	b=Rl0XCa7eNMPPdXnPUdOSa4I+w4m4XXC2sA6xQ4X0hiM1sKZvt+s1TB5CkVP03NN6lXccU1
-	9YdxnHkI6UVuYH0kwN2pKVLfSpCb9fxyAE9jcCb+OgTWWG2KZGYX6clI8lop54dTHCWZyi
-	SUq59vq5VleDTmYXAFFUQ5WZglHipQl99KxTgPt2k94oqoPKepOfTZA1wUjPi1DJcYFiFE
-	CJK3sLfs2tEZPH0Wgk0svEWb38pNOPhWdvkArfBzbKYrAt0BgnPrj3BcMN4ggOZJd/5mQl
-	QYP96xhXVsS/k/EWck66hb8ivvNeVJa9okeOlirZ+6TMdaV+LyTYDoqqhCfsBQ==
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Tue, 12 Nov 2024 15:06:08 +0100
-Subject: [PATCH net v3] net: phy: dp83869: fix status reporting for
- 1000base-x autonegotiation
+	s=arc-20240116; t=1731420442; c=relaxed/simple;
+	bh=FgXKW6BhffGyYtDU5ECCxoHBzDo0QQz41DIfSkBu6LA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EZlShHSi0n4ZVEI38LGSXEVN41oWWEaUibu+agCsZ6RbMYuR1WyTDN+nAJPEUsqLh/Ht+DjL8SAnaPvoab/LB2v12NSE75i2ykFn8lQ13HtWhx7mBB5/1mEYJum2O0oSlTG70/PHj1GM4TDzIV5hVkSWOXxEyBWtgEtEWn67NEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Q581Fl3C; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2951f3af3ceso2961496fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 06:07:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731420439; x=1732025239; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XBLxl8MQn90IOYFQNE2QB3bhcSqpZYc/78jBtkc8gSY=;
+        b=Q581Fl3C6vodl50RvVDAzxLsSqnREQ062qx27W8c6tI+slZqca+De3AkT7dWm1BQ42
+         A9Dkp6IgY1DybaEpM+zC+39rqWDkHMhG0lvxQsKCW2QAx/dcCtFMenMD9YJfPXOjiKV1
+         W6bXtttTHFoaJKLDzhAAFbGvf+jerD4xswuJA7uBjGowW9kdXMpZ8M3bC1SdX4osCE17
+         +BWo2ZI9CJNv0uV3UH8HfIawhGPa3q3r7kHt1RppgE31wUZtO3xg7KCtYZXMlWbZLYuy
+         /l4Kac1BdFCr5is15MBtMforzhVqOlT/3C3dmonSjkb+PdIQNT/FCsfgUhOtCWfOhH1m
+         aQvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731420439; x=1732025239;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XBLxl8MQn90IOYFQNE2QB3bhcSqpZYc/78jBtkc8gSY=;
+        b=fomRNLpRudAExiwXmzZzBGVA0cGtU3y3+qb9mgMFTWLrGIIaD7jSd9r04L2gUMutOu
+         l6V4JfaMyiOvxAirx3/+C2cLH0j5K6XkvEAJqWW1eTXCYjqoPhjxILQ3iDFgzvX6MZot
+         xdbEJjZE/5ytCrEuBlAY/zIZVqoNinjhU8hfP+/URnIPyrGuogLuXGhjH7ULp9sf8UUW
+         9fj4SNJ67m0tEzTp8FgDE2vdI0dMB1Nrwfp0m14Zkch+g8prc9rVkKTDKi44F+Z/ZYdJ
+         OWg+PZdREAEJXyl6F+Ct87qUThVAJbIrDsM1BwN+Ukp643nYk847qhoxgO9tEg/IyHCM
+         cBdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyxPWC0xAVte4PemL/1NhbfxJu+x/rXJGg/Xvg+OlzdSAEiZFQQ0uYwrlCccD1FbvTp/sFC7dvKEuxbDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuELerQS5id97uwuGSiUaDiJ5GNfD837Pib1AVGhi3/O1Q3x7r
+	kdmMdvV+YQzW97N3fXb590+MQ2+VD+PfcH3/q6mlSq1eMT6BjcVeO4wxdOb/LGQ=
+X-Google-Smtp-Source: AGHT+IE6/Zulglee42EqR6pm4NxzY3D1VnQ/4OdFs+x6lB09KGsOVRrOZIf6id75vga3Werl3HOmGQ==
+X-Received: by 2002:a05:6871:7b09:b0:277:da52:777 with SMTP id 586e51a60fabf-295600acfa1mr13774116fac.11.1731420438736;
+        Tue, 12 Nov 2024 06:07:18 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546c92853sm3381006fac.18.2024.11.12.06.07.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 06:07:18 -0800 (PST)
+Message-ID: <1671bb73-2e51-4ecc-b33d-d0b483348cda@kernel.dk>
+Date: Tue, 12 Nov 2024 07:07:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/16] mm: add PG_uncached page flag
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+ clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+ linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-4-axboe@kernel.dk>
+ <lponnb7dxjx3htksbggjoasvby6sa2a4ayrkcykdnxvypwy4pp@ci2fnmcyrke7>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <lponnb7dxjx3htksbggjoasvby6sa2a4ayrkcykdnxvypwy4pp@ci2fnmcyrke7>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241112-dp83869-1000base-x-v3-1-36005f4ab0d9@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAM9gM2cC/23N0QrCIBQG4FcJrzOOuk3tqveILnQ7NqF06BiLs
- XdvSRDBLv/zc75/IRmTx0zOh4UknHz2MWxBHA+k7U24I/XdlgkHXjHgNe0GJVSjKQMAazLSmYI
- D0zDJa6kqsj0OCZ2fC3olAUdy2469z2NMrzI0sVJ9Tb1nTowy6lrjUDRgO60uNsbx4cOpjc8CT
- vyHMKh2Ef5BtEShjZTKun9kXdc3p7CauwABAAA=
-X-Change-ID: 20241025-dp83869-1000base-x-0f0a61725784
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Dan Murphy <dmurphy@ti.com>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Romain Gantois <romain.gantois@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: romain.gantois@bootlin.com
 
-The DP83869 PHY transceiver supports converting from RGMII to 1000base-x.
-In this operation mode, autonegotiation can be performed, as described in
-IEEE802.3.
+On 11/12/24 2:12 AM, Kirill A. Shutemov wrote:
+> On Mon, Nov 11, 2024 at 04:37:30PM -0700, Jens Axboe wrote:
+>> Add a page flag that file IO can use to indicate that the IO being done
+>> is uncached, as in it should not persist in the page cache after the IO
+>> has been completed.
+> 
+> I have not found a way to avoid using a new bit. I am unsure if we have
+> enough bits on 32-bit systems with all possible features enabled.
 
-The DP83869 has a set of fiber-specific registers located at offset 0xc00.
-When the transceiver is configured in RGMII-to-1000base-x mode, these
-registers are mapped onto offset 0, which should make reading the
-autonegotiation status transparent.
+I think it should be OK, at least the kernel test bot reports build
+success on all the archs it tests, which has a lot of 32-bit archs. I
+have to say I didn't check on numbering and if the mm subsystem has a
+BUILD_BUG_ON() for bits exceeding the allowable value for unsigned long
+on the host, but I'm assuming it does?
 
-However, the fiber registers at offset 0xc04 and 0xc05 follow the bit
-layout specified in Clause 37, and genphy_read_status() assumes a Clause 22
-layout. Thus, genphy_read_status() doesn't properly read the capabilities
-advertised by the link partner, resulting in incorrect link parameters.
+> In the worst-case scenario, we may need to make the feature 64-bit only.
+> I believe it should be acceptable as long as userspace is prepared for the
+> possibility that RWF_UNCACHED may fail. It is not going to be supported by
+> all filesystems anyway.
 
-Similarly, genphy_config_aneg() doesn't properly write advertised
-capabilities.
+Right, I would not even see that as a big issue. 32-bit would just see
+-EOPNOTSUPP for any fs, even ones that support it on 64-bit archs.
 
-Fix the 1000base-x autonegotiation procedure by replacing
-genphy_read_status() and genphy_config_aneg() with their Clause 37
-equivalents.
-
-Fixes: a29de52ba2a1 ("net: dp83869: Add ability to advertise Fiber connection")
-Cc: stable@vger.kernel.org
-Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
----
-Changes in v3:
-- Used the genphy_c37 helpers instead of custom logic
-- Link to v2: https://lore.kernel.org/r/20241104-dp83869-1000base-x-v2-1-f97e39a778bf@bootlin.com
-
-Changes in v2:
-- Fixed an uninitialized use.
-- Link to v1: https://lore.kernel.org/r/20241029-dp83869-1000base-x-v1-1-fcafe360bd98@bootlin.com
----
- drivers/net/phy/dp83869.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
-index 5f056d7db83eed23f1cab42365fdc566a0d8e47f..b6b38caf9c0ed0b3ae12a2af7e56754e3ece642f 100644
---- a/drivers/net/phy/dp83869.c
-+++ b/drivers/net/phy/dp83869.c
-@@ -153,19 +153,32 @@ struct dp83869_private {
- 	int mode;
- };
- 
-+static int dp83869_config_aneg(struct phy_device *phydev)
-+{
-+	struct dp83869_private *dp83869 = phydev->priv;
-+
-+	if (dp83869->mode != DP83869_RGMII_1000_BASE)
-+		return genphy_config_aneg(phydev);
-+
-+	return genphy_c37_config_aneg(phydev);
-+}
-+
- static int dp83869_read_status(struct phy_device *phydev)
- {
- 	struct dp83869_private *dp83869 = phydev->priv;
-+	bool changed;
- 	int ret;
- 
-+	if (dp83869->mode == DP83869_RGMII_1000_BASE)
-+		return genphy_c37_read_status(phydev, &changed);
-+
- 	ret = genphy_read_status(phydev);
- 	if (ret)
- 		return ret;
- 
--	if (linkmode_test_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->supported)) {
-+	if (dp83869->mode == DP83869_RGMII_100_BASE) {
- 		if (phydev->link) {
--			if (dp83869->mode == DP83869_RGMII_100_BASE)
--				phydev->speed = SPEED_100;
-+			phydev->speed = SPEED_100;
- 		} else {
- 			phydev->speed = SPEED_UNKNOWN;
- 			phydev->duplex = DUPLEX_UNKNOWN;
-@@ -898,6 +911,7 @@ static int dp83869_phy_reset(struct phy_device *phydev)
- 	.soft_reset	= dp83869_phy_reset,			\
- 	.config_intr	= dp83869_config_intr,			\
- 	.handle_interrupt = dp83869_handle_interrupt,		\
-+	.config_aneg    = dp83869_config_aneg,                  \
- 	.read_status	= dp83869_read_status,			\
- 	.get_tunable	= dp83869_get_tunable,			\
- 	.set_tunable	= dp83869_set_tunable,			\
-
----
-base-commit: 20bbe5b802494444791beaf2c6b9597fcc67ff49
-change-id: 20241025-dp83869-1000base-x-0f0a61725784
-
-Best regards,
 -- 
-Romain Gantois <romain.gantois@bootlin.com>
-
+Jens Axboe
 
