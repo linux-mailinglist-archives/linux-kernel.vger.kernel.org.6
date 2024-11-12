@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-406819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47BA89C648A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:53:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3ADF9C648C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:53:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B063285733
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:53:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18F962857E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C366021CF84;
-	Tue, 12 Nov 2024 22:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2183A21CF9E;
+	Tue, 12 Nov 2024 22:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LFy+FHMF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q6y6LtGk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2FA21C185
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 22:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C15221CF89;
+	Tue, 12 Nov 2024 22:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731451983; cv=none; b=XWjug8Pkd2lVOsUfprd1rp8aorUhyfc6gF8Dq4K4ocyw+UKtT8k3CrHUbvCo2BZfgTn4k1kdtxLApwoYRpEaHPMu9pvX6Q5xXmtPeN6TUisrNqHQ/5LwplVjXpWFKi2E0QS49FFW85/xcpns4sU9iV4Sz2BfNPJzIFWkpYkAMPY=
+	t=1731451984; cv=none; b=sVVN7ccOvHzjOiWYIAw5iIzML2Etd0k9OlGNlUPpNiwBlKvR64tiwIyEvPu/1fc05L0Hfi8pQ0Au4/z6VBKEqDCeLL22xSUXW0QDuzrBsPAmFMn4eewj0wxqmNrGKI2k+M/hUf2SFDK5rbR980I1X3KhGcLwQuFutEeE8svHYas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731451983; c=relaxed/simple;
-	bh=gM2fD9GKvbDRwedhwlgxqJL8AUErzeS2hOc00WVUabA=;
+	s=arc-20240116; t=1731451984; c=relaxed/simple;
+	bh=yQwt2DsCgJNyhwxurxcyAkIppPnQMY1VaVKG7hi5I50=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=H+nqYhJ712YMweyEw8DeeCt6wTzydARBlOQXwIZOH2Gt9m5ioDChzRSmTwh++EyUaV8hMxslhY5zugHuSdMVbQN/38TDdWXVcwQIg7ZdwwGhnTGJofteDJiHFRZdMqhzbY/LkIl3pMaNm4nbFJW1vJYb3mzL1s2IcHKdQikFDdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LFy+FHMF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA32AC4CECD;
-	Tue, 12 Nov 2024 22:53:02 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=kcNNvOcGg9tgFaxcq7ZU/WB9vjQEFflJtSTfAUn3H1c979nlmkEt5qpOY4bCCZeLqk8Jibdoat2BjTa+5Yp/2+qq+HdOiJsr+xwjcPVjnivTSruTeJ5A1Xk4WLt8Nee0lMZEJFPPfx4ct0yA7xyZ0FpfabSQ9fzITRnxgjC0fws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q6y6LtGk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F323AC4CECD;
+	Tue, 12 Nov 2024 22:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731451982;
-	bh=gM2fD9GKvbDRwedhwlgxqJL8AUErzeS2hOc00WVUabA=;
+	s=k20201202; t=1731451984;
+	bh=yQwt2DsCgJNyhwxurxcyAkIppPnQMY1VaVKG7hi5I50=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=LFy+FHMFW6LdVtTsrqkuD9RI0sDFVIbBYGK2GONCqeFgY2wxRp531N6g0/fz9SQqr
-	 CvIlxXQWjpRfsBedTEpDT8Czv/KaElBxKJwIbsCrkq7+pWtOn1rpy0XBWOzd4rnPbf
-	 NC2/74M+LXAsnYFiy3909PAyZgitL8RnOQiVHq7OD+L4OORloAkjmwoymRYaOiLmSr
-	 3XzclU356FU+uQFVs3ODaDAhQXfmOguWzNRF6XlufbFZKzrXm297wunUADLZ8c0f8u
-	 PUP49+DCmEjBZJS4jzoNQD2tYNQiCZ26tD8/VQaXR9zUsvKY0uMyJDAlkMGBDNnZtH
-	 Ory/FhVzi6s6Q==
+	b=q6y6LtGktbgmjw7H7iEjQnUw2HgxVOxdQdc3XvkpzYIwS3B5Bg7247bL18aVlvf6c
+	 HruMzh6Ko1Z6shqY/8X6eMEliFKSNrAGHS4/4Gcijrjs1UEkqkNoEqSTHUaZFrDJEb
+	 gdMrbkSjLDbKB6sAihOeai9Ad4VstoFrf0AAF1cS13kfFvglzDCWVE3PgFXTzsHimE
+	 IVH8dkBDV5m2c3gm2t0Ees/AGJmcOdAt5qLgyZsn1B3WYif5ivyXEdgPMXyqyOvJtb
+	 QbqFFo/TMAivSPSeohmtQmadCT9s+3jD4Qd0eMqU7D/cVZPZxP6YEeSfcQb2sXnRKj
+	 VdxC4cxziwnBA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DFA3809A80;
-	Tue, 12 Nov 2024 22:53:14 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C503809A80;
+	Tue, 12 Nov 2024 22:53:15 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,38 +51,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] irqchip/sifive-plic: Fix error codes
+Subject: Re: [PATCH] mmc: core: Only set maximum DMA segment size if DMA is
+ supported
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <173145199270.701548.8713115624337765162.git-patchwork-notify@kernel.org>
-Date: Tue, 12 Nov 2024 22:53:12 +0000
-References: <20240903-correct_error_codes_sifive_plic-v1-1-d929b79663a2@rivosinc.com>
-In-Reply-To: <20240903-correct_error_codes_sifive_plic-v1-1-d929b79663a2@rivosinc.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, tglx@linutronix.de,
+ <173145199424.701548.5612261824540957185.git-patchwork-notify@kernel.org>
+Date: Tue, 12 Nov 2024 22:53:14 +0000
+References: <20240924210123.2288529-1-linux@roeck-us.net>
+In-Reply-To: <20240924210123.2288529-1-linux@roeck-us.net>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-riscv@lists.infradead.org, ulf.hansson@linaro.org,
  paul.walmsley@sifive.com, samuel.holland@sifive.com,
- dan.carpenter@linaro.org, apatel@ventanamicro.com,
- linux-kernel@vger.kernel.org, lkp@intel.com
+ linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
+ robin.murphy@arm.com
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
-by Thomas Gleixner <tglx@linutronix.de>:
+by Ulf Hansson <ulf.hansson@linaro.org>:
 
-On Tue, 03 Sep 2024 16:36:19 -0700 you wrote:
-> Set error to -ENOMEM if kcalloc() fails or if irq_domain_add_linear()
-> fails inside of plic_probe().
+On Tue, 24 Sep 2024 14:01:23 -0700 you wrote:
+> Since upstream commit 334304ac2bac ("dma-mapping: don't return errors
+> from dma_set_max_seg_size") calling dma_set_max_seg_size() on a device
+> not supporting DMA results in a warning traceback. This is seen when
+> booting the sifive_u machine from SD. The underlying SPI controller
+> (sifive,spi0 compatible) explicitly sets dma_mask to NULL.
 > 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202409031122.yBh8HrxA-lkp@intel.com/
+> Avoid the backtrace by only calling dma_set_max_seg_size() if DMA is
+> supported.
 > 
 > [...]
 
 Here is the summary with links:
-  - irqchip/sifive-plic: Fix error codes
-    https://git.kernel.org/riscv/c/6eabf656048d
+  - mmc: core: Only set maximum DMA segment size if DMA is supported
+    https://git.kernel.org/riscv/c/c26339faed11
 
 You are awesome, thank you!
 -- 
