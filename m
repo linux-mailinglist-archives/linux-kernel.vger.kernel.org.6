@@ -1,128 +1,148 @@
-Return-Path: <linux-kernel+bounces-405345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC6A9C5019
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B45A9C5039
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:03:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51E69B2CCD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:57:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FAE4B22041
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83F420B7EB;
-	Tue, 12 Nov 2024 07:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8277320B800;
+	Tue, 12 Nov 2024 07:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uvUNRxQG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcAa/IQc"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474FF20B1FD;
-	Tue, 12 Nov 2024 07:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA695234;
+	Tue, 12 Nov 2024 07:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731398164; cv=none; b=n3QS4PBzpQqa4sjoulsIDg+4DCA8vlgGdBE9d4lwYLa1dSD8EzNcD8UJssoAMzvU5E4d2qXT+7WRr2Tr7bOl6LoTMl1vd6jZp1r4froi7kWjZaAb2C28m0dmcam8vEDd1QyaSRlkd4KUGuP2CRl2cJJHk2Njb4hwgi57ujtBjHU=
+	t=1731398191; cv=none; b=XMuMnbuIs5QWlsVYFN1cpJylI1QUKPHw2DGlzZs7/oTWipzqHAfJkCoORn6FwhYSuJJa7eTIp9KVAY5P/CLaKizfcBNK04l8x8qWS2gwdMBHB0gyrTA90h47lXP+RJvU2dYTj59txrbx8t+u2rrlGEyLo+phpu73DsPEeieVq7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731398164; c=relaxed/simple;
-	bh=V9lX4iOMzdPywPlNVTTgzZTq+EE2SHNVw6w3LpJCgP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DkmcEx1qrR/ofyq7Y4J83wEjxOQlAT35hN+ByspawcClOU2jorKZhRxl4V/TLEA9SSZezsPVb8fQd1bZD/Cx5WBQEuaWJgDv1Hv4vBzE4aORMKzD49r8Uc3ZiRCDwnz2czSLy30QOv9VdsFGS2ofBCGSEqB0/AUbMZgA9m/xMcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uvUNRxQG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D13C2C4CED7;
-	Tue, 12 Nov 2024 07:56:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731398163;
-	bh=V9lX4iOMzdPywPlNVTTgzZTq+EE2SHNVw6w3LpJCgP4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uvUNRxQGwDLlyDIQwFsfNXgmJshsTPmK7ijHBg1b7NsMU8uCSlpROaRjvEjZhlgSA
-	 NsyACToEgfYZMvuz1MnOAmazyRfENqtqZT8ZPosmZwa4br+A8byz2DnyLiIXPq8cXa
-	 Gh5L+J85W5VHfP1cRMV96DrdI6PC4aehyJKbS1B1sLIuOCbpeWjnNIMUTiDV5TEr4e
-	 A0w1IRMTsvQswnZCXH4n6TCtZog+cbu/DQz49GevXDOLAnfidSiHpJJr+a5j0OTweQ
-	 G+VjHH82+dJ9sKd2mYSJKkT1dj3n/Lmx0N32Mt2Vcia5tv2OHwQwJvfJYRC71sJ7J/
-	 FFBVZRvwDy4HQ==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb5111747cso46086811fa.2;
-        Mon, 11 Nov 2024 23:56:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUpUzF74KyxYvpajzDgWkViDrPeLNMucR3Sm4hrgd46kI+T+KHWhpjgl8nek+SlNOF8VimRJY09@vger.kernel.org, AJvYcCVCxSg8b62ojUmW7d6yHHcpk1EWlwJb8hi3qS22zBx1zULX9xsf0gYsPHkZQsDyVqE24GtK5rzIrJ5HFOik@vger.kernel.org, AJvYcCWoNel0MzrDYhhDbRpF89okJae0f/r3H/A9bvOGfAndLwptt8N4Lfad6BeLdCtRWJt5VUEfMvVTJBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfwVrl9TgKpUCeCVAz2W8JOK8UshfvcKpagQSIJoOiDwdPbiD2
-	pcca0i9tZATzT4jkQSSO46hPySoEjoUMgtIZ8CLY53dFcnd4n1AtP/I4v8pgeXc05s6cZqRND83
-	mH7ic8HQPQQWfRUmhYoqwmohXN9Y=
-X-Google-Smtp-Source: AGHT+IGY9YhvWdpxD2zz5N0EyUndIKkLeiILNNLD8iIOOYe7vN1EggpGO5+5vqq7VgKlrwsqUOFjp3dKHHkeNbYFcoE=
-X-Received: by 2002:a05:651c:2111:b0:2fb:44ca:801c with SMTP id
- 38308e7fff4ca-2ff2030961amr71061341fa.35.1731398162160; Mon, 11 Nov 2024
- 23:56:02 -0800 (PST)
+	s=arc-20240116; t=1731398191; c=relaxed/simple;
+	bh=25O1AxlRpWs+3gu/vbg8zcYP/wwTZeoTz8rYqGhb2PU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lAK+B8FDlpwKZv0lW+iGyYLkHdVsn8kJmt8BFuFqk3scM9JKBNNw/YEvwvx3fdhMV/L0hx4A7a/Djo8MDAzktRrz4JW+Nu6YgdwESVpzL0OcO55Y+kKRDSD8PlQwkDWb6F4KBY8kVWK8WupM5oc9QUaMPHz9sdXgRbAD8fo/rUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcAa/IQc; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cd76c513cso44816515ad.3;
+        Mon, 11 Nov 2024 23:56:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731398190; x=1732002990; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NefPRLN+h9TOgssrrobmBkWbrfPIcMnQcGv5XGBIdzk=;
+        b=LcAa/IQcF6s5r78Xa2x1ThRraghDkaRdIWLg0tlxJbsxuZnw7fq3LHOGVDMBDWII7k
+         ugOZ1caWr9yfKKosPOuw+Y6PRq3y13Vr/4uBbQKv6DCrd8oduk0+7zoWRvc8podWFrHR
+         6ZiyetQWHEZwR15FaF2fV4zSSOfpxvl9oyRRioO4RkL/qvpIrCVRsyehJGPVqiy0/qge
+         prL55ZPtGI2zvvtBBPHzmTCubOmxP4KFtscaE/ym0lM+/xeUuLAeW3/G5X/q6BSR+kL4
+         kUJc3PCbOYdG8barHwA2hSs95++2rMndWx10JF9PW6+ZIB7RVOmkC6Hv2p/C5DpJsZxq
+         LVYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731398190; x=1732002990;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NefPRLN+h9TOgssrrobmBkWbrfPIcMnQcGv5XGBIdzk=;
+        b=DW/2Um4wIPpAuqQCXfqXyNTRWoP5op3nNoD0dmNK5IYvbck+RlRyQXYjwGm3uXDJgY
+         zKSli6iFHfxlUrELjvZo7KRrZL9AdjhfBLrcFtlKKPDOPOob04Amqguq9+GtJ5G8AYNN
+         e6/XsZUuUghGRdA9501U0RVWOu7Q0/nxFz0pA0W+v44mCCCnv/BKXs6QADRAkJm5E0Q2
+         4QJT1BglIqxDEIgHUY7OdOASDwv9YIw+FOSb2ZdIjxK6sYzTWqJlRW3DBRWo9f1ztuIE
+         AyMK8AhEtTCCgOHQl4wsciqrd7cZBjXNrWhVJORc5M25LUs3oYKFzHs5wIVGfFDCLuVR
+         s0HA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRAxJmZ0vs6EFuDlUGQnzMPStuteCzz29MLG1gF9mS528Iw2lFw8UHStf/BEDh6OMs3E6k3qMYjdKgM3luQg==@vger.kernel.org, AJvYcCVzIKTXzjN4aeVzX1alUXNh633P2L8NgngA6EaMj/VI9/C0yu4hIr00bS6JRKqWKeIvvgsEL2wSplvo/A==@vger.kernel.org, AJvYcCX3+q8wrwlsKApwocy7WXCNsZIQ/bTqNI+q2UrrXCrnVSpP6DNzDCW4H07E3JHwrffIJeI4W6eXrGGH@vger.kernel.org, AJvYcCXiGqg7flPVbjR5aab+7FSCCJ1zoJYs0J7VDntXp7TnEuGbj/njD+BaGYQFjB+FaNBgOmE9GS7zu5JnaLWu@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA5d2fCGAPf3b5e5N+tHQVeW32WQzsJr34BYVYy81p+wTjZ5HP
+	M4x/9ICtG05hwPn8H+NTbaIeWCMEH01k/bQxhaPqfsJKZyXKwBpf
+X-Google-Smtp-Source: AGHT+IE0KS2NS7V7DN97gZCWihhMgbFp+BwZ71PDpPLPGgxlj/Wy496iueX09Dw83yU62q37vMBjQw==
+X-Received: by 2002:a17:902:ce91:b0:20c:da98:d752 with SMTP id d9443c01a7336-211ab929e3fmr18904925ad.16.1731398189634;
+        Mon, 11 Nov 2024 23:56:29 -0800 (PST)
+Received: from thinkpad ([117.213.103.248])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e41717sm85733995ad.122.2024.11.11.23.56.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 23:56:29 -0800 (PST)
+Date: Tue, 12 Nov 2024 13:26:19 +0530
+From: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>
+To: Xin Liu <quic_liuxin@quicinc.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+	quic_jiegan@quicinc.com, quic_aiquny@quicinc.com,
+	quic_tingweiz@quicinc.com, quic_sayalil@quicinc.com
+Subject: Re: [PATCH v1 2/4] dt-bindings: ufs: qcom: Add UFS Host Controller
+ for QCS615
+Message-ID: <20241112075619.2ilsccnnk4leqmdy@thinkpad>
+References: <20241017042300.872963-1-quic_liuxin@quicinc.com>
+ <20241017042300.872963-3-quic_liuxin@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111214527.18289-1-nsaenz@amazon.com>
-In-Reply-To: <20241111214527.18289-1-nsaenz@amazon.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 12 Nov 2024 08:55:51 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXH2FRxwryJ9kz4CThWG_D30nW6g-UJzxW9uRQzBAZEetA@mail.gmail.com>
-Message-ID: <CAMj1kXH2FRxwryJ9kz4CThWG_D30nW6g-UJzxW9uRQzBAZEetA@mail.gmail.com>
-Subject: Re: [PATCH] x86/efi: Apply EFI Memory Attributes after kexec
-To: Nicolas Saenz Julienne <nsaenz@amazon.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, Sai Praneeth <sai.praneeth.prakhya@intel.com>, 
-	Matt Fleming <matt@codeblueprint.co.uk>, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stanspas@amazon.de, nh-open-source@amazon.com, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241017042300.872963-3-quic_liuxin@quicinc.com>
 
-On Mon, 11 Nov 2024 at 22:45, Nicolas Saenz Julienne <nsaenz@amazon.com> wrote:
->
-> Kexec bypasses EFI's switch to virtual mode. In exchange, it has its own
-> routine, kexec_enter_virtual_mode(), that replays the mappings made by
-> the original kernel. Unfortunately, the function fails to reinstate
-> EFI's memory attributes and runtime memory protections, which would've
-> otherwise been set after entering virtual mode. Remediate this by
-> calling efi_runtime_update_mappings() from it.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 18141e89a76c ("x86/efi: Add support for EFI_MEMORY_ATTRIBUTES_TABLE")
-> Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
->
+On Thu, Oct 17, 2024 at 12:22:58PM +0800, Xin Liu wrote:
+> From: Sayali Lokhande <quic_sayalil@quicinc.com>	
+> 	
+> Document the Universal Flash Storage(UFS) Host Controller on the Qualcomm
+> QCS615 Platform.
+> 
+> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
+> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
 > ---
->
-> Notes:
-> - I tested the Memory Attributes path using QEMU/OVMF.
->
-> - Although care is taken to make sure the memory backing the EFI Memory
->   Attributes table is preserved during runtime and reachable after kexec
->   (see efi_memattr_init()). I don't see the same happening for the EFI
->   properties table. Maybe it's just unnecessary as there's an assumption
->   that the table will fall in memory preserved during runtime? Or for
->   another reason? Otherwise, we'd need to make sure it isn't possible to
->   set EFI_NX_PE_DATA on kexec.
->
->  arch/x86/platform/efi/efi.c | 1 +
->  1 file changed, 1 insertion(+)
->
+>  Documentation/devicetree/bindings/ufs/qcom,ufs.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+> index cde334e3206b..a03fff5df5ef 100644
+> --- a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+> +++ b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+> @@ -26,6 +26,7 @@ properties:
+>            - qcom,msm8994-ufshc
+>            - qcom,msm8996-ufshc
+>            - qcom,msm8998-ufshc
+> +          - qcom,qcs615-ufshc
+>            - qcom,qcs8300-ufshc
+>            - qcom,sa8775p-ufshc
+>            - qcom,sc7180-ufshc
+> @@ -243,6 +244,7 @@ allOf:
+>          compatible:
+>            contains:
+>              enum:
+> +              - qcom,qcs615-ufshc
+>                - qcom,sm6115-ufshc
+>                - qcom,sm6125-ufshc
+>      then:
+> -- 
+> 2.34.1
+> 
+> 
 
-Thanks.
-
-I think we should just drop support for the EFI_PROPERTIES_TABLE - it
-was a failed, short-lived experiment that broke the boot on both Linux
-and Windows, and was replaced with the memory attributes table shortly
-after.
-
-
-> diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-> index 88a96816de9a..b9b17892c495 100644
-> --- a/arch/x86/platform/efi/efi.c
-> +++ b/arch/x86/platform/efi/efi.c
-> @@ -784,6 +784,7 @@ static void __init kexec_enter_virtual_mode(void)
->
->         efi_sync_low_kernel_mappings();
->         efi_native_runtime_setup();
-> +       efi_runtime_update_mappings();
->  #endif
->  }
->
-> --
-> 2.40.1
->
+-- 
+மணிவண்ணன் சதாசிவம்
 
