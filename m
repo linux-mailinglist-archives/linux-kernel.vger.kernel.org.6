@@ -1,162 +1,111 @@
-Return-Path: <linux-kernel+bounces-405709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A764A9C5618
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:16:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BBF9C5613
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:16:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 357101F215B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:16:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED471F215E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F689221FC7;
-	Tue, 12 Nov 2024 10:50:47 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C30220D7B;
+	Tue, 12 Nov 2024 10:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="huGsx0N+"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8943F215013;
-	Tue, 12 Nov 2024 10:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AD7220D5C
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731408646; cv=none; b=Y0TGS4k0QQ0WriEuDcZ6DLG8ZYf79V8TYh4NWEplq8uBzfclZUpf70cwGV1MiMfRME8p13Xp5k1joYCiE90bncmiJdxDmDrumVzk9fLXibGVt1Hv/RHPLdWThrxqKgAGAluTjeW+hbiBL8grpi0lh87ZTWs+vKjh6h5NlyXvp5g=
+	t=1731408638; cv=none; b=rJYrYzxNhr9o5B1rNwd/cokCzru2iJGh3feWUKiuTFa/qHVUBvuPM41GKMkwTNG1G/4Zfy50ClP5ax4AWIh5CPA94vpadsWx3/M94tNfFbhmFe2f2i1lWlA179xMiRMVJduXzq0N10EJuaLZQ1WjVL2RrTYufKcGCsnHvq/nRMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731408646; c=relaxed/simple;
-	bh=5/DByjEEer8WXk/PaeapgQQMr9rzXdq1kcSHqwQGC4I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Goilo5vnjeR/GLxxSVoqi/pKYL/2IZy/RzMbbGg1Gb4uIM/o+L09gDXAXTV3QrIvZWt+xVqdAeeSRX7rNYfMPt7bvnhLGoUobEGyW+61WobzjCR8xhWQEnL5iFNhaJpFcpoX0vGMmU9ZPPWT4IcA+Tky5g3SgV33xmEM08sVYyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ea5f68e17aso55384807b3.3;
-        Tue, 12 Nov 2024 02:50:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731408642; x=1732013442;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o0BSboSqMmas8utBDJVLngyLT8Ucl86axxgJRcwpUMQ=;
-        b=iopOKNMKF5zXtyE+DMHwUkv1fSY/NVlEEl7IO8GLrNY+5qqdicnBPyHDVYg+4v3NFk
-         MorJfkOFe6riIJt4SFTKjt89uACaPFjT3y8n31co+kTPliH6mCSVfNgeXXEGEzlnEA0q
-         ngRgKRLEaS3VTK20wJ9oJ6lnNurhzKVrxFt7IESBFGcD6DXB/vZIiihxjSIvwH41GPqL
-         72SIdTLJvivFIc58AOi8peGHdkDQdhGvPhs1hhIZmHpVJuUSuTc+l4oDE/MiEBEJ7r6B
-         TFsoKiZXus7SECsXDxtIcnVsPYdh89MW/L1tXLxdC7hFoKgQ0H/S+T65rCacNINWdVC7
-         aPow==
-X-Forwarded-Encrypted: i=1; AJvYcCW7IDMX4tRDTebia+mb3ok1Rv/wcLDBlcH5EFgmfWJ4S2d5rroqbV0j9pyZrg4i+HbGLranyfljPyYaPG18dVS0EsU=@vger.kernel.org, AJvYcCWPrso06pO0y4IcBK2lMrIodLnMWhuf5k5DS0lM/OfAIMzo9BQNUwfCeOrh1uUWpAgmHYQjvjLT3YSdtn5T@vger.kernel.org, AJvYcCWSGv89OgkMB/qoLDiuAIsEpVsbzGWkJidFyvKVn3LTKBN3n6TouJhflknlEdRWXqM1zJOQ9SqDdBhN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW6psa/pNzvb+7e4XcMDqXsvQEyaP8sMNkNHbt2+KyHfASG4Em
-	kvf7zChgi5zVmvtEOp+/E2LInwCA2Z6HD6Iv+v17c1GmnywX7dmtjJSs3Cka
-X-Google-Smtp-Source: AGHT+IEE8dqhj3QPdyCSXJsXrewnASvozcvMgJFIedqkGIrZRiyr9V8vK31qxKA2OnMIdBMON8aSwQ==
-X-Received: by 2002:a05:690c:dc1:b0:6d3:f9a6:e29c with SMTP id 00721157ae682-6eaddda0e01mr147759387b3.12.1731408642671;
-        Tue, 12 Nov 2024 02:50:42 -0800 (PST)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eace8f1d2csm24669967b3.42.2024.11.12.02.50.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 02:50:41 -0800 (PST)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e5b7cd1ef5so46627907b3.1;
-        Tue, 12 Nov 2024 02:50:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVmlb142wAwJbk5buebo9G5A6vscfVNpFYfhZeclzN3M6xMAklg+zhTxOaxFjUlSpQkB813F2YTwwlo@vger.kernel.org, AJvYcCWmdmIU5WuaVRMxI/D0g2jZA5iurLSA6D0mHYXDhmHRhRDVP1Ey/pYVaFh62vh7KnBQBkHzvDXhClUL7ZqjdpXfQqE=@vger.kernel.org, AJvYcCX0xIWwHJ7WRgPt2HrdmBQjnuVPwJeyL8G0PjooOCXvDxrmJN4r9nb7C+mwvVvFpbFGeQA44kax/++C5Om0@vger.kernel.org
-X-Received: by 2002:a05:690c:48c8:b0:6e3:2192:e0e6 with SMTP id
- 00721157ae682-6eaddda2d9fmr160448687b3.14.1731408641672; Tue, 12 Nov 2024
- 02:50:41 -0800 (PST)
+	s=arc-20240116; t=1731408638; c=relaxed/simple;
+	bh=d0rkJCXmARckOR0ApqbLV71XuCQ8/P+BmXaLUyM+hZI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yj9GWUklB9OmDDL/jwinLOk/PbuN337bfTyheQjnghQR/qqb+sepax6w/j3g4AWxZVfxbN2CmN/Py5F1DY0cqU7l4lfEO0T0i38x/wi03pBT/K092QLqMrwefefeQMsQ1YYBEIj6G1QcGiMcYyST3Fek2cNVQJ9KgREdchGDpiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=huGsx0N+; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1731408634;
+	bh=d0rkJCXmARckOR0ApqbLV71XuCQ8/P+BmXaLUyM+hZI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=huGsx0N+QXnHFkB+EPH2jUGLA8Dq53UwS++PogGrliWtn0fp5bAnf+l52ny29gc6t
+	 pCB/zf3krpIjPf+REG+5i4lrLMduo+9Y8iWqpa1NrCqypuwN7E7NR1u50hh/O5BBT0
+	 Mu3RX7NmQEFUhbB7f8Ix6iIXGSat05fSepWEV1HKa1/JDYSw8ypJetGS/Eq1/Wunhm
+	 KyyasO+Ssr0QYjlRKFu6XrlHkQ/A2iimAsmC1q/K3iAuxEGKfGvlmi91kPAbE2uz2n
+	 M1uFDusJpU4xDWVhZY09qgAOlikC27855i5ND+UUrtA43eW5aAjNBJnjYhA98V3ymG
+	 YOtWfZ79+B1Aw==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 108C517E35F0;
+	Tue, 12 Nov 2024 11:50:34 +0100 (CET)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: chunkuang.hu@kernel.org
+Cc: p.zabel@pengutronix.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	sui.jingfeng@linux.dev,
+	ck.hu@mediatek.com,
+	amergnat@baylibre.com,
+	dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com,
+	dan.carpenter@linaro.org
+Subject: [PATCH] drm/mediatek: Initialize pointer in mtk_drm_of_ddp_path_build_one()
+Date: Tue, 12 Nov 2024 11:50:30 +0100
+Message-ID: <20241112105030.93337-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230209133507.150571-1-clement.leger@bootlin.com>
- <20230209133507.150571-3-clement.leger@bootlin.com> <CAMuHMdWUorkDYXZvsd-9rjwEkeJYC_FMfexZHaGYHDry=9Yjdg@mail.gmail.com>
- <20230215092933.2f71ece0@fixe.home> <20230215115441.361aed53@fixe.home> <CAMuHMdVhGFyrWx6oD-K9WhZRtYT_xJ_kWRA+vhdvB_JubFk8YA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVhGFyrWx6oD-K9WhZRtYT_xJ_kWRA+vhdvB_JubFk8YA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 12 Nov 2024 11:50:29 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX4nMA6HSu=UkNEWJWKK432VB5YVQCWn_rDZ6mNSv+41g@mail.gmail.com>
-Message-ID: <CAMuHMdX4nMA6HSu=UkNEWJWKK432VB5YVQCWn_rDZ6mNSv+41g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb
- board device-tree
-To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Herve Codina <herve.codina@bootlin.com>, 
-	=?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
-	Milan Stevanovic <milan.stevanovic@se.com>, Jimmy Lalande <jimmy.lalande@se.com>, 
-	Pascal Eberhard <pascal.eberhard@se.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Gareth Williams <gareth.williams.jx@renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Cl=C3=A9ment,
+The struct device_node *next pointer is not initialized, and it is
+used in an error path in which it may have never been modified by
+function mtk_drm_of_get_ddp_ep_cid().
 
-On Wed, Feb 15, 2023 at 12:31=E2=80=AFPM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Feb 15, 2023 at 11:52 AM Cl=C3=A9ment L=C3=A9ger
-> <clement.leger@bootlin.com> wrote:
-> > Le Wed, 15 Feb 2023 09:29:33 +0100,
-> > Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com> a =C3=A9crit :
-> > > Le Tue, 14 Feb 2023 17:25:14 +0100,
-> > > Geert Uytterhoeven <geert@linux-m68k.org> a =C3=A9crit :
-> > > > On Thu, Feb 9, 2023 at 2:32 PM Cl=C3=A9ment L=C3=A9ger <clement.leg=
-er@bootlin.com> wrote:
-> > > > > The EB board (Expansion board) supports both RZ/N1D and RZ-N1S. S=
-ince this
-> > > > > configuration targets only the RZ/N1D, it is named r9a06g032-rzn1=
-d400-eb.
-> > > > > It adds support for the 2 additional switch ports (port C and D) =
-that are
-> > > > > available on that board.
-> > > > >
-> > > > > Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com=
->
-> > > >
-> > > > Thanks for your patch!
-> > > >
-> > > > > --- /dev/null
-> > > > > +++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-eb.dts
->
-> > > > > +       pinctrl-0 =3D <&pins_eth1>, <&pins_eth2>, <&pins_eth3>, <=
-&pins_eth4>,
-> > > > > +                   <&pins_mdio1>;
-> > > > > +
-> > > > > +       mdio {
-> > > > > +               /* CN15 and CN16 switches must be configured in M=
-DIO2 mode */
-> > > > > +               switch0phy1: ethernet-phy@1 {
-> > > > > +                       reg =3D <1>;
-> > > > > +                       marvell,reg-init =3D <3 16 0 0x1010>;
-> > > >
-> > > > marvell,reg-init is not documented in any DT bindings document?
-> > >
-> > > Indeed, this is not somethiong that should be made available here. It=
-'s
-> > > only inverting the LED polarity but supported by some internal patch.
-> > > I'll remove that.
->
-> > I actually was confused by a property I added in another device-tree bu=
-t
-> > marvell,reg-init exists, is handled by the marvell phy driver and used
-> > in a few device-trees. Strangely, it is not documented anywhere. So I
-> > can either remove that (and the LED won't work properly) or let it live
-> > depending on what you prefer.
->
-> In that case, please keep it.
-> But the property really should be documented, one day...
+Since the error path is relying on that pointer being NULL for the
+OVL Adaptor and/or invalid component check and since said pointer
+is being used in prints for %pOF, in the case that it points to a
+bogus address, the print may cause a KP.
 
-Any plans to follow-up?
-Thanks!
+To resolve that, initialize the *next pointer to NULL before usage.
 
-Gr{oetje,eeting}s,
+Fixes: 4c932840db1d ("drm/mediatek: Implement OF graphs support for display paths")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                        Geert
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 9a8ef8558da9..bc06c664e80f 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -900,7 +900,7 @@ static int mtk_drm_of_ddp_path_build_one(struct device *dev, enum mtk_crtc_path
+ 					 const unsigned int **out_path,
+ 					 unsigned int *out_path_len)
+ {
+-	struct device_node *next, *prev, *vdo = dev->parent->of_node;
++	struct device_node *next = NULL, *prev, *vdo = dev->parent->of_node;
+ 	unsigned int temp_path[DDP_COMPONENT_DRM_ID_MAX] = { 0 };
+ 	unsigned int *final_ddp_path;
+ 	unsigned short int idx = 0;
+-- 
+2.47.0
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
