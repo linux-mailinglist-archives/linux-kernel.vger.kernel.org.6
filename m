@@ -1,163 +1,190 @@
-Return-Path: <linux-kernel+bounces-406194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F629C5BF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:34:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1499C5BFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CAD41F21A6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:34:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FAE0282FC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49E92010FB;
-	Tue, 12 Nov 2024 15:34:23 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71222022D2;
+	Tue, 12 Nov 2024 15:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="N1tOKKtK"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BD0201024;
-	Tue, 12 Nov 2024 15:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16D5201253;
+	Tue, 12 Nov 2024 15:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731425663; cv=none; b=aCP5Ls11f1wTGISp5pzGOrlsIc5Whhy82cmNT46pAQTumv7/ZY9aGpN09cGbnWVZDOO7jWAu5hkAWCNXaFRQ1hueDIg4M8L4yY2ldLgBPwlvOuygNsj0ed0mmIdAWEa0mPdm+5xAQHBV4HuaUIioYBCMvUNx8fxrOKHDcVHJEGM=
+	t=1731425707; cv=none; b=TzsNh4YfjmQQTshy7OTQynJJhVsrEaXWdOfY75lc/RI77SDuM85/2jcStYh1uaZmuevvT37NWhsuX3dzMKbKQ4lLchLg/U/9mzJSpDg/VaRWkpj7zWkTFL4p/1Z9uf3h7mqnJgvALZI2OcuxP9chz8RiBknn4ZfIULUaHtTG4rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731425663; c=relaxed/simple;
-	bh=0NGIVkcyQz/aQ+hIPBIw/XshyCLcHpHPKFfkVYTrPiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y+/nBA6cyJOLHPRrrUsjyFY7ex6c7/mneli2DN+CQWszVAd1QXpnwFPWs+45gtUWTM3DHiuFwLXdz6upx21GVL4e+8I3FpWqOl9MWTxaim4dhz1lRmizOGCjoW8F0co41AL/sOBi9YuRABKjykAkiNIZ7d+9ju0KdXOZ1NIb3Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DD33C4CECD;
-	Tue, 12 Nov 2024 15:34:21 +0000 (UTC)
-Date: Tue, 12 Nov 2024 10:34:38 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Michael C. Pratt" <mcpratt@pm.me>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Peter
- Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
- <vschneid@redhat.com>, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH RESEND 2 1/1] sched/syscalls: Allow setting niceness
- using sched_param struct
-Message-ID: <20241112103438.57ab1727@gandalf.local.home>
-In-Reply-To: <20241111070152.9781-2-mcpratt@pm.me>
-References: <20241111070152.9781-1-mcpratt@pm.me>
-	<20241111070152.9781-2-mcpratt@pm.me>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731425707; c=relaxed/simple;
+	bh=G1EL/5dFTQLrRgb48Hj4XjZL8TYLTx/GXepImuust7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DPe0tw/j0Ey9XnRNTTew+42Gs12Iw3iEp13SjLMODAaBhvbxgMFqbvNfqU+PxRWcQfDTpfvuDi2dAJG+IfSsmkgqIXnUCFApDDz+FEgAZf4+B8Nb/rF0amuKOvbegs+HW9Ru80ca0yyGlJBPcvCRk5kq3O3Xf9o5ekr6nGywzLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=N1tOKKtK; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4ACFYlGe002943;
+	Tue, 12 Nov 2024 09:34:47 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731425687;
+	bh=8MzERit/I5MynQF+dQgf1nzw3r//+UtEH+8JutqbrkQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=N1tOKKtKOwVzqV9XImxZ12Dy5wPJmJ/EUjpVqulkFVBD3ytHqCpIxI2RItcPYRbO1
+	 dWq+6jBmQ3RaT8i8DbF4SqsdQppREaFyucXXlEr9pNTdWAa7rCrQH96NPbiAfvwVU7
+	 YDfYblrJxM4fkuwtF0abUyM2Hv3/fEz/DOdmWv+k=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4ACFYlQF043556
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 12 Nov 2024 09:34:47 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 12
+ Nov 2024 09:34:46 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 12 Nov 2024 09:34:47 -0600
+Received: from [137.167.6.238] (lt5cg1094w5k.dhcp.ti.com [137.167.6.238])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4ACFYhX0130880;
+	Tue, 12 Nov 2024 09:34:44 -0600
+Message-ID: <2dbf1cba-0b16-413b-947e-dacf32c85687@ti.com>
+Date: Tue, 12 Nov 2024 17:34:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 09/17] wifi: cc33xx: Add main.c
+To: Johannes Berg <johannes@sipsolutions.net>, Kalle Valo <kvalo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Sabeeh Khan <sabeeh-khan@ti.com>
+References: <20241107125209.1736277-1-michael.nemanov@ti.com>
+ <20241107125209.1736277-10-michael.nemanov@ti.com>
+ <685d782d68bfc664c4fcc594dff96546ffc30e5f.camel@sipsolutions.net>
+Content-Language: en-US
+From: "Nemanov, Michael" <michael.nemanov@ti.com>
+In-Reply-To: <685d782d68bfc664c4fcc594dff96546ffc30e5f.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, 11 Nov 2024 07:03:51 +0000
-"Michael C. Pratt" <mcpratt@pm.me> wrote:
-
-> >From userspace, spawning a new process with, for example,  
-> posix_spawn(), only allows the user to work with
-> the scheduling priority value defined by POSIX
-> in the sched_param struct.
+On 11/8/2024 1:42 PM, Johannes Berg wrote:
+> Hi,
 > 
-> However, sched_setparam() and similar syscalls lead to
-> __sched_setscheduler() which rejects any new value
-> for the priority other than 0 for non-RT schedule classes,
-> a behavior that existed since Linux 2.6 or earlier.
+> reading through this anyway looking for mac80211 integration, so I'll
+> nitpick too ... ;-)
 > 
-> Linux translates the usage of the sched_param struct
-> into it's own internal sched_attr struct during the syscall,
-> but the user currently has no way to manage the other values
-> within the sched_attr struct using only POSIX functions.
+
+...
+
+>> +	if (wlvif->sta.role_chan_type != NL80211_CHAN_HT40MINUS &&
+>> +	    wlvif->sta.role_chan_type != NL80211_CHAN_HT40PLUS)
+>> +		ieee80211_connection_loss(cc33xx_wlvif_to_vif(wlvif));
 > 
-> The only other way to adjust niceness when using posix_spawn()
-> would be to set the value after the process has started,
-> but this introduces the risk of the process being dead
-> before the syscall can set the priority afterward.
+> You seem to support HE (PPE thresholds above and all that), but then you
+> still use CHAN_HT40MINUS/PLUS?! That seems ... rather wrong? You should
+> probably track in terms of NL80211_CHAN_WIDTH_*, I'm not even sure how
+> you get NL80211_CHAN_* values in the first place, mac80211 should never
+> use them now?
 > 
-> To resolve this, allow the use of the priority value
-> originally from the POSIX sched_param struct in order to
-> set the niceness value instead of rejecting the priority value.
+
+Right, a leftover from wlcore. Since CC33xx is 20 MHz only device I'll 
+remove it.
+
+...
+
+>> +static inline void cc33xx_tx_watchdog_work(struct work_struct *work)
+>> +{
+>> +	container_of(to_delayed_work(work), struct cc33xx, tx_watchdog_work);
+>> +}
 > 
-> Edit the sched_get_priority_*() POSIX syscalls
-> in order to reflect the range of values accepted.
+> I don't think that does what you think it does. Well, I don't know what
+> you think it does, but ...
 > 
-> Cc: stable@vger.kernel.org # Apply to kernel/sched/core.c
-
-Why is stable Cc'd?
-
-> Signed-off-by: Michael C. Pratt <mcpratt@pm.me>
-> ---
->  kernel/sched/syscalls.c | 21 +++++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
+> Also there should be (almost) no inline in C files, and even if it were
+> correct you'd probably just use it exactly once?
 > 
-> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-> index 24f9f90b6574..43eb283e6281 100644
-> --- a/kernel/sched/syscalls.c
-> +++ b/kernel/sched/syscalls.c
-> @@ -785,6 +785,19 @@ static int _sched_setscheduler(struct task_struct *p, int policy,
->  		attr.sched_policy = policy;
->  	}
->  
-> +	if (attr.sched_priority > MAX_PRIO-1)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * If priority is set for SCHED_NORMAL or SCHED_BATCH,
-> +	 * set the niceness instead, but only for user calls.
-> +	 */
-> +	if (check && attr.sched_priority > MAX_RT_PRIO-1 &&
-> +	   ((policy != SETPARAM_POLICY && fair_policy(policy)) || fair_policy(p->policy))) {
-> +		attr.sched_nice = PRIO_TO_NICE(attr.sched_priority);
-> +		attr.sched_priority = 0;
-> +	}
 
-This really looks like a hack. Specifically that we are exposing how the
-kernel records priority to user space. That is the greater than
-MAX_RT_PRIO-1. 120 may be the priority the kernel sees on nice values, but
-it is not something that we should every expose to user space system calls.
+Agree, will get rid of inline in all functions.
 
-That said, you are worried about the race of spawning a new task and
-setting its nice value because the new task may have exited. What about
-using pidfd? Create a task returning the pidfd and use that to set its nice
-value.
+...
 
--- Steve
-
-
-> +
->  	return __sched_setscheduler(p, &attr, check, true);
->  }
->  /**
-> @@ -1532,9 +1545,11 @@ SYSCALL_DEFINE1(sched_get_priority_max, int, policy)
->  	case SCHED_RR:
->  		ret = MAX_RT_PRIO-1;
->  		break;
-> -	case SCHED_DEADLINE:
->  	case SCHED_NORMAL:
->  	case SCHED_BATCH:
-> +		ret = MAX_PRIO-1;
-> +		break;
-> +	case SCHED_DEADLINE:
->  	case SCHED_IDLE:
->  	case SCHED_EXT:
->  		ret = 0;
-> @@ -1560,9 +1575,11 @@ SYSCALL_DEFINE1(sched_get_priority_min, int, policy)
->  	case SCHED_RR:
->  		ret = 1;
->  		break;
-> -	case SCHED_DEADLINE:
->  	case SCHED_NORMAL:
->  	case SCHED_BATCH:
-> +		ret = MAX_RT_PRIO;
-> +		break;
-> +	case SCHED_DEADLINE:
->  	case SCHED_IDLE:
->  	case SCHED_EXT:
->  		ret = 0;
+>> +static int parse_control_message(struct cc33xx *cc,
+>> +				 const u8 *buffer, size_t buffer_length)
+>> +{
+>> +	u8 *const end_of_payload = (u8 *const)buffer + buffer_length;
+>> +	u8 *const start_of_payload = (u8 *const)buffer;
 > 
-> base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
+> I don't think the "u8 *const" is useful here, and the cast is awkward.
+> If anything you'd want "const u8 *const" (which should make it not need
+> the cast), but the const you have adds no value... do you even know what
+> it means? ;-)
+> 
+
+My intent was to express that start and end pointers are fixed and will 
+not change in the loop below. When reading this again I agree this hurts 
+more than it helps, I'll drop it.
+
+const u8 *buffer in the prototype illustrates that parse_control_message 
+will not change the data so I'll keep it if there a re no objections.
+
+>> +	struct NAB_header *nab_header;
+> 
+> surely checkpatch complained about CamelCase or so with the struct name
+> like that?
+> 
+
+Double-checked, no warnings from checkpatch:
+----------------------------------------------
+$ scripts/checkpatch.pl --codespell --strict 
+../../export/upstream/patch/v5-0009-wifi-cc33xx-Add-main.c.patch
+WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+#44:
+new file mode 100644
+
+WARNING: Prefer "GPL" over "GPL v2" - see commit bf7fbeeae6db ("module: 
+Cure the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity")
+#5729: FILE: drivers/net/wireless/ti/cc33xx/main.c:5681:
++MODULE_LICENSE("GPL v2");
+
+total: 0 errors, 2 warnings, 0 checks, 5687 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+../../export/upstream/patch/v5-0009-wifi-cc33xx-Add-main.c.patch has 
+style problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+$
+----------------------------------------------
+
+Obviously will fix the definition.
+
+
+Still going over all other items you referred to, will take a minute :)
+
+Thanks and regards,
+Michael.
 
 
