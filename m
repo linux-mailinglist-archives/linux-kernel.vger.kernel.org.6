@@ -1,292 +1,153 @@
-Return-Path: <linux-kernel+bounces-406205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78D49C60FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:04:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C0E09C60C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:48:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B0EFB62602
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:40:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A170B3CDA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A43202643;
-	Tue, 12 Nov 2024 15:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7FA202F8B;
+	Tue, 12 Nov 2024 15:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="LNDR2sPw"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W5zBLfn/"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4DB202625
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECFE1F7068;
+	Tue, 12 Nov 2024 15:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731425999; cv=none; b=CT9iFh3WjaJdsNHZ1BYGM4aIecS6/p/tEw+HiOkscf8sz9dxAxTDbN2pOT8ZQrb4+1ESqMxrjaD/s/FfBfss99CRs34IZTPY3Z6r5ER9lKYJLLQfV3zpleyvY1lp8nm/4j3IJxXTnUYUpP54Be/I5njhNc2uK1AY0MrDZb5ERdE=
+	t=1731426966; cv=none; b=D78e+bfBTti4v+nX7QO6ZK67zQhYp940xCeTEyiyj3xSbFl3joqhLGbFy5NNuQz9NA0uA2Xm5ajAnXQQ5cYdYb/VK593gDYB/FyjBxS0KeZ34uJa+TP6e4BNYSQQ3PIVaS1Fv21lhMGzLwAPZi7S8F1Uqgy1b1jR4gu7dWwzWSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731425999; c=relaxed/simple;
-	bh=lSn9tZqbXXMm4ytAopoRf2rbmRp9OS2LoZx9rzlMOSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hUq0Jvz0eN5iqB/mhl0orh8DLujoRmEyy8X65MoeFM3DrPvSibd6NwjqshzlAz7ZxuU2QH7l5CuLCzZn+JsxHV8k0RzxSeX3YKS+ZTDSLciAyVyLSyAYCxaIUJbRzkTdoluDCnbM7a8bXLWNpWd8kIa+vUPkbx/3GIg7cxTiaUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=LNDR2sPw; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso978632166b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:39:57 -0800 (PST)
+	s=arc-20240116; t=1731426966; c=relaxed/simple;
+	bh=FUkY8vBvHpNmPvUODc0GVgjz5hCCodk0jxmUUq4d3j0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qgy7wndBHqvtgT4L4a9d+HgKcZ6TzjMsMIgWSTZ2Vrw+bQZz1QBxG5x27VteWZlg+XON+/qM6yjOS8JOjmMUhbeT8aMTAIcvi2kVDZT2TAeSRXeHL1l212Ih6bP/nhDN428bH/M1CKhoqx0FVRIFzAT/W/n/PmTOVXAi7NtOE0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W5zBLfn/; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5ebc27fdc30so2892510eaf.2;
+        Tue, 12 Nov 2024 07:56:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1731425996; x=1732030796; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=tkqstsrPp4KySdsvdodgkejaPTUdxNGqUhtM7D3Jo5A=;
-        b=LNDR2sPwvCuVp+/9rgigDnzZ9RLW+z9jU4Pr/pOVGRL89BPe0cSL7SqkEX5lqp4Ije
-         gsExYuYoI7UR5ftGdc+jemBt7MB44wGRF8wV5kQx1mTv4SUXDa650BN1tnjUH/xQ5/sB
-         +afpsnhU6eRBjwp5J9jA8pzVJqVFDKypQSV7xFQt2eBdGDVoGHHLhsaFJx5xEh3Pn30U
-         LRlqbjQwER0VgsqGDcNnyAwVD5w5H+K3vzrGFw+XRCiMYbjX9igMBTm3BDQK2Wdd4MuM
-         4lONrY9wgEkzikkYKuBZGtWzxUg+IWydNrtHc/dRtTM5rp5t12Aoy/yQCzKGDHhKQJuj
-         Rx7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731425996; x=1732030796;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1731426963; x=1732031763; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tkqstsrPp4KySdsvdodgkejaPTUdxNGqUhtM7D3Jo5A=;
-        b=UzvpE1zS28w7AbFLGaRSUXdnqPl9al6QvJnmdaEjJX8V0PVagUdrd46+UAmVythRw5
-         8qraTpySWiBnGwapKMJtittq233sTQNuTm94duWywniRwuSoGBaWfNP0gQhvkzCb7xRE
-         lcB0C4FcBcLcWZ8RBFWRUbmxsgHsnTDo5UtzfJifaoUZjKDXRBqhTYgopgUjGSDeWO5e
-         JAsSzOlz943bmNzSevm1YRCAdioj06O1Wt3ZVAp4R3+EiQBR56Pp7eM2wgVsGKMyIN8P
-         6+uu/c08OUC4+q5GTiG+bejoQjVn2Pl8IMGtBptHhOBA9j/0oCUUadIFOu380KBEbGDi
-         wwlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUk79V0QsTOpvKOQ+iSh4jDuK9FS5TuvYKwLIyigIwMzqJhir6zkqhtf+ojzJnadkt7HYkk4cWGJ6KnIas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA0Dpj7/V90IKDJYi4rK9YOp4/OzMSmiOiklpzJakwulv4LMWr
-	A8xvmoDPku+7Tp4eYl4/elmpBmIivF1yahAbUYm+Gw6Ise4ofw9bD6msHnL45SY=
-X-Google-Smtp-Source: AGHT+IHevdpcDT+9UCMSKbtTe0SiY9drSWARd9dhjS8G5D91gUBoqMjSSVFPcqZZ7ncLNNwGkLrisQ==
-X-Received: by 2002:a17:906:f597:b0:a9a:13dd:2734 with SMTP id a640c23a62f3a-a9eeff44839mr1773883266b.36.1731425996131;
-        Tue, 12 Nov 2024 07:39:56 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:e829:c484:5241:93b2? ([2001:67c:2fbc:1:e829:c484:5241:93b2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a4a988sm728455166b.59.2024.11.12.07.39.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 07:39:55 -0800 (PST)
-Message-ID: <8ed53007-cc7c-4747-a690-f27915f2be8d@openvpn.net>
-Date: Tue, 12 Nov 2024 16:40:19 +0100
+        bh=ZYmSNlu/VUJDhCWFzgw6Pwurlvm+R+J0mmXptnSbNrU=;
+        b=W5zBLfn/HDsIGhE4clBlpbCE5DCfGDi+QyxDbzcRPY69J+KTyXp6gLPAWa/1GR6iOi
+         tX5g2r0Y2lWCU60Yj0jhaIGhMdCJSACE9Z5v0XQtVxByDs03AHqbxnbuTykWmj/MrlTU
+         Anqdr8T8WMI/QaBvraMaDpGb30LjfbBGiyQMhqRAzMFTvES9yHCxVddbRqkMfxloM7Jh
+         LZk2Hd3Me1+2mUDLm0vDcwxM/HYvQZ36VEi8n8cvcD0nYmctoTTqgAM+XNOrSjSOuSRV
+         DCagbL8BYhl3gCv0eKklptzyef1rtx1CObHvcsvwxb/pSO49sPwI0jx2GR4Hm8KJrg2R
+         MKZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731426963; x=1732031763;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZYmSNlu/VUJDhCWFzgw6Pwurlvm+R+J0mmXptnSbNrU=;
+        b=uIDhtKRvx4p5VDr1dZVvcz4WLzrR+AxdXI/ERZPt07+lP8bTZ+sn4E0sokeQ/0AUKm
+         /HWJGDtspH8IQDWONk9FfoBxAuC/11Kd8OAF+lxtpwmEhB4r07nrJ9RhzK29N6JvsuXp
+         Q6D4pp9c619wC6XIMbabwzU5SgxUa9qmeoQvV7bAV+RZ0NajdvSNso8HQQ96UiwhCIG0
+         9rDQ3lnmTSGOxBjLj7e7NqKprzHuUXNwzoV4kQHL7sBiptb2lX7C8dx28nwFENMO9uhz
+         nNx4igJG5slDvlzJSQuRbhrqDxP6LlZ5NB7jpE3hypp6+tvqxZRurALRlca+lXK0CKHz
+         R8aA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/x0E2nb4YXz4rso7uPBTdCYFIyPl8lEaRPIYjiyG+NU4cmslGKs22HNkxHLnRtDJVXIwotjhZU7x2DbOr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA7jFiOBw2kyU+2XN+24h8ni6XXKa2qCD+MNNIrOyN+JUaTr3Q
+	AVJsRgn/J4UkxoJg4zABpTm2BX/xecg4CfwYBrhU4bclsmTWC1TsHLWsevh94t/QyHzAcMo4CmP
+	X8PYe06UTU9czFLZBE4rey87SqvcEUvsZhVA=
+X-Google-Smtp-Source: AGHT+IFezwbgWPN7unZsmswTxXu6sC+1b7SLstIy6sy3nImuLBY2n8J/CIe/ya4BMckZnw191hkIZtJ7537RVfVF1e4=
+X-Received: by 2002:a05:6358:9791:b0:1c3:2411:588f with SMTP id
+ e5c5f4694b2df-1c641ea72e5mr727978055d.9.1731426963523; Tue, 12 Nov 2024
+ 07:56:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 19/23] ovpn: implement key add/get/del/swap
- via netlink
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-19-de4698c73a25@openvpn.net> <ZynwjJNz6kLa4p7x@hog>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <ZynwjJNz6kLa4p7x@hog>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241101135452.19359-1-erin.shepherd@e43.eu> <20241101135452.19359-3-erin.shepherd@e43.eu>
+In-Reply-To: <20241101135452.19359-3-erin.shepherd@e43.eu>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 12 Nov 2024 16:55:52 +0100
+Message-ID: <CAOQ4uxjTN5rXqAgR-ovfEuo7gSYY6Wig1-4QV6a5BXFkfqge6A@mail.gmail.com>
+Subject: Re: [PATCH 2/4] pidfs: implement file handle export support
+To: Erin Shepherd <erin.shepherd@e43.eu>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	christian@brauner.io, paul@paul-moore.com, bluca@debian.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/11/2024 11:16, Sabrina Dubroca wrote:
-> 2024-10-29, 11:47:32 +0100, Antonio Quartulli wrote:
->> This change introduces the netlink commands needed to add, get, delete
->> and swap keys for a specific peer.
->>
->> Userspace is expected to use these commands to create, inspect (non
->> sensible data only), destroy and rotate session keys for a specific
-> 
-> nit: s/sensible/sensitive/
-> 
->> +int ovpn_crypto_config_get(struct ovpn_crypto_state *cs,
->> +			   enum ovpn_key_slot slot,
->> +			   struct ovpn_key_config *keyconf)
->> +{
-> [...]
->> +
->> +	rcu_read_lock();
->> +	ks = rcu_dereference(cs->slots[idx]);
->> +	if (!ks || (ks && !ovpn_crypto_key_slot_hold(ks))) {
->> +		rcu_read_unlock();
->> +		return -ENOENT;
->> +	}
->> +	rcu_read_unlock();
-> 
-> You could stay under rcu_read_lock a little bit longer and avoid
-> taking a reference just to release it immediately.
+On Fri, Nov 1, 2024 at 2:55=E2=80=AFPM Erin Shepherd <erin.shepherd@e43.eu>=
+ wrote:
+>
+> On 64-bit platforms, userspace can read the pidfd's inode in order to
+> get a never-repeated PID identifier. On 32-bit platforms this identifier
+> is not exposed, as inodes are limited to 32 bits. Instead expose the
+> identifier via export_fh, which makes it available to userspace via
+> name_to_handle_at
+>
+> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
 
-ACK.
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-> 
->> +	keyconf->cipher_alg = ovpn_aead_crypto_alg(ks);
->> +	keyconf->key_id = ks->key_id;
->> +
->> +	ovpn_crypto_key_slot_put(ks);
->> +
->> +	return 0;
->> +}
-> 
-> 
-> [...]
->>   int ovpn_nl_key_get_doit(struct sk_buff *skb, struct genl_info *info)
->>   {
-> [...]
->> +	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
->> +			      OVPN_A_KEYCONF_PEER_ID))
->> +		return -EINVAL;
->> +
->> +	peer_id = nla_get_u32(attrs[OVPN_A_KEYCONF_PEER_ID]);
->> +
->> +	peer = ovpn_peer_get_by_id(ovpn, peer_id);
->> +	if (!peer) {
->> +		NL_SET_ERR_MSG_FMT_MOD(info->extack,
->> +				       "cannot find peer with id %u", 0);
-> 
->                                                                         peer_id?
-> 
->> +		return -ENOENT;
->> +	}
->> +
->> +	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
->> +			      OVPN_A_KEYCONF_SLOT))
->> +		return -EINVAL;
-> 
-> Move this check before ovpn_peer_get_by_id? We're leaking a reference
-> on the peer.
-
-ACK
-
-> 
-> 
->> +
->> +	slot = nla_get_u32(attrs[OVPN_A_KEYCONF_SLOT]);
->> +
->> +	ret = ovpn_crypto_config_get(&peer->crypto, slot, &keyconf);
->> +	if (ret < 0) {
->> +		NL_SET_ERR_MSG_FMT_MOD(info->extack,
->> +				       "cannot extract key from slot %u for peer %u",
->> +				       slot, peer_id);
->> +		goto err;
->> +	}
->> +
->> +	msg = nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
->> +	if (!msg) {
->> +		ret = -ENOMEM;
->> +		goto err;
->> +	}
->> +
->> +	ret = ovpn_nl_send_key(msg, info, peer->id, slot, &keyconf,
->> +			       info->snd_portid, info->snd_seq, 0);
-> 
-> info->snd_portid and info->snd_seq can be extracted from info directly
-> in ovpn_nl_send_key since there's no other caller, and flags=0 can be
-> skipped as well.
-
-I tried to keep the signature similar to send_peer, but indeed they can 
-both be simplified.
-
-> 
->> +	if (ret < 0) {
->> +		nlmsg_free(msg);
->> +		goto err;
->> +	}
->> +
->> +	ret = genlmsg_reply(msg, info);
->> +err:
->> +	ovpn_peer_put(peer);
->> +	return ret;
->>   }
-> 
-> 
-> 
-> [...]
->>   int ovpn_nl_key_del_doit(struct sk_buff *skb, struct genl_info *info)
->>   {
->> -	return -EOPNOTSUPP;
->> +	struct nlattr *attrs[OVPN_A_KEYCONF_MAX + 1];
->> +	struct ovpn_struct *ovpn = info->user_ptr[0];
->> +	enum ovpn_key_slot slot;
->> +	struct ovpn_peer *peer;
->> +	u32 peer_id;
->> +	int ret;
->> +
->> +	if (GENL_REQ_ATTR_CHECK(info, OVPN_A_KEYCONF))
->> +		return -EINVAL;
->> +
->> +	ret = nla_parse_nested(attrs, OVPN_A_KEYCONF_MAX,
->> +			       info->attrs[OVPN_A_KEYCONF],
->> +			       ovpn_keyconf_nl_policy, info->extack);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
->> +			      OVPN_A_KEYCONF_PEER_ID))
->> +		return -EINVAL;
->> +
->> +	if (ret)
->> +		return ret;
-> 
-> leftover?
-
-very likely.
-
-Thanks a lot
-
-Regards,
-
-> 
-> 
->> +	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
->> +			      OVPN_A_KEYCONF_SLOT))
->> +		return -EINVAL;
-> 
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
-
+> ---
+>  fs/pidfs.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index 80675b6bf884..c8e7e9011550 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include <linux/anon_inodes.h>
+> +#include <linux/exportfs.h>
+>  #include <linux/file.h>
+>  #include <linux/fs.h>
+>  #include <linux/magic.h>
+> @@ -347,6 +348,25 @@ static const struct dentry_operations pidfs_dentry_o=
+perations =3D {
+>         .d_prune        =3D stashed_dentry_prune,
+>  };
+>
+> +static int pidfs_encode_fh(struct inode *inode, __u32 *fh, int *max_len,
+> +                          struct inode *parent)
+> +{
+> +       struct pid *pid =3D inode->i_private;
+> +
+> +       if (*max_len < 2) {
+> +               *max_len =3D 2;
+> +               return FILEID_INVALID;
+> +       }
+> +
+> +       *max_len =3D 2;
+> +       *(u64 *)fh =3D pid->ino;
+> +       return FILEID_KERNFS;
+> +}
+> +
+> +static const struct export_operations pidfs_export_operations =3D {
+> +       .encode_fh =3D pidfs_encode_fh,
+> +};
+> +
+>  static int pidfs_init_inode(struct inode *inode, void *data)
+>  {
+>         inode->i_private =3D data;
+> @@ -382,6 +402,7 @@ static int pidfs_init_fs_context(struct fs_context *f=
+c)
+>                 return -ENOMEM;
+>
+>         ctx->ops =3D &pidfs_sops;
+> +       ctx->eops =3D &pidfs_export_operations;
+>         ctx->dops =3D &pidfs_dentry_operations;
+>         fc->s_fs_info =3D (void *)&pidfs_stashed_ops;
+>         return 0;
+> --
+> 2.46.1
+>
+>
 
