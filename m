@@ -1,230 +1,126 @@
-Return-Path: <linux-kernel+bounces-405451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0689C51EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:26:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45EE9C5191
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:12:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 377D3B28DA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:12:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33ACE1F22746
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB1A1F7092;
-	Tue, 12 Nov 2024 09:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE5B20DD4A;
+	Tue, 12 Nov 2024 09:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fIWo2cUK"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="buAfCkEp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XsDobdut"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9713B20CCFF
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E64209F4A;
+	Tue, 12 Nov 2024 09:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731402718; cv=none; b=ToCpdQIwjEWVmMV1VPNyXny3XbwDWcaRuzaSr7cfirt34xUI0q5nFH7ImslPRSY1NMr7ZdGFC+/NpXBRS6/7yHmjSXN4Sq8IDiGsq0dLHqyhtetdWAtcO8PsdhEdzI8ufOR9g6aRLsfCcF12WkhjDws8o7Cbl/g8QzGPHGT5aa8=
+	t=1731402746; cv=none; b=oSplU/HCj0G425WPwwaurYye8CybOaeKHIuJ+5uTxvhJMasY3L2wKvLI3xcI5Is9anBtg6ZxxxOAx15+tMHGajx0lUUNeAq1TK5H3EWQ8QKRZssKye2XdPKlgCpa9KGY2ng88qJPkcG6esiP+mAQCCK9ZPcM9iazsmcm3YtWNbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731402718; c=relaxed/simple;
-	bh=ByhGgvdqV4gerAhSZ+0p1VGIZ0e4s+vC2r6OuvedF2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u23Cbz7kv3HNQ1v+rgQOqWZIejH2r1W4OPb01CZ6aVIwRAgKIc3j8C/rn3GowsD2bwg7H5xrJLnwDNaH3rZhwC2Dy/A5P3bTeMoK5GFyL9gq+8m9nW/P5IbM++zJfYd4TeWPZgC9R/rQ5VDnOrr6elERTX0mE5EzILeRKOfS7Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fIWo2cUK; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a6acac4c3so888597466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 01:11:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731402715; x=1732007515; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2bT49tEuI3XaNlJGqnWq8uFVJQIUx+wbR1sO+SjK7Ss=;
-        b=fIWo2cUK61O/eAvvX/Q5QXDbekPP2pMR1pylIGUfmKaDmK44ICDn1DdIFq41546HzT
-         IksrdJqumzAeFJ/7xI9NlrxXi6qTjlDyGdgmy7JujvTx9LjRPzZgWkVw5+VNroPTmjvX
-         /bAn/vxPxJs6Dpa3ELNH3ELr/xvsgcGHYClk3+w7y53PG2lk4MoPWVZ1+hIy5hI4Cuso
-         rMkRLOmXH8lNN5wMHcHLZLbR7BYiUQOf/JDkLZqvv6wwjaoe4VVUBYfFuZ/mllU322KW
-         x6fKybqOEu02DKumvjMpoLjRWkWj0A8sNGuryL3zSoCmtxbIsxhuxOCJ6CTU/syye92O
-         6nwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731402715; x=1732007515;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2bT49tEuI3XaNlJGqnWq8uFVJQIUx+wbR1sO+SjK7Ss=;
-        b=sOu3gPbpIvaIMg5zu0Tv0r4sb3yWq7gJuevrePFtX3mCQlUBpVnF/5BzNOQipPDNhD
-         6bK7204kCLMBjB4LxynIRRd5YoSTO09NGODyh3LGQYWcKvNPrPs4+JukdF2aSLlPCKn4
-         GIFvof6KKbEReODyQnhukiexe14bpDW+M2spCgo0ZbU0XJIisTIub3m6j2G7L9Sy7yAd
-         FpaBCXTNRZ6V8HK3HdhRZmJwMd9b7OvvKzE5HTzH7JaphXMPUg066TtDz1eAoMz5RPe/
-         O94QQq+XcIYUV5M2WPTcq872SOK9UWT3RoShxxwP9zkoERYco7r5YPUXRA4n8YgZVHgO
-         VwOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDQpXl9jZftZsQg14lY0lCwWsX7VNcUI8aj6eC6eQxg0doVs2OuxgayfaBXf9izAHqM1NuPTxFJ0JIXSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydXtJig0rha98OCW9TrSXuYQcfrZc5MoQsfjBx23CCUz+B1j8Y
-	UAPF89GNxLvB0cp4Cm2FEdIGJUs5AcuAjQJ3zcIm3MOn2B2Cbm9W+aZ+fRSBr1A=
-X-Google-Smtp-Source: AGHT+IFY6ZnIGl+BWNcLVcWN0We3CqKXyiZszP+RpGx14lKsX8/Pc0KElS+H7O02yRwDXvrWjPb4Ng==
-X-Received: by 2002:a17:907:1c11:b0:a9e:4b88:e02a with SMTP id a640c23a62f3a-a9eefcd1ad8mr1505031866b.0.1731402714848;
-        Tue, 12 Nov 2024 01:11:54 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa1dda672easm63499266b.40.2024.11.12.01.11.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 01:11:54 -0800 (PST)
-Message-ID: <b109e943-7436-42ae-912a-e6f6e20a948e@tuxon.dev>
-Date: Tue, 12 Nov 2024 11:11:50 +0200
+	s=arc-20240116; t=1731402746; c=relaxed/simple;
+	bh=6JtaLLQ/v3VECtHaMsXqeUBPZz842Chv6jk9Tfb+EaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f9m4rroJNU9YLkw9UmkSGuXsRsA1+2y7SdbjqAtBm/NbZpuJQGWFySbOsICv5I9hiP6+f/2QkRqMdnKEEZ5+M2J/HNGOK5uZhkebHVXmXHVTDd/8ubGcw9Y/AzWYFbpKTagvO604HzE5sa4l6KmBZdO3rNeITh1lgkvDXv8je4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=buAfCkEp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XsDobdut; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 286331140182;
+	Tue, 12 Nov 2024 04:12:23 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Tue, 12 Nov 2024 04:12:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1731402743; x=
+	1731489143; bh=LviMUWp4Is8Fy/dVsm0aEbYiR7YOyd/oz5oNPRf4lTg=; b=b
+	uAfCkEpImy5cjaoLEU5eFxh7p2wxjkFDdmQeReof5SL3TVEn6WausxBEwpiCioBo
+	9jLsc83YaFd6ouBNhr6dG2qtVHuHM9P83YnVoqwFX+M77bReKCHcCnhS5I9P60fV
+	bnSllq+u7p0s8XWiwQpIxFvr1BNFKnnSxZeUhEXsH2iFm53RTPm+AkZFu9ZAqJv6
+	F+8WJm0kjoPip4QRqHA9fNJ5jjV4r1QRNxQdwKXuUnwoVKx9AycrtbKrGB10lSqi
+	BGVWJFWm3dhJwQ2jpQC9MSuzvaS1d0NUqyhaNGwhvbv8hkcir6TQsyG01fP0FKXg
+	P5GeCF6IShcnpG9tOyX0g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731402743; x=1731489143; bh=LviMUWp4Is8Fy/dVsm0aEbYiR7YOyd/oz5o
+	NPRf4lTg=; b=XsDobdutrRH1T1/TltivI79Y3Cb8DNBZBUZcxIIGJJWZaElkO4Y
+	FCcDgGwaQPZUanAndjuGtWBOXjJjRobSmBB2vUkVccr0woNlj3uEWKNqmUBx/CdC
+	E3cLbAPQ53KooZIhHEX/xZeBLDgbiJR/Tuq1oauzkvXAXhXpgZBUKQVKVAZ/9Kub
+	qdrzYGZV31kDUp4zEKITuDodbvF+QBMmlHlBxeXMn5b/QWJG5UEBIlBXqhobFLPI
+	VpXJGICsuF+J6IkaNCsvE/AcQzNOZPY2zRHUIy6soIugOElMdTH2eJ6k7mEzdOHl
+	t1kyF8v5OgvV0l9fOfdaR4OTv716fPGJQuA==
+X-ME-Sender: <xms:9hszZ9AXcvesEPT2Ac1yYleRPxob8aOMB3S6M58G-1oRTl1sWkvqZw>
+    <xme:9hszZ7gfr3hv9PsiOsH2LMFjqHSxgcSp4YaDnEPMxW8GeOPEubdrLiMP7APTcwkx0
+    j7d3fYcS7z5eZIx5m0>
+X-ME-Received: <xmr:9hszZ4kpEH7hl8qKrI1nRGP3bBT53kApJN2n7HjRvUo6j7_YZ-IBpI4YqRLLZp887jh-_Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudefgdduvdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqmhhm
+    sehkvhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdr
+    ohhrghdprhgtphhtthhopegtlhhmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuh
+    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhl
+    lhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqsghtrhhfsh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgvgihtgees
+    vhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:9hszZ3wxYo-EonlUCaSna0xEvY9Ye-it7EF5_DeUkCfk-vTYmJbA-g>
+    <xmx:9hszZyQ-2Kf278mXEJiFImXvd0sRH-vBI_GlHrNCBIOd_xBb7YPqbA>
+    <xmx:9hszZ6Zp_cC09g1441JPyU_dulG9M_TVwhc7SlgbsLh91Mkw_TN7ig>
+    <xmx:9hszZzSxdqRUEs-SSCOGHa9YOoY3BM7n51A20v7kTETCDNpl5s7IcA>
+    <xmx:9xszZ3KhGoeFXQWiZqiR5dKy_gf-bAqGpjBDmvrCYSz0CEgR3yJVMfw2>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 12 Nov 2024 04:12:18 -0500 (EST)
+Date: Tue, 12 Nov 2024 11:12:15 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org, 
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 03/16] mm: add PG_uncached page flag
+Message-ID: <lponnb7dxjx3htksbggjoasvby6sa2a4ayrkcykdnxvypwy4pp@ci2fnmcyrke7>
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-4-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
- "broonie@kernel.org" <broonie@kernel.org>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
- "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
- <20241108104958.2931943-25-claudiu.beznea.uj@bp.renesas.com>
- <TYCPR01MB113329FE5E9E610BEF45DC001865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <c15bb621-6cd9-4be3-beec-20fecd411547@tuxon.dev>
- <TY3PR01MB1134600DEBF0096A67950441086582@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <ce074521-7d4b-4514-9b2b-59b246686210@tuxon.dev>
- <TY3PR01MB11346AF4A763ECF2D2F31588C86592@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB11346AF4A763ECF2D2F31588C86592@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111234842.2024180-4-axboe@kernel.dk>
 
+On Mon, Nov 11, 2024 at 04:37:30PM -0700, Jens Axboe wrote:
+> Add a page flag that file IO can use to indicate that the IO being done
+> is uncached, as in it should not persist in the page cache after the IO
+> has been completed.
 
+I have not found a way to avoid using a new bit. I am unsure if we have
+enough bits on 32-bit systems with all possible features enabled.
 
-On 12.11.2024 11:03, Biju Das wrote:
-> Hi Claudiu,
-> 
->> -----Original Message-----
->> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->> Sent: 12 November 2024 08:31
->> Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
->>
->> Hi, Biju,
->>
->> On 11.11.2024 13:30, Biju Das wrote:
->>> Hi Claudiu,
->>>
->>>> -----Original Message-----
->>>> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->>>> Sent: 11 November 2024 11:20
->>>> Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc:
->>>> Enable SSI3
->>>>
->>>> Hi, Biju,
->>>>
->>>> On 10.11.2024 10:54, Biju Das wrote:
->>>>> Hi Claudiu,
->>>>>
->>>>> Thanks for the patch.
->>>>>
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
->>>>>> Sent: 08 November 2024 10:50
->>>>>> Subject: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable
->>>>>> SSI3
->>>>>>
->>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>>
->>>>>> Enable SSI3.
->>>>>>
->>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>> ---
->>>>>>
->>>>>> Changes in v2:
->>>>>> - none
->>>>>>
->>>>>>  arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 26
->>>>>> ++++++++++++++++++++
->>>>>>  1 file changed, 26 insertions(+)
->>>>>>
->>>>>> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
->>>>>> b/arch/arm64/boot/dts/renesas/rzg3s-
->>>>>> smarc.dtsi
->>>>>> index 4aa99814b808..6dd439e68bd4 100644
->>>>>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
->>>>>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
->>>>>> @@ -64,6 +64,11 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
->>>>>>  	};
->>>>>>  };
->>>>>>
->>>>>
->>>>> &audio_clk1 {
->>>>>        assigned-clocks = <&versa3 xx>;
->>>>>        clock-frequency = <11289600>; };
->>>>
->>>> audio_clk1 node is in the RZ/G3S dtsi to keep the compilation happy.
->>>>
->>>> For this board the audio clock1 for the SSI 3 is from <&versa3 2>.
->>>>
->>>> If we fill in the audio_clk1 here it will be useless, there will be
->>>> no consumers for it and it is not available on board.
->>>
->>> As per SSI IP needs external clks AUDIO_CLK1 and AUDIO_CLK2.
->>>
->>> AUDIO_CLK1 is provided by versa3 generator and
->>> AUDIO_CLK2 is provided by Crystal.
->>>
->>> Currently AUDIO_CLK2 it reports a frequency of 12288000 which is a
->>> multiple of 48kHz whereas for AUDIO_CLK1, it reports a frequency of 0.
->>
->> Why? You mentioned above that "AUDIO_CLK1 is provided by versa3 generator".
-> 
-> Output from versa3 generator is connector to AUDIO_CLK1 
+In the worst-case scenario, we may need to make the feature 64-bit only.
+I believe it should be acceptable as long as userspace is prepared for the
+possibility that RWF_UNCACHED may fail. It is not going to be supported by
+all filesystems anyway.
 
-According to schematics this is true.
-
-
-> that you described in
-> SoC dtsi node with the entries
-> 
-> +	audio_clk1: audio-clk1 {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		/* This value must be overridden by boards that provide it. */
-> +		clock-frequency = <0>;
-> +		status = "disabled";
-> +	};
-
-That is a clock node, placeholder in the DTSI, to make compilation happy.
-
-> 
-> This needs to be overridden by board dts,
-
-Only if used, otherwise is an useless node.
-
-> where versa3 is providing this clk.
-> Currently there is no relation between this SoC device node and versa3 clk output for audio clk1.
-
-I may be wrong or I many not understand what you are trying to say, but
-isn't what this patch does? See this diff from this patch:
-
-+&ssi3 {
-+	clocks = <&cpg CPG_MOD R9A08G045_SSI3_PCLK2>,
-+		 <&cpg CPG_MOD R9A08G045_SSI3_PCLK_SFR>,
-+		 <&versa3 2>, <&audio_clk2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ssi3_pins>, <&audio_clock_pins>;
-+	status = "okay";
-+};
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
