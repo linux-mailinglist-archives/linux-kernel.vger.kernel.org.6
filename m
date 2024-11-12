@@ -1,185 +1,121 @@
-Return-Path: <linux-kernel+bounces-406845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED95D9C6503
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:18:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC0A69C6509
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:21:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D36E1F24B85
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:18:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62F061F24543
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A43A21B449;
-	Tue, 12 Nov 2024 23:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D6621C168;
+	Tue, 12 Nov 2024 23:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBoOfsQI"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aGO4PHGY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABDC1CD1E1;
-	Tue, 12 Nov 2024 23:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9831FCC7B;
+	Tue, 12 Nov 2024 23:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731453526; cv=none; b=Ke6djeCz3gTeOB2d8kL4+wHNc5g7VpI32acQW00tasGUn1FzEVzrmWf22SEEMkTCzPXMYYqbbX1yJpCe6uIQV2e4D6I2jTm6UEwjyTC+cPw/A+4Tw7gTF2XnafC4DP9eZS73W/POtWIfCGpkAV7bIFWjW0fkzY5i0xc129CPizA=
+	t=1731453686; cv=none; b=TZPKKKr4VbDTLICrQMud4OXn8MxtrRwXBsqVgDpgKJXRyUZ9UnzgzWhwrW0E/8cv+nFMiTHAwNe5TWyDGgCkzlrbwQcOkM9yPkathC+kRLZG9fJ4uBcDx2wRJgQMX3LMjP2oxtwJHPT1ESN9bN7nguE6EJtnlzH7Xnf5Ev4ZTFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731453526; c=relaxed/simple;
-	bh=j5tp8BIiEuvNmH9bABxgSGDA3hZWAh0HdrW6c8kKxmc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A0SXcBtud0ZViPr+YxX597gbGth/UStWw2Yq1/QjdsYhF4062bKOkvRtE420j2/FgGYi6FfhC0rJZ+iOoJbHRlgGFD06q/qDaG/LfiMiVymF4e38DresmuBZGHZ+2OeEHhj78ZRlWEE1ZHVeVsDEJnRLYj6IcKZqDfJRBoQo//Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBoOfsQI; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-84fc9005dccso2260180241.3;
-        Tue, 12 Nov 2024 15:18:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731453524; x=1732058324; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pi+pYaGR6y7Ai0UyIsT80xxaJyBdGHeNxbYRSDfpr2w=;
-        b=QBoOfsQIMmXcR/AdjSa2AEvlj0nd7JAHdZreMEzvP4n+RNZAI00P1ZC9yvrDWOLihD
-         71bnyS1G/X/R2xiuWhA9SfbMJQq2ZjMsR47ROVFxEdCw++oYjjCitrvWfOIGQgmO19Yz
-         fBPmwVvbWVmgpnOgmwFCRXWeZk+6vO4Sf0nVRnMFyK5Rkv4yReMS09F/hkxAjPHrVrZZ
-         4oNuBYfs81FnWOvBshwIqn16Q/SYhzfsSO2qWGM5c0pLUIJdwSQgORPH6KsyIjX1rFb0
-         YvXbED9CLwWuRPBJUv2EFfPIVSsH0Z3vUQFpTBKqCtbg3Wjstwj7xHIBacojNvPGXXVH
-         03FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731453524; x=1732058324;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pi+pYaGR6y7Ai0UyIsT80xxaJyBdGHeNxbYRSDfpr2w=;
-        b=hS/T9SVT4FvusjyVlDApo/jJOl432507qUHjT5HTtXY74cYpnIzPraH3dwcSNs7bxm
-         cVJqL2JdgtN+R6yE49pRsF2Jt2yPSEjPhoQl53La0M9ntvV/wJm/H1hxHftFiT53GRq9
-         CJgxok24r7TE3+rs4EMgiFeEZ1mLEQggl7Xzh9a0Ue9xTgBm3hDpcasahc6NWHph94v5
-         ig6FpQ2hxKHLgZMLqe2k5P8IqfgUwTUhB+91qk2m5FNZt+8sRPWYnBKR3uybOt9IPGyG
-         7kWqIibt6bAe2Cy/Zk3k+Q4lfzcNSksggyZ3s2MGEnzkRuVgevt8QDuqDhRXhV2ls6Xb
-         qU0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU2b5vUXtSFZ0q1Xo1EJv2tk1JNKi4Lfuar8P9XngroRqYm7j1YCfow7SCnfOaG6v9XwZRKKoe8PCZQAFg=@vger.kernel.org, AJvYcCUVoofW7ARt6a9qQEdybpXeQOvWk2yWqV/RKeUfKc7XqsJ5GiR7uADK+Y8zukaKb7Z9HORylOs1b21CuvPOQ3k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCfxpCFPAJdczmrLdFUn/5WSS5/n3fyjc82wm6eZ+hH/301WqY
-	1BuJw5CDa8D4avuBlX/13WSqvbfgU6DTQEvy+1zlnEAdn+3Lf/1UXRSRMAEITG0BZxjY5kgIf8u
-	eYD7ryt81gRqKBad1Q48IW05xv/U=
-X-Google-Smtp-Source: AGHT+IE0KMxl2L7FAgAF1uK83iGl2fLu73Z+liQ++G7K8FyZY20uV35uKgP4t4LCX9V/512WmwQrkmrPAyRu/F2cdHg=
-X-Received: by 2002:a05:6102:f14:b0:4a4:97d1:aea0 with SMTP id
- ada2fe7eead31-4ad468a3023mr1095260137.11.1731453523763; Tue, 12 Nov 2024
- 15:18:43 -0800 (PST)
+	s=arc-20240116; t=1731453686; c=relaxed/simple;
+	bh=pf5m812P4MpW8rpJVvllGJLZbUndrZP5mDpwz5bvzQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YjrYJIxMEVfkds5QiT9RTOX/sWeP5lozoj3d52GEXXUWpkc+4+NejykB0m1yUf84IlzzlxIcM75Xh0mUY8V0eJ5oPDq2vzejULYMOhgVba4SJnKcgR7caN850sPzzsziKkjEOHp/AiC0YEOOOgYWrT2bGwgvn92GeyvJolkKVKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aGO4PHGY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F084C4CECD;
+	Tue, 12 Nov 2024 23:21:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731453685;
+	bh=pf5m812P4MpW8rpJVvllGJLZbUndrZP5mDpwz5bvzQw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aGO4PHGYreJ8XxVHinU3igucwMCbUdi18QBVZzLsJfUEpNlXATUHnb8tGnJkEOyfe
+	 dgOMrh5LUehS/d982NRoNjRW2gmZ3ztSBIWQ5EruxZpI8VRJkLqTlpuh6l5TA/6Bgd
+	 8f5ZOe23ZvXY1SUp7hhAEiLe4Hf4W6vMkkvnJcu5JgezAxqwEBCK4wztiq4vqlZeFQ
+	 kOHEisXaMWl/rXhUWGHT+4K6FKrbJ06g6TCog2kTzk1It/UBD5o7nakcTZHO/vrBgo
+	 A1yeVjscWK5CJmKD0/eSo47aA2vPxH8504HdCki/ZVLfgCYZVtOQ8RmAgLOnMPAeo3
+	 K3cVluZFr5CIA==
+Date: Tue, 12 Nov 2024 17:21:22 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/6] PCI: pwrctl: Add power control driver for qps615
+Message-ID: <sfygtqch7ldrvtfdfumwmejkekv2j2hcoqemu4ne3bvejqdpdd@dons6axfbywx>
+References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
+ <20241112-qps615_pwr-v3-6-29a1e98aa2b0@quicinc.com>
+ <qyoh5vsdcih7vs3aq3ltw3dxkxqe6jdpugh64i2hyjm2in7bl3@okblag6jl4gv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111112615.179133-1-alistair@alistair23.me>
- <x6OyXuGQi1xeknAX_pjcl17BOpxRM6OGtLWGhGOH4LUgghJaP29a4ebzCT21QdfxBb88PwZCc2U7zizrTTSzVg==@protonmail.internalid>
- <20241111112615.179133-2-alistair@alistair23.me> <878qtqt1n4.fsf@kernel.org>
- <SnLsh8RJ31-mqOVagPGJkEkUNFbHMWOubRf9pTxflqODI9Hf_iCJm2u0hUV5lY0mwT6WqGQ_4uYd12M2kmPYqw==@protonmail.internalid>
- <CAKmqyKNjjELzVbWgBHaHr8N1XnOJHk-U6RfLyb-FbTJ7h9jPoA@mail.gmail.com> <87iksssrhr.fsf@kernel.org>
-In-Reply-To: <87iksssrhr.fsf@kernel.org>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Wed, 13 Nov 2024 09:18:17 +1000
-Message-ID: <CAKmqyKPs_nZh4dq6VWty=1WXuPHLCzBs78CBqi7szs+tr37S8g@mail.gmail.com>
-Subject: Re: [PATCH v3 01/11] rust: bindings: Support some inline static functions
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Alistair Francis <alistair@alistair23.me>, linux-kernel@vger.kernel.org, 
-	boqun.feng@gmail.com, me@kloenk.dev, benno.lossin@proton.me, 
-	tmgross@umich.edu, aliceryhl@google.com, gary@garyguo.net, ojeda@kernel.org, 
-	rust-for-linux@vger.kernel.org, alex.gaynor@gmail.com, 
-	alistair.francis@wdc.com, bjorn3_gh@protonmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <qyoh5vsdcih7vs3aq3ltw3dxkxqe6jdpugh64i2hyjm2in7bl3@okblag6jl4gv>
 
-On Tue, Nov 12, 2024 at 7:58=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
-.org> wrote:
->
-> "Alistair Francis" <alistair23@gmail.com> writes:
->
-> > On Mon, Nov 11, 2024 at 10:07=E2=80=AFPM Andreas Hindborg <a.hindborg@k=
-ernel.org> wrote:
-> >>
-> >> "Alistair Francis" <alistair@alistair23.me> writes:
-> >>
-> >> <cut>
-> >>
-> >> > diff --git a/rust/exports.c b/rust/exports.c
-> >> > index 587f0e776aba..288958d2ebea 100644
-> >> > --- a/rust/exports.c
-> >> > +++ b/rust/exports.c
-> >> > @@ -18,6 +18,7 @@
-> >> >  #include "exports_core_generated.h"
-> >> >  #include "exports_helpers_generated.h"
-> >> >  #include "exports_bindings_generated.h"
-> >> > +#include "exports_bindings_static_generated.h"
-> >>
-> >> Generating `exports_bindings_static_generated.h` depends on `exports.o=
-`,
-> >> which depends on `exports.c`. Does this not create chicken-egg kind of
-> >> problem?
-> >
-> > It is a bit confusing as there are a few levels of autogeneration, but
-> > Make happily handles it.
-> >
-> > `exports.c` depends on `exports_bindings_static_generated.h`
-> >
-> > But `exports_bindings_static_generated.h` depends on `extern.o`
-> > (extern not exports).
-> >
-> > `extern.o` then depends on `extern.c`
-> >
-> > `extern.c` then depends on `bindings_generated_static.rs`, which is
-> > generated by bindgen.
-> >
-> > So there isn't a chick-egg problem and this happily builds from a clean=
- tree.
->
-> Right, I think I mixed up exports/extern.
->
-> Anyway, it does not build for me. I applied it on top of `rust-next` and
-> I get:
->
-> ..
-> =E2=94=82  CC      rust/extern.o                                         =
-                                                                           =
-                                                                           =
-                                                                           =
-                                    =E2=94=82
-> =E2=94=82/home/aeh/src/linux-rust/helpers/rust/extern.c:1:10: fatal error=
-: '/home/aeh/src/linux-rust/helpers/bindings/bindings_helper.h' file not fo=
-und                                                                        =
-                                                                           =
-                                    =E2=94=82
-> =E2=94=82    1 | #include "/home/aeh/src/linux-rust/helpers/bindings/bind=
-ings_helper.h"                                                             =
-                                                                           =
-                                                                           =
-                                    =E2=94=82
-> =E2=94=82      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~~~~~~~~~                                                             =
-                                                                           =
-                                                                           =
-                                    =E2=94=82
-> =E2=94=821 error generated.                                              =
-                                                                           =
-                                                                           =
-                                                                           =
-                                    =E2=94=82
+On Tue, Nov 12, 2024 at 09:51:42AM -0600, Bjorn Andersson wrote:
+> On Tue, Nov 12, 2024 at 08:31:38PM +0530, Krishna chaitanya chundru wrote:
+> > QPS615 is the PCIe switch which has one upstream and three downstream
+> > ports. To one of the downstream ports ethernet MAC is connected as endpoint
+> > device. Other two downstream ports are supposed to connect to external
+> > device. One Host can connect to QPS615 by upstream port. QPS615 switch
+> > needs to be configured after powering on and before PCIe link was up.
+> > 
+> > The PCIe controller driver already enables link training at the host side
+> > even before qps615 driver probe happens, due to this when driver enables
+> > power to the switch it participates in the link training and PCIe link
+> > may come up before configuring the switch through i2c. To prevent the
+> > host from participating in link training, disable link training on the
+> > host side to ensure the link does not come up before the switch is
+> > configured via I2C.
+> > 
+> > Based up on dt property and type of the port, qps615 is configured
+> > through i2c.
+> 
+> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+> 
 
-Thanks for testing this
+Sorry, while I think this looks okay, this patch still does not compile.
 
-The #include in `extern.c` is auto-generated by bindgen based on your
-current directory. So for an out of tree build I guess it's just
-wrong. I'll fixup the sed operation to ensure we correct the path to
-be a relative path instead.
+Trying to compile this code with either clang 14 or 17 I still get the
+following error:
 
-Alistair
+  CC [M]  drivers/pci/pwrctl/pci-pwrctl-qps615.o
+In file included from drivers/pci/pwrctl/pci-pwrctl-qps615.c:6:
+In file included from ./include/linux/delay.h:13:
+In file included from ./include/linux/sched.h:13:
+In file included from ./arch/arm64/include/asm/processor.h:29:
+In file included from ./include/linux/cache.h:6:
+In file included from ./arch/arm64/include/asm/cache.h:43:
+In file included from ./arch/arm64/include/asm/cputype.h:228:
+In file included from ./arch/arm64/include/asm/sysreg.h:1129:
+./include/linux/bitfield.h:166:3: error: call to '__bad_mask' declared with 'error' attribute: bad bitfield mask
+  166 |                 __bad_mask();
+      |                 ^
+./include/linux/bitfield.h:166:3: error: call to '__bad_mask' declared with 'error' attribute: bad bitfield mask
+2 errors generated.
+make[5]: *** [scripts/Makefile.build:229: drivers/pci/pwrctl/pci-pwrctl-qps615.o] Error 1
+make[4]: *** [scripts/Makefile.build:478: drivers/pci/pwrctl] Error 2
+make[3]: *** [scripts/Makefile.build:478: drivers/pci] Error 2
+make[2]: *** [scripts/Makefile.build:478: drivers] Error 2
+make[1]: *** [/home/bjorn/sandbox/kernel/sm8150/Makefile:1946: .] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
 
->
->
-> I am doing out of tree build - maybe that is the culprit?
->
->
-> Best regards,
-> Andreas Hindborg
->
->
+This is caused by the way you invoke u32_replace_bits()
+
+Regards,
+Bjorn
 
