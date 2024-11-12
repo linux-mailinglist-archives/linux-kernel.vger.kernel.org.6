@@ -1,109 +1,98 @@
-Return-Path: <linux-kernel+bounces-405425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238459C5127
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:49:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF71E9C512B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:50:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD4F9282E30
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:49:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A375E282742
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCBA154456;
-	Tue, 12 Nov 2024 08:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42DF20BB5C;
+	Tue, 12 Nov 2024 08:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AVc1DM/E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="In6O58hI"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D5320B808;
-	Tue, 12 Nov 2024 08:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89DB154456;
+	Tue, 12 Nov 2024 08:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731401349; cv=none; b=dyvUmWShUbyQ420/r5QPz4J0QFIMPVW0hMpR3Bx/yFqgpw/8amw93S1AbXdVzxTtkVwaZBd+Svh81DvIDV0kjBeC++v/Vlm2Yt+XpbH4hRwvlTNGYCyiO2BO1WKRD9JH6MsYNDAAcYyIr8gNfwX4tgDqB9qSnYH7lw5TLi+O5uI=
+	t=1731401433; cv=none; b=FSJbff/0eoIDWOHqJFSOOUvNpbY0xI1l10UZHBdV9BOmuOtL5b2hvjRcZGXkeqM1sN9+ZsVS4Sy9c2odiwvdllOPcGGQvLcWsHopz1SqLVAvp8uj26DA8cUmSGRxODi8575H1GEoYXW99wC3k0KutAY88MGwyp+zRHBo8w7B30I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731401349; c=relaxed/simple;
-	bh=u538irlfig+WMEwsMmlEFU1cqwsNMdddm/USlMeIkBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UWV0gbqDKE72mVbDWI4jCg0NZxbd60TW3LopDHdlwNRH8N2Rw3P1l3bfoTIcfnNN/bFYKVZvmXa4Mt/x05X9/fSQ+v/gP1YFVpefpWMdSTcUN8s4k8zCzUyQq9tonf9umvf9q46W/n2LeSZJ4P+6uCcELb/duCBFSUTX8NkqbHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AVc1DM/E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8CB1C4CECD;
-	Tue, 12 Nov 2024 08:49:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731401348;
-	bh=u538irlfig+WMEwsMmlEFU1cqwsNMdddm/USlMeIkBY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AVc1DM/EPVB2wQu92rKsU0+HxLdCnE9chDFn1H3G7+zDIiSemycjucvtl2EDcQras
-	 gHfeFjstY9cSbcWjSwrIQIfXxx8vG18GhCzTF0G5uK0SDIAm0R4YINfELjggpiQ9WY
-	 uVgD2Q+Nv/o4l7rZ4vd72Vtp/WjWH3tTqgV2SqcazDZu2QGNZdOimcLwACDl5IlEvK
-	 8oEzTDup0f5DsbOERWQUgsEs/7SCCDwDoNvjXzpkDgDpWA6UoiW54thGjAlP3t3ggc
-	 O9m5ebyLbRtEpbXTduTQqMr/6uj+fRsx8aYLG8hTV9aD4XlYMCC8I8ODxvfqZf79Ca
-	 RPq2z7oyX/+xg==
-Date: Tue, 12 Nov 2024 09:49:03 +0100
-From: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
-To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Ivan Mikhaylov <i.mikhaylov@yadro.com>, 
-	linux-leds@vger.kernel.org, "David S . Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Add LED mode behavior/select properties and handle
-Message-ID: <fuk5stahnpinahhyixdgeepchucvfbha3ikqagewxhxlh5337x@zuo46w4enzp4>
-References: <20201209140501.17415-1-i.mikhaylov@yadro.com>
- <20201216224118.GA31740@amd>
- <ZzMPr3TlEErExRqr@FUE-ALEWI-WINX>
+	s=arc-20240116; t=1731401433; c=relaxed/simple;
+	bh=03q15j2Lt3IeGTt82CCDiHL9P0XgGA7sbC/p4V8tOcs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FX1AgeryFNtm2AlkclPTrAlWEmaDoJ89AjWNrxgC+ayC6+ivZR6n/r1SE2VAj+maQkH2Gh8VvD0Ja4dOE0Pt4zjXXrF33ws65/fzkJq2DlhNJBg5ySOdvbxfjDJr+Up5tnerUNCehr6Mk2koaU7Yy5XpphyxABES+eeccR/22nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=In6O58hI; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ea64af4bbbso372860a12.1;
+        Tue, 12 Nov 2024 00:50:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731401431; x=1732006231; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=03q15j2Lt3IeGTt82CCDiHL9P0XgGA7sbC/p4V8tOcs=;
+        b=In6O58hIKTMfcC3E8KPWlfuDD5kLE5lqnSekYzE0ZxOzdhQjtid2URXD99AHMjTPrt
+         /fLTICikmuBVCgY0eZ3cWyTeHUGj14vkHRpci193t/soGba2PSs/JA2J/fQBGdmIb2KS
+         ewf8vzzNPijEYHejtm6xtj1rJDm6T607hizaTqBGa8rMfT9f9eWck811kK3jcxVZgVlC
+         uOxnK7FU3CvVp2DZA6tiMDI5UL1iOTUYr9gwXIEY4THuzEExcNdToOk78sVo6+2LTqLd
+         XZtK7FpLbPdNYUxHcW7J9i8StPxlryOwYM7oRv5z119glie1FONcEkqZKe4SAWqH/IBx
+         x4gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731401431; x=1732006231;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=03q15j2Lt3IeGTt82CCDiHL9P0XgGA7sbC/p4V8tOcs=;
+        b=Zaao2cQhBBohCBNH+dxhcJeG6EKb2QBBQFH9aUPtIQNsz8OcoHFCTwUDNed1pjnhX2
+         JgEEfIGJ/WNUbnAV2R/a7mjWY2cotWhnTGjqMzBjOzVNkfiJTGqYAnWY8+IQqpaI2tgw
+         JHly0QLiyUpcYn/7nY0/fgDRw7ldsVs03IE3h6KJxt8xvthq3MmDMOojpnmazhyQHuH0
+         8K8ZyOVHk2vSZwrFvTQboTCkmtDzmODwPqftBed3cOfastegPEIlD/u+spaFdowuhj3n
+         HyVh6MrhmlY/ecKJAtnn1hdx/8dn3NFZY4FAaoJNjC7bEJndGoHZNf2JKTN8MlcRUuFU
+         ZDNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9DxEYguJBxXJ39ieVGQ6h/K1sufmF0I5Kilu57njn0wTmbR2EqGDgRogUbyrKkP8pi84vysXwjVQAGw==@vger.kernel.org, AJvYcCVGJaalq5DlfHx/bC6SU2Le4lHhN4uGbJfCQ0nDhGx7DFFSjJTbyYBaeGcaTdoGmV0tIPrsmHgOc+kaL1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQlggMVSlm67lEq9q/68bwbnPzEwdu61+dmFPk6FrPbi6R68Ee
+	bMU0MGbiGJOiRRcJpXTB0xPCFh6VtUu60vtZ9BjgveuVWk6T3dWJf/7KeztOXTqvm68iJeuyiCm
+	Tg/UwWmi8GameQF2s3ySbooCyO94=
+X-Google-Smtp-Source: AGHT+IFDw7PNTYCy+RAJj95O+zz3G9plt0FLhubHfcJ8mKg1/oWHQ95bYKlN8xKb+wuqb+75Owt84XotyXCroFWBDl4=
+X-Received: by 2002:a17:90b:4b42:b0:2e2:e860:f69d with SMTP id
+ 98e67ed59e1d1-2e9b167af91mr8695106a91.7.1731401430898; Tue, 12 Nov 2024
+ 00:50:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzMPr3TlEErExRqr@FUE-ALEWI-WINX>
+References: <20241111175842.550fc29d@canb.auug.org.au> <CANiq72=JhmDJJCgcG5ex2A1gvBxCg3wzzutUc3L1HLPrPsHeyA@mail.gmail.com>
+ <CANiq72nyWAhyORsDij6P6U7Ww=eCp6S=LzPWZN4wxGD8JiK+RQ@mail.gmail.com>
+ <CANiq72mYq-53xB9WFTH3H78WLrQuJze-nEybjwyLqnrSbv8UqA@mail.gmail.com> <20241112172920.6aedc927@canb.auug.org.au>
+In-Reply-To: <20241112172920.6aedc927@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 12 Nov 2024 09:50:18 +0100
+Message-ID: <CANiq72kCYzyYQZVfXOO0u6N2aBccHtEjnAZZr6yoFa85YZVZwQ@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the rust tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 09:19:59AM +0100, Alexander Wilhelm wrote:
-> Am Wed, Dec 16, 2020 at 11:41:19PM +0100 schrieb Pavel Machek:
-> > Hi!
-> > 
-> > > In KSZ9131 PHY it is possible to control LEDs blink behavior via
-> > > LED mode behavior and select registers. Add DTS properties plus handles
-> > > of them inside micrel PHY driver.
-> > > 
-> > > I've some concerns about passing raw register values into LED mode
-> > > select and behavior. It can be passed via array like in microchip
-> > > driver(Documentation/devicetree/bindings/net/microchip,lan78xx.txt).
-> > > There is the problem in this particular driver - there is a lot of other PHYs
-> > > and led mode behavior/select states may intersect, that's the reason why
-> > > I did it this way. Is there any good ways to make it look more
-> > > properly?
-> > 
-> > Lets... not do this?
-> > 
-> > We have a LED subsystem which should probably control the LEDs... so
-> > user can specify behaviours at run-time, instead of them being
-> > hard-coded in the device tree.
-> > 
-> > Plus, LED subsystem will use same interface for networks LEDs as for
-> > ... other LEDs.
-> 
-> Hi Pavel,
-> 
-> I would also like to control the LEDs via subsystem interface, but how I can
-> configure those to be visible in 'sys/class/leds'? My LEDs are connected
-> directly to KSZ9131RNX phy device and not to any of GPIO available on the CPU.
-> Am I missing some DTS entries therefore?
+On Tue, Nov 12, 2024 at 7:30=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Its all good, no build failures and conflicts still there (but rerere
+> took care of those).
 
-The KSZ9131RNX driver needs to implement some LED methods, like
-.led_brightness_set(), .led_blink_set(), .led_hw_is_supported(),
-.led_hw_control_set(), .led_hw_control_get().
+Great, thanks!
 
-Look for example at marvell.c driver, or broadcom.c.
-
-Regarding DTS, look at linux/arch/arm/boot/dts/marvell/armada-370-rd.dts.
-The ethernet-phy@0 node has leds subnode, describing the LEDs.
-
-Marek
+Cheers,
+Miguel
 
