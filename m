@@ -1,76 +1,65 @@
-Return-Path: <linux-kernel+bounces-405532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5923C9C5286
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:58:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 170189C528F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:59:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61F81F2204C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:58:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD661F23555
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE46420E329;
-	Tue, 12 Nov 2024 09:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAB520FAB3;
+	Tue, 12 Nov 2024 09:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TZrc5F1o"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAjHOal1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C877F1E4AD;
-	Tue, 12 Nov 2024 09:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B37420E31C;
+	Tue, 12 Nov 2024 09:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731405485; cv=none; b=Tz0hMVa1ThB6r4wTgyKyH8FRGn8oVTfpq10k6lQKMWNCUD9zx5TXFTprvuBHz/oDZCgePUALF8AaFGJsotCrRxMmxvDTOdFVjWA03MoHweeOzr7caBEnn82ozATFbVlgPQ8r2uFH52c1mQiNUtFc+Hy4rd4nIWKDfxwTaan6HR0=
+	t=1731405535; cv=none; b=fI7Q+MVOWXarXbrl6uhv0WQ4Fl0viERHvg69mealS/ykfUG/ZpFk63Du/brwZxR0QVgzi//SR0LnX8yn5P8Y16KzWE3/Kf0En611bZJl1rrXejQ+u6aX122PML3JH4r9Y3GxASL1LW4D/Qp3u63Z7aDuar0m5bCWto/d0f/R3QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731405485; c=relaxed/simple;
-	bh=FYwKX44a4chADa+zBgV8O2gk95sOkV/2PizgSwnwgTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VckNfay3WLaaQbubzHn8G0h2Oc9uVqCxqV8G63Xh94mRLXYRJsNUOuciD/qXm9FnVAlzfYitNSZyXVxELPX2+WuVGE60M4ZWTiYHuDxQXPxPMSA9FG2lMLqC/F/zQzFrIGzg+coxgZtgyzuWqVaEDBkeH1RrCJ9HK2k81ulXqhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TZrc5F1o; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731405484; x=1762941484;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=FYwKX44a4chADa+zBgV8O2gk95sOkV/2PizgSwnwgTA=;
-  b=TZrc5F1oHlB1w/iUAU24a2oyzz6ELUCfehWAchWfHieXMfmLwbdVKrAv
-   rcGLct1bADl+odYDagf7PKDlnI0t9mDycjPYZTavfxP+FlNfG+N92Z2/t
-   ZBqe37r1zp4xMcvaHknL21JW1YripRjVP981j+vqd8sW04kG0XtRfo7R/
-   7NiCzSm/7Ja14GYFbDd4G8UojRM4XIAN5PbG/wxnYi6MkrJ/KiV3vE54S
-   GMEpntsBQqT99j6Vyz1G0uP1YQY1S7pnLNGicnBIOmbzLw+gp+xisSeAU
-   AWB9v3F3qnnNbj0p980ncQljURiFqSyoVUlzLoh/5fMzOoC9uG44IcJqu
-   Q==;
-X-CSE-ConnectionGUID: I2mKurlVTLOtS3VITcRO0A==
-X-CSE-MsgGUID: /1UPG2VeTyuRiF61lOCLzQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41792423"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41792423"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 01:58:03 -0800
-X-CSE-ConnectionGUID: li7PhifSRmyxfF2knLeXzA==
-X-CSE-MsgGUID: wJAhsyRVQF+55jh3Z/tRAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="87545992"
-Received: from iklimasz-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.105])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 01:57:59 -0800
-Date: Tue, 12 Nov 2024 11:57:54 +0200
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
-	seanjc@google.com, yan.y.zhao@intel.com, isaku.yamahata@gmail.com,
-	kai.huang@intel.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xiaoyao.li@intel.com,
-	reinette.chatre@intel.com
-Subject: Re: [PATCH v2 00/25] TDX vCPU/VM creation
-Message-ID: <ZzMmomR-orhes_-p@tlindgre-MOBL1>
-References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
- <d0cf8fb2-9cff-40d0-8ffb-5d0ba9c86539@intel.com>
- <ZzHTLO-TM_5_Q7U3@tlindgre-MOBL1>
- <2f0b7e2c-2d1d-4390-8cc9-72a0c3d44370@intel.com>
+	s=arc-20240116; t=1731405535; c=relaxed/simple;
+	bh=Z1viKT12L8Y2BLw1uaPLyAgZcHy96ritO3DNvdtjbL8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=t6/5AmtuXlHgYe+1zyHctif9Uvr2jmdKdpTTuklCeuXwt5hUeS91lzjwf1jEI/as7wgp8rBwLq9yyJ6Vt8lssSjGm5DwunMQxD3UZunhOzhckh0HU/jiIDK+K/nYgGaAanc26UyzshIikRL7/nKLcrXxwT+bMpB+vyIiZgB21/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PAjHOal1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80036C4CECD;
+	Tue, 12 Nov 2024 09:58:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731405534;
+	bh=Z1viKT12L8Y2BLw1uaPLyAgZcHy96ritO3DNvdtjbL8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=PAjHOal13UfwsfmGlpR8f0QMtnWMaeruStnH4LUN97c89MCInPk8Tb2TqoOY6Rco/
+	 LTttx3UYymEXmeRvJ5mViWTuaEEc0G1n50G+vdfpCX31ooBMypOzXcpntN9w7eUhRe
+	 7B0LiEwNmV+EBRmVugq5NTTNgWK7VEZN8Df+n9CLociYeUpl7+JxlenQZZQCOa/S2T
+	 Ajxu9uCwK0n4K5k5UgnH9IQh5RS0QOo8PXTGW9sQuNH/leH081FIg+XTOFw5O13bjN
+	 m8FaJ71FJYLoVJlDTLT8lZf8SMht+cVQyQkkNqwcbjAa4/7geAiCYCd9LSza5Rfvzn
+	 /2vzaFmWQggJA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Alistair Francis" <alistair23@gmail.com>
+Cc: "Alistair Francis" <alistair@alistair23.me>,
+  <linux-kernel@vger.kernel.org>,  <boqun.feng@gmail.com>,
+  <me@kloenk.dev>,  <benno.lossin@proton.me>,  <tmgross@umich.edu>,
+  <aliceryhl@google.com>,  <gary@garyguo.net>,  <ojeda@kernel.org>,
+  <rust-for-linux@vger.kernel.org>,  <alex.gaynor@gmail.com>,
+  <alistair.francis@wdc.com>,  <bjorn3_gh@protonmail.com>
+Subject: Re: [PATCH v3 01/11] rust: bindings: Support some inline static
+ functions
+In-Reply-To: <CAKmqyKNjjELzVbWgBHaHr8N1XnOJHk-U6RfLyb-FbTJ7h9jPoA@mail.gmail.com>
+	(Alistair Francis's message of "Tue, 12 Nov 2024 08:58:07 +1000")
+References: <20241111112615.179133-1-alistair@alistair23.me>
+	<x6OyXuGQi1xeknAX_pjcl17BOpxRM6OGtLWGhGOH4LUgghJaP29a4ebzCT21QdfxBb88PwZCc2U7zizrTTSzVg==@protonmail.internalid>
+	<20241111112615.179133-2-alistair@alistair23.me>
+ <878qtqt1n4.fsf@kernel.org>
+	<SnLsh8RJ31-mqOVagPGJkEkUNFbHMWOubRf9pTxflqODI9Hf_iCJm2u0hUV5lY0mwT6WqGQ_4uYd12M2kmPYqw==@protonmail.internalid>
+	<CAKmqyKNjjELzVbWgBHaHr8N1XnOJHk-U6RfLyb-FbTJ7h9jPoA@mail.gmail.com>
+Date: Tue, 12 Nov 2024 10:58:40 +0100
+Message-ID: <87iksssrhr.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,54 +67,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2f0b7e2c-2d1d-4390-8cc9-72a0c3d44370@intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 09:26:36AM +0200, Adrian Hunter wrote:
-> On 11/11/24 11:49, Tony Lindgren wrote:
-> > On Thu, Oct 31, 2024 at 09:21:29PM +0200, Adrian Hunter wrote:
-> >> On 30/10/24 21:00, Rick Edgecombe wrote:
-> >>> Here is v2 of TDX VM/vCPU creation series. As discussed earlier, non-nits 
-> >>> from v1[0] have been applied and it’s ready to hand off to Paolo. A few 
-> >>> items remain that may be worth further discussion:
-> >>>  - Disable CET/PT in tdx_get_supported_xfam(), as these features haven’t 
-> >>>    been been tested.
-> >>
-> >> It seems for Intel PT we have no support for restoring host
-> >> state.  IA32_RTIT_* MSR preservation is Init(XFAM(8)) which means
-> >> the TDX Module sets the MSR to its RESET value after TD Enty/Exit.
-> >> So it seems to me XFAM(8) does need to be disabled until that is
-> >> supported.
-> > 
-> > So for now, we should remove the PT bit from tdx_get_supported_xfam(),
-> > but can still keep it in tdx_restore_host_xsave_state()?
-> 
-> Yes
-> 
-> > 
-> > Then for save/restore, maybe we can just use the pt_guest_enter() and
-> > pt_guest_exit() also for TDX. Some additional checks are needed for
-> > the pt_mode though as the TDX module always clears the state if PT is
-> > enabled. And the PT_MODE_SYSTEM will be missing TDX enter/exit data
-> > but might be otherwise usable.
-> 
-> pt_guest_enter() / pt_guest_exit() are not suitable for TDX.  pt_mode
-> is not relevant for TDX because the TDX guest is always hidden from the
-> host behind SEAM.  However, restoring host MSRs is not the only issue.
-> 
-> The TDX Module does not validate Intel PT CPUID leaf 0x14
-> (except it must be all zero if Intel PT is not supported
-> i.e. if XFAM bit 8 is zero).  For invalid MSR accesses by the guest,
-> the TDX Module will inject #GP.  Host VMM could provide valid CPUID
-> to avoid that, but it would also need to be valid for the destination
-> platform if migration was to be attempted.
-> 
-> Disabling Intel PT for TDX for now also avoids that issue.
+"Alistair Francis" <alistair23@gmail.com> writes:
 
-OK thanks for the detailed explanation.
+> On Mon, Nov 11, 2024 at 10:07=E2=80=AFPM Andreas Hindborg <a.hindborg@ker=
+nel.org> wrote:
+>>
+>> "Alistair Francis" <alistair@alistair23.me> writes:
+>>
+>> <cut>
+>>
+>> > diff --git a/rust/exports.c b/rust/exports.c
+>> > index 587f0e776aba..288958d2ebea 100644
+>> > --- a/rust/exports.c
+>> > +++ b/rust/exports.c
+>> > @@ -18,6 +18,7 @@
+>> >  #include "exports_core_generated.h"
+>> >  #include "exports_helpers_generated.h"
+>> >  #include "exports_bindings_generated.h"
+>> > +#include "exports_bindings_static_generated.h"
+>>
+>> Generating `exports_bindings_static_generated.h` depends on `exports.o`,
+>> which depends on `exports.c`. Does this not create chicken-egg kind of
+>> problem?
+>
+> It is a bit confusing as there are a few levels of autogeneration, but
+> Make happily handles it.
+>
+> `exports.c` depends on `exports_bindings_static_generated.h`
+>
+> But `exports_bindings_static_generated.h` depends on `extern.o`
+> (extern not exports).
+>
+> `extern.o` then depends on `extern.c`
+>
+> `extern.c` then depends on `bindings_generated_static.rs`, which is
+> generated by bindgen.
+>
+> So there isn't a chick-egg problem and this happily builds from a clean t=
+ree.
 
-Regards,
+Right, I think I mixed up exports/extern.
 
-Tony
+Anyway, it does not build for me. I applied it on top of `rust-next` and
+I get:
+
+..
+=E2=94=82  CC      rust/extern.o                                           =
+                                                                           =
+                                                                           =
+                                                                           =
+                                  =E2=94=82
+=E2=94=82/home/aeh/src/linux-rust/helpers/rust/extern.c:1:10: fatal error: =
+'/home/aeh/src/linux-rust/helpers/bindings/bindings_helper.h' file not foun=
+d                                                                          =
+                                                                           =
+                                  =E2=94=82
+=E2=94=82    1 | #include "/home/aeh/src/linux-rust/helpers/bindings/bindin=
+gs_helper.h"                                                               =
+                                                                           =
+                                                                           =
+                                  =E2=94=82
+=E2=94=82      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~~~~~~~                                                               =
+                                                                           =
+                                                                           =
+                                  =E2=94=82
+=E2=94=821 error generated.                                                =
+                                                                           =
+                                                                           =
+                                                                           =
+                                  =E2=94=82
+
+
+I am doing out of tree build - maybe that is the culprit?
+
+
+Best regards,
+Andreas Hindborg
+
+
 
