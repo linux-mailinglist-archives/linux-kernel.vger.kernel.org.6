@@ -1,95 +1,215 @@
-Return-Path: <linux-kernel+bounces-406126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD399C5B35
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:02:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209E59C5B3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:04:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739A61F21331
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:02:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A9B1F23D9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC0F20011E;
-	Tue, 12 Nov 2024 14:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF82F2003A9;
+	Tue, 12 Nov 2024 15:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCshjeoy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qm28EQd0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9704720011F;
-	Tue, 12 Nov 2024 14:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050262003D4;
+	Tue, 12 Nov 2024 15:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423546; cv=none; b=R+tqJEHeYWqlCS3DLrvbf63mh1E11ecgmLbqLhUTHxU+2ZcMy+pJoZRycRAnRd/3Eh0hUmIOiig0Vl6yN4LgDxrDKmRbHzn6DtNiMs3Ga6L8YEnO8frswy3cChNJRVPs5uUkRGhGQE4AmIVALd9NYKy1xOQwfTTcXsPHzdusaf4=
+	t=1731423671; cv=none; b=F08rgRR8/8DqS7C8VLTrL42n1cMaBAIqxcsHjEk7Hah+8fCDKSlEfkrjkjdLPEQKx0Z8WStiSNk8AB+dWvlZUVp9PMNNFKznAC0fdKkycxeoViihYkVpW/O0FqGsKKCMAHVgglrV6rq3enGNM+qE+kwFKRumxPBVrTMCp5u+61Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423546; c=relaxed/simple;
-	bh=DpsWLJxtohQJudxgWo/V7PQCzAkmAY48E5oG2OuDKmo=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=MUgFO8d46a7OlZBWcHPL3+v+GqgmAr/1hxFt+Jm3wbH6kcf6UhpWEVELrjFHo2zYQJL/vvu01dbQNaukpio8XTb/8OQ4ggnAnNwAaAiqBE7mH90vtgTdifr8v8zD7T4qzNqWdzxpjFeD59N5hdrzFkaqRLHXEnDwWXmxsY47z+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RCshjeoy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DA7EC4CECD;
-	Tue, 12 Nov 2024 14:59:05 +0000 (UTC)
+	s=arc-20240116; t=1731423671; c=relaxed/simple;
+	bh=Gf8uszhCfusiw1ItUnt3wAwlqc3863Gu5tZDl/Tw5bI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N0bAKm51EpUwAI5mKXML4giKcNjfpd+ceoLY8ilW1YwCV4lH1UTjJfGmY52Oxb5bmHY5PRQfOx5nNP8bSa0x2UG8dT07NOJBXQRBiCKs2+keNURj0g0HVgcZoLyQPCpBig61LAszVNm51ZyTsn4Y8Zf0jaHgGaYlU00t24dMFuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qm28EQd0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AD8DC4CECD;
+	Tue, 12 Nov 2024 15:01:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731423546;
-	bh=DpsWLJxtohQJudxgWo/V7PQCzAkmAY48E5oG2OuDKmo=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=RCshjeoyuwM7Ojxw0bPmH++yRLgJ26P7Wvhx9yYlTWvW8W+bLZoX2imjVLgBxnDcZ
-	 LGtXQB07WTs+77RVdXCjW3yBuWsJ+UkQveevGNzSGKgJYVdjcRzjayDmbgfKKCGXrl
-	 RnJMMYQNBDbC8so7O/SLc0VNkmeUDocgeLWvgZFBskqzbE6FGipM5SlrhGY1SKbe2r
-	 Z5MQi8WyFI0zWIXQbHGgncM51EVaYxEtcifejjYhKRr39v4VUT4NGbDBekvbxBGBr/
-	 euuhNHbwuewtf9jBN6sevXh+tPHWFpecj5BW9L5jqJ9w7uO/jvygp4ZL6Oiy1m00Fp
-	 9ji/0/uIBVdGw==
-From: Kalle Valo <kvalo@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>,  <ath11k@lists.infradead.org>,
-  <linux-wireless@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] wifi: ath11k: add support for QCA6698AQ
-References: <20241031000541.3331606-1-quic_miaoqing@quicinc.com>
-	<bb1c77cb-7efc-4c85-a946-5394b9105416@quicinc.com>
-Date: Tue, 12 Nov 2024 16:59:03 +0200
-In-Reply-To: <bb1c77cb-7efc-4c85-a946-5394b9105416@quicinc.com> (Jeff
-	Johnson's message of "Thu, 31 Oct 2024 07:58:56 -0700")
-Message-ID: <87o72k4hxk.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1731423670;
+	bh=Gf8uszhCfusiw1ItUnt3wAwlqc3863Gu5tZDl/Tw5bI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qm28EQd0YllKNaLq16hQuq31v2NXg7WusBq6E/6dmSioCEnypeGf6UuzsnH+CICET
+	 3hcV3l5LVKY8c8t21QKZ6glWV2X1LSrJVqc/DLDVx8+5B+N483LxlGIPSA3/xXwWXx
+	 LyYmfRzsCSBFocUJrKcEaTHBqT9kmeKUFfyD++nNfCI0zb8IY5LLd1AUiJqla2VF2c
+	 5kM2mCQz3OxgXl/X+1wDnH07Y5zwPbODQFnTDhgL2YFyv3mZef4xZYTUkyejS+qG2B
+	 0QRQ2n8WHbZnRDUTCjxXbWoM6OpaFANFOLCNeiwUkxpjRqafDSPtq+Ehad4Qugu0sG
+	 k5snDbVzisKxg==
+Received: from [104.132.45.109] (helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tAsOC-00CE6n-9o;
+	Tue, 12 Nov 2024 15:01:08 +0000
+Date: Tue, 12 Nov 2024 15:01:07 +0000
+Message-ID: <875xosts24.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: James Clark <james.clark@linaro.org>, Fuad Tabba <tabba@google.com>
+Cc: broonie@kernel.org,
+	kvmarm@lists.linux.dev,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Don't save FP traps in default cptr_el2 value
+In-Reply-To: <20241112105032.793274-1-james.clark@linaro.org>
+References: <20241112105032.793274-1-james.clark@linaro.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 104.132.45.109
+X-SA-Exim-Rcpt-To: james.clark@linaro.org, tabba@google.com, broonie@kernel.org, kvmarm@lists.linux.dev, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+On Tue, 12 Nov 2024 10:50:31 +0000,
+James Clark <james.clark@linaro.org> wrote:
+> 
+> kvm_get_reset_cptr_el2() is called at vcpu init before the vcpu is
+> loaded. Since the linked commit, the fp state was moved from the vcpu to
+> host data but it shouldn't be accessed at this point.
+> 
+> Move the bits that require guest_owns_fp_regs() out of the default value
+> and into just before they're used in activate and deactivate traps. This
+> fixes the following bug when nvhe && vcpu_has_sve() == true:
+> 
+>  BUG: using smp_processor_id() in preemptible [00000000] code: lkvm/118
+>  caller is debug_smp_processor_id+0x20/0x30
+>  CPU: 0 UID: 0 PID: 118 Comm: lkvm Not tainted 6.12.0-rc1+ #35
+>  Hardware name: FVP Base RevC (DT)
+>  Call trace:
+>   dump_backtrace+0xfc/0x120
+>   show_stack+0x24/0x38
+>   dump_stack_lvl+0x3c/0x98
+>   dump_stack+0x18/0x28
+>   check_preemption_disabled+0xe0/0xe8
+>   debug_smp_processor_id+0x20/0x30
+>   guest_owns_fp_regs+0x1c/0xb0
+>   kvm_arch_vcpu_ioctl+0xcfc/0xe10
+>   kvm_vcpu_ioctl+0x6c4/0x8a0
+>   __arm64_sys_ioctl+0x9c/0xe0
+>   invoke_syscall+0x4c/0x110
+>   el0_svc_common+0xb8/0xf0
+>   do_el0_svc+0x28/0x40
+>   el0_svc+0x4c/0xc0
+>   el0t_64_sync_handler+0x84/0x100
+>   el0t_64_sync+0x190/0x198
+> 
+> Fixes: 5294afdbf45a ("KVM: arm64: Exclude FP ownership from kvm_vcpu_arch")
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+> 
+> I'm only mildly confident that the logic here is equivalent to before.
+> Someone with a bit more context about the FP stuff can say, or if there
+> is a neater way to fix this issue altogether.
+> 
+>  arch/arm64/include/asm/kvm_emulate.h | 15 +++++++++------
+>  arch/arm64/kvm/hyp/nvhe/switch.c     |  3 ++-
+>  2 files changed, 11 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+> index cf811009a33c..0eefb9fb08a0 100644
+> --- a/arch/arm64/include/asm/kvm_emulate.h
+> +++ b/arch/arm64/include/asm/kvm_emulate.h
+> @@ -629,16 +629,12 @@ static __always_inline u64 kvm_get_reset_cptr_el2(struct kvm_vcpu *vcpu)
+>  			val |= CPACR_EL1_SMEN_EL1EN;
+>  	} else if (has_hvhe()) {
+>  		val = CPACR_ELx_FPEN;
+> -
+> -		if (!vcpu_has_sve(vcpu) || !guest_owns_fp_regs())
+> +		if (!vcpu_has_sve(vcpu))
+>  			val |= CPACR_ELx_ZEN;
+>  		if (cpus_have_final_cap(ARM64_SME))
+>  			val |= CPACR_ELx_SMEN;
+>  	} else {
+>  		val = CPTR_NVHE_EL2_RES1;
+> -
+> -		if (vcpu_has_sve(vcpu) && guest_owns_fp_regs())
+> -			val |= CPTR_EL2_TZ;
+>  		if (cpus_have_final_cap(ARM64_SME))
+>  			val &= ~CPTR_EL2_TSM;
+>  	}
+> @@ -648,8 +644,15 @@ static __always_inline u64 kvm_get_reset_cptr_el2(struct kvm_vcpu *vcpu)
+>  
+>  static __always_inline void kvm_reset_cptr_el2(struct kvm_vcpu *vcpu)
+>  {
+> -	u64 val = kvm_get_reset_cptr_el2(vcpu);
+> +	u64 val = vcpu->arch.cptr_el2;
+>  
+> +	if (has_hvhe()) {
+> +		if (!guest_owns_fp_regs())
+> +			val |= CPACR_ELx_ZEN;
+> +	} else if (!has_vhe()) {
+> +		if (vcpu_has_sve(vcpu) && guest_owns_fp_regs())
+> +			val |= CPTR_EL2_TZ;
+> +	}
+>  	kvm_write_cptr_el2(val);
+>  }
+>  
+> diff --git a/arch/arm64/kvm/hyp/nvhe/switch.c b/arch/arm64/kvm/hyp/nvhe/switch.c
+> index cc69106734ca..296c4155e1fc 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/switch.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/switch.c
+> @@ -60,7 +60,8 @@ static void __activate_traps(struct kvm_vcpu *vcpu)
+>  			val |= CPTR_EL2_TFP | CPTR_EL2_TZ;
+>  
+>  		__activate_traps_fpsimd32(vcpu);
+> -	}
+> +	} else if (!has_hvhe() && vcpu_has_sve(vcpu))
+> +		val |= CPTR_EL2_TZ;
+>  
+>  	kvm_write_cptr_el2(val);
+>  	write_sysreg(__this_cpu_read(kvm_hyp_vector), vbar_el2);
 
-> On 10/30/2024 5:05 PM, Miaoqing Pan wrote:
->> QCA6698AQ IP core is the same as WCN6855 hw2.1, they share the same
->> PCI device ID, the same major and minor version numbers, the same
->> register address, and same HAL descriptors, etc. The most significant
->> difference is that QCA6698AQ has different RF, IPA, thermal, etc.
->> 
->> Follow the approach done in commit 5dc9d1a55e95 ("wifi: ath11k: add
->> support for QCA2066"), enumerate the subversion number to identify the
->> specific card.
->> 
->> Tested-on: QCA6698AQ hw2.1 PCI WLAN.HSP.1.1-04479-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
->> 
->> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
->
-> Am I correct that this satisfies at least a subset of the devices you were
-> trying to support with the following?
-> https://lore.kernel.org/all/20241024002514.92290-1-quic_miaoqing@quicinc.com/
->
-> If so, can you reply to that thread, pointing to this new patch, and elaborate
-> on what is now supported and what still requires ath11k to support
-> board-specific firmware overrides?
+I think this is papering over the real issue, which is that we
+conflate reset value for the host and what is required for the guest
+to run.
 
-That question is still open but otherwise this patch looks good to me.
-But I'll give an Acked-by only after I understand what's that "NFA765
-m.2 card for IoT platforms" mentioned in the other thread is.
+CPTR_EL2 is state-dependent, as you found out. And that really only
+means one single thing: it cannot be initialised outside of the vcpu
+being either loaded or run, both of which require being in a
+non-preemptible section.
+
+There is also another thing: VHE rebuilds the guest's CPTR_EL2 view
+from scratch, while the nVHE takes the saved state, mutates it in
+funny ways before applying it, and pKVM does all sorts of interesting
+manipulations before hitting the nVHE code.
+
+What I would really like to see is:
+
+- when entering the guest, we recompute the run-time value of CPTR_EL2
+  from scratch, just like VHE does.
+
+- when exiting the guest, we reset the value using the current helper,
+  which takes the guest state into account.
+
+- pKVM should be converted to using the plain nVHE code.
+
+- vcpu->arch.cptr_el2 should be killed.
+
+I think Fuad has already started on some of that. Fuad, do you mind
+adding that to your current rework and post something shortly?
+
+Thanks,
+
+	M.
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Without deviation from the norm, progress is not possible.
 
