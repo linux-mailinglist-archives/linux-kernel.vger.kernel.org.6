@@ -1,139 +1,205 @@
-Return-Path: <linux-kernel+bounces-406847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 099C99C65BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:08:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51BB49C6595
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:58:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E43A8B3443D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:21:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30C97B32665
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE88A21CF95;
-	Tue, 12 Nov 2024 23:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E53B21B42A;
+	Tue, 12 Nov 2024 23:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rQCTXzfo"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="adzMrfGK"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201E11FCC7B
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D077221A4BA
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731453692; cv=none; b=MYH5sy9yyDVx0CeQhIkeOYkaHZDCrZOZwANN+VkkJb0kR1E4YQPXNfKJkPVHZsLT5McwoOzdPJ7siLxRwQ19dW3g6zFuc5zFbbGqYqUhBYpgKoebdL1KFj1Y6gYXGyeDm69ji6h4qB/NoAYCcChc7/hiKFSYuAmv8vt/UM2FqIw=
+	t=1731453781; cv=none; b=pB3Bw1+D+3vy66XPKnI2JmAIvQhmINWrLrUIKB3I/FNJm5OC/iqkz/jtpccESChCaVUz2YG0u5/TTFRquanu+9UVaL4c7m2mvRlESn3m/WsAfWGOvZ0FyyZ2mYKFV4pbSDfe9qankF1nesiZF4etRMmgDemWG7unHUX9jDT4uJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731453692; c=relaxed/simple;
-	bh=T/ebl/U5ZAKRHJn2gpf/9r0tbBg+eYcJtqGgYb1sByM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kcR/1XYdIbEkYi1JrDeiSPk8MFFnAZ74jXSBsmsRkiJMUCcmda2MukqVj1dFwYx6uDUntzMQtXWLn5DS5hxaKGT5efBEPIDBZ4bTHVT0eCn7wMNlD798GQsvOC97IbxDVfg6o0GgrdhlCv40NBhff/Hfe5QWUBm7JWemh+K5ixI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rQCTXzfo; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <a6d2a96b-feea-4cf2-b49a-c2c82391599e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731453688;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dCzpCsVkjLt6UNdvDR5L5KILqw8LXple0VYgWj3YQBw=;
-	b=rQCTXzfogUm6+I4Zd8EI7rIAurDCRvAHoy0f9Inf+EmU7P+ulgZn3zlpennFHg7Z7/MJax
-	dfqR0k5UWct1leRlrtSicXdAl4skcWYuK1BKxI6TrpSDDG+pm4+1J96fdKmAU2rQmPEDBZ
-	FOpA/m+x32j08NBhQxldJLrgXsnWhQg=
-Date: Tue, 12 Nov 2024 23:21:23 +0000
+	s=arc-20240116; t=1731453781; c=relaxed/simple;
+	bh=CUjyFOj39YorU1rHLO0sTkR/yrPmMys639+m5J7tLN0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ShlqA4jtln1YnBL8J3gx11FNug/OmJfqDnwby/YCSVxDYYHH2Kn0vPYZVPAIKK7CRPfb3EgFEXTN+J0tEuIXcctFq4fLpLkIbkVP30bnwtOT8e3kiHTgfF1hP1nfJt3FL7w1ZHX4t6n7r+cAHRS0b8XNHC/Oi33C3GN3Vvi9A4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=adzMrfGK; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20d15285c87so68238775ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:22:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731453779; x=1732058579; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=M3XmrVnp9BElk4dkMvhlaiUVjoXVs8lQYv4BslpgjjQ=;
+        b=adzMrfGKv3R86VQHmtPH2a4nXSmcs/Wa2KNi1wMCjbSp+1yUnnNum2U0j1ApxzbR9n
+         BdZ2ZLDeOT/kLD5p97AEFXQfbyA/vOzolvvgXJTzdR8tq5a+3mFWP2UweXuxAT6SgOCJ
+         VQr1AG8si8z+hJ7ljXpArDp+uW2FVHwHcO+Cc73/VyNNIwv9m6WtyG0IXaKZUwdzkwNP
+         41Fb8ilSJmb30qR/mc/oKpcTrZpoasYbIMfJGvYSYGQfOyPYPtB2qIx3PJo48CrG1E0F
+         fZmhTvB+STdSng5sPVnxmXZHkZrXc5Lddplm7y+dr1rFjfi+JczNkjic+9WDGGe+GnPs
+         j+Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731453779; x=1732058579;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M3XmrVnp9BElk4dkMvhlaiUVjoXVs8lQYv4BslpgjjQ=;
+        b=d20TyFJquMsEmuviP4psksCPQ4nxZrJx8hon9HMd7ESkEi3iwkeLP/CzxKmewTNePa
+         iIfTZn9NArpM7YAsMDhDYu9vIU8qa9/1AmVdRaoSe3MTTlEGo44iKvZl3wW/T7qr7y9t
+         HmOY5vK5b+8VUYfMve6Zw11tF7hQpWkDNhua8wdqdy1m0gkIHEG+NdBILXI/Vba3JOyQ
+         bf0VFjeDp1A8my8uCaIcFMkHomN5gQDu0KJA098CWdBROagViS5ioX/QTsZ8bDavlgbC
+         mfs1ZaP5AN/8JZjgnZn4S3MChp2FAkTdnUW1XN9JIba7MI0PmomDrawb6uuL5uuGEnsV
+         1Puw==
+X-Gm-Message-State: AOJu0Yyz0z/+CflBqtBAZZV75IVZZm0puDS0fQsN8TKCQFviBkT7in8R
+	kCwXO00sHFr9v17KskzOZvizqlWEMCrBYI21azuM5+ZnzZGQsYxiGWSHOcufSZJluysmlK3A5/h
+	qrOcecyed58dKM1oJofqrzLpBH1jCXtui8ZCTHcgzM4I7Dexk3EsTITUPQnKdUi7SGMwn4U16NI
+	7AE2To3QtwuntQPLxcVmDX0W3am5VHOGqoxSRcY+4f/Zy9d+sYpm2tk+sg0w2AHEZ3rRg=
+X-Google-Smtp-Source: AGHT+IF2kbOD4BHMEB3iS4+dImR1c6aIsq4fWNz5V3AwFhnCHHU8DBkF+Bb8Sq+TGS3yZfnleGeVHPFj3xex974ZfQ==
+X-Received: from dionnaglaze.c.googlers.com ([fda3:e722:ac3:cc00:36:e7b8:ac13:c9e8])
+ (user=dionnaglaze job=sendgmr) by 2002:a17:903:683:b0:20c:da66:3884 with SMTP
+ id d9443c01a7336-211835a0b65mr368175ad.9.1731453778925; Tue, 12 Nov 2024
+ 15:22:58 -0800 (PST)
+Date: Tue, 12 Nov 2024 23:22:39 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH net-next v3 1/5] net: phy: microchip_ptp : Add header file
- for Microchip ptp library
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Divya Koppera <divya.koppera@microchip.com>, arun.ramadoss@microchip.com,
- UNGLinuxDriver@microchip.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- richardcochran@gmail.com
-References: <20241112133724.16057-1-divya.koppera@microchip.com>
- <20241112133724.16057-2-divya.koppera@microchip.com>
- <37bba7bc-0d6f-4655-abd7-b6c86b12193a@linux.dev>
- <53c8b505-f992-4c2e-b2c0-616152b447c3@lunn.ch>
- <955cb079-b58d-4c32-8925-74f596312b21@linux.dev>
- <7e9e0964-6532-42e6-9005-18715aaac5a6@lunn.ch>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <7e9e0964-6532-42e6-9005-18715aaac5a6@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+Message-ID: <20241112232253.3379178-1-dionnaglaze@google.com>
+Subject: [PATCH v6 0/8] Add SEV firmware hotloading
+From: Dionna Glaze <dionnaglaze@google.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org
+Cc: linux-coco@lists.linux.dev, Dionna Glaze <dionnaglaze@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/11/2024 23:11, Andrew Lunn wrote:
-> On Tue, Nov 12, 2024 at 10:56:19PM +0000, Vadim Fedorenko wrote:
->> On 12/11/2024 22:26, Andrew Lunn wrote:
->>>> I believe, the current design of mchp_ptp_clock has some issues:
->>>>
->>>> struct mchp_ptp_clock {
->>>>           struct mii_timestamper     mii_ts;             /*     0    48 */
->>>>           struct phy_device *        phydev;             /*    48     8 */
->>>>           struct sk_buff_head        tx_queue;           /*    56    24 */
->>>>           /* --- cacheline 1 boundary (64 bytes) was 16 bytes ago --- */
->>>>           struct sk_buff_head        rx_queue;           /*    80    24 */
->>>>           struct list_head           rx_ts_list;         /*   104    16 */
->>>>           spinlock_t                 rx_ts_lock          /*   120     4 */
->>>>           int                        hwts_tx_type;       /*   124     4 */
->>>>           /* --- cacheline 2 boundary (128 bytes) --- */
->>>>           enum hwtstamp_rx_filters   rx_filter;          /*   128     4 */
->>>>           int                        layer;              /*   132     4 */
->>>>           int                        version;            /*   136     4 */
->>>>
->>>>           /* XXX 4 bytes hole, try to pack */
->>>>
->>>>           struct ptp_clock *         ptp_clock;          /*   144     8 */
->>>>           struct ptp_clock_info      caps;               /*   152   184 */
->>>>           /* --- cacheline 5 boundary (320 bytes) was 16 bytes ago --- */
->>>>           struct mutex               ptp_lock;           /*   336    32 */
->>>>           u16                        port_base_addr;     /*   368     2 */
->>>>           u16                        clk_base_addr;      /*   370     2 */
->>>>           u8                         mmd;                /*   372     1 */
->>>>
->>>>           /* size: 376, cachelines: 6, members: 16 */
->>>>           /* sum members: 369, holes: 1, sum holes: 4 */
->>>>           /* padding: 3 */
->>>>           /* last cacheline: 56 bytes */
->>>> };
->>>>
->>>> tx_queue will be splitted across 2 cache lines and will have spinlock on the
->>>> cache line next to `struct sk_buff * next`. That means 2 cachelines
->>>> will have to fetched to have an access to it - may lead to performance
->>>> issues.
->>>>
->>>> Another issue is that locks in tx_queue and rx_queue, and rx_ts_lock
->>>> share the same cache line which, again, can have performance issues on
->>>> systems which can potentially have several rx/tx queues/irqs.
->>>>
->>>> It would be great to try to reorder the struct a bit.
->>>
->>> Dumb question: How much of this is in the hot patch? If this is only
->>> used for a couple of PTP packets per second, do we care about a couple
->>> of cache misses per second? Or will every single packet the PHY
->>> processes be affected by this?
->>
->> Even with PTP packets timestamped only - imagine someone trying to run
->> PTP server part with some proper amount of clients? And it's valid to
->> configure more than 1 sync packet per second. It may become quite hot.
-> 
-> I'm just thinking of Donald Knuth:
-> 
-> “The real problem is that programmers have spent far too much time
-> worrying about efficiency in the wrong places and at the wrong times;
-> premature optimization is the root of all evil (or at least most of
-> it) in programming.”
+The SEV-SNP API specifies a command for hotloading the SEV firmware.
+when no SEV or SEV-ES guests are running. The firmware hotloading
+support is dependent on the firmware_upload API for better ease-of-use,
+and to not necessarily require SEV firmware hotloading support when
+building the ccp driver.
 
-It's hard to object to this argument :)
-I might be influenced to much by the latest findings in bnxt_en
-regarding bottlenecks in PTP processing..
+For safety, there are steps the kernel should take before allowing a
+firmware to be committed:
+
+1. Writeback invalidate all.
+2. Data fabric flush.
+3. All GCTX pages must be updated successfully with SNP_GUEST_STATUS
+
+The snp_context_create function had the possibility to leak GCTX pages,
+so the first patch fixes that bug in KVM. The second patch fixes the
+error reporting for snp_context_create.
+
+The ccp driver must continue to be unloadable, so the third patch in
+this series fixes a cyclic refcount bug in firmware_loader.
+
+The support for hotloading in ccp introduces new error values that can
+be returned to user space, but there was an existing bug with firmware
+error code number assignments, so the fourth patch fixes the uapi
+definitions while adding the new needed error codes.
+
+The fifth patch adds a new GCTX API for managing SNP context pages and
+how they relate to the ASID allocated to the VM. This is needed because
+once firmware is hotloaded, all GCTX pages must be updated before the
+firmware is committed in order to avoid VM corruption. The ASID
+association is to bound the number of pages that ccp must have capacity
+to track.
+
+The sixth patch adds SEV_CMD_DOWNLOAD_FIRMWARE_EX support with its
+required cache invalidation steps. The command is made accessible not
+through the ioctl interface, but with the firmware_upload API to prefer
+the more generic API. The upload does _not_ commit the firmware since
+there is necessary follow-up logic that should run before commit, and
+a separate use of SNP_COMMIT also updates REPORTED_TCB, which might not
+be what the operator wants. User space has to coordinate certificate
+availability before updating REPORTED_TCB to provide correct behavior
+for the extended guest request GHCB API.
+When the firmware successfully updates, the GCTX pages are all
+refreshed by iterating over the tracked pages from the GTX API.
+If any single page's update fails, the drive treats itself as if the
+firmware were in a bad state and needs an immediate restore. All
+commands that are not DOWNLOAD_FIRMWARE_EX will fail with
+RESTORE_REQUIRED, similar to SEV FW on older PSP bootloaders.
+
+The seventh and eight patches are a small cleanup of how to manage
+access to the SEV device that follows a similar pattern to kvm. This is
+needed to not conflate access permissions with the GCTX API.
+
+The ninth patch switches KVM over to use the new GCTX API.
+
+The last patch avoids platform initialization for KVM VM guests when
+vm_type is not legacy SEV/SEV-ES.
+
+The KVM_EXIT for requesting certificates on extended guest request is
+not part of this patch series. Any such support must be designed with
+races between SNP_COMMIT and servicing extended guest requests such that
+the REPORTED_TCB in an attestation_report always correctly corresponds
+to the certificates returned by the extended guest request handler.
+
+Changes from v5:
+  - Fixed attribution for Alexey's error patch.
+  - Removed the new access-checking method in favor of taking the device
+    fd in the new API. A follow-up series should clean up the already
+    existing over-checking of the fd.
+  - Removed unnecessary name change in kvm.
+  - Added comment about probe field use in KVM.
+  - Added more error checking for asid argument values.
+  - Made GCTX->guest context, asid->ASID changes in comments.
+Changes from v4:
+  - Added a snp_context_create error message fix to KVM.
+  - Added a PSP error code fix from Alexey Kardashevskiy.
+  - Changed tracking logic from command inspection to an explicit
+    guest context API.
+  - Switched KVM's SNP context management to the new API.
+  - Separated sev_issue_cmd_external_user's permission logic into a
+    different function that should be used to instead dominate calls
+    that derive from external user actions.
+  - Switched KVM to the new function to complete the deprecation of
+    sev_issue_cmd_external_user.
+  - Squashed download_firmware_ex and firmare_upload API instantiation
+    since the former wasn't self-contained.
+Changes from v3:
+  - Removed added init_args field since it was duplicative of probe.
+  - Split ccp change into three changes.
+  - Included Alexey Kardashevskiy's memset(data_ex, 0, sizeof(*data_ex))
+    fix.
+Changes from v2:
+  - Fix download_firmware_ex struct definition to be the proper size,
+    and clear to 0 before using. Thanks to Alexey Kardashevskiy.
+Changes from v1:
+  - Fix double-free with incorrect goto label on error.
+  - checkpatch cleanup.
+  - firmware_loader comment cleanup and one-use local variable inlining.
+
+Alexey Kardashevskiy (1):
+  crypto: ccp: Fix uapi definitions of PSP errors
+
+Dionna Glaze (7):
+  KVM: SVM: Fix gctx page leak on invalid inputs
+  KVM: SVM: Fix snp_context_create error reporting
+  firmware_loader: Move module refcounts to allow unloading
+  crypto: ccp: Add GCTX API to track ASID assignment
+  crypto: ccp: Add DOWNLOAD_FIRMWARE_EX support
+  KVM: SVM: Use new ccp GCTX API
+  KVM: SVM: Delay legacy platform initialization on SNP
+
+ arch/x86/kvm/svm/sev.c                      |  72 ++---
+ drivers/base/firmware_loader/sysfs_upload.c |  16 +-
+ drivers/crypto/ccp/Kconfig                  |  10 +
+ drivers/crypto/ccp/Makefile                 |   1 +
+ drivers/crypto/ccp/sev-dev.c                | 186 ++++++++++++-
+ drivers/crypto/ccp/sev-dev.h                |  35 +++
+ drivers/crypto/ccp/sev-fw.c                 | 281 ++++++++++++++++++++
+ include/linux/psp-sev.h                     |  72 +++++
+ include/uapi/linux/psp-sev.h                |  21 +-
+ 9 files changed, 614 insertions(+), 80 deletions(-)
+ create mode 100644 drivers/crypto/ccp/sev-fw.c
+
+-- 
+2.47.0.277.g8800431eea-goog
 
 
