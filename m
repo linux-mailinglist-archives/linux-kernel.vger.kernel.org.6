@@ -1,207 +1,108 @@
-Return-Path: <linux-kernel+bounces-406522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213859C6060
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:26:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B64D9C6071
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:31:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE3CF1F24284
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:26:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5B8E2851E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24302216446;
-	Tue, 12 Nov 2024 18:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875F421744B;
+	Tue, 12 Nov 2024 18:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5U+LRIh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YxZJ5DeX"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B982161FE;
-	Tue, 12 Nov 2024 18:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341E92170D3
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731435998; cv=none; b=AFQLyGFpkRBu0orLqJG911kG8IbXvlz5H7cXTcNoVv8e9l6a4Pm9J9FLdVWmXKWyO5KkoRAJD/bNTf5X91rVAw0YpFYIXmyy5q58nV4Md/AILIM0ZAP0J7zI72btvQKnCiGokAn0owQdRgl+iUakvcHS0H1ckFIBkm089EcHM4g=
+	t=1731436304; cv=none; b=M1HpftaDZup6FB8X50HezNXLZVoyB0UOCouEFFo/XRIX5M9cllbLQXulZkmd4f0BME+cT2zwMcQlEI5OQg+a/AaKQdMf6DpHZXXl0dl11U/ABGtRV2TXDtID9vklB3eUu6s41n0thH1R2zv/U1gDK+I7C5fCfC9sAeGe6rJq2Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731435998; c=relaxed/simple;
-	bh=+k+xazJIGWsZNMEpds/k53QfQTCdhfxkPLySez4LE18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tnIrhQKPswfKyOWd0AfJufkxEQYl8Vh6BUSsacUgjFbdlnh2B3ICaEESsakQo6C4TiQZD712BhmUAku1U6GqUWS6vP14Uj2k9KXJ+yiTrauYBou259VVPmxmRa+Fo3gULTdoyA6Uodc6MKYtx4fhghHjbuJjsDRfqQEdQtE02CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5U+LRIh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3523EC4CECD;
-	Tue, 12 Nov 2024 18:26:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731435998;
-	bh=+k+xazJIGWsZNMEpds/k53QfQTCdhfxkPLySez4LE18=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=n5U+LRIhCMYo75eL8Sr2nV5MaLYGBrX+1rI9p2Rl/cmj2K0Hy6U9JwvAuy1FShAaD
-	 MzSmxrAfdO98KGMvaAl5zOa23OXRllVvOCFVl77jiHiqQROcjnAaN0GsKqvtDq4HrT
-	 xuYA1tA5ioeIr1e83XLPYbmbNF8KA+JEVdQG8LjzbCZcyqdCo2jiVG1HNvXajOb38e
-	 ZwygvQZ9ZSQQNRih4aZUdHr/0RGtsZ566QZeVWcppB0kqDPNqaWGuYWQgapne3dtOs
-	 zZVrOnlm18nsB5w0UPZnRjt43hrCa1GUWdql6rUZWi/5GDPPp5gxnU8ZbATWOvizFS
-	 eIuz8pAaWbRKQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D2396CE0D89; Tue, 12 Nov 2024 10:26:37 -0800 (PST)
-Date: Tue, 12 Nov 2024 10:26:37 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>,
-	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
-	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-	dlustig@nvidia.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	lkmm@lists.linux.dev, torvalds@linux-foundation.org
-Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
- case-insensitive filesystem.
-Message-ID: <de5485b8-6d88-46f6-b982-cdfb3cf80a13@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241111164248.1060-1-egyszeregy@freemail.hu>
- <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
- <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
- <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
- <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
- <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
- <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
- <62634bbe-edd6-4973-a96a-df543f39f240@rowland.harvard.edu>
- <61075efa-8d53-455b-bba3-e88bbf4da0a5@paulmck-laptop>
- <75a5a694-1313-44b1-baff-d72559ac9039@rowland.harvard.edu>
+	s=arc-20240116; t=1731436304; c=relaxed/simple;
+	bh=muS5YqxBg1X4aKFuoG3dKehUBVF2a3t+rvoZaz64Fy4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RXgsmLCivxKBVS7YJe90RjRp3T+WQpZ8fSaT4AJgfNSHHYwhQXURD95DuRj7bEWT0vGvKqTIhqhVJMOdagznW07oYeXDjyEA7f1WCsrblR6Q0E7lOPkGe+aVwM6T4KqjSfciUtAVN+eNTolr6ws0fXkIatDBYL5PaDMbw4ZpYgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YxZJ5DeX; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731436300;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0hPGUSawC3wfWVUaw8imv0OPqbrEwJlGlsqYQZ9dtME=;
+	b=YxZJ5DeXQCszRej4fDorjEZSMYJ72k/sG0pUZPjWHKvAo7y0NNk458TBedYu/ez7YpWImb
+	1FhJ48RFUHTxQwwIk60kpQ9rVwGEYbPRUcCEIWY4nmtT/VlKr6gWfubiua+qKSmxC8+p03
+	0Y7dmQyxzYmxs58A2p+EuFQC8vI15QI=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: David Woodhouse <dwmw2@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] jffs2: Use str_yes_no() helper function
+Date: Tue, 12 Nov 2024 19:31:11 +0100
+Message-ID: <20241112183113.173127-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <75a5a694-1313-44b1-baff-d72559ac9039@rowland.harvard.edu>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 12, 2024 at 10:35:25AM -0500, Alan Stern wrote:
-> On Mon, Nov 11, 2024 at 08:20:05PM -0800, Paul E. McKenney wrote:
-> > On Mon, Nov 11, 2024 at 07:59:33PM -0500, Alan Stern wrote:
-> > > On Mon, Nov 11, 2024 at 10:15:30PM +0100, Szőke Benjamin wrote:
-> > > > warning: the following paths have collided (e.g. case-sensitive paths
-> > > > on a case-insensitive filesystem) and only one from the same
-> > > > colliding group is in the working tree:
-> > > > 
-> > > >   'tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus'
-> > > >   'tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus'
-> > > 
-> > > I support the idea of renaming one of these files.  Not to make things 
-> > > work on case-insensitive filesystems, but simply because having two 
-> > > files with rather long (and almost nonsensical) names that are identical 
-> > > aside from one single letter is an excellent way to confuse users.
-> > > 
-> > > Come on -- just look at the error report above.  Can you tell at a 
-> > > glance, without going through and carefully comparing the two strings 
-> > > letter-by-letter, exactly what the difference is?  Do you really think 
-> > > anybody could?
-> > > 
-> > > I haven't looked to see if there are any other similar examples in the 
-> > > litmus-tests directory, but if there are than they should be changed 
-> > > too.
-> > 
-> > It does jump out at me,
-> 
-> Maybe this means you've spent too much of your life concentrating on 
-> these files!  :-)
+Remove hard-coded strings by using the str_yes_no() helper function.
 
-It is all too easy to argue that I have spent too much of my life
-concentrating on files in general, not just these.  ;-)
+Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ fs/jffs2/nodemgmt.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-> >  but even if it didn't, the usual use of tab
-> > completion and copy/paste should make it a non-problem, not?
-> 
-> Those things help when people want to type in a filename.  They do not 
-> help when people are trying to read the filenames, figure out what the 
-> difference between them is, compare a name mentioned in one place to a 
-> name mentioned in another place, or understand how the names are related 
-> to the file contents.
+diff --git a/fs/jffs2/nodemgmt.c b/fs/jffs2/nodemgmt.c
+index bbab2bdc71b6..69569864630e 100644
+--- a/fs/jffs2/nodemgmt.c
++++ b/fs/jffs2/nodemgmt.c
+@@ -15,6 +15,7 @@
+ #include <linux/mtd/mtd.h>
+ #include <linux/compiler.h>
+ #include <linux/sched/signal.h>
++#include <linux/string_choices.h>
+ #include "nodelist.h"
+ #include "debug.h"
+ 
+@@ -317,9 +318,9 @@ static int jffs2_find_nextblock(struct jffs2_sb_info *c)
+ 			   And there's no space left. At all. */
+ 			pr_crit("Argh. No free space left for GC. nr_erasing_blocks is %d. nr_free_blocks is %d. (erasableempty: %s, erasingempty: %s, erasependingempty: %s)\n",
+ 				c->nr_erasing_blocks, c->nr_free_blocks,
+-				list_empty(&c->erasable_list) ? "yes" : "no",
+-				list_empty(&c->erasing_list) ? "yes" : "no",
+-				list_empty(&c->erase_pending_list) ? "yes" : "no");
++				str_yes_no(list_empty(&c->erasable_list)),
++				str_yes_no(list_empty(&c->erasing_list)),
++				str_yes_no(list_empty(&c->erase_pending_list)));
+ 			return -ENOSPC;
+ 		}
+ 
+@@ -883,7 +884,7 @@ int jffs2_thread_should_wake(struct jffs2_sb_info *c)
+ 
+ 	jffs2_dbg(1, "%s(): nr_free_blocks %d, nr_erasing_blocks %d, dirty_size 0x%x, vdirty_blocks %d: %s\n",
+ 		  __func__, c->nr_free_blocks, c->nr_erasing_blocks,
+-		  c->dirty_size, nr_very_dirty, ret ? "yes" : "no");
++		  c->dirty_size, nr_very_dirty, str_yes_no(ret));
+ 
+ 	return ret;
+ }
+-- 
+2.47.0
 
-All true, but beyond a certain point, we can solicit help from our
-friendly nearby computer.  For example, create a temporary directory,
-use "touch" to create the two names (based on copy and paste) in that
-temporary directory, then let bash tab completion help us out.
-
-But you make a good point later...
-
-> > find . -print | tr 'A-Z' 'a-z' | sort | uniq -c | sort -k1nr | awk '{ if ($1 > 1) print }'
-> > 
-> > The output for the kernel and the github litmus repo are shown below.
-> > 
-> > 							Thanx, Paul
-> > 
-> > ------------------------------------------------------------------------
-> > 
-> > For the kernel:
-> > 
-> > ------------------------------------------------------------------------
-> > 
-> >       2 ./include/uapi/linux/netfilter_ipv4/ipt_ecn.h
-> >       2 ./include/uapi/linux/netfilter_ipv4/ipt_ttl.h
-> >       2 ./include/uapi/linux/netfilter_ipv6/ip6t_hl.h
-> >       2 ./include/uapi/linux/netfilter/xt_connmark.h
-> >       2 ./include/uapi/linux/netfilter/xt_dscp.h
-> >       2 ./include/uapi/linux/netfilter/xt_mark.h
-> >       2 ./include/uapi/linux/netfilter/xt_rateest.h
-> >       2 ./include/uapi/linux/netfilter/xt_tcpmss.h
-> >       2 ./net/netfilter/xt_dscp.c
-> >       2 ./net/netfilter/xt_hl.c
-> >       2 ./net/netfilter/xt_rateest.c
-> >       2 ./net/netfilter/xt_tcpmss.c
-> 
-> Those are all fine.  The filenames are nice and short, and the case 
-> differences really do stand out because they affect entire words, not 
-> just a single letter in the middle of a long string of letters.
-> 
-> >       2 ./tools/memory-model/litmus-tests/z6.0+pooncelock+pooncelock+pombonce.litmus
-> 
-> This stands for the files we're talking about, right?  It needs help.
-
-We do have a rule for the filenames in that directory that most of
-them follow (I am looking at *you*, "dep+plain.litmus"!).  So we have
-a few options:
-
-1.	Status quo.  (How boring!!!)
-
-2.	Come up with a better rule mapping the litmus-test file
-	contents to the filename, and rename things to follow that rule.
-	(Holy bikeshedding, Batman!)
-
-3.	Keep it simple and keep the current rule, but make the
-	combination of spin_lock() and smp_mb__after_spinlock()
-	have a greater Hamming distance from "lock".  Szőke's
-	patch changed only one of the filenames containing "Lock".
-	(Bikeshedding, but narrower scope.)
-
-4.	One of the above, but bring the litmus tests not following
-	the rule into compliance.
-
-5.	Give up on the idea of the name reflecting the contents of the
-	file, and just number them or something.  (More bikeshedding
-	and a different form of confusion.)
-
-6.	#5, but accompanied by some tool or script that allows easy
-	searching of the litmus tests by pattern of interaction.
-	(Easy for *me* to say!)
-
-7.	Something else entirely.
-
-Thoughts?
-
-> > ------------------------------------------------------------------------
-> > 
-> > For the github litmus repo, almost all of which are automatically
-> > generated:
-> 
-> I'm not so concerned about these.  A litmus test repo isn't in the same 
-> category as a kernel source directory.  Maybe it wouldn't hurt to make 
-> some of them more distinguishable (I haven't looked at the original 
-> names to tell), but they're not our problem here and now.
-
-Plus any changes would require corresponding changes to the scripts
-generating them, which I currently lack both enthusiasm and time for.  ;-)
-
-							Thanx, Paul
 
