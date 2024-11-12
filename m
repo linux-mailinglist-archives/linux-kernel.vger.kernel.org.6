@@ -1,115 +1,177 @@
-Return-Path: <linux-kernel+bounces-405698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E5609C55F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:12:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309C99C561E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA1E71F24DB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:12:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 598D8B446D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C8221CFBA;
-	Tue, 12 Nov 2024 10:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FFF21D239;
+	Tue, 12 Nov 2024 10:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KcfKcMXb"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yl+2gyNY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B61A21CFA9
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217FB21D230;
+	Tue, 12 Nov 2024 10:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731408531; cv=none; b=klHuNgIla2V2I+UiSNySA4SDAjRUFHWJlfme6mjYRt2oBTTuykDyZrP0qyaV+LAFCp304l1pDhO6rCfk/5tueGIfk6SV9WsRfGGVNli0J3/0F7OCeMTWXg7ex5OIEKBM5Td2Ds75BLwFWzqgS2I9btYB8DTlEGQY1+6eEYVzjwI=
+	t=1731408570; cv=none; b=P6Ym6Q4yNGCJfkzJ+aNrZTR4BQ3Mk5FO6N8f1rYcdNptLMYXH9Irojp6epjFkq801ttjc0Gm65cvleOKlt4l+cgSZgS2BE2Qd4cFcI9IR6JBmqjiM1lt7YSSrKTPrSpUuXGLyJn+agmzmvt202lk4M2LhYuI52mSWvrHlY3qDRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731408531; c=relaxed/simple;
-	bh=mlVwLQCWy24Cb/sNaSGUN5XV3+kGewbUdR+Bx7uYdlM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a+73oh7CwqjPZ2zgQNr9kdwAhuRm0dAOweyA08b9baPbSmU6BIG8a3HPUH03atxPsa6z/aM5NtaPj+M4e04szTn8Tt+YbPTyPrwjzd5HZTp86S3FFHXOaFbYcBCf5uuIwu5PoI9TeiLxajBS4MgX5T7iEX3nJe30ahDAy74KJdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KcfKcMXb; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5C7DDE0003;
-	Tue, 12 Nov 2024 10:48:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731408527;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mlVwLQCWy24Cb/sNaSGUN5XV3+kGewbUdR+Bx7uYdlM=;
-	b=KcfKcMXbPi2VOK8LbaLSQSLr+CG5JNTDTqmQ1mXvmbswz/W4GicAOjOtUczHOJbBUw6r/6
-	wAFCz6HjglSKRY+ZVhUoC5eWV5kLq4vsHXCNv+hwMl2yF8T9KBKN+CWtoVsssGdPScFZeW
-	mnW9omVWNkwP1vTovuljDEQMSsJ4/O+2H/jDTsVOqQnPYExHLBmN+A7mdpI3WcWHqO2SLN
-	VcrwVprYlOXOlcakn/rYOHFvvJ0iJuuwX8sLt8kKbGQLt+2nfvp2PjvBwVsGoipiCx+eZ3
-	iE0fHHhOX2ZCdqeO2l6C0hGepKntAcahlF4dpm2n6iWEdGOzsqTS5YAd/c+zLA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: SkyLake Huang (=?utf-8?B?6buD5ZWf5r6k?=) <SkyLake.Huang@mediatek.com>
-Cc: "dev@kicherer.org" <dev@kicherer.org>,  "d-gole@ti.com" <d-gole@ti.com>,
-  "vigneshr@ti.com" <vigneshr@ti.com>,  "gch981213@gmail.com"
- <gch981213@gmail.com>,  "mmkurbanov@salutedevices.com"
- <mmkurbanov@salutedevices.com>,  "richard@nod.at" <richard@nod.at>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-  "kernel@sberdevices.ru" <kernel@sberdevices.ru>
-Subject: Re: [PATCH v2] mtd: spinand: add support for FORESEE F35SQA002G
-In-Reply-To: <dbdb45ed1135e73b4eebd76e6f61b96d48aaedc6.camel@mediatek.com>
-	("SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCkiJ3M=?= message of "Tue, 12 Nov
- 2024 10:08:31
-	+0000")
-References: <20241108163455.885-1-SkyLake.Huang@mediatek.com>
-	<20241108163455.885-4-SkyLake.Huang@mediatek.com>
-	<dbdb45ed1135e73b4eebd76e6f61b96d48aaedc6.camel@mediatek.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Tue, 12 Nov 2024 11:48:45 +0100
-Message-ID: <87ikssu3qq.fsf@bootlin.com>
+	s=arc-20240116; t=1731408570; c=relaxed/simple;
+	bh=Jxa8ZokOau2HkkKxBChAVF5TbIVaPYQgdafFIUtzKFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q9NyznMdP97uppQpJlg3sbY6619+RZamxEpXLVwwfimxT/GNvw2OmGbtgvMZjzufb4gNs9hpzovHVGP++UgM9bO0/xaQGfJFVl7RESLv/Q72JqtZqIuyQ8nCmUsppsofk4a7llEJZDLCVpmM7SqK8Xax+6Z0ZMGTybcJNtr9qfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yl+2gyNY; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731408569; x=1762944569;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Jxa8ZokOau2HkkKxBChAVF5TbIVaPYQgdafFIUtzKFI=;
+  b=Yl+2gyNYs/XMofWReIjbX5/u17kzbwBUZotQplxGur6nEuqAY4oj280g
+   TqRFpa9E2mdhxq81ewKoWRKsDVrIy/s02ExQ1jeTq7+99NtDaWjWzuQ59
+   W/i/kFdgL0nhSJGpj3JRAJuklGxmV9uXmdTNmEtIuVIhZiUFZRJ5LjO4L
+   FZnJV0jfXioGx2t8J4IY6cWOsHWZm12QlQZ+ULOxkArjivV9zLKE02p73
+   JWMTYHqKq2t+5G/f5OlJig2esbB1c13W6JhWARXKoq64HqeQ8AqvpHVaM
+   n7DXyejmjOKzmZpqi0c9Oql2V9X1IQILcejW3L4Elk6MYbZ8EKwG8i1pY
+   Q==;
+X-CSE-ConnectionGUID: 3hpUvWxjR2WJOtcZ9Iv44A==
+X-CSE-MsgGUID: CGfzPgb0QNeGAeZfqWLdUg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="35169100"
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="35169100"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 02:49:29 -0800
+X-CSE-ConnectionGUID: 4A+3ji+gScmQe6XNGJ5Qog==
+X-CSE-MsgGUID: uQvZQiNWQX2TxW7ojgCz/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="91892665"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 02:49:27 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 93AFA11F83B;
+	Tue, 12 Nov 2024 12:49:24 +0200 (EET)
+Date: Tue, 12 Nov 2024 10:49:24 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Jai Luthra <jai.luthra@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] media: i2c: imx219: make HBLANK r/w to allow longer
+ exposures
+Message-ID: <ZzMytF509nZ8CYGZ@kekkonen.localdomain>
+References: <20241029-imx219_fixes-v1-0-b45dc3658b4e@ideasonboard.com>
+ <20241029-imx219_fixes-v1-2-b45dc3658b4e@ideasonboard.com>
+ <ZySV3KKXSyIreRI4@kekkonen.localdomain>
+ <CAPY8ntDF8W+xRBXbe=LYpg21LL7-svhCySTSJHRNiDzQs4Xw5Q@mail.gmail.com>
+ <Zy3oKnHBiGOq8Uoj@kekkonen.localdomain>
+ <CAPY8ntD4Q4f5fSC+xW=j-5T38_Zb5x7pGQM4RYVzrz+NJMGtUQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPY8ntD4Q4f5fSC+xW=j-5T38_Zb5x7pGQM4RYVzrz+NJMGtUQ@mail.gmail.com>
 
-Hi Sky,
+Hi Dave,
 
-On 12/11/2024 at 10:08:31 GMT, SkyLake Huang (=E9=BB=83=E5=95=9F=E6=BE=A4) =
-<SkyLake.Huang@mediatek.com> wrote:
+On Mon, Nov 11, 2024 at 07:37:56PM +0000, Dave Stevenson wrote:
+> Hi Sakari
+> 
+> On Fri, 8 Nov 2024 at 10:30, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+> >
+> > Hi Dave,
+> >
+> > On Thu, Nov 07, 2024 at 12:43:52PM +0000, Dave Stevenson wrote:
+> > > Hi Sakari
+> > >
+> > > On Fri, 1 Nov 2024 at 08:48, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+> > > >
+> > > > Hi Jai,
+> > > >
+> > > > On Tue, Oct 29, 2024 at 02:27:36PM +0530, Jai Luthra wrote:
+> > > > > From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> > > > >
+> > > > > The HBLANK control was read-only, and always configured such
+> > > > > that the sensor HTS register was 3448. This limited the maximum
+> > > > > exposure time that could be achieved to around 1.26 secs.
+> > > > >
+> > > > > Make HBLANK read/write so that the line time can be extended,
+> > > > > and thereby allow longer exposures (and slower frame rates).
+> > > > > Retain the overall HTS setting when changing modes rather than
+> > > > > resetting it to a default.
+> > > >
+> > > > It looks like this changes horizontal blanking at least in some cases. Does
+> > > > this also work as expected in binned modes, for instance?
+> > > >
+> > > > Many sensors have image quality related issues on untested albeit
+> > > > functional line length values.
+> > > >
+> > > > So my question is: how has this been validated?
+> > >
+> > > Validated by Sony, or others?
+> > > I've tested a range of values in all modes and not observed any image
+> > > quality issues.
+> >
+> > Somehow at least. :-)
+> >
+> > >
+> > > From previous discussions with Sony, they always provide their big
+> > > spreadsheet of register values for the specific mode and frame rate
+> > > requested. I don't think they even officially state that changing
+> > > VTS/FRM_LENGTH_LINES to change the framerate is permitted.
+> > > There are some Sony datasheets (eg imx258) that state "set to X. Any
+> > > other value please confirm with Sony", but that isn't the case for the
+> > > imx219 datasheet. I take that as it is permitted within the defined
+> > > ranges.
+> >
+> > I'm not that much concerned of vertical blanking, changing that within the
+> > valid range has effects on the image itself very seldom. Horizontal
+> > blanking is different though and this is what the patch makes changeable,
+> > including a change in the default value. Of course there are big
+> > differences between sensors here.
+> 
+> The intention was that the default value shouldn't change, and as the
+> overall PIXELS_PER_LINE value was meant to be retained on a mode
+> change the value used should only change if an application changes
+> V4L2_CID_HBLANK. If I blundered in the implementation of that, then
+> that should be fixed (I know Jacopo made comments, but I haven't had a
+> chance to investigate).
 
-> Hi Miquel/Martin,
-> About this driver, including F35SQA001G/F35SQA002G parts, I'm concerned
-> that the driver will always use 32H for update_cache operations, which
-> means it's not compitable with those SPI controller who can't transmit
-> 2048 bytes (most small-density SPI-NAND's page size nowadays) at one
-> time.
->
-> The following controller's driver seems that they can't transmit 2048
-> bytes in one transmission:
-> - spi-amd.c: 64 bytes (AMD_SPI_MAX_DATA)
-> - spi-amlogic-spifc-a1.c: 512 bytes (SPIFC_A1_BUFFER_SIZE)
-> - spi-fsl-qspi.c: 1KB
-> - spi-hisi-sfc-v3xx.c: 64*6 bytes
-> - spi-intel.c: 64 bytes (INTEL_SPI_FIFO_SZ)
-> - spi-microchip-core-qspi.c: 256 bytesc (MAX_DATA_CMD_LEN)
-> - spi-nxp-fspi.c: TX:1KB, RX: 512B in FIFO mode
-> - spi-wpcm-fiu.c: 4B
+I guess I misread the patch. It indeed should be the same.
 
-I believe most of these drivers are still able to send one page of data
-without toggling the CS (which is what actually matters, I believe). If
-they were broken, they would be broken with all spi memory devices, not
-only Foresee's.
+> 
+> I doubt we'd get validation from Sony beyond the contents of the
+> datasheet. Potentially as the sensor is so old they don't have the
+> information or engineers involved.
+> I'm happy to set up a test system and capture a set of images with
+> HBLANK from min to max at some increment. With the same exposure and
+> gain they should all be identical as long as there isn't any movement
+> (rolling shutter with longer readout times and all that). Would that
+> be satisfactory?
 
-> I guess we need to add some check to make sure that F35SQA series work
-> only with those SPI controllers who can transmit more than 2048
-> bytes(NAND page size) at one time?
+Sounds good to me. I just thought how it actually had been tested. :-)
 
-There is already a supports_op() hook for that, I believe we are
-fine. If however you experience errors, please report them and we'll
-look for a solution.
+> 
+> For contrast, the IMX290 datasheet states that VMAX shall be fixed at
+> 0x465 for all-pixel mode / 0x2ee for 720p mode, and HMAX should be
+> changed for frame rate control. As you say, sensors differ.
 
-Thanks,
-Miqu=C3=A8l
+-- 
+Kind regards,
+
+Sakari Ailus
 
