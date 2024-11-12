@@ -1,168 +1,78 @@
-Return-Path: <linux-kernel+bounces-405818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF57E9C5780
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:17:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 033CE9C578F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:20:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66B281F2274E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:17:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE73B1F22F7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F7E1F7789;
-	Tue, 12 Nov 2024 12:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A261CD218;
+	Tue, 12 Nov 2024 12:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sc4MF+Wk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="edookn7v"
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DB984D2B;
-	Tue, 12 Nov 2024 12:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D07284D2B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731413822; cv=none; b=Kk6HJkt+j4bBzeOISx0DMLPUC4V5Um3pu5zBufgHRpPY5LVMEYFXDMbZkkTEFTbuezqXPO4hHNiNFiNbCiCugkqlUfvWHyZzHHy4jObkNnofT5K3ivRq/NbNolSO99Sga+Wjmf5MU3yXuhQaZY6KcT4oYfxTbYyCFn/AToOsTWI=
+	t=1731414006; cv=none; b=oFI5oOaPOHbTB096ZP5or3p4ge27bz+wKwAcM4YP5Ix99nixKyTjMalF3uUnfRf3Dt3TJTNaDqJnzurYz4RIkOMBkQZ3OTumL+eOEwF8vZKJTSUoeLD8uOcSYZe79MnMEmw/liRUmiZX8ubUPoWOQCAUSyR5DWsqOa9d3gmyidc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731413822; c=relaxed/simple;
-	bh=s3xLRKr3f419fYPU6PB/kHAOhOABMEaamyvZW4/7k6M=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Jz1VyqB8NppF3m76Uro+VFqLhRBNT/U/KiD34CY2cExgL6N4icqpdz+MvwxygO511EKDk43mcqQL2LRxG7vrQ2tfdOnf5RDwiPgrY06XDgfaUfCNuzotTU51Fbflq9l3cUmze7sq/qctrjjP51OQTF57GZuStpa1eEocW8f5Kl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sc4MF+Wk; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731413821; x=1762949821;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=s3xLRKr3f419fYPU6PB/kHAOhOABMEaamyvZW4/7k6M=;
-  b=Sc4MF+WkpY0SenT22CUfw786G3+GP0iJQY98evfijMB9NKqJa0Jh5luS
-   Gm8KJfa6Qf7aCj4SquNXKyzT9beYuN15FkQh4C49CEzranePncskwoJJy
-   vVSfye8hAMhovnGx3OLtPmrZRyoO8O2EXuByDJuO4jVA8vtzmTDhJhXvV
-   U4TVg46h5Oxk6tWO3l/6lU+ViJlCVaVrzQAPx/80HzRm9hT5e+4It7iMr
-   tV8GUOy8Wkc4pXMnbwHXd9+D6lR9qjZFQywdBnOyDaj3YQyUnGexDkhDe
-   NdYON1VvibaaLJ3EReeDTkLKVg797TloS9B+4hwiP5JnQ4qV1kn89Lx4Y
-   g==;
-X-CSE-ConnectionGUID: D+u5sGEnQeOgguk8emCxJQ==
-X-CSE-MsgGUID: 5N09NnycT72CoKrDuDa+EA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48699694"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="48699694"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 04:17:01 -0800
-X-CSE-ConnectionGUID: tS7BO2LFRleFpECaFnqibg==
-X-CSE-MsgGUID: OlATpCQtTNOM99rxgsUCzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
-   d="scan'208";a="87549164"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 04:16:55 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 12 Nov 2024 14:16:52 +0200 (EET)
-To: Mario Limonciello <mario.limonciello@amd.com>
-cc: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>, 
-    x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
-    Perry Yuan <perry.yuan@amd.com>, LKML <linux-kernel@vger.kernel.org>, 
-    linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, 
-    platform-driver-x86@vger.kernel.org, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Perry Yuan <Perry.Yuan@amd.com>
-Subject: Re: [PATCH v6 06/12] platform/x86: hfi: init per-cpu scores for each
- class
-In-Reply-To: <20241104175407.19546-7-mario.limonciello@amd.com>
-Message-ID: <7fa961b4-894d-8805-8a23-2ed8ef04fe7f@linux.intel.com>
-References: <20241104175407.19546-1-mario.limonciello@amd.com> <20241104175407.19546-7-mario.limonciello@amd.com>
+	s=arc-20240116; t=1731414006; c=relaxed/simple;
+	bh=WbqUoNGStj0yJBWRAcNQgXuOpvQ0qgq97BNeRTq314k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zm7UCOwJiwUB+SbqtzWfzjBgau++RPYJ2Qo64vGtq952cNL8x1uuHheWKY1lf8sHUTzmf8VWHwBF0PmtfhE6AsREeOHxlHkAa5xcYyoT1Zoz2k5829oHpWb1FLhM3jJ5eqTkbEWjxGQJq+dISZlchO1hiAGuyTGanrbU0rhb1VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=edookn7v; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from localhost (82-65-169-98.subs.proxad.net [82.65.169.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 8FC8D40277;
+	Tue, 12 Nov 2024 12:20:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1731414001;
+	bh=Rk0IMDV/zo3xqw4/+uhsC9QPVxMHlRKdYyoLckuxcaE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=edookn7vE3zkcOcPbpMhHIPJRGqC3qsbW83obD5/k0crimbIcpQsXaLTyeqWEqRZu
+	 MuicvhAG+S5UpwoD0CtRvkiRWwNrv9B+cOpyP/MFrQxgk9gP51wQFsF60dgbgTxVFA
+	 +DCrTxH8daHsncL0NE44zurKtwihKy4mcDWqLeoAGhEZhcFIeqLnb5p/qPveQ7Hkg2
+	 l+5NXMGtnPJ0a0edRJs3PSCuXqTEAhHjpboROz4bMcNMogl9VaTOi1zufrJqomlu9l
+	 H53D9EWFdNEMXMrG1atQl0t7D26T1yG7V4P3vuZiLXGx2VQd7To0yd9da5W8VGPcXP
+	 4XM7jeJnDFXXw==
+From: Agathe Porte <agathe.porte@canonical.com>
+To: linux-kernel@vger.kernel.org
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Agathe Porte <agathe.porte@canonical.com>
+Subject: [PATCH v3 0/1] ufs: ufs_sb_private_info: remove unused s_{2,3}apb fields
+Date: Tue, 12 Nov 2024 13:18:24 +0100
+Message-ID: <20241112122000.35610-1-agathe.porte@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Mon, 4 Nov 2024, Mario Limonciello wrote:
+v3: drop stable Cc as requested (because the value is not used), and
+    reformulate patch description
 
-> From: Perry Yuan <Perry.Yuan@amd.com>
-> 
-> Initialize per cpu score `amd_hfi_ipcc_scores` which store energy score
-> and performance score data for each class.
-> 
-> `Classic core` and `Dense core` are ranked according to those values as
-> energy efficiency capability or performance capability.
-> OS scheduler will pick cores from the ranking list on each class ID for
-> the thread which provide the class id got from hardware feedback
-> interface.
-> 
-> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
-> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/platform/x86/amd/hfi/hfi.c | 31 ++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
-> index 708d7d18fe2f2..9bdd9d9a615b8 100644
-> --- a/drivers/platform/x86/amd/hfi/hfi.c
-> +++ b/drivers/platform/x86/amd/hfi/hfi.c
-> @@ -113,6 +113,8 @@ struct amd_hfi_cpuinfo {
->  
->  static DEFINE_PER_CPU(struct amd_hfi_cpuinfo, amd_hfi_cpuinfo) = {.class_index = -1};
->  
-> +static DEFINE_MUTEX(hfi_cpuinfo_lock);
+Agathe Porte (1):
+  ufs: ufs_sb_private_info: remove unused s_{2,3}apb fields
 
-No users in this patch?
+ fs/ufs/super.c  | 4 ----
+ fs/ufs/ufs_fs.h | 4 ----
+ 2 files changed, 8 deletions(-)
 
 -- 
- i.
+2.43.0
 
-
-> +
->  static int find_cpu_index_by_apicid(unsigned int target_apicid)
->  {
->  	int cpu_index;
-> @@ -226,6 +228,31 @@ static int amd_hfi_alloc_class_data(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *hfi_cpuinfo, int cpu)
-> +{
-> +	for (int i = 0; i < hfi_cpuinfo->nr_class; i++)
-> +		WRITE_ONCE(hfi_cpuinfo->ipcc_scores[i],
-> +			   hfi_cpuinfo->amd_hfi_classes[i].perf);
-> +
-> +	return 0;
-> +}
-> +
-> +static int update_hfi_ipcc_scores(void)
-> +{
-> +	int cpu;
-> +	int ret;
-> +
-> +	for_each_present_cpu(cpu) {
-> +		struct amd_hfi_cpuinfo *hfi_cpuinfo = per_cpu_ptr(&amd_hfi_cpuinfo, cpu);
-> +
-> +		ret = amd_set_hfi_ipcc_score(hfi_cpuinfo, cpu);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int amd_hfi_metadata_parser(struct platform_device *pdev,
->  				   struct amd_hfi_data *amd_hfi_data)
->  {
-> @@ -311,6 +338,10 @@ static int amd_hfi_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	ret = update_hfi_ipcc_scores();
-> +	if (ret)
-> +		return ret;
-> +
->  	return 0;
->  }
->  
-> 
 
