@@ -1,139 +1,110 @@
-Return-Path: <linux-kernel+bounces-405716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA2649C562B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:19:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58AD69C563E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:21:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8367F1F21A60
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1781F2412C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3160E226B69;
-	Tue, 12 Nov 2024 10:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6706E1F77B1;
+	Tue, 12 Nov 2024 11:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qz38Ai9X"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="lasDZ6YS"
+Received: from out203-205-221-153.mail.qq.com (out203-205-221-153.mail.qq.com [203.205.221.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028662259F4;
-	Tue, 12 Nov 2024 10:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D121F77A7;
+	Tue, 12 Nov 2024 11:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731408963; cv=none; b=F/Ka0wCLHQxJxmtVoTMdAc5y8oa9U5ibTyu3wS3wfUtvxSeEOC0vIk2t6JCxL/dbVnXxlssXuVzwt8hn0As8DOuoAE/lDuaZuaIFKyqawTlx5BBDpwIR/vAevn+4PEM0GX2tzhn3D/UuihyQZ0uew+xJ9WFzd/GXnhPNLbIuaGs=
+	t=1731409267; cv=none; b=LX1E30uA/CnbjdJD/O9l1C9c6bj5R6Oip4Db2QG9PPemCNYaS11PihZHUZbv3Wriz3UPITmgKxdaB0qaLTXHXq7b5ppRRRMqDtC5OBjsYl+YDYMKGIxAC3/prCk48BNZgj24qtBp3MLsHX7JCid+JvlBwNHwZ1MGCSfsTjDEvrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731408963; c=relaxed/simple;
-	bh=EpeEtjlHWVXs+suvJz/GrveenUpZ/Qy+eXbgaVF7xhE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mmmSWzrWR/lNQ4UBUDoADeoNSXvgbnrc5rLFSpCZcnYQUeSui0Fm9WNHwyLI2ss4xTnn7lgk2Qma9prL3GdUwhkFft1izkc2tIakDee5NTgKuOXRL7ahLlqH8YdBpHtfVGOGf/ZnszopfaqcaOs0dvLn/clVRT7MO7RYNEQM+s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qz38Ai9X; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731408962; x=1762944962;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=EpeEtjlHWVXs+suvJz/GrveenUpZ/Qy+eXbgaVF7xhE=;
-  b=Qz38Ai9XaaED5Ukrd9hpAsrxTQlzNGNbPkatA2a0diF4h5hIEbJlusc4
-   sKggr7C17cgBL/ZBY9UNEFl+BKinn7Qmbf8V5OGeykSyHeJAT99BH/n5Q
-   EFQozD9DukETJvXLHP7gTi9Jm/vJHK4d9QZcDIgES6eGDFEEeHWY/MJBj
-   DHTr1wEPmn/ZyQotuN4sFIyqSWi1ggGyiQ5pZPZpyZdt2aztNJKyDFKV1
-   ySi2iWiZmcHwRwWrREvBGSuywXoWsTbWXEeyOifmJfT20ZiH2yJXP234d
-   xwyCI8aJdE0Xt6D7uCns7JllG66GadxAIwSEISpGUBNOXv23s8tzpAS5P
-   w==;
-X-CSE-ConnectionGUID: wfhhrVZ/RhK0poey7VxZmg==
-X-CSE-MsgGUID: gZKeUisGS9y74DLKV8BwUQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="56625962"
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="56625962"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 02:56:01 -0800
-X-CSE-ConnectionGUID: swth+WH1Swy8eqchNE7NAg==
-X-CSE-MsgGUID: mSgjhOocS3GumrYuqkQtRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="118337284"
-Received: from opintica-mobl1 (HELO [10.245.244.216]) ([10.245.244.216])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 02:55:59 -0800
-Message-ID: <89ebe611-a9b8-43f5-bb52-e8a299f79188@linux.intel.com>
-Date: Tue, 12 Nov 2024 11:55:56 +0100
+	s=arc-20240116; t=1731409267; c=relaxed/simple;
+	bh=HD8whapfYmvcrd+Tc4Wd0RY3N9kWe8uq7YUypxnRdms=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=A9aWPhpGng8IdU1BEH1LWDux1boauHL9e8TJXytH7IDzGJHNOIGnAxZlPddPGp8t1Cjyu/e2X8Znw7keptYuIQIQZTOpKrmUmSvc510T4QWKqm23ra3zSwzrkTGHTPirGcEKmUbUVnXaOAoep42rjDvFRpnZqYXRhUw2djOkRv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=lasDZ6YS; arc=none smtp.client-ip=203.205.221.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1731408960; bh=+iVYn7cc4Y6tKTf487xZKVqWUWZ+Myao9FCG5NP3SnU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=lasDZ6YSFePT81npXe5G42TbgfppoDdRCZAHLGJaMXPcK0tPbgejUaAe4PyahzaVY
+	 gNuTOFOl9zhFsxlnWx9YTXBQQ+nmC6w+/VdeVzXGBNfMl5JO6pUc/Rxf6H3z/6Cptp
+	 z4SMt8UecDF4cKOBC3U5BJYmEK1sujLdoZnsMnco=
+Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
+	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
+	id DF9B0A22; Tue, 12 Nov 2024 18:55:57 +0800
+X-QQ-mid: xmsmtpt1731408957tybknkk7v
+Message-ID: <tencent_4A46BB45335A9E721B634B011B242548BA08@qq.com>
+X-QQ-XMAILINFO: Mm/8i8/T4yneg6U2Wcsf3c0uojxQ+XdWGVj7jiquTd91Y06lx8DKpnTuygm/UX
+	 4fI4WkRLA/O5CtDySh8fPxzBVp1VpI90ZsWl+k4jOen54P3egk8eqNCFFMhStiaz50ZmKpyvrjhN
+	 xdXIJYjx3qUteJiwi8t1LLdostsFPIGtKEjnoIdVg0ORjzZiGhz/2z3lDRpbMsiZ8zHlM3o0Gv7Q
+	 yL+CmGJ/AvJciOrknBwm0A+F7madsUDMBNEChBsR9x3VN/XJLyNllnvSuWfX3byTb8GsPeYUO9HT
+	 J+LLayX17Xn77kGLCAIcoaqvkhSJOcauKAkFypH1Xq3QhTbKAxXRjIw7oH81RGnFdYIgsbbJsmPo
+	 NrBZMZhUlkZP4BQbxk9mbTli8kk7my6gqL9cDCQbvXntSsL2eUlUNu0osF9wm72kg9fG39fovvGO
+	 TnvTNppkUvvCzvox5iIhL+HoTUtT2XXjHV0uV+DxCciZuZkYXu5PlxulH8pP/YrrzAcMD/gkfHFj
+	 1HlT62zxiy59paNbkIRILkBpHScCu0+qK0gcncVk+V0NoAMYvvZc7j6+xzbZnb8wYLI0qO5mvar3
+	 MVNwh3ezHu8JcuCfY6soThE0bur+JcW/t2Xp+Q/yn97zbys+sPliYxg6PDaClxolB9/kUrOMAzhQ
+	 DaoK9Xtc2O/Ol57GZBIwM2LdtbPn09w6itUf1NYScOiD1L5d3Gur0qcaiM82QmmcXv1VvOfzpb92
+	 lOMSJofmUiRQKcendc6Swe130lC5Jav0g/M4S1BX37aMU+vSFcaudF62fqQbiXfp9L7NQlpRvLB9
+	 ATyF4sjZ8vEGenXjl+j1K3fuHzOW7liWvw/CcKYYZxsLMXrjys6gsD8h7PkrMMn+Fl/xdIK5zKQg
+	 dyr/jKWMeQPaljLFrfKnEqOFe7YqxHhIkQNynx/5/HYDJ8NyHuQGunwRMzGcycikYtA0+XdJeH
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com
+Cc: konishi.ryusuke@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-nilfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] nilfs2: fix a uaf in nilfs_find_entry
+Date: Tue, 12 Nov 2024 18:55:58 +0800
+X-OQ-MSGID: <20241112105557.1541067-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <6732e1d8.050a0220.138bd5.00d3.GAE@google.com>
+References: <6732e1d8.050a0220.138bd5.00d3.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
- cpuidle_play_dead() over mwait_play_dead()
-To: Dave Hansen <dave.hansen@intel.com>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- rafael.j.wysocki@intel.com, len.brown@intel.com,
- artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
-References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
- <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com>
- <394fa854-41a9-4ad1-880b-629108d52b41@intel.com>
-Content-Language: en-US
-From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-In-Reply-To: <394fa854-41a9-4ad1-880b-629108d52b41@intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-> I don't think the bug has anything to do with this patch, really.
-> There's no need to rehash it here.
->
-> The issue here is that the only way to call mwait today is via
-> mwait_play_dead() directly, using its internally-calculated hint.
->
-> What you want is for a cpuidle-driver-calculated hint to be used.  So,
-> you're using the new hint function via the cpuidle driver.  But you just
-> need the cpuidle driver to be called first, not the old
-> mwait_play_dead()-calculated hint.  The new code will still do mwait,
-> just via a different path and with a different hint.
+The i_size value of the directory "cgroup.controllers" opened by openat is 0,
+which causes 0 to be returned when calculating the last valid byte in
+nilfs_last_byte(), which ultimately causes kaddr to move forward by reclen
+(its value is 32 in this case), which ultimately triggers the uaf when
+accessing de->rec_len in nilfs_find_entry().
 
-Ok. I'll just say that we change the order because idle driver may know better.
+To avoid this issue, add a check for i_size in nilfs_lookup().
 
-> The thing this doesn't mention is what the impact on everyone else is.
-> I _think_ the ACPI cpuidle driver is the only worry.  Today, if there's
-> a system that supports mwait and ACPI cpuidle, it'll use mwait.  After
-> this patch, it'll use ACPI cpuidle.
->
-> The changelog doesn't mention that behavior change or why that's OK.
+Reported-by: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=96d5d14c47d97015c624
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/nilfs2/namei.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-True, but I think the mwait_play_dead() is exclusively for Intel. Other target
-platforms get an early return. I'll include that in the commit message.
-
-> Also, looking at this:
->
->> -    mwait_play_dead();
->>      if (cpuidle_play_dead())
->> -        hlt_play_dead();
->> +        mwait_play_dead();
->> +    hlt_play_dead();
->
-> None of those return on success, right?
->
-> Is there any reason this couldn't just be:
->
->     /* The first successful play_dead() will not return: */
->     cpuidle_play_dead();
->     mwait_play_dead();
->     hlt_play_dead();
->
-> That has the added bonus of not needing to return anything from
-> mwait_play_dead() and the resulting churn from the last patch.
-
-mwait_play_dead may return if mwait_play_dead_with_hint returns and it only does
-on non-smp builds. That being said, we do ignore the return value right now,
-because in either case we want to enter hlt_play_dead() as a fallback, so I
-guess we can make mwait_play_dead return void, but leave
-mwait_play_dead_with_hint returning int or add ifdef CONFIG_SMP guards in
-intel_idle.
-
-When going with the return types proposed in this patch set, on non-smp builds
-intel_idle would call mwait_play_dead_with_hint() which would "return 1"; and
-propagate through cpuidle_play_dead().
+diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
+index 9b108052d9f7..0b57bcd9c2c5 100644
+--- a/fs/nilfs2/namei.c
++++ b/fs/nilfs2/namei.c
+@@ -60,6 +60,9 @@ nilfs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
+ 	if (dentry->d_name.len > NILFS_NAME_LEN)
+ 		return ERR_PTR(-ENAMETOOLONG);
+ 
++	if (!dir->i_size)
++		return ERR_PTR(-EINVAL);
++
+ 	res = nilfs_inode_by_name(dir, &dentry->d_name, &ino);
+ 	if (res) {
+ 		if (res != -ENOENT)
+-- 
+2.43.0
 
 
