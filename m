@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-406851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA37A9C65A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:01:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 365069C6537
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:34:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7C09B3C46D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:23:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8023B3D8F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F136D21D20A;
-	Tue, 12 Nov 2024 23:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E185121CFA4;
+	Tue, 12 Nov 2024 23:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qKsxBg6K"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o050sadq"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCACE21CFA4
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A251421D215
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731453787; cv=none; b=AUxAJsbNs/NuJ9tO2Dg5t4s3BpH8yBksBa4qLPnLCxO/ZnFxPPFyzIn+gI/QICvBaMqDcYl9/5W5bFz4r1fCnL7JvdJJPGzIKn/IN39GxqSV/rHqpeuQ2ZeAHuBmyNVB4/j1/KqxYH/t4sVXxMRSfWL6Jve7jHQzzkxUHe6oV1o=
+	t=1731453790; cv=none; b=m1TxN4xByiWbYAucwgcwnwCK64kr4mOlvYTn2Ee2LUStkLEpyUFGDH/ot9swlDH3xOeJ7zIu+/PnyYldKc/1212gCd8yRJNSQuc/91KQ6/3F0yyfi3pHI+pdQdDEwedSpTeEzXZgURPYwGnTD+cxHHMFk0l0vrN/G2kFb5uNuKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731453787; c=relaxed/simple;
-	bh=ayby78yQOyjOz6ls+yE5cxTfghhQvc3yyzZlL7gs+bU=;
+	s=arc-20240116; t=1731453790; c=relaxed/simple;
+	bh=fkSYYUFFU2dhT6w7OYZJxAhhsJkywG0c349xGH09+og=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qDDLc7+oZTIEw0oUFkpwQBqjecUHQDldMa3L3vPdxdBW6C12/c39UvoNXy2H7AcTu2/XRdHj0Cd9EvXwnVGSx7rDvPPeeCsofirNxaSkmDJD3E8aCQnUKeS5JlymR73E7HCuUYnedwaxWf+lHJFhl1hD/71+u+qU8EzhEB3I9ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qKsxBg6K; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=iw5eDV8Dow7oCCC5UYx/ujEonZ9SJk1fYLC+wMvHC0j/wr0ombD9sGoI0BsLTwVd/baXX3sVReKCckxJ2Ly8lUeTchtf/mY/lY7CYSjLH8ftG9fx0hDEJdXs/bdSq32Jo6oNeTh3D+FfKMZPp7293qi6iqLb+c70PwE5UiijmMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o050sadq; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2e2bb354e91so6498038a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:23:05 -0800 (PST)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e7e7568ed3so2805067b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:23:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731453785; x=1732058585; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731453787; x=1732058587; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WmL++hD8fgHMSusvyHDFwqq57StgWysj/njcEHmccMk=;
-        b=qKsxBg6KK1KzmbyM0Qc41DcpDFnsE0GF+9Cuu59tvTI93sVv9ldwTQ8gYUTB/lQUgN
-         scdqqDh3wEvmDuaHzVOIvpddU+ghfl63E/8FIMrxDuR1X5iPb3oVEDLZd8s60mOTIsh5
-         S9LH10gSP4qPwq0olBcEx1YoV6dwVMe6f0dN3X6J3BdjT8IfRYvF8hvsN/XpVZhnftib
-         K3CNOt/g+lPNfsPBbYgPOi6XcCY9pSKCccqyowLLfc7PRMbDN/nxdXtE+6eVkKE52g5+
-         08mfOQjmYBpvAWFEPMwTMvCQM21GBLGbLRexMe2h2Kno1gPP+vt7VPv1TPJ9Y390UeFu
-         qt4w==
+        bh=waco7iVOB4xSaLUY84IKzzTbmzK38z3CV8Wi2DuMfOk=;
+        b=o050sadqo1QrI4MAIphrM+Wrw4rVusq2jJLpkUqTa51z2sq4c+MnzaM9R5ROwKscnb
+         Jw6YeM2t8QiO+XTpd3wVH948Uw6I7U5evQAlwvRkgQZ0vnjHEhOHEualKQuHI41GAKcA
+         ofsUAWzji9qO9COgifNXdpbz4CjeMzEaBc7llDWztlx8Ok0m+ItMtvz463q0dARpS7j1
+         dvhjJQtcmJGyIim9R7VkZ0y8PFgziBJqggBrJO+FoC/JAy1I73eqQiJZAdJXky6HVPUc
+         Y/UPaXKR9gyxwvrqnxEV9UPxB9pfuTm3Kesa2OQRAsy12J+Cvv3hHJ6Uuxs3hqLZoFNZ
+         dO8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731453785; x=1732058585;
+        d=1e100.net; s=20230601; t=1731453787; x=1732058587;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WmL++hD8fgHMSusvyHDFwqq57StgWysj/njcEHmccMk=;
-        b=L4R8qOq5Bq1b7c5CQZKwAnYQ31uMqr8JiqXKM74fe0+rIYIYjRxLbQM2TMgNabR4Dz
-         h/yLsL+dMsdA/a9zllkcFPZcPJpRZcIfYUhmQJ758zRoYaJ4A9hQEpMK9GwzdIFM2Ckq
-         cn4iio37+lgv7tF2WN380KuHlS/SDUT4OCDvn2JpGseC++XsJ+yYD962ot0SP8yLdpcf
-         BGlMJsSk4L5N55Na443uWjXAWwhAfsrIAAzHVaRz3a52RgS0/Vhs/VB7BKQtBnNqR3HU
-         wH8ZpIOAZ+P/1tFD0FV9/RCO5D27QZ+XHFkmYmhQ1HDe1kRaLlZse8eTdiqCRQop/4q4
-         zydg==
-X-Gm-Message-State: AOJu0YyiJ6G0uSbD9dfTxRqcnGncLobX9n7UdKeLCuSRuKkPwwAzpgEb
-	HCfd+Qop1Buz2qxFfOuoSfE0BEAIgk1q+2R9/3OaY65yixOX/KrzX+9Noxq0u7m2/8G0Sozkb0S
-	NEZQNcetip4DCLKgVpKnTSka62TtOgs5onWH2+iP+Q8tfbvaN7qJg9D08fv8kxD+Jfg1kC1A8wq
-	bLdnwb6yr2TYCUswJMamUZqtMdXv9PNLRBN6uszhCIBy39jdJ6dv978wL1/+7kciHCnZE=
-X-Google-Smtp-Source: AGHT+IEKIx/zzlZD9qfrCEEtWDHbsmZlYa32pBSY0nOxUmKrJ4QniZXwOwxKWzCDaGQhHEeyreWYnDeyUdJT3VYCwQ==
+        bh=waco7iVOB4xSaLUY84IKzzTbmzK38z3CV8Wi2DuMfOk=;
+        b=vDP9c/WQeRTIZxxfW+Q6vj0mxXID/2euEX7sXpgZlWYojYAKquQbDw0M/3KEYirxfT
+         k6+3Bmy5RizFxBDWGb6BVTePLLHK3gr2+3lwn1sdbzb7VFZVRGvOk0c30Gbi0hD04WDx
+         xJ1lgrSaNBe8NVjqsbbYpclMAtxToKrDzHZM1fEHv52PHgpfOhF15cyLwaAjsvQg38sg
+         G7MIKE1S0ZCNshI4hzwObr/Sx7BDGth5xIxXbieYBEdsAlrhWUf8k5qQgybq/O+dPIbn
+         c8iKTygrh9iuJD+9K1OZG7ymTr2zvgCInLe7QsJNPSJvHsfRxqLKQ3ykh7YtHDSwQbNV
+         ocUg==
+X-Gm-Message-State: AOJu0YwgWfg4otfjn8Xjuix9zU/MyLWCpSIy21vyVvAQKKPAr3M6012w
+	5dC5Sc2vyL/WbDuzQKD1cVr49D5h2DAL1FCmfpey5cSfsu8UEcIW2geHy4phR7cnJkmgHhKLWE5
+	1CYPc9tBFgnZ4JfF61L97r7psLulsUinyVm/RTuaWvZgz3sHfrJDwpFAh77FvssepdWNmUKI9kO
+	OS4dZH0S4f4XSIPftVg2rFikSwgQGbzkFARIc5tZVTXYaUUq3xIDk6U0lUMlk01aa0a5U=
+X-Google-Smtp-Source: AGHT+IE0qPNehuCJmgZ3Y9jGmKLJIF83WkMtt6X+ytxPHivZrMnOcg1sXwjkCfj06PlKJC8uXCRQCyOSugbOqkdYyw==
 X-Received: from dionnaglaze.c.googlers.com ([fda3:e722:ac3:cc00:36:e7b8:ac13:c9e8])
- (user=dionnaglaze job=sendgmr) by 2002:a17:90b:2ec3:b0:2e2:bb49:1052 with
- SMTP id 98e67ed59e1d1-2e9e4c7f1aamr70975a91.4.1731453784634; Tue, 12 Nov 2024
- 15:23:04 -0800 (PST)
-Date: Tue, 12 Nov 2024 23:22:41 +0000
+ (user=dionnaglaze job=sendgmr) by 2002:a25:d04c:0:b0:e2e:317a:d599 with SMTP
+ id 3f1490d57ef6-e337fdb51ccmr99338276.2.1731453787171; Tue, 12 Nov 2024
+ 15:23:07 -0800 (PST)
+Date: Tue, 12 Nov 2024 23:22:42 +0000
 In-Reply-To: <20241112232253.3379178-1-dionnaglaze@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,28 +73,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241112232253.3379178-1-dionnaglaze@google.com>
 X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Message-ID: <20241112232253.3379178-3-dionnaglaze@google.com>
-Subject: [PATCH v6 2/8] KVM: SVM: Fix snp_context_create error reporting
+Message-ID: <20241112232253.3379178-4-dionnaglaze@google.com>
+Subject: [PATCH v6 3/8] firmware_loader: Move module refcounts to allow unloading
 From: Dionna Glaze <dionnaglaze@google.com>
 To: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Brijesh Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, 
-	Ashish Kalra <ashish.kalra@amd.com>
-Cc: linux-coco@lists.linux.dev, Dionna Glaze <dionnaglaze@google.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, John Allen <john.allen@amd.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
 	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
 	Danilo Krummrich <dakr@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Tianfei zhang <tianfei.zhang@intel.com>, 
-	Alexey Kardashevskiy <aik@amd.com>, stable@vger.kernel.org, kvm@vger.kernel.org
+	"Rafael J. Wysocki" <rafael@kernel.org>, Tianfei zhang <tianfei.zhang@intel.com>
+Cc: linux-coco@lists.linux.dev, Dionna Glaze <dionnaglaze@google.com>, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ashish Kalra <ashish.kalra@amd.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, John Allen <john.allen@amd.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Michael Roth <michael.roth@amd.com>, Alexey Kardashevskiy <aik@amd.com>, 
+	Russ Weight <russell.h.weight@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Failure to allocate should not return -ENOTTY.
-Command failure has multiple possible error modes.
+If a kernel module registers a firmware upload API ops set, then it's
+unable to be moved due to effectively a cyclic reference that the module
+depends on the upload which depends on the module.
 
-Fixes: 136d8bc931c8 ("KVM: SEV: Add KVM_SEV_SNP_LAUNCH_START command")
+Instead, only require the try_module_get when an upload is requested to
+disallow unloading a module only while the upload is in progress.
+
+Fixes: 97730bbb242c ("firmware_loader: Add firmware-upload support")
 
 CC: Sean Christopherson <seanjc@google.com>
 CC: Paolo Bonzini <pbonzini@redhat.com>
@@ -115,46 +118,85 @@ CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC: "Rafael J. Wysocki" <rafael@kernel.org>
 CC: Tianfei zhang <tianfei.zhang@intel.com>
 CC: Alexey Kardashevskiy <aik@amd.com>
-CC: stable@vger.kernel.org
 
+Tested-by: Ashish Kalra <ashish.kalra@amd.com>
+Reviewed-by: Russ Weight <russ.weight@linux.dev>
 Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
 ---
- arch/x86/kvm/svm/sev.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/base/firmware_loader/sysfs_upload.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 357906375ec59..d0e0152aefb32 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -2171,7 +2171,7 @@ static void *snp_context_create(struct kvm *kvm, struct kvm_sev_cmd *argp)
- 	/* Allocate memory for context page */
- 	context = snp_alloc_firmware_page(GFP_KERNEL_ACCOUNT);
- 	if (!context)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/base/firmware_loader/sysfs_upload.c b/drivers/base/firmware_loader/sysfs_upload.c
+index 829270067d163..7d9c6aef7720a 100644
+--- a/drivers/base/firmware_loader/sysfs_upload.c
++++ b/drivers/base/firmware_loader/sysfs_upload.c
+@@ -204,6 +204,7 @@ static void fw_upload_main(struct work_struct *work)
+ 		fwlp->ops->cleanup(fwl);
  
- 	data.address = __psp_pa(context);
- 	rc = __sev_issue_cmd(argp->sev_fd, SEV_CMD_SNP_GCTX_CREATE, &data, &argp->error);
-@@ -2179,7 +2179,7 @@ static void *snp_context_create(struct kvm *kvm, struct kvm_sev_cmd *argp)
- 		pr_warn("Failed to create SEV-SNP context, rc %d fw_error %d",
- 			rc, argp->error);
- 		snp_free_firmware_page(context);
--		return NULL;
-+		return ERR_PTR(rc);
+ putdev_exit:
++	module_put(fwlp->module);
+ 	put_device(fw_dev->parent);
+ 
+ 	/*
+@@ -239,6 +240,9 @@ int fw_upload_start(struct fw_sysfs *fw_sysfs)
  	}
  
- 	return context;
-@@ -2227,8 +2227,8 @@ static int snp_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
- 		return -EINVAL;
+ 	fwlp = fw_sysfs->fw_upload_priv;
++	if (!try_module_get(fwlp->module)) /* released in fw_upload_main */
++		return -EFAULT;
++
+ 	mutex_lock(&fwlp->lock);
  
- 	sev->snp_context = snp_context_create(kvm, argp);
--	if (!sev->snp_context)
--		return -ENOTTY;
-+	if (IS_ERR(sev->snp_context))
-+		return PTR_ERR(sev->snp_context);
+ 	/* Do not interfere with an on-going fw_upload */
+@@ -310,13 +314,10 @@ firmware_upload_register(struct module *module, struct device *parent,
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
- 	start.gctx_paddr = __psp_pa(sev->snp_context);
- 	start.policy = params.policy;
+-	if (!try_module_get(module))
+-		return ERR_PTR(-EFAULT);
+-
+ 	fw_upload = kzalloc(sizeof(*fw_upload), GFP_KERNEL);
+ 	if (!fw_upload) {
+ 		ret = -ENOMEM;
+-		goto exit_module_put;
++		goto exit_err;
+ 	}
+ 
+ 	fw_upload_priv = kzalloc(sizeof(*fw_upload_priv), GFP_KERNEL);
+@@ -358,7 +359,7 @@ firmware_upload_register(struct module *module, struct device *parent,
+ 	if (ret) {
+ 		dev_err(fw_dev, "%s: device_register failed\n", __func__);
+ 		put_device(fw_dev);
+-		goto exit_module_put;
++		goto exit_err;
+ 	}
+ 
+ 	return fw_upload;
+@@ -372,8 +373,7 @@ firmware_upload_register(struct module *module, struct device *parent,
+ free_fw_upload:
+ 	kfree(fw_upload);
+ 
+-exit_module_put:
+-	module_put(module);
++exit_err:
+ 
+ 	return ERR_PTR(ret);
+ }
+@@ -387,7 +387,6 @@ void firmware_upload_unregister(struct fw_upload *fw_upload)
+ {
+ 	struct fw_sysfs *fw_sysfs = fw_upload->priv;
+ 	struct fw_upload_priv *fw_upload_priv = fw_sysfs->fw_upload_priv;
+-	struct module *module = fw_upload_priv->module;
+ 
+ 	mutex_lock(&fw_upload_priv->lock);
+ 	if (fw_upload_priv->progress == FW_UPLOAD_PROG_IDLE) {
+@@ -403,6 +402,5 @@ void firmware_upload_unregister(struct fw_upload *fw_upload)
+ 
+ unregister:
+ 	device_unregister(&fw_sysfs->dev);
+-	module_put(module);
+ }
+ EXPORT_SYMBOL_GPL(firmware_upload_unregister);
 -- 
 2.47.0.277.g8800431eea-goog
 
