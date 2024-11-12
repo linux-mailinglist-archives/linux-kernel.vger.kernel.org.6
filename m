@@ -1,92 +1,101 @@
-Return-Path: <linux-kernel+bounces-406485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C727E9C63C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:49:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEFB29C63F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42D98BE2D74
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:04:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2A5BBA3183
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DAE215019;
-	Tue, 12 Nov 2024 18:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2A3216DE2;
+	Tue, 12 Nov 2024 18:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kLOottUA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="0FVrwnpo"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A8E214431;
-	Tue, 12 Nov 2024 18:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FF5215C55;
+	Tue, 12 Nov 2024 18:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731434638; cv=none; b=ZqbmSJdQgCEoa2jsg8sMiYctpvY6rUko9XAayPa9DODuYu0pbQZx2H9eHBnXhZ3x9N4qhfNf9RCuv0FGXXFUMTky17g08ABs37WOeSBx6XAAbz0Fqsmlm/48XtpiN2BPQbr8mfPjpgc+jetcPvMrVW7YU2o9lAKJApHRIpQ9ju8=
+	t=1731435017; cv=none; b=RzcZgmZWaXQd1NrdfpucCjBtFKepLphPmEzKxPkZhK/cPg/0jChVyeHXxzbai5sillE6UFzQ+Zbkscle2GL6TuPUQhjQJOoetgzzdu4rbgJ39avmnn/UKJLifOYQNvRqpIebQpYNvyGmYa5qwVRPn/TCST2YMrc8Uw3ByVEAo8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731434638; c=relaxed/simple;
-	bh=kqF92FnpSa2OXbqzYAFWSrZYSfupDZ8zTDehmduwQM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ece+b9jv7dgRW3NJ9NrVwY0y3ZysVQmcOD2uGqVgpTRYa7Jctgveurj4fMbnOBgvi6kGKi/H+8S1k+Wz1R0Xr5nXfAJa4R57eJg3XEIK96rVx3e/Pt7SS5NFEWW6PDJGEzGJMEvV2Cfg7YSOG9l6exgF6/XsaSs1+hd8euhzzU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kLOottUA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD84CC4CECD;
-	Tue, 12 Nov 2024 18:03:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731434638;
-	bh=kqF92FnpSa2OXbqzYAFWSrZYSfupDZ8zTDehmduwQM0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kLOottUAHgXyuaS5FZ7OFzdzu2OTg/oAzzpsqUYRe679Go3sEJL3g7LL3TvuXKQuk
-	 kJLtqwgjzF4IRoHXQ/ovpRcMp9KVydXxhdY+BDVMmeAUTwui5EJbJh+73Q9Dk/bSsT
-	 L3K5KjlKOKuIXuyz1MsPurXFFMgUBf0liqQJjIf4FpHhxhw+Tq6XoerTiuWe59eA7b
-	 7aNPWrwpUH9saLrfUwsTao0yghQeqUECpbPEDYKdUKDkxj8J2lKO4knfMx1mIv7Fg3
-	 BuGXXqqCkzwQI3PqJ/NXxmQu9skJgUekwOpP/ePQyLJiTqmtxXjwe96kUeZAhD3O+R
-	 8Z2SQdJHdisEw==
-Date: Tue, 12 Nov 2024 18:03:51 +0000
-From: Conor Dooley <conor@kernel.org>
-To: h1k0n <ybzjyhk@gmail.com>
-Cc: charlie@rivosinc.com, ajones@ventanamicro.com, andy.chiu@sifive.com,
-	aou@eecs.berkeley.edu, conor.dooley@microchip.com, corbet@lwn.net,
-	devicetree@vger.kernel.org, evan@rivosinc.com, guoren@kernel.org,
-	jernej.skrabec@gmail.com, jrtc27@jrtc27.com, jszhang@kernel.org,
-	krzk+dt@kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org,
-	samuel.holland@sifive.com, samuel@sholland.org, shuah@kernel.org,
-	wens@csie.org
-Subject: Re: D1 vlenb
-Message-ID: <20241112-blooming-reheat-d9a23401f6d6@spud>
-References: <20240911-xtheadvector-v10-3-8d3930091246@rivosinc.com>
- <20241112021227.357-1-ybzjyhk@gmail.com>
+	s=arc-20240116; t=1731435017; c=relaxed/simple;
+	bh=cQNF8sqDey2exlLOHgSvw5x7MKZ5aOz8+xnxhyeYDy8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UPS41jeJYGtySirN+kIVNk57Zkj9ovonJsI0O/m3PQbLJWGpkSwhqejs1E4vXMKI6WvvpJCaNecM8fFQK4ETTHKdVNf/AS9fb9otxGqbu54PKI4O7/Fg6xSz+YI/XU8qq2b8vLeHRNYvyz9273dw0yqhzfyE8CnQrZ7sZNbUc88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=0FVrwnpo; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XnvbB4NKPzlgMVh;
+	Tue, 12 Nov 2024 18:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1731435011; x=1734027012; bh=OnTouWYoGANIM6Er2wgBFd/G
+	9z2tKXnnqtxhxZfEEyU=; b=0FVrwnpo9hrNXKz9rXENeRTJMNxM6PcM/Y2pTbhn
+	NP9sdmBgnKjaZOl8Q6KCaBKKpqte8MAthVoz9QJoEmiDnL09fFnva/V7TWKjNvMz
+	JTcKlDWHZHd9D9yFrBnKj1pajYu+CcgWWhfGgOXtD6GWqYRhd6O1LO1XAYcUoqZY
+	cyeDwockPKPrpuBttC3kRACzR8rTdnHQG6AlMImVgnqHhh/2tRnsfie1FjyeJ/Hl
+	1qN/1qmqg9SE21+nhmf7kn1pJYmK9FQPis3vjuNeHediYUsA7N7bl5SH2fvTDntV
+	K1pe8OWcE26YAOQSzxXFECzJgNiTyWjQz623VluZrEYagA==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id gbdu87m0IOPq; Tue, 12 Nov 2024 18:10:11 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Xnvb16nBNzlgMVc;
+	Tue, 12 Nov 2024 18:10:05 +0000 (UTC)
+Message-ID: <cb3b0c9c-4589-4b58-90a1-998743803c5a@acm.org>
+Date: Tue, 12 Nov 2024 10:10:02 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3sbg3BDZLVHaW7eG"
-Content-Disposition: inline
-In-Reply-To: <20241112021227.357-1-ybzjyhk@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] scsi: ufs-qcom: Enable Dumping of Hibern8, MCQ, and
+ Testbus Registers
+To: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>,
+ Manish Pandey <quic_mapa@quicinc.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com
+References: <20241025055054.23170-1-quic_mapa@quicinc.com>
+ <20241112075000.vausf7ulr2t5svmg@thinkpad>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241112075000.vausf7ulr2t5svmg@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 11/11/24 11:50 PM, Manivannan Sadhasivam wrote:
+> On Fri, Oct 25, 2024 at 11:20:51AM +0530, Manish Pandey wrote:
+>> Submitting a series of patches aimed at enhancing the debugging and monitoring capabilities
+>> of the UFS-QCOM driver. These patches introduce new functionalities that will significantly
+>> aid in diagnosing and resolving issues related to hardware and software operations.
+>>
+> 
+> TBH, the current state of dumping UFSHC registers itself is just annoying as it
+> pollutes the kernel ring buffer. I don't think any peripheral driver in the
+> kernel does this. Please dump only relevant registers, not everything that you
+> feel like dumping.
 
---3sbg3BDZLVHaW7eG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I wouldn't mind if the code for dumping  UFSHC registers would be removed.
 
-On Tue, Nov 12, 2024 at 10:12:26AM +0800, h1k0n wrote:
+Thanks,
 
-This message is entirely empty FYI
-
---3sbg3BDZLVHaW7eG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzOYhwAKCRB4tDGHoIJi
-0hjfAQCqq2U6n0j4CEI1t2O0Z7i8ABrvQx9u4Yq+TaBYhwtgLAEArAZcyVMA30do
-BQbGW+93CZzpOrFMDM6b5Zs06UPQUgE=
-=yLsb
------END PGP SIGNATURE-----
-
---3sbg3BDZLVHaW7eG--
+Bart.
 
