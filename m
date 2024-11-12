@@ -1,242 +1,216 @@
-Return-Path: <linux-kernel+bounces-406053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5754A9C5A75
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:34:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C854A9C5A77
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:35:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16C9D28546E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:34:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC511F22CBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073B91FB3;
-	Tue, 12 Nov 2024 14:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A401FCC67;
+	Tue, 12 Nov 2024 14:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wo9EdhFn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O03eL8K9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wo9EdhFn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O03eL8K9"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HikdT6Nw"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8571F7093;
-	Tue, 12 Nov 2024 14:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692C11F7093
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422080; cv=none; b=XAO5743dvbZy5woLUZini5EHv3aBjENxSItROC/uimnhiwYpRNm11Esz1sSik2Hd9YtW8876s1SNkZHgyYzsEoHBlg2ZLnDycqcQnxphYo2/ebEh6Erwn+Lj+nzLrzBtRmjMtOWbHcciSl4FY/xoLBcb6IioGEvwJyaK4dfLva4=
+	t=1731422147; cv=none; b=pgEUkPMvzOWch1u/amT/fY7+0Xz4VeqOOo3brmR00EJXkFR534XBt/Be6Os2OTb1uoKGRj4dOfquPW1LLxjzt3QtD1TZOjOBOSgPLIVGPUw4X7A+jUK5wcS19duKv7UAoUUcON1mq5wM9iqdyAuHov6fkux7a5+ZSBuuDLo0Eq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422080; c=relaxed/simple;
-	bh=38Cat+mTHIwEdTCRWoxB7/cJ0Tc2zilueN0nvwFkzdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iIqytdvR5ruVSwJ38vuSsL9UUgO22Q1fL56Ie5/+1Qi+03wWYN0wvAcjrbTMNwHdLrsiG7Bn9JJvjXPg2WWMwZZWMOylTvNKB6Mqz45pW4MLYFEunsCIbP7lUuEpYQbN9I1+el4UahW+kmMReb3QAAmUELwgVJ81/9bJeysjn3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wo9EdhFn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O03eL8K9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wo9EdhFn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O03eL8K9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A9CF21F451;
-	Tue, 12 Nov 2024 14:34:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731422076; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9VVQgsqOYFZoxlytwLwYIeskoXYMoZVzYMX1BO/EMw8=;
-	b=Wo9EdhFnFAPvNY6+Z/KkEpCRCgsFAEUyzleJ/yRlSenPkIf5+L41vB51cKs5Q/cEdcKog0
-	8SAtVddMNLSeJJ6x0MQPrxNZcI0xxZZ7qNUCRy/zM/p/7BNl++NsiXUG+/dDtxYCc5k94j
-	Nn3aKdoypSaj8TpMD9TC6WGgW19yQso=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731422076;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9VVQgsqOYFZoxlytwLwYIeskoXYMoZVzYMX1BO/EMw8=;
-	b=O03eL8K9wy1y+iKsGzoVaQRu02eW6PlnV1TTGzJ0h7LKiHePkrTphVhygcxPljAUnSdlvY
-	6Ka/D5pmlQeDB0CQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731422076; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9VVQgsqOYFZoxlytwLwYIeskoXYMoZVzYMX1BO/EMw8=;
-	b=Wo9EdhFnFAPvNY6+Z/KkEpCRCgsFAEUyzleJ/yRlSenPkIf5+L41vB51cKs5Q/cEdcKog0
-	8SAtVddMNLSeJJ6x0MQPrxNZcI0xxZZ7qNUCRy/zM/p/7BNl++NsiXUG+/dDtxYCc5k94j
-	Nn3aKdoypSaj8TpMD9TC6WGgW19yQso=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731422076;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9VVQgsqOYFZoxlytwLwYIeskoXYMoZVzYMX1BO/EMw8=;
-	b=O03eL8K9wy1y+iKsGzoVaQRu02eW6PlnV1TTGzJ0h7LKiHePkrTphVhygcxPljAUnSdlvY
-	6Ka/D5pmlQeDB0CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9795313301;
-	Tue, 12 Nov 2024 14:34:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nQT8JHxnM2cHfgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 12 Nov 2024 14:34:36 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 47094A08D0; Tue, 12 Nov 2024 15:34:36 +0100 (CET)
-Date: Tue, 12 Nov 2024 15:34:36 +0100
-From: Jan Kara <jack@suse.cz>
-To: Asahi Lina <lina@asahilina.net>
-Cc: Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Chinner <david@fromorbit.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Sergio Lopez Pascual <slp@redhat.com>,
-	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
-Message-ID: <20241112143436.c2irwddrwopusqad@quack3>
-References: <20241104105711.mqk4of6frmsllarn@quack3>
- <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
- <ZylHyD7Z+ApaiS5g@dread.disaster.area>
- <21f921b3-6601-4fc4-873f-7ef8358113bb@asahilina.net>
- <20241106121255.yfvlzcomf7yvrvm7@quack3>
- <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
- <20241107100105.tktkxs5qhkjwkckg@quack3>
- <28308919-7e47-49e4-a821-bcd32f73eecb@asahilina.net>
- <20241108121641.jz3qdk2qez262zw2@quack3>
- <a6866a71-dde9-44a2-8b0e-d6d3c4c702f8@asahilina.net>
+	s=arc-20240116; t=1731422147; c=relaxed/simple;
+	bh=1IlveR25fMmS5/QdrDXCjZiS8/dRkNR5bD6tax0zuHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M4KubbNZ+G8JJV24ODGllIEjFpp5OAv4sac+gYH/fTz5r5n+qSV4kwdNDxln9pgjxyugNcRPvESlRoqQISqHVz33iBM6L6pFs5wQ4ODQwZCXb/aYEBKtqydKUH8AJ4JgQDe1TnxwEjd37ygGvTg2/Zjq4jX6Tk7kNy54080o2U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HikdT6Nw; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d4c1b1455so3839280f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 06:35:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731422143; x=1732026943; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pVxaA1z9fT6bwML4eXqw0/GJ56n1cvR8YdBgkVNFYhQ=;
+        b=HikdT6NweKqCmBuQKTDtF/+j8J6NbVl+IB1TjX0TAyrnWgkyhN/kqtAsFl/bpHOZFQ
+         ZUnc3NWhRj2HMwH2/vV44xLRAuD4vab/KJawkgxAlInsChie1rY3k7Ywrwmq5j1KdbMJ
+         doUmSMS2yiZ2nYwRSmOV8QL/C5Q076mJAlcPYPlCLTa2QoH1XPiao+7iCFjuPIkbvH4V
+         hC1KkiYsWsXLjsIwElG93OjGJaD1GxdOjZ/z6f40nFMi3Pf05HJRgTdrZcRueJceW2Ny
+         zThVPJn2rZToUsN7nwVowhfVSeHKXUeuO/LQBKEt8TYmJ0TFApLUrd6KupkDZRNHcF2x
+         H7Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731422143; x=1732026943;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pVxaA1z9fT6bwML4eXqw0/GJ56n1cvR8YdBgkVNFYhQ=;
+        b=vGFqeGzzCpbt10SptNyCJ++IDRrAqBumSMtyQRHp6VkZW6fCKZiVCT3LX2assyQ6nz
+         EF7J+gc8U6ZNDOpuPytVTsIu3kji65ZwiA/rNiAmnAVpDaG2LgJI2OwfwRTcgmapvizK
+         Ll/nsIy9XAtLeboPK7XFiPyQ8pMYIx7X7Zwe6HfwdydUE31sYe0kkCrmUyV/7XEtC8iD
+         vrBpg91qVbT0ImZhL56q9AewgPiS61IIpAqw5GaQDHgIojR599U1ED6M5DQ9DD0zLCmM
+         gJhjiEYXwDvAvc4D+YxRNhVsyFP/VzM2gRmpof2O6Za5gpS0k3yzjmC4m8mIMqLNxhL3
+         HvHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlCvMH3DLqCEHLL/IVDZIdZTxQ89XGNakbQyHKvkFvvTtJauqgqzVEnKecLvCnMfeEtlVKEMG24gylJ0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtfcyzYXzN268OXWCflT9viUeo2nchqNs3FERXJKtHudWvgZD/
+	QnZCG+JEheEjdZ3X4X6X7IPVU/jnhuApl496uhpGUqdjvRAXvovlUa3R4ggBpNA=
+X-Google-Smtp-Source: AGHT+IH3nn1DNyejg0QrIXmlhIVJG/2B1Lgrs9dlmIN9VPOR91QgXKaw3SCiFOYSgglSTBaCrt/cBA==
+X-Received: by 2002:a5d:59a3:0:b0:37d:3999:7b4 with SMTP id ffacd0b85a97d-3820811097cmr2114887f8f.17.1731422142732;
+        Tue, 12 Nov 2024 06:35:42 -0800 (PST)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97e46bsm15344100f8f.30.2024.11.12.06.35.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 06:35:42 -0800 (PST)
+Message-ID: <7fdcf601-524b-4530-861d-e4b0f8c1023b@suse.com>
+Date: Tue, 12 Nov 2024 15:35:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6866a71-dde9-44a2-8b0e-d6d3c4c702f8@asahilina.net>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/3] module: Don't fail module loading when setting
+ ro_after_init section RO failed
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen
+ <samitolvanen@google.com>, Kees Cook <kees@kernel.org>,
+ linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
+ <CGME20241109103554eucas1p1548e0da57cccb9546a88402f1f5c94be@eucas1p1.samsung.com>
+ <164e5f22f8ab59d1d516e3c992efdd9f83ab4819.1731148254.git.christophe.leroy@csgroup.eu>
+ <D5HZV4A6SC9A.25U3Q0WUVDJHZ@samsung.com>
+ <b74f0845-4916-47eb-945b-eb91ae05fc91@csgroup.eu>
+ <D5K3PNXEIKYK.11GZ8BMY02OA4@samsung.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <D5K3PNXEIKYK.11GZ8BMY02OA4@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue 12-11-24 18:49:46, Asahi Lina wrote:
-> On 11/8/24 9:16 PM, Jan Kara wrote:
-> > On Fri 08-11-24 01:09:54, Asahi Lina wrote:
-> >> On 11/7/24 7:01 PM, Jan Kara wrote:
-> >>> On Wed 06-11-24 11:59:44, Dan Williams wrote:
-> >>>> Jan Kara wrote:
-> >>>> [..]
-> >>>>>> This WARN still feels like the wrong thing, though. Right now it is the
-> >>>>>> only thing in DAX code complaining on a page size/block size mismatch
-> >>>>>> (at least for virtiofs). If this is so important, I feel like there
-> >>>>>> should be a higher level check elsewhere, like something happening at
-> >>>>>> mount time or on file open. It should actually cause the operations to
-> >>>>>> fail cleanly.
-> >>>>>
-> >>>>> That's a fair point. Currently filesystems supporting DAX check for this in
-> >>>>> their mount code because there isn't really a DAX code that would get
-> >>>>> called during mount and would have enough information to perform the check.
-> >>>>> I'm not sure adding a new call just for this check makes a lot of sense.
-> >>>>> But if you have some good place in mind, please tell me.
-> >>>>
-> >>>> Is not the reason that dax_writeback_mapping_range() the only thing
-> >>>> checking ->i_blkbits because 'struct writeback_control' does writeback
-> >>>> in terms of page-index ranges?
-> >>>
-> >>> To be fair, I don't remember why we've put the assertion specifically into
-> >>> dax_writeback_mapping_range(). But as Dave explained there's much more to
-> >>> this blocksize == pagesize limitation in DAX than just doing writeback in
-> >>> terms of page-index ranges. The whole DAX entry tracking in xarray would
-> >>> have to be modified to properly support other entry sizes than just PTE &
-> >>> PMD sizes because otherwise the entry locking just doesn't provide the
-> >>> guarantees that are expected from filesystems (e.g. you could have parallel
-> >>> modifications happening to a single fs block in pagesize < blocksize case).
-> >>>
-> >>>> All other dax entry points are filesystem controlled that know the
-> >>>> block-to-pfn-to-mapping relationship.
-> >>>>
-> >>>> Recall that dax_writeback_mapping_range() is historically for pmem
-> >>>> persistence guarantees to make sure that applications write through CPU
-> >>>> cache to media.
-> >>>
-> >>> Correct.
-> >>>
-> >>>> Presumably there are no cache coherency concerns with fuse and dax
-> >>>> writes from the guest side are not a risk of being stranded in CPU
-> >>>> cache. Host side filesystem writeback will take care of them when / if
-> >>>> the guest triggers a storage device cache flush, not a guest page cache
-> >>>> writeback.
-> >>>
-> >>> I'm not so sure. When you call fsync(2) in the guest on virtiofs file, it
-> >>> should provide persistency guarantees on the file contents even in case of
-> >>> *host* power failure. So if the guest is directly mapping host's page cache
-> >>> pages through virtiofs, filemap_fdatawrite() call in the guest must result
-> >>> in fsync(2) on the host to persist those pages. And as far as I vaguely
-> >>> remember that happens by KVM catching the arch_wb_cache_pmem() calls and
-> >>> issuing fsync(2) on the host. But I could be totally wrong here.
-> >>
-> >> I don't think that's how it actually works, at least on arm64.
-> >> arch_wb_cache_pmem() calls dcache_clean_pop() which is either dc cvap or
-> >> dc cvac. Those are trapped by HCR_EL2<TPC>, and that is never set by KVM.
-> >>
-> >> There was some discussion of this here:
-> >> https://lore.kernel.org/all/20190702055937.3ffpwph7anvohmxu@US-160370MP2.local/
-> > 
-> > I see. Thanks for correcting me.
-> > 
-> >> But I'm not sure that all really made sense then.
-> >>
-> >> msync() and fsync() should already provide persistence. Those end up
-> >> calling vfs_fsync_range(), which becomes a FUSE fsync(), which fsyncs
-> >> (or fdatasyncs) the whole file. What I'm not so sure is whether there
-> >> are any other codepaths that also need to provide those guarantees which
-> >> *don't* end up calling fsync on the VFS. For example, the manpages kind
-> >> of imply munmap() syncs, though as far as I can tell that's not actually
-> >> the case. If there are missing sync paths, then I think those might just
-> >> be broken right now...
-> > 
-> > munmap(2) is not an issue because that has no persistency guarantees in
-> > case of power failure attached to it. Thinking about it some more I agree
-> > that just dropping dax_writeback_mapping_range() from virtiofs should be
-> > safe. The modifications are going to be persisted by the host eventually
-> > (so writeback as such isn't needed) and all crash-safe guarantees are
-> > revolving around calls like fsync(2), sync(2), sync_fs(2) which get passed
-> > by fuse and hopefully acted upon on the host. I'm quite confident with this
-> > because even standard filesystems such as ext4 flush disk caches only in
-> > response to operations like these (plus some in journalling code but that's
-> > a separate story).
-> > 
-> > 								Honza
+On 11/12/24 10:43, Daniel Gomez wrote:
+> On Mon Nov 11, 2024 at 7:53 PM CET, Christophe Leroy wrote:
+>>
+>>
+>> Le 09/11/2024 à 23:17, Daniel Gomez a écrit :
+>>> On Sat Nov 9, 2024 at 11:35 AM CET, Christophe Leroy wrote:
+>>>> Once module init has succeded it is too late to cancel loading.
+>>>> If setting ro_after_init data section to read-only fails, all we
+>>>> can do is to inform the user through a warning.
+>>>>
+>>>> Reported-by: Thomas Gleixner <tglx@linutronix.de>
+>>>> Closes: https://protect2.fireeye.com/v1/url?k=d3deb284-b2a35ac3-d3df39cb-74fe485fff30-288375d7d91e4ad9&q=1&e=701066ca-634d-4525-a77d-1a44451f897a&u=https%3A%2F%2Feur01.safelinks.protection.outlook.com%2F%3Furl%3Dhttps%253A%252F%252Flore.kernel.org%252Fall%252F20230915082126.4187913-1-ruanjinjie%2540huawei.com%252F%26data%3D05%257C02%257Cchristophe.leroy%2540csgroup.eu%257C26b5ca7363e54210439b08dd010c4865%257C8b87af7d86474dc78df45f69a2011bb5%257C0%257C0%257C638667874457200373%257CUnknown%257CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%253D%253D%257C0%257C%257C%257C%26sdata%3DZeJ%252F3%252B2Nx%252FBf%252FWLFEkhxKlDhZk8LNkz0fs%252Fg2xMcOjY%253D%26reserved%3D0
+>>>> Fixes: d1909c022173 ("module: Don't ignore errors from set_memory_XX()")
+>>>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>>>> ---
+>>>>   kernel/module/main.c | 6 +++---
+>>>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/kernel/module/main.c b/kernel/module/main.c
+>>>> index 2de4ad7af335..1bf4b0db291b 100644
+>>>> --- a/kernel/module/main.c
+>>>> +++ b/kernel/module/main.c
+>>>> @@ -2583,7 +2583,9 @@ static noinline int do_init_module(struct module *mod)
+>>>>   #endif
+>>>>   	ret = module_enable_rodata_ro_after_init(mod);
+>>>>   	if (ret)
+>>>> -		goto fail_mutex_unlock;
+>>>> +		pr_warn("%s: %s() returned %d, ro_after_init data might still be writable\n",
+>>>> +			mod->name, __func__, ret);
+>>>> +
+>>>>   	mod_tree_remove_init(mod);
+>>>>   	module_arch_freeing_init(mod);
+>>>>   	for_class_mod_mem_type(type, init) {
+>>>> @@ -2622,8 +2624,6 @@ static noinline int do_init_module(struct module *mod)
+>>>>   
+>>>>   	return 0;
+>>>
+>>> I think it would make sense to propagate the error. But that would
+>>> require changing modprobe.c. What kind of error can we expect when this
+>>> happens?
+>>
+>> AFAIK, on powerpc it fails with EINVAL when
+>> - The area is a vmalloc or module area and is a hugepage area
+>> - The area is not vmalloc or io register and MMU is not powerpc radix MMU
+>>
+>> Otherwise it propagates the error from apply_to_existing_page_range(). 
+>> IIUC it will return EINVAL when it hits a leaf PTE in upper directories.
 > 
-> I think we should go with that then. Should I send it as Suggested-by:
-> Dan or do you want to send it?
+> Looking at that path I see we can also fail at __apply_to_page_range()
+> -> apply_to_p4d_range() and return with -ENOMEM.
+> 
+> My proposal was to do something like the change below in modprobe:
+> 
+> diff --git a/tools/modprobe.c b/tools/modprobe.c
+> index ec66e6f..8876e27 100644
+> --- a/tools/modprobe.c
+> +++ b/tools/modprobe.c
+> @@ -572,6 +572,11 @@ static int insmod_insert(struct kmod_module *mod, int flags, const char *extra_o
+>                 err = 0;
+>         else {
+>                 switch (err) {
+> +               case -EINVAL:
+> +                       ERR("module '%s'inserted: ro_after_init data might"
+> +                           "still be writable (see dmesg)\n",
+> +                           kmod_module_get_name(mod));
+> +                       break;
+>                 case -EEXIST:
+>                         ERR("could not insert '%s': Module already in kernel\n",
+>                             kmod_module_get_name(mod));
+> 
+> But I think these error codes may be also be reported in other parts
+> such as simplify_symbols() so may not be a good idea after all.
 
-I say go ahead and send it with Dan's suggested-by :)
+It isn't really possible to make a sensible use of the return code from
+init_module(), besides some basic check for -EEXIST. The problem is that
+any error code from a module's init function is also propagated as
+a result from the syscall.
 
-								Honza
+> 
+> Maybe we just need to change the default/catch all error message in
+> modprobe.c and to indicate/include this case:
+> 
+> diff --git a/tools/modprobe.c b/tools/modprobe.c
+> index ec66e6f..3647d37 100644
+> --- a/tools/modprobe.c
+> +++ b/tools/modprobe.c
+> @@ -582,7 +582,8 @@ static int insmod_insert(struct kmod_module *mod, int flags, const char *extra_o
+>                             kmod_module_get_name(mod));
+>                         break;
+>                 default:
+> -                       ERR("could not insert '%s': %s\n", kmod_module_get_name(mod),
+> +                       ERR("could not insert '%s' or inserted with error %s, "
+> +                           "(see dmesg)\n", kmod_module_get_name(mod),
+>                             strerror(-err));
+>                         break;
+>                 }
+> 
+> 
+>>
+>> On other architectures it can be different, I know some architecture try 
+>> to split the pages when they hit hugepages and that can fail.
+> 
+> Is it worth it adding an error code for this case in case we want to
+> report it back?
+
+I feel that the proposed kernel warning about this situation is
+sufficient and the loader should then return 0 to indicate that the
+module got loaded. It would be more confusing to return an error but
+with the module actually remaining inserted.
+
+A module loaded without having its RO-after-init section changed
+properly to RO is still fully functional. In practice, if this final
+set_memory_ro() call fails, the system is already in such a state where
+the additional warning is the least of the issues?
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Petr
 
