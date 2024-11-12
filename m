@@ -1,247 +1,126 @@
-Return-Path: <linux-kernel+bounces-405584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E809F9C531E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:23:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB649C532A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:24:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D71F2832D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:23:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 687781F264DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02742123DB;
-	Tue, 12 Nov 2024 10:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8476213144;
+	Tue, 12 Nov 2024 10:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="JITA7opH"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010062.outbound.protection.outlook.com [52.101.228.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qjUh3xZj"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B2520F5B6;
-	Tue, 12 Nov 2024 10:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731406941; cv=fail; b=ZISCg6Y5QMj0TELpLPP5/cXcfFE/neQXkKSsk6+4zKBgjVtcUDq1JaPG8x4XxbkMBiGCeeaXXRVQmIOTTjqb95Rh+rV0VLIo79vssrTYViZALkx7NCMqQw1XBeM9nWMgKkKxUNf1x2cNuhVAOAcicO5ZtTu1hPorYshP1sVjk6M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731406941; c=relaxed/simple;
-	bh=uuLHv/TPbpyuJSiDvnMB3FkKX1rc4MgscSaNKvIT5RI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TpyCjozS12B82awYdRB4GPMwQqGYE52vDMOE4rwIYfLehqQ9v96+mP3zVAw0PcNmduEgR7HP+1Uc+5NrEiydpT4vVandFe1bZIfsyNsudTSkE3Fv5V6C6ndENDU/glTrBkrqIAaRzZkQp1vR4vdmoie4BzVVjqBU+CPONURGJ74=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=JITA7opH; arc=fail smtp.client-ip=52.101.228.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kkNRwlEvpRinMUUP2xIvRlv8lG1e6GuwPqw0qgh2VETF11UWdZ3FIyaJOoWynsLZYkI5LKdrDdaFvoJ6fQaJBduYXNDkMkKmHv4WuPy1AqLJaaSz5orbwR67D90Q8dJf+QcSwMW9o/ErUumsGlObbMB0dTiF3KjuNWsnS5LZ28/HiNmE8u78dPp430jQN4SgNfSDsObB5B5zDUO9u0q5AaHiyoShDbgsQHNBoSz6otg+UfOYKae1BauCqziheRdQXk99VFuhBdMdTnjNDGz3UrEbfFOJNpJ6pO2dY4lz89Ns+izMv6+Oi05jZQteF8ggTZYUpgQx1tAXoi1sk2pKTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oxJ4RwOEr82XCbEspiLXyjx5a9jdl3H2kZ8mGdsCYv8=;
- b=iOxjewv9KwwA9dnHhCwCvBRsyQO6YllyzGfuaVg0gIRbxY2nw8Gmji66v2snUV18vGLc1Or/ae3vOIpenh/A3jfJv8gW1D/nbj2QoZh4yMX9wDoTYZia14TbNs7encg0XZuwbVTw9c0M/0pGh56JsHZWRrh2jON5kd+LN/KLGdAejPpFhnH/2tHOxnSNAZwtSL0fxv+2CHRdCsg+DY4DgYuHYYhNHnQG6aMhOaeKIi646ZAASuMKDZLCzK31GDoTkY0ys9CQH2h0mqkAAWAiNMDU3n9ZWBn4xjj7Qmw10gQ4jFZKQIOJZ8vFtmmEiHaKJ0/cP6AZnmDlq4aevZj/6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oxJ4RwOEr82XCbEspiLXyjx5a9jdl3H2kZ8mGdsCYv8=;
- b=JITA7opHf0+qEjBO7ehBLdgE1GLUw0bWkZu/S8nDXSMkK0CiJTIpLMyk3fzRiP09FE7K9GIYV1Hay4rc+qk4uHD7v/k2SeqqroE72xY3g+9eEWY4nUr86EqjPbViQrG3FuVOJuiBzZoLNr9Um4sTNXn0uBW3xCbtquQbS2OwD8U=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYCPR01MB8552.jpnprd01.prod.outlook.com (2603:1096:400:138::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Tue, 12 Nov
- 2024 10:22:13 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 10:22:13 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Liu Ying <victor.liu@nxp.com>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-CC: "shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de"
-	<s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "catalin.marinas@arm.com"
-	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
-	"abelvesa@kernel.org" <abelvesa@kernel.org>, "peng.fan@nxp.com"
-	<peng.fan@nxp.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>, "andrzej.hajda@intel.com"
-	<andrzej.hajda@intel.com>, "neil.armstrong@linaro.org"
-	<neil.armstrong@linaro.org>, "rfoss@kernel.org" <rfoss@kernel.org>,
-	laurent.pinchart <laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se"
-	<jonas@kwiboo.se>, "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
-	<tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>, "quic_bjorande@quicinc.com"
-	<quic_bjorande@quicinc.com>, "geert+renesas@glider.be"
-	<geert+renesas@glider.be>, "dmitry.baryshkov@linaro.org"
-	<dmitry.baryshkov@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>,
-	"nfraprado@collabora.com" <nfraprado@collabora.com>, "marex@denx.de"
-	<marex@denx.de>
-Subject: RE: [PATCH v6 7/7] arm64: defconfig: Enable ITE IT6263 driver
-Thread-Topic: [PATCH v6 7/7] arm64: defconfig: Enable ITE IT6263 driver
-Thread-Index: AQHbNOqfdCG8B3DZuESvH2RV/HKqu7KzbykQ
-Date: Tue, 12 Nov 2024 10:22:13 +0000
-Message-ID:
- <TY3PR01MB11346F931EAF9BB82DDDC9A3F86592@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20241112100547.2908497-1-victor.liu@nxp.com>
- <20241112100547.2908497-8-victor.liu@nxp.com>
-In-Reply-To: <20241112100547.2908497-8-victor.liu@nxp.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYCPR01MB8552:EE_
-x-ms-office365-filtering-correlation-id: 50d24a4a-c52e-4e94-f022-08dd0303e009
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?nbDxbJxiT8XptAQtXmHfPAJmkoMzmE7AQXa4/fs3BROIBZcuSHaMY0kKXCvv?=
- =?us-ascii?Q?gqbIQZG5anr/++V5u3ERpmbNyQLnsPlzwTw0o59a1X3pvvuHUl4dgUJGuX6A?=
- =?us-ascii?Q?ni45r6AWzKd8TvHZQQAl+JWbYjRAUvouJCSFSm+sIaWlgQ4aQLZ4MdRbdDcC?=
- =?us-ascii?Q?TFp/2yrhZU+6zvvzZbkRhfc2+YUDAfmEpUH4mApeAv6Yhg+NYGEHg3yWIr3g?=
- =?us-ascii?Q?Vh0Ze0ULoKlqMajEtI4efOoAYxaqAFhVC8lWkGC+yplKeCVPiWuXTiSi7p0E?=
- =?us-ascii?Q?3kGrBM58S0rSORpuVLmgyIj0PiF8C/oDLSTmRyzZSaYnv6hu9NPf8jfiLqeR?=
- =?us-ascii?Q?zRBbPSAwBpYD0+eBXsR6lzOKYkgxRicW2jlZ6zMUlhK/IuG33yHuBwF0omnC?=
- =?us-ascii?Q?+Y+117vVcL7nsCFUNSrGkV12X9BmuHf+NF/s9KbD3tOakAsQpzbgBKwH4JsW?=
- =?us-ascii?Q?HuLZSBUg7TH1hDC3xKKAq0znokcDIGp47tfMbVyaCrEgCbjhSdnfRcfvaPUg?=
- =?us-ascii?Q?04B6qlyyFvin8fc3GIHgEKkhBiS55NMWrhUvAwS7OiEmBGCyYM2ePyPRs8ea?=
- =?us-ascii?Q?1mPw5vfCrS1YcYvbTEvdJqmRsJYObH7Y/N7WS1EyeSv7RPVoWbhxc29deeI6?=
- =?us-ascii?Q?Fxrj/K91VEuFKNt+jwgGGyYWpt9Koqgc6QhTH3Su2aabje4anGUwHyIjI2tZ?=
- =?us-ascii?Q?Gqio40tP3FFptDdXkOZTvwULEo/XYnAzDM4ktUOWmmBOt1zVPLXZYazixSu3?=
- =?us-ascii?Q?Jh8f3Mge4ipod5s3G4rXmsq0sc8BbJIXcGUJf6fIYqRuNs2lxK3YkQfYC2c/?=
- =?us-ascii?Q?NeStvsxI/ZyYxspgxdFEY+zscTt1C+hPjn0HWpvm6OAqjNeJy14anKg2UY6h?=
- =?us-ascii?Q?/V8VQwN0JETHA7cf3GsRZug6dY98Vp1ONeFmzUfnK2KRCFonWWu3DNk+mcyY?=
- =?us-ascii?Q?HipSrtWhkMQlWcQvlUF8yiKiTSMG67jNV5CMkS2Vbf3vhyYBvQbOCWONMnz3?=
- =?us-ascii?Q?+VXFIY99co6YhwfCEvlz55nyGS8NsPVbw/3QXRbGzuB6Lbrz3QZz5zuSbqUg?=
- =?us-ascii?Q?Kq87m0ReS9HiCli0dYas2HmT3AzTgwZPVz4T/tNNR1xl+Z8cmtQ5bsWl0Y+u?=
- =?us-ascii?Q?SmhFK/Uf0QuFO1QoKdVXC3si4CQAMG2O9U8xtcKEZR16Xw8O4c/fQATwLTca?=
- =?us-ascii?Q?djKhC4BsIArcsqg34NpFiWHjSj1YqePdq5Wa7dYtlSXPsc62QLB9MTmNjoiG?=
- =?us-ascii?Q?kn+IoN1LMNeO8loiVQT8UBQAEnzfAUbeK8rj0/Cg4KW8IqrdBGc1TaQ0C+z5?=
- =?us-ascii?Q?eFaZdtS+3bta1LLkACJLQKYA7Vkbw0+xWUx+VptVVJoBAlo7Flpy07uWrB4S?=
- =?us-ascii?Q?uH2r6Yk=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?dkdhoLYUceSSIPm4+pWmfQ6LirkCXieDCvA+Cpi5kdBa5COTnd1TNn9duGNQ?=
- =?us-ascii?Q?A+PK5mYzxTJYGLA0pn5Kl6CqGff0O6GSsjyjuqtJRtP9vQiKZEu99ueBQpDz?=
- =?us-ascii?Q?X4u58IlSkNcAcgXKaUoyJ8xlFX/fHL3gz030Z2ha8dyjFah+OPLW7XYZAQwe?=
- =?us-ascii?Q?tvULfWnSjoQBxtajxMfkrBMkutrDslaVaHw2cLZtjciJHGOO8ywg/kME0KSo?=
- =?us-ascii?Q?iwMJUZx48R8udwNMXd6vnONnO/RfCRP1Oy2TI/vyd8RrS8ga2pIeanDl7tyA?=
- =?us-ascii?Q?peqHj3V512xwuehxoAsRUkGnoQZk49cOg8f3iZbUJog4pYEPILZYfUWnhawb?=
- =?us-ascii?Q?mg68zQAgIRzNFAqQTUt/veTROqfgXRpti5IlsegdyBOcuRb9DkAHXs9FKBqR?=
- =?us-ascii?Q?oWfVeYEAAd7GFZIE1N7pGrLWB3/Gy0bo4CTGKzLCUIAnUZVPeoe9Nd2T6HE9?=
- =?us-ascii?Q?Vn7cX577T0mDjJlquK44xTk+gJ/fheAxaOvtz1DANwE4u13Ju7DVg5GxCBfO?=
- =?us-ascii?Q?Di6UdwrSJc7ODeehyC5bPu7x1oTOySiQLztm2LP4CnR65aMx5f9cXWBjjmR9?=
- =?us-ascii?Q?5IOZTV07YwPPyLbOoqrdfCshVE0DDS7UgsRXRpIqaQ3Ox8lJ9PTKUoUh5OGA?=
- =?us-ascii?Q?NQGb9MxhG5Ei6uMbwDbCHIl1XVwzN5+pbOp+DgSfMyu90ryg+5OlU2sNHv2L?=
- =?us-ascii?Q?MTwQebsoyFyjgfjlOfcgBLuV/yMhaUVh5huqeOPYvXFA35ID2zRqwcpHDnos?=
- =?us-ascii?Q?l+krxY/4kJC/DeT1YEm+6FLcSu5guVgdBifi0vk+/Z5CJnzmp/CFaMwLmt3s?=
- =?us-ascii?Q?m63B0MNAXg6yoambqNU+/vqkmslKd/AuqjwjJXjH1YR32hxo1xDYpW9gV/vN?=
- =?us-ascii?Q?B+syh7ko+aUaulD0whorUW905jda71LExfeE8g9/olCDceU7oBxl6dkxxc6I?=
- =?us-ascii?Q?tM6ChHWI6Ur9i9SzQbpDitUr6C6S7388m0Psd2hiPM9b6+wuBc2XisTE/U24?=
- =?us-ascii?Q?HbBFEVXdP52gJD+kHu6VyyhPQs48ezBK8kzJjoe/9sjfGPd1gxzqt6D51mBR?=
- =?us-ascii?Q?4Qij3voZVKmdr2Qhewh8H4SCgDQpKLPGH0itrQwGem3xMvx8pfDNZvikfisB?=
- =?us-ascii?Q?4SnL+3QZSWmWcWVG7+NUwj7TaLVJ75mSu9x9tc5e+NOl0Arvc30IolRZZRa7?=
- =?us-ascii?Q?VyJWJcEjM7cV2VYaxQNhg0STmYg0qylJyTWjJu8inB4/DKyh0ZUmvgPgg3hx?=
- =?us-ascii?Q?PDiKJahCg+n+C6ovV9y37vx8oMckvlBR4LRxZkLWeSGb5JZ+EbouUYJP727C?=
- =?us-ascii?Q?4qbN3KJFa4XhGBaLxa7RvsNlPsta5nPGfp3BhiXtTt5LqqrabJTaGbsrUTVS?=
- =?us-ascii?Q?z2xFyvGWNMQFdWmoey5lugBnrHM8shm6Z3xxHfVOPiFtOuM0wXpsPeIeQNBL?=
- =?us-ascii?Q?BvVXZMOIx6mMoBsRP10Nz1n7WjB4DY6IfpVuBfBpZP7jqJWrFwtDJ4ipqULD?=
- =?us-ascii?Q?g8LeDgs2gp1XgHDTocVU4aWkyQN7edxFP5D40iaS7O8cP9ZkOHjccKWTm7/R?=
- =?us-ascii?Q?Jvjc1T9GuMAFcPswmLJo/Pb90U3D6fyXDg3DwfS94sJpItR4YfCSpd9+9miv?=
- =?us-ascii?Q?yA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612062123DB
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731406991; cv=none; b=iVfcNbaF+Tab1Mwb0eFEXBMAFVFj//dG2qYMVHkbLsQJNSk+w+i0WHJgLQA7XztvQEX/s2bkGXVUMxZYA7zhybmkZHNe3BUNd2nGh2bugPcfJlp74j0oG5OHA+tcNeZJYjo0pWwabyXrl/tZ2WffP81+vqO6MOx4wHRRRYE0Au0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731406991; c=relaxed/simple;
+	bh=e/QqDzlVLbsFjZCG9tc6aZaGsN5YICbP0g+qKrCy2XM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bJhjduzEyFh+PnrVaqq3jWd5zyXr8IX6Kr2elJRq8lt0dE2FnY1G1Lzi7AOoQuJ+TbpEqLvZrVuu+fcE+XY3f4oABEOMqg+Q388poEOpkwM3jmE0lK4crnkBd6TEEMVrLsOGzmkD1XZmPqTMH4mcrpRZbgAK2Trbz60Xe2Guylw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qjUh3xZj; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9ec86a67feso946317666b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:23:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731406988; x=1732011788; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ezd42G+JwcNpijWol87RV7vPAsy6HdlYEXoioaZ3yUM=;
+        b=qjUh3xZjuf2V4Kddsrd7fwDSoiID/KN/poQOgn6lFjGqf4cDP60PVTGIp5iIspKcsa
+         FFtdv/GuG9/g6uff3JulmtVQoZsUwwVelUPid7NrEWHF7ty9W2R7RfZ70gp466kIk76h
+         DbhTaN2id+s+R1c/qSyXIXdyP4B70zFL1Sq3fvjowOvu4pKb76+Md0FCJ1dacCCg5AS3
+         OdedmMS/fwSLeNObBWelp8GbdqzofpMInQueJ29DsmQgj8ef38Sbfd4rmqdDnvEFr1BC
+         y9G11KNFoADEQ4x26C+WAfVr6A9V+KhYXTkKKfHaqePkMXTzjRwxPd/hkjoo1xGIf/E5
+         vf7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731406988; x=1732011788;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ezd42G+JwcNpijWol87RV7vPAsy6HdlYEXoioaZ3yUM=;
+        b=bheHqeRV/8HLaHYIKOwjMAAChOwRK7HhWZdvL0XZSpVPujwv3nAW0QGoIZSPibFtwj
+         DyZ47TwzmlnMxkmsmykrEFNOWHJU1V7eBQTzlF97ZxkPq1hCo64vtb5w/RWUMmbHzFLB
+         DtOiTBv13KEnVEN9vPFxvrdxaIELd+jc1M/gYnRgJovzz4lm7J5sLG9pHqOTFcyGsG8w
+         4spd5Ip0q6DXIlDwVUkib0UsDOvCyQLV3EGSdVFRzLe70hIsIl1MqWnSA4dRmY4/SBht
+         /GSfVZvNHc03/fbliooQSM9CAmPe+wsMsp1zhhN1gbtq+CAZ8I/jVDUgt2zKiAO/366o
+         1kpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKUL3e6XZjpBosb3vzaaPXKS09hPBwJhBLoPFqaWUu024xDHDyiAVAdxw8jn2snwZuIgN8QGVBgjYTBSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOWpZ8X1O1mrDS/cyJmNIUjb/5QLnM1N65N0He94HjaIvBF6JV
+	i3NHNdC7Ci6+grD10qj9Yhq8T3FOX+4jduX8ABXK6z8/VESGWEZF4Wk5ISufBqiun0O/n3vej0X
+	f
+X-Google-Smtp-Source: AGHT+IGt4j9ZZSe9rgo5rLVKL7Sw0JNMnKYRedUbOwvl2VfIbz2NdhXaY+7ntI9ZFHojloYTONpjJw==
+X-Received: by 2002:a17:907:7d8e:b0:a9a:14fc:44a2 with SMTP id a640c23a62f3a-a9eeff44f6emr1650475766b.30.1731406987590;
+        Tue, 12 Nov 2024 02:23:07 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9f08c9ae30sm394026966b.55.2024.11.12.02.23.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 02:23:07 -0800 (PST)
+Date: Tue, 12 Nov 2024 13:23:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/bridge: ite-it6263: Prevent error pointer
+ dereference in probe()
+Message-ID: <804a758b-f2e7-4116-b72d-29bc8905beed@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50d24a4a-c52e-4e94-f022-08dd0303e009
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2024 10:22:13.4987
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5LatjY0gmUXvT88i+2h0J41sLIMaWWdraBM3T74Af2quLO/5b0OhYubRAMF07VZQ6WGaoTsEzzzHg8YBOPB6sCkWCNByPL08LJQzXYrxBpI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8552
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hi Liu Ying,
+If devm_i2c_new_dummy_device() fails then we were supposed to return an
+error code, but instead the function continues and will crash on the next
+line.  Add the missing return statement.
 
-Thanks for the patch.
+Fixes: 049723628716 ("drm/bridge: Add ITE IT6263 LVDS to HDMI converter")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/bridge/ite-it6263.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> -----Original Message-----
-> From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf Of Li=
-u Ying
-> Sent: 12 November 2024 10:06
-> Subject: [PATCH v6 7/7] arm64: defconfig: Enable ITE IT6263 driver
->=20
-> ITE IT6263 LVDS to HDMI converter is populated on NXP IMX-LVDS-HDMI and I=
-MX-DLVDS-HDMI adapter cards.
-> The adapter cards can connect to i.MX8MP EVK base board to support video =
-output through HDMI
-> connectors.
-> Build the ITE IT6263 driver as a module.
->=20
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Cheers,
-Biju
-
-
-> ---
-> v6:
-> * No change.
->=20
-> v5:
-> * No change.
->=20
-> v4:
-> * No change.
->=20
-> v3:
-> * No change.
->=20
-> v2:
-> * No change.
->=20
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig =
-index
-> d13218d0c30f..9b20b75f82e2 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -901,6 +901,7 @@ CONFIG_DRM_PANEL_SITRONIX_ST7703=3Dm
->  CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA=3Dm
->  CONFIG_DRM_PANEL_VISIONOX_VTDR6130=3Dm
->  CONFIG_DRM_FSL_LDB=3Dm
-> +CONFIG_DRM_ITE_IT6263=3Dm
->  CONFIG_DRM_LONTIUM_LT8912B=3Dm
->  CONFIG_DRM_LONTIUM_LT9611=3Dm
->  CONFIG_DRM_LONTIUM_LT9611UXC=3Dm
-> --
-> 2.34.1
+diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge/ite-it6263.c
+index cbabd4e20d3e..5f138a5692c7 100644
+--- a/drivers/gpu/drm/bridge/ite-it6263.c
++++ b/drivers/gpu/drm/bridge/ite-it6263.c
+@@ -845,8 +845,8 @@ static int it6263_probe(struct i2c_client *client)
+ 	it->lvds_i2c = devm_i2c_new_dummy_device(dev, client->adapter,
+ 						 LVDS_INPUT_CTRL_I2C_ADDR);
+ 	if (IS_ERR(it->lvds_i2c))
+-		dev_err_probe(it->dev, PTR_ERR(it->lvds_i2c),
+-			      "failed to allocate I2C device for LVDS\n");
++		return dev_err_probe(it->dev, PTR_ERR(it->lvds_i2c),
++				     "failed to allocate I2C device for LVDS\n");
+ 
+ 	it->lvds_regmap = devm_regmap_init_i2c(it->lvds_i2c,
+ 					       &it6263_lvds_regmap_config);
+-- 
+2.45.2
 
 
