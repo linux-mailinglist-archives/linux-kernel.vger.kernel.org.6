@@ -1,52 +1,60 @@
-Return-Path: <linux-kernel+bounces-405779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF549C56E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:45:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3AA9C56E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:45:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64DB21F22A13
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:45:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F142836B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE061BCA11;
-	Tue, 12 Nov 2024 11:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE7D1BD4FB;
+	Tue, 12 Nov 2024 11:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="O0pUXGRL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HAkHWhHq"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B9A19E992
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33E6230989;
+	Tue, 12 Nov 2024 11:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731411932; cv=none; b=ayjzdiFeGK+h1xQaaGIj8eaW2sQU09HRArby82PnGuCpEi55UE2fQo/yCTG3QuxjjYpfxutoyUxf5sW4AvHfSncvETFviU+12HByCsdMoAp8Htq4WkiPo+GbETgYkRW0MZhdij+psMe1qhDjOMiPviaoRa9Nr0h9O2e0XX2Rgqg=
+	t=1731411950; cv=none; b=u6knIELUQPWpE4evFkqQS6alSWbnDatIWNbUVqv8XsmBKkuCS81+xJb6mPZGVRM3wRXdq0QK9ome13wS5c0eX3QNWT3PFKDJNbyXdU2IaaPda168CJWaLFUPr8hZ2Un3bp3+JSZrkwdC4hLxw7XC8BfIFLRASXo6rLVSzFBB/Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731411932; c=relaxed/simple;
-	bh=7LI280z4fmODV2SHNnr/yWCyaQ36kuShQQJYP5jJPDY=;
+	s=arc-20240116; t=1731411950; c=relaxed/simple;
+	bh=rwStpxnanly060PEUm3Ory3Ei/C3/hXuY2xfwxrCRZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iLexefG94En1H0JCXqan9x/xunN6YvUtOUmh2gtFuCNKdxEHzfLHu65goZA6B9hPHzMdBY4AlsR6YxbV5nEyNxThgW+P4/7XwJnxAGy16BmoVtoq9RZYrkqRfC2bIdQ+SJp4VMZfDkVIBJ34jHD+v7htvNSETv8oVXrVoQ9+0Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=O0pUXGRL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94087C4CECD;
-	Tue, 12 Nov 2024 11:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731411932;
-	bh=7LI280z4fmODV2SHNnr/yWCyaQ36kuShQQJYP5jJPDY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O0pUXGRLhCM8PDVlopg/DMcLkRuFJEcBROtqMnyk8L9zXmUCuDrVys+qBiboT00ZV
-	 uaBGdTM0baEX8qXDeZ5bbT6Gy2hK0ArFAYczse+SLpJPwiaM8rk0zdoLyWNzymBifx
-	 yaF6SBO2dmMvIVYQRudiFwUkoaz3L/HpLczvx+as=
-Date: Tue, 12 Nov 2024 12:45:29 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH 3/3] driver core: class: Delete a redundant check in APIs
- class_(for_each|find)_device()
-Message-ID: <2024111230-diabetic-stubbed-102b@gregkh>
-References: <20241105-class_fix-v1-0-80866f9994a5@quicinc.com>
- <20241105-class_fix-v1-3-80866f9994a5@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPr5QMR49WHUlWGsWfn77bVxyLTnsmivWXOItQgF+BgfUYKfkHWes2aQDsEQ/72uk2JQLJYm1PB6xqjoa30efWTtL2s1lLcE7yHOEVZB7TjmeFlAPHyPejEmKulTfPMK9m9zEsTpmCcs/M7zsw1CkguxjWuTvVwvPh/bFkMiz8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HAkHWhHq; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rwStpxnanly060PEUm3Ory3Ei/C3/hXuY2xfwxrCRZA=; b=HAkHWhHqQmq0ysSeQcV2mDrJ48
+	q7nWiDT5YfVgVeDp+asNKOigehmNCDAMwbiyezP37Ho3nJ72/a/wS2rVc80QljLw+wY0vrS364kWC
+	q93IwzP8NNCM1I0dvYpEHycbjt67nsusczwxVOlZQLmxCMugvd8Ly6x90tVgQLcpfvlX4a8dmCd6x
+	QLn5r0mTSKkedro7OpxSBFQd4FGUeVbmnJiPb9vyHaoZkt3vnRuUzlteZc9eGWd5MFQjEWMi0llgI
+	rq+TA0kv6jBPtlzZ63tJ+noGKquaxLz/jWYO8U39FbdyOvTxl2t6/tV+hmAqwOZ7/K+rTCI/mpjCq
+	2/DhTcGg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tApL6-0000000D3Rl-2Z0a;
+	Tue, 12 Nov 2024 11:45:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 94D10300478; Tue, 12 Nov 2024 12:45:43 +0100 (CET)
+Date: Tue, 12 Nov 2024 12:45:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	rafael.j.wysocki@intel.com, len.brown@intel.com,
+	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
+Subject: Re: [PATCH v3 0/3] SRF: Fix offline CPU preventing pc6 entry
+Message-ID: <20241112114543.GP22801@noisy.programming.kicks-ass.net>
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,56 +63,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105-class_fix-v1-3-80866f9994a5@quicinc.com>
+In-Reply-To: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
 
-On Tue, Nov 05, 2024 at 08:20:24AM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> Delete redundant check (!@class) in both API class_for_each_device() and
-> class_find_device() with below reasons:
-> 
-> - The check is covered by later check (!@sp).
-> - Callers are unlikely to call both APIs with NULL class argument.
-> - Make parameter check consistent with all of other class APIs.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  drivers/base/class.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/base/class.c b/drivers/base/class.c
-> index e81da280af74..120d3aeb52fe 100644
-> --- a/drivers/base/class.c
-> +++ b/drivers/base/class.c
-> @@ -408,8 +408,6 @@ int class_for_each_device(const struct class *class, const struct device *start,
->  	struct device *dev;
->  	int error = 0;
->  
-> -	if (!class)
-> -		return -EINVAL;
->  	if (!sp) {
->  		WARN(1, "%s called for class '%s' before it was registered",
->  		     __func__, class->name);
+On Fri, Nov 08, 2024 at 01:29:06PM +0100, Patryk Wlazlyn wrote:
 
-Now, if I pass in NULL for class, I get an odd warning, AND the kernel
-crashes with the dereference of class->name.
+> Removing the existing "kexec hack" by bringing all offlined CPUs back
+> online before proceeding with the kexec would make it even simpler, but
+> I am not sure we can do that. It looks kind of obvious to me, but for
+> some reason the hack exist.
 
-So this is not ok :(
-
-> @@ -456,8 +454,6 @@ struct device *class_find_device(const struct class *class, const struct device
->  	struct class_dev_iter iter;
->  	struct device *dev;
->  
-> -	if (!class)
-> -		return NULL;
->  	if (!sp) {
->  		WARN(1, "%s called for class '%s' before it was registered",
->  		     __func__, class->name);
-
-Same here, this change is going to break things if people get it wrong,
-please leave both of these as-is.
-
-thanks,
-
-greg k-h
+There's a comment there that explains why this is done. If you don't
+understand this, then please don't touch this code.
 
