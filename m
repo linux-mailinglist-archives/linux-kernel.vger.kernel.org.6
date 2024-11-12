@@ -1,323 +1,266 @@
-Return-Path: <linux-kernel+bounces-405715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D379C565A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:25:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9B39C5624
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:18:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40721B3A3EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:19:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C1CA1F21CDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4442259E6;
-	Tue, 12 Nov 2024 10:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A192139DB;
+	Tue, 12 Nov 2024 10:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alistair23.me header.i=@alistair23.me header.b="IRdPVpSC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ifEJK3xL"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cj9U8nnS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D71D2259C2;
-	Tue, 12 Nov 2024 10:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041712139D8;
+	Tue, 12 Nov 2024 10:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731408959; cv=none; b=ou/SSe1ykNGzA3RkDYvD5pTu0NKRF5Nb2wWosLKVPWgbuRKIoSAYrSDK5mOfLnA6415+4YHwlfKCya4YRa9MF6u+NzLzPd8EsQ8oL0lFXhy1ocWeIo1hIL2OhzCKCyZodK+SC2LD4viCkVNCsWi1bnosXkC/3m7aRCI9BWD7+90=
+	t=1731408904; cv=none; b=Qdm7PSxQTB+4H7PBKHjcz4g1pozmSaqWHlA0ZPmdVwyqwQOw1dqPKfy2wObH+gmFgS168MyiyAUzZZ9SaAQ9OJ3hyhk5XjkGplqM1lhasonh5ZWJDALJ2Vbb0+g2QEbwo5SO+7EtpB5IdEKutW/rX6GZBakPmYlkH9TQZKx8tgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731408959; c=relaxed/simple;
-	bh=dYUTeNmtAQ8X8gMz0q9BALSEM0DhK8omLem364dEbWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jqOIVAObSLglswjyoILj4YRRpeCcRmPSNFL2t/rn+frt8BgUYrCw9WBBBoTaiEvt12a2hUz8Fiqlzr8/TEj8l5pco3jr6uF6OlXcSwTXmHKil6rp0Awhv9CrwFtueWSUASrYNH6bZvetEXImNBvCGA+Y/vQtb0KMdLHISgWSxLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alistair23.me; spf=pass smtp.mailfrom=alistair23.me; dkim=pass (2048-bit key) header.d=alistair23.me header.i=@alistair23.me header.b=IRdPVpSC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ifEJK3xL; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alistair23.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alistair23.me
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 9916D25401D0;
-	Tue, 12 Nov 2024 05:55:56 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Tue, 12 Nov 2024 05:55:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alistair23.me;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1731408956; x=
-	1731495356; bh=7RBDUfleD6Ixf368mtQOm0zVnbqIdDQIGho2QbrKN5A=; b=I
-	RdPVpSCWvOc2+LNyPsl1BKtw7avQj+Okw5pUIIuyhv448UVd2Yqxu4sUcQHhUatO
-	V9PynE2GQKkIpC28SlkKroTN21tazmjv+JlR4iOFz5UX59VJXclFNrb39pNgBijp
-	acYWHUXZqIIzzusQ+JPKE7CPEmDANWsP9zTMd5q8EIvCfriR81OJCnm/h7iBWbJB
-	dTbAsVknu7zN3zVHTDxU9qxmu6rehARccrXT12gHJW9aha1evNxx/X9YIKjbr+92
-	hH0IxBlGie4weOxKYhoCgCUBaKULjID5sqZD2tZZVDOiynNLPg+s42jp91R3f4MT
-	7c4LPjCj81RYujXqT0sbg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1731408956; x=1731495356; bh=7
-	RBDUfleD6Ixf368mtQOm0zVnbqIdDQIGho2QbrKN5A=; b=ifEJK3xLRkDAIbXqy
-	VsJixwXvY75DzN02ptdxaZml8Wfss7KO0SxBOzDpH36aPQs+z8p5A0YqGhADl+In
-	enViNYpMrBr40jgFOhrcKdAl9RjmwUmJSSiZGk11N+1ISzDMpEy0Zg7+OPPfP9jq
-	SXpRmkrUoihNrciZOu5NJr0EwkDZImB18DDAAOhQbBCerql++5vNvkPIHh8TMpxN
-	5HQ/MVXNloyIlXSG1+YwmBfoPpbVx1azQH7BsXTFmxwx3fbN8k/C6C1DWxyxn11+
-	qPqzLi8depLgpmyym4tZ9oGTQc6FkyryW1V1ZgVJhg5LoLBINBKQy+J2j54pEPvb
-	g3lOg==
-X-ME-Sender: <xms:PDQzZ5uz17B_fRDuJ4bG7QEbk1Mcp466nhzMdYec3KZkOYJ_KjPaAA>
-    <xme:PDQzZyfXDlzn3GdVAeWPpo9ugBNWEGTySoXVgQqIL4eACUa9vg90y-uGGvK2odPWV
-    xptXQ5lhUH2upJfavI>
-X-ME-Received: <xmr:PDQzZ8z98qiDzVkacve5BMEMWDiCf-yeAbcDC27oOV7-8dide6PC2UGxedFE2rWms2LIoe8-U3dT>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudeggddukecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvvefuff
-    fkofgjfhgggfestdekredtredttdenucfhrhhomheptehlihhsthgrihhrucfhrhgrnhgt
-    ihhsuceorghlihhsthgrihhrsegrlhhishhtrghirhdvfedrmhgvqeenucggtffrrghtth
-    gvrhhnpeeitdefkeetledvleevveeuueejffeugfeuvdetkeevjeejueetudeftefhgfeh
-    heenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrlh
-    hishhtrghirhesrghlihhsthgrihhrvdefrdhmvgdpnhgspghrtghpthhtohepjedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
-    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukh
-    dprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthho
-    pegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrlhhishhtrghirhdvfeesgh
-    hmrghilhdrtghomhdprhgtphhtthhopegrlhhishhtrghirhdrfhhrrghntghishesfigu
-    tgdrtghomh
-X-ME-Proxy: <xmx:PDQzZwPEbmRfjjrkyIhHTQH5CJQ9LXhOy4_5-ynRo97SjSc4NdIwDQ>
-    <xmx:PDQzZ5_rS9DlvktTkm9hiog5MUc6Fx8LMewHN9KAhC8HMur8A_qeiQ>
-    <xmx:PDQzZwXJfn-AtTWlvNy8GPjbHVSnXN4nJ18LaMiZj1X7qhkC2g2E-A>
-    <xmx:PDQzZ6emz0r7saIODLwUy7gY5a81VmZvcz0V1_6o8qSctYGrXBeIfA>
-    <xmx:PDQzZyN5iI1YzfgW7re2jfUUqLqeWRLMsxSAaXaUDbE9oYYJgxPKxGQH>
-Feedback-ID: ifd214418:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 12 Nov 2024 05:55:53 -0500 (EST)
-From: Alistair Francis <alistair@alistair23.me>
-To: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: linux@armlinux.org.uk,
-	hkallweit1@gmail.com,
-	andrew@lunn.ch,
-	alistair23@gmail.com,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH 2/2] mdio: Remove mdio45_ethtool_gset_npage()
-Date: Tue, 12 Nov 2024 20:54:30 +1000
-Message-ID: <20241112105430.438491-2-alistair@alistair23.me>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241112105430.438491-1-alistair@alistair23.me>
-References: <20241112105430.438491-1-alistair@alistair23.me>
+	s=arc-20240116; t=1731408904; c=relaxed/simple;
+	bh=5hm6cRCf3A4dsk72yYd1IGdms+5/nAnLnzx5OyeYExM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q9sjFcV5yPexoMNazKqcZBuBdUp9FJnfUISQFXRScKbkMco5/BxTvS+xTec2eTCfsKu7BULp3LNcR/74KnvUJWT6XSRbcgkjthiHLAxAG8iUqOY4bY2o6x8KjJYHfjgZ1AV1eZsbLI+ck8ezO9aV4cHD9ie+6nUs3fY/TMhwBiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cj9U8nnS; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731408903; x=1762944903;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5hm6cRCf3A4dsk72yYd1IGdms+5/nAnLnzx5OyeYExM=;
+  b=cj9U8nnStM5bEIjpXFncvAVhSCAvcxp/kuhIUBgpFEN8StFmso/Z6p0F
+   IYN6wqeKT/3tlbIPv0XAgXay47vdbsvT2LOPHGud6pXeW9zDKlPBSkIi2
+   2652R/oJfEGmJmBz7mE3fahuNKd2bdk5F9BE41RD36rYIlPDnAG76ughF
+   3ONUwb+lLaTGAeH5QZu5+0SvXGz8aP1jUpsw1R/riy4RNkL/uK7CYKLey
+   NR2tNmY/zO5H/2IclTH5gJpPR26vsPyrPgLIhSIet8AaogBgOjrZ5Niz2
+   cOKqfZQigeoKctYSn/wL0J6UbLUjVws4wn9y7caAEzEQf5eIldEexaq4C
+   g==;
+X-CSE-ConnectionGUID: fukqBK0/RH+J4huBEnPeSA==
+X-CSE-MsgGUID: japnR2u2S5uKcqJgIphS/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="56625867"
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="56625867"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 02:55:02 -0800
+X-CSE-ConnectionGUID: LDvoqFvUTyeYYZsF8EMURA==
+X-CSE-MsgGUID: v3O5qL68RZixlmf3nfnlsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="118335281"
+Received: from opintica-mobl1 (HELO [10.245.244.216]) ([10.245.244.216])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 02:55:00 -0800
+Message-ID: <91e96978-7c40-4883-85ef-8cae0aa04ea2@linux.intel.com>
+Date: Tue, 12 Nov 2024 11:54:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] x86/smp: Allow calling mwait_play_dead with
+ arbitrary hint
+To: Dave Hansen <dave.hansen@intel.com>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ rafael.j.wysocki@intel.com, len.brown@intel.com,
+ artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241108122909.763663-2-patryk.wlazlyn@linux.intel.com>
+ <dfe36107-1397-4401-b8fd-86cafe871866@intel.com>
+Content-Language: en-US
+From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+In-Reply-To: <dfe36107-1397-4401-b8fd-86cafe871866@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Alistair Francis <alistair.francis@wdc.com>
+> First, it is not clear what code this refers to.  It needs to be more clear.
 
-The mdio45_ethtool_gset_npage() function isn't called, so let's remove
-it.
+ACK. I thought that code changes serve that purpose, but I can explicitly quote
+the code I am reffering to.
 
-Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
----
- drivers/net/mdio.c   | 172 -------------------------------------------
- include/linux/mdio.h |   3 -
- 2 files changed, 175 deletions(-)
+> Second, this is not clear about the bug.  Start with being crystal clear
+> about the problem and the impact:
+>
+>     MWAIT needs different hints on different CPUs to reach the most
+>     efficient idle states. The hint calculation* works in practice
+>     on current hardware, but it fails on newer ones. Those newer
+>     CPUs' battery life really suffers when the system is suspended
+>     like when a laptop lid is closed.
+>
+>      * The current calculation is the for loop inspecting edx in
+>        mwait_play_dead()
+>
+> Then you can go into detail about what the bad implementation does.
 
-diff --git a/drivers/net/mdio.c b/drivers/net/mdio.c
-index e08c90ac0c6e..f67a4d4005e7 100644
---- a/drivers/net/mdio.c
-+++ b/drivers/net/mdio.c
-@@ -166,178 +166,6 @@ static u32 mdio45_get_an(const struct mdio_if_info *mdio, u16 addr)
- 	return result;
- }
- 
--/**
-- * mdio45_ethtool_gset_npage - get settings for ETHTOOL_GSET
-- * @mdio: MDIO interface
-- * @ecmd: Ethtool request structure
-- * @npage_adv: Modes currently advertised on next pages
-- * @npage_lpa: Modes advertised by link partner on next pages
-- *
-- * The @ecmd parameter is expected to have been cleared before calling
-- * mdio45_ethtool_gset_npage().
-- *
-- * Since the CSRs for auto-negotiation using next pages are not fully
-- * standardised, this function does not attempt to decode them.  The
-- * caller must pass them in.
-- */
--void mdio45_ethtool_gset_npage(const struct mdio_if_info *mdio,
--			       struct ethtool_cmd *ecmd,
--			       u32 npage_adv, u32 npage_lpa)
--{
--	int reg;
--	u32 speed;
--
--	BUILD_BUG_ON(MDIO_SUPPORTS_C22 != ETH_MDIO_SUPPORTS_C22);
--	BUILD_BUG_ON(MDIO_SUPPORTS_C45 != ETH_MDIO_SUPPORTS_C45);
--
--	ecmd->transceiver = XCVR_INTERNAL;
--	ecmd->phy_address = mdio->prtad;
--	ecmd->mdio_support =
--		mdio->mode_support & (MDIO_SUPPORTS_C45 | MDIO_SUPPORTS_C22);
--
--	reg = mdio->mdio_read(mdio->dev, mdio->prtad, MDIO_MMD_PMAPMD,
--			      MDIO_CTRL2);
--	switch (reg & MDIO_PMA_CTRL2_TYPE) {
--	case MDIO_PMA_CTRL2_10GBT:
--	case MDIO_PMA_CTRL2_1000BT:
--	case MDIO_PMA_CTRL2_100BTX:
--	case MDIO_PMA_CTRL2_10BT:
--		ecmd->port = PORT_TP;
--		ecmd->supported = SUPPORTED_TP;
--		reg = mdio->mdio_read(mdio->dev, mdio->prtad, MDIO_MMD_PMAPMD,
--				      MDIO_SPEED);
--		if (reg & MDIO_SPEED_10G)
--			ecmd->supported |= SUPPORTED_10000baseT_Full;
--		if (reg & MDIO_PMA_SPEED_1000)
--			ecmd->supported |= (SUPPORTED_1000baseT_Full |
--					    SUPPORTED_1000baseT_Half);
--		if (reg & MDIO_PMA_SPEED_100)
--			ecmd->supported |= (SUPPORTED_100baseT_Full |
--					    SUPPORTED_100baseT_Half);
--		if (reg & MDIO_PMA_SPEED_10)
--			ecmd->supported |= (SUPPORTED_10baseT_Full |
--					    SUPPORTED_10baseT_Half);
--		ecmd->advertising = ADVERTISED_TP;
--		break;
--
--	case MDIO_PMA_CTRL2_10GBCX4:
--		ecmd->port = PORT_OTHER;
--		ecmd->supported = 0;
--		ecmd->advertising = 0;
--		break;
--
--	case MDIO_PMA_CTRL2_10GBKX4:
--	case MDIO_PMA_CTRL2_10GBKR:
--	case MDIO_PMA_CTRL2_1000BKX:
--		ecmd->port = PORT_OTHER;
--		ecmd->supported = SUPPORTED_Backplane;
--		reg = mdio->mdio_read(mdio->dev, mdio->prtad, MDIO_MMD_PMAPMD,
--				      MDIO_PMA_EXTABLE);
--		if (reg & MDIO_PMA_EXTABLE_10GBKX4)
--			ecmd->supported |= SUPPORTED_10000baseKX4_Full;
--		if (reg & MDIO_PMA_EXTABLE_10GBKR)
--			ecmd->supported |= SUPPORTED_10000baseKR_Full;
--		if (reg & MDIO_PMA_EXTABLE_1000BKX)
--			ecmd->supported |= SUPPORTED_1000baseKX_Full;
--		reg = mdio->mdio_read(mdio->dev, mdio->prtad, MDIO_MMD_PMAPMD,
--				      MDIO_PMA_10GBR_FECABLE);
--		if (reg & MDIO_PMA_10GBR_FECABLE_ABLE)
--			ecmd->supported |= SUPPORTED_10000baseR_FEC;
--		ecmd->advertising = ADVERTISED_Backplane;
--		break;
--
--	/* All the other defined modes are flavours of optical */
--	default:
--		ecmd->port = PORT_FIBRE;
--		ecmd->supported = SUPPORTED_FIBRE;
--		ecmd->advertising = ADVERTISED_FIBRE;
--		break;
--	}
--
--	if (mdio->mmds & MDIO_DEVS_AN) {
--		ecmd->supported |= SUPPORTED_Autoneg;
--		reg = mdio->mdio_read(mdio->dev, mdio->prtad, MDIO_MMD_AN,
--				      MDIO_CTRL1);
--		if (reg & MDIO_AN_CTRL1_ENABLE) {
--			ecmd->autoneg = AUTONEG_ENABLE;
--			ecmd->advertising |=
--				ADVERTISED_Autoneg |
--				mdio45_get_an(mdio, MDIO_AN_ADVERTISE) |
--				npage_adv;
--		} else {
--			ecmd->autoneg = AUTONEG_DISABLE;
--		}
--	} else {
--		ecmd->autoneg = AUTONEG_DISABLE;
--	}
--
--	if (ecmd->autoneg) {
--		u32 modes = 0;
--		int an_stat = mdio->mdio_read(mdio->dev, mdio->prtad,
--					      MDIO_MMD_AN, MDIO_STAT1);
--
--		/* If AN is complete and successful, report best common
--		 * mode, otherwise report best advertised mode. */
--		if (an_stat & MDIO_AN_STAT1_COMPLETE) {
--			ecmd->lp_advertising =
--				mdio45_get_an(mdio, MDIO_AN_LPA) | npage_lpa;
--			if (an_stat & MDIO_AN_STAT1_LPABLE)
--				ecmd->lp_advertising |= ADVERTISED_Autoneg;
--			modes = ecmd->advertising & ecmd->lp_advertising;
--		}
--		if ((modes & ~ADVERTISED_Autoneg) == 0)
--			modes = ecmd->advertising;
--
--		if (modes & (ADVERTISED_10000baseT_Full |
--			     ADVERTISED_10000baseKX4_Full |
--			     ADVERTISED_10000baseKR_Full)) {
--			speed = SPEED_10000;
--			ecmd->duplex = DUPLEX_FULL;
--		} else if (modes & (ADVERTISED_1000baseT_Full |
--				    ADVERTISED_1000baseT_Half |
--				    ADVERTISED_1000baseKX_Full)) {
--			speed = SPEED_1000;
--			ecmd->duplex = !(modes & ADVERTISED_1000baseT_Half);
--		} else if (modes & (ADVERTISED_100baseT_Full |
--				    ADVERTISED_100baseT_Half)) {
--			speed = SPEED_100;
--			ecmd->duplex = !!(modes & ADVERTISED_100baseT_Full);
--		} else {
--			speed = SPEED_10;
--			ecmd->duplex = !!(modes & ADVERTISED_10baseT_Full);
--		}
--	} else {
--		/* Report forced settings */
--		reg = mdio->mdio_read(mdio->dev, mdio->prtad, MDIO_MMD_PMAPMD,
--				      MDIO_CTRL1);
--		speed = (((reg & MDIO_PMA_CTRL1_SPEED1000) ? 100 : 1)
--			 * ((reg & MDIO_PMA_CTRL1_SPEED100) ? 100 : 10));
--		ecmd->duplex = (reg & MDIO_CTRL1_FULLDPLX ||
--				speed == SPEED_10000);
--	}
--
--	ethtool_cmd_speed_set(ecmd, speed);
--
--	/* 10GBASE-T MDI/MDI-X */
--	if (ecmd->port == PORT_TP
--	    && (ethtool_cmd_speed(ecmd) == SPEED_10000)) {
--		switch (mdio->mdio_read(mdio->dev, mdio->prtad, MDIO_MMD_PMAPMD,
--					MDIO_PMA_10GBT_SWAPPOL)) {
--		case MDIO_PMA_10GBT_SWAPPOL_ABNX | MDIO_PMA_10GBT_SWAPPOL_CDNX:
--			ecmd->eth_tp_mdix = ETH_TP_MDI;
--			break;
--		case 0:
--			ecmd->eth_tp_mdix = ETH_TP_MDI_X;
--			break;
--		default:
--			/* It's complicated... */
--			ecmd->eth_tp_mdix = ETH_TP_MDI_INVALID;
--			break;
--		}
--	}
--}
--EXPORT_SYMBOL(mdio45_ethtool_gset_npage);
--
- /**
-  * mdio45_ethtool_ksettings_get_npage - get settings for ETHTOOL_GLINKSETTINGS
-  * @mdio: MDIO interface
-diff --git a/include/linux/mdio.h b/include/linux/mdio.h
-index c63f43645d50..3c3deac57894 100644
---- a/include/linux/mdio.h
-+++ b/include/linux/mdio.h
-@@ -165,9 +165,6 @@ extern int mdio_set_flag(const struct mdio_if_info *mdio,
- 			 bool sense);
- extern int mdio45_links_ok(const struct mdio_if_info *mdio, u32 mmds);
- extern int mdio45_nway_restart(const struct mdio_if_info *mdio);
--extern void mdio45_ethtool_gset_npage(const struct mdio_if_info *mdio,
--				      struct ethtool_cmd *ecmd,
--				      u32 npage_adv, u32 npage_lpa);
- extern void
- mdio45_ethtool_ksettings_get_npage(const struct mdio_if_info *mdio,
- 				   struct ethtool_link_ksettings *cmd,
--- 
-2.47.0
+It would kind of get into the bussiness of documenting the mwait instruction
+itself. I am modifying behavior of already existing code.
+
+Should I be more clear in the commit message or you also meant adding more code
+comments?
+
+>> For example Intel's Sierra Forest report two C6 substates in cpuid leaf 5:
+>>     C6S  (hint 0x22)
+>>     C6SP (hint 0x23)
+>>
+>> Hints 0x20 and 0x21 are skipped entirely,
+>
+> Why does it start at 0x20?  Giving the example on new, broken hardware
+> is also a bit weak without an example from old, fully functional hardware.
+
+It's just how mwait hints work on Intel hardware:
+    EAX[3:0] # Sub C-state
+    EAX[7:4] # C-state
+
+CPUID leaf 0x5 report how many sub c-states are there for any c-state.
+Old code assumes that you can derive the actual hints from that, but you can
+only do that if available hints are continuous, which is not guaranteed and is
+not true on SRF and possibly future platforms.
+
+Hint 0x20 (C6) was given as an example, because it's where the problem is.
+
+Mwait hints themselves are processor-specific and so the same hint may mean
+different thing on different hardware.
+
+>> causing the current
+>> implementation to compute the wrong hint, when looking for the deepest
+>> cstate for offlined CPU to enter. As a result, package with an offlined
+>> CPU can never reach PC6.
+>
+> I don't think the PC6 detail matters enough to mention here.
+
+I can simplify the commit message, but the PC6 problem is the reason this change
+was proposed.
+
+>> Allow the idle driver to call mwait_play_dead() code with the forced
+>> mwait hint, skipping the cpuid based computation.
+>>
+>> Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+>> ---
+>>  arch/x86/include/asm/smp.h |  6 ++++++
+>>  arch/x86/kernel/smpboot.c  | 25 ++++++++++++++++++-------
+>>  2 files changed, 24 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+>> index ca073f40698f..fbd275d6661a 100644
+>> --- a/arch/x86/include/asm/smp.h
+>> +++ b/arch/x86/include/asm/smp.h
+>> @@ -114,6 +114,7 @@ void wbinvd_on_cpu(int cpu);
+>>  int wbinvd_on_all_cpus(void);
+>>  
+>>  void smp_kick_mwait_play_dead(void);
+>> +int mwait_play_dead_with_hint(unsigned long hint);
+>>  
+>>  void native_smp_send_reschedule(int cpu);
+>>  void native_send_call_func_ipi(const struct cpumask *mask);
+>> @@ -164,6 +165,11 @@ static inline struct cpumask *cpu_llc_shared_mask(int cpu)
+>>  {
+>>      return (struct cpumask *)cpumask_of(0);
+>>  }
+>> +
+>> +static inline int mwait_play_dead_with_hint(unsigned long eax_hint)
+>> +{
+>> +    return 1;
+>> +}
+>>  #endif /* CONFIG_SMP */
+>>  
+>>  #ifdef CONFIG_DEBUG_NMI_SELFTEST
+>> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+>> index 0c35207320cb..44c40781bad6 100644
+>> --- a/arch/x86/kernel/smpboot.c
+>> +++ b/arch/x86/kernel/smpboot.c
+>> @@ -1270,13 +1270,14 @@ void play_dead_common(void)
+>>      local_irq_disable();
+>>  }
+>>  
+>> +int mwait_play_dead_with_hint(unsigned long eax_hint);
+>
+> We generally prefer these get a declaration in a header or get moved
+> around in the file, not declared like this.
+
+If forward declared and defined after mwait_play_dead, it makes the git
+diff/blame simpler. As an alternative I could define it above, but the resulting
+diff is harder to read and I didn't want to include whole smp header just for
+that, but perhaps I should.
+
+>>  /*
+>>   * We need to flush the caches before going to sleep, lest we have
+>>   * dirty data in our caches when we come back up.
+>>   */
+>> -static inline void mwait_play_dead(void)
+>> +static inline int mwait_play_dead(void)
+>>  {
+>> -    struct mwait_cpu_dead *md = this_cpu_ptr(&mwait_cpu_dead);
+>>      unsigned int eax, ebx, ecx, edx;
+>>      unsigned int highest_cstate = 0;
+>>      unsigned int highest_subcstate = 0;
+>> @@ -1284,13 +1285,13 @@ static inline void mwait_play_dead(void)
+>>  
+>>      if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+>>          boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
+>> -        return;
+>> +        return 1;
+>>      if (!this_cpu_has(X86_FEATURE_MWAIT))
+>> -        return;
+>> +        return 1;
+>>      if (!this_cpu_has(X86_FEATURE_CLFLUSH))
+>> -        return;
+>> +        return 1;
+>>      if (__this_cpu_read(cpu_info.cpuid_level) < CPUID_MWAIT_LEAF)
+>> -        return;
+>> +        return 1;
+>
+> If you're going to use an 'int' for a fail/nofail return type, please
+> just use -ERRNO's. It makes it *MUCH* more clear that these are error
+> returns and not something else.
+>
+> That's what cpuidle_play_dead() does, for instance,  Please follow its lead.
+
+ACK. Makes sense.
+
+>>      eax = CPUID_MWAIT_LEAF;
+>>      ecx = 0;
+>> @@ -1314,6 +1315,13 @@ static inline void mwait_play_dead(void)
+>>              (highest_subcstate - 1);
+>>      }
+>>  
+>> +    return mwait_play_dead_with_hint(eax);
+>> +}
+>> +
+>> +int mwait_play_dead_with_hint(unsigned long eax_hint)
+>> +{
+>> +    struct mwait_cpu_dead *md = this_cpu_ptr(&mwait_cpu_dead);
+>> +
+>>      /* Set up state for the kexec() hack below */
+>>      md->status = CPUDEAD_MWAIT_WAIT;
+>>      md->control = CPUDEAD_MWAIT_WAIT;
+>> @@ -1333,7 +1341,7 @@ static inline void mwait_play_dead(void)
+>>          mb();
+>>          __monitor(md, 0, 0);
+>>          mb();
+>> -        __mwait(eax, 0);
+>> +        __mwait(eax_hint, 0);
+>>  
+>>          if (READ_ONCE(md->control) == CPUDEAD_MWAIT_KEXEC_HLT) {
+>>              /*
+>> @@ -1353,6 +1361,9 @@ static inline void mwait_play_dead(void)
+>>                  native_halt();
+>>          }
+>>      }
+>> +
+>> +    /* Never reached */
+>> +    return 0;
+>>  }
+>
+> I think the preferred way to do this is to add a __noreturn annotation.
+
+OK.
 
 
