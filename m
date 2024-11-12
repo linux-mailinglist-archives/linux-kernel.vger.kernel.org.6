@@ -1,332 +1,185 @@
-Return-Path: <linux-kernel+bounces-405144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A61C79C4D78
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:45:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3F219C4D7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:47:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DB3FB238B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:44:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 909D7B2487B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57257208215;
-	Tue, 12 Nov 2024 03:44:09 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F38208962;
+	Tue, 12 Nov 2024 03:46:31 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4467519CC29;
-	Tue, 12 Nov 2024 03:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6C819CC29
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731383048; cv=none; b=jzu9PLIi0zs2sc3GRRmQzEuK79yrzGXpgvh70IAFwDHFPfJ2SrxhxDzdy6VMBTJaQRiNVI+5wT00OPXPSei4hc3mqVWx3ab8GBm9L4BthJw8WZI5QOAT5A0SAb/PZF59JlCLeg9RK7CEM+b2hQSoCvZn60wsNL2A9h9fEe8P8bg=
+	t=1731383191; cv=none; b=P1ZpPRTx1Ljzjc5rcggbaKdmIkZV3Got7jmspjpiK7WvHtMbZltb92dQKEY8eZBogIBEyF7yVJXfHdeSgT0dGu8JHqJtu/6mELX1L0pIbO9hySmjJ0+Hj+sV18NYiMNcgN3+9q9z2k6J1ndi9lwN77391EX1Oouh+VG/NcGebEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731383048; c=relaxed/simple;
-	bh=ruY/EJqxhlXRsPF9HXdZIc+Z0H3EP9D6qVw/aLKKdhI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o2v1YDVscoYxxyHyS19Ze9CjcQOMUTqs2YMUsMC/Qz5MxIu4P6pxNgd9Exhlwd9R4mgMO2XLNsjfBs8/cDJnuU0I1tlkgtJGPDJlNctPlAGVvnNivAMqCDrWFV732LY5Y8N9tgGZS8nyqrs9wq3aw0THPxnPaShZhZVgEu+PsRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XnXMK2VYnz4f3lY5;
-	Tue, 12 Nov 2024 11:43:41 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 703091A0197;
-	Tue, 12 Nov 2024 11:43:54 +0800 (CST)
-Received: from [10.174.177.210] (unknown [10.174.177.210])
-	by APP4 (Coremail) with SMTP id gCh0CgDHo4f1zjJnFXosBg--.43366S3;
-	Tue, 12 Nov 2024 11:43:51 +0800 (CST)
-Message-ID: <dd6bd7f5-cf2e-3123-3017-c209d81ab290@huaweicloud.com>
-Date: Tue, 12 Nov 2024 11:43:49 +0800
+	s=arc-20240116; t=1731383191; c=relaxed/simple;
+	bh=MdF0vQAzDkjzPCpTxKOBblHlGzTL1baHSFNggrEk/FQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cPUSvQP5ZVmQQE/SU2gxRDrxSoOgMPO5zgwmTjHWPbhThVGq/47y9f69F5GSX/1N1QBT1VlTWXkBkJqgySVvaEHGqPVtI6As8k/XYVnRLaAo2nWFN+HHjEyJCix/csmKweJKvSIkayuhEUPXfgCJ2g3t7Etrf4ulVNZf4EfN9rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6b2581364so57752575ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:46:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731383189; x=1731987989;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gTlS1My+IX6vUSKJh4vEvVCjOuHSbZWEzCPaUoxSiP0=;
+        b=sseyd7Q8mNKaRFzySvnyyIBQFtDBZAwPA2d1yl9ZyjlTuHdRAIps3KrOswYJvfFmWJ
+         9kNCZQrEIdpsPGkjTPPxFUQcWCQREvwp/LveEVUHgqi/QOkXsQ6ZBhfv9lOmTp4ZNz3Z
+         DODfCJPRnu3RZI3y0ypU4Stk1rbhbvnwoynOrOzCPUSy+vTpjkDblc3lZExfsX1Zu+cN
+         OpHe9cwOgv7VagrxINzP5KF9hy0bCeXU9CdBrmKsX+BFek3qjHicP/VtoOu3+7SPDyJ7
+         KrhVMsMupFXtCN6+l8KJZIxzzwNUZIrtntoFMRFDmwh/Yu3I4pAGmXzECUuOfiNpufC4
+         aNew==
+X-Forwarded-Encrypted: i=1; AJvYcCWlGLKub2HZRok+LMGGAtTL54QTipHex/MuF1tcIKZYYhbszBjBBMMq/GqVF2lgrBiGztHZl7zz7LWsoto=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvYqfqjjSa2W3y6plYfxutZNffrSsH2JxxfMGtfhq7lL9aZdY0
+	TEwrmJgfGUCnpM1GDgiTB1pgKzp5qyXEQP2lMIYuDfVMLav8e2IuRNCstGGiykVLG+VlydVNiAe
+	LmS0I8Ne8CRh14G3vKiO+XJBlbMHRWHfhRJtc8N0xe6vKvczH2GG4EsU=
+X-Google-Smtp-Source: AGHT+IG3ufhXQPfWoo/ORV9DkMtBnk/0diPUmflaxDDBBQ/UNSgc7NBkjFs68zErC0fsRRuARu/bX+P3GgrIsquVZiyX2HrALGLv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [RFC PATCH 6/6 6.6] libfs: fix infinite directory reads for
- offset dir
-To: Chuck Lever III <chuck.lever@oracle.com>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, Chuck Lever <cel@kernel.org>,
- linux-stable <stable@vger.kernel.org>,
- "harry.wentland@amd.com" <harry.wentland@amd.com>,
- "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
- "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
- "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
- "christian.koenig@amd.com" <christian.koenig@amd.com>,
- "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
- "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Liam Howlett <liam.howlett@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Greg KH <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>,
- "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
- "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
- "mingo@kernel.org" <mingo@kernel.org>,
- "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
- "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
- "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
- "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>,
- "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
- linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20241111005242.34654-1-cel@kernel.org>
- <20241111005242.34654-7-cel@kernel.org>
- <278433c2-611c-6c8e-7964-5c11977b68b7@huaweicloud.com>
- <96A93064-8DCE-4B78-9F2A-CF6E7EEABEB1@oracle.com>
- <73a05cb9-569c-9b3c-3359-824e76b14461@huaweicloud.com>
- <09F40EA2-9537-4C7A-A221-AA403ED3FF64@oracle.com>
-From: yangerkun <yangerkun@huaweicloud.com>
-In-Reply-To: <09F40EA2-9537-4C7A-A221-AA403ED3FF64@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHo4f1zjJnFXosBg--.43366S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ar15WFykJF4xXw48KFWUCFg_yoW3KFW7pr
-	W5Jan0krs7Xw1UGr4vq3WDZrySv3Z7Kr18Xrn5W34UJryqvr13KF1xAr1Y9a48Ar1kCr12
-	qF45t343ur1UArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
-X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
+X-Received: by 2002:a05:6e02:1f08:b0:3a6:b0a3:5402 with SMTP id
+ e9e14a558f8ab-3a6f1a21dcdmr159700115ab.17.1731383188700; Mon, 11 Nov 2024
+ 19:46:28 -0800 (PST)
+Date: Mon, 11 Nov 2024 19:46:28 -0800
+In-Reply-To: <0000000000009d5daa05ed9815fa@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6732cf94.050a0220.5088e.0003.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth] WARNING in call_timer_fn
+From: syzbot <syzbot+6fb78d577e89e69602f9@syzkaller.appspotmail.com>
+To: ben-linux@fluff.org, bp@alien8.de, daniel.sneddon@linux.intel.com, 
+	dave.hansen@linux.intel.com, gregkh@linuxfoundation.org, hdanton@sina.com, 
+	hpa@zytor.com, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	mingo@redhat.com, netdev@vger.kernel.org, pbonzini@redhat.com, 
+	penguin-kernel@I-love.SAKURA.ne.jp, penguin-kernel@i-love.sakura.ne.jp, 
+	rafael@kernel.org, rosted@goodmis.org, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, syzkaller-bugs@googlegroups.com, 
+	tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    de9df030ccb5 usb: typec: ucsi: glink: be more precise on o..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=15637ea7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=358c1689354aeef3
+dashboard link: https://syzkaller.appspot.com/bug?extid=6fb78d577e89e69602f9
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101db8c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1738f4e8580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/fcce9dc5242d/disk-de9df030.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/420ef3e22854/vmlinux-de9df030.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a6d0ac1f944e/bzImage-de9df030.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6fb78d577e89e69602f9@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 9 at kernel/workqueue.c:2257 __queue_work+0xc3a/0x1080 kernel/workqueue.c:2256
+Modules linked in:
+CPU: 0 UID: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.12.0-rc6-syzkaller-00106-gde9df030ccb5 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:__queue_work+0xc3a/0x1080 kernel/workqueue.c:2256
+Code: 07 83 c0 03 38 d0 7c 09 84 d2 74 05 e8 7f 46 8b 00 8b 5b 2c 31 ff 83 e3 20 89 de e8 40 bf 32 00 85 db 75 60 e8 f7 bc 32 00 90 <0f> 0b 90 e9 f9 f7 ff ff e8 e9 bc 32 00 90 0f 0b 90 e9 a8 f7 ff ff
+RSP: 0018:ffffc90000007bf0 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: 0000000000000100 RCX: ffffffff812335c1
+RDX: ffff888101698000 RSI: ffffffff81233619 RDI: 0000000000000005
+RBP: ffff88811a063780 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000100 R11: 0000000000000000 R12: 1ffff92000000f90
+R13: 0000000000000001 R14: 0000000000000101 R15: ffff888106b28800
+FS:  0000000000000000(0000) GS:ffff8881f5800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7cbbc0c258 CR3: 0000000116944000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ call_timer_fn+0x1a0/0x610 kernel/time/timer.c:1794
+ expire_timers kernel/time/timer.c:1840 [inline]
+ __run_timers+0x56a/0x930 kernel/time/timer.c:2419
+ __run_timer_base kernel/time/timer.c:2430 [inline]
+ __run_timer_base kernel/time/timer.c:2423 [inline]
+ run_timer_base+0x111/0x190 kernel/time/timer.c:2439
+ run_timer_softirq+0x1a/0x40 kernel/time/timer.c:2449
+ handle_softirqs+0x206/0x8d0 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu kernel/softirq.c:637 [inline]
+ irq_exit_rcu+0xac/0x110 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+ sysvec_apic_timer_interrupt+0x90/0xb0 arch/x86/kernel/apic/apic.c:1049
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:console_trylock_spinning kernel/printk/printk.c:2042 [inline]
+RIP: 0010:vprintk_emit+0x621/0x6f0 kernel/printk/printk.c:2406
+Code: 85 ed 0f 85 81 00 00 00 e8 0c 94 1f 00 9c 41 5c 41 81 e4 00 02 00 00 31 ff 4c 89 e6 e8 68 96 1f 00 4d 85 e4 0f 85 8d 00 00 00 <e8> ea 93 1f 00 45 31 c9 41 b8 01 00 00 00 31 c9 48 8d 05 00 00 00
+RSP: 0018:ffffc9000009f6e8 EFLAGS: 00000293
+RAX: 0000000000000000 RBX: 0000000000000029 RCX: ffffffff81365f9e
+RDX: ffff888101698000 RSI: ffffffff81365fa8 RDI: 0000000000000007
+RBP: 1ffff92000013edf R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000200 R14: ffff88810d331d40 R15: ffffc9000009f7b0
+ dev_vprintk_emit drivers/base/core.c:4942 [inline]
+ dev_printk_emit+0xfb/0x140 drivers/base/core.c:4953
+ __dev_printk+0xf5/0x270 drivers/base/core.c:4965
+ _dev_info+0xe5/0x120 drivers/base/core.c:5011
+ usb_disconnect+0xec/0x920 drivers/usb/core/hub.c:2286
+ hub_port_connect drivers/usb/core/hub.c:5361 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x1bed/0x4f40 drivers/usb/core/hub.c:5903
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	85 ed                	test   %ebp,%ebp
+   2:	0f 85 81 00 00 00    	jne    0x89
+   8:	e8 0c 94 1f 00       	call   0x1f9419
+   d:	9c                   	pushf
+   e:	41 5c                	pop    %r12
+  10:	41 81 e4 00 02 00 00 	and    $0x200,%r12d
+  17:	31 ff                	xor    %edi,%edi
+  19:	4c 89 e6             	mov    %r12,%rsi
+  1c:	e8 68 96 1f 00       	call   0x1f9689
+  21:	4d 85 e4             	test   %r12,%r12
+  24:	0f 85 8d 00 00 00    	jne    0xb7
+* 2a:	e8 ea 93 1f 00       	call   0x1f9419 <-- trapping instruction
+  2f:	45 31 c9             	xor    %r9d,%r9d
+  32:	41 b8 01 00 00 00    	mov    $0x1,%r8d
+  38:	31 c9                	xor    %ecx,%ecx
+  3a:	48                   	rex.W
+  3b:	8d                   	.byte 0x8d
+  3c:	05                   	.byte 0x5
+  3d:	00 00                	add    %al,(%rax)
 
 
-
-在 2024/11/11 23:34, Chuck Lever III 写道:
-> 
-> 
->> On Nov 11, 2024, at 10:20 AM, yangerkun <yangerkun@huaweicloud.com> wrote:
->>
->>
->>
->> 在 2024/11/11 22:39, Chuck Lever III 写道:
->>>> On Nov 10, 2024, at 9:36 PM, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>>>
->>>> Hi,
->>>>
->>>> 在 2024/11/11 8:52, cel@kernel.org 写道:
->>>>> From: yangerkun <yangerkun@huawei.com>
->>>>> [ Upstream commit 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a ]
->>>>> After we switch tmpfs dir operations from simple_dir_operations to
->>>>> simple_offset_dir_operations, every rename happened will fill new dentry
->>>>> to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
->>>>> key starting with octx->newx_offset, and then set newx_offset equals to
->>>>> free key + 1. This will lead to infinite readdir combine with rename
->>>>> happened at the same time, which fail generic/736 in xfstests(detail show
->>>>> as below).
->>>>> 1. create 5000 files(1 2 3...) under one dir
->>>>> 2. call readdir(man 3 readdir) once, and get one entry
->>>>> 3. rename(entry, "TEMPFILE"), then rename("TEMPFILE", entry)
->>>>> 4. loop 2~3, until readdir return nothing or we loop too many
->>>>>     times(tmpfs break test with the second condition)
->>>>> We choose the same logic what commit 9b378f6ad48cf ("btrfs: fix infinite
->>>>> directory reads") to fix it, record the last_index when we open dir, and
->>>>> do not emit the entry which index >= last_index. The file->private_data
->>>>
->>>> Please notice this requires last_index should never overflow, otherwise
->>>> readdir will be messed up.
->>> It would help your cause if you could be more specific
->>> than "messed up".
->>>>> now used in offset dir can use directly to do this, and we also update
->>>>> the last_index when we llseek the dir file.
->>>>> Fixes: a2e459555c5f ("shmem: stable directory offsets")
->>>>> Signed-off-by: yangerkun <yangerkun@huawei.com>
->>>>> Link: https://lore.kernel.org/r/20240731043835.1828697-1-yangerkun@huawei.com
->>>>> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
->>>>> [brauner: only update last_index after seek when offset is zero like Jan suggested]
->>>>> Signed-off-by: Christian Brauner <brauner@kernel.org>
->>>>> Link: https://nvd.nist.gov/vuln/detail/CVE-2024-46701
->>>>> [ cel: adjusted to apply to origin/linux-6.6.y ]
->>>>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
->>>>> ---
->>>>>   fs/libfs.c | 37 +++++++++++++++++++++++++------------
->>>>>   1 file changed, 25 insertions(+), 12 deletions(-)
->>>>> diff --git a/fs/libfs.c b/fs/libfs.c
->>>>> index a87005c89534..b59ff0dfea1f 100644
->>>>> --- a/fs/libfs.c
->>>>> +++ b/fs/libfs.c
->>>>> @@ -449,6 +449,14 @@ void simple_offset_destroy(struct offset_ctx *octx)
->>>>>    xa_destroy(&octx->xa);
->>>>>   }
->>>>>   +static int offset_dir_open(struct inode *inode, struct file *file)
->>>>> +{
->>>>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
->>>>> +
->>>>> + file->private_data = (void *)ctx->next_offset;
->>>>> + return 0;
->>>>> +}
->>>>
->>>> Looks like xarray is still used.
->>> That's not going to change, as several folks have already
->>> explained.
->>>> I'm in the cc list ,so I assume you saw my set, then I don't know why
->>>> you're ignoring my concerns.
->>>> 1) next_offset is 32-bit and can overflow in a long-time running
->>>> machine.
->>>> 2) Once next_offset overflows, readdir will skip the files that offset
->>>> is bigger.
->>
->> I'm sorry, I'm a little busy these days, so I haven't responded to this
->> series of emails.
->>
->>> In that case, that entry won't be visible via getdents(3)
->>> until the directory is re-opened or the process does an
->>> lseek(fd, 0, SEEK_SET).
->>
->> Yes.
->>
->>> That is the proper and expected behavior. I suspect you
->>> will see exactly that behavior with ext4 and 32-bit
->>> directory offsets, for example.
->>
->> Emm...
->>
->> For this case like this:
->>
->> 1. mkdir /tmp/dir and touch /tmp/dir/file1 /tmp/dir/file2
->> 2. open /tmp/dir with fd1
->> 3. readdir and get /tmp/dir/file1
->> 4. rm /tmp/dir/file2
->> 5. touch /tmp/dir/file2
->> 4. loop 4~5 for 2^32 times
->> 5. readdir /tmp/dir with fd1
->>
->> For tmpfs now, we may see no /tmp/dir/file2, since the offset has been overflow, for ext4 it is ok... So we think this will be a problem.
->>
->>> Does that not directly address your concern? Or do you
->>> mean that Erkun's patch introduces a new issue?
->>
->> Yes, to be honest, my personal feeling is a problem. But for 64bit, it may never been trigger.
-> 
-> Thanks for confirming.
-> 
-> In that case, the preferred way to handle it is to fix
-> the issue in upstream, and then backport that fix to LTS.
-> Dependence on 64-bit offsets to avoid a failure case
-> should be considered a workaround, not a real fix, IMHO.
-
-Yes.
-
-> 
-> Do you have a few moments to address it, or if not I
-> will see to it.
-
-You can try to do this, for the reason I am quite busy now until end of 
-this month... Sorry.
-
-> 
-> I think reducing the xa_limit in simple_offset_add() to,
-> say, 2..16 would make the reproducer fire almost
-> immediately.
-
-Yes.
-
-> 
-> 
->>> If there is a problem here, please construct a reproducer
->>> against this patch set and post it.
->>>> Thanks,
->>>> Kuai
->>>>
->>>>> +
->>>>>   /**
->>>>>    * offset_dir_llseek - Advance the read position of a directory descriptor
->>>>>    * @file: an open directory whose position is to be updated
->>>>> @@ -462,6 +470,9 @@ void simple_offset_destroy(struct offset_ctx *octx)
->>>>>    */
->>>>>   static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
->>>>>   {
->>>>> + struct inode *inode = file->f_inode;
->>>>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
->>>>> +
->>>>>    switch (whence) {
->>>>>    case SEEK_CUR:
->>>>>    offset += file->f_pos;
->>>>> @@ -475,8 +486,9 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
->>>>>    }
->>>>>      /* In this case, ->private_data is protected by f_pos_lock */
->>>>> - file->private_data = NULL;
->>>>> - return vfs_setpos(file, offset, U32_MAX);
->>>>> + if (!offset)
->>>>> + file->private_data = (void *)ctx->next_offset;
->>>>> + return vfs_setpos(file, offset, LONG_MAX);
->>>>>   }
->>>>>     static struct dentry *offset_find_next(struct xa_state *xas)
->>>>> @@ -505,7 +517,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
->>>>>      inode->i_ino, fs_umode_to_dtype(inode->i_mode));
->>>>>   }
->>>>>   -static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
->>>>> +static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
->>>>>   {
->>>>>    struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
->>>>>    XA_STATE(xas, &so_ctx->xa, ctx->pos);
->>>>> @@ -514,17 +526,21 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
->>>>>    while (true) {
->>>>>    dentry = offset_find_next(&xas);
->>>>>    if (!dentry)
->>>>> - return ERR_PTR(-ENOENT);
->>>>> + return;
->>>>> +
->>>>> + if (dentry2offset(dentry) >= last_index) {
->>>>> + dput(dentry);
->>>>> + return;
->>>>> + }
->>>>>      if (!offset_dir_emit(ctx, dentry)) {
->>>>>    dput(dentry);
->>>>> - break;
->>>>> + return;
->>>>>    }
->>>>>      dput(dentry);
->>>>>    ctx->pos = xas.xa_index + 1;
->>>>>    }
->>>>> - return NULL;
->>>>>   }
->>>>>     /**
->>>>> @@ -551,22 +567,19 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
->>>>>   static int offset_readdir(struct file *file, struct dir_context *ctx)
->>>>>   {
->>>>>    struct dentry *dir = file->f_path.dentry;
->>>>> + long last_index = (long)file->private_data;
->>>>>      lockdep_assert_held(&d_inode(dir)->i_rwsem);
->>>>>      if (!dir_emit_dots(file, ctx))
->>>>>    return 0;
->>>>>   - /* In this case, ->private_data is protected by f_pos_lock */
->>>>> - if (ctx->pos == DIR_OFFSET_MIN)
->>>>> - file->private_data = NULL;
->>>>> - else if (file->private_data == ERR_PTR(-ENOENT))
->>>>> - return 0;
->>>>> - file->private_data = offset_iterate_dir(d_inode(dir), ctx);
->>>>> + offset_iterate_dir(d_inode(dir), ctx, last_index);
->>>>>    return 0;
->>>>>   }
->>>>>     const struct file_operations simple_offset_dir_operations = {
->>>>> + .open = offset_dir_open,
->>>>>    .llseek = offset_dir_llseek,
->>>>>    .iterate_shared = offset_readdir,
->>>>>    .read = generic_read_dir,
->>> --
->>> Chuck Lever
-> 
-> 
-> --
-> Chuck Lever
-> 
-> 
-
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
