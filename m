@@ -1,134 +1,87 @@
-Return-Path: <linux-kernel+bounces-405160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A20A9C4DB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:18:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CBED9C4DB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:19:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFF0BB25AA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D644628485B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3381A20820C;
-	Tue, 12 Nov 2024 04:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dfQok9uP"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741062076D7;
+	Tue, 12 Nov 2024 04:19:08 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED24916CD29;
-	Tue, 12 Nov 2024 04:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA28316CD29
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731385069; cv=none; b=ogdMOZ6yyoWESG/5mIJE+rULMAv/jNfh/g+BZnB4LTEsF5KEwlDi6GNfe5vxzurplE/xNs2px3cqMU+YPo9Yh4r6EJ5InmS4vmMS/zzQiziaEnFshmy0h0mX//qMcHp8Hr2+Cy4gQa+5KKocJp70U5TrVqfXBCEzGT8AjqtN0UY=
+	t=1731385148; cv=none; b=h/1LFS2orZX4hPCs8uBdu+zd3YryhU57KFuvPzedVW4XYfLX6GsgfwIo+5eMzrbpqSTVSfzvxje4UjYqMQ+WLeF9OmnzJlfSJIQbR5OUOj3fsKaM8fb9fjq4Bbzvoow1rzGHIx5Ynge6dycq+m/FIcnmTbaCrzdFgqglpQwXSRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731385069; c=relaxed/simple;
-	bh=k7LOEk6gN7fAxmNF5JGDqcFsEqmqT0pIXJXZw8FwpQk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a07ej2e0wY+9pjl80pENk0h86b1ZAtNx/hfvkzss4QZnvTCVVMLQB0kPEYBIsVUP8VLrnkAT41Lr2D/NAzF4Y2KCGWhWUOau1HW3cLmz8+fbfNrnb9vNfPxgfdvUqME09n70KOknnhzUb+DOUpVoAzr2z84+2TwF5zcdsigYnXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dfQok9uP; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb443746b8so38425021fa.0;
-        Mon, 11 Nov 2024 20:17:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731385066; x=1731989866; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=U+FWR8JB3iGygzW+0LDvSj1bu2cDbdfDQXwliSvtrpE=;
-        b=dfQok9uPktXJ9SFik1ZqnJLgNUObwMcsJiV5KKHPXmVTekXfdHqHv8O1TIGjlfhcTh
-         H6aPojIjh/xv4mNWS8lRjyvBJEiG60zDCZfEA7qvpV8Vy4XOvuTEI6XHtH3ZgEfg2zN8
-         KXY5RBHcL5Ie+aow14cFno/P+f22J1VL1Idh8+J1syk9YvEfFTfm2163BSxrOOIgZGV+
-         ypGQ9yaA/Ii9dzg163IrT1S3KD1pLh70PEFB9Gl8f+fmCq9Kpwilo++Sa/LYAKViokg5
-         7m9qf3asrsAADmYC84BcmEmJgqFapQ614ALZcKIhmQeGmKMFBtop31Vg1og2Jb0eoS5X
-         C8kw==
+	s=arc-20240116; t=1731385148; c=relaxed/simple;
+	bh=qcNGZb0zcfdyAR6WX7WjkGuX/xaJTtHsYCAqaxz88nQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Z+SWvWHJ3jO2PFfnIt5AjnpV0qiKcw0znfCnMZh6mfkY82bMjjUOivD42eRaPKZGro++y5VP7gawSn6CG8bgc+yOZ4pPFg6qVyAHUdp6PMRkMwx1x/xty6+ZtR+2yBMHn7i+eSnEkf8c3y6xBHr/nGGayqu9p62ID74ke7/cX30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a4f2698c76so63132505ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:19:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731385066; x=1731989866;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U+FWR8JB3iGygzW+0LDvSj1bu2cDbdfDQXwliSvtrpE=;
-        b=AlaPXKzH33sqe6YJLj7aFYw602xWwwk6uFVahD5k2QyLyLR9r4xE8eab2Ox19ezMcW
-         irKQCjIpWTEEAc4sB5n7nXzWxHvFK6VhBHiXjp1c/giH8+XvhfR0ZXvbV/gKQq0RFrHm
-         bKB5vOfD0NKC7E209H7ymESyhKfwdWogzMR9VWZGBN471JobxkudTa2M5xgWUQp+XzNC
-         ON8pbfpTvR5Vd8cxDdn8gp+kSLzgYFX436GjDrz/ips2iemKNPM1moO5HVeEL8KespZB
-         cwIJ+X39z5wLzYyq0JrAClw3cKGHOTsY5cvAKD25uLkLACBUEEvvbE58RoQKp9JSr2+o
-         a8Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Ef+iaZMmEomGN6LQD45QJjIEbTlANRO5B+6kdRjaHbokvn7Tn1S9ba/e/HD+y3pszDs=@vger.kernel.org, AJvYcCXtaz4eUe4DPBtKgOh92fCt6CAeTVlWrw7kJ2yYnki1/ttAbWvU4tnTZW+2hFRsZsmkrJzjIG4EoyEmhNDQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmNxYUhW3N9M8aaqlYYCg0L4/3ePKzHLwG8o3xRgkD7fd9I/b5
-	IVOTeBrzLgbF0J+D5EHjBFt6YzeTxR+xkBmc22RIb6wJ8XfWW+DIq3TKM4UeOi2csFu7ydArM29
-	xuCS/kSeg72UdiBTIxjglxgR7TwE=
-X-Google-Smtp-Source: AGHT+IHT0dx6NKcn5LUY8JdYpFouaPR00H/LE7FPbnyQclXlUaA2k4a06gnhIhUhftncjxxNq4suP/vS3gIcpBXszdY=
-X-Received: by 2002:a2e:b8d5:0:b0:2f9:cc40:6afe with SMTP id
- 38308e7fff4ca-2ff2021ed1dmr59250361fa.14.1731385065753; Mon, 11 Nov 2024
- 20:17:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731385145; x=1731989945;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nSHO4aEXz44u7koCxYpwnPCzcEcn/6W5q76jYKRolGc=;
+        b=uADD7fmumLisaORvn9WTpJ0d8wnZS76aNKamcvok26PwCJvcJfAfnk0/3t52i+gjDO
+         XMD3VFoydYZsZfhp34KwSo4nuygNJt7PNkXAUV3NEUrwDF9TW19V0B3+5z+tMBOXTtOD
+         OkqXCS7oAkgdKhvpeM4DDa5YErNkwBbCGeW3PquFCbHHb1CwqANf41Sazt5IW4OV4mBR
+         WvXkLbzeqDtAU4mk6PpUV0dGspyd3cqc3GzoPHxYZ7HLTOiSoRo2FVBeuR4cGzJtPymd
+         G8ql9GYmpB8EAFeaZzJBeASka8e9S5tQixppfz9RlDB3cVTcIUAsJcoUpT7fBb53PxQ8
+         hAsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZahvsEngtWPSHrvePPfSOQ5xDU4DqTfxDGPJnWtwfQGHVKO7uv0hgGbe1I5nSQq915YIXrp9zJj6uNAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPK2ganDNB4Gyom0jYcpVcCHTV3ICZliDNTGVKZGgNtW02FwOD
+	FU9GjShFCUkBLFgUqnSUNzZf7rP8VAwg5DXlcjkOKcB+2xAVL6eI1FBQPJtAsxwlAtTCvdvQd1y
+	tmiVglYYaDP1Wf02cEYPG0PIzjsbs8jNNSVjAfYWA+jCaRH4hNsnSouM=
+X-Google-Smtp-Source: AGHT+IFAX/wmaf+N4MZ9JDibyywnq4xw0pai+Z24GA9zOHxPX/SM8JOCbsG+9w/UZah9s2JSg4KsZtUAgHoDSKCFAfDUdhi3US7C
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111183935.8550-1-advaitdhamorikar@gmail.com> <ZzJTPx1ca4JF8FU-@google.com>
-In-Reply-To: <ZzJTPx1ca4JF8FU-@google.com>
-From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-Date: Tue, 12 Nov 2024 09:47:34 +0530
-Message-ID: <CAJ7bepLzHYypiNiqyfbSba4hRBMf0OFekVa--9Nm0nuW4D=jDg@mail.gmail.com>
-Subject: Re: [PATCH-next] KVM: x86/tdp_mmu: Fix redundant u16 compared to 0
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	anupnewsmail@gmail.com
+X-Received: by 2002:a05:6e02:1685:b0:3a0:98b2:8f3b with SMTP id
+ e9e14a558f8ab-3a6f19ebd22mr171526385ab.7.1731385145664; Mon, 11 Nov 2024
+ 20:19:05 -0800 (PST)
+Date: Mon, 11 Nov 2024 20:19:05 -0800
+In-Reply-To: <cdcb0458-9e94-44c6-9864-ce6de521b32c@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6732d739.050a0220.138bd5.00d0.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_copygc
+From: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
+To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello Sean,
+Hello,
 
-> NAK, the comparison is necessary as kvm_tdp_mmu_zap_leafs() deliberately invokes
-> for_each_valid_tdp_mmu_root_yi
-> eld_safe() => __for_each_tdp_mmu_root_yield_safe()
->with -1 to iterate over all address spaces.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> And I don't want to drop the check for __for_each_tdp_mmu_root(), even though
-> there aren't any _current_ users that pass -1, as I want to keep the iterators
-> symmetrical.
+Reported-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
+Tested-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
 
-Understood, thanks for the feedback.
+Tested on:
 
-Best regards,
-Advait
+commit:         2d5404ca Linux 6.12-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1733b8c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dcca673786a14715
+dashboard link: https://syzkaller.appspot.com/bug?extid=8689d10f1894eedf774d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11ae74e8580000
 
-On Tue, 12 Nov 2024 at 00:26, Sean Christopherson <seanjc@google.com> wrote:
->
-> On Tue, Nov 12, 2024, Advait Dhamorikar wrote:
-> > An unsigned value can never be negative,
-> > so this test will always evaluate the same way.
-> > `_as_id` a u16 is compared to 0.
->
-> Please wrap changelogs at ~75 characters.
->
-> > Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-> > ---
-> >  arch/x86/kvm/mmu/tdp_mmu.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> > index 4508d868f1cd..b4e7b6a264d6 100644
-> > --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> > +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> > @@ -153,7 +153,7 @@ static struct kvm_mmu_page *tdp_mmu_next_root(struct kvm *kvm,
-> >       for (_root = tdp_mmu_next_root(_kvm, NULL, _only_valid);                \
-> >            ({ lockdep_assert_held(&(_kvm)->mmu_lock); }), _root;              \
-> >            _root = tdp_mmu_next_root(_kvm, _root, _only_valid))               \
-> > -             if (_as_id >= 0 && kvm_mmu_page_as_id(_root) != _as_id) {       \
-> > +             if (kvm_mmu_page_as_id(_root) != _as_id) {      \
->
-> NAK, the comparison is necessary as kvm_tdp_mmu_zap_leafs() deliberately invokes
-> for_each_valid_tdp_mmu_root_yield_safe() => __for_each_tdp_mmu_root_yield_safe()
-> with -1 to iterate over all address spaces.
->
-> And I don't want to drop the check for __for_each_tdp_mmu_root(), even though
-> there aren't any _current_ users that pass -1, as I want to keep the iterators
-> symmetrical.
+Note: testing is done by a robot and is best-effort only.
 
