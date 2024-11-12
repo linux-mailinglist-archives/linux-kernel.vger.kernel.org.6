@@ -1,217 +1,231 @@
-Return-Path: <linux-kernel+bounces-405591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F350C9C534D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:26:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACB69C5357
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:27:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83EB41F23A8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:26:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BAA028826A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B4E212EEF;
-	Tue, 12 Nov 2024 10:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42E61F26E3;
+	Tue, 12 Nov 2024 10:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="cpwY5bkn"
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011016.outbound.protection.outlook.com [52.101.125.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NsKjAOpw"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801CB2141BE;
-	Tue, 12 Nov 2024 10:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731407103; cv=fail; b=OR9AemuOlitrBrGB+KjK3uwMemYtGN3/OPl5xdCSVlYmteIB7xo0BYDvULHPD41hxPUTtKjvfJ7M1OtM72v2ATjsZz3BIU1r/zBsW95hJkM8JDr6O3C9fUFwkefnsNCEz1VTWaxdmyGAQumssuFc1hI9JwhwfugUkES+wvka+kg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731407103; c=relaxed/simple;
-	bh=ip60Ye4urgPE5vNEWLZcMv/2Ehz9u2XbUhHyW8pl7m8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MbZbwaRb3vGoNNMGqWEe6+fV5NrHO2tOAEAeoANtLFjFTJpZ5xVbhf5qf7GtU0Ai4i2q+Q7s+KWHxPBeAuDTceUFLZ97O9u5YqgTPOpiTC6oVtQAl8pIITlpKRO0mx6qcY2nkFH+GTfx7WkmvYa3jqDdcDR6ECQVjKthRcpnWio=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=cpwY5bkn; arc=fail smtp.client-ip=52.101.125.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N8ij0wNvtRwmULVCEsZc+L9GZEhy5YRJO2RCzCD7qfp4vlGGMzAudvIksoocB0mnJNIdv8L68z5a0jc3ZQXF1mDBZ4hfCQ8gf/aHniEn4bGoRSHWJq3bof9+hH2w2pVudkgd5mevsdjx2vBYEp6FYnwlDBhOp5wYvZrhZ9ddD3r1fqIEAAQ2cW2kKBo4Ot60inzEO7NO3Yh9RX1TOf0kDjMohk+nXrRCq0Y2nvm/KWAC2DgkHWfXVsZLmgDVwOZRDymEahPUdZ0YfF9eDClTDp3pjgsD2q6LPIM0M1Uyix+zoW1qa2gtgt3wPH4jctEgOgWHVWXzA8N9p0Qe2HwJoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R6rIjPLjwTWDjvcUsfzNELl7ZQFW/SDhQPcrg+sdDAo=;
- b=NjtOBO0bhSCwonTr12v6NEiDlAAuCo8VPEf+lLQJDPgf+ODS4tz9+S0Q0QXUJ/kcc5QXiUvWEu2TjS7tcw/H3K3p/Nq5dkJ+7d7UgkgTtLRVGBNKUykQFzs1fMvvmCh2pib95Nluf0GoziD9xniLQpAejMd5T0q41CiTdJ0DZOOEwdCBEAXfCudk5M1wSCIJXpbR8MVnu74K1okV0I2Vnvtb+gecYSmfK+n7et1OUbDyThPeOszNki2JEUKUlS5uVMhSyiOK+JJgdANLcvQI6eceQgZb9KVKzaZX6vvC4fZLMxD8PirrO96IXhBGoAnhZ3CBqwnP0Skc7gPukS0QUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R6rIjPLjwTWDjvcUsfzNELl7ZQFW/SDhQPcrg+sdDAo=;
- b=cpwY5bknMn4iC3hOu0rI376dkiW+wFAQtqiWljaUTraYRYU4Z80bFTlA7MvylVntC79ags6FSn/jy9gIq9FWIfwWTnlJARWhSfdESOMHMM3oK2ZwlFA3O8fktmC915X/cP10wltEYRXX3GwPG+k0wHqPWDLhxfYEqwcMcZNShgc=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TY3PR01MB10435.jpnprd01.prod.outlook.com (2603:1096:400:257::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Tue, 12 Nov
- 2024 10:24:58 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 10:24:58 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Liu Ying <victor.liu@nxp.com>
-CC: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, laurent.pinchart
-	<laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH next] drm/bridge: ite-it6263: Prevent error pointer
- dereference in probe()
-Thread-Topic: [PATCH next] drm/bridge: ite-it6263: Prevent error pointer
- dereference in probe()
-Thread-Index: AQHbNOzgUbwqUiJ2cUGyo9Mi0uk/LrKzcDWQ
-Date: Tue, 12 Nov 2024 10:24:58 +0000
-Message-ID:
- <TY3PR01MB1134646424EE505AA5525AE8C86592@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <804a758b-f2e7-4116-b72d-29bc8905beed@stanley.mountain>
-In-Reply-To: <804a758b-f2e7-4116-b72d-29bc8905beed@stanley.mountain>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY3PR01MB10435:EE_
-x-ms-office365-filtering-correlation-id: 56829fcb-f57e-48f7-0a20-08dd03044240
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?76mK5WE5F/a93/hLzNKufJM+yKJcqIVaG4Ghki2YPVxYKxvuCyp8r8ny8UEM?=
- =?us-ascii?Q?q4yhjYCCA4TOM06vJS8rDTalih2s9/JUbQIcp0u48JqF9OYZLLfpEKi4zVxN?=
- =?us-ascii?Q?/mlpjJBR1cfKpfBEvzCJH6y+3FROOOZqidgToCnLios0f1QWh9YTpKRBShP/?=
- =?us-ascii?Q?Eimn2wci1zh3Q6eU/UWJfRyXEVWlG00yvMZ9qAfxZke0BbMrkO4TVT+4ZY58?=
- =?us-ascii?Q?GBbat08lmxatD3bBdOVce31PuPjkU4Len0dX3m/+DfAK3Ukv5gnWw4effKLN?=
- =?us-ascii?Q?pKLUEVhcb5pqL6jr1465SSI29ELkzs0935aryg2Q7V523rBSDukgqEFSHVvS?=
- =?us-ascii?Q?zBKDJrAZVQQDfbkoUHU58xh+Q078eFjPEMu2fLnOcPAFS3JEfi191UEuN4JM?=
- =?us-ascii?Q?4ehNBy+cUXZRMm07J6QM1pgNcEl8DB4XsQgE/OuStyiNsHe8uzVuMz2qPQwU?=
- =?us-ascii?Q?of9F+e79yq1SrybDOJySPLwGY6qJ2JsUfiT+AgqJ/+LiFVcJE1tsR+U2ZnBX?=
- =?us-ascii?Q?4N4jGRWHN6QUJ3GV5VuaLxh4DEl04FCe4rtnEyUbKaZi8Nbaw8RlFif4rCvd?=
- =?us-ascii?Q?EpWd1CvwUZKfsKB/xlqDX+spx77HYw55HwZGDXPlRYXis5Ipb5jKxdOoqO7l?=
- =?us-ascii?Q?CintljaqwAtIGt1fG30OvDWl1/V0bwmraPPVc4hIKuxZHFJDAhMRjCfqKPkJ?=
- =?us-ascii?Q?uuey+pIES32iQYcVGx4QqKbFwuUkmZLilu7ydA4nYbsaxhXhUE57dPSGMYNR?=
- =?us-ascii?Q?9TSJg+q4Btq5cuuxaR1TDyp+umJfVVZuV+vA/u0vPpnyJB/Z/QDEfvDuS1Ed?=
- =?us-ascii?Q?ogPcqGYKgs1KPC07J1zaRiGrCXqjw9pq/Hw2SEfmM08pcBGzLewAyl8oS/Tg?=
- =?us-ascii?Q?392iDRcUsJxfBzQ4noT7OW6AbVP06utOokO+zxNzR0NQk1aTdxNExOIm6l4H?=
- =?us-ascii?Q?UaK1mrxDdTHn3YUDSNKVkoNxnsg42sOmeJgTk40FKyPWn1RAXpRRwRlbTqLY?=
- =?us-ascii?Q?2YAIRDufuVRhqyPUunKbM5khkMkj4rRdR/voWPYHJNBQtFMGV0K+qoUE8AiH?=
- =?us-ascii?Q?D+0UwjBbOBbqMiNJBS2hBKVw2PXbnBplF23Rbz1YZNawnePMvNIybLxZtQTE?=
- =?us-ascii?Q?yWUMClJSyLiw7s8R6xnI2LFipjk6GRZ7sjb9Hpm/kIC8yy0lgGv8urFuC/8M?=
- =?us-ascii?Q?Ta3oM0m4aPmJqk9g2JsMQ56HsHgDxN1uJSX4pllusMENALNPxLOpFeVCW8i0?=
- =?us-ascii?Q?SK5VlyxF4mJfg7v0veDkE8rA9zt5dz2hvVq8CXGebqnxK6ZLALt2M3VcVzcp?=
- =?us-ascii?Q?lSlCZEKxBz6SFTyc6mx25L7Vdz1JA0Z9dO9q4HCBkv9ETxQrkuQuc9tz3a16?=
- =?us-ascii?Q?mLKMQGI=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?J0uPmu15O4Zi4SVhEwYmUjtEJB0/ZmrgM6jG9JE/9Kr43gldYJ0KJaLZ8OJO?=
- =?us-ascii?Q?nsMtHrYAG8yfBZQHW/boNicqi5GAquu+T3YrRppV84EtE5FmbjRsY+S/294w?=
- =?us-ascii?Q?xjUnK5ySJprGz3aBDjkv1oQsJVLrt+3Q0CR1p2eS3pzhH7vRVdYISXVvRS1u?=
- =?us-ascii?Q?aFbG9r96nuaJ4/xKEAsdzpBvcIbsIjZEBOec9f3Pz6SofisSKfAm+j8D8Nd9?=
- =?us-ascii?Q?QIGuWdPRN4XuhzOJOcrKdeyFV4o1bEfWkiSEMaEv/CpRZOyufzVQXwUPlr9X?=
- =?us-ascii?Q?y1Dk3WZQyKY8woEzfW8hkTY44F9V6sFSqZHaj5kTJPIvrQxTj0bvg61vHrR4?=
- =?us-ascii?Q?DxxV1QE8IpUBmq0iDFRi8PZ84p6a8NQgeQK3eeYdijHee1m5/+aHb/Ud9J6I?=
- =?us-ascii?Q?TTLEWbA7gM3cbvJo8RgJqhkmOlKRjMk07HLatEV2slWonyNqTVNdcAKw2z4n?=
- =?us-ascii?Q?YbaDohH2ovfqOHSVkVdec7ReuqB+3Wan3c7O6JeD3UcKucaZeWaSHwH0cWa8?=
- =?us-ascii?Q?oloDYkgP9rB26sfjBGDRgsLqX0J4DXLJLtVpFxx6X219hfSse7ylGs58pdla?=
- =?us-ascii?Q?wDVLqhITYywGpqHlfW/hbjGzRpzyxg+z7i9bqX/Dsd+LAcKUnIhjTK+6/EgT?=
- =?us-ascii?Q?+AZP+Y0lJt8qhkDrTkxjdyWTw1eNW9DqWpRLRd9pj1wEkx+8v0PgvM7qebez?=
- =?us-ascii?Q?gMBMDU1VTonK5fsNaW/s9KJyQrqHNsqJWViYiwJ1dtFU7ZrL0oHQSBLIYn4y?=
- =?us-ascii?Q?0Gbw+hpWMEnntEKAi9PleIp3cPi5phMVdd4sYkwn8OmiT1q0yTG7IAlLbVzc?=
- =?us-ascii?Q?kTU6woSLXuyVr2tHpj0b5snoC9AqQSfqkbqvhSs7dt/8rwmsNKUonT2ggSPZ?=
- =?us-ascii?Q?r6V1IHYYCC2MXMtn4OA4hfgMIqMWz8a1ThtEHX7SLbQs9JQ14srb/PyIBO/Z?=
- =?us-ascii?Q?24K7cve9nsiDkrqD+DL3RmhsmumKVCSPHVLiWGxe2wwfEgLlqFD5L5tEiJS4?=
- =?us-ascii?Q?Q/uwgA1+zJm185rw806DYLemsmh/1aeoLw6NcUvOKWZ0JldcExkpV7FCkguO?=
- =?us-ascii?Q?0diJ/DtBEVtn7TeMlAEJ3lbyAWs33tWSJeTixiOJ3UPcGmm9e0OtVtrVGlP/?=
- =?us-ascii?Q?Vgyvbq4OSagdL+IaCg3iD4qekmgIT6SJ+8wxoIJq8U50DxPT1KW0X5+1EVpT?=
- =?us-ascii?Q?9tqnz8dl5oNhyhMvR77UJxCZmzR0yU341Kuscs+G7llFXbdQVzebF/hoyCZf?=
- =?us-ascii?Q?LNWHaku30FdIRPBehQnsOOZp1mO+GjoDLrRU2p8DZd0acPPHrIlp4z+dutvA?=
- =?us-ascii?Q?vRowFuBZQJRDs4WgOGxgiS0vErLV9DbdtATVdGbviUaidQbjvjBes2QOV3h3?=
- =?us-ascii?Q?eGV9+1PKb9KgBnf8MhliCHTPZ7F6jYvDvtSLwpCVxFKrwdjHgcgyfG0wuDqR?=
- =?us-ascii?Q?PXQXy8fY2j6WuHZYx5AsPYe7o4yqPVmKthVtw0TdV0ntQvz1lOIHExDh+RZ0?=
- =?us-ascii?Q?y0CntxnM7yj39GLYLqoE0aFPzOGLoJbyVL8Mn7bsmo/1+l8SsObFcWh33MAz?=
- =?us-ascii?Q?yGCmcs5b2qCehOih+nwrkR4ntqzDA9VLvsysR4R4JJXKEXgesBPmleKWsXW5?=
- =?us-ascii?Q?Dg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F1320B20B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731407145; cv=none; b=LzlHA61Zy3mtDKNEKtTF/OP9nDqaSc2xMoRmyjDGQncGgQW5q8XMdWMmr6v32NpoZ86SiFCzEybB8ggogO8jjC4+VwA/covFGhYjQDM3Zb4zj8cTuqpB+k3F2d0ke3wCGcDovSSqcno3RW1w09US9cSrd2StJM9yAkU/umPjEFQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731407145; c=relaxed/simple;
+	bh=1D1zZKYCSlaEhy1+5tHVx44PwVRCFIMTedpvlyE0kik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t9ZuLPJb3LWaDtgRvkgpQGG8Ja/Pv/5lxbfkNT0gL/UvSy8cxw6DUBSBTCxN+voMfbZT7IlTM7ZZ/jf9sFeGFmxCdlANbwP2HMbRwYBTF/AIqm9xrQUmmj3Ci0RyNBeVEpgsDIeRg15zOwTjun/Y9oSf2lAw0vrhC6TaLUYeU4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NsKjAOpw; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d55f0cf85so3650291f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:25:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731407141; x=1732011941; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/5yHXIwIHCW+JAcYCylm65WJUcWQ5bSuDUNscIOTBvE=;
+        b=NsKjAOpwPdPiiYFJnoCR3kUbdhlIsAUz5KJsbdXS4WVj/sKUhvXRMgY8X7UQ+4N6AC
+         NMaJ/SkkWeAoOf/OgdrZ5dzTJ4CpjVJf79i1KcoDhlFp+Sxhy5gE31fHIxdGYp2O591Y
+         YZHts2iclJF6uU6VCX/q10hKP776dBRbbedFmtuFPdZEjiFp0f8p+dpkeu5463UQtvx0
+         nktO8apSndE0TjVTHDd9ERelyqB7UF7oJX2OuA3vk6m70QHexuPWgWc5Rqf+VpjyLJCq
+         Lnlkwp3th31IlfaBYKDuRUkt16/QJYyCxRio3+tOq7TSQ2al6PheGIgakumvYJvNkdW/
+         ELgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731407141; x=1732011941;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/5yHXIwIHCW+JAcYCylm65WJUcWQ5bSuDUNscIOTBvE=;
+        b=I0H2BU9teZw15AR1DGnXgfk/5jrN0uH7FGYY3eXdR4qPSLoeZWsMb5LjzQx+SpfrUD
+         f/xi3LZZNJOQJmsdPrJDAOvu3aIATxUrkHeEfxWcSZQpvML66mHoA8cOPSw6/WAsxkEW
+         gvakjzUV10ztrEWnlUwPVscSuv1c4n97krZX7Qm95lEhwmYT0pKr6w1aNHvXEkYyu/1G
+         oqaOqC2PS5FD5jmPwTfUg6+CGdJqHtEcfkQDWBownbJzKRn/FZ4/nfHbLcifTVpN1EYy
+         pmD73nUCEnjjTuZ+mYGnriich4mX5EIC5IoXe7823tQ2MfZPPGnHTr6H1PXPtkvCARin
+         7mQw==
+X-Gm-Message-State: AOJu0YwtVsg8dfjwmJrBO1kV0/HO7Oqu6imbZhgGxs/fl8F4kAgG1euP
+	pB1nN6ldK0/2ddz5vI3naMtzKdbexW7k5AidUVkW3OFStowcAzyWnSr0Cfip6Cw=
+X-Google-Smtp-Source: AGHT+IGIYd2CmmVqWiZ5wMCAwv4CjM91gTS2b3teNaxRcn9X2Z86zV570IB+s6/7CCxiw+pEV6x29w==
+X-Received: by 2002:a05:6000:184e:b0:381:df72:52cd with SMTP id ffacd0b85a97d-381f1822aadmr14787560f8f.23.1731407141024;
+        Tue, 12 Nov 2024 02:25:41 -0800 (PST)
+Received: from pathway.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda03696sm15200653f8f.87.2024.11.12.02.25.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 02:25:40 -0800 (PST)
+Date: Tue, 12 Nov 2024 11:25:38 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Chris Down <chris@chrisdown.name>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
+Subject: Re: [PATCH v6 03/11] printk: console: Implement core per-console
+ loglevel infrastructure
+Message-ID: <ZzMtCVlLVLnwghQB@pathway.suse.cz>
+References: <cover.1730133890.git.chris@chrisdown.name>
+ <28d8dff56bc15b2a41f0d2035701ccb11df22610.1730133890.git.chris@chrisdown.name>
+ <Zy4368zf-sJyyzja@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56829fcb-f57e-48f7-0a20-08dd03044240
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2024 10:24:58.2665
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: O79eCds1ZvALDXoa7wKvg9Bpa2iPnAOPeW1asCViK3iuLYfIKtjnMPLk7sULNjxw7Hsae7NIOaQeLbKBo0vBpx2Z8eCR8G/A8uApkwjBb6o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10435
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zy4368zf-sJyyzja@pathway.suse.cz>
 
-Hi Dan Carpenter,
+On Fri 2024-11-08 17:10:31, Petr Mladek wrote:
+> On Mon 2024-10-28 16:45:37, Chris Down wrote:
+> It would be nice to describe the basic logic in the commit message.
+> And also the handling when the global console_loglevel is modified
+> via sysrq. Something like:
+> 
+> <proposal>
+> This commit adds the internal infrastructure to support per-console
+> log levels, which will be configurable through sysfs and the kernel
+> command line in future commits.
+> 
+> The global `console_loglevel` is preserved and used as the default log
+> level for all consoles. Each console can override this global level
+> with its own specific log level stored in `struct console`. To
+> override the global level, the per-console log level must be greater
+> than 0; otherwise, the default value of -1 ensures the global level
+> is used.
+> 
+> The existing `ignore_loglevel` command line parameter will override
+> both the global and per-console log levels.
+> </proposal>
+> 
+> > --- a/kernel/printk/printk.c
+> > +++ b/kernel/printk/printk.c
+> > @@ -1287,9 +1287,62 @@ module_param(ignore_loglevel, bool, S_IRUGO | S_IWUSR);
+> > +enum loglevel_source
+> > +console_effective_loglevel_source(const struct console *con)
+> > +{
+> > +	if (WARN_ON_ONCE(!con))
+> > +		return LLS_GLOBAL;
+> > +
+> > +	if (ignore_loglevel)
+> > +		return LLS_IGNORE_LOGLEVEL;
+> > +
+> > +	if (per_console_loglevel_is_set(con))
+> > +		return LLS_LOCAL;
+> > +
+> > +	return LLS_GLOBAL;
+> > +}
+> 
+> The @con parameter is nice. But it makes it hard to add lockdep
+> checks. So, I suggest to pass the console specific loglevel
+> as the parameter, like:
+> 
+> enum loglevel_source
+> console_effective_loglevel_source(int con_level)
+> {
+> 	if (ignore_loglevel)
+> 		return LLS_IGNORE_LOGLEVEL;
+> 
+> 	if (is_valid_per_console_loglevel(con_level))
+> 		return LLS_LOCAL;
+> 
+> 	return LLS_GLOBAL;
+> }
+> 
+> int console_effective_loglevel(int con_level)
+> {
+> 	enum loglevel_source source;
+> 	int level;
+> 
+> 	source = console_effective_loglevel_source(con_level);
+> 
+> 	switch (source) {
+> 	case LLS_IGNORE_LOGLEVEL:
+> 		level = CONSOLE_LOGLEVEL_MOTORMOUTH;
+> 		break;
+> 	case LLS_LOCAL:
+> 		level = con_level;
+> 		break;
+> 	case LLS_GLOBAL:
+> 		level = console_level;
+> 		break;
+> 	default:
+> 		pr_warn("Unhandled console loglevel source: %d", source);
+> 		level = console_level;
+> 		break;
+> 	}
+> 
+> 	return level;
+> }
+> 
+> static bool suppress_message_printing(int level, int con_level)
+> {
+> 	return level >= console_effective_loglevel(con_level);
+> }
+> 
+> >  
+> >  #ifdef CONFIG_BOOT_PRINTK_DELAY
+> > @@ -2975,7 +3042,7 @@ bool printk_get_next_message(struct printk_message *pmsg, struct console *con,
+> >  	pmsg->dropped = r.info->seq - seq;
+> >  
+> >  	/* Never suppress when used in devkmsg_read() */
+> > -	if (con && suppress_message_printing(r.info->level))
+> > +	if (con && suppress_message_printing(r.info->level, con))
+> 
+> We could read the con_level at the beginning of the funcion. We
+> already read there the CON_EXTENDED attribute:
+> 
+> 	int con_level:
+> 
+> 	if (con) {
+> 		is_extended = console_srcu_read_flags(con) & CON_EXTENDED;
+> 		con_level = console_srcu_read_loglevel(con);
+> 	} else {
+> 		/* Used only by devkmsg_read(). */
+> 		is_extended = true;
+> 		con_level = LOGLEVEL_DEFAULT;
 
-Thanks for the patch.
+Or we could do:
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: 12 November 2024 10:23
-> Subject: [PATCH next] drm/bridge: ite-it6263: Prevent error pointer deref=
-erence in probe()
->=20
-> If devm_i2c_new_dummy_device() fails then we were supposed to return an e=
-rror code, but instead the
-> function continues and will crash on the next line.  Add the missing retu=
-rn statement.
->=20
-> Fixes: 049723628716 ("drm/bridge: Add ITE IT6263 LVDS to HDMI converter")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+	} else {
+		/* Used only by devkmsg_read(). Show all messages there. */
+		is_extended = true;
+		con_level = CONSOLE_LOGLEVEL_MOTORMOUTH;
 
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+The LOGLEVE_DEFAULT would cause using the global loglevel.
+But we want to force showing the message.
 
-Cheers,
-Biju
 
-> ---
->  drivers/gpu/drm/bridge/ite-it6263.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge=
-/ite-it6263.c
-> index cbabd4e20d3e..5f138a5692c7 100644
-> --- a/drivers/gpu/drm/bridge/ite-it6263.c
-> +++ b/drivers/gpu/drm/bridge/ite-it6263.c
-> @@ -845,8 +845,8 @@ static int it6263_probe(struct i2c_client *client)
->  	it->lvds_i2c =3D devm_i2c_new_dummy_device(dev, client->adapter,
->  						 LVDS_INPUT_CTRL_I2C_ADDR);
->  	if (IS_ERR(it->lvds_i2c))
-> -		dev_err_probe(it->dev, PTR_ERR(it->lvds_i2c),
-> -			      "failed to allocate I2C device for LVDS\n");
-> +		return dev_err_probe(it->dev, PTR_ERR(it->lvds_i2c),
-> +				     "failed to allocate I2C device for LVDS\n");
->=20
->  	it->lvds_regmap =3D devm_regmap_init_i2c(it->lvds_i2c,
->  					       &it6263_lvds_regmap_config);
-> --
-> 2.45.2
+> 	}
+> 
+> Note that I have used LOGLEVEL_DEFAULT instead of the hardcoded -1.
+> IMHO, it is better to use a NAME and LOGLEVEL_DEFAULT is defined as -1
+> and the name more or less fits here.
+> 
+> and then do:
+> 
+> 	if (con && suppress_message_printing(r.info->level, con_level))
 
+and then we do not need to check the @con here.
+
+This idea came when I was looking at resolving conflicts against the patchset
+which removed the hack in sysrq code, see
+https://lore.kernel.org/r/20241105-printk-loud-con-v2-0-bd3ecdf7b0e4@suse.com
+
+Best Regards,
+Petr
 
