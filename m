@@ -1,139 +1,93 @@
-Return-Path: <linux-kernel+bounces-405466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B1F9C5226
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:35:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5AA69C51C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:21:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B240FB27941
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:20:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 780F81F231AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B55C20D4F4;
-	Tue, 12 Nov 2024 09:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E909320C03B;
+	Tue, 12 Nov 2024 09:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pqr3wnfP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="NSPJ3oVX"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281311AA1DB;
-	Tue, 12 Nov 2024 09:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7851D20C01C;
+	Tue, 12 Nov 2024 09:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731403247; cv=none; b=bhBipAZeEHu/p+vxhzCqkLu9cc4GN91A8fMspuaWlHh82YQlfO6KU6UA/+YqG57wepYOso86tRtSUq5HH+eTrnoPwlHr7l9973UpXXOkj58ypf4fCvaHv2cv8mZr+e4BxH0APVEe0IPJ2fL2OgYOcRidzHqzFGLoV7ZAj7udXmE=
+	t=1731403265; cv=none; b=dXJk1P3wLi5FHL18zgJ4Mt6P0IrBizC4khmqjxqVt7I9+x3itMrF/ZEeh79/EVTQRiiES2y3Ru074rdE1R9Lnz1Zy+s6253fNyrEpR5mAsybtLSmc5L7ssj1//PFpn5rkIOynyTo2RfRHLMtK1CUAOxKr1TgXFEVkSxV8NxIQk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731403247; c=relaxed/simple;
-	bh=wAWx/SGA2EXYdjiNXUC9oPhYTPYTn/PCtaLOpByk+/M=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=pw0exTUTMcSyESFAwKPI4zHRJKwgKjv8qL/jMv6rJLECUHFaIC+JpXl84GNE7bGpcd8fTztsRGZR8JGt2yYvk6gXwUK8mq89qLjMlL1XCA22s0jJBrTh2amahwwYyta5fqSZEsj7eldE79VdgLIgxUcX1mLyqrvPkMXXvrau+5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pqr3wnfP; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731403247; x=1762939247;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=wAWx/SGA2EXYdjiNXUC9oPhYTPYTn/PCtaLOpByk+/M=;
-  b=Pqr3wnfPpKnI3JkkRgV4687R8U76nsDniFSEmChDxFV5s5uA1SKzq0cE
-   72mO8jtZkmekNXEuij8xCof6LYXqiyJUZoNTGq/uNtSx7tEcTGT7Iaqyf
-   AN4E9hXlAu+fieQKGqFNaYT7PTyH84pbhYtedmDv3RlwoZd9ugIhlaxKN
-   hvGolRoejEZV8t536xYNPoRGnwhJLOqQj/JrNjUTMEONE/7ex1SiA/vB6
-   d3ckyNjy1N9ja+6dLlbhgL5INqGwil1mDHUOVIY7+slJaumOVs9vT6giL
-   0Ucz5MsXZtEK6PrZ/Tft7/HbpHKTB1iO638KovDB+CYKPvp9T4hldMyme
-   Q==;
-X-CSE-ConnectionGUID: PiMYtC3xTL2pRDBWRv6EeA==
-X-CSE-MsgGUID: LVgMqa3HT2aNBbE8tzwpEQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53781118"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="53781118"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 01:20:46 -0800
-X-CSE-ConnectionGUID: 5h21Fj1ZSyKvbe4L99cjgA==
-X-CSE-MsgGUID: armBer0LSGu+mND6YZ91qw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="92301038"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 01:20:39 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 12 Nov 2024 11:20:35 +0200 (EET)
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-    Rob Herring <robh@kernel.org>, Krzysztof Wilczy??ski <kw@linux.com>, 
-    "Maciej W . Rozycki" <macro@orcam.me.uk>, 
-    Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-    Alexandru Gagniuc <mr.nuke.me@gmail.com>, 
-    Krishna chaitanya chundru <quic_krichai@quicinc.com>, 
-    Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-    Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Daniel Lezcano <daniel.lezcano@linaro.org>, 
-    Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
-    Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v9 3/9] PCI: Store all PCIe Supported Link Speeds
-In-Reply-To: <20241111203023.GA1816689@bhelgaas>
-Message-ID: <2703fd74-ea61-17a8-267c-24d357e6b0f7@linux.intel.com>
-References: <20241111203023.GA1816689@bhelgaas>
+	s=arc-20240116; t=1731403265; c=relaxed/simple;
+	bh=X0nkcWscmQlrmf+TLY0Wg9gFcUpK0Cen4YMwGoVDmeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cJEA6Qva/srpE1cb9DN50FdE8CKbSLb9nOmMPo3ESy4kDdBLjTIrZEdxhCyZvDMIto7GPARRG4+spmys/6HErIXpWgl2bdPx96jPl6V3SwqZjQQnR2+Tfjhr4GKAU8pNo9K/aytQsn27mdGThbd5aua1YEaXxxlYSH7tw2kqs+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=NSPJ3oVX; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 8714F1FA05;
+	Tue, 12 Nov 2024 10:20:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1731403259;
+	bh=nqTjLk1zD6oeEo+651Nbriswu6CCF85fypmhG0chddQ=; h=From:To:Subject;
+	b=NSPJ3oVXgNMobw7T+l2Hku9TkGxCiTqJdgAI4bhJFLR+/7GBaNWzVcJc2OHxi+jhd
+	 eS5NBfYRXfeB/c4L1T8+1iI7/DOR0QzWps2Dar7yw/mR8VebEwukyu+zKkKLy/a19Y
+	 lj4ISO32bml8ylATCB8ThOn2GRpHZoPqiFjxohKUFRseWRksJWfZDlif7iIl/+nW0u
+	 UdpbMzg+paTWriTKQw+FePelFAPwZ6WO0BG5+DqbD1qxvovo4EtrsFGo3HTZw1EyCD
+	 D55R9dwj/KQaeCimXmeqqjDxWoFRN15B9HJelZY5soybi4pkkq0Jh1URdKnU731rgm
+	 TXWjYwdLln1SQ==
+Date: Tue, 12 Nov 2024 10:20:54 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <frank.li@nxp.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
+	Adam Ford <aford173@gmail.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Mark Brown <broonie@kernel.org>, ulf.hansson@linaro.org
+Subject: Re: clk_imx8mp_audiomix_runtime_resume Kernel panic regression on
+ v6.12
+Message-ID: <20241112092054.GA18139@francesco-nb>
+References: <20241007132555.GA53279@francesco-nb>
+ <20241112075958.GA8092@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-2131621588-1731403235=:961"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112075958.GA8092@francesco-nb>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Tue, Nov 12, 2024 at 08:59:58AM +0100, Francesco Dolcini wrote:
+> On Mon, Oct 07, 2024 at 03:25:55PM +0200, Francesco Dolcini wrote:
+> > it seems that an old regression is back on v6.12, reproduced on -rc2
+> > (not sure about rc1).
+> > 
+> > The original report is from https://lore.kernel.org/all/20240424164725.GA18760@francesco-nb/
+> > and it was fixed with https://lore.kernel.org/all/1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com/.
+> > 
+> > Is it now back?
+> 
+> I was able to reproduce this issue once more, this time with 6.11.7.
+> As I wrote in another email the issue is not systematic as it used to
+> be.
+> 
+> Any idea?
 
---8323328-2131621588-1731403235=:961
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Frank, Shengjiu, could it be that the udelay(5) in imx_pgc_power_up() is
+too short and therefore we have such non-systematic failures?
 
-On Mon, 11 Nov 2024, Bjorn Helgaas wrote:
+Francesco
 
-> On Mon, Nov 11, 2024 at 02:23:35PM +0100, Lukas Wunner wrote:
-> > On Fri, Oct 18, 2024 at 05:47:49PM +0300, Ilpo J=C3=A4rvinen wrote:
-> > > diff --git a/include/linux/pci.h b/include/linux/pci.h
-> > > index be5ed534c39c..a02b77fe7865 100644
-> > > --- a/include/linux/pci.h
-> > > +++ b/include/linux/pci.h
-> > > @@ -303,6 +303,7 @@ enum pci_bus_speed {
-> > >  =09PCI_SPEED_UNKNOWN=09=09=3D 0xff,
-> > >  };
-> > > =20
-> > > +u8 pcie_get_supported_speeds(struct pci_dev *dev);
-> > >  enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev);
-> > >  enum pcie_link_width pcie_get_width_cap(struct pci_dev *dev);
-> >=20
-> > I realize this is now already queued as commit 73ee11953294 on pci/bwct=
-rl,
-> > nevertheless one belated comment:
-> >=20
-> > Since there are no callers of pcie_get_supported_speeds() outside the
-> > PCI core, the above declaration should probably rather live in
-> > drivers/pci/pci.h.
->=20
-> I moved them, thanks!
-
-Thanks for taking care of that.
-
-> I noticed duplicate declarations for pcie_get_speed_cap() and
-> pcie_get_width_cap(), so I'll add a patch to drop them from
-> drivers/pci/pci.h.
-
-I also noticed the same. FWIW,
-
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-
-for that patch of yours.
-
---=20
- i.
-
---8323328-2131621588-1731403235=:961--
 
