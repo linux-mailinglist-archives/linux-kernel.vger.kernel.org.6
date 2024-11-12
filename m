@@ -1,101 +1,98 @@
-Return-Path: <linux-kernel+bounces-406735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB30A9C6331
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:17:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 903699C6306
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:02:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F440B335D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:58:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543BA286145
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06D8219E5E;
-	Tue, 12 Nov 2024 20:58:07 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD7221A4A4;
+	Tue, 12 Nov 2024 21:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MHtkKfjl"
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037D720A5CF;
-	Tue, 12 Nov 2024 20:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE9A13FD99;
+	Tue, 12 Nov 2024 21:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731445087; cv=none; b=tmBY8oF9/8GmRM7sinUKWsa63s/0/Rnk53htq1OrDGiqrc+c3duYF8rdglbHbp8mMwPqdaRWxcWBbbGA3ikSjCZgkxJxM45UkKqWcDRpCbB4Qi5W/0Mxjtdz9lQKxlBGXECrUH4SOEhvq1VeGdEM35ptCnDXYWKbozr/xLWJVog=
+	t=1731445352; cv=none; b=CKd9lO4SA6/sshioZ9xz5VoY/eGnpKh4njuCipZf9sP7kJNT9BKOaJ0cuIm6Fu4Tw40PtuyEQjIM2k6dhkz3rYU90fjYMNDyhLqhXhI6aog66OzzT7fTIo3JbvIjHJzHP73DKBcUl9YSFsu11xXD+AqX+RY/eVZEdpFvj4o5Ekc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731445087; c=relaxed/simple;
-	bh=57IMcks0UzNbvv0P63HRcg/VqJkgmnJEQVaZIG3NtMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dPlRP1agAUg3pYzkVXRi20Kf5AkIRNZBUR5Ppg4syEaLrx1Hy3vnYm5aswp3BQ47gtU1CxmOXFd3DS1korGTxjrqboe4oEcmzgovAhKp8UZ5d8myqeJwASryEjoJhmL1CR/ua8iNLRRvbIDtv4FnTZsiyq9fr2n4N39DPp1MRH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 794311C00A0; Tue, 12 Nov 2024 21:58:03 +0100 (CET)
-Date: Tue, 12 Nov 2024 21:58:03 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.11 000/184] 6.11.8-rc1 review
-Message-ID: <ZzPBW26qjxwOu1pL@duo.ucw.cz>
-References: <20241112101900.865487674@linuxfoundation.org>
+	s=arc-20240116; t=1731445352; c=relaxed/simple;
+	bh=zM/yV7Sqqn3L0LKsqpE/sHVlA1LHzAmE6utNVl3Ahvw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DZ4IgDOgqbdFxtpvzIVVgTKqNg8aSAPyjsDBrj/RUq5S5gJwNb4lWVexOGVtNdGZbJNEoKwx/K9/8p8cEzNmBbzMzdb6HWvY+cnOLGIQrFObpdrzxtZE93zMWxKvf22FMiSf3O0I8jG0iiOKx16p7M1h/CI3EzEkxTv7mRbtzFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MHtkKfjl; arc=none smtp.client-ip=80.12.242.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id Ay0kt5zlow8U4Ay0kt7lCL; Tue, 12 Nov 2024 22:01:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731445279;
+	bh=fsqOGr2Zhrw+aZU6nyolhdzki25Q9IQLpHrgqpUTkwM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=MHtkKfjlLa8z4OTJs3qgB6ABuLU2DcnSq2GNKpXo+KBDw2+lbQHMia4n5jL5ZGVnC
+	 L5Hq11I++Lz3M3y5F1kM33VJvawfRfXJfxqNH8i/2Fvt7Z09MX0Au9J1JgK/V8R+so
+	 hpCfkK5FuVMtFxBAW3Jcld8a+1qxNDx4qu+boUSMu5Fk1tVAS4wWj7894yUpN2Qekn
+	 PGTWM+Sa1TKS9xs+U8KcU9rld2GJm+HrfsOsT+uBdwznVYghSdVPFlrC702OiVMyMd
+	 T5osH+H2Tv5ssim/zzMTdmh4ZEwBuMuzBg4/LA09xpwFKS2wmPsX7sUgauxTAICmxu
+	 1nuMysk/dzKUA==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 12 Nov 2024 22:01:19 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-i2c@vger.kernel.org
+Subject: [PATCH] Documentation: i2c: Constify struct i2c_device_id
+Date: Tue, 12 Nov 2024 22:01:00 +0100
+Message-ID: <c8e6da4adb7381ee27e8e11854c9d856382cdc93.1731445244.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JZyBI9jf13Ow+if5"
-Content-Disposition: inline
-In-Reply-To: <20241112101900.865487674@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
 
+Constify the i2c_device_id structure in the doc to give a cleaner starting
+point.
 
---JZyBI9jf13Ow+if5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Also remove an empty line which is usually not added.
 
-Hi!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ Documentation/i2c/writing-clients.rst | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> This is the start of the stable review cycle for the 6.11.8 release.
-> There are 184 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+diff --git a/Documentation/i2c/writing-clients.rst b/Documentation/i2c/writing-clients.rst
+index 0b8439ea954c..121e618e72ec 100644
+--- a/Documentation/i2c/writing-clients.rst
++++ b/Documentation/i2c/writing-clients.rst
+@@ -31,12 +31,11 @@ driver model device node, and its I2C address.
+ 
+ ::
+ 
+-  static struct i2c_device_id foo_idtable[] = {
++  static const struct i2c_device_id foo_idtable[] = {
+ 	{ "foo", my_id_for_foo },
+ 	{ "bar", my_id_for_bar },
+ 	{ }
+   };
+-
+   MODULE_DEVICE_TABLE(i2c, foo_idtable);
+ 
+   static struct i2c_driver foo_driver = {
+-- 
+2.47.0
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.11.y
-
-6.6, 5.15 pass our testing, too:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.6.y
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.15.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---JZyBI9jf13Ow+if5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZzPBWwAKCRAw5/Bqldv6
-8i+gAJ9VqEchISICs4AYWdlbGpyw9gLUxACgpb/g5M8tXJVyCB0cUFDSU+JMn0k=
-=BkfG
------END PGP SIGNATURE-----
-
---JZyBI9jf13Ow+if5--
 
