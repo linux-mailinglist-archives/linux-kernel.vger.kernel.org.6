@@ -1,143 +1,126 @@
-Return-Path: <linux-kernel+bounces-405868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD7309C584D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:51:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E209C5852
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:52:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 647FF1F23342
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:51:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72F881F2323B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CEC7080F;
-	Tue, 12 Nov 2024 12:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F087082E;
+	Tue, 12 Nov 2024 12:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1k9FsZk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="k1xRH8iG"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D459136672;
-	Tue, 12 Nov 2024 12:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD1E6F099
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731415844; cv=none; b=qxejMlvz7LZBfJ/IIXwZwcnBq7x3e6ok0D/v7mhJ79NeQ1deDxtr2ZHevNJCEEyIDfoL61dLOW5bV0Eqx/7XOfN2mdQkEaE0+HiiU61H3F/yhVKNNbdeuQwR4pjsSbJSu5Olj2iI9fnYV5jTJwNQ5QI7sPKGH5PrmpAysqP1ObA=
+	t=1731415926; cv=none; b=nHgdgZQTGW4yuzKSayqfeQID9AXbhH8JU828Aiy1/PCE0y4MKg+l4R+N82M8TIQ/2bh3eRkFQIHJOnzf9/s7sxCrZeIvyhpRBVH5fjTuwlLAD69B0w7KPqGwp74ExAEqm4yJS9nJej7BYTuokF528Dlfk0txT7Dz/7xs/WyV0RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731415844; c=relaxed/simple;
-	bh=mnfOiE5eIPKtHfBAoGmaq+Twf9102+gLIWoMtZu0bl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kKwUOUj8bHm1AE4UEEivR8M02bQOkTUsMiggrWdQB8TbCUFWZsrBcsMjDdsK+yqK2muee/FEafAtJNNzUbE4hhnXCqIcV5k2JnY5/J4B/T9HhnKCpqggBk72mVyvN5Pt6sdTlkL1mXltLeb9Uq1PwuJSe0NWdJQXeKQQRC5RaRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1k9FsZk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93527C4CED5;
-	Tue, 12 Nov 2024 12:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731415844;
-	bh=mnfOiE5eIPKtHfBAoGmaq+Twf9102+gLIWoMtZu0bl0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e1k9FsZkWnzSFQdSuqZTtm74De+U2+fi5KQ9go3TSSh9EmKfhg2x8Hn+cOvRUi6dW
-	 IShlat4q6U6iPda++MFYpgkBa4/HiO8fXimkEY8D+sWRoLOfFk/694VpuEH66gWw5A
-	 4Adr8RJQCaG3DorphdmKofOi5BKBWE5bepAf0o3Dgx21BQ2ryKL6TsKMvNiC8u0TkR
-	 kXvNEF529tO9T+BcKNcFF81h2scalD2x+atDCynMkpmzmiy8CSlI0fUfpKoxD7TrSZ
-	 zDh8/772CBWItkKxVkN2xB72B7gftDcwngNwMp0/xn8lwOIQHDxTtzWkpuZN91p6ix
-	 Uo9TtZ73dfFnw==
-Date: Tue, 12 Nov 2024 13:50:40 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Mingcong Bai <jeffbai@aosc.io>,
-	Thorsten Leemhuis <regressions@leemhuis.info>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	LKML <linux-kernel@vger.kernel.org>, rcu <rcu@vger.kernel.org>,
-	sakiiily@aosc.io, Kexy Biscuit <kexybiscuit@aosc.io>
-Subject: Re: [Regression] wifi problems since tg3 started throwing rcu stall
- warnings
-Message-ID: <ZzNPIOR8aaxfrLE2@localhost.localdomain>
-References: <b8da4aec-4cca-4eb0-ba87-5f8641aa2ca9@leemhuis.info>
- <ZxjLQzHKuR-w16hF@pavilion.home>
- <2b25a988-6965-48e4-a788-58dd8a776e06@leemhuis.info>
- <e2ffd3d06fad236ea900d4fb439b2240@aosc.io>
- <937c258b-f34c-4f63-949d-a5e7c8db714d@leemhuis.info>
- <ZyyQuTfMMSLwStf_@pavilion.home>
- <a7fc57a1a49b5f710c4354ca21c91dba@aosc.io>
- <Zy4WKKq18GunXa6S@localhost.localdomain>
- <814ca9e3-df3b-45ce-ad36-9659b445c499@paulmck-laptop>
+	s=arc-20240116; t=1731415926; c=relaxed/simple;
+	bh=WEQednnW/wFnwxpMGjVhEQb8fNxGWPhIjnN5iKz0fu8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XVgqlCfQC5pYnPGRuXEh7KdEX7D1lEJLtLw4JhBrB6Ezmhyia/lViWjUlwBA0E1cAka55Th3iYgACBIqel3I3m0lEK/3z6j0czcF0E9oyazm8aBhyj7O5qPhyK53BygrfWSEFGshKaDwBnFEE0lbw5XgWR2IqVckPNAeGAwExqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=k1xRH8iG; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43158625112so49515975e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:52:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731415923; x=1732020723; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ItC2fxl3q3F4+PCf0UD7oi85OBnIB0U+ggjyxuMdhdo=;
+        b=k1xRH8iGOWLElFf8WFuDBJRUF0GcrvIyUWvFujlsDqf6Dmgl+8yjulFoivG0Zfb9bj
+         IPCPlICg+s0LAwV5G/SvC1oJSIpeBzAM/WEaVQ+RtZ5q6SjqpcSY3zthzWXNvFpI/J6T
+         LTRDv8KL2rNZGb82OmJ0O67vU6xe5/qLAKE+/mR7gAmUBxTQ2TxOvW1oCasMDBO+6Qhg
+         oykpa0ryFgY6ZeaQZ/z+ie6UAsi0g1CfO2VxkNuaL0qZONNmHhmCQhioRuEdL5tuuqs4
+         PXlKj9KFkKXNBjmDBiaLUgl0cJYIDvGkFbTHa17O89MSzr9X+r5ZNby9UrmlwrEtp9yz
+         VoBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731415923; x=1732020723;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ItC2fxl3q3F4+PCf0UD7oi85OBnIB0U+ggjyxuMdhdo=;
+        b=F6LZJSGkgiv9VMSVugnc9bhG9X/3ayHDXzTgZMFRhumtb41NgUXwUuUscKKTvhPM/T
+         LOCY/C9KV0LZCse26Y0tNDfd7dVXxil38VOWPRJxIJvh3bEOmO7187Nw1eK8eqapt8R5
+         IrYJ6AJlyafRpgSxPqR7wMNfYqEqm0vKF+JhdIyECybvUmfHZ9MNpTIuG+cLBFpTYHnD
+         2ZJVkgnUp2bvTXX6VwkCgDJehwRa68gwGJ7/1wsQZHsTiG6ukvAO0IuPtuBwJ8mcURUD
+         AxY7/AocR9l9wo2cGrXbwQ8CKbOFTivuUOgavG5FRdabU/MNUVtRMrS++3+QJHpI4X/q
+         i09A==
+X-Forwarded-Encrypted: i=1; AJvYcCU9ghyfIotMtzpypEf2LTg9D/1WWZxP2Q0Oz5h24roInxbVt70G8leEuS1pZ5i3EhS7hNd9/zaOWm0unCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywifs5Zzj9H3zC+UvxAmPeQv0yYnhVs7qOx1TV171n1CTil5uVy
+	c/H0AR+FfShPVOlMVevPz8P7DttQOI+9XdgAuA63YIX0SknOEGEvZjHGwCFCOxI=
+X-Google-Smtp-Source: AGHT+IGP1vWW532uhucbygG3Lp5or8zZuQTeIPnXLHkrmwfWtKfTiCcJOexZfHzCsZL16ncrBwbjCQ==
+X-Received: by 2002:a05:6000:402a:b0:37d:5103:8894 with SMTP id ffacd0b85a97d-381f1881319mr12834957f8f.42.1731415922836;
+        Tue, 12 Nov 2024 04:52:02 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:94a5:ced7:f64:fdaf])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda04ad0sm15287346f8f.100.2024.11.12.04.52.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 04:52:02 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	heiko@sntech.de,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Ye Zhang <ye.zhang@rock-chips.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com
+Subject: Re: (subset) [PATCH v5 0/4] gpio: rockchip: Update the GPIO driver
+Date: Tue, 12 Nov 2024 13:52:01 +0100
+Message-ID: <173141591574.57283.303844773378689063.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241112015408.3139996-1-ye.zhang@rock-chips.com>
+References: <20241112015408.3139996-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <814ca9e3-df3b-45ce-ad36-9659b445c499@paulmck-laptop>
 
-Le Fri, Nov 08, 2024 at 07:14:41AM -0800, Paul E. McKenney a écrit :
-> On Fri, Nov 08, 2024 at 02:46:16PM +0100, Frederic Weisbecker wrote:
-> > Le Fri, Nov 08, 2024 at 12:29:40AM +0800, Mingcong Bai a écrit :
-> > > Hi Frederic,
-> > > 
-> > > <snip>
-> > > 
-> > > > Sorry for the lag, I still don't understand how this specific commit
-> > > > can produce this issue. Can you please retry with and without this
-> > > > commit
-> > > > reverted?
-> > > 
-> > > Just tested v6.12-rc6 with and without the revert. Without the revert, the
-> > > touchpad and the wireless adapter both stopped working, whereas with the
-> > > revert, both devices functions as normal.
-> > > 
-> > > I have attached the dmesg for both kernels below. Unlike the log we got last
-> > > time, there is no direct reference to tg3 any more, but the NMI backtrace
-> > > still pointed to NetworkManager and net/netlink-related functions (perhaps a
-> > > debug kernel would be more helpful?). Here's a snippet:
-> > > 
-> > > [   10.337720] rcu: INFO: rcu_preempt detected expedited stalls on
-> > > CPUs/tasks: { P683 } 21 jiffies s: 781 root: 0x0/T
-> > > [   10.339168] rcu: blocking rcu_node structures (internal RCU debug):
-> > > [   10.591480] loop0: detected capacity change from 0 to 8
-> > > [   11.777733] rcu: INFO: rcu_preempt detected expedited stalls on
-> > > CPUs/tasks: { 3-.... } 21 jiffies s: 1077 root: 0x8/.
-> > > [   11.779210] rcu: blocking rcu_node structures (internal RCU debug):
-> > > [   11.780630] Sending NMI from CPU 1 to CPUs 3:
-> > > [   11.780659] NMI backtrace for cpu 3
-> > > [   11.780663] CPU: 3 UID: 0 PID: 1027 Comm: NetworkManager Not tainted
-> > > 6.12.0-aosc-main #1
-> > 
-> > Funny, this happens on bootup and no CPU has ever gone offline, so the path
-> > modified by this patch shouldn't have been taken. And yet this commit has
-> > an influence to the point of reliably triggering that stall.
-> > 
-> > I'm running off of ideas, Paul any clue?
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Tue, 12 Nov 2024 09:54:04 +0800, Ye Zhang wrote:
+> GPIO driver support acpi and new version, set input direction in
+> irq_request_resources, fix division error and debounce config error.
 > 
-> Here is one straw to grasp at...
+> Changes since v1:
+> - Split commits with multiple changes into separate commits.
+> - Adjust backportable fix to the forefront.
+> - Modify messages of some commits.
 > 
-> Is it possible that one of the CPUs had a problem coming online at boot,
-> and therefore backed out of the online process, thus appearing to at
-> least some of the CPU-hotplug notifiers to have gone offline?
+> [...]
 
-I looked for it in the dmesg and there are indeed rejected CPUs but very early,
-before secondary boot-up.
+Applied, thanks!
 
-Just in case, Mingcong Bai can you test the following patch without the
-revert and see if it triggers something?
+[1/4] gpio: rockchip: explan the format of the GPIO version ID
+      commit: 591ae6bed250e4067db926313ff7279d23a1c7d1
+[2/4] gpio: rockchip: change the GPIO version judgment logic
+      commit: 41209307cad7f14c387c68375a93b50e54261a53
+[3/4] gpio: rockchip: support new version GPIO
+      commit: 8bcbd0379c05c66ce2e842c7e8901aa317cdf04e
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 35949ec1f935..b4f8ed8138d3 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -5170,6 +5170,7 @@ void rcutree_migrate_callbacks(int cpu)
- 	struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
- 	bool needwake;
- 
-+	WARN_ON_ONCE(1);
- 	if (rcu_rdp_is_offloaded(rdp))
- 		return;
- 
-
-
-Thanks.
-
-> 
-> 							Thanx, Paul
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
