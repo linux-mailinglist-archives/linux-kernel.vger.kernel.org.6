@@ -1,453 +1,211 @@
-Return-Path: <linux-kernel+bounces-405203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2819C4E45
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:32:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 280819C4E4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:35:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B18B81F25118
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:32:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DA86B21AC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111C1209664;
-	Tue, 12 Nov 2024 05:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102EB207A3E;
+	Tue, 12 Nov 2024 05:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVXH81Sc"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="IgCRbKvh"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2043.outbound.protection.outlook.com [40.107.241.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630E717333A;
-	Tue, 12 Nov 2024 05:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731389526; cv=none; b=nQPxDkTGliPPowbAHRYbRAnbV4h7CtwPGm9j86D4HiPQzHah11uvhqa9I1VOajfyRFcBIgcyJX7zL/AiAFE3K27HR6+iOU4sGUqd/3YsDdIKJicUV4LEfLM01Q7e+PwoxmOdMsXUiBAhrkk/EAj+UJ1c/wyMh0BvmP152JurWKo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731389526; c=relaxed/simple;
-	bh=6bE3jdxyoMQLgptLifTB+v3B4roQ+hD3F0vEDBYqPsg=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kXieQpXzrA7NPqslXpEd2Upe52+1fXr3/puq//BJ4itAnIk9qQHIfdhiV0mAGG2frQ9FIpfuE1gCZBuFMME3dr/4Fbba12ZV9yXL3zZ+ZU6sDRdUM60Xyz0BsrUgd8QwENHts7YrMTXPvoLrN88wLTCT+5xsVGkdRQ35XRdw6zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVXH81Sc; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c7edf2872so49508825ad.1;
-        Mon, 11 Nov 2024 21:32:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731389524; x=1731994324; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b+4mxPJ+g18SR9b4gggRSBkZ7SdunBZ7o+EK85L2ooA=;
-        b=MVXH81ScMy+chL8dRJrAIRMTjB7Owbh2Ge5V6J5ULaAmhipssxzVHoF6hz0pu8V2gu
-         tpuvV/0FVU7SeutVC3CU8XgskA5CKMkpA/rn314xLil1GQaAQAAissklQBua1jOQbAy7
-         VY2Ue05XeX0FZmtvO2wJfutsf7LFJQyawQA8AdAJZtoPSnQwZnJs74NUyqiKswp20Jpu
-         4p54vjLz4rryWlKncgh/g15TSd4KMzSEte5xBySfmEZjJuN9F/PnRFkpDJqML3dMdXc1
-         WenQINMnnI96YNybkyQ4JHhI+WXVwHrWOv2sdrrseQoD1VZo5tQ3QG2R+n7/CSWcNBob
-         ZlqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731389524; x=1731994324;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b+4mxPJ+g18SR9b4gggRSBkZ7SdunBZ7o+EK85L2ooA=;
-        b=fd6pDDkJLMmOZOQrAjjIinGC5WUhBolC1lHtlb0deaXzypgRvm90UG1UqwdouP+XV4
-         PChMlDRnwwnrVlmLQSGLYgq2Z18MlyM9C+KDp6+aljCp43ba91r6xci6+S23CHk/nxcy
-         rQoZTE/Hb8TQPab8m16UJx2kEJf1TXz1Y7zNHq0YnXHb00+I0a2ImjbGB9CnUrvK40Ko
-         HOtsHLdEnfGfSDioBcns2douXGDn5EnVV89UUaybSMkk3KsH9ebdkZM3hp3LYu2QvNuI
-         jKTgbtlYCUS6Kc6duIpHI4V/bo7WdYyp+uq5bBx9S8RtPs8rDbeZ/WheXSJZLCg+bdvt
-         8QLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdGB5oP8FqLKMS2AC7szbRBs/nwAFbl38TzGWcA1x+yqr5sC0XrSx3HkGJYSaqLd9nilVa6C13qII/uO9z@vger.kernel.org, AJvYcCVjX1xS3CGgxslno8qsXJz0T9PyFTaf97UDk8ftuY6ELKaFCbkbZ4EZPE1KSvHY0DiEWx6jc6NXrGke@vger.kernel.org, AJvYcCWfwjOqIVlP7dOqDXSYcuiXcLLSNjsPMd6E31LL743tgQmM1V/AE9vM4ZyHMwEJ7IPrIxTe6BIyMYUOFoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd67tCz1jQj3kKpRBp2wLhWtd9b2wsjYJ7ewoYpaz3P3AkUq5y
-	qn/c4C1n6p+AK56lKo6jkU3LZ6nlB9QEVy2QhIsT2JDsHKNoRdxB
-X-Google-Smtp-Source: AGHT+IE7ZB+JygivYN7DRDyTz5bRORwOqOffxgQGMsQc3P7jip8WElNPqo+qzrpjqX0jczvjGYhLbQ==
-X-Received: by 2002:a17:902:d50d:b0:20c:62af:a0f0 with SMTP id d9443c01a7336-2118217c5afmr220351525ad.7.1731389523447;
-        Mon, 11 Nov 2024 21:32:03 -0800 (PST)
-Received: from localhost.localdomain (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177ddf19esm85815505ad.92.2024.11.11.21.32.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 21:32:03 -0800 (PST)
-From: mjchen <mjchen0829@gmail.com>
-To: dmitry.torokhov@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	sudeep.holla@arm.com,
-	peng.fan@nxp.com,
-	arnd@arndb.de,
-	mjchen0829@gmail.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mjchen@nuvoton.com
-Subject: [PATCH v2 2/2] input: keypad: add new keypad driver for MA35D1
-Date: Tue, 12 Nov 2024 05:30:59 +0000
-Message-Id: <20241112053059.3361-3-mjchen0829@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241112053059.3361-1-mjchen0829@gmail.com>
-References: <20241112053059.3361-1-mjchen0829@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211A25234;
+	Tue, 12 Nov 2024 05:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731389735; cv=fail; b=ug19M060H9vEv+6HJOEY92fAagfwhxYlKO5wG5GG9VBkP/h/pZ/zMRGVVvcS9vhSMToIOQRRNSr15hmdtqaFp7tkniQNaz/39pTf7rL/IWwBx0dlAik8EewYdrbfsD3xCrhUzmVJBshHP85CQkpCrvePS3awNrpoZmDYdcqxLmM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731389735; c=relaxed/simple;
+	bh=Yl8XSdIZ+55B5uDueEJWP/OwPmAvK8Ho0PnQcbJ+MNU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rRVvpl1Spzkt4docCaLL8HXjrDguqqm6GACKv5QVo+e8m/dFOnFbNdAAle5JYlOWvxmjApJ3GPSBfC+5mPOhaq39pqBCHoMFtGcwtByP7ssmh1Zn/bSefYXhTLdPXTERuxeqztlysj/P0NDf+uZv+vSmGS+diutwIAjk9EkFjaU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=IgCRbKvh; arc=fail smtp.client-ip=40.107.241.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VTGDh/Z4NF3yGg7NWobsINFl7GSQHluWusreDtkcJJHV9pvwPZ9/kpks67VVloPluKmALTnU28c0QHwJ+WaIYMk0teHFUeuAQbB6Zv1QOgOy+tNkogLjzoajRcUK1J/7UOfFHUzbpJWkjfF61Vo9rkXmM5erUa9epaPAobD+zapbZBopRm9r09EknnoU2ierB/GihwlxofT+Cx+d17yv279CN0JmfYTfKjl57EvMruxo+LeQ+k5or1PPvOENda96ZA308dqa4VB4O727e2mVsnLtlyk/0zeJgmXJ+BqJIYku2v0AuDTioDUTuqKCDqdFkjwdqg/05/SOm+WxRVG4Kw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tbvxHvoZ1NFwbQnurLqzU9jJ63X65704hWawsgWcVDo=;
+ b=CNmFPqAQpO+K2iCCHU3J3fKDepzzh/CLGE3q3lsa3Vry0GQswcdwciyF8X5DoxSYZqtDA9RH4ko7Z/xEYQuiSgEpbRXtkzaE2OFppki+VFI2cVnae7gz1Eu7cUn+IAfKMB9+D7+f4tmmvcc16rgwJ9fJhWRFEpBg82DClsjnbInX9yxHC0z6S3dkTYtUc25JczMVkUx7LrxjWoIzBQpjhNLW+Lsy5UuFCfuF7M6/LRqLm0sfXVkfSIfhkdt77/QrRd1eUJGmylJiOzESfzTWek0YYW6O83LNXC0cdPjOlOXA+MoBaqc2TTiUaIqxSx9VxFGWID3NIqZ2XXk/8friWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.206) smtp.rcpttodomain=kernel.org smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tbvxHvoZ1NFwbQnurLqzU9jJ63X65704hWawsgWcVDo=;
+ b=IgCRbKvhnZwgPwKeY1yXkcw69U3PltcKJ0EEwJyLkKSfF1Rvydz0HOMx5KmCZxbVqv9faGVJNbcr35TNUDrB+da2fuyqNGWgFQNI3/f7smehe0nP4hJeBsVPgOiBN7Ib06BvH9MHezIOhoKjjxagTTIenplwW5M6qXgt/NYv5POEHTj5t7NF6vlyeBK51YbQbAp0rJhkFgPJCQk46tXQLVpgzYHlw5P0gYpLFIpua7CffMmfO0sQfbP3LkWtS+so/Cu29/p/GdjQhBGEyuUXpHc/hg0vEqboxaqtM9bXD5ZJXUvFs2TAa07i3uPowDkhAzhWtZIeuRhH1YAyoFXVxw==
+Received: from AS4P195CA0009.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:5e2::17)
+ by DU4PR10MB8997.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:56c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.16; Tue, 12 Nov
+ 2024 05:35:26 +0000
+Received: from AM3PEPF00009B9C.eurprd04.prod.outlook.com
+ (2603:10a6:20b:5e2:cafe::21) by AS4P195CA0009.outlook.office365.com
+ (2603:10a6:20b:5e2::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29 via Frontend
+ Transport; Tue, 12 Nov 2024 05:35:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.206) by
+ AM3PEPF00009B9C.mail.protection.outlook.com (10.167.16.21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8158.14 via Frontend Transport; Tue, 12 Nov 2024 05:35:26 +0000
+Received: from SI-EXCAS2000.de.bosch.com (10.139.217.201) by eop.bosch-org.com
+ (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 12 Nov
+ 2024 06:35:26 +0100
+Received: from [10.34.219.93] (10.139.217.196) by SI-EXCAS2000.de.bosch.com
+ (10.139.217.201) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 12 Nov
+ 2024 06:35:25 +0100
+Message-ID: <2c8f1d58-e90e-4ba1-92e3-44e24040ac92@de.bosch.com>
+Date: Tue, 12 Nov 2024 06:35:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/11] rust: bindings: Auto-generate inline static
+ functions
+To: Andreas Hindborg <a.hindborg@kernel.org>
+CC: Alistair Francis <alistair@alistair23.me>, <linux-kernel@vger.kernel.org>,
+	<boqun.feng@gmail.com>, <me@kloenk.dev>, <benno.lossin@proton.me>,
+	<tmgross@umich.edu>, <aliceryhl@google.com>, <gary@garyguo.net>,
+	<ojeda@kernel.org>, <rust-for-linux@vger.kernel.org>,
+	<alex.gaynor@gmail.com>, <alistair.francis@wdc.com>,
+	<bjorn3_gh@protonmail.com>, <alistair23@gmail.com>
+References: <20241111112615.179133-1-alistair@alistair23.me>
+ <bR_L15e11CHC0AS4d41vkbo-whYRfTKoU_htcjK8F_inG0Y5HQslqOWHOLBeNTCYqsgSqOtHXeoOj4ifT5ndJA==@protonmail.internalid>
+ <9369b621-47d1-4967-8a68-874bb602deeb@de.bosch.com>
+ <87msi5swsj.fsf@kernel.org>
+Content-Language: en-US
+From: Dirk Behme <dirk.behme@de.bosch.com>
+In-Reply-To: <87msi5swsj.fsf@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9C:EE_|DU4PR10MB8997:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2d8363b-b7fe-4d3c-b86e-08dd02dbd003
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d2ttNEJmcXBsNGFJclZtM0xuS0VXODR0cVpkYk9rT0txck5GR3ZaRGlIZUlh?=
+ =?utf-8?B?bTRrYjhRMGFaRW1OK253SjhDaDhuNDdVUGVYSmtoaEkydkV4ZUNWYmVXQlVL?=
+ =?utf-8?B?MG5KYVZPWC9ETWV6VDZGcTVHVmc2MCtpRy9ab0NxUnNaeUxsclI2K2dyRXVx?=
+ =?utf-8?B?YXJlRkpTc1F2MGFrc0NBbmNwN0gwclNVNUV0SEpoWkJ3cGxIQmM3R09abkZm?=
+ =?utf-8?B?QlhoNTEzSzB4blJQNFpubEs4YXRNa1RJaWo2UW5JZkgwVEJKYWtjVFcrbmNa?=
+ =?utf-8?B?djBCVk1xc016OGdNcXVqMGc4U3pHL1ZEYTBFRGtGRzNmNEkra2ZZelY1Vk5a?=
+ =?utf-8?B?dVk2NFFtQTBaYXNIQ0QxZ08vcnRFU1NwNmYrS2FoOE8wK0gyYnpjbjlLV2Rn?=
+ =?utf-8?B?TTNyU0RUNWJqSTJ5Z0NyNk9YMG9HZEplY1NMUXNha09uT1VzT1hjbzY2ekUv?=
+ =?utf-8?B?YmRTVkdWbkxPZ0VsK2tOMmtWdFljZUF5amhzTFN1aHRvMWNHV3pwSFBFTzhF?=
+ =?utf-8?B?YnNrY1JMbzVGU3kwS0ovTEUxYmM5dEtvZXlaUU1GMCtSQmV4dFYxUGRMeHdj?=
+ =?utf-8?B?bmxoRGJhckpJZmdzZEYySTZKZ1grMm9Wem8yeUlPQ1RRM1NLWlh0NmdpeWxk?=
+ =?utf-8?B?dG13V1NRZWFZR2xSL1RpVEcwRzlramQ0WWpnaWVRQktGbEYxckQ2YmZvelNh?=
+ =?utf-8?B?OTBzb1FOSXlGa0tIc1lDemE3MDZPNkdJZDFKRlp2SkpMa1dpUndvUEpmWEs3?=
+ =?utf-8?B?TjJkMk5STElnc3BqNmk5YUZpYytJS3V0SjdsdVBUbG0vT09wNEdBTUxRN2hw?=
+ =?utf-8?B?T0M5SFloRm9uZE5hV1ZnbEFNMVpKcDFTN0lRTmRaRWxIK0d2RkxmOENiUU1V?=
+ =?utf-8?B?N3J5dCtOK2lqTHh4ZmJwWjdmRmpXdGFpRTl1MEVjZHM5TE5YVzhJMGc2MVdv?=
+ =?utf-8?B?dFVvR0J4TGNyM0F6em1uTWFrSzIrMTZRV1dNRWFFS3V0a3pFRmhVaFRCRUN6?=
+ =?utf-8?B?UzFDbk4zMUhZS2N5MStFb3ZvMU5ZeS9rN0ZpbktMWnlQOTNSMG1ZbU5MVFhW?=
+ =?utf-8?B?NWJvbmlVUEQ0eWNaTXFYYS9oM05xaURLTm9GdGdpTlBsOEltZFpkNHdaTTQ0?=
+ =?utf-8?B?NmJGWXM0aGk2c2JJRnNpQjZYaGFzS2FmS0xvbXFuU3BSd0NIb1ozV09hZm10?=
+ =?utf-8?B?VHFjVnRoaWdVTXBhNXo4b0NUSXZPbHBqRk9IcUJFODVjWW9KTUppdDNIZTlV?=
+ =?utf-8?B?RllQM3dZaWJrOS9yTGRvbGMzT1RDZ003L3RzQks4SmJJSkhQSDdDZEV2SEdM?=
+ =?utf-8?B?SjczSGx2clVLL3pBa09FMlA3MzgxWW9NR1E2TUF5T2x4bEMvRVJNZTJBNmlW?=
+ =?utf-8?B?bi80cDM5SFluK0l3L0VQcHpneGZoUlRCV1cvd2ppOUJmeWxIRDUzMnU0anMw?=
+ =?utf-8?B?SldJNzh2VUVGUVNhMWNTSzduMnpVY1hBdG9nKzZxV3FsSlkzRkNhMzV3Z0Z6?=
+ =?utf-8?B?N1E3WkJsOUI2WVB4RXNjaWY0bHcrdmF6UHRiR2FiU3NJOTFlcTVsV1d4Y0RV?=
+ =?utf-8?B?aHNRMmlHTm1ucnh1WVpaNXF3bEpUV0tTTThkTDBRY3RVTitUYTlFVk9NRlQx?=
+ =?utf-8?B?UEsvNGRWUm5IUWw2K09nY0N5bHJuV05qVExBanIvNmdlNGJPZndBQTBBYk5I?=
+ =?utf-8?B?WW1mV2Fjc3hJQysrTkdHbkNrMEFaTE1sdUFib3BhTVIycFIrMUExYjNwUEZs?=
+ =?utf-8?B?ZlNVcThhbzJVMjl4cHViVjdoRW9jd3BKMnhFZUY0Q29kR2FodDc1dzlTL2Nq?=
+ =?utf-8?B?cTdSc2xUalJaYndZT09xcERMU0E1NDdrT0xTOTZtSkFPc2RPQkZZY2pidXR3?=
+ =?utf-8?B?Zzh6a2todXZIQUx6MWZwYTd0bDI3eFM0WE41NXArSnZFckE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 05:35:26.6695
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2d8363b-b7fe-4d3c-b86e-08dd02dbd003
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF00009B9C.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR10MB8997
 
-Adds a new keypad driver for the MA35D1 platform.
-The driver supports key scanning and interrupt handling.
+Hi Andreas,
 
-Signed-off-by: mjchen <mjchen0829@gmail.com>
----
- drivers/input/keyboard/Kconfig         |  10 +
- drivers/input/keyboard/Makefile        |   1 +
- drivers/input/keyboard/ma35d1_keypad.c | 308 +++++++++++++++++++++++++
- 3 files changed, 319 insertions(+)
- create mode 100644 drivers/input/keyboard/ma35d1_keypad.c
+On 11.11.2024 14:51, Andreas Hindborg wrote:
+> "Dirk Behme" <dirk.behme@de.bosch.com> writes:
+> 
+>>
+>> It builds for me now and the htmldocs were built as well.
+>>
+>> Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
+> 
+> Does it build for you if you have a clean tree?
 
-diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
-index 721ab69e84ac..d7c0d0f4a88d 100644
---- a/drivers/input/keyboard/Kconfig
-+++ b/drivers/input/keyboard/Kconfig
-@@ -797,4 +797,14 @@ config KEYBOARD_CYPRESS_SF
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called cypress-sf.
- 
-+config KEYBOARD_MA35D1
-+	tristate "Nuvoton MA35D1 keypad driver"
-+	depends on ARCH_MA35 || COMPILE_TEST
-+	select INPUT_MATRIXKMAP
-+	help
-+	  Say Y here if you want to use Nuvoton MA35D1 keypad.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called ma35d1-keypad.
-+
- endif
-diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
-index 1e0721c30709..9b858cdd1b6b 100644
---- a/drivers/input/keyboard/Makefile
-+++ b/drivers/input/keyboard/Makefile
-@@ -70,3 +70,4 @@ obj-$(CONFIG_KEYBOARD_TEGRA)		+= tegra-kbc.o
- obj-$(CONFIG_KEYBOARD_TM2_TOUCHKEY)	+= tm2-touchkey.o
- obj-$(CONFIG_KEYBOARD_TWL4030)		+= twl4030_keypad.o
- obj-$(CONFIG_KEYBOARD_XTKBD)		+= xtkbd.o
-+obj-$(CONFIG_KEYBOARD_MA35D1)		+= ma35d1_keypad.o
-diff --git a/drivers/input/keyboard/ma35d1_keypad.c b/drivers/input/keyboard/ma35d1_keypad.c
-new file mode 100644
-index 000000000000..be7ff4f49e8c
---- /dev/null
-+++ b/drivers/input/keyboard/ma35d1_keypad.c
-@@ -0,0 +1,308 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ *  MA35D1 keypad driver
-+ *  Copyright (C) 2024 Nuvoton Technology Corp.
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/input.h>
-+#include <linux/platform_device.h>
-+#include <linux/input/matrix_keypad.h>
-+#include <linux/clk.h>
-+#include <linux/of.h>
-+#include <linux/bitops.h>
-+#include <linux/pm_wakeirq.h>
-+
-+/* Keypad Interface Registers */
-+#define KPI_CONF		0x00
-+#define KPI_3KCONF		0x04
-+#define KPI_STATUS		0x08
-+#define KPI_RSTC		0x0C
-+#define KPI_KEST		0x10
-+#define KPI_KPE0		0x18
-+#define KPI_KPE1		0x1C
-+#define KPI_KRE0		0x20
-+#define KPI_KRE1		0x24
-+#define KPI_PRESCALDIV		0x28
-+
-+/* KPI_CONF - Keypad Configuration Register */
-+#define KROW		GENMASK(30, 28) /* Keypad Matrix ROW number */
-+#define KCOL		GENMASK(26, 24) /* Keypad Matrix COL Number */
-+#define DB_CLKSEL	GENMASK(19, 16) /* De-bounce sampling cycle selection */
-+#define PRESCALE	GENMASK(15, 8)  /* Row Scan Cycle Pre-scale Value */
-+#define WAKEUP		BIT(5) /* Lower Power Wakeup Enable */
-+#define INTEN		BIT(3) /* Key Interrupt Enable Control */
-+#define RKINTEN	BIT(2) /* Release Key Interrupt Enable */
-+#define PKINTEN	BIT(1) /* Press Key Interrupt Enable Control */
-+#define ENKP		BIT(0) /* Keypad Scan Enable */
-+
-+/* KPI_STATUS - Keypad Status Register */
-+#define PKEY_INT	BIT(4) /* Press key interrupt */
-+#define RKEY_INT	BIT(3) /* Release key interrupt */
-+#define KEY_INT	BIT(2) /* Key Interrupt */
-+#define RST_3KEY	BIT(1) /* 3-Keys Reset Flag */
-+#define PDWAKE		BIT(0) /* Power Down Wakeup Flag */
-+
-+#define KEY_EVENT_BITS 64
-+
-+struct ma35d1_keypad {
-+	struct clk *clk;
-+	struct input_dev *input_dev;
-+	void __iomem *mmio_base;
-+	int irq;
-+	unsigned int kpi_row;
-+	unsigned int kpi_col;
-+	unsigned int debounce_val;
-+	unsigned int pre_scale;
-+	unsigned int pre_scale_divider;
-+};
-+
-+static void ma35d1_keypad_scan_matrix(struct ma35d1_keypad *keypad, unsigned int status)
-+{
-+	struct input_dev *input_dev = keypad->input_dev;
-+	unsigned int code;
-+	unsigned int key;
-+	unsigned long pressed_keys = 0, released_keys = 0;
-+	unsigned int row_shift = get_count_order(keypad->kpi_col);
-+	unsigned short *keymap = input_dev->keycode;
-+	unsigned long key_event[4];
-+	unsigned int index;
-+
-+	/* Read key event status */
-+	key_event[0] = readl(keypad->mmio_base + KPI_KPE0);
-+	key_event[1] = readl(keypad->mmio_base + KPI_KPE1);
-+	key_event[2] = readl(keypad->mmio_base + KPI_KRE0);
-+	key_event[3] = readl(keypad->mmio_base + KPI_KRE1);
-+
-+	/* Clear key event status */
-+	writel(key_event[0], (keypad->mmio_base + KPI_KPE0));
-+	writel(key_event[1], (keypad->mmio_base + KPI_KPE1));
-+	writel(key_event[2], (keypad->mmio_base + KPI_KRE0));
-+	writel(key_event[3], (keypad->mmio_base + KPI_KRE1));
-+
-+	pressed_keys  = key_event[0] | key_event[1] << 32;
-+	released_keys = key_event[2] | key_event[3] << 32;
-+
-+	/* Process pressed keys */
-+	for_each_set_bit(index, &pressed_keys, KEY_EVENT_BITS) {
-+		code = MATRIX_SCAN_CODE(index / 8, (index % 8), row_shift);
-+		key = keymap[code];
-+
-+		input_event(input_dev, EV_MSC, MSC_SCAN, code);
-+		input_report_key(input_dev, key, 1);
-+	}
-+
-+	/* Process released keys */
-+	for_each_set_bit(index, &released_keys, KEY_EVENT_BITS) {
-+		code = MATRIX_SCAN_CODE(index / 8, (index % 8), row_shift);
-+		key = keymap[code];
-+
-+		input_event(input_dev, EV_MSC, MSC_SCAN, code);
-+		input_report_key(input_dev, key, 0);
-+	}
-+
-+	input_sync(input_dev);
-+}
-+
-+static irqreturn_t ma35d1_keypad_interrupt(int irq, void *dev_id)
-+{
-+	struct ma35d1_keypad *keypad = dev_id;
-+	unsigned int  kstatus;
-+
-+	kstatus = readl(keypad->mmio_base + KPI_STATUS);
-+
-+	if (kstatus & (PKEY_INT | RKEY_INT)) {
-+		ma35d1_keypad_scan_matrix(keypad, kstatus);
-+	} else {
-+		if (kstatus & PDWAKE)
-+			writel(PDWAKE, (keypad->mmio_base + KPI_STATUS));
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int ma35d1_keypad_open(struct input_dev *dev)
-+{
-+	struct ma35d1_keypad *keypad = input_get_drvdata(dev);
-+	unsigned int val, config;
-+
-+	val = RKINTEN | PKINTEN | INTEN | ENKP;
-+	val |= FIELD_PREP(KCOL, (keypad->kpi_col - 1)) | FIELD_PREP(KROW, (keypad->kpi_row - 1));
-+
-+	if (keypad->debounce_val > 0)
-+		config = FIELD_PREP(PRESCALE, (keypad->pre_scale - 1)) |
-+			 FIELD_PREP(DB_CLKSEL, keypad->debounce_val);
-+	else
-+		config = FIELD_PREP(PRESCALE, (keypad->pre_scale - 1));
-+
-+	val |= config;
-+
-+	writel(val, keypad->mmio_base + KPI_CONF);
-+	writel((keypad->pre_scale_divider - 1),	keypad->mmio_base + KPI_PRESCALDIV);
-+
-+	return 0;
-+}
-+
-+static void ma35d1_keypad_close(struct input_dev *dev)
-+{
-+	struct ma35d1_keypad *keypad = input_get_drvdata(dev);
-+	unsigned int val;
-+
-+	val = readl(keypad->mmio_base + KPI_KPE0) & ~ENKP;
-+	writel(val, keypad->mmio_base + KPI_CONF);
-+}
-+
-+static int ma35d1_keypad_probe(struct platform_device *pdev)
-+{
-+	struct ma35d1_keypad *keypad;
-+	struct input_dev *input_dev;
-+	struct resource *res;
-+	int error = 0;
-+
-+	keypad = devm_kzalloc(&pdev->dev, sizeof(*keypad), GFP_KERNEL);
-+	if (!keypad)
-+		return -ENOMEM;
-+
-+	input_dev = devm_input_allocate_device(&pdev->dev);
-+	if (!input_dev)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -ENODEV;
-+
-+	keypad->mmio_base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(keypad->mmio_base))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(keypad->mmio_base),
-+					"failed to remap I/O memor\n");
-+
-+	keypad->irq = platform_get_irq(pdev, 0);
-+	if (keypad->irq < 0) {
-+		dev_err(&pdev->dev, "failed to get IRQ\n");
-+		return keypad->irq;
-+	}
-+
-+	keypad->clk = devm_clk_get_enabled(&pdev->dev, NULL);
-+	if (IS_ERR(keypad->clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(keypad->clk), "failed to get core clk\n");
-+
-+	error = matrix_keypad_parse_properties(&pdev->dev, &keypad->kpi_row, &keypad->kpi_col);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to parse keypad params\n");
-+		return error;
-+	}
-+
-+	error = matrix_keypad_build_keymap(NULL, NULL, keypad->kpi_row, keypad->kpi_col,
-+					   NULL, input_dev);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to build keymap\n");
-+		return error;
-+	}
-+
-+	keypad->input_dev = input_dev;
-+	input_dev->name = pdev->name;
-+	input_dev->id.bustype = BUS_HOST;
-+	input_dev->open = ma35d1_keypad_open;
-+	input_dev->close = ma35d1_keypad_close;
-+	input_dev->dev.parent = &pdev->dev;
-+
-+	error = device_property_read_u32(&pdev->dev, "debounce-period", &keypad->debounce_val);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to acquire 'debounce-period'\n");
-+		return error;
-+	}
-+
-+	keypad->debounce_val = __builtin_ctz(keypad->debounce_val);
-+
-+	error = device_property_read_u32(&pdev->dev, "key-scan-time", &keypad->pre_scale);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to acquire 'key-scan-time'\n");
-+		return error;
-+	}
-+
-+	device_property_read_u32(&pdev->dev, "key-scan-time-div", &keypad->pre_scale_divider);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to acquire 'key-scan-time-div'\n");
-+		return error;
-+	}
-+
-+	__set_bit(EV_REP, input_dev->evbit);
-+	input_set_drvdata(input_dev, keypad);
-+	input_set_capability(input_dev, EV_MSC, MSC_SCAN);
-+
-+	error = devm_request_irq(&pdev->dev, keypad->irq, ma35d1_keypad_interrupt,
-+				 IRQF_NO_SUSPEND, pdev->name, keypad);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to request IRQ\n");
-+		return error;
-+	}
-+
-+	platform_set_drvdata(pdev, keypad);
-+	device_init_wakeup(&pdev->dev, 1);
-+
-+	error = dev_pm_set_wake_irq(&pdev->dev, keypad->irq);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to enable irq wake\n");
-+		return error;
-+	}
-+
-+	error = input_register_device(input_dev);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to register input device\n");
-+		return error;
-+	}
-+
-+	return 0;
-+}
-+
-+static void ma35d1_keypad_remove(struct platform_device *pdev)
-+{
-+	struct ma35d1_keypad *keypad = platform_get_drvdata(pdev);
-+
-+	input_unregister_device(keypad->input_dev);
-+}
-+
-+static int ma35d1_keypad_suspend(struct device *dev)
-+{
-+	struct ma35d1_keypad *keypad = dev_get_drvdata(dev);
-+
-+	if (device_may_wakeup(dev))
-+		writel(readl(keypad->mmio_base + KPI_CONF) | WAKEUP, keypad->mmio_base + KPI_CONF);
-+
-+	return 0;
-+}
-+
-+static int ma35d1_keypad_resume(struct device *dev)
-+{
-+	struct ma35d1_keypad *keypad = dev_get_drvdata(dev);
-+
-+	if (device_may_wakeup(dev))
-+		writel(readl(keypad->mmio_base + KPI_CONF) & ~(WAKEUP),
-+		       keypad->mmio_base + KPI_CONF);
-+
-+	return 0;
-+}
-+
-+static DEFINE_SIMPLE_DEV_PM_OPS(ma35d1_pm_ops, ma35d1_keypad_suspend, ma35d1_keypad_resume);
-+
-+static const struct of_device_id ma35d1_kpi_of_match[] = {
-+	{ .compatible = "nuvoton,ma35d1-kpi"},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, ma35d1_kpi_of_match);
-+
-+static struct platform_driver ma35d1_keypad_driver = {
-+	.probe		= ma35d1_keypad_probe,
-+	.remove		= ma35d1_keypad_remove,
-+	.driver		= {
-+		.name	= "ma35d1-kpi",
-+		.pm	= pm_sleep_ptr(&ma35d1_pm_ops),
-+		.of_match_table = ma35d1_kpi_of_match,
-+	},
-+};
-+module_platform_driver(ma35d1_keypad_driver);
-+
-+MODULE_AUTHOR("Ming-Jen Chen");
-+MODULE_DESCRIPTION("MA35D1 Keypad Driver");
-+MODULE_LICENSE("GPL");
-+
--- 
-2.25.1
+
+Yes, it builds fine on top of recent rust-next [1] [2].
+
+
+> I think there is a
+> dependency issue in the makefile, as indicated in another email.
+
+
+Please have a look to Alistair's explanation:
+
+https://lore.kernel.org/rust-for-linux/CAKmqyKNjjELzVbWgBHaHr8N1XnOJHk-U6RfLyb-FbTJ7h9jPoA@mail.gmail.com/
+
+Best regards
+
+Dirk
+
+
+[1]
+
+795e3d43d83a5 rust: helpers: Remove uaccess helpers
+0071ccb890a3f rust: helpers: Remove some task helpers
+9881077429443 rust: helpers: Remove some spinlock helpers
+495b561ce78b9 rust: helpers: Remove signal helper
+48107d1e5cc61 rust: helpers: Remove some refcount helpers
+621903d5c46eb rust: helpers: Remove rbtree helper
+d1484aaea0fcd rust: helpers: Remove some page helpers
+941df485c6631 rust: helpers: Remove kunit helper
+f62ea696e0114 rust: helpers: Remove err helper
+6f59d029873ac rust: helpers: Remove blk helper
+c093c35fb693a rust: bindings: Support some inline static functions
+74949fc30c7a0 x86/defconfig: Enable Rust
+d072acda4862f (rust-next) rust: use custom FFI integer types
+...
+
+[2]
+
+/ # uname -a
+Linux (none) 6.12.0-rc2-00090-g795e3d43d83a #3 SMP PREEMPT_DYNAMIC Tue 
+Nov 12 06:28:23 CET 2024 x86_64 GNU/Linux
 
 
