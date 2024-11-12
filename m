@@ -1,252 +1,234 @@
-Return-Path: <linux-kernel+bounces-405286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249319C4F88
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:36:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B81B9C4F79
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD69A28316F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:36:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1752B22176
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5472520BB4B;
-	Tue, 12 Nov 2024 07:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC02D20ADDE;
+	Tue, 12 Nov 2024 07:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lt915TTd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CqficmTH"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EFE20B7F2;
-	Tue, 12 Nov 2024 07:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D26120899E
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731396970; cv=none; b=kXd9X3KpKN9gnC+96ca+qRBiowEALyfXR/RrdSCufzjXCF263JuH5Z7toaG5GKnq2CQpvSzkneOmypgq7VRq6hl91cr1PwXxlBkjg7HbZKwPdZ/Dr4XHmEDAWwLHcKmkd6dgJoxJO4T45eR4Y3UWkhD2rLNpMN4awLRByZgaYtM=
+	t=1731396869; cv=none; b=FhNZYwes1BD8p4U/mtrQNJ/B0/V5h59jdwcXJWL+RQGtH/x3NhqLems/sxJnF5UbiWEmFNrSgRmXhMcBHsMg9GHDl/oVNCAIROi7snLYKX2Xy0BFnW3wRPM+1TlvqyfMQIAemxGKORnHzjFwCbckyT5qTT1FqoeZIXWPBqG+xRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731396970; c=relaxed/simple;
-	bh=of7plpVte7XNPEMtrFY0wCx/BEfkhfecPCB6gu16mYY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VHOlVWuypwLXGJSeAND79V8FSCMy1EKRNRqai+tglYAr5pEhW1CCbBP4ztH/K0HkHpjeLmyiiENEk35PDpTD+PuIcMBX1GLFrKvST8coA6EN4oD085JOc6rstNETn29gWVWPhpEMpKpNo9lFnqsSxfEO2sCG6h8s6WNh5/h62pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lt915TTd; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731396968; x=1762932968;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=of7plpVte7XNPEMtrFY0wCx/BEfkhfecPCB6gu16mYY=;
-  b=Lt915TTdgHVcWebuMLlrVreQJ/O2TklGES/JjL0eH2cQ/PWNEmFedOzz
-   jy86DR4HKCkX7w0iirM+Wa0r+qt35ClIoZqWHho8pb5AyFvdNQ0uUdcW8
-   nHcMU4OWTIu7EaTxNxHnI7Sb4Su3GfybMmwMHMykZdazUcsPKZBZ3pP5I
-   BY/pdtp1pdrWZMQa3s2AEJgrGMXZNLeGV0N51Ik+hnSnvO/2TGiZ/GDgx
-   DlMmkYsL1KYufiU6N0mncPN6H05TTt3VNDWjE6/73uLyXKD/CQIzuC/kC
-   sUQJFg44vwCW/DQbOGEO+bj0SR2ekV/uRPqGxkJh7bB1kql6fFDDOp7YO
-   A==;
-X-CSE-ConnectionGUID: O6qinUy+Q7myTdHrNFfYYQ==
-X-CSE-MsgGUID: OfBCE2hlRJ685f4rtZ9oDw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="31090070"
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="31090070"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:36:08 -0800
-X-CSE-ConnectionGUID: 2ZgE5tpDTS6kFB/P1WrCFw==
-X-CSE-MsgGUID: qp17lVZFQOemsVj+GaKniQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="92086370"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:36:04 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org,
-	dave.hansen@linux.intel.com
-Cc: rick.p.edgecombe@intel.com,
-	kai.huang@intel.com,
-	adrian.hunter@intel.com,
-	reinette.chatre@intel.com,
-	xiaoyao.li@intel.com,
-	tony.lindgren@intel.com,
-	binbin.wu@linux.intel.com,
-	dmatlack@google.com,
-	isaku.yamahata@intel.com,
-	isaku.yamahata@gmail.com,
-	nik.borisov@suse.com,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH v2 00/24] TDX MMU Part 2
-Date: Tue, 12 Nov 2024 15:33:27 +0800
-Message-ID: <20241112073327.21979-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1731396869; c=relaxed/simple;
+	bh=S9AWkh9lGMhvCzL2BzrZte8v4YH0TGUUAI683H2TIAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Zp57x/xiYzeGgnTC+b70scxDCHr+dIHHrFzsCJtydVcMVXGLypIlCvq5ieQMjjr2or0UCgSBqG2oKzpMgOipqlQSDjpZtsIChFdoNVA+gGjwVvJ1tr/QN0+wwWQy07dZ7oHgk4jMNP9jXaYM2ViET0NcagY4sZUAyiOxXqP8EcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CqficmTH; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so4446349b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:34:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1731396865; x=1732001665; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QeJvnOkpNipvaH1FIbSRW01azEBiVaLjEayar5yqJZ0=;
+        b=CqficmTHKGs/MaYDU2QMwrYH+YS9FYeC/8DBMHalbXRNszRF/QhzOJLyuRLbGiAK4T
+         ZcV9XSyemU0NLOaK/GVzi5k/2OlTUK9NTGWGo2QnUaybPuUjBzLqrcciMdG3fpsrQSe/
+         1YTNMBGLsMjEH2mjnl7TgDihDCWYe3LNIKYEM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731396865; x=1732001665;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QeJvnOkpNipvaH1FIbSRW01azEBiVaLjEayar5yqJZ0=;
+        b=jHRuolZT4eAFr/XPhzTNE3Vofn5NxEswNmzF9K1zHRhcdpHXPo54YHyPhZKc44P0wh
+         wWgigDSvpDkpROXGmnq3MLu6DNqsYA7j36onFmC3Jx9C4E0FCZRIcPLqQSy2eiaJqQ3f
+         1DrnbMqDit5omKBy2MEC7BqrCud7bMFyQ2HnZoPOIhHqsuliRXL3zzM37ai/KuHAE2Vq
+         yHn78RHUz0mWXTaZ+oRpdixXWlT8fXZ8dqSC0jLrCy7Kl64gM3J7qTEPIVEx1eOqbxbV
+         HINJBqJKQaYb/bs6RfePsgimXX3JeRSqz43hF3AgY5xy9UkEnTzUKfjqPIh4Rg8v0NeP
+         GI+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVXyeukAEsimvWfedGgTtMJqOhtnmYplw523++8VpBatwVPsrpAsdV1cs6pvYimWn49ISUjudPJK/Nh6Xg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSoaGdkqxHAXJ/+K4rw3f4iKrC0cnODIIGQserhlBGcfrA88DY
+	di2OgR1Q++PWuyFXmju/WtuR7nUx/WGqEpYO2Lr+SZwnl9tKllzzF39cbg6n3mAT0NJ2SHJYzbA
+	=
+X-Google-Smtp-Source: AGHT+IGzWCGIJVN1Bajk3aY5Ezm0oGO0lMUy5hZgd6Or9HJzTzqB441BAapCmsVuWlClMnfbPI4K8g==
+X-Received: by 2002:a05:6a20:2593:b0:1db:dc9d:47e9 with SMTP id adf61e73a8af0-1dc22b5924amr21557904637.32.1731396865405;
+        Mon, 11 Nov 2024 23:34:25 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:9e09:d4e8:509d:405b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e5a1d1sm86778005ad.210.2024.11.11.23.34.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 23:34:25 -0800 (PST)
+Date: Tue, 12 Nov 2024 16:34:21 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: ext4: possible circular locking dependency at ext4_xattr_inode_create
+Message-ID: <20241112073421.GD1458936@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 Hi,
 
-Here is v2 of the TDX “MMU part 2” series.
-As discussed earlier, non-nit feedbacks from v1[0] have been applied.
-- Among them, patch "KVM: TDX: MTRR: implement get_mt_mask() for TDX" was
-  dropped. The feature self-snoop was not made a dependency for enabling
-  TDX since checking for the feature self-snoop was not included in
-  kvm_mmu_may_ignore_guest_pat() in the base code. So, strickly speaking,
-  current code would incorrectly zap the mirrored root if non-coherent DMA
-  devices were hot-plugged.
+I've a following syzkaller report (no reproducer); the report is
+against 5.15, but the same call-chain seems possible in current
+upstream as well.  So I suspect that maybe ext4_xattr_inode_create()
+should take nested inode_lock (I_MUTEX_XATTR) instead.  Does the
+patch below make any sense?
 
-There were also a few minor issues noticed by me and fixed without internal
-discussion (noted in each patch's version log).
+======================================================
+WARNING: possible circular locking dependency detected
+5.15.168-syzkaller-23766-g3f37c55c6291 #0 Not tainted
+------------------------------------------------------
+syz-executor297/1452 is trying to acquire lock:
+ffff888120b5e750 (&ea_inode->i_rwsem#8/1){+.+.}-{3:3}, at: inode_lock
+ffff888120b5e750 (&ea_inode->i_rwsem#8/1){+.+.}-{3:3}, at: ext4_xattr_inode_create
+ffff888120b5e750 (&ea_inode->i_rwsem#8/1){+.+.}-{3:3}, at: ext4_xattr_inode_lookup_create
+ffff888120b5e750 (&ea_inode->i_rwsem#8/1){+.+.}-{3:3}, at: ext4_xattr_set_entry+0x2aeb/0x3200
 
-It’s now ready to hand off to Paolo/kvm-coco-queue.
+but task is already holding lock:
+ffff888120b58c68 (&ei->i_data_sem/3){++++}-{3:3}, at: ext4_setattr+0x12b5/0x1950
 
-
-One remaining item that requires further discussion is "How to handle
-the TDX module lock contention (i.e. SEAMCALL retry replacements)".
-The basis for future discussions includes:
-(1) TDH.MEM.TRACK can contend with TDH.VP.ENTER on the TD epoch lock.
-(2) TDH.VP.ENTER contends with TDH.MEM* on S-EPT tree lock when 0-stepping
-    mitigation is triggered.
-    - The threshold of zero-step mitigation is counted per-vCPU when the
-      TDX module finds that EPT violations are caused by the same RIP as
-      in the last TDH.VP.ENTER for 6 consecutive times.
-      The threshold value 6 is explained as 
-      "There can be at most 2 mapping faults on instruction fetch
-       (x86 macro-instructions length is at most 15 bytes) when the
-       instruction crosses page boundary; then there can be at most 2
-       mapping faults for each memory operand, when the operand crosses
-       page boundary. For most of x86 macro-instructions, there are up to 2
-       memory operands and each one of them is small, which brings us to
-       maximum 2+2*2 = 6 legal mapping faults."
-    - If the EPT violations received by KVM are caused by
-      TDG.MEM.PAGE.ACCEPT, they will not trigger 0-stepping mitigation.
-      Since a TD is required to call TDG.MEM.PAGE.ACCEPT before accessing a
-      private memory when configured with pending_ve_disable=Y, 0-stepping
-      mitigation is not expected to occur in such a TD.
-(3) TDG.MEM.PAGE.ACCEPT can contend with SEAMCALLs TDH.MEM*.
-    (Actually, TDG.MEM.PAGE.ATTR.RD or TDG.MEM.PAGE.ATTR.WR can also
-     contend with SEAMCALLs TDH.MEM*. Although we don't need to consider
-     these two TDCALLs when enabling basic TDX, they are allowed by the
-     TDX module, and we can't control whether a TD invokes a TDCALL or
-     not).
-
-The "KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with operand SEPT" is 
-still in place in this series (at the tail), but we should drop it when we
-finalize on the real solution.
+which lock already depends on the new lock.
 
 
-This series has 5 commits intended to collect Acks from x86 maintainers.
-These commits introduce and export SEAMCALL wrappers to allow KVM to manage
-the S-EPT (the EPT that maps private memory and is protected by the TDX
-module):
+the existing dependency chain (in reverse order) is:
 
-  x86/virt/tdx: Add SEAMCALL wrapper tdh_mem_sept_add() to add SEPT
-    pages
-  x86/virt/tdx: Add SEAMCALL wrappers to add TD private pages
-  x86/virt/tdx: Add SEAMCALL wrappers to manage TDX TLB tracking
-  x86/virt/tdx: Add SEAMCALL wrappers to remove a TD private page
-  x86/virt/tdx: Add SEAMCALL wrappers for TD measurement of initial
-    contents
- 
-This series is based off of a kvm-coco-queue commit and some pre-req
-series:
-1. commit ee69eb746754 ("KVM: x86/mmu: Prevent aliased memslot GFNs") (in
-   kvm-coco-queue).
-2. v7 of "TDX host: metadata reading tweaks, bug fix and info dump" [1].
-3. v1 of "KVM: VMX: Initialize TDX when loading KVM module" [2], with some
-   new feedback from Sean.
-4. v2 of “TDX vCPU/VM creation” [3]
- 
-It requires TDX module 1.5.06.00.0744[4], or later. This is due to removal
-of the workarounds for the lack of the NO_RBP_MOD feature required by the
-kernel. Now NO_RBP_MOD is enabled (in VM/vCPU creation patches), and this
-particular version of the TDX module has a required NO_RBP_MOD related bug
-fix.
-A working edk2 commit is 95d8a1c ("UnitTestFrameworkPkg: Use TianoCore
-mirror of subhook submodule").
+-> #1 (&ei->i_data_sem/3){++++}-{3:3}:
+       down_write+0x38/0x60
+       ext4_update_i_disksize
+       ext4_xattr_inode_write
+       ext4_xattr_inode_lookup_create
+       ext4_xattr_set_entry+0x2839/0x3200
+       ext4_xattr_ibody_set+0x113/0x320
+       ext4_xattr_set_handle+0xa31/0x1440
+       ext4_xattr_set+0x266/0x3d0
+       __vfs_setxattr+0x15e/0x1c0
+       __vfs_setxattr_noperm+0x128/0x5e0
+       vfs_setxattr+0x1c6/0x410
+       setxattr+0x1d6/0x270
+       path_setxattr+0x1cc/0x2b0
+       __do_sys_lsetxattr
+       __se_sys_lsetxattr
+       __x64_sys_lsetxattr+0xb4/0xd0
+       do_syscall_x64
+       do_syscall_64+0x69/0xc0
+       entry_SYSCALL_64_after_hwframe+0x66/0xd0
 
- 
-The series has been tested as part of the development branch for the TDX
-base series. The testing consisted of TDX kvm-unit-tests and booting a
-Linux TD, and TDX enhanced KVM selftests.
+-> #0 (&ea_inode->i_rwsem#8/1){+.+.}-{3:3}:
+       check_prev_add
+       check_prevs_add
+       validate_chain
+       __lock_acquire+0x2c95/0x7850
+       lock_acquire+0x1d2/0x4e0
+       down_write+0x38/0x60
+       inode_lock
+       ext4_xattr_inode_create
+       ext4_xattr_inode_lookup_create
+       ext4_xattr_set_entry+0x2aeb/0x3200
+       ext4_xattr_block_set+0xdc1/0x2de0
+       ext4_xattr_move_to_block
+       ext4_xattr_make_inode_space
+       ext4_expand_extra_isize_ea+0xe58/0x19c0
+       __ext4_expand_extra_isize+0x2fd/0x400
+       ext4_try_to_expand_extra_isize
+       __ext4_mark_inode_dirty+0x58b/0x840
+       ext4_setattr+0x1341/0x1950
+       notify_change+0xafb/0xd80
+       do_truncate+0x218/0x2f0
+       handle_truncate
+       do_open
+       path_openat+0x27d3/0x2e10
+       do_filp_open+0x23a/0x360
+       do_sys_openat2+0x188/0x720
+       do_sys_open+0x1d1/0x220
+       do_syscall_x64
+       do_syscall_64+0x69/0xc0
+       entry_SYSCALL_64_after_hwframe+0x66/0xd0
 
-The full KVM branch is here:
-https://github.com/intel/tdx/tree/tdx_kvm_dev-2024-11-11.3
+other info that might help us debug this:
 
-Matching QEMU:
-https://github.com/intel-staging/qemu-tdx/commits/tdx-qemu-upstream-v6.1/
+ Possible unsafe locking scenario:
 
-[0] https://lore.kernel.org/kvm/20240904030751.117579-1-rick.p.edgecombe@intel.com/
-[1] https://lore.kernel.org/kvm/cover.1731318868.git.kai.huang@intel.com/#t
-[2] https://lore.kernel.org/kvm/cover.1730120881.git.kai.huang@intel.com/
-[3] https://lore.kernel.org/kvm/20241030190039.77971-1-rick.p.edgecombe@intel.com/
-[4] https://github.com/intel/tdx-module/releases/tag/TDX_1.5.06
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ei->i_data_sem/3);
+                               lock(&ea_inode->i_rwsem#8/1);
+                               lock(&ei->i_data_sem/3);
+  lock(&ea_inode->i_rwsem#8/1);
 
+ *** DEADLOCK ***
 
-Isaku Yamahata (17):
-  KVM: x86/tdp_mmu: Add a helper function to walk down the TDP MMU
-  KVM: TDX: Add accessors VMX VMCS helpers
-  KVM: TDX: Set gfn_direct_bits to shared bit
-  x86/virt/tdx: Add SEAMCALL wrapper tdh_mem_sept_add() to add SEPT
-    pages
-  x86/virt/tdx: Add SEAMCALL wrappers to add TD private pages
-  x86/virt/tdx: Add SEAMCALL wrappers to manage TDX TLB tracking
-  x86/virt/tdx: Add SEAMCALL wrappers to remove a TD private page
-  x86/virt/tdx: Add SEAMCALL wrappers for TD measurement of initial
-    contents
-  KVM: TDX: Require TDP MMU and mmio caching for TDX
-  KVM: x86/mmu: Add setter for shadow_mmio_value
-  KVM: TDX: Set per-VM shadow_mmio_value to 0
-  KVM: TDX: Handle TLB tracking for TDX
-  KVM: TDX: Implement hooks to propagate changes of TDP MMU mirror page
-    table
-  KVM: TDX: Implement hook to get max mapping level of private pages
-  KVM: TDX: Add an ioctl to create initial guest memory
-  KVM: TDX: Finalize VM initialization
-  KVM: TDX: Handle vCPU dissociation
+5 locks held by syz-executor297/1452:
+ #0: ffff88811231c460 (sb_writers#5){.+.+}-{0:0}, at: mnt_want_write+0x3b/0x80
+ #1: ffff888120b58de0 (&sb->s_type->i_mutex_key#8){++++}-{3:3}, at: inode_lock
+ #1: ffff888120b58de0 (&sb->s_type->i_mutex_key#8){++++}-{3:3}, at: do_truncate+0x204/0x2f0
+ #2: ffff888120b58f80 (mapping.invalidate_lock){++++}-{3:3}, at: filemap_invalidate_lock
+ #2: ffff888120b58f80 (mapping.invalidate_lock){++++}-{3:3}, at: ext4_setattr+0xd49/0x1950
+ #3: ffff888120b58c68 (&ei->i_data_sem/3){++++}-{3:3}, at: ext4_setattr+0x12b5/0x1950
+ #4: ffff888120b58ab8 (&ei->xattr_sem){++++}-{3:3}, at: ext4_write_trylock_xattr
+ #4: ffff888120b58ab8 (&ei->xattr_sem){++++}-{3:3}, at: ext4_try_to_expand_extra_isize
+ #4: ffff888120b58ab8 (&ei->xattr_sem){++++}-{3:3}, at: __ext4_mark_inode_dirty+0x4f7/0x840
 
-Rick Edgecombe (3):
-  KVM: x86/mmu: Implement memslot deletion for TDX
-  KVM: VMX: Teach EPT violation helper about private mem
-  KVM: x86/mmu: Export kvm_tdp_map_page()
+stack backtrace:
+Call Trace:
+ <TASK>
+ __dump_stack
+ dump_stack_lvl+0x1e3/0x2d0
+ check_noncircular+0x2f3/0x3a0
+ check_prev_add
+ check_prevs_add
+ validate_chain
+ __lock_acquire+0x2c95/0x7850
+ lock_acquire+0x1d2/0x4e0
+ down_write+0x38/0x60
+ inode_lock
+ ext4_xattr_inode_create
+ ext4_xattr_inode_lookup_create
+ ext4_xattr_set_entry+0x2aeb/0x3200
+ ext4_xattr_block_set+0xdc1/0x2de0
+ ext4_xattr_move_to_block
+ ext4_xattr_make_inode_space
+ ext4_expand_extra_isize_ea+0xe58/0x19c0
+ __ext4_expand_extra_isize+0x2fd/0x400
+ ext4_try_to_expand_extra_isize
+ __ext4_mark_inode_dirty+0x58b/0x840
+ ext4_setattr+0x1341/0x1950
+ notify_change+0xafb/0xd80
+ do_truncate+0x218/0x2f0
+ handle_truncate
+ do_open
+ path_openat+0x27d3/0x2e10
+ do_filp_open+0x23a/0x360
+ do_sys_openat2+0x188/0x720
+ do_sys_open+0x1d1/0x220
+ do_syscall_x64
+ do_syscall_64+0x69/0xc0
+ entry_SYSCALL_64_after_hwframe+0x66/0xd0
 
-Sean Christopherson (2):
-  KVM: VMX: Split out guts of EPT violation to common/exposed function
-  KVM: TDX: Add load_mmu_pgd method for TDX
+---
 
-Yan Zhao (1):
-  KVM: x86/mmu: Do not enable page track for TD guest
-
-Yuan Yao (1):
-  [HACK] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with operand
-    SEPT
-
- arch/x86/include/asm/tdx.h      |   9 +
- arch/x86/include/asm/vmx.h      |   1 +
- arch/x86/include/uapi/asm/kvm.h |  10 +
- arch/x86/kvm/mmu.h              |   4 +
- arch/x86/kvm/mmu/mmu.c          |   7 +-
- arch/x86/kvm/mmu/page_track.c   |   3 +
- arch/x86/kvm/mmu/spte.c         |   8 +-
- arch/x86/kvm/mmu/tdp_mmu.c      |  37 +-
- arch/x86/kvm/vmx/common.h       |  43 ++
- arch/x86/kvm/vmx/main.c         | 104 ++++-
- arch/x86/kvm/vmx/tdx.c          | 727 +++++++++++++++++++++++++++++++-
- arch/x86/kvm/vmx/tdx.h          |  93 ++++
- arch/x86/kvm/vmx/tdx_arch.h     |  23 +
- arch/x86/kvm/vmx/vmx.c          |  25 +-
- arch/x86/kvm/vmx/x86_ops.h      |  51 +++
- arch/x86/virt/vmx/tdx/tdx.c     | 176 ++++++++
- arch/x86/virt/vmx/tdx/tdx.h     |   8 +
- virt/kvm/kvm_main.c             |   1 +
- 18 files changed, 1278 insertions(+), 52 deletions(-)
- create mode 100644 arch/x86/kvm/vmx/common.h
-
--- 
-2.43.2
-
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index 7647e9f6e190..db3c68fbbadf 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1511,7 +1511,7 @@ static struct inode *ext4_xattr_inode_create(handle_t *handle,
+ 		 */
+ 		dquot_free_inode(ea_inode);
+ 		dquot_drop(ea_inode);
+-		inode_lock(ea_inode);
++		inode_lock_nested(inode, I_MUTEX_XATTR);
+ 		ea_inode->i_flags |= S_NOQUOTA;
+ 		inode_unlock(ea_inode);
+ 	}
 
