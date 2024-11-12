@@ -1,88 +1,104 @@
-Return-Path: <linux-kernel+bounces-405411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B1C9C5100
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:43:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AFA29C5152
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:59:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A18D1F21BB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:43:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3734BB2D78A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8342101A4;
-	Tue, 12 Nov 2024 08:39:42 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425E920EA33
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCEB2101BB;
+	Tue, 12 Nov 2024 08:40:09 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F06920BB23;
+	Tue, 12 Nov 2024 08:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731400782; cv=none; b=VyprxR0Eb9z3fKppdEz3Ks/HNBh2QZpp+DvtAFnpSBSAUuQRBy3tazpOz3gX7ukr+4BPx/chFoRsEtykurO7l6ulaa/H0H3x+jC992c6BlpTGAsqC5FDGbNDQ/UobCQejo/TRnjlEmLvxjql6cU0zXOaQX4n97xdIc8YNqIAC0I=
+	t=1731400809; cv=none; b=X+l9uBMhCWHG4GYPNzqdM8iqtA4tr+AjmR7/DyHe3oC2BG28YLDHyRFFShbWJQHzvE6lEX98APhpvEV8dkaSrjguOhrb8bsrDVZ/ZM5DNtgjtj0MF2qyl8zWdjPNCK6oRyjzMtw+q8c+XRQMRAEGrJevQxtm6AWvIOS8CgENSZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731400782; c=relaxed/simple;
-	bh=8a7IghDD2F19zEoED7hhdIjA/SwpOf9+n+JnpHyC9aM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=taxgOMPjf9WIS0GmCVbDDPW19wvyLqR6LtZizwKLtePExZwKV/xeIHiPd3nf6lAucDOx+eifnPFZ8MvVzFN9L89g9opw2i1l1FoQte9CPWcQ87RLoUQDC80I6PjJdsE1IqpXmc7/DyL0lfmvtEUiGansEsBD/8mYYcYLPkQlqRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee26733144420d-44227;
-	Tue, 12 Nov 2024 16:39:35 +0800 (CST)
-X-RM-TRANSID:2ee26733144420d-44227
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.103])
-	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee467331446a9d-37f56;
-	Tue, 12 Nov 2024 16:39:35 +0800 (CST)
-X-RM-TRANSID:2ee467331446a9d-37f56
-From: Luo Yifan <luoyifan@cmss.chinamobile.com>
-To: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	donald.hunter@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	edumazet@google.com,
-	sfr@canb.auug.org.au,
-	Luo Yifan <luoyifan@cmss.chinamobile.com>
-Subject: [PATCH] ynl: samples: Fix the wrong format specifier
-Date: Tue, 12 Nov 2024 16:39:21 +0800
-Message-Id: <20241112083921.283923-1-luoyifan@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1731400809; c=relaxed/simple;
+	bh=TdNm9lt7INn6v6tFtBGy259qRCJfD0xoMjjyaXHVgMI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ShIFCAPGUUckCbN3XlcaWHoDS/jSiGM6fYRRAqGC45qy2yzVHfdwg2BuiAVXnWFK+lxUaG6F3thPUzPDGMXKXVLgICrzS3r1NooxztDDkUmA/cy5XESlHZJCPk7JMQylo4HqHv7NCqo13WQ2hBK4EPyW7dM5GyIWtgRek1hnfOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xnfsj655Kz6K6sp;
+	Tue, 12 Nov 2024 16:36:57 +0800 (CST)
+Received: from frapeml100006.china.huawei.com (unknown [7.182.85.201])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7E2D6140C72;
+	Tue, 12 Nov 2024 16:40:03 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (7.182.85.71) by
+ frapeml100006.china.huawei.com (7.182.85.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 12 Nov 2024 09:40:03 +0100
+Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
+ frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
+ Tue, 12 Nov 2024 09:40:03 +0100
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
+	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
+ Cameron" <jonathan.cameron@huawei.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+Subject: RE: [PATCH v15 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
+ migration driver
+Thread-Topic: [PATCH v15 3/4] hisi_acc_vfio_pci: register debugfs for
+ hisilicon migration driver
+Thread-Index: AQHbNNV2zCpG8rxQT0i37T+GTvsNQLKzUpKA
+Date: Tue, 12 Nov 2024 08:40:03 +0000
+Message-ID: <1c0a2990bc6243b281d53177bc30cc92@huawei.com>
+References: <20241112073322.54550-1-liulongfang@huawei.com>
+ <20241112073322.54550-4-liulongfang@huawei.com>
+In-Reply-To: <20241112073322.54550-4-liulongfang@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-Make a minor change to eliminate a static checker warning. The type
-of s->ifc is unsigned int, so the correct format specifier should be
-%u instead of %d.
-
-Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
----
- tools/net/ynl/samples/page-pool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/net/ynl/samples/page-pool.c b/tools/net/ynl/samples/page-pool.c
-index 332f281ee..e5d521320 100644
---- a/tools/net/ynl/samples/page-pool.c
-+++ b/tools/net/ynl/samples/page-pool.c
-@@ -118,7 +118,7 @@ int main(int argc, char **argv)
- 			name = if_indextoname(s->ifc, ifname);
- 			if (name)
- 				printf("%8s", name);
--			printf("[%d]\t", s->ifc);
-+			printf("[%u]\t", s->ifc);
- 		}
- 
- 		printf("page pools: %u (zombies: %u)\n",
--- 
-2.27.0
 
 
 
+> -----Original Message-----
+> From: liulongfang <liulongfang@huawei.com>
+> Sent: Tuesday, November 12, 2024 7:33 AM
+> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
+> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+> <jonathan.cameron@huawei.com>
+> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
+> Subject: [PATCH v15 3/4] hisi_acc_vfio_pci: register debugfs for hisilico=
+n
+> migration driver
+>=20
+>=20
+> +static void hisi_acc_vfio_debug_init(struct hisi_acc_vf_core_device
+> *hisi_acc_vdev)
+> +{
+> +	struct vfio_device *vdev =3D &hisi_acc_vdev->core_device.vdev;
+> +	struct hisi_acc_vf_migration_file *migf =3D NULL;
+> +	struct dentry *vfio_dev_migration =3D NULL;
+> +	struct dentry *vfio_hisi_acc =3D NULL;
+
+Nit, I think we can get rid of these NULL initializations.
+
+If you have time, please consider respin (sorry, missed this in earlier rev=
+iews.)
+
+Thanks,
+Shameer
 
