@@ -1,253 +1,156 @@
-Return-Path: <linux-kernel+bounces-406773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6319C63A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:42:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5599C63A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:42:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CAF928581F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:42:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E0B41F23522
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E03D21A70E;
-	Tue, 12 Nov 2024 21:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6903D21A4DA;
+	Tue, 12 Nov 2024 21:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B0jGwwZ/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Cykd86NL"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B08219E5F;
-	Tue, 12 Nov 2024 21:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731447738; cv=fail; b=VWdfAO+i+V9Ry4+ZszfzMKP7U4PmVkOdrWnvAuUBX5IwzF5vBKZdG7zZDTED0RA+nm9j9Lu5OozZ3/CqNQSlUhn/9ad3VAIX3yVxtekQiYeWE48UfZBzcI9wn7hI8t7VvxwO8OuycwsKVe7YAHR9bS/ySGrfeO5u3lzlNm5PXs0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731447738; c=relaxed/simple;
-	bh=oB49ytUmxatmffVBPuu92ADpmfzOrBFCNPaOlyI2Zeg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=giLEznkvq4G9MOZZ0nqlI2vr0L/nqJIiCQhUybxDmtO4Yn8//kTNsmNxLG+h0fD0iQCSW26JEO0H2LP+ZWmQEy/oJSWfeO7oqLQcc6djGwvJE/ud+/y9rwOFTZNo6KlvFzVX2iyOfyJxKeDe7xBLq9O7tCBMg4mdAl9KzyKmdSs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B0jGwwZ/; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731447737; x=1762983737;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=oB49ytUmxatmffVBPuu92ADpmfzOrBFCNPaOlyI2Zeg=;
-  b=B0jGwwZ/abMoPs92KzlxCzIThiFlQuVYvgVrNDgAz2waQfk2r0vmFbHz
-   oT2AvGDI5AM8eTNE3NTEyq2cISaVervf+dVeMmmiU3OfQv1wXB7VI0ycr
-   Ucgkbr8blpHNqQOuelHhPTV4eulQKf6hO+1UXMmE85+mz4jEURRPAEHmU
-   6oXsaDpsMfiZnI+WbrK9PIClfNLqw3fVLopc0cegiaOxhDTiFAA28d4FJ
-   sWreOIjHyhiidITP0vUpmowY3/pnhl44BkbuNFzulJRpuqvsqhnl2zAKC
-   qz+7Nu0vKhkeVahl3gVF8c32h6p7cj5T9fPcYHNlvyUWpd/vJpFqLSY6a
-   w==;
-X-CSE-ConnectionGUID: AcVBWZrZSxaiHDo5uLOeFQ==
-X-CSE-MsgGUID: 6GAEunuVQfeRUwpFJPomRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31081486"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31081486"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 13:42:14 -0800
-X-CSE-ConnectionGUID: SsojwrxoRP2Bqzr95LiZTw==
-X-CSE-MsgGUID: nOSVc860QZGPos2SHmEO8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="87817107"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Nov 2024 13:42:08 -0800
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 12 Nov 2024 13:42:07 -0800
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 12 Nov 2024 13:42:07 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.44) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 12 Nov 2024 13:42:07 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mDr+cp8FExKGCNEprCXJGwwmy+2kGhO1mo0FEKctYbvvW6fsn8epdJ9zjh6EpK5ZskA0kfUVNbGRj90HkDQj3pqVo17d2SAf/9valYtMd4rDh2hFHGXiNxWu7vuEkgaj2/heIFr7t7CH40UgW/jjOCxJcnO5flARn84su2kCDRncC257RcSAoBCfCkEo66rPwdzgm9DI6HX+lblb9yWfRo91srPhBGbztuIJFQWbPvrvoUExre5KsEfYH387HN6t13/eiHbyIUgvpnH2TIKP6XuRerkI8iP6C7Psy1hP+Lx13HjvUx2Zd7jvwoqImHkoJgt9NAIaANdYw66Poe2Djw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=97+VqzIvg55akLOvL0zhR9UMJ2Zzsa2a24VbP1PcrjE=;
- b=tQD6iZscpdwOMaUd7q9IRrCV5UjRUMRfKJc6z2s5PpqAc/zRZTUTr3waWVZUIhdPxS/hHfN5KGSWaCsrhQJXInRLZwMXSE/BBebt0VVgXF88aROPMi2PRQSfXyf4+SP3s7jg/Y3DaGT8G3D7YE/0uYJNryj/7h4wwRhPM35/Aojhh7+Kqls7Lrg3J30sZWI8UHngS2OIPdWAPcQ+chHrfWiSBoj4t8jBfUv553hCfgb3QeaE9csAEA5PYR6RKa0wmfqFh9tPIyJztmW2N9e41JeiijQlocpE/yWcv2jYJvZt96oAE1U+IxdXmM+UNKu/ql3D/Y73Utozmi3gXd7jYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by SN7PR11MB7705.namprd11.prod.outlook.com (2603:10b6:806:32f::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27; Tue, 12 Nov
- 2024 21:41:59 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 21:41:59 +0000
-Date: Tue, 12 Nov 2024 13:41:55 -0800
-From: Dan Williams <dan.j.williams@intel.com>
-To: Gregory Price <gourry@gourry.net>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-mm@kvack.org>
-CC: <linux-cxl@vger.kernel.org>, <kernel-team@meta.com>,
-	<Jonathan.Cameron@huawei.com>, <dan.j.williams@intel.com>,
-	<rrichter@amd.com>, <Terry.Bowman@amd.com>, <dave.jiang@intel.com>,
-	<ira.weiny@intel.com>, <alison.schofield@intel.com>, <gourry@gourry.net>,
-	<dave.hansen@linux.intel.com>, <luto@kernel.org>, <peterz@infradead.org>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
-	<rafael@kernel.org>, <lenb@kernel.org>, <david@redhat.com>,
-	<osalvador@suse.de>, <gregkh@linuxfoundation.org>,
-	<akpm@linux-foundation.org>, <rppt@kernel.org>
-Subject: Re: [PATCH v6 3/3] acpi,srat: give memory block size advice based on
- CFMWS alignment
-Message-ID: <6733cba395c30_10bc6294df@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20241106155847.7985-1-gourry@gourry.net>
- <20241106155847.7985-4-gourry@gourry.net>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241106155847.7985-4-gourry@gourry.net>
-X-ClientProxiedBy: MW4PR04CA0317.namprd04.prod.outlook.com
- (2603:10b6:303:82::22) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF2B21A4C4
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 21:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731447730; cv=none; b=Zw14JZC/9ZvpABfn2IsYwW9UfjcncwhwY3kgPsBKaG2OtN5PAFB9bXmyJyCXXEQD/S4CkwvVV49AuIg97GhIxBpC9wRKOw/hQsDV1lRF2/SIfcB0EeRz5l2mIqvK6c9OBQGciCdBy/trC47byLPAuAKkpYTajCpZZ6xV+0iBmy0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731447730; c=relaxed/simple;
+	bh=gJchVZ0aipmPi6N3tyZJvlVK6yAXfrk0qcAZdAjQQAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jU3mIJ1bz7u0iKV9VKnrk/Obk3PU7Tx/Bdhg9car4yj8xbQCndk+BKwNpKIoIkDGXcPrV3b19A6uM/s6hRYExflTlE6mPD+RjReZDblXbLKptfz60UcYwjrmR2fiUotZneiJXgWHPm5uM22DxNnxX3zIeXs21RKevPp20L3lmXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Cykd86NL; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e5a62031aso4909008b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:42:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1731447728; x=1732052528; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=1JyuzlEmjIKs0OEzFDs2Ei5r4rj+a+WGwyUfTtd/WDY=;
+        b=Cykd86NL5DGBIShkmvNri2OGGtyqC1gR4YBJD9qe2P7PJMqgi/1CqDsEEFNN3ZRMCs
+         sWu5UN9ZEcKaphPufageAYkQZegs5fW+Jfoe2hoSvFz/SOcmZrJdN9zmNh2ATO9Ot2wN
+         qnKJ0UM3bv/9xDfg8V9LOPVbcZW7f70jgLKuY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731447728; x=1732052528;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1JyuzlEmjIKs0OEzFDs2Ei5r4rj+a+WGwyUfTtd/WDY=;
+        b=SD8YjLS8ohPaZjBe2OR9kOD3EWEn6xNaPFFnSJWLjPGPXIfAaHOyiBHBzy24CnRtQz
+         Mk3tiOaBvtca6Y1Nxbq77TMDxkIU45uEJBSZqhwE2b+vlxP078/+SMig6lCsy7vmGc5n
+         SXddqLoXJ8YWxTXFqIn8IlrK9SHpNxYwMMwr5tvTZWm3kyyFD+eDQNaRMcHt5172TRLf
+         uDemnM6O3QrqD/D1kl2sRCxrFPVWV9Lsdu1ozyg44JSPS2qSX2qEQMexLPhrYq6diUq2
+         JtaVbZYV3YMqJuaw4J8bf1Fnp/5YYG7Mn4U0PiUQApbQKLXgBStiPB2WqFG/W6AV1aiJ
+         S9OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXra2i0HeMs8JsdPKRaXmrPLw2nEDUL9Be40AKVxz/dRkMSVz3vrwHvXtq4MtjOjH4jLGrhwcCNQx9YlIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3Qm5dLC8RGm6Od52yWgaxF4muRmcGD+EEoIbsAVPopEGh3exk
+	UFNcDqmDvk36xLD9hZ0YdFdBzEY5WN4VDbw463lLL1FGNF1x4Ra6ScOfB2tM/g==
+X-Google-Smtp-Source: AGHT+IFDh6oyLu1szZNtbuwF2rTREJskobicbVjVT9besKSihoc9sQcmwBwA22LNfYSTp8e423c8ow==
+X-Received: by 2002:a17:90a:e7cb:b0:2e2:a8dd:9bb5 with SMTP id 98e67ed59e1d1-2e9b170d9f4mr23022270a91.12.1731447727580;
+        Tue, 12 Nov 2024 13:42:07 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9f3f4fe0bsm9897a91.53.2024.11.12.13.42.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 13:42:06 -0800 (PST)
+Message-ID: <4b50e109-da52-4616-8f68-75174ffac8a5@broadcom.com>
+Date: Tue, 12 Nov 2024 13:42:02 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SN7PR11MB7705:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5c223e98-e040-45d2-f3b2-08dd0362d616
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?OWjcqhUnMhj6GcdVYJc8QtVYd/k4wxYjEwwU4ENpC0oReVjGv4XYMmzTIMtJ?=
- =?us-ascii?Q?PutGmw6fiJ438rByOLEK80VfLr5tr9CxKMrdzEGivDqMpg826xdFh6jUR0pU?=
- =?us-ascii?Q?XMDbJ2fN2fL69aG4XqicQt4vdh2wDJkfRFbYHEdXjojZFgpdfn6giKmRW2Nv?=
- =?us-ascii?Q?xNphGANheY8ChcJEL1Vl4AbfLZ3+x+xuS9WVPABL587g7il0A8a07dnFRfCm?=
- =?us-ascii?Q?Q/NMo847VFmhJD9cgyxad01tKVlNZcmU/aQnT/SLkigbdxPZQbPPLSJGF1l3?=
- =?us-ascii?Q?nVGwge0tA64Hz6jujmmm9uG1sMba8HlfiDd73a1dYBYOz6lpPyVm3RvH8Upc?=
- =?us-ascii?Q?pn5XOIJvEKVKRNVcg6UbWTycIybOaRce0fY9BEKySsgbtH/Covcl9IlntpJw?=
- =?us-ascii?Q?aVooKOaQ+159fO8FDSBJ7xZqVglPCI+0Vy/yQeBFBnEDijauUlG9UBJnG+uI?=
- =?us-ascii?Q?5oxTaJrtZzCBeltH0mb7Cw5/pZeWAQP8Jc4Xv2xKKZ0u4w8g5WL75z8EwodC?=
- =?us-ascii?Q?ngxtTsuiDgEnsfjQXZBRlnTwLP5UvPlvfpsnUOCF7TQ0dyths9EOlY4j2YDo?=
- =?us-ascii?Q?8LALj4Yk5NMlqD8RjzfCW+P1A0Dn/06htB+PKNajuPK93tqYhi9dItC7fD+r?=
- =?us-ascii?Q?tiK6UpISXY+9MqRPB1pDVCGtUiL3QsprlF7KbwErx17vWXw4jCxmwpKs4huU?=
- =?us-ascii?Q?UyAU2D4A4C1dA+nXoFPtYmWBYmVGT43tQd5HH8jcOQ+GxNaHzLMCXHR+R8Z7?=
- =?us-ascii?Q?PsqXj7vQdvlTzExBGQXaN3ZtxTF+TUkY79/9Z+0tpTvpvTmF7t8/y5KMaMVN?=
- =?us-ascii?Q?VmPEfg7dALhglZMXnrgfQkjdNBXWIp/i1qVBbm7Pu/xQKwjiBJ2BmYUdFLZP?=
- =?us-ascii?Q?npt/wA+f7Me71coRlhfSBI9FJuOGofS3encG1mSMX/paDELVkTmPHxagcthc?=
- =?us-ascii?Q?b3d8VY7ghoEBVGQEFExx4aFxcUkgA1K9jOW2+gQCtyIjKv8RFvN3IN5pfdZe?=
- =?us-ascii?Q?FtVYUl94qPgld359UkRZwQwezKR8LaYYcToItsogl6GVDn0WqN3xr97tEmN0?=
- =?us-ascii?Q?esjNAzUjCZghMX5dr0Zen33xs8WpD0CDjVBytbLJYqFPzV3GzST7rRVY84vY?=
- =?us-ascii?Q?+oCRIHE1FNffDQEpV+SqAhVvCMMEUGL/Y1uFOb/9iFdAGp2gCsSXW9kjTAuo?=
- =?us-ascii?Q?rK/fFTbCAPG/FNodNj/cxnNGJ/WPOeyLL1P1AYK/l0lgXG/5zglvPGfSZx93?=
- =?us-ascii?Q?hQDNg6fBzgVdmcOhoTgsP4NVkwNHX25TzhmffR/uLoVsgpF3C4gje9lRelT9?=
- =?us-ascii?Q?tDM=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?plOOpkgCSBvEwnPDUNf0RjmYQ4o7PZWp9EZjEBpre4jYmmBVVFG9xtq9AWVJ?=
- =?us-ascii?Q?/e3jDWxlTdJYR5xoTrc0k8LLvqQRmlsz0xfxML0WLXhWsbFVIE4Izy2wYqhq?=
- =?us-ascii?Q?siq6ZfEfX7jbiRnJWUiHglBu6qCR1wQ2DKQe/XBuPJ62OfLwGq+PAGQV2W2u?=
- =?us-ascii?Q?HvmmSH0ZZepQRVk3gSAdXMVV078Zht+xlm8GslHy8Fxgi3AJdjn8pyIqOZ+A?=
- =?us-ascii?Q?X239P8l8fIrGUVwYVusevFs7yYROkoo3eiyWrAw4j9zdM5ffwHhsRa/FNKp5?=
- =?us-ascii?Q?t78Bq8gGAPFEwpq7On92a249GQa2ETbozSMlYhM+5FBC4sGUDZmS/xGsM+bv?=
- =?us-ascii?Q?xPYhsYQo9zxzqQCIdMAOVxSfDwbtirf8oeume+NTMjO1TqTzGA21iCwUgGRc?=
- =?us-ascii?Q?Qc44XLUgaiaW+zLKAJaiNNTQMyz/V6+jrDtPiN6BsChzhk38+sfS67W1zWHh?=
- =?us-ascii?Q?+Y+GVyJIFy5FLJ5A7OcmYtp896z82rdV9GBUxIIXOho8OewtetPrBgsrlhdd?=
- =?us-ascii?Q?A6WO7OJanLrt/RznYnstXPAwBUJ8hpVa+78+V+Trk0OCFN2H+fhQxbOWA54u?=
- =?us-ascii?Q?fvkJSk/WuJBtaLjRPjnkpYmcYVCghQGXfhLzR/wm3roGr8XxLFWACyCX6YM4?=
- =?us-ascii?Q?QghNH8OR02Yu+fXauCHlva62P3bNwyhUbljf8qUTSMzXBkoJeeXdZg68ERm8?=
- =?us-ascii?Q?Agq4UJKIswzhC7bbhhIN2HjvKfLUnr1cVHLmXhH9vmIYeOgA3M+CVGoH4SjJ?=
- =?us-ascii?Q?fQItJ9bjOiNcI9PplqQzmcrxEJX97pFwlbFJjTqEWOaNJpNFv+1WYTiFEZKH?=
- =?us-ascii?Q?OMN1ro1AuuJQKtvwy1mnlDIdrM7enas+Zl7lxYtHTPJnaAAQkjd1asQqLLgj?=
- =?us-ascii?Q?VkqZLKasDWyGEItEQ4L81GAX3v4wnmq7/C4YHGlHYNZk8SG+A0s+w0xbKSeg?=
- =?us-ascii?Q?LUD1PI1NBIh+ZJ6Tqn3mO6xj+7gBy5BZU9ahxnQ+XJKZtExWcT9yp+YQdjmY?=
- =?us-ascii?Q?hKGnzoaa3w1yHm/lpR4ZS+kM7rHoIKInsP5N2T/tuWk2mx86vYw9lOWEAwK1?=
- =?us-ascii?Q?+SPdtyp6nREp8vKyQh6e/3k4+SOJH4y46JJSrS2DcF35J8YLJ03/+F4ydt4w?=
- =?us-ascii?Q?Wap08btA+/nO4V2aMujEuao4Aa0jIUukEIORQKOpXrIkuwzX6yWZXomJcrsE?=
- =?us-ascii?Q?cH4vLSe4ZnBRu43Ng+kFrbkMDTwwYQ6Gs6/9kXCQGKKzYAFsS23IdMEim3L+?=
- =?us-ascii?Q?dl5sJ0cfj0zOWvK0MacZeWbbCCsyjq1M3aNIrTsBWHCmPd9/kBmA6HK7eM7l?=
- =?us-ascii?Q?GBiugX8OGacorsFrqawgQhH3aAWxoPZNWgn1XCRbz70pfrfctNgaX/yRc6Lp?=
- =?us-ascii?Q?chQ3poHEd2j2MG+hteMJ23YbuaQa6gUrhFunI3sPawd9STwjtia4Jo+4cW8U?=
- =?us-ascii?Q?bZK9vsmbC8FVMbm/zjFRMai1wzpUzBe1tm6SfT0ii0+sAU5RWzPoyD+7OJl3?=
- =?us-ascii?Q?oz+NbyB9BNtxyTYaxQz7G4M2SJICbftrBCyCiU8GDu8DkTqQG6igMtWddqAd?=
- =?us-ascii?Q?Q4ZeFXCTmUgwc8ycDZeie5JosnDBMlvAwQCPcZ26sOFmi/NRDTPq5q16KdmL?=
- =?us-ascii?Q?rQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c223e98-e040-45d2-f3b2-08dd0362d616
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 21:41:59.1664
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2qGWHDB5wxDtvCbUGNA9yGhZv8/FO+O5joCN3vg/wdhU5txasuBCAFdgrfhHNjbP7N3pto20t2EvKROMHOiWuGESM9Oq6lfpdriet96K/kw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7705
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3 net-next] net: modernize IRQ resource acquisition
+To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Vladimir Oltean <olteanv@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+ Marcin Wojtas <marcin.s.wojtas@gmail.com>, Byungho An <bh74.an@samsung.com>,
+ Kevin Brace <kevinbrace@bracecomputerlab.com>,
+ Francois Romieu <romieu@fr.zoreil.com>, Michal Simek <michal.simek@amd.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Zhao Qiang <qiang.zhao@nxp.com>,
+ "open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "moderated list:ARM/Allwinner sunXi SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
+ "open list:FREESCALE SOC FS_ENET DRIVER" <linuxppc-dev@lists.ozlabs.org>
+References: <20241112211442.7205-1-rosenp@gmail.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20241112211442.7205-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Gregory Price wrote:
-> Capacity is stranded when CFMWS regions are not aligned to block size.
-> On x86, block size increases with capacity (2G blocks @ 64G capacity).
+On 11/12/24 13:14, Rosen Penev wrote:
+> In probe, np == pdev->dev.of_node. It's easier to pass pdev directly.
 > 
-> Use CFMWS base/size to report memory block size alignment advice.
+> Replace irq_of_parse_and_map() by platform_get_irq() to do so. Requires
+> removing the error message as well as fixing the return type.
 > 
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> ---
->  drivers/acpi/numa/srat.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+> Replace of_address_to_resource() with platform_get_resource() for the
+> same reason.
 > 
-> diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-> index 44f91f2c6c5d..34b6993e7d6c 100644
-> --- a/drivers/acpi/numa/srat.c
-> +++ b/drivers/acpi/numa/srat.c
-> @@ -14,6 +14,7 @@
->  #include <linux/errno.h>
->  #include <linux/acpi.h>
->  #include <linux/memblock.h>
-> +#include <linux/memory.h>
->  #include <linux/numa.h>
->  #include <linux/nodemask.h>
->  #include <linux/topology.h>
-> @@ -338,13 +339,22 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
->  {
->  	struct acpi_cedt_cfmws *cfmws;
->  	int *fake_pxm = arg;
-> -	u64 start, end;
-> +	u64 start, end, align;
->  	int node;
->  
->  	cfmws = (struct acpi_cedt_cfmws *)header;
->  	start = cfmws->base_hpa;
->  	end = cfmws->base_hpa + cfmws->window_size;
->  
-> +	/* Align memblock size to CFMW regions if possible */
-> +	align = 1UL << __ffs(start | end);
-> +	if (align >= SZ_256M) {
-> +		if (memory_block_advise_max_size(align) < 0)
-> +			pr_warn("CFMWS: memblock size advise failed\n");
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> (for CAN)
+> Reviewed-by: Marc Kleine-Budde <mkl@pengutronix.de>
 
-Oh, this made me go back to look at what happens if CFMWS has multiple
-alignment suggestions. Should not memory_block_advise_max_size() be
-considering the max advice?
+For bcm_sf2.c:
 
-    if (memory_block_advised_size) {
-        ...    
-    } else {
-            memory_block_advised_size = max(memory_block_advised_size, size);
-    }
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
-For example, if region0 is an x4 region and region1 is an x1 region then
-the memory block size should be 1GB, not 256M. I.e. CFMWS alignment
-follows CXL hardware decoder alignment of "256M * InterleaveWays".
+-- 
+Florian
 
