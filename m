@@ -1,174 +1,96 @@
-Return-Path: <linux-kernel+bounces-406745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1C89C6480
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:52:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6179C6455
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:35:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 524FDB3E422
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:15:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2529B2E301
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C3221A4A4;
-	Tue, 12 Nov 2024 21:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E6A21A4B8;
+	Tue, 12 Nov 2024 21:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VSxLxg/a"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NrVYDOHS"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7FD149DFF;
-	Tue, 12 Nov 2024 21:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8935721314D
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 21:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731446139; cv=none; b=Fw6QEqQALYwdPvZ5QkIZTSSj5lITQw8T5c1tFGqYBRhLJevYPn9VqgHKmLVQ1SlT0IkUMgFB0rjQTACI3L5/4QAldWVzXHw27uttcziqvgAhYcH2sEKrJkNr4nsqoMykdv317A1+XhZ8pUYnnQ3Z9IUyQVBcs3gOgx8N/JG6Knk=
+	t=1731446969; cv=none; b=BV9H0mPM1hon0DFAfbrrB3hRdP8+u6RZLCYYsX6pWr0VaJiTSkxz7bvrAz6huWL+oxg+r2Tn8RaDENUQLX06ham6KCBa9s5KQNkGu7COl9qkqM6IT3vooByvYGlJQ+1ueFxV/9URhkibPiNcwNdgG32cAExqNHTCkKa5oyIBj8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731446139; c=relaxed/simple;
-	bh=cgNeAq7GLe8jdj8U9CxiQo/sayDmTho0s9XZQ8phaKM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EDq2JD+4Wt5mN/2m6B3C5n6uagVjWIlxgS+GqvGeLcVBqbx2fu4GukQP52L460eoHT9bhMIZFsI13yXFOuY74JcnxzPcJ3l1EAO0gj68NE7TgTSOv+uhmYBt0zKYOy37Pj9YaXjptPC0RLycCFnOc+wQLVxMENZAQNIPLcysJa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VSxLxg/a; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACLCr3x016320;
-	Tue, 12 Nov 2024 21:15:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/tADVTVWYoSeZndEkxjaWqdP520eLRzjYoMvkH0Yfs0=; b=VSxLxg/agVBvzdfP
-	sNT2EbWfW9IqCf2q+5WxGN3kj32qBc3urDvPr+IqmZDl5oYXmiOCWBNxto9ylDYb
-	1XOZW70uxNN4kM6xkMvUK0m0MyzTFyl5YzadBEfKKIGQ+p9NLuSaN0X91cYsD25w
-	BcFZpkJe7pZD3y2ZumRTYdC0sI+YUHPR+J0THOz1wGd0E+f4n2lkJxblPP31wZ1a
-	oNnu4yz874S+R/YD98D0avdg/ofJ2BDXn1CqlEEeUh7T0kL86UdbltxwZwkhUniI
-	+4A88p6b7eZKakL06JSUd8a+XqGUkOHeOoZJT+yulDl1euoE5HWTM50Scd9x7Xw8
-	ZFwrXQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v47y1yeb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 21:15:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACLFOqN023337
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 21:15:24 GMT
-Received: from [10.216.22.98] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
- 2024 13:15:19 -0800
-Message-ID: <5a959c08-cc90-4a05-88b2-e1ee666561e2@quicinc.com>
-Date: Wed, 13 Nov 2024 02:45:16 +0530
+	s=arc-20240116; t=1731446969; c=relaxed/simple;
+	bh=JWVjvOuUu6cR6pPjE3K7atmNp6S5Wl0cAN2jxQvRU8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k03vYE6nNKcN1wYV19HghoZOdKI19r019ArSrVDcpIYo1oSrqNjLe5TTb0f1LdPh98tmTAsjJwxxNHFWaMUT8aVFG34QcYcVTpvYKyuBsC/tz+yMk5XD1JbIUp4It1QswxoDFwqSONuYDog1+nharni8eqaa/PM0iwmT5CkdHeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NrVYDOHS; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731446965;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ciDG6XzStM4rMTl5F/ayytQQTAJYpG9+U+DoCstH5lQ=;
+	b=NrVYDOHS9kWwxOEc1hua7/rLZqlSjgbxMu3ZSLh4K34jqt0MkZIo7JxIIR85+b7AWCL1AP
+	ZjzqUCyrP+LoqPFcYadib2idTOkyr+GqZEmKENHWPnLdG28xd3MNJJc+8FStzPD2pZO3pZ
+	m2afJVVrEQjI1qKWtqatecCLL9CWGXM=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-unionfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ovl: Use str_on_off() helper in ovl_show_options()
+Date: Tue, 12 Nov 2024 22:28:15 +0100
+Message-ID: <20241112212814.237680-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] drm/msm/adreno: Setup SMMU aparture for
- per-process page table
-To: Rob Clark <robdclark@gmail.com>,
-        Bjorn Andersson
-	<bjorn.andersson@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Simona Vetter
-	<simona@ffwll.ch>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>
-References: <20241110-adreno-smmu-aparture-v2-0-9b1fb2ee41d4@oss.qualcomm.com>
- <20241110-adreno-smmu-aparture-v2-2-9b1fb2ee41d4@oss.qualcomm.com>
- <CAF6AEGvD95RyUXDBjgmoefgO6QyeRw3tpa7EG1MLFKdxcoZ-4g@mail.gmail.com>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <CAF6AEGvD95RyUXDBjgmoefgO6QyeRw3tpa7EG1MLFKdxcoZ-4g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: v8eAhhWpWJc6NMlkOr28Y0LJkskGPL9I
-X-Proofpoint-GUID: v8eAhhWpWJc6NMlkOr28Y0LJkskGPL9I
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 spamscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411120170
+X-Migadu-Flow: FLOW_OUT
 
-On 11/11/2024 8:38 PM, Rob Clark wrote:
-> On Sun, Nov 10, 2024 at 9:31 AM Bjorn Andersson
-> <bjorn.andersson@oss.qualcomm.com> wrote:
->>
->> Support for per-process page tables requires the SMMU aparture to be
->> setup such that the GPU can make updates with the SMMU. On some targets
->> this is done statically in firmware, on others it's expected to be
->> requested in runtime by the driver, through a SCM call.
->>
->> One place where configuration is expected to be done dynamically is the
->> QCS6490 rb3gen2.
->>
->> The downstream driver does this unconditioanlly on any A6xx and newer,
-> 
-> nit, s/unconditioanlly/unconditionally/
-> 
->> so follow suite and make the call.
->>
->> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> 
-> Reviewed-by: Rob Clark <robdclark@gmail.com>
-> 
-> 
->> ---
->>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 11 +++++++++++
->>  1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
->> index 076be0473eb5..75f5367e73ca 100644
->> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
->> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
->> @@ -572,8 +572,19 @@ struct drm_gem_object *adreno_fw_create_bo(struct msm_gpu *gpu,
->>
->>  int adreno_hw_init(struct msm_gpu *gpu)
->>  {
+Remove hard-coded strings by using the str_on_off() helper function.
 
-SCM calls into TZ can block for a very long time (seconds). It depends
-on concurrent activities from other drivers like crypto for eg:. So we
-should not do this in the gpu wake up path.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ fs/overlayfs/params.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Practically, gpu probe is the better place to do this.
-
--Akhil
-
->> +       struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
->> +       int ret;
->> +
->>         VERB("%s", gpu->name);
->>
->> +       if (adreno_gpu->info->family >= ADRENO_6XX_GEN1 &&
->> +           qcom_scm_set_gpu_smmu_aperture_is_available()) {
->> +               /* We currently always use context bank 0, so hard code this */
->> +               ret = qcom_scm_set_gpu_smmu_aperture(0);
->> +               if (ret)
->> +                       DRM_DEV_ERROR(gpu->dev->dev, "unable to set SMMU aperture: %d\n", ret);
->> +       }
->> +
->>         for (int i = 0; i < gpu->nr_rings; i++) {
->>                 struct msm_ringbuffer *ring = gpu->rb[i];
->>
->>
->> --
->> 2.45.2
->>
+diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
+index e42546c6c5df..1127721a5f7f 100644
+--- a/fs/overlayfs/params.c
++++ b/fs/overlayfs/params.c
+@@ -987,17 +987,16 @@ int ovl_show_options(struct seq_file *m, struct dentry *dentry)
+ 		seq_printf(m, ",redirect_dir=%s",
+ 			   ovl_redirect_mode(&ofs->config));
+ 	if (ofs->config.index != ovl_index_def)
+-		seq_printf(m, ",index=%s", ofs->config.index ? "on" : "off");
++		seq_printf(m, ",index=%s", str_on_off(ofs->config.index));
+ 	if (ofs->config.uuid != ovl_uuid_def())
+ 		seq_printf(m, ",uuid=%s", ovl_uuid_mode(&ofs->config));
+ 	if (ofs->config.nfs_export != ovl_nfs_export_def)
+-		seq_printf(m, ",nfs_export=%s", ofs->config.nfs_export ?
+-						"on" : "off");
++		seq_printf(m, ",nfs_export=%s",
++			   str_on_off(ofs->config.nfs_export));
+ 	if (ofs->config.xino != ovl_xino_def() && !ovl_same_fs(ofs))
+ 		seq_printf(m, ",xino=%s", ovl_xino_mode(&ofs->config));
+ 	if (ofs->config.metacopy != ovl_metacopy_def)
+-		seq_printf(m, ",metacopy=%s",
+-			   ofs->config.metacopy ? "on" : "off");
++		seq_printf(m, ",metacopy=%s", str_on_off(ofs->config.metacopy));
+ 	if (ofs->config.ovl_volatile)
+ 		seq_puts(m, ",volatile");
+ 	if (ofs->config.userxattr)
+-- 
+2.47.0
 
 
