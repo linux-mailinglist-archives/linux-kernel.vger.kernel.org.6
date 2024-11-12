@@ -1,234 +1,141 @@
-Return-Path: <linux-kernel+bounces-406351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1889C5DC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:54:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C27CB9C5DD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:56:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 753E7281B7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:54:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79F5A1F21914
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D917120D504;
-	Tue, 12 Nov 2024 16:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2882123FE;
+	Tue, 12 Nov 2024 16:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YsnWFga/"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YPpko2qb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4F8207A27;
-	Tue, 12 Nov 2024 16:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE3820EA35;
+	Tue, 12 Nov 2024 16:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731430349; cv=none; b=i4O+FBAVxySzYybQz7A5gT7+8Q+XgTJ6Jj97QiVvLQHOGIjGrowHR3d9gGZuG+EyrE7WA0Z+wBHEJY/9QvnnYLMw+5XSYCgwBO/iS/GNMrmkB+aJoIeGyBDbbWUlaq/hb8GyPue0l6PoUmVju4Jnbpkne5YztN65oNdnU6vnkNs=
+	t=1731430431; cv=none; b=GgmjNDFhSNMHcnVBRP4z26fwrgMPUgKoVe0OBmTysRpufAqedHiTXvXxlL7WOOAbNKjyFokol4SC9yOGig1LRNThNb5SvnXZsELkB9iX6/Ib0wmUKSO7taMJeBAe6so+/Hx7KkhxJhgkhIsj+Wlo/La34hTXJnlE4MML9aajrB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731430349; c=relaxed/simple;
-	bh=iI5szIIcqmZrkEhRC5Ov52XwoqJuRtw9HckXkdyExoc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WGl8WARucrWjBWckfBhT0LN5mMYZ990iHdGDqGaOuHAAPHMGha4obWnni+1qhsq1kn+7JVmjt4BIL0dt33fABH90suhRZGuVtU1V+1QC6HllVYUkjZCvO908rhy79J1vpzhnL1Af0K87MztwYdZq2JylvegO/JT5Om7EcZ5sjJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YsnWFga/; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACF9wNV032510;
-	Tue, 12 Nov 2024 16:52:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=5kGHGQW/UIKfyiFBOgAB7MFfaJ7VUgcXK/YC6y9G0
-	2k=; b=YsnWFga/XpiBK5kNJAAHPxl708odkqq+j+RFS/i1r/iJUevzNHsdKGAtC
-	JLZVkBT8aY3/+Aojjn9qIHCEIlN4QVKoC8UvOSOvNIg7z/Los1YyrAEbDExgKkXc
-	by74mVR9qzjmx1GqzERdp+q6dnfsAcLyffmJAwMYg//BAr9Jwc5XO50+y/HvesNr
-	hFWBxBboLDX/M4QpkLl+A//H8Y7jhc7AZ/LqyINib61lcE39a6cfEEX/SL8iEfmU
-	a/7QFp0mRB3hDofnCjsAPMqoOZTXMkblcXnqqHRhtBflxCXU81YWH9P9hP9Qk6al
-	ElQVSEO/Kcy47hFeO+IaunRl+qLog==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42v9dv0dv2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 16:52:17 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACGZ5Co008270;
-	Tue, 12 Nov 2024 16:52:16 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tjeykfns-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 16:52:16 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ACGqEPU56295774
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Nov 2024 16:52:15 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D620058055;
-	Tue, 12 Nov 2024 16:52:14 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2D4E75804E;
-	Tue, 12 Nov 2024 16:52:14 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 12 Nov 2024 16:52:14 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.ibm.com>
-To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        zohar@linux.ibm.com
-Cc: linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Subject: [PATCH v2] ima: Suspend PCR extends and log appends when rebooting
-Date: Tue, 12 Nov 2024 11:52:06 -0500
-Message-ID: <20241112165206.756351-1-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731430431; c=relaxed/simple;
+	bh=ODw1HrrVUx4XDdn+NA3ZiM07EdzE1pUd7SlEHngh474=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ld58Ybm/MAHieV267qpQSdC8nH1xbEtDduRvA4FZTQnDFY1AaRHLd0cMtHCSp2VZp4N4HPGVjd0drzkHsUceKTSJncr5+C1/7gcopjtmeQiOJDYf3z41gdpHOFMQKZqL6RrqEE6hiWuDxTcu2hdtcB4USdWPbGClW6hkp4AZGgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YPpko2qb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BF8C4CECD;
+	Tue, 12 Nov 2024 16:53:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731430430;
+	bh=ODw1HrrVUx4XDdn+NA3ZiM07EdzE1pUd7SlEHngh474=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YPpko2qbSkx3B/Yke7goINBZ5S4Gf38HLGrkUd18K0+NDW5TDc2VM8SjUAEi81sCE
+	 VWJR7e47xV/EaMi8Ut+FCVeSu/Se2MCM1NoE5AuqTmi3OjltsAR34taDLR9bK7barr
+	 x0PRbnboZ7eYnBg6m7u87Mtvx+l0Csa6qtyBnsc0=
+Date: Tue, 12 Nov 2024 17:53:47 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Daniel Wagner <dwagner@suse.de>
+Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org,
+	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
+	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
+	linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v3 4/8] blk-mp: introduce blk_mq_hctx_map_queues
+Message-ID: <2024111212-rash-suffocate-dc13@gregkh>
+References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
+ <20241112-refactor-blk-affinity-helpers-v3-4-573bfca0cbd8@kernel.org>
+ <2024111202-parish-prowess-78bc@gregkh>
+ <c8c671c1-267a-4aa7-a64b-51a461176ad3@flourine.local>
+ <2024111215-jury-unlighted-3953@gregkh>
+ <5967d256-037e-4ac8-a509-c6955b03db05@flourine.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wQXyKy6mVxh0lCDZ9il-AdL2qV_-7djN
-X-Proofpoint-ORIG-GUID: wQXyKy6mVxh0lCDZ9il-AdL2qV_-7djN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- lowpriorityscore=0 phishscore=0 bulkscore=0 malwarescore=0 adultscore=0
- priorityscore=1501 mlxscore=0 impostorscore=0 mlxlogscore=999 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411120133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5967d256-037e-4ac8-a509-c6955b03db05@flourine.local>
 
-To avoid the following types of error messages due to a failure by the TPM
-driver to use the TPM, suspend TPM PCR extensions and the appending of
-entries to the IMA log once IMA's reboot notifier has been called. This
-avoids trying to use the TPM after the TPM subsystem has been shut down.
+On Tue, Nov 12, 2024 at 05:15:31PM +0100, Daniel Wagner wrote:
+> On Tue, Nov 12, 2024 at 04:42:40PM +0100, Greg Kroah-Hartman wrote:
+> > On Tue, Nov 12, 2024 at 04:33:09PM +0100, Daniel Wagner wrote:
+> > > On Tue, Nov 12, 2024 at 02:58:43PM +0100, Greg Kroah-Hartman wrote:
+> > > > > +void blk_mq_hctx_map_queues(struct blk_mq_queue_map *qmap,
+> > > > > +			    struct device *dev, unsigned int offset)
+> > > > > +
+> > > > > +{
+> > > > > +	const struct cpumask *mask;
+> > > > > +	unsigned int queue, cpu;
+> > > > > +
+> > > > > +	if (!dev->bus->irq_get_affinity)
+> > > > > +		goto fallback;
+> > > > 
+> > > > I think this is better than hard-coding it, but are you sure that the
+> > > > bus will always be bound to the device here so that you have a valid
+> > > > bus-> pointer?
+> > > 
+> > > No, I just assumed the bus pointer is always valid. If it is possible to
+> > > have a device without a bus, than I'll better extend the condition to
+> > > 
+> > > 	if (!dev->bus || !dev->bus->irq_get_affinity)
+> > >         	goto fallback;
+> > 
+> > I don't know if it's possible as I don't know what codepaths are calling
+> > this, it was hard to unwind.  But you should check "just to be safe" :)
+> 
+> The main path to map_queues is via the probe functions. There are some
+> more paths like when updating a tagset after the number of queues but
+> that is all after the probe function.
+> 
+> nvme_probe
+>   nvme_alloc_admin_tag_set
+>     blk_mq_alloc_tag_set
+>        blk_mq_update_queue_map
+>           set->ops->map_queues
+> 	     blk_mq_htcx_map_queues
+>   nvme_alloc_io_tag_set
+>     blk_mq_alloc_tag_set
+>       blk_mq_update_queue_map
+>         set->ops->map_queues
+>           blk_mq_htcx_map_queues
+> 
+> virtscsi_probe, hisi_sas_v3_probe, ...
+>   scsi_add_host
+>     scsi_add_host_with_dma
+>       scsi_mq_setup_tags
+>          blk_mq_alloc_tag_set
+>            blk_mq_update_queue_map
+>              set->ops->map_queues
+>                blk_mq_htcx_map_queues
+> 
+> virtblk_probe
+>   blk_mq_alloc_tag_set
+>     blk_mq_update_queue_map
+>       set->ops->map_queues
+>         blk_mq_htcx_map_queues
+> 
+> Does this help?
 
-[111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
-[111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
+Ok, that seems fine.  Worst case, you crash and it's obvious that it
+needs to be checked in the future :)
 
-This error could be observed on a ppc64 machine running SuSE Linux where
-processes are still accessing files after devices have been shut down.
+thanks,
 
-Suspending the IMA log and PCR extensions shortly before reboot does not
-seem to open a significant measurement gap since neither TPM quoting would
-work for attestation nor that new log entries could be written to anywhere
-after devices have been shut down. However, there's a time window between
-the invocation of the reboot notifier and the shutdown of devices in
-kernel_restart_prepare() where __usermodehelper_disable() waits for all
-running_helpers to exit. During this time window IMA could now miss log
-entries even though attestation would still work. The reboot of the system
-shortly after may make this small gap insignificant.
-
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-
----
- v2:
-  - followed Mimi's suggestions
-
----
- security/integrity/ima/ima.h       |  1 +
- security/integrity/ima/ima_init.c  |  2 ++
- security/integrity/ima/ima_queue.c | 43 ++++++++++++++++++++++++++++++
- 3 files changed, 46 insertions(+)
-
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 3c323ca213d4..3f1a82b7cd71 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -278,6 +278,7 @@ unsigned long ima_get_binary_runtime_size(void);
- int ima_init_template(void);
- void ima_init_template_list(void);
- int __init ima_init_digests(void);
-+void __init ima_init_reboot_notifier(void);
- int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
- 			  void *lsm_data);
- 
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 4e208239a40e..a2f34f2d8ad7 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -152,6 +152,8 @@ int __init ima_init(void)
- 
- 	ima_init_key_queue();
- 
-+	ima_init_reboot_notifier();
-+
- 	ima_measure_critical_data("kernel_info", "kernel_version",
- 				  UTS_RELEASE, strlen(UTS_RELEASE), false,
- 				  NULL, 0);
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 532da87ce519..9b3c9587313f 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -16,6 +16,7 @@
-  */
- 
- #include <linux/rculist.h>
-+#include <linux/reboot.h>
- #include <linux/slab.h>
- #include "ima.h"
- 
-@@ -44,6 +45,12 @@ struct ima_h_table ima_htable = {
-  */
- static DEFINE_MUTEX(ima_extend_list_mutex);
- 
-+/*
-+ * Used internally by the kernel to suspend measurements.
-+ * Protected by ima_extend_list_mutex.
-+ */
-+static bool ima_measurements_suspended;
-+
- /* lookup up the digest value in the hash table, and return the entry */
- static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
- 						       int pcr)
-@@ -176,6 +183,17 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
- 		}
- 	}
- 
-+	/*
-+	 * ima_measurements_suspended will be set before the TPM subsystem has
-+	 * been shut down.
-+	 */
-+	if (ima_measurements_suspended) {
-+		audit_cause = "measurements_suspended";
-+		audit_info = 0;
-+		result = -ENODEV;
-+		goto out;
-+	}
-+
- 	result = ima_add_digest_entry(entry,
- 				      !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE));
- 	if (result < 0) {
-@@ -211,6 +229,31 @@ int ima_restore_measurement_entry(struct ima_template_entry *entry)
- 	return result;
- }
- 
-+static void ima_measurements_suspend(void)
-+{
-+	mutex_lock(&ima_extend_list_mutex);
-+	ima_measurements_suspended = true;
-+	mutex_unlock(&ima_extend_list_mutex);
-+}
-+
-+static int ima_reboot_notifier(struct notifier_block *nb,
-+			       unsigned long action,
-+			       void *data)
-+{
-+	ima_measurements_suspend();
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static struct notifier_block ima_reboot_nb = {
-+	.notifier_call = ima_reboot_notifier,
-+};
-+
-+void __init ima_init_reboot_notifier(void)
-+{
-+	register_reboot_notifier(&ima_reboot_nb);
-+}
-+
- int __init ima_init_digests(void)
- {
- 	u16 digest_size;
--- 
-2.43.0
-
+greg k-h
 
