@@ -1,129 +1,176 @@
-Return-Path: <linux-kernel+bounces-404966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B012C9C4B25
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:49:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB6A9C4B35
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:51:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E5A31F2231E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:49:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C04072814F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDB51FEFA8;
-	Tue, 12 Nov 2024 00:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8382010E2;
+	Tue, 12 Nov 2024 00:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EcMYPIg+"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LpE6pqMt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600F31FDF91
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8BA200CBB;
+	Tue, 12 Nov 2024 00:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731372541; cv=none; b=YcxuE4T56NAPYPDIkq0UfGuYvBkaVjaJfa5ciB7WPQd1E/XTQuuLl5w0+jG6eNyf8fLYmCzpRR+h0qzZKLb9oqIiy0iycoTaNCmU+8vx2ZAebSZldftsZqSkYpAnvYjysi/TrR75rdAulnJ6x2RETPAmbD4tod4RrRo9hZnR6+k=
+	t=1731372621; cv=none; b=hdn8yFVQl6L+SWYw5NoCl9hrUT29rcZKblOG0vFPI+la3xODpYqaS/F682fyt2I8twT5ZI6AgEmlKb8pfcIMt++kFKlcJ1flKBsdAeMO5ei6LR7CuL57M/XZQss0HsiS530THqMYL0nHQw/psvpUNZfD7M2+QMxur1VgEPtHinM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731372541; c=relaxed/simple;
-	bh=kYrzIGpGTAdZ+l/frIKwRSqMzvZbvhwJEEu4sv0ER6U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iOJX8JhoTxoEpdqBToZGut0uuaYgxoqhveObe68nzGV4Ah8T2wS6iGEabi1ULX1O0Fg4kNkfwoKTsa+DbX/atm49sBjsi39nAf2J5dSKgEJTin31SvkrAXaQwjyHYiRbJizWscwVirXigD/xjmi8XHZfs83PG6GGp4ucRhNvxZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EcMYPIg+; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7edbbc3a9f2so2916365a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:49:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731372540; x=1731977340; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V3d51sumdx2ObGqeplCpCcwVtIOlKxVMh1GOKKAkQVA=;
-        b=EcMYPIg+xSc7sZ97E2Y6WDQ0v/J+eSWuiVvDncScmx5/fqlTieQo+ayOjaCIstZHpL
-         vLiDy4IzwCmaCJhKlIqvtdMPs2c3Rq+JCmkB0VEz0y/k9Ed+2D1jqjzCXHNkTAnWfOh+
-         oovIV9E6raPuREhYznWvVsmzS8v6dN/F7ZID6aZYWafq9I54N52xSZLTR1VQnKM9JERd
-         MSG2vPO/c4gxyBPd9kgrEvtAKoRkotO2W4g+/KN3Nh5ktkrak5C207ayp2bxqVgtvhIF
-         4WiDAfPULUycGJOIniCX+n+yerKMVea8HCi8JNNPb8Ie0kB5Vc4Atls1kvNKpROzaxcN
-         HFqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731372540; x=1731977340;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V3d51sumdx2ObGqeplCpCcwVtIOlKxVMh1GOKKAkQVA=;
-        b=b6g2YFKHd+9MSI3xcNm2hdAeeoCNjCr+uV+s8NEg/sbEhmDXV6s6KPdRi14HQ6oGUo
-         0syM+k2jKkS5AD3DOgPC+dgI5fbaXVb4L5anjZHTJB8FUuggc0zalnVMpCKEF8xT+zhj
-         eKVVwoUqyOvnvkkaZkRzOdySUZ9FvkoUpNLxYD35zNsUIseiCoLUUFEYDfXsQwao83/r
-         Vn1KnIM6v39I3cUkPNn32nN7SA0KeC5tJkM751W4djkeMSALmoKAmbImfC+voWJ1Qs4u
-         UV1lRJ62ba2iMqUwXkj39ogYdJe+RW6Md8Kps+zZvxXMicM5LQySVbGrH+/YLcn4bf6f
-         0Urg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3noWs5kjPVPh92uqG4LgTSjFweoW1WEBFEFFilxLyUWD26GX/5HXxOn7X1TFzGfgQCKkcDAwlfHwIMXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEbq+4H6xoyaz7D5g0PsFtqupKdtCfYNZYF6mCSsOpxVsBF+lF
-	5oZG0S096nSqtYMzR8r1jojPem4lW8uoAy6MtN1TmFBJe9mS5OlVfhzkMA74CCDQrkzQJWv0fRL
-	Xnw==
-X-Google-Smtp-Source: AGHT+IHlyWiwcxXqbhz1fA8zTtz9hHIbjIUyo1Hj8c0N93O+44mC0qg7F+KmIsWLl9LBY634Ti3J8Ix3Z6M=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a63:943:0:b0:6d4:4eea:bd22 with SMTP id
- 41be03b00d2f7-7f430aa4f08mr49656a12.4.1731372539660; Mon, 11 Nov 2024
- 16:48:59 -0800 (PST)
-Date: Mon, 11 Nov 2024 16:48:58 -0800
-In-Reply-To: <20241111105430.575636482@infradead.org>
+	s=arc-20240116; t=1731372621; c=relaxed/simple;
+	bh=Vi+Na65JaduyR3qjgc/a6Jn7pkM6el+5yWfyriM5ab0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jE74KX04/SZqBwljTrjVKESM7yUXymPAguDzrlvZ8Ztg1PkcR3dGt0e1CDydZmsrpzr6thmNBhnbG5EuTircmBsgh8MvkmBP3okf7mfZVxnqiAXDbC1LUX5t+lCG9gcsksdB7cnLwk60cVOuMWx/hyen3t+GTRgYpS6x+t91HOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LpE6pqMt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABC9Eia019676;
+	Tue, 12 Nov 2024 00:49:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=NVIuvcN0ZMYMkb/pY/tVXi
+	ol5WGKrj//jazWF7CVjTo=; b=LpE6pqMtcsWWuW8kXAnApgaToXKmGeOp3sH4NL
+	vth4y/jw2OdaV3AwqZ8DAbxrcCb/xlPvvrVaNtcJVVDcp/r97rx/e2PHbzY5/IEb
+	MPgpyfHAv6mQ1tEl49G37Ppjomsdi5KMn1rwbr7diQE9GjzWBm2BUTN2XcIQVFIX
+	u632mz6h8WTS781KAtUIDk8CGQYrBZ4MLn0+1wKmus/8ogLEpUK1Gg7dfqGgSBa1
+	EDi+fvJMWbjMCsErISvzIU8sx2lQFm2PmxMidAwaZnmwuavvn17osebz6hmXlSuQ
+	kdavUhLngb+oczBlvV9IO3y7wcvoIJn337eb1KViz5JIR9hg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0465p9x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 00:49:58 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC0nvxO026742
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 00:49:57 GMT
+Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 11 Nov 2024 16:49:56 -0800
+From: Melody Olvera <quic_molvera@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?=
+	<nfraprado@collabora.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "Satya Durga
+ Srinivasu Prabhala" <quic_satyap@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Melody Olvera <quic_molvera@quicinc.com>
+Subject: [PATCH v2 0/6] dts: qcom: Introduce SM8750 device trees
+Date: Mon, 11 Nov 2024 16:49:30 -0800
+Message-ID: <20241112004936.2810509-1-quic_molvera@quicinc.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241111105430.575636482@infradead.org>
-Message-ID: <ZzKl-ldUQD9ldjWR@google.com>
-Subject: Re: [RFC][PATCH 0/8] module: Strict per-modname namespaces
-From: Sean Christopherson <seanjc@google.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com, 
-	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org, 
-	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	hch@infradead.org, gregkh@linuxfoundation.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gTllFbuONkCx3yNajB8rNRPDcyIhDNIs
+X-Proofpoint-ORIG-GUID: gTllFbuONkCx3yNajB8rNRPDcyIhDNIs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 priorityscore=1501 spamscore=0 suspectscore=0
+ mlxlogscore=980 impostorscore=0 adultscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411120005
 
-On Mon, Nov 11, 2024, Peter Zijlstra wrote:
-> Hi!
-> 
-> Implement a means for exports to be available only to an explicit list of named
-> modules. By explicitly limiting the usage of certain exports, the abuse
-> potential/risk is greatly reduced.
-> 
-> The first three 'patches' clean up the existing export namespace code along the
-> same lines of 33def8498fdd ("treewide: Convert macro and uses of __section(foo)
-> to __section("foo")") and for the same reason, it is not desired for the
-> namespace argument to be a macro expansion itself.
-> 
-> In fact, the second patch is really only a script, because sending the output
-> to the list is a giant waste of bandwidth. Whoever eventually commits this to a
-> git tree should squash these first three patches.
-> 
-> The remainder of the patches introduce the special "MODULE_<modname-list>"
-> namespace, which shall be forbidden from being explicitly imported. A module
-> that matches the simple modname-list will get an implicit import.
-> 
-> Lightly tested with something like:
-> 
-> git grep -l EXPORT_SYMBOL arch/x86/kvm/ | while read file;
-> do
->   sed -i -e 's/EXPORT_SYMBOL_GPL(\(.[^)]*\))/EXPORT_SYMBOL_GPL_FOR(\1, "kvm,kvm-intel,kvm-amd")/g' $file;
-> done
+This series adds the initial device tree support for the SM8750 SoCs
+needed to boot to shell. This specifically adds support for clocks,
+pinctrl, rpmhpd, regulators, interconnects, and SoC and board
+compatibles.
 
-Heh, darn modules.  This will compile just fine, but if the module contains a
-dash, loading the module will fail because scripts/Makefile.lib replaces the dash
-with an underscore the build name.  E.g. "kvm-intel" at compile time generates
-kvm-intel.ko, but the actual name of the module as seen by the kernel is kvm_intel.
+The Qualcomm Technologies, Inc. SM8750 SoC is the latest in the line of
+consumer mobile device SoCs. See more at:
+https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/images/company/news-media/media-center/press-kits/snapdragon-summit-2024/day-1/documents/Snapdragon8EliteProductBrief.pdf
 
---
-# These flags are needed for modversions and compiling, so we define them here
-# $(modname_flags) defines KBUILD_MODNAME as the name of the module it will
-# end up in (or would, if it gets compiled in)
-name-fix-token = $(subst $(comma),_,$(subst -,_,$1))  <====================
-name-fix = $(call stringify,$(call name-fix-token,$1))
-basename_flags = -DKBUILD_BASENAME=$(call name-fix,$(basetarget))
-modname_flags  = -DKBUILD_MODNAME=$(call name-fix,$(modname)) \
-		 -D__KBUILD_MODNAME=kmod_$(call name-fix-token,$(modname))
-modfile_flags  = -DKBUILD_MODFILE=$(call stringify,$(modfile))
---
+Dependencies:
+clks: https://lore.kernel.org/all/20241112002807.2804021-1-quic_molvera@quicinc.com/
+interconnects: https://lore.kernel.org/all/20241112003017.2805670-1-quic_molvera@quicinc.com/
+pinctrl: https://lore.kernel.org/all/20241112002843.2804490-1-quic_molvera@quicinc.com/
+regulators: https://lore.kernel.org/all/20241112002645.2803506-1-quic_molvera@quicinc.com/
+power domains: https://lore.kernel.org/all/20241112002444.2802092-1-quic_molvera@quicinc.com/
+misc bindings:
+- https://lore.kernel.org/all/20241112003544.2807368-1-quic_molvera@quicinc.com/
+- https://lore.kernel.org/all/20241112003217.2806556-1-quic_molvera@quicinc.com/
+- https://lore.kernel.org/all/20241021230500.2632527-1-quic_molvera@quicinc.com/
+- https://lore.kernel.org/all/20241021230439.2632480-1-quic_molvera@quicinc.com/
+applied bindings:
+- https://lore.kernel.org/all/20241021230427.2632466-1-quic_molvera@quicinc.com/
+
+Changes in V2:
+- split dts and dtsi patches into separate patches
+- changed eusb-repeater to phy
+- removed empty chosen node
+- lowercased phandles in dtsi
+- added system-wide domain idle state
+- added leading zeroes to applicable regs
+- corrected gpio ranges
+- removed some unnecessary comments
+- updated timer size cells
+- separated pmics & thermal zones into their own file
+- added chassis type to board files
+- added reserved tlmm nodes to board files
+- corrected regulator-0 supplies in board files
+
+Jishnu Prakash (1):
+  arm64: dts: qcom: Add pmd8028 and pmih0108 PMICs
+
+Melody Olvera (5):
+  dt-bindings: arm: qcom: Document sm8750 SoC and boards
+  arm64: dts: qcom: Add base SM8750 dtsi
+  arm64: dts: qcom: sm8750: Add pmic dtsi
+  arm64: dts: qcom: Add SM8750 MTP and QRD boards
+  arm64: defconfig: Enable SM8750 SoC base configs
+
+ .../devicetree/bindings/arm/qcom.yaml         |    7 +
+ arch/arm64/boot/dts/qcom/Makefile             |    2 +
+ arch/arm64/boot/dts/qcom/pmd8028.dtsi         |   56 +
+ arch/arm64/boot/dts/qcom/pmih0108.dtsi        |   62 +
+ arch/arm64/boot/dts/qcom/sm8750-mtp.dts       |  794 +++++
+ arch/arm64/boot/dts/qcom/sm8750-pmics.dtsi    |  188 ++
+ arch/arm64/boot/dts/qcom/sm8750-qrd.dts       |  792 +++++
+ arch/arm64/boot/dts/qcom/sm8750.dtsi          | 2917 +++++++++++++++++
+ arch/arm64/configs/defconfig                  |    4 +
+ 9 files changed, 4822 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/pmd8028.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/pmih0108.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sm8750-pmics.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/sm8750-qrd.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sm8750.dtsi
+
+
+base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+-- 
+2.46.1
+
 
