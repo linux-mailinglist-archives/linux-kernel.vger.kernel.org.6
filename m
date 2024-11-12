@@ -1,90 +1,176 @@
-Return-Path: <linux-kernel+bounces-404990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88BCB9C4B70
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:01:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 234959C4B7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F3371F22CE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:01:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BE82B2CF2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7B1204930;
-	Tue, 12 Nov 2024 01:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C389204938;
+	Tue, 12 Nov 2024 01:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pf6cRdZm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwGY6DjE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E582D204F69;
-	Tue, 12 Nov 2024 01:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6E52AF06;
+	Tue, 12 Nov 2024 01:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731373226; cv=none; b=fKHYBtNr47vf7jfozdruyr4ONvnqSm7FVjslxK4UH+U1dOli/tzzQMMvViZBJWdF3ouy0PM27JoCnDN4LeI6DNUkkLj6GEVvOAZ4GpxzaxPZz5ajiIYBrPOERlPf0fX/URnCuJSKspp6FCVSTF+KElEP4giFl9ezlBSCpLpXTW4=
+	t=1731373318; cv=none; b=Na/a+QmVXTO3PfMDAZhKW8Z3lPwc4YolSEPocZVzLNb15pzlSaV9DBJ3Q1fMAxUtYeSuRR5adC0BeZfC109fkIkkHmwlnzPVkWF+camOgYxS7rT3UTm7Y5eDQRgG/kGNA+vmwS6E7FODpnXG030er4hZjei1jIZL5RHj1/T1Rb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731373226; c=relaxed/simple;
-	bh=XDi78O8LiEB1ZSRs5hsMzJJBiHT6fO/M3EM+IrAkdKM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cGX2BqCn8vccfvHIGZo1Mya5BMoFUxfcQTKk7l0DUknltjJAq1skzmDjyF+l6557EM8tLO7z11fzdi3nP2MUDuzfMw6Ns7LsMhc4yJbfvA1ZLZ0gv9lZpBPkip8DqzEfaPC8DT5Wxa6IsQgJo0W8aE5uXZ9Krkj8aOD4Xmlr0dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pf6cRdZm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6362DC4CED5;
-	Tue, 12 Nov 2024 01:00:25 +0000 (UTC)
+	s=arc-20240116; t=1731373318; c=relaxed/simple;
+	bh=k80a+SD4Pue7a8iqtHCLrHC9JuTq32V81o15OKln5Io=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eo55S6MR/v0dgfh5k0KeAMpSiFrQrvFqrg71oOoFmU6v57jxCh2/KtYECSqDkGxCxdwm1JVoYkKKcw64Eg2MLQw+wI4D5A7GYuC9OsWkisRJVtCsOJFaST5gfRQapnGETp3rbflu1ElJni1a737uGjb2PsyGa7RKGilQLT51uD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwGY6DjE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDA23C4CECF;
+	Tue, 12 Nov 2024 01:01:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731373225;
-	bh=XDi78O8LiEB1ZSRs5hsMzJJBiHT6fO/M3EM+IrAkdKM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pf6cRdZmhk9zhPBxud3yJwYkNUQD5R7YP0y4CyHGnfmcy7jsQPs/x9Biz8QUR4edj
-	 +vgdYqYn34aBeH/TSUQtgJpsGAaZRlC1BPZSJKu/E+hUt7n1bL6gQCPGsFuSdyAM1W
-	 sQpJ925a5xD7WqRlGvwx3SyUAZ9t4gzueOBK5+E+JbhlS1A9Z9RSwvPOAmq1z47RSn
-	 6TtJdKgqdBzX9Xu83EAdcz+f3gLdBGUEWeBenjWS6LIailVivLn6n/zYUjHUmL4Otp
-	 0388Lxt5tKhoYkjwk0hBZp0NuBQDb8SBONkbSCatVub36YgP7TYVTvg4uaG+SgrqvQ
-	 NryKJGaXBXZAA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE983809A80;
-	Tue, 12 Nov 2024 01:00:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1731373317;
+	bh=k80a+SD4Pue7a8iqtHCLrHC9JuTq32V81o15OKln5Io=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hwGY6DjEaUcuyCloXySi6ub9344kqsHf43g6l5Kl9rHB77QnV5/1zbsGSI1QU26+K
+	 nuNbySMenT4Khhx58ELYoqw9EQ9V8Tp3LVMCRuJj2GiKVFcorzjaIUMJJD8CajunfY
+	 mdwvytRjx6mafLXqHuikx4sp0dKnKzCHLBdRjRSJ0DyC5WS1v3WirnjPZaEVvj3dcT
+	 gn5/8zRCeSbFqsUZQbwgxh+4eCPG05JWcH79PVJcuE7HGBtdpXHHz9pnfzE7PTKLJR
+	 Ra4rxMkdA85NFV2ZRPDnSvlzZ2RIb9sYnc3f3gJzyB2YyE7or6bOYzLNy/a1kDcDT6
+	 j8j3I4P32oV3Q==
+Date: Mon, 11 Nov 2024 17:01:57 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 13/16] iomap: make buffered writes work with RWF_UNCACHED
+Message-ID: <20241112010157.GE9421@frogsfrogsfrogs>
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-14-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] net: phy: aquantia: Add mdix config and reporting
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173137323550.33228.294651309025242322.git-patchwork-notify@kernel.org>
-Date: Tue, 12 Nov 2024 01:00:35 +0000
-References: <20241106222057.3965379-1-paul.davey@alliedtelesis.co.nz>
-In-Reply-To: <20241106222057.3965379-1-paul.davey@alliedtelesis.co.nz>
-To: Paul Davey <paul.davey@alliedtelesis.co.nz>
-Cc: andrew@lunn.ch, daniel@makrotopia.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111234842.2024180-14-axboe@kernel.dk>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu,  7 Nov 2024 11:20:57 +1300 you wrote:
-> Add support for configuring MDI-X state of PHY.
-> Add reporting of resolved MDI-X state in status information.
+On Mon, Nov 11, 2024 at 04:37:40PM -0700, Jens Axboe wrote:
+> Add iomap buffered write support for RWF_UNCACHED. If RWF_UNCACHED is
+> set for a write, mark the folios being written with drop_writeback. Then
+> writeback completion will drop the pages. The write_iter handler simply
+> kicks off writeback for the pages, and writeback completion will take
+> care of the rest.
 > 
-> Tested on AQR113C.
+> This still needs the user of the iomap buffered write helpers to call
+> iocb_uncached_write() upon successful issue of the writes.
 > 
-> Signed-off-by: Paul Davey <paul.davey@alliedtelesis.co.nz>
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/iomap/buffered-io.c | 15 +++++++++++++--
+>  include/linux/iomap.h  |  4 +++-
+>  2 files changed, 16 insertions(+), 3 deletions(-)
 > 
-> [...]
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index ef0b68bccbb6..2f2a5db04a68 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -603,6 +603,8 @@ struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
+>  
+>  	if (iter->flags & IOMAP_NOWAIT)
+>  		fgp |= FGP_NOWAIT;
+> +	if (iter->flags & IOMAP_UNCACHED)
+> +		fgp |= FGP_UNCACHED;
+>  	fgp |= fgf_set_order(len);
+>  
+>  	return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
+> @@ -1023,8 +1025,9 @@ ssize_t
+>  iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
+>  		const struct iomap_ops *ops, void *private)
+>  {
+> +	struct address_space *mapping = iocb->ki_filp->f_mapping;
+>  	struct iomap_iter iter = {
+> -		.inode		= iocb->ki_filp->f_mapping->host,
+> +		.inode		= mapping->host,
+>  		.pos		= iocb->ki_pos,
+>  		.len		= iov_iter_count(i),
+>  		.flags		= IOMAP_WRITE,
+> @@ -1034,9 +1037,14 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
+>  
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+>  		iter.flags |= IOMAP_NOWAIT;
+> +	if (iocb->ki_flags & IOCB_UNCACHED)
+> +		iter.flags |= IOMAP_UNCACHED;
+>  
+> -	while ((ret = iomap_iter(&iter, ops)) > 0)
+> +	while ((ret = iomap_iter(&iter, ops)) > 0) {
+> +		if (iocb->ki_flags & IOCB_UNCACHED)
+> +			iter.iomap.flags |= IOMAP_F_UNCACHED;
+>  		iter.processed = iomap_write_iter(&iter, i);
+> +	}
+>  
+>  	if (unlikely(iter.pos == iocb->ki_pos))
+>  		return ret;
+> @@ -1770,6 +1778,9 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
+>  	size_t poff = offset_in_folio(folio, pos);
+>  	int error;
+>  
+> +	if (folio_test_uncached(folio))
+> +		wpc->iomap.flags |= IOMAP_F_UNCACHED;
+> +
+>  	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos)) {
+>  new_ioend:
+>  		error = iomap_submit_ioend(wpc, 0);
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index f61407e3b121..2efc72df19a2 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -64,6 +64,7 @@ struct vm_fault;
+>  #define IOMAP_F_BUFFER_HEAD	0
+>  #endif /* CONFIG_BUFFER_HEAD */
+>  #define IOMAP_F_XATTR		(1U << 5)
+> +#define IOMAP_F_UNCACHED	(1U << 6)
 
-Here is the summary with links:
-  - [net-next,v2] net: phy: aquantia: Add mdix config and reporting
-    https://git.kernel.org/netdev/net-next/c/bc3d60bd4c91
+This value ^^^ is set only by the core iomap code, right?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+>  /*
+>   * Flags set by the core iomap code during operations:
 
+...in which case it should be set down here.  It probably ought to have
+a description of what it does, too:
 
+"IOMAP_F_UNCACHED is set to indicate that writes to the page cache (and
+hence writeback) will result in folios being evicted as soon as the
+updated bytes are written back to the storage."
+
+If the writeback fails, does that mean that the dirty data will /not/ be
+retained in the page cache?  IIRC we finally got to the point where the
+major filesystems leave pagecache alone after writeback EIO.
+
+The rest of the mechanics looks nifty to me; there's plenty of places
+where this could be useful to me personally. :)
+
+--D
+
+> @@ -173,8 +174,9 @@ struct iomap_folio_ops {
+>  #define IOMAP_NOWAIT		(1 << 5) /* do not block */
+>  #define IOMAP_OVERWRITE_ONLY	(1 << 6) /* only pure overwrites allowed */
+>  #define IOMAP_UNSHARE		(1 << 7) /* unshare_file_range */
+> +#define IOMAP_UNCACHED		(1 << 8) /* uncached IO */
+>  #ifdef CONFIG_FS_DAX
+> -#define IOMAP_DAX		(1 << 8) /* DAX mapping */
+> +#define IOMAP_DAX		(1 << 9) /* DAX mapping */
+>  #else
+>  #define IOMAP_DAX		0
+>  #endif /* CONFIG_FS_DAX */
+> -- 
+> 2.45.2
+> 
+> 
 
