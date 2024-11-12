@@ -1,115 +1,129 @@
-Return-Path: <linux-kernel+bounces-406179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F0F59C5BB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:21:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A919C5BBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:22:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 559E81F22764
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:21:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB13A1F222CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596302003CA;
-	Tue, 12 Nov 2024 15:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D919F200B86;
+	Tue, 12 Nov 2024 15:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LP3eNWXu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="tX3qfyS9"
+Received: from pv50p00im-ztdg10011201.me.com (pv50p00im-ztdg10011201.me.com [17.58.6.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E6C2003C9
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864522003D0
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731424902; cv=none; b=I4GpB/aQ53FT9bWlgNoFalEav7L6f9glVriyAt4jDAv5MFiFy61lwHTry9IDmPblyNGAOG/82A7/P2BvAEkGCFK+8JbuieM6Rxdsf9m3PHLUPc0Mk/LIV5Cr2WbnhLVIqbHQBZAqDiVhAWqzOMn+UK0sCl8etX55x3RnXZL47Sw=
+	t=1731424938; cv=none; b=QM7fraec+pgltEfyrkdviARFfa8ruJl5HOOI6MCJMd0krML68DWHm5FXtKJjTzcxWcCdJtwBXEOY6jknATMuWXym30zKxsyK1D9Iib5OgD5lEyGlFxVTbABrRg4eV2Su0OjNA/AHUtAK+TIxvVJtQfsKrqGiBL1cUZ96BsNpM3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731424902; c=relaxed/simple;
-	bh=er4PJTicIYffSe6+e9Td7WCRIaSF+o4AElRrQEg4mLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u+/TUMxAwou8IhcB1kc72Ez30pEPEhCbAbtvEE4fq72vjH/nbG9D4rKAtfmWoy2E3kPnYhkJDSybNwNb4quTnNH72+HteMYLRC+71D5Hv+ZQsIE0PWcQ6xYjYpSjIBVxYLKo4akpHbKH0JaFfmMrHo78JCKKitE3oGTqTaw/Zys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LP3eNWXu; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731424901; x=1762960901;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=er4PJTicIYffSe6+e9Td7WCRIaSF+o4AElRrQEg4mLM=;
-  b=LP3eNWXu0aoN6WpF+Yy2ga4djKKhbgjbExQvetA+3sMm8JXA/8nQpsVs
-   PIe0ELLgMXIBk42m4tIdJ1veAVNDA6VIFKHr/kEoCPO6NJrQnXfaGRvbW
-   pwqFAQJX12f5VLx0EHHN1sO8r06cJBYczEJfw7Rjy2Kswhw++5ZO9Qc25
-   O2Cc7XJQ0WpMoEYkoenJs6xmZL6nf1Aorfx1qBh10Nc2BTWKsUvXwabm4
-   5dS5lsiz4Iq2GfsFVNbMjvh3Ax414/xZbQGRbFNaKT35HCL+fhuO4UWdb
-   jZKV7Kkdvm0YyJjkk4xgKZD7jtMJMNQUOd6Yme4bAb57XnaYbeBT3aKMn
-   w==;
-X-CSE-ConnectionGUID: Jh/B4WH5SqKzwvOHVtsSeQ==
-X-CSE-MsgGUID: sbF0dXP6Qy6tWqhgyYKN8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="41874039"
-X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
-   d="scan'208";a="41874039"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 07:21:41 -0800
-X-CSE-ConnectionGUID: wMtIHsZ7SGOTjFcfGERlrQ==
-X-CSE-MsgGUID: QK23n+MwSyKsgCRvXwTaBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
-   d="scan'208";a="87096546"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 07:21:38 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tAshz-0000000E2YE-2izT;
-	Tue, 12 Nov 2024 17:21:35 +0200
-Date: Tue, 12 Nov 2024 17:21:35 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Petr Mladek <pmladek@suse.com>, John Ogness <john.ogness@linutronix.de>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Steven Rostedt <rostedt@goodmis.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] printk: add dummy printk_force_console_enter/exit
- helpers
-Message-ID: <ZzNyf6nA8dh_joYd@smile.fi.intel.com>
-References: <20241112142748.673772-1-arnd@kernel.org>
- <20241112142939.724093-1-arnd@kernel.org>
+	s=arc-20240116; t=1731424938; c=relaxed/simple;
+	bh=DjwzB9wR3hCHJ/jmCvydX7qHDWYSNTkF/cIgh1KFGqM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=k8K3XILj3u7/gYO394s9kuRJazOjKRP6EYO9BwMsudp5D/PmOaVH8RJQekhodi2iSuF4rTyFGnE42bumKxl07wU1R3oXJR6vz+afydTaH9VxE9R0L7tskwyjIY0be5TvIrge8pI77HC7lrJMmIUjPWQQZePA2dyxqz6JUp+OO4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=tX3qfyS9; arc=none smtp.client-ip=17.58.6.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1731424936;
+	bh=Zay688FL54iPGlwqJao+cjW8sbujCzTCJ0i2J2TYacc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:
+	 x-icloud-hme;
+	b=tX3qfyS90RxkCulXGU6UCVR8SJFbz8VMalN2Is4tgl9y+B/7hDXRSYLIOYnGmcFHG
+	 K/bDLn9bQBkEegj98H6qcJlIHfyLH2mM8/r/JokGKwypViCO2plFThvDqGkrKU5Pnj
+	 /eyZ0AZAIeN50ys4R0qC6e5rF4aeLXmeNgFdRfSZXyqREZmxG9TVqJmu9156dTmhnr
+	 vw2hhlXx0LEMCkWl/BnORx4SsZq8xU/3y1evJ9aPShLoZXz4qOAaUoGWTf7dIlAtQc
+	 thhW0GWOYDbEQ+/HidcnK2n3yo6PFcn171xlbcgujR/MWdTjPy/AT1b0zD4Illx+p/
+	 YEJojQMlB5bsg==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011201.me.com (Postfix) with ESMTPSA id 67843680367;
+	Tue, 12 Nov 2024 15:22:08 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Tue, 12 Nov 2024 23:21:45 +0800
+Subject: [PATCH v2] PM: domains: Fix return value of API
+ dev_pm_get_subsys_data()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112142939.724093-1-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241112-fix_dev_pm_get_subsys_data-v2-1-3774257ede73@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAIhyM2cC/42NTQqDMBBGr1KybspkUCpd9R5FgklGnYU/zWioi
+ Hdv6gm6fI+P9+1KKDKJelx2FSmx8DRmwOtF+b4ZO9IcMisELAwY0C1/bKBk58F2tFhZnWxiQ7M
+ 0Got75RwCtIFUDsyR8vqMv+rMPcsyxe38SuZn/8omo41GLIGqFqA07vle2fPob34aVH0cxxfJE
+ CzJxgAAAA==
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+ Len Brown <len.brown@intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Proofpoint-ORIG-GUID: 28ktdltU_XQhkPVWQvv7A6hFiEgDzoPM
+X-Proofpoint-GUID: 28ktdltU_XQhkPVWQvv7A6hFiEgDzoPM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-12_05,2024-11-12_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 phishscore=0
+ clxscore=1015 suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2411120123
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-On Tue, Nov 12, 2024 at 03:29:15PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The newly added interface is broken when PRINTK is disabled:
-> 
-> drivers/tty/sysrq.c: In function '__handle_sysrq':
-> drivers/tty/sysrq.c:601:9: error: implicit declaration of function 'printk_force_console_enter' [-Wimplicit-function-declaration]
->   601 |         printk_force_console_enter();
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/tty/sysrq.c:611:25: error: implicit declaration of function 'printk_force_console_exit' [-Wimplicit-function-declaration]
->   611 |                         printk_force_console_exit();
->       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Add empty stub functions for both.
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-Does it compile with `make W=1` without warnings/errors? If so, I am okay with
-the approach.
+dev_pm_get_subsys_data() has below 2 issues under condition
+(@dev->power.subsys_data != NULL):
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+- it will do unnecessary kzalloc() and kfree().
+- it will return -ENOMEM if the kzalloc() fails, that is wrong
+  it should return 0 since the kzalloc() is not needed.
 
+Fix by not doing kzalloc() and returning 0 for the condition.
+
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Changes in v2:
+- Remove both stable and fix tag
+- Correct commit message
+- Link to v1: https://lore.kernel.org/r/20241010-fix_dev_pm_get_subsys_data-v1-1-2250e8f0051b@quicinc.com
+---
+ drivers/base/power/common.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+index cca2fd0a1aed..a3cec013092c 100644
+--- a/drivers/base/power/common.c
++++ b/drivers/base/power/common.c
+@@ -26,6 +26,14 @@ int dev_pm_get_subsys_data(struct device *dev)
+ {
+ 	struct pm_subsys_data *psd;
+ 
++	spin_lock_irq(&dev->power.lock);
++	if (dev->power.subsys_data) {
++		dev->power.subsys_data->refcount++;
++		spin_unlock_irq(&dev->power.lock);
++		return 0;
++	}
++	spin_unlock_irq(&dev->power.lock);
++
+ 	psd = kzalloc(sizeof(*psd), GFP_KERNEL);
+ 	if (!psd)
+ 		return -ENOMEM;
+
+---
+base-commit: 9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
+change-id: 20241010-fix_dev_pm_get_subsys_data-2478bb200fde
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
