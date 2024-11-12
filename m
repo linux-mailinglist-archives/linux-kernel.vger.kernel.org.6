@@ -1,223 +1,184 @@
-Return-Path: <linux-kernel+bounces-406708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0579C6282
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:26:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70DB89C6397
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:40:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1103C1F260F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:26:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8277BB8182B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C00E219E2F;
-	Tue, 12 Nov 2024 20:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A273F219CAB;
+	Tue, 12 Nov 2024 20:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hm0ggcuY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="qBC7WSoW"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6DA219CB2;
-	Tue, 12 Nov 2024 20:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30352219CA4
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 20:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731443165; cv=none; b=dkOUB20qmgfosqeYbfQi1mgiAfxnFkBR3QyCARvBr5OWoG/U0sbhg88QHVVaRcR+6GE3lvSGfD0CxSeazvk4yxRrdvNDApKrtD467HZ7u11kgIeJi7OjJi3LsCWLafzwskkSvZrew+aHzA5aZ3d2nIC7oCDzr1jVeya5vatLwCo=
+	t=1731443159; cv=none; b=cmdp7Y6Lf+SV0LevE3CfbBQBknhEk32kz7IsdMUPzV1hF8a3Qqab16iwDq29+WFwjp7naz8GGm1AGXSyQmiiXWWS9bZBHNDAjeiE8/5qiuDf5Op8oLLQxjL2Ih0HvYr1VisPW92jdZk8szH9mGpwDL9nAk/1XyY1S0A7krYfnUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731443165; c=relaxed/simple;
-	bh=Qcum8ubMRfMH0pNAD4awTm1xz9Aql0UVEtVhsoAChAA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fBL+6ikG0XX/2xbcBl0EMI83YVh4ZBEyJ4D8XNLSmSDLYZtzalXLPX+EPeoXbJcCixVeIChpdDM+zUQcoQ3Y1pkwAsbMyzX+QykkxYibtM3n1JWV5/M/5IXEGhx/WRmWKCGcj+1PnOt0EiCqwljBV2prKOIbC9ecO/yMskypznw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hm0ggcuY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC98EC4CEDC;
-	Tue, 12 Nov 2024 20:26:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731443164;
-	bh=Qcum8ubMRfMH0pNAD4awTm1xz9Aql0UVEtVhsoAChAA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Hm0ggcuYlNUiIp9CbUr+YPxnNSMRhz0e+TTYH8gJBQIauhGSxC4ZefsUdoMreszHv
-	 MfjOWDKCin5gSVwTgo3nvFRJXhSLe8wHIqkPnM1ph7elEcTEpMxUDo6FIW6ft4KM2q
-	 Gs2ey3lwLwygEC3lflIWorsAuo69u1xeT6lj514pf78WC4CtO3w5JChOfhqcb6JLD6
-	 v9Dsv5UJknEllMOIPrrKewKIdF24kH6GYgInusc+l//Db1+v1fMwHYfWwmqpGRczB4
-	 xYC5Kcpk8lc11bu54p7XEhFV42EinBx/NcVscbkGqfBzkD8Ko+xHjgOPRgN4CVyezf
-	 pcZrHdGwNZEGQ==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5ebc349204cso2798717eaf.3;
-        Tue, 12 Nov 2024 12:26:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCULS5HWvl8nz8aX3VXeAWBVTSa4rCjWmsFLNQ1G9KlQ2xdSblsFi+n5uBClop6QO2xFa688URTm/ECEJYrc@vger.kernel.org, AJvYcCUMW5g+uXV1SddproIkeDkeYq4tyNabrhYjML4F36ujAc4+FUd1cSWAT8++USAvR4UrQ+dJZvEXAlxlO5rzusioSXZEiA==@vger.kernel.org, AJvYcCXP8+TPRcLIq56eaZsqeWRGEORfGV3ZZZmcQ5hU6USAXbTZ6LXwO9kTOiIhgK4HGciIRWoH+gwTUTJw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvQc3i2VB/2ZTULcMc3sfj+R1Q1DsU/eEtKzUOTH8bMZVL1jbp
-	qIaDhCgQhytc0QdVuSPnbuetW+HQOEBhtfMacDmHJMGMJbAMP1v3FF0D94Sx1BH9Pqk1X8r4L0g
-	KaZPKBKyawWOxnrSuvBbGfkWZ5KA=
-X-Google-Smtp-Source: AGHT+IGueUF6YygHSoCLSttKQ5J82xFSJpZu1XOHp1U7sZTwXBi/RujuKdVKS0T4WDHw3EaUOQdo0MG0CaeY9cW9fsA=
-X-Received: by 2002:a05:6820:1f08:b0:5eb:85ee:2cbd with SMTP id
- 006d021491bc7-5ee57c60694mr12148398eaf.6.1731443164001; Tue, 12 Nov 2024
- 12:26:04 -0800 (PST)
+	s=arc-20240116; t=1731443159; c=relaxed/simple;
+	bh=MdTfH+E7fr989/AY5JdLMHr+uSfW5aVjwietaX7i8EU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S+wAdvwrUqaDnTbLREIeNzYDQlcE7+xnTO2Bg+kmko9z5K57JYFFc8L8NQfpXcSP6oQBEZNBx/H/VTpXCglSxr/pEMapk4NCb15EBg8pMR/3MX5UwYmS1YisjXKxOTzTWwibSA5rRtHlsXQ55Ca+I36hrEBijFym8wZUaPxf770=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=qBC7WSoW; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b18da94ba9so3278885a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:25:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1731443156; x=1732047956; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T4Y8BC5cx/asz6XOBwxn/nus2x9aqEp8mBzAEquRJAk=;
+        b=qBC7WSoWHTVCN4B7KQMvlvFLV36a5ADKu/2jUIPQqTUZO/awjyOL3+9/X92f+iresV
+         g2OGvP9eO2voL6Y5d9mcVrW4SIArMfqHxKrzgJpvztIOfkSEOBq+HDyjOCa2FnT0srC8
+         6UMLmdn3fzePoycH3j2zrnEpDkznhaz4EIQFXCBltWHZFmFCDBYdsFounb34+q3L6ZGU
+         8Yb3IaeXmjqA30JFQ/W/SscGlmQ7cRnb6Jn3S+W0qBl3zWOuDkXewsVBgWPKexA6BZQq
+         5ua4DKWl5rKjzbxzSyuDVuIZq+j0yziswF6XYSVNBT5dGKx0G0OcVFziTATr2D+97YZu
+         Lm7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731443156; x=1732047956;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T4Y8BC5cx/asz6XOBwxn/nus2x9aqEp8mBzAEquRJAk=;
+        b=WSgKuLUXz9Ujq4+0LlD6uajrv9HFk80138iCug+d2Nn4T1MHdmeH6P3E1S6K9/nlDW
+         Xvye8cr3eJ9L2SYZ8kZWgRa19BUMWUW8N7aPqYBalUkkC3jpbQHpu0gQd1RBq/8et9jY
+         0bFjzEeuVDYf+yh/oOEyVnYOasmshUS08trNcGXBpQvM3mLqAZHIdlQqTwB46hmJ/01T
+         KjaRYNI54suTDHk5DxTKioFfqyHTZ3vJgdcTmHTlZ43bnZ+wZqMV4zzl3lWaKy/9xMyI
+         kYGmqreAXhmkAeGNmWrXTwwwB6ng+Ym/G3yjIqxo/h9f2tQy1o8ArZFXYNm1wwBZTX7R
+         1s/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWvBfABGzFHHozq2/kj6wd9wdrP6pI7DCzaz6f1NwJt5mCEkXLcCleAPbOZVfSWDzOnk4TAwPLF8UmrwVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK5fCWPqGso4JoBtnsWw9iHINUdz+BzHLC0+jKIP1WzPv3/tWl
+	WZLKt9Ecbm76DZxhmp9sG5/RP/IixeDZj70FmBLZ25jUuPRRorzFJpzGGzo6HA==
+X-Google-Smtp-Source: AGHT+IEFVux3HN6tJzgVu7E2X1lRQvRziWl9XkNXgBuYbREjGETu2ERXVJqnkgV7yVGCEPshcAVYSQ==
+X-Received: by 2002:a05:620a:29d0:b0:7b1:4a2a:9ae0 with SMTP id af79cd13be357-7b3318d0163mr2813162085a.9.1731443156081;
+        Tue, 12 Nov 2024 12:25:56 -0800 (PST)
+Received: from rowland.harvard.edu ([140.247.12.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3961df9f1sm76132086d6.23.2024.11.12.12.25.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 12:25:55 -0800 (PST)
+Date: Tue, 12 Nov 2024 15:25:53 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: oneukum@suse.com, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	syzbot+9760fbbd535cee131f81@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v4] usb/cdc-wdm: fix memory info leak in wdm_read
+Message-ID: <4ea9e56b-0941-4ea4-8cf3-b62facdbff53@rowland.harvard.edu>
+References: <2024111232-relative-bottom-4995@gregkh>
+ <20241112132931.3504749-1-snovitoll@gmail.com>
+ <824e839d-ee72-4923-bc88-e9cc58201b07@rowland.harvard.edu>
+ <CACzwLxgVJ2jROr8RWHXv++2m2tD9fvskp_MqTL7VhCPr-Eeeiw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241109044151.29804-1-mario.limonciello@amd.com>
- <CAJZ5v0gaNKKbf29WD5keQxJdgP93P_iWiQMwp7cOL9NCUumeZA@mail.gmail.com> <411286d5-83c2-471f-a723-6a00aee3cc89@amd.com>
-In-Reply-To: <411286d5-83c2-471f-a723-6a00aee3cc89@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 12 Nov 2024 21:25:52 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gj7qoSHd54q+KCLz44Hj+MpkgU7LZG1nNBHf+4dwVHpw@mail.gmail.com>
-Message-ID: <CAJZ5v0gj7qoSHd54q+KCLz44Hj+MpkgU7LZG1nNBHf+4dwVHpw@mail.gmail.com>
-Subject: Re: [PATCH v6 00/22] Add support for binding ACPI platform profile to
- multiple drivers
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Len Brown <lenb@kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Corentin Chary <corentin.chary@gmail.com>, 
-	"Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Alexis Belmonte <alexbelm48@gmail.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:ACPI" <linux-acpi@vger.kernel.org>, 
-	"open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
-	"open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
-	Mark Pearson <mpearson-lenovo@squebb.ca>, Matthew Schwartz <matthew.schwartz@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACzwLxgVJ2jROr8RWHXv++2m2tD9fvskp_MqTL7VhCPr-Eeeiw@mail.gmail.com>
 
-On Tue, Nov 12, 2024 at 9:20=E2=80=AFPM Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
-> On 11/12/2024 14:16, Rafael J. Wysocki wrote:
-> > On Sat, Nov 9, 2024 at 5:42=E2=80=AFAM Mario Limonciello
-> > <mario.limonciello@amd.com> wrote:
-> >>
-> >> Currently there are a number of ASUS products on the market that happe=
-n to
-> >> have ACPI objects for amd-pmf to bind to as well as an ACPI platform
-> >> profile provided by asus-wmi.
-> >>
-> >> The ACPI platform profile support created by amd-pmf on these ASUS
-> >> products is "Function 9" which is specifically for "BIOS or EC
-> >> notification" of power slider position. This feature is actively used
-> >> by some designs such as Framework 13 and Framework 16.
-> >>
-> >> On these ASUS designs we keep on quirking more and more of them to tur=
-n
-> >> off this notification so that asus-wmi can bind.
-> >>
-> >> This however isn't how Windows works.  "Multiple" things are notified =
-for
-> >> the power slider position. This series adjusts Linux to behave similar=
-ly.
-> >>
-> >> Multiple drivers can now register an ACPI platform profile and will re=
-act
-> >> to set requests.
-> >>
-> >> To avoid chaos, only positions that are common to both drivers are
-> >> accepted when the legacy /sys/firmware/acpi/platform_profile interface
-> >> is used.
-> >>
-> >> This series also adds a new concept of a "custom" profile.  This allow=
-s
-> >> userspace to discover that there are multiple driver handlers that are
-> >> configured differently.
-> >>
-> >> This series also allows dropping all of the PMF quirks from amd-pmf.
-> >>
-> >> ---
-> >> v6:
-> >>   * Add patch dev patch but don't make mandatory
-> >
-> > Probably a typo?
->
-> Ah whoops, yes.
->
-> >
-> > Which patch is it, BTW?
->
-> Patch 3.
->
-> >
-> > In any case, if the merge window for 6.13 starts on the upcoming
-> > weekend, which is likely to happen AFAICS, I'll defer applying this
-> > series until 6.13-rc1 is out.
-> >
-> > It's larger and it's been changing too often recently for me to catch
-> > up and I'll be much more comfortable if it spends some time in
-> > linux-next before going into the mainline (and not during a merge
-> > window for that matter).
-> >
->
-> I'm thankful; Armin ended up having a lot of very valuable feedback.
->
-> Yeah, it makes sense to defer to next cycle.
->
-> Would you prefer me to rebase and resend as v7 after the merge window or
-> will you just add it to a TODO?
+On Wed, Nov 13, 2024 at 12:30:08AM +0500, Sabyrzhan Tasbolatov wrote:
+> I've re-read your and Oliver's comments and come up with this diff,
+> which is the same as v4 except it is within a spinlock.
+> 
+> diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
+> index 86ee39db013f..47b299e03e11 100644
+> --- a/drivers/usb/class/cdc-wdm.c
+> +++ b/drivers/usb/class/cdc-wdm.c
+> @@ -598,8 +598,11 @@ static ssize_t wdm_read
+>                 spin_unlock_irq(&desc->iuspin);
+>         }
+> 
+> -       if (cntr > count)
+> -               cntr = count;
+> +       spin_lock_irq(&desc->iuspin);
+> +       /* Ensure cntr does not exceed available data in ubuf. */
+> +       cntr = min_t(size_t, count, desc->length);
+> +       spin_unlock_irq(&desc->iuspin);
+> +
+>         rv = copy_to_user(buffer, desc->ubuf, cntr);
+>         if (rv > 0) {
+>                 rv = -EFAULT;
 
-If rebasing is needed, it will be welcome.  Also if you need/want to
-make any changes in the meantime, please respin.  Otherwise I can just
-pick up the current series.
+You seem to be stuck in a rut, doing the same thing over and over again 
+and not realizing that it accomplishes nothing.  The spinlock here 
+doesn't help; it merely allows you to avoid calling READ_ONCE.
 
-> >>   * See other patches changelogs for individualized changes
-> >>
-> >> Mario Limonciello (22):
-> >>    ACPI: platform-profile: Add a name member to handlers
-> >>    platform/x86/dell: dell-pc: Create platform device
-> >>    ACPI: platform_profile: Add device pointer into platform profile
-> >>      handler
-> >>    ACPI: platform_profile: Add platform handler argument to
-> >>      platform_profile_remove()
-> >>    ACPI: platform_profile: Pass the profile handler into
-> >>      platform_profile_notify()
-> >>    ACPI: platform_profile: Move sanity check out of the mutex
-> >>    ACPI: platform_profile: Move matching string for new profile out of
-> >>      mutex
-> >>    ACPI: platform_profile: Use guard(mutex) for register/unregister
-> >>    ACPI: platform_profile: Use `scoped_cond_guard`
-> >>    ACPI: platform_profile: Create class for ACPI platform profile
-> >>    ACPI: platform_profile: Add name attribute to class interface
-> >>    ACPI: platform_profile: Add choices attribute for class interface
-> >>    ACPI: platform_profile: Add profile attribute for class interface
-> >>    ACPI: platform_profile: Notify change events on register and
-> >>      unregister
-> >>    ACPI: platform_profile: Only show profiles common for all handlers
-> >>    ACPI: platform_profile: Add concept of a "custom" profile
-> >>    ACPI: platform_profile: Make sure all profile handlers agree on
-> >>      profile
-> >>    ACPI: platform_profile: Check all profile handler to calculate next
-> >>    ACPI: platform_profile: Notify class device from
-> >>      platform_profile_notify()
-> >>    ACPI: platform_profile: Allow multiple handlers
-> >>    platform/x86/amd: pmf: Drop all quirks
-> >>    Documentation: Add documentation about class interface for platform
-> >>      profiles
-> >>
-> >>   .../ABI/testing/sysfs-platform_profile        |   5 +
-> >>   .../userspace-api/sysfs-platform_profile.rst  |  28 +
-> >>   drivers/acpi/platform_profile.c               | 537 ++++++++++++++--=
---
-> >>   .../surface/surface_platform_profile.c        |   8 +-
-> >>   drivers/platform/x86/acer-wmi.c               |  12 +-
-> >>   drivers/platform/x86/amd/pmf/Makefile         |   2 +-
-> >>   drivers/platform/x86/amd/pmf/core.c           |   1 -
-> >>   drivers/platform/x86/amd/pmf/pmf-quirks.c     |  66 ---
-> >>   drivers/platform/x86/amd/pmf/pmf.h            |   3 -
-> >>   drivers/platform/x86/amd/pmf/sps.c            |   4 +-
-> >>   drivers/platform/x86/asus-wmi.c               |  10 +-
-> >>   drivers/platform/x86/dell/alienware-wmi.c     |   8 +-
-> >>   drivers/platform/x86/dell/dell-pc.c           |  36 +-
-> >>   drivers/platform/x86/hp/hp-wmi.c              |   8 +-
-> >>   drivers/platform/x86/ideapad-laptop.c         |   6 +-
-> >>   .../platform/x86/inspur_platform_profile.c    |   7 +-
-> >>   drivers/platform/x86/thinkpad_acpi.c          |  16 +-
-> >>   include/linux/platform_profile.h              |   9 +-
-> >>   18 files changed, 553 insertions(+), 213 deletions(-)
-> >>   delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
-> >>
-> >>
-> >> base-commit: d68cb6023356af3bd3193983ad4ec03954a0b3e2
-> >> --
-> >> 2.43.0
-> >>
->
+> > Since the new code does the same thing as the old code, it cannot
+> > possibly fix any bugs.
+> 
+> Without the reproducer I can not confirm that this fixes the hypothetical bug,
+> however here is my understand how the diff above can fix the memory info leak:
+> 
+> static ssize_t wdm_read() {
+>         cntr = READ_ONCE(desc->length);
+>         if (cntr == 0) {
+>                 spin_lock_irq(&desc->iuspin);
+> 
+>                 /* can remain 0 if not increased in wdm_in_callback() */
+>                 cntr = desc->length;
+> 
+>                 spin_unlock_irq(&desc->iuspin);
+>         }
+> 
+>         spin_lock_irq(&desc->iuspin);
+>         /* take the minimum of whatever user requests `count` and
+> desc->length = 0 */
+>         cntr = min_t(size_t, count, desc->length);
+>         spin_lock_irq(&desc->iuspin);
+> 
+>         /* cntr is 0, nothing to copy to the user space. */
+>         rv = copy_to_user(buffer, desc->ubuf, cntr);
+
+This does not explain anything.  How do you think your change will avoid 
+the memory info leak?  That is, what differences between the old code 
+and the new code will cause the leak to happen with the old code and not 
+to happen with your new code?
+
+Note that if cntr is 0 then nothing is copied to user space so there is 
+no info leak.
+
+> > (Actually there is one other thing to watch out for: the difference
+> > between signed and unsigned values.  Here cntr and desc->length are
+> > signed whereas count is unsigned.  In theory that could cause problems
+> > -- it might even be related to the cause of the original bug report.
+> > Can you prove that desc->length will never be negative?)
+> 
+> desc->length can not be negative if I understand the following correctly:
+> 
+> static void wdm_in_callback(struct urb *urb)
+> {
+>         ...
+>         int length = urb->actual_length;
+>        ...
+>        if (length + desc->length > desc->wMaxCommand) {
+>               /* The buffer would overflow */
+>              ...
+>        } else {
+>               /* we may already be in overflow */
+>               if (!test_bit(WDM_OVERFLOW, &desc->flags)) {
+>                      ...
+>                      desc->length += length;
+>                      desc->reslength = length;
+>        }
+> }
+> 
+> urb->actual_length is u32, actually, need to change `int length` to
+> `u32 length` though.
+
+You don't really need to change it.  urb->actual_length can never be 
+larger than urb->length.
+
+Alan Stern
 
