@@ -1,76 +1,116 @@
-Return-Path: <linux-kernel+bounces-405496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A939C521E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:34:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 826319C5222
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:34:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8C462877E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:34:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4325B287638
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DC320E037;
-	Tue, 12 Nov 2024 09:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7912D20DD74;
+	Tue, 12 Nov 2024 09:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjLKffB2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fsPzRm3Y"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DEE20DD58;
-	Tue, 12 Nov 2024 09:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E26A1ABEC2;
+	Tue, 12 Nov 2024 09:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731404035; cv=none; b=i34QUwyjSvWQaTlfmrX2ZwEM/2pXG6W8oa466B33q7fTio3ond0pRpEjt1iiagbn7jz7K7lg8FAnctvNZGaMJpnO6D53TEgYAK3XDzWz8OK/kkG7TSoOnEx8hyceewUbkOhZCjjBvK1vJ/X0einfq+pvu8Sj/vDxPvwnyPf0qLg=
+	t=1731404066; cv=none; b=lnNUQ67qUlz9BE4FH++dse/1mspa/zeB2DDAYTtoEqGXt+Q12gjdgT3M5XNZBq0RYUB+oCsdbgy3pJwOPhWID2PGYZZktPWs9lxr4X/Tnhlb0KJt+X8dkZwk5t/z2r+cqf/EhQEjqc27EKmZxc4noSXxnoxNLrLXzpTIVhXc+ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731404035; c=relaxed/simple;
-	bh=Fg8MnjDmxNCrn8ah//QG+8TRTVgVED9RKQIw3QMapzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kEFRUMtWjWayoW7A5D4pS2vExj8J4StATMPiAp/eXzVBmkDLC2uPletrmgnYSRp7aKfkgTxPwEhOm8IbzST0/p/3R5T6cq7ywZMXr+PAbx8HRppkwLZR4XZZ8whWLON43B8Dgb7FVjBi1uDwxZm6bUW///xhCRtZvO6ImYZt/AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjLKffB2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0A01C4CECD;
-	Tue, 12 Nov 2024 09:33:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731404034;
-	bh=Fg8MnjDmxNCrn8ah//QG+8TRTVgVED9RKQIw3QMapzA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AjLKffB2pNqPLsTHl9HkHlwxx+YV26vW5NgyMhm71EIeYroFQNRhn0wd/XTj4S2I+
-	 Li48MCvM77JRa8OZMnSzXAxGs056PE3k5FGtO99VgSa0EjoCCRDcDdf5inVeZdZI0N
-	 ehfBOWyD+rSjOMLkM8z1eYcbcREB4afA44wffgpApx734bhx+HDCJrBWchF9FAgV6G
-	 Qpw+1taP7MfQdaSW9ptDHDz2eYm9qL57ia0aFxH2etkat9d87zpBhxGZrJRsAsOZ2m
-	 w48L8GJfKgf2zLdR+GN0zqSyCODFRbxHBUJb9CgkRMRrDm4dqxJ9jLb5GRiUUmYUxY
-	 Y6ah3lSq+mSVQ==
-Message-ID: <d05b2ea4-dc00-4583-bf17-0972083962a9@kernel.org>
-Date: Tue, 12 Nov 2024 09:33:49 +0000
+	s=arc-20240116; t=1731404066; c=relaxed/simple;
+	bh=2oJC61B3cj9hNS0FEGQ89rFN3UKKVg+d+eYizlcOTs8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bB+B8cLxVu/34lBiLBKSbXP1lWJLQ/Np4uncdhB4PNhlDzM+lKPVUrq9cDxZFCl/DOP28sbH3jDFFpIJQ8GQMlrYpX5rw4ZoUPmxWF01y4KQwK955mzbtx6m+5/LMGbbsEWDNnvltC2a3YsPu1QIP8YMigSLlM90z3y6B6nlYN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fsPzRm3Y; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f2b95775so6771208e87.1;
+        Tue, 12 Nov 2024 01:34:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731404063; x=1732008863; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aIvy7sHDIF/P0xKV5ZB06CXppqkV1x6iHD+MoKg51ak=;
+        b=fsPzRm3YBmRGYqp4l9mZSv4NbpjT5s/O/R1zs9MXPe8WyeuadQOWuKngA4j9UuUCUp
+         Kl67VXM5boBEymfN793f7cPpy4coh/GMLf3ZVLbbmNsFKTuTAKmE9VaPTwuIPHwjXz4m
+         pA+FowdfQI7m4EpxxTnqcwU5WV9FydushKJ3Ah5ZpNDH32ydyRQ6xVDGztQfL+oYMfHw
+         b4FpqzmAQMxr/n65DdLvE5fSLA8R6eVPqkgptw582aYaHvDv9Wf8S9jWbtQeAKMYQ+dh
+         mGE6C69pf8CiRvmB9Ou6jpM26kkZqYhriQx4BZgk3v42xs3KIwUIHYXJ63XTvWee7zuJ
+         u5ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731404063; x=1732008863;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aIvy7sHDIF/P0xKV5ZB06CXppqkV1x6iHD+MoKg51ak=;
+        b=YwZKQcCe6bQN5HsotGqWnf0nXt78open6I8TtOSdeF+MWatJRBNphMmZnBCn7ZdzVz
+         UIYXRfYU3nu5hVw9SEe9B9IYG/NNxlMkRu0NfL5UoYDEJkeWzbBXRFYdvqd4YXl6cOmT
+         JZ1SMsifusUg3j4SKFH89SFblD06RyQPFnSm8Ca/HZfr6PbgnFbY+L3dincPaokJkbkZ
+         uoB+/8Wy2tAGh4vRnPjyelsUB32AtS97oDggpl8FM45ehpL3/b6yLVan+5WBjvaF2SgC
+         QcExJcJv6L+D4hrV10E+r1A9WOK2RiKJ4Bmua/L+L0n6Oc+s07e1GFk3yXCme/45NtGM
+         YDxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVukDgbsL/xsnTfk0r3S/1DlikKhk9D+Iss0bgx+pVv/8KBd5bEj7gsZ+xV1XZNtY/rYG45qDIxx8jK4bwSewE2cA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxma45kCntf52kuLx6gyP/0L+Hr7jBgdJYXKuAuX0QNHVi+SeUo
+	HY2T7ppeagwSppdhxWU7OeCbtUWSjbP8qfGAIb1FMT/EdcH2vurd
+X-Google-Smtp-Source: AGHT+IEpW0kWN4jGRG2H2u9atBg0cacZuFn9Qtzcnuig3NeGX17ybEcw+CsSoFEVQbnsHKCmTB+GnA==
+X-Received: by 2002:a05:6512:2809:b0:533:4785:82ab with SMTP id 2adb3069b0e04-53d862bec24mr11091711e87.1.1731404062919;
+        Tue, 12 Nov 2024 01:34:22 -0800 (PST)
+Received: from prasmi.Home ([2a06:5906:61b:2d00:4221:c5a8:8273:369b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a18521sm704085866b.20.2024.11.12.01.34.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 01:34:22 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] arm64: defconfig: Enable Renesas RZ/V2H(P) Watchdog driver
+Date: Tue, 12 Nov 2024 09:34:12 +0000
+Message-ID: <20241112093412.20093-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bpftool: Cast variable `var` to long long
-To: Luo Yifan <luoyifan@cmss.chinamobile.com>, andrii.nakryiko@gmail.com
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
- linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
- song@kernel.org, yonghong.song@linux.dev
-References: <CAEf4BzYgqb=NcSCJiJQEPUPhE02cUZqaFdYc4FJXvQUeXxhHJA@mail.gmail.com>
- <20241112073701.283362-1-luoyifan@cmss.chinamobile.com>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20241112073701.283362-1-luoyifan@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-2024-11-12 15:37 UTC+0800 ~ Luo Yifan <luoyifan@cmss.chinamobile.com>
-> When the SIGNED condition is met, the variable `var` should be cast to
-> `long long` instead of `unsigned long long`.
-> 
-> Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Looks good this time, thank you!
+Enable the watchdog driver for the Renesas RZ/V2H(P) SoC.
 
-Reviewed-by: Quentin Monnet <qmo@kernel.org>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index dd82ef9d7adc..cb04c7c98a7e 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -736,6 +736,7 @@ CONFIG_MESON_WATCHDOG=m
+ CONFIG_ARM_SMC_WATCHDOG=y
+ CONFIG_RENESAS_WDT=y
+ CONFIG_RENESAS_RZG2LWDT=y
++CONFIG_RENESAS_RZV2HWDT=y
+ CONFIG_UNIPHIER_WATCHDOG=y
+ CONFIG_PM8916_WATCHDOG=m
+ CONFIG_BCM2835_WDT=y
+-- 
+2.43.0
+
 
