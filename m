@@ -1,119 +1,223 @@
-Return-Path: <linux-kernel+bounces-406315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487249C60B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:46:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A63D49C60A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55AE1B631C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:30:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 265A2B82562
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939542076BE;
-	Tue, 12 Nov 2024 16:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8EE207202;
+	Tue, 12 Nov 2024 16:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="VEtNgY5Y"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C/HHPXEA"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FA320515D;
-	Tue, 12 Nov 2024 16:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D12C205ACA
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731428897; cv=none; b=SbnL9JEA1fzPigvDK8zuy4S7rSyo4sHy6zI/7WtKiknUQGDHD3aHYYlIDg2xXt/DJtrLPkjuun1vSfCnrzqjpTZtvCwjC7gu/VeivjnoYEOAbByrAllzkInDLp2kGoKB3H37kJWVKy4fRDt4Zp6LDzd6MA9AqJS0ZccRwZgCs58=
+	t=1731428803; cv=none; b=Y929MmpNfHay0HH1mmDSHmSVtD0txsTYka7HNqjp7d2QY4vRq1nnyJxBetHDlMDtJkgRrXOO6KHisGJOKUbY8955Mw36w675BhxkpeAGuZ5BTzBMnD0VW7gXvX0UTCavZ6xHWUKfgn5hIm4g04bDdyw4fltBaDDcb56X28wsj5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731428897; c=relaxed/simple;
-	bh=t+xRugik8cMQGF+C24rVq81FmuqePhgwPQ6+NWjac+E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i0THLxqhPimRn7zoraZ/UKO2s1djF90ECQMWvuNzhbV3peloUNqQFWKqPAOmiUPKNlehtzF3MCENUh1613BSVte1lOiv/zGy3biaca4CNCE3naEfKeQ+cb2EnvZERNXMU6TLVvyN3JsUmq+tcgRvtUxmM2pqicPPmfq9lXb1MeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=VEtNgY5Y; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACFEmUT021877;
-	Tue, 12 Nov 2024 17:25:01 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	vBfUfNwcvx47MJ9lJL9jVaJ6m9ogByKNwXL/dt/Zq7s=; b=VEtNgY5Yyu/FYRf7
-	2khfLb5Lputi18f4dBs0Yb11TthYSy68v+Luc7bQYHFiOHczIPQkKqG38oIWvhgp
-	aHnlMWryk1K8NQ7yr8geVxHv96IoZMw2ZT+GHAQZI8cCgiZEyLD8a8yXcdWM6mrE
-	P3NoRZyunJCgIoDZbRr84IQ9Z6ZtWQXsgQDyE1Rz3vcC/RsOBdng0AfpbHIvY9Z2
-	6DqGobMNfZcohJIiO93lZpbFfRfszQBB5MJ+/ZKywzGKFvA3hlnkIcDLDIp+GoQq
-	8T3FSHYlwrsWbznGmc7Cp7BFO4ED/zA4KJkY1xg3q7J5OR5PuORKYdyUFLjRIUjY
-	xcTyfw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42tj64356f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 17:25:01 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7AD6540045;
-	Tue, 12 Nov 2024 17:23:37 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B7FB82CB0DD;
-	Tue, 12 Nov 2024 17:21:48 +0100 (CET)
-Received: from localhost (10.129.178.212) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 12 Nov
- 2024 17:21:48 +0100
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <cassel@kernel.org>,
-        <quic_schintav@quicinc.com>, <fabrice.gasnier@foss.st.com>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Christian Bruel <christian.bruel@foss.st.com>
-Subject: [PATCH 5/5] MAINTAINERS: add entry for ST STM32MP25 PCIe drivers
-Date: Tue, 12 Nov 2024 17:19:25 +0100
-Message-ID: <20241112161925.999196-6-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241112161925.999196-1-christian.bruel@foss.st.com>
-References: <20241112161925.999196-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1731428803; c=relaxed/simple;
+	bh=S9W2WXz1aoFle7jMtSo9YFGjT3PLYy1KOHJi8c5DW64=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ADf1xW9hyIwMnIWvYa3y69xXarz9ub8EauFEOXzFMaYxmqT9H3NVShKk3fh6LsO7yYtA+wReE7UhiB2v16cJY0hK7PUz110e9i/GEUyvp2xZQWGgcClAkc3jKj/Yl4MVlqxl7hUERKelszBYibpW2z3s3yoAS9IjX2UCGxypcR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C/HHPXEA; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cdda5cfb6so58346155ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:26:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731428800; x=1732033600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dBDm5YplvK1Tjp260uG3N3n5iAW+A5nynoG+NI9FCdI=;
+        b=C/HHPXEA2SW03oP4RnVgFmxNylsnjmANKRt4uWBEnOH8EljY6jFtB3A/ifLjI63xHx
+         CmPV7wUl/Ql6T/OK6dyuJeqzz8jQ5ET1kGFvFy3+FxmEzlpASBPDIUWT0KsTpQlR4aVJ
+         CQfi73fjI9d+s1pFVjVxA60iuKCUINEJAZnZAf4veA1k0dyv3KPc5S5Du1GCoxv91fkw
+         F72/gncwwZ4k5p6K6YI+JWT6aNBdY2XvQdw50SVS+VmZSll12lSi7iUbMLNyoHrbmm2d
+         0q41Eyg10Sy1+GQO+uyLSyLcPDnys1ju41xlvWuJ9+5DmqLqcnW+3BcJveVyRg2h2ymB
+         Nm2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731428800; x=1732033600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dBDm5YplvK1Tjp260uG3N3n5iAW+A5nynoG+NI9FCdI=;
+        b=vnZ4ZDBCoBairppC6nwww/XDB7t68GQOsFdQjFKPlgI2UPRqBujExQwpAJfE9qV0ky
+         jGF8jZGKN0hlldzpNEUOLPdAcV1LxiHO1efSWJsAn8DK6qvHPddOrl/9jxjEjlchhY97
+         R+MLaFRDuTLuxY30YxKJcFpnV5qWeCRXiCinQzLEHx37WaUcu5qqWz55HghMyf3Nw8w8
+         2vAsDwdc32bNj2uWOtFG8MjzvadyNv3cU41/lVgAsYf/Ppn68O+L8jUY4fBFNBeChQjE
+         NvBjiJkgZj6REHcdPbakhD6a8fvdWZ0UxJE8O9n8KPZ+mgJZtyRgEJXzezR8926dJeLG
+         LH/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWtPIk9dridaZapkY78FAFHLY57J4x4paNupjAysjtFgwxNdxvAgKi//SQk7JWL1c5l+LVw7f83CXYCEtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuqFQT6jXT5WPi4Epepk+vH+mTE0DFowbdOGFcfI6MsC2PAhkE
+	MTpj5hgrlPyQBadik7/XXi6fOstiRBoAyO/ySmPcGkM69oQ0LZ9oSsYE1t4yNuu5V14wo5mNfJj
+	H7o8XLIpDo28Occqv29ZOjhldbAB3nb2CZwg0
+X-Google-Smtp-Source: AGHT+IFpm6M7L2VZIQwUnipZyu/MLtDy5Uu3vSlLx0Ppq9T51e9JZwkC8za5NU0aeFDjNXD5LXQAFLac9cPHaatZHC8=
+X-Received: by 2002:a17:902:d50c:b0:20c:5cdd:aa7 with SMTP id
+ d9443c01a7336-2118359ad74mr239413035ad.43.1731428800233; Tue, 12 Nov 2024
+ 08:26:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
+ <20241108083133.GD38786@noisy.programming.kicks-ass.net> <CAGETcx-CvWVc=TP5OmUL_iF7fSb1awJB1G8NghM1q_6dYKXkQQ@mail.gmail.com>
+ <cc8831c7-8ea2-0ee7-061f-73352d7832ad@amd.com> <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
+ <20241111104054.GE22801@noisy.programming.kicks-ass.net> <CAGETcx_1uyZ3M1LtSkZDHiTwDQj8M54V-=geRqJYkZXo9ZbU6w@mail.gmail.com>
+ <CAKfTPtBBq0mMat4FWPYprxZX52VFrKrrDMqvXBROuY4T-95+GQ@mail.gmail.com>
+ <CAKfTPtB90_ywaVooR=MGfjhxz2mf=kOeEzdDWKh=7jfcuu7xQg@mail.gmail.com>
+ <CAGETcx_7LYuZi356mD2j7bcZReobQE0MjoT8vdtgvdN_L2t9ww@mail.gmail.com> <CAKfTPtCs8wCoUvNgxNcqi5ozDiRBrLLkuA4Edi1bu1UZLsV-Vg@mail.gmail.com>
+In-Reply-To: <CAKfTPtCs8wCoUvNgxNcqi5ozDiRBrLLkuA4Edi1bu1UZLsV-Vg@mail.gmail.com>
+From: Saravana Kannan <saravanak@google.com>
+Date: Tue, 12 Nov 2024 08:25:59 -0800
+Message-ID: <CAGETcx-pFmBSkVfQ2tAitunb+1uZ_wE6b1+H-4jdAM_0SxJjtQ@mail.gmail.com>
+Subject: Re: Very high scheduling delay with plenty of idle CPUs
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+	wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
+	Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de, John Stultz <jstultz@google.com>, 
+	Vincent Palomares <paillon@google.com>, Tobias Huschle <huschle@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add myself as STM32MP25 PCIe host and PCIe endpoint drivers
+On Tue, Nov 12, 2024 at 1:03=E2=80=AFAM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> On Tue, 12 Nov 2024 at 08:24, Saravana Kannan <saravanak@google.com> wrot=
+e:
+> >
+> > On Mon, Nov 11, 2024 at 11:12=E2=80=AFAM Vincent Guittot
+> > <vincent.guittot@linaro.org> wrote:
+> > >
+> > > On Mon, 11 Nov 2024 at 20:01, Vincent Guittot
+> > > <vincent.guittot@linaro.org> wrote:
+> > > >
+> > > > On Mon, 11 Nov 2024 at 19:24, Saravana Kannan <saravanak@google.com=
+> wrote:
+> > > > >
+> > > > > On Mon, Nov 11, 2024 at 2:41=E2=80=AFAM Peter Zijlstra <peterz@in=
+fradead.org> wrote:
+> > > > > >
+> > > > > > On Sun, Nov 10, 2024 at 10:15:07PM -0800, Saravana Kannan wrote=
+:
+> > > > > >
+> > > > > > > I actually quickly hacked up the cpu_overutilized() function =
+to return
+> > > > > > > true during suspend/resume and the threads are nicely spread =
+out and
+> > > > > > > running in parallel. That actually reduces the total of the
+> > > > > > > dpm_resume*() phases from 90ms to 75ms on my Pixel 6.
+> > > > > >
+> > > > > > Right, so that kills EAS and makes it fall through to the regul=
+ar
+> > > > > > select_idle_sibling() thing.
+> > > > > >
+> > > > > > > Peter,
+> > > > > > >
+> > > > > > > Would you be open to the scheduler being aware of
+> > > > > > > dpm_suspend*()/dpm_resume*() phases and triggering the CPU
+> > > > > > > overutilized behavior during these phases? I know it's a very=
+ use case
+> > > > > > > specific behavior but how often do we NOT want to speed up
+> > > > > > > suspend/resume? We can make this a CONFIG or a kernel command=
+ line
+> > > > > > > option -- say, fast_suspend or something like that.
+> > > > > >
+> > > > > > Well, I don't mind if Vincent doesn't. It seems like a very
+> > > > > > specific/targeted thing and should not affect much else, so it =
+is a
+> > > > > > relatively safe thing to do.
+> > > > > >
+> > > > > > Perhaps a more direct hack in is_rd_overutilized() would be eve=
+n less
+> > > > > > invasive, changing cpu_overutilized() relies on that getting pr=
+opagated
+> > > > > > to rd->overutilized, might as well skip that step, no?
+> > > > >
+> > > > > is_rd_overutilized() sounds good to me. Outside of setting a flag=
+ in
+> > > >
+> > > > At know I'm not convinced that this is a solution but just a quick
+> > > > hack for your problem. We must understand 1st what is wrong
+> > >
+> > > And you should better switch to performance cpufreq governor to
+> > > disable eas and run at max freq if your further wants to decrease
+> > > latency
+> >
+> > Ohhh... now that you mention fixing CPU frequencies, a lot of systems
+> > fix their CPU frequencies during suspend/resume. Pixel 6 is one of
+> > them. In the case of Pixel 6, the driver sets the policy min/max to
+> > these fixed frequencies to force the CPU to stay at one frequency.
+> > Will EAS handle this correctly? I wonder if that'd affect the task
+>
+> AFAICT, it should
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+To be clear, I'm not opposed to any sched fixes that will do the right
+thing naturally.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4803908768e8..277e1cc0769e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17912,6 +17912,13 @@ L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
- F:	drivers/pci/controller/dwc/pci-exynos.c
- 
-+PCI DRIVER FOR STM32MP25
-+M:	Christian Bruel <christian.bruel@foss.st.com>
-+L:	linux-pci@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/pci/st,stm32-pcie-*.yaml
-+F:	drivers/pci/controller/dwc/*stm32*
-+
- PCI DRIVER FOR SYNOPSYS DESIGNWARE
- M:	Jingoo Han <jingoohan1@gmail.com>
- M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
--- 
-2.34.1
+> > placement decision. Also, other systems might limit CPU frequencies in
+> > ways that EAS can't tell. If the CPU frequencies are frozen, I'm not
+> > sure EAS makes a lot of sense. Except maybe using CPU max capacity to
+> > make sure little CPUs are busy first before using the big CPUs?
+> >
+> > But even if EAS thinks the CPU freq could go up (when it can't), it
+> > still doesn't make a lot of sense to not use those idle CPUs and
+> > instead try to bump up the frequency (by putting more threads in a
+> > CPU).
+>
+> In this case, you just need to call the below before entering suspend
+> and after resuming
+>   echo 1 > /proc/sys/kernel/sched_energy_aware
+> instead of hacking overutilized
+> This will disable EAS without rebuilding sched domain
 
+That disables EAS for a huge portion of the suspend/resume where we do
+want it to be enabled.
+
+Also, as I said before, I want to do this only for the "devices
+resume" part where there is a lot of parallelism. Not for the entire
+system suspend/resume.
+
+Is there an in-kernel version of this call? Do I just need to set and
+clear sysctl_sched_energy_aware? Also, does setting/clearing
+overutilized rebuild the sched domain?
+
+Thanks,
+Saravana
+
+>
+> >
+> > Anyway, with all this in mind, it makes more sense to me to just
+> > trigger the "overutilized" mode during these specific parts of
+> > suspend/resume.
+> >
+> > -Saravana
+> >
+> > >
+> > > >
+> > > > > sched.c that the suspend/resume code sets/clears, I can't think o=
+f an
+> > > > > interface that's better at avoiding abuse. Let me know if you hav=
+e
+> > > > > any. Otherwise, I'll just go with the flag option. If Vincent get=
+s the
+> > > > > scheduler to do the right thing without this, I'll happily drop t=
+his
+> > > > > targeted hack.
+> > > > >
+> > > > > -Saravana
 
