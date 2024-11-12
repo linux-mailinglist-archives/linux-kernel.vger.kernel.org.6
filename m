@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-406713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 699279C6291
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:28:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C68E9C629B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:30:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214B51F23933
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:28:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8AFD1F2341A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DC7219E34;
-	Tue, 12 Nov 2024 20:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF3F219E39;
+	Tue, 12 Nov 2024 20:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gx7ndIVW"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ftZAx+wX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBC020ADEC;
-	Tue, 12 Nov 2024 20:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511AD1FA829;
+	Tue, 12 Nov 2024 20:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731443322; cv=none; b=U9SWOP0dUZgAr+2ghbCHgAw4cB211HomfPBEd8hqyW3We23V506cAlTLlB+0dEhpnwadLwSXis2/ib6C6sVHhA3yTLnsnGYNmBK9LAtyFg3HwS3ugNNfRtZv0BJwKTSe3MyYt12pqRnP3HRMF8/IjbKo3ihh362rtcv+L5Wg9r0=
+	t=1731443433; cv=none; b=m2u/BGqC3cx5KMvXk34FCBvT8gyUy9n17CXR5k4BHycCjk6R6Phxk6hyaCXCEUDxl3IP+B/I3joj2VDisBPlIgs8uuH6DudN3xu56SMSzfAOGHL1Ys/OYR3g3dNpY96/XWzQZx2NZYUqSDhAZMv2neUBn1xRPPzeqBUi7LnFpO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731443322; c=relaxed/simple;
-	bh=hcELpbwUs79w/4JpkCJTZzZv0RDESBqBk4p/yzxsxHM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f1/nXvlMhxYccV9fqiHM8i+OZhnZx7uQ45t+dX8pfQ9G+9p4hoI45CqP38DG0BD8v5grMJNVwJ458yqr4YmPCHnAg/3Yj+wQdpOSi9oVfYTf1YRbqiHuZhcKKXojjl4CZt9z+a9lz9Gb5MCYCdLqTWHLtzpd6EV043uM7k6yVxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gx7ndIVW; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso20929a12.1;
-        Tue, 12 Nov 2024 12:28:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731443320; x=1732048120; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=v2FT/0mZJivL0ZZoqfs7CNBIJ1ZIhmKypOpf5tX8Zgw=;
-        b=gx7ndIVWzXg3+01oHfPLpld+SsADmFYp90Sz2OalnGGVEtb1PeeeYYc3AkYLEnV4kI
-         IqnkUt8DFdJXn0pAA2DQkRf6NACQJacmHMiSf4vK8fkCUkElJtzNboQH4/zkgGdqxAtO
-         DGmyRaClYIi/7PE2R7DX5Ty3KFohoXaWjx+y6r1pQVgZ+WlRdEk1FA8UldKz88xXEW2z
-         SL7iPr4vkPFIURCy8HD7l9y1EPtP8xabZ6PXpcN1PwEM8SP+jkFsdOKyo5FKzd/CchrY
-         uE0sq42RbJHPRrNBiBTkCFYq1z8NaF4MfNd0qec6jTPbEuHTLMFed5UFYAnhXmS2uQu7
-         J7Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731443320; x=1732048120;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v2FT/0mZJivL0ZZoqfs7CNBIJ1ZIhmKypOpf5tX8Zgw=;
-        b=cvhCyVTGs+4CV2mGRFzFn9cEyTohM3c+rJWYoxLTnkynCMJgyxlbRJzr3wudJiJpiT
-         z85GakGudwVlhGuOA6+7ko05phqjJ0DWJ2tXO/NJ218OV1d9HGGFJvFNyaYo9ArHIRjO
-         WQLfHhMI7Ei7aJUhi9wm98FLnN570CurUrh8d6k4/FrA9IEqmDFDc5meQMjwoa3SJubU
-         PCWzgHZ+Xtseo+Y5EZBUoj/WGSWL5LTSYlltoXmMxdWOQN27yMLoojfeeTePnsek3Ks9
-         Kp/paOlMENX1YfPsmuVbarxcepUctEdzuSblJ1lK3Sh7ocznKCts7LYRHEmZb44gWxrN
-         LdUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUe1zGNbSLxFaqAVwkiMKSYJsjnKV/irQE20jFNVWtyqS82OUBG2zVgftXmOqpPW/rqqXHeWKZ+JMvsiso=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0x6lbGlR12zWpdtwmh+/FOPQoIps52QF3qtqZA5GsW001Z22n
-	ClFt+NrHN0MP10WPs7XBjjyVERLGPTRjV1qSy1QbNL8INtbFUDK4
-X-Google-Smtp-Source: AGHT+IFZE05j4koXdnVIsrWlQDXjIzpfwdaEM8dGhyz6pcxXqnrNsq+2+3l8Q0qtJRIUELTLwv5EbA==
-X-Received: by 2002:a05:6a21:3290:b0:1db:e327:dd82 with SMTP id adf61e73a8af0-1dc232d87f4mr27396788637.5.1731443320448;
-        Tue, 12 Nov 2024 12:28:40 -0800 (PST)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:23d:98b3:efff:2469:dece:37c7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7240785ff9csm11767600b3a.8.2024.11.12.12.28.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 12:28:38 -0800 (PST)
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-To: Helge Deller <deller@gmx.de>
-Cc: linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Suraj Sonawane <surajsonawane0215@gmail.com>
-Subject: [PATCH] video: fbdev: metronomefb: Fix buffer overflow in load_waveform()
-Date: Wed, 13 Nov 2024 01:58:25 +0530
-Message-Id: <20241112202825.17322-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731443433; c=relaxed/simple;
+	bh=+PUVRgggdhPSTIkIBl/ezF6/hWqD9yQj8MKY0IoHDko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IX86qWRHVRt/QAU0oOWPvb7YuGOpE1dQ2iw2Gv97SQpKzEgQCCsJj1jhEygS8CWgBAmFff52ew7SWu+u7HwxQXq9dT1ckWTITFGbX48TZA2one9dxLrWlHvQDeLuaec5rEirs3VIB2r5Z6v7W1yv7L8qJI2ornXb6mFwf+2Sp7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ftZAx+wX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACCGhv7005745;
+	Tue, 12 Nov 2024 20:30:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Au4EFGKypvp3GDzbOIj5YnMCOF2q1QNzsySezonXE2k=; b=ftZAx+wXpl8Lg50x
+	vQl5jLUXXnMTnR2avmFkgwKw4olieFdOvWqDrur2naYIJf9ERfS3+li5LayzyhUU
+	DpaFMLtcVltZsJIDN08DyFePXy1B/cyyf/4MoSn3xygJi95rV1d3ssR7H5I7wSeB
+	40SqmYBikyD0/Zehht4QCdWsOYVhnwxUyu7xNgYDqYQH3SFN//q5Qf8yPhzEcnzc
+	USKIFeC3yYmAH060YzeOLRpPClSFH6+jL2pZBC4tDM27Yz2M2/T82IRPXU2WMdpe
+	pfnc/3QAblt0Dct8UNFGE0SVzR1UwRtQuMLVGJGqyR3CA7c9g5OLMgDZPcjzl2jd
+	kChA3w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uwt5jqys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 20:30:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACKULXv006224
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 20:30:21 GMT
+Received: from [10.216.22.98] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
+ 2024 12:30:16 -0800
+Message-ID: <eb665284-31f0-4e95-8f24-c2782bec72bd@quicinc.com>
+Date: Wed, 13 Nov 2024 02:00:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][V2] drm/msm/a5xx: remove null pointer check on pdev
+To: Colin Ian King <colin.i.king@gmail.com>, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241112182218.1119158-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <20241112182218.1119158-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xZXpRrSehdhS4gDgZuKMyLCWgIDajSip
+X-Proofpoint-ORIG-GUID: xZXpRrSehdhS4gDgZuKMyLCWgIDajSip
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=965
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 clxscore=1011
+ malwarescore=0 impostorscore=0 adultscore=0 suspectscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411120164
 
-Fix an error detected by the Smatch tool:
+On 11/12/2024 11:52 PM, Colin Ian King wrote:
+> The call chain on a5xx_gpu_init is such that pdev is not going to be
+> null, so the null check on pdev can be removed. This also cleans up
+> a static analysis warning where pdev is dereferenced before the null
+> check which cannot actually occur.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> 
+Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 
-drivers/video/fbdev/metronomefb.c:220 load_waveform() error:
-buffer overflow 'wfm_hdr->stuff2a' 2 <= 4
-drivers/video/fbdev/metronomefb.c:220 load_waveform() error:
-buffer overflow 'wfm_hdr->stuff2a' 2 <= 4
-
-The access to wfm_hdr->stuff2a in the loop can lead to a buffer
-overflow if stuff2a is not large enough. To fix this, a check was
-added to ensure that stuff2a has sufficient space before accessing
-it. This prevents the overflow and improves the safety of the code.
-
-Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
----
- drivers/video/fbdev/metronomefb.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/video/fbdev/metronomefb.c b/drivers/video/fbdev/metronomefb.c
-index 6f0942c6e..9da55cef2 100644
---- a/drivers/video/fbdev/metronomefb.c
-+++ b/drivers/video/fbdev/metronomefb.c
-@@ -210,6 +210,12 @@ static int load_waveform(u8 *mem, size_t size, int m, int t,
- 	}
- 	wfm_hdr->mc += 1;
- 	wfm_hdr->trc += 1;
-+
-+	if (sizeof(wfm_hdr->stuff2a) < 5) {
-+		dev_err(dev, "Error: insufficient space in stuff2a\n");
-+		return -EINVAL;
-+	}
-+
- 	for (i = 0; i < 5; i++) {
- 		if (*(wfm_hdr->stuff2a + i) != 0) {
- 			dev_err(dev, "Error: unexpected value in padding\n");
--- 
-2.34.1
+-Akhil
+> ---
+> 
+> V2: rewrite Subject, remove null check on pdev
+> 
+> ---
+>  drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> index ee89db72e36e..4edf9109d1d8 100644
+> --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> @@ -1760,11 +1760,6 @@ struct msm_gpu *a5xx_gpu_init(struct drm_device *dev)
+>  	unsigned int nr_rings;
+>  	int ret;
+>  
+> -	if (!pdev) {
+> -		DRM_DEV_ERROR(dev->dev, "No A5XX device is defined\n");
+> -		return ERR_PTR(-ENXIO);
+> -	}
+> -
+>  	a5xx_gpu = kzalloc(sizeof(*a5xx_gpu), GFP_KERNEL);
+>  	if (!a5xx_gpu)
+>  		return ERR_PTR(-ENOMEM);
 
 
