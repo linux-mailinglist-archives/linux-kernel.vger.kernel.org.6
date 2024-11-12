@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-406368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8243B9C5E08
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:00:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051219C5E0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:01:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46766281A35
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:00:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0DA51F2197F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3D4216446;
-	Tue, 12 Nov 2024 16:56:50 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6701B20E026;
+	Tue, 12 Nov 2024 16:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="STiu4vFw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D2420651E;
-	Tue, 12 Nov 2024 16:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A941FCC43;
+	Tue, 12 Nov 2024 16:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731430610; cv=none; b=Zni70L9RwogWFZRzRq8DE208Itq13zhLG1BGCOpMkApRnCFpWn0JdCO17zKbvDSWHe7Quy3x70l5TrxznQ9XIA2Bkzg7Wzyr9039O2qLvbn9Cj7h7Jab3Nv88pm9JhuEStqyWQNlBGYcyonLjoXe7bjqyVmR7pydmknR4TcgIMw=
+	t=1731430717; cv=none; b=SbgqhKUw4jytgj/1Mqa5yx2ljIN4dVtSjIGiD0OrI7Me3N3ikic9JgbyCRuKVFH6mE5a1+BoNHTZrcxO3bXAV0M95Pc57f1QmmybHtBITeW6xdmPishi0sxzPFudMedhNHuAtxqZzeNk6oq/7Q5j/HFJoRDgjDagQCuznLyQvEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731430610; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
+	s=arc-20240116; t=1731430717; c=relaxed/simple;
+	bh=6MATLaNTaFPSyKBlF8ht5BCoK52hQMWsO7YQuGpBK9M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BB4C4gJquGbGF3nzna+CWBhGsAlPUmM1MafYRORzPHb5FTGRbQUlf3pWuHVN2Ds7Odr8H/PK/QZkQTnG/Q4qB0PWaFCXJ1cdI7x3yAQDyxKFQATRLZthiwS7G25xsh5a7in0DM3yaqjASAd0pO8Dd3+CSCCHYrA/rNsa0KPN/ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id DE04068AFE; Tue, 12 Nov 2024 17:56:45 +0100 (CET)
-Date: Tue, 12 Nov 2024 17:56:45 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Daniel Wagner <wagi@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com,
-	mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
-	storagedev@microchip.com, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 4/8] blk-mp: introduce blk_mq_hctx_map_queues
-Message-ID: <20241112165645.GD20057@lst.de>
-References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org> <20241112-refactor-blk-affinity-helpers-v3-4-573bfca0cbd8@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ESheaBQNk8yHAivAYzfbyTqNXRPS03niwxbnLPkKLUAB0rY2DYDYeBRLvvjJIozardhKn8EEY7a+jQzLim21DetpAufqovf4dBkmteGyUtpBbl7X/cjBb2lHQCRy5j93jA5kuzpgy84H84zQVCf2r5Ch477o0X2SmbM+0WyKVCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=STiu4vFw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C8FAC4CECD;
+	Tue, 12 Nov 2024 16:58:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731430717;
+	bh=6MATLaNTaFPSyKBlF8ht5BCoK52hQMWsO7YQuGpBK9M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=STiu4vFwe+SdIbAaKqeygcdVCSIzYQuVq2GT2lEMoYIVlGA/32lnlDAeCU7V4KhE5
+	 oF5FNDajS6y4JZjt/yc5mPw4YJIDqwD1pJzJ19u1F679c1+foDl+OqzQ96Jedoj5mn
+	 sqGiYk9W/4pY1xJjV18Km9BScqIDyfAw7GHLQp6AObOizNwHKIOEYMYIWIOHPb79Sy
+	 kqFI2+TnKlNw48qyqMbzs0SNqEDUFS2/GTImtQ9INWtxCDPv0L8YTOlXXZuOj27vcc
+	 QvODrfJK32ePKD34SFxB9SS0lD95wtZ/2AepPK+F3Oonz84apjc4lmLBLh8zcOT9i+
+	 Q6kkjwfiLoaEw==
+Date: Tue, 12 Nov 2024 13:58:32 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Hao Ge <hao.ge@linux.dev>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	Hao Ge <gehao@kylinos.cn>
+Subject: Re: [PATCH] perf bpf-filter: Return -1 directly when pfi allocation
+ fails
+Message-ID: <ZzOJOEpyAc92462-@x1>
+References: <20241112022815.191201-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,11 +61,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241112-refactor-blk-affinity-helpers-v3-4-573bfca0cbd8@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20241112022815.191201-1-hao.ge@linux.dev>
 
-Looks good:
+On Tue, Nov 12, 2024 at 10:28:15AM +0800, Hao Ge wrote:
+> From: Hao Ge <gehao@kylinos.cn>
+> 
+> Directly return -1 when pfi allocation fails,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+The convention for this function is to return -errno, so please resubmit
+returning -ENOMEM.
 
+- Arnaldo
+
+> instead of performing other operations on pfi.
+> 
+> Fixes: 0fe2b18ddc40 ("perf bpf-filter: Support multiple events properly")
+> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> ---
+>  tools/perf/util/bpf-filter.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/bpf-filter.c b/tools/perf/util/bpf-filter.c
+> index e87b6789eb9e..34c8bf7e469e 100644
+> --- a/tools/perf/util/bpf-filter.c
+> +++ b/tools/perf/util/bpf-filter.c
+> @@ -375,7 +375,7 @@ static int create_idx_hash(struct evsel *evsel, struct perf_bpf_filter_entry *en
+>  	pfi = zalloc(sizeof(*pfi));
+>  	if (pfi == NULL) {
+>  		pr_err("Cannot save pinned filter index\n");
+> -		goto err;
+> +		return -1;
+>  	}
+>  
+>  	pfi->evsel = evsel;
+> -- 
+> 2.25.1
 
