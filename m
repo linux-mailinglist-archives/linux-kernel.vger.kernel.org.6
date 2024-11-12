@@ -1,132 +1,122 @@
-Return-Path: <linux-kernel+bounces-405993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD44E9C59C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:59:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9CA9C5A8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:39:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93632284E60
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:59:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7103B268F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031851FC7D0;
-	Tue, 12 Nov 2024 13:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AEVL3aiL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E211FBF6E;
+	Tue, 12 Nov 2024 14:05:11 +0000 (UTC)
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC051FBCB4;
-	Tue, 12 Nov 2024 13:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4941885A4;
+	Tue, 12 Nov 2024 14:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731419927; cv=none; b=nGKQxcDwLhY7e8scpc7lv1FQYweY+jP45s65S5T7/vUhO9kZyb6VzxZNByRSSmv0Gl/THUd1yvmBNYUwMTITcizbfcjmr8y31XL1+qR6uG3RaL3KotL6pGKYTF4kPSahHunUDXN9fiK2WcKypX9HmoAFf8xEGwwDg0QEFdXGpK0=
+	t=1731420310; cv=none; b=l7eZ+r2TxhQEIC20bE2RpZ8ACu4d+ax3cuXWiVDLUf2BFhi5waWNGFVjZQKpQDyeZrupxIq0j+in3LAx0cCedInZ5eH1jQQ+yy6s5/WxO72+AVFUwdTEKWtgJbSFXr0LXV1NADXzfDTtAZ2KeE1oMyagClyAI/PL7v2uSLeGNvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731419927; c=relaxed/simple;
-	bh=4pQscTrEU5vmK5o46Z8CwGup1txTZg9HfKzeFdSrbS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EYVU88uyHi62isQ5CP1SEscHXoNC26YU2OjtubkkaWn5cPXUC24/T5qT0Uga8onY0pGegbNqi3VOEsYsPYJNazYnCoVFqQUiCVzDWIMPaoVr12ODvFCp1hM0MwRT3FgdKvTFs0FNRO8CTUDUa5XsveVkiCJLUCnLRnSjQjcmaxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AEVL3aiL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 341EAC4CECD;
-	Tue, 12 Nov 2024 13:58:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731419926;
-	bh=4pQscTrEU5vmK5o46Z8CwGup1txTZg9HfKzeFdSrbS8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AEVL3aiL8wTkbdWnNSbzgcdNk3RQPWC313AxWLqPSQ8lsIHiJyIIQ+a1+0brKoEv7
-	 KUUta4ZAheLRxq/dXvj3W5IPp6XNi2jYXbYffK6aebTP7RStJ8pz1CsuOdvXtnlcum
-	 RimsoDVR8th5qGmtSlee4+rtTASaMD19tU6j829U=
-Date: Tue, 12 Nov 2024 14:58:43 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Daniel Wagner <wagi@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org,
-	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
-	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 4/8] blk-mp: introduce blk_mq_hctx_map_queues
-Message-ID: <2024111202-parish-prowess-78bc@gregkh>
-References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
- <20241112-refactor-blk-affinity-helpers-v3-4-573bfca0cbd8@kernel.org>
+	s=arc-20240116; t=1731420310; c=relaxed/simple;
+	bh=ZpfuAYhFKoclFbDUPh8BHHiItTTKVdU+LMzqw74gvxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rizmasgouZD1jLBtuLkqP0cIg9ML6W83KJhL4ImYYn8hH0GZQHz0bZHaUtYjxfvEi0EG82hwzJM94a6j0jfcDTrNrL0AgOW8duvJZqnb/BJ87lPyCpy1raLuQITBBJyFqgfJx+k6j8jhADa85lufjrHv88DOWAVMq+XngusY6qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7242f559a9fso2856940b3a.1;
+        Tue, 12 Nov 2024 06:05:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731420308; x=1732025108;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dq3XLXJU/AnKNlxTOmeTq2X0+ChFWml7RLz6HCZUdOg=;
+        b=Z2bH7wV9LXNu8fvD3GmrAGXR/tLdV7nOsTJs2bPrj+YxzLYboSFDOpxY7Zb9wzw1pb
+         WVGd+QXt1Et/JmzFBdv7th97e+o9XZMf98JDeOERWvVbQQoMzM/mrr7x71pfLVvuYewv
+         sC+IYnzLQ0E7RSuzEfqo+1SDxxwm3BJjZE7piy9eM1bzY+auULg70mMY0JWyPMONaI9F
+         VewgJFDzu3wwvk6zTDi9h57k6xPe26Zhc9WIkGu0fqHGDemsR6asDEXkhAaUI8CbMuB+
+         hKHmBpp9LOnTZLRGUtmaaB7zBDBdpnqVIJ4yBiuXF7yDv6JlA5w6i3Q+nm7XnLwojmqd
+         3lAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGBC6emwvVGQUDOIyh/qPOw4FlzCWj23ojeDLXts2DhbOOC4aQv1K4y1kukl8Cuy0lw4SHhinPoCrZcf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8vKp8JG7YSb/Og1if4hrsgMN9EH6BWbyTNGIs0A3VbOhlTJ1r
+	he4tEirvVqaY8Z6msZ2FOeQ9Q6DeKMYkFwjV/odUYqvdjQ4y3itR
+X-Google-Smtp-Source: AGHT+IGPKRetxuYOODxLpn4mRetQBnacD2UxQzqmZqYxWavHJJtlwoB/44wnXSSWGNSjKx0WDj39yQ==
+X-Received: by 2002:a05:6a20:1586:b0:1db:ef91:2e51 with SMTP id adf61e73a8af0-1dc22b579b3mr22725332637.28.1731420307713;
+        Tue, 12 Nov 2024 06:05:07 -0800 (PST)
+Received: from localhost.localdomain (124x33x176x97.ap124.ftth.ucom.ne.jp. [124.33.176.97])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f644a23sm10480007a12.53.2024.11.12.06.05.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 06:05:07 -0800 (PST)
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-sparse@vger.kernel.org,
+	Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Subject: [PATCH v3 0/2] add _statically_true() to simplify GENMASK_INPUT_CHECK()
+Date: Tue, 12 Nov 2024 22:59:22 +0900
+Message-ID: <20241112140454.518823-4-mailhol.vincent@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112-refactor-blk-affinity-helpers-v3-4-573bfca0cbd8@kernel.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1490; i=mailhol.vincent@wanadoo.fr; h=from:subject; bh=ZpfuAYhFKoclFbDUPh8BHHiItTTKVdU+LMzqw74gvxo=; b=owGbwMvMwCV2McXO4Xp97WbG02pJDOnGCW0TLWftqFjmwRa8VE/UjNu9LFd8smmT6w6NZQa3T k5O4GXoKGVhEONikBVTZFlWzsmt0FHoHXboryXMHFYmkCEMXJwCMBHX9Qz/697sXS34pDw0LC1V ye4cX6/264IdPz9ZhdzSrljxtnT+e0aG+WITZK99TboYVOh++03ZjT2VPxgsOU0vfBPd2nvBMia fGQA=
+X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp; fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 12, 2024 at 02:26:19PM +0100, Daniel Wagner wrote:
-> blk_mq_pci_map_queues and blk_mq_virtio_map_queues will create a CPU to
-> hardware queue mapping based on affinity information. These two function
-> share common code and only differ on how the affinity information is
-> retrieved. Also, those functions are located in the block subsystem
-> where it doesn't really fit in. They are virtio and pci subsystem
-> specific.
-> 
-> Thus introduce provide a generic mapping function which uses the
-> irq_get_affinity callback from bus_type.
-> 
-> Originally idea from Ming Lei <ming.lei@redhat.com>
-> 
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->  block/blk-mq-cpumap.c  | 37 +++++++++++++++++++++++++++++++++++++
->  include/linux/blk-mq.h |  2 ++
->  2 files changed, 39 insertions(+)
-> 
-> diff --git a/block/blk-mq-cpumap.c b/block/blk-mq-cpumap.c
-> index 9638b25fd52124f0173e968ebdca5f1fe0b42ad9..db22a7d523a2762b76398fdd768f55efd1d6d669 100644
-> --- a/block/blk-mq-cpumap.c
-> +++ b/block/blk-mq-cpumap.c
-> @@ -11,6 +11,7 @@
->  #include <linux/smp.h>
->  #include <linux/cpu.h>
->  #include <linux/group_cpus.h>
-> +#include <linux/device/bus.h>
->  
->  #include "blk.h"
->  #include "blk-mq.h"
-> @@ -54,3 +55,39 @@ int blk_mq_hw_queue_to_node(struct blk_mq_queue_map *qmap, unsigned int index)
->  
->  	return NUMA_NO_NODE;
->  }
-> +
-> +/**
-> + * blk_mq_hctx_map_queues - Create CPU to hardware queue mapping
-> + * @qmap:	CPU to hardware queue map.
-> + * @dev:	The device to map queues.
-> + * @offset:	Queue offset to use for the device.
-> + *
-> + * Create a CPU to hardware queue mapping in @qmap. The struct bus_type
-> + * irq_get_affinity callback will be used to retrieve the affinity.
-> + */
-> +void blk_mq_hctx_map_queues(struct blk_mq_queue_map *qmap,
-> +			    struct device *dev, unsigned int offset)
-> +
-> +{
-> +	const struct cpumask *mask;
-> +	unsigned int queue, cpu;
-> +
-> +	if (!dev->bus->irq_get_affinity)
-> +		goto fallback;
+The first patch introduces a new variant of statically_true() named
+_statically_true() which rely on __is_constexpr() to produce a
+constant expression result which can be used in BUILD_BUG_ON_ZERO()
+and other macros which expect a constant expression as input.
 
-I think this is better than hard-coding it, but are you sure that the
-bus will always be bound to the device here so that you have a valid
-bus-> pointer?
+The second patch applies this newly created _statically_true() to
+GENMASK_INPUT_CHECK().
 
-thanks,
 
-greg k-h
+** Changelog **
+
+v2 -> v3:
+
+   - split the single patch into a series of two patches.
+
+   - add explanation of why _statically_true() is needed in addition
+     to the existing statically_true(). Explain the pros and cons of
+     each.
+
+   - use __builtin_choose_expr() in _statically_true(). The
+     _statically_true() of the v2 works perfectly fine when used in
+     conjunction with BUILD_BUG_ON_ZERO() but fails if used, for
+     example, in arrays or in static_assert().
+
+Link: https://lore.kernel.org/all/20241111164743.339117-2-mailhol.vincent@wanadoo.fr/
+
+v1 -> v2:
+
+   - introduce _statically_true(), taking inspiration from
+     statically_true() as introduced in commit 22f546873149 ("minmax:
+     improve macro expansion and type checking").
+
+Link: https://lore.kernel.org/all/20240609073513.256179-1-mailhol.vincent@wanadoo.fr/
+
+Vincent Mailhol (2):
+  compiler.h: add _static_assert()
+  linux/bits.h: simplify GENMASK_INPUT_CHECK()
+
+ include/linux/bits.h     |  5 ++---
+ include/linux/compiler.h | 14 ++++++++++++++
+ 2 files changed, 16 insertions(+), 3 deletions(-)
+
+-- 
+2.45.2
+
 
