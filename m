@@ -1,206 +1,247 @@
-Return-Path: <linux-kernel+bounces-406801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E439C6472
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:46:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE819C6435
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:24:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 994F2B2C7AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:22:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AFF52822C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0223D219C9E;
-	Tue, 12 Nov 2024 22:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8591E21A6FF;
+	Tue, 12 Nov 2024 22:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="V31rFO1C"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wQcviIGh"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3DD1C0DD6
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 22:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4890221A4DC
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 22:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731450138; cv=none; b=uCfF0l4oYQT4YKxU6WYRD3GU5XaypNKWDN7zlGKtzCRWMxzIhV/072XD2nJfS6vWsHwx0VZMkiEi/e28NqlWXWPjSW2Ut7IDQ1WFw+oeaQULcFIsbanEt5vowdzCAgs3hx1rOWq3lbYMMfnDRYHpPsH+efD4LhUAa4v4rgQ2PEs=
+	t=1731450268; cv=none; b=msv1FS4y0vsUhKmMGnCrtPdDqAvOcO3CnnNt0iVULKaVOLmlYvmLNQ6jFkYqkU+Uy/sZtdcVHjbvsnj0/Ev1Ya7st968ORgGgNMEWT1m7vJfCc22SYSyDXrSMqBWcDL/wSOQjdeO//Cpxy0FjaxS+YEUk+tfY47lhyNpiSvqGls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731450138; c=relaxed/simple;
-	bh=XvcRH2z9Mk+KcQ/n1l1PXqkDGa7TDpKW5lJrqcOjVQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l+1Gtavh1IulhWlF18UzxZ+CxUFPIXyQu8kNsntMyD+D93A5Q7z5kBlp/ljSNsOTdytX69udrNUn4ig8p/Nb8UzafcJ3oe28QVazm9LGeggVlb8ZIdYwzuKqlglJWs4UMcPk1mKMxIhMjOy2w5fSNw97wxNWZmpGCT+/dnhE+SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=V31rFO1C; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1731450113;
- bh=AuUhsWmnwS3Wq04jwBtV8xlb7rkCU2Qg5LzNdH/FNA4=;
- b=V31rFO1Cs7EX8K1z/q0Z0B+MvegdFxr9jea0Z53oW3CjvNvvaf0N84dNRTFF/ecESeUL4ecU2
- TgUtD12239FwfIO3uJWdKyAwZM3Qzt8x/ix7XlAkK2OPQ/9kOTJvnFRFtEmszlYhV7BBeKW59Du
- tmOIcssHgcwBtTTX7im0mnMmCUO760w0q6/W5YlZhH8si3SyvDURRhIm8WYigKUbYSc3fT/P0aI
- dw0SphJ9zNJ516rAPeYLWy+HBa12R2bdQMdAqyml/7IiiyF/E2HW77KbRS5KGvfo9cRg8Ktc0Oc
- kbB+GXkCv1Pq/zdci3ssnHeVZEWTIhMfOHiohVX9+ECg==
-Message-ID: <79f13cef-1630-491f-8525-b2b44c0d42fb@kwiboo.se>
-Date: Tue, 12 Nov 2024 23:21:44 +0100
+	s=arc-20240116; t=1731450268; c=relaxed/simple;
+	bh=/wlansXT8ic1VdGrktjv6oyEADi9JxkCX7zQgwP+2Lg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rSCEoLMPINqZBZIFbHPhTRGtY63RQny+eKVnw5EUpfJx8J3EOyRb6jajQGdJbMJtr3lZihYmQ9hG3WWTWxwv9nfmv4MGHVftC/04g/7rW7NmJi2Jh8l3RSST4BDfeD/oBocQbx2MZJewWX3tsYaAgpUVkdTpyIHXKZ5i9DD1XV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wQcviIGh; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20ca4877690so20025ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:24:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731450266; x=1732055066; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XrbUWlz/10HI8HCWywPHxZR9oOzLRJKPdLGJRk3v8wY=;
+        b=wQcviIGhyMH7BttYPzkOspFSDnDLhfdZR6TXRGgyTRUTuxp6ILrQir0hzaFrGR1i+3
+         Hf6RiUqIRV72eZNDya/IDhaySuCC28epWyYD0nr5FBi4FdJVb4IPigYRaNH45SkJa3Av
+         zGvJrkemAzmZHy6VWbeEl6xxGvNB0sEmp9spo2HI6G8llbv5aJVy/2d0piHM5bsEg8lG
+         7wyPl9KxffDqx6PxQZQ8Nimli7IB7DTnpSuQd0R/fQjtbg8BPEeYjBrGq4XXNVUPJPUp
+         UIUOH6ZAdaXQknS8Ar7XVmw4/n+EM//qhYULysXjDGOxWCfEXsiq/MNfFXamqo4cdRSB
+         Va5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731450266; x=1732055066;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XrbUWlz/10HI8HCWywPHxZR9oOzLRJKPdLGJRk3v8wY=;
+        b=ocl/z8gRPHhLE+aBgV11uZWlTJ2jlKZMAiU6GJjhulx9TcXe6Oikas3Wz1t3h1oatD
+         texrwhIl2UeJsDHtDzzHtvCd7qoWtIqLUUg+jBur59NXann+mKKuLCWNwI+USUWgaCe7
+         v1C6Y28Ycdg2Lu+l3TIVah1DpRnqqeSk/R2GlmaRiiY9a/rZEuvua2yLbRT+lGXxnvkY
+         mAR/c/nIpzljNrLS4XGW2T8kFhUuWeS8goCKPyiVe4ZLUgyTbaICm6euqFouNgg5YaZs
+         laO9393mTjVyXDqLeISgAMiWudH5s/H/3cMaSBtNBWA+HVMTpfxROrCQImM12ULwbE0o
+         sW9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXYIV3s4pYR0ZSJYRTBJ/uyORO3ei1nXwXxD83YtYWM0OAAy3T3rxO0a33WsmqqMQaNJ5QNqHL/Gt05JIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdgJo1zsJxM91/bNz9gdB0Uz6OXNd7gf38h9fa9qHZszmT7lE1
+	yTucm0nnwCNUU9TaUrJTwb3Mucttr11684y+h4Wy5ydi9jRN8m8p5hzllYlZ92WMigeRSqv1ae1
+	/cxl9v7DKg9gEziuM40u5ZHwgiLXl7dcOl6LT
+X-Gm-Gg: ASbGncue0pKfYJDNhTleu8q+8Q3WRLq6JyjhDdpHYoqwxaVj/lJUAmT1x5kG/SUB6sj
+	8Rs1BOrp1Mid4XjCi99a0mSoJnPYE9h4UWOTcQGN55iIy9PZa8RjI+OOwLf8HyNc=
+X-Google-Smtp-Source: AGHT+IHVjOXDPek3bTfzpcjqhyl6dO+VgXJqAYZyQMTiOm5YzMnjDVAcfOTw1GP054zeGixwaVYPsd6ThcCJdKkbUoY=
+X-Received: by 2002:a17:903:2449:b0:20b:81bb:4a81 with SMTP id
+ d9443c01a7336-211b70725d1mr132885ad.7.1731450266232; Tue, 12 Nov 2024
+ 14:24:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Enable UART8 on rock-3b
-To: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>,
- Dragan Simic <dsimic@manjaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- FUKAUMI Naoki <naoki@radxa.com>, Chukun Pan <amadeus@jmu.edu.cn>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241111181807.13211-1-tszucs@linux.com>
- <20241111181807.13211-4-tszucs@linux.com>
- <4ba81dfa-f276-4e05-b46b-92f50dbcfcc4@kwiboo.se>
- <CA+GksrJLpeU8x-kjR1Ng3ySf+giiufCsJuBssng9qoX1PjAunA@mail.gmail.com>
- <9330ebb370780c001fd2aaee49aec9e8@manjaro.org>
- <CA+GksrJjDPve29Vh7ZFhM+JFp058xmXZAPeuLuFth7v=JeiH2w@mail.gmail.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <CA+GksrJjDPve29Vh7ZFhM+JFp058xmXZAPeuLuFth7v=JeiH2w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-ForwardEmail-ID: 6733d4fe9402f7538d196cc3
+References: <20241026121758.143259-1-irogers@google.com> <20241026121758.143259-4-irogers@google.com>
+ <20241112195343.GA404636@e132581.arm.com>
+In-Reply-To: <20241112195343.GA404636@e132581.arm.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 12 Nov 2024 14:24:15 -0800
+Message-ID: <CAP-5=fXuyZbn3Jiq=RQaLTqybgji50Ko8jrpsinFqo+OOPBeRw@mail.gmail.com>
+Subject: Re: [PATCH v1 3/4] perf record: Skip don't fail for events that don't open
+To: Leo Yan <leo.yan@arm.com>
+Cc: Atish Patra <atishp@rivosinc.com>, linux-riscv@lists.infradead.org, 
+	beeman@rivosinc.com, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Ze Gao <zegao2021@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Ben Gainey <ben.gainey@arm.com>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Junhao He <hejunhao3@huawei.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Tamás,
+On Tue, Nov 12, 2024 at 11:53=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
+>
+> On Sat, Oct 26, 2024 at 05:17:57AM -0700, Ian Rogers wrote:
+> >
+> > Whilst for many tools it is an expected behavior that failure to open
+> > a perf event is a failure, ARM decided to name PMU events the same as
+> > legacy events and then failed to rename such events on a server uncore
+> > SLC PMU. As perf's default behavior when no PMU is specified is to
+> > open the event on all PMUs that advertise/"have" the event, this
+> > yielded failures when trying to make the priority of legacy and
+> > sysfs/json events uniform - something requested by RISC-V and ARM. A
+> > legacy event user on ARM hardware may find their event opened on an
+> > uncore PMU which for perf record will fail. Arnaldo suggested skipping
+> > such events which this patch implements. Rather than have the skipping
+> > conditional on running on ARM, the skipping is done on all
+> > architectures as such a fundamental behavioral difference could lead
+> > to problems with tools built/depending on perf.
+> >
+> > An example of perf record failing to open events on x86 is:
+> > ```
+> > $ perf record -e data_read,cycles,LLC-prefetch-read -a sleep 0.1
+> > Error:
+> > Failure to open event 'data_read' on PMU 'uncore_imc_free_running_0' wh=
+ich will be removed.
+> > The sys_perf_event_open() syscall returned with 22 (Invalid argument) f=
+or event (data_read).
+> > "dmesg | grep -i perf" may provide additional information.
+> >
+> > Error:
+> > Failure to open event 'data_read' on PMU 'uncore_imc_free_running_1' wh=
+ich will be removed.
+> > The sys_perf_event_open() syscall returned with 22 (Invalid argument) f=
+or event (data_read).
+> > "dmesg | grep -i perf" may provide additional information.
+> >
+> > Error:
+> > Failure to open event 'LLC-prefetch-read' on PMU 'cpu' which will be re=
+moved.
+> > The LLC-prefetch-read event is not supported.
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 2.188 MB perf.data (87 samples) ]
+> >
+> > $ perf report --stats
+> > Aggregated stats:
+> >                TOTAL events:      17255
+> >                 MMAP events:        284  ( 1.6%)
+> >                 COMM events:       1961  (11.4%)
+> >                 EXIT events:          1  ( 0.0%)
+> >                 FORK events:       1960  (11.4%)
+> >               SAMPLE events:         87  ( 0.5%)
+> >                MMAP2 events:      12836  (74.4%)
+> >              KSYMBOL events:         83  ( 0.5%)
+> >            BPF_EVENT events:         36  ( 0.2%)
+> >       FINISHED_ROUND events:          2  ( 0.0%)
+> >             ID_INDEX events:          1  ( 0.0%)
+> >           THREAD_MAP events:          1  ( 0.0%)
+> >              CPU_MAP events:          1  ( 0.0%)
+> >            TIME_CONV events:          1  ( 0.0%)
+> >        FINISHED_INIT events:          1  ( 0.0%)
+> > cycles stats:
+> >               SAMPLE events:         87
+> > ```
+>
+> Thanks for James reminding me.  Tested on AVA platform:
+>
+> # tree /sys/bus/event_source/devices/arm_dsu_*/events
+>   ...
+>   /sys/bus/event_source/devices/arm_dsu_9/events
+>   =E2=94=9C=E2=94=80=E2=94=80 bus_access
+>   =E2=94=9C=E2=94=80=E2=94=80 bus_cycles
+>   =E2=94=9C=E2=94=80=E2=94=80 cycles
+>   =E2=94=9C=E2=94=80=E2=94=80 l3d_cache
+>   =E2=94=9C=E2=94=80=E2=94=80 l3d_cache_allocate
+>   =E2=94=9C=E2=94=80=E2=94=80 l3d_cache_refill
+>   =E2=94=9C=E2=94=80=E2=94=80 l3d_cache_wb
+>   =E2=94=94=E2=94=80=E2=94=80 memory_error
+>
+> # ./perf record -- sleep 0.1
+>  Error:
+>  Failure to open event 'cycles:PH' on PMU 'arm_dsu_0' which will be
+>  removed.
+>  cycles:PH: PMU Hardware doesn't support sampling/overflow-interrupts.
+>  Try 'perf stat'
+>  Error:
+>  Failure to open event 'cycles:PH' on PMU 'arm_dsu_1' which will be
+>  removed.
+>  cycles:PH: PMU Hardware doesn't support sampling/overflow-interrupts.
+>  Try 'perf stat'
+>  ...
+>  Error:
+>  Failure to open event 'cycles:PH' on PMU 'arm_dsu_15' which will be
+>  removed.
+>  cycles:PH: PMU Hardware doesn't support sampling/overflow-interrupts.
+>  Try 'perf stat'
+>  [ perf record: Woken up 1 times to write data ]
+>  [ perf record: Captured and wrote 0.008 MB perf.data (8 samples) ]
+>
+> # ./perf report --stats
+>
+>  Aggregated stats:
+>                 TOTAL events:         67
+>                  MMAP events:         40  (59.7%)
+>                  COMM events:          1  ( 1.5%)
+>                SAMPLE events:          8  (11.9%)
+>               KSYMBOL events:          6  ( 9.0%)
+>             BPF_EVENT events:          6  ( 9.0%)
+>        FINISHED_ROUND events:          1  ( 1.5%)
+>              ID_INDEX events:          1  ( 1.5%)
+>            THREAD_MAP events:          1  ( 1.5%)
+>               CPU_MAP events:          1  ( 1.5%)
+>             TIME_CONV events:          1  ( 1.5%)
+>         FINISHED_INIT events:          1  ( 1.5%)
+>  cycles:P stats:
+>                SAMPLE events:          8
+>
+> # ./perf stat -- sleep 0.1
+>
+>  Performance counter stats for 'sleep 0.1':
+>
+>               0.87 msec task-clock                       #    0.009 CPUs =
+utilized
+>                  1      context-switches                 #    1.148 K/sec
+>                  0      cpu-migrations                   #    0.000 /sec
+>                 52      page-faults                      #   59.685 K/sec
+>            877,835      instructions                     #    1.14  insn =
+per cycle
+>                                                   #    0.25  stalled cycl=
+es per insn
+>            772,102      cycles                           #  886.210 M/sec
+>            191,914      stalled-cycles-frontend          #   24.86% front=
+end cycles idle
+>            219,183      stalled-cycles-backend           #   28.39% backe=
+nd cycles idle
+>            184,099      branches                         #  211.307 M/sec
+>              8,548      branch-misses                    #    4.64% of al=
+l branches
+>
+>        0.101623529 seconds time elapsed
+>
+>        0.001645000 seconds user
+>        0.000000000 seconds sys
+>
+> Tested-by: Leo Yan <leo.yan@arm.com>
 
-On 2024-11-12 22:04, Tamás Szűcs wrote:
-> Hi Dragan,
-> 
-> On Tue, Nov 12, 2024 at 4:07 PM Dragan Simic <dsimic@manjaro.org> wrote:
->> Please correct me if I'm wrong, but isn't this UART supposed to be
->> used for the Bluetooth part of an SDIO WiFi + Bluetooth module, in
->> form of a non-standard M.2 module that Radxa sells?
-> 
-> UART8 is supposed to be used for any radio module connected to the M2E
-> connector.
-> It will typically be responsible for Bluetooth or BLE but it could be
-> 802.15.4 or whatever. In any case, all wanting to use it will need the
-> uart8 node enabled.
+Thanks Leo! As the Tested-by makes sense only if you've applied all 4
+patches, which your testing and James' testing shows you've both done,
+I'll add the tags to all 4 patches. I'll do likewise with Atish,
+rebase and resend the patches.
 
-Do you have any specific sdio+uart module you are testing these changes
-with? The pinout for sdio+uart on Radxa's M.2 Key E slot is their own,
-pinout for pcie and usb should be closer to a common standard.
-
-https://dl.radxa.com/accessories/wireless-module/ROCKPi_M2_Wireless_Module_Pinout_v10.xlsx
-
-> 
->>
->> With that in mind, I see very little sense in just enabling the UART,
->> without defining the entire Bluetooth interface, which AFAIK produces
-> 
-> Defining a bluetooth node would hardwire idiosyncrasies of a given
-> radio module's Bluetooth core. Sure you could add a sleep clock, all
-> kind of sideband signals for wakeups, reset, power down, etc. But hey,
-> some will use them, some won't. I think it's undesirable and
-> unnecessary. You can hciattach from here and most will work just like
-> that. Tighter integration or anything special, module specific on top
-> should be handled individially, on a case-by-case basis. This is a dev
-> board after all. I say trick of all trades.
-
-Changing to status=okay for sdmmc2 and uart8 should be fine, it does not
-cause any issue for my pcie wifi module testing with a Radxa A8 module.
-
-Testing with a Radxa A2 module (sdio+uart), the sdio/wifi part is
-automatically discovered, however bluetooth require a DT overlay for
-automatic probe. Something like this seem to work:
-
-diff --git a/rk3568-rock-3b-radxa-a2.dtso b/rk3568-rock-3b-radxa-a2.dtso
-new file mode 100644
-index 000000000000..746b04e601af
---- /dev/null
-+++ b/dts/rk3568-rock-3b-radxa-a2.dtso
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * DT-overlay for Radxa ROCK Pi Wireless Module A2.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/pinctrl/rockchip.h>
-+
-+&sdmmc2 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	wifi@1 {
-+		compatible = "brcm,bcm43456-fmac", "brcm,bcm4329-fmac";
-+		reg = <1>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <RK_PD6 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "host-wake";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wifi_wake_host_h>;
-+	};
-+};
-+
-+&uart8 {
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "brcm,bcm4345c5";
-+		clocks = <&rk809 1>;
-+		clock-names = "lpo";
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <RK_PB5 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "host-wakeup";
-+		device-wakeup-gpios = <&gpio4 RK_PB4 GPIO_ACTIVE_HIGH>;
-+		shutdown-gpios = <&gpio4 RK_PB2 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bt_reg_on_h &bt_wake_host_h &host_wake_bt_h>;
-+		vbat-supply = <&vcc3v3_sys2>;
-+		vddio-supply = <&vcc_1v8>;
-+	};
-+};
-
-With that applied wifi and bt module is detected and firmware loaded
-during startup:
-
-[    4.684687] mmc_host mmc2: Bus speed (slot 0) = 150000000Hz (slot req 150000000Hz, actual 150000000HZ div = 0)
-[    4.699412] dwmmc_rockchip fe000000.mmc: Successfully tuned phase to 360
-[    4.707429] mmc2: new ultra high speed SDR104 SDIO card at address 0001
-[    4.717034] brcmfmac: brcmf_fw_alloc_request: using brcm/brcmfmac43456-sdio for chip BCM4345/9
-[    4.760907] Bluetooth: hci0: BCM: chip id 130
-[    4.763736] Bluetooth: hci0: BCM: features 0x0f
-[    4.787714] Bluetooth: hci0: BCM4345C5
-[    4.788482] Bluetooth: hci0: BCM4345C5 (003.006.006) build 0000
-[   11.417553] Bluetooth: hci0: BCM: features 0x0f
-[   11.441621] Bluetooth: hci0: BCM4345C5 Ampak_CL1 UART 37.4 MHz BT 5.2 [Version: 1039.1086]
-[   11.442423] Bluetooth: hci0: BCM4345C5 (003.006.006) build 1086
-
-Regards,
-Jonas
-
-> 
->> nasty looking error messages in the kernel log when there's actually
->> nothing connected to the UART.
-> 
-> My dmesg is clean as a whistle
-> root@rock-3b:~# dmesg | grep -E 'fe6c0000|ttyS0'
-> [    0.344818] fe6c0000.serial: ttyS0 at MMIO 0xfe6c0000 (irq = 26,
-> base_baud = 1500000) is a 16550A
-> What kind of nasty errors do you recall?
-> 
-> Kind regards,
-> Tamas
-
+Thanks,
+Ian
 
