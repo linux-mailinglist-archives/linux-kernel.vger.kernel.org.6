@@ -1,153 +1,145 @@
-Return-Path: <linux-kernel+bounces-406832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8119C656F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:48:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C3C9C65D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:18:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA723B3491A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:05:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06AA2B2F20E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81CD021B456;
-	Tue, 12 Nov 2024 23:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FDD21B427;
+	Tue, 12 Nov 2024 23:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="YNYl4oPT"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QDGnReqE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361081531C4;
-	Tue, 12 Nov 2024 23:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1FC219C8A
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731452692; cv=none; b=PmB/wYn3fwSRczWPch2QiwV6SaZd9FxbpULGbMl2Nus/58oUUqnJ8kdWyUDGEm13jYVgS2SFD8ymebdcTtbv2RTnUr5tFc3z+EhMwWyTF4RNf6ByFdTMNfJAnYt86YZvm90ovc9HK6UWgbwf/kric/8Sc3s4G0pGhq13vvLcNgg=
+	t=1731452833; cv=none; b=tvruDqyZ/78yzTY2XEM4JrLiTi9LR5VEPdHCxDtEvrAL4aCCp3YBwyTWUtAW6Do+IKHrBsyBVZfxHJs1WMc6RqUtY9oc1EbNYwvCJbC/Z0Xmb6eDsxkM70L9A+2IxL4C78q0G7Z44L75BMdpVI5gdXAtoNR9j7Wnau9rrTsFJWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731452692; c=relaxed/simple;
-	bh=uVca2jGYpWUvOxYC184KdSetOQQ3dXnnGdAzfG68pw4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WOsQlQuvNACRRexuD7KoMiLa2Eeup0pf56Edkk/SLE29AidGWGOw+iM5xd39URCtdKh6hbCgh9V7WdRcTK5gUM6i904eJQsLc32UrFLyOIP0t0LRtVT9NAkGYBV4rWi2xdAfMXlRVVD4XGOvrGtj76vvFuBLJjvoZRSTEDc3AoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=YNYl4oPT; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 61A3B100003;
-	Wed, 13 Nov 2024 02:04:49 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 61A3B100003
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1731452689;
-	bh=GzpLeQmauji/V5ygVX6H57e5rXHsmuG1+VVjGr5bYFk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=YNYl4oPTELNlAq5DjPqmHHpKXGnnpzWVgTWF0UwXU233aYiC1djwvfJG1oIDSOtAi
-	 fFphLpYPW2NW+etIwNtrx5sA7j8jqZr41TfCYV7u/kI6z/iw4U5FhzcE3KFoYpUlx+
-	 EJufX9pSTO5snqQSf6z8kXIYsNqFPqDB8lJ+9sv9a/hxu2vaVWoooscLJHQJKySaZ6
-	 EAGGpeN2NKlokZS/na0akBegTRubqqiIJ3rt8luKbAtW5znYS0vQofM2AWhnTsSfre
-	 Yqd5v1CsRumzzpyCL2yJ4L63UKzP/pv6mXdPXErqU91jxMW7AbmNgj1Lt701jflieY
-	 n6ZaPXhBGq5Zg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 13 Nov 2024 02:04:49 +0300 (MSK)
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
-	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, "Rob
- Herring" <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v5 0/3] Add A1 Soc audio clock controller driver
-Date: Wed, 13 Nov 2024 02:04:40 +0300
-Message-ID: <20241112230443.1406460-1-jan.dakinevich@salutedevices.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731452833; c=relaxed/simple;
+	bh=TFy3fU/4I2GpEadKr7IhLMNlWmHyK3B0PI16A0z0L/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A+N3tmu7Csz6WXtqIIVqFkLyq7HEI9a6qsfqimpgr6+72dyExL+113SNMoj8hhwNqhB5nldVfIg0zO61HqrdWF/pviipBr4+rQktBPkGepeVVRVyK5cIRfpt8PNVE5UxeXXVkw64bH5onRT2DrYF8tZlAu3H+n/mGv2Qc+eqHzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QDGnReqE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731452830;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LE/PCh+Wa1FzY66oOB8AxWyuC5tcu2XLg9eirKv3WLg=;
+	b=QDGnReqEQ3XAqkLIEmkoC2Ty1uKkIfB7QF4uKfBy4wmQY5YK2tnCE07xQG1q8OoyVpay05
+	xjGRi7TZx0UJcKqcDcGaFR0Gi/+WpEp7VTcLdxNIs2Wldor0Fmcd/IDlYBD/VSIfNPlUbL
+	Uds79oNzSPUka+X4EGzBr7cHeNGv5jc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-442-MnFH-b77PzSngY9wFOdGog-1; Tue, 12 Nov 2024 18:07:08 -0500
+X-MC-Unique: MnFH-b77PzSngY9wFOdGog-1
+X-Mimecast-MFC-AGG-ID: MnFH-b77PzSngY9wFOdGog
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43151a9ea95so587815e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:07:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731452827; x=1732057627;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LE/PCh+Wa1FzY66oOB8AxWyuC5tcu2XLg9eirKv3WLg=;
+        b=Ef/Gw7sduDqBJDscyqsUFDOskEP1U0vVNAgqGmA6RryND38jLsQoTrUrlSJP8xtnPl
+         Hn+snMugdESFsYTIBrxC+fZXLLlxYD7Eu1l/kALVHglZGTtJstPmRrye8o1j72sSMklp
+         1apHeL6gQM2iGRXvaiGVECa2zz5Qi1AlxcMBl7Hs24nuhGQ71EbK0fVKg4cpWS/vABaL
+         JorRYp2u8AJIiyvcU8Q1wnEUBYQsYdhbX+Oyx/sumDiMZeG09jyN85umBx0TnlPqaLvU
+         I173h3+GCdmXsL76msZkcgOetPQGMQkHB248PJ8li2QLiRMTHU8qXsER0TD2VM7tonHh
+         cBuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOS1S8Rhka1bj5ImdTDUefthEqYQKFSN4uMkn15zAbhr/PiWF8IJaEaOLK38TjLRu/2BVsAnUYuOnHn4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyULWVpkaupupEwtzZFueMUbyhXKkiE8IXn3XqxhMj1ZFOYxFAU
+	FzYMwEOMb0mYs7syB0ftn+AwtU4T5jYmcypAWnpG/Vs44q6Sfn6PPBbOh05VKa9XwZeqAY5L9pD
+	wzlp6xzNPtxaCDtP/NIlgcWgvRaE/HBp3rNsFLmfIOU6EwYuE1BzAk6dXtAt4XQ==
+X-Received: by 2002:a05:600c:444a:b0:42c:b603:422 with SMTP id 5b1f17b1804b1-432b748015bmr146675395e9.8.1731452827518;
+        Tue, 12 Nov 2024 15:07:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFG91DAj9dtbmBJmaPVjIVaDJVRfiBwwHIq3NwnUafHc3Lid0KCyDysuuqaOuhfXgM1r68lOQ==
+X-Received: by 2002:a05:600c:444a:b0:42c:b603:422 with SMTP id 5b1f17b1804b1-432b748015bmr146675275e9.8.1731452827184;
+        Tue, 12 Nov 2024 15:07:07 -0800 (PST)
+Received: from redhat.com ([2a02:14f:17b:c70e:bfc8:d369:451b:c405])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d54e8015sm2478145e9.7.2024.11.12.15.07.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 15:07:05 -0800 (PST)
+Date: Tue, 12 Nov 2024 18:07:00 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Gediminas Repecka <gediminas.repecka@gmail.com>
+Cc: jasowang@redhat.com, virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vdpa: vdpa_sim: vdpa_sim_net: fixed cofing style issues
+Message-ID: <20241112180522-mutt-send-email-mst@kernel.org>
+References: <20241107191941.37300-1-gediminas.repecka@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 189131 [Nov 12 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, 127.0.0.199:7.1.2;salutedevices.com:7.1.1;lore.kernel.org:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, FromAlignment: n
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/11/12 21:28:00
-X-KSMG-LinksScanning: Clean, bases: 2024/11/12 22:50:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/12 21:10:00 #26864167
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107191941.37300-1-gediminas.repecka@gmail.com>
 
-This series adds support for audio clock and reset controllers on A1 SoC family.
 
-Changes v4 [4] -> v5
- - moved changes of aux reset driver to series [5]
- - added reset controller on top of audio-vad
- - merged into single file
- - reworked variables/defines naming
- - added clk81 clock hierarchy
- - added TDMIN_VAD-related clocks
- - excluded DT patch (it will submitted separately)
+On Thu, Nov 07, 2024 at 09:19:41PM +0200, Gediminas Repecka wrote:
+> Fixed coding style issues reported by checkpatch script
+> ---
 
-Changes v3 [3] -> v4
- - Use auxiliary reset device implemented in [4]
- - Split the driver into files
- - Use common with axg-audio yaml schema
- - Unify clock-names with axg-audio
+A lot is wrong with this submission, given it's supposed to fix
+checkpatch:
 
-Changes v2 [2] -> v3
- - reset:
-   * added auxiliary device
- - yaml:
-   * added declaration of optional clocks
-   * fixed names in example and another cosmetics
- - clocks:
-   * reworked naming
-   * stop using of "core" clock name
-   * fixed wrong parenting
+- no signature
+- typo in subject
+- not using direct voice (Fix, not Fixed)
 
-Changes v1 [1] -> v2:
- - Detached from v1's series (patch 2, 3, 4, 25)
- - Reuse some of defines from axg-audio
- - Split the controller into two memory regions
 
-Links:
- [1] https://lore.kernel.org/lkml/20240314232201.2102178-1-jan.dakinevich@salutedevices.com/
- [2] https://lore.kernel.org/lkml/20240328010831.884487-1-jan.dakinevich@salutedevices.com/
- [3] https://lore.kernel.org/lkml/20240419125812.983409-1-jan.dakinevich@salutedevices.com/
- [4] https://lore.kernel.org/all/20240913121152.817575-1-jan.dakinevich@salutedevices.com/
- [5] https://lore.kernel.org/all/20241112230056.1406222-1-jan.dakinevich@salutedevices.com/
+pls fix and resubmit
 
-Jan Dakinevich (3):
-  clk: meson: axg: share the set of audio helper macros
-  dt-bindings: clock: axg-audio: document A1 SoC audio clock controller
-    driver
-  clk: meson: a1: add the audio clock controller driver
-
- .../clock/amlogic,axg-audio-clkc.yaml         |   4 +
- drivers/clk/meson/Kconfig                     |  14 +
- drivers/clk/meson/Makefile                    |   1 +
- drivers/clk/meson/a1-audio.c                  | 841 ++++++++++++++++++
- drivers/clk/meson/axg-audio.c                 | 215 +----
- drivers/clk/meson/meson-audio.h               | 156 ++++
- .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 139 +++
- 7 files changed, 1190 insertions(+), 180 deletions(-)
- create mode 100644 drivers/clk/meson/a1-audio.c
- create mode 100644 drivers/clk/meson/meson-audio.h
- create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
-
--- 
-2.34.1
+>  drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+> index 6caf09a1907b..0705aff74cf3 100644
+> --- a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+> +++ b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+> @@ -53,7 +53,7 @@ struct vdpasim_cq_stats {
+>  	u64 errors;
+>  };
+> 
+> -struct vdpasim_net{
+> +struct vdpasim_net {
+>  	struct vdpasim vdpasim;
+>  	struct vdpasim_dataq_stats tx_stats;
+>  	struct vdpasim_dataq_stats rx_stats;
+> @@ -293,7 +293,7 @@ static int vdpasim_net_get_stats(struct vdpasim *vdpasim, u16 idx,
+>  	unsigned int start;
+>  	int err = -EMSGSIZE;
+> 
+> -	switch(idx) {
+> +	switch (idx) {
+>  	case 0:
+>  		do {
+>  			start = u64_stats_fetch_begin(&net->rx_stats.syncp);
+> @@ -543,7 +543,7 @@ static struct vdpa_mgmt_dev mgmt_dev = {
+>  	.ops = &vdpasim_net_mgmtdev_ops,
+>  	.config_attr_mask = (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR |
+>  			     1 << VDPA_ATTR_DEV_NET_CFG_MTU |
+> -		             1 << VDPA_ATTR_DEV_FEATURES),
+> +			     1 << VDPA_ATTR_DEV_FEATURES),
+>  	.max_supported_vqs = VDPASIM_NET_VQ_NUM,
+>  	.supported_features = VDPASIM_NET_FEATURES,
+>  };
+> 
+> 2.34.1
 
 
