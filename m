@@ -1,141 +1,199 @@
-Return-Path: <linux-kernel+bounces-405990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0A29C59AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:56:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1669C59B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0753284E1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:56:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 521AD284E2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F61D1FC7CC;
-	Tue, 12 Nov 2024 13:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E231C9DD8;
+	Tue, 12 Nov 2024 13:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hc24ecNC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/4/B46x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13751FBC9B
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886421FBF75;
+	Tue, 12 Nov 2024 13:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731419772; cv=none; b=Ddm/s52ASGwE4D5QvqNW9fxlYjRhmAgnAwNi/rqQJIhhr1FuJZby3koeGSBHkLlldAwZIYsa6jdp91T6dr2eKPql/F27EbtPra25tfSlFbcT8sa3u2XJa6jcddlbE8mMO+GWg5J0AiIvEThukfipHODEJ5Q/QeFNj/sujwMmze8=
+	t=1731419835; cv=none; b=VG+5NMJR/BuKkEbHtP3cmwcrYoa+GRZSdZMSA4FWmw9PJV46C5ySJ2hcTKPL1ImqTZSHdy0L8J2puPqCAWGIndXC/YU9VE6XIjyhUiKiC4p3nmAazURY9SXp0QpzEThrhPWjckHKLs8FQNRSU5fqHXjS/WrEaWJbL6pV3NBj4J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731419772; c=relaxed/simple;
-	bh=T6YQnYADiOc+eB2ZCcn4o+pCA4TyC4vZ8TSHZ5+kOMU=;
+	s=arc-20240116; t=1731419835; c=relaxed/simple;
+	bh=690X58wLXuEw3RWxlo54q8TfYewr1w4lhcbv/TRzk+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=duiKLblZANNUfrwFcg/hvzYn6moThGJzkzcwH3wMgh6V2bZ8hm4X+yuXhf1c6/Oc+ISRlci6PIzyoYluHPD/kCtuWSq0c0TXlfjD8xLWE9NrUxBLqF9AhtHQhL00SFiVQgLUUXKJ3GskMd7WIIYMfqrsdiMCDU75nyi+xnFeKEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hc24ecNC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EDD3C4CECD;
-	Tue, 12 Nov 2024 13:56:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mYuUc4OBl06gN/Eyu98hbCJbdasDKHkEYKnqLjyPN+w76+bhEeJP3nE9hXWtYYm3IF4DbupC5lz46hrZzwkFy4vWPKCK37s5PP/WMW9vlAflkz2i5RwGo3LMM0m4ZuYyLkeAvuh3Bc/cNwfZ3+uodusbw9EeM4KB8P/iOuvAxMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/4/B46x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24822C4CECD;
+	Tue, 12 Nov 2024 13:57:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731419771;
-	bh=T6YQnYADiOc+eB2ZCcn4o+pCA4TyC4vZ8TSHZ5+kOMU=;
+	s=k20201202; t=1731419834;
+	bh=690X58wLXuEw3RWxlo54q8TfYewr1w4lhcbv/TRzk+8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hc24ecNCVjkhpfrV8ycxiIWZhdPjJrw4TacSlWMX6JYcVnUXCfIfAGDEVyqVQ1Y0R
-	 GewWL+5dsT9Es6z5WK3wa070E3ixHzqnYYKEjACP4XL3ljYsfaZF9rJ33UMOs2WbGr
-	 aWAFwEyKQ52ScJcI9k+ybt6QeQ6UB1tckZomd6l3RJYShsHQbWRHMyJ/j5uBUbgFsh
-	 WM/7AH8ERdOv7XykYciWcu3PAL9dyIY4WI4bLjSLZydvaDN4Ilw++FsD+wlKp4Q3+F
-	 c7jwA+4d9HVor1nxvNgt0W1G8PQnb86JLID44Rdf4U//Oh3mfjmscW0cxsDz3cxSTp
-	 JlT+Q5Mpq8sig==
-Date: Tue, 12 Nov 2024 14:56:08 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [RFC 1/3] tick-sched: Remove last_tick and calculate next tick
- from now
-Message-ID: <ZzNeeCvSFL7OzHKF@localhost.localdomain>
-References: <20241108174839.1016424-1-joel@joelfernandes.org>
- <20241108174839.1016424-2-joel@joelfernandes.org>
- <ZzKWvislBnjV9kpf@pavilion.home>
- <874j4co98w.ffs@tglx>
+	b=D/4/B46xdU2kNwx+1Q3YfQfOsQ4aeqSaZtYGiYxqOSmis1LJm/zIfXfOEgRx9KtDA
+	 WOwgqSJrrBH5zxoBsnhK1LvCnlxqZYRr1y/ZSFNephwJ6cFC4Wte6T7azlmthAoTJ7
+	 zqkK1+xm9cOPisdQeZrpYl6Bs+yNWCKD38uNvXjGWGP7YBjYBlZJ1K7c5DOeOmMy6K
+	 LheNQHg/V/NF7ebh7iY2Vul3ywW7U+Pc36WQI+3bv0iulqjfiOUWp2VY0MFuwm5r+0
+	 ZvpBcMcMzQDF/PXAdKr2TtYMuAPUmstf3tgtNQwpCN+0vlmufpmnLZk9riRwICfQNd
+	 oWAYFfXNiPhNg==
+Date: Tue, 12 Nov 2024 13:57:09 +0000
+From: Simon Horman <horms@kernel.org>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, andrew+netdev@lunn.ch,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pkshih@realtek.com, larry.chiu@realtek.com
+Subject: Re: [PATCH net-next 1/2] rtase: Add support for RTL907XD-VA PCIe port
+Message-ID: <20241112135709.GO4507@kernel.org>
+References: <20241111025532.291735-1-justinlai0215@realtek.com>
+ <20241111025532.291735-2-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <874j4co98w.ffs@tglx>
+In-Reply-To: <20241111025532.291735-2-justinlai0215@realtek.com>
 
-Le Tue, Nov 12, 2024 at 02:46:23PM +0100, Thomas Gleixner a écrit :
-> On Tue, Nov 12 2024 at 00:43, Frederic Weisbecker wrote:
-> > Le Fri, Nov 08, 2024 at 05:48:34PM +0000, Joel Fernandes (Google) a écrit :
+On Mon, Nov 11, 2024 at 10:55:31AM +0800, Justin Lai wrote:
+> Add RTL907XD-VA hardware version and modify the speed reported by
+> .get_link_ksettings in ethtool_ops.
 > 
-> >> During tick restart, we use last_tick and forward it past now.
-> >>
-> >> Since we are forwarding past now, we can simply use now as a reference
-> >> instead of last_tick. This patch removes last_tick and does so.
-> >>
-> >> This patch potentially does more mul/imul than the existing code,
-> >> as sometimes forwarding past now need not be done if last_tick > now.
-> >> However, the patch is a cleanup which reduces LOC and reduces the size
-> >> of struct tick_sched.
-> 
-> May I politely ask you to read and follow the Documentation
-> vs. changelogs?
-> 
->   https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
-> 
-> Also
-> 
-> git grep 'This patch' Documentation/process
-> 
-> might give you a hint.
-> 
-> >> -	/* Forward the time to expire in the future */
-> >> -	hrtimer_forward(&ts->sched_timer, now, TICK_NSEC);
-> >> +	hrtimer_set_expires(&ts->sched_timer, DIV_ROUND_UP_ULL(now, TICK_NSEC) * TICK_NSEC);
-> 
-> How is a division and multiplication in this hotpath helpful? That's
-> awfully slow on 32-bit machines and pointless on 64-bit too.
-> 
-> Using now is also wrong as it breaks the sched_skew_tick distribution by
-> aligning the tick on all CPUs again.
-> 
-> IOW, this "cleanup" is making things worse.
-> 
-> > We don't want to rewrite hrtimer_forward() but, after all, the current expiry is
-> > enough a relevant information.
-> >
-> > How about just this? It's worth it as it now forwards after the real last programmed
-> > tick, which should be close enough from @now with a delta below TICK_NSEC, or even
-> > better @now is below the expiry. Therefore it should resume as just a no-op
-> > or at worst an addition within hrtimer_forward():
-> >
-> > diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-> > index 753a184c7090..ffd0c026a248 100644
-> > --- a/kernel/time/tick-sched.c
-> > +++ b/kernel/time/tick-sched.c
-> > @@ -838,7 +838,6 @@ EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
-> >  static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
-> >  {
-> >  	hrtimer_cancel(&ts->sched_timer);
-> > -	hrtimer_set_expires(&ts->sched_timer, ts->last_tick);
-> >  
-> >  	/* Forward the time to expire in the future */
-> >  	hrtimer_forward(&ts->sched_timer, now, TICK_NSEC);
-> 
-> That's just wrong. ts->sched_timer.expires contains a tick in the
-> future. If tick_nohz_stop_tick() set it to 10 ticks in the future and
-> the CPU goes out of idle due to a device interrupt before the timer
-> expires, then hrtimer_forward() will do nothing because expires is ahead
-> of now.
-> 
-> Which means the CPU is not idle and has no tick until the delayed tick
-> which was set by tick_nohz_stop_tick() expires. Not really correct.
+> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
 
-Bah! Yes of course...
+Hi Justin,
 
+this seems to be doing several things:
+
+1) Adding defines for existing values
+2) Correcting the speed for RTL907XD-V1
+3) Adding support for RTL907XD-VA
+
+I think these would be best handled as 3 patches.
+And I wonder if 2) is a bug fix for net rather than an
+enhancement for net-next.
+
+> ---
+>  drivers/net/ethernet/realtek/rtase/rtase.h    | 10 +++++--
+>  .../net/ethernet/realtek/rtase/rtase_main.c   | 26 ++++++++++++++-----
+>  2 files changed, 28 insertions(+), 8 deletions(-)
 > 
-> Thanks,
+> diff --git a/drivers/net/ethernet/realtek/rtase/rtase.h b/drivers/net/ethernet/realtek/rtase/rtase.h
+> index 583c33930f88..2bbfcad613ab 100644
+> --- a/drivers/net/ethernet/realtek/rtase/rtase.h
+> +++ b/drivers/net/ethernet/realtek/rtase/rtase.h
+> @@ -9,7 +9,11 @@
+>  #ifndef RTASE_H
+>  #define RTASE_H
+>  
+> -#define RTASE_HW_VER_MASK 0x7C800000
+> +#define RTASE_HW_VER_MASK     0x7C800000
+> +#define RTASE_HW_VER_906X_7XA 0x00800000
+> +#define RTASE_HW_VER_906X_7XC 0x04000000
+> +#define RTASE_HW_VER_907XD_V1 0x04800000
+> +#define RTASE_HW_VER_907XD_VA 0x08000000
+>  
+>  #define RTASE_RX_DMA_BURST_256       4
+>  #define RTASE_TX_DMA_BURST_UNLIMITED 7
+> @@ -170,7 +174,7 @@ enum rtase_registers {
+>  	RTASE_INT_MITI_TX = 0x0A00,
+>  	RTASE_INT_MITI_RX = 0x0A80,
+>  
+> -	RTASE_VLAN_ENTRY_0     = 0xAC80,
+> +	RTASE_VLAN_ENTRY_0 = 0xAC80,
+
+This change doesn't seem related to the rest of the patch.
+
+>  };
+>  
+>  enum rtase_desc_status_bit {
+> @@ -327,6 +331,8 @@ struct rtase_private {
+>  	u16 int_nums;
+>  	u16 tx_int_mit;
+>  	u16 rx_int_mit;
+> +
+> +	u32 hw_ver;
+>  };
+>  
+>  #define RTASE_LSO_64K 64000
+> diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> index f8777b7663d3..73ebdf0bc376 100644
+> --- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> @@ -1714,10 +1714,22 @@ static int rtase_get_settings(struct net_device *dev,
+>  			      struct ethtool_link_ksettings *cmd)
+>  {
+>  	u32 supported = SUPPORTED_MII | SUPPORTED_Pause | SUPPORTED_Asym_Pause;
+> +	const struct rtase_private *tp = netdev_priv(dev);
+>  
+>  	ethtool_convert_legacy_u32_to_link_mode(cmd->link_modes.supported,
+>  						supported);
+> -	cmd->base.speed = SPEED_5000;
+> +
+> +	switch (tp->hw_ver) {
+> +	case RTASE_HW_VER_906X_7XA:
+> +	case RTASE_HW_VER_906X_7XC:
+> +		cmd->base.speed = SPEED_5000;
+> +		break;
+> +	case RTASE_HW_VER_907XD_V1:
+> +	case RTASE_HW_VER_907XD_VA:
+> +		cmd->base.speed = SPEED_10000;
+> +		break;
+> +	}
+> +
+>  	cmd->base.duplex = DUPLEX_FULL;
+>  	cmd->base.port = PORT_MII;
+>  	cmd->base.autoneg = AUTONEG_DISABLE;
+
+> @@ -1974,13 +1986,15 @@ static void rtase_init_software_variable(struct pci_dev *pdev,
+>  
+>  static bool rtase_check_mac_version_valid(struct rtase_private *tp)
+>  {
+> -	u32 hw_ver = rtase_r32(tp, RTASE_TX_CONFIG_0) & RTASE_HW_VER_MASK;
+>  	bool known_ver = false;
+>  
+> -	switch (hw_ver) {
+> -	case 0x00800000:
+> -	case 0x04000000:
+> -	case 0x04800000:
+> +	tp->hw_ver = rtase_r32(tp, RTASE_TX_CONFIG_0) & RTASE_HW_VER_MASK;
+
+Now that this is setting tp->hw_ver perhaps the name of the function should
+be changed? Perhaps rtase_set_mac_version() ? Perhaps a single patch can be
+created that reworks this function, preparing for other work, by:
+
+* Changes the name of the function
+* Sets tp->hw_ver
+* Changes the return type from bool to int
+  (as is currently done as part of patch 2/2)
+
+Although a refactor, perhaps that could be part of a series for net that
+also includes two more patches that depend on it and:
+
+* Correct the speed for RTL907XD-V1
+* Corrects error handling in the case where the version is invalid
+  (as is currently done as part of patch 2/2)
+
+And then any remaning enhancements can be addressed as follow-up
+patches for net-next.
+
+
+> +
+> +	switch (tp->hw_ver) {
+> +	case RTASE_HW_VER_906X_7XA:
+> +	case RTASE_HW_VER_906X_7XC:
+> +	case RTASE_HW_VER_907XD_V1:
+> +	case RTASE_HW_VER_907XD_VA:
+>  		known_ver = true;
+>  		break;
+>  	}
+> -- 
+> 2.34.1
 > 
->         tglx
 
