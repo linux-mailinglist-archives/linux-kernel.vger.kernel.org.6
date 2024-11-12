@@ -1,76 +1,120 @@
-Return-Path: <linux-kernel+bounces-406155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D719C5B8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:13:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A189C5B31
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:02:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11EC11F22AF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:13:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94BD5280551
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00854200C8C;
-	Tue, 12 Nov 2024 15:09:22 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C45200C8D;
-	Tue, 12 Nov 2024 15:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8972022CB;
+	Tue, 12 Nov 2024 14:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Xu+Rt82N"
+Received: from ms11p00im-qufo17281601.me.com (ms11p00im-qufo17281601.me.com [17.58.38.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D718201276
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.38.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731424161; cv=none; b=ftKsOALZq7NbUTDBeQJn9ILtBBCfGbqkySzqO3yI0my3GUiS9mmoFF4a6+We7pOu6B6smLszGb0+zpkGhRhbtWxqAoqaYxjJKWIhnwUxT0qhDOEGVA0HwejNAXc6jQWcGtZLO9TFBH5mYqV1X22xdEreYDMW/ewagr9pSuo9uK4=
+	t=1731423518; cv=none; b=gvZoJHOXEpIcr/ji626OOAoZqXu4iU0IVX3wT90fcK4YaTiED4GLNCO7tYFzTU5dvjqpY2XjLwQVwb9hUEJdokHXUa+fUxZdaHRaWsblw5Rx9ejzg5ccM5hIvT584PbO93psSkFb90tEWCKxzeC1JM71cZSo9H3nXWoy6HQRGUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731424161; c=relaxed/simple;
-	bh=yC7qNkZa2EQhkOswYkNu3xJNB7x6A6biSjIrvj5GG6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W4Glf+Pt96tXbcI+LWfIRQXn3WGykc+PoDNtSUiBmdZu8npx4BHxqg3gPTIFijyfXXfHX0FFM3ueaT7SBT0N7BNHKVZyaXFhMBolXSr5X28oS2WnyZixzMBWvIQvBe+GhGsyQ+gemYN8EvXbVXgqmrhlSmxevqZpAOhGN4Gs0Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1tAsVf-0004rX-00; Tue, 12 Nov 2024 16:08:51 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 2D528C014F; Tue, 12 Nov 2024 15:58:23 +0100 (CET)
-Date: Tue, 12 Nov 2024 15:58:23 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: dhowells@redhat.com, jlayton@kernel.org, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chenhuacai@kernel.org,
-	kernel@xen0n.name, jiaxun.yang@flygoat.com,
-	guanwentao@uniontech.com, zhanjun@uniontech.com,
-	xuerpeng@uniontech.com, maqianga@uniontech.com,
-	baimingcong@uniontech.com
-Subject: Re: [PATCH 0/2] MIPS: loongson3_defconfig: Enable blk_dev_nvme by
- default
-Message-ID: <ZzNtD+b4zgfdFUe7@alpha.franken.de>
-References: <324362BC443F16F8+cover.1730638429.git.wangyuli@uniontech.com>
+	s=arc-20240116; t=1731423518; c=relaxed/simple;
+	bh=yRmtPN0TFHkU99Flp+fEchW2OsR8PBdDUPKHR2odiLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M3kSKcILlj2QU9dV7intxJH2cLn9Y5oy6GPV4+XbiU43QGTsHPyYZzrizJQZzdMaT4MuEux8a+L9VEAkUaKp7M1fQdseeXAOlxKW7O1oK94F0/1y7Ri1pe042yQ8lfB2xjEashwSUhIO97e5yAhKazauIEd4zY+DVwhp0nix2ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Xu+Rt82N; arc=none smtp.client-ip=17.58.38.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1731423516;
+	bh=Eh44U3KL7qWcwQYFzXUwloAPncqESfrGkSg2LByutzI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=Xu+Rt82NWGawAyXcrKqEmFdwZC5k+gTO5JOqa3bSrzaWqn1fFShXHLV9r6lg/9Yk2
+	 sT8svgev72ExV2fA/yzfehaNCzBJep1PkNN/M11mcVqFhNkx7cVxMhC6rVIV8FX+Q/
+	 KFMAyG+5dBouzUKoqcuKluy2wEAzynME2DsUpf0fNPj3ywBtxnpA0cJJrV/clGbUew
+	 uBLz5DFK/MdgYFRDmQCtSsridVTsz6g4T64oc7lgPIewyCNVHi2CG39q9UIEyS7w4H
+	 kxsGMUGacUM0O7tEwDQJVaZzRWVp3XdjlIcS7FZK00NSJvxCGkOplreNIF82YIvKy/
+	 kZBsCu+QqaEuw==
+Received: from [192.168.1.26] (ms11p00im-dlb-asmtpmailmevip.me.com [17.57.154.19])
+	by ms11p00im-qufo17281601.me.com (Postfix) with ESMTPSA id DD7FFAA00C9;
+	Tue, 12 Nov 2024 14:58:32 +0000 (UTC)
+Message-ID: <2682bae5-9ae6-4781-8d57-47587084a58f@icloud.com>
+Date: Tue, 12 Nov 2024 22:58:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <324362BC443F16F8+cover.1730638429.git.wangyuli@uniontech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] PM: domains: Fix return value of API
+ dev_pm_get_subsys_data()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
+ stable@vger.kernel.org
+References: <20241028-fix_dev_pm_get_subsys_data-v1-1-20385f4b1e17@quicinc.com>
+ <2024111257-collide-finalist-7a0c@gregkh>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <2024111257-collide-finalist-7a0c@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 0ab2Ysty0ejJwHjOS-IKdzmmv4mTLVK4
+X-Proofpoint-ORIG-GUID: 0ab2Ysty0ejJwHjOS-IKdzmmv4mTLVK4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-12_05,2024-11-12_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ mlxscore=0 clxscore=1015 spamscore=0 mlxlogscore=905 phishscore=0
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2411120120
 
-On Sun, Nov 03, 2024 at 09:00:03PM +0800, WangYuli wrote:
-> A significant number of 3A4000 machines come with NVMe drives
-> pre-installed, so we should support it in its defconfig.
+On 2024/11/12 19:46, Greg Kroah-Hartman wrote:
+> On Mon, Oct 28, 2024 at 08:31:11PM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> dev_pm_get_subsys_data() has below 2 issues under condition
+>> (@dev->power.subsys_data != NULL):
+>>
+>> - it will do unnecessary kzalloc() and kfree().
 > 
-> To avoid confusion, update defconfig beforehand.
+> But that's ok, everything still works, right?
+
+yes.
+
 > 
-> WangYuli (2):
->   MIPS: loongson3_defconfig: Update configs dependencies
->   MIPS: loongson3_defconfig: Enable blk_dev_nvme by default
+>> - it will return -ENOMEM if the kzalloc() fails, that is wrong
+>>   since the kzalloc() is not needed.
 > 
->  arch/mips/configs/loongson3_defconfig | 32 ++++++++-------------------
->  1 file changed, 9 insertions(+), 23 deletions(-)
+> But it's ok to return the proper error if the system is that broken.
 
-series applied to mips-next.
+IMO, the API should return 0 (success) instead of -ENOMEM since it does
+not need to do kzalloc().
 
-Thomas.
+Different return value should impact caller's logic.
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+> 
+>>
+>> Fixed by not doing kzalloc() and returning 0 for the condition.
+>>
+>> Fixes: ef27bed1870d ("PM: Reference counting of power.subsys_data")
+>> Cc: stable@vger.kernel.org
+> 
+> Why is this relevant for stable kernels?
+
+you can remove both Fix and stable tag directly if you like this change.(^^)
+
+> 
+> thanks,
+> 
+> greg k-h
+
 
