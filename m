@@ -1,64 +1,68 @@
-Return-Path: <linux-kernel+bounces-406098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50759C5F05
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:32:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 441BE9C5CFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:18:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 231B3B471D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:52:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1279FB228B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983751FF7B6;
-	Tue, 12 Nov 2024 14:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CF31FF7BF;
+	Tue, 12 Nov 2024 14:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tF0fHLsr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9DUX3WW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0223C2309A3;
-	Tue, 12 Nov 2024 14:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D13620010B;
+	Tue, 12 Nov 2024 14:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423130; cv=none; b=NHuZAzMSEdtf5lc3zB8ckbcrMLzHZ4BAmIjL4qQg/L91TWzn3car0ibY+UV5rl3kd3SZvEcOXZXn3BjO6tFNoyAPK0ha0nYl/LtsFED0II80jUNeOX9sJeDwVSCHluMF7bi9rrJchLql/82o32zEFXUiPd4YQsNcFHKgoh/oXZw=
+	t=1731423138; cv=none; b=blvAE/txZHXtUw72M2Hd68zBZ6d/ZgLeSA39OGz2r7mYYeUTYJVzsSsRzsbseUOzH+TlrP1VgdboQexrdjTe4Hehuf39FA9cy+wfASEBngPGalkO+/tSnvcHd1rpXDIRQLycgbe/tp2IRuvD09U4bjsTfTyg/0HvGzb4pq4WWUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423130; c=relaxed/simple;
-	bh=2S9CoFvH8vbZLEEph+lBWbRkjxdGKOOkqpjrAj9RVRc=;
+	s=arc-20240116; t=1731423138; c=relaxed/simple;
+	bh=5UY7zE2xDmZ/aGLmtXPVX1tGAih/WdNZc9gDIB70zsc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=peMPEFqRmqXhnR0c+EUQoE0nOXQpUKKFFxQKCRZR1xxnC9eupKWFzNPboIghX5V5+daj8USuhGcB/XgrfvoWn1E3mJirKKel1Vt2swGT8aF6+8NQ2cXiHZe+8HS1btMmRSP/6nMHkHxCeSv8bIf91x4pl0w+tHXbHW6cLxzGXN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tF0fHLsr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97F91C4CECD;
-	Tue, 12 Nov 2024 14:52:06 +0000 (UTC)
+	 MIME-Version; b=p0ebkmKRY8lLRsXIwTYy9w+Ol4zzpbEK2G2IvP+vSbgpHBxRBu1y6E1SJG4gPZqR0m1LgWx2slKBxYeFfMjPOYm4Q4cxjx5t0SRWwP90XNytfKJ+5BHyd/Rj0qiQ/xK+YCWsFMzZeLsG6eU/IJ48nCcqPdlTCbmJdrsUd3JlvFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9DUX3WW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09482C4CECD;
+	Tue, 12 Nov 2024 14:52:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731423129;
-	bh=2S9CoFvH8vbZLEEph+lBWbRkjxdGKOOkqpjrAj9RVRc=;
+	s=k20201202; t=1731423137;
+	bh=5UY7zE2xDmZ/aGLmtXPVX1tGAih/WdNZc9gDIB70zsc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tF0fHLsraQbTEUlY2w6EjUJjdlJ5+hBIb1UPKIWTrjp87X9jnqo2HeElhjxXD3eyJ
-	 0I7CPmyX3fzTDaYhkAJ+ezymDQ0cHg2TXujj8CA3MQI+ZcEFPDFyHq/5reG/MlyFjp
-	 Hyx5L+YupujyOuyDW9qWmFX1PHkyEU/wFm0ho5UDLRo1fHicU4JcjLian7N2WwaeC4
-	 BdL7r93mhM2drsJca+g3W8C6IdJ6rnBVvhrCxnMyq+Gp+tFIvaPMDF+4FrYtlX2zUt
-	 9OD+GG1jrlY0qhu0Ra8rBopSAU9eB9qH49KOZuhFdmwzvT1hoAiRW3VmB+HEXKn9m1
-	 mY5do7WtLJOcQ==
+	b=s9DUX3WWJRRloLMHnjLBrMjIzfxWmhraywqbrSLtMP0pBdcsgVNveghEZEOFsYsTS
+	 hiaTF3uRo5BmUl1IBbRoX6BrqaBSMxn0gdTIQHOmsCLWTW31LBfPGhzr9A8hJm5l+w
+	 Q9tY4WQzCw+FuP7F0PCK3N9N/pmDmEpElM0JkqH757udj3UTKyyZOpw8m6Ly3eJ9Jg
+	 gdZbrYV/FHpEKiiapcrlHqRD8S+iSRcH6QRaEj5NguI5pRBvvHF+xizCu5b3hbjZdJ
+	 tR+SE4e19PF7tFidMBIpFeZd2zyHFX5GYAri4VhHEdIJqfSfW08qgV9UadYaNcHk0X
+	 ex/f0xvtrPdGg==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
-Cc: Zhen Lei <thunder.leizhen@huawei.com>,
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
 	Boqun Feng <boqun.feng@gmail.com>,
 	Joel Fernandes <joel@joelfernandes.org>,
 	Josh Triplett <josh@joshtriplett.org>,
 	Lai Jiangshan <jiangshanlai@gmail.com>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Uladzislau Rezki <urezki@gmail.com>,
 	Zqiang <qiang.zhang1211@gmail.com>,
 	rcu <rcu@vger.kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	bpf@vger.kernel.org,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
 	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 01/16] srcu: Replace WARN_ON_ONCE() with BUILD_BUG_ON() if possible
-Date: Tue, 12 Nov 2024 15:51:44 +0100
-Message-ID: <20241112145159.23032-2-frederic@kernel.org>
+Subject: [PATCH 03/16] srcu: Introduce srcu_gp_is_expedited() helper function
+Date: Tue, 12 Nov 2024 15:51:46 +0100
+Message-ID: <20241112145159.23032-4-frederic@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241112145159.23032-1-frederic@kernel.org>
 References: <20241112145159.23032-1-frederic@kernel.org>
@@ -70,45 +74,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Zhen Lei <thunder.leizhen@huawei.com>
+From: "Paul E. McKenney" <paulmck@kernel.org>
 
-The value of ARRAY_SIZE() can be determined at compile time, so if both
-sides of the equation are ARRAY_SIZE(), using BUILD_BUG_ON() can help us
-catch the problem earlier.
+Even though the open-coded expressions usually fit on one line, this
+commit replaces them with a call to a new srcu_gp_is_expedited()
+helper function in order to improve readability.
 
-While there are cases where unequal array sizes will work, there is no
-point in allowing them, so it makes more sense to force them to be equal
-using BUILD_BUG_ON().
-
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: <bpf@vger.kernel.org>
+Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- kernel/rcu/srcutree.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/rcu/srcutree.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index 31706e3293bc..78afaffd1b26 100644
+index 2fe0abade9c0..5b1a315f77bc 100644
 --- a/kernel/rcu/srcutree.c
 +++ b/kernel/rcu/srcutree.c
-@@ -128,7 +128,7 @@ static void init_srcu_struct_data(struct srcu_struct *ssp)
- 	 * Initialize the per-CPU srcu_data array, which feeds into the
- 	 * leaves of the srcu_node tree.
- 	 */
--	WARN_ON_ONCE(ARRAY_SIZE(sdp->srcu_lock_count) !=
-+	BUILD_BUG_ON(ARRAY_SIZE(sdp->srcu_lock_count) !=
- 		     ARRAY_SIZE(sdp->srcu_unlock_count));
- 	for_each_possible_cpu(cpu) {
- 		sdp = per_cpu_ptr(ssp->sda, cpu);
-@@ -187,7 +187,7 @@ static bool init_srcu_struct_nodes(struct srcu_struct *ssp, gfp_t gfp_flags)
- 	/* Each pass through this loop initializes one srcu_node structure. */
- 	srcu_for_each_node_breadth_first(ssp, snp) {
- 		spin_lock_init(&ACCESS_PRIVATE(snp, lock));
--		WARN_ON_ONCE(ARRAY_SIZE(snp->srcu_have_cbs) !=
-+		BUILD_BUG_ON(ARRAY_SIZE(snp->srcu_have_cbs) !=
- 			     ARRAY_SIZE(snp->srcu_data_have_cbs));
- 		for (i = 0; i < ARRAY_SIZE(snp->srcu_have_cbs); i++) {
- 			snp->srcu_have_cbs[i] = SRCU_SNP_INIT_SEQ;
+@@ -418,6 +418,16 @@ static void check_init_srcu_struct(struct srcu_struct *ssp)
+ 	spin_unlock_irqrestore_rcu_node(ssp->srcu_sup, flags);
+ }
+ 
++/*
++ * Is the current or any upcoming grace period to be expedited?
++ */
++static bool srcu_gp_is_expedited(struct srcu_struct *ssp)
++{
++	struct srcu_usage *sup = ssp->srcu_sup;
++
++	return ULONG_CMP_LT(READ_ONCE(sup->srcu_gp_seq), READ_ONCE(sup->srcu_gp_seq_needed_exp));
++}
++
+ /*
+  * Returns approximate total of the readers' ->srcu_lock_count[] values
+  * for the rank of per-CPU counters specified by idx.
+@@ -622,7 +632,7 @@ static unsigned long srcu_get_delay(struct srcu_struct *ssp)
+ 	unsigned long jbase = SRCU_INTERVAL;
+ 	struct srcu_usage *sup = ssp->srcu_sup;
+ 
+-	if (ULONG_CMP_LT(READ_ONCE(sup->srcu_gp_seq), READ_ONCE(sup->srcu_gp_seq_needed_exp)))
++	if (srcu_gp_is_expedited(ssp))
+ 		jbase = 0;
+ 	if (rcu_seq_state(READ_ONCE(sup->srcu_gp_seq))) {
+ 		j = jiffies - 1;
+@@ -867,7 +877,7 @@ static void srcu_gp_end(struct srcu_struct *ssp)
+ 	spin_lock_irq_rcu_node(sup);
+ 	idx = rcu_seq_state(sup->srcu_gp_seq);
+ 	WARN_ON_ONCE(idx != SRCU_STATE_SCAN2);
+-	if (ULONG_CMP_LT(READ_ONCE(sup->srcu_gp_seq), READ_ONCE(sup->srcu_gp_seq_needed_exp)))
++	if (srcu_gp_is_expedited(ssp))
+ 		cbdelay = 0;
+ 
+ 	WRITE_ONCE(sup->srcu_last_gp_end, ktime_get_mono_fast_ns());
 -- 
 2.46.0
 
