@@ -1,175 +1,132 @@
-Return-Path: <linux-kernel+bounces-405323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ADB09C4FE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:49:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2C29C4FE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:49:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BAD11F214BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:49:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148481F21683
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC591CEEB3;
-	Tue, 12 Nov 2024 07:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263C720A5F7;
+	Tue, 12 Nov 2024 07:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbwDuuvz"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LOzHq/2O"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDF320BB59;
-	Tue, 12 Nov 2024 07:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811A6205E37
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731397509; cv=none; b=S8YR5awIOLR/kpwHY7AjPuTD+PSfabDUFdamKQ3SdGWjWuOqdZboXPfOM5GDDHSr/c/XXhXYLCC0rAblxR07tGf0MA3VUUipgIMV+0snU9pNUzKw07R4HLWoC0ROBwaHNiAkC6xBlE9jRpnDZ9+31DnDOKEMajOyXsXdTRnPCCA=
+	t=1731397561; cv=none; b=P5gix2fuwpNmeckvF99rQETruTBLd5PSYhx1qxY2LfIpKvkNMYzuDNlr9kir2WNE2ORvWVKTJPxpfOZOBJILuQfBRw8xKjNteohOB5M+e2mxILMlKgPla7C6HmFmD9Ra6NkA8CY8tAFmnxLEQw/Zc6SEKgi8U1yCWr2AK0maiPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731397509; c=relaxed/simple;
-	bh=6Co9+HFhkrAyybpuUDGbybmXfat+6GD47OYnwCaf5jw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=khCgzn1DwhJ/2/ScmIljzz4wRoLNrOFMFwwalWt2Fs9PukjqM42xIhLnB46ns9GP5H8Koj7UU1r0q3IbPNbc5o8ZG9TH/OCERduh4rrdoHVCzt3dSDRnH18U81vsoFfK5Gcb8vRjQSrWd2BQxD8IobN3foJN+xu+cIZpHf07KBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CbwDuuvz; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539fe02c386so6067220e87.0;
-        Mon, 11 Nov 2024 23:45:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731397506; x=1732002306; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PvuH9yhCeBMlG36zLRmS+IcsMk1yHd7W71vxP6lAfWA=;
-        b=CbwDuuvzV4zy5kimXk75YgkfJQfN4NC8aZCxb1pViLSJmbuWG7koEY7PVMsoH55Fqo
-         cDumSaWy/Bh8onpRtGYGHgaM+3a3hns2A+JRPOY47Ph0dnoG/QNGbfKKjZG/l8KNloFe
-         qFzWl2WQUK+cCT3ErRTjU7fqsKS2rOnfDqVQgDg8Uansnjgti8rJzCAgkmHzuCW9HxFz
-         dqwNNn2F6pHJ/PKxDVZM9mvIcf/EyyBcbqhQG38Nn8OwC3YRPHYIan1y9ZBI9jF37ANc
-         QIJ2ci0TG3MrrCyGbC28DHoLZmZmSz2NsZpetDBggatJQIU7M15xXr1LReGQUUObwYxe
-         HUYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731397506; x=1732002306;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PvuH9yhCeBMlG36zLRmS+IcsMk1yHd7W71vxP6lAfWA=;
-        b=bHg2YLROEfmcHqF+VwIF9FvD6ZKvo1XQupNgCjf6q0wy8xSfZS/7cZXwiqNzRNff+5
-         kM0dYlxFVPZfd/i1PELG8SbwHWBoVnYTTSR+EarZXiODi/hBhcdL8bxDXQN4LZGu4ZHE
-         YGsJpIfUESEzZtGdDmcFFHyCftKTU5RnBEad9wzYlVxeRQbjrBLOj1Jw/WTjuzvKRtk1
-         +0c3pMmq8z0i1QKO2thKyOgjbrv2/+QpSPB53mRvYC1oN5tXhv0pngUkIZNbv+Viebiy
-         yq6Oubn6qhc5LNqc58/h74txmJUVCzTiDkn67YYIN2/yuEDRWpzi8aKFVla/dTVaEApF
-         YWoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWLnTIHkfhrzoU5in2PZqZO/GPetbQMyqyjYObu/sY08pxCwKKYMsafqPxjX0yNsc4kBhn3O42QBzU@vger.kernel.org, AJvYcCVybPZQ6UErfO4gK0phn4ZLzb9r1rxBcMtVgi4Q8Edo4WJ2f4/8d6lsT0K9KeoEhbVs6YzDGl/+mpOO@vger.kernel.org, AJvYcCW7x8MFfaRF6EFUGvgyL+0t1H6OLUA1ycmpHLusCfNIfaJULWHNlxJQAaCmqE7sJhzGKCZX0U/uIehMTw==@vger.kernel.org, AJvYcCWuSlSGniHIDQJnjTIiBW0ehQ0AY2KUl7XMOFNGqHZvHrCWkAkclpXQa5j7AcYTTdikhpK8lL//LyQsjT8y@vger.kernel.org, AJvYcCX0CsxxeeUCQ3NR0xn0Y5fhOrgccNODGaZSpzf3MyVK8OHisH2wsGkfk2eC4w9fEcfvxMipvj83v9b3@vger.kernel.org, AJvYcCXZHkqqYK+tkDN40Vzb/VXMI3Wdm8RoOtPbMWqrUygUdHXeJCXZWFMRMDsjQvAIrLgNniubLG35GNydM0nG@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC+1j8Fy/EMjQ9+OFLKXd7feNnC9fYyCJ4Drm4B7SxbRnLFj1p
-	QNGq9NoXmD7Q4UoSDYus6knan4PgYUp854vw37T56ELEzN4eLihe
-X-Google-Smtp-Source: AGHT+IGMIr+lUOiAWgiLqS9sR2Hcfvkf2KB7t1d9QR2hVKbD3J5J6DiuP1/RdyjRc4cRHYP/8VQpkg==
-X-Received: by 2002:a05:6512:3e17:b0:539:ede3:827f with SMTP id 2adb3069b0e04-53d85f231c6mr5858903e87.24.1731397505707;
-        Mon, 11 Nov 2024 23:45:05 -0800 (PST)
-Received: from ?IPV6:2001:678:a5c:1202:4fb5:f16a:579c:6dcb? (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff178eec81sm19427331fa.33.2024.11.11.23.45.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 23:45:05 -0800 (PST)
-Message-ID: <70772ce5-9dca-418e-9714-80ba4ae28959@gmail.com>
-Date: Tue, 12 Nov 2024 08:45:01 +0100
+	s=arc-20240116; t=1731397561; c=relaxed/simple;
+	bh=eBiuIt2a7mdjKmvjBYkWXOV8hgkGe+0Dp4qs0mZqoos=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KDEURlZv9vi51cYQMp5Zih8SgetkrSvAzv78lnV2BaR+9rOWaZ3ZkkBYfsx2SAv4wy4pZHx4LYrBj/XDmFlHH//8Qe6ByblR+BT5eRDVu9Tv+FDZ1Jzq7+gscyjrIxFwV84q4d3p9YaGGOE+n008WD1GdZ/ubVKyA2EeNy/lYOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LOzHq/2O; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731397556; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=ZYC5bpSYWv5P3qsOnKs0Y3rLvkMWTCSi3IfFbvJXsAg=;
+	b=LOzHq/2OG+X8tAF0ItcO5D93f6PNh4gUSQsHNrF+CTVvzoHjXVjzigpJ2Drq9yhGwFpH60vutJ44LWDSUPlogLDQKFWFG01RmXuurH/L5oY3wHW+PronidhFYhsCic4MaoTcH+p9PnKIYOluUgPddEJEdomN60u89iPvjUaiMvY=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WJGDWmE_1731397554 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 12 Nov 2024 15:45:54 +0800
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+To: akpm@linux-foundation.org,
+	hughd@google.com
+Cc: willy@infradead.org,
+	david@redhat.com,
+	wangkefeng.wang@huawei.com,
+	21cnbao@gmail.com,
+	ryan.roberts@arm.com,
+	ioworker0@gmail.com,
+	da.gomez@samsung.com,
+	baolin.wang@linux.alibaba.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] Support large folios for tmpfs
+Date: Tue, 12 Nov 2024 15:45:47 +0800
+Message-Id: <cover.1731397290.git.baolin.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/7] Adjust symbol ordering in text output section
-To: Rong Xu <xur@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
- Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>,
- Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>,
- Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>,
- Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
- Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>,
- Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>,
- workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Maksim Panchenko <max4bolt@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
- Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>,
- Krzysztof Pszeniczny <kpszeniczny@google.com>,
- Sriraman Tallam <tmsriram@google.com>, Stephane Eranian
- <eranian@google.com>, x86@kernel.org, linux-arch@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20241026051410.2819338-1-xur@google.com>
- <20241026051410.2819338-4-xur@google.com>
- <44193ca7-9d31-4b58-99cc-3300a6ad5289@gmail.com>
- <CAF1bQ=ShjoEQZGPjDoy_B6wZdD_jr-RevVXwEDPA_-o-Ba0Omg@mail.gmail.com>
- <e7cd2746-0ad8-452f-aa12-e3a37e8a9288@gmail.com>
- <CAF1bQ=SYeeKLUTfbqw-KH1rHJCj_CfJBuk+mZUrnnb7aDjRV2A@mail.gmail.com>
- <CAF1bQ=R18HLC2vjCGj+M=VYidrVzz3RT=U8cckXgpgrxc0kG0Q@mail.gmail.com>
-Content-Language: en-US, sv-SE
-From: Klara Modin <klarasmodin@gmail.com>
-In-Reply-To: <CAF1bQ=R18HLC2vjCGj+M=VYidrVzz3RT=U8cckXgpgrxc0kG0Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024-11-12 06:38, Rong Xu wrote:
-> I compared the System.map files from Klara Modin. The linker script is
-> doing what I expected: relocating the unlikely executed functions to the
-> beginning of the .text section.
-> 
-> However, the problem is with the _stext symbol. It belongs to the
-> .text section, so
-> it is positioned after the unlikely (or hot) functions. But it really
-> needs to be
-> the start of the text section.
-> 
-> I checked all vmlinux.lds.S in arch/, I found that most archs
-> explicitly assign _stext to the same address as _text, with the
-> following 3 exceptions:
->    arch/sh/kernel/vmlinux.lds.S
->    arch/mips/kernel/vmlinux.lds.S
->    arch/sparc/kernel/vmlinux.lds.S
-> 
-> Note that we already partially handled arch/sparc/kernel/vmlinux.lds.S
-> for sparc64.
-> But we need to handle sparc32 also.
-> 
-> Additionally, the boot/compressed/vmlinux.lds.S also the TEXT_TEXT
-> template. However,
-> I presume these files do not generate the .text.unlikely. or
-> .text.hot.* sections.
-> 
-> I sent the following patch to Klara because I don't have an
-> environment to build and test.
-> ====================
-> diff --git a/arch/mips/kernel/vmlinux.lds.S b/arch/mips/kernel/vmlinux.lds.S
-> index 9ff55cb80a64..5f130af44247 100644
-> --- a/arch/mips/kernel/vmlinux.lds.S
-> +++ b/arch/mips/kernel/vmlinux.lds.S
-> @@ -61,6 +61,7 @@ SECTIONS
->          /* read-only */
->          _text = .;      /* Text and read-only data */
->          .text : {
-> +               _stext = .;
->                  TEXT_TEXT
->                  SCHED_TEXT
->                  LOCK_TEXT
-> ======================
-> 
-> If Klara confirms the fix, I will send the patch for review.
-> 
-> Thanks,
-> 
-> -Rong
-> 
+Traditionally, tmpfs only supported PMD-sized huge folios. However nowadays
+with other file systems supporting any sized large folios, and extending
+anonymous to support mTHP, we should not restrict tmpfs to allocating only
+PMD-sized huge folios, making it more special. Instead, we should allow
+tmpfs can allocate any sized large folios.
 
-This does indeed fix the issue for me.
+Considering that tmpfs already has the 'huge=' option to control the huge
+folios allocation, we can extend the 'huge=' option to allow any sized huge
+folios. The semantics of the 'huge=' mount option are:
 
-Thanks,
-Tested-by: Klara Modin <klarasmodin@gmail.com>
+huge=never: no any sized huge folios
+huge=always: any sized huge folios
+huge=within_size: like 'always' but respect the i_size
+huge=advise: like 'always' if requested with fadvise()/madvise()
+
+Note: for tmpfs mmap() faults, due to the lack of a write size hint, still
+allocate the PMD-sized huge folios if huge=always/within_size/advise is set.
+
+Moreover, the 'deny' and 'force' testing options controlled by
+'/sys/kernel/mm/transparent_hugepage/shmem_enabled', still retain the same
+semantics. The 'deny' can disable any sized large folios for tmpfs, while
+the 'force' can enable PMD sized large folios for tmpfs.
+
+Any comments and suggestions are appreciated. Thanks.
+
+Changes from v1:
+ - Add reviewed tag from Barry and David. Thanks.
+ - Fix building warnings reported by kernel test robot.
+ - Add a new patch to control the default huge policy for tmpfs.
+
+Changes from RFC v3:
+ - Drop the huge=write_size option.
+ - Allow any sized huge folios for 'hgue' option.
+ - Update the documentation, per David.
+
+Changes from RFC v2:
+ - Drop mTHP interfaces to control huge page allocation, per Matthew.
+ - Add a new helper to calculate the order, suggested by Matthew.
+ - Add a new huge=write_size option to allocate large folios based on
+   the write size.
+ - Add a new patch to update the documentation.
+
+Changes from RFC v1:
+ - Drop patch 1.
+ - Use 'write_end' to calculate the length in shmem_allowable_huge_orders().
+ - Update shmem_mapping_size_order() per Daniel.
+
+Baolin Wang (4):
+  mm: factor out the order calculation into a new helper
+  mm: shmem: change shmem_huge_global_enabled() to return huge order
+    bitmap
+  mm: shmem: add large folio support for tmpfs
+  mm: shmem: add a kernel command line to change the default huge policy
+    for tmpfs
+
+David Hildenbrand (1):
+  docs: tmpfs: update the huge folios policy for tmpfs and shmem
+
+ .../admin-guide/kernel-parameters.txt         |   7 +
+ Documentation/admin-guide/mm/transhuge.rst    |  64 ++++++--
+ include/linux/pagemap.h                       |  16 +-
+ mm/shmem.c                                    | 148 ++++++++++++++----
+ 4 files changed, 183 insertions(+), 52 deletions(-)
+
+-- 
+2.39.3
+
 
