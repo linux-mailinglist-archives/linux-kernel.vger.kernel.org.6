@@ -1,124 +1,115 @@
-Return-Path: <linux-kernel+bounces-406859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8409B9C6543
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:37:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F8C9C65D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:16:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4798B457F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:26:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1BC1B45FBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B50921B449;
-	Tue, 12 Nov 2024 23:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9FF21CF96;
+	Tue, 12 Nov 2024 23:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="sZivjMBQ"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fIFZlYOh"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EF41CDFBD;
-	Tue, 12 Nov 2024 23:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F2E21A4BA;
+	Tue, 12 Nov 2024 23:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731453933; cv=none; b=tSae7eLP5kTOOzPzi4NJ9gUOGjc8lpEr+pMhz7Ar7FE8ig0a/uVpJrOREdmMDf2sfA5tnLqOaWW2+lHlAW5l9uctaHtGBIyh9WM3vRkcpSbxSbqZsbGaVfn17Q0Ht/lX3Z1ZyNW7iw0+xYYGhj2uoxH9dJPphnEK/xf4Z65wcZc=
+	t=1731454015; cv=none; b=CcCGJ5QBMyfvx7pxHlGS7JSc5fL6d2N0x7m5d5Vsi3rVIoV+6otP1gBojhblc3NvGsVwJIzZJ6HRPEQM13X4Lo+5cOMPq+XVr+7QzRchqX/U6VmzElgtW8AXJR0WZHZinliB0rD7JV0zqUvFaYPEn/yVODjH01NRf0FYsW+Gwu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731453933; c=relaxed/simple;
-	bh=u5+sBODmjLDV3d7dxSv9XLwRzvuWtgWa8Hyh/CmRwnE=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=I2row6rwT2xV72srgMxYw6xjgdglJal4Xujb+XhGqWH3JVMA2X2U69S/rGpFTkt+8f9GPkkXVMMgp/sjLWiPkz6HpyjspDgLFUH6r2aG2NvsnbBbbJc4Yc5oOw4WovM1b9I2ug3MsW9RpmCQQ84E19cqaXs/stVKgrhfb3Oalkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=sZivjMBQ; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1731454015; c=relaxed/simple;
+	bh=8kMaQixG7RxCy4KI4oHAOvzbh9jRezSBR49xHjKZYbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kDsb50b5/La1/bi38NqdyKz7e+iOw44TOo8y7xLBMu/CMOd1HcNiZFWepojPfgYUwev37Rbh3IdzPVJaRt22BcOhCt/EWk/N9pfFGFlyHiyr12rIu6116Gxd6TudhAQKztsL/dxuSwrffv3cLA7CvekcZ5OlPgYAmmJvmKt/xbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fIFZlYOh; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c2239508-6d00-4176-b0d6-3e07e06a367f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731454012;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2S8Z8cF1RQIyQ6StHC2v3AQfecASJCXdndvixzbj32M=;
+	b=fIFZlYOhSL9R8UhiJvythCYpiTEQLGqSsgbJ39dznH74qaXM4yVllETK51FLpKWYHnnhlA
+	kH3pJTP7wTAwJ41LHtYdD/O2W7OdtkslYnXaUXALZ+o+0J171G+UebRSjg+0Xm2R/IK/wT
+	OEjAg+OnhMderQoxShHiJRuGqpuBoAM=
+Date: Tue, 12 Nov 2024 15:26:43 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1731453929;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jfGfhX/60wKOjIGQemt3Pw+kuswpotS/o+x+NvMi1fw=;
-	b=sZivjMBQomCGF+mskHkPDQfwxXTIBR89ZtoMiCh4EHKlRR1+DgLwnLx+w0EpZ15f+Q5Qc5
-	klc3ywdOgC6vmMAUIliO1ONW3C+WYt515DFfSZ0lPNuyXsZDq/Slm9w6lnxT93JrdVQcDM
-	eU13jNq4Va+AoUcu0klIUARwUEAmy7H93xPZZU+Lu8/0u8F4u/V7mHncCgPbgs6kQs8z4C
-	pk0azoAb59HhToAAvFJBlt/3xb9ApT2go8i2F4h8NoOfIVGa72+ja66WCKyRosTB/V2039
-	Nb8D7D6d60xJ7VTPhZ1Si0yn5BNSeoDuAQgEfl2WnzJQfT8OfJZEKGUiijxgTw==
-Date: Wed, 13 Nov 2024 00:25:28 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: =?UTF-8?Q?Tam=C3=A1s_Sz=C5=B1cs?= <tszucs@linux.com>
-Cc: Jonas Karlman <jonas@kwiboo.se>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, FUKAUMI Naoki
- <naoki@radxa.com>, Chukun Pan <amadeus@jmu.edu.cn>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Enable UART8 on rock-3b
-In-Reply-To: <CA+GksrJjDPve29Vh7ZFhM+JFp058xmXZAPeuLuFth7v=JeiH2w@mail.gmail.com>
-References: <20241111181807.13211-1-tszucs@linux.com>
- <20241111181807.13211-4-tszucs@linux.com>
- <4ba81dfa-f276-4e05-b46b-92f50dbcfcc4@kwiboo.se>
- <CA+GksrJLpeU8x-kjR1Ng3ySf+giiufCsJuBssng9qoX1PjAunA@mail.gmail.com>
- <9330ebb370780c001fd2aaee49aec9e8@manjaro.org>
- <CA+GksrJjDPve29Vh7ZFhM+JFp058xmXZAPeuLuFth7v=JeiH2w@mail.gmail.com>
-Message-ID: <0eb19e4daf2cdf3d4a04935876c3d3b0@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Subject: Re: [PATCH v2 bpf-next 3/4] bpf: Add recursion prevention logic for
+ inode storage
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+ daniel@iogearbox.net, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
+ amir73il@gmail.com, repnop@google.com, jlayton@kernel.org,
+ josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
+References: <20241112083700.356299-1-song@kernel.org>
+ <20241112083700.356299-4-song@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20241112083700.356299-4-song@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello Tamas,
+On 11/12/24 12:36 AM, Song Liu wrote:
+> +static void *__bpf_inode_storage_get(struct bpf_map *map, struct inode *inode,
+> +				     void *value, u64 flags, gfp_t gfp_flags, bool nobusy)
+>   {
+>   	struct bpf_local_storage_data *sdata;
+>   
+> -	WARN_ON_ONCE(!bpf_rcu_lock_held());
+> -	if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
+> -		return (unsigned long)NULL;
+> -
+> +	/* explicitly check that the inode not NULL */
+>   	if (!inode)
+> -		return (unsigned long)NULL;
+> +		return NULL;
+>   
+>   	sdata = inode_storage_lookup(inode, map, true);
 
-On 2024-11-12 22:04, Tamás Szűcs wrote:
-> On Tue, Nov 12, 2024 at 4:07 PM Dragan Simic <dsimic@manjaro.org> 
-> wrote:
->> Please correct me if I'm wrong, but isn't this UART supposed to be
->> used for the Bluetooth part of an SDIO WiFi + Bluetooth module, in
->> form of a non-standard M.2 module that Radxa sells?
-> 
-> UART8 is supposed to be used for any radio module connected to the M2E
-> connector.
-> It will typically be responsible for Bluetooth or BLE but it could be
-> 802.15.4 or whatever. In any case, all wanting to use it will need the
-> uart8 node enabled.
+s/true/nobusy/
 
-I see, but I'm still guessing what's the actual use of enabling the
-UART8 when it will remain pretty much useless without the additional
-DT configuration, such as in the WiFi+Bluetooth DT overlay that Jonas
-sent a bit earlier?
+>   	if (sdata)
+> -		return (unsigned long)sdata->data;
+> +		return sdata->data;
+>   
+> -	/* This helper must only called from where the inode is guaranteed
+> -	 * to have a refcount and cannot be freed.
+> -	 */
+> -	if (flags & BPF_LOCAL_STORAGE_GET_F_CREATE) {
+> +	/* only allocate new storage, when the inode is refcounted */
+> +	if (atomic_read(&inode->i_count) &&
+> +	    flags & BPF_LOCAL_STORAGE_GET_F_CREATE) {
 
-I think that the UART8 should be enabled together with something that
-actually makes use of it, which in this case unfortunately cannot be
-automatically detected and configured, so it belongs to a DT overlay.
-I'll get back to this in my next response.
+	    (flags & BPF_LOCAL_STORAGE_GET_F_CREATE) && nobusy) {
 
->> With that in mind, I see very little sense in just enabling the UART,
->> without defining the entire Bluetooth interface, which AFAIK produces
-> 
-> Defining a bluetooth node would hardwire idiosyncrasies of a given
-> radio module's Bluetooth core. Sure you could add a sleep clock, all
-> kind of sideband signals for wakeups, reset, power down, etc. But hey,
-> some will use them, some won't. I think it's undesirable and
-> unnecessary. You can hciattach from here and most will work just like
-> that. Tighter integration or anything special, module specific on top
-> should be handled individially, on a case-by-case basis. This is a dev
-> board after all. I say trick of all trades.
-> 
->> nasty looking error messages in the kernel log when there's actually
->> nothing connected to the UART.
-> 
-> My dmesg is clean as a whistle
-> root@rock-3b:~# dmesg | grep -E 'fe6c0000|ttyS0'
-> [    0.344818] fe6c0000.serial: ttyS0 at MMIO 0xfe6c0000 (irq = 26,
-> base_baud = 1500000) is a 16550A
-> What kind of nasty errors do you recall?
-
-Those would be the kernel error messages produced with the Bluetooth
-DT configuration in place, but with no SDIO module installed.
+>   		sdata = bpf_local_storage_update(
+>   			inode, (struct bpf_local_storage_map *)map, value,
+>   			BPF_NOEXIST, false, gfp_flags);
+> -		return IS_ERR(sdata) ? (unsigned long)NULL :
+> -					     (unsigned long)sdata->data;
+> +		return IS_ERR(sdata) ? NULL : sdata->data;
+>   	}
+>   
+> -	return (unsigned long)NULL;
+> +	return NULL;
+> +}
 
