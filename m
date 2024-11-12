@@ -1,193 +1,242 @@
-Return-Path: <linux-kernel+bounces-405543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB069C52B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:07:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 790CE9C52E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:15:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79A191F219BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:07:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24AB3B2C855
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BE8212642;
-	Tue, 12 Nov 2024 10:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D5D21314D;
+	Tue, 12 Nov 2024 10:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="A0QTFl3R"
-Received: from smtp-out.freemail.hu (fmfe06.freemail.hu [46.107.16.199])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="QwBa+r+q"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FCB1F26E3;
-	Tue, 12 Nov 2024 10:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406FA212EEF;
+	Tue, 12 Nov 2024 10:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731405978; cv=none; b=doLdB27A+bdDK+XWZgpoOnSWsOMrMQw37Jx9WbUlaC5o0dpWFIFYL+yRydVqtnVxF7aSFnaerb+StMxrFQv6U+pZS6Q+OFfwRloZvuc6NJL/u4iAH6/p/7AaxBdjI9NMDfTmeY1G6FGBCvOlQOGmEjXOQNGTxcIScdU8dVIXYx8=
+	t=1731405983; cv=none; b=p2/Ewwwz88mgpPIhqXPCFFrm1h34nirQlCK6X65GI9Te8EOEdwWdhLSkUM3KLm6H8gCJJpnCk/Bxlv5AOpBJIscBQ/HMkgA7dGLLEwPCqCI036B16XH4YBpLrcRMw2Ei2gW4McL5Z4LvSExPq9JFlI7PZRtTbuvnj+MURbuUI94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731405978; c=relaxed/simple;
-	bh=oErtQKVCupMz+bfteO33B3eFn6gN0aJ9XhnkeXcflOs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=idS2QW6mlXEvU2zAyB493aXW3YeS4tQZ1eIHKT9+RAYSnQPakX6VMP7IMFMee2Pazcv3lgNYGrbHCvTk9LPpj74Cqcxum+0p1dG2mz+npsN1JETMMF95PB0NeFBnWVVQATepEX9RUpDpX3ppNrYf5bUTc5Gbtoe3Ca6ShAiYo1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=A0QTFl3R reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
-Received: from [192.168.0.16] (catv-178-48-208-49.catv.fixed.vodafone.hu [178.48.208.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.freemail.hu (Postfix) with ESMTPSA id 4Xnhrg5jGHzH4S;
-	Tue, 12 Nov 2024 11:06:11 +0100 (CET)
-Message-ID: <9ecdbe98-666b-4467-85f5-7f9bc01788c2@freemail.hu>
-Date: Tue, 12 Nov 2024 11:06:05 +0100
+	s=arc-20240116; t=1731405983; c=relaxed/simple;
+	bh=PtwouKHAn/VHkgGXa42Miuf+DbfWJ6bCaJAhn+NoCYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hotUHrQzg3mIrvt2v7BN+fBasWE4TPyECbjRFmsBtC/Ekzq2IZybyGdIefzS/DyknSFtk5USW2OVO6q5G9pKRYgjtCHTCMI3Q+BbdDM+gQczAhmcwLjBj8mqhllDY5Ad8P5lbT7IE1yNUySzqGIL21ztFGxJl46TDUNuCEeA6Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=QwBa+r+q; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=qEqElcS5St5CaM+svgsscnrIfVD/nab9lkfJvbTL8nk=; b=QwBa+r+qb0XaTDVdiMDrGefwj7
+	HUS93wehrhz0EGkwpNhgYywnJpOi3YvldcYW9FOmgWEHoX3NE/upVkS2IzViaPwCE5u/6zQIHaD4b
+	Nw7VNVzwfcul5Chyb91FNpM3YvhzHW/8tCdn7aA1/F58l+G3EzfooWYzD8M8P/7zKzJ3Zl/ITXJhR
+	iP1KUmkMT1WuX928BXG3bsPfpHUMFXZNHOkSPtVzJUhTdkxJnod5gBd4E2wxDYQNaZNbHZqrh8KoC
+	LF1ftT7/1JwT51409ochdXi7RGjEc5R5OnBAG1gCBrXgLjFKY9WtdKR2txk6wu2f/f3km5LO5K6/e
+	GqGyKwfw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44242)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tAnml-0003tT-0t;
+	Tue, 12 Nov 2024 10:06:13 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tAnmj-0007Mx-14;
+	Tue, 12 Nov 2024 10:06:09 +0000
+Date: Tue, 12 Nov 2024 10:06:09 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
+Cc: lpieralisi@kernel.org, thomas.petazzoni@bootlin.com, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	salee@marvell.com, dingwei@marvell.com
+Subject: Re: [PATCH 1/1] PCI: armada8k: Add link-down handle
+Message-ID: <ZzMokT-2pop1Y5hh@shell.armlinux.org.uk>
+References: <20241112064813.751736-1-jpatel2@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
- case-insensitive filesystem.
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, paulmck@kernel.org,
- stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
- peterz@infradead.org, npiggin@gmail.com, dhowells@redhat.com,
- j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
- dlustig@nvidia.com, joel@joelfernandes.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, lkmm@lists.linux.dev
-References: <20241111164248.1060-1-egyszeregy@freemail.hu>
- <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
- <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
- <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
- <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
- <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
- <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
- <CAHk-=wiEuh613GjBefTRe-_Eha1X1GoU=1nLt65uccSBC8Ne=A@mail.gmail.com>
- <705daf58-dd30-4935-9864-6489b9b90a35@freemail.hu>
- <ZzKpK_9nxh4Qg6mW@tardis.local>
-Content-Language: hu
-From: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
-In-Reply-To: <ZzKpK_9nxh4Qg6mW@tardis.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1731405972;
-	s=20181004; d=freemail.hu;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	l=4889; bh=ZZtgnOp/FICuvzimecGx+gYv0LEqLmAJkTRBu94dDNw=;
-	b=A0QTFl3ReDv0fKmt9l1674cUmXJfZwVCvdveD6T0H2obDSBcsLZIetGZbWxOIRh0
-	5EehLZe7BPZF+YQAZQANC4E94ZkqcgsIBYwebbFp13AeKuHwVF5cEOqY1jpGzV7LAs1
-	hcXyYNH3yr5JR1mFHgKmxR04rFhsc1V0Ao+6XdW27riD4Ou5NcZ+xMHQf8JDWeK9zjJ
-	0F3iGl/VCjfSWMWgTA2+S1PdSLD1Tcjz+NFzUDr9Wfr50C0/pYlKsT2yueeORcjO3PS
-	zRvKekQ7sKOjGm7ARtzqO53ixso927hWPts/CA51yKyH26SHJEdJ7bt0XW8RjvE0cUY
-	SVCv+LAwtA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112064813.751736-1-jpatel2@marvell.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-2024. 11. 12. 2:02 keltezéssel, Boqun Feng írta:
-> On Tue, Nov 12, 2024 at 12:21:51AM +0100, Sz"oke Benjamin wrote:
->> 2024. 11. 11. 23:00 keltezéssel, Linus Torvalds írta:
->>> On Mon, 11 Nov 2024 at 13:15, Sz"oke Benjamin <egyszeregy@freemail.hu> wrote:
->>>>
->>>> There is a technical issue in the Linux kernel source tree's file naming/styles
->>>> in git clone command on case-insensitive filesystem.
->>>
->>> No.
->>>
->>> This is entirely your problem.
->>>
->>> The kernel build does not work, and is not intended to work on broken setups.
->>>
->>> If you have a case-insensitive filesystem, you get to keep both broken parts.
->>>
->>> I actively hate case-insensitive filesystems. It's a broken model in
->>> so many ways. I will not lift a finger to try to help that
->>> braindamaged setup.
->>>
->>> "Here's a nickel, Kid. Go buy yourself a real computer"
->>>
->>>                Linus
->>
->>
->> In this patch my goal is to improve Linux kernel codebase to able to
->> edit/coding in any platform, in an IDE which has a modern GUI.
->>
->> Chillout, i am not so stupid to compile kernel on this "braindamaged setup",
->> I just like to edit the code and manage it by git commands.
->>
+Overall, your recent patches look like they're part of a series - they
+are dependent on each other, but you haven't sent them as a series. They
+need to be sent as a series so people know what order these patches
+should be applied in, and that they're all related.
+
+On Mon, Nov 11, 2024 at 10:48:13PM -0800, Jenishkumar Maheshbhai Patel wrote:
+> In PCIE ISR routine caused by RST_LINK_DOWN
+> we schedule work to handle the link-down procedure.
+> Link-down procedure will:
+> 1. Remove PCIe bus
+> 2. Reset the MAC
+> 3. Reconfigure link back up
+> 4. Rescan PCIe bus
 > 
-> Then you just need to create a case-sensitive partition, no? What's the
-> *technical* issue of doing that? And that cannot be more challenging
-> than testing your kernel changes, right? So it won't raise the bar of a
-> potential serious kernel contributer.
+> Signed-off-by: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-armada8k.c | 84 ++++++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
+> index 07775539b321..b1b48c2016f7 100644
+> --- a/drivers/pci/controller/dwc/pcie-armada8k.c
+> +++ b/drivers/pci/controller/dwc/pcie-armada8k.c
+> @@ -21,6 +21,8 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/resource.h>
+>  #include <linux/of_pci.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+>  
+>  #include "pcie-designware.h"
+>  
+> @@ -32,6 +34,9 @@ struct armada8k_pcie {
+>  	struct clk *clk_reg;
+>  	struct phy *phy[ARMADA8K_PCIE_MAX_LANES];
+>  	unsigned int phy_count;
+> +	struct regmap *sysctrl_base;
+> +	u32 mac_rest_bitmask;
+> +	struct work_struct recover_link_work;
+>  };
+>  
+>  #define PCIE_VENDOR_REGS_OFFSET		0x8000
+> @@ -72,6 +77,8 @@ struct armada8k_pcie {
+>  #define AX_USER_DOMAIN_MASK		0x3
+>  #define AX_USER_DOMAIN_SHIFT		4
+>  
+> +#define UNIT_SOFT_RESET_CONFIG_REG	0x268
+> +
+>  #define to_armada8k_pcie(x)	dev_get_drvdata((x)->dev)
+>  
+>  static void armada8k_pcie_disable_phys(struct armada8k_pcie *pcie)
+> @@ -216,6 +223,65 @@ static int armada8k_pcie_host_init(struct dw_pcie_rp *pp)
+>  	return 0;
+>  }
+>  
+> +static void armada8k_pcie_recover_link(struct work_struct *ws)
+> +{
+> +	struct armada8k_pcie *pcie = container_of(ws, struct armada8k_pcie, recover_link_work);
+> +	struct dw_pcie_rp *pp = &pcie->pci->pp;
+> +	struct pci_bus *bus = pp->bridge->bus;
+> +	struct pci_dev *root_port;
+> +	int ret;
+> +
+> +	root_port = pci_get_slot(bus, 0);
+> +	if (!root_port) {
+> +		dev_err(pcie->pci->dev, "failed to get root port\n");
+> +		return;
+> +	}
+> +	pci_lock_rescan_remove();
+> +	pci_stop_and_remove_bus_device(root_port);
+> +	/*
+> +	 * Sleep needed to make sure all pcie transactions and access
+> +	 * are flushed before resetting the mac
+> +	 */
+> +	msleep(100);
+> +
+> +	/* Reset mac */
+> +	regmap_update_bits_base(pcie->sysctrl_base, UNIT_SOFT_RESET_CONFIG_REG,
+> +				pcie->mac_rest_bitmask, 0, NULL, false, true);
+> +	udelay(1);
+> +	regmap_update_bits_base(pcie->sysctrl_base, UNIT_SOFT_RESET_CONFIG_REG,
+> +				pcie->mac_rest_bitmask, pcie->mac_rest_bitmask,
+> +				NULL, false, true);
+> +	udelay(1);
+> +
+> +	ret = dw_pcie_setup_rc(pp);
+> +	if (ret)
+> +		goto fail;
+> +
+> +	ret = armada8k_pcie_host_init(pp);
+> +	if (ret) {
+> +		dev_err(pcie->pci->dev, "failed to initialize host: %d\n", ret);
+> +		goto fail;
+> +	}
+> +
+> +	if (!dw_pcie_link_up(pcie->pci)) {
+> +		ret = dw_pcie_start_link(pcie->pci);
+> +		if (ret)
+> +			goto fail;
+> +	}
+> +
+> +	/* Wait until the link becomes active again */
+> +	if (dw_pcie_wait_for_link(pcie->pci))
+> +		dev_err(pcie->pci->dev, "Link not up after reconfiguration\n");
+> +
+> +	bus = NULL;
+> +	while ((bus = pci_find_next_bus(bus)) != NULL)
+> +		pci_rescan_bus(bus);
+> +
+> +fail:
+> +	pci_unlock_rescan_remove();
+> +	pci_dev_put(root_port);
+> +}
+> +
+>  static irqreturn_t armada8k_pcie_irq_handler(int irq, void *arg)
+>  {
+>  	struct armada8k_pcie *pcie = arg;
+> @@ -253,6 +319,9 @@ static irqreturn_t armada8k_pcie_irq_handler(int irq, void *arg)
+>  		 * initiate a link retrain. If link retrains were
+>  		 * possible, that is.
+>  		 */
+> +		if (pcie->sysctrl_base && pcie->mac_rest_bitmask)
+> +			schedule_work(&pcie->recover_link_work);
+> +
+>  		dev_dbg(pci->dev, "%s: link went down\n", __func__);
+>  	}
+>  
+> @@ -322,6 +391,8 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
+>  
+>  	pcie->pci = pci;
+>  
+> +	INIT_WORK(&pcie->recover_link_work, armada8k_pcie_recover_link);
+> +
+>  	pcie->clk = devm_clk_get(dev, NULL);
+>  	if (IS_ERR(pcie->clk))
+>  		return PTR_ERR(pcie->clk);
+> @@ -349,6 +420,19 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
+>  		goto fail_clkreg;
+>  	}
+>  
+> +	pcie->sysctrl_base = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+> +						       "marvell,system-controller");
+> +	if (IS_ERR(pcie->sysctrl_base)) {
+> +		dev_warn(dev, "failed to find marvell,system-controller\n");
+> +		pcie->sysctrl_base = 0x0;
+> +	}
+> +
+> +	ret = of_property_read_u32(pdev->dev.of_node, "marvell,mac-reset-bit-mask",
+> +				   &pcie->mac_rest_bitmask);
+> +	if (ret < 0) {
+> +		dev_warn(dev, "couldn't find mac reset bit mask: %d\n", ret);
+> +		pcie->mac_rest_bitmask = 0x0;
+> +	}
+>  	ret = armada8k_pcie_setup_phys(pcie);
+>  	if (ret)
+>  		goto fail_clkreg;
+> -- 
+> 2.25.1
+> 
+> 
 > 
 
-It is easy to say just need a case-sensitive partition, and sure it can be 
-configurable but for example on Windows, admin rights needed for it, which is 
-not available in 90% for a workstation machine in an universitiy or a general 
-company.
-
-
->> So, this is a tipical Braindamaged setup in 2024 for Generation of a half of
->> Y (like me), Z and Alpha developers.
->>
->> Windows or MacOS system
->> - Visual Studio Code for coding
->>      - Git for manage kernel source
->>      - IntelliSense in coding
->>      - Live coding with other developers
->>
->> Linux remote server
->> - Visual Studio Code remote SSH extension/connection for Linux server
->>      - Sync kernel workdir with remote Ubuntu/Debian/RHEL Linux server
->>      - Remote SSH compile for X86_64, ARM64 etc ...
->>      - Download the build result
->>
-> 
-> How do you know it's "typical"? I just googled it and confirmed I'm a
-> Gen Y ;-) and I'm not using vscode or any IDE, a lot of Gen Y, Z and
-> Alpha developers I know either use Linux on their desktop/laptop or they
-> don't use IDEs. May my experience suffice to say it's not typical? Or is
-> it the case where I thought me and my friends are the whole world? ;-)
-> 
->> Instead of Visual Studio Code it can be possible to use JetBrains, Eclipse
->> and so on any other modern IDE. The actual limitation is only, that there is
->> a filename issue in the Linux kernel source with
->> "Z6.0+pooncelock+poonceLock+pombonce.litmus", why git clone is failed to
->> work well in this case-insensitive OSs.
-> 
-> They are not "case-insensitive" OSes, they support case-sensitive
-> filesystems, and they support them for a reason, so just use them. With
-> your changes, it may be OK at clone time, but as soon as you do some
-> serious development involving `git bisect`, you might be very frustated
-> that your setup doesn't work.
-> 
-> So your solution is incompleted (not handling the git history), and your
-> goal is a bit personalized: it's only useful to people who want to
-> read/edit Linux code without running it and don't want to use a
-> case-sensitive filesystem, and that's not very persuasive. I don't think
-> we can accept the solution or commit to that goal.
-> 
-
-I know the superhero operation may not possible but, i like to edit the code, i 
-like to browse the code by mouse clicking easily, how possible in a limited way 
-in https://elixir.bootlin.com/linux/v6.11.7/source. I like to get a well work 
-IntelliSense and later Copilot AI feature.
-
-In my use-case i do it for ARM64 embedded boards to make patches and 
-modifications for my Yocto projects, it means i will run and test my kernel 
-build on my target board only, which was downloaded from the remote compiler 
-machine after my remote build.
-
-As i saw that in some Youtube coding persons and cahnnels and see colleagues and 
-friends, young developers more like to use IDE/GUI in Windows or MacOS for just 
-coding/editing and do the basics via git, then use any SSH connection/solution 
-to compile the things in remotely then test it in Qemu or a real remote 
-machine/board.
-
-In 2024 trend is for multiplatform IDEs like Eclipse, VScode and so on ... SW 
-Projects also need to support the minimum possibilities to able to edit and 
-manage them in multiplatform mode, otherwise this techs improvments makes no 
-sense and they never take adventage of their new IDEs benefits for these 
-projects in the future.
-
-> Regards,
-> Boqun
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
