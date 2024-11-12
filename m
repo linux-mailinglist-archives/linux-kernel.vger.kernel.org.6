@@ -1,377 +1,155 @@
-Return-Path: <linux-kernel+bounces-406425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E52E9C5EE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:28:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DFB19C5EEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:29:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A111F21B2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:28:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150601F22953
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C522139D2;
-	Tue, 12 Nov 2024 17:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rV9TyvPT"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299B22144CB;
+	Tue, 12 Nov 2024 17:28:25 +0000 (UTC)
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC5D2123FF
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AAE2141AD;
+	Tue, 12 Nov 2024 17:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731432479; cv=none; b=CzC51b3HTeB6wR20atKA3DgbjbV4M/RzJSfQrMibAIhqvg/zyZ2un22RmmKU/ojZ/pMb1Pd208zCZ5oyY1/UryklebptbW96uZ/4U69nWuyVMsXSA+qUi7USEqn5FsW3bMcK+iYkQT67OP01CmQTGjrt1BqIA5O4iI64IYECeok=
+	t=1731432504; cv=none; b=myhpvTo5idBq5ItWR9lSinqWFVzJrPmmHTWIFaPzwFv5hMx/KlU/2AImPooaqfk2AQbEbzf3SjeYXmab5mk4bIkfxhm8ATYzbW1BxAJxXA1TQKcydZLKSSoyo8Y+2Lt7jqXNfEDzHjnphMsplhFwKXccRisBrVHVZL/Kvj59Thc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731432479; c=relaxed/simple;
-	bh=/r0OYPqICBFR5VtOll1qmVLyzaVPdEQeWZCbK4/E4WU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vDyAOIpBjepFyffFrLD4nJMhuN+hb5rd6eyq75rrCaSW0cNf8PDZo/FbAsJmGj5JfzV84j1qCFO4fJulitKhxldtmJjPL2Xo7BwGAOOL0tAjoNQ64W2W1ci8RfRsSnhYblzMkHOz/S2xCJAliJmebwKL3JnSJkUaBA6rwPE8n+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rV9TyvPT; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43152b79d25so49904675e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:27:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731432475; x=1732037275; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=r9C7zut+QQcjHwHSGcJuOPsgWncFr28LdU47xW3z+sc=;
-        b=rV9TyvPToWZXbti6zhU50Nssa/1nt+aI3m+cDC9gH7nTFmfhY37gB2I2NxNOZwAxGd
-         QoJ4aWK6mY+iIeWK2VkmyqMnRUdr39031pMN5g1Nr1pRf6V2NguTyhd2zbhq+kiBj/d3
-         he0X3IaHIZwaLTNDFGU9MLGRDI1+a90r8g1EtIw6O4JQokNPs1kxaswxXD1Qy6JQtkFU
-         huqWYZpgD7VKggtMM9hVfNUKDwVZQae6Dtl7iHV8vMymeRgr0E30sMj/6mwrLlOaV+CS
-         adhdInBmajpmXP6MGHGtyrwShCnakpT1QFb8M8j+DR6buTIFAeA0BK6PywRrDdiDDMWI
-         ygfQ==
+	s=arc-20240116; t=1731432504; c=relaxed/simple;
+	bh=xbgk5hAoqieohPCSfNFhSlP8wiXGZ1l1vbeJYgtQU6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sud2cYKN9j/qISLEDz1CCz8cuuAnTxPnlydUds7YoJezOtCOxx6u1PueJJaRJvOq17FBWf29v8NarYSRAoonxemRWlp7SOEz0BLf4S7umQEAVCcyGXX/ubbzTaJTrXNkwZ6Y9wCly0f3bNPpM4tMtVLjwM/76OiH1+q9g6zdznc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-72041ff06a0so4836745b3a.2;
+        Tue, 12 Nov 2024 09:28:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731432475; x=1732037275;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r9C7zut+QQcjHwHSGcJuOPsgWncFr28LdU47xW3z+sc=;
-        b=nViKrkbP6DE7L4nZR111PHanFd1sWecwPyQvZURFFPQ1xGovkn43rU8OecaP2C+o9w
-         cQuvjnoxGcR85LiXWtiwDepsCJAf3+Q5EVUW93rxD1+FUB/suWM76F+Aadpzo84WVqxK
-         WCwKEg45Smp25IwZbMuAW4mWMU9bo0XPXcaHt2pAKPVbYghKxYjCzRKeFbVMWF49rnB3
-         rX32QqzNNaOmTQ+oma63FCUlWqvf/LOtMsWUt05Ohri0VP0SPr1Rd+1NrgVDfud1LNUJ
-         4F9bvZeHoiHm2kn4ZYyg+l8d46LSmNqaI2JBcGjVS8Z5UpL5VFkKGvnhepoyUrJZsFzb
-         D16Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUFgjC/idaQafZyPy2jtM8T0EnvoqvOi3dCcrznSZQsXWxvb3z73XgOR2p9yHl3mrf4N2azELOM9en8P/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySQlHM28UPc7nIrqYD1mcxAddCQrO5UYeZcPPz36Cuf4T3GZ5s
-	b28BdFypTBU4UvwxpRyi8bUvBhSRLKKZX7EIcM1NHgGAQg0x1oFTu7eu3SCniXc=
-X-Google-Smtp-Source: AGHT+IH5vPmQaPivGg0an3CBEX+0qooI5KTDMC56HM1MBHvWy2i4JiGZmehqc8VpzCO1+qgEokzUkg==
-X-Received: by 2002:a5d:6d03:0:b0:37c:cfeb:e612 with SMTP id ffacd0b85a97d-381f17261e1mr14714587f8f.1.1731432474567;
-        Tue, 12 Nov 2024 09:27:54 -0800 (PST)
-Received: from linaro.org ([2a02:2454:ff21:ef80:f548:3a80:2990:6de4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9f8984sm16180830f8f.71.2024.11.12.09.27.53
+        d=1e100.net; s=20230601; t=1731432502; x=1732037302;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5dn6D2PvAkkjUh/aBGO5vR9KleF05rgJT7heCtBroHA=;
+        b=NEMFV3R7AraiomzguFA8CfvXcLQjTKvbPpr1CVQUcOfSGfAFk11uI+4QTxCsV2MG2K
+         e73i/1IIcQKXIRY4eFK/fE6RpXpxQNO8To7D9e1s4OoViclvbCXNoe+ok+iWxHFMVMJu
+         nwFj3itnlix07J0425UlFtkB5bDupDDVpWwpi4mlASl/XdsPYdup8xsO7hXC1FaFMPd4
+         npB2QKFMG+jYQYLpaUghqegs/Ry93CBvtcMn2j4zVXvpZ9brooXo99R4xkuW5Rl5jejp
+         x2510u92UjXxXj5eVIhTzNejiSgLlqwZm+YExwbHzr0qETs4Knf5i7nK9MwL/wQUtrlj
+         lK+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWMg6kpZQyxSOYfYy4XK/Uiv86HZl0snRdnj+80D3vU613rtDR+rDS5Q79416lRU93lQj6wmR4YJmpwuNRN@vger.kernel.org, AJvYcCXow8hr63VBI5WprS3PNA4dpkt3SFj59u1GyU3i6g3H37dJG3oWAT7OpY9gUw6NO33M2rUcqSQEiXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywZR1BCNlKXpxWY2H6jYYlxd/QzJt1s/AndoFx3/x2FHT3uhnt
+	SoBMBrLjwfvaaHdoKcjoGtExzCqiwbgSaC4PpZKSa8Pcscsgo+0QQLDXAiEL
+X-Google-Smtp-Source: AGHT+IFSNsjE/iTfFwkGzc2xjx4LVmXz4eNCEmZ61WTfvXpPt6p/no7XzV4AWwvmr4PomUrYufaubg==
+X-Received: by 2002:a05:6a00:3d56:b0:71e:410:4764 with SMTP id d2e1a72fcca58-7241329bb4cmr24364304b3a.8.1731432502126;
+        Tue, 12 Nov 2024 09:28:22 -0800 (PST)
+Received: from localhost.localdomain (124x33x176x97.ap124.ftth.ucom.ne.jp. [124.33.176.97])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407864f78sm11481439b3a.33.2024.11.12.09.28.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 09:27:54 -0800 (PST)
-Date: Tue, 12 Nov 2024 18:27:46 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: =?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Amit Kucheria <amitk@kernel.org>,
-	Thara Gopinath <thara.gopinath@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-pm@vger.kernel.org, iommu@lists.linux.dev,
-	Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>
-Subject: Re: [PATCH v5 08/10] arm64: dts: qcom: Add initial support for
- MSM8917
-Message-ID: <ZzOQEgLLhkH-IymV@linaro.org>
-References: <20241112-msm8917-v5-0-3ca34d33191b@mainlining.org>
- <20241112-msm8917-v5-8-3ca34d33191b@mainlining.org>
+        Tue, 12 Nov 2024 09:28:21 -0800 (PST)
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+To: netdev@vger.kernel.org,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	David Ahern <dsahern@gmail.com>,
+	linux-can@vger.kernel.org,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Robert Nawrath <mbro1689@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Subject: [PATCH iproute2-next v1 1/6] iplink_can: remove unused FILE *f parameter in three functions
+Date: Wed, 13 Nov 2024 02:27:51 +0900
+Message-ID: <20241112172812.590665-9-mailhol.vincent@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241112172812.590665-8-mailhol.vincent@wanadoo.fr>
+References: <20241112172812.590665-8-mailhol.vincent@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2361; i=mailhol.vincent@wanadoo.fr; h=from:subject; bh=xbgk5hAoqieohPCSfNFhSlP8wiXGZ1l1vbeJYgtQU6I=; b=owGbwMvMwCV2McXO4Xp97WbG02pJDOnGE3RObqroWpB8kSmcL5ex9J8l62a3lEsb0ufZPq0y8 r+/+YhWRykLgxgXg6yYIsuyck5uhY5C77BDfy1h5rAygQxh4OIUgInE9DAyTNjseGdhnN28ybuO P25bKTVNtGXe75vCfsyqjQ9Cld5Ous3IcG25YoONMyuDH7P+P4XGYy0LmhL9trnfCX3y83f4/Fo BPgA=
+X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp; fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241112-msm8917-v5-8-3ca34d33191b@mainlining.org>
 
-On Tue, Nov 12, 2024 at 04:49:38PM +0100, Barnabás Czémán wrote:
-> From: Otto Pflüger <otto.pflueger@abscue.de>
-> 
-> Add initial support for MSM8917 SoC.
-> 
-> Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
-> [reword commit, rebase, fix schema errors]
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
->  arch/arm64/boot/dts/qcom/msm8917.dtsi | 1974 +++++++++++++++++++++++++++++++++
->  1 file changed, 1974 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8917.dtsi b/arch/arm64/boot/dts/qcom/msm8917.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..cf0a0eec1141e11faca0ee9705d6348ab32a0f50
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/msm8917.dtsi
-> @@ -0,0 +1,1974 @@
-> [...]
-> +		domain-idle-states {
-> +			cluster_sleep_0: cluster-sleep-0 {
-> +				compatible = "domain-idle-state";
-> +				arm,psci-suspend-param = <0x41000023>;
-> +				entry-latency-us = <700>;
-> +				exit-latency-us = <650>;
-> +				min-residency-us = <1972>;
-> +			};
-> +
-> +			cluster_sleep_1: cluster-sleep-1 {
-> +				compatible = "domain-idle-state";
-> +				arm,psci-suspend-param = <0x41000043>;
-> +				entry-latency-us = <240>;
-> +				exit-latency-us = <280>;
-> +				min-residency-us = <806>;
-> +			};
+FILE *f, the first parameter of below functions:
 
-I think my comment here is still open:
+ * can_print_tdc_opt()
+ * can_print_tdc_const_opt()
+ * void can_print_ctrlmode_ext()
 
-This is strange, the deeper sleep state has lower timings than the
-previous one?
+is unused. Remove it.
 
-> +
-> +			cluster_sleep_2: cluster-sleep-2 {
-> +				compatible = "domain-idle-state";
-> +				arm,psci-suspend-param = <0x41000053>;
-> +				entry-latency-us = <700>;
-> +				exit-latency-us = <1000>;
-> +				min-residency-us = <6500>;
-> +			};
-> +		};
-> +
-> [...]
-> +		restart@4ab000 {
-> +			compatible = "qcom,pshold";
-> +			reg = <0x004ab000 0x4>;
-> +		};
+Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+---
+ ip/iplink_can.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-This one too:
+diff --git a/ip/iplink_can.c b/ip/iplink_can.c
+index f2967db5..01d977fa 100644
+--- a/ip/iplink_can.c
++++ b/ip/iplink_can.c
+@@ -337,7 +337,7 @@ can_print_timing_min_max(const char *json_attr, const char *fp_attr,
+ 	close_json_object();
+ }
+ 
+-static void can_print_tdc_opt(FILE *f, struct rtattr *tdc_attr)
++static void can_print_tdc_opt(struct rtattr *tdc_attr)
+ {
+ 	struct rtattr *tb[IFLA_CAN_TDC_MAX + 1];
+ 
+@@ -365,7 +365,7 @@ static void can_print_tdc_opt(FILE *f, struct rtattr *tdc_attr)
+ 	}
+ }
+ 
+-static void can_print_tdc_const_opt(FILE *f, struct rtattr *tdc_attr)
++static void can_print_tdc_const_opt(struct rtattr *tdc_attr)
+ {
+ 	struct rtattr *tb[IFLA_CAN_TDC_MAX + 1];
+ 
+@@ -393,7 +393,7 @@ static void can_print_tdc_const_opt(FILE *f, struct rtattr *tdc_attr)
+ 	close_json_object();
+ }
+ 
+-static void can_print_ctrlmode_ext(FILE *f, struct rtattr *ctrlmode_ext_attr,
++static void can_print_ctrlmode_ext(struct rtattr *ctrlmode_ext_attr,
+ 				   __u32 cm_flags)
+ {
+ 	struct rtattr *tb[IFLA_CAN_CTRLMODE_MAX + 1];
+@@ -417,7 +417,7 @@ static void can_print_opt(struct link_util *lu, FILE *f, struct rtattr *tb[])
+ 
+ 		print_ctrlmode(PRINT_ANY, cm->flags, "ctrlmode");
+ 		if (tb[IFLA_CAN_CTRLMODE_EXT])
+-			can_print_ctrlmode_ext(f, tb[IFLA_CAN_CTRLMODE_EXT],
++			can_print_ctrlmode_ext(tb[IFLA_CAN_CTRLMODE_EXT],
+ 					       cm->flags);
+ 	}
+ 
+@@ -542,7 +542,7 @@ static void can_print_opt(struct link_util *lu, FILE *f, struct rtattr *tb[])
+ 		print_uint(PRINT_ANY, "brp", " dbrp %u", dbt->brp);
+ 
+ 		if (tb[IFLA_CAN_TDC])
+-			can_print_tdc_opt(f, tb[IFLA_CAN_TDC]);
++			can_print_tdc_opt(tb[IFLA_CAN_TDC]);
+ 
+ 		close_json_object();
+ 	}
+@@ -566,7 +566,7 @@ static void can_print_opt(struct link_util *lu, FILE *f, struct rtattr *tb[])
+ 		print_uint(PRINT_ANY, "brp_inc", " dbrp_inc %u", dbtc->brp_inc);
+ 
+ 		if (tb[IFLA_CAN_TDC])
+-			can_print_tdc_const_opt(f, tb[IFLA_CAN_TDC]);
++			can_print_tdc_const_opt(tb[IFLA_CAN_TDC]);
+ 
+ 		close_json_object();
+ 	}
+-- 
+2.45.2
 
-You have PSCI for shutting down, do you actually need this?
-
-> +
-> +		tlmm: pinctrl@1000000 {
-> +			compatible = "qcom,msm8917-pinctrl";
-> +			reg = <0x01000000 0x300000>;
-> +			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-> +			gpio-controller;
-> +			gpio-ranges = <&tlmm 0 0 134>;
-> +			#gpio-cells = <2>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +
-> [...]
-> +			sdc1_clk_on: sdc1-clk-on-state {
-> +				pins = "sdc1_clk";
-> +				bias-disable;
-> +				drive-strength = <16>;
-> +			};
-> +
-> +			sdc1_clk_off: sdc1-clk-off-state {
-> +				pins = "sdc1_clk";
-> +				bias-disable;
-> +				drive-strength = <2>;
-> +			};
-> +
-> +			sdc1_cmd_on: sdc1-cmd-on-state {
-> +				pins = "sdc1_cmd";
-> +				bias-disable;
-> +				drive-strength = <10>;
-> +			};
-> +
-> +			sdc1_cmd_off: sdc1-cmd-off-state {
-> +				pins = "sdc1_cmd";
-> +				bias-disable;
-> +				drive-strength = <2>;
-> +			};
-> +
-> +			sdc1_data_on: sdc1-data-on-state {
-> +				pins = "sdc1_data";
-> +				bias-pull-up;
-> +				drive-strength = <10>;
-> +			};
-> +
-> +			sdc1_data_off: sdc1-data-off-state {
-> +				pins = "sdc1_data";
-> +				bias-pull-up;
-> +				drive-strength = <2>;
-> +			};
-> +
-> +			sdc1_rclk_on: sdc1-rclk-on-state {
-> +				pins = "sdc1_rclk";
-> +				bias-pull-down;
-> +			};
-> +
-> +			sdc1_rclk_off: sdc1-rclk-off-state {
-> +				pins = "sdc1_rclk";
-> +				bias-pull-down;
-> +			};
-> +
-> +			sdc2_clk_on: sdc2-clk-on-state {
-> +				pins = "sdc2_clk";
-> +				drive-strength = <16>;
-> +				bias-disable;
-> +			};
-> +
-> +			sdc2_clk_off: sdc2-clk-off-state {
-> +				pins = "sdc2_clk";
-> +				bias-disable;
-> +				drive-strength = <2>;
-> +			};
-> +
-> +			sdc2_cmd_on: sdc2-cmd-on-state {
-> +				pins = "sdc2_cmd";
-> +				bias-pull-up;
-> +				drive-strength = <10>;
-> +			};
-> +
-> +			sdc2_cmd_off: sdc2-cmd-off-state {
-> +				pins = "sdc2_cmd";
-> +				bias-pull-up;
-> +				drive-strength = <2>;
-> +			};
-
-These are not referenced anywhere? Not here in the sdhc_X nodes, and
-also not in your msm8917-xiaomi-riva.dts. Would also recommend
-consolidating these to a single node like in msm8916.dtsi, see commit
-c943e4c58b2f ("arm64: dts: qcom: msm8916/39: Consolidate SDC pinctrl").
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c943e4c58b2ffb0dcd497f8b12f284f5e8fc477e
-
-> +
-> +			sdc2_cd_on: cd-on-state {
-> +				pins = "gpio67";
-> +				function = "gpio";
-> +				drive-strength = <2>;
-> +				bias-pull-up;
-> +			};
-> +
-> +			sdc2_cd_off: cd-off-state {
-> +				pins = "gpio67";
-> +				function = "gpio";
-> +				drive-strength = <2>;
-> +				bias-disable;
-> +			};
-
-It does not make sense to have different on/off states for the card
-detect (CD) pin of the SD card. It needs to work even when the SD card
-is suspended so we can detect insertions/removals. Also should be placed
-in the board-specific DT part.
-
-See commit dfbda20dabaa ("arm64: dts: qcom: msm8916/39: Fix SD card
-detect pinctrl").
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=dfbda20dabaa1f284abd550035db5887384c8e4c
-
-
-> +
-> +			sdc2_data_on: sdc2-data-on-state {
-> +				pins = "sdc2_data";
-> +				bias-pull-up;
-> +				drive-strength = <10>;
-> +			};
-> +
-> +			sdc2_data_off: sdc2-data-off-state {
-> +				pins = "sdc2_data";
-> +				bias-pull-up;
-> +				drive-strength = <2>;
-> +			};
-> +
-> [...]
-> +		blsp1_i2c4: i2c@78b8000 {
-> +			compatible = "qcom,i2c-qup-v2.2.1";
-> +			reg = <0x078b8000 0x500>;
-> +			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&gcc GCC_BLSP1_QUP4_I2C_APPS_CLK>,
-> +				 <&gcc GCC_BLSP1_AHB_CLK>;
-> +			clock-names = "core", "iface";
-> +			dmas = <&blsp1_dma 10>, <&blsp1_dma 11>;
-> +			dma-names = "tx", "rx";
-> +			pinctrl-0 = <&blsp1_i2c4_default>;
-> +			pinctrl-1 = <&blsp1_i2c4_sleep>;
-> +			pinctrl-names = "default", "sleep";
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
-> +		blsp2_i2c5: i2c@7af5000 {
-
-This is actually blsp2_i2c1 if you look at the clock name below:
-
-> +			compatible = "qcom,i2c-qup-v2.2.1";
-> +			reg = <0x07af5000 0x600>;
-> +			interrupts = <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&gcc GCC_BLSP2_QUP1_I2C_APPS_CLK>,
-
-here ^
-
-But I realize now that the pinctrl functions are consecutively numbered
-without the BLSP number. Sorry for the confusion.
-
-Basically:
-  - blsp1_i2c2 == blsp_i2c2
-  - blsp2_i2c1 == blsp_i2c5
-
-Looking at some other examples upstream I guess you can choose between
-one of the following options:
-
- 1. msm8974/msm8976/msm8996/msm8998: Use &blspX_i2cY labels for the i2c@
-    node and pinctrl and only have the slightly confusing pinctrl
-    function. E.g. this in msm8976.dtsi:
-
-			/* 4 (not 6!) interfaces per QUP, BLSP2 indexes are numbered (n)+4 */
-			blsp2_i2c2_default: blsp2-i2c2-default-state {
-				pins = "gpio22", "gpio23";
-				function = "blsp_i2c6";
-				drive-strength = <2>;
-				bias-disable;
-			};
-
-    Note how blsp2_i2c2 == blsp_i2c6.
-
- 2. msm8994: Use &blspX_i2cY labels for the i2c@ node, but keep pinctrl
-    named &i2cN_default. E.g. this in msm8994.dtsi:
-
-		blsp2_i2c1: i2c@f9963000 {
-			/* ... */
-			pinctrl-names = "default", "sleep";
-			pinctrl-0 = <&i2c7_default>;
-			pinctrl-1 = <&i2c7_sleep>;
-			/* ... */
-		};
-
-    Note how blsp2_i2c1 == i2c7_default here.
-
- 3. msm8953: Use &i2c_N labels everywhere like on downstream. E.g. this
-    in msm8953.dtsi. This is pretty much what you had originally:
-
-		i2c_5: i2c@7af5000 {
-			/* ... */
-			pinctrl-names = "default", "sleep";
-			pinctrl-0 = <&i2c_5_default>;
-			pinctrl-1 = <&i2c_5_sleep>;
-			/* ... */
-		};
-
-All of these are fine for me. Feel free to pick the one you prefer. But
-let's not introduce a new confusing variant of this. :-)
-
-Thanks,
-Stephan
 
