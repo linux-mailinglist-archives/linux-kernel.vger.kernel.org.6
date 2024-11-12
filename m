@@ -1,126 +1,131 @@
-Return-Path: <linux-kernel+bounces-406389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3068E9C5E6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:11:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 593B99C5E72
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:11:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9909281AFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C23E282E0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6027120DD7E;
-	Tue, 12 Nov 2024 17:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D488217474;
+	Tue, 12 Nov 2024 17:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dPjPdfu1"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KF6aRyBn"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86467217326
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE592076AB;
+	Tue, 12 Nov 2024 17:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731431210; cv=none; b=U/8/iyo1vnGYnNagdwGLnotWSuUvuggp5q4c+5dVMsGBd4C53qmiG+XccPv6lRAez2ZunnCj/4aHeErAT3DCDfvATos81cCWCYKP8HaRwUbk7lGWYfZR8eRRfMRd800yM6hFWiIi55FMF7uav7/vE8lTjmz34bvzUVLdpw4IHIs=
+	t=1731431226; cv=none; b=AxTcIyfEkCScgzIux1X0e5wWeihVtEOu2gGT88cgncjbToMFQEi44J3kTIEKZgOvwdelH0KuEQkXRf2B7IIaI90pKG5FMfHJeEfSFMkDvKUPpSvjREduz7rb30oOaLg9AAn2jlKnWhFa8qqRNvzg+mqrOHqxJoPXBFiWpXVTp80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731431210; c=relaxed/simple;
-	bh=2JX9+Oec6re2y1a4xOhuxeNQc/xPxRA9BwsugQ7a94M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y3k9hQedFdiFu/r0Odbs4XoNqFyQtezlv5/p9b1AcqOKvQKVHLIU/EK/Gp0Y2+DdyMZ3mHH+LLIIKLIZggFk3zFPpwcOxOlPAaPrJpDL0OhQf52x0rnjSI0YqrbEHcn9Gyg6UK2Qg1v4k16qor9mF+NpwRARfnQwuQZ+oLlWIjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dPjPdfu1; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-718078c7f53so2784853a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:06:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731431207; x=1732036007; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7gBQdB8LfkLX5TUCZ/pNzgnlsSmd42L4jALhpOoe5nw=;
-        b=dPjPdfu19geTWahmuINPChOSlT0d+4AlIMz5oGOhn3dOn1vfUJ6y7AZSVAjffAYIpI
-         IDbrSEZWUFksZ0mLCzoYekpZ2YQ+fUlz6JvKWHAxyvx1TK+BK9Eu8uXIFJZzXj6DWiGX
-         e942R0ao6+6I3rsSHyxvU1wzwokhFI5z0cpmDEu1987T9OjD4wPUxXpizcPkYksx24q2
-         qAn110tEBls1yZBJYZyrS02wPFTLs8eAZBOZmlsugj2ksoKvx4ta8QckGTuKXCfIEjVN
-         NcZ1JQMLtZYDV5WCbPTgMw8tNe4iaRl9BZ1Kf6MMecgoD+nscJD8YB9S58G6j+Eu/Qhh
-         D4+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731431207; x=1732036007;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7gBQdB8LfkLX5TUCZ/pNzgnlsSmd42L4jALhpOoe5nw=;
-        b=n+kop9wD1rVdDzOFvr3Hv1pku0ZUX0cXkj7kcLTWmkjIq3slkeGq3FMX3tNSdYQVRl
-         sFf0cskXmizwYopV4JGpRoLVgjS4PYKLGvs+8zuU54rr/frIJqDt/3JQzsHOyap1aJSk
-         Anvtnqpf7tmTYflTAjzGRrNzkIOwblLmiQOFzVwUlPAk8yvgnhp2R0YkBewB6c9UOmg0
-         ZxR2w3mY1InmiYIqt0IoxD40oDGYlBz7QnVEwQ8tk4q+nXhpTNwumVvX2ZWyt2cDteFQ
-         OLtEcTycRoDasmquKOH+N6s9wYkVG80Qv0V6hzzdfTZzGddzO2X3NNsreM21m3OFKKb4
-         UMag==
-X-Forwarded-Encrypted: i=1; AJvYcCX5lyYYP7qPAG3gq+YOFK5r6XLMHPp0rTYijRDk74XUSNP5Zodc4ehXGFAiExannM3AePt/mi6mdyGQxvg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBuz3lNGdGu0ebCWu5qI+K2ErOgmsBLbl4KaYBVKZI6mhjlmaH
-	AbpXgTCiSaXwG94ejo0Nt5/vua7nr3ONzmyHGBC7GXNpQIBquGCTSucp8voUKEyzbToXdmczf7T
-	+lp0=
-X-Google-Smtp-Source: AGHT+IEFhmr73BlsFmSujeWjETDWW8vIMJ259KHsMl2qTFCMehDdIEol/c6/Y43aheLgyMPMHb+QxQ==
-X-Received: by 2002:a05:6830:6b0b:b0:713:d359:317a with SMTP id 46e09a7af769-71a1b0c73demr12018118a34.15.1731431207695;
-        Tue, 12 Nov 2024 09:06:47 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a107eb5c8sm2785031a34.13.2024.11.12.09.06.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 09:06:47 -0800 (PST)
-Message-ID: <7a4ef71f-905e-4f2a-b3d2-8fd939c5a865@kernel.dk>
-Date: Tue, 12 Nov 2024 10:06:45 -0700
+	s=arc-20240116; t=1731431226; c=relaxed/simple;
+	bh=yfOv/eMBAl8i55aF51GafdzPzmAf+rbqJvtUJEDJb5M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JsnT+T0e1+YojpDgLIivfXG17SBFdqCv6x5AIML7ECoE2kwB+aGIrhyVwKj3X+vwQXWR79FtlOMPmj+XePcfKm1jLoLPWjONnDrwzt1ALkljKtFO5/pj8p3BXdOYcqI35/0JsLhSHcaP/rHtCP6sUyqPSQ1IuSzxDf9AGhieE20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KF6aRyBn; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 54B79E0002;
+	Tue, 12 Nov 2024 17:07:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731431222;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MNtCugG59nS9OABDLmKZagjpJ188CbPhZJNQ0/shOKY=;
+	b=KF6aRyBn5/7nNXSS5Mad6+l+b+BbubgLGJZfM7VgpqTBqmHpPWlNRVneQ/d90gcj71UWiN
+	vQcSemki6Sg14AxdjC6nY7uZpZWp4VcbfJSdHPfxJHViK4AcI22w/xTuXP3hzBPUIeD0ao
+	ROh47wIUy58MA/IYBsb0gpI1GW5WjRBMwuKHrSKQsvikmu2vDMAEMsj8+vkHOK2IMk+1WS
+	V/coLl2a4ohAaV3xmvzLYT0KbnbwQOUJ9d3Fx1nw2oai5BsAdrKmzc/OsDrLy2uU56QAVl
+	gyPT5qDS9aEjQfoG92F6DTJ2A4mNIJn4eOxk3euoa5MdvohILAkFdhPrDWk+Pg==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Daniel Machon <daniel.machon@microchip.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v4 0/9] Support external snapshots on dwmac1000
+Date: Tue, 12 Nov 2024 18:06:48 +0100
+Message-ID: <20241112170658.2388529-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
-To: Brian Foster <bfoster@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
- "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
- linux-kernel@vger.kernel.org, willy@infradead.org
-References: <20241110152906.1747545-1-axboe@kernel.dk>
- <20241110152906.1747545-9-axboe@kernel.dk>
- <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
- <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
- <ZzIfwmGkbHwaSMIn@infradead.org>
- <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
- <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
- <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
- <ZzLkF-oW2epzSEbP@infradead.org>
- <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk> <ZzOEzX0RddGeMUPc@bfoster>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZzOEzX0RddGeMUPc@bfoster>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On 11/12/24 9:39 AM, Brian Foster wrote:
-> On Tue, Nov 12, 2024 at 08:14:28AM -0700, Jens Axboe wrote:
->> On 11/11/24 10:13 PM, Christoph Hellwig wrote:
->>> On Mon, Nov 11, 2024 at 04:42:25PM -0700, Jens Axboe wrote:
->>>> Here's the slightly cleaned up version, this is the one I ran testing
->>>> with.
->>>
->>> Looks reasonable to me, but you probably get better reviews on the
->>> fstests lists.
->>
->> I'll send it out once this patchset is a bit closer to integration,
->> there's the usual chicken and egg situation with it. For now, it's quite
->> handy for my testing, found a few issues with this version. So thanks
->> for the suggestion, sure beats writing more of your own test cases :-)
->>
-> 
-> fsx support is probably a good idea as well. It's similar in idea to
-> fsstress, but bashes the same file with mixed operations and includes
-> data integrity validation checks as well. It's pretty useful for
-> uncovering subtle corner case issues or bad interactions..
+Hi,
 
-Indeed, I did that too. Re-running xfstests right now with that too.
+This is v4 on the series to support external snapshots on dwmac1000.
+
+The main change since v3 is the move of the fifo flush wait in the
+ptp_clock_info enable() function within the mutex that protects the ptp
+registers. Thanks Jakub and Paolo for spotting this.
+
+This series also aggregates Daniel's reviews, except for the patch 4
+which was modified since then.
+
+This series is another take on the previous work [1] done by
+Alexis Lothoré, that fixes the support for external snapshots
+timestamping in GMAC3-based devices.
+
+Details on why this is needed are mentionned on the cover [2] from V1.
+
+[1]: https://lore.kernel.org/netdev/20230616100409.164583-1-alexis.lothore@bootlin.com/
+[2]: https://lore.kernel.org/netdev/20241029115419.1160201-1-maxime.chevallier@bootlin.com/
+
+Thanks Alexis for laying the groundwork for this,
+
+Best regards,
+
+Maxime
+
+Link to V1: https://lore.kernel.org/netdev/20241029115419.1160201-1-maxime.chevallier@bootlin.com/
+Link to V2: https://lore.kernel.org/netdev/20241104170251.2202270-1-maxime.chevallier@bootlin.com/
+Link to V3: https://lore.kernel.org/netdev/20241106090331.56519-1-maxime.chevallier@bootlin.com/
+
+Maxime Chevallier (9):
+  net: stmmac: Don't modify the global ptp ops directly
+  net: stmmac: Use per-hw ptp clock ops
+  net: stmmac: Only update the auto-discovered PTP clock features
+  net: stmmac: Introduce dwmac1000 ptp_clock_info and operations
+  net: stmmac: Introduce dwmac1000 timestamping operations
+  net: stmmac: Enable timestamping interrupt on dwmac1000
+  net: stmmac: Don't include dwmac4 definitions in stmmac_ptp
+  net: stmmac: Configure only the relevant bits for timestamping setup
+  net: stmmac: dwmac_socfpga: This platform has GMAC
+
+ drivers/net/ethernet/stmicro/stmmac/common.h  |   4 +
+ .../ethernet/stmicro/stmmac/dwmac-socfpga.c   |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac1000.h   |  12 +++
+ .../ethernet/stmicro/stmmac/dwmac1000_core.c  | 101 ++++++++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    |  15 ++-
+ .../ethernet/stmicro/stmmac/stmmac_hwtstamp.c |  26 ++++-
+ .../net/ethernet/stmicro/stmmac/stmmac_ptp.c  |  38 +++++--
+ .../net/ethernet/stmicro/stmmac/stmmac_ptp.h  |  10 ++
+ 8 files changed, 196 insertions(+), 11 deletions(-)
 
 -- 
-Jens Axboe
+2.47.0
+
 
