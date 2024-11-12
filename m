@@ -1,93 +1,80 @@
-Return-Path: <linux-kernel+bounces-406268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA5E9C6092
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:40:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F909C60A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:45:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBCA9B67C16
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:06:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D3CEB36179
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE73206064;
-	Tue, 12 Nov 2024 16:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AC12123FE;
+	Tue, 12 Nov 2024 16:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pCfGX1eF"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DUJRdw6M"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14DE206944
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037E9206E61;
+	Tue, 12 Nov 2024 16:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731427283; cv=none; b=VwR244ribrVdusSmni2sGQFeW5x8KLGuxicfTeO0/zYsdNpMFH6EIQXLmzCs5q3MJ0hXVn9agO8fnyzCBTPQH8tih7r974XYqw9XVfqd3q/KEUT9CVI0rLyyQR+kb29cuHKJlT8RdfFAdsRzcP6Qs9vof584/p6tboENAuzPHp8=
+	t=1731427293; cv=none; b=DqKta/rPgfGQYlTHvVHNnELGp2IEHogQUZFuIly6MmQOboxjAhNdyD2EV5hFSazv1XSUBdGMC0KsfjfjaHmNW1tPSXqcGNJIsCQ4aZjjkZonCBPV6k2jkI2Z8PCaPKusavvWL6rxi3SIbnUUNcVZiKwZ/ZtxvI8x9aCEy/ruGq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731427283; c=relaxed/simple;
-	bh=X11z4nP5ntnwRF1ZolXpN7FUrcu0tKB9xT6gGdibvic=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Gd0NR2owaYfQOJaLcNTckH+cWtggwzkDHXqUnVnGWnS4U/0fMOg6mkYbtP4HJZReRWyr0A9tXrAZHJ01hSUleNV4f2xNVUizvJq+Qn2zVye9kIQQLkzJWZT134Qlqd+upu94cdxfn5EAKci3q5lurzTmsGYYxRklr+vXDTrZdZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pCfGX1eF; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53d8c08cfc4so3243822e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:01:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731427280; x=1732032080; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NGPOgTfEx0zJge0MarOgxWQ/d+55clu7muVrKzy61Ic=;
-        b=pCfGX1eFWD8Y995zSqxy9F/Hdu9tNUCDIt4ufs/icWCfyvkw3WjrVJhgmpRii70THx
-         NVfjkZrbcIYDxJmtBdAktXeMurxe0DOXHPXNQD9LiVqhXDa+j+AQKQb+tLj4ElgZsP4v
-         P2Zabv9DhDx/pXl072/JqGTOAFI7oq+K39U30+dV6BZ5CxnCjBrGR/17n/4nyA2C/kyS
-         yFkfDOMHjCBGM1+coNFWYMUbXMIqTMvz1Q9C/C/zeeWHZsRFIVxetkAe+Vt92GRJRKJU
-         mnx6sBM/KWb8jeqj6Kzt5eyKrlDFsHx6QqJtzUUcQr+YKEv5ycCZJuXdU7RRmeitzRhx
-         KFNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731427280; x=1732032080;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NGPOgTfEx0zJge0MarOgxWQ/d+55clu7muVrKzy61Ic=;
-        b=YdJgPku+tiA3iMIc2r+4DIqfoAKDeOJtubhjbBGN5Mwz1MxsW8Bxzq2hrgTuEFtfOb
-         E6JfBJropjmFyhKpCPkeu0xqHl3fLQ/Zfw8gcKTWYiFuUoC2tz02e8iDoMEdAXme88ls
-         KVK8yalZTqYvJRMlDRUYqLDxQDqpod2K66e0nC/zxgcuibYfQgmGgUAhaLjlFp8WTUNE
-         0bA9Y4SQ4c3aNkYM514fkbW3KtxPBD7I73CGJNJK8eithSQnaCNB1SGCXla0EvNdAYta
-         sMlIjYYYTMr01Yx1EGs5+yBZiTVlsbW+EtUHN5tCqEAwHu6cIVupIkemj+q57OkjeZJ+
-         zJbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVU/0XCXKx1Ako9PWO0fSn+rKTajVc6/fmLyzJFHTY6RE2XyTdjYCmqLDaXFvCrlYFVVGe9Kn/3999QCRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD7yr/INfsK0Nms2ctvuGqGmGt+hDncJqzpA+ihr4W6cGctd+F
-	PtS+2MCIvEcFEjdnOVReOJK8pwj8Ot67BrqBwvuADTlNVDWIRqSVzfzn3kWQvtI=
-X-Google-Smtp-Source: AGHT+IEdng9Cf3uldN4S+XjdS7jJypPc3Cm092Iw1cAx9FuZf73d96gc+rFbb9O++UlTz/UpP50Bzw==
-X-Received: by 2002:a05:6512:3a82:b0:539:918c:5124 with SMTP id 2adb3069b0e04-53d862e3283mr8220628e87.31.1731427278787;
-        Tue, 12 Nov 2024 08:01:18 -0800 (PST)
-Received: from pop-os.. ([145.224.90.214])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03bb760fsm6148172a12.47.2024.11.12.08.01.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 08:01:17 -0800 (PST)
-From: James Clark <james.clark@linaro.org>
-To: linux-perf-users@vger.kernel.org,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	tim.c.chen@linux.intel.com
-Cc: James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/5] perf stat: Also hide metric-units from JSON when event didn't run
-Date: Tue, 12 Nov 2024 16:00:42 +0000
-Message-Id: <20241112160048.951213-3-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241112160048.951213-1-james.clark@linaro.org>
-References: <20241112160048.951213-1-james.clark@linaro.org>
+	s=arc-20240116; t=1731427293; c=relaxed/simple;
+	bh=rE1n742XV6Hh13YXAK03XaqAi+NRIgacwErEEh/8Nto=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tgk4q+bPAJhgGQ8eGWIb+SgFnFiPRsgnOd9cYN6kS/xamsUZTWzXF0Li7ph7GNYCpuTZYQhkU32qKaM/kxxpnru4Ny0RBYHWc/nJTSFYXZ6qaluQl7V4+HED8AUZcVPi5Xmqrcpfs4kv0uoH0s38DG/RU1BXxO7EQ4i0He9Oy7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DUJRdw6M; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731427292; x=1762963292;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rE1n742XV6Hh13YXAK03XaqAi+NRIgacwErEEh/8Nto=;
+  b=DUJRdw6Mux3ocdraaH8w4dphmI5Kxh0+lvt9V1QT80U2KSRoA3US2JG9
+   xur+QDzg2Ux0eqTkQF0Nda9D8Vzs+eZ4xnzU4HYX7I1SoOTvvp6YegTyh
+   4f9hlrLCQ+SM7jt6Cax5xfY3FXer2LRVYRc+xll5gDXMobCjAH+FDqO+7
+   4V3xY3u3HBXxdUIt2w4q1navglVz7ZZLYTlc1cQn0cxV1BBoxVs1c+IrY
+   ICYrVQ8KaKNXr62hK7cqiHMVLbq5d9gNjxp34oqAEAtqrEWrxpJxveORn
+   BP5PONUCrFlRZkqoTINgFv0/B9m5Tm+2yOvfw6Fz98mwzPtAS5I6UTNLP
+   w==;
+X-CSE-ConnectionGUID: r00eIVo0RXWAump5SFMEpA==
+X-CSE-MsgGUID: ryj38hkrTmmaXlz06P6hWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41831474"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41831474"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 08:01:31 -0800
+X-CSE-ConnectionGUID: 7Orz8rzdQA+vB3J+K3Cg1A==
+X-CSE-MsgGUID: UQQKbw39RLis5EwXPvg7zw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="87489572"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 12 Nov 2024 08:01:28 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 440FA1BE; Tue, 12 Nov 2024 18:01:27 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Cc: Peter Chen <peter.chen@kernel.org>,
+	Pawel Laszczak <pawell@cadence.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v1 1/1] usb: cdns3: Synchronise PCI IDs via common data base
+Date: Tue, 12 Nov 2024 18:01:25 +0200
+Message-ID: <20241112160125.2340972-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,58 +83,164 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We decided to hide NULL metric-units rather than showing it as "(null)"
-when a dependent event for a metric doesn't exist. But on hybrid systems
-if the process doesn't hit a PMU you get an empty string metric unit
-instead. To make it consistent change all empty strings to NULL.
+There are a few places in the kernel where PCI IDs for different Cadence
+USB controllers are being used. Besides different naming, they duplicate
+each other. Make this all in order by providing common definitions via
+PCI IDs database and use in all users. While doing that, rename
+definitions as Roger suggested.
 
-Note that metric-threshold is already hidden in this case without this
-change.
-
-Where a process only runs on cpu_core and never hits cpu_atom:
-Before:
- $ perf stat -j -- true
- ...
- {"counter-value" : "<not counted>", "unit" : "", "event" : "cpu_atom/branch-misses/", "event-runtime" : 0, "pcnt-running" : 0.00, "metric-value" : "0.000000", "metric-unit" : ""}
- {"counter-value" : "6326.000000", "unit" : "", "event" : "cpu_core/branch-misses/", "event-runtime" : 293786, "pcnt-running" : 100.00, "metric-value" : "3.553394", "metric-unit" : "of all branches", "metric-threshold" : "good"}
- ...
-
-After:
- ...
- {"counter-value" : "<not counted>", "unit" : "", "event" : "cpu_atom/branch-misses/", "event-runtime" : 0, "pcnt-running" : 0.00}
- {"counter-value" : "5778.000000", "unit" : "", "event" : "cpu_core/branch-misses/", "event-runtime" : 282240, "pcnt-running" : 100.00, "metric-value" : "3.226797", "metric-unit" : "of all branches", "metric-threshold" : "good"}
- ...
-
-Reviewed-by: Ian Rogers <irogers@google.com>
-Signed-off-by: James Clark <james.clark@linaro.org>
+Suggested-by: Roger Quadros <rogerq@kernel.org>
+Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- tools/perf/util/stat-display.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/usb/cdns3/cdns3-pci-wrap.c       |  4 +---
+ drivers/usb/cdns3/cdnsp-pci.c            | 26 +++++++++---------------
+ drivers/usb/gadget/udc/cdns2/cdns2-pci.c |  3 +--
+ drivers/usb/host/xhci-pci.c              |  5 ++---
+ include/linux/pci_ids.h                  |  4 ++++
+ 5 files changed, 18 insertions(+), 24 deletions(-)
 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index a5d72f4a515c..0e16eecfbad8 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -854,7 +854,8 @@ static void printout(struct perf_stat_config *config, struct outstate *os,
+diff --git a/drivers/usb/cdns3/cdns3-pci-wrap.c b/drivers/usb/cdns3/cdns3-pci-wrap.c
+index 591d149de8f3..3b3b3dc75f35 100644
+--- a/drivers/usb/cdns3/cdns3-pci-wrap.c
++++ b/drivers/usb/cdns3/cdns3-pci-wrap.c
+@@ -37,8 +37,6 @@ struct cdns3_wrap {
+ #define PCI_DRIVER_NAME		"cdns3-pci-usbss"
+ #define PLAT_DRIVER_NAME	"cdns-usb3"
  
- 	if (run == 0 || ena == 0 || counter->counts->scaled == -1) {
- 		if (config->metric_only) {
--			pm(config, os, METRIC_THRESHOLD_UNKNOWN, "", "", 0);
-+			pm(config, os, METRIC_THRESHOLD_UNKNOWN, /*format=*/NULL,
-+			   /*unit=*/NULL, /*val=*/0);
- 			return;
- 		}
+-#define PCI_DEVICE_ID_CDNS_USB3	0x0100
+-
+ static struct pci_dev *cdns3_get_second_fun(struct pci_dev *pdev)
+ {
+ 	struct pci_dev *func;
+@@ -189,7 +187,7 @@ static void cdns3_pci_remove(struct pci_dev *pdev)
+ }
  
-@@ -909,7 +910,7 @@ static void printout(struct perf_stat_config *config, struct outstate *os,
- 			perf_stat__print_shadow_stats(config, counter, uval, aggr_idx,
- 						      &out, &config->metric_events);
- 	} else {
--		pm(config, os, METRIC_THRESHOLD_UNKNOWN, /*format=*/NULL, /*unit=*/"", /*val=*/0);
-+		pm(config, os, METRIC_THRESHOLD_UNKNOWN, /*format=*/NULL, /*unit=*/NULL, /*val=*/0);
+ static const struct pci_device_id cdns3_pci_ids[] = {
+-	{ PCI_VDEVICE(CDNS, PCI_DEVICE_ID_CDNS_USB3) },
++	{ PCI_VDEVICE(CDNS, PCI_DEVICE_ID_CDNS_USBSS) },
+ 	{ 0, }
+ };
+ 
+diff --git a/drivers/usb/cdns3/cdnsp-pci.c b/drivers/usb/cdns3/cdnsp-pci.c
+index 2d05368a6745..a51144504ff3 100644
+--- a/drivers/usb/cdns3/cdnsp-pci.c
++++ b/drivers/usb/cdns3/cdnsp-pci.c
+@@ -28,12 +28,6 @@
+ #define PCI_DRIVER_NAME		"cdns-pci-usbssp"
+ #define PLAT_DRIVER_NAME	"cdns-usbssp"
+ 
+-#define PCI_DEVICE_ID_CDNS_USB3		0x0100
+-#define PCI_DEVICE_ID_CDNS_UDC		0x0200
+-
+-#define PCI_CLASS_SERIAL_USB_CDNS_USB3	(PCI_CLASS_SERIAL_USB << 8 | 0x80)
+-#define PCI_CLASS_SERIAL_USB_CDNS_UDC	PCI_CLASS_SERIAL_USB_DEVICE
+-
+ static struct pci_dev *cdnsp_get_second_fun(struct pci_dev *pdev)
+ {
+ 	/*
+@@ -41,10 +35,10 @@ static struct pci_dev *cdnsp_get_second_fun(struct pci_dev *pdev)
+ 	 * Platform has two function. The fist keeps resources for
+ 	 * Host/Device while the secon keeps resources for DRD/OTG.
+ 	 */
+-	if (pdev->device == PCI_DEVICE_ID_CDNS_UDC)
+-		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_USB3, NULL);
+-	if (pdev->device == PCI_DEVICE_ID_CDNS_USB3)
+-		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_UDC, NULL);
++	if (pdev->device == PCI_DEVICE_ID_CDNS_USBSSP)
++		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_USBSS, NULL);
++	if (pdev->device == PCI_DEVICE_ID_CDNS_USBSS)
++		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_USBSSP, NULL);
+ 
+ 	return NULL;
+ }
+@@ -221,12 +215,12 @@ static const struct dev_pm_ops cdnsp_pci_pm_ops = {
+ };
+ 
+ static const struct pci_device_id cdnsp_pci_ids[] = {
+-	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_UDC),
+-	  .class = PCI_CLASS_SERIAL_USB_CDNS_UDC },
+-	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_UDC),
+-	  .class = PCI_CLASS_SERIAL_USB_CDNS_USB3 },
+-	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB3),
+-	  .class = PCI_CLASS_SERIAL_USB_CDNS_USB3 },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSSP),
++	  .class = PCI_CLASS_SERIAL_USB_DEVICE },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSSP),
++	  .class = PCI_CLASS_SERIAL_USB_CDNS },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSS),
++	  .class = PCI_CLASS_SERIAL_USB_CDNS },
+ 	{ 0, }
+ };
+ 
+diff --git a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
+index b1a8f772467c..e589593b4cbf 100644
+--- a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
++++ b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
+@@ -15,7 +15,6 @@
+ #include "cdns2-gadget.h"
+ 
+ #define PCI_DRIVER_NAME		"cdns-pci-usbhs"
+-#define PCI_DEVICE_ID_CDNS_USB2	0x0120
+ #define PCI_BAR_DEV		0
+ #define PCI_DEV_FN_DEVICE	0
+ 
+@@ -113,7 +112,7 @@ static const struct dev_pm_ops cdns2_pci_pm_ops = {
+ };
+ 
+ static const struct pci_device_id cdns2_pci_ids[] = {
+-	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB2),
++	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB),
+ 	  .class = PCI_CLASS_SERIAL_USB_DEVICE },
+ 	{ 0, }
+ };
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index 47c4f70793e4..b21474e81482 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -82,8 +82,6 @@
+ #define PCI_DEVICE_ID_ASMEDIA_3042_XHCI			0x3042
+ #define PCI_DEVICE_ID_ASMEDIA_3242_XHCI			0x3242
+ 
+-#define PCI_DEVICE_ID_CDNS_SSP				0x0200
+-
+ static const char hcd_name[] = "xhci_hcd";
+ 
+ static struct hc_driver __read_mostly xhci_pci_hc_driver;
+@@ -475,8 +473,9 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 		if (pdev->device == 0x9203)
+ 			xhci->quirks |= XHCI_ZHAOXIN_TRB_FETCH;
  	}
++
+ 	if (pdev->vendor == PCI_VENDOR_ID_CDNS &&
+-	    pdev->device == PCI_DEVICE_ID_CDNS_SSP)
++	    pdev->device == PCI_DEVICE_ID_CDNS_USBSSP)
+ 		xhci->quirks |= XHCI_CDNS_SCTX_QUIRK;
  
- 	if (!config->metric_only) {
+ 	/* xHC spec requires PCI devices to support D3hot and D3cold */
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index e4bddb927795..d2402bf4aea2 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -121,6 +121,7 @@
+ #define PCI_CLASS_SERIAL_USB_OHCI	0x0c0310
+ #define PCI_CLASS_SERIAL_USB_EHCI	0x0c0320
+ #define PCI_CLASS_SERIAL_USB_XHCI	0x0c0330
++#define PCI_CLASS_SERIAL_USB_CDNS	0x0c0380
+ #define PCI_CLASS_SERIAL_USB_DEVICE	0x0c03fe
+ #define PCI_CLASS_SERIAL_FIBER		0x0c04
+ #define PCI_CLASS_SERIAL_SMBUS		0x0c05
+@@ -2421,6 +2422,9 @@
+ #define PCI_VENDOR_ID_QCOM		0x17cb
+ 
+ #define PCI_VENDOR_ID_CDNS		0x17cd
++#define PCI_DEVICE_ID_CDNS_USBSS	0x0100
++#define PCI_DEVICE_ID_CDNS_USB		0x0120
++#define PCI_DEVICE_ID_CDNS_USBSSP	0x0200
+ 
+ #define PCI_VENDOR_ID_ARECA		0x17d3
+ #define PCI_DEVICE_ID_ARECA_1110	0x1110
 -- 
-2.34.1
+2.43.0.rc1.1336.g36b5255a03ac
 
 
