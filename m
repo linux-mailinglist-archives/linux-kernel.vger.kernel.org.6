@@ -1,148 +1,253 @@
-Return-Path: <linux-kernel+bounces-405284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F8A9C4F83
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:36:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A419C4FA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:40:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EFE1B253EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:36:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59216B26A48
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D053420ADDD;
-	Tue, 12 Nov 2024 07:36:01 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8061620C006;
+	Tue, 12 Nov 2024 07:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DabZaDXy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0801A727D
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C7F20A5FE;
+	Tue, 12 Nov 2024 07:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731396961; cv=none; b=Es/uUIcjquyE1SAAIlPZgssf8G48yUeBx9MzdTK/2QtG5UW5qyomIRp0ICGQGlxwi5JE+2t8SnB2iImySfTHpVIRSDepL9GCzTC/bifo9K+t0ZbQbWk4RKafUmA8VjALtJosmtIVtPctbApsrrPBSZOurYR2zZATePauvtFR+hc=
+	t=1731397103; cv=none; b=Z3+UinAD5oq0Jqu/P01Spk/VVjf46GMkpilkArpA26VAIq8T4mTCMdjq8mJ3H4UE9vyC9oRlYHid8N37jC8l9bBI7Vd9GJH8XfUsxWPr6oXb3yPANybVp++u+lT1JjSZ6r/iUheTlBX8yNh7S4KfcN7yKvaxKcMoKPHsNIriOfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731396961; c=relaxed/simple;
-	bh=MTusJ+VIblS7XuG1K9vvab4HGqAvOzQdo69w87y3F6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dz6ZvlOYoMQ+fEbdQdC0ayQcpfgxaue7SqxN20wkikh7iZN0TXKIbww6GA++0CIBUWxVzwM/oucQcQB8YjGk6cNOjTN/ioPbsaFso5UPF6g5VPbW/MqmBwf83jSO0xh7G9jhCZg9mnElUSItgmu+vyo+l5s8rKWAMiWMdo7DrN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tAlRA-0004gT-SY; Tue, 12 Nov 2024 08:35:44 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tAlRA-000NDS-0N;
-	Tue, 12 Nov 2024 08:35:44 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id BF6B4371246;
-	Tue, 12 Nov 2024 07:35:43 +0000 (UTC)
-Date: Tue, 12 Nov 2024 08:35:43 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: can: tcan4x5x: Document the
- ti,nwkrq-voltage-sel option
-Message-ID: <20241112-sincere-warm-quetzal-e854ac-mkl@pengutronix.de>
-References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
- <20241111-tcan-wkrqv-v2-2-9763519b5252@geanix.com>
+	s=arc-20240116; t=1731397103; c=relaxed/simple;
+	bh=LJP5i6H0vrVARHyHyA5b39kA++Huw/2CwDa6XjsgVdQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uzVAx/7H5YO1iiOTJ+u40DRZp2Q6m/CawUH1Z5MZS/J+/XUGkgxAdYIgoX8OyF86xzl4IUAzL++OkcJXZ217lJ9bTYfgTGPYO/sx2+cjc+Z3Fc4yFIOpZl79r/f9/aruomFS2s+CovlcdKIkr2QkVCBytAfTh0tARqfzSb8PoDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DabZaDXy; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731397102; x=1762933102;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=LJP5i6H0vrVARHyHyA5b39kA++Huw/2CwDa6XjsgVdQ=;
+  b=DabZaDXyFkV7CC1mvIWhfdDo/zVh2wBkDctNcZVww8SUzlRVFNZe8WsF
+   UYoPtOQJibX+J+9iSXDqNHRFQh+d7AUZ7wbXgUmo1N7YkWZLa7gJUO0Ew
+   pSJqP97ci/jhnvsDeihgx3m3EIy/8RLQRM/6ElpYB1UaNkDLQCMZRWnTx
+   Dg0HvCbri63XOypgTtTwAd1nY8+zuV+dEj5SNiZm7+NvvcGZFskQ5V2xS
+   3LmRt7f032E4q6GCXZjlep619GorypKO4x+9S9PEWPrInD131r13z3Qqh
+   tkrz5Yf0zlpwFUJQNcXSyZ2dRTZNhjumyBIu+3fiOsy72GPV1je4FyVDG
+   Q==;
+X-CSE-ConnectionGUID: jF4UArfmS7S1geYmbjew1Q==
+X-CSE-MsgGUID: dc/yFJ8rR5e2y/8owxcfKw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="42598658"
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="42598658"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:38:22 -0800
+X-CSE-ConnectionGUID: B4UqiyKrQc65YKcJV4DvLA==
+X-CSE-MsgGUID: DZR3eZcrQ8Ofxujm9Aj9TQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="110595087"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:38:17 -0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org,
+	dave.hansen@linux.intel.com
+Cc: rick.p.edgecombe@intel.com,
+	kai.huang@intel.com,
+	adrian.hunter@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@intel.com,
+	binbin.wu@linux.intel.com,
+	dmatlack@google.com,
+	isaku.yamahata@intel.com,
+	isaku.yamahata@gmail.com,
+	nik.borisov@suse.com,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH v2 06/24] KVM: TDX: Add accessors VMX VMCS helpers
+Date: Tue, 12 Nov 2024 15:35:50 +0800
+Message-ID: <20241112073551.22070-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20241112073327.21979-1-yan.y.zhao@intel.com>
+References: <20241112073327.21979-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kgu6nm6qbttpidbk"
-Content-Disposition: inline
-In-Reply-To: <20241111-tcan-wkrqv-v2-2-9763519b5252@geanix.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+From: Isaku Yamahata <isaku.yamahata@intel.com>
 
---kgu6nm6qbttpidbk
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/2] dt-bindings: can: tcan4x5x: Document the
- ti,nwkrq-voltage-sel option
-MIME-Version: 1.0
+TDX defines SEAMCALL APIs to access TDX control structures corresponding to
+the VMX VMCS.  Introduce helper accessors to hide its SEAMCALL ABI details.
 
-On 11.11.2024 09:54:50, Sean Nyekjaer wrote:
-> nWKRQ supports an output voltage of either the internal reference voltage
-> (3.6V) or the reference voltage of the digital interface 0 - 6V.
-> Add the devicetree option ti,nwkrq-voltage-sel to be able to select
-> between them.
->=20
-> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-> ---
->  Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml | 13 ++++++++=
-+++++
->  1 file changed, 13 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml b=
-/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-> index f1d18a5461e05296998ae9bf09bdfa1226580131..a77c560868d689e92ded08b9d=
-eb43e5a2b89bf2b 100644
-> --- a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-> +++ b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-> @@ -106,6 +106,18 @@ properties:
->        Must be half or less of "clocks" frequency.
->      maximum: 18000000
-> =20
-> +  ti,nwkrq-voltage-sel:
-> +    $ref: /schemas/types.yaml#/definitions/uint8
-> +    description:
-> +      nWKRQ Pin GPO buffer voltage rail configuration.
-> +      The option of this properties will tell which
-> +      voltage rail is used for the nWKRQ Pin.
-> +    oneOf:
-> +      - description: Internal voltage rail
-> +        const: 0
-> +      - description: VIO voltage rail
-> +        const: 1
+Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+Co-developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+---
+TDX MMU part 2 v2:
+-Move inline warning msgs to tdh_vp_rd/wr_failed() (Paolo)
 
-We usually don't want to put register values into the DT. Is 0, i.e. the
-internal voltage rail the default? Is using a boolean better here?
+TDX MMU part 2 v1:
+ - Update for the wrapper functions for SEAMCALLs. (Sean)
+ - Eliminate kvm_mmu_free_private_spt() and open code it.
+ - Fix bisectability issues in headers (Kai)
+ - Updates from seamcall overhaul (Kai)
 
-regards,
-Marc
+v19:
+ - deleted unnecessary stub functions,
+   tdvps_state_non_arch_check() and tdvps_management_check().
+---
+ arch/x86/kvm/vmx/tdx.c | 13 +++++++
+ arch/x86/kvm/vmx/tdx.h | 88 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 101 insertions(+)
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 7fb32d3b1aae..ed4473d0c2cd 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -32,6 +32,19 @@ static enum cpuhp_state tdx_cpuhp_state;
+ 
+ static const struct tdx_sys_info *tdx_sysinfo;
+ 
++void tdh_vp_rd_failed(struct vcpu_tdx *tdx, char *uclass, u32 field, u64 err)
++{
++	KVM_BUG_ON(1, tdx->vcpu.kvm);
++	pr_err("TDH_VP_RD[%s.0x%x] failed 0x%llx\n", uclass, field, err);
++}
++
++void tdh_vp_wr_failed(struct vcpu_tdx *tdx, char *uclass, char *op, u32 field,
++		      u64 val, u64 err)
++{
++	KVM_BUG_ON(1, tdx->vcpu.kvm);
++	pr_err("TDH_VP_WR[%s.0x%x]%s0x%llx failed: 0x%llx\n", uclass, field, op, val, err);
++}
++
+ #define KVM_SUPPORTED_TD_ATTRS (TDX_TD_ATTR_SEPT_VE_DISABLE)
+ 
+ static u64 tdx_get_supported_attrs(const struct tdx_sys_info_td_conf *td_conf)
+diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+index 1b78a7ea988e..727bcf25d731 100644
+--- a/arch/x86/kvm/vmx/tdx.h
++++ b/arch/x86/kvm/vmx/tdx.h
+@@ -49,6 +49,10 @@ struct vcpu_tdx {
+ 	enum vcpu_tdx_state state;
+ };
+ 
++void tdh_vp_rd_failed(struct vcpu_tdx *tdx, char *uclass, u32 field, u64 err);
++void tdh_vp_wr_failed(struct vcpu_tdx *tdx, char *uclass, char *op, u32 field,
++		      u64 val, u64 err);
++
+ static inline bool is_td(struct kvm *kvm)
+ {
+ 	return kvm->arch.vm_type == KVM_X86_TDX_VM;
+@@ -80,6 +84,90 @@ static __always_inline u64 td_tdcs_exec_read64(struct kvm_tdx *kvm_tdx, u32 fiel
+ 	}
+ 	return data;
+ }
++
++static __always_inline void tdvps_vmcs_check(u32 field, u8 bits)
++{
++#define VMCS_ENC_ACCESS_TYPE_MASK	0x1UL
++#define VMCS_ENC_ACCESS_TYPE_FULL	0x0UL
++#define VMCS_ENC_ACCESS_TYPE_HIGH	0x1UL
++#define VMCS_ENC_ACCESS_TYPE(field)	((field) & VMCS_ENC_ACCESS_TYPE_MASK)
++
++	/* TDX is 64bit only.  HIGH field isn't supported. */
++	BUILD_BUG_ON_MSG(__builtin_constant_p(field) &&
++			 VMCS_ENC_ACCESS_TYPE(field) == VMCS_ENC_ACCESS_TYPE_HIGH,
++			 "Read/Write to TD VMCS *_HIGH fields not supported");
++
++	BUILD_BUG_ON(bits != 16 && bits != 32 && bits != 64);
++
++#define VMCS_ENC_WIDTH_MASK	GENMASK(14, 13)
++#define VMCS_ENC_WIDTH_16BIT	(0UL << 13)
++#define VMCS_ENC_WIDTH_64BIT	(1UL << 13)
++#define VMCS_ENC_WIDTH_32BIT	(2UL << 13)
++#define VMCS_ENC_WIDTH_NATURAL	(3UL << 13)
++#define VMCS_ENC_WIDTH(field)	((field) & VMCS_ENC_WIDTH_MASK)
++
++	/* TDX is 64bit only.  i.e. natural width = 64bit. */
++	BUILD_BUG_ON_MSG(bits != 64 && __builtin_constant_p(field) &&
++			 (VMCS_ENC_WIDTH(field) == VMCS_ENC_WIDTH_64BIT ||
++			  VMCS_ENC_WIDTH(field) == VMCS_ENC_WIDTH_NATURAL),
++			 "Invalid TD VMCS access for 64-bit field");
++	BUILD_BUG_ON_MSG(bits != 32 && __builtin_constant_p(field) &&
++			 VMCS_ENC_WIDTH(field) == VMCS_ENC_WIDTH_32BIT,
++			 "Invalid TD VMCS access for 32-bit field");
++	BUILD_BUG_ON_MSG(bits != 16 && __builtin_constant_p(field) &&
++			 VMCS_ENC_WIDTH(field) == VMCS_ENC_WIDTH_16BIT,
++			 "Invalid TD VMCS access for 16-bit field");
++}
++
++#define TDX_BUILD_TDVPS_ACCESSORS(bits, uclass, lclass)				\
++static __always_inline u##bits td_##lclass##_read##bits(struct vcpu_tdx *tdx,	\
++							u32 field)		\
++{										\
++	u64 err, data;								\
++										\
++	tdvps_##lclass##_check(field, bits);					\
++	err = tdh_vp_rd(tdx->tdvpr_pa, TDVPS_##uclass(field), &data);		\
++	if (unlikely(err)) {							\
++		tdh_vp_rd_failed(tdx, #uclass, field, err);			\
++		return 0;							\
++	}									\
++	return (u##bits)data;							\
++}										\
++static __always_inline void td_##lclass##_write##bits(struct vcpu_tdx *tdx,	\
++						      u32 field, u##bits val)	\
++{										\
++	u64 err;								\
++										\
++	tdvps_##lclass##_check(field, bits);					\
++	err = tdh_vp_wr(tdx->tdvpr_pa, TDVPS_##uclass(field), val,		\
++		      GENMASK_ULL(bits - 1, 0));				\
++	if (unlikely(err))							\
++		tdh_vp_wr_failed(tdx, #uclass, " = ", field, (u64)val, err);	\
++}										\
++static __always_inline void td_##lclass##_setbit##bits(struct vcpu_tdx *tdx,	\
++						       u32 field, u64 bit)	\
++{										\
++	u64 err;								\
++										\
++	tdvps_##lclass##_check(field, bits);					\
++	err = tdh_vp_wr(tdx->tdvpr_pa, TDVPS_##uclass(field), bit, bit);	\
++	if (unlikely(err))							\
++		tdh_vp_wr_failed(tdx, #uclass, " |= ", field, bit, err);	\
++}										\
++static __always_inline void td_##lclass##_clearbit##bits(struct vcpu_tdx *tdx,	\
++							 u32 field, u64 bit)	\
++{										\
++	u64 err;								\
++										\
++	tdvps_##lclass##_check(field, bits);					\
++	err = tdh_vp_wr(tdx->tdvpr_pa, TDVPS_##uclass(field), 0, bit);		\
++	if (unlikely(err))							\
++		tdh_vp_wr_failed(tdx, #uclass, " &= ~", field, bit, err);\
++}
++
++TDX_BUILD_TDVPS_ACCESSORS(16, VMCS, vmcs);
++TDX_BUILD_TDVPS_ACCESSORS(32, VMCS, vmcs);
++TDX_BUILD_TDVPS_ACCESSORS(64, VMCS, vmcs);
+ #else
+ static inline void tdx_bringup(void) {}
+ static inline void tdx_cleanup(void) {}
+-- 
+2.43.2
 
---kgu6nm6qbttpidbk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmczBUwACgkQKDiiPnot
-vG/mHwf/V/AdTguFVuFRCKsEV/Otsvn2jZqArMnu6ejpMEmdSJ0obfxwglmq8l68
-dfHjq+Or5XCgR6NxLoSWeG6cKFgTatO+YToo7T2heLFncFbHYH8rgzOdI7dwitLy
-Tb9GJEQD+/O7pPhQCi3r1iMfjjGIfwfoHPTD0xB+qxkqJERv+LP0w/0g5aVM5BmI
-pnTOUtZ64jRBkpFTCXoeS3XwT/ve1JUy/+ShV1TNhub0CKVx7ds/ZHxxsHb5YKc0
-kp/QqTkDUpb4qADVwyUVhtDZSMqN7MNWvCSJ5hj529hajySeCXF2zpvQdPDPJpam
-9Ywrs6wqj/j75pejy4WqDQwQLUU6Zg==
-=h1Jh
------END PGP SIGNATURE-----
-
---kgu6nm6qbttpidbk--
 
