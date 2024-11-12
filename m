@@ -1,142 +1,233 @@
-Return-Path: <linux-kernel+bounces-406587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 383239C610C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:09:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB659C6107
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:08:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E34BB1F22204
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:09:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1B02853A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC8C2194A1;
-	Tue, 12 Nov 2024 19:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50E32185A0;
+	Tue, 12 Nov 2024 19:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="TinuTRjl"
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LwTiiZkt"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2F0218947
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23800217659
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731438552; cv=none; b=ite2w9OZdnnJAtsmkShmpw6e2c5IueRmGGWlnQXKPbFKf4woSvpc9S/pbNFhxAKbX0MlKVOliN//+g2DgpAntnLJXA0X/zywiOoZ4glJqLK5jV1mXa/JVc7zQxth1l9dutm/oA/D87c/+pyti9y68pzAs1jUyA9Trkj5Xn4xwJM=
+	t=1731438531; cv=none; b=Z7dLCHjsHv0Zrr3cjo8UUUlEwA/mURka/KFbWaYdaifYO6TCuR/B09cV3j5yJvwAKAh1RBd9gMqgcmgJhk9gZoG5V372HoFsZRmKtFw4MWqzO5fZfW8v66MDpVvWf8ontYi5y8sV5bDg9goFzsuAEDJr5BWm0yMHVtNg2UFULX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731438552; c=relaxed/simple;
-	bh=1ytyDmqmYGEfJHwfaXioLVwFYj+zkAhZNDBlxyKs8Dw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RppY/AVfRcC95wSFQtH7OIAy6cve8dyE6dmJ6KpbR4YQQUdoMu84kAMIvvCQ4btLD4tAagdj3+LVCI7k4e602Qzk4iWNFOQRCdsEjEVZuKh5V2sOid36UE6b3BSgkEOT3m+HCLE3jkv8/Icbbr1aqMz0swTQAbMiyAWIPcQXzmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=TinuTRjl; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([106.146.16.70])
-	by smtp.orange.fr with ESMTPA
-	id AwFntjwiq18HRAwG9t29qp; Tue, 12 Nov 2024 20:09:10 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731438550;
-	bh=0NHpSD6qsurxbYxMcXGV0ZZS/bVySspTWKfjYRHZuDY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=TinuTRjlMaUiCOOU+hZbqTOjC9r46Zs0iNGlHeQ0iPhUMzkaFmzJECSReUcoWBQ7D
-	 rN7WKUqk9KTJJqysH5xzLVW6Gdv2LTnvUmX2fIyLdMb0kTcwYGUAbVz3bSex7WD1gY
-	 +Faf8J7j74+2J/sTMRcB/PGML2dNuziF/UhVNWrA2LvKMjgTRAqZskRNuDu0/HOOon
-	 0zfewxJhvvZZuch9zCk9y1ddSGohbAtkrr8Sm/UN7487fqE80v+kz/x9EStv9SGnjj
-	 kJeeCeDMK0utEKEzRJaqi7maWuZY3FJKAfBg1XJtBDtURACOrbiwXEmX0ari39WyDZ
-	 W62l8GarnqDoQ==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 12 Nov 2024 20:09:10 +0100
-X-ME-IP: 106.146.16.70
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-sparse@vger.kernel.org,
-	Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Subject: [RESEND PATCH v3 2/2] linux/bits.h: simplify GENMASK_INPUT_CHECK()
-Date: Wed, 13 Nov 2024 04:08:40 +0900
-Message-ID: <20241112190840.601378-6-mailhol.vincent@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241112190840.601378-4-mailhol.vincent@wanadoo.fr>
-References: <20241112190840.601378-4-mailhol.vincent@wanadoo.fr>
+	s=arc-20240116; t=1731438531; c=relaxed/simple;
+	bh=eBTaB4haV1+fSAnpXlnmJPonxx05FWC9EMFbUs9j2+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=spqV9BMFE1q6DTeLwyHGODvrW6MQnVTrYq6xq+ZRlATxQS0gK95TQziK8KSjsEOnBlVv9o7yMHquRVQM+WRA7yfyDYiCcfzBV54/vkNd7u4sz/1XGe5UBtpupEZt7VAUlm1JH0I9wTSfY6gMtbHTdYbueWiPIAlc1aHEhr8unjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LwTiiZkt; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e5f533e1c2so3786916b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:08:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731438527; x=1732043327; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D2L7Qc7cWvztIAJNQU15qiNixT/BI8zR+cXMMeIYHYo=;
+        b=LwTiiZkt+VCGzeCcLOD2cfdUkTUxBSeBTSiufKCHowuLFSXh0U7dkvYiaRls+OVChd
+         /IndjGkRrtXwmv+QH0neUcKKBzBKi6qCOKjhmBN7RViQqV0L2XylxL5NnaNfZCDd1QqY
+         lH146t9Ol5f89rLAvrZuxljQdXuAJ4VX45UtJzRTXomKQednR430nM64t/ELvandZU8n
+         24DRgbMjG/YLWid+jNkrLBVjagyFMqunye10eT+HKasiVHx7tq+F4X/bOXlpaeYsdAtC
+         XjVnTunVtbeFwV/uKJ++w8vT432YcwbbkIoMZx5Fuen8Sj04WIWfcooJM7I3P+6fBU3k
+         BDvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731438527; x=1732043327;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D2L7Qc7cWvztIAJNQU15qiNixT/BI8zR+cXMMeIYHYo=;
+        b=d+O5t/jwhQzYGcSic1XrQtwz8v3RNKGg3AAPopXvi7Ut4wkjnRaBQWHTsQTOhQjVh3
+         B5Ln5xkbKZjh9kiSpeiFXytXPztoGwp1cxX72/ZloD8h1JRsrvjYtgUlqXM4ezGWo2Jb
+         WFe4pJbvAdIeVfGwt3aDFazTql9rh6Ggld04ojy70WrNIgVUeSoZOJwLexLNk7lYbt1B
+         oK+yyh5marHoS557//voZ0hABhVBQAWlGscYW51G6yOMS14zXRuoWKYOIxG4PbZIHbvE
+         RIEwl5PelyEdVwlZHWQpp+MZxbphgzqWzyyOk8ciL9bwCYHLNELn63eAsg7DVkPFGsU9
+         QbSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWuc9b+ls1KVd24rgPUb9G6627i7W3UeANorB66Ojj7D9SERjbunjFROzMhLD45+zc2azPDf796CwSD914=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxyDOnPM/eAqmb7Ngkwbet7Ffg22nhwVVpgZsrQif3iV/ZqVF1
+	gMdE74CBa/MATZllMz/XRGK0pdCqrCqCNa1L3Mg6ewbVO2F9jjDaRF6Y1hYzohU=
+X-Google-Smtp-Source: AGHT+IHoD/uu9DK4NnbrmBtV1ufstZJ55RPP5+LQ3aAZ0f5dnSCso4iUv4jnAvRgbKIUMZBidnJMoA==
+X-Received: by 2002:a05:6808:1790:b0:3e6:263b:9108 with SMTP id 5614622812f47-3e7946adb92mr15187907b6e.22.1731438527201;
+        Tue, 12 Nov 2024 11:08:47 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e7b0955af5sm22182b6e.4.2024.11.12.11.08.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 11:08:46 -0800 (PST)
+Message-ID: <b1dcd133-471f-40da-ab75-d78ea9a8fa4c@kernel.dk>
+Date: Tue, 12 Nov 2024 12:08:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2142; i=mailhol.vincent@wanadoo.fr; h=from:subject; bh=1ytyDmqmYGEfJHwfaXioLVwFYj+zkAhZNDBlxyKs8Dw=; b=owGbwMvMwCV2McXO4Xp97WbG02pJDOnGy3cca1jFf27D1c3L7ldtbf9yo3qefAXz1RWHUmL/l 975mjTVqqOUhUGMi0FWTJFlWTknt0JHoXfYob+WMHNYmUCGMHBxCsBElP4z/DO62VISH1IZ9dnq +a0kxlkX3JZ+dlvieEyuJ5+J7ZBO9X6G/2V561Q/vVj16sYC1Tyxig7pwBTLll26euuXRRW+VNr 5gwkA
-X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp; fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+To: Brian Foster <bfoster@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+ linux-kernel@vger.kernel.org, willy@infradead.org
+References: <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
+ <ZzIfwmGkbHwaSMIn@infradead.org>
+ <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
+ <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
+ <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
+ <ZzLkF-oW2epzSEbP@infradead.org>
+ <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk> <ZzOEzX0RddGeMUPc@bfoster>
+ <7a4ef71f-905e-4f2a-b3d2-8fd939c5a865@kernel.dk>
+ <3f378e51-87e7-499e-a9fb-4810ca760d2b@kernel.dk> <ZzOiC5-tCNiJylSx@bfoster>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZzOiC5-tCNiJylSx@bfoster>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In GENMASK_INPUT_CHECK(),
+On 11/12/24 11:44 AM, Brian Foster wrote:
+> On Tue, Nov 12, 2024 at 10:19:02AM -0700, Jens Axboe wrote:
+>> On 11/12/24 10:06 AM, Jens Axboe wrote:
+>>> On 11/12/24 9:39 AM, Brian Foster wrote:
+>>>> On Tue, Nov 12, 2024 at 08:14:28AM -0700, Jens Axboe wrote:
+>>>>> On 11/11/24 10:13 PM, Christoph Hellwig wrote:
+>>>>>> On Mon, Nov 11, 2024 at 04:42:25PM -0700, Jens Axboe wrote:
+>>>>>>> Here's the slightly cleaned up version, this is the one I ran testing
+>>>>>>> with.
+>>>>>>
+>>>>>> Looks reasonable to me, but you probably get better reviews on the
+>>>>>> fstests lists.
+>>>>>
+>>>>> I'll send it out once this patchset is a bit closer to integration,
+>>>>> there's the usual chicken and egg situation with it. For now, it's quite
+>>>>> handy for my testing, found a few issues with this version. So thanks
+>>>>> for the suggestion, sure beats writing more of your own test cases :-)
+>>>>>
+>>>>
+>>>> fsx support is probably a good idea as well. It's similar in idea to
+>>>> fsstress, but bashes the same file with mixed operations and includes
+>>>> data integrity validation checks as well. It's pretty useful for
+>>>> uncovering subtle corner case issues or bad interactions..
+>>>
+>>> Indeed, I did that too. Re-running xfstests right now with that too.
+>>
+>> Here's what I'm running right now, fwiw. It adds RWF_UNCACHED support
+>> for both the sync read/write and io_uring paths.
+>>
+> 
+> Nice, thanks. Looks reasonable to me at first glance. A few randomish
+> comments inlined below.
+> 
+> BTW, I should have also mentioned that fsx is also useful for longer
+> soak testing. I.e., fstests will provide a decent amount of coverage as
+> is via the various preexisting tests, but I'll occasionally run fsx
+> directly and let it run overnight or something to get the op count at
+> least up in the 100 millions or so to have a little more confidence
+> there isn't some rare/subtle bug lurking. That might be helpful with
+> something like this. JFYI.
 
-  __builtin_choose_expr(__is_constexpr((l) > (h)), (l) > (h), 0)
+Good suggestion, I can leave it running overnight here as well. Since
+I'm not super familiar with it, what would be a good set of parameters
+to run it with?
 
-is the exact expansion of:
+>>  #define READ 0
+>>  #define WRITE 1
+>> -#define fsxread(a,b,c,d)	fsx_rw(READ, a,b,c,d)
+>> -#define fsxwrite(a,b,c,d)	fsx_rw(WRITE, a,b,c,d)
+>> +#define fsxread(a,b,c,d,f)	fsx_rw(READ, a,b,c,d,f)
+>> +#define fsxwrite(a,b,c,d,f)	fsx_rw(WRITE, a,b,c,d,f)
+>>  
+> 
+> My pattern recognition brain wants to see an 'e' here. ;)
 
-  _statically_true((l) > (h))
+This is a "check if reviewer has actually looked at it" check ;-)
 
-Apply _statically_true() to simplify GENMASK_INPUT_CHECK().
+>> @@ -266,7 +273,9 @@ prterr(const char *prefix)
+>>  
+>>  static const char *op_names[] = {
+>>  	[OP_READ] = "read",
+>> +	[OP_READ_UNCACHED] = "read_uncached",
+>>  	[OP_WRITE] = "write",
+>> +	[OP_WRITE_UNCACHED] = "write_uncached",
+>>  	[OP_MAPREAD] = "mapread",
+>>  	[OP_MAPWRITE] = "mapwrite",
+>>  	[OP_TRUNCATE] = "truncate",
+>> @@ -393,12 +402,14 @@ logdump(void)
+>>  				prt("\t******WWWW");
+>>  			break;
+>>  		case OP_READ:
+>> +		case OP_READ_UNCACHED:
+>>  			prt("READ     0x%x thru 0x%x\t(0x%x bytes)",
+>>  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+>>  			    lp->args[1]);
+>>  			if (overlap)
+>>  				prt("\t***RRRR***");
+>>  			break;
+>> +		case OP_WRITE_UNCACHED:
+>>  		case OP_WRITE:
+>>  			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
+>>  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+>> @@ -784,9 +795,8 @@ doflush(unsigned offset, unsigned size)
+>>  }
+>>  
+>>  void
+>> -doread(unsigned offset, unsigned size)
+>> +__doread(unsigned offset, unsigned size, int flags)
+>>  {
+>> -	off_t ret;
+>>  	unsigned iret;
+>>  
+>>  	offset -= offset % readbdy;
+>> @@ -818,23 +828,39 @@ doread(unsigned offset, unsigned size)
+>>  			(monitorend == -1 || offset <= monitorend))))))
+>>  		prt("%lld read\t0x%x thru\t0x%x\t(0x%x bytes)\n", testcalls,
+>>  		    offset, offset + size - 1, size);
+>> -	ret = lseek(fd, (off_t)offset, SEEK_SET);
+>> -	if (ret == (off_t)-1) {
+>> -		prterr("doread: lseek");
+>> -		report_failure(140);
+>> -	}
+>> -	iret = fsxread(fd, temp_buf, size, offset);
+>> +	iret = fsxread(fd, temp_buf, size, offset, flags);
+>>  	if (iret != size) {
+>> -		if (iret == -1)
+>> -			prterr("doread: read");
+>> -		else
+>> +		if (iret == -1) {
+>> +			if (errno == EOPNOTSUPP && flags & RWF_UNCACHED) {
+>> +				rwf_uncached = 1;
+> 
+> I assume you meant rwf_uncached = 0 here?
 
-Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
----
-This change passes the unit tests from CONFIG_BITS_TEST, including the
-extra negative tests provided under #ifdef TEST_GENMASK_FAILURES [1].
+Indeed, good catch. Haven't tested this on a kernel without RWF_UNCACHED
+yet...
 
-[1] commit 6d511020e13d ("lib/test_bits.c: add tests of GENMASK")
-Link: https://git.kernel.org/torvalds/c/6d511020e13d
+> If so, check out test_fallocate() and friends to see how various
+> operations are tested for support before the test starts. Following that
+> might clean things up a bit.
 
-** Changelog **
+Sure, I can do something like that instead. fsx looks pretty old school
+in its design, was not expecting a static (and single) fd. But since we
+have that, we can do the probe and check. Just a basic read would be
+enough, with RWF_UNCACHED set.
 
-v2 -> v3:
+> Also it's useful to have a CLI option to enable/disable individual
+> features. That tends to be helpful to narrow things down when it does
+> happen to explode and you want to narrow down the cause.
 
-   - split the single patch into a series of two patches.
+I can add a -U for "do not use uncached".
 
-   - add greater explanation of why _statically_true() is needed in
-     addition of the existing statically_true(). Explain the pros and
-     cons of both.
-
-   - use __builtin_choose_expr() in _statically_true(). The
-     _statically_true() of the v2 works perfectly fine when used in
-     conjunction with BUILD_BUG_ON_ZERO() but fails if used in arrays
-     or in static_assert()
-
-   - update the patch description accordingly
-
-Link: https://lore.kernel.org/all/20241111164743.339117-2-mailhol.vincent@wanadoo.fr/
-
-v1 -> v2:
-
-   - introduce _statically_true(), taking inspiration from
-     statically_true() as introduced in commit 22f546873149 ("minmax:
-     improve macro expansion and type checking").
-
-Link: https://lore.kernel.org/all/20240609073513.256179-1-mailhol.vincent@wanadoo.fr/
----
- include/linux/bits.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/bits.h b/include/linux/bits.h
-index 60044b608817..01713e1eda56 100644
---- a/include/linux/bits.h
-+++ b/include/linux/bits.h
-@@ -20,9 +20,8 @@
-  */
- #if !defined(__ASSEMBLY__)
- #include <linux/build_bug.h>
--#define GENMASK_INPUT_CHECK(h, l) \
--	(BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
--		__is_constexpr((l) > (h)), (l) > (h), 0)))
-+#include <linux/compiler.h>
-+#define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(_statically_true((l) > (h)))
- #else
- /*
-  * BUILD_BUG_ON_ZERO is not available in h files included from asm files,
 -- 
-2.45.2
-
+Jens Axboe
 
