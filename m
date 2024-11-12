@@ -1,137 +1,122 @@
-Return-Path: <linux-kernel+bounces-404985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886109C4B62
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:00:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBC89C4B66
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:00:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA965281D0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:00:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B75BAB2593C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B29F204014;
-	Tue, 12 Nov 2024 00:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C044A2038CB;
+	Tue, 12 Nov 2024 00:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u8pT54M/"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="EI8qZFPz"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2D7204001
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5302038C0
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731373184; cv=none; b=QJhBrUf2qnvCV7bLYAdb+mJG6GeII0mtyxMB07/JDMWmKdJ6J6eH7IcM53JXL+pAh2jCovL5wy8BkAoaA6Ltf4Lc19xGFPrpcfSvoJl783oaIkFPyuhG8nAtxjyaAYt7+y3NYtpefTcgJGXazDQNsbTYrWrmdPsh9HneFHtLjA8=
+	t=1731373181; cv=none; b=qdBQBn1nmhUYIyM43JcwZMeCVpAAZtidDoLD+NwMRsqSrOys5R7jxMk8oq4j/cn0TZyQqjNtLtV0cx1QaqAOzBY5gKv0U8B4fp2vYptXR80FkivCEy9pMOaLhwGPFikYXN3J1fEMddc4gLJMYO3meChQKxcO3ZqTnzE8UMzQsq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731373184; c=relaxed/simple;
-	bh=y1/ND4heqsVX/YABFxnL/lnL07J2BlMnjEGg/bN38z0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Qu51JOIAt/ucE3Oe8YBl4rWWt5OM1JZ9bNtJB/YWLymfXL8uviw2/HxBR97bxARYvLJfFSuNrRBVV2jGrhfp8UuUUApc2ZV4fL7tCrdF8xPmVHzwlxA8ZWDOie8Uv0WhRU+a0JeRaxIZKhkzR3aMxwuYoWD2Y6ZABMAaJnQHZfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u8pT54M/; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-460969c49f2so118561cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:59:42 -0800 (PST)
+	s=arc-20240116; t=1731373181; c=relaxed/simple;
+	bh=vl/gZZOX/UQNHQwVhGhWo6Q/nOcInYX8OF9wEj7gD4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qotmsFCohup+BOj8Dxqxd+yuhl+oCAyYGZs2Al1CerFu+LIHN7BZvpnD1aA60rJc601xAPE8tFvwj6751LFamYSVYcX8A8VuIUrXSolcqMh26bDzOzOs0xYBBwVKX+cI4WnTO0sy+aVJixLERgn7OOeWQkJPD8YirREIJROmwm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=EI8qZFPz; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b14554468fso357872385a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:59:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731373182; x=1731977982; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LecjDJoTOnaJoml7h+dyn1NllN9mcIC7cbAU8yO5fVI=;
-        b=u8pT54M/njNiKN3m0f76UO3oQrP0HNuQGfsoWX9C1w1bjiUbLwGZtsCn71CrEDQ944
-         33cdXunY57Ryt0gjun/HlnqQD9qcMlsFVJ7Hx88dWRcdj7WcRFMD3II0M0IV1CRNmEuW
-         yiV1+EIxziDPAJ2sGKnI2RsjmStmi2mZIfsdSNb8YY89GWLpOaviv2zAQgLvkui9lFXe
-         4Fhb6dGerMJ/MzTYtbbakDdxNEwOX2jwnnTGiIQMCU445XcWffZ1zVmTaW/evngcLjtF
-         TRLK6WCkkYRtW5ALemBGsdpygo3ABpONB7/tLo98nvqP+Te38dR6QBnm5iQ3zc2iLTlG
-         dhHA==
+        d=rowland.harvard.edu; s=google; t=1731373178; x=1731977978; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Dgryruqvz3oynCw+eynUzr+rPfTLudMm2oFpIDaJpIA=;
+        b=EI8qZFPzuxhXEoZltyam9xvlv7GDfzxxFwz/5jVkBe4ansBxzCjTYAYEYS/6dxNKBs
+         8ew/eFno4jz/zR54h+Hg20lAKR69IKI0yiZNBr5JTSghFlUYdfwwAeiSDwSmVQ36WqTn
+         U0/H/QHMzFW6SfNH6nOrO7ar6hqZVLzjQy+94Vu609jF171CRgYNT9/4ao71v+eq5ERX
+         5FMosQjErnWAkWbbzUl5IXiEVnLGrXE/xNmr4H3eEfoZmdiPn5ao6+Jhr5aBXGks25+O
+         LMhPZWMsCRYWQw2Qqoz0hV25EXgM4kgJAdyu/uf58uhQVuF/9OhaEgk3arRx6tt7smsQ
+         exJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731373182; x=1731977982;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LecjDJoTOnaJoml7h+dyn1NllN9mcIC7cbAU8yO5fVI=;
-        b=hepzee6Ek5KkY9A40npekEyFZvBE9kBvsp8Ae2L3qLtf0vLMxuhI7sQZGjwbDEBhbv
-         o3auIk7gsbJ/aEqlRvl3F4Urki2AHzqrz6qgMarx8DlrnYB7/rb6yDWyaCjO9taa685k
-         jXrkqeiA5xKtyj2Feo1LD6GKsuu8xTiDbBIFudW0qRESk7I2T/kOtbJd/oOLhIMVsIWH
-         MSNOyZtYkBHysd/xLUJRGU7G0+lcqdCAeqR7Rik7g2bGglzqGmL6GFbUOGPG8F9AX5vo
-         OJitkuXMOf/zPsZKpmFBuhG0e2yPtQwY3JGJn+hPBgHgGyBlChAMWfGL+85g5/EDhs01
-         qOVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyLJMQYSDlPbNtyiwQyuAyuaqCmoK1Ctl9qoi1CiMY17OK7aIXFhxkIJBmiT9KMTqxvkyJ5+IJMOThYiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhjSPYZCSznLi9mLt0Jjsb7nm7yYD/DhHjJMg0zk9RlogBqFo6
-	mw/3kPL/luGQVgvywhufXWaHP0agwZvh8+/liGNRirNy47wz3buWgWVWE78j+XovF+qX4YZ+ci6
-	MjnSnisTJiTivXW4KlAe/DiojvaIDT97rVL8z
-X-Gm-Gg: ASbGncsKF9i/hvLBRDhv+/5JDiQ3A+r2VuNe4Qy32Hy9yKGhfL4BL6zDISD8oAhl0Yx
-	/X5V5TK0ImznpW21SzvBp5giAcG9BpCQ=
-X-Google-Smtp-Source: AGHT+IEKsIFJbzCEUMdsDAPcE+87L+ORDqqQpmYus1Wg3+7ujB5DDEVe1FkWX+KWOSMItCnNYwksNyNROIU4xmGwdqQ=
-X-Received: by 2002:a05:622a:47ca:b0:461:31b8:d203 with SMTP id
- d75a77b69052e-463427ddf44mr218161cf.3.1731373181873; Mon, 11 Nov 2024
- 16:59:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731373178; x=1731977978;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dgryruqvz3oynCw+eynUzr+rPfTLudMm2oFpIDaJpIA=;
+        b=RuMtRvZ2H3cumg0lN91b0GDvHfvgaluH1jrtZxsuLkH3SPxdc4K14AN3zQPtV0TAjK
+         H9PzfpArArNnE5aP+j7Olxd+GFY2ygvA0hc90K3UHPntMdZ2cZHwSM3jYITQSOMp4hIw
+         B3TZhtP+cdny8fOFoQqOrnsUTK6CbTcApdkfFXxAqf0xY5jauISprAcsjHXlMnDPfLqH
+         Wxgbgi3wtkzXUBFBnD4JywqYFMLheQtdLD/+K0bqT2uLKWbpExRjWJvOJv9WqRx74QV3
+         OYha/GgcFRYVQ0ynPWRg2XUH3+wIIsRyrTEV+HcHuuYi29UDOAEsBzGOtw7TIYTFOJ47
+         g0iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrZ4j6YK1/d0JI1gZdlS3V8yBK+OofWQDy2J8l8QmyiwzG/XAsDcKU8OPL6ZNDe8VtgM3Sje5+N8Dm6jU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsUjDTnGUWgxUwe99RWV/m/PWVmDpgQhOVH00dEq2bQMtF/Hlz
+	7I1dlwM7FdwEvZ82hphaMTXvQ2YeK0XVEhwYxRhcObF/vovyPQFWWP77bBh81A==
+X-Google-Smtp-Source: AGHT+IHwCd43sTsu98WuNqYuXULodJh8oMVMDF/iNnhpfWU3O1q7dXshmn4PYa1T6jBdvqusm4gnKQ==
+X-Received: by 2002:a05:620a:454d:b0:7b2:5e0:c439 with SMTP id af79cd13be357-7b331ec6103mr2066623485a.30.1731373178443;
+        Mon, 11 Nov 2024 16:59:38 -0800 (PST)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::2c91])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac63da6sm545393885a.58.2024.11.11.16.59.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 16:59:37 -0800 (PST)
+Date: Mon, 11 Nov 2024 19:59:33 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>
+Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
+	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	lkmm@lists.linux.dev, torvalds@linux-foundation.org
+Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
+ case-insensitive filesystem.
+Message-ID: <62634bbe-edd6-4973-a96a-df543f39f240@rowland.harvard.edu>
+References: <20241111164248.1060-1-egyszeregy@freemail.hu>
+ <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
+ <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
+ <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
+ <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
+ <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
+ <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111205506.3404479-1-surenb@google.com> <20241111205506.3404479-4-surenb@google.com>
- <20241112003527.ogtrnknjwvtqfewm@offworld>
-In-Reply-To: <20241112003527.ogtrnknjwvtqfewm@offworld>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 11 Nov 2024 16:59:30 -0800
-Message-ID: <CAJuCfpGRdYkbJ3DkyNZPwsZqu29rnqGdOY9B+M1dL14Cu79XDg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] mm: replace rw_semaphore with atomic_t in vma_lock
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, willy@infradead.org, 
-	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, mhocko@suse.com, 
-	vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
-	oleg@redhat.com, paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, 
-	hdanton@sina.com, hughd@google.com, minchan@google.com, jannh@google.com, 
-	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
 
-On Mon, Nov 11, 2024 at 4:35=E2=80=AFPM Davidlohr Bueso <dave@stgolabs.net>=
- wrote:
->
-> On Mon, 11 Nov 2024, Suren Baghdasaryan wrote:
->
-> >@@ -787,7 +893,10 @@ static inline void vma_start_write(struct vm_area_s=
-truct *vma)
-> >        * we should use WRITE_ONCE() for cleanliness and to keep KCSAN h=
-appy.
-> >        */
-> >       WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
-> >-      up_write(&vma->vm_lock.lock);
-> >+      /* Write barrier to ensure vm_lock_seq change is visible before c=
-ount */
-> >+      smp_wmb();
-> >+      rwsem_release(&vma->vm_lock.dep_map, _RET_IP_);
-> >+      atomic_set(&vma->vm_lock.count, VMA_LOCK_UNLOCKED);
->
-> Too many barriers here. Just do atomic_set_release and remove that
-> smp_wmb(). And what you are doing is really ensuring nothing leaks out
-> of the critical region, so that comment should also be more generic.
+On Mon, Nov 11, 2024 at 10:15:30PM +0100, Szőke Benjamin wrote:
+> warning: the following paths have collided (e.g. case-sensitive paths
+> on a case-insensitive filesystem) and only one from the same
+> colliding group is in the working tree:
+> 
+>   'tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus'
+>   'tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus'
 
-Uh, yes. I missed that.
+I support the idea of renaming one of these files.  Not to make things 
+work on case-insensitive filesystems, but simply because having two 
+files with rather long (and almost nonsensical) names that are identical 
+aside from one single letter is an excellent way to confuse users.
 
->
-> I would expect regression testing to catch this sort of thing.
+Come on -- just look at the error report above.  Can you tell at a 
+glance, without going through and carefully comparing the two strings 
+letter-by-letter, exactly what the difference is?  Do you really think 
+anybody could?
 
-Well, it's in vma_start_write(), which is in the write-locking path.
-Maybe that's why it's not very visible.
+I haven't looked to see if there are any other similar examples in the 
+litmus-tests directory, but if there are than they should be changed 
+too.
 
->
-> ...
->
-> > #ifdef CONFIG_PER_VMA_LOCK
-> >+              struct wait_queue_head vma_writer_wait;
->
-> You might want to use rcuwait here instead, which is much more
-> optimized for the single waiter requirement vmas have.
-
-Thanks for the suggestion! I'll give it a try.
-
->
-> Thanks,
-> Davidlohr
+Alan
 
