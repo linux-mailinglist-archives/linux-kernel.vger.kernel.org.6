@@ -1,256 +1,164 @@
-Return-Path: <linux-kernel+bounces-405022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0AE9C4C02
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:47:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8223C9C4C2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:04:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 011A928370C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:46:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 973C8B2C589
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CB820495C;
-	Tue, 12 Nov 2024 01:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VdDtksdk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A06D20492F;
+	Tue, 12 Nov 2024 01:47:18 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367CB157A59;
-	Tue, 12 Nov 2024 01:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC992AF06;
+	Tue, 12 Nov 2024 01:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731376007; cv=none; b=fRZD1j57Vc51muolv7Hw4Jt8xNSpJd5hxug6UQ9XeuofUNo9AdgtGBKG6f0Chhcwka8McZtbNJNff2zGBKX7DqWwPt5VmF+AMm+aZ4xwAovcfQ96MP5fSMb3KQqPjn/vqsc61872bIg9HWMvE7p8JqDYbhHAsc5HcFHwHRWcxTU=
+	t=1731376037; cv=none; b=n3uKOICC39nZd7RM9mwAZpQKGbOSH+N6eDBqt9C9+jtb8NvZNuV5vF+WbbzdanLuvHqHYt1qvR6OaLPfC0FKGH65fx29OHZu5ABcd8ibDWKgKMBcBKdnVl9cjpzAH5qn3e6cMMZXCbTeigwuBQC49KY5a7uvdfbZ1bzsZnRNhXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731376007; c=relaxed/simple;
-	bh=t4DRispja/rBIeZTUS8EcXZ3J1ffNNE/f2oEAh9MOBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efvf7Qd4BfZUvq2pTjukveHFGyLczVpopra3S5tbzr6KTv3kY86rQTCbDaW0l0SY6HsZoZpKVQkU5tnDSXe/fMNxbLr7Pr3QbZ0dtBXXXZHK0K74JjTyF1qv1/4WDEPQjiuA9yp5NVIwzMx3kUvVwPabe73AlpoyZOSTJ3C+fH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VdDtksdk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2075C4CECF;
-	Tue, 12 Nov 2024 01:46:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731376006;
-	bh=t4DRispja/rBIeZTUS8EcXZ3J1ffNNE/f2oEAh9MOBU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VdDtksdkWsJewWFnWeWj1DgQh0hTYxkIOHwakEVcfa1Ey2YiItPT+ygm3HtXsaHG/
-	 WEvobcWb0jJ4V9MVgp+u/otQt9aOYZahk8UZe2AvnUxwE/rM8b/MnSUYforQkBBD2X
-	 d2jHPs5RRDB6j0wzWuKa5nTRlxPPiyDO5Ub3Y/QxIZ4RbZiaaPoy3FLV6DICWvKm6w
-	 GW2o8gzgeoqxLMgKOEbwvu9AUCzN/K0JIHOHZODnpOleV6q0V97eWszH9NQfb+2zs/
-	 NxnsC5UUuiV9Jkv+n0yFITPrWXMGhvj5g1Uys2Rvr8hGFNHa0xsWpT6ZiMT2pdBQ1X
-	 +XSGKxJdgJX1Q==
-Date: Mon, 11 Nov 2024 17:46:44 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Amit Shah <amit@kernel.org>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, x86@kernel.org, linux-doc@vger.kernel.org,
-	amit.shah@amd.com, thomas.lendacky@amd.com, bp@alien8.de,
-	tglx@linutronix.de, peterz@infradead.org,
-	pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, mingo@redhat.com,
-	dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
-	pbonzini@redhat.com, daniel.sneddon@linux.intel.com,
-	kai.huang@intel.com, sandipan.das@amd.com,
-	boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
-	david.kaplan@amd.com, dwmw@amazon.co.uk
-Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
- AMD
-Message-ID: <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
-References: <20241111163913.36139-1-amit@kernel.org>
- <20241111163913.36139-2-amit@kernel.org>
- <20241111193304.fjysuttl6lypb6ng@jpoimboe>
- <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+	s=arc-20240116; t=1731376037; c=relaxed/simple;
+	bh=t2riWp8iVz5vagodm+20WB+hhuSzF3Z8aqzuVOor10Q=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=LrrftKLOerzIBLFF2wmnk1qQtoaFz2gKIIn9tzepToXUpV/jyxaDU/6JmCuaWkMmWh4zc5NzCgBSeOD3BNE1I02HuMQoJSDYm5JiTN+kdMzAnnIw3E8ZNuHWnxgdSQSJ4S+ZfpSVOxwRevlzq+MvjdWSfqhVzbwa/fapmjj2WGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XnTk32tJZz10Qsg;
+	Tue, 12 Nov 2024 09:44:43 +0800 (CST)
+Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id ECC7B140157;
+	Tue, 12 Nov 2024 09:47:10 +0800 (CST)
+Received: from [10.67.110.237] (10.67.110.237) by
+ kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 12 Nov 2024 09:47:10 +0800
+Subject: Re: [PATCH 1/2] perf probe: Reset old content before processing the
+ next event string
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+CC: <acme@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<dima@secretsauce.net>, <aleksander.lobakin@intel.com>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241108181909.3515716-1-lihuafei1@huawei.com>
+ <20241111134705.021f73408c0aff41918ab2a5@kernel.org>
+From: Li Huafei <lihuafei1@huawei.com>
+Message-ID: <24c76d15-43d1-3612-be61-44d34fb3ac9e@huawei.com>
+Date: Tue, 12 Nov 2024 09:47:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20241111134705.021f73408c0aff41918ab2a5@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf500004.china.huawei.com (7.202.181.242)
 
-On Tue, Nov 12, 2024 at 12:29:28AM +0000, Andrew Cooper wrote:
-> This is my take.  On AMD CPUs, there are two unrelated issues to take
-> into account:
+
+
+On 2024/11/11 12:47, Masami Hiramatsu (Google) wrote:
+> On Sat, 9 Nov 2024 02:19:08 +0800
+> Li Huafei <lihuafei1@huawei.com> wrote:
 > 
-> 1) SRSO
+>> I added two probe events:
+>>
+>>   # perf probe -f -a schedule+8
+>>   Added new event:
+>>     probe:schedule       (on schedule+8)
+>>
+>>   You can now use it in all perf tools, such as:
+>>
+>>           perf record -e probe:schedule -aR sleep 1
+>>
+>>   # perf probe -f -a schedule+20
+>>   Added new event:
+>>     probe:schedule_1     (on schedule+20)
+>>
+>>   You can now use it in all perf tools, such as:
+>>
+>>           perf record -e probe:schedule_1 -aR sleep 1
+>>
+>> However, 'perf probe -l' shows the same offset:
+>>
+>>   # perf probe -l
+>>     probe:schedule       (on schedule+8@kernel/sched/core.c)
+>>     probe:schedule_1     (on schedule+8@kernel/sched/core.c)
+>>
+>> __show_perf_probe_events() does not clean up the 'pev' content when
+>> parsing the rawlist. If the 'pev->offset' is not set while processing
+>> the next probe event string, the offset value of the previous event will
+>> be used.  After adding debug information, it was found that indeed there
+>> was line number information when processing 'probe:schedule_1', so the
+>> offset was not set and used the offset from 'probe:schedule'.
+>>
+>> To fix this, in the loop that parses the rawlist, reset the contents of
+>> 'tev' and 'pev' to ensure it does not affect the next parsing.
+>>
+>> After the modification,  'perf probe -l' shows the following:
+>>
+>>   # perf probe -l
+>>     probe:schedule       (on schedule+8@kernel/sched/core.c)
+>>     probe:schedule_1     (on schedule:-6751@kernel/sched/core.c)
+>>
+>> Note that 'probe:schedule_1' is displayed with line number, but the line
+>> number seem to be incorrect. This issue is independent of the problem
+>> fixed by the current patch and will be addressed in the next patch.
+>>
 > 
-> Affects anything which doesn't enumerate SRSO_NO, which is all parts to
-> date including Zen5.
+> Good catch! But we should do the cleanup in clear_perf_probe_event()
+> and clear_probe_trace_event().
 > 
-> SRSO ends up overflowing the RAS with arbitrary BTB targets, such that a
-> subsequent genuine RET follows a prediction which never came from a real
-> CALL instruction.
+>> Fixes: d8f9da240495 ("perf tools: Use zfree() where applicable")
 > 
-> Mitigations for SRSO are either safe-ret, or IBPB-on-entry.  Parts
-> without IBPB_RET using IBPB-on-entry need to manually flush the RAS.
+> What we need is to revert this change for above 2 functions, because
+> without that, it "clear"s the structure correctly. Current code
+> releases allocated fields, but not clear all fields. This can lead
+> another bug.
+
+
+Right, I will make this change in the next version.
+
+Thanks，
+Huafei
+
 > 
-> Importantly, SMEP does not protection you against SRSO across the
-> user->kernel boundary, because the bad RAS entries are arbitrary.  New
-> in Zen5 is the SRSO_U/S_NO bit which says this case can't occur any
-> more.  So on Zen5, you can in principle get away without a RAS flush on
-> entry.
-
-Updated to mention SRSO:
-
-	/*
-	 * In general there are two types of RSB attacks:
-	 *
-	 * 1) RSB underflow ("Intel Retbleed")
-	 *
-	 *    Some Intel parts have "bottomless RSB".  When the RSB is empty,
-	 *    speculated return targets may come from the branch predictor,
-	 *    which could have a user-poisoned BTB or BHB entry.
-	 *
-	 *    When IBRS or eIBRS is enabled, the "user -> kernel" attack is
-	 *    mitigated by the IBRS branch prediction isolation properties, so
-	 *    the RSB buffer filling wouldn't be necessary to protect against
-	 *    this type of attack.
-	 *
-	 *    The "user -> user" attack is mitigated by RSB filling on context
-	 *    switch.
-	 *
-	 *    The "guest -> host" attack is mitigated by IBRS or eIBRS.
-	 *
-	 * 2) Poisoned RSB entry
-	 *
-	 *    If the 'next' in-kernel return stack is shorter than 'prev',
-	 *    'next' could be tricked into speculating with a user-poisoned RSB
-	 *    entry.  Poisoned RSB entries can also be created by Branch Type
-	 *    Confusion ("AMD retbleed") or SRSO.
-	 *
-	 *    The "user -> kernel" attack is mitigated by SMEP and eIBRS.  AMD
-	 *    without SRSO_NO also needs the SRSO mitigation.
-	 *
-	 *    The "user -> user" attack, also known as SpectreBHB, requires RSB
-	 *    clearing.
-	 *
-	 *    The "guest -> host" attack is mitigated by either eIBRS (not
-	 *    IBRS!) or RSB clearing on vmexit.  Note that eIBRS
-	 *    implementations with X86_BUG_EIBRS_PBRSB still need "lite" RSB
-	 *    clearing which retires a single CALL before the first RET.
-	 */
-
-
----8<---
-
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: [PATCH] x86/bugs: Update insanely long comment about RSB attacks
-
-The long comment above the setting of X86_FEATURE_RSB_CTXSW is a bit
-confusing.  It starts out being about context switching specifically,
-but then goes on to describe "user -> kernel" mitigations, which aren't
-necessarily limited to context switches.
-
-Clarify that it's about *all* RSB attacks and their mitigations.
-
-For consistency, add the "guest -> host" mitigations as well.  Then the
-comment above spectre_v2_determine_rsb_fill_type_at_vmexit() can be
-removed and the overall line count is reduced.
-
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- arch/x86/kernel/cpu/bugs.c | 60 +++++++++++++-------------------------
- 1 file changed, 20 insertions(+), 40 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 47a01d4028f6..3dd1e504d706 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1581,26 +1581,6 @@ static void __init spec_ctrl_disable_kernel_rrsba(void)
- 
- static void __init spectre_v2_determine_rsb_fill_type_at_vmexit(enum spectre_v2_mitigation mode)
- {
--	/*
--	 * Similar to context switches, there are two types of RSB attacks
--	 * after VM exit:
--	 *
--	 * 1) RSB underflow
--	 *
--	 * 2) Poisoned RSB entry
--	 *
--	 * When retpoline is enabled, both are mitigated by filling/clearing
--	 * the RSB.
--	 *
--	 * When IBRS is enabled, while #1 would be mitigated by the IBRS branch
--	 * prediction isolation protections, RSB still needs to be cleared
--	 * because of #2.  Note that SMEP provides no protection here, unlike
--	 * user-space-poisoned RSB entries.
--	 *
--	 * eIBRS should protect against RSB poisoning, but if the EIBRS_PBRSB
--	 * bug is present then a LITE version of RSB protection is required,
--	 * just a single call needs to retire before a RET is executed.
--	 */
- 	switch (mode) {
- 	case SPECTRE_V2_NONE:
- 		return;
-@@ -1818,43 +1798,43 @@ static void __init spectre_v2_select_mitigation(void)
- 	pr_info("%s\n", spectre_v2_strings[mode]);
- 
- 	/*
--	 * If Spectre v2 protection has been enabled, fill the RSB during a
--	 * context switch.  In general there are two types of RSB attacks
--	 * across context switches, for which the CALLs/RETs may be unbalanced.
-+	 * In general there are two types of RSB attacks:
- 	 *
--	 * 1) RSB underflow
-+	 * 1) RSB underflow ("Intel Retbleed")
- 	 *
- 	 *    Some Intel parts have "bottomless RSB".  When the RSB is empty,
- 	 *    speculated return targets may come from the branch predictor,
- 	 *    which could have a user-poisoned BTB or BHB entry.
- 	 *
--	 *    AMD has it even worse: *all* returns are speculated from the BTB,
--	 *    regardless of the state of the RSB.
-+	 *    When IBRS or eIBRS is enabled, the "user -> kernel" attack is
-+	 *    mitigated by the IBRS branch prediction isolation properties, so
-+	 *    the RSB buffer filling wouldn't be necessary to protect against
-+	 *    this type of attack.
- 	 *
--	 *    When IBRS or eIBRS is enabled, the "user -> kernel" attack
--	 *    scenario is mitigated by the IBRS branch prediction isolation
--	 *    properties, so the RSB buffer filling wouldn't be necessary to
--	 *    protect against this type of attack.
-+	 *    The "user -> user" attack is mitigated by RSB filling on context
-+	 *    switch.
- 	 *
--	 *    The "user -> user" attack scenario is mitigated by RSB filling.
-+	 *    The "guest -> host" attack is mitigated by IBRS or eIBRS.
- 	 *
- 	 * 2) Poisoned RSB entry
- 	 *
- 	 *    If the 'next' in-kernel return stack is shorter than 'prev',
- 	 *    'next' could be tricked into speculating with a user-poisoned RSB
--	 *    entry.
-+	 *    entry.  Poisoned RSB entries can also be created by Branch Type
-+	 *    Confusion ("AMD retbleed") or SRSO.
- 	 *
--	 *    The "user -> kernel" attack scenario is mitigated by SMEP and
--	 *    eIBRS.
-+	 *    The "user -> kernel" attack is mitigated by SMEP and eIBRS.  AMD
-+	 *    without SRSO_NO also needs the SRSO mitigation.
- 	 *
--	 *    The "user -> user" scenario, also known as SpectreBHB, requires
--	 *    RSB clearing.
-+	 *    The "user -> user" attack, also known as SpectreBHB, requires RSB
-+	 *    clearing.
- 	 *
--	 * So to mitigate all cases, unconditionally fill RSB on context
--	 * switches.
--	 *
--	 * FIXME: Is this pointless for retbleed-affected AMD?
-+	 *    The "guest -> host" attack is mitigated by either eIBRS (not
-+	 *    IBRS!) or RSB clearing on vmexit.  Note that eIBRS
-+	 *    implementations with X86_BUG_EIBRS_PBRSB still need "lite" RSB
-+	 *    clearing which retires a single CALL before the first RET.
- 	 */
-+
- 	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
- 	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
- 
--- 
-2.47.0
-
+> Thank you,
+> 
+>> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+>> ---
+>>  tools/perf/util/probe-event.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+>> index a17c9b8a7a79..ec0b11f8d881 100644
+>> --- a/tools/perf/util/probe-event.c
+>> +++ b/tools/perf/util/probe-event.c
+>> @@ -2695,6 +2695,8 @@ static int __show_perf_probe_events(int fd, bool is_kprobe,
+>>  next:
+>>  		clear_perf_probe_event(&pev);
+>>  		clear_probe_trace_event(&tev);
+>> +		memset(&tev, 0, sizeof(tev));
+>> +		memset(&pev, 0, sizeof(pev));
+>>  		if (ret < 0)
+>>  			break;
+>>  	}
+>> -- 
+>> 2.25.1
+>>
+>>
+> 
+> 
 
