@@ -1,91 +1,176 @@
-Return-Path: <linux-kernel+bounces-406692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5769C6254
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:13:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2046A9C634F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:22:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9384C281BA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:13:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C5B5B3FF72
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4A8219E4B;
-	Tue, 12 Nov 2024 20:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061A0219CAD;
+	Tue, 12 Nov 2024 20:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="I36W98i9"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OdO18lPB"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B858219E57;
-	Tue, 12 Nov 2024 20:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3397219CAB
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 20:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731442366; cv=none; b=AZ2liNOuBJNkGqdFc3+yw3DjZtlC9rwBx+jMv1Za/4az9QqpBfWbVO7Kpa7of5pbkMTLJx80oubwf2rNkmTuZwrwSbr2LwUqg7dQWcY5BEGEZrh2ZR1yV1vSrSpqS3wDIT0kigRawz6AEjlHR8eQL6QiXq49h8v4gq9xc0gSDQQ=
+	t=1731442418; cv=none; b=bdMHdH/ulYTx/Mu6pAlLArCKQCv38u2Ly8xWDFdGl8eKAriwNtjt5rN17eX27crdrwXFd73XUF+G6tlckCAI/yyv1N+AQyiJZK9u2Of4FIoAC5sVRED9cwD+GE8e3neDqsAhXhetFWe3XqpzmaXleQKdVHHOHEtxaUIuuBiU4QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731442366; c=relaxed/simple;
-	bh=7E+MCjcMxZ9hrldEY1WGxt+s38Bf/hlAZRNYwyxcytw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=otl26H43lw0bo61bWyG9hF+wmd77kOmQ9ov29RWXWf+exn7SZrM2E4h6Uot8RQMR2lBV0lQSLQnhDzYAT/X6/BeoYm1/dsNnf5iSruGCOt0FHOujhnZc4gHVrWCneYgMHheygAFJAipqEQQYlbrvR53bAiixL+oMbgFIcM++GR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=I36W98i9; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CF2EF403E4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1731442364; bh=7E+MCjcMxZ9hrldEY1WGxt+s38Bf/hlAZRNYwyxcytw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=I36W98i9M1HmB6s8VdQcVvfJWzGxqGDQWxKXslivaORSlIOyCZyG7pFT0c/LgBCeA
-	 w4qQksF0QXWA3Nwv+QBy8PctQah38iHqllovC1/IGfN488NowKruGjRkvo+Uw4w/zl
-	 snKYa2fSSOE3JHCT742mOnhKydb4brnuG5F9o+QRKZa69sSkBcb1ZBntkC9JRjLScj
-	 4I+ScA8O13NIQFap/7Vpt5WP20pdsg1bbCy7dRtONMA3Xmxj/kCDocabB5XtxMQpKE
-	 Hu7aP/mn7TO0tNrrLkSyM+E75RB/V7BQdfZY10g4NOcFicYvPLO53ptZwGwq3sexe7
-	 OfHixR43l8v7g==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id CF2EF403E4;
-	Tue, 12 Nov 2024 20:12:43 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Dongliang Mu <dzm91@hust.edu.cn>, si.yanteng@linux.dev, Alex Shi
- <alexs@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick
- Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, Dongliang Mu <dzm91@hust.edu.cn>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] docs/zh_CN: fix one sentence in llvm.rst
-In-Reply-To: <20241107013615.374757-1-dzm91@hust.edu.cn>
-References: <20241107013615.374757-1-dzm91@hust.edu.cn>
-Date: Tue, 12 Nov 2024 13:12:43 -0700
-Message-ID: <87ed3gqkhw.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1731442418; c=relaxed/simple;
+	bh=QY+lZkSp4pEMsOH5ViLZZ71ACCvNupC89gqwzm36rVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rdZII2hXgieTY/6M8Tw1ugnevzFNl2/z0EmtolwI6/bJriLzTQpGFNmxrv+bQajgSZUlH4g5WXFb3c8dCqfFiNbYOV7x5bmnbW4kD6Xx39NracuT1ilqyYE1L/LZI9t2tGIaWCgNpJ2Q5tTHjNdM83F+RBdsE0y0ME0BmJ4gDgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OdO18lPB; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4608dddaa35so50601cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:13:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731442415; x=1732047215; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ok3qcHy+me2Jj8oTM9OE18MgpCpWLeklNFe0Xu3psIY=;
+        b=OdO18lPBo5qORwZj/3PVqK06R8y3jZZ8+yIx6rAIojUQdnvwzHf09Fbhw/UUkIk3dV
+         dWXwNP3Xkhi3z4sVkW3KudtMhWrBJz4ZtVra3Zmawx8zNO5lTyzkcYrRDA9hCtrBdthR
+         /SAKmtiA1IETUMkg4nt0LrmB+gYpchqCaVcEWxMrJVnbWVYYSHusxI0Iy3mS2mEGD7/b
+         h+F7Ylwu1aTKwBT0U6bHRvLM0fAuSWN72IgICbhMD4saSHFl3bPpZHeusFLLB/4IsHzv
+         iptWosQ1aiDYT7jBk4oDWYR4eAGUMw2Er0rSqCy2JAg9qI9zcK+g3NTLiBHxoB7HgRoX
+         mfeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731442415; x=1732047215;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ok3qcHy+me2Jj8oTM9OE18MgpCpWLeklNFe0Xu3psIY=;
+        b=FvAkYqr9kwzNqghzYca3Zw1/vya7XVhz/MFZiJXAitIHCDglNpSo31bCS2fz+RonuW
+         bzH8im9bgzjQXGS3p5tFmpBy0V9yEWg//qnIPyQVXBwU4pX7QVWsWVsUx/Uf9ScBNXqh
+         5cSbvdPf+lhh3Zu/pCKzPZ9jj++tD9ugt4FzCG3w5JG+HB+zmwv5fcJc01yI5ojKfcNl
+         xxXWr83KFy/euE/RY394WoHyWr7pp0b7H6FPBATg0HYsDP+3U1osx4Vgx+vnMV0E0EsS
+         Immhqr5vPMkrcCSZvR2z+5A93SVcY8naUnBN1WNsu4ZLUChhFH0zDAPGoqB1iVqoJ1aY
+         9ODQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVL21xjHVeKa4nJZ6Xcf4J3JjdVwdglgfnY5Y1rHqtjaRP6yLYt4+nPxhkaGUOanRYolP7Du39XrBPvKhc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzIPIhUASCrX/jiGNnEQ4iKk2kJwy8R0Z5qapSJPplo0WZmShs
+	39NpviGWvIJATOy6+nPkMjecotyoDv2AUqHuOJFioGDxNADRE5lA5Js2f7xhvRaDprEiWH3/+aZ
+	z2mUiGnvdYKOY1QqubeDvt/8LHJ31jfbT4vLb
+X-Gm-Gg: ASbGnctqbXn6s0bj6g1Zk8kw9X5Ee7XX9Bq61StYBwIzwBD3FpzCA7FcpgfbX1f+47m
+	fI32NKVOhaemJWvXbJfsJSXZmVxQU2+HBJnvrxHp+d+6vvh4Dm9NBMspv3iZS
+X-Google-Smtp-Source: AGHT+IHEhri+khloSfLyc9f+kn+S0I//KWGpBCIikR491QgXS5ZsJTa+TGjEAvCX7DRA5b9a6+qU8vYdidxIcZgIBaA=
+X-Received: by 2002:a05:622a:47c6:b0:461:679f:f1ba with SMTP id
+ d75a77b69052e-4634bca4e56mr371601cf.20.1731442415109; Tue, 12 Nov 2024
+ 12:13:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+References: <20241026051410.2819338-1-xur@google.com> <20241026051410.2819338-4-xur@google.com>
+ <44193ca7-9d31-4b58-99cc-3300a6ad5289@gmail.com> <CAF1bQ=ShjoEQZGPjDoy_B6wZdD_jr-RevVXwEDPA_-o-Ba0Omg@mail.gmail.com>
+ <e7cd2746-0ad8-452f-aa12-e3a37e8a9288@gmail.com> <CAF1bQ=SYeeKLUTfbqw-KH1rHJCj_CfJBuk+mZUrnnb7aDjRV2A@mail.gmail.com>
+ <CAF1bQ=R18HLC2vjCGj+M=VYidrVzz3RT=U8cckXgpgrxc0kG0Q@mail.gmail.com> <70772ce5-9dca-418e-9714-80ba4ae28959@gmail.com>
+In-Reply-To: <70772ce5-9dca-418e-9714-80ba4ae28959@gmail.com>
+From: Rong Xu <xur@google.com>
+Date: Tue, 12 Nov 2024 12:13:22 -0800
+Message-ID: <CAF1bQ=QycziM6GQoTWSMQCGWPkZEDmAHMLfokoJ6k-vn7rCA=g@mail.gmail.com>
+Subject: Re: [PATCH v6 3/7] Adjust symbol ordering in text output section
+To: Klara Modin <klarasmodin@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>, 
+	workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Maksim Panchenko <max4bolt@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	Yabin Cui <yabinc@google.com>, Krzysztof Pszeniczny <kpszeniczny@google.com>, 
+	Sriraman Tallam <tmsriram@google.com>, Stephane Eranian <eranian@google.com>, x86@kernel.org, 
+	linux-arch@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-RG9uZ2xpYW5nIE11IDxkem05MUBodXN0LmVkdS5jbj4gd3JpdGVzOg0KDQo+IEFjY29yZGluZyB0
-byBKaW5qaWUgUnVhbiwgdGhlIGRlc2NyaXB0aW9uIGFib3V0IHRoZSBwcmVidWlsdCBsbHZtIGlz
-DQo+IGluY29ycmVjdC4gRml4IHRoaXMgc2VudGVuY2Ugd2l0aCBuZXcgdW5kZXJzdGFuZGluZy4N
-Cj4NCj4gTGluazogaHR0cHM6Ly9ncm91cHMuZ29vZ2xlLmNvbS9nL2h1c3Qtb3Mta2VybmVsLXBh
-dGNoZXMvYy9HYk41UmtWckJoby9tLzJzQzlyQXc3QlFBSg0KPiBTaWduZWQtb2ZmLWJ5OiBEb25n
-bGlhbmcgTXUgPGR6bTkxQGh1c3QuZWR1LmNuPg0KPiAtLS0NCj4gIERvY3VtZW50YXRpb24vdHJh
-bnNsYXRpb25zL3poX0NOL2tidWlsZC9sbHZtLnJzdCB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvRG9jdW1l
-bnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04va2J1aWxkL2xsdm0ucnN0IGIvRG9jdW1lbnRhdGlv
-bi90cmFuc2xhdGlvbnMvemhfQ04va2J1aWxkL2xsdm0ucnN0DQo+IGluZGV4IGY3MTA5MjE0NGEy
-Ni4uZjg3ZTAxODFkOGU3IDEwMDY0NA0KPiAtLS0gYS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9u
-cy96aF9DTi9rYnVpbGQvbGx2bS5yc3QNCj4gKysrIGIvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlv
-bnMvemhfQ04va2J1aWxkL2xsdm0ucnN0DQo+IEBAIC0xODgsNyArMTg4LDcgQEAgTExWTSDlubbk
-uI3mlK/mjIEgTGludXgg5YaF5qC45omA5pyJ5Y+v5pSv5oyB55qE5p625p6E77yM5ZCM5qC377yM
-5Y2z5L2/IExMVk0gDQo+ICANCj4gIOaIkeS7rOWcqCBga2VybmVsLm9yZyA8aHR0cHM6Ly9rZXJu
-ZWwub3JnL3B1Yi90b29scy9sbHZtLz5gXyDmj5DkvpvpooTnvJbor5HnmoTnqLPlrprniYggTExW
-TeOAgg0KPiAg6L+Z5Lqb54mI5pys5bey57uP6ZKI5a+5IExpbnV4IOWGheaguOaehOW7uu+8jOS9
-v+eUqOmFjee9ruaWh+S7tuaVsOaNrui/m+ihjOS8mOWMluOAguebuOi+g+S6juWFtuS7luWPkeih
-jOeJiOS4reeahCBMTFZN77yM5a6D5Lus5bqU6K+lDQo+IC3og73mj5Dpq5jlhoXmoLjmnoTlu7rm
-l7bpl7TjgIINCj4gK+iDveaPkOmrmOWGheaguOaehOW7uuaViOeOh+OAgg0KDQpBcHBsaWVkLCB0
-aGFua3MuDQoNCmpvbg0K
+I sent the following patch for review:
+https://lkml.org/lkml/2024/11/12/1565
+
+Thanks!
+
+-Rong
+
+On Mon, Nov 11, 2024 at 11:45=E2=80=AFPM Klara Modin <klarasmodin@gmail.com=
+> wrote:
+>
+> On 2024-11-12 06:38, Rong Xu wrote:
+> > I compared the System.map files from Klara Modin. The linker script is
+> > doing what I expected: relocating the unlikely executed functions to th=
+e
+> > beginning of the .text section.
+> >
+> > However, the problem is with the _stext symbol. It belongs to the
+> > .text section, so
+> > it is positioned after the unlikely (or hot) functions. But it really
+> > needs to be
+> > the start of the text section.
+> >
+> > I checked all vmlinux.lds.S in arch/, I found that most archs
+> > explicitly assign _stext to the same address as _text, with the
+> > following 3 exceptions:
+> >    arch/sh/kernel/vmlinux.lds.S
+> >    arch/mips/kernel/vmlinux.lds.S
+> >    arch/sparc/kernel/vmlinux.lds.S
+> >
+> > Note that we already partially handled arch/sparc/kernel/vmlinux.lds.S
+> > for sparc64.
+> > But we need to handle sparc32 also.
+> >
+> > Additionally, the boot/compressed/vmlinux.lds.S also the TEXT_TEXT
+> > template. However,
+> > I presume these files do not generate the .text.unlikely. or
+> > .text.hot.* sections.
+> >
+> > I sent the following patch to Klara because I don't have an
+> > environment to build and test.
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > diff --git a/arch/mips/kernel/vmlinux.lds.S b/arch/mips/kernel/vmlinux.=
+lds.S
+> > index 9ff55cb80a64..5f130af44247 100644
+> > --- a/arch/mips/kernel/vmlinux.lds.S
+> > +++ b/arch/mips/kernel/vmlinux.lds.S
+> > @@ -61,6 +61,7 @@ SECTIONS
+> >          /* read-only */
+> >          _text =3D .;      /* Text and read-only data */
+> >          .text : {
+> > +               _stext =3D .;
+> >                  TEXT_TEXT
+> >                  SCHED_TEXT
+> >                  LOCK_TEXT
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > If Klara confirms the fix, I will send the patch for review.
+> >
+> > Thanks,
+> >
+> > -Rong
+> >
+>
+> This does indeed fix the issue for me.
+>
+> Thanks,
+> Tested-by: Klara Modin <klarasmodin@gmail.com>
 
