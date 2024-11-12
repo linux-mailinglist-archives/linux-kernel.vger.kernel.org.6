@@ -1,101 +1,114 @@
-Return-Path: <linux-kernel+bounces-406162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13599C5B9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:15:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9B69C5B9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887FA1F2334E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:15:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1154F2831C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18E32003CA;
-	Tue, 12 Nov 2024 15:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9671FF7BF;
+	Tue, 12 Nov 2024 15:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yRPrsOW+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="m8CVMls3"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D451FF056;
-	Tue, 12 Nov 2024 15:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A9043AA1
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731424461; cv=none; b=JhL4zMVr/CyBAowL8IsSNo+eptLEveAPThPN4dLei/gA3RiJuuPJbR9M0+pU6LJRpAM2FWZHrlb5n0bgJIkwwbPbZRqRPQVN8xP6IxR4WkYpOLy+dYvJsN9B5gVPqeAaCHuDhuoRS7qnt2GwNlwSFgeAsV553dufziVFQ2cvGp4=
+	t=1731424474; cv=none; b=PVm28xeUN2P2csKEiru+ZvfdiyHCjUwjcDUChprlZr8GzU0rAubY8rXX4rmGC9GNAkPSVRuSaielY6uj5tB8q+hUzfAgyu1oAZcA4TLlrvMB5POECRdPINgcHAeUkOI5F+5tNw1/olTktAzkk1JRByLhhJcT3nKnyzRLv7jPWyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731424461; c=relaxed/simple;
-	bh=BOt1n5cNm6RK271T1p/QXRcLB6NfdzPBBt9542rWDio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oJV3xjCjeVtMmKjLwo/cSWq9jbyVzQpqdCXvK/5KO/+dyXZfjmfKwy5jDPFm2FAw3jCHH3/wjxJJONLdPZ2G1fWe7irfy7gxNWqXx5nKo5qoZ8cpXh82gwf2CWlExYAFlKOOcUzpyeNqUM9gq86PrBmjUrLLFDUtBt7JXpMK3JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yRPrsOW+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B31FC4CED5;
-	Tue, 12 Nov 2024 15:14:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731424460;
-	bh=BOt1n5cNm6RK271T1p/QXRcLB6NfdzPBBt9542rWDio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yRPrsOW+s8DkCgtkwh0SepWEkAvGYzR3m+gROrG44hIJo13pj3EGK1XKL4vs5XULg
-	 ReGEGIruZVP7OkDQIl1QwHbBtHbAXDIIjrjZ3/KJ4SIdAqaz3lpskSjwilTxc/OlZH
-	 MTTAhLUFv0pPsa+KyWbkQwyQpHtLRQ5aGYTONIjw=
-Date: Tue, 12 Nov 2024 16:14:17 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: linux-usb@vger.kernel.org, andreyknvl@gmail.com,
-	stern@rowland.harvard.edu, b-liu@ti.com, johan@kernel.org,
-	oneukum@suse.com, linux-kernel@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net
-Subject: Re: [PATCH] drivers/usb: refactor min(), max() with min_t(), max_t()
-Message-ID: <2024111251-spill-hatchback-72da@gregkh>
-References: <20241112150437.3508388-1-snovitoll@gmail.com>
+	s=arc-20240116; t=1731424474; c=relaxed/simple;
+	bh=b2KM3R1Q5tQG+JKB9eoj1tjOdl35CzW7T7sGig8ZyQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RJK2UGZ5LAoA4S+RAic0o+F8XFpdwGlutmDcB5hLKsK8hHaii6ZxxsmL+M5L5+48TdDcWmhzVFroZBUTLaQFgktG12exIfq5N1zemx28qfqjvPGH5fQ1Vd3N1DoXp86XUQ55yYrYn7M7KFsSASPFfoan1/XJhPxUl5zezcogCfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=m8CVMls3; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-28cdd9d8d01so2957330fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:14:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731424470; x=1732029270; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZMz623KukwCRCwVdjpn5ENIcLZ5bWxNUSBajZwamIfs=;
+        b=m8CVMls3qPXS5X0gxPKc+sUz0i93RXeB/trkUqPNNMIkZ/X7cEqqC3gnwVQCMf/9zP
+         9iTngcAMrrETBwE5+JB5uzrz/VeSXcG8ckHh6qZ8lgRYBir3xNIhBHqFnBd/cL0i+p0g
+         3kUvqoedmF7z1NuS8vxnVXycECFlwhJYJE/RcA/vU9nnViv1gpdS0n5JvpF9PK2jFvpJ
+         Cj4wTTFpov3HnXtNz5ZFJ3QJLaDpyS9X2y7HrWaoienTTgkHSl4pMbLART6xBLRi8tDO
+         q3SU61Hf5cqv0WNfutU8ZW9FhrhAEggvkLvMdLCrA3bziIQdfOzNgTWu1r8ZXqlrvsSs
+         I81w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731424470; x=1732029270;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZMz623KukwCRCwVdjpn5ENIcLZ5bWxNUSBajZwamIfs=;
+        b=ckZ1GWhZ6xgcVpd3YeGHPAmiTofIU2cL4UBbJ+r7nmWyTTkOlcG7bJk+58hjhW4e2q
+         GoCgfu9SCVbDeyH7hiWKkPOqx9eE6LWPoftRjZbikCGJTiIwbzN9hoy1Wxm07i2MGWEZ
+         I30jDZQhUQinnYDR3zd7c28bmyViTwutVPoD2RuVPmjF9dFCbatLiE/JE7W48y/WXDt3
+         Sqjd4sXqlOtVRJS48UTjfREcEE5MbDE3ZeNIGSBJN4pPa/jMjjY7FDAXT1PPBq1FFr7l
+         gpLWPDQMXBNe/zHD3P2upcpHlomrSrr+ppDcwvlogXqK/wcMuePBAY/GMYI6eKWkLuZ8
+         az3g==
+X-Forwarded-Encrypted: i=1; AJvYcCV/gUXWRcWjv6Ku8AaT9ZT0aRRj6q+tVcca/D7v6v6j4rNZQbmTQB+v4CnPjlsVBJ+AVZuWe5BSeeRL6jM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR48Bnobso5GrU8c8cgzdyHLhv4J3NdyWH+FjPJgcORaBq3s2j
+	FoxG5Bhm2pTzoYN1skgmqkqqDrPj3yvWsKuMpa8dB0K6kFtT8/+3U8ibZr7G+qvSqgHsv//Q+fl
+	NwOM=
+X-Google-Smtp-Source: AGHT+IHT/p345mEZBMk5iEPlL4UdfBp49t0367lnxgs3ykjFrEFDJjYG+ulQ12gnvLQ/q/yMlk8/Ag==
+X-Received: by 2002:a05:6870:1d1:b0:278:3de:c8de with SMTP id 586e51a60fabf-295cd08c5cdmr3167596fac.24.1731424470364;
+        Tue, 12 Nov 2024 07:14:30 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546ed7ab3sm3542727fac.42.2024.11.12.07.14.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 07:14:29 -0800 (PST)
+Message-ID: <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk>
+Date: Tue, 12 Nov 2024 08:14:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112150437.3508388-1-snovitoll@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+ linux-kernel@vger.kernel.org, willy@infradead.org
+References: <20241110152906.1747545-1-axboe@kernel.dk>
+ <20241110152906.1747545-9-axboe@kernel.dk>
+ <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
+ <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
+ <ZzIfwmGkbHwaSMIn@infradead.org>
+ <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
+ <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
+ <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
+ <ZzLkF-oW2epzSEbP@infradead.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZzLkF-oW2epzSEbP@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 12, 2024 at 08:04:37PM +0500, Sabyrzhan Tasbolatov wrote:
-> Scanned the current drivers/usb code with `max\(.*\(` and `min\(.*\(`
-> regexp queries to find casting inside of min() and max() which
-> may lead to subtle bugs or even security vulnerabilities,
-> especially if negative values are involved.
+On 11/11/24 10:13 PM, Christoph Hellwig wrote:
+> On Mon, Nov 11, 2024 at 04:42:25PM -0700, Jens Axboe wrote:
+>> Here's the slightly cleaned up version, this is the one I ran testing
+>> with.
 > 
-> Let's refactor to min_t() and max_t() specifying the data type
-> to ensure it's applicable for the both compareable arguments.
-> It should address potential type promotion issues and improves type safety.
-> 
-> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-> ---
->  drivers/usb/core/config.c                    |  2 +-
->  drivers/usb/gadget/composite.c               | 12 ++++++------
->  drivers/usb/gadget/configfs.c                |  2 +-
->  drivers/usb/gadget/function/f_fs.c           |  6 +++---
->  drivers/usb/gadget/function/f_mass_storage.c |  8 ++++----
->  drivers/usb/gadget/function/uvc_video.c      |  4 ++--
->  drivers/usb/gadget/legacy/raw_gadget.c       |  4 ++--
->  drivers/usb/gadget/udc/omap_udc.c            |  4 ++--
->  drivers/usb/gadget/usbstring.c               |  2 +-
->  drivers/usb/host/ehci-hcd.c                  |  2 +-
->  drivers/usb/host/oxu210hp-hcd.c              |  4 ++--
->  drivers/usb/host/r8a66597-hcd.c              |  2 +-
->  drivers/usb/misc/usbtest.c                   |  3 ++-
->  drivers/usb/mon/mon_bin.c                    |  2 +-
->  drivers/usb/musb/musb_core.c                 |  2 +-
->  drivers/usb/musb/musb_gadget_ep0.c           |  2 +-
->  drivers/usb/musb/musb_host.c                 |  5 ++---
->  drivers/usb/serial/io_edgeport.c             |  2 +-
->  drivers/usb/serial/sierra.c                  |  2 +-
->  drivers/usb/storage/sddr09.c                 |  4 ++--
->  drivers/usb/storage/sddr55.c                 |  8 ++++----
->  21 files changed, 41 insertions(+), 41 deletions(-)
+> Looks reasonable to me, but you probably get better reviews on the
+> fstests lists.
 
-Can you break these up to at least "one per drivers/usb/*" subdirectory
-to make it easier to review and apply?
+I'll send it out once this patchset is a bit closer to integration,
+there's the usual chicken and egg situation with it. For now, it's quite
+handy for my testing, found a few issues with this version. So thanks
+for the suggestion, sure beats writing more of your own test cases :-)
 
-thanks,
-
-greg k-h
+-- 
+Jens Axboe
 
