@@ -1,107 +1,151 @@
-Return-Path: <linux-kernel+bounces-406345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FD59C62F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:58:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F00B9C61EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:56:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DE8FB22865
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:52:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52657B612B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2470820A5C7;
-	Tue, 12 Nov 2024 16:51:39 +0000 (UTC)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D8821441C;
+	Tue, 12 Nov 2024 16:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XBOqp5F7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D872076D5;
-	Tue, 12 Nov 2024 16:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628462141C9;
+	Tue, 12 Nov 2024 16:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731430298; cv=none; b=pnxrPGWmwaawJQTEAwR62xCruKItZ7HyrdwVk/Or5sTYe7XIjcGKWw6tnk4RKlAJcuQW+cppZRLaGO8H3Om8Ruz5XAT/LZddBcLbvlwgMVXxzvdXSukb6K31LxiEtCFopKMtGw8QADjTQcZ4HHp/of2Gj6Y6oPDJ1xLtJtTcHJo=
+	t=1731430556; cv=none; b=AAYJ/7WsGZoPEpTmolPWo5PSlH70dBM0y7oU7V/U9BaXQohZona3wluWLSksioJiUJU+aGN/PJqDp1JvIh3Nuwl7M86L8/Iclppxh/FQz8IxLE+Nc9HDZS+oO1BSSq6h36j1KolM/DSiZYzi1oJuWrt3wbLw5D9w1my5ihxznl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731430298; c=relaxed/simple;
-	bh=HUuRF+VpnVCdV5kJ9WCQELFFEG9d8bVIIEs+eIl+0EM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nGed7kTo8K4z2jheA5MT32NH0+/rsDKGf16sBw4t4tqT4O30dGgT6Si3EppgBDYgQQMFa+PbDMfsoKhh8D5UfMcq1+yCMAR/0mikRjK17y0mzm8tnnFbFkGfTiOrCv0tySuRH//o0/8F1xxI4JvUVzroMHNtdz3MJOWf4TWROVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7240fa50694so4533194b3a.1;
-        Tue, 12 Nov 2024 08:51:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731430296; x=1732035096;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=llFs2o/AZRfDbTGGAt9cEjHshD2VstPRhzSHKTGEl4Y=;
-        b=X6041hvkCbzoud9NJ+YY92RiSr+Z2FEJJUc8xijOM7tq5Is2vSxCrc0fg5krZGrjrs
-         WXor6f2Kw8YbXKiy9zXR/fRMZxIjKXBQPk+PTndYih1jjAq5ewqF12pw43zQbacAKJoM
-         /65+VH3Rp0OTWGWZC/QfxBiA2ePx1XYDYjQOnRpRdOovxqQSyb0LZfPgBZQnnR4VJu96
-         +Hoe7bbcfvKWN9T3MDx4AkXdOC+ktNclL0qquVmTgw31+fw+IYEtX3cDJmvHIMDtcPEB
-         drY0W+f5YGiDsDWQYe5jGY+t6aU5E9Ks+gwHeYswAyKZ2XZeOFzpUAtKpL7WDK9hOVbp
-         HbNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfkcMJb/ttUzGMy+F9UhUgn22/5d0dna11jfbIkhaF0wQ/RqlhIu0oGaV2U+LgcgIyW86junr6eLePq8k=@vger.kernel.org, AJvYcCWTDkDyEzdBLfdTUMskpGn7OyBILVZIrU+JnluYqrtvKsKCvuWFQy4W9I1b9JMgLqJsetOqtHBv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/E8O6NosWPh/NNEpAl2YfKKwltlQ5tKaogE8dX+DJPRbF5mTP
-	brZzqRqtyn9Nk0dAv2YMxOWkxQTID6V+0X1OfVRFKCQ6L7l6CLcxkA6zpw==
-X-Google-Smtp-Source: AGHT+IGfEvt+vr5Gelf7D4xOsG1UREz/mUJN+n6wyuY+ufWwPryyN6GsE6YKmfawgOTA2GUdFXWWKw==
-X-Received: by 2002:a05:6a00:a1d:b0:71e:693c:107c with SMTP id d2e1a72fcca58-724132c15a3mr21756587b3a.11.1731430296049;
-        Tue, 12 Nov 2024 08:51:36 -0800 (PST)
-Received: from localhost.localdomain (124x33x176x97.ap124.ftth.ucom.ne.jp. [124.33.176.97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407860aa5sm11271260b3a.32.2024.11.12.08.51.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 08:51:35 -0800 (PST)
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-To: linux-can@vger.kernel.org,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: Robert Nawrath <mbro1689@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Subject: [PATCH v1 2/5] can: netlink: replace tabulation by space in assignment
-Date: Wed, 13 Nov 2024 01:50:17 +0900
-Message-ID: <20241112165118.586613-9-mailhol.vincent@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241112165118.586613-7-mailhol.vincent@wanadoo.fr>
-References: <20241112165118.586613-7-mailhol.vincent@wanadoo.fr>
+	s=arc-20240116; t=1731430556; c=relaxed/simple;
+	bh=bYBlmRZnSP1+6bbO6DyCu9HwcvNxZ82NbuYVPGaawCk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JEQdkDOO2OR+tHehYaAa8rkVJN8PpSyP2NP0257VtaACx743IlfRx+FLHe8G2kVzoxT9orhuaQopyecoN8mEMkW2mQj5/oNNROdE+8z9dfTh7RZ1VxSO1PX0A/YpxGDe0XgqTk3W+wgk5e4xb5vD9WwmmakWy2K7eZehTDFaJTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XBOqp5F7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC9FoOL003032;
+	Tue, 12 Nov 2024 16:55:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	U0jvV2u/4nB0nNLZJ5fmuVk3Sm8TxGDd+eRh6fPI5u8=; b=XBOqp5F7RHcgxXFW
+	OgGWwNYqs37Fmgx7f3Ioagt3UUVkNZwIhv9cF07HBFVtYzNu+KNaZZHqz7H/qXCi
+	Ya5Yr2emm+0+ElHXq4YI79naniIj2ve+BGYJLef81zjZbITamfkgXhKWNCLEcq2q
+	sml7Bm+op1YRvm3rzMiYtj2Y3+aIVORxdy9DOtVGiz3+nPlPFb+c03AJ0hgKTF/g
+	AuUlwkyEaE9hVVf3j81D33lRKSbpViECLzBDHsyBlaJhGkPVGnTkiHC9eARxQ5yU
+	5VbC/2XLofuafHSun4Bt61Nw5gIE7UlMDpbcBwQyi3W8/boOZnAcG2gj3okwuCZy
+	98nkCA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v47y1auv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 16:55:41 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACGteNi029119
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 16:55:40 GMT
+Received: from hu-bibekkum-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 12 Nov 2024 08:55:35 -0800
+From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+To: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>, <jgg@ziepe.ca>, <jsnitsel@redhat.com>,
+        <robh@kernel.org>, <krzysztof.kozlowski@linaro.org>,
+        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>
+CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <quic_bibekkum@quicinc.com>
+Subject: [PATCH v17 2/5] iommu/arm-smmu: refactor qcom_smmu structure to include single pointer
+Date: Tue, 12 Nov 2024 22:24:51 +0530
+Message-ID: <20241112165454.2698269-3-quic_bibekkum@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241112165454.2698269-1-quic_bibekkum@quicinc.com>
+References: <20241112165454.2698269-1-quic_bibekkum@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1188; i=mailhol.vincent@wanadoo.fr; h=from:subject; bh=HUuRF+VpnVCdV5kJ9WCQELFFEG9d8bVIIEs+eIl+0EM=; b=owGbwMvMwCV2McXO4Xp97WbG02pJDOnG7W1hM5fP5rqw0lzPsNmzMvvm9+aWuvhyxkebfRwzf 4pu3dLaUcrCIMbFICumyLKsnJNboaPQO+zQX0uYOaxMIEMYuDgFYCL39jP8s9o499TinmvPt8kU JoV5VV/7wPM57/iXdYp8Sh5Lzq3Oc2P4xcTOEi0609Yhz+VX2KO50tvSp/q1pMh7frm2vjWJTae RCQA=
-X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp; fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TO5gAFzuUJvCdEyin8lFMYdaMILVOPcu
+X-Proofpoint-GUID: TO5gAFzuUJvCdEyin8lFMYdaMILVOPcu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 spamscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411120135
 
-commit cfd98c838cbe ("can: netlink: move '=' operators back to
-previous line (checkpatch fix)") inadvertently introduced a tabulation
-between the IFLA_CAN_DATA_BITTIMING_CONST array index and the equal
-sign.
+qcom_smmu_match_data is static and constant so refactor qcom_smmu
+to store single pointer to qcom_smmu_match_data instead of
+replicating multiple child members of the same and handle the further
+dereferences in the places that want them.
 
-Remove it.
-
-Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Suggested-by: Robin Murphy <robin.murphy@arm.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
 ---
- drivers/net/can/dev/netlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c | 2 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c       | 2 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h       | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netlink.c
-index 7455a7c5a383..df8b7ba68b6e 100644
---- a/drivers/net/can/dev/netlink.c
-+++ b/drivers/net/can/dev/netlink.c
-@@ -18,7 +18,7 @@ static const struct nla_policy can_policy[IFLA_CAN_MAX + 1] = {
- 	[IFLA_CAN_CLOCK] = { .len = sizeof(struct can_clock) },
- 	[IFLA_CAN_BERR_COUNTER] = { .len = sizeof(struct can_berr_counter) },
- 	[IFLA_CAN_DATA_BITTIMING] = { .len = sizeof(struct can_bittiming) },
--	[IFLA_CAN_DATA_BITTIMING_CONST]	= { .len = sizeof(struct can_bittiming_const) },
-+	[IFLA_CAN_DATA_BITTIMING_CONST] = { .len = sizeof(struct can_bittiming_const) },
- 	[IFLA_CAN_TERMINATION] = { .type = NLA_U16 },
- 	[IFLA_CAN_TDC] = { .type = NLA_NESTED },
- 	[IFLA_CAN_CTRLMODE_EXT] = { .type = NLA_NESTED },
--- 
-2.45.2
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
+index 548783f3f8e8..d03b2239baad 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
+@@ -73,7 +73,7 @@ void qcom_smmu_tlb_sync_debug(struct arm_smmu_device *smmu)
+ 	if (__ratelimit(&rs)) {
+ 		dev_err(smmu->dev, "TLB sync timed out -- SMMU may be deadlocked\n");
+
+-		cfg = qsmmu->cfg;
++		cfg = qsmmu->data->cfg;
+ 		if (!cfg)
+ 			return;
+
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+index 6372f3e25c4b..d26f5aea248e 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+@@ -507,7 +507,7 @@ static struct arm_smmu_device *qcom_smmu_create(struct arm_smmu_device *smmu,
+ 		return ERR_PTR(-ENOMEM);
+
+ 	qsmmu->smmu.impl = impl;
+-	qsmmu->cfg = data->cfg;
++	qsmmu->data = data;
+
+ 	return &qsmmu->smmu;
+ }
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h
+index 3c134d1a6277..b55cd3e3ae48 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h
+@@ -8,7 +8,7 @@
+
+ struct qcom_smmu {
+ 	struct arm_smmu_device smmu;
+-	const struct qcom_smmu_config *cfg;
++	const struct qcom_smmu_match_data *data;
+ 	bool bypass_quirk;
+ 	u8 bypass_cbndx;
+ 	u32 stall_enabled;
+--
+2.34.1
 
 
