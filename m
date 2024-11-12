@@ -1,172 +1,163 @@
-Return-Path: <linux-kernel+bounces-406059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F4949C5D1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:25:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA8E9C5C39
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F677B654AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:37:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7C56B36D57
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9901FCC4F;
-	Tue, 12 Nov 2024 14:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="lP18VSUS"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8082003B0;
+	Tue, 12 Nov 2024 14:37:36 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4C213BAE2;
-	Tue, 12 Nov 2024 14:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D441FCC4F;
+	Tue, 12 Nov 2024 14:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422206; cv=none; b=VT8J53Qk3PLx28ph5nCfuBGTMAqd/Tt+/iaSOy7P9kmc+TqPjzV4kZP7aox5qNDCPrNcJd+9T+4bE6ApgngaMfDz3BdOiG9FjkF/d7Fdtq7YQDhbYhNqQMIF4WCV9xGBP9eUXBVM4eAB+whWC1Zh/N7zz9AgKXNtZamlANHx+xc=
+	t=1731422255; cv=none; b=Fh3v4AmRzThQzjU6z+U8l90agw7esFpSVdlnatg+4IfYgxdUYTUcaBPQvc+hvLe5SEtJizy+Jqu9tfRUo6zrXtTpC2T57vXpFzpB8t+k73bocMNcr7EaaMoC06BdyTD77QVTRfCPIml60W80PIrlzJZhxqHgUxc+pnMkPuDi/Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422206; c=relaxed/simple;
-	bh=aOO9QZMTHau3vTCUo3PfPAinL0t8EQepGvynB/EOXqg=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=I3yiD7EQnliVkrzPfVLuMBPwIRi8j9G9oDqlcF607tIelVBaSASBdphsrkOPNjTPXBdplElnjsadVToij2QmElYe/8pnyx+5/PeD+tjxV+PSzKyfhSLh+Wn0Zj/hCUewYpNHPnO3GECjQP/+kHUM7V82H06lQrdUpXfmIgYVD+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=lP18VSUS; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1731422255; c=relaxed/simple;
+	bh=pcsB3HxBUO3zjYSRuVYOVBKwnqHHUka3qTp7aYKNFtc=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=axC2oXKjaqLAcINj4lHoiJTwHYmbtt5YNWD+bWP2Yr3MleWqVCiwDmPE0r+BKxQh/he9PiKcUatrRrKVXyOUjyZzbevwmt6LNzRH26C8A448gRIojHnMklRAF8vDNx2IxY/fp/V+n0m0xU4mOaVujHrqkQ1wdx6LzbRROWR6j1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xnpps4X0lz10Qlw;
+	Tue, 12 Nov 2024 22:35:01 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id E597B180104;
+	Tue, 12 Nov 2024 22:37:29 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 12 Nov 2024 22:37:28 +0800
+Message-ID: <98187fe7-23f1-4c52-a62f-c96e720cb491@huawei.com>
+Date: Tue, 12 Nov 2024 22:37:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1731422201;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p37w8dh3AMk4B0TEeIgVCn6S2A3tTzg9OwNCj8TrimU=;
-	b=lP18VSUS81kGud5E6Mo8dEoe3wl9IDmvKcYolW5MJc+ognXnrJbr2X5ZJrLK61keBEf/Qv
-	BMvVCYQyO58cp9HOood0JjU5p+M/v07hV23stEhkpiMCrWl5+Bp8RI7tTDt65dHWT/uvhG
-	vcRg0UEBFgqY/ZeFkHQw9YiLIJu3kE9mei8zrGnLpeJ7zriziE96+9jCqble2bIvhimMD3
-	v7SGJ/2oWxlON6KBN6pO28uws0dpOGxmYEAfNYq0WSXXNri5aEQj9wFSNVwGXiOSLe+pF7
-	IGSAlw/bML6RAgQNCt1eGvz23sLb4m+S+9f/xRgGi/DNHLSwzOt2os4vweQpdQ==
-Date: Tue, 12 Nov 2024 15:36:41 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix vdd_gpu voltage constraints on
- PinePhone Pro
-In-Reply-To: <607a731c-41e9-497a-a08c-f718339610ae@arm.com>
-References: <0718feb8e95344a0b615f61e6d909f6e105e3bf9.1731264205.git.dsimic@manjaro.org>
- <607a731c-41e9-497a-a08c-f718339610ae@arm.com>
-Message-ID: <fdf58f3e9fcb4c672a4bb114fbdab60d@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+	<horms@kernel.org>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
+	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V3 net-next 5/7] net: hibmcge: Add pauseparam supported in
+ this module
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20241111145558.1965325-1-shaojijie@huawei.com>
+ <20241111145558.1965325-6-shaojijie@huawei.com>
+ <efd481a8-d020-452b-b29b-dfa373017f1f@lunn.ch>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <efd481a8-d020-452b-b29b-dfa373017f1f@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-Hello Robin,
 
-On 2024-11-12 15:19, Robin Murphy wrote:
-> On 10/11/2024 6:44 pm, Dragan Simic wrote:
->> The regulator-{min,max}-microvolt values for the vdd_gpu regulator in 
->> the
->> PinePhone Pro device dts file are too restrictive, which prevents the 
->> highest
->> GPU OPP from being used, slowing the GPU down unnecessarily.  Let's 
->> fix that
->> by making the regulator-{min,max}-microvolt values less strict, using 
->> the
->> voltage range that the Silergy SYR838 chip used for the vdd_gpu 
->> regulator is
->> actually capable of producing. [1][2]
-> 
-> Specifying the absolute limits which the regulator driver necessarily
-> already knows doesn't seem particularly useful... Moreover, the RK3399
-> datasheet specifies the operating range for GPU_VDD as 0.80-1.20V, so
-> at the very least, allowing the regulator to go outside that range
-> seems inadvisable.
+on 2024/11/12 1:58, Andrew Lunn wrote:
+> On Mon, Nov 11, 2024 at 10:55:56PM +0800, Jijie Shao wrote:
+>> The MAC can automatically send or respond to pause frames.
+>> This patch supports the function of enabling pause frames
+>> by using ethtool.
+>>
+>> Pause auto-negotiation is not supported currently.
+> What is actually missing to support auto-neg pause? You are using
+> phylib, so it will do most of the work. You just need your adjust_link
+> callback to configure the hardware to the result of the negotiation.
+> And call phy_support_asym_pause() to let phylib know what the MAC
+> supports.
+>
+> 	Andrew
 
-Indeed, which is why I already mentioned in the patch description
-that I do plan to update the constraints of all regulators to match
-the summary of the constraints of their consumers.  Though, I plan
-to do that later, as a separate directory-wide cleanup, for which
-I must find and allocate a substantial amount of time, to make sure
-there will be no mistakes.
+Thanks for your guidance,
 
-> However there's a separate datasheet for the
-> RK3399-T variant, which does specify this 875-975mV range and a
-> maximum GPU clock of 600MHz, along with the same 1.5GHz max.
-> Cortex-A72 clock as advertised for RK3399S, so it seems quite possible
-> that these GPU constraints here are in fact intentional as well.
-> Obviously users are free to overclock and overvolt if they wish - I do
-> for my actively-cooled RK3399 board :) - but it's a different matter
-> for mainline to force it upon them.
+I haven't really figured out the difference between phy_support_sym_pause()
+and phy_support_asym_paus(). However, according to your guidance
+and referring to the phylib interface and other drivers code,
+I implemented the auto-neg pause function:
 
-Well, maybe the RK3399S is the same in that regard as the RK3399-T,
-but maybe it actually isn't -- unfortunately, we don't have some
-official RK3399S datasheet that would provide us with the required
-information.  As another, somewhat unrelated example, we don't have
-some official documentation to tell us is the RK3399S supposed not
-to have working PCI Express interface, which officially isn't present
-in the RK3399-T variant.
 
-However, I fully agree that forcing any kind of an overclock is not
-what we want to do.  Thus, I'll do my best, as I already noted in this
-thread, to extract the dtb from the "reference" Android build that
-Rockchip itself provided for the RK3399S-based PinePhone Pro.  That's
-closest to the official documentation for the RK3399S variant that we
-can get our hands on.
++static void hbg_ethtool_get_pauseparam(struct net_device *net_dev,
++				       struct ethtool_pauseparam *param)
++{
++	struct hbg_priv *priv = netdev_priv(net_dev);
++
++	param->autoneg = priv->mac.pause_autoneg;
++	hbg_hw_get_pause_enable(priv, &param->tx_pause, &param->rx_pause);
++}
++
++static int hbg_ethtool_set_pauseparam(struct net_device *net_dev,
++				      struct ethtool_pauseparam *param)
++{
++	struct hbg_priv *priv = netdev_priv(net_dev);
++	struct phy_device *phydev = priv->mac.phydev;
++
++	phy_set_asym_pause(phydev, param->rx_pause, param->tx_pause);
++
++	priv->mac.pause_autoneg = param->autoneg;
++	if (!param->autoneg)
++		hbg_hw_set_pause_enable(priv, param->tx_pause, param->rx_pause);
++
++	return 0;
++}
 
->> This also eliminates the following error messages from the kernel log:
->> 
->>    core: _opp_supported_by_regulators: OPP minuV: 1100000 maxuV: 
->> 1150000, not supported by regulator
->>    panfrost ff9a0000.gpu: _opp_add: OPP not supported by regulators 
->> (800000000)
->> 
->> These changes to the regulator-{min,max}-microvolt values make the 
->> PinePhone
->> Pro device dts consistent with the dts files for other Rockchip 
->> RK3399-based
->> boards and devices.  It's possible to be more strict here, by 
->> specifying the
->> regulator-{min,max}-microvolt values that don't go outside of what the 
->> GPU
->> actually may use, as the consumer of the vdd_gpu regulator, but those 
->> changes
->> are left for a later directory-wide regulator cleanup.
->> 
->> [1] 
->> https://files.pine64.org/doc/PinePhonePro/PinephonePro-Schematic-V1.0-20211127.pdf
->> [2] 
->> https://www.t-firefly.com/download/Firefly-RK3399/docs/Chip%20Specifications/DC-DC_SYR837_838.pdf
->> 
->> Fixes: 78a21c7d5952 ("arm64: dts: rockchip: Add initial support for 
->> Pine64 PinePhone Pro")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->> ---
->>   arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts 
->> b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
->> index 1a44582a49fb..956d64f5b271 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
->> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
->> @@ -410,8 +410,8 @@ vdd_gpu: regulator@41 {
->>   		pinctrl-names = "default";
->>   		pinctrl-0 = <&vsel2_pin>;
->>   		regulator-name = "vdd_gpu";
->> -		regulator-min-microvolt = <875000>;
->> -		regulator-max-microvolt = <975000>;
->> +		regulator-min-microvolt = <712500>;
->> +		regulator-max-microvolt = <1500000>;
->>   		regulator-ramp-delay = <1000>;
->>   		regulator-always-on;
->>   		regulator-boot-on;
+......
+
++static void hbg_flowctrl_cfg(struct hbg_priv *priv)
++{
++	struct phy_device *phydev = priv->mac.phydev;
++	bool rx_pause;
++	bool tx_pause;
++
++	if (!priv->mac.pause_autoneg)
++		return;
++
++	phy_get_pause(phydev, &tx_pause, &rx_pause);
++	hbg_hw_set_pause_enable(priv, tx_pause, rx_pause);
++}
++
+  static void hbg_phy_adjust_link(struct net_device *netdev)
+  {
+  	struct hbg_priv *priv = netdev_priv(netdev);
+@@ -140,6 +153,7 @@ static void hbg_phy_adjust_link(struct net_device *netdev)
+  			priv->mac.duplex = phydev->duplex;
+  			priv->mac.autoneg = phydev->autoneg;
+  			hbg_hw_adjust_link(priv, speed, phydev->duplex);
++			hbg_flowctrl_cfg(priv);
+  		}
+  
+  		priv->mac.link_status = phydev->link;
+@@ -168,6 +182,7 @@ static int hbg_phy_connect(struct hbg_priv *priv)
+  		return ret;
+  
+  	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_1000baseT_Half_BIT);
++	phy_support_asym_pause(phydev);
+  	phy_attached_info(phydev);
+  
+  	return 0;
+
+......
+
+Can the auto-neg pause function be fully supported?
+If the code is ok, I'll add it in the next version.
+
+Thanks,
+Jijie Shao
+
+
 
