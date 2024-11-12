@@ -1,55 +1,94 @@
-Return-Path: <linux-kernel+bounces-405733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75A49C565E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:25:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29369C5663
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:26:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B712282C50
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:25:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31A3B1F21AC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1019E2123ED;
-	Tue, 12 Nov 2024 11:08:09 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695562141B9;
+	Tue, 12 Nov 2024 11:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tfh5Jh1L";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+BujC0L1";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tfh5Jh1L";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+BujC0L1"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1572123DB;
-	Tue, 12 Nov 2024 11:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE742141A2;
+	Tue, 12 Nov 2024 11:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731409688; cv=none; b=GwZPi2VJvzx/Ckwg4LAHt5ij9fM5arq2kTSeKElZnBOilHtFMY57+sJCZ/mQHf9o8V0XpiljI8fum1MBQ5ejv8iVyNuKiExhC3gpqW0ws9O3ERGF7Yh7iD2yvnX4MBqSeWhBxGUNACo1gh1ls+Z1Crn8FZb8jzSa7sgJ+X5L5gQ=
+	t=1731409776; cv=none; b=V06+NJZTBdVdeJJaL3Q0/LQ2dILIEBmfKLmmlmKc3Twt1Vn0Gjj7hIrr3GppfdYpCHCN6CsTNpiCdptOZANni3NhkRdGQwFMf8yJR1605ppWpSp9YHILU4TUA/6ji4EwAw6Yh5TSlnnXL+aCAyFCBjqH3mQoGZNUg+TMXct2xIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731409688; c=relaxed/simple;
-	bh=2M20ipULjGXwpO41eLIE/8fjstdMBqeuXYmngo/mBpU=;
+	s=arc-20240116; t=1731409776; c=relaxed/simple;
+	bh=uvU86PZmsTw7fLmxJyD27WBfsIY4qydtW6qXekwUqJQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uLMoOMsqTx7B+Aa2G5k84TG1qefL4LqRFTBe/gsirv5orvGdUE9ibKY2e/WeLgtZ26ZBTk8XzMdx8BeQdU7nYX46o7yQUBY7aJ+LjT01hqpQkqWwR+Ou9zFo50EJpJsap2lVfg/nQGDnDd4SPhov3ayimTeNueSfl/r+767cL5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XnkD4409fz9sST;
-	Tue, 12 Nov 2024 12:08:04 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id S77qXnTSMVfQ; Tue, 12 Nov 2024 12:08:04 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XnkD431Zcz9sS8;
-	Tue, 12 Nov 2024 12:08:04 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 56E9D8B764;
-	Tue, 12 Nov 2024 12:08:04 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id reLFDPbyYRx0; Tue, 12 Nov 2024 12:08:04 +0100 (CET)
-Received: from [192.168.233.62] (unknown [192.168.233.62])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CBE5A8B763;
-	Tue, 12 Nov 2024 12:08:03 +0100 (CET)
-Message-ID: <a5622f46-5eb9-4c62-8a01-6f4bb0e3b701@csgroup.eu>
-Date: Tue, 12 Nov 2024 12:08:03 +0100
+	 In-Reply-To:Content-Type; b=VOwHgy9ZVSkxW/T4xIMC8st6nfRBSRATaYNo06FIy4mxvzML4XGbg73UAmaMb9hrpcXmejhEvscO6RBEYglwRqJ8Blk9Bu35NEnuY6y7NmeA3xIgCEoXmw2QzYFNmEkdUH6VdpEXS5y9rZa+NPDUJtKuBQAnGAc6WMJkxcnpgZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tfh5Jh1L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+BujC0L1; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tfh5Jh1L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+BujC0L1; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0380C215D5;
+	Tue, 12 Nov 2024 11:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731409767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=z7Z2UQlbAHlFmfwFU/o6qE0CBbboWdDKwMbTIfHRy04=;
+	b=Tfh5Jh1LsY55iCTuS8r3sNq89ZmdVjMM3II27wyqK8j1Jw/lvsSH+nZZmNlNT3l2Afwcw5
+	WSmBMjM5n+OHSeONm/aXqGq8l4YwNlov1Okc+3ZsTFPEtFOEeXOHVRxH3JbrDZvBKNCFm6
+	vKyYnVLuIqWKFEYsymDMuYHE2bU9HQ8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731409767;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=z7Z2UQlbAHlFmfwFU/o6qE0CBbboWdDKwMbTIfHRy04=;
+	b=+BujC0L11HpxMYY8xeM5+In+jZIrRfAlIK5RMdnNY5p4M/o8MhSPk+ojXq1HPW9Y+TN9pP
+	aX0qtSQDomnrfJBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731409767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=z7Z2UQlbAHlFmfwFU/o6qE0CBbboWdDKwMbTIfHRy04=;
+	b=Tfh5Jh1LsY55iCTuS8r3sNq89ZmdVjMM3II27wyqK8j1Jw/lvsSH+nZZmNlNT3l2Afwcw5
+	WSmBMjM5n+OHSeONm/aXqGq8l4YwNlov1Okc+3ZsTFPEtFOEeXOHVRxH3JbrDZvBKNCFm6
+	vKyYnVLuIqWKFEYsymDMuYHE2bU9HQ8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731409767;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=z7Z2UQlbAHlFmfwFU/o6qE0CBbboWdDKwMbTIfHRy04=;
+	b=+BujC0L11HpxMYY8xeM5+In+jZIrRfAlIK5RMdnNY5p4M/o8MhSPk+ojXq1HPW9Y+TN9pP
+	aX0qtSQDomnrfJBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 72E6A13301;
+	Tue, 12 Nov 2024 11:09:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id a/OeGmY3M2eDPgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 12 Nov 2024 11:09:26 +0000
+Message-ID: <5f95c0d7-01a4-485d-a9d7-1a39acf9c680@suse.cz>
+Date: Tue, 12 Nov 2024 12:09:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,92 +96,188 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/3] module: Don't fail module loading when setting
- ro_after_init section RO failed
-To: Daniel Gomez <da.gomez@samsung.com>, Luis Chamberlain
- <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>,
- linux-modules@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-References: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
- <CGME20241109103554eucas1p1548e0da57cccb9546a88402f1f5c94be@eucas1p1.samsung.com>
- <164e5f22f8ab59d1d516e3c992efdd9f83ab4819.1731148254.git.christophe.leroy@csgroup.eu>
- <D5HZV4A6SC9A.25U3Q0WUVDJHZ@samsung.com>
- <b74f0845-4916-47eb-945b-eb91ae05fc91@csgroup.eu>
- <D5K3PNXEIKYK.11GZ8BMY02OA4@samsung.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <D5K3PNXEIKYK.11GZ8BMY02OA4@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Subject: Re: [PATCH v2 3/4] perf lock contention: Resolve slab object name
+ using BPF
+Content-Language: en-US
+To: Namhyung Kim <namhyung@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
+ Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>,
+ bpf@vger.kernel.org, Stephane Eranian <eranian@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Kees Cook <kees@kernel.org>
+References: <20241108061500.2698340-1-namhyung@kernel.org>
+ <20241108061500.2698340-4-namhyung@kernel.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20241108061500.2698340-4-namhyung@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,intel.com,infradead.org,vger.kernel.org,google.com,linux.dev,gmail.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-DQoNCkxlIDEyLzExLzIwMjQgw6AgMTA6NDMsIERhbmllbCBHb21leiBhIMOpY3JpdMKgOg0K
-PiBPbiBNb24gTm92IDExLCAyMDI0IGF0IDc6NTMgUE0gQ0VULCBDaHJpc3RvcGhlIExlcm95
-IHdyb3RlOg0KPj4NCj4+DQo+PiBMZSAwOS8xMS8yMDI0IMOgIDIzOjE3LCBEYW5pZWwgR29t
-ZXogYSDDqWNyaXTCoDoNCj4+PiBPbiBTYXQgTm92IDksIDIwMjQgYXQgMTE6MzUgQU0gQ0VU
-LCBDaHJpc3RvcGhlIExlcm95IHdyb3RlOg0KPj4+PiBPbmNlIG1vZHVsZSBpbml0IGhhcyBz
-dWNjZWRlZCBpdCBpcyB0b28gbGF0ZSB0byBjYW5jZWwgbG9hZGluZy4NCj4+Pj4gSWYgc2V0
-dGluZyByb19hZnRlcl9pbml0IGRhdGEgc2VjdGlvbiB0byByZWFkLW9ubHkgZmFpbHMsIGFs
-bCB3ZQ0KPj4+PiBjYW4gZG8gaXMgdG8gaW5mb3JtIHRoZSB1c2VyIHRocm91Z2ggYSB3YXJu
-aW5nLg0KPj4+Pg0KPj4+PiBSZXBvcnRlZC1ieTogVGhvbWFzIEdsZWl4bmVyIDx0Z2x4QGxp
-bnV0cm9uaXguZGU+DQo+Pj4+IENsb3NlczogaHR0cHM6Ly9ldXIwMS5zYWZlbGlua3MucHJv
-dGVjdGlvbi5vdXRsb29rLmNvbS8/dXJsPWh0dHBzJTNBJTJGJTJGcHJvdGVjdDIuZmlyZWV5
-ZS5jb20lMkZ2MSUyRnVybCUzRmslM0RkM2RlYjI4NC1iMmEzNWFjMy1kM2RmMzljYi03NGZl
-NDg1ZmZmMzAtMjg4Mzc1ZDdkOTFlNGFkOSUyNnElM0QxJTI2ZSUzRDcwMTA2NmNhLTYzNGQt
-NDUyNS1hNzdkLTFhNDQ0NTFmODk3YSUyNnUlM0RodHRwcyUyNTNBJTI1MkYlMjUyRmV1cjAx
-LnNhZmVsaW5rcy5wcm90ZWN0aW9uLm91dGxvb2suY29tJTI1MkYlMjUzRnVybCUyNTNEaHR0
-cHMlMjUyNTNBJTI1MjUyRiUyNTI1MkZsb3JlLmtlcm5lbC5vcmclMjUyNTJGYWxsJTI1MjUy
-RjIwMjMwOTE1MDgyMTI2LjQxODc5MTMtMS1ydWFuamluamllJTI1MjU0MGh1YXdlaS5jb20l
-MjUyNTJGJTI1MjZkYXRhJTI1M0QwNSUyNTI1N0MwMiUyNTI1N0NjaHJpc3RvcGhlLmxlcm95
-JTI1MjU0MGNzZ3JvdXAuZXUlMjUyNTdDMjZiNWNhNzM2M2U1NDIxMDQzOWIwOGRkMDEwYzQ4
-NjUlMjUyNTdDOGI4N2FmN2Q4NjQ3NGRjNzhkZjQ1ZjY5YTIwMTFiYjUlMjUyNTdDMCUyNTI1
-N0MwJTI1MjU3QzYzODY2Nzg3NDQ1NzIwMDM3MyUyNTI1N0NVbmtub3duJTI1MjU3Q1RXRnBi
-R1pzYjNkOGV5SkZiWEIwZVUxaGNHa2lPblJ5ZFdVc0lsWWlPaUl3TGpBdU1EQXdNQ0lzSWxB
-aU9pSlhhVzR6TWlJc0lrRk9Jam9pVFdGcGJDSXNJbGRVSWpveWZRJTI1MjUzRCUyNTI1M0Ql
-MjUyNTdDMCUyNTI1N0MlMjUyNTdDJTI1MjU3QyUyNTI2c2RhdGElMjUzRFplSiUyNTI1MkYz
-JTI1MjUyQjJOeCUyNTI1MkZCZiUyNTI1MkZXTEZFa2h4S2xEaFprOExOa3owZnMlMjUyNTJG
-ZzJ4TWNPalklMjUyNTNEJTI1MjZyZXNlcnZlZCUyNTNEMCZkYXRhPTA1JTdDMDIlN0NjaHJp
-c3RvcGhlLmxlcm95JTQwY3Nncm91cC5ldSU3Q2M4NmFkYmQ3YmFkMjRiMTA0MmJkMDhkZDAy
-ZmU3YzhlJTdDOGI4N2FmN2Q4NjQ3NGRjNzhkZjQ1ZjY5YTIwMTFiYjUlN0MwJTdDMCU3QzYz
-ODY3MDAxNDI1OTgyMjYyMiU3Q1Vua25vd24lN0NUV0ZwYkdac2IzZDhleUpGYlhCMGVVMWhj
-R2tpT25SeWRXVXNJbFlpT2lJd0xqQXVNREF3TUNJc0lsQWlPaUpYYVc0ek1pSXNJa0ZPSWpv
-aVRXRnBiQ0lzSWxkVUlqb3lmUSUzRCUzRCU3QzAlN0MlN0MlN0Mmc2RhdGE9R3B4cng0MDFm
-UmRDR2FoR2NJNkd0SnAlMkJxTFRac25OcXhzRG96NFRBZlU4JTNEJnJlc2VydmVkPTANCj4+
-Pj4gRml4ZXM6IGQxOTA5YzAyMjE3MyAoIm1vZHVsZTogRG9uJ3QgaWdub3JlIGVycm9ycyBm
-cm9tIHNldF9tZW1vcnlfWFgoKSIpDQo+Pj4+IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waGUg
-TGVyb3kgPGNocmlzdG9waGUubGVyb3lAY3Nncm91cC5ldT4NCj4+Pj4gLS0tDQo+Pj4+ICAg
-IGtlcm5lbC9tb2R1bGUvbWFpbi5jIHwgNiArKystLS0NCj4+Pj4gICAgMSBmaWxlIGNoYW5n
-ZWQsIDMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4+Pj4NCj4+Pj4gZGlmZiAt
-LWdpdCBhL2tlcm5lbC9tb2R1bGUvbWFpbi5jIGIva2VybmVsL21vZHVsZS9tYWluLmMNCj4+
-Pj4gaW5kZXggMmRlNGFkN2FmMzM1Li4xYmY0YjBkYjI5MWIgMTAwNjQ0DQo+Pj4+IC0tLSBh
-L2tlcm5lbC9tb2R1bGUvbWFpbi5jDQo+Pj4+ICsrKyBiL2tlcm5lbC9tb2R1bGUvbWFpbi5j
-DQo+Pj4+IEBAIC0yNTgzLDcgKzI1ODMsOSBAQCBzdGF0aWMgbm9pbmxpbmUgaW50IGRvX2lu
-aXRfbW9kdWxlKHN0cnVjdCBtb2R1bGUgKm1vZCkNCj4+Pj4gICAgI2VuZGlmDQo+Pj4+ICAg
-IAlyZXQgPSBtb2R1bGVfZW5hYmxlX3JvZGF0YV9yb19hZnRlcl9pbml0KG1vZCk7DQo+Pj4+
-ICAgIAlpZiAocmV0KQ0KPj4+PiAtCQlnb3RvIGZhaWxfbXV0ZXhfdW5sb2NrOw0KPj4+PiAr
-CQlwcl93YXJuKCIlczogJXMoKSByZXR1cm5lZCAlZCwgcm9fYWZ0ZXJfaW5pdCBkYXRhIG1p
-Z2h0IHN0aWxsIGJlIHdyaXRhYmxlXG4iLA0KPj4+PiArCQkJbW9kLT5uYW1lLCBfX2Z1bmNf
-XywgcmV0KTsNCj4+Pj4gKw0KPj4+PiAgICAJbW9kX3RyZWVfcmVtb3ZlX2luaXQobW9kKTsN
-Cj4+Pj4gICAgCW1vZHVsZV9hcmNoX2ZyZWVpbmdfaW5pdChtb2QpOw0KPj4+PiAgICAJZm9y
-X2NsYXNzX21vZF9tZW1fdHlwZSh0eXBlLCBpbml0KSB7DQo+Pj4+IEBAIC0yNjIyLDggKzI2
-MjQsNiBAQCBzdGF0aWMgbm9pbmxpbmUgaW50IGRvX2luaXRfbW9kdWxlKHN0cnVjdCBtb2R1
-bGUgKm1vZCkNCj4+Pj4gICAgDQo+Pj4+ICAgIAlyZXR1cm4gMDsNCj4+Pg0KPj4+IEkgdGhp
-bmsgaXQgd291bGQgbWFrZSBzZW5zZSB0byBwcm9wYWdhdGUgdGhlIGVycm9yLiBCdXQgdGhh
-dCB3b3VsZA0KPj4+IHJlcXVpcmUgY2hhbmdpbmcgbW9kcHJvYmUuYy4gV2hhdCBraW5kIG9m
-IGVycm9yIGNhbiB3ZSBleHBlY3Qgd2hlbiB0aGlzDQo+Pj4gaGFwcGVucz8NCj4+DQo+PiBB
-RkFJSywgb24gcG93ZXJwYyBpdCBmYWlscyB3aXRoIEVJTlZBTCB3aGVuDQo+PiAtIFRoZSBh
-cmVhIGlzIGEgdm1hbGxvYyBvciBtb2R1bGUgYXJlYSBhbmQgaXMgYSBodWdlcGFnZSBhcmVh
-DQo+PiAtIFRoZSBhcmVhIGlzIG5vdCB2bWFsbG9jIG9yIGlvIHJlZ2lzdGVyIGFuZCBNTVUg
-aXMgbm90IHBvd2VycGMgcmFkaXggTU1VDQo+Pg0KPj4gT3RoZXJ3aXNlIGl0IHByb3BhZ2F0
-ZXMgdGhlIGVycm9yIGZyb20gYXBwbHlfdG9fZXhpc3RpbmdfcGFnZV9yYW5nZSgpLg0KPj4g
-SUlVQyBpdCB3aWxsIHJldHVybiBFSU5WQUwgd2hlbiBpdCBoaXRzIGEgbGVhZiBQVEUgaW4g
-dXBwZXIgZGlyZWN0b3JpZXMuDQo+IA0KPiBMb29raW5nIGF0IHRoYXQgcGF0aCBJIHNlZSB3
-ZSBjYW4gYWxzbyBmYWlsIGF0IF9fYXBwbHlfdG9fcGFnZV9yYW5nZSgpDQo+IC0+IGFwcGx5
-X3RvX3A0ZF9yYW5nZSgpIGFuZCByZXR1cm4gd2l0aCAtRU5PTUVNLg0KDQpUaGUgLUVOT01F
-TSBpcyB3aGVuICdjcmVhdGUnIGlzIHRydWUsIHVzdWFsbHkgd2hlbiB0aGVyZSBpcyBub3Qg
-ZW5vdWdoIA0KbWVtb3J5IGF2YWlsYWJsZSB0byBjcmVhdGUgYSBwYWdlIHRhYmxlIC4uLiBp
-biB0aGF0IGNhc2UgSSBndWVzcyB5b3UgDQpoYXZlIG11Y2ggbW9yZSBwcm9ibGVtcyB0byBo
-YXBwZW4gLi4uDQoNCnNldF9tZW1vcnlfcm8oKSBvbiBwb3dlcnBjIGNhbGxzIGFwcGx5X3Rv
-X2V4aXN0aW5nX3BhZ2VfcmFuZ2UoKSB3aGljaCANCmltcGxpZXMgJ2NyZWF0ZScgaXMgZmFs
-c2UuDQoNCkNocmlzdG9waGUNCg==
+On 11/8/24 07:14, Namhyung Kim wrote:
+> The bpf_get_kmem_cache() kfunc can return an address of the slab cache
+> (kmem_cache).  As it has the name of the slab cache from the iterator,
+> we can use it to symbolize some dynamic kernel locks in a slab.
+> 
+> Before:
+>   root@virtme-ng:/home/namhyung/project/linux# tools/perf/perf lock con -abl sleep 1
+>    contended   total wait     max wait     avg wait            address   symbol
+> 
+>            2      3.34 us      2.87 us      1.67 us   ffff9d7800ad9600    (mutex)
+>            2      2.16 us      1.93 us      1.08 us   ffff9d7804b992d8    (mutex)
+>            4      1.37 us       517 ns       343 ns   ffff9d78036e6e00    (mutex)
+>            1      1.27 us      1.27 us      1.27 us   ffff9d7804b99378    (mutex)
+>            2       845 ns       599 ns       422 ns   ffffffff9e1c3620   delayed_uprobe_lock (mutex)
+>            1       845 ns       845 ns       845 ns   ffffffff9da0b280   jiffies_lock (spinlock)
+>            2       377 ns       259 ns       188 ns   ffffffff9e1cf840   pcpu_alloc_mutex (mutex)
+>            1       305 ns       305 ns       305 ns   ffffffff9e1b4cf8   tracepoint_srcu_srcu_usage (mutex)
+>            1       295 ns       295 ns       295 ns   ffffffff9e1c0940   pack_mutex (mutex)
+>            1       232 ns       232 ns       232 ns   ffff9d7804b7d8d8    (mutex)
+>            1       180 ns       180 ns       180 ns   ffffffff9e1b4c28   tracepoint_srcu_srcu_usage (mutex)
+>            1       165 ns       165 ns       165 ns   ffffffff9da8b3a0   text_mutex (mutex)
+> 
+> After:
+>   root@virtme-ng:/home/namhyung/project/linux# tools/perf/perf lock con -abl sleep 1
+>    contended   total wait     max wait     avg wait            address   symbol
+> 
+>            2      1.95 us      1.77 us       975 ns   ffff9d5e852d3498   &task_struct (mutex)
+>            1      1.18 us      1.18 us      1.18 us   ffff9d5e852d3538   &task_struct (mutex)
+>            4      1.12 us       354 ns       279 ns   ffff9d5e841ca800   &kmalloc-cg-512 (mutex)
+>            2       859 ns       617 ns       429 ns   ffffffffa41c3620   delayed_uprobe_lock (mutex)
+>            3       691 ns       388 ns       230 ns   ffffffffa41c0940   pack_mutex (mutex)
+>            3       421 ns       164 ns       140 ns   ffffffffa3a8b3a0   text_mutex (mutex)
+>            1       409 ns       409 ns       409 ns   ffffffffa41b4cf8   tracepoint_srcu_srcu_usage (mutex)
+>            2       362 ns       239 ns       181 ns   ffffffffa41cf840   pcpu_alloc_mutex (mutex)
+>            1       220 ns       220 ns       220 ns   ffff9d5e82b534d8   &signal_cache (mutex)
+>            1       215 ns       215 ns       215 ns   ffffffffa41b4c28   tracepoint_srcu_srcu_usage (mutex)
+> 
+> Note that the name starts with '&' sign for slab objects to inform they
+> are dynamic locks.  It won't give the accurate lock or type names but
+> it's still useful.  We may add type info to the slab cache later to get
+> the exact name of the lock in the type later.
+> 
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+
+<snip>
+
+> diff --git a/tools/perf/util/bpf_skel/lock_contention.bpf.c b/tools/perf/util/bpf_skel/lock_contention.bpf.c
+> index fd24ccb00faec0ba..b5bc37955560a58e 100644
+> --- a/tools/perf/util/bpf_skel/lock_contention.bpf.c
+> +++ b/tools/perf/util/bpf_skel/lock_contention.bpf.c
+> @@ -123,6 +123,8 @@ struct mm_struct___new {
+>  	struct rw_semaphore mmap_lock;
+>  } __attribute__((preserve_access_index));
+>  
+> +extern struct kmem_cache *bpf_get_kmem_cache(u64 addr) __ksym __weak;
+> +
+>  /* control flags */
+>  const volatile int has_cpu;
+>  const volatile int has_task;
+> @@ -496,8 +498,23 @@ int contention_end(u64 *ctx)
+>  		};
+>  		int err;
+>  
+> -		if (aggr_mode == LOCK_AGGR_ADDR)
+> -			first.flags |= check_lock_type(pelem->lock, pelem->flags);
+> +		if (aggr_mode == LOCK_AGGR_ADDR) {
+> +			first.flags |= check_lock_type(pelem->lock,
+> +						       pelem->flags & LCB_F_TYPE_MASK);
+> +
+> +			/* Check if it's from a slab object */
+> +			if (bpf_get_kmem_cache) {
+> +				struct kmem_cache *s;
+> +				struct slab_cache_data *d;
+> +
+> +				s = bpf_get_kmem_cache(pelem->lock);
+> +				if (s != NULL) {
+> +					d = bpf_map_lookup_elem(&slab_caches, &s);
+> +					if (d != NULL)
+> +						first.flags |= d->id;
+> +				}
+
+Is this being executed as part of obtaining a perf event record, or as part
+of a postprocessing pass? I'm not familiar enough with the code to be certain.
+
+- if it's part of perf event record, can you just store 's' and defer
+resolving the cache by bpf_map_lookup_elem() to postprocessing?
+- if it's postprocessing, it would be too late for bpf_get_kmem_cache() as
+the object might be gone already?
+
+The second alternative would be worse as it could miss the cache or
+misattribute (in case page is reallocated by another cache), the first is
+just less efficient than possible.
+
+> +			}
+> +		}
+>  
+>  		err = bpf_map_update_elem(&lock_stat, &key, &first, BPF_NOEXIST);
+>  		if (err < 0) {
+
 
