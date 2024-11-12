@@ -1,144 +1,135 @@
-Return-Path: <linux-kernel+bounces-405977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C839C5985
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:50:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C952A9C5988
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:50:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A11DC1F215D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:50:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F448281571
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD351FC7D2;
-	Tue, 12 Nov 2024 13:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D071FCC41;
+	Tue, 12 Nov 2024 13:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUrVSkhl"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QczC1MZp"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDAB1F7084;
-	Tue, 12 Nov 2024 13:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B1E1FBCB4;
+	Tue, 12 Nov 2024 13:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731419399; cv=none; b=qCAYwaf41qq6YIXuwewE1gCbYDEexkc4rxX2WPyadNQJdSdE5AWfCBveRzyrQTGCjWskINePS/aSEjN6CErUFHoM0QtCWiAXpw9aiobBUlBU7qHKbBeiWQaWWcKvvh9uJ/ntpzreTNJV9zgWRi9d+hC7h8MPAsKCRyrQ1G3nqsU=
+	t=1731419405; cv=none; b=nFvYZK0tj9rjGFjaLmX2hAKZm6tXDktMQyMVAaqWoUbaNYA/STQ/TvrbCEmMkf4RjtOhJPs/rJ/hH9g0jqM9sKg+/s1RIyzNs0bM6tTyXcxO1J1QyPsl9yIYgYX7ZwZIrNyv+Ta13DYq6y7SACgNwtVUr5lnjDOO5DIRxEkmiUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731419399; c=relaxed/simple;
-	bh=xxqZjKyyIL0XXUeabUZZHhuFFj2N9TvWPGK5fiBuKK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kng3BKNn/Ln+MWq69ypaaRCxVU8npQw3sujcwZZZIAieJS0g+DkF7YNJJ6M9oEz2Urd2yK25baYTKjoHsKPTyGNkSkhJFsqE6lKGMzUGCO6PyrpVtiuohm83EAzAQc41MlJdKyyrkfGJ1NoJw0GI53AkniQ0VX7L9YhSGQcWM6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUrVSkhl; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9ec86a67feso981811566b.1;
-        Tue, 12 Nov 2024 05:49:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731419396; x=1732024196; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l+iykLBkBRw5dPDO2BZR6hZTQ61YSR4pkCwvNoRVC54=;
-        b=QUrVSkhlf+MeMRYrWDCeGdR/OlXuM23a7n9VMeEjTNQIGvF3s9/9uO1n5GshoHCN7B
-         kTrFxAtKGUhiXehs8TKkrE/jpCAntKiY8fUeCaJBZnH0Ok5uhVHM54StQUUYLMjuJvSz
-         2TLLBZi7yUHyNcWaMeGc0GtwH88koVKjXo6cN3Hieb+19OZzv4k/AWDza5EvYkKZTmQS
-         TjJeztSIUEPa3x4lJ2TGd97wWZemMIffCENvsaLG3LhUAWg8ehd/GuUSZ98Hgj4j9jcZ
-         EDoE1rqPeLQIjdw/xbP41zJ784jx0/zytuqcS+vCtoDkNtwUZOykNOF5T0YxIQsQt/MO
-         Xb3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731419396; x=1732024196;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l+iykLBkBRw5dPDO2BZR6hZTQ61YSR4pkCwvNoRVC54=;
-        b=uRu8/93lUV5N59jolqRwalS1te+HVYxc9y5cRam9nd4aK2bZGvfz9qvv0O5jnp+bHM
-         gWszrOWpAKv09uEiHeP4s9cuxMkWsVEA32xlcfqWK7W7tolghtD/7SRjH2NA4UCVE8tx
-         4ntm7AxBQGeOlfKEaHy9bNAAa58UGVADZ4SrUM4TAGxiQcxrLIKqhURLDbGfChJSOJE2
-         UNihHfOEru5sjSKE4yYMj1X3Lc/cBofFzsITqNK2u87T8fPP3PqOtB/BS+UNT2zW8WBF
-         FeIHHgKv9phVSZoz8Wrbm5DE5BlqUQ/bapNiqdsMJK8PF8s03rS87bw6v6GKt4HxRJ1t
-         IShw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBijBcYgZwIueoUETfTJDpj5qteWSeZtxE1foIpjuALVVSxqV3AerqfU4Mt+cxzvtPIykSiiaNBKHGyA==@vger.kernel.org, AJvYcCXkblE5rSDqS1zY4LnOzbxtjnmOPqrTioo/MdikOu4e+cFrJYAEFk7/qi5TOsE9mrLd27C/+PWzyML1UhCwbHo=@vger.kernel.org, AJvYcCXsVJj6IXGDC46dNgDpcN8QffxeWMUiNdDh4nyRQYMaxVUdfU75LpoRfRWY/r2jqNjd6KhsqQ0DHWS91C6D@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHDTliUojJL9hN9FfM+n+OMFwtilzM2qIaAhje6R+4+n1HaGih
-	O/NU1edHeuesieQe8MtdD3uApXJRhsOrsKbsoCZm0g35e22MgEhXpD27+w==
-X-Google-Smtp-Source: AGHT+IEQfwW72fiopWEaiGYHQOMt1gcRAAKz84sp3Cng0TvQds9rT+IUnil1tQ90Bb7C2glXhnM3SA==
-X-Received: by 2002:a17:907:7e8e:b0:a9e:b2da:b4a3 with SMTP id a640c23a62f3a-a9ef00190b1mr1683013266b.42.1731419396312;
-        Tue, 12 Nov 2024 05:49:56 -0800 (PST)
-Received: from [192.168.178.40] ([146.52.232.33])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc4933sm718334266b.99.2024.11.12.05.49.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 05:49:55 -0800 (PST)
-Message-ID: <e01952e3-8098-4490-a813-ed0d9457eb3e@gmail.com>
-Date: Tue, 12 Nov 2024 14:49:55 +0100
+	s=arc-20240116; t=1731419405; c=relaxed/simple;
+	bh=wNbnPVDNTI08jMStKp3ZCBDwbQM7GErnoyauBVGfL1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=paAz/RpPmjwNWCuCQEICcCtiKQcHIm9BA3kUmYoovtYJuuAV2FuJIBJigzsG3dtXl3q/aJEfvwc6MrDIBpW53rA8WcR8PhC2Wze7/AMJ9XK6zrOjcXYmXHrnudR85IPp6eXCKIiWayiAbtsOCLH9cB7w/0q8wKvE0nffAj+mGT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QczC1MZp; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=M9UFpBYRnthoX0zJOVLLNv0Z7hyxw5uB1de5Q9Xf9Sw=; b=QczC1MZpT2+ZT0zBr9SbUh8n7E
+	wI5lnpCWNMsVisRKuYnYcsqEUhwu0u6PQg9/J0DwnoHLdcKOWo5bn08DpOQnufKjCwcRLQwW5aAt3
+	2QH4+RLQWvlX/7PnrrEk0Q237bpds+sAXmAWXolUjtIjes5aJCwWc3WkUu4U1LKu8q4M9dwPLjTgW
+	vorjhs7s7LT3S5ystQXCdn5sd44PKg+/n5ZOCBQG4WANUf36zY9WuOmiflTAOWSJe7m9aWuB+3NhH
+	EisJU46pUZKEsWwfsPQ5dMWUx4ryX+ul4uDcJ//wYDHvDaCKVyNFM8C0wJX3dAUrp7vETV3Z3lqX1
+	dAPMC1WA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tArHM-0000000D4oF-2Cpy;
+	Tue, 12 Nov 2024 13:50:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BA7D6300478; Tue, 12 Nov 2024 14:49:59 +0100 (CET)
+Date: Tue, 12 Nov 2024 14:49:59 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	rafael.j.wysocki@intel.com, len.brown@intel.com,
+	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
+Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+Message-ID: <20241112134959.GG6497@noisy.programming.kicks-ass.net>
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com>
+ <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
+ <CAJZ5v0ivAk1xrcJgiJnDWnL3GdijSdsuV4K_4ORjnsjPUVAEnA@mail.gmail.com>
+ <20241112121843.GF6497@noisy.programming.kicks-ass.net>
+ <CAJZ5v0iSP4Gh2FwKdkOw20N4hzwQ94+WmnT+3EY94QG3gORWzA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: target: tcmu: Constify some structures
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
-References: <f83cd8469cc17391178e1181e8c26c4c1fb6028f.1731330634.git.christophe.jaillet@wanadoo.fr>
-From: Bodo Stroesser <bostroesser@gmail.com>
-Content-Language: en-US
-In-Reply-To: <f83cd8469cc17391178e1181e8c26c4c1fb6028f.1731330634.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0iSP4Gh2FwKdkOw20N4hzwQ94+WmnT+3EY94QG3gORWzA@mail.gmail.com>
 
-On 11.11.24 14:10, Christophe JAILLET wrote:
-> 'struct nla_policy' and 'struct match_table_t' are not modified in this
-> driver.
-> 
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
-> function pointers, which is the case of struct nla_policy.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->     text	   data	    bss	    dec	    hex	filename
->    93188	   6933	    338	 100459	  1886b	drivers/target/target_core_user.o
-> 
-> After:
-> =====
->     text	   data	    bss	    dec	    hex	filename
->    93508	   6581	    338	 100427	  1884b	drivers/target/target_core_user.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only
-> ---
->   drivers/target/target_core_user.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
-> index 717931267bda..0f5d820af119 100644
-> --- a/drivers/target/target_core_user.c
-> +++ b/drivers/target/target_core_user.c
-> @@ -361,7 +361,7 @@ static const struct genl_multicast_group tcmu_mcgrps[] = {
->   	[TCMU_MCGRP_CONFIG] = { .name = "config", },
->   };
->   
-> -static struct nla_policy tcmu_attr_policy[TCMU_ATTR_MAX+1] = {
-> +static const struct nla_policy tcmu_attr_policy[TCMU_ATTR_MAX + 1] = {
->   	[TCMU_ATTR_DEVICE]	= { .type = NLA_STRING },
->   	[TCMU_ATTR_MINOR]	= { .type = NLA_U32 },
->   	[TCMU_ATTR_CMD_STATUS]	= { .type = NLA_S32 },
-> @@ -2430,7 +2430,7 @@ enum {
->   	Opt_cmd_ring_size_mb, Opt_err,
->   };
->   
-> -static match_table_t tokens = {
-> +static const match_table_t tokens = {
->   	{Opt_dev_config, "dev_config=%s"},
->   	{Opt_dev_size, "dev_size=%s"},
->   	{Opt_hw_block_size, "hw_block_size=%d"},
+On Tue, Nov 12, 2024 at 01:30:29PM +0100, Rafael J. Wysocki wrote:
 
+> > > Then we are back to the original approach though:
+> > >
+> > > https://lore.kernel.org/linux-pm/20241029101507.7188-3-patryk.wlazlyn@linux.intel.com/
+> >
+> > Well, that won't be brilliant for hybrid systems where the available
+> > states are different per CPU.
+> 
+> But they aren't.
+> 
+> At least so far that has not been the case on any platform known to me
+> and I'm not aware of any plans to make that happen (guess what, some
+> other OSes may be unhappy).
 
-Reviewed-by: Bodo Stroesser <bostroesser@gmail.com>
+Well, that's something at least.
 
-Thanks,
-Bodo
+> > Also, all of this is a bit of a trainwreck... AFAICT AMD wants IO based
+> > idle (per the 2018 commit). So they want the ACPI thing.
+> 
+> Yes.
+> 
+> > But on Intel we really don't want HLT, and had that MWAIT, but that has
+> > real problems with KEXEC. And I don't think we can rely on INTEL_IDLE=y.
+> 
+> We could because it handles ACPI now and ACPI idle doesn't add any
+> value on top of it except for the IO-based idle case.
+
+You're saying we can mandate INTEL_IDLE=y? Because currently defconfig
+doesn't even have it on.
+
+> > The ACPI thing doesn't support FFh states for it's enter_dead(), should it?
+> 
+> It does AFAICS, but the FFH is still MWAIT.
+
+What I'm trying to say is that acpi_idle_play_dead() doesn't seem to
+support FFh and as such won't ever use MWAIT.
+
+> > Anyway, ideally x86 would grow a new instruction to offline a CPU, both
+> > MWAIT and HLT have problems vs non-maskable interrupts.
+> >
+> > I really don't know what is best here, maybe moving that whole CPUID
+> > loop to boot, store the value in a per-cpu mwait_play_dead_hint. Have
+> > AMD explicitly clear the value, and avoid mwait when 0 -- hint 0 is
+> > equal to HLT anyway.
+> >
+> > But as said, we need a new instruction.
+> 
+> Before that, there is the problem with the MWAIT hint computation in
+> mwait_play_dead() and in fact intel_idle does know what hint to use in
+> there.
+
+But we need to deal witn INTEL_IDLE=n. Also, I don't see any MWAIT_LEAF
+parsing in intel_idle.c. Yes, it requests the information, but then it
+mostly ignores it -- it only consumes two ECX bits or so.
+
+I don't see it finding a max-cstate from mwait_substates anywhere.
+
+So given we don't have any such code, why can't we simply fix the cstate
+parsing we have in mwait_play_dead() and call it a day?
 
