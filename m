@@ -1,266 +1,159 @@
-Return-Path: <linux-kernel+bounces-406768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A269C639C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3097E9C63A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B26CA28524D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:41:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F3A2851C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725DA21A4C8;
-	Tue, 12 Nov 2024 21:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4F743AA1;
+	Tue, 12 Nov 2024 21:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1XnnVC6"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qK8PUPXg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE6B20604B;
-	Tue, 12 Nov 2024 21:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A19F21A6ED;
+	Tue, 12 Nov 2024 21:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731447643; cv=none; b=EIFJSYeo2KF4igbkstOOFvie0QHx1xNju0C5wmYDFRdgRKir+f2A247AE0/ORYLfHp9YDIXbO2BvXC7O+W/Jxj4+a/bfW0I9BPItmfn8qCAUJFE1kg/SLxTo4+WPf8o1fgC/UoMILfmx+qj5JD3D3Cmj0xAseyI/wNAlsvoXrzs=
+	t=1731447696; cv=none; b=h/rbQ40RM/Bah+BsCMZ0j8C/jNglbiAa4VhnE4sekJouiLE+Fgoc8Y4lFC+j+OHO9KTOZSWh2AYzr+fBEtS12o2ZFi0CpktaAI02aVlpXbsJKfB70nHoKOTbXeidJRMplU/e3hI6kdQdQcwjoPx5QwTgfUkgSuYC8nZZQCQblWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731447643; c=relaxed/simple;
-	bh=edoAyla8Rqv0rNa7JGF9aon7gJr5YK26ByGNMwLc/Es=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=toEmsfgxlWU5ytZNSVBCIDKFQrpuOmcDNgoqgEFP+Bkgo0nHD2xqwZ2jWS8ktsuf2qY2ILbgEiz8ne3m1ni7bbPcrosGXFrBCeA1LI77agi8SGJHYOIemZMX3Ap782hptH5WP8PhUoXapxKURqNWuzFq0CUj9RLVJFkNm7+xQo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1XnnVC6; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e290e857d56so5895292276.1;
-        Tue, 12 Nov 2024 13:40:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731447641; x=1732052441; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ra+hu73Jn9BLF/9oZjXy+Xnf5EDq8HGwgu7FojceqVg=;
-        b=V1XnnVC6boMAdaU8Sqd1R0PK9uSwJOtZN4rhNEinfYpSUGbX049O3knszdZkzNEsHN
-         EjmkPAj15nJRya3aOdCTLG3CuIzxfOktSNjAJjlnVF4oiMYalVTUPOz+o1rRab+ssitH
-         aaqRRp3+671nd13VKtVcuqztCU4nl8+A5FnmII0vRUQQt1tTnngHTmv4FDtOWC5Tl0VO
-         wYoJwFLXC7F9MAcCKwr9Bb+6651/ACSAd5RwPNSEdTYRd4MNdJPFaO3uIPcGHQ+PGZWL
-         92NgZvZkVgvyMpP8SnWTPQ/9u4rtpWETedCRtruuk28B+37subJdp/0DlIy3nDVOmM/S
-         1HDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731447641; x=1732052441;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ra+hu73Jn9BLF/9oZjXy+Xnf5EDq8HGwgu7FojceqVg=;
-        b=jvMl+1Ut4rGrquGSiBVrg/iPUm+lNlfeDggydpzbKxxwf3Y3CalA2vzMzZX/h+8VrF
-         iOmY9jdVsdJVX7YprQnSNZMPQNR47x54Jk7hTqfWLcRS7ZtWR7/mETItkbHbJ3hU/71f
-         Iqvy6VphKVXOHM7P/hXf741h5q9R28eWAfx20K/3ottRd5SGhEilMmFwJjTAUh/FDzrN
-         FV+YSSkJBGcEWHjDaVIVy9Fo/Uwcj5vfn//kx8/s7Fqf5DkQIvL8vLaTJGYGzPVsDnak
-         WMQfc9/0E9bYCkNEgD5Rs3oK7YthvSwTPTgijiXe6gGY8gHmb7zG5JUTAWfddd8XKzax
-         ooRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwsv3P2VjsXszbR1gw3P7R12vclaYOsgMbZZxB+O4aWz9PY/90OcUmC7L3QH/S+qZjSn+BTt7uzZ3EeJs=@vger.kernel.org, AJvYcCXEBLCkWe7mVhTHGs6csVBbkxtNZSMb1PshMK6LC3uQ4cV9pecIsU1IBv1ebnjaekmCZlmodhSl7KZV3CVpuZB/Xw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXUCzeu47cLR1VbkRQbqxxdrO1aJxKs0EqUZ6kGHXdKI+tdnSI
-	vsE6r9v4R9T6ySzgeUjbjntXaMy3qIvCQGNq9LygFj5IwFiDqHPgq4cRJl+CzNr67C0vee2TWVw
-	+QZXdNXswRvyx2wwiSIRAVyAS6EU=
-X-Google-Smtp-Source: AGHT+IHbkkvhmT5jB1Iw/RfnrsZdesYrAU6+6bsibexySVnZzYJ+X09a4MVvrqvtiBACJ17tbPpFcwmArNAg+2sVOhY=
-X-Received: by 2002:a05:6902:a04:b0:e33:1014:2d9c with SMTP id
- 3f1490d57ef6-e337f8d3c6amr15832778276.50.1731447640783; Tue, 12 Nov 2024
- 13:40:40 -0800 (PST)
+	s=arc-20240116; t=1731447696; c=relaxed/simple;
+	bh=+r1zjWFmIgf8fAjGCmjFjRtm3GAxhQNL1/z2KLtcs9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=t4klvUUvm/SuWr1kqku1ZZPdB1BswU3No7Lq84MLZwrEyLvFy9+7XP/YNNQjaZIzX0vgi2ZlCLpWhLMIeBZxGoplnYNvGbDSg//cQXqLyn+bVDN7QzlE0fkQZojHITrsLp0320zq/HFFLPN57KSVA4VrAoWc0/T5JgF1z3GWH1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qK8PUPXg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 013FBC4CED6;
+	Tue, 12 Nov 2024 21:41:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731447696;
+	bh=+r1zjWFmIgf8fAjGCmjFjRtm3GAxhQNL1/z2KLtcs9g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=qK8PUPXg/DWALAXo3BBuqgdkp4YMaXv9aQkA5TNaW23k41Ku4q60rQWaXnQr7CvJX
+	 ZAI4TeJa5/FmFwju6GXCUUMDaYND+pA9iQxbI0MmLP6EpY5u3EflRf5tPGuHFe2wTO
+	 d+jnQ1f7iMEPiFCedEld/kRnoynqu127yAdbcCK9Tuj8eHSzOLhh1aftYo97RD+PeJ
+	 f/1XN91h0rk4beRpQuSgNVpYllOorY3XcGEx8hYD9Zr1ODKf/Nr5+YqGM4dANa4pEA
+	 AnBD+B6r+mMVvA7Im3xPW1v/AfE2Ia69phuOyxY9ACg3mka3hNV/Amw/lGyCvxmRNa
+	 89PVAabGdknsg==
+Date: Tue, 12 Nov 2024 15:41:34 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
+Cc: lpieralisi@kernel.org, thomas.petazzoni@bootlin.com, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	salee@marvell.com, dingwei@marvell.com
+Subject: Re: [PATCH 1/1] PCI: armada8k: use reset controller to reset mac
+Message-ID: <20241112214134.GA1861807@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108204137.2444151-1-howardchu95@gmail.com>
- <20241108204137.2444151-10-howardchu95@gmail.com> <CAP-5=fX-+bcovrhgW585xZZEZv=bx+=w-Aw5Y8ONR3Q0dORA5Q@mail.gmail.com>
-In-Reply-To: <CAP-5=fX-+bcovrhgW585xZZEZv=bx+=w-Aw5Y8ONR3Q0dORA5Q@mail.gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Tue, 12 Nov 2024 13:40:30 -0800
-Message-ID: <CAH0uvoh76QH8OjBfrs_nRYHEirwDb+=hxbvJTRJQhY5DZKvLEw@mail.gmail.com>
-Subject: Re: [PATCH v7 09/10] perf record --off-cpu: Dump the remaining
- samples in BPF's stack trace map
-To: Ian Rogers <irogers@google.com>
-Cc: acme@kernel.org, peterz@infradead.org, namhyung@kernel.org, 
-	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112070745.759678-1-jpatel2@marvell.com>
 
-Hello Ian,
+Observe subject line capitalization convention.
 
-On Mon, Nov 11, 2024 at 10:07=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
-ote:
->
-> On Fri, Nov 8, 2024 at 12:41=E2=80=AFPM Howard Chu <howardchu95@gmail.com=
-> wrote:
-> >
-> > Dump the remaining samples, as if it is dumping a direct sample.
-> >
-> > Put the stack trace, tid, off-cpu time and cgroup id into the raw_data
-> > section, just like a direct off-cpu sample coming from BPF's
-> > bpf_perf_event_output().
-> >
-> > This ensures that evsel__parse_sample() correctly parses both direct
-> > samples and accumulated samples.
->
-> Nice, hopefully this should mean we can get rid of the logic holding
-> all threads live for the sake of off-CPU, as off-CPU events were being
-> "sampled" after threads had terminated
-> (symbol_conf.keep_exited_threads). An example of this logic is:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/=
-tree/tools/perf/builtin-report.c?h=3Dperf-tools-next#n1484
-> Perhaps there is a follow up to dump exiting processes with a BPF
-> program on `tp/sched/sched_process_exit`. If the exited process is
-> already "dumped" then its map entry can be removed which may lower
-> overhead if off-CPU is running for a long time system wide.
+On Mon, Nov 11, 2024 at 11:07:45PM -0800, Jenishkumar Maheshbhai Patel wrote:
+> change mac reset and mac reset bits to reset controller
 
-Thanks for the advice, that's actually a great idea. IIUC, when a task
-exits, dump its off-cpu time regardless of the threshold, and delete
-the map entry to save space for other tasks.
+Capitalize sentence.
 
->
->
-> > Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
->
-> Reviewed-by: Ian Rogers <irogers@google.com>
->
-> Thanks,
-> Ian
->
-> > ---
-> >  tools/perf/util/bpf_off_cpu.c | 62 +++++++++++++++++++++--------------
-> >  1 file changed, 38 insertions(+), 24 deletions(-)
-> >
-> > diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cp=
-u.c
-> > index cfe5b17393e9..f1be354e2fe7 100644
-> > --- a/tools/perf/util/bpf_off_cpu.c
-> > +++ b/tools/perf/util/bpf_off_cpu.c
-> > @@ -37,6 +37,8 @@ union off_cpu_data {
-> >         u64 array[1024 / sizeof(u64)];
-> >  };
-> >
-> > +u64 off_cpu_raw[MAX_STACKS + 5];
-> > +
-> >  static int off_cpu_config(struct evlist *evlist)
-> >  {
-> >         char off_cpu_event[64];
-> > @@ -61,6 +63,9 @@ static int off_cpu_config(struct evlist *evlist)
-> >  static void off_cpu_start(void *arg)
-> >  {
-> >         struct evlist *evlist =3D arg;
-> > +       struct evsel *evsel;
-> > +       struct perf_cpu pcpu;
-> > +       int i, err;
-> >
-> >         /* update task filter for the given workload */
-> >         if (skel->rodata->has_task && skel->rodata->uses_tgid &&
-> > @@ -304,6 +309,7 @@ int off_cpu_write(struct perf_session *session)
-> >  {
-> >         int bytes =3D 0, size;
-> >         int fd, stack;
-> > +       u32 raw_size;
-> >         u64 sample_type, val, sid =3D 0;
-> >         struct evsel *evsel;
-> >         struct perf_data_file *file =3D &session->data->file;
-> > @@ -343,46 +349,54 @@ int off_cpu_write(struct perf_session *session)
-> >
-> >         while (!bpf_map_get_next_key(fd, &prev, &key)) {
-> >                 int n =3D 1;  /* start from perf_event_header */
-> > -               int ip_pos =3D -1;
-> >
-> >                 bpf_map_lookup_elem(fd, &key, &val);
-> >
-> > +               /* zero-fill some of the fields, will be overwritten by=
- raw_data when parsing */
-> >                 if (sample_type & PERF_SAMPLE_IDENTIFIER)
-> >                         data.array[n++] =3D sid;
-> > -               if (sample_type & PERF_SAMPLE_IP) {
-> > -                       ip_pos =3D n;
-> > +               if (sample_type & PERF_SAMPLE_IP)
-> >                         data.array[n++] =3D 0;  /* will be updated */
-> > -               }
-> >                 if (sample_type & PERF_SAMPLE_TID)
-> > -                       data.array[n++] =3D (u64)key.pid << 32 | key.tg=
-id;
-> > +                       data.array[n++] =3D 0;
-> >                 if (sample_type & PERF_SAMPLE_TIME)
-> >                         data.array[n++] =3D tstamp;
-> > -               if (sample_type & PERF_SAMPLE_ID)
-> > -                       data.array[n++] =3D sid;
-> >                 if (sample_type & PERF_SAMPLE_CPU)
-> >                         data.array[n++] =3D 0;
-> >                 if (sample_type & PERF_SAMPLE_PERIOD)
-> > -                       data.array[n++] =3D val;
-> > -               if (sample_type & PERF_SAMPLE_CALLCHAIN) {
-> > -                       int len =3D 0;
-> > -
-> > -                       /* data.array[n] is callchain->nr (updated late=
-r) */
-> > -                       data.array[n + 1] =3D PERF_CONTEXT_USER;
-> > -                       data.array[n + 2] =3D 0;
-> > -
-> > -                       bpf_map_lookup_elem(stack, &key.stack_id, &data=
-.array[n + 2]);
-> > -                       while (data.array[n + 2 + len])
-> > +                       data.array[n++] =3D 0;
-> > +               if (sample_type & PERF_SAMPLE_RAW) {
-> > +                       /*
-> > +                        *  [ size ][ data ]
-> > +                        *  [     data     ]
-> > +                        *  [     data     ]
-> > +                        *  [     data     ]
-> > +                        *  [ data ][ empty]
-> > +                        */
-> > +                       int len =3D 0, i =3D 0;
-> > +                       void *raw_data =3D (void *)data.array + n * siz=
-eof(u64);
-> > +
-> > +                       off_cpu_raw[i++] =3D (u64)key.pid << 32 | key.t=
-gid;
-> > +                       off_cpu_raw[i++] =3D val;
-> > +
-> > +                       /* off_cpu_raw[i] is callchain->nr (updated lat=
-er) */
-> > +                       off_cpu_raw[i + 1] =3D PERF_CONTEXT_USER;
-> > +                       off_cpu_raw[i + 2] =3D 0;
-> > +
-> > +                       bpf_map_lookup_elem(stack, &key.stack_id, &off_=
-cpu_raw[i + 2]);
-> > +                       while (off_cpu_raw[i + 2 + len])
-> >                                 len++;
-> >
-> > -                       /* update length of callchain */
-> > -                       data.array[n] =3D len + 1;
-> > +                       off_cpu_raw[i] =3D len + 1;
-> > +                       i +=3D len + 2;
-> > +
-> > +                       off_cpu_raw[i++] =3D key.cgroup_id;
-> >
-> > -                       /* update sample ip with the first callchain en=
-try */
-> > -                       if (ip_pos >=3D 0)
-> > -                               data.array[ip_pos] =3D data.array[n + 2=
-];
-> > +                       raw_size =3D i * sizeof(u64) + sizeof(u32); /* =
-4 bytes for alignment */
-> > +                       memcpy(raw_data, &raw_size, sizeof(raw_size));
-> > +                       memcpy(raw_data + sizeof(u32), off_cpu_raw, i *=
- sizeof(u64));
-> >
-> > -                       /* calculate sample callchain data array length=
- */
-> > -                       n +=3D len + 2;
-> > +                       n +=3D i + 1;
-> >                 }
-> >                 if (sample_type & PERF_SAMPLE_CGROUP)
-> >                         data.array[n++] =3D key.cgroup_id;
-> > --
-> > 2.43.0
-> >
+s/mac/MAC/
 
-Thanks,
-Howard
+Explain why we want this.  Apparently you're changing from one MAC
+reset method to another method?
+
+Collect these into a series instead of posting individual random
+patches.
+
+> Signed-off-by: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-armada8k.c | 30 +++++++---------------
+>  1 file changed, 9 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
+> index 9a48ef60be51..f9d6907900d1 100644
+> --- a/drivers/pci/controller/dwc/pcie-armada8k.c
+> +++ b/drivers/pci/controller/dwc/pcie-armada8k.c
+> @@ -21,7 +21,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/resource.h>
+>  #include <linux/of_pci.h>
+> -#include <linux/mfd/syscon.h>
+> +#include <linux/reset.h>
+>  #include <linux/regmap.h>
+>  #include <linux/of_gpio.h>
+>  
+> @@ -35,11 +35,10 @@ struct armada8k_pcie {
+>  	struct clk *clk_reg;
+>  	struct phy *phy[ARMADA8K_PCIE_MAX_LANES];
+>  	unsigned int phy_count;
+> -	struct regmap *sysctrl_base;
+> -	u32 mac_rest_bitmask;
+>  	struct work_struct recover_link_work;
+>  	enum of_gpio_flags flags;
+>  	struct gpio_desc *reset_gpio;
+> +	struct reset_control *reset;
+>  };
+>  
+>  #define PCIE_VENDOR_REGS_OFFSET		0x8000
+> @@ -257,12 +256,9 @@ static void armada8k_pcie_recover_link(struct work_struct *ws)
+>  	msleep(100);
+>  
+>  	/* Reset mac */
+> -	regmap_update_bits_base(pcie->sysctrl_base, UNIT_SOFT_RESET_CONFIG_REG,
+> -				pcie->mac_rest_bitmask, 0, NULL, false, true);
+> +	reset_control_assert(pcie->reset);
+>  	udelay(1);
+> -	regmap_update_bits_base(pcie->sysctrl_base, UNIT_SOFT_RESET_CONFIG_REG,
+> -				pcie->mac_rest_bitmask, pcie->mac_rest_bitmask,
+> -				NULL, false, true);
+> +	reset_control_deassert(pcie->reset);
+>  	udelay(1);
+>  
+>  	ret = dw_pcie_setup_rc(pp);
+> @@ -331,7 +327,7 @@ static irqreturn_t armada8k_pcie_irq_handler(int irq, void *arg)
+>  		 * initiate a link retrain. If link retrains were
+>  		 * possible, that is.
+>  		 */
+> -		if (pcie->sysctrl_base && pcie->mac_rest_bitmask)
+> +		if (pcie->reset)
+>  			schedule_work(&pcie->recover_link_work);
+>  
+>  		dev_dbg(pci->dev, "%s: link went down\n", __func__);
+> @@ -440,18 +436,10 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
+>  	if (gpio_is_valid(reset_gpio))
+>  		pcie->reset_gpio = gpio_to_desc(reset_gpio);
+>  
+> -	pcie->sysctrl_base = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+> -						       "marvell,system-controller");
+> -	if (IS_ERR(pcie->sysctrl_base)) {
+> -		dev_warn(dev, "failed to find marvell,system-controller\n");
+> -		pcie->sysctrl_base = 0x0;
+> -	}
+> -
+> -	ret = of_property_read_u32(pdev->dev.of_node, "marvell,mac-reset-bit-mask",
+> -				   &pcie->mac_rest_bitmask);
+> -	if (ret < 0) {
+> -		dev_warn(dev, "couldn't find mac reset bit mask: %d\n", ret);
+> -		pcie->mac_rest_bitmask = 0x0;
+> +	pcie->reset = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+> +	if (IS_ERR(pcie->reset)) {
+> +		dev_warn(dev, "failed to find mac reset\n");
+> +		pcie->reset = 0x0;
+>  	}
+>  	ret = armada8k_pcie_setup_phys(pcie);
+>  	if (ret)
+> -- 
+> 2.25.1
+> 
 
