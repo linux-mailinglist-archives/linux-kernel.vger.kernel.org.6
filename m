@@ -1,91 +1,80 @@
-Return-Path: <linux-kernel+bounces-404927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0EC9C4A7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:12:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65799C4A77
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0AA6B31C02
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:11:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C97B281462
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824E14409;
-	Tue, 12 Nov 2024 00:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418CA7494;
+	Tue, 12 Nov 2024 00:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="nqNOw4zU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FYtWjqgo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1B84C91
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD954409;
+	Tue, 12 Nov 2024 00:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731370264; cv=none; b=H2anqeZoqau6CtCINZIbWcL1BUpmd7AoymaMiTdFus2+houvWfsEPyzllxgbTIOEIiDpfnOcgSmjVSKpcLJ9InT8xtu6IW5OmJZStUj485u23qMUMGXUeRQuyzdW8dQblpDcifB26b8jCF07u8zLFZSJqaTXbs4Vlfq7IPXCEuA=
+	t=1731370327; cv=none; b=ilHE1VyUbD0dtdMSVCJzLAouV2veYmRKzqG/XuH/H9G1VDjOkpTKX0N6xmMlRTn4NaZFb4phbfMl0U2lSkinnYpnY3Q2F1kynR2Z/PfqPP8aXsiEkq22d7ECL/MCK4JfwmP91a8RHby+14eql1jTP8K9IaB/bahl+k4PGNW5zPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731370264; c=relaxed/simple;
-	bh=3DPDYTaWToG+1nItkCo1KdEPJK4TtL89ZByaok+uIxs=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=HVtH3xC0MPNa+sSlTptcYLQivrN14vq8YzURpgyXGh3Veg3/MBEJ99CBf2TqTaRzhMzXEUIEFVeC2MIAYvMbh23kGno5TZQIFNKR+qO9SEVG+hRzU0rKD7f84x/7iyjj3TDocmZ2xsUYPgcI/pTrpyOTUPBfX5pVd9Qs4BloKko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=nqNOw4zU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B32F6C4CECF;
-	Tue, 12 Nov 2024 00:11:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1731370263;
-	bh=3DPDYTaWToG+1nItkCo1KdEPJK4TtL89ZByaok+uIxs=;
+	s=arc-20240116; t=1731370327; c=relaxed/simple;
+	bh=F6KtVDx7kefgsDbbvSvre0SI4ek2HJre6EpkN5nZLpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O1OQkdDdsZ8a2XjqEkj3dpe+WC9a5T2/bMe9sEhjRLo2Yqv5REDVRUzhThcUZRHGfwv5DQ/3I3Fysi19wyREP4pf0U9PX+wtAkxIJgN6vUJdk16Obfv9UrviFxEJ8yN9olzelEaSY0NH0PMFnVMUMiOV2HtwhiNpjFB45Vq1+v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FYtWjqgo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACB5FC4CECF;
+	Tue, 12 Nov 2024 00:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731370327;
+	bh=F6KtVDx7kefgsDbbvSvre0SI4ek2HJre6EpkN5nZLpw=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nqNOw4zUVCIXgOu+pl5rQuZpt5FpkJg1atcHOguLCPqCWNgfv1DtA95TZc7B8JRA2
-	 wAbA5LfUKnAYibKZYb+Wm3clv3LUY5/mRo1mBgKwhYiWZwFEhR/gL7FQ4q+mgsKG5I
-	 CpmTIrMXyW9FWUGlMPvS5Wm/QyaFGpyXitT1qphY=
-Date: Mon, 11 Nov 2024 16:11:02 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: willy@infradead.org, liam.howlett@oracle.com,
- lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
- hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
- mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
- oleg@redhat.com, paulmck@kernel.org, brauner@kernel.org,
- dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
- minchan@google.com, jannh@google.com, shakeel.butt@linux.dev,
- souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 0/4] move per-vma lock into vm_area_struct
-Message-Id: <20241111161102.e047bce4adfbf38002b7a9cf@linux-foundation.org>
-In-Reply-To: <CAJuCfpGw1Nnh3nonDHv-UAeqTB=-3z1+hJk9Opy4X-6mbvdEhw@mail.gmail.com>
-References: <20241111205506.3404479-1-surenb@google.com>
-	<20241111221839.w4rqqlvvkm42jdgm@offworld>
-	<CAJuCfpGw1Nnh3nonDHv-UAeqTB=-3z1+hJk9Opy4X-6mbvdEhw@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=FYtWjqgoyYor2KQxuCduFyVPGGug7Lae6Zmq//DBd3J775HaM3IaD89LNwlzGfzg8
+	 OTbdTKXJNxQ7RyTm/Uf3WjPXmMeT5O+324PbmckBkAIr+vu3Hisv/RQ+px6riH/ew9
+	 EvzwcyclN8+IzKBkfEDqUbK5gE4mrRnEDF5MObJoeQoQxwuk1cOoO6ls0My5yu96wx
+	 AslbCPGQqKPkw4swgS1D4SPmEY0D2GeJvPbvqytMxbsfghFSySvHDlc7/qImqc3ZgG
+	 frjtrVU+2NYAa3e1d2JYggboGUkn5HZd4Q36XxubIDtQnn2ie3QdpX7feyV1rmruUu
+	 dFA/HxKRYepAQ==
+Date: Mon, 11 Nov 2024 16:12:05 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
+ <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Richard
+ Cochran <richardcochran@gmail.com>, Alexis =?UTF-8?B?TG90aG9yw6k=?=
+ <alexis.lothore@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 4/9] net: stmmac: Introduce dwmac1000
+ ptp_clock_info and operations
+Message-ID: <20241111161205.25c53c62@kernel.org>
+In-Reply-To: <20241106090331.56519-5-maxime.chevallier@bootlin.com>
+References: <20241106090331.56519-1-maxime.chevallier@bootlin.com>
+	<20241106090331.56519-5-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 11 Nov 2024 15:19:22 -0800 Suren Baghdasaryan <surenb@google.com> wrote:
+On Wed,  6 Nov 2024 10:03:25 +0100 Maxime Chevallier wrote:
+> +		mutex_unlock(&priv->aux_ts_lock);
+> +
+> +		/* wait for auxts fifo clear to finish */
+> +		ret = readl_poll_timeout(ptpaddr + PTP_TCR, tcr_val,
+> +					 !(tcr_val & GMAC_PTP_TCR_ATSFC),
+> +					 10, 10000);
 
-> On Mon, Nov 11, 2024 at 2:18 PM Davidlohr Bueso <dave@stgolabs.net> wrote:
-> >
-> > On Mon, 11 Nov 2024, Suren Baghdasaryan wrote:
-> >
-> > >To minimize memory overhead, vm_lock implementation is changed from
-> > >using rw_semaphore (40 bytes) to an atomic (8 bytes) and several
-> > >vm_area_struct members are moved into the last cacheline, resulting
-> > >in a less fragmented structure:
-> >
-> > I am not a fan of building a custom lock, replacing a standard one.
-> 
-> Understandable.
-
-If we're going to invent a new lock type, I'm thinking we should do
-that - make it a standaline thing, add full lockdep support, etc.
-
-I wonder if we could remove the lock from the vma altogeher and use an
-old-fashioned hashed lock.  An array of locks indexed by the vma
-address.  It might work well enough, although sizing the array would be
-difficult.
-
+Is there a good reason to wait for the flush to complete outside of 
+the mutex? 
 
