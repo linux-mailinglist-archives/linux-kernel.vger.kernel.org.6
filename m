@@ -1,141 +1,172 @@
-Return-Path: <linux-kernel+bounces-405862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A589C583F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:49:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B413A9C5862
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:58:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E41B1F22D93
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:49:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EB24B3FDAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17B51632FF;
-	Tue, 12 Nov 2024 12:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5037155CBF;
+	Tue, 12 Nov 2024 12:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwcBxAhX"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bymiCwOO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC981DA5E;
-	Tue, 12 Nov 2024 12:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B73D145FE5;
+	Tue, 12 Nov 2024 12:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731415640; cv=none; b=HKz6kLZSdaVCvRFwNDE7yMbFkgJ8O5t0HROBw/QrvUP58RSZFf4ghT8sOjpdQdTANtLgk3J1bSFrcUI1bIkDAJbBdH7l07o2WfKf5ct7Z7xM49v80FwxkHg8BIuWv6vpVVUsbbHDMlCbM5MMmS9bURaTOwZmlDdgIE9wEuIil5s=
+	t=1731415748; cv=none; b=AmVyl0aNycRgM35c4p9JSmS8PGAkhfgiCuhFns9p0jCzoaP/w2PrbCX8PFLUTP8n4sVfWsmj2p8JpAGMXcGIPoI+gvXNmjKn0J/Iq0G0rs7RLxbKnK/dm+LWi8p1RwvPpMiAkYXV+it6U7QNUfuemIaXsncMnGTDFvMIUyKBZ7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731415640; c=relaxed/simple;
-	bh=X+jLQfoGRtei2d/QjhR/7M+LmZaJ/zvfk3jtFKfMIh4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dg8cEkkTdO/6duBVGvfuOD0sj+2n+GSUgXS7AlLhWDYlL09CFeBBqeHxeVliUYEi20syhZUhJXa7zexlkBbP7pnTPzBErsQr3RlTily0cN5t0y+zxR/ANuu6jG4ZKAy8i8biFm/Sz8cQZKHd7HhggJEsoV0UUCFOf58Tzo8PivA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HwcBxAhX; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539e7e73740so5247528e87.3;
-        Tue, 12 Nov 2024 04:47:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731415636; x=1732020436; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1l/8zIWx9ByG93a85cgLjNVvi5N7DhTgRSp0I+NsBNo=;
-        b=HwcBxAhXHIkvv5RN/yC1dkdVAuGyYPj4mnrY02+UdBi4Lq26f5hHFC0TE6YrI5S7cF
-         V17587vsDKgAoRcix8XYH7JGNRzMBDnPvVAzVE2t1RXXDI6Y6ERYC6U+g+zlTF7bS+Qt
-         9cvgEd2OXdsy45dUa5OVhRoWOTgsrKe1T7TcVoc0lwEo7n9owZtjVgDCfgo1ZIEK/cBW
-         uVzfxhgGOXQELeMCfKt+5t/sMF1bmjdkfrj8bZeB8expU7MqEbkyTnVbjXdQUxnCEVCp
-         EC1EwDf9/O+FZLcmWUDVLJ8arxpIAu7JKZq6iB7u68kQf3NR3hpbESTd3f1+wllgJnw1
-         ZjZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731415636; x=1732020436;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1l/8zIWx9ByG93a85cgLjNVvi5N7DhTgRSp0I+NsBNo=;
-        b=w1DJdm7viEOeEUn4EexmRsb1JdL/Qvra9Z898AYUSaP4eoI9ZNgbQZRmiiSK2k/ZTX
-         vGhLG3gRbtVH2K3k6zPosKCgqPIy80Cmb1ukTAG9bUwZSjvWTBCtpm0vhKUUlJcm5kLO
-         mqNQz0pNrY0HxxE/eL/fQpQ65l1TDiwi3Vyvik+d68CxsJze/7WGODW2u5bUxmcbFR1e
-         4BJcUj8FicXBBO7zaaEJVSNHdhKz0ORi9VLPs3LklzmzsuH0yOhdcgQm5Ht/fj5AJs42
-         j3/1/hFJX5WFle4gf9CaMXb5jf8G+u7WGOIv6NQEx4BB1QOskaeLBS00fk+jUje15irH
-         ODHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnFvPxbpMNijGoSNUpU4JTyt7cHa7ZeNaTP07xX694kwk2xuIXEkdaRqUc5k5rbZnof/PXw4ZrvaJg@vger.kernel.org, AJvYcCVFZFQIzVOMX/MIlQiAw9JPjMF5kfUflmRA8DUirzCmdUKpUExOinvwXXyPTyoY6iL2kivpgdIDrDneBzWx@vger.kernel.org, AJvYcCW2QAPAP3pbS79GW+WkDh1JS5lDuT8Rys8kvPyr+KZdu7pZDcKYwPs5nDcAwU15Vq7r4U+vC371x3hgFjXPgA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGq+fUbq2vRRgUR+F3VWUdpzR8l+xaevY+hjUBPNcb6Wc2kFQ3
-	duVABDRnoc86gA/PWmqBZ68XVvs/BbH+oIJxWx205qFkv4vOuyAX
-X-Google-Smtp-Source: AGHT+IGlnKKltAFgPKq1ayj+s19oGo3VkeizvwN9Pm+xzjqpVaZGBKH8G8tVYcgFXRl3ErD1m+9Qbw==
-X-Received: by 2002:a05:6512:12c4:b0:539:ebe5:2986 with SMTP id 2adb3069b0e04-53d9a40710amr1412217e87.12.1731415636223;
-        Tue, 12 Nov 2024 04:47:16 -0800 (PST)
-Received: from T15.. ([46.175.113.10])
-        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-53d8c3cbf20sm1142577e87.132.2024.11.12.04.47.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 04:47:15 -0800 (PST)
-From: Wojciech Slenska <wojciech.slenska@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Wojciech Slenska <wojciech.slenska@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: qcom: qcm2290: Add uart3 node
-Date: Tue, 12 Nov 2024 13:46:49 +0100
-Message-Id: <20241112124651.215537-1-wojciech.slenska@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731415748; c=relaxed/simple;
+	bh=gihI+UyP0xz/4nL4XaP9AyrL3fvtn5BQxcVZq3dAg8U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Zi4ly+7jqdT3XZoy1L8cnbqkoAXaLKYHCGkMN2JNDtYHaWtIDTeNrHRuSy82Fvi7zRZ6rVSxHELZiubvJeZRxbWKZRw6UcNL2h2w7ybdu297Aj6l8bgZY9NRTMZVREdS1NQrodjoh27k3kZSaeBzzlE0p/MQISDulEuPpTMbAGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bymiCwOO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACCOXQ5028090;
+	Tue, 12 Nov 2024 12:48:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Xbhmlm0PmIzqTXAdFDt5A5FVPcXGjy8qgW/6BhEzPtw=; b=bymiCwOO03MvFoCg
+	VsT+pi+9ftb0tapZGjWw/LqSw4ljJ4YqCfqW6IXPaTWjvrCpgxHQ606y8XS0B5Le
+	Kk6xYQwiszVMy3pleTRgfEaLv426ucnwn+UC82CVEK2nL0g+nIY6NUUBZhqjZyiO
+	UrcPOj8yqsoXJ90imTXrnGkukIHRrrGcDSE0xNusnnNapyltAt17APFzT2GVyzRN
+	Kwe+0ixWEJ866HA/ZOHe+6eWa0ApwP5tvXNqhPz7AjBsMUUrKUVY9Qz62vSUDwJh
+	tIZOGRugGjovigbGm8c5cPwLHJdhy0AlHgdQmXM22Wyz6ykmO4/BOAKSSeeuAbGG
+	+xsfjg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42sytsq9rn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 12:48:51 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACCmosj020679
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 12:48:50 GMT
+Received: from [10.253.79.133] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
+ 2024 04:48:45 -0800
+Message-ID: <8f319458-96fd-42dd-9580-cee3f2b00341@quicinc.com>
+Date: Tue, 12 Nov 2024 20:48:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 3/5] net: pcs: qcom-ipq: Add PCS create and
+ phylink operations for IPQ9574
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Heiner Kallweit
+	<hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_suruchia@quicinc.com>,
+        <quic_pavir@quicinc.com>, <quic_linchen@quicinc.com>,
+        <quic_luoj@quicinc.com>, <srinivas.kandagatla@linaro.org>,
+        <bartosz.golaszewski@linaro.org>, <vsmuthu@qti.qualcomm.com>,
+        <john@phrozen.org>
+References: <20241101-ipq_pcs_rc1-v1-0-fdef575620cf@quicinc.com>
+ <20241101-ipq_pcs_rc1-v1-3-fdef575620cf@quicinc.com>
+ <d7782a5e-2f67-4f62-a594-0f52144a368f@lunn.ch>
+ <9b3a4f00-59f2-48d1-8916-c7d7d65df063@quicinc.com>
+ <a0826aa8-703c-448d-8849-47808f847774@lunn.ch>
+ <9b7def00-e900-4c5e-ba95-671bd1ef9240@quicinc.com>
+ <17ae9ace-55a6-4e09-ba1a-889b5381fb0f@lunn.ch>
+Content-Language: en-US
+From: Lei Wei <quic_leiwei@quicinc.com>
+In-Reply-To: <17ae9ace-55a6-4e09-ba1a-889b5381fb0f@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xIt24bxKN3Hx8vltGBTSt7S9QC8N-b-L
+X-Proofpoint-ORIG-GUID: xIt24bxKN3Hx8vltGBTSt7S9QC8N-b-L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 bulkscore=0 impostorscore=0 phishscore=0
+ mlxlogscore=776 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411120103
 
-Add node to support uart3.
 
-Signed-off-by: Wojciech Slenska <wojciech.slenska@gmail.com>
----
- arch/arm64/boot/dts/qcom/qcm2290.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm2290.dtsi b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-index 79bc42ffb6a1..0fae49d6ff16 100644
---- a/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-@@ -550,6 +550,13 @@ qup_uart0_default: qup-uart0-default-state {
- 				bias-disable;
- 			};
- 
-+			qup_uart3_default: qup-uart3-default-state {
-+				pins = "gpio8", "gpio9", "gpio10", "gpio11";
-+				function = "qup3";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
- 			qup_uart4_default: qup-uart4-default-state {
- 				pins = "gpio12", "gpio13";
- 				function = "qup4";
-@@ -1239,6 +1246,23 @@ &qup_virt SLAVE_QUP_CORE_0 RPM_ALWAYS_TAG>,
- 				status = "disabled";
- 			};
- 
-+			uart3: serial@4a8c000 {
-+				compatible = "qcom,geni-uart";
-+				reg = <0x0 0x04a8c000 0x0 0x4000>;
-+				interrupts = <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
-+				clock-names = "se";
-+				pinctrl-0 = <&qup_uart3_default>;
-+				pinctrl-names = "default";
-+				interconnects = <&qup_virt MASTER_QUP_CORE_0 RPM_ALWAYS_TAG
-+						 &qup_virt SLAVE_QUP_CORE_0 RPM_ALWAYS_TAG>,
-+						<&bimc MASTER_APPSS_PROC RPM_ALWAYS_TAG
-+						 &config_noc MASTER_APPSS_PROC RPM_ALWAYS_TAG>;
-+				interconnect-names = "qup-core",
-+						     "qup-config";
-+				status = "disabled";
-+			};
-+
- 			i2c4: i2c@4a90000 {
- 				compatible = "qcom,geni-i2c";
- 				reg = <0x0 0x04a90000 0x0 0x4000>;
--- 
-2.34.1
+On 11/8/2024 9:24 PM, Andrew Lunn wrote:
+>>> Another artefact of not have a child-parent relationship. I wounder if
+>>> it makes sense to change the architecture. Have the PCS driver
+>>> instantiate the PCS devices as its children. They then have a device
+>>> structure for calls like clk_bulk_get(), and a more normal
+>>> consumer/provider setup.
+>>>
+>>
+>> I think you may be suggesting to drop the child node usage in the DTS, so
+>> that we can attach all the MII clocks to the single PCS node, to facilitate
+>> usage of bulk get() API to retrieve the MII clocks for that PCS.
+> 
+> I would keep the child nodes. They describe the cookie-cutter nature
+> of the hardware. The problem is with the clk_bulk API, not allowing
+> you to pass a device_node. of_clk_bulk_get() appears to do what you
+> want, but it is not exported. What we do have is:
+> 
+> /**
+>   * devm_get_clk_from_child - lookup and obtain a managed reference to a
+>   *                           clock producer from child node.
+>   * @dev: device for clock "consumer"
+>   * @np: pointer to clock consumer node
+>   * @con_id: clock consumer ID
+>   *
+>   * This function parses the clocks, and uses them to look up the
+>   * struct clk from the registered list of clock providers by using
+>   * @np and @con_id
+>   *
+>   * The clock will automatically be freed when the device is unbound
+>   * from the bus.
+>   */
+> struct clk *devm_get_clk_from_child(struct device *dev,
+>                                      struct device_node *np, const char *con_id);
+> 
+> So maybe a devm_get_clk_bulk_from_child() would be accepted?
+> 
+> However, it might not be worth the effort. Using the bulk API was just
+> a suggestion to make the code simpler, not a strong requirement.
+> 
+
+OK, I agree.
+
+For the PCS instantiation for child nodes, I would like to summarize the 
+two options we have, and mention our chosen approach. 1.) Instantiate 
+the PCS during the create API call, and export create/destroy API to the 
+network driver similar to existing drivers (OR) 2.) Instantiate the 
+child nodes during PCS probe and let the MAC driver access the 
+'phylink_pcs' object using a ipq_pcs_get()/ipq_pcs_put() API instead of 
+ipq_pcs_create()/ipq_pcs_destroy().
+
+The other PCS drivers are following the create/destroy usage pattern 
+(option 1). However we are leaning towards option 2, since it is a 
+simpler design. Hope this approach is ok.
+
+> 	Andrew
 
 
