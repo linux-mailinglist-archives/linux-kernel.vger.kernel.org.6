@@ -1,105 +1,203 @@
-Return-Path: <linux-kernel+bounces-405724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353EA9C5641
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:22:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1090F9C5644
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:22:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF64428FA38
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:22:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 963E41F231B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999201FB73C;
-	Tue, 12 Nov 2024 11:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315CE20C004;
+	Tue, 12 Nov 2024 11:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CUyFtoHF"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l4zM3z4L"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA9E1F77A7;
-	Tue, 12 Nov 2024 11:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A231F77A7;
+	Tue, 12 Nov 2024 11:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731409293; cv=none; b=hYqgRMS0iqQxydKRQ58aLloY6SQI9RVCyAryIeZ7aWEtpJ4i8+YTRGgMilxg7SsV4zX8gQX1yvhEZp/JnQwh4VH7PLxZh2lnHEntSn/cRHaZgW6AgTo1k/gbfGOzpqJgK+t5AT2HuECAf9c9in8Ilh2XYze5RURDqoIrGK71fx8=
+	t=1731409324; cv=none; b=T62ak2TB0JsgqmD3BoebmiPH6qvvRzv8s6TU2B1a8Q5kcvuR8WAwMWN786c2Y8bVf1A19SaJeC/zeH3MtoDq4FWD3ux8H9J6yJ4BS6FN0b7ne/nzKAz5uNYapa8pYQ7y1Xn9z4QHJw2+KQg/ubCycJSsclP3sbD9e77KMCVYkds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731409293; c=relaxed/simple;
-	bh=A/1yp0LaJZZY/+agPEY0mYZ96StMCvDdlakH86oaiKE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JOuCvYc7L8tD2npllVgSSviJ2HC3BsOFZlTipq/bihF7yN3uc1KrCzQC31Z5sv74k7ONNm9FudBNUsomQB6WTpP6STJUwSvy0Y+v7sFfmcfTdK6nQToK6FoQqcCt8GQ1IcG0zm5MRff2wvJWMaDXm7y/E1GfOYglff6BfzyQ1/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CUyFtoHF; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 38001240011;
-	Tue, 12 Nov 2024 11:01:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731409283;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=osagrrumfDGl8S19V6hpWE8fnqHAIqSNeF5380MEu3w=;
-	b=CUyFtoHF/08sM1eEggzqP7IJe6O8R0TkpW63Bs9QPbEdltpEwqx575feeKDvJIgjExRxu3
-	S58bXqI/Fj8kpAt8YxV2ziwbVUsg4FlPj0VGcqr7rlpTal2QUPme2eDLdB9kA7cURMN91e
-	QE5SagNWrT2yPA7s6OpZS+2GegGVlbaiawgxOYKVCvHX3RkOa5drKDAwjcIsIjpej1LcXp
-	mZcddRk18xaXwz269r4UdXdckjewdoNEExtNIHl50eu0UCwTkrTkTHKj7E3TleHq+VTeYF
-	AWYg+8wZTVjqZz1phg+9KSXGxV8QsyY1eheqFBVjP4mC4by7oORFMmrW9gBXrg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: <alex.aring@gmail.com>,  <davem@davemloft.net>,  <dmantipov@yandex.ru>,
-  <edumazet@google.com>,  <horms@kernel.org>,  <kuba@kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-usb@vger.kernel.org>,
-  <linux-wpan@vger.kernel.org>,  <netdev@vger.kernel.org>,
-  <pabeni@redhat.com>,  <stefan@datenfreihafen.org>,
-  <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>,
-  <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH] mac802154: add a check for slave data list before delete
-In-Reply-To: <20241112002134.2003089-1-lizhi.xu@windriver.com> (Lizhi Xu's
-	message of "Tue, 12 Nov 2024 08:21:33 +0800")
-References: <87msi5pn7y.fsf@bootlin.com>
-	<20241112002134.2003089-1-lizhi.xu@windriver.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Tue, 12 Nov 2024 12:01:21 +0100
-Message-ID: <87a5e4u35q.fsf@bootlin.com>
+	s=arc-20240116; t=1731409324; c=relaxed/simple;
+	bh=5KfUg0YOsEzPPCGT9maCxQzQVsth/OgqTvMecB45+jI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=i/MynGebNzy6Hkn7I3Ap+0GN8qP+v1PKz/Uxgu5Lv1JnTfCbbc0cWjqERjMk/3PE5Q2tHYUV+gUniDDNO/DNn6MKdqmlhuYnqRGYfUYPH2a6YhmbGbjvsyCqCogLZWE8KCcZvju0XxlslkWFM6wtMa+SKfJJC8PMly7cnMr3YOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l4zM3z4L; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC2DtB6020024;
+	Tue, 12 Nov 2024 11:01:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=4eIblupSAURCtRr/i0Ikcl
+	C40xnjd6QYmYxBpcye40s=; b=l4zM3z4LdEoelNax/xsz7u8vDXyjaJMbyo46n+
+	dcTS7thFVQqDx9RNBHOBpI8Kq7+nBSs6AsKrDOmG5N1jyEtFmz2khxihuhVzxDXt
+	BXdNfda8P32r/iAkfPzD8ybrny1X/DYv7P/5erZ4FZ+2n9cziEnQqdTfQPdSdLNP
+	XvPPXm8rBVoUoh1Xh8b5vYfx91nWIXxFwbxcTKyyMICoYb1MnF2HAGLHGbjTI17/
+	9XfBtHLJJn4c8MnCIMIMv+9LJ+mXqHhxQgVKCeOO0VZOF8WUMKa+sDNISfiFNm2U
+	yB5yZoJPv1gxd6OiqjtusGgj957ZqM24N8yGrnzCkNbV4KRg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t1186xk5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 11:01:58 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACB1wAB027366
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 11:01:58 GMT
+Received: from hu-mkshah-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 12 Nov 2024 03:01:55 -0800
+From: Maulik Shah <quic_mkshah@quicinc.com>
+Date: Tue, 12 Nov 2024 16:31:51 +0530
+Subject: [PATCH] arm64: dts: qcom: sa8775p: Add CPUs to psci power domain
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241112-sa8775p_cpuidle-v1-1-66ff3ba72464@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJ41M2cC/x3M0QpAMBSA4VfRubZyDhpeRdJwximxtkhp7265/
+ C7+/4XAXjhAl73g+ZYg55GAeQbzZo6VlSzJQAVViEgqmEbr2o2zu2TZWdW2nCyZVhO2kCrn2cr
+ zH/shxg/IlJPBYQAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_lsrao@quicinc.com>,
+        Maulik Shah
+	<quic_mkshah@quicinc.com>
+X-Mailer: b4 0.12.5-dev-2aabd
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731409314; l=3117;
+ i=quic_mkshah@quicinc.com; s=20240109; h=from:subject:message-id;
+ bh=5KfUg0YOsEzPPCGT9maCxQzQVsth/OgqTvMecB45+jI=;
+ b=B8HsMrlFyk5OPwp1yMHvOb+r3nRtzbs5/dSqt6PzNCoLsJb1EasRdnQ6lP6c7eadz3LfZCvbH
+ RTzo/VDdufVAqkXLhnq7vKg9YzkbPw7KmV8pLwqQhp7I089DeOSoA42
+X-Developer-Key: i=quic_mkshah@quicinc.com; a=ed25519;
+ pk=bd9h5FIIliUddIk8p3BlQWBlzKEQ/YW5V+fe759hTWQ=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uaGX6g4n-rNX8wGs1U7TukbF8gonsgZ5
+X-Proofpoint-GUID: uaGX6g4n-rNX8wGs1U7TukbF8gonsgZ5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ bulkscore=0 mlxlogscore=826 lowpriorityscore=0 malwarescore=0
+ clxscore=1011 priorityscore=1501 adultscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411120090
 
-On 12/11/2024 at 08:21:33 +08, Lizhi Xu <lizhi.xu@windriver.com> wrote:
+Commit 4f79d0deae37 ("arm64: dts: qcom: sa8775p: add CPU idle states")
+already added cpu and cluster idle-states but have not added CPU devices
+to psci power domain without which idle states do not get detected.
 
-> On Mon, 11 Nov 2024 20:46:57 +0100, Miquel Raynal wrote:
->> On 08/11/2024 at 22:54:20 +08, Lizhi Xu <lizhi.xu@windriver.com> wrote:
->>=20
->> > syzkaller reported a corrupted list in ieee802154_if_remove. [1]
->> >
->> > Remove an IEEE 802.15.4 network interface after unregister an IEEE 802=
-.15.4
->> > hardware device from the system.
->> >
->> > CPU0					CPU1
->> > =3D=3D=3D=3D					=3D=3D=3D=3D
->> > genl_family_rcv_msg_doit		ieee802154_unregister_hw
->> > ieee802154_del_iface			ieee802154_remove_interfaces
->> > rdev_del_virtual_intf_deprecated	list_del(&sdata->list)
->> > ieee802154_if_remove
->> > list_del_rcu
->>=20
->> FYI this is a "duplicate" but with a different approach than:
->> https://lore.kernel.org/linux-wpan/87v7wtpngj.fsf@bootlin.com/T/#m02cebe=
-86ec0171fc4d3350676bbdd4a7e3827077
-> No, my patch was the first to fix it, someone else copied my
-> patch. Here is my patch:
+Add CPUs to psci power domain.
 
-Ok, so same question as to the other contributor, why not enclosing the
-remaining list_del_rcu() within mutex protection? Can we avoid the
-creation of the LISTDONE state bit?
+Fixes: 4f79d0deae37 ("arm64: dts: qcom: sa8775p: add CPU idle states")
+Signed-off-by: Maulik Shah <quic_mkshah@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Thanks,
-Miqu=C3=A8l
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+index 9f315a51a7c1..26290feb768f 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+@@ -44,6 +44,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
++			power-domains = <&cpu_pd0>;
++			power-domain-names = "psci";
+ 			qcom,freq-domain = <&cpufreq_hw 0>;
+ 			next-level-cache = <&l2_0>;
+ 			capacity-dmips-mhz = <1024>;
+@@ -66,6 +68,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
++			power-domains = <&cpu_pd1>;
++			power-domain-names = "psci";
+ 			qcom,freq-domain = <&cpufreq_hw 0>;
+ 			next-level-cache = <&l2_1>;
+ 			capacity-dmips-mhz = <1024>;
+@@ -83,6 +87,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x200>;
+ 			enable-method = "psci";
++			power-domains = <&cpu_pd2>;
++			power-domain-names = "psci";
+ 			qcom,freq-domain = <&cpufreq_hw 0>;
+ 			next-level-cache = <&l2_2>;
+ 			capacity-dmips-mhz = <1024>;
+@@ -100,6 +106,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x300>;
+ 			enable-method = "psci";
++			power-domains = <&cpu_pd3>;
++			power-domain-names = "psci";
+ 			qcom,freq-domain = <&cpufreq_hw 0>;
+ 			next-level-cache = <&l2_3>;
+ 			capacity-dmips-mhz = <1024>;
+@@ -117,6 +125,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x10000>;
+ 			enable-method = "psci";
++			power-domains = <&cpu_pd4>;
++			power-domain-names = "psci";
+ 			qcom,freq-domain = <&cpufreq_hw 1>;
+ 			next-level-cache = <&l2_4>;
+ 			capacity-dmips-mhz = <1024>;
+@@ -140,6 +150,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x10100>;
+ 			enable-method = "psci";
++			power-domains = <&cpu_pd5>;
++			power-domain-names = "psci";
+ 			qcom,freq-domain = <&cpufreq_hw 1>;
+ 			next-level-cache = <&l2_5>;
+ 			capacity-dmips-mhz = <1024>;
+@@ -157,6 +169,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x10200>;
+ 			enable-method = "psci";
++			power-domains = <&cpu_pd6>;
++			power-domain-names = "psci";
+ 			qcom,freq-domain = <&cpufreq_hw 1>;
+ 			next-level-cache = <&l2_6>;
+ 			capacity-dmips-mhz = <1024>;
+@@ -174,6 +188,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x10300>;
+ 			enable-method = "psci";
++			power-domains = <&cpu_pd7>;
++			power-domain-names = "psci";
+ 			qcom,freq-domain = <&cpufreq_hw 1>;
+ 			next-level-cache = <&l2_7>;
+ 			capacity-dmips-mhz = <1024>;
+
+---
+base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+change-id: 20241112-sa8775p_cpuidle-5f3bf2a97219
+
+Best regards,
+-- 
+Maulik Shah <quic_mkshah@quicinc.com>
+
 
