@@ -1,161 +1,87 @@
-Return-Path: <linux-kernel+bounces-405269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B559C4F5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:24:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB64D9C4F49
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7411BB22094
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:24:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 554F2B212C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E14620ADDB;
-	Tue, 12 Nov 2024 07:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k8TQ1YUh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFF0207A14;
+	Tue, 12 Nov 2024 07:19:08 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1BB20A5EB;
-	Tue, 12 Nov 2024 07:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF9319EED4
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731396262; cv=none; b=M7KxInFBDWpED7YZQeHQmxqALMWsLDazV3WX0r8Qk0JL6OqwqrD4wc7uejoxTRIqSPvjAndBn52FMksgQ8pDnvJbBsC1kfrvEuLM/2PMdluf8mI8sSuN4g62TmQPTD33QjWAAZHtX0DPseMjQ0gX3Epx0rHW/f4i0EVCMeBE2VE=
+	t=1731395947; cv=none; b=V1bOZ98YiHegP6w+RdMsP37K/oxlCGQSHnbOfgDZRwxHpUDhjU0Wb3yJ4f7zca1aTWgpcC92aLwfQ9A4tZBvg1J9hYUpzRVnrWbVAzbaUamwsyjAbbaDr2yWNsPeiTl3XehObrEYNWxQF40R9xv1XxpErnvspZSPE3ApGA6fu5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731396262; c=relaxed/simple;
-	bh=AmKKDwOqZfPgxQ71wPS/jT+BiPX5ic7MGRFRRuksVSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=a/eihmb+e5I+gHWMTw8IIIfC8sLxXe6zmhUM3RL0Gzu5ljSKMhpUNAct8crWwJoD2gsrXEGNCmC12N4hsgWaNdcEiwDqaNSb2BoC2MMj0diprvyBgHovJMv1l+Lz0aA41LjHe+WL5b2BT+H1iQhPci50JZbkWM3KjfrssWiKfBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k8TQ1YUh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC3frYA019134;
-	Tue, 12 Nov 2024 07:18:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Tzjf94MXs8BvObqrZx+eUlU3ZPS4ZV90CozDAWrbMrw=; b=k8TQ1YUhaSKWma4C
-	t2qbJAq/xHxBUUxzhag6ChbbyoA08kYQRoO1H3iqTDCwWZ7zw5DCZ/Ez5G8xw8tW
-	UwV0VXNY4ObY9HUFaukdoSJloksTnfHJ4KZFf67/XlF/vrHnjJB0d94u8modqanZ
-	gK+Js3AI/xq7jMtK+sMUhwYgUe0/HADEI/q540onESGTSD6RyaMh14qkxXkBk911
-	uWcQjEGBy+KU0WnAGHFKeJng6HIv7IE6dHoZqIgyaaxOAW4FXXVvj3e8U2oZd3gd
-	lg8LicU0jm2m+oZb3za94OjBF+Nwtp6Yuit9zc54fg2uMhMzVeARdcbYcE/SzE2v
-	B+0GgA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0gkxcs1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 07:18:27 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC7IQ53007141
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 07:18:26 GMT
-Received: from [10.253.13.129] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 11 Nov
- 2024 23:18:22 -0800
-Message-ID: <e35d1541-8bd7-447d-b544-e8fb8cce287a@quicinc.com>
-Date: Tue, 12 Nov 2024 15:18:19 +0800
+	s=arc-20240116; t=1731395947; c=relaxed/simple;
+	bh=+4zF+I5UVkznq+MwkXTk3TvFz3Fj3uOIqamwDRxd6tg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Y2ns3a3uwXuWAWW8rJ/hSqmAP2qh3JVCYbbrIZPKZ6oIc/CrmIuiS6KW4o0uz2vShhcwj6hu2TX+uYxj7H/yvRVcjRRLz+6P152ojWKZD0h9uGOnVdgpjkWt9mdvQ7AvmhZyQrgo2OZBHL9esECPzCwRLF1VZFVk60mkuq/MVLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a4e80ccd1bso56681685ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:19:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731395945; x=1732000745;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2mpeObwQvE4CpcJBlgp4+m7ylk6uy6K6IVGUb1AoJuo=;
+        b=AmjPmejWgE+W/w1/QRHV50D3dZYX2SXhm8i7aOrPGswEEjySI6Go8/siNy/ec/mWzd
+         1H24RIz03pXVq2erIeQ5QSMSC8wEmDFkE64GPQg7rF7cL7GiHg5Xt9mJsEif3tVT3CnW
+         BrJ0/v24rcbk8HEwKVuE699GHPNW4LCyOu6aB4GqNvsoQM3e8Vyd89DKl8KpCpSCWcv8
+         s1A/smteAQxrpGZv4IVw21s2dpDicjOjiKUfcXarz2GVw/yaKgwrBDP0DcaGR4xdOTD6
+         sQa0hkSG8ErKnfrFJrBK9mqVQxndkzChEyV2p5ULEOEnehT4ALktxTelAdZXolu386Mn
+         Ah9w==
+X-Forwarded-Encrypted: i=1; AJvYcCU2W5pr+a5Ql6/u8QXBA+tF+Zt1xZGzuBLnjlaCbTG4BR/irhv10Ku9hHQocitoAnnCSCYDJEtWZosVFv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF6u4UMQvmiBG3fTHoV0xbVMIlSDUwstKQFIOWHoTlhCpXivZX
+	V7r8zQiKxLY5HCEnaidL8Z+g3beKDIv+LZrvItm2ahU/8VjMelDXgVsjFUsX3BQPx93XmaGRrk6
+	5uhxZVPA59oJHmJpcSvk/2HpwFwccFV7qVQbF23S42J75Z87qC1AX0xk=
+X-Google-Smtp-Source: AGHT+IGGdltFSF9otbWIiMMlwDZRPg2bZ543HSOG9b0hu+m8AfvpICqafwJCX0SRwAq4IQ+gFk0Z04zG3QIUqnXWi5iYX9w9RGz1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] PCI: endpoint: Fix API pci_epc_destroy() releasing
- domain_nr ID faults
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Zijun Hu
-	<zijun_hu@icloud.com>
-CC: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Kishon Vijay Abraham
- I <kishon@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Frank Li
-	<Frank.Li@nxp.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jingoo Han
-	<jingoohan1@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Shawn Lin
-	<shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, <stable@vger.kernel.org>
-References: <20241107-epc_rfc-v2-0-da5b6a99a66f@quicinc.com>
- <20241107-epc_rfc-v2-1-da5b6a99a66f@quicinc.com>
- <20241112070339.ivgjqctoxaf2xqxr@thinkpad>
-Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <20241112070339.ivgjqctoxaf2xqxr@thinkpad>
+X-Received: by 2002:a92:c244:0:b0:3a6:ab32:7417 with SMTP id
+ e9e14a558f8ab-3a6f1994673mr133680085ab.1.1731395945502; Mon, 11 Nov 2024
+ 23:19:05 -0800 (PST)
+Date: Mon, 11 Nov 2024 23:19:05 -0800
+In-Reply-To: <20241112064621.uOkpD%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67330169.050a0220.5088e.0009.GAE@google.com>
+Subject: Re: [syzbot] [wpan?] [usb?] BUG: corrupted list in ieee802154_if_remove
+From: syzbot <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bkmDRW36247srH1YjhAQvCp6Xvg9L36p
-X-Proofpoint-GUID: bkmDRW36247srH1YjhAQvCp6Xvg9L36p
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- spamscore=0 clxscore=1011 mlxscore=0 mlxlogscore=653 lowpriorityscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411120059
 
-On 11/12/2024 3:03 PM, Manivannan Sadhasivam wrote:
-> On Thu, Nov 07, 2024 at 08:53:08AM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> pci_epc_destroy() invokes pci_bus_release_domain_nr() to release domain_nr
->> ID, but the invocation has below 2 faults:
->>
->> - The later accesses device @epc->dev which has been kfree()ed by previous
->>   device_unregister(), namely, it is a UAF issue.
->>
->> - The later frees the domain_nr ID into @epc->dev, but the ID is actually
->>   allocated from @epc->dev.parent, so it will destroy domain_nr IDA.
->>
->> Fix by freeing the ID to @epc->dev.parent before unregistering @epc->dev.
->>
->> The file(s) affected are shown below since they indirectly use the API.
->> drivers/pci/controller/cadence/pcie-cadence-ep.c
->> drivers/pci/controller/dwc/pcie-designware-ep.c
->> drivers/pci/controller/pcie-rockchip-ep.c
->> drivers/pci/controller/pcie-rcar-ep.c
-> 
-> No need to mention the callers.
-> 
+Hello,
 
-thank you Manivannan for code review.
-good suggestions, i will take them for further similar patches.(^^)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
->>
->> Fixes: 0328947c5032 ("PCI: endpoint: Assign PCI domain number for endpoint controllers")
->> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
->> Cc: Jingoo Han <jingoohan1@gmail.com>
->> Cc: Marek Vasut <marek.vasut+renesas@gmail.com>
->> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->> Cc: Shawn Lin <shawn.lin@rock-chips.com>
->> Cc: Heiko Stuebner <heiko@sntech.de>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> Good catch! (not sure how I messed up in first place).
-> 
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> - Mani
-> 
->> ---
+Reported-by: syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com
+Tested-by: syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com
 
-[snip]
+Tested on:
 
->>
-> 
+commit:         2d5404ca Linux 6.12-rc7
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=134afea7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1503500c6f615d24
+dashboard link: https://syzkaller.appspot.com/bug?extid=985f827280dc3a6e7e92
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17b1f4e8580000
 
+Note: testing is done by a robot and is best-effort only.
 
