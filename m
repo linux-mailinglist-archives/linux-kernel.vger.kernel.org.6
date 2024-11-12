@@ -1,223 +1,118 @@
-Return-Path: <linux-kernel+bounces-406605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F97E9C615A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:24:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D469C6167
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:26:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213B51F23036
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:24:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C849BA3CFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFC0219C8C;
-	Tue, 12 Nov 2024 19:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BE72076B8;
+	Tue, 12 Nov 2024 15:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="kOFYZ3Iu"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDey1Oft"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22AD2194B4
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A8620720E;
+	Tue, 12 Nov 2024 15:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439289; cv=none; b=e0wg3xPuX3fqSn8jp/+w+5IOpFTVu9Or5bQZWSuA+8rntKdPwjIOQ44AB8my4RXWm4N1OOiWhT1DATddnHujng8Ks+aHT25O6DjZcQuL4uE8CGQPJXTjavpEE1GYAIqCTUK3rhdcXA21wNQj+8bxgoQtkrgCCzIKd0AXJEqvDk4=
+	t=1731427122; cv=none; b=E7NSMQQXtG2g5Mr2tXuggAyewLA/aaRQs1dBIAUJ3Flkb5GrUP1Ip0po7qRsixOHy8DlJ4F+4CZf/OLC6tdGWJTCEsAEnfqh6xfFDdsjCP9fnRMZPlpwx6P8s3zmzpQRn53qsAM3DpJzxZpAv2Y4UN6UC0ARc6NJjJDI+PiK6J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439289; c=relaxed/simple;
-	bh=yE45QrhNWmhn/fkyErZOdv2B/yQ4TBW/IkZmciYJkDw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UsBx+RrQ/IiTqiYoW3l1XSuTlR21SkIeyYvqOjfvrmlGQLZscZskBML1d1son+FmUooFfVgsAcW7iYF7GL9N8Y4uu0Ala73io3XhhWJq0pFNf1o6QSY/uOMd6isthgkhglFxbrsylYD+em9HooLYviTL7hkbbgV/1sCDx1Mit9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=kOFYZ3Iu; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3e5fb8a4e53so3441290b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:21:26 -0800 (PST)
+	s=arc-20240116; t=1731427122; c=relaxed/simple;
+	bh=WzQuvL1qaXh0RlfWv8D0x8WAvSbMA0OdN3Q2Ejhekms=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=i4GZ20WD0/yHWCFvJoyhdxbvD163WnsKFcGebNP35oGAVDyOon4llPSHIM+IHXHNfRAwao7pvWnyFJVzFVNqVNtu/AAdbCaRsBh/Q4pVP/gkvsazFaGCsS7UTQhev6yvQ35iFcjgwerZ6EbXdqFZcClJfxApoaHFI2W/k/8rSug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XDey1Oft; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so49136885e9.0;
+        Tue, 12 Nov 2024 07:58:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1731439286; x=1732044086; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KdLsB2RmvIaNhuM2RQrjIGniDaG3gtn+FYYbXQwyLjQ=;
-        b=kOFYZ3IulBK375eW1ZuKRiveMYUhhQl9BaF+/Nrtw+5aD55ITnD6jWAmTlhkd3pwrs
-         XChBnwST1bZIww6fVKbvxif/jAqRnMNN0Eo3DEGg4nMcTr2e0zPEV6GLpfAFaP97Qnbl
-         MaCfjPyQc/kB0ypdJHateZ9Cn0YVwUct0QdZ0=
+        d=gmail.com; s=20230601; t=1731427119; x=1732031919; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/a3ScA4GKVwMKEp5bNwzhgLvy/jMX4sk0gqCJ9bcam4=;
+        b=XDey1OftcG3JqSn+PdZ4QJueC5CatfC6Wk2YoifNsqrtjru9sdf7jmRsHEWBSSi+89
+         fGqMl4q8PlHKwb8Ri3fV6L9fWw3OQYhecwqCx6yqGFveY/98q65vRwJIyNbcmlHz+aHh
+         v7HLdVABCmh2DWDCnK5g5b0bZBRFKB8icKBAMw18r4aKRSFpmjhpoNEZoXYzEmo5GPXT
+         Idd8fIkIcg2DfLANCUXrhgunPnTvxBaTJ/pGMu8l9V1J+4OjUgX6pTKWcaTCDO4NNBhy
+         sUm18PknimbkSTUPmMnBhXbkfv4DDLrqADF5Tnfr4CcwhgESY5avVa5FBRFnu7mOOjKR
+         v+LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731439286; x=1732044086;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KdLsB2RmvIaNhuM2RQrjIGniDaG3gtn+FYYbXQwyLjQ=;
-        b=aRs//CHS4egfj5vcLDALZf4F2oNNm2aLHAX5YxAnwP34OURt93T1y/MLA7MnkWl5I8
-         AIKP03cmO7RULxktNn2duYz7PmW2u7D5h6ZarMk2ZgfAoE7qpzjGLBsPL7HrFKYvSCS0
-         qR/UGEuJybG3C060NA9isannGSyAlDEYyQa/7OWRrfi8Gfs3BE3kHlGmY5lPd0KUUt2a
-         gPg0WVu1D6nlznbiAJk3s/C7XJzy03lrsZEvkJcDSRTXN527qNFTSfterSNqpQTlYPzM
-         uBEeHD+GG8/UOizpD/S0byLHYPZOUiOGePOX6l2v9xkc9yek6bPNbp8z3rlqrd62HOBI
-         +zQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUarXBT0rHq7Y6nA73nnHrS8ZRcNR1aKdegToeR13KJT8OFeoliKRUqArK7ijTXdOh3n9w73G4M8PnoWcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7WY7QrKn3lbV9OM8EmsXUmJmQXkZoN1xhkQiSZJEhbsYMaVu9
-	eRyTdQiiNR2Fp9yCUCgi+Idf+6LM2m2dUNJkWUAGRgotzVlaJs6d0ZcdDxLCPszKoAC2/tYsZQO
-	uooW7UfiGhsPLCy3/cV5rgBaZRe8ZnC/QBR0j6Q==
-X-Google-Smtp-Source: AGHT+IG8MZOfUN1iQ3EJafqKXedS2lIEywdwom52FQH7gICN9ovIXOS7HUYpRMgTzYVe1l/BK5FWaXivkAr8ZVcdAbg=
-X-Received: by 2002:a05:6808:1302:b0:3e0:7441:e487 with SMTP id
- 5614622812f47-3e7b0ad78b4mr98755b6e.37.1731439285895; Tue, 12 Nov 2024
- 11:21:25 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731427119; x=1732031919;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/a3ScA4GKVwMKEp5bNwzhgLvy/jMX4sk0gqCJ9bcam4=;
+        b=HU+Un16dzMmfD7Z4vplZt6O3QhPDge4IwLU5w0ELt/+w7rJM63b2lwzcuyTiRYoqLz
+         xgu/JZE4Aje09gYTiANX4Z0a/8ZPcGkrjZHva4EcOms3fF0Rd9iQlQexkx+V6XVzeqJx
+         Hd058PLx+HdeFzchiaIV8TRo7rqSCcN7NtEN1AJ84zma61GNvNQlh9eFTwJUwGNqyRmf
+         0kef9mMk8GXpiF3Qvf21aBKN9mq6pSqbFl9P/fhJwQRLGkqErn7vKNgn/6CTbE5F5EOE
+         zJSn2pLxi5+PZ+c70Qd0MCQoRd9gPBO4BmXBqKT5Bjl7bWAIDvgmReumMfkaABrlr+jo
+         3o6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVoG+J+fNIBb1vuNDs2NJP+HeIN5P0XxRyQVoeDd8+6XNDv89E411D50EuWpr/yujQR4Nv8duXpQxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDMg+MCf182BQuSc0wR8g+q3YvBytI27njgz1ZSi8fzMt7UNY+
+	biAGc3Ups8NBahKfQhnkvF7NR8FWbHjAsR5x+tKhrH4L3FFkHbTZ
+X-Google-Smtp-Source: AGHT+IGKhg0idjgcZB7nZV/8fQC70huh7z1KhT3us97vMBFd4YuUTyplBPiFYDRAuAdW3/aRHr0ETQ==
+X-Received: by 2002:a05:6000:2a1:b0:381:cffc:d419 with SMTP id ffacd0b85a97d-381f183f682mr14837750f8f.36.1731427119405;
+        Tue, 12 Nov 2024 07:58:39 -0800 (PST)
+Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381edc1104asm15991136f8f.88.2024.11.12.07.58.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 07:58:39 -0800 (PST)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: gregkh@linuxfoundation.org,
+	andreyknvl@gmail.com,
+	b-liu@ti.com,
+	johan@kernel.org,
+	oneukum@suse.com,
+	stern@rowland.harvard.edu
+Cc: linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	snovitoll@gmail.com,
+	usb-storage@lists.one-eyed-alien.net
+Subject: [PATCH v2 5/8] drivers/usb/mon: refactor min with min_t
+Date: Tue, 12 Nov 2024 20:58:14 +0500
+Message-Id: <20241112155817.3512577-6-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241112155817.3512577-1-snovitoll@gmail.com>
+References: <2024111251-spill-hatchback-72da@gregkh>
+ <20241112155817.3512577-1-snovitoll@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111163723.9002-1-skhan@linuxfoundation.org>
-In-Reply-To: <20241111163723.9002-1-skhan@linuxfoundation.org>
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 12 Nov 2024 20:21:15 +0100
-Message-ID: <CAKMK7uGS3FJVp690She5d+XbQV5x7yQFPozta4cfnzga-BYAOQ@mail.gmail.com>
-Subject: Re: [PATCH v2] Documentation/CoC: spell out enforcement for
- unacceptable behaviors
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: gregkh@linuxfoundation.org, corbet@lwn.net, workflows@vger.kernel.org, 
-	rdunlap@infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Dan Williams <dan.j.williams@intel.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 11 Nov 2024 at 17:39, Shuah Khan <skhan@linuxfoundation.org> wrote:
-> The Code of Conduct committee's goal first and foremost is to bring about
-> change to ensure our community continues to foster respectful discussions.
->
-> In the interest of transparency, the CoC enforcement policy is formalized
-> for unacceptable behaviors.
->
-> Update the Code of Conduct Interpretation document with the enforcement
-> information.
->
-> Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: Miguel Ojeda <ojeda@kernel.org>
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Acked-by: Jonathan Corbet <corbet@lwn.net>
-> Acked-by: Steven Rostedt <rostedt@goodmis.org>
-> Acked-by: Dan Williams <dan.j.williams@intel.com>
-> Acked-by: Theodore Ts'o <tytso@mit.edu>
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> ---
->
-> Changes since v1:
-> - Updates Acks with Ted's ack.
-> - Fixes subsection formatting as per Randy's suggestion.
-> - Fixes a spelling error.
->
->  .../code-of-conduct-interpretation.rst        | 52 +++++++++++++++++++
->  1 file changed, 52 insertions(+)
->
-> diff --git a/Documentation/process/code-of-conduct-interpretation.rst b/Documentation/process/code-of-conduct-interpretation.rst
-> index 66b07f14714c..ebddf218341d 100644
-> --- a/Documentation/process/code-of-conduct-interpretation.rst
-> +++ b/Documentation/process/code-of-conduct-interpretation.rst
-> @@ -156,3 +156,55 @@ overridden decisions including complete and identifiable voting details.
->  Because how we interpret and enforce the Code of Conduct will evolve over
->  time, this document will be updated when necessary to reflect any
->  changes.
-> +
-> +Enforcement for Unacceptable Behavior Code of Conduct Violations
-> +----------------------------------------------------------------
-> +
-> +The Code of Conduct committee works to ensure that our community continues
-> +to be inclusive and fosters diverse discussions and viewpoints, and works
-> +to improve those characteristics over time. The Code of Conduct committee
-> +takes measures to restore productive and respectful collaboration when an
-> +unacceptable behavior has negatively impacted that relationship.
-> +
-> +Seek public apology for the violation
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +The Code of Conduct Committee publicly calls out the behavior in the
-> +setting in which the violation has taken place, seeking public apology
-> +for the violation.
-> +
-> +A public apology for the violation is the first step towards rebuilding
-> +the trust. Trust is essential for the continued success and health of the
-> +community which operates on trust and respect.
-> +
-> +Remedial measures if there is no public apology for the violation
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +The Code of Conduct Committee determines the next course of action
-> +to restore the healthy collaboration by recommending remedial measure(s)
-> +to the TAB for approval.
-> +
-> +- Ban violator from participating in the kernel development process for
-> +  a period of up to a full kernel development cycle. The Code of Conduct
-> +  Committee could require public apology as a condition for lifting the
-> +  ban.
-> +
-> +The scope of the ban for a period of time could include:
-> +
-> +    a. denying patch contributions and pull requests
-> +    b. pausing collaboration with the violator by ignoring their
-> +       contributions and/or blocking their email account(s)
-> +    c. blocking their access to kernel.org accounts and mailing lists
-> +
-> +Once the TAB approves one or more of the measures outlined in the scope of
-> +the ban by a two-thirds vote, the Code of Conduct Committee will enforce
-> +the TAB approved measure(s) in collaboration with the community, maintainers,
-> +sub-maintainers, and kernel.org administrators.
+Ensure type safety by using min_t() instead of casted min().
 
-This is a detail I missed at first, but I think it's a very important
-one and needs to be highlighted.
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+---
+ drivers/usb/mon/mon_bin.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Years ago when the kernel CoC was put in plae, there was a very long
-discussion around whether maintainers are required to enforce the CoC,
-or not. The rather strong consensus was that they are not responsible,
-but help is appreciated, as documented in this patch: c1d1ba844f01
-("Code of conduct: Fix wording around maintainers enforcing the code
-of conduct")
+diff --git a/drivers/usb/mon/mon_bin.c b/drivers/usb/mon/mon_bin.c
+index afb71c18415d..c93b43f5bc46 100644
+--- a/drivers/usb/mon/mon_bin.c
++++ b/drivers/usb/mon/mon_bin.c
+@@ -823,7 +823,7 @@ static ssize_t mon_bin_read(struct file *file, char __user *buf,
+ 	ep = MON_OFF2HDR(rp, rp->b_out);
+ 
+ 	if (rp->b_read < hdrbytes) {
+-		step_len = min(nbytes, (size_t)(hdrbytes - rp->b_read));
++		step_len = min_t(size_t, nbytes, hdrbytes - rp->b_read);
+ 		ptr = ((char *)ep) + rp->b_read;
+ 		if (step_len && copy_to_user(buf, ptr, step_len)) {
+ 			mutex_unlock(&rp->fetch_lock);
+-- 
+2.34.1
 
-This was also acknowledged once more in a patch merged two years ago
-with c1d1ba844f01 ("Code of conduct: Fix wording around maintainers
-enforcing the code of conduct") by changing "decisions by the
-committee" into "decisions regarding enforcement recommendations", to
-make it very explicit that they're just recommendations to the TAB and
-maintainers and that the CoC team does not have independent
-enforcement powers.
-
-The approval by the TAB is still here, but maintainers don't seem to
-get a say anymore. Is this the intention, because it seems to be a
-really substantial change? From our experience on the fd.o side, there
-is a subset of maintainers who do not appreciate this responsibility
-at all and very much would not like to have it. Given that, and the
-kernel's strong consensus a few years ago against this I don't think
-enlisting maintainers for enforcement without a wide agreement is
-going to be well received - even when personally I think it's the
-right approach to CoC enforcement, I did not put an ack on that patch
-for clear reasons.
-
-Also, if a maintainer refuses to implement an enforcement decision,
-will they be sanctioned too? Since this is all an entirely new section
-and does not touch any of the existing sections I'm also not clear on
-when one or the other rules apply, and how they interact.
-
-This part looks confusing to me, and a bit in a scary way.
-
-Cheers, Sima
-
-
-> +
-> +The effectiveness of the remedial measure(s) approved by the TAB depends
-> +on the trust and cooperation from the community, maintainers, sub-maintainers,
-> +and kernel.org administrators in enforcing them.
-> +
-> +The Code of Conduct Committee sincerely hopes that unacceptable behaviors
-> +that require seeking public apologies continue to be exceedingly rare
-> +occurrences in the future.
-> --
-> 2.40.1
->
->
-
-
---
-Daniel Vetter
-Software Engineer, Intel Corporation
 
