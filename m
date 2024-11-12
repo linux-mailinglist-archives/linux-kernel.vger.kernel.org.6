@@ -1,149 +1,151 @@
-Return-Path: <linux-kernel+bounces-405259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F499C4F2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:09:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3D59C4F38
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:15:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED22D283AB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:09:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36D5B1F2239F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC7F20A5EB;
-	Tue, 12 Nov 2024 07:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BE220B1E0;
+	Tue, 12 Nov 2024 07:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wVJmn2Fc"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="DU+hJHfM"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06CE20A5F7
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA11F20A5FF;
+	Tue, 12 Nov 2024 07:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731395324; cv=none; b=mhtn9A3AzTDxegOfIhrXtbovXAjtlcqNPaBueZ6Gyk5C/+xm7eBHMVXBuekLe54PPbjXy9hUxecJRkTKDxuBPiAW2PyVhHhEJA3BbYsMOpPkM160NinkSVAABUb2CMJvQVF6CVrw/7nei2FhEb5Pb2hkyKyXKU7M9n/NOpPHE90=
+	t=1731395709; cv=none; b=DKfo6Uz6Wu+ScxMR5DxnYFUUf3F4QW8UDvVz3UP4CK9KarStA8kS8if+v0BYRgSKCDA8hKukf248t+27E8B4hWQeHL8kjihNYLT90N5ApyD2UvhTu+SHvvKJJ8a1TmXbjsPO/5lKcmjmmUt1bIm+G2OSxzXHWp/AeTDWJZV58ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731395324; c=relaxed/simple;
-	bh=vQpLr73fPAhyt03b7DbuAYrhHB/HfoQbi+CkELdcpO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dp/1n59PllZAA8kjh/QlQQ+u4Z4kFxYQDwLsKxj0EnBYMMXwj8sl8YzwzWCXjLgtPjS7f++4RP3TXWGUxIW4T28ENafI7+Z5Zz9U+YIvfDluasq2NkxuJT6Tbty08CcwA6jW/8E+/+4iuX18D1cMPB+6lxloP98qY1MY2X0jqOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wVJmn2Fc; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-720d5ada03cso5368501b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:08:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731395322; x=1732000122; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GYotEMBcArnksOWpjr0ougrZeUumVFiWesABvsp9ubM=;
-        b=wVJmn2FcDREXPawtIwjpevNGPVIB0METJpU83ImusUEzJmQ15IEgjKCZgL6BNiY7Vu
-         KxMNL8uJzcgIogK1tFRgAS2oRn9Gihnj8S3eRYBVFn6lPfroF0IeS+kNn45wbfaScVm0
-         onvZ+rgN18OaPw4kj/rG6L5QIKiGqupX4F6qyVnqaCvbqVyTP7bKeNM5vPppeoSQD/Rh
-         wvBNaYd/ozs9bUayIj/PuRho95JHtK5klANjZau2CWc3A4P3IRg98zha8WuhOtAFQOuy
-         E0M0QHgsYwMWI9g6HuHOVAxD9m+GqeiO9gGMSRaEa5oejbul4YS6gdghmouQyGY5FX0d
-         Urkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731395322; x=1732000122;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GYotEMBcArnksOWpjr0ougrZeUumVFiWesABvsp9ubM=;
-        b=AhFbIi5s3qh+vonG9TgQhTnRemaKV4XQ3O3f787VriJrIOUwncWb2C58xYm6QrAef7
-         hFtjRqWUTTVdRmOfmutRdx0AtKv4S8sJKf5uxb6wf2e/pHyE40drflXjLIQni7jqq93u
-         dQSB+cB/UtYO+JGPtQnmn49e/b/u4rkfXYkUKMcSLG/BGXIZt0xZ3yjOnYgA6zPOfoQ/
-         Q6mGTELO1Vjc31o+DVmibFiPQqU9+0xc5Mt2QdpqwMlv61sESX6M9w1LKAjYRtXLsWGb
-         CDgfpiOadKUjtR/0AMwRGWoY0uSly7x5zUNibJ6Lk7EGtgFWU6y6LXuqU80CamMgFsue
-         7tyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ4ggM/LKFoy6GpMw62c6+CbfFCJX2Gjzri5X7lAWVvYUE4vPTnMnARngbqLfp20BO9/4x7DymGFw2uzc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykYicjSZrNmi2B62IXp0uRyS36ZLWHustwB+coIJEROX0YWzH+
-	PBMvxcuVNB43aDQ9Ny4mv9Ajp2Tajz3oCJa4GmDWImLo0otekYS2BX5bN3sV4Q==
-X-Google-Smtp-Source: AGHT+IEgoR8vcVl0tRHfaHi7w/ESUdKFgKdOZs0ADUUkeKDj40lQwin0LYfqby4SbBaVUfu+WzSmOA==
-X-Received: by 2002:a05:6a00:4f93:b0:71e:6c65:e7c4 with SMTP id d2e1a72fcca58-7241339e122mr18485552b3a.26.1731395322004;
-        Mon, 11 Nov 2024 23:08:42 -0800 (PST)
-Received: from thinkpad ([117.213.103.248])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7240799bb25sm10714175b3a.109.2024.11.11.23.08.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 23:08:41 -0800 (PST)
-Date: Tue, 12 Nov 2024 12:38:34 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] PCI: endpoint: Fix API pci_epc_remove_epf()
- cleaning up wrong EPC of EPF
-Message-ID: <20241112070834.ttnmue5bfu6lnxdb@thinkpad>
-References: <20241107-epc_rfc-v2-0-da5b6a99a66f@quicinc.com>
- <20241107-epc_rfc-v2-2-da5b6a99a66f@quicinc.com>
+	s=arc-20240116; t=1731395709; c=relaxed/simple;
+	bh=nfcLnmD+D/CfXHBdEVD6YP35dinDuE9CTLoceAXX1lM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H0N2sSjVBWfyTMsZMbJDcGxyk83dybLmENUik8rbaldRehq5BM5ZL+sMsYVjS1nBlTJYEXscfL2YEIpFuDvJal9BZ5QWtnJlZcIuCj1hCM4mUNt+QhZdqv1/DNaj9vrEePoN3UQlft+AZgOlO2+XyoHgFdcqWHTSC1GuN2lqjkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=DU+hJHfM; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABLu5fw016704;
+	Mon, 11 Nov 2024 23:13:55 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=+nvaEIkJi1JKRsX47Bn13It
+	bUtldzj6zpPQcXn6HvLg=; b=DU+hJHfMvUD7n8xtXhOdgiOi89/Db9Pc+i/1WMj
+	XcFwklXYKFNUaYJyi3c+V1lfwL0boqORmWpiQhhmjZkrUIer+NKWykBbeapnSCuK
+	QSm+ZXlC1X+IVN/3IathgJP8C28X3TtSZpQaFpWFSiS6BW3qlDyf2LzYjiNeLRJ7
+	CZGEOi18w+d5e7TIxGjmfNeKcFbxm4YwqUFGXhoeWDR8Y1TQrkORv9s8dnO+5c7V
+	yUrq4nsL0RNhlF1Y9Cv3RbvuUg6spXPvfWJn+nTGFufw36OvIem1oZBvsFsV0eJi
+	8DG6CPVJIbI2piYDB1VfRpKqP7LccCtYaiksliQnMqc3fqw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42un9d1csv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 23:13:54 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 11 Nov 2024 23:13:53 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 11 Nov 2024 23:13:53 -0800
+Received: from localhost.localdomain (unknown [10.111.135.16])
+	by maili.marvell.com (Postfix) with ESMTP id 0A18F3F70B2;
+	Mon, 11 Nov 2024 23:13:53 -0800 (PST)
+From: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
+To: <andrew@lunn.ch>, <gregory.clement@bootlin.com>,
+        <sebastian.hesselbarth@gmail.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <salee@marvell.com>, <dingwei@marvell.com>,
+        Jenishkumar Maheshbhai Patel
+	<jpatel2@marvell.com>
+Subject: [PATCH 1/1] arm64: dts: marvell: use reset controller to reset mac
+Date: Mon, 11 Nov 2024 23:13:50 -0800
+Message-ID: <20241112071350.762111-1-jpatel2@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241107-epc_rfc-v2-2-da5b6a99a66f@quicinc.com>
+Content-Type: text/plain
+X-Proofpoint-GUID: 3ZGkxgAhdUC6TpdclIJI6IyS3PWbiEOt
+X-Proofpoint-ORIG-GUID: 3ZGkxgAhdUC6TpdclIJI6IyS3PWbiEOt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
+ definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
 
-On Thu, Nov 07, 2024 at 08:53:09AM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> It is wrong for pci_epc_remove_epf(..., epf, SECONDARY_INTERFACE) to
-> clean up @epf->epc obviously.
-> 
-> Fix by cleaning up @epf->sec_epc instead of @epf->epc for
-> SECONDARY_INTERFACE.
-> 
-> Fixes: 63840ff53223 ("PCI: endpoint: Add support to associate secondary EPC with EPF")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+change mac reset and mac reset bits to reset controller
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
+---
+ arch/arm64/boot/dts/marvell/armada-cp11x.dtsi | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-- Mani
-
-> ---
->  drivers/pci/endpoint/pci-epc-core.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-> index bcc9bc3d6df5..62f7dff43730 100644
-> --- a/drivers/pci/endpoint/pci-epc-core.c
-> +++ b/drivers/pci/endpoint/pci-epc-core.c
-> @@ -660,18 +660,18 @@ void pci_epc_remove_epf(struct pci_epc *epc, struct pci_epf *epf,
->  	if (IS_ERR_OR_NULL(epc) || !epf)
->  		return;
->  
-> +	mutex_lock(&epc->list_lock);
->  	if (type == PRIMARY_INTERFACE) {
->  		func_no = epf->func_no;
->  		list = &epf->list;
-> +		epf->epc = NULL;
->  	} else {
->  		func_no = epf->sec_epc_func_no;
->  		list = &epf->sec_epc_list;
-> +		epf->sec_epc = NULL;
->  	}
-> -
-> -	mutex_lock(&epc->list_lock);
->  	clear_bit(func_no, &epc->function_num_map);
->  	list_del(list);
-> -	epf->epc = NULL;
->  	mutex_unlock(&epc->list_lock);
->  }
->  EXPORT_SYMBOL_GPL(pci_epc_remove_epf);
-> 
-> -- 
-> 2.34.1
-> 
-
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+index f5aef6a23f65..f358f9809edd 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+@@ -6,7 +6,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/mvebu-icu.h>
+-#define CP11X_PCIEx_MAC_RESET_BIT_MASK(n)	(0x1 << 11 + ((n + 2) % 3))
++#define CP11X_PCIEx_MAC_RESET_BIT(n)	(11 + ((n + 2) % 3))
+ #include <dt-bindings/thermal/thermal.h>
+ 
+ #include "armada-common.dtsi"
+@@ -276,6 +276,12 @@ CP11X_LABEL(gpio2): gpio@140 {
+ 			};
+ 		};
+ 
++		CP11X_LABEL(pcie_mac_reset): pcie-mac-reset@0x440268 {
++			compatible = "snps,dw-low-reset";
++			#reset-cells = <1>;
++			reg = <0x440268 0x4>;
++		};
++
+ 		CP11X_LABEL(syscon1): system-controller@400000 {
+ 			compatible = "syscon", "simple-mfd";
+ 			reg = <0x400000 0x1000>;
+@@ -548,8 +554,7 @@ CP11X_LABEL(pcie0): pcie@CP11X_PCIE0_BASE {
+ 		num-lanes = <1>;
+ 		clock-names = "core", "reg";
+ 		clocks = <&CP11X_LABEL(clk) 1 13>, <&CP11X_LABEL(clk) 1 14>;
+-		marvell,system-controller = <&CP11X_LABEL(syscon0)>;
+-		marvell,mac-reset-bit-mask = <CP11X_PCIEx_MAC_RESET_BIT_MASK(0)>;
++		resets = <&CP11X_LABEL(pcie_mac_reset) CP11X_PCIEx_MAC_RESET_BIT(0)>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -575,8 +580,7 @@ CP11X_LABEL(pcie1): pcie@CP11X_PCIE1_BASE {
+ 		num-lanes = <1>;
+ 		clock-names = "core", "reg";
+ 		clocks = <&CP11X_LABEL(clk) 1 11>, <&CP11X_LABEL(clk) 1 14>;
+-		marvell,system-controller = <&CP11X_LABEL(syscon0)>;
+-		marvell,mac-reset-bit-mask = <CP11X_PCIEx_MAC_RESET_BIT_MASK(1)>;
++		resets = <&CP11X_LABEL(pcie_mac_reset) CP11X_PCIEx_MAC_RESET_BIT(1)>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -602,8 +606,7 @@ CP11X_LABEL(pcie2): pcie@CP11X_PCIE2_BASE {
+ 		num-lanes = <1>;
+ 		clock-names = "core", "reg";
+ 		clocks = <&CP11X_LABEL(clk) 1 12>, <&CP11X_LABEL(clk) 1 14>;
+-		marvell,system-controller = <&CP11X_LABEL(syscon0)>;
+-		marvell,mac-reset-bit-mask = <CP11X_PCIEx_MAC_RESET_BIT_MASK(2)>;
++		resets = <&CP11X_LABEL(pcie_mac_reset) CP11X_PCIEx_MAC_RESET_BIT(2)>;
+ 		status = "disabled";
+ 	};
+ };
 -- 
-மணிவண்ணன் சதாசிவம்
+2.25.1
+
 
