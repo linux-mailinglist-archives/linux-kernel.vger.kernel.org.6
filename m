@@ -1,186 +1,150 @@
-Return-Path: <linux-kernel+bounces-405577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E7C9C530D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:20:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC9A9C53AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:33:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9463A1F26154
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:20:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6114B2FCB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C079213142;
-	Tue, 12 Nov 2024 10:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFE22139DB;
+	Tue, 12 Nov 2024 10:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Bbc+El5o"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="l+BejFZe"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0EF212F1D
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4FC20A5FE;
+	Tue, 12 Nov 2024 10:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731406559; cv=none; b=T50T3QJpbfkq0NYVbNadUZ8kYPuIrFdwwXNxu85jlfgkFSe7peVqcQHZzVK2iTfzcA4rnWkHgEQ2e4vrdK8RP8oofpCS58kZkKjkZS1xlaq/7nGTU2Rzmju+363ev2KTavNsZ1WkaA4fdtkD8zWFQreOeQIpLycd/JREZFAIK6Y=
+	t=1731406606; cv=none; b=A8dp/A2X7Y2Tt9IIkFWxXRUqhvhbN6zwxXpHWllP/yt6TrrQMCvbD0un4sr68yZuzezTPyEBOpKQCa+DNIp2mpUPezaMuZfUcCCk8FqdxdLZgodPyEALccou7JNHsNOxfuDjZVEug5l/P35zKvBFMq8TYtFmjaHmjC41m/q0+5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731406559; c=relaxed/simple;
-	bh=uGuGiQIlJrIXE4iVMImssRilu1RGQ+ZOnY+Z06vrHoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nb24K13aUeGpAxaTv4NiM2GNWCDPjB44Wb6Qs0jjF8TeylrQ65RM7HfFwjeFQCk47KAK0t/Od4/2+olounSxEQRxaqLEfkerxGKkTZGcAk+nsmkQc3bxrcJ/2owisbekMvjRKf/0jgtUOaP5nWquD9Srw0k1oq1e5cifd1qTqM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Bbc+El5o; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso43063675e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:15:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731406556; x=1732011356; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=obp8yGIldYDVzI0XN70dXZCO2SHc5IgrE0mc+D/CPjg=;
-        b=Bbc+El5oUdB8pUtW5r8ewApdOQ8EcPOc8Y9SArUlAPQB9BN21P6IFSKaH+ezVdOqZZ
-         jvKhoTqtz9QSDzGIInBUA+kPmIfbBj+emxvuDHI2jgle+orpUVPP0QYtMauL6XWmQiQt
-         1nZACWK4ySUYEmm1Hxjj+XM2RgRBbR5CCpPLO/4PzQJ2FHJnRRrCTUk5XBN9qqwThkST
-         Zp0G8v3HxrX/kfRcOAwTm04rU8EH0s+MFa9nOKylb9OYjwIGCJUelw9nPuvgU7zNMD2k
-         xj79uEipbdoS/wt4TnSVJQZOaSGWLih1Z1vvW2dtDo+xjrTpQVBbNmU41zW9xs2Kdwxm
-         VKQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731406556; x=1732011356;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=obp8yGIldYDVzI0XN70dXZCO2SHc5IgrE0mc+D/CPjg=;
-        b=ZHjWXWfYs8ZfSHQ0g1sQ5IuwihezM9NmryngK04AwoVOEjM0PRZ7SXQ/LvVQN4u1RL
-         vk7ftz98SfgNFsT1OCM9o0sYLwxXsVLJNAtCK1neoTM7Dp7/vOkldO9AwqNU9nKbbA/a
-         7ebQRzB/YV7c9N58OF1ZyZkvNHENIMITsc3Mu7CJBi9Y89BDgMqpT8NA24Hcu6gx/PpI
-         VvMfkMkb6boPfVWLpGyRq07HJ5XUFTRld0Da5vSxfTmak4Jgp/Z2bX4LKbnEzBksp4h6
-         MLTAmit2HxzbSu+gD1UCF3jC3lMKsexK1aSuAzrgppQy//JySuMnHXPjMxh+S2WZR2Y8
-         xSBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAF82qb/Og9Nf5+OfZ4AIuFi7vGeeF5r0yxSV2Sq+gLLcNWiNbTr1XQOZGiFgFX7yTcPYjswm5H+cso80=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy49qsfXW8jnbnqAhBQEDpOTx2XA3An4JfwEaBjy3eb7cKCwU4/
-	nFWrkAdXhm0ye9jyvEtT9LgIsQw1chAUyEzy4IPINr0WQb5xgZBEnUgSBjNjfAc=
-X-Google-Smtp-Source: AGHT+IFUtKcOxI9iGKzatyRYf8XbPC5gcQcujb8cjUFmjs/ViAYZu4pW7ViB0cQLuE4H16EQLauy0w==
-X-Received: by 2002:a05:600c:3c8f:b0:431:4e25:fe42 with SMTP id 5b1f17b1804b1-432b751e28fmr122955855e9.32.1731406555816;
-        Tue, 12 Nov 2024 02:15:55 -0800 (PST)
-Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05305a4sm205703715e9.5.2024.11.12.02.15.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 02:15:55 -0800 (PST)
-Date: Tue, 12 Nov 2024 11:15:54 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Aren <aren@peacevolution.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Kaustabh Chakraborty <kauschluss@disroot.org>, =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
-	Ondrej Jirman <megi@xff.cz>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] iio: light: stk3310: use dev_err_probe where
- possible
-Message-ID: <4ibd5tgpt3uzbmouqdiiv5pvfxebo5qsmgn3xh6rlb73qevatv@cajznxqnlca3>
-References: <20241102195037.3013934-3-aren@peacevolution.org>
- <20241102195037.3013934-11-aren@peacevolution.org>
- <ZyiIcDaANjxwtCz-@smile.fi.intel.com>
- <m7x526sv5krgt4t2whn5ykyktoz5u7ihsxv3qa5yue3ucbk6lb@37spwsmlcylm>
- <ZzEPACoblmcQD9yu@surfacebook.localdomain>
- <xubjmxig4luag27ifnmqmv3x3bvzhwczwvw34kw6tssaa2d24t@ysnqh5e3g7sz>
- <ZzHSE9Nrf4YySJrq@smile.fi.intel.com>
+	s=arc-20240116; t=1731406606; c=relaxed/simple;
+	bh=C/BP9FVcPJ1uezwVLOwwlYDX1qvfG5XzghUAvz0KXaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZC1ULCLCFNg1y8CsGsmNZM2FHZxyaIvJYPaL77pncYLnt7y1jfXAJ4wzyOdAqFfi4KxVA7tjDBVwGFlgetVPNtIQEwtzVVnd9mZnP7iUZ2HWp7mnjwlka9kydu/S8A2h4w2Z0W/+m5QGIO4iBEX7ihcgpzNi/skKp+iQXGJ+YGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=l+BejFZe; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F15A3E0005;
+	Tue, 12 Nov 2024 10:16:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731406601;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QWhd/u5s3s71+O5VjXaZ+pcPf116rHmE/Ep6H484160=;
+	b=l+BejFZeIVc+7HYLOrj+Xc2sUzOC4LJBDtFiRfKihLiEmtGfjJ76JuT/rcBynIU3hOTOKM
+	Qvo5UuWQHIxgFMukSzazjyuv+kXC81xRTN8r+kbvY8hyIB3Jls/AWgmyt3KP1bVOMCKv7O
+	3tYkS+RRckNrhGSIXi7xBxv2za58F3LsJYNXuOO2q8VU4vR6E7V6ejWHJXafbJ8EjBXmIQ
+	wAWHltNP6B/umXy4uzlGmIdlQ3RuNUDwfK9P64sANy0E4xk9ZBotIB6S0a+vPcQujYmyAD
+	JncZbpa7CGss0Jic41O+Wo2E0Y9tJoZBk+JHnqDbFHrnudi6FL5e+GzXWldj6w==
+Date: Tue, 12 Nov 2024 11:16:39 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
+ kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, Radu
+ Pirea <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh
+ <j.vosburgh@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, donald.hunter@gmail.com,
+ danieller@nvidia.com, ecree.xilinx@gmail.com, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+ Willem de Bruijn <willemb@google.com>, Shannon Nelson
+ <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>
+Subject: Re: [PATCH net-next v19 09/10] net: ethtool: Add support for
+ tsconfig command to get/set hwtstamp config
+Message-ID: <20241112111639.5261b3cf@kmaincent-XPS-13-7390>
+In-Reply-To: <955dde4b-b4ba-439f-b7d4-f64d90c58d55@linux.dev>
+References: <20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com>
+	<20241030-feature_ptp_netnext-v19-9-94f8aadc9d5c@bootlin.com>
+	<955dde4b-b4ba-439f-b7d4-f64d90c58d55@linux.dev>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mx2qhhffnejmsbkn"
-Content-Disposition: inline
-In-Reply-To: <ZzHSE9Nrf4YySJrq@smile.fi.intel.com>
-
-
---mx2qhhffnejmsbkn
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 4/6] iio: light: stk3310: use dev_err_probe where
- possible
-MIME-Version: 1.0
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Hello Andy, hello Aren,
+On Sat, 9 Nov 2024 01:43:30 +0000
+Vadim Fedorenko <vadim.fedorenko@linux.dev> wrote:
 
-On Mon, Nov 11, 2024 at 11:44:51AM +0200, Andy Shevchenko wrote:
-> On Sun, Nov 10, 2024 at 04:34:30PM -0500, Aren wrote:
-> > On Sun, Nov 10, 2024 at 09:52:32PM +0200, Andy Shevchenko wrote:
-> > > Sun, Nov 10, 2024 at 02:14:24PM -0500, Aren kirjoitti:
+> > +	ret =3D net_hwtstamp_validate(&hwtst_config);
+> > +	if (ret)
+> > +		goto err_clock_put;
+> > +
+> > +	if (mod) {
+> > +		struct kernel_hwtstamp_config zero_config =3D {0};
+> > +		struct hwtstamp_provider *__hwtstamp;
+> > +
+> > +		/* Disable current time stamping if we try to enable
+> > +		 * another one
+> > +		 */
+> > +		ret =3D dev_set_hwtstamp_phylib(dev, &zero_config,
+> > info->extack); =20
+> 	=09
+> _hwtst_config is still inited to 0 here, maybe it can be used to avoid
+> another stack allocation?
+
+You are right, thanks!
+
 >=20
-> You can do it differently
+> > +		if (ret < 0)
+> > +			goto err_clock_put;
+> > +
+> > +		/* Change the selected hwtstamp source */
+> > +		__hwtstamp =3D rcu_replace_pointer_rtnl(dev->hwtstamp,
+> > hwtstamp);
+> > +		if (__hwtstamp)
+> > +			call_rcu(&__hwtstamp->rcu_head,
+> > +				 remove_hwtstamp_provider);
+> > +	} else {
+> > +		/* Get current hwtstamp config if we are not changing the
+> > +		 * hwtstamp source
+> > +		 */
+> > +		ret =3D dev_get_hwtstamp_phylib(dev, &_hwtst_config); =20
 >=20
-> #define STK3310_REGFIELD(name)							\
-> do {										\
-> 	data->reg_##name =3D							\
-> 		devm_regmap_field_alloc(dev, regmap, stk3310_reg_field_##name);	\
-> 	if (IS_ERR(data->reg_##name))						\
-> 		return dev_err_probe(dev, PTR_ERR(data->reg_##name),		\
-> 				     "reg field alloc failed.\n");		\
-> } while (0)
+> This may be tricky whithout ifr set properly. But it should force
+> drivers to be converted.
+
+It is the point, it even return not supported error if ndo_hwtstamp_set/get=
+ are
+not defined.
+=20
+> > +		if (ret < 0 && ret !=3D -EOPNOTSUPP)
+> > +			goto err_clock_put;
+> > +	}
+> > +
+> > +	if (memcmp(&hwtst_config, &_hwtst_config, sizeof(hwtst_config))) {
+> > =20
 >=20
-> > #define STK3310_REGFIELD(name) ({						\
-> > 	data->reg_##name =3D devm_regmap_field_alloc(dev, regmap,			\
-> > 						   stk3310_reg_field_##name);   \
-> > 	if (IS_ERR(data->reg_##name))						\
-> > 		return dev_err_probe(dev, PTR_ERR(data->reg_##name),		\
-> > 				     "reg field alloc failed\n");		\
-> > })
->=20
-> I am against unneeded use of GNU extensions.
->=20
-> > > > replacing "do { } while (0)" with "({ })" and deindenting could make
-> > > > enough room to clean this up the formatting of this macro though.
-> > >=20
-> > > do {} while (0) is C standard, ({}) is not.
-> >=20
-> > ({ }) is used throughout the kernel, and is documented as such[1]. I
-> > don't see a reason to avoid it, if it helps readability.
->=20
-> I don't see how it makes things better here, and not everybody is familia=
-r with
-> the concept even if it's used in the kernel here and there. Also if a too=
-l is
-> being used in one case it doesn't mean it's suitable for another.
+> better to use kernel_hwtstamp_config_changed() helper here
 
-Just to throw in my subjective view here: I don't expect anyone with
-some base level knowledge of C will have doubts about the semantics of
-({ ... }) and compared to that I find do { ... } while (0) less optimal,
-because it's more verbose and when spotting the "do {" part, the
-semantic only gets clear when you also see the "while (0)". Having said
-that I also dislike the "do" starting on column 0, IMHO the RHS of the
-#define should be intended.
+Oh yes, thanks for pointing it out.
 
-So if you ask me, this is not an unneeded use of an extension. The
-extension is used to improve readabilty and I blame the C standard to
-not support this syntax.
-
-While I'm in critics mode: I consider hiding a return in a macro bad
-style.
-
-Best regards
-Uwe
-
---mx2qhhffnejmsbkn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmczKtcACgkQj4D7WH0S
-/k5IrAf9Egz14wVYaV3DKBPJo8fgsKBghLX7gexCzWL4+0rkjfgtP8gSFaK8OnVY
-8howbIeCxwbCUSEZEtWJU36A5oaLI370Mb24KajDPQZyayedIXqF1UubYE3ZXcrA
-gwbGyho7TkbsUnrXbMhkp5lr7aU6O8JdIedrSqv7FnMxfkVUVkU6Hrai52+r3b3t
-k6uAvR1Yl+OD1XIq5FEeCW5tcoYEQ5rK6apeMXvdkPdg0o6ZKVjAt9vK9NVxPPpW
-2CdM15ron07ikOYiBDin1ZaD3x7FdzVh8z9RiizG5q5a6fPjh5SELLbBMHeGtnaZ
-5cCYi84a0NHhmndqIy6gZYPX4hhDXg==
-=b8YO
------END PGP SIGNATURE-----
-
---mx2qhhffnejmsbkn--
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
