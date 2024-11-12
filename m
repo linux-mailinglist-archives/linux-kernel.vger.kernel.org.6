@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-406563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544DD9C6442
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:28:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E97D09C643C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:26:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 414BEBA12F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:53:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53D46B2EA23
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7760E217F28;
-	Tue, 12 Nov 2024 18:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DB221830E;
+	Tue, 12 Nov 2024 18:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="r7GPgT0U"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="aCGTWi6U"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF4A217455;
-	Tue, 12 Nov 2024 18:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F07E217F27;
+	Tue, 12 Nov 2024 18:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731437579; cv=none; b=mGjNy1QwMD4Umw/88i/JAqlanDu7KMI8GwAHjCYoEQEVFfSbrYVN6chpraVPac+1lEWh/DFjaORcr1njbIoYyoyIvV9TBnYGtBW0c19ZQps9/WeAtL4moa2QRzgmU4TXp2uOEp7KVJfD7ZiVE+Y3swh65dvs0lXXI+Wc9ixT/QE=
+	t=1731437848; cv=none; b=cdyew3oeKVHwwmPkKUO1bcJ9pauBhdIw2H0iAKHyYgeLRHEjAV/HEHT/b1r76z6rqoai3gDVg7VfP3A/RFA8/dj3b4eN0nApshfMxUgwcBgB2siNSevvrOYEr26YVTbduxcpONmgS2TH6tUnK0UgAMC/otuozmClXfvGGfNmKrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731437579; c=relaxed/simple;
-	bh=YgHRSbxC/ZXv72RVmDXFLg/VmGfgqNxNSpewO/fOLmI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Kfr6vEaLsVprQyHhKS7yM6i0eVOHquFLZsps4VlwxCga5MHKmPZtOkIexUCkpP5KjOXfvpVwgpNKb00taVM4zORE7cx9zjo51nsI/nxj75EoeBchKptl6dIfL7YB3AeU+D+yNmA5K0B5w7aezPreuVd9iHIjCNdWxT7nJRQLvF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=r7GPgT0U; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1731437577; x=1762973577;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=FPTdqkauhYcoU/yyHwIv52pl8ORMHMvmHcj/aCkgZf8=;
-  b=r7GPgT0UKy8JSPVK7BnhjSS8/UC8MZgfGIywipX6/iYYxlbxsoB9Fpjt
-   xpYCkNPcDdqjI41pmR1tVhm3hzxEZfc6Zm3YNLrBt7Oy3xb8iv4N13buq
-   9vjNV7oVXH92GrYjj2dy3OKs5hwtNEhp/QGy+/hTNSMKR10aD8N8h0D/s
-   Q=;
-X-IronPort-AV: E=Sophos;i="6.12,148,1728950400"; 
-   d="scan'208";a="439046280"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.124.125.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 18:52:54 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.17.79:52042]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.46.11:2525] with esmtp (Farcaster)
- id 85d768d5-4ef5-4937-9808-bf7aff734ffc; Tue, 12 Nov 2024 18:52:53 +0000 (UTC)
-X-Farcaster-Flow-ID: 85d768d5-4ef5-4937-9808-bf7aff734ffc
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 12 Nov 2024 18:52:53 +0000
-Received: from dev-dsk-nsaenz-1b-189b39ae.eu-west-1.amazon.com (10.13.235.138)
- by EX19D004EUC001.ant.amazon.com (10.252.51.190) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 12 Nov 2024 18:52:49 +0000
-From: Nicolas Saenz Julienne <nsaenz@amazon.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Matt Fleming
-	<matt@codeblueprint.co.uk>, <linux-efi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <stanspas@amazon.de>,
-	<nh-open-source@amazon.com>, Nicolas Saenz Julienne <nsaenz@amazon.com>
-Subject: [PATCH v2 1/2] x86/efi: Drop support for the EFI_PROPERTIES_TABLE
-Date: Tue, 12 Nov 2024 18:52:16 +0000
-Message-ID: <20241112185217.48792-1-nsaenz@amazon.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1731437848; c=relaxed/simple;
+	bh=PL6M+hMDi1rzqXCk2vT356vV01rAWmK34Z+z0GixyvQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fBX3/ztOlp5NTaik8IIF6atDjwm65cov19UC1CvAqjvWuvgieQeRVc6e+romZ5v+k0nYHk90ieYqJBxuk03i9cJp5LqB/G3f5vqny7mlXlIynTEkrvwNs+kXmCg15lwbJtRo862wXZr6hn32Amay7SY/NnjSEoPBtdgAqLScQrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=aCGTWi6U; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACI4FSr003711;
+	Tue, 12 Nov 2024 10:57:16 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=Xp9qf19XALaV19BbEfrSdjU
+	hUbakXd5kKiz4cL6nAQI=; b=aCGTWi6UMVbWlDDPC6340NKsxDkbkemNf7plqI/
+	PLokVnPwsT8SAxbVy138HP/qonJCOk1Fn7+bpfeDpp4q84K1ndBWYtxFVgAIEM++
+	Jsn6vXocnQfqeTTufQGwV+avmo1wzNOPj9ig7LUHeW3FKZQXMXfqSHrYzAzxAi+Y
+	AZEN9/JJ/5G0UgQxYlNia8FAtwa5pOg1MeLn26rziXxOAPgGtwOXZtJIVqWvR1BS
+	KuRyo4yRNPUBhX2+N/qawaoTJgpZMwnsaPmopNYdifq9sgejM13GiPDrhgflPbZC
+	owoHJRekLcLSB1PUTT8iJhVD2UbGJF6NJc/vdhfGJveSK1w==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42v9xdreue-3
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 10:57:16 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 12 Nov 2024 10:57:04 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 12 Nov 2024 10:57:03 -0800
+Received: from hyd1425.marvell.com (unknown [10.29.37.152])
+	by maili.marvell.com (Postfix) with ESMTP id 681043F7045;
+	Tue, 12 Nov 2024 10:56:59 -0800 (PST)
+From: Sai Krishna <saikrishnag@marvell.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
+        <gakula@marvell.com>, <lcherian@marvell.com>, <jerinj@marvell.com>,
+        <hkelam@marvell.com>, <sbhatta@marvell.com>, <andrew+netdev@lunn.ch>,
+        <kalesh-anakkur.purayil@broadcom.com>
+CC: Sai Krishna <saikrishnag@marvell.com>
+Subject: [net-next PATCH v3 0/6] CN20K silicon with mbox support 
+Date: Wed, 13 Nov 2024 00:23:20 +0530
+Message-ID: <20241112185326.819546-1-saikrishnag@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,170 +75,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: EX19D039UWB003.ant.amazon.com (10.13.138.93) To
- EX19D004EUC001.ant.amazon.com (10.252.51.190)
+X-Proofpoint-GUID: bysDiIEebIf-EIq9me3jD8tpZM6wQKP0
+X-Proofpoint-ORIG-GUID: bysDiIEebIf-EIq9me3jD8tpZM6wQKP0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Drop support for the EFI_PROPERTIES_TABLE. It was a failed, short-lived
-experiment that broke the boot both on Linux and Windows, and was
-replaced by the EFI_MEMORY_ATTRIBUTES_TABLE shortly after.
+CN20K is the next generation silicon in the Octeon series with various
+improvements and new features.
 
-Suggested-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
+Along with other changes the mailbox communication mechanism between RVU
+(Resource virtualization Unit) SRIOV PFs/VFs with Admin function (AF) has
+also gone through some changes.
+
+Some of those changes are
+- Separate IRQs for mbox request and response/ack.
+- Configurable mbox size, default being 64KB.
+- Ability for VFs to communicate with RVU AF instead of going through
+  parent SRIOV PF.
+
+Due to more memory requirement due to configurable mbox size, mbox memory
+will now have to be allocated by
+- AF (PF0) for communicating with other PFs and all VFs in the system.
+- PF for communicating with it's child VFs.
+
+On previous silicons mbox memory was reserved and configured by firmware.
+
+This patch series add basic mbox support for AF (PF0) <=> PFs and
+PF <=> VFs. AF <=> VFs communication and variable mbox size support will
+come in later.
+
+Patch #1 Supported co-existance of bit encoding PFs and VFs in 16-bit
+         hardware pcifunc format between CN20K silicon and older octeon
+         series. Also exported PF,VF masks and shifts present in mailbox
+         module to all other modules.
+
+Patch #2 Added basic mbox operation APIs and structures to support both
+         CN20K and previous version of silicons.
+
+Patch #3 This patch adds support for basic mbox infrastructure
+         implementation for CN20K silicon in AF perspective. There are
+         few updates w.r.t MBOX ACK interrupt and offsets in CN20k.
+         
+Patch #4 Added mbox implementation between NIC PF and AF for CN20K.
+
+Patch #5 Added mbox communication support between AF and AF's VFs.
+
+Patch #6 This patch adds support for MBOX communication between NIC PF and
+         its VFs.
+
+Sai Krishna (5):
+  octeontx2-af: CN20k basic mbox operations and structures
+  octeontx2-af: CN20k mbox to support AF REQ/ACK functionality
+  octeontx2-pf: CN20K mbox REQ/ACK implementation for NIC PF
+  octeontx2-af: CN20K mbox implementation for AF's VF
+  octeontx2-pf: CN20K mbox implementation between PF-VF
+
+Subbaraya Sundeep (1):
+  octeontx2: Set appropriate PF, VF masks and shifts based on silicon
+
 ---
- arch/x86/platform/efi/efi.c    | 19 ---------------
- arch/x86/platform/efi/efi_64.c | 42 ----------------------------------
- include/linux/efi.h            | 17 +++-----------
- 3 files changed, 3 insertions(+), 75 deletions(-)
+v3 changes:
+	Addressed review comments given by Jakub Kicinski, Simon Horman
+        1. Fixed sparse errors, warnings.
+        2. Fixed a comment mistake, inline with kernel-doc format.
+        3. Removed un-necessary type casting to honor Networking code format.
 
-diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index 88a96816de9a..375ebd78296a 100644
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@ -54,14 +54,12 @@
- #include <asm/uv/uv.h>
- 
- static unsigned long efi_systab_phys __initdata;
--static unsigned long prop_phys = EFI_INVALID_TABLE_ADDR;
- static unsigned long uga_phys = EFI_INVALID_TABLE_ADDR;
- static unsigned long efi_runtime, efi_nr_tables;
- 
- unsigned long efi_fw_vendor, efi_config_table;
- 
- static const efi_config_table_type_t arch_tables[] __initconst = {
--	{EFI_PROPERTIES_TABLE_GUID,	&prop_phys,		"PROP"		},
- 	{UGA_IO_PROTOCOL_GUID,		&uga_phys,		"UGA"		},
- #ifdef CONFIG_X86_UV
- 	{UV_SYSTEM_TABLE_GUID,		&uv_systab_phys,	"UVsystab"	},
-@@ -82,7 +80,6 @@ static const unsigned long * const efi_tables[] = {
- 	&efi_runtime,
- 	&efi_config_table,
- 	&efi.esrt,
--	&prop_phys,
- 	&efi_mem_attr_table,
- #ifdef CONFIG_EFI_RCI2_TABLE
- 	&rci2_table_phys,
-@@ -502,22 +499,6 @@ void __init efi_init(void)
- 		return;
- 	}
- 
--	/* Parse the EFI Properties table if it exists */
--	if (prop_phys != EFI_INVALID_TABLE_ADDR) {
--		efi_properties_table_t *tbl;
--
--		tbl = early_memremap_ro(prop_phys, sizeof(*tbl));
--		if (tbl == NULL) {
--			pr_err("Could not map Properties table!\n");
--		} else {
--			if (tbl->memory_protection_attribute &
--			    EFI_PROPERTIES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA)
--				set_bit(EFI_NX_PE_DATA, &efi.flags);
--
--			early_memunmap(tbl, sizeof(*tbl));
--		}
--	}
--
- 	set_bit(EFI_RUNTIME_SERVICES, &efi.flags);
- 	efi_clean_memmap();
- 
-diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
-index 91d31ac422d6..ac57259a432b 100644
---- a/arch/x86/platform/efi/efi_64.c
-+++ b/arch/x86/platform/efi/efi_64.c
-@@ -412,51 +412,9 @@ static int __init efi_update_mem_attr(struct mm_struct *mm, efi_memory_desc_t *m
- 
- void __init efi_runtime_update_mappings(void)
- {
--	efi_memory_desc_t *md;
--
--	/*
--	 * Use the EFI Memory Attribute Table for mapping permissions if it
--	 * exists, since it is intended to supersede EFI_PROPERTIES_TABLE.
--	 */
- 	if (efi_enabled(EFI_MEM_ATTR)) {
- 		efi_disable_ibt_for_runtime = false;
- 		efi_memattr_apply_permissions(NULL, efi_update_mem_attr);
--		return;
--	}
--
--	/*
--	 * EFI_MEMORY_ATTRIBUTES_TABLE is intended to replace
--	 * EFI_PROPERTIES_TABLE. So, use EFI_PROPERTIES_TABLE to update
--	 * permissions only if EFI_MEMORY_ATTRIBUTES_TABLE is not
--	 * published by the firmware. Even if we find a buggy implementation of
--	 * EFI_MEMORY_ATTRIBUTES_TABLE, don't fall back to
--	 * EFI_PROPERTIES_TABLE, because of the same reason.
--	 */
--
--	if (!efi_enabled(EFI_NX_PE_DATA))
--		return;
--
--	for_each_efi_memory_desc(md) {
--		unsigned long pf = 0;
--
--		if (!(md->attribute & EFI_MEMORY_RUNTIME))
--			continue;
--
--		if (!(md->attribute & EFI_MEMORY_WB))
--			pf |= _PAGE_PCD;
--
--		if ((md->attribute & EFI_MEMORY_XP) ||
--			(md->type == EFI_RUNTIME_SERVICES_DATA))
--			pf |= _PAGE_NX;
--
--		if (!(md->attribute & EFI_MEMORY_RO) &&
--			(md->type != EFI_RUNTIME_SERVICES_CODE))
--			pf |= _PAGE_RW;
--
--		if (cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT))
--			pf |= _PAGE_ENC;
--
--		efi_update_mappings(md, pf);
- 	}
- }
- 
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index e28d88066033..e5815867aba9 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -379,7 +379,6 @@ void efi_native_runtime_setup(void);
- #define EFI_SYSTEM_RESOURCE_TABLE_GUID		EFI_GUID(0xb122a263, 0x3661, 0x4f68,  0x99, 0x29, 0x78, 0xf8, 0xb0, 0xd6, 0x21, 0x80)
- #define EFI_FILE_SYSTEM_GUID			EFI_GUID(0x964e5b22, 0x6459, 0x11d2,  0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b)
- #define DEVICE_TREE_GUID			EFI_GUID(0xb1b621d5, 0xf19c, 0x41a5,  0x83, 0x0b, 0xd9, 0x15, 0x2c, 0x69, 0xaa, 0xe0)
--#define EFI_PROPERTIES_TABLE_GUID		EFI_GUID(0x880aaca3, 0x4adc, 0x4a04,  0x90, 0x79, 0xb7, 0x47, 0x34, 0x08, 0x25, 0xe5)
- #define EFI_RNG_PROTOCOL_GUID			EFI_GUID(0x3152bca5, 0xeade, 0x433d,  0x86, 0x2e, 0xc0, 0x1c, 0xdc, 0x29, 0x1f, 0x44)
- #define EFI_RNG_ALGORITHM_RAW			EFI_GUID(0xe43176d7, 0xb6e8, 0x4827,  0xb7, 0x84, 0x7f, 0xfd, 0xc4, 0xb6, 0x85, 0x61)
- #define EFI_MEMORY_ATTRIBUTES_TABLE_GUID	EFI_GUID(0xdcfa911d, 0x26eb, 0x469f,  0xa2, 0x20, 0x38, 0xb7, 0xdc, 0x46, 0x12, 0x20)
-@@ -580,15 +579,6 @@ struct efi_mem_range {
- 	u64 attribute;
- };
- 
--typedef struct {
--	u32 version;
--	u32 length;
--	u64 memory_protection_attribute;
--} efi_properties_table_t;
--
--#define EFI_PROPERTIES_TABLE_VERSION	0x00010000
--#define EFI_PROPERTIES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA	0x1
--
- typedef struct {
- 	u16 version;
- 	u16 length;
-@@ -871,10 +861,9 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
- #define EFI_PARAVIRT		6	/* Access is via a paravirt interface */
- #define EFI_ARCH_1		7	/* First arch-specific bit */
- #define EFI_DBG			8	/* Print additional debug info at runtime */
--#define EFI_NX_PE_DATA		9	/* Can runtime data regions be mapped non-executable? */
--#define EFI_MEM_ATTR		10	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
--#define EFI_MEM_NO_SOFT_RESERVE	11	/* Is the kernel configured to ignore soft reservations? */
--#define EFI_PRESERVE_BS_REGIONS	12	/* Are EFI boot-services memory segments available? */
-+#define EFI_MEM_ATTR		9	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
-+#define EFI_MEM_NO_SOFT_RESERVE	10	/* Is the kernel configured to ignore soft reservations? */
-+#define EFI_PRESERVE_BS_REGIONS	11	/* Are EFI boot-services memory segments available? */
- 
- #ifdef CONFIG_EFI
- /*
+v2 changes:
+	Addressed review comments given by Kalesh Anakkur Purayil
+        1. Optimized code in parts of patches, removed redundant code
+        2. Fixed sparse warning
+        3. Removed debug log.
+
+ .../ethernet/marvell/octeontx2/af/Makefile    |   3 +-
+ .../ethernet/marvell/octeontx2/af/cn20k/api.h |  34 ++
+ .../marvell/octeontx2/af/cn20k/mbox_init.c    | 418 ++++++++++++++++++
+ .../ethernet/marvell/octeontx2/af/cn20k/reg.h |  81 ++++
+ .../marvell/octeontx2/af/cn20k/struct.h       |  40 ++
+ .../ethernet/marvell/octeontx2/af/common.h    |   2 +-
+ .../net/ethernet/marvell/octeontx2/af/mbox.c  | 129 +++++-
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |  13 +
+ .../net/ethernet/marvell/octeontx2/af/rvu.c   | 195 +++++---
+ .../net/ethernet/marvell/octeontx2/af/rvu.h   |  52 ++-
+ .../marvell/octeontx2/af/rvu_struct.h         |   6 +-
+ .../ethernet/marvell/octeontx2/nic/Makefile   |   2 +-
+ .../ethernet/marvell/octeontx2/nic/cn10k.c    |  18 +-
+ .../ethernet/marvell/octeontx2/nic/cn10k.h    |   1 +
+ .../ethernet/marvell/octeontx2/nic/cn20k.c    | 252 +++++++++++
+ .../ethernet/marvell/octeontx2/nic/cn20k.h    |  17 +
+ .../marvell/octeontx2/nic/otx2_common.c       |  10 +-
+ .../marvell/octeontx2/nic/otx2_common.h       |  35 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 152 +++++--
+ .../ethernet/marvell/octeontx2/nic/otx2_reg.h |  49 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  44 +-
+ 21 files changed, 1391 insertions(+), 162 deletions(-)
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/api.h
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/mbox_init.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/reg.h
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/struct.h
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/cn20k.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/cn20k.h
+
 -- 
-2.40.1
+2.25.1
 
 
