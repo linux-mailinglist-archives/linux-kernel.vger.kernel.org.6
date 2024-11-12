@@ -1,169 +1,123 @@
-Return-Path: <linux-kernel+bounces-406005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D0389C59F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:09:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C1BC9C59F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:11:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F51D1F2470F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:09:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90BD1F2344A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AAE1F6677;
-	Tue, 12 Nov 2024 14:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9780B1FC7DC;
+	Tue, 12 Nov 2024 14:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="n3c4That"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1/bVu0cj"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA761FC7F2
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A261FBF6C
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731420547; cv=none; b=i9uTauUgNY+uuRjJkSRkCxJz7CC0Fu7RuxAHXH+wy0uFJQeDZxo0GfnFAM39hxkEIsDBKs9ZqDnYpWBt8yDmCWk/TsE87WFUEcvYxt7NpuidsG70Kvmpu7CUfT9lQHvjLvWeWNUmlX/xswFCvB2Ik5/fp6z+MVFJs4dULaFA5R8=
+	t=1731420697; cv=none; b=cOMzJ+ORnUYDGn9dkJAmVnxPLUBCDOmVk2ehl/LPSgrMbM+F7Ff7c99HzoI4jcO5qcro+PuKQTP+Dn78qUzSgh7FWm/TFtl6zymj5z4WgUkqBR3nqfawdihU9rgp6SnbPokI/fFuIa3bFTuMBqg0yIDc7bJyQrmPuUaQfqBDJLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731420547; c=relaxed/simple;
-	bh=6Kcgmtiz1FW/ZzHlnliH50F3dtShqEHk4ESpOMRpn6M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tJ3o8W53JbCLJRCga3JhJdYITDaBxYWW68RmJoJ/swLtg2wScD84X4/UgSE9shIW7yEN2LeNg8+7LXkXwn4qn9lYH2l+z2G+pImDxZcScZ+gv782bWnvDLdPa+ID0K68Xxs/HIW47g/WildjYcfV/jjM7I3PCowiG21Ci7gd4wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=n3c4That; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-290d8d5332cso2669373fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 06:09:05 -0800 (PST)
+	s=arc-20240116; t=1731420697; c=relaxed/simple;
+	bh=1fZhEbTaDiiroktK8JnnW5AlOotjuE0UbSmwivk2zNw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fnes8/w6/n2hKfupwKdv9cPIpSZ8UIwCCFnWb1MzKmornLXzgF1Fg1fZMXvBp8mQmI5ov+a5kYzaFz6YeaGSgfo2bnLqHhNAILAeYTHMcrbnhsFa+SHqK8xZmIuy89JYCYcEwBPpGUe80RCklJNBsmgJWHn/5FH6UCHJv9xMuIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1/bVu0cj; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20ca4877690so140915ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 06:11:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731420544; x=1732025344; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2VTmM5QSlq1n4SzNFjqKKxkTqt3/4ndegS1abSdzblw=;
-        b=n3c4ThatqANXuJpPQpmUl7Ojx2qgDF7iYQB7Zafmd4z6aYq39iMF4xOighkZiWQb3q
-         KpjqOKSPCqQV8cSjQdaBRrkNjiQEQ/VNvukESFANe5Hzdjn2cmz5KYyfeFN0dtYfs4Mc
-         jCu5WC69UO2GzUXDflWCwXn+dfAQOqt5qDuqAwk7UfihlkjXITeTsYLttQnUDFEAsT2d
-         9kG0LRjo+LMAu5Suac+YBlqAgfvEX70nUrXUZqixw0WwGAjxloj7YUkDf+9JzH37gtnY
-         Ftbsu6t7nY5y/8TckePIUzs/1D1GxxZz48fHE+5kzRiDjOyLMLOkIk3MJ3EJBifO8I0A
-         wf8Q==
+        d=google.com; s=20230601; t=1731420694; x=1732025494; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AkqXyzik8eZACIcFxqtlyAZ4d3oM6XwthEsQPSJKppo=;
+        b=1/bVu0cjI6uYSnBA6czimetVLmc4a5JGirGFl/zFfaishrtCemA91rk4WvrIeXqLtJ
+         Djzps+0sfFL0KSOYuggZhRAu4wd0K9M7BG2NjtGP8wa9l5RKj8hKuc1IYIH+Zi+qYGxH
+         MDHIrC3+MhxDj/mwpaddYiMSPAzfwaCqTUtjYQEi/JO778EoHj/oDnkDj/07kRKaWAWp
+         egSveJvzfPb0MJVPSx3fwv5TzRbbK4oUG5JtQTbQvPORKCVOtgx5jVPvEXaJkKGhmoPu
+         FFDRTq6Oi3Mij6ZsBkRwkfmkfhPwNbzjwVGWAnS8LsWRXcVdAkKuNtheHtwdBHyvYAI1
+         ranQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731420544; x=1732025344;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2VTmM5QSlq1n4SzNFjqKKxkTqt3/4ndegS1abSdzblw=;
-        b=TgaZqR5lm6U9VT8cMFlzpcWnsMf6JCHe+touRsRavdjihwlNfc8ZTK3GBvYmB1HCP9
-         CoJ422r0MJEPf6kcZwvrWuZazHnxqmR51nzWJUwx4Wbv3FpjhKMNw3h/CHAtpPJkLyw6
-         rs9piRq0I605JOti+NgzviOoHihP1+zioB8S0NZFSlVZ+K3bZW8+NHgxENlyTdim1Xpm
-         wyedKgX90YrW939+bhymi6vvb7gTRxLTshB18uunBuHC1GAhiRfj59IZBudrvOU5+YVM
-         DDqah2+bhkl7/J8D8ox4wgAi132zYGnn0huH1ZIwT6LboxPhdKe7h9LQu2BH7hggozDL
-         3uiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGzl/GxoGYGXT9ITBJUvOvNwZ3ncxmWzQrFauV4PLStb93SBcG1saepsGMJGPqbVUdsWPR3XkBIwSCd4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWA2C25T0qH77YdxL1FTrc1X6DUfmgr2viyS6FmAkvS46QuiUE
-	9CjyyJTxKG/CwlKNCwmnvh8p0BMokL8qtuBJdhVvJcacZ7Gqc1M8aSHUkZHqSgs=
-X-Google-Smtp-Source: AGHT+IGKZws8A8A6GExZpeIFWIve06Wn6yTSLfUbW410QSZ9Z8ht/7ABpd8OcL3b6MeePGxUd8BRIw==
-X-Received: by 2002:a05:6870:f603:b0:288:60d3:a257 with SMTP id 586e51a60fabf-295603e193dmr14748452fac.40.1731420544420;
-        Tue, 12 Nov 2024 06:09:04 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546c40039sm3431688fac.2.2024.11.12.06.09.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 06:09:03 -0800 (PST)
-Message-ID: <9a5474b6-aaac-4567-9405-351d6755f947@kernel.dk>
-Date: Tue, 12 Nov 2024 07:09:02 -0700
+        d=1e100.net; s=20230601; t=1731420694; x=1732025494;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AkqXyzik8eZACIcFxqtlyAZ4d3oM6XwthEsQPSJKppo=;
+        b=WK3yUoFdtSN0sWXXMZ8vGYo2TsRFBrdwVWtf4/j7cMJz1340LIiTFNri2LcZ6A8dqD
+         kGEvJGuU6dV6QhrX3qVXUUyfub+BGmGw0D4gSUQBtpQcV0K9Mnxxqk22sYh0s0wiyPQJ
+         3p7Xw5mP5BWpwowipyjrSfcIiKRK5Eh1NQputg2vnzUQg5dv9RfYDMzI1MGRTws0t0xQ
+         d1S9cRo5A9gKZAIPuxLU8kfSCTOJEx+ROb0tKuc+qvo8D/NFTWpvl7r5Q8KCebUmuO0g
+         0iE1b+aJdydNDKGzyMH5prmBclcedfx9cAG8SvwUwMSAuwk+7uaxV4lJ132o5nXscVeK
+         LeSQ==
+X-Gm-Message-State: AOJu0Yz/OWhjebfnPSzfMaH/Gh37LRscPrDob4I3FjvbG4cvldJb0ipU
+	qGjLU9ES4g5qTZe38yZ8Z0PpXyKRCkOaUnRbAijAK0Iw0pPWrjWhPIF4P19VJdPG+6rGMiQtinv
+	Cg4UTocn9UBKx56BhoIi5gyctLRd14gzIk5kB
+X-Gm-Gg: ASbGncuAATWr9mXnWbumztAXd4ntW87WZUa+nfhaxjZRnT4++Ppv7kBdjK9OCSonFMN
+	0QnWniI4afrid95BnVkZVOqSwECTX0w==
+X-Google-Smtp-Source: AGHT+IHlRgvzbYmdyT/fAOqtiTj4F4oiQEsE+/ajhC4KCnzbFZ6t8EIkbdeU7Hy/B+sKHd+rJDTDQvGKLo1SfMQrNTg=
+X-Received: by 2002:a17:903:124a:b0:20c:568f:37c7 with SMTP id
+ d9443c01a7336-211aceca238mr1984225ad.17.1731420693651; Tue, 12 Nov 2024
+ 06:11:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/16] mm/filemap: drop uncached pages when writeback
- completes
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
- linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-xfs@vger.kernel.org
-References: <20241111234842.2024180-1-axboe@kernel.dk>
- <20241111234842.2024180-10-axboe@kernel.dk>
- <mxh6husr25uw6u7wgp4p3stqcsxh6uek2hjktfwof3z6ayzdjr@4t4s3deim7dd>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <mxh6husr25uw6u7wgp4p3stqcsxh6uek2hjktfwof3z6ayzdjr@4t4s3deim7dd>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241112074048.1762371-1-mmaslanka@google.com> <ZzNVH65o0ue6jn6a@finisterre.sirena.org.uk>
+In-Reply-To: <ZzNVH65o0ue6jn6a@finisterre.sirena.org.uk>
+From: =?UTF-8?Q?Marek_Ma=C5=9Blanka?= <mmaslanka@google.com>
+Date: Tue, 12 Nov 2024 15:11:07 +0100
+Message-ID: <CAGcaFA3SdBVtOiPJQG82YwBX01s5_mJszeM4LNSc5Pn74S2Cvw@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: da7219-aad: Fix detection of plugged jack after resume
+To: Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Support Opensource <support.opensource@diasemi.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/12/24 2:31 AM, Kirill A. Shutemov wrote:
-> On Mon, Nov 11, 2024 at 04:37:36PM -0700, Jens Axboe wrote:
->> If the folio is marked as uncached, drop pages when writeback completes.
->> Intended to be used with RWF_UNCACHED, to avoid needing sync writes for
->> uncached IO.
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->>  mm/filemap.c | 28 ++++++++++++++++++++++++++++
->>  1 file changed, 28 insertions(+)
->>
->> diff --git a/mm/filemap.c b/mm/filemap.c
->> index 3d0614ea5f59..40debe742abe 100644
->> --- a/mm/filemap.c
->> +++ b/mm/filemap.c
->> @@ -1600,6 +1600,27 @@ int folio_wait_private_2_killable(struct folio *folio)
->>  }
->>  EXPORT_SYMBOL(folio_wait_private_2_killable);
->>  
->> +/*
->> + * If folio was marked as uncached, then pages should be dropped when writeback
->> + * completes. Do that now. If we fail, it's likely because of a big folio -
->> + * just reset uncached for that case and latter completions should invalidate.
->> + */
->> +static void folio_end_uncached(struct folio *folio)
->> +{
->> +	/*
->> +	 * Hitting !in_task() should not happen off RWF_UNCACHED writeback, but
->> +	 * can happen if normal writeback just happens to find dirty folios
->> +	 * that were created as part of uncached writeback, and that writeback
->> +	 * would otherwise not need non-IRQ handling. Just skip the
->> +	 * invalidation in that case.
->> +	 */
->> +	if (in_task() && folio_trylock(folio)) {
->> +		if (folio->mapping)
->> +			folio_unmap_invalidate(folio->mapping, folio, 0);
->> +		folio_unlock(folio);
->> +	}
->> +}
->> +
->>  /**
->>   * folio_end_writeback - End writeback against a folio.
->>   * @folio: The folio.
->> @@ -1610,6 +1631,8 @@ EXPORT_SYMBOL(folio_wait_private_2_killable);
->>   */
->>  void folio_end_writeback(struct folio *folio)
->>  {
->> +	bool folio_uncached = false;
->> +
->>  	VM_BUG_ON_FOLIO(!folio_test_writeback(folio), folio);
->>  
->>  	/*
->> @@ -1631,9 +1654,14 @@ void folio_end_writeback(struct folio *folio)
->>  	 * reused before the folio_wake_bit().
->>  	 */
->>  	folio_get(folio);
->> +	if (folio_test_uncached(folio) && folio_test_clear_uncached(folio))
->> +		folio_uncached = true;
-> 
-> Hm? Maybe
-> 
-> 	folio_uncached = folio_test_clear_uncached(folio);
-> 
-> ?
+Hi Mark,
 
-It's done that way to avoid a RMW for the (for now, at least) common
-case of not seeing cached folios. For that case, you can get by with a
-cheap test_bit, for the cached case you pay the full price of the
-test_clear.
+On Tue, Nov 12, 2024 at 2:16=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> On Tue, Nov 12, 2024 at 07:40:47AM +0000, Marek Maslanka wrote:
+> > Don't notify and mark the jack as unplugged during the "set_jack" actio=
+n,
+> > because this action is called very late in during the resume process, f=
+orcing
+> > the jack to be unplugged after the resume, even if the jack is plugged =
+in. Let's
+> > leave the responsibility of managing the insertion of the jack to IRQ.
+>
+> > @@ -33,10 +33,6 @@ void da7219_aad_jack_det(struct snd_soc_component *c=
+omponent, struct snd_soc_jac
+> >       struct da7219_priv *da7219 =3D snd_soc_component_get_drvdata(comp=
+onent);
+> >
+> >       da7219->aad->jack =3D jack;
+> > -     da7219->aad->jack_inserted =3D false;
+> > -
+> > -     /* Send an initial empty report */
+> > -     snd_soc_jack_report(jack, 0, DA7219_AAD_REPORT_ALL_MASK);
+> >
+> >       /* Enable/Disable jack detection */
+> >       snd_soc_component_update_bits(component, DA7219_ACCDET_CONFIG_1,
+>
+> This path is also (AFAICT only?) called when registering the jack by
+> da7219_set_jack(), I'm not immediately seeing the path for resume.  This
+> suggests that what's going on here is an issue with the machine driver
+> unregistering the jack over suspend?
 
-Previous versions just had the test_clear, happy to just go back or add
-a comment, whatever is preferred.
-
--- 
-Jens Axboe
+In my case the da7219_set_jack() is directly called from avs_card_resume_po=
+st()
+(sound/soc/intel/avs/boards/da7219.c) so that could be a problem too.
 
