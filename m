@@ -1,175 +1,161 @@
-Return-Path: <linux-kernel+bounces-405919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF239C58DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:23:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B503C9C5923
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:32:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E9C1F21BDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A493282B7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D7C1531CB;
-	Tue, 12 Nov 2024 13:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="i89aoZhI"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D979B16B38B;
+	Tue, 12 Nov 2024 13:29:31 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4181DFF7;
-	Tue, 12 Nov 2024 13:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731417810; cv=pass; b=YFYq+2Rec/Cw6b9ED9D+69rrF6g6HqM8t3S+bG+zPhelkoqhF2lm9VYo3L0rRX4y8Fch8AgHDikFHsvLGk4S/0CZslOXttAckEWS2NhDKayauGti/WY03zEA5zr1EnQ0stk4H77nKPjB8UKBSsz0uGfDpMaCbRfRJi6PS7SaBzY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731417810; c=relaxed/simple;
-	bh=bcgcbtLsnfvJN/tLyVZnCzLHtUqLL24cZ8Nw9dUiTlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B3SBu0eT6xK/ZL+s6uiJMoWuvYoF1QGNgB2eE+QbpzKMoY7qcNBPqmwhjoOgDegP7f2up4JIg987haGQFavp69bTlX0Qhe6NTa8vU3qxQwua8WDlKJorAp2OubzB3rpip5iQSrPz7ZaIu1m3EewBCHldUZqOpS1OVIxDPnoXzIs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=i89aoZhI; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1731417781; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=bgUPyrww6J9+NQtS1Vgwi5dpP+UVlrlbR72nZqJoFlYFriOD71dUSVQvrLW2xxWU9KoF5E1IcT1ZdA1782T3Doxux51ebqQ0H0LySXoV1Np2/hoMXUX9mAtVpIqNbneqeGGGTEB5hbcnxm5FrwMA1Wf9GDfLOQT8KH5cjWeFrtA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1731417781; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=bcgcbtLsnfvJN/tLyVZnCzLHtUqLL24cZ8Nw9dUiTlA=; 
-	b=IIsGol37GkbRJsetbaBPni3GrGMlCMhSY2LLKMmOByCuAS3Ys5gwSMlmbah07B1N/v7gzgEwD4Og3lHDYaS3geZKYvG0sXSXddvdV32WP4H10zJuitff+xNZXXkzUF6nWsqtqZgB0eqTzz4zpM4MaxJSqtVWtlcR/yBhxdwFaeg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731417781;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=bcgcbtLsnfvJN/tLyVZnCzLHtUqLL24cZ8Nw9dUiTlA=;
-	b=i89aoZhI+IwGr6TdCv6uoSZXVVvtW7iMmMNszB6wkpnbCOZJmDz5MZS78hN0rgqi
-	ezKpPH/qGioZ2sYq7Ov46p+bEqQ4wNp8hW99xKdYd42Jm03D8Pw1FQf9nh2hMlUIQys
-	WQ7LfJo2jfcLVsm/ab5+tnNOOBp6cbJci32nN5dA=
-Received: by mx.zohomail.com with SMTPS id 1731417780379727.6755151416451;
-	Tue, 12 Nov 2024 05:23:00 -0800 (PST)
-Received: by mercury (Postfix, from userid 1000)
-	id 9272A1060457; Tue, 12 Nov 2024 14:22:55 +0100 (CET)
-Date: Tue, 12 Nov 2024 14:22:55 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Ye Zhang <ye.zhang@rock-chips.com>, linus.walleij@linaro.org, heiko@sntech.de, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com, 
-	tao.huang@rock-chips.com, finley.xiao@rock-chips.com, tim.chen@rock-chips.com, 
-	elaine.zhang@rock-chips.com
-Subject: Re: [PATCH v5 4/4] gpio: rockchip: Set input direction when request
- irq
-Message-ID: <qwlya3kten7ugxzruohmbmmymjd6trz3rlbflirr3yym2vfe32@rapst33wknmd>
-References: <20241112015408.3139996-1-ye.zhang@rock-chips.com>
- <20241112015408.3139996-5-ye.zhang@rock-chips.com>
- <CAMRc=MfTmpLSEUVTXSu8jf9tyTfQc=iG9NpovFem-qSDOCnagQ@mail.gmail.com>
- <ZzMwh2GMP-bE7aLO@smile.fi.intel.com>
- <CAMRc=MePqsQatxNy7p5c3sE4z8RepjjLeFgpppKgEctCU3jAUw@mail.gmail.com>
- <CAMRc=MdY1idv1o_nZFb1fKLpM5DHCPmEu5t5MMa_kV9csLgQWw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BB314EC77
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731418171; cv=none; b=TWjSPp/4QMq/kyrlCj90OvZyZVt+dDfiM0AnfrxKjLX1mlfLXM3idC9JvtPGhVMW0sCiGzC8MMfHnO5QBj/Xvs1DtTn9QmrHZMHz9N6zKWs2OhP+zxADh4jRfRCQCKe1qTVivEjksFGcjd9S+WOvyE2lJ+061gB2jVsgs1YTSk0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731418171; c=relaxed/simple;
+	bh=KcmKP3Z2JcNBhWHA9DtlE5Gpg654ZsGNOMIzCxzPcLs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IfBxuDlHG6YIpi9WECrhWxlNaoU+jp+lGVFdqP7n7E8NKHYnZSkq+K55N2lyTU6SWo0V/q6ucrJDd8mJBfC1V2xGx2UDd18DFMScTDZlpXHOcEooCQfgG5t5CoLHawgpMSEpkqYCAA2smUO2ifIsL1Og6/wu/caSYU0p+XD5YSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XnnFd32Zlz28fPc;
+	Tue, 12 Nov 2024 21:24:37 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2E74914035F;
+	Tue, 12 Nov 2024 21:29:20 +0800 (CST)
+Received: from localhost.huawei.com (10.169.71.169) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 12 Nov 2024 21:29:18 +0800
+From: Yongbang Shi <shiyongbang@huawei.com>
+To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>
+CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
+	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 drm-dp 0/4] Add dp module in hibmc driver
+Date: Tue, 12 Nov 2024 21:23:43 +0800
+Message-ID: <20241112132348.2631150-1-shiyongbang@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ejtr6ggm3ld65lkc"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MdY1idv1o_nZFb1fKLpM5DHCPmEu5t5MMa_kV9csLgQWw@mail.gmail.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/231.391.79
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
+From: baihan li <libaihan@huawei.com>
 
---ejtr6ggm3ld65lkc
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 4/4] gpio: rockchip: Set input direction when request
- irq
-MIME-Version: 1.0
+Realizing the basic display function of DP cable for DP connector
+displaying. Add DP module in hibmc drm driver, which is for Hisilicon
+Hibmc SoC which used for Out-of-band management. Blow is the general
+hardware connection, both the Hibmc and the host CPU are on the same
+mother board.
 
-Hi,
++----------+       +----------+      +----- ----+      +----------------+
+|          | PCIe  |  Hibmc   |      |          |      |                |
+|host CPU( |<----->| display  |<---->| dp kapi  |<---->| dp aux moduel  |
+|arm64,x86)|       |subsystem |      |  moduel  |<---->| dp link moduel |
++----------+       +----------+      +----------+      +----------------+
 
-On Tue, Nov 12, 2024 at 01:53:48PM +0100, Bartosz Golaszewski wrote:
-> On Tue, Nov 12, 2024 at 1:50=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
-l> wrote:
-> > On Tue, Nov 12, 2024 at 11:40=E2=80=AFAM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Tue, Nov 12, 2024 at 09:48:06AM +0100, Bartosz Golaszewski wrote:
-> > > > On Tue, Nov 12, 2024 at 2:54=E2=80=AFAM Ye Zhang <ye.zhang@rock-chi=
-ps.com> wrote:
-> > > > >
-> > > > > Since the GPIO can only generate interrupts when its direction is=
- set to
-> > > > > input, it is set to input before requesting the interrupt resourc=
-es.
-> > >
-> > > ...
-> > >
-> > > > This looks like a fix to me, do you want it sent for stable? If so,
-> > > > please add the Fixes tag and put it first in the series.
-> > >
-> > > Independently on the resolution on this, can the first three be appli=
-ed to
-> > > for-next? I think they are valuable from the documentation perspectiv=
-e as
-> > > it adds the explanation of the version register bit fields.
-> > >
-> > > The last one seems to me independent (code wise, meaning no potential
-> > > conflicts) to the rest and may be applied to for-current later on.
-> > >
-> > > --
-> > > With Best Regards,
-> > > Andy Shevchenko
-> > >
-> > >
-> >
-> > There's another issue I see with this patch. It effectively changes
-> > the pin's direction behind the back of the GPIOLIB. If a GPIO is
-> > requested, its direction set to output and another orthogonal user
-> > requests the same pin as input, we'll never update the FLAG_IS_OUT
->=20
-> I meant to say "same pin as interrupt". Sorry for the noise.
+---
+ChangeLog:
+v3 -> v4:
+  - retun error codes in  result incorrect branch, suggested by Dmitry Baryshkov.
+  - replacing all ret= with returns, suggested by Dmitry Baryshkov.
+  - moving the comment below the judgment statement, suggested by Dmitry Baryshkov.
+  - moving definations to the source file and clearing headers, suggested by Dmitry Baryshkov.
+  - reanaming dp_prefix to hibmc_dp_prefix, suggested by Dmitry Baryshkov.
+  - changing hibmc_dp_reg_write_field to static inline and lock, suggested by Dmitry Baryshkov.
+  - moving some structs to later patch, suggested by Dmitry Baryshkov.
+  - optimizing hibmc_dp_link_get_adjust_train() to delete for loop, suggested by Dmitry Baryshkov.
+  - changing ELNRNG to EIO error code, suggested by Dmitry Baryshkov.
+  - deleting meaningless macro, suggested by Dmitry Baryshkov.
+  - fixing build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202411041559.WIfxRN6n-lkp@intel.com/
+  - changed the type of train_set to array, suggested by Dmitry Baryshkov.
+  - using actual link rate instead of magic num, suggested by Dmitry Baryshkov.
+  - deleting hibmc_dp_hw_uninit(), suggested by Dmitry Baryshkov.
+  - separating hibmc_vdac and hibmc_dp changes into separate patche, suggested by Dmitry Baryshkov.
+  - static int hibmc_dp_prepare(), suggested by Dmitry Baryshkov.
+  v3:https://lore.kernel.org/all/20241101105028.2177274-1-shiyongbang@huawei.com/
+v2 -> v3:
+  - put the macro definations in latter patch where they are actually used, suggested by Dmitry Baryshkov.
+  - rename some macro definations to make them sensible, suggested by Dmitry Baryshkov.
+  - using FIELD_PREP and FIELD_GET, suggested by Dmitry Baryshkov.
+  - using DP_DPCD_REV_foo, suggested by Dmitry Baryshkov.
+  - using switchcase in dp_link_reduce_lane, suggested by Dmitry Baryshkov.
+  - deleting dp_link_pattern2dpcd function and using macros directly, suggested by Dmitry Baryshkov.
+  - deleting EFAULT error codes, suggested by Dmitry Baryshkov.
+  - fix build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202410250305.UHKDhtxy-lkp@intel.com/
+    Closes: https://lore.kernel.org/oe-kbuild-all/202410250931.UDQ9s66H-lkp@intel.com/
+    Closes: https://lore.kernel.org/oe-kbuild-all/202410251136.1m7BlR68-lkp@intel.com/
+  v2:https://lore.kernel.org/all/20241022124148.1952761-1-shiyongbang@huawei.com/
+v1 -> v2:
+  - using drm_dp_aux frame implement dp aux read and write functions, suggested by Jani Nikula.
+  - using drm dp header files' dp macros instead, suggested by Andy Yan.
+  - using drm_dp_* functions implement dp link training process, suggested by Jani Nikula.
+  - changed some defines and functions to former patch, suggested by Dmitry Baryshkov.
+  - sorting the headers including in dp_hw.h and hibmc_drm_drv.c files, suggested by Dmitry Baryshkov.
+  - deleting struct dp_mode and dp_mode_cfg function, suggested by Dmitry Baryshkov.
+  - modifying drm_simple_encoder_init function, suggested by Dmitry Baryshkov.
+  - refactoring struct hibmc_connector, suggested by Dmitry Baryshkov.
+  - withdrawing the modification in hibmc_kms_init, suggested by Dmitry Baryshkov.
+  - fix build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202410031735.8iRZZR6T-lkp@intel.com/
+    Closes: https://lore.kernel.org/oe-kbuild-all/202410040328.VeVxM9yB-lkp@intel.com/
+  v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
+---
 
-GPIO output and interrupt at the same time looks like a misconfiguration
-to me. Maybe check for that situation and return -EBUSY?
+baihan li (5):
+  drm/hisilicon/hibmc: add dp aux in hibmc drivers
+  drm/hisilicon/hibmc: add dp link moduel in hibmc drivers
+  drm/hisilicon/hibmc: add dp hw moduel in hibmc driver
+  drm/hisilicon/hibmc: refactored struct hibmc_drm_private
+  drm/hisilicon/hibmc: add dp module in hibmc
 
--- Sebastian
+ drivers/gpu/drm/hisilicon/hibmc/Makefile      |   3 +-
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c   | 164 +++++++++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  63 ++++
+ .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  19 +
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 217 +++++++++++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  28 ++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 339 ++++++++++++++++++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  76 ++++
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 118 ++++++
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  12 +
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  19 +-
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c   |  41 ++-
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  |  20 +-
+ 13 files changed, 1080 insertions(+), 39 deletions(-)
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
 
->=20
-> Bart
->=20
-> > value and I don't think any subsequent behavior can be considered
-> > defined.
-> >
-> > I applied the first 3 patches as they look alright.
-> >
-> > Bart
+-- 
+2.33.0
 
---ejtr6ggm3ld65lkc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmczVqUACgkQ2O7X88g7
-+pr69g//SFAjME4lUgAKRXNnfZVfFq+IoUFP4e1HXfxmVXggtYcVHZ8RTsry/PQo
-YXHrS+xj9lnVVeIH3mU407+ripkb1RoaZWUXtc4EHG2MZiqBjdxznCHQNuT7yRGQ
-TiLd82ZsRy3x4V3HiLaeJxByNSLsS50idq/XHqk7Jq5Ub5Jf4RQrzaQsM+Sf2WFF
-707M1dEUNKjYHBvVfIybCzNjbkGur0JWeiQ8Yo6rJkLnNTQSCgOuVmQ+/J9fPZgJ
-GABMiJ2Qor3rzudj5Ac3Mqocr3hUHpgTKT+3Uub2eHg3gF/FLil7Wdcv8QPtmJHl
-eR9vJTAF40p1mhk/xH22PGm72xdZEKot2efs8cIQ2Xfkt9kwBE+NDNc3XmxXC5/D
-iT7YhXJsscYzpBnxO2wvU113s3yPZNx5HhjuSvxj5ZLyFCP3h1A4jU8MTwu89US7
-ZaoGbnl8/s8yv5BxeysT9kwmcRG5YEGIMwJn/9vZEKqKz/3X5srXiar5Mdc0RFkq
-eKcvWHJVtgrtRdKb0TUCM9vxulfUGEk+4Pz4VQ+LdbabRWkVXWEHGXzGORIW0okA
-+R/2yIMhW/9w1gRolqDjBqXIyEieie7hQgYDZEenQdTTFu5w06FCdNrhzmP+abVT
-lgGJoNXJCzEbo7EeUi2tjiMmNSHHszMu5snP3Fhz6t1iM0Rp7ys=
-=QZit
------END PGP SIGNATURE-----
-
---ejtr6ggm3ld65lkc--
 
