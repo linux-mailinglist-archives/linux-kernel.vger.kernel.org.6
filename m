@@ -1,739 +1,332 @@
-Return-Path: <linux-kernel+bounces-405185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00BA69C4E06
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:04:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A61C79C4D78
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:45:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E0C41F24EE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:04:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DB3FB238B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C181D208220;
-	Tue, 12 Nov 2024 05:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vEsB/sbh"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57257208215;
+	Tue, 12 Nov 2024 03:44:09 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE731990AB
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4467519CC29;
+	Tue, 12 Nov 2024 03:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731387866; cv=none; b=ZDy3EqJFcydzAP1i4tvvwdNJIsvTriMMHKhF3dHqh1ux0SG0iAMGvfu9VB9wvWqjJc8FX8jI0jJm+y0NuQUJBJxkHLtXwCbeWsPAvOyzmZP6xfRrmx5MNRh1OI70VcckvcDtJXhP3ctUQpfm9GuAfKgeQN4Xd9dZGgTg8nZz2Jg=
+	t=1731383048; cv=none; b=jzu9PLIi0zs2sc3GRRmQzEuK79yrzGXpgvh70IAFwDHFPfJ2SrxhxDzdy6VMBTJaQRiNVI+5wT00OPXPSei4hc3mqVWx3ab8GBm9L4BthJw8WZI5QOAT5A0SAb/PZF59JlCLeg9RK7CEM+b2hQSoCvZn60wsNL2A9h9fEe8P8bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731387866; c=relaxed/simple;
-	bh=K9Gv3v3Uc6AHETT1xR7ch/v0oKyX3W85GdVQwzAG2r0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=R3F+C8jgUls8yNg4G1ki7sYG/VYBur/+9aF3Y+n627jm6SF7mbvHBp2lMxMq38n6De3gdfgRWSBK8gZ8LZIjNmXkoZddt2E3hsmPkw9mmTOZaUtjBTtCr6tEuJwnNCw5I8K0uXxyS0lu6tGOPGqu1mUwC/MSQIgI0pD8jBVP64k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vEsB/sbh; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241112050421epoutp025c2f591d96ea6faec31252090fd48f58~HIBYhmIf40653206532epoutp028
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:04:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241112050421epoutp025c2f591d96ea6faec31252090fd48f58~HIBYhmIf40653206532epoutp028
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1731387861;
-	bh=Rd+2J3oJ1RFd57FvIVu3KfojR2nZ0v+fm0z3RWfr5vQ=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=vEsB/sbh8ElnfHSLpN36bY9obWL0QxwbG0SCm844VfshBoW0vfNDx+5Me7is2clKE
-	 AZ5IBixzB9Qn/qgfqZTTkcPIH+B7FJpuiPAJKQcHyDnE+1SAeLjKASuCQI+7eHuB2G
-	 IhlGbQEhcbxrHF7iUQpP+FdvyWS1cSBELhujAAjQ=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20241112050420epcas5p364776bf147a05930e0a6349e8e1fb484~HIBYEaTTe0572605726epcas5p3b;
-	Tue, 12 Nov 2024 05:04:20 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4XnZ8M2yWGz4x9QD; Tue, 12 Nov
-	2024 05:04:19 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	EC.F0.09800.1D1E2376; Tue, 12 Nov 2024 14:04:17 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241111123656epcas5p20cac863708cd83d1fdbb523625665273~G6jQl8uM12592225922epcas5p2C;
-	Mon, 11 Nov 2024 12:36:56 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241111123656epsmtrp112b31db35f5c7f16ceffa6ce87659d60~G6jQk5pd01738917389epsmtrp14;
-	Mon, 11 Nov 2024 12:36:56 +0000 (GMT)
-X-AuditID: b6c32a4b-23fff70000002648-e0-6732e1d1b5c6
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	6D.A6.35203.86AF1376; Mon, 11 Nov 2024 21:36:56 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241111123655epsmtip187b58a3df07ff2e517ed92eb61d2749b~G6jPbwdms0368203682epsmtip1H;
-	Mon, 11 Nov 2024 12:36:55 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk, asml.silence@gmail.com
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, hexue
-	<xue01.he@samsung.com>
-Subject: [PATCH liburing] test: add test cases for hybrid iopoll
-Date: Mon, 11 Nov 2024 20:36:50 +0800
-Message-ID: <20241111123650.1857526-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1731383048; c=relaxed/simple;
+	bh=ruY/EJqxhlXRsPF9HXdZIc+Z0H3EP9D6qVw/aLKKdhI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o2v1YDVscoYxxyHyS19Ze9CjcQOMUTqs2YMUsMC/Qz5MxIu4P6pxNgd9Exhlwd9R4mgMO2XLNsjfBs8/cDJnuU0I1tlkgtJGPDJlNctPlAGVvnNivAMqCDrWFV732LY5Y8N9tgGZS8nyqrs9wq3aw0THPxnPaShZhZVgEu+PsRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XnXMK2VYnz4f3lY5;
+	Tue, 12 Nov 2024 11:43:41 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 703091A0197;
+	Tue, 12 Nov 2024 11:43:54 +0800 (CST)
+Received: from [10.174.177.210] (unknown [10.174.177.210])
+	by APP4 (Coremail) with SMTP id gCh0CgDHo4f1zjJnFXosBg--.43366S3;
+	Tue, 12 Nov 2024 11:43:51 +0800 (CST)
+Message-ID: <dd6bd7f5-cf2e-3123-3017-c209d81ab290@huaweicloud.com>
+Date: Tue, 12 Nov 2024 11:43:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [RFC PATCH 6/6 6.6] libfs: fix infinite directory reads for
+ offset dir
+To: Chuck Lever III <chuck.lever@oracle.com>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, Chuck Lever <cel@kernel.org>,
+ linux-stable <stable@vger.kernel.org>,
+ "harry.wentland@amd.com" <harry.wentland@amd.com>,
+ "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
+ "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
+ "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+ "christian.koenig@amd.com" <christian.koenig@amd.com>,
+ "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
+ "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Liam Howlett <liam.howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Greg KH <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>,
+ "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
+ "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+ "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+ "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
+ "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
+ linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20241111005242.34654-1-cel@kernel.org>
+ <20241111005242.34654-7-cel@kernel.org>
+ <278433c2-611c-6c8e-7964-5c11977b68b7@huaweicloud.com>
+ <96A93064-8DCE-4B78-9F2A-CF6E7EEABEB1@oracle.com>
+ <73a05cb9-569c-9b3c-3359-824e76b14461@huaweicloud.com>
+ <09F40EA2-9537-4C7A-A221-AA403ED3FF64@oracle.com>
+From: yangerkun <yangerkun@huaweicloud.com>
+In-Reply-To: <09F40EA2-9537-4C7A-A221-AA403ED3FF64@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJKsWRmVeSWpSXmKPExsWy7bCmhu7Fh0bpBmuf6VrMWbWN0WL13X42
-	i3et51gsfnXfZbS4vGsOm8XZCR9YLbounGJzYPfYOesuu8fls6UefVtWMXp83iQXwBKVbZOR
-	mpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdICSQlliTilQ
-	KCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITtj3+Wz
-	LAWvSiq+Nn1mb2C8HdHFyMkhIWAi0fehmbGLkYtDSGA3o8TirzNYIZxPjBLzvtyFynxjlDi0
-	4zIbTEvH3y6oqr2MEm//fGaCcH4wSmxasZoZpIpNQEli/5YPjCC2iIC2xOvHU1m6GDk4mAWi
-	JF6s5QYJCws4SCw90cQOYrMIqErcm/2GCaSEV8Ba4vzWcohd8hKLdywHm8grIChxcuYTFhCb
-	GSjevHU2M0TNKXaJxwfEIWwXiUe/r7FA2MISr45vYYewpSRe9rdB2fkSk7+vZ4SwayTWbX4H
-	VW8t8e/KHqgrNSXW79KHCMtKTD21jgliLZ9E7+8nTBBxXokd82BsJYklR1ZAjZSQ+D1hESvI
-	GAkBD4nlpwxBTCGBWInTPRUTGOVnIfllFpJfZiHsXcDIvIpRMrWgODc9tdi0wDgvtRweqcn5
-	uZsYwWlQy3sH46MHH/QOMTJxMB5ilOBgVhLh1fDXTxfiTUmsrEotyo8vKs1JLT7EaAoM34nM
-	UqLJ+cBEnFcSb2hiaWBiZmZmYmlsZqgkzvu6dW6KkEB6YklqdmpqQWoRTB8TB6dUA9P2V9ni
-	nics83K3cj1QSWRstrmjkXZOp3nDuW33cjkahd2cbxyb2nDCdefJ20zbNVkK1qXf+iS7zF65
-	0PpvzWWOT8JXxKzrle8FA3VpRGS+KGz5scem6cK2gMV7lmZ4HHfxqrnbpcpT1BAb2O6kURsu
-	Ybb4vGfxyrroDfweURFvSzk+fEyNj9/mJBvAp5a6/8CBhmLX83oaWSueaN/Y1GO76N0D9iyP
-	95Neyss8Xba4s2xvhcXb7ctVMudOq9FI3+dXlsliYVHt+eix6oxXPjsFX98PVo1ddlF90lmD
-	lTvsJn47FvDnV86XFedYP2eG2BnstVf4d2yCzOLr9SpBD8Kf5abfvtahr3G4Y36oEktxRqKh
-	FnNRcSIALbCzRAwEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOLMWRmVeSWpSXmKPExsWy7bCSnG7GL8N0g8UXRCzmrNrGaLH6bj+b
-	xbvWcywWv7rvMlpc3jWHzeLshA+sFl0XTrE5sHvsnHWX3ePy2VKPvi2rGD0+b5ILYInisklJ
-	zcksSy3St0vgyth3+SxLwauSiq9Nn9kbGG9HdDFyckgImEh0/O1i7WLk4hAS2M0osfT8ahaI
-	hITEjkd/WCFsYYmV/56zQxR9Y5T48m0HM0iCTUBJYv+WD4xdjBwcIgK6Eo13FUDCzAIxEh/2
-	TGAHsYUFHCSWnmgCs1kEVCXuzX7DBFLOK2AtcX5rOcR4eYnFO5aDTeQVEJQ4OfMJC8QYeYnm
-	rbOZJzDyzUKSmoUktYCRaRWjZGpBcW56brFhgWFearlecWJucWleul5yfu4mRnBYamnuYNy+
-	6oPeIUYmDsZDjBIczEoivBr++ulCvCmJlVWpRfnxRaU5qcWHGKU5WJTEecVf9KYICaQnlqRm
-	p6YWpBbBZJk4OKUamELvaa9rOFzveuH2EoaoY2vsi3dkFMZV6y7ccUJ10navA3O8d0YrXyzS
-	r5R9cMmwL7PxyrUVK7/VHWJZ52M/xUDXu2vxlU2PFx7+p7SLSX3VjQyb5VqFu5ctcr+0Yl6W
-	0hFBhRcHHSUuK62tLzkSdyEsZI2ZTtDRCY7FWu+j3zeo+jatbhQ+tle3aFbMBtZvpol/oqYp
-	qqsHHeNUuJVweFFbblUnv+xKlQT2IBb2Qr9VwoeKG2bOMthyZsGuxH4+1ds3Pp61OZhizLNu
-	ar6jx9X3FdI1b3h+eO94lXF03pc8dTO5vXtEPyXo1aYqbnm2VKU+wWvl0+NTnJPOb/+3229/
-	54Wj6XdamR1SlAx3nVViKc5INNRiLipOBACASjZIugIAAA==
-X-CMS-MailID: 20241111123656epcas5p20cac863708cd83d1fdbb523625665273
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241111123656epcas5p20cac863708cd83d1fdbb523625665273
-References: <CGME20241111123656epcas5p20cac863708cd83d1fdbb523625665273@epcas5p2.samsung.com>
+X-CM-TRANSID:gCh0CgDHo4f1zjJnFXosBg--.43366S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ar15WFykJF4xXw48KFWUCFg_yoW3KFW7pr
+	W5Jan0krs7Xw1UGr4vq3WDZrySv3Z7Kr18Xrn5W34UJryqvr13KF1xAr1Y9a48Ar1kCr12
+	qF45t343ur1UArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
+X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
 
-Add a test file for hybrid iopoll to make sure it works safe.Testcass
-include basic read/write tests, and run in normal iopoll mode and
-passthrough mode respectively.
 
-Signed-off-by: hexue <xue01.he@samsung.com>
----
- man/io_uring_setup.2            |  10 +-
- src/include/liburing/io_uring.h |   3 +
- test/Makefile                   |   1 +
- test/iopoll-hybridpoll.c        | 544 ++++++++++++++++++++++++++++++++
- 4 files changed, 557 insertions(+), 1 deletion(-)
- create mode 100644 test/iopoll-hybridpoll.c
 
-diff --git a/man/io_uring_setup.2 b/man/io_uring_setup.2
-index 2f87783..8cfafdc 100644
---- a/man/io_uring_setup.2
-+++ b/man/io_uring_setup.2
-@@ -78,7 +78,15 @@ in question. For NVMe devices, the nvme driver must be loaded with the
- parameter set to the desired number of polling queues. The polling queues
- will be shared appropriately between the CPUs in the system, if the number
- is less than the number of online CPU threads.
--
-+.TP
-+.B IORING_SETUP_HYBRID_IOPOLL
-+This flag must setup with 
-+.B IORING_SETUP_IOPOLL
-+flag. hybrid poll is a new
-+feature baed on iopoll, this could be a suboptimal solution when running
-+on a single thread, it offers higher performance than IRQ and lower CPU
-+utilization than polling. Similarly, this feature also requires the devices
-+to support polling configuration.
- .TP
- .B IORING_SETUP_SQPOLL
- When this flag is specified, a kernel thread is created to perform
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index 20bc570..d16364c 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -200,6 +200,9 @@ enum io_uring_sqe_flags_bit {
-  */
- #define IORING_SETUP_NO_SQARRAY		(1U << 16)
- 
-+/* Use hybrid poll in iopoll process */
-+#define IORING_SETUP_HYBRID_IOPOLL      (1U << 17)
-+
- enum io_uring_op {
- 	IORING_OP_NOP,
- 	IORING_OP_READV,
-diff --git a/test/Makefile b/test/Makefile
-index dfbbcbe..ea9452c 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -116,6 +116,7 @@ test_srcs := \
- 	iopoll.c \
- 	iopoll-leak.c \
- 	iopoll-overflow.c \
-+	iopoll-hybridpoll.c \
- 	io_uring_enter.c \
- 	io_uring_passthrough.c \
- 	io_uring_register.c \
-diff --git a/test/iopoll-hybridpoll.c b/test/iopoll-hybridpoll.c
-new file mode 100644
-index 0000000..d7c08ae
---- /dev/null
-+++ b/test/iopoll-hybridpoll.c
-@@ -0,0 +1,544 @@
-+/* SPDX-License-Identifier: MIT */
-+/*
-+ * Description: basic read/write tests with 
-+ * hybrid polled IO, include iopoll and io_uring
-+ * passthrough.
-+ */
-+#include <errno.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <fcntl.h>
-+#include <sys/types.h>
-+#include <poll.h>
-+#include <sys/eventfd.h>
-+#include <sys/resource.h>
-+#include "helpers.h"
-+#include "liburing.h"
-+#include "../src/syscall.h"
-+#include "nvme.h"
-+
-+#define FILE_SIZE	(128 * 1024)
-+#define BS		4096
-+#define BUFFERS		(FILE_SIZE / BS)
-+
-+static struct iovec *vecs;
-+static int no_pt, no_iopoll;
-+
-+static int fill_pattern(int tc)
-+{
-+	unsigned int val, *ptr;
-+	int i, j;
-+	int u_in_buf = BS / sizeof(val);
-+
-+	val = (tc / 2) * FILE_SIZE;
-+	for (i = 0; i < BUFFERS; i++) {
-+		ptr = vecs[i].iov_base;
-+		for (j = 0; j < u_in_buf; j++) {
-+			*ptr = val;
-+			val++;
-+			ptr++;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int verify_buf(int tc, void *buf, off_t off)
-+{
-+	int i, u_in_buf = BS / sizeof(unsigned int);
-+	unsigned int *ptr;
-+
-+	off /= sizeof(unsigned int);
-+	off += (tc / 2) * FILE_SIZE;
-+	ptr = buf;
-+	for (i = 0; i < u_in_buf; i++) {
-+		if (off != *ptr) {
-+			fprintf(stderr, "Found %u, wanted %llu\n", *ptr,
-+					(unsigned long long) off);
-+			return 1;
-+		}
-+		ptr++;
-+		off++;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __test_io_uring_passthrough_io(const char *file, struct io_uring *ring, int tc, int write,
-+		     int sqthread, int fixed, int nonvec)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	struct nvme_uring_cmd *cmd;
-+	int open_flags;
-+	int do_fixed;
-+	int i, ret, fd = -1;
-+	off_t offset;
-+	__u64 slba;
-+	__u32 nlb;
-+
-+	if (write)
-+		open_flags = O_WRONLY;
-+	else
-+		open_flags = O_RDONLY;
-+
-+	if (fixed) {
-+		ret = t_register_buffers(ring, vecs, BUFFERS);
-+		if (ret == T_SETUP_SKIP)
-+			return 0;
-+		if (ret != T_SETUP_OK) {
-+			fprintf(stderr, "buffer reg failed: %d\n", ret);
-+			goto err;
-+		}
-+	}
-+
-+	fd = open(file, open_flags);
-+	if (fd < 0) {
-+		if (errno == EACCES || errno == EPERM)
-+			return T_EXIT_SKIP;
-+		perror("file open");
-+		goto err;
-+	}
-+
-+	if (sqthread) {
-+		ret = io_uring_register_files(ring, &fd, 1);
-+		if (ret) {
-+			fprintf(stderr, "file reg failed: %d\n", ret);
-+			goto err;
-+		}
-+	}
-+
-+	if (write)
-+		fill_pattern(tc);
-+
-+	offset = 0;
-+	for (i = 0; i < BUFFERS; i++) {
-+		sqe = io_uring_get_sqe(ring);
-+		if (!sqe) {
-+			fprintf(stderr, "sqe get failed\n");
-+			goto err;
-+		}
-+		if (write) {
-+			int use_fd = fd;
-+
-+			do_fixed = fixed;
-+
-+			if (sqthread)
-+				use_fd = 0;
-+			if (fixed && (i & 1))
-+				do_fixed = 0;
-+			if (do_fixed) {
-+				io_uring_prep_write_fixed(sqe, use_fd, vecs[i].iov_base,
-+								vecs[i].iov_len,
-+								offset, i);
-+				sqe->cmd_op = NVME_URING_CMD_IO;
-+			} else if (nonvec) {
-+				io_uring_prep_write(sqe, use_fd, vecs[i].iov_base,
-+							vecs[i].iov_len, offset);
-+				sqe->cmd_op = NVME_URING_CMD_IO;
-+			} else {
-+				io_uring_prep_writev(sqe, use_fd, &vecs[i], 1,
-+								offset);
-+				sqe->cmd_op = NVME_URING_CMD_IO_VEC;
-+			}	
-+		} else {
-+			int use_fd = fd;
-+
-+			do_fixed = fixed;
-+
-+			if (sqthread)
-+				use_fd = 0;
-+			if (fixed && (i & 1))
-+				do_fixed = 0;
-+			if (do_fixed) {
-+				io_uring_prep_read_fixed(sqe, use_fd, vecs[i].iov_base,
-+								vecs[i].iov_len,
-+								offset, i);
-+				sqe->cmd_op = NVME_URING_CMD_IO;
-+			} else if (nonvec) {
-+				io_uring_prep_read(sqe, use_fd, vecs[i].iov_base,
-+							vecs[i].iov_len, offset);
-+				sqe->cmd_op = NVME_URING_CMD_IO;
-+			} else {
-+				io_uring_prep_readv(sqe, use_fd, &vecs[i], 1,
-+								offset);
-+				sqe->cmd_op = NVME_URING_CMD_IO_VEC;
-+			}
-+		}
-+		sqe->opcode = IORING_OP_URING_CMD;
-+		if (do_fixed)
-+			sqe->uring_cmd_flags |= IORING_URING_CMD_FIXED;
-+		sqe->user_data = ((uint64_t)offset << 32) | i;
-+		if (sqthread)
-+			sqe->flags |= IOSQE_FIXED_FILE;
-+
-+		cmd = (struct nvme_uring_cmd *)sqe->cmd;
-+		memset(cmd, 0, sizeof(struct nvme_uring_cmd));
-+
-+		cmd->opcode = write ? nvme_cmd_write : nvme_cmd_read;
-+
-+		slba = offset >> lba_shift;
-+		nlb = (BS >> lba_shift) - 1;
-+
-+		/* cdw10 and cdw11 represent starting lba */
-+		cmd->cdw10 = slba & 0xffffffff;
-+		cmd->cdw11 = slba >> 32;
-+		/* cdw12 represent number of lba's for read/write */
-+		cmd->cdw12 = nlb;
-+		if (do_fixed || nonvec) {
-+			cmd->addr = (__u64)(uintptr_t)vecs[i].iov_base;
-+			cmd->data_len = vecs[i].iov_len;
-+		} else {
-+			cmd->addr = (__u64)(uintptr_t)&vecs[i];
-+			cmd->data_len = 1;
-+		}
-+		cmd->nsid = nsid;
-+
-+		offset += BS;
-+	}
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != BUFFERS) {
-+		fprintf(stderr, "submit got %d, wanted %d\n", ret, BUFFERS);
-+		goto err;
-+	}
-+
-+	for (i = 0; i < BUFFERS; i++) {
-+		ret = io_uring_wait_cqe(ring, &cqe);
-+		if (ret) {
-+			fprintf(stderr, "wait_cqe=%d\n", ret);
-+			goto err;
-+		}
-+		if (cqe->res != 0) {
-+			if (!no_pt) {
-+				no_pt = 1;
-+				goto skip;
-+			}
-+			fprintf(stderr, "cqe res %d, wanted 0\n", cqe->res);
-+			goto err;
-+		}
-+		io_uring_cqe_seen(ring, cqe);
-+		if (!write) {
-+			int index = cqe->user_data & 0xffffffff;
-+			void *buf = vecs[index].iov_base;
-+			off_t voff = cqe->user_data >> 32;
-+
-+			if (verify_buf(tc, buf, voff))
-+				goto err;
-+		}
-+	}
-+
-+	if (fixed) {
-+		ret = io_uring_unregister_buffers(ring);
-+		if (ret) {
-+			fprintf(stderr, "buffer unreg failed: %d\n", ret);
-+			goto err;
-+		}
-+	}
-+	if (sqthread) {
-+		ret = io_uring_unregister_files(ring);
-+		if (ret) {
-+			fprintf(stderr, "file unreg failed: %d\n", ret);
-+			goto err;
-+		}
-+	}
-+
-+skip:
-+	close(fd);
-+	return 0;
-+err:
-+	if (fd != -1)
-+		close(fd);
-+	return 1;
-+}
-+
-+static int test_io_uring_passthrough(const char *file, int tc, int write, int sqthread,
-+		   int fixed, int nonvec)
-+{
-+	struct io_uring ring;
-+	int ret, ring_flags = 0;
-+
-+	ring_flags |= IORING_SETUP_SQE128;
-+	ring_flags |= IORING_SETUP_CQE32;
-+	ring_flags |= IORING_SETUP_HYBRID_IOPOLL;
-+
-+	if (sqthread)
-+		ring_flags |= IORING_SETUP_SQPOLL;
-+
-+	ret = t_create_ring(64, &ring, ring_flags);
-+	if (ret == T_SETUP_SKIP)
-+		return 0;
-+	if (ret != T_SETUP_OK) {
-+		if (ret == -EINVAL) {
-+			no_pt = 1;
-+			return T_SETUP_SKIP;
-+		}
-+		fprintf(stderr, "ring create failed: %d\n", ret);
-+		return 1;
-+	}
-+
-+	ret = __test_io_uring_passthrough_io(file, &ring, tc, write, sqthread, fixed, nonvec);
-+	io_uring_queue_exit(&ring);
-+
-+	return ret;
-+}
-+
-+static int provide_buffers(struct io_uring *ring)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	int ret, i;
-+
-+	for (i = 0; i < BUFFERS; i++) {
-+		sqe = io_uring_get_sqe(ring);
-+		io_uring_prep_provide_buffers(sqe, vecs[i].iov_base,
-+						vecs[i].iov_len, 1, 1, i);
-+	}
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != BUFFERS) {
-+		fprintf(stderr, "submit: %d\n", ret);
-+		return 1;
-+	}
-+
-+	for (i = 0; i < BUFFERS; i++) {
-+		ret = io_uring_wait_cqe(ring, &cqe);
-+		if (cqe->res < 0) {
-+			fprintf(stderr, "cqe->res=%d\n", cqe->res);
-+			return 1;
-+		}
-+		io_uring_cqe_seen(ring, cqe);
-+	}
-+
-+	return 0;
-+}
-+
-+static int __test_iopoll_io(const char *file, struct io_uring *ring, int write, int sqthread,
-+		     int fixed, int buf_select)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	int open_flags;
-+	int i, fd = -1, ret;
-+	off_t offset;
-+
-+	if (buf_select) {
-+		write = 0;
-+		fixed = 0;
-+	}
-+	if (buf_select && provide_buffers(ring))
-+		return 1;
-+
-+	if (write)
-+		open_flags = O_WRONLY;
-+	else
-+		open_flags = O_RDONLY;
-+	open_flags |= O_DIRECT;
-+
-+	if (fixed) {
-+		ret = t_register_buffers(ring, vecs, BUFFERS);
-+		if (ret == T_SETUP_SKIP)
-+			return 0;
-+		if (ret != T_SETUP_OK) {
-+			fprintf(stderr, "buffer reg failed: %d\n", ret);
-+			goto err;
-+		}
-+	}
-+	fd = open(file, open_flags);
-+	if (fd < 0) {
-+		if (errno == EINVAL || errno == EPERM || errno == EACCES)
-+			return 0;
-+		perror("file open");
-+		goto err;
-+	}
-+	if (sqthread) {
-+		ret = io_uring_register_files(ring, &fd, 1);
-+		if (ret) {
-+			fprintf(stderr, "file reg failed: %d\n", ret);
-+			goto err;
-+		}
-+	}
-+
-+	offset = 0;
-+	for (i = 0; i < BUFFERS; i++) {
-+		sqe = io_uring_get_sqe(ring);
-+		if (!sqe) {
-+			fprintf(stderr, "sqe get failed\n");
-+			goto err;
-+		}
-+		offset = BS * (rand() % BUFFERS);
-+		if (write) {
-+			int do_fixed = fixed;
-+			int use_fd = fd;
-+
-+			if (sqthread)
-+				use_fd = 0;
-+			if (fixed && (i & 1))
-+				do_fixed = 0;
-+			if (do_fixed) {
-+				io_uring_prep_write_fixed(sqe, use_fd, vecs[i].iov_base,
-+								vecs[i].iov_len,
-+								offset, i);
-+			} else {
-+				io_uring_prep_writev(sqe, use_fd, &vecs[i], 1,
-+								offset);
-+			}
-+		} else {
-+			int do_fixed = fixed;
-+			int use_fd = fd;
-+
-+			if (sqthread)
-+				use_fd = 0;
-+			if (fixed && (i & 1))
-+				do_fixed = 0;
-+			if (do_fixed) {
-+				io_uring_prep_read_fixed(sqe, use_fd, vecs[i].iov_base,
-+								vecs[i].iov_len,
-+								offset, i);
-+			} else {
-+				io_uring_prep_readv(sqe, use_fd, &vecs[i], 1,
-+								offset);
-+			}
-+
-+		}
-+		if (sqthread)
-+			sqe->flags |= IOSQE_FIXED_FILE;
-+		if (buf_select) {
-+			sqe->flags |= IOSQE_BUFFER_SELECT;
-+			sqe->buf_group = buf_select;
-+			sqe->user_data = i;
-+		}
-+	}
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != BUFFERS) {
-+		ret = io_uring_peek_cqe(ring, &cqe);
-+		if (!ret && cqe->res == -EOPNOTSUPP) {
-+			no_iopoll = 1;
-+			io_uring_cqe_seen(ring, cqe);
-+			goto out;
-+		}
-+		fprintf(stderr, "submit got %d, wanted %d\n", ret, BUFFERS);
-+		goto err;
-+	}
-+
-+	for (i = 0; i < BUFFERS; i++) {
-+		ret = io_uring_wait_cqe(ring, &cqe);
-+		if (ret) {
-+			fprintf(stderr, "wait_cqe=%d\n", ret);
-+			goto err;
-+		} else if (cqe->res == -EOPNOTSUPP) {
-+			fprintf(stdout, "File/device/fs doesn't support polled IO\n");
-+			no_iopoll = 1;
-+			goto out;
-+		} else if (cqe->res != BS) {
-+			fprintf(stderr, "cqe res %d, wanted %d\n", cqe->res, BS);
-+			goto err;
-+		}
-+		io_uring_cqe_seen(ring, cqe);
-+	}
-+
-+	if (fixed) {
-+		ret = io_uring_unregister_buffers(ring);
-+		if (ret) {
-+			fprintf(stderr, "buffer unreg failed: %d\n", ret);
-+			goto err;
-+		}
-+	}
-+	if (sqthread) {
-+		ret = io_uring_unregister_files(ring);
-+		if (ret) {
-+			fprintf(stderr, "file unreg failed: %d\n", ret);
-+			goto err;
-+		}
-+	}
-+
-+out:
-+	close(fd);
-+	return 0;
-+err:
-+	if (fd != -1)
-+		close(fd);
-+	return 1;
-+}
-+
-+static int test_iopoll(const char *fname, int write, int sqthread, int fixed,
-+		   int buf_select, int defer)
-+{
-+	struct io_uring ring;
-+	int ret, ring_flags = IORING_SETUP_IOPOLL | IORING_SETUP_HYBRID_IOPOLL;
-+
-+	if (no_iopoll)
-+		return 0;
-+
-+	if (defer)
-+		ring_flags |= IORING_SETUP_SINGLE_ISSUER |
-+			      IORING_SETUP_DEFER_TASKRUN;
-+
-+	ret = t_create_ring(64, &ring, ring_flags);
-+	if (ret == T_SETUP_SKIP)
-+		return 0;
-+	if (ret != T_SETUP_OK) {
-+		fprintf(stderr, "ring create failed: %d\n", ret);
-+		return 1;
-+	}
-+	ret = __test_iopoll_io(fname, &ring, write, sqthread, fixed, buf_select);
-+	io_uring_queue_exit(&ring);
-+	return ret;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int i, ret;
-+	char buf[256];
-+	char *fname;
-+
-+	if (argc > 1) {
-+		fname = argv[1];
-+	} else {
-+		srand((unsigned)time(NULL));
-+		snprintf(buf, sizeof(buf), ".basic-rw-%u-%u",
-+			(unsigned)rand(), (unsigned)getpid());
-+		fname = buf;
-+		t_create_file(fname, FILE_SIZE);
-+	}
-+
-+	vecs = t_create_buffers(BUFFERS, BS);
-+
-+	for (i = 0; i < 16; i++) {
-+		int write = (i & 1) != 0;
-+		int sqthread = (i & 2) != 0;
-+		int fixed = (i & 4) != 0;
-+		int buf_select = (i & 8) != 0;
-+		int defer = (i & 16) != 0;
-+		int nonvec = buf_select;
-+
-+		ret = test_iopoll(fname, write, sqthread, fixed, buf_select, defer);
-+		if (ret) {
-+			fprintf(stderr, "test_iopoll_io failed %d/%d/%d/%d/%d\n",
-+				write, sqthread, fixed, buf_select, defer);
-+			goto err;
-+		}
-+		if (no_iopoll)
-+			break;
-+
-+		ret = test_io_uring_passthrough(fname, i, write, sqthread, fixed, nonvec);
-+		if (no_pt)
-+			break;
-+		if (ret) {
-+			fprintf(stderr, "test_io_uring_passthrough_io failed %d/%d/%d/%d\n",
-+				write, sqthread, fixed, nonvec);
-+			goto err;
-+		}
-+	}
-+
-+	if (fname != argv[1])
-+		unlink(fname);
-+	return ret;
-+err:
-+	if (fname != argv[1])
-+		unlink(fname);
-+	return T_EXIT_FAIL;
-+}
--- 
-2.34.1
+在 2024/11/11 23:34, Chuck Lever III 写道:
+> 
+> 
+>> On Nov 11, 2024, at 10:20 AM, yangerkun <yangerkun@huaweicloud.com> wrote:
+>>
+>>
+>>
+>> 在 2024/11/11 22:39, Chuck Lever III 写道:
+>>>> On Nov 10, 2024, at 9:36 PM, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> 在 2024/11/11 8:52, cel@kernel.org 写道:
+>>>>> From: yangerkun <yangerkun@huawei.com>
+>>>>> [ Upstream commit 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a ]
+>>>>> After we switch tmpfs dir operations from simple_dir_operations to
+>>>>> simple_offset_dir_operations, every rename happened will fill new dentry
+>>>>> to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
+>>>>> key starting with octx->newx_offset, and then set newx_offset equals to
+>>>>> free key + 1. This will lead to infinite readdir combine with rename
+>>>>> happened at the same time, which fail generic/736 in xfstests(detail show
+>>>>> as below).
+>>>>> 1. create 5000 files(1 2 3...) under one dir
+>>>>> 2. call readdir(man 3 readdir) once, and get one entry
+>>>>> 3. rename(entry, "TEMPFILE"), then rename("TEMPFILE", entry)
+>>>>> 4. loop 2~3, until readdir return nothing or we loop too many
+>>>>>     times(tmpfs break test with the second condition)
+>>>>> We choose the same logic what commit 9b378f6ad48cf ("btrfs: fix infinite
+>>>>> directory reads") to fix it, record the last_index when we open dir, and
+>>>>> do not emit the entry which index >= last_index. The file->private_data
+>>>>
+>>>> Please notice this requires last_index should never overflow, otherwise
+>>>> readdir will be messed up.
+>>> It would help your cause if you could be more specific
+>>> than "messed up".
+>>>>> now used in offset dir can use directly to do this, and we also update
+>>>>> the last_index when we llseek the dir file.
+>>>>> Fixes: a2e459555c5f ("shmem: stable directory offsets")
+>>>>> Signed-off-by: yangerkun <yangerkun@huawei.com>
+>>>>> Link: https://lore.kernel.org/r/20240731043835.1828697-1-yangerkun@huawei.com
+>>>>> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+>>>>> [brauner: only update last_index after seek when offset is zero like Jan suggested]
+>>>>> Signed-off-by: Christian Brauner <brauner@kernel.org>
+>>>>> Link: https://nvd.nist.gov/vuln/detail/CVE-2024-46701
+>>>>> [ cel: adjusted to apply to origin/linux-6.6.y ]
+>>>>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>>>>> ---
+>>>>>   fs/libfs.c | 37 +++++++++++++++++++++++++------------
+>>>>>   1 file changed, 25 insertions(+), 12 deletions(-)
+>>>>> diff --git a/fs/libfs.c b/fs/libfs.c
+>>>>> index a87005c89534..b59ff0dfea1f 100644
+>>>>> --- a/fs/libfs.c
+>>>>> +++ b/fs/libfs.c
+>>>>> @@ -449,6 +449,14 @@ void simple_offset_destroy(struct offset_ctx *octx)
+>>>>>    xa_destroy(&octx->xa);
+>>>>>   }
+>>>>>   +static int offset_dir_open(struct inode *inode, struct file *file)
+>>>>> +{
+>>>>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
+>>>>> +
+>>>>> + file->private_data = (void *)ctx->next_offset;
+>>>>> + return 0;
+>>>>> +}
+>>>>
+>>>> Looks like xarray is still used.
+>>> That's not going to change, as several folks have already
+>>> explained.
+>>>> I'm in the cc list ,so I assume you saw my set, then I don't know why
+>>>> you're ignoring my concerns.
+>>>> 1) next_offset is 32-bit and can overflow in a long-time running
+>>>> machine.
+>>>> 2) Once next_offset overflows, readdir will skip the files that offset
+>>>> is bigger.
+>>
+>> I'm sorry, I'm a little busy these days, so I haven't responded to this
+>> series of emails.
+>>
+>>> In that case, that entry won't be visible via getdents(3)
+>>> until the directory is re-opened or the process does an
+>>> lseek(fd, 0, SEEK_SET).
+>>
+>> Yes.
+>>
+>>> That is the proper and expected behavior. I suspect you
+>>> will see exactly that behavior with ext4 and 32-bit
+>>> directory offsets, for example.
+>>
+>> Emm...
+>>
+>> For this case like this:
+>>
+>> 1. mkdir /tmp/dir and touch /tmp/dir/file1 /tmp/dir/file2
+>> 2. open /tmp/dir with fd1
+>> 3. readdir and get /tmp/dir/file1
+>> 4. rm /tmp/dir/file2
+>> 5. touch /tmp/dir/file2
+>> 4. loop 4~5 for 2^32 times
+>> 5. readdir /tmp/dir with fd1
+>>
+>> For tmpfs now, we may see no /tmp/dir/file2, since the offset has been overflow, for ext4 it is ok... So we think this will be a problem.
+>>
+>>> Does that not directly address your concern? Or do you
+>>> mean that Erkun's patch introduces a new issue?
+>>
+>> Yes, to be honest, my personal feeling is a problem. But for 64bit, it may never been trigger.
+> 
+> Thanks for confirming.
+> 
+> In that case, the preferred way to handle it is to fix
+> the issue in upstream, and then backport that fix to LTS.
+> Dependence on 64-bit offsets to avoid a failure case
+> should be considered a workaround, not a real fix, IMHO.
+
+Yes.
+
+> 
+> Do you have a few moments to address it, or if not I
+> will see to it.
+
+You can try to do this, for the reason I am quite busy now until end of 
+this month... Sorry.
+
+> 
+> I think reducing the xa_limit in simple_offset_add() to,
+> say, 2..16 would make the reproducer fire almost
+> immediately.
+
+Yes.
+
+> 
+> 
+>>> If there is a problem here, please construct a reproducer
+>>> against this patch set and post it.
+>>>> Thanks,
+>>>> Kuai
+>>>>
+>>>>> +
+>>>>>   /**
+>>>>>    * offset_dir_llseek - Advance the read position of a directory descriptor
+>>>>>    * @file: an open directory whose position is to be updated
+>>>>> @@ -462,6 +470,9 @@ void simple_offset_destroy(struct offset_ctx *octx)
+>>>>>    */
+>>>>>   static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+>>>>>   {
+>>>>> + struct inode *inode = file->f_inode;
+>>>>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
+>>>>> +
+>>>>>    switch (whence) {
+>>>>>    case SEEK_CUR:
+>>>>>    offset += file->f_pos;
+>>>>> @@ -475,8 +486,9 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+>>>>>    }
+>>>>>      /* In this case, ->private_data is protected by f_pos_lock */
+>>>>> - file->private_data = NULL;
+>>>>> - return vfs_setpos(file, offset, U32_MAX);
+>>>>> + if (!offset)
+>>>>> + file->private_data = (void *)ctx->next_offset;
+>>>>> + return vfs_setpos(file, offset, LONG_MAX);
+>>>>>   }
+>>>>>     static struct dentry *offset_find_next(struct xa_state *xas)
+>>>>> @@ -505,7 +517,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
+>>>>>      inode->i_ino, fs_umode_to_dtype(inode->i_mode));
+>>>>>   }
+>>>>>   -static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>>> +static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
+>>>>>   {
+>>>>>    struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
+>>>>>    XA_STATE(xas, &so_ctx->xa, ctx->pos);
+>>>>> @@ -514,17 +526,21 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>>>    while (true) {
+>>>>>    dentry = offset_find_next(&xas);
+>>>>>    if (!dentry)
+>>>>> - return ERR_PTR(-ENOENT);
+>>>>> + return;
+>>>>> +
+>>>>> + if (dentry2offset(dentry) >= last_index) {
+>>>>> + dput(dentry);
+>>>>> + return;
+>>>>> + }
+>>>>>      if (!offset_dir_emit(ctx, dentry)) {
+>>>>>    dput(dentry);
+>>>>> - break;
+>>>>> + return;
+>>>>>    }
+>>>>>      dput(dentry);
+>>>>>    ctx->pos = xas.xa_index + 1;
+>>>>>    }
+>>>>> - return NULL;
+>>>>>   }
+>>>>>     /**
+>>>>> @@ -551,22 +567,19 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>>>   static int offset_readdir(struct file *file, struct dir_context *ctx)
+>>>>>   {
+>>>>>    struct dentry *dir = file->f_path.dentry;
+>>>>> + long last_index = (long)file->private_data;
+>>>>>      lockdep_assert_held(&d_inode(dir)->i_rwsem);
+>>>>>      if (!dir_emit_dots(file, ctx))
+>>>>>    return 0;
+>>>>>   - /* In this case, ->private_data is protected by f_pos_lock */
+>>>>> - if (ctx->pos == DIR_OFFSET_MIN)
+>>>>> - file->private_data = NULL;
+>>>>> - else if (file->private_data == ERR_PTR(-ENOENT))
+>>>>> - return 0;
+>>>>> - file->private_data = offset_iterate_dir(d_inode(dir), ctx);
+>>>>> + offset_iterate_dir(d_inode(dir), ctx, last_index);
+>>>>>    return 0;
+>>>>>   }
+>>>>>     const struct file_operations simple_offset_dir_operations = {
+>>>>> + .open = offset_dir_open,
+>>>>>    .llseek = offset_dir_llseek,
+>>>>>    .iterate_shared = offset_readdir,
+>>>>>    .read = generic_read_dir,
+>>> --
+>>> Chuck Lever
+> 
+> 
+> --
+> Chuck Lever
+> 
+> 
 
 
