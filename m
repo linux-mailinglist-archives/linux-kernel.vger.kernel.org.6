@@ -1,112 +1,167 @@
-Return-Path: <linux-kernel+bounces-405830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C859C57AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:27:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B3509C57C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:30:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E1B81F21EB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:27:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1BD01F2254E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465791F7799;
-	Tue, 12 Nov 2024 12:27:09 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A062309BE
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628341F779B;
+	Tue, 12 Nov 2024 12:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXa3YGZ9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19821591F0;
+	Tue, 12 Nov 2024 12:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731414428; cv=none; b=ZuqXsc0n2HDZfoPqW7ij4Z2MNiA2NOODAbcL3RSnyrfQ8aXuNXPXHIaacxTFiDP1BVifzSwsYoWaX3XOXnEVYfAWe+RU8bw0Zx8WmfeG7dLG7KKIseN7/s06iGY4Q3WZ7kn2W9OAIeJjjp7+2Qi7lfYQQ6ISN5aP0exVCfK9sGk=
+	t=1731414641; cv=none; b=s00LdndhzLFUT+7nr488dbMZqxYmvjjSGkkarVAs3UuNZIBo3xkOlAvmdmx3ZUjHBbrXvNo2GAl2KChvYsdXtQfjQPTgaH8XHkQC5ef+tDuTEqy4yX07Hb/D9hVtWW/ZOENUUlHNLBj/A3ThMwzlOmuKc62Q9wXT9TQC6HRqFlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731414428; c=relaxed/simple;
-	bh=SzoTBuPP8/BKqz/GBTYRShwJP2WYiSoVU+Qpxi08EB4=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=DK5C0PY8tAg2GcXtcLluUBho1gUcShr77ghKzB0kwFML56VUiqdrdlzsoJMhZkMEl7Kq7IgosADETaaj7vknwDnD4JNB0PGdNE02MRQ1HscGm4NprynhCFFY/7rsUi3wq4pWcb2xWKXFaih8YXduG+UEImOH/8WLnlbNBJEDhQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxDeORSTNnlPw7AA--.51715S3;
-	Tue, 12 Nov 2024 20:26:57 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMCxbUeQSTNn07BSAA--.12703S3;
-	Tue, 12 Nov 2024 20:26:56 +0800 (CST)
-Subject: Re: [PATCH v2 5/5] LoongArch: Enable jump table with GCC for objtool
-To: Xi Ruoyao <xry111@xry111.site>, Peter Zijlstra <peterz@infradead.org>
-References: <20241105123906.26072-1-yangtiezhu@loongson.cn>
- <20241105123906.26072-6-yangtiezhu@loongson.cn>
- <20241105141530.GE10375@noisy.programming.kicks-ass.net>
- <62df4c24-68ed-fbfc-ed98-2df796697d89@loongson.cn>
- <9589c5b673f45f02e2b0fa9d9a96eff0f0df0920.camel@xry111.site>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <7e8adb0b-e681-72ae-40d8-740dc3f9480b@loongson.cn>
-Date: Tue, 12 Nov 2024 20:26:56 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1731414641; c=relaxed/simple;
+	bh=K6Dr3DZqEZ782kmjrEis62LDeTz0JIo7DNxCv/hKvqY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PIQQAA+NQ/bg0X+s7eakWiA/JhdOJDH4LnbbtCzZ+VXap7hk13BJ4Y7RC+HFp0OyO8y5JIpLSc/ri9wN2u/ORDei1DiEN/6IjBq+21vWn+4JkBO7KoiCxr6TM4Oi6YAqZWY7bskC+H0l0lla7ErYgAdhtrDHi5xYZqRSQi5oEsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXa3YGZ9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FEF4C4CED5;
+	Tue, 12 Nov 2024 12:30:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731414641;
+	bh=K6Dr3DZqEZ782kmjrEis62LDeTz0JIo7DNxCv/hKvqY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hXa3YGZ9dR2+1f6FCtTJSjt9ISZ9dhkKKDSsPJfO1OaEYqclMYMmBzpA49vEv/UpL
+	 ZT8gKs5yV4BYInZXZloZfF4SzisT70RZlubd8IvfIDRublyWYLehLid1Ju1xHiIiYc
+	 foJC2O5pWfDJER2VMZlEMDIL0O4shRT/1ekdF3SziuhrnzEsPDzAefkujR9ic1EGEg
+	 VOmY5sp/Grk3QkDWW5Fgo5TBOl7/P7Ob0P9PhC96HOu01NVkonYF9bJZ0v0WeMMo9y
+	 OoGsXbMETc6FNcLarshtXHEzXNDoHRO7yREGdOHM6QZfOgQ+F5KQI0eQX1VgZvualh
+	 eIvDtvhPguUZw==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-290ff24354dso2467517fac.0;
+        Tue, 12 Nov 2024 04:30:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU1Vnx9+5a3isqptdFLwWqZ5BsvCnbxo0Nt3biUrzYOqoUrt1414XtTWJA8vTBNe81PjypHuDOPM1BM4H0=@vger.kernel.org, AJvYcCUW3CbFQPCjnBuGRNlCNRx1AWSdomfX+/3PZ7avflFhfX7JsHRVo/CL+zRYvJfiVFiIJ1JrZTFZLWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTntMZuCfqvLd34+ycMuQaL1TrlJkUm1++yhIvr95yw9WqrWat
+	b3WTimIPhALQpu3NtsdmyXMYxwOO6v9H5gQzYdmrn338yJhLyv4Zfo67HTBlxaw1zT/QPXnlWjF
+	3sP/atMeqAyVqvND16J9bnxe46GE=
+X-Google-Smtp-Source: AGHT+IHoAB+gqnV2MrGVPi3KTzsa88+X+L2vVRUSftu+5gpdSmntzoRnIuDGayV1g9aN+QDEKILfaxK1oq2l5r9D63M=
+X-Received: by 2002:a05:6870:8294:b0:288:5c55:dfd5 with SMTP id
+ 586e51a60fabf-2956036bb08mr13538264fac.31.1731414640537; Tue, 12 Nov 2024
+ 04:30:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <9589c5b673f45f02e2b0fa9d9a96eff0f0df0920.camel@xry111.site>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowMCxbUeQSTNn07BSAA--.12703S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrtryktF15CFyfJr48ZFy8tFc_yoWkWrg_Ww
-	18ur1kC3y5Aa97J3WDWr4F93y7GF4UJw48Jw1DJrW3tr15XF98GFn3uasav3W3JFWDXFnx
-	WF4DXasxCFyUuosvyTuYvTs0mTUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbIxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
-	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtw
-	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
-	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr
-	0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8vA
-	pUUUUUU==
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com> <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
+ <CAJZ5v0ivAk1xrcJgiJnDWnL3GdijSdsuV4K_4ORjnsjPUVAEnA@mail.gmail.com> <20241112121843.GF6497@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241112121843.GF6497@noisy.programming.kicks-ass.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 12 Nov 2024 13:30:29 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iSP4Gh2FwKdkOw20N4hzwQ94+WmnT+3EY94QG3gORWzA@mail.gmail.com>
+Message-ID: <CAJZ5v0iSP4Gh2FwKdkOw20N4hzwQ94+WmnT+3EY94QG3gORWzA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	rafael.j.wysocki@intel.com, len.brown@intel.com, 
+	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/12/2024 11:15 AM, Xi Ruoyao wrote:
-> On Wed, 2024-11-06 at 13:03 +0800, Tiezhu Yang wrote:
->> On 11/05/2024 10:15 PM, Peter Zijlstra wrote:
->>> On Tue, Nov 05, 2024 at 08:39:06PM +0800, Tiezhu Yang wrote:
->>>> For now, it is time to remove the compiler option -fno-jump-tables
->>>> to enable jump table for objtool if the compiler is GCC and it has
->>>> the compiler option -mannotate-tablejump, otherwise still keep the
->>>> compiler option -fno-jump-tables to maintain compatibility with the
->>>> older compilers.
-
-...
-
->> ifdef CONFIG_CC_HAS_ANNOTATE_TABLEJUMP
->> KBUILD_CFLAGS                   += $(call cc-option,-mannotate-tablejump)
->> else
->> KBUILD_CFLAGS                   += -fno-jump-tables
->> endif
+On Tue, Nov 12, 2024 at 1:18=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
 >
-> Has -mannotate-tablejump been added to Clang?
+> On Tue, Nov 12, 2024 at 01:03:49PM +0100, Rafael J. Wysocki wrote:
+> > On Tue, Nov 12, 2024 at 12:47=E2=80=AFPM Peter Zijlstra <peterz@infrade=
+ad.org> wrote:
+> > >
+> > > On Fri, Nov 08, 2024 at 01:29:08PM +0100, Patryk Wlazlyn wrote:
+> > > > The generic implementation, based on cpuid leaf 0x5, for looking up=
+ the
+> > > > mwait hint for the deepest cstate, depends on them to be continuous=
+ in
+> > > > range [0, NUM_SUBSTATES-1]. While that is correct on most Intel x86
+> > > > platforms, it is not architectural and may not result in reaching t=
+he
+> > > > most optimized idle state on some of them.
+> > > >
+> > > > Prefer cpuidle_play_dead() over the generic mwait_play_dead() loop =
+and
+> > > > fallback to the later in case of missing enter_dead() handler.
+> > > >
+> > > > Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+> > > > ---
+> > > >  arch/x86/kernel/smpboot.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> > > > index 44c40781bad6..721bb931181c 100644
+> > > > --- a/arch/x86/kernel/smpboot.c
+> > > > +++ b/arch/x86/kernel/smpboot.c
+> > > > @@ -1416,9 +1416,9 @@ void native_play_dead(void)
+> > > >       play_dead_common();
+> > > >       tboot_shutdown(TB_SHUTDOWN_WFS);
+> > > >
+> > > > -     mwait_play_dead();
+> > > >       if (cpuidle_play_dead())
+> > > > -             hlt_play_dead();
+> > > > +             mwait_play_dead();
+> > > > +     hlt_play_dead();
+> > > >  }
+> > >
+> > > Yeah, I don't think so. we don't want to accidentally hit
+> > > acpi_idle_play_dead().
+> >
+> > Fair enough.
+> >
+> > Then we are back to the original approach though:
+> >
+> > https://lore.kernel.org/linux-pm/20241029101507.7188-3-patryk.wlazlyn@l=
+inux.intel.com/
+>
+> Well, that won't be brilliant for hybrid systems where the available
+> states are different per CPU.
+
+But they aren't.
+
+At least so far that has not been the case on any platform known to me
+and I'm not aware of any plans to make that happen (guess what, some
+other OSes may be unhappy).
+
+> Also, all of this is a bit of a trainwreck... AFAICT AMD wants IO based
+> idle (per the 2018 commit). So they want the ACPI thing.
 
 Yes.
 
-> IMO it's better to add it
-> to Clang first, and add Clang & GCC support at once into objtool.
+> But on Intel we really don't want HLT, and had that MWAIT, but that has
+> real problems with KEXEC. And I don't think we can rely on INTEL_IDLE=3Dy=
+.
 
-Looks reasonable, the fact is that there are some corner issues
-compiled with Clang due to different compiler behaviors, most of
-the issues have been addressed and I need to do more test, I will
-send v3 with about 10 patches after the coming merge window.
+We could because it handles ACPI now and ACPI idle doesn't add any
+value on top of it except for the IO-based idle case.
 
-Thanks,
-Tiezhu
+> The ACPI thing doesn't support FFh states for it's enter_dead(), should i=
+t?
 
+It does AFAICS, but the FFH is still MWAIT.
+
+> Anyway, ideally x86 would grow a new instruction to offline a CPU, both
+> MWAIT and HLT have problems vs non-maskable interrupts.
+>
+> I really don't know what is best here, maybe moving that whole CPUID
+> loop to boot, store the value in a per-cpu mwait_play_dead_hint. Have
+> AMD explicitly clear the value, and avoid mwait when 0 -- hint 0 is
+> equal to HLT anyway.
+>
+> But as said, we need a new instruction.
+
+Before that, there is the problem with the MWAIT hint computation in
+mwait_play_dead() and in fact intel_idle does know what hint to use in
+there.
 
