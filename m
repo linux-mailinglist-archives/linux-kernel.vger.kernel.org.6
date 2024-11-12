@@ -1,87 +1,95 @@
-Return-Path: <linux-kernel+bounces-405161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CBED9C4DB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:19:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4375C9C4DB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D644628485B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:19:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BDB1F22E98
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741062076D7;
-	Tue, 12 Nov 2024 04:19:08 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB1616CD29;
+	Tue, 12 Nov 2024 04:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vOUwR8uv"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA28316CD29
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924CE2076D7
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731385148; cv=none; b=h/1LFS2orZX4hPCs8uBdu+zd3YryhU57KFuvPzedVW4XYfLX6GsgfwIo+5eMzrbpqSTVSfzvxje4UjYqMQ+WLeF9OmnzJlfSJIQbR5OUOj3fsKaM8fb9fjq4Bbzvoow1rzGHIx5Ynge6dycq+m/FIcnmTbaCrzdFgqglpQwXSRc=
+	t=1731385173; cv=none; b=mWbi78xN+acW9R85+KbHkHGKTUhAj01z69X0VS/DrgBNvkR4Sv/AUyaAMTihVx0CH9A6oFO5q7cRJ5FBdw+MrTjdQE5kblxUYxATfIOhINPZGhhiVrzeTYtuQMhVtf7EGyls6jNv7f0/BcLx7QxjBeiN3l157P2N0lCj6GaOEq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731385148; c=relaxed/simple;
-	bh=qcNGZb0zcfdyAR6WX7WjkGuX/xaJTtHsYCAqaxz88nQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Z+SWvWHJ3jO2PFfnIt5AjnpV0qiKcw0znfCnMZh6mfkY82bMjjUOivD42eRaPKZGro++y5VP7gawSn6CG8bgc+yOZ4pPFg6qVyAHUdp6PMRkMwx1x/xty6+ZtR+2yBMHn7i+eSnEkf8c3y6xBHr/nGGayqu9p62ID74ke7/cX30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a4f2698c76so63132505ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:19:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731385145; x=1731989945;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nSHO4aEXz44u7koCxYpwnPCzcEcn/6W5q76jYKRolGc=;
-        b=uADD7fmumLisaORvn9WTpJ0d8wnZS76aNKamcvok26PwCJvcJfAfnk0/3t52i+gjDO
-         XMD3VFoydYZsZfhp34KwSo4nuygNJt7PNkXAUV3NEUrwDF9TW19V0B3+5z+tMBOXTtOD
-         OkqXCS7oAkgdKhvpeM4DDa5YErNkwBbCGeW3PquFCbHHb1CwqANf41Sazt5IW4OV4mBR
-         WvXkLbzeqDtAU4mk6PpUV0dGspyd3cqc3GzoPHxYZ7HLTOiSoRo2FVBeuR4cGzJtPymd
-         G8ql9GYmpB8EAFeaZzJBeASka8e9S5tQixppfz9RlDB3cVTcIUAsJcoUpT7fBb53PxQ8
-         hAsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZahvsEngtWPSHrvePPfSOQ5xDU4DqTfxDGPJnWtwfQGHVKO7uv0hgGbe1I5nSQq915YIXrp9zJj6uNAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPK2ganDNB4Gyom0jYcpVcCHTV3ICZliDNTGVKZGgNtW02FwOD
-	FU9GjShFCUkBLFgUqnSUNzZf7rP8VAwg5DXlcjkOKcB+2xAVL6eI1FBQPJtAsxwlAtTCvdvQd1y
-	tmiVglYYaDP1Wf02cEYPG0PIzjsbs8jNNSVjAfYWA+jCaRH4hNsnSouM=
-X-Google-Smtp-Source: AGHT+IFAX/wmaf+N4MZ9JDibyywnq4xw0pai+Z24GA9zOHxPX/SM8JOCbsG+9w/UZah9s2JSg4KsZtUAgHoDSKCFAfDUdhi3US7C
+	s=arc-20240116; t=1731385173; c=relaxed/simple;
+	bh=Pjrrgx3ATjeR1rj9wkKMzhKUnI7pq6a5qMVXE57CBC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vF2M1oEonvUNo18ZOo0qlX+xDk0BAzPgFBkus46SvWTACZT5CrHKFAUBdaKfsuTmP7ljCxCHon2a8NTz2cOicZmmSV6gKWTrcqZx8/+xY7YFlLPDWjzQ3kHBg5TedP0RkJbpRBQ7gkfzxCnWvn+Iyr3FDwX0WV7WjAJLzkXmSRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vOUwR8uv; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731385167; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=c7fKyxo/pz++dyvvsWAfAxtkWd5v7tNsGWpTG2MvWsU=;
+	b=vOUwR8uvuUkYqJ1Hpw9cYErdPLHSBC9V6LoBoTDegOWdU/EGAEWuyI3k7I2y/sdbQ/rSrbK4yReay+QtavnMV+tneHK1cAhx8rvQa/AqLsGeaQ1kNU66vHtbM+QDb+CN+ug3d73r3/dOlYftUWF6NU5GbDDOPGWQ/CJO3MuXEKY=
+Received: from 30.221.128.202(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJFcaxu_1731385166 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 12 Nov 2024 12:19:26 +0800
+Message-ID: <7c26a52e-2642-41b8-bc1c-990567dd2109@linux.alibaba.com>
+Date: Tue, 12 Nov 2024 12:19:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1685:b0:3a0:98b2:8f3b with SMTP id
- e9e14a558f8ab-3a6f19ebd22mr171526385ab.7.1731385145664; Mon, 11 Nov 2024
- 20:19:05 -0800 (PST)
-Date: Mon, 11 Nov 2024 20:19:05 -0800
-In-Reply-To: <cdcb0458-9e94-44c6-9864-ce6de521b32c@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6732d739.050a0220.138bd5.00d0.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_copygc
-From: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
-To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] erofs: free pclusters if no cached folio is attached
+To: Chunhai Guo <guochunhai@vivo.com>, xiang@kernel.org
+Cc: chao@kernel.org, huyue2@coolpad.com, jefflexu@linux.alibaba.com,
+ dhavale@google.com, linux-erofs@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20241112043235.546164-1-guochunhai@vivo.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20241112043235.546164-1-guochunhai@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
-Tested-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
+On 2024/11/12 12:32, Chunhai Guo wrote:
+> Once a pcluster is fully decompressed and there are no attached cached
+> folios, its corresponding `struct z_erofs_pcluster` will be freed. This
+> will significantly reduce the frequency of calls to erofs_shrink_scan()
+> and the memory allocated for `struct z_erofs_pcluster`.
+> 
+> The tables below show approximately a 96% reduction in the calls to
+> erofs_shrink_scan() and in the memory allocated for `struct
+> z_erofs_pcluster` after applying this patch. The results were obtained
+> by performing a test to copy a 4.1GB partition on ARM64 Android devices
+> running the 6.6 kernel with an 8-core CPU and 12GB of memory.
+> 
+> 1. The reduction in calls to erofs_shrink_scan():
+> +-----------------+-----------+----------+---------+
+> |                 | w/o patch | w/ patch |  diff   |
+> +-----------------+-----------+----------+---------+
+> | Average (times) |   11390   |   390    | -96.57% |
+> +-----------------+-----------+----------+---------+
+> 
+> 2. The reduction in memory released by erofs_shrink_scan():
+> +-----------------+-----------+----------+---------+
+> |                 | w/o patch | w/ patch |  diff   |
+> +-----------------+-----------+----------+---------+
+> | Average (Byte)  | 133612656 | 4434552  | -96.68% |
+> +-----------------+-----------+----------+---------+
+> 
+> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
 
-Tested on:
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-commit:         2d5404ca Linux 6.12-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1733b8c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dcca673786a14715
-dashboard link: https://syzkaller.appspot.com/bug?extid=8689d10f1894eedf774d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11ae74e8580000
-
-Note: testing is done by a robot and is best-effort only.
+Thanks,
+Gao Xiang
 
