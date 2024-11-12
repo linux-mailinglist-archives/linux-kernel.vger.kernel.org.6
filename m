@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-406396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8119C5E7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:13:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F929C5E7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88E722838B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89B5028340C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD056219E4B;
-	Tue, 12 Nov 2024 17:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34CA21A4CE;
+	Tue, 12 Nov 2024 17:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ytekury5"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pCZ3G208"
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D29E217905;
-	Tue, 12 Nov 2024 17:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3510C2194BE;
+	Tue, 12 Nov 2024 17:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731431231; cv=none; b=CP43rzJmgLc66OD6DJZlGx3rwJdGD5NErI/4yi6taqo+0YP6Mt7Zuk7+zc7LFTRrvgR/g2/jRQRwmegbqw1jaFnKsDpR9zzL5T7UAJT0EF9Ke5R87xWiJZIsS6EZpUZSB5yQOEYRfTBHGqnFFFkfbLBN+IqPrhsQCVEfR+mOlFY=
+	t=1731431232; cv=none; b=i+O6O8gUx/HPFKbjW3iFaKpsbk1WUYD1v7m+R0MdVDy6E5CnYDWC2hOYguxfcnZh/LLsRKdbDLdcnRWjUzuS1bgE0CfrX6aBxBHX5+BQypmkRDSIcTsNCMbF5X5/8XQ+t/6aVlUIuRENt+vtbaTDbTffsj0NGwO6bhWOFp9ZuZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731431231; c=relaxed/simple;
-	bh=eLjWcDHkfciiegfslYMvZGgOofNetPEeUABVo92Xx/8=;
+	s=arc-20240116; t=1731431232; c=relaxed/simple;
+	bh=bet8NvkH1uCnuHOjXChUask37g3j8KJesxq8Pe/nu7w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f2t9G+UT2gGuyNMHVBxv+P0+Sg4UfE//PJIcYNoVxo7XZxVTiDmbB6PsSZa0nz5uvqEJ9OybwExbzqv5suy2IAU8XSQu42v/GjhnQmuO4Jzx6yd4VSD6mLjP/p6t2lha8V7J7hNVhaVNQsF+VPbSN/nFzXaM9TRxlKp6jGrSeMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ytekury5; arc=none smtp.client-ip=217.70.183.196
+	 MIME-Version; b=UFy5WwAxk6QBdXCZ+lETUEVk1/a94i8B1C6M72DDEmAzskJC7KZfxm9cy4IilCI8GeJmZdWn0eDODXfBZEydI2djsgY+rVk2SFVLBTbCsFJksAwNKBTBbhGBtGXiq2FOsdh90uqpQGnxAwTwQI/9DpnPXFr84ber3FQvta6s7Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pCZ3G208; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BC671E000D;
-	Tue, 12 Nov 2024 17:07:06 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AE45BE0006;
+	Tue, 12 Nov 2024 17:07:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731431227;
+	t=1731431228;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JpUCuhSkHtWF9OeH4XyNxAJf2CxJ+XC2B1fk8Kli6Z0=;
-	b=Ytekury5gdFXSXmU+zzqb3irnJBxDuDcnfrJdrj4fdYJXDSebxzyEp/hsM5/kagAJqaJfO
-	EyCXhyj8U4qBc8txVs8HkBrkRCca1uhLekoBlSF64Hyu7Ui/toUTbcw93d4fwzcemrj2sW
-	15f+YJ72AYKqXXLFse8o5gIvmPVgI2Ykjdj9CvxfR5lgRoiu8BrQRoBf7o7R4OrfYzXe14
-	s8Gj9mq8+GBgVPJ45ikw9plxtWgM1v0kQdZ23QL0BK8z1DUxBZlUwamarEldeiluiYtYt8
-	lx4abxj5c42AfQQYDWRl61ZDtKZjaawT5No03O6ZH+lkfIv3UuiZIFMV+iSUdA==
+	bh=m/dDOU3IXt6wqdCpft8g2WA+gm1F7IyRLWSAkath9us=;
+	b=pCZ3G208S6C7+vr6FbnjjLuPSZn1hB6+bG/Sw0rV2pLS3RY+60iMBN+iTvTtFc3YGhaY4U
+	eKYsJYIVbwmY0fkH1W8W84zLs0HUTcPkAoLr55oVXgM7z/MOrpqy379XMdpFtmIcm2jF5m
+	8MRuw1Ste6W3uavBZqWPYDfzv+Nb1mJ4Uew/7GCyU0Q9n64sNBGbfnevPA9jnCZtCu8Lvd
+	J+HJWr/SKdVRgJsbFYfV+ix4TKeslx12ZcBtcrsi4VqzRU90bb8E5LV7CcTY4HLQ4blmA/
+	dA5o/VBcl9EDyGxch8efc1c2LkADJMGF67rF2Nt358z36JcXn43TO8MTN+MAHg==
 From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
 	Jose Abreu <joabreu@synopsys.com>,
@@ -62,9 +62,9 @@ Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
 	linux-arm-kernel@lists.infradead.org,
 	Daniel Machon <daniel.machon@microchip.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v4 6/9] net: stmmac: Enable timestamping interrupt on dwmac1000
-Date: Tue, 12 Nov 2024 18:06:54 +0100
-Message-ID: <20241112170658.2388529-7-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next v4 7/9] net: stmmac: Don't include dwmac4 definitions in stmmac_ptp
+Date: Tue, 12 Nov 2024 18:06:55 +0100
+Message-ID: <20241112170658.2388529-8-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241112170658.2388529-1-maxime.chevallier@bootlin.com>
 References: <20241112170658.2388529-1-maxime.chevallier@bootlin.com>
@@ -77,59 +77,27 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: maxime.chevallier@bootlin.com
 
-The default configuration for the interrupts on dwmac1000 have the
-timestamping interrupt masked. Now that the timestamping has been
-adapted to dwmac1000, enable the timestamping interrupt on these
-platforms.
-
-On dwmac1000, the external snapshot interrupt is configured through a
-dedicated bit, that is set as reserved on other dwmac variants. The
-timestaming interrupt is acknowledged by reading the
-GMAC3_X_TIMESTAMP_STATUS register.
-
-Make sure that this interrupt is enabled when snapshot is enabled, and
-masked when disabled.
+The stmmac_ptp code doesn't need the dwmac4 register definitions, remove
+the inclusion.
 
 Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- .../net/ethernet/stmicro/stmmac/dwmac1000_core.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-index 73bba4fdc2e4..96bcda0856ec 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-@@ -595,6 +595,20 @@ void dwmac1000_timestamp_interrupt(struct stmmac_priv *priv)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
+index 430905f591b2..429b2d357813 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
+@@ -9,7 +9,6 @@
+ *******************************************************************************/
+ #include "stmmac.h"
+ #include "stmmac_ptp.h"
+-#include "dwmac4.h"
  
- /* DWMAC 1000 ptp_clock_info ops */
- 
-+static void dwmac1000_timestamp_interrupt_cfg(struct stmmac_priv *priv, bool en)
-+{
-+	void __iomem *ioaddr = priv->ioaddr;
-+
-+	u32 intr_mask = readl(ioaddr + GMAC_INT_MASK);
-+
-+	if (en)
-+		intr_mask &= ~GMAC_INT_DISABLE_TIMESTAMP;
-+	else
-+		intr_mask |= GMAC_INT_DISABLE_TIMESTAMP;
-+
-+	writel(intr_mask, ioaddr + GMAC_INT_MASK);
-+}
-+
- int dwmac1000_ptp_enable(struct ptp_clock_info *ptp,
- 			 struct ptp_clock_request *rq, int on)
- {
-@@ -628,6 +642,8 @@ int dwmac1000_ptp_enable(struct ptp_clock_info *ptp,
- 					 10, 10000);
- 
- 		mutex_unlock(&priv->aux_ts_lock);
-+
-+		dwmac1000_timestamp_interrupt_cfg(priv, on);
- 		break;
- 
- 	default:
+ /**
+  * stmmac_adjust_freq
 -- 
 2.47.0
 
