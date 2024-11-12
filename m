@@ -1,224 +1,142 @@
-Return-Path: <linux-kernel+bounces-405288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BC79C4F8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:37:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC769C4FA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:41:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0933C282CC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:37:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACA88B22076
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6FE20B1EE;
-	Tue, 12 Nov 2024 07:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC3520B80A;
+	Tue, 12 Nov 2024 07:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Y6gSJDLu"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aFuTflUe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38E620B1FA;
-	Tue, 12 Nov 2024 07:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0988820C03B;
+	Tue, 12 Nov 2024 07:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731396987; cv=none; b=GUr0xrNCaxwsEIAUCt+mn+kjmq9akzzgQVUioMPBDks0/7z7keIxQckuSM/GW0CSI8Qd2RZus9DRkschgZNsLyv973ynsTeBTx55+8JIyh0JX9xa4uCpRv+Ylyk+kKKT7fhenML0YqSHp5gUZttWGKmIf7+1mENVAlcwfG4A+Gg=
+	t=1731397126; cv=none; b=UuK1fQdsilOwWpaT386qyYkh43UGfhTKY81PFOQ0mxmpb1Vbo2918okTYi7zKfSi39jmvqoiAsPF58F+o5Oi4dzx766J68YeGHknUDjuSmX0BeMjPaYwBxulBJUmN4emp9nWiaxkxvsvLkOiYiDsgi1Xeip6Q46KELACcdOQaXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731396987; c=relaxed/simple;
-	bh=k4zTfjT84si84xCq8iTqVbTWKrn2+mUh2Lh8rW5aaGE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=J1MqvYFMaL51yvJ4sQuJKbBAavHDeHS4jHPnTQrldmxQDLiDYCba9rfJN29fayB2BZsgybNvBNa4q8OxWUTkZPj4/aRYChVehOn5WsMBG0YtP6z93P9b2ejFULswXcwLhRXUfItRo8Ies3O8TNdy8Ixr406+NRJp23CYzYyPwDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Y6gSJDLu; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC5Y0iB023042;
-	Tue, 12 Nov 2024 07:36:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/9p8ZN
-	ikNrrp5jzJZQo7AZkbhesZPvKcmOnCsNX8aGw=; b=Y6gSJDLu6VYoXFKq11fI8j
-	ON1q2CYCXMgmdpHQHTwDkT9UcyCNTua9A4ff7Y8mU3tl11Ut2F4djdZxGXNMAc6L
-	S2rIas1zE12mBbatYBfwpEj3dELJHP6Wk/EbVQuIkC6O4IaMzF1RRDBYy9BWiZyf
-	EbPI8gt9Ohk669JFO1pK43h2Sb2CYeeMfGKm6JxVLl5Z0IhvjoLcZKMHBuCaQS3y
-	JP9jr3tev7D1wj0WNjs5vX0HfOP4sDdTBH94qIZVOcQGcr8252+vQoggmY4l1wnN
-	ZhCqvLKs6iM/X2qVsXCbD/y3zeU75OhYIXSTyBE1V1a04r2f1zwV+yDAoB2D/ahQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42v0ynrdgx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 07:36:18 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AC7aI2C003686;
-	Tue, 12 Nov 2024 07:36:18 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42v0ynrdgs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 07:36:17 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABMpg2I027901;
-	Tue, 12 Nov 2024 07:36:17 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42tj2s3w08-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 07:36:17 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AC7aGvv52298178
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Nov 2024 07:36:16 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 96D125841D;
-	Tue, 12 Nov 2024 07:36:16 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6B04058427;
-	Tue, 12 Nov 2024 07:36:14 +0000 (GMT)
-Received: from [9.152.224.138] (unknown [9.152.224.138])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 12 Nov 2024 07:36:14 +0000 (GMT)
-Message-ID: <538b7781-0d57-45e6-a00a-fb03c0c30a52@linux.ibm.com>
-Date: Tue, 12 Nov 2024 08:36:13 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Remove unused function parameter in __smc_diag_dump
-To: Manas <manas18244@iiitd.ac.in>
-Cc: Jan Karcher <jaka@linux.ibm.com>, "D. Wythe" <alibuda@linux.alibaba.com>,
-        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, Anup Sharma <anupnewsmail@gmail.com>,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20241109-fix-oops-__smc_diag_dump-v1-1-1c55a3e54ad4@iiitd.ac.in>
- <ae8e61c6-e407-4303-aece-b7ce4060d73e@linux.ibm.com>
- <niqf7e6xbvkloosm7auwb4wlulkfr66dagdfnbigsn3fedclui@qoag5bzbd3ys>
-Content-Language: en-US
-From: Wenjia Zhang <wenjia@linux.ibm.com>
-In-Reply-To: <niqf7e6xbvkloosm7auwb4wlulkfr66dagdfnbigsn3fedclui@qoag5bzbd3ys>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: sfYniwUHAwkfgzaFpbBjHpFGg9vlxRjb
-X-Proofpoint-GUID: oYBnNRG1D8cmFhwqIDESKdzO8_8B8fCg
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1731397126; c=relaxed/simple;
+	bh=hpL8qRg9b5uNCj3fBmLnd4DdrGDSB5YFOl7ygYxVAmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cCGTZ9/9GTbT8kO2kI9FZaL2Z/nvu83Ec5F374MGv+emDLxhwUlSyy9sQ7s38wuzVO9bPnsUnSPHcEbVMC+uPaTRAoB7UsmzrJUt+AOL3fOlYLwSKMvHgZ4FXuTfFQmYGN2E8rleDSrdiD2mj2u0J8lrw79buZiEfCbXen9sEyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aFuTflUe; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731397125; x=1762933125;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=hpL8qRg9b5uNCj3fBmLnd4DdrGDSB5YFOl7ygYxVAmQ=;
+  b=aFuTflUeEQpgyHYt3BOHsAtCROEmMANLkTxhA7kj2sYbhYz4inqOdSlX
+   XqJEzHGL6ac0rjmOlHYHDM7ddt0xh+rDwjZqBnIptOCtnG36mk5IZLX13
+   kV8WhPRgYKyS+R0BsffdLa0RsNh6nFpFVNgilsNt5JBLGXXutHTD/p7W4
+   TnSKMzRfsGpL6DgvdMdvVWCQ/cLv15LGQqzYCRpp0w8MUyE+5GDCpW6Hn
+   JuvATrFw+EFOAsdRLJnw5OxswxvWqOy/tUoz2DFgQXVkIE2/a12E/5UeW
+   DOKdORXdo3qB9MhCTOwp/e2W0OIkGzMaY54qMHdY4DXzK0NBmmJxoPVMI
+   g==;
+X-CSE-ConnectionGUID: c2nd6TvbQa+/sTwlC07bTQ==
+X-CSE-MsgGUID: 8/KQMbcfS0mPI9dea2mgug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31389345"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31389345"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:38:44 -0800
+X-CSE-ConnectionGUID: 4cd0IoREQ7KLeIrtfNa9jA==
+X-CSE-MsgGUID: 1JFz42ZjS4OSeolUaLGb8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="87736272"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:38:40 -0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org,
+	dave.hansen@linux.intel.com
+Cc: rick.p.edgecombe@intel.com,
+	kai.huang@intel.com,
+	adrian.hunter@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@intel.com,
+	binbin.wu@linux.intel.com,
+	dmatlack@google.com,
+	isaku.yamahata@intel.com,
+	isaku.yamahata@gmail.com,
+	nik.borisov@suse.com,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH v2 08/24] KVM: TDX: Set gfn_direct_bits to shared bit
+Date: Tue, 12 Nov 2024 15:36:13 +0800
+Message-ID: <20241112073613.22100-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20241112073327.21979-1-yan.y.zhao@intel.com>
+References: <20241112073327.21979-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- mlxlogscore=988 suspectscore=0 clxscore=1015 mlxscore=0 lowpriorityscore=0
- priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120061
+Content-Transfer-Encoding: 8bit
 
+From: Isaku Yamahata <isaku.yamahata@intel.com>
 
+Make the direct root handle memslot GFNs at an alias with the TDX shared
+bit set.
 
-On 11.11.24 16:10, Manas wrote:
-> On 11.11.2024 15:11, Wenjia Zhang wrote:
->>
->>
->> On 09.11.24 07:28, Manas via B4 Relay wrote:
->>> From: Manas <manas18244@iiitd.ac.in>
->>>
->>> The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
->>> There is only one instance of this function being called and its passed
->>> with a NULL value in place of bc.
->>>
->>> Signed-off-by: Manas <manas18244@iiitd.ac.in>
->>> ---
->>> The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
->>> There is only one instance of this function being called and its passed
->>> with a NULL value in place of bc.
->>>
->>> Though, the compiler (gcc) optimizes it. Looking at the object dump of
->>> vmlinux (via `objdump -D vmlinux`), a new function clone
->>> (__smc_diag_dump.constprop.0) is added which removes this parameter from
->>> calling convention altogether.
->>>
->>> ffffffff8a701770 <__smc_diag_dump.constprop.0>:
->>> ffffffff8a701770:       41 57                   push   %r15
->>> ffffffff8a701772:       41 56                   push   %r14
->>> ffffffff8a701774:       41 55                   push   %r13
->>> ffffffff8a701776:       41 54                   push   %r12
->>>
->>> There are 5 parameters in original function, but in the cloned function
->>> only 4.
->>>
->>> I believe this patch also fixes this oops bug[1], which arises in the
->>> same function __smc_diag_dump. But I couldn't verify it further. Can
->>> someone please test this?
->>>
->>> [1] https://syzkaller.appspot.com/bug?extid=271fed3ed6f24600c364
->>> ---
->>>  net/smc/smc_diag.c | 6 ++----
->>>  1 file changed, 2 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
->>> index 
->>> 6fdb2d96777ad704c394709ec845f9ddef5e599a..8f7bd40f475945171a0afa5a2cce12d9aa2b1eb4 100644
->>> --- a/net/smc/smc_diag.c
->>> +++ b/net/smc/smc_diag.c
->>> @@ -71,8 +71,7 @@ static int smc_diag_msg_attrs_fill(struct sock *sk, 
->>> struct sk_buff *skb,
->>>  static int __smc_diag_dump(struct sock *sk, struct sk_buff *skb,
->>>                 struct netlink_callback *cb,
->>> -               const struct smc_diag_req *req,
->>> -               struct nlattr *bc)
->>> +               const struct smc_diag_req *req)
->>>  {
->>>      struct smc_sock *smc = smc_sk(sk);
->>>      struct smc_diag_fallback fallback;
->>> @@ -199,7 +198,6 @@ static int smc_diag_dump_proto(struct proto 
->>> *prot, struct sk_buff *skb,
->>>      struct smc_diag_dump_ctx *cb_ctx = smc_dump_context(cb);
->>>      struct net *net = sock_net(skb->sk);
->>>      int snum = cb_ctx->pos[p_type];
->>> -    struct nlattr *bc = NULL;
->>>      struct hlist_head *head;
->>>      int rc = 0, num = 0;
->>>      struct sock *sk;
->>> @@ -214,7 +212,7 @@ static int smc_diag_dump_proto(struct proto 
->>> *prot, struct sk_buff *skb,
->>>              continue;
->>>          if (num < snum)
->>>              goto next;
->>> -        rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh), bc);
->>> +        rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh));
->>>          if (rc < 0)
->>>              goto out;
->>>  next:
->>>
->>> ---
->>> base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
->>> change-id: 20241109-fix-oops-__smc_diag_dump-06ab3e9d39f4
->>>
->>> Best regards,
->>
->> That's true that the last parameter is not used. And the patch you 
->> suggested as a cleanup patch looks good to me. However, it should not 
->> fix the bug[1], because it does not match what the bug[1] described. 
->> Thank you, Jeongjun, for testing it! That verified that it indeed 
->> didn't fix the issue. I think the root cause is on handling 
->> idiag_sport. I'll look into it.
->>
->> [1] https://syzkaller.appspot.com/bug?extid=271fed3ed6f24600c364
->>
->> Thanks,
->> Wenjia
-> 
-> Thank you Wenjia for reviewing this.
-> 
-> Should I make any changes to the commit message if we are going forward 
-> with it
-> being as a cleanup patch? The commit message itself (barring the cover 
-> letter)
-> should be enough, I reckon.
-> 
-I think it is ok as it is.
+For TDX shared memory, the memslot GFNs need to be mapped at an alias with
+the shared bit set. These shared mappings will be mapped on the KVM MMU's
+"direct" root. The direct root has it's mappings shifted by applying
+"gfn_direct_bits" as a mask. The concept of "GPAW" (guest physical address
+width) determines the location of the shared bit. So set gfn_direct_bits
+based on this, to map shared memory at the proper GPA.
 
-Thanks,
-Wenjia
+Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+Co-developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+TDX MMU part 2 v2:
+ - Added Paolo's rb
+ - Use TDX 1.5 naming of config_flags instead of exec_controls (Xiaoyao)
+ - Use macro TDX_SHARED_BITS_PWL_5 and TDX_SHARED_BITS_PWL_4 for
+   gfn_direct_bits. (Yan)
+
+TDX MMU part 2 v1:
+ - Move setting of gfn_direct_bits to separate patch (Yan)
+---
+ arch/x86/kvm/vmx/tdx.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 785ee9f95504..38369cafc175 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -1041,6 +1041,11 @@ static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
+ 	kvm_tdx->attributes = td_params->attributes;
+ 	kvm_tdx->xfam = td_params->xfam;
+ 
++	if (td_params->config_flags & TDX_CONFIG_FLAGS_MAX_GPAW)
++		kvm->arch.gfn_direct_bits = TDX_SHARED_BIT_PWL_5;
++	else
++		kvm->arch.gfn_direct_bits = TDX_SHARED_BIT_PWL_4;
++
+ 	kvm_tdx->state = TD_STATE_INITIALIZED;
+ out:
+ 	/* kfree() accepts NULL. */
+-- 
+2.43.2
+
 
