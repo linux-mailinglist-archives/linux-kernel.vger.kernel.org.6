@@ -1,162 +1,185 @@
-Return-Path: <linux-kernel+bounces-405931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB4D9C5A0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:15:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76AD09C5A26
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:22:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 769B5B45014
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:30:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 964F3B45A65
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5A018A95D;
-	Tue, 12 Nov 2024 13:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB2E15A858;
+	Tue, 12 Nov 2024 13:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kTZHxdJt"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFap45hr"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B885317CA1F
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07010145B3F;
+	Tue, 12 Nov 2024 13:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418012; cv=none; b=RRGESQ+ipAVxA/IZJ+UT4BPiHj2TScyzoyOaaawOncBdjQnURBgXN07IHFLc1EfIKFUVwDyLhQ+2aKF1cz+oG4Aescpbk4ofEqiAX7rLLp5dbGIt7/ybZ3Rjky58bxtCoWGlp6DPpx8ahfq+s5MjSFlmYJ5y4dIuWXZ2cSf38/U=
+	t=1731418090; cv=none; b=JkZS+Yzo9V+QdicEoDthepP5/N/F0OvIiFcry6U8BpgSbKa8CwNANzOHYnyEI1ceQ1vxGyejc8ia5tKhVU0u8xOWdJz++RouK5oLXk3OGTLGmlCPbWhyFK6vl3ojeohQiCaGOlIx55mor1I2vIX7kZ/1yECBSYDLlGoZrMg9ZQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418012; c=relaxed/simple;
-	bh=tRnACknh/1EhHRTAz3cx2wXfmMECs90wmR2MIdzMzUE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Twfu3G30ZzhAsVdrRKMuIpPeELWtP1mECoZKauGOR1aFTctFmO5HW0Y3G6tSbS7uckgsGVKgaZmdt5Ptiyg86Fwrl2t5zMPP1SnY57Ah4nvzDlFPcn04jt0uwB7OJ9kBscmtAZ6CfMSpwcIAvUWZd8NHBlnKMkJBfwPdjgI+owM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kTZHxdJt; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431688d5127so44916765e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:26:50 -0800 (PST)
+	s=arc-20240116; t=1731418090; c=relaxed/simple;
+	bh=uuSadX5PVKOtC5uNK1nDK5MZ8cysr353hCL7P5ooP00=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XuQoRTDqyIsJ7E47Tnvz7tLZtowdeuIsgJLbzd4C+pxGXYYWo8COtcKA8pb73G2d1rPBMWzAOS+ghIa1HDQe0AQ4cmpHALFkqhsb8avWI2/tRDnrtRa2HafsPxxeztYxSGC/Zi5vxugHA1N1ycPnyhLS8KYGVaxjeH9VO/oxA5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFap45hr; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso50235375e9.0;
+        Tue, 12 Nov 2024 05:28:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731418009; x=1732022809; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dRmLbf/bz31mm/eeVY/iGKbUEcxPetAbKwSG1URLvJ0=;
-        b=kTZHxdJtUdGSuIEXQCVn9K03tYIzi3oadEzCKoygNbjRrQlvKZLj9BPFK841Aol5j0
-         bYLZi3gshr9FD7mPXtGzZV9mN4pX44OD04hjo/Fu/azkxv1lobLR5iCJW1V7OHstnMmy
-         lA971YAqm5ve8ReKIm2ItucLRMns3hr8R16OfopxwHqnkXYMNoIrDNXaYwZRkkupAg2c
-         GdAQWqUyGZwxbRn1dxlX/Amu8LugZEBMuT0rm2/8poujWyRD5v6L2iOC2QIrANmBo8MR
-         kF5J7nflDuPOf+LrXP5iCamdLAMBtXGMJ7pwXZ2FyRPVz5uXP8VJ/HplfCEP87yrMQCi
-         sqeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731418009; x=1732022809;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+        d=gmail.com; s=20230601; t=1731418087; x=1732022887; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=dRmLbf/bz31mm/eeVY/iGKbUEcxPetAbKwSG1URLvJ0=;
-        b=wbJhEkUbY5Wsjos9ovUd064RtxVj7MsW87eEvMB+tw+lOfZRHnizEJoQji47Mvpa0S
-         RX8VyvIXuXR7tZgs/BCxK64h2yqUYOu/WnHiWqBzkUIaHO0ibxVa6FGdWDSgw1cqn/Yj
-         6BmVHIL1PqjlhBX2HGH5/lbQ5eLdBQygpJOP3Jx7SVKlxPZIE3uTaMMAe2ufuKhL4q7z
-         v13AelPuIFZrCCHyTUhv+2128l5qr73SSw94UqJ6WUF9Xyrsq7W61QyM3pS3QgweBx/L
-         7Qe4PJcUkeXgfRmxrcavegDjR8dps4S8FEFR8dA7Cbw+bgctGya6lTTLB7WnYOkUdro3
-         8fDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyyuRXQFUCAB+UCJ7fBWdjMv4WTupPjc8u4EcUe8fvk/obznO6BtUuTeWT8N22OObMMfJ5G7RvLUwVciY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznOj7WvR7SF8cAavOSQBD8WXS6/R196DMnx+LM/1GXmJQ59+5H
-	HXAS4FslkMg5lrAG4S29sqxEjTtZXWsgGerfu5Es+f71SOp0sSbrBBGmiP9wngg=
-X-Google-Smtp-Source: AGHT+IFTQlXSukq+djtZ02mrwHjUmWSAl2HtnKbbzOayDUOl3KycAHIOi0rl6/yfP9eUPu5iRkh9QA==
-X-Received: by 2002:a05:600c:3514:b0:42f:4f6:f8f3 with SMTP id 5b1f17b1804b1-432b74fde60mr137847665e9.7.1731418009251;
-        Tue, 12 Nov 2024 05:26:49 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:860c:aff4:d0e9:9db8? ([2a01:e0a:982:cbb0:860c:aff4:d0e9:9db8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b0566544sm205123355e9.24.2024.11.12.05.26.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 05:26:48 -0800 (PST)
-Message-ID: <e1b810f6-b5b3-43aa-9cc1-e9601589ddf5@linaro.org>
-Date: Tue, 12 Nov 2024 14:26:47 +0100
+        bh=6Mdlml7mvRhIQJi3P6mBQ2xYrATvlG8Nv7RbYSprPig=;
+        b=eFap45hrKxRgl1yXxyjTkoWNyO3CHulrNjnlfl84hSi8KJ4jYbcHbY+SqRH59J5NPL
+         SttrsuJTcmJQQxO3XBulJQ9advt0sKAp508PEGwlr1Vrqpcqb7hHlHSWSTNjpuHiEF5W
+         0+pdY6xhewX1myeroU+kRc+CsJEGODOijjZkrO85X1LNC7VmE6UXxCu5zt5xdL3fKQu/
+         wVmiF8crzdY0GC7VLhwn12c/BTejHPfUJqhMUWoEPUragV4oa+/XyIJroq1XrkyTjQcE
+         +TNHtWC8KcZFDqYuK4qol9uWocNmRFgI9NmnapFZm1rEtqRjhVRo4tdTgM9Vmy1eiwpq
+         783g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731418087; x=1732022887;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6Mdlml7mvRhIQJi3P6mBQ2xYrATvlG8Nv7RbYSprPig=;
+        b=rfbzFcV05y3tiq9R+ySHb8gZ2DH4EN1uk4nZf8I/bjwF1t7Dd5RZm/f1qBqTfYcLYl
+         18z9VKqz2wjOiW8guNgw4o+wTrpjkb5JRQ+354HV7BBWPd61b3YaJ50AnHVHKcSKlc7/
+         JmZN6pwtLPwniwUIf7PMFwXyMUScy2SHVnix5aGcMwdKuZJq+6Opyfo753pLLu72ndwj
+         BTuvDYAhC7wDAtmuizvfzWsjtipZtqKQ3N2r67+UKT1LKaN2lfvEyvgFgb1YZrSpBM1i
+         OetDy1ibUWOoC4ZCPhtx8kekvOiE0PAkkj8WT9DoRLfZHAEZc8rzlgm2q7J8sBTWPP9R
+         wVTw==
+X-Forwarded-Encrypted: i=1; AJvYcCURTZHIjXNbIxF3buzyN/iJJHsq4v1VSJWc+/Pwq27tV6xGAsV6VOouSuuDuZ8rwaB/ZlUzWma3TxJZMio=@vger.kernel.org, AJvYcCW3ipQjr1vWhNQoYtvpXXA3bROyb6ECkUysubhlK1RW7yH6UQtpWol/NAqiiDP4OB9AeC5qpUxF24X8@vger.kernel.org, AJvYcCWhW7c4xuEQi8y/Ia3dg6vht1xlB36g84hq0EjUMG0B0DVppD8k0m10Mf/VkB7eK+6p49r6InlN7JwALKTu@vger.kernel.org, AJvYcCXHpQjnwbBik8To1jAG5jSGV657EWF5HjyVahlJxTum8Ae/d/6VeWaR9zs0tVQykFXqCggCytdsnK5I@vger.kernel.org
+X-Gm-Message-State: AOJu0YziT7XutrQPeLG1ycFOqSpQT240Zdx1hkpk2Lj7sB5FHe3gTfYm
+	s5U4Is1+8ZGL0k/NkE02uO7ygBi7cc90oMiCebt4RRPV6Nilt2sb
+X-Google-Smtp-Source: AGHT+IHuvmoh+csNe9X8YH1ZqOMhN/s/he+IW0zhFR4Gzg9kg6wzwqnVueAlLrzOkJEZhu46mUzUQA==
+X-Received: by 2002:a05:600c:4141:b0:42b:af5a:109 with SMTP id 5b1f17b1804b1-432cc533103mr25180105e9.24.1731418087081;
+        Tue, 12 Nov 2024 05:28:07 -0800 (PST)
+Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed987d95sm15591027f8f.44.2024.11.12.05.28.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 05:28:06 -0800 (PST)
+Message-ID: <2a4e69f3ac4fb6cb131735d3cb598223b71bc90b.camel@gmail.com>
+Subject: Re: [PATCH v4 4/6] iio: light: stk3310: use dev_err_probe where
+ possible
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, 
+ Andy Shevchenko <andy.shevchenko@gmail.com>, Aren <aren@peacevolution.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ =?ISO-8859-1?Q?Barnab=E1s_Cz=E9m=E1n?= <trabarni@gmail.com>, Ondrej Jirman
+ <megi@xff.cz>, linux-iio@vger.kernel.org,  devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
+ phone-devel@vger.kernel.org
+Date: Tue, 12 Nov 2024 14:28:05 +0100
+In-Reply-To: <4ibd5tgpt3uzbmouqdiiv5pvfxebo5qsmgn3xh6rlb73qevatv@cajznxqnlca3>
+References: <20241102195037.3013934-3-aren@peacevolution.org>
+	 <20241102195037.3013934-11-aren@peacevolution.org>
+	 <ZyiIcDaANjxwtCz-@smile.fi.intel.com>
+	 <m7x526sv5krgt4t2whn5ykyktoz5u7ihsxv3qa5yue3ucbk6lb@37spwsmlcylm>
+	 <ZzEPACoblmcQD9yu@surfacebook.localdomain>
+	 <xubjmxig4luag27ifnmqmv3x3bvzhwczwvw34kw6tssaa2d24t@ysnqh5e3g7sz>
+	 <ZzHSE9Nrf4YySJrq@smile.fi.intel.com>
+	 <4ibd5tgpt3uzbmouqdiiv5pvfxebo5qsmgn3xh6rlb73qevatv@cajznxqnlca3>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v5 1/5] dt-bindings: pinctrl: modify gpio-cells property
-To: xianwei.zhao@amlogic.com, Linus Walleij <linus.walleij@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241112-a4_pinctrl-v5-0-3460ce10c480@amlogic.com>
- <20241112-a4_pinctrl-v5-1-3460ce10c480@amlogic.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241112-a4_pinctrl-v5-1-3460ce10c480@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Hi,
+On Tue, 2024-11-12 at 11:15 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> Hello Andy, hello Aren,
+>=20
+> On Mon, Nov 11, 2024 at 11:44:51AM +0200, Andy Shevchenko wrote:
+> > On Sun, Nov 10, 2024 at 04:34:30PM -0500, Aren wrote:
+> > > On Sun, Nov 10, 2024 at 09:52:32PM +0200, Andy Shevchenko wrote:
+> > > > Sun, Nov 10, 2024 at 02:14:24PM -0500, Aren kirjoitti:
+> >=20
+> > You can do it differently
+> >=20
+> > #define
+> > STK3310_REGFIELD(name)							\
+> > do
+> > {										\
+> > 	data->reg_##name
+> > =3D							\
+> > 		devm_regmap_field_alloc(dev, regmap,
+> > stk3310_reg_field_##name);	\
+> > 	if (IS_ERR(data-
+> > >reg_##name))						\
+> > 		return dev_err_probe(dev, PTR_ERR(data-
+> > >reg_##name),		\
+> > 				=C2=A0=C2=A0=C2=A0=C2=A0 "reg field alloc
+> > failed.\n");		\
+> > } while (0)
+> >=20
+> > > #define STK3310_REGFIELD(name)
+> > > ({						\
+> > > 	data->reg_##name =3D devm_regmap_field_alloc(dev,
+> > > regmap,			\
+> > > 						=C2=A0=C2=A0
+> > > stk3310_reg_field_##name);=C2=A0=C2=A0 \
+> > > 	if (IS_ERR(data-
+> > > >reg_##name))						\
+> > > 		return dev_err_probe(dev, PTR_ERR(data-
+> > > >reg_##name),		\
+> > > 				=C2=A0=C2=A0=C2=A0=C2=A0 "reg field alloc
+> > > failed\n");		\
+> > > })
+> >=20
+> > I am against unneeded use of GNU extensions.
+> >=20
+> > > > > replacing "do { } while (0)" with "({ })" and deindenting could m=
+ake
+> > > > > enough room to clean this up the formatting of this macro though.
+> > > >=20
+> > > > do {} while (0) is C standard, ({}) is not.
+> > >=20
+> > > ({ }) is used throughout the kernel, and is documented as such[1]. I
+> > > don't see a reason to avoid it, if it helps readability.
+> >=20
+> > I don't see how it makes things better here, and not everybody is famil=
+iar with
+> > the concept even if it's used in the kernel here and there. Also if a t=
+ool is
+> > being used in one case it doesn't mean it's suitable for another.
+>=20
+> Just to throw in my subjective view here: I don't expect anyone with
+> some base level knowledge of C will have doubts about the semantics of
+> ({ ... }) and compared to that I find do { ... } while (0) less optimal,
+> because it's more verbose and when spotting the "do {" part, the
+> semantic only gets clear when you also see the "while (0)". Having said
+> that I also dislike the "do" starting on column 0, IMHO the RHS of the
+> #define should be intended.
+>=20
+> So if you ask me, this is not an unneeded use of an extension. The
+> extension is used to improve readabilty and I blame the C standard to
+> not support this syntax.
+>=20
+> While I'm in critics mode: I consider hiding a return in a macro bad
+> style.
+>=20
 
-On 12/11/2024 11:26, Xianwei Zhao via B4 Relay wrote:
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> 
-> Extend the value range of #gpio-cells property, including [2, 3],
-> to compatible with Amlogic A4 SoC and later chips's pinctrl module.
-> The early GPIO parameter number is 2, and the later GPIO parameter
-> number is 3.
-> 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->   .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml       | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
-> index e707c222a07f..6b53577dea59 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
-> @@ -36,7 +36,7 @@ $defs:
->         gpio-controller: true
->   
->         "#gpio-cells":
-> -        const: 2
-> +        enum: [2, 3]
->   
->         gpio-ranges:
->           maxItems: 1
-> 
+Not commenting on the debate between using the extension or not but I total=
+ly agree
+with Uwe about hiding the return in the macro.
 
-This is not what I expected, this allows 3 cells for all Amlogic pinctrl,
-which is wrong.
+- Nuno S=C3=A1
+>=20
 
-Instead, remove "#gpio-cells" definition from amlogic,meson-pinctrl-common.yaml
-and add them in all amlogic,meson-pinctrl-XXX.yaml with const: 2, and then when you
-introduce A4/A5, add a new amlogic,meson-pinctrl-a5.yaml with const: 3.
-
-Neil
 
