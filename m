@@ -1,243 +1,294 @@
-Return-Path: <linux-kernel+bounces-406395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB2B9C5FDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:04:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 475FF9C5FBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:00:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5717B666C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:13:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D641B38CF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512AA219E37;
-	Tue, 12 Nov 2024 17:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EA8212EEF;
+	Tue, 12 Nov 2024 17:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JgRQEOsU"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZXrQ2pu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500EE21766E;
-	Tue, 12 Nov 2024 17:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482CD20A5CE;
+	Tue, 12 Nov 2024 17:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731431230; cv=none; b=AjxGZvEbQQ+Ks+3lg+j5wAtktwJOqXJRTh75owhguvhjzlP7ZvXAkHAvSUKI+dUCTn+81HhbJVdskJES5WN0IGIFlKB0I4HgDYVBti9GeX7sEBzYaSQ4cbFOEO/0lPLWw377CcoEgVTKYBSIAa2KUZEQLne25uUXmIvDVGNJfBc=
+	t=1731431257; cv=none; b=r9oFjj4JZ3RWLF6cueE3KvFHtvW4hmTmwMmqZx5hT+3rFcJYdFVEPCMsF9deLjzbLkhYMAd5SlQj3vs1H64AHV/hqOg87RZAXLIgwUIXSQZY15Ph9B7kbAtmDbmmCjAvTHY1pJ6ZZolYi2tzEJckVCj40cNRLNPUOv5q+tNoMbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731431230; c=relaxed/simple;
-	bh=ge44t+vzpP25czJImRogfd9RR1tJ/LLzjMZ/sfTNePc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GJMafyOFNJDChD9YlgNzYn42G6MPTaPe6eV3fcKdZf7o3QTlagw7sJZVbgxOeqBBH8dsdRQLvAhZ6TENd1PSL7B4TLBjqxNqSJI8B2fwm6ApnxfYQY2Y0MLT5NDZJxthOe+otI4s9t3wbc6tA00m9FgTGFkQqSTgOpckiCNhSVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JgRQEOsU; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CD6CDE000A;
-	Tue, 12 Nov 2024 17:07:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731431226;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T6ZnuAFb2F+oFFiAGtEbZ+Rtj/nO6gtpyoJAEgh84h8=;
-	b=JgRQEOsUMb0pC3JEQ8hY6gK/a4XiZW9SPLrMbjiDhfmhOXC7r7kryo09tYUqS2Zg6v+YmN
-	zonw8S15Mc3c9qhtBzuC2+v2jPZvfxyH4FYDoPKhD8rvQntwx5xiN3WiRg5xZMKtPPZGsG
-	jU2bOs1upL/tSPsDH3ZKbAmTP7+Omt02QdD89+3kSeAuddbiBoE/CUObI+wf0veoq8sQda
-	mQafaxikUfkrlLuOeZ1yQz4tLA/xCMl5GdF6l4WmNOvRnZSSDUS2dZp7QZ60OgCH0LMKlC
-	BikOEAaDOmGFbOtHyR6lwZYV7FiT+ylgThNe/M2yvc44FE39QPyJu6LPDdyXqA==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	Daniel Machon <daniel.machon@microchip.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v4 5/9] net: stmmac: Introduce dwmac1000 timestamping operations
-Date: Tue, 12 Nov 2024 18:06:53 +0100
-Message-ID: <20241112170658.2388529-6-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241112170658.2388529-1-maxime.chevallier@bootlin.com>
-References: <20241112170658.2388529-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1731431257; c=relaxed/simple;
+	bh=qLiMapJibaTORzqY8SM6MRCCrq7rQuS5g1DJ8FUYOZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WYgRKB/ZRt4LpeYQVpavZE+0l4cJpMLluMQLI0MDPQ0EvXkaqx0aLF9M1ZKXpa5PAYKIQFRpqlGY+Z7HRPej7tkW9jhqi2ch16o4Hy+MmRH+b90+4YuZ0f9fUcP/NWEMhFoPCUORydRwHYU9kTtEfoqppKbiEddk/wCtEXSWwec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZXrQ2pu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CF99C4CECD;
+	Tue, 12 Nov 2024 17:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731431255;
+	bh=qLiMapJibaTORzqY8SM6MRCCrq7rQuS5g1DJ8FUYOZE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kZXrQ2pu9jnaPm0855wS3xUEqcISQyVI644PluZtGCWWMCQ9jgyC4zJGw5+YB3rpr
+	 Eyo4s3XAAEF6AYjkgLOAD0TZ0P7jxl3YIhytBAjBSsPKr/8oMvUOx8aH5SigUHVQu0
+	 kY8/Dvf5ekbvk7roCB3QFYEFz1HZcbA1b4kBMvn/UREZcCpMQU5Q0Y/M8G8EPIqSsb
+	 NgA9ieT+S7pORxawiw2MDLMj296RTvQNYgcC/9+THyKgCAZiCDLqZKfMso77iX/PUE
+	 U57HaUPa77+h+vmY+zZWSM2WRIIHHA422J2FOk2EPNSvO7MJvQZ0MhXzE1dg+cqKtU
+	 Zj/R26d2ImtPg==
+Date: Tue, 12 Nov 2024 14:07:31 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, namhyung@kernel.org, irogers@google.com,
+	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf trace: Fix perf trace tracing itself, creating
+ feedback loops
+Message-ID: <ZzOLU-9QkwGHsb3w@x1>
+References: <20241030052431.2220130-1-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+In-Reply-To: <20241030052431.2220130-1-howardchu95@gmail.com>
 
-In GMAC3_X, the timestamping configuration differs from GMAC4 in the
-layout of the registers accessed to grab the number of snapshots in FIFO
-as well as the register offset to grab the aux snapshot timestamp.
+On Tue, Oct 29, 2024 at 10:24:31PM -0700, Howard Chu wrote:
+> There exists a pids_filtered map in augmented_raw_syscalls.bpf.c that
+> ceases to provide functionality after the BPF skeleton migration:
+> commit 5e6da6be3082 ("perf trace: Migrate BPF augmentation to use a skeleton")
 
-Introduce dedicated ops to configure timestamping on dwmac100 and
-dwmac1000. The latency correction doesn't seem to exist on GMAC3, so its
-corresponding operation isn't populated.
+Thanks, applied to perf-tools-next,
 
-Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- drivers/net/ethernet/stmicro/stmmac/common.h  |  1 +
- .../net/ethernet/stmicro/stmmac/dwmac1000.h   |  7 ++++
- .../ethernet/stmicro/stmmac/dwmac1000_core.c  | 40 +++++++++++++++++++
- drivers/net/ethernet/stmicro/stmmac/hwif.c    |  4 +-
- .../ethernet/stmicro/stmmac/stmmac_hwtstamp.c | 11 +++++
- .../net/ethernet/stmicro/stmmac/stmmac_ptp.h  |  4 ++
- 6 files changed, 65 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-index 6f68a6b298c9..1367fa5c9b8e 100644
---- a/drivers/net/ethernet/stmicro/stmmac/common.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-@@ -549,6 +549,7 @@ extern const struct stmmac_desc_ops ndesc_ops;
- struct mac_device_info;
+- Arnaldo
  
- extern const struct stmmac_hwtimestamp stmmac_ptp;
-+extern const struct stmmac_hwtimestamp dwmac1000_ptp;
- extern const struct stmmac_mode_ops dwmac4_ring_mode_ops;
- 
- extern const struct ptp_clock_info stmmac_ptp_clock_ops;
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac1000.h b/drivers/net/ethernet/stmicro/stmmac/dwmac1000.h
-index 01eafeb1272f..600fea8f712f 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac1000.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac1000.h
-@@ -331,8 +331,15 @@ enum rtc_control {
- 
- /* PTP and timestamping registers */
- 
-+#define GMAC3_X_ATSNS       GENMASK(19, 16)
-+#define GMAC3_X_ATSNS_SHIFT 16
-+
- #define GMAC_PTP_TCR_ATSFC	BIT(24)
- #define GMAC_PTP_TCR_ATSEN0	BIT(25)
- 
-+#define GMAC3_X_TIMESTAMP_STATUS	0x28
-+#define GMAC_PTP_ATNR	0x30
-+#define GMAC_PTP_ATSR	0x34
-+
- extern const struct stmmac_dma_ops dwmac1000_dma_ops;
- #endif /* __DWMAC1000_H__ */
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-index a14509d88fe7..73bba4fdc2e4 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-@@ -553,6 +553,46 @@ int dwmac1000_setup(struct stmmac_priv *priv)
- 	return 0;
- }
- 
-+/* DWMAC 1000 HW Timestaming ops */
-+
-+void dwmac1000_get_ptptime(void __iomem *ptpaddr, u64 *ptp_time)
-+{
-+	u64 ns;
-+
-+	ns = readl(ptpaddr + GMAC_PTP_ATNR);
-+	ns += readl(ptpaddr + GMAC_PTP_ATSR) * NSEC_PER_SEC;
-+
-+	*ptp_time = ns;
-+}
-+
-+void dwmac1000_timestamp_interrupt(struct stmmac_priv *priv)
-+{
-+	struct ptp_clock_event event;
-+	u32 ts_status, num_snapshot;
-+	unsigned long flags;
-+	u64 ptp_time;
-+	int i;
-+
-+	/* Clears the timestamp interrupt */
-+	ts_status = readl(priv->ptpaddr + GMAC3_X_TIMESTAMP_STATUS);
-+
-+	if (!(priv->plat->flags & STMMAC_FLAG_EXT_SNAPSHOT_EN))
-+		return;
-+
-+	num_snapshot = (ts_status & GMAC3_X_ATSNS) >> GMAC3_X_ATSNS_SHIFT;
-+
-+	for (i = 0; i < num_snapshot; i++) {
-+		read_lock_irqsave(&priv->ptp_lock, flags);
-+		stmmac_get_ptptime(priv, priv->ptpaddr, &ptp_time);
-+		read_unlock_irqrestore(&priv->ptp_lock, flags);
-+
-+		event.type = PTP_CLOCK_EXTTS;
-+		event.index = 0;
-+		event.timestamp = ptp_time;
-+		ptp_clock_event(priv->ptp_clock, &event);
-+	}
-+}
-+
- /* DWMAC 1000 ptp_clock_info ops */
- 
- int dwmac1000_ptp_enable(struct ptp_clock_info *ptp,
-diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/ethernet/stmicro/stmmac/hwif.c
-index 1f508843fb5a..a72d336a8350 100644
---- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
-@@ -134,7 +134,7 @@ static const struct stmmac_hwif_entry {
- 		.desc = NULL,
- 		.dma = &dwmac100_dma_ops,
- 		.mac = &dwmac100_ops,
--		.hwtimestamp = &stmmac_ptp,
-+		.hwtimestamp = &dwmac1000_ptp,
- 		.ptp = &dwmac1000_ptp_clock_ops,
- 		.mode = NULL,
- 		.tc = NULL,
-@@ -153,7 +153,7 @@ static const struct stmmac_hwif_entry {
- 		.desc = NULL,
- 		.dma = &dwmac1000_dma_ops,
- 		.mac = &dwmac1000_ops,
--		.hwtimestamp = &stmmac_ptp,
-+		.hwtimestamp = &dwmac1000_ptp,
- 		.ptp = &dwmac1000_ptp_clock_ops,
- 		.mode = NULL,
- 		.tc = NULL,
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-index 5ef52ef2698f..a94829ef8cfb 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-@@ -269,3 +269,14 @@ const struct stmmac_hwtimestamp stmmac_ptp = {
- 	.timestamp_interrupt = timestamp_interrupt,
- 	.hwtstamp_correct_latency = hwtstamp_correct_latency,
- };
-+
-+const struct stmmac_hwtimestamp dwmac1000_ptp = {
-+	.config_hw_tstamping = config_hw_tstamping,
-+	.init_systime = init_systime,
-+	.config_sub_second_increment = config_sub_second_increment,
-+	.config_addend = config_addend,
-+	.adjust_systime = adjust_systime,
-+	.get_systime = get_systime,
-+	.get_ptptime = dwmac1000_get_ptptime,
-+	.timestamp_interrupt = dwmac1000_timestamp_interrupt,
-+};
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.h b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.h
-index fa4611855311..4cc70480ce0f 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.h
-@@ -96,8 +96,12 @@ enum aux_snapshot {
- 
- struct ptp_clock_info;
- struct ptp_clock_request;
-+struct stmmac_priv;
- 
- int dwmac1000_ptp_enable(struct ptp_clock_info *ptp,
- 			 struct ptp_clock_request *rq, int on);
- 
-+void dwmac1000_get_ptptime(void __iomem *ptpaddr, u64 *ptp_time);
-+void dwmac1000_timestamp_interrupt(struct stmmac_priv *priv);
-+
- #endif	/* __STMMAC_PTP_H__ */
--- 
-2.47.0
-
+> Before the migration, pid_filtered map works, courtesy of Arnaldo
+> Carvalho de Melo <acme@kernel.org>:
+> 
+> ⬢ [acme@toolbox perf-tools]$ git log --oneline -5
+> 6f769c3458b6cf2d (HEAD) perf tests trace+probe_vfs_getname.sh: Accept quotes surrounding the filename
+> 7777ac3dfe29f55d perf test trace+probe_vfs_getname.sh: Remove stray \ before /
+> 33d9c5062113a4bd perf script python: Add stub for PMU symbol to the python binding
+> e59fea47f83e8a9a perf symbols: Fix DSO kernel load and symbol process to correctly map DSO to its long_name, type and adjust_symbols
+> 878460e8d0ff84a0 perf build: Remove -Wno-unused-but-set-variable from the flex flags when building with clang < 13.0.0
+> 
+> root@x1:/home/acme/git/perf-tools# perf trace -e /tmp/augmented_raw_syscalls.o -e write* --max-events=30  &
+> [1] 180632
+> root@x1:/home/acme/git/perf-tools#      0.000 ( 0.051 ms): NetworkManager/1127 write(fd: 3, buf: 0x7ffeb508ef70, count: 8)                           = 8
+>      0.115 ( 0.010 ms): NetworkManager/1127 write(fd: 3, buf: 0x7ffeb508ef70, count: 8)                           = 8
+>      0.916 ( 0.068 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 246)                         = 246
+>      1.699 ( 0.047 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 121)                         = 121
+>      2.167 ( 0.041 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 121)                         = 121
+>      2.739 ( 0.042 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 121)                         = 121
+>      3.138 ( 0.027 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 121)                         = 121
+>      3.477 ( 0.027 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 121)                         = 121
+>      3.738 ( 0.023 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 121)                         = 121
+>      3.946 ( 0.024 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 121)                         = 121
+>      4.195 ( 0.024 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 121)                         = 121
+>      4.212 ( 0.026 ms): NetworkManager/1127 write(fd: 3, buf: 0x7ffeb508ef70, count: 8)                           = 8
+>      4.285 ( 0.006 ms): NetworkManager/1127 write(fd: 3, buf: 0x7ffeb508ef70, count: 8)                           = 8
+>      4.445 ( 0.018 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 260)                         = 260
+>      4.508 ( 0.009 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 124)                         = 124
+>      4.592 ( 0.010 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 116)                         = 116
+>      4.666 ( 0.009 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 130)                         = 130
+>      4.715 ( 0.010 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 95)                          = 95
+>      4.765 ( 0.007 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 102)                         = 102
+>      4.815 ( 0.009 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 79)                          = 79
+>      4.890 ( 0.008 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 57)                          = 57
+>      4.937 ( 0.007 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 89)                          = 89
+>      5.009 ( 0.010 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 112)                         = 112
+>      5.059 ( 0.010 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 112)                         = 112
+>      5.116 ( 0.007 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 79)                          = 79
+>      5.152 ( 0.009 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 33)                          = 33
+>      5.215 ( 0.008 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 37)                          = 37
+>      5.293 ( 0.010 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 128)                         = 128
+>      5.339 ( 0.009 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 89)                          = 89
+>      5.384 ( 0.008 ms): sudo/156867 write(fd: 8, buf: 0x55cb4cd2f650, count: 100)                         = 100
+> 
+> [1]+  Done                    perf trace -e /tmp/augmented_raw_syscalls.o -e write* --max-events=30
+> root@x1:/home/acme/git/perf-tools#
+> 
+> No events for the 'perf trace' (pid 180632), i.e. no feedback loop.
+> 
+> If we leave it running:
+> 
+> root@x1:/home/acme/git/perf-tools# perf trace -e /tmp/augmented_raw_syscalls.o -e landlock_add_rule &
+> [1] 181068
+> root@x1:/home/acme/git/perf-tools#
+> 
+> And then look at what maps it sets up:
+> 
+> root@x1:/home/acme/git/perf-tools# bpftool map | grep pids_filtered -A3
+> 1190: hash  name pids_filtered  flags 0x0
+>         key 4B  value 1B  max_entries 64  memlock 7264B
+>         btf_id 1613
+>         pids perf(181068)
+> root@x1:/home/acme/git/perf-tools#
+> 
+> And ask for dumping its contents:
+> 
+> We see that we are _also_ setting it to filter those:
+> 
+> root@x1:/home/acme/git/perf-tools# bpftool map dump id 1190
+> [{
+>         "key": 181068,
+>         "value": 1
+>     },{
+>         "key": 156801,
+>         "value": 1
+>     }
+> ]
+> 
+> Now testing the migration commit:
+> 
+> perf $ git log
+> commit 5e6da6be3082f77be06894a1a94d52a90b4007dc (HEAD)
+> Author: Ian Rogers <irogers@google.com>
+> Date:   Thu Aug 10 11:48:51 2023 -0700
+> 
+>     perf trace: Migrate BPF augmentation to use a skeleton
+> 
+> perf $ ./perf trace -e write --max-events=10 & echo #!
+> [1] 1808653
+> 
+> perf $      0.000 ( 0.010 ms): :1808671/1808671 write(fd: 1, buf: 0x6003f5b26fc0, count: 11)                          = 11
+>      0.162 (         ): perf/1808653 write(fd: 2, buf: 0x7fffc2174e50, count: 11)                       ...
+>      0.174 (         ): perf/1808653 write(fd: 2, buf: 0x74ce21804563, count: 1)                        ...
+>      0.184 (         ): perf/1808653 write(fd: 2, buf: 0x57b936589052, count: 5)
+> 
+> The feedback loop is there.
+> 
+> Keep it running, look into the bpf map:
+> 
+> perf $ bpftool map | grep pids_filtered
+> 10675: hash  name pids_filtered  flags 0x0
+> 
+> sberf $ bpftool map dump id 10675
+> []
+> 
+> The map is empty.
+> 
+> Now, this commit:
+> commit 64917f4df048 ("perf trace: Use heuristic when deciding if a syscall tracepoint "const char *" field is really a string")
+> 
+> Temporarily fixed the feedback loop for perf trace -e write, that's
+> because before using the heuristic, write is hooked to sys_enter_openat:
+> 
+> perf $ git log
+> commit 83a0943b1870944612a8aa0049f910826ebfd4f7 (HEAD)
+> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date:   Thu Aug 17 12:11:51 2023 -0300
+> 
+>     perf trace: Use the augmented_raw_syscall BPF skel only for tracing syscalls
+> 
+> perf $ ./perf trace -e write --max-events=10 -v 2>&1 | grep Reusing
+> Reusing "openat" BPF sys_enter augmenter for "write"
+> 
+> And after the heuristic fix, it's unaugmented:
+> 
+> perf $ git log
+> commit 64917f4df048a0649ea7901c2321f020e71e6f24 (HEAD)
+> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date:   Thu Aug 17 15:14:21 2023 -0300
+> 
+>     perf trace: Use heuristic when deciding if a syscall tracepoint "const char *" field is really a string
+> 
+> perf $ ./perf trace -e write --max-events=10 -v 2>&1 | grep Reusing
+> perf $
+> 
+> After using the heuristic, write is hooked to syscall_unaugmented, which
+> returns 1.
+> 
+> SEC("tp/raw_syscalls/sys_enter")
+> int syscall_unaugmented(struct syscall_enter_args *args)
+> {
+> 	return 1;
+> }
+> 
+> If the BPF program returns 1, the tracepoint filter will filter it
+> (since the tracepoint filter for perf is correctly set), but before the
+> heuristic, when it was hooked to a sys_enter_openat(), which is a BPF
+> program that calls bpf_perf_event_output() and writes to the buffer, it
+> didn't get filtered, thus creating feedback loop. So switching write to
+> unaugmented accidentally fixed the problem.
+> 
+> But some syscalls are not so lucky, for example newfstatat:
+> perf $ ./perf trace -e newfstatat --max-events=100 & echo #!
+> [1] 2166948
+> 
+>    457.718 (         ): perf/2166948 newfstatat(dfd: CWD, filename: "/proc/self/ns/mnt", statbuf: 0x7fff0132a9f0) ...
+>    457.749 (         ): perf/2166948 newfstatat(dfd: CWD, filename: "/proc/2166950/ns/mnt", statbuf: 0x7fff0132aa80) ...
+>    457.962 (         ): perf/2166948 newfstatat(dfd: CWD, filename: "/proc/self/ns/mnt", statbuf: 0x7fff0132a9f0) ...
+> 
+> Currently, write is augmented by the new BTF general augmenter (which
+> calls bpf_perf_event_output()). The problem, which luckily got fixed,
+> resurfaced, and that’s how it was discovered.
+> 
+> v1:
+> 
+> Currently when tracing system-wide, perf trace will trace itself,
+> creating feedback loops. This patch fixes this problem by setting the
+> correct BPF map for filtering pids.
+> 
+> Before:
+> 
+> here perf/2807067 is the tracing process itself):
+> 
+> perf $ ./perf trace -e write --max-events=10
+>      0.000 ( 0.007 ms): tmux: server/2299109 write(fd: 4, buf: \17, count: 1)                                      = 1 (systemd)
+>      0.060 (         ): perf/2807067 write(fd: 2, buf:      0.000 , count: 11)                          ...
+>      0.072 (         ): perf/2807067 write(fd: 2, buf: (, count: 1)                                     ...
+>      0.085 (         ): perf/2807067 write(fd: 2, buf:  0.007 ms, count: 9)                             ...
+>      0.089 (         ): perf/2807067 write(fd: 2, buf: ): , count: 3)                                   ...
+>      0.094 (         ): perf/2807067 write(fd: 2, buf: tmux: server/, count: 13)                        ...
+>      0.099 (         ): perf/2807067 write(fd: 2, buf: 2299109 , count: 8)                              ...
+>      0.103 (         ): perf/2807067 write(fd: 2, buf: write(fd: 4, buf: \17, count: 1, count: 31)      ...
+>      0.108 (         ): perf/2807067 write(fd: 2, buf: )                               , count: 41)     ...
+>      0.113 (         ): perf/2807067 write(fd: 2, buf: 1, count: 1)                                     ...
+> 
+> After:
+> 
+> perf $ ./perf trace -e write --max-events=10
+>      0.000 ( 0.030 ms): sshd/2725386 write(fd: 4, buf: r\148\133\163\17\167\194\172bF\231\192\227\194\215\251kBLE\167(\10WY\22\138^\233\28\248\249, count: 36) = 36 (idle_inject/3)
+>      0.622 ( 0.019 ms): sshd/2725386 write(fd: 4, buf: \177"\251\159\244)F5\224\250\135Y\1865/\30\191\171\140Q\213\182\133\145\224\148\190L\210{\143D, count: 228) =
+>      9.510 ( 0.014 ms): dirname/2805386 write(fd: 1, buf: /root/.tmux/plugins/tmux-continu, count: 43)        = 43 (kauditd)
+>      9.788 ( 0.007 ms): bash/2805385 write(fd: 1, buf: /root/.tmux/plugins/tmux-continu, count: 43)        = 43 (kauditd)
+>     13.865 ( 0.020 ms): :2805390/2805390 write(fd: 1, buf: 1.9\10, count: 4)                                   = 4 (kworker/R-rcu_g)
+>     15.183 ( 0.015 ms): tr/2805391 write(fd: 1, buf: 19, count: 2)                                       = 2 (kthreadd)
+>     15.715 ( 0.009 ms): bash/2805388 write(fd: 1, buf: 19\10, count: 3)                                    = 3 (pool_workqueue_)
+>     18.755 ( 0.014 ms): tmux/2805393 write(fd: 1, buf: tmux 3.4\10, count: 9)                              = 9 (kworker/0:0H-ev)
+>     19.737 ( 0.044 ms): sshd/2725386 write(fd: 4, buf: \188\197;\82d.1k\197\30\165[L@\153\139\192\173\247k\179kT.m\150\223\216\31\251\255, count: 316) =
+>     20.173 ( 0.008 ms): bash/2805396 write(fd: 1, buf: tmux 3.4\10, count: 9)                              = 9 (kworker/0:0H-ev)
+> 
+> Fixes: 5e6da6be3082 ("perf trace: Migrate BPF augmentation to use a skeleton")
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> ---
+>  tools/perf/builtin-trace.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 748b061f8678..5d83da62275c 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -4326,6 +4326,8 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+>  					sizeof(__u32), BPF_ANY);
+>  		}
+>  	}
+> +
+> +	trace->filter_pids.map = trace->skel->maps.pids_filtered;
+>  #endif
+>  	err = trace__set_filter_pids(trace);
+>  	if (err < 0)
+> -- 
+> 2.43.0
 
