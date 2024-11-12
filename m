@@ -1,254 +1,230 @@
-Return-Path: <linux-kernel+bounces-405450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 957879C5188
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:11:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0689C51EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:26:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213D51F22AD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:11:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 377D3B28DA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9181A20D4F5;
-	Tue, 12 Nov 2024 09:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB1A1F7092;
+	Tue, 12 Nov 2024 09:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=westermo.com header.i=@westermo.com header.b="f1zB9PZC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=beijerelectronicsab.onmicrosoft.com header.i=@beijerelectronicsab.onmicrosoft.com header.b="raab+w/i"
-Received: from mx08-0057a101.pphosted.com (mx08-0057a101.pphosted.com [185.183.31.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fIWo2cUK"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AAE20A5FB;
-	Tue, 12 Nov 2024 09:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.31.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731402669; cv=fail; b=rTEp668AtpepEoeT9olVMg83OZJD7AKA7ntWMx9UmwfpVIJKwZVHwUaVNNN8wvov/53jPEtqh6f0CrVkcIncddpX+g3osWxd6i3q8Y6zBbjzlGdkrYMyNMJuaItJTgwe0BiVJNxozpOorHo2xYyVfdrXwxvnJdiNgRwgCkCzEnU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731402669; c=relaxed/simple;
-	bh=oKTeMMHSevo76VCayw0WesIpQ6JrZukmu2YG4BPIXDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=S2ltBSfC+FERicCm0a/Kp/68mIXrBT2rhimZ3ThsyyGi1N0lAbZkSRv3Ep+bJcFoKwlKTD9B28cxeFSYuMZYiizUwz09MhXN10O+Dh2yMdTHNmFcoFmT4Pskl/x8kAzCSvDLZBphDbNzxDvHQWtgsGGg42IIFa3Kup0dCPgJFZA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=westermo.com; spf=pass smtp.mailfrom=westermo.com; dkim=pass (2048-bit key) header.d=westermo.com header.i=@westermo.com header.b=f1zB9PZC; dkim=fail (1024-bit key) header.d=beijerelectronicsab.onmicrosoft.com header.i=@beijerelectronicsab.onmicrosoft.com header.b=raab+w/i reason="signature verification failed"; arc=fail smtp.client-ip=185.183.31.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=westermo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=westermo.com
-Received: from pps.filterd (m0214196.ppops.net [127.0.0.1])
-	by mx07-0057a101.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC6e245009245;
-	Tue, 12 Nov 2024 10:10:52 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=westermo.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=270620241; bh=
-	a7YmF6JbEt5AqjXAy17MCySRvE6nDiiwlvyuUPZmPQw=; b=f1zB9PZCNbhuXPGk
-	FtKUrOVDCe7vqm9BuXDNkMk66KsKSvk97khvujhq5aAUpV0Zjjw9UqJVzKQC6fVy
-	V0PXqdGsLrgVThenLsAjCEw859cvHqmvapVLybJNaQez7ptbsP86JU0x/3mDag9R
-	P/5zW8jxO7WzYUis96jNIcCw7w74Lc1E7IVV4+B9yZcOjIBpNZiDWKGlu6JilVdC
-	+xlx/ZfcNXqoUC/SGQGMrRBWhUOLug4VB3aKhYjRjw18Kj5a9PDshLLgzMytHuwT
-	GkWWI+mYkhuHmWtQFxWWBnLs2GIHfTi9IaTSsajg4FjuwWwvIq5mE6lbfR/diMFd
-	VMahMw==
-Received: from eur05-vi1-obe.outbound.protection.outlook.com (mail-vi1eur05lp2168.outbound.protection.outlook.com [104.47.17.168])
-	by mx07-0057a101.pphosted.com (PPS) with ESMTPS id 42uwxjrak4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 10:10:52 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aY0f9yDb8UFEjPuX86afMqaP1MoNVSTH066sMXkq//tej8GFYF5eWChZ3uFOET2Zgoiejowt23cYPdgB3oymqWwJcCcNZJg6sUTNgfOktAuTqeg+tHbM+u09//MdLii33wDu+cpQll6yX9hNKFXr9pAbNhrBeq92TATQ8CxE5+rBHe+pU32p3Zvg/0djx59x7riePp7f0cP6eGJJ0DLuLHhUHkbIRJI1MZfYjDMFiZUyClt7vCX/NlD5zg7GF8H1gCYUQluYj7gwvoXuRR9eOYQnkBPkqa4xXrR8MbbCLYZUWFSNKePhZlICpufp6LC5n142eZdRjltgzmqIQinojQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/iOuX0ThF9UUI1qHonXeDkI6VngCaUVeMalA+HQrFPQ=;
- b=mpApii51CDpNMlZssCySmgZ1J6XCfgKllOoydMauzlEh0BBKfTt6gQXBBzcrDG10lQNhO/jLMTCsL28mzj9D/03u/wubknYX+BACRjZbh5Gi5e30l9ulkwSANR/DL1vLKhOAo6HnlrnSk1c3BLhlMsljHu/BeVfdz5sdo8YIVOdGxeacCVn2eGzBvA/1aEkhJJwEblLi78Qg1XnPGeq+VtH9y6E9OjPx82Sns2+4DNAblzALu6cm2vuiZr8lNywB+jveSGYG8aJ3faH37+4bFDBPxyf3O4pmC7DPTJErK5yWzdENt+8gzmVcEKbLNc3KMM8aHYXMNYF9XHLiBzsXKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=westermo.com; dmarc=pass action=none header.from=westermo.com;
- dkim=pass header.d=westermo.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9713B20CCFF
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731402718; cv=none; b=ToCpdQIwjEWVmMV1VPNyXny3XbwDWcaRuzaSr7cfirt34xUI0q5nFH7ImslPRSY1NMr7ZdGFC+/NpXBRS6/7yHmjSXN4Sq8IDiGsq0dLHqyhtetdWAtcO8PsdhEdzI8ufOR9g6aRLsfCcF12WkhjDws8o7Cbl/g8QzGPHGT5aa8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731402718; c=relaxed/simple;
+	bh=ByhGgvdqV4gerAhSZ+0p1VGIZ0e4s+vC2r6OuvedF2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u23Cbz7kv3HNQ1v+rgQOqWZIejH2r1W4OPb01CZ6aVIwRAgKIc3j8C/rn3GowsD2bwg7H5xrJLnwDNaH3rZhwC2Dy/A5P3bTeMoK5GFyL9gq+8m9nW/P5IbM++zJfYd4TeWPZgC9R/rQ5VDnOrr6elERTX0mE5EzILeRKOfS7Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fIWo2cUK; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a6acac4c3so888597466b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 01:11:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=beijerelectronicsab.onmicrosoft.com;
- s=selector1-beijerelectronicsab-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/iOuX0ThF9UUI1qHonXeDkI6VngCaUVeMalA+HQrFPQ=;
- b=raab+w/iGihk1HTFM4va6RxsjqCj45e/UbfRTYAaKFngQhkNAln7Ihu3jaRNoAlmNViOoPLRg/pjWUIBwm0+tQ4v4sXzUTcRUSBLb9m3AfPK7oH+YGwTH8hXBEdNAx+RBx6W7f/lbiHPwPvORebG7zVE8AdDHk9I8kIrDQyQN+U=
-Received: from AS8P192MB2240.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:63a::18)
- by AM7P192MB0692.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:14c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Tue, 12 Nov
- 2024 09:10:49 +0000
-Received: from AS8P192MB2240.EURP192.PROD.OUTLOOK.COM
- ([fe80::bee5:29b7:49f2:cf70]) by AS8P192MB2240.EURP192.PROD.OUTLOOK.COM
- ([fe80::bee5:29b7:49f2:cf70%6]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 09:10:48 +0000
-Date: Tue, 12 Nov 2024 10:10:41 +0100
-From: Alexander Wilhelm <alexander.wilhelm@westermo.com>
-To: Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Ivan Mikhaylov <i.mikhaylov@yadro.com>,
-        linux-leds@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Add LED mode behavior/select properties and handle
-Message-ID: <ZzMbkVbPu9I6sLby@FUE-ALEWI-WINX>
-References: <20201209140501.17415-1-i.mikhaylov@yadro.com>
- <20201216224118.GA31740@amd>
- <ZzMPr3TlEErExRqr@FUE-ALEWI-WINX>
- <fuk5stahnpinahhyixdgeepchucvfbha3ikqagewxhxlh5337x@zuo46w4enzp4>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fuk5stahnpinahhyixdgeepchucvfbha3ikqagewxhxlh5337x@zuo46w4enzp4>
-X-ClientProxiedBy: GVYP280CA0035.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:150:f9::28) To AS8P192MB2240.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:20b:63a::18)
+        d=tuxon.dev; s=google; t=1731402715; x=1732007515; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2bT49tEuI3XaNlJGqnWq8uFVJQIUx+wbR1sO+SjK7Ss=;
+        b=fIWo2cUK61O/eAvvX/Q5QXDbekPP2pMR1pylIGUfmKaDmK44ICDn1DdIFq41546HzT
+         IksrdJqumzAeFJ/7xI9NlrxXi6qTjlDyGdgmy7JujvTx9LjRPzZgWkVw5+VNroPTmjvX
+         /bAn/vxPxJs6Dpa3ELNH3ELr/xvsgcGHYClk3+w7y53PG2lk4MoPWVZ1+hIy5hI4Cuso
+         rMkRLOmXH8lNN5wMHcHLZLbR7BYiUQOf/JDkLZqvv6wwjaoe4VVUBYfFuZ/mllU322KW
+         x6fKybqOEu02DKumvjMpoLjRWkWj0A8sNGuryL3zSoCmtxbIsxhuxOCJ6CTU/syye92O
+         6nwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731402715; x=1732007515;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2bT49tEuI3XaNlJGqnWq8uFVJQIUx+wbR1sO+SjK7Ss=;
+        b=sOu3gPbpIvaIMg5zu0Tv0r4sb3yWq7gJuevrePFtX3mCQlUBpVnF/5BzNOQipPDNhD
+         6bK7204kCLMBjB4LxynIRRd5YoSTO09NGODyh3LGQYWcKvNPrPs4+JukdF2aSLlPCKn4
+         GIFvof6KKbEReODyQnhukiexe14bpDW+M2spCgo0ZbU0XJIisTIub3m6j2G7L9Sy7yAd
+         FpaBCXTNRZ6V8HK3HdhRZmJwMd9b7OvvKzE5HTzH7JaphXMPUg066TtDz1eAoMz5RPe/
+         O94QQq+XcIYUV5M2WPTcq872SOK9UWT3RoShxxwP9zkoERYco7r5YPUXRA4n8YgZVHgO
+         VwOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDQpXl9jZftZsQg14lY0lCwWsX7VNcUI8aj6eC6eQxg0doVs2OuxgayfaBXf9izAHqM1NuPTxFJ0JIXSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydXtJig0rha98OCW9TrSXuYQcfrZc5MoQsfjBx23CCUz+B1j8Y
+	UAPF89GNxLvB0cp4Cm2FEdIGJUs5AcuAjQJ3zcIm3MOn2B2Cbm9W+aZ+fRSBr1A=
+X-Google-Smtp-Source: AGHT+IFY6ZnIGl+BWNcLVcWN0We3CqKXyiZszP+RpGx14lKsX8/Pc0KElS+H7O02yRwDXvrWjPb4Ng==
+X-Received: by 2002:a17:907:1c11:b0:a9e:4b88:e02a with SMTP id a640c23a62f3a-a9eefcd1ad8mr1505031866b.0.1731402714848;
+        Tue, 12 Nov 2024 01:11:54 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa1dda672easm63499266b.40.2024.11.12.01.11.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 01:11:54 -0800 (PST)
+Message-ID: <b109e943-7436-42ae-912a-e6f6e20a948e@tuxon.dev>
+Date: Tue, 12 Nov 2024 11:11:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8P192MB2240:EE_|AM7P192MB0692:EE_
-X-MS-Office365-Filtering-Correlation-Id: 076c1531-8b5b-428b-2040-08dd02f9e5ef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?KeVgCJOPZA4KcYDNPT1YrmltCrbB5EjX2eOpBRgfRvy+sP5FJaZnlyZVmh?=
- =?iso-8859-1?Q?Qx8gBg4LkSeGYW8nni70MCVl9J/NMCXSK4UZWWLzclQMOsGzvphmdZciBa?=
- =?iso-8859-1?Q?TKkqUSS5Wl3KXhnAQlaZ1O7Z8tdQ1Sdn7uV01xRt7BwxvrGQrVXAWsyIHJ?=
- =?iso-8859-1?Q?UAj4ih7LCzBo/uv1M/9gizag4AtmBoLztbgst6W2PAmEnfS/6vt52iIrIm?=
- =?iso-8859-1?Q?ISMU8aKZFlp8T/zFNUhp8NrCGekm2Yl60vU9lWB6HXhESlZM1Tw2+7MFcx?=
- =?iso-8859-1?Q?YFd3+nMZqczoQPY+cRnm4/9Vro1v0uy3a/DVZwbYC4A3/NyyVzhC2f5cbV?=
- =?iso-8859-1?Q?ARy2GW3T+qmCQpXui3KDn0n+ZXMOmm2QnTT0q8jnI1zYbovsM9Yagn7fdO?=
- =?iso-8859-1?Q?odoFjnX6IODcfHA/7WiW7We5Uqr57RbRNyOJUQ42sFXONfocNBwPW1zwPO?=
- =?iso-8859-1?Q?Odbr6OCq5xcNFnmNreOtOwxCxEPFayhPIGbJ2M3Z3SEsXvd1SUPpsOA2KB?=
- =?iso-8859-1?Q?so4ouCf9+x0cUpALKTZWAUpjsarKNpEuogFO9sBf5qTawZnNf5gJBxcuAC?=
- =?iso-8859-1?Q?8dujUEfyuObgmpmoC2FK2zvROCxdX/OWiPNHQR/iH4YyjK8ED54qbRijZh?=
- =?iso-8859-1?Q?EPMxJ5D8KNKcXhPSTVeomLxBVk/juc9EYzr7qleJ6PlU6xfBZZ4+i9CUPC?=
- =?iso-8859-1?Q?opnDbsstGqZkSxBfdKz1frRyIhy7qnTpfCHP/38TBjuo5Rm4Z23mYg4Hdl?=
- =?iso-8859-1?Q?dOKvJ/4OlmDdiz3Ys0CRxV15HtHKkhKto8umIjKj54V9Rli/SnkhfjR4zU?=
- =?iso-8859-1?Q?mw5E5mbDvB15BBwdEcvDyAMwBZwmnkI43lQXYj8UDkU+gyrqyKYiRTD9If?=
- =?iso-8859-1?Q?Sd4vMjrnIZWfdgHOs5eQt07ESCMahnrV76PgQPiMu/5HElCRxJaoZWvUPh?=
- =?iso-8859-1?Q?PzVFin9DlBEMOJTOvEfzvW76RK6qMoAHujTMKXnYMaZRcIQmvAirBMgmWb?=
- =?iso-8859-1?Q?FxPUaotswJHf6aNyS+ksUW854+3qQrW7sHpw5KBr+UAtYJG6KyIgYPaVbV?=
- =?iso-8859-1?Q?OB8nvM4AMvvekZUzAC+rZK/StjZBSeCtdg2o/v0mbKoGd/+Nzbq9OBaeCR?=
- =?iso-8859-1?Q?PepIxyx4LVSao4oEPI9FTemkAIUM0fV2wVZrEM/+gPSmrZic6IXj9mlTam?=
- =?iso-8859-1?Q?hi9bxqDZu9PM8mIwZuFYNo06w2sy6unW6Soypfyg7K3S65B0IthBHqPusj?=
- =?iso-8859-1?Q?PtzBWgRsvzXt9QuxRosasktCLxFI7c+T82qqaX+6y4F0wPbAa8PglfTgXC?=
- =?iso-8859-1?Q?KTfWzsDgoua3BWzti5iZWjPiwmDpg9Kcz/4bmFo1J/qG2HV1mdyu8HrOGS?=
- =?iso-8859-1?Q?YJnZufQWpv?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8P192MB2240.EURP192.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?N1BHZnF7+EfxQnHdj8+HaWaHMlVF1mhWaaKv//pY1dQEIcZyuFpj5t/u1I?=
- =?iso-8859-1?Q?yJHJGl/iRy3a/t2SP44Up9P3Ek1fYa2fH+IqEWggwd9VySvrytFi5ofQ2C?=
- =?iso-8859-1?Q?a10iR46nAOlrgeahXJw7n8IyHkiWDCxPVTNRC4IyNxXXbzYMWcjSqUZ9io?=
- =?iso-8859-1?Q?UKfi46Xn/PvxhAMomKfm57RtsTEHP+HQ3tAy+meLZRdtNc+YE9bwHVZblC?=
- =?iso-8859-1?Q?slrXG8mU4T8RegKkrqoOE/VjX0Cqa88UCt1TU3f2KYepKa9vVUasyOCUXG?=
- =?iso-8859-1?Q?WSnZm7j2sYYVpBzKzyhzNJSNh67WcmwW5KBAW8o5xHTp5i3ExBRBAiYnKU?=
- =?iso-8859-1?Q?W5mMMyLGu5lD+GHdjH6/DNOQm8LvUIO5UTi++zzhD1sy1FKJtYwRVg4SKi?=
- =?iso-8859-1?Q?WLI92ZAXSpJ2NpcZNOA4iMloT35LIXikO1AfZkAykF5uKHynu0+XZcDNbV?=
- =?iso-8859-1?Q?BsGYFbMk2U/WFjAuSTdEfGv8x7ho2ED3KETWuZIVNQ9lBTxN0qP2krzvpc?=
- =?iso-8859-1?Q?+d0rCRL8Hf6EFlSII04ld//Tm8Ft2YJS3GH3uWiNxKK4OUMydKl/aM8drr?=
- =?iso-8859-1?Q?zUa8LOLWDig2QW9iMbRpHAgq+jsqgaqnrOQh+DeGgI8bfDulO1ARBAYfya?=
- =?iso-8859-1?Q?af5ccBspkIZu4HTRv0iEG0cgZOo2weUXV0aZKXcZm86guntNcudgta0DWW?=
- =?iso-8859-1?Q?ecQkc0GsaKdb7WwGbPJqOTh9Cv3rmYn/s/QcFT36No9kAt7pGkOMkzhSD2?=
- =?iso-8859-1?Q?ADG/uCAyxPDEiJD2s1qeXIV7h+4JG/S8HChb+pZCmiGdG+jxNXeb7LsSXe?=
- =?iso-8859-1?Q?XrH5ZRjXN1pGxQMOK8/T5qrNv2ExqlFdEZqj/eWpjuD+fT/lx0L/HT5Ja9?=
- =?iso-8859-1?Q?i1Cyt9SisoeCKH8GxcLXeHU7srpSRy0QQRrQoqdh3vrWewycXEptfj6HIS?=
- =?iso-8859-1?Q?3OO2KOUJHCbdpGEXFZv9OpfII2NfP7NpCUOlSYzmBwArn9+pKBsaaACTr6?=
- =?iso-8859-1?Q?FXfBJH4v9ExqrLQanV7G4tEuxW2q8D5olomdmjh+MN2eHl91aTanNS9Fvh?=
- =?iso-8859-1?Q?JvBUdyOrHuURRQ70jnRwlBmHnJx8l7QKJRXl9zsN1KA4u3C0Mh6FPnqxRQ?=
- =?iso-8859-1?Q?vvE7TyhdO9qjeLW6OOuJufp0osJImGt5Qz5D3mTM+wYIWlmLSSYqryadg0?=
- =?iso-8859-1?Q?2COfoXkcuCbgUQJH2wkC91wkivqgCT/pN0B9CO/viBtz8OMq7aRHEy5uwL?=
- =?iso-8859-1?Q?BzO8ITTjdisznXAQjpRhtvYYlB4aEFz6wxpsYmwlVukof4A3xU96RrOz7U?=
- =?iso-8859-1?Q?5KQyfVvNf+Z/t4w2gL9aXhMMGeyJI5J8I5CcVdqTtJ/ga1F0PKjWsYJSl1?=
- =?iso-8859-1?Q?WomnKuuy0VRnzTCJWwQYBFWgWQRjBw+o7yqIQkJ3mpnvZcnJRF/bh1q+XC?=
- =?iso-8859-1?Q?y9e0Cbdly74V7e0gD+6QggqO6i9IevmzB8AYfQcTrHbsYRFegrRvnkmsN8?=
- =?iso-8859-1?Q?I/k+XADQ6EdIRee9IeHM6CDQ0OKivoTv+JHEs2tNroapjzm4C0rMogfA7q?=
- =?iso-8859-1?Q?jC91nMM+ZqZBHEJd/L6QU0QrYV8udBb93CEsTbT7KXGbf3Jhz+RZUvZpNS?=
- =?iso-8859-1?Q?Xw96IIMyGnJ7yoQtFbVTp9wxDSzH5sF6Ke?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	2TzzOab8eU3aer1ZGyZTncd9+mmg3itjnEiuqOoYOUq75D7w0FjscVBBp2ka9C/tlY6T31CPuRdeJ2idhk21G96x+McJfD1E/oObMuEVV/72MN/dxsYxV9z8woV5LyNYbrfXwq/jpDmrhw0nTbOemcs0ppDYkTWj6OsnaSN+MqlT2aR3xzoGWqR3rcpMG0GpZ0Y3HHJQp56Y5eDRq9/sP6G4Ov2nYJMyK7tU0ohyooFQerLDi696+xv70ec9h2tqQkPB0W71vLx+09Nk23sat67KS3hctJNp6NWiFiNYHj8IfLLzj3Kf9w8NJfW0Oli9C5xU1Ewm4YoHSD7B6JpHINMz3x/TeHxbSE4AsZfMMTOuQdGjATNu4Chs6DW+5Mv7HKkyQK74pQY5p1j1incH1pA+XLOnyfu0jtD1nedRnoWeejNQVrkbNytQsCoj3J+iSodMFrTMYvQNPS6N2OhCCek0tcRtrHprHn9nTBr0BD5sn+imTeJyARWvEH5Ur6ck/eSbjnN5AC+YyLXsGjbxLpneHNTsfKtX3C5XcE1DoDT7gupKl8WDhoiDbrD5hXH74U/vgFrugM4S4eCkaVx0oXXo8FuZCdvHtQ/qYR3izBT8fRcuWcmIAhRSwiaYy9PG
-X-OriginatorOrg: westermo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 076c1531-8b5b-428b-2040-08dd02f9e5ef
-X-MS-Exchange-CrossTenant-AuthSource: AS8P192MB2240.EURP192.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 09:10:48.7570
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4b2e9b91-de77-4ca7-8130-c80faee67059
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5VYF0QxeiLaQY4E55zhl2RhC9wVKC/v0l58t/QdS/EtL/ibD4+qANWNso10kdBFy5r202+4sFW/YAaqXIaN+BQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7P192MB0692
-X-MS-Exchange-CrossPremises-AuthSource: AS8P192MB2240.EURP192.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossPremises-AuthAs: Internal
-X-MS-Exchange-CrossPremises-AuthMechanism: 14
-X-MS-Exchange-CrossPremises-Mapi-Admin-Submission:
-X-MS-Exchange-CrossPremises-MessageSource: StoreDriver
-X-MS-Exchange-CrossPremises-BCC:
-X-MS-Exchange-CrossPremises-OriginalClientIPAddress: 104.151.95.196
-X-MS-Exchange-CrossPremises-TransportTrafficType: Email
-X-MS-Exchange-CrossPremises-Antispam-ScanContext:
-	DIR:Originating;SFV:NSPM;SKIP:0;
-X-MS-Exchange-CrossPremises-SCL: 1
-X-MS-Exchange-CrossPremises-Processed-By-Journaling: Journal Agent
-X-OrganizationHeadersPreserved: AM7P192MB0692.EURP192.PROD.OUTLOOK.COM
-X-Proofpoint-ORIG-GUID: vHO3AQ5kyIXuTllAqDYEjTFgQpo4y8MT
-X-Proofpoint-GUID: vHO3AQ5kyIXuTllAqDYEjTFgQpo4y8MT
-X-Authority-Analysis: v=2.4 cv=U47ADvru c=1 sm=1 tr=0 ts=67331b9c cx=c_pps a=9TK2mEVt+YNFxHG6VsEebQ==:117 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10 a=VlfZXiiP6vEA:10 a=0HJ-WiGSmKEA:10
- a=8gLI3H-aZtYA:10 a=zol-OXSRhdHES_UYJygA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ "broonie@kernel.org" <broonie@kernel.org>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241108104958.2931943-25-claudiu.beznea.uj@bp.renesas.com>
+ <TYCPR01MB113329FE5E9E610BEF45DC001865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+ <c15bb621-6cd9-4be3-beec-20fecd411547@tuxon.dev>
+ <TY3PR01MB1134600DEBF0096A67950441086582@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <ce074521-7d4b-4514-9b2b-59b246686210@tuxon.dev>
+ <TY3PR01MB11346AF4A763ECF2D2F31588C86592@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB11346AF4A763ECF2D2F31588C86592@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am Tue, Nov 12, 2024 at 09:49:03AM +0100 schrieb Marek Behún:
-> On Tue, Nov 12, 2024 at 09:19:59AM +0100, Alexander Wilhelm wrote:
-> > Am Wed, Dec 16, 2020 at 11:41:19PM +0100 schrieb Pavel Machek:
-> > > Hi!
-> > > 
-> > > > In KSZ9131 PHY it is possible to control LEDs blink behavior via
-> > > > LED mode behavior and select registers. Add DTS properties plus handles
-> > > > of them inside micrel PHY driver.
-> > > > 
-> > > > I've some concerns about passing raw register values into LED mode
-> > > > select and behavior. It can be passed via array like in microchip
-> > > > driver(Documentation/devicetree/bindings/net/microchip,lan78xx.txt).
-> > > > There is the problem in this particular driver - there is a lot of other PHYs
-> > > > and led mode behavior/select states may intersect, that's the reason why
-> > > > I did it this way. Is there any good ways to make it look more
-> > > > properly?
-> > > 
-> > > Lets... not do this?
-> > > 
-> > > We have a LED subsystem which should probably control the LEDs... so
-> > > user can specify behaviours at run-time, instead of them being
-> > > hard-coded in the device tree.
-> > > 
-> > > Plus, LED subsystem will use same interface for networks LEDs as for
-> > > ... other LEDs.
-> > 
-> > Hi Pavel,
-> > 
-> > I would also like to control the LEDs via subsystem interface, but how I can
-> > configure those to be visible in 'sys/class/leds'? My LEDs are connected
-> > directly to KSZ9131RNX phy device and not to any of GPIO available on the CPU.
-> > Am I missing some DTS entries therefore?
+
+
+On 12.11.2024 11:03, Biju Das wrote:
+> Hi Claudiu,
 > 
-> The KSZ9131RNX driver needs to implement some LED methods, like
-> .led_brightness_set(), .led_blink_set(), .led_hw_is_supported(),
-> .led_hw_control_set(), .led_hw_control_get().
+>> -----Original Message-----
+>> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+>> Sent: 12 November 2024 08:31
+>> Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
+>>
+>> Hi, Biju,
+>>
+>> On 11.11.2024 13:30, Biju Das wrote:
+>>> Hi Claudiu,
+>>>
+>>>> -----Original Message-----
+>>>> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+>>>> Sent: 11 November 2024 11:20
+>>>> Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc:
+>>>> Enable SSI3
+>>>>
+>>>> Hi, Biju,
+>>>>
+>>>> On 10.11.2024 10:54, Biju Das wrote:
+>>>>> Hi Claudiu,
+>>>>>
+>>>>> Thanks for the patch.
+>>>>>
+>>>>>
+>>>>>> -----Original Message-----
+>>>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>>>>>> Sent: 08 November 2024 10:50
+>>>>>> Subject: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable
+>>>>>> SSI3
+>>>>>>
+>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>
+>>>>>> Enable SSI3.
+>>>>>>
+>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>> ---
+>>>>>>
+>>>>>> Changes in v2:
+>>>>>> - none
+>>>>>>
+>>>>>>  arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 26
+>>>>>> ++++++++++++++++++++
+>>>>>>  1 file changed, 26 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+>>>>>> b/arch/arm64/boot/dts/renesas/rzg3s-
+>>>>>> smarc.dtsi
+>>>>>> index 4aa99814b808..6dd439e68bd4 100644
+>>>>>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+>>>>>> @@ -64,6 +64,11 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
+>>>>>>  	};
+>>>>>>  };
+>>>>>>
+>>>>>
+>>>>> &audio_clk1 {
+>>>>>        assigned-clocks = <&versa3 xx>;
+>>>>>        clock-frequency = <11289600>; };
+>>>>
+>>>> audio_clk1 node is in the RZ/G3S dtsi to keep the compilation happy.
+>>>>
+>>>> For this board the audio clock1 for the SSI 3 is from <&versa3 2>.
+>>>>
+>>>> If we fill in the audio_clk1 here it will be useless, there will be
+>>>> no consumers for it and it is not available on board.
+>>>
+>>> As per SSI IP needs external clks AUDIO_CLK1 and AUDIO_CLK2.
+>>>
+>>> AUDIO_CLK1 is provided by versa3 generator and
+>>> AUDIO_CLK2 is provided by Crystal.
+>>>
+>>> Currently AUDIO_CLK2 it reports a frequency of 12288000 which is a
+>>> multiple of 48kHz whereas for AUDIO_CLK1, it reports a frequency of 0.
+>>
+>> Why? You mentioned above that "AUDIO_CLK1 is provided by versa3 generator".
 > 
-> Look for example at marvell.c driver, or broadcom.c.
+> Output from versa3 generator is connector to AUDIO_CLK1 
+
+According to schematics this is true.
+
+
+> that you described in
+> SoC dtsi node with the entries
 > 
-> Regarding DTS, look at linux/arch/arm/boot/dts/marvell/armada-370-rd.dts.
-> The ethernet-phy@0 node has leds subnode, describing the LEDs.
+> +	audio_clk1: audio-clk1 {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		/* This value must be overridden by boards that provide it. */
+> +		clock-frequency = <0>;
+> +		status = "disabled";
+> +	};
+
+That is a clock node, placeholder in the DTSI, to make compilation happy.
+
 > 
-> Marek
+> This needs to be overridden by board dts,
 
-Hi Marek,
+Only if used, otherwise is an useless node.
 
-thank you a lot. I think I got the main idea how the LED interface intended to
-work. The current linux master does not implement those callbacks for the micrel
-phy. I will look into implementing these functions if I am given enough time to
-do so.
+> where versa3 is providing this clk.
+> Currently there is no relation between this SoC device node and versa3 clk output for audio clk1.
 
+I may be wrong or I many not understand what you are trying to say, but
+isn't what this patch does? See this diff from this patch:
 
-Best regards
-Alexander Wilhelm
++&ssi3 {
++	clocks = <&cpg CPG_MOD R9A08G045_SSI3_PCLK2>,
++		 <&cpg CPG_MOD R9A08G045_SSI3_PCLK_SFR>,
++		 <&versa3 2>, <&audio_clk2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&ssi3_pins>, <&audio_clock_pins>;
++	status = "okay";
++};
 
