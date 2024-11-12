@@ -1,163 +1,195 @@
-Return-Path: <linux-kernel+bounces-405104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F21E9C4D03
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:04:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB409C4D0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D763728A332
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:04:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C1931F21A55
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A881206042;
-	Tue, 12 Nov 2024 03:04:29 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D701205E37;
+	Tue, 12 Nov 2024 03:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IunehSHa"
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F160D204F6B
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AB419DF62;
+	Tue, 12 Nov 2024 03:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731380668; cv=none; b=VEC9v4nzgTmkfgxdM0ybTZtJAGdGCjN4e24wY+9IvLksjbMzu505Pkooql90PZeG/d6457cuCwhmru2slcENCCy23/wGQ7jRDXScqkynUFr7JjBk2Hp6eIKtHDyiVod/riV17fHnAk0DWAZv3rFS9ONnt99xr64Ei8XjIJEY2gY=
+	t=1731380947; cv=none; b=VLqrBQe/tZDMrGBl/yKwqxhDeUM81y15r6I7TvljscyjkVITPWnjiO2smPpHEHOHMrZ6QCB+jvR+gOO3zcrh54A2jk1ZN5Wi8Z9ST2ymabecC7epGFNjFgVK2TDwxGXZhpB7APD5EGGppizNHmT+/9buVOkx/lrqeKRl6vTpfmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731380668; c=relaxed/simple;
-	bh=5E5zoCZfmHG5Vm9xFQpnYhFQgI57hRSIIDLfqT/WB54=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dzPKABxsPIYKpwT5nu0YOonBcd+81At4M0kyKydmC7gZSzYDmMDNgrszNIGHJtuTa1LLKuIeWTB5264R0g/fYz3ITaVZP7PzD0ViI5IOq1hlRNOqV9tjyHZtYRnoQZAccabphPIAMd5y8hjziHkLGXNBbGJ6xQkyfUil4FpXGCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so56304185ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:04:25 -0800 (PST)
+	s=arc-20240116; t=1731380947; c=relaxed/simple;
+	bh=gzs3+9anRTgv3Iily5Ls73R0Bqh3ICi77oS5UhFOCOo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Qo4oUz1BFvm0W3xJgKQLWA9R9yEWVD+kHM2JsmoFYYra3kgXdyQ1ce5rHlExkR236vZ/JAsOIWZyqH/462aB6moxdsLm33ug18MsAyB7sQ24qb/JMrCrJBhoNU6jXRr/ZlrAdZE1723r2+zsfwjb4bZo4kd8KYnBgavC2Nc2h3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IunehSHa; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-7ea8de14848so3130078a12.2;
+        Mon, 11 Nov 2024 19:09:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731380945; x=1731985745; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jxbojmtPvDfIuSrydnIbvZP6Ty3ccGTNat4sE7E/fQs=;
+        b=IunehSHafKdlLdgTDiD4anEy0g2+tp269+2YmEO6hbdpEw2qkLtHzT71xiYmL1vkc7
+         tyILSDiqQfgIhG6SbSMIeBHzvB1XJ6IUAL9H6qnlgNvi+ipN6IKgFLm1p/xlPr6gmYNz
+         xeRtbHbazTEvqwIXCmSO0dGoeH1csOdVm0fW9GnxVGrG3onJXfanjHUxg3lQ0q4NBAWA
+         awQBlqpYie1ff2aQseqgqJfGZ7wywkKhUrgpLw7hggOf8uSj/yVdoxRkq0/kKflthc7d
+         T3wSIMDAqD3TNU3Y7OmjTv/qbDcPsNQCplVjL2YW9tDXdbwF/dA4cWwvHtpAaJFeHm2+
+         dPiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731380665; x=1731985465;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LQfs/ir/rcLDEfv4UuYTTRFxsLhvu9ilv5C+meuZdIk=;
-        b=A6q0gfqIxFKC3UxXiUSc5g56coIEKaP/asE51QPftBQbSfxRJyJyZofAnokDShTI7/
-         /2D1n7i0lgReZK2C1g+dOBkUKQwyP+lvvUclg3hPLQ8xSMHj+8dPOVuPMwoaHFIl+y7P
-         +utW6Xh7YudQyixq+igOSNNUCf8Y3GRaNFovJlaTf4RFCm/JRwHsnzVq0s1xwTnj4VXY
-         +ANFbYL251Dywqvu+WS+1C9kELeOXo8JlF9wIE604G1IKibX5iVVJP4IuZA7PhoT/rhK
-         U5NMMkr0783QZP4j9qAl4cBhmLv9R7HN50VyPT+uMYnHba6YQntMWvz1xbngTZP7ZRLW
-         e9KA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNvX7tHR57bS1xgptM151Ax67yA2c28x1MkCVhFtGAhfAKaIc9W5xhd7ucA1Svk+B2G4BmKmAZ/vE6JLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbE14T3pDV24TN88yov5wav32LeNhJWBeiW19BAQ8++LsmNL50
-	ZkgMDkrMnKIYRFFtYQG7zQ5CoJL0Sslle1VBIe0jIwfwcpux7hLWy/iaRI0odC0SuW989PlLOMb
-	AwNVd+PcZf/cCODFrn2lpTCqWjcHxKPf3zB25ShkvPAEJwtDOSLA5WpY=
-X-Google-Smtp-Source: AGHT+IElBI7J4GDNJvBU94uMTqjTbApmid9zVXwv/FIVmUSnO9KB8WFYmTp1OC5O9JiVO/KsMVHjltKoTZoDsuApGyrllXsFWFQ0
+        d=1e100.net; s=20230601; t=1731380945; x=1731985745;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jxbojmtPvDfIuSrydnIbvZP6Ty3ccGTNat4sE7E/fQs=;
+        b=fqH3Stf3Lf6hG+q2BUviJJ9yYR7jYPFZZ+MEamhUvchR3vyX8Sad9Fk8a3IBmFh1qN
+         6KuoYjIHKD9EHlQAXA8vqhKhSOoSc0DjMVuoNh4TmRLE9iwKimdRV7/ggNAKH1Lbr9Qf
+         SLe1W1j/YKkR/khzHEM5/E0hFEXOBBafzGnnqSyHsa96+RFJOlLwyKCoq0hB90MWmWI2
+         4EwOC97r+m+0SmCuVtiUmPZ4lBypP5mKEY0/rir/hjZrKBnxkaGPQuhWiwKZl8KPXmi1
+         bGFD+mZqCaO79PkI3Siiyah7TwHbWOqJQpaWoHXOMme9vXuo1xyFZ6jNzwe+Uivjojpw
+         Bffw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwR4s2QqcmqqbVwABV540x+p8QIrjav4xJC3sUdhza7iYe3MoTx89XJ+RQ2Yzes0CEmPW5AS7AV07ZzxfX@vger.kernel.org, AJvYcCWhCTVwwx/gTx6VU5imlM73YVDYBPv5bFn9HfukLtMDmakNIsHpdP1TFl91CkGb0vAoBN5ECA1Zes1X@vger.kernel.org, AJvYcCXlSRmeudXVeiS63ikv1Wr2HvjfjxxSgVHoxRLd0Zh0eTbEkC0nXD+KnYLU1p3GtL4wrauuXJmZuG3/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBWveJw/6wmJTZnOKyqetpImtBHXqBpml8rrcX7YXkG3ZkOn89
+	xdi45f5xc27d8qc2l87bJB/34mZbro9idm5PKNkEhYZz4L4dhNsRKDigtzqptJoC5g==
+X-Google-Smtp-Source: AGHT+IFoUAjVIGTXbKt7DslLUHLm4w0RUW3celgY5+JUErt1NqK2BrRy8QgwIoCq10JGItaM5Q+17Q==
+X-Received: by 2002:a05:6a20:a108:b0:1db:dc13:735e with SMTP id adf61e73a8af0-1dc22b57621mr22128698637.30.1731380945508;
+        Mon, 11 Nov 2024 19:09:05 -0800 (PST)
+Received: from [127.0.1.1] ([120.211.145.167])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079a3a9csm9873447b3a.110.2024.11.11.19.09.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 19:09:05 -0800 (PST)
+From: Troy Mitchell <troymitchell988@gmail.com>
+X-Google-Original-From: Troy Mitchell <TroyMitchell988@gmail.com>
+Subject: [PATCH v3 0/2] riscv: spacemit: add i2c support to K1 SoC
+Date: Tue, 12 Nov 2024 11:07:38 +0800
+Message-Id: <20241112-k1-i2c-master-v3-0-5005b70dc208@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c264:0:b0:3a0:a71b:75e5 with SMTP id
- e9e14a558f8ab-3a6f1a039damr168406205ab.7.1731380664952; Mon, 11 Nov 2024
- 19:04:24 -0800 (PST)
-Date: Mon, 11 Nov 2024 19:04:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6732c5b8.050a0220.1fb99c.0161.GAE@google.com>
-Subject: [syzbot] [btrfs?] WARNING in btrfs_lookup_extent_info
-From: syzbot <syzbot+c2d0747453b5dddb214a@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHrGMmcC/03OQU7DMBCF4atEXjOVPXbcOKteoLvuUBeO89JYJ
+ A04pgJVvTsOIMHyaTSf/rtYkSJW0VZ3kXCLa1yuZeinSoTRXy+g2JctWLJRUit6URQ50OzXjEQ
+ D9sO+k32A06L8vCYM8ePbez6XPaRlpjwm+H8KN7LWzHKnjeVGk6JTWj6PMYcR0+Sa5nCZfZx2Y
+ Zl/zYS395KWf+C/srbaRGnZbl1SUefXGKjPpLzXCkAXem5v9eaUG6iYc8xt1cCxC11tLGA4OG9
+ Vz2bwsNLKGg5aOda1EefH4wv5hfguJQEAAA==
+To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Troy Mitchell <troymitchell988@gmail.com>
+Cc: linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Troy Mitchell <TroyMitchell988@gmail.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731380939; l=3842;
+ i=TroyMitchell988@gmail.com; h=from:subject:message-id;
+ bh=gzs3+9anRTgv3Iily5Ls73R0Bqh3ICi77oS5UhFOCOo=;
+ b=JvPvC2GL3etgvFd/M22MaGFDmFSc4l8snAfZvarYe7eSru1zOAS7/H1u2aXvS7mB04H3IX2nn
+ QJb/ywzquJRDn+wPiTmMBovkK/FO5BWSKjrQKG19W78EvsGUne2pxpX
+X-Developer-Key: i=TroyMitchell988@gmail.com; a=ed25519;
+ pk=2spEMGBd/Wkpd36N1aD9KFWOk0aHrhVxZQt+jxLXVC0=
 
-Hello,
+Hi all,
 
-syzbot found the following issue on:
+This patch implements I2C driver for the SpacemiT K1 SoC,
+providing basic support for I2C read/write communication which
+compatible with standard I2C bus specifications.
 
-HEAD commit:    906bd684e4b1 Merge tag 'spi-fix-v6.12-rc6' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1267fd5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=64aa0d9945bd5c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=c2d0747453b5dddb214a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+In this version, the driver defaults to use fast-speed-mode and
+interrupts for transmission, and does not support DMA, high-speed mode, or FIFO.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The docs of I2C can be found here, in chapter 16.1 I2C [1]
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-906bd684.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/88c5c4ba7e33/vmlinux-906bd684.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/07094e69f47b/bzImage-906bd684.xz
+Link: https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#part5 [1]
+---
+Change in v3:
+- Patch #1:
+	- Change the maxItems of reg from 2 to 1 in properties
+	- Modify reg in dts example 
+	- Changed the enum selection for clock-frequency to a range,
+	  setting a minimum value of 1 and a maximum value of 3,300,000.
+- Patch #2:
+	- Drop unused judgement in `spacemit_i2c_xfer_msg`
+	- Fix the dangling else warning in `spacemit_i2c_is_last_msg`
+	- Fix the error check for `i2c->base`
+	- Modify Kconfig dependencies
+Link to v2:
+https://lore.kernel.org/all/20241028053220.346283-1-TroyMitchell988@gmail.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c2d0747453b5dddb214a@syzkaller.appspotmail.com
+Change in v2:
+- Patch #1:
+	- Change the maxItems of reg from 1 to 2 in properties
+	- Change 'i2c' to 'I2C' in the commit message.
+	- Drop fifo-disable property
+	- Drop alias in dts example
+	- Move `unevaluatedProperties` after `required:` block
+- Patch #2:
+	- Alphabetize Makefile and Kconfig
+	- Change `.remove_new` to `.remove` in `struct platform_driver`
+	- Change `dev_alert` to `dev_warn_ratelimited` in `spacemit_i2c_bus_reset`
+	- Change `spacemit_i2c_read/write_reg` to `read/writel`
+	- Change `spacemit_i2c_dt_match` to `spacemit_i2c_of_match`
+	- Clean up code flow
+	- Fix unnecessary line wraps
+	- Move `spacemit_i2c_handle_err` to a suitable location
+	- Modify Kconfig dependencies
+	- Use `PTR_ERR(i2c->base)` directly as the `dev_err_probe` parameter instead of
+	  the intermediate variable
+Link to v1:
+https://lore.kernel.org/all/20241015075134.1449458-1-TroyMitchell988@gmail.com/
+---
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5340 at fs/btrfs/extent-tree.c:212 btrfs_lookup_extent_info+0x1011/0x11d0 fs/btrfs/extent-tree.c:212
-Modules linked in:
-CPU: 0 UID: 0 PID: 5340 Comm: syz.0.0 Not tainted 6.12.0-rc6-syzkaller-00169-g906bd684e4b1 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:btrfs_lookup_extent_info+0x1011/0x11d0 fs/btrfs/extent-tree.c:212
-Code: 8b ff ff ff 48 8b 7c 24 70 48 c7 c6 2c 9c 13 8e ba ac 00 00 00 b9 8b ff ff ff e8 aa 76 14 08 e9 62 fd ff ff e8 a0 b1 e4 fd 90 <0f> 0b 90 e9 ba fc ff ff 44 89 f1 80 e1 07 38 c1 0f 8c da f0 ff ff
-RSP: 0018:ffffc9000d386aa0 EFLAGS: 00010293
-RAX: ffffffff83b028c0 RBX: ffffc9000d386ce0 RCX: ffff888000192440
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000d386c40 R08: ffffffff83b02575 R09: 1ffff1100864306e
-R10: dffffc0000000000 R11: ffffed100864306f R12: ffff88803ead443c
-R13: dffffc0000000000 R14: 0000000000000000 R15: ffff888043218370
-FS:  00007f42babdd6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f42babdcf98 CR3: 0000000043b68000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- update_ref_for_cow+0x5a4/0x11f0 fs/btrfs/ctree.c:440
- btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
- btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
- btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
- btrfs_insert_empty_items+0x9c/0x1a0 fs/btrfs/ctree.c:4314
- btrfs_insert_empty_item fs/btrfs/ctree.h:669 [inline]
- insert_with_overflow+0x153/0x400 fs/btrfs/dir-item.c:35
- btrfs_insert_dir_item+0x241/0x640 fs/btrfs/dir-item.c:135
- btrfs_add_link+0x284/0xbe0 fs/btrfs/inode.c:6513
- btrfs_create_new_inode+0x141d/0x1f70 fs/btrfs/inode.c:6451
- btrfs_create_common+0x1d4/0x2e0 fs/btrfs/inode.c:6587
- lookup_open fs/namei.c:3595 [inline]
- open_last_lookups fs/namei.c:3694 [inline]
- path_openat+0x1c03/0x3590 fs/namei.c:3930
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_creat fs/open.c:1508 [inline]
- __se_sys_creat fs/open.c:1502 [inline]
- __x64_sys_creat+0x123/0x170 fs/open.c:1502
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f42bb17e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f42babdd038 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
-RAX: ffffffffffffffda RBX: 00007f42bb336130 RCX: 00007f42bb17e719
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000000
-RBP: 00007f42bb1f139e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f42bb336130 R15: 00007ffdd4424258
- </TASK>
+Troy Mitchell (2):
+  dt-bindings: i2c: spacemit: add support for K1 SoC
+  i2c: spacemit: add support for SpacemiT K1 SoC
 
+ .../bindings/i2c/spacemit,k1-i2c.yaml         |  51 ++
+ drivers/i2c/busses/Kconfig                    |  18 +
+ drivers/i2c/busses/Makefile                   |   1 +
+ drivers/i2c/busses/i2c-k1.c                   | 658 ++++++++++++++++++
+ 4 files changed, 728 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
+ create mode 100644 drivers/i2c/busses/i2c-k1.c
+
+--
+2.34.1
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Troy Mitchell (2):
+      dt-bindings: i2c: spacemit: add support for K1 SoC
+      i2c: spacemit: add support for SpacemiT K1 SoC
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ .../devicetree/bindings/i2c/spacemit,k1-i2c.yaml   |  52 ++
+ drivers/i2c/busses/Kconfig                         |  19 +
+ drivers/i2c/busses/Makefile                        |   1 +
+ drivers/i2c/busses/i2c-k1.c                        | 656 +++++++++++++++++++++
+ 4 files changed, 728 insertions(+)
+---
+base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+change-id: 20241031-k1-i2c-master-fe7f7b0dce93
+prerequisite-change-id: 20240626-k1-01-basic-dt-1aa31eeebcd2:v5
+prerequisite-patch-id: 47dcf6861f7d434d25855b379e6d7ef4ce369c9c
+prerequisite-patch-id: 77787fe82911923aff15ccf565e8fa451538c3a6
+prerequisite-patch-id: b0bdb1742d96c5738f05262c3b0059102761390b
+prerequisite-patch-id: 3927d39d8d77e35d5bfe53d9950da574ff8f2054
+prerequisite-patch-id: a98039136a4796252a6029e474f03906f2541643
+prerequisite-patch-id: c95f6dc0547a2a63a76e3cba0cf5c623b212b4e6
+prerequisite-patch-id: 66e750e438ee959ddc2a6f0650814a2d8c989139
+prerequisite-patch-id: 29a0fd8c36c1a4340f0d0b68a4c34d2b8abfb1ab
+prerequisite-patch-id: 0bdfff661c33c380d1cf00a6c68688e05f88c0b3
+prerequisite-patch-id: 99f15718e0bfbb7ed1a96dfa19f35841b004dae9
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Best regards,
+-- 
+Troy Mitchell <TroyMitchell988@gmail.com>
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
