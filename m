@@ -1,290 +1,360 @@
-Return-Path: <linux-kernel+bounces-405389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D199C50B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:34:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B179C50EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BB2BB295CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:32:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FAD8B249A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0A120BB27;
-	Tue, 12 Nov 2024 08:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51E420B7F0;
+	Tue, 12 Nov 2024 08:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="LB4TeJ2r"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cYQ4xslB"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E825120A5E3
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD4920A5FE
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731400292; cv=none; b=lghVaZwENIvtrHzKCzpqKMDa0556WGLyK8QQVNlsdWfd0/iw6xoMw2NtbEo8dLNQFiGeAzPuz1GcfmqKClFlH8IRX03KM29bk8Q0q2Wf5FpH+UuAjaePVqHeSPsyMpNEKnce5C9a6md0yL8pBqw66VBesBFuubYJKJIzbC7+VDo=
+	t=1731400380; cv=none; b=PUUD099/VYc4BuypISRKhAAzsQ1TjtuKYt2rSGqxQ5XOhMhPyQyhmV+ydhP6UB2E6a7jMzp1mIW3B+G/toHY9zJmzmf4gKaUuv3jHg0+gKn0ef7v3jfWXGcAjmkDNDJ1wb2xMbtxl8/m1Y1JBUSXxjQCv0Q2jzi1e8TpLfHHIEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731400292; c=relaxed/simple;
-	bh=xXCEJcHrEMjxlrj3J5Wc7ZCHF18/8gNCnF+VCp09UQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AQV7UpIeqZvCZSJk9hLF1CmSvgVCGXB2/LsUBXbKihxxwShOb68xN9LAXIT+9Y3X0j02XAZHXQSm7lx98efN8T+4xSAsRcg3xa9UhEq0tAJN3H4IEJ8jZ7Ry0qrxE7bhseouvAs073YROyF4cL23sF5woujuRzY55Cnotm/HyQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=LB4TeJ2r; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so60657101fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:31:28 -0800 (PST)
+	s=arc-20240116; t=1731400380; c=relaxed/simple;
+	bh=uJwb0TTl57hPGZjoejoO6FoBrOxbaib0DxAlcH9leAk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=K/km51HGCBY1/85Nah8fC8eCIwUK37cY7ZRnevAZY+bOkawELgps9mD9DgNV5N9/UhiWDBIxVrUox4kpEDpr+gPOi8/9thYnBIS3dKrB1tY/bQIFIBucbghHVp+YBdb1AUwIxvQYFZn2uxdkGeno91QmBZI8/PleivRWyvdDiWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cYQ4xslB; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53a007743e7so6298065e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:32:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731400287; x=1732005087; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rAnhdJuivGo9yNtQ2A0g972HDr7huhPiocLItX4d5N8=;
-        b=LB4TeJ2r6klLgmNGmftgm1CuicnjPfWdd6l/EXobEKoPRyzjXSXGerHrh3sJ7v/YeK
-         w5//cC/6j4qzo0PkYHSXV7xDhpjKsClqS29urublNc1CbZavPcVFF1VPkg9KbiYsM4gF
-         T5wkH1fwX5ep9xaxCPY/plyduJ6y2V4tK9CyIq+cLaT/avR6cHX6Qxrq5f1yXsY7YmEd
-         Rg1WDtcKMAtSrs77zCAHh9Clq18x4rV6EOQdSfQgVsiomFQsHZOKSmRS4rq4yjXlBNf6
-         lggXOVe39da3in3+QET69WVVmHw9mSDJboSmt5i31FIANOo33XQ9PEunwzXDEjIulTUw
-         0SgQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731400374; x=1732005174; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MpOmmhEgCIw/0RfkRHrc8gag9KJhea6HQz3Fc6gj8mk=;
+        b=cYQ4xslBmppGQExwWde4gLw7a3viRGeKNT7Puohhd7drPZYaNGeQhATKlzmormZLZn
+         +hdrBX26vl0NcpekepDCUCVysXWjQgt9W8QiAGj0B0XvWqwMzdrviArut6bt7srNwaan
+         HWaUA+gaieKt9jLgNOb+EmK2NdvSSsxQOOZPPM24u5VjTtPTZaXL2yKQnz8G8RItnt9u
+         X4JcVYqFtPWSvTdO5o6CUvUU8v0sOfnhuTLk0I6cAqdPWVatM1EE8giCyOvymJ1jcJze
+         sRfmZ6UhZV2GLQly4JbzjV+YgbsaipMkksr193LK7YZbCmjGGrF5cLkSdoJZbdK3AXa4
+         jbZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731400287; x=1732005087;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rAnhdJuivGo9yNtQ2A0g972HDr7huhPiocLItX4d5N8=;
-        b=SwvBBcVA2JnyWja/rtfGjgoQEARX5kA0f5D+z2aKGh5WJBdK8FN62eRKO4c1HzzQ5u
-         Auar2pi8pFPua4ZUao5HiyDtB9RieY+OuXwZPRe3oiV8BEHvJgltv3j2TGnBmwWy4DZW
-         JLFCrkgEhSj8GGecK35ThjOmOi+ISG1+cwCIKLytFkUUZ5kL9sh1DVfzxtGbBqCc4o7r
-         iHP+OnTkXQBya2N20Qmohm2MJtO6FrB/qUD+XacWYC7VBtXpC9X6idWCLQk1RI7wyyhY
-         sEwHm8t9lCWaW9wZ+L3uWkTWZ+/F7hxfB/3BbeQ5BA/XmTL9rpPetE9145l5kLgcn53M
-         W4ag==
-X-Forwarded-Encrypted: i=1; AJvYcCU2aDIRbJCKWlmjC3y+jrUr4Y0VG5KFUBgXAD4pfnicfMY8UE2n0YLQ9N9o90AwqNjXiKOQEZrNCD+UK8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2OlXzrvH3ZazFNGiIv4198u6V/TvugPTVEksjHKxZowm4LqTC
-	CmhX16XbDQmJ+uTHx2xU5V2k+Cp0VUFbSl9RnySFIY2dr62ZeiKkMQqmo1crq7k=
-X-Google-Smtp-Source: AGHT+IErWU2LiF5Ga+iyyaA3F58LkgbkpQmJW54uHLJyzIyElx/+t9OewFq3ElClX5zbBzsEIKDxIg==
-X-Received: by 2002:a2e:9a0a:0:b0:2f0:27da:6864 with SMTP id 38308e7fff4ca-2ff201bc4a3mr91446101fa.17.1731400286863;
-        Tue, 12 Nov 2024 00:31:26 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0def7e1sm689117266b.148.2024.11.12.00.31.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 00:31:26 -0800 (PST)
-Message-ID: <ce074521-7d4b-4514-9b2b-59b246686210@tuxon.dev>
-Date: Tue, 12 Nov 2024 10:31:22 +0200
+        d=1e100.net; s=20230601; t=1731400374; x=1732005174;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MpOmmhEgCIw/0RfkRHrc8gag9KJhea6HQz3Fc6gj8mk=;
+        b=ZFupYs3rTExoXp2Lm+ZHB36luPB7BXHH7Os3yIrZBT8gIznmSPmwvM3BtpYrX+Je42
+         tzErvaHSqB/tmvDn3sYcr82PanryYks0EYUm+O1RHU4CLymmEvGLt1Af+R6bo7RqAaRp
+         cL9oHhjl8h7GHsKD/Rf3HxjU7IxUhX7625lVI4MG/XAEkzeLpvleg/NkP/fmrZ2Mnt1r
+         9/5Ze7hB2xZQSo2V7AsaKfUKkiCciAzzS5Ro7Zif4Dz5wbEfsS3KIQ44+RsJiKTpSry1
+         hkXQuz6k0trpYzaP0pxFjqWVzDTWCaIb5cq3Ii6DGQyHWlg/88PIWJs6uMyZo/vT3dSh
+         noQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvWQEhkb6gNMPKin4Iwr04nllJV7GctMD90L0PxRxFBAGZLS1YiIBejc1Wc4r7c2s1e+2TYGl0aIZX56s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkBy8wWG8Yd82d+EPIv0Py7j0NqpNlkxHf4z/s509Un17qif38
+	I7P2kBI2yTNxqB194HZh7t4swFKDyPReJiK9PNn0S3cOwmrlEuoNC7tY9h7h5S8=
+X-Google-Smtp-Source: AGHT+IFDkMH3817tueatY05ODRpjlMk98rQ1z0j0irToOsmILa1mIIxBQeYG9cqGFBBCc961D8pddw==
+X-Received: by 2002:a05:6512:2393:b0:53b:4bc0:72aa with SMTP id 2adb3069b0e04-53d862431b0mr7092845e87.34.1731400374216;
+        Tue, 12 Nov 2024 00:32:54 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:50f9:1df6:c2b9:a468])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b053047dsm200262155e9.3.2024.11.12.00.32.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 00:32:53 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
+ Hilman <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/3] clk: meson: Fix failure of glitch-free mux
+ switching
+In-Reply-To: <20241111-fix_glitch_free-v2-2-0099fd9ad3e5@amlogic.com> (Chuan
+	Liu via's message of "Mon, 11 Nov 2024 11:37:02 +0800")
+References: <20241111-fix_glitch_free-v2-0-0099fd9ad3e5@amlogic.com>
+	<20241111-fix_glitch_free-v2-2-0099fd9ad3e5@amlogic.com>
+Date: Tue, 12 Nov 2024 09:32:53 +0100
+Message-ID: <1j8qto3l8q.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
- "broonie@kernel.org" <broonie@kernel.org>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
- "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
- <20241108104958.2931943-25-claudiu.beznea.uj@bp.renesas.com>
- <TYCPR01MB113329FE5E9E610BEF45DC001865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <c15bb621-6cd9-4be3-beec-20fecd411547@tuxon.dev>
- <TY3PR01MB1134600DEBF0096A67950441086582@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB1134600DEBF0096A67950441086582@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hi, Biju,
+On Mon 11 Nov 2024 at 11:37, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
 
-On 11.11.2024 13:30, Biju Das wrote:
-> Hi Claudiu,
-> 
->> -----Original Message-----
->> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->> Sent: 11 November 2024 11:20
->> Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
->>
->> Hi, Biju,
->>
->> On 10.11.2024 10:54, Biju Das wrote:
->>> Hi Claudiu,
->>>
->>> Thanks for the patch.
->>>
->>>
->>>> -----Original Message-----
->>>> From: Claudiu <claudiu.beznea@tuxon.dev>
->>>> Sent: 08 November 2024 10:50
->>>> Subject: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable
->>>> SSI3
->>>>
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> Enable SSI3.
->>>>
->>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>> ---
->>>>
->>>> Changes in v2:
->>>> - none
->>>>
->>>>  arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 26
->>>> ++++++++++++++++++++
->>>>  1 file changed, 26 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
->>>> b/arch/arm64/boot/dts/renesas/rzg3s-
->>>> smarc.dtsi
->>>> index 4aa99814b808..6dd439e68bd4 100644
->>>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
->>>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
->>>> @@ -64,6 +64,11 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
->>>>  	};
->>>>  };
->>>>
->>>
->>> &audio_clk1 {
->>>        assigned-clocks = <&versa3 xx>;
->>>        clock-frequency = <11289600>;
->>> };
->>
->> audio_clk1 node is in the RZ/G3S dtsi to keep the compilation happy.
->>
->> For this board the audio clock1 for the SSI 3 is from <&versa3 2>.
->>
->> If we fill in the audio_clk1 here it will be useless, there will be no consumers for it and it is not
->> available on board.
-> 
-> As per SSI IP needs external clks AUDIO_CLK1 and AUDIO_CLK2. 
-> 
-> AUDIO_CLK1 is provided by versa3 generator and
-> AUDIO_CLK2 is provided by Crystal.
-> 
-> Currently AUDIO_CLK2 it reports a frequency of 12288000 which is a multiple of 48kHz
-> whereas for AUDIO_CLK1, it reports a frequency of 0. 
+> From: Chuan Liu <chuan.liu@amlogic.com>
+>
+> glitch-free mux has two clock channels (channel 0 and channel 1) with
+> the same configuration.Channel 0 of glitch-free mux is not only the
+> clock source for the mux, but also the working clock for glitch free
+> mux. Therefore, when glitch-free mux switches, it is necessary to ensure
+> that channel 0 has a clock input, otherwise glitch free mux will not
+> work and cannot switch to the target channel. So adding flag
+> CLK_OPS_PARENT_ENABLE ensures that both channels 0 and 1 are enabled
+> when mux switches.
+>
+> In fact, we just need to make sure that channel 0 is enabled. The
+> purpose of CLK_OPS_PARENT_ENABLE may not be to solve our situation, but
+> adding this flag does solve our current problem.
+>
+> Fixes: 84af914404db ("clk: meson: a1: add Amlogic A1 Peripherals clock
+> controller driver")
 
-Why? You mentioned above that "AUDIO_CLK1 is provided by versa3 generator".
-It will report the frequency provided by the versa3 clock generator, isn't it?
+Fix your mailer please
 
-> By defining the node, it will report as the value as
-> 11289600 which is a multiple of 44.1kHZ.
+> Fixes: 14ebb3154b8f ("clk: meson: axg: add Video Clocks")
+> Fixes: f06ac3ed04e8 ("clk: meson: c3: add c3 clock peripherals controller
+> driver")
+> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+> Fixes: fac9a55b66c9 ("clk: meson-gxbb: Add MALI clocks")
+> Fixes: 74e1f2521f16 ("clk: meson: meson8b: add the GPU clock tree")
+> Fixes: 57b55c76aaf1 ("clk: meson: S4: add support for Amlogic S4 SoC
+> peripheral clock controller")
 
-Defining the node as you proposed have no meaning as it will be anyway
-disabled (see the dtsi) and will appear nowhere as no driver will be probed
-for it.
+There is no reason to mix up so many things together.
 
-Defining it's frequency and enabling will have no meaning either for the
-SSI3, as the SSI3 is connected to <&versa3 2> (as of the binding proposed
-in this patch).
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> ---
+>  drivers/clk/meson/a1-peripherals.c |  4 ++--
+>  drivers/clk/meson/axg.c            |  4 ++--
+>  drivers/clk/meson/c3-peripherals.c |  2 +-
+>  drivers/clk/meson/g12a.c           |  6 +++---
+>  drivers/clk/meson/gxbb.c           |  6 +++---
+>  drivers/clk/meson/meson8b.c        | 21 ++++++++++++++++++---
+>  drivers/clk/meson/s4-peripherals.c | 12 ++++++------
+>  7 files changed, 35 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
+> index 7aa6abb2eb1f..4b9686916b17 100644
+> --- a/drivers/clk/meson/a1-peripherals.c
+> +++ b/drivers/clk/meson/a1-peripherals.c
+> @@ -489,7 +489,7 @@ static struct clk_regmap dspa_sel = {
+>  			&dspa_b.hw,
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -635,7 +635,7 @@ static struct clk_regmap dspb_sel = {
+>  			&dspb_b.hw,
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> index 1b08daf579b2..a1217dff40fa 100644
+> --- a/drivers/clk/meson/axg.c
+> +++ b/drivers/clk/meson/axg.c
+> @@ -1144,7 +1144,7 @@ static struct clk_regmap axg_vpu = {
+>  			&axg_vpu_1.hw
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_NO_REPARENT,
+> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -1260,7 +1260,7 @@ static struct clk_regmap axg_vapb_sel = {
+>  			&axg_vapb_1.hw
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_NO_REPARENT,
+> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
+> index 7dcbf4ebee07..4566c2aeeb19 100644
+> --- a/drivers/clk/meson/c3-peripherals.c
+> +++ b/drivers/clk/meson/c3-peripherals.c
+> @@ -1431,7 +1431,7 @@ static struct clk_regmap hcodec = {
+>  		.ops = &clk_regmap_mux_ops,
+>  		.parent_data = hcodec_parent_data,
+>  		.num_parents = ARRAY_SIZE(hcodec_parent_data),
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index d3539fe9f7af..4d3b064d09fc 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -2812,7 +2812,7 @@ static struct clk_regmap g12a_vpu = {
+>  			&g12a_vpu_1.hw,
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_NO_REPARENT,
+> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -3105,7 +3105,7 @@ static struct clk_regmap g12a_vapb_sel = {
+>  			&g12a_vapb_1.hw,
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_NO_REPARENT,
+> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -4039,7 +4039,7 @@ static struct clk_regmap g12a_mali = {
+>  		.ops = &clk_regmap_mux_ops,
+>  		.parent_hws = g12a_mali_parent_hws,
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index 262c318edbd5..dfa9ffc61b41 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -1132,7 +1132,7 @@ static struct clk_regmap gxbb_mali = {
+>  		.ops = &clk_regmap_mux_ops,
+>  		.parent_hws = gxbb_mali_parent_hws,
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -1613,7 +1613,7 @@ static struct clk_regmap gxbb_vpu = {
+>  			&gxbb_vpu_1.hw
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_NO_REPARENT,
+> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -1748,7 +1748,7 @@ static struct clk_regmap gxbb_vapb_sel = {
+>  			&gxbb_vapb_1.hw
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_NO_REPARENT,
+> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index e4b474c5f86c..0af76b527e5b 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -1997,7 +1997,22 @@ static struct clk_regmap meson8b_mali = {
+>  			&meson8b_mali_1.hw,
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		/*
+> +		 * glitch-free mux has two clock channels (channel 0 and
+> +		 * channel 1) with the same configuration.Channel 0 of
+> +		 * glitch-free mux is not only the clock source for the mux,
+> +		 * but also the working clock for glitch free mux. Therefore,
+> +		 * when glitch-free mux switches, it is necessary to ensure that
+> +		 * channel 0 has a clock input, otherwise glitch free mux will
+> +		 * not work and cannot switch to the target channel. So adding
+> +		 * flag CLK_OPS_PARENT_ENABLE ensures that both channels 0 and 1
+> +		 * are enabled when mux switches.
+> +		 *
+> +		 * In fact, we just need to make sure that channel 0 is enabled.
+> +		 * The purpose of CLK_OPS_PARENT_ENABLE may not be to solve our
+> +		 * situation, but adding this flag does solve our current problem.
+> +		 */
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -2252,7 +2267,7 @@ static struct clk_regmap meson8b_vpu = {
+>  			&meson8b_vpu_1.hw,
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -2364,7 +2379,7 @@ static struct clk_regmap meson8b_vdec_1 = {
+>  			&meson8b_vdec_1_2.hw,
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+> index c930cf0614a0..79e0240d58e6 100644
+> --- a/drivers/clk/meson/s4-peripherals.c
+> +++ b/drivers/clk/meson/s4-peripherals.c
+> @@ -1404,7 +1404,7 @@ static struct clk_regmap s4_mali_mux = {
+>  		.ops = &clk_regmap_mux_ops,
+>  		.parent_hws = s4_mali_parent_hws,
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -1536,7 +1536,7 @@ static struct clk_regmap s4_vdec_mux = {
+>  		.ops = &clk_regmap_mux_ops,
+>  		.parent_hws = s4_vdec_mux_parent_hws,
+>  		.num_parents = ARRAY_SIZE(s4_vdec_mux_parent_hws),
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -1656,7 +1656,7 @@ static struct clk_regmap s4_hevcf_mux = {
+>  		.ops = &clk_regmap_mux_ops,
+>  		.parent_hws = s4_hevcf_mux_parent_hws,
+>  		.num_parents = ARRAY_SIZE(s4_hevcf_mux_parent_hws),
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -1774,7 +1774,7 @@ static struct clk_regmap s4_vpu = {
+>  			&s4_vpu_1.hw,
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -1989,7 +1989,7 @@ static struct clk_regmap s4_vpu_clkc_mux = {
+>  		.ops = &clk_regmap_mux_ops,
+>  		.parent_hws = s4_vpu_mux_parent_hws,
+>  		.num_parents = ARRAY_SIZE(s4_vpu_mux_parent_hws),
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
+> @@ -2115,7 +2115,7 @@ static struct clk_regmap s4_vapb = {
+>  			&s4_vapb_1.hw
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
 
-> 
-> From the schematic we know that versa 3 is providing this clock and the audio_clk1 has
-> a frequency of "11289600".
-
-<&versa3 2> connected to AUDIO_CLK1 pin is configured at 11.2896MHz in this
-series. See patch 22/25:
-
-+	versa3: clock-generator@68 {
-+		compatible = "renesas,5l35023";
-+		reg = <0x68>;
-+		clocks = <&x3_clk>;
-+		#clock-cells = <1>;
-+		assigned-clocks = <&versa3 0>,
-+				  <&versa3 1>,
-+				  *<&versa3 2>*,
-+				  <&versa3 3>,
-+				  <&versa3 4>,
-+				  <&versa3 5>;
-+		assigned-clock-rates = <24000000>,
-+				       <12288000>,
-+				       *<11289600>*,
-+				       <25000000>,
-+				       <100000000>,
-+				       <100000000>;
-+		renesas,settings = [
-+		  80 00 11 19 4c 42 dc 2f 06 7d 20 1a 5f 1e f2 27
-+		  00 40 00 00 00 00 00 00 06 0c 19 02 3f f0 90 86
-+		  a0 80 30 30 9c
-+		];
-+	};
-
-Thank you,
-Claudiu Beznea
-
-> 
-> Cheers,
-> Biju
-> 
-> 
->>
->> Thank you,
->> Claudiu Beznea
->>
->>>
->>> Maybe add audio_clk1, so that it described properly in clock tree??
->>>
->>> Cheers,
->>> Biju
->>>
->>>> +&audio_clk2 {
->>>> +	clock-frequency = <12288000>;
->>>> +	status = "okay";
->>>> +};
->>>> +
->>>>  &i2c0 {
->>>>  	status = "okay";
->>>>
->>>> @@ -94,6 +99,11 @@ da7212: codec@1a {  };
->>>>
->>>>  &pinctrl {
->>>> +	audio_clock_pins: audio-clock {
->>>> +		pins = "AUDIO_CLK1", "AUDIO_CLK2";
->>>> +		input-enable;
->>>> +	};
->>>> +
->>>>  	key-1-gpio-hog {
->>>>  		gpio-hog;
->>>>  		gpios = <RZG2L_GPIO(18, 0) GPIO_ACTIVE_LOW>; @@ -151,6 +161,13 @@ cd {
->>>>  			pinmux = <RZG2L_PORT_PINMUX(0, 2, 1)>; /* SD1_CD */
->>>>  		};
->>>>  	};
->>>> +
->>>> +	ssi3_pins: ssi3 {
->>>> +		pinmux = <RZG2L_PORT_PINMUX(18, 2, 8)>, /* BCK */
->>>> +			 <RZG2L_PORT_PINMUX(18, 3, 8)>, /* RCK */
->>>> +			 <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
->>>> +			 <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
->>>> +	};
->>>>  };
->>>>
->>>>  &scif0 {
->>>> @@ -171,3 +188,12 @@ &sdhi1 {
->>>>  	max-frequency = <125000000>;
->>>>  	status = "okay";
->>>>  };
->>>> +
->>>> +&ssi3 {
->>>> +	clocks = <&cpg CPG_MOD R9A08G045_SSI3_PCLK2>,
->>>> +		 <&cpg CPG_MOD R9A08G045_SSI3_PCLK_SFR>,
->>>> +		 <&versa3 2>, <&audio_clk2>;
->>>> +	pinctrl-names = "default";
->>>> +	pinctrl-0 = <&ssi3_pins>, <&audio_clock_pins>;
->>>> +	status = "okay";
->>>> +};
->>>> --
->>>> 2.39.2
->>>
+-- 
+Jerome
 
