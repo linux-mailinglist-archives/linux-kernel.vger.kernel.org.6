@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-405988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C959C59CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:01:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DBD9C59AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:56:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B393B2BAAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:56:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1F2284D0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CFD1FCC45;
-	Tue, 12 Nov 2024 13:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0405C1FBF7D;
+	Tue, 12 Nov 2024 13:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="MCECX3FP"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ah81A8my"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A3C1FBF7D
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FEE1FBF51
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731419718; cv=none; b=mPD52t9dGBVHV21JnZoocH0CjV6pbmqZT2hZqap/SoGMxytYBaTYl1t1CJsm1NPTOjww0OL1SACjdegJ7zzMdXTAhU/80pyTx0+m3XsSpSxxhKr27+9St82/Dm4d1KMUA6oRzXRD0mvwsnFDI6+CWzQHwUJOsUGjFuXn7aND3Vs=
+	t=1731419738; cv=none; b=PHfeUF+rAn41odAyE7q5TxV1TC3+SntQaVTWeeJEhKey5aSvcDsA0qdNLfVkuS4bAOaLUE8j0dEyJ6MAWYM418/7rAQ365W20MUpP2iEQ06orV3bbvPFbTLCkLWNSzV0NareJ9kiwbnuDQbxsQFsSLFK0Pz5jR7px9uP5xCriCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731419718; c=relaxed/simple;
-	bh=G8xzwS8Jh77VItMhM2kqDI9VqlIXOP4adNbvhnBqD9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DUQctq3GqGzqM0mX13jQeqh/j9LzSNDSi/rjjJgtfs0Qr53drdZpvkYC9h7pRA4/gu1QfWHPxpe3L2AkNHQPisREK1GBLkKnYjDPERJ/fRD0MJ1xCHVSw1qBd9pouSw7jRaDULvhSmlUV3EIK0yx1JPMJTJfwW+q1ziH0qcihdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=MCECX3FP; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e8607c2aso6408198e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:55:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1731419715; x=1732024515; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=voFHxermzTbW6SEYbNRfkjb3lYDKPPEthYfYOlt7fmU=;
-        b=MCECX3FPpzQOJoIEj6ke/Ul6Cwz9ZFtVnoAi2Sbibf/MSVlb0RQOOII5dBlzcnvxbb
-         ZiGQXfWURnSVp5+Tw9xAYUZ0PzUxNlOV91XtOzKhhX7STkZhF6VurVViXkwq2sGSpH5a
-         yROZuFPhLJmPF4jALX3BBkH080Z7EtmgG+tQzEn4UOznggjtIJ2b2VK2+Q/v40z6OQ4Z
-         CTXvnQmGsB0/TTat/z/xbrA4P2seiXAPcGEXQ8FZTs+QxgvxugSqRdqBUfXw2AcdMA6N
-         ctZLG+cqn6ccx05zp9US0um/dHPTMI3cU5DYkufvs8eoShLNpfAl7ruJwps8JrxwID8h
-         I8zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731419715; x=1732024515;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=voFHxermzTbW6SEYbNRfkjb3lYDKPPEthYfYOlt7fmU=;
-        b=gT4bAsIWstwYghWoA28IXUxvh87KdasRWhfx1YqBajLWYX2ZTySxIWtmusHwvUDf2N
-         C3fUPc0qJX4u4ax+/9VgtPBtUN5PWlGXEnDtDoNz9GdkmjjIscS8w2Hnv8k0f/kRjXGR
-         WZb+kJBlF1tkjws9ZIR1vCD66/hl75c5s/QKbS1hyGR+4oNiPmnFPKN7rWAvC7ap2irf
-         wjg88lujjhgXK57yeoYXWOf5yDiWD8PcehyRrdZ0549dCLp0NaJz15nPxQ2Y7yAwhLjm
-         jrrR6n+riTE5+EmBzxbc8egE7TPOW0W5Qx5XWlkF4VqmUAlBfcg7eOqqsbkKop/s8CFi
-         7ZRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVTFn20t86UBQPu7seuo5vud6oBpN4OK+ALHw4Jg0Po/d7CMV9TLOrfAUztIplamSqZ9asPdINhk/09Mk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMJ1TTsm8HPnnKQus2Ho1XDgxvdBr4kTz9Sexc6h9TmHtZJjyr
-	WHRNdfnRH+iHbOI022WmpOWIFjuDa2qbSoBBplNbXwsuddinqbmyEch1s4qyHLQ=
-X-Google-Smtp-Source: AGHT+IFuyNwJYii2n24HeeyLH2Hlj9JunNn86/qlU67LzZK76iRv2CYvlbAAnVqvPGC3XP9mtciezQ==
-X-Received: by 2002:a05:6512:b8f:b0:539:e88f:23a1 with SMTP id 2adb3069b0e04-53d862e4cfbmr7920565e87.44.1731419714884;
-        Tue, 12 Nov 2024 05:55:14 -0800 (PST)
-Received: from [192.168.1.128] ([62.205.150.185])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d82685d2asm1924953e87.67.2024.11.12.05.55.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 05:55:13 -0800 (PST)
-Message-ID: <3ced011d-0905-4bb6-9985-22957aebaf8d@blackwall.org>
-Date: Tue, 12 Nov 2024 15:55:13 +0200
+	s=arc-20240116; t=1731419738; c=relaxed/simple;
+	bh=wVhWepG5ipKBph4MdKxl7IN3Iu15gPli/CQF7GkV1ng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nsg6BKD/h/U1I0ZWBdfFRGkuoTSBg3cmlheDOOLMymFi3FBIU/W7AZm4oDIZLYP7shLFi6qFpPZbRo6VvafcaEujFwEv0j1HpzwHCjwua2ErFr69E7a6rIHcKq2VgRz30V3AenxBWdML1qd90yIcSsh2RwS0EvFF6Dxee7FkZio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ah81A8my; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B18BC4CECD;
+	Tue, 12 Nov 2024 13:55:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731419737;
+	bh=wVhWepG5ipKBph4MdKxl7IN3Iu15gPli/CQF7GkV1ng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ah81A8my9r1ybO6l447XUt9Nxob6kD6xCpF6+nIydADyOimPljoPbmC2GM15jTBbE
+	 AzbWHVKJA/AdahcslpFpnLiMUJhSpewRRDaI9dBvfJ33TMEEO0fOw5zV1qZ2PqCXNB
+	 y2XurDJdgQQkIqa3FuFk2/5iBut+1lfpr8ndhICM=
+Date: Tue, 12 Nov 2024 14:55:34 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] drivers: core: clear wake irq in device_unbind_cleanup
+Message-ID: <2024111213-eradicate-puma-3592@gregkh>
+References: <20241111092131.1693319-1-peng.fan@oss.nxp.com>
+ <2024111207-baggie-eskimo-d2b0@gregkh>
+ <PAXPR04MB8459A924A74FE917897F9F5288592@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv4 net 2/2] selftests: bonding: add ns multicast group
- testing
-To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
-Cc: Jay Vosburgh <jv@jvosburgh.net>, Andy Gospodarek <andy@greyhouse.net>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
-References: <20241111101650.27685-1-liuhangbin@gmail.com>
- <20241111101650.27685-3-liuhangbin@gmail.com>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20241111101650.27685-3-liuhangbin@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB8459A924A74FE917897F9F5288592@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-On 11/11/24 12:16, Hangbin Liu wrote:
-> Add a test to make sure the backup slaves join correct multicast group
-> when arp_validate enabled and ns_ip6_target is set. Here is the result:
+On Tue, Nov 12, 2024 at 01:09:19PM +0000, Peng Fan wrote:
+> Hi Greg
 > 
-> TEST: arp_validate (active-backup ns_ip6_target arp_validate 0)     [ OK ]
-> TEST: arp_validate (join mcast group)                               [ OK ]
-> TEST: arp_validate (active-backup ns_ip6_target arp_validate 1)     [ OK ]
-> TEST: arp_validate (join mcast group)                               [ OK ]
-> TEST: arp_validate (active-backup ns_ip6_target arp_validate 2)     [ OK ]
-> TEST: arp_validate (join mcast group)                               [ OK ]
-> TEST: arp_validate (active-backup ns_ip6_target arp_validate 3)     [ OK ]
-> TEST: arp_validate (join mcast group)                               [ OK ]
-> TEST: arp_validate (active-backup ns_ip6_target arp_validate 4)     [ OK ]
-> TEST: arp_validate (join mcast group)                               [ OK ]
-> TEST: arp_validate (active-backup ns_ip6_target arp_validate 5)     [ OK ]
-> TEST: arp_validate (join mcast group)                               [ OK ]
-> TEST: arp_validate (active-backup ns_ip6_target arp_validate 6)     [ OK ]
-> TEST: arp_validate (join mcast group)                               [ OK ]
+> > Subject: Re: [PATCH] drivers: core: clear wake irq in
+> > device_unbind_cleanup
+> > 
+> > On Mon, Nov 11, 2024 at 05:21:30PM +0800, Peng Fan (OSS) wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > With dev_pm_clear_wake_irq in device_unbind_cleanup, there is no
+> > need
+> > > to invoke dev_pm_clear_wake_irq in driver remove hook explicitly.
+> > >
+> > > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > > Cc: Rob Herring <robh@kernel.org>
+> > > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > >  drivers/base/dd.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/drivers/base/dd.c b/drivers/base/dd.c index
+> > > f0e4b4aba885..ea3a871bdd11 100644
+> > > --- a/drivers/base/dd.c
+> > > +++ b/drivers/base/dd.c
+> > > @@ -26,6 +26,7 @@
+> > >  #include <linux/wait.h>
+> > >  #include <linux/async.h>
+> > >  #include <linux/pm_runtime.h>
+> > > +#include <linux/pm_wakeirq.h>
+> > >  #include <linux/pinctrl/devinfo.h>
+> > >  #include <linux/slab.h>
+> > >
+> > > @@ -556,6 +557,7 @@ static void device_unbind_cleanup(struct
+> > device *dev)
+> > >  		dev->pm_domain->dismiss(dev);
+> > >  	pm_runtime_reinit(dev);
+> > >  	dev_pm_set_driver_flags(dev, 0);
+> > > +	dev_pm_clear_wake_irq(dev);
+> > 
+> > I don't understand, you say you don't need to invoke it, yet you are
+> > calling it here.
 > 
-> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-> ---
->  .../drivers/net/bonding/bond_options.sh       | 54 ++++++++++++++++++-
->  1 file changed, 53 insertions(+), 1 deletion(-)
+> I mean not need to invoke it in driver.remove hook. With this patch, we
+> could remove
+> https://elixir.bootlin.com/linux/v6.11.7/source/drivers/input/touchscreen/ti_am335x_tsc.c#L498
+> and same to other drivers.
+
+But you did not say that, and you would need to make this as part of a
+series.
+
+Also, are you sure that ll drivers want to clear this irq flag?  What is
+wrong with just doing it explicitly in the drivers that need it?
+
+> > 
+> > What commit id does this fix? 
 > 
+> I am thinking to take this as a improvement, with core code
+> has this, the various drivers no need explicitly invoke it
+> in their own driver remove hook.
+> 
+>  And what bug is this resolving?  What
+> > drivers are broken without this?
+> 
+> See here:
+> https://lore.kernel.org/all/ZymxvLMkkktRoCXZ@google.com/
 
-Always nice to see more tests, thanks!
-Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
+Again, this seems to be a per-driver thing.  What do you break if you
+attempt to do this for all drivers?  What about drivers that share irqs?
 
+How was this tested?  On what platfoms?
 
+thanks,
+
+greg k-h
 
