@@ -1,150 +1,122 @@
-Return-Path: <linux-kernel+bounces-405448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1AF9C51BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:19:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C599C5182
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:09:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62A0AB21AA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AF01282692
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6345920C499;
-	Tue, 12 Nov 2024 09:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="apVyWmKd"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7183209F4A
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F67020CCF7;
+	Tue, 12 Nov 2024 09:09:50 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0292209F4A;
+	Tue, 12 Nov 2024 09:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731402527; cv=none; b=UIAzlkr6Wv7fYmGzIHTqC3oVhM/Q7YGAFCrDU+AXhp72fyNBWz+yCwGJWcNDSSQ+xKkC8CAcSpPJmB7iR0m9dOyObBDMFqs/oeafJaipnfcN7Qqx9BI7pKVz/GXI51MkF01ZKCGz31pY+HOIsSNcEq+fi2rN00gY0xT0smsknbE=
+	t=1731402589; cv=none; b=qf8re7Jlc04p5HgYGB+ob8ceUiW1ow846YpvSUvZ9+pNfpyH+lLSX198iMaAspWLeu/k6tHOHhS3gloq37girOW8/6kp9zVOqcZT9+7HppEpVq5sUj0Ox4ANHTmVVbdf9hpa9tuu7FxrLgEAPq2eJqjtNfzgiGX6HvndB3RcSXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731402527; c=relaxed/simple;
-	bh=1BPCp/eM6urbPUDXCjCfw1PE8UHU+GB2Mm8NG/AaJpY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l2Ms6FY7k8aRpEZLmAbmvq/ik/RxRt1E+9x+hK1AHJGxAlt+DM1kthTkelleusqN/kqo2/bASkNe5lyvapYSQAblgqSnctDuW+C57mVqpKZfuAkJqFprjWfvfQoczAx97fWI+zKKbUzq0v/D9tu7QRu0Hkz9BxY0FZ9yahcRHME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=apVyWmKd; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1731402524;
-	bh=1BPCp/eM6urbPUDXCjCfw1PE8UHU+GB2Mm8NG/AaJpY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=apVyWmKdTawdkNq8GjXAhYwaUwXBp9uE3/RlXEhgVyO6/RXvBw6l3jaV+rVkOzwNH
-	 AZtZjQN5vJ1HRda+9ZQql+79U6hG2R6MEfmWbwfsv+AMmITmAifPCoaLDW62tPSKl2
-	 uUxWKm9DhmPt4/D28ZxOKWnVH3+jaCM69e03SlF4nA23DFZ6n2xetwwsaYwGUylARn
-	 A5T4L+AfBK2DxuWJDn8rbHBeID2qf8HZ3GafOlAQK681Yg718ZJqj8lbcvazbQM7Me
-	 Vfx0hovjkv8yMw4L9AVawkDlSvQuSyLGZyiFXoJ3hwXgCdj1ox33v5pKnS/p+/LkiW
-	 /lM2HhGCQ9CGA==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A907617E1411;
-	Tue, 12 Nov 2024 10:08:43 +0100 (CET)
-Date: Tue, 12 Nov 2024 10:08:36 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Akash Goel <akash.goel@arm.com>
-Cc: liviu.dudau@arm.com, steven.price@arm.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- mihail.atanassov@arm.com, ketil.johnsen@arm.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, nd@arm.com
-Subject: Re: [PATCH v2] drm/panthor: Fix handling of partial GPU mapping of
- BOs
-Message-ID: <20241112100836.57fcfd5f@collabora.com>
-In-Reply-To: <20241111134720.780403-1-akash.goel@arm.com>
-References: <20241111134720.780403-1-akash.goel@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1731402589; c=relaxed/simple;
+	bh=QOfIF/AW2EDodN6nhJ+3FHMgE8gfcr523gSgAKkFVYw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=frJKRoEwFYIbnEKaxl3U2QM4R3YOD9DjbgNOZwleH6twQ1pGq5tHJYMMRVY1c0agoIi7xwAnmjiem8yepXtfCthbFbdQNX1G937H+ifw+c/Bigxg9PTde6+7tgD6QX5tTX7LbWDoU93Stph8y6sK/hNYqg+D9LUdT4W1vGdEbJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee867331b50a1d-49a68;
+	Tue, 12 Nov 2024 17:09:38 +0800 (CST)
+X-RM-TRANSID:2ee867331b50a1d-49a68
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee667331b518fd-5c23b;
+	Tue, 12 Nov 2024 17:09:38 +0800 (CST)
+X-RM-TRANSID:2ee667331b518fd-5c23b
+From: Luo Yifan <luoyifan@cmss.chinamobile.com>
+To: helgaas@kernel.org,
+	manivannan.sadhasivam@linaro.org,
+	kw@linux.com,
+	kishon@kernel.org
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luo Yifan <luoyifan@cmss.chinamobile.com>
+Subject: [PATCH] tools: PCI: Fix several incorrect format specifiers
+Date: Tue, 12 Nov 2024 17:09:24 +0800
+Message-Id: <20241112090924.287056-1-luoyifan@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 11 Nov 2024 13:47:20 +0000
-Akash Goel <akash.goel@arm.com> wrote:
+Make a minor change to eliminate static checker warnings. Fix several
+incorrect format specifiers that misused signed and unsigned versions.
 
-> This commit fixes the bug in the handling of partial mapping of the
-> buffer objects to the GPU, which caused kernel warnings.
-> 
-> Panthor didn't correctly handle the case where the partial mapping
-> spanned multiple scatterlists and the mapping offset didn't point
-> to the 1st page of starting scatterlist. The offset variable was
-> not cleared after reaching the starting scatterlist.
-> 
-> Following warning messages were seen.
-> WARNING: CPU: 1 PID: 650 at drivers/iommu/io-pgtable-arm.c:659 __arm_lpae_unmap+0x254/0x5a0
-> <snip>
-> pc : __arm_lpae_unmap+0x254/0x5a0
-> lr : __arm_lpae_unmap+0x2cc/0x5a0
-> <snip>
-> Call trace:
->  __arm_lpae_unmap+0x254/0x5a0
->  __arm_lpae_unmap+0x108/0x5a0
->  __arm_lpae_unmap+0x108/0x5a0
->  __arm_lpae_unmap+0x108/0x5a0
->  arm_lpae_unmap_pages+0x80/0xa0
->  panthor_vm_unmap_pages+0xac/0x1c8 [panthor]
->  panthor_gpuva_sm_step_unmap+0x4c/0xc8 [panthor]
->  op_unmap_cb.isra.23.constprop.30+0x54/0x80
->  __drm_gpuvm_sm_unmap+0x184/0x1c8
->  drm_gpuvm_sm_unmap+0x40/0x60
->  panthor_vm_exec_op+0xa8/0x120 [panthor]
->  panthor_vm_bind_exec_sync_op+0xc4/0xe8 [panthor]
->  panthor_ioctl_vm_bind+0x10c/0x170 [panthor]
->  drm_ioctl_kernel+0xbc/0x138
->  drm_ioctl+0x210/0x4b0
->  __arm64_sys_ioctl+0xb0/0xf8
->  invoke_syscall+0x4c/0x110
->  el0_svc_common.constprop.1+0x98/0xf8
->  do_el0_svc+0x24/0x38
->  el0_svc+0x34/0xc8
->  el0t_64_sync_handler+0xa0/0xc8
->  el0t_64_sync+0x174/0x178
-> <snip>
-> panthor : [drm] drm_WARN_ON(unmapped_sz != pgsize * pgcount)
-> WARNING: CPU: 1 PID: 650 at drivers/gpu/drm/panthor/panthor_mmu.c:922 panthor_vm_unmap_pages+0x124/0x1c8 [panthor]
-> <snip>
-> pc : panthor_vm_unmap_pages+0x124/0x1c8 [panthor]
-> lr : panthor_vm_unmap_pages+0x124/0x1c8 [panthor]
-> <snip>
-> panthor : [drm] *ERROR* failed to unmap range ffffa388f000-ffffa3890000 (requested range ffffa388c000-ffffa3890000)
-> 
-> Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
-> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-> Reviewed-by: Steven Price <steven.price@arm.com>
-> Signed-off-by: Akash Goel <akash.goel@arm.com>
+Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+---
+ tools/pci/pcitest.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Oops, sorry, didn't notice the v2 before adding my R-b on v1.
+diff --git a/tools/pci/pcitest.c b/tools/pci/pcitest.c
+index 470258009..7b530d838 100644
+--- a/tools/pci/pcitest.c
++++ b/tools/pci/pcitest.c
+@@ -95,7 +95,7 @@ static int run_test(struct pci_test *test)
+ 
+ 	if (test->msinum > 0 && test->msinum <= 32) {
+ 		ret = ioctl(fd, PCITEST_MSI, test->msinum);
+-		fprintf(stdout, "MSI%d:\t\t", test->msinum);
++		fprintf(stdout, "MSI%u:\t\t", test->msinum);
+ 		if (ret < 0)
+ 			fprintf(stdout, "TEST FAILED\n");
+ 		else
+@@ -104,7 +104,7 @@ static int run_test(struct pci_test *test)
+ 
+ 	if (test->msixnum > 0 && test->msixnum <= 2048) {
+ 		ret = ioctl(fd, PCITEST_MSIX, test->msixnum);
+-		fprintf(stdout, "MSI-X%d:\t\t", test->msixnum);
++		fprintf(stdout, "MSI-X%u:\t\t", test->msixnum);
+ 		if (ret < 0)
+ 			fprintf(stdout, "TEST FAILED\n");
+ 		else
+@@ -116,7 +116,7 @@ static int run_test(struct pci_test *test)
+ 		if (test->use_dma)
+ 			param.flags = PCITEST_FLAGS_USE_DMA;
+ 		ret = ioctl(fd, PCITEST_WRITE, &param);
+-		fprintf(stdout, "WRITE (%7ld bytes):\t\t", test->size);
++		fprintf(stdout, "WRITE (%7lu bytes):\t\t", test->size);
+ 		if (ret < 0)
+ 			fprintf(stdout, "TEST FAILED\n");
+ 		else
+@@ -128,7 +128,7 @@ static int run_test(struct pci_test *test)
+ 		if (test->use_dma)
+ 			param.flags = PCITEST_FLAGS_USE_DMA;
+ 		ret = ioctl(fd, PCITEST_READ, &param);
+-		fprintf(stdout, "READ (%7ld bytes):\t\t", test->size);
++		fprintf(stdout, "READ (%7lu bytes):\t\t", test->size);
+ 		if (ret < 0)
+ 			fprintf(stdout, "TEST FAILED\n");
+ 		else
+@@ -140,7 +140,7 @@ static int run_test(struct pci_test *test)
+ 		if (test->use_dma)
+ 			param.flags = PCITEST_FLAGS_USE_DMA;
+ 		ret = ioctl(fd, PCITEST_COPY, &param);
+-		fprintf(stdout, "COPY (%7ld bytes):\t\t", test->size);
++		fprintf(stdout, "COPY (%7lu bytes):\t\t", test->size);
+ 		if (ret < 0)
+ 			fprintf(stdout, "TEST FAILED\n");
+ 		else
+-- 
+2.27.0
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-> ---
->  drivers/gpu/drm/panthor/panthor_mmu.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> index d8cc9e7d064e..8d05124793f5 100644
-> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> @@ -989,6 +989,8 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
->  
->  		if (!size)
->  			break;
-> +
-> +		offset = 0;
->  	}
->  
->  	return panthor_vm_flush_range(vm, start_iova, iova - start_iova);
 
 
