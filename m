@@ -1,180 +1,167 @@
-Return-Path: <linux-kernel+bounces-405270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56869C4F5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:24:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D669C4F5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:25:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5534F1F21748
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:24:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF373B232DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D6D20B20A;
-	Tue, 12 Nov 2024 07:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB8920A5F1;
+	Tue, 12 Nov 2024 07:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CO46elYM"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4Hg8sDdM"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2074.outbound.protection.outlook.com [40.107.93.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A2020B1F8
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731396270; cv=none; b=M0Tc+re48so/nrF2rSS0pp5j2FtAtC3KG1TpJTU7PZVamM/pXTLivMqPH9rGvNmTehtmU4Gwbpaen1Xwa5b+smnCrF4p5AgDAjwvko8DWt9iNkarsCQGLTFEzPOOIr9EmzqlhcPrfsjABNeCmLEAbd6/jy+gcg35iPhGrpt/4AE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731396270; c=relaxed/simple;
-	bh=8JAlkNRoq0eSrYPtV22XFY+LCdIfby1fw0Cq1EwFAnw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JGJ/e38+Caw8TL8cw5qye92JsRK//mcWEzO32pu8oxshWuw3Gc40xW/ulf06juk7mzcu68w2T2twvpF8Dh2yfOxNoeMEVlYCl85NPiOr1dQQYT/IZUTy0m9ejMPcUrIpmV/QnJFhzy+LLcf5BH8EZY7hHD7Xh+FUOu1lIrYMlBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CO46elYM; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2ed2230d8so4259193a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:24:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731396267; x=1732001067; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8JAlkNRoq0eSrYPtV22XFY+LCdIfby1fw0Cq1EwFAnw=;
-        b=CO46elYM42a1OKsqV8LIEAv7aXlCJfP7q8lcwwthPWafliuBMsJPUZGgJueV4Qtg2X
-         YG1OxUCdZvkL7XKm68xL59kI0tqQ5IVFwcPSqx8xow/MHEZUhBkwLwrXj/+y5BFe42VV
-         pLpbKbOiPDlxrO+huChOJfBdYZgAhCl4me2hJe34hCGM9ROOTPul88SyWZ/vIaZx68ag
-         cN2VFJmnqL6Yl3OFnw9y05xXhrUgNBWuKq62HTHLBB+NvIcqBDoYn8OUkCNefM8T4Tj4
-         MBRCaz7lA0k9NmTID0SQbQQ490+MUJFFNGySpnalZI+BqMnnTqjlpIoiAE65eVd8L9dO
-         EZBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731396267; x=1732001067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8JAlkNRoq0eSrYPtV22XFY+LCdIfby1fw0Cq1EwFAnw=;
-        b=aJVJa+rI1amDBbO+rm8EkDV3B8avJUJJm7g/V1MI00ncIw933XkEatILjXxTwp3xDs
-         c+nH3AnzrBnZCPQcWd+tmXjbh6HM/9p2ThFjyKb72654/R4SuciF8SyeW7E7Bql6SE+g
-         rv2WOGZ8EPmwiPFMyWsEho7MweksSLp4gqD1qLL8BsCqg5J70aN9M3j+/M/rx1jPuqzH
-         Sd91WsTgXe3QAZ/jx3p8PgKR7Ct8GOREzaPSBs7yKuELWmeh/gh/RVdbMEeyf83bexeq
-         spJ7bYpgAlR6AYg3LncqEGlOlkdxYcIV4LwqsmlH10OkeDJSbet21YjuKTUdQ4Nlrtls
-         sDAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTbJ9sO2r8Cvlapq7FPSI60neztdXMdv+OfoPF7WUFUmaC2u3toi2zMReCPAwjllQ+P/1XZ3e0QpdkObc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNofuX8QOVmDa1IByBhjo6avU2GsL/9+VUA+QlFeN2yL9RIp31
-	LQwREfBgLGArMhGdlNHT3sUxpNEE1yjoLQGnQi6pIENIDYcou4JPu0PvmP7Xm3VKvgRO/p1gqJM
-	FVLMpJ74TsTD49hiPdDkvDkJpzJTCJ1zWGg5a
-X-Google-Smtp-Source: AGHT+IFPmJJXxWAM3RfZsP7B7jxvKM7hhsVy7RGWBKep/B89T6ds4QjrZfKTTnn7PvUlkhWKHiGTWqcMcP5zJMfaK54=
-X-Received: by 2002:a17:90b:3c42:b0:2e2:b211:a4da with SMTP id
- 98e67ed59e1d1-2e9b1708091mr20035357a91.14.1731396266567; Mon, 11 Nov 2024
- 23:24:26 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E3320A5ED
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731396298; cv=fail; b=Kek9i54ekwKKcXVkROo0T4vlN+rnk/rUf5ljI5VMX0vILeZoMMi396ekvODYXarNSSsQSFjEMBhbxKjayqiAcJjEHQuOPPneyhZkaH+EsPDc7CHKujrhE2xpmeb9jdyTTd29V2e5j0tPyufouLH1F+d1Vtk+N2llAaI0iz0b79Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731396298; c=relaxed/simple;
+	bh=61wx5bD1WMBHmjFqWkWvbUtYdcSaq4Go3beX5+oC9a8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g57+iI1D+jzJBK7EvXdjxrbyVNwZTYuuhAysRz+3+b1+QkKBV3VyfZWsF06isElgOYG98Dc8NWihAU0S9j1dsNK6YyCqzg6fh7mLBJkzGib2NU0Hx/QaGo9j3naw8jrFss1tDHDOXUbQle1Xd6KaG5Rf8HG0qROdhgc8wK0VThg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4Hg8sDdM; arc=fail smtp.client-ip=40.107.93.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=L6apGc2er2D2jeTJkZjyVFaj7S+ZqLRA86YnBhnfHr1oyYaiYarIq6VI1leoFDbCRgfrmCR6ZlmYcCw8Ea2AS2cLAeRjM2tzYYH8i03fSzcn+BYRJppvGA+8nHN2gMepzME3umL/kFsaZ7V4UOcdAsqC0lgWeXnlOdNznUrpRd1Z3DlIUKumhCZjATrV0g+0Jr6I9iP/+qlCTqg/oNtwqWSGgpISzUfShS3jqASYWJWI69fZCwVNJugOp2xVlwTNeLw0JHf+8Yt5L3KJFc9A3cIABks3wT9n0sP2248JAwXZfwlnrG1Sykl+44/FOEQi7JweYCU5ZmrFmOoKbDQewQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+irpurVDl05ASJ31uAUcmgzGEZVQfWu9Zn9e4M5zE4s=;
+ b=hSlfVGFKGQ5Fj3r/T+doJLa8WUhmtUG/Om0n6MsEYzW9UiASya2mIUEcbgxRsBsoyIH/xsW8TH/x/OKj1eSmvYmOSGhbRiNn3eBf40RxGvv0scdBsT9YBOqjPWqjvIbNex6Wbcm8LK+czljH+nQYlg3Ntv+GlJ/NUx2eeLdO0N3Ok9DIPCg4pvOahsDv9z1WrOPGo7254aflBuPBAxMvXe2V8HboTR5dbjmdagb4K2M1ysreOfzOtow3crLhiNoet2NPaaoHF+u0MgExNEGm/dvdeNpTD4eeTCPoOnAAFI9rvUFH1B1SYxtxILlnSkjyIQDDHpaNmoVTNsrJlmHW+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+irpurVDl05ASJ31uAUcmgzGEZVQfWu9Zn9e4M5zE4s=;
+ b=4Hg8sDdMnxGACHwjm4B1zDRgqy90FWBCU0AJLtFk9U/qHUxpPJjUl+fY1xRGsXAhOxZQJ/koWQfNctwclEzoMuh/J7K6HryLv1LElPO4Z1muTVtZ0vGb3Lha/+j0JzADZYWP4Kk6QV6olZ2wpInZpFe8xM46uF43Ya6zKpjQRgk=
+Received: from BN9PR03CA0928.namprd03.prod.outlook.com (2603:10b6:408:107::33)
+ by IA1PR12MB6115.namprd12.prod.outlook.com (2603:10b6:208:3e9::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Tue, 12 Nov
+ 2024 07:24:51 +0000
+Received: from BL6PEPF00022575.namprd02.prod.outlook.com
+ (2603:10b6:408:107:cafe::cb) by BN9PR03CA0928.outlook.office365.com
+ (2603:10b6:408:107::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.16 via Frontend
+ Transport; Tue, 12 Nov 2024 07:24:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF00022575.mail.protection.outlook.com (10.167.249.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Tue, 12 Nov 2024 07:24:51 +0000
+Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 12 Nov
+ 2024 01:24:47 -0600
+From: Shivank Garg <shivankg@amd.com>
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <hpa@zytor.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>, <shivankg@amd.com>
+Subject: [PATCH] x86/cpu: Remove redundant CONFIG_NUMA guard around numa_add_cpu()
+Date: Tue, 12 Nov 2024 07:23:47 +0000
+Message-ID: <20241112072346.428623-1-shivankg@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
- <20241108083133.GD38786@noisy.programming.kicks-ass.net> <CAGETcx-CvWVc=TP5OmUL_iF7fSb1awJB1G8NghM1q_6dYKXkQQ@mail.gmail.com>
- <cc8831c7-8ea2-0ee7-061f-73352d7832ad@amd.com> <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
- <20241111104054.GE22801@noisy.programming.kicks-ass.net> <CAGETcx_1uyZ3M1LtSkZDHiTwDQj8M54V-=geRqJYkZXo9ZbU6w@mail.gmail.com>
- <CAKfTPtBBq0mMat4FWPYprxZX52VFrKrrDMqvXBROuY4T-95+GQ@mail.gmail.com> <CAKfTPtB90_ywaVooR=MGfjhxz2mf=kOeEzdDWKh=7jfcuu7xQg@mail.gmail.com>
-In-Reply-To: <CAKfTPtB90_ywaVooR=MGfjhxz2mf=kOeEzdDWKh=7jfcuu7xQg@mail.gmail.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Mon, 11 Nov 2024 23:23:47 -0800
-Message-ID: <CAGETcx_7LYuZi356mD2j7bcZReobQE0MjoT8vdtgvdN_L2t9ww@mail.gmail.com>
-Subject: Re: Very high scheduling delay with plenty of idle CPUs
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
-	Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de, John Stultz <jstultz@google.com>, 
-	Vincent Palomares <paillon@google.com>, Tobias Huschle <huschle@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022575:EE_|IA1PR12MB6115:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a9df382-7448-4868-820c-08dd02eb18a9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BpnKI9bgQlxuyD+T9V3tB1hTnThRxBrKV+0B7ba9xR9b1CfC/zh7Q4/m2MWB?=
+ =?us-ascii?Q?STmJSmk7QVkEaXJGIrDkmvbeRuC4nloRpVUaP8G4E5tuki1USZ8SKnJaLm23?=
+ =?us-ascii?Q?9KKT8v5gvTaz2RcxuVbF1wlx1xpdEOaWUrCTRIYP4/S7BC982oTPHPjZGTQR?=
+ =?us-ascii?Q?VPMHGDhfayPd3ni2F/a1t4+GVRh3ZrywDv3wtNGUPoPGU+kqaFybYumrQOvW?=
+ =?us-ascii?Q?8dqBSBkxLXxJ5VhM1GDuN6RFGRHAm+wUG9zUeSl1ZJR1J4nn5CxKl03x/1D+?=
+ =?us-ascii?Q?iGaS5pYcHzLrXTGLmFBgsIN5dmjP+rPG2VdsFDPd8qYPG+js70gN3v1mWdKV?=
+ =?us-ascii?Q?TwV0B6LNpgS3/2R4Vt844IXnhNc8ZpZgobLRLnRsuLp9ZHcL1CZOXlRdg6pc?=
+ =?us-ascii?Q?+fdh4DDVyDubLZJyLQt3njIcfRNFPCHaIpSmE9wn5ySNd2YByO9I9w7pep2l?=
+ =?us-ascii?Q?uQwjVoXucJ8cE3VbloLw7SnZ+n/qbIiCjuSybxPQZED57NgQLxqlaX6PryB1?=
+ =?us-ascii?Q?xQT5VVNkgEj0Wp69wSoTO4QdEHl/oumlnr4W98nApDqynMhNLSUeR9OwuZXm?=
+ =?us-ascii?Q?I2InFqu4Paj1Q1FDgla+gcN+xD6VmwUw51KCVE7yZZRwz85p5rvHREIlpnXN?=
+ =?us-ascii?Q?rpFNEHKIQFdzDX13n5cXxbTU08km/lEQanTn4Ef7ZktMyfhpWNQuk4e8mBq2?=
+ =?us-ascii?Q?nsa65EsvXc0TpXYLAuVI1Y0FhJt/Y2txqEiIWWRoDDUjpAxBQIaDpZwjNoJV?=
+ =?us-ascii?Q?q7C5bP/T86I8MwsTG081t4p8dfh9NeZyMa93o70KY6pSwcrjsy0p3tsvWFhJ?=
+ =?us-ascii?Q?1Clzih7MMTlPHilNwVxzOSD71n4EU7GNxzqUsmBfc4peDyVoass34Z3LNEAE?=
+ =?us-ascii?Q?au0p7bYgpsaIslVYJ7nkZEaIxB17INchN68OvZhFP29ehdBjq6pc3YbdhHtk?=
+ =?us-ascii?Q?d+uU9NkwZLCdLf+DTuVmu2A280ByyNf/kCVLE1j+4kBgsCkAYPWQ27nkMqT0?=
+ =?us-ascii?Q?MyOLt+l6JHg+ClKFNtkbFiRRu/fsvd0DVl9YUUP+WdyTG+6gZyxC429Rw5r2?=
+ =?us-ascii?Q?6Tnezycl+iVgdA0Aqwls1XPPS6oPT/Xa0+K9Tty6zJaTEod/r823jlLsIm9D?=
+ =?us-ascii?Q?koEhdZg32jBuHJkoo1jMGOwNE8RI70/bfa6i5+3rXfyL5aLPmmV3OSpFJBV+?=
+ =?us-ascii?Q?aJKrc9PByJgnDSfreZRjcHan4jQ/0YrOv8+Alk7lBCQug7mKbItg7W7cTSAF?=
+ =?us-ascii?Q?Vww/tp9nlqzJ8PuOYswSgxZxLM3/TLgV9d71Npa40nMEsrVWKf7JVsPHysob?=
+ =?us-ascii?Q?TKqVICdd7iVSomm7hEWU/AAmMMY0fcH91UTQDvnoSOnVBB3nMaboDqpDINcZ?=
+ =?us-ascii?Q?e+1Imo383VGYnMuQ8IZdsY+GhALBGzKd49ahDmxX9rdOtbnnrg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 07:24:51.0029
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a9df382-7448-4868-820c-08dd02eb18a9
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00022575.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6115
 
-On Mon, Nov 11, 2024 at 11:12=E2=80=AFAM Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> On Mon, 11 Nov 2024 at 20:01, Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
-> >
-> > On Mon, 11 Nov 2024 at 19:24, Saravana Kannan <saravanak@google.com> wr=
-ote:
-> > >
-> > > On Mon, Nov 11, 2024 at 2:41=E2=80=AFAM Peter Zijlstra <peterz@infrad=
-ead.org> wrote:
-> > > >
-> > > > On Sun, Nov 10, 2024 at 10:15:07PM -0800, Saravana Kannan wrote:
-> > > >
-> > > > > I actually quickly hacked up the cpu_overutilized() function to r=
-eturn
-> > > > > true during suspend/resume and the threads are nicely spread out =
-and
-> > > > > running in parallel. That actually reduces the total of the
-> > > > > dpm_resume*() phases from 90ms to 75ms on my Pixel 6.
-> > > >
-> > > > Right, so that kills EAS and makes it fall through to the regular
-> > > > select_idle_sibling() thing.
-> > > >
-> > > > > Peter,
-> > > > >
-> > > > > Would you be open to the scheduler being aware of
-> > > > > dpm_suspend*()/dpm_resume*() phases and triggering the CPU
-> > > > > overutilized behavior during these phases? I know it's a very use=
- case
-> > > > > specific behavior but how often do we NOT want to speed up
-> > > > > suspend/resume? We can make this a CONFIG or a kernel command lin=
-e
-> > > > > option -- say, fast_suspend or something like that.
-> > > >
-> > > > Well, I don't mind if Vincent doesn't. It seems like a very
-> > > > specific/targeted thing and should not affect much else, so it is a
-> > > > relatively safe thing to do.
-> > > >
-> > > > Perhaps a more direct hack in is_rd_overutilized() would be even le=
-ss
-> > > > invasive, changing cpu_overutilized() relies on that getting propag=
-ated
-> > > > to rd->overutilized, might as well skip that step, no?
-> > >
-> > > is_rd_overutilized() sounds good to me. Outside of setting a flag in
-> >
-> > At know I'm not convinced that this is a solution but just a quick
-> > hack for your problem. We must understand 1st what is wrong
->
-> And you should better switch to performance cpufreq governor to
-> disable eas and run at max freq if your further wants to decrease
-> latency
+Remove unnecessary CONFIG_NUMA ifdef around numa_add_cpu() since the
+function is already properly handled in numa.h for both NUMA and
+non-NUMA configurations. For !CONFIG_NUMA builds, numa_add_cpu() is
+defined as an empty function.
 
-Ohhh... now that you mention fixing CPU frequencies, a lot of systems
-fix their CPU frequencies during suspend/resume. Pixel 6 is one of
-them. In the case of Pixel 6, the driver sets the policy min/max to
-these fixed frequencies to force the CPU to stay at one frequency.
-Will EAS handle this correctly? I wonder if that'd affect the task
-placement decision. Also, other systems might limit CPU frequencies in
-ways that EAS can't tell. If the CPU frequencies are frozen, I'm not
-sure EAS makes a lot of sense. Except maybe using CPU max capacity to
-make sure little CPUs are busy first before using the big CPUs?
+Simplify the code without any functionality change.
 
-But even if EAS thinks the CPU freq could go up (when it can't), it
-still doesn't make a lot of sense to not use those idle CPUs and
-instead try to bump up the frequency (by putting more threads in a
-CPU).
+Testing: Make CONFIG_NUMA=n build
 
-Anyway, with all this in mind, it makes more sense to me to just
-trigger the "overutilized" mode during these specific parts of
-suspend/resume.
+Signed-off-by: Shivank Garg <shivankg@amd.com>
+---
+ arch/x86/kernel/cpu/common.c | 2 --
+ 1 file changed, 2 deletions(-)
 
--Saravana
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index a5f221ea5688..e5b128fc8184 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1906,9 +1906,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	/* Init Machine Check Exception if available. */
+ 	mcheck_cpu_init(c);
+ 
+-#ifdef CONFIG_NUMA
+ 	numa_add_cpu(smp_processor_id());
+-#endif
+ }
+ 
+ /*
+-- 
+2.34.1
 
->
-> >
-> > > sched.c that the suspend/resume code sets/clears, I can't think of an
-> > > interface that's better at avoiding abuse. Let me know if you have
-> > > any. Otherwise, I'll just go with the flag option. If Vincent gets th=
-e
-> > > scheduler to do the right thing without this, I'll happily drop this
-> > > targeted hack.
-> > >
-> > > -Saravana
 
