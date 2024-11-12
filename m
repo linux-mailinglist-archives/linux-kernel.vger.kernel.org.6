@@ -1,225 +1,215 @@
-Return-Path: <linux-kernel+bounces-405789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35FA19C56F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:50:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 871529C56EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:48:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1F711F21B15
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:50:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 166972813A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1361D1FA84F;
-	Tue, 12 Nov 2024 11:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9E11BB6B5;
+	Tue, 12 Nov 2024 11:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oymB69I1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U236BPwI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFDC230989;
-	Tue, 12 Nov 2024 11:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECA4230998
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731412153; cv=none; b=J2xy+s8+PXSWYdsfpVwiLvasEiuFnUCB/eDzV246RDd3vnUSHYGpJ+pDDlEco6mmwAzhDY/i/0yv3sbIHx3Ie5STFQnrFCPdISuP3oKVG++YQrhoxkQV47ZDGnj8MxAX9sQo0vbNRTNkH6j5dx70CvzopL3jFBrI34864fgV+Zc=
+	t=1731412121; cv=none; b=I7a12SZpR6R0VLi1AmkEBJofUw8m6/e37MpD546PoHQKBu9rGgWPS53UqVfccdKDLZRxIfFx8gDw+ryY50DQ+PcNg+2iDiCunDx91mm76MAzEQt28TLwOSTOvr18F3x4DTD0UEtyWAvbnCEIqtpZGGY6uJ14DNsVMrHXyPrgRNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731412153; c=relaxed/simple;
-	bh=2IAN0GkBPGdzI2DVRoi+bNAHMQKiOhqBBfc1P/mSgkI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=aP+BlgyFSt0Ja9sDyAy3oms/UPAPQC1QjslWZ/ou+Z0JgMgimM08ZNSg+iLxmg+lSFECdmQv4M8SiQ6xu+gOqgOJ+Z0TprD2KXFSh0INjPP4U03bahj+kMS3LCRHo2AyIDc6Y6ZJYV+H6+ntx6JA4FlyTHFwCEfJiJ2NBz/4T20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oymB69I1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC2x7jT017652;
-	Tue, 12 Nov 2024 11:49:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hxT1CXGpL+q39AIXGREm3YgkjDQb7tBNeBjYiXUmYpE=; b=oymB69I1nl343XcW
-	03fP/wvLsfK7NihyrphoPEDGvglA0QTc8vTFTjA5XTOhh0/nXBQru7h7wI/jKklL
-	FeAn8dgoC6juk9Alt428jhGNFye9904qZ9Bmepo6zdZ2ALZmBv0uAyEH0lZXlqz/
-	eiCF1nnWtuA352p0m+HpUz00rnY70H5pOtKkfHvR3nv64LADmfdAUx1FxeR9uGTq
-	iDilPQWXuHT1JnsPNBQE0EVQH9MLA5QYmVnXCgLweOL+OUoruFeSEhv1C0cUD8uF
-	YtKmwMee7pAbK0PxpeonCyTcfQPNZFn3bF7VICoCNHcDK6WUWm4Uw6eLVl15yl+9
-	Kp0ymg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0gky232-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 11:49:08 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACBn7Ii029143
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 11:49:07 GMT
-Received: from hu-renjiang-sha.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 12 Nov 2024 03:49:03 -0800
-From: Renjiang Han <quic_renjiang@quicinc.com>
-Date: Tue, 12 Nov 2024 17:17:59 +0530
-Subject: [PATCH v2 3/4] arm64: dts: qcom: add venus node for the qcs615
+	s=arc-20240116; t=1731412121; c=relaxed/simple;
+	bh=7eIJGXBtIMGCxFiT2JlnYA9gOa8LYpASyyHiISpfOvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qi9EFpE0f60z1PzYeiaAgy6Lip/eo6ArGsfyIMHrmkdqOlS6RvEuXNsRR4dIYo2XLKT0e0SnIskMx7++AQKbNGU7TU8Z8nAGrZz86KuJEFy3sOA1B24WYbvXaCf4MvLNxj+IcdnXWJOVrR6cVb/eI5K5b3NNETeqABxa1CabICE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U236BPwI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731412118;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AqgahQBkmrbTkXxLRsD+SK1IIUPbSi6lXHN1UXa8waw=;
+	b=U236BPwII0FAhukPGqmtDr8xNn9cKpcn5qjwG77KSJZTNv7Ngk0U5fkrLzi6dvJwyhQZpa
+	pOxUIzfjAV5tD/vWbWee0Udm6w9wiSY0cYux8thgeIjjmu/6PdXes5V25CIT9w6fDl9/hb
+	WsiRuImYaSzTLf89KEm1GdQO5dANStI=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-457-g3NNCdoJN2GUUZsrvy1naQ-1; Tue,
+ 12 Nov 2024 06:48:35 -0500
+X-MC-Unique: g3NNCdoJN2GUUZsrvy1naQ-1
+X-Mimecast-MFC-AGG-ID: g3NNCdoJN2GUUZsrvy1naQ
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 717011955F69;
+	Tue, 12 Nov 2024 11:48:33 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.29])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9092F1956086;
+	Tue, 12 Nov 2024 11:48:26 +0000 (UTC)
+Date: Tue, 12 Nov 2024 19:48:20 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH V2 3/3] block: model freeze & enter queue as lock for
+ supporting lockdep
+Message-ID: <ZzNAhGjZVgMtIIYD@fedora>
+References: <20241025003722.3630252-1-ming.lei@redhat.com>
+ <20241025003722.3630252-4-ming.lei@redhat.com>
+ <CGME20241029111338eucas1p2bd56c697b825eef235604e892569207e@eucas1p2.samsung.com>
+ <ca16370e-d646-4eee-b9cc-87277c89c43c@samsung.com>
+ <ZyEGLdg744U_xBjp@fedora>
+ <6551c33f-b9e1-45ab-b420-d022d6e4e402@samsung.com>
+ <ZzMqsmCVwfSHC7Vb@fedora>
+ <d86a4cfc-ea64-4d95-af6a-186c02d2a162@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241112-add-venus-for-qcs615-v2-3-e67947f957af@quicinc.com>
-References: <20241112-add-venus-for-qcs615-v2-0-e67947f957af@quicinc.com>
-In-Reply-To: <20241112-add-venus-for-qcs615-v2-0-e67947f957af@quicinc.com>
-To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Renjiang Han
-	<quic_renjiang@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731412132; l=3011;
- i=quic_renjiang@quicinc.com; s=20241001; h=from:subject:message-id;
- bh=2IAN0GkBPGdzI2DVRoi+bNAHMQKiOhqBBfc1P/mSgkI=;
- b=LnF7qXvrcCmLa+Q77aHtPxspAWOmBvDjdDsKRL9EY4CZmSxdunww+K9UiH8TF5Hp6hCHrLHEB
- nEVvckkWaZlDbK7NCNO7tdMXTMfXe1POgQsp1tTKhwez5TpNczSquNt
-X-Developer-Key: i=quic_renjiang@quicinc.com; a=ed25519;
- pk=8N59kMJUiVH++5QxJzTyHB/wh/kG5LxQ44j9zhUvZmw=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: uGAGY1BWPJmpQ_cwjFQrIDaL8pMq6NWx
-X-Proofpoint-GUID: uGAGY1BWPJmpQ_cwjFQrIDaL8pMq6NWx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=743 lowpriorityscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411120095
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d86a4cfc-ea64-4d95-af6a-186c02d2a162@samsung.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Add venus node into devicetree for the qcs615 video.
+On Tue, Nov 12, 2024 at 12:32:29PM +0100, Marek Szyprowski wrote:
+> On 12.11.2024 11:15, Ming Lei wrote:
+> > On Tue, Nov 12, 2024 at 09:36:40AM +0100, Marek Szyprowski wrote:
+> >> On 29.10.2024 16:58, Ming Lei wrote:
+> >>> On Tue, Oct 29, 2024 at 12:13:35PM +0100, Marek Szyprowski wrote:
+> >>>> On 25.10.2024 02:37, Ming Lei wrote:
+> >>>>> Recently we got several deadlock report[1][2][3] caused by
+> >>>>> blk_mq_freeze_queue and blk_enter_queue().
+> >>>>>
+> >>>>> Turns out the two are just like acquiring read/write lock, so model them
+> >>>>> as read/write lock for supporting lockdep:
+> >>>>>
+> >>>>> 1) model q->q_usage_counter as two locks(io and queue lock)
+> >>>>>
+> >>>>> - queue lock covers sync with blk_enter_queue()
+> >>>>>
+> >>>>> - io lock covers sync with bio_enter_queue()
+> >>>>>
+> >>>>> 2) make the lockdep class/key as per-queue:
+> >>>>>
+> >>>>> - different subsystem has very different lock use pattern, shared lock
+> >>>>>     class causes false positive easily
+> >>>>>
+> >>>>> - freeze_queue degrades to no lock in case that disk state becomes DEAD
+> >>>>>      because bio_enter_queue() won't be blocked any more
+> >>>>>
+> >>>>> - freeze_queue degrades to no lock in case that request queue becomes dying
+> >>>>>      because blk_enter_queue() won't be blocked any more
+> >>>>>
+> >>>>> 3) model blk_mq_freeze_queue() as acquire_exclusive & try_lock
+> >>>>> - it is exclusive lock, so dependency with blk_enter_queue() is covered
+> >>>>>
+> >>>>> - it is trylock because blk_mq_freeze_queue() are allowed to run
+> >>>>>      concurrently
+> >>>>>
+> >>>>> 4) model blk_enter_queue() & bio_enter_queue() as acquire_read()
+> >>>>> - nested blk_enter_queue() are allowed
+> >>>>>
+> >>>>> - dependency with blk_mq_freeze_queue() is covered
+> >>>>>
+> >>>>> - blk_queue_exit() is often called from other contexts(such as irq), and
+> >>>>> it can't be annotated as lock_release(), so simply do it in
+> >>>>> blk_enter_queue(), this way still covered cases as many as possible
+> >>>>>
+> >>>>> With lockdep support, such kind of reports may be reported asap and
+> >>>>> needn't wait until the real deadlock is triggered.
+> >>>>>
+> >>>>> For example, lockdep report can be triggered in the report[3] with this
+> >>>>> patch applied.
+> >>>>>
+> >>>>> [1] occasional block layer hang when setting 'echo noop > /sys/block/sda/queue/scheduler'
+> >>>>> https://bugzilla.kernel.org/show_bug.cgi?id=219166
+> >>>>>
+> >>>>> [2] del_gendisk() vs blk_queue_enter() race condition
+> >>>>> https://lore.kernel.org/linux-block/20241003085610.GK11458@google.com/
+> >>>>>
+> >>>>> [3] queue_freeze & queue_enter deadlock in scsi
+> >>>>> https://lore.kernel.org/linux-block/ZxG38G9BuFdBpBHZ@fedora/T/#u
+> >>>>>
+> >>>>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> >>>>> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> >>>> This patch landed yesterday in linux-next as commit f1be1788a32e
+> >>>> ("block: model freeze & enter queue as lock for supporting lockdep").
+> >>>> In my tests I found that it introduces the following 2 lockdep warnings:
+> >>>>
+> >>>>> ...
+> >>>>
+> >>>> 2. On QEMU's ARM64 virt machine, observed during system suspend/resume
+> >>>> cycle:
+> >>>>
+> >>>> # time rtcwake -s10 -mmem
+> >>>> rtcwake: wakeup from "mem" using /dev/rtc0 at Tue Oct 29 11:54:30 2024
+> >>>> PM: suspend entry (s2idle)
+> >>>> Filesystems sync: 0.004 seconds
+> >>>> Freezing user space processes
+> >>>> Freezing user space processes completed (elapsed 0.007 seconds)
+> >>>> OOM killer disabled.
+> >>>> Freezing remaining freezable tasks
+> >>>> Freezing remaining freezable tasks completed (elapsed 0.004 seconds)
+> >>>>
+> >>>> ======================================================
+> >>>> WARNING: possible circular locking dependency detected
+> >>>> 6.12.0-rc4+ #9291 Not tainted
+> >>>> ------------------------------------------------------
+> >>>> rtcwake/1299 is trying to acquire lock:
+> >>>> ffff80008358a7f8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x1c/0x28
+> >>>>
+> >>>> but task is already holding lock:
+> >>>> ffff000006136d68 (&q->q_usage_counter(io)#5){++++}-{0:0}, at:
+> >>>> virtblk_freeze+0x24/0x60
+> >>>>
+> >>>> which lock already depends on the new lock.
+> >>>>
+> >>>>
+> >>>> the existing dependency chain (in reverse order) is:
+> >>> This one looks a real thing, at least the added lockdep code works as
+> >>> expected, also the blk_mq_freeze_queue() use in virtio-blk's ->suspend()
+> >>> is questionable. I will take a further look.
+> >> Did you find a way to fix this one? I still observe such warnings in my
+> >> tests, even though your lockdep fixes are already merged to -next:
+> >> https://lore.kernel.org/all/20241031133723.303835-1-ming.lei@redhat.com/
+> > The lockdep fixes in ->next is just for making the added lockdep work
+> > correctly, and virtio-blk is another story.
+> >
+> > It might be fine to annotate it with blk_mq_freeze_queue_no_owner(),
+> > but it looks very fragile to call freeze queue in ->suspend(), and the lock
+> > is just kept as being grabbed in the whole suspend code path.
+> >
+> > Can you try the following patch?
+> 
+> Yes, this hides this lockdep warning, but imho it looks like a 
+> workaround, not a final fix.
+> 
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 86 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+Thanks for the test!
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index 06deb5c499fe83f0eb20d7957ca14948de7aab34..18ad4da5ed194458aded424560f45a3a9f3163dc 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -394,6 +394,11 @@ smem_region: smem@86000000 {
- 			no-map;
- 			hwlocks = <&tcsr_mutex 3>;
- 		};
-+
-+		pil_video_mem: pil-video@93400000 {
-+			reg = <0x0 0x93400000 0x0 0x500000>;
-+			no-map;
-+		};
- 	};
- 
- 	soc: soc@0 {
-@@ -530,6 +535,87 @@ gem_noc: interconnect@9680000 {
- 			qcom,bcm-voters = <&apps_bcm_voter>;
- 		};
- 
-+		venus: video-codec@aa00000 {
-+			compatible = "qcom,qcs615-venus";
-+			reg = <0x0 0xaa00000 0x0 0x100000>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&videocc VIDEO_CC_VENUS_CTL_CORE_CLK>,
-+				 <&videocc VIDEO_CC_VENUS_AHB_CLK>,
-+				 <&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>,
-+				 <&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
-+				 <&videocc VIDEO_CC_VCODEC0_AXI_CLK>;
-+			clock-names = "core",
-+				      "iface",
-+				      "bus",
-+				      "vcodec0_core",
-+				      "vcodec0_bus";
-+
-+			power-domains = <&videocc VENUS_GDSC>,
-+					<&videocc VCODEC0_GDSC>,
-+					<&rpmhpd RPMHPD_CX>;
-+			power-domain-names = "venus",
-+					     "vcodec0",
-+					     "cx";
-+
-+			operating-points-v2 = <&venus_opp_table>;
-+
-+			interconnects = <&mmss_noc MASTER_VIDEO_P0 0
-+					 &mc_virt SLAVE_EBI1 0>,
-+					<&gem_noc MASTER_APPSS_PROC 0
-+					 &config_noc SLAVE_VENUS_CFG 0>;
-+			interconnect-names = "video-mem",
-+					     "cpu-cfg";
-+
-+			iommus = <&apps_smmu 0xe40 0x20>;
-+
-+			memory-region = <&pil_video_mem>;
-+
-+			status = "disabled";
-+
-+			video-decoder {
-+				compatible = "venus-decoder";
-+			};
-+
-+			video-encoder {
-+				compatible = "venus-encoder";
-+			};
-+
-+			venus_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-133330000 {
-+					opp-hz = /bits/ 64 <133330000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+				};
-+
-+				opp-240000000 {
-+					opp-hz = /bits/ 64 <240000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+				};
-+
-+				opp-300000000 {
-+					opp-hz = /bits/ 64 <300000000>;
-+					required-opps = <&rpmhpd_opp_svs_l1>;
-+				};
-+
-+				opp-380000000 {
-+					opp-hz = /bits/ 64 <380000000>;
-+					required-opps = <&rpmhpd_opp_nom>;
-+				};
-+
-+				opp-410000000 {
-+					opp-hz = /bits/ 64 <410000000>;
-+					required-opps = <&rpmhpd_opp_turbo>;
-+				};
-+
-+				opp-460000000 {
-+					opp-hz = /bits/ 64 <460000000>;
-+					required-opps = <&rpmhpd_opp_turbo_l1>;
-+				};
-+			};
-+		};
-+
- 		videocc: clock-controller@ab00000 {
- 			compatible = "qcom,qcs615-videocc";
- 			reg = <0 0xab00000 0 0x10000>;
+It is actually not workaround, because what virtblk_freeze() needs is to drain
+all in-flight IOs. One thing missed is to mark the queue as quiesced,
+and I will post one formal patch with queue quiesce covered.
 
--- 
-2.34.1
+
+Thanks,
+Ming
 
 
