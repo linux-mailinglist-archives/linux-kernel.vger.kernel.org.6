@@ -1,256 +1,153 @@
-Return-Path: <linux-kernel+bounces-406540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD589C6111
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:12:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7F99C6090
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 869A1B2BD26
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:39:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB3A1F21C6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962AE21764C;
-	Tue, 12 Nov 2024 18:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYn1mdIO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F99C217476;
+	Tue, 12 Nov 2024 18:40:01 +0000 (UTC)
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C311D1FF7C4;
-	Tue, 12 Nov 2024 18:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7376217464
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731436771; cv=none; b=vGSxCB3jRIcWdcfqjN5vPKdUg396JThO7WqhRcwcxsbKtGxkaBlCgZ9n0uV3TPfWHITCN+yj0ZlbWvE17kxD9HuLCWGZc+buWiH7ferCOV39lMAEGXm6Uk5EeIaOhcvFySrJbm3UMAer6N3b4G36Jv8sKnknO9ZetY2zBmv9UMI=
+	t=1731436800; cv=none; b=oZXtmyJcuVVEbc5C3tVXCbY4fP4s7XKPvg8ccgm8cHuZXTnnwygRpp8Z7S9r+afZ4NG/j0bJ8VQT3gU/vgYv1gKn8E5tpZ16MCXoosFJz5cp/H7FsUNS1wi2l5x3YXGN3l7iL8rXoU7i2aP3fe7/hR8oxwa0j/qDILZClXO4Iyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731436771; c=relaxed/simple;
-	bh=LPsPGdrRFQP1YfArcIN3lRRQuZprHeTYpv+JfzrnQ8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Slbpavk74fe0+0lyfc08Gr6JSWu1SxzE9SlmtTiM/O5X1lsBlGi9rVQ+FgTjWfNEeVzR2DVCYISTnvRZl5n1gPbUa5rlaiMZ/mDQ5xJbvDXo64aEopiP827n+9yuzmyVrOfdK44XeaUGhglBCdPMKGOyh57O5HxTKIq1NEHoZhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iYn1mdIO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F7F9C4CECD;
-	Tue, 12 Nov 2024 18:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731436771;
-	bh=LPsPGdrRFQP1YfArcIN3lRRQuZprHeTYpv+JfzrnQ8c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iYn1mdIOMwsF0re7CBiWtxChZ58xSabc6LsC3iNz8VepKw45PaGUWSI5JkI37lhiO
-	 Z8+6y+phm44im0lRGa2IKqjN+lzL6R93RsEJYzb4RPvWmpgrt/Fnp5Muk5cSFivNGP
-	 EhkQfwQUTYwylXJpio+YPss37T+8PPQt4L4Rpd93lYPN6hHgVpH4m+RWuKAa5DQ8Nd
-	 WuALdHx/iChJppvzTOLxOuSMVLP7zc7aHwbzC+B9tVV23REtNEipxRavdpdZt4TG0W
-	 Ik/5oEPpQ8Xo2/YmEaPhUkD/f2D6ym2eXdzcKN68GKhRMorIlC20gMInH2gps3iEyp
-	 RPe0m1+bukeWA==
-Date: Tue, 12 Nov 2024 15:39:25 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: peterz@infradead.org, namhyung@kernel.org, irogers@google.com,
-	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/10] perf record --off-cpu: Dump off-cpu samples
- directly
-Message-ID: <ZzOg3Xlq2jsG85XQ@x1>
-References: <20241108204137.2444151-1-howardchu95@gmail.com>
+	s=arc-20240116; t=1731436800; c=relaxed/simple;
+	bh=+OhzSkfo85v5F2rNZ69nrxZhMtUgUfG4tVD8lKvJN+Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=psTgCE3tboBRgNQlvLiDqpZd7kem5tGMc3J4a7ImCLhUQWXBPxiEIGHY5UldQTQbcoEdhTdEPJO0ADxyB0Iq7cZZhqqdoYgT+hRNT7BFyL3u6dSHpLsAD4ldb5rlcm/qjnP8bk2HMnh/e8u5s02+1px8TmyjL4orYjLHmE7LqEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:78de:3cf6:79c5:d375])
+	by andre.telenet-ops.be with cmsmtp
+	id bufo2D00E4mJWgD01ufoi4; Tue, 12 Nov 2024 19:39:51 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tAvnS-006uOO-K9;
+	Tue, 12 Nov 2024 19:39:48 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tAvno-001t4x-1E;
+	Tue, 12 Nov 2024 19:39:48 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>,
+	Rob Herring <robh@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>
+Cc: iommu@lists.linux.dev,
+	linux-renesas-soc@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] dma-mapping: Save base/size instead of pointer to shared DMA pool
+Date: Tue, 12 Nov 2024 19:39:37 +0100
+Message-Id: <f8cef6845a6141f0277e31a71fe153612daae776.1731436631.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241108204137.2444151-1-howardchu95@gmail.com>
 
-⬢ [acme@toolbox perf-tools-next]$        git am ./v7_20241108_howardchu95_perf_record_off_cpu_dump_off_cpu_samples_directly.mbx
-Applying: perf record --off-cpu: Add --off-cpu-thresh option
-Applying: perf evsel: Expose evsel__is_offcpu_event() for future use
-Applying: perf record --off-cpu: Parse off-cpu event
-Applying: perf record --off-cpu: Preparation of off-cpu BPF program
-Applying: perf record --off-cpu: Dump off-cpu samples in BPF
-error: corrupt patch at line 107
-Patch failed at 0005 perf record --off-cpu: Dump off-cpu samples in BPF
-hint: Use 'git am --show-current-patch=diff' to see the failed patch
-hint: When you have resolved this problem, run "git am --continue".
-hint: If you prefer to skip this patch, run "git am --skip" instead.
-hint: To restore the original branch and stop patching, run "git am --abort".
-hint: Disable this message with "git config advice.mergeConflict false"
-⬢ [acme@toolbox perf-tools-next]$
+On RZ/Five, which is non-coherent, and uses CONFIG_DMA_GLOBAL_POOL=y:
 
-This is on top of:
+    Oops - store (or AMO) access fault [#1]
+    CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-rc1-00015-g8a6e02d0c00e #201
+    Hardware name: Renesas SMARC EVK based on r9a07g043f01 (DT)
+    epc : __memset+0x60/0x100
+     ra : __dma_alloc_from_coherent+0x150/0x17a
+    epc : ffffffff8062d2bc ra : ffffffff80053a94 sp : ffffffc60000ba20
+     gp : ffffffff812e9938 tp : ffffffd601920000 t0 : ffffffc6000d0000
+     t1 : 0000000000000000 t2 : ffffffffe9600000 s0 : ffffffc60000baa0
+     s1 : ffffffc6000d0000 a0 : ffffffc6000d0000 a1 : 0000000000000000
+     a2 : 0000000000001000 a3 : ffffffc6000d1000 a4 : 0000000000000000
+     a5 : 0000000000000000 a6 : ffffffd601adacc0 a7 : ffffffd601a841a8
+     s2 : ffffffd6018573c0 s3 : 0000000000001000 s4 : ffffffd6019541e0
+     s5 : 0000000200000022 s6 : ffffffd6018f8410 s7 : ffffffd6018573e8
+     s8 : 0000000000000001 s9 : 0000000000000001 s10: 0000000000000010
+     s11: 0000000000000000 t3 : 0000000000000000 t4 : ffffffffdefe62d1
+     t5 : 000000001cd6a3a9 t6 : ffffffd601b2aad6
+    status: 0000000200000120 badaddr: ffffffc6000d0000 cause: 0000000000000007
+    [<ffffffff8062d2bc>] __memset+0x60/0x100
+    [<ffffffff80053e1a>] dma_alloc_from_global_coherent+0x1c/0x28
+    [<ffffffff80053056>] dma_direct_alloc+0x98/0x112
+    [<ffffffff8005238c>] dma_alloc_attrs+0x78/0x86
+    [<ffffffff8035fdb4>] rz_dmac_probe+0x3f6/0x50a
+    [<ffffffff803a0694>] platform_probe+0x4c/0x8a
 
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git tmp.perf-tools-next
+If CONFIG_DMA_GLOBAL_POOL=y, the reserved_mem structure passed to
+rmem_dma_setup() is saved for later use, by saving the passed pointer.
+However, when dma_init_reserved_memory() is called later, the pointer
+has become stale, causing a crash.
 
-The message:
+E.g. in the RZ/Five case, the referenced memory now contains the
+reserved_mem structure for the "mmode_resv0@30000" node (with base
+0x30000 and size 0x10000), instead of the correct "pma_resv0@58000000"
+node (with base 0x58000000 and size 0x8000000).
 
-error: corrupt patch at line 107
+Fix this by saving the needed reserved_mem structure's contents instead.
 
-Doesn't look like a clash with something that changed after you prepared
-this patch set.
+Fixes: 8a6e02d0c00e7b62 ("of: reserved_mem: Restructure how the reserved memory regions are processed")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ kernel/dma/coherent.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-If we apply the first 4:
+diff --git a/kernel/dma/coherent.c b/kernel/dma/coherent.c
+index ff5683a57f77126d..3b2bdca9f1d4b027 100644
+--- a/kernel/dma/coherent.c
++++ b/kernel/dma/coherent.c
+@@ -330,7 +330,8 @@ int dma_init_global_coherent(phys_addr_t phys_addr, size_t size)
+ #include <linux/of_reserved_mem.h>
+ 
+ #ifdef CONFIG_DMA_GLOBAL_POOL
+-static struct reserved_mem *dma_reserved_default_memory __initdata;
++static phys_addr_t dma_reserved_default_memory_base __initdata;
++static phys_addr_t dma_reserved_default_memory_size __initdata;
+ #endif
+ 
+ static int rmem_dma_device_init(struct reserved_mem *rmem, struct device *dev)
+@@ -376,9 +377,10 @@ static int __init rmem_dma_setup(struct reserved_mem *rmem)
+ 
+ #ifdef CONFIG_DMA_GLOBAL_POOL
+ 	if (of_get_flat_dt_prop(node, "linux,dma-default", NULL)) {
+-		WARN(dma_reserved_default_memory,
++		WARN(dma_reserved_default_memory_size,
+ 		     "Reserved memory: region for default DMA coherent area is redefined\n");
+-		dma_reserved_default_memory = rmem;
++		dma_reserved_default_memory_base = rmem->base;
++		dma_reserved_default_memory_size = rmem->size;
+ 	}
+ #endif
+ 
+@@ -391,10 +393,10 @@ static int __init rmem_dma_setup(struct reserved_mem *rmem)
+ #ifdef CONFIG_DMA_GLOBAL_POOL
+ static int __init dma_init_reserved_memory(void)
+ {
+-	if (!dma_reserved_default_memory)
++	if (!dma_reserved_default_memory_size)
+ 		return -ENOMEM;
+-	return dma_init_global_coherent(dma_reserved_default_memory->base,
+-					dma_reserved_default_memory->size);
++	return dma_init_global_coherent(dma_reserved_default_memory_base,
++					dma_reserved_default_memory_size);
+ }
+ core_initcall(dma_init_reserved_memory);
+ #endif /* CONFIG_DMA_GLOBAL_POOL */
+-- 
+2.34.1
 
-⬢ [acme@toolbox perf-tools-next]$        git am ./v7_20241108_howardchu95_perf_record_off_cpu_dump_off_cpu_samples_directly.mbx
-Applying: perf record --off-cpu: Add --off-cpu-thresh option
-Applying: perf evsel: Expose evsel__is_offcpu_event() for future use
-Applying: perf record --off-cpu: Parse off-cpu event
-Applying: perf record --off-cpu: Preparation of off-cpu BPF program
-⬢ [acme@toolbox perf-tools-next]$ 
-
-Then try to apply just the 5th patch:
-
-⬢ [acme@toolbox perf-tools-next]$ b4 am -P5 -ctsl --cc-trailers 20241108204137.2444151-2-howardchu95@gmail.com
-⬢ [acme@toolbox perf-tools-next]$ patch -p1 < ./v7_20241108_howardchu95_perf_record_off_cpu_dump_off_cpu_samples_directly.mbx
-patching file tools/perf/util/bpf_skel/off_cpu.bpf.c
-patch: **** malformed patch at line 138:  
-
-⬢ [acme@toolbox perf-tools-next]$
-
-You have:
-
-@@ -209,6 +268,12 @@ static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
-        pelem->state = state;
-        pelem->stack_id = stack_id;
-
-+       /*
-+        * If stacks are successfully collected by bpf_get_stackid(), collect them once more
-+        * in task_storage for direct off-cpu sample dumping
-+        */
-+       if (stack_id > 0 && bpf_get_stack(ctx, &pelem->stack, MAX_STACKS * sizeof(u64), BPF_F_USER_STACK)) {
-+       }
-+
- next:
-        pelem = bpf_task_storage_get(&tstamp, next, NULL, 0);
-
-@@ -223,11 +288,19 @@ static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
-
-see the -209,6 +268,12? Did you edit it manually? It should be -209,6 +268,13
-
-And also what is the point of that empty if block?
-
-- Arnaldo
-
-On Fri, Nov 08, 2024 at 12:41:27PM -0800, Howard Chu wrote:
-> Changes in v7:
->  - Make off-cpu event system-wide
->  - Use strtoull instead of strtoul
->  - Delete unused variable such as sample_id, and sample_type
->  - Use i as index to update BPF perf_event map
->  - MAX_OFFCPU_LEN 128 is too big, make it smaller.
->  - Delete some bound check as it's always guaranteed
->  - Do not set ip_pos in BPF
->  - Add a new field for storing stack traces in the tstamp map
->  - Dump the off-cpu sample directly or save it in the off_cpu map, not both
->  - Delete the sample_type_off_cpu check
->  - Use __set_off_cpu_sample() to parse samples instead of a two-pass parsing
-> 
-> Changes in v6:
->  - Make patches bisectable
-> 
-> Changes in v5:
->  - Delete unnecessary copy in BPF program
->  - Remove sample_embed from perf header, hard code off-cpu stuff instead
->  - Move evsel__is_offcpu_event() to evsel.h
->  - Minor changes to the test
->  - Edit some comments
-> 
-> Changes in v4:
->  - Minimize the size of data output by perf_event_output()
->  - Keep only one off-cpu event
->  - Change off-cpu threshold's unit to microseconds
->  - Set a default off-cpu threshold
->  - Print the correct error message for the field 'embed' in perf data header
-> 
-> Changes in v3:
->  - Add off-cpu-thresh argument
->  - Process direct off-cpu samples in post
-> 
-> Changes in v2:
->  - Remove unnecessary comments.
->  - Rename function off_cpu_change_type to off_cpu_prepare_parse
-> 
-> v1:
-> 
-> As mentioned in: https://bugzilla.kernel.org/show_bug.cgi?id=207323
-> 
-> Currently, off-cpu samples are dumped when perf record is exiting. This
-> results in off-cpu samples being after the regular samples. This patch
-> series makes possible dumping off-cpu samples on-the-fly, directly into
-> perf ring buffer. And it dispatches those samples to the correct format
-> for perf.data consumers.
-> 
-> Before:
-> ```
->      migration/0      21 [000] 27981.041319: 2944637851    cycles:P:  ffffffff90d2e8aa record_times+0xa ([kernel.kallsyms])
->             perf  770116 [001] 27981.041375:          1    cycles:P:  ffffffff90ee4960 event_function+0xf0 ([kernel.kallsyms])
->             perf  770116 [001] 27981.041377:          1    cycles:P:  ffffffff90c184b1 intel_bts_enable_local+0x31 ([kernel.kallsyms])
->             perf  770116 [001] 27981.041379:      51611    cycles:P:  ffffffff91a160b0 native_sched_clock+0x30 ([kernel.kallsyms])
->      migration/1      26 [001] 27981.041400: 4227682775    cycles:P:  ffffffff90d06a74 wakeup_preempt+0x44 ([kernel.kallsyms])
->      migration/2      32 [002] 27981.041477: 4159401534    cycles:P:  ffffffff90d11993 update_load_avg+0x63 ([kernel.kallsyms])
-> 
-> sshd  708098 [000] 18446744069.414584:     286392 offcpu-time: 
-> 	    79a864f1c8bb ppoll+0x4b (/usr/lib/libc.so.6)
-> 	    585690935cca [unknown] (/usr/bin/sshd)
-> ```
-> 
-> After:
-> ```
->             perf  774767 [003] 28178.033444:        497           cycles:P:  ffffffff91a160c3 native_sched_clock+0x43 ([kernel.kallsyms])
->             perf  774767 [003] 28178.033445:     399440           cycles:P:  ffffffff91c01f8d nmi_restore+0x25 ([kernel.kallsyms])
->          swapper       0 [001] 28178.036639:  376650973           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
->          swapper       0 [003] 28178.182921:  348779378           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
->     blueman-tray    1355 [000] 28178.627906:  100184571 offcpu-time: 
-> 	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
-> 	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
-> 	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
-> 	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
-> 	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
-> 	    7fff24e862d8 [unknown] ([unknown])
-> 
-> 
->     blueman-tray    1355 [000] 28178.728137:  100187539 offcpu-time: 
-> 	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
-> 	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
-> 	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
-> 	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
-> 	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
-> 	    7fff24e862d8 [unknown] ([unknown])
-> 
-> 
->          swapper       0 [000] 28178.463253:  195945410           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
->      dbus-broker     412 [002] 28178.464855:  376737008           cycles:P:  ffffffff91c000a0 entry_SYSCALL_64+0x20 ([kernel.kallsyms])
-> ```
-> 
-> Howard Chu (10):
->   perf record --off-cpu: Add --off-cpu-thresh option
->   perf evsel: Expose evsel__is_offcpu_event() for future use
->   perf record --off-cpu: Parse off-cpu event
->   perf record --off-cpu: Preparation of off-cpu BPF program
->   perf record --off-cpu: Dump off-cpu samples in BPF
->   perf evsel: Assemble offcpu samples
->   perf record --off-cpu: Disable perf_event's callchain collection
->   perf script: Display off-cpu samples correctly
->   perf record --off-cpu: Dump the remaining samples in BPF's stack trace
->     map
->   perf test: Add direct off-cpu test
-> 
->  tools/perf/builtin-record.c             |  26 ++++++
->  tools/perf/builtin-script.c             |   4 +-
->  tools/perf/tests/builtin-test.c         |   1 +
->  tools/perf/tests/shell/record_offcpu.sh |  31 ++++++-
->  tools/perf/tests/tests.h                |   1 +
->  tools/perf/tests/workloads/Build        |   1 +
->  tools/perf/tests/workloads/offcpu.c     |  16 ++++
->  tools/perf/util/bpf_off_cpu.c           | 115 ++++++++++++++----------
->  tools/perf/util/bpf_skel/off_cpu.bpf.c  |  85 ++++++++++++++++--
->  tools/perf/util/evsel.c                 |  34 ++++++-
->  tools/perf/util/evsel.h                 |   2 +
->  tools/perf/util/off_cpu.h               |   3 +-
->  tools/perf/util/record.h                |   1 +
->  13 files changed, 264 insertions(+), 56 deletions(-)
->  create mode 100644 tools/perf/tests/workloads/offcpu.c
-> 
-> -- 
-> 2.43.0
 
