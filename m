@@ -1,191 +1,298 @@
-Return-Path: <linux-kernel+bounces-405434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA439C5145
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:56:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EACF9C514C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 547A21F2130D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:56:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E397E1F22C2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5138D20C00C;
-	Tue, 12 Nov 2024 08:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B1120C02B;
+	Tue, 12 Nov 2024 08:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2M102Q/"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="vAw5cr0c"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020122.outbound.protection.outlook.com [52.101.128.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F11154456;
-	Tue, 12 Nov 2024 08:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731401806; cv=none; b=nc1t4DmkPpkgdc/U7z3Ckt3mii1Jny/RMLqKJ7aMFU3N4Q1OpmnPcCD7r3bTIlg/yHAQysWW/gM0HVrYkq7pmMxtsgIC96YiW22bvbB6EOPrk97w71VO0yx5qEbp/Nf7gpdp9FQ4dLRoragFG+ije3SlVcRi2wo+O2lEDTTqNbM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731401806; c=relaxed/simple;
-	bh=CgwqNxD4b5hVXKWixRdDhIuy16f3CR/fFi6c86yuQFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tr76Ll77EXY3TOdsrWHlzEaO5frHFvOfx+G/i2Qx3K8Mi5O7WSDDBSnPH7hi7bBW1bvjquIVdErecbxhjiiUyB+LX7np2Su9utW4obQKKfvkoY6eetjeF2RTzDhzIWmvDlCAzxJKvTDyCcR443GwYutAZVW4v60bEpuOP6T2jNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2M102Q/; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c70abba48so51891505ad.0;
-        Tue, 12 Nov 2024 00:56:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731401804; x=1732006604; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W8gh+260UsnPZvt7qaiSyrpQ5TcKF/2NN+cGBxN4hwE=;
-        b=k2M102Q/mN9h2BU60FthOiHkXeRKqNU6OJ9y5ET0ulgXFvYgZKvGz8ul2XCBQRz3dw
-         C9yJBy1a/Yl8p4Yo3FwkmGC3aAAO3EtozANog013ANcegLbV1KdzjdG09cSjWwlFGrn5
-         0a6udMOdt7A0X/siOIc3w7Q4Uvkv/7LW5KfFzRv6dqCOKL7SPbvqKa1OI/eFdBaHe1YE
-         7BQN5/zsfaVyEFv4wIpLZlvo7jg1/mY6UqF8l6X4NV0X/vFNxtIbS1WgSxW+rx93znts
-         oEE7FIdQt+kXuFF9UQLY2pBfLqFJQ2ROBivsHRN7aXZ00ACMvB2xo21YdbOzfWWlez/R
-         g7/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731401804; x=1732006604;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W8gh+260UsnPZvt7qaiSyrpQ5TcKF/2NN+cGBxN4hwE=;
-        b=TC1qkyQD0ZMR8vBkkPboL50Mh74r/2JDTMEuY131oX8sXZBEV1R3snylxYR9L49EL0
-         ODU+oLt2yNHNHszag5PIv+qzGH7g9OXx9WGOpAdEfNLE8I/p+xCsB7zGtQj1ER8pZ9V1
-         q1V6FonBEi2mAPUIzyc96Gue2YWNR3+UejW6EWyjDG/ytaQ+pFHIRD/4qWtOUyIha/02
-         D5ZLcDN4VI4SGiQIwEV9ksK8lldqTgnL4muUWu0ThS/0Wljw7fiYzAQ+LTOAASd0PnD8
-         Mw25zpDjriG4zxdY7zxUz3jYe5Lx5Yjr1juEInMU8K3HBGSIONKiiY47mp2JvJ9OUNUC
-         mHtg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3tNGroFfwGTsiA/Ez4Ymxfyjfor6/tbA7UmLMF+/Fr/Ji82QKRb7zVYtIasuMQhTBVA+Un/l0ByLpml4OTuWs@vger.kernel.org, AJvYcCVG4dSN2Ridx867aEgl4zuQELo9IOXNjq1V697KCo8MJ0I/5mgX7hVSq+zyr7cM0G6DOAfc8YvNX3iI9Gc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo9CGE35COX1xl0BHrTPABRZ1VKa1Ts3waN/fqj/NZyahLo8cj
-	sNXhvfvUIRcY2GL8F85wxxm8Dlt0o7z3OY2ePVaJw7Om3cRmi/818QdWPQ==
-X-Google-Smtp-Source: AGHT+IHnuNtMJJXjm/8WJ4Tvnm+7ZEuZsTNkzjYWnsfS/T8ExAJzK75DHjmExKE65gOXJwPTNXaQyA==
-X-Received: by 2002:a17:903:1209:b0:20c:6bff:fc88 with SMTP id d9443c01a7336-21183cffdaamr221576465ad.28.1731401804412;
-        Tue, 12 Nov 2024 00:56:44 -0800 (PST)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177ddf050sm89174105ad.90.2024.11.12.00.56.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 00:56:43 -0800 (PST)
-Date: Tue, 12 Nov 2024 16:56:40 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: brendan.higgins@linux.dev, davidgow@google.com, rmoar@google.com,
-	skhan@linuxfoundation.org, rf@opensource.cirrus.com,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kunit: string-stream: Fix a UAF bug in
- kunit_init_suite()
-Message-ID: <ZzMYSA/EMN8GWsMI@visitorckw-System-Product-Name>
-References: <20241112080314.407966-1-ruanjinjie@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A4E20BB48;
+	Tue, 12 Nov 2024 08:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.122
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731401891; cv=fail; b=HuAZlyCjplN9h4qO0zBARwZxChHBSAQ1BNKomeMNG2KDeO6hYqldguPdKMCUM9vXCu3lPCNJg5wW3bwTN4T6UhsZS3Whj1JPxW+GqknyJL2gh1UZze6Yfux0fk9dKIcW3kfZEJ71kLihU0r/cxnncFM8xNYg2yPCVpnBpNkosK4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731401891; c=relaxed/simple;
+	bh=fddGPi3hdZkWYvvB8qG3Wdg56twuTRVZtAsP08cf2mY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ari6ZNFid/ldRdmy3m+oUxnCp0Y5GN/wAFgX28xxLD1ztHQ0CrsH7E9edkAzJcxISqhtFTqU8Qukm+Ji5RBth5IH9RP32g08xKV4EXz33IXU4S/alM3bmS2rc1QMTYyq+LNxJBYTaItTovhcDtHZ1nMM7wM4HVwosA7qKOUD2H4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=vAw5cr0c; arc=fail smtp.client-ip=52.101.128.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zP3cadDrW53JG1A317vJupJnbo9awHC21+V+KXB4R7leZh6f3vlVR3CYsM8By5jkjourpbwNTG0krV5A4t+w23G3IXVwWhIxWnLZR3QYACHZ2K4xWvbTJ3f4kZXieEfCGx/lVnqZOqywkLMfsuA+3uQp2RJf7qDcLijde9fhJqbVSAJfe8tQgBBnmfYti5+DaAknDtrc/WxS6n54uNX3w0AMi+NEVqkqS/28fvAihK3UkW3cFf00VfosLwZNr4vB3kF+k8CehimWSEvlQpWcAj3+jcYzY0W/Z7I6MM/9XTTaMrcLvUSf9w3pPixUQ/9uCNO9lhhVZnrd/JrpJaR2iQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4mab5Ghv6pURrAfMcFp9Tq0aBoxqStyoSgNbVv47clw=;
+ b=RQz3EASoWL2EncgU6pB6OrhMa+T/0Q1mdzIb5y9WtImwb2DgGc2DiAi9pd+IcEjIGVyYyoXP31xOazn3H3fz45kr4FRJi9T9SG3DLwrD7hKVoCwVBhsGtk/RaXVezpiX/L8agQXy9Hvn7iEUxMRWm9u9nYXj6yMXp6+vQXMGKGVhkF7ZZ/LNfPQcg47bDO93iG/Y5kv2/aIIGboQh3vH6ca1Ju+OaIk+ouTOgrKjLjILqEjbvSlgOq/4HDzHPHbd7udCs6aUhbrAsaZWwttnnkbNHyZ3EpGyhHi7jXv+JB4x7Nx2MAT73xuqHzoTz55HFbjyYtd+V2miazYvV9PgpQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4mab5Ghv6pURrAfMcFp9Tq0aBoxqStyoSgNbVv47clw=;
+ b=vAw5cr0cnrI0/6HnCMhfH2SVFdOmUUoM7grFDNpvWVex+oa1/McXVkuBqE9UItWHXFEFzChk6Gin134k3zvVRch8qe+8NG972ricS8KlaO/QGzYW3OzTCVdvrlEXgvx0ekM+EK/lilJ4mxcq9GfoBc+mT8lfq8IuvMB3ySOoyn2c1cU5a8ldiW3yJddrO5eEqTx2mF+puWOsttr+berHIlm2d6zqQDqkX0R+AHb4wkhLyb9e7ntiP2LWVlTQAH3cQy1kXjRtS/w8rH7QTPc0Rte7+Dc0FcA82RCRZ+QetmmGuQD8cldN2rGsxu/bJ3tlBobTVNPe+vaemhsOwu7Vsg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
+ by TYZPR03MB8534.apcprd03.prod.outlook.com (2603:1096:405:6a::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.26; Tue, 12 Nov
+ 2024 08:58:06 +0000
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123]) by TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123%5]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
+ 08:58:06 +0000
+Message-ID: <00e16b73-ddbe-4d9c-b485-9ed2a1e10087@amlogic.com>
+Date: Tue, 12 Nov 2024 16:58:00 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 0/4] Pinctrl: A4: Add pinctrl driver
+Content-Language: en-US
+To: neil.armstrong@linaro.org, Linus Walleij <linus.walleij@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241101-a4_pinctrl-v4-0-efd98edc3ad4@amlogic.com>
+ <27aa3716-1d28-4da8-80e6-212d7f94d193@linaro.org>
+ <84bbb8b3-d638-47e5-a0e9-371e9e56c89f@amlogic.com>
+ <97e2b1e4-1763-42c4-a3f0-986492ecfd97@linaro.org>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+In-Reply-To: <97e2b1e4-1763-42c4-a3f0-986492ecfd97@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR01CA0004.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::22) To TYZPR03MB6896.apcprd03.prod.outlook.com
+ (2603:1096:400:289::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112080314.407966-1-ruanjinjie@huawei.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|TYZPR03MB8534:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59548d11-6247-4420-a849-08dd02f81f7e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZFJyTU8zTDFiY3NEK1JDVEFnVFBnNE9tRVRMUzQxUXpGNm5IK3I1TFVGbzVW?=
+ =?utf-8?B?MHp3TVQxM1VMQmtNVDhBaWx4SFFwTDlrZXkyL3FqYkt4M3hjcjhnZ3ZQdEZp?=
+ =?utf-8?B?YkhCRk5mTzZLbDRLcHAvRytNekozRmJXaDl6bERVUWNvK2J1WWtDUzQ3Zk84?=
+ =?utf-8?B?Wi9mZlRLdUo1UmFYQ3VoTGdwN2VlTGhGWndiaFJMa0k2NzNOYjMveWFUcGtP?=
+ =?utf-8?B?bUl0WnphdTN0cjhIcUYwbTlRckZDOUZicnh2ZUhrRUNSWUNoM2hjd05lYjNR?=
+ =?utf-8?B?SzVQOVBaNnIvMk1hOE1aVHZwQmx5YU04WlBjMkxHdkFXS1E5bHV3enVjN25z?=
+ =?utf-8?B?aE9vUDZneTJMRC9iOTBKSTBBNWxLK3ZQMzh6c3llZWoza1N0TWpRaXJyYVdp?=
+ =?utf-8?B?Zmt1V1pya0hlTEQxa0xqVnJ6alNrQWdSZkJlR0tzNHRlQ2FSczcxSDBQY1R2?=
+ =?utf-8?B?b2RJbVJmT1dyWUF5MUtFOVIxT1d4ZTh6eGhaZFg5SmRmWkFLMlJRRmZmRWRW?=
+ =?utf-8?B?THVnMFdmdWJBdFgweHJxSWpBQWRtVDZJS3dIRENxbFp3b2FMUjJvR2x1OEgy?=
+ =?utf-8?B?NHVkaDVXd1BlMkVTMURtOFIwa3hBUUdqbkRCczAvWlNIVzB3c2dUOTlPdkNs?=
+ =?utf-8?B?Z0EyQ0wwUHhzSUtxWmwrY0k5Q1pEMHlDQTRBczdnN2JaVzFxbERWY2t3YVA4?=
+ =?utf-8?B?dHkyZWFiNk1nM2oySTB2ZXh2Q3N5b0FyM0hWSUZBSzR6clJ2UGxVM2ZsY2V0?=
+ =?utf-8?B?M2F5MnNtUExEQTdpZWJ0Ty9IY2Q3b3hVbFlhMjUyUnA2QU12YjJONmJXWUJN?=
+ =?utf-8?B?bVgrVEE1eUF0TUN4MWdQK1FScVdSKzZkSjBDUWtQK0dKa3FKOW1EdWlDb2Vv?=
+ =?utf-8?B?em1ERFdkdDlaTzdyc1pXVXIvZVQ3bURwcENxZ2pLTGtYRGJYK0VQN1dXR1Vh?=
+ =?utf-8?B?aTRQcWRySk11c0x6ekxVeEdqcHVycTRsSWVVaWo5NURHV2NnRTZ5NGlFYmZD?=
+ =?utf-8?B?dm1GR2VTY1pvNmhkeE1QampmcUdqVnpJTjY0MVlhZXJCT0RuZ2NYZkhzakJ0?=
+ =?utf-8?B?dmFjcWg5V0xISjNNOVc4bHVOVUZCWVo0cDgzb2xablZLeFVlb1pGb1VjanRl?=
+ =?utf-8?B?bHlzUGd5a3NMUTg4QU83OXQxclNFZlNLUFZTZnVZaXBvY21kclF5bmp6QTZm?=
+ =?utf-8?B?STBPT0c1MWMvTFJQRE9SK3VwamRGOWxwQ0J1YVNCN0svWFZ4MEV1ckorSGQ1?=
+ =?utf-8?B?Umo2UlZaZnlZbnRCZ2RUYkxrdUROc1VNZVFlYi9GWk5uMXVMa3cvWHNHRkx1?=
+ =?utf-8?B?MDFiTnZwQmkyM2ZKWTdOeHdHdFVIRDd1bDhTMUNSeTRyZVh1VDhJU2ZSbmR2?=
+ =?utf-8?B?OHkzUHZIZmdmTzFmelkreUNHbW9yZjY3TGEwZ28wZXh6bTZVRVlCaGUwTlkv?=
+ =?utf-8?B?YllaUmJMcURGYnFBUDJPNm1kTTVCb1FwRFU5d3U0eWtlZkRGTGxPQnRieFRl?=
+ =?utf-8?B?SCt2Yks3NW5WQ1hEcnR6Q0s4VE1keWp3Yyt4bHVYT0kvZ2N6TllUaEtZMXVW?=
+ =?utf-8?B?aUhUdU1iQUFmNlI4OFJ3bStSaSt3ZG4vbkhMZ2MwenNZY1JQS1VFcjJrcERF?=
+ =?utf-8?B?QzFrMlhyYWlLVUIzQitkUStpajJ2cmdEUjVPOG9oNkhwMEF5YUZsWDhKTFNC?=
+ =?utf-8?B?OG4vZ0tWM1I3bUFEakd2eXRNZVBNSkwxcU04S0oyck5YczhacUE5TFhmYk1p?=
+ =?utf-8?Q?kjfKdapHF/JDc/59MnfSTdYRjgORSCdNFLgh/cW?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bHpINk9DbHA4M0tkUWdtcXVpSk41WFZ0RFBBSGg4ZCsyTjUzMlJSdU05UTlY?=
+ =?utf-8?B?RnZ6ZThlaG5kVEpWQzdwY2pBeUlreXpvNUVPZWNVN1o1ejRCR0kwb1VUYVMv?=
+ =?utf-8?B?RGR0alg0YytVVWdudlVYUzNZYVhPTVBKTHJyTENMSmxBV0wvTVdyN3FlWkNs?=
+ =?utf-8?B?WDVCNE1TT1pVZm80bmpUdkpkWkx0TzJRWGxLVTJWTk1JaHdJVFVxZG1udTY3?=
+ =?utf-8?B?Vk80cmNkNlR2aHZjTkFwQ0tOcHU5NnJiNnE2VW9hajdrTHNXcHhJOGlNRXlP?=
+ =?utf-8?B?YjZ3cVpTZzFyTDJ4MjFSSE1pVWJrV0xSNnNGY3lTSzk5K3hKcys4b0txL0dh?=
+ =?utf-8?B?cG1NclJHTTN1SjVkV1JmRm04NlJCdW1xd2dwT2hIVTZibFgvVWFMYnlZY0tz?=
+ =?utf-8?B?NGs4Qm0rc0pkYlVUUlZjbkVydUUraTluNU5PQTJ2cjQ2MXNlZXlkektZRjhX?=
+ =?utf-8?B?bXRNeXFuQTZLeTkwZnBaREpNMDdJMGl6MmcrY1lFSTg1T09uamhsR0dJREhO?=
+ =?utf-8?B?ZzBqMUhsWjVFb3E2SDVUbUU4bzRuYlh1enRFcGF3T1pvTVE5TmF1Rnc4SzFC?=
+ =?utf-8?B?dERRRzRVTlMwZHY3NEQvM3dScUJlNVF0MHVxcUVZRU5yWTNFaUhYelo3OWJV?=
+ =?utf-8?B?TWxGN01meUJPcFpDRjdWR1FacFBpdWE4UWZrYVQ0bjJpZVZsZUljcGlJVW1T?=
+ =?utf-8?B?WWlKVDJEbEZWdHMrUm9IWUowL2hyTmpsckVIbURURDE1c1craE5ISkRnMlRr?=
+ =?utf-8?B?Q243UjIxekFmRnFxczkyVnZlaVBrT3RPdUQzSWVQdk1hSDNxYUdWUDRuRlQ3?=
+ =?utf-8?B?Vlp1R3NRb29SZmVvdks5ZEQvSFFaWUh6MFh5QnJYUWRoMjUxYUNSNEYyK1BZ?=
+ =?utf-8?B?andiby9ZUWhNc2s0LzgwR3dmcnZFOU5mMTUzZlRnUFdBeWZreVN5UERJdmVV?=
+ =?utf-8?B?YTgyaVZrcmkxVVhPRlQ1Y0ViYm5IT1YwTGRUZDBWaUVSbXZZaXJha0tPSWNW?=
+ =?utf-8?B?SEZ4VXMxbW5EZ2JGM2FhUld0cnhoUC9vVEZETDROQ0gwaU5LK1dGcnpLK0Zk?=
+ =?utf-8?B?ZWw5cmdKQ3d0OW9Id1FaZU9HU2g4WWFmQ2tidkNOajFBam1oa1FqaFdMdmVq?=
+ =?utf-8?B?NHp4UHBDeW1FM0huRStiVzZFRVU1S3B0VXRiWmZ6bkVwQVRXMnR5ZTRVZjZB?=
+ =?utf-8?B?c2ZrVXMrSzFzVU9BeVYwWkZWTHp4RW9ZTFF1ODg4dDMzR3ZySlp2TTE2aTlP?=
+ =?utf-8?B?ZGxHanJsWjlJK21vVDdyZFJiUmZhRnU5alg3VUIrUWMrM0RNOGl2RmdUTzFW?=
+ =?utf-8?B?bG02MGdQdGJ3RzhTenFxRzQ5L2pXTXFXOVUyQzlhMW9ha2xuN05FeFJDLzB1?=
+ =?utf-8?B?UTBVNGVnVVBsQ2tDTklVd0xRdkpHamV1UEhQbGtFVlloaFhJNmwrK0YwZThX?=
+ =?utf-8?B?ZE54TWY1ZU1ERUF3ZlpFTlhjbTBYbzl1NnFxazFLRC9RVTlyRU9adHh5Smg1?=
+ =?utf-8?B?N0lXR0FiajJVcWZMcWVJaU1wSWNhaUVma2RVLzVpVlIzdi9YRjFEc2tudHVy?=
+ =?utf-8?B?TVFFM2hxZDhZaVNUM1FKL3U1L1RROXJGWlNpenhsbTFiN0ZTZ2I0TWZDOW9I?=
+ =?utf-8?B?eDlCQUgwNTlGbFJHbkUwQm1BQy9GVWM5cUR6TVBpMjZvS0pmL1BTUjkvQXll?=
+ =?utf-8?B?RWJ4NG54UDFieGxaWWxlbVNhQ1IxaWpCNFUxSnRucDFIam5LWHRTTGp5VTBE?=
+ =?utf-8?B?Rk1YWDlvcDFYTGxETzlFYWxWbGp5RmNQNm1TKzRKVWlxMzJQUFBhaWhtaWp0?=
+ =?utf-8?B?dnJHWTFjQi8zODE5TWV2ejhzb0JaOFQ0ZjV6MGUxN25aOE9UMCtsS2lRdTB1?=
+ =?utf-8?B?RE43TzZ1aDF4UHVveEhJdVFvOU5vQVI0TjhjQitCZ1N1dVZtMEhPMlRiSmxO?=
+ =?utf-8?B?OEJGRTBYWTFpc0NIZ205SkxaM2VyeHA1NllnaU1VZkdxbUJWYktsSlNHbzgw?=
+ =?utf-8?B?TXlSQXVOU2JkNnl0ZW5ZaXJwSWJhQmNUVm05UVZSVlprQXF0M2tQR3Z4bEw2?=
+ =?utf-8?B?dTJNcmNXWHNhemlGckRneU9vSnVrTkp4WVJrU2xhUUdFblFSd3phUXRaeWZy?=
+ =?utf-8?B?TzZldGxtY2N0L29vY1pmazJYSGsyZTQxQ3lHckpkT2tXaUJSOStZMGlWdU03?=
+ =?utf-8?B?Ymc9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59548d11-6247-4420-a849-08dd02f81f7e
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 08:58:06.2037
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rYpBBgnkIhX8hnaUHAtXb/8jOMDmYCdDFHUXT2WP7RZXUWKVjQXOO8ojiK52ZD8ku11QNGfLzR/5DH/uFH7URBb3ZVVxG63Ah3HXGAMO6SI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB8534
 
-On Tue, Nov 12, 2024 at 04:03:14PM +0800, Jinjie Ruan wrote:
-> In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
-> kunit_suite_for_each_test_case() loop, the "suite->log = stream"
-> has assigned before, and the error path only free the suite->log's stream
-> memory but not set it to NULL, so the later string_stream_clear() of
-> suite->log in kunit_init_suite() will cause below UAF bug.
-> 
-> Set stream pointer to NULL after free to fix it.
-> 
-> 	Unable to handle kernel paging request at virtual address 006440150000030d
-> 	Mem abort info:
-> 	  ESR = 0x0000000096000004
-> 	  EC = 0x25: DABT (current EL), IL = 32 bits
-> 	  SET = 0, FnV = 0
-> 	  EA = 0, S1PTW = 0
-> 	  FSC = 0x04: level 0 translation fault
-> 	Data abort info:
-> 	  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> 	  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> 	  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> 	[006440150000030d] address between user and kernel address ranges
-> 	Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> 	Dumping ftrace buffer:
-> 	   (ftrace buffer empty)
-> 	Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
-> 	CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
-> 	Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
-> 	Hardware name: linux,dummy-virt (DT)
-> 	pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> 	pc : string_stream_clear+0x54/0x1ac
-> 	lr : string_stream_clear+0x1a8/0x1ac
-> 	sp : ffffffc080b47410
-> 	x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
-> 	x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
-> 	x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
-> 	x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
-> 	x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
-> 	x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
-> 	x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
-> 	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
-> 	x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
-> 	x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
-> 	Call trace:
-> 	 string_stream_clear+0x54/0x1ac
-> 	 __kunit_test_suites_init+0x108/0x1d8
-> 	 kunit_exec_run_tests+0xb8/0x100
-> 	 kunit_module_notify+0x400/0x55c
-> 	 notifier_call_chain+0xfc/0x3b4
-> 	 blocking_notifier_call_chain+0x68/0x9c
-> 	 do_init_module+0x24c/0x5c8
-> 	 load_module+0x4acc/0x4e90
-> 	 init_module_from_file+0xd4/0x128
-> 	 idempotent_init_module+0x2d4/0x57c
-> 	 __arm64_sys_finit_module+0xac/0x100
-> 	 invoke_syscall+0x6c/0x258
-> 	 el0_svc_common.constprop.0+0x160/0x22c
-> 	 do_el0_svc+0x44/0x5c
-> 	 el0_svc+0x48/0xb8
-> 	 el0t_64_sync_handler+0x13c/0x158
-> 	 el0t_64_sync+0x190/0x194
-> 	Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
-> 	---[ end trace 0000000000000000 ]---
-> 	Kernel panic - not syncing: Oops: Fatal exception
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
-> Suggested-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Hi Neil,
+    Thanks for your reply.
 
-Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-
-Regards,
-Kuan-Wei
-
-> ---
-> v2:
-> - Correct the fix way.
-> - Add Suggested-by.
-> ---
->  lib/kunit/debugfs.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+On 2024/11/12 16:24, Neil Armstrong wrote:
+> [ EXTERNAL EMAIL ]
 > 
-> diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
-> index d548750a325a..b25d214b93e1 100644
-> --- a/lib/kunit/debugfs.c
-> +++ b/lib/kunit/debugfs.c
-> @@ -212,8 +212,11 @@ void kunit_debugfs_create_suite(struct kunit_suite *suite)
->  
->  err:
->  	string_stream_destroy(suite->log);
-> -	kunit_suite_for_each_test_case(suite, test_case)
-> +	suite->log = NULL;
-> +	kunit_suite_for_each_test_case(suite, test_case) {
->  		string_stream_destroy(test_case->log);
-> +		test_case->log = NULL;
-> +	}
->  }
->  
->  void kunit_debugfs_destroy_suite(struct kunit_suite *suite)
-> -- 
-> 2.34.1
+> On 11/11/2024 04:26, Xianwei Zhao wrote:
+>> Hi Neil,
+>>     Thanks for your reply.
+>>
+>> On 2024/11/10 20:24, Neil Armstrong wrote:
+>>> [ EXTERNAL EMAIL ]
+>>>
+>>> Hi,
+>>>
+>>> Le 01/11/2024 à 09:27, Xianwei Zhao via B4 Relay a écrit :
+>>>> Add pinctrl driver support for Amloigc A4 SoC
+>>>>
+>>>> I want to find out what kind of solution is feasible to
+>>>> meet the needs of all parties. This RFC verion is one of them.
+>>>>
+>>>> All of Amogic SoCs GPIO device requirement is met here by
+>>>> adding GPIO bank definition instead of the pin definition.
+>>>> Binding header files will no longer be added to future
+>>>> SoCs's pin devices.
+>>>>
+>>>> The pinctrl software only adds insterface of of_xlate to support
+>>>> for transformation without affecting the overall framework and
+>>>> is compatible with previous drivers.
+>>>>
+>>>> The code in DTS file is also readable when using GPIO, as below:
+>>>>
+>>>> reset-gpios = <&gpio AMLOGIC_GPIO(AMLOGIC_GPIO_X, 6) GPIO_ACTIVE_LOW>;
+>>>
+>>> Fine, but why not use 3 cells instead of this macro ? Since you 
+>>> introduced the
+>>> custom xlate, parsing the 3 cells would be easier that using a macro:
+>>>
+>>> reset-gpios = <&gpio AMLOGIC_GPIO_X 6 GPIO_ACTIVE_LOW>;
+>>>
+>>> Neil
+>>
+>> I was prepared to do this before, mainly later considering 
+>> incompatible binding, using the original two parameter passing
+>>
+>> If use three parameters, I  need to modify the corresponding binding 
+>> property. in file:
+>> Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
+>>
+>>        "#gpio-cells":
+>>          const: 2
+>> It must be compatible with the current number of parameters(3)
+> 
+> Yes, you may move the #gpio-cells definition out of the common yaml
+> and define them in the soc spefic yaml and set it to 3 for a4.
+> 
+
+I can modify 
+Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml 
+file
+change
+         "#gpio-cells":
+           const: 2
+to
+         "#gpio-cells":
+           enum: [2, 3]
+
+  and make it to compatible with subsequent ones. Do you feel OK?
+
+> Neil
+> 
+>>
+>>>
+>>>>
+>>>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>>>> ---
+>>>> Changes in v4:
+>>>> - Add interface of of_xlate support.
+>>>> - Add const for some variable.
+>>>> - Link to v3: 
+>>>> https://lore.kernel.org/r/20241018-a4_pinctrl-v3-0-e76fd1cf01d7@amlogic.com
+>>>>
+>>>> Changes in v3:
+>>>> - Remove head file from binding.
+>>>> - Move GPIO define to file *.c.
+>>>> - Link to v2: 
+>>>> https://lore.kernel.org/r/20241014-a4_pinctrl-v2-0-3e74a65c285e@amlogic.com
+>>>>
+>>>> Changes in v2:
+>>>> - Use one marco instead of all pin define.
+>>>> - Add unit name for dts node.
+>>>> - Link to v1: 
+>>>> https://lore.kernel.org/all/20240611-a4_pinctrl-v1-0-dc487b1977b3@amlogic.com/
+>>>>
+>>>> ---
+>>>> Xianwei Zhao (4):
+>>>>        dt-bindings: pinctrl: Add support for Amlogic A4 SoCs
+>>>>        pinctrl: meson: add interface of of_xlate
+>>>>        pinctrl: meson: Add driver support for Amlogic A4 SoCs
+>>>>        arm64: dts: amlogic: a4: add pinctrl node
+>>>>
+>>>>   .../bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml |    2 +
+>>>>   arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        |   36 +
+>>>>   drivers/pinctrl/meson/Kconfig                      |    6 +
+>>>>   drivers/pinctrl/meson/Makefile                     |    1 +
+>>>>   drivers/pinctrl/meson/pinctrl-amlogic-a4.c         | 1321 
+>>>> ++++++++++++++++++++
+>>>>   drivers/pinctrl/meson/pinctrl-meson.c              |    4 +
+>>>>   drivers/pinctrl/meson/pinctrl-meson.h              |    4 +
+>>>>   include/dt-bindings/gpio/amlogic-gpio.h            |   50 +
+>>>>   8 files changed, 1424 insertions(+)
+>>>> ---
+>>>> base-commit: 58e2d28ed28e5bc8836f8c14df1f94c27c1f9e2f
+>>>> change-id: 20241012-a4_pinctrl-09d1b2a17e47
+>>>>
+>>>> Best regards,
+>>>
 > 
 
