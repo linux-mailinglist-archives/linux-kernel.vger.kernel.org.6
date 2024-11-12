@@ -1,99 +1,172 @@
-Return-Path: <linux-kernel+bounces-406457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611049C5F4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:40:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E119C5F64
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:46:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1878A1F22847
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:40:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C47C9B8218A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B681C2170D4;
-	Tue, 12 Nov 2024 17:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968BA1FF050;
+	Tue, 12 Nov 2024 14:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUQhFAFo"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gw7suwbH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82013212D37
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0252003A2
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731433136; cv=none; b=pljaD9HTvvTaJzQwE0MdNButQcZqiZZ7g2w+kVedMG1ldbUUfB6EDiJmYMSeYqI9ckwYwtnZzygYFYCKmrExGiaE7A3jyaFuwTQhYJC3dHE33BWe8n581vDb1UA2b4fPvgLe6LsW42XbYEDC6Wn3UWkKesTQeLZ/v3Mf4xcVSkw=
+	t=1731423143; cv=none; b=u190ziFFKMT9kt9eJMKEb2GKy0FtO8vVZ9NmpNEl0ZazxnPHl4abggypUY4VkDId8sHckHjKxftFdCBrBGSWAPSPhB4mGyZIcXD1nkODIupo6RvSUdLRaaQzIUFoRmMHKqarShcdCnzHig7gxb83bKlkLnbdpfuX0FW3wGiMj/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731433136; c=relaxed/simple;
-	bh=uqvlojepVHG+hFezyBlppjaIAaX/dWBBziS54qV71gk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=nMcEQvbaOdkDwacOAkOYpLVaXsurhgIuvQ2ktWLZEgUMMtu18Hgx/hLYFaj+GW7y2zkyEjcXgBY1j958+mx1UUz/BUP6k6w+XG/fAgVWywYLlHNvHnOFEpBGmQE9JlYH96bD31wGFgifIniAb5/XCrQ4D1F67pUJ1laYOkHBHE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lUQhFAFo; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5cef772621eso7382275a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:38:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731433132; x=1732037932; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uqvlojepVHG+hFezyBlppjaIAaX/dWBBziS54qV71gk=;
-        b=lUQhFAFo+kosVQQf4vhJKNHv2I0xXEP5/x11lJhq1lCa2fGFyga0fqQ4uh8IRrex2+
-         +cSbsp/AZ1Z7XP/xl0rj0LTRiaZelQ4RR4lqhtJdjXQCIbiGp2f41soQMOsXGsfIvemY
-         UQYiS3sP1P6UaMVr/ICbW1HZyhIrnm4FE7LN66WwCQbh6TiWaeUYuOJwY/fglLFC0KEx
-         XpSOE1/uRIIjWwl/BsjpBzAzXIUk3qKQTwYybcTGufhqIDem8tg3U59xXDj5LiYf+JVR
-         cc7PTk6itDRYQ++xrjICztoloQmUxbK1wHEavP4dU53m3zfaBv5Tes90/f3EWNM8qalw
-         Okhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731433132; x=1732037932;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uqvlojepVHG+hFezyBlppjaIAaX/dWBBziS54qV71gk=;
-        b=QOvg5c+rAUc0mCzSTNJyJpcCBR3FjSAfOucx2OAnUjSCDMjWkTTUa5jMUyNOIMNnUO
-         CjxHeFJJ3DwpvAn+85xb8vKi8p2VccUjSzJzBl7Dz1AwSIiHJ7S0l8KCl5fKGbt5WQiL
-         tWuSVefoQwVL2cwThR6EIbat8DqceOaZGcjc6cYZPqesjPe0+cBzvKhU0fW5Ui3RpY9o
-         4iTRshOAX3UeCmp8zdUvzESEQrWYIrP+LNspW7y4evAujpzhE9XQ1emkyaVvL0cv9Y4+
-         ar8e0wWY5crfRFMZyLGRlETdNNADu/AEKnZNJpQioQUfHF68FkBvMH1NK+tolzSCOtRf
-         Devg==
-X-Gm-Message-State: AOJu0YyDvB50+Bpgv7PJkz6P5x6IG9MWwW3xTEKPFzKIAaw3kN1VH3EN
-	8k+v1NCQxZGV4iTYB1ZckBTPQS5gJTZDM1PGdM8k6lKeA6BvowhIjSlZGBJUX34DXR88rEAz5g1
-	fBQIF1ii+H4LpoCJfNzc4xq2i2sCEuha7
-X-Google-Smtp-Source: AGHT+IGKmZK0nn6diUtrh2lUZtNP11nBeVhWBiYU56M/ElCPc28PowSc63cHG3DJIfEbE5WVWW/oVIglFBPRPeGzmjc=
-X-Received: by 2002:a05:6402:5241:b0:5cf:9f1:3f39 with SMTP id
- 4fb4d7f45d1cf-5cf630c4298mr47154a12.13.1731433131511; Tue, 12 Nov 2024
- 09:38:51 -0800 (PST)
+	s=arc-20240116; t=1731423143; c=relaxed/simple;
+	bh=XxmjXbd3NELFVsWVdW6o2Zxqx8IqBr4HxPuGWI6cATE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K+DTR3Q0PrtxTUbLSXh9Z0+FkF36Vs+zmru1LfJDqVAvxuRK5a98cUWAec+5qx3tJHt52UZc8CzoNjqAFhb0uUKKfI5sV8cyVyOdDLzzfNS1AVhUonhWMnH0Q46OePDTduIob8+RSt2JhwtmmCVPbcwLzzzsAm7uO1zYOBkX6UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gw7suwbH; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731423141; x=1762959141;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XxmjXbd3NELFVsWVdW6o2Zxqx8IqBr4HxPuGWI6cATE=;
+  b=gw7suwbHdWNPwD4yYfqvC7+3pp+IKU96UM6duCl6DHgHQNfcowfCz3NI
+   3kSVS3AV7YxTQpOsdO89tdU7pljQQQdB4LeXu5oy09qFwzqDph3ok9ju4
+   Hhg2pMhO6UXA0tWcsStvvkPiUU6FOSX5V6TC8xJZiyDBObwbohCFKiHJg
+   3eZUeDMQzhk10FO/FtUn2cW5/ITEzxExf9mJAE3XqEzAg+oppu6qJVEE9
+   xTZfQIy9IqwINe0dYSd1i4UzAKJHQ59plDFIDz1VP1sh0cIe6gPN4G8K/
+   UB+/n4XLTRu1DsbzuVC7qz6TlA73iEmDjWa+zeKerw4OTafgtu1iRuj3r
+   A==;
+X-CSE-ConnectionGUID: 4R+CzlhOTZGK+2Vkv6FlUg==
+X-CSE-MsgGUID: K7heGbiJQQG95rbbaVnb/g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="41885678"
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="41885678"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 06:52:20 -0800
+X-CSE-ConnectionGUID: ckdD5CfLSzipX2yz0R4Ubw==
+X-CSE-MsgGUID: f3iIhOODQomMGy2XCI5DuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="87259015"
+Received: from lkp-server01.sh.intel.com (HELO bcfed0da017c) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 12 Nov 2024 06:52:17 -0800
+Received: from kbuild by bcfed0da017c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tAsFb-0001RK-2e;
+	Tue, 12 Nov 2024 14:52:15 +0000
+Date: Tue, 12 Nov 2024 22:51:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chunhai Guo <guochunhai@vivo.com>, xiang@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, chao@kernel.org, huyue2@coolpad.com,
+	jefflexu@linux.alibaba.com, dhavale@google.com,
+	linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	Chunhai Guo <guochunhai@vivo.com>
+Subject: Re: [PATCH] erofs: add sysfs node to drop all compression-related
+ caches
+Message-ID: <202411122209.OQ3CcFg1-lkp@intel.com>
+References: <20241112091403.586545-1-guochunhai@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: CIJOML CIJOMLovic <cijoml@gmail.com>
-Date: Tue, 12 Nov 2024 18:38:40 +0100
-Message-ID: <CAB0z4NpWz+_PSrjfd=8Ps-md2U=gB6hRr0vY5o=rCBHG60WidA@mail.gmail.com>
-Subject: Thunderbolt external GPU dock does not work
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112091403.586545-1-guochunhai@vivo.com>
 
-Hello,
-I bought an external GPU dock from Aliexpress
-(https://vi.aliexpress.com/item/1005006121040283.html). The dock work
-perfectly under Windows 11, I can plug any graphic card and install
-drivers and us the card for gaming and encoding.
-However in Linux I get only this answer in dmesg and card is not recognized.
+Hi Chunhai,
 
-[30249.989401] pcieport 0000:00:1c.4: Intel SPT PCH root port ACS
-workaround enabled
-[30255.865096] hp_wmi: Unknown event_id - 131073 - 0x0
+kernel test robot noticed the following build errors:
 
-My kernel is
-[30249.989401] pcieport 0000:00:1c.4: Intel SPT PCH root port ACS
-workaround enabled
-[30255.865096] hp_wmi: Unknown event_id - 131073 - 0x0
-I tried also latest vanilla with no luck
+[auto build test ERROR on xiang-erofs/dev-test]
+[also build test ERROR on xiang-erofs/dev xiang-erofs/fixes linus/master v6.12-rc7 next-20241112]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Can anybody help me to get the dock working and allow me to play games
-under Linux?
+url:    https://github.com/intel-lab-lkp/linux/commits/Chunhai-Guo/erofs-add-sysfs-node-to-drop-all-compression-related-caches/20241112-170412
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
+patch link:    https://lore.kernel.org/r/20241112091403.586545-1-guochunhai%40vivo.com
+patch subject: [PATCH] erofs: add sysfs node to drop all compression-related caches
+config: x86_64-randconfig-161-20241112 (https://download.01.org/0day-ci/archive/20241112/202411122209.OQ3CcFg1-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241112/202411122209.OQ3CcFg1-lkp@intel.com/reproduce)
 
-Thank you
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411122209.OQ3CcFg1-lkp@intel.com/
 
-Michal
+All errors (new ones prefixed by >>):
+
+   fs/erofs/sysfs.c: In function 'erofs_attr_store':
+>> fs/erofs/sysfs.c:175:17: error: implicit declaration of function 'z_erofs_shrink_scan' [-Werror=implicit-function-declaration]
+     175 |                 z_erofs_shrink_scan(sbi, ~0UL);
+         |                 ^~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/z_erofs_shrink_scan +175 fs/erofs/sysfs.c
+
+   132	
+   133	static ssize_t erofs_attr_store(struct kobject *kobj, struct attribute *attr,
+   134							const char *buf, size_t len)
+   135	{
+   136		struct erofs_sb_info *sbi = container_of(kobj, struct erofs_sb_info,
+   137							s_kobj);
+   138		struct erofs_attr *a = container_of(attr, struct erofs_attr, attr);
+   139		unsigned char *ptr = __struct_ptr(sbi, a->struct_type, a->offset);
+   140		unsigned long t;
+   141		int ret;
+   142	
+   143		switch (a->attr_id) {
+   144		case attr_pointer_ui:
+   145			if (!ptr)
+   146				return 0;
+   147			ret = kstrtoul(skip_spaces(buf), 0, &t);
+   148			if (ret)
+   149				return ret;
+   150			if (t != (unsigned int)t)
+   151				return -ERANGE;
+   152	#ifdef CONFIG_EROFS_FS_ZIP
+   153			if (!strcmp(a->attr.name, "sync_decompress") &&
+   154			    (t > EROFS_SYNC_DECOMPRESS_FORCE_OFF))
+   155				return -EINVAL;
+   156	#endif
+   157			*(unsigned int *)ptr = t;
+   158			return len;
+   159		case attr_pointer_bool:
+   160			if (!ptr)
+   161				return 0;
+   162			ret = kstrtoul(skip_spaces(buf), 0, &t);
+   163			if (ret)
+   164				return ret;
+   165			if (t != 0 && t != 1)
+   166				return -EINVAL;
+   167			*(bool *)ptr = !!t;
+   168			return len;
+   169		case attr_drop_caches:
+   170			ret = kstrtoul(skip_spaces(buf), 0, &t);
+   171			if (ret)
+   172				return ret;
+   173			if (t != 1)
+   174				return -EINVAL;
+ > 175			z_erofs_shrink_scan(sbi, ~0UL);
+   176			return len;
+   177		}
+   178		return 0;
+   179	}
+   180	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
