@@ -1,432 +1,132 @@
-Return-Path: <linux-kernel+bounces-406665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5219C6210
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:02:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2CC9C61EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:56:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4594FB34BF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:55:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 100F81F24780
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C042194B2;
-	Tue, 12 Nov 2024 19:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1BE219C8D;
+	Tue, 12 Nov 2024 19:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="kYCs6k64"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="CvjabDkU"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF31320898E
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9733B20898E;
+	Tue, 12 Nov 2024 19:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731441334; cv=none; b=nB/FMMYLVoA63DMeI+/8htbpTSSSGWi2rv0ltT5slWu55dLtczsDIxkPvt7dObZwhV56vcK4G6Qg7vP5ZSF2K8/x3baZL97noiEvOtivZmoAemNw8tlx0bvovmW/A0npHi7sRKXSM453JYpXw7VMnEwLUDO1C5qoetB7q0wC7WI=
+	t=1731441348; cv=none; b=jdNk8zqzyQ9oc7PSv23JPZ5awWuumjTP4yndSi8aIaA5gvW47/2nzQyE9j0tRCObm7Ddazps8Pli99R1Qa5j7Zi1NJt8mlW/zOBRFov4SPw3JeHUph+/Jt+kuud8ylAYmIwMVlzabCL5YibFgoNiIOQpZ3AHtbXouL0GZU18/rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731441334; c=relaxed/simple;
-	bh=lMnszVlaml6MQok3Bjz9p2WYLuBOvU/GMqlpS2pnBC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aHbg4UknaxkJqj4DXvHHJ3iq/IvcNkW+pu+fjyCK+DhDzOvUG802b0phAqVKsCnsNdUCyTP39NM/HjES8kkqOAY/NAmSq4xXNGQn3jOLmkEHDS2PjlEOKPbdkrQd0+PKl9CDHjGXhrY3m1Q8cNH0Z3u1SDvH8oMdlpeXeGT5vAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=kYCs6k64; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e4e481692so6034563b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:55:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731441332; x=1732046132; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lMnszVlaml6MQok3Bjz9p2WYLuBOvU/GMqlpS2pnBC4=;
-        b=kYCs6k64wXuhqzFjzrmaXgOPH2Twv/ptvIwRfinvwq5HPZhnqfQWGjgIf7PEYqpEhM
-         B7o0+sscE08Fenc9hkXcbvstnAptgxhdHZOsKPHRBxTv63JnfdUrOLgL6+yOblguLhFk
-         IQfTDSH2rxWQ12LBdd+HwOySx4pbpNzw/ie/xKtBfVAMaGpBYNWm6DMRdh7gX6eomEV0
-         6TejzIN4EKOfd3Ldl0dbbCKcWiVD6jYrq9P702MC7JC25bSyMPTSODhUNdHQ28ZhJ6WD
-         7tJo+rxlEsSHlCxXY02Q3uNElWn0JrLud8yTHi1vBFUK8SWkfFN5fRx+kW5LnCksfjxJ
-         CbWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731441332; x=1732046132;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lMnszVlaml6MQok3Bjz9p2WYLuBOvU/GMqlpS2pnBC4=;
-        b=eLFmjNbVi4xrefsVlGPeHm9n+XC4NcvhLBCTI3HvNhKuuTeZtgUUEKYE0t+b/+GQLq
-         DxyWkWdk5InglOI2Z/yfdPhAIOZUM+YVrgN3cmfu01LnfOYRgOX1RliXta5+k4s8fBJ2
-         3bZToUCPcosaIsqDE1tOokbVbgz85e0OaxIVnvP4TlsskLLPzuLkuVeP+6HkZK1GEPxm
-         jR0VbATkz27vtjGuFYyAjoQcILaZ+GWheRcYre0V9NyHfX4H9oIUr6zyhfIzFYC7E36/
-         +8i9UyjefFnRBpLuRCXjFLzKbAkhpu8O7t/kOkk3o1qAVHjjnvABjoAuH5ibDtZlatIv
-         okSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW00accl0u+5vui9zkTG80hjr8c6gRzJGc9R0gEMgU2vZLNUQvVA2X7pEy9CRMtFv6oLpOrWJc9zuzwAkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdVoauvaGqL/wZHAnl68eXbJuLegbwLwNRvwYy1oV/dYKwu3yE
-	bpNAdTWz+Y0qFWOWnu9pEE31u4op8noYujr2u8rR2yA1GAR4OcjVoSmQc2MdmjMYQt7LUNP+Uoj
-	bfT+cHQOcZ9lcahwYmvJH5w/obE28oMlqxQuNo/lau1zOTqyX2Rg=
-X-Google-Smtp-Source: AGHT+IHEnIexfhNozK2RzQDOieRFZPyHUAevCcJp6nhApvWfAcD4T1PqBiIVot/PKPs3DPN+rWmxoN454jU9yLYi1d4=
-X-Received: by 2002:a05:6a00:a09:b0:71e:4930:1620 with SMTP id
- d2e1a72fcca58-7241327880dmr23051428b3a.3.1731441331842; Tue, 12 Nov 2024
- 11:55:31 -0800 (PST)
+	s=arc-20240116; t=1731441348; c=relaxed/simple;
+	bh=c94xZUz5BVRzxe1+uUbcC3auFTeo4NkaFnXe7tuvETA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UXvLcUx++nHWX661IHTRZ3BksKvQZtqwapdt1LdohmOk2Zayu2QTUyq/VZUIg/GHLkMKG7509Mg0Zxlz7wl072NXdRwvdE9X3dLJyc29ZUy+aLP7a1DZyuAv2a7S7Cv+/q4icY9iCUaz+aKSywQoqn+4ya05wKP1vnu5Q9wt8gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=CvjabDkU; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sendonly@marcansoft.com)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id 03D693FA6A;
+	Tue, 12 Nov 2024 19:55:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
+	s=default; t=1731441334;
+	bh=c94xZUz5BVRzxe1+uUbcC3auFTeo4NkaFnXe7tuvETA=;
+	h=From:Date:Subject:To:Cc;
+	b=CvjabDkUJUSSXOJExrmb9n9jBWbldd3zbnbE9fOlnTjyQwUZCmqg0TUWhnljH/jH5
+	 CcPFuMlQTtrFxrcpE6B/sP5SsTJXWIaKQWLYknOW3VBEXE+ES6/Z6nugx+eK8q15J7
+	 K0LiHQZFuXYs635KqwUosvSHPxw/lcwFZrWLln45qW+hxK232vdZOFUcrp/QQrYxhQ
+	 VJeqgt36Ge5gSb6vYokcL9Q9bPcNj9mYvjhhx82H8NldKKR/X8Gj21XI7sGBBtSJ8o
+	 hmhEr4yzK73oc6tpjRpFH1XuPjKwyZxNG0r+Vsbr29YmWbLZbqKzIXFugT1CRrt1rb
+	 cYRj70mJJn26A==
+From: Asahi Lina <lina@asahilina.net>
+Date: Wed, 13 Nov 2024 04:55:32 +0900
+Subject: [PATCH] fuse: dax: No-op writepages callback
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026121758.143259-1-irogers@google.com> <CAP-5=fXf9HtqKZyvfXNbKLTB-dL_Ax5Hd0_Gn1J-y0T1SE9wLQ@mail.gmail.com>
- <78eb729c-7594-460f-9d79-97fb683d8b5e@linaro.org> <CAHBxVyFXWpczMmWJbpWoLUjQ4nfNC2_h1yZqSd7kSr6N8Rvm5Q@mail.gmail.com>
- <d9bfd75a-003a-4f65-abba-b8bcaad13682@linaro.org> <CAP-5=fUHjxL5QbsyQQU-3EYiVhiO6wt=F5MfSfDcAffKP7WWAg@mail.gmail.com>
- <ccac5d65-b01f-4624-97cd-e350ce6de840@linaro.org> <CAP-5=fXK4NmdY_uTYWSsS+TgnpYK8y_wgm_W_rnqUYQ0BrPZFg@mail.gmail.com>
-In-Reply-To: <CAP-5=fXK4NmdY_uTYWSsS+TgnpYK8y_wgm_W_rnqUYQ0BrPZFg@mail.gmail.com>
-From: Atish Kumar Patra <atishp@rivosinc.com>
-Date: Tue, 12 Nov 2024 11:55:21 -0800
-Message-ID: <CAHBxVyFQsBSiYrSmhnP9ov=3yt8D1fQ8reuEZCNhwWyxBEd+PA@mail.gmail.com>
-Subject: Re: [PATCH v1 0/4] Prefer sysfs/JSON events also when no PMU is provided
-To: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ben Gainey <ben.gainey@arm.com>, 
-	Junhao He <hejunhao3@huawei.com>, linux-riscv@lists.infradead.org, beeman@rivosinc.com, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241113-dax-no-writeback-v1-1-ee2c3a8d9f84@asahilina.net>
+X-B4-Tracking: v=1; b=H4sIALOyM2cC/x3MQQqAIBBA0avErBtoUqS6SrRQm2oILDQqiO6et
+ HyL/x9IHIUTdMUDkU9JsoUMKgvwiw0zo4zZUFe1JiKFo70xbHhFOdhZv6ImNs4p0zbOQ872yJP
+ c/7If3vcDv70xw2IAAAA=
+X-Change-ID: 20241113-dax-no-writeback-41e6bb3698bc
+To: Miklos Szeredi <miklos@szeredi.hu>, 
+ Dan Williams <dan.j.williams@intel.com>
+Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Matthew Wilcox <willy@infradead.org>, Sergio Lopez Pascual <slp@redhat.com>, 
+ asahi@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Asahi Lina <lina@asahilina.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731441333; l=2006;
+ i=lina@asahilina.net; s=20240902; h=from:subject:message-id;
+ bh=c94xZUz5BVRzxe1+uUbcC3auFTeo4NkaFnXe7tuvETA=;
+ b=RITMZ3OffyOGQq+meVQPdwN87olVlNUBbNxkxDcqPQQ/ROTA+RYl1EH63EH5poTnKOMEOUEBi
+ mvNOmc+uGmjD2yAbLq0Or+s4ebqCvcJ14c21zu/Ww52zWMgLazBtDyC
+X-Developer-Key: i=lina@asahilina.net; a=ed25519;
+ pk=tpv7cWfUnHNw5jwf6h4t0gGgglt3/xcwlfs0+A/uUu8=
 
-On Tue, Nov 12, 2024 at 9:23=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Tue, Nov 12, 2024 at 6:22=E2=80=AFAM James Clark <james.clark@linaro.o=
-rg> wrote:
-> >
-> > On 11/11/2024 5:19 pm, Ian Rogers wrote:
-> > > On Mon, Nov 11, 2024 at 2:45=E2=80=AFAM James Clark <james.clark@lina=
-ro.org> wrote:
-> > >>
-> > >> On 08/11/2024 6:37 pm, Atish Kumar Patra wrote:
-> > >>> On Fri, Nov 8, 2024 at 4:16=E2=80=AFAM James Clark <james.clark@lin=
-aro.org> wrote:
-> > >>>>
-> > >>>>
-> > >>>>
-> > >>>> On 07/11/2024 18:51, Ian Rogers wrote:
-> > >>>>> On Sat, Oct 26, 2024 at 5:18=E2=80=AFAM Ian Rogers <irogers@googl=
-e.com> wrote:
-> > >>>>>>
-> > >>>>>> At the RISC-V summit the topic of avoiding event data being in t=
-he
-> > >>>>>> RISC-V PMU kernel driver came up. There is a preference for sysf=
-s/JSON
-> > >>>>>> events being the priority when no PMU is provided so that legacy
-> > >>>>>> events maybe supported via json. Originally Mark Rutland also
-> > >>>>>> expressed at LPC 2023 that doing this would resolve bugs on ARM =
-Apple
-> > >>>>>> M? processors, but James Clark more recently tested this and bel=
-ieves
-> > >>>>>> the driver issues there may not have existed or have been resolv=
-ed. In
-> > >>>>>> any case, it is inconsistent that with a PMU event names avoid l=
-egacy
-> > >>>>>> encodings, but when wildcarding PMUs (ie without a PMU with the =
-event
-> > >>>>>> name) the legacy encodings have priority.
-> > >>>>>>
-> > >>>>>> The patch doing this work was reverted in a v6.10 release candid=
-ate
-> > >>>>>> as, even though the patch was posted for weeks and had been on
-> > >>>>>> linux-next for weeks without issue, Linus was in the habit of us=
-ing
-> > >>>>>> explicit legacy events with unsupported precision options on his
-> > >>>>>> Neoverse-N1. This machine has SLC PMU events for bus and CPU cyc=
-les
-> > >>>>>> where ARM decided to call the events bus_cycles and cycles, the =
-latter
-> > >>>>>> being also a legacy event name. ARM haven't renamed the cycles e=
-vent
-> > >>>>>> to a more consistent cpu_cycles and avoided the problem. With th=
-ese
-> > >>>>>> changes the problematic event will now be skipped, a large warni=
-ng
-> > >>>>>> produced, and perf record will continue for the other PMU events=
-. This
-> > >>>>>> solution was proposed by Arnaldo.
-> > >>>>>>
-> > >>>>>> Two minor changes have been added to help with the error message=
- and
-> > >>>>>> to work around issues occurring with "perf stat metrics (shadow =
-stat)
-> > >>>>>> test".
-> > >>>>>>
-> > >>>>>> The patches have only been tested on my x86 non-hybrid laptop.
-> > >>>>>
-> > >>>>> Hi Atish and James,
-> > >>>>>
-> > >>>>> Could I get your tags for this series?
-> > >>>>>
-> > >>>
-> > >>> Hi Ian,
-> > >>> Thanks for your patches. It definitely helps to have a clean slate
-> > >>> implementation
-> > >>> for the perf tool. However, I have some open questions about other =
-use cases
-> > >>> that we discussed during the RVI Summit.
-> > >>>
-> > >>>>> The patches were originally motivated by wanting to make the beha=
-vior
-> > >>>>> of events parsed like "cycles" match that of "cpu/cycles/", the P=
-MU is
-> > >>>>> wildcarded to "cpu" in the first case. This was divergent because=
- of
-> > >>>>> ARM we switched from preferring legacy (type =3D PERF_TYPE_HARDWA=
-RE,
-> > >>>>> config =3D PERF_COUNT_HW_CPU_CYCLES) to sysfs/json (type=3D<core =
-PMU's
-> > >>>>> type>, config=3D<encoding from event>) when a PMU name was given.=
- This
-> > >>>>> aligns with RISC-V wanting to use json encodings to avoid complex=
-ity
-> > >>>>> in the PMU driver.
-> > >>>>>
-> > >>>>
-> > >>>> I couldn't find the thread, but I remember fairly recently it was
-> > >>>> mentioned that RISC-V would be supporting the legacy events after =
-all,
-> > >>>> maybe it was a comment from Atish? I'm not sure if that changes th=
-e
-> > >>>> requirements for this or not?
-> > >>>>
-> > >>>> I still can't really imagine how tooling would work if every tool =
-has to
-> > >>>> maintain the mappings of basic events like instructions and branch=
-es.
-> > >>>> For example all the perf_event_open tests in ltp use the legacy ev=
-ents.
-> > >>>>
-> > >>>
-> > >>> No it has not changed. While this series helps to avoid clunky vend=
-or
-> > >>> specific encodings
-> > >>> in the driver for perf tool, I am still unsure how we will manage
-> > >>> other applications
-> > >>> (directly passing legacy events through perf_event_open or
-> > >>> perf_evlist__open) will work.
-> > >>>
-> > >>> I have only anecdotal data about folks relying perf legacy events
-> > >>> directly to profile
-> > >>> their application. All of them use mostly cycle/instruction events =
-though.
-> > >>> Are there any users who use other legacy events directly without pe=
-rf tool ?
-> > >>>
-> > >>> If not, we may have only cycle/instruction mapping in the driver an=
-d
-> > >>> rely on json for everything else.
-> > >>> The other use case is virtualization. I have been playing with thes=
-e
-> > >>> patches to find a clean solution to
-> > >>> enable all the use cases. If you have any other ideas, please let m=
-e know.
-> > >>>
-> > >>
-> > >> Yeah I would expect it's mostly cycles and instructions. I searched =
-a
-> > >> bit for PERF_COUNT_HW_BRANCH_MISSES and only found tool/developer ty=
-pe
-> > >> usages, which I suppose we could expect to have to handle the mappin=
-gs
-> > >> like perf. Although it's not the easiest thing to search for and
-> > >> obviously that only includes open source.
-> > >>
-> > >> Usages do exist though, there are people posting on stack overflow u=
-sing
-> > >> it, and other various bug tracker listings. So you would expect thos=
-e
-> > >> same users to have to use raw event codes and some switch statement =
-to
-> > >> pick the right one for their hardware, or use Perf.
-> > >
-> > > I don't have any magic to solve this. My thoughts:
-> > >
-> > > 1) I thought legacy events were just going to hang around forever,
-> > > although the name hinting they'd kind of been deprecated. At LPC '23
-> > > Atish and Mark Rutland originally asked for the sysfs/json to be the
-> > > preference. I thought Kan was going to push back given the upheaval,
-> > > especially updating every test expectation. It went through but we're
-> > > in this weird state where wildcard events are encoded using legacy an=
-d
-> > > PMU specifying events aren't. What this series hopes to solve.
-> > >
-> > > 2) I think it is important that perf tool be a reference
-> > > implementation where others can look (strace, etc.) to base their
-> > > implementation. Moving perf to sysfs/json is 1 step closer to legacy
-> > > event deprecation. Please yell if deprecation isn't what is wanted as
-> > > personally other than cleanliness I don't mind. If we do decide not t=
-o
-> > > have sysfs/json be the priority then I think it sensible to revert th=
-e
-> > > changes making it the priority for events that specify a PMU. I'd lik=
-e
-> > > some level of consistency.
-> >
-> > Personally this change feels like it's encouraging fragmentation, the
-> > cleanest would be if RISC-V supports the legacy events like the other
-> > platforms. It's not a huge set of events anyway, and then existing
-> > software continues to work in addition to Perf continuing to work.
->
-> So I try to be agnostic on the issue but we got to this point because
-> of events being broken on ARM Apple chips. I fixed an issue where the
-> ARM core PMU appeared as an uncore PMU as ARM's PMU naming differs
-> from everyone else's. That fix made it so we used legacy events for
-> the ARM core PMU, the PMU driver didn't handle this correctly (at the
-> time) on ARM Apple Linux breaking perf over multiple Linux releases
-> affecting a number of users.
->
-> Having a pool of standard events isn't on the face of it a crazy idea,
-> I'll try to remember things that have come up:
->
-> 1) instructions and cycles seem like fairly easy events to agree upon.
-> However, we also have cpu-cycles that means cycles. With legacy events
-> the hyphen is often used as a PMU separator. Now what does the cpu
-> mean here? On ARM you also have cpu_cycles as a sysfs event, ie an
-> underscore and not a hyphen:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/=
-tree/drivers/perf/arm_pmuv3.c?h=3Dperf-tools-next#n192
-> What does 'cpu' mean when ARM has no core PMU called 'cpu' and in
-> heterogeneous systems there are multiple notions of 'cpu' for the core
-> PMU.
-> What's my point? Just trying to make a minimal 2 event set of common
-> events with the way things currently parse leads to ambiguity.
->
-> 2) missing/ambiguous legacy events. Beyond instructions and cycles
-> there are cache references, cache misses, branch instructions, branch
-> misses, bus cycles, stalled cycles frontend, stalled cycles backend
-> and reference CPU cycles. This set of events captures an out-of-order
-> machine with a single bus, but even then there's ambiguity over
-> whether the events include speculatively executed instructions or not.
-> What's my point? Using these events leads to unpredictable counts in
-> software. With a sysfs/json event there is a description but none was
-> ever given about what these legacy events should do, or do if you have
-> a system with >1 bus, counts for speculatively executed instructions,
-> isn't out-of-order, etc.
->
-> 3) "legacy cache" events never really took off. The legacy cache event
-> names encoded data around speculation and appeared less ambiguous, a
-> good source for all the names supported by perf is here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/=
-tree/tools/perf/util/evsel.c?h=3Dperf-tools-next#n734
-> but choices were made like prefetch is the same as a speculative read
-> in the encoding. Vendors no doubt agree and disagree on this. LLC and
-> L2 are synonyms, but today LLC generally means L3 and often an
-> entirely separate PMU.
-> What's my point? The code tried to do a smarter less ambiguous thing
-> than PERF_TYPE_HARDWARE with PERF_TYPE_HW_CACHE but again it was
-> flawed, carried too many architectural assumptions and without the
-> drivers adopting it neither did users.
->
-> 4) PMU drivers mapping issues and the aforementioned ARM Apple Linux
-> breakage, RISC-V wanting to keep mappings out of a more simplistic
-> driver.
->
-> So I wasn't there for all of this, but I think this is what led to the
-> legacy events effectively becoming deprecated.
->
-> > If we're still thinking that RISC-V will support the legacy events
-> > anyway in the future, then it weakens the argument to change this and
-> > risk any breakages that fall out of it.
->
-> Agreed, that's why I keep saying I'm only doing this because ARM and
-> RISC-V want it. What I want is that for things like the encoding of
+When using FUSE DAX with virtiofs, cache coherency is managed by the
+host. Disk persistence is handled via fsync() and friends, which are
+passed directly via the FUSE layer to the host. Therefore, there's no
+need to do dax_writeback_mapping_range(). All that ends up doing is a
+cache flush operation, which is not caught by KVM and doesn't do much,
+since the host and guest are already cache-coherent.
 
-In the beginning, we wanted it for the RISC-V ecosystem because we had
-an opportunity to start
-from a clean slate and attempt a better implementation. However, the
-burden of supporting the existing
-existing users who try to run their preferred way of profiling
-applications by using
-legacy events (especially cycle/instructions) are forcing us to follow
-the convention (have the encodings specified in the driver as well.
-) unfortunately.
+Since dax_writeback_mapping_range() checks that the inode block size is
+equal to PAGE_SIZE, this fixes a spurious WARN when virtiofs is used
+with a mismatched guest PAGE_SIZE and virtiofs backing FS block size
+(this happens, for example, when it's a tmpfs and the host and guest
+have a different PAGE_SIZE). FUSE DAX does not require any particular FS
+block size, since it always performs DAX mappings in aligned 2MiB
+blocks.
 
-However, we can add the encodings under a Kconfig which can be
-disabled or removed in the future if we get
-to a point where there are no legacy users.
+See discussion in [1].
 
-> "cpu-cycles" and "cpu/cpu-cycles/" when there is only 1 PMU providing
-> such an event called "cpu" the perf_event_attr encodings should match,
-> we don't have this today but did prior to changing the priority to fix
-> the ARM Apple Linux issue.
->
-> I think for what Atish is asking for perhaps the best route is to add
-> vendor standard events like ARM has. Anything done in Linux won't
-> carry over to other operating systems you can be trying to virtualize.
-> This doesn't to me feel like a problem we should be trying to solve
-> either in the kernel/driver or the tool, well I've not heard an idea
-> how we can.
->
+[1] https://lore.kernel.org/lkml/20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net/T/#u
 
-Apart from the non-Linux guests using SBI PMU events, the host
-hypervisor(also running Linux) may need
-event mapping available in the driver for the following reasons even
-for guests running Linux.
+Suggested-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Asahi Lina <lina@asahilina.net>
+---
+ fs/fuse/dax.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-1. The guest Linux is not running the updated perf tool with the
-correct json file
-2. VMM wants to fake the unique identifiers (vendorid, archid, implid)
-for migration or some
-other reasons.
+diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+index 12ef91d170bb3091ac35a33d2b9dc38330b00948..15cf7bb20b5ebf15451190dac2fcc2e841148e6c 100644
+--- a/fs/fuse/dax.c
++++ b/fs/fuse/dax.c
+@@ -777,11 +777,8 @@ ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ static int fuse_dax_writepages(struct address_space *mapping,
+ 			       struct writeback_control *wbc)
+ {
+-
+-	struct inode *inode = mapping->host;
+-	struct fuse_conn *fc = get_fuse_conn(inode);
+-
+-	return dax_writeback_mapping_range(mapping, fc->dax->dev, wbc);
++	/* nothing to flush, fuse cache coherency is managed by the host */
++	return 0;
+ }
+ 
+ static vm_fault_t __fuse_dax_fault(struct vm_fault *vmf, unsigned int order,
 
-Both these use cases are probably corner cases at best. That's why, I
-am inclined to keep the encoding
-in the driver to begin with with the hope we won't need to serve these
-use cases in the future.
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241113-dax-no-writeback-41e6bb3698bc
 
-The driver will use the raw events coming from json as a preferred
-method for all the events anyways. In that case,
-the hypervisor doesn't have to do anything apart from filtering. In
-absence of it, the events are encoded as legacy
-(HARDWARE or HARDWARE_CACHE) and the hypervisor will try its best to
-map those to a platform specific encoding.
+Cheers,
+~~ Lina
 
-> > I'm also not sure whether they really are legacy or just a common base
-> > set of events. Since the extended type thing was added even the legacy
-> > events support hybrid, so it's not like they expired from lack of
-> > features. Even if we claim they're legacy, is that really ever going to
-> > make them go away?
->
-> So for heterogeneous chips ARM first did BIG.little over ten years
-> ago. More recently Intel did hybrid and it wasn't until Intel added
-> hybrid support for legacy events that the idea of this worked. As you
-> know, ARM''s support came later. Does software outside of the perf
-> tool know to encode information in the extended type information in
-> legacy events? I doubt it. For example, libpfm4 has only recently been
-> adding support for heterogeneous CPUs.
->
-> So yes there are legacy events and they are a common pool of events
-> which is convenient for developers, however, this approach quickly
-> showed shortcomings and often lacked proper vendor support. My company
-> advocates developers against using common events, which admittedly is
-> more work for the developer, because we've had multiple issues over
-> the years primarily due to baked in assumptions.
->
-> Thanks,
-> Ian
->
-> > Although I admit nobody has come out with a definitive use case that
-> > doesn't use either the cycles or instructions events, so maybe its all =
-fine.
-> >
-> > >
-> > > 3) I'd like event parsing to be a library that is as easy to link
-> > > against as libbpf (i.e. not a viral license). Event parsing is really
-> > > just mapping an event name to 1 or more perf_event_attr. The PMU
-> > > abstraction is tied into the event parsing, but this has only been
-> > > more true recently. The evsel/evlist is tied into event parsing but
-> > > that feels separable. As most json isn't distributed under a viral
-> > > license this feels achievable, then I suspect most tools can use this
-> > > library rather than have to reinvent a wheel.
-> > >
-> > > Still looking for tags :-)
-> > >
-> > > Thanks,
-> > > Ian
-> >
 
