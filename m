@@ -1,179 +1,146 @@
-Return-Path: <linux-kernel+bounces-405712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA879C5622
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:17:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A54DC9C5652
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:24:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F01728C1FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:17:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD11CB45C88
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806052245E9;
-	Tue, 12 Nov 2024 10:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3714B22461B;
+	Tue, 12 Nov 2024 10:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lZdYuUDc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bg3xrTMh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lZdYuUDc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bg3xrTMh"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alistair23.me header.i=@alistair23.me header.b="drEJllAw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LKGw3kQD"
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BCB21502C;
-	Tue, 12 Nov 2024 10:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6C0215038;
+	Tue, 12 Nov 2024 10:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731408833; cv=none; b=PkOiMx/Y3r+Q8HWBu1pJBaHtuuHWz01QnqO5kECT+JXFckVgM51/3d0x6+69Ps/oT0TZT5OdlDRBjsIg6lXD3JR2b30O3qACreoMGLh2wbETswOumAcGBE8j/JtKoc1hVGXPLcw5Gqm+JsmpRDlF3xEF+xW4SlT5notbE1wCQr4=
+	t=1731408956; cv=none; b=sSKyh4+QwMvJkaFFfoA7YgFpY4g00eIbZM+zvK3gpko8VtgxaD3NMG28098hmMc4hRYKWhDmlaBICAB/+LqmH1JKdIift9lNCiHX3g7DdBmyLgs1sRix8N55kh15IvHuBOaT08hWt1COK3s4AiBBMJ89smq0vR8c9Sb98J8AFyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731408833; c=relaxed/simple;
-	bh=995iBmPm1i4W18GxviHZf2gYPUTyt9t72Pci/pkOWMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ei5BKuYN6SOTLrvz9T6Ce73Zma2ArWA6pXtFV7rsXwaB7LSZz74Vk+AAO3q2HEKcH0pCrs1edGEsvZIB+ED37XSU3RXmj0oFThWG0SqNRNBjtQtZcS1L/I0q4Zs3bFR3O7sAxhh7C5t3WhxiPVPiBn+WE+AA/BshnF6q5KQ3dnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lZdYuUDc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bg3xrTMh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lZdYuUDc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bg3xrTMh; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2002321297;
-	Tue, 12 Nov 2024 10:53:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731408830; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yfd7rH/G8Bq/nQidIzI1OLhuGKSbF9fTUijTRaoKJKo=;
-	b=lZdYuUDcE4rNKcJrHGudwfQjWIXzP6wif+LpMmCeIJ4BD+ayGlZXNXLj7qLWP9QRRokCtQ
-	z0HFqjoWsvFbUTXhhaki2wRUJp2egOAHvP6JAs1rlJaHxTvPSojlvU4XQ4Y1LouWNx9HjC
-	ZX/7OR8luqC/yYur7vVnO6QN0uXhD+I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731408830;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yfd7rH/G8Bq/nQidIzI1OLhuGKSbF9fTUijTRaoKJKo=;
-	b=bg3xrTMhq9ZaYVb9sWCQxP5I+adZqba5TDAztxpceh/23htljb6MYrGt1JOAyGE21yCQHb
-	Iwhs/HU9rE2cXdBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=lZdYuUDc;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=bg3xrTMh
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731408830; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yfd7rH/G8Bq/nQidIzI1OLhuGKSbF9fTUijTRaoKJKo=;
-	b=lZdYuUDcE4rNKcJrHGudwfQjWIXzP6wif+LpMmCeIJ4BD+ayGlZXNXLj7qLWP9QRRokCtQ
-	z0HFqjoWsvFbUTXhhaki2wRUJp2egOAHvP6JAs1rlJaHxTvPSojlvU4XQ4Y1LouWNx9HjC
-	ZX/7OR8luqC/yYur7vVnO6QN0uXhD+I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731408830;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yfd7rH/G8Bq/nQidIzI1OLhuGKSbF9fTUijTRaoKJKo=;
-	b=bg3xrTMhq9ZaYVb9sWCQxP5I+adZqba5TDAztxpceh/23htljb6MYrGt1JOAyGE21yCQHb
-	Iwhs/HU9rE2cXdBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1545F13301;
-	Tue, 12 Nov 2024 10:53:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hG0sBb4zM2eXOQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 12 Nov 2024 10:53:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A30E4A08D0; Tue, 12 Nov 2024 11:53:49 +0100 (CET)
-Date: Tue, 12 Nov 2024 11:53:49 +0100
-From: Jan Kara <jack@suse.cz>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, brauner@kernel.org,
-	sforshee@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz
-Subject: Re: [PATCH 0/3] io path options + reflink (mild security
- implications)
-Message-ID: <20241112105349.kg347ogngynglr4t@quack3>
-References: <20241112033539.105989-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1731408956; c=relaxed/simple;
+	bh=/0Cf1a5yIfHywCfB6n9mecjUfSbhNZKyuEH7CWiT2cQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JQriKwyqfxpHFMJ5qEctS9JnDo0pZ/Y2I5N2ylD5Dgdufm3vND3XFSyuwXvg6f7fMVtbsKIHnjuDe9RPSP8070yBWeLJpmSWQekjr5ktrYuWhomjAvhq2aORfta1WalbtzqBd7M3K0iQxuqvWhe0i7cujX2ap6E1qTS83IYTR9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alistair23.me; spf=pass smtp.mailfrom=alistair23.me; dkim=pass (2048-bit key) header.d=alistair23.me header.i=@alistair23.me header.b=drEJllAw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LKGw3kQD; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alistair23.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alistair23.me
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 65C0B2540150;
+	Tue, 12 Nov 2024 05:55:52 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Tue, 12 Nov 2024 05:55:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alistair23.me;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1731408952; x=1731495352; bh=HmzwMlBWFw
+	m21e1s6L71Z2FjShDjZvh1v3y1PTdDnbg=; b=drEJllAwZeqbTChnOLK8gjAdfn
+	xXvFRhFgoN4t5P8U+MKbzpNn/y87IQUJEeT4H6CAsxqV98hkFl8KUicECALoLLt6
+	qJwbzjJNS6t8adePK+YbqFznFXWfT2/Ag6IWQm9BZ7uVV2SqHTpDVQGM1c410pZU
+	w1JfuO2WttN9fIm84LnWvnh/keOBI2jZvZIl00+E8oGrVdZBDm2X/HHtcrIXhBxs
+	/2IEiETLbJFtFxL0kEXMltPiDpVhS4HhAAMvlylOmQBx1xYKm30AK5HfS94VUzYD
+	sPAN7OOKSR7CiXROW/rhfxIA1xR84uz4HM3N+elZKRPexBvErpg1TlIuY8Yw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731408952; x=1731495352; bh=HmzwMlBWFwm21e1s6L71Z2FjShDjZvh1v3y
+	1PTdDnbg=; b=LKGw3kQDBipsVdFQ5wMEpAcQCLQoqNpOgG+sO5NQ4zQ3HeYK/6i
+	1lpcD/2K4q0R5RhqJq4wl+PRKnmD4dQla7RVn9frXeygWhLamgi+fkmlbVS0cRx8
+	gscf4KxKceZTVGzbqx5Rke6VMT1uWX3Q2uPMUarRrCXBD8qtvLDLNteQ2ea7TkPO
+	GMySxHrP9XKduC6LZ/p8kKkUvkqBqz+wpR8POKx2Uoykk9/vW+qfVcdueZlHE+yw
+	IyTymuXe9X9lOL38pUTH12teSMCy19fQs2l8p0KfBAePsRQxE2dLEtkEq0/zoSas
+	EMS5P6lmCxZbv8bbLOtcTvk9OF21lP9yG+g==
+X-ME-Sender: <xms:NzQzZ089Fqg0VgF69gUi8YzOWzpZMf7dMEJ2FsUMBXGzvBkieZf6oQ>
+    <xme:NzQzZ8swV9t1exiJ3au1rFzXWNJGuxolzZYW3hv68yTgDg9xUrRDHyxEzRRzT_mEK
+    RvLf737L_F-5bu41fo>
+X-ME-Received: <xmr:NzQzZ6CAeraNCDZ6zNjj0R7xDoDJtwRmlHtmGD6utTJDBZ1LKAjER15ESDsgTLmsGran-2qpg9Bp>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudeggddukecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvvefuff
+    fkofgggfestdekredtredttdenucfhrhhomheptehlihhsthgrihhrucfhrhgrnhgtihhs
+    uceorghlihhsthgrihhrsegrlhhishhtrghirhdvfedrmhgvqeenucggtffrrghtthgvrh
+    hnpeegheejueehgeekjeffjeehhfejieelfeduudfhgeetieegueehvdeftefhgffhtden
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrlhhish
+    htrghirhesrghlihhsthgrihhrvdefrdhmvgdpnhgspghrtghpthhtohepjedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprh
+    gtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopegr
+    nhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrlhhishhtrghirhdvfeesghhmrg
+    hilhdrtghomhdprhgtphhtthhopegrlhhishhtrghirhdrfhhrrghntghishesfigutgdr
+    tghomh
+X-ME-Proxy: <xmx:NzQzZ0fwG1o3KNzHBKedhU3mqMnwKrXxTfpFuM6NzY-g1QwrLy6r_A>
+    <xmx:NzQzZ5PcfMfI9t5B21ZyXTVs6gozguQzVw3Jp-sKVAl08OHSvDubqA>
+    <xmx:NzQzZ-mYwHBuu_V3peiskB0AxH1C3DlTAKlWYeNOU0FS-pF1slmEEw>
+    <xmx:NzQzZ7sCzIKjsq5TH-sX7mNvbEfARmJhzcRflgpXSy756XWLXjf5tw>
+    <xmx:ODQzZ8eD6o3TqXKriidLJ5UhW073HBqy_xxhzDpbAoupBRGya4GLuLGI>
+Feedback-ID: ifd214418:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 12 Nov 2024 05:55:49 -0500 (EST)
+From: Alistair Francis <alistair@alistair23.me>
+To: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: linux@armlinux.org.uk,
+	hkallweit1@gmail.com,
+	andrew@lunn.ch,
+	alistair23@gmail.com,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: [PATCH 1/2] include: mdio: Remove mdio45_ethtool_gset()
+Date: Tue, 12 Nov 2024 20:54:29 +1000
+Message-ID: <20241112105430.438491-1-alistair@alistair23.me>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112033539.105989-1-kent.overstreet@linux.dev>
-X-Rspamd-Queue-Id: 2002321297
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Mon 11-11-24 22:35:32, Kent Overstreet wrote:
-> so, I've been fleshing out various things at the intersection of io path
-> options + rebalance + reflink, and this is the last little bit
-> 
-> background: bcachefs has io path options that can be set filesystem
-> wide, or per inode, and when changed rebalance automatically picks them
-> up and does the right thing
-> 
-> reflink adds a wrinkle, which is that we'd like e.g. recursively setting
-> the foreground/background targets on some files to move them to the
-> appropriate device (or nr_replicas etc.), like other data - but if a
-> user did a reflink copy of some other user's data and then set
-> nr_replicas=1, that would be bad.
-> 
-> so this series adds a flag to reflink pointers for "may propagate option
-> changes", which can then be set at remap_file_range() time based on
-> vfs level permission checks.
-> 
-> so, question for everyone: is write access to the source file what we
-> want? or should it be stricter, i.e. ownership matches?
+From: Alistair Francis <alistair.francis@wdc.com>
 
-Well, if I understand the impact properly, this seems similar to the
-effects vfs_fileattr_set() can have on a file and there we have:
+mdio45_ethtool_gset() is never called, so let's remove it.
 
-        if (!inode_owner_or_capable(idmap, inode))
-                return -EPERM;
+Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+---
+ include/linux/mdio.h | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-So I'd say ownership match would be more consistent.
-
-> then, we're currently missing mnt_idmap plumbing to remap_file_range()
-> to do said permissions checks - do we want to do that? or is there an
-> easier way?
-
-Well, if you have struct file, you have the mount and thus idmap through
-file_mnt_idmap(file). And struct file is available in remap_file_range()
-call stack so I'm not sure what is the problem exactly.
-
-								Honza
+diff --git a/include/linux/mdio.h b/include/linux/mdio.h
+index efeca5bd7600..c63f43645d50 100644
+--- a/include/linux/mdio.h
++++ b/include/linux/mdio.h
+@@ -173,22 +173,6 @@ mdio45_ethtool_ksettings_get_npage(const struct mdio_if_info *mdio,
+ 				   struct ethtool_link_ksettings *cmd,
+ 				   u32 npage_adv, u32 npage_lpa);
+ 
+-/**
+- * mdio45_ethtool_gset - get settings for ETHTOOL_GSET
+- * @mdio: MDIO interface
+- * @ecmd: Ethtool request structure
+- *
+- * Since the CSRs for auto-negotiation using next pages are not fully
+- * standardised, this function does not attempt to decode them.  Use
+- * mdio45_ethtool_gset_npage() to specify advertisement bits from next
+- * pages.
+- */
+-static inline void mdio45_ethtool_gset(const struct mdio_if_info *mdio,
+-				       struct ethtool_cmd *ecmd)
+-{
+-	mdio45_ethtool_gset_npage(mdio, ecmd, 0, 0);
+-}
+-
+ /**
+  * mdio45_ethtool_ksettings_get - get settings for ETHTOOL_GLINKSETTINGS
+  * @mdio: MDIO interface
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.47.0
+
 
