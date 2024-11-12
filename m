@@ -1,145 +1,139 @@
-Return-Path: <linux-kernel+bounces-406840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2549C655B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:43:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 099C99C65BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:08:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14112B2E0E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:12:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E43A8B3443D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507071B86E4;
-	Tue, 12 Nov 2024 23:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE88A21CF95;
+	Tue, 12 Nov 2024 23:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b="QSjWisTh"
-Received: from a.peacevolution.org (a.peacevolution.org [206.189.193.133])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rQCTXzfo"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D886121A71D;
-	Tue, 12 Nov 2024 23:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.193.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201E11FCC7B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731453109; cv=none; b=Yo824P4nSJX26NdVywh7MJQv1DK+pYSTJ2cagofLJt5TP7hGmoRDDOsB2GqUDlORB98hd6T6wGdj0EoB8aUCVnm7bS452/bu3hkT6iwRkPdD495TBKIUlNU1jAYlySAVO69BN2xtYtgaFhtibqMYVmfExH9flcu+hXoftv+BXsA=
+	t=1731453692; cv=none; b=MYH5sy9yyDVx0CeQhIkeOYkaHZDCrZOZwANN+VkkJb0kR1E4YQPXNfKJkPVHZsLT5McwoOzdPJ7siLxRwQ19dW3g6zFuc5zFbbGqYqUhBYpgKoebdL1KFj1Y6gYXGyeDm69ji6h4qB/NoAYCcChc7/hiKFSYuAmv8vt/UM2FqIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731453109; c=relaxed/simple;
-	bh=NmO64Sjewa/+GsTTNydYxbpRHAP/H0Q6gTgckdfbwNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8t2LILVja1mLC0VJ2zoEKE4vJ6s/yNDI88fxW9JRd2WszGaHxgMDPsPh454Y1XySFqmHJOE3jmTAxm7Q9pQ02HL+TJO4lDMoNPv9cjBOuV2WmP61gE8iLGR+pxHBJUg6iuh/U7zCFPFTHieUF3jx1P1liMKEh4xRUGUI96nNJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org; spf=pass smtp.mailfrom=peacevolution.org; dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b=QSjWisTh; arc=none smtp.client-ip=206.189.193.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peacevolution.org
-Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
-	by a.peacevolution.org (Postfix) with ESMTPA id D08794C739;
-	Tue, 12 Nov 2024 23:11:39 +0000 (UTC)
-Date: Tue, 12 Nov 2024 18:11:37 -0500
-From: Aren <aren@peacevolution.org>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Kaustabh Chakraborty <kauschluss@disroot.org>, =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
-	Ondrej Jirman <megi@xff.cz>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] iio: light: stk3310: use dev_err_probe where
- possible
-Message-ID: <6jwurbs27slfpsredvpxfgwjkurkqvfmzccaxnfgtuh4aks3c6@ciapprv3wsex>
-References: <20241102195037.3013934-3-aren@peacevolution.org>
- <20241102195037.3013934-11-aren@peacevolution.org>
- <ZyiIcDaANjxwtCz-@smile.fi.intel.com>
- <m7x526sv5krgt4t2whn5ykyktoz5u7ihsxv3qa5yue3ucbk6lb@37spwsmlcylm>
- <ZzEPACoblmcQD9yu@surfacebook.localdomain>
- <xubjmxig4luag27ifnmqmv3x3bvzhwczwvw34kw6tssaa2d24t@ysnqh5e3g7sz>
- <ZzHSE9Nrf4YySJrq@smile.fi.intel.com>
- <4ibd5tgpt3uzbmouqdiiv5pvfxebo5qsmgn3xh6rlb73qevatv@cajznxqnlca3>
+	s=arc-20240116; t=1731453692; c=relaxed/simple;
+	bh=T/ebl/U5ZAKRHJn2gpf/9r0tbBg+eYcJtqGgYb1sByM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kcR/1XYdIbEkYi1JrDeiSPk8MFFnAZ74jXSBsmsRkiJMUCcmda2MukqVj1dFwYx6uDUntzMQtXWLn5DS5hxaKGT5efBEPIDBZ4bTHVT0eCn7wMNlD798GQsvOC97IbxDVfg6o0GgrdhlCv40NBhff/Hfe5QWUBm7JWemh+K5ixI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rQCTXzfo; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a6d2a96b-feea-4cf2-b49a-c2c82391599e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731453688;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dCzpCsVkjLt6UNdvDR5L5KILqw8LXple0VYgWj3YQBw=;
+	b=rQCTXzfogUm6+I4Zd8EI7rIAurDCRvAHoy0f9Inf+EmU7P+ulgZn3zlpennFHg7Z7/MJax
+	dfqR0k5UWct1leRlrtSicXdAl4skcWYuK1BKxI6TrpSDDG+pm4+1J96fdKmAU2rQmPEDBZ
+	FOpA/m+x32j08NBhQxldJLrgXsnWhQg=
+Date: Tue, 12 Nov 2024 23:21:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Subject: Re: [PATCH net-next v3 1/5] net: phy: microchip_ptp : Add header file
+ for Microchip ptp library
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Divya Koppera <divya.koppera@microchip.com>, arun.ramadoss@microchip.com,
+ UNGLinuxDriver@microchip.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ richardcochran@gmail.com
+References: <20241112133724.16057-1-divya.koppera@microchip.com>
+ <20241112133724.16057-2-divya.koppera@microchip.com>
+ <37bba7bc-0d6f-4655-abd7-b6c86b12193a@linux.dev>
+ <53c8b505-f992-4c2e-b2c0-616152b447c3@lunn.ch>
+ <955cb079-b58d-4c32-8925-74f596312b21@linux.dev>
+ <7e9e0964-6532-42e6-9005-18715aaac5a6@lunn.ch>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <7e9e0964-6532-42e6-9005-18715aaac5a6@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4ibd5tgpt3uzbmouqdiiv5pvfxebo5qsmgn3xh6rlb73qevatv@cajznxqnlca3>
-X-Spamd-Bar: /
-Authentication-Results: auth=pass smtp.auth=aren@peacevolution.org smtp.mailfrom=aren@peacevolution.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=peacevolution.org;
-	s=dkim; t=1731453101;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
-	bh=/XvnojsbDU2iklE9xJFwgVgRWENV+XinNVMN6pOt4es=;
-	b=QSjWisTh28m3ad1tuS8ksPEWHblcKQJX1GVqDMfbdGFRlCO9UKjCCII5U0UztBmrE6NUW1
-	ajTb4KKLxsSIaHAKj3gbmwqW91BnTF6mZ0TQDRXEPGHJTR0fJFipdfoO1DNQLMvoEaffwy
-	Uz5hZTjJ+fCuSFtKzzlpepmg9SJyEi0=
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 12, 2024 at 11:15:54AM +0100, Uwe Kleine-K�nig wrote:
-> Hello Andy, hello Aren,
+On 12/11/2024 23:11, Andrew Lunn wrote:
+> On Tue, Nov 12, 2024 at 10:56:19PM +0000, Vadim Fedorenko wrote:
+>> On 12/11/2024 22:26, Andrew Lunn wrote:
+>>>> I believe, the current design of mchp_ptp_clock has some issues:
+>>>>
+>>>> struct mchp_ptp_clock {
+>>>>           struct mii_timestamper     mii_ts;             /*     0    48 */
+>>>>           struct phy_device *        phydev;             /*    48     8 */
+>>>>           struct sk_buff_head        tx_queue;           /*    56    24 */
+>>>>           /* --- cacheline 1 boundary (64 bytes) was 16 bytes ago --- */
+>>>>           struct sk_buff_head        rx_queue;           /*    80    24 */
+>>>>           struct list_head           rx_ts_list;         /*   104    16 */
+>>>>           spinlock_t                 rx_ts_lock          /*   120     4 */
+>>>>           int                        hwts_tx_type;       /*   124     4 */
+>>>>           /* --- cacheline 2 boundary (128 bytes) --- */
+>>>>           enum hwtstamp_rx_filters   rx_filter;          /*   128     4 */
+>>>>           int                        layer;              /*   132     4 */
+>>>>           int                        version;            /*   136     4 */
+>>>>
+>>>>           /* XXX 4 bytes hole, try to pack */
+>>>>
+>>>>           struct ptp_clock *         ptp_clock;          /*   144     8 */
+>>>>           struct ptp_clock_info      caps;               /*   152   184 */
+>>>>           /* --- cacheline 5 boundary (320 bytes) was 16 bytes ago --- */
+>>>>           struct mutex               ptp_lock;           /*   336    32 */
+>>>>           u16                        port_base_addr;     /*   368     2 */
+>>>>           u16                        clk_base_addr;      /*   370     2 */
+>>>>           u8                         mmd;                /*   372     1 */
+>>>>
+>>>>           /* size: 376, cachelines: 6, members: 16 */
+>>>>           /* sum members: 369, holes: 1, sum holes: 4 */
+>>>>           /* padding: 3 */
+>>>>           /* last cacheline: 56 bytes */
+>>>> };
+>>>>
+>>>> tx_queue will be splitted across 2 cache lines and will have spinlock on the
+>>>> cache line next to `struct sk_buff * next`. That means 2 cachelines
+>>>> will have to fetched to have an access to it - may lead to performance
+>>>> issues.
+>>>>
+>>>> Another issue is that locks in tx_queue and rx_queue, and rx_ts_lock
+>>>> share the same cache line which, again, can have performance issues on
+>>>> systems which can potentially have several rx/tx queues/irqs.
+>>>>
+>>>> It would be great to try to reorder the struct a bit.
+>>>
+>>> Dumb question: How much of this is in the hot patch? If this is only
+>>> used for a couple of PTP packets per second, do we care about a couple
+>>> of cache misses per second? Or will every single packet the PHY
+>>> processes be affected by this?
+>>
+>> Even with PTP packets timestamped only - imagine someone trying to run
+>> PTP server part with some proper amount of clients? And it's valid to
+>> configure more than 1 sync packet per second. It may become quite hot.
 > 
-> On Mon, Nov 11, 2024 at 11:44:51AM +0200, Andy Shevchenko wrote:
-> > On Sun, Nov 10, 2024 at 04:34:30PM -0500, Aren wrote:
-> > > On Sun, Nov 10, 2024 at 09:52:32PM +0200, Andy Shevchenko wrote:
-> > > > Sun, Nov 10, 2024 at 02:14:24PM -0500, Aren kirjoitti:
-> > 
-> > You can do it differently
-> > 
-> > #define STK3310_REGFIELD(name)							\
-> > do {										\
-> > 	data->reg_##name =							\
-> > 		devm_regmap_field_alloc(dev, regmap, stk3310_reg_field_##name);	\
-> > 	if (IS_ERR(data->reg_##name))						\
-> > 		return dev_err_probe(dev, PTR_ERR(data->reg_##name),		\
-> > 				     "reg field alloc failed.\n");		\
-> > } while (0)
-> > 
-> > > #define STK3310_REGFIELD(name) ({						\
-> > > 	data->reg_##name = devm_regmap_field_alloc(dev, regmap,			\
-> > > 						   stk3310_reg_field_##name);   \
-> > > 	if (IS_ERR(data->reg_##name))						\
-> > > 		return dev_err_probe(dev, PTR_ERR(data->reg_##name),		\
-> > > 				     "reg field alloc failed\n");		\
-> > > })
-> > 
-> > I am against unneeded use of GNU extensions.
-> > 
-> > > > > replacing "do { } while (0)" with "({ })" and deindenting could make
-> > > > > enough room to clean this up the formatting of this macro though.
-> > > > 
-> > > > do {} while (0) is C standard, ({}) is not.
-> > > 
-> > > ({ }) is used throughout the kernel, and is documented as such[1]. I
-> > > don't see a reason to avoid it, if it helps readability.
-> > 
-> > I don't see how it makes things better here, and not everybody is familiar with
-> > the concept even if it's used in the kernel here and there. Also if a tool is
-> > being used in one case it doesn't mean it's suitable for another.
+> I'm just thinking of Donald Knuth:
 > 
-> Just to throw in my subjective view here: I don't expect anyone with
-> some base level knowledge of C will have doubts about the semantics of
-> ({ ... }) and compared to that I find do { ... } while (0) less optimal,
-> because it's more verbose and when spotting the "do {" part, the
-> semantic only gets clear when you also see the "while (0)". Having said
-> that I also dislike the "do" starting on column 0, IMHO the RHS of the
-> #define should be intended.
+> “The real problem is that programmers have spent far too much time
+> worrying about efficiency in the wrong places and at the wrong times;
+> premature optimization is the root of all evil (or at least most of
+> it) in programming.”
 
-Thank you, this sums up my opinion on this better than I could have (and
-some bits I hadn't considered).
+It's hard to object to this argument :)
+I might be influenced to much by the latest findings in bnxt_en
+regarding bottlenecks in PTP processing..
 
-> So if you ask me, this is not an unneeded use of an extension. The
-> extension is used to improve readabilty and I blame the C standard to
-> not support this syntax.
-> 
-> While I'm in critics mode: I consider hiding a return in a macro bad
-> style.
-
-Yeah... probably worse than any of the formatting options here. I guess
-the proper way would be to use devm_regmap_field_bulk_alloc, but that's
-well outside the scope of this series. Perhaps it would make sense to
-move the macro definition to just before the function it's used in so
-it's at least a little easier to spot?
-
- - Aren
 
