@@ -1,570 +1,93 @@
-Return-Path: <linux-kernel+bounces-405163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D3689C4DB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:20:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5828F9C4DB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:20:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84366B26413
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:20:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F3F81F2358F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC0A20820C;
-	Tue, 12 Nov 2024 04:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FF9208224;
+	Tue, 12 Nov 2024 04:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FRWxJ4qu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGjbAkqb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A0516CD29;
-	Tue, 12 Nov 2024 04:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35C616CD29;
+	Tue, 12 Nov 2024 04:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731385206; cv=none; b=Ze1EBqJe/5nFEswrj9MB+PsOI/uboQZOUf6XzupoYebSYaQaEH8WBzTwmYMPltrADk4ghrHuyoAWtHVIp6mL6dguLILIEjIzmxs85DG4SR+G8LDTR7QI/RE58LUfQK5Hs6ZizZciFjCbH1Tet6ageUf0r+i1EqosVEHndQm25Jo=
+	t=1731385220; cv=none; b=iD/VZvsazfeiZiFV3R13RFyWJg8/m+YbGJMKzIVtWJMtKEYsVvU2zjkL94zexnvVUwxRdX8bg6MS8+01Ftl54UJb4mqmWOJ0gh2hzN7eFV6gtwoQ/So1mISobj1debuykXfP66WB6gT9WfLCiepM9iMJTdYV6qtuHFioBR+tfqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731385206; c=relaxed/simple;
-	bh=Y8NhY7Adl5BOV1u6OOJfKrr4ga7CKJYt7qunWVKxuq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXbLnYMGIBDxyHpqBOgeT41Do0Uje+Qd+bAPg/sE7xS9bZaIbkabIvmFmydRrbWM1fVZUoZiuny7cr8Fnn8Yov652EvTmN/e/CH3qbra+RXULIW+jBeACu8ZCpI5GkEhsuU8LjjJ0n7OyQx8wIQaCRq9pTvxL9/zM5ohF7iMNVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FRWxJ4qu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE38BC4CECD;
-	Tue, 12 Nov 2024 04:20:05 +0000 (UTC)
+	s=arc-20240116; t=1731385220; c=relaxed/simple;
+	bh=mxwbaNawZGtcG+XxsvPRjOQp5G0t2rcv8lhX48c7XEo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=OqK+3zi1UnReMUm27ynHQt+s64+OHs0OvohoflDcALf6QslDftKEBUouOV5gx5k8WbyNPL8k4uZpAFGNvvWOOoeIV3x6rqi07nX5rQ5B7c6cegkXDlojp4jXZVJd3ZLOT/e34NBDNjX4lb0hyiusddcj8VezMiAEl4jW+iXlvCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGjbAkqb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30C58C4CECD;
+	Tue, 12 Nov 2024 04:20:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731385205;
-	bh=Y8NhY7Adl5BOV1u6OOJfKrr4ga7CKJYt7qunWVKxuq0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=FRWxJ4qutMqaAFD73k+MrvF/wyzGeAR7BFbxHv3lMfbeWZj/TEoDhUPhsT1iMP5bi
-	 s8uGaZZ8dTRNifmL913I9AHLaKXeml+9iLsmcWlI76CXAsV4KNHoEWJ0t1id9g1LWR
-	 Fn7oqZw0aWusXE2jEhekcRDPDftMDzcsMJgP8jzBbW60tnULon3NjUEUXqtebgVaaU
-	 BUvrXGpt8AtB9HbiEWzngI9M4OKbCvZC/LEE/gS2E6rxE8p7n1m+7scEbpqfU446Tl
-	 G++M9eM2E6uKhLXQo8vJZja6MW9HMKZ9EtohePaR8utIPgt51pm8zghbH+snEZr13L
-	 aP5k4HWgKkczA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 60A38CE0BA3; Mon, 11 Nov 2024 20:20:05 -0800 (PST)
-Date: Mon, 11 Nov 2024 20:20:05 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>,
-	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
-	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-	dlustig@nvidia.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	lkmm@lists.linux.dev, torvalds@linux-foundation.org
-Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
- case-insensitive filesystem.
-Message-ID: <61075efa-8d53-455b-bba3-e88bbf4da0a5@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241111164248.1060-1-egyszeregy@freemail.hu>
- <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
- <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
- <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
- <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
- <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
- <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
- <62634bbe-edd6-4973-a96a-df543f39f240@rowland.harvard.edu>
+	s=k20201202; t=1731385219;
+	bh=mxwbaNawZGtcG+XxsvPRjOQp5G0t2rcv8lhX48c7XEo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=tGjbAkqbTvVh/D1eRCbgo20zc9NbDuwch2/k7vuZezh5bWEHyn04zSIKsxf3ux3SH
+	 /MVzC//gb1ADlDgCzCeXSzcZTWwBQkl/Ofh9FkrW/Q6dS0cbR1ni0Iu2d8LWK4ccXN
+	 TnBiUxPm7jeZsqEf27lpqh5vN0Oe08SIk1oEomea3ezOTMtxVusZ0XaYgt6O75b9id
+	 mwn++UxG1p6LaBZ3NP8pvuHAJ7HNbCimeoXJpOaZw6OKuhq2pRJuWrZFfZwi5v4PNJ
+	 7FJN/ZSujrnKYdomlHdZeC6Jcm40cJMZq89EvSNokso9uY/JvBuL2gOBqOdEVQuKOG
+	 Iz6mvUCl52ZGg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 715BF3809A80;
+	Tue, 12 Nov 2024 04:20:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <62634bbe-edd6-4973-a96a-df543f39f240@rowland.harvard.edu>
+Subject: Re: [PATCH bpf-next] bpf: replace the document for PTR_TO_BTF_ID_OR_NULL
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173138522926.78749.16727839517005198165.git-patchwork-notify@kernel.org>
+Date: Tue, 12 Nov 2024 04:20:29 +0000
+References: <20241111124911.1436911-1-dongml2@chinatelecom.cn>
+In-Reply-To: <20241111124911.1436911-1-dongml2@chinatelecom.cn>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: andrii@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dongml2@chinatelecom.cn
 
-On Mon, Nov 11, 2024 at 07:59:33PM -0500, Alan Stern wrote:
-> On Mon, Nov 11, 2024 at 10:15:30PM +0100, Szőke Benjamin wrote:
-> > warning: the following paths have collided (e.g. case-sensitive paths
-> > on a case-insensitive filesystem) and only one from the same
-> > colliding group is in the working tree:
-> > 
-> >   'tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus'
-> >   'tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus'
+Hello:
+
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
+
+On Mon, 11 Nov 2024 20:49:11 +0800 you wrote:
+> Commit c25b2ae13603 ("bpf: Replace PTR_TO_XXX_OR_NULL with PTR_TO_XXX |
+> PTR_MAYBE_NULL") moved the fields around and misplaced the
+> documentation for "PTR_TO_BTF_ID_OR_NULL". So, let's replace it in the
+> proper place.
 > 
-> I support the idea of renaming one of these files.  Not to make things 
-> work on case-insensitive filesystems, but simply because having two 
-> files with rather long (and almost nonsensical) names that are identical 
-> aside from one single letter is an excellent way to confuse users.
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 > 
-> Come on -- just look at the error report above.  Can you tell at a 
-> glance, without going through and carefully comparing the two strings 
-> letter-by-letter, exactly what the difference is?  Do you really think 
-> anybody could?
-> 
-> I haven't looked to see if there are any other similar examples in the 
-> litmus-tests directory, but if there are than they should be changed 
-> too.
+> [...]
 
-It does jump out at me, but even if it didn't, the usual use of tab
-completion and copy/paste should make it a non-problem, not?
+Here is the summary with links:
+  - [bpf-next] bpf: replace the document for PTR_TO_BTF_ID_OR_NULL
+    https://git.kernel.org/bpf/bpf-next/c/213a695297e1
 
-find . -print | tr 'A-Z' 'a-z' | sort | uniq -c | sort -k1nr | awk '{ if ($1 > 1) print }'
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-The output for the kernel and the github litmus repo are shown below.
 
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-For the kernel:
-
-------------------------------------------------------------------------
-
-      2 ./include/uapi/linux/netfilter_ipv4/ipt_ecn.h
-      2 ./include/uapi/linux/netfilter_ipv4/ipt_ttl.h
-      2 ./include/uapi/linux/netfilter_ipv6/ip6t_hl.h
-      2 ./include/uapi/linux/netfilter/xt_connmark.h
-      2 ./include/uapi/linux/netfilter/xt_dscp.h
-      2 ./include/uapi/linux/netfilter/xt_mark.h
-      2 ./include/uapi/linux/netfilter/xt_rateest.h
-      2 ./include/uapi/linux/netfilter/xt_tcpmss.h
-      2 ./net/netfilter/xt_dscp.c
-      2 ./net/netfilter/xt_hl.c
-      2 ./net/netfilter/xt_rateest.c
-      2 ./net/netfilter/xt_tcpmss.c
-      2 ./tools/memory-model/litmus-tests/z6.0+pooncelock+pooncelock+pombonce.litmus
-
-------------------------------------------------------------------------
-
-For the github litmus repo, almost all of which are automatically
-generated:
-
-------------------------------------------------------------------------
-
-      6 ./auto/c-lb-lrw+r-a+r-oc+r-oc.litmus
-      6 ./auto/c-lb-lrw+r-a+r-oc+r-oc.litmus.out
-      6 ./auto/c-lb-lrw+r-oc+r-oc+r-oc.litmus
-      6 ./auto/c-lb-lrw+r-oc+r-oc+r-oc.litmus.out
-      6 ./auto/lb-lrw+r-a+r-oc+r-oc.litmus.out
-      6 ./auto/lb-lrw+r-oc+r-oc+r-oc.litmus.out
-      5 ./auto/c-lb-lrw+r-oc+r-oc.litmus
-      5 ./auto/c-lb-lrw+r-oc+r-oc.litmus.out
-      5 ./auto/c-lb-lwr+r-a+r-oc+r-oc.litmus
-      5 ./auto/c-lb-lwr+r-a+r-oc+r-oc.litmus.out
-      5 ./auto/c-lb-lwr+r-oc+r-oc+r-oc.litmus
-      5 ./auto/c-lb-lwr+r-oc+r-oc+r-oc.litmus.out
-      5 ./auto/c-lb-lww+r-a+r-oc+r-oc.litmus
-      5 ./auto/c-lb-lww+r-a+r-oc+r-oc.litmus.out
-      5 ./auto/c-lb-lww+r-oc+r-oc+r-oc.litmus
-      5 ./auto/c-lb-lww+r-oc+r-oc+r-oc.litmus.out
-      5 ./auto/lb-lrw+r-oc+r-oc.litmus.out
-      5 ./auto/lb-lwr+r-a+r-oc+r-oc.litmus.out
-      5 ./auto/lb-lwr+r-oc+r-oc+r-oc.litmus.out
-      5 ./auto/lb-lww+r-a+r-oc+r-oc.litmus.out
-      5 ./auto/lb-lww+r-oc+r-oc+r-oc.litmus.out
-      4 ./auto/c-lb-lwr+r-oc+r-oc.litmus
-      4 ./auto/c-lb-lwr+r-oc+r-oc.litmus.out
-      4 ./auto/c-lb-lww+r-oc+r-oc.litmus
-      4 ./auto/c-lb-lww+r-oc+r-oc.litmus.out
-      4 ./auto/lb-lwr+r-oc+r-oc.litmus.out
-      4 ./auto/lb-lww+r-oc+r-oc.litmus.out
-      3 ./auto/c-lb-lrw+r-a+r-a+r-oc.litmus
-      3 ./auto/c-lb-lrw+r-a+r-a+r-oc.litmus.out
-      3 ./auto/c-lb-lrw+r-a+r-oc.litmus
-      3 ./auto/c-lb-lrw+r-a+r-oc.litmus.out
-      3 ./auto/c-lb-lrw+r-oc+r-oc+r-d.litmus
-      3 ./auto/c-lb-lrw+r-oc+r-oc+r-d.litmus.out
-      3 ./auto/c-lb-lrw+r-oc+r-oc+r-od.litmus
-      3 ./auto/c-lb-lrw+r-oc+r-oc+r-od.litmus.out
-      3 ./auto/c-lb-lwr+r-a+r-a+r-oc.litmus
-      3 ./auto/c-lb-lwr+r-a+r-a+r-oc.litmus.out
-      3 ./auto/c-lb-lwr+r-a+r-oc.litmus
-      3 ./auto/c-lb-lwr+r-a+r-oc.litmus.out
-      3 ./auto/c-lb-lwr+r-oc+r-oc+r-d.litmus
-      3 ./auto/c-lb-lwr+r-oc+r-oc+r-d.litmus.out
-      3 ./auto/c-lb-lwr+r-oc+r-oc+r-od.litmus
-      3 ./auto/c-lb-lwr+r-oc+r-oc+r-od.litmus.out
-      3 ./auto/c-lb-lww+r-a+r-a+r-oc.litmus
-      3 ./auto/c-lb-lww+r-a+r-a+r-oc.litmus.out
-      3 ./auto/c-lb-lww+r-a+r-oc.litmus
-      3 ./auto/c-lb-lww+r-a+r-oc.litmus.out
-      3 ./auto/c-lb-lww+r-oc+r-oc+r-d.litmus
-      3 ./auto/c-lb-lww+r-oc+r-oc+r-d.litmus.out
-      3 ./auto/c-lb-lww+r-oc+r-oc+r-od.litmus
-      3 ./auto/c-lb-lww+r-oc+r-oc+r-od.litmus.out
-      3 ./auto/lb-lrw+r-a+r-a+r-oc.litmus.out
-      3 ./auto/lb-lrw+r-a+r-oc.litmus.out
-      3 ./auto/lb-lrw+r-oc+r-oc+r-d.litmus.out
-      3 ./auto/lb-lrw+r-oc+r-oc+r-od.litmus.out
-      3 ./auto/lb-lwr+r-a+r-a+r-oc.litmus.out
-      3 ./auto/lb-lwr+r-a+r-oc.litmus.out
-      3 ./auto/lb-lwr+r-oc+r-oc+r-d.litmus.out
-      3 ./auto/lb-lwr+r-oc+r-oc+r-od.litmus.out
-      3 ./auto/lb-lww+r-a+r-a+r-oc.litmus.out
-      3 ./auto/lb-lww+r-a+r-oc.litmus.out
-      3 ./auto/lb-lww+r-oc+r-oc+r-d.litmus.out
-      3 ./auto/lb-lww+r-oc+r-oc+r-od.litmus.out
-      2 ./auto/c-lb-lrr+r-a+ob-o+ob-o+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+ob-o+ob-o+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-a+ob-o+r-a+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+ob-o+r-a+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-a+ob-o+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+ob-o+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-a+ob-o+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+ob-o+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-a+r-a+ob-o+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+r-a+ob-o+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-a+r-a+r-a+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+r-a+r-a+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-a+r-a+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+r-a+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-a+r-a+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+r-a+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-a+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-a+r-oc+ob-o+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+r-oc+ob-o+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-a+r-oc+r-a+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+r-oc+r-a+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-a+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-a+r-oc+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-a+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+ob-o+ob-o+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+ob-o+ob-o+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+ob-o+r-a+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+ob-o+r-a+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+ob-o+r-dd+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+ob-o+r-dd+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+ob-o+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+ob-o+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+ob-o+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+ob-o+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-a+ob-o+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-a+ob-o+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-a+r-a+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-a+r-a+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-a+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-a+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-a+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-a+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-dd+ob-o+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-dd+ob-o+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-dd+r-a+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-dd+r-a+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-dd+r-dd+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-dd+r-dd+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-dd+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-dd+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-dd+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-dd+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-oc+ob-o+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-oc+ob-o+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-oc+r-a+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-oc+r-a+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-oc+r-dd+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-oc+r-dd+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-dd+r-oc+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-dd+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-oc+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrr+r-oc+r-oc+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrr+r-oc+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-a+ob-o+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-a+ob-o+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-a+ob-o+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-a+ob-o+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-a.litmus
-      2 ./auto/c-lb-lrw+r-a+r-a.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-a+r-a.litmus
-      2 ./auto/c-lb-lrw+r-a+r-a+r-a.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-a+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-a+r-a+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-a+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-a+r-a+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-d+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-a+r-d+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-a+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-oc+ob-o+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-a+r-oc+ob-o+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-oc+ob-o+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-a+r-oc+ob-o+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-oc+r-a+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-a+r-oc+r-a+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-oc+r-d.litmus
-      2 ./auto/c-lb-lrw+r-a+r-oc+r-d.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-oc+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-a+r-oc+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-oc+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-a+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-oc+r-od.litmus
-      2 ./auto/c-lb-lrw+r-a+r-oc+r-od.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-oc+r-ov.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-od+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-a+r-od+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-a+r-ov+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-a+r-ov+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+ob-o+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-dd+ob-o+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+ob-o+r-oc+r-a.litmus
-      2 ./auto/c-lb-lrw+r-dd+ob-o+r-oc+r-a.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+ob-o+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-dd+ob-o+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-a+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-a+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-a+r-oc+r-a.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-a+r-oc+r-a.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-a+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-a+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-dd+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-dd+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-dd+r-oc+r-a.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-dd+r-oc+r-a.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-dd+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-dd+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+ob-o+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+ob-o+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+ob-o+r-a.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+ob-o+r-a.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+ob-o+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+ob-o+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-a.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-a.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-a+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-a+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-a+r-a.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-a+r-a.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-a+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-a+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-dd+r-a.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-dd+r-a.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-dd+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-dd+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-oc+r-a.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-oc+r-a.litmus.out
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-dd+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+ob-o+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-oc+ob-o+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+ob-o+ob-o+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-oc+ob-o+ob-o+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+ob-o+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-oc+ob-o+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+r-d.litmus
-      2 ./auto/c-lb-lrw+r-oc+r-d.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+r-d+r-d.litmus
-      2 ./auto/c-lb-lrw+r-oc+r-d+r-d.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+r-d+r-od.litmus
-      2 ./auto/c-lb-lrw+r-oc+r-d+r-od.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-oc+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+r-oc+ob-o+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-oc+r-oc+ob-o+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+r-oc+r-oc+ob-ob.litmus
-      2 ./auto/c-lb-lrw+r-oc+r-oc+r-oc+ob-ob.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+r-oc+r-oc+r-oc.litmus
-      2 ./auto/c-lb-lrw+r-oc+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+r-od.litmus
-      2 ./auto/c-lb-lrw+r-oc+r-od.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+r-od+r-d.litmus
-      2 ./auto/c-lb-lrw+r-oc+r-od+r-d.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+r-od+r-od.litmus
-      2 ./auto/c-lb-lrw+r-oc+r-od+r-od.litmus.out
-      2 ./auto/c-lb-lrw+r-oc+r-ov+r-d.litmus
-      2 ./auto/c-lb-lrw+r-oc+r-ov+r-d.litmus.out
-      2 ./auto/c-lb-lwr+r-a+r-a.litmus
-      2 ./auto/c-lb-lwr+r-a+r-a.litmus.out
-      2 ./auto/c-lb-lwr+r-a+r-a+r-a.litmus
-      2 ./auto/c-lb-lwr+r-a+r-a+r-a.litmus.out
-      2 ./auto/c-lb-lwr+r-a+r-d+r-oc.litmus
-      2 ./auto/c-lb-lwr+r-a+r-d+r-oc.litmus.out
-      2 ./auto/c-lb-lwr+r-a+r-oc+r-d.litmus
-      2 ./auto/c-lb-lwr+r-a+r-oc+r-d.litmus.out
-      2 ./auto/c-lb-lwr+r-a+r-oc+r-od.litmus
-      2 ./auto/c-lb-lwr+r-a+r-oc+r-od.litmus.out
-      2 ./auto/c-lb-lwr+r-a+r-od+r-oc.litmus
-      2 ./auto/c-lb-lwr+r-a+r-od+r-oc.litmus.out
-      2 ./auto/c-lb-lwr+r-a+r-ov+r-oc.litmus
-      2 ./auto/c-lb-lwr+r-a+r-ov+r-oc.litmus.out
-      2 ./auto/c-lb-lwr+r-oc.litmus
-      2 ./auto/c-lb-lwr+r-oc.litmus.out
-      2 ./auto/c-lb-lwr+r-oc+r-d.litmus
-      2 ./auto/c-lb-lwr+r-oc+r-d.litmus.out
-      2 ./auto/c-lb-lwr+r-oc+r-d+r-d.litmus
-      2 ./auto/c-lb-lwr+r-oc+r-d+r-d.litmus.out
-      2 ./auto/c-lb-lwr+r-oc+r-d+r-od.litmus
-      2 ./auto/c-lb-lwr+r-oc+r-d+r-od.litmus.out
-      2 ./auto/c-lb-lwr+r-oc+r-od.litmus
-      2 ./auto/c-lb-lwr+r-oc+r-od.litmus.out
-      2 ./auto/c-lb-lwr+r-oc+r-od+r-d.litmus
-      2 ./auto/c-lb-lwr+r-oc+r-od+r-d.litmus.out
-      2 ./auto/c-lb-lwr+r-oc+r-od+r-od.litmus
-      2 ./auto/c-lb-lwr+r-oc+r-od+r-od.litmus.out
-      2 ./auto/c-lb-lwr+r-oc+r-ov+r-d.litmus
-      2 ./auto/c-lb-lwr+r-oc+r-ov+r-d.litmus.out
-      2 ./auto/c-lb-lww+r-a+r-a.litmus
-      2 ./auto/c-lb-lww+r-a+r-a.litmus.out
-      2 ./auto/c-lb-lww+r-a+r-a+r-a.litmus
-      2 ./auto/c-lb-lww+r-a+r-a+r-a.litmus.out
-      2 ./auto/c-lb-lww+r-a+r-d+r-oc.litmus
-      2 ./auto/c-lb-lww+r-a+r-d+r-oc.litmus.out
-      2 ./auto/c-lb-lww+r-a+r-oc+r-d.litmus
-      2 ./auto/c-lb-lww+r-a+r-oc+r-d.litmus.out
-      2 ./auto/c-lb-lww+r-a+r-oc+r-od.litmus
-      2 ./auto/c-lb-lww+r-a+r-oc+r-od.litmus.out
-      2 ./auto/c-lb-lww+r-a+r-od+r-oc.litmus
-      2 ./auto/c-lb-lww+r-a+r-od+r-oc.litmus.out
-      2 ./auto/c-lb-lww+r-a+r-ov+r-oc.litmus
-      2 ./auto/c-lb-lww+r-a+r-ov+r-oc.litmus.out
-      2 ./auto/c-lb-lww+r-oc.litmus
-      2 ./auto/c-lb-lww+r-oc.litmus.out
-      2 ./auto/c-lb-lww+r-oc+r-d.litmus
-      2 ./auto/c-lb-lww+r-oc+r-d.litmus.out
-      2 ./auto/c-lb-lww+r-oc+r-d+r-d.litmus
-      2 ./auto/c-lb-lww+r-oc+r-d+r-d.litmus.out
-      2 ./auto/c-lb-lww+r-oc+r-d+r-od.litmus
-      2 ./auto/c-lb-lww+r-oc+r-d+r-od.litmus.out
-      2 ./auto/c-lb-lww+r-oc+r-od.litmus
-      2 ./auto/c-lb-lww+r-oc+r-od.litmus.out
-      2 ./auto/c-lb-lww+r-oc+r-od+r-d.litmus
-      2 ./auto/c-lb-lww+r-oc+r-od+r-d.litmus.out
-      2 ./auto/c-lb-lww+r-oc+r-od+r-od.litmus
-      2 ./auto/c-lb-lww+r-oc+r-od+r-od.litmus.out
-      2 ./auto/c-lb-lww+r-oc+r-ov+r-d.litmus
-      2 ./auto/c-lb-lww+r-oc+r-ov+r-d.litmus.out
-      2 ./auto/lb-lrr+r-a+ob-o+ob-o+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-a+ob-o+r-a+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-a+ob-o+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-a+ob-o+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-a+r-a+ob-o+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-a+r-a+r-a+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-a+r-a+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-a+r-a+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-a+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-a+r-oc+ob-o+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-a+r-oc+r-a+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-a+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-a+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+ob-o+ob-o+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+ob-o+r-a+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+ob-o+r-dd+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+ob-o+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+ob-o+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-a+ob-o+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-a+r-a+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-a+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-a+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-dd+ob-o+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-dd+r-a+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-dd+r-dd+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-dd+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-dd+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-oc+ob-o+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-oc+r-a+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-oc+r-dd+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-dd+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrr+r-oc+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-a+ob-o+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-a+ob-o+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-a+r-a.litmus.out
-      2 ./auto/lb-lrw+r-a+r-a+r-a.litmus.out
-      2 ./auto/lb-lrw+r-a+r-a+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-a+r-a+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-a+r-d+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-a+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-a+r-oc+ob-o+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-a+r-oc+ob-o+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-a+r-oc+r-a+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-a+r-oc+r-d.litmus.out
-      2 ./auto/lb-lrw+r-a+r-oc+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-a+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-a+r-oc+r-od.litmus.out
-      2 ./auto/lb-lrw+r-a+r-od+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-a+r-ov+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-dd+ob-o+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-dd+ob-o+r-oc+r-a.litmus.out
-      2 ./auto/lb-lrw+r-dd+ob-o+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-a+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-a+r-oc+r-a.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-a+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-dd+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-dd+r-oc+r-a.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-dd+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+ob-o+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+ob-o+r-a.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+ob-o+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+r-a.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+r-a+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+r-a+r-a.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+r-a+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+r-dd+r-a.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+r-dd+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+r-oc+r-a.litmus.out
-      2 ./auto/lb-lrw+r-dd+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-oc+ob-o+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-oc+ob-o+ob-o+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-oc+ob-o+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-oc+r-d.litmus.out
-      2 ./auto/lb-lrw+r-oc+r-d+r-d.litmus.out
-      2 ./auto/lb-lrw+r-oc+r-d+r-od.litmus.out
-      2 ./auto/lb-lrw+r-oc+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-oc+r-oc+ob-o+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-oc+r-oc+r-oc+ob-ob.litmus.out
-      2 ./auto/lb-lrw+r-oc+r-oc+r-oc+r-oc.litmus.out
-      2 ./auto/lb-lrw+r-oc+r-od.litmus.out
-      2 ./auto/lb-lrw+r-oc+r-od+r-d.litmus.out
-      2 ./auto/lb-lrw+r-oc+r-od+r-od.litmus.out
-      2 ./auto/lb-lrw+r-oc+r-ov+r-d.litmus.out
-      2 ./auto/lb-lwr+r-a+r-a.litmus.out
-      2 ./auto/lb-lwr+r-a+r-a+r-a.litmus.out
-      2 ./auto/lb-lwr+r-a+r-d+r-oc.litmus.out
-      2 ./auto/lb-lwr+r-a+r-oc+r-d.litmus.out
-      2 ./auto/lb-lwr+r-a+r-oc+r-od.litmus.out
-      2 ./auto/lb-lwr+r-a+r-od+r-oc.litmus.out
-      2 ./auto/lb-lwr+r-a+r-ov+r-oc.litmus.out
-      2 ./auto/lb-lwr+r-oc.litmus.out
-      2 ./auto/lb-lwr+r-oc+r-d.litmus.out
-      2 ./auto/lb-lwr+r-oc+r-d+r-d.litmus.out
-      2 ./auto/lb-lwr+r-oc+r-d+r-od.litmus.out
-      2 ./auto/lb-lwr+r-oc+r-od.litmus.out
-      2 ./auto/lb-lwr+r-oc+r-od+r-d.litmus.out
-      2 ./auto/lb-lwr+r-oc+r-od+r-od.litmus.out
-      2 ./auto/lb-lwr+r-oc+r-ov+r-d.litmus.out
-      2 ./auto/lb-lww+r-a+r-a.litmus.out
-      2 ./auto/lb-lww+r-a+r-a+r-a.litmus.out
-      2 ./auto/lb-lww+r-a+r-d+r-oc.litmus.out
-      2 ./auto/lb-lww+r-a+r-oc+r-d.litmus.out
-      2 ./auto/lb-lww+r-a+r-oc+r-od.litmus.out
-      2 ./auto/lb-lww+r-a+r-od+r-oc.litmus.out
-      2 ./auto/lb-lww+r-a+r-ov+r-oc.litmus.out
-      2 ./auto/lb-lww+r-oc.litmus.out
-      2 ./auto/lb-lww+r-oc+r-d.litmus.out
-      2 ./auto/lb-lww+r-oc+r-d+r-d.litmus.out
-      2 ./auto/lb-lww+r-oc+r-d+r-od.litmus.out
-      2 ./auto/lb-lww+r-oc+r-od.litmus.out
-      2 ./auto/lb-lww+r-oc+r-od+r-d.litmus.out
-      2 ./auto/lb-lww+r-oc+r-od+r-od.litmus.out
-      2 ./auto/lb-lww+r-oc+r-ov+r-d.litmus.out
-      2 ./rculitmusgen/lisa2c.sh
-
-------------------------------------------------------------------------
 
