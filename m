@@ -1,138 +1,135 @@
-Return-Path: <linux-kernel+bounces-405094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44749C4CE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:55:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1692A9C4CE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:56:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93AE51F2195E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:55:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 790BEB26D5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B204920720F;
-	Tue, 12 Nov 2024 02:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02A6208213;
+	Tue, 12 Nov 2024 02:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="e3Bp+zDB"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wVj3X9nX"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C2619F489
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683D3208201
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731380051; cv=none; b=kF/CnO9t13sHFFmkHzYYZim3mTsC4uquZvM3MG2ksaFUZ48qZmc9ES5tiIN1vJKY+o71REMDohEzUNXxriKIu0gRYcbfWSo4MToMf2ojxzX9XiqDh67rTVJRDFW1IXVjGyYdvpKIjNO1BUxzBREGgt1XZ9bj9G+y8iv2VP3stgg=
+	t=1731380090; cv=none; b=G9PwKBwT0MTjUn+S13kuoGRVb68tjqTWvt1Z54r8ASZIInt2IjBwPrcTtuE3JiY3NXl6cP21p5oe8DFv2XehATCyaUrPEsLpLC0kFnPxC3axvhHv5w/aF9LJCqaTqBJ1fFlAXsBtMJ9YDnB5YL92WhwuekfzBPZxlsd6eIULliU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731380051; c=relaxed/simple;
-	bh=wlbvrhqyWyTvnCkoAxzxk1XF4fc0oJTGZ1qf5xAYkWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D5NHmxTi8IrRr3lzOzFcMnQThDRqYDAopuklMWNUrC9iWaE1S3Ol58X/sGKvFEJ+Vs6v4ZO2uZjMUhMygEYFEX8btbM4iPsvmQwCSylPm0MRV/Wyz9L0GNlll3LAX5lsRk6t5E4+8MCRlBFk6m1vIP3fKDNKpzEBglMMiu1UEVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=e3Bp+zDB; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4AC2r93F3134183
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 11 Nov 2024 18:53:10 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4AC2r93F3134183
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1731379991;
-	bh=gjorSsxchh+ht/kZ7ZaoFSuF5phuCVrV0xf71JxGrKM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e3Bp+zDBUBc7t8gSWsAhOHpGiz0jxnlMUf3VfEm8JKCFYxBffzsXvcR9zQbzDk977
-	 /m+F2GDcomvYNCAUaL6T15PQrHe2q92yDhWWekgLC95WqKi5JPdV05IxpCd7qZo6i7
-	 Qu+wViP/q82NKcdfSip9eB35A568wGEClK74jAOEuu92gdIxunNtGmkQTHLKIGaT1u
-	 wXjRH0IBMJnsfFlqK/2wLG1jieL+rxE3V5D+HljOrd518oxkwjt8mWEwbtScnoNkEq
-	 MCNi67i2EMX6wZzFhUQZxmc3Ck+erSU94EejGbT+9/0UChcgRBS+4c4S6zNf7MKbOU
-	 prZ/TdGjVxpmA==
-Message-ID: <6735d24c-b031-499d-b298-ef8861b4daba@zytor.com>
-Date: Mon, 11 Nov 2024 18:53:09 -0800
+	s=arc-20240116; t=1731380090; c=relaxed/simple;
+	bh=DDJsAVAG+kMW+7r8Zr+yPdZo6Pi9sqB61ilk/o3tLAE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=U+iaTU7lacVfPdhZI2dpcErS9fUH+fFjYfhOelZCKNEIU+QwAn5VOPZuVv8wrRtFueV35VOjMSZ+KtcQrClbuXFdm8wMSwFWkZifPUVNLGq4EhMJZhLdDF9Ddf8Y9xaPKSzXPluIImOZWQm0iVegPdHKkzmJWXEnVe+bnZzsFqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wVj3X9nX; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d51055097so3070544f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:54:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731380087; x=1731984887; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eo9k8olRlknzdJkNiLmR5VQh+n8GJzR/az3L4re+Tfs=;
+        b=wVj3X9nXocrVXc85UKo/UrFCtcsit6Hin+kCfpzb7u/mxXm3S2lv0dimgcfm6K9hiS
+         9KiaoY8ZocVapRNTk3PFrwaAyVcTBWIEwl3FHUp31ybEiirO6bwXKOINQFt656PtCW64
+         5G5QIDXM47h+wF19f8rRd3Q3lrTwZuVkdP0+g8/bGM4X3VyHWxNCiCoO9rqJCfFB0Z9d
+         xKTxTILLYlGRusfDGxN3WhX3z92cE7j+JqKxVkqLgDm1ydZPb/aK8iF4cNw1rwlvUiOA
+         2zimfdPrfJxrNpMtYbhqrUBcl2E9novtrNxc8/mG33o4EP4/asRIecF5+QrE1+sH7aQW
+         Xc2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731380087; x=1731984887;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Eo9k8olRlknzdJkNiLmR5VQh+n8GJzR/az3L4re+Tfs=;
+        b=bPamIsTSWnV4LMtgfL0bNdf6HKcLS336QlDRspZLrrfD5NqiR2XYh81DyRSAGFf2rY
+         QqWkUNFJUfRsoDNdPWH93v7W4edPYjSUzX4cjRXK2BclJ/dCqQnqkOo1YdfrMSboaNtS
+         o95fwv/VXJX5ZpqczmSfuBRCCMF3uYr1WK+6i4kf6GDqi2g7L+XfykHSicdIOBmOy8kD
+         KUjdxy3Qbx+ggn+t0nmnZhdv+iA3OQQSrRcRYe+sd9T6vhnRFOBFDjEpNs7zHVRZ6uiV
+         ek453SPDRUbbhk/Nk3gLqmyUxJ2rPWOTZzX/FYtFOx8uGub1dBT/RonHjYeP8a5bQm3W
+         RU1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWRAOgeZhlRtEiBvgHbE9OMudCWZeSUqj4t8c50SmLblme9IaP7CUJhwIDnKE186B4S5cCsyAcGNg62uYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp3of9fRlxvQcFNvjVpMTSgkKrtfKDkKaf5fh7wM/B7ODVmO+X
+	G703CqNvlRjlKl+TGXbCP3N9iXAF0+v5YSaGmuK4GBfx/LWSzOO9eoms1Brrojk=
+X-Google-Smtp-Source: AGHT+IF8K4KLTpQs8OZ6BAg8g9f/6FMePfNpTShhMBDtavRsG60Wn1AVvIB9gmZL8H0aCpapxdCHQw==
+X-Received: by 2002:a5d:64e5:0:b0:37d:54d0:1f20 with SMTP id ffacd0b85a97d-381f18673e6mr12929497f8f.24.1731380086785;
+        Mon, 11 Nov 2024 18:54:46 -0800 (PST)
+Received: from localhost ([2.222.231.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9973e8sm14295080f8f.48.2024.11.11.18.54.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 18:54:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] x86/fred: Clear WFE in missing-ENDBRANCH #CPs
-To: Andrew Cooper <andrew.cooper3@citrix.com>, linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        peterz@infradead.org
-References: <20240916181000.416513-1-xin@zytor.com>
- <49b6c23b-dfd8-4874-bd6e-998dd039ed1a@zytor.com>
- <473f9dae-b711-4d96-8804-209275b963a2@citrix.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <473f9dae-b711-4d96-8804-209275b963a2@citrix.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 12 Nov 2024 02:54:45 +0000
+Message-Id: <D5JV0MOQ5QLW.16CF2337CD1TW@linaro.org>
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Cc: <linux-sound@vger.kernel.org>, <srinivas.kandagatla@linaro.org>,
+ <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh@kernel.org>,
+ <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+ <konradybcio@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+ <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <krzysztof.kozlowski@linaro.org>, <caleb.connolly@linaro.org>,
+ <linux-kernel@vger.kernel.org>, <a39.skl@gmail.com>
+Subject: Re: [PATCH v4 4/5] arm64: dts: qcom: sm4250: add LPASS LPI pin
+ controller
+X-Mailer: aerc 0.18.2
+References: <20241101005925.186696-1-alexey.klimov@linaro.org>
+ <20241101005925.186696-5-alexey.klimov@linaro.org>
+ <eaz4aordxjgnl7c2xhz6ek23eaapaszytcrea7a7y53b5p6aev@mtk7jsvywgcv>
+In-Reply-To: <eaz4aordxjgnl7c2xhz6ek23eaapaszytcrea7a7y53b5p6aev@mtk7jsvywgcv>
 
-On 11/8/2024 12:53 PM, Andrew Cooper wrote:
->> Andrew,
->>
->> can you please take another look?
-> After discussing with Dave on IRC, the ibt_clear_fred_wfe(regs); really
-> needs to be inside the ibt_selftest_noendbr path.
-> 
+On Fri Nov 1, 2024 at 7:50 AM GMT, Dmitry Baryshkov wrote:
+> On Fri, Nov 01, 2024 at 12:59:24AM +0000, Alexey Klimov wrote:
+> > Add the Low Power Audio SubSystem Low Power Island (LPASS LPI) pin
+> > controller device node required for audio subsystem on Qualcomm
+> > QRB4210 RB2. QRB4210 is based on sm4250 which has a slightly different
+> > lpass pin controller comparing to sm6115.
+> >=20
+> > While at this, also add description of lpi_i2s2 pins (active state)
+> > required for audio playback via HDMI.
+> >=20
+> > Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/sm4250.dtsi | 39 ++++++++++++++++++++++++++++
+> >  1 file changed, 39 insertions(+)
+> >=20
+> > diff --git a/arch/arm64/boot/dts/qcom/sm4250.dtsi b/arch/arm64/boot/dts=
+/qcom/sm4250.dtsi
+> > index a0ed61925e12..1b9983ab122e 100644
+> > --- a/arch/arm64/boot/dts/qcom/sm4250.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sm4250.dtsi
+> > @@ -36,3 +36,42 @@ &cpu6 {
+> >  &cpu7 {
+> >  	compatible =3D "qcom,kryo240";
+> >  };
+> > +
+> > +&lpass_tlmm {
+> > +	compatible =3D "qcom,sm4250-lpass-lpi-pinctrl";
+> > +	gpio-ranges =3D <&lpass_tlmm 0 0 26>;
+>
+> I think this should be <&lpass_tlmm 0 0 27>. The driver defines pins
+> 0-26.
 
-Sigh, I missed the discussion.
+Nice catch. Thanks, corrected and resend as version 5.
 
-> It's a selftest where we're deliberately trying to trigger #CP, and in
-> the one case where we're happy should we say "yeah, safe to clobber WFE
-> in the interrupted context" to let execution continue.
-> 
-> Clobbering WFE in any other circumstance is a security-relevant bug.
-
-I think we also need to clear WFE when !ibt_fatal.  No?
-
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-index fb8f4238969e..69a34636811f 100644
---- a/arch/x86/kernel/cet.c
-+++ b/arch/x86/kernel/cet.c
-@@ -128,6 +128,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, 
-unsigned long error_code)
-	if (!ibt_fatal) {
-		printk(KERN_DEFAULT CUT_HERE);
-		__warn(__FILE__, __LINE__, (void *)regs->ip, TAINT_WARN, regs, NULL);
-+		ibt_clear_fred_wfe(regs);
-		return;
-	}
-	BUG();
+Best regards,
+Alexey
 
 
