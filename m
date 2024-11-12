@@ -1,118 +1,152 @@
-Return-Path: <linux-kernel+bounces-405897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16499C58A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:10:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 697C39C58A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:10:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 318C4281DDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:10:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 229C31F218E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71F6433C0;
-	Tue, 12 Nov 2024 13:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE94B13E02D;
+	Tue, 12 Nov 2024 13:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BE5zfsKU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUpaAdhX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E76B139D1B;
-	Tue, 12 Nov 2024 13:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105E2136358;
+	Tue, 12 Nov 2024 13:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731416998; cv=none; b=imOp1U1uTPW1zc5vWcLs5+Dlw5fbCBg4MwSpUyxhSW1fX80NZjNKVLOa0TGAlJo2oWv6S6FfoyM9kPzkkfes+6RTrYxhxhTDgY8x+wLD1z6m2djB3rD7OMCi8OmXjFf1eViftgHo0ldaItK6E+QZb6cFswlD43bjoWU+88gK7iE=
+	t=1731417012; cv=none; b=W0zdvPus1DMl19H/2bNruZJ6EOdm9yLisLyXU23k/E7Q+zso3ndFdM+AlSrSL320XmCD9NH937joz0TVgQ0wlsK7DWgeDNRI7iGRm2D3Dklt+eBv/fegosfdf1YF1Wj+yLegeaUagE4sbpHRS6RShOAaFJRhViI6P0KZehHxKN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731416998; c=relaxed/simple;
-	bh=ZOR976k4viMscvaHHP1VDvAEW/nPievAM4xObeUGsa8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sD7vPStasVGc5gE7LI4AA/FGj3RIEaaPW+/P/f5F2KQLFdhEcF3WOlefNWS/kFrz/TeOlynh1rI8EWb1uiFrYVnTnwl5E1NoU56AMK3cQAHmh822oTSW9vh94Cqid28U93K8Xm37XTWAOf4eQH6lueQEe9ZzeEkOdWdxiTTshBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BE5zfsKU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49D6BC4CECD;
-	Tue, 12 Nov 2024 13:09:56 +0000 (UTC)
+	s=arc-20240116; t=1731417012; c=relaxed/simple;
+	bh=qU0TfofrryohZdFsp3G9A99dm0hCLhReQcTj+BrTMNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rwhAlj+MLOVh6zEx+SdUJntAL2Kc8qlESBKWzcwEOTSHy/V0LSCN5lec05EjpMChzlMMEcrpDWzdkMc02PncO7m50hCgMz+nkHs7S7Jx3XP3CSPDzfYQ8GXWAgAE6tNpS12pHy/HV5uM/lo1pWb3Ipifj2He+kqEzsnpJp2f4eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUpaAdhX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 665B2C4CECD;
+	Tue, 12 Nov 2024 13:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731416997;
-	bh=ZOR976k4viMscvaHHP1VDvAEW/nPievAM4xObeUGsa8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=BE5zfsKUWJJheftZvRaRfz6tFIXzgM4kSbF3nzYAYCOEIrFNpott7i2of6NWWEQQH
-	 TWpweHCf28ufd4JU82/w58GbR714FxakaXAsj4K+5A12glYbqCTYfkUVtkd5hZkjGW
-	 cIpmh4RxS++6VXB71AmY8h0yrgCMtnuuKfHd1rrSK7Ud1COSiJbnsNBxnhTulSnBN8
-	 XAAqyjJ9MQS5Yhe5QNm1aRgnUaxEMwMmucp6IVjLCpam/sId6LFOcpy8ol5HSi7Nmu
-	 1zteMZAlCcdZGYYQff95nQVWAvcOP5IVzkc5Bkb87V5O25Pm/i5mrINdixnhFpj3ls
-	 q5ToaE1dQVRqA==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 12 Nov 2024 13:09:50 +0000
-Subject: [PATCH] ASoC: max9768: Fix event generation for playback mute
+	s=k20201202; t=1731417011;
+	bh=qU0TfofrryohZdFsp3G9A99dm0hCLhReQcTj+BrTMNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TUpaAdhXZIEdKLTyrptCwezuUBm8tqnAv/4DtsXI+W3+UBpyMpIg8hPZCGwA3ciSk
+	 ZfWa03QQo2chyMy9ru5DUZ+1m7g5blckLc1M/bA2yjWzMhoH722i8DMDLPgnIArqN2
+	 vdaVP2mpFjVYGmmfuoa+w9RdrSIcpU/iMazuv7EhHdAt4PWUF7iYn1b974qGR3Hqoq
+	 EGB6DTmK/TWH/8vhDINQTtPY7KPzjkA6fXmoSOX3FiBB7hLar6hFBOogWD/AHezgjH
+	 4EjbkXQX3gHyU4atpYB/5+UOpS3Ivr+s2j2XuNk+WrVa/ax8lnV8xIXX4s4sJgm7eA
+	 Mo8AXtNDO3fGw==
+Date: Tue, 12 Nov 2024 14:10:06 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Erin Shepherd <erin.shepherd@e43.eu>, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	christian@brauner.io, paul@paul-moore.com, bluca@debian.org, 
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [PATCH 0/4] pidfs: implement file handle support
+Message-ID: <20241112-banknoten-ehebett-211d59cb101e@brauner>
+References: <20241101135452.19359-1-erin.shepherd@e43.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241112-asoc-max9768-event-v1-1-ba5d50599787@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAJ1TM2cC/x2MQQqAIBAAvxJ7biGl0vpKdNDaag9ZaIgg/T1pb
- nOYyRDIMwUYqwyeIge+XBFRV7Acxu2EvBYH2chWFNCEa8HTpEH1GimSe7DRnW1XaW0nFJTw9rR
- x+qfT/L4fTmKMdGQAAAA=
-X-Change-ID: 20241111-asoc-max9768-event-085b4d2bb517
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1409; i=broonie@kernel.org;
- h=from:subject:message-id; bh=ZOR976k4viMscvaHHP1VDvAEW/nPievAM4xObeUGsa8=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnM1Oj/iyjLp42K6FwkAMtLtI88dujvscwd2q8W
- SOwMPTSaaGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZzNTowAKCRAk1otyXVSH
- 0B5rB/9HgMF1OAq7y41eUySmIuGus3hX6rW/ohRlXijs8I1co/qEIObCFKzyq0MptDCdNYz57zT
- 5qXoAQ0lRBgoU0AdIEpRo9DgG5twicyt4Ih8vFHMduDZR3Q1mcwhzhL20w6d6bzDvZIdMvVGECK
- wLqdr6amN+L9RxbtVTkSECjPG+8S7FgujLn0oGsTuXWCtpIKlt+4d+IL1kuSH098UWItyPCBXnq
- N7OMCB/D3v4WzDHOGrAXel/3FUdOVEBo/raCv5m6Q5cdA+EmWbxxpBAYF5qWig/B91F02Yijlso
- MMhmpt8yeejIs9E33QpcxIrvcbhSuEQBCQbRK0JQ8Iz5CZ6s
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241101135452.19359-1-erin.shepherd@e43.eu>
 
-The max9768 has a custom control for playback mute which unconditionally
-returns 0 from the put() operation, rather than returning 1 on change to
-ensure notifications are generated to userspace. Check to see if the value
-has changed and return appropriately.
+On Fri, Nov 01, 2024 at 01:54:48PM +0000, Erin Shepherd wrote:
+> Since the introduction of pidfs, we have had 64-bit process identifiers 
+> that will not be reused for the entire uptime of the system. This greatly 
+> facilitates process tracking in userspace.
+> 
+> There are two limitations at present:
+> 
+>  * These identifiers are currently only exposed to processes on 64-bit 
+>    systems. On 32-bit systems, inode space is also limited to 32 bits and 
+>    therefore is subject to the same reuse issues.
+>  * There is no way to go from one of these unique identifiers to a pid or 
+>    pidfd.
+> 
+> Patch 1 & 2 in this stack implements fh_export for pidfs. This means 
+> userspace  can retrieve a unique process identifier even on 32-bit systems 
+> via name_to_handle_at.
+> 
+> Patch 3 & 4 in this stack implement fh_to_dentry for pidfs. This means 
+> userspace can convert back from a file handle to the corresponding pidfd. 
+> To support us going from a file handle to a pidfd, we have to store a pid 
+> inside the file handle. To ensure file handles are invariant and can move 
+> between pid namespaces, we stash a pid from the initial namespace inside 
+> the file handle.
+> 
+> I'm not quite sure if stashing an initial-namespace pid inside the file 
+> handle is the right approach here; if not, I think that patch 1 & 2 are 
+> useful on their own.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/max9768.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Sorry for the delayed reply (I'm recovering from a lengthy illness.).
 
-diff --git a/sound/soc/codecs/max9768.c b/sound/soc/codecs/max9768.c
-index e4793a5d179efced38c8f04de5e49f4cf67a17a1..8af3c7e5317fbb0c47baa40b90f8799b9b3d3e8a 100644
---- a/sound/soc/codecs/max9768.c
-+++ b/sound/soc/codecs/max9768.c
-@@ -54,10 +54,17 @@ static int max9768_set_gpio(struct snd_kcontrol *kcontrol,
- {
- 	struct snd_soc_component *c = snd_soc_kcontrol_component(kcontrol);
- 	struct max9768 *max9768 = snd_soc_component_get_drvdata(c);
-+	bool val = !ucontrol->value.integer.value[0];
-+	int ret;
- 
--	gpiod_set_value_cansleep(max9768->mute, !ucontrol->value.integer.value[0]);
-+	if (val != gpiod_get_value_cansleep(max9768->mute))
-+		ret = 1;
-+	else
-+		ret = 0;
- 
--	return 0;
-+	gpiod_set_value_cansleep(max9768->mute, val);
-+
-+	return ret;
- }
- 
- static const DECLARE_TLV_DB_RANGE(volume_tlv,
+I like the idea in general. I think this is really useful. A few of my
+thoughts but I need input from Amir and Jeff:
 
----
-base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
-change-id: 20241111-asoc-max9768-event-085b4d2bb517
+* In the last patch of the series you already implement decoding of
+  pidfd file handles by adding a .fh_to_dentry export_operations method.
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+  There are a few things to consider because of how open_by_handle_at()
+  works.
 
+  - open_by_handle_at() needs to be restricted so it only creates pidfds
+    from pidfs file handles that resolve to a struct pid that is
+    reachable in the caller's pid namespace. In other words, it should
+    mirror pidfd_open().
+
+    Put another way, open_by_handle_at() must not be usable to open
+    arbitrary pids to prevent a container from constructing a pidfd file
+    handle for a process that lives outside it's pid namespace
+    hierarchy.
+
+    With this restriction in place open_by_handle_at() can be available
+    to let unprivileged processes open pidfd file handles.
+
+    Related to that, I don't think we need to make open_by_handle_at()
+    open arbitrary pidfd file handles via CAP_DAC_READ_SEARCH. Simply
+    because any process in the initial pid namespace can open any other
+    process via pidfd_open() anyway because pid namespaces are
+    hierarchical.
+
+    IOW, CAP_DAC_READ_SEARCH must not override the restriction that the
+    provided pidfs file handle must be reachable from the caller's pid
+    namespace.
+
+  - open_by_handle_at() uses may_decode_fh() to determine whether it's
+    possible to decode a file handle as an unprivileged user. The
+    current checks don't make sense for pidfs. Conceptually, I think
+    there don't need to place any restrictions based on global
+    CAP_DAC_READ_SEARCH, owning user namespace of the superblock or
+    mount on pidfs file handles.
+
+    The only restriction that matters is that the requested pidfs file
+    handle is reachable from the caller's pid namespace.
+
+  - A pidfd always has exactly a single inode and a single dentry.
+    There's no aliases.
+
+  - Generally, in my naive opinion, I think that decoding pidfs file
+    handles should be a lot simpler than decoding regular path based
+    file handles. Because there should be no need to verify any
+    ancestors, or reconnect paths. Pidfs also doesn't have directory
+    inodes, only regular inodes. In other words, any dentry is
+    acceptable.
+
+    Essentially, the only thing we need is for exportfs_decode_fh_raw()
+    to verify that the provided pidfs file handle is resolvable in the
+    caller's pid namespace. If so we're done. The challenge is how to
+    nicely plumb this into the code without it sticking out like a sore
+    thumb.
+
+  - Pidfs should not be exportable via NFS. It doesn't make sense.
 
