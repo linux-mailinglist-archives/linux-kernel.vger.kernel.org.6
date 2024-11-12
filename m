@@ -1,151 +1,139 @@
-Return-Path: <linux-kernel+bounces-406864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E865F9C653B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:35:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A92AA9C6535
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:34:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E35C1F23807
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:35:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6096C1F23D47
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA26A21B441;
-	Tue, 12 Nov 2024 23:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF9820ADDB;
+	Tue, 12 Nov 2024 23:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="ylgF4mzc"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xt+pz0SO"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E782213135
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E66213135
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731454527; cv=none; b=Nq/Ob7kFZwDUrRPb4p6s8iLbv0mC4zT2KCtZmsBSe6ak5W7gvKUhasr+OUU/5nzctwr5cBGCstTZWFQ0bd+4Ik83quT3a5TAWC6H5CDy4aEkbEeNm8nlXOylS1aJ6PzyzNBJECOGLJX3cvuWXLpRoSZfRdA3RGqrwJgIGZxAUV0=
+	t=1731454464; cv=none; b=XZjlUy6nGvbBhiW3EG8el+/5BPKd9AKE7RXgntMl0FqznAEIGZyoZXTGrGwEr2rbuRTZVZiJ+PeHNt3OY5XM72bN7803Ii0wJZS8TopuAE98fwx/WYyzz41gspCFdkj3faDGoivMriDfUpPTjL9NhBktQxGSLxw01Cn09XGcCDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731454527; c=relaxed/simple;
-	bh=5QYxYmoaC0h97bCzFt7dyutECUXaQwbJKnIzfwNwwLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XDjyEiykGb7AWAeMYd7NKos0mTaH9+C0/k3C7Cc+V1VtYJ2Y7Ce5DAD83eQdOfU8niWMnfZ8xXTed2Qn7LnISYZG33Jkc/xpGNcebR2AujvS7xRbG5r7MFksch6ww2TfKQjlG5YKVQ2g2HphZoIBoyR9jylNmK5CoELefFTau6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=ylgF4mzc; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
-Date: Wed, 13 Nov 2024 10:33:14 +1100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
-	t=1731454521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gMbHqD+H0zd72SUEwYPmsE9R4wTLK4oFNYpLilDoG38=;
-	b=ylgF4mzcsM/CWq/YKvClifTLZH7vCdLAWKIqWnIPHm1D13CdUREyoniFOn+mElVbgLLUyR
-	Xz8KqJTTLDqDbgFRzFKuEpaY8K7sgvva0GGzq2I7veWNTf7CsjeyAJzCfwffGZiKK7L2g/
-	+xH6RouQQVtZGcTwIJ08yjwnxzDkECI66BD28PLVZFY5QaF5DbO5Tyv7CIgxLhZOSifrJs
-	CG3bnLO17WXI3WFwurYU9klwutqfWvMCsmna79NYtHZWSrl7exUSIwfl8cy8H1NZPhf3QS
-	SIPSaGNgiza2lEJdNE7UH+rS3FOjXovzHJEGLDL+JnixRk3MFJuyMQBw8SZ01A==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: John Watts <contact@jookia.org>
-To: Parthiban <parthiban@linumiz.com>
-Cc: Andre Przywara <andre.przywara@arm.com>,
-	Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Samuel Holland <samuel@sholland.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/sun4i: Workaround TCON TOP conflict between DE0 and
- DE1
-Message-ID: <ZzPluoI7xSTwhNcm@titan>
-References: <20241108-tcon_fix-v1-1-616218cc0d5f@jookia.org>
- <20241108115357.691b77b0@donnerap.manchester.arm.com>
- <Zy4SKCBwce3q0yj5@titan>
- <b26b9d86-4ff9-4543-85ce-176dccfbfa05@linumiz.com>
- <Zy4c9BFcrz2JVU6k@titan>
- <ZzNCsFiAiACFrQhE@titan>
- <f0d5b314-cfcc-4856-8d6e-09e437c075ec@linumiz.com>
+	s=arc-20240116; t=1731454464; c=relaxed/simple;
+	bh=V7YrvqMxBiDtu1yyjd5HTYFxNev9pFYFi/CbJHPn/GY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R7mWFr1pxb8ZuyjnSXjFj0NBOJ+WjtCzaqED/mbpmTgB1Y50exDHUfDcsH1l47eriEZM9GAYEGu9A5Kc3oXViu1WWf8X/KxYalYCh2sG34OYq5f/fv6CWggmQfCy/dh29KzlLZxBJNIO3TP5Xq2iBz9duyAwHnF2rE68tTRsYs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xt+pz0SO; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so52735305e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:34:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731454461; x=1732059261; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jDK6Jpe2m/hfg4hQn4ofja0c9FU98DCMFpbVNI55NDw=;
+        b=Xt+pz0SOjdIN95RcRiAVuhh3b0dx4jfeab0fNNmMVCLXCz8zguDUujXvHLBfbaLlNw
+         yEZ+5dJp5isT327A3Az76TtVQ6eWFrfqi88eeltZcPpXpc4tJ6S49cGrNdhaRWp2bZcW
+         oU3VycPUcBVJtXONPQ15X45LLHYnbFK/o2GPgdHnqNzFNK1b924wAV8gMxcLvqeaScDB
+         DyjjgmPAu8RUl7aBE80V9OOyLRgHtq7Tt4TNjXATbaVlOJs7xtcuYvFDgwUskH/3nKmd
+         l1FgDivKED0r5OERgl8OHW0TLSlD6rek1Rh/B1ZcLohcScfFGs0tGBnLhX14N8j401qo
+         kRrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731454461; x=1732059261;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jDK6Jpe2m/hfg4hQn4ofja0c9FU98DCMFpbVNI55NDw=;
+        b=pB3n/y1Q6I10MFGbR0vE0Qf9kfJBLJcjzcY+5HnzlI4g/57DyH3RKHhGKUlG4IHgyV
+         58f+Y0IoKgX+j9KgORm2OZNoNuEbXWnW2GcXHv4KgrsHD4qbti0MushQG3SWmsvoTfHS
+         YX240yz2Sb7xrJTUYXOBU+uJePt60rJ0CdW9SlFy/YaHwqyj9Ch3JtOHSsscdIoHkw8I
+         rqrwp+7mbI9w1Zq8btggep5FxdUYMGnuAsj8UVaCb7LehB7dLWI3d8LT/LCaqlOvHw+R
+         EsvmCxPKjufwqw7P4gv80Blua7yCb369ljZHc0tY9cThk5yjCVa9jbGwRZ+BZf8ILko5
+         sJig==
+X-Forwarded-Encrypted: i=1; AJvYcCX4nyeaJYi+WP2ZfYyL4ul02Zkvvu8iLS7KrfVeLN0mu7oM2fSvH/J1pzC0f2aPloCXm9dTFBOzg771mBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynsoDj+awAbHiDknTcxpoSTX5ubuc/3cBugC96dxA14+5QZbWR
+	rm23cLzWURQLNdrl27ePoTUq6BoKHsR9DOx1/1O4UDrTQOjNpDWenbgL8MPGQh4=
+X-Google-Smtp-Source: AGHT+IFlTjuNrbTGIsR+0sG4thfT19ptCWMJEbd2b1payDR1CxHa6BLA6qbK+uLJjTdl7xL7zRnAjw==
+X-Received: by 2002:a05:600c:5125:b0:430:52ec:1e41 with SMTP id 5b1f17b1804b1-432d4ab80d5mr8680315e9.17.1731454461350;
+        Tue, 12 Nov 2024 15:34:21 -0800 (PST)
+Received: from [192.168.0.48] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d550c14esm2955535e9.28.2024.11.12.15.34.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 15:34:20 -0800 (PST)
+Message-ID: <1cefe6f0-5d08-41a4-b0c6-2291dd5781ca@linaro.org>
+Date: Tue, 12 Nov 2024 23:34:18 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f0d5b314-cfcc-4856-8d6e-09e437c075ec@linumiz.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] media: qcom: camss: Restructure
+ camss_link_entities
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, krzk+dt@kernel.org
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241112133846.2397017-1-quic_vikramsa@quicinc.com>
+ <20241112133846.2397017-2-quic_vikramsa@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241112133846.2397017-2-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi there,
-
-On Tue, Nov 12, 2024 at 10:43:44PM +0530, Parthiban wrote:
-> #define TCON_TOP_PORT_DE0_MSK                   GENMASK(1, 0)
-> #define TCON_TOP_PORT_DE1_MSK                   GENMASK(5, 4)
+On 12/11/2024 13:38, Vikram Sharma wrote:
+> Refactor the camss_link_entities function by breaking it down into
+> three distinct functions. Each function will handle the linking of
+> a specific entity separately, enhancing readability.
 > 
-> references towards DE0 and DE1 is for DE itself, not the mixers in the
-> current implementation.
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   drivers/media/platform/qcom/camss/camss-vfe.c |   6 +-
+>   drivers/media/platform/qcom/camss/camss.c     | 196 ++++++++++++------
+>   drivers/media/platform/qcom/camss/camss.h     |   4 +
+>   3 files changed, 138 insertions(+), 68 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+> index 83c5a36d071f..446604cc7ef6 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+> @@ -1794,9 +1794,9 @@ int msm_vfe_register_entities(struct vfe_device *vfe,
+>   				&video_out->vdev.entity, 0,
+>   				MEDIA_LNK_FL_IMMUTABLE | MEDIA_LNK_FL_ENABLED);
+>   		if (ret < 0) {
+> -			dev_err(dev, "Failed to link %s->%s entities: %d\n",
+> -				sd->entity.name, video_out->vdev.entity.name,
+> -				ret);
+> +			camss_link_err(vfe->camss, sd->entity.name,
+> +				       video_out->vdev.entity.name,
+> +				       ret);
 
-So the datasheet says it's for DE0/DE1 but the Allwinner driver and mainline
-driver assume it's for mixers. There's a conflation between mixer and DE in
-this case, especially because everywhere mixer1 is used on the A133 it is
-switched to DE1. I'm also unaware of the R40 having two DEs which kind of
-confirms this might be a typo. If anyone has actually tested the second output
-of this it would help find out if it actually means DE1 or mixer1.
+So you're doing the right thing reusing camss_link_err here however
 
-> Handling for mixer0 <-> lcd1 and mixer1 <-> lcd0 also needs to set
-> DE2TCON_MUX in de clock, which is missing now.
+1. The commit log no-longer matches
+2. I generally suggest patches should be as granular as possible
+3. That means if you want to use camss_link_err in camss-vfe.c
+    and BTW I think that's, correct then
 
-Hmm. Are you sure? Looking at the Allwinner drivers it has the method
-de_top_set_de2tcon_mux in
-drivers/video/fbdev/sunxi/disp2/disp/de/lowlevel_v33x/de330/de_top.c
-which I think means it's for DE3? But I don't see it called anywhere?
+a) Refactor this to be two patches
+b) First patch is about reducing the repitious string and introducing
+    the reduction in camss.c and camss-vfe.c
+c) The second patch is about restructiring link_entities in camss.c
 
-This might be worth discussing in the DE3 patchset.
+Basically this patch now does two things and instead of havin those two 
+things contained in the one patch, you should split those two things 
+into two separate patches.
 
-> sun8i_tcon_top_set_hdmi_src for R40 already sets these values via quirks.
-> i.e controlling the port muxing. Also D1 quirks is same as R40. So the
-> original changes to make the DE1 point to TVx can also done in this quirk
-> without hardcoded value?
-
-In this case I'm using an LCD which isn't HDMI, so I'm not too sure how much
-this would help. Having it as a quirk also seems a bit overkill if this is a
-general preventative fix, especially since Allwinner doesn't seem to test their
-functionality. Relying on it seems like a mistake in this case.
-
-My other thought is that when sun8i_tcon_top_de_config is called it could do
-something. But I'm not sure what that something would actually be, given it may
-be called twice in an (I assume) unknown order.
-
-Say, if mixer1 is set as TV0 and and mixer0 is set as TV1 we would try to set mixer1
-first, see that mixer0 is already set to TV0 then ... error? Even though the
-final configuration doesn't have any conflicts.
-
-I was thinking something like this for my next patch:
-
-	/*
-	 * Make sure that by default DE0 and DE1 are set to different outputs,
-	 * otherwise we get a strange tinting or unusable display on the T113.
-	*/
-	reg = readl(regs + TCON_TOP_PORT_SEL_REG);
-	reg &= ~TCON_TOP_PORT_DE0_MSK;
-	reg |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 0);
-	reg &= ~TCON_TOP_PORT_DE1_MSK;
-	reg |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, 1);
-	writel(reg, regs + TCON_TOP_PORT_SEL_REG);
-
-Perhaps this could be hidden behind a quirk? I would have to check to see which
-chips have this behaviour, I'm not sure if it's a bug specific to the T113 or
-D1/T113 or R40 too.
-
-Also noting at the top of the file that DE0 and DE1 mean mixer0 and mixer1
-might be good to reduce confusion.
-
-What do you think? :)
-
-> Thanks,
-> Parthiban
-
-Thanks for your input!
-
-John Watts
+---
+bod
 
