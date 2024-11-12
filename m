@@ -1,140 +1,123 @@
-Return-Path: <linux-kernel+bounces-405371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F699C507C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:24:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB7E9C507A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:24:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7272EB25974
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:22:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F95DB23D55
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E8120B804;
-	Tue, 12 Nov 2024 08:21:30 +0000 (UTC)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A6879C4;
+	Tue, 12 Nov 2024 08:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0v5PZOew"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F4920B21C;
-	Tue, 12 Nov 2024 08:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFB620B210
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731399690; cv=none; b=U04NJq5W1PmYduRfEG3gRp+mFdrgiP1JpfSU3pdZ9i/RD60HuGfelF890kI4KS+na9jfkWnKNt+/2E3/z5cjqUY4mLkwqhDddYfvS7Ow7sXc02zo8A8ig9Y6YJv3dt18PGKDBIowztutPlfWpXZy019nIeEO+4tbmRo0IIrHcyI=
+	t=1731399690; cv=none; b=PIGp5Qlvfdi+u1SDC16h4oblZDKjFdkiEiZGMbUDtVzHNTpwoz6id0/5jwh+TmpwUcZ1oTU41ya+4iJKaWpgHF39xLxI8Z+GZ2cSmnyhwK12s211JWlE4L8dcSnSqrpKvLusF0m6QnDVJ2zF6BnK2N0sowG15wIWrQ7pwmCyf2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731399690; c=relaxed/simple;
-	bh=sjZAdvAtgbZ+vGzUS/YSH0JiAoVDAoGc378b/PsBnik=;
+	bh=Uxzxm5ea5xyHccq62Yr8rtYysd3AkZ+x2y27FL++Qw4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VliThmqWLZu2+obCW2ZjSls5VLWGkwmMA8QE2Urd3q+fXOiq7Nj6edYy2LMLUMIBTn85gB3EqwGa1gd4s6IkaB8Hxrv9XONJy/ehPlaIw9NIq5n8HhwMPvBCBv4VOKKcKbALj4En3uKiLbBIvaYenToLYKeWxA2W0KsCmCP1mX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e2903a48ef7so4957314276.2;
-        Tue, 12 Nov 2024 00:21:27 -0800 (PST)
+	 To:Cc:Content-Type; b=OnnOs1ccCUCEQsaNQYf+YJHWHubRjatJ6MRLxG/UjRTTnEM+Y1B5RLlV7NTABKWT2nLVpZariJGjCgLiEAHb+RL9NPkCt3ulN3Irbv7KeV4Qd9f5ozCY80pX4AAnMB9SuITFbocGqF5QHbJWD4wZtjadQHiMAykU+5sQJRM6tC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0v5PZOew; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so49838381fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:21:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731399687; x=1732004487; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uxzxm5ea5xyHccq62Yr8rtYysd3AkZ+x2y27FL++Qw4=;
+        b=0v5PZOewnXNMIdupPz+O1NmLMT+kOh55EY7kqbY8UxxOOViMlNzZF7NSjaHlbcJCCk
+         yRY+8Y7tz3V0PiVhVizAesF7nT0RMNw4fnKBn7or2ol75REiFLQTGzS84W9hIhaztz13
+         5q6+najOuboE+nlpxgvlifMvcYzaQx50kMKJP265PVot0qBragZD8LHioxL+VVMSd44a
+         6pu35zDBbvCBNla29XnRInO+AgVT2CPIvxXnSbNkDLDvuUkeg8hrbviRJLDP5XMVPGa2
+         avvwbNTPYa2huqbTf2o7RW0pd4q29i8m38X2Tdz5z2JUFw1Ua5UrlzMty0H3pHBACRoX
+         G4Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731399686; x=1732004486;
+        d=1e100.net; s=20230601; t=1731399687; x=1732004487;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nDwP6y4apLuPSJNyta68tT9HUAyd8428Aaq7TNs9y8M=;
-        b=VJt3Wl62ovxXDc93NS26qVCvfWICSl9+k6ymdsDvrCvX0kjcAhfLd9eTCN1hkiyvWa
-         I5S3Kp7DJUAO6kaSBx5KlJpntxVBHCAQTaaofJXLHWSi4I2cB0igmlYLPg8to+eU564M
-         iJQkKRTwFM1FbGl1vbMH+xs//bR7xJtVxVKp1WprCaiHLkNb5MmjCPUKKQCUDqggRePu
-         knoSCxtq63NIDFMcTnnChq6n66MckFYziJPfckdrIAGA2trBhH33ir5OZkmxuzuuvdes
-         ShqS4BsuqADoVz2b24qh2E3id211JvbJQRu2/kk2EwqMHaaBbp/WnusqY30ZaBmAJpb6
-         r6ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUXqbuFnMnS4b+j/AmMxH2gdIdhRhqHDGYlS6aLR2ymqhFeWFbxSBHoTDnlb+hSkyH6zrGck98VIWPe@vger.kernel.org, AJvYcCXiJSSmciBxQ9hy1OwgHEBH3/YrtQqnvzjpEYQZSm++AT3BgjIEOf8C9k4hbpYGCcuGiZR5JmY6K9WqpI/o@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx78OvivgaiBY5zHh9JQn2JMOE4Tos8xrFilcsiML8/9+/LDJYE
-	gFHpglqHKctIWQQwC/UPHBJyWFVojLO36WGU/kWYEp8d33xtOJHQMaFsP4uR
-X-Google-Smtp-Source: AGHT+IE8Owwk3fquhxdrmDKgbH/7Q50OWrL+rXvopOM9fZ3chlPzWe+d4aC7q79VETG6Cgj1OXc05w==
-X-Received: by 2002:a05:6902:10c7:b0:e28:7a13:747b with SMTP id 3f1490d57ef6-e337f882320mr14932905276.27.1731399686343;
-        Tue, 12 Nov 2024 00:21:26 -0800 (PST)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e336ef46e90sm2666252276.30.2024.11.12.00.21.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 00:21:25 -0800 (PST)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ea85f7f445so52819717b3.0;
-        Tue, 12 Nov 2024 00:21:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUU/g/Lr+ijifCYmx9GfnHLQnzqkoyXD3SqsTb5aZ5KhROztqeyNjKY/DuvFRe023Rkd+AKywsv4dC3@vger.kernel.org, AJvYcCX6EuDc0oUzv3i6l7BMzWuYr9HX2RynisZYddQlaHJvqhybjo3BBbZXesvWD319Xqqk0E9gebwTMi1Rkh6P@vger.kernel.org
-X-Received: by 2002:a05:690c:670b:b0:6e7:f940:fe81 with SMTP id
- 00721157ae682-6eaddd75bdamr148538287b3.6.1731399685525; Tue, 12 Nov 2024
- 00:21:25 -0800 (PST)
+        bh=Uxzxm5ea5xyHccq62Yr8rtYysd3AkZ+x2y27FL++Qw4=;
+        b=vVm3ofspeCKT3ZkuTfL17sMZ89rdxF1q94x8ZtYkFO/Oshll6hqEZJZDuzjNI2rum6
+         KRLLs2WowyQLW/A/OkcjFJtBm2uxBxyk9AGa2CTHDeZCI903s9xBdhmIXrIBYIiBo13G
+         LvLp83HO0ZPQfR9B2ASiPHMUeq7MHTYdh3ehrhvQ0TzpLTK30jLxJSmf4BNVEON2IZNC
+         Sx4uTVK29uiNnoacGmimX6cEH85yIWk8SmoUG4GR9kjOukTHaSpWm2/q1ZPIIoHxiOsa
+         wwHEF50NaIyHt/LEw4WOs5hjvPWatMGctZqAUSxf5GlYmzHUSaW6gXfegitBnfltk3Du
+         zJ9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWv7ysy1djAIM89riiAdaW21tsuNklxCCVpENTmTW1sLciSlUAhuYXgudRpyrVExRrvAwSsw9dyCxs0RBU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqpOOHQmpxYRhkd/aWeanlUzyqRfS3K0aEBUw+wekn3xHlXUty
+	pAXzir2DAlFgYkB2tOZ1uC508+92vUj806fHZ0kHp0cD1yJ4M4KjofyZNal8JwfzUZjWH9XPo33
+	9ITxykqYlHWelrPzMiXEDz4UcVxDeN5us/uRKDw==
+X-Google-Smtp-Source: AGHT+IFVGYhhtVdJltvrb5Q3HzqGHbeIDyhkfpyNVBE5lnUQtDNCEzpgZ2uC+RjR4w6nR+0eNq+zBdPYraWQBKs5YAQ=
+X-Received: by 2002:a2e:a9a4:0:b0:2fb:4abb:6fe1 with SMTP id
+ 38308e7fff4ca-2ff2015279fmr68829801fa.4.1731399686821; Tue, 12 Nov 2024
+ 00:21:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101-am64-hb-fix-overlay-v1-1-080b98b057b6@solid-run.com> <32c1f44c-6bc7-4722-9f73-743ea15cdcbd@solid-run.com>
-In-Reply-To: <32c1f44c-6bc7-4722-9f73-743ea15cdcbd@solid-run.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 12 Nov 2024 09:21:13 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVZB1iiM5K1VWch5HrohRz+HYu2z1KBXDh2e01TTPgOWQ@mail.gmail.com>
-Message-ID: <CAMuHMdVZB1iiM5K1VWch5HrohRz+HYu2z1KBXDh2e01TTPgOWQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am642-hummingboard-t: convert overlay
- to board dts
-To: Josua Mayer <josua@solid-run.com>
-Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241008160947.81045-1-brgl@bgdev.pl> <55ecee09-196a-4c7a-b7cf-61c19737735b@linaro.org>
+ <CAMRc=MeTgFaySBFya2e=CYnrXL6R7s9D1DRq+RxKcsf56xMc+g@mail.gmail.com> <CAMRc=MdVUtff7wLV7mxsoXEBY7pUvULuJH1GvJCJgCRj0OpCBg@mail.gmail.com>
+In-Reply-To: <CAMRc=MdVUtff7wLV7mxsoXEBY7pUvULuJH1GvJCJgCRj0OpCBg@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 12 Nov 2024 09:21:15 +0100
+Message-ID: <CAMRc=McMA_iN4QH006-kBEpAwMUKa5=ke+iYpmJJvtihWLQAVQ@mail.gmail.com>
+Subject: Re: [PATCH] i2c: qup: use generic device property accessors
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, neil.armstrong@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Josua,
-
-On Tue, Nov 12, 2024 at 6:05=E2=80=AFAM Josua Mayer <josua@solid-run.com> w=
-rote:
-> Am 01.11.24 um 15:16 schrieb Josua Mayer:
-> > SolidRun HummingBoard-T has two options for M.2 connector, supporting
-> > either PCI-E or USB-3.1 Gen 1 - depending on configuration of a mux
-> > on the serdes lane.
-> > The required configurations in device-tree were modeled as overlays.
+On Fri, Nov 1, 2024 at 3:20=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
+>
+> On Fri, Oct 25, 2024 at 10:04=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.=
+pl> wrote:
 > >
-> > The USB-3.1 overlay uses /delete-property/ to unset a boolean property
-> > on the usb controller limiting it to USB-2.0 by default.
-> > Overlays can not delete a property from the base dtb, therefore this
-> > overlay is at this time useless.
+> > On Tue, Oct 22, 2024 at 2:05=E2=80=AFPM <neil.armstrong@linaro.org> wro=
+te:
+> > >
+> > > On 08/10/2024 18:09, Bartosz Golaszewski wrote:
+> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > >
+> > > > There's no reason for this driver to use OF-specific property helpe=
+rs.
+> > > > Drop the last one in favor of the generic variant and no longer inc=
+lude
+> > > > of.h.
+> > > >
+> > > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > LGTM
+> > >
+> > > Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 > >
-> > Convert both overlays into full dts by including the base board dts.
-> > While the pcie overlay was functional, both are converted for a
-> > consistent user experience when selecting between the two mutually
-> > exclusive configurations.
+> > Andi, can you pick this up, please?
 > >
-> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Closes: https://lore.kernel.org/linux-devicetree/CAMuHMdXTgpTnJ9U7egC2X=
-jFXXNZ5uiY1O+WxNd6LPJW5Rs5KTw@mail.gmail.com
-> > Fixes: bbef42084cc1 ("arm64: dts: ti: hummingboard-t: add overlays for =
-m.2 pci-e and usb-3")
-> > Signed-off-by: Josua Mayer <josua@solid-run.com>
-> > ---
-> >   arch/arm64/boot/dts/ti/Makefile                            |  4 ----
-> >   ...gboard-t-pcie.dtso =3D> k3-am642-hummingboard-t-pcie.dts} | 14 +++=
-+++++------
-> >   ...gboard-t-usb3.dtso =3D> k3-am642-hummingboard-t-usb3.dts} | 13 +++=
-+++++-----
-> >   3 files changed, 16 insertions(+), 15 deletions(-)
-> >
-> Please hold off on this patch for the moment,
-> Thanks to some comments from Geert I wish to submit an alternative
-> solution via separate patch-set, for further discussion.
+> > Bart
+>
+> Any reason why this simple change cannot be picked up?
+>
+> Bartosz
 
-As you state in the other patch set  "I do not consider it ready for
-current merge window",  it may be worthwhile to not hold off?
-It can always be reverted whenif the alternative solution is accepted.
+I'll take it through my tree for v6.13 if there's no response in the
+following days.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Bart
 
