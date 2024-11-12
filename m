@@ -1,188 +1,253 @@
-Return-Path: <linux-kernel+bounces-405946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F569C592F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:35:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9109C5936
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:36:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB0F0282D32
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:35:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87EB7282A40
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7573A15A85B;
-	Tue, 12 Nov 2024 13:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C1B15853D;
+	Tue, 12 Nov 2024 13:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ExlVOz/z"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="NFhD7U74"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075B214EC77
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC4D433CB
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418453; cv=none; b=Lj+z82OG+YcBBjy+1rgyiq5tM+HYZ2lIdPnMOi92ahMwozuHoCd2HwBy9KyYUIIPRf/dxj0wCvyaT/zQeWztn49W4BD2OzLKK6yhmCieXmCNHNsaNR26HpEyjoBNKVjVvg+ckX7/kvF46X+mKKhFA1A17ORKY48yM17rVNehdzk=
+	t=1731418511; cv=none; b=soqNPtkbwuZO2ZHiDS6bKR7kDdCh/9rC9J8BIAv7XjfpY6V2gzfAt9LSvB1oAx+UBpneQ2OePFBxMPqGC2Wn6kyukJF3IE2NGgwn7mL/ttfvelxv9URSaV03HZaWD7i9pR0C9LrYF2m5JAkGEM25hSWJQ5SPvqFkaZBwHFLaWA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418453; c=relaxed/simple;
-	bh=ccZAmJUZ84i4bnR7UC/egNqccA0sRyz2WPlTAVWeXeM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dTmZPYjiFlth0AijGkmeCsV5egzlJSjv+ykFa4+Gi8spCuhcCJTkY9DvaY3Sj3PNEcfcC/cRyYiv6Q2Z8P7eRpZ2tmp3olHZaA4Gs7oQIs1JxlHkTYQJKrpR29V2pWk+LkpL/TD4Rt+f1a8Pp/jtfUWMPCAfkAwHiFITrnZiNSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ExlVOz/z; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43152b79d25so47375045e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:34:11 -0800 (PST)
+	s=arc-20240116; t=1731418511; c=relaxed/simple;
+	bh=EOXvOTztZpJCM4q327HIKFrJDyDFi92aRkdhqB9a5FE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=szycPMFjVy9Fjksv2Ho4/se/PiS4E/EVuwz8tpVU6hWiOxykNJUjpvv+Ju+UozBqqjLXpLm+b1JizjvFtwAMTwNugPuJg7XsTSvjZ2M+9k1RqFC1bcquVOPjYOP6R3HEN/kPQlodBi7TQ8s+UzFS0JElP2VR1DHHBrkn6eNTOnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=NFhD7U74; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso71558285e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:35:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731418450; x=1732023250; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p+omseve6sEWaNT3PbUtmXKwUOZhyNZ+lRjB/niytBE=;
-        b=ExlVOz/zMJ8fiHHq1+K1ESYZWeUbM7CARwNaeQ2le3N2LosCbNBVAP9C9lAhEIEtZq
-         D1PnxxOEcshnmWt55styhcmR3+8vIBPJDuC5NUCp6NKJcnIfyZzfF6n6E74N9JCGeH0m
-         oC/9BHBnY86SgSzJWgleKYgJqZeBP+QRKFp1KBW/2BbYjxJPwEzjVkbHr4wa/ontHsGo
-         5ArJD0Mxsg/3VyWaQCZWJZRZG4jATnr8zsMb9mbUM/vMo2QQL6vdcaKPOxXjtDadPOwf
-         GGjEtjiwHH+m9pdbQMIKLfWfzCbuzt+pVFBPELjQjxAkmpEUXAQppHvLbOcJllTj5/7Y
-         R+BA==
+        d=ventanamicro.com; s=google; t=1731418507; x=1732023307; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZJIMNBzuMK7h+qGksPtnaBGirglhm92ygI/WSEl5z9I=;
+        b=NFhD7U749CKPENWW5jUZNXnljnGISuCdbpu3LH2Qqu+kFDeTTuuHbewUvaUIpM3kX/
+         i3iAMoLk2WRD8m36UWFcraT9Se+KcD81VAVp5HjyvtoZyYFx7we7W49Rz0mYDnwulEP1
+         u94G2LwJWigB6Wgsd9CbExFDdLmU7Ks+DxmKcIhnM6R8YTTW5Q2jXZkkELhUtkcMCetY
+         iLP9SJzks3kOLRvJOFSsv/OJRGaO49PTYf/UvpDKdJ8mtyQn9Rtq5OKBJqqA+kBmBNwK
+         01MBVyk0zCjOWxkHOlr3z1qLkJi0Y1FZaa3syVwKQ/OyXVkgE/TMyWPJlq3EGQhPxcA7
+         gFCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731418450; x=1732023250;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=p+omseve6sEWaNT3PbUtmXKwUOZhyNZ+lRjB/niytBE=;
-        b=PTHy554npuCZiuLbaIYVYqI5qSj2ALbfrRR3H8xXOJSUX+IbEADVbeQW/Hv6utoJRP
-         XLP1BJAb4dGJgvv09nCwme0+wLisqPY5xsSF/vR4zDu8xxuPzNvyi9YIE1hX8l2b5jaB
-         mf0EXv55ME2ekI+1vXmiYCrpAOEJwP3sLCF6vliq1b554HmmnE+NzdPLcp/MMnJhkJBN
-         93gm1Q7dCjlPZ2OAjB7GIa7yX3wIWeCFmLk8DCiyFG+hdNzd7ZQ3CguqyoLJU4cUnIKB
-         1ZvNaRCuToGk2PnQgRkLuPDBFVCLIoaX4thedmOG/zUNeVXJX/0SRCy57cVo8Tp9m8TV
-         3sUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeEp83iVxZISYfQYLcLTDLbAgv4hbJWzZrJfr/SwbOYzYOe5VimUPj6/aMtsdjKX4HK4ozYNpRKq9Fx+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb/IR8O1Q/DO+fvqF8d8Yu1JAXrun2EpNi9L1AqlPigtKf2zk1
-	d+UAMKklZw5xmVfXBSks1K7vdu0O1jlkt6GxnJ+TXjuNo7Apa9OJhR6aMGPgns8=
-X-Google-Smtp-Source: AGHT+IE3ISTkzyh/KPRmrTOaebvxmXujGnc7RmLYTWKcmrFKgulLlHkQDLI+4AM/xhjc2ZCd/a/i1w==
-X-Received: by 2002:a05:600c:510a:b0:431:4e3f:9dee with SMTP id 5b1f17b1804b1-432b74fd7edmr145104225e9.4.1731418450344;
-        Tue, 12 Nov 2024 05:34:10 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:860c:aff4:d0e9:9db8? ([2a01:e0a:982:cbb0:860c:aff4:d0e9:9db8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05c1a13sm210146095e9.29.2024.11.12.05.34.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 05:34:09 -0800 (PST)
-Message-ID: <950f4d06-e064-46f3-b8e7-8bfd48b2b16f@linaro.org>
-Date: Tue, 12 Nov 2024 14:34:08 +0100
+        d=1e100.net; s=20230601; t=1731418507; x=1732023307;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZJIMNBzuMK7h+qGksPtnaBGirglhm92ygI/WSEl5z9I=;
+        b=bGuMqCq/ZeOWPSCR8YdNEew2zFJfM2e5jOzoetgd1duR2QDvZbxYyCTS4Df1KXqioQ
+         vivDqDHbtWF5cErmDZ3boJnOd3CSfLq4DjmTIhi8qeoupYLIb0ez7dqpOlYu18g1iCDr
+         pE8ss34mX7Q9ZholDTVv2hOdtxlj1KNU+ShWg9XbY02T3obK45PVI4rn+IpjxytFdKhF
+         ucwP4U84Y1dnHoqgvtNr7ABja4O5A0IaxzHCOFO6wSp9Iy4p1YuQryW83KZIMOeD5+b6
+         9rDM1a4+eZSgEFL6JzyGRimg137o4ur9bYT0IG0p4W1p0PPiLSQFzW/Ogi0gbSOkFIbG
+         KRXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXg36ciutw6qMi3m3AtF1asXHYsidZl+UDnHnlBxjuSDADwb7nBFBR2YHXb6nQ1CxMx0jemlB5mgbb8a/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf82j4sbUGHZZu7KsCHY91C6rOyMwdIgYit+FFblCGjhJZLi7m
+	dspba4uP/zm+H0xpG01CnsZQq/dOwb5ptN1af1yxK+e7lP2ZiDd+pHYzUbBRBzMINVJPnvfsGc6
+	8hF0=
+X-Google-Smtp-Source: AGHT+IG/Z7mx614mpiSG+bVLADanukSwztBdE+h0N2Kt0vduWKMvN0NDCdisoOsaoV/RL2Zy6lGUTA==
+X-Received: by 2002:a05:600c:458e:b0:431:6083:cd30 with SMTP id 5b1f17b1804b1-432b74fed94mr166289775e9.6.1731418507263;
+        Tue, 12 Nov 2024 05:35:07 -0800 (PST)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432cf118daesm12548325e9.0.2024.11.12.05.35.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 05:35:06 -0800 (PST)
+From: Andrew Jones <ajones@ventanamicro.com>
+To: iommu@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: tjeznach@rivosinc.com,
+	samuel.holland@sifive.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu
+Subject: [PATCH v2 1/1] iommu/riscv: Add support for platform msi
+Date: Tue, 12 Nov 2024 14:35:06 +0100
+Message-ID: <20241112133504.491984-4-ajones@ventanamicro.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241112133504.491984-3-ajones@ventanamicro.com>
+References: <20241112133504.491984-3-ajones@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v5 5/5] arm64: dts: amlogic: a4: add pinctrl node
-To: xianwei.zhao@amlogic.com, Linus Walleij <linus.walleij@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241112-a4_pinctrl-v5-0-3460ce10c480@amlogic.com>
- <20241112-a4_pinctrl-v5-5-3460ce10c480@amlogic.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241112-a4_pinctrl-v5-5-3460ce10c480@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/11/2024 11:26, Xianwei Zhao via B4 Relay wrote:
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> 
-> Add pinctrl device to support Amlogic A4.
-> 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->   arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi | 36 +++++++++++++++++++++++++++++
->   1 file changed, 36 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-> index de10e7aebf21..a176faf7f1ef 100644
-> --- a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-> @@ -5,6 +5,7 @@
->   
->   #include "amlogic-a4-common.dtsi"
->   #include <dt-bindings/power/amlogic,a4-pwrc.h>
-> +#include <dt-bindings/gpio/amlogic-gpio.h>
->   / {
->   	cpus {
->   		#address-cells = <2>;
-> @@ -48,3 +49,38 @@ pwrc: power-controller {
->   		};
->   	};
->   };
-> +
-> +&apb {
-> +	periphs_pinctrl: pinctrl@4000 {
-> +		compatible = "amlogic,a4-periphs-pinctrl";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges = <0x0 0x0 0x0 0x4000 0x0 0x02e0>;
-> +
-> +		gpio: bank@0 {
-> +			reg = <0x0 0x0 0x0 0x0050>,
-> +			      <0x0 0xc0 0x0 0x0220>;
-> +			reg-names = "mux", "gpio";
-> +			gpio-controller;
-> +			#gpio-cells = <3>;
-> +			gpio-ranges = <&periphs_pinctrl 0 0 73>;
-> +		};
-> +	};
-> +
-> +	aobus_pinctrl: pinctrl@8e700 {
-> +		compatible = "amlogic,a4-aobus-pinctrl";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges = <0x0 0x0 0x0 0x8e700 0x0 0x0064>;
-> +
-> +		ao_gpio: bank@0 {
-> +			reg = <0x0 0x00 0x0 0x04>,
-> +			      <0x0 0x04 0x0 0x60>;
-> +			reg-names = "mux", "gpio";
-> +			gpio-controller;
-> +			#gpio-cells = <3>;
-> +			gpio-ranges = <&aobus_pinctrl 0 0 8>;
-> +		};
-> +	};
-> +
-> +};
-> 
+Apply platform_device_msi_init_and_alloc_irqs() to add support for
+MSIs when the IOMMU is a platform device.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
+---
+ drivers/iommu/riscv/iommu-platform.c | 102 ++++++++++++++++++++++-----
+ 1 file changed, 84 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/iommu/riscv/iommu-platform.c b/drivers/iommu/riscv/iommu-platform.c
+index da336863f152..34b925909816 100644
+--- a/drivers/iommu/riscv/iommu-platform.c
++++ b/drivers/iommu/riscv/iommu-platform.c
+@@ -11,18 +11,43 @@
+  */
+ 
+ #include <linux/kernel.h>
++#include <linux/msi.h>
++#include <linux/of_irq.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ 
+ #include "iommu-bits.h"
+ #include "iommu.h"
+ 
++static void riscv_iommu_write_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
++{
++	struct device *dev = msi_desc_to_dev(desc);
++	struct riscv_iommu_device *iommu = dev_get_drvdata(dev);
++	u16 idx = desc->msi_index;
++	u64 addr;
++
++	addr = ((u64)msg->address_hi << 32) | msg->address_lo;
++
++	if (addr != (addr & RISCV_IOMMU_MSI_CFG_TBL_ADDR)) {
++		dev_err_once(dev,
++			     "uh oh, the IOMMU can't send MSIs to 0x%llx, sending to 0x%llx instead\n",
++			     addr, addr & RISCV_IOMMU_MSI_CFG_TBL_ADDR);
++	}
++
++	addr &= RISCV_IOMMU_MSI_CFG_TBL_ADDR;
++
++	riscv_iommu_writeq(iommu, RISCV_IOMMU_REG_MSI_CFG_TBL_ADDR(idx), addr);
++	riscv_iommu_writel(iommu, RISCV_IOMMU_REG_MSI_CFG_TBL_DATA(idx), msg->data);
++	riscv_iommu_writel(iommu, RISCV_IOMMU_REG_MSI_CFG_TBL_CTRL(idx), 0);
++}
++
+ static int riscv_iommu_platform_probe(struct platform_device *pdev)
+ {
++	enum riscv_iommu_igs_settings igs;
+ 	struct device *dev = &pdev->dev;
+ 	struct riscv_iommu_device *iommu = NULL;
+ 	struct resource *res = NULL;
+-	int vec;
++	int vec, ret;
+ 
+ 	iommu = devm_kzalloc(dev, sizeof(*iommu), GFP_KERNEL);
+ 	if (!iommu)
+@@ -40,16 +65,6 @@ static int riscv_iommu_platform_probe(struct platform_device *pdev)
+ 	iommu->caps = riscv_iommu_readq(iommu, RISCV_IOMMU_REG_CAPABILITIES);
+ 	iommu->fctl = riscv_iommu_readl(iommu, RISCV_IOMMU_REG_FCTL);
+ 
+-	/* For now we only support WSI */
+-	switch (FIELD_GET(RISCV_IOMMU_CAPABILITIES_IGS, iommu->caps)) {
+-	case RISCV_IOMMU_CAPABILITIES_IGS_WSI:
+-	case RISCV_IOMMU_CAPABILITIES_IGS_BOTH:
+-		break;
+-	default:
+-		return dev_err_probe(dev, -ENODEV,
+-				     "unable to use wire-signaled interrupts\n");
+-	}
+-
+ 	iommu->irqs_count = platform_irq_count(pdev);
+ 	if (iommu->irqs_count <= 0)
+ 		return dev_err_probe(dev, -ENODEV,
+@@ -57,13 +72,58 @@ static int riscv_iommu_platform_probe(struct platform_device *pdev)
+ 	if (iommu->irqs_count > RISCV_IOMMU_INTR_COUNT)
+ 		iommu->irqs_count = RISCV_IOMMU_INTR_COUNT;
+ 
+-	for (vec = 0; vec < iommu->irqs_count; vec++)
+-		iommu->irqs[vec] = platform_get_irq(pdev, vec);
++	igs = FIELD_GET(RISCV_IOMMU_CAPABILITIES_IGS, iommu->caps);
++	switch (igs) {
++	case RISCV_IOMMU_CAPABILITIES_IGS_BOTH:
++	case RISCV_IOMMU_CAPABILITIES_IGS_MSI:
++		if (is_of_node(dev->fwnode))
++			of_msi_configure(dev, to_of_node(dev->fwnode));
++
++		if (!dev_get_msi_domain(dev)) {
++			dev_warn(dev, "failed to find an MSI domain\n");
++			goto msi_fail;
++		}
++
++		ret = platform_device_msi_init_and_alloc_irqs(dev, iommu->irqs_count,
++							      riscv_iommu_write_msi_msg);
++		if (ret) {
++			dev_warn(dev, "failed to allocate MSIs\n");
++			goto msi_fail;
++		}
++
++		for (vec = 0; vec < iommu->irqs_count; vec++)
++			iommu->irqs[vec] = msi_get_virq(dev, vec);
++
++		/* Enable message-signaled interrupts, fctl.WSI */
++		if (iommu->fctl & RISCV_IOMMU_FCTL_WSI) {
++			iommu->fctl ^= RISCV_IOMMU_FCTL_WSI;
++			riscv_iommu_writel(iommu, RISCV_IOMMU_REG_FCTL, iommu->fctl);
++		}
++
++		dev_info(dev, "using MSIs\n");
++		break;
++
++msi_fail:
++		if (igs != RISCV_IOMMU_CAPABILITIES_IGS_BOTH) {
++			return dev_err_probe(dev, -ENODEV,
++					     "unable to use wire-signaled interrupts\n");
++		}
++
++		fallthrough;
+ 
+-	/* Enable wire-signaled interrupts, fctl.WSI */
+-	if (!(iommu->fctl & RISCV_IOMMU_FCTL_WSI)) {
+-		iommu->fctl |= RISCV_IOMMU_FCTL_WSI;
+-		riscv_iommu_writel(iommu, RISCV_IOMMU_REG_FCTL, iommu->fctl);
++	case RISCV_IOMMU_CAPABILITIES_IGS_WSI:
++		for (vec = 0; vec < iommu->irqs_count; vec++)
++			iommu->irqs[vec] = platform_get_irq(pdev, vec);
++
++		/* Enable wire-signaled interrupts, fctl.WSI */
++		if (!(iommu->fctl & RISCV_IOMMU_FCTL_WSI)) {
++			iommu->fctl |= RISCV_IOMMU_FCTL_WSI;
++			riscv_iommu_writel(iommu, RISCV_IOMMU_REG_FCTL, iommu->fctl);
++		}
++		dev_info(dev, "using wire-signaled interrupts\n");
++		break;
++	default:
++		return dev_err_probe(dev, -ENODEV, "invalid IGS\n");
+ 	}
+ 
+ 	return riscv_iommu_init(iommu);
+@@ -71,7 +131,13 @@ static int riscv_iommu_platform_probe(struct platform_device *pdev)
+ 
+ static void riscv_iommu_platform_remove(struct platform_device *pdev)
+ {
+-	riscv_iommu_remove(dev_get_drvdata(&pdev->dev));
++	struct riscv_iommu_device *iommu = dev_get_drvdata(&pdev->dev);
++	bool msi = !(iommu->fctl & RISCV_IOMMU_FCTL_WSI);
++
++	riscv_iommu_remove(iommu);
++
++	if (msi)
++		platform_device_msi_free_irqs_all(&pdev->dev);
+ };
+ 
+ static const struct of_device_id riscv_iommu_of_match[] = {
+-- 
+2.47.0
+
 
