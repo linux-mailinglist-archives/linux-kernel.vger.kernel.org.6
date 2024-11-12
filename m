@@ -1,169 +1,139 @@
-Return-Path: <linux-kernel+bounces-405327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF819C4FE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:50:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48DA39C4FEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:51:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8259B283216
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:50:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC66284091
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7BA20FAA7;
-	Tue, 12 Nov 2024 07:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="J9x9ZEkl"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D2D20B212;
+	Tue, 12 Nov 2024 07:49:30 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D24E20DD64
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70175208984
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731397566; cv=none; b=Ivujf05dXxJQRz7Dy7qm4WoxpSSpytKOBHqHwC+AOy+8lmg+IFEnB8+2J9HS2y8uWSLQ5yVteVPr316GCXflfUDBfDmPTX4tviXXgiJ0QnxkLX//4c/Ws9y4fZfdSjYoc4ccCpV8W2izqiUS5qVP2vjzH9F5aULoc8nNdn/dBY0=
+	t=1731397770; cv=none; b=o/FJSiBn7qWUApWITbDP120+6izRS7ju9U/hrEffzEqjSWGrwzOECO4sFG7V2JQfjXL36QXPRtlMkez1LIR3xKczmuEsSmHIKC6qUYbHpaD73HN4L8KbXfTFY1H9CtJ830FSNrGnVtFI79Dp++64i5xnaEjFrJrSsRQL0Cy1R2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731397566; c=relaxed/simple;
-	bh=L7rFdPe4RkTCRnaVXfTFgkfc8ImPN+u8+wGEVH5vCeA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RGrLuD+mlTTI8xfFhQ9yMMjHceM6NXM9cQakvsKEFz/QEOlJWi+s6Jkiup4NYfQHnFemtOgkuM0+cFfFdlpEqegvhAAueY6VtimGsvNlpK/wZQYjk0EkSep9flF2DWWbMAv61cr5R/OtocsBGo+0PGLGkjTJUml0E0rz1ueFQ/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=J9x9ZEkl; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731397561; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=QrGwmL/EZQwRk4LD22fvlkOHU0IkeaUKNMscFX8f1w0=;
-	b=J9x9ZEkl3hPePvX8j2T0pRH26LEcJiMJGaWm69ms2kPBJ+jT4UZbNuz2FpWo47vp69QNXKk9J0WiinF9VRQuqUDJIjIo83SB0yz2x5kW14K1F8HVYp9bJiYyg+fehjcgILKjO+L3sGtAsKrX5Q8gTZPGIKqAG9vi+F6ewaER2Bo=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WJGDWo8_1731397559 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 12 Nov 2024 15:46:00 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com
-Cc: willy@infradead.org,
-	david@redhat.com,
-	wangkefeng.wang@huawei.com,
-	21cnbao@gmail.com,
-	ryan.roberts@arm.com,
-	ioworker0@gmail.com,
-	da.gomez@samsung.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] docs: tmpfs: update the huge folios policy for tmpfs and shmem
-Date: Tue, 12 Nov 2024 15:45:52 +0800
-Message-Id: <c6a2085278292be8ccc24635ad75b0a59f3cd7dd.1731397290.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <cover.1731397290.git.baolin.wang@linux.alibaba.com>
-References: <cover.1731397290.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1731397770; c=relaxed/simple;
+	bh=ioQKK4dXSmQBeOnpnLIlwoF5ZBUimKGiicmxIH+Y1dI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fUbg4stpkytCvC1KejC3Dwu27hrWpXG3YkeUgQT99uNjAErYD2YxGIh40V6oWtC7KhRicPRzKNxFzd7GoFX508pAdromTa1uCAnbi2cdYgyekZcE+wd13IXCTHuue9hj5h8GRttRyQFKfo6Yabrn8p6xv2xpOIAphodlZXPfKcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tAldo-0006wT-TJ; Tue, 12 Nov 2024 08:48:48 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tAldk-000NF1-2N;
+	Tue, 12 Nov 2024 08:48:44 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 4663C37128A;
+	Tue, 12 Nov 2024 07:48:44 +0000 (UTC)
+Date: Tue, 12 Nov 2024 08:48:43 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, 
+	Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Kurt Kanzenbach <kurt@linutronix.de>, 
+	Vladimir Oltean <olteanv@gmail.com>, Chris Snook <chris.snook@gmail.com>, 
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	"maintainer:MICROCHIP LAN966X ETHERNET DRIVER" <UNGLinuxDriver@microchip.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Doug Berger <opendmb@gmail.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Richard Cochran <richardcochran@gmail.com>, "open list:MCAN MMIO DEVICE DRIVER" <linux-can@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:RENESAS ETHERNET SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCHv2 net-next] net: modernize ioremap in probe
+Message-ID: <20241112-snobbish-cocky-hyena-d0834a-mkl@pengutronix.de>
+References: <20241111200212.5907-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yivnidfints257kn"
+Content-Disposition: inline
+In-Reply-To: <20241111200212.5907-1-rosenp@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: David Hildenbrand <david@redhat.com>
 
-Update the huge folios policy for tmpfs and shmem.
+--yivnidfints257kn
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCHv2 net-next] net: modernize ioremap in probe
+MIME-Version: 1.0
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- Documentation/admin-guide/mm/transhuge.rst | 58 +++++++++++++++-------
- 1 file changed, 41 insertions(+), 17 deletions(-)
+On 11.11.2024 12:02:12, Rosen Penev wrote:
+> I changed resource acquisition to be performed in a single step. Possible
+> because devm is used here.
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 9ae775eaacbe..ba6edff728ed 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -358,8 +358,21 @@ default to ``never``.
- Hugepages in tmpfs/shmem
- ========================
- 
--You can control hugepage allocation policy in tmpfs with mount option
--``huge=``. It can have following values:
-+Traditionally, tmpfs only supported a single huge page size ("PMD"). Today,
-+it also supports smaller sizes just like anonymous memory, often referred
-+to as "multi-size THP" (mTHP). Huge pages of any size are commonly
-+represented in the kernel as "large folios".
-+
-+While there is fine control over the huge page sizes to use for the internal
-+shmem mount (see below), ordinary tmpfs mounts will make use of all available
-+huge page sizes without any control over the exact sizes, behaving more like
-+other file systems.
-+
-+tmpfs mounts
-+------------
-+
-+The THP allocation policy for tmpfs mounts can be adjusted using the mount
-+option: ``huge=``. It can have following values:
- 
- always
-     Attempt to allocate huge pages every time we need a new page;
-@@ -374,19 +387,19 @@ within_size
- advise
-     Only allocate huge pages if requested with fadvise()/madvise();
- 
--The default policy is ``never``.
-+Remember, that the kernel may use huge pages of all available sizes, and
-+that no fine control as for the internal tmpfs mount is available.
-+
-+The default policy in the past was ``never``, but it can now be adjusted
-+using the kernel parameter ``transparent_hugepage_tmpfs=<policy>``.
- 
- ``mount -o remount,huge= /mountpoint`` works fine after mount: remounting
- ``huge=never`` will not attempt to break up huge pages at all, just stop more
- from being allocated.
- 
--There's also sysfs knob to control hugepage allocation policy for internal
--shmem mount: /sys/kernel/mm/transparent_hugepage/shmem_enabled. The mount
--is used for SysV SHM, memfds, shared anonymous mmaps (of /dev/zero or
--MAP_ANONYMOUS), GPU drivers' DRM objects, Ashmem.
--
--In addition to policies listed above, shmem_enabled allows two further
--values:
-+In addition to policies listed above, the sysfs knob
-+/sys/kernel/mm/transparent_hugepage/shmem_enabled will affect the
-+allocation policy of tmpfs mounts, when set to the following values:
- 
- deny
-     For use in emergencies, to force the huge option off from
-@@ -394,13 +407,24 @@ deny
- force
-     Force the huge option on for all - very useful for testing;
- 
--Shmem can also use "multi-size THP" (mTHP) by adding a new sysfs knob to
--control mTHP allocation:
--'/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled',
--and its value for each mTHP is essentially consistent with the global
--setting.  An 'inherit' option is added to ensure compatibility with these
--global settings.  Conversely, the options 'force' and 'deny' are dropped,
--which are rather testing artifacts from the old ages.
-+shmem / internal tmpfs
-+----------------------
-+The mount internal tmpfs mount is used for SysV SHM, memfds, shared anonymous
-+mmaps (of /dev/zero or MAP_ANONYMOUS), GPU drivers' DRM  objects, Ashmem.
-+
-+To control the THP allocation policy for this internal tmpfs mount, the
-+sysfs knob /sys/kernel/mm/transparent_hugepage/shmem_enabled and the knobs
-+per THP size in
-+'/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled'
-+can be used.
-+
-+The global knob has the same semantics as the ``huge=`` mount options
-+for tmpfs mounts, except that the different huge page sizes can be controlled
-+individually, and will only use the setting of the global knob when the
-+per-size knob is set to 'inherit'.
-+
-+The options 'force' and 'deny' are dropped for the individual sizes, which
-+are rather testing artifacts from the old ages.
- 
- always
-     Attempt to allocate <size> huge pages every time we need a new page;
--- 
-2.39.3
+You should describe in an imperative way your changes. Something like:
 
+Resource acquisition can be performed in a single step.
+
+Replace platform_get_resource_byname() + devm_ioremap() by
+devm_platform_ioremap_resource_byname().
+
+=2E..and list the other changes, too.
+
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  v2: fixed compilation errors on PPC and reworded commit message
+>  drivers/net/can/m_can/m_can_platform.c        | 13 +++-------
+>  drivers/net/can/sja1000/sja1000_platform.c    | 15 +++--------
+
+Reviewed-by: Marc Kleine-Budde <mkl@pengutronix.de> # for CAN
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--yivnidfints257kn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmczCFkACgkQKDiiPnot
+vG/ajAf+I2q6yukaCiZ8l35kZU1eukgdk9t6XyKDMtT9KqDmbw1cU0QNEJTWp/Ht
+sMGGbP6LGX62Rjs+iGYfgsgvKFxDTwcQMYKW/sLL7hHmRkvcmgq1HQA113R+2bz5
+7NAZ526PH/esweR172ghpzpnkrjh1YI7fjAJcxfj2GE/91O7hlCyosUaeapCrPzh
+WvZkmbUXlt/ZY795yGCG8zlgjN0S4iAYMGezFVVdJ8foE1TRUFm/L4IBCHBzMEmL
+4k7Vx9yxtM+OFHZjjZeE2f3ZQUGU5+ouEmr3TddeIPLAGa2i4xiftttYKphFxlnT
+z+VY8lNrteObfdHws6wEr1bnVc36qA==
+=8JOR
+-----END PGP SIGNATURE-----
+
+--yivnidfints257kn--
 
