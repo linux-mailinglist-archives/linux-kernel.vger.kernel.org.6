@@ -1,147 +1,176 @@
-Return-Path: <linux-kernel+bounces-405785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B8719C5914
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:30:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495A49C58AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:12:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FB7EB3C84F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:49:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 796DFB2EA4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F001BB6B5;
-	Tue, 12 Nov 2024 11:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D571CD1EC;
+	Tue, 12 Nov 2024 11:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KoHmyHJL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0pLP32P"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B973C230989
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4132309A9;
+	Tue, 12 Nov 2024 11:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731412133; cv=none; b=sJIIca9Gu6VoeLxuRR1aMXe04dVmyRqJCGkYnfM4UXt5GkmwO4fUcx01lgQ3lcQTevHyzk9TTVFpomxunVNBjEJrIlO8aEroylh0ouGmUvjt9kOw8Mr0rgYI5H7HW/14Oztd662QyND+8W3cUkg4Eb1YGSXYG4BdihSvNEJEOJQ=
+	t=1731412398; cv=none; b=AJeLx5uJlQ/LAh3kp+d70gSjafc9DAMkM3DhxVts1Pzo8Ou7DKewQfTXJA957G4v5KnF9drqNFHQiKrUc6JmxHCB3x+IDSFYW31Rr66BWN3hdsXPcTztxqQT25aDR3NnrkFwzqNHuwPTjgQdL+8kEIgo8+xBSv3DioXllNi21QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731412133; c=relaxed/simple;
-	bh=sexKNXD7XnpRvBHnDNQiw6uZrGJfJ24MEeItqx5xgu0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JqRQC1gFJiGqV3Fb3eWOtuVZGBow83KnHr6oeuKfxp8UTG+CB0GVovMeKf4SPEObAwsfEClOvZBuZBG8xV3t/VPbw0pM9Fhpul2Fy6Gujiku3kuGPRoqXVvEavQMlNj0L9tgYw6jJGPeJ0UnIzTF63F5tQbW9w8yAUNOFa1HKW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KoHmyHJL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731412130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+FPaew/J2nFAbKvuzEnykWeNVwVW0+Al07LcXLfJeJc=;
-	b=KoHmyHJL0ghVs6wXUsK86gANffDyPwUbmZqczRVWRmkyMtAHIvdlCsTTnP0cCthj5/GUf+
-	mfHiOsZpV8ghn8E74hKwEdLm3zxKME6eeEld8jBr+DifNQKU2dkI8/YfIlMRDLrewbMp91
-	PEdo99HdgoexWQpgVVGBepmahGpE64w=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-507-vlWNuBxDPYC_6QIZU25JhQ-1; Tue, 12 Nov 2024 06:48:49 -0500
-X-MC-Unique: vlWNuBxDPYC_6QIZU25JhQ-1
-X-Mimecast-MFC-AGG-ID: vlWNuBxDPYC_6QIZU25JhQ
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b14634dba8so717680085a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:48:49 -0800 (PST)
+	s=arc-20240116; t=1731412398; c=relaxed/simple;
+	bh=TnqPipQg2CpmZLQ4wcu28TkzNcF6HV7w2kDzb759YOQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ytt9CWF3rAoHWeOMBfjkZ4T2XCqLQ9TxLqe+eVeY+TSnu/U/GxhPKccVQSlzMc8Te1bOmodiZlyitQKVGYrj35NghC5p2ls24SLne0wxt9CLjT+32h3MmD4DRki+B/1bJSWSuvAS+99o66MQ8pgABZlpCf4mcYqtxQPj/KFs5DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f0pLP32P; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ee11ff7210so4149882a12.1;
+        Tue, 12 Nov 2024 03:53:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731412396; x=1732017196; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=77BPT0TV3A11R+sNVa9I1JVGIl/YUnzmNjHt+0y5/uY=;
+        b=f0pLP32P6GFCHKpHjWzUNp1pHX+tefhqniTl0vhhXrKDgCSF4q5UsisUZmiApcnQBT
+         PQA74EQTv4IF3ThnX4/PILbBYcNyw+//4xYJzuWmj/dWIaHW7mkyXTLDgi5NOw7+Lo6w
+         nwT0PpzGyx/spzpveRFh3Gr51FjQhQYOyH+etVLK4K6mC2p5fWEHUEo779QeVR8rBTci
+         2lhlzmb7Yzz5IiGPiJ+g5y4aoCDIIj4nxxvVqfFNI6HFn3YQB3TM5HJ9YGNfQ7m0ATXE
+         VGyxvDSUyYp40wtzojLqrrjQCVjmDyHo4vQDwXyrRfdu4RIiX3Ngnoo0OqXReI2u5DAN
+         DTJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731412129; x=1732016929;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+FPaew/J2nFAbKvuzEnykWeNVwVW0+Al07LcXLfJeJc=;
-        b=sF7jBag/zfIsMeXbHwaDxwcT2HrWdAFgLrxqTVBFeF3LYtUYuIZxWK/8oj/Wa9Fr1I
-         2WrzGO6BMJ5VllZrQbwjKGZ9UHw/IqWXFTGf59KEVDIthOzVJkT55TyUpoghPD2RmSXJ
-         KhKmtMGkQOEWl5NV1ZrcWuRo2ZDYHFruhDU83RcPJx+M2S3iEO4PP+jOnemYL5ojDxww
-         C2tGF93og/dTNrKI8cgMiA0GvQlRsDtEJtjeye2gN20z9nnCoHMGLC7iLkyf5jRRaoDl
-         8tg3azmBFQ4On6jHERpyIIReLtbky1od+ZbyXvFEP9eqXlHdDImEoDsXgPZZch+nyjYC
-         LyKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWysiZH466K7XvwEo1eJ8KzjRFH4vqDyZvQS1QdFvwegY3hRU2mobU+nTxxXPpg8lHTCAXhHRac4Q9bJ4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOo+YLzia00Zh0aSPlpRq0feV/bxhBKXjoprfp8ABZ46p2SOIz
-	D7LqoYja3onjYaT/PiS/Zwhqvt8+lZ30w/TnV7DJMCAgUHPJf8keshcPCus/HrkWjXymyLjsLEd
-	kd2VU3/k5T8deyuDr2uBfmZM5Jjty15H7MiUYeRBgU/uGgXSNsKrcu5gwh9RdlQ==
-X-Received: by 2002:a05:620a:2943:b0:7b1:4579:61fa with SMTP id af79cd13be357-7b331f30f83mr2118315585a.55.1731412128852;
-        Tue, 12 Nov 2024 03:48:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFn8DsE5PCyIYersXMpgZHU5Oevhjar6lRDGEWUDoYfsGQSD6wAakm5smKreq1Jiix5BtG4WQ==
-X-Received: by 2002:a05:620a:2943:b0:7b1:4579:61fa with SMTP id af79cd13be357-7b331f30f83mr2118312985a.55.1731412128516;
-        Tue, 12 Nov 2024 03:48:48 -0800 (PST)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ace4fd7sm581186985a.108.2024.11.12.03.48.43
+        d=1e100.net; s=20230601; t=1731412396; x=1732017196;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=77BPT0TV3A11R+sNVa9I1JVGIl/YUnzmNjHt+0y5/uY=;
+        b=kHh9QlV6bEFu2E7kiy/GXTOJJF38YQEMqdUG2h6fhIFjsy0exib8cApl/fOxn9gi+W
+         ifTZEzIxmFawk1w6/cg0sQ4cc7HKmwm3ffKXpCcBTqZ0bNeWLdMVUJC1Q6KLlsDVy0JZ
+         HgPQw5WDn7fJ46P2Nayzmoq8toaU+oh88kzYx1mnHsq5mR6QBIaSAE43gSVkN9cuAx/o
+         tO+znRwQ0bcD2KS669qgAH67Lu2iO1FVlv7gIvyrGeg30GbU9ZrlhLglIbWR5PxWGyrG
+         O8W/rloqM4K7tZCzL7bLNu2ky3opZJoZtLW4TjhihT/sAkbxIm2QX8WHqEwNlIu1D6Ha
+         0Cyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZT53bF+NGCXRZz+x+jpQNETdP7d7FklWvVYyAZtHplsqYGoO2At0mPBl4qsnrPQcddOoIqXCL7vwGsT0p@vger.kernel.org, AJvYcCVKaNT5gzaKqjU7CjNXafGKyW03WB8FQCh7TTezr0pNViwL069BPZ23Yxh0qRCbEzqGsplpt+gGTiJzA3c=@vger.kernel.org, AJvYcCVeeOsJioq+uBWAoeAOlX9LElLZXmy51wBZdrJjrOAAFIrWuvLtPCkuwD5jyiG7o9p9O96dAezdkfZs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3TD1OaqY//AvnxVaSmz+vfZWQ5G9Sl88MCkny9l8GLB4RlK/A
+	0AfYiPDB6x3PZ7q2NGe1ZV0lCxTtu+jP6B9Z671BHn/ew2VVJqh1
+X-Google-Smtp-Source: AGHT+IGMAZvN6QZA0lKlxIqEWgUYkYo2wgb3l4Uv9em6gzdM5DvG1g7/whPF59nG27HiAoRwyRtHrg==
+X-Received: by 2002:a17:90b:2ece:b0:2e2:d33b:cc with SMTP id 98e67ed59e1d1-2e9b172e0bemr21513271a91.21.1731412396371;
+        Tue, 12 Nov 2024 03:53:16 -0800 (PST)
+Received: from ux-UP-WHL01 (mailgw01.gttektw.com. [45.117.96.243])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9b50dcd9bsm8080210a91.21.2024.11.12.03.53.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 03:48:46 -0800 (PST)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ingo Molnar
- <mingo@kernel.org>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, Nathan Chancellor <nathan@kernel.org>, Nick
- Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] sched/fair: Mark cfs_bandwidth_used() and
- m*_vruntime() with __maybe_unused
-In-Reply-To: <20240905171210.267626-1-andriy.shevchenko@linux.intel.com>
-References: <20240905171210.267626-1-andriy.shevchenko@linux.intel.com>
-Date: Tue, 12 Nov 2024 12:48:42 +0100
-Message-ID: <xhsmh7c98d65h.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        Tue, 12 Nov 2024 03:53:15 -0800 (PST)
+Date: Tue, 12 Nov 2024 19:53:10 +0800
+From: Charles Wang <charles.goodix@gmail.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: robh@kernel.org, krzk@kernel.org, hbarnor@chromium.org,
+	conor.dooley@microchip.com, dmitry.torokhov@gmail.com,
+	jikos@kernel.org, bentiss@kernel.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] HID: hid-goodix: Add OF supports
+Message-ID: <ZzNBpkwDLgutPJq8@ux-UP-WHL01>
+References: <20241111075000.111509-1-charles.goodix@gmail.com>
+ <20241111075000.111509-3-charles.goodix@gmail.com>
+ <CAD=FV=WKU2Wwfwg1EACYgJtUKJjYH2OOQn6ELXbBK=B-jzbTZQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=WKU2Wwfwg1EACYgJtUKJjYH2OOQn6ELXbBK=B-jzbTZQ@mail.gmail.com>
 
-On 05/09/24 20:12, Andy Shevchenko wrote:
-> When cfs_bandwidth_used() is unused, it prevents kernel builds
-> with clang, `make W=1` and CONFIG_WERROR=y:
+Hi Doug,
+
+On Mon, Nov 11, 2024 at 09:24:39AM -0800, Doug Anderson wrote:
+> Hi,
+> 
+> On Sun, Nov 10, 2024 at 11:50 PM Charles Wang <charles.goodix@gmail.com> wrote:
+> >
+> > This patch introduces the following changes:
+> > - Adds OF match table.
+> > - Hardcodes hid-report-addr in the driver rather than fetching it
+> >   from the device property.
+> >
+> > Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> > ---
+> >  drivers/hid/hid-goodix-spi.c | 17 +++++++++++------
+> >  1 file changed, 11 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/hid/hid-goodix-spi.c b/drivers/hid/hid-goodix-spi.c
+> > index 6ae2300a6..80c0288a3 100644
+> > --- a/drivers/hid/hid-goodix-spi.c
+> > +++ b/drivers/hid/hid-goodix-spi.c
+> > @@ -20,6 +20,7 @@
+> >  #define GOODIX_HID_REPORT_DESC_ADDR    0x105AA
+> >  #define GOODIX_HID_SIGN_ADDR           0x10D32
+> >  #define GOODIX_HID_CMD_ADDR            0x10364
+> > +#define GOODIX_HID_REPORT_ADDR         0x22C8C
+> >
+> >  #define GOODIX_HID_GET_REPORT_CMD      0x02
+> >  #define GOODIX_HID_SET_REPORT_CMD      0x03
+> > @@ -701,12 +702,7 @@ static int goodix_spi_probe(struct spi_device *spi)
+> >                 return dev_err_probe(dev, PTR_ERR(ts->reset_gpio),
+> >                                      "failed to request reset gpio\n");
+> >
+> > -       error = device_property_read_u32(dev, "goodix,hid-report-addr",
+> > -                                        &ts->hid_report_addr);
+> > -       if (error)
+> > -               return dev_err_probe(dev, error,
+> > -                                    "failed get hid report addr\n");
+> > -
+> > +       ts->hid_report_addr = GOODIX_HID_REPORT_ADDR;
+> >         error = goodix_dev_confirm(ts);
+> >         if (error)
+> >                 return error;
+> > @@ -790,6 +786,14 @@ static const struct acpi_device_id goodix_spi_acpi_match[] = {
+> >  MODULE_DEVICE_TABLE(acpi, goodix_spi_acpi_match);
+> >  #endif
+> >
+> > +#ifdef CONFIG_OF
+> > +static const struct of_device_id goodix_spi_of_match[] = {
+> > +       { .compatible = "goodix,gt7986u-spifw", },
+> > +       { }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, goodix_spi_of_match);
+> > +#endif
+> > +
+> >  static const struct spi_device_id goodix_spi_ids[] = {
+> >         { "gt7986u" },
+> >         { },
+> > @@ -800,6 +804,7 @@ static struct spi_driver goodix_spi_driver = {
+> >         .driver = {
+> >                 .name = "goodix-spi-hid",
+> >                 .acpi_match_table = ACPI_PTR(goodix_spi_acpi_match),
+> > +               .of_match_table = of_match_ptr(goodix_spi_of_match),
+> 
+> I can never quite remember what the current preference is in regards
+> to "OF" tables (whether to use #ifdef like you've done or mark them
+> `__maybe_unused`), so maybe someone will request you change it. ...but
+> IMO what you have is fine and looks to be properly guarded with
+> of_match_ptr(). As far as I'm concerned, this patch looks OK.
+> 
+> Oh, I guess the one "nit" is that I would have put "spi" in the
+> subject, making it "HID: hid-goodix-spi: Add OF supports". It might be
+> worth sending a v5 for that (after waiting a day or two) unless a
+> maintainer tells you not to.
 >
-> kernel/sched/fair.c:526:19: error: unused function 'max_vruntime' [-Werror,-Wunused-function]
->   526 | static inline u64 max_vruntime(u64 max_vruntime, u64 vruntime)
->       |                   ^~~~~~~~~~~~
-> kernel/sched/fair.c:6580:20: error: unused function 'cfs_bandwidth_used' [-Werror,-Wunused-function]
->  6580 | static inline bool cfs_bandwidth_used(void)
->       |                    ^~~~~~~~~~~~~~~~~~
->
-> Fix this by marking them with __maybe_unused (all cases for the sake of
-> symmetry).
->
 
-I assume that's with CONFIG_CFS_BANDWIDTH=n? Looks like
-cfs_bandwidth_used() uses are tucked away under helpers that themselves
-only really do something for CONFIG_CFS_BANDWIDTH=y, so you could remove
-the CONFIG_CFS_BANDWIDTH=n definition of cfs_bandwidth_used() directly.
+Ack,
 
-This compiles:
----
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2d16c8545c71e..57abb4ae8af39 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5373,8 +5373,6 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
- static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
- 
--static inline bool cfs_bandwidth_used(void);
--
- static void
- requeue_delayed_entity(struct sched_entity *se);
- 
-@@ -6754,11 +6752,6 @@ static void sched_fair_update_stop_tick(struct rq *rq, struct task_struct *p)
- 
- #else /* CONFIG_CFS_BANDWIDTH */
- 
--static inline bool cfs_bandwidth_used(void)
--{
--	return false;
--}
--
- static void account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec) {}
- static bool check_cfs_rq_runtime(struct cfs_rq *cfs_rq) { return false; }
- static void check_enqueue_throttle(struct cfs_rq *cfs_rq) {}
+> In any case:
+> 
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
+Thanks,
+Charles
 
