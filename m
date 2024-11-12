@@ -1,97 +1,112 @@
-Return-Path: <linux-kernel+bounces-406369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4799C6215
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:03:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152BB9C619E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:37:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3BE6BC024E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:01:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47F17B841FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E7420822F;
-	Tue, 12 Nov 2024 16:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516F12144D8;
+	Tue, 12 Nov 2024 17:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyDGHS8V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mTlJSKZx"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B6B20651E;
-	Tue, 12 Nov 2024 16:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6333A20C461;
+	Tue, 12 Nov 2024 17:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731430617; cv=none; b=TyfF1NPgzzEy2MYENokeZ/ox+I9P8j+ADlfBc2hfmwwU4rt6zlDe1Pl/SqoqzxhNrUU29g1N3k/kdzpjmu+wAIshvxX6qjugpSiA/oxh+CGZmgaKGFZhpZDrxsrkthEezi+C6CSRUTXbkxL1Cwbr0QsXmFfJ5jLKrZ5q6hGsUxc=
+	t=1731431058; cv=none; b=JVoWeYWksIO2dgVfUkWEMfAzumtX6pyAuZuVsVJfDVJV3Egqz/eV+ttW/OAVURw8knP0v5moS3Jst9521rL2AgROtt33jtE8gIEFvhqs+rdqvhGyOxtpr71MKHUC9vM8xlNsE7edqcReJCXC6/zG0MQ/qdkwEclH0wFd6Ot15D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731430617; c=relaxed/simple;
-	bh=EQvwaUi2w45hQ0nesz6tI/0jRlGB8KnI5X1+VY1Emb4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=apyIezI8Ir/Gvsb6r/YhJDln+XDeTt7N+/usow+5yjP/WI5SA0nvrmjDlOkIyLqOjJjGahqwfboIWPE8gMR80DneTm/m8S4hTiorLOsnd+7N97jTnEGlkASkSF/4WuqXwjjVeEInZKiYluK+5clKWhujCsLFEAzFNfEP49ZXPBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gyDGHS8V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09C3AC4CECD;
-	Tue, 12 Nov 2024 16:56:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731430616;
-	bh=EQvwaUi2w45hQ0nesz6tI/0jRlGB8KnI5X1+VY1Emb4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gyDGHS8VsFO8YiUHKzzdrGVONkbwC6XBKloCM7ImIfjtBGzSzNAUgp2U1WQRNik81
-	 Fsef0rzOtkP2gxPHhseqbSGQUo+F007cVaRRm44WCe98vAwzUKEsIImwT1EVlLXEEz
-	 0LPJez1/xObpd4tI+PXrrXb1OOwTry4zKTP8DK80gDMaU+/6dzq1hkBA8kBgDGuAIh
-	 InhNdo6bpFLAoS8m7e+5Nejf1cDjQeqc0stHuDrWH0xdL7jzaX5A21tmfk1g5qFhJ1
-	 EUacgxVFtwvt6r+/zqkKBBkvW0fRLCFGYz0b3KVM4AcH0I70MqjMdfXNiVT4hNrF9p
-	 aXeJjSEvP0IdQ==
-From: Will Deacon <will@kernel.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	robin.murphy@arm.com,
-	joro@8bytes.org,
-	thierry.reding@gmail.com,
-	vdumpa@nvidia.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH rc] iommu/tegra241-cmdqv: Fix alignment failure at max_n_shift
-Date: Tue, 12 Nov 2024 16:56:50 +0000
-Message-Id: <173142418330.1973910.1191259071038387348.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20241111030226.1940737-1-nicolinc@nvidia.com>
-References: <20241111030226.1940737-1-nicolinc@nvidia.com>
+	s=arc-20240116; t=1731431058; c=relaxed/simple;
+	bh=oCR1TRwTXEy0FAzrzB6QX1TyFzAg4HkdrRdVtwlaD0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QVKeyGMpCR26DgCnHywYpTd8SZ8e9xOxs5zW1rwspOVxBR/jUz4KBwRqcnqs5ArahHR8MDLMVWDLfysa+u+O4xv4PJvTzle+uIaGk7bQ4cHiM8g/1CIAnh3x7c8FDchbPfHlVFo+192KehXmvdv17kXIqNFwLOx1j8cNnaJ0Pdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mTlJSKZx; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20c767a9c50so58280285ad.1;
+        Tue, 12 Nov 2024 09:04:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731431057; x=1732035857; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3TzAZ2wI/SsBv8e6rWIulIn9M+uufamHvYe7/o5Pmqo=;
+        b=mTlJSKZxx0ZOJ1Aa9DMhFcQPG2VL5eyV8H61NlJKRgai4KE5h6SYE9WGC6/ckH0YO6
+         j3723koFLuHeZnVh7KJVKsYLL67ALXsMEVqEbip+zQPtR5gcAqkUq/5/Qm2pEyRK7vvi
+         YO0l787r8E+Dz2Dtc556AIpEhpg/a3CSdxw5EQ3dwT42Lv6QymOmMVoG+pz4mg+IxohP
+         TT6AJVYWhj+ubmSYZ1W1ISEYUk7uBoq4StJKyiLxNPdsOqGZyQkyQRyuTXzIFuG5maCX
+         zeR1yPGg/uRxOEboFKgXyMK9ken+M07QhT+gneOYgCiHwpfZvXnuXdyRpH8SPxX+zF/J
+         XB9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731431057; x=1732035857;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3TzAZ2wI/SsBv8e6rWIulIn9M+uufamHvYe7/o5Pmqo=;
+        b=XX8ZRcrOw3k9jB+SdArETlBY8AtWs3YrIK8YXLipTZVbkbj4HzVJHGM4dDlu8JLWit
+         oPCdsQ7pVPDXIgQr1tqTVWJ4nXE40IQbtABjsHKwvSz0cXERVKY1JpDD19DmsXE/yZnq
+         uuCR3XdbGCJIxOVr72mYDcaL4UzQKNuIbgzJl2pe5Wti13gM2o7rjkYElnsAbizn6scd
+         8L9mmw7b53N+FLfNfqruVYJSyIuOXuHe+j/Yb17EdIWhmTE2cIzYFuR4QarZSBG/nq2P
+         KWFjS9YVnqc6err3+xnuzgctGC4R+k6Tp9CKce4Anmu+MKwn6gqnUjN5IQwiY67WhnDL
+         DHvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhtaaI2LZQiUZ7SqffEXx6O0dqP5kv2ZyDDSwPNVVmp2pr5OSx5KQLLNyaGOtkenQbvlCtAECFcHtK@vger.kernel.org, AJvYcCV+n1rr1Ejx8kMccfztAW6csSexdds8HZecEoyjhNi1K6h8s/qN92BtEVjHYp9x+TzoAoYJbywPhKFApY4=@vger.kernel.org, AJvYcCWC5ChYhZPM5NPVuM4iohKAMTRIPyQci5iEkzl30e5PhoaKBkhFGZ/jEa64sKNyGBamnnX9IhdYPP4l@vger.kernel.org, AJvYcCXfwYEdMVh2ENzotWIhhhKyzsIiex8Q7EFMY2w9SiuhS5ri4u1GGG1ZAvItvk1RxQX0TjW7syCf5KIZrbGM@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF8qZmniUcaZx+WWUport0rOGmu+r9BWD3oytUA2CgxW/TNeHL
+	vfPYd1fn97cLbyeAQu+DT5DfNYTVN6Ykk8g6SGpyo8/HIff4Qozc
+X-Google-Smtp-Source: AGHT+IHRVCkPv69Giv9Ck6e8LALo+6Vd8jA6G0f2rPbTFybc2LxVw7NcogCrIEnD2UMIGigrnmpwQg==
+X-Received: by 2002:a17:902:c405:b0:205:4721:19c with SMTP id d9443c01a7336-21183d55b03mr238707535ad.37.1731431056592;
+        Tue, 12 Nov 2024 09:04:16 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e45839sm95869765ad.143.2024.11.12.09.04.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 09:04:15 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Tue, 12 Nov 2024 09:04:14 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] hwmon: tmp108: Add helper function
+ tmp108_common_probe() to prepare I3C support
+Message-ID: <ec1a3a2c-e1b3-481a-aac6-e0826c570ce6@roeck-us.net>
+References: <20241112-p3t1085-v4-0-a1334314b1e6@nxp.com>
+ <20241112-p3t1085-v4-1-a1334314b1e6@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112-p3t1085-v4-1-a1334314b1e6@nxp.com>
 
-On Sun, 10 Nov 2024 19:02:26 -0800, Nicolin Chen wrote:
-> When configuring a kernel with PAGE_SIZE=4KB, depending on its setting of
-> CONFIG_CMA_ALIGNMENT, VCMDQ_LOG2SIZE_MAX=19 could fail the alignment test
-> and trigger a WARN_ON:
->     WARNING: at drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3646
->     Call trace:
->      arm_smmu_init_one_queue+0x15c/0x210
->      tegra241_cmdqv_init_structures+0x114/0x338
->      arm_smmu_device_probe+0xb48/0x1d90
+On Tue, Nov 12, 2024 at 11:51:59AM -0500, Frank Li wrote:
+> Add help function tmp108_common_probe() to pave road to support i3c for
+> P3T1085(NXP) chip.
 > 
-> [...]
+> Use dev_err_probe() to simple code.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Applied to iommu (arm/smmu), thanks!
+Applied.
 
-[1/1] iommu/tegra241-cmdqv: Fix alignment failure at max_n_shift
-      https://git.kernel.org/iommu/c/a3799717b881
-
-Cheers,
--- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+Thanks,
+Guenter
 
