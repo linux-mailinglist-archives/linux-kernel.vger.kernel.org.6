@@ -1,151 +1,97 @@
-Return-Path: <linux-kernel+bounces-406362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F00B9C61EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:56:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4799C6215
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:03:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52657B612B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:58:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3BE6BC024E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D8821441C;
-	Tue, 12 Nov 2024 16:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E7420822F;
+	Tue, 12 Nov 2024 16:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XBOqp5F7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyDGHS8V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628462141C9;
-	Tue, 12 Nov 2024 16:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B6B20651E;
+	Tue, 12 Nov 2024 16:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731430556; cv=none; b=AAYJ/7WsGZoPEpTmolPWo5PSlH70dBM0y7oU7V/U9BaXQohZona3wluWLSksioJiUJU+aGN/PJqDp1JvIh3Nuwl7M86L8/Iclppxh/FQz8IxLE+Nc9HDZS+oO1BSSq6h36j1KolM/DSiZYzi1oJuWrt3wbLw5D9w1my5ihxznl8=
+	t=1731430617; cv=none; b=TyfF1NPgzzEy2MYENokeZ/ox+I9P8j+ADlfBc2hfmwwU4rt6zlDe1Pl/SqoqzxhNrUU29g1N3k/kdzpjmu+wAIshvxX6qjugpSiA/oxh+CGZmgaKGFZhpZDrxsrkthEezi+C6CSRUTXbkxL1Cwbr0QsXmFfJ5jLKrZ5q6hGsUxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731430556; c=relaxed/simple;
-	bh=bYBlmRZnSP1+6bbO6DyCu9HwcvNxZ82NbuYVPGaawCk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JEQdkDOO2OR+tHehYaAa8rkVJN8PpSyP2NP0257VtaACx743IlfRx+FLHe8G2kVzoxT9orhuaQopyecoN8mEMkW2mQj5/oNNROdE+8z9dfTh7RZ1VxSO1PX0A/YpxGDe0XgqTk3W+wgk5e4xb5vD9WwmmakWy2K7eZehTDFaJTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XBOqp5F7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC9FoOL003032;
-	Tue, 12 Nov 2024 16:55:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	U0jvV2u/4nB0nNLZJ5fmuVk3Sm8TxGDd+eRh6fPI5u8=; b=XBOqp5F7RHcgxXFW
-	OgGWwNYqs37Fmgx7f3Ioagt3UUVkNZwIhv9cF07HBFVtYzNu+KNaZZHqz7H/qXCi
-	Ya5Yr2emm+0+ElHXq4YI79naniIj2ve+BGYJLef81zjZbITamfkgXhKWNCLEcq2q
-	sml7Bm+op1YRvm3rzMiYtj2Y3+aIVORxdy9DOtVGiz3+nPlPFb+c03AJ0hgKTF/g
-	AuUlwkyEaE9hVVf3j81D33lRKSbpViECLzBDHsyBlaJhGkPVGnTkiHC9eARxQ5yU
-	5VbC/2XLofuafHSun4Bt61Nw5gIE7UlMDpbcBwQyi3W8/boOZnAcG2gj3okwuCZy
-	98nkCA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v47y1auv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 16:55:41 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACGteNi029119
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 16:55:40 GMT
-Received: from hu-bibekkum-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 12 Nov 2024 08:55:35 -0800
-From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-To: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>, <jgg@ziepe.ca>, <jsnitsel@redhat.com>,
-        <robh@kernel.org>, <krzysztof.kozlowski@linaro.org>,
-        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>
-CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <quic_bibekkum@quicinc.com>
-Subject: [PATCH v17 2/5] iommu/arm-smmu: refactor qcom_smmu structure to include single pointer
-Date: Tue, 12 Nov 2024 22:24:51 +0530
-Message-ID: <20241112165454.2698269-3-quic_bibekkum@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241112165454.2698269-1-quic_bibekkum@quicinc.com>
-References: <20241112165454.2698269-1-quic_bibekkum@quicinc.com>
+	s=arc-20240116; t=1731430617; c=relaxed/simple;
+	bh=EQvwaUi2w45hQ0nesz6tI/0jRlGB8KnI5X1+VY1Emb4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=apyIezI8Ir/Gvsb6r/YhJDln+XDeTt7N+/usow+5yjP/WI5SA0nvrmjDlOkIyLqOjJjGahqwfboIWPE8gMR80DneTm/m8S4hTiorLOsnd+7N97jTnEGlkASkSF/4WuqXwjjVeEInZKiYluK+5clKWhujCsLFEAzFNfEP49ZXPBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gyDGHS8V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09C3AC4CECD;
+	Tue, 12 Nov 2024 16:56:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731430616;
+	bh=EQvwaUi2w45hQ0nesz6tI/0jRlGB8KnI5X1+VY1Emb4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gyDGHS8VsFO8YiUHKzzdrGVONkbwC6XBKloCM7ImIfjtBGzSzNAUgp2U1WQRNik81
+	 Fsef0rzOtkP2gxPHhseqbSGQUo+F007cVaRRm44WCe98vAwzUKEsIImwT1EVlLXEEz
+	 0LPJez1/xObpd4tI+PXrrXb1OOwTry4zKTP8DK80gDMaU+/6dzq1hkBA8kBgDGuAIh
+	 InhNdo6bpFLAoS8m7e+5Nejf1cDjQeqc0stHuDrWH0xdL7jzaX5A21tmfk1g5qFhJ1
+	 EUacgxVFtwvt6r+/zqkKBBkvW0fRLCFGYz0b3KVM4AcH0I70MqjMdfXNiVT4hNrF9p
+	 aXeJjSEvP0IdQ==
+From: Will Deacon <will@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	robin.murphy@arm.com,
+	joro@8bytes.org,
+	thierry.reding@gmail.com,
+	vdumpa@nvidia.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH rc] iommu/tegra241-cmdqv: Fix alignment failure at max_n_shift
+Date: Tue, 12 Nov 2024 16:56:50 +0000
+Message-Id: <173142418330.1973910.1191259071038387348.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20241111030226.1940737-1-nicolinc@nvidia.com>
+References: <20241111030226.1940737-1-nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: TO5gAFzuUJvCdEyin8lFMYdaMILVOPcu
-X-Proofpoint-GUID: TO5gAFzuUJvCdEyin8lFMYdaMILVOPcu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 spamscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411120135
 
-qcom_smmu_match_data is static and constant so refactor qcom_smmu
-to store single pointer to qcom_smmu_match_data instead of
-replicating multiple child members of the same and handle the further
-dereferences in the places that want them.
+On Sun, 10 Nov 2024 19:02:26 -0800, Nicolin Chen wrote:
+> When configuring a kernel with PAGE_SIZE=4KB, depending on its setting of
+> CONFIG_CMA_ALIGNMENT, VCMDQ_LOG2SIZE_MAX=19 could fail the alignment test
+> and trigger a WARN_ON:
+>     WARNING: at drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3646
+>     Call trace:
+>      arm_smmu_init_one_queue+0x15c/0x210
+>      tegra241_cmdqv_init_structures+0x114/0x338
+>      arm_smmu_device_probe+0xb48/0x1d90
+> 
+> [...]
 
-Suggested-by: Robin Murphy <robin.murphy@arm.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
----
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c | 2 +-
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c       | 2 +-
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h       | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Applied to iommu (arm/smmu), thanks!
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
-index 548783f3f8e8..d03b2239baad 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
-@@ -73,7 +73,7 @@ void qcom_smmu_tlb_sync_debug(struct arm_smmu_device *smmu)
- 	if (__ratelimit(&rs)) {
- 		dev_err(smmu->dev, "TLB sync timed out -- SMMU may be deadlocked\n");
+[1/1] iommu/tegra241-cmdqv: Fix alignment failure at max_n_shift
+      https://git.kernel.org/iommu/c/a3799717b881
 
--		cfg = qsmmu->cfg;
-+		cfg = qsmmu->data->cfg;
- 		if (!cfg)
- 			return;
+Cheers,
+-- 
+Will
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-index 6372f3e25c4b..d26f5aea248e 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-@@ -507,7 +507,7 @@ static struct arm_smmu_device *qcom_smmu_create(struct arm_smmu_device *smmu,
- 		return ERR_PTR(-ENOMEM);
-
- 	qsmmu->smmu.impl = impl;
--	qsmmu->cfg = data->cfg;
-+	qsmmu->data = data;
-
- 	return &qsmmu->smmu;
- }
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h
-index 3c134d1a6277..b55cd3e3ae48 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h
-@@ -8,7 +8,7 @@
-
- struct qcom_smmu {
- 	struct arm_smmu_device smmu;
--	const struct qcom_smmu_config *cfg;
-+	const struct qcom_smmu_match_data *data;
- 	bool bypass_quirk;
- 	u8 bypass_cbndx;
- 	u32 stall_enabled;
---
-2.34.1
-
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
