@@ -1,246 +1,226 @@
-Return-Path: <linux-kernel+bounces-406271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F909C60A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:45:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1597F9C60CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D3CEB36179
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:07:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4744FBA00A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AC12123FE;
-	Tue, 12 Nov 2024 16:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D842038C7;
+	Tue, 12 Nov 2024 16:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DUJRdw6M"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="g++75T2m";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="DqrrWpf4"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037E9206E61;
-	Tue, 12 Nov 2024 16:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731427293; cv=none; b=DqKta/rPgfGQYlTHvVHNnELGp2IEHogQUZFuIly6MmQOboxjAhNdyD2EV5hFSazv1XSUBdGMC0KsfjfjaHmNW1tPSXqcGNJIsCQ4aZjjkZonCBPV6k2jkI2Z8PCaPKusavvWL6rxi3SIbnUUNcVZiKwZ/ZtxvI8x9aCEy/ruGq4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731427293; c=relaxed/simple;
-	bh=rE1n742XV6Hh13YXAK03XaqAi+NRIgacwErEEh/8Nto=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tgk4q+bPAJhgGQ8eGWIb+SgFnFiPRsgnOd9cYN6kS/xamsUZTWzXF0Li7ph7GNYCpuTZYQhkU32qKaM/kxxpnru4Ny0RBYHWc/nJTSFYXZ6qaluQl7V4+HED8AUZcVPi5Xmqrcpfs4kv0uoH0s38DG/RU1BXxO7EQ4i0He9Oy7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DUJRdw6M; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731427292; x=1762963292;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=rE1n742XV6Hh13YXAK03XaqAi+NRIgacwErEEh/8Nto=;
-  b=DUJRdw6Mux3ocdraaH8w4dphmI5Kxh0+lvt9V1QT80U2KSRoA3US2JG9
-   xur+QDzg2Ux0eqTkQF0Nda9D8Vzs+eZ4xnzU4HYX7I1SoOTvvp6YegTyh
-   4f9hlrLCQ+SM7jt6Cax5xfY3FXer2LRVYRc+xll5gDXMobCjAH+FDqO+7
-   4V3xY3u3HBXxdUIt2w4q1navglVz7ZZLYTlc1cQn0cxV1BBoxVs1c+IrY
-   ICYrVQ8KaKNXr62hK7cqiHMVLbq5d9gNjxp34oqAEAtqrEWrxpJxveORn
-   BP5PONUCrFlRZkqoTINgFv0/B9m5Tm+2yOvfw6Fz98mwzPtAS5I6UTNLP
-   w==;
-X-CSE-ConnectionGUID: r00eIVo0RXWAump5SFMEpA==
-X-CSE-MsgGUID: ryj38hkrTmmaXlz06P6hWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41831474"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41831474"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 08:01:31 -0800
-X-CSE-ConnectionGUID: 7Orz8rzdQA+vB3J+K3Cg1A==
-X-CSE-MsgGUID: UQQKbw39RLis5EwXPvg7zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
-   d="scan'208";a="87489572"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 12 Nov 2024 08:01:28 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 440FA1BE; Tue, 12 Nov 2024 18:01:27 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mathias Nyman <mathias.nyman@linux.intel.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Cc: Peter Chen <peter.chen@kernel.org>,
-	Pawel Laszczak <pawell@cadence.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v1 1/1] usb: cdns3: Synchronise PCI IDs via common data base
-Date: Tue, 12 Nov 2024 18:01:25 +0200
-Message-ID: <20241112160125.2340972-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00B12003AE;
+	Tue, 12 Nov 2024 16:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731427645; cv=fail; b=NbdSRr8hd6K79rslY5lTx3hLjv5h4NO6OjRQYBlQrFVva4kpcS6DnTQcmcB5JX6QrOxqgDT3obYhS7G85wNG71gxCCf7mSHFs+xKTcQSWESJk/S0ZIK7qWUsrwBCDh7lYjmsLDXNCZKH2rKjP9U2zQJ0Dwgu46k2Djr7GfTQpTw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731427645; c=relaxed/simple;
+	bh=OAWfjcK+5dpnhSThpMtxyGkoTVc7yBzcn0wOm8F1/Eo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ULTEL7K/WA6HQoy926OG6T3W3LUl6Pp0oZ+GsSqlFyPKSKst7wTI+QqSTPk3HiuPSHuOzOt0NgMMsmfpnteOc1he9HdoyYxwgwPEepl2V5UwfcVi7V/hEL0rH2cdyuS4t72QO3WyyNDKFWqbP7opKu1ilxnlqNwP3CgyEmXOOsE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=g++75T2m; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=DqrrWpf4; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACFNfww008551;
+	Tue, 12 Nov 2024 16:06:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=6majkkNgfIrPpP39TciwlrAsjmtQPepzOtdhjEAb97o=; b=
+	g++75T2mhiq1CQPobAiTNR+RMKiGYvXT1kZQrAueCssFStfXaeHAULQJI3tNl+Mu
+	47G52HUv5ZdG2/XQNYT995GhFTwu9hT4AEkTpJNM4lTRmnvpznUaFtVbJcbPrH0z
+	XXlj4rdMVazRbTRc0YzlpgoVehaVw50ClMS3aSE7A+80CH8qcS2V33rP1DZf9F6x
+	JrVoHkKlH7UiJksiXGA87YDqfoyCCvGSlnws5MNhuazs6AadldFS/mXQc+o49MEO
+	0wSvKFXdVQ4xEaEAb1Q00/nF/APdG/1VWkXgz894Xz/frHh1ohwPwE+KdOPu7JKL
+	XJ4+qMn2tNTH3dvib+w1YA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42t0n4vr4m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 12 Nov 2024 16:06:32 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACFnEMp036079;
+	Tue, 12 Nov 2024 16:06:15 GMT
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2170.outbound.protection.outlook.com [104.47.73.170])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42sx6835h9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 12 Nov 2024 16:06:15 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Fw7o5DrBHPCN3PsSaQ/BgdExaO/CbYJyGMQDQNshAXWSJ64k5qoJIdDQiDerw5Sg2fNSbiEfUSPjqONjfjyPeaPZNej3WO9ishVI3EJtZjRaXC1ahomV/myH8+a9naIyc6uMewH1d/OvzVJfvIo37y343RrYjOzpEA9lWnWRebZZMrYfnoQResOLoDbSj1+2z/18kJ3QHNF7lk9IWa6ztrox55IszDw3dez/kMYOlcg8qCiHkM3aEOP9PgbXXGAFv+oqNqJUux+nWviRkk0WUYi2qucxh8zbU42pzl1x7A2AAyHF9lssSeiLNmbRw7c5OLguitezuOxijfvFfZJ0Ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6majkkNgfIrPpP39TciwlrAsjmtQPepzOtdhjEAb97o=;
+ b=h+pdQr31qwJvOmQvQD7HUpYxwdz+o43jlksindpYueYIhnC7SJ5qSOd0cMxmnALGJ2ZWDbFWXaZavC+atIpVH7aBOLUbKzLhQkJCbRCYrmfgUDL9xEWw+gQt0012cRWqzf3lfSG5fnd4S9ML0sv6h1+pV4D4SkknrowL0Xk4z87ImDygQffwLXaCHfS9Kvv4oIHXVa93xPC9deJ5Ot8wMdQRs0vsnr1O/6kERGr213TEUXdmJbZ7ZU9ABZ0ejsLqaVu+W/iy67O9B0re/UpW6t6nu2rv/sIqBDmJw6XTBETbG+6GQyn+ROGQc6SZ0pvs/ATHJ07OqtoO80n2ae/tSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6majkkNgfIrPpP39TciwlrAsjmtQPepzOtdhjEAb97o=;
+ b=DqrrWpf4ou/663yol4US0R9DuW5CciVI9iEIZKxgOX928vtPZjkKkX5SB7IKviOQVk0/YhN4r3KP6AAFG2/ZVDpsOC44abxm6cL0+ikr7g2eN2T43fNzpXZoPRXKDMN06zVls3PY97hEt9cish0iuz02oS5n5Xc1nsWbmFOL/xs=
+Received: from DM4PR10MB6886.namprd10.prod.outlook.com (2603:10b6:8:102::10)
+ by SJ0PR10MB6327.namprd10.prod.outlook.com (2603:10b6:a03:44d::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27; Tue, 12 Nov
+ 2024 16:06:12 +0000
+Received: from DM4PR10MB6886.namprd10.prod.outlook.com
+ ([fe80::bdcc:98f5:ebd5:cd38]) by DM4PR10MB6886.namprd10.prod.outlook.com
+ ([fe80::bdcc:98f5:ebd5:cd38%5]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
+ 16:06:11 +0000
+Message-ID: <6a0abe9f-c3a8-452d-ab76-ee1e19da8bb5@oracle.com>
+Date: Tue, 12 Nov 2024 21:35:53 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 00/76] 5.15.172-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+        rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com,
+        broonie@kernel.org, Vegard Nossum <vegard.nossum@oracle.com>,
+        Darren Kenny <darren.kenny@oracle.com>
+References: <20241112101839.777512218@linuxfoundation.org>
+Content-Language: en-US
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+In-Reply-To: <20241112101839.777512218@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0004.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::12) To DM4PR10MB6886.namprd10.prod.outlook.com
+ (2603:10b6:8:102::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB6886:EE_|SJ0PR10MB6327:EE_
+X-MS-Office365-Filtering-Correlation-Id: faf5dd50-02f4-4f75-f46f-08dd0333ed41
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?K01YTHRQMmpQSE1nMm5sdzlSMW91cDhRcGc2MG1ROGdZaFdyd0k5Y3ZZYVFL?=
+ =?utf-8?B?eTFqY0RYZW1MUU9OMW1LZzkzcDZwWHRGSGtoczB6emM5UjdqMTJDODRKZ0p2?=
+ =?utf-8?B?enRud1Z2QVBzVGR2QWp6WlVDbGlGMllKTEJIMGF6SWlVNE50cWF0VXhaUVBD?=
+ =?utf-8?B?ZEt5amxubVhEOExmVmNkUFpIODBlRjlRRE0yNFdiSGhDbkVyN2lJQXJZallU?=
+ =?utf-8?B?SFZzb1kxWUFSdVJ3QlZiZU0zRDBuWVFaTzhybzRJMEJCRWx4TUZReC81enVM?=
+ =?utf-8?B?R1JYRG4ycEhXTDVEaUxDWUQvTUJvRFN6K2l1S0hvRTBuS0F1NU5XV2FCVkFu?=
+ =?utf-8?B?N21YQTdwMVJUZ2szbENRTDUrdHl2ZzBobWYwU0loMGcyZHdIZXgvMDg1RU9z?=
+ =?utf-8?B?Z0wrZzBaOFZjQXhLRmpHcXd6UHY5UkhrREJwMHBHYnRkU2dFQTcyYXg0eGNi?=
+ =?utf-8?B?WTNLV0FrK2R4a1l4dzRtaXp3ejZYSzlBaExJSmdOR1VZK3ZaU0pSS0JzS3Ji?=
+ =?utf-8?B?bmtPRTdHQVgyNkkwVzcvS01VcU9rTWt5NXhFQ0JFeDlCb0toTDdNdUJ1WmhR?=
+ =?utf-8?B?cHlHdXpqL1dGaFduU1BqQUIvZ0kxUkVBRlJWcFc3bDhUNEpXalZaUzRiQWlz?=
+ =?utf-8?B?RE1TamdFbm53dzcwenBKVHJPYWdXdXcxUm1XOTNrS3NIVmlMUGRyUzdEV3dG?=
+ =?utf-8?B?YXljVDNDZ0EzanVuMEJmekY4eDRjRElDdnNVYjIraEkvOWgvK0F4cy9KSHRp?=
+ =?utf-8?B?TTRpTzZ1LzJRczRhNDY1Q3Q3YVg1VWx4UHRJWi9zYTMyREZ6Y0Evci9JR05J?=
+ =?utf-8?B?WUVITGRJYzY1aEZ0eEtXNHJhSElRc1ZXWW84L3dPaXNPOE9qdnJZS3hhYlls?=
+ =?utf-8?B?U0JUQ2xLeW4wSDM4Y0RwSWJlTk5OSHVpcGhyajNXQlNiYUhuYURhcml1dDlV?=
+ =?utf-8?B?U1VLazRPWTE2anBTcUN3NWVPKzN5U3dLNXplcWNUZXBFYWpHeHdzTTVDUitX?=
+ =?utf-8?B?Z0pmWS95STc2TFdFbTB3NmlEMWpleDdlT0pzTDQ5cWpXbmFWK0tCV0EzYW1j?=
+ =?utf-8?B?MXNQV0JhTGVkK0FOV281QlBTdXJJL0k0ek0vVHRTNlY4SHRoSlBaMXR4emdr?=
+ =?utf-8?B?UThBaExQellHYXp6TFczZkRwMUloekNjRFBMSElOSWJsZ0M4d0FkTm5XS0Qr?=
+ =?utf-8?B?c3NxeTNqVjYvUUpGYjQ3NnJRbG8zRlhMNXlheFRRdEE4UEpwa21aVk5ML2ZB?=
+ =?utf-8?B?RWpXYTBob1ZMd0pPVUVaUlJJdzk5M01BRkJVT0xDSlROT2xxWjhvZ3VFVzFR?=
+ =?utf-8?B?cTJtZ3MxcmNIdGFvQTZBc2tjMHdhU1NsTnFUSytzU3FId0E0a0JoVlVTelFP?=
+ =?utf-8?B?bU8vMS9UR0h6TEoreTIxWGlyc1p1bmxXTnZ3RXNRejgweUREakxzSVpwRVJD?=
+ =?utf-8?B?OTF6V2pudkREUVJVUnNvZTB6T2QxYXZpaGMyZzdDNE1sZEszN3JTU0hpc1dW?=
+ =?utf-8?B?eWFNQWRTM2U4NElZd2I5ZUdMd2VrcTUwVlNIdmRVck5zMmt1d1ZzMGZkYUxO?=
+ =?utf-8?B?Z2hRanpPOTZIQ09FL1g1QVJJVVRLMmM5ZDIwK1AxUGU3SHo4Y0szN3BKT1M0?=
+ =?utf-8?B?YTNyTHpROHdONUxGMm1jNytXdkF1OUZHNDZoL1I2d3NCbzhPb0VjWU8rOEY3?=
+ =?utf-8?B?SUJ4MGJpZERwNzlRRTByRVpUaFplclFVdU1SNFEvQ2VZVDNDcmFrdnJLVW96?=
+ =?utf-8?Q?V8mdBDLFcztA0DNeT5WuZ0scTaWkSYZs+6IXUcW?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB6886.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MTMyLzVqdkNPZEZ2WU5uSEp4c3NoZXErdW9RUjcyUjRTUnlkc1BWTGlsbFI5?=
+ =?utf-8?B?Z3Zvbk9LdkxGSTZmUGY5UG5jSEJtaHorcExLTGJkdWNRTjVEQzFPQkU5OHRa?=
+ =?utf-8?B?SGZXSmRlTTFXMWpkeFk2V2JZWm1KUzJWM3FsODNuQzZ0UitZRzRxa0lySzZ0?=
+ =?utf-8?B?eGErRlY3bXk0VEFWZjVhSmFVWVNsaStJelpiK0dtSTJVMGN0aW1ON3dmbXAx?=
+ =?utf-8?B?VWx5MXdoL283S2R1VDRBT1VDamtIQkFGTmdHazZjbEkyM3oza2pUL3c2dFFE?=
+ =?utf-8?B?R0d3R3B1TFhjaHVjNVk2SkRLV1JHUHpNaVBEWVptQnpNK25oUU01YkU0YWtY?=
+ =?utf-8?B?UDladkdZSmNmWkdJL1ZjRFRhRGg1azJBSEZUQlYySUR2bGhRSkxsVnFEV2tQ?=
+ =?utf-8?B?UHZ6MUIrK2YzQmVRaERWYU1SSW5PdFdLeGtoaVhoQTVzMzNUM0NtMFBrSnVx?=
+ =?utf-8?B?MWZUa3FtS1lmQ3hwWUpDMjN3blpsVXdRaHJVbmY1RkUzRWlLbmxyQWdURmZr?=
+ =?utf-8?B?UFVFTXVaOVMvc1NCckVCOXlQNWhwV3Zjb2JVcjdzL21VTjhjR1hYaTNjRVEv?=
+ =?utf-8?B?WnhpK0thdG9JRWFna3ZWaEdkYndLWU5ESUVEYnJ5NGZGcCthaEk1L3AwUUk2?=
+ =?utf-8?B?b2hHUGF2YmRDcHdKQ2UzOWVWeVVNdlFqS0Qvb0s5WEtxTUpjYm1TNm5iSkgv?=
+ =?utf-8?B?T0ZCUXBTbU9SYzU5Ym55YzlJVWcrK0lWWnBwV3doS1FFb1E4eGc1RDlCWVl3?=
+ =?utf-8?B?RXY1Vld2clg4VkZ4ZlZqZ1BmNEtGVklTa2RJNGQ4NmV1VWVGLytZTTlTaXVi?=
+ =?utf-8?B?UG5CVExDbEFkdnl0U3lacVdBNDRJRG02SjNub0QxSWErR1FTSE9NaGhTTVow?=
+ =?utf-8?B?SE9QTEFvandqUmZPNjB4QnpRTmRXMzdBQlQ2TWhncm9DVmJjOU1sVSszL3NB?=
+ =?utf-8?B?UXBpMS96cjh1U0dJWWUrQ2xWMkUvV2xHMzNuNE1nSE1jQUdLNDFPaHQwT1B3?=
+ =?utf-8?B?SHFqZ3FGN25qTXpIWGhVbkdWZEhMYU12clZPSmtvMXVLKy9qR2IrTFd5NFAv?=
+ =?utf-8?B?emNJSW5HSmJJNzBDWlltZURvaDVCek0zcE5UVDFWRm8wNkNrbS9EVC9vZmUx?=
+ =?utf-8?B?aC9aSnlFNTltQVNEbGZic3ljektsQWZNTGs4ak9LbWd1eTdLRTh3ekYxVW5Q?=
+ =?utf-8?B?SGMrNW8ydWx5c2pxbHB4YWVTQmhvYXQzaDBOT1VxdEl4U2kwcVpuT2g0djlY?=
+ =?utf-8?B?S2JDNnNJRFBSSCsrazJzY2RpZWlEVjNpOHo4dVNFbUtxTlNXUTQzbkhMQ2JM?=
+ =?utf-8?B?TlZoMGFUQldZMS9xNzFiZUFxWktRcm9ISzA0bnJVamd3SUlLTnNQTVdha0Jk?=
+ =?utf-8?B?U1F3Z2RBdzNKNlBRR2IzZ0JzQlhzcFZ3SCtRendXWThYMFlzdERkQVJKRGZr?=
+ =?utf-8?B?MC9lYTh6TG5vSkFTVXhHM25MTmo0dFRvSTBoMFRYOWpGTVBSSW52Rm5jM0lt?=
+ =?utf-8?B?Z1VhNVByWXNNMXJsWmJ2aXhObEZ6VGVMYkwyMEh5VGpDRXJrYVl2Q0ZNbng0?=
+ =?utf-8?B?eC9ET3JvSFVaUkZ3SkNKNHd1TGsvWFRiYUJyQWlLRXJNcHprZHRianhzeXNn?=
+ =?utf-8?B?aDRTNDJ5Y1B5cHBqRlpwcE1hQTFkZzEwQk9mamlrc0lPS0prN1lyRzE1UWlI?=
+ =?utf-8?B?SEF6STh6ZVkzcDhITHVaMXdlUUtHbkJ5QXNKNnZpQ2dXelh0ZFY1SDU0Z204?=
+ =?utf-8?B?cWRoY1lRbWdkc3JDL0VYMXZCd3pmVkVwRGtrTENleHd0N2pvdWllSlpOa1cr?=
+ =?utf-8?B?djNiZkN1b3ZUTndsM0wyMDJTYWRoRnQzUkRicTJFQlVteG5kTStJRytwMVcw?=
+ =?utf-8?B?MS9yMG9wSy8xUnZWZ0J3RStJZmQva3g2Nm92d2JSUENoNEtGaWFBQWQ0Qjhh?=
+ =?utf-8?B?eWdyVENKOUxNdEJYY2MyT3p3d3VUVmV0OWpBSW4vMCswelhGeWFvYmpXeUlB?=
+ =?utf-8?B?bGRnaGlCOFNhNXJkaFA5U0l0emRBc2N1dVg3K2NsRzhUSmRFMURvMy9peGQ5?=
+ =?utf-8?B?UWoxUmRCaDJScDRjWDFleDdGVUNEViszNmdHYWVQRUtTYktCWG1lWUFoejAr?=
+ =?utf-8?B?SWVSK1JIUzhVTFd1OXMrbWlXbW1pQmh5cjVkTzQ4bXJoL2IrTDY4V1lzbWky?=
+ =?utf-8?Q?wbWIJtn1iGBPOJxIhrFBbw8=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	xcl8mMtxT0iRsNQiz4x2xgnZit0hjtU5w3+rg4/UX1bbBhFc4ZaNIdDOOWnWbvXYcbt/Z0vhaWypuBGI/JTUml45PKQx3HqkOHfXxUQwWhWALY4/0L3+cC5nUTRAcB+IKdiv7L94Sovzo+t76YWrKc+JDYQO67w7YWYkH7nqV28qYVScBWqDei286QdV3KX9/Ww6q3zLrf1ekB3/pwq6fb5nrkHOtteY8+btu3mrhUhzaBKZ0+LtpapdHHtzM0Ev6JPs6/GRILgZ12+MNF6whPfpIM8+yNhipUeBUNyRFQumfC0lbTvNMcKbkfORPgSQreDqZnpK8Y1zLIbKWoBJYReHv3nAcT0ROKD9owXRSHQlnKBPAmOfRkKmuCkpmdrP3ECqItuHDVpc1P4+VWSPX1n97UQnAiYB2RGBlqe4o+YqRzYJDuJfPjTRrtd+QyERZNcVakthMeQf+VQwGQ41GSs4BLyjkE+55mwNzS/dkm0qV2NPtKL1X8+DMY0F770BNwKqTWttQccwo4EJxo3pr37qXLDfSfmTfwIKGKEWFt3mMbAAZ0vcJYI8wUivMVkALfhzbOFyVSZYlYiHTpmMM59/lv1vOnAD7Pl4SBmuGV0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: faf5dd50-02f4-4f75-f46f-08dd0333ed41
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB6886.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 16:06:11.7222
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9Rb6QPnJNCDOyihlRm1YbH86CLtkoYEvGX3gBBF8GirZZ35/gD4aRxfngZmRWxnQvuG1Z1lsRs43QeF34EqM29lyVIr+J1Lwl0RHAUFWFTKXkF6BhLKHYUVbbduFcewo
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB6327
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-12_06,2024-11-12_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 phishscore=0 mlxlogscore=999 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2411120128
+X-Proofpoint-ORIG-GUID: erRTYzIqIXEw_G7-MZuYbisSH_yijUSi
+X-Proofpoint-GUID: erRTYzIqIXEw_G7-MZuYbisSH_yijUSi
 
-There are a few places in the kernel where PCI IDs for different Cadence
-USB controllers are being used. Besides different naming, they duplicate
-each other. Make this all in order by providing common definitions via
-PCI IDs database and use in all users. While doing that, rename
-definitions as Roger suggested.
+Hi Greg,
 
-Suggested-by: Roger Quadros <rogerq@kernel.org>
-Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/usb/cdns3/cdns3-pci-wrap.c       |  4 +---
- drivers/usb/cdns3/cdnsp-pci.c            | 26 +++++++++---------------
- drivers/usb/gadget/udc/cdns2/cdns2-pci.c |  3 +--
- drivers/usb/host/xhci-pci.c              |  5 ++---
- include/linux/pci_ids.h                  |  4 ++++
- 5 files changed, 18 insertions(+), 24 deletions(-)
+On 12/11/24 15:50, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.172 release.
+> There are 76 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-diff --git a/drivers/usb/cdns3/cdns3-pci-wrap.c b/drivers/usb/cdns3/cdns3-pci-wrap.c
-index 591d149de8f3..3b3b3dc75f35 100644
---- a/drivers/usb/cdns3/cdns3-pci-wrap.c
-+++ b/drivers/usb/cdns3/cdns3-pci-wrap.c
-@@ -37,8 +37,6 @@ struct cdns3_wrap {
- #define PCI_DRIVER_NAME		"cdns3-pci-usbss"
- #define PLAT_DRIVER_NAME	"cdns-usb3"
- 
--#define PCI_DEVICE_ID_CDNS_USB3	0x0100
--
- static struct pci_dev *cdns3_get_second_fun(struct pci_dev *pdev)
- {
- 	struct pci_dev *func;
-@@ -189,7 +187,7 @@ static void cdns3_pci_remove(struct pci_dev *pdev)
- }
- 
- static const struct pci_device_id cdns3_pci_ids[] = {
--	{ PCI_VDEVICE(CDNS, PCI_DEVICE_ID_CDNS_USB3) },
-+	{ PCI_VDEVICE(CDNS, PCI_DEVICE_ID_CDNS_USBSS) },
- 	{ 0, }
- };
- 
-diff --git a/drivers/usb/cdns3/cdnsp-pci.c b/drivers/usb/cdns3/cdnsp-pci.c
-index 2d05368a6745..a51144504ff3 100644
---- a/drivers/usb/cdns3/cdnsp-pci.c
-+++ b/drivers/usb/cdns3/cdnsp-pci.c
-@@ -28,12 +28,6 @@
- #define PCI_DRIVER_NAME		"cdns-pci-usbssp"
- #define PLAT_DRIVER_NAME	"cdns-usbssp"
- 
--#define PCI_DEVICE_ID_CDNS_USB3		0x0100
--#define PCI_DEVICE_ID_CDNS_UDC		0x0200
--
--#define PCI_CLASS_SERIAL_USB_CDNS_USB3	(PCI_CLASS_SERIAL_USB << 8 | 0x80)
--#define PCI_CLASS_SERIAL_USB_CDNS_UDC	PCI_CLASS_SERIAL_USB_DEVICE
--
- static struct pci_dev *cdnsp_get_second_fun(struct pci_dev *pdev)
- {
- 	/*
-@@ -41,10 +35,10 @@ static struct pci_dev *cdnsp_get_second_fun(struct pci_dev *pdev)
- 	 * Platform has two function. The fist keeps resources for
- 	 * Host/Device while the secon keeps resources for DRD/OTG.
- 	 */
--	if (pdev->device == PCI_DEVICE_ID_CDNS_UDC)
--		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_USB3, NULL);
--	if (pdev->device == PCI_DEVICE_ID_CDNS_USB3)
--		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_UDC, NULL);
-+	if (pdev->device == PCI_DEVICE_ID_CDNS_USBSSP)
-+		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_USBSS, NULL);
-+	if (pdev->device == PCI_DEVICE_ID_CDNS_USBSS)
-+		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_USBSSP, NULL);
- 
- 	return NULL;
- }
-@@ -221,12 +215,12 @@ static const struct dev_pm_ops cdnsp_pci_pm_ops = {
- };
- 
- static const struct pci_device_id cdnsp_pci_ids[] = {
--	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_UDC),
--	  .class = PCI_CLASS_SERIAL_USB_CDNS_UDC },
--	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_UDC),
--	  .class = PCI_CLASS_SERIAL_USB_CDNS_USB3 },
--	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB3),
--	  .class = PCI_CLASS_SERIAL_USB_CDNS_USB3 },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSSP),
-+	  .class = PCI_CLASS_SERIAL_USB_DEVICE },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSSP),
-+	  .class = PCI_CLASS_SERIAL_USB_CDNS },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSS),
-+	  .class = PCI_CLASS_SERIAL_USB_CDNS },
- 	{ 0, }
- };
- 
-diff --git a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
-index b1a8f772467c..e589593b4cbf 100644
---- a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
-+++ b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
-@@ -15,7 +15,6 @@
- #include "cdns2-gadget.h"
- 
- #define PCI_DRIVER_NAME		"cdns-pci-usbhs"
--#define PCI_DEVICE_ID_CDNS_USB2	0x0120
- #define PCI_BAR_DEV		0
- #define PCI_DEV_FN_DEVICE	0
- 
-@@ -113,7 +112,7 @@ static const struct dev_pm_ops cdns2_pci_pm_ops = {
- };
- 
- static const struct pci_device_id cdns2_pci_ids[] = {
--	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB2),
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB),
- 	  .class = PCI_CLASS_SERIAL_USB_DEVICE },
- 	{ 0, }
- };
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index 47c4f70793e4..b21474e81482 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -82,8 +82,6 @@
- #define PCI_DEVICE_ID_ASMEDIA_3042_XHCI			0x3042
- #define PCI_DEVICE_ID_ASMEDIA_3242_XHCI			0x3242
- 
--#define PCI_DEVICE_ID_CDNS_SSP				0x0200
--
- static const char hcd_name[] = "xhci_hcd";
- 
- static struct hc_driver __read_mostly xhci_pci_hc_driver;
-@@ -475,8 +473,9 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
- 		if (pdev->device == 0x9203)
- 			xhci->quirks |= XHCI_ZHAOXIN_TRB_FETCH;
- 	}
-+
- 	if (pdev->vendor == PCI_VENDOR_ID_CDNS &&
--	    pdev->device == PCI_DEVICE_ID_CDNS_SSP)
-+	    pdev->device == PCI_DEVICE_ID_CDNS_USBSSP)
- 		xhci->quirks |= XHCI_CDNS_SCTX_QUIRK;
- 
- 	/* xHC spec requires PCI devices to support D3hot and D3cold */
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index e4bddb927795..d2402bf4aea2 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -121,6 +121,7 @@
- #define PCI_CLASS_SERIAL_USB_OHCI	0x0c0310
- #define PCI_CLASS_SERIAL_USB_EHCI	0x0c0320
- #define PCI_CLASS_SERIAL_USB_XHCI	0x0c0330
-+#define PCI_CLASS_SERIAL_USB_CDNS	0x0c0380
- #define PCI_CLASS_SERIAL_USB_DEVICE	0x0c03fe
- #define PCI_CLASS_SERIAL_FIBER		0x0c04
- #define PCI_CLASS_SERIAL_SMBUS		0x0c05
-@@ -2421,6 +2422,9 @@
- #define PCI_VENDOR_ID_QCOM		0x17cb
- 
- #define PCI_VENDOR_ID_CDNS		0x17cd
-+#define PCI_DEVICE_ID_CDNS_USBSS	0x0100
-+#define PCI_DEVICE_ID_CDNS_USB		0x0120
-+#define PCI_DEVICE_ID_CDNS_USBSSP	0x0200
- 
- #define PCI_VENDOR_ID_ARECA		0x17d3
- #define PCI_DEVICE_ID_ARECA_1110	0x1110
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+No problems seen on x86_64 and aarch64 with our testing.
 
+Tested-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+
+Thanks,
+Harshit
 
