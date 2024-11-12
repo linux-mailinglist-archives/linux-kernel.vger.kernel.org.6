@@ -1,167 +1,134 @@
-Return-Path: <linux-kernel+bounces-406507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67ACF9C6049
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:22:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F889C6016
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:15:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10553BE4609
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:16:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47C972841F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A32217474;
-	Tue, 12 Nov 2024 18:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8463421732F;
+	Tue, 12 Nov 2024 18:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="msudGWks"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YaxrGIBS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561DC216DF2
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64701218594
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731435305; cv=none; b=erYvI8zBs7dZC8iam7xI9rSyGefBRmCZLpDHvR+8tBoqN1uJsH6DO6HUgKLCdjJ3yFS8LEongAqS4/ocsc5l9fpSSKd4ViTSXdo5O1GOyhzl7PMQjJZp4e+gxEGCLYz/qi5Ou6cZ/8JGXaLJQmxsQ+HY/adUD+UOTB8wQq/wzJ8=
+	t=1731435277; cv=none; b=ZJVwwO2q9LAnXFsjTW6TYfE81vlNCfIz7Qe8iVheV350bh9bV6ilY+N38QTZwlHSz+r5zyVw1fNMjMG/T9znSD/RroRgd74VpOanm3QPoKWUpkrq8SLtm4NTZYQ+5QJmndzoes2UqhFNu5oSkrEqCrbfv1qWTaDCg17F8HSmghY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731435305; c=relaxed/simple;
-	bh=4Hb821r6x9jOspp7k7R9OTHLtNmuXsdkmEXzZcr6GOw=;
+	s=arc-20240116; t=1731435277; c=relaxed/simple;
+	bh=cTA/3qBaVbffUGaQQs3FfHcFcnnvR+nC1eIweZ0ALvc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ciKDx1tg98NdVI4ind+l4Y+KOioBT2S1lWkDOD8vDTP1siMVKyZFBrTGAaKdCFWA30mPQoeH+thqAUhDXkD67JA74al3NB71rbbyM/wlJrYZQBiCMdCL4m62Jr/bdylEqAY9tML/Pe/DCSmkiPBfMA6iCypt77hJr0FrKn0dBss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=msudGWks; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 12 Nov 2024 13:14:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731435299;
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0w4bOB8I6Yfox3ogEe7S9G3aZIaxpVTWvjxXLRxXKgS88R2dspoDagj1Q+fG4J9Mu7wx6VywE1Oy5srmGF3DRmi1eEH0LmfBApnumv7Q4Qv0QzWNSGPTObF1tUs1U6PT0wN6GY81FotQY1QMd7T/Dhl6yKPF9Bz1SOwX63Ff8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YaxrGIBS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731435274;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=d8/ZE0KHOIIicHT1JQ4FzqCuQ19CG0YU7NmLKz0bP0A=;
-	b=msudGWksSYzgnmjp5P6ize+I22JN2SJ1DWQ82pNx/LfS7g9i5BvGuPdQEvoOJmOmtYZqoL
-	6yeOEqHDRQzRB+qObdacgNHQyc9NIQpUMaYRz4G9yvfkmiL1aZocDUAi0ZiaBMuT9DBLPm
-	xS7ylFT72XbC+dJfVZqn+VVBCdAduyg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Hao Ge <hao.ge@linux.dev>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Hao Ge <gehao@kylinos.cn>
-Subject: Re: [PATCH] lib/alloc_tag: Remove the sysctl configuration to
- prevent users from disabling it at runtime
-Message-ID: <tcz7mmykp7wi4h3cezhbh53wmsabzvd5shejae6vrku7haynzl@4te6hgxve3s2>
-References: <20241108075004.131911-1-hao.ge@linux.dev>
- <CAJuCfpEp_3Dz32fdpUaUbPaP6KZ+0fXmXBvBV1jRt9Q+LMRQAQ@mail.gmail.com>
- <71703c20-8311-ce3f-fbed-27d2ec3a2c82@linux.dev>
+	bh=NmxhVs+P1hJWoZYSTyfdVSHjqXEZNLNo4iVdoO1zihw=;
+	b=YaxrGIBStiTEOK/qLBT821tV/JUP6WNkkePA2QaO8YwT3vNZCs1XcZtgLNYk5+lQJBl8lS
+	TUybESvz53YxA3Sqv6FjVireb1T8vDf6eCXGzQwqkIZqC1fzuVwscjDFdBGvGwZhmiK5Mr
+	VjAgf6U/0KG7uPyb1F5wv5AsMsggelg=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-542WbpeqPuywkE7leFyq5g-1; Tue,
+ 12 Nov 2024 13:14:26 -0500
+X-MC-Unique: 542WbpeqPuywkE7leFyq5g-1
+X-Mimecast-MFC-AGG-ID: 542WbpeqPuywkE7leFyq5g
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5F77419560B1;
+	Tue, 12 Nov 2024 18:14:17 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.120])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 238491956086;
+	Tue, 12 Nov 2024 18:14:14 +0000 (UTC)
+Date: Tue, 12 Nov 2024 13:15:47 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 13/16] iomap: make buffered writes work with RWF_UNCACHED
+Message-ID: <ZzObU9CkhKEcRgc5@bfoster>
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-14-axboe@kernel.dk>
+ <ZzOEVwWpGEaq6wE7@bfoster>
+ <aeb58f3d-67b2-4df3-abc7-49a2e9bb8270@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <71703c20-8311-ce3f-fbed-27d2ec3a2c82@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <aeb58f3d-67b2-4df3-abc7-49a2e9bb8270@kernel.dk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Tue, Nov 12, 2024 at 11:30:39AM +0800, Hao Ge wrote:
-> Hi Suren
-> 
-> 
-> Firstly, please forgive me for my improper wording in the commit message.
-> 
-> After sending it, I realized that I should have used "suggestion" instead of
-> "decided".
-> 
-> Secondly, please forgive me for taking a few days to respond. I've been
-> quite busy these days.
-> 
-> 
-> Let's continue to discuss this issue.
-> 
-> 
-> On 11/9/24 02:16, Suren Baghdasaryan wrote:
-> > On Thu, Nov 7, 2024 at 11:50 PM Hao Ge <hao.ge@linux.dev> wrote:
-> > > From: Hao Ge <gehao@kylinos.cn>
-> > > 
-> > > After much consideration,I have decided to remove
-> > > the "mem_profiling" sysctl interface to prevent
-> > > users from dynamically enabling or disabling the
-> > > MEMORY ALLOCATION PROFILING feature at runtime.
-> > > 
-> > > I have taken the following actions: I set
-> > > CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=y to
-> > > enable memory allocation profiling by default,
-> > > and then made adjustments to mem_profiling dynamically
-> > > during runtime.
-> > > 
-> > > When I ran the OOM test program, I obtained useful
-> > > information that was indeed very helpful for debugging.
-> > > 
-> > > [ 1023.065402] Memory allocations:
-> > > [ 1023.065407]     12.8 GiB     6546 mm/huge_memory.c:1328 func:do_huge_pmd_anonymous_page
-> > > [ 1023.065412]      873 MiB   229985 arch/arm64/mm/fault.c:986 func:vma_alloc_zeroed_movable_folio
-> > > [ 1023.065415]      187 MiB    29732 mm/slub.c:2412 func:alloc_slab_page
-> > > [ 1023.065418]     99.8 MiB    25560 mm/memory.c:1065 func:folio_prealloc
-> > > [ 1023.065421]     47.2 MiB     3189 mm/readahead.c:434 func:ra_alloc_folio
-> > > [ 1023.065424]     30.0 MiB       15 mm/khugepaged.c:1072 func:alloc_charge_folio
-> > > [ 1023.065428]     28.6 MiB      514 mm/compaction.c:1880 func:compaction_alloc
-> > > [ 1023.065430]     25.8 MiB     6592 mm/page_ext.c:271 func:alloc_page_ext
-> > > [ 1023.065433]     25.6 MiB     6546 mm/huge_memory.c:1161 func:__do_huge_pmd_anonymous_page
-> > > [ 1023.065436]     23.5 MiB     6017 mm/shmem.c:1771 func:shmem_alloc_folio
-> > > 
-> > > After running echo 0 > /proc/sys/vm/mem_profiling
-> > > and then executing the same test program,
-> > > I obtained the following results
-> > > 
-> > > [ 1156.509699] Memory allocations:
-> > > [ 1156.509703]      187 MiB    29645 mm/slub.c:2412 func:alloc_slab_page
-> > > [ 1156.509707]      142 MiB     9357 mm/readahead.c:434 func:ra_alloc_folio
-> > > [ 1156.509710]      136 MiB    41325 arch/arm64/mm/fault.c:986 func:vma_alloc_zeroed_movable_folio
-> > > [ 1156.509713]     99.7 MiB    25531 mm/memory.c:1065 func:folio_prealloc
-> > > [ 1156.509716]     56.0 MiB       28 mm/huge_memory.c:1328 func:do_huge_pmd_anonymous_page
-> > > [ 1156.509719]     30.0 MiB       15 mm/khugepaged.c:1072 func:alloc_charge_folio
-> > > [ 1156.509723]     28.6 MiB      514 mm/compaction.c:1880 func:compaction_alloc
-> > > [ 1156.509725]     26.3 MiB     7460 mm/readahead.c:264 func:page_cache_ra_unbounded
-> > > [ 1156.509728]     25.8 MiB     6592 mm/page_ext.c:271 func:alloc_page_ext
-> > > [ 1156.509730]     23.5 MiB     6016 mm/shmem.c:1771 func:shmem_alloc_folio
-> > > 
-> > > Because mem_profiling was disabled by executing
-> > > echo 0 > /proc/sys/vm/mem_profiling,we are unable to
-> > > record memory allocation information after the disablement.
-> > Naturally you are unable to track the allocations after disabling it.
-> > You disabled it as root, so I assume you know what you are doing.
+On Tue, Nov 12, 2024 at 10:16:10AM -0700, Jens Axboe wrote:
+> On 11/12/24 9:37 AM, Brian Foster wrote:
+> > On Mon, Nov 11, 2024 at 04:37:40PM -0700, Jens Axboe wrote:
+> >> Add iomap buffered write support for RWF_UNCACHED. If RWF_UNCACHED is
+> >> set for a write, mark the folios being written with drop_writeback. Then
 > > 
-> > > These output logs can mislead users. And similarly, the same
-> > > applies to alloc_info.
-> > I would understand if you made /proc/allocinfo empty after disabling
-> > it to avoid confusing the user, but ripping out the ability to
-> > enable/disable profiling at runtime does not make sense to me. Once
-> > you collect required data, disabling profiling gets you back the
-> > performance that you pay for it. There are usecases when a program on
-> > a remote device periodically enables profiling for some time, records
-> > the difference in allocations and then disables it. Your change breaks
-> > such users.
+> > s/drop_writeback/uncached/ ?
 > 
+> Ah indeed, guess that never got changed. Thanks, will fix that in the
+> commit message.
 > 
-> Actually, my original intention was also to make /proc/allocinfo empty when
-> disabling it,
+> > BTW, this might be getting into wonky "don't care that much" territory,
+> > but something else to be aware of is that certain writes can potentially
+> > change pagecache state as a side effect outside of the actual buffered
+> > write itself.
+> > 
+> > For example, xfs calls iomap_zero_range() on write extension (i.e. pos >
+> > isize), which uses buffered writes and thus could populate a pagecache
+> > folio without setting it uncached, even if done on behalf of an uncached
+> > write.
+> > 
+> > I've only made a first pass and could be missing some details, but IIUC
+> > I _think_ this means something like writing out a stream of small,
+> > sparse and file extending uncached writes could actually end up behaving
+> > more like sync I/O. Again, not saying that's something we really care
+> > about, just raising it in case it's worth considering or documenting..
 > 
-> but I considered the following scenario: after we disable it and clear
-> /proc/allocinfo,
+> No that's useful info, I'm not really surprised that there would still
+> be cases where UNCACHED goes unnoticed. In other words, I'd be surprised
+> if the current patches for eg xfs/ext4 cover all the cases where new
+> folios are created and should be marked as UNCACHED of IOCB_UNCACHED is
+> set in the iocb.
 > 
-> we then start a memory-intensive application,
+> I think those can be sorted out or documented as we move forward.
+> UNCACHED is really just a hint - the kernel should do its best to not
+> have permanent folios for this IO, but there are certainly cases where
+> it won't be honored if you're racing with regular buffered IO or mmap.
+> For the case above, sounds like we could cover that, however, and
+> probably should.
 > 
-> such as our OOM (Out-Of-Memory) test program.
-> 
-> If we later enable it again, the issue described in my commit message would
-> still arise.
-> 
-> Perhaps we need to further consider how to handle this situation.
 
-Why would you do such a thing?
+Ok. I suppose you could plumb the iocb state through the zero range call
+as well, but given the description/semantics I wouldn't blame you if you
+wanted to leave that for a followon improvement. Thanks for the
+explanation.
 
-We put a lot of effort into making memory allocation profiling cheap
-enough to leave on, and I haven't seen a single complaint about
-performance overhead.
+Brian
+
+> -- 
+> Jens Axboe
+> 
+
 
