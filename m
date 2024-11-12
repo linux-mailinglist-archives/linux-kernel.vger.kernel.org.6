@@ -1,112 +1,162 @@
-Return-Path: <linux-kernel+bounces-405706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775FE9C5610
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:15:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A764A9C5618
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B0B31F21107
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:15:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 357101F215B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B04220D41;
-	Tue, 12 Nov 2024 10:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="isDiJkf0"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F689221FC7;
+	Tue, 12 Nov 2024 10:50:47 +0000 (UTC)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2F6215010;
-	Tue, 12 Nov 2024 10:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8943F215013;
+	Tue, 12 Nov 2024 10:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731408622; cv=none; b=GZZeF7YHmj+ktDqqYi+2agcEHH8Xc6EITlvxbOYdv3Za8tvyulirD4eIhDczStthOo5hiIHs9FcYaCstf650g0XtbYNUI+klvXt3vtmmb71cgf2m8xUKCPmRDU3EIFzl3OSPBb9ZkxF94l1Bu+mD+eZxFKa7rp7xQAIkmk66+xc=
+	t=1731408646; cv=none; b=Y0TGS4k0QQ0WriEuDcZ6DLG8ZYf79V8TYh4NWEplq8uBzfclZUpf70cwGV1MiMfRME8p13Xp5k1joYCiE90bncmiJdxDmDrumVzk9fLXibGVt1Hv/RHPLdWThrxqKgAGAluTjeW+hbiBL8grpi0lh87ZTWs+vKjh6h5NlyXvp5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731408622; c=relaxed/simple;
-	bh=K2Y9eESSp12JxRvCw+HrqqAyHVYfLWQIkdTY+grbKwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FnkLr686q9n1YaVveY7/p4H4u7lfmamnmoyo9dTfuHzC9YCLFYrlLIpqcImkJ6xwDDsP9AN7HVzZQfQWJKIbafYZwO3X8N7d1GJuVMhrmeHlVzLdSwC5qhcniZpk5s0lNazmjK62y3kZwrxk2e81utZLnz5Zkvt01e3qTGccLmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=isDiJkf0; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 37DEC1BF205;
-	Tue, 12 Nov 2024 10:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731408613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xkaaHxYMcgWp/Jayi5yY0YVWgrdbJQW2Bo/aXyuAcTM=;
-	b=isDiJkf0oDX77LXbJdSdCzRBNxcVXYU8Eai4pp6HN/z63vhnavWl1UtE70ItXhyv7QDcXF
-	Hgo8EJb7GPFkqIdTH9q/pUSAacJc7nfeAzL2kdSlKlv/Iy0k0uih6Dw0d+aJVBQ4QBW+16
-	UTjWOTeDMrFkVK1WXoIcFnZlfsDpSZDRaqIF0Ip1YFVNWBhmiS6udn0QDmXrDY/mqt9kAU
-	rReUKiWoFRLHv461lr7igdYCGG8/l1RDYhXE/IrLkZYhweOB2kEZvjgOVLsy8nhlPWOnGH
-	W4YleSe/ON9aFboToWLe5yXSTIPpSoglbRTZRjlXLyQSa5EBspMWShEGQeYvVA==
-Date: Tue, 12 Nov 2024 11:50:09 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, Andrew
- Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
- <edumazet@google.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Richard
- Cochran <richardcochran@gmail.com>, Alexis =?UTF-8?B?TG90aG9yw6k=?=
- <alexis.lothore@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 4/9] net: stmmac: Introduce dwmac1000
- ptp_clock_info and operations
-Message-ID: <20241112115009.028b8724@fedora.home>
-In-Reply-To: <1b335330-900e-4620-8aaf-a27424f44321@redhat.com>
-References: <20241106090331.56519-1-maxime.chevallier@bootlin.com>
-	<20241106090331.56519-5-maxime.chevallier@bootlin.com>
-	<20241111161205.25c53c62@kernel.org>
-	<1b335330-900e-4620-8aaf-a27424f44321@redhat.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1731408646; c=relaxed/simple;
+	bh=5/DByjEEer8WXk/PaeapgQQMr9rzXdq1kcSHqwQGC4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Goilo5vnjeR/GLxxSVoqi/pKYL/2IZy/RzMbbGg1Gb4uIM/o+L09gDXAXTV3QrIvZWt+xVqdAeeSRX7rNYfMPt7bvnhLGoUobEGyW+61WobzjCR8xhWQEnL5iFNhaJpFcpoX0vGMmU9ZPPWT4IcA+Tky5g3SgV33xmEM08sVYyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ea5f68e17aso55384807b3.3;
+        Tue, 12 Nov 2024 02:50:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731408642; x=1732013442;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o0BSboSqMmas8utBDJVLngyLT8Ucl86axxgJRcwpUMQ=;
+        b=iopOKNMKF5zXtyE+DMHwUkv1fSY/NVlEEl7IO8GLrNY+5qqdicnBPyHDVYg+4v3NFk
+         MorJfkOFe6riIJt4SFTKjt89uACaPFjT3y8n31co+kTPliH6mCSVfNgeXXEGEzlnEA0q
+         ngRgKRLEaS3VTK20wJ9oJ6lnNurhzKVrxFt7IESBFGcD6DXB/vZIiihxjSIvwH41GPqL
+         72SIdTLJvivFIc58AOi8peGHdkDQdhGvPhs1hhIZmHpVJuUSuTc+l4oDE/MiEBEJ7r6B
+         TFsoKiZXus7SECsXDxtIcnVsPYdh89MW/L1tXLxdC7hFoKgQ0H/S+T65rCacNINWdVC7
+         aPow==
+X-Forwarded-Encrypted: i=1; AJvYcCW7IDMX4tRDTebia+mb3ok1Rv/wcLDBlcH5EFgmfWJ4S2d5rroqbV0j9pyZrg4i+HbGLranyfljPyYaPG18dVS0EsU=@vger.kernel.org, AJvYcCWPrso06pO0y4IcBK2lMrIodLnMWhuf5k5DS0lM/OfAIMzo9BQNUwfCeOrh1uUWpAgmHYQjvjLT3YSdtn5T@vger.kernel.org, AJvYcCWSGv89OgkMB/qoLDiuAIsEpVsbzGWkJidFyvKVn3LTKBN3n6TouJhflknlEdRWXqM1zJOQ9SqDdBhN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW6psa/pNzvb+7e4XcMDqXsvQEyaP8sMNkNHbt2+KyHfASG4Em
+	kvf7zChgi5zVmvtEOp+/E2LInwCA2Z6HD6Iv+v17c1GmnywX7dmtjJSs3Cka
+X-Google-Smtp-Source: AGHT+IEE8dqhj3QPdyCSXJsXrewnASvozcvMgJFIedqkGIrZRiyr9V8vK31qxKA2OnMIdBMON8aSwQ==
+X-Received: by 2002:a05:690c:dc1:b0:6d3:f9a6:e29c with SMTP id 00721157ae682-6eaddda0e01mr147759387b3.12.1731408642671;
+        Tue, 12 Nov 2024 02:50:42 -0800 (PST)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eace8f1d2csm24669967b3.42.2024.11.12.02.50.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 02:50:41 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e5b7cd1ef5so46627907b3.1;
+        Tue, 12 Nov 2024 02:50:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVmlb142wAwJbk5buebo9G5A6vscfVNpFYfhZeclzN3M6xMAklg+zhTxOaxFjUlSpQkB813F2YTwwlo@vger.kernel.org, AJvYcCWmdmIU5WuaVRMxI/D0g2jZA5iurLSA6D0mHYXDhmHRhRDVP1Ey/pYVaFh62vh7KnBQBkHzvDXhClUL7ZqjdpXfQqE=@vger.kernel.org, AJvYcCX0xIWwHJ7WRgPt2HrdmBQjnuVPwJeyL8G0PjooOCXvDxrmJN4r9nb7C+mwvVvFpbFGeQA44kax/++C5Om0@vger.kernel.org
+X-Received: by 2002:a05:690c:48c8:b0:6e3:2192:e0e6 with SMTP id
+ 00721157ae682-6eaddda2d9fmr160448687b3.14.1731408641672; Tue, 12 Nov 2024
+ 02:50:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+References: <20230209133507.150571-1-clement.leger@bootlin.com>
+ <20230209133507.150571-3-clement.leger@bootlin.com> <CAMuHMdWUorkDYXZvsd-9rjwEkeJYC_FMfexZHaGYHDry=9Yjdg@mail.gmail.com>
+ <20230215092933.2f71ece0@fixe.home> <20230215115441.361aed53@fixe.home> <CAMuHMdVhGFyrWx6oD-K9WhZRtYT_xJ_kWRA+vhdvB_JubFk8YA@mail.gmail.com>
+In-Reply-To: <CAMuHMdVhGFyrWx6oD-K9WhZRtYT_xJ_kWRA+vhdvB_JubFk8YA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 12 Nov 2024 11:50:29 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX4nMA6HSu=UkNEWJWKK432VB5YVQCWn_rDZ6mNSv+41g@mail.gmail.com>
+Message-ID: <CAMuHMdX4nMA6HSu=UkNEWJWKK432VB5YVQCWn_rDZ6mNSv+41g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb
+ board device-tree
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Herve Codina <herve.codina@bootlin.com>, 
+	=?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
+	Milan Stevanovic <milan.stevanovic@se.com>, Jimmy Lalande <jimmy.lalande@se.com>, 
+	Pascal Eberhard <pascal.eberhard@se.com>, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Gareth Williams <gareth.williams.jx@renesas.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Jakub, Paolo,
+Hi Cl=C3=A9ment,
 
-On Tue, 12 Nov 2024 10:28:21 +0100
-Paolo Abeni <pabeni@redhat.com> wrote:
+On Wed, Feb 15, 2023 at 12:31=E2=80=AFPM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, Feb 15, 2023 at 11:52 AM Cl=C3=A9ment L=C3=A9ger
+> <clement.leger@bootlin.com> wrote:
+> > Le Wed, 15 Feb 2023 09:29:33 +0100,
+> > Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com> a =C3=A9crit :
+> > > Le Tue, 14 Feb 2023 17:25:14 +0100,
+> > > Geert Uytterhoeven <geert@linux-m68k.org> a =C3=A9crit :
+> > > > On Thu, Feb 9, 2023 at 2:32 PM Cl=C3=A9ment L=C3=A9ger <clement.leg=
+er@bootlin.com> wrote:
+> > > > > The EB board (Expansion board) supports both RZ/N1D and RZ-N1S. S=
+ince this
+> > > > > configuration targets only the RZ/N1D, it is named r9a06g032-rzn1=
+d400-eb.
+> > > > > It adds support for the 2 additional switch ports (port C and D) =
+that are
+> > > > > available on that board.
+> > > > >
+> > > > > Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com=
+>
+> > > >
+> > > > Thanks for your patch!
+> > > >
+> > > > > --- /dev/null
+> > > > > +++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-eb.dts
+>
+> > > > > +       pinctrl-0 =3D <&pins_eth1>, <&pins_eth2>, <&pins_eth3>, <=
+&pins_eth4>,
+> > > > > +                   <&pins_mdio1>;
+> > > > > +
+> > > > > +       mdio {
+> > > > > +               /* CN15 and CN16 switches must be configured in M=
+DIO2 mode */
+> > > > > +               switch0phy1: ethernet-phy@1 {
+> > > > > +                       reg =3D <1>;
+> > > > > +                       marvell,reg-init =3D <3 16 0 0x1010>;
+> > > >
+> > > > marvell,reg-init is not documented in any DT bindings document?
+> > >
+> > > Indeed, this is not somethiong that should be made available here. It=
+'s
+> > > only inverting the LED polarity but supported by some internal patch.
+> > > I'll remove that.
+>
+> > I actually was confused by a property I added in another device-tree bu=
+t
+> > marvell,reg-init exists, is handled by the marvell phy driver and used
+> > in a few device-trees. Strangely, it is not documented anywhere. So I
+> > can either remove that (and the LED won't work properly) or let it live
+> > depending on what you prefer.
+>
+> In that case, please keep it.
+> But the property really should be documented, one day...
 
-> On 11/12/24 01:12, Jakub Kicinski wrote:
-> > On Wed,  6 Nov 2024 10:03:25 +0100 Maxime Chevallier wrote:  
-> >> +		mutex_unlock(&priv->aux_ts_lock);
-> >> +
-> >> +		/* wait for auxts fifo clear to finish */
-> >> +		ret = readl_poll_timeout(ptpaddr + PTP_TCR, tcr_val,
-> >> +					 !(tcr_val & GMAC_PTP_TCR_ATSFC),
-> >> +					 10, 10000);  
-> > 
-> > Is there a good reason to wait for the flush to complete outside of 
-> > the mutex?   
-> 
-> Indeed looking at other `ptpaddr` access use-case, it looks like the
-> mutex protects both read and write accesses.
-> 
-> @Maxime: is the above intentional? looks race-prone
+Any plans to follow-up?
+Thanks!
 
-You're right, this is racy... It wasn't intentionnal, it's actually the
-same logic as dwmac4 uses so looks like dwmac4 is also incorrect in
-that regard.
+Gr{oetje,eeting}s,
 
-I'll send a v4 with that change, and a fix for dwmac4 along the way
-then.
+                        Geert
 
-Thanks for spotting this,
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Maxime
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
