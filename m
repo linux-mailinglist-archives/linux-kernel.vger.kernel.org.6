@@ -1,246 +1,111 @@
-Return-Path: <linux-kernel+bounces-406223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B718C9C5C49
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:49:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0609C5CE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:12:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BCC228401C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:49:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1433EB3ACD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE3F202F6E;
-	Tue, 12 Nov 2024 15:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D6F2038A8;
+	Tue, 12 Nov 2024 15:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Do/7rYUs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="QsprIbAT"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9573202630;
-	Tue, 12 Nov 2024 15:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6E1202647;
+	Tue, 12 Nov 2024 15:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731426578; cv=none; b=sqc4nHfYV0zXuvIMfqEPWVhjef6rKvndNdafMKtZZ5xHEqdW/sHIE+bXE67zSZhZpkp21cVH7LxD/0RyJyXejqfoVYJy3qXQIdsa9dv7ngZ7rg9A+wUmwFwZCX4f4YXBG7hH1Pw7Z903GkMcCNFCzmvtfaOU/Kh+XL1Lzo31kPQ=
+	t=1731426588; cv=none; b=DiCVJQawFWmsdyqbIjpA3wwZtTTlw1A7Y9Hqmmu/ti+9pmyVMkzRxMa0MJUCgS275Ss/R6SWzHI5QkIoVX3uuHxx+nU1RQ9So9t9lkbw+3MI9GCllnEij2ZpVskxcU2hN8aHiz42DkBW0JSyO8r8mmeUnOLh7uCao+52B5Wg21o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731426578; c=relaxed/simple;
-	bh=JPvp3Mh/bQjUYQkmm8hWLGL1nUaZ5fMwHjXvQSZsZYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ll8EE8V18W8UwEBwjVCn4+QpfbP0jygg/pfGLZEGjz7SIbQFtQwfZdhT34Gw6LGPL4cmaGrK/Ds3Is6IxzcNue8E0v8U3pgHF1/jI3hhiH8jc7eE6sfyxjeYZfenzoL2puT+5x0UiLhcGhkbOwpbXT70zihT01JeIZgiP9n0OuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Do/7rYUs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 267EAC4CECD;
-	Tue, 12 Nov 2024 15:49:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731426577;
-	bh=JPvp3Mh/bQjUYQkmm8hWLGL1nUaZ5fMwHjXvQSZsZYo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Do/7rYUspPeEoWMaeACCaJadOiUwHw3Kl4Zt5vQPquRqdxl0MH71LUywsjHIbnWi/
-	 hVsvPI7xTJ+iGVrd1kkonTi+JmIU2LhSSteoh/gUJaYCXQsq1D0bQsllo4MZYipyd7
-	 AY8+OpRMStTHprdVpkQ+LWAJuoneLKaU8YKUDYA3ESkvtVzhxHjBX/6IDeL9W8PjH/
-	 WVfp51P3KGpoF9XXkoDt0Gmp4zWhut0Ja9mudv1cq0+/jvFaC99FcTt1T6UYwg/BbL
-	 ie/vQh7A7ZffM1Zn5yjCvMVxYMxYpegnD8M8ybLiFYlkslQ7nzJ1BS6RC820PvGMGy
-	 Ibjy7Thz1wlag==
-Date: Tue, 12 Nov 2024 09:49:34 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
-	Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] arm64: dts: qcom: qcs6490-rb3gen2: Add node for
- qps615
-Message-ID: <6lfxpzpfpfb2s2rhbf3ch4rgyegw6cehfbrj26sqodzr2vfi4q@hgc3ahuulwqv>
-References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
- <20241112-qps615_pwr-v3-2-29a1e98aa2b0@quicinc.com>
+	s=arc-20240116; t=1731426588; c=relaxed/simple;
+	bh=HpsJRRqcEB7ubb20AIGzwyE59bS3PSN7BTK6n02gdPE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=OqXummaDfZvS49LgD0QHFwuM9Tn1+jjfvuV1lvc8HcareS52TVVjBCJqIlMA8TrDnKkB1UlyE2zgNkNpoyXP5PXICTqo0yVvyfpKVzu3eaKY7pR2hC2wcs3gWLhyooA3nfP9RZXsXM+xA/NNbVBCbC8jWj6B4f5UbSo7S6wVRc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=QsprIbAT; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [192.168.93.162] (254C22F6.nat.pool.telekom.hu [37.76.34.246])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 89B86E45D1;
+	Tue, 12 Nov 2024 15:49:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1731426584;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pJVsYRZf77zXzY1oz4aX5qV6KoAi5dZCp6QEtJjBO5E=;
+	b=QsprIbATiOINK8e0KFx0W6G6LBo+DCR+4FYoe99tHNQu1DFhTA9AzT8kjnn26KV/P8a+du
+	6xlSV3mNhVvHMPTQ4B6Sp5jwwfQ9rM/ajunE2zK6Nefgw59Ot9/skf+Ww1nmbOSg+r8kLG
+	/32YYg87GMBll0Bb+3/HzZ3v5Azu/SUAmOSeBzZlmmk4zMAT6/lKeEfgva3JKxt/kDfcd6
+	aJoCKWwz5v8yZFFD4Nfnw2Lm/66zjvkIJvuv5bnFaQzkQo90q40RGJ+bYOVUcbwE9mqENq
+	n4dAzsucfRBMWDzxbRn7SFTRIpHhTXmxmztWjmu5sv6vmg4XUvix+ok0W5BXWA==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Tue, 12 Nov 2024 16:49:34 +0100
+Subject: [PATCH v5 04/10] dt-bindings: thermal: tsens: Add MSM8937
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112-qps615_pwr-v3-2-29a1e98aa2b0@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241112-msm8917-v5-4-3ca34d33191b@mainlining.org>
+References: <20241112-msm8917-v5-0-3ca34d33191b@mainlining.org>
+In-Reply-To: <20241112-msm8917-v5-0-3ca34d33191b@mainlining.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731426576; l=935;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=HpsJRRqcEB7ubb20AIGzwyE59bS3PSN7BTK6n02gdPE=;
+ b=hCmJQ/PjL3fYNUJJwOkctpo3PjNNP0NUMuxB4G8XdrEw3bcCtm8516+TLgLQ1scISU9Gp+bzr
+ jTRdbQhWo2CC3/cH4Nzho76V8ihIN58Dfh+ncZWLJZckN1jdL684Vxs
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-On Tue, Nov 12, 2024 at 08:31:34PM +0530, Krishna chaitanya chundru wrote:
-> Add QPS615 PCIe switch node which has 3 downstream ports and in one
-> downstream port two embedded ethernet devices are present.
-> 
-> Power to the QPS615 is supplied through two LDO regulators, controlled
-> by two GPIOs, these are added as fixed regulators. And the QPS615 is
-> configured through i2c.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Document the compatible string for tsens v1.4 block found in MSM8937.
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+ Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Regards,
-Bjorn
+diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+index a12fddc8195500a0e7bdd51952a558890b35935c..f51656b672030b12ea0405fd392af11056093be7 100644
+--- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
++++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+@@ -39,6 +39,7 @@ properties:
+       - description: v1 of TSENS
+         items:
+           - enum:
++              - qcom,msm8937-tsens
+               - qcom,msm8956-tsens
+               - qcom,msm8976-tsens
+               - qcom,qcs404-tsens
 
-> ---
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 115 +++++++++++++++++++++++++++
->  arch/arm64/boot/dts/qcom/sc7280.dtsi         |   2 +-
->  2 files changed, 116 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> index 0d45662b8028..0e890841b600 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> @@ -202,6 +202,30 @@ vph_pwr: vph-pwr-regulator {
->  		regulator-min-microvolt = <3700000>;
->  		regulator-max-microvolt = <3700000>;
->  	};
-> +
-> +	vdd_ntn_0p9: regulator-vdd-ntn-0p9 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "VDD_NTN_0P9";
-> +		gpio = <&pm8350c_gpios 2 GPIO_ACTIVE_HIGH>;
-> +		regulator-min-microvolt = <899400>;
-> +		regulator-max-microvolt = <899400>;
-> +		enable-active-high;
-> +		pinctrl-0 = <&ntn_0p9_en>;
-> +		pinctrl-names = "default";
-> +		regulator-enable-ramp-delay = <4300>;
-> +	};
-> +
-> +	vdd_ntn_1p8: regulator-vdd-ntn-1p8 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "VDD_NTN_1P8";
-> +		gpio = <&pm8350c_gpios 3 GPIO_ACTIVE_HIGH>;
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +		enable-active-high;
-> +		pinctrl-0 = <&ntn_1p8_en>;
-> +		pinctrl-names = "default";
-> +		regulator-enable-ramp-delay = <10000>;
-> +	};
->  };
->  
->  &apps_rsc {
-> @@ -684,6 +708,75 @@ &mdss_edp_phy {
->  	status = "okay";
->  };
->  
-> +&pcie1_port {
-> +	pcie@0,0 {
-> +		compatible = "pci1179,0623";
-> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
-> +		#address-cells = <3>;
-> +		#size-cells = <2>;
-> +
-> +		device_type = "pci";
-> +		ranges;
-> +		bus-range = <0x2 0xff>;
-> +
-> +		vddc-supply = <&vdd_ntn_0p9>;
-> +		vdd18-supply = <&vdd_ntn_1p8>;
-> +		vdd09-supply = <&vdd_ntn_0p9>;
-> +		vddio1-supply = <&vdd_ntn_1p8>;
-> +		vddio2-supply = <&vdd_ntn_1p8>;
-> +		vddio18-supply = <&vdd_ntn_1p8>;
-> +
-> +		i2c-parent = <&i2c0 0x77>;
-> +
-> +		reset-gpios = <&pm8350c_gpios 1 GPIO_ACTIVE_LOW>;
-> +
-> +		pcie@1,0 {
-> +			reg = <0x20800 0x0 0x0 0x0 0x0>;
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +
-> +			device_type = "pci";
-> +			ranges;
-> +			bus-range = <0x3 0xff>;
-> +		};
-> +
-> +		pcie@2,0 {
-> +			reg = <0x21000 0x0 0x0 0x0 0x0>;
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +
-> +			device_type = "pci";
-> +			ranges;
-> +			bus-range = <0x4 0xff>;
-> +		};
-> +
-> +		pcie@3,0 {
-> +			reg = <0x21800 0x0 0x0 0x0 0x0>;
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +			device_type = "pci";
-> +			ranges;
-> +			bus-range = <0x5 0xff>;
-> +
-> +			pcie@0,0 {
-> +				reg = <0x50000 0x0 0x0 0x0 0x0>;
-> +				#address-cells = <3>;
-> +				#size-cells = <2>;
-> +				device_type = "pci";
-> +				ranges;
-> +			};
-> +
-> +			pcie@0,1 {
-> +				reg = <0x50100 0x0 0x0 0x0 0x0>;
-> +				#address-cells = <3>;
-> +				#size-cells = <2>;
-> +				device_type = "pci";
-> +				ranges;
-> +			};
-> +		};
-> +	};
-> +};
-> +
->  &pmk8350_rtc {
->  	status = "okay";
->  };
-> @@ -812,6 +905,28 @@ lt9611_rst_pin: lt9611-rst-state {
->  	};
->  };
->  
-> +&pm8350c_gpios {
-> +	ntn_0p9_en: ntn-0p9-en-state {
-> +		pins = "gpio2";
-> +		function = "normal";
-> +
-> +		bias-disable;
-> +		input-disable;
-> +		output-enable;
-> +		power-source = <0>;
-> +	};
-> +
-> +	ntn_1p8_en: ntn-1p8-en-state {
-> +		pins = "gpio3";
-> +		function = "normal";
-> +
-> +		bias-disable;
-> +		input-disable;
-> +		output-enable;
-> +		power-source = <0>;
-> +	};
-> +};
-> +
->  &tlmm {
->  	lt9611_irq_pin: lt9611-irq-state {
->  		pins = "gpio24";
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> index 3d8410683402..82434f085ff0 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> @@ -2279,7 +2279,7 @@ pcie1: pcie@1c08000 {
->  
->  			status = "disabled";
->  
-> -			pcie@0 {
-> +			pcie1_port: pcie@0 {
->  				device_type = "pci";
->  				reg = <0x0 0x0 0x0 0x0 0x0>;
->  				bus-range = <0x01 0xff>;
-> 
-> -- 
-> 2.34.1
-> 
+-- 
+2.47.0
+
 
