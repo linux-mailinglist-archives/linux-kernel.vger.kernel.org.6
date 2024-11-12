@@ -1,95 +1,124 @@
-Return-Path: <linux-kernel+bounces-406820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3ADF9C648C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:53:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A489C6494
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:56:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18F962857E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:53:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C08285920
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2183A21CF9E;
-	Tue, 12 Nov 2024 22:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B3821B42F;
+	Tue, 12 Nov 2024 22:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q6y6LtGk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fb9HEOOw"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C15221CF89;
-	Tue, 12 Nov 2024 22:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC44421A710
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 22:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731451984; cv=none; b=sVVN7ccOvHzjOiWYIAw5iIzML2Etd0k9OlGNlUPpNiwBlKvR64tiwIyEvPu/1fc05L0Hfi8pQ0Au4/z6VBKEqDCeLL22xSUXW0QDuzrBsPAmFMn4eewj0wxqmNrGKI2k+M/hUf2SFDK5rbR980I1X3KhGcLwQuFutEeE8svHYas=
+	t=1731452191; cv=none; b=nNqed/JbVUIBho0mII4FGjvJpcleMgFK/x+M1BvYTjKvWLcbAqG6qEeCiyOXaIZ50YDEEdX4rseORtUJL6lXzGK5quNEY0Ark4H1t5bQdq3eomxMFQbyya8eOyzyXp4Ni5XMU+Th3iHUwD4ulooCDaPtU17RvoiR8DrId2F6Op4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731451984; c=relaxed/simple;
-	bh=yQwt2DsCgJNyhwxurxcyAkIppPnQMY1VaVKG7hi5I50=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=kcNNvOcGg9tgFaxcq7ZU/WB9vjQEFflJtSTfAUn3H1c979nlmkEt5qpOY4bCCZeLqk8Jibdoat2BjTa+5Yp/2+qq+HdOiJsr+xwjcPVjnivTSruTeJ5A1Xk4WLt8Nee0lMZEJFPPfx4ct0yA7xyZ0FpfabSQ9fzITRnxgjC0fws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q6y6LtGk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F323AC4CECD;
-	Tue, 12 Nov 2024 22:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731451984;
-	bh=yQwt2DsCgJNyhwxurxcyAkIppPnQMY1VaVKG7hi5I50=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=q6y6LtGktbgmjw7H7iEjQnUw2HgxVOxdQdc3XvkpzYIwS3B5Bg7247bL18aVlvf6c
-	 HruMzh6Ko1Z6shqY/8X6eMEliFKSNrAGHS4/4Gcijrjs1UEkqkNoEqSTHUaZFrDJEb
-	 gdMrbkSjLDbKB6sAihOeai9Ad4VstoFrf0AAF1cS13kfFvglzDCWVE3PgFXTzsHimE
-	 IVH8dkBDV5m2c3gm2t0Ees/AGJmcOdAt5qLgyZsn1B3WYif5ivyXEdgPMXyqyOvJtb
-	 QbqFFo/TMAivSPSeohmtQmadCT9s+3jD4Qd0eMqU7D/cVZPZxP6YEeSfcQb2sXnRKj
-	 VdxC4cxziwnBA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C503809A80;
-	Tue, 12 Nov 2024 22:53:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1731452191; c=relaxed/simple;
+	bh=oJzhlBuHn1YLXMMDnaSfLL+TXKbLUA8gx3BOGBSu0XM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YePm636Ct4RoSHxkG5j3cEtI6nVqVGYnvITilnzEHNsHVRk6k+CYoK2rksf6nXlMpbwcnZztzLvkTx0QWPoXuwufxKm5a9vzxp1r3dspPVyBaqEXWLQ2vRowk4Sj6tmO+B3CCKrFpRjI+B1VyaDtVhkz38Mlb2vvpsB1E9+8eKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fb9HEOOw; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <955cb079-b58d-4c32-8925-74f596312b21@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731452184;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xPMqV+lIh6LLpGZxlE7IJAAQFrS4D1/vz6OV9TCZZIY=;
+	b=fb9HEOOwEDmhXyqJIkzybaVGqIUPo3nAWuPMZvVh7Ir2cBAR/eBwHwEivLV89cWFm1YGMt
+	UJKdV9GNlvAlKe9lc+uaDSjhfmrh+XDMBnDMOedVCcmpPhbe38IRv/tWW7F7+PTBKYBO9Z
+	viC9roTt5h+cpCpXR08TyYC3oqf6UPQ=
+Date: Tue, 12 Nov 2024 22:56:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] mmc: core: Only set maximum DMA segment size if DMA is
- supported
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <173145199424.701548.5612261824540957185.git-patchwork-notify@kernel.org>
-Date: Tue, 12 Nov 2024 22:53:14 +0000
-References: <20240924210123.2288529-1-linux@roeck-us.net>
-In-Reply-To: <20240924210123.2288529-1-linux@roeck-us.net>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-riscv@lists.infradead.org, ulf.hansson@linaro.org,
- paul.walmsley@sifive.com, samuel.holland@sifive.com,
- linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
- robin.murphy@arm.com
+Subject: Re: [PATCH net-next v3 1/5] net: phy: microchip_ptp : Add header file
+ for Microchip ptp library
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Divya Koppera <divya.koppera@microchip.com>, arun.ramadoss@microchip.com,
+ UNGLinuxDriver@microchip.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ richardcochran@gmail.com
+References: <20241112133724.16057-1-divya.koppera@microchip.com>
+ <20241112133724.16057-2-divya.koppera@microchip.com>
+ <37bba7bc-0d6f-4655-abd7-b6c86b12193a@linux.dev>
+ <53c8b505-f992-4c2e-b2c0-616152b447c3@lunn.ch>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <53c8b505-f992-4c2e-b2c0-616152b447c3@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
-
-This patch was applied to riscv/linux.git (fixes)
-by Ulf Hansson <ulf.hansson@linaro.org>:
-
-On Tue, 24 Sep 2024 14:01:23 -0700 you wrote:
-> Since upstream commit 334304ac2bac ("dma-mapping: don't return errors
-> from dma_set_max_seg_size") calling dma_set_max_seg_size() on a device
-> not supporting DMA results in a warning traceback. This is seen when
-> booting the sifive_u machine from SD. The underlying SPI controller
-> (sifive,spi0 compatible) explicitly sets dma_mask to NULL.
+On 12/11/2024 22:26, Andrew Lunn wrote:
+>> I believe, the current design of mchp_ptp_clock has some issues:
+>>
+>> struct mchp_ptp_clock {
+>>          struct mii_timestamper     mii_ts;             /*     0    48 */
+>>          struct phy_device *        phydev;             /*    48     8 */
+>>          struct sk_buff_head        tx_queue;           /*    56    24 */
+>>          /* --- cacheline 1 boundary (64 bytes) was 16 bytes ago --- */
+>>          struct sk_buff_head        rx_queue;           /*    80    24 */
+>>          struct list_head           rx_ts_list;         /*   104    16 */
+>>          spinlock_t                 rx_ts_lock          /*   120     4 */
+>>          int                        hwts_tx_type;       /*   124     4 */
+>>          /* --- cacheline 2 boundary (128 bytes) --- */
+>>          enum hwtstamp_rx_filters   rx_filter;          /*   128     4 */
+>>          int                        layer;              /*   132     4 */
+>>          int                        version;            /*   136     4 */
+>>
+>>          /* XXX 4 bytes hole, try to pack */
+>>
+>>          struct ptp_clock *         ptp_clock;          /*   144     8 */
+>>          struct ptp_clock_info      caps;               /*   152   184 */
+>>          /* --- cacheline 5 boundary (320 bytes) was 16 bytes ago --- */
+>>          struct mutex               ptp_lock;           /*   336    32 */
+>>          u16                        port_base_addr;     /*   368     2 */
+>>          u16                        clk_base_addr;      /*   370     2 */
+>>          u8                         mmd;                /*   372     1 */
+>>
+>>          /* size: 376, cachelines: 6, members: 16 */
+>>          /* sum members: 369, holes: 1, sum holes: 4 */
+>>          /* padding: 3 */
+>>          /* last cacheline: 56 bytes */
+>> };
+>>
+>> tx_queue will be splitted across 2 cache lines and will have spinlock on the
+>> cache line next to `struct sk_buff * next`. That means 2 cachelines
+>> will have to fetched to have an access to it - may lead to performance
+>> issues.
+>>
+>> Another issue is that locks in tx_queue and rx_queue, and rx_ts_lock
+>> share the same cache line which, again, can have performance issues on
+>> systems which can potentially have several rx/tx queues/irqs.
+>>
+>> It would be great to try to reorder the struct a bit.
 > 
-> Avoid the backtrace by only calling dma_set_max_seg_size() if DMA is
-> supported.
-> 
-> [...]
+> Dumb question: How much of this is in the hot patch? If this is only
+> used for a couple of PTP packets per second, do we care about a couple
+> of cache misses per second? Or will every single packet the PHY
+> processes be affected by this?
 
-Here is the summary with links:
-  - mmc: core: Only set maximum DMA segment size if DMA is supported
-    https://git.kernel.org/riscv/c/c26339faed11
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Even with PTP packets timestamped only - imagine someone trying to run
+PTP server part with some proper amount of clients? And it's valid to
+configure more than 1 sync packet per second. It may become quite hot.
 
 
