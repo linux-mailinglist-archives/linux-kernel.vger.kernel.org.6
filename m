@@ -1,117 +1,106 @@
-Return-Path: <linux-kernel+bounces-406153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46CED9C5B83
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:12:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B759C5B8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:13:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B8C128144A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:12:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7221A2819CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56492003DD;
-	Tue, 12 Nov 2024 15:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526B0200CBE;
+	Tue, 12 Nov 2024 15:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tSPx5jS9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p+/sOxN3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ip0xutgi"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32AC1FBF6E;
-	Tue, 12 Nov 2024 15:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1963E43AA1;
+	Tue, 12 Nov 2024 15:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731424155; cv=none; b=lJkNECFZ+G675ErtVDgNPJfCEviJW5qJnxOHE5ECMcpYdPtxuq5i/ICd/t/xe5E372MCquHJoPRApWcft0JxeZU1+Xx+Em7dfPCBardp3LoW7nNh9NF2YIZik+40RfnwSadey7hkniknc1ucSZ1UBIweACWknDrAttdDxo3ti+A=
+	t=1731424286; cv=none; b=K3RoQTmID49L+633hUuFuHsBTaMb9Z4MECV7Wgtlza7RC0J9jUV1BLoOj6bBAgo4w0aNAzATfJkpVo5FVCyEScsHiXcXS1Qgke9HvrouZ9mvIcEvAXMYxn3T6AsoyEWFsVGdip40EdlpNlBo5z+39RdQReYGEtCNRb9wIoJu+NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731424155; c=relaxed/simple;
-	bh=1yal8WnyDj7WFmQTjtVBqR/Cp2DayfFSKxcCh2gmJb4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iirVO/SNFUIKvUp6qtd7n81n/qIg+WKMCJYlMAkuUdWKOnB7SnJ1UA40mgldV2rWjtyGIP9HCARTTV8GTml3nhv0YdlEeRamsg6BDO+c3i/KS0XwkE2WLwSvxQF6nLSGEiGBLsitj6HKYCa6N1982Qgufr+Q+hV3TgS/AlGhnr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tSPx5jS9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p+/sOxN3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731424152;
+	s=arc-20240116; t=1731424286; c=relaxed/simple;
+	bh=mNQcuKMKs9WkN4Bp/Cnr0be/5mklf3kyEQiJd0Xw/5E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pftcbjy5D2igLgDhFut/Zmd0iB5e0R8ARxiVPp5bwqBsa8L2Q1ZcWxSxuPtuLjCq645kUElc0By6vPy0chfsksiQ1cNwSwE2aa7Q5azawoqQ73TZjlwkCwobTidhDXGoFp2kLKL+e/XJvNROuq6nPRSdUfLnr4cXF/Nklv0vETI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ip0xutgi; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5A5C660007;
+	Tue, 12 Nov 2024 15:11:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731424282;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+OwuircvxUSa0rTscRYfW7ivkxPcWV/LKtkFlw2hGKg=;
-	b=tSPx5jS9oii0btPsjnoFzDrjL8q4vDgEm558vreVqWxdUWauz32a4YFHDA5Zm9DTWe/exO
-	m/sFLgqyq0NaoM4ALjnXBvqKmkp2zFRxAIxBj3uAnInrZ4tCJ3ZDWZ/8wu8xYer7cdwS1i
-	Vls7Bc+RMp2ybtDTFHdu5BQ0hgIzDVnLHprqxEkpmsN+YgklQyNfXSptRXteb20QKmgcxF
-	bkEmEDJIyFIHzs3Rb5OxoXOcxV10phPPV69ZqtRiXVjUwzwFbwO6KprXIfuH+y5Xde8nn+
-	5KkxYIg2zf5qdgTAWAw2rC+ZbzxkWSIYXrT+30Le8F2PMDud821tEcZxTcDuBQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731424152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+OwuircvxUSa0rTscRYfW7ivkxPcWV/LKtkFlw2hGKg=;
-	b=p+/sOxN3Bs0C7HUz9S8JdQpZDGBP1h0uNHRTlfS66d3H3AsogsfU6VQCumczuYdxB3dBdA
-	7de6h++tqZhrwmBg==
-To: Kunwu Chan <kunwu.chan@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
- song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- bigeasy@linutronix.de, clrkwllms@kernel.org, rostedt@goodmis.org
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rt-devel@lists.linux.dev, Kunwu Chan <chentao@kylinos.cn>,
- syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
-Subject: Re: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
-In-Reply-To: <20241108063214.578120-1-kunwu.chan@linux.dev>
-References: <20241108063214.578120-1-kunwu.chan@linux.dev>
-Date: Tue, 12 Nov 2024 16:08:47 +0100
-Message-ID: <87v7wsmqv4.ffs@tglx>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wtYYv5PUbJ77a03efiZ4pQ9s9mVP5SQ4dp9o7vG+bhc=;
+	b=ip0xutgijU+5oT3vaZ6qMbY0/Fd203OE2X0js6IeT2uBer4qH4NhdW0Ilz5pAnd9EmLJPz
+	pIVPx/xI3i+a/p8AZnJlHecfe7y43RYDZDemGavd2j7rj9dCkf0uNnLxhfhykN4YGHXYtT
+	yG0YD6B2WzNcegL4UodEG8+FHkCPL1VMB+7Uem12woajXS5AGAnBDrvijxywl6QzKicKZO
+	jxuCLRGjM7MLnAfETa1LGC2JsHeyiNgBCPCCNkZ2Ips6daXEMdoflOuu85L76xlmTYgsEq
+	N3INL4Gp32+huKZRBHLYaviVUQo+bhJ4hPZVaFVkV6IsrAMpYYcCk6jLJcQ6sg==
+From: alexandre.belloni@bootlin.com
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] rtc: ab-eoz9: fix abeoz9_rtc_read_alarm
+Date: Tue, 12 Nov 2024 16:11:18 +0100
+Message-ID: <20241112151119.3451611-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Fri, Nov 08 2024 at 14:32, Kunwu Chan wrote:
-> When PREEMPT_RT is enabled, 'spinlock_t' becomes preemptible
-> and bpf program has owned a raw_spinlock under a interrupt handler,
-> which results in invalid lock acquire context.
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-This explanation is just wrong.
+abeoz9_rtc_read_alarm assumes we always read the alarm in 12-hour mode
+while abeoz9_rtc_set_alarm will always set it in 24-hour mode.
 
-The problem has nothing to do with an interrupt handler. Interrupt
-handlers on RT kernels are force threaded.
+We could support 12-hour mode in both functions but it seems very unlikely
+that the RTC would be set to 12-hour mode now as the driver has been
+setting it to 24-hour mode for a while now. The setting is undefined at
+power-up and unchanged by subsequent resets which doesn't help us.
 
->  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->  _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
->  trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
->  bpf_prog_2c29ac5cdc6b1842+0x43/0x47
->  bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
->  __bpf_prog_run include/linux/filter.h:701 [inline]
->  bpf_prog_run include/linux/filter.h:708 [inline]
->  __bpf_trace_run kernel/trace/bpf_trace.c:2340 [inline]
->  bpf_trace_run1+0x2ca/0x520 kernel/trace/bpf_trace.c:2380
->  trace_workqueue_activate_work+0x186/0x1f0 include/trace/events/workqueue.h:59
->  __queue_work+0xc7b/0xf50 kernel/workqueue.c:2338
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+Changes in v2:
+ - remove left over from development
 
-The problematic lock nesting is the work queue pool lock, which is a raw
-spinlock.
 
-> @@ -330,7 +330,7 @@ static long trie_update_elem(struct bpf_map *map,
->  	if (key->prefixlen > trie->max_prefixlen)
->  		return -EINVAL;
->  
-> -	spin_lock_irqsave(&trie->lock, irq_flags);
-> +	raw_spin_lock_irqsave(&trie->lock, irq_flags);
->  
->  	/* Allocate and fill a new node */
+ drivers/rtc/rtc-ab-eoz9.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Making this a raw spinlock moves the problem from the BPF trie code into
-the memory allocator. On RT the memory allocator cannot be invoked under
-a raw spinlock.
-
-Thanks,
-
-        tglx
+diff --git a/drivers/rtc/rtc-ab-eoz9.c b/drivers/rtc/rtc-ab-eoz9.c
+index 02f7d0711287..84c5f77808c5 100644
+--- a/drivers/rtc/rtc-ab-eoz9.c
++++ b/drivers/rtc/rtc-ab-eoz9.c
+@@ -64,7 +64,7 @@
+ #define ABEOZ9_BIT_ALARM_MIN		GENMASK(6, 0)
+ #define ABEOZ9_REG_ALARM_HOURS		0x12
+ #define ABEOZ9_BIT_ALARM_HOURS_PM	BIT(5)
+-#define ABEOZ9_BIT_ALARM_HOURS		GENMASK(4, 0)
++#define ABEOZ9_BIT_ALARM_HOURS		GENMASK(5, 0)
+ #define ABEOZ9_REG_ALARM_DAYS		0x13
+ #define ABEOZ9_BIT_ALARM_DAYS		GENMASK(5, 0)
+ #define ABEOZ9_REG_ALARM_WEEKDAYS	0x14
+@@ -231,8 +231,6 @@ static int abeoz9_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alarm)
+ 	alarm->time.tm_sec = bcd2bin(FIELD_GET(ABEOZ9_BIT_ALARM_SEC, regs[0]));
+ 	alarm->time.tm_min = bcd2bin(FIELD_GET(ABEOZ9_BIT_ALARM_MIN, regs[1]));
+ 	alarm->time.tm_hour = bcd2bin(FIELD_GET(ABEOZ9_BIT_ALARM_HOURS, regs[2]));
+-	if (FIELD_GET(ABEOZ9_BIT_ALARM_HOURS_PM, regs[2]))
+-		alarm->time.tm_hour += 12;
+ 
+ 	alarm->time.tm_mday = bcd2bin(FIELD_GET(ABEOZ9_BIT_ALARM_DAYS, regs[3]));
+ 
+-- 
+2.47.0
 
 
