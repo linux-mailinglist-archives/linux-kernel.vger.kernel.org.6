@@ -1,198 +1,107 @@
-Return-Path: <linux-kernel+bounces-405370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0666D9C506D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:21:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64B49C5073
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:22:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEEAD285CE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:21:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C373285E0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3B820C02B;
-	Tue, 12 Nov 2024 08:21:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8043720C009;
-	Tue, 12 Nov 2024 08:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5270C20BB44;
+	Tue, 12 Nov 2024 08:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RuXKYFFT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2BA20B20F
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731399681; cv=none; b=FO+0h+GU0M0EAabm97G2WYFPPna3tB96Boheqp9oi/7C3CSjsCF3WwOzM2agsEvmP+7Cya+zhAsrYes68SSXlSQ7kzEVUcSq8qhs6wAknP1D4Oo7okpD9iqv979lLnubdMuaoHiZWaL6KxL7CYLHW+QUg4sq/k4lUKH+GcGLwaw=
+	t=1731399713; cv=none; b=OIZTQ3oMwVUMUXTY3KF68t8PAlYGXK6u1BVFyU4QKNjvXeIybOfiIH6cnTnc4dCpKTl2VYetVjEZVVL6ApYZ7cd3wjpXWYRiALMLXsiPlpVC3uxGr41ZgCBsm1Uv2faP2cXqGVOGKmox3SOWi+wlFD+uC6Ryx0vd7lD18FNUT9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731399681; c=relaxed/simple;
-	bh=uwoun4OOl8XruolRVALC6myjgpm3tS2FLog1+GGP+/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cIvXi47Y9HugYE4B8Lqp/9eg/wMcdJhrSDgBicQfLNGJmIVC/c5YQkOEVAxt0REyCW8mPaAMe5QWxuGHSLHQAQGG9bYotOE33/T6MD2pzqyWdiGnJ83SLTvAHn03xbzWjK22Qjau1p6j2qcHulWuIkJlLKKd2pqLTbbGasmMIVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60E4912FC;
-	Tue, 12 Nov 2024 00:21:48 -0800 (PST)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E001C3F6A8;
-	Tue, 12 Nov 2024 00:21:16 -0800 (PST)
-Message-ID: <c4631fdd-0b01-4bda-9e9f-6ac974e27b68@arm.com>
-Date: Tue, 12 Nov 2024 09:21:16 +0100
+	s=arc-20240116; t=1731399713; c=relaxed/simple;
+	bh=E2JnKx+5iCgJILO+r22UoLU1siqCaV3PfeuXSkuonLQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=nr24E8mJxtzwoleaeoxjM3JJsQXwNWUINUznqt8qk5uf6wVR5/I8mvDBmbDkSzdyEDiObe/onrGX/Zy+Y8bX6arjuBw9o5WuhJWJN3kHezwESUbrzxR9IPpyqpHJP9jynrzsMdET4Fsy7SRbtLWWUzzZEEaS42BzOOatGJa3WJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RuXKYFFT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731399711;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kzi9gdJPeVpG71SW03k//T9gQOGNKFRiWfLnFWSTCbM=;
+	b=RuXKYFFTNth85ArgBxZj8XaxwpXcqYSIZHC996IyCbGY0wPqTLC7Fp0sZQKJ2I6pWOAvTL
+	jomu2TlseG/iMefOYDYUBPcKq0uJCOxI/niimc5jCqQ8stlyeT7S7mRO4JXhsdgvFpY5qn
+	/Px2664fnpDOnvvnn7n8f55aXkwH6UU=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-157-NL_IQbuNNMGixk4i6X3dHg-1; Tue,
+ 12 Nov 2024 03:21:47 -0500
+X-MC-Unique: NL_IQbuNNMGixk4i6X3dHg-1
+X-Mimecast-MFC-AGG-ID: NL_IQbuNNMGixk4i6X3dHg
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5462B1955F42;
+	Tue, 12 Nov 2024 08:21:46 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.45.224.51])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 138F430000DF;
+	Tue, 12 Nov 2024 08:21:42 +0000 (UTC)
+From: Jan Stancek <jstancek@redhat.com>
+To: donald.hunter@gmail.com,
+	kuba@kernel.org
+Cc: pabeni@redhat.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jstancek@redhat.com
+Subject: [PATCH v2 0/2] tools: ynl: two patches to ease building with rpmbuild
+Date: Tue, 12 Nov 2024 09:21:31 +0100
+Message-ID: <cover.1731399562.git.jstancek@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v0.1 6/6] cpufreq: intel_pstate: Add basic EAS
- support on hybrid platforms
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Len Brown <len.brown@intel.com>, Morten Rasmussen
- <morten.rasmussen@arm.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-References: <3607404.iIbC2pHGDl@rjwysocki.net>
- <115421572.nniJfEyVGO@rjwysocki.net>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <115421572.nniJfEyVGO@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 08/11/2024 17:46, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Modify intel_pstate to register stub EM perf domains for CPUs on
-> hybrid platforms via em_dev_register_perf_domain() and to use
-> em_dev_expand_perf_domain() introduced previously for adding new
-> CPUs to existing EM perf domains when those CPUs become online for
-> the first time after driver initialization.
-> 
-> This change is targeting platforms (for example, Lunar Lake) where
-> "small" CPUs (E-cores) are always more energy-efficient than the "big"
-> or "performance" CPUs (P-cores) when run at the same HWP performance
-> level, so it is sufficient to tell the EAS that E-cores are always
-> preferred (so long as there is enough spare capacity on one of them
-> to run the given task).
+I'm looking to build and package ynl for Fedora and Centos Stream users.
+Default rpmbuild has couple hardening options enabled by default [1][2],
+which currently prevent ynl from building.
 
-By treating all big CPUs (ignoring the different itmt prio values
-between them) we would have a system in which PD's are not in sync with
-the asym_cap_list* or the CPU capacities of individual CPUs and sched
-groups within the sched domain. Not sure if we want to go this way?
+This series contains 2 small patches to address it.
 
-* used by misfit handling - 22d5607400c6 ("sched/fair: Check if a task
-has a fitting CPU when updating misfit")
+[1] https://fedoraproject.org/wiki/Changes/Harden_All_Packages
+[2] https://fedoraproject.org/wiki/Changes/PythonSafePath
 
-> Accordingly, the perf domains are registered per CPU type (that is,
-> all P-cores belong to one perf domain and all E-cores belong to another
-> perf domain) and they are registered only if asymmetric CPU capacity is
-> enabled.  Each perf domain has a one-element states table and that
-> element only contains the relative cost value (the other fields in
-> it are not initialized, so they are all equal to zero), and the cost
-> value for the E-core perf domain is lower.
+Changes in v2:
+- rebased on top of https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/
 
-[...]
+Jan Stancek (2):
+  tools: ynl: add script dir to sys.path
+  tools: ynl: extend CFLAGS to keep options from environment
 
-> +static int hybrid_pcore_cost(struct device *dev, unsigned long freq,
-> +			     unsigned long *cost)
-> +{
-> +	/*
-> +	 * The number used here needs to be higher than the analogous
-> +	 * one in hybrid_ecore_cost() below.  The units and the actual
-> +	 * values don't matter.
-> +	 */
-> +	*cost = 2;
-> +	return 0;
+ tools/net/ynl/cli.py             | 3 +++
+ tools/net/ynl/ethtool.py         | 2 ++
+ tools/net/ynl/generated/Makefile | 2 +-
+ tools/net/ynl/lib/Makefile       | 2 +-
+ tools/net/ynl/samples/Makefile   | 2 +-
+ tools/net/ynl/ynl-gen-c.py       | 3 +++
+ 6 files changed, 11 insertions(+), 3 deletions(-)
 
-So you're not tying this to HFI energy scores?
+-- 
+2.43.0
 
-> +}
-> +
-> +static int hybrid_ecore_cost(struct device *dev, unsigned long freq,
-> +			     unsigned long *cost)
-> +{
-> +	*cost = 1;
-> +	return 0;
-> +}
-> +
-> +static struct hybrid_em_perf_domain perf_domains[HYBRID_NR_TYPES] = {
-> +	[HYBRID_PCORE] = { .cb.get_cost = hybrid_pcore_cost, },
-> +	[HYBRID_ECORE] = { .cb.get_cost = hybrid_ecore_cost, }
-> +};
-> +
-> +static bool hybrid_register_perf_domain(struct hybrid_em_perf_domain *pd)
-> +{
-> +	/*
-> +	 * Registering EM perf domains without asymmetric CPU capacity
-> +	 * support enabled is wasteful, so don't do that.
-> +	 */
-> +	if (!hybrid_max_perf_cpu)
-> +		return false;
-> +
-> +	pd->dev = get_cpu_device(cpumask_first(&pd->cpumask));
-> +	if (!pd->dev)
-> +		return false;
-> +
-> +	if (em_dev_register_perf_domain(pd->dev, 1, &pd->cb, &pd->cpumask, false)) {
-> +		pd->dev = NULL;
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-
-What are the issues in case you would use the existing ways (non-stub)
-to setup the EM?
-
-static int intel_pstate_get_cpu_cost()
-
-static void intel_pstate_register_em(struct cpufreq_policy *policy)
-
-  struct em_data_callback em_cb = EM_ADV_DATA_CB(NULL,
-                                              intel_pstate_get_cpu_cost)
-
-  em_dev_register_perf_domain(get_cpu_device(policy->cpu), 1,
-                              &em_cb, policy->related_cpus, 1);
-                                      ^^^^^^^^^^^^^^^^^^^^*
-
-static void intel_pstate_set_register_em_fct(void)
-
-  default_driver->register_em = intel_pstate_register_em
-
-static int __init intel_pstate_init(void)
-
-  ...
-  intel_pstate_set_register_em_fct()
-  ...
-
-I guess one issue is the per-CPU policy as an argument to
-em_dev_register_perf_domain() (*) ?
-
-> +static void hybrid_register_all_perf_domains(void)
-> +{
-> +	enum hybrid_cpu_type type;
-> +
-> +	for (type = HYBRID_PCORE; type < HYBRID_NR_TYPES; type++)
-> +		hybrid_register_perf_domain(&perf_domains[type]);
-> +}
-> +
-> +static void hybrid_add_to_perf_domain(int cpu, enum hybrid_cpu_type type)
-> +{
-> +	struct hybrid_em_perf_domain *pd = &perf_domains[type];
-> +
-> +	guard(mutex)(&hybrid_capacity_lock);
-> +
-> +	if (cpumask_test_cpu(cpu, &pd->cpumask))
-> +		return;
-> +
-> +	cpumask_set_cpu(cpu, &pd->cpumask);
-> +	if (pd->dev)
-> +		em_dev_expand_perf_domain(pd->dev, cpu);
-> +	else if (hybrid_register_perf_domain(pd))
-> +		em_rebuild_perf_domains();
-
-I assume that the 'if' and the 'else if' condition here are only taken
-when the CPU is brought online after boot?
-
-[...]
 
