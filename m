@@ -1,250 +1,111 @@
-Return-Path: <linux-kernel+bounces-405318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70589C4FD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:48:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E92519C4FC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:45:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1606EB285CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:48:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7621CB259B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C420220BB27;
-	Tue, 12 Nov 2024 07:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C90520E018;
+	Tue, 12 Nov 2024 07:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d5noO6F9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gB2oFB+k"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDA720B7EB;
-	Tue, 12 Nov 2024 07:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858F120E013
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731397303; cv=none; b=DWNbUK6yawuI99NbMHXzXFRfx72Mjl1KxVd0UUfQdKWhIH1BdZoZr8I683+whvZTaRRTay8BGfMqykM4VJxeQxlbrem1NZu9tLaUvylHhcWJArw0JtMtC8g+WtIpde1X1unYFH+1FX3ciJn/INI7ZqOO4NmfL+7P8FQd9R28yog=
+	t=1731397257; cv=none; b=TRxIvrzeXYnTnPbnOEKJVvSzI3o/JbOrZ2G2Orjh+77divyUyjNloasMZ4xA1/HZcCny8gkcn4HSavJg06GRJ3jIiXb5t6pTKmB+/lbr1prINREqdqq5ikvx9ERdsiOmGNWX7r3ONBkBnhAKzzc/lm6+jyycEdZZB7iZfLGAwIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731397303; c=relaxed/simple;
-	bh=hSJ6BEYyUGCyEcY/U+BKLm7dTIH/L848thDKTcyA8Xg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lJOlWINLMeioc5xzZiOmM8efxm5gdlssw2jvNWiG0aGpvbc9qOdT3LXok7+hWIeR7fFVGJKn+4wP/vbfFabicIkHcEtsGbHT4fNihKaRAhI+Qj0ZzsVT1b01QadO0ksHMuUbnKdmQsZO/6xL+twPN0zfop5Dphd+jd+/PyYzD+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d5noO6F9; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731397301; x=1762933301;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=hSJ6BEYyUGCyEcY/U+BKLm7dTIH/L848thDKTcyA8Xg=;
-  b=d5noO6F9wG/YrECAoUAXCtQOrZzmEbAr6uRYhkdn1nsZI61iDNNHaE6g
-   jXoK+QTmFhN6SxpuO2QreDZwf3H5qo6Vv7JsWl16W63UIDnTIHesHVARE
-   HrfHqbAqRQJnWpSFj+pLQ8AtmmPUQXelYQOG9F90dSnFQw7SdgS8biy6M
-   gV/WqCdm4/TyAFeyEBgNbgJo0L2EBmozzyc5yvzi663fiN/DJ6GRX7Q5l
-   j6wG/pbvsc+WAmUqlsCI0I83uKCXQb3C5yEfjUrtBO12p2jkj2BgbGlqC
-   gpKF1qcKI1EpJvw+b74eXjCMcSptGpTFrH9+4tttKkoX+vS0EFUXUUCso
-   g==;
-X-CSE-ConnectionGUID: xPd20s7eSzGx+WfioRESqA==
-X-CSE-MsgGUID: qG7rL3TBR9aQ73gZXpFosA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="31090942"
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="31090942"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:41:41 -0800
-X-CSE-ConnectionGUID: TtLWdoWQQdmpQSpiSx+ODg==
-X-CSE-MsgGUID: v5QTDcqTQfyb5cCPTOPVZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="92089776"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:41:37 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org,
-	dave.hansen@linux.intel.com
-Cc: rick.p.edgecombe@intel.com,
-	kai.huang@intel.com,
-	adrian.hunter@intel.com,
-	reinette.chatre@intel.com,
-	xiaoyao.li@intel.com,
-	tony.lindgren@intel.com,
-	binbin.wu@linux.intel.com,
-	dmatlack@google.com,
-	isaku.yamahata@intel.com,
-	isaku.yamahata@gmail.com,
-	nik.borisov@suse.com,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: [PATCH v2 24/24] [HACK] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with operand SEPT
-Date: Tue, 12 Nov 2024 15:39:09 +0800
-Message-ID: <20241112073909.22326-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20241112073327.21979-1-yan.y.zhao@intel.com>
-References: <20241112073327.21979-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1731397257; c=relaxed/simple;
+	bh=LCGPv+6YwJIdrNnGREkhyKDHGqnUI/KiwmLaMOf/yJs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LARTWEHTa8/y7B1Re+MPj7nwWWuCuTqwEq0e/gZ26Yj7QXnU3MaXNsMLQm3f0sVBwkLhNnk+0k37Wou7aZg3kbEnV62/5KMHo4+zj8wREU67Jls68bzOgCzp3lyUKxUKCnNsd+lSiIWNcgzNnx5gyuoLwPAejD3WdWZdQ/7PJMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gB2oFB+k; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea258fe4b6so97027057b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:40:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731397254; x=1732002054; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PrZPIuWY1b6bcFJ7xG9KK/ME+qoSvMHLOuT1F2kJLZE=;
+        b=gB2oFB+k/ny2rJr8baBTDpqQ+xSWQoAtpFnu6zTTPbWCpao7HhmAOZHbC0DCIPzZu/
+         fdXSgbPQmON9hCTTQdjBcs27L+Jh/F+tg0n+cTu3qqnGO5qmOEc2c4s42CyQ0CY1bYCd
+         vvbG/55ppA7S5+yVRj37CQLISFWX58UDHLwehNqb1bIOLN9dOiU8jusln0pAhjjAtLyp
+         ippqwdOcak35A5Wgg9sm/cx28tji9eSJ5Yqd2xjg+nddT4seH06D2HDDsTBA/fCJHeD8
+         6aQIFDh4hdmjPqPewJ+8OgRIRuYqGgVHUZ26/AecWj1NMNA7BgUl1HMrstBEIkYdP2He
+         qW/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731397254; x=1732002054;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PrZPIuWY1b6bcFJ7xG9KK/ME+qoSvMHLOuT1F2kJLZE=;
+        b=fRP4uvLCyuVNrXsUQwjcVoKPg6Wd00dT8oxVr2e/A4wTwC+zgRmmoRC40OqqlI1tjl
+         sUI32EcF60mtTXKoHW9aPdx8yExuqL35eXwoOHCGCWsSeZEtUHeiwhZlWr/3/6foQkFx
+         GAr9RhDtZTRnWJhulF3IXwicLniYZ+zub6LT0kRzbH11cxaX1lk4FJDaB8wzArew/TTm
+         GsNBytHvWvUSbkU1KT3ozqgnsPE9ytN97SxBwb7Fl0Ln0LXOoNQOxIRcM/jXwybTOOFA
+         Tbwj09XrPWisH6UkKfLyjHX4Xd4BAj19rQrJiU3YAJdbIi6eZBL9rucr70nZtNeFUIJb
+         Zz6A==
+X-Gm-Message-State: AOJu0YyoNd2t1VwYbwZJZklQRL67Y+utqauJSPRHjHEkLF/2vk2qXeHC
+	FKGN54Vw3qJnhXb7JQd7eTPLxuxLU+JhdnY1UEWWbHimX+rgfccqIR5zWHG+kAXenhKE45nqzwR
+	/Rs1BJU9e3tm9cnC0i7fMfOt9pgk3yYyVJGXSl0Y8XNism1PlPxHKBetqbRpvB6hkuz/r1OuC6V
+	kurcr28KWDbDKh93N+y1aTiADy+mpUW7OsDqHytcWtjAeM7QCIqmShHjyZ
+X-Google-Smtp-Source: AGHT+IEdDPa0Xt5ebacxDlkHdUDoUVS+NEyLA4yLerHiyZABrnK1IxrW5FLVo+Dl608HpYDtwlBzmxgWfufmzc4=
+X-Received: from mmaslanka2.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:b8d])
+ (user=mmaslanka job=sendgmr) by 2002:a05:690c:887:b0:6b2:6cd4:7f9a with SMTP
+ id 00721157ae682-6eaddff31bcmr1717127b3.8.1731397253863; Mon, 11 Nov 2024
+ 23:40:53 -0800 (PST)
+Date: Tue, 12 Nov 2024 07:40:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+Message-ID: <20241112074048.1762371-1-mmaslanka@google.com>
+Subject: [PATCH] ASoC: da7219-aad: Fix detection of plugged jack after resume
+From: Marek Maslanka <mmaslanka@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marek Maslanka <mmaslanka@google.com>, 
+	Support Opensource <support.opensource@diasemi.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Yuan Yao <yuan.yao@intel.com>
+Don't notify and mark the jack as unplugged during the "set_jack" action,
+because this action is called very late in during the resume process, forcing
+the jack to be unplugged after the resume, even if the jack is plugged in. Let's
+leave the responsibility of managing the insertion of the jack to IRQ.
 
-Temporary retry in SEAMCALL wrappers when the TDX module returns
-TDX_OPERAND_BUSY with operand SEPT.
-
-The TDX module has many internal locks to protect its resources. To avoid
-staying in SEAM mode for too long, SEAMCALLs will return a TDX_OPERAND_BUSY
-error code to the kernel instead of spinning on the locks.
-
-Usually, callers of the SEAMCALL wrappers can avoid contentions by
-implementing proper locks on their side. For example, KVM can efficiently
-avoid the TDX module's lock contentions for resources like TDR, TDCS, KOT,
-and TDVPR by taking locks within KVM or making a resource per-thread.
-
-However, for performance reasons, callers like KVM may not want to use
-exclusive locks to avoid internal contentions on the SEPT tree within the
-TDX module. For instance, KVM allows TDH.VP.ENTER to run concurrently with
-TDH.MEM.SEPT.ADD, TDH.MEM.PAGE.AUG, and TDH.MEM.PAGE.REMOVE.
-
-Resources       SHARED users               EXCLUSIVE users
-------------------------------------------------------------------------
-SEPT tree       TDH.MEM.SEPT.ADD           TDH.VP.ENTER
-                TDH.MEM.PAGE.AUG           TDH.MEM.SEPT.REMOVE
-                TDH.MEM.PAGE.REMOVE        TDH.MEM.RANGE.BLOCK
-
-Inside the TDX module, although TDH.VP.ENTER only acquires an exclusive
-lock on the SEPT tree when zero-step mitigation is triggered, it is still
-possible to encounter TDX_OPERAND_BUSY with operand SEPT in KVM. Retry in
-the SEAMCALL wrappers temporarily until KVM either retries on the caller
-side or finds a way to avoid the contentions.
-
-Note:
-The wrappers only retry for 16 times for the TDX_OPERAND_BUSY with operand
-SEPT. Retries exceeding 16 times are rare.
-SEAMCALLs TDH.MEM.* can also contend with TDCALL TDG.MEM.PAGE.ACCEPT,
-returning TDX_OPERAND_BUSY without operand SEPT. Do not retry in the
-SEAMCALL wrappers for such rare errors.
-Let the callers handle these rare errors.
-
-Signed-off-by: Yuan Yao <yuan.yao@intel.com>
-Co-developed-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Co-developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+Signed-off-by: Marek Maslanka <mmaslanka@google.com>
 ---
-TDX MMU part 2 v2:
- - Updates the patch log. (Yan)
+ sound/soc/codecs/da7219-aad.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-TDX MMU part 2 v1:
- - Updates from seamcall overhaul (Kai)
-
-v19:
- - fix typo TDG.VP.ENTER => TDH.VP.ENTER,
-   TDX_OPRRAN_BUSY => TDX_OPERAND_BUSY
- - drop the description on TDH.VP.ENTER as this patch doesn't touch
-   TDH.VP.ENTER
----
- arch/x86/virt/vmx/tdx/tdx.c | 47 +++++++++++++++++++++++++++++++++----
- 1 file changed, 42 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index 7e0574facfb0..04cb2f1d6deb 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -1563,6 +1563,43 @@ void tdx_guest_keyid_free(unsigned int keyid)
- }
- EXPORT_SYMBOL_GPL(tdx_guest_keyid_free);
+diff --git a/sound/soc/codecs/da7219-aad.c b/sound/soc/codecs/da7219-aad.c
+index 15e5e3eb592b3..2745b55fba662 100644
+--- a/sound/soc/codecs/da7219-aad.c
++++ b/sound/soc/codecs/da7219-aad.c
+@@ -33,10 +33,6 @@ void da7219_aad_jack_det(struct snd_soc_component *component, struct snd_soc_jac
+ 	struct da7219_priv *da7219 = snd_soc_component_get_drvdata(component);
  
-+/*
-+ * TDX module acquires its internal lock for resources.  It doesn't spin to get
-+ * locks because of its restrictions of allowed execution time.  Instead, it
-+ * returns TDX_OPERAND_BUSY with an operand id.
-+ *
-+ * Multiple VCPUs can operate on SEPT.  Also with zero-step attack mitigation,
-+ * TDH.VP.ENTER may rarely acquire SEPT lock and release it when zero-step
-+ * attack is suspected.  It results in TDX_OPERAND_BUSY | TDX_OPERAND_ID_SEPT
-+ * with TDH.MEM.* operation.  Note: TDH.MEM.TRACK is an exception.
-+ *
-+ * Because TDP MMU uses read lock for scalability, spin lock around SEAMCALL
-+ * spoils TDP MMU effort.  Retry several times with the assumption that SEPT
-+ * lock contention is rare.  But don't loop forever to avoid lockup.  Let TDP
-+ * MMU retry.
-+ */
-+#define TDX_OPERAND_BUSY			0x8000020000000000ULL
-+#define TDX_OPERAND_ID_SEPT			0x92
-+
-+#define TDX_ERROR_SEPT_BUSY    (TDX_OPERAND_BUSY | TDX_OPERAND_ID_SEPT)
-+
-+static inline u64 tdx_seamcall_sept(u64 op, struct tdx_module_args *in)
-+{
-+#define SEAMCALL_RETRY_MAX     16
-+	struct tdx_module_args args_in;
-+	int retry = SEAMCALL_RETRY_MAX;
-+	u64 ret;
-+
-+	do {
-+		args_in = *in;
-+		ret = seamcall_ret(op, in);
-+	} while (ret == TDX_ERROR_SEPT_BUSY && retry-- > 0);
-+
-+	*in = args_in;
-+
-+	return ret;
-+}
-+
- u64 tdh_mng_addcx(u64 tdr, u64 tdcs)
- {
- 	struct tdx_module_args args = {
-@@ -1586,7 +1623,7 @@ u64 tdh_mem_page_add(u64 tdr, u64 gpa, u64 hpa, u64 source, u64 *rcx, u64 *rdx)
- 	u64 ret;
+ 	da7219->aad->jack = jack;
+-	da7219->aad->jack_inserted = false;
+-
+-	/* Send an initial empty report */
+-	snd_soc_jack_report(jack, 0, DA7219_AAD_REPORT_ALL_MASK);
  
- 	clflush_cache_range(__va(hpa), PAGE_SIZE);
--	ret = seamcall_ret(TDH_MEM_PAGE_ADD, &args);
-+	ret = tdx_seamcall_sept(TDH_MEM_PAGE_ADD, &args);
- 
- 	*rcx = args.rcx;
- 	*rdx = args.rdx;
-@@ -1605,7 +1642,7 @@ u64 tdh_mem_sept_add(u64 tdr, u64 gpa, u64 level, u64 hpa, u64 *rcx, u64 *rdx)
- 	u64 ret;
- 
- 	clflush_cache_range(__va(hpa), PAGE_SIZE);
--	ret = seamcall_ret(TDH_MEM_SEPT_ADD, &args);
-+	ret = tdx_seamcall_sept(TDH_MEM_SEPT_ADD, &args);
- 
- 	*rcx = args.rcx;
- 	*rdx = args.rdx;
-@@ -1636,7 +1673,7 @@ u64 tdh_mem_page_aug(u64 tdr, u64 gpa, u64 hpa, u64 *rcx, u64 *rdx)
- 	u64 ret;
- 
- 	clflush_cache_range(__va(hpa), PAGE_SIZE);
--	ret = seamcall_ret(TDH_MEM_PAGE_AUG, &args);
-+	ret = tdx_seamcall_sept(TDH_MEM_PAGE_AUG, &args);
- 
- 	*rcx = args.rcx;
- 	*rdx = args.rdx;
-@@ -1653,7 +1690,7 @@ u64 tdh_mem_range_block(u64 tdr, u64 gpa, u64 level, u64 *rcx, u64 *rdx)
- 	};
- 	u64 ret;
- 
--	ret = seamcall_ret(TDH_MEM_RANGE_BLOCK, &args);
-+	ret = tdx_seamcall_sept(TDH_MEM_RANGE_BLOCK, &args);
- 
- 	*rcx = args.rcx;
- 	*rdx = args.rdx;
-@@ -1882,7 +1919,7 @@ u64 tdh_mem_page_remove(u64 tdr, u64 gpa, u64 level, u64 *rcx, u64 *rdx)
- 	};
- 	u64 ret;
- 
--	ret = seamcall_ret(TDH_MEM_PAGE_REMOVE, &args);
-+	ret = tdx_seamcall_sept(TDH_MEM_PAGE_REMOVE, &args);
- 
- 	*rcx = args.rcx;
- 	*rdx = args.rdx;
+ 	/* Enable/Disable jack detection */
+ 	snd_soc_component_update_bits(component, DA7219_ACCDET_CONFIG_1,
 -- 
-2.43.2
+2.47.0.277.g8800431eea-goog
 
 
