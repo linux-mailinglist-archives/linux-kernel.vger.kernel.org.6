@@ -1,171 +1,172 @@
-Return-Path: <linux-kernel+bounces-406058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03BAF9C5DF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:58:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4949C5D1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:25:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDF54B279AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:37:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F677B654AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DE11FE0EE;
-	Tue, 12 Nov 2024 14:36:16 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9901FCC4F;
+	Tue, 12 Nov 2024 14:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="lP18VSUS"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18291FCF6C;
-	Tue, 12 Nov 2024 14:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4C213BAE2;
+	Tue, 12 Nov 2024 14:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422176; cv=none; b=AEWOxDfKWxjEOeqUcwSbj6qa33ndnPkeNU8taA8qqVhUeGOKhss56gBNC0jm+RIfuaTlqV8p+5FHuLl9qRKBwNF0PTrISTUdkBQRVU4XmvfDAdAIyhMC/q9671f+3Rjlz2ENrabFuwacy9nyOTuXzNL4iYDqYb7O+N2ej+pRv8s=
+	t=1731422206; cv=none; b=VT8J53Qk3PLx28ph5nCfuBGTMAqd/Tt+/iaSOy7P9kmc+TqPjzV4kZP7aox5qNDCPrNcJd+9T+4bE6ApgngaMfDz3BdOiG9FjkF/d7Fdtq7YQDhbYhNqQMIF4WCV9xGBP9eUXBVM4eAB+whWC1Zh/N7zz9AgKXNtZamlANHx+xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422176; c=relaxed/simple;
-	bh=Swj4SJsULX+YIa8TLSPmrrh1lNABYWXUZCNeI6pAgC8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ofDxr9m1kuhrYoBrqMLzgQi4hCeteCgYB87n6hb7l/Su4/HlUYqJM2JW61mqyhPfvifg1xD1rP/g82jG1PE7MRJpatxl4nLjklolZocAyh9RwdK0kt16Y0/LlQJ7Fy6eQ6oiJpJsdd4Vq3UdVKf7xjXKTQriAKcaQlcREmsorFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cb7139d9dso53249235ad.1;
-        Tue, 12 Nov 2024 06:36:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731422174; x=1732026974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fU6W7rKC1LDOoPqE+zgv8rY63qL2TykSBZFtxfoHqJQ=;
-        b=b4fG0o/09cBIx8Z6h4prwEcRDFmVomAXLOQC8+FBVg4RDIU1iI6WtVIfqpbzr6aqAt
-         +9eYCkXbWkWUfGbjMPNtMifED+7NJWm7d6sExSUBWg4pfXTYG3GOULVxNYJeqdDE4zFn
-         fBFLo8nlGBLuEmp5H8F9fe1wLwwIeGFCSIcIG4Ur9HiFiWP4rde+iToDhpITnklwqykf
-         XmO5dLnz/ht5BHeZ6wYUcQUZz4ovLsLggZzKd2/9c4chw0cxQBFCsY42RO21jRJx9FeY
-         KHSemnr8JuB4N2cH6X+gpGRTqXVmGOr+VWkWJRD3n29UTJAbgweM0Hps0V0R8LaeGZL7
-         g2ng==
-X-Forwarded-Encrypted: i=1; AJvYcCUKgXyw0OjfYUeFN2UDNDZUi6lfaC6VrY031lvZ9FtNOs2DFepKyL8fLWsTgFn+La0w6wN1hUdXQ8vr@vger.kernel.org, AJvYcCURrRJCinDSGoj1l87h5prVHPB1T3YvXEEcLo1r/LA0ZyFN24SjrUd4si0l23hSBEhqX42smEVQys1dfZeb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXtTVuaA2tfjHHLznWpMF7A1Yww9lnMcYbW4yvJaFNcd0JPaaQ
-	s9oflgf57+6IwEBY3KpgYQNVzB5iNzIsrxl2+clEtx+xumDAnDAkpfXoASedTeNGwQ==
-X-Google-Smtp-Source: AGHT+IEBldIykjeOMBEw6JcPYD1BWPf3DRE9rWz+yBHxL0qv7kC4+C6xg5z6GXyXJDwsL3vajYna2Q==
-X-Received: by 2002:a17:903:2a8b:b0:20c:cd23:449d with SMTP id d9443c01a7336-21183e1eff6mr220783885ad.46.1731422174169;
-        Tue, 12 Nov 2024 06:36:14 -0800 (PST)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com. [209.85.216.41])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e418bfsm94417445ad.169.2024.11.12.06.36.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 06:36:13 -0800 (PST)
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2eba31d3aso4337669a91.2;
-        Tue, 12 Nov 2024 06:36:13 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUgvaXPA9XYnoRtoCvbCwh+/grG+Tp865E/nRl+alZIpNGLewv97gjfnrug954E4r9yJan6WglUX1rUbZ+8@vger.kernel.org, AJvYcCVEn1NLIHaw0i14pE/4Eh0imt5OpGkoqiAYfSgZ0Ps9MfpNgb0s9RBxoioqSZHxKLP6H1w92Hdn0cwi@vger.kernel.org
-X-Received: by 2002:a17:90b:3c0e:b0:2e2:dcea:2b8c with SMTP id
- 98e67ed59e1d1-2e9b16eeb4emr22784902a91.6.1731422173348; Tue, 12 Nov 2024
- 06:36:13 -0800 (PST)
+	s=arc-20240116; t=1731422206; c=relaxed/simple;
+	bh=aOO9QZMTHau3vTCUo3PfPAinL0t8EQepGvynB/EOXqg=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=I3yiD7EQnliVkrzPfVLuMBPwIRi8j9G9oDqlcF607tIelVBaSASBdphsrkOPNjTPXBdplElnjsadVToij2QmElYe/8pnyx+5/PeD+tjxV+PSzKyfhSLh+Wn0Zj/hCUewYpNHPnO3GECjQP/+kHUM7V82H06lQrdUpXfmIgYVD+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=lP18VSUS; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111181807.13211-1-tszucs@linux.com> <20241111181807.13211-2-tszucs@linux.com>
- <c89c2f16-ffb0-4b61-a962-9705f9f1e0e2@kwiboo.se>
-In-Reply-To: <c89c2f16-ffb0-4b61-a962-9705f9f1e0e2@kwiboo.se>
-From: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>
-Date: Tue, 12 Nov 2024 15:36:02 +0100
-X-Gmail-Original-Message-ID: <CA+GksrJzkxffSQbuseGFL0=2PDxV+TRevX0-NOkc6FNYLmNgYA@mail.gmail.com>
-Message-ID: <CA+GksrJzkxffSQbuseGFL0=2PDxV+TRevX0-NOkc6FNYLmNgYA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm64: dts: rockchip: Add supported UHS-I rates to
- sdmmc0 on rock-3b
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, FUKAUMI Naoki <naoki@radxa.com>, Dragan Simic <dsimic@manjaro.org>, 
-	Chukun Pan <amadeus@jmu.edu.cn>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1731422201;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p37w8dh3AMk4B0TEeIgVCn6S2A3tTzg9OwNCj8TrimU=;
+	b=lP18VSUS81kGud5E6Mo8dEoe3wl9IDmvKcYolW5MJc+ognXnrJbr2X5ZJrLK61keBEf/Qv
+	BMvVCYQyO58cp9HOood0JjU5p+M/v07hV23stEhkpiMCrWl5+Bp8RI7tTDt65dHWT/uvhG
+	vcRg0UEBFgqY/ZeFkHQw9YiLIJu3kE9mei8zrGnLpeJ7zriziE96+9jCqble2bIvhimMD3
+	v7SGJ/2oWxlON6KBN6pO28uws0dpOGxmYEAfNYq0WSXXNri5aEQj9wFSNVwGXiOSLe+pF7
+	IGSAlw/bML6RAgQNCt1eGvz23sLb4m+S+9f/xRgGi/DNHLSwzOt2os4vweQpdQ==
+Date: Tue, 12 Nov 2024 15:36:41 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Fix vdd_gpu voltage constraints on
+ PinePhone Pro
+In-Reply-To: <607a731c-41e9-497a-a08c-f718339610ae@arm.com>
+References: <0718feb8e95344a0b615f61e6d909f6e105e3bf9.1731264205.git.dsimic@manjaro.org>
+ <607a731c-41e9-497a-a08c-f718339610ae@arm.com>
+Message-ID: <fdf58f3e9fcb4c672a4bb114fbdab60d@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hi Jonas,
+Hello Robin,
 
-Thank you for pointing this out! I haven't noticed this before. I've
-done some testing and I believe I am able to reproduce the issue you
-described, although I cannot confirm the reason.
-The only occasion I encounter any problems is when a UHS SD card or
-SDIO device is connected to sdmmc0 during bootup. Sometimes the device
-is recognized as HS only. Obviously no tuning value reported. Also,
-sdmmc2 cuts out completely. I'm booting from eMMC and when the SD card
-is removed in this state I lose my rootfs. Certainly, this needs more
-attention but it seems to be unrelated to the changes here.
+On 2024-11-12 15:19, Robin Murphy wrote:
+> On 10/11/2024 6:44 pm, Dragan Simic wrote:
+>> The regulator-{min,max}-microvolt values for the vdd_gpu regulator in 
+>> the
+>> PinePhone Pro device dts file are too restrictive, which prevents the 
+>> highest
+>> GPU OPP from being used, slowing the GPU down unnecessarily.  Let's 
+>> fix that
+>> by making the regulator-{min,max}-microvolt values less strict, using 
+>> the
+>> voltage range that the Silergy SYR838 chip used for the vdd_gpu 
+>> regulator is
+>> actually capable of producing. [1][2]
+> 
+> Specifying the absolute limits which the regulator driver necessarily
+> already knows doesn't seem particularly useful... Moreover, the RK3399
+> datasheet specifies the operating range for GPU_VDD as 0.80-1.20V, so
+> at the very least, allowing the regulator to go outside that range
+> seems inadvisable.
 
-I need more time to check but are you sure this SD card during bootup
-issue is gone with UHS-I disabled?
+Indeed, which is why I already mentioned in the patch description
+that I do plan to update the constraints of all regulators to match
+the summary of the constraints of their consumers.  Though, I plan
+to do that later, as a separate directory-wide cleanup, for which
+I must find and allocate a substantial amount of time, to make sure
+there will be no mistakes.
 
-Also, in every other case, when you connect any device to sdmmc0 after
-bootup, performance and stability is perfect.
-Interestingly I also don't experience this behavior with an eMMC
-device and / or an SDIO device connected to sdmmc2 during bootup. Only
-sdmmc0 is problematic and only during bootup.
+> However there's a separate datasheet for the
+> RK3399-T variant, which does specify this 875-975mV range and a
+> maximum GPU clock of 600MHz, along with the same 1.5GHz max.
+> Cortex-A72 clock as advertised for RK3399S, so it seems quite possible
+> that these GPU constraints here are in fact intentional as well.
+> Obviously users are free to overclock and overvolt if they wish - I do
+> for my actively-cooled RK3399 board :) - but it's a different matter
+> for mainline to force it upon them.
 
-Any more thoughts on this are very welcome.
+Well, maybe the RK3399S is the same in that regard as the RK3399-T,
+but maybe it actually isn't -- unfortunately, we don't have some
+official RK3399S datasheet that would provide us with the required
+information.  As another, somewhat unrelated example, we don't have
+some official documentation to tell us is the RK3399S supposed not
+to have working PCI Express interface, which officially isn't present
+in the RK3399-T variant.
 
-Kind regards,
-Tamas
+However, I fully agree that forcing any kind of an overclock is not
+what we want to do.  Thus, I'll do my best, as I already noted in this
+thread, to extract the dtb from the "reference" Android build that
+Rockchip itself provided for the RK3399S-based PinePhone Pro.  That's
+closest to the official documentation for the RK3399S variant that we
+can get our hands on.
 
-
-
-Tam=C3=A1s Sz=C5=B1cs
-tszucs@linux.com
-
-On Mon, Nov 11, 2024 at 8:00=E2=80=AFPM Jonas Karlman <jonas@kwiboo.se> wro=
-te:
->
-> Hi Tam=C3=A1s,
->
-> On 2024-11-11 19:17, Tam=C3=A1s Sz=C5=B1cs wrote:
-> > Add all supported UHS-I rates to sdmmc0 and allow 200 MHz maximum clock=
- to
-> > benefit modern SD cards.
-> >
-> > Signed-off-by: Tam=C3=A1s Sz=C5=B1cs <tszucs@linux.com>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts b/arch/arm=
-64/boot/dts/rockchip/rk3568-rock-3b.dts
-> > index 3d0c1ccfaa79..242af5337cdf 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-> > @@ -670,8 +670,14 @@ &sdmmc0 {
-> >       bus-width =3D <4>;
-> >       cap-sd-highspeed;
-> >       disable-wp;
-> > +     max-frequency =3D <200000000>;
-> >       pinctrl-names =3D "default";
-> >       pinctrl-0 =3D <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
-> > +     sd-uhs-sdr12;
-> > +     sd-uhs-sdr25;
-> > +     sd-uhs-sdr50;
-> > +     sd-uhs-sdr104;
-> > +     sd-uhs-ddr50;
->
-> There is an issue with io-domain driver not always being probed before
-> mmc driver, this typically result in io-domain being configured wrong,
-> and mmc tuning happen before io-domain is correctly configured.
->
-> You can usually observe this by looking at the tuning value during boot
-> and comparing it to the tuning value after removing and re-insering a
-> sd-card.
->
-> Because of this uhs modes was left out from initial DT submission, some
-> cards will work others wont, sd-uhs-sdr50 is known to be working with
-> most cards even with the probe order issue.
->
-> Also I thought that lower speeds where implied?
->
-> Regards,
-> Jonas
->
-> >       vmmc-supply =3D <&vcc3v3_sd>;
-> >       vqmmc-supply =3D <&vccio_sd>;
-> >       status =3D "okay";
->
+>> This also eliminates the following error messages from the kernel log:
+>> 
+>>    core: _opp_supported_by_regulators: OPP minuV: 1100000 maxuV: 
+>> 1150000, not supported by regulator
+>>    panfrost ff9a0000.gpu: _opp_add: OPP not supported by regulators 
+>> (800000000)
+>> 
+>> These changes to the regulator-{min,max}-microvolt values make the 
+>> PinePhone
+>> Pro device dts consistent with the dts files for other Rockchip 
+>> RK3399-based
+>> boards and devices.  It's possible to be more strict here, by 
+>> specifying the
+>> regulator-{min,max}-microvolt values that don't go outside of what the 
+>> GPU
+>> actually may use, as the consumer of the vdd_gpu regulator, but those 
+>> changes
+>> are left for a later directory-wide regulator cleanup.
+>> 
+>> [1] 
+>> https://files.pine64.org/doc/PinePhonePro/PinephonePro-Schematic-V1.0-20211127.pdf
+>> [2] 
+>> https://www.t-firefly.com/download/Firefly-RK3399/docs/Chip%20Specifications/DC-DC_SYR837_838.pdf
+>> 
+>> Fixes: 78a21c7d5952 ("arm64: dts: rockchip: Add initial support for 
+>> Pine64 PinePhone Pro")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> ---
+>>   arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts 
+>> b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+>> index 1a44582a49fb..956d64f5b271 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+>> @@ -410,8 +410,8 @@ vdd_gpu: regulator@41 {
+>>   		pinctrl-names = "default";
+>>   		pinctrl-0 = <&vsel2_pin>;
+>>   		regulator-name = "vdd_gpu";
+>> -		regulator-min-microvolt = <875000>;
+>> -		regulator-max-microvolt = <975000>;
+>> +		regulator-min-microvolt = <712500>;
+>> +		regulator-max-microvolt = <1500000>;
+>>   		regulator-ramp-delay = <1000>;
+>>   		regulator-always-on;
+>>   		regulator-boot-on;
 
