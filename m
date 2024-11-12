@@ -1,83 +1,130 @@
-Return-Path: <linux-kernel+bounces-406704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FFC9C6438
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:25:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04EEC9C63CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:53:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CAE5B34E4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:22:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35833B39196
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3818219E29;
-	Tue, 12 Nov 2024 20:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA69D219E29;
+	Tue, 12 Nov 2024 20:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="i7pXQKor"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GTqceyQR"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D8720ADEC;
-	Tue, 12 Nov 2024 20:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6CA214422;
+	Tue, 12 Nov 2024 20:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731442963; cv=none; b=c71ethLf8JNx8PUGN4EHsseqQVNE1jUnmMRUOTsJaa2NnB+2dT19SznhgNfGtoJLIwk0n/7u0jTj6tRr78ka1vGJAceiehHyAoTn0GoUvLK27ohGPEVt8svGTgOHGQ/lTn2F4DYr0/cGJ4X5uAELI/pMn/qN1ktIbwmAYANFYaQ=
+	t=1731443080; cv=none; b=SGtcr7e/UtCJK6e2S7hkGQYRoep5TSYdXDCSBt5XjurJ3pFutnd0hBtvYvdASOuoOrS/cI1O/EZOohHzUKmQ4eYQljtr5dXdI4fcNRei3gRPAIkiOwtDIJRrr7o/HJ5/1mhK+TD2KhnhbIZAxz8AXs3uSaRurrnzOMS1Gj9vrUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731442963; c=relaxed/simple;
-	bh=j94YPPKHW+HGIR9yGse9SApV73HQ5pPkVnWZ6EPbohE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PPrNqWU4hbBW7DGmdt6pOD8Ii2vKuAExqofwxaz2zgWhZ+6XFU1ZTZ/YmIJVin8ofJaWkVwvOHhMugKwm/u8kkTKMUgt8t9FWphbW29WnY68mAenqTX2hJTOTYYjFp4ILQKfUtkD+QLeg2fN5BpufC6wZAQJo1OCN0ILZABBh3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=i7pXQKor; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 22C5E403E4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1731442960; bh=2rETktBd99QqoCTmMdd2okuoKC8zuYCdjVSFBuTiRx8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=i7pXQKorhE+a7z0fOmtLA3DIJZ2yunwHFi5AaXefErA5kpspQj/NocH2omEjQJoWc
-	 XSpVhG+oVlq1HX6TRm30SHiZGfdLBgyEmg9i0q2XudThYutlZsWRbBceMAjXUdmVlM
-	 /tvWDIVkc6NrR0s8aBjHVwT/WOCE2ftrgglGBxgO8UklutlxsaYl8SoVX9LWIHiVrN
-	 LAXGVBDTVAVbvHEYJ84/sYWjccNLBPQQuG9Q4d6gUAnlrSxZ1iigI7a0/uOvSLvKap
-	 FstOwfmgoSvfH9tBba/Avi/rOR+cdyBinVV+ps6W7BClz40p5Ls1jjjmI+Z/8Or6H5
-	 U7Gzg4mZUyzSg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 22C5E403E4;
-	Tue, 12 Nov 2024 20:22:40 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Abhinav Saxena <xandfury@gmail.com>,
- linux-kernel-mentees@lists.linuxfoundation.org, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Abhinav Saxena <xandfury@gmail.com>
-Subject: Re: [PATCH] docs: fix typos and whitespace in
- Documentation/process/backporting.rst
-In-Reply-To: <20241107061911.106040-1-xandfury@gmail.com>
-References: <20241107061911.106040-1-xandfury@gmail.com>
-Date: Tue, 12 Nov 2024 13:22:39 -0700
-Message-ID: <871pzgqk1c.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1731443080; c=relaxed/simple;
+	bh=xZw5haos1ld6yv5nzPymcFSveT2KoHF7bDsMCR8H27s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R4L3kc01MSOv7nT14F4V+pgTPIvVs6Afeln9yKP1p/hmoqpwBuiFf70JnGy25XBYcXVBIPwlc3JbD9KBeQQMFreha1ndgkqIynSW1oq8q17a6JmiQ00l34FgTkIhurSUdg433vPDQ9yYtZ9gzbJidLtIpE9yy9ypMaBhK/zMnl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GTqceyQR; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-720cb6ac25aso5611947b3a.3;
+        Tue, 12 Nov 2024 12:24:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731443078; x=1732047878; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=270BLjS5HCsb+r1rogOxxK6M3BPUdx0UJy73IXWJm50=;
+        b=GTqceyQREIsvcca8GubCebpf7JMeS4pRTLuOacYb90izvZK0I4zLCpk2ma/ZY6F005
+         G2zmlNIkYmxPmULs8/5Wz70n7CcjcCfIB9GqG720JJct7jdW8sgD0jhhBQ2igZ3dngFG
+         BYFvElDAesIVxos2+H1UfhEmiMHJ77sEbRMBZiLCQyj/z5gdLAlaCtiEhlxXGPkiJ3d7
+         GOJHKv+/ss7EMmsC7T+kSeYxff1pRP62MQwLU/5Cuq+9RjBmyzxLvwgYz3bhaZl8SHRO
+         755KtOnMilgqxrb2cP0g3WMm5Dj2v019qt1k3QlpP7ST2mYydueur8jr9ugszXXu58Df
+         iVnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731443078; x=1732047878;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=270BLjS5HCsb+r1rogOxxK6M3BPUdx0UJy73IXWJm50=;
+        b=Oftqw2cPeWfRZ89kbYVxtaqz2ORmV0OOQsBblWT79vBbMSY5WxdgxSNdgbGBkEq4m7
+         pTJIKVkLlcwVNHV6j4R3PdsJxW26ZA4tWqm4YiK3IP6FnhU2shyd4hvYzBjruMUJ4WiA
+         6HPEXDqsklsw/fVix3Lk28lbRsWe7z8qYgcF2BZhtktNpiHqSRXfNC8o5wvcaN+4t4qv
+         0+ROPWW05HcwG2oQIpPhWduTi+3CC4VhJ8DZ3mC5LCquzdtwFyYZa9/iohWzWmRTF9/M
+         pHmIGdDl/N93FOhcfllWt200z9xXC55dj4N3Sx/CupcASCzT+jHowqB5jfi6YY2his4F
+         ltLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiq5wNjcTucJ14Ym9RP51t5eeyCPXI1U5aVISSRQF6Wx69HqMaVKDhHAzrbaxVTSLb9QjH6+QvKizoA8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaiDnc+azT0KVKcOCRhMM5TQkVv71a3w9NH+bYAFsHMSQRKflo
+	RUYJxS+88M6vCfjodJgs74C+uMx2Ib7IdHKj+hJuVKRKTK+apY3X57h43A==
+X-Google-Smtp-Source: AGHT+IGF/Lrsf9yOnqhR5tUB5kmgLuT40v7w3nOeMnTmcwXq9wrXw9HgP1p+NoH/8Ew8aUWRdeb7Hw==
+X-Received: by 2002:a05:6a21:338a:b0:1db:f07e:8ab5 with SMTP id adf61e73a8af0-1dc22b53668mr25770666637.36.1731443076886;
+        Tue, 12 Nov 2024 12:24:36 -0800 (PST)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:23d:98b3:efff:2469:dece:37c7])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f642bedsm10907361a12.67.2024.11.12.12.24.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 12:24:36 -0800 (PST)
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Suraj Sonawane <surajsonawane0215@gmail.com>
+Subject: [PATCH] pwdomain: Fix ERR_PTR() dereference in core.c
+Date: Wed, 13 Nov 2024 01:54:22 +0530
+Message-Id: <20241112202422.17113-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Abhinav Saxena <xandfury@gmail.com> writes:
+Fix an issue detected by the Smatch tool:
 
-> - Fix repeated word "when" in backporting documentation
-> - Remove trailing whitespace after '$' character
->
-> These issues were reported by checkpatch.pl. No functional changes.
->
-> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
-> ---
->  Documentation/process/backporting.rst | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+drivers/pmdomain/core.c:509 genpd_dev_pm_set_performance_state() error:
+'genpd' dereferencing possible ERR_PTR()
+drivers/pmdomain/core.c:970 genpd_dev_pm_start() error:
+'genpd' dereferencing possible ERR_PTR()
 
-Applied, thanks.
+The function `dev_to_genpd(dev)` may return an error pointer, and
+the code does not check whether it is valid before dereferencing.
+This can lead to undefined behavior. To fix this, checks were added
+to ensure that `genpd` is not an error pointer before using it.
+If an error pointer is encountered, the function returns the error
+value using `PTR_ERR(genpd)`.
 
-jon
+Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+---
+ drivers/pmdomain/core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+index 5ede0f7ed..69dc8471e 100644
+--- a/drivers/pmdomain/core.c
++++ b/drivers/pmdomain/core.c
+@@ -506,6 +506,9 @@ static int genpd_dev_pm_set_performance_state(struct device *dev,
+ 	struct generic_pm_domain *genpd = dev_to_genpd(dev);
+ 	int ret = 0;
+ 
++	if (IS_ERR(genpd))
++		return PTR_ERR(genpd);
++
+ 	genpd_lock(genpd);
+ 	if (pm_runtime_suspended(dev)) {
+ 		dev_gpd_data(dev)->rpm_pstate = state;
+@@ -963,6 +966,9 @@ static int genpd_dev_pm_start(struct device *dev)
+ {
+ 	struct generic_pm_domain *genpd = dev_to_genpd(dev);
+ 
++	if (IS_ERR(genpd))
++		return PTR_ERR(genpd);
++
+ 	return genpd_start_dev(genpd, dev);
+ }
+ 
+-- 
+2.34.1
+
 
