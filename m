@@ -1,237 +1,123 @@
-Return-Path: <linux-kernel+bounces-406038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727069C5A48
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:29:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC86C9C5A38
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:25:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29E761F267FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:29:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F3E928497C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D1720126D;
-	Tue, 12 Nov 2024 14:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1178C200131;
+	Tue, 12 Nov 2024 14:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlbTDH6h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WE2BCxl+"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189F520125E;
-	Tue, 12 Nov 2024 14:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D4A20010B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731421438; cv=none; b=kEhDjXThjuniwtBqZetx8lStX+MEpgy8hK7p8hX0tRzBtOHjlVJbsTTfu3UO/NYzU4f15SWN90fJTgyfzi4eWpoRQO9Lic7ixsgU+hxSBf9CReWSZk9JZ4tMD0XYGFUWq1dhOuHEXN7/yvQ1YE8PY3FlPCWoY84MSV5ju+Norns=
+	t=1731421398; cv=none; b=pDM7UmMES2X9riJxL8FRdm1l9W2vxOoZoAYAekiuxmIBfDLWIXmPOb7OQ57BtykNODGZCEsHKzEt0vwPEXkGlLc9JlwrwLKy2K1fcHQrcTQjeX0P7F8m1tlqP3VFokpX2Rm9oCLq5qfKE1en50Ngrp2rYWl/BuVPfow3q+1HSJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731421438; c=relaxed/simple;
-	bh=8m8QxthF6RSxr1U64nd88bE97A7JtNoesWKGZhEX7H4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ip7fSfIuv2ESv5PvS3+wB1O29isgJAtXvzquWNQGeKomROCJeX1v30ttzN2qFafJFR0xj9prYqLOT5y9TdIRz8KCJcCZtkaYMJiqlCzg4xMpImcUpfcaIXpHl7C6dK8ERbPURvg7znK9DH3/Jo2uwK89jd+eXtQWBYcsoF+pBZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlbTDH6h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1974BC4CED0;
-	Tue, 12 Nov 2024 14:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731421438;
-	bh=8m8QxthF6RSxr1U64nd88bE97A7JtNoesWKGZhEX7H4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YlbTDH6hdjV/sk+v9jJccS2ss5qGqRf+KxF7XQl8ZALctCB5jEp/0MmrVg7Qd979/
-	 ol7GkfKe91I9vcGVLZgBHr6E/vDNTbeYge+EXau2BMs7xU6PvYXVeMzLKdtl+xGmHf
-	 YKsp1VJuOnlD5z+BGrK4xHzxTCkGkeF69ybUwYPUKBPsqE4qqHLT4PJoQCY1oESWLh
-	 9sROp5Unh6+hKuw8N8WiPaR37e2Rbr4QQ+kmGHTRQZbBiGuz1Vp3YXlWJIW1xWA5V3
-	 CfHXXnjdx+D/R2oO7Pwxpwy27AjWchCfoHdO1PGf7//Spl0+iQKuC0D8Otg8ScffVe
-	 umK1Eh10JAgrA==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	rcu@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michal Hocko <mhocko@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH 21/21] rcu: Use kthread preferred affinity for RCU exp kworkers
-Date: Tue, 12 Nov 2024 15:22:45 +0100
-Message-ID: <20241112142248.20503-22-frederic@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241112142248.20503-1-frederic@kernel.org>
-References: <20241112142248.20503-1-frederic@kernel.org>
+	s=arc-20240116; t=1731421398; c=relaxed/simple;
+	bh=xLZH+Xfag2SN+MKIfB72pxM2G5vb0dkWWnFkhnsJMac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AOBW8WwevAIc4VQkob7NZPgjdmVF/ulk0WM4k9f/HQrgZBeAXfre4okrFJJxDHRz3avloEpg3gZ4MsYgW5nZB1ics33i2UO53aNnR+Mx7iJjRfgW5X5bPREwYv2Y3iaQOK8s6lfDWeiNiL1nAjf73TKaBWIwrTtTOy6rQREgdgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WE2BCxl+; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=cBqRmdYnZ0uBmz3/FIRHL3M94rfZ14nksgCicJDAsp0=; b=WE2BCxl+p3TzcV/CkJxxY9N1aj
+	sTDCo+70jFAXPXQYk3AFBAX+hjGHm/DTLMS5GrVVY77MxO5NJ8X/R2Am1NXa84meAkobS6NagYbCZ
+	ePuLPPneEvuRQLQxpFDnSAMsu/k9q/CsZwyWuOMQnFN97h9r71xQhDv2pRNJhHnjswEVAVs5CgLgw
+	GQZjUwBkz0hz4DS2T79gD767bPsUkS7ntH1x+LdKGzrfZ60t4X2vHDbP01PT43z7FxYK8vcVgDrEe
+	+58yKmiVUk//BwIJxtV0c6XhTekeeEQtPvs7A2eFJ5d/UaB+EaUsYA2/Dn4b0nDWwBSn2muv1wRsV
+	lZ149p+w==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tArnL-0000000D5Pj-0rBT;
+	Tue, 12 Nov 2024 14:23:03 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8F59F300478; Tue, 12 Nov 2024 15:23:02 +0100 (CET)
+Date: Tue, 12 Nov 2024 15:23:02 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Phil Auld <pauld@redhat.com>
+Cc: Mike Galbraith <efault@gmx.de>, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de
+Subject: Re: [PATCH] sched/fair: Dequeue sched_delayed tasks when waking to a
+ busy CPU
+Message-ID: <20241112142302.GI6497@noisy.programming.kicks-ass.net>
+References: <20241106135346.GL24862@noisy.programming.kicks-ass.net>
+ <20241106141420.GZ33184@noisy.programming.kicks-ass.net>
+ <d2b90fa283d1655d73576eb392949d9b1539070d.camel@gmx.de>
+ <bd737a9a498638b253d6e273cbbea108b6c5a4b0.camel@gmx.de>
+ <982456f0abca321b874b7974bdf17d1a605c3d38.camel@gmx.de>
+ <5280774bce7343c43904ae3df4403942092f5562.camel@gmx.de>
+ <20241107140945.GA34695@noisy.programming.kicks-ass.net>
+ <750542452c4f852831e601e1b8de40df4b108d9a.camel@gmx.de>
+ <5a4cb3e4ab698fe2d8419e28d61e292dcd0c8fad.camel@gmx.de>
+ <20241112124117.GA336451@pauld.westford.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241112124117.GA336451@pauld.westford.csb>
 
-Now that kthreads have an infrastructure to handle preferred affinity
-against CPU hotplug and housekeeping cpumask, convert RCU exp workers to
-use it instead of handling all the constraints by itself.
+On Tue, Nov 12, 2024 at 07:41:17AM -0500, Phil Auld wrote:
+> On Tue, Nov 12, 2024 at 08:05:04AM +0100 Mike Galbraith wrote:
+> > On Fri, 2024-11-08 at 01:24 +0100, Mike Galbraith wrote:
+> > > On Thu, 2024-11-07 at 15:09 +0100, Peter Zijlstra wrote:
+> > > > On Thu, Nov 07, 2024 at 03:02:36PM +0100, Mike Galbraith wrote:
+> > > > > On Thu, 2024-11-07 at 10:46 +0100, Mike Galbraith wrote:
+> > > > > > On Thu, 2024-11-07 at 05:03 +0100, Mike Galbraith wrote:
+> > > > > > > 
+> > > > > > > I built that patch out of curiosity, and yeah, set_next_task_fair()
+> > > > > > > finding a cfs_rq->curr ends play time pretty quickly.
+> > > > > > 
+> > > > > > The below improved uptime, and trace_printk() says it's doing the
+> > > > > > intended, so I suppose I'll add a feature and see what falls out.
+> > > > > 
+> > > > > From netperf, I got.. number tabulation practice.  Three runs of each
+> > > > > test with and without produced nothing but variance/noise.
+> > > > 
+> > > > Make it go away then.
+> > > > 
+> > > > If you could write a Changelog for you inspired bit and stick my cleaned
+> > > > up version under it, I'd be much obliged.
+> > > 
+> > > Salut, much obliged for eyeball relief.
+> > 
+> > Unfortunate change log place holder below aside, I think this patch may
+> > need to be yanked as trading one not readily repeatable regression for
+> > at least one that definitely is, and likely multiple others.
+> > 
+> > (adds knob)
+> >
+> 
+> Yes, I ws just coming here to reply. I have the results from the first
+> version of the patch (I don't think the later one fundemtally changed
+> enough that it will matter but those results are still pending).
+> 
+> Not entirely surprisingly we've traded a ~10% rand write regression for
+> 5-10% rand read regression. This makes sense to me since the reads are
+> more likely to be synchronous and thus be more buddy-like and benefit
+> from flipping back and forth on the same cpu.  
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/rcu/tree.c | 105 +++++++++-------------------------------------
- 1 file changed, 19 insertions(+), 86 deletions(-)
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 65072deb538e..35949ec1f935 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -4891,6 +4891,22 @@ rcu_boot_init_percpu_data(int cpu)
- 	rcu_boot_init_nocb_percpu_data(rdp);
- }
- 
-+static void rcu_thread_affine_rnp(struct task_struct *t, struct rcu_node *rnp)
-+{
-+	cpumask_var_t affinity;
-+	int cpu;
-+
-+	if (!zalloc_cpumask_var(&affinity, GFP_KERNEL))
-+		return;
-+
-+	for_each_leaf_node_possible_cpu(rnp, cpu)
-+		cpumask_set_cpu(cpu, affinity);
-+
-+	kthread_affine_preferred(t, affinity);
-+
-+	free_cpumask_var(affinity);
-+}
-+
- struct kthread_worker *rcu_exp_gp_kworker;
- 
- static void rcu_spawn_exp_par_gp_kworker(struct rcu_node *rnp)
-@@ -4903,7 +4919,7 @@ static void rcu_spawn_exp_par_gp_kworker(struct rcu_node *rnp)
- 	if (rnp->exp_kworker)
- 		return;
- 
--	kworker = kthread_run_worker(0, name, rnp_index);
-+	kworker = kthread_create_worker(0, name, rnp_index);
- 	if (IS_ERR_OR_NULL(kworker)) {
- 		pr_err("Failed to create par gp kworker on %d/%d\n",
- 		       rnp->grplo, rnp->grphi);
-@@ -4913,16 +4929,9 @@ static void rcu_spawn_exp_par_gp_kworker(struct rcu_node *rnp)
- 
- 	if (IS_ENABLED(CONFIG_RCU_EXP_KTHREAD))
- 		sched_setscheduler_nocheck(kworker->task, SCHED_FIFO, &param);
--}
- 
--static struct task_struct *rcu_exp_par_gp_task(struct rcu_node *rnp)
--{
--	struct kthread_worker *kworker = READ_ONCE(rnp->exp_kworker);
--
--	if (!kworker)
--		return NULL;
--
--	return kworker->task;
-+	rcu_thread_affine_rnp(kworker->task, rnp);
-+	wake_up_process(kworker->task);
- }
- 
- static void __init rcu_start_exp_gp_kworker(void)
-@@ -5007,79 +5016,6 @@ int rcutree_prepare_cpu(unsigned int cpu)
- 	return 0;
- }
- 
--static void rcu_thread_affine_rnp(struct task_struct *t, struct rcu_node *rnp)
--{
--	cpumask_var_t affinity;
--	int cpu;
--
--	if (!zalloc_cpumask_var(&affinity, GFP_KERNEL))
--		return;
--
--	for_each_leaf_node_possible_cpu(rnp, cpu)
--		cpumask_set_cpu(cpu, affinity);
--
--	kthread_affine_preferred(t, affinity);
--
--	free_cpumask_var(affinity);
--}
--
--/*
-- * Update kthreads affinity during CPU-hotplug changes.
-- *
-- * Set the per-rcu_node kthread's affinity to cover all CPUs that are
-- * served by the rcu_node in question.  The CPU hotplug lock is still
-- * held, so the value of rnp->qsmaskinit will be stable.
-- *
-- * We don't include outgoingcpu in the affinity set, use -1 if there is
-- * no outgoing CPU.  If there are no CPUs left in the affinity set,
-- * this function allows the kthread to execute on any CPU.
-- *
-- * Any future concurrent calls are serialized via ->kthread_mutex.
-- */
--static void rcutree_affinity_setting(unsigned int cpu, int outgoingcpu)
--{
--	cpumask_var_t cm;
--	unsigned long mask;
--	struct rcu_data *rdp;
--	struct rcu_node *rnp;
--	struct task_struct *task_exp;
--
--	rdp = per_cpu_ptr(&rcu_data, cpu);
--	rnp = rdp->mynode;
--
--	task_exp = rcu_exp_par_gp_task(rnp);
--
--	/*
--	 * If CPU is the boot one, this task is created later from early
--	 * initcall since kthreadd must be created first.
--	 */
--	if (!task_exp)
--		return;
--
--	if (!zalloc_cpumask_var(&cm, GFP_KERNEL))
--		return;
--
--	mutex_lock(&rnp->kthread_mutex);
--	mask = rcu_rnp_online_cpus(rnp);
--	for_each_leaf_node_possible_cpu(rnp, cpu)
--		if ((mask & leaf_node_cpu_bit(rnp, cpu)) &&
--		    cpu != outgoingcpu)
--			cpumask_set_cpu(cpu, cm);
--	cpumask_and(cm, cm, housekeeping_cpumask(HK_TYPE_RCU));
--	if (cpumask_empty(cm)) {
--		cpumask_copy(cm, housekeeping_cpumask(HK_TYPE_RCU));
--		if (outgoingcpu >= 0)
--			cpumask_clear_cpu(outgoingcpu, cm);
--	}
--
--	if (task_exp)
--		set_cpus_allowed_ptr(task_exp, cm);
--
--	mutex_unlock(&rnp->kthread_mutex);
--
--	free_cpumask_var(cm);
--}
--
- /*
-  * Has the specified (known valid) CPU ever been fully online?
-  */
-@@ -5108,7 +5044,6 @@ int rcutree_online_cpu(unsigned int cpu)
- 	if (rcu_scheduler_active == RCU_SCHEDULER_INACTIVE)
- 		return 0; /* Too early in boot for scheduler work. */
- 	sync_sched_exp_online_cleanup(cpu);
--	rcutree_affinity_setting(cpu, -1);
- 
- 	// Stop-machine done, so allow nohz_full to disable tick.
- 	tick_dep_clear(TICK_DEP_BIT_RCU);
-@@ -5325,8 +5260,6 @@ int rcutree_offline_cpu(unsigned int cpu)
- 	rnp->ffmask &= ~rdp->grpmask;
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 
--	rcutree_affinity_setting(cpu, cpu);
--
- 	// nohz_full CPUs need the tick for stop-machine to work quickly
- 	tick_dep_set(TICK_DEP_BIT_RCU);
- 	return 0;
--- 
-2.46.0
-
+OK, so I'm going to make this commit disappear.
 
