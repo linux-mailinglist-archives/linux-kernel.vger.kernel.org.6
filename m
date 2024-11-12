@@ -1,47 +1,49 @@
-Return-Path: <linux-kernel+bounces-406390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 593B99C5E72
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:11:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA619C5E77
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:12:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C23E282E0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:11:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50F11F21A0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D488217474;
-	Tue, 12 Nov 2024 17:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7711218317;
+	Tue, 12 Nov 2024 17:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KF6aRyBn"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fcSBz1Gr"
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE592076AB;
-	Tue, 12 Nov 2024 17:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75D82076D2;
+	Tue, 12 Nov 2024 17:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731431226; cv=none; b=AxTcIyfEkCScgzIux1X0e5wWeihVtEOu2gGT88cgncjbToMFQEi44J3kTIEKZgOvwdelH0KuEQkXRf2B7IIaI90pKG5FMfHJeEfSFMkDvKUPpSvjREduz7rb30oOaLg9AAn2jlKnWhFa8qqRNvzg+mqrOHqxJoPXBFiWpXVTp80=
+	t=1731431229; cv=none; b=MzdvPVOfnj7v4ipijiUHfWe09UgiT3o6v+3Z1iF0rj4wGPZmnJmIhm4yCwosMfM0VhtLvSvthQavuNy4rspvMwBwqQExg4alKRwAOjhIvKjMZWP4+kW/5SyiZ8pzp4/QVpUI1L8ZzzCiFiTXoOzQj30gZgE3A7B31NqVaIQUiQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731431226; c=relaxed/simple;
-	bh=yfOv/eMBAl8i55aF51GafdzPzmAf+rbqJvtUJEDJb5M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JsnT+T0e1+YojpDgLIivfXG17SBFdqCv6x5AIML7ECoE2kwB+aGIrhyVwKj3X+vwQXWR79FtlOMPmj+XePcfKm1jLoLPWjONnDrwzt1ALkljKtFO5/pj8p3BXdOYcqI35/0JsLhSHcaP/rHtCP6sUyqPSQ1IuSzxDf9AGhieE20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KF6aRyBn; arc=none smtp.client-ip=217.70.183.196
+	s=arc-20240116; t=1731431229; c=relaxed/simple;
+	bh=RNS8OS44VA3qZ7FOchNv1YRfFwIzzNzs2xyH7AstGYY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OFnBIVBAfgE9y5WS3wJBMVV32Q5NfrEsfuJAyWTLvY/Sbhp7pH4HxPtPCAh5IP9mpbz7Xf/peI63OVQJT0eEfYnbBRTInVxNiReQMFrW/x4CxCnnB3Pi/wOIk9eaR7ebusYAMOURO7hk7sMxXizyrUCEzh1SEIiTULhoC+Hh0Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fcSBz1Gr; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 54B79E0002;
-	Tue, 12 Nov 2024 17:07:00 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 341ADE0005;
+	Tue, 12 Nov 2024 17:07:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731431222;
+	t=1731431224;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MNtCugG59nS9OABDLmKZagjpJ188CbPhZJNQ0/shOKY=;
-	b=KF6aRyBn5/7nNXSS5Mad6+l+b+BbubgLGJZfM7VgpqTBqmHpPWlNRVneQ/d90gcj71UWiN
-	vQcSemki6Sg14AxdjC6nY7uZpZWp4VcbfJSdHPfxJHViK4AcI22w/xTuXP3hzBPUIeD0ao
-	ROh47wIUy58MA/IYBsb0gpI1GW5WjRBMwuKHrSKQsvikmu2vDMAEMsj8+vkHOK2IMk+1WS
-	V/coLl2a4ohAaV3xmvzLYT0KbnbwQOUJ9d3Fx1nw2oai5BsAdrKmzc/OsDrLy2uU56QAVl
-	gyPT5qDS9aEjQfoG92F6DTJ2A4mNIJn4eOxk3euoa5MdvohILAkFdhPrDWk+Pg==
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q5euAD6mvMtoI8FBmagdROpF4KMX7Rxgrb+7EFp/no4=;
+	b=fcSBz1GrzADukN6xLwU6Gqk8+OPPUxrk7kfxs0YK3n4Ea7Co4G3bTtTz6Ua5Q2RjnIVdIJ
+	3IeYRuYwwlrGYSaJTzJe9+gwBaBtfF4vbpAHxgeR8zka4jduvrIGErnOSvxaPQuPN0mo/o
+	H3nlthG5bwg+MR8ZCj1oMwjfpGeCK9Kwhk9GfUrVCo7jCaSQj8FSxfu2bwRRQsXqziX1CZ
+	4kqEEy2hO2bU3+OoUH6C4BpCN18/s5nfq62Kdpz4tOItR7gOkGvhJPfDsU0Mx5E/O2vUDs
+	Hvm9PpHFB2l1vtlfFSyqRCdOIbPsXrGjA/2LTRVIrwSoEf9WnU/pkQAOsk0L9A==
 From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
 	Jose Abreu <joabreu@synopsys.com>,
@@ -60,71 +62,153 @@ Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
 	linux-arm-kernel@lists.infradead.org,
 	Daniel Machon <daniel.machon@microchip.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v4 0/9] Support external snapshots on dwmac1000
-Date: Tue, 12 Nov 2024 18:06:48 +0100
-Message-ID: <20241112170658.2388529-1-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next v4 2/9] net: stmmac: Use per-hw ptp clock ops
+Date: Tue, 12 Nov 2024 18:06:50 +0100
+Message-ID: <20241112170658.2388529-3-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241112170658.2388529-1-maxime.chevallier@bootlin.com>
+References: <20241112170658.2388529-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hi,
+The auxiliary snapshot configuration was found to differ depending on
+the dwmac version. To prepare supporting this, allow specifying the
+ptp_clock_info ops in the hwif array
 
-This is v4 on the series to support external snapshots on dwmac1000.
+Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/common.h     |  2 ++
+ drivers/net/ethernet/stmicro/stmmac/hwif.c       | 11 +++++++++++
+ drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c |  4 +---
+ 3 files changed, 14 insertions(+), 3 deletions(-)
 
-The main change since v3 is the move of the fifo flush wait in the
-ptp_clock_info enable() function within the mutex that protects the ptp
-registers. Thanks Jakub and Paolo for spotting this.
-
-This series also aggregates Daniel's reviews, except for the patch 4
-which was modified since then.
-
-This series is another take on the previous work [1] done by
-Alexis Lothoré, that fixes the support for external snapshots
-timestamping in GMAC3-based devices.
-
-Details on why this is needed are mentionned on the cover [2] from V1.
-
-[1]: https://lore.kernel.org/netdev/20230616100409.164583-1-alexis.lothore@bootlin.com/
-[2]: https://lore.kernel.org/netdev/20241029115419.1160201-1-maxime.chevallier@bootlin.com/
-
-Thanks Alexis for laying the groundwork for this,
-
-Best regards,
-
-Maxime
-
-Link to V1: https://lore.kernel.org/netdev/20241029115419.1160201-1-maxime.chevallier@bootlin.com/
-Link to V2: https://lore.kernel.org/netdev/20241104170251.2202270-1-maxime.chevallier@bootlin.com/
-Link to V3: https://lore.kernel.org/netdev/20241106090331.56519-1-maxime.chevallier@bootlin.com/
-
-Maxime Chevallier (9):
-  net: stmmac: Don't modify the global ptp ops directly
-  net: stmmac: Use per-hw ptp clock ops
-  net: stmmac: Only update the auto-discovered PTP clock features
-  net: stmmac: Introduce dwmac1000 ptp_clock_info and operations
-  net: stmmac: Introduce dwmac1000 timestamping operations
-  net: stmmac: Enable timestamping interrupt on dwmac1000
-  net: stmmac: Don't include dwmac4 definitions in stmmac_ptp
-  net: stmmac: Configure only the relevant bits for timestamping setup
-  net: stmmac: dwmac_socfpga: This platform has GMAC
-
- drivers/net/ethernet/stmicro/stmmac/common.h  |   4 +
- .../ethernet/stmicro/stmmac/dwmac-socfpga.c   |   1 +
- .../net/ethernet/stmicro/stmmac/dwmac1000.h   |  12 +++
- .../ethernet/stmicro/stmmac/dwmac1000_core.c  | 101 ++++++++++++++++++
- drivers/net/ethernet/stmicro/stmmac/hwif.c    |  15 ++-
- .../ethernet/stmicro/stmmac/stmmac_hwtstamp.c |  26 ++++-
- .../net/ethernet/stmicro/stmmac/stmmac_ptp.c  |  38 +++++--
- .../net/ethernet/stmicro/stmmac/stmmac_ptp.h  |  10 ++
- 8 files changed, 196 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+index 684489156dce..4a0a1708c391 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/common.h
++++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+@@ -551,6 +551,8 @@ struct mac_device_info;
+ extern const struct stmmac_hwtimestamp stmmac_ptp;
+ extern const struct stmmac_mode_ops dwmac4_ring_mode_ops;
+ 
++extern const struct ptp_clock_info stmmac_ptp_clock_ops;
++
+ struct mac_link {
+ 	u32 caps;
+ 	u32 speed_mask;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+index cfc50289aed6..47458cbcbc94 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
++++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+@@ -113,6 +113,7 @@ static const struct stmmac_hwif_entry {
+ 	const void *dma;
+ 	const void *mac;
+ 	const void *hwtimestamp;
++	const void *ptp;
+ 	const void *mode;
+ 	const void *tc;
+ 	const void *mmc;
+@@ -134,6 +135,7 @@ static const struct stmmac_hwif_entry {
+ 		.dma = &dwmac100_dma_ops,
+ 		.mac = &dwmac100_ops,
+ 		.hwtimestamp = &stmmac_ptp,
++		.ptp = &stmmac_ptp_clock_ops,
+ 		.mode = NULL,
+ 		.tc = NULL,
+ 		.mmc = &dwmac_mmc_ops,
+@@ -152,6 +154,7 @@ static const struct stmmac_hwif_entry {
+ 		.dma = &dwmac1000_dma_ops,
+ 		.mac = &dwmac1000_ops,
+ 		.hwtimestamp = &stmmac_ptp,
++		.ptp = &stmmac_ptp_clock_ops,
+ 		.mode = NULL,
+ 		.tc = NULL,
+ 		.mmc = &dwmac_mmc_ops,
+@@ -171,6 +174,7 @@ static const struct stmmac_hwif_entry {
+ 		.dma = &dwmac4_dma_ops,
+ 		.mac = &dwmac4_ops,
+ 		.hwtimestamp = &stmmac_ptp,
++		.ptp = &stmmac_ptp_clock_ops,
+ 		.mode = NULL,
+ 		.tc = &dwmac4_tc_ops,
+ 		.mmc = &dwmac_mmc_ops,
+@@ -192,6 +196,7 @@ static const struct stmmac_hwif_entry {
+ 		.dma = &dwmac4_dma_ops,
+ 		.mac = &dwmac410_ops,
+ 		.hwtimestamp = &stmmac_ptp,
++		.ptp = &stmmac_ptp_clock_ops,
+ 		.mode = &dwmac4_ring_mode_ops,
+ 		.tc = &dwmac510_tc_ops,
+ 		.mmc = &dwmac_mmc_ops,
+@@ -213,6 +218,7 @@ static const struct stmmac_hwif_entry {
+ 		.dma = &dwmac410_dma_ops,
+ 		.mac = &dwmac410_ops,
+ 		.hwtimestamp = &stmmac_ptp,
++		.ptp = &stmmac_ptp_clock_ops,
+ 		.mode = &dwmac4_ring_mode_ops,
+ 		.tc = &dwmac510_tc_ops,
+ 		.mmc = &dwmac_mmc_ops,
+@@ -234,6 +240,7 @@ static const struct stmmac_hwif_entry {
+ 		.dma = &dwmac410_dma_ops,
+ 		.mac = &dwmac510_ops,
+ 		.hwtimestamp = &stmmac_ptp,
++		.ptp = &stmmac_ptp_clock_ops,
+ 		.mode = &dwmac4_ring_mode_ops,
+ 		.tc = &dwmac510_tc_ops,
+ 		.mmc = &dwmac_mmc_ops,
+@@ -256,6 +263,7 @@ static const struct stmmac_hwif_entry {
+ 		.dma = &dwxgmac210_dma_ops,
+ 		.mac = &dwxgmac210_ops,
+ 		.hwtimestamp = &stmmac_ptp,
++		.ptp = &stmmac_ptp_clock_ops,
+ 		.mode = NULL,
+ 		.tc = &dwxgmac_tc_ops,
+ 		.mmc = &dwxgmac_mmc_ops,
+@@ -278,6 +286,7 @@ static const struct stmmac_hwif_entry {
+ 		.dma = &dwxgmac210_dma_ops,
+ 		.mac = &dwxlgmac2_ops,
+ 		.hwtimestamp = &stmmac_ptp,
++		.ptp = &stmmac_ptp_clock_ops,
+ 		.mode = NULL,
+ 		.tc = &dwxgmac_tc_ops,
+ 		.mmc = &dwxgmac_mmc_ops,
+@@ -362,6 +371,8 @@ int stmmac_hwif_init(struct stmmac_priv *priv)
+ 		priv->fpe_cfg.reg = entry->regs.fpe_reg;
+ 		priv->ptpaddr = priv->ioaddr + entry->regs.ptp_off;
+ 		priv->mmcaddr = priv->ioaddr + entry->regs.mmc_off;
++		memcpy(&priv->ptp_clock_ops, entry->ptp,
++		       sizeof(struct ptp_clock_info));
+ 		if (entry->est)
+ 			priv->estaddr = priv->ioaddr + entry->regs.est_off;
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
+index 11ab1d6b916a..41581f516ea9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
+@@ -265,7 +265,7 @@ static int stmmac_getcrosststamp(struct ptp_clock_info *ptp,
+ }
+ 
+ /* structure describing a PTP hardware clock */
+-static struct ptp_clock_info stmmac_ptp_clock_ops = {
++const struct ptp_clock_info stmmac_ptp_clock_ops = {
+ 	.owner = THIS_MODULE,
+ 	.name = "stmmac ptp",
+ 	.max_adj = 62500000,
+@@ -303,8 +303,6 @@ void stmmac_ptp_register(struct stmmac_priv *priv)
+ 	if (priv->plat->has_gmac4 && priv->plat->clk_ptp_rate)
+ 		priv->plat->cdc_error_adj = (2 * NSEC_PER_SEC) / priv->plat->clk_ptp_rate;
+ 
+-	priv->ptp_clock_ops = stmmac_ptp_clock_ops;
+-
+ 	priv->ptp_clock_ops.n_per_out = priv->dma_cap.pps_out_num;
+ 	priv->ptp_clock_ops.n_ext_ts = priv->dma_cap.aux_snapshot_n;
+ 
 -- 
 2.47.0
 
