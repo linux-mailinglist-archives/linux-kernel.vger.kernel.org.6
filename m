@@ -1,99 +1,115 @@
-Return-Path: <linux-kernel+bounces-405951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 024EB9C5C36
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:47:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A13CE9C5C38
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:47:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EE81B38ECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:37:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFECCB2B1DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FA5148828;
-	Tue, 12 Nov 2024 13:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F171FBF55;
+	Tue, 12 Nov 2024 14:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="uY2tL0PP"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XQeLXCXk"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC1142AA4;
-	Tue, 12 Nov 2024 13:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED79189B81
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418644; cv=none; b=Jsdm5mKLGt2tatlVJSDvDGyYpXXadBIEtVWObCIozC1BvzJf6LxCX2Vr5oFRxThlH+ONyzRYkjrHmP33CKrbivRjTdyCA71L7F3JudLTEmsAiOBTmtY9qvv/rAzwLMk+Q2ZEOMgpNTHmsZAFsyAmobJWb4PiWbLIvrs5FUCklZc=
+	t=1731420031; cv=none; b=UlZzQx9eJ+DOPP0mTj9sDnIJxFTOMhn07Xfd3NTCCjb5bZxnJcBGvJeA+1xPIdzJVV32JqDf3eJU4NP8rkrh3/HaoZZt10wul/Dddb5oKSNSlanSAOZ2sA3wAYBWGEgvhvvqAw76tmwS493apQ4dhlum7Xk3A1mm54ge1qA1RRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418644; c=relaxed/simple;
-	bh=EVYtzQGT3MSF63g4iCllL2nKr5PUl0YgthsgBXSWCjo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P9WB9Wq5a388qZBtqqE3FMG09iLo2ZwRQdbaapuM/L0KqQULCzrXKT1v+tdg4becMu6N3zb24QeGrSd0JWm3nppKnxoCc3RJBETfVGTPio/DiOiBEQGT5h7YPdX2cCTBqgWMsWBmFPdjkXgrLKY4iX0saYhlGS4OEIXK8ieh0Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=uY2tL0PP; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731418642; x=1762954642;
-  h=from:to:subject:date:message-id:mime-version;
-  bh=EVYtzQGT3MSF63g4iCllL2nKr5PUl0YgthsgBXSWCjo=;
-  b=uY2tL0PPtCMJhMNZ2jWuI0Y/ABpZN0GlP9IGS4yi/sCb9TXxtE76TbP/
-   /H0esl3SVGNLDvsCACts8jzUqvfT8Few7OE4FkH0sGO+Qq4aKuyoLxBXJ
-   ktXs+rNZW2QXTG8OSgC3r/sUk5SC9rfW1cuKQ+OA2RtnwVU3QRf1DzCHP
-   SXJSftW/uvWPDLOSUeA8SM9XUAMqqz9XT1aQZbjMqC1vDGSri4mBq7ETy
-   IO6qOr1h7gqKrUTVtwWyUUSLw+Q0KMlqLW2FPMrdEGfpLDNFzrEewfa5/
-   SFCyM38X+gfz0dSRXh8toP91rC574h830e6OxcBQyB+oiazuC1nHWoE2A
-   w==;
-X-CSE-ConnectionGUID: MrNChj17QCGoNOgRM4DkTw==
-X-CSE-MsgGUID: pxuDztyERIyMkw3B1dHC1w==
-X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
-   d="scan'208";a="201634987"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Nov 2024 06:37:21 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 12 Nov 2024 06:37:05 -0700
-Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 12 Nov 2024 06:37:01 -0700
-From: Divya Koppera <divya.koppera@microchip.com>
-To: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
-	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>,
-	<vadim.fedorenko@linux.dev>
-Subject: [PATCH net-next v3 0/5] Add ptp library for Microchip phys
-Date: Tue, 12 Nov 2024 19:07:19 +0530
-Message-ID: <20241112133724.16057-1-divya.koppera@microchip.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1731420031; c=relaxed/simple;
+	bh=TRnR0puv3DVvdMkmJ8jXgDJd8hbXTb7LJCiudOLugI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CytMOxgku8SKye+jGbg4wVNfYE2LtEwGirj2OnfHd9Jwpu94W6Wspw6+kueZ9/LsByEd2i+L6EJfnUzIIYZbFIykHZB4lNHYj+/Gkk4dwMFI0Mr17BZuB7og4+LI7SkPhck63fVt+oGHcd8jTXXwAocWRqT4dRA5pU2R9oSzPec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XQeLXCXk; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a0c7abaa6so740422866b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 06:00:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731420027; x=1732024827; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JotyiF7JA1aOKIxM8oyPGm4XUpGQdD7Isb1ZkZqsUuw=;
+        b=XQeLXCXksUkzajjXbDYEGT2ycAsgDtiBV/8QLIMg1k/s4+UF9BCa9jWyH2ZDzx/i4u
+         lTKAitmlazOOh7NBqKwLfkJ7CukU57dfQH0Q12x4opSBVdrTIulvcilW4dnb0Q1tNiMg
+         m3b9XnQKDukpea+aJ0wqDpbjEC7/CuXGj/5IHdotwichMhAVdV/evirozu7XZAfcR+bN
+         V6dtXck8hLJLbTxbL1tcNg5VsARFJ+j6/0NKmOlmBJD4TaiGg408kbwaBTlxcVX33u8p
+         MZgJezxTUDutvAe7ZjdZoHdOtroa2wCJPTnbC3MFF+RuB6yDiPS6lQbXuZFMq1jUGPhj
+         mGAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731420027; x=1732024827;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JotyiF7JA1aOKIxM8oyPGm4XUpGQdD7Isb1ZkZqsUuw=;
+        b=dz1tqKWW5lnxDFqHjYioY2i5ID+Ca4/F1F/azaRRbJJUDb6K+NN3P5pDbaRpPmXb72
+         /HaMiEEmrXqNqVLWlPqoj7wfHv0G5hWGPj6kD+MfHhi26KHYn2HpS1381q7SLwhrcjXN
+         LRTY/e8NcJDcmkMXAmt3JvF4lQXLJTVzAil44Xhi8Os+TnsDgovBVcBKcbgTKojyqz0x
+         4IxoS6uyWLXTSxmDVAQCqqvRbatTOX+zKSO8Unelnu2KLpMIx0vsfsTW1pZCDlAoE/OP
+         5CqkIWYmUD2TVXHC26yVuZvr44fvBL+TvuQUamywk58ClTBB0pgmF+Bjgb+FePgTMlse
+         VZDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYpPock77Pv6tBtoUHo7nuTorPtiTu5l/VZeqJVul/CKm62AO6WEL0CopeoZ2jF4w5skkRh76Bu58iyOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjujhz7q/egNOSgDxqnNCbKK+CdoPrvuP2QhGoQGAkdQZKxIK1
+	GtYDwA0MvQ8aBWBtI6ybfaYqCQ8tSgKgm+XVlNkZ1CCwU7NE4sOmRp3StoyOVys=
+X-Google-Smtp-Source: AGHT+IEuCfFqsVepbJbSlEu8+mWrlXZd1MVpoMO+tLhQgthVKd5GpvRRJnE/ndDrxDsOu4+BUtcj0w==
+X-Received: by 2002:a17:907:9344:b0:a9a:714:4393 with SMTP id a640c23a62f3a-a9eefeecafcmr1660632466b.23.1731420027014;
+        Tue, 12 Nov 2024 06:00:27 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9f08c9ae30sm416505066b.55.2024.11.12.06.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 06:00:25 -0800 (PST)
+Date: Tue, 12 Nov 2024 17:00:22 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	linux-security-module@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] security: remove redundant assignment to variable
+ rc
+Message-ID: <433bb625-480f-46f2-986a-604fda49c046@stanley.mountain>
+References: <20241112124532.468198-1-colin.i.king@gmail.com>
+ <20241112133224.GA340871@mail.hallyn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112133224.GA340871@mail.hallyn.com>
 
-Adds support of ptp library in Microchip phys
+On Tue, Nov 12, 2024 at 07:32:24AM -0600, Serge E. Hallyn wrote:
+> On Tue, Nov 12, 2024 at 12:45:32PM +0000, Colin Ian King wrote:
+> > In the case where rc is equal to EOPNOTSUPP it is being reassigned a
+> > new value of zero that is never read. The following continue statement
+> > loops back to the next iteration of the lsm_for_each_hook loop and
+> > rc is being re-assigned a new value from the call to getselfattr.
+> > The assignment is redundant and can be removed.
+> > 
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> 
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> 
+> (long as it doesn't go to stable :)
+> 
 
-Divya Koppera (5):
-  net: phy: microchip_ptp : Add header file for Microchip ptp library
-  net: phy: microchip_ptp : Add ptp library for Microchip phys
-  net: phy: Kconfig: Add ptp library support and 1588 optional flag in
-    Microchip phys
-  net: phy: Makefile: Add makefile support for ptp in Microchip phys
-  net: phy: microchip_t1 : Add initialization of ptp for lan887x
+There is a tag for fixes which would break stable.
 
- drivers/net/phy/Kconfig         |   9 +-
- drivers/net/phy/Makefile        |   1 +
- drivers/net/phy/microchip_ptp.c | 997 ++++++++++++++++++++++++++++++++
- drivers/net/phy/microchip_ptp.h | 217 +++++++
- drivers/net/phy/microchip_t1.c  |  40 +-
- 5 files changed, 1260 insertions(+), 4 deletions(-)
- create mode 100644 drivers/net/phy/microchip_ptp.c
- create mode 100644 drivers/net/phy/microchip_ptp.h
+Cc: <stable+noautosel@kernel.org> # reason goes here, and must be present
 
--- 
-2.17.1
+But this isn't a fix and it wouldn't break stable so probably that's not
+appropriate.
+
+regards,
+dan carpenter
 
 
