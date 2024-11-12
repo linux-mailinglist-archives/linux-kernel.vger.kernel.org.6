@@ -1,161 +1,251 @@
-Return-Path: <linux-kernel+bounces-406373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FEC29C5E11
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:02:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FAE49C5E18
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 501C82815F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:02:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E527A1F2211C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7B8213ED1;
-	Tue, 12 Nov 2024 16:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C4120822E;
+	Tue, 12 Nov 2024 17:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WkKG9iZ7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t0PKh1QZ"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E397B21314D
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39073212EE3
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731430725; cv=none; b=RIXukfn+DfCiM40Tt49wTKkVVLlpNaZ0o7IepA0pIuaPlcgViyAkcJHS7tFWT8/9IHssrKJx7CUaF9UMWWnRARZzGluVwoQrKVI5+/wrGqz1FVdNKm+pI/fL7+QoB43R/0i2TUr1TZ2hS4eaSD6om5xUKgdVTKAiTjlFaXTAiC8=
+	t=1731430865; cv=none; b=hKGIvgyF9BT3X/du3GNqAoXFZpAYjnaFz8TlTn+bHk6eCdpCy/ZtaJ4Zy3ZWOKo7X3cIKWejwtvdV2xeLSQDVnw5pNVg07/Fh+BBTFqkv057Tgv43a96uae/qOfW1rabX5mC0hryAVQtCQtfOqFCn0Zd633tNQI4glCj8SgrlO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731430725; c=relaxed/simple;
-	bh=HoxmzCT6mnj28Trnf1t4CyqZ6h/XARVGjiQMikKj4ho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oqzE0v0H/bOmCSkgKJlkcw59MTQD4ok3gZMUSiQxhMVvkFoh5IqtgMpldQkxLfY+yJW/lhc1oKdKJcDifqW9gTxsvvYVtHiEsOyz66gPNk1JGScS5KeduSfQtY1+dVzefJOFuFgh4jatCBnX/kpLz7vc4tUBhpQoDHZCUv/cp1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WkKG9iZ7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731430722;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9FaEMvbMjXEAnY/QQcdR8QO1T/C9D0TBGIj/rMfrLn4=;
-	b=WkKG9iZ7gpwHsgfVNbIpgRaLqAQt0hC7rkMtIv9gwAkA6zYhrQvm8WgT5q1RcEmGdFFh7g
-	qjF8WE+//NkOTo6588++dliwJwwxNlNZlOau5elHNep2CjpAwbHQjPrI/KJArlaWkoVHKt
-	xyME7LP9Ifl1XbU6vp4W+QjNtc8kmkg=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-215-k9oJtS3oO0a7yUE00IThvg-1; Tue, 12 Nov 2024 11:58:40 -0500
-X-MC-Unique: k9oJtS3oO0a7yUE00IThvg-1
-X-Mimecast-MFC-AGG-ID: k9oJtS3oO0a7yUE00IThvg
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d4854fa0eso3850674f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:58:40 -0800 (PST)
+	s=arc-20240116; t=1731430865; c=relaxed/simple;
+	bh=TaEQq/zsqzk7h8VtTv5NNw6VgKc+uuvVFtnQlq88Y4c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e7LV1pxKQawaW+VjhVtnzuCgCjW5omZrFxp3J+rmrEEHTkGl1HAtf49n/VllXjPBlfJXvLqWC5q9/tW2ZpUaggUhPReuMmZB0B/IKlOFmqnCOuRdwRAApqh16li4bEt4e/65VYDumalF1PEYHS1Xj0d7qwYyjADRdqHQKZ1vHUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t0PKh1QZ; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c7edf2872so54768185ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:01:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731430861; x=1732035661; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WNeVM7wN3cEFr3UimaaD8sV34evfO8MGbGDN9uNkzEY=;
+        b=t0PKh1QZUJmB5T3SAu9yJNIsw5hQn+Q8r+cF1x0XdRbv/A3pT8MMlk0gbhD5K1wweX
+         Jz1RUsw+32i1Uq/eoCfoo11YSXmY/CIKS5xJT22jmG8xcz2GnwyVxDYwPAdBB7T4ULLd
+         34qm1kWzNVe+3u5dyJq88SPsoF+aqHHeXKirMh8ywpbslu65QpEQDnwghVfO8q1K0+MW
+         cRjDgemxb29wgi4oZr/gy7bodWvzn5vtq3EV/kCab1FX9oDCnGjQVxt5fqt5FgDb7/gm
+         SD5L73kejJ7T3aLjjZj4s7vZB5VKV7mEtU0npZBpu/E9tP+GFG6SG4aXBWM1nfSFaSGp
+         9QxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731430719; x=1732035519;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9FaEMvbMjXEAnY/QQcdR8QO1T/C9D0TBGIj/rMfrLn4=;
-        b=B+Sv5evkewuqhAqi391ZFHxC1nvIFOUusoD//TpXtgb+iLFU/ifKtNyRWwBO7sVAkT
-         1vpqs3sK+lImEn0W8hOUjZvN8D670lAm380IpDVq6ghsvZtBTS9Wh6WbADY8j1sBBNCM
-         kdMzk6RN0cDmy+t6dTcbJ9yZ79odM35FCVSs2tZt9Qf9BXFDbbcy0z1thFu6pLAwjSJq
-         s/9H50AgZwmWZaAh11HNjQqwzpzJ6PbGK+ZSwMcOwvI6+RIJoeyNNlamaA+gjUjB4sQt
-         DQ38Qf7vyYa/pf9cgI6pnnwHbmrb9Bwj19Hhx23asLfHleYIdlkMG7jbEXqKMYg+pCzE
-         BKMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUO+9X3X5KOB/bPCiXEMicqGH9vOLGnNsWHAJJ4I3n9ZbNgdRBHuNGXxi8piI72k6jVnOBTnMhAdaUrnnE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyvz20PgMgOSah2ahcuJ4M6GHzCUzzWxHADPYfTf0CtRFWUugh
-	RaoI8CrksDPf7EUzSrym2MTraZ3Lch+WGlY6U8hYv3Pv7hpgX1ecyQl0n3XmgZcJvPT2A3oKcAN
-	/rvog/3gCvZiPm9RkwauBNl2joPZnLymC7raE7/9+ra8Ll7XB+XGvCX9gPqpoKw==
-X-Received: by 2002:a05:6000:4605:b0:37d:5436:4a1 with SMTP id ffacd0b85a97d-381f18673c6mr12611295f8f.3.1731430719469;
-        Tue, 12 Nov 2024 08:58:39 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHlITkqDf7VP2Sw0yQoTtVIl0tkRy4bdXZ1v7tibUu6XVe3rmAStjPURbL1ibPKd93g2+wEWg==
-X-Received: by 2002:a05:6000:4605:b0:37d:5436:4a1 with SMTP id ffacd0b85a97d-381f18673c6mr12611282f8f.3.1731430719141;
-        Tue, 12 Nov 2024 08:58:39 -0800 (PST)
-Received: from ?IPV6:2003:cb:c739:8e00:7a46:1b8c:8b13:d3d? (p200300cbc7398e007a461b8c8b130d3d.dip0.t-ipconnect.de. [2003:cb:c739:8e00:7a46:1b8c:8b13:d3d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b054b3fesm213500835e9.17.2024.11.12.08.58.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 08:58:38 -0800 (PST)
-Message-ID: <5dcea9d4-a2eb-4704-96fc-73273e94a370@redhat.com>
-Date: Tue, 12 Nov 2024 17:58:37 +0100
+        d=1e100.net; s=20230601; t=1731430861; x=1732035661;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WNeVM7wN3cEFr3UimaaD8sV34evfO8MGbGDN9uNkzEY=;
+        b=P7IvsWe6ecOM5C8K/TfTTAUNeDId8cO9BY09JteZ8FYIAZmsz7NQJ5tYrcYj6uOOyr
+         pRP9ojHANupoCNX63LziHLW2KxpFs/dKfa+A0tyODUdpP3QlyyqehNKRUnkl6PSDh7Ix
+         mKQ5JVhSH++jfbcPfZ0rUEmUQOmJUxWJcmaVDeifg7XSiwR/WN3Qb45IBJ6H12jHRMca
+         Q5N56k1iMQDSnwwZYr4K8SY+CegnkFLg/Qa21YteM0aVMPn1/tpz+ssqQlKVtfJv/AFa
+         MP9K1gcO42qbHqt2w/LjXBYRSW5h+/dcUXf22P3XSa+0Af+Khzxf80k4YWtXFyghj0sr
+         apdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGp8yQt0rdrf4iGUtswkqbw1k1jXhGg7s4iiKKMCwfnVDTJCyA2MA0dVsEueyOUO9lixcLShzjk/5o2yc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX4HwFc0bulDPhXloLY1+1ELzSlqX3gXAhZh/ZPrczDDOAH/oI
+	629qnv6DXhFshWg48zoNF/MRv3Z9HV/EeblZhpPunYDSDOYXmVEv0+uxHScX7gnZoPRPL9FJQv1
+	gCPi0mUEWlYIPnBnY51AWnL+nifOyNkqLQ0kPtg==
+X-Google-Smtp-Source: AGHT+IFq4G4UQjeS7kkwKm5qmu4RxOjLYC6PEgXZbwvky97imu0uCL18CbjqRRrtZn4NOTKpVH6H8S9//AQyrYmGctM=
+X-Received: by 2002:a17:90b:2789:b0:2e2:bb32:73e7 with SMTP id
+ 98e67ed59e1d1-2e9b1f844damr26117058a91.15.1731430860105; Tue, 12 Nov 2024
+ 09:01:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] mm: introduce zap_nonpresent_ptes()
-To: Qi Zheng <zhengqi.arch@bytedance.com>, jannh@google.com,
- hughd@google.com, willy@infradead.org, mgorman@suse.de,
- muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
- zokeefe@google.com, rientjes@google.com, peterx@redhat.com,
- catalin.marinas@arm.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org
-References: <cover.1730360798.git.zhengqi.arch@bytedance.com>
- <34ef26a763af7b2d8dee707b6f60ff85edda345f.1730360798.git.zhengqi.arch@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <34ef26a763af7b2d8dee707b6f60ff85edda345f.1730360798.git.zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
+ <20241108083133.GD38786@noisy.programming.kicks-ass.net> <CAGETcx-CvWVc=TP5OmUL_iF7fSb1awJB1G8NghM1q_6dYKXkQQ@mail.gmail.com>
+ <cc8831c7-8ea2-0ee7-061f-73352d7832ad@amd.com> <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
+ <20241111104054.GE22801@noisy.programming.kicks-ass.net> <CAGETcx_1uyZ3M1LtSkZDHiTwDQj8M54V-=geRqJYkZXo9ZbU6w@mail.gmail.com>
+ <CAKfTPtBBq0mMat4FWPYprxZX52VFrKrrDMqvXBROuY4T-95+GQ@mail.gmail.com>
+ <CAKfTPtB90_ywaVooR=MGfjhxz2mf=kOeEzdDWKh=7jfcuu7xQg@mail.gmail.com>
+ <CAGETcx_7LYuZi356mD2j7bcZReobQE0MjoT8vdtgvdN_L2t9ww@mail.gmail.com>
+ <CAKfTPtCs8wCoUvNgxNcqi5ozDiRBrLLkuA4Edi1bu1UZLsV-Vg@mail.gmail.com> <CAGETcx-pFmBSkVfQ2tAitunb+1uZ_wE6b1+H-4jdAM_0SxJjtQ@mail.gmail.com>
+In-Reply-To: <CAGETcx-pFmBSkVfQ2tAitunb+1uZ_wE6b1+H-4jdAM_0SxJjtQ@mail.gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 12 Nov 2024 18:00:48 +0100
+Message-ID: <CAKfTPtAyWEvVMDR4cT_nu9fw47rb-Rjm6X-C5UJE0ZRFzdROrQ@mail.gmail.com>
+Subject: Re: Very high scheduling delay with plenty of idle CPUs
+To: Saravana Kannan <saravanak@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+	wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
+	Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de, John Stultz <jstultz@google.com>, 
+	Vincent Palomares <paillon@google.com>, Tobias Huschle <huschle@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 31.10.24 09:13, Qi Zheng wrote:
-> Similar to zap_present_ptes(), let's introduce zap_nonpresent_ptes() to
-> handle non-present ptes, which can improve code readability.
-> 
-> No functional change.
-> 
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+On Tue, 12 Nov 2024 at 17:26, Saravana Kannan <saravanak@google.com> wrote:
+>
+> On Tue, Nov 12, 2024 at 1:03=E2=80=AFAM Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > On Tue, 12 Nov 2024 at 08:24, Saravana Kannan <saravanak@google.com> wr=
+ote:
+> > >
+> > > On Mon, Nov 11, 2024 at 11:12=E2=80=AFAM Vincent Guittot
+> > > <vincent.guittot@linaro.org> wrote:
+> > > >
+> > > > On Mon, 11 Nov 2024 at 20:01, Vincent Guittot
+> > > > <vincent.guittot@linaro.org> wrote:
+> > > > >
+> > > > > On Mon, 11 Nov 2024 at 19:24, Saravana Kannan <saravanak@google.c=
+om> wrote:
+> > > > > >
+> > > > > > On Mon, Nov 11, 2024 at 2:41=E2=80=AFAM Peter Zijlstra <peterz@=
+infradead.org> wrote:
+> > > > > > >
+> > > > > > > On Sun, Nov 10, 2024 at 10:15:07PM -0800, Saravana Kannan wro=
+te:
+> > > > > > >
+> > > > > > > > I actually quickly hacked up the cpu_overutilized() functio=
+n to return
+> > > > > > > > true during suspend/resume and the threads are nicely sprea=
+d out and
+> > > > > > > > running in parallel. That actually reduces the total of the
+> > > > > > > > dpm_resume*() phases from 90ms to 75ms on my Pixel 6.
+> > > > > > >
+> > > > > > > Right, so that kills EAS and makes it fall through to the reg=
+ular
+> > > > > > > select_idle_sibling() thing.
+> > > > > > >
+> > > > > > > > Peter,
+> > > > > > > >
+> > > > > > > > Would you be open to the scheduler being aware of
+> > > > > > > > dpm_suspend*()/dpm_resume*() phases and triggering the CPU
+> > > > > > > > overutilized behavior during these phases? I know it's a ve=
+ry use case
+> > > > > > > > specific behavior but how often do we NOT want to speed up
+> > > > > > > > suspend/resume? We can make this a CONFIG or a kernel comma=
+nd line
+> > > > > > > > option -- say, fast_suspend or something like that.
+> > > > > > >
+> > > > > > > Well, I don't mind if Vincent doesn't. It seems like a very
+> > > > > > > specific/targeted thing and should not affect much else, so i=
+t is a
+> > > > > > > relatively safe thing to do.
+> > > > > > >
+> > > > > > > Perhaps a more direct hack in is_rd_overutilized() would be e=
+ven less
+> > > > > > > invasive, changing cpu_overutilized() relies on that getting =
+propagated
+> > > > > > > to rd->overutilized, might as well skip that step, no?
+> > > > > >
+> > > > > > is_rd_overutilized() sounds good to me. Outside of setting a fl=
+ag in
+> > > > >
+> > > > > At know I'm not convinced that this is a solution but just a quic=
+k
+> > > > > hack for your problem. We must understand 1st what is wrong
+> > > >
+> > > > And you should better switch to performance cpufreq governor to
+> > > > disable eas and run at max freq if your further wants to decrease
+> > > > latency
+> > >
+> > > Ohhh... now that you mention fixing CPU frequencies, a lot of systems
+> > > fix their CPU frequencies during suspend/resume. Pixel 6 is one of
+> > > them. In the case of Pixel 6, the driver sets the policy min/max to
+> > > these fixed frequencies to force the CPU to stay at one frequency.
+> > > Will EAS handle this correctly? I wonder if that'd affect the task
+> >
+> > AFAICT, it should
+>
+> To be clear, I'm not opposed to any sched fixes that will do the right
+> thing naturally.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+a quick try on rb5 while continuing testing my rework of eas patch
+doesn't show the problem and I still need to check with current eas
+version
 
--- 
-Cheers,
+>
+> > > placement decision. Also, other systems might limit CPU frequencies i=
+n
+> > > ways that EAS can't tell. If the CPU frequencies are frozen, I'm not
+> > > sure EAS makes a lot of sense. Except maybe using CPU max capacity to
+> > > make sure little CPUs are busy first before using the big CPUs?
+> > >
+> > > But even if EAS thinks the CPU freq could go up (when it can't), it
+> > > still doesn't make a lot of sense to not use those idle CPUs and
+> > > instead try to bump up the frequency (by putting more threads in a
+> > > CPU).
+> >
+> > In this case, you just need to call the below before entering suspend
+> > and after resuming
+> >   echo 1 > /proc/sys/kernel/sched_energy_aware
+> > instead of hacking overutilized
+> > This will disable EAS without rebuilding sched domain
+>
+> That disables EAS for a huge portion of the suspend/resume where we do
+> want it to be enabled.
+>
+> Also, as I said before, I want to do this only for the "devices
+> resume" part where there is a lot of parallelism. Not for the entire
+> system suspend/resume.
 
-David / dhildenb
+Would this be really a problem ? You might not get the disable of eas
+for your exact portion but on the other hand, you want to speedup
+suspend resume.
+I mean, if systems already fix frequency of cpus during suspend
+resume, they can just disable eas as well. eas will be disable but
+sched_asym_cpucapacity will remain enabled
 
+>
+> Is there an in-kernel version of this call? Do I just need to set and
+> clear sysctl_sched_energy_aware? Also, does setting/clearing
+
+no, it ends up updating a static key
+
+> overutilized rebuild the sched domain?
+
+no.
+
+But system is not overutilized as you mentioned in your description,
+you have some scheduling latency constraint on kworker threads
+
+
+>
+> Thanks,
+> Saravana
+>
+> >
+> > >
+> > > Anyway, with all this in mind, it makes more sense to me to just
+> > > trigger the "overutilized" mode during these specific parts of
+> > > suspend/resume.
+> > >
+> > > -Saravana
+> > >
+> > > >
+> > > > >
+> > > > > > sched.c that the suspend/resume code sets/clears, I can't think=
+ of an
+> > > > > > interface that's better at avoiding abuse. Let me know if you h=
+ave
+> > > > > > any. Otherwise, I'll just go with the flag option. If Vincent g=
+ets the
+> > > > > > scheduler to do the right thing without this, I'll happily drop=
+ this
+> > > > > > targeted hack.
+> > > > > >
+> > > > > > -Saravana
 
