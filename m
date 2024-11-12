@@ -1,78 +1,120 @@
-Return-Path: <linux-kernel+bounces-406762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD899C638D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:38:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4BE9C6393
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:39:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406F9284A90
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:38:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5E401F241AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A66B21A4CE;
-	Tue, 12 Nov 2024 21:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0F621A4CE;
+	Tue, 12 Nov 2024 21:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgWIf6nu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjP5qwzq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E176421A4AD;
-	Tue, 12 Nov 2024 21:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418EB204930;
+	Tue, 12 Nov 2024 21:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731447508; cv=none; b=dzwyuc4cTiURUpdlWn0CCOUORITiaB42AxKjSr4JKuaJpPvzvt8FtTVpNoqYTgdIBv1A9odOdvd+2kc2OoGV83uD2zOEm4+a7SPD/ihVNIuGd3pUdbw++mn5nuYi7JVXzD93D2S0btjRhxcyiDS7qvNOPG5vurtbcvqDHnX6R50=
+	t=1731447571; cv=none; b=Uxwv+pvjWqpHsCleucZnkZEfw7rt41V7F2DGRn4iEA48lnQDnLGxdjHgpWYdKU17WqfGqzXhua/xLpyW1mNPwKbITNH+BMbjwXBUpL+pA4jQsgEUp/TLIY7R3vQG0wI98AssK53HebanP3TyCe4eMWq79erfLUSrrq7GHwXNq7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731447508; c=relaxed/simple;
-	bh=gEN8uXETejN0E4QO3cZhAuE7L6ECcR/9dXB6mbXEnzU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=hYdGR8GbgWQ6mUYG/C8Dtv6dUaFslN9k0Y9qI5B0YUf+RTVV0m7ccnrDpTJQ/B0QRT0waJj/JDY4u8FmkCvqDDf5gHiNQ3Q+0FncKP1V9pnvEzFLK09BkaWq+OTx2BWLOGIQ/FipJ1cWvKgNBkzY7xD5lYJ9ZCSJORh0s1Bpc5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgWIf6nu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9D0FC4CECD;
-	Tue, 12 Nov 2024 21:38:27 +0000 (UTC)
+	s=arc-20240116; t=1731447571; c=relaxed/simple;
+	bh=9pk1AsME6rZGiOxewMrICrzKTyHvu3xjCllKNiqeHVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cT5Wj1jyY8hKpr4hYkI5/3j13rJdJd2dYrbVFvBF5jZiXXDjQHse5Ct07XV3hmxTZQLm/oIPVp2gCE7+GD8gb6sdrzIO7srNpD/XAVzG1P8gR2ooKEqa4L/I3WCmF9WBO4Kft8x10zO4Rfh91MTz0odm7+3hb+OZUPsx6qCvLfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjP5qwzq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9302CC4CECD;
+	Tue, 12 Nov 2024 21:39:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731447507;
-	bh=gEN8uXETejN0E4QO3cZhAuE7L6ECcR/9dXB6mbXEnzU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=UgWIf6nuv8LYbGT5QxugQAtyvXcjPGcD02dtwO+emTcU1sQpuv5kf8bf4vY9Uj+xn
-	 MKfVy6eGD8zKa0it1NXlziv5CjIvsN3uksncddBEaE3BdrZWzDKVTAe/dYlJ/UrkVH
-	 omqTY/+G6Uh68tpKkdn0MsAOZO0bCW/t+kWStIsU8wNaDsqAwqIEduzJanoAbcl9As
-	 dwWphg6PSr3iJE3BF4kY5zryVBLGY1r/GcGq9JSn/3g4Hc3VcC9AZmBFXZ5+lFZPDt
-	 I0OW5FdvWlfxsH53dIcpDkcE4EDYNFH8fY7S8bUYIrmcHQUI1oFmzwrpI29W73qjkJ
-	 Dzb9M0IH3Q+QQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34BE73809A80;
-	Tue, 12 Nov 2024 21:38:39 +0000 (UTC)
-Subject: Re: [GIT PULL] Landlock fix for v6.12-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241109194158.422529-1-mic@digikod.net>
-References: <20241109194158.422529-1-mic@digikod.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241109194158.422529-1-mic@digikod.net>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.12-rc7
-X-PR-Tracked-Commit-Id: 03197e40a22c2641a1f9d1744418cd29f4954b83
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 92dda329e337b7ab9cb63f4563dd7a21d001e47c
-Message-Id: <173144751773.678506.5852131497022270582.pr-tracker-bot@kernel.org>
-Date: Tue, 12 Nov 2024 21:38:37 +0000
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Daniel Burgener <dburgener@linux.microsoft.com>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+	s=k20201202; t=1731447570;
+	bh=9pk1AsME6rZGiOxewMrICrzKTyHvu3xjCllKNiqeHVo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KjP5qwzqavKkOvy0mCyR8hsndiZ4/WlOLOngrc8Z0VDnOAruNdaL9uE8I8ElrRksZ
+	 iR6EUBppMV1CT1Qfq79vftI8TJjSGPSXGmktKjCVkkdaRv2mMkNuSAq1n4ox8VHSBZ
+	 xZfXOyRcXXc8Yp4zq8UdH0xyB4G5gFtnkxts7BrjGmWCAJDyKbbkN9gtuDghFtav5L
+	 viyEOfg2IfemHHwl+iFtnZ2p4bgrMtxTO6KRBt8EajPqpITC01dOukTN9IuIDYWNGk
+	 Dy380jDeR3T4MFPD8od+bCk1oUIfFpQN8MR6oaCSfEgsl3PMcaFvR7b70ktDAnrt92
+	 Q4x21nhRoKSuw==
+Date: Tue, 12 Nov 2024 21:39:28 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: stable@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
+	Eric Sandeen <sandeen@redhat.com>
+Subject: Re: [PATCH] Revert "f2fs: remove unreachable lazytime mount option
+ parsing"
+Message-ID: <ZzPLELITeOeBsYdi@google.com>
+References: <20241112010820.2788822-1-jaegeuk@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112010820.2788822-1-jaegeuk@kernel.org>
 
-The pull request you sent on Sat,  9 Nov 2024 20:41:58 +0100:
+Hi Eric,
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.12-rc7
+Could you please check this revert as it breaks the mount()?
+It seems F2FS needs to implement new mount support.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/92dda329e337b7ab9cb63f4563dd7a21d001e47c
+Thanks,
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+On 11/12, Jaegeuk Kim wrote:
+> This reverts commit 54f43a10fa257ad4af02a1d157fefef6ebcfa7dc.
+> 
+> The above commit broke the lazytime mount, given
+> 
+> mount("/dev/vdb", "/mnt/test", "f2fs", 0, "lazytime");
+> 
+> CC: stable@vger.kernel.org # 6.11+
+> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/super.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 49519439b770..35c4394e4fc6 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -150,6 +150,8 @@ enum {
+>  	Opt_mode,
+>  	Opt_fault_injection,
+>  	Opt_fault_type,
+> +	Opt_lazytime,
+> +	Opt_nolazytime,
+>  	Opt_quota,
+>  	Opt_noquota,
+>  	Opt_usrquota,
+> @@ -226,6 +228,8 @@ static match_table_t f2fs_tokens = {
+>  	{Opt_mode, "mode=%s"},
+>  	{Opt_fault_injection, "fault_injection=%u"},
+>  	{Opt_fault_type, "fault_type=%u"},
+> +	{Opt_lazytime, "lazytime"},
+> +	{Opt_nolazytime, "nolazytime"},
+>  	{Opt_quota, "quota"},
+>  	{Opt_noquota, "noquota"},
+>  	{Opt_usrquota, "usrquota"},
+> @@ -922,6 +926,12 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+>  			f2fs_info(sbi, "fault_type options not supported");
+>  			break;
+>  #endif
+> +		case Opt_lazytime:
+> +			sb->s_flags |= SB_LAZYTIME;
+> +			break;
+> +		case Opt_nolazytime:
+> +			sb->s_flags &= ~SB_LAZYTIME;
+> +			break;
+>  #ifdef CONFIG_QUOTA
+>  		case Opt_quota:
+>  		case Opt_usrquota:
+> -- 
+> 2.47.0.277.g8800431eea-goog
 
