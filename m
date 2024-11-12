@@ -1,134 +1,167 @@
-Return-Path: <linux-kernel+bounces-406505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7576E9C600F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:14:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67ACF9C6049
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C9351F22405
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:14:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10553BE4609
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED0121744C;
-	Tue, 12 Nov 2024 18:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A32217474;
+	Tue, 12 Nov 2024 18:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="hs3FhlgG"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="msudGWks"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C195A217444
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561DC216DF2
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731435252; cv=none; b=PrNa+3/OzG2L/daFdorfqZUS95C++l5TGbwLNHlYXbZ6yDurS5xmrRk/EymD7T0B846zb3xIuaVi+jr1vm/DMBnbFiJEvPa373QOlpvdGxFe+YAhgrQmZ8TKUE2NP4NcaQGe3GeM0TyJs2unHt/SAr9yk3c3b6UMhJefFxzgGB0=
+	t=1731435305; cv=none; b=erYvI8zBs7dZC8iam7xI9rSyGefBRmCZLpDHvR+8tBoqN1uJsH6DO6HUgKLCdjJ3yFS8LEongAqS4/ocsc5l9fpSSKd4ViTSXdo5O1GOyhzl7PMQjJZp4e+gxEGCLYz/qi5Ou6cZ/8JGXaLJQmxsQ+HY/adUD+UOTB8wQq/wzJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731435252; c=relaxed/simple;
-	bh=KJNA/HS/V38dOF0HjcnnPpMye9DKRg+GfJ9vo58ukxY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FINVYE4irSoU3+Z2JbenEkWW31W/TkKpvandjvGJ14nl1dZ6iHt5OTgrXt135i6VWCHAWLhOQ9QwfApNA4DE2fdflhlpI3Hps7GlQAuaq2q8csCqoelQZB42EtiJt1u3oxFlQPS/8a2c1VbP48foDZied6/Lq30KhZxJtb4vQz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=hs3FhlgG; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20caea61132so52061325ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:14:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1731435250; x=1732040050; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uEA1osGcew3Hs+zbGBeYbe5Wrb34ypC2zAINbLjOcIk=;
-        b=hs3FhlgGLcS+8ML2Tqcv88TmooIxprDtiPXewcmL+h6RYJVRSx6HGtUIS8seugYCHN
-         10MMPMp7y+S7r6G7C8pjbMI+ZZPBRJv3JDI9JuNObMS+AOeVi9zr9VxHUOPAJaU/s7PS
-         gQAyKaUurSjJrLNf7MW+ikBoOauT1NVSUYcDY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731435250; x=1732040050;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uEA1osGcew3Hs+zbGBeYbe5Wrb34ypC2zAINbLjOcIk=;
-        b=OJlSbX1KaNAI1s1K7wc3SRzH//k2SR8maJzeniXP9Z5gkY8lkIFN9R4S5c5572k0ZW
-         fqDsLcKC0274cwe80cZP6Zh2KWjRxGghsq0FYBbDaAS0UIKL6/E2iO84/WBNOC7TkIUi
-         JyvWqW5ah4FwL+Einb+K/mth9mZqkJKULrgdhdUiODKZIe1Z+ov6UTl5SByy3j1tfxAv
-         bRFkNgIdk9blwLvCCFB+cyteYT7tvfm3xefhEJBpXesgVI39GSVDFF6kjpoNRGwY7GE8
-         +J0fF+r7ljBMQLDzfogQR+c/6WUoomDzqYdFFxKYwZF6qgG+Rl6m8jcPb6rQhOJYT4PQ
-         /lDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW140EbaxOA0oohhD84oeG3iJgEDba7MvYoJYqR6vbYMOXD5lP6em7QNFn5cQmE4ZqG3r/t6EoeWjrZAYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCXPoSM7AmF84tpV6wIIaG0EVEXfamHZubvRhNTduGvbVNfXq8
-	bQzeMb4ECmoa4cBiL7ay4FVc/wjivj1wWxWqIC69h8OY3z8Vai1o4YIg54bTqn4=
-X-Google-Smtp-Source: AGHT+IEAnGQva3AzMqzJIs+veptFvSaLDO+4Otmy0KyHaoebB8btAc6NalxMdu3A253C7i70rlM1zw==
-X-Received: by 2002:a17:902:ce0c:b0:20b:4875:2c51 with SMTP id d9443c01a7336-2118352a6damr243041825ad.27.1731435249956;
-        Tue, 12 Nov 2024 10:14:09 -0800 (PST)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6a388sm96639035ad.245.2024.11.12.10.14.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 10:14:09 -0800 (PST)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: pabeni@redhat.com,
-	edumazet@google.com,
-	amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	kuba@kernel.org,
-	mkarsten@uwaterloo.ca,
-	Joe Damato <jdamato@fastly.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [RFC net 2/2] netdev-genl: Hold rcu_read_lock in napi_set
-Date: Tue, 12 Nov 2024 18:13:59 +0000
-Message-Id: <20241112181401.9689-3-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241112181401.9689-1-jdamato@fastly.com>
-References: <20241112181401.9689-1-jdamato@fastly.com>
+	s=arc-20240116; t=1731435305; c=relaxed/simple;
+	bh=4Hb821r6x9jOspp7k7R9OTHLtNmuXsdkmEXzZcr6GOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ciKDx1tg98NdVI4ind+l4Y+KOioBT2S1lWkDOD8vDTP1siMVKyZFBrTGAaKdCFWA30mPQoeH+thqAUhDXkD67JA74al3NB71rbbyM/wlJrYZQBiCMdCL4m62Jr/bdylEqAY9tML/Pe/DCSmkiPBfMA6iCypt77hJr0FrKn0dBss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=msudGWks; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 12 Nov 2024 13:14:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731435299;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d8/ZE0KHOIIicHT1JQ4FzqCuQ19CG0YU7NmLKz0bP0A=;
+	b=msudGWksSYzgnmjp5P6ize+I22JN2SJ1DWQ82pNx/LfS7g9i5BvGuPdQEvoOJmOmtYZqoL
+	6yeOEqHDRQzRB+qObdacgNHQyc9NIQpUMaYRz4G9yvfkmiL1aZocDUAi0ZiaBMuT9DBLPm
+	xS7ylFT72XbC+dJfVZqn+VVBCdAduyg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Hao Ge <hao.ge@linux.dev>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Hao Ge <gehao@kylinos.cn>
+Subject: Re: [PATCH] lib/alloc_tag: Remove the sysctl configuration to
+ prevent users from disabling it at runtime
+Message-ID: <tcz7mmykp7wi4h3cezhbh53wmsabzvd5shejae6vrku7haynzl@4te6hgxve3s2>
+References: <20241108075004.131911-1-hao.ge@linux.dev>
+ <CAJuCfpEp_3Dz32fdpUaUbPaP6KZ+0fXmXBvBV1jRt9Q+LMRQAQ@mail.gmail.com>
+ <71703c20-8311-ce3f-fbed-27d2ec3a2c82@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <71703c20-8311-ce3f-fbed-27d2ec3a2c82@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-Hold rcu_read_lock during netdev_nl_napi_set_doit, which calls
-napi_by_id and requires rcu_read_lock to be held.
+On Tue, Nov 12, 2024 at 11:30:39AM +0800, Hao Ge wrote:
+> Hi Suren
+> 
+> 
+> Firstly, please forgive me for my improper wording in the commit message.
+> 
+> After sending it, I realized that I should have used "suggestion" instead of
+> "decided".
+> 
+> Secondly, please forgive me for taking a few days to respond. I've been
+> quite busy these days.
+> 
+> 
+> Let's continue to discuss this issue.
+> 
+> 
+> On 11/9/24 02:16, Suren Baghdasaryan wrote:
+> > On Thu, Nov 7, 2024 at 11:50 PM Hao Ge <hao.ge@linux.dev> wrote:
+> > > From: Hao Ge <gehao@kylinos.cn>
+> > > 
+> > > After much consideration,I have decided to remove
+> > > the "mem_profiling" sysctl interface to prevent
+> > > users from dynamically enabling or disabling the
+> > > MEMORY ALLOCATION PROFILING feature at runtime.
+> > > 
+> > > I have taken the following actions: I set
+> > > CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=y to
+> > > enable memory allocation profiling by default,
+> > > and then made adjustments to mem_profiling dynamically
+> > > during runtime.
+> > > 
+> > > When I ran the OOM test program, I obtained useful
+> > > information that was indeed very helpful for debugging.
+> > > 
+> > > [ 1023.065402] Memory allocations:
+> > > [ 1023.065407]     12.8 GiB     6546 mm/huge_memory.c:1328 func:do_huge_pmd_anonymous_page
+> > > [ 1023.065412]      873 MiB   229985 arch/arm64/mm/fault.c:986 func:vma_alloc_zeroed_movable_folio
+> > > [ 1023.065415]      187 MiB    29732 mm/slub.c:2412 func:alloc_slab_page
+> > > [ 1023.065418]     99.8 MiB    25560 mm/memory.c:1065 func:folio_prealloc
+> > > [ 1023.065421]     47.2 MiB     3189 mm/readahead.c:434 func:ra_alloc_folio
+> > > [ 1023.065424]     30.0 MiB       15 mm/khugepaged.c:1072 func:alloc_charge_folio
+> > > [ 1023.065428]     28.6 MiB      514 mm/compaction.c:1880 func:compaction_alloc
+> > > [ 1023.065430]     25.8 MiB     6592 mm/page_ext.c:271 func:alloc_page_ext
+> > > [ 1023.065433]     25.6 MiB     6546 mm/huge_memory.c:1161 func:__do_huge_pmd_anonymous_page
+> > > [ 1023.065436]     23.5 MiB     6017 mm/shmem.c:1771 func:shmem_alloc_folio
+> > > 
+> > > After running echo 0 > /proc/sys/vm/mem_profiling
+> > > and then executing the same test program,
+> > > I obtained the following results
+> > > 
+> > > [ 1156.509699] Memory allocations:
+> > > [ 1156.509703]      187 MiB    29645 mm/slub.c:2412 func:alloc_slab_page
+> > > [ 1156.509707]      142 MiB     9357 mm/readahead.c:434 func:ra_alloc_folio
+> > > [ 1156.509710]      136 MiB    41325 arch/arm64/mm/fault.c:986 func:vma_alloc_zeroed_movable_folio
+> > > [ 1156.509713]     99.7 MiB    25531 mm/memory.c:1065 func:folio_prealloc
+> > > [ 1156.509716]     56.0 MiB       28 mm/huge_memory.c:1328 func:do_huge_pmd_anonymous_page
+> > > [ 1156.509719]     30.0 MiB       15 mm/khugepaged.c:1072 func:alloc_charge_folio
+> > > [ 1156.509723]     28.6 MiB      514 mm/compaction.c:1880 func:compaction_alloc
+> > > [ 1156.509725]     26.3 MiB     7460 mm/readahead.c:264 func:page_cache_ra_unbounded
+> > > [ 1156.509728]     25.8 MiB     6592 mm/page_ext.c:271 func:alloc_page_ext
+> > > [ 1156.509730]     23.5 MiB     6016 mm/shmem.c:1771 func:shmem_alloc_folio
+> > > 
+> > > Because mem_profiling was disabled by executing
+> > > echo 0 > /proc/sys/vm/mem_profiling,we are unable to
+> > > record memory allocation information after the disablement.
+> > Naturally you are unable to track the allocations after disabling it.
+> > You disabled it as root, so I assume you know what you are doing.
+> > 
+> > > These output logs can mislead users. And similarly, the same
+> > > applies to alloc_info.
+> > I would understand if you made /proc/allocinfo empty after disabling
+> > it to avoid confusing the user, but ripping out the ability to
+> > enable/disable profiling at runtime does not make sense to me. Once
+> > you collect required data, disabling profiling gets you back the
+> > performance that you pay for it. There are usecases when a program on
+> > a remote device periodically enables profiling for some time, records
+> > the difference in allocations and then disables it. Your change breaks
+> > such users.
+> 
+> 
+> Actually, my original intention was also to make /proc/allocinfo empty when
+> disabling it,
+> 
+> but I considered the following scenario: after we disable it and clear
+> /proc/allocinfo,
+> 
+> we then start a memory-intensive application,
+> 
+> such as our OOM (Out-Of-Memory) test program.
+> 
+> If we later enable it again, the issue described in my commit message would
+> still arise.
+> 
+> Perhaps we need to further consider how to handle this situation.
 
-Add a helper function which calls napi_by_id and sets the error code and
-extack. It is used by this commit and the next commit to reduce code
-duplication.
+Why would you do such a thing?
 
-Closes: https://lore.kernel.org/netdev/719083c2-e277-447b-b6ea-ca3acb293a03@redhat.com/
-Fixes: 1287c1ae0fc2 ("netdev-genl: Support setting per-NAPI config values")
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- net/core/netdev-genl.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-index 934c63a93524..2a04270e9d2d 100644
---- a/net/core/netdev-genl.c
-+++ b/net/core/netdev-genl.c
-@@ -361,15 +361,13 @@ int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *info)
- 	napi_id = nla_get_u32(info->attrs[NETDEV_A_NAPI_ID]);
- 
- 	rtnl_lock();
-+	rcu_read_lock();
- 
--	napi = napi_by_id(napi_id);
--	if (napi) {
-+	napi = __do_napi_by_id(napi_id, info, &err);
-+	if (!err)
- 		err = netdev_nl_napi_set_config(napi, info);
--	} else {
--		NL_SET_BAD_ATTR(info->extack, info->attrs[NETDEV_A_NAPI_ID]);
--		err = -ENOENT;
--	}
- 
-+	rcu_read_unlock();
- 	rtnl_unlock();
- 
- 	return err;
--- 
-2.25.1
-
+We put a lot of effort into making memory allocation profiling cheap
+enough to leave on, and I haven't seen a single complaint about
+performance overhead.
 
