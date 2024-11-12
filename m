@@ -1,163 +1,179 @@
-Return-Path: <linux-kernel+bounces-405731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B429C5655
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:24:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F709C5659
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:25:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29DDB1F227ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:24:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7AD1F21756
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2485C230998;
-	Tue, 12 Nov 2024 11:07:23 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DBB2309AD;
+	Tue, 12 Nov 2024 11:07:30 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3855C230981
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A022309AC
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731409642; cv=none; b=XmIVRukeiDX7FkTJ3syHgzAslOiHYVptiT3nuy8YYASkCHDu1tEtDSae7Tp1RC0TVjAK4R2W9i25UZpKchK3t6qAnx6Cj6En3TgcBU8mzPR/5Xf9fofJH78C0cLNYx2XGSYi35oETbzxBpbyDjSmOmunMoOJRpuLqjx3QrXY+zM=
+	t=1731409650; cv=none; b=ghRKV6gAzdQfJs11zIzFBba8aa9OGxBBWazdQ/q3ERGjGqItndilgWn19qpJ6ZymXHZF+mmuHXVs6x2VmNwfZMM5/9LqwRccrOoNfgWer3fZ8nZ8arEceon6bw7iMGY5TAckKmaBcfmoO5oRly3RcWIeoPv1YHvXYaAUCjAcIVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731409642; c=relaxed/simple;
-	bh=5N3GaKSwUHeMGTL3n/ySVMERB1KPLXNmvcXpTMn7F9s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TqLAFYvrhT6Y/Tx0oKS6a0kL+brXsI6WFxfFVD3RVn4nFqXSb4aVWLLibbBKp80dlmSva8Qj7HdQlr+7/oRdnJwV24FMS8Xt7BjOEcxfWwfRg9qCkrDMmAp0sRsaO/oRygHHN6ytS2BVTwNIdDzJAWv7FHntek1TpZJhUwU1pmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 4ACB6UaU098026;
-	Tue, 12 Nov 2024 19:06:30 +0800 (+08)
-	(envelope-from Xiuhong.Wang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xnk933qr1z2KfPZ3;
-	Tue, 12 Nov 2024 19:05:27 +0800 (CST)
-Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Tue, 12 Nov 2024 19:06:28 +0800
-From: Xiuhong Wang <xiuhong.wang@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-CC: <niuzhiguo84@gmail.com>, <xiuhong.wang.cn@gmail.com>,
-        <hao_hao.wang@unisoc.com>, <ke.wang@unisoc.com>
-Subject: [PATCH] f2fs: Fix to avoid long time to shrink extent cache
-Date: Tue, 12 Nov 2024 19:06:27 +0800
-Message-ID: <20241112110627.1314632-1-xiuhong.wang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1731409650; c=relaxed/simple;
+	bh=RFZzXqoHJBrRDQJjiavpi4dM8wfBthHXlqsFXx1CzFs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dM8lo+i83DIfHGX9tEugVyDcPx+c6NomOM2RrSfUSeglOXflj71NQ2GJknlGADZl28aAz+Tnup2W/6FYHO9xqrU5FBe4VNS+oct3aCY5VA4PNrcBScFg4ZL/qjD3c7LD248fyYQvV07q0jcQJ4fh5J2OmWTRQGpw/ptwa2NEYoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6b563871eso66798955ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:07:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731409647; x=1732014447;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w71F2J8vMNvo3Ek2tm/lYKr31zIi+UKebGsl9EWIncQ=;
+        b=mabKqBgVCRhqX0ax5Vaane9BxawfZaUcCRlXVCCOtXGP4T1hV6uw1u0plZij2NzpBb
+         s3tcRIlcu81rh17aFrNVvOPtKdtkuyjehviF813KaenerrtiwUiD+bPmz2Ji79G4Zax0
+         zk5SVGLMO+bdoYbxjjY+oB6YDnMxup7CfOcnz69g1T40/9wjXCE/HZygo6tiWcSiIVqb
+         ZMTtbpYZsC1KChj5fNMRlXvw/U9Ium7MaTf4czwqPrbnUjfveaMnVF7M8d45Mv4cPUSw
+         Z0xqnk8pqUsHhrAix0ADj4NZ8f1LuBXYVTuHemWYZ5EYLiT2nm53is8wAqifk/+d7okq
+         tAqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhA99XFa91tDKt0WjufdOf2J61PeQtCqeuRy7Beuk7snsUkBlgXkquehJXDk4PBfPX0Yn+J3fubrF//Uk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw13g77ZygfnJ2oKe3YFXFcwJNuKR4YdUum1lcoVaR2uGBQy8S7
+	mnnRFdxWVhd+IT7HG0VAeMJXSHpsd4in8qqfczooA7QdsJbmpcl4Rk5d4hdCmgvUEULLoEoqNa/
+	Z4AJiV8y5a2Gr9H4V34CTPq/OluVaGQ3XiFXrznFWuWxUioDEUS1r/fE=
+X-Google-Smtp-Source: AGHT+IEfgsgjXOkhRoFIkhOM217U6CY/5f1hoxqVenSQP/u0mgXDpHP5VOR87F1b9fCK4bGpCZH0yVrLlh3l0e/Ok8Rr4MK1xPMj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 4ACB6UaU098026
+X-Received: by 2002:a05:6e02:17cb:b0:3a6:c493:7396 with SMTP id
+ e9e14a558f8ab-3a6f19a00bbmr166241545ab.3.1731409647561; Tue, 12 Nov 2024
+ 03:07:27 -0800 (PST)
+Date: Tue, 12 Nov 2024 03:07:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673336ef.050a0220.a0661.0411.GAE@google.com>
+Subject: [syzbot] [bluetooth?] WARNING in emon
+From: syzbot <syzbot+179a0c842142690ca7cb@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-We encountered a system hang problem based on the following 
-experiment:
-There are 17 processes, 8 of which do 4k data read, write and
-compare tests, and 8 do 64k read, write and compare tests. Each
-thread writes a 256M file, and another thread writes a large file
-to 80% of the disk, and then keeps doing read operations, all of
-which are direct operations. This will cause the large file to be
-filled to 80% of the disk to be severely fragmented. On a 512GB
-device, this large file may generate a huge zombie extent tree.
+Hello,
 
-When system shutting down, the init process needs to wait for the
-writeback process, and the writeback process may encounter the
-situation where the READ_EXTENT_CACHE space is insufficient and
-needs to free the zombie extent tree. The extent tree has a large
-number of extent nodes, it will a long free time to free, which
-triggers system hang.
+syzbot found the following issue on:
 
-The stack when the problem occurs is as follows:
-crash_arm64> bt 1
-PID: 1        TASK: ffffff80801a9200  CPU: 1    COMMAND: "init"
- #0 [ffffffc00806b9a0] __switch_to at ffffffc00810711c
- #1 [ffffffc00806ba00] __schedule at ffffffc0097c1c4c
- #2 [ffffffc00806ba60] schedule at ffffffc0097c2308
- #3 [ffffffc00806bab0] wb_wait_for_completion at ffffffc0086320d4
- #4 [ffffffc00806bb20] writeback_inodes_sb at ffffffc00863719c
- #5 [ffffffc00806bba0] sync_filesystem at ffffffc00863c98c
- #6 [ffffffc00806bbc0] f2fs_quota_off_umount at ffffffc00886fc60
- #7 [ffffffc00806bc20] f2fs_put_super at ffffffc0088715b4
- #8 [ffffffc00806bc60] generic_shutdown_super at ffffffc0085cd61c
- #9 [ffffffc00806bcd0] kill_f2fs_super at ffffffc00886b3dc
+HEAD commit:    906bd684e4b1 Merge tag 'spi-fix-v6.12-rc6' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11bacea7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=20d60fe605153ebe
+dashboard link: https://syzkaller.appspot.com/bug?extid=179a0c842142690ca7cb
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-crash_arm64> bt 14997
-PID: 14997    TASK: ffffff8119d82400  CPU: 3    COMMAND: "kworker/u16:0"
- #0 [ffffffc019f8b760] __detach_extent_node at ffffffc0088d5a58
- #1 [ffffffc019f8b790] __release_extent_node at ffffffc0088d5970
- #2 [ffffffc019f8b810] f2fs_shrink_extent_tree at ffffffc0088d5c7c
- #3 [ffffffc019f8b8a0] f2fs_balance_fs_bg at ffffffc0088c109c
- #4 [ffffffc019f8b910] f2fs_write_node_pages at ffffffc0088bd4d8
- #5 [ffffffc019f8b990] do_writepages at ffffffc0084a0b5c
- #6 [ffffffc019f8b9f0] __writeback_single_inode at ffffffc00862ee28
- #7 [ffffffc019f8bb30] writeback_sb_inodes at ffffffc0086358c0
- #8 [ffffffc019f8bc10] wb_writeback at ffffffc0086362dc
- #9 [ffffffc019f8bcc0] wb_do_writeback at ffffffc008634910
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Process 14997 ran for too long and caused the system hang.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-906bd684.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/34d4b570061f/vmlinux-906bd684.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/08ae18992ed1/bzImage-906bd684.xz
 
-At this time, there are still 1086911 extent nodes in this zombie
-extent tree that need to be cleaned up.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+179a0c842142690ca7cb@syzkaller.appspotmail.com
 
-crash_arm64_sprd_v8.0.3++> extent_tree.node_cnt ffffff80896cc500
-  node_cnt = {
-    counter = 1086911
-  },
+Nov  8 11:01:11 syzkNov  8 11:01:11 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL device
+Nov  8 11:01:11 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL device
+Nov  8 11:01:11 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL device
+Nov  8 11:01:11 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL device
+Nov  8 11:01:11 syzkaller daemon.err dhc[  112.611200][   T35] ------------[ cut here ]------------
+pcd[5661]: libud[  112.612841][   T35] WARNING: CPU: 3 PID: 35 at kernel/workqueue.c:2257 __queue_work+0xc3a/0x1080 kernel/workqueue.c:2256
+ev: received NUL[  112.616635][   T35] CPU: 3 UID: 0 PID: 35 Comm: kworker/3:0 Not tainted 6.12.0-rc6-syzkaller-00169-g906bd684e4b1 #0
+Nov  8 11:01:11 [  112.619771][   T35] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+syzkaller daemon[  112.622998][   T35] Workqueue: events l2cap_chan_timeout
+.err dhcpcd[5661[  112.626360][   T35] Code: 07 83 c0 03 38 d0 7c 09 84 d2 74 05 e8 2f e7 97 00 8b 5b 2c 31 ff 83 e3 20 89 de e8 80 5f 36 00 85 db 75 60 e8 37 5d 36 00 90 <0f> 0b 90 e9 f9 f7 ff ff e8 29 5d 36 00 90 0f 0b 90 e9 a8 f7 ff ff
+]: libudev: rece[  112.631694][   T35] RSP: 0018:ffffc900008efab8 EFLAGS: 00010093
+ived NULL device[  112.633897][   T35] RAX: 0000000000000000 RBX: ffff88801b0a0c00 RCX: ffffffff8159028a
 
-The root cause of this problem is that when the f2fs_balance_fs
-function is called in the write process, it will determine
-whether to call f2fs_balance_fs_bg, but it is difficult to
-meet the condition of excess_cached_nats. When the
-f2fs_shrink_extent_tree function is called to free during 
-f2fs_write_node_pages, there are too many extent nodes on the 
-extent tree, which causes a loop and causes a system hang.
+Nov  8 11:01:1[  112.633927][   T35] RBP: ffff88804b5b48c8 R08: 0000000000000005 R09: 0000000000000000
+1 syzkaller daem[  112.633934][   T35] R10: 0000000000200000 R11: 0000000000000000 R12: ffff888028731800
+on.err dhcpcd[56[  112.633941][   T35] R13: 0000000000000008 R14: ffff88804b5b48d0 R15: ffff888028731800
+61]: libudev: re[  112.648173][   T35] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ceived NULL devi[  112.650334][   T35] CR2: 00005633f9eb8300 CR3: 00000000245a0000 CR4: 0000000000352ef0
+ce
+Nov  8 11:01[  112.655004][   T35] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+:11 syzkaller da[  112.655013][   T35] Call Trace:
+emon.err dhcpcd[[  112.655023][   T35]  ? __warn+0xea/0x3d0 kernel/panic.c:746
+Nov  8 11:01:11 syzkaller daemon[  112.655042][   T35]  ? __queue_work+0xc3a/0x1080 kernel/workqueue.c:2256
+.err dhcpcd[5661[  112.663447][   T35]  ? __report_bug lib/bug.c:199 [inline]
+.err dhcpcd[5661[  112.663447][   T35]  ? report_bug+0x3c0/0x580 lib/bug.c:219
+]: libudev: rece[  112.665186][   T35]  ? handle_bug+0x54/0xa0 arch/x86/kernel/traps.c:285
+ived NULL device[  112.665198][   T35]  ? exc_invalid_op+0x17/0x50 arch/x86/kernel/traps.c:309
 
-To solve this problem, when calling f2fs_balance_fs, check whether
-the extent cache is sufficient. If not, release the zombie extent
-tree.
+Nov  8 11:01:1[  112.665209][   T35]  ? asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:621
+1 syzkaller daem[  112.665227][   T35]  ? to_kthread kernel/kthread.c:76 [inline]
+1 syzkaller daem[  112.665227][   T35]  ? kthread_data+0x4a/0xc0 kernel/kthread.c:244
+on.err dhcpcd[56[  112.672090][   T35]  ? __queue_work+0xc39/0x1080 kernel/workqueue.c:2256
+61]: libudev: re[  112.673920][   T35]  ? __queue_work+0xc3a/0x1080 kernel/workqueue.c:2256
+ceived NULL devi[  112.675676][   T35]  ? __queue_work+0xc39/0x1080 kernel/workqueue.c:2256
+ce
+Nov  8 11:01[  112.677419][   T35]  ? clear_pending_if_disabled+0xa9/0x210 kernel/workqueue.c:2358
+:11 syzkaller da[  112.679306][   T35]  ? __pfx_clear_pending_if_disabled+0x10/0x10 arch/x86/include/asm/atomic.h:23
+emon.err dhcpcd[[  112.681308][   T35]  __queue_delayed_work+0x21b/0x2e0 kernel/workqueue.c:2507
+5661]: libudev: [  112.683075][   T35]  queue_delayed_work_on+0x12a/0x150 kernel/workqueue.c:2552
+received NULL de[  112.684835][   T35]  queue_delayed_work include/linux/workqueue.h:677 [inline]
+received NULL de[  112.684835][   T35]  hci_conn_drop include/net/bluetooth/hci_core.h:1570 [inline]
+received NULL de[  112.684835][   T35]  hci_conn_drop include/net/bluetooth/hci_core.h:1544 [inline]
+received NULL de[  112.684835][   T35]  l2cap_chan_del+0x5a0/0x900 net/bluetooth/l2cap_core.c:674
+vice
+Nov  8 11:[  112.686467][   T35]  l2cap_chan_close+0xff/0xa30 net/bluetooth/l2cap_core.c:847
+01:11 syzkaller [  112.688470][   T35]  ? __pfx_l2cap_chan_close+0x10/0x10 net/bluetooth/l2cap_core.c:3787
+daemon.err dhcpc[  112.690727][   T35]  ? rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+daemon.err dhcpc[  112.690727][   T35]  ? rcu_is_watching+0x12/0xc0 kernel/rcu/tree.c:737
+Nov  8 11:01:11 [  112.692741][   T35]  ? trace_lock_acquire+0x14a/0x1d0 include/trace/events/lock.h:24
+syzkaller daemon[  112.696630][   T35]  l2cap_chan_timeout+0x196/0x310 net/bluetooth/l2cap_core.c:435
+.err dhcpcd[5661[  112.698753][   T35]  process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+]: libudev: rece[  112.700904][   T35]  ? __pfx_lock_acquire.part.0+0x10/0x10 kernel/locking/lockdep.c:122
+ived NULL device[  112.703198][   T35]  ? __pfx_process_one_work+0x10/0x10 include/linux/list.h:153
 
-Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Nov  8 11:01:1[  112.705413][   T35]  ? assign_work+0x1a0/0x250 kernel/workqueue.c:1200
+1 syzkaller daem[  112.707453][   T35]  process_scheduled_works kernel/workqueue.c:3310 [inline]
+1 syzkaller daem[  112.707453][   T35]  worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+on.err dhcpcd[56[  112.709488][   T35]  ? __pfx_worker_thread+0x10/0x10 include/linux/list.h:183
+61]: libudev: re[  112.711618][   T35]  kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ceived NULL devi[  112.713380][   T35]  ? __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
+ceived NULL devi[  112.713380][   T35]  ? _raw_spin_unlock_irq+0x23/0x50 kernel/locking/spinlock.c:202
+ce
+Nov  8 11:01[  112.715597][   T35]  ? __pfx_kthread+0x10/0x10 include/linux/list.h:373
+:11 syzkaller da[  112.717559][   T35]  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+emon.err dhcpcd[[  112.719468][   T35]  ? __pfx_kthread+0x10/0x10 include/linux/list.h:373
+5661]: libudev: [  112.721437][   T35]  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+received NULL de[  112.723473][   T35]  </TASK>
+vic[e 
+
+
 ---
-Test the problem with the temporary versions:
-patch did not reproduce the problem, the patch is as follows:
-@@ -415,7 +415,7 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
-                f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_FAULT_INJECT);
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-        /* balance_fs_bg is able to be pending */
--       if (need && excess_cached_nats(sbi))
-+       if (need)
-                f2fs_balance_fs_bg(sbi, false);
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
----
- fs/f2fs/segment.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 1766254279d2..390bec177567 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -415,7 +415,9 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
- 		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_FAULT_INJECT);
- 
- 	/* balance_fs_bg is able to be pending */
--	if (need && excess_cached_nats(sbi))
-+	if (need && (excess_cached_nats(sbi) ||
-+			!f2fs_available_free_memory(sbi, READ_EXTENT_CACHE) ||
-+			!f2fs_available_free_memory(sbi, AGE_EXTENT_CACHE)))
- 		f2fs_balance_fs_bg(sbi, false);
- 
- 	if (!f2fs_is_checkpoint_ready(sbi))
--- 
-2.25.1
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
