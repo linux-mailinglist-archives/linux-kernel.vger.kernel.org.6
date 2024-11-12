@@ -1,87 +1,138 @@
-Return-Path: <linux-kernel+bounces-406690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133CF9C6464
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:40:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3097F9C63DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:56:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAEDAB440E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:12:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BFBBB3490D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:20:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1009C219CAB;
-	Tue, 12 Nov 2024 20:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058E7219E57;
+	Tue, 12 Nov 2024 20:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="r0ia7Rf7"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="hsXUjPtg"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246891A76D2;
-	Tue, 12 Nov 2024 20:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36AA219E4F
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 20:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731442330; cv=none; b=VDKkIrXz+IyoLoHks583Mp61zmhirDgBzsVpzs9M0+70gqmdNj3udXIZSaZ8BiFvIoDfoKVI57GMGnqnSXGHZJJ/Yb409NeWjkztgHXYuRdNiKAdwKLVLXcs1dXcb6bmcw4N4RsZtEU/jZcf9E2NqD8kVwgI0tjcP2nx53xhqf4=
+	t=1731442806; cv=none; b=qxbYucXSktHUcFcIS7ICHshFuiD55l3GJvTY3h1QtHk1FTYICFhJKThr0y4AnLo1z8C8EEpSTD27rqhnow/VxYDgMonLsusqmuadAZe/O93vQFL9Lz+fFzcDYrGJxDs4DOGuJgOHTkiBenDfIuN5LazUhe+ramCr0dLrRnlaVbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731442330; c=relaxed/simple;
-	bh=Fu/1Rg21Fzm0n9/O98bf05emGXukx/vTkSyf0y3r0qo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ligNinFzZ68m2uzQSnk9LjcqLa0snDX2D/q+gABxSz1DsdmbN+1D6Pn3ISL/4RFOjouMGUZN/uQX5/yxYabsDaBTmWNKleSdQ9Q+IlD404FN7W+kz6GDkzpeWB39N3KeSC1EVmwXSCNnBhwxo6TxAk34mmNf8F5O7kGDWqdfmRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=r0ia7Rf7; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2FB50403E4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1731442328; bh=Fu/1Rg21Fzm0n9/O98bf05emGXukx/vTkSyf0y3r0qo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=r0ia7Rf7FAZyI4nJFwj77F2Pqf3jumnN6ehnVylqM7eNlhsKlNwfSdkp+7n+I7TrG
-	 m7zrey0jzQOzZOxGoC1DuF5qb5jkEoj6jDCAIINek3nvSeGL6tAS3tR4IBfox+53xJ
-	 IN2A9n6HtEYbrEya4CrdFf9QYoUzQFKDkjaZl9kpRraj3pHoV+41S6jYE0TmJbguQc
-	 yAQgMNthoKRywfKPC2jilolx6/T/qBtDTFN3WWg3yG/v0nH6ixDh+BRT6zE/l4D/IC
-	 tIehhc0KjrYR/SyWk4DbxE/q4fTniIf27E0j04y1lYXAL+gUNfgqjPM7zq/peJC+SY
-	 24ufMcXZi4bIQ==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 2FB50403E4;
-	Tue, 12 Nov 2024 20:12:08 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: David Lechner <dlechner@baylibre.com>, anish kumar
- <yesanishhere@gmail.com>, broonie@kernel.org,
- u.kleine-koenig@pengutronix.de, Jonathan.Cameron@huawei.com,
- pstanner@redhat.com
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/2] Documentation: devres: add missing mailbox helpers
-In-Reply-To: <8dee409f-4b38-4168-9316-1fd15c97fc89@baylibre.com>
-References: <20241106235217.94718-1-yesanishhere@gmail.com>
- <8dee409f-4b38-4168-9316-1fd15c97fc89@baylibre.com>
-Date: Tue, 12 Nov 2024 13:12:07 -0700
-Message-ID: <87ikssqkiw.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1731442806; c=relaxed/simple;
+	bh=qh6V9H24WUaHZ398YoDNUIlxMIImfm73W8XwHDnuY+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WhOHzhzf8yCbghXC7mj53FaxxcJREmM08yGmS5dvBbFSXwj4B2CXk6lcxVqDO2g4fmidK3asGDT82FkrrYjOyrJm7s8UGXUU4ODWcKkuHAkJpGmT/yNsl/kgWiT3eWCPTqMW9Gkpbrnz8cJJmaUVMBJaH+LyaBxMisMHCl0d0ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=hsXUjPtg; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e5ffbc6acbso3628347b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:20:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1731442804; x=1732047604; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2I9EFlpFWjPTkUAQq90uTZ+s3a93U8M2zwH+dtcnH4g=;
+        b=hsXUjPtgxifVWO3/Tfp+ZiXrd7AmNdAcb/pzj2Q0dTJFq2FJp4JhYQtnMU454B2VVz
+         qDHNmKqmmr//yGRwKNOhnFfhN9g/bn2XuL9TRFdfh852qxbZ60fLpcrnDc4xRc/P39R9
+         ZSbxdTHfm+PHMlyIveWr1edPxpscs0R1v1OmPPvrocoAmyvUB2ajvX4V1R1urQYJysWi
+         /MNd8Ixut32RHmZ+r2bSn7I25b+wDf1TCgInBYYjUW7u3hsD+MhWIyvtdvG5zKdmj218
+         rTdJB+VkHCinUM4UaP2uLtxfvDjUeYeAzc4hTRfB5yWmtOWdDhksbgIwuACWVltKxWH/
+         PXug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731442804; x=1732047604;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2I9EFlpFWjPTkUAQq90uTZ+s3a93U8M2zwH+dtcnH4g=;
+        b=mPlHBxegvaBLPbeGx2ZNtAhq6zESyiSgeyqBdeHAVPoSPgt3IE1XO27x6FF5Dl82v0
+         nNsTWVV3UUe5hJ+S1HGqlcUWsXHz2KZ+N40F62CMKffvcghs5PU0UJFj0MiNNNOdbnoL
+         qSi1FNBKSZ2diSTsbxE033huZONsIe1RRQYDo4oTPhkmxKCHj56m/+vS98EiqaJotjZ0
+         CRHpYBR6dRv552Y0enn6KzplTZqeTrMkSbQ3T+1x37BNzQO6gYotkdeIV4bwCx0iufdS
+         bYDV2eLc+Rh/+mOxGq7FBHmK6ICACf93xJWYJYuhvG/qyOkHQ0/BneLPfP40Ptxw56sY
+         DZWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXN4pDXcG7wAjI0wXVUMfVwcu/Yke1gU7RHtaK8rcjskn4PqdLGttz+USG3dWUPwQAqr2wfpUZnT3nCH4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF3IpyUXCCAF8xZYLnZar40Nno4cFJcAV1iyA8oTHsOU+uXxR1
+	vgUcFtQHOQnyakRsmKpQYcx4y6CQj7SmVMWwj676LdxPi17UEeeNOnMXZeeLiw==
+X-Google-Smtp-Source: AGHT+IH1weg8kjVuBmmwCga7pLih0gbvjmLcj7PDw/tDzwTnXQ97nvMfMsfBc6I2vGLThNMzOqVnPw==
+X-Received: by 2002:a54:470e:0:b0:3e7:9e03:2359 with SMTP id 5614622812f47-3e79e0328e1mr8282209b6e.34.1731442803988;
+        Tue, 12 Nov 2024 12:20:03 -0800 (PST)
+Received: from rowland.harvard.edu ([140.247.12.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3961df03fsm75883546d6.16.2024.11.12.12.20.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 12:20:03 -0800 (PST)
+Date: Tue, 12 Nov 2024 15:20:00 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>,
+	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
+	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
+	dlustig@nvidia.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	lkmm@lists.linux.dev, torvalds@linux-foundation.org
+Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
+ case-insensitive filesystem.
+Message-ID: <25cee4ed-1115-42d4-8422-ed7f7f4ff389@rowland.harvard.edu>
+References: <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
+ <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
+ <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
+ <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
+ <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
+ <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
+ <62634bbe-edd6-4973-a96a-df543f39f240@rowland.harvard.edu>
+ <61075efa-8d53-455b-bba3-e88bbf4da0a5@paulmck-laptop>
+ <75a5a694-1313-44b1-baff-d72559ac9039@rowland.harvard.edu>
+ <de5485b8-6d88-46f6-b982-cdfb3cf80a13@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <de5485b8-6d88-46f6-b982-cdfb3cf80a13@paulmck-laptop>
 
-David Lechner <dlechner@baylibre.com> writes:
+On Tue, Nov 12, 2024 at 10:26:37AM -0800, Paul E. McKenney wrote:
+> We do have a rule for the filenames in that directory that most of
+> them follow (I am looking at *you*, "dep+plain.litmus"!).  So we have
+> a few options:
+> 
+> 1.	Status quo.  (How boring!!!)
+> 
+> 2.	Come up with a better rule mapping the litmus-test file
+> 	contents to the filename, and rename things to follow that rule.
+> 	(Holy bikeshedding, Batman!)
+> 
+> 3.	Keep it simple and keep the current rule, but make the
+> 	combination of spin_lock() and smp_mb__after_spinlock()
+> 	have a greater Hamming distance from "lock".  Szőke's
+> 	patch changed only one of the filenames containing "Lock".
+> 	(Bikeshedding, but narrower scope.)
+> 
+> 4.	One of the above, but bring the litmus tests not following
+> 	the rule into compliance.
+> 
+> 5.	Give up on the idea of the name reflecting the contents of the
+> 	file, and just number them or something.  (More bikeshedding
+> 	and a different form of confusion.)
+> 
+> 6.	#5, but accompanied by some tool or script that allows easy
+> 	searching of the litmus tests by pattern of interaction.
+> 	(Easy for *me* to say!)
+> 
+> 7.	Something else entirely.
+> 
+> Thoughts?
 
-> On 11/6/24 5:52 PM, anish kumar wrote:
->> mailbox api's were missing from the devres documentation.
->> This patch adds them.
->
-> I've been wondering... Is it really that useful to have all
-> of the devn_ functions listed in the documentation?
+Thumbs up for 3.
 
-Not particularly, no.
-
-Far better would be to use the docs build system to bring in the
-kerneldoc comments that are there for at least a good subset of those
-functions.
-
-Thanks,
-
-jon
+Alan
 
