@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-406112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494869C5EB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:20:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF619C5DFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:58:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC3ECB833AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:57:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 512E0B82060
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBAE202652;
-	Tue, 12 Nov 2024 14:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D8A2038A2;
+	Tue, 12 Nov 2024 14:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XXoJnIX9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lsLl9uQv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEDB1FC7FF;
-	Tue, 12 Nov 2024 14:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36908202F9E;
+	Tue, 12 Nov 2024 14:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423180; cv=none; b=iDsXcaNgYEGY7qwCyZLB7dPTPapjsc8kvX4dv4A3zh3oe79USoIACwXyv5kKlXg1Dyfak9oV9Kyc3oAhMMF7YHkrY66C08Xtnq8URaC4pPbXkYJ5CnA27ghCrpGxqeV7HqwKwGBrmihU/EJdfwuu6/Ou+GjXARvLqc28FEqsvmI=
+	t=1731423188; cv=none; b=I0Q8hUOnP5j6qgP2hsyCK5dmVkJHie6c+fwYEoXl0Z+GEoGWhxDZa1HPAlxuXEuXU4REaDjiRpT3VENeayLSVMBrty2MkIvhun8Tp5hgAeDMLKJCvmsu1S46sso7pDaV4uiF5M5eUtET1alrNAg5X/M28Qnlg03ynoyF7+Miges=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423180; c=relaxed/simple;
-	bh=89PLNAGurys0mJBxDA/ZpZpRTaoDP8T4R09w6xw7TlU=;
+	s=arc-20240116; t=1731423188; c=relaxed/simple;
+	bh=DSNbca3lQ8LSXso6jqYZBWuI3HmmlzLJZscELXWEgfM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rUELgmAT3zjCHc9M568NuinEdiESeyqX83ceOo84vHrwfO35XlaphvHbBhfOrj+lL0CmMKj3mkz9YSdEbRC3ewCMx+QyZ+N8s7W8rwDWwr5Y+6ZjE7CvhwNBKxiQd+V80Ho6PwJdSl7iseECAGrFvk0l5vGns4tc8YF8rlz2oUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XXoJnIX9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36055C4CED8;
-	Tue, 12 Nov 2024 14:52:55 +0000 (UTC)
+	 MIME-Version; b=DPdN6G9DxNiLLsoT5gv5afnOVDfNVbsuvFyrhHpnHutiv4C/ZwBG6M59t64DNxSUgwEz3mXcw7ouGGuvKFPVEB9SnPQJZ+ru4zYNIuZm88Gf3VtYN+Mh/wV0C7bWb7rWVy08YHpU0KOwXZPq+fhA0AJT/dDTrldm1gDfIrI9pDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lsLl9uQv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3F2BC4CEDB;
+	Tue, 12 Nov 2024 14:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731423179;
-	bh=89PLNAGurys0mJBxDA/ZpZpRTaoDP8T4R09w6xw7TlU=;
+	s=k20201202; t=1731423187;
+	bh=DSNbca3lQ8LSXso6jqYZBWuI3HmmlzLJZscELXWEgfM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XXoJnIX9pE8GJIgPVMl6V0UxchgE3PpNmtPgDuER5xM7+oAv98KyfhztiNFbZvv3I
-	 Gv0irBUQjJBkLD4m7c/aTcktoCrfPCtma5YaS6M9/8jEVVaRmGA03wbFM5L8p+kxCy
-	 MU6yC1wN3RSeXo7B9TEfOySx1wsZ3wSRgBQVCGTYdgC+jfYgszTra20vOzefUoFiZ1
-	 HSyvwVjm2nfHA6sQsF/9SfYYR2/8QIzn6VVBWVOYfhOXMfEPsYLMspw4nnPkHRpBRO
-	 afw7nCn2A6tIfzPqNzwqFmZ/wjhDS9BibAJxmTLZK5fYaIqr90NCZqDPMgugY9KUtz
-	 fJ8B3OOOOX2lA==
+	b=lsLl9uQvLt8thmWmeMZSNMaub4BZv51O5iIP//APEUCfgN+bjQ1CZ0MVStIZmS3b+
+	 hu13ktakC0BZhufXS5q+zV6kXHDF5BfegCMlNst9SX4dJV5SHY/2IQkl8TTMw2VXVB
+	 8EYtfrQ/3ifIbHLbEKFzAVvlt8FXyjb8f72itSwXtENX0m3Pga+QZ+BwltzddhfucA
+	 LV/oJmR7CyqxJ7H2n+MIcfvhTV9IU/0m6VvXTv9K1M08knmIFXVzelFXEp/6H+RdNm
+	 ijMQrQmvib3MXp2qmJ9SVrRKFVuSbr1ffRdXmc5f6qboI0ZKmPR171otuGyYSf17uk
+	 S9O9wym6AR+NQ==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: "Paul E. McKenney" <paulmck@kernel.org>,
@@ -60,9 +60,9 @@ Cc: "Paul E. McKenney" <paulmck@kernel.org>,
 	bpf@vger.kernel.org,
 	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
 	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 13/16] rcutorture: Add srcu_read_lock_lite() support to rcutorture.reader_flavor
-Date: Tue, 12 Nov 2024 15:51:56 +0100
-Message-ID: <20241112145159.23032-14-frederic@kernel.org>
+Subject: [PATCH 15/16] refscale: Add srcu_read_lock_lite() support using "srcu-lite"
+Date: Tue, 12 Nov 2024 15:51:58 +0100
+Message-ID: <20241112145159.23032-16-frederic@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241112145159.23032-1-frederic@kernel.org>
 References: <20241112145159.23032-1-frederic@kernel.org>
@@ -76,8 +76,11 @@ Content-Transfer-Encoding: 8bit
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-This commit causes bit 0x4 of rcutorture.reader_flavor to select the new
-srcu_read_lock_lite() and srcu_read_unlock_lite() functions.
+This commit creates a new srcu-lite option for the refscale.scale_type
+module parameter that selects srcu_read_lock_lite() and
+srcu_read_unlock_lite().
+
+[ paulmck: Apply Dan Carpenter feedback. ]
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Cc: Alexei Starovoitov <ast@kernel.org>
@@ -88,50 +91,64 @@ Cc: <bpf@vger.kernel.org>
 Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 4 ++--
- kernel/rcu/rcutorture.c                         | 7 +++++++
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ kernel/rcu/refscale.c | 37 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 34 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 52922727006f..203ec51e41d4 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5431,8 +5431,8 @@
- 			If there is more than one bit set, the readers
- 			are entered from low-order bit up, and are
- 			exited in the opposite order.  For SRCU, the
--			0x1 bit is normal readers and the 0x2 bit is
--			for NMI-safe readers.
-+			0x1 bit is normal readers, 0x2 NMI-safe readers,
-+			and 0x4 light-weight readers.
+diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
+index 0db9db73f57f..338e7c5ac44a 100644
+--- a/kernel/rcu/refscale.c
++++ b/kernel/rcu/refscale.c
+@@ -212,6 +212,36 @@ static const struct ref_scale_ops srcu_ops = {
+ 	.name		= "srcu"
+ };
  
- 	rcutorture.shuffle_interval= [KNL]
- 			Set task-shuffle interval (s).  Shuffling tasks
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 405decec3367..a313cdcb0960 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -658,6 +658,11 @@ static int srcu_torture_read_lock(void)
- 		WARN_ON_ONCE(idx & ~0x1);
- 		ret += idx << 1;
- 	}
-+	if (reader_flavor & 0x4) {
++static void srcu_lite_ref_scale_read_section(const int nloops)
++{
++	int i;
++	int idx;
++
++	for (i = nloops; i >= 0; i--) {
 +		idx = srcu_read_lock_lite(srcu_ctlp);
-+		WARN_ON_ONCE(idx & ~0x1);
-+		ret += idx << 2;
++		srcu_read_unlock_lite(srcu_ctlp, idx);
 +	}
- 	return ret;
- }
++}
++
++static void srcu_lite_ref_scale_delay_section(const int nloops, const int udl, const int ndl)
++{
++	int i;
++	int idx;
++
++	for (i = nloops; i >= 0; i--) {
++		idx = srcu_read_lock_lite(srcu_ctlp);
++		un_delay(udl, ndl);
++		srcu_read_unlock_lite(srcu_ctlp, idx);
++	}
++}
++
++static const struct ref_scale_ops srcu_lite_ops = {
++	.init		= rcu_sync_scale_init,
++	.readsection	= srcu_lite_ref_scale_read_section,
++	.delaysection	= srcu_lite_ref_scale_delay_section,
++	.name		= "srcu-lite"
++};
++
+ #ifdef CONFIG_TASKS_RCU
  
-@@ -683,6 +688,8 @@ srcu_read_delay(struct torture_random_state *rrsp, struct rt_read_seg *rtrsp)
- static void srcu_torture_read_unlock(int idx)
- {
- 	WARN_ON_ONCE((reader_flavor && (idx & ~reader_flavor)) || (!reader_flavor && (idx & ~0x1)));
-+	if (reader_flavor & 0x4)
-+		srcu_read_unlock_lite(srcu_ctlp, (idx & 0x4) >> 2);
- 	if (reader_flavor & 0x2)
- 		srcu_read_unlock_nmisafe(srcu_ctlp, (idx & 0x2) >> 1);
- 	if ((reader_flavor & 0x1) || !(reader_flavor & 0x7))
+ // Definitions for RCU Tasks ref scale testing: Empty read markers.
+@@ -1082,9 +1112,10 @@ ref_scale_init(void)
+ 	long i;
+ 	int firsterr = 0;
+ 	static const struct ref_scale_ops *scale_ops[] = {
+-		&rcu_ops, &srcu_ops, RCU_TRACE_OPS RCU_TASKS_OPS &refcnt_ops, &rwlock_ops,
+-		&rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops, &clock_ops, &jiffies_ops,
+-		&typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
++		&rcu_ops, &srcu_ops, &srcu_lite_ops, RCU_TRACE_OPS RCU_TASKS_OPS
++		&refcnt_ops, &rwlock_ops, &rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops,
++		&clock_ops, &jiffies_ops, &typesafe_ref_ops, &typesafe_lock_ops,
++		&typesafe_seqlock_ops,
+ 	};
+ 
+ 	if (!torture_init_begin(scale_type, verbose))
 -- 
 2.46.0
 
