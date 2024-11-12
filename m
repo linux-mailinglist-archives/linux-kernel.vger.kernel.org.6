@@ -1,172 +1,123 @@
-Return-Path: <linux-kernel+bounces-406102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E119C5F64
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:46:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27CFF9C5FD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:03:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C47C9B8218A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:53:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF27BB62451
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968BA1FF050;
-	Tue, 12 Nov 2024 14:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDD220370A;
+	Tue, 12 Nov 2024 15:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gw7suwbH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcBA/9/Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0252003A2
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C017D2022CF;
+	Tue, 12 Nov 2024 15:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423143; cv=none; b=u190ziFFKMT9kt9eJMKEb2GKy0FtO8vVZ9NmpNEl0ZazxnPHl4abggypUY4VkDId8sHckHjKxftFdCBrBGSWAPSPhB4mGyZIcXD1nkODIupo6RvSUdLRaaQzIUFoRmMHKqarShcdCnzHig7gxb83bKlkLnbdpfuX0FW3wGiMj/I=
+	t=1731423757; cv=none; b=I/rDtiz4JzirVxG4x6VfHLGDbIXyBsh+bJuHLfq8d57vJIpKRHatuT6IMpYWEhpQ48lEzO44pxlSeyx1GWyXKwlnqnIExmzFgmztUuo55Dic8MvRbCXacv5GcL0ITUqbB3H0G22Iv0k7k60EJhm/YKhPYS4pKy+2TVe/MdXCDg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423143; c=relaxed/simple;
-	bh=XxmjXbd3NELFVsWVdW6o2Zxqx8IqBr4HxPuGWI6cATE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K+DTR3Q0PrtxTUbLSXh9Z0+FkF36Vs+zmru1LfJDqVAvxuRK5a98cUWAec+5qx3tJHt52UZc8CzoNjqAFhb0uUKKfI5sV8cyVyOdDLzzfNS1AVhUonhWMnH0Q46OePDTduIob8+RSt2JhwtmmCVPbcwLzzzsAm7uO1zYOBkX6UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gw7suwbH; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731423141; x=1762959141;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XxmjXbd3NELFVsWVdW6o2Zxqx8IqBr4HxPuGWI6cATE=;
-  b=gw7suwbHdWNPwD4yYfqvC7+3pp+IKU96UM6duCl6DHgHQNfcowfCz3NI
-   3kSVS3AV7YxTQpOsdO89tdU7pljQQQdB4LeXu5oy09qFwzqDph3ok9ju4
-   Hhg2pMhO6UXA0tWcsStvvkPiUU6FOSX5V6TC8xJZiyDBObwbohCFKiHJg
-   3eZUeDMQzhk10FO/FtUn2cW5/ITEzxExf9mJAE3XqEzAg+oppu6qJVEE9
-   xTZfQIy9IqwINe0dYSd1i4UzAKJHQ59plDFIDz1VP1sh0cIe6gPN4G8K/
-   UB+/n4XLTRu1DsbzuVC7qz6TlA73iEmDjWa+zeKerw4OTafgtu1iRuj3r
-   A==;
-X-CSE-ConnectionGUID: 4R+CzlhOTZGK+2Vkv6FlUg==
-X-CSE-MsgGUID: K7heGbiJQQG95rbbaVnb/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="41885678"
-X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
-   d="scan'208";a="41885678"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 06:52:20 -0800
-X-CSE-ConnectionGUID: ckdD5CfLSzipX2yz0R4Ubw==
-X-CSE-MsgGUID: f3iIhOODQomMGy2XCI5DuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
-   d="scan'208";a="87259015"
-Received: from lkp-server01.sh.intel.com (HELO bcfed0da017c) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 12 Nov 2024 06:52:17 -0800
-Received: from kbuild by bcfed0da017c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tAsFb-0001RK-2e;
-	Tue, 12 Nov 2024 14:52:15 +0000
-Date: Tue, 12 Nov 2024 22:51:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chunhai Guo <guochunhai@vivo.com>, xiang@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, chao@kernel.org, huyue2@coolpad.com,
-	jefflexu@linux.alibaba.com, dhavale@google.com,
-	linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Chunhai Guo <guochunhai@vivo.com>
-Subject: Re: [PATCH] erofs: add sysfs node to drop all compression-related
- caches
-Message-ID: <202411122209.OQ3CcFg1-lkp@intel.com>
-References: <20241112091403.586545-1-guochunhai@vivo.com>
+	s=arc-20240116; t=1731423757; c=relaxed/simple;
+	bh=Lth/cTu415pGV1tveL1POnX0SqNeYIVlgE4dGG9C+Xk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NJQKht+52QZ0zglHeqJspVf/9HvOL2l00j5hoyThz8RoPjFfOSXHZxdzJAC9ehFJdSPL1GvSW8KfC4PzHZGCALcUj5msmgvmxSQTH7twE2bc5ohShfMb3DIHuaZ86xA+D/Ywv56SBmFch21HemTvFFPiW2HuxZjT8niyO7xkvB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VcBA/9/Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47848C4CED0;
+	Tue, 12 Nov 2024 15:02:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731423757;
+	bh=Lth/cTu415pGV1tveL1POnX0SqNeYIVlgE4dGG9C+Xk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VcBA/9/ZqfcGz9Ge8aq4Bd/tYrjbF+wn+r6SeUOWV9EDPFzGUbtCfztfOSZ1KMR00
+	 9wkPBdseEZiZDwtXKXCgLznBA96dFragazszzIBI+xbRq7HO0l3xw2pzKbgi5oUt1S
+	 6g7eLI6N5+R2xgmG6b7b+CxQ/lASya6kzI5HdFf3upwlpbYmCmGNhJegzfR0foD/y3
+	 bUOgb45b6iKqd5cbuKd9uEVUX77UnJr2ycVtNYB3kcp8l80ndw2tZ2NbvL7oXBr8vz
+	 YL/VGS7gJolG6HWrtck6+xClW6lKZh9zwCa8LaxvfxYZdkHIXyWbWvU7/7iYQ05ww7
+	 dIGX84Z5wcQ7A==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-288916b7fceso2870314fac.3;
+        Tue, 12 Nov 2024 07:02:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW7EdTfsVYgc4rtPFVnZhAhEMFj9Cw7K3k2LrCDx8UEPnkOSwmzoISaSGCAs8SQ1bqRo5bBWTuDugk=@vger.kernel.org, AJvYcCXgPY0fKK3rwX329yIMZmcOFS3S8e5GhXQ5vt9mibo76YZojpqevhpCeYLydsi338XGporjofq9NgACvmc=@vger.kernel.org, AJvYcCXqZCf2h8fUGFNZmaJIAiU35xjXW0VjZFgDTdNMtSUIck3RyRjJfCBzHwi6UX2qRx0gHVzH5MYv@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOZbQfvU20iaSm9sr96uRmY69pJmDh/b+JkCl1jxOUF803ZPq3
+	lvYbprExBZJRiYZ4wFN1lLBog1l720s5kHN9Ed+08RosMjC8h6FgwnaOx5FUw7C7SSGqtjkp+2g
+	hAxgLRvuIZicEexrVgwELGCTuRPA=
+X-Google-Smtp-Source: AGHT+IHpU8jj1gpJ3DpcjYHyo31Jfoe6bE1bjo7IXcIK5UkPqz+c4dbdqI8jvCFUwQQTlYVcet9pjMtpHQ29sT1Lf8c=
+X-Received: by 2002:a05:6871:3a0e:b0:277:f14c:844b with SMTP id
+ 586e51a60fabf-2956032f0c4mr14089377fac.37.1731423756617; Tue, 12 Nov 2024
+ 07:02:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112091403.586545-1-guochunhai@vivo.com>
+References: <20241111162316.GH22801@noisy.programming.kicks-ass.net>
+ <20241112053722.356303-1-lenb@kernel.org> <351549432f8d766842dec74ccab443077ea0af91.1731389117.git.len.brown@intel.com>
+ <CAJZ5v0j1gvwoYS-YaOQWh0bQ3x5=54npiYj8erq68dM92+ad-g@mail.gmail.com>
+ <CAJvTdKnRpDQKUVNJ4Gp7r+WaHo0y-Wume3ay7toHU+Xz0gv2Zw@mail.gmail.com>
+ <CAJZ5v0g74GWomsfV9ko5pVrwx+x6smU7u7oHV=ZYDLTKYxMWsw@mail.gmail.com> <CAJvTdK=SnRqwjR5fUatP0CzaXD_CpZ-1cc+2yX0D8_XM_3oJUw@mail.gmail.com>
+In-Reply-To: <CAJvTdK=SnRqwjR5fUatP0CzaXD_CpZ-1cc+2yX0D8_XM_3oJUw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 12 Nov 2024 16:02:25 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hm8LenFyQBrORmreGWh+4dWoJeCLRngJOZSq3UVhnNOQ@mail.gmail.com>
+Message-ID: <CAJZ5v0hm8LenFyQBrORmreGWh+4dWoJeCLRngJOZSq3UVhnNOQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] x86/cpu: Add INTEL_LUNARLAKE_M to X86_BUG_MONITOR
+To: Len Brown <lenb@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, peterz@infradead.org, tglx@linutronix.de, 
+	x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Len Brown <len.brown@intel.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Chunhai,
+On Tue, Nov 12, 2024 at 3:02=E2=80=AFPM Len Brown <lenb@kernel.org> wrote:
+>
+> On Tue, Nov 12, 2024 at 8:14=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
+> >
+> > On Tue, Nov 12, 2024 at 2:12=E2=80=AFPM Len Brown <lenb@kernel.org> wro=
+te:
+> > >
+> > > On Tue, Nov 12, 2024 at 6:44=E2=80=AFAM Rafael J. Wysocki <rafael@ker=
+nel.org> wrote:
+> > >
+> > > > > -       if (boot_cpu_has(X86_FEATURE_MWAIT) && c->x86_vfm =3D=3D =
+INTEL_ATOM_GOLDMONT)
+> > > > > +       if (boot_cpu_has(X86_FEATURE_MWAIT) &&
+> > > > > +           (c->x86_vfm =3D=3D INTEL_ATOM_GOLDMONT
+> > > > > +            || c->x86_vfm =3D=3D INTEL_LUNARLAKE_M))
+> > > >
+> > > > I would put the || at the end of the previous line, that is
+> > >
+> > >
+> > > It isn't my personal preference for human readability either,
+> > > but this is what scripts/Lindent does...
+> >
+> > Well, it doesn't match the coding style of the first line ...
+>
+> Fair observation.
+>
+> I'll bite.
+>
+> If you took the existing intel.c and added it as a patch to the kernel,
+> the resulting checkpatch would have 6 errors and 33 warnings.
+>
+> If you ran Lindent on the existing intel.c, the resulting diff would be
+> 408 lines --  1 file changed, 232 insertions(+), 176 deletions(-)
+>
+> This for a file that is only 1300 lines long.
+>
+> If whitespace nirvana is the goal, tools are the answer, not the valuable
+> cycles of human reviewers.
 
-kernel test robot noticed the following build errors:
+Well, the advice always given is to follow the coding style of the
+given fine in the first place.
 
-[auto build test ERROR on xiang-erofs/dev-test]
-[also build test ERROR on xiang-erofs/dev xiang-erofs/fixes linus/master v6.12-rc7 next-20241112]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Chunhai-Guo/erofs-add-sysfs-node-to-drop-all-compression-related-caches/20241112-170412
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
-patch link:    https://lore.kernel.org/r/20241112091403.586545-1-guochunhai%40vivo.com
-patch subject: [PATCH] erofs: add sysfs node to drop all compression-related caches
-config: x86_64-randconfig-161-20241112 (https://download.01.org/0day-ci/archive/20241112/202411122209.OQ3CcFg1-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241112/202411122209.OQ3CcFg1-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411122209.OQ3CcFg1-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   fs/erofs/sysfs.c: In function 'erofs_attr_store':
->> fs/erofs/sysfs.c:175:17: error: implicit declaration of function 'z_erofs_shrink_scan' [-Werror=implicit-function-declaration]
-     175 |                 z_erofs_shrink_scan(sbi, ~0UL);
-         |                 ^~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/z_erofs_shrink_scan +175 fs/erofs/sysfs.c
-
-   132	
-   133	static ssize_t erofs_attr_store(struct kobject *kobj, struct attribute *attr,
-   134							const char *buf, size_t len)
-   135	{
-   136		struct erofs_sb_info *sbi = container_of(kobj, struct erofs_sb_info,
-   137							s_kobj);
-   138		struct erofs_attr *a = container_of(attr, struct erofs_attr, attr);
-   139		unsigned char *ptr = __struct_ptr(sbi, a->struct_type, a->offset);
-   140		unsigned long t;
-   141		int ret;
-   142	
-   143		switch (a->attr_id) {
-   144		case attr_pointer_ui:
-   145			if (!ptr)
-   146				return 0;
-   147			ret = kstrtoul(skip_spaces(buf), 0, &t);
-   148			if (ret)
-   149				return ret;
-   150			if (t != (unsigned int)t)
-   151				return -ERANGE;
-   152	#ifdef CONFIG_EROFS_FS_ZIP
-   153			if (!strcmp(a->attr.name, "sync_decompress") &&
-   154			    (t > EROFS_SYNC_DECOMPRESS_FORCE_OFF))
-   155				return -EINVAL;
-   156	#endif
-   157			*(unsigned int *)ptr = t;
-   158			return len;
-   159		case attr_pointer_bool:
-   160			if (!ptr)
-   161				return 0;
-   162			ret = kstrtoul(skip_spaces(buf), 0, &t);
-   163			if (ret)
-   164				return ret;
-   165			if (t != 0 && t != 1)
-   166				return -EINVAL;
-   167			*(bool *)ptr = !!t;
-   168			return len;
-   169		case attr_drop_caches:
-   170			ret = kstrtoul(skip_spaces(buf), 0, &t);
-   171			if (ret)
-   172				return ret;
-   173			if (t != 1)
-   174				return -EINVAL;
- > 175			z_erofs_shrink_scan(sbi, ~0UL);
-   176			return len;
-   177		}
-   178		return 0;
-   179	}
-   180	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+checkpatch reflects the preferences of its author is this particular
+respect and maintainers' preferences tend to differ from one to
+another.
 
