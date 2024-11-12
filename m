@@ -1,264 +1,185 @@
-Return-Path: <linux-kernel+bounces-406044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7111B9C5A60
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:31:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D5569C5A63
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:32:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E196A1F226B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:31:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F25311F2238E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6E31FCC42;
-	Tue, 12 Nov 2024 14:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8B62003B6;
+	Tue, 12 Nov 2024 14:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="cA+CuVxs"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DjcAexex"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CD71531CB
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8B61FF034;
+	Tue, 12 Nov 2024 14:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731421732; cv=none; b=JMf4YwNZSQ0/7h/o7ZjxQO65vv46fmA7fRaMS17ejYSNDElhx34mPu0f5vnAp3sgxlqWaKKnwgtJQwJWKtVAhsRb/ABazPKXpx4CXMlIl/557Lpw2Xg2scIP73QoxaGw+TMjwoi6eh1L1QiwF118LldJFjwLZDWGhZvBppN4RgY=
+	t=1731421744; cv=none; b=szzShjyPNF3hsQE5Vr0Av/pYFaKTIL+N2Roovt88m/Xi67hKnxs+uhw+H+AUx7fe/eUvjMI/QVAekH2zj6abo+yUUBLROUkEw7XHD7F6LRnfqZvYSEPSoc6CQ/rYF3GIyY2KVApNY4Td70bQxSZoDQTgqbIB853w3iGVrckXngY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731421732; c=relaxed/simple;
-	bh=Zr8bm1lBd4bS/nrCZQbbvCHkK7jy5ohjF5f67FDOS0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t9gMSCeCqjMy+0xYWh/CeWRmiDabonC6mYzhZw4PqQdDgFIw5uv+JhqtrGTUnGwhtcs27LnyEJtH78ztYvpfVI8SS4l8F3iftEA4QgNZ3AbBa+T4wmk8ACAj2KV13HZk2AAl7sUE7n9+4JNAR5h8s1nKLjZs1f62skMDmJzM+8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=cA+CuVxs; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1731421727;
-	bh=Zr8bm1lBd4bS/nrCZQbbvCHkK7jy5ohjF5f67FDOS0g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cA+CuVxsj33iOaHGXWQt8VeBpUtXVNwx7jlrNOXOMQXZZxYzNS6MNZgQYs+7Tur9o
-	 e24mXQxaqiVV3kx2xlb+Htx9ofQT380VGvIYEIJyo9frJ1UUoUYuj69Ad7UCBYwfe4
-	 blyXtKTBJ6cbmOTcov2AGH2EEUUODLjAEXx15fwjLsIjbRA4/09KlSlPxagcz73i+W
-	 z02D34YzBwb/zR8ynXpk32jWDf0Y8/bqOCfKnFVew6Wm5qD3Zn90NiSbj9kRDRrGLD
-	 gV26zrjV+MQG4fqrxPKPYjePUkFP7rGGzkxpwN5T4tgo4wF6eAtW53t76XcNE296wu
-	 TA5A1nl1JgcLg==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Xnpgg2spfz183w;
-	Tue, 12 Nov 2024 09:28:47 -0500 (EST)
-Message-ID: <f76b79c0-070a-44d6-ac8b-71d063f2357a@efficios.com>
-Date: Tue, 12 Nov 2024 09:27:23 -0500
+	s=arc-20240116; t=1731421744; c=relaxed/simple;
+	bh=L4cRSTZJjIOJHNCSoBcliNQV4OpjqFUqJAWhfjHttHI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=WCA/gZZuzCPrYTUadyYjF20skuh6cn3JbqxiLUEMis9kK85XjC/qPjDBMcqzHVLVPkzKevCIilgP5dLDAb3gkvBUE9n8gbw9WDTayKyJWN8uTVM3uO5oSoPEZyWguiXKNSSCvaycZmKOAFVoWXd0WkiBnmbphxnqxSQI3SOnWmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DjcAexex; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731421743; x=1762957743;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=L4cRSTZJjIOJHNCSoBcliNQV4OpjqFUqJAWhfjHttHI=;
+  b=DjcAexexQKIshlNMHmejsn0+IbwfoACH8nF1cioPPJcY85dxt6DyoUTg
+   KJTwKRYkhH77h45nxniLa+QySjHk1GrGQjta0jk3W1bVM/5oUjRl48uOu
+   hooto+vt1hnk9S0JAj+WSNruLoNrcSIR791tzV/QTwtxYPqNvzNVjop5S
+   ae2UTp735prKQcGT5I37esYQn5AM4z2OphfVkABLgkO3bJjPKRb7ZDXYo
+   eEfje9UwN0QXqyp/n3J8aT3BMSvV3W8jlg6qsNrO1ZwIduOjHFQdF5UXi
+   xMKni9KNfw1d5GbGpkCGRqDmkJUwJ0B/BbXDdIvr+sSG7nlkYnLeYI7va
+   Q==;
+X-CSE-ConnectionGUID: YhW8pnpCSq+BS4BrRIjs2w==
+X-CSE-MsgGUID: KGIVFixISo2VW6i0nVQC0Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="41883194"
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="41883194"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 06:29:00 -0800
+X-CSE-ConnectionGUID: 88GsC4YLQoG0inf2dZGqzA==
+X-CSE-MsgGUID: SBUmkFKMQheLbv92y7VyHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="91521989"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 06:28:57 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 12 Nov 2024 16:28:55 +0200 (EET)
+To: =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>
+cc: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI: Fix BAR resizing when VF BARs are assigned
+In-Reply-To: <a22a321a-0e60-474b-971c-8512189a69ca@amd.com>
+Message-ID: <c5d1b5d8-8669-5572-75a7-0b480f581ac1@linux.intel.com>
+References: <20241112134225.9837-1-ilpo.jarvinen@linux.intel.com> <a22a321a-0e60-474b-971c-8512189a69ca@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] rseq: Validate read-only fields under DEBUG_RSEQ
- config
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, "Paul E . McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Andrew Morton
- <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Peter Oskolkov <posk@google.com>,
- Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>,
- Florian Weimer <fweimer@redhat.com>, Carlos O'Donell <carlos@redhat.com>,
- DJ Delorie <dj@redhat.com>, libc-alpha@sourceware.org
-References: <20241111192214.1988000-1-mathieu.desnoyers@efficios.com>
- <20241112100419.GN22801@noisy.programming.kicks-ass.net>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241112100419.GN22801@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323328-120525138-1731421735=:13135"
 
-On 2024-11-12 05:04, Peter Zijlstra wrote:
-> On Mon, Nov 11, 2024 at 02:22:14PM -0500, Mathieu Desnoyers wrote:
-> 
-> So I'm entirely agreeing with the intent, but perhaps we can argue a
-> little on the implementation :-)
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Of course, thanks for providing feedback!
+--8323328-120525138-1731421735=:13135
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> 
->> +#ifdef CONFIG_DEBUG_RSEQ
->> +static struct rseq *rseq_kernel_fields(struct task_struct *t)
->> +{
->> +	return (struct rseq *) t->rseq_fields;
->> +}
->> +
->> +static int rseq_validate_ro_fields(struct task_struct *t)
->> +{
->> +	u32 cpu_id_start, cpu_id, node_id, mm_cid;
->> +	struct rseq __user *rseq = t->rseq;
->> +
->> +	/*
->> +	 * Validate fields which are required to be read-only by
->> +	 * user-space.
->> +	 */
->> +	if (!user_read_access_begin(rseq, t->rseq_len))
->> +		goto efault;
->> +	unsafe_get_user(cpu_id_start, &rseq->cpu_id_start, efault_end);
->> +	unsafe_get_user(cpu_id, &rseq->cpu_id, efault_end);
->> +	unsafe_get_user(node_id, &rseq->node_id, efault_end);
->> +	unsafe_get_user(mm_cid, &rseq->mm_cid, efault_end);
->> +	user_read_access_end();
->> +
->> +	if (cpu_id_start != rseq_kernel_fields(t)->cpu_id_start)
->> +		printk_ratelimited(KERN_WARNING
->> +			"Detected rseq cpu_id_start field corruption. Value: %u, expecting: %u (pid=%d).\n",
->> +			cpu_id_start, rseq_kernel_fields(t)->cpu_id_start, t->pid);
->> +	if (cpu_id != rseq_kernel_fields(t)->cpu_id)
->> +		printk_ratelimited(KERN_WARNING
->> +			"Detected rseq cpu_id field corruption. Value: %u, expecting: %u (pid=%d).\n",
->> +			cpu_id, rseq_kernel_fields(t)->cpu_id, t->pid);
->> +	if (node_id != rseq_kernel_fields(t)->node_id)
->> +		printk_ratelimited(KERN_WARNING
->> +			"Detected rseq node_id field corruption. Value: %u, expecting: %u (pid=%d).\n",
->> +			node_id, rseq_kernel_fields(t)->node_id, t->pid);
->> +	if (mm_cid != rseq_kernel_fields(t)->mm_cid)
->> +		printk_ratelimited(KERN_WARNING
->> +			"Detected rseq mm_cid field corruption. Value: %u, expecting: %u (pid=%d).\n",
->> +			mm_cid, rseq_kernel_fields(t)->mm_cid, t->pid);
-> 
-> So aside from this just being ugly, this also has the problem of getting
-> the ratelimits out of sync and perhaps only showing partial corruption
-> for any one task.
-> 
-> Completely untested hackery below.
+On Tue, 12 Nov 2024, Christian K=C3=B6nig wrote:
 
-Your approach looks indeed better than mine, I'll steal it with your
-permission. :)
+> Am 12.11.24 um 14:42 schrieb Ilpo J=C3=A4rvinen:
+>=20
+> __resource_resize_store() attempts to release all resources of the
+> device before attempting the resize. The loop, however, only covers
+> standard BARs (< PCI_STD_NUM_BARS). If a device has VF BARs that are
+> assigned, pci_reassign_bridge_resources() finds the bridge window still
+> has some assigned child resources and returns -NOENT which makes
+> pci_resize_resource() to detect an error and abort the resize.
+>=20
+>=20
+> Looks good in general, but a couple of comments.
+>=20
+> Similarly, an assigned Expansion ROM resource prevents the resize.
+>=20
+>=20
+> Expansion ROMs were intentionally left untouched by the initial patch sin=
+ce those are
+> usually 32bit resources and the resize was implemented only for 64bit BAR=
+s.
+>=20
+> Change the release loop to cover both the VF BARs and Expansion ROM
+> which allows the resize operation to release the bridge windows and
+> attempt to assigned them again with the different size.
+>=20
+>=20
+> I'm not sure if Expansion ROMs should be touched here. Those are 32bit re=
+sources
+> usually and notoriously broken in the ACPI tables.
+>
+> What I've seen multiple times that after releasing them you can't move no=
+r assign
+> them again to their original position.
+>=20
+> Background is that some ACPI table denotes the location of the ROM as res=
+erved and we
+> only accept the Expansion ROM at that location because of a quirk (which =
+is of course
+> not applied when you resize).
+>=20
+> On the other hand do we have use cases for resizing 32bit BARs? So far we=
+ resized
+> those only by accident.
 
-> 
->> @@ -423,6 +504,17 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
->>   	current->rseq = rseq;
->>   	current->rseq_len = rseq_len;
->>   	current->rseq_sig = sig;
->> +#ifdef CONFIG_DEBUG_RSEQ
->> +	/*
->> +	 * Initialize the in-kernel rseq fields copy for validation of
->> +	 * read-only fields.
->> +	 */
->> +	if (get_user(rseq_kernel_fields(current)->cpu_id_start, &rseq->cpu_id_start) ||
->> +	    get_user(rseq_kernel_fields(current)->cpu_id, &rseq->cpu_id) ||
->> +	    get_user(rseq_kernel_fields(current)->node_id, &rseq->node_id) ||
->> +	    get_user(rseq_kernel_fields(current)->mm_cid, &rseq->mm_cid))
->> +		return -EFAULT;
->> +#endif
-> 
-> So I didn't change the above, but wouldn't it make more sense to do
-> rseq_reset_rseq_cpu_node_id() here, but without the validation?
+Thanks for taking a look!
 
-Indeed we could do this (for both DEBUG_RSEQ={y,n}), but it would add extra
-useless stores to those userspace fields on rseq registration, which is
-performed on every thread creation starting from glibc 2.35. The
-rseq_set_notify_resume() invoked at the end of registration ensures that
-those fields get populated before return to userspace.
+This is not about resizing 32bit BARs.
 
-So I am not against a more robust approach, but I'm reluctant to add redundant
-work on thread creation.
+Is that somehow enforced so they cannot end up into the same bridge=20
+window? Because we can only resize a bridge window if we release all its=20
+child resources.
 
-> 
+> As __resource_resize_store() checks first that no driver is bound to
+> the PCI device before resizing is allowed, SR-IOV cannot be enabled
+> during resize so it is safe to release also the IOV resources.
+>=20
+> Fixes: 8bb705e3e79d ("PCI: Add pci_resize_resource() for resizing BARs")
+>=20
+>=20
+> The code in question was added by 91fa127794ac ("PCI: Expose PCIe Resizab=
+le BAR
+> support via sysfs").
+
+Oh right. I don't know why I ended up picking that other commit (sure, I=20
+was also looking that other diff but maybe it was just a copy-paste=20
+error).
+
+--=20
+ i.
+
+> Regards,
+> Christian.
+>=20
+> Reported-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
+> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
 > ---
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1364,6 +1364,15 @@ struct task_struct {
->   	 * with respect to preemption.
->   	 */
->   	unsigned long rseq_event_mask;
-> +# ifdef CONFIG_DEBUG_RSEQ
-> +	/*
-> +	 * This is a place holder to save a copy of the rseq fields for
-> +	 * validation of read-only fields. The struct rseq has a
-> +	 * variable-length array at the end, so it cannot be used
-> +	 * directly. Reserve a size large enough for the known fields.
-> +	 */
-> +	char 				rseq_fields[sizeof(struct rseq)];
-> +# endif
->   #endif
->   
->   #ifdef CONFIG_SCHED_MM_CID
-> --- a/kernel/rseq.c
-> +++ b/kernel/rseq.c
-
-We should #include <linux/ratelimit.h> then.
-
-> @@ -25,6 +25,79 @@
->   				  RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL | \
->   				  RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE)
->   
-> +#ifdef CONFIG_DEBUG_RSEQ
-> +static struct rseq *rseq_kernel_fields(struct task_struct *t)
-> +{
-> +	return (struct rseq *) t->rseq_fields;
-> +}
-> +
-> +static int rseq_validate_ro_fields(struct task_struct *t)
-> +{
-> +	static DEFINE_RATELIMIT_STATE(_rs,
-> +				      DEFAULT_RATELIMIT_INTERVAL,
-> +				      DEFAULT_RATELIMIT_BURST);
-> +	u32 cpu_id_start, cpu_id, node_id, mm_cid;
-> +	struct rseq __user *rseq = t->rseq;
-> +
-> +	/*
-> +	 * Validate fields which are required to be read-only by
-> +	 * user-space.
-> +	 */
-> +	if (!user_read_access_begin(rseq, t->rseq_len))
-> +		goto efault;
-> +	unsafe_get_user(cpu_id_start, &rseq->cpu_id_start, efault_end);
-> +	unsafe_get_user(cpu_id, &rseq->cpu_id, efault_end);
-> +	unsafe_get_user(node_id, &rseq->node_id, efault_end);
-> +	unsafe_get_user(mm_cid, &rseq->mm_cid, efault_end);
-> +	user_read_access_end();
-> +
-> +	if ((cpu_id_start != rseq_kernel_fields(t)->cpu_id_start ||
-> +	     cpu_id != rseq_kernel_fields(t)->cpu_id ||
-> +	     node_id != rseq_kernel_fields(t)->node_id ||
-> +	     mm_cid != rseq_kernel_fields(t)->mm_cid) && __ratelimit(&_rs)) {
-> +
-> +		pr_warn("Detected rseq corruption for pid: %d;\n"
-> +			"  cpu_id_start: %u ?= %u\n"
-> +			"  cpu_id:       %u ?= %u\n"
-> +			"  node_id:      %u ?= %u\n"
-> +			"  mm_cid:       %u ?= %u\n"
-> +			t->pid,
-> +			cpu_id_start, rseq_kernel_fields(t)->cpu_id_start,
-> +			cpu_id, rseq_kernel_fields(t)->cpu_id,
-> +			node_id, rseq_kernel_fields(t)->node_id,
-> +			mm_cid, rseq_kernel_fields(t)->mm_cid);
-> +	}
-
-It looks better, thanks.
-
-> +
-> +	/* For now, only print a console warning on mismatch. */
-> +	return 0;
-> +
-> +efault_end:
-> +	user_read_access_end();
-> +efault:
-> +	return -EFAULT;
-> +}
-> +
-> +static void rseq_set_ro_fields(struct task_struct *t, u32 cpu_id_start, u32 cpu_id,
-> +			       u32 node_id, u32 mm_cid)
-> +{
-> +	rseq_kernel_fields(t)->cpu_id_start = cpu_id;
-> +	rseq_kernel_fields(t)->cpu_id = cpu_id;
-> +	rseq_kernel_fields(t)->node_id = node_id;
-> +	rseq_kernel_fields(t)->mm_cid = mm_cid;
-> +}
-
-This too.
-
-Thanks!
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+>  drivers/pci/pci-sysfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index 5d0f4db1cab7..80b01087d3ef 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -1440,7 +1440,7 @@ static ssize_t __resource_resize_store(struct devic=
+e *dev, int=20
+> n,
+> =20
+>  =09pci_remove_resource_files(pdev);
+> =20
+> -=09for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
+> +=09for (i =3D 0; i < PCI_BRIDGE_RESOURCES; i++) {
+>  =09=09if (pci_resource_len(pdev, i) &&
+>  =09=09    pci_resource_flags(pdev, i) =3D=3D flags)
+>  =09=09=09pci_release_resource(pdev, i);
+>=20
+>=20
+>=20
+>=20
+--8323328-120525138-1731421735=:13135--
 
