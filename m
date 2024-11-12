@@ -1,236 +1,105 @@
-Return-Path: <linux-kernel+bounces-405612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B599C5427
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:38:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FB79C5440
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:39:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9FE41F20EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:38:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B59041F22680
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871B7216449;
-	Tue, 12 Nov 2024 10:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E902123F5;
+	Tue, 12 Nov 2024 10:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NRk6L0Ga"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2055.outbound.protection.outlook.com [40.107.249.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jRn9GE58"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F7D215C61;
-	Tue, 12 Nov 2024 10:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731407701; cv=fail; b=faXVWdh3FQiR31Rn7SG+t0kt6Yh3c5/JyxYW+SGG+FNBkHG8puTg4U+WRIgMVsMcZX9J1A66Psncm5OEVZPtfYglR/VE3fB3eci6PhLK4tVTI+I2FGHGGazrEekzXpBTPB43sot8MKuU2bgtahr8yBlJ1X08DBFD0vEmTbdmMAQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731407701; c=relaxed/simple;
-	bh=oROrbigEnbxBbJQZmQCz+t1ZoYRdoE4L/rIVMdGvE9E=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Abfx8heBFxTImzXFuamjZey3w2nCel1Jz4ZjvAkKWfKsL7zSiCkYCGlMR82Ge17ykKBldF+yIYA5kqJqpxpX52gMUeBbB0e0IuMVUma2KSLMNtgpa+T+N0HLrqsEQKmx8Ve6MKKZ6jnOhBNCpxxX7lVJidtAYVr6CRhzJBA8w2g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NRk6L0Ga; arc=fail smtp.client-ip=40.107.249.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aM+GyKJtjCGZZQS/qD/c99saHQSMN1jT+QLLLLkF9X499QDpmjAA0CNtbZl5FDns5LJ9Ikq5SqvJmgR5rHDijmiAV1EJnsntSk+Eegt1UQE6dSH5U6lDcoi5nT/M9Ct3EsMEmzNodr1BCpfUU6FEe+qabMmS2gEStRzNnY/Sx9Do22/4bESuUGKKF9exR7MyLGp5y8ExhN9ysDMdmMuo4DbSU0z5RmlSis/Fnh9WmVLp70I+QSoFtIsTxgCiVRa4lzrJ8UkS7ZnIj1BlqqrXaQsF/MMfgtKEpYWhoN6QhwmD3M2pymfeizYVVWRusi7wTTlSdph1tksqPCaOKLlGGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mJK8WWOvDdKnJn03HGc+yupP/YXIOxc9ngBNgUkeoqw=;
- b=ElZXc4NCQg6xLYgYw6C3ewa0o1VLc5V8ooQlljNjW0wdjU07iiM0aMmmxZCxDb3AiGL1+Td2Gr0aJ6LW9GHpcoMnrVAzmE9yOshDR6mm0wsMX9y5PQbXCC5GTquMUHUw13PA9QuXl/FAR/hz4IXCyr8KH2UvTfqbIayz+ILR3Xo1ouxD2bdV5ZEmn9ck25QpYfMFABRopEqS7uP0db6JQaBpzZgbmwMYCQ9VLrHukYDpNCYRVO+nA6Bh+//fF3ki4V4C7DZD3WnFefOHm5d3S78n/ze8wpZnCuQjRMLoCBTcnfLON4iJGUTj60sTU8kTCcOZCX29w45SPN1Odo5X8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mJK8WWOvDdKnJn03HGc+yupP/YXIOxc9ngBNgUkeoqw=;
- b=NRk6L0GaTex3erCOw3kQ7zsvQkvJO0WcZjtWwyo7mHyEdGGMRH2/uARGjFFs4iZg/oCklw7j0nj8jlzBSFtzeH3Xi0OKU8C/vNZc41GwRm0CA5Z9MVR9Vn2+1y+S0MAcFWkzO+DXY7N/yKWQBZOVlrTYHfy+JnaMAaRh76J4GV83F5n3vvXpGfnCBCw2/QSxzO/TDh4PchfSz1L+hs1Dj+J1RwuGZkeMPsVQQz5LjaPWBvCYGnITXVYmLXLTgexPHpBBdqLl7EpJPqgZBBE1Q+ND3iW0pZ/Z9BLPO9S2oXuTzv0Tmaj1gHePk/glq31MAjd+GWR1OKkWvIezjJMPCA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
- by DU2PR04MB8598.eurprd04.prod.outlook.com (2603:10a6:10:2d9::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Tue, 12 Nov
- 2024 10:34:57 +0000
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891%6]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 10:34:57 +0000
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: vkoul@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com,
-	festevam@gmail.com,
-	nicoleotsuka@gmail.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [RESEND PATCH v5 6/6] ASoC: fsl_easrc: register m2m platform device
-Date: Tue, 12 Nov 2024 18:34:04 +0800
-Message-Id: <20241112103404.3565675-7-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20241112103404.3565675-1-shengjiu.wang@nxp.com>
-References: <20241112103404.3565675-1-shengjiu.wang@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0008.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::14) To AM0PR04MB7044.eurprd04.prod.outlook.com
- (2603:10a6:208:191::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEF720EA35;
+	Tue, 12 Nov 2024 10:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731407768; cv=none; b=CaI/nBoIquCDb/BLPwwRB5z4km7cLw17YehXISWYCN8YOnv2K6tJlVfBB827sacpOn7fNMD3o6vDPX0eq7BQBO1dphp1Xt+a/u8+4LDzaiuVv1Zbq4BIGMvyT6WrRHuA9P9y3xefgb7SMQEXn6hcYz5bBUM/nKv1NkGdL8LPuN8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731407768; c=relaxed/simple;
+	bh=DHiTAMwV398QIUGxkXtvg8oIerdlFd/qTK8p+EpW/R4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cf4d9Ltgbx259DZOO0+87VpyaEpWhzvmfZblN2fYVxZEwkDJ0lNiJe/HAboW2Lu7rtU34wOHiaSQSmDATRW3wpYoxZqsIMuUmIjBKndrmb2TKoXjVF8g8Cl47JxEE7g/QLyxjzR6f1+33At70Ls0/IUjLEOFE8ZnY+yfNz4XtuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jRn9GE58; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D56B3C4CED4;
+	Tue, 12 Nov 2024 10:36:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731407767;
+	bh=DHiTAMwV398QIUGxkXtvg8oIerdlFd/qTK8p+EpW/R4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jRn9GE58rg5jRKYzneHhwC9isjT4j93Hqwyw8MJZgGHEV3FQpizt1Y0fAdar/y4WN
+	 MsBLsRrVfokx6/upoaCt6SniNa76mwPDlWNros0ooTd73reZVQE+oQDy94mkKCxt1h
+	 vJ1pdqt5D0+9rJ610Pvbjc5T+sZ2b4t7sYPJlCOzOdaKv58jz3MXeDQRpgrpfiMZi1
+	 NT2Nd0fE1+nAb4jmnTQZp0g+zPJA+WRNZGKw2zkRSoi88osz07zAnJyCf3hd0uOtol
+	 LANQglcfj4SY7iKag+XfGuc0752AGQeGQ2yrK1M4FLJ41CJ14AX/3wR6Cr691ADCpW
+	 YGSR1kv2xVtoQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Charles Han <hanchunchao@inspur.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	konradybcio@kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.11 01/16] soc: qcom: Add check devm_kasprintf() returned value
+Date: Tue, 12 Nov 2024 05:35:43 -0500
+Message-ID: <20241112103605.1652910-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|DU2PR04MB8598:EE_
-X-MS-Office365-Filtering-Correlation-Id: fea32b8a-671c-4a02-5d6a-08dd0305a736
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?08iqkw6LXXBhm+VaxPe9tLt3RCfOuKFRdSqVL3I27l+wCeoe1SMjjgfzllva?=
- =?us-ascii?Q?GdXYNKQ71R3YMsfr30CundZKuYvuNNWBRKLk6XX09wRFgmETGaTP44RD6E5q?=
- =?us-ascii?Q?QY+BhBhcIjQL0PqnbrlnkXO7COSBuYQ6vtaNtGG21oV8eIqmE50kOeHo6Im0?=
- =?us-ascii?Q?7Rb95zD1Ph7HCurIm5GElTtWhjQS5CYmONs+y+vwfek54y/R1gtz41BX8s0r?=
- =?us-ascii?Q?/ebdv1JSMDNVzumPLsFvZZUkw2ePWinL3nOWUjCahcYbwS0h3PdA7EGs5pB1?=
- =?us-ascii?Q?6mI2hWx84x39XyKurm51trnK/ISwKibR+5UetKE3tXd1a4uj9XUA9scMaDeM?=
- =?us-ascii?Q?B6W+F6tWqkUdT2Ap4UENmssFJpzxi3MJdHzKDGvzgdFJ0xlHepLOAlgO85PF?=
- =?us-ascii?Q?ctuT/9IyPKvAVefqVzDDLZujcYR9pughRLKn4hI/QfGdc3oi1yFAvCdBdV86?=
- =?us-ascii?Q?+bST0i3RtyRk4aTTgNNSys890YQMiIvsRL8+HJSfOnoXPkRbkk7DRDJjNzDo?=
- =?us-ascii?Q?088U2uZgppXs9jadAjkbQynRP5eJgFoYEmmHZTBXJb3geQxTS+fTrySpuQ6i?=
- =?us-ascii?Q?KhwqzCT1ZEj5kWraokwDmXOS2eMajF/77oh2cK21T9JmiLWsa0N4kwl04HIk?=
- =?us-ascii?Q?WeXR6LnHovDR72tAd/hE1rZH0Mx6khlgAUMQnS/EuGERFPZZz4M1khFLgnD1?=
- =?us-ascii?Q?tqGY093aKf4G8IJghfgZYAIlIChTEp3yJ86ocRCmiCFCmFZ3h+e0UWZrV/nx?=
- =?us-ascii?Q?oWpwq1JMzxcKCNRB+ZYKlsjKf8hLSk8PQmgQ6C2JZqdwmPPXA29T77T5uOMj?=
- =?us-ascii?Q?kAilIP/8MG0LbU8vJUQQt33zIJGniKDiem12x5Ph56oQjQC/T/UOXapohaGD?=
- =?us-ascii?Q?de8uVZFzj0rJLKLPYdMgKp4uAqVsk9AmPNiqDZsJrP+47WBgjZaTzXBYqtpD?=
- =?us-ascii?Q?IUaEDeVc0jLysIgRhvcBHYySitPbWL+LxUuuAG2m/67GvBiBX4h2hgGvK90a?=
- =?us-ascii?Q?uwQ3+ybWtNh5GCJkJxUFL3OLAaaPj/Ht7gt1fBCBuL+9EhGdkW0mpVQFaEFq?=
- =?us-ascii?Q?SZD+riiN67qO0gC80ZQxhI0lQnK0ZuXNWqiUvP3NvJzXW8qf7I897NuwyOfY?=
- =?us-ascii?Q?YXJ24jg2D2Jdo37AFIVGcVd2H4gJP8haVvwLssheTPkv/EIrXNeisL+daLBf?=
- =?us-ascii?Q?wWet/LR9P/UbLxLtRhyitVgr4hLwAslZDa8FFLMhz3dVdUWhPz6YNZ6nxwNe?=
- =?us-ascii?Q?coa+AeDrDjal7XoXWE0OuTHRtwH38dFrofeRnTMyS04Yx0PXA3heikZJQIzw?=
- =?us-ascii?Q?2acTUgyf9kFQ3CcO66Px82GUANTyYY0AtUDah88gPtoWPzyCpMqmdjAkBAuO?=
- =?us-ascii?Q?Rp22dtemgASv7lJLvhD5t+MRY+DE?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BuRrEtPRIxInbM5JqkhSzF3c1nM/oZZ+3hZxuDe0lUp16DcxGVkjTZGC2DxQ?=
- =?us-ascii?Q?Z3xJBzb6BR/MyI6FyvepTEtOjit9Jv2gdLf30ShyivRMQzB4uKSDWW0iTQvc?=
- =?us-ascii?Q?2kN1jL6fnQVcyeOcJENZl2UL8klgG5C2FPeZPxwwJcvsU495gVWkuzhda2d/?=
- =?us-ascii?Q?YtCIQBSc15T2c/EZsf0HLfIaD8qJ1/YlT72VV7rGcb4oOLODaotYFnm5yXka?=
- =?us-ascii?Q?XA+3nwdEHZ4B2JCUIlcI8yoFJMOghb1gWhoeJezxCJjn6z+aEHxXYu46G6FE?=
- =?us-ascii?Q?mlUAyCAv8bbuMaKVO8THiBG3nru/2xhD+IjEfqCmwQoZeTavbhhhH1cE5rGm?=
- =?us-ascii?Q?yeD+cCVMKJS9xMH50cZzThHJF79JwcsiXcQ0UBpwbLXk90BicBLmmrFPv6hH?=
- =?us-ascii?Q?FwdztxAHfgE6WpRVEoSyafsbqhoeAHjgr0V5wVV27x3kxPiCx6bZC2FjqVb0?=
- =?us-ascii?Q?cXHFniamfkIVbiymi+OV4YLuq9Ic1N+Q7URyyFSiRlbPH/29yX72KXbQ4rX5?=
- =?us-ascii?Q?HAN4SnQyNtdD8RKjP1bCWra6yV4MayjphUbjCHpOQTBjmlemTVEJCI6SgHy1?=
- =?us-ascii?Q?dYjCXzJPjEazTH71Jjs1G4Npaz8ZHZs2G3sQhbqofVnOvXdgMO0N3OR6nExK?=
- =?us-ascii?Q?09rM4hkE6boH4a3vbVZxQrNbbBPxRo0dspajf95JHc2Zy2YBYIOjSCTWZLhO?=
- =?us-ascii?Q?Mi5Y2oznVoyH+Bl2KTM35jgOtC2sUsRp2LZrXcxKgrSloGgD5epBf6tWOIa4?=
- =?us-ascii?Q?Wp9Sli1os8gFHXSEn6XkJnIImngJP66HAIrJFJMwkEDJ/URtB+n3NZb++hiM?=
- =?us-ascii?Q?qvIGXsuAQRmJe2qcoSHvctQ8zmdY9wQ+tDZNBVOesBoy/r7P1Ct0RegRk4Ze?=
- =?us-ascii?Q?tmea6WpXMUskGDspL53C7QB7kitk43VAG9laCHR9AnlYweWm+F6uAnHnAYTZ?=
- =?us-ascii?Q?GbYTPVZO6pU9ve9/odCsX3gmIgcjJLF8r5uJ075hTJra6gLKUoDqb8GMSawS?=
- =?us-ascii?Q?GhzZvEolXOmOjhFpCeFkUmwhsDxHRC8jrQ1RWdNaJ+c8q3D7rXIPrG5i0ZKi?=
- =?us-ascii?Q?rXAF48CugYwHY2XJCDudx8ox6J0xpPU+qKzcFn7OACns8/5tqOGSyu4jnTXw?=
- =?us-ascii?Q?CXBBymz1FFfPjinfSbDeAvTF7Jan7CsbmwTh3hrVgf2DKaIvIU/L/H6SP/s6?=
- =?us-ascii?Q?7H+mqVXYah3YL7ZfyiBeVYObAzEAGQbKKvYNmTLKGSuXG+7lGegVJ98VL8A+?=
- =?us-ascii?Q?OdWBwHyioGHAa68KO9lmXh9xrG/m0O0xaCmREoOHNMhUlzaB14dJDzU6QpRu?=
- =?us-ascii?Q?dVFuz1ol84VQf6sAu/wIkOZbQcsDdf25ji8TjwrccVEDzWhCV5gV5bWHe2/r?=
- =?us-ascii?Q?+XdVxGRjc8+BR1T/yzZPDqvSCcEOuMg8AaAE/A6I8vAHUbv7csXuYb+ULOg6?=
- =?us-ascii?Q?eNe1okDwwEbXrkap92T4jHbPXhQAFCF/8iOnYP4rt38p8cPJsnbRh0ZNCON5?=
- =?us-ascii?Q?KmTpObvuo/o0L0ZeFQAo1b7AHc75iDkWHAlCWJI7+Firkl46re4MQn4ofBj8?=
- =?us-ascii?Q?9A/CKPHD+3gz7ybf/sDn5nlS2iPCVI2SZLY5nKhP?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fea32b8a-671c-4a02-5d6a-08dd0305a736
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 10:34:57.3980
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /e9rB9C6YoBf14w8/45HflvU39ksrcMt7wGsHpy3XMK9QpbiV4qh7JvxERc45LlZkr78bJcFO0jiWCSC2LiETQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8598
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.11.7
+Content-Transfer-Encoding: 8bit
 
-Register m2m platform device,that user can
-use M2M feature.
+From: Charles Han <hanchunchao@inspur.com>
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Jaroslav Kysela <perex@perex.cz>
+[ Upstream commit e694d2b5c58ba2d1e995d068707c8d966e7f5f2a ]
+
+devm_kasprintf() can return a NULL pointer on failure but this
+returned value in qcom_socinfo_probe() is not checked.
+
+Signed-off-by: Charles Han <hanchunchao@inspur.com>
+Link: https://lore.kernel.org/r/20240929072349.202520-1-hanchunchao@inspur.com
+Signed-off-by: Bjorn Andersson <andersson@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/fsl/fsl_easrc.c | 33 +++++++++++++++++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
+ drivers/soc/qcom/socinfo.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/fsl/fsl_easrc.c b/sound/soc/fsl/fsl_easrc.c
-index f17a185a1910..f404a39009e1 100644
---- a/sound/soc/fsl/fsl_easrc.c
-+++ b/sound/soc/fsl/fsl_easrc.c
-@@ -2204,6 +2204,12 @@ static int fsl_easrc_probe(struct platform_device *pdev)
- 		goto err_pm_disable;
- 	}
- 
-+	ret = fsl_asrc_m2m_init(easrc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to init m2m device %d\n", ret);
-+		return ret;
+diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+index d7359a235e3cf..1d5a69eda26e5 100644
+--- a/drivers/soc/qcom/socinfo.c
++++ b/drivers/soc/qcom/socinfo.c
+@@ -782,10 +782,16 @@ static int qcom_socinfo_probe(struct platform_device *pdev)
+ 	qs->attr.revision = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%u.%u",
+ 					   SOCINFO_MAJOR(le32_to_cpu(info->ver)),
+ 					   SOCINFO_MINOR(le32_to_cpu(info->ver)));
+-	if (offsetof(struct socinfo, serial_num) <= item_size)
++	if (!qs->attr.soc_id || qs->attr.revision)
++		return -ENOMEM;
++
++	if (offsetof(struct socinfo, serial_num) <= item_size) {
+ 		qs->attr.serial_number = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+ 							"%u",
+ 							le32_to_cpu(info->serial_num));
++		if (!qs->attr.serial_number)
++			return -ENOMEM;
 +	}
-+
- 	return 0;
  
- err_pm_disable:
-@@ -2213,6 +2219,10 @@ static int fsl_easrc_probe(struct platform_device *pdev)
- 
- static void fsl_easrc_remove(struct platform_device *pdev)
- {
-+	struct fsl_asrc *easrc = dev_get_drvdata(&pdev->dev);
-+
-+	fsl_asrc_m2m_exit(easrc);
-+
- 	pm_runtime_disable(&pdev->dev);
- }
- 
-@@ -2313,10 +2323,29 @@ static int fsl_easrc_runtime_resume(struct device *dev)
- 	return ret;
- }
- 
-+static int fsl_easrc_suspend(struct device *dev)
-+{
-+	struct fsl_asrc *easrc = dev_get_drvdata(dev);
-+	int ret;
-+
-+	fsl_asrc_m2m_suspend(easrc);
-+	ret = pm_runtime_force_suspend(dev);
-+	return ret;
-+}
-+
-+static int fsl_easrc_resume(struct device *dev)
-+{
-+	struct fsl_asrc *easrc = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = pm_runtime_force_resume(dev);
-+	fsl_asrc_m2m_resume(easrc);
-+	return ret;
-+}
-+
- static const struct dev_pm_ops fsl_easrc_pm_ops = {
- 	RUNTIME_PM_OPS(fsl_easrc_runtime_suspend, fsl_easrc_runtime_resume, NULL)
--	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
--				pm_runtime_force_resume)
-+	SYSTEM_SLEEP_PM_OPS(fsl_easrc_suspend, fsl_easrc_resume)
- };
- 
- static struct platform_driver fsl_easrc_driver = {
+ 	qs->soc_dev = soc_device_register(&qs->attr);
+ 	if (IS_ERR(qs->soc_dev))
 -- 
-2.34.1
+2.43.0
 
 
