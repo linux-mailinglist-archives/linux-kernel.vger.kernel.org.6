@@ -1,92 +1,290 @@
-Return-Path: <linux-kernel+bounces-405388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582A09C50A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:31:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D199C50B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:34:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1034B1F22A3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:31:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BB2BB295CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D844620CCE5;
-	Tue, 12 Nov 2024 08:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0A120BB27;
+	Tue, 12 Nov 2024 08:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GcwqxcaN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="LB4TeJ2r"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1292920B7F6;
-	Tue, 12 Nov 2024 08:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E825120A5E3
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731400232; cv=none; b=dyd4qwPQsNV3GhddeWB5UEK+onpvou1wSXtdBKwkilVJk3TJYBFGjpVEB9nxj35BxL4ltHV3PEhSoK0t/g3IeAoNfLrZPocRiLkw7gx+GwE7yB2i6A47iXGqtnaPygIOzT3jn4hrBOIdEjPcH74nJe3AgZctOpfKsRktpDoDNhY=
+	t=1731400292; cv=none; b=lghVaZwENIvtrHzKCzpqKMDa0556WGLyK8QQVNlsdWfd0/iw6xoMw2NtbEo8dLNQFiGeAzPuz1GcfmqKClFlH8IRX03KM29bk8Q0q2Wf5FpH+UuAjaePVqHeSPsyMpNEKnce5C9a6md0yL8pBqw66VBesBFuubYJKJIzbC7+VDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731400232; c=relaxed/simple;
-	bh=qJGjeqrO3MOifyflIBZ0HVysY2YzY/j6eCF9sYrgS5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ec2LQ4xC81ojXGfWo+oIa+vVIcGieW6I6WqoL/k9aRjcYH3FG7Zu37k/Dpr7x38vAxTItO5Zdnvx2Y5JnjqxFRbvtvmJTOsQAO7zqhn90BU/oEx14QTqpl9q0XdT0jTyW8LnFhOQ3vBjKTpanWRJGmONFs7ZfeN3UmimWR5uV5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GcwqxcaN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0DBFC4CECD;
-	Tue, 12 Nov 2024 08:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731400231;
-	bh=qJGjeqrO3MOifyflIBZ0HVysY2YzY/j6eCF9sYrgS5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GcwqxcaNduEPK/K2fYAs0FORz7sRZtaot2h80t/HUQ6u78ZtkjV3dZeZ10yiXI1l9
-	 3qe+FYXNRb35xz7YSLEP8NsXGCgNk1HCke1X0YsQF3L9/Ku1aWBQjQorQtVCVciNUz
-	 Y0jPUKDoCHULzs5J6dND3HWQFC75xrn/6KYZkfkY=
-Date: Tue, 12 Nov 2024 09:30:27 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: stable@vger.kernel.org, sashal@kernel.org, jeffbai@aosc.io,
-	broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz,
-	tiwai@suse.com, mario.limonciello@amd.com, me@jwang.link,
-	end.to.start@mail.ru, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.1+] ASoC: amd: yc: fix internal mic on Xiaomi Book Pro
- 14 2022
-Message-ID: <2024111221-brittle-mumbo-d475@gregkh>
-References: <2948220EEF71E78E+20241111070804.979792-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1731400292; c=relaxed/simple;
+	bh=xXCEJcHrEMjxlrj3J5Wc7ZCHF18/8gNCnF+VCp09UQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AQV7UpIeqZvCZSJk9hLF1CmSvgVCGXB2/LsUBXbKihxxwShOb68xN9LAXIT+9Y3X0j02XAZHXQSm7lx98efN8T+4xSAsRcg3xa9UhEq0tAJN3H4IEJ8jZ7Ry0qrxE7bhseouvAs073YROyF4cL23sF5woujuRzY55Cnotm/HyQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=LB4TeJ2r; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so60657101fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:31:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1731400287; x=1732005087; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rAnhdJuivGo9yNtQ2A0g972HDr7huhPiocLItX4d5N8=;
+        b=LB4TeJ2r6klLgmNGmftgm1CuicnjPfWdd6l/EXobEKoPRyzjXSXGerHrh3sJ7v/YeK
+         w5//cC/6j4qzo0PkYHSXV7xDhpjKsClqS29urublNc1CbZavPcVFF1VPkg9KbiYsM4gF
+         T5wkH1fwX5ep9xaxCPY/plyduJ6y2V4tK9CyIq+cLaT/avR6cHX6Qxrq5f1yXsY7YmEd
+         Rg1WDtcKMAtSrs77zCAHh9Clq18x4rV6EOQdSfQgVsiomFQsHZOKSmRS4rq4yjXlBNf6
+         lggXOVe39da3in3+QET69WVVmHw9mSDJboSmt5i31FIANOo33XQ9PEunwzXDEjIulTUw
+         0SgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731400287; x=1732005087;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rAnhdJuivGo9yNtQ2A0g972HDr7huhPiocLItX4d5N8=;
+        b=SwvBBcVA2JnyWja/rtfGjgoQEARX5kA0f5D+z2aKGh5WJBdK8FN62eRKO4c1HzzQ5u
+         Auar2pi8pFPua4ZUao5HiyDtB9RieY+OuXwZPRe3oiV8BEHvJgltv3j2TGnBmwWy4DZW
+         JLFCrkgEhSj8GGecK35ThjOmOi+ISG1+cwCIKLytFkUUZ5kL9sh1DVfzxtGbBqCc4o7r
+         iHP+OnTkXQBya2N20Qmohm2MJtO6FrB/qUD+XacWYC7VBtXpC9X6idWCLQk1RI7wyyhY
+         sEwHm8t9lCWaW9wZ+L3uWkTWZ+/F7hxfB/3BbeQ5BA/XmTL9rpPetE9145l5kLgcn53M
+         W4ag==
+X-Forwarded-Encrypted: i=1; AJvYcCU2aDIRbJCKWlmjC3y+jrUr4Y0VG5KFUBgXAD4pfnicfMY8UE2n0YLQ9N9o90AwqNjXiKOQEZrNCD+UK8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2OlXzrvH3ZazFNGiIv4198u6V/TvugPTVEksjHKxZowm4LqTC
+	CmhX16XbDQmJ+uTHx2xU5V2k+Cp0VUFbSl9RnySFIY2dr62ZeiKkMQqmo1crq7k=
+X-Google-Smtp-Source: AGHT+IErWU2LiF5Ga+iyyaA3F58LkgbkpQmJW54uHLJyzIyElx/+t9OewFq3ElClX5zbBzsEIKDxIg==
+X-Received: by 2002:a2e:9a0a:0:b0:2f0:27da:6864 with SMTP id 38308e7fff4ca-2ff201bc4a3mr91446101fa.17.1731400286863;
+        Tue, 12 Nov 2024 00:31:26 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0def7e1sm689117266b.148.2024.11.12.00.31.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 00:31:26 -0800 (PST)
+Message-ID: <ce074521-7d4b-4514-9b2b-59b246686210@tuxon.dev>
+Date: Tue, 12 Nov 2024 10:31:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2948220EEF71E78E+20241111070804.979792-1-wangyuli@uniontech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ "broonie@kernel.org" <broonie@kernel.org>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241108104958.2931943-25-claudiu.beznea.uj@bp.renesas.com>
+ <TYCPR01MB113329FE5E9E610BEF45DC001865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+ <c15bb621-6cd9-4be3-beec-20fecd411547@tuxon.dev>
+ <TY3PR01MB1134600DEBF0096A67950441086582@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB1134600DEBF0096A67950441086582@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 11, 2024 at 03:08:04PM +0800, WangYuli wrote:
-> From: Mingcong Bai <jeffbai@aosc.io>
-> 
-> [ Upstream commit de156f3cf70e17dc6ff4c3c364bb97a6db961ffd ]
-> 
-> Xiaomi Book Pro 14 2022 (MIA2210-AD) requires a quirk entry for its
-> internal microphone to be enabled.
-> 
-> This is likely due to similar reasons as seen previously on Redmi Book
-> 14/15 Pro 2022 models (since they likely came with similar firmware):
-> 
-> - commit dcff8b7ca92d ("ASoC: amd: yc: Add Xiaomi Redmi Book Pro 15 2022
->   into DMI table")
-> - commit c1dd6bf61997 ("ASoC: amd: yc: Add Xiaomi Redmi Book Pro 14 2022
->   into DMI table")
-> 
-> A quirk would likely be needed for Xiaomi Book Pro 15 2022 models, too.
-> However, I do not have such device on hand so I will leave it for now.
-> 
-> Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
-> Link: https://patch.msgid.link/20241106024052.15748-1-jeffbai@aosc.io
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
->  sound/soc/amd/yc/acp6x-mach.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+Hi, Biju,
 
-Now queued up, thanks.
+On 11.11.2024 13:30, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+>> Sent: 11 November 2024 11:20
+>> Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
+>>
+>> Hi, Biju,
+>>
+>> On 10.11.2024 10:54, Biju Das wrote:
+>>> Hi Claudiu,
+>>>
+>>> Thanks for the patch.
+>>>
+>>>
+>>>> -----Original Message-----
+>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>>>> Sent: 08 November 2024 10:50
+>>>> Subject: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable
+>>>> SSI3
+>>>>
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> Enable SSI3.
+>>>>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> ---
+>>>>
+>>>> Changes in v2:
+>>>> - none
+>>>>
+>>>>  arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 26
+>>>> ++++++++++++++++++++
+>>>>  1 file changed, 26 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+>>>> b/arch/arm64/boot/dts/renesas/rzg3s-
+>>>> smarc.dtsi
+>>>> index 4aa99814b808..6dd439e68bd4 100644
+>>>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+>>>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+>>>> @@ -64,6 +64,11 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
+>>>>  	};
+>>>>  };
+>>>>
+>>>
+>>> &audio_clk1 {
+>>>        assigned-clocks = <&versa3 xx>;
+>>>        clock-frequency = <11289600>;
+>>> };
+>>
+>> audio_clk1 node is in the RZ/G3S dtsi to keep the compilation happy.
+>>
+>> For this board the audio clock1 for the SSI 3 is from <&versa3 2>.
+>>
+>> If we fill in the audio_clk1 here it will be useless, there will be no consumers for it and it is not
+>> available on board.
+> 
+> As per SSI IP needs external clks AUDIO_CLK1 and AUDIO_CLK2. 
+> 
+> AUDIO_CLK1 is provided by versa3 generator and
+> AUDIO_CLK2 is provided by Crystal.
+> 
+> Currently AUDIO_CLK2 it reports a frequency of 12288000 which is a multiple of 48kHz
+> whereas for AUDIO_CLK1, it reports a frequency of 0. 
 
-greg k-h
+Why? You mentioned above that "AUDIO_CLK1 is provided by versa3 generator".
+It will report the frequency provided by the versa3 clock generator, isn't it?
+
+> By defining the node, it will report as the value as
+> 11289600 which is a multiple of 44.1kHZ.
+
+Defining the node as you proposed have no meaning as it will be anyway
+disabled (see the dtsi) and will appear nowhere as no driver will be probed
+for it.
+
+Defining it's frequency and enabling will have no meaning either for the
+SSI3, as the SSI3 is connected to <&versa3 2> (as of the binding proposed
+in this patch).
+
+> 
+> From the schematic we know that versa 3 is providing this clock and the audio_clk1 has
+> a frequency of "11289600".
+
+<&versa3 2> connected to AUDIO_CLK1 pin is configured at 11.2896MHz in this
+series. See patch 22/25:
+
++	versa3: clock-generator@68 {
++		compatible = "renesas,5l35023";
++		reg = <0x68>;
++		clocks = <&x3_clk>;
++		#clock-cells = <1>;
++		assigned-clocks = <&versa3 0>,
++				  <&versa3 1>,
++				  *<&versa3 2>*,
++				  <&versa3 3>,
++				  <&versa3 4>,
++				  <&versa3 5>;
++		assigned-clock-rates = <24000000>,
++				       <12288000>,
++				       *<11289600>*,
++				       <25000000>,
++				       <100000000>,
++				       <100000000>;
++		renesas,settings = [
++		  80 00 11 19 4c 42 dc 2f 06 7d 20 1a 5f 1e f2 27
++		  00 40 00 00 00 00 00 00 06 0c 19 02 3f f0 90 86
++		  a0 80 30 30 9c
++		];
++	};
+
+Thank you,
+Claudiu Beznea
+
+> 
+> Cheers,
+> Biju
+> 
+> 
+>>
+>> Thank you,
+>> Claudiu Beznea
+>>
+>>>
+>>> Maybe add audio_clk1, so that it described properly in clock tree??
+>>>
+>>> Cheers,
+>>> Biju
+>>>
+>>>> +&audio_clk2 {
+>>>> +	clock-frequency = <12288000>;
+>>>> +	status = "okay";
+>>>> +};
+>>>> +
+>>>>  &i2c0 {
+>>>>  	status = "okay";
+>>>>
+>>>> @@ -94,6 +99,11 @@ da7212: codec@1a {  };
+>>>>
+>>>>  &pinctrl {
+>>>> +	audio_clock_pins: audio-clock {
+>>>> +		pins = "AUDIO_CLK1", "AUDIO_CLK2";
+>>>> +		input-enable;
+>>>> +	};
+>>>> +
+>>>>  	key-1-gpio-hog {
+>>>>  		gpio-hog;
+>>>>  		gpios = <RZG2L_GPIO(18, 0) GPIO_ACTIVE_LOW>; @@ -151,6 +161,13 @@ cd {
+>>>>  			pinmux = <RZG2L_PORT_PINMUX(0, 2, 1)>; /* SD1_CD */
+>>>>  		};
+>>>>  	};
+>>>> +
+>>>> +	ssi3_pins: ssi3 {
+>>>> +		pinmux = <RZG2L_PORT_PINMUX(18, 2, 8)>, /* BCK */
+>>>> +			 <RZG2L_PORT_PINMUX(18, 3, 8)>, /* RCK */
+>>>> +			 <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
+>>>> +			 <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
+>>>> +	};
+>>>>  };
+>>>>
+>>>>  &scif0 {
+>>>> @@ -171,3 +188,12 @@ &sdhi1 {
+>>>>  	max-frequency = <125000000>;
+>>>>  	status = "okay";
+>>>>  };
+>>>> +
+>>>> +&ssi3 {
+>>>> +	clocks = <&cpg CPG_MOD R9A08G045_SSI3_PCLK2>,
+>>>> +		 <&cpg CPG_MOD R9A08G045_SSI3_PCLK_SFR>,
+>>>> +		 <&versa3 2>, <&audio_clk2>;
+>>>> +	pinctrl-names = "default";
+>>>> +	pinctrl-0 = <&ssi3_pins>, <&audio_clock_pins>;
+>>>> +	status = "okay";
+>>>> +};
+>>>> --
+>>>> 2.39.2
+>>>
 
