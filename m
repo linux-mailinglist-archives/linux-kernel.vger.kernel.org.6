@@ -1,97 +1,78 @@
-Return-Path: <linux-kernel+bounces-406083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6B69C5AC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:45:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391D69C5AC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:46:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 636021F229CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:45:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F205628337E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536E21FF053;
-	Tue, 12 Nov 2024 14:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF3E1FDFBD;
+	Tue, 12 Nov 2024 14:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PryHmpLd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE2D1FE10A;
-	Tue, 12 Nov 2024 14:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E491FBF79;
+	Tue, 12 Nov 2024 14:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422672; cv=none; b=D839Pi9TwgEMO3Ut4KjGxJ+VlA96UwPQsupfesqBAVp7T1f68iIqqfP2WlVNJwE8Nq4KZy8eFpiEsySWE/fKS1v2AhSoJZhVYipR/j39LpewRHorc+qiRwrlpxkANZIL+QF2726dlR1/x6POqzojAGh2FtU+ypQXy6etyPL0tFA=
+	t=1731422728; cv=none; b=ULz5r6tUyKuNYf6Mw3FemqT2OGap2Pzm3RrDuIlmdP2WjTnD01IyDJ+b8q8X0lfMuBM2amqkh940v62f6rSy+Zfgu7VVnDYaBNMQPmUVWq34jpZztoixGB1GU5Ta1W7C+ZuLZ07vOFtbGPbkUEJaFgFvZC1SYwBe1uYWDKIGne8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422672; c=relaxed/simple;
-	bh=spgfkYfdtxiRXj09AHTCjCq+F7GElLNu1CMfPrjHt4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hd+Dyo0CAH0eKdFXcHQ+J0kYCN/cy5N4PzWX8lxvqP4dBZW2FWgEMIDeMPZbrxPmweedH4n1fKu+nZDoxBB2WceB30+BtrRwqKfPwqoQqNJhFqbKTLTguzrzJegr5iEmKAzwI8N1Z3W7oUTgNsArmaOPUZzBe33gmX9iwfrZVLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A02C4CECD;
-	Tue, 12 Nov 2024 14:44:28 +0000 (UTC)
-Date: Tue, 12 Nov 2024 09:44:37 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
- <mark.rutland@arm.com>, linux-arch@vger.kernel.org, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
- <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, Christian
- Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v18 12/17] fprobe: Add fprobe_header encoding feature
-Message-ID: <20241112094437.59848631@gandalf.local.home>
-In-Reply-To: <20241110001054.b0a5afb2d7bb1c09b4bd6b0b@kernel.org>
-References: <172991731968.443985.4558065903004844780.stgit@devnote2>
-	<172991747946.443985.11014834036464028393.stgit@devnote2>
-	<20241101102212.5e9d74d9@gandalf.local.home>
-	<20241110001054.b0a5afb2d7bb1c09b4bd6b0b@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731422728; c=relaxed/simple;
+	bh=4DTzZviNMUgLM16PkuQSDcAJyrHH7thkYlZicAdGBD0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ObToeYnLYWSrkvYhjaeGCAAoR9k6mqOQ9e9dowUPfaETSJ4ETw+2TIlV29h07s9r/BGwq3FhwleznaLsBfn4LElfzBb3fPzuB7xz9qoPXzi6BHjIomsSbnA7RQGBE/8ru6z/ODnCbmkF5IttdBwFHV4on161uCrcTL023fc5SUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PryHmpLd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC134C4CECD;
+	Tue, 12 Nov 2024 14:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731422728;
+	bh=4DTzZviNMUgLM16PkuQSDcAJyrHH7thkYlZicAdGBD0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=PryHmpLdIxk6dO+WIIu2UCi8OEzEM6L0QtodQjAS3u6Uvl4VjIG4RZicaELMW7nMd
+	 KWh6vXOcEKbELPSWdumtrM8DzUwLQtGaYYczo2xywNkJSFKXrwwy5zYj1a2X1be/7D
+	 C3YpMqfxWOY7He7puJ/HIZujStaDaPQkVDwUQFGlJ10aTBMGEoP89h4Me19XI79r+E
+	 lbB5cxf54Jl9leO9ff0qdel3exU8/8Yuo5GPXW6Pxt3u0TZNuTuoafuksUaiFhcw8k
+	 wUNDXEIdU65VB6K+0Y1qoCytlpf5Qgv9QEf1m9KnH1Y7+mw5aYOVoxFN/ZzUBsTYan
+	 EF2dKr9bSSjtw==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
+ Karel Balej <balejk@matfyz.cz>
+Cc: duje.mihanovic@skole.hr, phone-devel@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht
+In-Reply-To: <20241012193345.18594-1-balejk@matfyz.cz>
+References: <20241012193345.18594-1-balejk@matfyz.cz>
+Subject: Re: (subset) [RFC PATCH v2 1/2] mfd: 88pm886: add the RTC cell
+Message-Id: <173142272657.1051767.11499156324006746710.b4-ty@kernel.org>
+Date: Tue, 12 Nov 2024 14:45:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Sun, 10 Nov 2024 00:10:54 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-
-> > > +++ b/arch/x86/include/asm/fprobe.h
-> > > @@ -0,0 +1,9 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > +#ifndef _ASM_X86_FPROBE_H
-> > > +#define _ASM_X86_FPROBE_H
-> > > +
-> > > +#ifdef CONFIG_64BIT
-> > > +#include <asm-generic/fprobe.h>
-> > > +#endif
-> > > +
-> > > +#endif /* _ASM_X86_FPROBE_H */
-> > > \ No newline at end of file  
-> > 
-> > Same for the above.  
+On Sat, 12 Oct 2024 21:31:38 +0200, Karel Balej wrote:
+> Add a MFD cell for the chip's real-time clock.
 > 
-> OK, but x86 and riscv, we need this default template on 64bit only.
-> So those may keep it, right?
+> 
 
-Hmm, I wonder if we could just add:
+Applied, thanks!
 
-  generic-$(CONFIG_X86_32)
+[1/2] mfd: 88pm886: add the RTC cell
+      commit: 156d87b679a565a166da4a7ce892cb87f6317faf
 
-But since I don't see that used anywhere, we may need this for archs that
-partially have it.
+--
+Lee Jones [李琼斯]
 
--- Steve
 
