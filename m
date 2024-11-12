@@ -1,117 +1,86 @@
-Return-Path: <linux-kernel+bounces-405217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE139C4E7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:01:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17769C4E7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:01:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D4F2873C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:01:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7543E2871B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D498520ADD9;
-	Tue, 12 Nov 2024 06:01:25 +0000 (UTC)
-Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C6A1A0AFE;
-	Tue, 12 Nov 2024 06:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9491E20A5E1;
+	Tue, 12 Nov 2024 06:01:16 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4C91A0AFE;
+	Tue, 12 Nov 2024 06:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731391285; cv=none; b=raazxSBXhI4Q6dz1tDKtzI7tEbPtYlzOImBU3EVVOYh/1aj6pwhzJYEt5iyPP9IPuMS1ohesaQlFWPgHXawTsjeyqIMZn31trAeRetYxJxFUIKg8R6qbTtaWCAq7FPga8Te/tY64Ohvo8Klr7q97CpxAG+AuJyoYV10quYQ6nHE=
+	t=1731391276; cv=none; b=XqsK4fWwmVeM1chKN/RwCNziarp049uqEdkAUN4Kcby2N3S1SuFY4Z3VqWZo68p9rYixMGzzRiai+UwTLgjFNtJut8J3EXOnBquJnPhPJlK3yJE56crNvHtBiNe30YBpRrqlaiQfHL795g1voPhoKrII7RS1u3mZfUL3WBF27Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731391285; c=relaxed/simple;
-	bh=66qUZLgWuxj88U/ojOcgZSc3hCJottpI1ddRUJ5yBmg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LbqLUraH9qnHu4bjHthA/Olrow59GUZQK0xc7J7v3xL+ce+Xtr9FD26eiWGbvNEXHyOSXbMIj/Q4RGGmgIraxAy+wYDcipYR7Mw/7Q/AzhgD0Jxg9kBsif06tEI/48Cn9sWu4YsFZH2UJltlP31WQmg4mXlsL/OMJgVPprXRrHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee96732ef2b026-1203b;
-	Tue, 12 Nov 2024 14:01:15 +0800 (CST)
-X-RM-TRANSID:2ee96732ef2b026-1203b
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.103])
-	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee96732ef2aaab-46f56;
-	Tue, 12 Nov 2024 14:01:15 +0800 (CST)
-X-RM-TRANSID:2ee96732ef2aaab-46f56
-From: Luo Yifan <luoyifan@cmss.chinamobile.com>
-To: acme@kernel.org
-Cc: adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com,
-	irogers@google.com,
-	jolsa@kernel.org,
-	kan.liang@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	luoyifan@cmss.chinamobile.com,
-	mark.rutland@arm.com,
-	mingo@redhat.com,
-	namhyung@kernel.org,
-	peterz@infradead.org
-Subject: [PATCH] perf jvmti: Remove unnecessary ret variable in jvmti_write_code
-Date: Tue, 12 Nov 2024 14:01:03 +0800
-Message-Id: <20241112060103.282531-1-luoyifan@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <ZzJErOTawAelWAQd@x1>
-References: <ZzJErOTawAelWAQd@x1>
+	s=arc-20240116; t=1731391276; c=relaxed/simple;
+	bh=0PVIDi3JGo0JcgiypZig4noJVOHBWMpTvGUyYzU70NI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hgj2O5pSu0EZjHUyEj95qgpqAXSvssBuVvK8nyj63y3Uy44jZQXh20cjjcRkFUeSBK/IZw9S/kZa2AwoM5RpUQETMfo3BrWns4SpeCbcf6FW+YYZZrxaJqGbeoup4Miaeso5H7+VBl2rZq/+NOuBrLY1vg1LvHuIDwVMAAhD7bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id A286768D09; Tue, 12 Nov 2024 07:01:08 +0100 (CET)
+Date: Tue, 12 Nov 2024 07:01:08 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
+	Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org, matthew.brost@intel.com,
+	Thomas.Hellstrom@linux.intel.com, brian.welty@intel.com,
+	himal.prasad.ghimiray@intel.com, krishnaiah.bommu@intel.com,
+	niranjana.vishwanathapura@intel.com
+Subject: Re: [PATCH v1 00/17] Provide a new two step DMA mapping API
+Message-ID: <20241112060108.GA10056@lst.de>
+References: <20241104095831.GA28751@lst.de> <20241105195357.GI35848@ziepe.ca> <20241107083256.GA9071@lst.de> <20241107132808.GK35848@ziepe.ca> <20241107135025.GA14996@lst.de> <20241108150226.GM35848@ziepe.ca> <20241108150500.GA10102@lst.de> <20241108152537.GN35848@ziepe.ca> <20241108152956.GA12130@lst.de> <20241108153846.GO35848@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108153846.GO35848@ziepe.ca>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Following the approach in the jvmti_write_debug_info function, just
-remove the ret variable from jvmti_write_code function. It's safe since
-we don’t really care about the return value of fwrite_unlocked. This
-change makes the code cleaner and more compiler-friendly.
+On Fri, Nov 08, 2024 at 11:38:46AM -0400, Jason Gunthorpe wrote:
+> > > What I'm thinking about is replacing code like the above with something like:
+> > > 
+> > > 		if (p2p_provider)
+> > > 			return DMA_MAPPING_ERROR;
+> > > 
+> > > And the caller is the one that would have done is_pci_p2pdma_page()
+> > > and either passes p2p_provider=NULL or page->pgmap->p2p_provider.
+> > 
+> > And where do you get that one from?
+> 
+> Which one?
 
-Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
----
- tools/perf/jvmti/jvmti_agent.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
-index 526dcaf9f..9b49a880b 100644
---- a/tools/perf/jvmti/jvmti_agent.c
-+++ b/tools/perf/jvmti/jvmti_agent.c
-@@ -363,7 +363,6 @@ jvmti_write_code(void *agent, char const *sym,
- 	struct jr_code_load rec;
- 	size_t sym_len;
- 	FILE *fp = agent;
--	int ret = -1;
- 
- 	/* don't care about 0 length function, no samples */
- 	if (size == 0)
-@@ -400,7 +399,7 @@ jvmti_write_code(void *agent, char const *sym,
- 	 */
- 	rec.code_index = code_generation++;
- 
--	ret = fwrite_unlocked(&rec, sizeof(rec), 1, fp);
-+	fwrite_unlocked(&rec, sizeof(rec), 1, fp);
- 	fwrite_unlocked(sym, sym_len, 1, fp);
- 
- 	if (code)
-@@ -408,9 +407,7 @@ jvmti_write_code(void *agent, char const *sym,
- 
- 	funlockfile(fp);
- 
--	ret = 0;
--
--	return ret;
-+	return 0;
- }
- 
- int
--- 
-2.27.0
-
-
+The p2p_provider thing (whatever that will actually be).
 
 
