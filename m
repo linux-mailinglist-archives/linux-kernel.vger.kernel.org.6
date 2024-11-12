@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-406103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F53A9C5D9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:44:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 494869C5EB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:20:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2951BB82387
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:54:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC3ECB833AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DEF200B8E;
-	Tue, 12 Nov 2024 14:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBAE202652;
+	Tue, 12 Nov 2024 14:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHk8JAtZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XXoJnIX9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5339E1FF056;
-	Tue, 12 Nov 2024 14:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEDB1FC7FF;
+	Tue, 12 Nov 2024 14:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423146; cv=none; b=tvN8Eq43NQhskGSamRjzk2qTmEw3WRUHoOp0c5y71fpklWNMNqiBthyCoLz8Wmt0xTjikKezEvjAB/3JRVIdQDZTWXcGCemcYw7CVcslay5jD7kz5wnoiPO0OOFRanp7+f6RNsfBCGc/wQ7HBIxXtTbcVi/2DIN0Ctvlspukixw=
+	t=1731423180; cv=none; b=iDsXcaNgYEGY7qwCyZLB7dPTPapjsc8kvX4dv4A3zh3oe79USoIACwXyv5kKlXg1Dyfak9oV9Kyc3oAhMMF7YHkrY66C08Xtnq8URaC4pPbXkYJ5CnA27ghCrpGxqeV7HqwKwGBrmihU/EJdfwuu6/Ou+GjXARvLqc28FEqsvmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423146; c=relaxed/simple;
-	bh=cdJ+xBnPORsx2g7uxvtjLS56Zpr2XJsr87vnsr2jyos=;
+	s=arc-20240116; t=1731423180; c=relaxed/simple;
+	bh=89PLNAGurys0mJBxDA/ZpZpRTaoDP8T4R09w6xw7TlU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aqniYbOlEeIxMwnje3Cvny43nmJ/tHTBHh5MSwgtw3iYZFGQt8cvAl0cgo+8Lat1J1+VnpcJbSU/tTrjGBeCznzxrlqsYyA9kb/bMFAzEpiNBjqljzYGo8Qp2dTeZfDoc/erXrwptmJSd3hZY1QroJnvN72MKBy+CXGHSJdy6zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHk8JAtZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CFFBC4CED9;
-	Tue, 12 Nov 2024 14:52:21 +0000 (UTC)
+	 MIME-Version; b=rUELgmAT3zjCHc9M568NuinEdiESeyqX83ceOo84vHrwfO35XlaphvHbBhfOrj+lL0CmMKj3mkz9YSdEbRC3ewCMx+QyZ+N8s7W8rwDWwr5Y+6ZjE7CvhwNBKxiQd+V80Ho6PwJdSl7iseECAGrFvk0l5vGns4tc8YF8rlz2oUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XXoJnIX9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36055C4CED8;
+	Tue, 12 Nov 2024 14:52:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731423145;
-	bh=cdJ+xBnPORsx2g7uxvtjLS56Zpr2XJsr87vnsr2jyos=;
+	s=k20201202; t=1731423179;
+	bh=89PLNAGurys0mJBxDA/ZpZpRTaoDP8T4R09w6xw7TlU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OHk8JAtZ4DmTg1qGtX9TXL3Xq6bcOHS8jRo5I6rlok3iZW8m89sw985/l8ImsRwHT
-	 2XlKB1WF83tYrLHTFkE5WQ6pf0aNa3BSZsyOUnLIzT5NwJ7JBXQPdBaweGkA3I7inQ
-	 VIsIIBTtFoNUwFj4ny5Vo9EjPyh9IZGvEH4yy3Fle1ZpkQ8+qXicH6gpSRXhXE87pl
-	 Ccu/HbfVKm0OAGQ4zc91gU7k+yQwC95R7kertZh7tgr+hKdnzdyNDmXHuu0iTtEpZJ
-	 f/NM+PapRVldfY3kL2r1xPHI0//A9jJwpf/4+KZ3X/t/nyvr87fjvWVDWd5KwqKF+J
-	 9kYpTr9pA9n5Q==
+	b=XXoJnIX9pE8GJIgPVMl6V0UxchgE3PpNmtPgDuER5xM7+oAv98KyfhztiNFbZvv3I
+	 Gv0irBUQjJBkLD4m7c/aTcktoCrfPCtma5YaS6M9/8jEVVaRmGA03wbFM5L8p+kxCy
+	 MU6yC1wN3RSeXo7B9TEfOySx1wsZ3wSRgBQVCGTYdgC+jfYgszTra20vOzefUoFiZ1
+	 HSyvwVjm2nfHA6sQsF/9SfYYR2/8QIzn6VVBWVOYfhOXMfEPsYLMspw4nnPkHRpBRO
+	 afw7nCn2A6tIfzPqNzwqFmZ/wjhDS9BibAJxmTLZK5fYaIqr90NCZqDPMgugY9KUtz
+	 fJ8B3OOOOX2lA==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: "Paul E. McKenney" <paulmck@kernel.org>,
@@ -60,9 +60,9 @@ Cc: "Paul E. McKenney" <paulmck@kernel.org>,
 	bpf@vger.kernel.org,
 	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
 	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 05/16] srcu: Bit manipulation changes for additional reader flavor
-Date: Tue, 12 Nov 2024 15:51:48 +0100
-Message-ID: <20241112145159.23032-6-frederic@kernel.org>
+Subject: [PATCH 13/16] rcutorture: Add srcu_read_lock_lite() support to rcutorture.reader_flavor
+Date: Tue, 12 Nov 2024 15:51:56 +0100
+Message-ID: <20241112145159.23032-14-frederic@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241112145159.23032-1-frederic@kernel.org>
 References: <20241112145159.23032-1-frederic@kernel.org>
@@ -76,11 +76,8 @@ Content-Transfer-Encoding: 8bit
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-Currently, there are only two flavors of readers, normal and NMI-safe.
-Very straightforward state updates suffice to check for erroneous
-mixing of reader flavors on a given srcu_struct structure.  This commit
-upgrades the checking in preparation for the addition of light-weight
-(as in memory-barrier-free) readers.
+This commit causes bit 0x4 of rcutorture.reader_flavor to select the new
+srcu_read_lock_lite() and srcu_read_unlock_lite() functions.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Cc: Alexei Starovoitov <ast@kernel.org>
@@ -91,34 +88,50 @@ Cc: <bpf@vger.kernel.org>
 Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- kernel/rcu/srcutree.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt | 4 ++--
+ kernel/rcu/rcutorture.c                         | 7 +++++++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index f259dd834272..9774bc500de5 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -462,7 +462,7 @@ static unsigned long srcu_readers_unlock_idx(struct srcu_struct *ssp, int idx)
- 		if (IS_ENABLED(CONFIG_PROVE_RCU))
- 			mask = mask | READ_ONCE(cpuc->srcu_reader_flavor);
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 52922727006f..203ec51e41d4 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5431,8 +5431,8 @@
+ 			If there is more than one bit set, the readers
+ 			are entered from low-order bit up, and are
+ 			exited in the opposite order.  For SRCU, the
+-			0x1 bit is normal readers and the 0x2 bit is
+-			for NMI-safe readers.
++			0x1 bit is normal readers, 0x2 NMI-safe readers,
++			and 0x4 light-weight readers.
+ 
+ 	rcutorture.shuffle_interval= [KNL]
+ 			Set task-shuffle interval (s).  Shuffling tasks
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 405decec3367..a313cdcb0960 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -658,6 +658,11 @@ static int srcu_torture_read_lock(void)
+ 		WARN_ON_ONCE(idx & ~0x1);
+ 		ret += idx << 1;
  	}
--	WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && (mask & (mask >> 1)),
-+	WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && (mask & (mask - 1)),
- 		  "Mixed NMI-safe readers for srcu_struct at %ps.\n", ssp);
- 	return sum;
++	if (reader_flavor & 0x4) {
++		idx = srcu_read_lock_lite(srcu_ctlp);
++		WARN_ON_ONCE(idx & ~0x1);
++		ret += idx << 2;
++	}
+ 	return ret;
  }
-@@ -712,8 +712,9 @@ void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor)
- 	sdp = raw_cpu_ptr(ssp->sda);
- 	old_reader_flavor_mask = READ_ONCE(sdp->srcu_reader_flavor);
- 	if (!old_reader_flavor_mask) {
--		WRITE_ONCE(sdp->srcu_reader_flavor, reader_flavor_mask);
--		return;
-+		old_reader_flavor_mask = cmpxchg(&sdp->srcu_reader_flavor, 0, reader_flavor_mask);
-+		if (!old_reader_flavor_mask)
-+			return;
- 	}
- 	WARN_ONCE(old_reader_flavor_mask != reader_flavor_mask, "CPU %d old state %d new state %d\n", sdp->cpu, old_reader_flavor_mask, reader_flavor_mask);
- }
+ 
+@@ -683,6 +688,8 @@ srcu_read_delay(struct torture_random_state *rrsp, struct rt_read_seg *rtrsp)
+ static void srcu_torture_read_unlock(int idx)
+ {
+ 	WARN_ON_ONCE((reader_flavor && (idx & ~reader_flavor)) || (!reader_flavor && (idx & ~0x1)));
++	if (reader_flavor & 0x4)
++		srcu_read_unlock_lite(srcu_ctlp, (idx & 0x4) >> 2);
+ 	if (reader_flavor & 0x2)
+ 		srcu_read_unlock_nmisafe(srcu_ctlp, (idx & 0x2) >> 1);
+ 	if ((reader_flavor & 0x1) || !(reader_flavor & 0x7))
 -- 
 2.46.0
 
