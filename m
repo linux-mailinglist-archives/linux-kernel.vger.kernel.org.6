@@ -1,101 +1,135 @@
-Return-Path: <linux-kernel+bounces-405066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E82129C4C94
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:28:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4B09C4C95
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:29:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D2451F2171E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:28:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6360D1F219DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3633204930;
-	Tue, 12 Nov 2024 02:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787E9204924;
+	Tue, 12 Nov 2024 02:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+9CnN9g"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="VDFvusWp"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75904C91;
-	Tue, 12 Nov 2024 02:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F244C91
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731378521; cv=none; b=ghWUnyAgMKEL2eqekDPBNTG/fFPLppeeuFpwSYtzpRiJ7lwHbLulk7dTTiJQh+OPmb7ok9p6aAYIv9VfSEDeKk/gIybZhcSsLsfT2SgouHgWqeKCCprOU/vpFmchtHtd50FRQGp7eaFcgN5Yo4ZpCqiujO5FyeS5pE2X1L7MOEM=
+	t=1731378584; cv=none; b=QbvH8GC9N13T9tNI6rd44qaSUwoPoR5B69CqprAY/V+AidqHp7+SCZvG7YHOYGrdhD+uPZdmF5jeX8VciiftBz51Gd6GNBh1/FX+T4tTJnPVcdT/+BC2JEGlIImn/Jr6aHEUA3f0ev81Nl35PnIYQTwdsfw7OUD8+2MiKRlw+Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731378521; c=relaxed/simple;
-	bh=Ggmo9WRktZUG72auD+myLd8qdmalUQoLFuvjx/3plH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lGGGohMv6DwT6sJ/ZoelKgmAd7zQR6XtCAf2YXNDwKa/SJsVt5FQ/Gj00EEOh34cWFKvC24NJ/sdnlffDh2mqu4HffZdi17tMKWJdWscyDs58VYKcgR51MaficIy/hg1Cp/uAZkFCKWsSxzOa745rCGN7bqZ5w3siehK32AWnpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+9CnN9g; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2114214c63eso42938255ad.3;
-        Mon, 11 Nov 2024 18:28:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731378519; x=1731983319; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YJpf/vgoUNNJlHC3zs4C5JJSrlxepQDdd1yn1DyhgVI=;
-        b=c+9CnN9g6Nye/kuN894UACvOkvTQYonSS7XUHh1NP7i6xaUqgtNMcjnNORnV7QK7kQ
-         QTSSkLcGEXVM92GKbVOhEp/tI4S8Lp1dBj3qRe+fGc5tb31aE8amEBbtQPqY2pXd28/H
-         5nkTGLmvmy/py/bL4anppxVu5f7om4WhIZDaE0T9aR4Kn75ZZ5jMM7lvRekI9WgYA1DY
-         I+juALl4L3WMxb1o+2Bsf4yXWXWoICO4bteU2i8OmJ6Zf+80CBqfIBAOxaPJrXPBHi8+
-         NsK39iLhIZklq/Nvm4TdLW4L9nvf8QJ8dVDkTb6OeY+3IDpGvmg4o0c4pgWemKzdlBRR
-         /Fpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731378519; x=1731983319;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YJpf/vgoUNNJlHC3zs4C5JJSrlxepQDdd1yn1DyhgVI=;
-        b=A2qWbH4KW+fsiYs3wLVzsLmcQiPHQBuUlX8hgmFL9amrkL7t2uf/X/KV228Z04gckG
-         OrpwiUohLAbvnjzpKdrxBnhBwo61aRKMPFXK1wqmoIrzYN9nlT+pNGPAg9/uVghtDoc2
-         qfO0fFxieI1jjUfagcsH5V/mtbA4hSBXoKtkJNmFObVKBqaI+pYnPNGfPRoaGWOilkSC
-         U1QFg/PqBsdO//iwYzeDA82EbTujFTUy0HzDd/ioLlzBu8NNMGhN57NL5pc5pjstwLIi
-         WSkdn15ZFYBXM8+tNJd//zgNz9n+u5Pb7TfCL5RugsImHgD9JawBVMBPLhYd5Eg+FTMd
-         RDdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUO72SdrOSfUEcomzp2vnIL8K6I+AKpMTzmYHh3ITiaT4URA7D4oiJVcDzdlVzQsJCnwJXPubY7HiC0fQ==@vger.kernel.org, AJvYcCW5g788vM33uUEInHGdU2DipLIoAqbah0N498YwA0KYq93A0NpzutEsWdeGH0sCUIXb+QzRZSz7sqFHzyxt@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAXtNZWA437i/kcisA5XJSQpnIyH9vB94VnwmEe7gw3E6RzPNy
-	K5Q/Wm0eel+aPZrXSJasIgLV31dKRGtYFQv+qkcPVSQbP8xN71Ej
-X-Google-Smtp-Source: AGHT+IGYbjmsCrqh+gBkaxrSk83UAyOYhs5+9YIp9hmSkfLJsX+BaO9u4uIo+woUsWa3HAl3z/UVwg==
-X-Received: by 2002:a17:902:d4c5:b0:20c:bb35:dae2 with SMTP id d9443c01a7336-2118353968emr229124495ad.28.1731378518677;
-        Mon, 11 Nov 2024 18:28:38 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e87544sm80772115ad.283.2024.11.11.18.28.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 18:28:37 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 11 Nov 2024 18:28:36 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Pei Xiao <xiaopei01@kylinos.cn>
-Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xiaopeitux@foxmail.com
-Subject: Re: [PATCH] hwmon: (nct6775-core) Fix overflows seen when writing
- limit attributes
-Message-ID: <60eb849f-29d5-4bfa-9cb3-3a3add653ab5@roeck-us.net>
-References: <7d5084cea33f7c0fd0578c59adfff71f93de94d9.1731375425.git.xiaopei01@kylinos.cn>
+	s=arc-20240116; t=1731378584; c=relaxed/simple;
+	bh=YMKkNRXhINdwmcR50mjo9vNVVgM421WgWzE/aWzG8xo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WlbHSjB5KU/Z7i1vySVXDm/y6jBlAKPD1/EQ6SzR+sV+HUdoNK34b3pF/59G4tOvQgJw0BLpBrH6+85ZkAZPgokr9Un/Se69bZobfLt27etHtxNNqgyTf2pwo47UZyGqjEOyJiZpHiCgIhM3rwrfTCEGC/3wBOLDYrLU41pjR+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=VDFvusWp; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
+	by cmsmtp with ESMTPS
+	id AWM7tv1xYqvuoAgf0toIp5; Tue, 12 Nov 2024 02:29:42 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id AgeztZ0h2WdNZAgeztL6tv; Tue, 12 Nov 2024 02:29:41 +0000
+X-Authority-Analysis: v=2.4 cv=FtTO/Hrq c=1 sm=1 tr=0 ts=6732bd95
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=GtNDhlRIH4u8wNL3EA3KcA==:17
+ a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=kF_k85glk-dGMAHQuvsA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=I6b+CDp0tmCJRWsuY6LgYO2ruc1ZB4Ffg0rOAwSqW2Q=; b=VDFvusWpttT02M1qiNxbAKxGju
+	btfKhuSPdxZ8hfu3OxNyDgqzOKpQq3J4JF6QrT+VprbXVuytxS7GxcJg24+O4e6TDxy++TfFsZPLG
+	ZMCrVY7BU9miwUDV1OdCtYyHYqhstVytVVnLJGZFCa5vUCBOf7mBB40oZ4P+uyPU7p3S6ZwQ+q3gD
+	2ktE+K6wuIJFUsKzxyq9g+/McwdNWrcRtJ8xYeTAEAXU2H6mp93is/Wc4zoHsHN1VvzU+PfyGBklG
+	VhAfG5QT/zhilMx6SJrO0Up5NpS8Nyig/1UX9sPjyzgv4+XIwvHtMEr4Ct/cpj1Px5tniYJD/ys2R
+	osEMJzfw==;
+Received: from [177.238.21.80] (port=15558 helo=[192.168.0.21])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1tAgez-001POk-0K;
+	Mon, 11 Nov 2024 20:29:41 -0600
+Message-ID: <94d65b73-9c64-4bb2-a60b-74ac558acd0e@embeddedor.com>
+Date: Mon, 11 Nov 2024 20:29:39 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d5084cea33f7c0fd0578c59adfff71f93de94d9.1731375425.git.xiaopei01@kylinos.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [gustavoars:testing/wfamnae-next20241104-inet-sock] BUILD
+ REGRESSION 12b3f0eabce902acc13e01d76d9fd848474d4654
+To: kernel test robot <lkp@intel.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <202411101800.RWcjKBGj-lkp@intel.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <202411101800.RWcjKBGj-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.21.80
+X-Source-L: No
+X-Exim-ID: 1tAgez-001POk-0K
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.21]) [177.238.21.80]:15558
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 1
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfDnyE8BZdkKI2WW/Mw8YsPCzJ61AvtNSRtzsi3a8bkvsAKTZ/yOkAp1hW+W2l76ug8C1ZirLfeMtgW38+yUSoMPh1oJCMd9mvDNaCDcSbAoVNy6qcPVG
+ 9+hnd2YUb9MddwZvrba8gaD3jJbfA9dIGRQxX8nvlEJPmmTQx4rZ0yMJdCOeu7zZOTW2LE/T7KfdHktRK1/7tVmXz2YhgPRAMbTYfhFKFBrLvwMotlpl22bb
 
-On Tue, Nov 12, 2024 at 09:39:51AM +0800, Pei Xiao wrote:
-> DIV_ROUND_CLOSEST() after kstrtoul() results in an overflow if a large
-> number such as 18446744073709551615 is provided by the user.
-> Fix it by reordering clamp_val() and DIV_ROUND_CLOSEST() operations.
+Hi!
+
+On 10/11/24 04:10, kernel test robot wrote:
+> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241104-inet-sock
+> branch HEAD: 12b3f0eabce902acc13e01d76d9fd848474d4654  net: inet_sock.h: Avoid thousands of -Wflex-array-member-not-at-end warnings
 > 
-> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
-> Fixes: c3963bc0a0cf ("hwmon: (nct6775) Split core and platform driver")
+> Error/Warning ids grouped by kconfigs:
+> 
+> recent_errors
+> |-- arm-allmodconfig
+> |   `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
+> |-- arm-allyesconfig
+> |   `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
+> |-- mips-allmodconfig
+> |   `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
+> |-- mips-allyesconfig
+> |   `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
+> |-- parisc-allmodconfig
+> |   `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
+> |-- parisc-allyesconfig
+> |   `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
+> `-- xtensa-allyesconfig
+>      `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
+> 
 
-Applied.
+Which compiler was used GCC or Clang? Which version?
 
-Thanks,
-Guenter
+Including more detailed logs for these Errors/Warnings
+would be of great help if possible. :)
+
+Thanks for reporting this!
+--
+Gustavo
 
