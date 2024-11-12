@@ -1,146 +1,198 @@
-Return-Path: <linux-kernel+bounces-406264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA8E9C5CBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:04:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8F79C5CBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:04:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24FFA1F23B59
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:04:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 295761F237BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E50205AAC;
-	Tue, 12 Nov 2024 15:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35A3205138;
+	Tue, 12 Nov 2024 15:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtM8kyOU"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYOBihfF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F04E200CA8;
-	Tue, 12 Nov 2024 15:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF9C20409A;
+	Tue, 12 Nov 2024 15:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731427165; cv=none; b=DJQfxJ2YIhAZjZRm9AbXimxm/atO9/IpHRJc5XzD5OjBazNj9RpurdcngRyNZWQ6AqfI/Q3Z9ijzKjDb7dQojLKXvsXWv9M4fFihwl97XCr5Ufwhy0pSjEFuT+QMiqIPV4aojbDSEmlMLIzYwADn4UM7fuXxu2FdaHisYpeRlxA=
+	t=1731427156; cv=none; b=aaNeMedXmHyYlJ2pk8yQ2V4tmx+0G3gBouKmFMMlBJYB4JUvtGwfp1i/p2TTQcqFvWPLHwv5EY/EMNVsdbIn5X1eyit1hLk1/JNmSTsUkm84lIuqBsdDk0W5HYxyNbY7GVZEcC+jGLNPb1iUth6PgmdAStXExd0v3nnStrHRiRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731427165; c=relaxed/simple;
-	bh=wDbUcYyCAxSuDczfvbcumQ0r2fxBkz3WNOzotZNf3oI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=byUQPT0+cn3jmlpI24xZnV9bC7GyxEpFmsqD3Rvml10PHAHxcvPh0nn4qiuUfdMw+WK8tAELCoTHmhcs/dZsw4VmLytqxNlblzMg/YlsPbc6jHYqrdpwUeqA7A7SDP/VEyOxfkzy1eOZwUN+XYr/H6yUEVLzv8rZOQnl6HwGLBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KtM8kyOU; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460b2e4c50fso39920561cf.0;
-        Tue, 12 Nov 2024 07:59:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731427163; x=1732031963; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bat9/xJV7AvURdsz2iED2jNcpnDBIev/RoH/7ziy/gk=;
-        b=KtM8kyOUU4R1C2E0ArEOL3x1dbdFd2OQXKHh47vRSTi/LbHvxPIR2s1CYkCYVw96EA
-         Binjdozh7w331bEweLx75lBvglsadI7LfAXkUnym6sZoheT6Xf++y/cqe3pK9NCeH8Sa
-         5GCzXv1tRCwJE7Hd1B8DLkSXSaqKRRf2AnF1jGngP2aGyOHa7TKAMO4DYsCmuiPFwTGC
-         96XEyWm4NrFPRKjc6lu7NSNqvJZtWaGvSJoPc+kZ0k64iJc8iuxpmn09ldA0xHJE4lJe
-         MrqPDvQEl0myVsWUGZAE+IgPka2NXMLZ4eS4yN9EV1WvBbcfUfYg7etZ0zKqwcNsMO2l
-         qLQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731427163; x=1732031963;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bat9/xJV7AvURdsz2iED2jNcpnDBIev/RoH/7ziy/gk=;
-        b=R97SommUHH88IUI+89RtXvpgLJwAXJlL4tfQxlR0mRVDyJRE512rFCkbNngsd/NOMw
-         L0P08OPG+yYHtGWM13/g8XfRq+SYlmGWfXXbAIif2BBphGU1OqXChoUJYYlMvb323mT9
-         QriTxBBz5fFSQeJRBfdYWHjFGxqmQ4JZJ+hiX8z6pF04VgD0hxzluK7b2G8jsn1pbPpH
-         20Dv2dMtI9UC4dDgMZrW0SLY2xjUfy8DMPv9jxn9hoPpdL4S4JFL+m333X5uLTnQe9Ky
-         VG6nNScTkQNT3wElGPd9jzWS1citRNYREfXYr7bku+XJk8Nrbooo7oPX61h7XCs9N69h
-         hKzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWC+LXIazKIYK0U8mRbUPVFmPOTxURHWSHU4xwPa4BSmCZENLmLww0myDljzgRdNtidA7u+HfixkICiu0jy@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJAgdGXSPFCEPWeJul7d5CFFp0xx6bWdOmTpJIOkHTds7kcXZu
-	ysxN4VhNTp3pz90rIGQPKDeD/V2mouN/tNHJEin7NfugjQ2uYcOhOrmLRZItzedoHwNsJu46rNm
-	37Add/2g1G5QNeNzgH4rGndBTJTjo4q5IFKE=
-X-Google-Smtp-Source: AGHT+IGGVds2Zk2FiqgWXrwtcM5CJcFo1xPRYV9kQCKS8z4jkc3dP2MdcyL4Gk6QnGgDlsU4XzZzBQcD70oSna/XVCI=
-X-Received: by 2002:ac8:7f01:0:b0:45d:6320:3c4a with SMTP id
- d75a77b69052e-463094113c1mr241044151cf.42.1731427162946; Tue, 12 Nov 2024
- 07:59:22 -0800 (PST)
+	s=arc-20240116; t=1731427156; c=relaxed/simple;
+	bh=BleI3g/9Mgelj0hSQNkzA4/4uDaRN4Z/XLhqKzmcEOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cazjbap+KJlvxcGfuRQUG2BPtDdbi8qHieJmpNgZVK3v8Mh1Q6evJIpBDDE7m66HsCAoshu/F1DNSDVyuThXWMn3NH2YQfPuRdqdhZYz7Ri5+oMcRKqVWL2gkePbtiolTiyeUdUz4mA8jpBb9IMassrE9qPc9ClgemRGO7m6kxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYOBihfF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6CB1C4CECD;
+	Tue, 12 Nov 2024 15:59:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731427155;
+	bh=BleI3g/9Mgelj0hSQNkzA4/4uDaRN4Z/XLhqKzmcEOI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DYOBihfFEvWfaR9x6HoxpRiixjrLPzdHw3AC7d65JT0zJmFcqRaDU3DqumpVMuP3U
+	 L+dKz61++MfqjLtTY8YrAE+kOlFaGCXB6xfFwbOymCnKB0chgXMfkf9+lPjXgMO5+S
+	 cwZyeqY6VIAYir3vd2tPSscqw9BxZ/kEXtl8m0ZE7gFkcjlNef36otxZHhOX4dsyVl
+	 y8BRMr1SGH7a0VdwTaoU7QGu3Cob6eoURtLb6XqbXddsLah+3aeWxixUn/tyBgIxiT
+	 1mLoTxCaYtAYx9MyyXv4FzmlKk6pu8kBQOtIC8XOE+OciASiGo53fIb9IshrIi4kjj
+	 B9gyxnpKVOfxw==
+Date: Tue, 12 Nov 2024 09:59:13 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: kw@linux.com, u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu,
+	arnd@arndb.de, bhelgaas@google.com, unicorn_wang@outlook.com,
+	conor+dt@kernel.org, guoren@kernel.org, inochiama@outlook.com,
+	krzk+dt@kernel.org, lee@kernel.org, lpieralisi@kernel.org,
+	manivannan.sadhasivam@linaro.org, palmer@dabbelt.com,
+	paul.walmsley@sifive.com, pbrobinson@gmail.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com, xiaoguang.xing@sophgo.com,
+	fengchun.li@sophgo.com
+Subject: Re: [PATCH 1/5] dt-bindings: pci: Add Sophgo SG2042 PCIe host
+Message-ID: <20241112155913.GA973575-robh@kernel.org>
+References: <cover.1731303328.git.unicorn_wang@outlook.com>
+ <1edbed1276a459a144f0cb0815859a1eb40bfcbf.1731303328.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101135452.19359-1-erin.shepherd@e43.eu> <20241101135452.19359-4-erin.shepherd@e43.eu>
-In-Reply-To: <20241101135452.19359-4-erin.shepherd@e43.eu>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 12 Nov 2024 16:59:11 +0100
-Message-ID: <CAOQ4uxjD6Xsi-RV90xj-M9RbncTB5vPu2r_HLF1Es5hYixonLg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] pid: introduce find_get_pid_ns
-To: Erin Shepherd <erin.shepherd@e43.eu>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	christian@brauner.io, paul@paul-moore.com, bluca@debian.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1edbed1276a459a144f0cb0815859a1eb40bfcbf.1731303328.git.unicorn_wang@outlook.com>
 
-On Fri, Nov 1, 2024 at 2:56=E2=80=AFPM Erin Shepherd <erin.shepherd@e43.eu>=
- wrote:
->
-> In some situations it is useful to be able to atomically get a PID
-> from a specific PID namespace.
->
-> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
+On Mon, Nov 11, 2024 at 01:59:37PM +0800, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
+> 
+> Add binding for Sophgo SG2042 PCIe host controller.
+> 
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
 > ---
->  include/linux/pid.h |  1 +
->  kernel/pid.c        | 10 ++++++++--
->  2 files changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/pid.h b/include/linux/pid.h
-> index a3aad9b4074c..965f8b3ff9a8 100644
-> --- a/include/linux/pid.h
-> +++ b/include/linux/pid.h
-> @@ -124,6 +124,7 @@ extern struct pid *find_vpid(int nr);
->  /*
->   * Lookup a PID in the hash table, and return with it's count elevated.
->   */
-> +extern struct pid *find_get_pid_ns(int nr, struct pid_namespace *ns);
->  extern struct pid *find_get_pid(int nr);
->  extern struct pid *find_ge_pid(int nr, struct pid_namespace *);
->
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 2715afb77eab..2967f8a98330 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -470,16 +470,22 @@ struct task_struct *get_pid_task(struct pid *pid, e=
-num pid_type type)
->  }
->  EXPORT_SYMBOL_GPL(get_pid_task);
->
-> -struct pid *find_get_pid(pid_t nr)
-> +struct pid *find_get_pid_ns(pid_t nr, struct pid_namespace *ns)
->  {
->         struct pid *pid;
->
->         rcu_read_lock();
-> -       pid =3D get_pid(find_vpid(nr));
-> +       pid =3D get_pid(find_pid_ns(nr, ns));
->         rcu_read_unlock();
->
->         return pid;
->  }
-> +EXPORT_SYMBOL_GPL(find_get_pid_ns);
+>  .../bindings/pci/sophgo,sg2042-pcie-host.yaml | 88 +++++++++++++++++++
+>  1 file changed, 88 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml b/Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml
+> new file mode 100644
+> index 000000000000..d4d2232f354f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml
+> @@ -0,0 +1,88 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/sophgo,sg2042-pcie-host.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +struct pid *find_get_pid(pid_t nr)
-> +{
-> +       return find_get_pid_ns(nr, task_active_pid_ns(current));
-> +}
->  EXPORT_SYMBOL_GPL(find_get_pid);
->
->  pid_t pid_nr_ns(struct pid *pid, struct pid_namespace *ns)
-> --
-> 2.46.1
->
->
+> +title: Sophgo SG2042 PCIe Host (Cadence PCIe Wrapper)
+> +
+> +description: |+
+
+Don't need '|+'
+
+> +  Sophgo SG2042 PCIe host controller is based on the Cadence PCIe core.
+
+> +  It shares common features with the PCIe core and inherits common properties
+> +  defined in Documentation/devicetree/bindings/pci/cdns-pcie-host.yaml.
+
+That's clear from the $ref. No need to say that in prose.
+
+> +
+> +maintainers:
+> +  - Chen Wang <unicorn_wang@outlook.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: sophgo,sg2042-pcie-host
+> +
+> +  reg:
+> +    maxItems: 2
+> +
+> +  reg-names:
+> +    items:
+> +      - const: reg
+> +      - const: cfg
+> +
+> +  sophgo,syscon-pcie-ctrl:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: Phandle to the SYSCON entry
+
+Please describe what you need to access.
+
+> +
+> +  sophgo,link-id:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Cadence IP link ID.
+
+Is this an index or related to the syscon? Nak for the former, use 
+linux,pci-domain. For the latter, add an arg to sophgo,syscon-pcie-ctrl.
+
+> +
+> +  sophgo,internal-msi:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description: Identifies whether the PCIE node uses internal MSI controller.
+
+Wouldn't 'msi-parent' work for this purpose?
+
+> +
+> +  vendor-id:
+> +    const: 0x1f1c
+> +
+> +  device-id:
+> +    const: 0x2042
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  interrupt-names:
+> +    const: msi
+> +
+> +allOf:
+> +  - $ref: cdns-pcie-host.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - sophgo,syscon-pcie-ctrl
+> +  - sophgo,link-id
+> +  - vendor-id
+> +  - device-id
+> +  - ranges
+
+ranges is already required in the common schemas.
+
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    pcie@62000000 {
+> +      compatible = "sophgo,sg2042-pcie-host";
+> +      device_type = "pci";
+> +      reg = <0x62000000  0x00800000>,
+> +            <0x48000000  0x00001000>;
+> +      reg-names = "reg", "cfg";
+> +      #address-cells = <3>;
+> +      #size-cells = <2>;
+> +      ranges = <0x81000000 0 0x00000000 0xde000000 0 0x00010000>,
+> +               <0x82000000 0 0xd0400000 0xd0400000 0 0x0d000000>;
+> +      bus-range = <0x80 0xbf>;
+> +      vendor-id = <0x1f1c>;
+> +      device-id = <0x2042>;
+> +      cdns,no-bar-match-nbits = <48>;
+> +      sophgo,link-id = <0>;
+> +      sophgo,syscon-pcie-ctrl = <&cdns_pcie1_ctrl>;
+> +      sophgo,internal-msi;
+> +      interrupt-parent = <&intc>;
+> +    };
+> -- 
+> 2.34.1
+> 
 
