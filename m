@@ -1,131 +1,119 @@
-Return-Path: <linux-kernel+bounces-405980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4519F9C598C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:51:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C1E79C598D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:51:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC5A2842CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:51:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33E451F23017
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2838E1FDFA4;
-	Tue, 12 Nov 2024 13:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9C41FCF6B;
+	Tue, 12 Nov 2024 13:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="rstItsb9"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Aycbh7Sn"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D678F1FC7DC
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139241FCF66
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731419430; cv=none; b=NK/36eedKjZ/vFE84LsmO+4PXzfc38QSbxSqr+nBf2xF8q9zHev4ta4m49jSMbHoxymCs9bAcbA/AfUVubPBmxGmwWU4REC6MC0iq/LawZqvoj88NMYJrrc9WcD7Xkrkf3gm0zNBqD9mlnuijtisEj/FCB8LtVwB6hpLDaLUSYA=
+	t=1731419431; cv=none; b=jzoE1fdtQTXbjbaPNgr9gInPDnpiJaEyT2TbHKeQI1/6zMLWkpGBKgY9mO/lyIiZh4tpRRGCqbpCvwbXmfuyX2w4h/92pd692HInTDb9UWW98H0cCzkSM+ZnmBU+axo3k3cbDqbCjM2bc/koDdHd97AxZU8xqk5fN8U9dMnZjd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731419430; c=relaxed/simple;
-	bh=mzq613P0rQJ2+4JHU/B89oV7zMp4IkunBZ8sL1R7feI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UaYDKqOk1tn2OK1U+xnK9N5iK0w26qtukdAndydffsiVVXu0AzaRT5BhlcYZ4cnGvIG3WZ+dnHFBZxHT6r1CNKwv9WwjDK2uprAkLkUWy1JHOV/fjeD9Qx6+NaN/jgKBtm8GNOswweckcmB/PXh7luQwjsNTAh6QkNRXSWxa9Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=rstItsb9; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so8814830e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:50:27 -0800 (PST)
+	s=arc-20240116; t=1731419431; c=relaxed/simple;
+	bh=r57rnXgG4AkYhE9Spqgv17A9y5FNAF3NSxhnociPfTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTIyoBhCBu16R9zPNMwS0sSldfaiDvRcmPefF4uRNu6cZ9qg8+rPn4ZlKkkiSYNgJ5cfc2uM+YGedxMh8upj3kMmRhtoxzOAEu9QxgR5sm2O97NabEujGHeL44+XlgX32D5rMK6HfR9deoEomKBbLSAF/drQxPL+shdBn6N03Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Aycbh7Sn; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so65313081fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:50:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1731419426; x=1732024226; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=faWcBO3IObJ6Ff1ndGVWG5mNTwtfJB+/3MIGY1Y/Ibw=;
-        b=rstItsb9/vxg5pCALe+xEjzh/fa/g14ATXWB15ukZLLxfxzqrTSk2xos/MtDpPKP6f
-         ynmN+nu5asUSZ3ADEnNqFgbzKDDjkpPz9I1nstI297a1I9WAr1J5cnookOdsWgEZWZsz
-         koaqbkG3n/7zhpLi77ObH7Q1VmHnnVZrBN24He79R8SCvQmyfiYwka0EDA/Kdj46bW4A
-         RcV8Px/AHNmIG9lTtN5mNrDjKCvkZlLGtz+4q2eVK0FnpRvhwxogjp5x9YfeQtFHYtiz
-         /EsE/2ySYFMcAbTd5vCcBPi9j3woL0Ghxtpb9buIgRl3BWnGBofGlZqTmfNN6KyoEJsP
-         IMqw==
+        d=linaro.org; s=google; t=1731419428; x=1732024228; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nkqISw1cuUKk/RswWCfsbwfb8VGVL06uekkDQG2WNDU=;
+        b=Aycbh7Sn5bl3/RegXiRR0rxSIOuZ33kqaVM9gzCH4EXS5rzWuNTuy/DDOYjs0FPG9E
+         q+bN9TW8rniwdiCeaiZwH0Sv0X4bzicWbhMHAoRBrEkKT3yFZFBYW8u0f4wKZeGGr0Fg
+         YrH1q5Q1ff9Vw3zgLq9lf5r31wpQGW4I7V9ofrXY2ocso08vnnxRc0tyHQcVA4fD3rSx
+         EY3FFCyUgsW27WdAQSYYTGbxN07URUt4dq2/ZPO7KsXT8BmVBt0qDVOve6uqsIm8dQuN
+         TIAjge/9opKPERgARDc/2ppeePc6HHFUos94ewxsGVZlQpdnZr58z/ekOoV0RQbFJsbP
+         03Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731419426; x=1732024226;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=faWcBO3IObJ6Ff1ndGVWG5mNTwtfJB+/3MIGY1Y/Ibw=;
-        b=XM/sBX1hrLd/KgbyOoVcpJXtmMItD9ukpBpgM8wmhhpp3IuPHpChwfpwmZUerPn0Nq
-         m45oEtLvobSaVy7b/R+jWLK/DkyOP3bYQjZMmjTl8Cj6lwPKgsn149Bh39pDl3qOO3ml
-         y355bswNEqzj1dUjgpaS6mSI3RuyJ9VFWT2/8FgIuvQeOGuadvvWVvsiV7cH0ZBJMx98
-         8vlPb5m3xD3RvtfRa/LKukv/BjtUYaejxNXU5fzR1SOjHESmgCT8tqG8ymixObHL6Gj5
-         GpTaJJEoyKZikKE4Sbfhrf8ciJK3e3W3au6tljto5HgKi/DL4l3S1wGrB7UBELhsZb7y
-         p66A==
-X-Forwarded-Encrypted: i=1; AJvYcCVqAfiqi7RZ+STHQZ+2n/Acp1CJpCcu1YeKiX5fDs9Z6hfMakbkKaXwTFiNbVkmLiBRwj6QyumqJT2DpUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI/92sX4aMQazn1nQTjEw0ZGoYV9vaIgVHA9/o+966DdMF94Bg
-	7WjeUQykRoZiJBXhmzBWLtDOBbBWhPpegby67KkPyFEd8Peq4rLod/AOeX2+trw=
-X-Google-Smtp-Source: AGHT+IH8giJ+0I4u5AIEdyM111/2T0kTvvnxMXkxC6ARvNEqpPlklpz/VToCv4/0i97trTh84+rTUA==
-X-Received: by 2002:a05:6512:3f09:b0:533:71f:3a3d with SMTP id 2adb3069b0e04-53d862c7321mr13439101e87.24.1731419425787;
-        Tue, 12 Nov 2024 05:50:25 -0800 (PST)
-Received: from [192.168.1.128] ([62.205.150.185])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826a9d9dsm1844419e87.205.2024.11.12.05.50.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 05:50:24 -0800 (PST)
-Message-ID: <6821f3d4-3157-451d-86f2-bb1d1a990c17@blackwall.org>
-Date: Tue, 12 Nov 2024 15:50:22 +0200
+        d=1e100.net; s=20230601; t=1731419428; x=1732024228;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nkqISw1cuUKk/RswWCfsbwfb8VGVL06uekkDQG2WNDU=;
+        b=VBFHncHGndz/Zray6PhibKf1W5JBtMLu1GycG/fyP4DHQb5Jm/DNzFE5q2yFxfnwqY
+         xzNXSKDnZtS5AQTTLXZOE+CeLfAMoSnO7R9qSNp+RH9IH0pCaGewh91FpEeN85ncCU1P
+         LlOMhQDM3iI/UqEpB+76YOFKDRH2h2P/zXkeJqZtj0/bvxQfiovSbx64LkUBiOmLKZuH
+         4uSuiqC3HREsTBpa+/2BLs4yGpJL5x1q2Z2FvCkZnNLJiqTX/vPtTp7AvDd2N7ivpEBo
+         PDwP0EpLeE6YiVC3mD/WTB9e/gEpY9CbGvwGFjcc8AUsFpNw9yoZncmdT5v6nnzXo9Gj
+         mvNw==
+X-Forwarded-Encrypted: i=1; AJvYcCW70kINw3f0f4L+vjY/WZVQynEYyq+LwH9CLyixn9HeVCYYYWvBbTPdZMvvTYsa2JmPcOvCMWuCt48+Nb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2eJX/Ud8NEnSJJGQTTjSmE2XOj6umZbXt5WeqOF5L48+UneCB
+	5yiyWtWicbCbRSTVjhqsY4gu4+vNi5aonLeTxAcGL27psqobYoLhT1ulrs1E270=
+X-Google-Smtp-Source: AGHT+IHGiQ69XV1c7WSUGoGxDNlI/Le1J4+wr+SQYknI4TQv5yTHViFezgLAJNw6WKj0yT3uRyKEAA==
+X-Received: by 2002:a05:651c:50b:b0:2fb:2a1c:936d with SMTP id 38308e7fff4ca-2ff201859e2mr114929661fa.10.1731419428204;
+        Tue, 12 Nov 2024 05:50:28 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff178f2daesm20147701fa.31.2024.11.12.05.50.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 05:50:26 -0800 (PST)
+Date: Tue, 12 Nov 2024 15:50:24 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Odelu Kukatla <quic_okukatla@quicinc.com>, Mike Tipton <quic_mdtipton@quicinc.com>
+Subject: Re: [PATCH V4 1/3] dt-bindings: interconnect: Add EPSS L3 compatible
+ for SA8775P
+Message-ID: <tv7gsceomtdjcymma5ximownsxleg2ujuxcwjgkzj5zhmlscr7@wnyx3bfi2cpo>
+References: <20241112075826.28296-1-quic_rlaggysh@quicinc.com>
+ <20241112075826.28296-2-quic_rlaggysh@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv3 net 1/2] bonding: add ns target multicast address to
- slave device
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
- Andy Gospodarek <andy@greyhouse.net>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
-References: <20241106051442.75177-1-liuhangbin@gmail.com>
- <20241106051442.75177-2-liuhangbin@gmail.com> <ZytEBmPmqHwfCIzo@penguin>
- <ZzHW9llUizisMk3u@fedora>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <ZzHW9llUizisMk3u@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112075826.28296-2-quic_rlaggysh@quicinc.com>
 
-On 11/11/24 12:05, Hangbin Liu wrote:
-> On Wed, Nov 06, 2024 at 12:25:10PM +0200, Nikolay Aleksandrov wrote:
->>> diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
->>> index 95d59a18c022..60368cef2704 100644
->>> --- a/drivers/net/bonding/bond_options.c
->>> +++ b/drivers/net/bonding/bond_options.c
->>> @@ -15,6 +15,7 @@
->>>  #include <linux/sched/signal.h>
->>>  
->>>  #include <net/bonding.h>
->>> +#include <net/ndisc.h>
->>>  
->>>  static int bond_option_active_slave_set(struct bonding *bond,
->>>  					const struct bond_opt_value *newval);
->>> @@ -1234,6 +1235,64 @@ static int bond_option_arp_ip_targets_set(struct bonding *bond,
->>>  }
->>>  
->>>  #if IS_ENABLED(CONFIG_IPV6)
->>> +static bool slave_can_set_ns_maddr(struct bonding *bond, struct slave *slave)
->>
->> const bond/slave
->>
->>> +{
->>> +	return BOND_MODE(bond) == BOND_MODE_ACTIVEBACKUP &&
->>> +	       !bond_is_active_slave(slave) &&
->>> +	       slave->dev->flags & IFF_MULTICAST;
->>> +}
+On Tue, Nov 12, 2024 at 07:58:24AM +0000, Raviteja Laggyshetty wrote:
+> Add Epoch Subsystem (EPSS) L3 interconnect provider binding on
+> SA8775P SoCs.
 > 
-> Hi, FYI, in new patch I only set bond to const as slave will be called
-> by bond_is_active_slave().
+> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Thanks
-> Hangbin
+> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+> index 21dae0b92819..94f7f283787a 100644
+> --- a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+> +++ b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+> @@ -33,6 +33,7 @@ properties:
+>                - qcom,sm6375-cpucp-l3
+>                - qcom,sm8250-epss-l3
+>                - qcom,sm8350-epss-l3
+> +              - qcom,sa8775p-epss-l3
+>            - const: qcom,epss-l3
 
-Yeah, I figured. :) Thanks for letting me know!
+No, sa8775p isn't compatible with qcom,epss-l3. I asked you to split the
+driver patch, not to change the compatibles.
 
+
+-- 
+With best wishes
+Dmitry
 
