@@ -1,134 +1,106 @@
-Return-Path: <linux-kernel+bounces-405800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C009C571A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:58:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F8A9C571E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:59:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 858962833FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:58:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B36A1F214B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135D41CD1E8;
-	Tue, 12 Nov 2024 11:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A001CD1F7;
+	Tue, 12 Nov 2024 11:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="a2/tyhe7"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NW0Cnhro"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672161CD1F6
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E7F1BCA11;
+	Tue, 12 Nov 2024 11:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731412684; cv=none; b=QQIG/y9ecR+5WesaFg/eawgTMDtei0PYOB0g6jZGf7pVsrFq5WajgF/00IRbzzubRL9aYloge/gcyiknO0D/iFFjzuvLIzBhF9q7C/k2AhkTxvzvgladnxyh/0RSGhlLmToDqU6zzJ2qI+37MMi4JYzRQfJhBVdbeYY4u7oMe6M=
+	t=1731412736; cv=none; b=Qbo6G8k8npuF2xUOrDVU3Do+0cMtvGbQKF6OlBiovuSk7vzDY894PqDHGvVukeMT1GtlOA6GCBswk5L4Lg/24ilRRGBSyY5AuKovfG6BJoI9xvNNoSy4ZeZr9QpSm5cmyjTDCt0qjJlv8xuYuA+StGj6JRnJ3IcpW4HLiMJ8QpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731412684; c=relaxed/simple;
-	bh=gamiLNTrf25mtswS6LdlmTYjTT5i/nU926ZrJK9h7Yk=;
+	s=arc-20240116; t=1731412736; c=relaxed/simple;
+	bh=TUNmIAPn6+pKk5nzKQZ1OjgyCLxgxK7kaAVkQhXghrw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T7U2e2dNABITYxRNsj5/Qv30DlVbLOflMLUS7NuOcNzAyw2LK5eNgpOmgQjZCkQt0wzTzMzWWGWQW0l4nuH0q/jJjcp7t5oTASLtuYk8h/+LsYIGwGef2DLCS9/S7cxhaiSK2AnEmsGv4sfOoyGa7vJDRNS0TS6id3tV/zRPv40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=a2/tyhe7; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
-Date: Tue, 12 Nov 2024 22:57:36 +1100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
-	t=1731412678;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZLPANBLamjGfC5r6egRWAEDIhWpqsCbbZn+Iq+TVaHs=;
-	b=a2/tyhe7fNibfAbbCny3Aikp3SsQnw6XH7Ov42dzBegj2EiTgNMN3Xtj9HxXtxU8+uGVBm
-	nI9QJwwmQq3bac1SiNPQ53yBhbBEyJpPAlZrm8CZ4rAOzxF6iZ1FJVCbk2xF0Y9mw3Q3N8
-	0PWbOjQIDg3RwbSIyV7Ve+qisx+cnXeNfaZRvcKs1sKx2WLVjquVBuWwRjFd96OsiKw4a5
-	zJGLpuo/iZ/i7LfAsFL1Zmb+8W2cMl1QovdUVyShoYPgpXyfcsMFIFqpfd0XdqkFtzY2kO
-	0SEGYCrQNR+RkH+svIeIYbE1elx45wTijw4bX2EApjeDRad+MCIup1tiKLtEPQ==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: John Watts <contact@jookia.org>
-To: Parthiban <parthiban@linumiz.com>
-Cc: Andre Przywara <andre.przywara@arm.com>,
-	Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Samuel Holland <samuel@sholland.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/sun4i: Workaround TCON TOP conflict between DE0 and
- DE1
-Message-ID: <ZzNCsFiAiACFrQhE@titan>
-References: <20241108-tcon_fix-v1-1-616218cc0d5f@jookia.org>
- <20241108115357.691b77b0@donnerap.manchester.arm.com>
- <Zy4SKCBwce3q0yj5@titan>
- <b26b9d86-4ff9-4543-85ce-176dccfbfa05@linumiz.com>
- <Zy4c9BFcrz2JVU6k@titan>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uHCDUQlNftbl/GL43xtYnfDSKYlmra4qSAF6j9K32//FRfl1SaBEg8bCtwE6hkJ6KGZqGsHywR07PVWToWCjza0oKrE/YWffO5/Lb4N6gkpLGKcc8Pbx3v3u9yDABdJZtbjnm4iy0hWnYQ9qHR07FQMJB+KOA62WeshA7Ula7MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NW0Cnhro; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3B28440E0219;
+	Tue, 12 Nov 2024 11:58:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id K0mb3qn6eQ2E; Tue, 12 Nov 2024 11:58:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731412724; bh=pUkUnh5KepZX+fycGuZ0Jah4PiIPhoLoA1x5Uf4hXQk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NW0CnhroUylwEPqyeQXOXk8N75MoxkYs5HX51aINwz3/N/Sc7QvF6fhvnOXKzoZRf
+	 xHSLAW//IkLuS48CV8o11VTS6McVekMZAMwpamDs4YVLPhQDNmf64ZEaxxus0GGAh1
+	 qSm0zujyK+5Aa3NjLrR3izo2/Fax5WjEvrBPKKyOJlpU30V3d45abZlL1dz5IgzPRx
+	 GXYmy23QGxIHNOEK1PhwMAAO87iixqGjQNabWLH+NZbhIaRq+QqJpHr/7VqLypeI2m
+	 ScUs8D9oodqzw53BS8LofG4633bSXF0nx64RDWGHc8Ia/zrNSdtEYHGYo8tFxRfGdh
+	 4FspwmabVVWm0tBOtytantZjshy+wSmwCh5zk9kS0vs3PHtgq0xZk6hPsVqUN8TGMe
+	 Ehd0UMrKfLP0EW6Kvj5FMTGqr49PWzuOI+XzN4N4RnPJ9CSv9Kx0lE5HavG8Oet23k
+	 40HNeBNrEPuBeq0ifurBg2yRkYUwIjnx1YzxQ6dFQr47sTeKYNVE08/QY6aZWncPwu
+	 LSFoR6is7HANMt4McbKCzKnrpbjq0T2OSV79cnZD4yOSD8iw7LludXMY0cYHfsbLr2
+	 oLGPqeuAjK/Vnit3Shi4DXwmAxSwAC2+k9HHEtponuRrHhnTgrI+L79/9oN18K7WEk
+	 B77eLJ7GBNfM7YBGD/6uFgVc=
+Received: from zn.tnic (p200300ea973a31e1329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:31e1:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 42A8D40E019C;
+	Tue, 12 Nov 2024 11:58:19 +0000 (UTC)
+Date: Tue, 12 Nov 2024 12:58:11 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, Amit Shah <amit@kernel.org>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+	linux-doc@vger.kernel.org, amit.shah@amd.com,
+	thomas.lendacky@amd.com, tglx@linutronix.de, peterz@infradead.org,
+	pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, mingo@redhat.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
+	pbonzini@redhat.com, daniel.sneddon@linux.intel.com,
+	kai.huang@intel.com, sandipan.das@amd.com,
+	boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
+	david.kaplan@amd.com, dwmw@amazon.co.uk
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Message-ID: <20241112115811.GAZzNC08WU5h8bLFcf@fat_crate.local>
+References: <20241111163913.36139-1-amit@kernel.org>
+ <20241111163913.36139-2-amit@kernel.org>
+ <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+ <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+ <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zy4c9BFcrz2JVU6k@titan>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
 
-Hey everyone,
+On Mon, Nov 11, 2024 at 05:46:44PM -0800, Josh Poimboeuf wrote:
+> Subject: [PATCH] x86/bugs: Update insanely long comment about RSB attacks
 
-I'm not sure exactly where to add this but I discussed some of this with
-Parthiban on #linux-sunxi a few days ago, so I want to write it down
-before I work on the next version of the patch.
+Why don't you stick this insanely long comment in
+Documentation/admin-guide/hw-vuln/ while at it?
 
-I had assumed for some reason in my mind that DE0 and DE1 here referred
-to mixers, but they actually refer to chips that have multiple DEs. It
-looks like at least with the A133 it has two DEs instead of two mixers.
+Its place is hardly in the code. You can point to it from the code tho...
 
-This can be found by looking at the Allwinner BSP: SUN50IW10 requires
-CONFIG_INDEPENDENT_DE and has a device tree with an extra reg and clock:
+-- 
+Regards/Gruss,
+    Boris.
 
-<0x0 0x06800000 0x0 0x3fffff>,/*de1*/
-<&clk_dpss_top1>
-
-However the tcon-top code seems to conflate mixers and DE in the
-mainline code and the Allwinner code. So ... It seems like 'DE0' and
-'DE1' really do mean mixers in this case. It's probably best to note
-that down.
-
-I thought a bit more about how to solve this properly- setting two
-mixers to the same output is something people probably won't do in
-practice, so the only way you could really arrive at this bugged state
-is by setting it as the default state. This patch may be the correct
-solution after all.
-
-John Watts
-
-On Sat, Nov 09, 2024 at 01:15:16AM +1100, John Watts wrote:
-> On Fri, Nov 08, 2024 at 07:36:16PM +0530, Parthiban wrote:
-> > To add, 0x20 will be DE0 <--> LCD0 and DE1 <--> TV0. Below note (copied from
-> > R40) states the priority of the DE selection, which fails to work? Not sure,
-> > may be disabling CORE1_SCLK_GATE and CORE1_HCLK_GATE in de2-clk helps.
-> > 
-> > With A133 following the same as T113 with single mixer without TV, still
-> > sets 0x20 in vendor kernel.
-> > 
-> > copied from R40:
-> > Note: The priority of DE0 is higher than DE1.
-> > If TCON_LCD0 selects DE0 and DE1 as source at the same time, then
-> > DE0 will be used for the source of TCON_LCD0.
-> 
-> Hi there,
-> 
-> Yes that was a pretty bad typo, I meant to say DE1 to TV0
-> The prioritization seems broken in the T113 at least, it's racy from
-> what I see in testing. I should note this in the patch too.
-> 
-> I looked at the datasheets and kernel code briefly: I can't seem to
-> figure out what SCLK/HCLK gating does and I don't think the kernel
-> touches these registers which are gated by default.
-> 
-> > Thanks,
-> > Parthiban
-> 
-> John Watts
+https://people.kernel.org/tglx/notes-about-netiquette
 
