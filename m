@@ -1,96 +1,196 @@
-Return-Path: <linux-kernel+bounces-406496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686D89C5FF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:12:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9459C5FF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:11:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CABD2848C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:12:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40BD22885C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA14216DE3;
-	Tue, 12 Nov 2024 18:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0048B217444;
+	Tue, 12 Nov 2024 18:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="AP13VNhF"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZXHg62pO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BFC216449;
-	Tue, 12 Nov 2024 18:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A417212F05
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731435058; cv=none; b=YG1P+5znpwLasTaymlIUL21/e2uIS2B+UMnYfEJdg3NxnxPPc/7BLR6BiEQpREj+qNc4XVvmg1dlA1FeUMSMoFk0ZbsFVc4wSfzo993HOkq376jKNKrqNZaN2jCq+OneVEFVKO1Vx8iVQIFIpvlj5y02FvlJqBuLFwQCgQT+sUc=
+	t=1731435032; cv=none; b=YmpOS0RuF/2EeQ1nOatqm8VyRCZnQ/WcLkFX9rp6IZ4JTNrZKfZvm83ooEG7J7ml4GyyGe/3NzlivxdGnLgI+g11CA/sK237gRbHUYHo3AhcvgfiUNcCw5VifdNZGR/csWJoVNvzGtROu7BmBD0EcMAX5pRtbmelisGoEECyuxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731435058; c=relaxed/simple;
-	bh=LEQ3H94W9G+4p1zBDNvVrlmIym5MwkCk8vk1Mz9frXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fP+uuqBUYNvHGBSDFZU5EB5yJHXSjEJOTRreH1V+s04chEHojV1uhMHqTseRmiXI6AXSwHkdB+XmRZ5lMO0iO85BlEXi6JQUdETCNFEFLHNjlQgU7l+JKTXOSQcAkhwsyRbr3E4oMGjGAWCJjJLvIa34PRHGa9HOfdW7ZERHoMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=AP13VNhF; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [172.27.3.244] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4ACIAE083429129
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 12 Nov 2024 10:10:14 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4ACIAE083429129
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1731435015;
-	bh=6Kx7RtEhxS9ERAWk+qY7jBAYM7lxFcKMRDRKdoGvtOc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AP13VNhFxKlW2B9mIEBBxfwn4PhNlLH+AqHj29XlAWqwf/a37gjL1uL9DkZHwdkqZ
-	 lBvEdDhGfXoJgNofNIf7KT2Q1YPqMjto5ISr2VFVvt8+ia3eUY+VE8WS0RHe2Ej0OC
-	 P6nV81LRCQ5OJ7CSyxwIJGQM/5fyZXB9WNx3CbBRPjPgoTeb1rLovKWzt7mt1yhzHi
-	 Wa2gjYRNbTfL/Sv9nMcpmvm58+FG72Iv1DpkOyWVd5F++r5206Fuausdkkjb8NN0hL
-	 rpnNl0Yn/UICTfZFhxK9ybCUVjuHoTCElUlWVbga4QGHPzy66gKSZOBpuI4PCYYZEy
-	 LdiZ5prEbc4cQ==
-Message-ID: <8c70586e-2513-42d4-b2cd-476caa416c16@zytor.com>
-Date: Tue, 12 Nov 2024 10:10:14 -0800
+	s=arc-20240116; t=1731435032; c=relaxed/simple;
+	bh=auejVTsiysPFBoG1D6SaMyEY/YijY3VjNx6zUFhFCKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G7wl6NM7L4xXjOwd6ZhzGWrPU9owaL7IPYAcW/585oJfTHoq+evtV//N9VJZY2+VdsrHm+GLWrCqtdd/i2QDwU8qwkfX8BtxJimiS58V0gtiMrMQcw6NTkgtRlh/DERHBe7wW0c9SLfBqdLL1qu70ZKMFSeNFjIYhZAVbDriH2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZXHg62pO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731435029;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qSj0SdB8QSc7Mjd9L/4LWSQMYeFV5iHP2hv8TZtArto=;
+	b=ZXHg62pO7flqLU/3PJg2WAS3Fj5dNr3YbGIfOUinvnBiFImDA2zHoXGsdXkb4DZ/X64Uqu
+	nQpdOXZh6jp51+jU2BvWZ7GshqQT/BbLL1h5zZSvrlrpUuEXjw0eNjfAxbx9gK9/0A91cj
+	oYpaL30LxqYVgXENB/tbdIP3BbbV2s8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-266--KDSIWVmPMGLF4ReAom0aQ-1; Tue,
+ 12 Nov 2024 13:10:24 -0500
+X-MC-Unique: -KDSIWVmPMGLF4ReAom0aQ-1
+X-Mimecast-MFC-AGG-ID: -KDSIWVmPMGLF4ReAom0aQ
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 042A91955BCF;
+	Tue, 12 Nov 2024 18:10:22 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.120])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 84FA61955F40;
+	Tue, 12 Nov 2024 18:10:19 +0000 (UTC)
+Date: Tue, 12 Nov 2024 13:11:52 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 12/16] ext4: add RWF_UNCACHED write support
+Message-ID: <ZzOaaInUHOmlAL-o@bfoster>
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-13-axboe@kernel.dk>
+ <ZzOD_qV5tpv9nbw7@bfoster>
+ <df2b9a81-3ebd-48fe-a205-2d4007fe73d1@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86: kvm: add back X86_LOCAL_APIC dependency
-To: Sean Christopherson <seanjc@google.com>, Arnd Bergmann <arnd@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner
- <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Isaku Yamahata <isaku.yamahata@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20241112065415.3974321-1-arnd@kernel.org>
- <ZzOY-AlBgouiIbDB@google.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <ZzOY-AlBgouiIbDB@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df2b9a81-3ebd-48fe-a205-2d4007fe73d1@kernel.dk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 11/12/24 10:05, Sean Christopherson wrote:
->>
->> Fixes: ea4290d77bda ("KVM: x86: leave kvm.ko out of the build if no vendor module is requested")
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202410060426.e9Xsnkvi-lkp@intel.com/
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->> Question: is there actually any point in keeping KVM support for 32-bit host
->> processors?
+On Tue, Nov 12, 2024 at 10:13:12AM -0700, Jens Axboe wrote:
+> On 11/12/24 9:36 AM, Brian Foster wrote:
+> > On Mon, Nov 11, 2024 at 04:37:39PM -0700, Jens Axboe wrote:
+> >> IOCB_UNCACHED IO needs to prune writeback regions on IO completion,
+> >> and hence need the worker punt that ext4 also does for unwritten
+> >> extents. Add an io_end flag to manage that.
+> >>
+> >> If foliop is set to foliop_uncached in ext4_write_begin(), then set
+> >> FGP_UNCACHED so that __filemap_get_folio() will mark newly created
+> >> folios as uncached. That in turn will make writeback completion drop
+> >> these ranges from the page cache.
+> >>
+> >> Now that ext4 supports both uncached reads and writes, add the fop_flag
+> >> FOP_UNCACHED to enable it.
+> >>
+> >> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> >> ---
+> >>  fs/ext4/ext4.h    |  1 +
+> >>  fs/ext4/file.c    |  2 +-
+> >>  fs/ext4/inline.c  |  7 ++++++-
+> >>  fs/ext4/inode.c   | 18 ++++++++++++++++--
+> >>  fs/ext4/page-io.c | 28 ++++++++++++++++------------
+> >>  5 files changed, 40 insertions(+), 16 deletions(-)
+> >>
+> > ...
+> >> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> >> index 54bdd4884fe6..afae3ab64c9e 100644
+> >> --- a/fs/ext4/inode.c
+> >> +++ b/fs/ext4/inode.c
+> >> @@ -1138,6 +1138,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+> >>  	int ret, needed_blocks;
+> >>  	handle_t *handle;
+> >>  	int retries = 0;
+> >> +	fgf_t fgp_flags;
+> >>  	struct folio *folio;
+> >>  	pgoff_t index;
+> >>  	unsigned from, to;
+> >> @@ -1164,6 +1165,15 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+> >>  			return 0;
+> >>  	}
+> >>  
+> >> +	/*
+> >> +	 * Set FGP_WRITEBEGIN, and FGP_UNCACHED if foliop contains
+> >> +	 * foliop_uncached. That's how generic_perform_write() informs us
+> >> +	 * that this is an uncached write.
+> >> +	 */
+> >> +	fgp_flags = FGP_WRITEBEGIN;
+> >> +	if (*foliop == foliop_uncached)
+> >> +		fgp_flags |= FGP_UNCACHED;
+> >> +
+> >>  	/*
+> >>  	 * __filemap_get_folio() can take a long time if the
+> >>  	 * system is thrashing due to memory pressure, or if the folio
+> >> @@ -1172,7 +1182,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+> >>  	 * the folio (if needed) without using GFP_NOFS.
+> >>  	 */
+> >>  retry_grab:
+> >> -	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
+> >> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
+> >>  					mapping_gfp_mask(mapping));
+> >>  	if (IS_ERR(folio))
+> >>  		return PTR_ERR(folio);
+> > 
+> > JFYI, I notice that ext4 cycles the folio lock here in this path and
+> > thus follows up with a couple checks presumably to accommodate that. One
+> > is whether i_mapping has changed, which I assume means uncached state
+> > would have been handled/cleared externally somewhere..? I.e., if an
+> > uncached folio is somehow truncated/freed without ever having been
+> > written back?
+> > 
+> > The next is a folio_wait_stable() call "in case writeback began ..."
+> > It's not immediately clear to me if that is possible here, but taking
+> > that at face value, is it an issue if we were to create an uncached
+> > folio, drop the folio lock, then have some other task dirty and
+> > writeback the folio (due to a sync write or something), then have
+> > writeback completion invalidate the folio before we relock it here?
 > 
-> Nope.  We need _a_ 32-bit KVM build to run as a nested (L1) hypervisor for testing
-> purposes, but AFAIK there's zero need to keep 32-bit KVM up-to-date.
+> I don't either of those are an issue. The UNCACHED flag will only be set
+> on a newly created folio, it does not get inherited for folios that
+> already exist.
 > 
 
-What do you mean here? Running an old kernel with the 32-bit KVM in a VM 
-for testing the L0 hypervisor?
+Right.. but what I was wondering for that latter case is if the folio is
+created here by ext4, so uncached is set before it is unlocked.
 
-	-hpa
+On second look I guess the uncached completion invalidation should clear
+mapping and thus trigger the retry logic here. That seems reasonable
+enough, but is it still possible to race with writeback?
+
+Maybe this is a better way to ask.. what happens if a write completes to
+an uncached folio that is already under writeback? For example, uncached
+write 1 completes, submits for writeback and returns to userspace. Then
+write 2 begins and redirties the same folio before the uncached
+writeback completes.
+
+If I follow correctly, if write 2 is also uncached, it eventually blocks
+in writeback submission (folio_prepare_writeback() ->
+folio_wait_writeback()). It looks like folio lock is held there, so
+presumably that would bypass the completion time invalidation in
+folio_end_uncached(). But what if write 2 was not uncached or perhaps
+writeback completion won the race for folio lock vs. the write side
+(between locking the folio for dirtying and later for writeback
+submission)? Does anything prevent invalidation of the folio before the
+second write is submitted for writeback?
+
+IOW, I'm wondering if the uncached completion time invalidation also
+needs a folio dirty check..?
+
+Brian
+
+> -- 
+> Jens Axboe
+> 
 
 
