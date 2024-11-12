@@ -1,133 +1,237 @@
-Return-Path: <linux-kernel+bounces-405285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E809C4F87
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:36:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E4279C4FA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:40:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D8E7B23466
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:36:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70E50B26D35
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718B520B219;
-	Tue, 12 Nov 2024 07:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C947120DD51;
+	Tue, 12 Nov 2024 07:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FXfoUJwq"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mHM5Lsao"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEB220B212
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736241C1AD1;
+	Tue, 12 Nov 2024 07:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731396967; cv=none; b=rPFXHsvAEDWs3Tzdv4OZ+9OCDn6S65HI3B5PjH/QOyy2oOJ5BwVKHAng+sICyfvSpYsUKs/KbAsreYgIwxfnjW7hr+CD+MYLGRJpLUZzJtvk3I8y6maydW3ZfbYXVMMMAmb9MO4/hA7qzl79nKh+5+mdZB2iIj4jJlUhxAq6nUQ=
+	t=1731397115; cv=none; b=Bxsm2l8kxOYDku8bm1X85eqccDFN+QMMf1U2f14exH6QzVMfyjq8w8DkZC3Yl5kCMt+HTuPmRiPpdlPRGBTXjAecYl1iIOPZZKCldqw11LuBs+Un7i+OJ1+BpZSQLjPM6bm1wDVaPhL6Jn+P3lLmEyrxarw3aFPhJDewmusD2Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731396967; c=relaxed/simple;
-	bh=cQLQVxsI2PezBMH0R9KgG1QekZtyZGbTki7LvdK5sLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mpn+6ahy/jEsALmqHKmaG6zmBGNI3t2nXkq4N9BpBeSQiEuKfJtIMuVb3WdQmsvdjdm2abn0pj09wBtii7DSZ1Pr7gA722LEegC3gNyMXpvrYUGA2a6A0Kdu3KoCQrXJOiPm48sRLrwHgGmNoWoswgOnEL+RXFoUeoa5tHfu5KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FXfoUJwq; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7d4f85766f0so3864323a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:36:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731396962; x=1732001762; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Wz2Xll3k6PrE80Ti+u6oUdCAXTR3EqoFjFkrEaeKDLQ=;
-        b=FXfoUJwqi3Wb3lM4jjfLXkaTavmdF6TXBIYUeYBihtH6kLkF7AtvvaBGwo5VabDgHw
-         i/cPt3ejFKg+fsWFfQ17nQU2NxH600CBmr/0JIF+vC4NwI3pk6AskqfxZCMZe7sZMhbU
-         n7CsUAZYUzZrHImCgcNiXWr7yqzC5XRGK+DA5EWnOgNC/MY/niSzWMcyF0GK/Rj/hgX8
-         LQ6FeXnGG7PINhhH39aTTQKJY45xc8xJsqVMrUUFYmAWu5adWmir03INm8wO/Z2eLA4X
-         Jhq9SYA2TC8J2h+KL895TgBgCI3K9Ecq6vve6E+6Qh6gC9n2OKO8NbR+PAWbXHn0lfsu
-         uqmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731396962; x=1732001762;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wz2Xll3k6PrE80Ti+u6oUdCAXTR3EqoFjFkrEaeKDLQ=;
-        b=ucsKb71fuQ6PAP61+9oNrBrq0DfuuSnb4NYfGsvhyCCuldUrBpVY80b+MvpKA2WzEV
-         /71FwOxv6arOOKXLwyaZud+K34qyut2xKQLm3YGUrvzCnrcWeuki02fK96klkq3jlog0
-         pZbbJW6td1Dqkdbrf24fEVfUWzhUr9P2aOX2hqyq1cJpgT+PX7f+JLJmC3L7M1G2Wr0p
-         BAv9hSHdlxbZ0Wp8RQB3ICLF4DLAaDvDEv3hIJRCgOwll+gIy9WeV7kxYdiuBVfrXE27
-         0XJ1Vp0s8JGBN1j9924wkdctvjFQjrQUyCxHMZXJ6cNpWYb6oakjWJer5W5SnDdEJ9ci
-         zNTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUC3iggxjK2ojTZUwOEME7ZZKV8kHvXoF6dwNb/xc9WyrTxDxr+AAKe5sYRJK1VJlHd98DTod2zQsbdmoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yypuwo0KdukTZK6wpTVlL+7VmTLaXoZPI8/TZFR8Y1tR6DTBvug
-	EREbEIt7fHAqC36Vvh7W9uSH1CoKup050mfjUAxO4O/AD4g6zp7XnvvnkhIqbA==
-X-Google-Smtp-Source: AGHT+IFxOmOq64lXg5Fe+uFtEajww8dyWjj1b2gl9w/hnQ4Zgtjj8DdggtCcycfHVqp6iQQC9ZemGA==
-X-Received: by 2002:a05:6a20:7f92:b0:1db:92be:1276 with SMTP id adf61e73a8af0-1dc228ebf86mr22461366637.6.1731396962481;
-        Mon, 11 Nov 2024 23:36:02 -0800 (PST)
-Received: from thinkpad ([117.213.103.248])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078641a2sm10757715b3a.20.2024.11.11.23.35.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 23:36:01 -0800 (PST)
-Date: Tue, 12 Nov 2024 13:05:52 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] PCI: endpoint: fix bugs for both API
- pci_epc_destroy() and pci_epc_remove_epf()
-Message-ID: <20241112073552.kbzx557ebdbqe5ax@thinkpad>
-References: <20241107-epc_rfc-v2-0-da5b6a99a66f@quicinc.com>
+	s=arc-20240116; t=1731397115; c=relaxed/simple;
+	bh=sN9nijE9CbITTXnFl8o4aImSrCwVmYnOzQ3JNw75nO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u08xkqlIyJPT/B5qXW2/0eeN62uG9j0bO+mcDUM55/4O7/7jrUgU0i+j/4m8NcTuYfP9TETt4VciTlUWWkYo5z1t8P+Ig0g5kn+ALB6MH+8JTDfUgmULXZsFaC0ag5d2jpwfrImk/nSRPRlW20ouf7di1cW9HwJ/16Gb+doYrps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mHM5Lsao; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731397113; x=1762933113;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=sN9nijE9CbITTXnFl8o4aImSrCwVmYnOzQ3JNw75nO0=;
+  b=mHM5Lsaogo2egUOEtqZHUGQMXbV5slEF6r4m4tT7h7oJud+ioC14RLyR
+   IzpyulcfRqyJv+8OB82reuN5cZHIfEifnaWNoGTPcIEpjWVMWSZrUNT9C
+   tQRB8wCnp3/q/d9RvQUDmNZVCF3zl6YJyDBcmL9bCvD+NZVOZNoS99FJ/
+   xdEZ3/q2Juxtt7hSAppYwKoJXJ6uQbc7noMaXojUTnEDdfZAmUCkR1x6F
+   leitfpsGenpMk37XTtbAkc1svLGaTutEc5YRn73uP+Dx0DQFdBa7x4PUa
+   wv0EhDcvFpyVUBSkH/zKf0znUthahCPOiIEln8d5n/GYwspvLWppiN5iw
+   A==;
+X-CSE-ConnectionGUID: tUwHEn1NQ+O9//LFyUbpSQ==
+X-CSE-MsgGUID: 4kdYjOz4Q72UoSlcRZsNmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31389325"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31389325"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:38:33 -0800
+X-CSE-ConnectionGUID: v947A+FzS7yrcfp0f4V+Fw==
+X-CSE-MsgGUID: APiAnDlnTGCyF4dRgxMmAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="87736007"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:38:28 -0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org,
+	dave.hansen@linux.intel.com
+Cc: rick.p.edgecombe@intel.com,
+	kai.huang@intel.com,
+	adrian.hunter@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@intel.com,
+	binbin.wu@linux.intel.com,
+	dmatlack@google.com,
+	isaku.yamahata@intel.com,
+	isaku.yamahata@gmail.com,
+	nik.borisov@suse.com,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH v2 07/24] KVM: TDX: Add load_mmu_pgd method for TDX
+Date: Tue, 12 Nov 2024 15:36:01 +0800
+Message-ID: <20241112073601.22084-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20241112073327.21979-1-yan.y.zhao@intel.com>
+References: <20241112073327.21979-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241107-epc_rfc-v2-0-da5b6a99a66f@quicinc.com>
 
-On Thu, Nov 07, 2024 at 08:53:07AM +0800, Zijun Hu wrote:
-> This patch series is to fix bugs for below 2 APIs:
-> pci_epc_destroy()
-> pci_epc_remove_epf()
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Applied to pci/endpoint!
+TDX uses two EPT pointers, one for the private half of the GPA space and
+one for the shared half. The private half uses the normal EPT_POINTER vmcs
+field, which is managed in a special way by the TDX module. For TDX, KVM is
+not allowed to operate on it directly. The shared half uses a new
+SHARED_EPT_POINTER field and will be managed by the conventional MMU
+management operations that operate directly on the EPT root. This means for
+TDX the .load_mmu_pgd() operation will need to know to use the
+SHARED_EPT_POINTER field instead of the normal one. Add a new wrapper in
+x86 ops for load_mmu_pgd() that either directs the write to the existing
+vmx implementation or a TDX one.
 
-- Mani
+tdx_load_mmu_pgd() is so much simpler than vmx_load_mmu_pgd() since for the
+TDX mode of operation, EPT will always be used and KVM does not need to be
+involved in virtualization of CR3 behavior. So tdx_load_mmu_pgd() can
+simply write to SHARED_EPT_POINTER.
 
-> ---
-> Changes in v2:
-> - Correct title and commit messages, and remove RFC tag
-> - Link to v1: https://lore.kernel.org/r/20241102-epc_rfc-v1-0-5026322df5bc@quicinc.com
-> 
-> ---
-> Zijun Hu (2):
->       PCI: endpoint: Fix API pci_epc_destroy() releasing domain_nr ID faults
->       PCI: endpoint: Fix API pci_epc_remove_epf() cleaning up wrong EPC of EPF
-> 
->  drivers/pci/endpoint/pci-epc-core.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
-> ---
-> base-commit: ad5df4a631fa7eeb8eb212d21ab3f6979fd1926e
-> change-id: 20241102-epc_rfc-e1d9d03d5101
-> 
-> Best regards,
-> -- 
-> Zijun Hu <quic_zijuhu@quicinc.com>
-> 
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Isaku Yamahata <isaku.yamahata@intel.com>
+Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+Co-developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+TDX MMU part 2 v2:
+-Check shared EPT level matches to direct bits mask in tdx_load_mmu_pgd()
+ (Chao Gao)
 
+TDX MMU part 2 v1:
+- update the commit msg with the version rephrased by Rick.
+  https://lore.kernel.org/all/78b1024ec3f5868e228baf797c6be98c5397bd49.camel@intel.com/
+
+v19:
+- Add WARN_ON_ONCE() to tdx_load_mmu_pgd() and drop unconditional mask
+---
+ arch/x86/include/asm/vmx.h |  1 +
+ arch/x86/kvm/vmx/main.c    | 13 ++++++++++++-
+ arch/x86/kvm/vmx/tdx.c     | 15 +++++++++++++++
+ arch/x86/kvm/vmx/x86_ops.h |  4 ++++
+ 4 files changed, 32 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
+index f7fd4369b821..9298fb9d4bb3 100644
+--- a/arch/x86/include/asm/vmx.h
++++ b/arch/x86/include/asm/vmx.h
+@@ -256,6 +256,7 @@ enum vmcs_field {
+ 	TSC_MULTIPLIER_HIGH             = 0x00002033,
+ 	TERTIARY_VM_EXEC_CONTROL	= 0x00002034,
+ 	TERTIARY_VM_EXEC_CONTROL_HIGH	= 0x00002035,
++	SHARED_EPT_POINTER		= 0x0000203C,
+ 	PID_POINTER_TABLE		= 0x00002042,
+ 	PID_POINTER_TABLE_HIGH		= 0x00002043,
+ 	GUEST_PHYSICAL_ADDRESS          = 0x00002400,
+diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
+index d28ffddd766f..3c292b4a063a 100644
+--- a/arch/x86/kvm/vmx/main.c
++++ b/arch/x86/kvm/vmx/main.c
+@@ -98,6 +98,17 @@ static void vt_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 	vmx_vcpu_reset(vcpu, init_event);
+ }
+ 
++static void vt_load_mmu_pgd(struct kvm_vcpu *vcpu, hpa_t root_hpa,
++			    int pgd_level)
++{
++	if (is_td_vcpu(vcpu)) {
++		tdx_load_mmu_pgd(vcpu, root_hpa, pgd_level);
++		return;
++	}
++
++	vmx_load_mmu_pgd(vcpu, root_hpa, pgd_level);
++}
++
+ static int vt_mem_enc_ioctl(struct kvm *kvm, void __user *argp)
+ {
+ 	if (!is_td(kvm))
+@@ -229,7 +240,7 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
+ 	.write_tsc_offset = vmx_write_tsc_offset,
+ 	.write_tsc_multiplier = vmx_write_tsc_multiplier,
+ 
+-	.load_mmu_pgd = vmx_load_mmu_pgd,
++	.load_mmu_pgd = vt_load_mmu_pgd,
+ 
+ 	.check_intercept = vmx_check_intercept,
+ 	.handle_exit_irqoff = vmx_handle_exit_irqoff,
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index ed4473d0c2cd..785ee9f95504 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -28,6 +28,9 @@
+ bool enable_tdx __ro_after_init;
+ module_param_named(tdx, enable_tdx, bool, 0444);
+ 
++#define TDX_SHARED_BIT_PWL_5 gpa_to_gfn(BIT_ULL(51))
++#define TDX_SHARED_BIT_PWL_4 gpa_to_gfn(BIT_ULL(47))
++
+ static enum cpuhp_state tdx_cpuhp_state;
+ 
+ static const struct tdx_sys_info *tdx_sysinfo;
+@@ -495,6 +498,18 @@ void tdx_vcpu_free(struct kvm_vcpu *vcpu)
+ 	tdx->state = VCPU_TD_STATE_UNINITIALIZED;
+ }
+ 
++
++void tdx_load_mmu_pgd(struct kvm_vcpu *vcpu, hpa_t root_hpa, int pgd_level)
++{
++	u64 shared_bit = (pgd_level == 5) ? TDX_SHARED_BIT_PWL_5 :
++			  TDX_SHARED_BIT_PWL_4;
++
++	if (KVM_BUG_ON(shared_bit != kvm_gfn_direct_bits(vcpu->kvm), vcpu->kvm))
++		return;
++
++	td_vmcs_write64(to_tdx(vcpu), SHARED_EPT_POINTER, root_hpa);
++}
++
+ static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
+ {
+ 	const struct tdx_sys_info_td_conf *td_conf = &tdx_sysinfo->td_conf;
+diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
+index 4739891858ea..f49135094c94 100644
+--- a/arch/x86/kvm/vmx/x86_ops.h
++++ b/arch/x86/kvm/vmx/x86_ops.h
+@@ -129,6 +129,8 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu);
+ void tdx_vcpu_free(struct kvm_vcpu *vcpu);
+ 
+ int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp);
++
++void tdx_load_mmu_pgd(struct kvm_vcpu *vcpu, hpa_t root_hpa, int root_level);
+ #else
+ static inline int tdx_vm_init(struct kvm *kvm) { return -EOPNOTSUPP; }
+ static inline void tdx_mmu_release_hkid(struct kvm *kvm) {}
+@@ -140,6 +142,8 @@ static inline int tdx_vcpu_create(struct kvm_vcpu *vcpu) { return -EOPNOTSUPP; }
+ static inline void tdx_vcpu_free(struct kvm_vcpu *vcpu) {}
+ 
+ static inline int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp) { return -EOPNOTSUPP; }
++
++static inline void tdx_load_mmu_pgd(struct kvm_vcpu *vcpu, hpa_t root_hpa, int root_level) {}
+ #endif
+ 
+ #endif /* __KVM_X86_VMX_X86_OPS_H */
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.2
+
 
