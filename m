@@ -1,232 +1,206 @@
-Return-Path: <linux-kernel+bounces-406296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E0D79C5FF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:11:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59C4F9C6113
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:13:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37899B2587A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:16:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD518B27343
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924D02036F8;
-	Tue, 12 Nov 2024 16:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FD9206079;
+	Tue, 12 Nov 2024 16:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IkznnKYo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="tiy4gtBq"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C04C15A858
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D639A205AB0;
+	Tue, 12 Nov 2024 16:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731428155; cv=none; b=nqPGOa2jvEamQw19R51pCKAflEP0j7GFAlaJQc3PiHbns3qVx8i2Udm6DrkGtesY4clUHLswo9cPvrYzpgvP/meXLJ0ZRboh6z7lpXTxsCXVFv8kwbLPLdyy3CWeHdfalqsGE7ftLcgofhMRQ69AIO7bMh0/eWMyWYn8I0yBc6I=
+	t=1731428889; cv=none; b=U3KEaKCILf1XpZm4uu56zGz4Xf6D86mnj53VQ+wq2GOk+7ZlKzfOony8GZW7Cf+d6vmzn1fA2CzMfxyx23byy6f+59oc/WINyxbE0dimmXK73CantSC9t0bxbkctPDrswGkG/b2RAUfKw0+H+RNLFVsp+xGBXu+EqYS61dU1Tk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731428155; c=relaxed/simple;
-	bh=4UR5EKqZjpPBLzgaWuHRCxJQFNwcc0KOm0eSJp5sjKA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=C1dw3+et3K8wMnIssE5IW8tLXKodmtwYT8l4bVB1nBQJ/0JFXHSToyI9eZSAHzfjxXKPO+MIDMYS7kE84fbEXYvAiqsqCVR1Clvh/XZsADzi9CzXzcgbl8U9mHiVD8Z3rldV5c85GF/wwPBMEgvxVvTj3afP9Do1L/ShPfpfKW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IkznnKYo; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731428151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CGSxKIhmgHQVS95IEwsr6vSLWHmQILSDnH5eKsxrAk0=;
-	b=IkznnKYo+tBZwtumkzc1AwQRhXe/x6ojZ/aeulUAnmHHX9+TSUgnggFiBaTF9UU6nziaQV
-	yfwZkb7AlpqHscUjUSyiq87fjj3bPmj7T04vtom0iSKfpboF3Sh7q0OI7WVf6gqZhtYp6e
-	bDkouPKJ4ELq7JxEj2zoD08HLJqnEy0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-509-WIRgQfkMN1CH5INgpvMPrg-1; Tue, 12 Nov 2024 11:15:50 -0500
-X-MC-Unique: WIRgQfkMN1CH5INgpvMPrg-1
-X-Mimecast-MFC-AGG-ID: WIRgQfkMN1CH5INgpvMPrg
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43154a0886bso41677475e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:15:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731428149; x=1732032949;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CGSxKIhmgHQVS95IEwsr6vSLWHmQILSDnH5eKsxrAk0=;
-        b=ccdYER2v6rJ/7uk/TUzGRtbTSX9lbjQeF6Z0RtUatb7glc6NOQTP3Fh1J+QCcFeouY
-         I3052ALaQMQWJJKyZvxPCorUktdTB9bOPwSa/V/xSt/Opx88JUl7h9u7kLAXmSfVLdLX
-         WuREsWB9VtPb08Ytfx7zZrDjsZmWEQmOkq/CScjP1aVHeIaHDPhiS3b9bsgBWAiYXhJr
-         S0EO7dblr+D3rqr0M2FT61nRWMRURCh0FvovudP8MTFnLCuMekD3NcQ/KEiGlsSSz/lE
-         MQYEmTZyfyZudIr1xYlGUtSZn2blbhgVPHZZVRdVc5Kobs+Cp1kFz3aLoLJrn1OXvtgI
-         QzOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtKQ+QxDhilHGEmtaGLhgekn1UOmP5SL9rRrkC/30KgMsEdKVpwUGk4nLi/h3yt47nyDrE++jCfZgMatM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCoiA6Vl1FWirELTUI8Bma2R8+j/6DQVfAcavs51AKf9cJ2PIn
-	Q8280JXqDFVIQDBBo0IYptwxkvd1QlFOAmYlJIgPktnl7ktWDQsrM+WUo+PBKMgQf4B8O94heUu
-	HqIoNyDWKJ6mq5nzXEy7pXWlBd3RA9ozeeJA+UwO+CUEI8TjfASzMSpO8mmsNUA==
-X-Received: by 2002:a05:6000:1f82:b0:37c:babe:2c49 with SMTP id ffacd0b85a97d-381f1866fddmr14275459f8f.19.1731428149259;
-        Tue, 12 Nov 2024 08:15:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFHYmklDuONGLyRS+lxwaMfrwWRygDU41ZfDfE9a5a5W0kE4CYAFlgPInHqQdbpI1Vo946hhQ==
-X-Received: by 2002:a05:6000:1f82:b0:37c:babe:2c49 with SMTP id ffacd0b85a97d-381f1866fddmr14275412f8f.19.1731428148769;
-        Tue, 12 Nov 2024 08:15:48 -0800 (PST)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda04ceasm15542399f8f.102.2024.11.12.08.15.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 08:15:48 -0800 (PST)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Steve Wahl <steve.wahl@hpe.com>, Steve Wahl <steve.wahl@hpe.com>, Ingo
- Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri
- Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org, K Prateek Nayak
- <kprateek.nayak@amd.com>, Vishal Chourasia <vishalc@linux.ibm.com>, samir
- <samir@linux.ibm.com>
-Cc: Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>
-Subject: Re: [PATCH v2] sched/topology: improve topology_span_sane speed
-In-Reply-To: <20241031200431.182443-1-steve.wahl@hpe.com>
-References: <20241031200431.182443-1-steve.wahl@hpe.com>
-Date: Tue, 12 Nov 2024 17:15:47 +0100
-Message-ID: <xhsmh4j4cctsc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1731428889; c=relaxed/simple;
+	bh=BQBq2KwyTn0BX6cEv2Ucx0Vx/gddarbz/pp8l7bdnbg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hzmvX5WSmlxO+ZfwvRU+1UwmeIVz7bQqVgqdp0ONysm1rwcD4w3/pgwsLKx4odsNc+qvuveDgMyuSDmTcGAPvnt908gRBBYupG2e09HgAygxhfEgHuNyjfQzLtgBsKzJiblASeqaghrGwGpcs+S1hfWhrAhogUIENLCkOkv39fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=tiy4gtBq; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACCREXx025206;
+	Tue, 12 Nov 2024 17:24:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	M79B9yXRhahhsdQQ5jt3NuyPZPc3ZVTz3ctnb7+EBi4=; b=tiy4gtBq+20FlFJ1
+	tY1F6oe843WF14AFHeJzF37W2dZbs4848CWrC2xdgw/TPSVXPmEgAwp97F+zcqxC
+	6xyjsWcuMEcCIFNpkKPb8TcTK5Yt1t4Zt1cUu8rK82wzWbDTYVloPOP+ZV/uVBoe
+	ad4Cfgs2EsI2usGlg/jZMDSxh51ZLRpdtiQFRX1Jkp0fgnLpGHePs+CynbRaOnIY
+	ib3TPh2ZUPqLV0DV0OeqNzfCpLTjZZQ1tcq3+fLDnRK+GxP5JShR9p+aSaHNVCj4
+	6pHRaWTiKuZplFW/uxdTGpr3E6hc/K1Wl/8/nh2K0+39FFYcGDfUikULFKm8APoG
+	H0g9VQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42syy1ndgb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 17:24:42 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9773840059;
+	Tue, 12 Nov 2024 17:23:21 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 16E912AC00C;
+	Tue, 12 Nov 2024 17:20:28 +0100 (CET)
+Received: from localhost (10.129.178.212) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 12 Nov
+ 2024 17:20:27 +0100
+From: Christian Bruel <christian.bruel@foss.st.com>
+To: <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <cassel@kernel.org>,
+        <quic_schintav@quicinc.com>, <fabrice.gasnier@foss.st.com>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Christian Bruel <christian.bruel@foss.st.com>
+Subject: [PATCH 3/5] dt-bindings: PCI: Add STM32MP25 PCIe endpoint bindings
+Date: Tue, 12 Nov 2024 17:19:23 +0100
+Message-ID: <20241112161925.999196-4-christian.bruel@foss.st.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241112161925.999196-1-christian.bruel@foss.st.com>
+References: <20241112161925.999196-1-christian.bruel@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On 31/10/24 15:04, Steve Wahl wrote:
-> Use a different approach to topology_span_sane(), that checks for the
-> same constraint of no partial overlaps for any two CPU sets for
-> non-NUMA topology levels, but does so in a way that is O(N) rather
-> than O(N^2).
->
-> Instead of comparing with all other masks to detect collisions, keep
-> one mask that includes all CPUs seen so far and detect collisions with
-> a single cpumask_intersects test.
->
-> If the current mask has no collisions with previously seen masks, it
-> should be a new mask, which can be uniquely identified ("id") by the
-> lowest bit set in this mask.  Mark that we've seen a mask with this
-> id, and add the CPUs in this mask to the list of those seen.
->
-> If the current mask does collide with previously seen masks, it should
-> be exactly equal to a mask seen before, identified once again by the
-> lowest bit the current mask has set.  It's an error if we haven't seen
-> a mask with that id, or if the current mask doesn't match the one we
-> get by looking up that id.
->
-> Move the topology_span_sane() check out of the existing topology level
-> loop, let it do its own looping to match the needs of this algorithm.
->
-> On a system with 1920 processors (16 sockets, 60 cores, 2 threads),
-> the average time to take one processor offline is reduced from 2.18
-> seconds to 1.01 seconds.  (Off-lining 959 of 1920 processors took
-> 34m49.765s without this change, 16m10.038s with this change in place.)
->
-> Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
-> ---
->
-> Version 2: Adopted suggestion by K Prateek Nayak that removes an array and
-> simplifies the code, and eliminates the erroneous use of
-> num_possible_cpus() that Peter Zijlstra noted.
->
-> Version 1 discussion:
->     https://lore.kernel.org/all/20241010155111.230674-1-steve.wahl@hpe.com/
->
->  kernel/sched/topology.c | 73 +++++++++++++++++++++++++++--------------
->  1 file changed, 48 insertions(+), 25 deletions(-)
->
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 9748a4c8d668..6a2a3e91d59e 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -2356,35 +2356,58 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
->  
->  /*
->   * Ensure topology masks are sane, i.e. there are no conflicts (overlaps) for
-> - * any two given CPUs at this (non-NUMA) topology level.
-> + * any two given CPUs on non-NUMA topology levels.
->   */
-> -static bool topology_span_sane(struct sched_domain_topology_level *tl,
-> -			      const struct cpumask *cpu_map, int cpu)
-> +static bool topology_span_sane(const struct cpumask *cpu_map)
->  {
-> -	int i = cpu + 1;
-> +	struct sched_domain_topology_level *tl;
-> +	struct cpumask *covered, *id_seen;
-> +	int cpu;
->  
-> -	/* NUMA levels are allowed to overlap */
-> -	if (tl->flags & SDTL_OVERLAP)
-> -		return true;
-> +	lockdep_assert_held(&sched_domains_mutex);
-> +	covered = sched_domains_tmpmask;
-> +	id_seen = sched_domains_tmpmask2;
-> +
-> +	for_each_sd_topology(tl) {
-> +
-> +		/* NUMA levels are allowed to overlap */
-> +		if (tl->flags & SDTL_OVERLAP)
-> +			continue;
-> +
-> +		cpumask_clear(covered);
-> +		cpumask_clear(id_seen);
->  
-> -	/*
-> -	 * Non-NUMA levels cannot partially overlap - they must be either
-> -	 * completely equal or completely disjoint. Otherwise we can end up
-> -	 * breaking the sched_group lists - i.e. a later get_group() pass
-> -	 * breaks the linking done for an earlier span.
-> -	 */
-> -	for_each_cpu_from(i, cpu_map) {
->  		/*
-> -		 * We should 'and' all those masks with 'cpu_map' to exactly
-> -		 * match the topology we're about to build, but that can only
-> -		 * remove CPUs, which only lessens our ability to detect
-> -		 * overlaps
-> +		 * Non-NUMA levels cannot partially overlap - they must be either
-> +		 * completely equal or completely disjoint. Otherwise we can end up
-> +		 * breaking the sched_group lists - i.e. a later get_group() pass
-> +		 * breaks the linking done for an earlier span.
->  		 */
-> -		if (!cpumask_equal(tl->mask(cpu), tl->mask(i)) &&
-> -		    cpumask_intersects(tl->mask(cpu), tl->mask(i)))
-> -			return false;
-> +		for_each_cpu(cpu, cpu_map) {
-> +			const struct cpumask *tl_cpu_mask = tl->mask(cpu);
-> +			int id;
-> +
-> +			/* lowest bit set in this mask is used as a unique id */
-> +			id = cpumask_first(tl_cpu_mask);
-> +
-> +			/* if this mask doesn't collide with what we've already seen */
-> +			if (!cpumask_intersects(tl_cpu_mask, covered)) {
-> +				/* Really odd case when cpu != id, likely not sane */
-> +				if ((cpu != id) && !cpumask_equal(tl_cpu_mask, tl->mask(id)))
-> +					return false;
-> +				if (cpumask_test_and_set_cpu(id, id_seen))
-> +					return false;
-> +				cpumask_or(covered, tl_cpu_mask, covered);
-> +			} else if ((!cpumask_test_cpu(id, id_seen)) ||
-> +				    !cpumask_equal(tl->mask(id), tl_cpu_mask)) {
-> +				/*
-> +				 * a collision with covered should have exactly matched
-> +				 * a previously seen mask with the same id
-> +				 */
-> +				return false;
-> +			}
-> +		}
+STM32MP25 PCIe Controller is based on the DesignWare core configured as
+end point mode from the SYSCFG register.
 
-Ok so you're speeding it up, but you still get a O(nr_cpu_ids) walk every
-hotplug when the check itself only needs to be done at most once per
-possible online CPU combination (~ 2^(nr_cpu_ids)). If all CPUs are kicked
-to life at boot, then the check only needs to be done once. If you only
-boot with a subset of present CPUs to speed things up, the check still
-becomes irrelevant once you've kicked the rest to life.
+Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+---
+ .../bindings/pci/st,stm32-pcie-ep.yaml        | 97 +++++++++++++++++++
+ 1 file changed, 97 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
 
-I would reiterate my suggestion to get to a state where the check can be
-entirely short-circuited [1].
-
-[1]: http://lore.kernel.org/r/xhsmh8quc5ca4.mognet@vschneid-thinkpadt14sgen2i.remote.csb
+diff --git a/Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
+new file mode 100644
+index 000000000000..f0d215982794
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
+@@ -0,0 +1,97 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pci/st,stm32-pcie-ep.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: STM32MP25 PCIe endpoint driver
++
++maintainers:
++  - Christian Bruel <christian.bruel@foss.st.com>
++
++description:
++  PCIe endpoint controller based on the Synopsys DesignWare PCIe core.
++
++allOf:
++  - $ref: /schemas/pci/snps,dw-pcie-common.yaml#
++
++properties:
++  compatible:
++    const: st,stm32mp25-pcie-ep
++
++  reg:
++    items:
++      - description: Data Bus Interface (DBI) registers.
++      - description: PCIe configuration registers.
++
++  reg-names:
++    items:
++      - const: dbi
++      - const: addr_space
++
++  clocks:
++    maxItems: 1
++    description: PCIe system clock
++
++  clock-names:
++    const: core
++
++  resets:
++    maxItems: 1
++
++  reset-names:
++    const: core
++
++  phys:
++    maxItems: 1
++
++  phy-names:
++    const: pcie-phy
++
++  reset-gpios:
++    description: GPIO controlled connection to PERST# signal
++    maxItems: 1
++
++  access-controllers:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++required:
++  - resets
++  - reset-names
++  - clocks
++  - clock-names
++  - phys
++  - phy-names
++  - reset-gpios
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/st,stm32mp25-rcc.h>
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/phy/phy.h>
++    #include <dt-bindings/reset/st,stm32mp25-rcc.h>
++
++    pcie-ep@48400000 {
++        compatible = "st,stm32mp25-pcie-ep";
++        num-lanes = <1>;
++        reg = <0x48400000 0x400000>,
++              <0x10000000 0x8000000>;
++        reg-names = "dbi", "addr_space";
++        clocks = <&rcc CK_BUS_PCIE>;
++        clock-names = "core";
++        phys = <&combophy PHY_TYPE_PCIE>;
++        phy-names = "pcie-phy";
++        resets = <&rcc PCIE_R>;
++        reset-names = "core";
++        pinctrl-names = "default", "init";
++        pinctrl-0 = <&pcie_pins_a>;
++        pinctrl-1 = <&pcie_init_pins_a>;
++        reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
++        power-domains = <&CLUSTER_PD>;
++        access-controllers = <&rifsc 68>;
++    };
+-- 
+2.34.1
 
 
