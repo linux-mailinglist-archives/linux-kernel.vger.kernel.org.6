@@ -1,197 +1,146 @@
-Return-Path: <linux-kernel+bounces-406253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3FA9C5CA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:01:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D04AF9C5CA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:01:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EADAA2857B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:01:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B21B1F2191F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA36B20262A;
-	Tue, 12 Nov 2024 15:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A810C2038B0;
+	Tue, 12 Nov 2024 15:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZSkZ4VZF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xN7/aDO6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZSkZ4VZF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xN7/aDO6"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVS5gYWw"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C5720125F
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6005D203713;
+	Tue, 12 Nov 2024 15:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731427072; cv=none; b=YSIh2tzivArVh4Mwsb+y4RydBqb8BJU+bBUQa/zV6ZKcHyUtyB9oEmnXzS1R6YCC7YSbWr/1l1ZlU5LxfYfUw4FZPDJdOgq59hFMgQxNF6uc6SrgUMaZSlA2+U3orLRkVzBG3IJzXRqsUewVLxjZ6li8Qi93o3MEUqhZD3nK1d4=
+	t=1731427110; cv=none; b=OnrjooKWmGso8MHBbqUMI71+pEc8Ln+h1BzmsyM53Mml1b6jwNJVIGQJNc14m3/QIoSSXbFVds8+15VDNpDxqeRNG0d95HE4r85iQw3p3e7b9MSpf2vlS921GDTh2y6pmyK8gsN0FJ4HaBXfcod6jsCFuw3Q7g0TvexaS+EsIGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731427072; c=relaxed/simple;
-	bh=cbPmloV1jvpa86WLNpCCd67G00pCVtas0/2pKBcPfdk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gOoxZ1RpMedoFI86oh4waZQ1HN6VQtyqs/E960KRPeFSEyRJXnHbdvPtTUmqzY5CAzUdZjH9swtwZov80mkF+1aiZHEkE/Ul+NYJLsLWDh2rE4T5xi+hAm6EdeO4it6bSjtPZvdqSfu1YSiXCISkTAtRWcOZmSsyy6z3Zo1dyjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZSkZ4VZF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xN7/aDO6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZSkZ4VZF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xN7/aDO6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 23D052126B;
-	Tue, 12 Nov 2024 15:57:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731427068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1Vsu1t4h6/aBaZlYhDQ8mDz4w9NDoi8rFMIElVtAgPY=;
-	b=ZSkZ4VZFGga5ZN298VJU7l9mr9cf9GRbPTME8sik1992bxWwZiQyOIvVhkJxXwOQH2G93D
-	HUwGYdfM02LSzIid4mrKRk2GTpQxyu+Bgx2VR459wJYQ0209G50cmEIKjOCjZC5Nl/Zbgm
-	BwwXJ36qgmmfBkjO21yHBvoCRAdMTLU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731427068;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1Vsu1t4h6/aBaZlYhDQ8mDz4w9NDoi8rFMIElVtAgPY=;
-	b=xN7/aDO64UDz6j6w5kwoZwc+dprX6D9HazcZm3iIIU5TJikHmkZUlkt6HzyGJJjz4tEBlt
-	sMoOIpOE4HHtaVDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731427068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1Vsu1t4h6/aBaZlYhDQ8mDz4w9NDoi8rFMIElVtAgPY=;
-	b=ZSkZ4VZFGga5ZN298VJU7l9mr9cf9GRbPTME8sik1992bxWwZiQyOIvVhkJxXwOQH2G93D
-	HUwGYdfM02LSzIid4mrKRk2GTpQxyu+Bgx2VR459wJYQ0209G50cmEIKjOCjZC5Nl/Zbgm
-	BwwXJ36qgmmfBkjO21yHBvoCRAdMTLU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731427068;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1Vsu1t4h6/aBaZlYhDQ8mDz4w9NDoi8rFMIElVtAgPY=;
-	b=xN7/aDO64UDz6j6w5kwoZwc+dprX6D9HazcZm3iIIU5TJikHmkZUlkt6HzyGJJjz4tEBlt
-	sMoOIpOE4HHtaVDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E63AF13721;
-	Tue, 12 Nov 2024 15:57:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0VuaN/t6M2d2FwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 12 Nov 2024 15:57:47 +0000
-Message-ID: <07a72c38-22f5-4b99-9d74-0877eaf2bee2@suse.cz>
-Date: Tue, 12 Nov 2024 16:57:47 +0100
+	s=arc-20240116; t=1731427110; c=relaxed/simple;
+	bh=Wk29+QyBe2z3l3f7+Mpt9+b85LMwjK3ZL8cZ5FYsIuM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=o4JZ1wQ1v2etMquZX9sU+PL0K4rtAEefHdtsDUNbKk05eEWfCQzb7JPQKO9ntT2WDA7T/B7FvoXrfGLpoe8uafXCME6xKZm1lFrLrg16LizepEgNYB4Sa46JB7wFxn0cADOHRqV+Wn7ny2vR5O/LblYtKAaR+5va+SgmNd0qv8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVS5gYWw; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-431688d5127so46516475e9.0;
+        Tue, 12 Nov 2024 07:58:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731427105; x=1732031905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q/qVENU9+N/71Xr2X4szHCr6pk0/5uELMhfDCvBqSqQ=;
+        b=QVS5gYWwBrZL2JNxHxessaebchRBAYfpwdn0VXAHrusCNLa/4ZQQy3CJuZ9DgKY5q7
+         jQ51LKiIqmbzDQS2ID30ygPkiEYac/QagXaE4iD2yzKdQrmFAwaOOeVyvEYjRFSvRjwY
+         Iag0Ynek/kQEEVWYyomXD5KLO4UA3h8oy2mtNX9LR0Q5b+3U26cQq6YbeSOk5WS7OECk
+         4EMb5y3fmCV++MjVXmJZGln0b4Io8fBSSK9oV3R3mbaxZOwEvtHdOf4bWVJi2/lxkP32
+         BJo03haWin9aT3Qjtf+hVh66jfUEo3CILUbQbWyRmWDDpTn+5tVg6R5ancy/l6BYxVhb
+         rAtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731427105; x=1732031905;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q/qVENU9+N/71Xr2X4szHCr6pk0/5uELMhfDCvBqSqQ=;
+        b=AggCkUiKN9tspSosAa1Sic8lSy6etBqjDH0c3xhRyG27KiOK/BBViRUCJgbhCPOxWk
+         E7xXwsMQ5XvREHJW5OFo0ktQQCKrpGESlhAOd8Kq1dsviNG/3Bm5PuJ3bX1WF+lKPU6v
+         EBXRqFbqQdp6Rl218QL1g2S9JH/u9KaLQFphn5wsAD3o9LD7c+iNkjutqnZaDXsNs88X
+         dKCxfSPE8XKM3ynbyjnkHwkBTPWVv+lCTPP2bGAbzduMbAoHrVCJijNOVvvQFl4WP+V6
+         aXHk7ncPu4Gi2FltYfuNO5P2b8xkA5rCv7kli0amtxZYPmHzLT6K9ToGPezKb0IN4iH5
+         Y/ng==
+X-Forwarded-Encrypted: i=1; AJvYcCVnl60Dz/oLNKwxP/5zM8zwiUbybTrHFAIFNwoIbxiEFGhATiEXPEM//dKWcmzFHGHfcHQHnGohNmA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3v0sma75wNRkc9K7pzTLdbH9Lcke/jbRoxfkOrP+Ll5wHQHew
+	urKD6Zu0lqG0AzlogbBjMuvYB1c486kZF88g1CyFpwRTzE5OhD5I
+X-Google-Smtp-Source: AGHT+IH8rG7r+w6v7PiScq7laBsY6abFHvictPV12TRigvPRHmoKnFczKr7jaE8XylK+PpxauJSN9A==
+X-Received: by 2002:a05:600c:6987:b0:426:8884:2c58 with SMTP id 5b1f17b1804b1-432bcafd113mr118177695e9.4.1731427104394;
+        Tue, 12 Nov 2024 07:58:24 -0800 (PST)
+Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381edc1104asm15991136f8f.88.2024.11.12.07.58.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 07:58:23 -0800 (PST)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: gregkh@linuxfoundation.org,
+	andreyknvl@gmail.com,
+	b-liu@ti.com,
+	johan@kernel.org,
+	oneukum@suse.com,
+	stern@rowland.harvard.edu
+Cc: linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	snovitoll@gmail.com,
+	usb-storage@lists.one-eyed-alien.net
+Subject: [PATCH v2 0/8] drivers/usb: refactor min/max with min_t/max_t
+Date: Tue, 12 Nov 2024 20:58:09 +0500
+Message-Id: <20241112155817.3512577-1-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2024111251-spill-hatchback-72da@gregkh>
+References: <2024111251-spill-hatchback-72da@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] mm: move per-vma lock into vm_area_struct
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: willy@infradead.org, liam.howlett@oracle.com, lorenzo.stoakes@oracle.com,
- mhocko@suse.com, hannes@cmpxchg.org, mjguzik@gmail.com,
- oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com,
- peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
- brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
- minchan@google.com, jannh@google.com, shakeel.butt@linux.dev,
- souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kernel-team@android.com
-References: <20241111205506.3404479-1-surenb@google.com>
- <20241111205506.3404479-3-surenb@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241111205506.3404479-3-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[infradead.org,oracle.com,suse.com,cmpxchg.org,gmail.com,intel.com,techsingularity.net,redhat.com,stgolabs.net,kernel.org,sina.com,google.com,linux.dev,soleen.com,kvack.org,vger.kernel.org,android.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLumbhs4xhzuuihrchnpuyb6qu)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On 11/11/24 21:55, Suren Baghdasaryan wrote:
-> @@ -511,7 +476,6 @@ void __vm_area_free(struct vm_area_struct *vma)
->  {
->  	vma_numab_state_free(vma);
->  	free_anon_vma_name(vma);
-> -	vma_lock_free(vma);
->  	kmem_cache_free(vm_area_cachep, vma);
->  }
+This patch series improves type safety in the drivers/usb/*
+by using `min_t()` and `max_t()` instead of min(), max()
+with the casting inside. It should address potential type promotion issues.
 
-Have you investigated if this allows to perform vma_numab_state_free() and
-free_anon_vma_name() immediately, and only kfree_rcu() the vma itself,
-instead of performing all this in a call_rcu() callback?
+Scanned the current drivers/usb code with `max\(.*\(` and `min\(.*\(`
+regexp queries to find casting inside of min() and max() which
+may lead to subtle bugs or even security vulnerabilities,
+especially if negative values are involved.
 
-Of course if we succeed converting vma's to SLAB_TYPESAFE_RCU this immediate
-freeing of numab state and anon_vma_name would be implied, but maybe it's an
-useful intermediate step on its own.
+Let's refactor to min_t() and max_t() specifying the data type
+to ensure it's applicable for the both compareable arguments.
+
+Changes v1 -> v2:
+  - split a single patch into a patch series
+	  per each drivers/usb/* subdirectory (Greg).
+
+Sabyrzhan Tasbolatov (8):
+  drivers/usb/gadget: refactor min with min_t
+  drivers/usb/core: refactor max with max_t
+  drivers/usb/host: refactor min/max with min_t/max_t
+  drivers/usb/misc: refactor min with min_t
+  drivers/usb/mon: refactor min with min_t
+  drivers/usb/musb: refactor min/max with min_t/max_t
+  drivers/usb/serial: refactor min with min_t
+  drivers/usb/storage: refactor min with min_t
+
+ drivers/usb/core/config.c                    |  2 +-
+ drivers/usb/gadget/composite.c               | 12 ++++++------
+ drivers/usb/gadget/configfs.c                |  2 +-
+ drivers/usb/gadget/function/f_fs.c           |  6 +++---
+ drivers/usb/gadget/function/f_mass_storage.c |  8 ++++----
+ drivers/usb/gadget/function/uvc_video.c      |  4 ++--
+ drivers/usb/gadget/legacy/raw_gadget.c       |  4 ++--
+ drivers/usb/gadget/udc/omap_udc.c            |  4 ++--
+ drivers/usb/gadget/usbstring.c               |  2 +-
+ drivers/usb/host/ehci-hcd.c                  |  2 +-
+ drivers/usb/host/oxu210hp-hcd.c              |  4 ++--
+ drivers/usb/host/r8a66597-hcd.c              |  2 +-
+ drivers/usb/misc/usbtest.c                   |  3 ++-
+ drivers/usb/mon/mon_bin.c                    |  2 +-
+ drivers/usb/musb/musb_core.c                 |  2 +-
+ drivers/usb/musb/musb_gadget_ep0.c           |  2 +-
+ drivers/usb/musb/musb_host.c                 |  5 ++---
+ drivers/usb/serial/io_edgeport.c             |  2 +-
+ drivers/usb/serial/sierra.c                  |  2 +-
+ drivers/usb/storage/sddr09.c                 |  4 ++--
+ drivers/usb/storage/sddr55.c                 |  8 ++++----
+ 21 files changed, 41 insertions(+), 41 deletions(-)
+
+-- 
+2.34.1
+
 
