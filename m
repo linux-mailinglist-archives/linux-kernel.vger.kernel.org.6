@@ -1,180 +1,150 @@
-Return-Path: <linux-kernel+bounces-406272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B22359C5CCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:07:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36C0F9C5CCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 424F51F23750
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:07:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2D861F237F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457F921314D;
-	Tue, 12 Nov 2024 16:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F333B20402C;
+	Tue, 12 Nov 2024 16:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V7I7C9T7"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kZuJTRYS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3654212F03
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4553204000;
+	Tue, 12 Nov 2024 16:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731427297; cv=none; b=q0vITaoHPYfFGI0pTI0tkDXk223kj/gB6y4RWxv5aYX0YU49kE/BHMdquOWxMx5nnxQbXBRPBwEaBHBn8xilC2EWfH92Ha2zNaH/0UXCUDZ8WHyCqSqO4tXUqRBNw88y2N0bn/OI+ZXMbA+XtjveQSvgLFuOfQ8ndHCnBd49/u0=
+	t=1731427321; cv=none; b=LCJw0NX2csrGwZroY2FthDuCh2bERwHXDj4BCLbaGIlj8/KlXpek/UperEnoHxvLoc/rS5iW447vIqeb5WyYQKgdMxzmztLCc5/3oZZM5wXj+XfelQkPux6mS4ZIfWT+wRhJgnE6kZzUw9UIyhfTaS0D7pqAdkwd1h6P3rBMRwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731427297; c=relaxed/simple;
-	bh=E1GO+wXsMoWY5kN68+eZphs4BdgOqmXVnV4f83AYM5Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XFxVHhEe3PGT6A20JYccIw/zMdBpBiOUP5o0TdAodaOT0X7PUfQZdG/wH7DGfgRSYqwbxYPxe0kN+vSzkGypvyBvaetQEHcguihWMGro6oDXkYVl08WIrancsLycgCtG9T5hAM3+E5/aJ8Ji2PMoImy0plcmzmj9mbA74CoMbNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V7I7C9T7; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb5a9c7420so51261181fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:01:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731427294; x=1732032094; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J1wxrEwtrIa/6tacdYcY+vjRhcRt6Rg8gQj+1ymAPK8=;
-        b=V7I7C9T7l8uAfgfrw/Jpzivwl6SINQPxC+NgLuScQHz36ztp80mDLqOgi6jbLxa6wv
-         0KCCgxpuAm4QOFyDT4XRA/5IwNShlvGa3Mvy5zYx+Vqu4mm6fAaC5nwvso4wwcGspaGq
-         ebBhBOy0wtxxhw89OZz/bLX7t3mvzKm4YmBxLqJvp1Pj1jRe4zO95x3L9of9t/iIuvRU
-         O/BYz6NcnuDhkwGP2Q4/QzIVegQxvNh9nK/blQPTTSfhhDcmDV7rJoRDzCHIDncmq/sa
-         SZWShz9QhsUBt/pICrNYu3GAkNGPhKDe01DZliuYWRPb2hW/AqqnWbhYxG+SXksYe4oM
-         v4jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731427294; x=1732032094;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J1wxrEwtrIa/6tacdYcY+vjRhcRt6Rg8gQj+1ymAPK8=;
-        b=XV0OxG2pC/cmFyiDIgxLYrXG7KMa3KS0Q2cnrSR9zDGooDjkAxedbhHjbRZA7jkvDZ
-         buWc2WzgjwTxX4yKz4IMoIUZeH75Tb0dkzSIFjocI/LrpfcZkXsVTGi7yXYNRvzif9ps
-         KjTXGTRvUF/Ljzaou0+UYo2OoDt5u2YavyjQW0v/wqT3GcfUaua8oSHPUf19qImyJNLn
-         sNkePYxqCjc9p1FrsIojtDVpKnIfyprIChqBY7w6e6+Eo6PdJqC3dt8jZlU1y2itFLif
-         tTW5qOsTl+FWnIhmCpwgRVRT75tckhH4v5y2nHGRfr+EUd2EcnF5peYLCRhve9Evd3MT
-         s+wA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6f8AvjSoXHQmnDqflc0tv3xc0+M0ylhWL3h56opp6cm9Pv5XnzQ6QGZ34z31dspVCXG2dXpoIXF6Ueys=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw3n8PvgIKawG61rYsk5m7ZDZajlhAlx90JbBmZmxqCKgQXCCo
-	5VHLIhg1mG22/MWiR/WxcJDitFkxPJfegnWPMNrYiVM4tIAWEvqSSMC4tTtGWjk=
-X-Google-Smtp-Source: AGHT+IGx3RVHA4+byL2YTLnZZ+/5E8G3YY8XlVAXe4mp3PgtfDZjahR2xR/tDM+pFFm2RtkJYAlNcQ==
-X-Received: by 2002:a2e:a99c:0:b0:2fa:d534:3ee7 with SMTP id 38308e7fff4ca-2ff2027d94emr81313131fa.35.1731427293638;
-        Tue, 12 Nov 2024 08:01:33 -0800 (PST)
-Received: from pop-os.. ([145.224.90.214])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03bb760fsm6148172a12.47.2024.11.12.08.01.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 08:01:33 -0800 (PST)
-From: James Clark <james.clark@linaro.org>
-To: linux-perf-users@vger.kernel.org,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	tim.c.chen@linux.intel.com
-Cc: James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] perf stat: Document and clarify outstate members
-Date: Tue, 12 Nov 2024 16:00:45 +0000
-Message-Id: <20241112160048.951213-6-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241112160048.951213-1-james.clark@linaro.org>
-References: <20241112160048.951213-1-james.clark@linaro.org>
+	s=arc-20240116; t=1731427321; c=relaxed/simple;
+	bh=iaYaUStprZ8SceeIhaWWBwFLmxeVYeoQCC7M5tVJmxo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=CeBIjAkT0Q0E9nhxRylBhcxQ2C3OKS40ZrMZuyiU57zowEgiFKw8vonSE9vYMWl/ehIT8bVgUaMfbQw/teGhcOb2azcNaLjUzNQKPrU5MOcerAS1kwoiNQ/hb6Dump+5XVFHKNcsqW9uxlAx+GKDnarWSZiKM8ZW+EbXwQjWmR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kZuJTRYS; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731427320; x=1762963320;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=iaYaUStprZ8SceeIhaWWBwFLmxeVYeoQCC7M5tVJmxo=;
+  b=kZuJTRYSbdt4Dqm2BSkywySafk5A17AbojvKpvTbKjE22QWXF+OYHbRa
+   XV04rnxxMkC5zTwXIYlUmpyZz5g4kDyJwAwDjZ1euJp/pBFaAIQytS14M
+   G/fyQDirnAk+u6MMhEEG39/M1x7+fN7JIzf9eVQFbMtWIPQxxGeMyRdc/
+   HR1PaBiZ5S0GJF3/T4+dxiLNy59jQvggDOhuSFg6btMbY4QHMdCn/Uc+v
+   D6ZksUT9LAwb5ZLpd9ZpbxNc2oXp1hlJOWWRBNj4toHANn6hjLv6wA+8D
+   +fCL9sDx0kqBFYVBI32k80HJYV2g7LahTraxjIE52BpG9BQu7Mtmaczp1
+   A==;
+X-CSE-ConnectionGUID: hzfe6WZOTB2i8QU7k8axag==
+X-CSE-MsgGUID: jayRqt+KSOK63CAlG97FEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41831582"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41831582"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 08:01:59 -0800
+X-CSE-ConnectionGUID: MweyGtHOTjm8Wi5P6z1maw==
+X-CSE-MsgGUID: 5dCRf5GdQ6GAPRIdDJIe+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="87489721"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 08:01:53 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 12 Nov 2024 18:01:50 +0200 (EET)
+To: Lukas Wunner <lukas@wunner.de>, 
+    Jonathan Cameron <Jonathan.Cameron@huawei.com>
+cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+    Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+    Rob Herring <robh@kernel.org>, Krzysztof Wilczy??ski <kw@linux.com>, 
+    "Maciej W . Rozycki" <macro@orcam.me.uk>, 
+    Alexandru Gagniuc <mr.nuke.me@gmail.com>, 
+    Krishna chaitanya chundru <quic_krichai@quicinc.com>, 
+    Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+    Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Daniel Lezcano <daniel.lezcano@linaro.org>, 
+    Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+    Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v9 7/9] PCI/bwctrl: Add API to set PCIe Link Speed
+In-Reply-To: <ZzN4pO0lJDTSySaz@wunner.de>
+Message-ID: <4f4ee107-1b25-f866-832e-6a35c8c7c35a@linux.intel.com>
+References: <20241018144755.7875-1-ilpo.jarvinen@linux.intel.com> <20241018144755.7875-8-ilpo.jarvinen@linux.intel.com> <ZzN4pO0lJDTSySaz@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-1027285098-1731427310=:13135"
 
-Not all of these are "state" so separate them into two sections. Rename
-and document to make all clearer.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/perf/util/stat-display.c | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+--8323328-1027285098-1731427310=:13135
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index 8377e24602dd..ba79f73e1cf5 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -115,15 +115,29 @@ static void print_running_csv(struct perf_stat_config *config, u64 run, u64 ena)
- 		config->csv_sep, run, config->csv_sep, enabled_percent);
- }
- struct outstate {
--	FILE *fh;
-+	/* Std mode: insert a newline before the next metric */
- 	bool newline;
-+	/* JSON mode: track need for comma for a previous field or not */
- 	bool first;
-+	/* Num CSV separators remaining to pad out when not all fields are printed */
-+	int  csv_col_pad;
-+
-+	/*
-+	 * The following don't track state across fields, but are here as a shortcut to
-+	 * pass data to the print functions. The alternative would be to update the
-+	 * function signatures of the entire print stack to pass them through.
-+	 */
-+	/* Place to output to */
-+	FILE * const fh;
- 	/* Lines are timestamped in --interval-print mode */
- 	char timestamp[64];
--	int  nfields;
--	int  aggr_nr;
-+	/* Num items aggregated in current line. See struct perf_stat_aggr.nr */
-+	int aggr_nr;
-+	/* Core/socket/die etc ID for the current line */
- 	struct aggr_cpu_id id;
-+	/* Event for current line */
- 	struct evsel *evsel;
-+	/* Cgroup for current line */
- 	struct cgroup *cgrp;
- };
- 
-@@ -473,7 +487,7 @@ static void new_line_csv(struct perf_stat_config *config, void *ctx)
- 	int i;
- 
- 	__new_line_std_csv(config, os);
--	for (i = 0; i < os->nfields; i++)
-+	for (i = 0; i < os->csv_col_pad; i++)
- 		fputs(config->csv_sep, os->fh);
- }
- 
-@@ -550,12 +564,12 @@ static void print_metricgroup_header_csv(struct perf_stat_config *config,
- 
- 	if (!metricgroup_name) {
- 		/* Leave space for running and enabling */
--		for (i = 0; i < os->nfields - 2; i++)
-+		for (i = 0; i < os->csv_col_pad - 2; i++)
- 			fputs(config->csv_sep, os->fh);
- 		return;
- 	}
- 
--	for (i = 0; i < os->nfields; i++)
-+	for (i = 0; i < os->csv_col_pad; i++)
- 		fputs(config->csv_sep, os->fh);
- 	fprintf(config->output, "%s", metricgroup_name);
- 	new_line_csv(config, ctx);
-@@ -837,7 +851,7 @@ static void printout(struct perf_stat_config *config, struct outstate *os,
- 		pm = config->metric_only ? print_metric_only_csv : print_metric_csv;
- 		nl = config->metric_only ? NULL : new_line_csv;
- 		pmh = print_metricgroup_header_csv;
--		os->nfields = 4 + (counter->cgrp ? 1 : 0);
-+		os->csv_col_pad = 4 + (counter->cgrp ? 1 : 0);
- 	} else if (config->json_output) {
- 		pm = config->metric_only ? print_metric_only_json : print_metric_json;
- 		nl = config->metric_only ? NULL : new_line_json;
--- 
-2.34.1
+On Tue, 12 Nov 2024, Lukas Wunner wrote:
 
+> On Fri, Oct 18, 2024 at 05:47:53PM +0300, Ilpo J=E4rvinen wrote:
+> > +EXPORT_SYMBOL_GPL(pcie_set_target_speed);
+>=20
+> My apologies for another belated comment on this series.
+> This patch is now a688ab21eb72 on pci/bwctrl:
+>=20
+> I note that pcie_set_target_speed() is not called my a modular user
+> (CONFIG_PCIE_THERMAL is bool, not tristate), so the above-quoted export
+> isn't really necessary right now.  I don't know if it was added
+> intentionally because some modular user is expected to show up
+> in the near future.
+
+Its probably a thinko to add it at all but then there have been talk about=
+=20
+other users interested in the API too so it's not far fetched we could see=
+=20
+a user. No idea about timelines though.
+
+There are some AMD GPU drivers tweaking the TLS field on their own but=20
+they also touch some HW specific registers (although, IIRC, they only=20
+touch Endpoint'sTLS). I was thinking of converting them but I'm unsure if=
+=20
+that yields something very straightforward and ends up producing a working=
+=20
+conversion or not (without ability to test with the HW). But TBH, not on=20
+my highest priority item.
+
+> > @@ -135,6 +296,7 @@ static int pcie_bwnotif_probe(struct pcie_device *s=
+rv)
+> >  =09if (!data)
+> >  =09=09return -ENOMEM;
+> > =20
+> > +=09devm_mutex_init(&srv->device, &data->set_speed_mutex);
+> >  =09ret =3D devm_request_threaded_irq(&srv->device, srv->irq, NULL,
+> >  =09=09=09=09=09pcie_bwnotif_irq_thread,
+> >  =09=09=09=09=09IRQF_SHARED | IRQF_ONESHOT,
+>=20
+> We generally try to avoid devm_*() functions in port service drivers
+> because if we later on move them into the PCI core (which is the plan),
+> we'll have to unroll them.  Not the end of the world that they're used
+> here, just not ideal.
+
+I think Jonathan disagrees with you on that:
+
+https://lore.kernel.org/linux-pci/20241017114812.00005e67@Huawei.com/
+
+:-)
+
+--=20
+ i.
+
+--8323328-1027285098-1731427310=:13135--
 
