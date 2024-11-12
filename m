@@ -1,123 +1,72 @@
-Return-Path: <linux-kernel+bounces-406136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27CFF9C5FD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:03:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA949C6011
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:15:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF27BB62451
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:06:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D9D2B2E2ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDD220370A;
-	Tue, 12 Nov 2024 15:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcBA/9/Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C017D2022CF;
-	Tue, 12 Nov 2024 15:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97633200C91;
+	Tue, 12 Nov 2024 15:27:21 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A430200BA5;
+	Tue, 12 Nov 2024 15:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423757; cv=none; b=I/rDtiz4JzirVxG4x6VfHLGDbIXyBsh+bJuHLfq8d57vJIpKRHatuT6IMpYWEhpQ48lEzO44pxlSeyx1GWyXKwlnqnIExmzFgmztUuo55Dic8MvRbCXacv5GcL0ITUqbB3H0G22Iv0k7k60EJhm/YKhPYS4pKy+2TVe/MdXCDg0=
+	t=1731425241; cv=none; b=RIJgLodCLa5Vpltj3ifqGOcBSqW/vkpDZaYkTBY6wt/aPAH6y5N378mpumvzX+RNbILALJTUyNxU83m9amax1jjaj7Rqt6pSLcd1f+cV7808qqRGK1/xKYKO8/Pedtgaw24LBnVHsQ8dXLa4wYKx9R/XwAfNK8dNfrmQR2vlPBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423757; c=relaxed/simple;
-	bh=Lth/cTu415pGV1tveL1POnX0SqNeYIVlgE4dGG9C+Xk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NJQKht+52QZ0zglHeqJspVf/9HvOL2l00j5hoyThz8RoPjFfOSXHZxdzJAC9ehFJdSPL1GvSW8KfC4PzHZGCALcUj5msmgvmxSQTH7twE2bc5ohShfMb3DIHuaZ86xA+D/Ywv56SBmFch21HemTvFFPiW2HuxZjT8niyO7xkvB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VcBA/9/Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47848C4CED0;
-	Tue, 12 Nov 2024 15:02:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731423757;
-	bh=Lth/cTu415pGV1tveL1POnX0SqNeYIVlgE4dGG9C+Xk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VcBA/9/ZqfcGz9Ge8aq4Bd/tYrjbF+wn+r6SeUOWV9EDPFzGUbtCfztfOSZ1KMR00
-	 9wkPBdseEZiZDwtXKXCgLznBA96dFragazszzIBI+xbRq7HO0l3xw2pzKbgi5oUt1S
-	 6g7eLI6N5+R2xgmG6b7b+CxQ/lASya6kzI5HdFf3upwlpbYmCmGNhJegzfR0foD/y3
-	 bUOgb45b6iKqd5cbuKd9uEVUX77UnJr2ycVtNYB3kcp8l80ndw2tZ2NbvL7oXBr8vz
-	 YL/VGS7gJolG6HWrtck6+xClW6lKZh9zwCa8LaxvfxYZdkHIXyWbWvU7/7iYQ05ww7
-	 dIGX84Z5wcQ7A==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-288916b7fceso2870314fac.3;
-        Tue, 12 Nov 2024 07:02:37 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW7EdTfsVYgc4rtPFVnZhAhEMFj9Cw7K3k2LrCDx8UEPnkOSwmzoISaSGCAs8SQ1bqRo5bBWTuDugk=@vger.kernel.org, AJvYcCXgPY0fKK3rwX329yIMZmcOFS3S8e5GhXQ5vt9mibo76YZojpqevhpCeYLydsi338XGporjofq9NgACvmc=@vger.kernel.org, AJvYcCXqZCf2h8fUGFNZmaJIAiU35xjXW0VjZFgDTdNMtSUIck3RyRjJfCBzHwi6UX2qRx0gHVzH5MYv@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOZbQfvU20iaSm9sr96uRmY69pJmDh/b+JkCl1jxOUF803ZPq3
-	lvYbprExBZJRiYZ4wFN1lLBog1l720s5kHN9Ed+08RosMjC8h6FgwnaOx5FUw7C7SSGqtjkp+2g
-	hAxgLRvuIZicEexrVgwELGCTuRPA=
-X-Google-Smtp-Source: AGHT+IHpU8jj1gpJ3DpcjYHyo31Jfoe6bE1bjo7IXcIK5UkPqz+c4dbdqI8jvCFUwQQTlYVcet9pjMtpHQ29sT1Lf8c=
-X-Received: by 2002:a05:6871:3a0e:b0:277:f14c:844b with SMTP id
- 586e51a60fabf-2956032f0c4mr14089377fac.37.1731423756617; Tue, 12 Nov 2024
- 07:02:36 -0800 (PST)
+	s=arc-20240116; t=1731425241; c=relaxed/simple;
+	bh=HNgfvtBVLWi2KlzOgkPTGH92XT5IEgf6spap8erVFQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=agi3tviQ3+M471Q99/lJIvlx3XkfO/EzB8Xnx79mt1cXVHKwUyAoepS9yHWDnH9s74rOZSF4c0FxnXsKxhpTkLzgFwggVeKKH+iRZkO8bFdBG0iRrGmjA+p4/Kf2yle8f5tM6hvhOAXrQidYECPZZb2SzoHrKyu/jqQOao0CWhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1tAsnW-000536-00; Tue, 12 Nov 2024 16:27:18 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id E84ADC0110; Tue, 12 Nov 2024 16:10:40 +0100 (CET)
+Date: Tue, 12 Nov 2024 16:10:40 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+	linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] MAINTAINERS: Deal with the linux-mips.org mess
+Message-ID: <ZzNv8PWzPsxiuPSN@alpha.franken.de>
+References: <alpine.DEB.2.21.2411121327130.9262@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111162316.GH22801@noisy.programming.kicks-ass.net>
- <20241112053722.356303-1-lenb@kernel.org> <351549432f8d766842dec74ccab443077ea0af91.1731389117.git.len.brown@intel.com>
- <CAJZ5v0j1gvwoYS-YaOQWh0bQ3x5=54npiYj8erq68dM92+ad-g@mail.gmail.com>
- <CAJvTdKnRpDQKUVNJ4Gp7r+WaHo0y-Wume3ay7toHU+Xz0gv2Zw@mail.gmail.com>
- <CAJZ5v0g74GWomsfV9ko5pVrwx+x6smU7u7oHV=ZYDLTKYxMWsw@mail.gmail.com> <CAJvTdK=SnRqwjR5fUatP0CzaXD_CpZ-1cc+2yX0D8_XM_3oJUw@mail.gmail.com>
-In-Reply-To: <CAJvTdK=SnRqwjR5fUatP0CzaXD_CpZ-1cc+2yX0D8_XM_3oJUw@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 12 Nov 2024 16:02:25 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hm8LenFyQBrORmreGWh+4dWoJeCLRngJOZSq3UVhnNOQ@mail.gmail.com>
-Message-ID: <CAJZ5v0hm8LenFyQBrORmreGWh+4dWoJeCLRngJOZSq3UVhnNOQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] x86/cpu: Add INTEL_LUNARLAKE_M to X86_BUG_MONITOR
-To: Len Brown <lenb@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, peterz@infradead.org, tglx@linutronix.de, 
-	x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Len Brown <len.brown@intel.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2411121327130.9262@angie.orcam.me.uk>
 
-On Tue, Nov 12, 2024 at 3:02=E2=80=AFPM Len Brown <lenb@kernel.org> wrote:
->
-> On Tue, Nov 12, 2024 at 8:14=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.=
-org> wrote:
-> >
-> > On Tue, Nov 12, 2024 at 2:12=E2=80=AFPM Len Brown <lenb@kernel.org> wro=
-te:
-> > >
-> > > On Tue, Nov 12, 2024 at 6:44=E2=80=AFAM Rafael J. Wysocki <rafael@ker=
-nel.org> wrote:
-> > >
-> > > > > -       if (boot_cpu_has(X86_FEATURE_MWAIT) && c->x86_vfm =3D=3D =
-INTEL_ATOM_GOLDMONT)
-> > > > > +       if (boot_cpu_has(X86_FEATURE_MWAIT) &&
-> > > > > +           (c->x86_vfm =3D=3D INTEL_ATOM_GOLDMONT
-> > > > > +            || c->x86_vfm =3D=3D INTEL_LUNARLAKE_M))
-> > > >
-> > > > I would put the || at the end of the previous line, that is
-> > >
-> > >
-> > > It isn't my personal preference for human readability either,
-> > > but this is what scripts/Lindent does...
-> >
-> > Well, it doesn't match the coding style of the first line ...
->
-> Fair observation.
->
-> I'll bite.
->
-> If you took the existing intel.c and added it as a patch to the kernel,
-> the resulting checkpatch would have 6 errors and 33 warnings.
->
-> If you ran Lindent on the existing intel.c, the resulting diff would be
-> 408 lines --  1 file changed, 232 insertions(+), 176 deletions(-)
->
-> This for a file that is only 1300 lines long.
->
-> If whitespace nirvana is the goal, tools are the answer, not the valuable
-> cycles of human reviewers.
+On Tue, Nov 12, 2024 at 01:47:17PM +0000, Maciej W. Rozycki wrote:
+> Hi,
+> 
+>  Here's v2 of the patch series to address Ralf Baechle to have stopped 
+> responding and linux-mips.org gone down, and Thomas stepping up as a 
+> replacement maintainer.  This has been regenerated against the current 
+> version of MAINTAINERS.  Please apply.
+> 
+>  Previous iterations:
+> 
+> - v1 at: <https://lore.kernel.org/r/alpine.DEB.2.21.2410131952550.40463@angie.orcam.me.uk/>.
 
-Well, the advice always given is to follow the coding style of the
-given fine in the first place.
+I didn't see this mail, but the v2 series in patchwork...
+Applied to mips-next.
 
-checkpatch reflects the preferences of its author is this particular
-respect and maintainers' preferences tend to differ from one to
-another.
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
