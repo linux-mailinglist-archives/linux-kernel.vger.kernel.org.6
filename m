@@ -1,162 +1,166 @@
-Return-Path: <linux-kernel+bounces-406759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5319C637E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:36:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63ADB9C639D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:41:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B49B1F257DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:36:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BF0D1F219DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0EB21A4CE;
-	Tue, 12 Nov 2024 21:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3D221A4DF;
+	Tue, 12 Nov 2024 21:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElakLreo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="q0izeBXF"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D3E204930;
-	Tue, 12 Nov 2024 21:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DDB204930
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 21:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731447371; cv=none; b=d3o5nzPERcRBUzm7QXEzaUThJMPxytOcuE+reUgUDhn/0A+pFtHJJ81RIzrv0/qqkR0RaDBBTMBXfEXOIfJdSCyq3smNXw281o6/93cU9Cgc/uPVcBHYkbzQRLsfxdTPEtWpgKs4ADorB41csZ3V4w2pX1cYvZh4NVgwIul4nI0=
+	t=1731447653; cv=none; b=gGc8kYkkzWyqCnmQVR0e6ugbKDwdvYa8RDHcxqWMJcNDiArHb8+buNBtZ+ZO2zzxZpMErjaP/bLl7dHHJQ63YsK6XQu9Y19S74B7FbcYW0ClcNtfe5i8a9KtoHJqg5Co2Oi/6TBYxA9YFqb8Sgo++jhN7bPo+sTAEw8qYA8bxyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731447371; c=relaxed/simple;
-	bh=YT8QiaKYc6WikadvMwOhGhXCA4jctxjY4UC9dlIgrcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=EShJxVWyaB0zaIMPJvNp+E+AhG6F1YEItRFFHT1Ok/WiGSOVMciDlpFj+aX7XCg4Crihmy12cGRwecyuOPXDDaTNuS6x4tChF20gKPU8OLKCcdXpNQqn/6SJIL+d90CvPQeIjCyeLGiWCj9MshmpddrMyE6pTT2ew6mBLFGnvzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElakLreo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18BCFC4CECD;
-	Tue, 12 Nov 2024 21:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731447371;
-	bh=YT8QiaKYc6WikadvMwOhGhXCA4jctxjY4UC9dlIgrcA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ElakLreoUElzFc7nu+uUsrDpPS++A0T23q9ciRXNhxC/vItSuDw56NpCqpiFxi7QK
-	 vEvTsi/Pbdi8S96yxwOII1A5naDXEQ4ffh+1vyaw3dpzrkGhsNb/Gc5mDahZOpP2cZ
-	 wJiVxI+shzQqIcniXTTKnr1NDwX7858vpglbmRj67KkQXYwoGke+TODCw0Gshy5FH8
-	 uVlyvrTpkWdyz/ZHXIi2JytmXQ7uIGo4+V9sGOy3/rUFVBD8TSM/ezEJrn9d/G1Wra
-	 d2rqYXbIpDZRPUHSUV7Zc+8/vY8bkhdq1VF7BwEfB8GYtgJFTZCsAj5lOKyDNcuwRL
-	 gwF3luLnvkVTQ==
-Date: Tue, 12 Nov 2024 15:36:08 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
-Cc: lpieralisi@kernel.org, thomas.petazzoni@bootlin.com, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	salee@marvell.com, dingwei@marvell.com
-Subject: Re: [PATCH 1/1] PCI: armada8k: add device reset to link-down handle
-Message-ID: <20241112213608.GA1861480@bhelgaas>
+	s=arc-20240116; t=1731447653; c=relaxed/simple;
+	bh=OwN4XgTU/F7qQnbkvXDrYKew1VWQvrWT9N+LFxLW1UM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kteQ5ZFD92rWSzIq6szNFnPAMyLch7b+USHdfThZeHipfyss5fAQ02Ve6keqDa9kyChsFsLvS5GDhkiwGUICgZ32ZiGPy546UO42oSEM3L15n5VRqEwQVkTIBwMEMRKUDDn9upfFjd5/+VFQvbNu34nXQ2yrvvklHgrLJKxFvks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=q0izeBXF; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=kBJsD0iEA6btQOR5yHhO1Hhm5kswTi+CVHncyRBSHIY=; b=q0izeBXF93QDYBrf
+	uoBooQXq5IHjyyOK/LscuP81ghPYJFd9kGw3D2/0WFwO4FDGpUmqENlW767M3qKQKvY/bSePCWHJ5
+	gnzvchB7i+mIsaRQMSynM+c5TaMv9G3JHbBMDeTMDvN5DTDIf1oNiuEa008VVv62up4SZYwxixpw7
+	7d034rN6WvFLBafS7zAhrzPOqhiKLHZckoxIA9pbNpqAbrDHxK6acA1kNxwtdwOIBcNIBsvrEa3oP
+	OjaM9FQpICPuaNpdikDMx+z2Sl0bIXtH9PH20Tl+ixo8OGk/PODeQvfEd5vPAnsbydSksBKVs9oI0
+	ouDlpejaEr+K0EK+ag==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tAyYj-00H8oA-1T;
+	Tue, 12 Nov 2024 21:36:25 +0000
+Date: Tue, 12 Nov 2024 21:36:25 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: abbotti@mev.co.uk, hsweeten@visionengravers.com
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] comedi: comedi_8254: Remove unused
+ comedi_8254_ns_to_timer
+Message-ID: <ZzPKWeqPhY0miHSC@gallifrey>
+References: <20241010204127.271377-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241112070310.757856-1-jpatel2@marvell.com>
+In-Reply-To: <20241010204127.271377-1-linux@treblig.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 21:36:08 up 188 days,  8:50,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-In subject, follow capitalization convention.  Use "git log
---oneline".
+* linux@treblig.org (linux@treblig.org) wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> comedi_8254_ns_to_timer() has been unused since it was added
+> in commit
+> d42b5211d861 ("staging: comedi: comedi_8254: introduce module for 8254 timer support")
+> 
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-On Mon, Nov 11, 2024 at 11:03:10PM -0800, Jenishkumar Maheshbhai Patel wrote:
-> Added pcie reset via gpio support as described in the
-> designware-pcie.txt DT binding document.
-> In cases link down cause still exist in device.
-> The device need to be reset to reestablish the link.
-> If reset-gpio pin provided in the device tree, then the linkdown
-> handle resets the device before reestablishing link.
+Ping.
 
-s/pcie/PCIe/
-s/gpio/GPIO/
+Thanks,
 
-Add blank lines between paragraphs.  Rewrap to fill 75 columns.
+Dave
 
-> Signed-off-by: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
 > ---
->  drivers/pci/controller/dwc/pcie-armada8k.c | 24 ++++++++++++++++++++--
->  1 file changed, 22 insertions(+), 2 deletions(-)
+>  drivers/comedi/drivers/comedi_8254.c | 37 ----------------------------
+>  include/linux/comedi/comedi_8254.h   |  2 --
+>  2 files changed, 39 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
-> index b1b48c2016f7..9a48ef60be51 100644
-> --- a/drivers/pci/controller/dwc/pcie-armada8k.c
-> +++ b/drivers/pci/controller/dwc/pcie-armada8k.c
-> @@ -23,6 +23,7 @@
->  #include <linux/of_pci.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/regmap.h>
-> +#include <linux/of_gpio.h>
-
-Preserve (mostly) alpha sorted list of includes.
-
->  #include "pcie-designware.h"
+> diff --git a/drivers/comedi/drivers/comedi_8254.c b/drivers/comedi/drivers/comedi_8254.c
+> index 6beca2a6d66e..9b7747dab747 100644
+> --- a/drivers/comedi/drivers/comedi_8254.c
+> +++ b/drivers/comedi/drivers/comedi_8254.c
+> @@ -77,10 +77,6 @@
+>   * to create a 32-bit rate generator (I8254_MODE2). These functions are
+>   * provided to handle the cascaded counters:
+>   *
+> - * comedi_8254_ns_to_timer()
+> - *	Calculates the divisor value needed for a single counter to generate
+> - *	ns timing.
+> - *
+>   * comedi_8254_cascade_ns_to_timer()
+>   *	Calculates the two divisor values needed to the generate the pacer
+>   *	clock (in ns).
+> @@ -472,39 +468,6 @@ void comedi_8254_cascade_ns_to_timer(struct comedi_8254 *i8254,
+>  }
+>  EXPORT_SYMBOL_GPL(comedi_8254_cascade_ns_to_timer);
 >  
-> @@ -37,6 +38,8 @@ struct armada8k_pcie {
->  	struct regmap *sysctrl_base;
->  	u32 mac_rest_bitmask;
->  	struct work_struct recover_link_work;
-> +	enum of_gpio_flags flags;
-> +	struct gpio_desc *reset_gpio;
->  };
+> -/**
+> - * comedi_8254_ns_to_timer - calculate the divisor value for nanosec timing
+> - * @i8254:	comedi_8254 struct for the timer
+> - * @nanosec:	the desired ns time
+> - * @flags:	comedi_cmd flags
+> - */
+> -void comedi_8254_ns_to_timer(struct comedi_8254 *i8254,
+> -			     unsigned int *nanosec, unsigned int flags)
+> -{
+> -	unsigned int divisor;
+> -
+> -	switch (flags & CMDF_ROUND_MASK) {
+> -	default:
+> -	case CMDF_ROUND_NEAREST:
+> -		divisor = DIV_ROUND_CLOSEST(*nanosec, i8254->osc_base);
+> -		break;
+> -	case CMDF_ROUND_UP:
+> -		divisor = DIV_ROUND_UP(*nanosec, i8254->osc_base);
+> -		break;
+> -	case CMDF_ROUND_DOWN:
+> -		divisor = *nanosec / i8254->osc_base;
+> -		break;
+> -	}
+> -	if (divisor < 2)
+> -		divisor = 2;
+> -	if (divisor > I8254_MAX_COUNT)
+> -		divisor = I8254_MAX_COUNT;
+> -
+> -	*nanosec = divisor * i8254->osc_base;
+> -	i8254->next_div = divisor;
+> -}
+> -EXPORT_SYMBOL_GPL(comedi_8254_ns_to_timer);
+> -
+>  /**
+>   * comedi_8254_set_busy - set/clear the "busy" flag for a given counter
+>   * @i8254:	comedi_8254 struct for the timer
+> diff --git a/include/linux/comedi/comedi_8254.h b/include/linux/comedi/comedi_8254.h
+> index d527f04400df..21be0b7250b4 100644
+> --- a/include/linux/comedi/comedi_8254.h
+> +++ b/include/linux/comedi/comedi_8254.h
+> @@ -129,8 +129,6 @@ void comedi_8254_pacer_enable(struct comedi_8254 *i8254,
+>  void comedi_8254_update_divisors(struct comedi_8254 *i8254);
+>  void comedi_8254_cascade_ns_to_timer(struct comedi_8254 *i8254,
+>  				     unsigned int *nanosec, unsigned int flags);
+> -void comedi_8254_ns_to_timer(struct comedi_8254 *i8254,
+> -			     unsigned int *nanosec, unsigned int flags);
 >  
->  #define PCIE_VENDOR_REGS_OFFSET		0x8000
-> @@ -238,9 +241,18 @@ static void armada8k_pcie_recover_link(struct work_struct *ws)
->  	}
->  	pci_lock_rescan_remove();
->  	pci_stop_and_remove_bus_device(root_port);
-> +	/* Reset device if reset gpio is set */
-> +	if (pcie->reset_gpio) {
-> +		/* assert and then deassert the reset signal */
-> +		gpiod_set_value_cansleep(pcie->reset_gpio, 0);
-> +		msleep(100);
-
-Needs some sort of #define for this 100 ms.
-
-> +		gpiod_set_value_cansleep(pcie->reset_gpio,
-> +					 (pcie->flags & OF_GPIO_ACTIVE_LOW) ? 0 : 1);
-> +	}
->  	/*
-> -	 * Sleep needed to make sure all pcie transactions and access
-> -	 * are flushed before resetting the mac
-> +	 * Sleep used for two reasons.
-> +	 * First make sure all pcie transactions and access are flushed before resetting the mac
-> +	 * and second to make sure pci device is ready in case we reset the device
->  	 */
->  	msleep(100);
-
-s/pcie/PCIe/ (throughout)
-s/mac/MAC/
-
-Explain the 100ms.  Hopefully this is something defined by PCIe base
-or CEM spec.  Use or add #define as needed.
-
-> @@ -376,6 +388,7 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
->  	struct armada8k_pcie *pcie;
->  	struct device *dev = &pdev->dev;
->  	struct resource *base;
-> +	int reset_gpio;
->  	int ret;
->  
->  	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
-> @@ -420,6 +433,13 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
->  		goto fail_clkreg;
->  	}
->  
-> +	/* Config reset gpio for pcie if the reset connected to gpio */
-> +	reset_gpio = of_get_named_gpio_flags(pdev->dev.of_node,
-> +					     "reset-gpios", 0,
-> +					     &pcie->flags);
-> +	if (gpio_is_valid(reset_gpio))
-> +		pcie->reset_gpio = gpio_to_desc(reset_gpio);
-> +
->  	pcie->sysctrl_base = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
->  						       "marvell,system-controller");
->  	if (IS_ERR(pcie->sysctrl_base)) {
+>  void comedi_8254_set_busy(struct comedi_8254 *i8254,
+>  			  unsigned int counter, bool busy);
 > -- 
-> 2.25.1
+> 2.47.0
 > 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
