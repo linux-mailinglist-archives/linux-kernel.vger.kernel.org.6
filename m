@@ -1,123 +1,192 @@
-Return-Path: <linux-kernel+bounces-406320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56E49C5DA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:47:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C949C5D60
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:33:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C34A7B60597
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:32:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 539C3281F8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80071205E12;
-	Tue, 12 Nov 2024 16:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFF72064E9;
+	Tue, 12 Nov 2024 16:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dm18XPwS"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ehkN2Dmd"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BED51FF606;
-	Tue, 12 Nov 2024 16:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF09205AC3;
+	Tue, 12 Nov 2024 16:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731429151; cv=none; b=VU16dV6nzr31FpLcW1w/Qn25q0eLtylCqnC9SnmO9LuxPMD4LjoLCpkaWlBw1jBKom+loYFIM50zc7IfaNOrzkzKoqlWCWbO3G8SWRmdZtAMBwz7fjJ8WTqBOAASGpFWZxvwhsDLwz2sJV/9KJ6uWWtTfzV2fQ3l3x1Fh1LLKqg=
+	t=1731429226; cv=none; b=F+9Ban/Zkn+pkxoAzErjFSoxz+sTfx/Azgf5ONNtar5o0mXpniO3Uwk/XCG/7Xb9mpAygc5uWMyh2ttG3fwwBNeF+3htzkcGXW6FKszwzS3R75HPorWGN9omUcUAtMpnENBHVeGdcW4zr6o9SBDRnRaZUR1z5W7bF/PTsc6oml8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731429151; c=relaxed/simple;
-	bh=F/XCPeO4O8tZN4eAcsA8CztI64hU6XKdoR4/jrSSK+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hu3SWg9w0NeO9M0BooFwX8wQZK8D9HY3tXE07D6YBUyFCrY69rF7MP5qzcMsPzlXvPxMqmuQS1gtTiJ2EOcvO1VW0jxQfDkrnGl/MOArIZw8SV+grZAoLR+WDTY+FplE79xmaJRfh8NHfKmgNV2pMd0cvr4A0WxpLFoU4yNfdLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dm18XPwS; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Nu4Sd3KnZDWtn2DFp/yCpmc9h6SD4LwdQmAnX+pJ3qg=; b=dm18XPwSkIk2Gd4GhmDSBPzR/j
-	j21k7+lwtSBsSVyO+fagzEbYD81nqsvBuDcMhk/9QkS7UETnN3OV6IintX0Q1LXOCbg4dyOu4c/Ba
-	4Zo9ahr2WmLZpvYKpmxHwbwsOhKUxsxz+1/1OgNkV9h5gJGguU4DuN0WnqtggmxpBIcA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tAtoQ-00D3Cf-2g; Tue, 12 Nov 2024 17:32:18 +0100
-Date: Tue, 12 Nov 2024 17:32:18 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 net-next 5/7] net: hibmcge: Add pauseparam supported
- in this module
-Message-ID: <d22285c6-8286-4db0-86ca-90fff08e3a42@lunn.ch>
-References: <20241111145558.1965325-1-shaojijie@huawei.com>
- <20241111145558.1965325-6-shaojijie@huawei.com>
- <efd481a8-d020-452b-b29b-dfa373017f1f@lunn.ch>
- <98187fe7-23f1-4c52-a62f-c96e720cb491@huawei.com>
+	s=arc-20240116; t=1731429226; c=relaxed/simple;
+	bh=WBOgIoUyc5WH2QU+QYCxp8Q1lARJRrF0Jr6rGSt+GQQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A/BNvKbxJSIMdQMpojISq9iICSQ2J7RBKpg+HNXvG2UG0njYPi+Vo/UFYHqvC4qTi/RYC5C5YEn33vo7qai7vaCiahvI96nXI2fC4BwXm6yxEdFskCfF+6CeS9clQfkHW8qQIb5H+eyD+YNye5YutNC8JArCE1tVJMHoynPm6is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ehkN2Dmd; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-46089a6849bso40849461cf.3;
+        Tue, 12 Nov 2024 08:33:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731429223; x=1732034023; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZFfT48pUBvcSrQCu50oLrUydAI9K2tE/O7BShP437/E=;
+        b=ehkN2DmdnAFaI7Ipddak4NlKu1Pt9v8gMcYCcS7zosq7+lOMFdE20U2PKgDGSTTF1V
+         EM7GcR2PE9OJARmm5S1mITG2sxfJ9dc8ZrGMMa5748LNOc/6uDNj7mpeA73RCREKMbqY
+         d4geXZvzGXdXWRJvOT3IJ6l9Aq0mofJnPvr495CeUqg6J8Hzbh9fPN7BvbPlrqkTdYRf
+         CrRzSHoJNQTlPncsfwHvRcreVaW6ji0MzSJElpMbEX+6jJbhpdUCahxONtP8k950jSAS
+         UlzvFcFBhZG8wui6vpdIqu+OogEC4q/fw+MPC9N3yN7kfWJO+ADQBTNFKuns9PNcdRx8
+         l8jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731429223; x=1732034023;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZFfT48pUBvcSrQCu50oLrUydAI9K2tE/O7BShP437/E=;
+        b=eixWeKAppIeB4BILf80MbH+lJY7SSZt/AAmkAM+Cwl9vQ9F9d07Y9OwHD+0iZY5xPW
+         SErWbof7ATE1luK4xZpQP98VEqsTqFKDCN3EWifuxbNGg4a/M2XhmGokACHzWCQFMQ+Z
+         nxF1xng6lRzeyPHixx4k7PB+TtSRLFwqwyhZXhdUOS82Twi0ezVNRhhfz5Cdy8MrMOcD
+         fAiFHfnC9htrowZNBBz3mPOPSo9BHE+rxYuUnm+7N8JjlX76Mbh8zCIVXsZghIb9Dp4D
+         7OHofaJTH2qeWAvD50/myhTlGe526avY6EEZ4PBBx1YdykYUB56Nl0aO/3gLB1vRvIo6
+         WfOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZfoaUqwZBzrc/MqCHtdYCx2Yox586bwahFpyrdz7nTk2ahi2r+TfYZO0sN903Yiv72jcOYiP3Igwuw/dZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt/oARjCRhUizNV2hLOeHBDn8g22kFn9siSNEu87spq0U9CVZB
+	JErDjQu3LwHPNOC/yGhtAaC4HjM+IiS7H9sPFegonKPc2bPTAhyLAqaXr4TwWGDYQofdocx71M1
+	Jqs3yQz7KxNifPL9rNVBCfTU0sjs=
+X-Google-Smtp-Source: AGHT+IF9I22x1jeyTGVvNuBsIVyLPtT39KVP+euJZ35DvpQFBo4krBTeHLIUrM5e0HN768qZ4dP1xBI+mwyE4WFkIG0=
+X-Received: by 2002:ac8:690b:0:b0:462:b217:4e26 with SMTP id
+ d75a77b69052e-46309412398mr274271591cf.48.1731429223601; Tue, 12 Nov 2024
+ 08:33:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <98187fe7-23f1-4c52-a62f-c96e720cb491@huawei.com>
+References: <20241101135452.19359-1-erin.shepherd@e43.eu> <20241101135452.19359-5-erin.shepherd@e43.eu>
+In-Reply-To: <20241101135452.19359-5-erin.shepherd@e43.eu>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 12 Nov 2024 17:33:32 +0100
+Message-ID: <CAOQ4uxgf7=p_p+4zBMv57-HWiiKHLRt0cFuuN3Nip+aT6F4_Ug@mail.gmail.com>
+Subject: Re: [PATCH 4/4] pidfs: implement fh_to_dentry
+To: Erin Shepherd <erin.shepherd@e43.eu>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	christian@brauner.io, paul@paul-moore.com, bluca@debian.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 10:37:27PM +0800, Jijie Shao wrote:
-> 
-> on 2024/11/12 1:58, Andrew Lunn wrote:
-> > On Mon, Nov 11, 2024 at 10:55:56PM +0800, Jijie Shao wrote:
-> > > The MAC can automatically send or respond to pause frames.
-> > > This patch supports the function of enabling pause frames
-> > > by using ethtool.
-> > > 
-> > > Pause auto-negotiation is not supported currently.
-> > What is actually missing to support auto-neg pause? You are using
-> > phylib, so it will do most of the work. You just need your adjust_link
-> > callback to configure the hardware to the result of the negotiation.
-> > And call phy_support_asym_pause() to let phylib know what the MAC
-> > supports.
-> > 
-> > 	Andrew
-> 
-> Thanks for your guidance,
-> 
-> I haven't really figured out the difference between phy_support_sym_pause()
-> and phy_support_asym_paus().
+On Fri, Nov 1, 2024 at 3:05=E2=80=AFPM Erin Shepherd <erin.shepherd@e43.eu>=
+ wrote:
+>
+> This enables userspace to use name_to_handle_at to recover a pidfd
+> to a process.
+>
+> We stash the process' PID in the root pid namespace inside the handle,
+> and use that to recover the pid (validating that pid->ino matches the
+> value in the handle, i.e. that the pid has not been reused).
+>
+> We use the root namespace in order to ensure that file handles can be
+> moved across namespaces; however, we validate that the PID exists in
+> the current namespace before returning the inode.
+>
+> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
 
-sym_pause means that when the MAC pauses, it does it in both
-directions, receive and transmit. Asymmetric pause means it can pause
-just receive, or just transmit.
+Functionally, this looks correct to me, so you may add:
 
-Since you have both tx_pause and rx_pause, you can do both.
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-> +static void hbg_ethtool_get_pauseparam(struct net_device *net_dev,
-> +				       struct ethtool_pauseparam *param)
-> +{
-> +	struct hbg_priv *priv = netdev_priv(net_dev);
+But I can't say that I am a good person to judge if this new functionality
+can expose new information to unpriv users or allow them to get access
+to processes that they could not get access to before.
+
+Thanks,
+Amir.
+
+> ---
+>  fs/pidfs.c | 50 +++++++++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 43 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index c8e7e9011550..2d66610ef385 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -348,23 +348,59 @@ static const struct dentry_operations pidfs_dentry_=
+operations =3D {
+>         .d_prune        =3D stashed_dentry_prune,
+>  };
+>
+> -static int pidfs_encode_fh(struct inode *inode, __u32 *fh, int *max_len,
+> +#define PIDFD_FID_LEN 3
 > +
-> +	param->autoneg = priv->mac.pause_autoneg;
-> +	hbg_hw_get_pause_enable(priv, &param->tx_pause, &param->rx_pause);
+> +struct pidfd_fid {
+> +       u64 ino;
+> +       s32 pid;
+> +} __packed;
+> +
+> +static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+>                            struct inode *parent)
+>  {
+>         struct pid *pid =3D inode->i_private;
+> -
+> -       if (*max_len < 2) {
+> -               *max_len =3D 2;
+> +       struct pidfd_fid *fid =3D (struct pidfd_fid *)fh;
+> +
+> +       if (*max_len < PIDFD_FID_LEN) {
+> +               *max_len =3D PIDFD_FID_LEN;
+>                 return FILEID_INVALID;
+>         }
+>
+> -       *max_len =3D 2;
+> -       *(u64 *)fh =3D pid->ino;
+> -       return FILEID_KERNFS;
+> +       fid->ino =3D pid->ino;
+> +       fid->pid =3D pid_nr(pid);
+> +       *max_len =3D PIDFD_FID_LEN;
+> +       return FILEID_INO64_GEN;
 > +}
 > +
-> +static int hbg_ethtool_set_pauseparam(struct net_device *net_dev,
-> +				      struct ethtool_pauseparam *param)
+> +static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
+> +                                        struct fid *gen_fid,
+> +                                        int fh_len, int fh_type)
 > +{
-> +	struct hbg_priv *priv = netdev_priv(net_dev);
-> +	struct phy_device *phydev = priv->mac.phydev;
+> +       int ret;
+> +       struct path path;
+> +       struct pidfd_fid *fid =3D (struct pidfd_fid *)gen_fid;
+> +       struct pid *pid;
 > +
-> +	phy_set_asym_pause(phydev, param->rx_pause, param->tx_pause);
-
-Not needed. This just tells phylib what the MAC is capable of. The
-capabilities does not change, so telling it once in hbg_phy_connect()
-is sufficient.
-
-	Andrew
+> +       if (fh_type !=3D FILEID_INO64_GEN || fh_len < PIDFD_FID_LEN)
+> +               return NULL;
+> +
+> +       pid =3D find_get_pid_ns(fid->pid, &init_pid_ns);
+> +       if (!pid || pid->ino !=3D fid->ino || pid_vnr(pid) =3D=3D 0) {
+> +               put_pid(pid);
+> +               return NULL;
+> +       }
+> +
+> +       ret =3D path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
+> +       if (ret < 0)
+> +               return ERR_PTR(ret);
+> +
+> +       mntput(path.mnt);
+> +       return path.dentry;
+>  }
+>
+>  static const struct export_operations pidfs_export_operations =3D {
+>         .encode_fh =3D pidfs_encode_fh,
+> +       .fh_to_dentry =3D pidfs_fh_to_dentry,
+>  };
+>
+>  static int pidfs_init_inode(struct inode *inode, void *data)
+> --
+> 2.46.1
+>
+>
 
