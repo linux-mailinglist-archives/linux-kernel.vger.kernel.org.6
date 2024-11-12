@@ -1,63 +1,61 @@
-Return-Path: <linux-kernel+bounces-405570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A739E9C52F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:17:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C089C52F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:17:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DA73282560
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:17:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05CF3281FF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B44B2141D4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4A72141CB;
 	Tue, 12 Nov 2024 10:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFibndRn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MmqZTv+o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9282123EC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8037A2123E1
 	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731406510; cv=none; b=fevP8y+NhOrOkZlY/RBCE+zmTOWIX3UXxqi9HN7v9/xlBL05MdppiehBpqcG/Ee6apvnTOf3q17Msk+fDAgnzevSTE7gtZi/2/5vL48zMNZTndBfg1xTPHbKq4NqfHFCMlAMIEDrfPf8VS61CqQWvQ8Rslzwesc/JfmgS2W/rV8=
+	t=1731406510; cv=none; b=mDGCKwOZw1Kj1BwXtf5iiUK//ZEUj3WdmJqeb5F9Rj9Q8hHouHyfyxTwXZvGAmKZZcGXLlVJiMszQREy3TwDM9qYZ2cKxTLno00tIFYoqMMPz7EQ/ZH8oElVIPC27SKjmtznVtOMzdz/wEwm9bekV4iYvk0GvLrKGsT5s9hC+ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731406510; c=relaxed/simple;
-	bh=apFR7M0tIEJqpEFEJ/08XV2maPVJqD0XB6JTsMxgY/o=;
+	bh=3q4iw0X8CIIZSET8d9LVRHez80oiBXEYI6La10ZBs2s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gUM7g+lQ++xFw6Ku8CIM6cDvMMZAcwjI+vqu5sGAfhLp3rP4JuXbnxmlBC3VOTqUw99adi7gGcDWI6+B22dROuh+TDFiP99U5WzCcieE/i7F80dquJnNLHSG3MuknmD1CCeRwX1xlsFOF7FFNiugW3YfSxmXYdK+s658p+H7COw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFibndRn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED676C4CEDF;
+	 MIME-Version; b=G45GWeeZe4RcROPK3TG12q8XVHbxdAThXAED/G6ZajeqbRGLMkw3ccrBsUMSZSF/nnJzEbJlpDe4hFRXBe5a/zJ2lZPRq7OiZV+PHSPld5CU8/SbNHPP+Pa6/LH9w9YuMnFfxgVWAAvnmbs0E/CVHCnvYnxeMSZeMFQfDiu6hkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MmqZTv+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B59C4CEDD;
 	Tue, 12 Nov 2024 10:15:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1731406510;
-	bh=apFR7M0tIEJqpEFEJ/08XV2maPVJqD0XB6JTsMxgY/o=;
+	bh=3q4iw0X8CIIZSET8d9LVRHez80oiBXEYI6La10ZBs2s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aFibndRnQ9ZS/vIB1KLsAg3fDTOb5PNyJ4ycdthVT2CHbV3ybmy4LB/FUYah3JLP+
-	 DurOqptdazujjGo0zEGm3DV96n1Y3pa6vwSIkRTzfxvJQEK5lmLbeQJZdtV/5zEaYe
-	 DOwDJKuk/K89yCcZBh5v2GiIMtMR/+DO/ZClemUhvn1WxA5dbg6D0hF7XHZ0u2TnTo
-	 kQ8ydoLGTMcxkVr2pNre6071YA3oqqxAk5ewvV3CMuEiEK/vyxpFq3/na1w0Qs/O1u
-	 MHusllaIzJ5y4QpXJrFlp/WG61RFcbg8LPDElRn0zPQyqgz9+htr1dxb8TQoBwP5ID
-	 nMncCoUpCBzxg==
+	b=MmqZTv+oK5ggXcxbbPaIytID0MnR9Z2nrjYzXB3+wpepvmvSvgIonMh8zC7xU1vjy
+	 OSKV2ifImFEeH3hp69d10SIfmX0CtriSBEmp3FM7PUgHJgXX6rhPZetvTEnabV8FIs
+	 JWXpR9JlGNAE0hx3N753JEFWtSvNAkZ8Dg3LR8TDmRayt4Np1xO+uswWokfyTi3X71
+	 86Zm2TDGVhCBse3WCbFXYzflLzFrubZEFtuDwmtzoz2+EHaFtv1w5QFf8ONdQq7NLr
+	 OgtEbmUg+ZVtcBOTH+MWdvevmouuLwrKL1usDKkEiQmI9arsBGE30wnquPPYb/pvE0
+	 RDjWTM5mW98nQ==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tAnvP-00000000JdK-1NkA;
+	id 1tAnvP-00000000JdO-1ULZ;
 	Tue, 12 Nov 2024 11:15:07 +0100
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Igor Mammedov <imammedo@redhat.com>
 Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	Shiju Jose <shiju.jose@huawei.com>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Ani Sinha <anisinha@redhat.com>,
 	Dongjiu Geng <gengdongjiu1@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	qemu-arm@nongnu.org,
 	qemu-devel@nongnu.org
-Subject: [PATCH v3 14/15] acpi/ghes: Change ghes fill logic to work with only one source
-Date: Tue, 12 Nov 2024 11:14:58 +0100
-Message-ID: <3cf3d0f0253faf8d2497175e8473431d8ef25810.1731406254.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v3 15/15] docs: acpi_hest_ghes: fix documentation for CPER size
+Date: Tue, 12 Nov 2024 11:14:59 +0100
+Message-ID: <817b8a3146385c911de003911ebef922ed397839.1731406254.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <cover.1731406254.git.mchehab+huawei@kernel.org>
 References: <cover.1731406254.git.mchehab+huawei@kernel.org>
@@ -70,53 +68,35 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Extending to multiple sources require a BIOS pointer to the
-beginning of the HEST table, which in turn requires a backward-compatible
-code.
-
-So, the current code supports only one source. Ensure that and simplify
-the code.
+While the spec defines a CPER size of 4KiB for each record,
+currently it is set to 1KiB. Fix the documentation and add
+a pointer to the macro name there, as this may help to keep
+it updated.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Acked-by: Igor Mammedov <imammedo@redhat.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 ---
- hw/acpi/ghes.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ docs/specs/acpi_hest_ghes.rst | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-index 8df21bad1165..e7de3b302602 100644
---- a/hw/acpi/ghes.c
-+++ b/hw/acpi/ghes.c
-@@ -393,15 +393,13 @@ static void get_ghes_offsets(uint64_t ghes_addr,
-      * As the current version supports only one source, the ack offset is
-      * just sizeof(uint64_t).
-      */
--    *read_ack_register_addr = ghes_addr +
--			      ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t);
-+    *read_ack_register_addr = ghes_addr + sizeof(uint64_t);
- }
+diff --git a/docs/specs/acpi_hest_ghes.rst b/docs/specs/acpi_hest_ghes.rst
+index 68f1fbe0a4af..c3e9f8d9a702 100644
+--- a/docs/specs/acpi_hest_ghes.rst
++++ b/docs/specs/acpi_hest_ghes.rst
+@@ -67,8 +67,10 @@ Design Details
+ (3) The address registers table contains N Error Block Address entries
+     and N Read Ack Register entries. The size for each entry is 8-byte.
+     The Error Status Data Block table contains N Error Status Data Block
+-    entries. The size for each entry is 4096(0x1000) bytes. The total size
+-    for the "etc/hardware_errors" fw_cfg blob is (N * 8 * 2 + N * 4096) bytes.
++    entries. The size for each entry is defined at the source code as
++    ACPI_GHES_MAX_RAW_DATA_LENGTH (currently 1024 bytes). The total size
++    for the "etc/hardware_errors" fw_cfg blob is
++    (N * 8 * 2 + N * ACPI_GHES_MAX_RAW_DATA_LENGTH) bytes.
+     N is the number of the kinds of hardware error sources.
  
- void ghes_record_cper_errors(const void *cper, size_t len,
-                              uint16_t source_id, Error **errp)
- {
-     uint64_t cper_addr = 0, read_ack_register_addr = 0, read_ack_register;
--    uint64_t start_addr;
-     AcpiGedState *acpi_ged_state;
-     AcpiGhesState *ags;
- 
-@@ -418,11 +416,8 @@ void ghes_record_cper_errors(const void *cper, size_t len,
-     }
-     ags = &acpi_ged_state->ghes_state;
- 
--    start_addr = le64_to_cpu(ags->hw_error_le);
--
--    start_addr += source_id * sizeof(uint64_t);
--
--    get_ghes_offsets(start_addr, &cper_addr, &read_ack_register_addr);
-+    assert(ACPI_GHES_ERROR_SOURCE_COUNT == 1);
-+    get_ghes_offsets(le64_to_cpu(ags->hw_error_le), &cper_addr, &read_ack_register_addr);
- 
-     cper_addr = le64_to_cpu(cper_addr);
-     if (!cper_addr) {
+ (4) QEMU generates the ACPI linker/loader script for the firmware. The
 -- 
 2.47.0
 
