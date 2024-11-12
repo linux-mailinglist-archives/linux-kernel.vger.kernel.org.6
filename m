@@ -1,239 +1,156 @@
-Return-Path: <linux-kernel+bounces-405355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21AEA9C5034
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:03:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D1209C503C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:03:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E71E1F2142A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F332E1F21541
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D83B20B803;
-	Tue, 12 Nov 2024 08:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="wvuzIg+l"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBC020A5E2;
+	Tue, 12 Nov 2024 08:03:46 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B629D204932
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A0219D067;
+	Tue, 12 Nov 2024 08:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731398559; cv=none; b=ilvHM/pQ7wKUjgd/VAN6qKiqLKMxHx5phOedGdRTFx3NbEJscATOkiLzYGM7OnV5kCLr1S8Bamd8Dad/vG4JS/Pwtpt4b/JnSqPgokzhFh1Ylm4pmDv2Xn84s4p/CbtO/yrzQ9/UQ6GtNGmRlWuVZ60W3UP0h/MbP8Iuy9kf8Es=
+	t=1731398625; cv=none; b=N6udRoZJm6Xr8fheIAmqEkhzp04vBIcczDz7zr8eb8kKs/Q/mMbb1ZPPL9HojBfdpNPliHYevGAYCvi9gIp8X89sXvoeR0X7ELE0YAvK+GFf7Fiu4jGazm3n4eefJ0K6Ate7kFucVqw+xKVovMWLAUkrELzvfxBSi3GQ/lrgZs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731398559; c=relaxed/simple;
-	bh=zTQs4iNYqrYTQArW/fssiFnJaC4arl24n5g3YvT3h9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fifrKggJ7gYUxhhMgI3wmGHtv+8eBa41KDUFEh8+Bfa+BLg3Czlyy/0kd+jWABhTJPVtnPfdGApPUOyPe1/1xzLBfg+1bYbD1qSmAX4i9TJ7TTzXsLoD38CA1vVX82ZbbvXJ5xOiXliVLHRhKVNaSSnpljR9OgXNJdnhKgtQBJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=wvuzIg+l; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e3686088c3so4156789a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:02:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731398557; x=1732003357; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uS5sz2JrbxVWrFAMlEwTsUEhH2M/8tFpm8+HfNM8G+A=;
-        b=wvuzIg+lBY0vBcqKLe27w48ucELFJU5/acrz4KJTIvx+CnVg0qNXvWY4luHK2JEOiZ
-         kJmFIXqaTiKGkuGYVbCXhEvtyyLQ/IlqwJXC7DEZJCEYrv9FXVoHaAeePfLtNRdQkMBS
-         NpWGElPGLUwg6SYd3fGY1K0JKqlpfBQ7/zF6VZwD5ggPRQM79rU5vcsUsVv/KdzVTWTf
-         aLFGvswi3l9d60bMeMukzA5xiNobiKvFY51vMkEc3yH8CFUM3GkS3L5RXrcUDyvT4lmw
-         d3YD0P4OS8UL/ljgRjsvHEnCvFu4KFj60SPeIkceKTlVDRALN/fjIfTOGaY5mdt/9sRd
-         sBSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731398557; x=1732003357;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uS5sz2JrbxVWrFAMlEwTsUEhH2M/8tFpm8+HfNM8G+A=;
-        b=WcvgMA8OxhWau0wkCdMKapROuG/+p+6DYbxUJgRAJSCQt9Ivj+vDo/HoR/afPlVFPK
-         AkcjY5PpIK8r3m1MzUrlTofYl2oQSsnTh6i8kHJct16Fekc9Y+1lKIroZI1Jo/Mq7TfE
-         4MpSpXzS6pKyzbJ9Uz/QQgS1I3N62SsWR5fqYesLdixaY7i5WMlsFvmWyBNIObkSGSm+
-         q/vosmwIBwP2EkhGCpc1B9lnCvd9IkKGe9agqb6DRp4FAuCqUr8+vyw2s3MhB6sBKfkY
-         WIwVTIVDR8GZob8MXfAbwJJSgo+y3NhoHrm51NHlahElGDvX/ZaYMhLat4v101xUUvXZ
-         4CBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVHijbWkWuNt+X0Gq+tZKaPz30cU2MBISDIvYTd+wZNK9779gT3VxWEN2uWxdl3e4ctekmDOF1X/LDwYU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+Q/s6Wl6dMV4NrWVSB1Mn/LcgA1HcDMAPzGw82ciXkaFGm2N8
-	LR3d8DUv9sAfjDoKyaeuSOeYxgSsla/iqXQRx81vuOlILZRofanTisUDK2Lwa9o=
-X-Google-Smtp-Source: AGHT+IFdASJjKkBSve/9sR6y2nL3MjtIZ6Y0Rsyru0XowgMfxn2lqyfKHrnIxIhR4ebg9IkWdeg66w==
-X-Received: by 2002:a17:90a:ec86:b0:2e1:d5c9:1bc4 with SMTP id 98e67ed59e1d1-2e9e4aa8a19mr2404697a91.7.1731398557043;
-        Tue, 12 Nov 2024 00:02:37 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a4f97b2sm12006946a91.8.2024.11.12.00.02.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 00:02:36 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1tAlr7-00DYAE-1V;
-	Tue, 12 Nov 2024 19:02:33 +1100
-Date: Tue, 12 Nov 2024 19:02:33 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
-	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
-	kirill@shutemov.name, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 10/16] mm/filemap: make buffered writes work with
- RWF_UNCACHED
-Message-ID: <ZzMLmYNQFzw9Xywv@dread.disaster.area>
-References: <20241111234842.2024180-1-axboe@kernel.dk>
- <20241111234842.2024180-11-axboe@kernel.dk>
- <ZzKn4OyHXq5r6eiI@dread.disaster.area>
- <0487b852-6e2b-4879-adf1-88ba75bdecc0@kernel.dk>
+	s=arc-20240116; t=1731398625; c=relaxed/simple;
+	bh=2Wm92elPAtztDmT3Kx85R9bXNVMbAhWA0esUZf8fJzo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TjHuyWdg7PDjU507g1UczESCnkS4aJz+/RQuqmKzxIgxBvgMfWApWIOkdNA+z9M7TdCAp46TZczbyBlCX4OP6VcUQ+KT7DuDeO2A/OS4N3erqNqhFFSz0H1dLz2wZQNXwc/lbFEsfcRtAplBAHxVyfD+0+5mADqAu66wUpZnx78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xnf4J5ktSz10Mf1;
+	Tue, 12 Nov 2024 16:01:04 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id B6B071800F2;
+	Tue, 12 Nov 2024 16:03:32 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
+ (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 12 Nov
+ 2024 16:03:31 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <visitorckw@gmail.com>, <brendan.higgins@linux.dev>,
+	<davidgow@google.com>, <rmoar@google.com>, <skhan@linuxfoundation.org>,
+	<rf@opensource.cirrus.com>, <linux-kselftest@vger.kernel.org>,
+	<kunit-dev@googlegroups.com>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH v2] kunit: string-stream: Fix a UAF bug in kunit_init_suite()
+Date: Tue, 12 Nov 2024 16:03:14 +0800
+Message-ID: <20241112080314.407966-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0487b852-6e2b-4879-adf1-88ba75bdecc0@kernel.dk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-On Mon, Nov 11, 2024 at 06:27:46PM -0700, Jens Axboe wrote:
-> On 11/11/24 5:57 PM, Dave Chinner wrote:
-> > On Mon, Nov 11, 2024 at 04:37:37PM -0700, Jens Axboe wrote:
-> >> If RWF_UNCACHED is set for a write, mark new folios being written with
-> >> uncached. This is done by passing in the fact that it's an uncached write
-> >> through the folio pointer. We can only get there when IOCB_UNCACHED was
-> >> allowed, which can only happen if the file system opts in. Opting in means
-> >> they need to check for the LSB in the folio pointer to know if it's an
-> >> uncached write or not. If it is, then FGP_UNCACHED should be used if
-> >> creating new folios is necessary.
-> >>
-> >> Uncached writes will drop any folios they create upon writeback
-> >> completion, but leave folios that may exist in that range alone. Since
-> >> ->write_begin() doesn't currently take any flags, and to avoid needing
-> >> to change the callback kernel wide, use the foliop being passed in to
-> >> ->write_begin() to signal if this is an uncached write or not. File
-> >> systems can then use that to mark newly created folios as uncached.
-> >>
-> >> Add a helper, generic_uncached_write(), that generic_file_write_iter()
-> >> calls upon successful completion of an uncached write.
-> > 
-> > This doesn't implement an "uncached" write operation. This
-> > implements a cache write-through operation.
-> 
-> It's uncached in the sense that the range gets pruned on writeback
-> completion.
+In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
+kunit_suite_for_each_test_case() loop, the "suite->log = stream"
+has assigned before, and the error path only free the suite->log's stream
+memory but not set it to NULL, so the later string_stream_clear() of
+suite->log in kunit_init_suite() will cause below UAF bug.
 
-That's not the definition of "uncached". Direct IO is, by
-definition, "uncached" because it bypasses the cache and is not
-coherent with the contents of the cache.
+Set stream pointer to NULL after free to fix it.
 
-This IO, however, is moving the data coherently through the cache
-(both on read and write).  The cached folios are transient - i.e.
--temporarily resident- in the cache whilst the IO is in progress -
-but this behaviour does not make it "uncached IO".
+	Unable to handle kernel paging request at virtual address 006440150000030d
+	Mem abort info:
+	  ESR = 0x0000000096000004
+	  EC = 0x25: DABT (current EL), IL = 32 bits
+	  SET = 0, FnV = 0
+	  EA = 0, S1PTW = 0
+	  FSC = 0x04: level 0 translation fault
+	Data abort info:
+	  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+	  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+	  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+	[006440150000030d] address between user and kernel address ranges
+	Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+	Dumping ftrace buffer:
+	   (ftrace buffer empty)
+	Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
+	CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
+	Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
+	Hardware name: linux,dummy-virt (DT)
+	pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+	pc : string_stream_clear+0x54/0x1ac
+	lr : string_stream_clear+0x1a8/0x1ac
+	sp : ffffffc080b47410
+	x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
+	x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
+	x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
+	x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
+	x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
+	x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
+	x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
+	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
+	x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
+	x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
+	Call trace:
+	 string_stream_clear+0x54/0x1ac
+	 __kunit_test_suites_init+0x108/0x1d8
+	 kunit_exec_run_tests+0xb8/0x100
+	 kunit_module_notify+0x400/0x55c
+	 notifier_call_chain+0xfc/0x3b4
+	 blocking_notifier_call_chain+0x68/0x9c
+	 do_init_module+0x24c/0x5c8
+	 load_module+0x4acc/0x4e90
+	 init_module_from_file+0xd4/0x128
+	 idempotent_init_module+0x2d4/0x57c
+	 __arm64_sys_finit_module+0xac/0x100
+	 invoke_syscall+0x6c/0x258
+	 el0_svc_common.constprop.0+0x160/0x22c
+	 do_el0_svc+0x44/0x5c
+	 el0_svc+0x48/0xb8
+	 el0t_64_sync_handler+0x13c/0x158
+	 el0t_64_sync+0x190/0x194
+	Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
+	---[ end trace 0000000000000000 ]---
+	Kernel panic - not syncing: Oops: Fatal exception
 
-Calling it "uncached IO " is simply wrong from any direction I look
-at it....
+Cc: stable@vger.kernel.org
+Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
+Suggested-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+v2:
+- Correct the fix way.
+- Add Suggested-by.
+---
+ lib/kunit/debugfs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> For write-through, I'd consider that just the fact that it
-> gets kicked off once dirtied rather than wait for writeback to get
-> kicked at some point.
-> 
-> So I'd say write-through is a subset of that.
-
-I think the post-IO invalidation that these IOs do is largely
-irrelevant to how the page cache processes the write. Indeed,
-from userspace, the functionality in this patchset would be
-implemented like this:
-
-oneshot_data_write(fd, buf, len, off)
-{
-	/* write into page cache */
-	pwrite(fd, buf, len, off);
-
-	/* force the write through the page cache */
-	sync_file_range(fd, off, len, SYNC_FILE_RANGE_WRITE | SYNC_FILE_RANGE_WAIT_AFTER);
-
-	/* Invalidate the single use data in the cache now it is on disk */
-	posix_fadvise(fd, off, len, POSIX_FADV_DONTNEED);
-}
-
-Allowing the application to control writeback and invalidation
-granularity is a much more flexible solution to the problem here;
-when IO is sequential, delayed allocation will be allowed to ensure
-large contiguous extents are created and that will greatly reduce
-file fragmentation on XFS, btrfs, bcachefs and ext4. For random
-writes, it'll submit async IOs in batches...
-
-Given that io_uring already supports sync_file_range() and
-posix_fadvise(), I'm wondering why we need an new IO API to perform
-this specific write-through behaviour in a way that is less flexible
-than what applications can already implement through existing
-APIs....
-
-> > the same problems you are trying to work around in this series
-> > with "uncached" writes.
-> > 
-> > IOWS, what we really want is page cache write-through as an
-> > automatic feature for buffered writes.
-> 
-> I don't know who "we" is here - what I really want is for the write to
-> get kicked off, but also reclaimed as part of completion. I don't want
-> kswapd to do that, as it's inefficient.
-
-"we" as in the general cohort of filesystem and mm
-developers who interact closely with the page cache all the time.
-There was a fair bit of talk about writethrough and other
-transparent page cache IO path improvements at LSFMM this year.
-
-> > That also gives us a common place for adding cache write-through
-> > trigger logic (think writebehind trigger logic similar to readahead)
-> > and this is also a place where we could automatically tag mapping
-> > ranges for reclaim on writeback completion....
-> 
-> I appreciate that you seemingly like the concept, but not that you are
-> also seemingly trying to commandeer this to be something else. Unless
-> you like the automatic reclaiming as well, it's not clear to me.
-
-I'm not trying to commandeer anything.
-
-Having thought about it more, I think this new API is unneccesary
-for custom written applications to perform fine grained control of
-page cache residency of one-shot data. We already have APIs that
-allow applications to do exactly what this patchset is doing. rather
-than choosing to modify whatever benchmark being used to use
-existing APIs, a choice was made to modify both the applicaiton and
-the kernel to implement a whole new API....
-
-I think that was the -wrong choice-.
-
-I think this partially because the kernel modifications are don't
-really help further us towards the goal of transparent mode
-switching in the page cache.
-
-Read-through should be a mode that the readahead control activates,
-not be something triggered by a special read() syscall flag. We
-already have access patterns and fadvise modes guiding this.
-Write-through should be controlled in a similar way.
-
-And making the data being read and written behave as transient page
-caceh objects should be done via an existing fadvise mode, too,
-because the model you have implemented here exactly matches the 
-definition of FADV_NOREUSE:
-
-	POSIX_FADV_NOREUSE
-              The specified data will be accessed only once.
-
-Having a new per-IO flag that effectively collides existing
-control functionality into a single inflexible API bit doesn't
-really make a whole lot of sense to me.
-
-IOWs, I'm not questioning whether we need rw-through modes and/or
-IO-transient residency for page cache based IO - it's been on our
-radar for a while. I'm more concerned that the chosen API in this
-patchset is a poor one as it cannot replace any of the existing
-controls we already have for these sorts of application directed
-page cache manipulations...
-
--Dave.
+diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
+index d548750a325a..b25d214b93e1 100644
+--- a/lib/kunit/debugfs.c
++++ b/lib/kunit/debugfs.c
+@@ -212,8 +212,11 @@ void kunit_debugfs_create_suite(struct kunit_suite *suite)
+ 
+ err:
+ 	string_stream_destroy(suite->log);
+-	kunit_suite_for_each_test_case(suite, test_case)
++	suite->log = NULL;
++	kunit_suite_for_each_test_case(suite, test_case) {
+ 		string_stream_destroy(test_case->log);
++		test_case->log = NULL;
++	}
+ }
+ 
+ void kunit_debugfs_destroy_suite(struct kunit_suite *suite)
 -- 
-Dave Chinner
-david@fromorbit.com
+2.34.1
+
 
