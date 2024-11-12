@@ -1,255 +1,155 @@
-Return-Path: <linux-kernel+bounces-405226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F118B9C4ECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:36:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1023C9C4ECE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B2051F24867
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:36:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62158B21404
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AE6209664;
-	Tue, 12 Nov 2024 06:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED5620A5C6;
+	Tue, 12 Nov 2024 06:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUnVR+oO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E5318BBA2;
-	Tue, 12 Nov 2024 06:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D805234;
+	Tue, 12 Nov 2024 06:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731393362; cv=none; b=fOlF9rWzinmEa4pBMir9oQDqM2aM0yymyKcD9I83DFkGpPbhEZ/fBW2sBE3tu67NdaZwPBQc5wf2U0lfzAYe05qYYFecDlWV6UjziSe01Qsno4FqyTf7n5AR9uwT5unf+IsD57Y7G5VEUIMFnKfhi6kHFfLNYvnDtzbgZYtx+V0=
+	t=1731393376; cv=none; b=uZNAzfT7CGxNiSonOLfoUQrBQD8Ser99EoHtaAwzW36LXikAqUp8HgbIcVGp13xVPcKwmqBbpjiKE87QxBoMjcaHf4E5vRSEzwQHdYpRx8pf4f9AHRKm9MJRUfpURAh2YdWiqzfImmKpwHTvq0WJIAz7m3TPIbfebv8hg1vnXy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731393362; c=relaxed/simple;
-	bh=+Lb/mifrNg/smRm/Odip625EHRUZkjx9ViFBn6wuARY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nGma80tCl/WiAlMf5KmQZI1EMXfD9NfUvd+7IXdA2RFmEEOsu6k6zVKFgrcfZO7j00yVaKnRHaZ946pUyXULcU1vI26xGs67qLNrNIIXHwpDCFnSs3B9QxPLDib7aiWibThw9T1ubcGc6YyKhWiN5LULspKIkZC8Dmuvwy5z++w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 025FEC4CECD;
-	Tue, 12 Nov 2024 06:35:58 +0000 (UTC)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	Xuefeng Li <lixuefeng@loongson.cn>,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	s=arc-20240116; t=1731393376; c=relaxed/simple;
+	bh=Kx/2YcZVw5+1nJRqzUIuKgPpESgjehNlV9sTwiNF6JA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NlC22TpsQllivod6FAM9kBlgpJhgTK01XOZBOFqlAinZOa93GZTIuGOBqkwByyxlVVJzR3XBaiof+m/QjqMGTlH4nNSOSHxVIO/zW+byb7GLwDD86jqlh4j4B/zmoLOYWC5XNzYIQyXpVll+R02RZC1aEZF2KZmIRG43lzcI7hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUnVR+oO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C3A5C4CECD;
+	Tue, 12 Nov 2024 06:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731393375;
+	bh=Kx/2YcZVw5+1nJRqzUIuKgPpESgjehNlV9sTwiNF6JA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qUnVR+oOFJH8wpxQGXof2oMeLxjYDgxwYUPZGdkB+pofFLVtj7JjD1xGjQdOMy43x
+	 DJ8jNt9gB92lH+JtPPV+EM7m4/E4ApVV1rMGJ3ZcWM77mSyzdqVowiKTRQYGKE8RCz
+	 SX8GWxzhyDd2LgVivexQeIOeH4LiLCdbUGHKFMCMD0Vz46/4Q+wopq0pG+JELJf9/J
+	 +yIIHDQaR8km5NkICjN6UA2wipUaJQ64tNz0H2QQ8w6+rlrHRm40EdrDxmlRoCETr5
+	 7RMdmquAu7kEjzDKG/BO0yOdYd5KEl1F+Wr9jrXmzdq7pXp8jzi64n0rADA97p+2qc
+	 +5U1d3zHwPKpA==
+Date: Tue, 12 Nov 2024 08:36:08 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
 	linux-kernel@vger.kernel.org,
-	loongson-kernel@lists.loongnix.cn,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>
-Subject: [PATCH] LoongArch: For all possible CPUs setup logical-physical CPU mapping
-Date: Tue, 12 Nov 2024 14:35:40 +0800
-Message-ID: <20241112063540.1135079-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
+	=?iso-8859-1?Q?netdev=40vger=2Ekernel=2Eorg_Thomas_Wei=DFschuh?= <linux@weissschuh.net>
+Subject: Re: [PATCH v1 1/2] PCI/sysfs: Change read permissions for VPD
+ attributes
+Message-ID: <20241112063608.GF71181@unreal>
+References: <20241111211738.GD71181@unreal>
+ <20241111214804.GA1820183@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111214804.GA1820183@bhelgaas>
 
-In order to support ACPI-based physical CPU hotplug, we suppose for all
-"possible" CPUs cpu_logical_map() can work. Because some drivers want to
-use cpu_logical_map() for all "possible" CPUs, while currently we only
-setup logical-physical mapping for "present" CPUs. This lack of mapping
-also causes cpu_to_node() cannot work for hot-added CPUs.
+On Mon, Nov 11, 2024 at 03:48:04PM -0600, Bjorn Helgaas wrote:
+> [+cc Thomas]
+> 
+> On Mon, Nov 11, 2024 at 11:17:38PM +0200, Leon Romanovsky wrote:
+> > On Mon, Nov 11, 2024 at 02:41:04PM -0600, Bjorn Helgaas wrote:
+> > > On Thu, Nov 07, 2024 at 08:56:56PM +0200, Leon Romanovsky wrote:
+> > > > From: Leon Romanovsky <leonro@nvidia.com>
+> > > > 
+> > > > The Vital Product Data (VPD) attribute is not readable by regular
+> > > > user without root permissions. Such restriction is not really needed
+> > > > for many devices in the world, as data presented in that VPD is not
+> > > > sensitive and access to the HW is safe and tested.
+> > > > 
+> > > > This change aligns the permissions of the VPD attribute to be accessible
+> > > > for read by all users, while write being restricted to root only.
+> > > > 
+> > > > For the driver, there is a need to opt-in in order to allow this
+> > > > functionality.
+> > > 
+> > > I don't think the use case is very strong (and not included at all
+> > > here).
+> > 
+> > I will add the use case, which is running monitoring application without
+> > need to be root. IMHO reducing number of applications that require
+> > privileged access is a very strong case. I personally try to avoid
+> > applications with root/setuid privileges.
+> 
+> Avoiding root/setuid is a very good thing.  I just don't think using
+> VPD directly from userspace is a great idea because VPD is so slow and
+> sometimes unreliable to read.
 
-All "possible" CPUs are listed in MADT, and the "present" subset is
-marked as ACPI_MADT_ENABLED. To setup logical-physical CPU mapping for
-all possible CPUs and keep present CPUs continuous in cpu_present_mask,
-we parse MADT twice. The first pass handles CPUs with ACPI_MADT_ENABLED
-and the second pass handles CPUs without ACPI_MADT_ENABLED.
+This is one time operation during application initialization, which is
+fast in our devices. It is used by the NVML https://developer.nvidia.com/management-library-nvml.
 
-The global flag (cpu_enumerated) is removed because acpi_map_cpu() calls
-cpu_number_map() rather than set_processor_mask() now.
+> And apparently this is a pretty unusual situation since I haven't heard
+> similar requests for other devices.
 
-Reported-by: Bibo Mao <maobibo@loongson.cn>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/kernel/acpi.c | 81 +++++++++++++++++++++++-------------
- arch/loongarch/kernel/smp.c  |  3 +-
- 2 files changed, 55 insertions(+), 29 deletions(-)
+Maybe they didn't bother to ask.
 
-diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
-index f1a74b80f22c..382a09a7152c 100644
---- a/arch/loongarch/kernel/acpi.c
-+++ b/arch/loongarch/kernel/acpi.c
-@@ -58,48 +58,48 @@ void __iomem *acpi_os_ioremap(acpi_physical_address phys, acpi_size size)
- 		return ioremap_cache(phys, size);
- }
- 
--static int cpu_enumerated = 0;
--
- #ifdef CONFIG_SMP
--static int set_processor_mask(u32 id, u32 flags)
-+static int set_processor_mask(u32 id, u32 pass)
- {
--	int nr_cpus;
--	int cpu, cpuid = id;
--
--	if (!cpu_enumerated)
--		nr_cpus = NR_CPUS;
--	else
--		nr_cpus = nr_cpu_ids;
-+	int cpu = -1, cpuid = id;
- 
--	if (num_processors >= nr_cpus) {
-+	if (num_processors >= NR_CPUS) {
- 		pr_warn(PREFIX "nr_cpus limit of %i reached."
--			" processor 0x%x ignored.\n", nr_cpus, cpuid);
-+			" processor 0x%x ignored.\n", NR_CPUS, cpuid);
- 
- 		return -ENODEV;
- 
- 	}
-+
- 	if (cpuid == loongson_sysconf.boot_cpu_id)
- 		cpu = 0;
--	else
--		cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
--
--	if (!cpu_enumerated)
--		set_cpu_possible(cpu, true);
- 
--	if (flags & ACPI_MADT_ENABLED) {
-+	switch (pass) {
-+	case 1: /* Pass 1 handle enabled processors */
-+		if (cpu < 0)
-+			cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
- 		num_processors++;
- 		set_cpu_present(cpu, true);
--		__cpu_number_map[cpuid] = cpu;
--		__cpu_logical_map[cpu] = cpuid;
--	} else
-+		break;
-+	case 2: /* Pass 2 handle disabled processors */
-+		if (cpu < 0)
-+			cpu = find_first_zero_bit(cpumask_bits(cpu_possible_mask), NR_CPUS);
- 		disabled_cpus++;
-+		break;
-+	default:
-+		return cpu;
-+	}
-+
-+	set_cpu_possible(cpu, true);
-+	__cpu_number_map[cpuid] = cpu;
-+	__cpu_logical_map[cpu] = cpuid;
- 
- 	return cpu;
- }
- #endif
- 
- static int __init
--acpi_parse_processor(union acpi_subtable_headers *header, const unsigned long end)
-+acpi_parse_p1_processor(union acpi_subtable_headers *header, const unsigned long end)
- {
- 	struct acpi_madt_core_pic *processor = NULL;
- 
-@@ -110,12 +110,29 @@ acpi_parse_processor(union acpi_subtable_headers *header, const unsigned long en
- 	acpi_table_print_madt_entry(&header->common);
- #ifdef CONFIG_SMP
- 	acpi_core_pic[processor->core_id] = *processor;
--	set_processor_mask(processor->core_id, processor->flags);
-+	if (processor->flags & ACPI_MADT_ENABLED)
-+		set_processor_mask(processor->core_id, 1);
- #endif
- 
- 	return 0;
- }
- 
-+static int __init
-+acpi_parse_p2_processor(union acpi_subtable_headers *header, const unsigned long end)
-+{
-+	struct acpi_madt_core_pic *processor = NULL;
-+
-+	processor = (struct acpi_madt_core_pic *)header;
-+	if (BAD_MADT_ENTRY(processor, end))
-+		return -EINVAL;
-+
-+#ifdef CONFIG_SMP
-+	if (!(processor->flags & ACPI_MADT_ENABLED))
-+		set_processor_mask(processor->core_id, 2);
-+#endif
-+
-+	return 0;
-+}
- static int __init
- acpi_parse_eio_master(union acpi_subtable_headers *header, const unsigned long end)
- {
-@@ -143,12 +160,14 @@ static void __init acpi_process_madt(void)
- 	}
- #endif
- 	acpi_table_parse_madt(ACPI_MADT_TYPE_CORE_PIC,
--			acpi_parse_processor, MAX_CORE_PIC);
-+			acpi_parse_p1_processor, MAX_CORE_PIC);
-+
-+	acpi_table_parse_madt(ACPI_MADT_TYPE_CORE_PIC,
-+			acpi_parse_p2_processor, MAX_CORE_PIC);
- 
- 	acpi_table_parse_madt(ACPI_MADT_TYPE_EIO_PIC,
- 			acpi_parse_eio_master, MAX_IO_PICS);
- 
--	cpu_enumerated = 1;
- 	loongson_sysconf.nr_cpus = num_processors;
- }
- 
-@@ -310,6 +329,10 @@ static int __ref acpi_map_cpu2node(acpi_handle handle, int cpu, int physid)
- 	int nid;
- 
- 	nid = acpi_get_node(handle);
-+
-+	if (nid != NUMA_NO_NODE)
-+		nid = early_cpu_to_node(cpu);
-+
- 	if (nid != NUMA_NO_NODE) {
- 		set_cpuid_to_node(physid, nid);
- 		node_set(nid, numa_nodes_parsed);
-@@ -324,12 +347,14 @@ int acpi_map_cpu(acpi_handle handle, phys_cpuid_t physid, u32 acpi_id, int *pcpu
- {
- 	int cpu;
- 
--	cpu = set_processor_mask(physid, ACPI_MADT_ENABLED);
--	if (cpu < 0) {
-+	cpu = cpu_number_map(physid);
-+	if (cpu < 0 || cpu >= nr_cpu_ids) {
- 		pr_info(PREFIX "Unable to map lapic to logical cpu number\n");
--		return cpu;
-+		return -ERANGE;
- 	}
- 
-+	num_processors++;
-+	set_cpu_present(cpu, true);
- 	acpi_map_cpu2node(handle, cpu, physid);
- 
- 	*pcpu = cpu;
-diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
-index 9afc2d8b3414..c0b498467ffa 100644
---- a/arch/loongarch/kernel/smp.c
-+++ b/arch/loongarch/kernel/smp.c
-@@ -331,11 +331,11 @@ void __init loongson_prepare_cpus(unsigned int max_cpus)
- 	int i = 0;
- 
- 	parse_acpi_topology();
-+	cpu_data[0].global_id = cpu_logical_map(0);
- 
- 	for (i = 0; i < loongson_sysconf.nr_cpus; i++) {
- 		set_cpu_present(i, true);
- 		csr_mail_send(0, __cpu_logical_map[i], 0);
--		cpu_data[i].global_id = __cpu_logical_map[i];
- 	}
- 
- 	per_cpu(cpu_state, smp_processor_id()) = CPU_ONLINE;
-@@ -380,6 +380,7 @@ void loongson_init_secondary(void)
- 		     cpu_logical_map(cpu) / loongson_sysconf.cores_per_package;
- 	cpu_data[cpu].core = pptt_enabled ? cpu_data[cpu].core :
- 		     cpu_logical_map(cpu) % loongson_sysconf.cores_per_package;
-+	cpu_data[cpu].global_id = cpu_logical_map(cpu);
- }
- 
- void loongson_smp_finish(void)
--- 
-2.43.5
+> 
+> Sort of ironic that some vendors, especially Intel and AMD, add new
+> Device IDs for devices that work exactly the same as their
+> predecessors, so we are continually adding to the pci_device_id
+> tables, while here we apparently the same Device ID is used for
+> devices that differ in ways we actually want to know about.
 
+I'm not Intel or AMD employee and never worked there, but from what I
+heard it is not technical decision but outcome of how their development
+process is structured.
+
+> 
+> > > If we do need to do this, I think it's a property of the device, not
+> > > the driver.
+> > 
+> > But how will device inform PCI core about safe VPD read?
+> > Should I add new field to struct pci_device_id? Add a quirk?
+> > Otherwise, I will need to add a line "pci_dev->downgrade_vpd_read=true"
+> > to mlx5 probe function and it won't change a lot from current
+> > implementation.
+> 
+> To me it looks like a pci_dev bit, not a pci_driver bit.
+> 
+> I would set it .probe() so all the code is in one place.  And it's not
+> related to a device defect, as most quirks are.
+
+The advantage of quirks is that we will be able to set proper file
+permissions from the beginning without need to load/bind driver.
+
+As Thomas suggested, the vpd_attr_is_visible() will be something
+like this, which is neat:
+
+if (pdev->downgrade_vpd_read)
+	return 644;
+else
+	return 600;
+
+Thanks
+
+> 
+> Bjorn
+> 
 
