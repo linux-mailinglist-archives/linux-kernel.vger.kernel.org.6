@@ -1,203 +1,166 @@
-Return-Path: <linux-kernel+bounces-405773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C159C56D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:43:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49CC39C56DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:44:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6024B2838CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:43:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23EF4284230
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9872309BA;
-	Tue, 12 Nov 2024 11:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ECE2309A3;
+	Tue, 12 Nov 2024 11:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bxdfcXMT"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cx6HBuuw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81E7230998;
-	Tue, 12 Nov 2024 11:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44066230999
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731411789; cv=none; b=RlEPEIHGzgncu0/8065j/+bhBWwbFAE4zwM7DTwoVorwpHkRi1UhPi5xSMXMffv4sHjVG8eWFdhktn8XiFv9bNggBEgz6AL/TX/zy61lRHCROXmWu58nJ2L9cVo74p5VZA3ebwMUvHgWCHRhhn9RO2R4z4r7q+2r2d/Nq2D9I6w=
+	t=1731411830; cv=none; b=Gym+YPTebsEIQwHPxFmoN5QjW8u6U3/wCy4RMx9DXK7dXgOhIEZ3q/CBWhqjb/xZL1mcsnsZRC5n3eSPrd5i1Dx0PFlK6DSuMeWnYCyFxeDKPmOFkIETquyPxCSU8pnGnicQJm5O0AB6XwGUCodsV/W/zPwH9g2gw+KyUv5xKRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731411789; c=relaxed/simple;
-	bh=ywmrmwU61cquYWqHb3soWy5KtfML++9SbcjwKY7ZNaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hzBMPidEcp5xrNAYUFZvCCZ6nuWkavyqpWDgXxlhOwoI/FZgFNxpEdHb9t2TdEkZYQIZGp7rG7tzDK+69p3+3yyMFVsjVkGRpj2Q0ESte5PqRaMQtba2pLih9O4u3j5IMxeyQG+xtV1HodvdQcEeWP34kg+E1PDLpx+Mwh4gGYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bxdfcXMT; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2a96b242cso66009a91.3;
-        Tue, 12 Nov 2024 03:43:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731411787; x=1732016587; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j0z23DhUHW7wNW00l4MV+YrP9iRE6XDYN76aiQ5G0Vc=;
-        b=bxdfcXMTMML0HDa+Fl3n1UlOKn2FOyA2a5ecccu2xTbhPPKR/zxPuxLwb15Imix97k
-         iRms+RY/Z4s/sCg9oCCHvfaqXNeoVcvhQArgXxfKoJ9HUWD720Tr2c1fsz0brli4szqQ
-         ZqqupYXHCDjpqI1GjFttUD3Nl7JXzD/ZyUUwA4WrxcSHuKos7aRsc7TDlUT5TdlFVn6z
-         Sp+5jiFI3BJ7JWvC9tDtKolxbkSo5KgTrC7Q2mMYFO37BLskW+IykNV+jOUmNUGPGh1R
-         W/BMKVIpGBqADdGa+NxBpolWri0k+si5H1/AXS7H969MoFHrZ1ycNa9E9yiWqXshX6c/
-         d3qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731411787; x=1732016587;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j0z23DhUHW7wNW00l4MV+YrP9iRE6XDYN76aiQ5G0Vc=;
-        b=QBzFogRaJGHtAHhJiVK1fIWGA3YnWlGKzHay1BAeTSNgU7zPuZEZXTdB5qvWhCDdXj
-         qzgTFn0LsDAX0t/wioMzkHvO+hlHfoFMMpTGsCiiPB5uWQFmaizM47cQQ4BOYbEHUUdx
-         aQB8aEYTaQCxI5H0KmSXMBELqqKFTexYZhnh9L7s0pRWd44Edq/nHwfetTpvfORZr4OS
-         u+eibAdUOsULpo0W6foyQ5DqoItpE4GJcd9oj1DvC1oeEEL5grvzEH0gFStdAO7HQ3Jv
-         T4LOm9/ZVhtcybrb5s2LXwtQHcvOei0aAxcKSDqULFcL+xjz+D6M/rWj6AJPzdV5VLPg
-         Sx1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUIlZ3+ud+unARJlxZWUMG87WCzLzA5PCuG0tYtj5lJAg+2oKKC43N5/Y/Jzoi3+e4vuh41iYtBWuKuGHkejCQ=@vger.kernel.org, AJvYcCVLRn8qxdkf6hqUGc+Jf/HXtmxVNEDoD9wXuiAjr9Q/q6ad1NulQNkg9LElGuSMuwSRnsOS0jN8MTJ1ms0=@vger.kernel.org, AJvYcCWhgWjBbiQmmhqXD2roEyWTerr5KOK2tkTxvUfT0ZEqA9VlaneeFlLhs7/iz+GxrDKjaZikWRaJ0dp9WNxR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9Ix8NhwQCD+wXipMgACiyCjz9Am2IYP4xV0GkGbMnri2rB+t6
-	jOHhKkQhuEG01KGgDAE1Ln1lvPQ9vdsetImVzQYlYJ6uCExhDejgsk6bKUP4ZZ2lv9WDjsjTuUI
-	v/CP/JwUzR+7n9VBE1kLdEacoiRk=
-X-Google-Smtp-Source: AGHT+IGggizb3kL12ZjnHA+9BEc8hjb63HpYjen5xTTmWs+MKPFBZ8CYn9vyQuK8cPPVTowrwyuTF+2y5HhglUBEUAA=
-X-Received: by 2002:a17:90b:3ec5:b0:2e2:ada8:2984 with SMTP id
- 98e67ed59e1d1-2e9b174818dmr8920433a91.4.1731411787013; Tue, 12 Nov 2024
- 03:43:07 -0800 (PST)
+	s=arc-20240116; t=1731411830; c=relaxed/simple;
+	bh=PO4EqrQG8RsV0jjl15L5FZ6DGDHaLJ4T2Tt9UahcMr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NRNzqEZT8CXUiK2rUP3W4fVAzFe2uw1oH4J4xDDUIEPhYWp7vfyjHHRN1XvP5JUhuMDMm3HClfQFfuSHNbr4og1fIo1dH2Co57uAFFGC+ropju8yuXbn1gEfO6WOfRWi5gUbWkDf7fYSXPismMCzCCvWlI+jE8nhraEMCB++mv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cx6HBuuw; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731411829; x=1762947829;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PO4EqrQG8RsV0jjl15L5FZ6DGDHaLJ4T2Tt9UahcMr0=;
+  b=Cx6HBuuwMUsw8Kz+tPnCB7/mG6jevxWYcrv3paxRQJ/BMtSKJOq5IQlN
+   fsZ6FyrgDZ0wL29d59a1ZeZ6LXQSYqZmCm2ds4YKvI71ifDYzHCXymzsF
+   HgEMEfeKXAIXX5m0+ziSp6Y7W0OcV7x8s8UjwdMb7YNJ8qQjiB5F0YzvN
+   KoN021rpMYOLgVb2dD40e6FC06IMY7aC1mottSoxcUeFC9t6DYAJxgCTk
+   VylMxVuCM6pNGfmfmF7Ygq6LwoFypQCisxkcNWIWwzMTQLgTaFGHryPQS
+   hqDO2/Hii91JitwSVIgM2EjPKSkjhw3ojgOF9GukokMCwbCMh3x9ypiuU
+   Q==;
+X-CSE-ConnectionGUID: 2KVENqOjSyytxx3/TGmnaQ==
+X-CSE-MsgGUID: j9pbgaNfR2iks2nL3vdfhw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="34943595"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="34943595"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 03:43:48 -0800
+X-CSE-ConnectionGUID: JRXgTNxdSRqQi1bW9R5BFg==
+X-CSE-MsgGUID: 93AprrR1TuSu8jYshNm7mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="110705762"
+Received: from lkp-server01.sh.intel.com (HELO bcfed0da017c) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 12 Nov 2024 03:43:45 -0800
+Received: from kbuild by bcfed0da017c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tApJ8-0001Ev-1f;
+	Tue, 12 Nov 2024 11:43:42 +0000
+Date: Tue, 12 Nov 2024 19:42:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chunhai Guo <guochunhai@vivo.com>, xiang@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, chao@kernel.org,
+	huyue2@coolpad.com, jefflexu@linux.alibaba.com, dhavale@google.com,
+	linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	Chunhai Guo <guochunhai@vivo.com>
+Subject: Re: [PATCH] erofs: clean up the cache if cached decompression is
+ disabled
+Message-ID: <202411121928.BzWJRXSl-lkp@intel.com>
+References: <20241112031513.528474-1-guochunhai@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111201607.653149-1-ojeda@kernel.org>
-In-Reply-To: <20241111201607.653149-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 12 Nov 2024 12:42:55 +0100
-Message-ID: <CANiq72mUu9V0tAFRYju5=B9-EZ9hbPVMabKJvHm67n7BgSVQXw@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: warn on bindgen < 0.69.5 and libclang >= 19.1
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, Ben Beasley <code@musicinmybrain.net>, 
-	NoisyCoil <noisycoil@tutanota.com>, Matthias Geiger <werdahias@riseup.net>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112031513.528474-1-guochunhai@vivo.com>
 
-On Mon, Nov 11, 2024 at 9:16=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> When testing a `clang` upgrade with Rust Binder, Alice encountered [1] a
-> build failure caused by `bindgen` not translating some symbols related to
-> tracepoints. This was caused by commit 2e770edd8ce1 ("[libclang] Compute
-> the right spelling location") changing the behavior of a function exposed
-> by `libclang`. `bindgen` fixed the regression in commit 600f63895f73
-> ("Use clang_getFileLocation instead of clang_getSpellingLocation").
->
-> However, the regression fix is only available in `bindgen` versions
-> 0.69.5 or later (it was backported for 0.69.x). This means that when
-> older bindgen versions are used with new versions of `libclang`, `bindgen=
-`
-> may do the wrong thing, which could lead to a build failure.
->
-> Alice encountered the bug with some header files related to tracepoints,
-> but it could also cause build failures in other circumstances. Thus,
-> always emit a warning when using an old `bindgen` with a new `libclang`
-> so that other people do not have to spend time chasing down the same
-> bug.
->
-> However, testing just the version is inconvenient, since distributions
-> do patch their packages without changing the version, so I reduced the
-> issue into the following piece of code that can trigger the issue:
->
->     #define F(x) int x##x
->     F(foo);
->
-> In particular, an unpatched `bindgen` will ignore the macro expansion
-> and thus not provide a declaration for the exported `int`.
->
-> Thus add a build test to `rust_is_available.sh` using the code above
-> (that is only triggered if the versions appear to be affected), following
-> what we did for the 0.66.x issue.
->
-> Moreover, I checked the status in the major distributions we have
-> instructions for:
->
->   - Fedora 41 was affected but is now OK, since it now ships `bindgen`
->     0.69.5.
->
->     Thanks Ben for the quick reply on the updates that were ongoing.
->
->     Fedora 40 and earlier are OK (older `libclang`, and they also now
->     carry `bindgen` 0.69.5).
->
->   - Debian Sid was affected but is now OK, since they now ship a patched
->     `bindgen` binary (0.66.1-7+b3). The issue was reported to Debian by
->     email and then as a bug report [2].
->
->     Thanks NoisyCoil and Matthias for the quick replies. NoisyCoil handle=
-d
->     the needed updates. Debian may upgrade to `bindgen` 0.70.x, too.
->
->     Debian Testing is OK (older `libclang` so far).
->
->   - Ubuntu non-LTS (oracular) is affected. The issue was reported to Ubun=
-tu
->     by email and then as a bug report [3].
->
->     Ubuntu LTS is not affected (older `libclang` so far).
->
->   - Arch Linux, Gentoo Linux and openSUSE should be OK (newer `bindgen` i=
-s
->     provided). Nix as well (older `libclang` so far).
->
-> This issue was also added to our "live list" that tracks issues around
-> distributions [4].
->
-> Cc: Ben Beasley <code@musicinmybrain.net>
-> Cc: NoisyCoil <noisycoil@tutanota.com>
-> Cc: Matthias Geiger <werdahias@riseup.net>
-> Link: https://lore.kernel.org/rust-for-linux/20241030-bindgen-libclang-wa=
-rn-v1-1-3a7ba9fedcfe@google.com/ [1]
-> Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D1086510 [2]
-> Link: https://bugs.launchpad.net/ubuntu/+source/rust-bindgen-cli/+bug/208=
-6639 [3]
-> Link: https://github.com/Rust-for-Linux/linux/issues/1127 [4]
-> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
-> We would like to put this into the merge window, or ideally very soon aft=
-er as a
-> "fix" (it is not really a fix, but it is very convenient for people wonde=
-ring
-> why their toolchain may not work, especially if tracepoints land in the m=
-erge
-> window as expected).
->
-> v2 (based on Alice's v1):
->   - Fixed libclang version number (we use a different `get_canonical_vers=
-ion`
->     that returns one more digit).
->   - Added build test -- now we can detect binaries like Debian's that are
->     patched but do not change the version number.
->   - Added tests.
->   - Explained the current status of the distributions in the commit messa=
-ge.
+Hi Chunhai,
 
-Cc'ing Kbuild too, so that they are aware, just in case -- sorry, I
-should have done that in the patch itself yesterday:
+kernel test robot noticed the following build errors:
 
-    https://lore.kernel.org/rust-for-linux/20241111201607.653149-1-ojeda@ke=
-rnel.org/
+[auto build test ERROR on xiang-erofs/dev-test]
+[also build test ERROR on xiang-erofs/dev xiang-erofs/fixes linus/master v6.12-rc7 next-20241112]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Cheers,
-Miguel
+url:    https://github.com/intel-lab-lkp/linux/commits/Chunhai-Guo/erofs-clean-up-the-cache-if-cached-decompression-is-disabled/20241112-105927
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
+patch link:    https://lore.kernel.org/r/20241112031513.528474-1-guochunhai%40vivo.com
+patch subject: [PATCH] erofs: clean up the cache if cached decompression is disabled
+config: x86_64-randconfig-004-20241112 (https://download.01.org/0day-ci/archive/20241112/202411121928.BzWJRXSl-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241112/202411121928.BzWJRXSl-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411121928.BzWJRXSl-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from fs/erofs/super.c:10:
+   In file included from include/linux/fs_context.h:14:
+   In file included from include/linux/security.h:33:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> fs/erofs/super.c:749:20: error: no member named 'umount_mutex' in 'struct erofs_sb_info'
+     749 |                 mutex_lock(&sbi->umount_mutex);
+         |                             ~~~  ^
+   include/linux/mutex.h:166:44: note: expanded from macro 'mutex_lock'
+     166 | #define mutex_lock(lock) mutex_lock_nested(lock, 0)
+         |                                            ^~~~
+>> fs/erofs/super.c:750:3: error: call to undeclared function 'z_erofs_shrink_scan'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     750 |                 z_erofs_shrink_scan(sbi, ~0UL);
+         |                 ^
+   fs/erofs/super.c:751:22: error: no member named 'umount_mutex' in 'struct erofs_sb_info'
+     751 |                 mutex_unlock(&sbi->umount_mutex);
+         |                               ~~~  ^
+   1 warning and 3 errors generated.
+
+
+vim +749 fs/erofs/super.c
+
+   731	
+   732	static int erofs_fc_reconfigure(struct fs_context *fc)
+   733	{
+   734		struct super_block *sb = fc->root->d_sb;
+   735		struct erofs_sb_info *sbi = EROFS_SB(sb);
+   736		struct erofs_sb_info *new_sbi = fc->s_fs_info;
+   737	
+   738		DBG_BUGON(!sb_rdonly(sb));
+   739	
+   740		if (new_sbi->fsid || new_sbi->domain_id)
+   741			erofs_info(sb, "ignoring reconfiguration for fsid|domain_id.");
+   742	
+   743		if (test_opt(&new_sbi->opt, POSIX_ACL))
+   744			fc->sb_flags |= SB_POSIXACL;
+   745		else
+   746			fc->sb_flags &= ~SB_POSIXACL;
+   747	
+   748		if (new_sbi->opt.cache_strategy == EROFS_ZIP_CACHE_DISABLED) {
+ > 749			mutex_lock(&sbi->umount_mutex);
+ > 750			z_erofs_shrink_scan(sbi, ~0UL);
+   751			mutex_unlock(&sbi->umount_mutex);
+   752		}
+   753		sbi->opt = new_sbi->opt;
+   754	
+   755		fc->sb_flags |= SB_RDONLY;
+   756		return 0;
+   757	}
+   758	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
