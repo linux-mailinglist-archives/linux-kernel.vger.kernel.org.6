@@ -1,238 +1,113 @@
-Return-Path: <linux-kernel+bounces-405361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6A79C5054
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:11:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8525A9C505A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:14:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD1328235B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:11:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7221B20D61
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8757E20ADED;
-	Tue, 12 Nov 2024 08:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4C920ADCA;
+	Tue, 12 Nov 2024 08:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yRpysj0F";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Js1GNAuR";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yRpysj0F";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Js1GNAuR"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZYBz3KtF"
+Received: from mail-lf1-f65.google.com (mail-lf1-f65.google.com [209.85.167.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188BF154456;
-	Tue, 12 Nov 2024 08:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6E820A5E2
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731399095; cv=none; b=XkXvmjUQ9VbKTogu+iBQ2ykj30q6sTIBNiXSlv2Kf4q05DeGHB6x8GjIDYlrOQLh5EIAgBnacvXimwjQD7bnxN/Nk4mrI9PSv4+WzL2DKgH0dz88wH1/BQD2t3rSxV20vhIhBcFE8FMlhaEKE0gsL+X30Mp72st+dnBB0vOjeBs=
+	t=1731399282; cv=none; b=HwhAJ4iv5q12/moLI6xnWe7ESC+Qntdv40NNMTYapq3QpF/J4aETVVpZRPCNloRsOwY+k5y8PxEPMYMZkcaCI18b7QD+q3h1D+IGTx6iptwM3pYR03/xq9O8+4IzeUntsWOemfoTi0YDTn7TeOJtt4USfSbNurKU653wCM7dnjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731399095; c=relaxed/simple;
-	bh=OWvnyr0ioE4YWIB27E9Mqc4qTOqTNZ0hUmgZF0RdJTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pHeqpNfi8QUhT6bilCWzCf3tBnxRPTrl9TOlhitsvg7BslbUvmoy1qFw9zYmtLXYcpIeDs4rpfedVs0TFUzGbKd4ERyoNILIEyHXyC9Er+U2yRHLLeIzpw5SmVZboAK/4ru0JHCAIR1cuKgwKg/wRhLqKU30WxRhSbrYTIAzfjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yRpysj0F; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Js1GNAuR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yRpysj0F; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Js1GNAuR; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4CE782174B;
-	Tue, 12 Nov 2024 08:11:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731399092; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qr5OChPFncC56wHPH9cbmD5GS1I+pLfMZgzb0/4DL24=;
-	b=yRpysj0F8P8dtV9fVwKhx0VRam6njoHsDBHToVO5D7zVTns5frOLhLhWx9VZe6MQxnfuSX
-	z9Wom3NYBhfD8VmY4+wYChySBW0UGuON1w2850C+yYFE1SrCdKgSrvupzQ6d/dvD9bBmc1
-	AV8PD5rDJV2EA3Yk/APLYtO5bz5BKK4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731399092;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qr5OChPFncC56wHPH9cbmD5GS1I+pLfMZgzb0/4DL24=;
-	b=Js1GNAuREBPIZsseJTRHfPUY0TQdMj/Tsr6SlRHN/yWRL8OFZunGJXfdHfHJ30YjGv0GpI
-	6vB18EFS9huz3pCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731399092; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qr5OChPFncC56wHPH9cbmD5GS1I+pLfMZgzb0/4DL24=;
-	b=yRpysj0F8P8dtV9fVwKhx0VRam6njoHsDBHToVO5D7zVTns5frOLhLhWx9VZe6MQxnfuSX
-	z9Wom3NYBhfD8VmY4+wYChySBW0UGuON1w2850C+yYFE1SrCdKgSrvupzQ6d/dvD9bBmc1
-	AV8PD5rDJV2EA3Yk/APLYtO5bz5BKK4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731399092;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qr5OChPFncC56wHPH9cbmD5GS1I+pLfMZgzb0/4DL24=;
-	b=Js1GNAuREBPIZsseJTRHfPUY0TQdMj/Tsr6SlRHN/yWRL8OFZunGJXfdHfHJ30YjGv0GpI
-	6vB18EFS9huz3pCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1E41B13721;
-	Tue, 12 Nov 2024 08:11:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4tMcBrQNM2cEBAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 12 Nov 2024 08:11:32 +0000
-Message-ID: <832483d5-db64-4195-a86c-028eff033fbe@suse.de>
-Date: Tue, 12 Nov 2024 09:11:31 +0100
+	s=arc-20240116; t=1731399282; c=relaxed/simple;
+	bh=p+PLXWjKhpjZKwcc5evOVsR4vXrIBGkinCO2LXr8fB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQAInvRUwuLOSb1cnsVjTns8MHCfYl3FGfk7rSJpd5ZaFX74LlfI6GjFUUCE89JFLvLGfBPpx4KubLqBcWIYnMT7mX5KPGvu4e+kWE0gUXtGWnnjkm+csfe6SpF8+aOWRAyx9VH6LsMkNmkr63GG2V5MvWA7nkAHLHaSngiGPCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZYBz3KtF; arc=none smtp.client-ip=209.85.167.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f65.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so5942079e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:14:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731399278; x=1732004078; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sw10TBbxuvf4HDg6HLVPzeEukqtfWyQvuwOwH1nNUuY=;
+        b=ZYBz3KtF0eHFm5jLH2pRcwW/0+iDcTKP4+3MQ2WFAFgAFmv5m4YCikSb8t/iMGALQB
+         7rZ2nnKoIVROKd9jDhVfsTjfgfeAJTwCWip2/fxA2//4YB2nRKTgutabh1sKdnFem6c4
+         btJ6daRdpXz7kNbURFeOLE09ves3kTp7Oh9DFdFTp+5iNjalyqDrT8aaII42ltxT+Cbe
+         WNdo37i6x4WuLb3QFOsawx6Pjr/webSniFsUZAM5bwtSgdUIU5alGN+vGh1zsyM3K1XI
+         HPuj8T7dtC5LnpQ1Prj2UbTGaeiHz/lCu5wv29Xntf+D/I0uLJQZ08cTPQyAktMAp1v6
+         rMYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731399278; x=1732004078;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sw10TBbxuvf4HDg6HLVPzeEukqtfWyQvuwOwH1nNUuY=;
+        b=PL2PfY2dhYp+azwDs3Z7Mi+5p76MPnCySr5H8XmMtKfbkgtNZ1IeljJHahm9QnX9Vp
+         imKEKAr92GOg5hANVr4MpvjTHrIBAzylvzT8wu0uOpEy9ZyDSkKM2bNyfqJmI4D3JLnw
+         zxg5waeWzHy1dEdvnFd+OrDU/bFIFg2HwUOn6gIwF/Tgia8tjuhKU11orTEVoIbvSFJt
+         rmm76MyYl+kflAK/G/kCZER8tjC26raQTcf0MhkcSnvYyADiGTSK8/Um3ctGEkn6btJO
+         5lzwwpeDAHW6PB9IHqBJ0sdcQ6yOSGrsxaVJFfXHeppShkoNHzas5NhfOxSbzlT/n325
+         fznA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVNtcnLwTaIRo9419qrGJoyf8+YwwFzGESGZbFoPFvB4yvNekNNvY8RQx3q/t5Ksy9N+B4T8Tf5NdG2do=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg3VR4hNniummC5b8FfsO3mtvNwMr4dz+0SxIn1KbcGmOiCTQ6
+	KRkJPSx7fkALIaiHIpVe6AccL0OS6Txggz39g6th3+sdwPklRIqMK6ITJ3wM4zw=
+X-Google-Smtp-Source: AGHT+IFTdAFBMMexGsjhtVqcKMviXCoA1Ar7R1Xm34YUqQZKZmRFIVoKBH8NkaeKsRQ21uPL0Q4RjQ==
+X-Received: by 2002:a05:6512:2214:b0:53a:38:7b8c with SMTP id 2adb3069b0e04-53d862c5a94mr6955168e87.34.1731399278397;
+        Tue, 12 Nov 2024 00:14:38 -0800 (PST)
+Received: from u94a ([2401:e180:8d01:b15:c48:5934:ee45:3aed])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e5810csm88272225ad.179.2024.11.12.00.14.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 00:14:37 -0800 (PST)
+Date: Tue, 12 Nov 2024 16:14:32 +0800
+From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+To: Tao Lyu <tao.lyu@epfl.ch>
+Cc: Eduard Zingerman <eddyz87@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, cve@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: CVE-2023-52920: bpf: support non-r10 register spill/fill to/from
+ stack in precision tracking
+Message-ID: <o7mtz7q3537vuw3gcqjxjdrsg4p6k7dvldu7dabonx2wrcyomn@ks5pl5soifjv>
+References: <2024110518-CVE-2023-52920-17f6@gregkh>
+ <emjjveewgoegvinmjmba4ys34vbmb3sp6r6qefv77i5mtettmj@hsvm5vm3qivd>
+ <961720ed43b3df26042efc260d433fb6ddf5c44e.camel@gmail.com>
+ <6ff5182d2cdc4601834bfaa1e3cd1db3@epfl.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: drm/fbdev-dma: regression
-To: =?UTF-8?Q?Nuno_Gon=C3=A7alves?= <nunojpg@gmail.com>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
- Linux Framebuffer <linux-fbdev@vger.kernel.org>
-References: <20220621104617.8817-1-tzimmermann@suse.de>
- <CAEXMXLR55DziAMbv_+2hmLeH-jP96pmit6nhs6siB22cpQFr9w@mail.gmail.com>
- <d2562174-eebe-4462-9a9a-03936b3bcf89@leemhuis.info>
- <b4d28b98-a85c-4095-9c1b-8ebdfa13861c@suse.de>
- <CAEXMXLQEJPVPyqLpH6C7R6iqhhKBpdNS9QeESbEdcmxB70goSA@mail.gmail.com>
- <c392b606-e2a4-4644-9ce6-217fdcabfdeb@suse.de>
- <CAEXMXLRDDC+PB7S9VtqyMr1MUPPb7NYngwu4gcn9-K2kyHm3rQ@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <CAEXMXLRDDC+PB7S9VtqyMr1MUPPb7NYngwu4gcn9-K2kyHm3rQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.981];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6ff5182d2cdc4601834bfaa1e3cd1db3@epfl.ch>
 
-Hi
+On Fri, Nov 08, 2024 at 07:59:22AM GMT, Tao Lyu wrote:
+...
+> >> I'm trying to determine the security implication of CVE-2023-52920, or
+> >> more specifically, what does commit 41f6f64e6999 ("bpf: support non-r10
+> >> register spill/fill to/from stack in precision tracking") fix.
+> >> Superficially this looks more like an improvement to the verifier.
+> >
+> > It is my understanding as well, that this commit is an optimization to
+> > avoid some precision marks. I do not see any security implications.
+...
+> Hi Andrii, Eduard, and Shung-Hsi,
+> 
+> The previous discussion is here: https://lore.kernel.org/bpf/20231020155842.130257-1-tao.lyu@epfl.ch/ 
+> 
+> In short, without this patch, the verifier will miss checking an execution path that can have out-of-bound access,
+> which eventually leads to privilege escalation, like obtaining the root privilege.
 
+Thank you both for looking into this, and Tao's pointer to previous
+discussion. I'll try to have this backported to at least stable 6.6.y.
 
-Am 11.11.24 um 20:06 schrieb Nuno Gonçalves:
->
->
-> On Mon, Nov 11, 2024, 14:37 Thomas Zimmermann <tzimmermann@suse.de> wrote:
->
->     Hi
->
->
->     Am 11.11.24 um 14:42 schrieb Nuno Gonçalves:
->     > On Mon, Nov 11, 2024 at 1:22 PM Thomas Zimmermann
->     <tzimmermann@suse.de> wrote:
->     >> The patch in question changes the whole memory management of the
->     >> affected code. It's also noteworthy that most of it has been
->     reworked
->     >> for the upcoming v6.12. Maybe this already fixed the problem.
->     Kernel
->     >> v6.11-rc7 added commit 5a498d4d06d6 ("drm/fbdev-dma: Only install
->     >> deferred I/O if necessary"), which possibly fixes the problem
->     as well.
->     >>
->     >> But there's no explicit fix for this problem and I have not
->     seen any
->     >> other related reports. Any further information is welcome.
->     > Issue was present since 5ab91447aa13b8b98bc11f5326f33500b0ee2c48 and
->     > tested until 6.12-rc3.
->     > Is there any suggestion on how to dig down?
->
->     Do you have a stack trace of this problem?
->
->
-> No. I need to build kernel with debug?
-
-Isn't there an error message in the output of dmesg?
-
-Or maybe can you save the whole output of dmesg after a crash and attach 
-the file to an email?
-
-In the original bug report, you mentioned that you often get an error. 
-But not 'always'?
-
-Do you have a reproducer for the problem? Such as a very simple program 
-that triggers the bug.
-
->
->
->
->     Which hardware platform is affected?
->
->
-> ARM64 with ili9225 and display size 220, 176. It also
-> happens in another board with a different tinydrm driver and size 320,
-> 240.
-
-I meant, which board or CPU. ARM64/Aarch64 is really just a very broad 
-term describing the system.
-
-Best regards
-Thomas
-
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+Best,
+Shung-Hsi
 
