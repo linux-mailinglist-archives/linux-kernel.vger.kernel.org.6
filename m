@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-406648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703DD9C648F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:54:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B2B9C6424
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E89CB67118
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:48:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EEFBB32B4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89AF7219CB4;
-	Tue, 12 Nov 2024 19:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F6C21B456;
+	Tue, 12 Nov 2024 19:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GJ4zAHZg"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2082.outbound.protection.outlook.com [40.107.94.82])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KwpiTF3s"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2068.outbound.protection.outlook.com [40.107.94.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1E020C019
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA3421A4A6
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.68
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731440889; cv=fail; b=LwxoPCeYz1DbNl6oCidHY5VImsAFm1P9BzrV8+j/N+60aNBdI1+YeILcOCydFL02AE5QhKkGsr6IGzQC/Cth83AN2JhXUnMigUkVBOlzwYuWKoFuy0z2StgBSF2f2E1AomG/pjK0Yk26HUCBRUCf9yCjEWhjaCJUaET6FilU+fc=
+	t=1731440898; cv=fail; b=hZXVQ0NQgkGc9sxEtYKFblTpR92lzHPqqQT5uvFuEvZbSDbBERA4TRkNnaFRex/ZUiix5fgJTE59i8dkUziTg6t0r8uMZP2eckXvBI7NwQ1lZ0cEJKdiiSfL6FhMuA/Bt9pGpC3IIFrfPpJJ22xHgCgrAPx4+O9G2trMwiUbwCU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731440889; c=relaxed/simple;
-	bh=s2Ib5sQj2uiOx/2EZCaY8wDkc7lwwXhyQSr8pcLhKFQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RaPsidDrNNnLsiPpR42HU6rG5o9nncLQH/ZxSxeSX36+uPX7uvtPx6PhSv5/uO+hDNrr/Cp8D8ozhonsde2OnSt53BpQYUVQ5WYdo/2wprPQhnmrP/QrpBxt7acpWNDVA0EyficDYR8BFGxumt2bACdTMq/qLNeldJg1b8UQrUU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GJ4zAHZg; arc=fail smtp.client-ip=40.107.94.82
+	s=arc-20240116; t=1731440898; c=relaxed/simple;
+	bh=A3/WWMjwD9c/nDRsFrRxGGCgYISUAmHhpoKW4wUJSK8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d9t3+NBi0yLURWs3zL9skaR1ldz7UEmad0ukTh5DBR1/c0Id1fHPp29WPSb1hktY8wqZH6sO1nZ1HG+uSIHGUawPvajiPqVbzDHIVPbic0XmtgCfEDMhAtp96WY4mvXWPqHNoyr4MefgYxnUqVcA/b6dgyBUg5AIUmy4ds3Mp8M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KwpiTF3s; arc=fail smtp.client-ip=40.107.94.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EIriCnJ4FEBXZrL+nKx4dtPqtHltSgHf3PZmqip9395c3kNJc+DzDfNmTp/YA46236C9QGA2vkqemQU2OM020DDeRgeNjrWJ9Ir97KLINggDUgxqRQ8hxit+e9Dooh0tHpXVSrgt1zCfixur8oVtmfgh3G91P4Jpkn7wOWexD6Z9BimohhVWawxjaXpgdJGP6rhICbYXP10jj6Qjlu2axOu+iUWft287Nmw/V0mfk5N8DFLEBM/QC0JYhfjXGLqIf/iwg40xkpm8NwgcMs6n6h6IMl8UjTTZuRV3LGdJJt4MRwVDs7WL6hEZaZMWtETZt1dyB76MfELGhWnX9vtpDQ==
+ b=YzoD76Ua3cC678YvFeLk09zRKxIc+dlbch9pMxCnoHyv+UpUnXPSUCuLdrNa+16SDeDfGHosCaFIk7qGEYF6dozvGYS1inGi6FesZ8THaKHpf8rNUuOZ1ztve2H3QFd6xymDYNuT0ji5D0lHfh8AFMVk32cms93gSoDE4RWVVHvK5iJnYlfGfZkmGXWg1rt/jmBitK+kAtQPLnIxgLYrxox3va7ibvOldAx5sl+UL6E15dqWec+DwFyngSNPM8HeWOFckjeaVbnGvo00pu5TVD0dePZQgsz7pIsZ9TmY73EyL+x8/uALVwQ6qG9WlVbEgQn+sumPVwhUMCdAZskWTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wHAUM4A8Kmvtv3HWtndZ+mhcU3+mNl6X6Z7e7d3SdyM=;
- b=Kv4R26WYqVj1emXpEWN9Nzhqx+N3ImDV35CGWTk5Y1gZVAXTpuEpwY+ha43PfVyYcpEpLoRv/rbiE6oSz1yiwBFwpb400dyNyoeDI4ikwnAmpZw2sCrYHL8Iqsvd97Du6ZGe+wNnumCuwaETOGH8stWnsVMU88+8P2YgIIkKAndTVxRtK2DWERWiRaSkkYFCy09Xx7RT9CrUrBGi71WFPxZCJm+y+vfyC7QFD8yg+CscptMSiGEZn7hhMz9iwAe+bzKBeC8ND7r1xwWUHrLrtSm5ZdxfwOOMKNUtZl5Zw/mgm9Dh8xP0zRQ87Zxjao+M9YUVBCEAvBeKADXYZDCCmw==
+ bh=asyFZaLo6mPu+KtbRIx8dlBchQlf9hDlqpDU1EIf3jU=;
+ b=MZtB3bZN32YJacyNjSWHmLhaCXaUVNtYBWqdN22eACKWWhAPoFifFriqK5fisvlAj8qyJ8spoZqLL25/iH5xsnoqasffQoI7RUr4FKP89B25h9rHgCEElniCHkEKkmCrbLfAp/Qq3jSYEaLAohf3ituk8ZZ5AQ6XRyOEO3Pql7/DIelKXpjcdwhK7FoZzbFUfSC//rYwMSBZI1lqRoxTwaZyQQ6sx5u3fs68gZW+vhvn1HKVWz7MrXcBe7lobjynWl0H8AoKlNXhVwjTGk8lsrfnomxhRBB9vIge67Bwx3M9gccXvaT3INe28KMuLlYl8WQTOkAUCUp2dvWa366fYQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wHAUM4A8Kmvtv3HWtndZ+mhcU3+mNl6X6Z7e7d3SdyM=;
- b=GJ4zAHZgHlLnNZUKKlXTtiNzqDy28i8S/13uremEquwjHKKGkhA5Gooo19WLH6znaxtlyQeeSYR7WuENG3tww4JpL+M2J0wq7bUJ3Pdv6G7/2SB2cGv2vGbM1YI8BLIWY+D6VEi3NatJTICDX4U67GfgLVhp8afKXdAZshDVpos=
-Received: from SJ0PR13CA0217.namprd13.prod.outlook.com (2603:10b6:a03:2c1::12)
- by PH8PR12MB7424.namprd12.prod.outlook.com (2603:10b6:510:228::14) with
+ bh=asyFZaLo6mPu+KtbRIx8dlBchQlf9hDlqpDU1EIf3jU=;
+ b=KwpiTF3sCrJMNJi/8G1l5kn1EOouSM/SmvY8SBkrvdIQ14Man/DbLYbaZx8I9FAVdTB9qcVlvFuEfo7q+orlZmQeHq9GGcXJEycntTUknexdSPuFXuAXjZWdqDFn2HXuf5oNkz+K/hj/G+81tUEADQ2DF0/H75bqCzUqV+qcNJY=
+Received: from SJ0PR13CA0237.namprd13.prod.outlook.com (2603:10b6:a03:2c1::32)
+ by DS7PR12MB9476.namprd12.prod.outlook.com (2603:10b6:8:250::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Tue, 12 Nov
- 2024 19:48:02 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Tue, 12 Nov
+ 2024 19:48:10 +0000
 Received: from CO1PEPF000066E6.namprd05.prod.outlook.com
- (2603:10b6:a03:2c1:cafe::b0) by SJ0PR13CA0217.outlook.office365.com
- (2603:10b6:a03:2c1::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.15 via Frontend
- Transport; Tue, 12 Nov 2024 19:48:02 +0000
+ (2603:10b6:a03:2c1:cafe::fa) by SJ0PR13CA0237.outlook.office365.com
+ (2603:10b6:a03:2c1::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.16 via Frontend
+ Transport; Tue, 12 Nov 2024 19:48:10 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -63,28 +64,30 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from SATLEXMB03.amd.com (165.204.84.17) by
  CO1PEPF000066E6.mail.protection.outlook.com (10.167.249.4) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8158.14 via Frontend Transport; Tue, 12 Nov 2024 19:48:01 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ 15.20.8158.14 via Frontend Transport; Tue, 12 Nov 2024 19:48:10 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 12 Nov
- 2024 13:48:01 -0600
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ 2024 13:48:04 -0600
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 12 Nov
- 2024 13:48:00 -0600
+ 2024 13:48:04 -0600
 Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 12 Nov 2024 13:48:00 -0600
+ Transport; Tue, 12 Nov 2024 13:48:03 -0600
 From: Lizhi Hou <lizhi.hou@amd.com>
 To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
 	<dri-devel@lists.freedesktop.org>
 CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
 	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
 	<king.tam@amd.com>
-Subject: [PATCH V10 00/10] AMD XDNA driver
-Date: Tue, 12 Nov 2024 11:47:35 -0800
-Message-ID: <20241112194745.854626-1-lizhi.hou@amd.com>
+Subject: [PATCH V10 04/10] accel/amdxdna: Add hardware resource solver
+Date: Tue, 12 Nov 2024 11:47:39 -0800
+Message-ID: <20241112194745.854626-5-lizhi.hou@amd.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241112194745.854626-1-lizhi.hou@amd.com>
+References: <20241112194745.854626-1-lizhi.hou@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,207 +96,641 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000066E6:EE_|PH8PR12MB7424:EE_
-X-MS-Office365-Filtering-Correlation-Id: 29d1cd01-1ae6-473d-3676-08dd0352eaf5
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066E6:EE_|DS7PR12MB9476:EE_
+X-MS-Office365-Filtering-Correlation-Id: 049aaf84-9115-49dd-ad9b-08dd0352efdd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?qJzGMY74XCX3qdAnHsHX5DhLNeAtuIvls/oW5D7cJsJpd3kuuUcTSO2FGDot?=
- =?us-ascii?Q?Thf7WsJqqshlk8z9RAeB/qeEkCfI6FNvYtZVi/2cZU3kRxuAGKJUL/e1VCJg?=
- =?us-ascii?Q?rShdMgzvCSC/2nvb33VYV4gL+U1iRmcuCEUYrMKeqIv+7WwX6yLW8e0MzyST?=
- =?us-ascii?Q?+Jzt4vUmjs75oJv/lGR6VBL3as3EqS41u0y9Pr07t1mqgzZPi7/qJuoRmBgE?=
- =?us-ascii?Q?Xxz92fxMUwmEoCCeagEST6Pa5MsGiEux5nzH2RrfgAr9nhio+SwD+Qu0+HWr?=
- =?us-ascii?Q?plgmYezNvgkTYanKVx/0qWfG2SmH/keerToiS/5ViGmf7D5tD7O9235Gcc4B?=
- =?us-ascii?Q?ZvyP6sSlP10vw1Q9a/gs8V1Grw2hUgkjPMp4hxcESLbpV6lmC8Q7e7ncAdNR?=
- =?us-ascii?Q?Cntv008mSqNYHFq/XXHstEUM39fCz0EuEKHuAAoXuccVEJZtIQGnhgACrlRA?=
- =?us-ascii?Q?ZqVB7NxBVJC0ypoFrv+JqwUbVjQ/oh3XZtYvJFU8gFu5j5Axs7oOKjZG9DhT?=
- =?us-ascii?Q?5CqObK6Mw3My0iC3cozniKt1tRthM2QVbS11ldYZcGAXik9ra1f/eG48hBAu?=
- =?us-ascii?Q?suWgx8XlZSsbRS6IQ6uqIcd4wBivKIY/qw15SqqAMPtmCRmnWuP+eTU4Lxr/?=
- =?us-ascii?Q?kRuMrAqcfmPDmiC5POYJAc2/YNcY8/kl1xKbI1XIC9r4k997CRkFl7YwCopE?=
- =?us-ascii?Q?iro972udUSDuHyL6Djl8FiDyNtHbqo45Jaa+5nFD3COgmSLM09pAZSHFdT70?=
- =?us-ascii?Q?J3kUAcEmnKzar4LAyCzuks4Ib/4IloKwaKsjP4LQfGSL1ntup3m8gtn/JMUi?=
- =?us-ascii?Q?azP6bMIGAM4qMiHGH0G34TimcUGBgpVTu47WNSge7Dn5DPM3lq2j6nWlZMAd?=
- =?us-ascii?Q?b2ud0RdHRLNjcqZqwJhzCdERfBn4/hPGM57tRNZcRs9kfwIJLT6urcmGQE1/?=
- =?us-ascii?Q?pMdPAoOBd/tVOMW1pQ2v2EX82qL/87LWIcS8J5S9I5QX7q7YAIhvYFGaZgnF?=
- =?us-ascii?Q?8BQj0L5iHUrtXq43fjPFCR3hIPeYXsga2tAbq4zfp5vcwQMHO3xOeusoy0Zr?=
- =?us-ascii?Q?63Fv536+oFyYEb0loJmp85qYiy/wPWixFZ+PZSckWsKITaMRbdMfSAIkPDL2?=
- =?us-ascii?Q?JtnyyuJQ64Jb62YmJxDg6C1rmP3SanHuhncolztWUofR90pPs8NC/NTnw3zP?=
- =?us-ascii?Q?zxpNffZJssHhDJdwgZl5W8d0wKAEGlXinJTRsFyYONdJJUPjIIxW1kslQVYb?=
- =?us-ascii?Q?mrND6tyviTelHG7HpDjfpQC/oWZTeZyXVYS4hCpzEXBI/VGeGyWJyeMGztbH?=
- =?us-ascii?Q?BqYfeF5d+83bOIl7GOoSv7MV5os/7567Juk5cRPVSOgJVHySIXmEP8A+eQgk?=
- =?us-ascii?Q?DiSK32Q=3D?=
+	=?us-ascii?Q?4QLyE3gv4vVXeMnPBTIXhc9xpaF0v5ekSG395DjEI43s1JG5XvG/okiKCGYc?=
+ =?us-ascii?Q?q4yYg7LlllgLEVkdYdg5G4OrLPOhLGqFj5goW2GnMzv5fUAQh62n4npZiobC?=
+ =?us-ascii?Q?roaTyowZ1SxRwNZvr9BdwpXPLO01lyTXlqoH8yEssYBf98HKphjnVaQ9GKCP?=
+ =?us-ascii?Q?ApwvmMZRAJrSWr6aLryIznCD7p1kGia4LZaU9oFZupO8/Fc/fy4D4HJYSLqb?=
+ =?us-ascii?Q?PTJOjZXJw23vP+lPER1Eq4/3dSbL/+ERw+CH8MEh1w+OvjejmkPENS5lfq7I?=
+ =?us-ascii?Q?2YshznRTm+HrVPnIK5FitMFkDLArtwhAkUXKXlwWtC1YJ2vex33heJ7F/rKV?=
+ =?us-ascii?Q?VtOtyoM+JfC34OaYnxl2DI1jSyoJX36JTAsfGDhT6jivAO02GmS1+hs2djR6?=
+ =?us-ascii?Q?eiLmGBfwu0YVRub4XBOIggTfls30wWrbsWWJLnfR/Wha+jjJObjOIs0AK5mu?=
+ =?us-ascii?Q?IPdV688ZfovG4fAr3Pv1GerSCLHcCOwFt8VMF1iA3CsgawUvdKB0dQbKVvq5?=
+ =?us-ascii?Q?hheZUMTY4F0l18OBWzHBc4JRc8CRIHw4CoVDg2h0jiM3hvQm/LtEM3kcZOab?=
+ =?us-ascii?Q?lQ4fXWEvYVK35yvksEFsSNYX38bUsF7SRDtdP2Wb0FchO3R2U3fCiT6h0lhA?=
+ =?us-ascii?Q?h6g5S1sdq7E6zPPRplN40eLS1L8kDUi6sGIQqRReRH9qsRBEjluTA6ae0o9X?=
+ =?us-ascii?Q?77MmGYRb/fBXyZ+fmFfwYBiEKJRIHbznxs3x1pyD1WKr6IKUZJ9yLce4o6A6?=
+ =?us-ascii?Q?pLi96FMmDg1f2ikTM4OkxxHyqGmEGv/5eWoLlzdGwFfkHZuQv/CR5Mgbjpbs?=
+ =?us-ascii?Q?rA5nn0dOQUp5fig2Bp+enmJC8PCLulYowYB6KhTwD4l7fszHYFy6QN2dd7V3?=
+ =?us-ascii?Q?XhQ0lUSx9izeg6clA13KOWFOEtzvzJCinvJUnxvO5EbeF3RLdC4JbnlbWox1?=
+ =?us-ascii?Q?yeq0H9IICAQHQjW4se/ZpuXJ+szMVKx45EtdnkvGwXvSjOj4LV27sIOfV6Je?=
+ =?us-ascii?Q?O4BBlxRVg5JgnIITAcSug53+rQpHIXbWolFQoKQh9771ARaKd55xnjKcOo+9?=
+ =?us-ascii?Q?KDApOdNdA6wRb5EyhQIOabaAPiN5d3nhdp+axXACl6xqoF6FrWK/uI4A0vAK?=
+ =?us-ascii?Q?mMn8KO6iJfGJw73AOH14TxkfKc1etQ3MCDUo9RfxXjtTScQa0W3z3AdSRp3l?=
+ =?us-ascii?Q?hB27vqp+WP6J+/TbSUfBHDZXfRycfzL4U4rMxh5Nw/ShDkqjwST2ZBOamJBK?=
+ =?us-ascii?Q?/U8wcOaj/nLOD1yQUvVf0OSJGdCE0YNOCB49CkqETqPpp+7UMOoEVj++9q3Y?=
+ =?us-ascii?Q?Uj3aa5YkKr8qG2vJ9n6Eh6cLjwZjRokyi7yMJnLRLzGtUV6NPqLgoSN9RsSs?=
+ =?us-ascii?Q?Wky14L4ZWSfcl/kn2d7FfIuP7Mlml9CwHSJBj4L4IcRHXxEIeA=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 19:48:01.9056
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 19:48:10.1243
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29d1cd01-1ae6-473d-3676-08dd0352eaf5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 049aaf84-9115-49dd-ad9b-08dd0352efdd
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	CO1PEPF000066E6.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7424
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9476
 
-This patchset introduces a new Linux Kernel Driver, amdxdna for AMD NPUs.
-The driver is based on Linux accel subsystem.
+The AI Engine consists of 2D array of tiles arranged as columns. Provides
+the basic column allocation and release functions for the tile columns.
 
-NPU (Neural Processing Unit) is an AI inference accelerator integrated
-into AMD client CPUs. NPU enables efficient execution of Machine Learning
-applications like CNNs, LLMs, etc.  NPU is based on AMD XDNA
-architecture [1].
-
-AMD NPU consists of the following components:
-
-  - Tiled array of AMD AI Engine processors.
-  - Micro Controller which runs the NPU Firmware responsible for
-    command processing, AIE array configuration, and execution management.
-  - PCI EP for host control of the NPU device.
-  - Interconnect for connecting the NPU components together.
-  - SRAM for use by the NPU Firmware.
-  - Address translation hardware for protected host memory access by the
-    NPU.
-
-NPU supports multiple concurrent fully isolated contexts. Concurrent
-contexts may be bound to AI Engine array spatially and or temporarily.
-
-The driver is licensed under GPL-2.0 except for UAPI header which is
-licensed GPL-2.0 WITH Linux-syscall-note.
-
-User mode driver stack consists of XRT [2] and AMD AIE Plugin for IREE [3].
-
-The firmware for the NPU is distributed as a closed source binary, and has
-already been pushed to the DRM firmware repository [4].
-
-[1] https://www.amd.com/en/technologies/xdna.html
-[2] https://github.com/Xilinx/XRT
-[3] https://github.com/nod-ai/iree-amd-aie
-[4] https://gitlab.freedesktop.org/drm/firmware/-/tree/amd-ipu-staging/amdnpu
-
-Changes since v9:
-- Change notifier_lock to rw_semaphore
-
-Changes since v8:
-- Fix mis-merged line
-
-Changes since v7:
-- Prealloc dma fence chain before publishing dma-fence
-- Install the job's finished fence in dma-resv rather than driver fence
-
-Changes since v6:
-- Revise command submission flow
-
-Changes since v5:
-- Remove wait_cmd ioctl and use syncobj instead
-- Cleanup spelling errors
-- Add dependencies in Kconfig
-
-Changes since v4:
-- Fix lockdep errors
-- Use __u* structure for struct aie_error
-
-Changes since v3:
-- Remove debug BO patch
-- Changes based on code review comments
-
-Changes since v2:
-- Add document amdnpu.rst
-- Change AIE2_DEVM_SIZE to 64M due to firmware change
-- Changes based on code review comments
-
-Changes since v1:
-- Remove some inline defines
-- Minor changes based on code review comments
-
-Lizhi Hou (10):
-  accel/amdxdna: Add documentation for AMD NPU accelerator driver
-  accel/amdxdna: Add a new driver for AMD AI Engine
-  accel/amdxdna: Support hardware mailbox
-  accel/amdxdna: Add hardware resource solver
-  accel/amdxdna: Add hardware context
-  accel/amdxdna: Add GEM buffer object management
-  accel/amdxdna: Add command execution
-  accel/amdxdna: Add suspend and resume
-  accel/amdxdna: Add error handling
-  accel/amdxdna: Add query functions
-
- Documentation/accel/amdxdna/amdnpu.rst        | 281 ++++++
- Documentation/accel/amdxdna/index.rst         |  11 +
- Documentation/accel/index.rst                 |   1 +
- MAINTAINERS                                   |  11 +
- drivers/accel/Kconfig                         |   1 +
- drivers/accel/Makefile                        |   1 +
- drivers/accel/amdxdna/Kconfig                 |  18 +
- drivers/accel/amdxdna/Makefile                |  21 +
- drivers/accel/amdxdna/TODO                    |   5 +
- drivers/accel/amdxdna/aie2_ctx.c              | 900 ++++++++++++++++++
- drivers/accel/amdxdna/aie2_error.c            | 360 +++++++
- drivers/accel/amdxdna/aie2_message.c          | 791 +++++++++++++++
- drivers/accel/amdxdna/aie2_msg_priv.h         | 370 +++++++
- drivers/accel/amdxdna/aie2_pci.c              | 762 +++++++++++++++
- drivers/accel/amdxdna/aie2_pci.h              | 259 +++++
- drivers/accel/amdxdna/aie2_psp.c              | 146 +++
- drivers/accel/amdxdna/aie2_smu.c              | 119 +++
- drivers/accel/amdxdna/aie2_solver.c           | 330 +++++++
- drivers/accel/amdxdna/aie2_solver.h           | 154 +++
- drivers/accel/amdxdna/amdxdna_ctx.c           | 553 +++++++++++
- drivers/accel/amdxdna/amdxdna_ctx.h           | 162 ++++
- drivers/accel/amdxdna/amdxdna_gem.c           | 622 ++++++++++++
- drivers/accel/amdxdna/amdxdna_gem.h           |  65 ++
- drivers/accel/amdxdna/amdxdna_mailbox.c       | 576 +++++++++++
- drivers/accel/amdxdna/amdxdna_mailbox.h       | 124 +++
- .../accel/amdxdna/amdxdna_mailbox_helper.c    |  61 ++
- .../accel/amdxdna/amdxdna_mailbox_helper.h    |  42 +
- drivers/accel/amdxdna/amdxdna_pci_drv.c       | 409 ++++++++
- drivers/accel/amdxdna/amdxdna_pci_drv.h       | 123 +++
- drivers/accel/amdxdna/amdxdna_sysfs.c         |  67 ++
- drivers/accel/amdxdna/npu1_regs.c             | 101 ++
- drivers/accel/amdxdna/npu2_regs.c             | 118 +++
- drivers/accel/amdxdna/npu4_regs.c             | 118 +++
- drivers/accel/amdxdna/npu5_regs.c             | 118 +++
- include/trace/events/amdxdna.h                | 101 ++
- include/uapi/drm/amdxdna_accel.h              | 436 +++++++++
- 36 files changed, 8337 insertions(+)
- create mode 100644 Documentation/accel/amdxdna/amdnpu.rst
- create mode 100644 Documentation/accel/amdxdna/index.rst
- create mode 100644 drivers/accel/amdxdna/Kconfig
- create mode 100644 drivers/accel/amdxdna/Makefile
- create mode 100644 drivers/accel/amdxdna/TODO
- create mode 100644 drivers/accel/amdxdna/aie2_ctx.c
- create mode 100644 drivers/accel/amdxdna/aie2_error.c
- create mode 100644 drivers/accel/amdxdna/aie2_message.c
- create mode 100644 drivers/accel/amdxdna/aie2_msg_priv.h
- create mode 100644 drivers/accel/amdxdna/aie2_pci.c
- create mode 100644 drivers/accel/amdxdna/aie2_pci.h
- create mode 100644 drivers/accel/amdxdna/aie2_psp.c
- create mode 100644 drivers/accel/amdxdna/aie2_smu.c
+Co-developed-by: Min Ma <min.ma@amd.com>
+Signed-off-by: Min Ma <min.ma@amd.com>
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+---
+ drivers/accel/amdxdna/Makefile          |   1 +
+ drivers/accel/amdxdna/aie2_pci.c        |  23 +-
+ drivers/accel/amdxdna/aie2_solver.c     | 330 ++++++++++++++++++++++++
+ drivers/accel/amdxdna/aie2_solver.h     | 154 +++++++++++
+ drivers/accel/amdxdna/amdxdna_pci_drv.h |   1 +
+ 5 files changed, 508 insertions(+), 1 deletion(-)
  create mode 100644 drivers/accel/amdxdna/aie2_solver.c
  create mode 100644 drivers/accel/amdxdna/aie2_solver.h
- create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.c
- create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.h
- create mode 100644 drivers/accel/amdxdna/amdxdna_gem.c
- create mode 100644 drivers/accel/amdxdna/amdxdna_gem.h
- create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.c
- create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.h
- create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.c
- create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.h
- create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.c
- create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.h
- create mode 100644 drivers/accel/amdxdna/amdxdna_sysfs.c
- create mode 100644 drivers/accel/amdxdna/npu1_regs.c
- create mode 100644 drivers/accel/amdxdna/npu2_regs.c
- create mode 100644 drivers/accel/amdxdna/npu4_regs.c
- create mode 100644 drivers/accel/amdxdna/npu5_regs.c
- create mode 100644 include/trace/events/amdxdna.h
- create mode 100644 include/uapi/drm/amdxdna_accel.h
 
+diff --git a/drivers/accel/amdxdna/Makefile b/drivers/accel/amdxdna/Makefile
+index 1b4e78b43b44..39d3404fbc8f 100644
+--- a/drivers/accel/amdxdna/Makefile
++++ b/drivers/accel/amdxdna/Makefile
+@@ -5,6 +5,7 @@ amdxdna-y := \
+ 	aie2_pci.o \
+ 	aie2_psp.o \
+ 	aie2_smu.o \
++	aie2_solver.o \
+ 	amdxdna_mailbox.o \
+ 	amdxdna_mailbox_helper.o \
+ 	amdxdna_pci_drv.o \
+diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
+index d4acee1cee31..ce0822238b11 100644
+--- a/drivers/accel/amdxdna/aie2_pci.c
++++ b/drivers/accel/amdxdna/aie2_pci.c
+@@ -14,9 +14,14 @@
+ 
+ #include "aie2_msg_priv.h"
+ #include "aie2_pci.h"
++#include "aie2_solver.h"
+ #include "amdxdna_mailbox.h"
+ #include "amdxdna_pci_drv.h"
+ 
++int aie2_max_col = XRS_MAX_COL;
++module_param(aie2_max_col, uint, 0600);
++MODULE_PARM_DESC(aie2_max_col, "Maximum column could be used");
++
+ /*
+  * The management mailbox channel is allocated by firmware.
+  * The related register and ring buffer information is on SRAM BAR.
+@@ -307,6 +312,7 @@ static int aie2_init(struct amdxdna_dev *xdna)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(xdna->ddev.dev);
+ 	void __iomem *tbl[PCI_NUM_RESOURCES] = {0};
++	struct init_config xrs_cfg = { 0 };
+ 	struct amdxdna_dev_hdl *ndev;
+ 	struct psp_config psp_conf;
+ 	const struct firmware *fw;
+@@ -403,7 +409,22 @@ static int aie2_init(struct amdxdna_dev *xdna)
+ 		XDNA_ERR(xdna, "Query firmware failed, ret %d", ret);
+ 		goto stop_hw;
+ 	}
+-	ndev->total_col = ndev->metadata.cols;
++	ndev->total_col = min(aie2_max_col, ndev->metadata.cols);
++
++	xrs_cfg.clk_list.num_levels = 3;
++	xrs_cfg.clk_list.cu_clk_list[0] = 0;
++	xrs_cfg.clk_list.cu_clk_list[1] = 800;
++	xrs_cfg.clk_list.cu_clk_list[2] = 1000;
++	xrs_cfg.sys_eff_factor = 1;
++	xrs_cfg.ddev = &xdna->ddev;
++	xrs_cfg.total_col = ndev->total_col;
++
++	xdna->xrs_hdl = xrsm_init(&xrs_cfg);
++	if (!xdna->xrs_hdl) {
++		XDNA_ERR(xdna, "Initialize resolver failed");
++		ret = -EINVAL;
++		goto stop_hw;
++	}
+ 
+ 	release_firmware(fw);
+ 	return 0;
+diff --git a/drivers/accel/amdxdna/aie2_solver.c b/drivers/accel/amdxdna/aie2_solver.c
+new file mode 100644
+index 000000000000..a537c66589a4
+--- /dev/null
++++ b/drivers/accel/amdxdna/aie2_solver.c
+@@ -0,0 +1,330 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2022-2024, Advanced Micro Devices, Inc.
++ */
++
++#include <drm/drm_device.h>
++#include <drm/drm_managed.h>
++#include <drm/drm_print.h>
++#include <linux/bitops.h>
++#include <linux/bitmap.h>
++
++#include "aie2_solver.h"
++
++struct partition_node {
++	struct list_head	list;
++	u32			nshared;	/* # shared requests */
++	u32			start_col;	/* start column */
++	u32			ncols;		/* # columns */
++	bool			exclusive;	/* can not be shared if set */
++};
++
++struct solver_node {
++	struct list_head	list;
++	u64			rid;		/* Request ID from consumer */
++
++	struct partition_node	*pt_node;
++	void			*cb_arg;
++	u32			cols_len;
++	u32			start_cols[] __counted_by(cols_len);
++};
++
++struct solver_rgroup {
++	u32				rgid;
++	u32				nnode;
++	u32				npartition_node;
++
++	DECLARE_BITMAP(resbit, XRS_MAX_COL);
++	struct list_head		node_list;
++	struct list_head		pt_node_list;
++};
++
++struct solver_state {
++	struct solver_rgroup		rgp;
++	struct init_config		cfg;
++	struct xrs_action_ops		*actions;
++};
++
++static u32 calculate_gops(struct aie_qos *rqos)
++{
++	u32 service_rate = 0;
++
++	if (rqos->latency)
++		service_rate = (1000 / rqos->latency);
++
++	if (rqos->fps > service_rate)
++		return rqos->fps * rqos->gops;
++
++	return service_rate * rqos->gops;
++}
++
++/*
++ * qos_meet() - Check the QOS request can be met.
++ */
++static int qos_meet(struct solver_state *xrs, struct aie_qos *rqos, u32 cgops)
++{
++	u32 request_gops = calculate_gops(rqos) * xrs->cfg.sys_eff_factor;
++
++	if (request_gops <= cgops)
++		return 0;
++
++	return -EINVAL;
++}
++
++/*
++ * sanity_check() - Do a basic sanity check on allocation request.
++ */
++static int sanity_check(struct solver_state *xrs, struct alloc_requests *req)
++{
++	struct cdo_parts *cdop = &req->cdo;
++	struct aie_qos *rqos = &req->rqos;
++	u32 cu_clk_freq;
++
++	if (cdop->ncols > xrs->cfg.total_col)
++		return -EINVAL;
++
++	/*
++	 * We can find at least one CDOs groups that meet the
++	 * GOPs requirement.
++	 */
++	cu_clk_freq = xrs->cfg.clk_list.cu_clk_list[xrs->cfg.clk_list.num_levels - 1];
++
++	if (qos_meet(xrs, rqos, cdop->qos_cap.opc * cu_clk_freq / 1000))
++		return -EINVAL;
++
++	return 0;
++}
++
++static struct solver_node *rg_search_node(struct solver_rgroup *rgp, u64 rid)
++{
++	struct solver_node *node;
++
++	list_for_each_entry(node, &rgp->node_list, list) {
++		if (node->rid == rid)
++			return node;
++	}
++
++	return NULL;
++}
++
++static void remove_partition_node(struct solver_rgroup *rgp,
++				  struct partition_node *pt_node)
++{
++	pt_node->nshared--;
++	if (pt_node->nshared > 0)
++		return;
++
++	list_del(&pt_node->list);
++	rgp->npartition_node--;
++
++	bitmap_clear(rgp->resbit, pt_node->start_col, pt_node->ncols);
++	kfree(pt_node);
++}
++
++static void remove_solver_node(struct solver_rgroup *rgp,
++			       struct solver_node *node)
++{
++	list_del(&node->list);
++	rgp->nnode--;
++
++	if (node->pt_node)
++		remove_partition_node(rgp, node->pt_node);
++
++	kfree(node);
++}
++
++static int get_free_partition(struct solver_state *xrs,
++			      struct solver_node *snode,
++			      struct alloc_requests *req)
++{
++	struct partition_node *pt_node;
++	u32 ncols = req->cdo.ncols;
++	u32 col, i;
++
++	for (i = 0; i < snode->cols_len; i++) {
++		col = snode->start_cols[i];
++		if (find_next_bit(xrs->rgp.resbit, XRS_MAX_COL, col) >= col + ncols)
++			break;
++	}
++
++	if (i == snode->cols_len)
++		return -ENODEV;
++
++	pt_node = kzalloc(sizeof(*pt_node), GFP_KERNEL);
++	if (!pt_node)
++		return -ENOMEM;
++
++	pt_node->nshared = 1;
++	pt_node->start_col = col;
++	pt_node->ncols = ncols;
++
++	/*
++	 * Before fully support latency in QoS, if a request
++	 * specifies a non-zero latency value, it will not share
++	 * the partition with other requests.
++	 */
++	if (req->rqos.latency)
++		pt_node->exclusive = true;
++
++	list_add_tail(&pt_node->list, &xrs->rgp.pt_node_list);
++	xrs->rgp.npartition_node++;
++	bitmap_set(xrs->rgp.resbit, pt_node->start_col, pt_node->ncols);
++
++	snode->pt_node = pt_node;
++
++	return 0;
++}
++
++static int allocate_partition(struct solver_state *xrs,
++			      struct solver_node *snode,
++			      struct alloc_requests *req)
++{
++	struct partition_node *pt_node, *rpt_node = NULL;
++	int idx, ret;
++
++	ret = get_free_partition(xrs, snode, req);
++	if (!ret)
++		return ret;
++
++	/* try to get a share-able partition */
++	list_for_each_entry(pt_node, &xrs->rgp.pt_node_list, list) {
++		if (pt_node->exclusive)
++			continue;
++
++		if (rpt_node && pt_node->nshared >= rpt_node->nshared)
++			continue;
++
++		for (idx = 0; idx < snode->cols_len; idx++) {
++			if (snode->start_cols[idx] != pt_node->start_col)
++				continue;
++
++			if (req->cdo.ncols != pt_node->ncols)
++				continue;
++
++			rpt_node = pt_node;
++			break;
++		}
++	}
++
++	if (!rpt_node)
++		return -ENODEV;
++
++	rpt_node->nshared++;
++	snode->pt_node = rpt_node;
++
++	return 0;
++}
++
++static struct solver_node *create_solver_node(struct solver_state *xrs,
++					      struct alloc_requests *req)
++{
++	struct cdo_parts *cdop = &req->cdo;
++	struct solver_node *node;
++	int ret;
++
++	node = kzalloc(struct_size(node, start_cols, cdop->cols_len), GFP_KERNEL);
++	if (!node)
++		return ERR_PTR(-ENOMEM);
++
++	node->rid = req->rid;
++	node->cols_len = cdop->cols_len;
++	memcpy(node->start_cols, cdop->start_cols, cdop->cols_len * sizeof(u32));
++
++	ret = allocate_partition(xrs, node, req);
++	if (ret)
++		goto free_node;
++
++	list_add_tail(&node->list, &xrs->rgp.node_list);
++	xrs->rgp.nnode++;
++	return node;
++
++free_node:
++	kfree(node);
++	return ERR_PTR(ret);
++}
++
++static void fill_load_action(struct solver_state *xrs,
++			     struct solver_node *snode,
++			     struct xrs_action_load *action)
++{
++	action->rid = snode->rid;
++	action->part.start_col = snode->pt_node->start_col;
++	action->part.ncols = snode->pt_node->ncols;
++}
++
++int xrs_allocate_resource(void *hdl, struct alloc_requests *req, void *cb_arg)
++{
++	struct xrs_action_load load_act;
++	struct solver_node *snode;
++	struct solver_state *xrs;
++	int ret;
++
++	xrs = (struct solver_state *)hdl;
++
++	ret = sanity_check(xrs, req);
++	if (ret) {
++		drm_err(xrs->cfg.ddev, "invalid request");
++		return ret;
++	}
++
++	if (rg_search_node(&xrs->rgp, req->rid)) {
++		drm_err(xrs->cfg.ddev, "rid %lld is in-use", req->rid);
++		return -EEXIST;
++	}
++
++	snode = create_solver_node(xrs, req);
++	if (IS_ERR(snode))
++		return PTR_ERR(snode);
++
++	fill_load_action(xrs, snode, &load_act);
++	ret = xrs->cfg.actions->load(cb_arg, &load_act);
++	if (ret)
++		goto free_node;
++
++	snode->cb_arg = cb_arg;
++
++	drm_dbg(xrs->cfg.ddev, "start col %d ncols %d\n",
++		snode->pt_node->start_col, snode->pt_node->ncols);
++
++	return 0;
++
++free_node:
++	remove_solver_node(&xrs->rgp, snode);
++
++	return ret;
++}
++
++int xrs_release_resource(void *hdl, u64 rid)
++{
++	struct solver_state *xrs = hdl;
++	struct solver_node *node;
++
++	node = rg_search_node(&xrs->rgp, rid);
++	if (!node) {
++		drm_err(xrs->cfg.ddev, "node not exist");
++		return -ENODEV;
++	}
++
++	xrs->cfg.actions->unload(node->cb_arg);
++	remove_solver_node(&xrs->rgp, node);
++
++	return 0;
++}
++
++void *xrsm_init(struct init_config *cfg)
++{
++	struct solver_rgroup *rgp;
++	struct solver_state *xrs;
++
++	xrs = drmm_kzalloc(cfg->ddev, sizeof(*xrs), GFP_KERNEL);
++	if (!xrs)
++		return NULL;
++
++	memcpy(&xrs->cfg, cfg, sizeof(*cfg));
++
++	rgp = &xrs->rgp;
++	INIT_LIST_HEAD(&rgp->node_list);
++	INIT_LIST_HEAD(&rgp->pt_node_list);
++
++	return xrs;
++}
+diff --git a/drivers/accel/amdxdna/aie2_solver.h b/drivers/accel/amdxdna/aie2_solver.h
+new file mode 100644
+index 000000000000..9b1847bb46a6
+--- /dev/null
++++ b/drivers/accel/amdxdna/aie2_solver.h
+@@ -0,0 +1,154 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2023-2024, Advanced Micro Devices, Inc.
++ */
++
++#ifndef _AIE2_SOLVER_H
++#define _AIE2_SOLVER_H
++
++#define XRS_MAX_COL 128
++
++/*
++ * Structure used to describe a partition. A partition is column based
++ * allocation unit described by its start column and number of columns.
++ */
++struct aie_part {
++	u32	start_col;
++	u32	ncols;
++};
++
++/*
++ * The QoS capabilities of a given AIE partition.
++ */
++struct aie_qos_cap {
++	u32     opc;            /* operations per cycle */
++	u32     dma_bw;         /* DMA bandwidth */
++};
++
++/*
++ * QoS requirement of a resource allocation.
++ */
++struct aie_qos {
++	u32	gops;		/* Giga operations */
++	u32	fps;		/* Frames per second */
++	u32	dma_bw;		/* DMA bandwidth */
++	u32	latency;	/* Frame response latency */
++	u32	exec_time;	/* Frame execution time */
++	u32	priority;	/* Request priority */
++};
++
++/*
++ * Structure used to describe a relocatable CDO (Configuration Data Object).
++ */
++struct cdo_parts {
++	u32		   *start_cols;		/* Start column array */
++	u32		   cols_len;		/* Length of start column array */
++	u32		   ncols;		/* # of column */
++	struct aie_qos_cap qos_cap;		/* CDO QoS capabilities */
++};
++
++/*
++ * Structure used to describe a request to allocate.
++ */
++struct alloc_requests {
++	u64			rid;
++	struct cdo_parts	cdo;
++	struct aie_qos		rqos;		/* Requested QoS */
++};
++
++/*
++ * Load callback argument
++ */
++struct xrs_action_load {
++	u32                     rid;
++	struct aie_part         part;
++};
++
++/*
++ * Define the power level available
++ *
++ * POWER_LEVEL_MIN:
++ *     Lowest power level. Usually set when all actions are unloaded.
++ *
++ * POWER_LEVEL_n
++ *     Power levels 0 - n, is a step increase in system frequencies
++ */
++enum power_level {
++	POWER_LEVEL_MIN = 0x0,
++	POWER_LEVEL_0   = 0x1,
++	POWER_LEVEL_1   = 0x2,
++	POWER_LEVEL_2   = 0x3,
++	POWER_LEVEL_3   = 0x4,
++	POWER_LEVEL_4   = 0x5,
++	POWER_LEVEL_5   = 0x6,
++	POWER_LEVEL_6   = 0x7,
++	POWER_LEVEL_7   = 0x8,
++	POWER_LEVEL_NUM,
++};
++
++/*
++ * Structure used to describe the frequency table.
++ * Resource solver chooses the frequency from the table
++ * to meet the QOS requirements.
++ */
++struct clk_list_info {
++	u32        num_levels;                     /* available power levels */
++	u32        cu_clk_list[POWER_LEVEL_NUM];   /* available aie clock frequencies in Mhz*/
++};
++
++struct xrs_action_ops {
++	int (*load)(void *cb_arg, struct xrs_action_load *action);
++	int (*unload)(void *cb_arg);
++};
++
++/*
++ * Structure used to describe information for solver during initialization.
++ */
++struct init_config {
++	u32			total_col;
++	u32			sys_eff_factor; /* system efficiency factor */
++	u32			latency_adj;    /* latency adjustment in ms */
++	struct clk_list_info	clk_list;       /* List of frequencies available in system */
++	struct drm_device	*ddev;
++	struct xrs_action_ops	*actions;
++};
++
++/*
++ * xrsm_init() - Register resource solver. Resource solver client needs
++ *              to call this function to register itself.
++ *
++ * @cfg:	The system metrics for resource solver to use
++ *
++ * Return:	A resource solver handle
++ *
++ * Note: We should only create one handle per AIE array to be managed.
++ */
++void *xrsm_init(struct init_config *cfg);
++
++/*
++ * xrs_allocate_resource() - Request to allocate resources for a given context
++ *                           and a partition metadata. (See struct part_meta)
++ *
++ * @hdl:	Resource solver handle obtained from xrs_init()
++ * @req:	Input to the Resource solver including request id
++ *		and partition metadata.
++ * @cb_arg:	callback argument pointer
++ *
++ * Return:	0 when successful.
++ *		Or standard error number when failing
++ *
++ * Note:
++ *      There is no lock mechanism inside resource solver. So it is
++ *      the caller's responsibility to lock down XCLBINs and grab
++ *      necessary lock.
++ */
++int xrs_allocate_resource(void *hdl, struct alloc_requests *req, void *cb_arg);
++
++/*
++ * xrs_release_resource() - Request to free resources for a given context.
++ *
++ * @hdl:	Resource solver handle obtained from xrs_init()
++ * @rid:	The Request ID to identify the requesting context
++ */
++int xrs_release_resource(void *hdl, u64 rid);
++#endif /* _AIE2_SOLVER_H */
+diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+index 64bce970514b..c0710d3130fd 100644
+--- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
++++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+@@ -58,6 +58,7 @@ struct amdxdna_dev {
+ 	struct drm_device		ddev;
+ 	struct amdxdna_dev_hdl		*dev_handle;
+ 	const struct amdxdna_dev_info	*dev_info;
++	void				*xrs_hdl;
+ 
+ 	struct mutex			dev_lock; /* per device lock */
+ 	struct amdxdna_fw_ver		fw_ver;
 -- 
 2.34.1
 
