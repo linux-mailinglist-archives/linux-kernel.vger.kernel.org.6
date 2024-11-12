@@ -1,128 +1,142 @@
-Return-Path: <linux-kernel+bounces-406047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99DE69C5A65
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:32:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D68F9C5B61
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:07:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1D32859B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:32:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3D30B33018
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D3E1FC7DF;
-	Tue, 12 Nov 2024 14:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C531FE10A;
+	Tue, 12 Nov 2024 14:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xnaJIt2r";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QzfxjV9P"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gh+7tTro"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017771F708F
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548CF1F9EDE;
+	Tue, 12 Nov 2024 14:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731421847; cv=none; b=QimN/RU41dj0vqJUCeVdmKE4Tr7pHWel4PNjduJHHwWXwI0cac8oiqBXkrcw2iRJBaW1CGqp+Qc7HIFp95CpAc6fqC5sN1HsX4aNgRUvBJ9gPwTVoIzzsmGXtnxpLRTy/E1cDF2s8hZDdm79YLVRujpAlbtyZ+ShUOdZQF9rEVY=
+	t=1731421866; cv=none; b=DnXrgfnJenIol/ue90V8PsS0rPCjfRJyN/fBn/8MXYqma2FXkd6k5LZ0Xdb0bWqUqARDcuTmRZVOZNGDj7qh2GhTaoCHKkzG8BTNL+M0KEX78CBbrecsjc/037yIoEoK8MZoFkjxTdf4pdSWtx00dMInsGs/fikmQMHkC+usIUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731421847; c=relaxed/simple;
-	bh=p8ExRg4z1a1LltITq7U6wb/KGJ2S8pV0ajmyjQAexy8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BEkielLEQkfqLd3TROTtlIwcCC6bggAav3q+sAKIH+edUMQnqF2JuaM+QjLtf1PZKBGH7S22kV4f8EWR/GwbV3vzbRJx4BWP429GgdAFTlEsV0PcRt/ZdKsOqGR14LRWun0PN/UrNIyjC7QEPAW2fZBLFwRYzhOiNu/yY38HSt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xnaJIt2r; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QzfxjV9P; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731421844;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DfB7KMTx1REg3uFpEr1DS4wFMbhQ4wNa/fXYGewvLsg=;
-	b=xnaJIt2ruBeywTuHAfaY+/IwsNwAUSqY7htsEFt4H2f/1+A5cxvOL2SXaiFg9hTmjch00j
-	vlzd3anqzRmoBvkANgimQigW/B9mkt2AQee01nxilNQi1D2VYtoSAzMo/yVWyrwPIJNEOo
-	qDNEqUMUnhn3vnlz8XgCYxcvUkwpS3TM/xtO6u+PoDuN8sGH7r7HvGK64thp5YwtqiHa1s
-	IEk/x/lNBBvvu3/tdk3sTOdr4RXdIOYVJZsda7j6K1X65IMHGcNFkBCgmX3NsXFHM3weU4
-	uBg9IB5LzqktZZWlTHweT5+uNc+qjRZVGGI2OE8esmzsEa4JA5P+13XHyq2HFQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731421844;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DfB7KMTx1REg3uFpEr1DS4wFMbhQ4wNa/fXYGewvLsg=;
-	b=QzfxjV9PbXhdIXAysGX5LcRT47hPxb/EbxP/o3fkw4VoKNtI7qDD0tE+PigAbCGnC9wYMj
-	qN/qO/07xjgQt1Bg==
-To: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- linux-kernel@vger.kernel.org, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
- Ingo Molnar <mingo@kernel.org>
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: Re: [RFC 3/3] tick-sched: Replace jiffie readout with idle_entrytime
-In-Reply-To: <20241108174839.1016424-4-joel@joelfernandes.org>
-References: <20241108174839.1016424-1-joel@joelfernandes.org>
- <20241108174839.1016424-4-joel@joelfernandes.org>
-Date: Tue, 12 Nov 2024 15:30:24 +0100
-Message-ID: <871pzgo77j.ffs@tglx>
+	s=arc-20240116; t=1731421866; c=relaxed/simple;
+	bh=FKxrtq5k01R8nrZHRpsGFJKA8KdWuOOgePCCOjWHNR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UE61NSM46pcc6I8ORrBYCSKPq9osSHA+mfdRihvfox8mbIcqI/NzYYCYaHfq0s0jCJPbRlSlE6lgARVWv5Us92Lf9VdnZPqeAuykh0mV+udH3riBK1BpE3/+unozTFjRw3D/wcjpUmS46cJeMabQx9L16KZno4T+WmnB2kDyh+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gh+7tTro; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c714cd9c8so58324575ad.0;
+        Tue, 12 Nov 2024 06:31:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731421864; x=1732026664; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j4CG0+cc8Un34sMUc5JJuUPk6GZzogDzO5VJIh69+F8=;
+        b=Gh+7tTroTqlkdkh6vIA8lAIftVF+xmY7K4HbgkkCx9xzTQ3oFsg7PKg8kvGK90qoKE
+         su0HzSo6VUCxcROzEm1BVJGF3TtsdNDO2PL+G4k4gTG59hqz+EpAJEAnoEVJ2q3QnPeO
+         O6lZ3B9s1hPb0RJU4Vya2Che85g3AjsOkd2JAmEILruCJ28kKExmvM9vsnw8q4C2fTgT
+         YuwSE1k/KLLJYHqeUIS3cW0ADf34QHceVstTtIj9hKQZaMrU+fbscbKFafW0euwZZNYo
+         x8eY+Kg5dxUaZeuKQBzTJXVo7J4Jpu/4U7z6+DsJeFWTZ++uJ1kJmHahWRB2LDZBCmai
+         mkqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731421864; x=1732026664;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j4CG0+cc8Un34sMUc5JJuUPk6GZzogDzO5VJIh69+F8=;
+        b=VkM/bitNvT82RoK5m30S6oh2YT32mubsr007mgMlam7tK4T3TpgGFHPMdRLYirPT+0
+         sz92HvqHOFphrwtsJGuRt33OBSUcwrwK5D0JVIYV3gNTRD8rq9gNBs5mtapjIB8Dq1s6
+         /yC2OmH+tt+BRzkML4UfhJmhelH9ypGLdGyA2shudViDHIs/oxwXXJZbPATC6wL+hqmX
+         tcHePPiABQ2s+J7hdHqes19feNOCgc3kgV9MGLA+xvC2UaYh4FtIiuqpjPrKFHP2iyPv
+         NlD7+/gVg133hHUG+auBlT3GF6mTwkjM8HpNbZeD9aqVdC2BxKLB9CdE7fFbjeyK7p+2
+         PoOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqFYGeIEWdSqzyg7el7C5PqF5oN7HqdJIcz3P711ZpbTwTYPbm0s46H2xnSbdAo6I8j79h+pw1gkQLd6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8xjP7uTAJXTvKlAfaYvsncVf7c98oKiL+U1EoYuYovGj6YBNV
+	TR8VqjzsY2toTnroQfDT7m7zQ6rLXkyYZ9uoyXXPMOR5XEuLPCks
+X-Google-Smtp-Source: AGHT+IGTrGp+94KmdGoTL5rsvNAu++M+zYZRXjb9tO+a96OGTTtiwrtcNyrm8cl91N0YcC/QN0n7yQ==
+X-Received: by 2002:a17:903:230a:b0:20b:b75d:e8c1 with SMTP id d9443c01a7336-21183d10969mr225364985ad.4.1731421864519;
+        Tue, 12 Nov 2024 06:31:04 -0800 (PST)
+Received: from localhost.localdomain ([27.7.112.193])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dde2e1sm93396515ad.76.2024.11.12.06.31.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 06:31:04 -0800 (PST)
+From: Shivam Chaudhary <cvam0000@gmail.com>
+To: shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shivam Chaudhary <cvam0000@gmail.com>
+Subject: [PATCH v5 0/2] kselftest: tmpfs: Add ksft macros and skip if no root
+Date: Tue, 12 Nov 2024 20:00:54 +0530
+Message-ID: <20241112143056.565122-1-cvam0000@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 08 2024 at 17:48, Joel Fernandes wrote:
-> This solves the issue where jiffies can be stale and inaccurate.
+This version 5 patch series replace direct error handling methods with ksft
+macros, which provide better reporting.Currently, when the tmpfs test runs,
+it does not display any output if it passes,and if it fails
+(particularly when not run as root),it simply exits without any warning or
+message.
 
-Which issue?
+This series of patch adds:
 
-> Putting some prints, I see that basemono can be quite stale:
-> tick_nohz_next_event: basemono=18692000000 basemono_from_idle_entrytime=18695000000
+1. Add 'ksft_print_header()' and 'ksft_set_plan()'
+   to structure test outputs more effectively.
 
-What is your definition of stale? 3ms on a system with HZ < 1000 is
-completely correct and within the margin of the next tick, no?
+2. Error if not run as root.
 
-> Since we have 'now' in ts->idle_entrytime, we can just use that. It is
-> more accurate, cleaner, reduces lines of code and reduces any lock
-> contention with the seq locks.
+3. Replace direct error handling with 'ksft_test_result_*',
+   'ksft_exit_fail_msg' macros for better reporting.
 
-What's more accurate and what is the actual problem you are trying to
-solve. This handwaving about cleaner, less lines of code and contention
-on a non existing lock is just not helpful.
+v4->v5:
+         - Remove unnecessary pass messages.
+         - Remove unnecessary use of KSFT_SKIP.
+         - Add appropriate use of ksft_exit_fail_msg.
 
-> I was also concerned about issue where jiffies is not updated for a long
-> time, and then we receive a non-tick interrupt in the future. Relying on
-> stale jiffies value and using that as base can be inaccurate to determine
-> whether next event occurs within next tick. Fix that.
+v4 1/2: https://lore.kernel.org/all/20241105202639.1977356-2-cvam0000@gmail.com/
+v4 2/2: https://lore.kernel.org/all/20241105202639.1977356-3-cvam0000@gmail.com/
 
-I'm failing to decode this word salad.
+v3->v4:
+         - Start a patchset
+         - Split patch into smaller patches to make it easy to review.
+  Patch1 Replace  'ksft_test_result_skip' with 'KSFT_SKIP' during root run check.
+  Patch2 Replace  'ksft_test_result_fail' with 'KSFT_SKIP' where fail does not make sense,
+         or failure could be due to not unsupported APIs with appropriate warnings.
 
-> XXX: Need to fix issue in idle accounting which does 'jiffies -
-> idle_entrytime'. If idle_entrytime is more current than jiffies, it
-> could cause negative values. I could replace jiffies with idle_exittime
-> in this computation potentially to fix that.
 
-So you "fix" some yet to be correctly described issue by breaking stuff?
+v3: https://lore.kernel.org/all/20241028185756.111832-1-cvam0000@gmail.com/
 
->  static ktime_t tick_nohz_next_event(struct tick_sched *ts, int cpu)
->  {
-> -	u64 basemono, next_tick, delta, expires, delta_hr, next_hr_wo;
-> +	u64 basemono, next_tick, delta, expires, delta_hr, next_hr_wo, boot_ticks;
->  	unsigned long basejiff;
->  	int tick_cpu;
->  
-> -	basemono = get_jiffies_update(&basejiff);
-> +	boot_ticks = DIV_ROUND_DOWN_ULL(ts->idle_entrytime, TICK_NSEC);
+v2->v3:
+        - Remove extra ksft_set_plan()
+        - Remove function for unshare()
+        - Fix the comment style
+v2: https://lore.kernel.org/all/20241026191621.2860376-1-cvam0000@gmail.com/
 
-Again this div/mult is more expensive than the sequence count on 32bit.
+v1->v2:
+        - Make the commit message more clear.
+v1: https://lore.kernel.org/all/20241024200228.1075840-1-cvam0000@gmail.com/T/#u
 
-> -/*
-> - * Read jiffies and the time when jiffies were updated last
-> - */
-> -u64 get_jiffies_update(unsigned long *basej)
 
-How does this even compile? This function is global for a reason.
+thanks
+Shivam
 
-Thanks,
+Shivam Chaudhary (2):
+  selftests: tmpfs: Add Test-fail if not run as root
+  selftests: tmpfs: Add kselftest support to tmpfs
 
-        tglx
+ .../selftests/tmpfs/bug-link-o-tmpfile.c      | 60 ++++++++++++-------
+ 1 file changed, 37 insertions(+), 23 deletions(-)
+
+-- 
+2.45.2
+
 
