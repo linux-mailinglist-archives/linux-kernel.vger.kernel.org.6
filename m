@@ -1,130 +1,94 @@
-Return-Path: <linux-kernel+bounces-405336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D5CD9C4FFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:54:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7759C502B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:01:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56946B2415C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:53:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3F47B2BEF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BC720B1EC;
-	Tue, 12 Nov 2024 07:52:32 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F235920B80B;
+	Tue, 12 Nov 2024 07:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="EW0hYoyp"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F091CEEB3
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A3E20A5FB
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731397951; cv=none; b=jXZpH1+DxG/fqInjK9nlynKv5Qu0Pyd6z8c+4JoPTlAaT/OJsd+y0VCxa85VkvGkb9fGjrZKr59PhZIU4dP6ZRUxVS+wsehk9NoF0Ka8+NjrWvuSMUo6/w/55Y6d9er8XcBBYtw7lPI09QKkgLOfPh8wuoQRdcZq3syH2nfbC/Y=
+	t=1731397953; cv=none; b=IW0DWzeWVHs4EK+aW613op99Zd+Q+60nBD1qH9mCvNGZbBam1WwxMa5aCXQGfMeGzyVLUVfPuGrKaf35ufX6a31AkfFSjI4gOW2hvhT6D6U+v53bBSy0UAjOh/24YbX8XJfyOUo37brEvnEnBUnwK1X1M1NmVMuLikdddTW1Sfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731397951; c=relaxed/simple;
-	bh=POwYjtnpgolL6l6ahsmO9UZ0qOY+y4zU24wV7XuUjFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kgYbckxKFyN1AamLNrhPur9Dis/wGkTXAgCpQ7qHnbTbMz0EHY3AvjNnGNzBHn2m32njMJ/JODaKW75tl8iNz/7RL1taSOsqyWA96jUFfLURleuTObaXBqPgoijQPgBKGyekaw8yn4QqjG//fXjjVTDfZStcPQExw5yKHNye+Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tAlhA-0007Yv-E2; Tue, 12 Nov 2024 08:52:16 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tAlh9-000NFE-2L;
-	Tue, 12 Nov 2024 08:52:15 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 4871137129D;
-	Tue, 12 Nov 2024 07:52:15 +0000 (UTC)
-Date: Tue, 12 Nov 2024 08:52:14 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ
- voltage
-Message-ID: <20241112-doberman-of-original-discourse-a50070-mkl@pengutronix.de>
-References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
- <20241112-bizarre-cuttlefish-of-excellence-ff4e83-mkl@pengutronix.de>
- <lfgpif7zqwr3ojopcnxmktdhfpeui5yjrxp5dbzhlz7h3ewhle@3lbg553ujfgq>
+	s=arc-20240116; t=1731397953; c=relaxed/simple;
+	bh=z3WR9KzI7l5LiqVtZYynfLAHz/kXtDppxOFH3VB4fnU=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=pr2J3iFZr5lyAIAV8ScddE2MA6vJE9ZwL5bcbFnJhEOVt7HtFdPKAmpRYJ5Qk5ZlEjxx+yNyDQmrotqtsPSnI0a8ZfER27LHVW8NLS00aLpsknhTzPrBs3xmCDHDToHf8KOtuuqIMWbSk/y/9snSOUHQfM0m1j7IENLE2W/u208=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=EW0hYoyp; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1731397944; bh=2vbR2/qcNnaF1ZIMH82U9pMzO8VYgoI0AFu2rqp3jJ8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=EW0hYoyp/Rn6FR0Rq5dnclYj2oN0YJthSpXNS0cL7cmtC0vRp7k4WLVdV3rxBsHJn
+	 hsNJppFf7phAtssB2VF8p9ARugBwILtPbuK0XXgodS5npk6aRpc/E/L+APGmcIFGAi
+	 YqsDKPKyalOQ3Bv3j8mjymOPTpvFxISux9t6gLrY=
+Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id D16B5029; Tue, 12 Nov 2024 15:52:22 +0800
+X-QQ-mid: xmsmtpt1731397942ti9d34800
+Message-ID: <tencent_5074A97043AAA456F764576E46C7137EC305@qq.com>
+X-QQ-XMAILINFO: OKkKo7I1HxIeG6JtRWKoTqnQvC876yRiKSgnzyFOKMTkU0i55F5F48sIgrlrpX
+	 qv2gQV1UuafmyV98312Dqic4aN4i639etxn7saR2KhQI8H7r0BIv/HWW4Mr4sci9epMxH6zLMUzT
+	 drCNNrsK/tDeq7ZhXcIedR33ZdJ0f0MVEDIjQCP9LBl80h0t1FqqzSK/lb1zqQSMLcRhFMctZuDi
+	 ZQjgpayAS90JVLTFqh9vkcZcFxz+HUFoKzdj8s6bPynfrRlojw6xLfO6YZYjM9vasj4awzjff1y6
+	 88otZqeEPPvJXpeQB2F0/Wv2J3JrhyL95exZfmbFxvT9X1nXw0K3qbefFCZBqpV/WqOi30V5lgmZ
+	 CVPQ1aw219QjL22z8/uM+Tt8o0NOWDNfB/T8r79LapHQ9IlUTWaenSYVyaI1vfL1NluboJL8DvAB
+	 bqb/8Ns/L3hXY0hTAhVSIRJ5ToB1uqMbh4J9pGT0wvvf6AW+FEMwwzD4wI+M40nph8DTSHCPrjAR
+	 IupKss4YzZGb69tDTBgIZyNTKDZYGBkELAQy6kY8odj/JrpkcC5JZkqJ3X97pURtLTgQeC/NbCPE
+	 r+aJEZAroF+U8PLrLJMdOQGshPY668FvS6b3Rix/DW1wrCXmUFe1R/LlsF1obrZfy2ffd+/AS2o1
+	 GJxNuIm6T/J9Un3yqI5kLcg/AA4LC7hGZOpk6bjZXBpLvsNij/KPVEuUBu5LYEf/4hF4NHcXgTrY
+	 ZXZyti4nOsjWpuHL6AEvdqmzav1rXWsrxeUMrmJwnWwvmsbS7n0J8xddYldHA+Hw+3lXhMd/2+SO
+	 7yngWiBdz7s51gOLIgX86efi9AJcaiN+ZSsBQabCqiyLxGmosUuZpIUgxgQiEFEZmPXN+W/PcDiQ
+	 mwt48v40fPMD/4X1PLno54J1kaXCjVaQRmAlB43lzB
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [nilfs?] KASAN: use-after-free Read in nilfs_find_entry
+Date: Tue, 12 Nov 2024 15:52:23 +0800
+X-OQ-MSGID: <20241112075222.1365869-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <6732e1d8.050a0220.138bd5.00d3.GAE@google.com>
+References: <6732e1d8.050a0220.138bd5.00d3.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hh6yehkk7ldsldi7"
-Content-Disposition: inline
-In-Reply-To: <lfgpif7zqwr3ojopcnxmktdhfpeui5yjrxp5dbzhlz7h3ewhle@3lbg553ujfgq>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+next de space is not enough
 
---hh6yehkk7ldsldi7
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ
- voltage
-MIME-Version: 1.0
+#syz test
 
-On 12.11.2024 08:44:00, Sean Nyekjaer wrote:
-> Hi Marc,
->=20
-> On Tue, Nov 12, 2024 at 08:38:26AM +0100, Marc Kleine-Budde wrote:
-> > On 11.11.2024 09:54:48, Sean Nyekjaer wrote:
-> > > This series adds support for setting the nWKRQ voltage.
-> >=20
-> > IIRC the yaml change should be made before the driver change. Please
-> > make the yaml changes the 1st patch in the series.
-> >=20
-> > Marc
-> >=20
->=20
-> I know, so I have added, prerequisite-change-id as pr the b4 manual.
+diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
+index a8602729586a..09a24c81dc7d 100644
+--- a/fs/nilfs2/dir.c
++++ b/fs/nilfs2/dir.c
+@@ -317,7 +317,7 @@ struct nilfs_dir_entry *nilfs_find_entry(struct inode *dir,
+ 
+ 		de = (struct nilfs_dir_entry *)kaddr;
+ 		kaddr += nilfs_last_byte(dir, n) - reclen;
+-		while ((char *)de <= kaddr) {
++		while ((char *)de + sizeof(*de) <= kaddr) {
+ 			if (de->rec_len == 0) {
+ 				nilfs_error(dir->i_sb,
+ 					    "zero-length directory entry");
 
-I mean the order of patches in this series. First the yaml patch, then
-the code change.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---hh6yehkk7ldsldi7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmczCSwACgkQKDiiPnot
-vG+fnwgAmvu0pC+KQK1mZHowWzB931rUdeDA6rQvNK+37ZcU2Cq74OYzNLslL0D3
-QXZHkt/2xpelz/IcWPg6/KADSP817woI7FDyVvyWi2sy43Us+UW2V442/VC+m5jA
-iV27BL9RsaXoEzEyc3jcKBtrRsVQNy2xVFtKiOkR+vxb/gglWA0ndrHuxa3aX5Sr
-nkvFepwi+2V17IIwU7F67y+f66+X0iIf7S6WvxOPxk+3v0fIcYYr7bmyB0HDRt9w
-ZDyIe1u2IhwQwDorQuZ5x1sUOTdgLLC48DYd7yOkJ1B4LkRow3znNmuZZAMzqE0G
-Zlh4hfNSkX4FO8pPaDQ/jUpqh6KMFg==
-=7h/8
------END PGP SIGNATURE-----
-
---hh6yehkk7ldsldi7--
 
