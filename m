@@ -1,334 +1,370 @@
-Return-Path: <linux-kernel+bounces-405429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 119129C5132
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:52:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5489C5135
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:52:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90A261F24951
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:52:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35B6282DBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F8F20C022;
-	Tue, 12 Nov 2024 08:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8162620D51A;
+	Tue, 12 Nov 2024 08:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cyGqB5r0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="TBI9S/6g"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB46320C000
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D2920C006;
+	Tue, 12 Nov 2024 08:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731401513; cv=none; b=FPMEVhbRTzoCw3c403oEAaBnFesbfU8dxk/lO26HegJ1U8otmJAUH76gRSY+p/PEve3T5PqgugVQuv1pJBDnKJX8FNoZPeCmRkeNv2777iQnJZlYgdxUUkgS/lHdJdUNYlSJjXVqJsi+c0TOxvnjs9jO4EGGxLDbUHZDfrvC4aM=
+	t=1731401516; cv=none; b=izbeQBr1ktioYpV8itHJDS2A0Itpa6x93ahQOeEbOYb74FXb8pQutOvLG02rsLt6a23BqA5/fYXUdROLpISmUtKj7Np+N/lS1etovF9fUFczmDRiHt+FoQ+Zrq1TTZ6JE+DQXMNd/gIM3SRSwm0dwxMAakDNX9oMDB2uvycKtqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731401513; c=relaxed/simple;
-	bh=hqeAJY76rhFiFf6cAio6VT0Icw2e1fXd60fyjszZKEo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OzKK1kUcbr/DQ4q3i+hmw9KE4Huwcp9r3A9Gxspp5buBYle495lBxZ/D1tbjVTlcgC6EczuOvAMj/M9x+RKma8QGYZ3NhTbKJTSQnKJmNTMarvD56sd7JOrwdDUVJcumzgFCdoEOfPwb/gGgJGXAXnmDkYf4hG0tBvtGdsUIyKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cyGqB5r0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731401509;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YOb8rWtwHrk24MmNOtLxS6mQv73INDj+nqVSb0TDgSc=;
-	b=cyGqB5r093wJtjYojb4Gbqnz3AcmvzxLx4ATFnuMKam7N2k4InND+8cXNNJti6x40/BsEx
-	BJRA6CNn13tbzVGyyfp5xC+7/y/bSRp7u9qBFJShhjNecc9JsW4Lw6qABfTmF6ArjPa2R2
-	R4dHjTFPsqzXpFUlkIoZGJHHPSvCS4o=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-590-nhhUK87KNgCUuy-0m81RTA-1; Tue, 12 Nov 2024 03:51:48 -0500
-X-MC-Unique: nhhUK87KNgCUuy-0m81RTA-1
-X-Mimecast-MFC-AGG-ID: nhhUK87KNgCUuy-0m81RTA
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5c88bde66bdso4174000a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:51:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731401507; x=1732006307;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YOb8rWtwHrk24MmNOtLxS6mQv73INDj+nqVSb0TDgSc=;
-        b=adAhx2tkUeE8A5l7HEVwQgWXWZzC2ujKulrIKerc/HQIKXZR4DSQKNoyiMIfymzbCx
-         HuCQc/gIFgxweqfPZ5tk2xdzKr4OlWvFgblkojxAYh+rvKaZ2eBhHQERy3oJ+yAhqVSE
-         7WU3fwNnZctzn0Q8xsDM0X5xvQVUPoWllpCQsHIuHSNADfq1g3vcnJ1WWiuJDu1onE2h
-         R96Y50BV54AItced7xTR6iRIWN6kORPvR+sCaoVGuqN2aT3A0y1gU91qN+7tYWQPN1z5
-         MJj2YmG2ZZ6v2kPnwRaGtUT/UMCbw4n7QVeix9QCnaaBiHLZ06gz+2Ql/WDzy5zwxzR1
-         qTpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHkMC47ds3HNLCk3IdCO7N9Dz7RfM1thM6UNzsxmTLSTYVDGAMMB7RUweMAg8sEvoYAXTeSvz16pqFcL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6HqWe72EQhCKWDV8ihOPI/JUqVN0S439u8VPtDmHr78UnlYkC
-	hF+9CFzKSXl0nhSbTUHQXciWdSwO7yfh7/fOGDOzGEuSMJ6056vIOCPVhjEJ0xhz19lCtAKUNM7
-	uzHzu6x95quyFDdK54HM2kl5KiEckRQoi5Qm9jXiXoYW4Hch0+pBu2BmW3iktbLptgXpBpzMN0L
-	bmpxv5jcBmwEojhFnAGZHEF6edHC/e+Ji1BuY04N3U//zPaQ==
-X-Received: by 2002:a05:6402:26c2:b0:5cf:fa1:892d with SMTP id 4fb4d7f45d1cf-5cf0fa18bf4mr12296059a12.6.1731401507241;
-        Tue, 12 Nov 2024 00:51:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH4zvcjt9uYCBVnjxtXCYSgME6kAyJUMDQvcV2l83TFUVIwcuhE/MGhLyVOr7UFAiD2r3dlfA==
-X-Received: by 2002:a05:6402:26c2:b0:5cf:fa1:892d with SMTP id 4fb4d7f45d1cf-5cf0fa18bf4mr12296029a12.6.1731401506637;
-        Tue, 12 Nov 2024 00:51:46 -0800 (PST)
-Received: from fedora (g2.ign.cz. [91.219.240.8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03b7f0d8sm5759578a12.24.2024.11.12.00.51.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 00:51:46 -0800 (PST)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>, Michael Kelley
- <mhklinux@outlook.com>
-Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "K. Y.
- Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, Jiri
- Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Dmitry
- Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] HID: hyperv: streamline driver probe to avoid devres
- issues
-In-Reply-To: <20241112060449.GA18117@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20241111131240.35158-1-vkuznets@redhat.com>
- <SN6PR02MB41577C6B7BF387BEB9114A05D4582@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20241112060449.GA18117@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Date: Tue, 12 Nov 2024 09:51:45 +0100
-Message-ID: <877c98x2am.fsf@redhat.com>
+	s=arc-20240116; t=1731401516; c=relaxed/simple;
+	bh=pYPjOl4Y62ALmekzbz+Ow6DGaG2mwuMEWrvp7WMQ25M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CnFRdZDw2jEsuILMxKBtLljZsfUB2/ADRfg9+xpVCQYEoiUy5WrfA2qsFewAO/YfLUheM4RtAvjlG3Xp9P3Qi9wPZmxsELIrOc7fVDprkY7DvPeTz0ZbVdIQ4DHbmAXh+IEeC3SvcFOCZLXvlIMVcbR8jrP8m8m8zIPxF+L0dDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=TBI9S/6g; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1731401509;
+	bh=g7iLu+7yPrnLIvbqhHlXz2P/Uxc3qWAcXrQd0/3zSUk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TBI9S/6g4M/R4J8bCadEXVtepNGnU8XTgm+EE6uOAm6SDbc0G/7dY7kCPNOXKIxd2
+	 YMqgbRRnhT1d/gu9Q1CReLRY9rHq/q4MGrXMRFAn+JmxWe4hcdCcsLly5Qy1IUYyHB
+	 urfJkwVs0p0nvx9Arkfdd568MC+cnIokV2nUA0OSLSZFX5kOGj2JXOQFmsm/aYDY25
+	 EPz4ZwoKNsVBWl4y6kcgiWrUs0aO9B0F2QD0OGR/b3B1VPGY38VUiooXKKKB23caHm
+	 WbuqCQeLcArg5UkD0qW1a5oav5jDY89QuWZi5T9MEsrMTEiiLhO2alWcEgiejLLjye
+	 cVkkNV/f5uevA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XngBr722rz4x8T;
+	Tue, 12 Nov 2024 19:51:48 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: linux-pm@vger.kernel.org
+Cc: <linuxppc-dev@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>,
+	rafael@kernel.org,
+	viresh.kumar@linaro.org
+Subject: [PATCH] cpufreq: maple: Remove maple driver
+Date: Tue, 12 Nov 2024 19:51:48 +1100
+Message-ID: <20241112085148.415574-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Saurabh Singh Sengar <ssengar@linux.microsoft.com> writes:
+This driver is no longer buildable since the PPC_MAPLE platform was
+removed, see commit 62f8f307c80e ("powerpc/64: Remove maple platform").
 
-> On Mon, Nov 11, 2024 at 04:50:24PM +0000, Michael Kelley wrote:
->> From: Vitaly Kuznetsov <vkuznets@redhat.com> Sent: Monday, November 11, 2024 5:13 AM
->> > 
->> > It was found that unloading 'hid_hyperv' module results in a devres
->> > complaint:
->> > 
->> >  ...
->> >  hv_vmbus: unregistering driver hid_hyperv
->> >  ------------[ cut here ]------------
->> >  WARNING: CPU: 2 PID: 3983 at drivers/base/devres.c:691
->> > devres_release_group+0x1f2/0x2c0
->> >  ...
->> >  Call Trace:
->> >   <TASK>
->> >   ? devres_release_group+0x1f2/0x2c0
->> >   ? __warn+0xd1/0x1c0
->> >   ? devres_release_group+0x1f2/0x2c0
->> >   ? report_bug+0x32a/0x3c0
->> >   ? handle_bug+0x53/0xa0
->> >   ? exc_invalid_op+0x18/0x50
->> >   ? asm_exc_invalid_op+0x1a/0x20
->> >   ? devres_release_group+0x1f2/0x2c0
->> >   ? devres_release_group+0x90/0x2c0
->> >   ? rcu_is_watching+0x15/0xb0
->> >   ? __pfx_devres_release_group+0x10/0x10
->> >   hid_device_remove+0xf5/0x220
->> >   device_release_driver_internal+0x371/0x540
->> >   ? klist_put+0xf3/0x170
->> >   bus_remove_device+0x1f1/0x3f0
->> >   device_del+0x33f/0x8c0
->> >   ? __pfx_device_del+0x10/0x10
->> >   ? cleanup_srcu_struct+0x337/0x500
->> >   hid_destroy_device+0xc8/0x130
->> >   mousevsc_remove+0xd2/0x1d0 [hid_hyperv]
->> >   device_release_driver_internal+0x371/0x540
->> >   driver_detach+0xc5/0x180
->> >   bus_remove_driver+0x11e/0x2a0
->> >   ? __mutex_unlock_slowpath+0x160/0x5e0
->> >   vmbus_driver_unregister+0x62/0x2b0 [hv_vmbus]
->> >   ...
->
-> Do we want to mention the other error as well this patch is fixing:
+Remove the driver.
 
-The error itself is likely the same ('hid_dev->driver' override with
-'mousevsc_hid_driver' stub which doesn't do anything) but the trace
-stack is a bit different, yes.
+Note that the comment in the driver says it supports "SMU & 970FX
+based G5 Macs", but that's not true, that comment was copied from
+pmac64-cpufreq.c, which still exists and continues to support those
+machines.
 
->
-> [   68.237679] ------------[ cut here ]------------
-> [   68.237681] WARNING: CPU: 23 PID: 579 at drivers/hid/hid-core.c:1262 hid_open_report+0x2c0/0x350 [hid]
-> <snip>
-> [   68.237741] RIP: 0010:hid_open_report+0x2c0/0x350 [hid]
-> [   68.237765] Call Trace:
-> [   68.237767]  <TASK>
-> [   68.237769]  ? show_regs+0x6c/0x80
-> [   68.237774]  ? __warn+0x8d/0x150
-> [   68.237777]  ? hid_open_report+0x2c0/0x350 [hid]
-> [   68.237784]  ? report_bug+0x182/0x1b0
-> [   68.237788]  ? handle_bug+0x6e/0xb0
-> [   68.237791]  ? exc_invalid_op+0x18/0x80
-> [   68.237794]  ? asm_exc_invalid_op+0x1b/0x20
-> [   68.237799]  ? hid_open_report+0x2c0/0x350 [hid]
-> [   68.237805]  mousevsc_probe+0x1d5/0x250 [hid_hyperv]
-> [   68.237808]  vmbus_probe+0x3b/0xa0 [hv_vmbus]
-> [   68.237822]  really_probe+0xee/0x3c0
-> [   68.237827]  __driver_probe_device+0x8c/0x180
-> [   68.237830]  driver_probe_device+0x24/0xd0
-> [   68.237832]  __driver_attach_async_helper+0x6e/0x110
-> [   68.237835]  async_run_entry_fn+0x30/0x130
-> [   68.237837]  process_one_work+0x178/0x3d0
-> [   68.237839]  worker_thread+0x2de/0x410
-> [   68.237841]  ? __pfx_worker_thread+0x10/0x10
-> [   68.237843]  kthread+0xe1/0x110
-> [   68.237847]  ? __pfx_kthread+0x10/0x10
-> [   68.237849]  ret_from_fork+0x44/0x70
-> [   68.237852]  ? __pfx_kthread+0x10/0x10
-> [   68.237854]  ret_from_fork_asm+0x1a/0x30
-> [   68.237858]  </TASK>
-> [   68.237859] ---[ end trace 0000000000000000 ]---
-> [   68.237861] hid-generic 0006:045E:0621.0002: parse failed
-> [   68.238276] hv_vmbus: probe failed for device 58f75a6d-d949-4320-99e1-a2a2576d581c (-19)
->
->
->> > 
->> > And the issue seems to be that the corresponding devres group is not
->> > allocated. Normally, devres_open_group() is called from
->> > __hid_device_probe() but Hyper-V HID driver overrides 'hid_dev->driver'
->> > with 'mousevsc_hid_driver' stub and basically re-implements
->> > __hid_device_probe() by calling hid_parse() and hid_hw_start() but not
->> > devres_open_group(). hid_device_probe() does not call __hid_device_probe()
->> > for it. Later, when the driver is removed, hid_device_remove() calls
->> > devres_release_group() as it doesn't check whether hdev->driver was
->> > initially overridden or not.
->> > 
->> > The issue seems to be related to the commit 62c68e7cee33 ("HID: ensure
->> > timely release of driver-allocated resources") but the commit itself seems
->> > to be correct.
->> > 
->> > Fix the issue by dropping the 'hid_dev->driver' override and using
->> > hid_register_driver()/hid_unregister_driver() instead. Alternatively, it
->> > would have been possible to rely on the default handling but
->> > HID_CONNECT_DEFAULT implies HID_CONNECT_HIDRAW and it doesn't seem to work
->> > for mousevsc as-is.
->> > 
->> > Fixes: 62c68e7cee33 ("HID: ensure timely release of driver-allocated resources")
->> > Suggested-by: Michael Kelley <mhklinux@outlook.com>
->> > Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> > ---
->> > Changes since v1:
->> > - Keep custom HID driver for mousevsc but do it properly
->> > [Michael Kelley].
->> > - Add 'Fixes:' tag [Saurabh Singh Sengar].
->> > ---
->> >  drivers/hid/hid-hyperv.c | 58 ++++++++++++++++++++++++++++------------
->> >  1 file changed, 41 insertions(+), 17 deletions(-)
->> > 
->> > diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
->> > index f33485d83d24..0fb210e40a41 100644
->> > --- a/drivers/hid/hid-hyperv.c
->> > +++ b/drivers/hid/hid-hyperv.c
->> > @@ -422,6 +422,25 @@ static int mousevsc_hid_raw_request(struct hid_device *hid,
->> >  	return 0;
->> >  }
->> > 
->> > +static int mousevsc_hid_probe(struct hid_device *hid_dev, const struct hid_device_id *id)
->> > +{
->> > +	int ret;
->> > +
->> > +	ret = hid_parse(hid_dev);
->> > +	if (ret) {
->> > +		hid_err(hid_dev, "parse failed\n");
->> > +		return ret;
->> > +	}
->> > +
->> > +	ret = hid_hw_start(hid_dev, HID_CONNECT_HIDINPUT | HID_CONNECT_HIDDEV);
->> > +	if (ret) {
->> > +		hid_err(hid_dev, "hw start failed\n");
->> > +		return ret;
->> > +	}
->> > +
->> > +	return 0;
->> > +}
->> > +
->> >  static const struct hid_ll_driver mousevsc_ll_driver = {
->> >  	.parse = mousevsc_hid_parse,
->> >  	.open = mousevsc_hid_open,
->> > @@ -431,7 +450,16 @@ static const struct hid_ll_driver mousevsc_ll_driver = {
->> >  	.raw_request = mousevsc_hid_raw_request,
->> >  };
->> > 
->> > -static struct hid_driver mousevsc_hid_driver;
->> > +static const struct hid_device_id mousevsc_devices[] = {
->> > +	{ HID_DEVICE(BUS_VIRTUAL, HID_GROUP_ANY, 0x045E, 0x0621) },
->> > +	{ }
->> > +};
->> > +
->> > +static struct hid_driver mousevsc_hid_driver = {
->> > +	.name = "hid-hyperv",
->> > +	.id_table = mousevsc_devices,
->> > +	.probe = mousevsc_hid_probe,
->> > +};
->> > 
->> >  static int mousevsc_probe(struct hv_device *device,
->> >  			const struct hv_vmbus_device_id *dev_id)
->> > @@ -473,7 +501,6 @@ static int mousevsc_probe(struct hv_device *device,
->> >  	}
->> > 
->> >  	hid_dev->ll_driver = &mousevsc_ll_driver;
->> > -	hid_dev->driver = &mousevsc_hid_driver;
->> >  	hid_dev->bus = BUS_VIRTUAL;
->> >  	hid_dev->vendor = input_dev->hid_dev_info.vendor;
->> >  	hid_dev->product = input_dev->hid_dev_info.product;
->> > @@ -488,20 +515,6 @@ static int mousevsc_probe(struct hv_device *device,
->> >  	if (ret)
->> >  		goto probe_err2;
->> > 
->> > -
->> > -	ret = hid_parse(hid_dev);
->> > -	if (ret) {
->> > -		hid_err(hid_dev, "parse failed\n");
->> > -		goto probe_err2;
->> > -	}
->> > -
->> > -	ret = hid_hw_start(hid_dev, HID_CONNECT_HIDINPUT | HID_CONNECT_HIDDEV);
->> > -
->> > -	if (ret) {
->> > -		hid_err(hid_dev, "hw start failed\n");
->> > -		goto probe_err2;
->> > -	}
->> > -
->> >  	device_init_wakeup(&device->device, true);
->> > 
->> >  	input_dev->connected = true;
->> > @@ -579,12 +592,23 @@ static struct  hv_driver mousevsc_drv = {
->> > 
->> >  static int __init mousevsc_init(void)
->> >  {
->> > -	return vmbus_driver_register(&mousevsc_drv);
->> > +	int ret;
->> > +
->> > +	ret = hid_register_driver(&mousevsc_hid_driver);
->> > +	if (ret)
->> > +		return ret;
->> > +
->> > +	ret = vmbus_driver_register(&mousevsc_drv);
->> > +	if (ret)
->> > +		hid_unregister_driver(&mousevsc_hid_driver);
->> > +
->> > +	return ret;
->> >  }
->> > 
->> >  static void __exit mousevsc_exit(void)
->> >  {
->> >  	vmbus_driver_unregister(&mousevsc_drv);
->> > +	hid_unregister_driver(&mousevsc_hid_driver);
->> >  }
->> > 
->> >  MODULE_LICENSE("GPL");
->> > --
->> > 2.47.0
->> 
->> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
->
-> Tested V2 as well, please feel free to  add,
-> Tested-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+---
+ drivers/cpufreq/Kconfig.powerpc |   7 -
+ drivers/cpufreq/Makefile        |   1 -
+ drivers/cpufreq/maple-cpufreq.c | 242 --------------------------------
+ 3 files changed, 250 deletions(-)
+ delete mode 100644 drivers/cpufreq/maple-cpufreq.c
 
-Thank you!
+The removal commit is in the powerpc/next branch:
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git/log/?h=next
 
+I can take this via the powerpc tree if that's easiest, let me know.
+
+diff --git a/drivers/cpufreq/Kconfig.powerpc b/drivers/cpufreq/Kconfig.powerpc
+index 58151ca56695..eb678fa5260a 100644
+--- a/drivers/cpufreq/Kconfig.powerpc
++++ b/drivers/cpufreq/Kconfig.powerpc
+@@ -17,13 +17,6 @@ config CPU_FREQ_CBE_PMI
+ 	  frequencies. Using PMI, the processor will not only be able to run at
+ 	  lower speed, but also at lower core voltage.
+ 
+-config CPU_FREQ_MAPLE
+-	bool "Support for Maple 970FX Evaluation Board"
+-	depends on PPC_MAPLE
+-	help
+-	  This adds support for frequency switching on Maple 970FX
+-	  Evaluation Board and compatible boards (IBM JS2x blades).
+-
+ config CPU_FREQ_PMAC
+ 	bool "Support for Apple PowerBooks"
+ 	depends on ADB_PMU && PPC32
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 0f184031dd12..1a8f787db7e2 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -92,7 +92,6 @@ obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
+ obj-$(CONFIG_CPU_FREQ_CBE)		+= ppc-cbe-cpufreq.o
+ ppc-cbe-cpufreq-y			+= ppc_cbe_cpufreq_pervasive.o ppc_cbe_cpufreq.o
+ obj-$(CONFIG_CPU_FREQ_CBE_PMI)		+= ppc_cbe_cpufreq_pmi.o
+-obj-$(CONFIG_CPU_FREQ_MAPLE)		+= maple-cpufreq.o
+ obj-$(CONFIG_QORIQ_CPUFREQ)   		+= qoriq-cpufreq.o
+ obj-$(CONFIG_CPU_FREQ_PMAC)		+= pmac32-cpufreq.o
+ obj-$(CONFIG_CPU_FREQ_PMAC64)		+= pmac64-cpufreq.o
+diff --git a/drivers/cpufreq/maple-cpufreq.c b/drivers/cpufreq/maple-cpufreq.c
+deleted file mode 100644
+index 690da85c4865..000000000000
+--- a/drivers/cpufreq/maple-cpufreq.c
++++ /dev/null
+@@ -1,242 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- *  Copyright (C) 2011 Dmitry Eremin-Solenikov
+- *  Copyright (C) 2002 - 2005 Benjamin Herrenschmidt <benh@kernel.crashing.org>
+- *  and                       Markus Demleitner <msdemlei@cl.uni-heidelberg.de>
+- *
+- * This driver adds basic cpufreq support for SMU & 970FX based G5 Macs,
+- * that is iMac G5 and latest single CPU desktop.
+- */
+-
+-#undef DEBUG
+-
+-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+-
+-#include <linux/module.h>
+-#include <linux/types.h>
+-#include <linux/errno.h>
+-#include <linux/kernel.h>
+-#include <linux/delay.h>
+-#include <linux/sched.h>
+-#include <linux/cpufreq.h>
+-#include <linux/init.h>
+-#include <linux/completion.h>
+-#include <linux/mutex.h>
+-#include <linux/time.h>
+-#include <linux/of.h>
+-
+-#define DBG(fmt...) pr_debug(fmt)
+-
+-/* see 970FX user manual */
+-
+-#define SCOM_PCR 0x0aa001			/* PCR scom addr */
+-
+-#define PCR_HILO_SELECT		0x80000000U	/* 1 = PCR, 0 = PCRH */
+-#define PCR_SPEED_FULL		0x00000000U	/* 1:1 speed value */
+-#define PCR_SPEED_HALF		0x00020000U	/* 1:2 speed value */
+-#define PCR_SPEED_QUARTER	0x00040000U	/* 1:4 speed value */
+-#define PCR_SPEED_MASK		0x000e0000U	/* speed mask */
+-#define PCR_SPEED_SHIFT		17
+-#define PCR_FREQ_REQ_VALID	0x00010000U	/* freq request valid */
+-#define PCR_VOLT_REQ_VALID	0x00008000U	/* volt request valid */
+-#define PCR_TARGET_TIME_MASK	0x00006000U	/* target time */
+-#define PCR_STATLAT_MASK	0x00001f00U	/* STATLAT value */
+-#define PCR_SNOOPLAT_MASK	0x000000f0U	/* SNOOPLAT value */
+-#define PCR_SNOOPACC_MASK	0x0000000fU	/* SNOOPACC value */
+-
+-#define SCOM_PSR 0x408001			/* PSR scom addr */
+-/* warning: PSR is a 64 bits register */
+-#define PSR_CMD_RECEIVED	0x2000000000000000U   /* command received */
+-#define PSR_CMD_COMPLETED	0x1000000000000000U   /* command completed */
+-#define PSR_CUR_SPEED_MASK	0x0300000000000000U   /* current speed */
+-#define PSR_CUR_SPEED_SHIFT	(56)
+-
+-/*
+- * The G5 only supports two frequencies (Quarter speed is not supported)
+- */
+-#define CPUFREQ_HIGH                  0
+-#define CPUFREQ_LOW                   1
+-
+-static struct cpufreq_frequency_table maple_cpu_freqs[] = {
+-	{0, CPUFREQ_HIGH,		0},
+-	{0, CPUFREQ_LOW,		0},
+-	{0, 0,				CPUFREQ_TABLE_END},
+-};
+-
+-/* Power mode data is an array of the 32 bits PCR values to use for
+- * the various frequencies, retrieved from the device-tree
+- */
+-static int maple_pmode_cur;
+-
+-static const u32 *maple_pmode_data;
+-static int maple_pmode_max;
+-
+-/*
+- * SCOM based frequency switching for 970FX rev3
+- */
+-static int maple_scom_switch_freq(int speed_mode)
+-{
+-	unsigned long flags;
+-	int to;
+-
+-	local_irq_save(flags);
+-
+-	/* Clear PCR high */
+-	scom970_write(SCOM_PCR, 0);
+-	/* Clear PCR low */
+-	scom970_write(SCOM_PCR, PCR_HILO_SELECT | 0);
+-	/* Set PCR low */
+-	scom970_write(SCOM_PCR, PCR_HILO_SELECT |
+-		      maple_pmode_data[speed_mode]);
+-
+-	/* Wait for completion */
+-	for (to = 0; to < 10; to++) {
+-		unsigned long psr = scom970_read(SCOM_PSR);
+-
+-		if ((psr & PSR_CMD_RECEIVED) == 0 &&
+-		    (((psr >> PSR_CUR_SPEED_SHIFT) ^
+-		      (maple_pmode_data[speed_mode] >> PCR_SPEED_SHIFT)) & 0x3)
+-		    == 0)
+-			break;
+-		if (psr & PSR_CMD_COMPLETED)
+-			break;
+-		udelay(100);
+-	}
+-
+-	local_irq_restore(flags);
+-
+-	maple_pmode_cur = speed_mode;
+-	ppc_proc_freq = maple_cpu_freqs[speed_mode].frequency * 1000ul;
+-
+-	return 0;
+-}
+-
+-static int maple_scom_query_freq(void)
+-{
+-	unsigned long psr = scom970_read(SCOM_PSR);
+-	int i;
+-
+-	for (i = 0; i <= maple_pmode_max; i++)
+-		if ((((psr >> PSR_CUR_SPEED_SHIFT) ^
+-		      (maple_pmode_data[i] >> PCR_SPEED_SHIFT)) & 0x3) == 0)
+-			break;
+-	return i;
+-}
+-
+-/*
+- * Common interface to the cpufreq core
+- */
+-
+-static int maple_cpufreq_target(struct cpufreq_policy *policy,
+-	unsigned int index)
+-{
+-	return maple_scom_switch_freq(index);
+-}
+-
+-static unsigned int maple_cpufreq_get_speed(unsigned int cpu)
+-{
+-	return maple_cpu_freqs[maple_pmode_cur].frequency;
+-}
+-
+-static int maple_cpufreq_cpu_init(struct cpufreq_policy *policy)
+-{
+-	cpufreq_generic_init(policy, maple_cpu_freqs, 12000);
+-	return 0;
+-}
+-
+-static struct cpufreq_driver maple_cpufreq_driver = {
+-	.name		= "maple",
+-	.flags		= CPUFREQ_CONST_LOOPS,
+-	.init		= maple_cpufreq_cpu_init,
+-	.verify		= cpufreq_generic_frequency_table_verify,
+-	.target_index	= maple_cpufreq_target,
+-	.get		= maple_cpufreq_get_speed,
+-	.attr		= cpufreq_generic_attr,
+-};
+-
+-static int __init maple_cpufreq_init(void)
+-{
+-	struct device_node *cpunode;
+-	unsigned int psize;
+-	unsigned long max_freq;
+-	const u32 *valp;
+-	u32 pvr_hi;
+-	int rc = -ENODEV;
+-
+-	/*
+-	 * Behave here like powermac driver which checks machine compatibility
+-	 * to ease merging of two drivers in future.
+-	 */
+-	if (!of_machine_is_compatible("Momentum,Maple") &&
+-	    !of_machine_is_compatible("Momentum,Apache"))
+-		return 0;
+-
+-	/* Get first CPU node */
+-	cpunode = of_cpu_device_node_get(0);
+-	if (cpunode == NULL) {
+-		pr_err("Can't find any CPU 0 node\n");
+-		goto bail_noprops;
+-	}
+-
+-	/* Check 970FX for now */
+-	/* we actually don't care on which CPU to access PVR */
+-	pvr_hi = PVR_VER(mfspr(SPRN_PVR));
+-	if (pvr_hi != 0x3c && pvr_hi != 0x44) {
+-		pr_err("Unsupported CPU version (%x)\n", pvr_hi);
+-		goto bail_noprops;
+-	}
+-
+-	/* Look for the powertune data in the device-tree */
+-	/*
+-	 * On Maple this property is provided by PIBS in dual-processor config,
+-	 * not provided by PIBS in CPU0 config and also not provided by SLOF,
+-	 * so YMMV
+-	 */
+-	maple_pmode_data = of_get_property(cpunode, "power-mode-data", &psize);
+-	if (!maple_pmode_data) {
+-		DBG("No power-mode-data !\n");
+-		goto bail_noprops;
+-	}
+-	maple_pmode_max = psize / sizeof(u32) - 1;
+-
+-	/*
+-	 * From what I see, clock-frequency is always the maximal frequency.
+-	 * The current driver can not slew sysclk yet, so we really only deal
+-	 * with powertune steps for now. We also only implement full freq and
+-	 * half freq in this version. So far, I haven't yet seen a machine
+-	 * supporting anything else.
+-	 */
+-	valp = of_get_property(cpunode, "clock-frequency", NULL);
+-	if (!valp)
+-		goto bail_noprops;
+-	max_freq = (*valp)/1000;
+-	maple_cpu_freqs[0].frequency = max_freq;
+-	maple_cpu_freqs[1].frequency = max_freq/2;
+-
+-	/* Force apply current frequency to make sure everything is in
+-	 * sync (voltage is right for example). Firmware may leave us with
+-	 * a strange setting ...
+-	 */
+-	msleep(10);
+-	maple_pmode_cur = -1;
+-	maple_scom_switch_freq(maple_scom_query_freq());
+-
+-	pr_info("Registering Maple CPU frequency driver\n");
+-	pr_info("Low: %d Mhz, High: %d Mhz, Cur: %d MHz\n",
+-		maple_cpu_freqs[1].frequency/1000,
+-		maple_cpu_freqs[0].frequency/1000,
+-		maple_cpu_freqs[maple_pmode_cur].frequency/1000);
+-
+-	rc = cpufreq_register_driver(&maple_cpufreq_driver);
+-
+-bail_noprops:
+-	of_node_put(cpunode);
+-
+-	return rc;
+-}
+-
+-module_init(maple_cpufreq_init);
+-
+-
+-MODULE_DESCRIPTION("cpufreq driver for Maple 970FX/970MP boards");
+-MODULE_LICENSE("GPL");
 -- 
-Vitaly
+2.47.0
 
 
