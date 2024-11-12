@@ -1,108 +1,85 @@
-Return-Path: <linux-kernel+bounces-405399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4ED9C50CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:36:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D309C50CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:37:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 081521F22FCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5792F281F19
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8645F20DD52;
-	Tue, 12 Nov 2024 08:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1C720C499;
+	Tue, 12 Nov 2024 08:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xi4bbwMx"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MCZI6DmB"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5573C20C480
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB3F20D518
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731400559; cv=none; b=POTDe3jDXFySJvUZsyzB0mHbtIc7L04lzlgk/VHtN+2WDhd3XJpU5XiCkvnG5d7EH4robHFlTN1d7zJr6+LXPd2ocFm+exAXxnUZlYL9p8lWQreE/njqfy0hel+JycOwpQ0Snk8Nz53DUeOLfYSaYapyXz7u9K8CLpq2UmBovFQ=
+	t=1731400561; cv=none; b=aozX9skzK2CFQ3OuhxleDfItnD2egV+kHAsnDtEDHF037KXq8W4k8X3LTWfuOMLDYaNTsbLDnnGfk3Cv+15HiV/u46VmW8EoSDIhYK85l1kjuCzvLUCBApFUtgY4YXX9HaGizHiH9lIi4OykDRWRCdL+mTGTX660P7rIM0vbjNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731400559; c=relaxed/simple;
-	bh=Mu/o9Qv5X4vFA1jVqoDuiGcIFYCOHs8UofluQ4+eEKY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UHgNn1g0yjk/Aogem6ZqWc81+Cq6LssJaQinbI0oZKyOuFd+02Zvb0NQmShStHD9QJwRHzIvTKv3/uTRJ/iTSUCJtb2hQGnpYu8wIVopXsNlxn0skxLRhH5DVsLorT3issCR7jrHqyuuMXVK8U4pyLmzOQx+J0pbUoSxeJtuMuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xi4bbwMx; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1731400561; c=relaxed/simple;
+	bh=Ogd04ibt1boR9D5geKyDS0rBfBdR3YmD0RQ58WcqbMs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bTsW0JGPyL3MMqd5furA+y0ebEHH+kbTeUpAZ1M4JhiyA5ORhyQzQkxQIyW29C1cbkgM3FIVMhakh7mQf/yeQhi1EfHrSqTF7D2zYAX4WDuyoilZxM/N1Nq/HON7ySR4X5CAlGP3GtwtQKl0VrdqpBca8NFzii8XURZ+xfZeRy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MCZI6DmB; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4315eac969aso30420365e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:35:57 -0800 (PST)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso46628025e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:35:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731400556; x=1732005356; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731400557; x=1732005357; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C6QofcCdQmsLqvy2bS7OgsAFd+Nwlz5uz8nWM8QdfQg=;
-        b=xi4bbwMxLhYH890He0EpuJIQKm1uEbt6p7k97C9nHAXw3cpleuHPPuuL4CigGeCVGV
-         wEGwXr8oC8h1LMjsUZ0SUFQ4GEKAMSIAwwLcBxwyg0hMf4cV3EG1dUAgWNuN0+552CAY
-         DQrotiTtgbqBoqCmiVCjuurdLQpGdiEBg0mpbwzivTJ81PXGPRBvJWXqxDGJo825iVm2
-         /98wW3ElR+hNhp3NuqqkB9ygWPpxv3065NKvyF6QcT1jBUCsd6JnsqBp9J4kPD1VoNMZ
-         dynSEvrsjhgMkn1l82wt51pFunlgvwJp5N/8MPxGrmJrN5rqau8cMhUOmGVoVlipgDM/
-         Sumw==
+        bh=vzBUP4IjhpgilYzc3QP5HxQ10f2Yq/2yZCvHZ4g8xvA=;
+        b=MCZI6DmBCZWPXvq7fTh79CivdABB55wD4dEx9UxKtsQ+wxq9OGHt2y27+DDsQK6Qrh
+         LcigIQ/zHZdHNp9f5tj0jx8xQyd1iO1YIhEAp3356ujYtYQxcyUo4bXsycDscxaU7zkK
+         JN1T4Wyd0GGlcFjY0jitbCRNom5QX6LM8GjpRheg5O3i8AMRp/pfx78CeFMfBijWx/Z+
+         FPrTYrI9SAl3MTQswO6KzxHyNVTkJZ9OrhrygmcLWl65uMrxtaWVkFJJ+NRt9JNEmLXb
+         A8k08PUCC4d1cCtgUaDhZeuClKgBuSE7/Jz5IvkKL3ZzL863AAsL2PmewMPcz1kCythp
+         bx/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731400556; x=1732005356;
+        d=1e100.net; s=20230601; t=1731400557; x=1732005357;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=C6QofcCdQmsLqvy2bS7OgsAFd+Nwlz5uz8nWM8QdfQg=;
-        b=QrFnTPqsvTGWtjvYMjF2nV7VfyYoAxPYUFHwG70gnhSqayYxIoIBuONzsQz6T9TX68
-         FaMW7+nhrClwVN1wQGlHQTgGUP4MUNNDIXUIz6OrqyZuH9E9oJ+QjTgjiXlgAQavgjDo
-         EXSbYwP2YhgRUy1/oVfm726o6a2WLbjaBHshxajwuI4+XU3HkeHJE6t2tAxGIXQj4YRZ
-         GAdQKPCOYPftETOSaR84SVVfvwDAJIx2U5leGGoWZxMzCE1UikPGY5gQ4Fj/Hu4cDBG5
-         K8jBq0QKq74NEPrkKoezM87L0q7e9P858sQr8AXR/eBwzQPyHk8ew2h4YeM8fpDRiFi+
-         lMVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaC48EWW8NCeKtjP5KgUePFYLP26BRfg2h919EjGFutucb91E2a271vUH1p4FOzTPoKd4fmQogQlNVTps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxExTxS6xGRj7SJLQFm0qACeBwVeqVWc1pQFJ7TL+XRKAKiBBw
-	d2nOJSzP+r60d88SjUP481/rXoMmDJSwh0UkdrfSitjKzxFfTZAq23sqpox8OhM=
-X-Google-Smtp-Source: AGHT+IGW+y3BR7dFB04YA4ES3C1lW4o7kCU2hloqBgpq+LKWd/AQDkgHN2jgVjcYHfhMS3JEIGnWwQ==
-X-Received: by 2002:a05:600c:4690:b0:431:5226:1633 with SMTP id 5b1f17b1804b1-432b744ef66mr130754775e9.6.1731400555594;
-        Tue, 12 Nov 2024 00:35:55 -0800 (PST)
+        bh=vzBUP4IjhpgilYzc3QP5HxQ10f2Yq/2yZCvHZ4g8xvA=;
+        b=QT+P3+nabk9z86E2Q2ptyOeJ38aM72l9rcY23CZgQHt4LuxP8GQ7WjYuacPGtNGuFe
+         KOCt4hIqQxHFPA95zwUXEC54MfzM/7ZHu8M4d0ojfCUUFdWAKNXFo8qp2Ud2yMnPD4B+
+         UDRd9UMVBtZYYbS28izTIhlXstnFgE9NpM1qoTA/35WgBMiRTEJQ1SkX8KebYIk597as
+         ufEUB19Bk8JlGBJg2G5igHExXXxpiQN7KmQ4oueW2rn2YQTlt0uIyOKo4m+LOjakampL
+         pYFcA6PIKLLvOQXFEdDeRk/eG8IqCvCsMDIVr38anbKitme7OWeUkwNb88Mk15e2rwud
+         jv/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWRTF1oaioD11gwusc2VQmoTXATkoIp9Ex8xSApSr2cHm5hzniTTcuphqBUFVlpd9J8lkAhAEonQcmZi34=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7lLIHG6tjmkTUtrUrHLSl9JMHVw3/njl+482/ZWSXl/K4iwid
+	Su6TjWSRayXDjOeoVviRsAKsELGmpru+YFE2NyEpBOwuIsJiurfjj1xh/UhFrwY=
+X-Google-Smtp-Source: AGHT+IHJ9ujCbbhIsj7TrIvtnmafDAChYmP23T6s6gb+JxDcqoE9J2hSsnZv1j2TrI4f4DKJmqsWhA==
+X-Received: by 2002:a05:600c:19c8:b0:42f:7ed4:4c26 with SMTP id 5b1f17b1804b1-432b75002b7mr138902825e9.12.1731400557221;
+        Tue, 12 Nov 2024 00:35:57 -0800 (PST)
 Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa523a0esm233176195e9.0.2024.11.12.00.35.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa709ec7sm242209895e9.35.2024.11.12.00.35.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 00:35:55 -0800 (PST)
+        Tue, 12 Nov 2024 00:35:56 -0800 (PST)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Brian Norris <briannorris@chromium.org>,
-	Julius Werner <jwerner@chromium.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Gabriel Somlo <somlo@cmu.edu>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Jay Buddhabhatti <jay.buddhabhatti@amd.com>,
-	Ronak Jain <ronak.jain@amd.com>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	Praveen Teja Kundanala <praveen.teja.kundanala@amd.com>,
-	arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	patches@opensource.cirrus.com,
 	linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	imx@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	qemu-devel@nongnu.org,
-	linux-rpi-kernel@lists.infradead.org
-Subject: [PATCH] firmware: Switch back to struct platform_driver::remove()
-Date: Tue, 12 Nov 2024 09:35:20 +0100
-Message-ID:  <36974feb6035201d53384557259ec72fe311053b.1731397962.git.u.kleine-koenig@baylibre.com>
+	linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] regulator: Switch back to struct platform_driver::remove()
+Date: Tue, 12 Nov 2024 09:35:21 +0100
+Message-ID:  <ab85510f83fa901e44d5d563fe6e768054229bfe.1731398433.git.u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -111,7 +88,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7555; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=Mu/o9Qv5X4vFA1jVqoDuiGcIFYCOHs8UofluQ4+eEKY=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnMxNYRTU/Z/YcH9oKPyjD1Bi3PtTwnTXisZzZA y+s+3m+Wv2JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZzMTWAAKCRCPgPtYfRL+ TnzXB/wIb7KWzpl9KhF1WQm264Rj2ne8x5AR+YU2GkZbmy5FZrtPt6HXJuJgBDULzpxixsmxIJF VlvB5dKowmesjkiHP1AFIiR2D9fWHM+CZMEFlqVCJGrdEQrW9D+UmULcTNI3XB222G4b7YLFHM0 ed5WNuOnohzkIvJSnXdnFm/sx4bu902DDKuNLJAvDs03YbVOb2skn28UEl0B7lXZ76AcJCc3CkS wV70cKyYkGbRAjHgBNtbZcxR/2sZ1BL6KTlE4IXgb8MxxwahMWg2nbcdW/xI3OHYzt0LTeREnhL 2dc2WNr0WcclVbruKzpBOsuQEfd3vxFF7Hm2ApRGzKe6CE3/
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6809; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=Ogd04ibt1boR9D5geKyDS0rBfBdR3YmD0RQ58WcqbMs=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnMxNbdHLjDOnU3k+1ISOuzbFCoPl7yMqU5CS7W aALrvuQhoSJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZzMTWwAKCRCPgPtYfRL+ TsWYCACaD+qvsw1AJCAzT6ixsV4Mxdp3Z0Vy/Ye08kXC/NvejBKyAgZBh98uiHT1XNztZrRFSX6 1B3710YaALWB7SDDlHxXhY6E0HIVGrMAu3PkdmaxX0N6bUeGyn9qQVp9w6YD2oruut0akzt+V0W gssa5Pa9C3jwsgkHkKR82GkbeTVxK9Zk213tc9cvE5VQYu+tcxArPAHFZVgo2VZe8yLgPa/klLz /mbHEuK6R4IWJdHy+vMBAFPrOtPGDrR0UjkCiVqKQiHH/5CpHP6IiGunLTrHaXNtQfKMnQGm+CJ rMJj77T1fadlyr5CUG1HN7ZIaOnSPd0ErA1wUiZT18D1wohr
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
@@ -119,23 +96,24 @@ After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
 return void") .remove() is (again) the right callback to implement for
 platform drivers.
 
-Convert all platform drivers below drivers/firmware to use .remove(),
+Convert all platform drivers below drivers/regulator to use .remove(),
 with the eventual goal to drop struct platform_driver::remove_new(). As
 .remove() and .remove_new() have the same prototypes, conversion is done
 by just changing the structure member name in the driver initializer.
+
+A few whitespace changes are done en passant to make indention
+consistent.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 ---
 Hello,
 
-I did a single patch for all of drivers/firmware. While I usually prefer
-to do one logical change per patch, this seems to be overengineering
-here as the individual changes are really trivial and shouldn't be much
-in the way for stable backports.
-
-There is no dedicated maintainer for drivers/firmware, maybe Sudeep as
-biggest committer there can take it? Or would it be sensible to split
-this patch?
+I did a single patch for all of drivers/regulator. While I usually
+prefer to do one logical change per patch, this seems to be
+overengineering here as the individual changes are really trivial and
+shouldn't be much in the way for stable backports. But I'll happily
+split the patch if you prefer it split. Also if you object the
+indentation stuff, I can rework that.
 
 This is based on yesterday's next, if conflicts arise when you apply it
 at some later time and don't want to resolve them, feel free to just
@@ -147,161 +125,140 @@ fine.)
 Best regards
 Uwe
 
- drivers/firmware/arm_scmi/driver.c            | 2 +-
- drivers/firmware/arm_scpi.c                   | 2 +-
- drivers/firmware/google/coreboot_table.c      | 2 +-
- drivers/firmware/imx/imx-dsp.c                | 2 +-
- drivers/firmware/microchip/mpfs-auto-update.c | 2 +-
- drivers/firmware/mtk-adsp-ipc.c               | 2 +-
- drivers/firmware/qemu_fw_cfg.c                | 2 +-
- drivers/firmware/raspberrypi.c                | 2 +-
- drivers/firmware/stratix10-rsu.c              | 2 +-
- drivers/firmware/stratix10-svc.c              | 2 +-
- drivers/firmware/xilinx/zynqmp.c              | 2 +-
- 11 files changed, 11 insertions(+), 11 deletions(-)
+ drivers/regulator/arizona-ldo1.c        | 12 ++++++------
+ drivers/regulator/bd9571mwv-regulator.c |  2 +-
+ drivers/regulator/db8500-prcmu.c        |  2 +-
+ drivers/regulator/stm32-vrefbuf.c       |  2 +-
+ drivers/regulator/uniphier-regulator.c  |  2 +-
+ drivers/regulator/userspace-consumer.c  |  2 +-
+ drivers/regulator/virtual.c             |  2 +-
+ drivers/regulator/wm8350-regulator.c    |  6 +++---
+ 8 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index 1f53ca1f87e3..1b5fb2c4ce86 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -3333,7 +3333,7 @@ static struct platform_driver scmi_driver = {
- 		   .dev_groups = versions_groups,
- 		   },
- 	.probe = scmi_probe,
--	.remove_new = scmi_remove,
-+	.remove = scmi_remove,
- };
+diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
+index 4b54068d4f59..501843996faa 100644
+--- a/drivers/regulator/arizona-ldo1.c
++++ b/drivers/regulator/arizona-ldo1.c
+@@ -375,18 +375,18 @@ static int madera_ldo1_probe(struct platform_device *pdev)
  
- static struct dentry *scmi_debugfs_init(void)
-diff --git a/drivers/firmware/arm_scpi.c b/drivers/firmware/arm_scpi.c
-index f4d47577f83e..87c323de17b9 100644
---- a/drivers/firmware/arm_scpi.c
-+++ b/drivers/firmware/arm_scpi.c
-@@ -1049,7 +1049,7 @@ static struct platform_driver scpi_driver = {
- 		.dev_groups = versions_groups,
+ static struct platform_driver arizona_ldo1_driver = {
+ 	.probe = arizona_ldo1_probe,
+-	.remove_new = arizona_ldo1_remove,
+-	.driver		= {
+-		.name	= "arizona-ldo1",
++	.remove = arizona_ldo1_remove,
++	.driver = {
++		.name = "arizona-ldo1",
+ 		.probe_type = PROBE_FORCE_SYNCHRONOUS,
  	},
- 	.probe = scpi_probe,
--	.remove_new = scpi_remove,
-+	.remove = scpi_remove,
  };
- module_platform_driver(scpi_driver);
  
-diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
-index 208652a8087c..882db32e51be 100644
---- a/drivers/firmware/google/coreboot_table.c
-+++ b/drivers/firmware/google/coreboot_table.c
-@@ -220,7 +220,7 @@ MODULE_DEVICE_TABLE(of, coreboot_of_match);
+ static struct platform_driver madera_ldo1_driver = {
+ 	.probe = madera_ldo1_probe,
+-	.remove_new = arizona_ldo1_remove,
+-	.driver		= {
+-		.name	= "madera-ldo1",
++	.remove = arizona_ldo1_remove,
++	.driver = {
++		.name = "madera-ldo1",
+ 		.probe_type = PROBE_FORCE_SYNCHRONOUS,
+ 	},
+ };
+diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
+index c7ceba56e7dc..209beabb5c37 100644
+--- a/drivers/regulator/bd9571mwv-regulator.c
++++ b/drivers/regulator/bd9571mwv-regulator.c
+@@ -356,7 +356,7 @@ static struct platform_driver bd9571mwv_regulator_driver = {
+ 		.pm = DEV_PM_OPS,
+ 	},
+ 	.probe = bd9571mwv_regulator_probe,
+-	.remove_new = bd9571mwv_regulator_remove,
++	.remove = bd9571mwv_regulator_remove,
+ 	.id_table = bd9571mwv_regulator_id_table,
+ };
+ module_platform_driver(bd9571mwv_regulator_driver);
+diff --git a/drivers/regulator/db8500-prcmu.c b/drivers/regulator/db8500-prcmu.c
+index 1e2d54da1b9a..1ec2e1348891 100644
+--- a/drivers/regulator/db8500-prcmu.c
++++ b/drivers/regulator/db8500-prcmu.c
+@@ -480,7 +480,7 @@ static struct platform_driver db8500_regulator_driver = {
+ 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+ 	},
+ 	.probe = db8500_regulator_probe,
+-	.remove_new = db8500_regulator_remove,
++	.remove = db8500_regulator_remove,
+ };
  
- static struct platform_driver coreboot_table_driver = {
- 	.probe = coreboot_table_probe,
--	.remove_new = coreboot_table_remove,
-+	.remove = coreboot_table_remove,
+ static int __init db8500_regulator_init(void)
+diff --git a/drivers/regulator/stm32-vrefbuf.c b/drivers/regulator/stm32-vrefbuf.c
+index 40855105dd33..a85ea94f0673 100644
+--- a/drivers/regulator/stm32-vrefbuf.c
++++ b/drivers/regulator/stm32-vrefbuf.c
+@@ -280,7 +280,7 @@ MODULE_DEVICE_TABLE(of, stm32_vrefbuf_of_match);
+ 
+ static struct platform_driver stm32_vrefbuf_driver = {
+ 	.probe = stm32_vrefbuf_probe,
+-	.remove_new = stm32_vrefbuf_remove,
++	.remove = stm32_vrefbuf_remove,
  	.driver = {
- 		.name = "coreboot_table",
- 		.acpi_match_table = ACPI_PTR(cros_coreboot_acpi_match),
-diff --git a/drivers/firmware/imx/imx-dsp.c b/drivers/firmware/imx/imx-dsp.c
-index 01c8ef14eaec..ed79e823157a 100644
---- a/drivers/firmware/imx/imx-dsp.c
-+++ b/drivers/firmware/imx/imx-dsp.c
-@@ -180,7 +180,7 @@ static struct platform_driver imx_dsp_driver = {
- 		.name = "imx-dsp",
- 	},
- 	.probe = imx_dsp_probe,
--	.remove_new = imx_dsp_remove,
-+	.remove = imx_dsp_remove,
- };
- builtin_platform_driver(imx_dsp_driver);
+ 		.name  = "stm32-vrefbuf",
+ 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+diff --git a/drivers/regulator/uniphier-regulator.c b/drivers/regulator/uniphier-regulator.c
+index 5f868042392f..74939b7fcd81 100644
+--- a/drivers/regulator/uniphier-regulator.c
++++ b/drivers/regulator/uniphier-regulator.c
+@@ -207,7 +207,7 @@ MODULE_DEVICE_TABLE(of, uniphier_regulator_match);
  
-diff --git a/drivers/firmware/microchip/mpfs-auto-update.c b/drivers/firmware/microchip/mpfs-auto-update.c
-index 0f7ec8848202..38a03698cec9 100644
---- a/drivers/firmware/microchip/mpfs-auto-update.c
-+++ b/drivers/firmware/microchip/mpfs-auto-update.c
-@@ -458,7 +458,7 @@ static struct platform_driver mpfs_auto_update_driver = {
- 		.name = "mpfs-auto-update",
- 	},
- 	.probe = mpfs_auto_update_probe,
--	.remove_new = mpfs_auto_update_remove,
-+	.remove = mpfs_auto_update_remove,
- };
- module_platform_driver(mpfs_auto_update_driver);
- 
-diff --git a/drivers/firmware/mtk-adsp-ipc.c b/drivers/firmware/mtk-adsp-ipc.c
-index fdb083f42ebf..2b79371c61c9 100644
---- a/drivers/firmware/mtk-adsp-ipc.c
-+++ b/drivers/firmware/mtk-adsp-ipc.c
-@@ -132,7 +132,7 @@ static struct platform_driver mtk_adsp_ipc_driver = {
- 		.name = "mtk-adsp-ipc",
- 	},
- 	.probe = mtk_adsp_ipc_probe,
--	.remove_new = mtk_adsp_ipc_remove,
-+	.remove = mtk_adsp_ipc_remove,
- };
- builtin_platform_driver(mtk_adsp_ipc_driver);
- 
-diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-index 85c525745b31..d58da3e4500a 100644
---- a/drivers/firmware/qemu_fw_cfg.c
-+++ b/drivers/firmware/qemu_fw_cfg.c
-@@ -757,7 +757,7 @@ MODULE_DEVICE_TABLE(acpi, fw_cfg_sysfs_acpi_match);
- 
- static struct platform_driver fw_cfg_sysfs_driver = {
- 	.probe = fw_cfg_sysfs_probe,
--	.remove_new = fw_cfg_sysfs_remove,
-+	.remove = fw_cfg_sysfs_remove,
+ static struct platform_driver uniphier_regulator_driver = {
+ 	.probe = uniphier_regulator_probe,
+-	.remove_new = uniphier_regulator_remove,
++	.remove = uniphier_regulator_remove,
  	.driver = {
- 		.name = "fw_cfg",
- 		.of_match_table = fw_cfg_sysfs_mmio_match,
-diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
-index 18cc34987108..7ecde6921a0a 100644
---- a/drivers/firmware/raspberrypi.c
-+++ b/drivers/firmware/raspberrypi.c
-@@ -406,7 +406,7 @@ static struct platform_driver rpi_firmware_driver = {
+ 		.name  = "uniphier-regulator",
+ 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+diff --git a/drivers/regulator/userspace-consumer.c b/drivers/regulator/userspace-consumer.c
+index 6153d0295b6d..72bb5ffb49a8 100644
+--- a/drivers/regulator/userspace-consumer.c
++++ b/drivers/regulator/userspace-consumer.c
+@@ -210,7 +210,7 @@ MODULE_DEVICE_TABLE(of, regulator_userspace_consumer_of_match);
+ 
+ static struct platform_driver regulator_userspace_consumer_driver = {
+ 	.probe		= regulator_userspace_consumer_probe,
+-	.remove_new	= regulator_userspace_consumer_remove,
++	.remove		= regulator_userspace_consumer_remove,
+ 	.driver		= {
+ 		.name		= "reg-userspace-consumer",
+ 		.probe_type	= PROBE_PREFER_ASYNCHRONOUS,
+diff --git a/drivers/regulator/virtual.c b/drivers/regulator/virtual.c
+index 0a0ee186c6af..218a0d66a152 100644
+--- a/drivers/regulator/virtual.c
++++ b/drivers/regulator/virtual.c
+@@ -357,7 +357,7 @@ static void regulator_virtual_remove(struct platform_device *pdev)
+ 
+ static struct platform_driver regulator_virtual_consumer_driver = {
+ 	.probe		= regulator_virtual_probe,
+-	.remove_new	= regulator_virtual_remove,
++	.remove		= regulator_virtual_remove,
+ 	.driver		= {
+ 		.name		= "reg-virt-consumer",
+ 		.probe_type	= PROBE_PREFER_ASYNCHRONOUS,
+diff --git a/drivers/regulator/wm8350-regulator.c b/drivers/regulator/wm8350-regulator.c
+index 9939a5d2cbec..d09864bae5ef 100644
+--- a/drivers/regulator/wm8350-regulator.c
++++ b/drivers/regulator/wm8350-regulator.c
+@@ -1304,9 +1304,9 @@ EXPORT_SYMBOL_GPL(wm8350_register_led);
+ 
+ static struct platform_driver wm8350_regulator_driver = {
+ 	.probe = wm8350_regulator_probe,
+-	.remove_new = wm8350_regulator_remove,
+-	.driver		= {
+-		.name	= "wm8350-regulator",
++	.remove = wm8350_regulator_remove,
++	.driver = {
++		.name = "wm8350-regulator",
+ 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
  	},
- 	.probe		= rpi_firmware_probe,
- 	.shutdown	= rpi_firmware_shutdown,
--	.remove_new	= rpi_firmware_remove,
-+	.remove		= rpi_firmware_remove,
  };
- module_platform_driver(rpi_firmware_driver);
- 
-diff --git a/drivers/firmware/stratix10-rsu.c b/drivers/firmware/stratix10-rsu.c
-index e20cee9c2d32..1ea39a0a76c7 100644
---- a/drivers/firmware/stratix10-rsu.c
-+++ b/drivers/firmware/stratix10-rsu.c
-@@ -802,7 +802,7 @@ static void stratix10_rsu_remove(struct platform_device *pdev)
- 
- static struct platform_driver stratix10_rsu_driver = {
- 	.probe = stratix10_rsu_probe,
--	.remove_new = stratix10_rsu_remove,
-+	.remove = stratix10_rsu_remove,
- 	.driver = {
- 		.name = "stratix10-rsu",
- 		.dev_groups = rsu_groups,
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index 528f37417aea..c5c78b869561 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -1271,7 +1271,7 @@ static void stratix10_svc_drv_remove(struct platform_device *pdev)
- 
- static struct platform_driver stratix10_svc_driver = {
- 	.probe = stratix10_svc_drv_probe,
--	.remove_new = stratix10_svc_drv_remove,
-+	.remove = stratix10_svc_drv_remove,
- 	.driver = {
- 		.name = "stratix10-svc",
- 		.of_match_table = stratix10_svc_drv_match,
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index cdb565c41119..720fa8b5d8e9 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -2118,6 +2118,6 @@ static struct platform_driver zynqmp_firmware_driver = {
- 		.dev_groups = zynqmp_firmware_groups,
- 	},
- 	.probe = zynqmp_firmware_probe,
--	.remove_new = zynqmp_firmware_remove,
-+	.remove = zynqmp_firmware_remove,
- };
- module_platform_driver(zynqmp_firmware_driver);
 
 base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
 -- 
