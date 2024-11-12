@@ -1,533 +1,142 @@
-Return-Path: <linux-kernel+bounces-406447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22A49C6305
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:02:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FBF49C6172
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32598BE010F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:36:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AD9AB43C85
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF7C21A4B5;
-	Tue, 12 Nov 2024 17:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF04521CF91;
+	Tue, 12 Nov 2024 17:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZEYC5A4u"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="GzFa7jLG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QU7yuGbG"
+Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D57219E47;
-	Tue, 12 Nov 2024 17:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8B321C194;
+	Tue, 12 Nov 2024 17:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731432691; cv=none; b=kkVcy/hP3Hwu5w//8hIQgj0fxAS5incbkYEZy8Aji6KbFB90sjG17MvCKzTXbtW3hnjIRpVsdqIfdAIte5HmVjGk5M4QeGxGIQjHHvbivIO6LVR7hgSz0T/3ZUyHC3BTBY+s9zpCe2RC7/JkOheIQm6l2YziZ3XEPKrvNZgwkvM=
+	t=1731432710; cv=none; b=pb3oml53AXQEJ6/1pdeVPf1shUb+twGw4soexddZitD9i03C+yMS6/mQl5Qvx8pbBclkCkAVp5ispRgYnKZaIKaKTXv7xLd/4sNgkXt/KPsKXETV1/nW4ZpuzYDGzdk+MTQAUu5gHI0cmLXjoODIiKCxr6mwGylGv00N8XFX5zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731432691; c=relaxed/simple;
-	bh=cDeootdgXFCItMKH2EoqOPWP6LpkiYfptGvmzGlDe3c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RvlAR5TutFhqtFLIS3ZHDi+8ZafzAgtkKv9ROpNCTZew8pyFTBBjvZO0FlIEt754cd4Hae+KeQTp0lTkvPjRoPi+jRzQxVz/+I+M5vDyO3fvUtqyAsZkjN5ZiDtGP1glsSpSNbEOP8i/l8efyTLSJIALV5ifFfCh18hSEyRMdNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZEYC5A4u; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACFm1ZM004274;
-	Tue, 12 Nov 2024 17:31:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gKieqR2agRsNj4DJAMxckmxfKmBOOVNEF1G4OS/szT4=; b=ZEYC5A4uRa1hm5Ii
-	Hlgdsh7d6lt4T1vGasAexuehTvS9UzlDt5KF0A4atgQdfXbN+p26WxTIpCc9DquB
-	wVU1XS8K5lQQhWzLahFrDqxhzzJwdfG7xdcax6WKeDlR4k7UySEX75hfHDDUdeeg
-	A+9s0P26j8kkLM7PYnpRvnMvZ9YKDdBpoeKLMrxHRxVSWoCbuJBtHUjg2hXAJwDc
-	tAVNQzIbSlTblucOQT4hCINjHsa1kQ2Unqf3mUSana9S/gJ68nmBIPEDTtydTLMD
-	vcCXj/KAwJcCTnDu0I5j4PBTWSAF972pwJ2dFkrDwhDTlwe7kfyhm2DiAN3R3lfb
-	cJqTTg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v1h6huvy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 17:31:17 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACHVGDP023525
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 17:31:16 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 12 Nov 2024 09:31:07 -0800
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <akapatra@quicinc.com>, <hariramp@quicinc.com>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <cros-qcom-dts-watchers@chromium.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <quic_vikramsa@quicinc.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: [PATCH v5 1/5] media: dt-bindings: Add qcom,sc7280-camss
-Date: Tue, 12 Nov 2024 23:00:28 +0530
-Message-ID: <20241112173032.2740119-2-quic_vikramsa@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241112173032.2740119-1-quic_vikramsa@quicinc.com>
-References: <20241112173032.2740119-1-quic_vikramsa@quicinc.com>
+	s=arc-20240116; t=1731432710; c=relaxed/simple;
+	bh=5T+mAOmQGUGuwgb0NzVB0VxVq11xmNt5l/I4xqeDOR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bOBgPiRdtqusx+01DTgpCkTDHtPUPm1dTbIGpsShloA/1kQ0rWftjp3xG6bjASyVgHYR3x6kw5LPyahZwPHH0oPB18rPSwZyFs4fvDq69aas0eKRvnNi6qhm/e1VP4L65SUHrh9T7YINBvUGZBdwuZyH8umfPC95A+nDD40UBec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=GzFa7jLG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QU7yuGbG; arc=none smtp.client-ip=202.12.124.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailflow.stl.internal (Postfix) with ESMTP id A8F481D403A6;
+	Tue, 12 Nov 2024 12:31:47 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Tue, 12 Nov 2024 12:31:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1731432707; x=
+	1731436307; bh=s6+xxQXvhzXkvyOoCBbCT7VarA6WfiyFPIHUZfxtZUI=; b=G
+	zFa7jLG1cWT/l+QMM28wJShPN4UQW8P05arsOBDfylxJ3/9TgcvjKm/8+v/P/nK3
+	03uIsXlzbXykeGOTpIE3VjMLsPYKJMWY7NaZxUiagiOp+veFi8WiHswObSzIUiIz
+	y6czcrmDoEcRl8Mgq76C22xu0oKlhJ8tF/1f0+340Cua9vYey44vdbCxMl/L3De1
+	XCzokog1Jlvo8fzcEsKAsZI0QJt5yS8d86rHjb6ipT6iCUd7GjkVSujlmrFlwOzM
+	1tUyi2LfUgMfQ0Ij/3GEFaWZNiPwVBKZpZqsKsqpiKMbfR6UGIE7wDENqGKEvV2A
+	bWVytrOCoXb1AD5AqbCEQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731432707; x=1731436307; bh=s6+xxQXvhzXkvyOoCBbCT7VarA6WfiyFPIH
+	UZfxtZUI=; b=QU7yuGbGwa8Z+V54sn/5JthnsF22tXeINVYQjVTohHgFnensyHA
+	qU9EX5G1JC2dKNfZPfk2JBoYGbWxxmHlXBmz0YvZhd3FOzoupZhX2w5Y2xWNBeQD
+	9AWIQnoXugYQ94QKl6w118Xs3Hveoow1TkmFeEO7OdImRLfnO8vTfbXlsYW877u/
+	GUrHTL9wykAeN3GMrIiuYeaCMCzEbo5e5FtB85iu7wA98cAO2SPHRqflMvxL/HKP
+	SpYV3yUI/VP+EaBe4d77lfb7fwtB1cCj1O0EsX9Vdn1RFS18t7QaksyJYYfQTmJS
+	8uMp/il/TRYI5nRIDqY6SzJoNHsROf3rrEA==
+X-ME-Sender: <xms:A5EzZ0avZxicPbACnSmZZemAPUn-YRcImU-qTENbgTlCjR-VFVrZ4Q>
+    <xme:A5EzZ_agHByMCvQSmPF946IyZqRMBGDX58jO_KqwPYeX43c8R97kI4V3-VMPLD-gX
+    0jXlCBLscGdjDmDs1s>
+X-ME-Received: <xmr:A5EzZ-_k9V50mwznRx6VadZE5yrBuqhZSo-9dbqLRvZgU_cTAZ_YMlzybF3h>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudeggdelkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
+    hfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrih
+    hlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeeg
+    teehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghr
+    tghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehrhigriigrnh
+    hovhdrshdrrgesghhmrghilhdrtghomhdprhgtphhtthhopegrnhhtohhnihhosehophgv
+    nhhvphhnrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
+    dprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggv
+    nhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepnhgvthguvghvse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:A5EzZ-qfmO1SZMWEeL67fe3hBFK3DbMlO6b8CFY8a8EF_5OzxSkzrw>
+    <xmx:A5EzZ_oWpN1cgxf0RB6fIhVyMd_w8TWWHYuoyyU9PyS3nWIRc_g0Bg>
+    <xmx:A5EzZ8QA4Ub8--0CtUVQ5m7yxznrX1zxCQ3TFQ2PMIz7wAdi90rgiA>
+    <xmx:A5EzZ_r8ynOAQb2nqebqVpW4ehCb8JoEipI2reWxrn2MMcXdJRI4ZQ>
+    <xmx:A5EzZzfnM5zGEqu92LtUmm3X7pxTRQvHEBMxG5JnTB-H-x7XeJM3jjNI>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 12 Nov 2024 12:31:46 -0500 (EST)
+Date: Tue, 12 Nov 2024 18:31:45 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+Cc: Antonio Quartulli <antonio@openvpn.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v11 06/23] ovpn: introduce the ovpn_peer object
+Message-ID: <ZzORATd5hG614dta@hog>
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-6-de4698c73a25@openvpn.net>
+ <b7d3ec11-afe4-409c-970e-8bc647364a08@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: l1DRmnG9-qX6cUqgptEySlU5DHTEbN_E
-X-Proofpoint-GUID: l1DRmnG9-qX6cUqgptEySlU5DHTEbN_E
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0 clxscore=1015
- lowpriorityscore=0 impostorscore=0 spamscore=0 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120140
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b7d3ec11-afe4-409c-970e-8bc647364a08@gmail.com>
 
-Add bindings for qcom,sc7280-camss to support the camera subsystem
-on the SC7280 platform.
+2024-11-10, 15:38:27 +0200, Sergey Ryazanov wrote:
+> On 29.10.2024 12:47, Antonio Quartulli wrote:
+> > An ovpn_peer object holds the whole status of a remote peer
+> > (regardless whether it is a server or a client).
+> > 
+> > This includes status for crypto, tx/rx buffers, napi, etc.
+> > 
+> > Only support for one peer is introduced (P2P mode).
+> > Multi peer support is introduced with a later patch.
+> 
+> Reviewing the peer creation/destroying code I came to a generic question.
+> Did you consider keeping a single P2P peer in the peers table as well?
+> 
+> Looks like such approach can greatly simply the code by dropping all these
+> 'switch (ovpn->mode)' checks and implementing a unified peer management. The
+> 'peer' field in the main private data structure can be kept to accelerate
+> lookups, still using peers table for management tasks like removing all the
+> peers on the interface teardown.
 
-Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
----
- .../bindings/media/qcom,sc7280-camss.yaml     | 415 ++++++++++++++++++
- 1 file changed, 415 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
+It would save a few 'switch(mode)', but force every client to allocate
+the hashtable for no reason at all. That tradeoff doesn't look very
+beneficial to me, the P2P-specific code is really simple. And if you
+keep ovpn->peer to make lookups faster, you're not removing that many
+'switch(mode)'.
 
-diff --git a/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml b/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
-new file mode 100644
-index 000000000000..b27d4af8a64e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
-@@ -0,0 +1,415 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/qcom,sc7280-camss.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm SC7280 CAMSS ISP
-+
-+maintainers:
-+  - Azam Sadiq Pasha Kapatrala Syed <akapatra@quicinc.com>
-+  - Hariram Purushothaman <hariramp@quicinc.com>
-+
-+description:
-+  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
-+
-+properties:
-+  compatible:
-+    const: qcom,sc7280-camss
-+
-+  clocks:
-+    maxItems: 32
-+
-+  clock-names:
-+    items:
-+      - const: camnoc_axi
-+      - const: csiphy0
-+      - const: csiphy0_timer
-+      - const: csiphy1
-+      - const: csiphy1_timer
-+      - const: csiphy2
-+      - const: csiphy2_timer
-+      - const: csiphy3
-+      - const: csiphy3_timer
-+      - const: csiphy4
-+      - const: csiphy4_timer
-+      - const: gcc_camera_ahb
-+      - const: gcc_cam_hf_axi
-+      - const: soc_ahb
-+      - const: vfe0
-+      - const: vfe0_axi
-+      - const: vfe0_cphy_rx
-+      - const: vfe0_csid
-+      - const: vfe0_lite
-+      - const: vfe0_lite_cphy_rx
-+      - const: vfe0_lite_csid
-+      - const: vfe1
-+      - const: vfe1_axi
-+      - const: vfe1_cphy_rx
-+      - const: vfe1_csid
-+      - const: vfe1_lite
-+      - const: vfe1_lite_cphy_rx
-+      - const: vfe1_lite_csid
-+      - const: vfe2
-+      - const: vfe2_axi
-+      - const: vfe2_cphy_rx
-+      - const: vfe2_csid
-+
-+  interrupts:
-+    maxItems: 15
-+
-+  interrupt-names:
-+    items:
-+      - const: csid0
-+      - const: csid0_lite
-+      - const: csid1
-+      - const: csid1_lite
-+      - const: csid2
-+      - const: csiphy0
-+      - const: csiphy1
-+      - const: csiphy2
-+      - const: csiphy3
-+      - const: csiphy4
-+      - const: vfe0
-+      - const: vfe0_lite
-+      - const: vfe1
-+      - const: vfe1_lite
-+      - const: vfe2
-+
-+  interconnects:
-+    maxItems: 2
-+
-+  interconnect-names:
-+    items:
-+      - const: ahb
-+      - const: hf_0
-+
-+  iommus:
-+    maxItems: 1
-+
-+  power-domains:
-+    items:
-+      - description: IFE0 GDSC - Image Front End, Global Distributed Switch Controller.
-+      - description: IFE1 GDSC - Image Front End, Global Distributed Switch Controller.
-+      - description: IFE2 GDSC - Image Front End, Global Distributed Switch Controller.
-+      - description: Titan GDSC - Titan ISP Block, Global Distributed Switch Controller.
-+
-+  power-domain-names:
-+    items:
-+      - const: ife0
-+      - const: ife1
-+      - const: ife2
-+      - const: top
-+
-+  ports:
-+    $ref: /schemas/graph.yaml#/properties/ports
-+
-+    description:
-+      CSI input ports.
-+
-+    properties:
-+      port@0:
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-+        unevaluatedProperties: false
-+        description:
-+          Input port for receiving CSI data.
-+
-+        properties:
-+          endpoint:
-+            $ref: video-interfaces.yaml#
-+            unevaluatedProperties: false
-+
-+            properties:
-+              data-lanes:
-+                minItems: 1
-+                maxItems: 4
-+
-+            required:
-+              - data-lanes
-+
-+      port@1:
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-+        unevaluatedProperties: false
-+        description:
-+          Input port for receiving CSI data.
-+
-+        properties:
-+          endpoint:
-+            $ref: video-interfaces.yaml#
-+            unevaluatedProperties: false
-+
-+            properties:
-+              data-lanes:
-+                minItems: 1
-+                maxItems: 4
-+
-+            required:
-+              - data-lanes
-+
-+      port@2:
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-+        unevaluatedProperties: false
-+        description:
-+          Input port for receiving CSI data.
-+
-+        properties:
-+          endpoint:
-+            $ref: video-interfaces.yaml#
-+            unevaluatedProperties: false
-+
-+            properties:
-+              data-lanes:
-+                minItems: 1
-+                maxItems: 4
-+
-+            required:
-+              - data-lanes
-+
-+      port@3:
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-+        unevaluatedProperties: false
-+        description:
-+          Input port for receiving CSI data.
-+
-+        properties:
-+          endpoint:
-+            $ref: video-interfaces.yaml#
-+            unevaluatedProperties: false
-+
-+            properties:
-+              data-lanes:
-+                minItems: 1
-+                maxItems: 4
-+
-+            required:
-+              - data-lanes
-+
-+      port@4:
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-+        unevaluatedProperties: false
-+        description:
-+          Input port for receiving CSI data.
-+
-+        properties:
-+          endpoint:
-+            $ref: video-interfaces.yaml#
-+            unevaluatedProperties: false
-+
-+            properties:
-+              data-lanes:
-+                minItems: 1
-+                maxItems: 4
-+
-+            required:
-+              - data-lanes
-+
-+  reg:
-+    maxItems: 15
-+
-+  reg-names:
-+    items:
-+      - const: csid0
-+      - const: csid0_lite
-+      - const: csid1
-+      - const: csid1_lite
-+      - const: csid2
-+      - const: csiphy0
-+      - const: csiphy1
-+      - const: csiphy2
-+      - const: csiphy3
-+      - const: csiphy4
-+      - const: vfe0
-+      - const: vfe0_lite
-+      - const: vfe1
-+      - const: vfe1_lite
-+      - const: vfe2
-+
-+  vdda-phy-supply:
-+    description:
-+      Phandle to a regulator supply to PHY core block.
-+
-+  vdda-pll-supply:
-+    description:
-+      Phandle to 1.8V regulator supply to PHY refclk pll block.
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - clocks
-+  - clock-names
-+  - interrupts
-+  - interrupt-names
-+  - interconnects
-+  - interconnect-names
-+  - iommus
-+  - power-domains
-+  - power-domain-names
-+  - vdda-phy-supply
-+  - vdda-pll-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,camcc-sc7280.h>
-+    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
-+    #include <dt-bindings/interconnect/qcom,sc7280.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        camss: camss@acaf000 {
-+            compatible = "qcom,sc7280-camss";
-+
-+            reg = <0x0 0x0acb3000 0x0 0x1000>,
-+                  <0x0 0x0acc8000 0x0 0x1000>,
-+                  <0x0 0x0acba000 0x0 0x1000>,
-+                  <0x0 0x0accf000 0x0 0x1000>,
-+                  <0x0 0x0acc1000 0x0 0x1000>,
-+                  <0x0 0x0ace0000 0x0 0x2000>,
-+                  <0x0 0x0ace2000 0x0 0x2000>,
-+                  <0x0 0x0ace4000 0x0 0x2000>,
-+                  <0x0 0x0ace6000 0x0 0x2000>,
-+                  <0x0 0x0ace8000 0x0 0x2000>,
-+                  <0x0 0x0acaf000 0x0 0x4000>,
-+                  <0x0 0x0acc4000 0x0 0x4000>,
-+                  <0x0 0x0acb6000 0x0 0x4000>,
-+                  <0x0 0x0accb000 0x0 0x4000>,
-+                  <0x0 0x0acbd000 0x0 0x4000>;
-+            reg-names = "csid0",
-+                        "csid0_lite",
-+                        "csid1",
-+                        "csid1_lite",
-+                        "csid2",
-+                        "csiphy0",
-+                        "csiphy1",
-+                        "csiphy2",
-+                        "csiphy3",
-+                        "csiphy4",
-+                        "vfe0",
-+                        "vfe0_lite",
-+                        "vfe1",
-+                        "vfe1_lite",
-+                        "vfe2";
-+
-+            clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-+                     <&camcc CAM_CC_CSIPHY0_CLK>,
-+                     <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-+                     <&camcc CAM_CC_CSIPHY1_CLK>,
-+                     <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-+                     <&camcc CAM_CC_CSIPHY2_CLK>,
-+                     <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-+                     <&camcc CAM_CC_CSIPHY3_CLK>,
-+                     <&camcc CAM_CC_CSI3PHYTIMER_CLK>,
-+                     <&camcc CAM_CC_CSIPHY4_CLK>,
-+                     <&camcc CAM_CC_CSI4PHYTIMER_CLK>,
-+                     <&gcc GCC_CAMERA_AHB_CLK>,
-+                     <&gcc GCC_CAMERA_HF_AXI_CLK>,
-+                     <&camcc CAM_CC_CPAS_AHB_CLK>,
-+                     <&camcc CAM_CC_IFE_0_CLK>,
-+                     <&camcc CAM_CC_IFE_0_AXI_CLK>,
-+                     <&camcc CAM_CC_IFE_0_CPHY_RX_CLK>,
-+                     <&camcc CAM_CC_IFE_0_CSID_CLK>,
-+                     <&camcc CAM_CC_IFE_LITE_0_CLK>,
-+                     <&camcc CAM_CC_IFE_LITE_0_CPHY_RX_CLK>,
-+                     <&camcc CAM_CC_IFE_LITE_0_CSID_CLK>,
-+                     <&camcc CAM_CC_IFE_1_CLK>,
-+                     <&camcc CAM_CC_IFE_1_AXI_CLK>,
-+                     <&camcc CAM_CC_IFE_1_CPHY_RX_CLK>,
-+                     <&camcc CAM_CC_IFE_1_CSID_CLK>,
-+                     <&camcc CAM_CC_IFE_LITE_1_CLK>,
-+                     <&camcc CAM_CC_IFE_LITE_1_CPHY_RX_CLK>,
-+                     <&camcc CAM_CC_IFE_LITE_1_CSID_CLK>,
-+                     <&camcc CAM_CC_IFE_2_CLK>,
-+                     <&camcc CAM_CC_IFE_2_AXI_CLK>,
-+                     <&camcc CAM_CC_IFE_2_CPHY_RX_CLK>,
-+                     <&camcc CAM_CC_IFE_2_CSID_CLK>;
-+            clock-names = "camnoc_axi",
-+                          "csiphy0",
-+                          "csiphy0_timer",
-+                          "csiphy1",
-+                          "csiphy1_timer",
-+                          "csiphy2",
-+                          "csiphy2_timer",
-+                          "csiphy3",
-+                          "csiphy3_timer",
-+                          "csiphy4",
-+                          "csiphy4_timer",
-+                          "gcc_camera_ahb",
-+                          "gcc_cam_hf_axi",
-+                          "soc_ahb",
-+                          "vfe0",
-+                          "vfe0_axi",
-+                          "vfe0_cphy_rx",
-+                          "vfe0_csid",
-+                          "vfe0_lite",
-+                          "vfe0_lite_cphy_rx",
-+                          "vfe0_lite_csid",
-+                          "vfe1",
-+                          "vfe1_axi",
-+                          "vfe1_cphy_rx",
-+                          "vfe1_csid",
-+                          "vfe1_lite",
-+                          "vfe1_lite_cphy_rx",
-+                          "vfe1_lite_csid",
-+                          "vfe2",
-+                          "vfe2_axi",
-+                          "vfe2_cphy_rx",
-+                          "vfe2_csid";
-+
-+            interrupts = <GIC_SPI 464 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 640 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 122 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 641 IRQ_TYPE_EDGE_RISING>;
-+            interrupt-names = "csid0",
-+                              "csid0_lite",
-+                              "csid1",
-+                              "csid1_lite",
-+                              "csid2",
-+                              "csiphy0",
-+                              "csiphy1",
-+                              "csiphy2",
-+                              "csiphy3",
-+                              "csiphy4",
-+                              "vfe0",
-+                              "vfe0_lite",
-+                              "vfe1",
-+                              "vfe1_lite",
-+                              "vfe2";
-+
-+            interconnects = <&gem_noc MASTER_APPSS_PROC 0 &cnoc2 SLAVE_CAMERA_CFG 0>,
-+                            <&mmss_noc MASTER_CAMNOC_HF 0 &mc_virt SLAVE_EBI1 0>;
-+            interconnect-names = "ahb", "hf_0";
-+
-+            iommus = <&apps_smmu 0x800 0x4e0>;
-+
-+            power-domains = <&camcc CAM_CC_IFE_0_GDSC>,
-+                            <&camcc CAM_CC_IFE_1_GDSC>,
-+                            <&camcc CAM_CC_IFE_2_GDSC>,
-+                            <&camcc CAM_CC_TITAN_TOP_GDSC>;
-+            power-domain-names = "ife0", "ife1", "ife2", "top";
-+
-+            vdda-phy-supply = <&vreg_l10c_0p88>;
-+            vdda-pll-supply = <&vreg_l6b_1p2>;
-+
-+            ports {
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+            };
-+        };
-+    };
 -- 
-2.25.1
-
+Sabrina
 
