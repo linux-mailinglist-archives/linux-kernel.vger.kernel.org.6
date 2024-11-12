@@ -1,466 +1,296 @@
-Return-Path: <linux-kernel+bounces-405168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056989C4DC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:34:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C25C39C4DC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:35:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 871C6287A36
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:34:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96E411F24DAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20DA20899C;
-	Tue, 12 Nov 2024 04:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F173E20820A;
+	Tue, 12 Nov 2024 04:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0w0p1JH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MxOn2YL6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F9341C79;
-	Tue, 12 Nov 2024 04:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1DD41C79
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731386035; cv=none; b=OSS5KYSZ3AKZEO2FS5dzsgcGMfw9MyoNZsP2zQemRuivLkULDprXQbjRUPmToQjq5VhxJI2jEhFAuTgU9IlITryTxSMezYiv7Og884wselQ7BzGN4Vh6sQhxDukrtGExNWZhFWkxzRNiH6fxUjxaMuzKU7T9DEqjFSiFYPqdgDU=
+	t=1731386124; cv=none; b=D1BxmlEJ2MUJEE81FW4SmOj+s22tcrqMyQDwbIxD+/NuuzzxJsfYcXp5V9pTQ9yfJJIQCTB7MEiy8FfinMeQtEODm+S/0HoZIcJFmytuIJ3vyv+d8Co+eD5rvyaiYeCP4QsIjfFrN7iMFC2krNz5YGct22OXDGwKxScRa0A+EDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731386035; c=relaxed/simple;
-	bh=1wSD+O/xu2pWXbq3lZLLIALSc/7bm3caBy1zV8NgrLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uH2EX4eBBJj5K9edXnDr2oMQEyLYE6cX0lCDWe2bpwvRIFfujXUUqmnV+Aonpf7Ze6qWduf2+W0yWxKeBGLb0kWI0gA+SdfMbCl5+PSAkfZMWjXjuyAurEv3Iu+F0GV1tgeEefwAi/k2zYpO8uBT0TohdWPGMUdwCO5UzH9rowQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0w0p1JH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F366C4CECD;
-	Tue, 12 Nov 2024 04:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731386034;
-	bh=1wSD+O/xu2pWXbq3lZLLIALSc/7bm3caBy1zV8NgrLU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u0w0p1JH1YdusCRBXaAc/VRVwp0F9Ustkoh79Rgzem6zwYsdyflIc06wLl5aq4yyb
-	 F6HCoVVXa9kyIhhT7NB8MuJSdXX2oRSKFHrYgv8eu5fKbk24uaIaMNZn93BmFsNCMl
-	 qcdYma65hrsjvCvtNg+pkH6S47zvEpbblF1Nli/RN9VhgzWpVQ9BdL8QbXfVJsCybk
-	 BEby/kkaGi4Q5KG1a+TcNKZVLLbN/H2IzyaCC0x9TeLq7t9Pw4Z5EIH1E10hTwR3WE
-	 zpFAaAFrPb5VFWEaD3m7hrUe6nNS7yPm0VCz81Wd+n/aMP84+9SdHEkansEkGfD4v3
-	 SbGlPKPV0b3tQ==
-Date: Mon, 11 Nov 2024 22:33:51 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com
-Subject: Re: [PATCH v2 RESEND 3/3] i2c: i2c-qcom-geni: Add Block event
- interrupt support
-Message-ID: <54iirnbdmcvbg2zpkajuwqjdb6mxlehpvtnq2hmxd4beuh4ish@mbuttdzzvebv>
-References: <20241111140244.13474-1-quic_jseerapu@quicinc.com>
- <20241111140244.13474-4-quic_jseerapu@quicinc.com>
+	s=arc-20240116; t=1731386124; c=relaxed/simple;
+	bh=FCE0HRXxSuRsfhnSfw2DXG1M+BVUsGsJosrr103OftQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=u5DhinJMbTZPanhw+qEPNPDo9OWOqxXBmoTks7XAzv7m64LjNdOj2X5VqnAwcPL7dAZRoFCdMBhg6Aohn9SlKL8dBCEbpENChQlbCjyWvYOCd21d3SgkY2inP/kQ7meJt1h+3zUiR6/NIfAQKXqxMwjkTWJeBkOlidM+Qb/K8KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MxOn2YL6; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731386122; x=1762922122;
+  h=date:from:to:cc:subject:message-id;
+  bh=FCE0HRXxSuRsfhnSfw2DXG1M+BVUsGsJosrr103OftQ=;
+  b=MxOn2YL6xrv7CeZeGqkOVDn1/p9gZ5Vkf0whqp78xLCNH38HogfgZJOl
+   PcYqhGV9NXsTC27CKvqHPZi9xc7V6knh7PnqKkCmREpKYETIMh9lojZ5/
+   wj7V1XNEqEYaH3s0u5dNM2BBCV8W47sS6O1de5lP1hN4mP8eyoILW0aTa
+   f0ezJaSodEJpTW9U9hpDvpNgxPyPcXyXy4RsXELxakNOa9EoY45+gY7c3
+   IHTrdYk3clv2YJttkcDq2+2EFIaPJHQ/1t5EfQFmLLj1WJ3Dpd5O/zr/B
+   k6zuyean8YufYq+asfCp+DLsxVgZCdbaBiKFu/U8mzN0pd2pKelMItAG/
+   w==;
+X-CSE-ConnectionGUID: 3ctpjMWrRQiHe0IphEwqTA==
+X-CSE-MsgGUID: y2xWCUeVSYqgF/rPnznFig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="48716861"
+X-IronPort-AV: E=Sophos;i="6.12,146,1728975600"; 
+   d="scan'208";a="48716861"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 20:34:38 -0800
+X-CSE-ConnectionGUID: 8fRIbnjfR8mspS+nHrhBwg==
+X-CSE-MsgGUID: dpfik7f2SO+g4rdPVltcfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,146,1728975600"; 
+   d="scan'208";a="92366492"
+Received: from lkp-server01.sh.intel.com (HELO bcfed0da017c) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 11 Nov 2024 20:34:33 -0800
+Received: from kbuild by bcfed0da017c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tAibm-0000SB-2u;
+	Tue, 12 Nov 2024 04:34:30 +0000
+Date: Tue, 12 Nov 2024 12:33:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:tip/urgent] BUILD SUCCESS
+ 3311cd903ab35ba440199c6ace6fbe5560dacb1f
+Message-ID: <202411121246.XmVJFRqb-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111140244.13474-4-quic_jseerapu@quicinc.com>
 
-On Mon, Nov 11, 2024 at 07:32:44PM +0530, Jyothi Kumar Seerapu wrote:
-> The I2C driver gets an interrupt upon transfer completion.
-> For multiple messages in a single transfer, N interrupts will be
-> received for N messages, leading to significant software interrupt
-> latency. To mitigate this latency, utilize Block Event Interrupt (BEI)
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tip/urgent
+branch HEAD: 3311cd903ab35ba440199c6ace6fbe5560dacb1f  Merge branch into tip/master: 'x86/urgent'
 
-Please rewrite this to the tone that the reader doesn't know what Block
-Event Interrupt is, or that it exists.
+elapsed time: 789m
 
-> only when an interrupt is necessary. This means large transfers can be
-> split into multiple chunks of 8 messages internally, without expecting
-> interrupts for the first 7 message completions, only the last one will
-> trigger an interrupt indicating 8 messages completed.
-> 
-> By implementing BEI, multi-message transfers can be divided into
-> chunks of 8 messages, improving overall transfer time.
+configs tested: 204
+configs skipped: 6
 
-You already wrote this in the paragraph above.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    clang-20
+alpha                               defconfig    gcc-14.2.0
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    clang-20
+arc                          axs101_defconfig    clang-20
+arc                                 defconfig    gcc-14.2.0
+arc                            hsdk_defconfig    gcc-14.2.0
+arc                        nsim_700_defconfig    gcc-14.2.0
+arc                   randconfig-001-20241112    gcc-14.2.0
+arc                   randconfig-002-20241112    gcc-14.2.0
+arc                           tb10x_defconfig    gcc-14.2.0
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.2.0
+arm                              allyesconfig    clang-20
+arm                          collie_defconfig    gcc-14.2.0
+arm                                 defconfig    gcc-14.2.0
+arm                            dove_defconfig    clang-20
+arm                            dove_defconfig    gcc-14.2.0
+arm                       imx_v6_v7_defconfig    gcc-14.2.0
+arm                      jornada720_defconfig    clang-20
+arm                        mvebu_v5_defconfig    gcc-14.2.0
+arm                        mvebu_v7_defconfig    gcc-14.2.0
+arm                       omap2plus_defconfig    gcc-14.2.0
+arm                          pxa168_defconfig    gcc-14.2.0
+arm                   randconfig-001-20241112    gcc-14.2.0
+arm                   randconfig-002-20241112    gcc-14.2.0
+arm                   randconfig-003-20241112    gcc-14.2.0
+arm                   randconfig-004-20241112    gcc-14.2.0
+arm                        realview_defconfig    gcc-14.2.0
+arm                         wpcm450_defconfig    gcc-14.2.0
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.2.0
+arm64                               defconfig    gcc-14.2.0
+arm64                 randconfig-001-20241112    gcc-14.2.0
+arm64                 randconfig-002-20241112    gcc-14.2.0
+arm64                 randconfig-003-20241112    gcc-14.2.0
+arm64                 randconfig-004-20241112    gcc-14.2.0
+csky                             alldefconfig    clang-20
+csky                              allnoconfig    gcc-14.2.0
+csky                                defconfig    gcc-14.2.0
+csky                  randconfig-001-20241112    gcc-14.2.0
+csky                  randconfig-002-20241112    gcc-14.2.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.2.0
+hexagon                          allyesconfig    clang-20
+hexagon                             defconfig    gcc-14.2.0
+hexagon               randconfig-001-20241112    gcc-14.2.0
+hexagon               randconfig-002-20241112    gcc-14.2.0
+i386                             allmodconfig    clang-19
+i386                              allnoconfig    clang-19
+i386                             allyesconfig    clang-19
+i386        buildonly-randconfig-001-20241112    clang-19
+i386        buildonly-randconfig-002-20241112    clang-19
+i386        buildonly-randconfig-003-20241112    clang-19
+i386        buildonly-randconfig-004-20241112    clang-19
+i386        buildonly-randconfig-005-20241112    clang-19
+i386        buildonly-randconfig-006-20241112    clang-19
+i386                                defconfig    clang-19
+i386                  randconfig-001-20241112    clang-19
+i386                  randconfig-002-20241112    clang-19
+i386                  randconfig-003-20241112    clang-19
+i386                  randconfig-004-20241112    clang-19
+i386                  randconfig-005-20241112    clang-19
+i386                  randconfig-006-20241112    clang-19
+i386                  randconfig-011-20241112    clang-19
+i386                  randconfig-012-20241112    clang-19
+i386                  randconfig-013-20241112    clang-19
+i386                  randconfig-014-20241112    clang-19
+i386                  randconfig-015-20241112    clang-19
+i386                  randconfig-016-20241112    clang-19
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch                           defconfig    gcc-14.2.0
+loongarch             randconfig-001-20241112    gcc-14.2.0
+loongarch             randconfig-002-20241112    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+m68k                          amiga_defconfig    clang-20
+m68k                                defconfig    gcc-14.2.0
+m68k                            q40_defconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+microblaze                          defconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                        bcm63xx_defconfig    gcc-14.2.0
+mips                           ip22_defconfig    clang-20
+mips                           ip32_defconfig    gcc-14.2.0
+mips                        qi_lb60_defconfig    clang-20
+mips                          rb532_defconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                               defconfig    gcc-14.2.0
+nios2                 randconfig-001-20241112    gcc-14.2.0
+nios2                 randconfig-002-20241112    gcc-14.2.0
+openrisc                          allnoconfig    clang-20
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-12
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    clang-20
+parisc                           allyesconfig    gcc-14.2.0
+parisc                              defconfig    gcc-12
+parisc                randconfig-001-20241112    gcc-14.2.0
+parisc                randconfig-002-20241112    gcc-14.2.0
+parisc64                         alldefconfig    gcc-14.2.0
+parisc64                            defconfig    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    clang-20
+powerpc                          allyesconfig    clang-20
+powerpc                          allyesconfig    gcc-14.2.0
+powerpc                     asp8347_defconfig    clang-20
+powerpc                       eiger_defconfig    gcc-14.2.0
+powerpc                    gamecube_defconfig    gcc-14.2.0
+powerpc               mpc834x_itxgp_defconfig    clang-20
+powerpc               mpc834x_itxgp_defconfig    gcc-14.2.0
+powerpc                 mpc836x_rdk_defconfig    clang-20
+powerpc                     mpc83xx_defconfig    clang-20
+powerpc                       ppc64_defconfig    clang-20
+powerpc                       ppc64_defconfig    gcc-14.2.0
+powerpc               randconfig-001-20241112    gcc-14.2.0
+powerpc               randconfig-002-20241112    gcc-14.2.0
+powerpc               randconfig-003-20241112    gcc-14.2.0
+powerpc                     sequoia_defconfig    clang-20
+powerpc                     skiroot_defconfig    gcc-14.2.0
+powerpc64             randconfig-001-20241112    gcc-14.2.0
+powerpc64             randconfig-002-20241112    gcc-14.2.0
+powerpc64             randconfig-003-20241112    gcc-14.2.0
+riscv                            allmodconfig    clang-20
+riscv                            allmodconfig    gcc-14.2.0
+riscv                             allnoconfig    clang-20
+riscv                            allyesconfig    clang-20
+riscv                            allyesconfig    gcc-14.2.0
+riscv                               defconfig    gcc-12
+riscv                 randconfig-001-20241112    gcc-14.2.0
+riscv                 randconfig-002-20241112    gcc-14.2.0
+s390                             allmodconfig    gcc-14.2.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.2.0
+s390                                defconfig    gcc-12
+s390                  randconfig-001-20241112    gcc-14.2.0
+s390                  randconfig-002-20241112    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                                  defconfig    gcc-12
+sh                ecovec24-romimage_defconfig    clang-20
+sh                          landisk_defconfig    gcc-14.2.0
+sh                     magicpanelr2_defconfig    gcc-14.2.0
+sh                          polaris_defconfig    clang-20
+sh                    randconfig-001-20241112    gcc-14.2.0
+sh                    randconfig-002-20241112    gcc-14.2.0
+sh                          rsk7264_defconfig    gcc-14.2.0
+sh                           se7343_defconfig    clang-20
+sh                           se7721_defconfig    gcc-14.2.0
+sh                   secureedge5410_defconfig    gcc-14.2.0
+sh                     sh7710voipgw_defconfig    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc64                             defconfig    gcc-12
+sparc64               randconfig-001-20241112    gcc-14.2.0
+sparc64               randconfig-002-20241112    gcc-14.2.0
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20241112    gcc-14.2.0
+um                    randconfig-002-20241112    gcc-14.2.0
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20241112    gcc-12
+x86_64      buildonly-randconfig-002-20241112    gcc-12
+x86_64      buildonly-randconfig-003-20241112    gcc-12
+x86_64      buildonly-randconfig-004-20241112    gcc-12
+x86_64      buildonly-randconfig-005-20241112    gcc-12
+x86_64      buildonly-randconfig-006-20241112    gcc-12
+x86_64                              defconfig    clang-19
+x86_64                                  kexec    gcc-12
+x86_64                randconfig-001-20241112    gcc-12
+x86_64                randconfig-002-20241112    gcc-12
+x86_64                randconfig-003-20241112    gcc-12
+x86_64                randconfig-004-20241112    gcc-12
+x86_64                randconfig-005-20241112    gcc-12
+x86_64                randconfig-006-20241112    gcc-12
+x86_64                randconfig-011-20241112    gcc-12
+x86_64                randconfig-012-20241112    gcc-12
+x86_64                randconfig-013-20241112    gcc-12
+x86_64                randconfig-014-20241112    gcc-12
+x86_64                randconfig-015-20241112    gcc-12
+x86_64                randconfig-016-20241112    gcc-12
+x86_64                randconfig-071-20241112    gcc-12
+x86_64                randconfig-072-20241112    gcc-12
+x86_64                randconfig-073-20241112    gcc-12
+x86_64                randconfig-074-20241112    gcc-12
+x86_64                randconfig-075-20241112    gcc-12
+x86_64                randconfig-076-20241112    gcc-12
+x86_64                               rhel-8.3    gcc-12
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                generic_kc705_defconfig    gcc-14.2.0
+xtensa                          iss_defconfig    gcc-14.2.0
+xtensa                randconfig-001-20241112    gcc-14.2.0
+xtensa                randconfig-002-20241112    gcc-14.2.0
 
-Where is this number 8 coming from btw?
-
-> This optimization reduces transfer time from 168 ms to 48 ms for a
-> series of 200 I2C write messages in a single transfer, with a
-> clock frequency support of 100 kHz.
-> 
-> BEI optimizations are currently implemented for I2C write transfers only,
-> as there is no use case for multiple I2C read messages in a single transfer
-> at this time.
-> 
-> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-> ---
-> 
-> v1 -> v2:
->    - Moved gi2c_gpi_xfer->msg_idx_cnt to separate local variable.
->    - Updated goto labels for error scenarios in geni_i2c_gpi function
->    - memset tx_multi_xfer to 0.
->    - Removed passing current msg index to geni_i2c_gpi.
->    - Fixed kernel test robot reported compilation issues.    
-> 
->  drivers/i2c/busses/i2c-qcom-geni.c | 203 +++++++++++++++++++++++++----
->  1 file changed, 178 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> index 7a22e1f46e60..04a7d926dadc 100644
-> --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> @@ -100,6 +100,10 @@ struct geni_i2c_dev {
->  	struct dma_chan *rx_c;
->  	bool gpi_mode;
->  	bool abort_done;
-> +	bool is_tx_multi_xfer;
-> +	u32 num_msgs;
-> +	u32 tx_irq_cnt;
-> +	struct gpi_i2c_config *gpi_config;
->  };
->  
->  struct geni_i2c_desc {
-> @@ -500,6 +504,7 @@ static int geni_i2c_tx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->  static void i2c_gpi_cb_result(void *cb, const struct dmaengine_result *result)
->  {
->  	struct geni_i2c_dev *gi2c = cb;
-> +	struct gpi_multi_xfer *tx_multi_xfer;
->  
->  	if (result->result != DMA_TRANS_NOERROR) {
->  		dev_err(gi2c->se.dev, "DMA txn failed:%d\n", result->result);
-> @@ -508,7 +513,21 @@ static void i2c_gpi_cb_result(void *cb, const struct dmaengine_result *result)
->  		dev_dbg(gi2c->se.dev, "DMA xfer has pending: %d\n", result->residue);
->  	}
->  
-> -	complete(&gi2c->done);
-> +	if (gi2c->is_tx_multi_xfer) {
-
-Wouldn't it be cleaner to treat the !is_tx_multi_xfer case as a
-multi-xfer of length 1?
-
-> +		tx_multi_xfer = &gi2c->gpi_config->multi_xfer;
-> +
-> +		/*
-> +		 * Send Completion for last message or multiple of NUM_MSGS_PER_IRQ.
-> +		 */
-> +		if ((tx_multi_xfer->irq_msg_cnt == gi2c->num_msgs - 1) ||
-> +		    (!((tx_multi_xfer->irq_msg_cnt + 1) % NUM_MSGS_PER_IRQ))) {
-> +			tx_multi_xfer->irq_cnt++;
-> +			complete(&gi2c->done);
-
-Why? You're removing the wait_for_completion_timeout() from
-geni_i2c_gpi_xfer() when is_tx_multi_xfer is set.
-
-> +		}
-> +		tx_multi_xfer->irq_msg_cnt++;
-> +	} else {
-> +		complete(&gi2c->done);
-> +	}
->  }
->  
->  static void geni_i2c_gpi_unmap(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
-> @@ -526,7 +545,42 @@ static void geni_i2c_gpi_unmap(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->  	}
->  }
->  
-> -static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
-> +/**
-> + * gpi_i2c_multi_desc_unmap() - unmaps the buffers post multi message TX transfers
-> + * @dev: pointer to the corresponding dev node
-> + * @gi2c: i2c dev handle
-> + * @msgs: i2c messages array
-> + * @peripheral: pointer to the gpi_i2c_config
-> + */
-> +static void gpi_i2c_multi_desc_unmap(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[],
-> +				     struct gpi_i2c_config *peripheral)
-> +{
-> +	u32 msg_xfer_cnt, wr_idx = 0;
-> +	struct gpi_multi_xfer *tx_multi_xfer = &peripheral->multi_xfer;
-> +
-> +	/*
-> +	 * In error case, need to unmap all messages based on the msg_idx_cnt.
-> +	 * Non-error case unmap all the processed messages.
-
-What is the benefit of this optimization, compared to keeping things
-simple and just unmap all buffers at the end of geni_i2c_gpi_xfer()?
-
-> +	 */
-> +	if (gi2c->err)
-> +		msg_xfer_cnt = tx_multi_xfer->msg_idx_cnt;
-> +	else
-> +		msg_xfer_cnt = tx_multi_xfer->irq_cnt * NUM_MSGS_PER_IRQ;
-> +
-> +	/* Unmap the processed DMA buffers based on the received interrupt count */
-> +	for (; tx_multi_xfer->unmap_msg_cnt < msg_xfer_cnt; tx_multi_xfer->unmap_msg_cnt++) {
-> +		if (tx_multi_xfer->unmap_msg_cnt == gi2c->num_msgs)
-> +			break;
-> +		wr_idx = tx_multi_xfer->unmap_msg_cnt % QCOM_GPI_MAX_NUM_MSGS;
-> +		geni_i2c_gpi_unmap(gi2c, &msgs[tx_multi_xfer->unmap_msg_cnt],
-> +				   tx_multi_xfer->dma_buf[wr_idx],
-> +				   tx_multi_xfer->dma_addr[wr_idx],
-> +				   NULL, (dma_addr_t)NULL);
-> +		tx_multi_xfer->freed_msg_cnt++;
-> +	}
-> +}
-> +
-> +static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[],
->  			struct dma_slave_config *config, dma_addr_t *dma_addr_p,
->  			void **buf, unsigned int op, struct dma_chan *dma_chan)
->  {
-> @@ -538,26 +592,48 @@ static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->  	enum dma_transfer_direction dma_dirn;
->  	struct dma_async_tx_descriptor *desc;
->  	int ret;
-> +	struct gpi_multi_xfer *gi2c_gpi_xfer;
-> +	dma_cookie_t cookie;
-> +	u32 msg_idx;
->  
->  	peripheral = config->peripheral_config;
-> -
-> -	dma_buf = i2c_get_dma_safe_msg_buf(msg, 1);
-> -	if (!dma_buf)
-> -		return -ENOMEM;
-> +	gi2c_gpi_xfer = &peripheral->multi_xfer;
-> +	dma_buf = gi2c_gpi_xfer->dma_buf[gi2c_gpi_xfer->buf_idx];
-> +	addr = gi2c_gpi_xfer->dma_addr[gi2c_gpi_xfer->buf_idx];
-> +	msg_idx = gi2c_gpi_xfer->msg_idx_cnt;
-> +
-> +	dma_buf = i2c_get_dma_safe_msg_buf(&msgs[msg_idx], 1);
-> +	if (!dma_buf) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
->  
->  	if (op == I2C_WRITE)
->  		map_dirn = DMA_TO_DEVICE;
->  	else
->  		map_dirn = DMA_FROM_DEVICE;
->  
-> -	addr = dma_map_single(gi2c->se.dev->parent, dma_buf, msg->len, map_dirn);
-> +	addr = dma_map_single(gi2c->se.dev->parent, dma_buf,
-> +			      msgs[msg_idx].len, map_dirn);
->  	if (dma_mapping_error(gi2c->se.dev->parent, addr)) {
-> -		i2c_put_dma_safe_msg_buf(dma_buf, msg, false);
-> -		return -ENOMEM;
-> +		i2c_put_dma_safe_msg_buf(dma_buf, &msgs[msg_idx], false);
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	if (gi2c->is_tx_multi_xfer) {
-> +		if (((msg_idx + 1) % NUM_MSGS_PER_IRQ))
-> +			peripheral->flags |= QCOM_GPI_BLOCK_EVENT_IRQ;
-> +		else
-> +			peripheral->flags &= ~QCOM_GPI_BLOCK_EVENT_IRQ;
-> +
-> +		/* BEI bit to be cleared for last TRE */
-> +		if (msg_idx == gi2c->num_msgs - 1)
-> +			peripheral->flags &= ~QCOM_GPI_BLOCK_EVENT_IRQ;
->  	}
->  
->  	/* set the length as message for rx txn */
-> -	peripheral->rx_len = msg->len;
-> +	peripheral->rx_len = msgs[msg_idx].len;
->  	peripheral->op = op;
->  
->  	ret = dmaengine_slave_config(dma_chan, config);
-> @@ -575,7 +651,8 @@ static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->  	else
->  		dma_dirn = DMA_DEV_TO_MEM;
->  
-> -	desc = dmaengine_prep_slave_single(dma_chan, addr, msg->len, dma_dirn, flags);
-> +	desc = dmaengine_prep_slave_single(dma_chan, addr, msgs[msg_idx].len,
-> +					   dma_dirn, flags);
->  	if (!desc) {
->  		dev_err(gi2c->se.dev, "prep_slave_sg failed\n");
->  		ret = -EIO;
-> @@ -585,15 +662,48 @@ static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->  	desc->callback_result = i2c_gpi_cb_result;
->  	desc->callback_param = gi2c;
->  
-> -	dmaengine_submit(desc);
-> -	*buf = dma_buf;
-> -	*dma_addr_p = addr;
-> +	if (!((msgs[msg_idx].flags & I2C_M_RD) && op == I2C_WRITE)) {
-> +		gi2c_gpi_xfer->msg_idx_cnt++;
-> +		gi2c_gpi_xfer->buf_idx = (msg_idx + 1) % QCOM_GPI_MAX_NUM_MSGS;
-> +	}
-> +	cookie = dmaengine_submit(desc);
-> +	if (dma_submit_error(cookie)) {
-> +		dev_err(gi2c->se.dev,
-> +			"%s: dmaengine_submit failed (%d)\n", __func__, cookie);
-> +		ret = -EINVAL;
-> +		goto err_config;
-> +	}
->  
-> +	if (gi2c->is_tx_multi_xfer) {
-> +		dma_async_issue_pending(gi2c->tx_c);
-> +		if ((msg_idx == (gi2c->num_msgs - 1)) ||
-> +		    (gi2c_gpi_xfer->msg_idx_cnt >=
-> +		     QCOM_GPI_MAX_NUM_MSGS + gi2c_gpi_xfer->freed_msg_cnt)) {
-> +			ret = gpi_multi_desc_process(gi2c->se.dev, gi2c_gpi_xfer,
-
-A function call straight into the GPI driver? I'm not entirely familiar
-with the details of the dmaengine API, but this doesn't look correct.
-
-> +						     gi2c->num_msgs, XFER_TIMEOUT,
-> +						     &gi2c->done);
-> +			if (ret) {
-> +				dev_err(gi2c->se.dev,
-> +					"I2C multi write msg transfer timeout: %d\n",
-> +					ret);
-> +				gi2c->err = ret;
-> +				goto err_config;
-> +			}
-> +		}
-> +	} else {
-> +		/* Non multi descriptor message transfer */
-> +		*buf = dma_buf;
-> +		*dma_addr_p = addr;
-> +	}
->  	return 0;
->  
->  err_config:
-> -	dma_unmap_single(gi2c->se.dev->parent, addr, msg->len, map_dirn);
-> -	i2c_put_dma_safe_msg_buf(dma_buf, msg, false);
-> +	dma_unmap_single(gi2c->se.dev->parent, addr,
-> +			 msgs[msg_idx].len, map_dirn);
-> +	i2c_put_dma_safe_msg_buf(dma_buf, &msgs[msg_idx], false);
-> +
-> +out:
-> +	gi2c->err = ret;
->  	return ret;
->  }
->  
-> @@ -605,6 +715,7 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->  	unsigned long time_left;
->  	dma_addr_t tx_addr, rx_addr;
->  	void *tx_buf = NULL, *rx_buf = NULL;
-> +	struct gpi_multi_xfer *tx_multi_xfer;
->  	const struct geni_i2c_clk_fld *itr = gi2c->clk_fld;
->  
->  	config.peripheral_config = &peripheral;
-> @@ -618,6 +729,34 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->  	peripheral.set_config = 1;
->  	peripheral.multi_msg = false;
->  
-> +	gi2c->gpi_config = &peripheral;
-> +	gi2c->num_msgs = num;
-> +	gi2c->is_tx_multi_xfer = false;
-> +	gi2c->tx_irq_cnt = 0;
-> +
-> +	tx_multi_xfer = &peripheral.multi_xfer;
-> +	memset(tx_multi_xfer, 0, sizeof(struct gpi_multi_xfer));
-> +
-> +	/*
-> +	 * If number of write messages are four and higher then
-
-Why four?
-
-> +	 * configure hardware for multi descriptor transfers with BEI.
-> +	 */
-> +	if (num >= MIN_NUM_OF_MSGS_MULTI_DESC) {
-> +		gi2c->is_tx_multi_xfer = true;
-> +		for (i = 0; i < num; i++) {
-> +			if (msgs[i].flags & I2C_M_RD) {
-> +				/*
-> +				 * Multi descriptor transfer with BEI
-> +				 * support is enabled for write transfers.
-> +				 * Add BEI optimization support for read
-> +				 * transfers later.
-
-Prefix this comment with "TODO:"
-
-> +				 */
-> +				gi2c->is_tx_multi_xfer = false;
-> +				break;
-> +			}
-> +		}
-> +	}
-> +
->  	for (i = 0; i < num; i++) {
->  		gi2c->cur = &msgs[i];
->  		gi2c->err = 0;
-> @@ -628,14 +767,16 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->  			peripheral.stretch = 1;
->  
->  		peripheral.addr = msgs[i].addr;
-> +		if (i > 0 && (!(msgs[i].flags & I2C_M_RD)))
-> +			peripheral.multi_msg = false;
->  
-> -		ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
-> +		ret =  geni_i2c_gpi(gi2c, msgs, &config,
->  				    &tx_addr, &tx_buf, I2C_WRITE, gi2c->tx_c);
->  		if (ret)
->  			goto err;
->  
->  		if (msgs[i].flags & I2C_M_RD) {
-> -			ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
-> +			ret =  geni_i2c_gpi(gi2c, msgs, &config,
->  					    &rx_addr, &rx_buf, I2C_READ, gi2c->rx_c);
->  			if (ret)
->  				goto err;
-> @@ -643,18 +784,26 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->  			dma_async_issue_pending(gi2c->rx_c);
->  		}
->  
-> -		dma_async_issue_pending(gi2c->tx_c);
-> -
-> -		time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
-> -		if (!time_left)
-> -			gi2c->err = -ETIMEDOUT;
-> +		if (!gi2c->is_tx_multi_xfer) {
-> +			dma_async_issue_pending(gi2c->tx_c);
-> +			time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
-
-By making this conditional on !is_tx_multi_xfer transfers, what makes
-the loop wait for the transfer to complete before you below unmap the
-buffers?
-
-> +			if (!time_left) {
-> +				dev_err(gi2c->se.dev, "%s:I2C timeout\n", __func__);
-> +				gi2c->err = -ETIMEDOUT;
-> +			}
-> +		}
->  
->  		if (gi2c->err) {
->  			ret = gi2c->err;
->  			goto err;
->  		}
->  
-> -		geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
-> +		if (!gi2c->is_tx_multi_xfer) {
-> +			geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
-> +		} else if (gi2c->tx_irq_cnt != tx_multi_xfer->irq_cnt) {
-> +			gi2c->tx_irq_cnt = tx_multi_xfer->irq_cnt;
-> +			gpi_i2c_multi_desc_unmap(gi2c, msgs, &peripheral);
-> +		}
->  	}
->  
->  	return num;
-> @@ -663,7 +812,11 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->  	dev_err(gi2c->se.dev, "GPI transfer failed: %d\n", ret);
->  	dmaengine_terminate_sync(gi2c->rx_c);
->  	dmaengine_terminate_sync(gi2c->tx_c);
-> -	geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
-> +	if (gi2c->is_tx_multi_xfer)
-> +		gpi_i2c_multi_desc_unmap(gi2c, msgs, &peripheral);
-> +	else
-> +		geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
-> +
-
-As above, it would be nice if multi-xfer was just a special case with a
-single buffer; rather than inflating the cyclomatic complexity.
-
-Regards,
-Bjorn
-
->  	return ret;
->  }
->  
-> -- 
-> 2.17.1
-> 
-> 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
