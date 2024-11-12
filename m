@@ -1,203 +1,115 @@
-Return-Path: <linux-kernel+bounces-405697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADE39C56D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:42:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E5609C55F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:12:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57651B2BAAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:12:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA1E71F24DB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C941021CFA5;
-	Tue, 12 Nov 2024 10:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C8221CFBA;
+	Tue, 12 Nov 2024 10:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="9oMiat9a"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KcfKcMXb"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5776421CF86;
-	Tue, 12 Nov 2024 10:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B61A21CFA9
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731408528; cv=none; b=qd21qqJmmElRqo8ojXhuW6w60O2LuoOLah6vV4lGTejz7o/ihfBsVPMSM/P6sGMc3UVXmHRqZXFDYcqOGUM6Mquu/bt9q/aqvMI0Lkxt2p9HvwFZx2AFY8Lm1Frnl6inPx3Ag2gw0EIHhF3J8WmMAprPimyzdLpZLMEGqxNfPu8=
+	t=1731408531; cv=none; b=klHuNgIla2V2I+UiSNySA4SDAjRUFHWJlfme6mjYRt2oBTTuykDyZrP0qyaV+LAFCp304l1pDhO6rCfk/5tueGIfk6SV9WsRfGGVNli0J3/0F7OCeMTWXg7ex5OIEKBM5Td2Ds75BLwFWzqgS2I9btYB8DTlEGQY1+6eEYVzjwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731408528; c=relaxed/simple;
-	bh=Rlz9/2w3HuGHPx/1Dx6dMSeAHh6+zlOAnHthXakqKJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d+wxFEPST5Ua9G2imtY5gPmu/raZSUw7lmZBvPgHQUhG/SMRjxcQKzA//Kzt6f1wTHY+Z2ohooSqsHoW/OuzLTstD66/GmeLrwQFNBgOckKFU/CTS2Q3e8/lQ+ywik9wlXNylXULRWfDcsjiSJe0azdb47AMa7tG3qUtRPQS4Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=9oMiat9a; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=2m7yLhxfZDBBcaSm+o4e0Z6YDFzbc2KbJ1HEoJJMrgE=; b=9oMiat9aS3OnXG3WvYQ6dodxHB
-	c3IKeiuhoIjkbP/vFCRnyEKdsl90Q82eNInauL9GoJFDN6sN/smTp40tdct7YHbmusIztadZeNmT1
-	cMA32aoHjjpu+yKHPZr3sMJE0SXKKv8n09FgEm6HNwnVZ3xYBr/QG8Q0PEvXAJ60wd2xK7/g/atl1
-	5cidNMeMHYtCv1CxH09N+J4oAvA2DozhbCpxbtemIOZsxhUpKlrGweu3bj2lRyvOONLu+cZs+FZJn
-	0/eXYnZJRXoVFmduzywld+K6DGYhoeTbfRx/GqN6A460Lbv1GK1yxOZxQO8CeeS0eOplhyS4GE/fh
-	v+x5pbSg==;
-Date: Tue, 12 Nov 2024 11:48:18 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Mithil Bavishi <bavishimithil@gmail.com>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman
- <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
- <tony@atomide.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jessica Zhang
- <quic_jesszhan@quicinc.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, Thierry Reding
- <thierry.reding@gmail.com>, linux-omap@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3 10/10] ARM: dts: ti: omap: samsung-espresso10: Add
- initial support for Galaxy Tab 2 10.1
-Message-ID: <20241112114818.1eb238e9@akair>
-In-Reply-To: <20241108200440.7562-11-bavishimithil@gmail.com>
-References: <20241108200440.7562-1-bavishimithil@gmail.com>
-	<20241108200440.7562-11-bavishimithil@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731408531; c=relaxed/simple;
+	bh=mlVwLQCWy24Cb/sNaSGUN5XV3+kGewbUdR+Bx7uYdlM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=a+73oh7CwqjPZ2zgQNr9kdwAhuRm0dAOweyA08b9baPbSmU6BIG8a3HPUH03atxPsa6z/aM5NtaPj+M4e04szTn8Tt+YbPTyPrwjzd5HZTp86S3FFHXOaFbYcBCf5uuIwu5PoI9TeiLxajBS4MgX5T7iEX3nJe30ahDAy74KJdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KcfKcMXb; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5C7DDE0003;
+	Tue, 12 Nov 2024 10:48:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731408527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mlVwLQCWy24Cb/sNaSGUN5XV3+kGewbUdR+Bx7uYdlM=;
+	b=KcfKcMXbPi2VOK8LbaLSQSLr+CG5JNTDTqmQ1mXvmbswz/W4GicAOjOtUczHOJbBUw6r/6
+	wAFCz6HjglSKRY+ZVhUoC5eWV5kLq4vsHXCNv+hwMl2yF8T9KBKN+CWtoVsssGdPScFZeW
+	mnW9omVWNkwP1vTovuljDEQMSsJ4/O+2H/jDTsVOqQnPYExHLBmN+A7mdpI3WcWHqO2SLN
+	VcrwVprYlOXOlcakn/rYOHFvvJ0iJuuwX8sLt8kKbGQLt+2nfvp2PjvBwVsGoipiCx+eZ3
+	iE0fHHhOX2ZCdqeO2l6C0hGepKntAcahlF4dpm2n6iWEdGOzsqTS5YAd/c+zLA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: SkyLake Huang (=?utf-8?B?6buD5ZWf5r6k?=) <SkyLake.Huang@mediatek.com>
+Cc: "dev@kicherer.org" <dev@kicherer.org>,  "d-gole@ti.com" <d-gole@ti.com>,
+  "vigneshr@ti.com" <vigneshr@ti.com>,  "gch981213@gmail.com"
+ <gch981213@gmail.com>,  "mmkurbanov@salutedevices.com"
+ <mmkurbanov@salutedevices.com>,  "richard@nod.at" <richard@nod.at>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+  "kernel@sberdevices.ru" <kernel@sberdevices.ru>
+Subject: Re: [PATCH v2] mtd: spinand: add support for FORESEE F35SQA002G
+In-Reply-To: <dbdb45ed1135e73b4eebd76e6f61b96d48aaedc6.camel@mediatek.com>
+	("SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCkiJ3M=?= message of "Tue, 12 Nov
+ 2024 10:08:31
+	+0000")
+References: <20241108163455.885-1-SkyLake.Huang@mediatek.com>
+	<20241108163455.885-4-SkyLake.Huang@mediatek.com>
+	<dbdb45ed1135e73b4eebd76e6f61b96d48aaedc6.camel@mediatek.com>
+User-Agent: mu4e 1.12.1; emacs 29.4
+Date: Tue, 12 Nov 2024 11:48:45 +0100
+Message-ID: <87ikssu3qq.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Am Fri,  8 Nov 2024 20:04:39 +0000
-schrieb Mithil Bavishi <bavishimithil@gmail.com>:
+Hi Sky,
 
-> Create a device tree for the 10 inch variants (P5100, P5110, P5113)
-> 
-> Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
-> ---
->  .../dts/ti/omap/omap4-samsung-espresso10.dts  | 102 ++++++++++++++++++
->  1 file changed, 102 insertions(+)
->  create mode 100644 arch/arm/boot/dts/ti/omap/omap4-samsung-espresso10.dts
-> 
-> diff --git a/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso10.dts b/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso10.dts
-> new file mode 100644
-> index 000000000..70bbef468
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso10.dts
-> @@ -0,0 +1,102 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/dts-v1/;
-> +
-> +#include "omap4-samsung-espresso-common.dtsi"
-> +#include <dt-bindings/power/summit,smb347-charger.h>
-> +/ {
-> +	model = "Samsung Galaxy Tab 2 (10 inch)";
-> +	compatible = "samsung,espresso10", "ti,omap4430", "ti,omap4";
-> +
-> +	i2c-gpio-5 {
-> +		smb347: charger@6 {
-> +			compatible = "summit,smb347";
-> +			reg = <0x6>; // 0x0C >> 1
-> +			interrupt-parent = <&gpio2>;
-> +			interrupts = <0 IRQ_TYPE_EDGE_BOTH>;
-> +
-> +			summit,enable-usb-charging;
-> +			summit,enable-charge-control = <SMB3XX_CHG_ENABLE_SW>;
-> +			summit,chip-temperature-threshold-celsius = <120>;
-> +			summit,usb-current-limit-microamp = <1800000>;
-> +		};
-> +	};
-> +
-> +	backlight: backlight {
-> +		compatible = "pwm-backlight";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&backlight_pins>;
-> +		pwms = <&pwm10 0 1600 0>;
-> +		power-supply = <&reg_lcd>;
-> +		enable-gpios = <&gpio3 31 GPIO_ACTIVE_HIGH>;
-> +		brightness-levels = <0 4 8 16 32 64 128 255>;
-> +		default-brightness-level = <7>;
-> +	};
-> +
-> +	panel {
-> +		compatible = "samsung,ltn101al03", "panel-lvds";
-> +		power-supply = <&reg_lcd>;
-> +		width-mm = <223>;
-> +		height-mm = <125>;
-> +		data-mapping = "vesa-24";
-> +		backlight = <&backlight>;
-> +
-> +		panel-timing {
-> +			clock-frequency = <69818000>;
-> +
-> +			hback-porch = <64>;
-> +			hactive = <1280>;
-> +			hfront-porch = <16>;
-> +			hsync-len = <48>;
-> +
-> +			vback-porch = <11>;
-> +			vactive = <800>;
-> +			vfront-porch = <16>;
-> +			vsync-len = <3>;
-> +
-> +			hsync-active = <0>;
-> +			vsync-active = <0>;
-> +			de-active = <1>;
-> +			pixelclk-active = <1>;
-> +		};
-> +
-> +		port {
-> +			panel_in: endpoint {
-> +				remote-endpoint = <&bridge_out>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&i2c3 {
-> +	touchscreen: synaptics-rmi4-i2c@20 {
+On 12/11/2024 at 10:08:31 GMT, SkyLake Huang (=E9=BB=83=E5=95=9F=E6=BE=A4) =
+<SkyLake.Huang@mediatek.com> wrote:
 
-touchscreen@20
+> Hi Miquel/Martin,
+> About this driver, including F35SQA001G/F35SQA002G parts, I'm concerned
+> that the driver will always use 32H for update_cache operations, which
+> means it's not compitable with those SPI controller who can't transmit
+> 2048 bytes (most small-density SPI-NAND's page size nowadays) at one
+> time.
+>
+> The following controller's driver seems that they can't transmit 2048
+> bytes in one transmission:
+> - spi-amd.c: 64 bytes (AMD_SPI_MAX_DATA)
+> - spi-amlogic-spifc-a1.c: 512 bytes (SPIFC_A1_BUFFER_SIZE)
+> - spi-fsl-qspi.c: 1KB
+> - spi-hisi-sfc-v3xx.c: 64*6 bytes
+> - spi-intel.c: 64 bytes (INTEL_SPI_FIFO_SZ)
+> - spi-microchip-core-qspi.c: 256 bytesc (MAX_DATA_CMD_LEN)
+> - spi-nxp-fspi.c: TX:1KB, RX: 512B in FIFO mode
+> - spi-wpcm-fiu.c: 4B
 
-> +		compatible = "syna,rmi4-i2c";
-> +		reg = <0x20>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		interrupt-parent = <&gpio2>;
-> +		interrupts = <14 IRQ_TYPE_EDGE_FALLING>;
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&touch_pins>;
-> +
-> +		avdd-supply = <&reg_touch_ldo_en>;
-not known in schema
+I believe most of these drivers are still able to send one page of data
+without toggling the CS (which is what actually matters, I believe). If
+they were broken, they would be broken with all spi memory devices, not
+only Foresee's.
 
-> +		vdd-supply = <&ldo6>;
-> +
-> +		syna,reset-delay-ms = <200>;
-> +		syna,startup-delay-ms = <200>;
-> +
-> +		touchscreen-size-x = <1279>;
+> I guess we need to add some check to make sure that F35SQA series work
+> only with those SPI controllers who can transmit more than 2048
+> bytes(NAND page size) at one time?
 
-Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml:
-horizontal resolution of touchscreen (maximum x coordinate reported + 1)
+There is already a supports_op() hook for that, I believe we are
+fine. If however you experience errors, please report them and we'll
+look for a solution.
 
-So this touchscreen reports max 1278?
-
-> +		touchscreen-size-y = <799>;
-
-same question.
-
-And these things belong below rm4-f11 according to
-Documentation/devicetree/bindings/input/syna,rmi4.yaml
-
-Regards,
-Andreas
+Thanks,
+Miqu=C3=A8l
 
