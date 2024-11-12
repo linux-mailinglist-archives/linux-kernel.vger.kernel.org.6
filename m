@@ -1,117 +1,220 @@
-Return-Path: <linux-kernel+bounces-406589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F1E9C63CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:51:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 432989C642F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:20:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D188B3243F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:14:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0A34B43FEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DAE2185A0;
-	Tue, 12 Nov 2024 19:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F7021949E;
+	Tue, 12 Nov 2024 19:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="GV9G/+qR"
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5iutILE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B54209F51;
-	Tue, 12 Nov 2024 19:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1255218D98;
+	Tue, 12 Nov 2024 19:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731438887; cv=none; b=gP7jOBk3kkzr0Y4SbY9lLf7TjCZxlA/FQHkGZo/Pp9Cp+zZEu4YAhIklzJ8q7sA8opHdzinUPjMDMNLkO9O6mVF7lwXfRcSfT9TCNOsWezpTANLb4LNNr/mhYlPFBPvHy+0EUbgaKYapb+Sm5w1+blyAp7LclR9/e7Rd1sAWE6g=
+	t=1731439048; cv=none; b=MNvaEH+DaMrkCjQGYdXPVmSZ5LtddK/aeuKoItbzJoLupzkcBqo+MmlkFQaId7e6+OTTAJM+igtTWCtar+CquRH/CyR3vvWfk4wDiTnu0jKjN9ly55GeTcnW0HrbVFh/tIExEDEce7QiXx+IgtEXUEM3KGRW7aIKZCRcoyROAlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731438887; c=relaxed/simple;
-	bh=R7tK11HFFz92+5HgqOqjKz3m+zMzZ9lbCfyu9MqKoPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ram/hPHufwf47LnzLSmlyFZT56E2LObvG1Q9k0TwkUurnOL6sDwuWW7zkWPWneXJCnXxO+5gXre7KypA5PKPG8JaMkG2f0DtE7kERuNbWMAu+OiLYBt6kII1I2GTszC7OfT6NlSajlE5kt5TfFI7JpcG9eUQHfNmFVAZ+DkhqU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=GV9G/+qR; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.20.10.7] ([106.146.16.70])
-	by smtp.orange.fr with ESMTPA
-	id AwLVtikJ0OOAtAwLXt2Ra3; Tue, 12 Nov 2024 20:14:44 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731438884;
-	bh=BmonsybAbjh00IDKXp8k0GsOn+QsdbOPhsMJajM8bjE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=GV9G/+qRhEpcKfTTesqylr+yxC/irA8TQG5U2sCSemwlX4W2dHAZ6vwotqRbOnu1X
-	 qkfMTQ3Ss4E7UdChL9Xzlfqr/s757fClyKWBbT7Abpvuwfj1mZVgcG9K/0fN+bJ3QE
-	 pzxEbk1H9ecHL7HDw4hyf8LACpSKCdXCcrhK1hY858u6HGw6oPpDWp7duKAzyV3SUc
-	 62kSMnvlRVcNHpwi28YNx5idPaBxKWbhYum2DQwb37zZvnqkHY9xW4nOCik/GPCPSO
-	 JzPa5qjRVf1WoNy6FGSXlxRNnejbK3PE1sCBFChZN0iwjDftO445Vo7E1VilY16AF3
-	 JNCeKiM2DnF4Q==
-X-ME-Helo: [172.20.10.7]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 12 Nov 2024 20:14:44 +0100
-X-ME-IP: 106.146.16.70
-Message-ID: <ac2bbf41-7801-4788-b842-69d9b6291907@wanadoo.fr>
-Date: Wed, 13 Nov 2024 04:14:20 +0900
+	s=arc-20240116; t=1731439048; c=relaxed/simple;
+	bh=p9g9ldYowVrzMVe9obVK9iw6SZeeneXH7DN4MDPTvz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rRkUQdh0b/ZZHzbRtE+NJAAU5zfCAueW9R5/yfPGWLftvgUYU/gRRg3tYgKrElQrF966CctqOTLmFI6zsLRTlz73l+up6hwRPexlfP7PwUdbKM1LKXDQGbp8pch1bIEklpTletIdZdLXZVm6wGLCo6Ohob6N71+vQKbVBlKigE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5iutILE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9BC0C4CED5;
+	Tue, 12 Nov 2024 19:17:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731439044;
+	bh=p9g9ldYowVrzMVe9obVK9iw6SZeeneXH7DN4MDPTvz8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f5iutILEy9ks7fcw4MC1dy+6IZxzX6MNB+IwQCu/pwcGYVI3wdod0XXjTEgcg2AEC
+	 NBfVGghdA+2/15adVtXBjlyyl3gQGQ6JP0JkUTN5pNci+DFXP/r/9xFSQud1daV1J0
+	 MZBKlQ9viyXpuCc5nkbSnwc6o1iPPbiaD8xt0eSlZ3YTFdbTwc30wgxstkD+RIhfVN
+	 mH2R8rShc04tX0NaogQcS0DkaxusTFku4NsSuNfec+mA/V5FsmdAqNHzBnK3tOhF0Y
+	 C231GoJ/VWRj73NR0nbCG1Vdv4NOdeN+bzibXAL5VwP9/SY147UAq3yhH44ZFFQ8Fr
+	 H0mpxWw+yyg4A==
+Date: Tue, 12 Nov 2024 16:17:19 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, namhyung@kernel.org, irogers@google.com,
+	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 00/10] perf record --off-cpu: Dump off-cpu samples
+ directly
+Message-ID: <ZzOpvzN-OTLZPyFh@x1>
+References: <20241108204137.2444151-1-howardchu95@gmail.com>
+ <ZzOg3Xlq2jsG85XQ@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] add _statically_true() to simplify
- GENMASK_INPUT_CHECK()
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
- linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org,
- Rikard Falkeborn <rikard.falkeborn@gmail.com>
-References: <20241112140454.518823-4-mailhol.vincent@wanadoo.fr>
- <CAADWXX88Uv+r1JtpnN2gDv6S2wDTqxsn5x8+-U_xWfeNxmT9NA@mail.gmail.com>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-In-Reply-To: <CAADWXX88Uv+r1JtpnN2gDv6S2wDTqxsn5x8+-U_xWfeNxmT9NA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZzOg3Xlq2jsG85XQ@x1>
 
-On 13/11/2024 at 02:52, Linus Torvalds wrote:
-> On Tue, Nov 12, 2024 at 6:05 AM Vincent Mailhol
-> <mailhol.vincent@wanadoo.fr> wrote:
->> v2 -> v3:
->>
->>     - split the single patch into a series of two patches.
-> I haven't actually gotten to the patches yet, because all your emails
-> end up in my spam box.
->
-> The reason is because your git-send-email setup is broken, resulting in:
->
->    dmarc=fail (p=QUARANTINE sp=NONE dis=QUARANTINE) header.from=wanadoo.fr
->
-> because you claim to use a wanadoo.fr address in your "From:" line:
->
->      From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
->
-> but you actually used gmail to send it, and the DKIM hash was
-> generated by gmail:
->
->      DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
->          d=1e100.net;
->
-> And then DMARC complains because the From: and the DKIM doesn't match.
->
-> So to actually get the right DKIM hashes, you need to either
->
->   (a) send email using the wanadoo.fr smtp gateway
->
-> or
->
->   (b) make the sender be that gmail address that you actually use for sending.
->
-> Pls fix.
+On Tue, Nov 12, 2024 at 03:39:25PM -0300, Arnaldo Carvalho de Melo wrote:
+> ⬢ [acme@toolbox perf-tools-next]$        git am ./v7_20241108_howardchu95_perf_record_off_cpu_dump_off_cpu_samples_directly.mbx
+> Applying: perf record --off-cpu: Add --off-cpu-thresh option
+> Applying: perf evsel: Expose evsel__is_offcpu_event() for future use
+> Applying: perf record --off-cpu: Parse off-cpu event
+> Applying: perf record --off-cpu: Preparation of off-cpu BPF program
+> Applying: perf record --off-cpu: Dump off-cpu samples in BPF
+> error: corrupt patch at line 107
+> Patch failed at 0005 perf record --off-cpu: Dump off-cpu samples in BPF
+> hint: Use 'git am --show-current-patch=diff' to see the failed patch
+> hint: When you have resolved this problem, run "git am --continue".
+> hint: If you prefer to skip this patch, run "git am --skip" instead.
+> hint: To restore the original branch and stop patching, run "git am --abort".
+> hint: Disable this message with "git config advice.mergeConflict false"
+> ⬢ [acme@toolbox perf-tools-next]$
+> 
+> This is on top of:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git tmp.perf-tools-next
+> 
+> The message:
+> 
+> error: corrupt patch at line 107
+> 
+> Doesn't look like a clash with something that changed after you prepared
+> this patch set.
+> 
+> If we apply the first 4:
+> 
+> ⬢ [acme@toolbox perf-tools-next]$        git am ./v7_20241108_howardchu95_perf_record_off_cpu_dump_off_cpu_samples_directly.mbx
+> Applying: perf record --off-cpu: Add --off-cpu-thresh option
+> Applying: perf evsel: Expose evsel__is_offcpu_event() for future use
+> Applying: perf record --off-cpu: Parse off-cpu event
+> Applying: perf record --off-cpu: Preparation of off-cpu BPF program
+> ⬢ [acme@toolbox perf-tools-next]$ 
+> 
+> Then try to apply just the 5th patch:
+> 
+> ⬢ [acme@toolbox perf-tools-next]$ b4 am -P5 -ctsl --cc-trailers 20241108204137.2444151-2-howardchu95@gmail.com
+> ⬢ [acme@toolbox perf-tools-next]$ patch -p1 < ./v7_20241108_howardchu95_perf_record_off_cpu_dump_off_cpu_samples_directly.mbx
+> patching file tools/perf/util/bpf_skel/off_cpu.bpf.c
+> patch: **** malformed patch at line 138:  
+> 
+> ⬢ [acme@toolbox perf-tools-next]$
+> 
+> You have:
+> 
+> @@ -209,6 +268,12 @@ static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
+>         pelem->state = state;
+>         pelem->stack_id = stack_id;
+> 
+> +       /*
+> +        * If stacks are successfully collected by bpf_get_stackid(), collect them once more
+> +        * in task_storage for direct off-cpu sample dumping
+> +        */
+> +       if (stack_id > 0 && bpf_get_stack(ctx, &pelem->stack, MAX_STACKS * sizeof(u64), BPF_F_USER_STACK)) {
+> +       }
+> +
+>  next:
+>         pelem = bpf_task_storage_get(&tstamp, next, NULL, 0);
+> 
+> @@ -223,11 +288,19 @@ static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
+> 
+> see the -209,6 +268,12? Did you edit it manually? It should be -209,6 +268,13
 
-D'oh. Sorry for that and thanks for the notice. I just resent the full 
-v3 with the correct smtp gateway (note that you may see it coming from 
-smtp.orange.fr, this is the same as smtp.wanadoo.fr).
+So, I fixed up that patch hunk, applied the patch and tried to build
+perf:
 
-Yours sincerely,
-Vincent Mailhol
+  CC      /tmp/build/perf-tools-next/util/bpf_off_cpu.o
+  CC      /tmp/build/perf-tools-next/util/bpf-filter.o
+  CC      /tmp/build/perf-tools-next/util/bpf_lock_contention.o
+  CC      /tmp/build/perf-tools-next/util/bpf_kwork.o
+  CC      /tmp/build/perf-tools-next/util/bpf_kwork_top.o
+  CC      /tmp/build/perf-tools-next/util/annotate-data.o
+  CC      /tmp/build/perf-tools-next/util/data-convert-bt.o
+  CC      /tmp/build/perf-tools-next/util/data-convert-json.o
+util/bpf_off_cpu.c: In function ‘off_cpu_start’:
+util/bpf_off_cpu.c:78:9: error: ‘evsel’ undeclared (first use in this function)
+   78 |         evsel = evlist__find_evsel_by_str(evlist, OFFCPU_EVENT);
+      |         ^~~~~
+util/bpf_off_cpu.c:78:9: note: each undeclared identifier is reported only once for each function it appears in
+In file included from /tmp/build/perf-tools-next/libperf/include/internal/cpumap.h:6,
+                 from /tmp/build/perf-tools-next/libperf/include/internal/evsel.h:9,
+                 from /home/acme/git/perf-tools-next/tools/perf/util/evsel.h:10,
+                 from util/bpf_off_cpu.c:4:
+util/bpf_off_cpu.c:84:42: error: ‘i’ undeclared (first use in this function)
+   84 |         perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
+      |                                          ^
+/tmp/build/perf-tools-next/libperf/include/perf/cpumap.h:90:15: note: in definition of macro ‘perf_cpu_map__for_each_cpu’
+   90 |         for ((idx) = 0, (cpu) = perf_cpu_map__cpu(cpus, idx);   \
+      |               ^~~
+util/bpf_off_cpu.c:84:36: error: ‘pcpu’ undeclared (first use in this function)
+   84 |         perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
+      |                                    ^~~~
+/tmp/build/perf-tools-next/libperf/include/perf/cpumap.h:90:26: note: in definition of macro ‘perf_cpu_map__for_each_cpu’
+   90 |         for ((idx) = 0, (cpu) = perf_cpu_map__cpu(cpus, idx);   \
+      |                          ^~~
+/tmp/build/perf-tools-next/libperf/include/perf/cpumap.h:90:23: error: left-hand operand of comma expression has no effect [-Werror=unused-value]
+   90 |         for ((idx) = 0, (cpu) = perf_cpu_map__cpu(cpus, idx);   \
+      |                       ^
+util/bpf_off_cpu.c:84:9: note: in expansion of macro ‘perf_cpu_map__for_each_cpu’
+   84 |         perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/build/perf-tools-next/libperf/include/perf/cpumap.h:92:21: error: left-hand operand of comma expression has no effect [-Werror=unused-value]
+   92 |              (idx)++, (cpu) = perf_cpu_map__cpu(cpus, idx))
+      |                     ^
+util/bpf_off_cpu.c:84:9: note: in expansion of macro ‘perf_cpu_map__for_each_cpu’
+   84 |         perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+util/bpf_off_cpu.c:85:17: error: ‘err’ undeclared (first use in this function)
+   85 |                 err = bpf_map__update_elem(skel->maps.offcpu_output, &pcpu.cpu, sizeof(__u32),
+      |                 ^~~
+cc1: all warnings being treated as errors
+  CC      /tmp/build/perf-tools-next/util/jitdump.o
+  CC      /tmp/build/perf-tools-next/util/bpf-event.o
+make[4]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:105: /tmp/build/perf-tools-next/util/bpf_off_cpu.o] Error 1
+make[4]: *** Waiting for unfinished jobs....
+make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:158: util] Error 2
+make[2]: *** [Makefile.perf:789: /tmp/build/perf-tools-next/perf-util-in.o] Error 2
+make[1]: *** [Makefile.perf:292: sub-make] Error 2
+make: *** [Makefile:119: install-bin] Error 2
+make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+⬢ [acme@toolbox perf-tools-next]$
 
+I squashed the patch below and I'm trying to apply the other patches to do some
+minimal testing on the feature itself, but the organization of the
+patches needs some work.
+
+- Arnaldo
+
+diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cpu.c
+index cfe5b17393e9ed3a..531465b07952f3b7 100644
+--- a/tools/perf/util/bpf_off_cpu.c
++++ b/tools/perf/util/bpf_off_cpu.c
+@@ -61,6 +61,9 @@ static int off_cpu_config(struct evlist *evlist)
+ static void off_cpu_start(void *arg)
+ {
+ 	struct evlist *evlist = arg;
++	struct evsel *evsel;
++	struct perf_cpu pcpu;
++	int i;
+ 
+ 	/* update task filter for the given workload */
+ 	if (skel->rodata->has_task && skel->rodata->uses_tgid &&
+@@ -82,6 +85,8 @@ static void off_cpu_start(void *arg)
+ 	}
+ 
+ 	perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
++		int err;
++
+ 		err = bpf_map__update_elem(skel->maps.offcpu_output, &pcpu.cpu, sizeof(__u32),
+ 					   xyarray__entry(evsel->core.fd, i, 0),
+ 					   sizeof(__u32), BPF_ANY);
 
