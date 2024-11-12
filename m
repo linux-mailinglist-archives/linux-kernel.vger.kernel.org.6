@@ -1,85 +1,91 @@
-Return-Path: <linux-kernel+bounces-404925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255DD9C4A6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:10:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0EC9C4A7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:12:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB421F222B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:10:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0AA6B31C02
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7715A5695;
-	Tue, 12 Nov 2024 00:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824E14409;
+	Tue, 12 Nov 2024 00:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FOl33i5A"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="nqNOw4zU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A194A02;
-	Tue, 12 Nov 2024 00:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1B84C91
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731370203; cv=none; b=ke8ih3G0nOrSNz7gBcJliGjA1rva9v4cloKaT5baySNtSO4/zFQK57MLGbJuZBbmMgnLpmNtZv39roTIjcyXxzE/CS+5NE8jMBauctXEo0NixLEW8RTW98rj7emfUvUrDtnVgxO3YJjacZdQ14wYKdQtH9oHBFhD0Lpx7QETH+k=
+	t=1731370264; cv=none; b=H2anqeZoqau6CtCINZIbWcL1BUpmd7AoymaMiTdFus2+houvWfsEPyzllxgbTIOEIiDpfnOcgSmjVSKpcLJ9InT8xtu6IW5OmJZStUj485u23qMUMGXUeRQuyzdW8dQblpDcifB26b8jCF07u8zLFZSJqaTXbs4Vlfq7IPXCEuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731370203; c=relaxed/simple;
-	bh=xl6DIroffs/s8SGonn2or/IMxO7QdNwIkPQb7bfS4GU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I56YmRlKNM4JdUobYM3kVnPjtdcR/rHhKN5x5R85fyfumEdbcHIQiHk71gtrROtB7ZTbg+59KY7i9k3J81j8rREauF8R7t+FuHddTeNG92wqmZbYXjaHDlCKzXt2coDGj58GR74xeYG6i8p5BqGVgi+iRyZz+y47sbNSNcgeaUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FOl33i5A; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=bWFsc8p4mLEB2MsGFXn2adZDroP0crxGSJj952nDsxM=; b=FOl33i5A6z2Bva7wdZHfGSsBEY
-	nQaJ7xMux/r+sL9cZqTvKFrEQQ4ecB5EfnQ4kqmRC1u6cpJ2h15/Vt0xomG3LLu8bDkDl5BVTlijL
-	J1qOiLxMJYOsqvq0s1tS6D+FSgOxvD251O7L1pKnKB0ixUn2T8d8CP+OludQ3qVrDxrI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tAeTW-00Cwht-P1; Tue, 12 Nov 2024 01:09:42 +0100
-Date: Tue, 12 Nov 2024 01:09:42 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sanman Pradhan <sanman.p211993@gmail.com>
-Cc: netdev@vger.kernel.org, alexanderduyck@fb.com, kuba@kernel.org,
-	kernel-team@meta.com, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
-	mohsin.bashr@gmail.com, sanmanpradhan@meta.com,
-	andrew+netdev@lunn.ch, vadim.fedorenko@linux.dev,
-	jdamato@fastly.com, sdf@fomichev.me, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5] eth: fbnic: Add PCIe hardware statistics
-Message-ID: <d55bf54b-87c0-460f-b06c-b1941f473922@lunn.ch>
-References: <20241111195715.1619855-1-sanman.p211993@gmail.com>
+	s=arc-20240116; t=1731370264; c=relaxed/simple;
+	bh=3DPDYTaWToG+1nItkCo1KdEPJK4TtL89ZByaok+uIxs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=HVtH3xC0MPNa+sSlTptcYLQivrN14vq8YzURpgyXGh3Veg3/MBEJ99CBf2TqTaRzhMzXEUIEFVeC2MIAYvMbh23kGno5TZQIFNKR+qO9SEVG+hRzU0rKD7f84x/7iyjj3TDocmZ2xsUYPgcI/pTrpyOTUPBfX5pVd9Qs4BloKko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=nqNOw4zU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B32F6C4CECF;
+	Tue, 12 Nov 2024 00:11:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1731370263;
+	bh=3DPDYTaWToG+1nItkCo1KdEPJK4TtL89ZByaok+uIxs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nqNOw4zUVCIXgOu+pl5rQuZpt5FpkJg1atcHOguLCPqCWNgfv1DtA95TZc7B8JRA2
+	 wAbA5LfUKnAYibKZYb+Wm3clv3LUY5/mRo1mBgKwhYiWZwFEhR/gL7FQ4q+mgsKG5I
+	 CpmTIrMXyW9FWUGlMPvS5Wm/QyaFGpyXitT1qphY=
+Date: Mon, 11 Nov 2024 16:11:02 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: willy@infradead.org, liam.howlett@oracle.com,
+ lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
+ hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
+ mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+ oleg@redhat.com, paulmck@kernel.org, brauner@kernel.org,
+ dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
+ minchan@google.com, jannh@google.com, shakeel.butt@linux.dev,
+ souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH 0/4] move per-vma lock into vm_area_struct
+Message-Id: <20241111161102.e047bce4adfbf38002b7a9cf@linux-foundation.org>
+In-Reply-To: <CAJuCfpGw1Nnh3nonDHv-UAeqTB=-3z1+hJk9Opy4X-6mbvdEhw@mail.gmail.com>
+References: <20241111205506.3404479-1-surenb@google.com>
+	<20241111221839.w4rqqlvvkm42jdgm@offworld>
+	<CAJuCfpGw1Nnh3nonDHv-UAeqTB=-3z1+hJk9Opy4X-6mbvdEhw@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111195715.1619855-1-sanman.p211993@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> @@ -145,6 +147,8 @@ struct fbnic_dev *fbnic_devlink_alloc(struct pci_dev *pdev)
+On Mon, 11 Nov 2024 15:19:22 -0800 Suren Baghdasaryan <surenb@google.com> wrote:
+
+> On Mon, Nov 11, 2024 at 2:18 PM Davidlohr Bueso <dave@stgolabs.net> wrote:
+> >
+> > On Mon, 11 Nov 2024, Suren Baghdasaryan wrote:
+> >
+> > >To minimize memory overhead, vm_lock implementation is changed from
+> > >using rw_semaphore (40 bytes) to an atomic (8 bytes) and several
+> > >vm_area_struct members are moved into the last cacheline, resulting
+> > >in a less fragmented structure:
+> >
+> > I am not a fan of building a custom lock, replacing a standard one.
 > 
->  	fbd->mac_addr_boundary = FBNIC_RPC_TCAM_MACDA_DEFAULT_BOUNDARY;
-> 
-> +	fbnic_dbg_fbd_init(fbd);
-> +
->  	return fbd;
->  }
+> Understandable.
 
-I thought it was odd that you create debugfs files in
-fbnic_devlink_alloc(). But when you look at that function, it is
-actually badly named, it is a collection of random initialisation, of
-which devlink is just one.
+If we're going to invent a new lock type, I'm thinking we should do
+that - make it a standaline thing, add full lockdep support, etc.
 
-I would suggest you call fbnic_dbg_fbd_init() in probe, like any
-normal driver would.
+I wonder if we could remove the lock from the vma altogeher and use an
+old-fashioned hashed lock.  An array of locks indexed by the vma
+address.  It might work well enough, although sizing the array would be
+difficult.
 
-	Andrew
 
