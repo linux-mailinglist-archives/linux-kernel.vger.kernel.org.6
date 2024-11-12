@@ -1,439 +1,133 @@
-Return-Path: <linux-kernel+bounces-406544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1729C6361
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:26:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08DAF9C6249
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:11:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66E4DB33FF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:43:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA6CFBE5861
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50207230994;
-	Tue, 12 Nov 2024 18:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4828217F28;
+	Tue, 12 Nov 2024 18:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fNghmlnf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="CGu3iysX"
+Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8AA217474
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49490217476
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731436983; cv=none; b=btvIbizJTSDsrZtWbTdNBfS5yiNgPgSqzDV7V+5BCIMF7Kc8nzqERlt3DaSmf8fCQj4UXLpq5kS61FrjaUI7V0mNrgoWhZM1bDX+2z1wuMtZMFuzeXNRd8t8aLAvvi4fiDlgFQCr9sfMSKVfjZrd4ppT5I7aXyrCLB0T2cwNIFo=
+	t=1731437141; cv=none; b=Lz1s0IbOzx5bF05AEA/0ryOzYgrHSBYmJaqiXzHonjd23OzxpIYnPrCMkBhdn160yZ6+me4Tjvqp2H8YUyLwOX2b5m3KlgpJNztw2zHfotlw21SV4LgkImfzsnh+iayIi88vnK1RfVMZl4qTdx/D4araIZbxEYK1Ffaz60jxG1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731436983; c=relaxed/simple;
-	bh=S7FUwtVV0BAKBNPojmarbvihA/jhfYctbNTjlWrVP8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WrBsmTwp2jjPi4bbu6kBNoHNYGy/26D/xk+97N0YhxnWVhMKLKw/6DbP/Akt6Wlvo7yqLmxue7u9WptkfLcDp1zW4/fUGE25rLKrPy6+KdUzdtA+MbV+CYlVES5VTslpqA/kCsARkoWg6PWOuX+Zycvfl1as05XiOuYQOg3F8iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fNghmlnf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731436980;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tPoALtQLssYylid2Eh8irr2ayHO3s2n1Pnm5KZqNhDA=;
-	b=fNghmlnfMq6Cz+P34rt8RI/7j5q7x+cAGWhYBlZkqWqSeq7HJCb5GCCtcnPWRheEB2JaUg
-	dQ6+3zrHh1jnH9CGpE6axaIHlqFNQo9X5OERfo8I7qGQqJX6ic1HeMrQc3j85OWepWFEA9
-	bhqB233nrHgMT+wv4Y7C5nvAA6VzjxE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-189-KBKMB-AKMtCdhLFGSI1cJg-1; Tue,
- 12 Nov 2024 13:42:58 -0500
-X-MC-Unique: KBKMB-AKMtCdhLFGSI1cJg-1
-X-Mimecast-MFC-AGG-ID: KBKMB-AKMtCdhLFGSI1cJg
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 68AFC1955EE8;
-	Tue, 12 Nov 2024 18:42:56 +0000 (UTC)
-Received: from bfoster (unknown [10.22.80.120])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4402A1956086;
-	Tue, 12 Nov 2024 18:42:54 +0000 (UTC)
-Date: Tue, 12 Nov 2024 13:44:27 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	"Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
-	linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
-Message-ID: <ZzOiC5-tCNiJylSx@bfoster>
-References: <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
- <ZzIfwmGkbHwaSMIn@infradead.org>
- <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
- <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
- <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
- <ZzLkF-oW2epzSEbP@infradead.org>
- <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk>
- <ZzOEzX0RddGeMUPc@bfoster>
- <7a4ef71f-905e-4f2a-b3d2-8fd939c5a865@kernel.dk>
- <3f378e51-87e7-499e-a9fb-4810ca760d2b@kernel.dk>
+	s=arc-20240116; t=1731437141; c=relaxed/simple;
+	bh=5AfxsiIGnThkCH9+gv4t/5YzNoha7tPyUzDonhfXsDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kU2MK2kI6gRn/T9QLhzFstrRi6An33LDw1dCKLWrgESOm4JBW+YS5luDCiT+fuOJZnvjhmkwW0dSw9O1Fsh6f9I6KoWNj94TZOgSh952e3wU4G9xcwqvyO+yk8ZZSrIYwmu/x4VxVBY5ZKPuijG7UFQ/oEikondPqFfzudZjyRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=CGu3iysX; arc=none smtp.client-ip=66.163.185.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731437132; bh=44dFyDMdFWCMHOzhpZuUtqKywMz30N+fbraStaI1L/E=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=CGu3iysXr3o4XqYPqFYJhiFA0/kVDR7xydNpXZojXAg3ehSAgqo1KnngT/r2Kyw+VXseNysHTIWD2WYh6E0n0ACnFVIZUCh2XTPXrq4wAlcoelWJdiqmzs/Fes5JUJAftJbAPFDGIsp4vFvCNGlXc36AI+W8jgqCzdReWWyeA1ihJ45kkRcbyeQxJsnDR0cIvJU80Mu3xW/sIhuPgJM0ad1Ta3exJg0avI/+DMtJVSOZSGDQWj0Esi8M232av6cMZDAPjfOW7xGCMA8We/M0mCZvwkjF+LkZFNHb9ad0SVj37BBmtUhtEZUOkmqgx6oIog3fT5LZV9KrStoxSThzug==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731437132; bh=stVwctm+rHDaZV5WnCWt/qR0FsE4RGRrgUsQjLDT+Ya=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=YE0YxkdhA4vuca5RHtFnxxJmgqbWcPjktb6/34U2+MxzQpSKikTnlOPDSNbRDYtqiFJcr58V8EEvhbrimRdOnezH+3FkgjPKBuyFjUroYVXKLnYud5iRRrLhPDet05Ef4LSbHnmogmeyYsLQBgSmRcZ0Qnkd2VxH2dt6nV8Bl8RvtGjdC2V4SfwtpS2Pbp53l3Rj68FpksOw0jwqetA7b9dR2DAjdwuYreDnZY2y9H9buE1MlJ80kf1cO6MllvFo99+b6PFaIjN+d+2FslTfYFMV/TOFf+5s8THnC3KbETD7jgBTx/wLxkjtfHWh8HlCM6NcqIrs/soMb/V8BvwUFw==
+X-YMail-OSG: mfFEfiUVM1k9jpYadsLcoTcNbR8iNtaf4VkGV3FO3GYWkqdmuAMN0KUv4b5D_yf
+ SmRzqrPlp0x0Ifm2ZbHNi0do9nNiR57MOBSABtvcYKiOzoCjK_vf6vduQxttnHlt87HyUJICHhBr
+ y6ZwRtUFuGy_woTRw2Ehd9AviLy5i8fSWwtrzfPv8Ks8B0QB7ufp_Mq2Ef5OIyG2dWCqHC1aooeO
+ 2P.L3FVRZL2NKuUWm.omnzE3V.CdnKxaF6NbarCHVfMu8HaBk6eDW5upk8bTf2zv0hdzYoJuHxZ5
+ 2e1TyeTfzfTlm3FRJo8lo_xLQtRdc603GpLTv41XtpUjMU3Egxgs5_19Ddz5F0E4YN.3OKcGCbeF
+ 2YqZMuSDXD6Wl07NbTCguFVS3M3359gNVQFl.fWrX29gsJ4luW9zgJ9yd2Ini4_xZR0MaFTNp4Qd
+ TKi9YG3lCcPDANPNm7q5OrMQLDVgi3Exf5MkdodSL6GNw66BrrXETn4Kygr922IVPams9Y2wHMM7
+ XMNQwHYNUotxUB8PkCZMpdD3zCCLtzRnAgXPiDW2WyJxmhE.ESfnlgc2tKb.AzNHPGHOHjEMDL12
+ 8IKEHtRsAp8vcCwxip0FS2fDZL36IHROl41wTAYzOg6JMesAsiyX4I9gP8lQfEK4vH7eY0Yb8Svv
+ hjH49EX9UXozaWtIQCqXXI2VXgiHzeShT4ALI.2e469yoaSkDJ7Fw9_3G3oapARYbV1F96rMurk8
+ 7blTWv2kCx7RLSuJ6jJPst4KK0sqYG6pjFL_dH.jZJDRh875Vzs8GB7Wauh6XIeFPEpF8CsOi004
+ V16Be6aa1DBWt6mxd49_MjzxO1jUIl6Hi8onJalDtiQ0Xt7bRPYIDQEnrzhtTbuCWRlANKnHWIgA
+ eS9BQWHQKkD2dHXeztIrMv5GshTq2_FxLnVLwGuqfiCXdwxVuNlGWW7n2lRf886cuJ1klqtj.HkM
+ .HuzKUWO2vi3GqHeQP6dz5PDkMsDrOJ20LgS0zq58gQoGu0pGU.k5ZhVwJ5tlAkWkREztxgMAFBI
+ zwkYl14NrTju5K.XGBO0PBOK7lhtIlFbIZBjP5_c430GcfUXytmXWv2P3MaajvTl51lCFi8MyB12
+ eQn.nLKAha9YzAts3T9rWcQMwHlNGLGKijUHGbWes.1hDElSTSTPGVyBm2VjejcL3uXyEcoFsXZ5
+ s9VjllxBBypNAtcBGHNMTeCdq5AOvSCqbqdz7pkSfSJiwmOOhCl1zmabVkF84f4lm9d.DxnCaKeO
+ Z5XAJH9GUws1iCcm11OgzUocNQaS_DlnxATvkDtx2vziaGU_l1yVSlpQTwQUNNBcIDm04ekuZN9X
+ .vuNzqEIs0SLf8CwX_HUcGYhvLKFAEJ1ydgnk3UNJR2wbvmcaGgz1hamiO1.TsV687aw18YT4T4S
+ tBNH3okxMY937vdy2IPKHMLQjwI_g1f9FMSpi5l9Vrytuv4sYInSxl0n4ubWPd7Lf3jhZk2x6aTR
+ 23pTuNdWjOUjV2LobHU96519JFW6SBTceNVybVqJjdqrXQjz3ADW0ZJrIS1A_9Uo1J7.fv8fiO7M
+ tHIPBFy7gXIi8W9xcEzfS3Zpwr9P90jASsJSwGEQrJKs3b52HsS3Gv2qbZP_pd8I.0pMLq9qUUsu
+ 72jg8MBDJZJywIcTD2KyOAjpany4o4QspMAOyGsCoEb8SpgCK2rxaWtmeKM0baGgS.ZZm6ZEhlxx
+ gEHPsqd.2wwuap3x7WQBDzpUChNOdKXdYuQxhHPmsErKyqwwyC.33vfL3HL4lfp4SoLcWYV_46YP
+ fRIpsz_tJLlPC8JVR0fZ1dd7WekLDaxDiK6SB0M5hrqwJo7X.WDFL1GkF1ieaoFXiGHW57JVQc1J
+ hgG6vNsQDTnrpLGUR6I5Y.Ofb4moLOgHrrIHADNW5QlQttKVgVCAOXlW1VGY4zwQsJWsMHvhC3gF
+ nBFWGOcMk_BxXurJIB6MOMvyuOqY2VdlJSw0.q7SiOdodXBYIQw_MIr7LtyI_LXGnGXabfh39aOq
+ RDMHTya1JVsA1wzpwgT3P91_dU95TXRNveFWIPAWhWTkRwejCCrzmIJLPs9d78fE_YrXA1ca.Ldn
+ Kt9CDj8BfWP8VX_QUo7srmpNXFKNKfn1jDBfQEXGusTdwau_Gnwzyv1d5F3ZmhakPDb4bSLJoN1y
+ lcjvSMd8DebRVusDDqUiOvCkN0OxLVsuYzIuIYbY6mYGjNp9l9Rn0E4RWpSOQUS7i5PlguDaMBkS
+ WQgcoXjsDsHznjRbPZEOIbqsFKCjI5Qrxl1mvkO1_gWN6DbUi9mHm6irAIsaOf.w7Tgqi._T8Q2q
+ OK2rnYejuLhIaRhzNogjjozekt3s-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: fd96ef61-f196-4ec9-90a5-cdea99300bc5
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Tue, 12 Nov 2024 18:45:32 +0000
+Received: by hermes--production-gq1-5dd4b47f46-pfhh2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8729408aad8f9c6002e94a5bf8721013;
+          Tue, 12 Nov 2024 18:45:27 +0000 (UTC)
+Message-ID: <ccfb14f5-4efe-4958-962e-9542009352cc@schaufler-ca.com>
+Date: Tue, 12 Nov 2024 10:45:25 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3f378e51-87e7-499e-a9fb-4810ca760d2b@kernel.dk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: lsm: Refactor
+ `flags_overset_lsm_set_self_attr` test
+To: Amit Vadhavana <av2082000@gmail.com>, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, shuah@kernel.org
+Cc: ricardo@marliere.net, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linux.dev, linux-security-module@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20241112182810.24761-1-av2082000@gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20241112182810.24761-1-av2082000@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, Nov 12, 2024 at 10:19:02AM -0700, Jens Axboe wrote:
-> On 11/12/24 10:06 AM, Jens Axboe wrote:
-> > On 11/12/24 9:39 AM, Brian Foster wrote:
-> >> On Tue, Nov 12, 2024 at 08:14:28AM -0700, Jens Axboe wrote:
-> >>> On 11/11/24 10:13 PM, Christoph Hellwig wrote:
-> >>>> On Mon, Nov 11, 2024 at 04:42:25PM -0700, Jens Axboe wrote:
-> >>>>> Here's the slightly cleaned up version, this is the one I ran testing
-> >>>>> with.
-> >>>>
-> >>>> Looks reasonable to me, but you probably get better reviews on the
-> >>>> fstests lists.
-> >>>
-> >>> I'll send it out once this patchset is a bit closer to integration,
-> >>> there's the usual chicken and egg situation with it. For now, it's quite
-> >>> handy for my testing, found a few issues with this version. So thanks
-> >>> for the suggestion, sure beats writing more of your own test cases :-)
-> >>>
-> >>
-> >> fsx support is probably a good idea as well. It's similar in idea to
-> >> fsstress, but bashes the same file with mixed operations and includes
-> >> data integrity validation checks as well. It's pretty useful for
-> >> uncovering subtle corner case issues or bad interactions..
-> > 
-> > Indeed, I did that too. Re-running xfstests right now with that too.
-> 
-> Here's what I'm running right now, fwiw. It adds RWF_UNCACHED support
-> for both the sync read/write and io_uring paths.
-> 
+On 11/12/2024 10:28 AM, Amit Vadhavana wrote:
+> - Remove unnecessary `tctx` variable, use `ctx` directly.
+> - Simplified code with no functional changes.
+>
+> Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
 
-Nice, thanks. Looks reasonable to me at first glance. A few randomish
-comments inlined below.
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 
-BTW, I should have also mentioned that fsx is also useful for longer
-soak testing. I.e., fstests will provide a decent amount of coverage as
-is via the various preexisting tests, but I'll occasionally run fsx
-directly and let it run overnight or something to get the op count at
-least up in the 100 millions or so to have a little more confidence
-there isn't some rare/subtle bug lurking. That might be helpful with
-something like this. JFYI.
-
-> 
-> diff --git a/ltp/fsx.c b/ltp/fsx.c
-> index 41933354..104910ff 100644
-> --- a/ltp/fsx.c
-> +++ b/ltp/fsx.c
-> @@ -43,6 +43,10 @@
->  # define MAP_FILE 0
->  #endif
->  
-> +#ifndef RWF_UNCACHED
-> +#define RWF_UNCACHED	0x80
-> +#endif
-> +
->  #define NUMPRINTCOLUMNS 32	/* # columns of data to print on each line */
->  
->  /* Operation flags (bitmask) */
-> @@ -101,7 +105,9 @@ int			logcount = 0;	/* total ops */
->  enum {
->  	/* common operations */
->  	OP_READ = 0,
-> +	OP_READ_UNCACHED,
->  	OP_WRITE,
-> +	OP_WRITE_UNCACHED,
->  	OP_MAPREAD,
->  	OP_MAPWRITE,
->  	OP_MAX_LITE,
-> @@ -190,15 +196,16 @@ int	o_direct;			/* -Z */
->  int	aio = 0;
->  int	uring = 0;
->  int	mark_nr = 0;
-> +int	rwf_uncached = 1;
->  
->  int page_size;
->  int page_mask;
->  int mmap_mask;
-> -int fsx_rw(int rw, int fd, char *buf, unsigned len, unsigned offset);
-> +int fsx_rw(int rw, int fd, char *buf, unsigned len, unsigned offset, int flags);
->  #define READ 0
->  #define WRITE 1
-> -#define fsxread(a,b,c,d)	fsx_rw(READ, a,b,c,d)
-> -#define fsxwrite(a,b,c,d)	fsx_rw(WRITE, a,b,c,d)
-> +#define fsxread(a,b,c,d,f)	fsx_rw(READ, a,b,c,d,f)
-> +#define fsxwrite(a,b,c,d,f)	fsx_rw(WRITE, a,b,c,d,f)
->  
-
-My pattern recognition brain wants to see an 'e' here. ;)
-
->  struct timespec deadline;
->  
-> @@ -266,7 +273,9 @@ prterr(const char *prefix)
->  
->  static const char *op_names[] = {
->  	[OP_READ] = "read",
-> +	[OP_READ_UNCACHED] = "read_uncached",
->  	[OP_WRITE] = "write",
-> +	[OP_WRITE_UNCACHED] = "write_uncached",
->  	[OP_MAPREAD] = "mapread",
->  	[OP_MAPWRITE] = "mapwrite",
->  	[OP_TRUNCATE] = "truncate",
-> @@ -393,12 +402,14 @@ logdump(void)
->  				prt("\t******WWWW");
->  			break;
->  		case OP_READ:
-> +		case OP_READ_UNCACHED:
->  			prt("READ     0x%x thru 0x%x\t(0x%x bytes)",
->  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
->  			    lp->args[1]);
->  			if (overlap)
->  				prt("\t***RRRR***");
->  			break;
-> +		case OP_WRITE_UNCACHED:
->  		case OP_WRITE:
->  			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
->  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
-> @@ -784,9 +795,8 @@ doflush(unsigned offset, unsigned size)
->  }
->  
->  void
-> -doread(unsigned offset, unsigned size)
-> +__doread(unsigned offset, unsigned size, int flags)
+> ---
+>  tools/testing/selftests/lsm/lsm_set_self_attr_test.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+> index 66dec47e3ca3..732e89fe99c0 100644
+> --- a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+> +++ b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+> @@ -56,16 +56,15 @@ TEST(flags_zero_lsm_set_self_attr)
+>  TEST(flags_overset_lsm_set_self_attr)
 >  {
-> -	off_t ret;
->  	unsigned iret;
+>  	const long page_size = sysconf(_SC_PAGESIZE);
+> -	char *ctx = calloc(page_size, 1);
+> +	struct lsm_ctx *ctx = calloc(page_size, 1);
+>  	__u32 size = page_size;
+> -	struct lsm_ctx *tctx = (struct lsm_ctx *)ctx;
 >  
->  	offset -= offset % readbdy;
-> @@ -818,23 +828,39 @@ doread(unsigned offset, unsigned size)
->  			(monitorend == -1 || offset <= monitorend))))))
->  		prt("%lld read\t0x%x thru\t0x%x\t(0x%x bytes)\n", testcalls,
->  		    offset, offset + size - 1, size);
-> -	ret = lseek(fd, (off_t)offset, SEEK_SET);
-> -	if (ret == (off_t)-1) {
-> -		prterr("doread: lseek");
-> -		report_failure(140);
-> -	}
-> -	iret = fsxread(fd, temp_buf, size, offset);
-> +	iret = fsxread(fd, temp_buf, size, offset, flags);
->  	if (iret != size) {
-> -		if (iret == -1)
-> -			prterr("doread: read");
-> -		else
-> +		if (iret == -1) {
-> +			if (errno == EOPNOTSUPP && flags & RWF_UNCACHED) {
-> +				rwf_uncached = 1;
-
-I assume you meant rwf_uncached = 0 here?
-
-If so, check out test_fallocate() and friends to see how various
-operations are tested for support before the test starts. Following that
-might clean things up a bit.
-
-Also it's useful to have a CLI option to enable/disable individual
-features. That tends to be helpful to narrow things down when it does
-happen to explode and you want to narrow down the cause.
-
-Brian
-
-> +				return;
-> +			}
-> +			prterr("dowrite: read");
-> +		} else {
->  			prt("short read: 0x%x bytes instead of 0x%x\n",
->  			    iret, size);
-> +		}
->  		report_failure(141);
+>  	ASSERT_NE(NULL, ctx);
+>  	if (attr_lsm_count()) {
+> -		ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, tctx, &size,
+> +		ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, ctx, &size,
+>  					       0));
 >  	}
->  	check_buffers(temp_buf, offset, size);
->  }
-> +void
-> +doread(unsigned offset, unsigned size)
-> +{
-> +	__doread(offset, size, 0);
-> +}
+> -	ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT | LSM_ATTR_PREV, tctx,
+> +	ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT | LSM_ATTR_PREV, ctx,
+>  					size, 0));
 >  
-> +void
-> +doread_uncached(unsigned offset, unsigned size)
-> +{
-> +	if (rwf_uncached) {
-> +		__doread(offset, size, RWF_UNCACHED);
-> +		if (rwf_uncached)
-> +			return;
-> +	}
-> +	__doread(offset, size, 0);
-> +}
-> +	
->  void
->  check_eofpage(char *s, unsigned offset, char *p, int size)
->  {
-> @@ -870,7 +896,6 @@ check_contents(void)
->  	unsigned map_offset;
->  	unsigned map_size;
->  	char *p;
-> -	off_t ret;
->  	unsigned iret;
->  
->  	if (!check_buf) {
-> @@ -885,13 +910,7 @@ check_contents(void)
->  	if (size == 0)
->  		return;
->  
-> -	ret = lseek(fd, (off_t)offset, SEEK_SET);
-> -	if (ret == (off_t)-1) {
-> -		prterr("doread: lseek");
-> -		report_failure(140);
-> -	}
-> -
-> -	iret = fsxread(fd, check_buf, size, offset);
-> +	iret = fsxread(fd, check_buf, size, offset, 0);
->  	if (iret != size) {
->  		if (iret == -1)
->  			prterr("check_contents: read");
-> @@ -1064,9 +1083,8 @@ update_file_size(unsigned offset, unsigned size)
->  }
->  
->  void
-> -dowrite(unsigned offset, unsigned size)
-> +__dowrite(unsigned offset, unsigned size, int flags)
->  {
-> -	off_t ret;
->  	unsigned iret;
->  
->  	offset -= offset % writebdy;
-> @@ -1101,18 +1119,18 @@ dowrite(unsigned offset, unsigned size)
->  			(monitorend == -1 || offset <= monitorend))))))
->  		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\n", testcalls,
->  		    offset, offset + size - 1, size);
-> -	ret = lseek(fd, (off_t)offset, SEEK_SET);
-> -	if (ret == (off_t)-1) {
-> -		prterr("dowrite: lseek");
-> -		report_failure(150);
-> -	}
-> -	iret = fsxwrite(fd, good_buf + offset, size, offset);
-> +	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
->  	if (iret != size) {
-> -		if (iret == -1)
-> +		if (iret == -1) {
-> +			if (errno == EOPNOTSUPP && flags & RWF_UNCACHED) {
-> +				rwf_uncached = 0;
-> +				return;
-> +			}
->  			prterr("dowrite: write");
-> -		else
-> +		} else {
->  			prt("short write: 0x%x bytes instead of 0x%x\n",
->  			    iret, size);
-> +		}
->  		report_failure(151);
->  	}
->  	if (do_fsync) {
-> @@ -1126,6 +1144,22 @@ dowrite(unsigned offset, unsigned size)
->  	}
->  }
->  
-> +void
-> +dowrite(unsigned offset, unsigned size)
-> +{
-> +	__dowrite(offset, size, 0);
-> +}
-> +
-> +void
-> +dowrite_uncached(unsigned offset, unsigned size)
-> +{
-> +	if (rwf_uncached) {
-> +		__dowrite(offset, size, RWF_UNCACHED);
-> +		if (rwf_uncached)
-> +			return;
-> +	}
-> +	__dowrite(offset, size, 0);
-> +}
->  
->  void
->  domapwrite(unsigned offset, unsigned size)
-> @@ -2340,11 +2374,21 @@ have_op:
->  		doread(offset, size);
->  		break;
->  
-> +	case OP_READ_UNCACHED:
-> +		TRIM_OFF_LEN(offset, size, file_size);
-> +		doread_uncached(offset, size);
-> +		break;
-> +
->  	case OP_WRITE:
->  		TRIM_OFF_LEN(offset, size, maxfilelen);
->  		dowrite(offset, size);
->  		break;
->  
-> +	case OP_WRITE_UNCACHED:
-> +		TRIM_OFF_LEN(offset, size, maxfilelen);
-> +		dowrite_uncached(offset, size);
-> +		break;
-> +
->  	case OP_MAPREAD:
->  		TRIM_OFF_LEN(offset, size, file_size);
->  		domapread(offset, size);
-> @@ -2702,7 +2746,7 @@ uring_setup()
->  }
->  
->  int
-> -uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> +uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset, int flags)
->  {
->  	struct io_uring_sqe     *sqe;
->  	struct io_uring_cqe     *cqe;
-> @@ -2733,6 +2777,7 @@ uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
->  		} else {
->  			io_uring_prep_writev(sqe, fd, &iovec, 1, o);
->  		}
-> +		sqe->rw_flags = flags;
->  
->  		ret = io_uring_submit_and_wait(&ring, 1);
->  		if (ret != 1) {
-> @@ -2781,7 +2826,7 @@ uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
->  }
->  #else
->  int
-> -uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> +uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset, int flags)
->  {
->  	fprintf(stderr, "io_rw: need IO_URING support!\n");
->  	exit(111);
-> @@ -2789,19 +2834,21 @@ uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
->  #endif
->  
->  int
-> -fsx_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> +fsx_rw(int rw, int fd, char *buf, unsigned len, unsigned offset, int flags)
->  {
->  	int ret;
->  
->  	if (aio) {
->  		ret = aio_rw(rw, fd, buf, len, offset);
->  	} else if (uring) {
-> -		ret = uring_rw(rw, fd, buf, len, offset);
-> +		ret = uring_rw(rw, fd, buf, len, offset, flags);
->  	} else {
-> +		struct iovec iov = { .iov_base = buf, .iov_len = len };
-> +
->  		if (rw == READ)
-> -			ret = read(fd, buf, len);
-> +			ret = preadv2(fd, &iov, 1, offset, flags);
->  		else
-> -			ret = write(fd, buf, len);
-> +			ret = pwritev2(fd, &iov, 1, offset, flags);
->  	}
->  	return ret;
->  }
-> 
-> 
-> -- 
-> Jens Axboe
-> 
-
+>  	free(ctx);
 
