@@ -1,380 +1,280 @@
-Return-Path: <linux-kernel+bounces-405879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07C79C597C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:47:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE639C59A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:54:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2D13B3AF96
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:59:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BB3DB385B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D6113635B;
-	Tue, 12 Nov 2024 12:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA7113B787;
+	Tue, 12 Nov 2024 13:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lfZLypWH"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="V/TZbEtq"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262C570831
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731416340; cv=none; b=QvkhGdrPWx3mUGTIG8MWCNBOqJbJBg1hSEVuHfLFdH6F3LB2barWPmSjpiWTs+PxSmDdc1mPfPLQZWdfRkuR3wNNO1KcCsT8wpblv/rt0+GwmMUp4pHEQu5qbLjlm7MYOg2J5xfxpbdMCLwhzhfRNw4myaV2VkU83vb6uCRU+lM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731416340; c=relaxed/simple;
-	bh=125QBvBBFLhLFtk94EPTnczNUbDw16H36xs8BEZ9QCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bh6PKEr8ZANqhhfCYymiG4Mmj+POoPsi7XDTCakEAXNxm0TBhgF/vMslQqzBmNWdb4/dUVmS4msvat8CNTPTUIXMC89E1iob/DiRxCG1zQTRs6glYL+FLgLXJXGujFwegWHfI5cKvcl3G5jJSkPZFP0qpNz0c5IlEECnjsVtqfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lfZLypWH; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43150ea2db6so84695e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:58:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731416336; x=1732021136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yfAeLaRFWdN/IgPZYBOM4W/Hl1zrpIvx0XX4d1JTnqQ=;
-        b=lfZLypWHEtTIxaWglQdddlsRIhzkC5DC08cFm1mrB/pw+q5c+voCfwAP+lmyI8iUbL
-         Q/iOn8ydYGJXzGtyibs86KZplfRrT8UNRBILEW+C+HqgzUxZDenXVgcmXPxLu1raEunH
-         FwFS0whGiCQuBFPdZIxVTUenSFL6MdNJ2mi9fnBoNwFqDKclj2A7V9m5JTBozQwC4lvl
-         jwGymb9dv+fFvdEJDnP3u0RkhL6Zd0hq1HuRJ2QQkugW9akZH5GPZPph79IF39TnRgAO
-         5dv8MY+IqrlcuAhikULQ7erXTSaS9B/b1FXCRQNG9ihE3GQ06zwSEQqNA3BDMuPvnh+h
-         wKjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731416336; x=1732021136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yfAeLaRFWdN/IgPZYBOM4W/Hl1zrpIvx0XX4d1JTnqQ=;
-        b=F+E4n1FE36bLdOVCXSMijkgg6SnX6KToklCsTXzpovtY5y4ytiIiJULJ5/P5yH1gre
-         ZREqCd++onKTUPnAjyan8HTM/bgjl3pkg9zvzh4U+3ZUDIdV1PM07mxFBTDlZMNaZqDC
-         8FuT6/82R1OVWm6ebpMXjYZYQ37hEN1hO/5Zyup4OB7gYL1amu/ZMb0CbduYwhcYDS4n
-         3CnPfxqkCdja9bDLuOunEQ2JBlj9yPs0xZrRmaeUrlxY7I/Q5KNLYlfR/VTg8MLkKYdv
-         BtSkxWNRKPA6hXxyzzQJpYcYue3NUvruBUk0vmvYjK7APJGjUzlCW3kkKhoRnSLYpWLf
-         zSBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJzYlZWR3nE25V6Or33blLm8Ypm4kwJVgHrcIhNCqK1uQmCgkq+uzWFXtZhbIhax2D63s2MOQavvCVNFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBxFckCG+sivj1Z5sRuQUPDqU/SAU3aDN+fCZMAqftg/dOAtpL
-	t8BJfS2g0rWPYKz33kVQq6zxxMPTQKbr2PFNLzn5HPBIIukCzuPfDy2rg+ByEP2J4+mnj4PykYY
-	UDaDDyYord/FA4Oa//5cvquZ5/iGUvwLWC0rClLorm77bg1u50bsMinc=
-X-Gm-Gg: ASbGncsTNnorYc9cEsW6ee1Z9Hbm1h0ZmWKaTOPjcmhfNTrq3GN3fGtAZAk2MiYBVAH
-	hSis4s1yBKuouSLjouBvcYNNTes2ojKCF63hDbB2z8zo950bWZxD8N5/BtQ==
-X-Google-Smtp-Source: AGHT+IHLz6K9tbthJlaw1F8JcdjVsquGr069haUcEPP6n2eZiBDEp86lACNry8D0/sD7HeRefdA8WFvsihfIk72p6Tk=
-X-Received: by 2002:a05:600c:4d0d:b0:42b:a8fc:3937 with SMTP id
- 5b1f17b1804b1-432cc969fdamr1541985e9.4.1731416335983; Tue, 12 Nov 2024
- 04:58:55 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE75433D9;
+	Tue, 12 Nov 2024 13:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731416676; cv=fail; b=eunAN2nrdy86/RbWbQaU68yQJcZCD3cegmJxAX6ZjwB6qioUoR2tAlFWyWW3hjtAv6m6KxLtuj2Z39jB6gHFoocW4kmf165gT4ngXZ8fHA81cxv9auZgjStmAMtPvAloR4iTLKKqF5SL6xPzMm9GXiFB178rv43Dt+y61+GcHMA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731416676; c=relaxed/simple;
+	bh=1MOa5ThBcBoM5mdmgIARMdHXNibCr9zxGhUH2CGvG+k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WsvMfq+mdH5/NzgSlOjfnWl+0JFi1nlXzDlp8/gfgj7UKhf0AD7p0a9PwoA/v1++fcgvxboFHqR5dps31OmEfKe661QZNG0L69ZH7HFy5lE/MR/HKEm4gQo2ldQB7oioxO0+O0tpMkrF2h70/j2PihyXaUihxi581I2MqEQPDGc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=V/TZbEtq; arc=fail smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC4mC0r020863;
+	Tue, 12 Nov 2024 05:04:02 -0800
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2176.outbound.protection.outlook.com [104.47.56.176])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42t84pn45v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 05:03:58 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T0G9FRk/p5cW4eGponM1PO3I7Kueaz8ZwOZGQRiC/vqNKfmZFlReaHb9zUrdUXfFHsfJe0yzbGa2tpieqqwLbomR4SDbS31AjRNHaW5rNDiR6QRfXwfVrimS/4W+HuUJ3cttVI6ss6DvrWuASyLsAu3tDCeD3EU3PazqbQepZUQL6zHCKnFozpCIt2AhNBHAcjM2oRRJtidl+Teh1FpKzNCCoTKjFsB9nweNDy05t/gCDRXn+1kDCRxBubliJ0dlY5Jc8LwgwNH+D4K+3Y0qvKk1vAE+C0jIMKcUNY+5uCAseJzv8bpEfGciPn3bv4OyUoPOjDpgVvYcbHCCGfN8PA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1MOa5ThBcBoM5mdmgIARMdHXNibCr9zxGhUH2CGvG+k=;
+ b=lHl/GLno+J04sr42+hfZpSgAiBFxz+w69K8ZO4kP2mrx9fqeyPM51JcubLSrCmYweY/viz+jiW+czIOwwqqm5w2/9aNo+OTNhedxqW81FOxRPUkbGgfDkjhXKfkyDUAnn4Q2p7Kly5fC+clmx3UhkJ46LDf07+OSGj6KJz8iY+Suk4ksM0288yGK0Bvywl9ZZgZIwAbfAmMeaNw1DQbMvmYuQvplk/huJH55wasJEaJyjZq5VYeVox3RUJ3ozUWzt75mnv24afHnjolS6i0080XYB1IBTEPfNoSbYWBWF5stIEb1cnXJR0EGEoHk6/mZwozRFCcELen2njz9QOYEEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1MOa5ThBcBoM5mdmgIARMdHXNibCr9zxGhUH2CGvG+k=;
+ b=V/TZbEtq9aFWTD5pZFwpSfVIy/xFfwTjrVptqWUQhHbGamQmouEkc+xJSBV4QTzKHnTZKpwaXUlWYHmfOE1YX1uO8aHO5soPIpsltO3EEjYhzwRZO66k48Y7vxCVNK8PjuFjSkV/5XXZoiUWVsobX4hXA+461uiaFEeOBEXB/Qc=
+Received: from PH0PR18MB4734.namprd18.prod.outlook.com (2603:10b6:510:cd::24)
+ by BY1PR18MB5328.namprd18.prod.outlook.com (2603:10b6:a03:526::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Tue, 12 Nov
+ 2024 13:03:49 +0000
+Received: from PH0PR18MB4734.namprd18.prod.outlook.com
+ ([fe80::8adb:1ecd:bca9:6dcd]) by PH0PR18MB4734.namprd18.prod.outlook.com
+ ([fe80::8adb:1ecd:bca9:6dcd%3]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
+ 13:03:49 +0000
+From: Shinas Rasheed <srasheed@marvell.com>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Haseeb Gani <hgani@marvell.com>, Sathesh B Edara <sedara@marvell.com>,
+        Vimlesh Kumar <vimleshk@marvell.com>,
+        "thaller@redhat.com"
+	<thaller@redhat.com>,
+        "wizhao@redhat.com" <wizhao@redhat.com>,
+        "kheib@redhat.com" <kheib@redhat.com>,
+        "egallen@redhat.com"
+	<egallen@redhat.com>,
+        "konguyen@redhat.com" <konguyen@redhat.com>,
+        "horms@kernel.org" <horms@kernel.org>,
+        "frank.feng@synaxg.com"
+	<frank.feng@synaxg.com>,
+        Veerasenareddy Burru <vburru@marvell.com>,
+        Andrew
+ Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>,
+        Abhijit Ayarekar <aayarekar@marvell.com>,
+        Satananda
+ Burla <sburla@marvell.com>
+Subject: RE: [EXTERNAL] Re: [PATCH net v3 1/7] octeon_ep: Add checks to fix
+ double free crashes.
+Thread-Topic: [EXTERNAL] Re: [PATCH net v3 1/7] octeon_ep: Add checks to fix
+ double free crashes.
+Thread-Index: AQHbMbI9ovCa+Fu9y02Z/3B5ZFyELLKvD78AgAJ/aFCAAZ4GwA==
+Date: Tue, 12 Nov 2024 13:03:48 +0000
+Message-ID:
+ <PH0PR18MB473440FBC843E4A88229A38CC7592@PH0PR18MB4734.namprd18.prod.outlook.com>
+References: <20241108074543.1123036-1-srasheed@marvell.com>
+ <20241108074543.1123036-2-srasheed@marvell.com>
+ <bdaa8da4-aa72-43de-8b05-88ed52573a8a@linux.dev>
+ <PH0PR18MB4734F7C5CD86F64D9074E395C7582@PH0PR18MB4734.namprd18.prod.outlook.com>
+In-Reply-To:
+ <PH0PR18MB4734F7C5CD86F64D9074E395C7582@PH0PR18MB4734.namprd18.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR18MB4734:EE_|BY1PR18MB5328:EE_
+x-ms-office365-filtering-correlation-id: 498b3334-dd8d-47f4-fc57-08dd031a72f7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?T3Ivd0pDczhyc2ZGbXZqWEVTVTU4eFFYUm55WnNXaW1LYlBXTUp1QzNhNXc1?=
+ =?utf-8?B?QUxucXp1WjY4M3ZVU3NFVjJDRkNJZForYkhqZUkzVU4wWXF0SXRRVG92U1R3?=
+ =?utf-8?B?VkR3Wk5TZlVvdGV6dnJ3dWRJRWFMSnRBNENVazNzb1gyK0lUMERucUt6bC9W?=
+ =?utf-8?B?QzI2a0tLd3pnY3R3aG40TkFYYi9VVDhEeUtRUlc4bnRjbXVjSDUvRHBaeVNC?=
+ =?utf-8?B?RGpYZUhxb25wRmtXamhuTkprM0ZmbDR1U3Z3NklIWXIreUlEcU9keFY2QWs0?=
+ =?utf-8?B?VFJnb2tPYlNqTWgwbUF1UUVZdlNYVkc0ZW1WMGlYR2lvWHJ1azIvRmxKMXdV?=
+ =?utf-8?B?NHBqbmpFbURhR1R5LzRmRXBhb3lTdWFsZmRLMHRnaHVTSUZ1Y1JZOGV2YUVp?=
+ =?utf-8?B?eGJPdy9tQXRCWjg3WHlrQS9wM2s4aStXQmttNHNkM1hPZGM1a202U3ZuUC9p?=
+ =?utf-8?B?MllFcVJSMnRYUjFZM3hpWVVITk5Id1FlNTJaSVJtZHBuZUV0b1p2ODRJZ204?=
+ =?utf-8?B?UWVFNWpLWnRpRi9id1JkSnptUUFkYVRGNmM4U2JkaW9PY2JCVXBZbWxQSjRN?=
+ =?utf-8?B?bXhTZU9mWnJibDloNHljMFdDVWtjODJMQ1pGN0VWVXJBUXIrSHI0MUx0ZzFH?=
+ =?utf-8?B?WVIvTGYxbktkVjNMdU1RNEJwVVZIc0pZSUE1MWs3d0J5LzB1cEQ2d3FPQ0tI?=
+ =?utf-8?B?bk5DWk00YzJtRmdFZjBsY3hyVUxFYWNpbnlwVTFIZStxL3o0dHJaaVdaNTlT?=
+ =?utf-8?B?SFhLb1JYYXFxeEx4MkRMVTZxakJXUXk1UHBTQTlZVXlMeTdXTThBSXRPUDRq?=
+ =?utf-8?B?Sy81T1hFUU9UTVJBWlh2TkhodS83TzJwckp2SUgrQnVXenlaMm9sWllGZ0RC?=
+ =?utf-8?B?aGZ2UE1FaVVLdG5keGQvT0piZENKaWt1VmtYbnA2dDByanZsbThObmkwUjFa?=
+ =?utf-8?B?VmdVVHlLYjltOThaR25aVmUzNVd3elZHTElsc1dJNEc5UExNQndhVklkd2FV?=
+ =?utf-8?B?dTlka0lLV3FSQk5yNVU3RW1KRFlVbkxwajVsQXZ1ZytMVEVoTk0zanhnZjBB?=
+ =?utf-8?B?aG9qVzlmSEp3bmpQQTdOTzJQc2lreXhKL0YxWnVOVmRYbkZIZGE1ajBMbWJH?=
+ =?utf-8?B?RVBaTXJiNFI5ZGFtVHpZYWR1OS93L0pURk40Z0tOaFJCUW5sNmQzZTI0UExq?=
+ =?utf-8?B?SGVZcGpCRTRIdjR4Znp6dkdpdVE5RWQwV1VVT1FpS1RaaFEyUmdkZWhzSm1w?=
+ =?utf-8?B?YXNuMzZLTmpXcVVQWlJGN2w1b24yWHhsL2crTHFKTjZtaTFpVjBpdHFlZm9D?=
+ =?utf-8?B?RGZmZjZKWlpVSXg2UkNEOGZLT3pCWjJSWDd3dnBzYWgrQ1g3NGRoZnVtVUl5?=
+ =?utf-8?B?UkU0SzRoZ2E4em1RN1plWUtZcC9ZR1A1QW1QemVtQTRYaWR5VXdIZWw3Zi9p?=
+ =?utf-8?B?ZTQvckFDMXlSQ2xBZ3hCcFFGVGMvWHVlekI3TDlScTk3WHhvTVpTa0xVU29t?=
+ =?utf-8?B?RXk1SSs0VUJuYjA4anY1aDltTCtMTGNoaTJZTFZjWnl1Z2NGYnVJTnpYNU1i?=
+ =?utf-8?B?akp2NmdXSWp0bzZXY2k5VFJwaUhyYTdYNWRaOHN6aUUvSGE5U29KSGhLY2pE?=
+ =?utf-8?B?MWNjMlh6eW1KalhrNGZKb3k5QXFJckYxZmJLQ0FzQkhqSUh3eWpudGdjekFH?=
+ =?utf-8?B?ZjRYNkZXaTYrMGNPVDRPY0JJUjJ2UmhaL3VTcG5OZjJYR2FEcStLYTd1NWh5?=
+ =?utf-8?B?ZFZYR2V6MTBaTUtHaTVXQ3Y0d2F2MzU0VS9LTklNTWhPMnRyalBOV3BUdnA0?=
+ =?utf-8?B?VUxvOFh5RFpIdTA0ZnF0eE1BSk5GL3dMQW1nQUlDanZZS2Z4NlJPRGF5UGlF?=
+ =?utf-8?Q?L5/JXaoMuIk/O?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR18MB4734.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?VlZld2FjVEVzSmJidWQ4TWlqa1NGRWliN29TaTl0MWh3TzJKcnVKd3hYdVJB?=
+ =?utf-8?B?b1NrL2d4TSt0WGV3c2lYNWdwN3J5Yk8xRzBmeXgyS1g2enlzN282eURJdXp2?=
+ =?utf-8?B?dHd6VXU1T1dNZ1g1N0tqRS94bURNbnkwVkQ1OVR6cWF2SHR2Y3VmK2NnVTFH?=
+ =?utf-8?B?NXh3RVNOQWhMdHZhQVJhZFdoa2owNkVleEVOc2kvUldPNlRWQldoUXNTdUVG?=
+ =?utf-8?B?SWEzSHdoUzk0MG44VXN4eGFQZjZhSU91Z0paWmNaSElXQlJ6WnZmZVk2UDBP?=
+ =?utf-8?B?ZGRNUkp6bzl0aXExTXoxaW03U3VQbjJIcW1lN3k1TmNYcTV4clhnSW04US9k?=
+ =?utf-8?B?MGhEZURBYkdyYUZEOFBtcU9ISHVubkZiMEdTUHZqejA0N3IzVjAva29FNVZH?=
+ =?utf-8?B?Y2FUWVVDTW8rWlZQUk56alNwZzl2YUpIOE1KNk1FU3VwZmtxb2VTNlBvZSts?=
+ =?utf-8?B?VE93SXhnZUEvQ3ZkMitkUng0WitHUElmZ2h6VURVYUY2Q1BKTDlVZ1Z1LytW?=
+ =?utf-8?B?WlUyM0ZMK3cvcGhVM3ZDUXBwR25qSjQ5MUtmYS82NXA1M2M5MzE4dmZPRkpu?=
+ =?utf-8?B?NjVXd2d5WUV0dnFqVUZMenNJWGtrN2I3WkNGU011UEFja0xuWUsvYU9QTERw?=
+ =?utf-8?B?VWh2L1p2b3FTUG02eTIvNDNnNnUzWWlNL2pCdjREUzRjOXduaGNNcThaTVVY?=
+ =?utf-8?B?TjJFZ3VtWU1ORHBoMk5uRE4wYzQ0MUZiclRpeFJoNDBaN1F2Ti81M0lyb05Q?=
+ =?utf-8?B?VnIxSzlmQVlMTmRQRm1OSzRFME5pRTZGQTI2cXRGYmU1cnhDd091OURrUU9T?=
+ =?utf-8?B?R2FwV0I3T2ZrKy9zWEd3ZXhkanp5Qkx6ZCsyQVpzanRQNVZTS0FxRGM1R3Ix?=
+ =?utf-8?B?UU5ESkxCUUdwYTN6OFFVNzJxQ1FTazA1L015Y1NFT3BnVDc4VzUxRGdZclFw?=
+ =?utf-8?B?d0x6Y2JmRVFqVHRBYk9sUGJRY0lYSEFHSEJFVUd5RjlFa3U5QVRtMDVJbC9M?=
+ =?utf-8?B?Wm83QWY0WEEzZURrS2YveXlvaFZvTjc5S0Exa3U4V2p0ZG1iZzhhMlQyWTJy?=
+ =?utf-8?B?UlB0aWtGT2RKSytncTNraTQ5SE1PRXNEZS9vNEo0ZFZpWGU2NDBJbE5kWnFR?=
+ =?utf-8?B?bi92Yk9BSlJnbWRydEs0cEVaWjRoN3kxaWlSWEJ6bWRNTHFWcEwyQlFIVnlp?=
+ =?utf-8?B?NlJJbUQrdUlIUWxrSUpBVllYVlVFbWswRXZqK0RieEFYS3JFQktjT3cvUklO?=
+ =?utf-8?B?OVlLTnlhRGk1RTA1alFQdFVwNFdQVGtWSkdWSXZaSG50ejBRM001aWNLajl0?=
+ =?utf-8?B?TVVWOVpkVmdkOHFoYUwyQmZVOXBhSEdTUzdIUFZGa2FZUWx0L1ZWY0hTczJt?=
+ =?utf-8?B?TmdmdkQrTjlBQWZpb3h0YUlvU0RXWmtkT2xEdUhLQWpHMUpwZXRmenRFRVcw?=
+ =?utf-8?B?MGlpWmUrUkd1bVp5MW5ndXBQTDVBUld5UElVb1IrWFRYVHpNMW1NTW5IbEJy?=
+ =?utf-8?B?RG5vdlhXM0pIbGdTd1RMT0JNYyswWHBPT0x4MSt1a3lWQVhPREZ4VWRoN29I?=
+ =?utf-8?B?SlF1clpWUXpWVnVNQTU0RUxQUElGMmxxeWZ3NzJDZkNYSGdic3FESDhXdjlK?=
+ =?utf-8?B?UXhEOCtPVlRWcWxXRnpZTmNJdExhL0drTUk2RC9OVUpZcGVZUWQ1VWZNK0pr?=
+ =?utf-8?B?R3hBYU1uNVVWK0huMmZmbWttZk1iVkgvVFZsNzFZdjE1WFhYdS9zUzEzaHhM?=
+ =?utf-8?B?RTRlMFVIUmljVHczRDQyRzFyYXRSOGlyUkNRMXVYVWtDRG0vWm5BaWsrWEQ0?=
+ =?utf-8?B?ZEkrZ3pObUV4Z004ZWdQdnhNd2w4NlRpYUJQdE1mYVhuSWdBMWI3QWtERUFV?=
+ =?utf-8?B?YVRlUnVNdnJCVlIrNDBvRDRtNGdQUzBKYndUaS9MMGZSNGlCZkEyNTE0WUtp?=
+ =?utf-8?B?ZFBRc1RydzNSMjlNelkxcmNwMkdoU0x5bG8zOVZCWS8zVkZHdkRzMS9nOWY3?=
+ =?utf-8?B?bHhFbzVYZVpvNGNLZ2hzeGNlZlFleWZ1TXJVdlVaL284ZUdkZHptUEFyKzBh?=
+ =?utf-8?B?VXhWUkVmazExMjA4WnNyR2VUVGd6NGxYOFU5RU5ZZlJOalpBYytkQzgyeEFw?=
+ =?utf-8?Q?Bh+jg5X57CdmoggJ3nMWk4/aK?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010-vma-v6-0-d89039b6f573@google.com> <20241010-vma-v6-1-d89039b6f573@google.com>
- <CAG48ez3gXicVYXiPsQDmYuPSsKMbES2KRQDk+0ANWSS0zDkqSw@mail.gmail.com>
- <CAH5fLgjeWKSH+4X+moy9Qc9YOp0dKAFZic6wBHjq_D6NHFmNRg@mail.gmail.com>
- <CAG48ez2bdKj9=rHuu221jtLK9P_a9j-MVx=pW=zg91RPrBrZ_w@mail.gmail.com> <CAH5fLgiVTK6mv5m4FaNFZMP4vHKo=8UbR9qm56aaB0Dmrp3x3w@mail.gmail.com>
-In-Reply-To: <CAH5fLgiVTK6mv5m4FaNFZMP4vHKo=8UbR9qm56aaB0Dmrp3x3w@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 12 Nov 2024 13:58:20 +0100
-Message-ID: <CAG48ez0S_dgXUM476vithROG3-su+-UcJGYs52fvSeg0LG1eWA@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] rust: mm: add abstractions for mm_struct and vm_area_struct
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4734.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 498b3334-dd8d-47f4-fc57-08dd031a72f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2024 13:03:48.8967
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: AARoZ/jJZm5Q4mFgOAT8XWrOnmLiEMTF8B8kdjdlU2Pza2yXHumrb5jBtmG85QLIRvw4rCqRzf2Sb6ss1Sheew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR18MB5328
+X-Proofpoint-ORIG-GUID: T2Qa12UswqbQbgdhhGHmmb7vTH5Ywh4W
+X-Proofpoint-GUID: T2Qa12UswqbQbgdhhGHmmb7vTH5Ywh4W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, Nov 12, 2024 at 1:12=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
-> On Mon, Nov 11, 2024 at 5:51=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
-e:
-> >
-> > On Mon, Nov 11, 2024 at 12:41=E2=80=AFPM Alice Ryhl <aliceryhl@google.c=
-om> wrote:
-> > > Thanks a lot for your review!
-> > >
-> > > Note that there is a v7 already:
-> > > https://lore.kernel.org/all/20241014-vma-v7-0-01e32f861195@google.com=
-/
-> >
-> > Yeah, oops, somehow I only realized I was looking at an older version
-> > of the series after sending my mail...
-> >
-> > > On Fri, Nov 8, 2024 at 8:02=E2=80=AFPM Jann Horn <jannh@google.com> w=
-rote:
-> > > > On Thu, Oct 10, 2024 at 2:56=E2=80=AFPM Alice Ryhl <aliceryhl@googl=
-e.com> wrote:
-> > > >> These abstractions allow you to manipulate vmas. Rust Binder will =
-uses
-> > > >> these in a few different ways.
-> > > >>
-> > > >> In the mmap implementation, a VmAreaNew will be provided to the mm=
-ap
-> > > >> call which allows it to modify the vma in ways that are only okay =
-during
-> > > >> initial setup. This is the case where the most methods are availab=
-le.
-> > > >>
-> > > >> However, Rust Binder needs to insert and remove pages from the vma=
- as
-> > > >> time passes. When incoming messages arrive, pages may need to be
-> > > >> inserted if space is missing, and in this case that is done by usi=
-ng a
-> > > >> stashed ARef<Mm> and calling mmget_not_zero followed by mmap_write=
-_lock
-> > > >> followed by vma_lookup followed by vm_insert_page. In this case, s=
-ince
-> > > >> mmap_write_lock is used, the VmAreaMut type will be in use.
-> > > >
-> > > > FYI, the way the C binder implementation uses vma_lookup() and
-> > > > vm_insert_page() is not very idiomatic. The standard way of
-> > > > implementing binder_alloc_free_page() would be to use something lik=
-e
-> > > > unmap_mapping_range() instead of using
-> > > > vma_lookup()+zap_page_range_single(); though to set that up, you'd
-> > > > have to create one inode per binder file, maybe with something like
-> > > > the DRM subsystem's drm_fs_inode_new(). And instead of having
-> > > > binder_install_single_page(), the standard way would be to let
-> > > > binder_vm_fault() install PTEs lazily on fault. That way you'd neve=
-r
-> > > > have to take mmap locks or grab MM references yourself.
-> > >
-> > > Would that actually work? All writes happen from kernel space, so it'=
-s
-> > > not clear to me that we can trigger the fault handler from there. We
-> > > can't use copy_to_user because the write happens from a different
-> > > process than the one that owns the vma.
-> > >
-> > > That said, one alternative is to let Binder store an array of `struct
-> > > page` and just write directly to those pages when writing from kernel
-> > > space. Then binder_vm_fault() can look up the relevant page from the
-> > > array when userspace attempts to read the data.
-> >
-> > Right, that's what I was thinking of - keep allocating pages at the
-> > same point in time when binder currently does it, only defer mapping
-> > them into userspace.
-> >
-> > > Though we could also
-> > > just vm_insert_page() right before returning the address to userspace=
-,
-> > > since we know that userspace will read it right away after the syscal=
-l
-> > > returns.
-> >
-> > I think that is basically what binder does now?
->
-> Right now binder calls vm_insert_page() right after calling
-> alloc_page(), which means that vm_insert_page() happens in the process
-> sending the message. But we could delay the call so that it happens in
-> the process that receives the message instead (which is also the
-> process that owns the mapping).
-
-Ah, I see. I don't think that would make much of a difference in terms
-of the complexity of MM locking, except that you'd save an
-mmget_not_zero()...
-
-> > > > Let me know if you think it would be helpful to see a prototype of
-> > > > that in C - I think I can cobble that together, but doing it nicely
-> > > > will require some work to convert at least some of the binder_alloc
-> > > > locking to mutexes, and some more work to switch the ->f_mapping of
-> > > > the binder file or something like that. (I guess modeling that in R=
-ust
-> > > > might be a bit of a pain though...)
-> > >
-> > > It would be useful to hear about what the advantages of
-> > > unmap_mapping_range() are. I don't need a full prototype, I should be
-> > > able to understand given a rough description of what the required
-> > > changes are.
-> >
-> > The nice part is that basically, if you have a pointer to the file or
-> > the inode, you can just do something like the following to zap a PTE:
-> >
-> > unmap_mapping_range(file->f_mapping, index, 1, 1);
-> >
-> > You don't have to take any locks yourself to make that work, you don't
-> > even have to hold a reference to the mm_struct or anything like that,
-> > and you don't need any of that logic you currently have in the C
-> > binder driver to look up the VMA by address and revalidate it is still
-> > the VMA you expect. The MM subsystem will automatically iterate
-> > through all VMAs that overlap the specified range of the file's
-> > address_space, and it will zap PTEs in the specified range (and it
-> > even works fine if the VMAs have been moved or split or exist in
-> > multiple processes or stuff like that). It's a similar story on the
-> > allocation path. The only locks you need to explicitly take are
-> > whatever locks the driver internally requires.
-> >
-> > Going through the fault handler and/or the address_space for
-> > installing/removing PTEs, instead of using vma_lookup(), is also safer
-> > because it implicitly ensures you can only operate on your own
-> > driver's VMAs. From a glance at the Rust binder RFC
-> > (https://lore.kernel.org/all/20231101-rust-binder-v1-19-08ba9197f637@go=
-ogle.com/),
-> > it looks like use_page_slow() just looks up the VMA at the expected
-> > address and calls insert_page() on it. I don't immediately see
-> > anything in the Rust Binder RFC that would prevent calling
-> > insert_page() on a newly created VMA of a different type that has
-> > appeared at the same address - which could cause the page to
-> > inadvertently become writable by userspace (if the new VMA is
-> > writable), could cause refcounted pages to be installed in VM_PFNMAP
-> > regions that are supposed to only contain non-refcounted entries,
-> > could probably cause type confusion when trying to install 4K pages in
-> > hugetlb regions that can't contain 4K pages, and so on.
->
-> Right ... I guess I'm missing an equivalent to binder_vma_close to
-> ensure that once the vma is closed, we don't try to insert pages.
-
-Yeah, I think that would work. (I think there currently is no way to
-shrink a VMA without first splitting it, so you should see ->open()
-and ->close() invocations when that happens.)
-
-> I gave a suggestion to enforce that vm_insert_page is only called on
-> MIXEDMAP vmas in my previous email. I guess that would prevent the
-> type confusion you mention, but it still seems dangerous ... you risk
-> that some other driver is storing special data in the private data of
-> pages in the new vma, and if you insert a random page there, there
-> could maybe be type confusion on the private data in the `struct
-> page`?
-
-Hmm, yeah, maybe...
-
-> > Though I just realized, you're only doing this in the shrinker
-> > callback where you're not supposed to sleep, but unmap_mapping_range()
-> > requires sleeping locks. So I guess directly using
-> > unmap_mapping_range() wouldn't work so well. I guess one way to
-> > address that could be to add a trylock version of
-> > unmap_mapping_range().
-> >
-> > Another more fancy solution to that would be to stop using shrinkers
-> > entirely, and instead make binder pages show up as clean file pages on
-> > the kernel's page allocation LRU lists, and let the kernel take care
-> > of removing page mappings - basically similar to how reclaim works for
-> > normal file pages. I'm a bit fuzzy on how this area of the kernel
-> > works exactly; one option might be to do something similar to
-> > aio_private_file(), creating a new anonymous inode - but unlike in
-> > AIO, you'd then install that anonymous inode's address_space as the
-> > i_mapping of the existing file in binder_open(), rather than creating
-> > a new file. Then you could pin the inode's pages into a page pointer
-> > array in the kernel (sort of like in aio_setup_ring(), except you'd
-> > only do it on demand in binder_install_buffer_pages()), and then have
-> > a "release_folio" operation in your address_space_operations that
-> > drops your page reference if the page is currently unused. At that
-> > point, the driver wouldn't really be participating in creating or
-> > removing userspace PTEs at all, the kernel would mostly manage it for
-> > you, except that you'd have to tell the kernel when it is okay to
-> > reclaim pages, or something like that.
->
-> Whether it's okay to reclaim a given page can flip-flop very quickly
-> under some workflows. Changing that setting has to be a pretty fast
-> operation.
-
-I think one fast way to do that would be to track this internally in
-binder (as is the case now), and then have address_space_operations
-callbacks that the kernel invokes when it wants to know whether a page
-can be discarded or not.
-
-> > (I think in the Linux kernel, you might theoretically be able to cause
-> > memory safety issues by deadlocking in particular ways - if you are
-> > running on a CONFIG_PREEMPT kernel without panic_on_warn set, and
-> > you're in a non-preemptible context because you're holding a spinlock
-> > or such, and then you sleep because you try to wait on a mutex or
-> > kmalloc() with GFP_KERNEL, the scheduler will print a "scheduling
-> > while atomic" error message and then try to recover from that
-> > situation by resetting the preempt_count and scheduling anyway. I
-> > think that theoretically breaks the RCU read-side critical sections
-> > normally implied by spinlocks once you return to the broken context,
-> > though IIRC this situation will get fixed up at the next syscall
-> > return or something along those lines. I haven't tried this though.)
->
-> Sleeping in atomic context is a known area of concern. We're working
-> on it. For now, just assume that it's one of the allowed bad things.
-> Eventually we would like to handle it properly with this tool:
-> https://www.memorysafety.org/blog/gary-guo-klint-rust-tools/
-
-Ah, thanks for the pointer.
-
-> > > >> +    /// Maps a single page at the given address within the virtua=
-l memory area.
-> > > >> +    ///
-> > > >> +    /// This operation does not take ownership of the page.
-> > > >> +    #[inline]
-> > > >> +    pub fn vm_insert_page(&self, address: usize, page: &Page) -> =
-Result {
-> > > >> +        // SAFETY: By the type invariants, the caller holds the m=
-map write lock, so this access is
-> > > >> +        // not a data race. The page is guaranteed to be valid an=
-d of order 0. The range of
-> > > >> +        // `address` is already checked by `vm_insert_page`.
-> > > >> +        to_result(unsafe { bindings::vm_insert_page(self.as_ptr()=
-, address as _, page.as_ptr()) })
-> > > >
-> > > > vm_insert_page() has a kinda weird contract because there are two
-> > > > contexts from which you can call it cleanly:
-> > > >
-> > > > 1. You can call it on a VmAreaRef (just like zap_page_range_single(=
-),
-> > > > you only need to hold an mmap read lock or VMA read lock, no write
-> > > > lock is required); however, you must ensure that the VMA is already
-> > > > marked VM_MIXEDMAP. This is the API contract under which you'd call
-> > > > this from a fault handler.
-> > > >
-> > > > 2. You can call it on a VmAreaNew (and it will take care of setting
-> > > > VM_MIXEDMAP for you).
-> > > >
-> > > > I think nothing would immediately crash if you called vm_insert_pag=
-e()
-> > > > on a VMA that does not yet have VM_MIXEDMAP while holding the mmap
-> > > > lock in write mode; but that would permit weird scenarios where you
-> > > > could, for example, have a userfaultfd context associated with a VM=
-A
-> > > > which becomes VM_MIXEDMAP, while normally you can't attach userfaul=
-tfd
-> > > > contexts to VM_MIXEDMAP VMAs. I don't think if that actually leads =
-to
-> > > > anything bad, but it would be a weird state that probably shouldn't=
- be
-> > > > permitted.
-> > > >
-> > > > There are also safety requirements for the page being installed, bu=
-t I
-> > > > guess the checks that vm_insert_page() already does via
-> > > > validate_page_before_insert() might be enough to make this safe...
-> > >
-> > > One way to handle this is to make an VmAreaRef::check_mixedmap that
-> > > returns a VmAreaMixedMapRef after checking the flag. That type can th=
-en
-> > > have a vm_insert_page method.
-> >
-> > Sounds reasonable.
-> >
-> > > As for VmAreaNew, I'm not sure we should have it there. If we're not
-> > > careful, it would be a way to set VM_MIXEDMAP on something that alrea=
-dy
-> > > has the VM_PFNMAP flag. We can probably just tell you to set VM_MIXED=
-MAP
-> > > directly and then go through the method on VmAreaRef.
-> >
-> > Makes sense.
-> >
-> > I guess one tricky part is that it might be bad if you could
->
-> Seems like this sentence is incomplete?
-
-Whoops, guess I got distracted while writing this...
-
-I guess it could be bad if you could install page mappings before
-changing the VMA flags in a way that makes the already-installed page
-mappings invalid. But as long as you don't change the
-VM_READ/VM_WRITE/VM_EXEC flags, and you never clear
-VM_MIXEDMAP/VM_PFNMAP, I think that probably can't happen, so that
-should be fine...
+SGkgVmFkaW0sDQoNClJlcGx5aW5nIHRvIHRoZSBWMiBwYXRjaCBjb21tZW50czoNCg0KT24gMDcv
+MTEvMjAyNCAxMzoyOCwgU2hpbmFzIFJhc2hlZWQgd3JvdGU6DQo+PiBGcm9tOiBWaW1sZXNoIEt1
+bWFyIDx2aW1sZXNoa0BtYXJ2ZWxsLmNvbT4NCj4+IA0KPj4gQWRkIHJlcXVpcmVkIGNoZWNrcyB0
+byBhdm9pZCBkb3VibGUgZnJlZS4gQ3Jhc2hlcyB3ZXJlDQo+PiBvYnNlcnZlZCBkdWUgdG8gdGhl
+IHNhbWUgb24gcmVzZXQgc2NlbmFyaW9zDQo+PiANCj4+IFNpZ25lZC1vZmYtYnk6IFZpbWxlc2gg
+S3VtYXIgPHZpbWxlc2hrQG1hcnZlbGwuY29tPg0KPj4gU2lnbmVkLW9mZi1ieTogU2hpbmFzIFJh
+c2hlZWQgPHNyYXNoZWVkQG1hcnZlbGwuY29tPg0KPj4gLS0tDQo+PiBWMjoNCj4+ICAgIC0gTm8g
+Y2hhbmdlcw0KPj4gDQo+PiBWMTogaHR0cHM6Ly91cmxkZWZlbnNlLnByb29mcG9pbnQuY29tL3Yy
+L3VybD91PWh0dHBzLTNBX19sb3JlLmtlcm5lbC5vcmdfYWxsXzIwMjQxMTAxMTAzNDE2LjEwNjQ5
+MzAtMkQyLTJEc3Jhc2hlZWQtNDBtYXJ2ZWxsLmNvbV8mZD1Ed0lDYVEmYz1uS2pXZWMyYjZSMG1P
+eVBhejd4dGZRJnI9MU94TEQ0eS1veHJsZ1ExcmpYZ1d0bUx6MXBuYURqRDk2c0RxLWNLVXdLNCZt
+PXFjS2RJTTF6c2JCRDRURkFzYTE5eUp6S05rVGxGTHJEZk00ZmZTbFRpdFNXRWxxWnFnZEZxb2RB
+TGNMODNpV0Imcz1NX2twSkI3TEw3SnFJQmstTUJYb25DeWZfQldnM2Zjd0h1TWM4RlFwdW4wJmU9
+DQo+PiANCj4+ICAgLi4uL2V0aGVybmV0L21hcnZlbGwvb2N0ZW9uX2VwL29jdGVwX21haW4uYyAg
+IHwgMzkgKysrKysrKysrKystLS0tLS0tLQ0KPj4gICAuLi4vbmV0L2V0aGVybmV0L21hcnZlbGwv
+b2N0ZW9uX2VwL29jdGVwX3R4LmMgfCAgMiArDQo+PiAgIDIgZmlsZXMgY2hhbmdlZCwgMjUgaW5z
+ZXJ0aW9ucygrKSwgMTYgZGVsZXRpb25zKC0pDQo+PiANCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L25ldC9ldGhlcm5ldC9tYXJ2ZWxsL29jdGVvbl9lcC9vY3RlcF9tYWluLmMgYi9kcml2ZXJzL25l
+dC9ldGhlcm5ldC9tYXJ2ZWxsL29jdGVvbl9lcC9vY3RlcF9tYWluLmMNCj4+IGluZGV4IDU0OTQz
+NmVmYzIwNC4uZmY3MmI3OTZiZDI1IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJu
+ZXQvbWFydmVsbC9vY3Rlb25fZXAvb2N0ZXBfbWFpbi5jDQo+PiArKysgYi9kcml2ZXJzL25ldC9l
+dGhlcm5ldC9tYXJ2ZWxsL29jdGVvbl9lcC9vY3RlcF9tYWluLmMNCj4+QEAgLTE1NCw5ICsxNTQs
+MTEgQEAgc3RhdGljIGludCBvY3RlcF9lbmFibGVfbXNpeF9yYW5nZShzdHJ1Y3Qgb2N0ZXBfZGV2
+aWNlICpvY3QpDQo+PiAgKi8NCj4+ICAgc3RhdGljIHZvaWQgb2N0ZXBfZGlzYWJsZV9tc2l4KHN0
+cnVjdCBvY3RlcF9kZXZpY2UgKm9jdCkNCj4+ICAgew0KPj4gLQlwY2lfZGlzYWJsZV9tc2l4KG9j
+dC0+cGRldik7DQo+PiAtCWtmcmVlKG9jdC0+bXNpeF9lbnRyaWVzKTsNCj4+IC0Jb2N0LT5tc2l4
+X2VudHJpZXMgPSBOVUxMOw0KPj4gKwlpZiAob2N0LT5tc2l4X2VudHJpZXMpIHsNCj4+ICsJCXBj
+aV9kaXNhYmxlX21zaXgob2N0LT5wZGV2KTsNCj4+ICsJCWtmcmVlKG9jdC0+bXNpeF9lbnRyaWVz
+KTsNCj4+ICsJCW9jdC0+bXNpeF9lbnRyaWVzID0gTlVMTDsNCj4+ICsJfQ0KPj4gICAJZGV2X2lu
+Zm8oJm9jdC0+cGRldi0+ZGV2LCAiRGlzYWJsZWQgTVNJLVhcbiIpOw0KPg0KPkhvdyBjYW4gdGhp
+cyBmdW5jdGlvbiBjcmFzaD8gcGNpX2Rpc2FibGVfbXNpeCgpIHdpbGwgaGF2ZSBjaGVja3MgZm9y
+DQo+YWxyZWFkeSBkaXNhYmxlZCBtc2l4LCBrZnJlZSBjYW4gcHJvcGVybHkgZGVhbCB3aXRoIE5V
+TEwgcG9pbnRlci4NCj5EbyB5b3UgaGF2ZSBzdGFjayB0cmFjZSBvZiB0aGUgY3Jhc2ggaGVyZT8N
+Cj4NCg0KSSB0aGluayB5b3UncmUgcmlnaHQuIFRoaXMgd29uJ3QgcGVyaGFwcyBiZSB0aGUgYWN0
+dWFsIHBhcnQgb2YgdGhlIGNvZGUgImZpeGluZyINCnRoZSBjcmFzaCwgYW5kIG1pZ2h0IGp1c3Qg
+YXMgYSBwcm90ZWN0aW9uLiBJIHNoYWxsIHJlbW92ZSB0aGlzLg0KDQo+PiAgfQ0KPj4gICANCj4+
+IEBAIC00OTYsMTYgKzQ5OCwxOCBAQCBzdGF0aWMgdm9pZCBvY3RlcF9mcmVlX2lycXMoc3RydWN0
+IG9jdGVwX2RldmljZSAqb2N0KQ0KPj4gIHsNCj4+ICAgCWludCBpOw0KPj4gICANCj4+IC0JLyog
+Rmlyc3QgZmV3IE1TSS1YIGludGVycnVwdHMgYXJlIG5vbiBxdWV1ZSBpbnRlcnJ1cHRzOyBmcmVl
+IHRoZW0gKi8NCj4+IC0JZm9yIChpID0gMDsgaSA8IENGR19HRVRfTk9OX0lPUV9NU0lYKG9jdC0+
+Y29uZik7IGkrKykNCj4+IC0JCWZyZWVfaXJxKG9jdC0+bXNpeF9lbnRyaWVzW2ldLnZlY3Rvciwg
+b2N0KTsNCj4+IC0Ja2ZyZWUob2N0LT5ub25faW9xX2lycV9uYW1lcyk7DQo+PiAtDQo+PiAtCS8q
+IEZyZWUgSVJRcyBmb3IgSW5wdXQvT3V0cHV0IChUeC9SeCkgcXVldWVzICovDQo+PiAtCWZvciAo
+aSA9IENGR19HRVRfTk9OX0lPUV9NU0lYKG9jdC0+Y29uZik7IGkgPCBvY3QtPm51bV9pcnFzOyBp
+KyspIHsNCj4+IC0JCWlycV9zZXRfYWZmaW5pdHlfaGludChvY3QtPm1zaXhfZW50cmllc1tpXS52
+ZWN0b3IsIE5VTEwpOw0KPj4gLQkJZnJlZV9pcnEob2N0LT5tc2l4X2VudHJpZXNbaV0udmVjdG9y
+LA0KPj4gLQkJCSBvY3QtPmlvcV92ZWN0b3JbaSAtIENGR19HRVRfTk9OX0lPUV9NU0lYKG9jdC0+
+Y29uZildKTsNCj4+ICsJaWYgKG9jdC0+bXNpeF9lbnRyaWVzKSB7DQo+PiArCQkvKiBGaXJzdCBm
+ZXcgTVNJLVggaW50ZXJydXB0cyBhcmUgbm9uIHF1ZXVlIGludGVycnVwdHM7IGZyZWUgdGhlbSAq
+Lw0KPj4gKwkJZm9yIChpID0gMDsgaSA8IENGR19HRVRfTk9OX0lPUV9NU0lYKG9jdC0+Y29uZik7
+IGkrKykNCj4+ICsJCQlmcmVlX2lycShvY3QtPm1zaXhfZW50cmllc1tpXS52ZWN0b3IsIG9jdCk7
+DQo+PiArCQlrZnJlZShvY3QtPm5vbl9pb3FfaXJxX25hbWVzKTsNCj4+ICsNCj4+ICsJCS8qIEZy
+ZWUgSVJRcyBmb3IgSW5wdXQvT3V0cHV0IChUeC9SeCkgcXVldWVzICovDQo+PiArCQlmb3IgKGkg
+PSBDRkdfR0VUX05PTl9JT1FfTVNJWChvY3QtPmNvbmYpOyBpIDwgb2N0LT5udW1faXJxczsgaSsr
+KSB7DQo+PiArCQkJaXJxX3NldF9hZmZpbml0eV9oaW50KG9jdC0+bXNpeF9lbnRyaWVzW2ldLnZl
+Y3RvciwgTlVMTCk7DQo+PiArCQkJZnJlZV9pcnEob2N0LT5tc2l4X2VudHJpZXNbaV0udmVjdG9y
+LA0KPj4gKwkJCQkgb2N0LT5pb3FfdmVjdG9yW2kgLSBDRkdfR0VUX05PTl9JT1FfTVNJWChvY3Qt
+PmNvbmYpXSk7DQo+PiArCQl9DQo+PiAgIAl9DQo+PiAgIAluZXRkZXZfaW5mbyhvY3QtPm5ldGRl
+diwgIklSUXMgZnJlZWRcbiIpOw0KPj4gICB9DQo+DQo+SGF2ZSB5b3UgY29uc2lkZXJlZCBmYXN0
+IHJldHVybiBvcHRpb24/IGxpa2UNCj4NCj5pZiAoIW9jdGVwX2Rpc2FibGVfbXNpeCkNCj4JcmV0
+dXJuOw0KPg0KPkl0IHdpbGwgbWFrZSBsZXNzIGludGVuZGF0aW9uIGFuZCBsZXNzIGNoYW5nZXMg
+aW4gTG9DIGJ1dCB3aWxsIHByZXN1bWUNCj50aGUgc2FtZSBiZWhhdmlvci4NCj4NCg0KRG8geW91
+IG1lYW4gdGhpczoNCmlmICghb2N0LT5tc2l4X2VudHJpZXMpDQoJcmV0dXJuOw0KCQ0KSSdsbCBt
+YWtlIHRoYXQgY2hhbmdlIGFzIHdlbGwuDQoNClRoYW5rcyENClNoaW5hcw0K
 
