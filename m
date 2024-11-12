@@ -1,91 +1,124 @@
-Return-Path: <linux-kernel+bounces-405774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7F19C56D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:43:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2FA9C56DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:45:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C997A1F212BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:43:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6240D1F22415
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0256D2309AD;
-	Tue, 12 Nov 2024 11:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E1E1CD1E7;
+	Tue, 12 Nov 2024 11:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qroCbawh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="en/EoVJG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6DB230996;
-	Tue, 12 Nov 2024 11:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8461B1AFB35;
+	Tue, 12 Nov 2024 11:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731411819; cv=none; b=ozVO5TQU1UNhoar+yWHX7JiEDSQFjxqoRHXWqw3GyVqmuYdFcfUoknlwCk9hBdScj2it7RVDSjoGGYEfUrUiKhGc4WCu+XB8sEn1zqGNdzZahy0P73COZdLA5SnI7ZJkYZAWEHjCNQX0pYEwVw6GkkoA2ucxslfDQAzZE5nlxSo=
+	t=1731411884; cv=none; b=Q9qgDGxXmp1vyx9TMcT0QuEFTtZgVmUc7zIVXc+1mZBQx5i+iQOZIwuDEgZ0f51P6MdsaHfZn+FbPLP32j+uiFBuPD/+Tq5Xp7SDG+b2KmiNOvdHU04HzjM86cclwlPeoxLYqJlPjec+DwiIuwpWJzzjuEPYwlSTdFPRJ0uiS5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731411819; c=relaxed/simple;
-	bh=XoJgW+LcOAR9J10RgEMWkbjwd6Wl1yPZDJ5TlOBDh4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftljMxbb3U4C+aOm1WyzNU66DtF4OGPN6rI7RRRXE+S0d7TjJgE1Lq3ZwN/s8RO3C5fer4x4lUAdeGkKmD5LBsN68qK1WSKUcGxsvTbZf98m+mmx4ilkJr2eRhCsht9WMzvnbiFxP6czs98wccRHBf8S1rnnI/F1FY4dpU3XW/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qroCbawh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 399E9C4CECD;
-	Tue, 12 Nov 2024 11:43:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731411817;
-	bh=XoJgW+LcOAR9J10RgEMWkbjwd6Wl1yPZDJ5TlOBDh4A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qroCbawhlONSfyslRcHkauBBNGFxkCgqylBsCTetmKC5HTpVEeuWQTVqCBKeRVpAo
-	 eeoTc388NndSdla5rbdWmOes9p0JKfJrk5gnhtFa/MK22AX3fY2grzPjSUip+nUMUR
-	 R1tlLPADglKH1VlF1qft8aDxxqvpZQJ7VJwmB740=
-Date: Tue, 12 Nov 2024 12:43:34 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] driver core: class: Fix wild pointer dereference in
- API class_dev_iter_next()
-Message-ID: <2024111205-countable-clamor-d0c7@gregkh>
-References: <20241105-class_fix-v1-0-80866f9994a5@quicinc.com>
- <20241105-class_fix-v1-1-80866f9994a5@quicinc.com>
+	s=arc-20240116; t=1731411884; c=relaxed/simple;
+	bh=HBGmd7LnHZIxSyRepcDAui8bwvx6IpwO6m4FZ6iG2uc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A1gj1k+AV1HyZ9LXwCW2ofQxYE0ofxXspuE3K8AaUsIAYqfgViejm2N0nQoYQL5h8pe5gqMIr0XZteO90kNZdnmLtFQjIl0J+8RvJwm64bGNvKz2zEBzlrZSusTwJJC4ehMoVXMwbzKQ24BZiIcBESJK8doeFqBctmOolZ2bI+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=en/EoVJG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E23E5C4CED6;
+	Tue, 12 Nov 2024 11:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731411883;
+	bh=HBGmd7LnHZIxSyRepcDAui8bwvx6IpwO6m4FZ6iG2uc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=en/EoVJGtxE/JmGWj/z+UEHRFXJf5ZmJnVRF6367gtmPvaTzHzKjobiz+VxME5tc3
+	 Nn7mO3MeFiiG1K76L/TsBRHjWPuAq16Se62Ui9ekgR1eLpFwaaqgEKMW6jhWXtQipB
+	 sBXKjD/BD8UU0W79Plxbw92ZuEQ0bkDb+9yDzY6qZDrkQqaI1xxog22gc0JvORA+K+
+	 JYJ7PNIoxsThXJUyRyrMbNgHWyRyiH3gh6YsE8d9RljKqTPAWAWQQXDvI64vUV4QsJ
+	 wgc3WbDgtlhkpM3wTOsgYmuRZTLHDFPyNkEabKDlGpbgCbQRAbVeWaggE1T9Vr7sNJ
+	 KMjNL8vMjMVzw==
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5ebc27fdc30so2740125eaf.2;
+        Tue, 12 Nov 2024 03:44:43 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUGXCo4BjkaBJG6F1UapRJX69eUbVttYrHZSL5oKa3SifSk1CDra3d3y3YBr5CWPwUtAryIDrmi@vger.kernel.org, AJvYcCUzP9byHqI6lNVHyTxlxaweEpPOAimCHtSphfU3xMIxAaviat5Ymy/JgbO8oILoa5LmmEYRrJeX9kw=@vger.kernel.org, AJvYcCVCx/YkQq3Xm/bQkGXuu6afxp4ONhZR4oXeQSlSRkCiplB/FI10y8axZZxnmYqNJP8FaIjLj72RAcLCvlc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4Zf2nv3V0G2n6oEaJYhLXvex6KUbuX9eX+CZ1FNAjNiwBa378
+	vIOnlpEaGmJvTaaUA7dWVOz7jxq7GAWuBezuEvuXHMTtfHlvnqe3EX302tm+n9M0SKP9lUp3y9n
+	YnwGGJdO1DDDUapxCFp3S2J6zqX4=
+X-Google-Smtp-Source: AGHT+IHEnNMF4ElCmn3oKj+4IzNKQ36nGCs61M4QPp9bDjMbO5EIPJrMfsrdGOSy3nYtlqKj3LwzZO5tLssIhs9m2BI=
+X-Received: by 2002:a05:6820:2910:b0:5ed:fc18:910f with SMTP id
+ 006d021491bc7-5ee57c4092fmr10724745eaf.3.1731411883196; Tue, 12 Nov 2024
+ 03:44:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105-class_fix-v1-1-80866f9994a5@quicinc.com>
+References: <20241111162316.GH22801@noisy.programming.kicks-ass.net>
+ <20241112053722.356303-1-lenb@kernel.org> <351549432f8d766842dec74ccab443077ea0af91.1731389117.git.len.brown@intel.com>
+In-Reply-To: <351549432f8d766842dec74ccab443077ea0af91.1731389117.git.len.brown@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 12 Nov 2024 12:44:30 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0j1gvwoYS-YaOQWh0bQ3x5=54npiYj8erq68dM92+ad-g@mail.gmail.com>
+Message-ID: <CAJZ5v0j1gvwoYS-YaOQWh0bQ3x5=54npiYj8erq68dM92+ad-g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] x86/cpu: Add INTEL_LUNARLAKE_M to X86_BUG_MONITOR
+To: Len Brown <lenb@kernel.org>
+Cc: peterz@infradead.org, tglx@linutronix.de, x86@kernel.org, 
+	rafael@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Len Brown <len.brown@intel.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 05, 2024 at 08:20:22AM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> class_dev_iter_init(struct class_dev_iter *iter, struct class *class, ...)
-> has return type void, but it does not initialize its output parameter @iter
-> when suffers class_to_subsys(@class) error, so caller can not detect the
-> error and call API class_dev_iter_next(@iter) which will dereference wild
-> pointers of @iter's members as shown by below typical usage:
-> 
-> // @iter's members are wild pointers
-> struct class_dev_iter iter;
-> 
-> // No change in @iter when the error happens.
-> class_dev_iter_init(&iter, ...);
-> 
-> // dereference these wild member pointers here.
-> while (dev = class_dev_iter_next(&iter)) { ... }.
-> 
-> Actually, all callers of the API have such usage pattern in kernel tree.
-> Fix by memset() @iter in API *_init() and error checking @iter in *_next().
-> 
-> Fixes: 7b884b7f24b4 ("driver core: class.c: convert to only use class_to_subsys")
-> Cc: stable@vger.kernel.org
+On Tue, Nov 12, 2024 at 6:37=E2=80=AFAM Len Brown <lenb@kernel.org> wrote:
+>
+> From: Len Brown <len.brown@intel.com>
+>
+> Under some conditions, MONITOR wakeups on Lunar Lake processors
+> can be lost, resulting in significant user-visible delays.
+>
+> Add LunarLake to X86_BUG_MONITOR so that wake_up_idle_cpu()
+> always sends an IPI, avoiding this potential delay.
+>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219364
+>
+> Cc: stable@vger.kernel.org # 6.11
+> Signed-off-by: Len Brown <len.brown@intel.com>
 
-There is no in-kernel broken users of this from what I can tell, right?
-Otherwise things would have blown up by now, so why is this needed in
-stable kernels?
+So again
 
-thanks,
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-greg k-h
+and see one super-minor nit below.
+
+> ---
+>  arch/x86/kernel/cpu/intel.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+> index e7656cbef68d..284cd561499c 100644
+> --- a/arch/x86/kernel/cpu/intel.c
+> +++ b/arch/x86/kernel/cpu/intel.c
+> @@ -586,7 +586,9 @@ static void init_intel(struct cpuinfo_x86 *c)
+>              c->x86_vfm =3D=3D INTEL_WESTMERE_EX))
+>                 set_cpu_bug(c, X86_BUG_CLFLUSH_MONITOR);
+>
+> -       if (boot_cpu_has(X86_FEATURE_MWAIT) && c->x86_vfm =3D=3D INTEL_AT=
+OM_GOLDMONT)
+> +       if (boot_cpu_has(X86_FEATURE_MWAIT) &&
+> +           (c->x86_vfm =3D=3D INTEL_ATOM_GOLDMONT
+> +            || c->x86_vfm =3D=3D INTEL_LUNARLAKE_M))
+
+I would put the || at the end of the previous line, that is
+
+> +           (c->x86_vfm =3D=3D INTEL_ATOM_GOLDMONT ||
+> +            c->x86_vfm =3D=3D INTEL_LUNARLAKE_M))
+
+>                 set_cpu_bug(c, X86_BUG_MONITOR);
+>
+>  #ifdef CONFIG_X86_64
+> --
+> 2.43.0
+>
 
