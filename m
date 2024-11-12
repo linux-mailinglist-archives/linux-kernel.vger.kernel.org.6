@@ -1,143 +1,234 @@
-Return-Path: <linux-kernel+bounces-406751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B509C6355
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:23:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5288A9C635C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:25:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99E5D284753
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 037F52845F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899D8219E5F;
-	Tue, 12 Nov 2024 21:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914D821A4D2;
+	Tue, 12 Nov 2024 21:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="dNXO4mUe"
-Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7F62170DD
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 21:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QtPc88R6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73242170DD;
+	Tue, 12 Nov 2024 21:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731446587; cv=none; b=lbL4NrL3puXJbRrsAIqgaIS6EDO0tqWz+/bCQL0BCbdeN/HdAQdNUIOxyPSvO7d20khm+88uF7b+H3h0NCoPhWst2/j8TYSSfBTkT6Wc9Ya9NmySyXV4+etYjVYP5gci/TIFAslnePBVwzskBgypDXKOBgj0ZE1ycYgjdFljBVk=
+	t=1731446689; cv=none; b=Z4mgJ05NZOWI4u09sBwRqzr4tz8tZeBGoOMqd1/Z3if469h1WLDxWBAQj2I45gePKhFKHiXMGy4EFde5ZbiUGuo+6BT596psnmKxCeasKz8Z4SmH8tA2nRxO9nI72r35C8zHHDzNkH9hHmfRhCfmHJn51muE5sHocioV9t8HaUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731446587; c=relaxed/simple;
-	bh=dt+W4jwPHmvYsuvWkhV3WWNG0Uz01POlPX8r55tYII0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dwN76dk7JCaDzh7IvpnmMxN5jI9XdczBn4TJBAxrn8e/836ZXZ/LPUOIdFy1zYChgq/Y13VH4d3m6LyxhKd9LTUPHHVkmeIxkoo1lrLmd4WugLwBoxiq2dc3wWyQBIFDOJFMe85kBvBbCIgd0tL76uD1gmPGXmGCrzEd3Hu9Bwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=dNXO4mUe; arc=none smtp.client-ip=136.144.140.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
-	t=1731446577; bh=dt+W4jwPHmvYsuvWkhV3WWNG0Uz01POlPX8r55tYII0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dNXO4mUeVpg5waiRqJdBzpapUzKzNsDIULmYOiuJM0hLDsEnk97UXvrJ5IDiUe/7X
-	 bRXniyCOWxBVFvA+kGdLh9UuLa/ZImshpZVXoTSiWwtjajZNZAQF7OBXu+XaQcvWX6
-	 moBsta73iwOHYSqHKy1LMCnnagholpIQOqAKroHi+m21Lu/Kb7KtPRVUhKD8lMNshJ
-	 abOG0EwPTmu+tKnb6u7dV2mN3vhWeAlPhg3N3J35FJbvCsI/YOvEZlyUP1Q6ne0kEP
-	 HvaCLP+5LFfIX2ETZxJQCsytmcGRHnoMg0mNYZF8uC46bgcXILTp1qhTzmts5lVudh
-	 3fn3Fi1DCqG3mu0kLYEsjlLpk3VJWrbFtZ97hA0d/GA8LL/B/Y8JTfaQa9H8RohTFd
-	 WizV0gqGzQTlG2lAQSBFyt7RLL2cBtbLNJIT3IkJXxYLCZ26PUQNZyBbg5XYha+dEt
-	 i/ODnbdjoEWxj70iqfDX6gjxjOWUHIrqUZrKYVeuLuR5TicdgU5GwsCZYTUut3H3Vm
-	 kwgYQ6kg0qIc4tdGqdJrLdvyjG1HzcJ4E0Prz/73c3jkEZPhkiPvpwjeOBAE0tT72l
-	 K1j5yorNobtpTBzVQPyfyeS1W7QWv8odu+OKUKZk5qhpp2Z7V1rjm6vXGwO9TCq6q+
-	 CWSpR/CThevBPoH8Lx/az68A=
-Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
-	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id 350F418D986;
-	Tue, 12 Nov 2024 22:22:57 +0100 (CET)
-Message-ID: <2590cecf-e1f9-4af9-8fbb-9b49f5e335c0@ijzerbout.nl>
-Date: Tue, 12 Nov 2024 22:22:54 +0100
+	s=arc-20240116; t=1731446689; c=relaxed/simple;
+	bh=IcTJgLodvSURGaK4wqAzdTDDMij+U5Fu23bdAxDaorg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=DWTEyq+Sd95Y7DQ8JMyZgSZ4MtZjkIxhmqxdoSM2FA9kz+1AyBjaRLMrSHRbduwM/FuJUnltNwXnDb9XLeWMZ3t0L0YHPx2bXrTfUcFfx2FhHe1hjDr9uY6CP6U29m3S83/+8gotlVIOLKITLZc/aNBqvoBpY0YGFLTfKSzSihM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QtPc88R6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2543BC4CECD;
+	Tue, 12 Nov 2024 21:24:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731446689;
+	bh=IcTJgLodvSURGaK4wqAzdTDDMij+U5Fu23bdAxDaorg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=QtPc88R6MNDMn8zqqI1B9uJrVb9jLqWL5ToBEKV+RxMCJW92huc1DxZg2adpjHUX6
+	 aZXq1kKE5zX0Ey1E4e4vSCGjuQHgMygguL5X0C657sxGqYbq8uohO+xYAJWTAq0DU8
+	 MN7w8BxC0H4dGiAF6lN4zyDAtx9UuMgT7D/NMc7vxIcaI6BGjRL9Ao7rwzzoySl0bm
+	 egE33GKzO7eo9qaJgvFU1cCBXXWbCOOhT+vWZJbaIKP+pqu9UXi864epLTZgyK+BtS
+	 g9zhmeVR3mFnD4xcc+F6UqPNkcqJ9X6nPcUKODln2QB8sd+DBYdTKPe2ULK6pmVXda
+	 JxCGpcywl/irA==
+Date: Tue, 12 Nov 2024 15:24:47 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>,
+	Fenghua Yu <fenghua.yu@intel.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	Peter Chen <peter.chen@kernel.org>,
+	Pawel Laszczak <pawell@cadence.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v1 1/1] usb: cdns3: Synchronise PCI IDs via common data
+ base
+Message-ID: <20241112212447.GA1861184@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATH v5 2/3] iommu/vt-d: debugfs: Create/remove debugfs file per
- {device, pasid}
-To: Jingqi Liu <Jingqi.liu@intel.com>, iommu@lists.linux.dev,
- Lu Baolu <baolu.lu@linux.intel.com>, Tian Kevin <kevin.tian@intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>
-Cc: linux-kernel@vger.kernel.org
-References: <20231013135811.73953-1-Jingqi.liu@intel.com>
- <20231013135811.73953-3-Jingqi.liu@intel.com>
-Content-Language: en-US
-From: Kees Bakker <kees@ijzerbout.nl>
-In-Reply-To: <20231013135811.73953-3-Jingqi.liu@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112160125.2340972-1-andriy.shevchenko@linux.intel.com>
 
-Op 13-10-2023 om 15:58 schreef Jingqi Liu:
-> Add a debugfs directory per pair of {device, pasid} if the mappings of
-> its page table are created and destroyed by the iommu_map/unmap()
-> interfaces. i.e. /sys/kernel/debug/iommu/intel/<device source id>/<pasid>.
-> Create a debugfs file in the directory for users to dump the page
-> table corresponding to {device, pasid}. e.g.
-> /sys/kernel/debug/iommu/intel/0000:00:02.0/1/domain_translation_struct.
-> For the default domain without pasid, it creates a debugfs file in the
-> debugfs device directory for users to dump its page table. e.g.
-> /sys/kernel/debug/iommu/intel/0000:00:02.0/domain_translation_struct.
->
-> When setting a domain to a PASID of device, create a debugfs file in
-> the pasid debugfs directory for users to dump the page table of the
-> specified pasid. Remove the debugfs device directory of the device
-> when releasing a device. e.g.
-> /sys/kernel/debug/iommu/intel/0000:00:01.0
->
-> Signed-off-by: Jingqi Liu <Jingqi.liu@intel.com>
+On Tue, Nov 12, 2024 at 06:01:25PM +0200, Andy Shevchenko wrote:
+> There are a few places in the kernel where PCI IDs for different Cadence
+> USB controllers are being used. Besides different naming, they duplicate
+> each other. Make this all in order by providing common definitions via
+> PCI IDs database and use in all users. While doing that, rename
+> definitions as Roger suggested.
+> 
+> Suggested-by: Roger Quadros <rogerq@kernel.org>
+> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+Looks like maybe something for the USB tree?
+
 > ---
->   drivers/iommu/intel/debugfs.c | 53 +++++++++++++++++++++++++++++++----
->   drivers/iommu/intel/iommu.c   |  7 +++++
->   drivers/iommu/intel/iommu.h   | 14 +++++++++
->   3 files changed, 69 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/iommu/intel/debugfs.c b/drivers/iommu/intel/debugfs.c
-> [...]
-> +/* Remove the device pasid debugfs directory. */
-> +void intel_iommu_debugfs_remove_dev_pasid(struct dev_pasid_info *dev_pasid)
-> +{
-> +	debugfs_remove_recursive(dev_pasid->debugfs_dentry);
-> +}
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> [...]
-> @@ -4710,6 +4713,7 @@ static void intel_iommu_remove_dev_pasid(struct device *dev, ioasid_t pasid)
->   	spin_unlock_irqrestore(&dmar_domain->lock, flags);
->   
->   	domain_detach_iommu(dmar_domain, iommu);
-> +	intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
->   	kfree(dev_pasid);
->   out_tear_down:
->   	intel_pasid_tear_down_entry(iommu, dev, pasid, false);
->
-
-So, a call to intel_iommu_debugfs_remove_dev_pasid() was added.
-There is a potential problem that dev_pasid can be NULL.
-The diff doesn't show the whole context so let me give that here.
-Today that piece of the code looks like this
-
-         list_for_each_entry(curr, &dmar_domain->dev_pasids, link_domain) {
-                 if (curr->dev == dev && curr->pasid == pasid) {
-                         list_del(&curr->link_domain);
-                         dev_pasid = curr;
-                         break;
-                 }
-         }
-         WARN_ON_ONCE(!dev_pasid);
-         spin_unlock_irqrestore(&dmar_domain->lock, flags);
-
-         cache_tag_unassign_domain(dmar_domain, dev, pasid);
-         domain_detach_iommu(dmar_domain, iommu);
-         intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
-         kfree(dev_pasid);
-
-The for_each loop can exit without finding an entry.
-The WARN_ON_ONCE also suggests that there can be a NULL.
-After that the new function is called (see above) and it will
-dereference the NULL pointer.
-
-Can you have a closer look?
--- 
-Kees Bakker
+>  drivers/usb/cdns3/cdns3-pci-wrap.c       |  4 +---
+>  drivers/usb/cdns3/cdnsp-pci.c            | 26 +++++++++---------------
+>  drivers/usb/gadget/udc/cdns2/cdns2-pci.c |  3 +--
+>  drivers/usb/host/xhci-pci.c              |  5 ++---
+>  include/linux/pci_ids.h                  |  4 ++++
+>  5 files changed, 18 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/usb/cdns3/cdns3-pci-wrap.c b/drivers/usb/cdns3/cdns3-pci-wrap.c
+> index 591d149de8f3..3b3b3dc75f35 100644
+> --- a/drivers/usb/cdns3/cdns3-pci-wrap.c
+> +++ b/drivers/usb/cdns3/cdns3-pci-wrap.c
+> @@ -37,8 +37,6 @@ struct cdns3_wrap {
+>  #define PCI_DRIVER_NAME		"cdns3-pci-usbss"
+>  #define PLAT_DRIVER_NAME	"cdns-usb3"
+>  
+> -#define PCI_DEVICE_ID_CDNS_USB3	0x0100
+> -
+>  static struct pci_dev *cdns3_get_second_fun(struct pci_dev *pdev)
+>  {
+>  	struct pci_dev *func;
+> @@ -189,7 +187,7 @@ static void cdns3_pci_remove(struct pci_dev *pdev)
+>  }
+>  
+>  static const struct pci_device_id cdns3_pci_ids[] = {
+> -	{ PCI_VDEVICE(CDNS, PCI_DEVICE_ID_CDNS_USB3) },
+> +	{ PCI_VDEVICE(CDNS, PCI_DEVICE_ID_CDNS_USBSS) },
+>  	{ 0, }
+>  };
+>  
+> diff --git a/drivers/usb/cdns3/cdnsp-pci.c b/drivers/usb/cdns3/cdnsp-pci.c
+> index 2d05368a6745..a51144504ff3 100644
+> --- a/drivers/usb/cdns3/cdnsp-pci.c
+> +++ b/drivers/usb/cdns3/cdnsp-pci.c
+> @@ -28,12 +28,6 @@
+>  #define PCI_DRIVER_NAME		"cdns-pci-usbssp"
+>  #define PLAT_DRIVER_NAME	"cdns-usbssp"
+>  
+> -#define PCI_DEVICE_ID_CDNS_USB3		0x0100
+> -#define PCI_DEVICE_ID_CDNS_UDC		0x0200
+> -
+> -#define PCI_CLASS_SERIAL_USB_CDNS_USB3	(PCI_CLASS_SERIAL_USB << 8 | 0x80)
+> -#define PCI_CLASS_SERIAL_USB_CDNS_UDC	PCI_CLASS_SERIAL_USB_DEVICE
+> -
+>  static struct pci_dev *cdnsp_get_second_fun(struct pci_dev *pdev)
+>  {
+>  	/*
+> @@ -41,10 +35,10 @@ static struct pci_dev *cdnsp_get_second_fun(struct pci_dev *pdev)
+>  	 * Platform has two function. The fist keeps resources for
+>  	 * Host/Device while the secon keeps resources for DRD/OTG.
+>  	 */
+> -	if (pdev->device == PCI_DEVICE_ID_CDNS_UDC)
+> -		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_USB3, NULL);
+> -	if (pdev->device == PCI_DEVICE_ID_CDNS_USB3)
+> -		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_UDC, NULL);
+> +	if (pdev->device == PCI_DEVICE_ID_CDNS_USBSSP)
+> +		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_USBSS, NULL);
+> +	if (pdev->device == PCI_DEVICE_ID_CDNS_USBSS)
+> +		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_USBSSP, NULL);
+>  
+>  	return NULL;
+>  }
+> @@ -221,12 +215,12 @@ static const struct dev_pm_ops cdnsp_pci_pm_ops = {
+>  };
+>  
+>  static const struct pci_device_id cdnsp_pci_ids[] = {
+> -	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_UDC),
+> -	  .class = PCI_CLASS_SERIAL_USB_CDNS_UDC },
+> -	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_UDC),
+> -	  .class = PCI_CLASS_SERIAL_USB_CDNS_USB3 },
+> -	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB3),
+> -	  .class = PCI_CLASS_SERIAL_USB_CDNS_USB3 },
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSSP),
+> +	  .class = PCI_CLASS_SERIAL_USB_DEVICE },
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSSP),
+> +	  .class = PCI_CLASS_SERIAL_USB_CDNS },
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSS),
+> +	  .class = PCI_CLASS_SERIAL_USB_CDNS },
+>  	{ 0, }
+>  };
+>  
+> diff --git a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
+> index b1a8f772467c..e589593b4cbf 100644
+> --- a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
+> +++ b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
+> @@ -15,7 +15,6 @@
+>  #include "cdns2-gadget.h"
+>  
+>  #define PCI_DRIVER_NAME		"cdns-pci-usbhs"
+> -#define PCI_DEVICE_ID_CDNS_USB2	0x0120
+>  #define PCI_BAR_DEV		0
+>  #define PCI_DEV_FN_DEVICE	0
+>  
+> @@ -113,7 +112,7 @@ static const struct dev_pm_ops cdns2_pci_pm_ops = {
+>  };
+>  
+>  static const struct pci_device_id cdns2_pci_ids[] = {
+> -	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB2),
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB),
+>  	  .class = PCI_CLASS_SERIAL_USB_DEVICE },
+>  	{ 0, }
+>  };
+> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+> index 47c4f70793e4..b21474e81482 100644
+> --- a/drivers/usb/host/xhci-pci.c
+> +++ b/drivers/usb/host/xhci-pci.c
+> @@ -82,8 +82,6 @@
+>  #define PCI_DEVICE_ID_ASMEDIA_3042_XHCI			0x3042
+>  #define PCI_DEVICE_ID_ASMEDIA_3242_XHCI			0x3242
+>  
+> -#define PCI_DEVICE_ID_CDNS_SSP				0x0200
+> -
+>  static const char hcd_name[] = "xhci_hcd";
+>  
+>  static struct hc_driver __read_mostly xhci_pci_hc_driver;
+> @@ -475,8 +473,9 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+>  		if (pdev->device == 0x9203)
+>  			xhci->quirks |= XHCI_ZHAOXIN_TRB_FETCH;
+>  	}
+> +
+>  	if (pdev->vendor == PCI_VENDOR_ID_CDNS &&
+> -	    pdev->device == PCI_DEVICE_ID_CDNS_SSP)
+> +	    pdev->device == PCI_DEVICE_ID_CDNS_USBSSP)
+>  		xhci->quirks |= XHCI_CDNS_SCTX_QUIRK;
+>  
+>  	/* xHC spec requires PCI devices to support D3hot and D3cold */
+> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> index e4bddb927795..d2402bf4aea2 100644
+> --- a/include/linux/pci_ids.h
+> +++ b/include/linux/pci_ids.h
+> @@ -121,6 +121,7 @@
+>  #define PCI_CLASS_SERIAL_USB_OHCI	0x0c0310
+>  #define PCI_CLASS_SERIAL_USB_EHCI	0x0c0320
+>  #define PCI_CLASS_SERIAL_USB_XHCI	0x0c0330
+> +#define PCI_CLASS_SERIAL_USB_CDNS	0x0c0380
+>  #define PCI_CLASS_SERIAL_USB_DEVICE	0x0c03fe
+>  #define PCI_CLASS_SERIAL_FIBER		0x0c04
+>  #define PCI_CLASS_SERIAL_SMBUS		0x0c05
+> @@ -2421,6 +2422,9 @@
+>  #define PCI_VENDOR_ID_QCOM		0x17cb
+>  
+>  #define PCI_VENDOR_ID_CDNS		0x17cd
+> +#define PCI_DEVICE_ID_CDNS_USBSS	0x0100
+> +#define PCI_DEVICE_ID_CDNS_USB		0x0120
+> +#define PCI_DEVICE_ID_CDNS_USBSSP	0x0200
+>  
+>  #define PCI_VENDOR_ID_ARECA		0x17d3
+>  #define PCI_DEVICE_ID_ARECA_1110	0x1110
+> -- 
+> 2.43.0.rc1.1336.g36b5255a03ac
+> 
 
