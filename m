@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-405221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48C09C4E8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:13:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CD89C4EA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:18:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34A50B21ACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:13:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31215B24791
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9B820A5DD;
-	Tue, 12 Nov 2024 06:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF88C20A5D9;
+	Tue, 12 Nov 2024 06:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7pqRIFd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="J9875zWw"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009891C303A;
-	Tue, 12 Nov 2024 06:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E826E19EED4;
+	Tue, 12 Nov 2024 06:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731391980; cv=none; b=YEEfzOzvMkre8XrMfIdi8kn1pjPppRXRwwoeWh9I9zmQonIz5QcSnwbaSV/wpmkKrvoHu3iVDO9hJOKja3IsxUveMolX+HJng3tg49PIIWmh8qnfGILmt/BwV+gxhoz95CnPoQfPfq033ZpsaXJaIHLjtpU7zeiBiaEGtjQL3CE=
+	t=1731392271; cv=none; b=FkSUhyOP/mRSw3Yv49rsCZZEV77DNaiLWBiaT5nIBoUGVIAUIdnVZJdkwZR/XDp07WCldZ5yj8Bbm0lPwASkKIkV9tnOytIOyLO6MvmQkDPfGj5rF2ki43swJuSQAK/rnAgS1f0vB0/ue6Xuuo7MlJAzpJr978j1jP17ZheZxks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731391980; c=relaxed/simple;
-	bh=QgTT7r0KqdxQuGEyaNMWaIbXVXDTyKgK3Gsg2wAV8VY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zf0YX+hd4wo39p6d6r/SUQnW62UDlmCnftWsDnXUkIEjCYUoo2PXG7pRx4xASTqBSeXj10IIVQfmhGuxXsREOczdgHVZSpRfCiMRGmloPmc4WWNavf86FCUW7KJyK2HUNVokqCxCvv96PhdVWbO5cDpTwqryvlKSXHIg/AyXUO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7pqRIFd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E68C4CECD;
-	Tue, 12 Nov 2024 06:12:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731391979;
-	bh=QgTT7r0KqdxQuGEyaNMWaIbXVXDTyKgK3Gsg2wAV8VY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F7pqRIFdF2Q8kK200JhJZVR15jL8IAIjTRAsJ/3iqygUv52ELnGusC8MdwAGEWURj
-	 Ux3qDflbxmJCSGWO9wS+f2kd/6dWwesQ0MeWWcRwhFkXJhSvvY7VFR3MlNaUKUoJ8t
-	 36DlAxbl6HgQzVGGbcTRFRdjEfVrTBOE8P71PclNKZWtm7hZU0QZ4fBJDmKKuvsvET
-	 PElV5kIZI72F5yDUCmL+ABZBH4+ZXXccfzitW/p2EQnMPeoklGn3pI+a4yXisZPM3E
-	 S7CosqEeb/1etakULkJMiuoJ4Cd5+CowGR8D2t453kkvzmZd+IuIIbbPEgRTGpVtbn
-	 hV2fszerLJ0Cw==
-Date: Tue, 12 Nov 2024 08:12:51 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
-	Aditya Prabhune <aprabhune@nvidia.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
-	Bert Kenward <bkenward@solarflare.com>,
-	Matt Carlson <mcarlson@broadcom.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Jean Delvare <jdelvare@suse.de>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] PCI/sysfs: Change read permissions for VPD
- attributes
-Message-ID: <20241112061251.GE71181@unreal>
-References: <f93e6b2393301df6ac960ef6891b1b2812da67f3.1731005223.git.leonro@nvidia.com>
- <20241111204104.GA1817395@bhelgaas>
- <20241111163430.7fad2a2a@hermes.local>
+	s=arc-20240116; t=1731392271; c=relaxed/simple;
+	bh=FjWfuxbaFsptLDDLdKjT29NXwqNi6LmI9HVJ+sz1XRg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FBfpPkyd74P7MX5qbxKCh47bnk7IqSLJiWZctxwJzysBH+jM+OPzXrmBjwwcVgZ+duC1hYgRlYyRCZJlrmnyHnrDbFE5XVwaNGyeeLvSyZZ5ElrlP34wB1Ub5KMjTyQzu3cMjnWlnFy+wZ6mzEFVjbMS3CGseKNRCMJiunB2jDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=J9875zWw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC1vdTm005745;
+	Tue, 12 Nov 2024 06:17:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4b2Dl8YQKJ26ieLnPOJHIP3dB1v1fV6KV5TDF2LPOTQ=; b=J9875zWwz5VU/65U
+	OL8srDVURyPfquSn3rPeC9ngTUpAETREbPLXmiKeEr9vnobTXN24wuv6Y9cx7JtR
+	6mLx9Cncv+ODPQmFd0npk8WNtqOqVXlv4+Wk6xKjNc65zTb9nXSxV+5E6Cgn2EYC
+	nd40xq3y1J7175nMsrsY67P8w4IaGCs3Gveg8+F9D2o93E5qIU00FRW44yS4mbRX
+	s6R2lFCg6vsv1XpFKXXXeTlzZlibgXIkrAaToVV5RYZ/rz32eEk4J4LArBWwL6tW
+	5kPCnkbxhc1qm3yRbHdzs0FLnlxGvjZR4LXQ8/UboQDFBFJhX2f6qb6Fq5RX7gk8
+	0YEUJg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uwt5gg4d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 06:17:45 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC6Hiol015524
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 06:17:44 GMT
+Received: from [10.206.111.70] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 11 Nov
+ 2024 22:17:41 -0800
+Message-ID: <78e6ff6b-efe1-496c-a1fb-c9a0a4aba2d2@quicinc.com>
+Date: Tue, 12 Nov 2024 11:47:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111163430.7fad2a2a@hermes.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: sc7280: enable venus node
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <cros-qcom-dts-watchers@chromium.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241004-venus_sc7280-v1-1-4d7d8fd7e95b@quicinc.com>
+ <kezh3lmysij56g2tjwwuas5r26ro5i777yxxitsdcjeg7zp67v@oknrdbkzison>
+Content-Language: en-US
+From: Vedang Nagar <quic_vnagar@quicinc.com>
+In-Reply-To: <kezh3lmysij56g2tjwwuas5r26ro5i777yxxitsdcjeg7zp67v@oknrdbkzison>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gNoc8bsv_U6pjTkxOuoHla7nC6Y2Oyn9
+X-Proofpoint-ORIG-GUID: gNoc8bsv_U6pjTkxOuoHla7nC6Y2Oyn9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=234
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 clxscore=1011
+ malwarescore=0 impostorscore=0 adultscore=0 suspectscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411120049
 
-On Mon, Nov 11, 2024 at 04:34:30PM -0800, Stephen Hemminger wrote:
-> On Mon, 11 Nov 2024 14:41:04 -0600
-> Bjorn Helgaas <helgaas@kernel.org> wrote:
+
+
+On 10/7/2024 1:20 AM, Dmitry Baryshkov wrote:
+> On Fri, Oct 04, 2024 at 04:22:31PM GMT, Vedang Nagar wrote:
+>> Enable the venus node on Qualcomm sc7280. It was made disabled
+>> earlier to avoid bootup crash, which is fixed now with [1].
 > 
-> > On Thu, Nov 07, 2024 at 08:56:56PM +0200, Leon Romanovsky wrote:
-> > > From: Leon Romanovsky <leonro@nvidia.com>
-> > > 
-> > > The Vital Product Data (VPD) attribute is not readable by regular
-> > > user without root permissions. Such restriction is not really needed
-> > > for many devices in the world, as data presented in that VPD is not
-> > > sensitive and access to the HW is safe and tested.
-> > > 
-> > > This change aligns the permissions of the VPD attribute to be accessible
-> > > for read by all users, while write being restricted to root only.
-> > > 
-> > > For the driver, there is a need to opt-in in order to allow this
-> > > functionality.  
-> > 
-> > I don't think the use case is very strong (and not included at all
-> > here).
-> > 
-> > If we do need to do this, I think it's a property of the device, not
-> > the driver.
+> NAK, there might be other reasons to keep venus disabled, like the lack
+> of the vendor-signed firmware for the particular device.
+Can you pls elaborate more on this? Any device with sc7280 SOC can use
+venus.mbn which is already present in linux-firmware git.
+
+Regards,
+Vedang Nagar
 > 
-> I remember some broken PCI devices, which will crash if VPD is read.
-
-This is opt-in feature for devices which are known to be working.
-Broken devices will continue to be broken and will continue to require
-root permissions for read.
-
-Thanks
+>>
+>> [1]
+>> https://lore.kernel.org/linux-media/20231201-sc7280-venus-pas-v3-2-bc132dc5fc30@fairphone.com/
+>>
+>> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 2 --
+>>  1 file changed, 2 deletions(-)
+> 
 
