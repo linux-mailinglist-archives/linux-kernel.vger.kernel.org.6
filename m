@@ -1,247 +1,422 @@
-Return-Path: <linux-kernel+bounces-406412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60EBA9C5EAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:20:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBEE59C5EB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:20:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B3E281808
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CAE22815AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3CF2144B2;
-	Tue, 12 Nov 2024 17:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067332123FD;
+	Tue, 12 Nov 2024 17:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GloFRP7D"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2044.outbound.protection.outlook.com [40.107.105.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1fXQuC+f"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3512144A0;
-	Tue, 12 Nov 2024 17:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731431862; cv=fail; b=ALaQ6U/s5bQPvj5LyL5Dp7ec84ohJapD3VhtBC1HnusmPWx7ajqCKlu2HmGpGqVD7plnQld9x/DEsXF2k7ZRjxqVFZRaJz8C6iBUVcmeq+En9gDoK2SJtr2lD6cSkLGaYBoCvu43D5gvSZVhj86aVPGLvOTDZPbQGWBOQjnQFZY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731431862; c=relaxed/simple;
-	bh=kDyDHar1QLlC7v+3wLIKhrLezbYWpXNMJxaIcxx/LQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=njxdTCKIgm0AhgXi7Vy0FGFYYwCOWigYWOlSm8C/apJhLsDgkobnp8JE3v3sf8bk2xNi1ytTNYMF0qUd2BkwrQkh9kThU4ZBSeqdD5vFYDthdfxoquolMyhvfSMif+LLkm61gFa7Ef5LH+NYmVQ7H3ngrs/I6pBzmV0g3aCf4pE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GloFRP7D; arc=fail smtp.client-ip=40.107.105.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TOa88Bc4PnkgeyYUjrAMGY/o44P629a3yriGee1SKr2MZCaRZORGPHuwmLUiczIZmpm3304A40VSkf0rdZdJSglgPidsQ4o6L47F1OifVYrlwkhSEOd3yAdovauVakvcZlE3GPAp67uwAjxKHXamwJZFceZ0Tr49T5OynPeoO+zxwFz/a81+TgOoWTBPoHcc6qqQFQygeHK8EUbQ3Gm5blaIMAf4NtMawfNNX6X82Fy7APmqzO7FyA/y37FgF13fwweJE67GO+WwxEyKIxGeadL6hVmkCq9elUwHbK666Fwk3HUNj2Rq4HBTGE3bdWXISGTXjVfEC1gXRMfmsYoDcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oDFQSMaRmvB8vN2fXu5MX16VD2AzyCVjydJ5ZBgfUsY=;
- b=Qnp9PHl88Vn7rY51dk4v3hw0Uuxi8wXyfQX14zhzGHD6EUrNcV+Xaxzvkb7f3DHKMHQZihJQTK9dUCkTqp3OOrWkpxxi/huT4YDx22hV02rhR5wfzZr1fNZqI80OgytXeuFJhxKGzlodxn2uvzf7E6XOWZ8JcKHuXPXVJsqZyz62It54Of9JkEwj4TpM2kNNl7eVSqE2Y5yofpd3w1p7cOvjKrTjBG2p7mDTuOjOT4wh6LxoKt+dRGgp6wtFWw03ENKYe7m+55b3ltx9Avllq6lNcEb2l4cJ89NEQOQECghuQk7i3wGuPRZ9vF7Go1eGhXIjkWeGNCSz4UxvgrABXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oDFQSMaRmvB8vN2fXu5MX16VD2AzyCVjydJ5ZBgfUsY=;
- b=GloFRP7DozD+DlGAi5vrzaInHr+pw1Pa2HoN5dabvrQ5MWM9/0uLJ1pdiR6t2540K9uTvMhVG3ZIjnUorikFabTT4LJBgIw+C8iFaFu+IaEZEzgkfRg0NfTWIDhGJqmsglOPDLV7N9wqZSd1m/6TOxSNwSJr1bnjLCC4alXPm5/h2/WxCf/TOPNFIECOOJnKWJC6kjroFTsshTq8fCKKsuWWX+1/2BhZpMJAyAmMORbKRPKMdyxOV9RJM3Br6XcnPx3YH2byZXrw5SzkhCp0UQiE9h6E14z4bAHqHyivQ1CpqkHHYzAGUOTJYxgRIRhqDo6KEj+V9OruXC9osYxiiA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI1PR04MB6831.eurprd04.prod.outlook.com (2603:10a6:803:135::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Tue, 12 Nov
- 2024 17:17:37 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 17:17:36 +0000
-Date: Tue, 12 Nov 2024 12:17:29 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Vinod Koul <vkoul@kernel.org>,
-	"open list:FREESCALE eDMA DRIVER" <imx@lists.linux.dev>,
-	"open list:FREESCALE eDMA DRIVER" <dmaengine@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 2/2] dmaengine: fsl-edma: free irq correctly in remove
- pathy
-Message-ID: <ZzONqV2hTgTk7xiT@lizhi-Precision-Tower-5810>
-References: <20241111072602.1179457-1-peng.fan@oss.nxp.com>
- <20241111072602.1179457-2-peng.fan@oss.nxp.com>
- <ZzItm7l9pGfrUSK8@lizhi-Precision-Tower-5810>
- <PAXPR04MB84598E5B79A7115A2540A5FF88592@PAXPR04MB8459.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB84598E5B79A7115A2540A5FF88592@PAXPR04MB8459.eurprd04.prod.outlook.com>
-X-ClientProxiedBy: SJ0PR05CA0144.namprd05.prod.outlook.com
- (2603:10b6:a03:33d::29) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5CF1FF03B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731431947; cv=none; b=iyc2GUz9hQSwSe53o2mWsZvw74YTOnqUi+trjvO0C9v47uPXgIgiokawLjh56Juy/Q+CcNKs/gv8zvjpS8COvHgS8xrEGQ9i/Y9ecDfWE9Q0CAOAeRG4RlkLaPiWHm8KrXfTPjEOFh+zXzPK9bM40RX40ot1pm/QtIUc2cPPB1A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731431947; c=relaxed/simple;
+	bh=pDzD7M86hmb/Davpv+QCf7+0qfC44zYQb2N7ECQ7294=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TF/tqUOuHEn8XsgP4k/ifP0hg5M3cK/KVl415Ll3wECUHPGyy/jx4CwJ1NjC5BW1YOe+NxBOvkPJ5iOfo1Zffd+rXl3U31C3MeykO7Ow2PbuWUfSIbnfiz6F295Upfv6NQ+VnrEwHw4x5owEbUoM7scma2inRLINkRbDB1LYLZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1fXQuC+f; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-288a90e4394so2629463fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:19:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731431944; x=1732036744; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=EotR0bw+FAnHMrISS9FPE3lHhbs9IrDHabSVQGLPmwA=;
+        b=1fXQuC+ffHBSt9yUs2C6C+ncL8aZxg224BEymJ0x/5uQ9rMbIuEylG/xJ+D3RU5gek
+         cExCPPjm5Hd6dVBh3DXX7WkJP+rAmn/eoMJgUeBgv/E3ZriZt25pdXcecxCP3f9hVA/3
+         jjb7ZPgQwZ5pL4SsvgS44B2VL95IUAlL3RePs7s8j3IU/ka6bbd9WzZuqtKsAn8kronC
+         nugs165FjyiunM3pUwa0vNn0d6bjiji00zIq40I/WfDg3mhS12h3wfnxXrJ8G04/xL/j
+         FHjvNt/Jxo9GBz9pydezM6jmX6xMHj2tbaB1laFSGcGB2z+RzA/gB2kW1xO3kYVGRPiV
+         RIBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731431944; x=1732036744;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EotR0bw+FAnHMrISS9FPE3lHhbs9IrDHabSVQGLPmwA=;
+        b=OXZmGt/nG6qW71/bL5jWRPPsDbCYlpgFkaSTZSYa7iZSJDdNxGAXsQmMVF8WQ8LPzJ
+         3WiGDKvGWVYJKDUV/QE/zHVdzeknZqJL0CrSLsCPXSsCT3rNl3c4XVVuMlMT+L3TyYfs
+         nbHthoGA4FQJA0DZOofux6x1kFOCuJga6jmuSAvxm05wvp29ar3PJKJkebXhUz3UvWMu
+         6X98mi84It78fl7iUHYKbu9+Yl/eY1TeSysSVLjbt75Tu63KjTGwEwCVgL+O4BIm4twX
+         0jjLz/CZ/kO2kAX9jsVabJ/5G929ZMOWjeUIT3bXJkU5y/FRayB448KIJAMowIzkeIKI
+         iUdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtNkGtsKDgpo4ltYDTebr9eFaOkJjobZrpdX5DtW7vE7XtY/4qAfb3puKrin/rY79gCma94UNkbH7wlsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx89IUObXhbpHXjr8fjAFK5qlkqnjy6vST7VhSH/oDUqKeJgMV3
+	8ZXdLfU2wrqLl1q67pFh198GHISiT87CBw/TO/gVzENB/g8Mvj9z0F0hBYaOnGY/44avyger3jQ
+	MKHs=
+X-Google-Smtp-Source: AGHT+IHgATCiN5pGkNIh40SG1qC/yKgG0COrPWw6RMy3oiE6zHQ4+BmWlr+9g37rnmPmCr9cWKuRFA==
+X-Received: by 2002:a05:6870:9a95:b0:277:db7f:cfb2 with SMTP id 586e51a60fabf-295ccfd6b0emr3503409fac.14.1731431944532;
+        Tue, 12 Nov 2024 09:19:04 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546c42b3bsm3525410fac.9.2024.11.12.09.19.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 09:19:03 -0800 (PST)
+Message-ID: <3f378e51-87e7-499e-a9fb-4810ca760d2b@kernel.dk>
+Date: Tue, 12 Nov 2024 10:19:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI1PR04MB6831:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e5caa6f-b816-46a1-27a6-08dd033de76d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|1800799024|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?A48tsTWho8rarWg7xZ0nm87N5cjwPoN1rI0xJi8tSLDvshWjsxu2l1h8d9kI?=
- =?us-ascii?Q?NJpE32WF3EF+Aq2N96lswNciF5gw/kRcYRNlTF7yRPRy/EkdXxRgAuT21+4q?=
- =?us-ascii?Q?fXxNd6KfYAcio25GrXtPGC1jU2ESpMovigZbMOSTyNtJsD/xeMT+3KzYQtWI?=
- =?us-ascii?Q?6NhPVzA8ehZ3wZ3xZa1DdHxi8plHu7MkDTQBZMEM1ftJw94p3uMFu67r9s7H?=
- =?us-ascii?Q?/yBP/pUez46Ab4Y/cOwipVCsNCkmkW9VZ7xQVSdpJ1rwq8wV0vUYXp4g+plI?=
- =?us-ascii?Q?4TjibHhJPASa9GY7DIn4+hLqtbXKMdxAUo+gEgYFqkvZMoWOQG60LSEFSgFb?=
- =?us-ascii?Q?59y18ufwx3H6+riy+G2CPMYsRRbSEQDpln77FGAIIGJtpSLMRDM/v+Hc1PQ1?=
- =?us-ascii?Q?N/pVPPNFbdtnI5oGCjNFyXzG/2+ptRbp9vTScMOK8hFjI3677jYIyVTNH2oR?=
- =?us-ascii?Q?ohIIRSmkSG7jxk3ENq5oUYXBHGGznqHyfob42dEUCYtO/rhOIP3EMLalFBT/?=
- =?us-ascii?Q?PGafR40K9ZPg5D/ju2HE3nq7jCjJcavv69Vx1+cuF3M+GPcbzLnHL0SeZ9oN?=
- =?us-ascii?Q?FMLD9YQw9KR0DL4bEmo7/yznyzjgq3SYMoTU5+HV5Y6zymWBtUZJSYY4PGT/?=
- =?us-ascii?Q?GsHguaSWjA+q+CNjXnI9jFA/LzV+8/mkDs6d3JS2Qo5BxlhevYuDCBadmFSV?=
- =?us-ascii?Q?CNqxV/zauNERa8q7vHcc+f68gcQOQXzIEMEnKdiZTDz4WtSJe3/sCY3OoyxI?=
- =?us-ascii?Q?3WebyAou3Pq4Hxu3bYCy5rXfQMBDSXLpV0rIsWblIUYJI1Y/gFGzdco8PNzq?=
- =?us-ascii?Q?sFjAoakM30OXi7VixwR//nH4Y4x1Cfjutr/NGgYpw/MKnxRpbH7MKSL9mE9X?=
- =?us-ascii?Q?ORTltByN4i+9bXVu0imNu/SAgX83RItDunKb7PmaVl182QeL3ofAmXuU2a5m?=
- =?us-ascii?Q?dRDtSOY3IYKT+uABuFHtWzpGwq+G5mNiUCux4wPRCxWUhrQs+G/J7iWizGHn?=
- =?us-ascii?Q?A1knTOmVJVC42D7NZJtmuBHHTsPKEB71e8ZSwlgDYdGDoP83yv81aSBZwWfv?=
- =?us-ascii?Q?6+AnqrrAo3UP+gNRxlHqXeegkKmKjKQNrX1F7lVTWru61Qn053mngLnIFVFJ?=
- =?us-ascii?Q?yP6u3GlDt3bgNWku2pqSPAxXiS3s/88qDmvVkb5ZTZ0+RC15K9tt7rwyvi53?=
- =?us-ascii?Q?XWu4rLqFBqpxGvDDxogsBFWjhVjq833+VgtkMrAlCKItfynOY4Xmz8bqgAUg?=
- =?us-ascii?Q?EuWJURItbED1Nzj+IcyNuPx7dvbl/GRCWgCizScUio6+u1qz7ryrVUB8jRDf?=
- =?us-ascii?Q?lapR/ehFS/LPKgJQuEXd+MLnhsWAOqQe4iP9bGdJaf7Ni8Pfrpduml7YAIUv?=
- =?us-ascii?Q?HbjNhGI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2ERE9PBTXSq2ZMYkVND89zSahnYEAvyJ1d3UtsDhLTWy6K7fIjz7d0PEIZZJ?=
- =?us-ascii?Q?9+9rj/IoOhUhGACUagjKyBaGIAdkBIhbaz6zgyPfkxjhkBbtckucDuZDLwGJ?=
- =?us-ascii?Q?QXjOe/2crg/vEiUJOdp/0g9MRDAlQIGahFhAcRVVPRODQlXo2BlKFPdtFoyS?=
- =?us-ascii?Q?O8oOSgjqmgUWk/KjvDihHLsEtuDvrjmWlPiWIV3BovFxs2s0k4ULI1Rsf2mR?=
- =?us-ascii?Q?50eSb9vjXJsw3dhPMu4Bd0bNvxG4lv2a+k+p7+8CTEUZUzB0VJT0RfbjTBUB?=
- =?us-ascii?Q?bZfOoWA9d4SJypwINoj9C9tJGdSYDKgDZFgVo3+2h2YoWzuWd1IXT2AjFHxK?=
- =?us-ascii?Q?WNNm9PYWeRw6odylmlurw8m0Rv5B/yZosaN3XFvTy+hUuN68ZEsw9IdGKXYY?=
- =?us-ascii?Q?Aw+kU1jvq6HOFv2jnl40ghwOPreBp4IfSUjL2a+QPdAhfUfrDNucxdNT3T5x?=
- =?us-ascii?Q?Hys3z6TiEhivoabhw9+pwrnF9AXmLCpSt1ISoz8ZEuF5fw9jwD6j1UTiZVqq?=
- =?us-ascii?Q?3Ib1BmVMqe9mPhIih2+3YahKJRy+sE78/8VtV0O0Zh35SWvMF1+RhnvLRdcb?=
- =?us-ascii?Q?IE9cMqjUitgCa78dAwJQpJrCcChxTYn2MzdeEsjVNB4aL2dLcMbDOIs8uUst?=
- =?us-ascii?Q?XMRO9llaVv02u0N942uAqTr3xHD3KLSSCxj0MY/j9NPVLkrdgzyBUG2aKXG0?=
- =?us-ascii?Q?qS6+Si3OKiVdYywNF1nZov3IQsWcvt4h98sYrMIjdpGgsGNrTkHabHTCCGPn?=
- =?us-ascii?Q?BIZrXIYclgGPic3uMR23sOOzEISZir+AGgox+EEQb1ytfz378Cv7EawzySli?=
- =?us-ascii?Q?/DwfPm29xLtidbcrhPakuskaOZHn2vBatb+rdUchaG18zj9GpaUexEAiANyR?=
- =?us-ascii?Q?hvG0TY/sfGZ+bKiID9+1C640wpvZEE/rqyqr6CCTqeg/ZFehQgY55MkMuVf7?=
- =?us-ascii?Q?cDwmVzIstqLGBddOETNeXdRLP0zfkzt+58/ZWfvC8aOvdtqhOMo85nH8obli?=
- =?us-ascii?Q?BdhDj5FrcxMjH/Q60s1+P5m7CLtFPHoHPsF+536UfcY8JUSXWOSKa6u7Um0F?=
- =?us-ascii?Q?uyUV37WvCIBRBBnsusAmbprIqen7ojWRnvhX83prQYVqs9X1gn9TR8A6ERE1?=
- =?us-ascii?Q?aO0YmepwvuT1LV1xqELNp/SSWaw5WevWpjgQCD+a2mwal90roA+2z7YegtHu?=
- =?us-ascii?Q?H5O8ifBPZnHEftzNhuzhPSis5x5YtCt/tm5lnifn84ud+udlG0Q7JgjgmtZ6?=
- =?us-ascii?Q?xfEKPgffTEiVAXuN7JiuVX7ku1x9OEQ2EzpjYUirVKYmOue2lhDPb1bUeXpk?=
- =?us-ascii?Q?g8vd3owig+LvH5RQBpXOeaJG0BHAXKQwohT0SUvMvYnnmF6N6eYvnpGvrFY+?=
- =?us-ascii?Q?qHA5W9Xa5Va8Aqp6e0sEvx43nYpdb6lxW5qxRqGEa279+TkJpFk+oajMO+dN?=
- =?us-ascii?Q?L7GfKxi6WJXHG2EHmJChcllz2TB45asvv+5jJo673auPHAYfpJTUDuJMj/PY?=
- =?us-ascii?Q?I/mhizzqaDPlRbd3SW03xVMYwJi/bw9bw0fdWaHAOjnkzqLoPIfpv5gbTyem?=
- =?us-ascii?Q?tghzynFt/1H2sUY4/ng=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e5caa6f-b816-46a1-27a6-08dd033de76d
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 17:17:36.8988
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZFY1o7+9qFnxCrhveV9tPV3+iSV9w1kVRmRbzplE5OmidzLi8mjQckIi8kRUQtAMoxpYxEZ4OIondIoZWUFViw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6831
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+From: Jens Axboe <axboe@kernel.dk>
+To: Brian Foster <bfoster@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+ linux-kernel@vger.kernel.org, willy@infradead.org
+References: <20241110152906.1747545-1-axboe@kernel.dk>
+ <20241110152906.1747545-9-axboe@kernel.dk>
+ <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
+ <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
+ <ZzIfwmGkbHwaSMIn@infradead.org>
+ <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
+ <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
+ <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
+ <ZzLkF-oW2epzSEbP@infradead.org>
+ <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk> <ZzOEzX0RddGeMUPc@bfoster>
+ <7a4ef71f-905e-4f2a-b3d2-8fd939c5a865@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <7a4ef71f-905e-4f2a-b3d2-8fd939c5a865@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 12, 2024 at 01:52:41AM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH V2 2/2] dmaengine: fsl-edma: free irq correctly in
-> > remove pathy
-> >
-> > On Mon, Nov 11, 2024 at 03:26:01PM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > To i.MX9, there is no valid fsl_edma->txirq/errirq, so add a check in
-> > > fsl_edma_irq_exit to avoid issues.
-> >
-> > Nik: can you add descript about what's issues?
->
-> It should not free an irq that was not requested. So I add a check here.
-> You wanna to me to add the kernel dump or log in commit log?
+On 11/12/24 10:06 AM, Jens Axboe wrote:
+> On 11/12/24 9:39 AM, Brian Foster wrote:
+>> On Tue, Nov 12, 2024 at 08:14:28AM -0700, Jens Axboe wrote:
+>>> On 11/11/24 10:13 PM, Christoph Hellwig wrote:
+>>>> On Mon, Nov 11, 2024 at 04:42:25PM -0700, Jens Axboe wrote:
+>>>>> Here's the slightly cleaned up version, this is the one I ran testing
+>>>>> with.
+>>>>
+>>>> Looks reasonable to me, but you probably get better reviews on the
+>>>> fstests lists.
+>>>
+>>> I'll send it out once this patchset is a bit closer to integration,
+>>> there's the usual chicken and egg situation with it. For now, it's quite
+>>> handy for my testing, found a few issues with this version. So thanks
+>>> for the suggestion, sure beats writing more of your own test cases :-)
+>>>
+>>
+>> fsx support is probably a good idea as well. It's similar in idea to
+>> fsstress, but bashes the same file with mixed operations and includes
+>> data integrity validation checks as well. It's pretty useful for
+>> uncovering subtle corner case issues or bad interactions..
+> 
+> Indeed, I did that too. Re-running xfstests right now with that too.
 
-Yes, at least need descript the issue. such as
-wrong free the no requested irq...
+Here's what I'm running right now, fwiw. It adds RWF_UNCACHED support
+for both the sync read/write and io_uring paths.
 
->
-> Thanks,
-> Peng.
->
-> >
-> > >
-> > > Fixes: 44eb827264de ("dmaengine: fsl-edma: request per-channel
-> > IRQ
-> > > only when channel is allocated")
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >
-> > > V2:
-> > >  None
-> > >
-> > >  drivers/dma/fsl-edma-main.c | 12 +++++++++---
-> > >  1 file changed, 9 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/dma/fsl-edma-main.c b/drivers/dma/fsl-edma-
-> > main.c
-> > > index 01bd5cb24a49..89c54eeb4925 100644
-> > > --- a/drivers/dma/fsl-edma-main.c
-> > > +++ b/drivers/dma/fsl-edma-main.c
-> > > @@ -303,6 +303,7 @@ fsl_edma2_irq_init(struct platform_device
-> > *pdev,
-> > >
-> > >  		/* The last IRQ is for eDMA err */
-> > >  		if (i == count - 1) {
-> > > +			fsl_edma->errirq = irq;
-> > >  			ret = devm_request_irq(&pdev->dev, irq,
-> > >
-> > 	fsl_edma_err_handler,
-> > >  						0, "eDMA2-ERR",
-> > fsl_edma);
-> > > @@ -322,10 +323,13 @@ static void fsl_edma_irq_exit(
-> > >  		struct platform_device *pdev, struct fsl_edma_engine
-> > *fsl_edma)  {
-> > >  	if (fsl_edma->txirq == fsl_edma->errirq) {
-> > > -		devm_free_irq(&pdev->dev, fsl_edma->txirq,
-> > fsl_edma);
-> > > +		if (fsl_edma->txirq >= 0)
-> > > +			devm_free_irq(&pdev->dev, fsl_edma->txirq,
-> > fsl_edma);
-> > >  	} else {
-> > > -		devm_free_irq(&pdev->dev, fsl_edma->txirq,
-> > fsl_edma);
-> > > -		devm_free_irq(&pdev->dev, fsl_edma->errirq,
-> > fsl_edma);
-> > > +		if (fsl_edma->txirq >= 0)
-> > > +			devm_free_irq(&pdev->dev, fsl_edma->txirq,
-> > fsl_edma);
-> > > +		if (fsl_edma->errirq >= 0)
-> > > +			devm_free_irq(&pdev->dev, fsl_edma->errirq,
-> > fsl_edma);
-> > >  	}
-> > >  }
-> > >
-> > > @@ -485,6 +489,8 @@ static int fsl_edma_probe(struct
-> > platform_device *pdev)
-> > >  	if (!fsl_edma)
-> > >  		return -ENOMEM;
-> > >
-> > > +	fsl_edma->errirq = -EINVAL;
-> > > +	fsl_edma->txirq = -EINVAL;
-> > >  	fsl_edma->drvdata = drvdata;
-> > >  	fsl_edma->n_chans = chans;
-> > >  	mutex_init(&fsl_edma->fsl_edma_mutex);
-> > > --
-> > > 2.37.1
-> > >
+
+diff --git a/ltp/fsx.c b/ltp/fsx.c
+index 41933354..104910ff 100644
+--- a/ltp/fsx.c
++++ b/ltp/fsx.c
+@@ -43,6 +43,10 @@
+ # define MAP_FILE 0
+ #endif
+ 
++#ifndef RWF_UNCACHED
++#define RWF_UNCACHED	0x80
++#endif
++
+ #define NUMPRINTCOLUMNS 32	/* # columns of data to print on each line */
+ 
+ /* Operation flags (bitmask) */
+@@ -101,7 +105,9 @@ int			logcount = 0;	/* total ops */
+ enum {
+ 	/* common operations */
+ 	OP_READ = 0,
++	OP_READ_UNCACHED,
+ 	OP_WRITE,
++	OP_WRITE_UNCACHED,
+ 	OP_MAPREAD,
+ 	OP_MAPWRITE,
+ 	OP_MAX_LITE,
+@@ -190,15 +196,16 @@ int	o_direct;			/* -Z */
+ int	aio = 0;
+ int	uring = 0;
+ int	mark_nr = 0;
++int	rwf_uncached = 1;
+ 
+ int page_size;
+ int page_mask;
+ int mmap_mask;
+-int fsx_rw(int rw, int fd, char *buf, unsigned len, unsigned offset);
++int fsx_rw(int rw, int fd, char *buf, unsigned len, unsigned offset, int flags);
+ #define READ 0
+ #define WRITE 1
+-#define fsxread(a,b,c,d)	fsx_rw(READ, a,b,c,d)
+-#define fsxwrite(a,b,c,d)	fsx_rw(WRITE, a,b,c,d)
++#define fsxread(a,b,c,d,f)	fsx_rw(READ, a,b,c,d,f)
++#define fsxwrite(a,b,c,d,f)	fsx_rw(WRITE, a,b,c,d,f)
+ 
+ struct timespec deadline;
+ 
+@@ -266,7 +273,9 @@ prterr(const char *prefix)
+ 
+ static const char *op_names[] = {
+ 	[OP_READ] = "read",
++	[OP_READ_UNCACHED] = "read_uncached",
+ 	[OP_WRITE] = "write",
++	[OP_WRITE_UNCACHED] = "write_uncached",
+ 	[OP_MAPREAD] = "mapread",
+ 	[OP_MAPWRITE] = "mapwrite",
+ 	[OP_TRUNCATE] = "truncate",
+@@ -393,12 +402,14 @@ logdump(void)
+ 				prt("\t******WWWW");
+ 			break;
+ 		case OP_READ:
++		case OP_READ_UNCACHED:
+ 			prt("READ     0x%x thru 0x%x\t(0x%x bytes)",
+ 			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+ 			    lp->args[1]);
+ 			if (overlap)
+ 				prt("\t***RRRR***");
+ 			break;
++		case OP_WRITE_UNCACHED:
+ 		case OP_WRITE:
+ 			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
+ 			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+@@ -784,9 +795,8 @@ doflush(unsigned offset, unsigned size)
+ }
+ 
+ void
+-doread(unsigned offset, unsigned size)
++__doread(unsigned offset, unsigned size, int flags)
+ {
+-	off_t ret;
+ 	unsigned iret;
+ 
+ 	offset -= offset % readbdy;
+@@ -818,23 +828,39 @@ doread(unsigned offset, unsigned size)
+ 			(monitorend == -1 || offset <= monitorend))))))
+ 		prt("%lld read\t0x%x thru\t0x%x\t(0x%x bytes)\n", testcalls,
+ 		    offset, offset + size - 1, size);
+-	ret = lseek(fd, (off_t)offset, SEEK_SET);
+-	if (ret == (off_t)-1) {
+-		prterr("doread: lseek");
+-		report_failure(140);
+-	}
+-	iret = fsxread(fd, temp_buf, size, offset);
++	iret = fsxread(fd, temp_buf, size, offset, flags);
+ 	if (iret != size) {
+-		if (iret == -1)
+-			prterr("doread: read");
+-		else
++		if (iret == -1) {
++			if (errno == EOPNOTSUPP && flags & RWF_UNCACHED) {
++				rwf_uncached = 1;
++				return;
++			}
++			prterr("dowrite: read");
++		} else {
+ 			prt("short read: 0x%x bytes instead of 0x%x\n",
+ 			    iret, size);
++		}
+ 		report_failure(141);
+ 	}
+ 	check_buffers(temp_buf, offset, size);
+ }
++void
++doread(unsigned offset, unsigned size)
++{
++	__doread(offset, size, 0);
++}
+ 
++void
++doread_uncached(unsigned offset, unsigned size)
++{
++	if (rwf_uncached) {
++		__doread(offset, size, RWF_UNCACHED);
++		if (rwf_uncached)
++			return;
++	}
++	__doread(offset, size, 0);
++}
++	
+ void
+ check_eofpage(char *s, unsigned offset, char *p, int size)
+ {
+@@ -870,7 +896,6 @@ check_contents(void)
+ 	unsigned map_offset;
+ 	unsigned map_size;
+ 	char *p;
+-	off_t ret;
+ 	unsigned iret;
+ 
+ 	if (!check_buf) {
+@@ -885,13 +910,7 @@ check_contents(void)
+ 	if (size == 0)
+ 		return;
+ 
+-	ret = lseek(fd, (off_t)offset, SEEK_SET);
+-	if (ret == (off_t)-1) {
+-		prterr("doread: lseek");
+-		report_failure(140);
+-	}
+-
+-	iret = fsxread(fd, check_buf, size, offset);
++	iret = fsxread(fd, check_buf, size, offset, 0);
+ 	if (iret != size) {
+ 		if (iret == -1)
+ 			prterr("check_contents: read");
+@@ -1064,9 +1083,8 @@ update_file_size(unsigned offset, unsigned size)
+ }
+ 
+ void
+-dowrite(unsigned offset, unsigned size)
++__dowrite(unsigned offset, unsigned size, int flags)
+ {
+-	off_t ret;
+ 	unsigned iret;
+ 
+ 	offset -= offset % writebdy;
+@@ -1101,18 +1119,18 @@ dowrite(unsigned offset, unsigned size)
+ 			(monitorend == -1 || offset <= monitorend))))))
+ 		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\n", testcalls,
+ 		    offset, offset + size - 1, size);
+-	ret = lseek(fd, (off_t)offset, SEEK_SET);
+-	if (ret == (off_t)-1) {
+-		prterr("dowrite: lseek");
+-		report_failure(150);
+-	}
+-	iret = fsxwrite(fd, good_buf + offset, size, offset);
++	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
+ 	if (iret != size) {
+-		if (iret == -1)
++		if (iret == -1) {
++			if (errno == EOPNOTSUPP && flags & RWF_UNCACHED) {
++				rwf_uncached = 0;
++				return;
++			}
+ 			prterr("dowrite: write");
+-		else
++		} else {
+ 			prt("short write: 0x%x bytes instead of 0x%x\n",
+ 			    iret, size);
++		}
+ 		report_failure(151);
+ 	}
+ 	if (do_fsync) {
+@@ -1126,6 +1144,22 @@ dowrite(unsigned offset, unsigned size)
+ 	}
+ }
+ 
++void
++dowrite(unsigned offset, unsigned size)
++{
++	__dowrite(offset, size, 0);
++}
++
++void
++dowrite_uncached(unsigned offset, unsigned size)
++{
++	if (rwf_uncached) {
++		__dowrite(offset, size, RWF_UNCACHED);
++		if (rwf_uncached)
++			return;
++	}
++	__dowrite(offset, size, 0);
++}
+ 
+ void
+ domapwrite(unsigned offset, unsigned size)
+@@ -2340,11 +2374,21 @@ have_op:
+ 		doread(offset, size);
+ 		break;
+ 
++	case OP_READ_UNCACHED:
++		TRIM_OFF_LEN(offset, size, file_size);
++		doread_uncached(offset, size);
++		break;
++
+ 	case OP_WRITE:
+ 		TRIM_OFF_LEN(offset, size, maxfilelen);
+ 		dowrite(offset, size);
+ 		break;
+ 
++	case OP_WRITE_UNCACHED:
++		TRIM_OFF_LEN(offset, size, maxfilelen);
++		dowrite_uncached(offset, size);
++		break;
++
+ 	case OP_MAPREAD:
+ 		TRIM_OFF_LEN(offset, size, file_size);
+ 		domapread(offset, size);
+@@ -2702,7 +2746,7 @@ uring_setup()
+ }
+ 
+ int
+-uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
++uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset, int flags)
+ {
+ 	struct io_uring_sqe     *sqe;
+ 	struct io_uring_cqe     *cqe;
+@@ -2733,6 +2777,7 @@ uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
+ 		} else {
+ 			io_uring_prep_writev(sqe, fd, &iovec, 1, o);
+ 		}
++		sqe->rw_flags = flags;
+ 
+ 		ret = io_uring_submit_and_wait(&ring, 1);
+ 		if (ret != 1) {
+@@ -2781,7 +2826,7 @@ uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
+ }
+ #else
+ int
+-uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
++uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset, int flags)
+ {
+ 	fprintf(stderr, "io_rw: need IO_URING support!\n");
+ 	exit(111);
+@@ -2789,19 +2834,21 @@ uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
+ #endif
+ 
+ int
+-fsx_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
++fsx_rw(int rw, int fd, char *buf, unsigned len, unsigned offset, int flags)
+ {
+ 	int ret;
+ 
+ 	if (aio) {
+ 		ret = aio_rw(rw, fd, buf, len, offset);
+ 	} else if (uring) {
+-		ret = uring_rw(rw, fd, buf, len, offset);
++		ret = uring_rw(rw, fd, buf, len, offset, flags);
+ 	} else {
++		struct iovec iov = { .iov_base = buf, .iov_len = len };
++
+ 		if (rw == READ)
+-			ret = read(fd, buf, len);
++			ret = preadv2(fd, &iov, 1, offset, flags);
+ 		else
+-			ret = write(fd, buf, len);
++			ret = pwritev2(fd, &iov, 1, offset, flags);
+ 	}
+ 	return ret;
+ }
+
+
+-- 
+Jens Axboe
 
