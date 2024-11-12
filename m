@@ -1,134 +1,94 @@
-Return-Path: <linux-kernel+bounces-405319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3251F9C4FD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:48:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B919C4FDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB7A828362E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:48:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B8B6282961
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819AB20B7EB;
-	Tue, 12 Nov 2024 07:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590EC20B811;
+	Tue, 12 Nov 2024 07:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j25MIWdG"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="U9zeIuSG"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE5A20B1FA
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A49520ADC0;
+	Tue, 12 Nov 2024 07:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731397327; cv=none; b=tE4rp2jpaSKCEA/KYEGKeGUH9HAJM6gScDT9ReSG+gVr5J+Oro5OxHkuoP3h8ZF0gkGSPf4MLzGf8c9WoDdNR1D2FZCGCJOMMRQy9syBdYvaYjvq3lP/ac5s8aYguuK9KBj9OymHlHh/RZ7LBqpSt+zVbJ11e7enyI2zZkwNu5E=
+	t=1731397445; cv=none; b=Kgp2MOXKeOBaLrnd2IB6MdY1QnSkoPlpfCSkxN+U2eutolzQICdc1MxWn4t6Rzsfw/qCnlNWGtWUuHLlgMnnV1dj6wotBawHgy7+HqwBzjKLoB3OWxcIWQVz7vdf4yePA72HtfXRRI54AdIo0tUY51NIFchXuELuo2wevmxrB20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731397327; c=relaxed/simple;
-	bh=4Zdw5kgKTgwPsGUNYQa35eedlMhMIviirI6Hy+Sd0hg=;
+	s=arc-20240116; t=1731397445; c=relaxed/simple;
+	bh=gYK8Sr5oh64mtihPCqd1kqaMIT1tBWPjHL4NQqEPAb4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dwhKhn+rERDBzKoeXSVo0N/p9rZaoNqrIMHi+P3WDM4T2c+XKKFO46XtV6EorGrJI4XwrhViPg9GpxtMYYSCjIUyukoEVekwHASH/IvXNh2c1U2st5tztQanWaD8Si0fWqgQkN8TL9qUDm3qjBvo1hKZdBfEZnZ/DXfaj82tlDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=j25MIWdG; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7181caa08a3so3030666a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:42:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731397325; x=1732002125; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mWb+6hjmOAxlNgDc7JKg2yzzLTEdqJ06FfSb5owKkeM=;
-        b=j25MIWdGoDvIVyDNgln+5npG/TeLmJHE8O3Qcv1StG5nkKn1moyBgKUYigN6TNkXod
-         9tEaLdyrKhebdGgw/jTwYyWvSREapa1is/A2o3vq97DoGNC06WM7h8Y/09Rdj6WS5UmD
-         +cRi9NlMwf1M3R8bNsq8eiRjeXPItW+fcJkkE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731397325; x=1732002125;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mWb+6hjmOAxlNgDc7JKg2yzzLTEdqJ06FfSb5owKkeM=;
-        b=a80+gojTDNA5MC4LMTEnQ7TicJe9VIde+G7lSZPvYxdTJ8qRSFtjmo+/fugLuYxNdc
-         zibE/zQnXWaFfUqMDNwGpWNO8VZtx0u7eZdyBwcv52OdPhRDz+gaXoMIMumcts4dQFP8
-         6TTVLmPSKhJqgPm6CTXQzzupDh2mI1HXK0H674DFg60lZPkDcB/1VdQvh9puygnwa0lE
-         FXhKNGLEUbAtAI906sR/rl2dKgJl2QWBZPpsq6Iq1JKaeOgSS/LgS8qo/9WdUfRg6hTt
-         cteevayuqPOMAZyRu71WQTVhcgQSweCARR6Fp1y0dDfMK3XWBo1V8vgBzpSJmbnOMzo0
-         +hQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNSK4aGMzOlVU08126UHpY/7KcYvavz1A+NqXZnqJpU/jofJs8jUwQbJxm4mBENKJ2tlIkyMqEk6OQY+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtWjd4ZVc/Fypm9pD/SwwZJAVWIRly9oqaOTPO8WttbONqAmPe
-	xnX4XFQTKP+a4kv2OO6tS/L8qhiDX4HqkiLgAwuYDew09w5t10Mrm4BTU+MV+g==
-X-Google-Smtp-Source: AGHT+IHAivkem+e7/fcFL3MNsRfeSzjTTUbqrvF8zF3iiVeiJL0WKCuRtYmXL80k54VkCTs+Wi5+3g==
-X-Received: by 2002:a05:6830:1050:b0:71a:21c9:cd82 with SMTP id 46e09a7af769-71a21c9d013mr9830707a34.0.1731397325430;
-        Mon, 11 Nov 2024 23:42:05 -0800 (PST)
-Received: from google.com ([2401:fa00:1:10:7cd:9f36:34ae:c525])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f67f079sm9823430a12.85.2024.11.11.23.42.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 23:42:04 -0800 (PST)
-Date: Tue, 12 Nov 2024 15:42:01 +0800
-From: "Sung-Chi, Li" <lschyi@chromium.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
-	Jean Delvare <jdelvare@suse.com>, devicetree@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v2] hwmon: (cros_ec) register thermal sensors to thermal
- framework
-Message-ID: <ZzMGyaBGX-yLZs8B@google.com>
-References: <20241111074904.1059268-1-lschyi@chromium.org>
- <20241111095045.1218986-1-lschyi@chromium.org>
- <4cb3b1c7-86fa-4344-a413-031723f31f1d@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UGY/pby93wG0+ENTMSkJKXjdREJhDoEEoUgbPg+swiyg69+mLh4jnLcYlvSDUOuSw3OXo0vIrkXtEdkr74Pmki/rzcj9c77rWG/LvXh2jzwCElo5M+PXkYyEEltX8Bw2aI8FcsfJYVpzQt3ul5uLBS3FwvRfn6nah+SuB+eP3wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=U9zeIuSG; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID; bh=AsWwEEvmw/bdBxEEFaD+tDkgRMXNBIOX6N+pznhzV4k=; b=U9zeIu
+	SGrGXjoQErw2vKerYTqZX06+8gI5WNy1r/v8gY34qXPX/JWYfUwnLiGnC8rPSM7JOW0bPgqNqTWhQ
+	3zPwMMztceWhILwN2makGTOK6iFTQa/ualdVj7eOtyFK4KbKSrqa0CWb2f5DRMNcqgm2E4SsWLCNS
+	gR+wdLYlfwVYZEtB9vKUcEfFz+S5NBYSWXqAT9GPTQKUA2iDU54KN881gNUsxbt7XdxCojJDYdXYc
+	v6gVhqCuVeKp2IJ3wQI6RbAbBn+e9o2TL2H1N2dbcx19Zs+OaAOa+P7KLUKPC3vewxztQb3Fp9e63
+	X6fQ+AZHNU/NFGIOhvV1z5Zp7x2g==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tAlZB-0003Cs-DP; Tue, 12 Nov 2024 08:44:01 +0100
+Received: from [185.17.218.86] (helo=Seans-MacBook-Pro.local)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tAlZA-000PqT-2H;
+	Tue, 12 Nov 2024 08:44:00 +0100
+Date: Tue, 12 Nov 2024 08:44:00 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ
+ voltage
+Message-ID: <lfgpif7zqwr3ojopcnxmktdhfpeui5yjrxp5dbzhlz7h3ewhle@3lbg553ujfgq>
+References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
+ <20241112-bizarre-cuttlefish-of-excellence-ff4e83-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4cb3b1c7-86fa-4344-a413-031723f31f1d@roeck-us.net>
+In-Reply-To: <20241112-bizarre-cuttlefish-of-excellence-ff4e83-mkl@pengutronix.de>
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27455/Mon Nov 11 10:58:33 2024)
 
-On Mon, Nov 11, 2024 at 09:01:33AM -0800, Guenter Roeck wrote:
-> On 11/11/24 01:50, Sung-Chi wrote:
-> > From: "Sung-Chi, Li" <lschyi@chromium.org>
-> > 
-> > cros_ec hwmon driver probes available thermal sensors when probing the
-> > driver.  Register these thermal sensors to the thermal framework, such
-> > that thermal framework can adopt these sensors as well.
-> > 
-> > To make cros_ec registrable to thermal framework, the cros_ec dts need
-> > the corresponding changes:
-> > 
-> > &cros_ec {
-> > 	#thermal-sensor-cells = <1>;
-> > };
-> > 
-> > Change-Id: I29b638427c715cb44391496881fc61ad53abccaf
+Hi Marc,
+
+On Tue, Nov 12, 2024 at 08:38:26AM +0100, Marc Kleine-Budde wrote:
+> On 11.11.2024 09:54:48, Sean Nyekjaer wrote:
+> > This series adds support for setting the nWKRQ voltage.
 > 
-> Drop.
+> IIRC the yaml change should be made before the driver change. Please
+> make the yaml changes the 1st patch in the series.
 > 
-> > Signed-off-by: Sung-Chi, Li <lschyi@chromium.org>
-> 
-> Detailed explanation will be needed: Why not use HWMON_C_REGISTER_TZ ?
-> Unless I am missing something, this code just duplicates code from the hwmon core.
-> 
-> Please do not send follow-up patch series as response to previous ones.
-> 
-> Guenter
+> Marc
 > 
 
-Hi, thank you for pointing out using HWMON_C_REGISTER_TZ. After checking how
-HWMON_C_REGSITER_TZ works, I think I only need to add one line into the
-cros_ec_hwmon_info, and almost all concerns Thomas pointed out in latest reply
-would be resolved automatically (because there would be only one line of change,
-and that change is just a hwmon configuration, so should be a valid way of
-combining with the thermal system).
+I know, so I have added, prerequisite-change-id as pr the b4 manual.
 
-Thank all for reviewing and giving inputs, and I will soon send out the one
-line patch.
-
-Best,
-Sung-Chi, Li
+/Sean
 
