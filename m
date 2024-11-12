@@ -1,100 +1,89 @@
-Return-Path: <linux-kernel+bounces-405764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC14D9C57FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:40:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5319C588E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:05:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6356B2F64E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:37:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E5EDB3C994
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744D123099B;
-	Tue, 12 Nov 2024 11:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755242309AF;
+	Tue, 12 Nov 2024 11:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+jFAjy5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+bqbS4O"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5436230989
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7499B230999;
+	Tue, 12 Nov 2024 11:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731411415; cv=none; b=s0X3NidoP7nenrtL9gC/j9zZxkklFia8kAbE4W47ktkDZNMJ4XDv7WTeTW85ERgJoswOQGLPuNq8IQ0587TWu0fLR8WpaB8fU/tORN8sidcQFjfpHMy4Q1PjdK8Fm0fepTdU2WBOaSyC3ph6paf7cAtJ/iuJ7LuavlpKWWamTXk=
+	t=1731411462; cv=none; b=BHEz5LNcvrF5NbiOqa9lu9teK4dsbDjXyiuFi0iaeL+wDrsGAvHIejhJHRuovNkwFRLmIwfMlVItXMbABSitaZedudB9kURgClhQEmVNEnQT5bpwPM/8h5cyD4TneM2hIQ4eT6/CLmxD81UOH9eG2rfEVOPsOGdaEWx5go5JBNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731411415; c=relaxed/simple;
-	bh=+50FJGKdMdt7/QBZZo9VkQ5mGbZlOo68kDdHC+pjOa8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bWNc/SRShNRW6s5V7y2w9r9XpZDgfXIf1h1/zPFxyyHIkTjwjFPfjedTIwhN3MzwNqj1Dg2yHUqkXuCSc+PkJOHltYck44x4EZEijl2d1MHDoaDaDJRflJKFVitE63lOZZl1voRV+U4mS351RhQ5LjwfkUObXM8yUEF6u5SWg+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+jFAjy5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0539BC4CECD;
-	Tue, 12 Nov 2024 11:36:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731411415;
-	bh=+50FJGKdMdt7/QBZZo9VkQ5mGbZlOo68kDdHC+pjOa8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=T+jFAjy52Z8t8R5fvwoK+XP6rKli9GFcPqJA38QvFmbllvWaJNkLV+ryiioUi8csq
-	 LDr5ctH6/dxkIehO0px6gixHtAdIduiNObraFQPQ8bbOREjhhR0YZRp99dxNDUz7Mc
-	 vLtS6pJnK2oKgMagVZwPXWo9s0pRPAmp1+dexz+aY/9rgky/hbq1jj1mKzGte+QyJS
-	 +2vmrffmodqalD+QMGHRlz0iW1C0zu1/3MCUmLd2AAIvYYX1Sl2I5rbAioHJHMkbwj
-	 oM3PQjwLSdjEsw9e2u6feWrAR8ci6xd7aYSmRtkm7g2p/sRRF5dGEWcJSnpuNIu8ze
-	 Zp6cHHT0VMCcg==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Andreas Schwab <schwab@suse.de>, Alexandre Ghiti <alex@ghiti.fr>, Palmer
- Dabbelt <palmer@dabbelt.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: linux-riscv@lists.infradead.org, =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>,
- Charlie Jenkins <charlie@rivosinc.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Albert
- Ou <aou@eecs.berkeley.edu>, Andrea Parri <parri.andrea@gmail.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: add forwarding header for
- arch/riscv/include/asm/fence.h
-In-Reply-To: <mvmbjymxdsc.fsf@suse.de>
-References: <mvm5xq44bqh.fsf@suse.de>
- <d380fd10-ebc4-4d66-becb-13995372d41a@ghiti.fr> <mvmfrnyxg2n.fsf@suse.de>
- <26452229-7461-48aa-987a-28444ace4f28@ghiti.fr> <mvmbjymxdsc.fsf@suse.de>
-Date: Tue, 12 Nov 2024 12:36:51 +0100
-Message-ID: <87h68cu1ik.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1731411462; c=relaxed/simple;
+	bh=Vfrl3Im6GZEToB0Gpf3py3k7uTOf2YCEgh+4Yca4qLM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mp5oqNlODdRnDuvxE70ZrWbRbk4C9BIaIEzO1HXoS+6A8gsjSX8wuUek6kYSESUBziipviS5vDy80Ok4pViObld6w11KLD55LXd09gA1MqibbdB3lx917w0iJZb1Mbl+rKon3PgDvW4SbeDno0FUC3r8oPdukR3chZ3CMXYnEbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+bqbS4O; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6cbd550b648so42243346d6.0;
+        Tue, 12 Nov 2024 03:37:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731411460; x=1732016260; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vfrl3Im6GZEToB0Gpf3py3k7uTOf2YCEgh+4Yca4qLM=;
+        b=O+bqbS4OLV8VGEeVsVA9HGsR1GvBKqN6Q1PGKdTiqWtOn66sP+H0qiwwOauT2nX5G4
+         jpl1qoTQro/33BrePSQgyoZArjrOT2DbbTVqV9Cm9qEAIOhADWWCC7/1IxpE0FFAmAWg
+         gx1oxW0LCpj33+NZQ8Crd7rNx1BY63FbFm8JGtlSInwI+TqvkNOvbOWKlNYyNUVnHOMn
+         1II7Rk3Og4ZBnEh3cPknWQE6JpCUTVxsR1UJ33NZsZyXtpPnjF+WpkbUGhS7o6oa2Pdb
+         2dA5bcRZZC9r+ubxTlVjc8XAYhr5UQMS9yBG8gJwLO3p5CB/0YzrzPsNfEwXE3dVZV2x
+         tubw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731411460; x=1732016260;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vfrl3Im6GZEToB0Gpf3py3k7uTOf2YCEgh+4Yca4qLM=;
+        b=KDRagcW0+utK4+P2z3EhoxOOKjJD7aycvhFuzcjggb81uwpDxiSkPsIJt2Z/p8a1Y8
+         52fmrGdyNyoTCGD3FQEQOHL5txn/6E5SU1XkukYindb5dZKh7mzh70LKzWTjvchYMKr0
+         V5syzXFRjpY5+pDylnhnloC+sdT8Wh9uycUzK/D4a5BKixEUJ3KyyMz2G6FsW4ySJQAJ
+         LP1pJX/fDE5jS9leyJgilO1p+jYnZOYna/ivjlzpyqXEbuPvCOD/UJ4NWrrK6YITVav9
+         qKxlXYgfQa2aIk6OF+Sc/6ixwKXFWs23OWCDeDmoH+FJHZVeAb4nXsR5vxBZg/QQFC+/
+         03xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXmjYRvsOGu0hK97l65W7v5DkgXXLHJ55LsoFkKeqpP6UmApi8SxwnR2BFOcXzC3A73RachMfRRxgc5gkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz78bQmPsuFpAeIlNoprASeYv2WakVL+RkclJ5Y9AHfXPSzfpe+
+	nDWmLu9N1DXhbeLLQfXvtqK84QXDufN+ofnyqchpLlwu3NpiDaDoS3+ElMkFNMCLz1WEg9qok42
+	QmErlVUNSRZioPIg7iQLdAHRdXgw=
+X-Google-Smtp-Source: AGHT+IHwlN//Kpl20G/RUC+3vT5GO7jitSU59M/eimS/04ANJ655/R6zZh8rbNEMuo9t0RWvM/PLJkNkynFh3IwnVZ8=
+X-Received: by 2002:a05:6214:459a:b0:6cb:fe93:53a6 with SMTP id
+ 6a1803df08f44-6d39e107939mr212424006d6.1.1731411460167; Tue, 12 Nov 2024
+ 03:37:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20241112100328.134730-1-yyyynoom@gmail.com>
+In-Reply-To: <20241112100328.134730-1-yyyynoom@gmail.com>
+From: Moon Yeounsu <yyyynoom@gmail.com>
+Date: Tue, 12 Nov 2024 20:37:28 +0900
+Message-ID: <CAAjsZQwvtOXBi=Z_aOzQR54QWav6OMUKTRj6QPAJJyjm1q1SoQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v3] net: dlink: add support for reporting stats
+ via `ethtool -S`
+To: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+	kuba@kernel.org, Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Andreas Schwab <schwab@suse.de> writes:
-
-> On Nov 11 2024, Alexandre Ghiti wrote:
->
->> Indeed, Bjorn's patches did not make it into rc7...
->
-> That needs to be fixed ASAP!
-
-Ok, if we want to unbreak the tools builds, two series are required for
-6.12.
-
-[1] which addresses the asm/fence.h path issue
-[2] which addresses the same issue, but for non-cross builds
-
-[2] can be pulled to RISC-V fixes, but [1] reside in the bpf-next tree
-(target 6.13). Details here: [3].
-
-To reiterate what I asked Andrii, but for RISC-V fixes: Would it be
-possible to pull these patches [2] into the RISC-V tree, having a
-duplicate set in bpf-next? Or are we stuck with stable backporting, as
-Andrii suggests?
-
-
-Bj=C3=B6rn
-
-[1] https://lore.kernel.org/linux-riscv/20240927131355.350918-1-bjorn@kerne=
-l.org/
-[2] https://lore.kernel.org/linux-riscv/20241106193208.290067-1-bjorn@kerne=
-l.org/
-[3] https://lore.kernel.org/linux-riscv/CAEf4BzZbq9OwSGi4pdb5_q8YkErfFiQFKY=
-Xg3g1rjpdejafx+Q@mail.gmail.com/
+There is an issue in this patch where stat information is not being
+added. Please DO NOT approve this patch.
+Additionally, while not critical, there are minor issues such as
+indentation problems and the lack of a Changelog. I will make sure to
+address these issues and send an updated version.
 
