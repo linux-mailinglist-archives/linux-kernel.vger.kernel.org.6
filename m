@@ -1,126 +1,99 @@
-Return-Path: <linux-kernel+bounces-406204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0999C5C15
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:40:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024EB9C5C36
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C314F1F23452
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:40:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EE81B38ECC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AAE2022CA;
-	Tue, 12 Nov 2024 15:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FA5148828;
+	Tue, 12 Nov 2024 13:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="n+25dFhC"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="uY2tL0PP"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B7F1FEFA8;
-	Tue, 12 Nov 2024 15:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC1142AA4;
+	Tue, 12 Nov 2024 13:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731425994; cv=none; b=WWQkbWaWc1fjU3NvqUBhYJePTCWGppcqbRE/dnseAFnXslOX9KuhQTMFEwgNZwxEe+sc4CIC+zcIzHBHrunSN7ZPAmhEcxFXAaBck0AL8qPUYGdt35hAHkxeOWEv6VXdIIDc2DZWHa86qYAYqsrbDHnE5LUALHgTgNfTYZxnF4E=
+	t=1731418644; cv=none; b=Jsdm5mKLGt2tatlVJSDvDGyYpXXadBIEtVWObCIozC1BvzJf6LxCX2Vr5oFRxThlH+ONyzRYkjrHmP33CKrbivRjTdyCA71L7F3JudLTEmsAiOBTmtY9qvv/rAzwLMk+Q2ZEOMgpNTHmsZAFsyAmobJWb4PiWbLIvrs5FUCklZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731425994; c=relaxed/simple;
-	bh=fvrNxzwDp2P3iPosrFRowJKvdfK7Cu3AryWdKt0N3Ls=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eiCp7cBwobU3vo5wU7Oz8Wk7qNMvBr63xuPwkwFsyC6GpfjFpFMBexEh696PyvIkbHydEzLqKyIhE+PpfByQPTPwmBcI2BIlM33k0fpxO/t3xH4pwGq9+SJ1+ZNOIvbvIlYF4NRowj3MtxIHnFrj4UjYcqEDG/3KRPODh+vyd6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=n+25dFhC; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=yC4PgO0iUg1E/9QX5QiVdbAl0FhMlHnWwAy+hx8zLyU=;
-	t=1731425993; x=1732635593; b=n+25dFhCEMsvZSJ+77KWS4+QeyK3HpzmWVj3lDZbVhXkBVK
-	iw9POVHy/1O36NwC8m1YrTkNw3NHwxlqSP4OnvNlw1HVcJrhFevAeT1Zzw0BH9QJCIARISV+Mpfc4
-	MXLu/wyejOcVmwSzslUW3HyOeo2xwD920oTB+yRrnbU3e8DALso3CO/h62kbtIoE19sMz88YsiMwu
-	GrMRaMlywOCenNPEtD8R76dNEr9QyRTPe4dsCq0HfLImkZgdwpwDnnl/5Z9GgdAwrhxuo9Z3EsHku
-	RzmrbxbfjTCFOtw5f059uYS4yw7gpTSYHLSMD6Epp+51Y+YKGO9IdivU7Wk7wpIQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1tAszb-000000031hp-0UTN;
-	Tue, 12 Nov 2024 16:39:47 +0100
-Message-ID: <59b318b2d6719a009189e10949df35f855790d63.camel@sipsolutions.net>
-Subject: Re: [PATCH v5 09/17] wifi: cc33xx: Add main.c
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Nemanov, Michael" <michael.nemanov@ti.com>, Kalle Valo
- <kvalo@kernel.org>,  "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sabeeh Khan <sabeeh-khan@ti.com>
-Date: Tue, 12 Nov 2024 16:39:45 +0100
-In-Reply-To: <2dbf1cba-0b16-413b-947e-dacf32c85687@ti.com>
-References: <20241107125209.1736277-1-michael.nemanov@ti.com>
-	 <20241107125209.1736277-10-michael.nemanov@ti.com>
-	 <685d782d68bfc664c4fcc594dff96546ffc30e5f.camel@sipsolutions.net>
-	 <2dbf1cba-0b16-413b-947e-dacf32c85687@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1731418644; c=relaxed/simple;
+	bh=EVYtzQGT3MSF63g4iCllL2nKr5PUl0YgthsgBXSWCjo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P9WB9Wq5a388qZBtqqE3FMG09iLo2ZwRQdbaapuM/L0KqQULCzrXKT1v+tdg4becMu6N3zb24QeGrSd0JWm3nppKnxoCc3RJBETfVGTPio/DiOiBEQGT5h7YPdX2cCTBqgWMsWBmFPdjkXgrLKY4iX0saYhlGS4OEIXK8ieh0Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=uY2tL0PP; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1731418642; x=1762954642;
+  h=from:to:subject:date:message-id:mime-version;
+  bh=EVYtzQGT3MSF63g4iCllL2nKr5PUl0YgthsgBXSWCjo=;
+  b=uY2tL0PPtCMJhMNZ2jWuI0Y/ABpZN0GlP9IGS4yi/sCb9TXxtE76TbP/
+   /H0esl3SVGNLDvsCACts8jzUqvfT8Few7OE4FkH0sGO+Qq4aKuyoLxBXJ
+   ktXs+rNZW2QXTG8OSgC3r/sUk5SC9rfW1cuKQ+OA2RtnwVU3QRf1DzCHP
+   SXJSftW/uvWPDLOSUeA8SM9XUAMqqz9XT1aQZbjMqC1vDGSri4mBq7ETy
+   IO6qOr1h7gqKrUTVtwWyUUSLw+Q0KMlqLW2FPMrdEGfpLDNFzrEewfa5/
+   SFCyM38X+gfz0dSRXh8toP91rC574h830e6OxcBQyB+oiazuC1nHWoE2A
+   w==;
+X-CSE-ConnectionGUID: MrNChj17QCGoNOgRM4DkTw==
+X-CSE-MsgGUID: pxuDztyERIyMkw3B1dHC1w==
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="201634987"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Nov 2024 06:37:21 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 12 Nov 2024 06:37:05 -0700
+Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 12 Nov 2024 06:37:01 -0700
+From: Divya Koppera <divya.koppera@microchip.com>
+To: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
+	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>,
+	<vadim.fedorenko@linux.dev>
+Subject: [PATCH net-next v3 0/5] Add ptp library for Microchip phys
+Date: Tue, 12 Nov 2024 19:07:19 +0530
+Message-ID: <20241112133724.16057-1-divya.koppera@microchip.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain
 
-On Tue, 2024-11-12 at 17:34 +0200, Nemanov, Michael wrote:
->=20
-> > > +static int parse_control_message(struct cc33xx *cc,
-> > > +				 const u8 *buffer, size_t buffer_length)
-> > > +{
-> > > +	u8 *const end_of_payload =3D (u8 *const)buffer + buffer_length;
-> > > +	u8 *const start_of_payload =3D (u8 *const)buffer;
-> >=20
-> > I don't think the "u8 *const" is useful here, and the cast is awkward.
-> > If anything you'd want "const u8 *const" (which should make it not need
-> > the cast), but the const you have adds no value... do you even know wha=
-t
-> > it means? ;-)
-> >=20
->=20
-> My intent was to express that start and end pointers are fixed and will=
-=20
-> not change in the loop below. When reading this again I agree this hurts=
-=20
-> more than it helps, I'll drop it.
+Adds support of ptp library in Microchip phys
 
-Well, I don't even mind the const so much rather than the cast, I'd
-probably not have commented on it if it were
+Divya Koppera (5):
+  net: phy: microchip_ptp : Add header file for Microchip ptp library
+  net: phy: microchip_ptp : Add ptp library for Microchip phys
+  net: phy: Kconfig: Add ptp library support and 1588 optional flag in
+    Microchip phys
+  net: phy: Makefile: Add makefile support for ptp in Microchip phys
+  net: phy: microchip_t1 : Add initialization of ptp for lan887x
 
-	const u8 *const end_of_payload =3D buffer + buffer_length;
-	const u8 *const start_of_payload =3D buffer;
+ drivers/net/phy/Kconfig         |   9 +-
+ drivers/net/phy/Makefile        |   1 +
+ drivers/net/phy/microchip_ptp.c | 997 ++++++++++++++++++++++++++++++++
+ drivers/net/phy/microchip_ptp.h | 217 +++++++
+ drivers/net/phy/microchip_t1.c  |  40 +-
+ 5 files changed, 1260 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/net/phy/microchip_ptp.c
+ create mode 100644 drivers/net/phy/microchip_ptp.h
 
-I'd still think the second const (for the variable) isn't all that
-useful, but really the lack of first const (for the object pointed to)
-makes the casts necessary and (IMHO) that's what hurts.
+-- 
+2.17.1
 
-> const u8 *buffer in the prototype illustrates that parse_control_message=
-=20
-> will not change the data so I'll keep it if there a re no objections.
-
-Sure.
-
-> > > +	struct NAB_header *nab_header;
-> >=20
-> > surely checkpatch complained about CamelCase or so with the struct name
-> > like that?
-> >=20
->=20
-> Double-checked, no warnings from checkpatch:
-
-Hah, ok :) I'm surprised because it complained about _Generic in my
-patch, and that's something you really can't even change since it's C11
-standard ...
-
-johannes
 
