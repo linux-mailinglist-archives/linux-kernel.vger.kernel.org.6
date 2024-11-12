@@ -1,114 +1,255 @@
-Return-Path: <linux-kernel+bounces-405225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467B29C4EC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:30:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F118B9C4ECC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:36:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF4828820C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:30:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B2051F24867
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3B7209F2A;
-	Tue, 12 Nov 2024 06:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VIAME+0S"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AE6209664;
+	Tue, 12 Nov 2024 06:36:02 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886F45234;
-	Tue, 12 Nov 2024 06:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E5318BBA2;
+	Tue, 12 Nov 2024 06:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731393038; cv=none; b=fUarVSd7nZdyy/09ist1uUmITglg6nEf2piOTQhCioLroqzuVyApJ7tSJl6f7sMxpcorN2Aea2/Hv0YphLgVzzySq7t7j9TmLvfJaLMEyQ0skncY8OnLij6ZpwLrJfbXP64U3Eo+q/h8KP+AucaDfsyj2hmvEME548LyBCoASZU=
+	t=1731393362; cv=none; b=fOlF9rWzinmEa4pBMir9oQDqM2aM0yymyKcD9I83DFkGpPbhEZ/fBW2sBE3tu67NdaZwPBQc5wf2U0lfzAYe05qYYFecDlWV6UjziSe01Qsno4FqyTf7n5AR9uwT5unf+IsD57Y7G5VEUIMFnKfhi6kHFfLNYvnDtzbgZYtx+V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731393038; c=relaxed/simple;
-	bh=ZamXW1gOCoJT7299mt7TjY0oZlhR+DtytP5GXkfobT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=swA6B85brmavrlxMqMniM937qLJ4dfzBt/ccqtC1UkQKLCUIOB5SDgPmjJEmPk2uyBzmvOvJRAOrp75+r1Or7hXMWkNmqumkGT9P/VtM0b6uyqfeVYeLbngprCPnC4M1ZnKKWEbpJVEMCbciieLlNnfBh1D+1W0qeAEOKb6PThs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VIAME+0S; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731393029;
-	bh=ZamXW1gOCoJT7299mt7TjY0oZlhR+DtytP5GXkfobT4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VIAME+0SFPNmDw6F3RWVElW2DTXlkvpPJ1l5NdmewntS4Mgbim0aZS/seNnFpsUAD
-	 DI2FQLS5BTs3p4T97/ScZwZjlBBAtGQkJIdSym/3Oq+wq8gtkvFy7fsUUllTe/yKHd
-	 3ohh0Fl412lzjWRA/oCG3WLTxsyBLoDGeWHQgTpWxO72cWtTAt5Dj+us5sMd5tKhvn
-	 jPD3WgfnpK1a4OnYQCwghb4Et6wrFukywwgH/7he0irh2Y+UbOSu3XnStrIxgMD0mk
-	 mtNsN9/XysoguTVa5/RPLEi4+QgIe65NyfzLwEExzuTcQpP6+lR+ycOGstLa5w3mME
-	 ns4U/7vNdCoog==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xnc3n3Gpqz4x2J;
-	Tue, 12 Nov 2024 17:30:29 +1100 (AEDT)
-Date: Tue, 12 Nov 2024 17:30:26 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the rust tree
-Message-ID: <20241112172920.6aedc927@canb.auug.org.au>
-In-Reply-To: <CANiq72mYq-53xB9WFTH3H78WLrQuJze-nEybjwyLqnrSbv8UqA@mail.gmail.com>
-References: <20241111175842.550fc29d@canb.auug.org.au>
-	<CANiq72=JhmDJJCgcG5ex2A1gvBxCg3wzzutUc3L1HLPrPsHeyA@mail.gmail.com>
-	<CANiq72nyWAhyORsDij6P6U7Ww=eCp6S=LzPWZN4wxGD8JiK+RQ@mail.gmail.com>
-	<CANiq72mYq-53xB9WFTH3H78WLrQuJze-nEybjwyLqnrSbv8UqA@mail.gmail.com>
+	s=arc-20240116; t=1731393362; c=relaxed/simple;
+	bh=+Lb/mifrNg/smRm/Odip625EHRUZkjx9ViFBn6wuARY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nGma80tCl/WiAlMf5KmQZI1EMXfD9NfUvd+7IXdA2RFmEEOsu6k6zVKFgrcfZO7j00yVaKnRHaZ946pUyXULcU1vI26xGs67qLNrNIIXHwpDCFnSs3B9QxPLDib7aiWibThw9T1ubcGc6YyKhWiN5LULspKIkZC8Dmuvwy5z++w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 025FEC4CECD;
+	Tue, 12 Nov 2024 06:35:58 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	Xuefeng Li <lixuefeng@loongson.cn>,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	loongson-kernel@lists.loongnix.cn,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Bibo Mao <maobibo@loongson.cn>
+Subject: [PATCH] LoongArch: For all possible CPUs setup logical-physical CPU mapping
+Date: Tue, 12 Nov 2024 14:35:40 +0800
+Message-ID: <20241112063540.1135079-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/=99vlNttIZwjw_HnFWa+GvR";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/=99vlNttIZwjw_HnFWa+GvR
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In order to support ACPI-based physical CPU hotplug, we suppose for all
+"possible" CPUs cpu_logical_map() can work. Because some drivers want to
+use cpu_logical_map() for all "possible" CPUs, while currently we only
+setup logical-physical mapping for "present" CPUs. This lack of mapping
+also causes cpu_to_node() cannot work for hot-added CPUs.
 
-Hi Miguel,
+All "possible" CPUs are listed in MADT, and the "present" subset is
+marked as ACPI_MADT_ENABLED. To setup logical-physical CPU mapping for
+all possible CPUs and keep present CPUs continuous in cpu_present_mask,
+we parse MADT twice. The first pass handles CPUs with ACPI_MADT_ENABLED
+and the second pass handles CPUs without ACPI_MADT_ENABLED.
 
-On Tue, 12 Nov 2024 00:58:47 +0100 Miguel Ojeda <miguel.ojeda.sandonis@gmai=
-l.com> wrote:
->
-> Stephen: I went with this, since unless I did something wrong, you
-> should see those build failures are gone, i.e. your build resolutions
-> were fine.
->=20
-> The hashes didn't change, I just dropped the top two commits.
->=20
-> You should be able to reuse the resolutions from yesterday.
->=20
-> If needed, we may simplify further, but let's see if this way works.
+The global flag (cpu_enumerated) is removed because acpi_map_cpu() calls
+cpu_number_map() rather than set_processor_mask() now.
 
-Its all good, no build failures and conflicts still there (but rerere
-took care of those).
+Reported-by: Bibo Mao <maobibo@loongson.cn>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ arch/loongarch/kernel/acpi.c | 81 +++++++++++++++++++++++-------------
+ arch/loongarch/kernel/smp.c  |  3 +-
+ 2 files changed, 55 insertions(+), 29 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
+index f1a74b80f22c..382a09a7152c 100644
+--- a/arch/loongarch/kernel/acpi.c
++++ b/arch/loongarch/kernel/acpi.c
+@@ -58,48 +58,48 @@ void __iomem *acpi_os_ioremap(acpi_physical_address phys, acpi_size size)
+ 		return ioremap_cache(phys, size);
+ }
+ 
+-static int cpu_enumerated = 0;
+-
+ #ifdef CONFIG_SMP
+-static int set_processor_mask(u32 id, u32 flags)
++static int set_processor_mask(u32 id, u32 pass)
+ {
+-	int nr_cpus;
+-	int cpu, cpuid = id;
+-
+-	if (!cpu_enumerated)
+-		nr_cpus = NR_CPUS;
+-	else
+-		nr_cpus = nr_cpu_ids;
++	int cpu = -1, cpuid = id;
+ 
+-	if (num_processors >= nr_cpus) {
++	if (num_processors >= NR_CPUS) {
+ 		pr_warn(PREFIX "nr_cpus limit of %i reached."
+-			" processor 0x%x ignored.\n", nr_cpus, cpuid);
++			" processor 0x%x ignored.\n", NR_CPUS, cpuid);
+ 
+ 		return -ENODEV;
+ 
+ 	}
++
+ 	if (cpuid == loongson_sysconf.boot_cpu_id)
+ 		cpu = 0;
+-	else
+-		cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
+-
+-	if (!cpu_enumerated)
+-		set_cpu_possible(cpu, true);
+ 
+-	if (flags & ACPI_MADT_ENABLED) {
++	switch (pass) {
++	case 1: /* Pass 1 handle enabled processors */
++		if (cpu < 0)
++			cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
+ 		num_processors++;
+ 		set_cpu_present(cpu, true);
+-		__cpu_number_map[cpuid] = cpu;
+-		__cpu_logical_map[cpu] = cpuid;
+-	} else
++		break;
++	case 2: /* Pass 2 handle disabled processors */
++		if (cpu < 0)
++			cpu = find_first_zero_bit(cpumask_bits(cpu_possible_mask), NR_CPUS);
+ 		disabled_cpus++;
++		break;
++	default:
++		return cpu;
++	}
++
++	set_cpu_possible(cpu, true);
++	__cpu_number_map[cpuid] = cpu;
++	__cpu_logical_map[cpu] = cpuid;
+ 
+ 	return cpu;
+ }
+ #endif
+ 
+ static int __init
+-acpi_parse_processor(union acpi_subtable_headers *header, const unsigned long end)
++acpi_parse_p1_processor(union acpi_subtable_headers *header, const unsigned long end)
+ {
+ 	struct acpi_madt_core_pic *processor = NULL;
+ 
+@@ -110,12 +110,29 @@ acpi_parse_processor(union acpi_subtable_headers *header, const unsigned long en
+ 	acpi_table_print_madt_entry(&header->common);
+ #ifdef CONFIG_SMP
+ 	acpi_core_pic[processor->core_id] = *processor;
+-	set_processor_mask(processor->core_id, processor->flags);
++	if (processor->flags & ACPI_MADT_ENABLED)
++		set_processor_mask(processor->core_id, 1);
+ #endif
+ 
+ 	return 0;
+ }
+ 
++static int __init
++acpi_parse_p2_processor(union acpi_subtable_headers *header, const unsigned long end)
++{
++	struct acpi_madt_core_pic *processor = NULL;
++
++	processor = (struct acpi_madt_core_pic *)header;
++	if (BAD_MADT_ENTRY(processor, end))
++		return -EINVAL;
++
++#ifdef CONFIG_SMP
++	if (!(processor->flags & ACPI_MADT_ENABLED))
++		set_processor_mask(processor->core_id, 2);
++#endif
++
++	return 0;
++}
+ static int __init
+ acpi_parse_eio_master(union acpi_subtable_headers *header, const unsigned long end)
+ {
+@@ -143,12 +160,14 @@ static void __init acpi_process_madt(void)
+ 	}
+ #endif
+ 	acpi_table_parse_madt(ACPI_MADT_TYPE_CORE_PIC,
+-			acpi_parse_processor, MAX_CORE_PIC);
++			acpi_parse_p1_processor, MAX_CORE_PIC);
++
++	acpi_table_parse_madt(ACPI_MADT_TYPE_CORE_PIC,
++			acpi_parse_p2_processor, MAX_CORE_PIC);
+ 
+ 	acpi_table_parse_madt(ACPI_MADT_TYPE_EIO_PIC,
+ 			acpi_parse_eio_master, MAX_IO_PICS);
+ 
+-	cpu_enumerated = 1;
+ 	loongson_sysconf.nr_cpus = num_processors;
+ }
+ 
+@@ -310,6 +329,10 @@ static int __ref acpi_map_cpu2node(acpi_handle handle, int cpu, int physid)
+ 	int nid;
+ 
+ 	nid = acpi_get_node(handle);
++
++	if (nid != NUMA_NO_NODE)
++		nid = early_cpu_to_node(cpu);
++
+ 	if (nid != NUMA_NO_NODE) {
+ 		set_cpuid_to_node(physid, nid);
+ 		node_set(nid, numa_nodes_parsed);
+@@ -324,12 +347,14 @@ int acpi_map_cpu(acpi_handle handle, phys_cpuid_t physid, u32 acpi_id, int *pcpu
+ {
+ 	int cpu;
+ 
+-	cpu = set_processor_mask(physid, ACPI_MADT_ENABLED);
+-	if (cpu < 0) {
++	cpu = cpu_number_map(physid);
++	if (cpu < 0 || cpu >= nr_cpu_ids) {
+ 		pr_info(PREFIX "Unable to map lapic to logical cpu number\n");
+-		return cpu;
++		return -ERANGE;
+ 	}
+ 
++	num_processors++;
++	set_cpu_present(cpu, true);
+ 	acpi_map_cpu2node(handle, cpu, physid);
+ 
+ 	*pcpu = cpu;
+diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+index 9afc2d8b3414..c0b498467ffa 100644
+--- a/arch/loongarch/kernel/smp.c
++++ b/arch/loongarch/kernel/smp.c
+@@ -331,11 +331,11 @@ void __init loongson_prepare_cpus(unsigned int max_cpus)
+ 	int i = 0;
+ 
+ 	parse_acpi_topology();
++	cpu_data[0].global_id = cpu_logical_map(0);
+ 
+ 	for (i = 0; i < loongson_sysconf.nr_cpus; i++) {
+ 		set_cpu_present(i, true);
+ 		csr_mail_send(0, __cpu_logical_map[i], 0);
+-		cpu_data[i].global_id = __cpu_logical_map[i];
+ 	}
+ 
+ 	per_cpu(cpu_state, smp_processor_id()) = CPU_ONLINE;
+@@ -380,6 +380,7 @@ void loongson_init_secondary(void)
+ 		     cpu_logical_map(cpu) / loongson_sysconf.cores_per_package;
+ 	cpu_data[cpu].core = pptt_enabled ? cpu_data[cpu].core :
+ 		     cpu_logical_map(cpu) % loongson_sysconf.cores_per_package;
++	cpu_data[cpu].global_id = cpu_logical_map(cpu);
+ }
+ 
+ void loongson_smp_finish(void)
+-- 
+2.43.5
 
---Sig_/=99vlNttIZwjw_HnFWa+GvR
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcy9gIACgkQAVBC80lX
-0GxL7AgApNQT+WgM6k+ao3utScRunxuPJjtYCCw3xoH1nCEXIfWhdtmJWeOs2Fa2
-fjL4W0hG18jIgKuMxZ6fT/zXIEdCHBL5pEQWNMNLyK/HIsSkvPNkLUQAs9Ulamgs
-BLp5DcMpvLKvNf/jZIHY76Iqf7Nkwpiix0OB2QXyP6oyJkuArnLucAg9ymkARbJZ
-dHetLqWMKR7xF3PsssWaNIdzMFW6SWmfdw1Gi3yZeykOaqQp7q1CzDEOU+eT93zM
-tBV6rl1eT07ob95TD2YzWQOTXVQhK/hGQiBqEALByrXyfqCje+mAmXXw8ENzvDRV
-5KT3/ryk7FfNZQ7OiYrhkY0eY5LUNg==
-=Ug1Y
------END PGP SIGNATURE-----
-
---Sig_/=99vlNttIZwjw_HnFWa+GvR--
 
