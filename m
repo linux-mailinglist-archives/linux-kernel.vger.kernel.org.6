@@ -1,193 +1,239 @@
-Return-Path: <linux-kernel+bounces-405354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737289C504F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:10:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AEA9C5034
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0402DB231C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E71E1F2142A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5077419D067;
-	Tue, 12 Nov 2024 08:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D83B20B803;
+	Tue, 12 Nov 2024 08:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WSuvlQDK"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="wvuzIg+l"
 Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC891A08CB
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B629D204932
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731398546; cv=none; b=Sm6hWb6G8khCz/o948RTWVDnlWQnlf32q5XMvNVEYxd+0Yu4rHrEdLnPZqhmzZ0wudwqHbQdJXBKyIDsyK9YRBXFGFLA0nGjReqXu86huHl4eM9SMWmntq/32zcrZ76dF6yaTUI10awSw3zggED+DOyZHJpL0Ye4b7wvbdR7mEo=
+	t=1731398559; cv=none; b=ilvHM/pQ7wKUjgd/VAN6qKiqLKMxHx5phOedGdRTFx3NbEJscATOkiLzYGM7OnV5kCLr1S8Bamd8Dad/vG4JS/Pwtpt4b/JnSqPgokzhFh1Ylm4pmDv2Xn84s4p/CbtO/yrzQ9/UQ6GtNGmRlWuVZ60W3UP0h/MbP8Iuy9kf8Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731398546; c=relaxed/simple;
-	bh=Gdzfz6nuF3Mv2sztvCsvN7kvDs3V6ahV1Si39NMWwFI=;
+	s=arc-20240116; t=1731398559; c=relaxed/simple;
+	bh=zTQs4iNYqrYTQArW/fssiFnJaC4arl24n5g3YvT3h9o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T8+hiMpv+SyIW08TdA1mu4we/K12NvbDLploOvDf1gCvW/pyGu3F0sDJNuS1W8f496EWrFHPCSIL8/cpYSBZtiMUh2f5iSS5A1sC3kZKuhn9huZiJhTz4lbsi1+bHBodMqPl/X45Xf8WzCoatw3cSODKhzPkCaveCgbwO9Ij5GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WSuvlQDK; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e30116efc9so4348106a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:02:24 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fifrKggJ7gYUxhhMgI3wmGHtv+8eBa41KDUFEh8+Bfa+BLg3Czlyy/0kd+jWABhTJPVtnPfdGApPUOyPe1/1xzLBfg+1bYbD1qSmAX4i9TJ7TTzXsLoD38CA1vVX82ZbbvXJ5xOiXliVLHRhKVNaSSnpljR9OgXNJdnhKgtQBJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=wvuzIg+l; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e3686088c3so4156789a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:02:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731398544; x=1732003344; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tdmcDJQb0kxtWtYlqvMLgav0HJpmDO9A2F6bQ8vcVVk=;
-        b=WSuvlQDKMgONIbtNGPDIFvCb70GeFTOzCgLON72X9RpI+9yUZWiMhpqTKg83ZIVPUH
-         TDIqhdOPuFTJYgXLhTLuKKI/7MekeTLommHP+nVt676qTztAzRAqhtGtUykFm+Xk4Zy2
-         Kagmskip+7WnTm++tTxv1HUPn+6uSX2LZSXBTAzNTDYNyA0iAysSiYBTt6i4niOQ3PLI
-         cuV31HiUJLdmB37a0nYliTW/yeh8c6AU1MWhSpCPnmxmUwu/4S03yKJF9jfceI9CsKWa
-         2LJICTT8G/BOAb00htrr6piqE2PZlleg2tL/EgXh60Pyv3yzsUhluvZvxkgRNZVID3VT
-         Yrow==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731398557; x=1732003357; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uS5sz2JrbxVWrFAMlEwTsUEhH2M/8tFpm8+HfNM8G+A=;
+        b=wvuzIg+lBY0vBcqKLe27w48ucELFJU5/acrz4KJTIvx+CnVg0qNXvWY4luHK2JEOiZ
+         kJmFIXqaTiKGkuGYVbCXhEvtyyLQ/IlqwJXC7DEZJCEYrv9FXVoHaAeePfLtNRdQkMBS
+         NpWGElPGLUwg6SYd3fGY1K0JKqlpfBQ7/zF6VZwD5ggPRQM79rU5vcsUsVv/KdzVTWTf
+         aLFGvswi3l9d60bMeMukzA5xiNobiKvFY51vMkEc3yH8CFUM3GkS3L5RXrcUDyvT4lmw
+         d3YD0P4OS8UL/ljgRjsvHEnCvFu4KFj60SPeIkceKTlVDRALN/fjIfTOGaY5mdt/9sRd
+         sBSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731398544; x=1732003344;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tdmcDJQb0kxtWtYlqvMLgav0HJpmDO9A2F6bQ8vcVVk=;
-        b=dFBn3OAqgPavzrAUyceEzczd/h37wM43Z1fqTqzhuPBL//zdbvFg5cfeZc9HGIC22Y
-         LnbtyZRnbACAHuvpGC8A6OXahJQgpcjv8NOBGEt8utdbW1VNi2R9OJVq0edSFYoGZIsO
-         AprsdvVLTIgQKwUob+KI5dd7qmcWVOVCtofNi4EYVRbxMmubiE1gHILB33FL7196myxh
-         VQdDtRGTS4Fcb1AJ7z5l1jJbpBv3Osc+2rjElv2pETHwBZaAoHz+yZ16+NoWWRu0idet
-         6R7lxmoCx34U32jRpChg0zaJ8oyh7oz4k3yGSvMDFUjpIOLLyOKBV6Wc/9OS4z+3Tiq+
-         jUOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVv65c6HYGyUlGaRwkkr2u7Q0rxSTLjjat2yKvIsD8CbVTM9wMn6YKcrd07Uv2gn0v3q6jmWIYaGvw2oUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ/0z0B8Xwt7PMQhzDSNB6BhKLZ0C56MCRnMczPNXyscpNg52L
-	sT5GD0n39+2bKc5USNAX9coPtX0zQFhzVQB2/VieRbEj2OgNEV4uTWLTz2dXBg==
-X-Google-Smtp-Source: AGHT+IGxmuoFDE3JbNsNx57MeL6QGeI+BKO4bDu8QDdKhoNLOa8X4pga/l3/7VWn1aeLrpGmDD9L0Q==
-X-Received: by 2002:a17:90b:4a87:b0:2e2:aef9:8f60 with SMTP id 98e67ed59e1d1-2e9b14ddb3bmr20379534a91.0.1731398544255;
-        Tue, 12 Nov 2024 00:02:24 -0800 (PST)
-Received: from thinkpad ([117.213.103.248])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9b23a510bsm8093555a91.15.2024.11.12.00.02.20
+        d=1e100.net; s=20230601; t=1731398557; x=1732003357;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uS5sz2JrbxVWrFAMlEwTsUEhH2M/8tFpm8+HfNM8G+A=;
+        b=WcvgMA8OxhWau0wkCdMKapROuG/+p+6DYbxUJgRAJSCQt9Ivj+vDo/HoR/afPlVFPK
+         AkcjY5PpIK8r3m1MzUrlTofYl2oQSsnTh6i8kHJct16Fekc9Y+1lKIroZI1Jo/Mq7TfE
+         4MpSpXzS6pKyzbJ9Uz/QQgS1I3N62SsWR5fqYesLdixaY7i5WMlsFvmWyBNIObkSGSm+
+         q/vosmwIBwP2EkhGCpc1B9lnCvd9IkKGe9agqb6DRp4FAuCqUr8+vyw2s3MhB6sBKfkY
+         WIwVTIVDR8GZob8MXfAbwJJSgo+y3NhoHrm51NHlahElGDvX/ZaYMhLat4v101xUUvXZ
+         4CBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVHijbWkWuNt+X0Gq+tZKaPz30cU2MBISDIvYTd+wZNK9779gT3VxWEN2uWxdl3e4ctekmDOF1X/LDwYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+Q/s6Wl6dMV4NrWVSB1Mn/LcgA1HcDMAPzGw82ciXkaFGm2N8
+	LR3d8DUv9sAfjDoKyaeuSOeYxgSsla/iqXQRx81vuOlILZRofanTisUDK2Lwa9o=
+X-Google-Smtp-Source: AGHT+IFdASJjKkBSve/9sR6y2nL3MjtIZ6Y0Rsyru0XowgMfxn2lqyfKHrnIxIhR4ebg9IkWdeg66w==
+X-Received: by 2002:a17:90a:ec86:b0:2e1:d5c9:1bc4 with SMTP id 98e67ed59e1d1-2e9e4aa8a19mr2404697a91.7.1731398557043;
+        Tue, 12 Nov 2024 00:02:37 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a4f97b2sm12006946a91.8.2024.11.12.00.02.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 00:02:23 -0800 (PST)
-Date: Tue, 12 Nov 2024 13:32:16 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>,
-	jingoohan1@gmail.com, bhelgaas@google.com, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, imx@lists.linux.dev,
-	kernel@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] PCI: dwc: Clean up some unnecessary codes in
- dw_pcie_suspend_noirq()
-Message-ID: <20241112080216.6kzdybe2su5ozp44@thinkpad>
-References: <20241107111334.n23ebkbs3uhxivvm@thinkpad>
- <20241108002425.GA1631063@bhelgaas>
- <20241111060902.mdbksegqj5rblqsn@thinkpad>
- <ZzJCGkenhxgJxoC4@lizhi-Precision-Tower-5810>
+        Tue, 12 Nov 2024 00:02:36 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1tAlr7-00DYAE-1V;
+	Tue, 12 Nov 2024 19:02:33 +1100
+Date: Tue, 12 Nov 2024 19:02:33 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 10/16] mm/filemap: make buffered writes work with
+ RWF_UNCACHED
+Message-ID: <ZzMLmYNQFzw9Xywv@dread.disaster.area>
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-11-axboe@kernel.dk>
+ <ZzKn4OyHXq5r6eiI@dread.disaster.area>
+ <0487b852-6e2b-4879-adf1-88ba75bdecc0@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZzJCGkenhxgJxoC4@lizhi-Precision-Tower-5810>
+In-Reply-To: <0487b852-6e2b-4879-adf1-88ba75bdecc0@kernel.dk>
 
-On Mon, Nov 11, 2024 at 12:42:50PM -0500, Frank Li wrote:
-> On Mon, Nov 11, 2024 at 11:39:02AM +0530, Manivannan Sadhasivam wrote:
-> > On Thu, Nov 07, 2024 at 06:24:25PM -0600, Bjorn Helgaas wrote:
-> > > On Thu, Nov 07, 2024 at 11:13:34AM +0000, Manivannan Sadhasivam wrote:
-> > > > On Thu, Nov 07, 2024 at 04:44:55PM +0800, Richard Zhu wrote:
-> > > > > Before sending PME_TURN_OFF, don't test the LTSSM stat. Since it's
-> > > > > safe to send PME_TURN_OFF message regardless of whether the link
-> > > > > is up or down. So, there would be no need to test the LTSSM stat
-> > > > > before sending PME_TURN_OFF message.
-> > > >
-> > > > What is the incentive to send PME_Turn_Off when link is not up?
-> > >
-> > > There's no need to send PME_Turn_Off when link is not up.
-> > >
-> > > But a link-up check is inherently racy because the link may go down
-> > > between the check and the PME_Turn_Off.  Since it's impossible for
-> > > software to guarantee the link is up, the Root Port should be able to
-> > > tolerate attempts to send PME_Turn_Off when the link is down.
-> > >
-> > > So IMO there's no need to check whether the link is up, and checking
-> > > gives the misleading impression that "we know the link is up and
-> > > therefore sending PME_Turn_Off is safe."
-> > >
-> >
-> > I agree that the check is racy (not sure if there is a better way to avoid
-> > that), but if you send the PME_Turn_Off unconditionally, then it will result in
-> > L23 Ready timeout and users will see the error message.
-> >
-> > > > > Remove the L2 poll too, after the PME_TURN_OFF message is sent
-> > > > > out.  Because the re-initialization would be done in
-> > > > > dw_pcie_resume_noirq().
-> > > >
-> > > > As Krishna explained, host needs to wait until the endpoint acks the
-> > > > message (just to give it some time to do cleanups). Then only the
-> > > > host can initiate D3Cold. It matters when the device supports L2.
-> > >
-> > > The important thing here is to be clear about the *reason* to poll for
-> > > L2 and the *event* that must wait for L2.
-> > >
-> > > I don't have any DesignWare specs, but when dw_pcie_suspend_noirq()
-> > > waits for DW_PCIE_LTSSM_L2_IDLE, I think what we're doing is waiting
-> > > for the link to be in the L2/L3 Ready pseudo-state (PCIe r6.0, sec
-> > > 5.2, fig 5-1).
-> > >
-> > > L2 and L3 are states where main power to the downstream component is
-> > > off, i.e., the component is in D3cold (r6.0, sec 5.3.2), so there is
-> > > no link in those states.
-> > >
-> > > The PME_Turn_Off handshake is part of the process to put the
-> > > downstream component in D3cold.  I think the reason for this handshake
-> > > is to allow an orderly shutdown of that component before main power is
-> > > removed.
-> > >
-> > > When the downstream component receives PME_Turn_Off, it will stop
-> > > scheduling new TLPs, but it may already have TLPs scheduled but not
-> > > yet sent.  If power were removed immediately, they would be lost.  My
-> > > understanding is that the link will not enter L2/L3 Ready until the
-> > > components on both ends have completed whatever needs to be done with
-> > > those TLPs.  (This is based on the L2/L3 discussion in the Mindshare
-> > > PCIe book; I haven't found clear spec citations for all of it.)
-> > >
-> > > I think waiting for L2/L3 Ready is to keep us from turning off main
-> > > power when the components are still trying to dispose of those TLPs.
-> > >
-> >
-> > Not just disposing TLPs as per the spec, most endpoints also need to reset their
-> > state machine as well (if there is a way for the endpoint sw to delay sending
-> > L23 Ready).
-> >
-> > > So I think every controller that turns off main power needs to wait
-> > > for L2/L3 Ready.
-> > >
-> > > There's also a requirement that software wait at least 100 ns after
-> > > L2/L3 Ready before turning off refclock and main power (sec
-> > > 5.3.3.2.1).
-> > >
-> >
-> > Right. Usually, the delay after PERST# assert would make sure this, but in
-> > layerscape driver (user of dw_pcie_suspend_noirq) I don't see power/refclk
-> > removal.
-> >
-> > Richard Zhu/Frank, thoughts?
+On Mon, Nov 11, 2024 at 06:27:46PM -0700, Jens Axboe wrote:
+> On 11/11/24 5:57 PM, Dave Chinner wrote:
+> > On Mon, Nov 11, 2024 at 04:37:37PM -0700, Jens Axboe wrote:
+> >> If RWF_UNCACHED is set for a write, mark new folios being written with
+> >> uncached. This is done by passing in the fact that it's an uncached write
+> >> through the folio pointer. We can only get there when IOCB_UNCACHED was
+> >> allowed, which can only happen if the file system opts in. Opting in means
+> >> they need to check for the LSB in the folio pointer to know if it's an
+> >> uncached write or not. If it is, then FGP_UNCACHED should be used if
+> >> creating new folios is necessary.
+> >>
+> >> Uncached writes will drop any folios they create upon writeback
+> >> completion, but leave folios that may exist in that range alone. Since
+> >> ->write_begin() doesn't currently take any flags, and to avoid needing
+> >> to change the callback kernel wide, use the foliop being passed in to
+> >> ->write_begin() to signal if this is an uncached write or not. File
+> >> systems can then use that to mark newly created folios as uncached.
+> >>
+> >> Add a helper, generic_uncached_write(), that generic_file_write_iter()
+> >> calls upon successful completion of an uncached write.
+> > 
+> > This doesn't implement an "uncached" write operation. This
+> > implements a cache write-through operation.
 > 
-> Generally, power/refclk remove when system enter sleep state. There is
-> signal "suspend_request_b", which connect to PMIC. After CPU trigger this
-> signnal, PMIC will turn off (pre fused) some power rail.
+> It's uncached in the sense that the range gets pruned on writeback
+> completion.
+
+That's not the definition of "uncached". Direct IO is, by
+definition, "uncached" because it bypasses the cache and is not
+coherent with the contents of the cache.
+
+This IO, however, is moving the data coherently through the cache
+(both on read and write).  The cached folios are transient - i.e.
+-temporarily resident- in the cache whilst the IO is in progress -
+but this behaviour does not make it "uncached IO".
+
+Calling it "uncached IO " is simply wrong from any direction I look
+at it....
+
+> For write-through, I'd consider that just the fact that it
+> gets kicked off once dirtied rather than wait for writeback to get
+> kicked at some point.
 > 
-> Refclk(come from SOC chip), OSC will be shutdown when send out
-> "suspend_request_b".
+> So I'd say write-through is a subset of that.
+
+I think the post-IO invalidation that these IOs do is largely
+irrelevant to how the page cache processes the write. Indeed,
+from userspace, the functionality in this patchset would be
+implemented like this:
+
+oneshot_data_write(fd, buf, len, off)
+{
+	/* write into page cache */
+	pwrite(fd, buf, len, off);
+
+	/* force the write through the page cache */
+	sync_file_range(fd, off, len, SYNC_FILE_RANGE_WRITE | SYNC_FILE_RANGE_WAIT_AFTER);
+
+	/* Invalidate the single use data in the cache now it is on disk */
+	posix_fadvise(fd, off, len, POSIX_FADV_DONTNEED);
+}
+
+Allowing the application to control writeback and invalidation
+granularity is a much more flexible solution to the problem here;
+when IO is sequential, delayed allocation will be allowed to ensure
+large contiguous extents are created and that will greatly reduce
+file fragmentation on XFS, btrfs, bcachefs and ext4. For random
+writes, it'll submit async IOs in batches...
+
+Given that io_uring already supports sync_file_range() and
+posix_fadvise(), I'm wondering why we need an new IO API to perform
+this specific write-through behaviour in a way that is less flexible
+than what applications can already implement through existing
+APIs....
+
+> > the same problems you are trying to work around in this series
+> > with "uncached" writes.
+> > 
+> > IOWS, what we really want is page cache write-through as an
+> > automatic feature for buffered writes.
 > 
+> I don't know who "we" is here - what I really want is for the write to
+> get kicked off, but also reclaimed as part of completion. I don't want
+> kswapd to do that, as it's inefficient.
 
-Thanks for clarifying! Then it would be better to add the 100ns delay after
-receiving the L23 Ready message from endpoint.
+"we" as in the general cohort of filesystem and mm
+developers who interact closely with the page cache all the time.
+There was a fair bit of talk about writethrough and other
+transparent page cache IO path improvements at LSFMM this year.
 
-- Mani
+> > That also gives us a common place for adding cache write-through
+> > trigger logic (think writebehind trigger logic similar to readahead)
+> > and this is also a place where we could automatically tag mapping
+> > ranges for reclaim on writeback completion....
+> 
+> I appreciate that you seemingly like the concept, but not that you are
+> also seemingly trying to commandeer this to be something else. Unless
+> you like the automatic reclaiming as well, it's not clear to me.
 
+I'm not trying to commandeer anything.
+
+Having thought about it more, I think this new API is unneccesary
+for custom written applications to perform fine grained control of
+page cache residency of one-shot data. We already have APIs that
+allow applications to do exactly what this patchset is doing. rather
+than choosing to modify whatever benchmark being used to use
+existing APIs, a choice was made to modify both the applicaiton and
+the kernel to implement a whole new API....
+
+I think that was the -wrong choice-.
+
+I think this partially because the kernel modifications are don't
+really help further us towards the goal of transparent mode
+switching in the page cache.
+
+Read-through should be a mode that the readahead control activates,
+not be something triggered by a special read() syscall flag. We
+already have access patterns and fadvise modes guiding this.
+Write-through should be controlled in a similar way.
+
+And making the data being read and written behave as transient page
+caceh objects should be done via an existing fadvise mode, too,
+because the model you have implemented here exactly matches the 
+definition of FADV_NOREUSE:
+
+	POSIX_FADV_NOREUSE
+              The specified data will be accessed only once.
+
+Having a new per-IO flag that effectively collides existing
+control functionality into a single inflexible API bit doesn't
+really make a whole lot of sense to me.
+
+IOWs, I'm not questioning whether we need rw-through modes and/or
+IO-transient residency for page cache based IO - it's been on our
+radar for a while. I'm more concerned that the chosen API in this
+patchset is a poor one as it cannot replace any of the existing
+controls we already have for these sorts of application directed
+page cache manipulations...
+
+-Dave.
 -- 
-மணிவண்ணன் சதாசிவம்
+Dave Chinner
+david@fromorbit.com
 
