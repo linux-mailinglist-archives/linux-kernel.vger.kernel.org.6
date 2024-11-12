@@ -1,99 +1,99 @@
-Return-Path: <linux-kernel+bounces-405960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FD49C5951
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:41:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16AAC9C5954
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:41:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D5B1F225D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:41:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1A1F1F21CF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1026156F3F;
-	Tue, 12 Nov 2024 13:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4313D167D80;
+	Tue, 12 Nov 2024 13:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXc2Ku8/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iAgJux5M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D11E146588;
-	Tue, 12 Nov 2024 13:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C493143736;
+	Tue, 12 Nov 2024 13:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418758; cv=none; b=JPsWngXwV+ZENCOui6le1RQQ2hQZqCIUVf/7RGP15+fyNtXI4xvMV0nwViEy8Ih+Mdw8XaY2rkJHHH/2W0tZxJ5ESkrlveCc01RYq2UWsS3eoXyN8C/i5vDn/h0mca/DLUcdSqc1FnupmvFdqJ2hNYopj3/134cLLXd+Gnid4VU=
+	t=1731418772; cv=none; b=BeH8xUl24OW2GFIbuUF0l1teR9BLTMmpOYymU1JD0ZkFABxqmIIMt8q+4JSaHoZFEvH/QCpLvWNCGrxAZ4gqGaWCyI7iBVl9q6wuBmAv8lytHSwcyocUzPzBqolbiYL/aiF90NMGPV6pryNhPHhtAHiHvkKGKXTvazaX7+ON8lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418758; c=relaxed/simple;
-	bh=HTj17UKyqcpA32aPMJQ3rZjYn3JmkdLEXjK/gMdzqCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yxw5TQwRx1z6u7aqRkvEoEgpJHqytDS2mL5bAOY3YxQTzqROx/m2TFJbLC6vIOYBA447sd9FFaCT8ajP8fQbLTM9EBhg+6OawifDyrU+jH2Ct2akQTq30+L0YjHnqR+BqAEFgBi73Makmtcj7yLdeiqH9kEm1CZBQUfgornarGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXc2Ku8/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F80C4CEDB;
-	Tue, 12 Nov 2024 13:39:17 +0000 (UTC)
+	s=arc-20240116; t=1731418772; c=relaxed/simple;
+	bh=bG++P6YTndM6Oq13+GniO3tcZGi4NAOAiRA9v3JLvPM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hDhYWscyJnBDvyGZZzJpGnd7ylYzkY78Ix4zGZF5TjAy3TTJQn3F58vUxstBRRX6dtvW36+bNikRgLPVGA0xascDSBCXxkjbUDYTDvZZZSFqLh4Zfq3YPUA/WEYYnGwDuH8mLoreSmKx7QtSbyptq/oNFAMbKMX6av0ebezm5/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iAgJux5M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3260C4CECD;
+	Tue, 12 Nov 2024 13:39:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731418757;
-	bh=HTj17UKyqcpA32aPMJQ3rZjYn3JmkdLEXjK/gMdzqCA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eXc2Ku8/olNbsZEVPMf2palHyjma7qRQoxzHjERM5iQpNDbcxZLbXo/UiBevB+Lhh
-	 E9q4n3mKGwqFVZnPiAD8J90B76XifpzX5JUdf7pWSe2puJS2CpVs4p3LE8FaG5BBLq
-	 dSQyWUNosd/dgF8MyFLvZsYNE5cLRX4dEMyNAlm169VZcYicVeKGIWsUCClemBMSaN
-	 bQdI4axDcgspd7KUkNBWTWB3Z019OKfBFBkqJEHw7PzLq8YHz+/P3NfGLWh60Qsi9Q
-	 MlGLLuoyNih0/rVkWkTasPlMXZAUpsVAxW9VY8a+DiCeHTwvtwZy2mXF8SwJ/KtqKA
-	 NONyY4J+evjsw==
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e28fd8cdfb8so5410042276.3;
-        Tue, 12 Nov 2024 05:39:17 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUpPYnvUF4Ur9iYUthXLFbxIXea0CXiwwSvJsPyHke5L47cFqy76jAIQx0u04uZQZYG+CnXlqiPZuBB@vger.kernel.org, AJvYcCWTH7BuEJ/0UcYrbQfin/l7jE1k8mJ1MfHw/c5HJtn/96pCitmjkPDPNY3cqLVJB03M6JAStH5RH6AmrY7J@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg1nSH5vPyt4696s5nTgJYBQ9Or7qTv6buz8uDoCXiZYMutD9b
-	kYxi4ou5beS+RNo2eZNYPqA5UKcVkVNDVKtOJhV7HI1Byf79GGtnlexBgyfLSI85WuWFEommi+W
-	fUW5X6Hb9qAvLC7izeL3ogJMPQw==
-X-Google-Smtp-Source: AGHT+IGc8OfE6fahX5PrDtu1pkdAInjlDFVeCPxxhNJ8gOu0N6jx2xL+Bj/4hQIgNw4xoSxx9H8K2P1VyeuKsAdP/ss=
-X-Received: by 2002:a05:6902:150b:b0:e29:1630:785c with SMTP id
- 3f1490d57ef6-e337f840d8emr15583204276.10.1731418756964; Tue, 12 Nov 2024
- 05:39:16 -0800 (PST)
+	s=k20201202; t=1731418772;
+	bh=bG++P6YTndM6Oq13+GniO3tcZGi4NAOAiRA9v3JLvPM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iAgJux5MBbkuO3UAHsragB93KtVH4746+HzjwSTXlyzYfWwnO7r48PSHSopalXI2h
+	 WLMbB3YPqY9UQagcXPAPLiogA0RTBHZHAIk+6lzemJTv6yHjMPGMpAe0aMUb5sA78K
+	 FbQQg4BuZYPN+K20g2qxEaNCoxgA+PZ+bV29YdnFwVazJTPSkBdmWnciNW48u7YSji
+	 JmDiPhggvMNGYcM1dSJJETHneEK4z8HXXqNHH0t6xHRxtgObLhMYyLyyVte+1fTJ8s
+	 JuhAAauh2xCCRBlaTKU/STMz3tNcYtJWx+BNpiLVpr3Ne8Z1gIwBzBV0wpBHColvMd
+	 3M7IAwrITvB3g==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Ian Kent <raven@themaw.net>,
+	Josef Bacik <josef@toxicpanda.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and sb_source
+Date: Tue, 12 Nov 2024 14:39:21 +0100
+Message-ID: <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241110-of-alias-v2-0-16da9844a93e@beagleboard.org>
-In-Reply-To: <20241110-of-alias-v2-0-16da9844a93e@beagleboard.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 12 Nov 2024 07:39:06 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+72Q6LyOj1va_qcyCVkSRwqGNvBFfB9NNOgYXasAFYJQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+72Q6LyOj1va_qcyCVkSRwqGNvBFfB9NNOgYXasAFYJQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] Update aliases when added or removed
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: Saravana Kannan <saravanak@google.com>, d-gole@ti.com, jkridner@beagleboard.org, 
-	lorforlinux@beagleboard.org, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Andrew Davis <afd@ti.com>, robertcnelson@beagleboard.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1316; i=brauner@kernel.org; h=from:subject:message-id; bh=bG++P6YTndM6Oq13+GniO3tcZGi4NAOAiRA9v3JLvPM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQbR/X4xQj8q3Su3p/5a1olf1zb4sj7EkZCfs1Wq9QSD 3f/z7zUUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBF/H0aG7p1pr0sX5rhc3xW0 a0pnmcgk5/jl87P2dnfsbDzL9vdZKiPDc8kD/+a1v97eqcO//Of921+myMev3FFg96Ww68aDVxW yrAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 9, 2024 at 1:52=E2=80=AFPM Ayush Singh <ayush@beagleboard.org> =
-wrote:
->
-> Currently the list of aliases is not updated when a DT overlay that adds
-> an alias is loaded or unloaded. This break drivers (e.g. serial) that
-> rely on of_alias_get_id().
+On Mon, 11 Nov 2024 10:09:54 -0500, Jeff Layton wrote:
+> Meta has some internal logging that scrapes /proc/self/mountinfo today.
+> I'd like to convert it to use listmount()/statmount(), so we can do a
+> better job of monitoring with containers. We're missing some fields
+> though. This patchset adds them.
+> 
+> 
 
-Drivers use the non-existent alias numbers for instances without an
-alias. So what happens if an index is already in use and then an
-overlay uses the same index.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-I don't see how this can work reliably unless the alias name doesn't
-exist in the base DT.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> This picks up the original patch series from Geert Uytterhoeven.
->
-> I have not added unittests in this version since I am not sure if kunit
-> tests should be added, or if the runtime unittests (CONFIG_OF_UNITTEST)
-> need to be added. Additionally, it would be great if someone can inform
-> me how to run the runtime unittests since the unittests seem to fail in
-> my current setup (tried running on qemu x86_64 and beagleplay).
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-You enable the config and boot.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Rob
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/3] fs: don't let statmount return empty strings
+      https://git.kernel.org/vfs/vfs/c/75ead69a7173
+[2/3] fs: add the ability for statmount() to report the fs_subtype
+      https://git.kernel.org/vfs/vfs/c/ed9d95f691c2
+[3/3] fs: add the ability for statmount() to report the sb_source
+      https://git.kernel.org/vfs/vfs/c/d31cea0ab403
 
