@@ -1,163 +1,119 @@
-Return-Path: <linux-kernel+bounces-406066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA8E9C5C39
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:48:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3DC9C5E1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7C56B36D57
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:39:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 268C4B3928A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8082003B0;
-	Tue, 12 Nov 2024 14:37:36 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23F5200114;
+	Tue, 12 Nov 2024 14:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="uPy/zGqA"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D441FCC4F;
-	Tue, 12 Nov 2024 14:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0945920012F;
+	Tue, 12 Nov 2024 14:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422255; cv=none; b=Fh3v4AmRzThQzjU6z+U8l90agw7esFpSVdlnatg+4IfYgxdUYTUcaBPQvc+hvLe5SEtJizy+Jqu9tfRUo6zrXtTpC2T57vXpFzpB8t+k73bocMNcr7EaaMoC06BdyTD77QVTRfCPIml60W80PIrlzJZhxqHgUxc+pnMkPuDi/Zc=
+	t=1731422415; cv=none; b=qjZu/pltNEBDuHq/rpGl082XcIF8foRmAhF+zjBlFjmWYoTsleDoFA2GYDjrunvTa6Kfb4lGGkA8UWWT4/DC5IFlavMdIUBUZZrtkFG5L4WX+Xrh18HKnBeA5vY+mHD1cFW3+Q7zQs4IH/clSpHalJVnBpzInXXq/H7sqfqsUuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422255; c=relaxed/simple;
-	bh=pcsB3HxBUO3zjYSRuVYOVBKwnqHHUka3qTp7aYKNFtc=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=axC2oXKjaqLAcINj4lHoiJTwHYmbtt5YNWD+bWP2Yr3MleWqVCiwDmPE0r+BKxQh/he9PiKcUatrRrKVXyOUjyZzbevwmt6LNzRH26C8A448gRIojHnMklRAF8vDNx2IxY/fp/V+n0m0xU4mOaVujHrqkQ1wdx6LzbRROWR6j1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xnpps4X0lz10Qlw;
-	Tue, 12 Nov 2024 22:35:01 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id E597B180104;
-	Tue, 12 Nov 2024 22:37:29 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 12 Nov 2024 22:37:28 +0800
-Message-ID: <98187fe7-23f1-4c52-a62f-c96e720cb491@huawei.com>
-Date: Tue, 12 Nov 2024 22:37:27 +0800
+	s=arc-20240116; t=1731422415; c=relaxed/simple;
+	bh=tLiyOYdn4NNHt5BE+18n/llcdobkAXi4c2H9DIp4KNE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gfpxPnmA2QsQA9iqTtxZNdONY1drKAMDcYAhfkyMz9TaOwj88fNslj5kjAb0ibSz5uqCfHF+EP2DsuhQtb2PBH3M0mKvryLwsrbEaq3wBHzH0Famm16dfoOStJ0wNLI23mgrxDxmTt/MLRwRKIZg59MJcEuTEiGAGmDXsGi0CVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=uPy/zGqA; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=5z0qkzpzTaqSRLBhyPcrkLXrKVsaoXL9ogzup9TZNgc=; b=uP
+	y/zGqA0JxsIP8vPe0DX+A2dovawAxa4z4elKpGrGTiE10jtMtc8/iBrSj8PvGMG6be0nD+0Wc9xfP
+	M+YSHq7JSPna2qWaXChLZ6pkP+hnKadK5DxNeBlhdVAZlVJFpdZ+FrUS2GgZXAxteN4R55LuLhTsQ
+	NrGko00lHOf6oXjzC8ks/s/gLhY0CQlD/tQggZ7uuq0sdkquUFBe02947Fcv6h0Wkemf1cjndrAvF
+	lhNrawXNwnxqed/xru5ebSSOV/p13sWMjZc8zKOefBBoiUT3dwP+3vXsgl8yvxE2Ti1V+yEHy99jf
+	MupIhBJWxQFRErZz7D7FqWTAtN7VLvBQ==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tAs3p-000Mzs-5H; Tue, 12 Nov 2024 15:40:05 +0100
+Received: from [185.17.218.86] (helo=zen.localdomain)
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tAs3o-000GXH-19;
+	Tue, 12 Nov 2024 15:40:04 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+Subject: [PATCH can-next v3 0/2] can: tcan4x5x: add option for selecting
+ nWKRQ voltage
+Date: Tue, 12 Nov 2024 15:39:38 +0100
+Message-Id: <20241112-tcan-wkrqv-v3-0-c66423fba26d@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
-	<horms@kernel.org>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 net-next 5/7] net: hibmcge: Add pauseparam supported in
- this module
-To: Andrew Lunn <andrew@lunn.ch>
-References: <20241111145558.1965325-1-shaojijie@huawei.com>
- <20241111145558.1965325-6-shaojijie@huawei.com>
- <efd481a8-d020-452b-b29b-dfa373017f1f@lunn.ch>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <efd481a8-d020-452b-b29b-dfa373017f1f@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+X-B4-Tracking: v=1; b=H4sIAKpoM2cC/1WQ3W7DIAxGXyXiekxgfprkau8x7QKIadGUpCWMZ
+ ar67vOSVVu5s+xz/JkrWzAnXFjfXFnGmpY0T1Sop4aFk5uOyNNANQMBWgoleAlu4p/v+VJ5sOA
+ 7YYUwg2MEnDPGtG6yV/YzNuFa2Bt1Tmkpc/7atlS59X+F8r+wSi54C2rwg4SI2r0c0U1pfQ7zu
+ Hkq/LH0HlggtjtYZWTnDRh4YG97vIyXDzqx3DPeL+ybXSkMD/NUMZddrb2RVoPGEG1Py8ni3YI
+ 0NI6pEOXBdU60sY2CvkKjAx+sHLxSB61BehE7rZ2lALdvOR3hiGsBAAA=
+X-Change-ID: 20241030-tcan-wkrqv-c62b906005da
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>
+X-Mailer: b4 0.14.2
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27456/Tue Nov 12 10:49:43 2024)
 
+This series adds support for setting the nWKRQ voltage.
 
-on 2024/11/12 1:58, Andrew Lunn wrote:
-> On Mon, Nov 11, 2024 at 10:55:56PM +0800, Jijie Shao wrote:
->> The MAC can automatically send or respond to pause frames.
->> This patch supports the function of enabling pause frames
->> by using ethtool.
->>
->> Pause auto-negotiation is not supported currently.
-> What is actually missing to support auto-neg pause? You are using
-> phylib, so it will do most of the work. You just need your adjust_link
-> callback to configure the hardware to the result of the negotiation.
-> And call phy_support_asym_pause() to let phylib know what the MAC
-> supports.
->
-> 	Andrew
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+---
+Changes in v3:
+- Switched the order of patches, yaml patch first and then code change.
+- Switched to a boolean ti,nwkrq-voltage-vio.
+- Switched internal variable to a bool.
+- Link to v2: https://lore.kernel.org/r/20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com
 
-Thanks for your guidance,
+Changes in v2:
+- Converted tcan4x5x.txt to DT schema. In
+  https://lore.kernel.org/linux-can/20241105-convert-tcan-v2-1-4b320f3fcf99@geanix.com/
+- Reworked ti,nwkrq-voltage-sel, to DH schema style.
+- Link to v1: https://lore.kernel.org/r/20241031-tcan-wkrqv-v1-0-823dbd12fe4a@geanix.com
 
-I haven't really figured out the difference between phy_support_sym_pause()
-and phy_support_asym_paus(). However, according to your guidance
-and referring to the phylib interface and other drivers code,
-I implemented the auto-neg pause function:
+---
+Sean Nyekjaer (2):
+      dt-bindings: can: tcan4x5x: Document the ti,nwkrq-voltage-vio option
+      can: tcan4x5x: add option for selecting nWKRQ voltage
 
+ .../devicetree/bindings/net/can/ti,tcan4x5x.yaml     |  8 ++++++++
+ drivers/net/can/m_can/tcan4x5x-core.c                | 20 ++++++++++++++++++++
+ drivers/net/can/m_can/tcan4x5x.h                     |  2 ++
+ 3 files changed, 30 insertions(+)
+---
+base-commit: 2b2a9a08f8f0b904ea2bc61db3374421b0f944a6
+change-id: 20241030-tcan-wkrqv-c62b906005da
+prerequisite-change-id: 20241105-convert-tcan-4b516424ecf6:v2
+prerequisite-patch-id: a652b1a16dadd5ff525d0b58fec56f605a976aa3
 
-+static void hbg_ethtool_get_pauseparam(struct net_device *net_dev,
-+				       struct ethtool_pauseparam *param)
-+{
-+	struct hbg_priv *priv = netdev_priv(net_dev);
-+
-+	param->autoneg = priv->mac.pause_autoneg;
-+	hbg_hw_get_pause_enable(priv, &param->tx_pause, &param->rx_pause);
-+}
-+
-+static int hbg_ethtool_set_pauseparam(struct net_device *net_dev,
-+				      struct ethtool_pauseparam *param)
-+{
-+	struct hbg_priv *priv = netdev_priv(net_dev);
-+	struct phy_device *phydev = priv->mac.phydev;
-+
-+	phy_set_asym_pause(phydev, param->rx_pause, param->tx_pause);
-+
-+	priv->mac.pause_autoneg = param->autoneg;
-+	if (!param->autoneg)
-+		hbg_hw_set_pause_enable(priv, param->tx_pause, param->rx_pause);
-+
-+	return 0;
-+}
-
-......
-
-+static void hbg_flowctrl_cfg(struct hbg_priv *priv)
-+{
-+	struct phy_device *phydev = priv->mac.phydev;
-+	bool rx_pause;
-+	bool tx_pause;
-+
-+	if (!priv->mac.pause_autoneg)
-+		return;
-+
-+	phy_get_pause(phydev, &tx_pause, &rx_pause);
-+	hbg_hw_set_pause_enable(priv, tx_pause, rx_pause);
-+}
-+
-  static void hbg_phy_adjust_link(struct net_device *netdev)
-  {
-  	struct hbg_priv *priv = netdev_priv(netdev);
-@@ -140,6 +153,7 @@ static void hbg_phy_adjust_link(struct net_device *netdev)
-  			priv->mac.duplex = phydev->duplex;
-  			priv->mac.autoneg = phydev->autoneg;
-  			hbg_hw_adjust_link(priv, speed, phydev->duplex);
-+			hbg_flowctrl_cfg(priv);
-  		}
-  
-  		priv->mac.link_status = phydev->link;
-@@ -168,6 +182,7 @@ static int hbg_phy_connect(struct hbg_priv *priv)
-  		return ret;
-  
-  	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_1000baseT_Half_BIT);
-+	phy_support_asym_pause(phydev);
-  	phy_attached_info(phydev);
-  
-  	return 0;
-
-......
-
-Can the auto-neg pause function be fully supported?
-If the code is ok, I'll add it in the next version.
-
-Thanks,
-Jijie Shao
-
+Best regards,
+-- 
+Sean Nyekjaer <sean@geanix.com>
 
 
