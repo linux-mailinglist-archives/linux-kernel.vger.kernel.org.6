@@ -1,155 +1,97 @@
-Return-Path: <linux-kernel+bounces-406114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF619C5DFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:58:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09DAA9C5D2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:27:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 512E0B82060
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:58:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23709BA0143
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D8A2038A2;
-	Tue, 12 Nov 2024 14:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lsLl9uQv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36908202F9E;
-	Tue, 12 Nov 2024 14:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85E8200C8E;
+	Tue, 12 Nov 2024 15:14:02 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAF82003A0;
+	Tue, 12 Nov 2024 15:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423188; cv=none; b=I0Q8hUOnP5j6qgP2hsyCK5dmVkJHie6c+fwYEoXl0Z+GEoGWhxDZa1HPAlxuXEuXU4REaDjiRpT3VENeayLSVMBrty2MkIvhun8Tp5hgAeDMLKJCvmsu1S46sso7pDaV4uiF5M5eUtET1alrNAg5X/M28Qnlg03ynoyF7+Miges=
+	t=1731424442; cv=none; b=m0L/yIcyre0KnU2fgxAtsK+Wy3CTAJfauZ3yLNjmzvqFI4VLi+tqLORxOuj/2ejLRoMZaxpolD3VKnLkBGrGt+r1xkbdsFte1PEaPjYAdAEcUa4K5pT9Vxw6jWnj6YhNWtNz0kScMXvwMqjfonk5T/4lNZHSYyTJBB4Sk+ykmq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423188; c=relaxed/simple;
-	bh=DSNbca3lQ8LSXso6jqYZBWuI3HmmlzLJZscELXWEgfM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DPdN6G9DxNiLLsoT5gv5afnOVDfNVbsuvFyrhHpnHutiv4C/ZwBG6M59t64DNxSUgwEz3mXcw7ouGGuvKFPVEB9SnPQJZ+ru4zYNIuZm88Gf3VtYN+Mh/wV0C7bWb7rWVy08YHpU0KOwXZPq+fhA0AJT/dDTrldm1gDfIrI9pDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lsLl9uQv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3F2BC4CEDB;
-	Tue, 12 Nov 2024 14:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731423187;
-	bh=DSNbca3lQ8LSXso6jqYZBWuI3HmmlzLJZscELXWEgfM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lsLl9uQvLt8thmWmeMZSNMaub4BZv51O5iIP//APEUCfgN+bjQ1CZ0MVStIZmS3b+
-	 hu13ktakC0BZhufXS5q+zV6kXHDF5BfegCMlNst9SX4dJV5SHY/2IQkl8TTMw2VXVB
-	 8EYtfrQ/3ifIbHLbEKFzAVvlt8FXyjb8f72itSwXtENX0m3Pga+QZ+BwltzddhfucA
-	 LV/oJmR7CyqxJ7H2n+MIcfvhTV9IU/0m6VvXTv9K1M08knmIFXVzelFXEp/6H+RdNm
-	 ijMQrQmvib3MXp2qmJ9SVrRKFVuSbr1ffRdXmc5f6qboI0ZKmPR171otuGyYSf17uk
-	 S9O9wym6AR+NQ==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	rcu <rcu@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	bpf@vger.kernel.org,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 15/16] refscale: Add srcu_read_lock_lite() support using "srcu-lite"
-Date: Tue, 12 Nov 2024 15:51:58 +0100
-Message-ID: <20241112145159.23032-16-frederic@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241112145159.23032-1-frederic@kernel.org>
-References: <20241112145159.23032-1-frederic@kernel.org>
+	s=arc-20240116; t=1731424442; c=relaxed/simple;
+	bh=HU7xQZHVLo7mJxnU+OBgtHpRxQNpBqipDKG4HfaQa0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SSvR/xMlW+T0fW01UJcEe0joErDHbJvmD4cwDatDo0WKdMVWuCtqE9EOD5hnf5H1KZxjVnWu64VkA6TVgRP5Ter24yXw/nZOdcp1O9MZ4Uatu70+dfZqPC4HrkrTFw/IDWYjjaV9RO+BqXpsem7Dh+MsnyitB95pl9khljlC+hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1tAsVf-0004rR-00; Tue, 12 Nov 2024 16:08:51 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 6E7E7C0110; Tue, 12 Nov 2024 15:56:10 +0100 (CET)
+Date: Tue, 12 Nov 2024 15:56:10 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andi.shyti@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v9 2/4] mips: dts: realtek: Add syscon-reboot node
+Message-ID: <ZzNsiu+rbYs7l9Wb@alpha.franken.de>
+References: <20241106001835.2725522-1-chris.packham@alliedtelesis.co.nz>
+ <20241106001835.2725522-3-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106001835.2725522-3-chris.packham@alliedtelesis.co.nz>
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+On Wed, Nov 06, 2024 at 01:18:33PM +1300, Chris Packham wrote:
+> The board level reset on systems using the RTL9302 can be driven via the
+> switch. Use a syscon-reboot node to represent this.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+> 
+> Notes:
+>     Changes in v9:
+>     - None
+>     Changes in v8:
+>     - None
+>     Changes in v7:
+>     - None
+>     Changes in v6:
+>     - Drop wildcard compatible
+>     Changes in v5:
+>     - Krzysztof did technically give a r-by on v4 but given the changes to
+>       the rest of the series I haven't included it.
+>     - Use reg instead of offset
+>     - Add a rtl9302c.dtsi for the specific chip which pulls in the generic
+>       rtl930x.dtsi and updates a few of the compatibles on the way through.
+>     - Update Cameo board to use rtl9302c.dtsi
+>     Changes in v4:
+>     - None
+>     Changes in v3:
+>     - None
+>     Changes in v2:
+>     - drop redundant status = "okay"
+> 
+>  .../dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts  |  2 +-
+>  arch/mips/boot/dts/realtek/rtl9302c.dtsi            |  7 +++++++
+>  arch/mips/boot/dts/realtek/rtl930x.dtsi             | 13 +++++++++++++
+>  3 files changed, 21 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/mips/boot/dts/realtek/rtl9302c.dtsi
 
-This commit creates a new srcu-lite option for the refscale.scale_type
-module parameter that selects srcu_read_lock_lite() and
-srcu_read_unlock_lite().
+applied to mips-next.
 
-[ paulmck: Apply Dan Carpenter feedback. ]
+Thomas.
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: <bpf@vger.kernel.org>
-Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/rcu/refscale.c | 37 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 34 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-index 0db9db73f57f..338e7c5ac44a 100644
---- a/kernel/rcu/refscale.c
-+++ b/kernel/rcu/refscale.c
-@@ -212,6 +212,36 @@ static const struct ref_scale_ops srcu_ops = {
- 	.name		= "srcu"
- };
- 
-+static void srcu_lite_ref_scale_read_section(const int nloops)
-+{
-+	int i;
-+	int idx;
-+
-+	for (i = nloops; i >= 0; i--) {
-+		idx = srcu_read_lock_lite(srcu_ctlp);
-+		srcu_read_unlock_lite(srcu_ctlp, idx);
-+	}
-+}
-+
-+static void srcu_lite_ref_scale_delay_section(const int nloops, const int udl, const int ndl)
-+{
-+	int i;
-+	int idx;
-+
-+	for (i = nloops; i >= 0; i--) {
-+		idx = srcu_read_lock_lite(srcu_ctlp);
-+		un_delay(udl, ndl);
-+		srcu_read_unlock_lite(srcu_ctlp, idx);
-+	}
-+}
-+
-+static const struct ref_scale_ops srcu_lite_ops = {
-+	.init		= rcu_sync_scale_init,
-+	.readsection	= srcu_lite_ref_scale_read_section,
-+	.delaysection	= srcu_lite_ref_scale_delay_section,
-+	.name		= "srcu-lite"
-+};
-+
- #ifdef CONFIG_TASKS_RCU
- 
- // Definitions for RCU Tasks ref scale testing: Empty read markers.
-@@ -1082,9 +1112,10 @@ ref_scale_init(void)
- 	long i;
- 	int firsterr = 0;
- 	static const struct ref_scale_ops *scale_ops[] = {
--		&rcu_ops, &srcu_ops, RCU_TRACE_OPS RCU_TASKS_OPS &refcnt_ops, &rwlock_ops,
--		&rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops, &clock_ops, &jiffies_ops,
--		&typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
-+		&rcu_ops, &srcu_ops, &srcu_lite_ops, RCU_TRACE_OPS RCU_TASKS_OPS
-+		&refcnt_ops, &rwlock_ops, &rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops,
-+		&clock_ops, &jiffies_ops, &typesafe_ref_ops, &typesafe_lock_ops,
-+		&typesafe_seqlock_ops,
- 	};
- 
- 	if (!torture_init_begin(scale_type, verbose))
 -- 
-2.46.0
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
