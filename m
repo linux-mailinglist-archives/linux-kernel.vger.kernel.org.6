@@ -1,89 +1,93 @@
-Return-Path: <linux-kernel+bounces-406078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF029C5AAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:43:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5EB49C5AB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:44:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92C441F22EB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:43:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA361F23084
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA541FF057;
-	Tue, 12 Nov 2024 14:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089C51FEFC8;
+	Tue, 12 Nov 2024 14:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fajmlr73"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nCt+95HR"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E4D1FE103;
-	Tue, 12 Nov 2024 14:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117631FCF52
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422450; cv=none; b=VaW7FahFQxaVPXmyydRrVDyYJudfUa26LniqXQx3MXOWE60VVqeH/l71IWLS+LGXx+flmZywkveaYsw2ejCXgirkjbGMllAJisRwNMIjvT92QePbt6MkqmGns6ZaZsbrJi03tW2dkBfiHwPCYzOVGX3fwXIPOWZmM7ZBKhTkMYw=
+	t=1731422528; cv=none; b=QeK5I/FXbyCiibD6MbP2cNviy72gVkAeDKeCHAc4YF60lEom/jAsV+qAct+wz6OLBzYTFhBF74KhlBGR7joi2SqHeMzvqFJ5mlYPf25QqXZkTseiAKNIzSYqGZUr49lfcTsOCQ1XoMChiGIzn0K7Su1Qdmfe3QA5hYyyJ3CxgXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422450; c=relaxed/simple;
-	bh=COoOuj+jFQPeqRyljb5rMOtI1BxvmrGJEHBKEmrwSDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nj7cZ4EDo0XxgPw1GS86EsQ86aJRdwv+PlagDFWe6XLlGZJEswx22SYUT3FD8Gh5GAJpWpil1O1kvUQJhVvEm2V62X1JClucobupz80urC0zBM3bHOho5CYz+eB0FAdtpuyuel2RPpqBlnadl9lypwtXd2rXe5dN6J9YUdH5UBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fajmlr73; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 838DA1C0007;
-	Tue, 12 Nov 2024 14:40:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731422445;
+	s=arc-20240116; t=1731422528; c=relaxed/simple;
+	bh=C55enUx95lzHdkblDU+VDmJRQxUKFGzKW2v8XrKPHNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sieItQ/1gL+BQcUwSd4q+QHRRBmGLOU2HASaI1+SFiM4UI2OsjqySvI+OWzi0F5qL4jmsCeVHZ7nlzAvJMkUDB7rQQZETCs142M/rFcVcYZynBwnH3xERUWE03aFhzzemahAs++7cwKPU91LOL9UqUdIypjC2VN2emD2oKlXm7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nCt+95HR; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <37be000a-3ef8-4df4-aefa-b4d73487ad27@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731422522;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nTKxTYuHxpsEfa5uoloGupR++LJq3u7SmDUHPOZk4Zo=;
-	b=Fajmlr73GJK0QIOTpMqiS/IXudOf0W2iauFh+mvW+N2zb7/4u9almQ1luDrG6EJLhDzHQT
-	0Roq/G7OzftOB99PzTD20VAAC7teWtZd78uQ1FJtgH1MhaKHHwTMhs3Ju6hqPBU3oabDLd
-	T0JnRy/G6Vxd35RCj/nXsyCwS9Dk4+XhbfyqPNGPulx8xBveJMAKipKSRNJzW8moJLZ8yM
-	TWcLt36Yuk6jPIUISzyxZCt0/gfJDk5smXSr6sgoeUcYhjceeyV4WSUvFwGGmh+QmPGfm4
-	rEuIUJKGLWEfuHrRgLvG6Z3Tfvlu8b2GiFbGs3k/BSiN9TdFzgkh4BI0eYm/rg==
-Date: Tue, 12 Nov 2024 15:40:44 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Yiting Deng <yiting.deng@amlogic.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v6 0/3] support for amlogic rtc
-Message-ID: <173142240907.3446466.9470229685878821309.b4-ty@bootlin.com>
-References: <20241112-rtc-v6-0-a71b60d2f354@amlogic.com>
+	bh=TjtCuBHtQgDpU3KQOdG6+r1FPPieI5NsRRxpX2bOTVg=;
+	b=nCt+95HRT/HZ9j+8Iud0gJu10W5OMu+C9+GoNpLHisBXJCDIyhTT6aebp5aN5fV/EiM+1R
+	n7hYjSLiCSfA3qiuOxDHyPUgLsVe4H+CKrNEH3UuzayqLotGsBxOgsHLaPb6hkJoWaUBmc
+	CnfZaHKi7D6ckeK8Dc5H4SR/IGcev4g=
+Date: Tue, 12 Nov 2024 09:41:58 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112-rtc-v6-0-a71b60d2f354@amlogic.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Subject: Re: [PATCH next] drm: zynqmp_dp: Unlock on error in
+ zynqmp_dp_bridge_atomic_enable()
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <b4042bd9-c943-4738-a2e1-8647259137c6@stanley.mountain>
+ <20241112052754.GB21062@pendragon.ideasonboard.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20241112052754.GB21062@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 12 Nov 2024 11:10:13 +0800, Xianwei Zhao wrote:
-> Add rtc driver and bindigns for the amlogic A4(A113L2) and A5(A113X2) SoCs.
+On 11/12/24 00:27, Laurent Pinchart wrote:
+> Hi Dan,
 > 
+> Thank you for the patch.
 > 
+> On Mon, Nov 11, 2024 at 12:06:10PM +0300, Dan Carpenter wrote:
+>> We added some locking to this function, but accidentally forgot to unlock
+>> if zynqmp_dp_mode_configure() failed.  Use a guard lock to fix it.
+>> 
+>> Fixes: a7d5eeaa57d7 ("drm: zynqmp_dp: Add locking")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> Sean, how about replacing all the mutex_lock()/mutex_unlock() calls
+> you've added in a7d5eeaa57d7 with guards ?
 
-Applied, thanks!
+I have no objection to that.
 
-[1/3] dt-bindings: rtc: Add Amlogic A4 and A5 RTC
-      https://git.kernel.org/abelloni/c/ce57cf7319e5
-[2/3] rtc: support for the Amlogic on-chip RTC
-      https://git.kernel.org/abelloni/c/c89ac9182ee2
-[3/3] MAINTAINERS: Add an entry for Amlogic RTC driver
-      https://git.kernel.org/abelloni/c/a012d430a4f2
+--Sean
 
-Best regards,
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
