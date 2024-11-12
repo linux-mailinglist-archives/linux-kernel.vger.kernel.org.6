@@ -1,101 +1,123 @@
-Return-Path: <linux-kernel+bounces-406209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8D89C5E87
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:15:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4FB9C5C26
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:43:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C26BB4404E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:43:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 558BD1F22ED4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221582022D9;
-	Tue, 12 Nov 2024 15:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADD9200C8E;
+	Tue, 12 Nov 2024 15:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N2ajiGJc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bBHRXVej"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6B38821;
-	Tue, 12 Nov 2024 15:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2DE200C94
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731426164; cv=none; b=a17XCrygIwjuJOXYalJ2Vdu1jLNN6+g0zm+Pz1VufunQXrKOLC1728vf61A44UZ6jmJLd2pg7b+0wrAwnrz01v8JT5bppdNL4wFfdOIhGR4j3BorHKhbEFczlcRfsM/pmSU7fPQ13cYM1MbMaNpHpOTXfIBkhXBDHjoKSBRFV94=
+	t=1731426199; cv=none; b=lfIzXY6pP79THLjAuIGZE5C4T690oOEzgc3SVMZ7Awl3Q4k9IWBXBKW7zDG6h31SblxwN+aHYpo/tg5Kt3+fjo4WGqTycCFQmusBOBN8eHj7FVdEoH9ey2VArSCHlhjMFFZr2B+gza7y/7MAtsPBriirWzgAaw9X13KmY4we4KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731426164; c=relaxed/simple;
-	bh=tdd3NZ+GHcRdJCaOdNApZtNodQGwtd707HfpjA9pncQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ta+VUzbZ0sk12HECdTCy/EDci2RQD9U499nLR6zIe/x7u+sMIvzxjxowcxIpgFEi/DzoHYOyS7Ei3/z+CGYPzXFAzeOL8boOWc28XXBPO6QRea4e2TDSPvtTw+OZ+1PVChXncVJhjCPTTIGIUsNC6Hj/pQsD/dCBMh5KrDWCa4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N2ajiGJc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB60C4CECD;
-	Tue, 12 Nov 2024 15:42:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731426163;
-	bh=tdd3NZ+GHcRdJCaOdNApZtNodQGwtd707HfpjA9pncQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N2ajiGJcJzz74Ud6lZK2wFDlIGZ3O4eOdH0hr+de2c5HOW9+GPcsdPg4Jbk0ecMJQ
-	 HzLiG2lJ6uDpGxNxfgvBAi+DEzcVf6ABtx+BALpCkjWI8ANBXGooww4MqSAjDxv7sH
-	 72AS1Q9Q40HtYbXDSbYWO7kVyWeZFH8BKQ9eINvE=
-Date: Tue, 12 Nov 2024 16:42:40 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Daniel Wagner <dwagner@suse.de>
-Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org,
-	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
-	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 4/8] blk-mp: introduce blk_mq_hctx_map_queues
-Message-ID: <2024111215-jury-unlighted-3953@gregkh>
-References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
- <20241112-refactor-blk-affinity-helpers-v3-4-573bfca0cbd8@kernel.org>
- <2024111202-parish-prowess-78bc@gregkh>
- <c8c671c1-267a-4aa7-a64b-51a461176ad3@flourine.local>
+	s=arc-20240116; t=1731426199; c=relaxed/simple;
+	bh=jLg3iIGdqUsUy8PbumjydYiC8wGi4ADE4Xjhm44Sa3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GKYCjqy99gxc5vtrBN67yCNcrMVWPbybrVeCyGlOh48tgZNDOxPp43xEN0QA30NmYaSmEBXEr3LD1ZJB5laJ7lHhp675/wo67MUR4y8Qilv7t7IZx0F/v2u6J2rsCeQp1fKHysPjLo3Wy0hrSDScbwMYs0DsUA//v81nGtodLbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bBHRXVej; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-28862804c9dso2825689fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:43:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731426196; x=1732030996; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MPGRYVZnENQchqDtOkd6T23ctHQLbROEiqELavnqalk=;
+        b=bBHRXVejZpnoYCYDMY+9pgYe9wgOsytNlZ/UTpBm1v0XdPHDywDvIaQIs9malw39Wo
+         geOMVx6c46paVNzMWgHX+GB8C8sFiBTDJdycr6c9imXZUlG5uKArt2/yV7A7FEW1KGxF
+         nXuubBNCPtBepq8KyXJtkTydNg1ANShRQYApA/+wiEigPH0z3d4TUONDtkPK7X73yGd3
+         yHgjWnMA+QM4xpO7DNRogVzcNb5a+IzdQ7y3uPwt0G1hqWvKdOxcRF3gJS31tQiM56Gs
+         7sHjX5L5nz/mcfHkTTlCOZGUX/BVHWA74S0jh+IlS41Q9W5T5MCTZTjDao1zv2lw368y
+         zAvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731426196; x=1732030996;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MPGRYVZnENQchqDtOkd6T23ctHQLbROEiqELavnqalk=;
+        b=BpWZuKJVMBYra/Ha8qELl+EuGU5rF3YdmzgrATDo2jGdNL4oPsIhrsbfG829X/4CFk
+         c3PTR0JQnmIIEwtAv8/vwkaOvyukKEymVfmuSH4LkiuwT8lIizO9a8zJBX4zYK8fwpOw
+         dIDXFBir+qnbOUuza6veb2syLusSer25/ReDV4ZNL/TNYB1kFJmG1CpMkViUVD7ug1s/
+         7IPTcbm8IdDZxypCjDh3WI0o4oAUZJBaTps/t1e0dEKYAdxm9WqpH/RHzJ8yDxIDVWaK
+         9YqGOHhvLikt6W1CgqOOcvk9ifMpokkkwf8phn4MY0s/deyLL3ulT1eXdZ05enjlSWh/
+         cDxw==
+X-Forwarded-Encrypted: i=1; AJvYcCX37gPKZ2NtWrI+N3nRezN7AdtL7EYHALkRBcx3fiJ8XERc1ssYbKnD8Zm+Yf07jhzJC0JSno/onq4iRi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN4mztjfSjnL7lQ3Gt4ldgqjWK3+AwWzwK0ucHUJc2EFSwwPTs
+	zDjIUriAzUZj1xgLG90O3k+CQeLgwtnt6S3VxyuxeLAW4IdPGd8UjkqC/xGC5kGZGeCRnWWI5qk
+	mLwY=
+X-Google-Smtp-Source: AGHT+IGWRW9zxLPcJ5x2fkal5OOLMH4WIgl8/rLC/lU0qkUAN08LLFyRp5+T7eXmY61Tvha4d7ZdTg==
+X-Received: by 2002:a05:6870:450e:b0:277:ca34:27e9 with SMTP id 586e51a60fabf-295603c0c36mr9373068fac.6.1731426196316;
+        Tue, 12 Nov 2024 07:43:16 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a109219dbsm2741817a34.67.2024.11.12.07.43.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 07:43:15 -0800 (PST)
+Message-ID: <c0eb2b6f-1145-4ce3-a2b3-98d32cdfa623@kernel.dk>
+Date: Tue, 12 Nov 2024 08:43:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c8c671c1-267a-4aa7-a64b-51a461176ad3@flourine.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH liburing] test: add test cases for hybrid iopoll
+To: Anuj Gupta <anuj20.g@samsung.com>, hexue <xue01.he@samsung.com>
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <CGME20241111123656epcas5p20cac863708cd83d1fdbb523625665273@epcas5p2.samsung.com>
+ <20241111123650.1857526-1-xue01.he@samsung.com>
+ <20241112104406.2rltxkliwhksn3hw@green245>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241112104406.2rltxkliwhksn3hw@green245>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 12, 2024 at 04:33:09PM +0100, Daniel Wagner wrote:
-> On Tue, Nov 12, 2024 at 02:58:43PM +0100, Greg Kroah-Hartman wrote:
-> > > +void blk_mq_hctx_map_queues(struct blk_mq_queue_map *qmap,
-> > > +			    struct device *dev, unsigned int offset)
-> > > +
-> > > +{
-> > > +	const struct cpumask *mask;
-> > > +	unsigned int queue, cpu;
-> > > +
-> > > +	if (!dev->bus->irq_get_affinity)
-> > > +		goto fallback;
-> > 
-> > I think this is better than hard-coding it, but are you sure that the
-> > bus will always be bound to the device here so that you have a valid
-> > bus-> pointer?
-> 
-> No, I just assumed the bus pointer is always valid. If it is possible to
-> have a device without a bus, than I'll better extend the condition to
-> 
-> 	if (!dev->bus || !dev->bus->irq_get_affinity)
->         	goto fallback;
+On 11/12/24 3:44 AM, Anuj Gupta wrote:
+>> +utilization than polling. Similarly, this feature also requires the devices
+>> +to support polling configuration.
+> This feature would work if a device doesn't have polled queues,right?
+> The performance might be suboptimal in that case, but the userspace won't
+> get any errors.
 
-I don't know if it's possible as I don't know what codepaths are calling
-this, it was hard to unwind.  But you should check "just to be safe" :)
+We've traditionally been a mix of lax and strict on this. IMHO we should
+return -EOPTNOTSUPP for IOPOLL (and IOPOLL|HYBRID) if polling isn't
+configured correctly. I've seen way too many not realize that they need
+to configure their nvme side for pollable queues for it to do what it
+needs to do. If you don't and it's just allowed, then you don't really
+get much of a win, you're just burning CPU.
 
-thanks,
+Hence I do think that this should strongly recommend that the devices
+support polling, that part is fine.
 
-greg k-h
+Agree with your other comments, thanks for reviewing it!
+
+> This patch mostly looks fine. But the code here seems to be largely
+> duplicated from "test/io_uring_passthrough.c" and "test/iopoll.c".
+> Can we consider adding the hybrid poll test as a part of the existing
+> tests as it seems that it would only require passing a extra flag
+> during ring setup.
+
+Yeah I do think modifying test/iopoll.c to test all the same
+configurations but with HYBRID added would be the way to go, rather than
+duplicate all of this. Ditto for passthrough.
+
+-- 
+Jens Axboe
 
