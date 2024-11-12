@@ -1,97 +1,146 @@
-Return-Path: <linux-kernel+bounces-405394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381F69C50B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:35:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE86E9C50C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E167A1F229F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:35:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5741EB28CD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627AF20B7E5;
-	Tue, 12 Nov 2024 08:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2919B20BB5F;
+	Tue, 12 Nov 2024 08:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="qqCbHHbY"
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kEn/K0Rj"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D86208999
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A9120C000
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731400515; cv=none; b=u0lAiViWF/QVd64QvUGGpkxXVl3RbO/l+oJbiJnr1aNyEkPUvFEaikD0kdZJ4U3MrO78+DRn1toh3anY/eNdT8z+cTPzDsOThCwYtrXY7K6MHFOUE5xUQD1pzIKFoXl+wpHvYYDQvrcFsysi+hRzDu+3sCeiuZncwglLeFWgs8k=
+	t=1731400520; cv=none; b=tVsc4R4xncVh+HlQEdYTWPcY/P93F5G2MnPh0LNpOtGzV3IqRo5KHOuhmWIIMUj8u5ttN3ly+EHS26QPYMqplffNDQOUfOIPfhbsDu23DJF8LwCXUzt1oAsxe2ZPgppRYkPfCI2B0KROMi0AJyp/4n0PAURM8HO7FH1P3UQ2gc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731400515; c=relaxed/simple;
-	bh=yOJt1JU2WCPimdhlzcBbj157gyGVwGQKcieS91z5apA=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=F85EVO9pW//DPUiWc6bch35MsaC+kEiy7y4VrgogMUaekQFpX7RCtPPDa/zhlwk9O8JtBkUDfQ0f1J7v5nJ5S0VviXuZ0qGDKrZa36UWQGON6HDPZgyPRXZ2yGknHZPHYaxFHvx6HLr3iTLvKnelAeVcDbrVOgG62sP8VYNXPkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=qqCbHHbY; arc=none smtp.client-ip=203.205.221.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1731400502; bh=IRU3M3O1x/Dpmjh3mkGbJkIGWbDWGC3+BfUrOB6tf8I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=qqCbHHbYkR4h7M0fGQODYC3J2CHXEh/0q33OPzhThW6Q0iXxsCBw8o7SFOof9L/n3
-	 Khk2yBqJVZIzV19QFFJ8umfxbGWban0umT2qg3moPSu/BybMgDMZ2nK5AsH3nqAyXz
-	 KwUN/1yuVeTtKL+QQOAJPrrBfKyHVbfZ8fFJXh7I=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 8C131C1E; Tue, 12 Nov 2024 16:35:01 +0800
-X-QQ-mid: xmsmtpt1731400501trsh9xyos
-Message-ID: <tencent_7423BEE445F76E7764C6C2336F8364696C05@qq.com>
-X-QQ-XMAILINFO: MB5+LsFw85NotBAAAy0fbcgvI6y0eCCCYCtQZ8zqlGEPgwePZX9QqVFjIbj+eG
-	 depg8iBRd8872fMzsjoDRTSQ0Oie90hmja2KK0qFQJYrj/maS9rIHI+GON9myvzaKdPwfOFVVOPh
-	 UqDZPm5A2VvAYOER4oWmbpsXiIsZjeNMd5EEFRbNQ79rFaFv/UTUfXYWmlQZkox4Lwc35YItsvaG
-	 rB+/X3oOg6fzNCohHyCP6iMOkHIMRp4Z0ClCuv74+TXgsmcoXuOFNg+PskrBxCXj0sSWzGSOTzEf
-	 YlR3TKH3+jxpMFoWMnjVJiS8I0kWVUDmNHyTRChFLDQYYKb5E/7/6ECuJCfohWp8GthIe4wcFtiz
-	 6vlRWRkyB7MW17HlddzqnYbUrUN38qyapUOt3q/W8szj97ahkH5/En6JvY/mvy4ImkO4fRiIO91u
-	 UekUFAPUhGpJQJsbdJg7HWvzdHkhneGEoiBgFTvBRGn5a3gY2IIivqJBg47EYTerSMUzT9h4BnfZ
-	 zhBcowGBOG8ly/moA55boyeczuEeGfKav335vDvH7cUVwl1G1eMlN88bSMK6ioqXNl4hZkIXBwNp
-	 r2eLriETDL085eqYvuPhnIoI92R5NmJZHqGNNCrvD6hTHQN/PB90jYnRPTQaNd+jmc8JpDRulghg
-	 kCbvOgHZ8QySc5pUU/Tx1o5h7idWZaT81eyd/Gtq3nvj3DTjVD+ahxWJTE7W4tXK/REEg2JK+M3m
-	 73vEmelBphRWQCjX1f888v44aE3CeuGW3t13b2OZw2AlpP+v7ws1ENc1NiX4/vyZqzJNtm/IKCTo
-	 /YRTZ3+0nrZ23g3kcUTuTi/Hl2YfdUHNJvMcGFi2FtrIraVktEKJWn3Bt2qBbP7v71zgncA+rlxg
-	 Yd4Zo0AHsFKQ+NtNfdPPbWWkW87FfEBR0toIr9IInsze6PROmHJds=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [nilfs?] KASAN: use-after-free Read in nilfs_find_entry
-Date: Tue, 12 Nov 2024 16:35:01 +0800
-X-OQ-MSGID: <20241112083500.1405986-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <6732e1d8.050a0220.138bd5.00d3.GAE@google.com>
-References: <6732e1d8.050a0220.138bd5.00d3.GAE@google.com>
+	s=arc-20240116; t=1731400520; c=relaxed/simple;
+	bh=q1kY2sQYlq+hOddVsv3T5fQZjCOWNt9cci/DeyYLwq0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=cPjjE0Z6Yex0+l/L3G8RZrmmwsg6tlDQNQR7Fg9e2mXmqT5C2XYKqFZoVt5JbabTyAYhf3o7kflCMVZIAS+ufiIv4OKWb9fYPXiQ6oRXsbvuoSASFWej4VIluNenHX0PbZ8PIpof945t+lT5RaEIJhQ5IBR+L3V4e/l7KBZj+c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kEn/K0Rj; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so47189175e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:35:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1731400517; x=1732005317; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PL5GeOh28TysV9Lqq7NP7GxRHBqQLXUN1hL7aKNKaMk=;
+        b=kEn/K0RjlE+vo2+wilIXoOGshXRTmUj5jJzpPKaziwXLy3w2vpPI9jRqIfliqu78wX
+         /lbqNpiWnJ29DWxcxBxMd2XNBmqipUIucxkPUhxHzvM58sSX2ytJefViUYzoJwiZknQl
+         d0wB8Oahp9BIlG/SG3uAe3JSf7fvhKlKlg4AHhFyXA/D4gKHztN0fTwoCpRsTDtr0nlN
+         HCBmTd40S6uF3I+kVj2DMtycdJ22GZwWuDDVDp43PGBmbfddimWTbaEvtWXL10jWaqAQ
+         6hJDTAAC49PPP8JNYV7rMZEtdVY8Amat8VbGKYCscxRW4sRVn7PKRQlv8mVAzeTutznf
+         QV2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731400517; x=1732005317;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PL5GeOh28TysV9Lqq7NP7GxRHBqQLXUN1hL7aKNKaMk=;
+        b=iDGmdV1Rmn6QiIKdI1yta4C1qpKeQrMbOcV8TiGuvROYQQwMQ98oBwwlbdEGnfphiY
+         s4vq1DgUfj0ayAKPd61fgi3JTiVoXSx1RKaylWZiVycKGof+TMY6wthCPMPPxs4SHSWI
+         CzzD1R38ZQfW51Alxhmb+nQnpxEX+EWsDXQ3OlXFP5v6U7qR6Y+o/kF54J3havxJ7rbH
+         JKh37fPG7ZYYTBif6N1NJtikaHp2oIXnkIejcX4YtBY8uTmZYCbpNXc94aOKKerS5bF3
+         2cc+4ioQ4kRMUOTdAcHja/ZQPD0OVnysqRC21Lp1C01GrQVCWmaufLWvKSyJyS5pvIPM
+         uX3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVxyQTklnyyMt65bjzLvN3Iff4FBa+yJxaYQAxL1L9HMrsCJYFzqNC6NLwuuV9rr99TnSBLIIim0gMI1yA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySeR8vnKbvgyDgofrzxxc+NuOZSS5AJ8URXIXMpi1R+6Eak7wU
+	bn/1R5l4BQt77Qhq1vRO4VSNsjycTwfsTrDkXvBEvTaucFAmCOJjDk6772pCrZ8=
+X-Google-Smtp-Source: AGHT+IFa1LixkOeiL8eI5oMGEu2ThX65XIYTJoURm9f8rPbRKT4O56MDA08ZH8xosIwK+pODYwTchA==
+X-Received: by 2002:a05:6000:178d:b0:368:37ac:3f95 with SMTP id ffacd0b85a97d-381f17255b9mr12724481f8f.31.1731400516852;
+        Tue, 12 Nov 2024 00:35:16 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97f544sm14918813f8f.40.2024.11.12.00.35.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 00:35:16 -0800 (PST)
+Message-ID: <d19d12e7-aabb-460c-a37c-6cbd3fe4e459@tuxon.dev>
+Date: Tue, 12 Nov 2024 10:35:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] serial: sh-sci: Check if TX data was written to
+ device in .tx_empty()
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: Jiri Slaby <jirislaby@kernel.org>, geert+renesas@glider.be,
+ magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ gregkh@linuxfoundation.org, p.zabel@pengutronix.de, g.liakhovetski@gmx.de,
+ lethal@linux-sh.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-serial@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
+References: <20241108100513.2814957-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241108100513.2814957-3-claudiu.beznea.uj@bp.renesas.com>
+ <530f4a8e-b71a-4db1-a2cc-df1fcfa132ec@kernel.org>
+ <3711546e-a551-4cc9-a378-17aab5b426ef@tuxon.dev>
+In-Reply-To: <3711546e-a551-4cc9-a378-17aab5b426ef@tuxon.dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-calc last byte dec reclen overflow ?
+Hi, Jiri,
 
-#syz test
+On 08.11.2024 14:19, Claudiu Beznea wrote:
+>>> @@ -885,6 +887,7 @@ static void sci_transmit_chars(struct uart_port *port)
+>>>           }
+>>>             sci_serial_out(port, SCxTDR, c);
+>>> +        s->first_time_tx = true;
+>>>             port->icount.tx++;
+>>>       } while (--count > 0);
+>>> @@ -1241,6 +1244,8 @@ static void sci_dma_tx_complete(void *arg)
+>>>       if (kfifo_len(&tport->xmit_fifo) < WAKEUP_CHARS)
+>>>           uart_write_wakeup(port);
+>>>   +    s->first_time_tx = true;
+>> This is too late IMO. The first in-flight dma won't be accounted in
+>> sci_tx_empty(). From DMA submit up to now.
+> If it's in-flight we can't determine it's status anyway with one variable.
+> We can set this variable later but it wouldn't tell the truth as the TX
+> might be in progress anyway or may have been finished?
+> 
+> The hardware might help with this though the TEND bit. According to the HW
+> manual, the TEND bit has the following meaning:
+> 
+> 0: Transmission is in the waiting state or in progress.
+> 1: Transmission is completed.
+> 
+> But the problem, from my point of view, is that the 0 has double meaning.
+> 
+> I noticed the tx_empty() is called in kernel multiple times before
+> declaring TX is empty or not. E.g., uart_suspend_port() call it 3 times,
+> uart_wait_until_sent() call it in a while () look with a timeout. There is
+> the uart_ioctl() which calls it though uart_get_lsr_info() only one time
+> but I presumed the user space might implement the same multiple trials
+> approach before declaring it empty.
+> 
+> Because of this I considered it wouldn't be harmful for the scenario you
+> described "The first in-flight dma won't be accounted in sci_tx_empty()"
+> as the user may try again later to check the status. For this reason I also
+> chose to have no extra locking around this variable.
+> 
+> Please let me know if you consider otherwise.
 
-diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-index a8602729586a..f014b7fed5ce 100644
---- a/fs/nilfs2/dir.c
-+++ b/fs/nilfs2/dir.c
-@@ -317,7 +317,10 @@ struct nilfs_dir_entry *nilfs_find_entry(struct inode *dir,
- 
- 		de = (struct nilfs_dir_entry *)kaddr;
- 		kaddr += nilfs_last_byte(dir, n) - reclen;
--		while ((char *)de <= kaddr) {
-+		printk("isize: %u, n: %lu, last byte: %u, reclen: %u, %s\n", dir->i_size, n, nilfs_last_byte(dir, n), reclen, __func__);
-+		if (nilfs_last_byte(dir, n) < reclen)
-+			break;
-+		while ((char *)de + sizeof(*de) <= kaddr) {
- 			if (de->rec_len == 0) {
- 				nilfs_error(dir->i_sb,
- 					    "zero-length directory entry");
+With the above explanation, can you please let me know if you still
+consider I should change the approach for this patch?
+
+Thank you,
+Claudiu Beznea
 
 
