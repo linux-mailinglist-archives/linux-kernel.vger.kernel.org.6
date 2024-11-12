@@ -1,118 +1,83 @@
-Return-Path: <linux-kernel+bounces-405212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6A09C4E66
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:47:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A239F9C4E67
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:47:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6530FB221A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:47:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AAB6B232AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26CA1C303A;
-	Tue, 12 Nov 2024 05:46:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DFB17333A
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADFC19F121;
+	Tue, 12 Nov 2024 05:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ek/3m+P5"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6531C303A
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731390418; cv=none; b=ZEXz4Ywd5TTmQ2I0F3xwj6Ny2G6PsU/V9n5OvsFsaH+UP5v884U+FrZWjbdZ8g9kc/82soxL/LCjAy1EOCtTUq7B6/2tRt1yN3rl2vuSaLw3HkLuXkVFES53lXR5IuNcv6f3CWAYErSWvwYrRoPqy4ruBJLiCcYj9heE4hXG5wU=
+	t=1731390449; cv=none; b=cqbIKaV8KluyU9lRVRyrYbNmHeCY3qGquZU91mpMKoa/XJM01JwoV5bpKXvHZGNi1k2Jvah7tL5hIEoKwk1RldmkJiWSp/q9fBh5cntl1QGPeIvBPsk7yAot9pQc/KFR3H7GqZlG7V1d4Ypat1LLnxsa5BL/l4aq/ttNaSSTMIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731390418; c=relaxed/simple;
-	bh=6wqsNI8g+LsX42UXEZCTfPAiHJB+iW7Ve5OHLfDxusU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CSJjmWQIUdGpoNFQs8aRNF0JwPYokyZWSHohKvY6yfje0DnQDEgqpCW8HYEhssrLNe9sNucd9h58hEkxWlxyppcjrmP9T3BcSfpGCoeHaZMFFdSubpvp+tuBOrTfUQ4zCE5eYe1P+lWOugzZlJk/hsdSuVmwAT8rpFgGYM7gR6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB21D1477;
-	Mon, 11 Nov 2024 21:47:23 -0800 (PST)
-Received: from bogus (unknown [10.57.89.22])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E2FCD3F66E;
-	Mon, 11 Nov 2024 21:46:42 -0800 (PST)
-Date: Tue, 12 Nov 2024 05:46:23 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: Re: Q: Kconfig: 'If unsure, say N'
-Message-ID: <20241112054623.7zxte2nny7h4st3h@bogus>
-References: <D5GVI1Q30BTS.1ZVQ4YC4OJYEL@cknow.org>
+	s=arc-20240116; t=1731390449; c=relaxed/simple;
+	bh=g8hi6aYPh6oSyuc6qbm8qF5zf2XJpCTu5ammD0FCK68=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=q7SODuxiuSliqLjAPH67mLlZSRnUOVZ3ymOa2UTDgoS+lULURvWC+osHkEKAYjkV5xoMEH46WFg2Tuh1d/6kWdanRkc9FYKQYmyMaijL2GxU51B7msjReVlHtbEcxEDCHXdHwr3nEaqguaJmdW08F6yA2+Jb3g03J2b+qeiSWi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ek/3m+P5; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2974743675so4805900276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 21:47:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731390447; x=1731995247; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=g8hi6aYPh6oSyuc6qbm8qF5zf2XJpCTu5ammD0FCK68=;
+        b=Ek/3m+P55JyymW8e2fKn/KkRk0s1RH2BDI2DxKKnTX4lvRQ73MtglPgsqcW90/4cVf
+         WHenvHJ0HoQTvSbcFN2jDatzqfS8YOSX2OVzM2fj2wMcYnQ/GZ9NN9E6cqsggo79btSZ
+         TOy2c3V4Xr5JsFT+TazmL3+PLJpuc0iFs7ap78WPjddBQDbNVunAww3LIL/tFbqlER3Q
+         nK+2pJ9LSWZIV50zYmEnDhVMot6l79+57Zvd52pWqs8hubrB6org9/z2g5PNCML401kO
+         qPtxvEN3iP3l1Bn+xbKI/4eY5e/a4SGFzssmXG1m/m8KulRpsGN4nxZm4ZRi2Zo9nI15
+         6xLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731390447; x=1731995247;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g8hi6aYPh6oSyuc6qbm8qF5zf2XJpCTu5ammD0FCK68=;
+        b=QE1ilYdNMlrJcDka5Lyolq8VWmafiauQVixoTn9cdxh4cyCKUjnKqWwLJRE4p5FFHa
+         CPC/L+dY5nX9kMbCZJ+lcxxZujy2YpztKwdjUKf6m5DR56Nwnw+KuIde/bao8VKJJEiX
+         A1sd5sZuWpF3BzRA8aUrKG0zQvrBq/YNo5dUDY+OazgwYs6fwbCJsC6Ib3o28gGOgmjh
+         U3UBNxQCDREZIyzIDn6vKTd4TuvE1bi1nG+6E9Uugx1nhqc1kTtk2ddgE9NcBZW6gIwm
+         iZOS7tWoqRW6vAg7BAP99Th9gcuN2xPAe+LaJXFeELTiYDKFauNeGKa9wmIOVNuXzJgz
+         ftjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuK1qHW6rq9WowPLyVXYr8V0sQ5hoADFZDrzdA2yV28jQIbDRkpJJYMhTRoeUtVCkOVuGUY6EcFZeLIMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwrK26KpDGBT0sdeEHJTA6di6lI1maWLcu5l+i943OhtKTO9lI
+	p6074U6Z+IfE8XNn3KCBNyEGcKi9KiISklqVEAXlh65Cn7AJBWtQ/cTLPmUUeY0n0gBwLRzxg6f
+	Pbpa22GqY+QgL/ft5vSeCjd0rm3I=
+X-Google-Smtp-Source: AGHT+IEH7IPubg+nhg/TqPabAyQONL9JfKCYVsx6KWMr0MNomtjno8rOxRH2O+07ejxYdSF8nOugly/+eISST48Qpwo=
+X-Received: by 2002:a05:690c:3504:b0:6e5:a431:af41 with SMTP id
+ 00721157ae682-6eaddfa6dddmr136859077b3.38.1731390446728; Mon, 11 Nov 2024
+ 21:47:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D5GVI1Q30BTS.1ZVQ4YC4OJYEL@cknow.org>
+References: <20240701045206.162103-1-dqfext@gmail.com>
+In-Reply-To: <20240701045206.162103-1-dqfext@gmail.com>
+From: Qingfang Deng <dqfext@gmail.com>
+Date: Tue, 12 Nov 2024 13:46:51 +0800
+Message-ID: <CALW65jbOJ+8MnjnA9+WJwy1-SERgizEiZmcSE=EnevF26X=sbQ@mail.gmail.com>
+Subject: Re: [PATCH] jffs2: fix use of uninitialized variable
+To: David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, 
+	Qingfang Deng <qingfang.deng@siflower.com.cn>, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 08, 2024 at 03:39:30PM +0100, Diederik de Haas wrote:
-> Hi,
->
-> In quite a number of Kconfig help text entries I see this:
-> "If unsure, say N."
->
-> But that raises the question: How can I be sure?
->
-> To me, this comes across as that the person who implemented the feature
-> recommends *against* using it, unless you think you know better then the
-> person who implemented it. Which is quite a high bar.
->
-
-If you don't know about the feature and it is not having any user-interface
-why do you want to enable it. You must understand the feature to enable it
-and use it IMO.
-
-> IIRC I did come across an entry which paraphrased said:
-> "This module can be useful in situation Y, but you run a real risk of
-> physically damaging your board when you use it.
-> So normally you REALLY should not enable this, but if you still need it
-> then the functionality is implemented in this module.
->
-> If unsure, say N."
->
-> Which is an excellent reason not to enable it ;-)
-> Moreover, it specifies when you can/should go against the advise and
-> tells you what the risk is if you do.
->
-> But the vast majority just says "If unsure, say N."
->
-> The problem is that I'd need a better justification to enable (as 'y' or
-> 'm') a module then "Based on (the rest of) the Help text, this looks
-> really useful".
->
-
-You seem to contradict yourself here. If you have understood the help
-text and think it is useful, it seems to me as an indication that you
-are not unsure really. So you can enable it if you want TBH.
-
-> Not to discuss these specifically, but just for illustration:
-> ``drivers/firmware/arm_scmi/transports/Kconfig`` has this
-> option: ``ARM_SCMI_TRANSPORT_SMC_ATOMIC_ENABLE``
-> which IIUC enables an *optional* feature for an atomic transaction.
->
-
-"If you want the SCMI SMC based transport to operate in atomic
-mode, avoiding any kind of sleeping behaviour for selected
-transactions on the TX path, answer Y.
-
-Enabling atomic mode operations allows any SCMI driver using this
-transport to optionally ask for atomic SCMI transactions and operate
-in atomic context too, at the price of using a number of busy-waiting
-primitives all over instead."
-
-So you read the above text, understood and find it useful. You must be
-not unsure of this feature then, so what does that text bother you.
-It is just a caution to users who are just build and not looked at the
-code, or have no idea about the feature or doesn't understand the help
-text.
-
---
-Regards,
-Sudeep
+Any update on this?
 
