@@ -1,92 +1,82 @@
-Return-Path: <linux-kernel+bounces-406090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4349C5AD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:49:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C99B49C5AD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:49:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A069A2863C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:49:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EFAE281D65
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5CB43AA1;
-	Tue, 12 Nov 2024 14:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5F91FEFA8;
+	Tue, 12 Nov 2024 14:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ityExVVJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F1B6DnyH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sKKYrTPv"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627891FCC66;
-	Tue, 12 Nov 2024 14:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6574C13F435
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422916; cv=none; b=ZDvbzPVB2Dr90qWEFS6LDreMigqREDlGA8tiX3VjPNZkBZgeL27vJmI7jUAVCfBGcvolqtOchIjI5HEfZCh3W6Ios7rhyXiK5uXzW6RKdHFS7f87qJOUqZczbm/sLMAvACC1/U+Ly2X2w39pHRCi0d8SdqENAuC6DruQS69Z/g4=
+	t=1731422926; cv=none; b=IU+3Wrb55WSpRz8CIJAyyhTvBznV+trsHsZSZ5qZyqi1zoCidLGJoiiC4mBUIeI4g4tbFGakrVPV/I0D1L+rJp7sKvElJ2lt2SDg5eXYWqtRnM+Fas62OjWqeSRwAng4xg+2h5CWkdCmiM3KPSK8VuPq216qsKKNYLfTbmiF+Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422916; c=relaxed/simple;
-	bh=LaX258tbxjOqEOTGbrNDUKoUkGa+ThGu/PsjRDKKkdQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ALmwTaN0sEps2MMdvSPwMPZd4+voIt3xAJz9MwrYg0Ksh3SWKjynQVpoHF4BDWziDbo+h6Hw0MwZh+78k4pNMyBJYT7sStcZFp9FCEvpqsmjfyk2YC7aSWPlKHJMqC9cMOv/tCNdwFDGNWE27CS0sIHkk25mjNYGZzKvmCBvpUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ityExVVJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A83DC4CECD;
-	Tue, 12 Nov 2024 14:48:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731422916;
-	bh=LaX258tbxjOqEOTGbrNDUKoUkGa+ThGu/PsjRDKKkdQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ityExVVJjDuG4ybSOwEhW0G8PSTWwT15xm7SChbAaxRGzsqELtPi4xC/YRZs9d+0j
-	 VaIAqJQyAOzU3TqjUu+OxDErg2eb76Q6OyQlSgLeXHD9VV2Lt2DEJE+LUQXqOpPxmE
-	 w0JfsmjHnx12YhiTYviaD82ee3Vz9U/Sf865ewvwpxQWqD4CGgBYXrh6d1FfNoi4YO
-	 HZ7uxe/lde53fnMZOvUy43+iMdJO6Hhuggk+9zWt9ohqHUMw/4IGFOHsCAPd2/Ng17
-	 8rB92hfyxXh2hi1vxP/A60CHceoO4KiD0YKVR5rrvSa4v6XtwlZMX9zLcO3+Ih3wf5
-	 kR1hdGVaqzNMQ==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Stanislav Jakubek <stano.jakubek@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-iio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
-In-Reply-To: <efd200c3b5b75405e4e450d064b026f10ae2f8e0.1730709384.git.stano.jakubek@gmail.com>
-References: <efd200c3b5b75405e4e450d064b026f10ae2f8e0.1730709384.git.stano.jakubek@gmail.com>
-Subject: Re: (subset) [PATCH v3 1/2] dt-bindings: mfd: sprd,sc2731: convert
- to YAML
-Message-Id: <173142291174.1055133.1779666527306049052.b4-ty@kernel.org>
-Date: Tue, 12 Nov 2024 14:48:31 +0000
+	s=arc-20240116; t=1731422926; c=relaxed/simple;
+	bh=D61eWjOrFwpgEFmkwTFdnMMEWAwxYM8vo6p7qTrJLoo=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YZgDUrdD1whsSgr9ECkQLkYaMec4oIdNENcO60zwxuQDOBpFAvmwq9d2GoXTJ2AzFIvWRMSf4B8TKxNtKgfYM4dUVe76JiCalUi+nHbP/fQ251sB/vYuIJkmYEninY2Uj+CGwx6KK1+qFwCwDYRM9kDBO1Z8p0OWGOIOPmuVYlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F1B6DnyH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sKKYrTPv; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731422919;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pwdFJEsHTVikOnAMWlThCtaM9ig0AlTkkrxPLwh79S8=;
+	b=F1B6DnyHBcOeFoSpLz6a11tktazX2qCPB4z7i0+Js4oPjybyj07gKBlXK6fMjWGDHyPBap
+	88T3caRR34Ps3P0kF80WU0qKE/+Wot8VaM+//yRibCBp7oBrJwOdeeP5EVlZqpgKkL58Sj
+	fAHbO0UYMiEvkfnBqFv5v8MjQrozGTJoF6Ntvyd5Xi4QH3rl2JCs0kdnb7qHX4bfOFrEnE
+	v3EVZrlgbbc9R3wqysXkQcfOCWWhUF39PNiHjhtJictJHg7feRMPUV4dcHWEqFQ3Iqp8CL
+	voBVH/u47QZnbG0HSDfDZD1e/tNSDOElLOfhAYgoGi/kGcJaHl8NZRhBKzIaxg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731422919;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pwdFJEsHTVikOnAMWlThCtaM9ig0AlTkkrxPLwh79S8=;
+	b=sKKYrTPvI5stYDSsj/LgJmZNDhL+U3P2w25SVv0kCXkpnoKJeK8Bfs+QbQuc7Epudv/DJi
+	4D6fc9n2r2e4jFAQ==
+To: Joel Fernandes <joel@joelfernandes.org>, linux-kernel@vger.kernel.org,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [RFC 3/3] tick-sched: Replace jiffie readout with idle_entrytime
+In-Reply-To: <20241110225545.GA1579217@google.com>
+References: <20241108174839.1016424-1-joel@joelfernandes.org>
+ <20241108174839.1016424-4-joel@joelfernandes.org>
+ <20241110225545.GA1579217@google.com>
+Date: Tue, 12 Nov 2024 15:48:43 +0100
+Message-ID: <87y11omrsk.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
 
-On Mon, 04 Nov 2024 09:48:21 +0100, Stanislav Jakubek wrote:
-> Convert the Spreadtrum SC27xx PMIC bindings to DT schema. Adjust the
-> filename to match the compatible of the only in-tree user, SC2731.
-> Change #interrupt-cells value to 1, as according to [1] that is the
-> correct value.
-> Move partial examples of child nodes in the child node schemas to this new
-> MFD schema to have one complete example.
-> 
-> [...]
+On Sun, Nov 10 2024 at 22:55, Joel Fernandes wrote:
+>
+> +       /*
+> +        * There is some time that passes between when clocksource starts and the
+> +        * first time tick device is setup. Offset basejiff by that.
+> +       */
+> +       basejiff -= DIV_ROUND_DOWN_ULL(tick_first_period, TICK_NSEC);
 
-Applied, thanks!
-
-[1/2] dt-bindings: mfd: sprd,sc2731: convert to YAML
-      commit: f9c7529fdb607a255bb648f0a7550813e311b5ba
-
---
-Lee Jones [李琼斯]
-
+We clearly need yet another division here. Especially as that division
+results in the exactly same value every time.
 
