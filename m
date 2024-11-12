@@ -1,152 +1,81 @@
-Return-Path: <linux-kernel+bounces-406774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018019C63AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:43:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B8F9C63DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:56:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B5781F2540D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:43:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E359BC1012
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B2221A4C7;
-	Tue, 12 Nov 2024 21:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3006D215C5A;
+	Tue, 12 Nov 2024 17:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zwgf7eGD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uzp8TFWI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF7543AA1;
-	Tue, 12 Nov 2024 21:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D0021442E;
+	Tue, 12 Nov 2024 17:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731447819; cv=none; b=tMtvVRKNTTmeDcZyx4jKSa5VP6bmAVerkGD9/OEbTsVP/N2DwoSGzr+NvEzo2DflQar8g/fAz3kkrjFPD/xCTR//XoN281g5PYtsG6Y17sAhZt6E5fSJKdD1+PekKrFfNKdkZ36gtblSny6ECCbJWYYWx1aJUAk1ONxP2snXXAQ=
+	t=1731434262; cv=none; b=bvPVplfK3iVuoIyUjfLA2hxZp3w7giB+4f+2rb97V6b1ZNXBv50vd65YFWd8PbywXkH93aGZxoqOX1Zleh5LrSFxhlMRwiPv5ch110SP6Bldc+0lJn5q5vYy/tMSrNpL2GEZDcmYTrZ5luGekphidcSVBcIEwetfk+wBs6nom9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731447819; c=relaxed/simple;
-	bh=TSBvSL3F8utvdtRSv0V0b72Rr2Qwe8DnowxnXL+/4GU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Rf5kQjLJfgEAIN/XU6oM+X8askCTOT0HnVraWAS0SzShYHXsCOvrwDrYp30OYMvKdBqdvyBKjUb/8QOkbPKPPB0GUpesY/PbtiVAij2S7z29q2ezbQYvTjqZUeqO6+BpYMWNXhuZiTiL1oo9XtHB4RA8mK2591XBfT/53aJzUPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zwgf7eGD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE84EC4CECD;
-	Tue, 12 Nov 2024 21:43:38 +0000 (UTC)
+	s=arc-20240116; t=1731434262; c=relaxed/simple;
+	bh=1URpfIrCXwUDp20J+85VGQv7B1uElnbl53FjCZonyuU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=tghjhhlh79DypIZNxH7EvsYIR1eyA4EwQvMEdKb6FpBHS6eYX7PCWLFxYEbyqPSeWXd975/JmHg2Ccvouv7hPAOVBiBKvsQT3tlHh4maVJeF7ufVVVD84jX2l+Lre9fmrZZpebKq3ZswBQg0PjppzaILA7p5yD5tle6rL+1wbRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uzp8TFWI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B00DC4CECD;
+	Tue, 12 Nov 2024 17:57:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731447819;
-	bh=TSBvSL3F8utvdtRSv0V0b72Rr2Qwe8DnowxnXL+/4GU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Zwgf7eGDinLJJQzHU5fzK0CcK8hMSQrpqCuhZlg5fCb9cZyYhPFFEaf5s1Jioe20y
-	 dtIgb9DZHNR3rivnptyX2Q3U9V6ySlrzPyuu2V9GbpfouD2cLKom+s8ZjMocS4Y5/7
-	 hlUW9sEc92udhXpwDVyMGoIdLA3/WShXbAxKRuUhIKuf9Y1shUh9VCV61EWCLjHLlD
-	 OUyFCvw7gNvZPdYLVoXY5BT84gPmgGkKoepMdRiKP+POu45iD+rN1eexkEVSX2M0A6
-	 XxfB/BW2DZZFZds0G7xrv/TpVMQd5k8AKjidTo5cOZHuWn6l8u8X0C8fbo9jFin1pq
-	 JNOvJD0KBeA7g==
-Date: Tue, 12 Nov 2024 15:43:37 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
-Cc: lpieralisi@kernel.org, thomas.petazzoni@bootlin.com, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	salee@marvell.com, dingwei@marvell.com
-Subject: Re: [PATCH 1/1] PCI: armada8k: Disable LTSSM on link down interrupts
-Message-ID: <20241112214337.GA1861873@bhelgaas>
+	s=k20201202; t=1731434262;
+	bh=1URpfIrCXwUDp20J+85VGQv7B1uElnbl53FjCZonyuU=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=uzp8TFWIFln5YzU8/cX9CtUrWs5/n5PMJb84/N0vbWt9G2svGTOsIS6sPvrWSf3aU
+	 NRzhnS9uXgiQJpr6qWxBRSt+i0qynR4FxOg6xKI+wZDs2bTEsU3RAp9IcopSU/OCan
+	 Ej97IxAi+iT1N1J/5O0tjEcTzj0cCvyh2cT5RfcKV5s60VDlMtm+/vJTJkGn3k2GUb
+	 5MuuIlMe8zAxOIllEesaN1NwDjEeySr7nZovPNksQUKp4now4Bazi1ffDLtpUA2aw4
+	 hjX8lqRp2oo5M8ptdAJhIcG6AxznFK96TR938ddqFz1f1W93x02NI9gg9+AIq49gF7
+	 IdCmW06ypgxQQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112064241.749493-1-jpatel2@marvell.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 12 Nov 2024 19:57:37 +0200
+Message-Id: <D5KE7X6LMR5Z.AA8PPWDBPQP7@kernel.org>
+Cc: "Roberto Sassu" <roberto.sassu@huawei.com>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tpm: Opt-in in disable PCR integrity protection
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Mimi Zohar" <zohar@linux.ibm.com>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>,
+ "Jonathan Corbet" <corbet@lwn.net>, "Peter Huewe" <peterhuewe@gmx.de>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>
+X-Mailer: aerc 0.18.2
+References: <20241107095138.78209-1-jarkko@kernel.org>
+ <76d9ae11c339b589a8ec94f010e7439b7ce7d283.camel@HansenPartnership.com>
+ <D5FZT0QPHL0O.231WD6VUHC48X@kernel.org>
+ <10296fd8b0fcbf1d813577ef41738ffea12b70d1.camel@HansenPartnership.com>
+ <dd51366e50de86e8a6002f2f53801c53a9b770f3.camel@linux.ibm.com>
+In-Reply-To: <dd51366e50de86e8a6002f2f53801c53a9b770f3.camel@linux.ibm.com>
 
-On Mon, Nov 11, 2024 at 10:42:41PM -0800, Jenishkumar Maheshbhai Patel wrote:
-> When a PCI link down condition is detected, the link training state
-> machine must be disabled immediately.
+On Mon Nov 11, 2024 at 9:53 PM EET, Mimi Zohar wrote:
+> > The original open coded the empty auth append with struct
+> > tpm2_null_auth since it's the only user.  However, since we do have
+> > another user in trusted keys, it might make sense to consolidate.
+>
+> Instead of delaying the current patch from being upstreamed, perhaps this=
+ change
+> can be deferred?
 
-Why?
+Yes.
 
-"Immediately" has no meaning here.  Arbitrary delays are possible and
-must not break anything.
-
-> Signed-off-by: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
-> ---
->  drivers/pci/controller/dwc/pcie-armada8k.c | 38 ++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
-> index b5c599ccaacf..07775539b321 100644
-> --- a/drivers/pci/controller/dwc/pcie-armada8k.c
-> +++ b/drivers/pci/controller/dwc/pcie-armada8k.c
-> @@ -53,6 +53,10 @@ struct armada8k_pcie {
->  #define PCIE_INT_C_ASSERT_MASK		BIT(11)
->  #define PCIE_INT_D_ASSERT_MASK		BIT(12)
->  
-> +#define PCIE_GLOBAL_INT_CAUSE2_REG	(PCIE_VENDOR_REGS_OFFSET + 0x24)
-> +#define PCIE_GLOBAL_INT_MASK2_REG	(PCIE_VENDOR_REGS_OFFSET + 0x28)
-> +#define PCIE_INT2_PHY_RST_LINK_DOWN	BIT(1)
-> +
->  #define PCIE_ARCACHE_TRC_REG		(PCIE_VENDOR_REGS_OFFSET + 0x50)
->  #define PCIE_AWCACHE_TRC_REG		(PCIE_VENDOR_REGS_OFFSET + 0x54)
->  #define PCIE_ARUSER_REG			(PCIE_VENDOR_REGS_OFFSET + 0x5C)
-> @@ -204,6 +208,11 @@ static int armada8k_pcie_host_init(struct dw_pcie_rp *pp)
->  	       PCIE_INT_C_ASSERT_MASK | PCIE_INT_D_ASSERT_MASK;
->  	dw_pcie_writel_dbi(pci, PCIE_GLOBAL_INT_MASK1_REG, reg);
->  
-> +	/* Also enable link down interrupts */
-> +	reg = dw_pcie_readl_dbi(pci, PCIE_GLOBAL_INT_MASK2_REG);
-> +	reg |= PCIE_INT2_PHY_RST_LINK_DOWN;
-> +	dw_pcie_writel_dbi(pci, PCIE_GLOBAL_INT_MASK2_REG, reg);
-> +
->  	return 0;
->  }
->  
-> @@ -221,6 +230,35 @@ static irqreturn_t armada8k_pcie_irq_handler(int irq, void *arg)
->  	val = dw_pcie_readl_dbi(pci, PCIE_GLOBAL_INT_CAUSE1_REG);
->  	dw_pcie_writel_dbi(pci, PCIE_GLOBAL_INT_CAUSE1_REG, val);
->  
-> +	val = dw_pcie_readl_dbi(pci, PCIE_GLOBAL_INT_CAUSE2_REG);
-> +
-> +	if (PCIE_INT2_PHY_RST_LINK_DOWN & val) {
-> +		u32 ctrl_reg = dw_pcie_readl_dbi(pci, PCIE_GLOBAL_CONTROL_REG);
-
-Add blank line.
-
-> +		/*
-> +		 * The link went down. Disable LTSSM immediately. This
-> +		 * unlocks the root complex config registers. Downstream
-> +		 * device accesses will return all-Fs
-> +		 */
-> +		ctrl_reg &= ~(PCIE_APP_LTSSM_EN);
-> +		dw_pcie_writel_dbi(pci, PCIE_GLOBAL_CONTROL_REG, ctrl_reg);
-
-And here.
-
-> +		/*
-> +		 * Mask link down interrupts. They can be re-enabled once
-> +		 * the link is retrained.
-> +		 */
-> +		ctrl_reg = dw_pcie_readl_dbi(pci, PCIE_GLOBAL_INT_MASK2_REG);
-> +		ctrl_reg &= ~PCIE_INT2_PHY_RST_LINK_DOWN;
-> +		dw_pcie_writel_dbi(pci, PCIE_GLOBAL_INT_MASK2_REG, ctrl_reg);
-
-And here.  Follow existing coding style in this file.
-
-> +		/*
-> +		 * At this point a worker thread can be triggered to
-> +		 * initiate a link retrain. If link retrains were
-> +		 * possible, that is.
-> +		 */
-> +		dev_dbg(pci->dev, "%s: link went down\n", __func__);
-> +	}
-> +
-> +	/* Now clear the second interrupt cause. */
-> +	dw_pcie_writel_dbi(pci, PCIE_GLOBAL_INT_CAUSE2_REG, val);
-> +
->  	return IRQ_HANDLED;
->  }
->  
-> -- 
-> 2.25.1
-> 
+BR, Jarkko
 
