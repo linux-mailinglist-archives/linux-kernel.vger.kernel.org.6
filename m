@@ -1,151 +1,154 @@
-Return-Path: <linux-kernel+bounces-406384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D3EA9C5E45
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:07:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A429C5E65
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:10:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7C7281C31
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:07:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD281F213CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1179020821D;
-	Tue, 12 Nov 2024 17:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F23D21502F;
+	Tue, 12 Nov 2024 17:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWrX0f6t"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wS+DmfxZ"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026681FC7C9;
-	Tue, 12 Nov 2024 17:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1691A20D515
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731431005; cv=none; b=Mn7MG7esrrYRJ4ndqRBeYGbvyUcMNcOqI7yxVhOdaRLFZ96Ff72KAxLtKSfSoIASKHpHZTBKMKYG80ePFJesQtmdBB2/9zWI8YAayjk07/cwmlaX2qavHE9MgBkM5sWzMgNGCFqh8HkBQ0tMR21L22c0LgV7KX4dmDof5QGJS+U=
+	t=1731431120; cv=none; b=SnnazzQjXhVbC/OUKGaCj+ymv7vnIkem2/jO7HEV9WswQ3gLrNqsQwT/kmztCMg3lgac7jHSBMVe+ktnROYM2ghNdUiCA1Jwiv9O3dLl/kVl61PM2jKrY/M4xy5emBu6VFl8v3ZX82lfH0GQkU+qYNc8pRUdHF4xD8ujbJDyJtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731431005; c=relaxed/simple;
-	bh=ZThpEhDdDJYycXgH6+ttXW1A2dm3uJNlEUYeZyShWaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gsiZKZfGC0K2+GvewgoFpnmwI0MoIVuG6/cTzoeou6kcb26kh8I3CScWYT/ltO8g4CkkPUHp8c0/HdfO1V4JzA4Bwz+SobbmU3pW5H4dkTp48h39ZDmtpfeC3hOActlC9ylhZpVI5BUYAbQQ9ycD/ZlFHp3PMyv+4jqvQkOncqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cWrX0f6t; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso3901431a12.0;
-        Tue, 12 Nov 2024 09:03:23 -0800 (PST)
+	s=arc-20240116; t=1731431120; c=relaxed/simple;
+	bh=+QhHbvTsdoN+h39DtOSWHLGO5rsf6lseXPlK1bc8n5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AEgpNK43GktTI11xwSE5KiiK4QRiEtGV+VDOqRL8f9Oi3OioA7OOVTN6y29rznTBn26PRQh4rk7nzvbBS1X/KmZI7oCPYWXinlRKxoQMwBq3w18+2MM7qp/WF/83hgIL1mILGa+t/OypVKNXlHmMx2cZXy+k5nwGc/vpu9OUM5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wS+DmfxZ; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e3f35268so6554335e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:05:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731431003; x=1732035803; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=9BKriUmIJ19IUhsAxrHMPhV/cGhyyzKc2XCySdvtSo8=;
-        b=cWrX0f6tIksorUVAUMBLJjt7QheiwORmpvnBNJnQ5SdbTaiLrAqZ+HvY7mILWHUBpL
-         WM+R6Nv/g0wOwhOGueJp7XeF2NtcZHbJRax9ix4pEEUqcmq7YZ8x7AmSZOMOvOAIoRg3
-         DKwfPErCU5YCzdxSYF97ScNFAE7mb32qjk1xEOu4ZEVxxXKM9jI9+AiRUNCzryUJVSK/
-         jccDKXE25s9RoHQDl6sZmDymWarzsPv6knJDpoR2T7JepqNSZZWuBUJu91U5EJxPiokQ
-         fhs3eitsG2SOCoDIg5ep2XgbinmaRi6Z8wgBJHXngFIDtvcgrWjGk/zIeitqI9OYR5EI
-         oUiA==
+        d=linaro.org; s=google; t=1731431117; x=1732035917; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NVKRrFlkkb4wg4R0ZPc49NQ3y+4Jopn/wW8d5M2TTXY=;
+        b=wS+DmfxZ3fjJTpiVxW2WgjHafA/BZ5bz0yMGe38l66xd3HT4Qko7oyNXE0AgA9wt8a
+         RXn1nlBTf5UNi3Re0gbi7vDxN83qgVVygDDj5TUvO5Vq7VbOlZWyzUhYhmLCQAtVM3uF
+         WLc91sJz0BGSRgUmKuljUc6uN9AFo607a6eNHDdkFQSL79zsAoiYm4MoRtCOn2qV2a1u
+         pZKxLhfLtBp0mA4U9tq3VCyIfYmlv88Ssya4pBtDzcBaF0y4mNMYZbGBs2usmHrq/F3Y
+         2doHzT9ChGioEKrX05Cg8jiTOzadR8ipwT2kDa1PhjGk3TGO1SX9mgB4s/W6HiyeX8Iv
+         aM+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731431003; x=1732035803;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1731431117; x=1732035917;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9BKriUmIJ19IUhsAxrHMPhV/cGhyyzKc2XCySdvtSo8=;
-        b=fBQIXOBI5wE/qD0VoNDdl2FKWTQJ1xY2za79eXXjTTtX1aQyvF1+Mk+h1T/Qa8YfNk
-         Wfr/CckqHGXI+EpG5augU3AljQg7pOvEZuWDihKVj7h5pysMCqHakonGXZ8R2EVN7geg
-         maERPtg2NpapUGEBBRTd1J/YGBbLjQ9dfzdxwMGxJFI4yLI0YhdxQn9v/NqUgK5mbsaV
-         6ZjoNki7U0y6u8YTF/VcVII054ZhyhV72IjZHoWxWCyZ39Cbal/Kx8B3Abo199EcZkqh
-         7+6Oyibwh8D3ondaWFEIliFJhr/xxUpIdtYJWeurqNSZRClqIzTTocYK7V9m4FjfJmj0
-         IRiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKQCBaQ66qO4KjF6rjN6cyHe6fyl1S+kgjS88MmnD8f1FsAmDE3Xycl1yEjqzE6lUWi3w2loVe1xcZAcT7@vger.kernel.org, AJvYcCVVITlUkvpXMLuLZez1OSCrHl00U4hwOaPdOVT/KNeKk/JL6Cyz0f+z7hTuHa4nIwNM9JGI3Nzhi34isw==@vger.kernel.org, AJvYcCWePdg6FpY8b9e4b9aK77n8cEAwCVF4QEoNHXK0HA3hOO3EJsSJ0jmIUX/tmcbBcSCTzdFfqvszxXhQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL/NT3dhQaK9KgXHCnJc9PG4RIGajrJpLkQ3HfbQG0NWhDyo8A
-	0OB2OY4lDjah/otEUTnbNCivbzh/Cftvx5eyUSaZR4CO/bbrc5oA
-X-Google-Smtp-Source: AGHT+IGsV+SVq1SZE7E9NIEiOQsy/0L/BCIYNgE/mk/cfMOPzl1p6AMdToKVI6Ob4UHwuo+FvPgQTw==
-X-Received: by 2002:a17:90b:1d50:b0:2e9:449e:d57f with SMTP id 98e67ed59e1d1-2e9e4ca235dmr4070965a91.34.1731431003217;
-        Tue, 12 Nov 2024 09:03:23 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a62bd4fsm12878827a91.50.2024.11.12.09.03.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 09:03:22 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <6d2abf6d-682f-461d-9147-cffc80825b18@roeck-us.net>
-Date: Tue, 12 Nov 2024 09:03:21 -0800
+        bh=NVKRrFlkkb4wg4R0ZPc49NQ3y+4Jopn/wW8d5M2TTXY=;
+        b=mpsoei1Wg0b4pW4dTsBcTMoyq6XLlxcH37hJJOoNEmyJcfxzPIfIWOVSESC2ManKkZ
+         TVWgz93IjwslhHZiQV4fm0kuXFRjOQQPhTYNevLg03POPwahHxYTSj2QV088YyJ1baru
+         AQSbAsgtQMFZPhuS2rvoCA8IBJI7ViHBTILwMcIeOTzQQtPnOYf0L+p1Do6PZNM9uvcj
+         8THA/jUDCpaRDuwPKeG7xnH2x6UQ3A1EwOK3oEX9WQ7/3+1QyxXmkb83KoDWC83dTPf4
+         yMc4xfIkzzZOi9lhz6MeGiWaox3nhpZXd928+DIiG8F9KySpcAq578iBw0L0QSoDI8Vc
+         hOQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIapnJcFATmSphwkiqfA+99Ng61Op8Y66+V6YMZlL/d3b0F9nMmjP6FefsEByV/UOeB95mS75QeclcWoI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjxyVu8lJsbl6mgJibyuJR3o8+dKck/Vqt+WIGVEVUCbkqLf2m
+	yhZa0UyzDd/UPQ/rplt+s3bpptFcyeh7XSpiaVTN3myU48o6qobHzovZmqxkO3s=
+X-Google-Smtp-Source: AGHT+IFktvxSEG21Y1Go2yfQvxLoLb0yDrWBRzLeB2+SLpucDdFBur1x+XpMAnkAtOQ4xTIMku4bxg==
+X-Received: by 2002:a05:6512:ac4:b0:53c:7624:586f with SMTP id 2adb3069b0e04-53d862c4785mr8425423e87.29.1731431117025;
+        Tue, 12 Nov 2024 09:05:17 -0800 (PST)
+Received: from linaro.org ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05e2a31sm214523895e9.36.2024.11.12.09.05.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 09:05:16 -0800 (PST)
+Date: Tue, 12 Nov 2024 19:05:14 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Johan Hovold <johan@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 6/6] arm64: dts: qcom: x1e80100-t14s: Enable external
+ DisplayPort support
+Message-ID: <ZzOKylgU3teUNuAe@linaro.org>
+References: <20241112-x1e80100-ps8830-v5-0-4ad83af4d162@linaro.org>
+ <20241112-x1e80100-ps8830-v5-6-4ad83af4d162@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] arm64: dts: imx93-9x9-qsb: add temp-sensor
- nxp,p3t1085
-To: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Jean Delvare <jdelvare@suse.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>,
- linux-hwmon@vger.kernel.org
-References: <20241112-p3t1085-v4-0-a1334314b1e6@nxp.com>
- <20241112-p3t1085-v4-3-a1334314b1e6@nxp.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241112-p3t1085-v4-3-a1334314b1e6@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112-x1e80100-ps8830-v5-6-4ad83af4d162@linaro.org>
 
-On 11/12/24 08:52, Frank Li wrote:
-> Add temp-sensor nxp,p3t1085 for imx93-9x9-qsb boards.
+On 24-11-12 19:01:15, Abel Vesa wrote:
+> The Lenovo ThinkPad T14s Gen6 provides external DisplayPort on all
+> 2 USB Type-C ports. Each one of this ports is connected to a dedicated
+> DisplayPort controller.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Due to support missing in the USB/DisplayPort combo PHY driver,
+> the external DisplayPort is limited to 2 lanes.
+> 
+> So enable the first and second DisplayPort controllers and limit their
+> data lanes number to 2.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+Please do not merge this specific patch.
 
+It is provided just for context and testing purposes.
+
+See the cover note for more details.
+
+> ---
+>  .../boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts      | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+> index ea3ecc7c5bda24f3a0a7bb027b456462b11daf4d..b08a173f0cfe2a2fc241a4e689d35b5e7e03d7e1 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+> +++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+> @@ -746,6 +746,22 @@ &mdss {
+>  	status = "okay";
+>  };
+>  
+> +&mdss_dp0 {
+> +	status = "okay";
+> +};
+> +
+> +&mdss_dp0_out {
+> +	data-lanes = <0 1>;
+> +};
+> +
+> +&mdss_dp1 {
+> +	status = "okay";
+> +};
+> +
+> +&mdss_dp1_out {
+> +	data-lanes = <0 1>;
+> +};
+> +
+>  &mdss_dp3 {
+>  	compatible = "qcom,x1e80100-dp";
+>  	/delete-property/ #sound-dai-cells;
+> 
+> -- 
+> 2.34.1
+> 
 
