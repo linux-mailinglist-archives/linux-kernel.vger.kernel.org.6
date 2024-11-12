@@ -1,334 +1,175 @@
-Return-Path: <linux-kernel+bounces-405916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718819C58D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:20:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF239C58DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:23:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F171E1F2121A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:20:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E9C1F21BDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171EC13C908;
-	Tue, 12 Nov 2024 13:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D7C1531CB;
+	Tue, 12 Nov 2024 13:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="R1fGFGwp"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="i89aoZhI"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D126C7080D
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731417626; cv=none; b=EgMJOlA6+LEZwCg4jYk1tpZXGg4C3/hy7+JVAZPYqt6D+pTsB/i4eEYMIVAv07nfLHfzi+O4UygCWyVxCJLRGv3F7eai5hMZEv9XNiku415SmHyPMyHACLfym/652A8oOEgTpIsBTUgI+9g97SZIsAhPK5chypOqYXfBdv9/pXA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731417626; c=relaxed/simple;
-	bh=4uQQKVnJVNkYxj3Jf3V9uXYx3Kw1s6pIzZwwAp0Wiaw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OHDHK8QAwE45IeqtnH1GfCG12FU9QexrEmGy4TKJSVFC2CYUzZH7AEGrwDYSFaDE4reXuKYjNY41DYVRkJQptf5C1QaRdNjmvC+XTZa0P0VHEBh6zbkzs1nAQajt/7h57Q30ErBGDvudD5JyeHa5tfIV8oUfAM7rmhr3mObERUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=R1fGFGwp; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9aa8895facso1046127366b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:20:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1731417622; x=1732022422; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=A1t9Ib/aPHDdfQvoVKx/Fp+uYeREslGX9huBdxy8D5w=;
-        b=R1fGFGwpLwBuY22360zqHCFEnrtfk2hrVbS8OpLp+AYP9e1SySpJPTZcqrWxCqjgQ/
-         CtHDSrQDdNVPvhM5cgIaKBv7pEJ+ceYEGN73V32Wfbw2LSEYL8GXVKLgTd2f1dTVKjlb
-         7cJP/UpEaUm9iCVWwOeaRM/5blXj5ML6D/5rnW7T5ihfPCRHQkLa84+kpZzgs72NaKPl
-         qZreU/NfePX9GRTF1xtg/hOZG6UftZ/8/l5Vht+eGmpS7GH7ZcDslLA3jJQgN+GRvURF
-         pEaJfvO7RiXhmdLWXoAntXxo4lxPwlL9XW+SFeCoI2TUk/hVty3Sokumt1vFjrzV5x3t
-         GT1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731417622; x=1732022422;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A1t9Ib/aPHDdfQvoVKx/Fp+uYeREslGX9huBdxy8D5w=;
-        b=vaGFkrvsSC5EJWO5xkMfXq4++1qGKnSV8zHw/panqy4E5Fz284qvNiOa5S5z+qZ0Jk
-         7etJZYxPvbYgrTaX4r2ttCbLAExqmZRvkTrLOOynoQ1Y8YsFvGrOXIdcqZ28VPXd+JFl
-         Po//GKL+sEAnZyiXq/wEOLDgmNYpHADciF1pFMaKkhidyt2L2FQYSDuDqLUOYuNypDnJ
-         hQlHIdEL2wqvQRi4sLAFABnlxJJiMi5lZMLDIrvLiW4gbP3fKbRPuOSfpjwlFmnTO7fA
-         eCtXJagwTMSPhQ6vrVs00HOeBsY1sPSNhttZsUzJLGB7OFhaFYTB7jUeg5ZfTrxN58e3
-         DHPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCZtcq9STTZu9YJdXM+uXIL9d76ti1JyFPMAEJKCB1O+IixEfD1yVh1Fv4yE5ugzKRTJCg67DrfCqOqPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhkdzfjHYx2BPB70SsiQo+MTgT8Ld5kWexTqmp8nxWwG1uyF7s
-	cKktK3D0v0BkDnLqKUuEyD2eGyF/8RXiKIVrRBwtv/wEmGQn7L+YJWfpNsWNsCw=
-X-Google-Smtp-Source: AGHT+IHxDEAm5J4fyPiYBfUUcx8JGUKH/71W41+JakmzEd92mmK3cHWQHCGpTj47KLde3aEZt1tLWg==
-X-Received: by 2002:a17:907:72c8:b0:a9a:1739:91e9 with SMTP id a640c23a62f3a-a9eefeebe72mr1631965066b.24.1731417622152;
-        Tue, 12 Nov 2024 05:20:22 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:e829:c484:5241:93b2? ([2001:67c:2fbc:1:e829:c484:5241:93b2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc5112sm718813966b.112.2024.11.12.05.20.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 05:20:21 -0800 (PST)
-Message-ID: <189dbeea-127a-47e8-84f8-c8cf1cc03536@openvpn.net>
-Date: Tue, 12 Nov 2024 14:20:45 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4181DFF7;
+	Tue, 12 Nov 2024 13:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731417810; cv=pass; b=YFYq+2Rec/Cw6b9ED9D+69rrF6g6HqM8t3S+bG+zPhelkoqhF2lm9VYo3L0rRX4y8Fch8AgHDikFHsvLGk4S/0CZslOXttAckEWS2NhDKayauGti/WY03zEA5zr1EnQ0stk4H77nKPjB8UKBSsz0uGfDpMaCbRfRJi6PS7SaBzY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731417810; c=relaxed/simple;
+	bh=bcgcbtLsnfvJN/tLyVZnCzLHtUqLL24cZ8Nw9dUiTlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B3SBu0eT6xK/ZL+s6uiJMoWuvYoF1QGNgB2eE+QbpzKMoY7qcNBPqmwhjoOgDegP7f2up4JIg987haGQFavp69bTlX0Qhe6NTa8vU3qxQwua8WDlKJorAp2OubzB3rpip5iQSrPz7ZaIu1m3EewBCHldUZqOpS1OVIxDPnoXzIs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=i89aoZhI; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731417781; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=bgUPyrww6J9+NQtS1Vgwi5dpP+UVlrlbR72nZqJoFlYFriOD71dUSVQvrLW2xxWU9KoF5E1IcT1ZdA1782T3Doxux51ebqQ0H0LySXoV1Np2/hoMXUX9mAtVpIqNbneqeGGGTEB5hbcnxm5FrwMA1Wf9GDfLOQT8KH5cjWeFrtA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731417781; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=bcgcbtLsnfvJN/tLyVZnCzLHtUqLL24cZ8Nw9dUiTlA=; 
+	b=IIsGol37GkbRJsetbaBPni3GrGMlCMhSY2LLKMmOByCuAS3Ys5gwSMlmbah07B1N/v7gzgEwD4Og3lHDYaS3geZKYvG0sXSXddvdV32WP4H10zJuitff+xNZXXkzUF6nWsqtqZgB0eqTzz4zpM4MaxJSqtVWtlcR/yBhxdwFaeg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731417781;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=bcgcbtLsnfvJN/tLyVZnCzLHtUqLL24cZ8Nw9dUiTlA=;
+	b=i89aoZhI+IwGr6TdCv6uoSZXVVvtW7iMmMNszB6wkpnbCOZJmDz5MZS78hN0rgqi
+	ezKpPH/qGioZ2sYq7Ov46p+bEqQ4wNp8hW99xKdYd42Jm03D8Pw1FQf9nh2hMlUIQys
+	WQ7LfJo2jfcLVsm/ab5+tnNOOBp6cbJci32nN5dA=
+Received: by mx.zohomail.com with SMTPS id 1731417780379727.6755151416451;
+	Tue, 12 Nov 2024 05:23:00 -0800 (PST)
+Received: by mercury (Postfix, from userid 1000)
+	id 9272A1060457; Tue, 12 Nov 2024 14:22:55 +0100 (CET)
+Date: Tue, 12 Nov 2024 14:22:55 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Ye Zhang <ye.zhang@rock-chips.com>, linus.walleij@linaro.org, heiko@sntech.de, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com, 
+	tao.huang@rock-chips.com, finley.xiao@rock-chips.com, tim.chen@rock-chips.com, 
+	elaine.zhang@rock-chips.com
+Subject: Re: [PATCH v5 4/4] gpio: rockchip: Set input direction when request
+ irq
+Message-ID: <qwlya3kten7ugxzruohmbmmymjd6trz3rlbflirr3yym2vfe32@rapst33wknmd>
+References: <20241112015408.3139996-1-ye.zhang@rock-chips.com>
+ <20241112015408.3139996-5-ye.zhang@rock-chips.com>
+ <CAMRc=MfTmpLSEUVTXSu8jf9tyTfQc=iG9NpovFem-qSDOCnagQ@mail.gmail.com>
+ <ZzMwh2GMP-bE7aLO@smile.fi.intel.com>
+ <CAMRc=MePqsQatxNy7p5c3sE4z8RepjjLeFgpppKgEctCU3jAUw@mail.gmail.com>
+ <CAMRc=MdY1idv1o_nZFb1fKLpM5DHCPmEu5t5MMa_kV9csLgQWw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 15/23] ovpn: implement keepalive mechanism
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-15-de4698c73a25@openvpn.net> <ZypfnyfToF1b6YAZ@hog>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <ZypfnyfToF1b6YAZ@hog>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-On 05/11/2024 19:10, Sabrina Dubroca wrote:
-> 2024-10-29, 11:47:28 +0100, Antonio Quartulli wrote:
->> @@ -105,6 +132,9 @@ void ovpn_decrypt_post(void *data, int ret)
->>   		goto drop;
->>   	}
->>   
->> +	/* keep track of last received authenticated packet for keepalive */
->> +	peer->last_recv = ktime_get_real_seconds();
-> 
-> It doesn't look like we're locking the peer here so that should be a
-> WRITE_ONCE() (and READ_ONCE(peer->last_recv) for all reads).
-
-Is that because last_recv is 64 bit long (and might be more than one 
-word on certain architectures)?
-
-I don't remember having to do so for reading/writing 32 bit long integers.
-
-I presume we need a WRITE_ONCE also upon initialization in 
-ovpn_peer_keepalive_set() right?
-We still want to coordinate that with other reads/writes.
-
-> 
->> +
->>   	/* point to encapsulated IP packet */
->>   	__skb_pull(skb, payload_offset);
->>   
->> @@ -121,6 +151,12 @@ void ovpn_decrypt_post(void *data, int ret)
->>   			goto drop;
->>   		}
->>   
->> +		if (ovpn_is_keepalive(skb)) {
->> +			net_dbg_ratelimited("%s: ping received from peer %u\n",
->> +					    peer->ovpn->dev->name, peer->id);
->> +			goto drop;
-> 
-> To help with debugging connectivity issues, maybe keepalives shouldn't
-> be counted as drops? (consume_skb instead of kfree_skb, and not
-> incrementing rx_dropped)
-> The packet was successfully received and did all it had to do.
-
-you're absolutely right. Will change that.
-
-> 
->> +		}
->> +
->>   		net_info_ratelimited("%s: unsupported protocol received from peer %u\n",
->>   				     peer->ovpn->dev->name, peer->id);
->>   		goto drop;
->> @@ -221,6 +257,10 @@ void ovpn_encrypt_post(void *data, int ret)
->>   		/* no transport configured yet */
->>   		goto err;
->>   	}
->> +
->> +	/* keep track of last sent packet for keepalive */
->> +	peer->last_sent = ktime_get_real_seconds();
-> 
-> And another WRITE_ONCE() here (also paired with READ_ONCE() on the
-> read side).
-
-Yap
-
-> 
-> 
->> +static int ovpn_peer_del_nolock(struct ovpn_peer *peer,
->> +				enum ovpn_del_peer_reason reason)
->> +{
->> +	switch (peer->ovpn->mode) {
->> +	case OVPN_MODE_MP:
-> 
-> I think it would be nice to add
-> 
->      lockdep_assert_held(&peer->ovpn->peers->lock);
-> 
->> +		return ovpn_peer_del_mp(peer, reason);
->> +	case OVPN_MODE_P2P:
-> 
-> and here
-> 
->      lockdep_assert_held(&peer->ovpn->lock);
-
-Yeah, good idea.
-__must_hold() can't work here, so lockdep_assert_held is definitely the 
-way to go.
-
-> 
-> (I had to check that ovpn_peer_del_nolock is indeed called with those
-> locks held since they're taken by ovpn_peer_keepalive_work_{mp,p2p},
-> adding these assertions would make it clear that ovpn_peer_del_nolock
-> is not an unsafe version of ovpn_peer_del)
-
-Right, it makes sense.
-
-> 
->> +		return ovpn_peer_del_p2p(peer, reason);
->> +	default:
->> +		return -EOPNOTSUPP;
->> +	}
->> +}
->> +
->>   /**
->>    * ovpn_peers_free - free all peers in the instance
->>    * @ovpn: the instance whose peers should be released
->> @@ -830,3 +871,150 @@ void ovpn_peers_free(struct ovpn_struct *ovpn)
->>   		ovpn_peer_unhash(peer, OVPN_DEL_PEER_REASON_TEARDOWN);
->>   	spin_unlock_bh(&ovpn->peers->lock);
->>   }
->> +
->> +static time64_t ovpn_peer_keepalive_work_single(struct ovpn_peer *peer,
->> +						time64_t now)
->> +{
->> +	time64_t next_run1, next_run2, delta;
->> +	unsigned long timeout, interval;
->> +	bool expired;
->> +
->> +	spin_lock_bh(&peer->lock);
->> +	/* we expect both timers to be configured at the same time,
->> +	 * therefore bail out if either is not set
->> +	 */
->> +	if (!peer->keepalive_timeout || !peer->keepalive_interval) {
->> +		spin_unlock_bh(&peer->lock);
->> +		return 0;
->> +	}
->> +
->> +	/* check for peer timeout */
->> +	expired = false;
->> +	timeout = peer->keepalive_timeout;
->> +	delta = now - peer->last_recv;
-> 
-> I'm not sure that's always > 0 if we finish decrypting a packet just
-> as the workqueue starts:
-> 
->    ovpn_peer_keepalive_work
->      now = ...
-> 
->                                         ovpn_decrypt_post
->                                           peer->last_recv = ...
-> 
->    ovpn_peer_keepalive_work_single
->      delta: now < peer->last_recv
-> 
-
-Yeah, there is nothing preventing this from happening...but is this 
-truly a problem? The math should still work, no?
-
-However:
-
-> 
-> 
->> +	if (delta < timeout) {
->> +		peer->keepalive_recv_exp = now + timeout - delta;
-> 
-> I'd shorten that to
-> 
->      peer->keepalive_recv_exp = peer->last_recv + timeout;
-> 
-> it's a bit more readable to my eyes and avoids risks of wrapping
-> values.
-> 
-> So I'd probably get rid of delta and go with:
-> 
->      last_recv = READ_ONCE(peer->last_recv)
->      if (now < last_recv + timeout) {
->      	peer->keepalive_recv_exp = last_recv + timeout;
->      	next_run1 = peer->keepalive_recv_exp;
->      } else if ...
-> 
->> +		next_run1 = peer->keepalive_recv_exp;
->> +	} else if (peer->keepalive_recv_exp > now) {
->> +		next_run1 = peer->keepalive_recv_exp;
->> +	} else {
->> +		expired = true;
->> +	}
-
-I agree this is simpler to read and gets rid of some extra operations.
-
-[note: I took inspiration from nat_keepalive_work_single() - it could be 
-simplified as well I guess]
-
-> 
-> [...]
->> +	/* check for peer keepalive */
->> +	expired = false;
->> +	interval = peer->keepalive_interval;
->> +	delta = now - peer->last_sent;
->> +	if (delta < interval) {
->> +		peer->keepalive_xmit_exp = now + interval - delta;
->> +		next_run2 = peer->keepalive_xmit_exp;
-> 
-> and same here
-
-Yeah, will change both. Thanks!
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ejtr6ggm3ld65lkc"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MdY1idv1o_nZFb1fKLpM5DHCPmEu5t5MMa_kV9csLgQWw@mail.gmail.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/231.391.79
+X-ZohoMailClient: External
 
 
-Regards,
+--ejtr6ggm3ld65lkc
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 4/4] gpio: rockchip: Set input direction when request
+ irq
+MIME-Version: 1.0
 
+Hi,
 
--- 
-Antonio Quartulli
-OpenVPN Inc.
+On Tue, Nov 12, 2024 at 01:53:48PM +0100, Bartosz Golaszewski wrote:
+> On Tue, Nov 12, 2024 at 1:50=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
+> > On Tue, Nov 12, 2024 at 11:40=E2=80=AFAM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Tue, Nov 12, 2024 at 09:48:06AM +0100, Bartosz Golaszewski wrote:
+> > > > On Tue, Nov 12, 2024 at 2:54=E2=80=AFAM Ye Zhang <ye.zhang@rock-chi=
+ps.com> wrote:
+> > > > >
+> > > > > Since the GPIO can only generate interrupts when its direction is=
+ set to
+> > > > > input, it is set to input before requesting the interrupt resourc=
+es.
+> > >
+> > > ...
+> > >
+> > > > This looks like a fix to me, do you want it sent for stable? If so,
+> > > > please add the Fixes tag and put it first in the series.
+> > >
+> > > Independently on the resolution on this, can the first three be appli=
+ed to
+> > > for-next? I think they are valuable from the documentation perspectiv=
+e as
+> > > it adds the explanation of the version register bit fields.
+> > >
+> > > The last one seems to me independent (code wise, meaning no potential
+> > > conflicts) to the rest and may be applied to for-current later on.
+> > >
+> > > --
+> > > With Best Regards,
+> > > Andy Shevchenko
+> > >
+> > >
+> >
+> > There's another issue I see with this patch. It effectively changes
+> > the pin's direction behind the back of the GPIOLIB. If a GPIO is
+> > requested, its direction set to output and another orthogonal user
+> > requests the same pin as input, we'll never update the FLAG_IS_OUT
+>=20
+> I meant to say "same pin as interrupt". Sorry for the noise.
 
+GPIO output and interrupt at the same time looks like a misconfiguration
+to me. Maybe check for that situation and return -EBUSY?
+
+-- Sebastian
+
+>=20
+> Bart
+>=20
+> > value and I don't think any subsequent behavior can be considered
+> > defined.
+> >
+> > I applied the first 3 patches as they look alright.
+> >
+> > Bart
+
+--ejtr6ggm3ld65lkc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmczVqUACgkQ2O7X88g7
++pr69g//SFAjME4lUgAKRXNnfZVfFq+IoUFP4e1HXfxmVXggtYcVHZ8RTsry/PQo
+YXHrS+xj9lnVVeIH3mU407+ripkb1RoaZWUXtc4EHG2MZiqBjdxznCHQNuT7yRGQ
+TiLd82ZsRy3x4V3HiLaeJxByNSLsS50idq/XHqk7Jq5Ub5Jf4RQrzaQsM+Sf2WFF
+707M1dEUNKjYHBvVfIybCzNjbkGur0JWeiQ8Yo6rJkLnNTQSCgOuVmQ+/J9fPZgJ
+GABMiJ2Qor3rzudj5Ac3Mqocr3hUHpgTKT+3Uub2eHg3gF/FLil7Wdcv8QPtmJHl
+eR9vJTAF40p1mhk/xH22PGm72xdZEKot2efs8cIQ2Xfkt9kwBE+NDNc3XmxXC5/D
+iT7YhXJsscYzpBnxO2wvU113s3yPZNx5HhjuSvxj5ZLyFCP3h1A4jU8MTwu89US7
+ZaoGbnl8/s8yv5BxeysT9kwmcRG5YEGIMwJn/9vZEKqKz/3X5srXiar5Mdc0RFkq
+eKcvWHJVtgrtRdKb0TUCM9vxulfUGEk+4Pz4VQ+LdbabRWkVXWEHGXzGORIW0okA
++R/2yIMhW/9w1gRolqDjBqXIyEieie7hQgYDZEenQdTTFu5w06FCdNrhzmP+abVT
+lgGJoNXJCzEbo7EeUi2tjiMmNSHHszMu5snP3Fhz6t1iM0Rp7ys=
+=QZit
+-----END PGP SIGNATURE-----
+
+--ejtr6ggm3ld65lkc--
 
