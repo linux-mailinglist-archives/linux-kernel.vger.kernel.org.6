@@ -1,104 +1,182 @@
-Return-Path: <linux-kernel+bounces-406337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D98F39C5FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:10:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE4C59C5FDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:04:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BCECBA7B9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:42:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4A3BB3D344
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5553C20E026;
-	Tue, 12 Nov 2024 16:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCJH36Mi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBC020F5AF;
+	Tue, 12 Nov 2024 16:51:41 +0000 (UTC)
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6145206E6D;
-	Tue, 12 Nov 2024 16:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC02209664;
+	Tue, 12 Nov 2024 16:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731429608; cv=none; b=IP5V1JzJvSSKQC6QeQnzamnYOJL71J3jyoD5ROi0bkg6A+cljHJ/wxAF2k8ZSPDLYVGsEGDS8ZfGLN7xFp8VOuaUoCNlYtaUpKBHLR+YPCF8/9giPmU58UaV476RjN+6+NmqdXQNIFQcFvXOtgwV+zec5mtfpYhoRQLSeTTSvbA=
+	t=1731430301; cv=none; b=GA5rVqY8tg8+vlN3G+s5Bj5W3oDaS8l1uPqGSeyYgSZR0T294mY6CbjS7iOFfY42jIuiZhN0Gz5OPmufT7NFJP93CFMfYdP5RoQmpssRoQmOsO7kP9HumiQZO3gASlA48s6hTijaH1/9a3V9XqVd3XvFHGqfFp+HVW2f0j4xhYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731429608; c=relaxed/simple;
-	bh=+N04U2p3GcrP7jjyn/1KyLgQIjlLCtQTvmCsowADuRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJAhnOEBeMkGoOTHaEGzhvUE1u8rbitlbxseK9Yhvl/SDxJ7CSw/bIte6OV7qM4J08qgPz3kPnkADc1c5TKJPe/Pcy3krEJLI2qM0Qank1LnU7aDxlfUJKwJbmD5oYY1xR04WG96LOGGbokvev6Ynit9iXJXYRsgaSjYjqQkHwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCJH36Mi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09DF3C4CED0;
-	Tue, 12 Nov 2024 16:40:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731429608;
-	bh=+N04U2p3GcrP7jjyn/1KyLgQIjlLCtQTvmCsowADuRo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eCJH36Mi8e7jO8g+WVpsNKgNfzMbd3yRYCNaY2xVCeVD4usfn5c4OJcB5H4oZJWmd
-	 lvkRtWEcjmPRVSYVx6NYe8Ouz4rkg5wDR7CaA/fyjQ+lnggWpv6lOj8XyxluSUzoj/
-	 j5PUguFa7uYrKSQ29rwcL9/V04vKtmOOvtwMsz4dOjxsfYXUR/95LpJUopZlanXp9o
-	 5CN2clEVAb7QEXil4Q2caH8W5v2GrKuTyx5EuADJcLW1OoAIvIqsiN+jag2QtYgwZD
-	 ExRXqKIX6TRF65F74PBfgjwNK6JPO6++2mfFVVwrXngfW2ySVD10Kod59W/XsAAdqi
-	 n0oOmdtdQArWQ==
-Date: Tue, 12 Nov 2024 10:40:06 -0600
-From: Rob Herring <robh@kernel.org>
-To: Philipp Rosenberger <p.rosenberger@kunbus.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	Thomas =?iso-8859-1?Q?B=F6hler?= <t.boehler@kunbus.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: rtc: pcf2127: Add nxp,battery-backed
- flag
-Message-ID: <20241112164006.GB1151895-robh@kernel.org>
-References: <20241111154144.163604-1-p.rosenberger@kunbus.com>
- <20241111154144.163604-2-p.rosenberger@kunbus.com>
+	s=arc-20240116; t=1731430301; c=relaxed/simple;
+	bh=rGQlHT/m68C3UfrBE/ikk7wol7f4uQPoJ3LHcF4oN6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=M+sRbUKuxAR9Vggi/OapUcaTU2UhjqEc+s+WKvaQ9rtQGphGWd8+nLaLJgbpSHBeCxz7nqhcFVMYgQmcp89XA88l5F8bNNyhuq12joQ3Pld/RpWBJkc0dlOzEPFxSTal5DWPDGQ8wPoVmVgpZ7rPWGtzcXDRy0nDBBEeKD8oPQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e4244fdc6so5041803b3a.0;
+        Tue, 12 Nov 2024 08:51:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731430298; x=1732035098;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X+RqkB1sUMX6vJyOuUWxOILOufOiaTgQEU1WBlalnbE=;
+        b=PH9OLIMeAY7NByrpjMSa0bVVQP600DkKfy5JyaQniFu8Dc+8xQOy+FU15ALLhjVmFK
+         gKBV/pUJQW8mw7msgXwzdkYh5T1/XP8oo89KBCsQhgbhsz56X26ZtZKaFkkKlv9QUWQ2
+         VMDc2ocXehmhLy4b2KUFJ89BppxjBFoZDeUMi4+NHiit5VGo9pGAZ2VMHBWj3KG5X3Fc
+         ERN7byoVQE8UPKa/J6BkY5UZ7O8xsDwOhgfORuBJQ0gd+XcZdJmgQlt9omEL6qEDQWZe
+         xTvz06dWggMllfdJg5SpDC0SghZJ7gs70IqhGJzAyjA5hQQYIbtOfSgKu0qjutyYPN0x
+         teGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQETihquCq6llqTkx0/it/BaALq9zCsm9zmBNL2nCHc67FoGsOjsnDfuVQAKQNwmERhfuRx4tvhumXIos=@vger.kernel.org, AJvYcCWUwmWr6OGtP9x0HYxTcgF/+pBN5q6xEQVM2iG3X5GIwizReQEt1zFaySUhJT7qHswgAU0dQ6g6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS+EIcgdfzdTHAVYxJ07/wte4uIzl1sj1Q1pUEFYmC4YzBqcOA
+	YJspYGXyJd/y6SMWpNmDcsIT5SSFHUdPzIoKkHkyNkEXuwcTITHSVY5AbA==
+X-Google-Smtp-Source: AGHT+IH0J8mWVdPBRmVltBM0FeHS71+xPiF6UIyxUy38j3OimBvgS2dE9R2Hy3KkDttDrC912zSToA==
+X-Received: by 2002:a05:6a00:c90:b0:71d:fe5b:5eb9 with SMTP id d2e1a72fcca58-724132a6513mr22787735b3a.10.1731430298297;
+        Tue, 12 Nov 2024 08:51:38 -0800 (PST)
+Received: from localhost.localdomain (124x33x176x97.ap124.ftth.ucom.ne.jp. [124.33.176.97])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407860aa5sm11271260b3a.32.2024.11.12.08.51.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 08:51:37 -0800 (PST)
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+To: linux-can@vger.kernel.org,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Robert Nawrath <mbro1689@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Subject: [PATCH v1 3/5] can: bittiming: rename CAN_CTRLMODE_TDC_MASK into CAN_CTRLMODE_FD_TDC_MASK
+Date: Wed, 13 Nov 2024 01:50:18 +0900
+Message-ID: <20241112165118.586613-10-mailhol.vincent@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241112165118.586613-7-mailhol.vincent@wanadoo.fr>
+References: <20241112165118.586613-7-mailhol.vincent@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111154144.163604-2-p.rosenberger@kunbus.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3947; i=mailhol.vincent@wanadoo.fr; h=from:subject; bh=rGQlHT/m68C3UfrBE/ikk7wol7f4uQPoJ3LHcF4oN6o=; b=owGbwMvMwCV2McXO4Xp97WbG02pJDOnG7e339s/j+btmCUNN6IZ/gr6hvFyNzAYvq+y3lWZd/ 3Dk/p3SjlIWBjEuBlkxRZZl5ZzcCh2F3mGH/lrCzGFlAhnCwMUpABP5z8zwv948TNtqRX3JT6l/ PPK3X/X6Pc5bMn39s+ZlTK2GR+c5MzIyvOm+m7rqXccJSdU7DzbmvlBb0vCUocl3fqJCwIkso0Q 1JgA=
+X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp; fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 11, 2024 at 04:41:43PM +0100, Philipp Rosenberger wrote:
-> This commit introduces the nxp,battery-backed property to the
-> nxp,pcf2127 Device Tree bindings. This flag indicates that the
-> RTC is battery-backed and forces the driver to enable the
-> battery switch-over function, but only if no other mode is already
-> configured.
-> 
-> With the PCF2131, the battery switch-over is disabled by default.
-> If the battery switch-over is not enabled by the bootloader or
-> firmware, this property ensures that the RTC can function correctly
-> when powered by the battery.
-> 
-> Signed-off-by: Philipp Rosenberger <p.rosenberger@kunbus.com>
-> ---
->  Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml b/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
-> index 2d9fe5a75b06..87ba16346fb4 100644
-> --- a/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
-> +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
-> @@ -30,6 +30,13 @@ properties:
->  
->    reset-source: true
->  
-> +  nxp,battery-backed:
-> +    description: |
-> +      Indicates that the RTC is battery-backed. This property forces
-> +      the driver to enable the battery switch-over function, but only if
-> +      no other mode is already configured.
-> +    $ref: /schemas/types.yaml#/definitions/flag
+With the introduction of CAN XL, a new CAN_CTRLMODE_XL_TDC_MASK will
+be introduced later on. Because CAN_CTRLMODE_TDC_MASK is not part of
+the uapi, rename it to CAN_CTRLMODE_FD_TDC_MASK to make it more
+explicit that this mask is meant for CAN FD.
 
-Seems like something that would be a common property? I didn't find any 
-prior art though.
+Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+---
+ drivers/net/can/dev/calc_bittiming.c |  2 +-
+ drivers/net/can/dev/netlink.c        | 12 ++++++------
+ include/linux/can/bittiming.h        |  2 +-
+ include/linux/can/dev.h              |  2 +-
+ 4 files changed, 9 insertions(+), 9 deletions(-)
 
-Rob
+diff --git a/drivers/net/can/dev/calc_bittiming.c b/drivers/net/can/dev/calc_bittiming.c
+index 3809c148fb88..a94bd67c670c 100644
+--- a/drivers/net/can/dev/calc_bittiming.c
++++ b/drivers/net/can/dev/calc_bittiming.c
+@@ -179,7 +179,7 @@ void can_calc_tdco(struct can_tdc *tdc, const struct can_tdc_const *tdc_const,
+ 	if (!tdc_const || !(ctrlmode_supported & CAN_CTRLMODE_TDC_AUTO))
+ 		return;
+ 
+-	*ctrlmode &= ~CAN_CTRLMODE_TDC_MASK;
++	*ctrlmode &= ~CAN_CTRLMODE_FD_TDC_MASK;
+ 
+ 	/* As specified in ISO 11898-1 section 11.3.3 "Transmitter
+ 	 * delay compensation" (TDC) is only applicable if data BRP is
+diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netlink.c
+index df8b7ba68b6e..72a60e8186aa 100644
+--- a/drivers/net/can/dev/netlink.c
++++ b/drivers/net/can/dev/netlink.c
+@@ -67,12 +67,12 @@ static int can_validate(struct nlattr *tb[], struct nlattr *data[],
+ 
+ 	if (data[IFLA_CAN_CTRLMODE]) {
+ 		struct can_ctrlmode *cm = nla_data(data[IFLA_CAN_CTRLMODE]);
+-		u32 tdc_flags = cm->flags & CAN_CTRLMODE_TDC_MASK;
++		u32 tdc_flags = cm->flags & CAN_CTRLMODE_FD_TDC_MASK;
+ 
+ 		is_can_fd = cm->flags & cm->mask & CAN_CTRLMODE_FD;
+ 
+ 		/* CAN_CTRLMODE_TDC_{AUTO,MANUAL} are mutually exclusive */
+-		if (tdc_flags == CAN_CTRLMODE_TDC_MASK)
++		if (tdc_flags == CAN_CTRLMODE_FD_TDC_MASK)
+ 			return -EOPNOTSUPP;
+ 		/* If one of the CAN_CTRLMODE_TDC_* flag is set then
+ 		 * TDC must be set and vice-versa
+@@ -230,16 +230,16 @@ static int can_changelink(struct net_device *dev, struct nlattr *tb[],
+ 			dev->mtu = CAN_MTU;
+ 			memset(&priv->fd.data_bittiming, 0,
+ 			       sizeof(priv->fd.data_bittiming));
+-			priv->ctrlmode &= ~CAN_CTRLMODE_TDC_MASK;
++			priv->ctrlmode &= ~CAN_CTRLMODE_FD_TDC_MASK;
+ 			memset(&priv->fd.tdc, 0, sizeof(priv->fd.tdc));
+ 		}
+ 
+-		tdc_mask = cm->mask & CAN_CTRLMODE_TDC_MASK;
++		tdc_mask = cm->mask & CAN_CTRLMODE_FD_TDC_MASK;
+ 		/* CAN_CTRLMODE_TDC_{AUTO,MANUAL} are mutually
+ 		 * exclusive: make sure to turn the other one off
+ 		 */
+ 		if (tdc_mask)
+-			priv->ctrlmode &= cm->flags | ~CAN_CTRLMODE_TDC_MASK;
++			priv->ctrlmode &= cm->flags | ~CAN_CTRLMODE_FD_TDC_MASK;
+ 	}
+ 
+ 	if (data[IFLA_CAN_BITTIMING]) {
+@@ -339,7 +339,7 @@ static int can_changelink(struct net_device *dev, struct nlattr *tb[],
+ 			err = can_tdc_changelink(priv, data[IFLA_CAN_TDC],
+ 						 extack);
+ 			if (err) {
+-				priv->ctrlmode &= ~CAN_CTRLMODE_TDC_MASK;
++				priv->ctrlmode &= ~CAN_CTRLMODE_FD_TDC_MASK;
+ 				return err;
+ 			}
+ 		} else if (!tdc_mask) {
+diff --git a/include/linux/can/bittiming.h b/include/linux/can/bittiming.h
+index 9b8a9c39614b..5dfdbb63b1d5 100644
+--- a/include/linux/can/bittiming.h
++++ b/include/linux/can/bittiming.h
+@@ -14,7 +14,7 @@
+ #define CAN_BITRATE_UNSET 0
+ #define CAN_BITRATE_UNKNOWN (-1U)
+ 
+-#define CAN_CTRLMODE_TDC_MASK					\
++#define CAN_CTRLMODE_FD_TDC_MASK				\
+ 	(CAN_CTRLMODE_TDC_AUTO | CAN_CTRLMODE_TDC_MANUAL)
+ 
+ /*
+diff --git a/include/linux/can/dev.h b/include/linux/can/dev.h
+index 492d23bec7be..e492dfa8a472 100644
+--- a/include/linux/can/dev.h
++++ b/include/linux/can/dev.h
+@@ -93,7 +93,7 @@ struct can_priv {
+ 
+ static inline bool can_tdc_is_enabled(const struct can_priv *priv)
+ {
+-	return !!(priv->ctrlmode & CAN_CTRLMODE_TDC_MASK);
++	return !!(priv->ctrlmode & CAN_CTRLMODE_FD_TDC_MASK);
+ }
+ 
+ /*
+-- 
+2.45.2
+
 
