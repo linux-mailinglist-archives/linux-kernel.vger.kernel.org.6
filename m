@@ -1,122 +1,209 @@
-Return-Path: <linux-kernel+bounces-406473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85BD9C61AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:43:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F2EB9C634D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:21:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2622FB2FD89
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:52:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68074B3E5E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3E32141A4;
-	Tue, 12 Nov 2024 17:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401ED215027;
+	Tue, 12 Nov 2024 17:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HOwxMVfS"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xv3yOpqb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A375C2139BC
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EB421442E;
+	Tue, 12 Nov 2024 17:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731433942; cv=none; b=pi7FcTqWX7rOwnbnF/1rY1/FZjWf7cik+IsBW0xKDiJTJospXoH+JWcEKBUTK0ZQpMirtOydwOrAPuqCRMbRi8kG4CC+MJ1N9dTlnabGfnjsOgt/0QdSCrU1q/X0bPZzQbCszRNIgqbb7SdhfN78oXEvkmz4z9a+KYLEPMq6PzA=
+	t=1731434350; cv=none; b=aeoezTAT0WBW/fNcGDvwa06QVUL/PZ8XyP8PokJv6CSXZO5IGSAHqMIlGKi5WYqM1yh4gsTSJS7R3Nw0qBxgSH1Du+RspHRAx3u95ZNZxMpOvM9R6wa1vJ7m1u5Xtbp2izb1OGv9PFrkj+LC6arLpxKiFUmAlPnYnXPuZWAK5kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731433942; c=relaxed/simple;
-	bh=rF0m3RHCDCu5flwjKgaX68jhNqdc11TxTrvhrmCBPPg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=etuocQzxojhn8fZKvQK3jWNJIKpPrEuur32lepbSXhSdPBql/oag6u/uVywXCfZx/Y3+LVL5VdBZZQaEkIRl2aMwj5ySX+7zezvMXVrLbAmtsK8S9djGqPJmnGsJP6s0ShbTXMYmLxV9ZAAnAb5itzYEWv/zxUXOBREzMbYDn5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HOwxMVfS; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e9f8dec3daso46134377b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:52:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1731433939; x=1732038739; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s4eyKsihgIZD98hfy0JGAdD/M8t7V0X38hx8vGXpfi0=;
-        b=HOwxMVfSDYQ+RxVYbxIKybq63fDnnIv3ifxeI3YXFf7c7AGzMw5A621vYXjS+UFgyI
-         Qp/I3I/uhNH+XQTOdmdzgHc+lCIeWwzVz0Y4VOutOEJ4vNk3L/nzxVOyjg2v7bRGV4lz
-         D2HDdEGPwaAevGXkFysfNgBG2ELGQXVK2qpTU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731433939; x=1732038739;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s4eyKsihgIZD98hfy0JGAdD/M8t7V0X38hx8vGXpfi0=;
-        b=JieB6P8ipHG8bSpwnLVo0k/4HDWfoRjxa1PXfs6MCLGpeJMQ9+H9dO8FRIMulf1XEi
-         k/XSefCFbnVwpNJAG8CeEbB6Mku0wJ/+Zm4LD6TK6ObZ9fmwDsE3vNAPtRdxTBy4rj6N
-         dFH/+AFFvELboJg0A4frp6ZjdTbqYIsmOM2AIs4zyyfIujHhqpb5xHUJjGrr9BEuFes4
-         LVVBTB1kcLDtu7uGpstBdDwe3B8KiH0FeIioaiyZI3ZBXibMZr7JqTGhwYQmXGmtbm2K
-         nERCZPPrEc6ln1te1fQTZnOhbNT0KHySwswG0p3XzyEZr28xxUSwv6p1ytPZOTxxSNvi
-         xzHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkPMiFKBm8apm2XoeRDBh+KPml/7ISB5pF3jSTZbRGf1SdO87CY0DVQ3Sui5ceWp1UROmwUdU2Qi87fuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy75br8qsIOI3tHwfDCMNLECEk6sf25TgGr2JMd4rD5t9C3B7D9
-	lKA8Dw+SBulAEyNYMlCbAmwAynl27OA+RZCf/cHL1VIyjZ1+GmeK/GJZ1JVsoC5niaaGGcsR7Ez
-	/2zR9XWtQuJYmsNljIBDZLCP96tMBdZlVn/XCug==
-X-Google-Smtp-Source: AGHT+IGvEcIbEvzGr1VmCsZ0mQRwAsSPld9R2C5JTh0+fNcSwWaec7ZBqYSyzKL8e3qzWUzVn7JzLdpmgnyRZvU5CZE=
-X-Received: by 2002:a05:690c:6211:b0:6ea:3313:f98c with SMTP id
- 00721157ae682-6eaddf8430emr155761917b3.32.1731433939616; Tue, 12 Nov 2024
- 09:52:19 -0800 (PST)
+	s=arc-20240116; t=1731434350; c=relaxed/simple;
+	bh=nBqJQ+9Rz7LqvO8HNtJko2uMGpeDf0A8fllkrbNh13U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Latpfh7/W7Y2n2n5/sYkDEa2zqXj7024Fp3MchTtKAr5ET+fKFiz1AQ8Zg3qJY+dqkSajK/ES2CCr86gI96UMo0n5DWGh+GMxn7AZNbw8Yyh4fNLagFOOO2Cdpsjw3+KRuYeI2puStsGIX3umDOG60SLfm20uIKoji3OfxLlciE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xv3yOpqb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D73DC4CECD;
+	Tue, 12 Nov 2024 17:59:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731434350;
+	bh=nBqJQ+9Rz7LqvO8HNtJko2uMGpeDf0A8fllkrbNh13U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xv3yOpqbU5jc8KCbzcJqp2C9IdPY824gNn7Xn1fLE3gMMO3O6Ku7iYI1DEATDxkXd
+	 /WnJ6ytFAnJ4mkcnKYmlWJT0mBOUk1aweXSDKptnpUY4bL8kFA4AQIcjSeKZUfNhg1
+	 zvM1eX4lJQhfBLJPbuH2ffxaq//pE7JWSUS0aY0yv1n8D5gsKWjhFKR0j/q8gHu2Hu
+	 SlrvrLYHM1sGlUAXVB/d/5c1sIgwPCw4wpsF5Bm+knPeiANlml0PxjQYIiiKCcicZU
+	 fYfhz5UKKQb/TZ1cbF7nAgLmVhfBXpAR3oo2HGlON4aqGWWwP4sGpDqMMLeDx6bw0/
+	 YfnsCKbpv96IA==
+Date: Tue, 12 Nov 2024 17:59:05 +0000
+From: Conor Dooley <conor@kernel.org>
+To: mjchen <mjchen0829@gmail.com>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, sudeep.holla@arm.com, peng.fan@nxp.com,
+	arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mjchen@nuvoton.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
+Message-ID: <20241112-fender-mug-8eb81a6727e0@spud>
+References: <20241112053059.3361-1-mjchen0829@gmail.com>
+ <20241112053059.3361-2-mjchen0829@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112140454.518823-4-mailhol.vincent@wanadoo.fr>
-In-Reply-To: <20241112140454.518823-4-mailhol.vincent@wanadoo.fr>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 12 Nov 2024 09:52:09 -0800
-Message-ID: <CAADWXX88Uv+r1JtpnN2gDv6S2wDTqxsn5x8+-U_xWfeNxmT9NA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] add _statically_true() to simplify GENMASK_INPUT_CHECK()
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-sparse@vger.kernel.org, Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="k0rDWj3vLf/SiQCG"
+Content-Disposition: inline
+In-Reply-To: <20241112053059.3361-2-mjchen0829@gmail.com>
+
+
+--k0rDWj3vLf/SiQCG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 6:05=E2=80=AFAM Vincent Mailhol
-<mailhol.vincent@wanadoo.fr> wrote:
->
-> v2 -> v3:
->
->    - split the single patch into a series of two patches.
+On Tue, Nov 12, 2024 at 05:30:58AM +0000, mjchen wrote:
+> Add YAML bindings for MA35D1 SoC keypad.
+>=20
+> Signed-off-by: mjchen <mjchen0829@gmail.com>
+> ---
+>  .../bindings/input/nuvoton,ma35d1-keypad.yaml | 89 +++++++++++++++++++
+>  1 file changed, 89 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/nuvoton,ma35d=
+1-keypad.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypa=
+d.yaml b/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
+> new file mode 100644
+> index 000000000000..71debafc3890
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
+> @@ -0,0 +1,89 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/nuvoton,ma35d1-keypad.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nuvoton MA35D1 Keypad
+> +
+> +maintainers:
+> +  - Ming-jen Chen <mjchen0829@gmail.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/input/matrix-keymap.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: nuvoton,ma35d1-kpi
+> +
+> +  debounce-period:
 
-I haven't actually gotten to the patches yet, because all your emails
-end up in my spam box.
+Not a common property, so it needs a vendor prefix.
 
-The reason is because your git-send-email setup is broken, resulting in:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
+> +    description: |
+> +      Key debounce period select, specified in terms of keypad IP clock =
+cycles.
+> +      Valid values include 0 (no debounce) and specific clock cycle valu=
+es:
+> +      8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, and 8192.
+> +
 
-  dmarc=3Dfail (p=3DQUARANTINE sp=3DNONE dis=3DQUARANTINE) header.from=3Dwa=
-nadoo.fr
+> +  nuvoton,key-scan-time:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Set the time it takes to scan each key in the keypad, in clock cyc=
+les of the IP.
+> +      This parameter controls how frequently the keypad is scanned, adju=
+sting the response time.
+> +      The valid range is from 1 to 256 clock cycles.
+> +    minimum: 1
+> +    maximum: 256
+> +
+> +  nuvoton,key-scan-time-div:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Set a divider that adjusts the scan time for each key.
+> +      This value scales the time it takes to scan each key
+> +      by multiplying the key-scan-time by the specified factor.
+> +      For example, if you set key-scan-time to 64 cycles and configure k=
+ey-scan-time-div to 2,
+> +      the scan time for each key will be increased to 128 cycles (64 cyc=
+les * 2). time.
+> +    minimum: 1
+> +    maximum: 256
 
-because you claim to use a wanadoo.fr address in your "From:" line:
+Why are both of these properties required? Why not just provide a single
+value and let the driver figure it out (and why not use the standard
+input property poll-interval)?
 
-    From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - linux,keymap
+> +  - debounce-period
+> +  - nuvoton,key-scan-time
+> +  - nuvoton,key-scan-time-div
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/input/input.h>
+> +    keypad@404A0000 {
+> +      compatible =3D "nuvoton,ma35d1-kpi";
+> +      reg =3D <0x404A0000 0x10000>;
+> +      interrupts =3D <79>;
+> +      clocks =3D <&clk>;
+> +      keypad,num-rows =3D <2>;
+> +      keypad,num-columns =3D <2>;
+> +
+> +      linux,keymap =3D <
+> +         MATRIX_KEY(0, 0, KEY_ENTER)
+> +         MATRIX_KEY(0, 1, KEY_ENTER)
+> +         MATRIX_KEY(1, 0, KEY_SPACE)
+> +         MATRIX_KEY(1, 1, KEY_Z)
+> +      >;
+> +
+> +      debounce-period =3D <8>;
+> +      nuvoton,key-scan-time =3D <1>;
+> +      nuvoton,key-scan-time-div =3D <24>;
+> +    };
+> --=20
+> 2.25.1
+>=20
 
-but you actually used gmail to send it, and the DKIM hash was
-generated by gmail:
+--k0rDWj3vLf/SiQCG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-    DKIM-Signature: v=3D1; a=3Drsa-sha256; c=3Drelaxed/relaxed;
-        d=3D1e100.net;
+-----BEGIN PGP SIGNATURE-----
 
-And then DMARC complains because the From: and the DKIM doesn't match.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzOXaQAKCRB4tDGHoIJi
+0pYPAQDDf02Gop88JjPTAhEapsw6Y2RsUuUw+y3t6GLs5WaYTQD6A9rBf5mY07HN
+IdLXIMBrLZwIVIq8TP0uaaLeB9wcgQI=
+=p5T+
+-----END PGP SIGNATURE-----
 
-So to actually get the right DKIM hashes, you need to either
-
- (a) send email using the wanadoo.fr smtp gateway
-
-or
-
- (b) make the sender be that gmail address that you actually use for sendin=
-g.
-
-Pls fix.
-
-                  Linus
+--k0rDWj3vLf/SiQCG--
 
