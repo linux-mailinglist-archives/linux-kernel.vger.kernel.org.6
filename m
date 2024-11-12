@@ -1,157 +1,233 @@
-Return-Path: <linux-kernel+bounces-406618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA689C6170
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:28:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A7A9C6176
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:30:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4143328390A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:28:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2151F220BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A171E2194BE;
-	Tue, 12 Nov 2024 19:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DE02185B8;
+	Tue, 12 Nov 2024 19:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTlcs1i3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRctDRDp"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE991FEFCB;
-	Tue, 12 Nov 2024 19:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E902003DD;
+	Tue, 12 Nov 2024 19:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439654; cv=none; b=AwEPJ5CcwQj9hci85gsKDmIC1eDoTsRFGlPlDI9cSHOlLl/LBdmHl9ZFIpBwGQjPsefo4CaJ49GiSlHvC4eJ2mgqSO20ozC0FlJBDYTqxFrYuCkbyhYpshA8FbAi4+XF5peNRnfT2r21dEC4fFrgb72Ep+4AVgqvajqxmpWAERA=
+	t=1731439824; cv=none; b=A84xQTZPH1NnuABUcHJCHqRm9V/tU734aQ45exzrHCvkuprT5v5ORXB6FWq45E8U53teUZsPTAWq5c9FrE+ub9dDLy3wh80BOcfXXObxRELsv+W6L4Ye7yZij+vzpvMRievzuAsth2UivAY90g4i7c6cX3wwE19QCltnLPqwouY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439654; c=relaxed/simple;
-	bh=2PvJnInDZ0fL0OD5iSF2Lsc8bhSqcL47V7QRFi8bQl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NotIyGYhoeH7DMXdWEVtNa6SyVBq98uTuqM4YGUy95F6clwhu9ofFok7RczGTiqOje8gJ5KwagQ8wILBMC6bfhGcjdpaM+4pm7PNSUQ/GXraIbLFHgDGKoyamPAEdzkmvD/R2uTEm8dTNmmZYJi22xm1HMcFzKUVUBlE+eE9+Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTlcs1i3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85FD3C4CECD;
-	Tue, 12 Nov 2024 19:27:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731439653;
-	bh=2PvJnInDZ0fL0OD5iSF2Lsc8bhSqcL47V7QRFi8bQl8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=HTlcs1i3lY2MOuOUk4hXeUqEXceB3P/U/Kte3QaaqBnl4gU+OHeP1BYMYJW+3xILz
-	 WSlW7WilXMKtpsLL9d49oPv69QICSD84aiYtYy+M9qI2KpYO/ZQkgGGyeyB3ZfekAr
-	 5kVjpXPj9az/zktOXdSJbW9cDR1gYlGGiciV0lZ6WeDkUlXKE+Ff9L4ql5I+C74yju
-	 6pk//65jqvDbmy3OaF2t5FvNkJoLy0zAyrinoBAeT5EDXPHzX+Hh8i0VUY8Zb9iKvv
-	 1l62HjBMQT26prDqhDg5u44BQL0WfXjCod29XOTh2VHfwpd5ThjJkbBvAhrDFwLXZQ
-	 lO56OrL1/813A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 261CCCE0D89; Tue, 12 Nov 2024 11:27:33 -0800 (PST)
-Date: Tue, 12 Nov 2024 11:27:33 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
-Subject: Re: [PATCH rcu 11/15] rcutorture: Add reader_flavor parameter for
- SRCU readers
-Message-ID: <d27da29c-7499-4f08-b582-a2bbb9b3c1c7@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <ddf64299-de71-41a2-b575-56ec173faf75@paulmck-laptop>
- <20241015161112.442758-11-paulmck@kernel.org>
- <c48c9dca-fe07-4833-acaa-28c827e5a79e@amd.com>
+	s=arc-20240116; t=1731439824; c=relaxed/simple;
+	bh=fgE12BIwlMY7+KjyhOKwQsf0m/eIuliOwPbr2ir8Rl4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iyh423wfdk/IsQaChvNE1P+VrEDjnvQmF7l6WnUj7r8YsvPWR+atf3S4ckDQS34UoNs3n2h9SVVKG8Ja6yOvI03pbETpw6Az0QKQFm/ab0UVMm0ZlCggKT8nJLP0Z2rI0HuNAkn8M141pjmSDA7owDKuIQef+HEn7ubURm7zj00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DRctDRDp; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d47eff9acso3687971f8f.3;
+        Tue, 12 Nov 2024 11:30:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731439821; x=1732044621; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l16f6QkdDHbu8NPQbi3zmZKB+rCbrufL1Zvvzn8jeo4=;
+        b=DRctDRDpp1nMiyaSvtYQo+Qm5Vyo7PD9lOFLaA7oG6DVt9TlBc9dT4w9lPAvrwufkF
+         I0jhBeRKcFfdSZ6LFKQNyxWkrXUO5Yhgaq5m3ffQMa23kQ4VBhHrElZDxM66tExpb5vD
+         bIUblk/FxhrdnHGLi4QXRPVig/iXE/KekENDSm+K5ki40yCBejo/hLoQHoQ9Lxp/13N/
+         fnfgMjSxuEh1nGtmwkD3ZVQh4YEzcZtQP0MYy10Tg2el7U+km8itJOzoL+kf6ebGlvE3
+         unmtGq/F7OF9ljvGlWSJh66NxFa0Xk2oOCD3YR2vGuO6HSsXJJARFnTIwyJMsYSq2L5V
+         z0KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731439821; x=1732044621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l16f6QkdDHbu8NPQbi3zmZKB+rCbrufL1Zvvzn8jeo4=;
+        b=xJJ49kMk03DtYC2qpU0aaK38xiOoQinC64xCWSGzabZpvOlAcCjYZYqIH2yeV9RH+v
+         bQbFpCu6chbNEY8DhFJCOU/VoYfhlvr5XR/a2NKYdWIrw5cfNbd7pG5G//ifIFIbTbO8
+         3YzuL6jcjxV4XEerwabmtUb0cKMBQneDRCdSK2te90hYEguLQiMlC3/tGxfJ23jHISmG
+         bvj8NIb9fgf9A57SCTdtTjI1uzWEZClhL2tpKARqa54VH8kgtFH0EJHgBp4doy1VYnuO
+         RoIBj8coUxTZPnzBL42bs7YLcJHhjUKnPdVFyF+MdAuvnUlJe9XcYBcPsAe64v9Qwoir
+         xHgg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3BTUg4MMdtkYgRXKS1UZgAOHQWysShPOc6vETlhP/tZGwMeO6+Q2RYPxPBVyy5KDrjxSbNEJKtDu1Cik=@vger.kernel.org, AJvYcCXhnZVVY6o9aGOGBErcRI9X5QOJfY02Dv9HSnPzPnt+gwhkPiyRAQ4fBxJ3D5BhJVJo8p3DQX+HFnwZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxcjV+9acU/m+zpNF1LxEJQDZGj4voZKtn8EsjRtLcCVjMJ2GR
+	REXT3sLIEt3jYWG+4lOPNGY9mGKZThxnOxsPyRo2weLDjiXv/HbgKTYzz3MMTRYPbPPx8sSioz1
+	irE3Jn/2rKmcngaE6lPkb3pJWGGU=
+X-Google-Smtp-Source: AGHT+IFwjFIsgpZQKzg8L4z2NM2FpJthfQ7fgjGpHDUe7iTEaYDD6h81rM9zbdkLpcHXF5PhFDanTHZv28KSbawmqYw=
+X-Received: by 2002:a5d:5f42:0:b0:37d:4436:4505 with SMTP id
+ ffacd0b85a97d-381f186ccdemr14970057f8f.32.1731439820582; Tue, 12 Nov 2024
+ 11:30:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c48c9dca-fe07-4833-acaa-28c827e5a79e@amd.com>
+References: <2024111232-relative-bottom-4995@gregkh> <20241112132931.3504749-1-snovitoll@gmail.com>
+ <824e839d-ee72-4923-bc88-e9cc58201b07@rowland.harvard.edu>
+In-Reply-To: <824e839d-ee72-4923-bc88-e9cc58201b07@rowland.harvard.edu>
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Date: Wed, 13 Nov 2024 00:30:08 +0500
+Message-ID: <CACzwLxgVJ2jROr8RWHXv++2m2tD9fvskp_MqTL7VhCPr-Eeeiw@mail.gmail.com>
+Subject: Re: [PATCH v4] usb/cdc-wdm: fix memory info leak in wdm_read
+To: Alan Stern <stern@rowland.harvard.edu>, oneukum@suse.com
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, 
+	syzbot+9760fbbd535cee131f81@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 10:12:40AM +0530, Neeraj Upadhyay wrote:
-> On 10/15/2024 9:41 PM, Paul E. McKenney wrote:
-> > This commit adds an rcutorture.reader_flavor parameter whose bits
-> > correspond to reader flavors.  For example, SRCU's readers are 0x1 for
-> > normal and 0x2 for NMI-safe.
-> > 
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Alexei Starovoitov <ast@kernel.org>
-> > Cc: Andrii Nakryiko <andrii@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> > Cc: <bpf@vger.kernel.org>
+On Tue, Nov 12, 2024 at 8:52=E2=80=AFPM Alan Stern <stern@rowland.harvard.e=
+du> wrote:
+>
+> On Tue, Nov 12, 2024 at 06:29:31PM +0500, Sabyrzhan Tasbolatov wrote:
+> > syzbot reported "KMSAN: kernel-infoleak in wdm_read", though there is n=
+o
+> > reproducer and the only report for this issue.
+> >
+> > The check:
+> >
+> >       if (cntr > count)
+> >               cntr =3D count;
+> >
+> > only limits `cntr` to `count` (the number of bytes requested by
+> > userspace), but it doesn't verify that `desc->ubuf` actually has `count=
+`
+> > bytes. This oversight can lead to situations where `copy_to_user` reads
+> > uninitialized data from `desc->ubuf`.
+> >
+> > This patch makes sure `cntr` respects` both the `desc->length` and the
+> > `count` requested by userspace, preventing any uninitialized memory fro=
+m
+> > leaking into userspace.
+>
 > > ---
-> >  .../admin-guide/kernel-parameters.txt         |  8 +++++
-> >  kernel/rcu/rcutorture.c                       | 30 ++++++++++++++-----
-> >  2 files changed, 30 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index 1518343bbe223..52922727006fc 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -5426,6 +5426,14 @@
-> >  			The delay, in seconds, between successive
-> >  			read-then-exit testing episodes.
-> >  
-> > +	rcutorture.reader_flavor= [KNL]
-> > +			A bit mask indicating which readers to use.
-> > +			If there is more than one bit set, the readers
-> > +			are entered from low-order bit up, and are
-> > +			exited in the opposite order.  For SRCU, the
-> > +			0x1 bit is normal readers and the 0x2 bit is
-> > +			for NMI-safe readers.
-> > +
-> >  	rcutorture.shuffle_interval= [KNL]
-> >  			Set task-shuffle interval (s).  Shuffling tasks
-> >  			allows some CPUs to go into dyntick-idle mode
-> > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> > index f96ab98f8182f..405decec33677 100644
-> > --- a/kernel/rcu/rcutorture.c
-> > +++ b/kernel/rcu/rcutorture.c
-> > @@ -111,6 +111,7 @@ torture_param(int, nocbs_nthreads, 0, "Number of NOCB toggle threads, 0 to disab
-> >  torture_param(int, nocbs_toggle, 1000, "Time between toggling nocb state (ms)");
-> >  torture_param(int, read_exit_delay, 13, "Delay between read-then-exit episodes (s)");
-> >  torture_param(int, read_exit_burst, 16, "# of read-then-exit bursts per episode, zero to disable");
-> > +torture_param(int, reader_flavor, 0x1, "Reader flavors to use, one per bit.");
-> >  torture_param(int, shuffle_interval, 3, "Number of seconds between shuffles");
-> >  torture_param(int, shutdown_secs, 0, "Shutdown time (s), <= zero to disable.");
-> >  torture_param(int, stall_cpu, 0, "Stall duration (s), zero to disable.");
-> > @@ -644,10 +645,20 @@ static void srcu_get_gp_data(int *flags, unsigned long *gp_seq)
-> >  
-> >  static int srcu_torture_read_lock(void)
-> >  {
-> > -	if (cur_ops == &srcud_ops)
-> > -		return srcu_read_lock_nmisafe(srcu_ctlp);
-> > -	else
-> > -		return srcu_read_lock(srcu_ctlp);
-> > +	int idx;
-> > +	int ret = 0;
-> > +
-> > +	if ((reader_flavor & 0x1) || !(reader_flavor & 0x7)) {
-> 
-> Minor: Maybe use macros in place of 0x1, 0x2, 0x7 as a cleanup later.
+> >  drivers/usb/class/cdc-wdm.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
+> > index 86ee39db013f..5a500973b463 100644
+> > --- a/drivers/usb/class/cdc-wdm.c
+> > +++ b/drivers/usb/class/cdc-wdm.c
+> > @@ -598,8 +598,9 @@ static ssize_t wdm_read
+> >               spin_unlock_irq(&desc->iuspin);
+> >       }
+>
+> Note that the code immediately before the "if" statement which ends here
+> does:
+>
+>         cntr =3D READ_ONCE(desc->length);
+>
+> And the code at the end of the "if" block does:
+>
+>                 cntr =3D desc->length;
+>
+> (while holding the spinlock).  Thus it is guaranteed that either way,
+> cntr is equal to desc->length when we reach this point.
+>
+> >
+> > -     if (cntr > count)
+> > -             cntr =3D count;
+> > +     /* Ensure cntr does not exceed available data in ubuf. */
+> > +     cntr =3D min_t(size_t, count, desc->length);
+>
+> And therefore this line does exactly the same computation as the code
+> you removed.  Except for one thing: At this point the spinlock is not
+> held, and your new code does not call READ_ONCE().  That is an
+> oversight.
 
-Hmmm...
+I've re-read your and Oliver's comments and come up with this diff,
+which is the same as v4 except it is within a spinlock.
 
-I could move SRCU_READ_FLAVOR_* to include/linux/srcu.h and make
-rcutorture use those.  Plus have a combined mask for the instances of 0x7.
+diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
+index 86ee39db013f..47b299e03e11 100644
+--- a/drivers/usb/class/cdc-wdm.c
++++ b/drivers/usb/class/cdc-wdm.c
+@@ -598,8 +598,11 @@ static ssize_t wdm_read
+                spin_unlock_irq(&desc->iuspin);
+        }
 
-Or is there a better way?
+-       if (cntr > count)
+-               cntr =3D count;
++       spin_lock_irq(&desc->iuspin);
++       /* Ensure cntr does not exceed available data in ubuf. */
++       cntr =3D min_t(size_t, count, desc->length);
++       spin_unlock_irq(&desc->iuspin);
++
+        rv =3D copy_to_user(buffer, desc->ubuf, cntr);
+        if (rv > 0) {
+                rv =3D -EFAULT;
 
-							Thanx, Paul
+>
+> Since the new code does the same thing as the old code, it cannot
+> possibly fix any bugs.
 
-> - Neeraj
-> 
-> > +		idx = srcu_read_lock(srcu_ctlp);
-> > +		WARN_ON_ONCE(idx & ~0x1);
-> > +		ret += idx;
-> > +	}
-> > +	if (reader_flavor & 0x2) {
-> > +		idx = srcu_read_lock_nmisafe(srcu_ctlp);
-> > +		WARN_ON_ONCE(idx & ~0x1);
-> > +		ret += idx << 1;
-> > +	}
-> > +	return ret;
-> >  }
-> >  
-> 
+Without the reproducer I can not confirm that this fixes the hypothetical b=
+ug,
+however here is my understand how the diff above can fix the memory info le=
+ak:
+
+static ssize_t wdm_read() {
+        cntr =3D READ_ONCE(desc->length);
+        if (cntr =3D=3D 0) {
+                spin_lock_irq(&desc->iuspin);
+
+                /* can remain 0 if not increased in wdm_in_callback() */
+                cntr =3D desc->length;
+
+                spin_unlock_irq(&desc->iuspin);
+        }
+
+        spin_lock_irq(&desc->iuspin);
+        /* take the minimum of whatever user requests `count` and
+desc->length =3D 0 */
+        cntr =3D min_t(size_t, count, desc->length);
+        spin_lock_irq(&desc->iuspin);
+
+        /* cntr is 0, nothing to copy to the user space. */
+        rv =3D copy_to_user(buffer, desc->ubuf, cntr);
+
+>
+> (Actually there is one other thing to watch out for: the difference
+> between signed and unsigned values.  Here cntr and desc->length are
+> signed whereas count is unsigned.  In theory that could cause problems
+> -- it might even be related to the cause of the original bug report.
+> Can you prove that desc->length will never be negative?)
+
+desc->length can not be negative if I understand the following correctly:
+
+static void wdm_in_callback(struct urb *urb)
+{
+        ...
+        int length =3D urb->actual_length;
+       ...
+       if (length + desc->length > desc->wMaxCommand) {
+              /* The buffer would overflow */
+             ...
+       } else {
+              /* we may already be in overflow */
+              if (!test_bit(WDM_OVERFLOW, &desc->flags)) {
+                     ...
+                     desc->length +=3D length;
+                     desc->reslength =3D length;
+       }
+}
+
+urb->actual_length is u32, actually, need to change `int length` to
+`u32 length` though.
+
+>
+> Alan Stern
+
+Please let me know if the diff makes sense and I will proceed with v5.
+
+Thanks
 
