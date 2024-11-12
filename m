@@ -1,96 +1,108 @@
-Return-Path: <linux-kernel+bounces-405468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABA09C521B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:33:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C44819C51C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:20:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF742B2B30A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86C16282120
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF3820BB44;
-	Tue, 12 Nov 2024 09:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6C420CCF5;
+	Tue, 12 Nov 2024 09:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="kCqDKm1P"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OL4ZTXdE"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F8420C01C
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7681A263F;
+	Tue, 12 Nov 2024 09:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731403274; cv=none; b=ZpROPA4J7ACemncpatUdT9B5hzeFAHEotekmK3nKXjMbv3pOmeVgDBZ869PfUU2Io6AgVfbAUa4oPZjmShZr30bxkgwvKkjryG91YSY8k6tc5473LEzLI+nuVewG5KDEOvPOgnql2w3lSSL+JlP/D00xFuxA0uivsVioNMtBjgI=
+	t=1731403231; cv=none; b=I39LQWITbvqhsXj65VXrxnHhraLkamoF2R4/W8dWpKcghAmOeijH6MAE0dmj01qG79ZxCkCDFI7ZwUjXc5gGWSiBmHBTXGNOP+dZz0NjFllR6mzEbFYsf4Ph51SHjFjaA0kppAs47GCk0dITbM3yLCHB//PSWlchZoc2ZKR4ZGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731403274; c=relaxed/simple;
-	bh=ZjyTIbMHIERz38+Y/2yfYFVVH68TddlAdYyZaGDvKsY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=a9oWOVRwN0w0+C0vl7e1rMRTEQdpSZc7suZYSZ6d+mJRUGZBOfG3lhclz690sOUXoBjbnvW3gbwcKCf0POvY1J1EQzFUXT4V47me9bRIWQdBXwzw059OePHt0QxfvhifKk5uDGcvDvD4ZJJQU9u3qCrQqsb8cTwSv9ex92dpn84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=kCqDKm1P; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1731403258; bh=AzBNZ4IJqPocACGqWdYRaoEB4ztwkej/YaY3ChMxMkQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=kCqDKm1PJSQ8b5p7+RAl/FKCYhGPNjCiQIRckULYlwBTTPtuX3QexTO7Er1FXzF2d
-	 cfqy+dvsjNmXB4LLP5xyDDOFvbkvPgov93KVffzoSxXPjShNhnkO79mgU+H/KEBZex
-	 wI3zvpV01ZlLFgfCi9nV278rS/6ZuINxEhFZX4KA=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 4E99F03D; Tue, 12 Nov 2024 17:19:41 +0800
-X-QQ-mid: xmsmtpt1731403181tpp1m17n1
-Message-ID: <tencent_3DDDF3704370896A63A8845A977C3767A605@qq.com>
-X-QQ-XMAILINFO: OKkKo7I1HxIeG6JtRWKoTqnmTo85maefyFj2RFPHeUY+TO38WBNwlJOX7ihRbp
-	 yDiupY6bKVAem4Auq6mACuGypJPWI2jR5Toq8at+5Lw6vh5nugBIFtiZjyYVZPkqnOVkYMJAj6B6
-	 oh50QLzeY5LvbA5jclEJNruvT7b4AvInnEmyg8CoNhNtIaQqRI3neFh77cdretzWvpmUckg6UZce
-	 qJ43/lYzRbqhZoiOgX2aFVvbHTuPGrc/Pvt7i8H28WtGCpjQGSUk1qZz+PNaDVTcIK6Da6iYONX0
-	 4vX/5pct+EvDLUM36CSSIimDF3SmpOihFsnHCD179w+1HFM4eaWWL3RTRI6fzPnPkoEo0ehpdE5d
-	 esioYqmMN9a6mwXlcSSEQMH63oO6mM7joRLlfXQRXXe6qbFRtsOjt+CbahFD1dlNRMaplQF6mv19
-	 sdsgFkpAb60hANpB3VXPAsIrkf2/ZW5WdESKTQGCEmYeCWDw5jCUyJokOAihsKohkBMbyUSNWmz3
-	 ToIXSwfTKc27X9ZgBH1+qldcvEyxfQbmKZXAmuwRTY0aqhwHxbETmDzDMywrMR8YNvCXC/7ZTDkQ
-	 +TT7GG54tKUUDVLiBD2+CBejC8U81xuGUkx1HjC0jpCDBycsnM/3ZhjwvuNgaBa4tXa1Jd87a+4u
-	 O2l+rBukF81A4PpNOckC64wQFMR7lzvVeuQII3FhXvGbA25ZO9nWbswBEXBnGzv7oSbZRQJTM6W8
-	 DJtZ2vz/MFflm4RVZBCnHhoEDtFlofFMztpwBrPQNqH57gEL4Ps6ZGLgEE2VbPC3pCxUm5fPlKa9
-	 HxSdQZUBIJ78Tqjv5AIMwTFQNLqDY1dqB5EbozRF2ySONQ/F6joNtY8XHQStRUdP82bLVKATqh0D
-	 sGKINECYYHrGUpO2eNinsr367lBTorz8hP3yot0Amm
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [netfilter?] KASAN: slab-out-of-bounds Read in bitmap_ip_add (2)
-Date: Tue, 12 Nov 2024 17:19:42 +0800
-X-OQ-MSGID: <20241112091941.1452135-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <6732caa8.050a0220.138bd5.00cf.GAE@google.com>
-References: <6732caa8.050a0220.138bd5.00cf.GAE@google.com>
+	s=arc-20240116; t=1731403231; c=relaxed/simple;
+	bh=c6pi5dXdP/h8/7/JDNS0siQZ6Lpa3Z3M9QxtKCvhodM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXFCBvznZB5y0onWHLtscry5nzD5IX14ql17Pk5I9r9kHGBapTUbjh4dWoTcV2kidjg3idhuCYg44s4V14ozdhWKVglweS4/Z+gcAC3k80Y1LPWN1e6CdzFvb0l7iL7KMx2yXTvZ+C5setGx4htMTfrXH8Cw55dnxc1mZUZbRxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OL4ZTXdE; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=f7JKtmmxys2g54UGX0YQKfhOKEwyTmRr83oofBasEK8=; b=OL4ZTXdEuBfE4ndU3QMek5I+rP
+	WW+ZBqIRkNjuT+7HTANWhhp3C/nDelw8jKhFaYgHhKumZUg2IBpcI2VwhW+9hshxtDEZU1gaAUut6
+	Txz3xm5f8EWNWHt4dtDF/0G1qm4/J1sj8WdnLnrQJOJau1TSmjSSKIR9KdUJM1EDXyGzqHNir9BKD
+	b0cXZKGOGoZVE2jgBrD/GRtnazBrHrCvQb6woQuSb716n9iKF4ZmSqiIBRjVggEjaCVPl9r2SFdjG
+	tIKm6wBlAChwxAn/WvjuLFhGYn0sNaO2u7CRd0tAUOzscsDfrRnRHWuzLv0xb29qTrt8BDbwb3c39
+	qDRVduhg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tAn4S-0000000E9o2-1Fft;
+	Tue, 12 Nov 2024 09:20:24 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EB74F300478; Tue, 12 Nov 2024 10:20:23 +0100 (CET)
+Date: Tue, 12 Nov 2024 10:20:23 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com,
+	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
+	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	hch@infradead.org, gregkh@linuxfoundation.org
+Subject: Re: [RFC][PATCH 0/8] module: Strict per-modname namespaces
+Message-ID: <20241112092023.GL22801@noisy.programming.kicks-ass.net>
+References: <20241111105430.575636482@infradead.org>
+ <ZzKl-ldUQD9ldjWR@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzKl-ldUQD9ldjWR@google.com>
 
-the value of first_ip or netmask are incorrect ?
+On Mon, Nov 11, 2024 at 04:48:58PM -0800, Sean Christopherson wrote:
+> On Mon, Nov 11, 2024, Peter Zijlstra wrote:
+> > Hi!
+> > 
+> > Implement a means for exports to be available only to an explicit list of named
+> > modules. By explicitly limiting the usage of certain exports, the abuse
+> > potential/risk is greatly reduced.
+> > 
+> > The first three 'patches' clean up the existing export namespace code along the
+> > same lines of 33def8498fdd ("treewide: Convert macro and uses of __section(foo)
+> > to __section("foo")") and for the same reason, it is not desired for the
+> > namespace argument to be a macro expansion itself.
+> > 
+> > In fact, the second patch is really only a script, because sending the output
+> > to the list is a giant waste of bandwidth. Whoever eventually commits this to a
+> > git tree should squash these first three patches.
+> > 
+> > The remainder of the patches introduce the special "MODULE_<modname-list>"
+> > namespace, which shall be forbidden from being explicitly imported. A module
+> > that matches the simple modname-list will get an implicit import.
+> > 
+> > Lightly tested with something like:
+> > 
+> > git grep -l EXPORT_SYMBOL arch/x86/kvm/ | while read file;
+> > do
+> >   sed -i -e 's/EXPORT_SYMBOL_GPL(\(.[^)]*\))/EXPORT_SYMBOL_GPL_FOR(\1, "kvm,kvm-intel,kvm-amd")/g' $file;
+> > done
+> 
+> Heh, darn modules.  This will compile just fine, but if the module contains a
+> dash, loading the module will fail because scripts/Makefile.lib replaces the dash
+> with an underscore the build name.  E.g. "kvm-intel" at compile time generates
+> kvm-intel.ko, but the actual name of the module as seen by the kernel is kvm_intel.
 
-#syz test
+I was wondering about that...  WTH is kvm doing that? I mean, I suppose
+you can do: "kvm-intel,kvm_intel" but that's somewhat tedious.
 
-diff --git a/net/netfilter/ipset/ip_set_bitmap_ip.c b/net/netfilter/ipset/ip_set_bitmap_ip.c
-index e4fa00abde6a..0fe17fba3b86 100644
---- a/net/netfilter/ipset/ip_set_bitmap_ip.c
-+++ b/net/netfilter/ipset/ip_set_bitmap_ip.c
-@@ -183,6 +183,10 @@ bitmap_ip_uadt(struct ip_set *set, struct nlattr *tb[],
- 
- 	for (; !before(ip_to, ip); ip += map->hosts) {
- 		e.id = ip_to_id(map, ip);
-+		printk("mnm: %u, firstip: %u, hosts: %u, id: %u, %s\n", (ip & ip_set_hostmask(map->netmask)),  map->first_ip, map->hosts, ei.id, __func__);
-+		if (ip & ip_set_hostmask(map->netmask) < map->first_ip)
-+			continue;
-+
- 		ret = adtfn(set, &e, &ext, &ext, flags);
- 
- 		if (ret && !ip_set_eexist(ret, flags))
 
 
