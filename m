@@ -1,83 +1,113 @@
-Return-Path: <linux-kernel+bounces-405558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D479C52DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:14:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 503A49C52E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45D122824B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16FCF280D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF7020EA2D;
-	Tue, 12 Nov 2024 10:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C91120EA32;
+	Tue, 12 Nov 2024 10:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8Z7EnP8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lz8wX3hh"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E2F4C91;
-	Tue, 12 Nov 2024 10:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89491EE02B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731406441; cv=none; b=lS/afKQAaxCjQkhxZtqrW5E9K2RitPhRGX8fugnqD/lRHric9uh1zIpJBS4BX1/XtdlyCPRkltPUzlOS+4TITLwYInhwprxwMIRtlttggHA8m+R33Rfj/qGTrY1rHp/47OqLhd1Y6/CLbIZjXQRipiAfbEe0YppQAprLBSnoUFM=
+	t=1731406476; cv=none; b=dOBO/B9pJcJqtgK8dBNA1z86SgMUfmo3VLG9Am2zU4Xqowipn7R2jSkzqDOP3aqjl5XlECiqAPKfzP3aTcKKRlPesY1clUkCWf9WBTT2n4mE+qHEGM/pPHfhFRMOqvEtluJhRMWncM6vdkRn7DObzQraOiMaetJ1OJ65dfq3JSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731406441; c=relaxed/simple;
-	bh=JOL53HhCG+jCAg5RprMfpeMshNGT3dJE9VpaSRZ3Q2I=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=n9J5/FvxJQLr6cQYzLXYkICEybJWnIeqrxFLcOSLi4UDrfTogx5WvRJqUDL4HPHsBVdMqVa7qw96n1A1+OwxispDkOPKzif0HOKFRlGFRZwgKZRipA5Fg75j1z0UJdwTmefsUVD6k/a5MnaH+DUnd3WB+XlgERiaT4rdjrFAerY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8Z7EnP8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9068DC4CECD;
-	Tue, 12 Nov 2024 10:13:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731406440;
-	bh=JOL53HhCG+jCAg5RprMfpeMshNGT3dJE9VpaSRZ3Q2I=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=k8Z7EnP8E4ROUfNXBXvCffHzpj7zHij1LE1EdzZ+b7eh6cX4QIXc3ZuYLmzKIWQPg
-	 swvfUWWdc2zCJi8gmXYVVbUhOcGTfDXXIuyfhDN6rLOJcJYRgRvt4ikBMlFn3ccK77
-	 wGoO6bfHuXRgf9gBHstXKHGixFf3OXnIVQnHrNN0+dLiFA+Goo8hUw/yXbMKimkhgc
-	 qo1C8hz/kev96vmhcFXb2Y70OiSbEqdvfdWda2i7OvZQqXjZLve3dYvbNRwmdJ1wU2
-	 bKcQYkrGxqr3wDDwJCKG6E5ezMcb+vssse06CDjeVjGnHFXDjByg4qCwMrXIVT2xE4
-	 wXhgMtY8zMRHg==
-From: Kalle Valo <kvalo@kernel.org>
-To: Karol Przybylski <karprzy7@gmail.com>
-Cc: jjohnson@kernel.org,  linux-wireless@vger.kernel.org,
-  ath12k@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  skhan@linuxfoundation.org
-Subject: Re: [PATCH v3] wifi: ath12k: Fix for out-of bound access error
-References: <20241105101132.374372-1-karprzy7@gmail.com>
-Date: Tue, 12 Nov 2024 12:13:57 +0200
-In-Reply-To: <20241105101132.374372-1-karprzy7@gmail.com> (Karol Przybylski's
-	message of "Tue, 5 Nov 2024 11:11:31 +0100")
-Message-ID: <87frnwwyhm.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1731406476; c=relaxed/simple;
+	bh=NI2FSn6wR9NllQpa1yQiYOWhZtDJAgUAJVvJXNP2daY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RY5GHkBu17u81aXrI3SgwaIsRsRcz3uYdy+qw5vrQIWDzNAbD88IyoKTWsKqUtSgFZFsC2xAHaCg2GFSKcd9fQszoK1om1AE6t7m+CnXWrmvJRTPiZunVTNB2Vksi2c6588y5Xrl2kw1754Tmp63ILo3UO4596wpdEk9Rsnlkpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Lz8wX3hh; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=NI2FSn6wR9NllQpa1yQiYOWhZtDJAgUAJVvJXNP2daY=; b=Lz8wX3hh3vIxhltmyWPz1aRlQn
+	kWu59NA/aM1/3WjpsFfFE3ZgkPK8u9TMSbPtwr3mEzLidEio5ah/99Y7tmc/L7Ptfp/RwQ90hxljZ
+	81C3LnCjpVBNCclD1/BWuQOqwMchTzPgMG10fSvD9OPaU6Mfg9JXHpqW2Zst8tqOPfrPu4OIpnrvl
+	SEOButaG95BZKrqdY7Ui/yna2q4m+WpHri4Z/ma18p3GpODoZ1lpRpHqsQOmoPFg7t7lHk+Sox0fB
+	XFQ3iqjB2LKTE8MGIO/lNohTEnJ/uG3nPEcACbfKTZ01p/nENMqyFn+L1zIAhgntrvLuaWE5zy+yH
+	RpZAfrRw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tAnui-0000000EDfU-1WT0;
+	Tue, 12 Nov 2024 10:14:25 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id F4081300478; Tue, 12 Nov 2024 11:14:23 +0100 (CET)
+Date: Tue, 12 Nov 2024 11:14:23 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, kexec@lists.infradead.org,
+	jpoimboe <jpoimboe@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>
+Subject: Re: [RFC PATCH 2/2] x86/kexec: Add data section to relocate_kernel
+Message-ID: <20241112101423.GO22801@noisy.programming.kicks-ass.net>
+References: <1983c62c02b863f6d70198730dbb55a1ef7ceb9f.camel@infradead.org>
+ <20241108052241.3972433-1-dwmw2@infradead.org>
+ <20241108052241.3972433-2-dwmw2@infradead.org>
+ <B26FDB75-D8F3-4D9C-9078-C536C461A7CF@zytor.com>
+ <1e8f11982ad0754d8123c143a514969fa2a07c05.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1e8f11982ad0754d8123c143a514969fa2a07c05.camel@infradead.org>
 
-Karol Przybylski <karprzy7@gmail.com> writes:
+On Tue, Nov 12, 2024 at 08:44:33AM +0000, David Woodhouse wrote:
+> On Fri, 2024-11-08 at 12:26 +0100, H. Peter Anvin wrote:
+> >=20
+> > > --- a/arch/x86/kernel/vmlinux.lds.S
+> > > +++ b/arch/x86/kernel/vmlinux.lds.S
+> > > @@ -100,7 +100,7 @@ const_pcpu_hot =3D pcpu_hot;
+> > > =A0=A0=A0=A0=A0=A0=A0=A0. =3D ALIGN(PAGE_SIZE);=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0\
+> > > =A0=A0=A0=A0=A0=A0=A0=A0__relocate_kernel_start =3D .;=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0\
+> > > =A0=A0=A0=A0=A0=A0=A0=A0*(.text.relocate_kernel);=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0\
+> > > -=A0=A0=A0=A0=A0=A0=A0*(.rodata.relocate_kernel);=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0\
+> > > +=A0=A0=A0=A0=A0=A0=A0*(.data.relocate_kernel);=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0\
 
-> Selfgen stats are placed in a buffer using print_array_to_buf_index() function.
-> Array length parameter passed to the function is too big, resulting in possible
-> out-of bound memory error.
-> Decreasing buffer size by one fixes faulty upper bound of passed array.
->
-> Discovered in coverity scan, CID 1600742 and CID 1600758
->
-> Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+Why are we having data in the middle of the text section?
 
-I assume you only compile tested this, it's always good to mention that
-in the commit message. But no need resend because of this.
+> > > =A0=A0=A0=A0=A0=A0=A0=A0__relocate_kernel_end =3D .;
+> > > #else
+> > > #define KEXEC_RELOCATE_KERNEL_TEXT
+> >=20
+> > Looks good at first glance. I'm currently traveling so I haven't
+> > fully reviewed it though.
+>=20
+> Turns out it doesn't help much. It's neater, obviously, but objtool
+> still wants to disassemble the .data.relocate_kernel section after it
+> gets included in the overall kernel text section.
 
-Acked-by: Kalle Valo <kvalo@kernel.org>
+Objtool only decodes stuff that has SHF_EXECINSTR set. Why would your
+data sections have that on?
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
