@@ -1,190 +1,115 @@
-Return-Path: <linux-kernel+bounces-406616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D259C647A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:51:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC2F9C6460
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05BA3BE6369
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:27:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23405B83241
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8F521A4DB;
-	Tue, 12 Nov 2024 19:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8F1219E39;
+	Tue, 12 Nov 2024 19:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niWPaqEi"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MhPScdjv"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5BD21949E;
-	Tue, 12 Nov 2024 19:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB6E219CB4;
+	Tue, 12 Nov 2024 19:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439550; cv=none; b=PFAZN80VIeokFyyDy9jdiZoAknro9rSg7QEh8azcQ4+b/amB28EkiHpamXqClnz6ghCARnPJfq3yjkSUGnvde7BsRXEVGqXTMmtjNrznMGM3JF6kTP2Q3NJMgA71TIDSgR9k2MUQDUxlXjzxV1VoA5ese5hKVqxw+fEhVz/ri+g=
+	t=1731439943; cv=none; b=cEgTEt7xcOIJNylCZph4PtuQk6OI6H4dfLWQglV1zYsBhqCTbIfimT7SivQBu9qaUjMxL2P8B+51FmzRVwqAaDLKcLh/E42KSDtrm/rUm34YWn2ILWEM7wwgEIg1e8u+IR1ovAubeuccvdNdupIyg2PZA/YuSAz9q/rZIYFr2oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439550; c=relaxed/simple;
-	bh=AjDxtUOOjIpTEE1nyWRWUP+h0r4wzvf5tBIrwgKyeUM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hT1i/bZiO1o3+fHhAy/yUKj+ye5xLTVhraKvxAnSZ3cvft0S11aFe8c1zby1VzHJbDSshCfgoEB/z3zh7fj3Vr6I+aUEUhB0SgTQGgbzOShv4FSh42GXM/fhJ8RM9+NlfjSFWQsXVV3hU3it4YUBM0Q6J4XR0vmdjZr6ozGPXU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niWPaqEi; arc=none smtp.client-ip=209.85.160.178
+	s=arc-20240116; t=1731439943; c=relaxed/simple;
+	bh=qiEs9UfwYLCUVE87QmWnGVgFSfuKAZ1ZwFNa5B5iCJ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=N8ow815iRwGJ1g6TXklQMN1hNZO2lPEQBQcEgUeKiizgJo1n3wKjUeMPNZ3qsSWDcTOPQD+51RIy5aty97DlQHrTkMyoe8V6mlBk8kZjTQXypO+lz+BQXkZt1CK3JWwekQ2KcT5qccSm0OHbh42WYyW2KJ2rLFVCy98O3tGONMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MhPScdjv; arc=none smtp.client-ip=209.85.215.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460ace055d8so44138061cf.1;
-        Tue, 12 Nov 2024 11:25:48 -0800 (PST)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso4016901a12.0;
+        Tue, 12 Nov 2024 11:32:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731439548; x=1732044348; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Hlkpyjr9+m8ziY3XcgbtHwZj36eM6mV2l4GU+t4LNeI=;
-        b=niWPaqEil2xjOi8gxdD9wc2w2F0QPcRzQ3q3MZELpyhIWZeIqrsVFSBI2iiyJr2pq1
-         3MYsPK72/dLpm6/1pvYn/gfpqHSUwl9plqeeFKiKJlUlzkIlbTSg+U3Ofmw/D8UIhvQp
-         kCAyBPd/0npLKu6Ah7BnXKF34vo9nFZ6kMWEDsI3x4H3vhXPKrW0HETNY9EGW+ga+z1w
-         ZZa368T9K1tgHJ1N9oYn70Cj3DWDSsFl1+kE1VkVZAWK8Scaku5TR0ail+4A/BxmSv+I
-         v6PcGYG4AFSCZDZb6e1hdnQ76GAAvJNPw2Gr81ajOUJbRoaHsg7cGxCoafYvLeJ/rD5Y
-         cAgw==
+        d=gmail.com; s=20230601; t=1731439942; x=1732044742; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=19kL+yPDKYdJPy/Ps5/CpYlnCiQbXdTiYWnn6mrqU7Q=;
+        b=MhPScdjv0mrBnPGajs//kuvIZ7uYSXvNy73VjwBu+Vddp58aJgawRnz9e3Aeunbaj7
+         G5VSb2rr3RPYbsFcHsYzgOAwnWe8OfJClHnQ2QlAp1JZvLMwIdyNleKINbW4/gZ8LCJo
+         e42hrN82XGqefJ/P9acUj2cf6sAlSRFoc6XSEBNRWqexERNfUhlWjIqSqtJCwfaBBXQG
+         MXWb0MBOYrwTd5mzbsqDc7jRAjwEg02oG8Tzad0s6i4rg0skQ/GIcYzbLteCDWdKA9Uv
+         xgjJnZU2uPcl8D3xQaax+h5w1Ts8xa/rW/H8aPNH0qLjsuh8NwUqw4btk3Hw4vtboMc7
+         d7jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731439548; x=1732044348;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731439942; x=1732044742;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Hlkpyjr9+m8ziY3XcgbtHwZj36eM6mV2l4GU+t4LNeI=;
-        b=hGIn+yK7+5DGVkxWnJP4Oi++vfcmVjg50b1ndK+UVJJwzJ8posF28Jtwju8gKYbfZz
-         SkFuoIIDKLD+7LFTgE1rNgMiU8T9cB1B02lj1Zu4sgvzmP0Sor4kXTJTAQZOZbJfjYv6
-         nnL5KNd0a/i1lL2AfgoEH8fB1I0/hoR556/nqeA/GIK+wttZrbg+N55yOZ5EtegBX3Fg
-         zW8H2TIfuICxFyV/jJQWvuzqaEBDbMPuqxjxowsomIlPKEdIWxNTIfCvv6XTepXl/keP
-         qJDkfguuJKTpQ/8rKceV+7bZjjfiCQplrFvBH5C86L12RPCsfLv1ZIRuYSvVMcg7kGxy
-         H8kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTpbdkSuvWXCBXiyew+eGe+RBLcIZi4tG1IdFrdDrtRDvMoJqHKj30+dTkYD7RhwO8Yoe0KTM0BqiyjiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1PsdOJQVj65UrIi6GupO8sviPa+dH8FRQJqzvb9Mltyrpok/L
-	ik5aNCefFmE7xBS5B7OPwLY3y+9Bp9wtabXOxeP9LdVdd1n0o9gW
-X-Google-Smtp-Source: AGHT+IFPTrZJJODGh0jMxoOVDYXovFI4pMfCUXnEjxCK0Y2/4OhWbOTYwcnXfi+scuf9nv+VV+adFQ==
-X-Received: by 2002:ac8:5a47:0:b0:462:a686:a42e with SMTP id d75a77b69052e-4634b4aea60mr3792921cf.3.1731439547763;
-        Tue, 12 Nov 2024 11:25:47 -0800 (PST)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2620:10d:c091:600::1:2ba5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ff5e14f9sm78395581cf.86.2024.11.12.11.25.46
+        bh=19kL+yPDKYdJPy/Ps5/CpYlnCiQbXdTiYWnn6mrqU7Q=;
+        b=kqFI2ayG0K3ZvGD4oM83DJkdBiV/IIQ0ee7AID11lpSW1CojwMLllsH2BbfSDIwPwl
+         RO2Qjsm3VjdOznAhaZMaNJr5Kuaus+ampuXMu9hGOSbhBoTeHrMUeieUpFAvo0T3AliZ
+         uNt196g0951Zv5yHqYTHaftuuxrr9mFTJxnnMRxyI5AeAAlzfiTXu8oKAP+N7tDHX0yt
+         ll6birSZO1Wf39TFGgupfG9SLPwrvLHO2Wev7wCzJQM9mwKoSIZaeEUCbydflDYMN3pU
+         35mauleNmnQ2FhXVLNlljnbdT16l0jY5CetallQyD6wjqwsH9p5/9imDwduiLfuhipzN
+         sFpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdV6cRHVUX4MgtSmE5K8lzLm4pKhdRD+vjbQUti4ytqqVUOUXARTCIyO2U+hlGOCB6M6+pVWb5qbMT55Dq@vger.kernel.org, AJvYcCWgfJjcpKztHei1wyuMZzCDkg9YqvpDwceqWD8OEGoDs3/tv8isVQnzNygfKu+mRanAARnAy0wW5XJ4@vger.kernel.org, AJvYcCX7fU1sML8nNSal4EbN0/Oum0Idcf/D1SDdUF5NR/geUJXTvYCKBHs/2BaWxgNJ1kXQFK1zpeeyS8DlBtFLouIWVMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPXWXdHOOVmmB6DUPtwc66X1wdCrw49iP6oKWtP1mfclnpF1fN
+	sAoMyuWfAxRXkOBMh68/b7PBQnRXfRNtuNuFHd9oB7PjwsS8nuKr
+X-Google-Smtp-Source: AGHT+IFf79q5WRlc870dE1XfS8Cl2qWdeeJWxdyPIWkzC5LukXp5+Hkgc11rMLrKxmPlUnOKzi4/dw==
+X-Received: by 2002:a17:90b:2651:b0:2da:8c28:6561 with SMTP id 98e67ed59e1d1-2e9e4bed741mr5162412a91.22.1731439941658;
+        Tue, 12 Nov 2024 11:32:21 -0800 (PST)
+Received: from localhost.localdomain ([38.44.237.182])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd17d8sm10988958a91.41.2024.11.12.11.32.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 11:25:47 -0800 (PST)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 12 Nov 2024 14:25:37 -0500
-Subject: [PATCH 2/2] xarray: extract helper from __xa_{insert,cmpxchg}
+        Tue, 12 Nov 2024 11:32:21 -0800 (PST)
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] dt-bindings: arm: samsung: Add compatible for Samsung Galaxy S20 FE (SM-G780F)
+Date: Tue, 12 Nov 2024 19:31:48 +0000
+Message-Id: <20241112193149.1262-2-wachiturroxd150@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241112193149.1262-1-wachiturroxd150@gmail.com>
+References: <20241112193149.1262-1-wachiturroxd150@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241112-xarray-insert-cmpxchg-v1-2-dc2bdd8c4136@gmail.com>
-References: <20241112-xarray-insert-cmpxchg-v1-0-dc2bdd8c4136@gmail.com>
-In-Reply-To: <20241112-xarray-insert-cmpxchg-v1-0-dc2bdd8c4136@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
+Content-Transfer-Encoding: 8bit
 
-Reduce code duplication by extracting a static inline function. This
-function is identical to __xa_cmpxchg with the exception that it does
-not coerce zero entries to null on the return path.
+Add binding for the Samsung Galaxy S20 FE (SM-G780F) board, which is
+based on the Samsung Exynos990 SoC.
 
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 ---
- lib/xarray.c | 37 ++++++++++++++++++-------------------
- 1 file changed, 18 insertions(+), 19 deletions(-)
+ .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 1b8305bffbff07adb80334fc83b5dc8e40ba2f50..2af86bede3c119060650ee8b891751531c6732e7 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -1491,7 +1491,7 @@ static void *xas_result(struct xa_state *xas, void *curr)
- {
- 	if (xas_error(xas))
- 		curr = xas->xa_node;
--	return xa_zero_to_null(curr);
-+	return curr;
- }
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index b5ba5ffc3..168e77375 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -240,6 +240,7 @@ properties:
+         items:
+           - enum:
+               - samsung,c1s                     # Samsung Galaxy Note20 5G (SM-N981B)
++              - samsung,r8s                     # Samsung Galaxy S20 FE (SM-G780F)
+           - const: samsung,exynos990
  
- /**
-@@ -1568,7 +1568,7 @@ void *__xa_store(struct xarray *xa, unsigned long index, void *entry, gfp_t gfp)
- 			xas_clear_mark(&xas, XA_FREE_MARK);
- 	} while (__xas_nomem(&xas, gfp));
- 
--	return xas_result(&xas, curr);
-+	return xas_result(&xas, xa_zero_to_null(curr));
- }
- EXPORT_SYMBOL(__xa_store);
- 
-@@ -1601,6 +1601,9 @@ void *xa_store(struct xarray *xa, unsigned long index, void *entry, gfp_t gfp)
- }
- EXPORT_SYMBOL(xa_store);
- 
-+static inline void *__xa_cmpxchg_raw(struct xarray *xa, unsigned long index,
-+			void *old, void *entry, gfp_t gfp);
-+
- /**
-  * __xa_cmpxchg() - Store this entry in the XArray.
-  * @xa: XArray.
-@@ -1619,6 +1622,13 @@ EXPORT_SYMBOL(xa_store);
-  */
- void *__xa_cmpxchg(struct xarray *xa, unsigned long index,
- 			void *old, void *entry, gfp_t gfp)
-+{
-+	return xa_zero_to_null(__xa_cmpxchg_raw(xa, index, old, entry, gfp));
-+}
-+EXPORT_SYMBOL(__xa_cmpxchg);
-+
-+static inline void *__xa_cmpxchg_raw(struct xarray *xa, unsigned long index,
-+			void *old, void *entry, gfp_t gfp)
- {
- 	XA_STATE(xas, xa, index);
- 	void *curr;
-@@ -1637,7 +1647,6 @@ void *__xa_cmpxchg(struct xarray *xa, unsigned long index,
- 
- 	return xas_result(&xas, curr);
- }
--EXPORT_SYMBOL(__xa_cmpxchg);
- 
- /**
-  * __xa_insert() - Store this entry in the XArray if no entry is present.
-@@ -1657,26 +1666,16 @@ EXPORT_SYMBOL(__xa_cmpxchg);
-  */
- int __xa_insert(struct xarray *xa, unsigned long index, void *entry, gfp_t gfp)
- {
--	XA_STATE(xas, xa, index);
- 	void *curr;
-+	int errno;
- 
--	if (WARN_ON_ONCE(xa_is_advanced(entry)))
--		return -EINVAL;
- 	if (!entry)
- 		entry = XA_ZERO_ENTRY;
--
--	do {
--		curr = xas_load(&xas);
--		if (!curr) {
--			xas_store(&xas, entry);
--			if (xa_track_free(xa))
--				xas_clear_mark(&xas, XA_FREE_MARK);
--		} else {
--			xas_set_err(&xas, -EBUSY);
--		}
--	} while (__xas_nomem(&xas, gfp));
--
--	return xas_error(&xas);
-+	curr = __xa_cmpxchg_raw(xa, index, NULL, entry, gfp);
-+	errno = xa_err(curr);
-+	if (errno)
-+		return errno;
-+	return (curr != NULL) ? -EBUSY : 0;
- }
- EXPORT_SYMBOL(__xa_insert);
- 
-
+       - description: Exynos Auto v9 based boards
 -- 
-2.47.0
+2.34.1
 
 
