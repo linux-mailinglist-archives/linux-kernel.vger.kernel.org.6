@@ -1,139 +1,121 @@
-Return-Path: <linux-kernel+bounces-405508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D499C523C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:41:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0229C5240
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:42:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96CA61F2168F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:41:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 119CA1F221E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D47220DD7F;
-	Tue, 12 Nov 2024 09:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5D320E022;
+	Tue, 12 Nov 2024 09:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="kPHXM9GX"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OlxQ5vyn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7DF20D4F4;
-	Tue, 12 Nov 2024 09:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DC020D4F4;
+	Tue, 12 Nov 2024 09:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731404456; cv=none; b=PihhcnKPkb6zwbywVwp/03+oIn1LqTSVf8Nz1IvJnvJPmMI1wu/98DZOWuMWDi6gRoL3eP7p2iWnlmeSc7OaD5zEfrnMV0QBt1dksLsQFHjvYY9S791sOoLQXilNLZGS+4um7pGTUWGAkWAr6rNUeXLtwrhDEB8G1aLKH5jyJJk=
+	t=1731404528; cv=none; b=ekYq6uRPoOT366rJvfGutfk+vcIAw27Nf+b2GUAWYu9YH9bof6NHAXLZDXGBailRe3yxyJWqgoHp+HtA5jfpWQcQzhKLsVgczXhYkpgQIZG7CslqjOfkvfI0YJkaZSEwBmMUNeIfLlimKgfs/+FStj1hal0Yz1d0JK22+b1DydU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731404456; c=relaxed/simple;
-	bh=NXriVagQ0yrjgcrlGD1x8haugZBG9rXpwaNoXOSMM+c=;
+	s=arc-20240116; t=1731404528; c=relaxed/simple;
+	bh=Zdm0ZFsz1QDD9ewH8lNkrlGMRhqE2Mfq+pNsouDTEMs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AU7ftepeC3ULLyz/Cw8j9JV7CxEt/wbF3jJoGmrYXgZaIWRj0u3Ed0QhxuupWHn4hDj/7McTDkB+A4RD2UTc8QUWjqjSsZ4lNtJN2/WErZ5TtofCpO9CGd1ocIfaW7uhtcT6SlMNScoF2KQM7JHNVWdInxEjmPOCGNjt92U3lLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=kPHXM9GX; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=zRK4dwC2pj8x4oVLThLt6Q7pXDWIdqXmbFkswTXuyXQ=; b=kPHXM9GXG96w7IN0GlLAObo5lV
-	1QxeaPf++7UefKmxBpPnEpLAqQRuJinzjST0By27abht9f83scNlYMNROnKbSrvn7L2hE7FvXXP2e
-	z/ex5HCrEDmHwEthspY5FYW5+bKz9C4RcYy61cdClki+DJPerd9SELs1xNW5EkI+gR5JsB6CN8EK4
-	AJaWYdBe4GRLaSyrlZJdbRKaU9kGRkQkd5bHVQeL4Ar2hFSQBbNQ4KjgzVUVce7rjIpEHaCif5R7j
-	0VwDIWC00Y+V8qfPZP9C+b9cMFuk9W+XtepOdXtmDJXokvAhRp71FJQa+dXEUnD2TiOGgkCI6lH51
-	uKTrvLAA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38390)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tAnO9-0003qe-2d;
-	Tue, 12 Nov 2024 09:40:46 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tAnO6-0007MY-39;
-	Tue, 12 Nov 2024 09:40:42 +0000
-Date: Tue, 12 Nov 2024 09:40:42 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
-Cc: lpieralisi@kernel.org, thomas.petazzoni@bootlin.com, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	salee@marvell.com, dingwei@marvell.com
-Subject: Re: [PATCH 1/1] PCI: armada8k: add device reset to link-down handle
-Message-ID: <ZzMimiRUAV6ecx1s@shell.armlinux.org.uk>
-References: <20241112070310.757856-1-jpatel2@marvell.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nSOcUQqP3A68NNr7kU/SsCEy7J3ZJ0XYuzrXNa6DGVXRdbIcG1wk3Aon9eRLVoB6Tjaio9hEEZ1bbFrZ5vBD8Apiqz9Liypc7hW6e7nrPE1jL2avCUeSYeKxcEdobc6/pUb1Ct66W/suUPX20S34811Fg9bGVezL5JuoonZCNq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OlxQ5vyn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58354C4CECD;
+	Tue, 12 Nov 2024 09:42:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731404527;
+	bh=Zdm0ZFsz1QDD9ewH8lNkrlGMRhqE2Mfq+pNsouDTEMs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OlxQ5vyn15uxfFSBHSFYs1sD0zKcvDQCPBjaT6ee4NRWmYiCCxbKW2S8PZ/I815dq
+	 NbmzS1F+hNdJlh6X2fDZRd+Hb0dm2++tn6Kfsw3QDWKJK4u2wWqZRpkHneKPw9urxQ
+	 s2WILodJ4v8bIFVPC6ZQQUcEh2PUMJzkfTraNCDA0iKG4bq25/dCnMolB9OSwNc/33
+	 BRGMQDEC8mnoewBOF/mip5vLyxDv0XTEavgdbwkEKWmgOOYHeQb1L9DGHRRHEvvxai
+	 F5qRT+mk7gpS6EG26DvepGQFzNeAmEiWRjcBfOouWSGgRK0vpowrYr+tUpK+3AOioD
+	 TK8wo7QaUogAA==
+Date: Tue, 12 Nov 2024 10:42:02 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Karel Zak <kzak@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Ian Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v3 0/2] fs: allow statmount to fetch the subtype and
+ devname
+Message-ID: <20241112-vielzahl-grasen-51280e378f23@brauner>
+References: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
+ <20241111-ruhezeit-renovieren-d78a10af973f@brauner>
+ <5418c22b64ac0d8d469d8f9725f1b7685e8daa1b.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241112070310.757856-1-jpatel2@marvell.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <5418c22b64ac0d8d469d8f9725f1b7685e8daa1b.camel@kernel.org>
 
-On Mon, Nov 11, 2024 at 11:03:10PM -0800, Jenishkumar Maheshbhai Patel wrote:
-> diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
-> index b1b48c2016f7..9a48ef60be51 100644
-> --- a/drivers/pci/controller/dwc/pcie-armada8k.c
-> +++ b/drivers/pci/controller/dwc/pcie-armada8k.c
-> @@ -23,6 +23,7 @@
->  #include <linux/of_pci.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/regmap.h>
-> +#include <linux/of_gpio.h>
->  
->  #include "pcie-designware.h"
->  
-> @@ -37,6 +38,8 @@ struct armada8k_pcie {
->  	struct regmap *sysctrl_base;
->  	u32 mac_rest_bitmask;
->  	struct work_struct recover_link_work;
-> +	enum of_gpio_flags flags;
-> +	struct gpio_desc *reset_gpio;
->  };
->  
->  #define PCIE_VENDOR_REGS_OFFSET		0x8000
-> @@ -238,9 +241,18 @@ static void armada8k_pcie_recover_link(struct work_struct *ws)
->  	}
->  	pci_lock_rescan_remove();
->  	pci_stop_and_remove_bus_device(root_port);
-> +	/* Reset device if reset gpio is set */
-> +	if (pcie->reset_gpio) {
-> +		/* assert and then deassert the reset signal */
-> +		gpiod_set_value_cansleep(pcie->reset_gpio, 0);
-> +		msleep(100);
-> +		gpiod_set_value_cansleep(pcie->reset_gpio,
-> +					 (pcie->flags & OF_GPIO_ACTIVE_LOW) ? 0 : 1);
+On Mon, Nov 11, 2024 at 08:42:26AM -0500, Jeff Layton wrote:
+> On Mon, 2024-11-11 at 10:17 +0100, Christian Brauner wrote:
+> > On Thu, 07 Nov 2024 16:00:05 -0500, Jeff Layton wrote:
+> > > Meta has some internal logging that scrapes /proc/self/mountinfo today.
+> > > I'd like to convert it to use listmount()/statmount(), so we can do a
+> > > better job of monitoring with containers. We're missing some fields
+> > > though. This patchset adds them.
+> > > 
+> > > 
+> > 
+> > I know Karel has been wanting this for libmount as well. Thanks for
+> > doing this! It would be nice if you could also add some selftests!
+> > 
+> 
+> (cc'ing Karel)
+> 
+> Thanks. We may need to tweak this a bit, based on Miklos' comments
+> about how empty strings are handled now, but it shouldn't be too big a
+> change.
+> 
+> I actually have a related question about libmount: glibc doesn't
+> currently provide syscall wrappers for statmount() and listmount().
 
-This looks wrong. resets are normally active-low.
-gpiod_set_value_cansleep() should be called with '1' to indicate active
-state, and '0' to indicate de-active state. DT should specify whether
-the signal is active high or active low.
+I think it'll be a bit until glibc exposes those system calls because I
+think they are special-purpose in a lot of ways. But also because glibc
+usually takes a while to add new system call wrappers.
 
-> +	/* Config reset gpio for pcie if the reset connected to gpio */
-> +	reset_gpio = of_get_named_gpio_flags(pdev->dev.of_node,
-> +					     "reset-gpios", 0,
-> +					     &pcie->flags);
-> +	if (gpio_is_valid(reset_gpio))
-> +		pcie->reset_gpio = gpio_to_desc(reset_gpio);
-> +
+> Would it make sense to have libmount provide those? We could copy the
 
-Just use devm_fwnode_gpiod_get() here, which will also handle the
-cleanup.
+I think libmount may not necessarily provide direct syscall wrappers but
+will expose new api functionality. This is at least what I gather from
+all the discussions on util-linux.
 
-To see how this should be done, look at
-drivers/pci/controller/pci-mvebu.c which gets the polarity settings
-correct too, as mentioned above.
+> wrappers in tools/testing/selftests/filesystems/statmount/statmount.h
+> to libmount.h.
+> 
+> It's error-prone and a pain to roll these yourself, and that would make
 
-Lastly, as this patch is related to the breaking DT change, it
-_should_ have been sent as a patch series (which means the same
-Cc list on each patch) so that reviewers can see the full story
-and comments on the other patches.
+As with most system calls.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> things simpler until someone is ready to do something for glibc.
+> 
+> Another idea might be to start a new userland header file that is just
+> a collection of static inline wrappers for syscalls that aren't
+> packaged in glibc.e.g.  pidfd_open also doesn't have glibc bindings, so
+> we could add that there too.
+
+Oh? What glibc version are you on? pidfd_open() et al should all have
+glibc wrappers afaik. It just always takes a while:
+
+        > cat /usr/include/x86_64-linux-gnu/sys/pidfd.h | grep pidfd
+        extern int pidfd_open (__pid_t __pid, unsigned int __flags) __THROW;
+        extern int pidfd_getfd (int __pidfd, int __targetfd,
+        extern int pidfd_send_signal (int __pidfd, int __sig, siginfo_t *__info,
+        extern pid_t pidfd_getpid (int __fd) __THROW;
 
