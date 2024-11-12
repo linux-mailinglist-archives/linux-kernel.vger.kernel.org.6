@@ -1,71 +1,85 @@
-Return-Path: <linux-kernel+bounces-405339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DFBD9C4FFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:54:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC8F9C5002
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:55:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330DE288260
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:54:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBEF71F21293
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C0A20CCD4;
-	Tue, 12 Nov 2024 07:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DB920A5FB;
+	Tue, 12 Nov 2024 07:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="xMIXRiN2"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k5StVuah"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4075620A5FB;
-	Tue, 12 Nov 2024 07:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12181209F4A;
+	Tue, 12 Nov 2024 07:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731398010; cv=none; b=pmmCnRjm4ITJsVNMoO0IZfor25JKBR5qf6b6zAJdB7VMbfxEqUy+cgQpz8ve6n2bH+2noU+amLsDXkD55ca3YeJYkqtkdGywT8ggpRCYI4k0wY0WpStpOCO936kocx0vPd0SJO0OSx7SGulujM0P6DkXWEOOiKSaMESvqVkYWUE=
+	t=1731398023; cv=none; b=CNszVTxCfuOI0eYsY/CZk1onVdXoHomV0dEfpE18hOqYMu97glFTIst3eDzvnWE3XLHW/J1zM0FZuCtiEg88zS6sKbWkQ07xxjOuGDxHHUxS/kd+XNWWJ+fG+FeslJV9CmemHJf4tyUrTdSthdqS8zGthGtLlkVffCpAYlGf8Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731398010; c=relaxed/simple;
-	bh=Ya9WJPZN2OZYUG7WeVzwc7TbneVeAAM4iyiHiQz6I44=;
+	s=arc-20240116; t=1731398023; c=relaxed/simple;
+	bh=aNauZ/Ih/QkT/dVs7qqIjV3TANMpfFtHW7+Wmb08jek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGjkXru4BAoRTr10h5LSXMNID5bZnqGRJG/8wvIrr/HZVt0PHYUVRgBwAqcuQB1gugaYmyde49fSlX3rrVFxgGYvMiafz8FxMHZjjK+l2VQmBqkfTzCuMGei1UWaS9V2nkMxgDM6N8yk0T/Y+ST3exwUAls+O1W85bokMVbORko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=xMIXRiN2; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID; bh=+CicQmBbCv29/xiHgnZ+Z8sv1AVWbLap/TSIARQnGHM=; b=xMIXRi
-	N2PIo5n168pq6k9vmSSzzqCHxptA0SI+y5n3L0tCLIZhtm3a3t1ohY6ZTTm5RYUQtvbUWpojGNyPy
-	Gsk8qzVA7l6Ebda2oGm9dFrT3D05OFPq3H5l220kmK2HYpx0jRavWoZUcGTgMvCG/+4J2vLLTRYKg
-	BPGKkLH5kZWG2ZvlVOyX65GHfJnr3bphceIuQDkUnpJtRRNJYYXUqQ7m4BB/84gxp7cQOX0/eBCYP
-	lG5hfGg0b3W3fknLd64sjDeMqhAEpbUA/W8LSMf0sObp1mhJ0a1MwvOBMLakF0BaXoqTgjFXgKqZY
-	mWHody1XGZWgxVUmLN47IAbqDMcA==;
-Received: from sslproxy05.your-server.de ([78.46.172.2])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1tAliH-0004Xm-8l; Tue, 12 Nov 2024 08:53:25 +0100
-Received: from [185.17.218.86] (helo=Seans-MacBook-Pro.local)
-	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1tAliG-000LDs-1k;
-	Tue, 12 Nov 2024 08:53:24 +0100
-Date: Tue, 12 Nov 2024 08:53:23 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ
- voltage
-Message-ID: <2ioqxdymcgx2tnz6cvcuibom6mwam32sushu7kv6bo4e6vemlf@m53nguyzqlyp>
-References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
- <20241112-bizarre-cuttlefish-of-excellence-ff4e83-mkl@pengutronix.de>
- <lfgpif7zqwr3ojopcnxmktdhfpeui5yjrxp5dbzhlz7h3ewhle@3lbg553ujfgq>
- <20241112-doberman-of-original-discourse-a50070-mkl@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cR0ZTeuJliB+4KJTOEtT+gTxFxlmTApTq8qih/ZTYg66gburRexOlN1GIYnWkVaQovCkDHBUKDN4VgYs/x5xmLvl5JPZFsn3tGnoAz+wYkc5/yJ6406tXKlFglxAqO+d5Ber4ifbvFn2BKSNPlwEhbCI5K98fYgZUvAznrfY9Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k5StVuah; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7242f559a9fso2506800b3a.1;
+        Mon, 11 Nov 2024 23:53:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731398020; x=1732002820; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bUgoxxvXrdhSJUKoJyf/O9v+5uKNcqCPwgTAuJ4BG7s=;
+        b=k5StVuahyiiO7KN2syrqVzoiJQoNBGi4VDfp5PzeOIB6lETijR+QTD5k5yf/nVXNIX
+         U7B1y/koPL8VYtiQqWmec7lRSnBVnG5MlTG/R8zMdhzRAeRNtGEMxMhwKQSg3t2NcHJO
+         cjUCbctYZtVGDXGK89L9zWbZaaFYDYFbt2WbGoDWE6z/2aUuYJ1CyXNZSBxGk96VxHSw
+         +9UYtAMFJ8PSsvqv3VcywndHOxMooQdpdZ+yefYeCgYwJb00AZd0fZINvYqEqr3CEZys
+         6yVdu1ND7YxjuBTCkQW2Hn8+xkJokakL/Fvw0UeJsqRJXPwGizGl6bhsux4lmuosZgnG
+         ksMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731398020; x=1732002820;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bUgoxxvXrdhSJUKoJyf/O9v+5uKNcqCPwgTAuJ4BG7s=;
+        b=sqth2KThKTm5bwSjy3YWsfIV9mVKN+1vNQqHWoTr7ONjBVM3Ng+LRmbpqsHkF390uB
+         jE2qe40F+J9uZRws8GNULOCd3ONJh/c2JUnVBPyDHnwTt3+aTo7Fu2/jUuwet6HTq8RG
+         NsPiHyvHaHeSvfZxIkfhiedwj9Xai/v1BmYC1rYJ8o5BzliiA8gDumZ0sQ8rvB27ZjIk
+         c9i9cIroCnPfAEVOklhjhVlu2oHfJboTMrKXesXnyk6d+e5qAZkiXxQ3FYkqu5MbR4QM
+         iJ2jkCVrmXG+xTsVCo5gJZxnxVKcOjdZBBjI6cZKdmCSHiz/6FYxpePKc5NvgqaTKtrS
+         2y3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWNCf9seypxgpVWSBWEEFYHyRj4VNYDlLlNmx4/m8LXV3ToBrHlZjAmlP//92NqskFZGDHtcJavOosbg+E=@vger.kernel.org, AJvYcCX+azBmUDVftd3Ff6ZXG/fCYrhKSVJZgkbrN3QIIAqTxhYAIJzIGODfat+lbB5cvtVyMGD3DCs+jxOE4Cdgr/+M2ys=@vger.kernel.org, AJvYcCXxgnQBGFdJh5EfasuZvrWSUS7Tzc9r+vXglW5Xn6RkZ3InZWeRbK4uWaMevdNJs7fUqWqXSoezstka4g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlym+J4AvRTn10gtV3GheKiS4z4TmwSlkiwzy8Kh04lPcZmwa0
+	WkmSK3M+B+lvrGTIswtn3VoeBbvZsKcFq2ECyd+VaKeL84mJJwV8
+X-Google-Smtp-Source: AGHT+IH4s7RgAlk5NeJXz45kGRRPxv9SbFPlQhFQl+z6UduWSSD31KYzEVYWdy1FjRFjXJxIydK7jg==
+X-Received: by 2002:a05:6a00:b56:b0:71e:5a1d:ecdc with SMTP id d2e1a72fcca58-7241334a09dmr21966921b3a.17.1731398020189;
+        Mon, 11 Nov 2024 23:53:40 -0800 (PST)
+Received: from thinkpad ([117.213.103.248])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7240799bb78sm10424749b3a.95.2024.11.11.23.53.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 23:53:39 -0800 (PST)
+Date: Tue, 12 Nov 2024 13:23:32 +0530
+From: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: alim.akhtar@samsung.com, James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com, krzk@kernel.org,
+	linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	andre.draszik@linaro.org, kernel-team@android.com,
+	willmcvicker@google.com
+Subject: Re: [PATCH 2/2] scsi: ufs: exynos: remove superfluous function
+ parameter
+Message-ID: <20241112075332.lhssmh44a77uyvit@thinkpad>
+References: <20241030102715.3312308-1-tudor.ambarus@linaro.org>
+ <20241030102715.3312308-2-tudor.ambarus@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,36 +88,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241112-doberman-of-original-discourse-a50070-mkl@pengutronix.de>
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27455/Mon Nov 11 10:58:33 2024)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241030102715.3312308-2-tudor.ambarus@linaro.org>
 
-Hi Marc,
-
-On Tue, Nov 12, 2024 at 08:52:14AM +0100, Marc Kleine-Budde wrote:
-> On 12.11.2024 08:44:00, Sean Nyekjaer wrote:
-> > Hi Marc,
-> > 
-> > On Tue, Nov 12, 2024 at 08:38:26AM +0100, Marc Kleine-Budde wrote:
-> > > On 11.11.2024 09:54:48, Sean Nyekjaer wrote:
-> > > > This series adds support for setting the nWKRQ voltage.
-> > > 
-> > > IIRC the yaml change should be made before the driver change. Please
-> > > make the yaml changes the 1st patch in the series.
-> > > 
-> > > Marc
-> > > 
-> > 
-> > I know, so I have added, prerequisite-change-id as pr the b4 manual.
+On Wed, Oct 30, 2024 at 10:27:15AM +0000, Tudor Ambarus wrote:
+> The pointer to device can be obtained from ufs->hba->dev,
+> remove superfluous function parameter.
 > 
-> I mean the order of patches in this series. First the yaml patch, then
-> the code change.
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> ---
+>  drivers/ufs/host/ufs-exynos.c | 4 ++--
+>  drivers/ufs/host/ufs-exynos.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> regards,
-> Marc
+> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+> index db89ebe48bcd..7e381ab1011d 100644
+> --- a/drivers/ufs/host/ufs-exynos.c
+> +++ b/drivers/ufs/host/ufs-exynos.c
+> @@ -198,7 +198,7 @@ static inline void exynos_ufs_ungate_clks(struct exynos_ufs *ufs)
+>  	exynos_ufs_ctrl_clkstop(ufs, false);
+>  }
+>  
+> -static int exynosauto_ufs_drv_init(struct device *dev, struct exynos_ufs *ufs)
+> +static int exynosauto_ufs_drv_init(struct exynos_ufs *ufs)
+>  {
+>  	struct exynos_ufs_uic_attr *attr = ufs->drv_data->uic_attr;
+>  
+> @@ -1424,7 +1424,7 @@ static int exynos_ufs_init(struct ufs_hba *hba)
+>  	exynos_ufs_fmp_init(hba, ufs);
+>  
+>  	if (ufs->drv_data->drv_init) {
+> -		ret = ufs->drv_data->drv_init(dev, ufs);
+> +		ret = ufs->drv_data->drv_init(ufs);
+>  		if (ret) {
+>  			dev_err(dev, "failed to init drv-data\n");
+>  			goto out;
+> diff --git a/drivers/ufs/host/ufs-exynos.h b/drivers/ufs/host/ufs-exynos.h
+> index 1646c4a9bb08..9670dc138d1e 100644
+> --- a/drivers/ufs/host/ufs-exynos.h
+> +++ b/drivers/ufs/host/ufs-exynos.h
+> @@ -182,7 +182,7 @@ struct exynos_ufs_drv_data {
+>  	unsigned int quirks;
+>  	unsigned int opts;
+>  	/* SoC's specific operations */
+> -	int (*drv_init)(struct device *dev, struct exynos_ufs *ufs);
+> +	int (*drv_init)(struct exynos_ufs *ufs);
+>  	int (*pre_link)(struct exynos_ufs *ufs);
+>  	int (*post_link)(struct exynos_ufs *ufs);
+>  	int (*pre_pwr_change)(struct exynos_ufs *ufs,
+> -- 
+> 2.47.0.199.ga7371fff76-goog
+> 
 > 
 
-Oh, noted thanks!
-
-/Sean
+-- 
+மணிவண்ணன் சதாசிவம்
 
