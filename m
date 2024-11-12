@@ -1,253 +1,133 @@
-Return-Path: <linux-kernel+bounces-405295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A419C4FA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:40:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E809C4F87
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:36:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59216B26A48
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:40:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D8E7B23466
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8061620C006;
-	Tue, 12 Nov 2024 07:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718B520B219;
+	Tue, 12 Nov 2024 07:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DabZaDXy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FXfoUJwq"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C7F20A5FE;
-	Tue, 12 Nov 2024 07:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEB220B212
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731397103; cv=none; b=Z3+UinAD5oq0Jqu/P01Spk/VVjf46GMkpilkArpA26VAIq8T4mTCMdjq8mJ3H4UE9vyC9oRlYHid8N37jC8l9bBI7Vd9GJH8XfUsxWPr6oXb3yPANybVp++u+lT1JjSZ6r/iUheTlBX8yNh7S4KfcN7yKvaxKcMoKPHsNIriOfk=
+	t=1731396967; cv=none; b=rPFXHsvAEDWs3Tzdv4OZ+9OCDn6S65HI3B5PjH/QOyy2oOJ5BwVKHAng+sICyfvSpYsUKs/KbAsreYgIwxfnjW7hr+CD+MYLGRJpLUZzJtvk3I8y6maydW3ZfbYXVMMMAmb9MO4/hA7qzl79nKh+5+mdZB2iIj4jJlUhxAq6nUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731397103; c=relaxed/simple;
-	bh=LJP5i6H0vrVARHyHyA5b39kA++Huw/2CwDa6XjsgVdQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uzVAx/7H5YO1iiOTJ+u40DRZp2Q6m/CawUH1Z5MZS/J+/XUGkgxAdYIgoX8OyF86xzl4IUAzL++OkcJXZ217lJ9bTYfgTGPYO/sx2+cjc+Z3Fc4yFIOpZl79r/f9/aruomFS2s+CovlcdKIkr2QkVCBytAfTh0tARqfzSb8PoDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DabZaDXy; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731397102; x=1762933102;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=LJP5i6H0vrVARHyHyA5b39kA++Huw/2CwDa6XjsgVdQ=;
-  b=DabZaDXyFkV7CC1mvIWhfdDo/zVh2wBkDctNcZVww8SUzlRVFNZe8WsF
-   UYoPtOQJibX+J+9iSXDqNHRFQh+d7AUZ7wbXgUmo1N7YkWZLa7gJUO0Ew
-   pSJqP97ci/jhnvsDeihgx3m3EIy/8RLQRM/6ElpYB1UaNkDLQCMZRWnTx
-   Dg0HvCbri63XOypgTtTwAd1nY8+zuV+dEj5SNiZm7+NvvcGZFskQ5V2xS
-   3LmRt7f032E4q6GCXZjlep619GorypKO4x+9S9PEWPrInD131r13z3Qqh
-   tkrz5Yf0zlpwFUJQNcXSyZ2dRTZNhjumyBIu+3fiOsy72GPV1je4FyVDG
-   Q==;
-X-CSE-ConnectionGUID: jF4UArfmS7S1geYmbjew1Q==
-X-CSE-MsgGUID: dc/yFJ8rR5e2y/8owxcfKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="42598658"
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="42598658"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:38:22 -0800
-X-CSE-ConnectionGUID: B4UqiyKrQc65YKcJV4DvLA==
-X-CSE-MsgGUID: DZR3eZcrQ8Ofxujm9Aj9TQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="110595087"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:38:17 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org,
-	dave.hansen@linux.intel.com
-Cc: rick.p.edgecombe@intel.com,
-	kai.huang@intel.com,
-	adrian.hunter@intel.com,
-	reinette.chatre@intel.com,
-	xiaoyao.li@intel.com,
-	tony.lindgren@intel.com,
-	binbin.wu@linux.intel.com,
-	dmatlack@google.com,
-	isaku.yamahata@intel.com,
-	isaku.yamahata@gmail.com,
-	nik.borisov@suse.com,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: [PATCH v2 06/24] KVM: TDX: Add accessors VMX VMCS helpers
-Date: Tue, 12 Nov 2024 15:35:50 +0800
-Message-ID: <20241112073551.22070-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20241112073327.21979-1-yan.y.zhao@intel.com>
-References: <20241112073327.21979-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1731396967; c=relaxed/simple;
+	bh=cQLQVxsI2PezBMH0R9KgG1QekZtyZGbTki7LvdK5sLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mpn+6ahy/jEsALmqHKmaG6zmBGNI3t2nXkq4N9BpBeSQiEuKfJtIMuVb3WdQmsvdjdm2abn0pj09wBtii7DSZ1Pr7gA722LEegC3gNyMXpvrYUGA2a6A0Kdu3KoCQrXJOiPm48sRLrwHgGmNoWoswgOnEL+RXFoUeoa5tHfu5KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FXfoUJwq; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7d4f85766f0so3864323a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:36:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731396962; x=1732001762; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Wz2Xll3k6PrE80Ti+u6oUdCAXTR3EqoFjFkrEaeKDLQ=;
+        b=FXfoUJwqi3Wb3lM4jjfLXkaTavmdF6TXBIYUeYBihtH6kLkF7AtvvaBGwo5VabDgHw
+         i/cPt3ejFKg+fsWFfQ17nQU2NxH600CBmr/0JIF+vC4NwI3pk6AskqfxZCMZe7sZMhbU
+         n7CsUAZYUzZrHImCgcNiXWr7yqzC5XRGK+DA5EWnOgNC/MY/niSzWMcyF0GK/Rj/hgX8
+         LQ6FeXnGG7PINhhH39aTTQKJY45xc8xJsqVMrUUFYmAWu5adWmir03INm8wO/Z2eLA4X
+         Jhq9SYA2TC8J2h+KL895TgBgCI3K9Ecq6vve6E+6Qh6gC9n2OKO8NbR+PAWbXHn0lfsu
+         uqmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731396962; x=1732001762;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wz2Xll3k6PrE80Ti+u6oUdCAXTR3EqoFjFkrEaeKDLQ=;
+        b=ucsKb71fuQ6PAP61+9oNrBrq0DfuuSnb4NYfGsvhyCCuldUrBpVY80b+MvpKA2WzEV
+         /71FwOxv6arOOKXLwyaZud+K34qyut2xKQLm3YGUrvzCnrcWeuki02fK96klkq3jlog0
+         pZbbJW6td1Dqkdbrf24fEVfUWzhUr9P2aOX2hqyq1cJpgT+PX7f+JLJmC3L7M1G2Wr0p
+         BAv9hSHdlxbZ0Wp8RQB3ICLF4DLAaDvDEv3hIJRCgOwll+gIy9WeV7kxYdiuBVfrXE27
+         0XJ1Vp0s8JGBN1j9924wkdctvjFQjrQUyCxHMZXJ6cNpWYb6oakjWJer5W5SnDdEJ9ci
+         zNTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUC3iggxjK2ojTZUwOEME7ZZKV8kHvXoF6dwNb/xc9WyrTxDxr+AAKe5sYRJK1VJlHd98DTod2zQsbdmoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yypuwo0KdukTZK6wpTVlL+7VmTLaXoZPI8/TZFR8Y1tR6DTBvug
+	EREbEIt7fHAqC36Vvh7W9uSH1CoKup050mfjUAxO4O/AD4g6zp7XnvvnkhIqbA==
+X-Google-Smtp-Source: AGHT+IFxOmOq64lXg5Fe+uFtEajww8dyWjj1b2gl9w/hnQ4Zgtjj8DdggtCcycfHVqp6iQQC9ZemGA==
+X-Received: by 2002:a05:6a20:7f92:b0:1db:92be:1276 with SMTP id adf61e73a8af0-1dc228ebf86mr22461366637.6.1731396962481;
+        Mon, 11 Nov 2024 23:36:02 -0800 (PST)
+Received: from thinkpad ([117.213.103.248])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078641a2sm10757715b3a.20.2024.11.11.23.35.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 23:36:01 -0800 (PST)
+Date: Tue, 12 Nov 2024 13:05:52 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] PCI: endpoint: fix bugs for both API
+ pci_epc_destroy() and pci_epc_remove_epf()
+Message-ID: <20241112073552.kbzx557ebdbqe5ax@thinkpad>
+References: <20241107-epc_rfc-v2-0-da5b6a99a66f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241107-epc_rfc-v2-0-da5b6a99a66f@quicinc.com>
 
-From: Isaku Yamahata <isaku.yamahata@intel.com>
+On Thu, Nov 07, 2024 at 08:53:07AM +0800, Zijun Hu wrote:
+> This patch series is to fix bugs for below 2 APIs:
+> pci_epc_destroy()
+> pci_epc_remove_epf()
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 
-TDX defines SEAMCALL APIs to access TDX control structures corresponding to
-the VMX VMCS.  Introduce helper accessors to hide its SEAMCALL ABI details.
+Applied to pci/endpoint!
 
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Co-developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
-TDX MMU part 2 v2:
--Move inline warning msgs to tdh_vp_rd/wr_failed() (Paolo)
+- Mani
 
-TDX MMU part 2 v1:
- - Update for the wrapper functions for SEAMCALLs. (Sean)
- - Eliminate kvm_mmu_free_private_spt() and open code it.
- - Fix bisectability issues in headers (Kai)
- - Updates from seamcall overhaul (Kai)
+> ---
+> Changes in v2:
+> - Correct title and commit messages, and remove RFC tag
+> - Link to v1: https://lore.kernel.org/r/20241102-epc_rfc-v1-0-5026322df5bc@quicinc.com
+> 
+> ---
+> Zijun Hu (2):
+>       PCI: endpoint: Fix API pci_epc_destroy() releasing domain_nr ID faults
+>       PCI: endpoint: Fix API pci_epc_remove_epf() cleaning up wrong EPC of EPF
+> 
+>  drivers/pci/endpoint/pci-epc-core.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+> ---
+> base-commit: ad5df4a631fa7eeb8eb212d21ab3f6979fd1926e
+> change-id: 20241102-epc_rfc-e1d9d03d5101
+> 
+> Best regards,
+> -- 
+> Zijun Hu <quic_zijuhu@quicinc.com>
+> 
 
-v19:
- - deleted unnecessary stub functions,
-   tdvps_state_non_arch_check() and tdvps_management_check().
----
- arch/x86/kvm/vmx/tdx.c | 13 +++++++
- arch/x86/kvm/vmx/tdx.h | 88 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 101 insertions(+)
-
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 7fb32d3b1aae..ed4473d0c2cd 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -32,6 +32,19 @@ static enum cpuhp_state tdx_cpuhp_state;
- 
- static const struct tdx_sys_info *tdx_sysinfo;
- 
-+void tdh_vp_rd_failed(struct vcpu_tdx *tdx, char *uclass, u32 field, u64 err)
-+{
-+	KVM_BUG_ON(1, tdx->vcpu.kvm);
-+	pr_err("TDH_VP_RD[%s.0x%x] failed 0x%llx\n", uclass, field, err);
-+}
-+
-+void tdh_vp_wr_failed(struct vcpu_tdx *tdx, char *uclass, char *op, u32 field,
-+		      u64 val, u64 err)
-+{
-+	KVM_BUG_ON(1, tdx->vcpu.kvm);
-+	pr_err("TDH_VP_WR[%s.0x%x]%s0x%llx failed: 0x%llx\n", uclass, field, op, val, err);
-+}
-+
- #define KVM_SUPPORTED_TD_ATTRS (TDX_TD_ATTR_SEPT_VE_DISABLE)
- 
- static u64 tdx_get_supported_attrs(const struct tdx_sys_info_td_conf *td_conf)
-diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-index 1b78a7ea988e..727bcf25d731 100644
---- a/arch/x86/kvm/vmx/tdx.h
-+++ b/arch/x86/kvm/vmx/tdx.h
-@@ -49,6 +49,10 @@ struct vcpu_tdx {
- 	enum vcpu_tdx_state state;
- };
- 
-+void tdh_vp_rd_failed(struct vcpu_tdx *tdx, char *uclass, u32 field, u64 err);
-+void tdh_vp_wr_failed(struct vcpu_tdx *tdx, char *uclass, char *op, u32 field,
-+		      u64 val, u64 err);
-+
- static inline bool is_td(struct kvm *kvm)
- {
- 	return kvm->arch.vm_type == KVM_X86_TDX_VM;
-@@ -80,6 +84,90 @@ static __always_inline u64 td_tdcs_exec_read64(struct kvm_tdx *kvm_tdx, u32 fiel
- 	}
- 	return data;
- }
-+
-+static __always_inline void tdvps_vmcs_check(u32 field, u8 bits)
-+{
-+#define VMCS_ENC_ACCESS_TYPE_MASK	0x1UL
-+#define VMCS_ENC_ACCESS_TYPE_FULL	0x0UL
-+#define VMCS_ENC_ACCESS_TYPE_HIGH	0x1UL
-+#define VMCS_ENC_ACCESS_TYPE(field)	((field) & VMCS_ENC_ACCESS_TYPE_MASK)
-+
-+	/* TDX is 64bit only.  HIGH field isn't supported. */
-+	BUILD_BUG_ON_MSG(__builtin_constant_p(field) &&
-+			 VMCS_ENC_ACCESS_TYPE(field) == VMCS_ENC_ACCESS_TYPE_HIGH,
-+			 "Read/Write to TD VMCS *_HIGH fields not supported");
-+
-+	BUILD_BUG_ON(bits != 16 && bits != 32 && bits != 64);
-+
-+#define VMCS_ENC_WIDTH_MASK	GENMASK(14, 13)
-+#define VMCS_ENC_WIDTH_16BIT	(0UL << 13)
-+#define VMCS_ENC_WIDTH_64BIT	(1UL << 13)
-+#define VMCS_ENC_WIDTH_32BIT	(2UL << 13)
-+#define VMCS_ENC_WIDTH_NATURAL	(3UL << 13)
-+#define VMCS_ENC_WIDTH(field)	((field) & VMCS_ENC_WIDTH_MASK)
-+
-+	/* TDX is 64bit only.  i.e. natural width = 64bit. */
-+	BUILD_BUG_ON_MSG(bits != 64 && __builtin_constant_p(field) &&
-+			 (VMCS_ENC_WIDTH(field) == VMCS_ENC_WIDTH_64BIT ||
-+			  VMCS_ENC_WIDTH(field) == VMCS_ENC_WIDTH_NATURAL),
-+			 "Invalid TD VMCS access for 64-bit field");
-+	BUILD_BUG_ON_MSG(bits != 32 && __builtin_constant_p(field) &&
-+			 VMCS_ENC_WIDTH(field) == VMCS_ENC_WIDTH_32BIT,
-+			 "Invalid TD VMCS access for 32-bit field");
-+	BUILD_BUG_ON_MSG(bits != 16 && __builtin_constant_p(field) &&
-+			 VMCS_ENC_WIDTH(field) == VMCS_ENC_WIDTH_16BIT,
-+			 "Invalid TD VMCS access for 16-bit field");
-+}
-+
-+#define TDX_BUILD_TDVPS_ACCESSORS(bits, uclass, lclass)				\
-+static __always_inline u##bits td_##lclass##_read##bits(struct vcpu_tdx *tdx,	\
-+							u32 field)		\
-+{										\
-+	u64 err, data;								\
-+										\
-+	tdvps_##lclass##_check(field, bits);					\
-+	err = tdh_vp_rd(tdx->tdvpr_pa, TDVPS_##uclass(field), &data);		\
-+	if (unlikely(err)) {							\
-+		tdh_vp_rd_failed(tdx, #uclass, field, err);			\
-+		return 0;							\
-+	}									\
-+	return (u##bits)data;							\
-+}										\
-+static __always_inline void td_##lclass##_write##bits(struct vcpu_tdx *tdx,	\
-+						      u32 field, u##bits val)	\
-+{										\
-+	u64 err;								\
-+										\
-+	tdvps_##lclass##_check(field, bits);					\
-+	err = tdh_vp_wr(tdx->tdvpr_pa, TDVPS_##uclass(field), val,		\
-+		      GENMASK_ULL(bits - 1, 0));				\
-+	if (unlikely(err))							\
-+		tdh_vp_wr_failed(tdx, #uclass, " = ", field, (u64)val, err);	\
-+}										\
-+static __always_inline void td_##lclass##_setbit##bits(struct vcpu_tdx *tdx,	\
-+						       u32 field, u64 bit)	\
-+{										\
-+	u64 err;								\
-+										\
-+	tdvps_##lclass##_check(field, bits);					\
-+	err = tdh_vp_wr(tdx->tdvpr_pa, TDVPS_##uclass(field), bit, bit);	\
-+	if (unlikely(err))							\
-+		tdh_vp_wr_failed(tdx, #uclass, " |= ", field, bit, err);	\
-+}										\
-+static __always_inline void td_##lclass##_clearbit##bits(struct vcpu_tdx *tdx,	\
-+							 u32 field, u64 bit)	\
-+{										\
-+	u64 err;								\
-+										\
-+	tdvps_##lclass##_check(field, bits);					\
-+	err = tdh_vp_wr(tdx->tdvpr_pa, TDVPS_##uclass(field), 0, bit);		\
-+	if (unlikely(err))							\
-+		tdh_vp_wr_failed(tdx, #uclass, " &= ~", field, bit, err);\
-+}
-+
-+TDX_BUILD_TDVPS_ACCESSORS(16, VMCS, vmcs);
-+TDX_BUILD_TDVPS_ACCESSORS(32, VMCS, vmcs);
-+TDX_BUILD_TDVPS_ACCESSORS(64, VMCS, vmcs);
- #else
- static inline void tdx_bringup(void) {}
- static inline void tdx_cleanup(void) {}
 -- 
-2.43.2
-
+மணிவண்ணன் சதாசிவம்
 
