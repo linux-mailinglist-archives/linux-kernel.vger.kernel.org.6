@@ -1,307 +1,205 @@
-Return-Path: <linux-kernel+bounces-405350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EBD9C501F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:00:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8141C9C5024
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:00:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79E8F287222
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DE85282F28
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CDC20B7E5;
-	Tue, 12 Nov 2024 07:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C028120B7FC;
+	Tue, 12 Nov 2024 08:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NMThQ3rx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="pnW8G92N"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2089.outbound.protection.outlook.com [40.107.21.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2BF20C305;
-	Tue, 12 Nov 2024 07:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731398340; cv=none; b=urI4+TieGnQ1qFlOFgBmT5ZPql9Y/MHzroSEgoKRzQeC3pUeHw8auohm5Sd3rOrjrzbQGuauHUwHH+NHsdUwr45zNCpWIxbmiKt5oczTC5ZxT4CEQFqhhkb4aJpBF6gcMRNIsLkdCiG28IpNsBQ3EhMjA/NlOLlAkblb9+RgY/g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731398340; c=relaxed/simple;
-	bh=epaPMKmrMVWkLaeqB69ZqjwNyivp3JxBDmh4GNEtxWI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r3TtjeHJJ33jzngWuk6oED+Bu1MqAIzzTzU+O+JMyMUwctWHnleTb144UNHjt1NaZlvIVkMQkLXlFEZbtUnFC3bwdpPch0Jp9jlQPgPIlZErnRiQoe0M/nRvU6efpwf2DCFyu7nIggCafMeeRIJbWUxvMUS7jV2wpUExfXRZ2ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NMThQ3rx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC1ul8k004728;
-	Tue, 12 Nov 2024 07:58:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dRTCgzxAR7P0V59NOUgYOFTOdc/opG9dw1N+XBK6hm4=; b=NMThQ3rxX+RugPtq
-	uIwWOXBoi1W9ivLjRlAatPNHZomznaAltU9vQH+BqbZqdnnwnwst90icjB4EEulq
-	Q8vPZtjsj71I7tNeAQscjA7iaLZRM2ev/iFOXJIz5NJKz5YmD/jWLISE8Ej6Lsag
-	KOiQa0yC2Cpmnh+ezmp8Wx24S2JocC01BYUpGlWY19KNlJrSyiWJR1Hx8rTJOyeB
-	zRrXNAqCdbIw0e3J/CJ3M0juzWuTLa2KqNXwpj7kg1h5CL2KJwnSC9KVvwCUOc9p
-	NdGSL4zdckJMZhxZgIZllvYk1csSq3jL7M8aFCKxHyP9cXytz1YLvSPljNzdhLFC
-	qzOhOw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uwt5gqj0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 07:58:55 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC7wt3f001400
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 07:58:55 GMT
-Received: from 19197b7011e2.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 11 Nov 2024 23:58:51 -0800
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: Sibi Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Odelu Kukatla <quic_okukatla@quicinc.com>,
-        Mike Tipton <quic_mdtipton@quicinc.com>
-Subject: [PATCH V4 3/3] interconnect: qcom: Add EPSS L3 support on SA8775P
-Date: Tue, 12 Nov 2024 07:58:26 +0000
-Message-ID: <20241112075826.28296-4-quic_rlaggysh@quicinc.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241112075826.28296-1-quic_rlaggysh@quicinc.com>
-References: <20241112075826.28296-1-quic_rlaggysh@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB93A20ADD7;
+	Tue, 12 Nov 2024 08:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731398402; cv=fail; b=J09+wuEKiWFyp7l0vfFgDv1bwlxaWXtKR/ukcIqavs+HnSr5riydDYWrHu4G/EP4lYi9lvFQ+nkxRUbWZdjtzvLgWXGfz+CgPhwKQ86ZiDHHHmX0IacJP8ye0D4pWIRbXncPvDIBf50QXR0D9uS2O2V8KuiMOEfJbBV6A6I+GXI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731398402; c=relaxed/simple;
+	bh=pAGtSjqCuT+59/OAliOTYkgr0+BbcnfOFd0crE/OJNI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=j4ykBv0tRWGyDjVJgPyOSoQLvNCclPJJ3Ke/5sNrwfdJEVMjcRYt19dgtHRqrzO6Gr/N4Sv9Qt8koqvGkTr4g+w9IKhdpDm6G7fzbmQqa4ph5l8syITl4QEmKHMtLI8we+dNjb0KzlM6Ldm39me8gkHkaS2VhE2XQEGs1T4PH1A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=pnW8G92N; arc=fail smtp.client-ip=40.107.21.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Kh4jcO+lekHWeuyLLyjZ8vvzlgJ05HIwWyI3/oYMM4ocIxcxrJXciRyS4qEwrXm+vBAbQNIrYxEf7UsRqciYygfCZj79ckgp/DZmsg4KKMX3wF7qZVkllnZqF/uYB3CHbfcon/6e8Nn/hbDro96sDLENCa9c4J7V7bjufMwjvaIpew/J3kfopEJ6kpuERJsiKsPQBHa6jHLTY8PFLpNN5hZxSDbho4/dmUvIEsB6YmgJ8r84JuTNdscu1+PArr8RT7vPlaT/yDM52INFG590OgrT67K9vzIj+ttfW7jS4BJdFyC+Q2bPJxRiZz9cGAhQB5NIbKZulM1Mp2Dm9FEYig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F1HMcCZV7PUkXmydHjpg7F4obkuxtDWsrqNPv5oMSic=;
+ b=JRxz2AAhJh0XInNclNryiA75B+mnCoAFazyov/IjiA2xFHchUBoU8jDEG3QcGcwUe2awUTrTsdt6WT2zl9qypwYYfW6L0GD+2doM/fkJcjd1z5WGTu24ckalDnuzwn24oSqcNbDSZSS52s7rMmhJZ3rnvaKV9TlTwWFUDnyrSV7R3Cm+ckQCCfmhWeoGJNPrhhkdnWawD0gooXdF+tMxhowGRYWYnSsvVGXcChMs/VlOZu6GakRlddOC42wHJSK5kZEMNKR1UHU+r7Zk9SH5fLI4ZN1skzI6WXiylOoyYBR4xwdAKThl4HZYhHkowyAU0mraakrEok2r+HdTQKZsXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F1HMcCZV7PUkXmydHjpg7F4obkuxtDWsrqNPv5oMSic=;
+ b=pnW8G92NJY07eglKIymld1TtXLK+PhA9iOgVwtbCKAMVxObe+aUwB4MoNiqxA/ZF/Onz+gdGI7zOJfIXTHzLWeDDIhhHLfJKvjTItiWNQBcykSt086LY/aV1mKPdZhBXKNP5/q1Gyuyuehk+b0YrSSdKewyV8YBXaTJhZ9mjAEZ0PfdxYIQkjdOYwGZpyXDQ1Ql76sYC2+nBbEdMhyE+0UQPNJ82Hes0peGTDdxoGIq4Xcz4UAjg2VVwnVxKl4lF5tzRY8YPFoPjnqoQ1LQhd6GifJTZ/I2fP1EjmoMPGTtSTIdZt3DJcCNPPCqvfZcDPjKWx4Pk22+2naox/XJjUQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
+ by PAXPR04MB9471.eurprd04.prod.outlook.com (2603:10a6:102:2b2::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Tue, 12 Nov
+ 2024 07:59:56 +0000
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd%6]) with mapi id 15.20.8137.018; Tue, 12 Nov 2024
+ 07:59:56 +0000
+Message-ID: <7f7e1a41-df51-4f32-aafc-360a487b3449@oss.nxp.com>
+Date: Tue, 12 Nov 2024 09:59:52 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3
+ SoCs
+To: Conor Dooley <conor@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, NXP S32 Linux <s32@nxp.com>,
+ Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>,
+ Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
+ Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+References: <20241111135940.2534034-1-ciprianmarian.costea@oss.nxp.com>
+ <20241111135940.2534034-2-ciprianmarian.costea@oss.nxp.com>
+ <20241111-guidance-theft-9d49ded4d9a0@spud>
+ <20241111-manatee-decipher-fb3d20982109@spud>
+Content-Language: en-US
+From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+In-Reply-To: <20241111-manatee-decipher-fb3d20982109@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS4P191CA0039.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:20b:657::24) To DU0PR04MB9251.eurprd04.prod.outlook.com
+ (2603:10a6:10:352::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 0e7W9YSyztj1R3QjgfE9YYWuxIS5RgUH
-X-Proofpoint-ORIG-GUID: 0e7W9YSyztj1R3QjgfE9YYWuxIS5RgUH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 adultscore=0 suspectscore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120064
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|PAXPR04MB9471:EE_
+X-MS-Office365-Filtering-Correlation-Id: d3c484ec-c191-4756-a53a-08dd02efff57
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SG9VdE9EaitlMHJCNkZsNTJ5Y0pJMmRubFMzRi80dHpsdG1KeDBobTBoYTVO?=
+ =?utf-8?B?MVRvbUN2NUdyaklqOUVMNEpOeDE2bWRibXcyd0pzR3N1TXlNVDc4ai9aeDhk?=
+ =?utf-8?B?ZDdrb3o5eGhtZHh1bkJ1bDE4Y0VzelQ0YlkrWTR0VDBYOVNRc08rSUFBNFN5?=
+ =?utf-8?B?WE5xd2Z0MkprWXQvNVJYYnExdDhGckR2L0YyVkk4Q2hlVEZieWVrVlYza2FI?=
+ =?utf-8?B?MFFwbXJBb3JDVTkyWEQrdVdvWGppdkNpd243TGl6eDdZNE9MU0pFMjRGVkZN?=
+ =?utf-8?B?R01RMHFtVVpMdVF3Sk5pR1FjM0JEdld5ZHZ0WFdxODBwMjE1ZGhYNFBwUVdo?=
+ =?utf-8?B?NUltM1hwbmVNZDBXY2paYnJneURSZWpqemtoM3hPZm9CVVU1L2dYUXdKak4x?=
+ =?utf-8?B?TndKSG9CeFZ6cXdtZEUvTEc2UXFCU0NuQXcrWHlwempXZ2Y4d2dkcW5UcEt4?=
+ =?utf-8?B?TTV4b0M3cUxpZ2taVVJjRDJpTEFZbHJnb1NGZUZZcXNaTjE0NWxhZlY4S1V4?=
+ =?utf-8?B?b2xtK2ZyT0hubnRUenphMHpVeW1mdUxWVSt2dzJEelM1NkxnU0huOVFRKzM1?=
+ =?utf-8?B?MjJQcjY2bitGL0NGRmZ4T0d6T1NSeDQ0bFRPdzdCSWExYlBuS1Vwc3Z6V0N3?=
+ =?utf-8?B?K1l5SU1BRTFqUy9EblFqY0ttMEtxbmM1TE1yZXJ2NE42RGVKdVpYVDd2MXUw?=
+ =?utf-8?B?MWhwSDlKNUJDTFB6ZFMrV2lsMjN4OVJTRXp2VjNmM3NXVHhqM2wvNWxOZ3Jl?=
+ =?utf-8?B?Qm84WVpPVW5mNnZKZW4yZTA2RTAzY0pmV1RQanoyQWtEWjAzOVMxZXdjRVpK?=
+ =?utf-8?B?aStIT21uWVNCQ1lZZU5kRGI4dHdsV3N1UmZnMG5GaGdQaUVXaTVOVDA0cU90?=
+ =?utf-8?B?b3VQS250Y3Nla0owbHNobi9Qa29Ka0VhalhhaGErL0NiUTlFZSsyRlRvbmIw?=
+ =?utf-8?B?VXhFZEgxQ1hJT0c5Ri95VXFYVjlUVEF4MVQxNDV5K0I0d0hHOGhjYXBlYzJi?=
+ =?utf-8?B?M2Fkblg1c3UySlAxZU5BbFNOd3F2aW50dXBGVGl6bTZNbWE1Z1hVU0JRVlRw?=
+ =?utf-8?B?UDhoSjVEdURqdFVEelhQL0tSNEQ2YzYyZm1qMG85RVBlc0pNYTdkd2JWTFRI?=
+ =?utf-8?B?cTl2TFlxYllRd1d2b1pSQ2s0ZzhQNklFamlUc2RSTnREVzFqa3FCVG1pcEVQ?=
+ =?utf-8?B?NzkwZ3ZiNmxWcWdIYTlmVUNqVFNVSmVMZFpZbDBtR1ZWRVp4cDlMdjZJZnNq?=
+ =?utf-8?B?Nmd5TFRiVXNiUm54aVdyZEhYbmFRbWIvN0dlTTRpRW5Ec1RSUEUwSXZ4d3NL?=
+ =?utf-8?B?Ti9vakd0Mms1a0VzQkFMV0ZKbXk3SlIzSm5nMzlxTDI5Y2dabjUrSjRkaUdB?=
+ =?utf-8?B?WEViTmV0ZzBtV3lGSnJSbG1QaW1uK0RxUmdGTTF3VitNVVNTOHltaHkreVU0?=
+ =?utf-8?B?enhwVGgyN01SNVBNQlBHVzdZTktpZ0hnWVZzYWFvd2pJZnNlcEhJY0xMd0dn?=
+ =?utf-8?B?S0ErQnhIeFl0ZXRab2swUS9ON2UrUVpRTGJ5dXd3QjdObU0yU0JGWXBQYnJX?=
+ =?utf-8?B?U1RoY2xrT2kwcjdFbEc1OGhXL1hwWThJZk1LV0lVRk9LUmVDUUZGT1ZFMUNo?=
+ =?utf-8?B?S1hiZ0NVdTVvRysrL2h6bmhKUjd3Z1FWWkFLUktYZU9LakxFRG91R2draFFn?=
+ =?utf-8?B?OGNSVTV3QWRHdFdraGV1UFBkdnV0RnZDcnJlMHg0aXByNlA3cnBKaWlydjFK?=
+ =?utf-8?Q?N74ls6DYUxP5+rVYAOBrRoeZ2t/OFXh0qPylgHI?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RTBJbENWWXdxY0UycEZ5aHpJN0JDcytCcmJHTlh0TEJFcWN6bmJodGNCakVB?=
+ =?utf-8?B?UVhDM3E3VU1xTEt4N3dsOU8xVkZmOXppVW13S3l2L2s1WHBKbTdiYVZpL0oz?=
+ =?utf-8?B?dkdRZkZqM3hvVUt1emZRQjV3VXNhdmZKUnRxRmM0ZU9QL0taa1Y0MWlybUFZ?=
+ =?utf-8?B?T0hNRExjZlB0V1NCQ1VNWHNMNWJFSXF4VHo2Ym90NnJaVVhPTGdUVzBHWEQy?=
+ =?utf-8?B?UzlZeXozbEJmdURuVkpLN0ZvZW01TGVoRTEram1KZHBHNS9DVG9jNWo1NzlE?=
+ =?utf-8?B?dE5vdzRBOUhoaVBDdWRXb3VIMEZ0SG82V0VFdnNBUmI5VnJrcmVuRXRQN1hG?=
+ =?utf-8?B?ckJkNTc2ZDBWejF1cUc1M2FRMFdyaVRqcjlPdmRCQTJ0ZTZNRXNpeUdWV3kv?=
+ =?utf-8?B?dy9kdVdXajZDRWdDQkJUMVZ6UFh3czJSQ1BPZnNHTEtwRS9JMmtQSFU0NDN0?=
+ =?utf-8?B?T3JicWdPN0VMK284OThCS3p3TjQ4S3UvWGdOMlByS3JTUzRaMHdxdVU4OGVN?=
+ =?utf-8?B?WVc4TXNxalJLa2NEK3dOeHZ6TnhMbDNPMjd3UnNvZWtncUNzSG5ZWTFlUFBQ?=
+ =?utf-8?B?ZG45VVpLVzZVZzZGcHJPWW5aWU5ZYStjMjd4NXFhT3d4dnRncTVOb3hwN0x5?=
+ =?utf-8?B?eEs3cW5ocHZBNlRJYUNQUktoRk5UQ2xpVEdORnF0K21LdU8vdVVCZmgycS9N?=
+ =?utf-8?B?R0l0RVBxVVlKMVNGRUJFeGVZYVNqNkthbWhhTFUyQVNWQmY0N3YrTnhSNldM?=
+ =?utf-8?B?WlBEZ1gzaHVQa0duRk1jcGVtdFVNT3FzZVc1NFR5aGRHK3pwWCtwZkZ5Szg1?=
+ =?utf-8?B?RWRwVkJzVkVjTWRkNEtYM2pFV2gyek5COEJvTW5Xc2dTSlZmeHhhdUx2T2lq?=
+ =?utf-8?B?WFQxS25mWUFSVXBjbW54RGZVaHpGcE9QWHgzN1hySWdiTTRXQ2lDa3lkZy9H?=
+ =?utf-8?B?TWdnaGkvWld3QTdlemEzY1l6QzVVU215bFYxR0xIdnZKT0JkaVFLUGZDdWtE?=
+ =?utf-8?B?L2tkZHcydElUdGkxYmxaTlFUWi9tUmJ3T2dmaW82enU4blZHNFdoSVFPU0hH?=
+ =?utf-8?B?YmZWZk9lV3BwZ01nd2QzMWxnR2JmQnE1dDhZck5KbGVFNG9tdytmREJMaTlD?=
+ =?utf-8?B?ZjVTM1R1eFhpdDVwOHhDTFlqbGQrTUhUWUcrZWd4WVlpRXFrOThuaWVxRHRr?=
+ =?utf-8?B?NUF5TWRiVGRwOTI2THZZcDRoWUpHSnlud3pxT3RFUE9TTUkxWWNRNlJlNnd0?=
+ =?utf-8?B?SnEwZEwyRXNzbVJpd0syVmZqcVRJdkxEYzFjTFFPTHN0UktSaDVPcERWMU55?=
+ =?utf-8?B?b096cW94SDZFY2ZDMk83OXdzS1JHakNkM0tseUs4TzhyMUFwYkRFa2tmYi94?=
+ =?utf-8?B?K1dpRU9ZeUlka2pCMEpNSmZqQmFGMXNPOXRDY1dSendFNk5XZGhrMGN2NG5z?=
+ =?utf-8?B?VFlDbDNjcmJ4MlQ3N0dLTHUvenZUQk9KMUI1cVFuZVVyMzdHSmRDbkR0UGx6?=
+ =?utf-8?B?NWVLVXJjbUNGdlZmSC90bStJUUxIeFVhK2s2QkRsOWphdzBJYjR4OTBmVGlB?=
+ =?utf-8?B?dmk0QmYyR1BzdmlZS3RpRnhhNEd3WmY4K0s1bWd4SWVpd0djRFpvcllGUCt4?=
+ =?utf-8?B?RE01RDVFa2I0VEdrbnlZL3pTbFdWaTVFZWN0a2N3aHhKSm03bGxMMldxWS9K?=
+ =?utf-8?B?UzN1SEliaDFMVWNZcmpFcUE4aXdIY3hseDB5bEFFYldXQUlzZVQzSWd4K3l5?=
+ =?utf-8?B?eDdaVzJFSG0vNXVvb2VoUW1LUy80dXhac0xEZ09iWXZrQ3VRUElzQ3JHZ0RH?=
+ =?utf-8?B?UVJRd0xaWGxmSnZ2S2tEeXBqWndNenVDS056Qmp1dUgwcSs3RmpqQ2M5Vm9H?=
+ =?utf-8?B?WnNPREwvUnppOGNxY21Uc3I2aEQ5OXZCbXNrK0czMmY1R1F4QW9WNTdZZVNC?=
+ =?utf-8?B?cDk3eitpR1pPQ0pCSHc5WVdXemUwUXRYTmorT3Y1Z0ZGTUJSQXhsOHhjcnBJ?=
+ =?utf-8?B?R3pIWmswMk82NGRVVXR1RzFBL2xoTlVEa1JSR09HbDNqWm9LR0VKRER0WVBp?=
+ =?utf-8?B?U0hJdGp6enR4anRvemlVblB2SjM5a2g4eUd1L1g3d1FyUWl5Y0NoVTMwMjBn?=
+ =?utf-8?B?N2QrZURRVjdKSWtvMXB6ZVhadEhMdmxNOUdoa1UzZ2JKSGxrM0JKNWwwTmJP?=
+ =?utf-8?Q?ni+S9TvupohD58pbcSmcCyw=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3c484ec-c191-4756-a53a-08dd02efff57
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 07:59:56.2288
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iDBsxT7YsuL9hLddoQXGnWA1fjCevIE3CgYQ3LhOaacMvakIIHOC5d4jxixt/ZtgW5v2zHuIJVdJpyRsU5IX0lsaYRNrhgt57xgV4AnPekM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9471
 
-Add Epoch Subsystem (EPSS) L3 interconnect provider on
-SA8775P SoCs with multiple device support.
+On 11/11/2024 10:06 PM, Conor Dooley wrote:
+> On Mon, Nov 11, 2024 at 08:05:50PM +0000, Conor Dooley wrote:
+>> On Mon, Nov 11, 2024 at 03:59:37PM +0200, Ciprian Costea wrote:
+>>> +  clock-names:
+>>> +    minItems: 2
+>>> +    maxItems: 3
+>>
+>> You actually have to provide the clock-names, otherwise you can't rely
+>> on them
+> 
+> Oh, and drop the "rtc_" prefix while you're at it.
 
-Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
----
- drivers/interconnect/qcom/osm-l3.c | 86 ++++++++++++++++++++++--------
- 1 file changed, 64 insertions(+), 22 deletions(-)
+Hi Conor,
 
-diff --git a/drivers/interconnect/qcom/osm-l3.c b/drivers/interconnect/qcom/osm-l3.c
-index 6a656ed44d49..8393ef6d4740 100644
---- a/drivers/interconnect/qcom/osm-l3.c
-+++ b/drivers/interconnect/qcom/osm-l3.c
-@@ -1,16 +1,19 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- #include <linux/args.h>
- #include <linux/bitfield.h>
- #include <linux/clk.h>
-+#include <linux/idr.h>
- #include <linux/interconnect-provider.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/platform_device.h>
- 
- #include <dt-bindings/interconnect/qcom,osm-l3.h>
-@@ -34,9 +37,14 @@
- 
- #define OSM_L3_MAX_LINKS		1
- 
-+#define OSM_L3_NODE_ID_START		10000
-+#define OSM_NODE_NAME_SUFFIX_SIZE	10
-+
- #define to_osm_l3_provider(_provider) \
- 	container_of(_provider, struct qcom_osm_l3_icc_provider, provider)
- 
-+static DEFINE_IDA(osm_l3_id);
-+
- struct qcom_osm_l3_icc_provider {
- 	void __iomem *base;
- 	unsigned int max_state;
-@@ -55,46 +63,40 @@ struct qcom_osm_l3_icc_provider {
-  */
- struct qcom_osm_l3_node {
- 	const char *name;
--	u16 links[OSM_L3_MAX_LINKS];
-+	const char *links[OSM_L3_MAX_LINKS];
- 	u16 id;
- 	u16 num_links;
- 	u16 buswidth;
- };
- 
- struct qcom_osm_l3_desc {
--	const struct qcom_osm_l3_node * const *nodes;
-+	struct qcom_osm_l3_node * const *nodes;
- 	size_t num_nodes;
- 	unsigned int lut_row_size;
- 	unsigned int reg_freq_lut;
- 	unsigned int reg_perf_state;
- };
- 
--enum {
--	OSM_L3_MASTER_NODE = 10000,
--	OSM_L3_SLAVE_NODE,
--};
--
--#define DEFINE_QNODE(_name, _id, _buswidth, ...)			\
--	static const struct qcom_osm_l3_node _name = {			\
-+#define DEFINE_QNODE(_name, _buswidth, ...)				\
-+	static struct qcom_osm_l3_node _name = {			\
- 		.name = #_name,						\
--		.id = _id,						\
- 		.buswidth = _buswidth,					\
- 		.num_links = COUNT_ARGS(__VA_ARGS__),			\
--		.links = { __VA_ARGS__ },				\
-+		__VA_OPT__(.links = { #__VA_ARGS__ })			\
- 	}
- 
--DEFINE_QNODE(osm_l3_master, OSM_L3_MASTER_NODE, 16, OSM_L3_SLAVE_NODE);
--DEFINE_QNODE(osm_l3_slave, OSM_L3_SLAVE_NODE, 16);
-+DEFINE_QNODE(osm_l3_master, 16, osm_l3_slave);
-+DEFINE_QNODE(osm_l3_slave, 16);
- 
--static const struct qcom_osm_l3_node * const osm_l3_nodes[] = {
-+static struct qcom_osm_l3_node * const osm_l3_nodes[] = {
- 	[MASTER_OSM_L3_APPS] = &osm_l3_master,
- 	[SLAVE_OSM_L3] = &osm_l3_slave,
- };
- 
--DEFINE_QNODE(epss_l3_master, OSM_L3_MASTER_NODE, 32, OSM_L3_SLAVE_NODE);
--DEFINE_QNODE(epss_l3_slave, OSM_L3_SLAVE_NODE, 32);
-+DEFINE_QNODE(epss_l3_master, 32, epss_l3_slave);
-+DEFINE_QNODE(epss_l3_slave, 32);
- 
--static const struct qcom_osm_l3_node * const epss_l3_nodes[] = {
-+static struct qcom_osm_l3_node * const epss_l3_nodes[] = {
- 	[MASTER_EPSS_L3_APPS] = &epss_l3_master,
- 	[SLAVE_EPSS_L3_SHARED] = &epss_l3_slave,
- };
-@@ -123,6 +125,19 @@ static const struct qcom_osm_l3_desc epss_l3_l3_vote = {
- 	.reg_perf_state = EPSS_REG_L3_VOTE,
- };
- 
-+static u16 get_node_id_by_name(const char *node_name,
-+			       const struct qcom_osm_l3_desc *desc)
-+{
-+	struct qcom_osm_l3_node *const *nodes = desc->nodes;
-+	int i;
-+
-+	for (i = 0; i < desc->num_nodes; i++) {
-+		if (!strcmp(nodes[i]->name, node_name))
-+			return nodes[i]->id;
-+	}
-+	return 0;
-+}
-+
- static int qcom_osm_l3_set(struct icc_node *src, struct icc_node *dst)
- {
- 	struct qcom_osm_l3_icc_provider *qp;
-@@ -164,10 +179,11 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
- 	const struct qcom_osm_l3_desc *desc;
- 	struct icc_onecell_data *data;
- 	struct icc_provider *provider;
--	const struct qcom_osm_l3_node * const *qnodes;
-+	struct qcom_osm_l3_node * const *qnodes;
- 	struct icc_node *node;
- 	size_t num_nodes;
- 	struct clk *clk;
-+	u64 addr;
- 	int ret;
- 
- 	clk = clk_get(&pdev->dev, "xo");
-@@ -188,6 +204,10 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
- 	if (!qp)
- 		return -ENOMEM;
- 
-+	ret = of_property_read_reg(pdev->dev.of_node, 0, &addr, NULL);
-+	if (ret)
-+		return ret;
-+
- 	qp->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(qp->base))
- 		return PTR_ERR(qp->base);
-@@ -242,8 +262,13 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
- 
- 	icc_provider_init(provider);
- 
-+	/* Allocate unique id for qnodes */
-+	for (i = 0; i < num_nodes; i++)
-+		qnodes[i]->id = ida_alloc_min(&osm_l3_id, OSM_L3_NODE_ID_START, GFP_KERNEL);
-+
- 	for (i = 0; i < num_nodes; i++) {
--		size_t j;
-+		char *node_name;
-+		size_t j, len;
- 
- 		node = icc_node_create(qnodes[i]->id);
- 		if (IS_ERR(node)) {
-@@ -251,13 +276,29 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
- 			goto err;
- 		}
- 
--		node->name = qnodes[i]->name;
-+		/* len = strlen(node->name) + @ + 8 (base-address) + NULL */
-+		len = strlen(qnodes[i]->name) + OSM_NODE_NAME_SUFFIX_SIZE;
-+		node_name = devm_kzalloc(&pdev->dev, len, GFP_KERNEL);
-+		if (!node_name) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
-+
-+		snprintf(node_name, len, "%s@%08llx", qnodes[i]->name, addr);
-+		node->name = node_name;
-+
- 		/* Cast away const and add it back in qcom_osm_l3_set() */
- 		node->data = (void *)qnodes[i];
- 		icc_node_add(node, provider);
- 
--		for (j = 0; j < qnodes[i]->num_links; j++)
--			icc_link_create(node, qnodes[i]->links[j]);
-+		for (j = 0; j < qnodes[i]->num_links; j++) {
-+			u16 link_node_id = get_node_id_by_name(qnodes[i]->links[j], desc);
-+
-+			if (link_node_id)
-+				icc_link_create(node, link_node_id);
-+			else
-+				goto err;
-+		}
- 
- 		data->nodes[i] = node;
- 	}
-@@ -284,6 +325,7 @@ static const struct of_device_id osm_l3_of_match[] = {
- 	{ .compatible = "qcom,sm8150-osm-l3", .data = &osm_l3 },
- 	{ .compatible = "qcom,sc8180x-osm-l3", .data = &osm_l3 },
- 	{ .compatible = "qcom,sm8250-epss-l3", .data = &epss_l3_perf_state },
-+	{ .compatible = "qcom,sa8775p-epss-l3", .data = &epss_l3_perf_state },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, osm_l3_of_match);
--- 
-2.39.2
+Thanks for taking time and reviewing this patchset.
+I will list the actual clock-names and remove the 'rtc_' prefix in V5.
 
+Best Regards,
+Ciprian
 
