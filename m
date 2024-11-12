@@ -1,166 +1,210 @@
-Return-Path: <linux-kernel+bounces-404970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9599C4B2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:51:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BFF79C4B3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:52:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15236289B8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:51:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E351F22363
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF0F201000;
-	Tue, 12 Nov 2024 00:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77112200CBC;
+	Tue, 12 Nov 2024 00:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GrLh8ptm"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xu+VijKs"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055E2200B8A;
-	Tue, 12 Nov 2024 00:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641A6200C9F
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731372619; cv=none; b=mFTubWm+Y8zWtUciYcur7W5/N8b5aN/g8e1+XOXUOoZeuaHwLOv/5SKKiBkWAO+EGo6JhsL9qae2M0B3UrzXPttBIijbxezKARQIIbiLjlW7cxAJYv/cnTikfsoFACZ8HMq1JDxll9m+aTBlRfByI29PV2qFLzeGeP5M7zTWSEU=
+	t=1731372662; cv=none; b=ljVpbSVdgmtm1pqvqUjBSK0bZJzeUuFPOu7DH3RW3wvw+X4kQHFVLc3cYna25nj0OEdPMALLrCefMP8VolJqMnt0T2F2Yytnq85/xA1TPFp+NczE/PCXRKErexPyW9QtlMVhyrouB8IjkGAdxACXlZqe+zAkcFMUB7micgE/neI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731372619; c=relaxed/simple;
-	bh=a1EiB5DtnOrzWTDQcWjya8ihJTJao7Ck9qAVcviqOZg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KBPGzXzNVjdApvhbfvfMX98rhbrjwQaCRXEPJslUsqWdz77MUTDCL1WLQu+Q1vnSn/AukJx8+FZZ8vZLvt1I/hDvKpc1axcLr3tJP9YZfl6mmioyP+XWFV+fSJKvTH3+yfc0ZBvwpaZiIG5XQjE4xqVBa6RAclrEFjQfWYukjfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GrLh8ptm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABCa9EU006661;
-	Tue, 12 Nov 2024 00:50:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6lHNsaDJqB9bTpbujJaZfGrEFccZimHqKTn7EZIuMlU=; b=GrLh8ptmbZATyeqH
-	kUBklfqiN/lHqMD3GWgLNNLMw0KOB5B3SOZrTOdjoO9GaCgyKtTRND0N8DvTCJOk
-	KIJyvkm5g1ZeE6pljBiNV1fKZi+paITHKsO60nbqXLX7evLF2LYteaoHBL9A4MyF
-	u21Mwp4ccgV+AZLT+IeNpEKXMvQZbF0qjjBf91/bjiKTNq+8dMVv0eGYEUT8lLTB
-	zK+/1pWCdD20rLcaLNUBdPI/75Cx3AhDTEpLZBmY8+dWPwkBYrdU+L3lUirXdPiU
-	fWIB69v+3s8KuVPVGld3m4NNs2EV37H0gqBJzn2Ern5AeYiagi0Dj8aE5hhFzcXT
-	0u3F5Q==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0465pa2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 00:50:01 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC0o05n027686
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 00:50:00 GMT
-Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 11 Nov 2024 16:49:59 -0800
-From: Melody Olvera <quic_molvera@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Geert Uytterhoeven
-	<geert+renesas@glider.be>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?=
-	<nfraprado@collabora.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        "Satya Durga
- Srinivasu Prabhala" <quic_satyap@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Raviteja Laggyshetty
-	<quic_rlaggysh@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 6/6] arm64: defconfig: Enable SM8750 SoC base configs
-Date: Mon, 11 Nov 2024 16:49:36 -0800
-Message-ID: <20241112004936.2810509-7-quic_molvera@quicinc.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241112004936.2810509-1-quic_molvera@quicinc.com>
-References: <20241112004936.2810509-1-quic_molvera@quicinc.com>
+	s=arc-20240116; t=1731372662; c=relaxed/simple;
+	bh=uAKm1Q9rSMgb/s8lIoy6s2itwU6TBOZsyRFjUDSDSEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s4m/lTsSAYGmo/uFEeB2zrK9anqyEZDscWjIfML20azEw1tHQUupPDHrCP9OKmvN7AZr+m5YiKKABnR4k4Uo7A1dhJs2ONlKO+/LZonCcqhG6MEBaPVZ5u6+xeXPNXl2MNeVD6QylvV+9VafsnD27iWLlnvfnCaTZ91DvslfSaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xu+VijKs; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <668e6f75-bdf3-44f8-a9e8-306fd4a22eb1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731372658;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tsSPQNZ5iLWASov38WAAf5vQXcJL0Tq9FLpBjWnTTcA=;
+	b=Xu+VijKsvEDV9ltfIimmgjDxgefoW9/OYsFf6aTxt5KikhbVHXEFyV467azrh1OV46JcgB
+	l4M2MUpmpg4czb3aJkxUizyFzh3vYTsSKwlw6bkJXL1X2cirZqyDw8JeL6BbMrzKancB3p
+	tTd0A4p6K3+pT6KDyW/jr5leCLj8mkc=
+Date: Mon, 11 Nov 2024 16:50:49 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7jCS3kk6TDfhxScazXyZCi7NkmPmugsr
-X-Proofpoint-ORIG-GUID: 7jCS3kk6TDfhxScazXyZCi7NkmPmugsr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 clxscore=1015 priorityscore=1501 spamscore=0 suspectscore=0
- mlxlogscore=912 impostorscore=0 adultscore=0 phishscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120005
+Subject: Re: [PATCH bpf-next/net 2/5] bpf: Add mptcp_subflow bpf_iter
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
+ Geliang Tang <geliang@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Martin KaFai Lau <martin.lau@kernel.org>
+References: <20241108-bpf-next-net-mptcp-bpf_iter-subflows-v1-0-cf16953035c1@kernel.org>
+ <20241108-bpf-next-net-mptcp-bpf_iter-subflows-v1-2-cf16953035c1@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20241108-bpf-next-net-mptcp-bpf_iter-subflows-v1-2-cf16953035c1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Enable GCC, TCSRCC, Pinctrl and Interconnect configs for Qualcomm's
-SM8750 SoC which is required to boot SM8750 MTP/QRD boards to a
-console shell. The configs are required to be marked as builtin
-and not modules due to the console driver dependencies.
+On 11/8/24 7:52 AM, Matthieu Baerts (NGI0) wrote:
+> From: Geliang Tang <tanggeliang@kylinos.cn>
+> 
+> It's necessary to traverse all subflows on the conn_list of an MPTCP
+> socket and then call kfunc to modify the fields of each subflow. In
+> kernel space, mptcp_for_each_subflow() helper is used for this:
+> 
+> 	mptcp_for_each_subflow(msk, subflow)
+> 		kfunc(subflow);
+> 
+> But in the MPTCP BPF program, this has not yet been implemented. As
+> Martin suggested recently, this conn_list walking + modify-by-kfunc
+> usage fits the bpf_iter use case.
+> 
+> So this patch adds a new bpf_iter type named "mptcp_subflow" to do
+> this and implements its helpers bpf_iter_mptcp_subflow_new()/_next()/
+> _destroy(). And register these bpf_iter mptcp_subflow into mptcp
+> common kfunc set. Then bpf_for_each() for mptcp_subflow can be used
+> in BPF program like this:
+> 
+> 	bpf_for_each(mptcp_subflow, subflow, msk)
+> 		kfunc(subflow);
+> 
+> Suggested-by: Martin KaFai Lau <martin.lau@kernel.org>
+> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
+> Reviewed-by: Mat Martineau <martineau@kernel.org>
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> ---
+> Notes:
+> A few versions of this single patch have been previously posted to the
+> BPF mailing list by Geliang, before continuing to the MPTCP mailing list
+> only, with other patches of this series. The version of the whole series
+> has been reset to 1, but here is the ChangeLog for this patch here:
+>   - v2: remove msk->pm.lock in _new() and _destroy() (Martin)
+>         drop DEFINE_BPF_ITER_FUNC, change opaque[3] to opaque[2] (Andrii)
+>   - v3: drop bpf_iter__mptcp_subflow
+>   - v4: if msk is NULL, initialize kit->msk to NULL in _new() and check
+>         it in _next() (Andrii)
+>   - v5: use list_is_last() instead of list_entry_is_head() add
+>         KF_ITER_NEW/NEXT/DESTROY flags add msk_owned_by_me in _new()
+>   - v6: add KF_TRUSTED_ARGS flag (Andrii, Martin)
+> ---
+>   net/mptcp/bpf.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 45 insertions(+)
+> 
+> diff --git a/net/mptcp/bpf.c b/net/mptcp/bpf.c
+> index 6f96a5927fd371f8ea92cbf96c875edef9272b98..d107c2865e97e6ccffb9e0720dfbbd232b63a3b8 100644
+> --- a/net/mptcp/bpf.c
+> +++ b/net/mptcp/bpf.c
+> @@ -29,6 +29,15 @@ static const struct btf_kfunc_id_set bpf_mptcp_fmodret_set = {
+>   	.set   = &bpf_mptcp_fmodret_ids,
+>   };
+>   
+> +struct bpf_iter_mptcp_subflow {
+> +	__u64 __opaque[2];
+> +} __aligned(8);
+> +
+> +struct bpf_iter_mptcp_subflow_kern {
+> +	struct mptcp_sock *msk;
+> +	struct list_head *pos;
+> +} __aligned(8);
+> +
+>   __bpf_kfunc_start_defs();
+>   
+>   __bpf_kfunc static struct mptcp_sock *bpf_mptcp_sk(struct sock *sk)
+> @@ -48,12 +57,48 @@ bpf_mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+>   	return mptcp_subflow_tcp_sock(subflow);
+>   }
+>   
+> +__bpf_kfunc static int
+> +bpf_iter_mptcp_subflow_new(struct bpf_iter_mptcp_subflow *it,
+> +			   struct mptcp_sock *msk)
+> +{
+> +	struct bpf_iter_mptcp_subflow_kern *kit = (void *)it;
+> +
+> +	kit->msk = msk;
+> +	if (!msk)
+> +		return -EINVAL;
+> +
+> +	msk_owned_by_me(msk);
 
-Co-developed-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+I recalled in the earlier revision, a concern had already been brought up about 
+needing lock held and using the subflow iter in tracing. This patch still has 
+the subflow iter available to tracing [by 
+register_btf_kfunc_id_set(BPF_PROG_TYPE_UNSPEC)]. How is it supposed to work? 
+Adding msk_owned_by_me(msk) does not help. At best it will give a WARN which is 
+not good and then keep going even msk is not locked.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index d13218d0c30f..ee8c7fc184e8 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -630,6 +630,7 @@ CONFIG_PINCTRL_SM8350=y
- CONFIG_PINCTRL_SM8450=y
- CONFIG_PINCTRL_SM8550=y
- CONFIG_PINCTRL_SM8650=y
-+CONFIG_PINCTRL_SM8750=y
- CONFIG_PINCTRL_X1E80100=y
- CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
- CONFIG_PINCTRL_LPASS_LPI=m
-@@ -1361,6 +1362,7 @@ CONFIG_SM_GCC_8350=y
- CONFIG_SM_GCC_8450=y
- CONFIG_SM_GCC_8550=y
- CONFIG_SM_GCC_8650=y
-+CONFIG_SM_GCC_8750=y
- CONFIG_SM_GPUCC_6115=m
- CONFIG_SM_GPUCC_8150=y
- CONFIG_SM_GPUCC_8250=y
-@@ -1370,6 +1372,7 @@ CONFIG_SM_GPUCC_8550=m
- CONFIG_SM_GPUCC_8650=m
- CONFIG_SM_TCSRCC_8550=y
- CONFIG_SM_TCSRCC_8650=y
-+CONFIG_SM_TCSRCC_8750=y
- CONFIG_SM_VIDEOCC_8250=y
- CONFIG_QCOM_HFPLL=y
- CONFIG_CLK_GFM_LPASS_SM8250=m
-@@ -1649,6 +1652,7 @@ CONFIG_INTERCONNECT_QCOM_SM8350=y
- CONFIG_INTERCONNECT_QCOM_SM8450=y
- CONFIG_INTERCONNECT_QCOM_SM8550=y
- CONFIG_INTERCONNECT_QCOM_SM8650=y
-+CONFIG_INTERCONNECT_QCOM_SM8750=y
- CONFIG_INTERCONNECT_QCOM_X1E80100=y
- CONFIG_COUNTER=m
- CONFIG_RZ_MTU3_CNT=m
--- 
-2.46.1
+Do you need to use subflow iter in tracing?
+
+The commit message mentioned it needs to modify the subflow. I don't see how 
+this modification could work in a tracing program also. It must be some non 
+tracing hooks? What is the plan on this hook? Is it a bpf_struct_ops or 
+something else?
+
+If it needs to modify the subflow, does it need to take the lock of the subflow?
+
+> +
+> +	kit->pos = &msk->conn_list;
+> +	return 0;
+> +}
+> +
+> +__bpf_kfunc static struct mptcp_subflow_context *
+> +bpf_iter_mptcp_subflow_next(struct bpf_iter_mptcp_subflow *it)
+> +{
+> +	struct bpf_iter_mptcp_subflow_kern *kit = (void *)it;
+> +
+> +	if (!kit->msk || list_is_last(kit->pos, &kit->msk->conn_list))
+> +		return NULL;
+> +
+> +	kit->pos = kit->pos->next;
+> +	return list_entry(kit->pos, struct mptcp_subflow_context, node);
+> +}
+> +
+> +__bpf_kfunc static void
+> +bpf_iter_mptcp_subflow_destroy(struct bpf_iter_mptcp_subflow *it)
+> +{
+> +}
+> +
+>   __bpf_kfunc_end_defs();
+>   
+>   BTF_KFUNCS_START(bpf_mptcp_common_kfunc_ids)
+>   BTF_ID_FLAGS(func, bpf_mptcp_sk)
+>   BTF_ID_FLAGS(func, bpf_mptcp_subflow_ctx)
+>   BTF_ID_FLAGS(func, bpf_mptcp_subflow_tcp_sock)
+> +BTF_ID_FLAGS(func, bpf_iter_mptcp_subflow_new, KF_ITER_NEW | KF_TRUSTED_ARGS)
+> +BTF_ID_FLAGS(func, bpf_iter_mptcp_subflow_next, KF_ITER_NEXT | KF_RET_NULL)
+> +BTF_ID_FLAGS(func, bpf_iter_mptcp_subflow_destroy, KF_ITER_DESTROY)
+>   BTF_KFUNCS_END(bpf_mptcp_common_kfunc_ids)
+>   
+>   static const struct btf_kfunc_id_set bpf_mptcp_common_kfunc_set = {
+> 
 
 
