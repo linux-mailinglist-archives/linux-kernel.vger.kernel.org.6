@@ -1,64 +1,54 @@
-Return-Path: <linux-kernel+bounces-405522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097249C5265
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:49:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2769C5268
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:50:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2662283660
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:49:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF43283672
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEA420EA3E;
-	Tue, 12 Nov 2024 09:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9425620E31E;
+	Tue, 12 Nov 2024 09:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z21vGaR8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="bxE3XTOU"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC1C20E021
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1E520CCE9;
+	Tue, 12 Nov 2024 09:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731404918; cv=none; b=FK1M6BhAZHwKpklAgeCSO2OPy8BZp259BEtlZgyrHrhN1/U4jFpmvYCcuFwD45lvXF8Nvs5DHOcgxQI1j72dFuG+ebFmEMOwHQ13Songbnn0pwMw4xTHW57y2q0qVaPv4Z83mk8bcUUjieuMl8qsiLRJoNJO2r8bOP3GGH4wPkE=
+	t=1731404990; cv=none; b=uWfz3gRqQfFlnJgD1/nHVwbwhf0SDLCd/iwQom64pSwdlgkngPH67fOhj/qQPOGKYGnQi6klBRKjVkgpoxn4hxiEZmUZUk/v98C6b2wPcvMxr65E1oNv73okmwGVBesVv+nk/iU0/Hir6Dp8XV/22jkHgM73MZ7ZuxRVgN4u5gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731404918; c=relaxed/simple;
-	bh=RkKDAdWbtMOyFm3KjYTYuPWh4xG/YdpIQsa4yIHFMPA=;
+	s=arc-20240116; t=1731404990; c=relaxed/simple;
+	bh=2Xz3/5UBzjG9E2T5qRaLZwW2h3Omo4UO0rF/gdvx0zg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=okYHvRIOfN+1P1HOQCBiekWKHOd0XTlu1WGpS8+ViiNnDpnHu3QCiwFD05ujpDAi4LgsmRWu0SisvQwg7XwWpJN5WCt5Etp5DxAnH1NJJSsADOeKRBi+DB5oVFMr1E8aZLUChsk7Op7M2nt5E/0Gj45i4045jaVv18y7RM668e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z21vGaR8; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731404917; x=1762940917;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=RkKDAdWbtMOyFm3KjYTYuPWh4xG/YdpIQsa4yIHFMPA=;
-  b=Z21vGaR8S0bxLg7pv+7UjCIaJ4xY8SIWH4ff5U78pS8jLPtCp5bzqVS9
-   KH3SQnIfvq/wBzgg+OWh47YAfot8Zx1uB1H3OtLfyfjg/zXPUlUJECiKV
-   Ur9AzXPLVUOEYUR90n9oTxe5gqW8j8qDf4b6B/qjMrgbXzTvJuT/dRXqJ
-   psIUCVpSl6prtNEVAxzZl1oZdabYYhGIvUIN8itHFqDa2xB3nMDsSXlFO
-   j22woOleuP0fI4wA4vZJUWLQ5GzIIMTzTbMJkHd/qPxHSShCOS/SvQTxR
-   f7Zd+2SJ1/J8Mnv8IXNb/dFKRAjOPXcfCbHPvmFMsWQQGy9cMpbXv6Avn
-   A==;
-X-CSE-ConnectionGUID: 0lfzYO3JQCu2JvypOXrc1g==
-X-CSE-MsgGUID: Rp9B4kQFSru/7nqJCeTdLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31191821"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31191821"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 01:48:37 -0800
-X-CSE-ConnectionGUID: PJ+V/aM9QDiOp18bTYckeQ==
-X-CSE-MsgGUID: IvMFK4y9TI6najQuKH7BsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="91394037"
-Received: from mylly.fi.intel.com (HELO [10.237.72.151]) ([10.237.72.151])
-  by fmviesa003.fm.intel.com with ESMTP; 12 Nov 2024 01:48:35 -0800
-Message-ID: <eaca7890-af22-4913-9758-53846ad1ec79@linux.intel.com>
-Date: Tue, 12 Nov 2024 11:48:34 +0200
+	 In-Reply-To:Content-Type; b=cm5lPnTkx7xKHGssAq6gIWCfc47mZYTEWoL7yzG0y7hqA9NvTZ6/r1pWNQKNzQzGNjvZ4HkxtV7i7Ixdqh6cL0vc8nI0FgtPfrjWJ0ycGFKPjski84sMeqa8jVIn7MZ0tD7GYnmkaekBXgVQLwD2NqvuXYGyfUbLiYyXd5cLtNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=bxE3XTOU; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: lina@asahilina.net)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id ACB9742118;
+	Tue, 12 Nov 2024 09:49:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
+	s=default; t=1731404987;
+	bh=2Xz3/5UBzjG9E2T5qRaLZwW2h3Omo4UO0rF/gdvx0zg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=bxE3XTOUk3F7yeLfYKEs5fE5Iu92erW3q1CzBaUQOJbedmvr5IYKKdU15GsuW+FiT
+	 bwJa7Q2HfKQMosUQvXpAIPkLVGmtR/W5bUDHS09nWDRxlGLVd2gwBxpMjII7t6evWc
+	 4xLhqO0NvumLvy1JSc6xHjDTMlySdckJR9K8lz62u74sE7pRNL8EbDEi+zIdeLX8LJ
+	 FrJxUXiReMrWbLF3VJWe1aLCQhfRvkinkSkZ+7uIGUkW4mkcluI7GAG8u45paGVjTg
+	 zjz4fDpVtq1whMNYu9gE+P4M9mOMnKCP0He1lKPZawi+7jlE/HPRzTZdVjGvTAXIxY
+	 YjFfVt5SlVDEg==
+Message-ID: <a6866a71-dde9-44a2-8b0e-d6d3c4c702f8@asahilina.net>
+Date: Tue, 12 Nov 2024 18:49:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,40 +56,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] i3c: dw: Add support for AMDI0015 ACPI ID
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Sanket.Goswami@amd.com, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
- <20241108073323.523805-2-Shyam-sundar.S-k@amd.com>
- <09cfdd95-c566-4379-be17-2d5e0f0e8357@linux.intel.com>
- <507a8af4-f128-4d73-9d0f-b8a6a15603d3@amd.com>
+Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
+To: Jan Kara <jack@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+ Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Sergio Lopez Pascual
+ <slp@redhat.com>, linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, asahi@lists.linux.dev
+References: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
+ <20241104105711.mqk4of6frmsllarn@quack3>
+ <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
+ <ZylHyD7Z+ApaiS5g@dread.disaster.area>
+ <21f921b3-6601-4fc4-873f-7ef8358113bb@asahilina.net>
+ <20241106121255.yfvlzcomf7yvrvm7@quack3>
+ <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
+ <20241107100105.tktkxs5qhkjwkckg@quack3>
+ <28308919-7e47-49e4-a821-bcd32f73eecb@asahilina.net>
+ <20241108121641.jz3qdk2qez262zw2@quack3>
 Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <507a8af4-f128-4d73-9d0f-b8a6a15603d3@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Asahi Lina <lina@asahilina.net>
+In-Reply-To: <20241108121641.jz3qdk2qez262zw2@quack3>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi
 
-On 11/12/24 10:48 AM, Shyam Sundar S K wrote:
->> Am I right this and patch 5/5 can be independent from rest of the series?
-> 
-> Right. 1/5 and 5/5 can be grouped. But rest of the other patches are
-> equally important because they drive the usecase.
-> 
+
+On 11/8/24 9:16 PM, Jan Kara wrote:
+> On Fri 08-11-24 01:09:54, Asahi Lina wrote:
+>> On 11/7/24 7:01 PM, Jan Kara wrote:
+>>> On Wed 06-11-24 11:59:44, Dan Williams wrote:
+>>>> Jan Kara wrote:
+>>>> [..]
+>>>>>> This WARN still feels like the wrong thing, though. Right now it is the
+>>>>>> only thing in DAX code complaining on a page size/block size mismatch
+>>>>>> (at least for virtiofs). If this is so important, I feel like there
+>>>>>> should be a higher level check elsewhere, like something happening at
+>>>>>> mount time or on file open. It should actually cause the operations to
+>>>>>> fail cleanly.
+>>>>>
+>>>>> That's a fair point. Currently filesystems supporting DAX check for this in
+>>>>> their mount code because there isn't really a DAX code that would get
+>>>>> called during mount and would have enough information to perform the check.
+>>>>> I'm not sure adding a new call just for this check makes a lot of sense.
+>>>>> But if you have some good place in mind, please tell me.
+>>>>
+>>>> Is not the reason that dax_writeback_mapping_range() the only thing
+>>>> checking ->i_blkbits because 'struct writeback_control' does writeback
+>>>> in terms of page-index ranges?
+>>>
+>>> To be fair, I don't remember why we've put the assertion specifically into
+>>> dax_writeback_mapping_range(). But as Dave explained there's much more to
+>>> this blocksize == pagesize limitation in DAX than just doing writeback in
+>>> terms of page-index ranges. The whole DAX entry tracking in xarray would
+>>> have to be modified to properly support other entry sizes than just PTE &
+>>> PMD sizes because otherwise the entry locking just doesn't provide the
+>>> guarantees that are expected from filesystems (e.g. you could have parallel
+>>> modifications happening to a single fs block in pagesize < blocksize case).
+>>>
+>>>> All other dax entry points are filesystem controlled that know the
+>>>> block-to-pfn-to-mapping relationship.
+>>>>
+>>>> Recall that dax_writeback_mapping_range() is historically for pmem
+>>>> persistence guarantees to make sure that applications write through CPU
+>>>> cache to media.
+>>>
+>>> Correct.
+>>>
+>>>> Presumably there are no cache coherency concerns with fuse and dax
+>>>> writes from the guest side are not a risk of being stranded in CPU
+>>>> cache. Host side filesystem writeback will take care of them when / if
+>>>> the guest triggers a storage device cache flush, not a guest page cache
+>>>> writeback.
+>>>
+>>> I'm not so sure. When you call fsync(2) in the guest on virtiofs file, it
+>>> should provide persistency guarantees on the file contents even in case of
+>>> *host* power failure. So if the guest is directly mapping host's page cache
+>>> pages through virtiofs, filemap_fdatawrite() call in the guest must result
+>>> in fsync(2) on the host to persist those pages. And as far as I vaguely
+>>> remember that happens by KVM catching the arch_wb_cache_pmem() calls and
+>>> issuing fsync(2) on the host. But I could be totally wrong here.
 >>
->> To me it looks these two patches enable bus communication and thus be
->> useful without rest of the series while latter need more discussion
->> (I'll have some notes coming) and Cc'ing linux-acpi.
+>> I don't think that's how it actually works, at least on arm64.
+>> arch_wb_cache_pmem() calls dcache_clean_pop() which is either dc cvap or
+>> dc cvac. Those are trapped by HCR_EL2<TPC>, and that is never set by KVM.
+>>
+>> There was some discussion of this here:
+>> https://lore.kernel.org/all/20190702055937.3ffpwph7anvohmxu@US-160370MP2.local/
 > 
-> I have Cc'ed linux-acpi in this revision. Do you have any feedback for
-> patches 2-4 ?
+> I see. Thanks for correcting me.
 > 
-Yes, I'm reviewing them and only the patch 2/5 was Cc'ed to linux-acpi.
+>> But I'm not sure that all really made sense then.
+>>
+>> msync() and fsync() should already provide persistence. Those end up
+>> calling vfs_fsync_range(), which becomes a FUSE fsync(), which fsyncs
+>> (or fdatasyncs) the whole file. What I'm not so sure is whether there
+>> are any other codepaths that also need to provide those guarantees which
+>> *don't* end up calling fsync on the VFS. For example, the manpages kind
+>> of imply munmap() syncs, though as far as I can tell that's not actually
+>> the case. If there are missing sync paths, then I think those might just
+>> be broken right now...
+> 
+> munmap(2) is not an issue because that has no persistency guarantees in
+> case of power failure attached to it. Thinking about it some more I agree
+> that just dropping dax_writeback_mapping_range() from virtiofs should be
+> safe. The modifications are going to be persisted by the host eventually
+> (so writeback as such isn't needed) and all crash-safe guarantees are
+> revolving around calls like fsync(2), sync(2), sync_fs(2) which get passed
+> by fuse and hopefully acted upon on the host. I'm quite confident with this
+> because even standard filesystems such as ext4 flush disk caches only in
+> response to operations like these (plus some in journalling code but that's
+> a separate story).
+> 
+> 								Honza
 
-Patchset split would serve better in my opinion enabling basic 
-communication and have an other set concentrating more complex scenario 
-we were try to get input from ACPI folks.
+I think we should go with that then. Should I send it as Suggested-by:
+Dan or do you want to send it?
+
+~~ Lina
+
 
