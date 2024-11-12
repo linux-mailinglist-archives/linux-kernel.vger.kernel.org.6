@@ -1,240 +1,146 @@
-Return-Path: <linux-kernel+bounces-405878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D30CA9C5867
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:59:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BEC39C586D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:59:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63EF21F234BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8DF71F23553
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894081369A8;
-	Tue, 12 Nov 2024 12:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C5E13212A;
+	Tue, 12 Nov 2024 12:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eLq0XgtU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FzHqa3ar"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E328A70831;
-	Tue, 12 Nov 2024 12:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6851292CE
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731416327; cv=none; b=B7gQNCczbRmzLpgQsva8EiMi0LsJIA4tVfNkBrokzmVJJVegnczRdVvV/h8NAhx2kCQ5Dlg8L08/vQe8Ss3DSMT+Ithb81Iv0w/+nAN2Hql8yiVkiJ/puWGn2J5Ly5wxJnwpsmjC4rb+E1lb/n5Uplrp67ZbU6Gt+neYHjgExws=
+	t=1731416364; cv=none; b=NC0tiiWvGd6XjI/x/ZO1tEmAcYF1aYP+70HuK28Rb43AyzomrmBd7ISOQRZpIrnWVg6LA0st2hajHyAX/Y9v3zs3jsKef9MmbZ9262IFL/NJN7qiUuqv4o+Qpq0rws7fN8iyE9s4f5YKxrHytop+XdZHA0U4j0ehszHXlp27bGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731416327; c=relaxed/simple;
-	bh=XsVrg/tycUyf1pge9uDquJ8kbJ4hI9A1otOr9vuWvsw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=G0eVK3yydQG2bKYTPsddzQjT7Anl7axOmafRHZ3BY8Hv0wiGFHl2Lf45/ZSUg9Y4vXkzS1P3xavCfmf67x1ndqpIU806xEXgkiGs3ODBYTbxzTC0scYjh46S5rTg9F4WEfOdGSOVywU/n516ttIqXmfkysAFVAIhSMycQtM7rYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eLq0XgtU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC9FhLh002987;
-	Tue, 12 Nov 2024 12:58:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6TFRQuks3xEPKLnmUVkx3quSMzhADnexEjI/TmNuYo4=; b=eLq0XgtU5E3qcGUO
-	78N+NPsqjatL+swhGTmIHtpvaykiNh+ys7s47Kcm7l3GPkGo4T4VKAwfKMVVZozR
-	DEvJCaUi0umrjgCXc6HhLQjCAMAN75JKdcxYDnyPhhqmliSwHY/n9NQ1RifAD6a7
-	jmF511bSfbL+3Qco103KFi2qvhZOo5BuC6NMXri1Y99DE2Lc0lVq3vYQ6KXKgMdU
-	gL6DQQ9YpOwZq/qZnO4vDfGq44uxFihiWkMLSOyS+z+uM7ELIhUMejcLkYawZQ30
-	nuc7iqTkcNSEMkowyrZqdbH6NrAEeRB10cK/9NSzyhwdlemviGbc3vTYxZ4JhKYG
-	PAWz0w==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v47y0jd4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 12:58:41 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACCwend000586
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 12:58:40 GMT
-Received: from [10.216.11.168] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
- 2024 04:58:37 -0800
-Message-ID: <410e1531-6c1b-fb29-2748-eca57fc13481@quicinc.com>
-Date: Tue, 12 Nov 2024 18:28:34 +0530
+	s=arc-20240116; t=1731416364; c=relaxed/simple;
+	bh=O1ra4cc8YXF6OcVwIaYhFtkTaBxbuaqHKor32feVjhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AYiXCzqfaPDkNyb1+yZeLexIen0JiSfh9xmQPo6ug/A87M5y0FgsSpX8TyM7lgDy8KgzzgAUmcpw5hjRvDXpJN4SUYLsqKhXBn6hXhmza7KzeXxVLC9GzieG5gY1s/6XR6R8OXuk8jZi1cbPbKb4c1D8h4Slh2gQWoQjbFfXz5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FzHqa3ar; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4316cce103dso70682515e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:59:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731416360; x=1732021160; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cfaiPLSE/cSMEniC7rNx14oY4I502rUQz+kbxcUTM/M=;
+        b=FzHqa3ar7dMC1zz4SEoyk+b8jk55Z942h7b2WqkdmZxprNjgr3Werl1yphBws75eVP
+         mfs3usrcASUjcMrGV2vS0K/dSSSiW8P56K7/7r64o366tC27/dKnf73y9R3mfcCviekT
+         N0m0tfNQZuXVGIuRKceb6JIEHJ49SKRiAw83gx9SmX1Q2tqeeOkO2G04KI/SbQb0ay1X
+         O/WBcP39bJ0GN1rcRRjSBKHYqRS8LQ8uIEc+tFOKLis7rVecSpuWiWXtbC8tWgIx/cNV
+         S7FHAAy3Nh0x7HN7hddw4hUnux9QiiOeSTRb+zLbPrgfnDXLnzONBGjddnF5+ec++qXV
+         lVPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731416360; x=1732021160;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cfaiPLSE/cSMEniC7rNx14oY4I502rUQz+kbxcUTM/M=;
+        b=msLIyQKwmG8Xc6T6w3e2BNrQah4ZbmeowQSpBzF9Q+SSzXum5gkAsvvzGj9rO6AQny
+         h3TicCVZsFCVgIf8HEM7gmixAMcC6tEP0B3WvDK7OLVHDnKCtVk7hBGUZT1pnk6LsG2+
+         oQ2xBqVuGnfGbWSGaWLxRFVF4XU7NBTvbaBuIWh8A+RALHjJbjVhM3qaB2jCybGzaZRZ
+         R06vbGJM2DOjLkIakKxbcJZBLpCHdHTPElfOp4Lv33uk8r0H9q3Y445Ym+WHNUVDdp1t
+         CJRv1UMdjzCc5YE7sIsguSKcRfbPXv4pLBPLl3XFDVo73FjVRHhB21suMwJCnNt99Qvx
+         FPGQ==
+X-Gm-Message-State: AOJu0YxxkUJjmoA1OGNeYJUry3PjPEXeOFM71eZmCrJSAggvlvlGaGMz
+	DQj+90W0KZ/TmSoOp9QJVcyUR3gChjjhL0pfJuQ7PUX9J8x1H370PDRfUOiue/0=
+X-Google-Smtp-Source: AGHT+IFU6xTdnYAb/vcuPafz5OnVgaag1P8H6I72Di3zG/EFdT2LjuKgZeQulxlN4dthmJnEGi4hdA==
+X-Received: by 2002:a05:6000:1541:b0:37d:2ea4:bfcc with SMTP id ffacd0b85a97d-381f186bc9bmr15525328f8f.13.1731416360468;
+        Tue, 12 Nov 2024 04:59:20 -0800 (PST)
+Received: from pathway.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ec1b1sm15705648f8f.82.2024.11.12.04.59.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 04:59:20 -0800 (PST)
+Date: Tue, 12 Nov 2024 13:59:18 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Chris Down <chris@chrisdown.name>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
+Subject: Re: [PATCH v6 04/11] printk: Support toggling per-console loglevel
+ via syslog() and cmdline
+Message-ID: <ZzNRJr21HiHXBAFO@pathway.suse.cz>
+References: <cover.1730133890.git.chris@chrisdown.name>
+ <07141a533c4071c364c4f2eda6d97a9a89797e67.1730133890.git.chris@chrisdown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 2/4] media: venus: hfi_parser: avoid OOB access beyond
- payload word count
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
- <20241105-venus_oob-v1-2-8d4feedfe2bb@quicinc.com>
- <474d3c62-5747-45b9-b5c3-253607b0c17a@linaro.org>
- <9098b8ef-76e0-f976-2f4e-1c6370caf59e@quicinc.com>
- <f53a359a-cffe-4c3a-9f83-9114d666bf04@linaro.org>
- <c9783a99-724a-cdf0-7e76-7cbf2c77d63f@quicinc.com>
- <f6e661da-6a8f-4555-881e-264e8518f50c@linaro.org>
-Content-Language: en-US
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <f6e661da-6a8f-4555-881e-264e8518f50c@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 68L1PboUyIa3j1Kv36ekw9PdVCYRr26j
-X-Proofpoint-GUID: 68L1PboUyIa3j1Kv36ekw9PdVCYRr26j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 spamscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411120105
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <07141a533c4071c364c4f2eda6d97a9a89797e67.1730133890.git.chris@chrisdown.name>
 
+On Mon 2024-10-28 16:45:40, Chris Down wrote:
+> A new module parameter (ignore_per_console_loglevel) is added, which can
+> be set via the kernel command line or at runtime through
+> /sys/module/printk/parameters/ignore_per_console_loglevel. When set, the
+> per-console loglevels are ignored, and the global console loglevel
+> (console_loglevel) is used for all consoles.
+> 
+> During sysrq, we temporarily disable per-console loglevels to ensure all
+> requisite messages are printed to the console. This is necessary because
+> sysrq is often used in dire circumstances where access to
+> /sys/class/console may not be trivially possible.
+> 
+> Additionally, the syslog actions SYSLOG_ACTION_CONSOLE_ON and
+> SYSLOG_ACTION_CONSOLE_OFF are augmented to save and restore the state of
+> ignore_per_console_loglevel. This allows administrators to enable or
+> disable per-console loglevels dynamically using the syslog() system
+> call, as supported in userspace by things like dmesg.
+> 
+> This is useful when debugging issues with message emission, or when
+> needing to quickly break glass and revert to global loglevel only.
+> 
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -1298,6 +1313,16 @@ bool per_console_loglevel_is_set(const struct console *con)
+>   * 1. con->level. The locally set, console-specific loglevel. Optional, only
+>   *    valid if >0.
+>   * 2. console_loglevel. The default global console loglevel, always present.
 
-On 11/12/2024 4:47 PM, Bryan O'Donoghue wrote:
-> On 12/11/2024 08:05, Vikash Garodia wrote:
->> You did not printed the last iteration without the proposed fix. In the last
->> iteration (Myword 1), it would access the data beyond allocated size of somebuf.
->> So we can see how the fix protects from OOB situation.
-> 
-> Right but the loop _can't_ be correct. What's the point in fixing an OOB in a
-> loop that doesn't work ?
-> 
-> This is the loop:
-> 
-> #define BUF_SIZE 0x20  // BUF_SIZE doesn't really matter
-> 
-> char somebuf[BUF_SIZE];
-> u32 *word = somebuf[0];
-> u32 words = ARRAY_SIZE(somebuf);
-> 
-> while (words > 1) {
->     data = word + 1;  // this
->     word++;           // and this
->     words--;
-> }
-> 
-> On the first loop
-> word = somebuf[0];
-> data = somebuf[3];
-> 
-> On the second loop
-> word = somebuf[3]; // the same value as *data in the previous loop
-> 
-> and that's just broken because on the second loop *word == *data in the first
-> loop !
-> 
-> That's what my program showed you
-> 
-> word 4 == 0x03020100 data=0x07060504
-> 
-> // word == data from previous loop
-> word 3 == 0x07060504 data=0x0b0a0908
-> 
-> // word == data from previous loop
-> word 2 == 0x0b0a0908 data=0x0f0e0d0c
-> 
-> The step size, the number of bytes this loop increments is fundamentally wrong
-> because
-> 
-> a) Its a fixed size [1]
-> b) *word in loop(n+1) == *data in loop(n)
-> 
-> Which cannot ever parse more than one data item - in effect never loop - in one go.
-In the second iteration, the loop would not match with any case and would try to
-match the case by incrementing word. Let say the first word is
-"HFI_PROPERTY_PARAM_CODEC_SUPPORTED" followed by 2 words (second and third word)
-of payload step size. At this point, now when the loop runs again with second
-word and third word, it would not match any case. Again at 4th word, it would
-match a case and process the payload.
-One thing that we can do here is to increment the word count with the step size
-of the data consumed ? This way 2nd and 3rd iteration can be skipped as we know
-that there would not be any case in those words.
+I think that I have suggested to remove the above comment because
+it was obvious from the code. I am in doubts now because use
+extendended it below ;-)
 
-Regards,
-Vikash
-> 
->> For the functionality part, packet from firmware would come as <prop type>
->> followed by <payload for that prop> i.e
->> *word = HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->> *data = payload --> hence here data is pointed to next u32 to point and parse
->> payload for HFI_PROPERTY_PARAM_CODEC_SUPPORTED.
->> likewise for other properties in the same packet
-> 
-> [1]
-> 
-> But we've established that word increments by one word.
-> We wouldn't fix this loop by just making it into
-> 
-> while (words > 1) {
->     data = word + 1;
->     word = data + 1;
->     words -= 2;
-> }
-> 
-> Because the consumers of the data have different step sizes, different number of
-> bytes they consume for the structs they cast.
-> 
-> =>
-> 
-> case HFI_PROPERTY_PARAM_CODEC_SUPPORTED:
->     parse_codecs(core, data);
->     // consumes sizeof(struct hfi_codec_supported)
->     struct hfi_codec_supported {
->         u32 dec_codecs;
->         u32 enc_codecs;
->     };
-> 
-> 
-> case HFI_PROPERTY_PARAM_MAX_SESSIONS_SUPPORTED:
->     parse_max_sessions(core, data);
->     // consumes sizeof(struct hfi_max_sessions_supported)
->     struct hfi_max_sessions_supported {
->         u32 max_sessions;
->     };
-> 
-> case HFI_PROPERTY_PARAM_CODEC_MASK_SUPPORTED:
->     parse_codecs_mask(&codecs, &domain, data);
->     // consumes sizeof(struct hfi_codec_mask_supported)
->     struct hfi_codec_mask_supported {
->             u32 codecs;
->             u32 video_domains;
->     };
-> 
-> case HFI_PROPERTY_PARAM_UNCOMPRESSED_FORMAT_SUPPORTED:
->     parse_raw_formats(core, codecs, domain, data);
->     // consumes sizeof(struct hfi_uncompressed_format_supported)
->     struct hfi_uncompressed_format_supported {
->         u32 buffer_type;
->         u32 format_entries;
->         struct hfi_uncompressed_plane_info plane_info;
->     };
-> 
-> case HFI_PROPERTY_PARAM_CAPABILITY_SUPPORTED:
->     parse_caps(core, codecs, domain, data);
->     
->     struct hfi_capabilities {
->         u32 num_capabilities;
->         struct hfi_capability data[];
->     };
-> 
->     where
->     hfi_platform.h:#define MAX_CAP_ENTRIES        32
-> 
-> I'll stop there.
-> 
-> This routine needs a rewrite.
-> 
-> ---
-> bod
+> + * The behaviour can be further changed by the following printk module
+> + * parameters:
+> + *
+> + * 1. ignore_loglevel. Can be set at boot or at runtime with
+> + *    /sys/module/printk/parameters/ignore_loglevel. Overrides absolutely
+> + *    everything since it's used to debug.
+> + * 2. ignore_per_console_loglevel. Existing per-console loglevel values are left
+> + *    intact, but are ignored in favour of console_loglevel as long as this is
+> + *    true. Also manipulated through syslog(SYSLOG_ACTION_CONSOLE_{ON,OFF}).
+
+I like that it is summarized in one place. I like the comment after all ;-)
+
+That said, it is also nicely summarized in
+Documentation/admin-guide/per-console-loglevel.rst
+So, it might be enough to mention it here.
+
+>   */
+>  enum loglevel_source
+>  console_effective_loglevel_source(const struct console *con)
+
+Best Regards,
+Petr
 
