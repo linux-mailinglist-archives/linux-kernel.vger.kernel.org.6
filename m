@@ -1,183 +1,139 @@
-Return-Path: <linux-kernel+bounces-406560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE6C9C60CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:52:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9EC9C60D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:52:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D37B283ED5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9399D283F8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600C7218305;
-	Tue, 12 Nov 2024 18:51:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDD22144D8;
-	Tue, 12 Nov 2024 18:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1F3218954;
+	Tue, 12 Nov 2024 18:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axeVZoYn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6168217455;
+	Tue, 12 Nov 2024 18:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731437514; cv=none; b=jhef3NIUv9xLu4eJfKzez8ojy7y+KNVpvJ50V0CDOYbg57pAQ1GPmNPczjseC/PH/H1AIAVQ+zs85LqZLnL9mwqsEKR6ZWqi4GB/ehzNhL6RiZjwl6O2Vg71OQgK/OsM5QBDCpNOPCx9xh1MJl5YOksQd4o0cwISrXnKoT36UD4=
+	t=1731437532; cv=none; b=n270ioK9e9kRYJBAGBQgZJgjuyqQzmH69TSCiLwk0yZ28rzYQ1muIYVH6rhQA2R1UuEyUEIr+s9uaYKmLwQPgLyCrV9RDsNDYuhCiTgDf0HuQNZc3I2Im8MAUA5OQQt/WSNN6eOFW2/785gVGl9bFWSQfrUDuZT298HS/qnvcnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731437514; c=relaxed/simple;
-	bh=IZb9Qolb6oqweuQOCiBsezlbcxbtYXIsJBMpLCYyCo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hFhSq9EXxiz2foKB+PZ1FYEsCMLRqrpQfRq0l/xtYZSpz5KetZjf1jvWlNgAxJO4uRDTbTkmfiA6zKD8h40Zb24dLKrNW9hiszsjtIXtZLA4z6LTjRgkkF1lyM9uf/17+JUPPqVREFnpB+6yg7U8V++oYjzaKDCRostUxTMffSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC1801516;
-	Tue, 12 Nov 2024 10:52:20 -0800 (PST)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8EF473F66E;
-	Tue, 12 Nov 2024 10:51:49 -0800 (PST)
-Message-ID: <33f8430e-0adc-4060-afb5-2cc5c79c8dec@arm.com>
-Date: Tue, 12 Nov 2024 18:51:48 +0000
+	s=arc-20240116; t=1731437532; c=relaxed/simple;
+	bh=lKpYDs3gx8HV/ktP6SJhRTmHZUBnTT2faH7Jw5atD6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p7n6RDL+Q6MQiLYmNm2KCj3cGWs0PxOmoHapVuHYPQ+vTmtSNhrZTXWL1Q9FubPNhRblFsQ1SPZTnSpe5hnKs+TZ08VXzUa6hUF7crAWh/XKFM4rzilJq/KRYlkRKcVCkuzhk3GKfO7wInezyCqv3njX4m+db/uVDR+bo7ru2gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axeVZoYn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE55C4CECD;
+	Tue, 12 Nov 2024 18:52:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731437532;
+	bh=lKpYDs3gx8HV/ktP6SJhRTmHZUBnTT2faH7Jw5atD6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=axeVZoYnVhXVzTtc/qwb+dFMqZ92LqT9qo0W+++qcjEzaXdJcnzJ7WHvrGhqKtNbM
+	 Dd5FmIihyXANhHN8tZ7uAnuuG6JoHWc+J4+kz0wzGOzvUIinbnOkVbkzl+VZnLjujo
+	 RkUsr1mfwsgFNvVc+2ZG8bADzn5mR0qDQrg9XY6YTTyX3JJO8fF4u/a0SBQnNWDsco
+	 WFSKQzX2aAgbtNgMqM+uU8AkK8SNlaXqw0/4hOVSvBvXsbNmDY0HDRt7aSVJkBNxMj
+	 9bv5oFeGMPx10+8Rao+jJxColh096D/2Dek9NQ/rDlFebm+T0uOWj+y12qfyi5vPU1
+	 PHhwhAf0vWVOw==
+Date: Tue, 12 Nov 2024 08:52:11 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hillf Danton <hdanton@sina.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Marco Elver <elver@google.com>, Zefan Li <lizefan.x@bytedance.com>,
+	tglx@linutronix.de
+Subject: Re: [PATCH v2 1/2] kernfs: Make it possible to use RCU for
+ kernfs_node::name lookup.
+Message-ID: <ZzOj2z4g7nzWnCBb@slm.duckdns.org>
+References: <20241112155713.269214-1-bigeasy@linutronix.de>
+ <20241112155713.269214-2-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix vdd_gpu voltage constraints on
- PinePhone Pro
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, stable@vger.kernel.org
-References: <0718feb8e95344a0b615f61e6d909f6e105e3bf9.1731264205.git.dsimic@manjaro.org>
- <607a731c-41e9-497a-a08c-f718339610ae@arm.com>
- <fdf58f3e9fcb4c672a4bb114fbdab60d@manjaro.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <fdf58f3e9fcb4c672a4bb114fbdab60d@manjaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112155713.269214-2-bigeasy@linutronix.de>
 
-On 12/11/2024 2:36 pm, Dragan Simic wrote:
-> Hello Robin,
-> 
-> On 2024-11-12 15:19, Robin Murphy wrote:
->> On 10/11/2024 6:44 pm, Dragan Simic wrote:
->>> The regulator-{min,max}-microvolt values for the vdd_gpu regulator in 
->>> the
->>> PinePhone Pro device dts file are too restrictive, which prevents the 
->>> highest
->>> GPU OPP from being used, slowing the GPU down unnecessarily.  Let's 
->>> fix that
->>> by making the regulator-{min,max}-microvolt values less strict, using 
->>> the
->>> voltage range that the Silergy SYR838 chip used for the vdd_gpu 
->>> regulator is
->>> actually capable of producing. [1][2]
->>
->> Specifying the absolute limits which the regulator driver necessarily
->> already knows doesn't seem particularly useful... Moreover, the RK3399
->> datasheet specifies the operating range for GPU_VDD as 0.80-1.20V, so
->> at the very least, allowing the regulator to go outside that range
->> seems inadvisable.
-> 
-> Indeed, which is why I already mentioned in the patch description
-> that I do plan to update the constraints of all regulators to match
-> the summary of the constraints of their consumers.  Though, I plan
-> to do that later, as a separate directory-wide cleanup, for which
-> I must find and allocate a substantial amount of time, to make sure
-> there will be no mistakes.
+Hello,
 
-Sure, but even if every other DT needs fixing, that still doesn't make 
-it a good idea to deliberately introduce the same mistake to *this* DT 
-and thus create even more work to fix it again. There's no value in 
-being consistently wrong over inconsistently wrong - if there's 
-justification for changing this DT at all, change it to be right.
+On Tue, Nov 12, 2024 at 04:52:38PM +0100, Sebastian Andrzej Siewior wrote:
+...
+> KERNFS_ROOT_SAME_PARENT is added to signal that the parent never
 
->> However there's a separate datasheet for the
->> RK3399-T variant, which does specify this 875-975mV range and a
->> maximum GPU clock of 600MHz, along with the same 1.5GHz max.
->> Cortex-A72 clock as advertised for RK3399S, so it seems quite possible
->> that these GPU constraints here are in fact intentional as well.
->> Obviously users are free to overclock and overvolt if they wish - I do
->> for my actively-cooled RK3399 board :) - but it's a different matter
->> for mainline to force it upon them.
-> 
-> Well, maybe the RK3399S is the same in that regard as the RK3399-T,
-> but maybe it actually isn't -- unfortunately, we don't have some
-> official RK3399S datasheet that would provide us with the required
-> information.  As another, somewhat unrelated example, we don't have
-> some official documentation to tell us is the RK3399S supposed not
-> to have working PCI Express interface, which officially isn't present
-> in the RK3399-T variant.
+Maybe KERNFS_ROOT_INVARIANT_PARENT captures it better?
 
-Looking back at the original submission, v2 *was* proposing the RK3399-T 
-OPPs, with the GPU capped at 600MHz, and it was said that those are what 
-PPP *should* be using[1]. It seems there was a semantic objection to 
-having a separate rk3399-t-opp.dtsi at the time, and when the main DTS 
-was reworked for v3 the 800MHz GPU OPP seems to have been overlooked. 
-However, since rk3399-t.dtsi does now exist anyway, it would seem more 
-logical to just use that instead of including rk3399.dtsi and then 
-overriding it to be pretty much equivalent to the T variant anyway.
+...
+> @@ -195,13 +191,47 @@ static int kernfs_path_from_node_locked(struct kernfs_node *kn_to,
+>   */
+>  int kernfs_name(struct kernfs_node *kn, char *buf, size_t buflen)
+>  {
+> +	struct kernfs_root *root;
+>  
+> +	guard(read_lock_irqsave)(&kernfs_rename_lock);
+> +	if (kn) {
+> +		root = kernfs_root(kn);
+> +		if (WARN_ON_ONCE(root->flags & KERNFS_ROOT_SAME_PARENT))
+> +			kn = NULL;
 
-Thanks,
-Robin.
+Hmm... does kn need to be set to NULL here?
 
-[1] 
-https://lore.kernel.org/linux-rockchip/CAN1fySWVVTeGHAD=_hFH+ZdcR_AEiBc0wqes9Y4VRzB=zcdvSw@mail.gmail.com/
+> +	}
+> +
+> +	if (!kn)
+> +		return strscpy(buf, "(null)", buflen);
+> +
+> +	return strscpy(buf, kn->parent ? kn->name : "/", buflen);
+...
+> +int kernfs_name_rcu(struct kernfs_node *kn, char *buf, size_t buflen)
+> +{
+> +	struct kernfs_root *root;
+> +
+> +	if (kn) {
+> +		root = kernfs_root(kn);
+> +		if (WARN_ON_ONCE(!(root->flags & KERNFS_ROOT_SAME_PARENT)))
+> +			kn = NULL;
 
-> However, I fully agree that forcing any kind of an overclock is not
-> what we want to do.  Thus, I'll do my best, as I already noted in this
-> thread, to extract the dtb from the "reference" Android build that
-> Rockchip itself provided for the RK3399S-based PinePhone Pro.  That's
-> closest to the official documentation for the RK3399S variant that we
-> can get our hands on.
-> 
->>> This also eliminates the following error messages from the kernel log:
->>>
->>>    core: _opp_supported_by_regulators: OPP minuV: 1100000 maxuV: 
->>> 1150000, not supported by regulator
->>>    panfrost ff9a0000.gpu: _opp_add: OPP not supported by regulators 
->>> (800000000)
->>>
->>> These changes to the regulator-{min,max}-microvolt values make the 
->>> PinePhone
->>> Pro device dts consistent with the dts files for other Rockchip 
->>> RK3399-based
->>> boards and devices.  It's possible to be more strict here, by 
->>> specifying the
->>> regulator-{min,max}-microvolt values that don't go outside of what 
->>> the GPU
->>> actually may use, as the consumer of the vdd_gpu regulator, but those 
->>> changes
->>> are left for a later directory-wide regulator cleanup.
->>>
->>> [1] 
->>> https://files.pine64.org/doc/PinePhonePro/PinephonePro-Schematic-V1.0-20211127.pdf
->>> [2] 
->>> https://www.t-firefly.com/download/Firefly-RK3399/docs/Chip%20Specifications/DC-DC_SYR837_838.pdf
->>>
->>> Fixes: 78a21c7d5952 ("arm64: dts: rockchip: Add initial support for 
->>> Pine64 PinePhone Pro")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->>> ---
->>>   arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts 
->>> b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
->>> index 1a44582a49fb..956d64f5b271 100644
->>> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
->>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
->>> @@ -410,8 +410,8 @@ vdd_gpu: regulator@41 {
->>>           pinctrl-names = "default";
->>>           pinctrl-0 = <&vsel2_pin>;
->>>           regulator-name = "vdd_gpu";
->>> -        regulator-min-microvolt = <875000>;
->>> -        regulator-max-microvolt = <975000>;
->>> +        regulator-min-microvolt = <712500>;
->>> +        regulator-max-microvolt = <1500000>;
->>>           regulator-ramp-delay = <1000>;
->>>           regulator-always-on;
->>>           regulator-boot-on;
+Ah, I suppose it's to keep things symmetric. That's fine.
+
+> +	}
+> +	if (!kn)
+> +		return strscpy(buf, "(null)", buflen);
+> +
+> +	guard(rcu)();
+
+Also, why are guards in different locations? Even when !SAME_PARENT, kn's
+can't jump across roots, so guard there can also be in the same location as
+this one?
+
+...
+> @@ -200,7 +205,10 @@ struct kernfs_node {
+>  	 * parent directly.
+>  	 */
+>  	struct kernfs_node	*parent;
+> -	const char		*name;
+> +	union {
+> +		const char		__rcu *name_rcu;
+> +		const char		*name;
+> +	};
+
+Wouldn't it be simpler if ->name is always __rcu and !SAME_PARENT just
+requires further protection on the read side?
+
+Thanks.
+
+-- 
+tejun
 
