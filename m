@@ -1,94 +1,94 @@
-Return-Path: <linux-kernel+bounces-405229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDAAD9C4ED2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:37:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885089C4ED7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:39:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9250028958D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:37:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DDB7289985
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC88208962;
-	Tue, 12 Nov 2024 06:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C8E20A5E4;
+	Tue, 12 Nov 2024 06:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="dteLER5Z"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="1kelb72c"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55C65234
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 06:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A3F5234;
+	Tue, 12 Nov 2024 06:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731393465; cv=none; b=NhGSvaxSZuqKdWiiB5EHEwCSmPPBFqkdJ5femIjqK5SAzxXSnxP0SRoVp6IcEaYuPUsWwZ2lZHWW9dCBT4XItZK9toPnr2q8ZWNiU6PBQilCPTzRis3nxqcfoKHC9fPa69eMp9q33l0NwcPnNV0R/COMFnmAXDkDarGIfdY4Xug=
+	t=1731393562; cv=none; b=TDQlyNNn5kpVnTTFDasEQFwD918Cd7UrmTTpuSmzikEOfk1kpYyju61GRNFds9qB6gRAe2LkI2Pn3KJxNkoXsDpFzqu4it6xDI7wRcDmZjyyc0s67/K5iPQqCBjMi2AjcKS++GGOLLgvp/bWrygw0HJqp37d5r7HcH7U+58XwMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731393465; c=relaxed/simple;
-	bh=DIhoDMs+ocERMPWwoBsCd61ryEJMxq66Wo/FyZ7XV6U=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=blJvf4i9Z4+pPQRpuogSnACpLkTF9lAQzjcuNPUWrQ2K1/TLU6UobXFeP9lXQeQlNiGroY/wtZVPiOi8Ldevz05wy7Rr/sKmROPLDaEDgvOX8KNnDl+1caGLnOT8+OEfSlWnTufvItdezBqgouYZlvKWYvhP9GMDa6e5bJ1seJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=dteLER5Z; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from graphene.canonical.com (1.general.amurray.uk.vpn [10.172.193.220])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id D87FC3F1E0;
-	Tue, 12 Nov 2024 06:37:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1731393454;
-	bh=GKUKx7XUX9NIQn1HWD9NcfpALG4TSgUzvapWP/4X8Ok=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type;
-	b=dteLER5ZEWCoo7LZPCZX1d2E0jXEllQcd1l3Nj4mr2E5bFemED5bJzyF+vbfpxvr5
-	 EQhJDnJhWhm2cdll7NG+7XYOhxyQssBkExhhs7pkEYBqGc3LXHeo16lxFbH/+QPl+H
-	 sYJrWvVHLsShqj9b2owPIHqsLY0l48lJfkMZ7V8AwtYEI3spQEIzgA74Z9OApCtW/Z
-	 jJZucXJHuNXQaApFd6JNpptfjh1zInyL9tmQvXPtSINlkfrZe7Vohxq7OEHs9T6Zk/
-	 fREDfiQ/9yQyUvq3G95jpxUAdburKeykUg4GOTJo2xjlCBcqWHtggk0CBNi2pQ50A2
-	 nBNQ2zHzrI/bw==
-From: Alex Murray <alex.murray@canonical.com>
-To: dave.hansen@linux.intel.com
-Cc: bp@alien8.de,linux-kernel@vger.kernel.org,tglx@linutronix.de,x86@kernel.org
-Subject: Re: [RFC][PATCH] x86/cpu/bugs: Consider having old Intel microcode
- to be a vulnerability
-In-Reply-To: <20241107170630.2A92B8D3@davehans-spike.ostc.intel.com>
-Date: Tue, 12 Nov 2024 17:07:27 +1030
-Message-ID: <87v7wtvty0.fsf@canonical.com>
+	s=arc-20240116; t=1731393562; c=relaxed/simple;
+	bh=qBZiGi1u8iJrl5166Fw1rBfClz9HCNwg6W87v0hoOjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tYRjnFXcqHnFzvei560eSnB9sRqgzA+OSJoiVkDLfTqTb85RcwQZpsAID2SSouRpDUtx5RtIK/k8d+PSXMttxaO9KWO3bbEPk6gFXD0Mk6wa8i+te3KcHSyaO1bg0TXRTJ4eY0Cg0Yi177U+CT7oxvwfjl2CSHCn2/Aa0Bt6WAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=1kelb72c; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID; bh=DMBzvsCGMw6qfR4K0jMLHbUMUuG0vgDO025DsOZ7Tv4=; b=1kelb7
+	2cZXNysGmHSwC/aAZ3zikdKshn2km2x26JXQmwIFkM7DW+8QFicJmIRj+H27B7GWoqzBe6dGEB6oT
+	RLLhp5Zc700i1weTf+Ws7UZaHO6qKSRI7yb+0Yqzm8GhNq68efxk6e5wpGFhxuCODg6NEM5RRCP0q
+	pxT7yOwnioffiuInvyjvE9RE8KWolPRHdp8HAyzCxJtRvEcv4WYQuw4hGri6RZ594X+U4rFuUyw7A
+	TZlziQoYgVPuN1vEeNNz+bzs26SQuRht2lboFIG+H0x/yyM0NqEwdORtSEdO02NH+CftX8uIaBdQb
+	i4ciYB7NfaIzufyyDC/RdHK91i2w==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tAkYU-000Giw-5O; Tue, 12 Nov 2024 07:39:14 +0100
+Received: from [185.17.218.86] (helo=Seans-MacBook-Pro.local)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tAkYT-000NhT-1L;
+	Tue, 12 Nov 2024 07:39:13 +0100
+Date: Tue, 12 Nov 2024 07:39:12 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ
+ voltage
+Message-ID: <fatpdmg5k2vlwzr3nhz47esxv7nokzdebd7ziieic55o5opzt6@axccyqm6rjts>
+References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
+ <20241111101011.30e04701@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241111101011.30e04701@kernel.org>
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27455/Mon Nov 11 10:58:33 2024)
 
+Hi Jakub,
+
+On Mon, Nov 11, 2024 at 10:10:11AM +0100, Jakub Kicinski wrote:
+> On Mon, 11 Nov 2024 09:54:48 +0100 Sean Nyekjaer wrote:
+> > This series adds support for setting the nWKRQ voltage.
 > 
-> == Microcode Revision Discussion ==
-> 
-> The microcode versions in the table were generated from the Intel
-> microcode git repo:
->
->  	29f82f7429c ("microcode-20241029 Release")
+> There is no need to CC netdev@ on pure drivers/net/can changes.
+> Since these changes are not tagged in any way I have to manually
+> go and drop all of them from our patchwork.
 
-This upstream microcode release only contained an update for a
-functional issue[1] - not any fixes for security issues. So it would not
-really be correct to say a machine running the previous microcode
-revision is vulnerable. As such, should the table of microcode revisions
-only be generated from the upstream microcode releases that contain
-fixes for security issues? 
+Oh sorry for that.
+I'm using b4's --auto-to-cc feature, any way to fix that?
 
-ie.
-
-> +{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0xb7, .steppings = 0x0002, .driver_data = 0x12b }
-
-should ideally be:
-
-> +{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0xb7, .steppings = 0x0002, .driver_data = 0x129 }
-
-to correspond with the previous microcode release that contained actual
-security fixes. 
-
-
-[1] https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/releases/tag/microcode-20241029
+Br,
+/Sean
 
