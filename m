@@ -1,128 +1,172 @@
-Return-Path: <linux-kernel+bounces-406406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582499C5E9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:18:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095FD9C5E9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CFA51F22B72
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:18:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04A9A283EBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304C0216A21;
-	Tue, 12 Nov 2024 17:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C45821744A;
+	Tue, 12 Nov 2024 17:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zWRGxxwv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XbBCMGA2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mRyBA0Ec"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D672076DA;
-	Tue, 12 Nov 2024 17:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C016021744D
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731431673; cv=none; b=nt5NQVKzYTOvES4ddbjKC9pEX45ozMAhdbIgx2sbMJdl708A0z/RIJwVrNTyM230ZT9X9NIHPtOkn7nz25W3BE9D+dzTP8LqZNwEyPjCx2M3o1XwvzO3YOHvHLL8vPBf7M4PcEZuavl+Zz5SYpgug0HD2RCbiD1GZ1Wz1zmSzTc=
+	t=1731431708; cv=none; b=GYAmXw1Hu4Vs0lRDnbQy1kPpv+qFxJPvZC0I3OLVs1uoHHOWsZKmlHmfeFxDJIGbaEfBwUtVCmM4n4n9flk2wrg6wRyy9TH5vySnlU0G7ScP7G6j4t6+UqjOt2H01E+3Ihf1SQ28vmkjPUKHxZ8h6fWlMOtv9UQ/93Ff5aFhVC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731431673; c=relaxed/simple;
-	bh=OVDxMNjz/kRsn0mlLewto2R8wq9d+xl95pyKd2dQH/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mPe25LqONyLSryh2qps2m5g7C0+LcFbPPAVyrl9CixtbMWeeOUULNB6RWdiXYIYnLrPqpmGTQ4lPyZB8OSLePt/YTG8KuxPSn6fdJtrQRucI4aQSsRVNwAA8lJCzzlg/XWSpHc6W+bL3C74HuCGzL7u9dOV5IIspqkT0XVEoS3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zWRGxxwv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XbBCMGA2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 12 Nov 2024 18:14:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731431669;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fLSGSsbdaiZ6JUBSPFVjQaHTBzfxSyRl8vuArkyUJAs=;
-	b=zWRGxxwvUomZz2ou/p/A3prEpsitfkJlzoi55RFCGH6L6nF+VtL6L6auxDo7Oe/u74hBnQ
-	9/o/xErl3Dt8Zjuz6010t84GKYAL41pLMljW/E+0pCfNBk0yZ7BMdhDakRAcFi9XEcFNPa
-	QGzGuGbkpIUQkzY/dlZewnYNVFNHsrgKWMlunaC8ghudyCLyxHkPRteduYUchfgkW4vawu
-	yCTJrZr3KMbyb55pRgwba13gvVI9W2Y4I4MwGzBxE8CfvMi0EU/6opviX54Y/u8lLBidKh
-	0zJIFza1ApvBf4Fgy9Yqmej9iFtuAx1LtNO59NNUs8cAJl1i3Cp/F2mzcSpjlQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731431669;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fLSGSsbdaiZ6JUBSPFVjQaHTBzfxSyRl8vuArkyUJAs=;
-	b=XbBCMGA2XMMqf1ILPCkgK8507FyvT6FWiYczNcIbxgasO5RneCbS/dxLprzBzaCeiF/R8j
-	HoEG7mwJB8xSUlAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Alex Shi <seakeel@gmail.com>, linux-xfs@vger.kernel.org,
-	Linux-MM <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: xfs deadlock on mm-unstable kernel?
-Message-ID: <20241112171428.UqPpObPV@linutronix.de>
-References: <e5814465-b39a-44d8-aa3d-427773c9ae16@gmail.com>
- <Zou8FCgPKqqWXKyS@dread.disaster.area>
+	s=arc-20240116; t=1731431708; c=relaxed/simple;
+	bh=nyh9dhwmH9LR43z/Y9Is5lt2DywQxJmev/TAao+dAEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l3IEWAJuJpiuDZ260DVeVQsf4ypAsmtBsGo48cwXp5N445YcFObhE017Y/KPqew1oYwJk3rHUbj4SmRCJOyjNItMAY/iG8uj5Qr/0NzEqbgxuDkb1EvUMzmGzdYp6Nk3a7q4QmUa+/mLCRNbXH7skNdMas/R5dvlqzGPkAtg7l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mRyBA0Ec; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731431707; x=1762967707;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=nyh9dhwmH9LR43z/Y9Is5lt2DywQxJmev/TAao+dAEE=;
+  b=mRyBA0EcW6b6XJnB4K46EA0rssjpeR3FgKmaibwYA8ijzNH6Y+ThiDY3
+   EwVkoy/dOhzIcJb3zkUOYh8QAKZD7+RTg09Qlm6ISJUCDJ5HEB2RRtN1T
+   H17/uVSIZkrDUzKAmdpY1PIKn1eYpMkPgxTmIJJM2/CAzRTrGdabz49ML
+   wFi/BSc6B4JgkfHyGd/V3IA1GcKYI+EMZwiUoNkl9iHOzcknQ0LnUn/VO
+   KQ6mJXVWsj4eZwN8yIbFpRDFMVFCS2pUJI2CW1SsmSUC3jWnUafC9fBIZ
+   cdOTT/VLozN1cjVQ7MTkVumlp3ZxeAcvu4mpB1KF8MDDOYy9dNNaETnHy
+   Q==;
+X-CSE-ConnectionGUID: yIRJJuncSbiX/SvYgi7Zrg==
+X-CSE-MsgGUID: mZRZuqV/Rg+lnXsLm7CY4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="42670017"
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="42670017"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 09:15:06 -0800
+X-CSE-ConnectionGUID: IdqbexO0TrKoY2Nu4Mzapw==
+X-CSE-MsgGUID: h/nSa3DBTIie7Dy2ZZRWwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="88005627"
+Received: from jairdeje-mobl1.amr.corp.intel.com (HELO [10.124.220.61]) ([10.124.220.61])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 09:15:05 -0800
+Message-ID: <001092d4-8431-488b-a98d-3aa5d4ecb692@intel.com>
+Date: Tue, 12 Nov 2024 09:15:05 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zou8FCgPKqqWXKyS@dread.disaster.area>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH] x86/cpu/bugs: Consider having old Intel microcode to
+ be a vulnerability
+To: Andrew Cooper <andrew.cooper3@citrix.com>, dave.hansen@linux.intel.com
+Cc: bp@alien8.de, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+ x86@kernel.org
+References: <20241107170630.2A92B8D3@davehans-spike.ostc.intel.com>
+ <59718ea7-efab-4975-a4e8-89c1d114a2e5@citrix.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <59718ea7-efab-4975-a4e8-89c1d114a2e5@citrix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2024-07-08 20:14:44 [+1000], Dave Chinner wrote:
-> On Mon, Jul 08, 2024 at 04:36:08PM +0800, Alex Shi wrote:
-> >   372.297234][ T3001] ============================================
-> > [  372.297530][ T3001] WARNING: possible recursive locking detected
-> > [  372.297827][ T3001] 6.10.0-rc6-00453-g2be3de2b70e6 #64 Not tainted
-> > [  372.298137][ T3001] --------------------------------------------
-> > [  372.298436][ T3001] cc1/3001 is trying to acquire lock:
-> > [  372.298701][ T3001] ffff88802cb910d8 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_reclaim_inode+0x59e/0x710
-> > [  372.299242][ T3001] 
-> > [  372.299242][ T3001] but task is already holding lock:
-> > [  372.299679][ T3001] ffff88800e145e58 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_ilock_data_map_shared+0x4d/0x60
-> > [  372.300258][ T3001] 
-> > [  372.300258][ T3001] other info that might help us debug this:
-> > [  372.300650][ T3001]  Possible unsafe locking scenario:
-> > [  372.300650][ T3001] 
-> > [  372.301031][ T3001]        CPU0
-> > [  372.301231][ T3001]        ----
-> > [  372.301386][ T3001]   lock(&xfs_dir_ilock_class);
-> > [  372.301623][ T3001]   lock(&xfs_dir_ilock_class);
-> > [  372.301860][ T3001] 
-> > [  372.301860][ T3001]  *** DEADLOCK ***
-> > [  372.301860][ T3001] 
-> > [  372.302325][ T3001]  May be due to missing lock nesting notation
-> > [  372.302325][ T3001] 
-> > [  372.302723][ T3001] 3 locks held by cc1/3001:
-> > [  372.302944][ T3001]  #0: ffff88800e146078 (&inode->i_sb->s_type->i_mutex_dir_key){++++}-{3:3}, at: walk_component+0x2a5/0x500
-> > [  372.303554][ T3001]  #1: ffff88800e145e58 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_ilock_data_map_shared+0x4d/0x60
-> > [  372.304183][ T3001]  #2: ffff8880040190e0 (&type->s_umount_key#48){++++}-{3:3}, at: super_cache_scan+0x82/0x4e0
+On 11/8/24 15:36, Andrew Cooper wrote:
+>> You can't practically run old microcode and consider a system secure
+>> these days.  So, let's call old microcode what it is: a vulnerability.
 > 
-> False positive. Inodes above allocation must be actively referenced,
-> and inodes accees by xfs_reclaim_inode() must have no references and
-> been evicted and destroyed by the VFS. So there is no way that an
-> unreferenced inode being locked for reclaim in xfs_reclaim_inode()
-> can deadlock against the refrenced inode locked by the inode lookup
-> code.
+> The list becomes stale 4 times a year, so you need to identify when it's
+> out of date, and whatever that something is has to be strong enough to
+> cause distros to backport too.  Perhaps a date in the header, so you can
+> at least report "status vulnerable, metadata out of date".
+
+I don't want to get too fancy about this.  I'm assuming that mainline
+and the stable kernels will be regularly fed new metadata.  The only way
+to have out-of-date metadata should be by running an out-of-date kernel
+in which case you have bigger problems on your hands.
+
+> Also, you want to identify EOL CPUs.  Just because they're on the most
+> recent published ucode doesn't mean they're not vulnerable.
+
+That's a good idea too.  But I think it deserves a separate discussion
+and separate patch.
+
+> Under some hypervisors, you get fed the revision 0x7fffffff.  Others
+> might tell you the truth, or it may be the truth from when you booted. 
+> For this, probably best to say "consult your hypervisor".
+
+Good point.  We should probably just say "unknown" when running as a
+guest, or just not have the sysfs file at all.
+
+> Failure to publish information, or not publishing fixes for in-support
+> parts should be considered a vulnerability.  (*ahem*, AMD)
 > 
-> Unfortunately, we don't have enough lockdep subclasses available to
-> annotate this correctly - we're already using all
-> MAX_LOCKDEP_SUBCLASSES to tell lockdep about all the ways we can
-> nest inode locks. That leaves us no space to add a "reclaim"
-> annotation for locking done from super_cache_scan() paths that would
-> avoid these false positives....
+> Or you could just simplify the whole path to "yes".  It's true, even if
+> people don't know.
 
-So the former inode (the one triggering the reclaim) is created and can
-not be the same as the one in reclaim list. Couldn't we assign it a
-different lock-class?
-My guess would be that you drop the lockdep_set_class() in
-xfs_setup_inode() and then do it in xfs_iget_cache_miss() before adding
-it to the tree. So you would have one class initially and then change it
-once it enters the tree. I guess once the inode is removed from the
-tree, it goes to kfree().
+This series answers the question:
 
-> -Dave.
+	Has the vendor published a newer OS-loadable microcode than you
+	are running right now?
 
-Sebastian
+It doesn't seek to answer the question:
+
+	Is the microcode that you are running right now vulnerable to
+	anything (that the kernel knows about)?
+
+I think the first question is quite answerable in a pretty factual way.
+The second question is much hardware.  It's worth answering for sure ...
+with another patch. :)
+
 
