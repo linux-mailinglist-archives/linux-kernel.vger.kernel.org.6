@@ -1,197 +1,215 @@
-Return-Path: <linux-kernel+bounces-405442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1565C9C516A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:03:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 013D99C51A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:15:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8CF7283231
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:03:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2443B26103
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C9820C481;
-	Tue, 12 Nov 2024 09:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD9020CCF7;
+	Tue, 12 Nov 2024 09:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p03Cn6nr"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XUCyvjm0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAAF1F7092
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731402213; cv=none; b=rQFMTeXggX9PaAQKAl92z4OpfJ2ZXfPyC5l/vrCTg0PBAQF1aiFgcDrGyqg2KBUg8nYbJ6K5fFANfXI0Pec3YIq6oJ3XgsoLbY8U69ljgNMtfcW54/8GS2EJeSxU7+xWQ7VCWSDTQ5lf/JhG8oYuW9Gk4aBuMlLKUevtnYg6xpk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731402213; c=relaxed/simple;
-	bh=SndNaI439ZlW5eU16756Ex0bD3YUhq33Uf6XSS8Tpbg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o78rAOBdTqm9b7Z9gTmhE8l31Cv40+VJgr9U+5EE+I5K/6WfgN9/CUDI0kZX7KvWO4emyYEJj6VWvRT2nvwAbwoFV2ctgo4no1pg/x7ieXbgVWMB4X70GjorfH6cAF0VJZArGDRbk//q7CBQ8h/13MNewI4cKQcljoTvfaAwaLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p03Cn6nr; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e9b55b83d2so3070145a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 01:03:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731402211; x=1732007011; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BZodqYnAl+hp6b8+gPO27uullhRtjTjKBuGYhquXyG0=;
-        b=p03Cn6nrkD+wSyuef5Nvk3OgLsu6M6qoajQYqjUtaFS/IL8BK9/JZBPd6fgVz6noex
-         9oZgCTAwbNbnq5E+H98YleXibH2I6KvTX9+OzFfG5wSn4yXB6md3YZLFXbpezGBifbsr
-         3VVPfsTDmsgN9qTPdWMtByc8AUacfRNYSpiWhx2ig8A0XgzsJkefq8nQt4H2aPKtuzrZ
-         NhDRDxjxPvRWWbo1QJO94p0/NXVVNpLRyoTmjz22oFfOLgIGQiftf52AuHinYWOAYibW
-         v4FDP3aRG8KjJGRM/1kOXBzjBeqF1QYYn00tJ3/GWUeLjSCdizVjumZRThHPhlGb+G/4
-         ldhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731402211; x=1732007011;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BZodqYnAl+hp6b8+gPO27uullhRtjTjKBuGYhquXyG0=;
-        b=I9I9IsVPFyqsM2dWvoEfN/kJAJU/alMlSf+cd0oPKduHVKHP0QE4twfjsXLVIIGDjb
-         k/1CswNQm2WIXFuAQ4poSO8VZ6MlCS92K+XIsCc52iAZ0vXWIWieDV97E/kQjKV8w7ES
-         k5AY2JXg+13EV5htWCylgOMtiiUp3nth2zsx4VzfW62xD9HlIqiQMMaclio9csgOb4Xa
-         P/Bay7qZYfBkxudP+1dKv9fHTW2xHG1L96sUucQ24TZhMlB1f0/sSTToRRe+8d25exQ/
-         TAFj6KdGzhXpDEHZAa+M7lh94//FILYv4V0SQVaHGpHD6oHCZ6/U7m3UxT9cyOE52lB8
-         lmgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVl2ZLJiE9dz3KCyHRYKGoIlRJ0TlAWiA2kepxRd6vKLjOj6/kmPf3HIDBemidvRxSitje95wcRqC4CBKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU89sOtuUhO2zwe6ZFMCrk64io4LXjEE3MjyM6khwUyvi+iFcj
-	sulTET334eCL06kfvwTAhZYkHsGRCYhdherh6TPUaRiRr3TmlrxZxfAvxE27TA/Ffmgj80SZVMt
-	Hx87WZ+8kOVxzwQqORbmD/xNyNOmiqdkG5fqZGg==
-X-Google-Smtp-Source: AGHT+IHBgdg+oJyxDVew007cJCkX64nuJzGbC3EDm5y6B/Dzp37sOvWjK5zGvZwAC4w/i8hjX3g1U1WVHjBUfcFGpOM=
-X-Received: by 2002:a17:90a:f94b:b0:2e5:e33c:99c5 with SMTP id
- 98e67ed59e1d1-2e9b1749339mr19105948a91.37.1731402210857; Tue, 12 Nov 2024
- 01:03:30 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94321F7092;
+	Tue, 12 Nov 2024 09:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731402265; cv=fail; b=KwbAYEo03XCtJKFqDxFRgtREcjNToVwbVHBNTkJ54yNwgcqcWCNDB0IHiNaCfeXB6UVqFVkXEoAdbgifBFuO5NACiiZnAaD4jZC3iV9Mm71PNqtS8FnUXblQNL+x933OmxiJk+oJzDYSVhpKeCB8XX+K3W/YONs6QhXRCdL9I0o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731402265; c=relaxed/simple;
+	bh=Wz+A0jAgLie9Blc684e230sV/R4XFLHUhE0W6BScHt4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=CIyY4mcWbXlFl5KoIE5ZvcDc3+gEAcV/orlVatXycexOrtNAmp6y/Bf3Hmtg9GiBmzUfmdsaA9zxC4oR8EGPG9Enp0A1EC6NeYaxF/KphW1ZuVwyPCGYgzCMFHEGV3dxVY3uqv/Y9zc3WCvX+lFJXKV3oeTJcCoLxEDQAw6fqyc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XUCyvjm0; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731402264; x=1762938264;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=Wz+A0jAgLie9Blc684e230sV/R4XFLHUhE0W6BScHt4=;
+  b=XUCyvjm0UKYdh2cUITtYqL897hq14T6NmmMr5E2B3eqHlWgfyoLiqVuD
+   ZmIekfG25TNywmJLsv/yIKL2ZZDHif3DlFV7q+iX+1Gmhd/KJoieyfhmp
+   XuhGN6nZRUUtpxnZgW3qLi/mxDBeAKVuhDAfm9LjjAq7viXZWjTuPeqMl
+   fLjloOJW7hgPnWheEt4KfPCNll+sQhvzMN5gORNNmcl8l8KWct7nWJUl6
+   PyO+eLaDvRN0b29ZjOs0BZPQD57BSn+ASnqUQsNz+uJmHuL5E+1g6V15I
+   Cut+8S2tzfV9ms8zWg0vmM7JK9zz3BdT3vXbIXIpo+cq2tR65diklBEE1
+   A==;
+X-CSE-ConnectionGUID: 5OoJcecbRhisGaS6Jw3iaw==
+X-CSE-MsgGUID: Gw4PKvHqT++YloHbh07M6Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53778886"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="53778886"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 01:04:24 -0800
+X-CSE-ConnectionGUID: /pq0g5wSTq66X4Q+Bq0eeA==
+X-CSE-MsgGUID: SyOF3M3tR5WbD6fDM+tjsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="92291639"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Nov 2024 01:04:23 -0800
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 12 Nov 2024 01:04:22 -0800
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 12 Nov 2024 01:04:22 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.47) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 12 Nov 2024 01:04:22 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OhY/YrCr3iXsR4lX8lFT4vlPg5BS3NSiUf7fr8r3/uhuewUaT570Gwn/t/BJf4FgkoGZolsVgVe6i3ILvIGqkoVzEMaf7hYQD/l14ekXczAJbdmXq6OHAdMvYof0AFTkdIF7KQwLkXJy1nBBsT7k0iZtSwTseJEjQa3LFTDl2sKUJeZyav4lg/p2VKPZjOI9N3k7Gg0xOrFNtEyq+UrG2ehaOOtjE360UKOeo8u4rJKE+x6gXCeINm9PV81AiXAxY1Ls4Ql5qQ1zENC7bRUKphw+ivq9FgzIDyGCooeJ9bkBWHj2haDbnQiZyQCj9WPrL+GQanlGyA7tNw2BHB0CAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ajKdEkGGrmmAYvX063RZ1ESB1vPu0tYkNaRMMFxzJmw=;
+ b=BIMx1wVsoRnFq4z7AMoaK5eM4bBw7KE0Py4azDfhHCBNcFa52Opu2L3Xrd2VUDUMSKIezL+inIm80T9ScR5QDhT7/nkOM55YAPxLR4ywAsa5fMMTvJRJsPi8ncZzXbm74H72mMVsvpwLQQYHhTgtuE+aZrqlSOSodY89IhlrQOD7aBej863egWejLT9/HB420cOaiCGFPbc/LmflxwgDsJJq5U+qnhADhpfYgWxTb1XTGswBS/4TF6258CAgN09IeGqKLnFjWgX2Q1IK2U2uvkAjbjCeX2gVzAwjl9S+z5gU7PdwsmllZbqrAANNFpeyIn2H8wcd8VEMYXhb0tTTKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by PH0PR11MB5110.namprd11.prod.outlook.com (2603:10b6:510:3f::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Tue, 12 Nov
+ 2024 09:04:20 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%3]) with mapi id 15.20.8137.021; Tue, 12 Nov 2024
+ 09:04:19 +0000
+Date: Tue, 12 Nov 2024 17:04:11 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/5] KVM: nVMX: Honor event priority when emulating PI
+ delivery during VM-Enter
+Message-ID: <ZzMaCzDNJAOCMFl6@intel.com>
+References: <20241101191447.1807602-1-seanjc@google.com>
+ <20241101191447.1807602-6-seanjc@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241101191447.1807602-6-seanjc@google.com>
+X-ClientProxiedBy: SI2PR04CA0011.apcprd04.prod.outlook.com
+ (2603:1096:4:197::10) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
- <20241108083133.GD38786@noisy.programming.kicks-ass.net> <CAGETcx-CvWVc=TP5OmUL_iF7fSb1awJB1G8NghM1q_6dYKXkQQ@mail.gmail.com>
- <cc8831c7-8ea2-0ee7-061f-73352d7832ad@amd.com> <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
- <20241111104054.GE22801@noisy.programming.kicks-ass.net> <CAGETcx_1uyZ3M1LtSkZDHiTwDQj8M54V-=geRqJYkZXo9ZbU6w@mail.gmail.com>
- <CAKfTPtBBq0mMat4FWPYprxZX52VFrKrrDMqvXBROuY4T-95+GQ@mail.gmail.com>
- <CAKfTPtB90_ywaVooR=MGfjhxz2mf=kOeEzdDWKh=7jfcuu7xQg@mail.gmail.com> <CAGETcx_7LYuZi356mD2j7bcZReobQE0MjoT8vdtgvdN_L2t9ww@mail.gmail.com>
-In-Reply-To: <CAGETcx_7LYuZi356mD2j7bcZReobQE0MjoT8vdtgvdN_L2t9ww@mail.gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 12 Nov 2024 10:03:19 +0100
-Message-ID: <CAKfTPtCs8wCoUvNgxNcqi5ozDiRBrLLkuA4Edi1bu1UZLsV-Vg@mail.gmail.com>
-Subject: Re: Very high scheduling delay with plenty of idle CPUs
-To: Saravana Kannan <saravanak@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
-	Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de, John Stultz <jstultz@google.com>, 
-	Vincent Palomares <paillon@google.com>, Tobias Huschle <huschle@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|PH0PR11MB5110:EE_
+X-MS-Office365-Filtering-Correlation-Id: 92e2af3d-b543-4178-661e-08dd02f8fe43
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?NeQ3UcM8mghypL5vuXMqtdr3vSnOabADmlwwiGf2wMTCCHxgfVnj8PTE3C88?=
+ =?us-ascii?Q?n57xKOV4uKE7un1yoZmwQPDlPXGPTwHkZHqp+GXTecSMl3Y6udsSBNUquIZd?=
+ =?us-ascii?Q?a4K9YBX89N/4t0srNaQa8BH9gu6515TwWxpVHfLLb2zqs84mZO78Xdx7KHdT?=
+ =?us-ascii?Q?QfSBCqHCmOXtY7Vd19qP/1WyD+ZDIQ9LhXD71YYaReag12Pf6ob1yBRoaP9f?=
+ =?us-ascii?Q?PAuEMeBu8hhJRPPH8GSpuBI1QuXd6RUnfZo2rh3FdkrPLmjJX/fqxYYDLQG8?=
+ =?us-ascii?Q?Odt4CjwRimpAZxZA/3P7ntJoswo50rjUHZGaQg8IcRvsdwrnCdsrZIp2XTq/?=
+ =?us-ascii?Q?lllipyWvASO2SbwcAe49vXAJmZAo6m7pPR3oCPNmYdE1Er+Q/6+pPH8SfHBB?=
+ =?us-ascii?Q?SP4veuAtxCN+MOhNbz5KvO3XattMf6qaEUrcAazroP5M36ewvxjQg3xmwVF4?=
+ =?us-ascii?Q?MLLXQT5hkLuE5aMsBZ9MKbRAz0qmOQ08AvMJPfje/NNb3PidPNWX4YvJh99T?=
+ =?us-ascii?Q?VTT9NqhmRCZkk4EfJNDrJYHxJFG99b7IhVXYlheQVAN25B18eGkyAJGhUWln?=
+ =?us-ascii?Q?54a4DHM1jGs95nRmx7Uq852KgW2dk5dksq6Qp+/rH6mmL7sripQchMMr7AI4?=
+ =?us-ascii?Q?y0TXsRmZmj+99rw12WHO3Xjsyq9VnkrsdkKLW3w6NQyLaalGgDdMh90rCbUI?=
+ =?us-ascii?Q?TrpAnm1CwGgAP2IJt2P5hXnSdhchYacGq3UrHMOPUx0NZUBXCGxkBM4xugaZ?=
+ =?us-ascii?Q?1LNH3NO2cY44CRO1D2Utgr4R6c6qOufqUoBlQxW2ZC2f0UkvGGAkGg29fGqP?=
+ =?us-ascii?Q?x4eul7rGhfMv48nGs1TBoSGL1QSenj2fM9/tnW7a6aG95JoPGwybxP0V/2xt?=
+ =?us-ascii?Q?A3qyXsORMagUQGNqaPopK3eG1aW/MppHxwmd6cibZr/52aWd0fICMEI/eoEL?=
+ =?us-ascii?Q?SVLa6bBTidLXUQbZ3oNVfU/qrjilQdx9whGiLoq42km4rnSdI1Ns6EFDiuy6?=
+ =?us-ascii?Q?xpenz46WOlzAuTI8xtS15pn4l97TErOSuvoc0C0lQEL6uz2rC9YGy+0UAaa3?=
+ =?us-ascii?Q?WCejliR7mJNJtfixtYObITsg8j4hMVWRly2XJy4U92q9pjChkPlP94gXFT6l?=
+ =?us-ascii?Q?CEXKpDTwNkeQJrjRptu+Tanjo1bW+KccT3Cr01y/fUbHx+C6C3QL6gDL4XQr?=
+ =?us-ascii?Q?G9CkGWKhyNLbficwzQrGRw3YHMANfPGEGQykE+p0XX/2dX+fAsDz29RZMxt8?=
+ =?us-ascii?Q?oE7AzXAYhdZF3lHp1s+tua3fTGl9xy/V6zFM6aKY7u5z+bnfzn63YRqg6nRP?=
+ =?us-ascii?Q?/2B6Cc8Hhv+hpgChppzGLVes?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qroaaU2jXB3oEpUvDxD71OXtXCzTwoNRkH2WsWa0W/ssWvdhTe3vZB62X1/L?=
+ =?us-ascii?Q?O3uoVJJVYZfNnRd9hLQmpA+hzJVZ6wp/tKjGgfmz0Y+5eOh/UrBEFY7kSxva?=
+ =?us-ascii?Q?LLMwfEX/dsQ2wb9VuycYKb1dRZPeEhjffrGGAexT7PtfG/3ebaRBNsMwE1dx?=
+ =?us-ascii?Q?CLarU93Cl4+zdW0dGTuvDl/UwTPDr6wewMdsp+4HH+l+Wz1VXoAFyAp+D8LR?=
+ =?us-ascii?Q?ZLGUQAnaVq2v6x1GCDXzM2Mwd+bxnobRjwFURFyQHRkoqn9bKr5mWrhux152?=
+ =?us-ascii?Q?KqWzOBUCtIlSl45VwTGIuGgc5danudV0gMzS+2ImP13hbsAy3wG/EP/dUI0U?=
+ =?us-ascii?Q?jnKWP3rQc3uXZURVUxxs+apuPL8uwi9/7CfZX7I6M/G4ifnTtJVGnbbtaCFD?=
+ =?us-ascii?Q?6oQjPnN1xI6cLzeIrrfWkF0zgqnIj/j8WEvZnwEQTSvHdnDigUWUSkfUKF5k?=
+ =?us-ascii?Q?qXTn7iu4CgIOqeMntZBC6n9vyjsusTsYYqUjFSnm0n6D3Cbd6ob56fFRI7zs?=
+ =?us-ascii?Q?C6bx9DfpwE5XBasJyfDt9Snwr66n10OL2Be8kbbpgy4n3u8Klc8nwAb5PeJn?=
+ =?us-ascii?Q?QBgkKWsJHTpSem6rJ39hSfWmwPt5vfw4MMwMsZUP5BJ9SvlQ6SdIg+5nVOdO?=
+ =?us-ascii?Q?FwVPJ76+YJnYkk+we9kCVmneRNr4E1sWqbzi8NMWSteM/Vd6Zpukx4vmxZs9?=
+ =?us-ascii?Q?KaI/mWsSiShtZe8IkOoXj3ugKkw0TYVLY8DEUtY/q0jMYWu8lWN/mKvSSHhM?=
+ =?us-ascii?Q?YLoeCmGZlF1/PkM8/Se6nfIX5DbbdlriUu6llivRKg5TVHc/8+4yxiiYUVDN?=
+ =?us-ascii?Q?DiIPobNrR1VBIVNfpP/5p/e4aP7LczGQD9uGou2q/nRhxr8fsArnQ7jQr+Z7?=
+ =?us-ascii?Q?HP7b3XWb0+xPernPCiC6WqqhkUS6DTLkhW0NvLkIEfHxRvm37fYd4nnN8CvQ?=
+ =?us-ascii?Q?1HB4VwiIujm+ruvr+KakxNLNKU0Wl2dh2vkU8ckJlF+6uTVSb2DfNZXA2kDa?=
+ =?us-ascii?Q?qNufNPXHv1/8euespBbwEqAN+Pmy119NRoAgj7W6RxSEYQr/1TAFghAddfT5?=
+ =?us-ascii?Q?C8xQwYNuUCJjbZm+DybJOxk/6wFdl4ptdG1jskreBBACxR91rSFZamRP61/C?=
+ =?us-ascii?Q?zDbtPdXX0rNbkCfhrtnb/4+4o0tKURI0YlEYgZW690hqbGpqfe8kOa6on9Hg?=
+ =?us-ascii?Q?6YyJA3mSavY0UuX6Pfkz97JMJTMcUahW88ZLp2p1dHm5ZXnVkvyeH71PjPIT?=
+ =?us-ascii?Q?S7KHmIXwutgjdQ1d4LPAuJby/4qBCBm7p+KMx7llriVSlspb2xpj5AGbKbru?=
+ =?us-ascii?Q?jbwiaV2ay5vl3R19LnLAxt3Z0APb5EnIToZk+oXcrzRY/mhFho+YWiidYPXX?=
+ =?us-ascii?Q?zy9EEXfunisPKCirqtBFfSciB9U9TbpHlq0OHT/l5cpEhhSjNC3VTzicgr1L?=
+ =?us-ascii?Q?+LJia6WWzbop1+4XOO1QdWbZdXPCYApntxYBLYWRsxLsd+p86sNnQ6dziu/l?=
+ =?us-ascii?Q?rNMIaGGmWnA9KMLsEqq+jhTHZsJSy6JUc57wncd9x2/vYqjlkJ0OPbSsafdH?=
+ =?us-ascii?Q?KSbYJzH3gXopWXP5EtGKVvWHJBFmMwB8WL2daIx5?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92e2af3d-b543-4178-661e-08dd02f8fe43
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 09:04:19.8966
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hOU0tT1Q5hET4ggpFdXV4Xb3JGgrjfyegGHjIunDpDs1+VNov5CQwXoU8sN2MXlMR6uCEWlbpD93sOZ/WZxTbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5110
+X-OriginatorOrg: intel.com
 
-On Tue, 12 Nov 2024 at 08:24, Saravana Kannan <saravanak@google.com> wrote:
+On Fri, Nov 01, 2024 at 12:14:47PM -0700, Sean Christopherson wrote:
+>Move the handling of a nested posted interrupt notification that is
+>unblocked by nested VM-Enter (unblocks L1 IRQs when ack-on-exit is enabled
+>by L1) from VM-Enter emulation to vmx_check_nested_events().  To avoid a
+>pointless forced immediate exit, i.e. to not regress IRQ delivery latency
+>when a nested posted interrupt is pending at VM-Enter, block processing of
+>the notification IRQ if and only if KVM must block _all_ events.  Unlike
+>injected events, KVM doesn't need to actually enter L2 before updating the
+>vIRR and vmcs02.GUEST_INTR_STATUS, as the resulting L2 IRQ will be blocked
+>by hardware itself, until VM-Enter to L2 completes.
 >
-> On Mon, Nov 11, 2024 at 11:12=E2=80=AFAM Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
-> >
-> > On Mon, 11 Nov 2024 at 20:01, Vincent Guittot
-> > <vincent.guittot@linaro.org> wrote:
-> > >
-> > > On Mon, 11 Nov 2024 at 19:24, Saravana Kannan <saravanak@google.com> =
-wrote:
-> > > >
-> > > > On Mon, Nov 11, 2024 at 2:41=E2=80=AFAM Peter Zijlstra <peterz@infr=
-adead.org> wrote:
-> > > > >
-> > > > > On Sun, Nov 10, 2024 at 10:15:07PM -0800, Saravana Kannan wrote:
-> > > > >
-> > > > > > I actually quickly hacked up the cpu_overutilized() function to=
- return
-> > > > > > true during suspend/resume and the threads are nicely spread ou=
-t and
-> > > > > > running in parallel. That actually reduces the total of the
-> > > > > > dpm_resume*() phases from 90ms to 75ms on my Pixel 6.
-> > > > >
-> > > > > Right, so that kills EAS and makes it fall through to the regular
-> > > > > select_idle_sibling() thing.
-> > > > >
-> > > > > > Peter,
-> > > > > >
-> > > > > > Would you be open to the scheduler being aware of
-> > > > > > dpm_suspend*()/dpm_resume*() phases and triggering the CPU
-> > > > > > overutilized behavior during these phases? I know it's a very u=
-se case
-> > > > > > specific behavior but how often do we NOT want to speed up
-> > > > > > suspend/resume? We can make this a CONFIG or a kernel command l=
-ine
-> > > > > > option -- say, fast_suspend or something like that.
-> > > > >
-> > > > > Well, I don't mind if Vincent doesn't. It seems like a very
-> > > > > specific/targeted thing and should not affect much else, so it is=
- a
-> > > > > relatively safe thing to do.
-> > > > >
-> > > > > Perhaps a more direct hack in is_rd_overutilized() would be even =
-less
-> > > > > invasive, changing cpu_overutilized() relies on that getting prop=
-agated
-> > > > > to rd->overutilized, might as well skip that step, no?
-> > > >
-> > > > is_rd_overutilized() sounds good to me. Outside of setting a flag i=
-n
-> > >
-> > > At know I'm not convinced that this is a solution but just a quick
-> > > hack for your problem. We must understand 1st what is wrong
-> >
-> > And you should better switch to performance cpufreq governor to
-> > disable eas and run at max freq if your further wants to decrease
-> > latency
->
-> Ohhh... now that you mention fixing CPU frequencies, a lot of systems
-> fix their CPU frequencies during suspend/resume. Pixel 6 is one of
-> them. In the case of Pixel 6, the driver sets the policy min/max to
-> these fixed frequencies to force the CPU to stay at one frequency.
-> Will EAS handle this correctly? I wonder if that'd affect the task
+>Note, very strictly speaking, moving the IRQ from L2's PIR to IRR before
+>entering L2 is still technically wrong.  But, practically speaking, only a
+>userspace that is deliberately checking KVM_STATE_NESTED_RUN_PENDING
+>against PIR and IRR can even notice; L2 will see architecturally correct
+>behavior, as KVM ensure the VM-Enter is finished before doing anything
+>that would effectively preempt the PIR=>IRR movement.
 
-AFAICT, it should
+In my understanding, L1 can notice some priority issue in some cases. e.g.,
+L1 enables NMI window VM-exit and enters L2 with a nested posted interrupt
+notification. Assuming L2 doesn't block NMIs, then NMI window VM-exit should
+happen immediately after nested VM-enter even before the nested posted
+interrupt processing.
 
-> placement decision. Also, other systems might limit CPU frequencies in
-> ways that EAS can't tell. If the CPU frequencies are frozen, I'm not
-> sure EAS makes a lot of sense. Except maybe using CPU max capacity to
-> make sure little CPUs are busy first before using the big CPUs?
->
-> But even if EAS thinks the CPU freq could go up (when it can't), it
-> still doesn't make a lot of sense to not use those idle CPUs and
-> instead try to bump up the frequency (by putting more threads in a
-> CPU).
-
-In this case, you just need to call the below before entering suspend
-and after resuming
-  echo 1 > /proc/sys/kernel/sched_energy_aware
-instead of hacking overutilized
-This will disable EAS without rebuilding sched domain
-
->
-> Anyway, with all this in mind, it makes more sense to me to just
-> trigger the "overutilized" mode during these specific parts of
-> suspend/resume.
->
-> -Saravana
->
-> >
-> > >
-> > > > sched.c that the suspend/resume code sets/clears, I can't think of =
-an
-> > > > interface that's better at avoiding abuse. Let me know if you have
-> > > > any. Otherwise, I'll just go with the flag option. If Vincent gets =
-the
-> > > > scheduler to do the right thing without this, I'll happily drop thi=
-s
-> > > > targeted hack.
-> > > >
-> > > > -Saravana
+Another case is the nested VM-enter may inject some events (i.e.,
+vmcs12->vm_entry_intr_info_field has a valid event). Event injection has
+higher priority over external interrupt VM-exit. The event injection may
+encounter EPT_VIOLATION which needs to be reflected to L1. In this case,
+L1 is supposed to observe the EPT VIOLATION before the nested posted interrupt
+processing.
 
