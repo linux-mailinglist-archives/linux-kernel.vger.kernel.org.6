@@ -1,71 +1,64 @@
-Return-Path: <linux-kernel+bounces-406322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468B09C5D63
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:35:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027819C5D75
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:37:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 056EF1F21756
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:35:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE91C1F2229B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB274206067;
-	Tue, 12 Nov 2024 16:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87952206963;
+	Tue, 12 Nov 2024 16:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P0NIsD0a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQaYjSTz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5087A2309BF
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81BE206067;
+	Tue, 12 Nov 2024 16:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731429292; cv=none; b=H/Ep2m2Vfl+41rzYRXq70Cwlz8dcNWG4rna+E9nsagSfPqLFlgOtRtD2E98+YStZS1VFdwz9OjLMUleU5V/RXKgjmrXFKuzMPbS0s4wYfPr+JWKy/lLFfRqfYjOirgEz+0vmPESQY6RURk1mfR8zAs77/8OYl3wMjMOU2QlnywU=
+	t=1731429446; cv=none; b=cddvYETCXQGU3IeFIC0l0vS4a/1VAe1Jl0fqnYnVsBnOZUwZGU8gz9/xWJ+gFSHzulXx2o0TcSj//ba504zo8X/k0tCm2DxOAohgQ7EXMadm5LWgLtHSTbrwjF8OVDxrbckXfG8ZENGdCNj1DNE+rF1QmNxbUIviOWp9Hp2YN9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731429292; c=relaxed/simple;
-	bh=maejiSruHV87Y+aXMuzBMKh+5AM/W/xMedlQ3gYipAQ=;
+	s=arc-20240116; t=1731429446; c=relaxed/simple;
+	bh=0Gd9BBi3w/ks72jwpBlBm8kmgsSoikaY5omKdoods7E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cNSh5Kaka5coIDHrNYdMuo8cvgs6Du7KawLj1qabfTd3XFuCcmrARGL5biVWhwBIW7hj0MiTvxujT0Vf9qU5TDVduoZ1Q6NkHsrrJeqQy0dm9CMBvGShRoykdtRnqMOqyWW1T9nM8XP/oQombxDfW4QfP2tf21Bigo0sum2zbVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P0NIsD0a; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731429289;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rKB5Z1lLpeLT0LZ+NAjLFKIK23L71bpb9LtJKKAzd7w=;
-	b=P0NIsD0aFbLQ0F8odQeqgz3NykreQxLZHovu/it9JRaDBeQlYk/ZHSCMs1KSwI28KhvEF+
-	qITKMtV69PiKTwPvauIQajwxCJ6usEXP2aiZmManV4oUzV8p9aL2yAjEVZ5c03iIsP1z47
-	sgAgQ7GkV5eADIJxorHU1EOqrXJxMTg=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-381-gwL-hOU5MVeY31HFqQOAlA-1; Tue,
- 12 Nov 2024 11:34:47 -0500
-X-MC-Unique: gwL-hOU5MVeY31HFqQOAlA-1
-X-Mimecast-MFC-AGG-ID: gwL-hOU5MVeY31HFqQOAlA
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ABAB61956096;
-	Tue, 12 Nov 2024 16:34:44 +0000 (UTC)
-Received: from bfoster (unknown [10.22.80.120])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 28C6330000DF;
-	Tue, 12 Nov 2024 16:34:41 +0000 (UTC)
-Date: Tue, 12 Nov 2024 11:36:14 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
-	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
-	kirill@shutemov.name, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 12/16] ext4: add RWF_UNCACHED write support
-Message-ID: <ZzOD_qV5tpv9nbw7@bfoster>
-References: <20241111234842.2024180-1-axboe@kernel.dk>
- <20241111234842.2024180-13-axboe@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P1ksTuZTtJES8BLbSMyn+qJ5ejhMyeJHRGULiMjWwJLnJhkY5mkd+QTWl8UNB3BaDkdG50PnbqESqOmX/r2hkR3gMdnrtPBZKfVOHi2Wp69I1UOA9uVRq4/HX5MqQkx58bYKwKwc4ox6q6IxAwQTtUJUZFYV3hdvSTyH7k8JK5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQaYjSTz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C5A6C4CECD;
+	Tue, 12 Nov 2024 16:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731429445;
+	bh=0Gd9BBi3w/ks72jwpBlBm8kmgsSoikaY5omKdoods7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UQaYjSTzIUtruQCkG7i8elZIjAfPq4ts1dJGlR7iG79h43GhySj+6iV6f1SXmPzvQ
+	 MbyYwKfjI7UJS0xmCwwO/0BSaeRSCXOU0NQTDdQCYNkGx6moa0+a8IMroSrbGn+Reu
+	 O8SHQxW9s7O0cCMikyNjOaat2rdp4bl//t4FttqP4M84tRQZoYhheeGCGZ1XDCCZoZ
+	 LvXsgbvkSB6Q9R6P56W6HB6vkOLuiB0r8alQxwjaAkRoSLdvTNmSrTHjYq7JjZ6uDq
+	 4ROllXcc/6b2M8LW/q2WumWONLV9Gvh6D9wVFQVJNde6woJmiTBxbDQCKP9NwdMjZU
+	 m36uFZe0dgUWw==
+Date: Tue, 12 Nov 2024 10:37:23 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] dt-bindings: can: tcan4x5x: Document the
+ ti,nwkrq-voltage-sel option
+Message-ID: <20241112163723.GA1142553-robh@kernel.org>
+References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
+ <20241111-tcan-wkrqv-v2-2-9763519b5252@geanix.com>
+ <20241112-sincere-warm-quetzal-e854ac-mkl@pengutronix.de>
+ <jd5ausjx726rem4iscupwfxilc2fsfkshw3pim2ps3i5btstge@sz6qnqjfvwx2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,179 +67,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241111234842.2024180-13-axboe@kernel.dk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <jd5ausjx726rem4iscupwfxilc2fsfkshw3pim2ps3i5btstge@sz6qnqjfvwx2>
 
-On Mon, Nov 11, 2024 at 04:37:39PM -0700, Jens Axboe wrote:
-> IOCB_UNCACHED IO needs to prune writeback regions on IO completion,
-> and hence need the worker punt that ext4 also does for unwritten
-> extents. Add an io_end flag to manage that.
+On Tue, Nov 12, 2024 at 08:40:56AM +0100, Sean Nyekjaer wrote:
+> Hi Marc,
 > 
-> If foliop is set to foliop_uncached in ext4_write_begin(), then set
-> FGP_UNCACHED so that __filemap_get_folio() will mark newly created
-> folios as uncached. That in turn will make writeback completion drop
-> these ranges from the page cache.
+> On Tue, Nov 12, 2024 at 08:35:43AM +0100, Marc Kleine-Budde wrote:
+> > On 11.11.2024 09:54:50, Sean Nyekjaer wrote:
+> > > nWKRQ supports an output voltage of either the internal reference voltage
+> > > (3.6V) or the reference voltage of the digital interface 0 - 6V.
+> > > Add the devicetree option ti,nwkrq-voltage-sel to be able to select
+> > > between them.
+> > > 
+> > > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml | 13 +++++++++++++
+> > >  1 file changed, 13 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+> > > index f1d18a5461e05296998ae9bf09bdfa1226580131..a77c560868d689e92ded08b9deb43e5a2b89bf2b 100644
+> > > --- a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+> > > +++ b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+> > > @@ -106,6 +106,18 @@ properties:
+> > >        Must be half or less of "clocks" frequency.
+> > >      maximum: 18000000
+> > >  
+> > > +  ti,nwkrq-voltage-sel:
+> > > +    $ref: /schemas/types.yaml#/definitions/uint8
+> > > +    description:
+> > > +      nWKRQ Pin GPO buffer voltage rail configuration.
+> > > +      The option of this properties will tell which
+> > > +      voltage rail is used for the nWKRQ Pin.
+> > > +    oneOf:
+> > > +      - description: Internal voltage rail
+> > > +        const: 0
+> > > +      - description: VIO voltage rail
+> > > +        const: 1
+> > 
+> > We usually don't want to put register values into the DT. Is 0, i.e. the
+> > internal voltage rail the default? Is using a boolean better here?
+> > 
+> > regards,
+> > Marc
+> > 
 > 
-> Now that ext4 supports both uncached reads and writes, add the fop_flag
-> FOP_UNCACHED to enable it.
+> Thanks for the review :)
 > 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/ext4/ext4.h    |  1 +
->  fs/ext4/file.c    |  2 +-
->  fs/ext4/inline.c  |  7 ++++++-
->  fs/ext4/inode.c   | 18 ++++++++++++++++--
->  fs/ext4/page-io.c | 28 ++++++++++++++++------------
->  5 files changed, 40 insertions(+), 16 deletions(-)
-> 
-...
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 54bdd4884fe6..afae3ab64c9e 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1138,6 +1138,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->  	int ret, needed_blocks;
->  	handle_t *handle;
->  	int retries = 0;
-> +	fgf_t fgp_flags;
->  	struct folio *folio;
->  	pgoff_t index;
->  	unsigned from, to;
-> @@ -1164,6 +1165,15 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->  			return 0;
->  	}
->  
-> +	/*
-> +	 * Set FGP_WRITEBEGIN, and FGP_UNCACHED if foliop contains
-> +	 * foliop_uncached. That's how generic_perform_write() informs us
-> +	 * that this is an uncached write.
-> +	 */
-> +	fgp_flags = FGP_WRITEBEGIN;
-> +	if (*foliop == foliop_uncached)
-> +		fgp_flags |= FGP_UNCACHED;
-> +
->  	/*
->  	 * __filemap_get_folio() can take a long time if the
->  	 * system is thrashing due to memory pressure, or if the folio
-> @@ -1172,7 +1182,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->  	 * the folio (if needed) without using GFP_NOFS.
->  	 */
->  retry_grab:
-> -	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
-> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
->  					mapping_gfp_mask(mapping));
->  	if (IS_ERR(folio))
->  		return PTR_ERR(folio);
+> Can you come up with a sane naming?
+> A boolean that equals true when it's set to VIO voltage? Or the other
+> way around?
 
-JFYI, I notice that ext4 cycles the folio lock here in this path and
-thus follows up with a couple checks presumably to accommodate that. One
-is whether i_mapping has changed, which I assume means uncached state
-would have been handled/cleared externally somewhere..? I.e., if an
-uncached folio is somehow truncated/freed without ever having been
-written back?
+Make the property named/present for the less common case if there is 
+one. That might not be known here.
 
-The next is a folio_wait_stable() call "in case writeback began ..."
-It's not immediately clear to me if that is possible here, but taking
-that at face value, is it an issue if we were to create an uncached
-folio, drop the folio lock, then have some other task dirty and
-writeback the folio (due to a sync write or something), then have
-writeback completion invalidate the folio before we relock it here?
-
-Brian
-
-> @@ -2903,6 +2913,7 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
->  	struct folio *folio;
->  	pgoff_t index;
->  	struct inode *inode = mapping->host;
-> +	fgf_t fgp_flags;
->  
->  	if (unlikely(ext4_forced_shutdown(inode->i_sb)))
->  		return -EIO;
-> @@ -2926,8 +2937,11 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
->  			return 0;
->  	}
->  
-> +	fgp_flags = FGP_WRITEBEGIN;
-> +	if (*foliop == foliop_uncached)
-> +		fgp_flags |= FGP_UNCACHED;
->  retry:
-> -	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
-> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
->  			mapping_gfp_mask(mapping));
->  	if (IS_ERR(folio))
->  		return PTR_ERR(folio);
-> diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-> index ad5543866d21..10447c3c4ff1 100644
-> --- a/fs/ext4/page-io.c
-> +++ b/fs/ext4/page-io.c
-> @@ -226,8 +226,6 @@ static void ext4_add_complete_io(ext4_io_end_t *io_end)
->  	unsigned long flags;
->  
->  	/* Only reserved conversions from writeback should enter here */
-> -	WARN_ON(!(io_end->flag & EXT4_IO_END_UNWRITTEN));
-> -	WARN_ON(!io_end->handle && sbi->s_journal);
->  	spin_lock_irqsave(&ei->i_completed_io_lock, flags);
->  	wq = sbi->rsv_conversion_wq;
->  	if (list_empty(&ei->i_rsv_conversion_list))
-> @@ -252,7 +250,7 @@ static int ext4_do_flush_completed_IO(struct inode *inode,
->  
->  	while (!list_empty(&unwritten)) {
->  		io_end = list_entry(unwritten.next, ext4_io_end_t, list);
-> -		BUG_ON(!(io_end->flag & EXT4_IO_END_UNWRITTEN));
-> +		BUG_ON(!(io_end->flag & (EXT4_IO_END_UNWRITTEN|EXT4_IO_UNCACHED)));
->  		list_del_init(&io_end->list);
->  
->  		err = ext4_end_io_end(io_end);
-> @@ -287,14 +285,15 @@ ext4_io_end_t *ext4_init_io_end(struct inode *inode, gfp_t flags)
->  
->  void ext4_put_io_end_defer(ext4_io_end_t *io_end)
->  {
-> -	if (refcount_dec_and_test(&io_end->count)) {
-> -		if (!(io_end->flag & EXT4_IO_END_UNWRITTEN) ||
-> -				list_empty(&io_end->list_vec)) {
-> -			ext4_release_io_end(io_end);
-> -			return;
-> -		}
-> -		ext4_add_complete_io(io_end);
-> +	if (!refcount_dec_and_test(&io_end->count))
-> +		return;
-> +	if ((!(io_end->flag & EXT4_IO_END_UNWRITTEN) ||
-> +	    list_empty(&io_end->list_vec)) &&
-> +	    !(io_end->flag & EXT4_IO_UNCACHED)) {
-> +		ext4_release_io_end(io_end);
-> +		return;
->  	}
-> +	ext4_add_complete_io(io_end);
->  }
->  
->  int ext4_put_io_end(ext4_io_end_t *io_end)
-> @@ -348,7 +347,7 @@ static void ext4_end_bio(struct bio *bio)
->  				blk_status_to_errno(bio->bi_status));
->  	}
->  
-> -	if (io_end->flag & EXT4_IO_END_UNWRITTEN) {
-> +	if (io_end->flag & (EXT4_IO_END_UNWRITTEN|EXT4_IO_UNCACHED)) {
->  		/*
->  		 * Link bio into list hanging from io_end. We have to do it
->  		 * atomically as bio completions can be racing against each
-> @@ -417,8 +416,13 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
->  submit_and_retry:
->  		ext4_io_submit(io);
->  	}
-> -	if (io->io_bio == NULL)
-> +	if (io->io_bio == NULL) {
->  		io_submit_init_bio(io, bh);
-> +		if (folio_test_uncached(folio)) {
-> +			ext4_io_end_t *io_end = io->io_bio->bi_private;
-> +			io_end->flag |= EXT4_IO_UNCACHED;
-> +		}
-> +	}
->  	if (!bio_add_folio(io->io_bio, io_folio, bh->b_size, bh_offset(bh)))
->  		goto submit_and_retry;
->  	wbc_account_cgroup_owner(io->io_wbc, &folio->page, bh->b_size);
-> -- 
-> 2.45.2
-> 
-> 
-
+Rob
 
