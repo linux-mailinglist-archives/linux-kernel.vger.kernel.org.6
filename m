@@ -1,259 +1,183 @@
-Return-Path: <linux-kernel+bounces-405357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A4069C5046
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:06:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E35A9C504C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:08:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA12B1F225ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:06:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E0511F226B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74E320B1F8;
-	Tue, 12 Nov 2024 08:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AEJtsguf"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8E120ADD7;
+	Tue, 12 Nov 2024 08:08:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF72B207A14;
-	Tue, 12 Nov 2024 08:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BDB1A08CB
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731398751; cv=none; b=YdRknBjtPOIQSlDkDDwgIcV50A7T/AFeAmbtrr6oJp8guKY5D/MQIKKXcd8Bw/nD1T6xr7PJbwy5o8dp/fkIFRrasFAtI2eF9fuX5/Qv3yH7O2xrKw4lmnuhx14TRSuCH0BtsnEgJfcoT/ililIhJcizlr/qv9iZ1426B/QMvPQ=
+	t=1731398886; cv=none; b=S/mf+IgCWK7BVUz0rGmShTljqJV4So+HbyGfgyTUG4DVxNlI+vSR7+2+OL7T9WE+gl2/TsHL1HU4ybBhZgpxgZOBREb8iBfGA4SGke75PMKgtgKp8bPYSFof/d3OTPIMQ6S95VINSXppYFwRTlcDsXcCIyceFH3xobOG0K5CvaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731398751; c=relaxed/simple;
-	bh=IeB/4XzrOyimQ4eBaOEL5hd1GPkvU5aH7HCprMBSaR8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UGit1S0fNCHSqjGkYdlCySnQhVZ3CRsYfBlRMgTHn9PbyBYyNVmhHePAJLr/exPE8lAPg6OQz2Pgyde7fpvh0ITMdRYaOcPliYaDn+3WwVB8thRagifeKCbpCnUSG2c2TvSLADkf6ih5q3Hl5CVtgb5pcFFeg2WrZjiEim2u4g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AEJtsguf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC1BSK5032123;
-	Tue, 12 Nov 2024 08:05:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lrd1dDuetkCSIDjAFPNOoc+ysmrRPIiHLNI+nAu1p+U=; b=AEJtsguf+L7YK3wb
-	7WV3XNjODMdNqawW/M6iBb4u2JkOfs+XKwqsLnj3ekaVJ9m9jw8jmdYH2u9fP2VV
-	4tVhy0N6VsFfbb/rNDU84e5QYDnItTz/6N+pmGRfvUq7qkK9ajA0GDqo/xIk2em6
-	eD6CEPTsaAbIS5BKxrM4mRofUo4MI6qfqmcaBNG6CKDmGVtShAWVO3rg5Qs/cNfN
-	2+8NibQAZyMKqpg5IgJMK9LsICObyLjnpHIo+/6a+IJDWO4P/YMRmGdoJIIB7Nlf
-	Yu+VDOUo7k1j1nRoz48WtoH+ffOHdJ+HpyjJhM0JTwEZa1IT8O5akuS28E+fn0EJ
-	CdXrEg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0gkxg5j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 08:05:45 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC85icl023067
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 08:05:45 GMT
-Received: from [10.216.26.111] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
- 2024 00:05:42 -0800
-Message-ID: <c9783a99-724a-cdf0-7e76-7cbf2c77d63f@quicinc.com>
-Date: Tue, 12 Nov 2024 13:35:39 +0530
+	s=arc-20240116; t=1731398886; c=relaxed/simple;
+	bh=AM5L4R6NaBdcutkqIqL4gMAFj36QWXzKuQZ49JMmfu4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Uz6ydfOrTfzRg0Pm5+/eRXd8f8IFhM6IYk1+6sAiUsmcou0160hutCveWDyIsvPhyXcmrjRJeSQbYFpnSm0fIRe+1GzlX0c9kkIENwIZDMZDBoshJT6TDNPobzuJjDw+jO92Gn0EQDDjgDfKPQjDTEw2EKrZq1qVwFqE0JdKE6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c3ecaaabso70676775ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:08:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731398883; x=1732003683;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eoP/5rdS8OwkJVlj1ETPwYBgUw8hzl2EFMvE7sJT7mM=;
+        b=Ap8kuL+NDaV19/cuqQpU2UOHOaABWSO3LPxbp22ksdbT6ApcbLWix19DN6cxygpZbo
+         +th3q4pe3pOo8h5E0zdB+NgCGKaNsbQJiOpmTirXinZvPEcnwlzLLM6sNvHzWqTLKC50
+         +dNGBvg9YifOenv24tKEAfLciT5nR47t07EddNhWUjfp+ow8/FaIX/lLDgmNMrAjW4Ha
+         pPFyFD/LUSDJAKNa7VQQl+Z6ejWYevftV5J4CfAv62DgBz1nHKACtWrJ3jme+LfQLp3c
+         f3e3f0QwDOxh/wv4jF+JYgb/jdyUGiWVAZ0pVp+UFX0x+fyqv8gCq61QCOhqYaMQEY3j
+         KxCA==
+X-Forwarded-Encrypted: i=1; AJvYcCX46++huqQBecek6RAk+GmoOt3U6qN3Pg8tSgu1cWDafhjiEAvf6r7WKB9iO6zjHMYryy/E8+kFgfJe/dk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZhkNoq1iy9U5gh+m6MDAWHmGYQiC1S3FvYRQRKXCNcK+aaVQA
+	sLMRLd2Rise8G5kpgzs4pn96gY1Jypgisaqi+IH+zKmDXhZMRMceYLFrkulvlAlFveFE7QwCu8/
+	m16Ob0whb3l/1DZNzz86MaS/9tM+nU5O0Sxi1xsE1n0ufL8AhXoBM3Sc=
+X-Google-Smtp-Source: AGHT+IGXfL9slfjxLTW5zrR+H9F6Rt8PAs4HqpPjzl2yXKz237brKVs5h3TQDH8yPVLuaFNXTg6xAU7kQqlnaGPRAmXAdho6zvfF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 2/4] media: venus: hfi_parser: avoid OOB access beyond
- payload word count
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
- <20241105-venus_oob-v1-2-8d4feedfe2bb@quicinc.com>
- <474d3c62-5747-45b9-b5c3-253607b0c17a@linaro.org>
- <9098b8ef-76e0-f976-2f4e-1c6370caf59e@quicinc.com>
- <f53a359a-cffe-4c3a-9f83-9114d666bf04@linaro.org>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <f53a359a-cffe-4c3a-9f83-9114d666bf04@linaro.org>
+X-Received: by 2002:a05:6e02:1786:b0:3a0:5642:c78 with SMTP id
+ e9e14a558f8ab-3a70c878d21mr16402335ab.15.1731398883665; Tue, 12 Nov 2024
+ 00:08:03 -0800 (PST)
+Date: Tue, 12 Nov 2024 00:08:03 -0800
+In-Reply-To: <tencent_5074A97043AAA456F764576E46C7137EC305@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67330ce3.050a0220.5088e.000a.GAE@google.com>
+Subject: Re: [syzbot] [nilfs?] KASAN: use-after-free Read in nilfs_find_entry
+From: syzbot <syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KHd7DbBJrH5cRN5YDxjG3K12YSMFFBKw
-X-Proofpoint-GUID: KHd7DbBJrH5cRN5YDxjG3K12YSMFFBKw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411120065
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: use-after-free Read in nilfs_find_entry
+
+=======================================================
+==================================================================
+BUG: KASAN: use-after-free in nilfs_find_entry+0x2ad/0x670 fs/nilfs2/dir.c:321
+Read of size 2 at addr ffff88805585f008 by task syz.0.15/5797
+
+CPU: 0 UID: 0 PID: 5797 Comm: syz.0.15 Not tainted 6.12.0-rc7-syzkaller-g2d5404caa8c7-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ nilfs_find_entry+0x2ad/0x670 fs/nilfs2/dir.c:321
+ nilfs_inode_by_name+0xad/0x240 fs/nilfs2/dir.c:394
+ nilfs_lookup+0xed/0x210 fs/nilfs2/namei.c:63
+ lookup_open fs/namei.c:3573 [inline]
+ open_last_lookups fs/namei.c:3694 [inline]
+ path_openat+0x11a7/0x3590 fs/namei.c:3930
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb5e537e719
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb5e609a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007fb5e5535f80 RCX: 00007fb5e537e719
+RDX: 000000000000275a RSI: 0000000020000080 RDI: ffffffffffffff9c
+RBP: 00007fb5e53f139e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fb5e5535f80 R15: 00007fff7a41f408
+ </TASK>
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x55be003c9 pfn:0x5585f
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+raw: 04fff00000000000 ffffea0001224c08 ffffea000110c308 0000000000000000
+raw: 000000055be003c9 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as freed
+page last allocated via order 0, migratetype Movable, gfp_mask 0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), pid 5800, tgid 5800 (dhcpcd-run-hook), ts 123081593697, free_ts 123090641935
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1541
+ prep_new_page mm/page_alloc.c:1549 [inline]
+ get_page_from_freelist+0x3649/0x3790 mm/page_alloc.c:3459
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4735
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ folio_alloc_mpol_noprof mm/mempolicy.c:2283 [inline]
+ vma_alloc_folio_noprof+0x12e/0x230 mm/mempolicy.c:2314
+ folio_prealloc+0x31/0x170
+ wp_page_copy mm/memory.c:3353 [inline]
+ do_wp_page+0x11c4/0x52d0 mm/memory.c:3745
+ handle_pte_fault+0x10e3/0x6820 mm/memory.c:5782
+ __handle_mm_fault mm/memory.c:5909 [inline]
+ handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6077
+ do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+page last free pid 5800 tgid 5800 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1112 [inline]
+ free_unref_folios+0xdb3/0x1750 mm/page_alloc.c:2689
+ folios_put_refs+0x76c/0x860 mm/swap.c:1007
+ free_pages_and_swap_cache+0x2ea/0x690 mm/swap_state.c:332
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+ tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+ exit_mmap+0x496/0xc40 mm/mmap.c:1936
+ __mmput+0x115/0x390 kernel/fork.c:1348
+ exit_mm+0x220/0x310 kernel/exit.c:571
+ do_exit+0x9b2/0x28e0 kernel/exit.c:926
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
+ x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88805585ef00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88805585ef80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff88805585f000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                      ^
+ ffff88805585f080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff88805585f100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
 
 
-On 11/12/2024 5:13 AM, Bryan O'Donoghue wrote:
-> On 11/11/2024 14:36, Vikash Garodia wrote:
->>> int hfi_parser(void *buf, int size)
->>> {
->>>          int word_count = size >> 2;
->>>          uint32_t*my_word = (uint32_t*)buf;
->> Make this as below and it should lead to OOB
->> uint32_t*my_word = (uint32_t*)buf + 1
->>
->> Regards,
->> Vikash
-> 
-> How does this code make sense ?
-> 
-> 
->         while (words_count) {
->                 data = word + 1;
-> 
->                 switch (*word) {
->                 case HFI_PROPERTY_PARAM_CODEC_SUPPORTED:
->                         parse_codecs(core, data);
->                         init_codecs(core);
->                         break;
->                 case HFI_PROPERTY_PARAM_MAX_SESSIONS_SUPPORTED:
->                         parse_max_sessions(core, data);
->                         break;
->                 case HFI_PROPERTY_PARAM_CODEC_MASK_SUPPORTED:
->                         parse_codecs_mask(&codecs, &domain, data);
->                         break;
->                 case HFI_PROPERTY_PARAM_UNCOMPRESSED_FORMAT_SUPPORTED:
->                         parse_raw_formats(core, codecs, domain, data);
->                         break;
->                 case HFI_PROPERTY_PARAM_CAPABILITY_SUPPORTED:
->                         parse_caps(core, codecs, domain, data);
->                         break;
->                 case HFI_PROPERTY_PARAM_PROFILE_LEVEL_SUPPORTED:
->                         parse_profile_level(core, codecs, domain, data);
->                         break;
->                 case HFI_PROPERTY_PARAM_BUFFER_ALLOC_MODE_SUPPORTED:
->                         parse_alloc_mode(core, codecs, domain, data);
->                         break;
->                 default:
->                         break;
->                 }
-> 
->                 word++;
->                 words_count--;
->         }
-> 
-> 
-> word[] = { 0, 1, 2, 3 };
-> 
-> words_count = 4;
-> 
-> while(words_count);
-> 
->     data = word + 1;
-> 
->     switch(*word) {
->     case WHATEVER:
->         do_something(param, data);
->     }
-> 
->     word++;
->     words_count--;
-> }
-> 
-> // iteration 0
-> data = 1;
-> *word = 0;
-> 
-> // iteration 1
-> data = 2;
-> *word = 1;
-> 
-> ????
-> 
-> How can the step size of word be correct ?
-> 
-> Do we ever actually process more than one pair here ?
-> 
-> #include <stdio.h>
-> #include <stdint.h>
-> 
-> char somebuf[16];
-> 
-> void init(char *buf, int len)
-> {
->         int i;
->         char c = 0;
-> 
->         for (i = 0; i < len; i++)
->                 buf[i] = c++;
-> }
-> 
-> int hfi_parser(void *buf, int size)
-> {
->         int word_count = size >> 2;
->         uint32_t *my_word = (uint32_t*)buf, *data;
-> 
->         printf("Size %d word_count %d\n", size, word_count);
-> 
->         while (word_count > 1) {
->                 data = my_word + 1;
->                 printf("Myword %d == 0x%08x data=0x%08x\n", word_count,
-> *my_word, *data);
->                 my_word++;
->                 word_count--;
->         }
-> }
-> 
-> int main(int argc, char *argv[])
-> {
->         int i;
-> 
->         init(somebuf, sizeof(somebuf));
->         for (i = 0; i < sizeof(somebuf); i++)
->                 printf("%x = %x\n", i, somebuf[i]);
-> 
->         hfi_parser(somebuf, sizeof(somebuf));
-> 
->         return 0;
-> }
-> 
-> 0 = 0
-> 1 = 1
-> 2 = 2
-> 3 = 3
-> 4 = 4
-> 5 = 5
-> 6 = 6
-> 7 = 7
-> 8 = 8
-> 9 = 9
-> a = a
-> b = b
-> c = c
-> d = d
-> e = e
-> f = f
-> Size 16 word_count 4
-> Myword 4 == 0x03020100 data=0x07060504
-> Myword 3 == 0x07060504 data=0x0b0a0908
-> Myword 2 == 0x0b0a0908 data=0x0f0e0d0c
-You did not printed the last iteration without the proposed fix. In the last
-iteration (Myword 1), it would access the data beyond allocated size of somebuf.
-So we can see how the fix protects from OOB situation.
+Tested on:
 
-For the functionality part, packet from firmware would come as <prop type>
-followed by <payload for that prop> i.e
-*word = HFI_PROPERTY_PARAM_CODEC_SUPPORTED
-*data = payload --> hence here data is pointed to next u32 to point and parse
-payload for HFI_PROPERTY_PARAM_CODEC_SUPPORTED.
-likewise for other properties in the same packet
+commit:         2d5404ca Linux 6.12-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11ea78c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
+dashboard link: https://syzkaller.appspot.com/bug?extid=96d5d14c47d97015c624
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1271335f980000
 
-Regards
-Vikash
 
