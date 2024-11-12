@@ -1,138 +1,193 @@
-Return-Path: <linux-kernel+bounces-406553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988519C60B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:46:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6109C60B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29AF61F21436
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:46:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3923F281A8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B6F21833A;
-	Tue, 12 Nov 2024 18:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C052185BB;
+	Tue, 12 Nov 2024 18:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TNZTecwv"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqfOgf+d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89627218331
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9048217476;
+	Tue, 12 Nov 2024 18:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731437076; cv=none; b=VJiun8Jb4BQ0DXL/6CWgFFD+jTgWez0GMvacCSFLRG3lb1gC/SR1t6PqJN7aFEYcAvEpX87ysZrJ1ltp3DvJHgmuiTeGTBGKJYJ0bf+FElfQsVOSgWgD/oGylXw8C2sKjH2cT1JzDTJ4bBTENd+F0z9GOA8AARFm8qcnhtKKvKI=
+	t=1731437131; cv=none; b=MpzWE6epy5aA+QmZbaW4v2gAxbXqYVb0VGW6m1clk98bHboncSw9bgX7JeFudXnpggKP7bVw3VXbagxNfKjzvGYXOa9yMvLIXBWdteZgLw89amw/71Q9tftHKrJb93H2Ce7zIeNHdnju94E/pkcDPlvAGKPD45cNoyppO0HJUcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731437076; c=relaxed/simple;
-	bh=Oa/YrficsfeyjH0/jTjfnABLWOfA6T78uM65AF9s+o8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B/2nntC7dUb/+qM6SerK1tTitSz30RkG+KKr80xfiy4Ljc8Es9vTmczGKnft1YEPuCXKstLJ8ccU3gLoadNTBbAY7OrqS0eN4u8gDSP2PSnvcN8g5ECNPzZzrlcy79bzqbNfXGfCMkdrQCsM6z5WsKKpr4fmDUiDo9Jkclerfg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TNZTecwv; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ea7c9226bbso59411067b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:44:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731437073; x=1732041873; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xGvVgCeLO47x1MsXySaQq6071hjPH/NhHOthZqYhKSQ=;
-        b=TNZTecwvlx2iw0NB+5v5GER1r97bOxENB1eMz5KB28cOyVBciLOVze0vhbmFNskiIt
-         iD/lRXPfodp/5YeLrbpyMMqdOhSkqLdIp80dkqWUST5hc8JwXcCizlA5A9HF3sMMLGQo
-         UanHNml33M3SSmTxkqbFYpfZ5RQd2pe8NrG/bKY6f92RKZ0NrFmnTGu4WtwYXL9ASfAc
-         XVhHDMhDD5YqURN7lFoA8LyFLSeNMOSOeikTz9Zal1LZOFZbBXaW9m3n12Vze65n0Miz
-         m8CyvxWhiaZVQz2fpXkHCwgr0Tz3m+PynHPnL0X292CoDpa2y1+Qj3X/Dpk3hCxPAfLZ
-         QNUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731437073; x=1732041873;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xGvVgCeLO47x1MsXySaQq6071hjPH/NhHOthZqYhKSQ=;
-        b=w35yYCk7M0c1LiDW60eljeNrdR/RYJF50xEZ3vScqEiW3nX0QCpWEwacPEcNYLY6LS
-         SCOPwxjR+c9Y8tRK0vLxIWrLqdAJFd/mq6M1UgB4ZB+Qxkgz09EsF+phYIBN2eAlqQ9m
-         MgsAEBTydFvfsTMemIfqX7VA3GJcqylZjbYj1oYx0NnX9C2+VvJWctKgK25jpR14re3f
-         l3saJ7kkciunFDApR9wFf7cuJ0miaZJbWRGanaZ1Gl/YdYq66TC0jKBXPZQLOetgY0zI
-         Htfn7qiWFPorFed1qYlnmyFgfFPWmREEwHUXt0ULJOuNBSxU+wubQtxwTRGb19CnC1pk
-         hhzg==
-X-Gm-Message-State: AOJu0YzdpIoT6VhYYtQix3eIQzi5dH5mDo4grQADrDvmysv26q+1afVf
-	Fmg59H45cKWxagAuBK0wxVkTFnRGoS0KvcIu3vlG7yUbb84hk4THHmvcISZlV1vdVWw6mXzWjX9
-	JsTlVNNQFuYq+GAcnKb6EV7E+AYtPEiA0eTbeyQ==
-X-Google-Smtp-Source: AGHT+IEe8csqC3Pg0F21RvUMA9aG223tYNBFweh8Drp5qTSmfQtunv7apTIfO3K79mr2mEtEH9f9z4XcBwW5aOMunNg=
-X-Received: by 2002:a05:690c:2501:b0:6dd:cdd7:ce49 with SMTP id
- 00721157ae682-6eca4640ff7mr44651927b3.6.1731437073569; Tue, 12 Nov 2024
- 10:44:33 -0800 (PST)
+	s=arc-20240116; t=1731437131; c=relaxed/simple;
+	bh=wCXJF4/5quDEP4F6qG1v7jSbleUiRWK2iEYLSUjTZPQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BlsXxx5MGGuHOe/cW06saf3qXQnTpzzQ79l+xlKonsrIPyHblYWhCh3fOzKap8/bXwJFCMY8N4OofXq0ukzGi+0TYACM530p60/qHaVXz2BZDYSDyFyHsmAlcaQFWCTm/fxA7x45JC1HAnSEAU4n0m1WUEF2TimJVUJGPTweRCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqfOgf+d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB9E7C4CECD;
+	Tue, 12 Nov 2024 18:45:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731437130;
+	bh=wCXJF4/5quDEP4F6qG1v7jSbleUiRWK2iEYLSUjTZPQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jqfOgf+dYhrkzneeZkWksvX30rmB1BmKC2+jNVBNOZHz3sDYVd1lbsk1WwjI0eUR0
+	 rKjq0bzNBJkPMQvjvKFY/cRI+GzPIeyF226omTKNgTnF5TVh6NHQJvvs1rAvfiTtYR
+	 cB/REsuUsWKUAAvFk+CUj+ZN89VeG+cdxPmNOtljdAkHcfBW7qoQt6KQqgz6aWQ7/f
+	 Epi9h3b8xOMoRMbMCpaTSu7R4RdZcCO8FBtMqBcH2eMh6nC3X2ZbFskWSrbfrjLBBU
+	 BoPH7b7YByjbp+JtHLIikSlg0a7b0ooLzte/iv2E7rVU2yHbQmtTPgm5BiTfVs9API
+	 l3xCxrjpP+6vA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+	HONG Yifan <elsk@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH v3] kbuild: rust: add PROCMACROLDFLAGS
+Date: Tue, 12 Nov 2024 19:44:55 +0100
+Message-ID: <20241112184455.855133-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241110114700.622372-1-aurelien@aurel32.net>
-In-Reply-To: <20241110114700.622372-1-aurelien@aurel32.net>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 12 Nov 2024 19:43:57 +0100
-Message-ID: <CAPDyKFp4t0zHo_sJ3F7D1atwiPK+e38KbhTfcr76Jv+32yUw6w@mail.gmail.com>
-Subject: Re: [PATCH] Revert "mmc: dw_mmc: Fix IDMAC operation with pages
- bigger than 4K"
-To: Aurelien Jarno <aurelien@aurel32.net>
-Cc: linux-kernel@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, 
-	Sam Protsenko <semen.protsenko@linaro.org>, 
-	"open list:SYNOPSYS DESIGNWARE MMC/SD/SDIO DRIVER" <linux-mmc@vger.kernel.org>, Ron Economos <re@w6rz.net>, Adam Green <greena88@gmail.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, 10 Nov 2024 at 12:47, Aurelien Jarno <aurelien@aurel32.net> wrote:
->
-> The commit 8396c793ffdf ("mmc: dw_mmc: Fix IDMAC operation with pages
-> bigger than 4K") increased the max_req_size, even for 4K pages, causing
-> various issues:
-> - Panic booting the kernel/rootfs from an SD card on Rockchip RK3566
-> - Panic booting the kernel/rootfs from an SD card on StarFive JH7100
-> - "swiotlb buffer is full" and data corruption on StarFive JH7110
->
-> At this stage no fix have been found, so it's probably better to just
-> revert the change.
->
-> This reverts commit 8396c793ffdf28bb8aee7cfe0891080f8cab7890.
->
-> Cc: stable@vger.kernel.org
-> Cc: Sam Protsenko <semen.protsenko@linaro.org>
-> Fixes: 8396c793ffdf ("mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K")
-> Closes: https://lore.kernel.org/linux-mmc/614692b4-1dbe-31b8-a34d-cb6db1909bb7@w6rz.net/
-> Closes: https://lore.kernel.org/linux-mmc/CAC8uq=Ppnmv98mpa1CrWLawWoPnu5abtU69v-=G-P7ysATQ2Pw@mail.gmail.com/
-> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+From: HONG Yifan <elsk@google.com>
 
-Applied for fixes, thanks!
+These are flags to be passed when linking proc macros for the Rust
+toolchain. If unset, it defaults to $(KBUILD_HOSTLDFLAGS).
 
-Kind regards
-Uffe
+This is needed because the list of flags to link hostprogs is not
+necessarily the same as the list of flags used to link libmacros.so.
+When we build proc macros, we need the latter, not the former (e.g. when
+using a Rust compiler binary linked to a different C library than host
+programs).
 
+To distinguish between the two, introduce this new variable to stand
+out from KBUILD_HOSTLDFLAGS used to link other host progs.
 
-> ---
->  drivers/mmc/host/dw_mmc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> I have posted a patch to fix the issue, but unfortunately it only fixes
-> the JH7110 case:
-> https://lore.kernel.org/linux-mmc/20241020142931.138277-1-aurelien@aurel32.net/
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 41e451235f637..e9f6e4e622901 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -2957,8 +2957,8 @@ static int dw_mci_init_slot(struct dw_mci *host)
->         if (host->use_dma == TRANS_MODE_IDMAC) {
->                 mmc->max_segs = host->ring_size;
->                 mmc->max_blk_size = 65535;
-> -               mmc->max_req_size = DW_MCI_DESC_DATA_LENGTH * host->ring_size;
-> -               mmc->max_seg_size = mmc->max_req_size;
-> +               mmc->max_seg_size = 0x1000;
-> +               mmc->max_req_size = mmc->max_seg_size * host->ring_size;
->                 mmc->max_blk_count = mmc->max_req_size / 512;
->         } else if (host->use_dma == TRANS_MODE_EDMAC) {
->                 mmc->max_segs = 64;
-> --
-> 2.45.2
->
+Signed-off-by: HONG Yifan <elsk@google.com>
+Link: https://lore.kernel.org/r/20241017210430.2401398-2-elsk@google.com
+[ v3:
+
+  - `export`ed the variable. Otherwise it would not be visible in
+    `rust/Makefile`.
+
+  - Removed "additional" from the documentation and commit message,
+    since this actually replaces the other flags, unlike other cases.
+
+  - Added example of use case to documentation and commit message.
+    Thanks Alice for the details on what Google needs!
+
+  - Instead of `HOSTLDFLAGS`, used `KBUILD_HOSTLDFLAGS` as the fallback
+    to preserve the previous behavior as much as possible, as discussed
+    with Alice/Yifan. Thus moved the variable down too (currently we
+    do not modify `KBUILD_HOSTLDFLAGS` elsewhere) and avoided
+    mentioning `HOSTLDFLAGS` directly in the documentation.
+
+  - Fixed documentation header formatting.
+
+  - Reworded slightly.
+
+         - Miguel ]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+Masahiro: if Kbuild wants to pick this up, that is great. Otherwise, I am happy
+picking this up early next cycle, if you give an `Acked-by` since this is
+changing the interface for Kbuild users given we are introducing a new
+environment variable. Thanks!
+
+Note that the `or` means if the string is empty, we will use the default rather
+than nothing. I didn't change that from Yifan's version, but maybe we want to do
+otherwise. Users can still provide e.g. an empty space to avoid any flag.
+
+Yifan/Alice: please double-check the changes. Thanks!
+
+v3: see changes above.
+v2: https://lore.kernel.org/rust-for-linux/20241017210430.2401398-2-elsk@google.com/
+v1: https://lore.kernel.org/rust-for-linux/20241017200138.2390077-2-elsk@google.com/
+
+ Documentation/kbuild/kbuild.rst | 11 +++++++++++
+ Makefile                        |  3 ++-
+ rust/Makefile                   |  2 +-
+ 3 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/kbuild/kbuild.rst b/Documentation/kbuild/kbuild.rst
+index 1796b3eba37b..9cb876ccc363 100644
+--- a/Documentation/kbuild/kbuild.rst
++++ b/Documentation/kbuild/kbuild.rst
+@@ -91,6 +91,17 @@ HOSTRUSTFLAGS
+ -------------
+ Additional flags to be passed to $(HOSTRUSTC) when building host programs.
+
++PROCMACROLDFLAGS
++----------------
++Flags to be passed when linking Rust proc macros. Since proc macros are loaded
++by rustc at build time, they must be linked in a way that is compatible with
++the rustc toolchain being used.
++
++For instance, it can be useful when rustc uses a different C library than
++the one the user wants to use for host programs.
++
++If unset, it defaults to the flags passed when linking host programs.
++
+ HOSTLDFLAGS
+ -----------
+ Additional flags to be passed when linking host programs.
+diff --git a/Makefile b/Makefile
+index a9e723cb0596..3efb001bada5 100644
+--- a/Makefile
++++ b/Makefile
+@@ -471,6 +471,7 @@ KBUILD_HOSTRUSTFLAGS := $(rust_common_flags) -O -Cstrip=debuginfo \
+ 			-Zallow-features= $(HOSTRUSTFLAGS)
+ KBUILD_HOSTLDFLAGS  := $(HOST_LFS_LDFLAGS) $(HOSTLDFLAGS)
+ KBUILD_HOSTLDLIBS   := $(HOST_LFS_LIBS) $(HOSTLDLIBS)
++KBUILD_PROCMACROLDFLAGS := $(or $(PROCMACROLDFLAGS),$(KBUILD_HOSTLDFLAGS))
+
+ # Make variables (CC, etc...)
+ CPP		= $(CC) -E
+@@ -595,7 +596,7 @@ export HOSTRUSTC KBUILD_HOSTRUSTFLAGS
+ export CPP AR NM STRIP OBJCOPY OBJDUMP READELF PAHOLE RESOLVE_BTFIDS LEX YACC AWK INSTALLKERNEL
+ export PERL PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
+ export KGZIP KBZIP2 KLZOP LZMA LZ4 XZ ZSTD
+-export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS LDFLAGS_MODULE
++export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS KBUILD_PROCMACROLDFLAGS LDFLAGS_MODULE
+ export KBUILD_USERCFLAGS KBUILD_USERLDFLAGS
+
+ export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS KBUILD_LDFLAGS
+diff --git a/rust/Makefile b/rust/Makefile
+index f349e7b067ea..9f55c470aa2c 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -344,7 +344,7 @@ quiet_cmd_rustc_procmacro = $(RUSTC_OR_CLIPPY_QUIET) P $@
+       cmd_rustc_procmacro = \
+ 	$(RUSTC_OR_CLIPPY) $(rust_common_flags) \
+ 		-Clinker-flavor=gcc -Clinker=$(HOSTCC) \
+-		-Clink-args='$(call escsq,$(KBUILD_HOSTLDFLAGS))' \
++		-Clink-args='$(call escsq,$(KBUILD_PROCMACROLDFLAGS))' \
+ 		--emit=dep-info=$(depfile) --emit=link=$@ --extern proc_macro \
+ 		--crate-type proc-macro \
+ 		--crate-name $(patsubst lib%.so,%,$(notdir $@)) $<
+
+base-commit: d072acda4862f095ec9056979b654cc06a22cc68
+--
+2.47.0
 
