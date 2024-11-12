@@ -1,66 +1,78 @@
-Return-Path: <linux-kernel+bounces-406509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BA89C604F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:23:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A4F9C6027
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:17:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A628B63EF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF8551F21FA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6715921621F;
-	Tue, 12 Nov 2024 18:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B96D215C4F;
+	Tue, 12 Nov 2024 18:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jKt2uut4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kqktWRkr"
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420CA230996
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2704F213154
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731435430; cv=none; b=bp/8rOIxT/zbyEWXOMc75TKuTw5xbFkOF3k+1cmF2KdRhTnaZDVf34WKF3jJxe9Xo8FmLbWmyZrZdj7Ad2gfUoJJZC+mQ/rnvxZ6FDXSmYnVhJ65bxMTO5fYr6iQUxcQUY4dfqw6FeQew7w5xjW1PoDWWnANdGxuZZHxT+FQoyY=
+	t=1731435461; cv=none; b=FVaJZ4oWhivWaUBXQ45RZhl7SbrvVu6UvIzUzsoT4w5+o+d8x0JPmakgoWiLYeTZk5A2r7wAsFh9RMCexoZIv43dPSPWjdFuUFyzkqyvJsRabEhaRXBQAbEHWOt0bdbLXZmqGMSboJwV6VVGgvpm7BWWAzox1VL+2roIU5bmqqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731435430; c=relaxed/simple;
-	bh=xK5HOA2LNsN0wxu7/nfc+HoQUfhGTyz3JySS+gepupQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A4RtzubOI8oeiORBy0D3HvHyS+0UzitS+yWA0ZsIa0odBaG9v91gMBblqoW1V6pYG3IeEzBSv8hut2wLEPTuac8lblMrHGcC28O4bv3SLTzZCsMifILAQ068Ge7jR/OEycVsB3dGzy/VP5Wrg0ffA3RhqiyV38kpb1aNQA34di4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jKt2uut4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731435425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UN31SK4HZ8LG9aqwjD3UUbiCVM5Zzt1ZT9FMaSigEAM=;
-	b=jKt2uut4UghL6vUiX7Trvp88d/wRMi0SOCYGx6yq9Ab5bmLHUSnvS7JHdOjcW4bcrYu2c6
-	zEe4VNiMeI9V3qtTTFe1DJ6BLQWQtQxl5mVU5dblzZd+ojmKzKINVTpbr5K3GFZjrKKOe3
-	kV3kfT1U9YSrSjz7iGo4+f6OzmD1WK8=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-467-j7arXNJbMReA734ZpwpGlQ-1; Tue,
- 12 Nov 2024 13:17:03 -0500
-X-MC-Unique: j7arXNJbMReA734ZpwpGlQ-1
-X-Mimecast-MFC-AGG-ID: j7arXNJbMReA734ZpwpGlQ
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A86891955BD2;
-	Tue, 12 Nov 2024 18:17:02 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1705430000DF;
-	Tue, 12 Nov 2024 18:17:01 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: torvalds@linux-foundation.org
+	s=arc-20240116; t=1731435461; c=relaxed/simple;
+	bh=Y/dTUHtupuwcj2O5IbQXs4jsi2wuCJhyQ67B6Au6hbM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZuYCwxd/Bairf0qGs2Hg/lcKYSlmPlYVLz+egG0RU+0RGfbdKZec2x/rBhlUYNXLbzWoX1vBvHCDkcVo4H/UD3OPOeoUC0gvSoXVqe/uoJ9xfWW6Q7oMG5yhDNo8mBAZCLZZ6GW42VkrQC+S+EwbCIv7qBXOQ+3rQ3sfVU5MvTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kqktWRkr; arc=none smtp.client-ip=209.85.210.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-720be27db74so9372b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:17:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731435459; x=1732040259; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8GXTXOEOysyHBE0iWhZWDRL8SYdiQsYVa+Qbm4+nz9U=;
+        b=kqktWRkrmoXxab652o6/719qii5L5aTn8kE6E+cXwSrVBnh4Lcc0Z2p9mCBwMo/clR
+         N1qpVKHDQWPMPYlwli34LNI2fx0fZNLeZYwXqR4l0vSRHkFeqi727M/RHR3CiWCiADM2
+         tr9ZYdDSzy1aTyPiVwGG6byWUazSqt6IlbwySDLCNgPs681J3DA7maNRZJtg2vqCEYhD
+         gYO1u7d89YdHqpnAstczK3+N7XIihRGEw0lR2EXlkUZ95qVI39V9QSpyk6D8St0XGcMs
+         OqlicvmMNY0DDQvhnnDOGgKedW2HFRLe2sPgfkaMMDK5gJfqvDToFEpoZVfmKn1AbtYY
+         AXPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731435459; x=1732040259;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8GXTXOEOysyHBE0iWhZWDRL8SYdiQsYVa+Qbm4+nz9U=;
+        b=cs5doTAUryTn+D2yqubwTaJgjqtiILf3I24yd3YCNqAmrZzBl/xNmEuXgKoLes1z3c
+         jTeRZ1u7VQTi19YCEnZKVZHJ0VNNsK3FlxiXi9aXQuHPMgAQI1JyAL1AofAuv946cbFl
+         jPE+rnxQEB5BXLObXAjtorwjP6WeRKO8j85BcnTQqgBWHBnto3pFEqsvGmglCjoKPBRx
+         xsFDAIS+q5dydfUw0rmn/XulCi+FVRmyJlDANBmbpXwuQMYUtMfRPQwITiNdlCc655qa
+         HNDuMYe8ms2sNKpZU+bTH8v1hvO7TPdZPeYkn8ir+Gb5vR9VIA+cImstaA4ieETPjMLl
+         zNAg==
+X-Gm-Message-State: AOJu0YwCebwtQrCCNV/j/qtSWbx1Vi4R7uu2fMcuoSWVJ/fF6DzhxEz5
+	TxRf77vd0LstYLWAvxwg/hFdMzZ/n8uhrwH8Vo3a98ZWb+1xrC4Z
+X-Google-Smtp-Source: AGHT+IH6v89oidzb1PXNHFBYdMfrv40Aj6dM057UgbaufnO9zh9gKbduRZoKhwu7Hg99JX0sOPDFSw==
+X-Received: by 2002:a05:6a00:a1a:b0:71e:71ba:9056 with SMTP id d2e1a72fcca58-7241407b632mr25047758b3a.10.1731435459193;
+        Tue, 12 Nov 2024 10:17:39 -0800 (PST)
+Received: from tom-QiTianM540-A739.. ([124.127.236.112])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079a3a9csm11430045b3a.110.2024.11.12.10.17.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 10:17:38 -0800 (PST)
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org
 Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 6.12-rc8 or final
-Date: Tue, 12 Nov 2024 13:17:00 -0500
-Message-ID: <20241112181700.384873-1-pbonzini@redhat.com>
+	baijiaju1990@gmail.com,
+	Qiu-ji Chen <chenqiuji666@gmail.com>
+Subject: [PATCH v2] driver core: Fix concurrency issue in match driver interface
+Date: Wed, 13 Nov 2024 02:17:33 +0800
+Message-Id: <20241112181733.148068-1-chenqiuji666@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,91 +80,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Linus,
+This patch identifies a concurrency issue. Taking the fsl_mc_bus_match()
+function as an example, fsl_mc_bus_match() is an implementation of the
+drv->bus->match interface. Since the entire function is not protected by a
+lock, it can experience a data race with the driver_set_override()
+function. The driver_set_override() function is provided by the driver
+core, and in this function, the driver_override field is updated while
+holding the device_lock.
 
-The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
+After the check if (mc_dev->driver_override), the driver_override field may
+be set to NULL, but the strcmp() function does not handle the case of a
+NULL pointer. If the empty driver_override field is passed to strcmp(), it
+could lead to a null pointer dereference issue. Additionally, we noticed
+that in the driver_set_override() function, after storing the new dev
+value, the old value is released. If a race condition occurs, this could
+lead to a use-after-free (UAF) issue in fsl_mc_bus_match().
 
-  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
+The only reference to fsl_mc_bus_match() is through the drv->bus->match
+interface, which is a typical example. Many drivers, such as amba, base,
+cdx, and others, have similar implementations.
 
-are available in the Git repository at:
+To fix this issue, we examined the interface that calls this function and
+found that the fsl_mc_bus_match() function is called by the drv->bus->match
+interface, which in turn is called by the driver_match_device() function.
+We discovered that there are three places in the code where
+driver_match_device() is called. In the call chain from __device_attach to
+__device_attach_driver to driver_match_device, the call to
+__device_attach_driver within __device_attach is already protected by a
+lock, so the call to driver_match_device in this chain is locked.
 
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+Since the driver_set_override() function, as mentioned earlier, is called
+in several drivers, including amba, base, cdx, and others, this data race
+issue is relatively common. Adding a lock at the lower level would conflict
+with the lock in the upper-level __device_attach(), leading to a potential
+deadlock. Therefore, we decided to add locks at the other two places where
+driver_match_device() is called to ensure that when the match interface is
+invoked, it prevents changes to the driver_override field during the call
+to driver_set_override(), thus resolving the data race issue.
 
-for you to fetch changes up to aa0d42cacf093a6fcca872edc954f6f812926a17:
+Fixes: 49b420a13ff9 ("driver core: check bus->match without holding device lock")
+Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+---
+In 2008, the kernel moved all match checks outside of the lock, and at that
+time, there was no override, so this approach worked. In 2015, one function
+moved the match check into the lock on one of its paths in order to support
+asynchronous device binding, which led to inconsistent behavior. Later,
+some kernel drivers added the driver_override feature to support binding
+specific drivers, and the driver_set_override function was widely used to
+control it. This function uses device_lock to control concurrency. This
+issue is caused by both lower-level drivers and upper-level drivers, so
+I'm not sure if the fixes tag is correct, and I haven't added a cc. I hope
+to discuss this issue with the developers.
+---
+V2:
+The incorrect description have been fixed.
+Thanks Greg KH for helpful suggestion.
+---
+ drivers/base/bus.c | 16 +++++++++++-----
+ drivers/base/dd.c  |  2 ++
+ 2 files changed, 13 insertions(+), 5 deletions(-)
 
-  KVM: VMX: Bury Intel PT virtualization (guest/host mode) behind CONFIG_BROKEN (2024-11-08 05:57:13 -0500)
-
-----------------------------------------------------------------
-KVM x86 and selftests fixes for 6.12:
-
-x86:
-
-- When emulating a guest TLB flush for a nested guest, flush vpid01, not
-  vpid02, if L2 is active but VPID is disabled in vmcs12, i.e. if L2 and
-  L1 are sharing VPID '0' (from L1's perspective).
-
-- Fix a bug in the SNP initialization flow where KVM would return '0' to
-  userspace instead of -errno on failure.
-
-- Move the Intel PT virtualization (i.e. outputting host trace to host
-  buffer and guest trace to guest buffer) behind CONFIG_BROKEN.
-
-- Fix memory leak on failure of KVM_SEV_SNP_LAUNCH_START
-
-- Fix a bug where KVM fails to inject an interrupt from the IRR after
-  KVM_SET_LAPIC.
-
-Selftests:
-
-- Increase the timeout for the memslot performance selftest to avoid false
-  failures on arm64 and nested x86 platforms.
-
-- Fix a goof in the guest_memfd selftest where a for-loop initialized a
-  bit mask to zero instead of BIT(0).
-
-- Disable strict aliasing when building KVM selftests to prevent the
-  compiler from treating things like "u64 *" to "uint64_t *" cases as
-  undefined behavior, which can lead to nasty, hard to debug failures.
-
-- Force -march=x86-64-v2 for KVM x86 selftests if and only if the uarch
-  is supported by the compiler.
-
-- Fix broken compilation of kvm selftests after a header sync in tools/
-
-----------------------------------------------------------------
-Dionna Glaze (1):
-      kvm: svm: Fix gctx page leak on invalid inputs
-
-John Sperbeck (1):
-      KVM: selftests: use X86_MEMTYPE_WB instead of VMX_BASIC_MEM_TYPE_WB
-
-Maxim Levitsky (1):
-      KVM: selftests: memslot_perf_test: increase guest sync timeout
-
-Paolo Bonzini (1):
-      Merge tag 'kvm-x86-fixes-6.12-rcN' of https://github.com/kvm-x86/linux into HEAD
-
-Patrick Roy (1):
-      KVM: selftests: fix unintentional noop test in guest_memfd_test.c
-
-Sean Christopherson (6):
-      KVM: selftests: Disable strict aliasing
-      KVM: selftests: Don't force -march=x86-64-v2 if it's unsupported
-      KVM: nVMX: Treat vpid01 as current if L2 is active, but with VPID disabled
-      KVM: SVM: Propagate error from snp_guest_req_init() to userspace
-      KVM: x86: Unconditionally set irr_pending when updating APICv state
-      KVM: VMX: Bury Intel PT virtualization (guest/host mode) behind CONFIG_BROKEN
-
- arch/x86/kvm/lapic.c                            | 29 +++++++++++++++---------
- arch/x86/kvm/svm/sev.c                          | 15 ++++++++-----
- arch/x86/kvm/vmx/nested.c                       | 30 ++++++++++++++++++++-----
- arch/x86/kvm/vmx/vmx.c                          |  6 +++--
- tools/testing/selftests/kvm/Makefile            | 10 +++++----
- tools/testing/selftests/kvm/guest_memfd_test.c  |  2 +-
- tools/testing/selftests/kvm/lib/x86_64/vmx.c    |  2 +-
- tools/testing/selftests/kvm/memslot_perf_test.c |  2 +-
- 8 files changed, 65 insertions(+), 31 deletions(-)
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index 657c93c38b0d..78d8c58fc50c 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -261,13 +261,19 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
+ 	const struct bus_type *bus = bus_get(drv->bus);
+ 	struct device *dev;
+ 	int err = -ENODEV;
++	int ret;
+ 
+ 	dev = bus_find_device_by_name(bus, NULL, buf);
+-	if (dev && driver_match_device(drv, dev)) {
+-		err = device_driver_attach(drv, dev);
+-		if (!err) {
+-			/* success */
+-			err = count;
++	if (dev) {
++		device_lock(dev);
++		ret = driver_match_device(drv, dev);
++		device_unlock(dev);
++		if (ret) {
++			err = device_driver_attach(drv, dev);
++			if (!err) {
++				/* success */
++				err = count;
++			}
+ 		}
+ 	}
+ 	put_device(dev);
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index f0e4b4aba885..0b894719eb28 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -1169,7 +1169,9 @@ static int __driver_attach(struct device *dev, void *data)
+ 	 * is an error.
+ 	 */
+ 
++	device_lock(dev);
+ 	ret = driver_match_device(drv, dev);
++	device_unlock(dev);
+ 	if (ret == 0) {
+ 		/* no match */
+ 		return 0;
+-- 
+2.34.1
 
 
