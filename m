@@ -1,98 +1,125 @@
-Return-Path: <linux-kernel+bounces-406720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B78209C6426
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:18:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127019C64F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:13:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D1E1B46E73
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:39:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC889B3BDB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10ED5219E4D;
-	Tue, 12 Nov 2024 20:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D7521A4A0;
+	Tue, 12 Nov 2024 20:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ff1apUwp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BC0JGiMH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EC41FC7F8;
-	Tue, 12 Nov 2024 20:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA33A219E3B;
+	Tue, 12 Nov 2024 20:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731443973; cv=none; b=CoiZQ+WNdpRef9lUHkOjzgEPcRvyfEUt9P1AgXGjn2FyXRT6omUYHGtG1FDsSjgKtCsOa1WMcsJg2teEXV1sJq8sXCRRLqXNd+/0/NQhg4FjJGK0OMzy3wdmuqNizOtDdzyvHaH+T3zLrP/QFDRdSxDOumEFOT6Z2HCnvpMsSrg=
+	t=1731444301; cv=none; b=FAQ23H5ttoqVOFABHtrENrNRYmKZnoialykZZ6CTYg3AUdMjCUPgGt7IoMnS9Hctwz8u/KkA97luwim2Y2qjMEw6FTbin90WudyOJJ6+ceaQKZ6E8+wx+So5QlF6tdvrzR2owNUC0q/WVL+crnMKC4QyWJlHhzuexK9vmjTZsjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731443973; c=relaxed/simple;
-	bh=Cz4bRV94/5MKAskZbYAn+TUSR0LBQP5CIfaO0PQZ+eA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=sp48npVFD5Gxlt19Y3Ejev9NVAjnj6ZeQfP6uoqHhryeLTZwGhEAEcLnckfTbWwBhy5AWs6VLkMWBSv4ST6nixff5oF/43m0rVHUsRocWy/hebh1baPovuHZnCV44BRPcvrzGQrOrjcIL2D+FeCw5I/LqCJri0qzQkvkXT0gxh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ff1apUwp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A76B9C4CED7;
-	Tue, 12 Nov 2024 20:39:32 +0000 (UTC)
+	s=arc-20240116; t=1731444301; c=relaxed/simple;
+	bh=5Cr1eflZL/DZBklAvj4490Qwo7UzjE+LNfqVpmLwH3s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UI/IT/yXhRRqeooKH7Cia/Tepv4wOv/q/6yj2NPXFlQe73SOU6NsoNU182cH0aBFFLIHa7a2HS1MssC9uN3/dbUC56KOXV7IYojJ/xfgIHusPVcrhSa7YyfaNCFKKfGAGxtviiwHoLp9C5HP5N+tbS5beFfiMu/aJDlXj9OiV1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BC0JGiMH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B83C4CECD;
+	Tue, 12 Nov 2024 20:45:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731443972;
-	bh=Cz4bRV94/5MKAskZbYAn+TUSR0LBQP5CIfaO0PQZ+eA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Ff1apUwpOiGPDm+i+5r5B3s5dmMB2dJgxctx3edd+b8FqF8Nq3n93rQlg+41y6zOA
-	 EPwhloVc6oGbcSWc3w0fax5DWB8hXhLMxLQJDc4PLLIMp5u3XuwJGwYPr+k0fxj1JN
-	 TvpI1koK8FK9Jz1qa6gsTyhc3PzbzilN2ZW+SDXjPgB15ms1yNhVgTOmpQE8s7gjNQ
-	 CYy8yCHHLYst8fgwZop0vbGlqErCDK4gxLXQdkg4avOvz8LJtuxCVfYTHZF2biblwf
-	 5JfB0NGw1U2oK8kbGhKypOx4xWcXZKafm1zqdSAGge/7VCqmssFPjEgxVbe5+4yk3k
-	 Gp8simaEgiFCg==
-Date: Tue, 12 Nov 2024 14:39:31 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
-	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
-	cassel@kernel.org, quic_schintav@quicinc.com,
-	fabrice.gasnier@foss.st.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] MAINTAINERS: add entry for ST STM32MP25 PCIe drivers
-Message-ID: <20241112203931.GA1858001@bhelgaas>
+	s=k20201202; t=1731444301;
+	bh=5Cr1eflZL/DZBklAvj4490Qwo7UzjE+LNfqVpmLwH3s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BC0JGiMH/ZHQFoX3rZkYj/3LNH7KBd9Ngoa0iZVzIQN0tP/F1lYjrJFXZN52pI2/T
+	 Dba3FM/wYJyChsZWb+ztVSmWdEp5GbS8uMgzCsgevWnMNS6R8EIZGvzOYfjcGtL3C0
+	 /Trr2XVaYzY/XjLy8kCXPFqKqb/5R7SQXXOyGrB3W1TD7tV95VEmT8AI3C8d5+GBhV
+	 Ai3gYWTrzxWFla+eJupcUzhO3cgDfzEMIsP8YY2xcCz4xwVlluesOuu3S/8jC8SZba
+	 /HVOsPdKcz2VEnx/HMF3nM2uCgsrYEcgADKXMcbKyaPLHvpUYHA5M2/6FuGnyxxW/P
+	 JgLy4xLp790uQ==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5edf76cd843so2637298eaf.1;
+        Tue, 12 Nov 2024 12:45:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWDtzfeaCh1ylb1RHk6onuopcEYlrNbZghvQ3a9VUEnQCKU1S2MwqSTOAGxMm30uIxcfCV9NZWpykBD9qo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7WZqa/Jpi7xGb2YNYH827xavjJPxu9ppBcKYXoV4dwrieNEZE
+	9tGQk11tjildEVom3m0q3nT3ZBzAr4zQM12b/LabfN68yAHzYKOVaskdN6Hm6XkL83r1USDssC7
+	rRRYOMGRDB5D/BLxmUbLz2SK2ELU=
+X-Google-Smtp-Source: AGHT+IFFUv+UXSZpj6AZrcz8sjUknYP9yAYvqYYxkKZ+/ktlSq0IY3A8veW/V9Zs5kVkgClznWbbLZcbxg6HP7n40ao=
+X-Received: by 2002:a05:6820:179a:b0:5ed:feae:d5bd with SMTP id
+ 006d021491bc7-5ee57cc4966mr12177544eaf.3.1731444300628; Tue, 12 Nov 2024
+ 12:45:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112161925.999196-6-christian.bruel@foss.st.com>
+References: <e9afefb7-3c4e-48ee-aab1-2f338c4e989d@intel.com> <20241106182313.165297-1-chang.seok.bae@intel.com>
+In-Reply-To: <20241106182313.165297-1-chang.seok.bae@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 12 Nov 2024 21:44:49 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0i0nf_8BGqbuFRQ6byxM9cPU4A37hiW10LZ57FTqDgO8w@mail.gmail.com>
+Message-ID: <CAJZ5v0i0nf_8BGqbuFRQ6byxM9cPU4A37hiW10LZ57FTqDgO8w@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: Simplify MSR read on the boot CPU
+To: "Chang S. Bae" <chang.seok.bae@intel.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org, 
+	viresh.kumar@linaro.org, dave.hansen@intel.com, bp@alien8.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 05:19:25PM +0100, Christian Bruel wrote:
-> Add myself as STM32MP25 PCIe host and PCIe endpoint drivers
-
-s/as STM32MP25/as maintainer of STM32MP25/
-
-> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+On Wed, Nov 6, 2024 at 7:23=E2=80=AFPM Chang S. Bae <chang.seok.bae@intel.c=
+om> wrote:
+>
+> Replace the 32-bit MSR access function with a 64-bit variant to simplify
+> the call site, eliminating unnecessary 32-bit value manipulations.
+>
+> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+> Cc: Rafael J. Wysocki <rafael@kernel.org>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Borislav Petkov <bp@alien8.de>
 > ---
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4803908768e8..277e1cc0769e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -17912,6 +17912,13 @@ L:	linux-samsung-soc@vger.kernel.org
->  S:	Maintained
->  F:	drivers/pci/controller/dwc/pci-exynos.c
->  
-> +PCI DRIVER FOR STM32MP25
-> +M:	Christian Bruel <christian.bruel@foss.st.com>
-> +L:	linux-pci@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/pci/st,stm32-pcie-*.yaml
-> +F:	drivers/pci/controller/dwc/*stm32*
-> +
->  PCI DRIVER FOR SYNOPSYS DESIGNWARE
->  M:	Jingoo Han <jingoohan1@gmail.com>
->  M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> -- 
-> 2.34.1
-> 
+> I've received feedback to use rdmsrl_on_cpu() instead of rdmsr_on_cpu()
+> for similar code in my feature-enabling series [1]. While auditing the
+> tree, I found this case as well, so here's another cleanup.
+>
+> [1] https://lore.kernel.org/lkml/e9afefb7-3c4e-48ee-aab1-2f338c4e989d@int=
+el.com/
+> ---
+>  drivers/cpufreq/acpi-cpufreq.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufre=
+q.c
+> index 0f04feb6cafa..b942cd11e179 100644
+> --- a/drivers/cpufreq/acpi-cpufreq.c
+> +++ b/drivers/cpufreq/acpi-cpufreq.c
+> @@ -73,20 +73,17 @@ static unsigned int acpi_pstate_strict;
+>
+>  static bool boost_state(unsigned int cpu)
+>  {
+> -       u32 lo, hi;
+>         u64 msr;
+>
+>         switch (boot_cpu_data.x86_vendor) {
+>         case X86_VENDOR_INTEL:
+>         case X86_VENDOR_CENTAUR:
+>         case X86_VENDOR_ZHAOXIN:
+> -               rdmsr_on_cpu(cpu, MSR_IA32_MISC_ENABLE, &lo, &hi);
+> -               msr =3D lo | ((u64)hi << 32);
+> +               rdmsrl_on_cpu(cpu, MSR_IA32_MISC_ENABLE, &msr);
+>                 return !(msr & MSR_IA32_MISC_ENABLE_TURBO_DISABLE);
+>         case X86_VENDOR_HYGON:
+>         case X86_VENDOR_AMD:
+> -               rdmsr_on_cpu(cpu, MSR_K7_HWCR, &lo, &hi);
+> -               msr =3D lo | ((u64)hi << 32);
+> +               rdmsrl_on_cpu(cpu, MSR_K7_HWCR, &msr);
+>                 return !(msr & MSR_K7_HWCR_CPB_DIS);
+>         }
+>         return false;
+> --
+
+Applied as 6.13 material, thanks!
 
