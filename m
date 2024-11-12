@@ -1,115 +1,181 @@
-Return-Path: <linux-kernel+bounces-405909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68D29C58C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:16:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B4AC9C58C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:17:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CECC28103D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:16:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF3431F216F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A68814387B;
-	Tue, 12 Nov 2024 13:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAF9148FED;
+	Tue, 12 Nov 2024 13:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQtkHIAa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XlsyByGW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D9E5FEE6;
-	Tue, 12 Nov 2024 13:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D525142AA4;
+	Tue, 12 Nov 2024 13:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731417380; cv=none; b=c2KtRPjbl7yNpEVxWQKKb1aWmd34QyAgpuSL94O8pHEH0L9OMFo/czcIaU7VRhysMy3LjZAuh5EHkpOGUo+HM0cd/EtoS7qkMkESjyQHYRDWaqgdPApa1+DftR3jc6PdAtASD7k5ytQFzEs4nGViC/+8F4p4AJnq1rhrB6g/0Eg=
+	t=1731417434; cv=none; b=YcW9ezv5RsmCN082NnJpss5riaeCZOCfc3FiNxj4gWMiOxcWbJS2ZqVxEGidqNgyq0+hlh8T0mEKG9XCUzxUM9ijZf9qZw4ydCK7aUkofWdTI1G6oatdfm0oXCnUXlqQ9TG5dW7M4gM0/EdvpbOtE5KeMMiKjeAQqCZf3/O9eck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731417380; c=relaxed/simple;
-	bh=/LXILyQW0YKQwU2/DZFNOfpGJbKzQNU/KY1lRH7sWyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hfty+mKk7y8O/nDudE+cOHaG9iqVVKkndjiO1OvyAaz2SiBgGexHopjBzX+/DgSEuHJZrivhOHCHohUJjdB/5XNORs72/Y01rAckPWk0jc+1q3xruAT5GuTH6Bb+TAL2xuXuDxK7VR1cLlVHPum+0ksjna5B+UTL9QTZKYq2t/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQtkHIAa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEE6AC4CECD;
-	Tue, 12 Nov 2024 13:16:17 +0000 (UTC)
+	s=arc-20240116; t=1731417434; c=relaxed/simple;
+	bh=bQbs1NAEcYo8+Js/A0LgSfHJ0MSgGorRyKV7H81F7xs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SNPA5vteNNHmTSwV26bmK5vmruy//dHg8dODNt/uRL0BCs3OKBHLDHY1k3P/7d9h006rbvF+07LATofeZHZCJRtTxA7lyGjcqsURGM4ni/0/jn1nEZg0zUNo0mM6muWlJAwnh53zNzt9LjOgap8sRKTh939rlBDASkiBA7xH5CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XlsyByGW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A836C4CECD;
+	Tue, 12 Nov 2024 13:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731417378;
-	bh=/LXILyQW0YKQwU2/DZFNOfpGJbKzQNU/KY1lRH7sWyk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EQtkHIAa6Y0YGpZn7/2Xj32/gVfaT/iWxz62OhXcodrPL3Vku8QUg+GP5FFRl73Vs
-	 Jlql/AxfEgnnIp91iikhJuXbIAC89ZH48aZifwKllu8pRGP2QKt9fR94VCt0QXCF+3
-	 +cwijR6zc8rHlEyP1L3MShJkB3Wm8lKM9n5g5Z9Vos9B7dJdmvYeOeHp+RZn4DTNYL
-	 8KMqqt3JSqpvT2gSDm/hWljwXrczPzK8Km1H2HNu9mqi574w8IQIwEdEqpw0hobt8e
-	 sSNlXjtyskzF0sntS6V8b6doqGJiK1aHqeDEqQLQVpdsDKzVc68Kj8X0k7SHZ3JpK9
-	 kXSypfc87OQMg==
-Date: Tue, 12 Nov 2024 13:16:15 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Marek Maslanka <mmaslanka@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Support Opensource <support.opensource@diasemi.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH] ASoC: da7219-aad: Fix detection of plugged jack after
- resume
-Message-ID: <ZzNVH65o0ue6jn6a@finisterre.sirena.org.uk>
-References: <20241112074048.1762371-1-mmaslanka@google.com>
+	s=k20201202; t=1731417434;
+	bh=bQbs1NAEcYo8+Js/A0LgSfHJ0MSgGorRyKV7H81F7xs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XlsyByGWX50FnVkBEZVH5pbvxsXfoiib0TlOyLKQoVmNEFH6lzZSgdArY4kPOXz6/
+	 qiaNs7nV/x+i8Je3ea/uxNbmRNIs4LDpmz4DKeOxnm3ZWzrPO57kr7wAr/+WIu845+
+	 FNAkpTTkAkn8a9rL1ovQaESmFEKo3A12xcqoVtswH39cBqNoI7B0PTMpdaBuTw5swi
+	 sFFZguwV7XtkRnBgcMB9kYXz7tVKun/8rQg9NSFwhHpqJY+DUKOYxlBQXSH4aMt7hR
+	 8OhV8iN6geYzCm7TWCehsLCiyAtq9DwN9Q5QecnstY+2vSrvHFx0ZdTkQ4p7AdZJQm
+	 RGbFHeJmrC5hw==
+Message-ID: <ee3aeadb-9897-428c-83e2-3e208f095d1d@kernel.org>
+Date: Tue, 12 Nov 2024 15:17:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JB+OrQ7TuTIBolfs"
-Content-Disposition: inline
-In-Reply-To: <20241112074048.1762371-1-mmaslanka@google.com>
-X-Cookie: Editing is a rewording activity.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 2/2] net: ti: icssg-prueth: Fix clearing of
+ IEP_CMP_CFG registers during iep_init
+To: Meghana Malladi <m-malladi@ti.com>, vigneshr@ti.com, m-karicheri2@ti.com,
+ jan.kiszka@siemens.com, javier.carrasco.cruz@gmail.com,
+ jacob.e.keller@intel.com, horms@kernel.org, diogo.ivo@siemens.com,
+ pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+ davem@davemloft.net, andrew+netdev@lunn.ch
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com, danishanwar@ti.com
+References: <20241106074040.3361730-1-m-malladi@ti.com>
+ <20241106074040.3361730-3-m-malladi@ti.com>
+ <f28bf97c-783d-489c-9549-0dd0f576497e@kernel.org>
+ <db77a358-a4d3-444e-971e-aa348ad8c8b7@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <db77a358-a4d3-444e-971e-aa348ad8c8b7@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---JB+OrQ7TuTIBolfs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 07:40:47AM +0000, Marek Maslanka wrote:
-> Don't notify and mark the jack as unplugged during the "set_jack" action,
-> because this action is called very late in during the resume process, for=
-cing
-> the jack to be unplugged after the resume, even if the jack is plugged in=
-=2E Let's
-> leave the responsibility of managing the insertion of the jack to IRQ.
+On 12/11/2024 11:04, Meghana Malladi wrote:
+> 
+> On 11/11/24 19:23, Roger Quadros wrote:
+>> Hi,
+>>
+>> On 06/11/2024 09:40, Meghana Malladi wrote:
+>>> When ICSSG interfaces are brought down and brought up again, the
+>>> pru cores are shut down and booted again, flushing out all the memories
+>>> and start again in a clean state. Hence it is expected that the
+>>> IEP_CMP_CFG register needs to be flushed during iep_init() to ensure
+>>> that the existing residual configuration doesn't cause any unusual
+>>> behavior. If the register is not cleared, existing IEP_CMP_CFG set for
+>>> CMP1 will result in SYNC0_OUT signal based on the SYNC_OUT register values.
+>>>
+>>> After bringing the interface up, calling PPS enable doesn't work as
+>>> the driver believes PPS is already enabled, (iep->pps_enabled is not
+>>> cleared during interface bring down) and driver  will just return true
+>>> even though there is no signal. Fix this by setting the iep->pps_enable
+>>> and iep->perout_enable flags to false during the link down.
+>>>
+>>> Fixes: c1e0230eeaab ("net: ti: icss-iep: Add IEP driver")
+>>> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+>>> ---
+>>>   drivers/net/ethernet/ti/icssg/icss_iep.c | 10 ++++++++++
+>>>   1 file changed, 10 insertions(+)
+>>>
+>>> diff --git a/drivers/net/ethernet/ti/icssg/icss_iep.c b/drivers/net/ethernet/ti/icssg/icss_iep.c
+>>> index 5d6d1cf78e93..03abc25ced12 100644
+>>> --- a/drivers/net/ethernet/ti/icssg/icss_iep.c
+>>> +++ b/drivers/net/ethernet/ti/icssg/icss_iep.c
+>>> @@ -195,6 +195,12 @@ static void icss_iep_enable_shadow_mode(struct icss_iep *iep)
+>>>         icss_iep_disable(iep);
+>>>   +    /* clear compare config */
+>>> +    for (cmp = IEP_MIN_CMP; cmp < IEP_MAX_CMP; cmp++) {
+>>> +        regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
+>>> +                   IEP_CMP_CFG_CMP_EN(cmp), 0);
+>>> +    }
+>>> +
+>>
+>> A bit later we are clearing compare status. Can clearing CMP be done in same for loop?
+>>
+> 
+> Yes it can be done in the same loop, I will update that.
+> 
+>>>       /* disable shadow mode */
+>>>       regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
+>>>                  IEP_CMP_CFG_SHADOW_EN, 0);
+>>> @@ -778,6 +784,10 @@ int icss_iep_exit(struct icss_iep *iep)
+>>>           ptp_clock_unregister(iep->ptp_clock);
+>>>           iep->ptp_clock = NULL;
+>>>       }
+>>> +
+>>> +    iep->pps_enabled = false;
+>>> +    iep->perout_enabled = false;
+>>> +
+>>
+>> But how do you keep things in sync with user space?
+>> User might have enabled PPS or PEROUT and then put SLICE0 interface down.
+>> Then if SLICE0 is brought up should PPS/PEROUT keep working like before?
+> 
+> No, why? Because either both SLICE0 and SLICE1 run when atleast one interface is up and both SLICE0 and SLICE1 are stopped when both the interfaces are brought down. So when SLICE0 is brought down, SLICE1 is also brought down. Next time you bring an interface up, it is a fresh boot for both SLICE1 and SLICE0. In this case, just like how we register for ptp clock (this is handled by the driver in icss_iep_init(),
+> pps also needs to be enabled (this has to be done by the user).
 
-> @@ -33,10 +33,6 @@ void da7219_aad_jack_det(struct snd_soc_component *com=
-ponent, struct snd_soc_jac
->  	struct da7219_priv *da7219 =3D snd_soc_component_get_drvdata(component);
-> =20
->  	da7219->aad->jack =3D jack;
-> -	da7219->aad->jack_inserted =3D false;
-> -
-> -	/* Send an initial empty report */
-> -	snd_soc_jack_report(jack, 0, DA7219_AAD_REPORT_ALL_MASK);
-> =20
->  	/* Enable/Disable jack detection */
->  	snd_soc_component_update_bits(component, DA7219_ACCDET_CONFIG_1,
+I just checked that PPS/PEROUT sysfs don't implement the show hook. So there
+is nothing to be in sync with user space.
 
-This path is also (AFAICT only?) called when registering the jack by
-da7219_set_jack(), I'm not immediately seeing the path for resume.  This
-suggests that what's going on here is an issue with the machine driver
-unregistering the jack over suspend?
+> 
+>> We did call ptp_clock_unregister() so it should unregister the PPS as well.
+>> What I'm not sure is if it calls the ptp->enable() hook to disable the PPS/PEROUT.
+>>
+>> If yes then that should take care of the flags as well.
+>>
+> 
+> No, ptp_clock_unregister() doesn't unregister PPS.
+> 
+>> If not then you need to call the relevant hooks explicitly but just after
+>> ptp_clock_unregister().
+>> e.g.
+>>     if (iep->pps_enabled)
+>>         icss_iep_pps_enable(iep, false);
+>>     else if (iep->perout_enabled)
+>>         icss_iep_perout_enable(iep, NULL, false);
+>>
+> 
+> This doesn't work because if pps_enabled is already true, it goes to icss_iep_pps_enable(), but inside it checks if pps_enabled is true, if so it returns 0, without acutally enabling pps. Which is why we need to set pps_enable and perout_enable to false.
 
---JB+OrQ7TuTIBolfs
-Content-Type: application/pgp-signature; name="signature.asc"
+Note that we are passing false in the last argument. i.e. we want to disable PPS/PEROUT.
+I don't see why it won't work.
 
------BEGIN PGP SIGNATURE-----
+> 
+>> But this means that user has to again setup PPS/PEROUT.   
+>>
+> 
+> So yes, this is the expected behavior for user to setup PPS/PEROUT after bringing up an interface. To clarify when user needs to again setup PPS:
+> 
+> 1. eth1 and eth2 are up, and one interface is brought down -> PPS/PEROUT will be working the same
+> 2. No interface is up, and one interface is brought up -> PPS/PEROUT needs to be enabled
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmczVR4ACgkQJNaLcl1U
-h9DyIQf/ekR9b6q5XbqcP889qtqZCzoymtgTaSj3bvLa6JKDZd13bL9mvWgRtDRU
-DK4119wZc3+5VFlG1zsgbXDaoKE4xyhJH4t2NXGBilKTLh7f97fRSXJfIfqBTPiD
-fmDdNhBPWw8ayr3MynnOTXR78cFT6o3DNmSYc89eyCQFdT2H9TJre3wyepTDUKlY
-O6MXbrYb7N7XItSZyyMImswSFluq6gJ8VOwdNivzC3+zR7iUA7dRLX2yh5J4ZlAJ
-0XwrmmSW4OLfaVWcPZfEaI3EL7PaDrSXq0RW0AXn2bURKQta5lz4bFABA1dmtvjT
-0lyUcmw5HkYerovMFLi4epvusDacmg==
-=4Yij
------END PGP SIGNATURE-----
+OK.
 
---JB+OrQ7TuTIBolfs--
+> 
+>>>       icss_iep_disable(iep);
+>>>         return 0;
+>>
+
+-- 
+cheers,
+-roger
 
