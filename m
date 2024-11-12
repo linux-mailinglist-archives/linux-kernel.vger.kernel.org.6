@@ -1,112 +1,157 @@
-Return-Path: <linux-kernel+bounces-406617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A959A9C62CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:45:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA689C6170
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:28:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B20ABA8403
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4143328390A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190CD21895E;
-	Tue, 12 Nov 2024 19:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A171E2194BE;
+	Tue, 12 Nov 2024 19:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ePtVwZ0+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F6NzJROR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTlcs1i3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140D81FEFCB;
-	Tue, 12 Nov 2024 19:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE991FEFCB;
+	Tue, 12 Nov 2024 19:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439637; cv=none; b=W/tjNFs8kkwzCggq86E+HFmrc+rXlLeJZQMvN8h9jgTbz5+lHldNA7PJaI2osbeqNGYOEXGvf2iBp3T8lFEDG9fF/D8f4aO43VET9mSewXsIXIAdtaBB6fl3DI3LTh02UGRtcroCznmRzXpKqSmZg1ESuo3ZUczfOLXD67rlFfc=
+	t=1731439654; cv=none; b=AwEPJ5CcwQj9hci85gsKDmIC1eDoTsRFGlPlDI9cSHOlLl/LBdmHl9ZFIpBwGQjPsefo4CaJ49GiSlHvC4eJ2mgqSO20ozC0FlJBDYTqxFrYuCkbyhYpshA8FbAi4+XF5peNRnfT2r21dEC4fFrgb72Ep+4AVgqvajqxmpWAERA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439637; c=relaxed/simple;
-	bh=YH2brv/TyQOjMwxIm4UxeA2thGe7AjZYl4hzRDIP7UE=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=ZwFE+l1kLYGNG3Dxkmncn6wuJU/H2fNNNlO6v0UmiTTu/d2JE5qBBDrQi0R7KqXJjdjpk/uIRbm/vuIzqayBc8PxsiqjiatwsON55Nl2uF+ksa5dJvzN4lYC2hSRjGbWkJKnYijeQ4SlT1eO9jL7/S/oerHtixGhImV8yTCqVJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ePtVwZ0+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F6NzJROR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 12 Nov 2024 19:27:12 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731439634;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=NeVVdBt8XYDcUZLK3uAH/HralHizCbqojlNYwwxGb94=;
-	b=ePtVwZ0+d2AxX/YFsXBZ3a7oaIY8CzEgHPCb5CJlb5ZSeUIKQUunspJx6utRiwYVRTJB8U
-	A3QwAvAvsXsBpappPTflHcIb+YtQ8wkBCA9H2vBjNKS0BeUnxUgncPvjQZ8IN4lF6zk6wJ
-	TtIGGUWWICjWEulyqAytwrTB5Byi4ffqzqEADemgM4NXIbjF+TFQsBr5WTHLNX42blzyVt
-	N7bPRaAzWwmwyS/M7TTp/Pjubi2jvFKrQ65y17fAYys6Ig3loZv/utEM8OYOrglYIR++hU
-	eNPaENfO1Sn+X332sRs2EnLBuDeyPT0Y5bHHZI5vTrfOJAyvmjaryNMT7ZC1+Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731439634;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=NeVVdBt8XYDcUZLK3uAH/HralHizCbqojlNYwwxGb94=;
-	b=F6NzJRORatEXcdEXjfcwJqMm2OW5wdYMcTnsUuuBKGIJFBUhKC5zxxFDvkk7Brw6VjO1Me
-	4DCdtA1BDGSLRcAw==
-From: "tip-bot2 for Thorsten Blum" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/sgx] x86/sgx: Use vmalloc_array() instead of vmalloc()
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, Kai Huang <kai.huang@intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1731439654; c=relaxed/simple;
+	bh=2PvJnInDZ0fL0OD5iSF2Lsc8bhSqcL47V7QRFi8bQl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NotIyGYhoeH7DMXdWEVtNa6SyVBq98uTuqM4YGUy95F6clwhu9ofFok7RczGTiqOje8gJ5KwagQ8wILBMC6bfhGcjdpaM+4pm7PNSUQ/GXraIbLFHgDGKoyamPAEdzkmvD/R2uTEm8dTNmmZYJi22xm1HMcFzKUVUBlE+eE9+Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTlcs1i3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85FD3C4CECD;
+	Tue, 12 Nov 2024 19:27:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731439653;
+	bh=2PvJnInDZ0fL0OD5iSF2Lsc8bhSqcL47V7QRFi8bQl8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=HTlcs1i3lY2MOuOUk4hXeUqEXceB3P/U/Kte3QaaqBnl4gU+OHeP1BYMYJW+3xILz
+	 WSlW7WilXMKtpsLL9d49oPv69QICSD84aiYtYy+M9qI2KpYO/ZQkgGGyeyB3ZfekAr
+	 5kVjpXPj9az/zktOXdSJbW9cDR1gYlGGiciV0lZ6WeDkUlXKE+Ff9L4ql5I+C74yju
+	 6pk//65jqvDbmy3OaF2t5FvNkJoLy0zAyrinoBAeT5EDXPHzX+Hh8i0VUY8Zb9iKvv
+	 1l62HjBMQT26prDqhDg5u44BQL0WfXjCod29XOTh2VHfwpd5ThjJkbBvAhrDFwLXZQ
+	 lO56OrL1/813A==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 261CCCE0D89; Tue, 12 Nov 2024 11:27:33 -0800 (PST)
+Date: Tue, 12 Nov 2024 11:27:33 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
+Subject: Re: [PATCH rcu 11/15] rcutorture: Add reader_flavor parameter for
+ SRCU readers
+Message-ID: <d27da29c-7499-4f08-b582-a2bbb9b3c1c7@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <ddf64299-de71-41a2-b575-56ec173faf75@paulmck-laptop>
+ <20241015161112.442758-11-paulmck@kernel.org>
+ <c48c9dca-fe07-4833-acaa-28c827e5a79e@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173143963304.32228.265321628400891478.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c48c9dca-fe07-4833-acaa-28c827e5a79e@amd.com>
 
-The following commit has been merged into the x86/sgx branch of tip:
+On Tue, Nov 12, 2024 at 10:12:40AM +0530, Neeraj Upadhyay wrote:
+> On 10/15/2024 9:41 PM, Paul E. McKenney wrote:
+> > This commit adds an rcutorture.reader_flavor parameter whose bits
+> > correspond to reader flavors.  For example, SRCU's readers are 0x1 for
+> > normal and 0x2 for NMI-safe.
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Andrii Nakryiko <andrii@kernel.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> > Cc: <bpf@vger.kernel.org>
+> > ---
+> >  .../admin-guide/kernel-parameters.txt         |  8 +++++
+> >  kernel/rcu/rcutorture.c                       | 30 ++++++++++++++-----
+> >  2 files changed, 30 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index 1518343bbe223..52922727006fc 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -5426,6 +5426,14 @@
+> >  			The delay, in seconds, between successive
+> >  			read-then-exit testing episodes.
+> >  
+> > +	rcutorture.reader_flavor= [KNL]
+> > +			A bit mask indicating which readers to use.
+> > +			If there is more than one bit set, the readers
+> > +			are entered from low-order bit up, and are
+> > +			exited in the opposite order.  For SRCU, the
+> > +			0x1 bit is normal readers and the 0x2 bit is
+> > +			for NMI-safe readers.
+> > +
+> >  	rcutorture.shuffle_interval= [KNL]
+> >  			Set task-shuffle interval (s).  Shuffling tasks
+> >  			allows some CPUs to go into dyntick-idle mode
+> > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> > index f96ab98f8182f..405decec33677 100644
+> > --- a/kernel/rcu/rcutorture.c
+> > +++ b/kernel/rcu/rcutorture.c
+> > @@ -111,6 +111,7 @@ torture_param(int, nocbs_nthreads, 0, "Number of NOCB toggle threads, 0 to disab
+> >  torture_param(int, nocbs_toggle, 1000, "Time between toggling nocb state (ms)");
+> >  torture_param(int, read_exit_delay, 13, "Delay between read-then-exit episodes (s)");
+> >  torture_param(int, read_exit_burst, 16, "# of read-then-exit bursts per episode, zero to disable");
+> > +torture_param(int, reader_flavor, 0x1, "Reader flavors to use, one per bit.");
+> >  torture_param(int, shuffle_interval, 3, "Number of seconds between shuffles");
+> >  torture_param(int, shutdown_secs, 0, "Shutdown time (s), <= zero to disable.");
+> >  torture_param(int, stall_cpu, 0, "Stall duration (s), zero to disable.");
+> > @@ -644,10 +645,20 @@ static void srcu_get_gp_data(int *flags, unsigned long *gp_seq)
+> >  
+> >  static int srcu_torture_read_lock(void)
+> >  {
+> > -	if (cur_ops == &srcud_ops)
+> > -		return srcu_read_lock_nmisafe(srcu_ctlp);
+> > -	else
+> > -		return srcu_read_lock(srcu_ctlp);
+> > +	int idx;
+> > +	int ret = 0;
+> > +
+> > +	if ((reader_flavor & 0x1) || !(reader_flavor & 0x7)) {
+> 
+> Minor: Maybe use macros in place of 0x1, 0x2, 0x7 as a cleanup later.
 
-Commit-ID:     f060c89dc1a3cfb6db3894e1d96980a568aa355c
-Gitweb:        https://git.kernel.org/tip/f060c89dc1a3cfb6db3894e1d96980a568aa355c
-Author:        Thorsten Blum <thorsten.blum@linux.dev>
-AuthorDate:    Tue, 12 Nov 2024 19:26:34 +01:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Tue, 12 Nov 2024 11:11:42 -08:00
+Hmmm...
 
-x86/sgx: Use vmalloc_array() instead of vmalloc()
+I could move SRCU_READ_FLAVOR_* to include/linux/srcu.h and make
+rcutorture use those.  Plus have a combined mask for the instances of 0x7.
 
-Use vmalloc_array() instead of vmalloc() to calculate the number of
-bytes to allocate.
+Or is there a better way?
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Acked-by: Kai Huang <kai.huang@intel.com>
-Link: https://lore.kernel.org/all/20241112182633.172944-2-thorsten.blum%40linux.dev
----
- arch/x86/kernel/cpu/sgx/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+							Thanx, Paul
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 9ace844..1a59e59 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -630,7 +630,7 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
- 	if (!section->virt_addr)
- 		return false;
- 
--	section->pages = vmalloc(nr_pages * sizeof(struct sgx_epc_page));
-+	section->pages = vmalloc_array(nr_pages, sizeof(struct sgx_epc_page));
- 	if (!section->pages) {
- 		memunmap(section->virt_addr);
- 		return false;
+> - Neeraj
+> 
+> > +		idx = srcu_read_lock(srcu_ctlp);
+> > +		WARN_ON_ONCE(idx & ~0x1);
+> > +		ret += idx;
+> > +	}
+> > +	if (reader_flavor & 0x2) {
+> > +		idx = srcu_read_lock_nmisafe(srcu_ctlp);
+> > +		WARN_ON_ONCE(idx & ~0x1);
+> > +		ret += idx << 1;
+> > +	}
+> > +	return ret;
+> >  }
+> >  
+> 
 
