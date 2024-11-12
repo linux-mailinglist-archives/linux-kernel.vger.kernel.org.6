@@ -1,177 +1,277 @@
-Return-Path: <linux-kernel+bounces-406118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578A59C5B1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:59:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2029C5B22
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17AA328140E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:59:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D721281BDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76C62003B4;
-	Tue, 12 Nov 2024 14:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BACF200B98;
+	Tue, 12 Nov 2024 14:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eNexm47M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LEPwMg/w"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AF41FEFA8
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423364; cv=none; b=gVganjPsN0P9JHtwSK6xF+0RSidEk+sblsm4u06mUVFWVrrRwAVfdSk7AgrJVGWw7KD2sRihle7sswBUO+z/GNOkF2XhyNUG18ab1fcB9b54l+B8vd/bQmQOK3Dkx8MHtT7H1Itr8JcgVstZ/GLu7fBFzJj6ToTEeiynQ27ATHE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423364; c=relaxed/simple;
-	bh=oU0WT5/i3G7DgaZFfeTwlebnKhTrhz/oUuWCQQ+C2zI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GmqODXBs65uYpnItbaAVLIndBsHPXCNk+W2ts4Y/4rrSAH0sP0WGLFgbvDKjJlaYG7laJXjm3zAPc8HLo1gMGail1z/ehHWGAySbvQPWAGZ3qMd4FZI4hkYoLt1x/96HdONMoWkXhlYx3b7oaJk6slSW3HmAIeWnAC7bC9FcmAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eNexm47M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD57BC4CECD;
-	Tue, 12 Nov 2024 14:56:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731423363;
-	bh=oU0WT5/i3G7DgaZFfeTwlebnKhTrhz/oUuWCQQ+C2zI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eNexm47MHFR9yA3McgFEbNtXfHkqJp+LW94rfLh6BILY48emzUcmNfFWVcpNH7zez
-	 6NKIYByZvzTBJ+8pY7FLgs1xOuAgRtyjE2RBcBBBYHd3XuSDFZFmw9zU3d2oYOm8HG
-	 hGyjXJm28pSRCH3bsBxpFTplq1ps5LIhb3AWrlKLnMPo7DuPfDzWZ/+agynXHo3NZe
-	 pmlpc2/xkjRKJfxJGfFylVAEw/E6Fyte1/mXBrFTKV5AF3+7P9zGiq0oMkB2zVwqny
-	 KynplvKzCsjbVDip1YMwapktTmtkAHXCtaCOQegwJZqDwuxEi2Yy6Vpccl/AjABxPU
-	 nNGRZ30mw5mgg==
-Date: Tue, 12 Nov 2024 15:55:57 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Philippe
- =?UTF-8?B?TWF0aGlldS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Eduardo
- Habkost <eduardo@habkost.net>, Marcel Apfelbaum
- <marcel.apfelbaum@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, Zhao Liu
- <zhao1.liu@intel.com>, linux-kernel@vger.kernel.org, qemu-arm@nongnu.org,
- qemu-devel@nongnu.org
-Subject: Re: [PATCH RFC 4/5] acpi/generic_event_device: add logic to detect
- if HEST addr is available
-Message-ID: <20241112155557.728e9d68@foz.lan>
-In-Reply-To: <20241003162728.1de6fc62@imammedo.users.ipa.redhat.com>
-References: <cover.1727782588.git.mchehab+huawei@kernel.org>
-	<176693e011a411db92be9e912bfc4a9da0e664b7.1727782588.git.mchehab+huawei@kernel.org>
-	<20241003162728.1de6fc62@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA8B2003DA;
+	Tue, 12 Nov 2024 14:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731423368; cv=fail; b=CpHrV1xGfzduHj1QswpqoP1Z+tEwm1QLwxre7SAZTxeM2/JPYi+Q2AXq326uvktRAnbT4c8DaBnfsLQzWIe9SfZ5xxqcVxQEGDNs2TQ+nKRKv4EyEpxF6EoIi62H4kBIZcDI5DcOIxfJfihIK1TGTvJB8zlNL9srm6QK4G/U7rM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731423368; c=relaxed/simple;
+	bh=sUrJeMH9RscmyIieJNOH6Omo5lJdOJV4tlT3b4TiGrc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GYYSL5mNLmS4PNHQZ99AkhzgMNzPGmoSr4OJEOs5ThuLmzvZJmHgjYRucwapOQ7TEdEOajQ15OJiCgc48hmgl+hAlLXmzaHLn0i6ccrry/xZOlYDOfBcl4QZr8wJKWmoeUtSG0joqCoX8AXJqbUy9pAG6AqJ9Pwf0hscHMO3wFs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LEPwMg/w; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731423367; x=1762959367;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=sUrJeMH9RscmyIieJNOH6Omo5lJdOJV4tlT3b4TiGrc=;
+  b=LEPwMg/wH/5MZ4LZ4U0OasHA12crZu/bf7jPlz9+xjhc81nddfBqzXWY
+   0VCqVfx1d6msOFemKW08ZkyDjEF93M3DgE8B8MOUX4qVQNCMjbIWsTZbV
+   KZxcRK1zjrV0g/tMO+2pHerLODx3jUg3JZTPALjykT65wU3Y8N1fEuhL2
+   XYX6rM67MdjFMALTNpD4E0fGGQOMlRPuKK9RNVcwBFuRBh5rEIXzbOhrC
+   cDym3xFAVpUWvb549SzBBTrQK41VmxBKYwoPSsXU1klLvPBhDb0SX8vx7
+   +eYo6eeju02yhySLSBeRf4TV9YkE71zt8JNnKJLJ+MKY/n1VGFAh7qEPx
+   w==;
+X-CSE-ConnectionGUID: v54ixHpQQQu2Q5e/onhN8w==
+X-CSE-MsgGUID: OpA/HOi7RbW/9x8Ju2jo1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48716505"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="48716505"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 06:56:06 -0800
+X-CSE-ConnectionGUID: bNqtTzAbRcut60SVq6Wz/Q==
+X-CSE-MsgGUID: 4wSLQJGKQOirDEbRZ69xaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="87463399"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Nov 2024 06:56:05 -0800
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 12 Nov 2024 06:56:04 -0800
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 12 Nov 2024 06:56:04 -0800
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.171)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 12 Nov 2024 06:56:04 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IZ71tGxRWxR3/uMCtsH8sywfgPxVP9l+jDIPOciQTrLcrvFrqYVzb+fQKQfDVsfM9bdC1vuaRXns4tdu564jDjhMJyOIVxC8r17CSOhyl1HuSzCVm2T60AaeeQDz20N61T9GCVDHcvV5IeA1mM/Y/Pms9lqfaJYpl47CvaASnfKJm7PGJNM6UkuWx/agut5RPYpIlwOCxi/Vj8TRh+QtwTj4Qz39kGu5gx6JPrUP8WNN7r8dhAx/NhvWLJ2pa9y2WT+28EXcWQqD1LBpD1Nx1yKIVRfDOl0AD23yQxk63p8xGehLo2A0uxgOum25HHcakLGTmjtBDfPyLbJb23lwtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uHaile56eIyKDdZjcDQ7sJmNP90rL+qy7dQ0CRaFFYI=;
+ b=dqIX91u/T/gpUpXLEy5g6aiSD2mr+xnAzuCVt970Bn4EAFDBsXynO9e8faHg8aez8Ycr/GldOhaZ1m8Ce4Fnd2rHvTdbL+cYFJIW20oqKXB+ivt9shuFUsiVZwHFrEhv94yHhO7CMkz0ose89dv8njh1zBw9Z3j/agcNps2cBJUQQji7KHhN8EOHgWvzndq/Nabp5o2RG17BdJAZXSGsQLnYu79uLSS/M9XbaOJAm7GiJcQNcgrGIXLMFPVTV4dZ3FeO2Ql5/R8ZQsPUOhhUHrXbcYxC4sRivOX7qykKrwANMX8pkoZ+Cun7IqNPcJI+ZWltnWROdTjwDa5wCdNDEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB5373.namprd11.prod.outlook.com (2603:10b6:5:394::7) by
+ MN2PR11MB4535.namprd11.prod.outlook.com (2603:10b6:208:24e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.26; Tue, 12 Nov
+ 2024 14:56:01 +0000
+Received: from DM4PR11MB5373.namprd11.prod.outlook.com
+ ([fe80::927a:9c08:26f7:5b39]) by DM4PR11MB5373.namprd11.prod.outlook.com
+ ([fe80::927a:9c08:26f7:5b39%5]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
+ 14:56:01 +0000
+Date: Tue, 12 Nov 2024 15:55:58 +0100
+From: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <intel-xe@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, Christian =?utf-8?B?S8O2bmln?=
+	<christian.koenig@amd.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+	<kw@linux.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?=
+	<ilpo.jarvinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: [PATCH v4 6/7] PCI: Allow drivers to control VF BAR size
+Message-ID: <f5z3pmw7jdxfeej56imz3i5s7upakjj2m6hyadtgpasvrvzciq@76cfywmwqkt5>
+References: <20241025215038.3125626-7-michal.winiarski@intel.com>
+ <20241028165031.GA1106195@bhelgaas>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241028165031.GA1106195@bhelgaas>
+X-ClientProxiedBy: BEXP281CA0011.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b10::21)
+ To DM4PR11MB5373.namprd11.prod.outlook.com (2603:10b6:5:394::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB5373:EE_|MN2PR11MB4535:EE_
+X-MS-Office365-Filtering-Correlation-Id: c019af95-76e5-40ee-714e-08dd032a1fda
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MHZmMlZXa1NpMnFuMW15cjIvaERka2xVMWJycUJKVHhJOVJHSjArOVd3TGY3?=
+ =?utf-8?B?TldVSXNZM0t1Tnd2QnFlWWlFR0pyTG5xR2pCQzRiTnJYMHpGS1lPVUlYc0xL?=
+ =?utf-8?B?eGtMZ2hEQnJWcE9sVkk0aFVwZGJoWWd3dVhIL0xTVFRqMTRDRndCN000aFh4?=
+ =?utf-8?B?clFTN3dhMDk5aUNoWEhGNVE4Q1NBREtGZ1ArTERBNEhBNHNHVzhHeklIek9i?=
+ =?utf-8?B?Z0xvaXJEK2cwUVJqOFhBNCtMTDBTUWQxVm1BN1pwQkw0VEkzSTV6aXlGTDQv?=
+ =?utf-8?B?RXErNDRLWnA0S2FsKzFGZE04WUJtZWZLSTdEd3dUT2VkQ2NWVHc4Rk1OTkxu?=
+ =?utf-8?B?Vk1nVWZOK1ZwclRPZjZObGxnbVZFMHFiWmRCUnJvbDZHcWxOaWltOWFkUlli?=
+ =?utf-8?B?YnlYdWJ0N1B5SE13WHUrem5KUEkzdmo4eU5uMFQ5cTBhcThuQUNscE1nUmJM?=
+ =?utf-8?B?L245ZEZ5S21JVkcxY3c0UG1lcHpCU21PUGNBV2V0bjJpWTJOTS84bkRXVy95?=
+ =?utf-8?B?MS9NVHBoMGtZcVFpbFZVQnYyeEM3T2hZUEJUYlVZaEtqTFNmemdscUw2Vy92?=
+ =?utf-8?B?V3VlbWRQUC9KcVFCeXVvdExTN2JNeVJ5TVBidG96QUNNUG16bHNmRS9PL1Ru?=
+ =?utf-8?B?NEphT0Q4YWQreTVTaVNiNEh4SkgwTlZNMnpTc1FzN2w5UFowa1BpdklFY29v?=
+ =?utf-8?B?S3pnbm4wVEhKVUFkamtQOU5IVjdyU1Mva0hCQ0poQVo1dmxPbVJhd0RDY0t6?=
+ =?utf-8?B?cnBpVkdEbllsSEdtR21RWDExS1d5UCtMZEZWMDVtZHlYSG82Q29XWXBtVSti?=
+ =?utf-8?B?bmpCZzN3WHE3UXU0RUNKZzlLRmtwaWpWZkNFSEF0UHFCeWJLR3R5S1FRQjRk?=
+ =?utf-8?B?c3VoNjZYTmV5blhsVTVJTXRoQ0IrYVc1UzNJaUljRnhHWHpQREdMblJvWlBn?=
+ =?utf-8?B?KzRwMTBURlR3aVlmWGdoa2YwaS95WjFSRC8wK0R3Zmttc3crajM2UEdmakln?=
+ =?utf-8?B?Zmd3bzNQMlJJeWU2eGx2YnZEWjFPSllnMUJLUXpkYXorcFhqOExrTXlSbzgr?=
+ =?utf-8?B?SHZrd1g3UEY1ZUd5TEpYbktQOGNWR1J3OWRLVVoxTmsxWWxKVlVwR1hUbzk4?=
+ =?utf-8?B?R0MxaUxTeXZNdjRkcVJxbWcvTkZWL1YwZWJMME1WMkorWTc4aCtNdkwyZ1Bu?=
+ =?utf-8?B?SXZuL09vbXRPV2lPRkN1eXQvczgvR2UvUE1EK0t4U0NTN2lNMzB4WmdjdldD?=
+ =?utf-8?B?bDFQcERpellRRVVHNUVoVHdYMkxXckRmdzJhclhmQ2UwNGp3WHVhMTFtKzdw?=
+ =?utf-8?B?MHpQMmk4NTN2K09TY1FvbFNSelVoWkJxbVRWbDlzNUdmcVcrb1ROSU8rZ3hP?=
+ =?utf-8?B?ZStBc3kzWDYvRzFBRmE1Wms0ZjVLbzVhOFZrR0VWNldQMFBhQXg2aDA5d2d0?=
+ =?utf-8?B?WTduanFpRThzdWxjQllFMEgyS3RtcThkZkJ1bkEyUHJjUlgzRnlrcEEvMU1P?=
+ =?utf-8?B?UndHVGU1STdqbktHM3A0d1ZWY1pkNkVtNXJEUm9IRU5qQ2ZPVHMrVXJtVEVH?=
+ =?utf-8?B?NEpZV1Y2eUR0OG92MlJzbGc5VUR3YVkrSjFwNGxSUjlMbDFSQWRlNFZFL081?=
+ =?utf-8?B?VFhmYWFQWS81QU9wRUMwMzhOaW9LT2Y2cmRuOFNXRkpESnF6V01OMmIrQXpp?=
+ =?utf-8?B?dTExZjNQRkJvZVBLYnZ2NklEdlpqVmNPRENKNms3a2EvYTV0V3BrakxxQklU?=
+ =?utf-8?Q?dArOnwNAPwwqfiP95f7NqPrqOMEe3/LEaknqdsB?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5373.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Q0svbC9lR2NGT25xN3J2bllJYjNQU1FHaFNBcUU5OCtSWVdvV1ovQys3bVhy?=
+ =?utf-8?B?Mk9Fd090ZXY5bjV2NmJ0S09STXluUzlJYXovUlFFYU44WkRTNGdaK3VOQkZh?=
+ =?utf-8?B?L0RybFFWS2twOVZHb211eFBMRWVDamxFZzZjcGUrb3BLc2NzQ0QwbXBlQ092?=
+ =?utf-8?B?YVRWQUhyTEpwTXlPb1ZlMXFhSVoxbmtCK2djNVFOVFhzY3MyMzZTK3VKdzF6?=
+ =?utf-8?B?MldTUThLaC9vbTNMWkxJZksyclc5a1VKdHJzY3BrTTZMRy9mVE9YdWFBd2VY?=
+ =?utf-8?B?ckJPMTYzc2VBMEszVTZkMUl5TFBLOWo2R0xUaHlybWQzZndGdWpTejVUK3VW?=
+ =?utf-8?B?TVFCTVIwelBjYW1DWHZ4N1YvWGVKNmptTTRhSjhSMUppS2gvNmdZNUxrZDF1?=
+ =?utf-8?B?OHJPQmxLRzcyWTR4VlNlVUtzRDd6WmxBNUxrcGhtM1lrQUlYeFFla1ZMOW16?=
+ =?utf-8?B?MDVDUUVFOExQWTZQNGdzRmRGKzhpN0RTZ0tobXNNdnRpSkIvaHo1Ui9qN3lF?=
+ =?utf-8?B?bG5Fbzh2YmNmeTNKLzBpSWw0NVBWVzUzNWI0dUpub0NvL29zSDlZVXR6RlVa?=
+ =?utf-8?B?aDhZeGFlZlZhdys5TE9rUGR2YjAvUE1rd2tzUUEwaklJSHJlVlRhaTdqeDNx?=
+ =?utf-8?B?RTc4aXFHOEt4VlQwdUh5M0pNM3NVcFV3YnlHNFZlR2tPcWRaSWVMWUlRZCtP?=
+ =?utf-8?B?VG9ZL0dVZGtzOFZiZFRreGl2WlE1WUJyTWgxK3hNWUF0WUoyMW1VandESjNa?=
+ =?utf-8?B?SGNVUldZN09Va05QT0k2M3ZSRWJuR25nMkFONSt1QnYrSXdWUkRyeUV4UUJI?=
+ =?utf-8?B?OVZFaWxzRUZMaklnWnNRdTZuTlhoVVVXa00xOUsvREIwTHpYVEFoL1RlRmt1?=
+ =?utf-8?B?TDl1MXgycFUwTTVrTjBvZnc1SVIycVRlTUZuMzBwNkp4aGNzMzhOQThkaHFY?=
+ =?utf-8?B?ekRtYmlmL0dBV1JWelNWbHp5YmNCWVZSSUlYL3d4aGJlcVVZTkVCd2VDRlh6?=
+ =?utf-8?B?YVgyazdyUEhNak91ckUrQWFVcDhxKy9BQXhQNElKNkhXYUV4SENmLzh6YWVh?=
+ =?utf-8?B?Nit5eFBlN1loRFJVSVZSdklwTmtKcmVqWWwzSTlnaWdISWZsdVJWWnM0NjEz?=
+ =?utf-8?B?Um8yS2JuZUVQbDY5bDF6TkFwTkdBSFMzVjlRZEEzOGd1STVmU1BkMmk1ZDZw?=
+ =?utf-8?B?b281ZTQ1SkZSSUg3SW5reDg5S01Yb2JQRjZWd1lqNDQ1OFd4bVRRZDRreWZT?=
+ =?utf-8?B?OFRoN1I0UHg3ZnVjZDU1UTJqTC9Tb1pxNXFtbXYxcW9ubVg3MWpBTHo5Tkph?=
+ =?utf-8?B?OHpUb0FFbUlHZVkvZXhsUkpHSU5BcTV6TTdCbGt1UnlXRzYzeWhPYVh3NEht?=
+ =?utf-8?B?S3FyRkZ2aWZWTUlDUTE5VlhJUmdkcVUzU2VCcHJqNTBLbzIzVnJFdkNuQ3A0?=
+ =?utf-8?B?RVNVZVdGUHhDU0JDOWVza1NROE11WmVxUHpRVG52eE5GTzIwTUQxSHdOdy9Q?=
+ =?utf-8?B?SnR6eVlrMHRtUkp4TjJTY3p6YzduaW9RME1NY2ZFWkdjK1VTS1NTM0tLTUNN?=
+ =?utf-8?B?Z2g4dzRUQXRSYjRXWWUzdUFYK2Q2anpHME1tYzhDUGVQTktaZFl1WE10RVN5?=
+ =?utf-8?B?cGo4VCt3bjAvOHI2MmdLVGtoM2JlWjBJYVRWdklxbnVVZVlkUWR0WUpmTDlP?=
+ =?utf-8?B?M2MzT3NWeUVzRXA3OE9wb3BzMU84MnZCb0N5T0xnRThMQ0p2a2Fqb2JIRzZh?=
+ =?utf-8?B?RDhXRjJ3QzJwdGMzN3VlMDBEL09leEJ5ZFpSakp2Y0hMTEs0bVlzNDNsTTNX?=
+ =?utf-8?B?U05rM21LSG1NNURkdjlHbXVhUU1zcEZ6YmQ4SzBPakoxMGxBdkY4aE5MWkU1?=
+ =?utf-8?B?YVpCbURiR3ZMdTdUVmRiVG1PTEduMXpmZklNdENwNDIySnVFQmxLTUZZZGhr?=
+ =?utf-8?B?Yi9WVUMwMDRqUWJBTi9BVFNCL09FeE5mN1FtenB3SC9kMlIxZnJBb3g0Ykto?=
+ =?utf-8?B?RW1CSzN3Q2N1OFZYbHFTSXphQy9vOUxIZmNYZkVYSXF4dGVPb0dBdGRzV3Jq?=
+ =?utf-8?B?UjRmY2owZE15UDRkK21HQ2wrUVFsQjhRVnlTYkpoR01Ld1BvS3V2eWwxc0FH?=
+ =?utf-8?B?b2NOQXlsZzlqNUhOS1krb0hqRkVsb0VmbnFWRlNHN3FuQ0dFaC9nRFNRamZr?=
+ =?utf-8?B?K3c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c019af95-76e5-40ee-714e-08dd032a1fda
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5373.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 14:56:01.6577
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nAXp+pyNzcoB4J3qlQa6XzEXte/4loEfz9UNi2r3zAsSdskmqbC/u+hBvmLwmSEsQn/iDN4cNo4vZiwNoyrRP8lL8QbVZEwI7Aoe0eudaBc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4535
+X-OriginatorOrg: intel.com
 
-Em Thu, 3 Oct 2024 16:27:28 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
-
-> > +++ b/hw/acpi/ghes.c
-> > @@ -513,7 +513,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
-> >      }
-> >      ags = &acpi_ged_state->ghes_state;
-> >  
-> > -    if (!ags->hest_addr_le) {
-> > +    if (!ags->hest_lookup) {
-> >          get_ghes_offsets(le64_to_cpu(ags->hw_error_le),
-> >                           &cper_addr, &read_ack_register_addr);  
+On Mon, Oct 28, 2024 at 11:50:31AM -0500, Bjorn Helgaas wrote:
+> On Fri, Oct 25, 2024 at 11:50:37PM +0200, Michał Winiarski wrote:
+> > Drivers could leverage the fact that the VF BAR MMIO reservation is
+> > created for total number of VFs supported by the device by resizing the
+> > BAR to larger size when smaller number of VFs is enabled.
+> > 
+> > Add a pci_iov_vf_bar_set_size() function to control the size and a
+> > pci_iov_vf_bar_get_sizes() helper to get the VF BAR sizes that will
+> > allow up to num_vfs to be successfully enabled with the current
+> > underlying reservation size.
+> > ...
 > 
-> just fencing off lookup is not enough,
-> to be compatible with qemu-9.1 (virt-9.1) we also should not publish hest_addr fwcfg.
+> > + * pci_iov_vf_bar_get_sizes - get VF BAR sizes that allow to create up to num_vfs
+> > + * @dev: the PCI device
+> > + * @resno: the resource number
+> > + * @num_vfs: number of VFs
+> > + *
+> > + * Get the sizes of a VF resizable BAR that can fit up to num_vfs within the
+> > + * resource that reserves the MMIO space (originally up to total_VFs) the as
+> > + * bitmask defined in the spec (bit 0=1MB, bit 19=512GB).
+> 
+> This sentence doesn't quite parse; something is missing around "the as".
 
-I tried this:
+Yeah, typo, "the" should be removed.
 
-diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-index 201e72516608..6bb962d3c449 100644
---- a/hw/acpi/ghes.c
-+++ b/hw/acpi/ghes.c
-@@ -402,8 +402,10 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
-     fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
-         NULL, &(ags->hw_error_le), sizeof(ags->hw_error_le), false);
- 
--    fw_cfg_add_file_callback(s, ACPI_HEST_ADDR_FW_CFG_FILE, NULL, NULL,
--        NULL, &(ags->hest_addr_le), sizeof(ags->hest_addr_le), false);
-+    if (ags->hest_lookup) {
-+        fw_cfg_add_file_callback(s, ACPI_HEST_ADDR_FW_CFG_FILE, NULL, NULL,
-+            NULL, &(ags->hest_addr_le), sizeof(ags->hest_addr_le), false);
-+    }
- 
-     ags->present = true;
- }
+> I'm guessing you mean to say something about the return value being a
+> bitmask of VF BAR sizes that can be accommodated if num_vfs are
+> enabled?  If so, maybe combine it with the following paragraph:
 
-But with such change, boot fails:
+I'll change it to:
 
-EFI stub: Booting Linux Kernel...
-UpdateRegionMappingRecursive(0): DF100000 - E1B90000 set 400 clr FF9F000000000B3F
-UpdateRegionMappingRecursive(1): DF100000 - E1B90000 set 400 clr FF9F000000000B3F
-UpdateRegionMappingRecursive(2): C0000000 - 100000000 set 6000000000070C clr 0
-UpdateRegionMappingRecursive(2): DF100000 - E1B90000 set 400 clr FF9F000000000B3F
-UpdateRegionMappingRecursive(3): DF000000 - DF200000 set 6000000000070C clr 0
-UpdateRegionMappingRecursive(3): DF100000 - DF200000 set 400 clr FF9F000000000B3F
-UpdateRegionMappingRecursive(3): E1A00000 - E1C00000 set 6000000000070C clr 0
-UpdateRegionMappingRecursive(3): E1A00000 - E1B90000 set 400 clr FF9F000000000B3F
-EFI stub: Generating empty DTB
-EFI stub: Exiting boot services...
-UpdateRegionMappingRecursive(0): 139AC1000 - 139CD0000 set 400 clr FF9F000000000B3F
-UpdateRegionMappingRecursive(1): 139AC1000 - 139CD0000 set 400 clr FF9F000000000B3F
-UpdateRegionMappingRecursive(2): 139AC1000 - 139CD0000 set 400 clr FF9F000000000B3F
-UpdateRegionMappingRecursive(3): 139A00000 - 139C00000 set 6000000000070C clr 0
-UpdateRegionMappingRecursive(3): 139AC1000 - 139C00000 set 400 clr FF9F000000000B3F
-UpdateRegionMappingRecursive(3): 139C00000 - 139CD0000 set 400 clr FF9F000000000B3F
-UpdateRegionMappingRecursive(0): 139AC1000 - 139AD0000 set 60000000000400 clr FF9F000000000B3F
-UpdateRegionMappingRecursive(1): 139AC1000 - 139AD0000 set 60000000000400 clr FF9F000000000B3F
-UpdateRegionMappingRecursive(2): 139AC1000 - 139AD0000 set 60000000000400 clr FF9F000000000B3F
-UpdateRegionMappingRecursive(3): 139AC1000 - 139AD0000 set 60000000000400 clr FF9F000000000B3F
-SetUefiImageMemoryAttributes - 0x000000013FE60000 - 0x0000000000040000 (0x0000000000000008)
-UpdateRegionMappingRecursive(0): 13FE60000 - 13FEA0000 set 70C clr 0
-UpdateRegionMappingRecursive(1): 13FE60000 - 13FEA0000 set 70C clr 0
-UpdateRegionMappingRecursive(2): 13FE60000 - 13FEA0000 set 70C clr 0
-UpdateRegionMappingRecursive(3): 13FE60000 - 13FEA0000 set 70C clr 0
-SetUefiImageMemoryAttributes - 0x000000013CAF0000 - 0x0000000000040000 (0x0000000000000008)
-UpdateRegionMappingRecursive(0): 13CAF0000 - 13CB30000 set 70C clr 0
-UpdateRegionMappingRecursive(1): 13CAF0000 - 13CB30000 set 70C clr 0
-UpdateRegionMappingRecursive(2): 13CAF0000 - 13CB30000 set 70C clr 0
-UpdateRegionMappingRecursive(3): 13CAF0000 - 13CB30000 set 70C clr 0
-SetUefiImageMemoryAttributes - 0x000000013CAA0000 - 0x0000000000040000 (0x0000000000000008)
-UpdateRegionMappingRecursive(0): 13CAA0000 - 13CAE0000 set 70C clr 0
-UpdateRegionMappingRecursive(1): 13CAA0000 - 13CAE0000 set 70C clr 0
-UpdateRegionMappingRecursive(2): 13CAA0000 - 13CAE0000 set 70C clr 0
-UpdateRegionMappingRecursive(3): 13CAA0000 - 13CAE0000 set 70C clr 0
-SetUefiImageMemoryAttributes - 0x000000013CA50000 - 0x0000000000040000 (0x0000000000000008)
-UpdateRegionMappingRecursive(0): 13CA50000 - 13CA90000 set 70C clr 0
-UpdateRegionMappingRecursive(1): 13CA50000 - 13CA90000 set 70C clr 0
-UpdateRegionMappingRecursive(2): 13CA50000 - 13CA90000 set 70C clr 0
-UpdateRegionMappingRecursive(3): 13CA50000 - 13CA90000 set 70C clr 0
-SetUefiImageMemoryAttributes - 0x000000013C960000 - 0x0000000000040000 (0x0000000000000008)
-UpdateRegionMappingRecursive(0): 13C960000 - 13C9A0000 set 70C clr 0
-UpdateRegionMappingRecursive(1): 13C960000 - 13C9A0000 set 70C clr 0
-UpdateRegionMappingRecursive(2): 13C960000 - 13C9A0000 set 70C clr 0
-UpdateRegionMappingRecursive(3): 13C960000 - 13C9A0000 set 70C clr 0
-SetUefiImageMemoryAttributes - 0x000000013FE20000 - 0x0000000000030000 (0x0000000000000008)
-UpdateRegionMappingRecursive(0): 13FE20000 - 13FE50000 set 70C clr 0
-UpdateRegionMappingRecursive(1): 13FE20000 - 13FE50000 set 70C clr 0
-UpdateRegionMappingRecursive(2): 13FE20000 - 13FE50000 set 70C clr 0
-UpdateRegionMappingRecursive(3): 13FE20000 - 13FE50000 set 70C clr 0
-SetUefiImageMemoryAttributes - 0x000000013C7B0000 - 0x0000000000030000 (0x0000000000000008)
-UpdateRegionMappingRecursive(0): 13C7B0000 - 13C7E0000 set 70C clr 0
-UpdateRegionMappingRecursive(1): 13C7B0000 - 13C7E0000 set 70C clr 0
-UpdateRegionMappingRecursive(2): 13C7B0000 - 13C7E0000 set 70C clr 0
-UpdateRegionMappingRecursive(3): 13C7B0000 - 13C7E0000 set 70C clr 0
-SetUefiImageMemoryAttributes - 0x000000013C770000 - 0x0000000000030000 (0x0000000000000008)
-UpdateRegionMappingRecursive(0): 13C770000 - 13C7A0000 set 70C clr 0
-UpdateRegionMappingRecursive(1): 13C770000 - 13C7A0000 set 70C clr 0
-UpdateRegionMappingRecursive(2): 13C770000 - 13C7A0000 set 70C clr 0
-UpdateRegionMappingRecursive(3): 13C770000 - 13C7A0000 set 70C clr 0
+"Get the sizes of a VF resizable BAR that can be accomodated within the
+resource that reserves the MMIO space if num_vfs are enabled.
 
-At this point, nothing else appears, and bios doesn't boot OSPM. 
+Returns 0 if BAR isn't resizable, otherwise returns a bitmask in format
+defined in the spec (bit 0=1MB, bit 19=512GB)."
 
-(I'm using an arm64 BIOS with debug enabled)
+-Michał
 
-Thanks,
-Mauro
+> 
+> > + * Returns 0 if BAR isn't resizable.
+> > + *
+> > + */
+> > +u32 pci_iov_vf_bar_get_sizes(struct pci_dev *dev, int resno, int num_vfs)
+> > +{
+> > +	resource_size_t size;
+> > +	u32 sizes;
+> > +	int i;
+> > +
+> > +	sizes = pci_rebar_get_possible_sizes(dev, resno);
+> > +	if (!sizes)
+> > +		return 0;
+> > +
+> > +	while (sizes > 0) {
+> > +		i = __fls(sizes);
+> > +		size = pci_rebar_size_to_bytes(i);
+> > +
+> > +		if (size * num_vfs <= pci_resource_len(dev, resno))
+> > +			break;
+> > +
+> > +		sizes &= ~BIT(i);
+> > +	}
+> > +
+> > +	return sizes;
+> > +}
+> > +EXPORT_SYMBOL_GPL(pci_iov_vf_bar_get_sizes);
 
