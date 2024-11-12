@@ -1,218 +1,134 @@
-Return-Path: <linux-kernel+bounces-405796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDCF9C57A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:23:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C009C571A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7BB3B2A8D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:57:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 858962833FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E011BCA11;
-	Tue, 12 Nov 2024 11:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135D41CD1E8;
+	Tue, 12 Nov 2024 11:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvVDY/yk"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="a2/tyhe7"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FCD23099A;
-	Tue, 12 Nov 2024 11:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672161CD1F6
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731412623; cv=none; b=nUsRFtSCRhEJpkKL1sNt4kvj8vI+zAqagRZQ51RU+jlVrMpcT4GerHTEw7yPc3z9FR49VYQZTNgWdy2axEnbETHyQeUnEnqT1x2gF8kT3xyifduaMJllTz01IDVYUTrv98j10OLON+jkNZr+SgsbhKo6AEiGQTL944q14qwvdW0=
+	t=1731412684; cv=none; b=QQIG/y9ecR+5WesaFg/eawgTMDtei0PYOB0g6jZGf7pVsrFq5WajgF/00IRbzzubRL9aYloge/gcyiknO0D/iFFjzuvLIzBhF9q7C/k2AhkTxvzvgladnxyh/0RSGhlLmToDqU6zzJ2qI+37MMi4JYzRQfJhBVdbeYY4u7oMe6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731412623; c=relaxed/simple;
-	bh=raGOCI4olUmct7eYFc+pJLCilCI9/9CufmqPe7VooIQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S0Y/1gfApulc14taolTsKhBC0mlgrHZHGUQYus0j2o+jmFAH/hd4WsDrORU1sdOR/663WdNubdwz5Ww0zz+mmFJ3RdgY9nw29IIdAucerP39xQk5Rw+gJvtWkODhXSVdRdRaicdoHEkuW2XLeoiaVKg3epGT2X+pQtWf+xlAth8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=piggz.co.uk; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvVDY/yk; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=piggz.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431688d5127so44035605e9.0;
-        Tue, 12 Nov 2024 03:57:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731412619; x=1732017419; darn=vger.kernel.org;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=gSu5VRx/T0r2Y1TQNYxUEQDwIAks1NmmDqtGiwK+coE=;
-        b=DvVDY/ykgychd03Zf/V2iZLFmiDgzngSToZxEqN2OMRpDr4WcTIXY4DIYQ8s2x3JNt
-         kVwEZe/gTiMG/c8oEnfSO0Y2X+R1ujPnykVteg17BhPQpuRi9nboLqEdIuX/oqpdZPGp
-         tQDINwvm2pwtE7CfoHK+qqyJNRvrSKhFHwq95bgV7nuth/uO9QHBU/41ktW5zVExCOIE
-         r2IykTEFfi0Eyj+LZfsXQ9nTYiNMrV3nMdxUv71pgriOgcIpkXKDTZkZFBchRRQ4AYYo
-         G4HJ8Zb1tUEbZElcvWWvU4Y8pqVmh99PCIRN0FurXgggb/iytVJS4oj0TlqHKKP0iJsd
-         cx4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731412619; x=1732017419;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gSu5VRx/T0r2Y1TQNYxUEQDwIAks1NmmDqtGiwK+coE=;
-        b=JE+YATAfmPbm3tcAL6x1xg2BgR7NJYWsKhHfhOF+rhY5llj91gJAhAwDbxvNaLz9ZU
-         r5pYXsHS1cHpOsvLc0NbypqX6sbvm25NY7tDArdfoYZ8k8Kqul1PhWYPf4wk7vE835bg
-         lE8HaQiLpDN33Hvx7b/L9ru1I47G67DEeGAyhN2p21xnlyvnZelE222MTKJmESUU6/Ll
-         SGja8nw2W7V/mIaq6bZcAQJ0nkmhGcS4sqpXqy64gPwdNHFP8xm/gsLrHLZTfbTpLKK+
-         xcGju/KvvFFg0FDLa7HOsVuh+G2IrYIXKYakweWIJAFKw1fz5pQX8P52bv5MT0KCgQN1
-         Zk+w==
-X-Forwarded-Encrypted: i=1; AJvYcCW19/btpWVjJUcA8eZPJHjpuXZEcxdSNOzPdKRT5kVzOVKDos8SuQC7yF1VOCsUevB9m29KTLyLGT7CNEC/@vger.kernel.org, AJvYcCWM3IdS//EFQLJ+XJ5q37q2VqCBdUKGUz5M2EGIeOII7tzGon+kvnnL7Y52+k2TuYwiviVAe1F0@vger.kernel.org, AJvYcCWxwujgMl6/j5L9PzxxZyKYLi3vxxbB/35M2q6meLnCgsM2EF4dPS2Cer20vkQ4hNlQagktmO4PRC8M@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGcxkHQD5eZMrzcToPsjECpLkee+YMGWhU8R863Y2mnVhmjaRU
-	n5YWiJu5PN+DYZV0q5FNhHwwaENIt0fwSiqpEn5Edtyr0shtbj9M
-X-Google-Smtp-Source: AGHT+IElsmspuC7y92QmrSRjeRp6WqdcehDOD3Uw/GDj15rvF4LUjZ5UI8+zxBjPZPJSfOK8ith9ow==
-X-Received: by 2002:a05:6000:1f8c:b0:37d:4a80:c395 with SMTP id ffacd0b85a97d-381f186b313mr12410123f8f.21.1731412619186;
-        Tue, 12 Nov 2024 03:56:59 -0800 (PST)
-Received: from adam-laptop-hp.localnet ([2a0a:ef40:d5b:4001:e118:be36:46b9:41b4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97cfefsm15121948f8f.26.2024.11.12.03.56.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 03:56:58 -0800 (PST)
-Sender: Adam Pigg <piggz1@gmail.com>
-From: Adam Pigg <adam@piggz.co.uk>
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, stable@vger.kernel.org,
- Dragan Simic <dsimic@manjaro.org>
-Subject:
- Re: [PATCH] arm64: dts: rockchip: Fix vdd_gpu voltage constraints on
- PinePhone Pro
-Date: Tue, 12 Nov 2024 11:56:52 +0000
-Message-ID: <2815923.lGaqSPkdTl@adam-laptop-hp>
-In-Reply-To:
- <0718feb8e95344a0b615f61e6d909f6e105e3bf9.1731264205.git.dsimic@manjaro.org>
-References:
- <0718feb8e95344a0b615f61e6d909f6e105e3bf9.1731264205.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1731412684; c=relaxed/simple;
+	bh=gamiLNTrf25mtswS6LdlmTYjTT5i/nU926ZrJK9h7Yk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T7U2e2dNABITYxRNsj5/Qv30DlVbLOflMLUS7NuOcNzAyw2LK5eNgpOmgQjZCkQt0wzTzMzWWGWQW0l4nuH0q/jJjcp7t5oTASLtuYk8h/+LsYIGwGef2DLCS9/S7cxhaiSK2AnEmsGv4sfOoyGa7vJDRNS0TS6id3tV/zRPv40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=a2/tyhe7; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
+Date: Tue, 12 Nov 2024 22:57:36 +1100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
+	t=1731412678;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZLPANBLamjGfC5r6egRWAEDIhWpqsCbbZn+Iq+TVaHs=;
+	b=a2/tyhe7fNibfAbbCny3Aikp3SsQnw6XH7Ov42dzBegj2EiTgNMN3Xtj9HxXtxU8+uGVBm
+	nI9QJwwmQq3bac1SiNPQ53yBhbBEyJpPAlZrm8CZ4rAOzxF6iZ1FJVCbk2xF0Y9mw3Q3N8
+	0PWbOjQIDg3RwbSIyV7Ve+qisx+cnXeNfaZRvcKs1sKx2WLVjquVBuWwRjFd96OsiKw4a5
+	zJGLpuo/iZ/i7LfAsFL1Zmb+8W2cMl1QovdUVyShoYPgpXyfcsMFIFqpfd0XdqkFtzY2kO
+	0SEGYCrQNR+RkH+svIeIYbE1elx45wTijw4bX2EApjeDRad+MCIup1tiKLtEPQ==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: John Watts <contact@jookia.org>
+To: Parthiban <parthiban@linumiz.com>
+Cc: Andre Przywara <andre.przywara@arm.com>,
+	Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Samuel Holland <samuel@sholland.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/sun4i: Workaround TCON TOP conflict between DE0 and
+ DE1
+Message-ID: <ZzNCsFiAiACFrQhE@titan>
+References: <20241108-tcon_fix-v1-1-616218cc0d5f@jookia.org>
+ <20241108115357.691b77b0@donnerap.manchester.arm.com>
+ <Zy4SKCBwce3q0yj5@titan>
+ <b26b9d86-4ff9-4543-85ce-176dccfbfa05@linumiz.com>
+ <Zy4c9BFcrz2JVU6k@titan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2630842.XAFRqVoOGU";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zy4c9BFcrz2JVU6k@titan>
+X-Migadu-Flow: FLOW_OUT
 
---nextPart2630842.XAFRqVoOGU
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Adam Pigg <adam@piggz.co.uk>
-To: linux-rockchip@lists.infradead.org
-Date: Tue, 12 Nov 2024 11:56:52 +0000
-Message-ID: <2815923.lGaqSPkdTl@adam-laptop-hp>
-MIME-Version: 1.0
+Hey everyone,
 
-On Sunday 10 November 2024 18:44:31 Greenwich Mean Time Dragan Simic wrote:
-> The regulator-{min,max}-microvolt values for the vdd_gpu regulator in the
-> PinePhone Pro device dts file are too restrictive, which prevents the
-> highest GPU OPP from being used, slowing the GPU down unnecessarily.  Let's
-> fix that by making the regulator-{min,max}-microvolt values less strict,
-> using the voltage range that the Silergy SYR838 chip used for the vdd_gpu
-> regulator is actually capable of producing. [1][2]
+I'm not sure exactly where to add this but I discussed some of this with
+Parthiban on #linux-sunxi a few days ago, so I want to write it down
+before I work on the next version of the patch.
+
+I had assumed for some reason in my mind that DE0 and DE1 here referred
+to mixers, but they actually refer to chips that have multiple DEs. It
+looks like at least with the A133 it has two DEs instead of two mixers.
+
+This can be found by looking at the Allwinner BSP: SUN50IW10 requires
+CONFIG_INDEPENDENT_DE and has a device tree with an extra reg and clock:
+
+<0x0 0x06800000 0x0 0x3fffff>,/*de1*/
+<&clk_dpss_top1>
+
+However the tcon-top code seems to conflate mixers and DE in the
+mainline code and the Allwinner code. So ... It seems like 'DE0' and
+'DE1' really do mean mixers in this case. It's probably best to note
+that down.
+
+I thought a bit more about how to solve this properly- setting two
+mixers to the same output is something people probably won't do in
+practice, so the only way you could really arrive at this bugged state
+is by setting it as the default state. This patch may be the correct
+solution after all.
+
+John Watts
+
+On Sat, Nov 09, 2024 at 01:15:16AM +1100, John Watts wrote:
+> On Fri, Nov 08, 2024 at 07:36:16PM +0530, Parthiban wrote:
+> > To add, 0x20 will be DE0 <--> LCD0 and DE1 <--> TV0. Below note (copied from
+> > R40) states the priority of the DE selection, which fails to work? Not sure,
+> > may be disabling CORE1_SCLK_GATE and CORE1_HCLK_GATE in de2-clk helps.
+> > 
+> > With A133 following the same as T113 with single mixer without TV, still
+> > sets 0x20 in vendor kernel.
+> > 
+> > copied from R40:
+> > Note: The priority of DE0 is higher than DE1.
+> > If TCON_LCD0 selects DE0 and DE1 as source at the same time, then
+> > DE0 will be used for the source of TCON_LCD0.
 > 
-> This also eliminates the following error messages from the kernel log:
+> Hi there,
 > 
->   core: _opp_supported_by_regulators: OPP minuV: 1100000 maxuV: 1150000, not
-> supported by regulator panfrost ff9a0000.gpu: _opp_add: OPP not supported
-> by regulators (800000000)
+> Yes that was a pretty bad typo, I meant to say DE1 to TV0
+> The prioritization seems broken in the T113 at least, it's racy from
+> what I see in testing. I should note this in the patch too.
 > 
-> These changes to the regulator-{min,max}-microvolt values make the PinePhone
-> Pro device dts consistent with the dts files for other Rockchip
-> RK3399-based boards and devices.  It's possible to be more strict here, by
-> specifying the regulator-{min,max}-microvolt values that don't go outside
-> of what the GPU actually may use, as the consumer of the vdd_gpu regulator,
-> but those changes are left for a later directory-wide regulator cleanup.
+> I looked at the datasheets and kernel code briefly: I can't seem to
+> figure out what SCLK/HCLK gating does and I don't think the kernel
+> touches these registers which are gated by default.
 > 
-Ive tested this on my PPP and can provide the following outputs.
-
-On a device without the patch:
-# cat /sys/class/devfreq/ff9a0000.gpu/trans_stat
-From  :   To
-: 200000000 297000000 400000000 500000000 600000000   time(ms)
-200000000:         0         0         0         0     12203   5387782
-297000000:      8208         0         0         0      2973   2337382
-400000000:       784      6283         0         0       439   1859857
-500000000:        67       287      1093         0       284    389599
-600000000:      3145      4611      6413      1730         0   1748889
-Total transition : 48520
-
-And with the patch:
-[root@PinePhonePro defaultuser]# cat /sys/class/devfreq/ff9a0000.gpu/trans_stat 
-     From  :   To
-           : 200000000 297000000 400000000 500000000 600000000 800000000   
-time(ms)
-  200000000:         0         0         0         0         0       364    
-188911
-  297000000:       120         0         0         0         0       234     
-31652
-  400000000:        77       182         0         0         0        82     
-32287
-  500000000:        10        57        56         0         0        57     
-13376
-  600000000:        21        14        35        31         0        22      
-9463
-  800000000:       137       101       250       148       123         0     
-97310
-Total transition : 2121
-[root@PinePhonePro defaultuser]# uptime
- 11:56:24 up  3:34,  1 users,  load average: 2.77, 2.24, 1.70
-
-I havnt noticed any issues, though I havnt done anything more in-depth than 
-run the compositor and play a youtube video in the browser
-
-> [1]
-> https://files.pine64.org/doc/PinePhonePro/PinephonePro-Schematic-V1.0-20211
-> 127.pdf [2]
-> https://www.t-firefly.com/download/Firefly-RK3399/docs/Chip%20Specification
-> s/DC-DC_SYR837_838.pdf
+> > Thanks,
+> > Parthiban
 > 
-> Fixes: 78a21c7d5952 ("arm64: dts: rockchip: Add initial support for Pine64
-> PinePhone Pro") Cc: stable@vger.kernel.org
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-Tested-By: Adam Pigg <adam@piggz.co.uk>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts index
-> 1a44582a49fb..956d64f5b271 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> @@ -410,8 +410,8 @@ vdd_gpu: regulator@41 {
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&vsel2_pin>;
->  		regulator-name = "vdd_gpu";
-> -		regulator-min-microvolt = <875000>;
-> -		regulator-max-microvolt = <975000>;
-> +		regulator-min-microvolt = <712500>;
-> +		regulator-max-microvolt = <1500000>;
->  		regulator-ramp-delay = <1000>;
->  		regulator-always-on;
->  		regulator-boot-on;
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-
-
---nextPart2630842.XAFRqVoOGU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEr1aGel3+a3VM67n3d+rfHu07OYAFAmczQoQACgkQd+rfHu07
-OYADkAf+LXSLL2XQi2NHVwvmnLvT1HH5gVHM/L+nTrbxrNJs6efCnE35HYlo4ye1
-kw9pN+BfWTGHuAOE3yRgIgXZXY9J/OEKcKpKpRNO6SYPiVnjm8F3ct8LAPXaPU53
-tQNF4VXtffgWoDgFDMbDd+kAWd6zPVyR3BuDFy9iMKYvFTKLka2JMHIz25wb+l94
-Vx6WDGlq0LTvslHsX1BTbIH82jzJrM07ohtQmeuZTsBPnV6jxpHDp3KaPAqtDoml
-6NtxipN/scNJXRAzq5lvyp1rHmTYTvjtvjJmuRrOnEYjyk6+Q2/ySxFVNw4+RhMG
-HheiovMko5kHxT1bvbFOJXjsKL23mA==
-=MG/w
------END PGP SIGNATURE-----
-
---nextPart2630842.XAFRqVoOGU--
-
-
-
+> John Watts
 
