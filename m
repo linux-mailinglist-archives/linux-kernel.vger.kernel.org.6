@@ -1,225 +1,186 @@
-Return-Path: <linux-kernel+bounces-405576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E229C530B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:19:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E7C9C530D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:20:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7287B283563
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:19:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9463A1F26154
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7C12123FE;
-	Tue, 12 Nov 2024 10:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C079213142;
+	Tue, 12 Nov 2024 10:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gAXzuSO0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Bbc+El5o"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83AB2123EA
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0EF212F1D
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731406538; cv=none; b=LW9Iu/nH8wYlSuEH/rTo/LBJRAYSsoj7IsNSQEf20C8OserFRIMcFVQR6EEjjeddg8R3V/W18/gCTD6GZFho7Mz/qB5d6rHQCTeTYoIxlh7WzqB44lNP3K9H++0MZVd9orNmJpc92rn71amJq1xy4WpeYF2P2LHkC7PRU9dm3S8=
+	t=1731406559; cv=none; b=T50T3QJpbfkq0NYVbNadUZ8kYPuIrFdwwXNxu85jlfgkFSe7peVqcQHZzVK2iTfzcA4rnWkHgEQ2e4vrdK8RP8oofpCS58kZkKjkZS1xlaq/7nGTU2Rzmju+363ev2KTavNsZ1WkaA4fdtkD8zWFQreOeQIpLycd/JREZFAIK6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731406538; c=relaxed/simple;
-	bh=guooStJXMaoDbFn7X3kTw0Ev4pBjDl2YVD85exGZwWE=;
+	s=arc-20240116; t=1731406559; c=relaxed/simple;
+	bh=uGuGiQIlJrIXE4iVMImssRilu1RGQ+ZOnY+Z06vrHoQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hcwjzAwaBHo38NaAZRJ3L3duwQ3/CS+6RqPXeUIUoi0u+qjevcQ/Wf9UDWglO4BsR8FaFWEVcVfBY7RmmPsy/H87WuhP7cO2CtV9aBe8xMsfYez9kQ8bjtepPPo/Ax18WFLhDcd1+KH5cQwOPsdsxlOyzJ9s0LkamVwHAJANpow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gAXzuSO0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731406535;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BqdPdoNBYDYxp2NGpvmW30sz/k0Y1JvkYQr+xowAiyM=;
-	b=gAXzuSO0WeNgS/BMmIFFJTmzts97v6eH8R+WMen6+BQRj7j8XhQUtcfFuMZeaF5oJlUcBe
-	NoUvV8KawXacHGfw5Pve/y+ouIXwXcLhlWAzUZoErdwd9QZMrq6wc/geraU1dsJC86swus
-	QokW77L8h7kjjbJd5lRqVB92Yv11ViI=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-90-v7Fywjj1MVWmUPQCIBD58Q-1; Tue,
- 12 Nov 2024 05:15:30 -0500
-X-MC-Unique: v7Fywjj1MVWmUPQCIBD58Q-1
-X-Mimecast-MFC-AGG-ID: v7Fywjj1MVWmUPQCIBD58Q
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 263E619560AE;
-	Tue, 12 Nov 2024 10:15:28 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.9])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DD6BD30001A2;
-	Tue, 12 Nov 2024 10:15:19 +0000 (UTC)
-Date: Tue, 12 Nov 2024 18:15:14 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH V2 3/3] block: model freeze & enter queue as lock for
- supporting lockdep
-Message-ID: <ZzMqsmCVwfSHC7Vb@fedora>
-References: <20241025003722.3630252-1-ming.lei@redhat.com>
- <20241025003722.3630252-4-ming.lei@redhat.com>
- <CGME20241029111338eucas1p2bd56c697b825eef235604e892569207e@eucas1p2.samsung.com>
- <ca16370e-d646-4eee-b9cc-87277c89c43c@samsung.com>
- <ZyEGLdg744U_xBjp@fedora>
- <6551c33f-b9e1-45ab-b420-d022d6e4e402@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nb24K13aUeGpAxaTv4NiM2GNWCDPjB44Wb6Qs0jjF8TeylrQ65RM7HfFwjeFQCk47KAK0t/Od4/2+olounSxEQRxaqLEfkerxGKkTZGcAk+nsmkQc3bxrcJ/2owisbekMvjRKf/0jgtUOaP5nWquD9Srw0k1oq1e5cifd1qTqM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Bbc+El5o; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso43063675e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:15:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731406556; x=1732011356; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=obp8yGIldYDVzI0XN70dXZCO2SHc5IgrE0mc+D/CPjg=;
+        b=Bbc+El5oUdB8pUtW5r8ewApdOQ8EcPOc8Y9SArUlAPQB9BN21P6IFSKaH+ezVdOqZZ
+         jvKhoTqtz9QSDzGIInBUA+kPmIfbBj+emxvuDHI2jgle+orpUVPP0QYtMauL6XWmQiQt
+         1nZACWK4ySUYEmm1Hxjj+XM2RgRBbR5CCpPLO/4PzQJ2FHJnRRrCTUk5XBN9qqwThkST
+         Zp0G8v3HxrX/kfRcOAwTm04rU8EH0s+MFa9nOKylb9OYjwIGCJUelw9nPuvgU7zNMD2k
+         xj79uEipbdoS/wt4TnSVJQZOaSGWLih1Z1vvW2dtDo+xjrTpQVBbNmU41zW9xs2Kdwxm
+         VKQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731406556; x=1732011356;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=obp8yGIldYDVzI0XN70dXZCO2SHc5IgrE0mc+D/CPjg=;
+        b=ZHjWXWfYs8ZfSHQ0g1sQ5IuwihezM9NmryngK04AwoVOEjM0PRZ7SXQ/LvVQN4u1RL
+         vk7ftz98SfgNFsT1OCM9o0sYLwxXsVLJNAtCK1neoTM7Dp7/vOkldO9AwqNU9nKbbA/a
+         7ebQRzB/YV7c9N58OF1ZyZkvNHENIMITsc3Mu7CJBi9Y89BDgMqpT8NA24Hcu6gx/PpI
+         VvMfkMkb6boPfVWLpGyRq07HJ5XUFTRld0Da5vSxfTmak4Jgp/Z2bX4LKbnEzBksp4h6
+         MLTAmit2HxzbSu+gD1UCF3jC3lMKsexK1aSuAzrgppQy//JySuMnHXPjMxh+S2WZR2Y8
+         xSBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAF82qb/Og9Nf5+OfZ4AIuFi7vGeeF5r0yxSV2Sq+gLLcNWiNbTr1XQOZGiFgFX7yTcPYjswm5H+cso80=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy49qsfXW8jnbnqAhBQEDpOTx2XA3An4JfwEaBjy3eb7cKCwU4/
+	nFWrkAdXhm0ye9jyvEtT9LgIsQw1chAUyEzy4IPINr0WQb5xgZBEnUgSBjNjfAc=
+X-Google-Smtp-Source: AGHT+IFUtKcOxI9iGKzatyRYf8XbPC5gcQcujb8cjUFmjs/ViAYZu4pW7ViB0cQLuE4H16EQLauy0w==
+X-Received: by 2002:a05:600c:3c8f:b0:431:4e25:fe42 with SMTP id 5b1f17b1804b1-432b751e28fmr122955855e9.32.1731406555816;
+        Tue, 12 Nov 2024 02:15:55 -0800 (PST)
+Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05305a4sm205703715e9.5.2024.11.12.02.15.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 02:15:55 -0800 (PST)
+Date: Tue, 12 Nov 2024 11:15:54 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	Aren <aren@peacevolution.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Kaustabh Chakraborty <kauschluss@disroot.org>, =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
+	Ondrej Jirman <megi@xff.cz>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] iio: light: stk3310: use dev_err_probe where
+ possible
+Message-ID: <4ibd5tgpt3uzbmouqdiiv5pvfxebo5qsmgn3xh6rlb73qevatv@cajznxqnlca3>
+References: <20241102195037.3013934-3-aren@peacevolution.org>
+ <20241102195037.3013934-11-aren@peacevolution.org>
+ <ZyiIcDaANjxwtCz-@smile.fi.intel.com>
+ <m7x526sv5krgt4t2whn5ykyktoz5u7ihsxv3qa5yue3ucbk6lb@37spwsmlcylm>
+ <ZzEPACoblmcQD9yu@surfacebook.localdomain>
+ <xubjmxig4luag27ifnmqmv3x3bvzhwczwvw34kw6tssaa2d24t@ysnqh5e3g7sz>
+ <ZzHSE9Nrf4YySJrq@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mx2qhhffnejmsbkn"
 Content-Disposition: inline
-In-Reply-To: <6551c33f-b9e1-45ab-b420-d022d6e4e402@samsung.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
-
-On Tue, Nov 12, 2024 at 09:36:40AM +0100, Marek Szyprowski wrote:
-> On 29.10.2024 16:58, Ming Lei wrote:
-> > On Tue, Oct 29, 2024 at 12:13:35PM +0100, Marek Szyprowski wrote:
-> >> On 25.10.2024 02:37, Ming Lei wrote:
-> >>> Recently we got several deadlock report[1][2][3] caused by
-> >>> blk_mq_freeze_queue and blk_enter_queue().
-> >>>
-> >>> Turns out the two are just like acquiring read/write lock, so model them
-> >>> as read/write lock for supporting lockdep:
-> >>>
-> >>> 1) model q->q_usage_counter as two locks(io and queue lock)
-> >>>
-> >>> - queue lock covers sync with blk_enter_queue()
-> >>>
-> >>> - io lock covers sync with bio_enter_queue()
-> >>>
-> >>> 2) make the lockdep class/key as per-queue:
-> >>>
-> >>> - different subsystem has very different lock use pattern, shared lock
-> >>>    class causes false positive easily
-> >>>
-> >>> - freeze_queue degrades to no lock in case that disk state becomes DEAD
-> >>>     because bio_enter_queue() won't be blocked any more
-> >>>
-> >>> - freeze_queue degrades to no lock in case that request queue becomes dying
-> >>>     because blk_enter_queue() won't be blocked any more
-> >>>
-> >>> 3) model blk_mq_freeze_queue() as acquire_exclusive & try_lock
-> >>> - it is exclusive lock, so dependency with blk_enter_queue() is covered
-> >>>
-> >>> - it is trylock because blk_mq_freeze_queue() are allowed to run
-> >>>     concurrently
-> >>>
-> >>> 4) model blk_enter_queue() & bio_enter_queue() as acquire_read()
-> >>> - nested blk_enter_queue() are allowed
-> >>>
-> >>> - dependency with blk_mq_freeze_queue() is covered
-> >>>
-> >>> - blk_queue_exit() is often called from other contexts(such as irq), and
-> >>> it can't be annotated as lock_release(), so simply do it in
-> >>> blk_enter_queue(), this way still covered cases as many as possible
-> >>>
-> >>> With lockdep support, such kind of reports may be reported asap and
-> >>> needn't wait until the real deadlock is triggered.
-> >>>
-> >>> For example, lockdep report can be triggered in the report[3] with this
-> >>> patch applied.
-> >>>
-> >>> [1] occasional block layer hang when setting 'echo noop > /sys/block/sda/queue/scheduler'
-> >>> https://bugzilla.kernel.org/show_bug.cgi?id=219166
-> >>>
-> >>> [2] del_gendisk() vs blk_queue_enter() race condition
-> >>> https://lore.kernel.org/linux-block/20241003085610.GK11458@google.com/
-> >>>
-> >>> [3] queue_freeze & queue_enter deadlock in scsi
-> >>> https://lore.kernel.org/linux-block/ZxG38G9BuFdBpBHZ@fedora/T/#u
-> >>>
-> >>> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> >>> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> >> This patch landed yesterday in linux-next as commit f1be1788a32e
-> >> ("block: model freeze & enter queue as lock for supporting lockdep").
-> >> In my tests I found that it introduces the following 2 lockdep warnings:
-> >>
-> >> > ...
-> >>
-> >>
-> >> 2. On QEMU's ARM64 virt machine, observed during system suspend/resume
-> >> cycle:
-> >>
-> >> # time rtcwake -s10 -mmem
-> >> rtcwake: wakeup from "mem" using /dev/rtc0 at Tue Oct 29 11:54:30 2024
-> >> PM: suspend entry (s2idle)
-> >> Filesystems sync: 0.004 seconds
-> >> Freezing user space processes
-> >> Freezing user space processes completed (elapsed 0.007 seconds)
-> >> OOM killer disabled.
-> >> Freezing remaining freezable tasks
-> >> Freezing remaining freezable tasks completed (elapsed 0.004 seconds)
-> >>
-> >> ======================================================
-> >> WARNING: possible circular locking dependency detected
-> >> 6.12.0-rc4+ #9291 Not tainted
-> >> ------------------------------------------------------
-> >> rtcwake/1299 is trying to acquire lock:
-> >> ffff80008358a7f8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x1c/0x28
-> >>
-> >> but task is already holding lock:
-> >> ffff000006136d68 (&q->q_usage_counter(io)#5){++++}-{0:0}, at:
-> >> virtblk_freeze+0x24/0x60
-> >>
-> >> which lock already depends on the new lock.
-> >>
-> >>
-> >> the existing dependency chain (in reverse order) is:
-> > This one looks a real thing, at least the added lockdep code works as
-> > expected, also the blk_mq_freeze_queue() use in virtio-blk's ->suspend()
-> > is questionable. I will take a further look.
-> 
-> Did you find a way to fix this one? I still observe such warnings in my 
-> tests, even though your lockdep fixes are already merged to -next: 
-> https://lore.kernel.org/all/20241031133723.303835-1-ming.lei@redhat.com/
-
-The lockdep fixes in ->next is just for making the added lockdep work
-correctly, and virtio-blk is another story.
-
-It might be fine to annotate it with blk_mq_freeze_queue_no_owner(),
-but it looks very fragile to call freeze queue in ->suspend(), and the lock
-is just kept as being grabbed in the whole suspend code path.
-
-Can you try the following patch?
-
-diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index 194417abc105..21488740eb15 100644
---- a/drivers/block/virtio_blk.c
-+++ b/drivers/block/virtio_blk.c
-@@ -1594,6 +1594,7 @@ static int virtblk_freeze(struct virtio_device *vdev)
- 
- 	/* Ensure no requests in virtqueues before deleting vqs. */
- 	blk_mq_freeze_queue(vblk->disk->queue);
-+	blk_mq_unfreeze_queue(vblk->disk->queue);
- 
- 	/* Ensure we don't receive any more interrupts */
- 	virtio_reset_device(vdev);
-@@ -1617,8 +1618,6 @@ static int virtblk_restore(struct virtio_device *vdev)
- 		return ret;
- 
- 	virtio_device_ready(vdev);
--
--	blk_mq_unfreeze_queue(vblk->disk->queue);
- 	return 0;
- }
- #endif
+In-Reply-To: <ZzHSE9Nrf4YySJrq@smile.fi.intel.com>
 
 
+--mx2qhhffnejmsbkn
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 4/6] iio: light: stk3310: use dev_err_probe where
+ possible
+MIME-Version: 1.0
 
-Thanks,
-Ming
+Hello Andy, hello Aren,
 
+On Mon, Nov 11, 2024 at 11:44:51AM +0200, Andy Shevchenko wrote:
+> On Sun, Nov 10, 2024 at 04:34:30PM -0500, Aren wrote:
+> > On Sun, Nov 10, 2024 at 09:52:32PM +0200, Andy Shevchenko wrote:
+> > > Sun, Nov 10, 2024 at 02:14:24PM -0500, Aren kirjoitti:
+>=20
+> You can do it differently
+>=20
+> #define STK3310_REGFIELD(name)							\
+> do {										\
+> 	data->reg_##name =3D							\
+> 		devm_regmap_field_alloc(dev, regmap, stk3310_reg_field_##name);	\
+> 	if (IS_ERR(data->reg_##name))						\
+> 		return dev_err_probe(dev, PTR_ERR(data->reg_##name),		\
+> 				     "reg field alloc failed.\n");		\
+> } while (0)
+>=20
+> > #define STK3310_REGFIELD(name) ({						\
+> > 	data->reg_##name =3D devm_regmap_field_alloc(dev, regmap,			\
+> > 						   stk3310_reg_field_##name);   \
+> > 	if (IS_ERR(data->reg_##name))						\
+> > 		return dev_err_probe(dev, PTR_ERR(data->reg_##name),		\
+> > 				     "reg field alloc failed\n");		\
+> > })
+>=20
+> I am against unneeded use of GNU extensions.
+>=20
+> > > > replacing "do { } while (0)" with "({ })" and deindenting could make
+> > > > enough room to clean this up the formatting of this macro though.
+> > >=20
+> > > do {} while (0) is C standard, ({}) is not.
+> >=20
+> > ({ }) is used throughout the kernel, and is documented as such[1]. I
+> > don't see a reason to avoid it, if it helps readability.
+>=20
+> I don't see how it makes things better here, and not everybody is familia=
+r with
+> the concept even if it's used in the kernel here and there. Also if a too=
+l is
+> being used in one case it doesn't mean it's suitable for another.
+
+Just to throw in my subjective view here: I don't expect anyone with
+some base level knowledge of C will have doubts about the semantics of
+({ ... }) and compared to that I find do { ... } while (0) less optimal,
+because it's more verbose and when spotting the "do {" part, the
+semantic only gets clear when you also see the "while (0)". Having said
+that I also dislike the "do" starting on column 0, IMHO the RHS of the
+#define should be intended.
+
+So if you ask me, this is not an unneeded use of an extension. The
+extension is used to improve readabilty and I blame the C standard to
+not support this syntax.
+
+While I'm in critics mode: I consider hiding a return in a macro bad
+style.
+
+Best regards
+Uwe
+
+--mx2qhhffnejmsbkn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmczKtcACgkQj4D7WH0S
+/k5IrAf9Egz14wVYaV3DKBPJo8fgsKBghLX7gexCzWL4+0rkjfgtP8gSFaK8OnVY
+8howbIeCxwbCUSEZEtWJU36A5oaLI370Mb24KajDPQZyayedIXqF1UubYE3ZXcrA
+gwbGyho7TkbsUnrXbMhkp5lr7aU6O8JdIedrSqv7FnMxfkVUVkU6Hrai52+r3b3t
+k6uAvR1Yl+OD1XIq5FEeCW5tcoYEQ5rK6apeMXvdkPdg0o6ZKVjAt9vK9NVxPPpW
+2CdM15ron07ikOYiBDin1ZaD3x7FdzVh8z9RiizG5q5a6fPjh5SELLbBMHeGtnaZ
+5cCYi84a0NHhmndqIy6gZYPX4hhDXg==
+=b8YO
+-----END PGP SIGNATURE-----
+
+--mx2qhhffnejmsbkn--
 
