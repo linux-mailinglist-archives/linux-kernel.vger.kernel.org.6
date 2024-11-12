@@ -1,134 +1,98 @@
-Return-Path: <linux-kernel+bounces-406065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABE59C5A8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:39:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C199C5A95
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 191CA1F22267
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:39:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFC371F21061
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E5620013A;
-	Tue, 12 Nov 2024 14:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E133200B83;
+	Tue, 12 Nov 2024 14:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2Mn6xzC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g10uLWKn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93D8200133;
-	Tue, 12 Nov 2024 14:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A441FF02D;
+	Tue, 12 Nov 2024 14:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422247; cv=none; b=Cgl52mhqn4Gy5qkDuFY1djEaXW/3anjnclgybaGg9qD00LanWpuRvz92vqLM1h83rkhW1LLwxxQJSdTXLE7fqG3yOfanzNAMOlQYSDH7Wq0HTtVi1kb3K8Z1ctDEa236zicqaplrb6LZWDG46QYOVVaxMWuvFqaPq3s7jhSTZb8=
+	t=1731422259; cv=none; b=ODAhOCfakVy3lIz+A4/KnrF1qFKuiEvsAWhpogR3jObx/pgHVIYWVAb/J6uA2PONLQ4aDJEYCuun/RovxGpK3UccavIY6RlGmWWHjrYvF4itwAJq2GaUo27Opg/qsgYl7Fk2H9SMp7GdBlq063iIM8nGAF+7hqs98PcegN98Kos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422247; c=relaxed/simple;
-	bh=2S3GF9YgOUVpSAFE9yXBXJbkzVZbHzXUYGcIPmCPbZ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lemDlobhfEwA5M6n33CGZbTn1SEEtzy/WrwZKrVSt2a/KctboSYY/zGsey2r7R0ORTs7D9qfRnWS6FGw0/lZ3Js8Phk6hKkAN/7xNbSpuANxGOQqKKpSwk05q3qj0iS4ilZ2vAMko9FRms6NwA6pMm4laBqhxnWW6qF5HAPtgIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2Mn6xzC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6B26C4CED0;
-	Tue, 12 Nov 2024 14:37:24 +0000 (UTC)
+	s=arc-20240116; t=1731422259; c=relaxed/simple;
+	bh=yW75lJPp4kqCgCVPMkIbHw2p/49v6BgJKGW8dcF7ODw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NpX8Sj2EcJgbkTCPRWfHTJAHVH34zYXNyXRLUoKeRR+FKXqdaiY3SQgAlH0cpy43C4CeiNYMgL/ypB/4qYveWu7PELEQ3+VHyGTZamIJjnALhXfrbavXB2IaICAnJVoiaiVjEvz+Dm0BY3/fzu0zGkLhd5HrM3x7ciDzY5on7oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g10uLWKn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 614C8C4CED6;
+	Tue, 12 Nov 2024 14:37:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731422247;
-	bh=2S3GF9YgOUVpSAFE9yXBXJbkzVZbHzXUYGcIPmCPbZ4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=E2Mn6xzCC22m1WxtxUGNvC2lSrvLRNlRgjRuhrdlOyrUOIZnLSVP/Yo8k6WcGze6j
-	 9Ka9JBu64D+JMdH1PueyIoUUZ7Ewhn+9XydE01xmBhQSbYrvI14/RUqaLpGiMUfZSo
-	 ICkvifnHUUskFbqBVJBqCmnrYzAlAc12Scwz1WFNzzQbJRRzYNmSM3btCBo4Imvvzu
-	 NyK0w8YG1qwmtjE2AaU2W/InanaH9tRBAsxwvsjYCC4vrnInjCKMsYJXngjaxmDOzu
-	 r0UJhz50sJdUeYTgJE9dwar3Kmcg4s0z/wsFvHzjx3PXfMyvIqI7vg5TkA8whm/jXn
-	 mvaFriSbpmkBQ==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	rcu <rcu@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 3/3] rcu: Finer-grained grace-period-end checks in rcu_dump_cpu_stacks()
-Date: Tue, 12 Nov 2024 15:37:11 +0100
-Message-ID: <20241112143711.21239-4-frederic@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241112143711.21239-1-frederic@kernel.org>
-References: <20241112143711.21239-1-frederic@kernel.org>
+	s=k20201202; t=1731422259;
+	bh=yW75lJPp4kqCgCVPMkIbHw2p/49v6BgJKGW8dcF7ODw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g10uLWKnMoNs8UBqNHWcGrgdFo2m2PeXfTpO5UC9XQTIoFUcEsj3IY5u3+5ybgzCp
+	 GwHzpvY8kxER14I30jltzkbfM01s2SLLvSrUoc9ZCd81AKxJJnXSmBsnD0D5lJwwYZ
+	 4ynd1xeQEFia4kPiBk92ofykCyf7yp3dsojpsHWkEdIoFEbNCjGUJ/n2IKjkflaHPq
+	 8V+c3lMxepIlwBUy1XOERaOsQSwogtCCJNZGs7mXLIbzmpGbS3qUEEgKVrCF1b4S4z
+	 9rAnGcwHL6gUWUkKPNh67Tkg42dJENV5bwX7Y1I/T5STRR7Qe0qREvnIBoBc0vO2Qb
+	 FTnqEQxf40XFA==
+Date: Tue, 12 Nov 2024 14:37:32 +0000
+From: Lee Jones <lee@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, jic23@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jdelvare@suse.com, linux@roeck-us.net,
+	srinivas.pandruvada@linux.intel.com, bentiss@kernel.org,
+	dmitry.torokhov@gmail.com, pavel@ucw.cz, ukleinek@debian.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-input@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v9 1/9] HID: hid-sensor-hub: don't use stale
+ platform-data on remove
+Message-ID: <20241112143732.GG8552@google.com>
+References: <20241107114712.538976-1-heiko@sntech.de>
+ <20241107114712.538976-2-heiko@sntech.de>
+ <nycvar.YFH.7.76.2411071358210.20286@cbobk.fhfr.pm>
+ <4934964.GXAFRqVoOG@diego>
+ <nycvar.YFH.7.76.2411071534110.20286@cbobk.fhfr.pm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <nycvar.YFH.7.76.2411071534110.20286@cbobk.fhfr.pm>
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+On Thu, 07 Nov 2024, Jiri Kosina wrote:
 
-This commit pushes the grace-period-end checks further down into
-rcu_dump_cpu_stacks(), and also uses lockless checks coupled with
-finer-grained locking.
+> On Thu, 7 Nov 2024, Heiko Stübner wrote:
+> 
+> > This change was more or less a surprise find, because I wanted to make
+> > the platform_data pointer in the mfd_cell struct const and this the hid
+> > sensor hub stood out as doing something strange ;-) .
+> > 
+> > So patch 2 of this series actually depends on this change to not cause
+> > build errors.
+> 
+> Ah, right.
+> 
+> > But seeing that we're after -rc6 alredy, I would assume the brunt of the 
+> > mcu series might need to wait after 6.13-rc1 anyway - but I guess that 
+> > depends on how Lee sees things ;-) .
+> 
+> OK, I am keeping my hands off it for the time being.
 
-The result is that the current leaf rcu_node structure's ->lock is
-acquired only if a stack backtrace might be needed from the current CPU,
-and is held across only that CPU's backtrace.  As a result, if there are
-no stalled CPUs associated with a given rcu_node structure, then its
-->lock will not be acquired at all.  On large systems, it is usually
-(though not always) the case that a small number of CPUs are stalling
-the current grace period, which means that the ->lock need be acquired
-only for a small fraction of the rcu_node structures.
+I can take it now with an Ack.
 
-[ paulmck: Apply Dan Carpenter feedback. ]
-
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/rcu/tree_stall.h | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-index b530844becf8..925fcdad5dea 100644
---- a/kernel/rcu/tree_stall.h
-+++ b/kernel/rcu/tree_stall.h
-@@ -342,20 +342,24 @@ static void rcu_dump_cpu_stacks(unsigned long gp_seq)
- 	struct rcu_node *rnp;
- 
- 	rcu_for_each_leaf_node(rnp) {
--		if (gp_seq != data_race(rcu_state.gp_seq)) {
--			pr_err("INFO: Stall ended during stack backtracing.\n");
--			return;
--		}
- 		printk_deferred_enter();
--		raw_spin_lock_irqsave_rcu_node(rnp, flags);
--		for_each_leaf_node_possible_cpu(rnp, cpu)
-+		for_each_leaf_node_possible_cpu(rnp, cpu) {
-+			if (gp_seq != data_race(rcu_state.gp_seq)) {
-+				printk_deferred_exit();
-+				pr_err("INFO: Stall ended during stack backtracing.\n");
-+				return;
-+			}
-+			if (!(data_race(rnp->qsmask) & leaf_node_cpu_bit(rnp, cpu)))
-+				continue;
-+			raw_spin_lock_irqsave_rcu_node(rnp, flags);
- 			if (rnp->qsmask & leaf_node_cpu_bit(rnp, cpu)) {
- 				if (cpu_is_offline(cpu))
- 					pr_err("Offline CPU %d blocking current GP.\n", cpu);
- 				else
- 					dump_cpu_task(cpu);
- 			}
--		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-+			raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-+		}
- 		printk_deferred_exit();
- 	}
- }
 -- 
-2.46.0
-
+Lee Jones [李琼斯]
 
