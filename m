@@ -1,168 +1,148 @@
-Return-Path: <linux-kernel+bounces-405594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B11209C536C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:28:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5B29C5381
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:30:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7720B288C88
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:28:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9823BB24515
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDC2213EFE;
-	Tue, 12 Nov 2024 10:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1272144BD;
+	Tue, 12 Nov 2024 10:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UWrPSaA6"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grShRzqD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB357213EDD;
-	Tue, 12 Nov 2024 10:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95632123CF;
+	Tue, 12 Nov 2024 10:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731407191; cv=none; b=LtUi7LaRr8hIBBsw3dqpP+HmOb9Tbwcumt92vjtgry5pos/9Sm5NetmRXY6wfU4u9cRNR8QnOJ+X4IX/Nk9wFj4PpAd7OlLbw6TpQDEW8uYZrauwcWKiHSAuSLzG4QDwQ4c4e6gyvbGW4l8tJ9RlsW5o0xi35xlKs2hbdSOg6cY=
+	t=1731407221; cv=none; b=eSaGzSFKVY5C+DAUHgeCJGiH9Y3/N4b+kzZHivB+tdMa9gOtPAezvr7dHDILNsYp7e5TnhHNBPeoEMjArrCQK7CKfd161yp1GLLnyo7S3t3f4tpP8I9M5NHbH4dG3au5gH+2RPLiO8a/fq6z0ol7SxxIcjCxoOYC+61rMb3ymgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731407191; c=relaxed/simple;
-	bh=kuZHpQVynWF0dMml92KBBRYvg0segfgTnuEueyOfqWI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZe7s0/ZLRtXal+gmpX+zcNBOFZZFbpMXKYgRKvczZ2gYQhDuHdLfIIYPFIqblsE8XfSMQamg2Mt581qviHuYdVoykblnHzelStkLQpYUvd8sWqmAiTt5vQ6eMnYScmGA/U813y3tjrhnSIu1tK34caui1Re+qIYzy1OPxs+7KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=UWrPSaA6; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731407189; x=1762943189;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kuZHpQVynWF0dMml92KBBRYvg0segfgTnuEueyOfqWI=;
-  b=UWrPSaA6VtQMT4SBetV7/d0pF1/EbG9rDgpKgHfN5RYkCwDPB1L7n7ke
-   wBwkc+CREN8/Uj0wzxfztMDsJyBu/+7OyqOS31d1CjBVfx8gYoFUhQWkp
-   GMRvJnhOui9qdPqdWbAp6OMPNtn8othv02ARdkk4MLsmvzJ9WKkHI5I3j
-   TP2lWUjodq/jgl59eydYikdHBTR8+XGHMTAW7BCluwz9vv7JgTIz2Hlhl
-   xdujAlzBrcAy8usrLPEmd1xx5D2CSeVPAWEt9J260cC43Qo4h0WjD4CzK
-   cwCX6E3/fPOrIDD4ZHjGJ9E91iEc7jE7Sm7wIawWC+40d8546i/xhNC7h
-   Q==;
-X-CSE-ConnectionGUID: 3LJNlechSByP7VxoY/Eupw==
-X-CSE-MsgGUID: 9ycbmhISRkmmNQwzqMXIaQ==
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="201628733"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Nov 2024 03:26:22 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 12 Nov 2024 03:26:20 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Tue, 12 Nov 2024 03:26:17 -0700
-Date: Tue, 12 Nov 2024 10:26:17 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: Andrew Lunn <andrew@lunn.ch>, <UNGLinuxDriver@microchip.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Lars Povlsen <lars.povlsen@microchip.com>, "Steen
- Hegelund" <Steen.Hegelund@microchip.com>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>, <jacob.e.keller@intel.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH net-next 7/7] net: lan969x: add function for configuring
- RGMII port devices
-Message-ID: <20241112102617.lhb5ou7kxlqm7qhk@DEN-DL-M70577>
-References: <20241106-sparx5-lan969x-switch-driver-4-v1-0-f7f7316436bd@microchip.com>
- <20241106-sparx5-lan969x-switch-driver-4-v1-7-f7f7316436bd@microchip.com>
- <6fee4db6-0085-4ce8-a6b5-050fddd0bc5a@lunn.ch>
- <20241108085320.fqbell5bfx3roey4@DEN-DL-M70577>
- <Zy32_Bs7gDAtay5V@shell.armlinux.org.uk>
+	s=arc-20240116; t=1731407221; c=relaxed/simple;
+	bh=ozCy6ZU2hX5f6zY41iGDT6qBtG5/wtGMJOKYzcXL8mI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MrkZqRIviNBXINBo44iNrZ2/55JjisUOoWCd86oaEQGUXRWW6kQ0YQVXAnp/HqeZtdtWeJQUWbP/x910Cfb/+Cd8rx/hCjIGuyNOvyCIkf3aoeXKXfz5SSfWHB74sxdMOJXFPA/p4cG0IwB/uFs2i2pxoCuKWNydVk++uvnEgws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grShRzqD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 91DC7C4CED4;
+	Tue, 12 Nov 2024 10:27:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731407221;
+	bh=ozCy6ZU2hX5f6zY41iGDT6qBtG5/wtGMJOKYzcXL8mI=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=grShRzqDOC6wD6g9HQ/AGhq4F32MxiJQKNMgTzVhCyM9PW8pBla9yzUqIWKOX05bt
+	 EG4DiqxZaZmziVO1FD9KgFLKTSpIyyiexE4qoBnmJVNPOAXIAqJ2iOqC6GtMIMgc2T
+	 iAJMZBJ9vcdHWT6hrKhESFz01bit9vTnpeBS60mYN0xp98cfjKngUWVJ11UILDNS69
+	 m7xrsbbULN24OBRuR5ur1DJb64Z65q5QrKK76Kc/Jdb/16QqvlopDUmOiuHeWkENFO
+	 ADumb6tQvXXdzj0rgFsDZsbdWHS1KhQZJup8FiCWFeMlmrBMjiX9VYAVWI45JFInmV
+	 VglxNgYbo16lA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88068D32D75;
+	Tue, 12 Nov 2024 10:27:01 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH v5 0/5] Pinctrl: A4: Add pinctrl driver
+Date: Tue, 12 Nov 2024 18:26:54 +0800
+Message-Id: <20241112-a4_pinctrl-v5-0-3460ce10c480@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Zy32_Bs7gDAtay5V@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG4tM2cC/2XM3wqCMByG4VuRHbfYP5121H1ExNp+04E62UQK8
+ d6bQqR0+H3wvDOKEBxEdMlmFGBy0fk+jfyUId2ovgbsTNqIESYooQwr8Rhcr8fQYlIZ+mSKShA
+ SJTAEsO61xW73tBsXRx/eW3ti6/vNiH1mYphgDlKoIteszOGqutbXTp+179AamvgelwfMEwZZW
+ EO1JdTIfyx+OOkDFiu2pirBaK6MOOJlWT4n9FvRIAEAAA==
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731407219; l=2465;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=ozCy6ZU2hX5f6zY41iGDT6qBtG5/wtGMJOKYzcXL8mI=;
+ b=sOGzqIGmNL31284iCxi1Im2K6kJYoy+yb5BpDC2T9TUmiq625OP+fUfHSwf99+yMwsOCF/1nF
+ Pa2dYuD0s4QAr2AkEy7txineOfnN2uYSdPybPk+c3kLiBt2IX9nu1Bo
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-Hi Russel,
+Add pinctrl driver support for Amloigc A4 SoC
 
-> > Hi Andrew,
-> >
-> > > > +     if (conf->phy_mode == PHY_INTERFACE_MODE_RGMII ||
-> > > > +         conf->phy_mode == PHY_INTERFACE_MODE_RGMII_TXID)
-> > > > +             rx_delay = true;
-> > > > +
-> > > > +     if (conf->phy_mode == PHY_INTERFACE_MODE_RGMII ||
-> > > > +         conf->phy_mode == PHY_INTERFACE_MODE_RGMII_RXID)
-> > > > +             tx_delay = true;
-> > >
-> > > O.K, now warning bells are ringing in this reviews head.
-> > >
-> > > What i don't see is the value you pass to the PHY? You obviously need
-> > > to mask out what the MAC is doing when talking to the PHY, otherwise
-> > > both ends will add delays.
-> > >
-> >
-> > What value should be passed to the PHY?
-> >
-> > We (the MAC) add the delays based on the PHY modes - so does the PHY.
-> >
-> > RGMII, we add both delays.
-> > RGMII_ID, the PHY adds both delays.
-> > RGMII_TXID, we add the rx delay, the PHY adds the tx delay.
-> > RGMII_RXID, we add the tx delay, the PHY adds the rx delay.
-> >
-> > Am I missing something here? :-)
-> 
-> What if the board routing adds the necessary delays?
-> 
-> From Documentation/networking/phy.rst:
-> "
-> * PHY_INTERFACE_MODE_RGMII: the PHY is not responsible for inserting any
->   internal delay by itself, it assumes that either the Ethernet MAC (if capable)
->   or the PCB traces insert the correct 1.5-2ns delay
-> ...
+All of Amogic SoCs GPIO device requirement is met here by
+adding GPIO bank definition instead of the pin definition.
+Binding header files will no longer be added to future
+SoCs's pin devices.
 
-Ack. The case where the PCB traces add the delay is certainly not
-handled with the current changes.
+The pinctrl software only adds insterface of of_xlate to support
+for transformation without affecting the overall framework and
+is compatible with previous drivers.
 
-> For cases where the PHY is not capable of providing this delay, but the
-> Ethernet MAC driver is capable of doing so, the correct phy_interface_t value
-> should be PHY_INTERFACE_MODE_RGMII, and the Ethernet MAC driver should be
-> configured correctly in order to provide the required transmit and/or receive
-> side delay from the perspective of the PHY device. Conversely, if the Ethernet
-> MAC driver looks at the phy_interface_t value, for any other mode but
-> PHY_INTERFACE_MODE_RGMII, it should make sure that the MAC-level delays are
-> disabled."
-> 
-> The point here is that you have three entities that can deal with the
-> required delays - the PHY, the board, and the MAC.
-> 
-> PHY_INTERFACE_MODE_RGMII* passed to phylink/phylib tells the PHY how it
-> should program its delay capabilities.
-> 
-> We're then down to dealing with the MAC and board induced delays. Many
-> implementations use the rx-internal-delay-ps and tx-internal-delay-ps
-> properties defined in the ethernet-controller.yaml DT binding to
-> control the MAC delays.
-> 
-> However, there are a few which use PHY_INTERFACE_MODE_RGMII* on the MAC
-> end, but in this case, they always pass PHY_INTERFACE_MODE_RGMII to
-> phylib to stop the PHY adding any delays.
-> 
-> However, we don't have a way at present for DSA/phylink etc to handle a
-> MAC that wants to ddd its delays with the PHY set to
-> PHY_INTERFACE_MODE_RGMII.
-> 
-> Thanks.
+The code in DTS file is also readable when using GPIO, as below:
 
-Right, so using the {rx,tx}-internal-delay-ps allows me to configure the
-MAC delays, or skip them entirely, in case the PCB adds them.
+reset-gpios = <&gpio AMLOGIC_GPIO_X 6 GPIO_ACTIVE_LOW>;
 
-Thanks!
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Changes in v5:
+- Modify if to switch.
+- Dropped parameter combination, bank and offset as independent parameter passing
+- Link to v4: https://lore.kernel.org/r/20241101-a4_pinctrl-v4-0-efd98edc3ad4@amlogic.com
 
-/Daniel
+Changes in v4:
+- Add interface of of_xlate support.
+- Add const for some variable.
+- Link to v3: https://lore.kernel.org/r/20241018-a4_pinctrl-v3-0-e76fd1cf01d7@amlogic.com
+
+Changes in v3:
+- Remove head file from binding.
+- Move GPIO define to file *.c.
+- Link to v2: https://lore.kernel.org/r/20241014-a4_pinctrl-v2-0-3e74a65c285e@amlogic.com
+
+Changes in v2:
+- Use one marco instead of all pin define.
+- Add unit name for dts node.
+- Link to v1: https://lore.kernel.org/all/20240611-a4_pinctrl-v1-0-dc487b1977b3@amlogic.com/
+
+---
+Xianwei Zhao (5):
+      dt-bindings: pinctrl: modify gpio-cells property
+      dt-bindings: pinctrl: Add support for Amlogic A4 SoCs
+      pinctrl: meson: add interface of of_xlate
+      pinctrl: meson: Add driver support for Amlogic A4 SoCs
+      arm64: dts: amlogic: a4: add pinctrl node
+
+ .../bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml |    2 +
+ .../pinctrl/amlogic,meson-pinctrl-common.yaml      |    2 +-
+ arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        |   36 +
+ drivers/pinctrl/meson/Kconfig                      |    6 +
+ drivers/pinctrl/meson/Makefile                     |    1 +
+ drivers/pinctrl/meson/pinctrl-amlogic-a4.c         | 1335 ++++++++++++++++++++
+ drivers/pinctrl/meson/pinctrl-meson.c              |    4 +
+ drivers/pinctrl/meson/pinctrl-meson.h              |    4 +
+ include/dt-bindings/gpio/amlogic-gpio.h            |   45 +
+ 9 files changed, 1434 insertions(+), 1 deletion(-)
+---
+base-commit: 58e2d28ed28e5bc8836f8c14df1f94c27c1f9e2f
+change-id: 20241012-a4_pinctrl-09d1b2a17e47
+
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
 
 
