@@ -1,114 +1,242 @@
-Return-Path: <linux-kernel+bounces-405996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04CE9C5B1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:59:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548F89C5A61
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:31:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B125B3236A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:01:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C73BEB3054A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B921FBF61;
-	Tue, 12 Nov 2024 14:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FC51FC7D8;
+	Tue, 12 Nov 2024 14:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XDgap37h"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="d0Ut6873"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B039B1885A4;
-	Tue, 12 Nov 2024 14:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A6614D718
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731420097; cv=none; b=nZq65zN8IorxX8Ti0AiB5+w1Y/jwwKCw2zzTjxV+0LT+nvGZ/82LL+9Bh1uSOA3BopyOs25jTN/VvrAcDR7LX/eSwrX6cnXm1d3qSySLWy5qdJSXQOm5j2+3fWS3uA9D2bJcmHXjDJFnWyPcFpYhhQCHE4AvXl7sYz/irPTEJco=
+	t=1731420162; cv=none; b=HZ+4SEycIv58K2l9jSEzdG3yZY1Zhn/v4dQ/J0+I5HlhzUXdSMtne2zeJNH86CxHLA7WKGuAjtoYXiHC3+MSr8KRSIxv2hjCDSmN3Sq9oBSi7mq5ISHieim0W/h1P8ID4yy5PyHNUjTSsyGzMZzAQi/rFi7B0bmH6xkQzhNxWNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731420097; c=relaxed/simple;
-	bh=2F6raWkeasLa1Dfln6V+p6Nu6ZY+Rc0S83Pxu1vJ3es=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b2i16Qj0wjQOR1NPlA/9/4KSQWUZOo4Faidbn6h6cAhoZovzPSRFu7/Inyrfn+64p69SbsLTe192g9CJooN/ayconlQhb51HzD/9romYQCsnh845MIwxVA+iBV8mDHOMwX7FcXmPktcceZ8hr/e+QydsucdiJ6a1N8rlHgs21bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XDgap37h; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+LwC9+l0EzZQ0PhPfDklx8frcQ3khr2ko874GAYlLE8=; b=XDgap37ho91c02OdHKL9m6Jet7
-	UnUFDtaOm+6gjeqOyZlJkLnAhNoBYR7a9UhlyiVBYPzjYPz4ghY5ZmqmhxLR4izB8OkeTTiW22IrD
-	JHuKjWrmA+ommOZ03fe75hVYEGb+fgimcAXMsFIOa/GUeHb+nRS2GrzC1LZuG5bG8zYXBnNGLjgqJ
-	xVz7v1pUZTobUlrHEV1d7vO3wxmM/0gtn+8ply6mSO2FVv1tZotdYWeXKHHesaRracR+ovIetAcZV
-	u3sn0rIc+R7v8BCKP9qTBN+uF6pHKBO5x4v9ijK6X8mr64wra/gYjm99vurRxrOebt826Ea659Xto
-	s2qEaBUQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tArSS-0000000EUfi-0pFD;
-	Tue, 12 Nov 2024 14:01:28 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7E0E6300478; Tue, 12 Nov 2024 15:01:27 +0100 (CET)
-Date: Tue, 12 Nov 2024 15:01:27 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	rafael.j.wysocki@intel.com, len.brown@intel.com,
-	dave.hansen@linux.intel.com
-Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
- cpuidle_play_dead() over mwait_play_dead()
-Message-ID: <20241112140127.GH6497@noisy.programming.kicks-ass.net>
-References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
- <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com>
- <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
- <CAJZ5v0ivAk1xrcJgiJnDWnL3GdijSdsuV4K_4ORjnsjPUVAEnA@mail.gmail.com>
- <20241112121843.GF6497@noisy.programming.kicks-ass.net>
- <0ecea0e5be59e63b7827f4db368f2aa3322fb71d.camel@linux.intel.com>
+	s=arc-20240116; t=1731420162; c=relaxed/simple;
+	bh=nMEVI/2NGTjHdzsBkszc/gnXp2l5saGrRrIu/NhMqLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZdFT3JJ2ega6svfArvoWppTDSt65QY6dHcn8VxOB9po3Ivk6qNVlPNjgR3jIEN4OURLz5PZFLgrmnYUxLzaeQa9vycG6RB7JRekPMU5yqb07xNWjImaBPip65Bh+/naOEgnYTr47/gyQCisqBkpeOdiaG5OeuPkJabgq3kUTMlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=d0Ut6873; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4316cce103dso71668455e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 06:02:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1731420157; x=1732024957; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=w9MgzxSfnAckOlGCT28T2HKEGEX2I2woiTYHMo+I8GU=;
+        b=d0Ut68739KCOmRuZJUv0Ee2hfPb7791i1QYf3S6nCj/QADRK6Z746gQSmkqC5qkkNZ
+         HXLClFW+J3IXgprGfyeQf0SYhlC/sC1Jn/rTINw5HfaBG4bGsN0LR6P2fzWNNhj4Ok01
+         S5+nGjd0qRJjmuH9F552+TKKSbxzG+pRsSHyXByVu3Wg2xs0o3Ark/2FVC2XuCh1PV5o
+         4dPLH4l2h5L0XPYoHY3tKp6QdLuUrR+azjJAX4/ZowS2MLpfhBllrvDUZwJF3+1QVWRN
+         iAKLJHjVVwGfQdITUwLFMCpTFtLcr7BER2onb/hJoucgpg/LCXfLba6KInepOay8Dp6x
+         HDrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731420157; x=1732024957;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w9MgzxSfnAckOlGCT28T2HKEGEX2I2woiTYHMo+I8GU=;
+        b=SV0g4eHfD62V0DmcYobmcy9bH/UIISSfrNUA3XwFI4Nnb0x/FBO+y3vJ7OjiPJvz3v
+         WQkTeiC0NZl5r/ncAWoOcQWAoYMIuEZDza+HXeQ8jAhYigN75z5ACUsPH93Gr4FANGE8
+         7O3mxBYXx8hOyTcCJ8+i5ozY7DFy/7LRVn2M/fHbltM7LLTfZi+RMTtjJdfSgB73ACsA
+         5eHnn+N/XJb1tsWyDRzKBDg8Y0HOSky7PfazhtoZy9lkPYuqjIM9PYdOplttIt6wUHdE
+         DixpMpQ2qMSY95j37GPuOtW52x/yfZJ8hA6BzdWsSAhpBmEwJCUOMgbg/cY5eIVNsABC
+         oh7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXOqpyrZjhMZ1NdU/1lFsGZN88kPDMCtDZU37x2B+LeM37b3keegFgZrw0oDwDoJDHs46ztZDa27IrVOzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3isnDkj5wsRKBnMIK4TQHnwjNUBqTbVmabD28nlcYPJ+lPbQU
+	7I2xqMU+yhMnQHfKMdpq6EW09uEUSJ0N+aw7MTcdBCRe2n+jhBhPqTCMO0HNlZM=
+X-Google-Smtp-Source: AGHT+IHCPRgv9M9Dduaty+H4R5FyYxKnOSdODxIf4vXyCrDSG2OprcKhqgaK6fmVVKuI8YWK9vHoxQ==
+X-Received: by 2002:a05:600c:5107:b0:431:59b2:f0c4 with SMTP id 5b1f17b1804b1-432b7503e9amr182495555e9.8.1731420156526;
+        Tue, 12 Nov 2024 06:02:36 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:e829:c484:5241:93b2? ([2001:67c:2fbc:1:e829:c484:5241:93b2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5b2dsm243551985e9.1.2024.11.12.06.02.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 06:02:35 -0800 (PST)
+Message-ID: <955030bd-e230-448c-8a63-1b356590dd15@openvpn.net>
+Date: Tue, 12 Nov 2024 15:03:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0ecea0e5be59e63b7827f4db368f2aa3322fb71d.camel@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 17/23] ovpn: add support for peer floating
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-17-de4698c73a25@openvpn.net> <ZzM0U81dmvdEWqdF@hog>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <ZzM0U81dmvdEWqdF@hog>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 12, 2024 at 02:44:49PM +0200, Artem Bityutskiy wrote:
-> On Tue, 2024-11-12 at 13:18 +0100, Peter Zijlstra wrote:
-> > But on Intel we really don't want HLT, and had that MWAIT, but that has
-> > real problems with KEXEC. And I don't think we can rely on INTEL_IDLE=y.
+On 12/11/2024 11:56, Sabrina Dubroca wrote:
+> 2024-10-29, 11:47:30 +0100, Antonio Quartulli wrote:
+>> diff --git a/drivers/net/ovpn/io.c b/drivers/net/ovpn/io.c
+>> index 63c140138bf98e5d1df79a2565b666d86513323d..0e8a6f2c76bc7b2ccc287ad1187cf50f033bf261 100644
+>> --- a/drivers/net/ovpn/io.c
+>> +++ b/drivers/net/ovpn/io.c
+>> @@ -135,6 +135,15 @@ void ovpn_decrypt_post(void *data, int ret)
+>>   	/* keep track of last received authenticated packet for keepalive */
+>>   	peer->last_recv = ktime_get_real_seconds();
+>>   
+>> +	if (peer->sock->sock->sk->sk_protocol == IPPROTO_UDP) {
 > 
-> If INTEL_IDLE is not set, then we'll just use existing mwait creation algorithm
-> in 'mwait_play_dead()', which works too, just not ideal.
+> What prevents peer->sock from being replaced and released
+> concurrently?
 
-So why not fix the substate detectoring function and ignore everything?
+Technically nothing.
+Userspace currently does not even support updating a peer socket at 
+runtime, but I wanted ovpn to be flexible enough from the beginning.
 
-> > Anyway, ideally x86 would grow a new instruction to offline a CPU, both
-> > MWAIT and HLT have problems vs non-maskable interrupts.
-> ... snip ...
-> > But as said, we need a new instruction.
+One approach might be to go back to peer->sock being unmutable and 
+forget about this.
+
+OTOH, if we want to keep this flexibility (which I think is nice), I 
+think I should make peer->sock an RCU pointer and access it accordingly.
+Does it make sense?
+
 > 
-> FYI, I already started discussing a special "gimme the deepest C-state" mwait
-> hint - just a constant like 0xFF. CPUID leaf 5 has many reserved bits, one could
-> be used for enumeration of this feature.
+> Or possibly reading the error value that ovpn_socket_new can return
+> before peer->sock is reset to NULL, just noticed this in
+> ovpn_nl_peer_modify:
 > 
-> But this is just a quick idea so far, and informal discussions so far.
+> 	if (attrs[OVPN_A_PEER_SOCKET]) {
+> 		// ...
+> 		peer->sock = ovpn_socket_new(sock, peer);
+> 		if (IS_ERR(peer->sock)) {
+> 			// ...
+> 			peer->sock = NULL;
+> 
+> 
+> (ovpn_encrypt_post has a similar check on
+> peer->sock->sock->sk->sk_protocol that I don't think is safe either)
 
-No, not mwait hint. We need an instruction that:
+Yap, agreed.
 
- - goes to deepest C state
- - drops into WAIT-for-Start-IPI (SIPI)
+> 
+> 
+>> +		/* check if this peer changed it's IP address and update
+>> +		 * state
+>> +		 */
+>> +		ovpn_peer_float(peer, skb);
+>> +		/* update source endpoint for this peer */
+>> +		ovpn_peer_update_local_endpoint(peer, skb);
+> 
+> Why not do both in the same function? They're not called anywhere else
+> (at least in this version of the series). They both modify peer->bind
+> depending on skb_protocol_to_family(skb), and operate under
+> peer->lock.
 
-Notably, it should not wake from:
+I never considered to do so as I just always assumed the two to be two 
+separate features/routines.
 
- - random memory writes
- - NMI, MCE, SMI and other such non-maskable thingies
- - anything else -- the memory pointed to by RIP might no longer exist
+I think it's a good idea and I would get rid of a few common 
+instructions (along with acquiring the lock twice). Thanks!
 
-Lets call the instruction: DEAD.
+> 
+> 
+>> +void ovpn_peer_float(struct ovpn_peer *peer, struct sk_buff *skb)
+>> +{
+>> +	struct hlist_nulls_head *nhead;
+>> +	struct sockaddr_storage ss;
+>> +	const u8 *local_ip = NULL;
+>> +	struct sockaddr_in6 *sa6;
+>> +	struct sockaddr_in *sa;
+>> +	struct ovpn_bind *bind;
+>> +	sa_family_t family;
+>> +	size_t salen;
+>> +
+>> +	rcu_read_lock();
+>> +	bind = rcu_dereference(peer->bind);
+>> +	if (unlikely(!bind)) {
+>> +		rcu_read_unlock();
+>> +		return;
+>> +	}
+>> +
+>> +	spin_lock_bh(&peer->lock);
+> 
+> You could take the lock from the start, instead of using rcu_read_lock
+> to get peer->bind. It would guarantee that the bind we got isn't
+> already being replaced just as we wait to update it. And same in
+> ovpn_peer_update_local_endpoint, it would make sure we're updating the
+> local IP for the active bind.
+> 
+> (sorry I didn't think about that last time we discussed this)
 
-With the mwait 'hack', kexec still goes belly up if it gets a spurious
-NMI (and them others) at an inopportune time, and this does happen
-afaik. Just not enough to worry the data center guys like the mwait
-thing.
+no worries :) and I like the idea. will do that, thanks.
+
+> 
+>> +	if (likely(ovpn_bind_skb_src_match(bind, skb)))
+>> +		goto unlock;
+>> +
+>> +	family = skb_protocol_to_family(skb);
+>> +
+> 
+
+-- 
+Antonio Quartulli
+OpenVPN Inc.
+
 
