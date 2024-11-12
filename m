@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-406404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF8B49C5E96
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:17:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 582499C5E9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:18:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E7901F21B45
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CFA51F22B72
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EE520A5C7;
-	Tue, 12 Nov 2024 17:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304C0216A21;
+	Tue, 12 Nov 2024 17:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2hn4gktA"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zWRGxxwv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XbBCMGA2"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B963821500E
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D672076DA;
+	Tue, 12 Nov 2024 17:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731431599; cv=none; b=drujGcvoHg92KFslI4T8ow3+QxB740OjH0pmPBSYg9Col6COnDfOEaePvIxGMlyuKwC0Zo33HrPDMIygOnIbYhw0wszT00Nordi/EoDc4UMxgLd9M29UAOxHnWGYbBzm8AHPSom4SvzwmvYjIKSCFHGLPxgFqhNKF8d6xgInCsE=
+	t=1731431673; cv=none; b=nt5NQVKzYTOvES4ddbjKC9pEX45ozMAhdbIgx2sbMJdl708A0z/RIJwVrNTyM230ZT9X9NIHPtOkn7nz25W3BE9D+dzTP8LqZNwEyPjCx2M3o1XwvzO3YOHvHLL8vPBf7M4PcEZuavl+Zz5SYpgug0HD2RCbiD1GZ1Wz1zmSzTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731431599; c=relaxed/simple;
-	bh=OaIUNL4wDulYBWCeL52yflc/neDWNsACf3HqYi4lxlw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l/mzlBVR+qj1vecgopGUc2DRjXDQZSRhQ625rQr4KDR8IuKzbZKuR6fo8fuEZPEhHiBrDK2AFjHxZPNZjVx7cO0jFRUjNk3zF5a7A6nCLw8MMcLAjWMDHN89JOTz8dcT30fo74CtaqSWsY0ueQqdp3Q0UYC6aFRMVAXHF2OOztQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2hn4gktA; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3e601b6a33aso3468845b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:13:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731431595; x=1732036395; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hhFc34QUIUtRmxEJib4/H+5a4T4gZgtNawOMUenBu5s=;
-        b=2hn4gktAu2bXg6QIK5HzUibtinBzYRFPoxDow1f3UmHelR9UGv5coMHakweqRMRIym
-         kp3Ga015gohmr3A+IxrgVH8dnCo2csTaFvWUMf81Ti2IrCbc/yMHzg5YN6HLaaj5a1X8
-         uznE2I9ayKEqXMbOkk4WKO+VkjGNDtd/OMJO64X6kiWttBuYwnCbBZ9F8g9YJRdr8Nz3
-         5yEy6F+lSNbK591sinNhYy6uUXmevNJLAvuMtADMuYMdCLGyeQBNsEua/OiHiT8VjBI0
-         BPdne/u4wIOZgLshPcZj9bHOYCn0Oj5an4xIpV3/yo0Yjz5h63XMyTXfGrRHxR5wUuaS
-         QIhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731431595; x=1732036395;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hhFc34QUIUtRmxEJib4/H+5a4T4gZgtNawOMUenBu5s=;
-        b=FN4bh7MRo7hrqfZVNR/BG7W/t0Hcl47kAunSD+r2vyeWNWES/n3d+rRDLKDqAH8DEs
-         EYNmkqkeAjHVjcpuHb+LQr63ZvcXP7djdFDPqKtTps9QCbcvdfpz52lDIWL+sru5pPo/
-         s9vtLuRygtttyMWbsCqArDSjzbbl+Vo7y+w5uC+5qJBFPqLV1+z5Si6NknemSUe1TZXS
-         Knt+/CninwRaGT0XE3XYhAO+jYI6x5rrR0TGXYY1oEoaje+PN+HcrdvfDQU092MZgab8
-         pNrPB3KZcQIOsuc2CXBdAdnImjUGGCUcCxgk3tjMbyI/DevkbKbEQJc/k0MjhTSiYyTh
-         0lAw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1ZAIDrNNI795foMfP/GZrOC42I7HPM4bkJ0+n5WoBqgCsaDn+GEBIXI6q52U9ruq2InSdDUMsfouADb0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9H3I5j9OLz0/sPYTDsCji/A8s66RBBVNvcZL/zcghJW2f/+Y8
-	zOdfpq0j5C051YGRoZrNpiXAsfMWeiMzSRTucZB1/pqWk3OcZvdd+S8jGp1/sAA=
-X-Google-Smtp-Source: AGHT+IH644V99dOVg147q96OR3GJtIRC7XpOTmFUI9LGtr4TxaaFP6x3xC1BuVau04Ao7iJOTmXH6w==
-X-Received: by 2002:a05:6808:10c9:b0:3e6:60dc:5aee with SMTP id 5614622812f47-3e794654540mr13513708b6e.3.1731431594747;
-        Tue, 12 Nov 2024 09:13:14 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e78cca37c9sm2630818b6e.21.2024.11.12.09.13.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 09:13:14 -0800 (PST)
-Message-ID: <df2b9a81-3ebd-48fe-a205-2d4007fe73d1@kernel.dk>
-Date: Tue, 12 Nov 2024 10:13:12 -0700
+	s=arc-20240116; t=1731431673; c=relaxed/simple;
+	bh=OVDxMNjz/kRsn0mlLewto2R8wq9d+xl95pyKd2dQH/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mPe25LqONyLSryh2qps2m5g7C0+LcFbPPAVyrl9CixtbMWeeOUULNB6RWdiXYIYnLrPqpmGTQ4lPyZB8OSLePt/YTG8KuxPSn6fdJtrQRucI4aQSsRVNwAA8lJCzzlg/XWSpHc6W+bL3C74HuCGzL7u9dOV5IIspqkT0XVEoS3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zWRGxxwv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XbBCMGA2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 12 Nov 2024 18:14:28 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731431669;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fLSGSsbdaiZ6JUBSPFVjQaHTBzfxSyRl8vuArkyUJAs=;
+	b=zWRGxxwvUomZz2ou/p/A3prEpsitfkJlzoi55RFCGH6L6nF+VtL6L6auxDo7Oe/u74hBnQ
+	9/o/xErl3Dt8Zjuz6010t84GKYAL41pLMljW/E+0pCfNBk0yZ7BMdhDakRAcFi9XEcFNPa
+	QGzGuGbkpIUQkzY/dlZewnYNVFNHsrgKWMlunaC8ghudyCLyxHkPRteduYUchfgkW4vawu
+	yCTJrZr3KMbyb55pRgwba13gvVI9W2Y4I4MwGzBxE8CfvMi0EU/6opviX54Y/u8lLBidKh
+	0zJIFza1ApvBf4Fgy9Yqmej9iFtuAx1LtNO59NNUs8cAJl1i3Cp/F2mzcSpjlQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731431669;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fLSGSsbdaiZ6JUBSPFVjQaHTBzfxSyRl8vuArkyUJAs=;
+	b=XbBCMGA2XMMqf1ILPCkgK8507FyvT6FWiYczNcIbxgasO5RneCbS/dxLprzBzaCeiF/R8j
+	HoEG7mwJB8xSUlAg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Alex Shi <seakeel@gmail.com>, linux-xfs@vger.kernel.org,
+	Linux-MM <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: xfs deadlock on mm-unstable kernel?
+Message-ID: <20241112171428.UqPpObPV@linutronix.de>
+References: <e5814465-b39a-44d8-aa3d-427773c9ae16@gmail.com>
+ <Zou8FCgPKqqWXKyS@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/16] ext4: add RWF_UNCACHED write support
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
- kirill@shutemov.name, linux-btrfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
-References: <20241111234842.2024180-1-axboe@kernel.dk>
- <20241111234842.2024180-13-axboe@kernel.dk> <ZzOD_qV5tpv9nbw7@bfoster>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZzOD_qV5tpv9nbw7@bfoster>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zou8FCgPKqqWXKyS@dread.disaster.area>
 
-On 11/12/24 9:36 AM, Brian Foster wrote:
-> On Mon, Nov 11, 2024 at 04:37:39PM -0700, Jens Axboe wrote:
->> IOCB_UNCACHED IO needs to prune writeback regions on IO completion,
->> and hence need the worker punt that ext4 also does for unwritten
->> extents. Add an io_end flag to manage that.
->>
->> If foliop is set to foliop_uncached in ext4_write_begin(), then set
->> FGP_UNCACHED so that __filemap_get_folio() will mark newly created
->> folios as uncached. That in turn will make writeback completion drop
->> these ranges from the page cache.
->>
->> Now that ext4 supports both uncached reads and writes, add the fop_flag
->> FOP_UNCACHED to enable it.
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->>  fs/ext4/ext4.h    |  1 +
->>  fs/ext4/file.c    |  2 +-
->>  fs/ext4/inline.c  |  7 ++++++-
->>  fs/ext4/inode.c   | 18 ++++++++++++++++--
->>  fs/ext4/page-io.c | 28 ++++++++++++++++------------
->>  5 files changed, 40 insertions(+), 16 deletions(-)
->>
-> ...
->> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->> index 54bdd4884fe6..afae3ab64c9e 100644
->> --- a/fs/ext4/inode.c
->> +++ b/fs/ext4/inode.c
->> @@ -1138,6 +1138,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->>  	int ret, needed_blocks;
->>  	handle_t *handle;
->>  	int retries = 0;
->> +	fgf_t fgp_flags;
->>  	struct folio *folio;
->>  	pgoff_t index;
->>  	unsigned from, to;
->> @@ -1164,6 +1165,15 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->>  			return 0;
->>  	}
->>  
->> +	/*
->> +	 * Set FGP_WRITEBEGIN, and FGP_UNCACHED if foliop contains
->> +	 * foliop_uncached. That's how generic_perform_write() informs us
->> +	 * that this is an uncached write.
->> +	 */
->> +	fgp_flags = FGP_WRITEBEGIN;
->> +	if (*foliop == foliop_uncached)
->> +		fgp_flags |= FGP_UNCACHED;
->> +
->>  	/*
->>  	 * __filemap_get_folio() can take a long time if the
->>  	 * system is thrashing due to memory pressure, or if the folio
->> @@ -1172,7 +1182,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->>  	 * the folio (if needed) without using GFP_NOFS.
->>  	 */
->>  retry_grab:
->> -	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
->> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
->>  					mapping_gfp_mask(mapping));
->>  	if (IS_ERR(folio))
->>  		return PTR_ERR(folio);
+On 2024-07-08 20:14:44 [+1000], Dave Chinner wrote:
+> On Mon, Jul 08, 2024 at 04:36:08PM +0800, Alex Shi wrote:
+> >   372.297234][ T3001] ============================================
+> > [  372.297530][ T3001] WARNING: possible recursive locking detected
+> > [  372.297827][ T3001] 6.10.0-rc6-00453-g2be3de2b70e6 #64 Not tainted
+> > [  372.298137][ T3001] --------------------------------------------
+> > [  372.298436][ T3001] cc1/3001 is trying to acquire lock:
+> > [  372.298701][ T3001] ffff88802cb910d8 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_reclaim_inode+0x59e/0x710
+> > [  372.299242][ T3001] 
+> > [  372.299242][ T3001] but task is already holding lock:
+> > [  372.299679][ T3001] ffff88800e145e58 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_ilock_data_map_shared+0x4d/0x60
+> > [  372.300258][ T3001] 
+> > [  372.300258][ T3001] other info that might help us debug this:
+> > [  372.300650][ T3001]  Possible unsafe locking scenario:
+> > [  372.300650][ T3001] 
+> > [  372.301031][ T3001]        CPU0
+> > [  372.301231][ T3001]        ----
+> > [  372.301386][ T3001]   lock(&xfs_dir_ilock_class);
+> > [  372.301623][ T3001]   lock(&xfs_dir_ilock_class);
+> > [  372.301860][ T3001] 
+> > [  372.301860][ T3001]  *** DEADLOCK ***
+> > [  372.301860][ T3001] 
+> > [  372.302325][ T3001]  May be due to missing lock nesting notation
+> > [  372.302325][ T3001] 
+> > [  372.302723][ T3001] 3 locks held by cc1/3001:
+> > [  372.302944][ T3001]  #0: ffff88800e146078 (&inode->i_sb->s_type->i_mutex_dir_key){++++}-{3:3}, at: walk_component+0x2a5/0x500
+> > [  372.303554][ T3001]  #1: ffff88800e145e58 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_ilock_data_map_shared+0x4d/0x60
+> > [  372.304183][ T3001]  #2: ffff8880040190e0 (&type->s_umount_key#48){++++}-{3:3}, at: super_cache_scan+0x82/0x4e0
 > 
-> JFYI, I notice that ext4 cycles the folio lock here in this path and
-> thus follows up with a couple checks presumably to accommodate that. One
-> is whether i_mapping has changed, which I assume means uncached state
-> would have been handled/cleared externally somewhere..? I.e., if an
-> uncached folio is somehow truncated/freed without ever having been
-> written back?
+> False positive. Inodes above allocation must be actively referenced,
+> and inodes accees by xfs_reclaim_inode() must have no references and
+> been evicted and destroyed by the VFS. So there is no way that an
+> unreferenced inode being locked for reclaim in xfs_reclaim_inode()
+> can deadlock against the refrenced inode locked by the inode lookup
+> code.
 > 
-> The next is a folio_wait_stable() call "in case writeback began ..."
-> It's not immediately clear to me if that is possible here, but taking
-> that at face value, is it an issue if we were to create an uncached
-> folio, drop the folio lock, then have some other task dirty and
-> writeback the folio (due to a sync write or something), then have
-> writeback completion invalidate the folio before we relock it here?
+> Unfortunately, we don't have enough lockdep subclasses available to
+> annotate this correctly - we're already using all
+> MAX_LOCKDEP_SUBCLASSES to tell lockdep about all the ways we can
+> nest inode locks. That leaves us no space to add a "reclaim"
+> annotation for locking done from super_cache_scan() paths that would
+> avoid these false positives....
 
-I don't either of those are an issue. The UNCACHED flag will only be set
-on a newly created folio, it does not get inherited for folios that
-already exist.
+So the former inode (the one triggering the reclaim) is created and can
+not be the same as the one in reclaim list. Couldn't we assign it a
+different lock-class?
+My guess would be that you drop the lockdep_set_class() in
+xfs_setup_inode() and then do it in xfs_iget_cache_miss() before adding
+it to the tree. So you would have one class initially and then change it
+once it enters the tree. I guess once the inode is removed from the
+tree, it goes to kfree().
 
--- 
-Jens Axboe
+> -Dave.
+
+Sebastian
 
