@@ -1,155 +1,128 @@
-Return-Path: <linux-kernel+bounces-406246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD48A9C5DA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:47:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05629C5C98
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:59:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6DBAB46016
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:58:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F7661F237C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AD72040AE;
-	Tue, 12 Nov 2024 15:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F75205AB6;
+	Tue, 12 Nov 2024 15:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TWVGjLo4"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JlSkjZl+"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BDD20409A
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500A220515C
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731427025; cv=none; b=eQ4fMgzaIFxEZDgAtZtvO0yYyGgyY78JX+7QBIhgZkFV7lk8zgbZN19t3zkuS1qcW7xOoL2Z4jlKMw5u1zHHMKOtO6ihFjrPKMM9LJFAwRbKl26BWTAAgKLP5Z6TH8BoIJqxmdcGeJePzHYSN9VlNESHIhVflOQ6tGJNV7Y2cPI=
+	t=1731427031; cv=none; b=TSItPFlR8c2mG4IJz3WV9+Yz6pXyjWkaQ0UzhJhyKMVVIwfMSkgJ3PeMw0ePr6eowYYCWekxuXHCNsugDFAcu5Mw5WESMPCiRrEQM15Q2G3g+AU0iJ1CUjxoLpd2sRrivQmn8fZJuUcfitaAHzvmFv0TdsJ6yOmSHp+4vEm+fQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731427025; c=relaxed/simple;
-	bh=VAA1g9rl5BaF/kPLFoBaEIyM0NZnhRw8AObDrZkEUk8=;
+	s=arc-20240116; t=1731427031; c=relaxed/simple;
+	bh=7T1EWpUdFVknKbZI8QiuRaCYoZtqqd0I+lPaOsqrczk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mVQOkkcEs0v1agwWKtLD6M7t2TBwcr3A3ogiiq96jXcSLKYAgLAHTu0hvOfsa1h+o7aad4jzbiIyWrv0eKjXsoOTGYcZTGm6RCs50nBVQu54NJwzYWxF1WrwI938QPnET3YAATb2ERL1nU2KIOuW0yY4aDFmCjVsKf02XKZ3Q6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TWVGjLo4; arc=none smtp.client-ip=209.85.219.182
+	 To:Cc:Content-Type; b=gh/XXdEDtL/QB2Maf4upTsvh3tdIbqwVzGMCGq4ueup297+n6+ReLbDK2TbYl5BWNuqAGUDgeJCbrEmaGHi+W7jH5F7SHo+jhWYnLIBqQUVh3w2ZTNdYA2tW7kn4S0rhBimIXWuTTP56XJXHPtAlzgndLfk4kKaFOFh9CBK+7ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JlSkjZl+; arc=none smtp.client-ip=209.85.128.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e28fea0f5b8so5256007276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:57:03 -0800 (PST)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e2e41bd08bso59109337b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:57:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731427022; x=1732031822; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1731427028; x=1732031828; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LvLeNnoi9Q/2tIEpsYYZ7QLjjHPm2C2yqmvXawnq7e4=;
-        b=TWVGjLo437KtZ1N0ot1zyu62Sx8PpjHsiGo+8LrlwBzdvuaPjwkwn55aFkeTNWfMdo
-         nbyfMEGrnsX60ddYxvqJKEppHssAh2UGoGgxUd1P3YE3qHgwTidc58bZi1BRaUb4RS9h
-         WAWsZ/58I8+wM9xhwpVg+aCbyDBUylz+tr4MUugA4sIo/XwMlGH8t5aw6y8V3gY8AubF
-         F3wZ7eeV+TUcVP+uJ8fP7eWBxXXoCTmVn0dDfnJUd+bqPnWAohQxwJVXw+r7kbY+Occ3
-         ngNlmMr+dZa/foW8TqfyH6w9PFpGrOapgn/mMOtv9zTvLdR2y3OncvXOyr+zF4OQyfVw
-         eO5g==
+        bh=wBk1KBzwEOHZKuHnC3LcVYLaBvifyeSlS2dX2zuDsKo=;
+        b=JlSkjZl+lcABpzV2c2qb0SI35Ttlj6sWwim6B5osCcSbqVx49rDmt73hXQ2UHcQfIj
+         Zm6bQU8t2ywTS9AuE9WfvxKYVf7YzdSQBBg56zfBPpFFyjcmuTQEkxhdereSvkZmWD39
+         x5MvGoBHAPYKsIz/G3+CEEw0GnQhN2PkFJZpoOlu8GAD8tsJxO77iHkdQSkxvSL4DH8J
+         CsNPvCTc72BcZ118c/RBMfw5HvBEaSj2IHakzv16NQhzH8XfeRep3BWNq31wewiEXRt0
+         xHpHf0wYgy4tcNYig3g9YBcepuIswHOGng1kZBhixtlc2nNOA44571rXkTMfpOOTcRaK
+         bHGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731427022; x=1732031822;
+        d=1e100.net; s=20230601; t=1731427028; x=1732031828;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LvLeNnoi9Q/2tIEpsYYZ7QLjjHPm2C2yqmvXawnq7e4=;
-        b=rJ1i/D0uszlC9t3C3c71683OOBZsKaZ70WJBlwEMWrYj1QQwIn1R+pF7yOtjqnd1RN
-         m8cHwOnKPl/51yM4Ocy5hQy07sqA5UxTVNuaKTCT4KTN6g11VMTBOv/ta0oamjqOrlQ1
-         MKAvEslcKUdWxtEvavkS9LPOXBRuUDRtgbCV11IRczNa7NRSBtY+wQL4pOyG2UgDhCAi
-         trrFfQnr+BdUvQeRRpsQcCVOihjiMsSXUISidtj006zzX2KODxTNS8iT7HKsXIasFzFK
-         RKoir7CWVR55+g9fv4bT79/2+JxSmOlaXVDtFX1HqRdeLIGIigPwctWtVxX9uuTqZfZ8
-         +dJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaPs/MntebS6RfgN/ttQut36WGnKWOFbgJ7P8u+u3IM27/usvcdu7R7px0qPzI9pb+AVW97kITZuCo2XA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCpbB8M4FEqerWAPWtjQEzImNxHUKMfFVCF4qhe0jS0Q4vrXYo
-	eJi2GiziGgJhQNIexOjJmLYumj0EBGCdok93jWM4Uy+Vd5BjjZAiu9sEyYnUPYCelc+miHq9tY0
-	zFGEqy1f4D/jl9pHpJAvjILdDDdmR/6z7I3lDWA==
-X-Google-Smtp-Source: AGHT+IH5CCJQlrbtWhzwNwEuVmBy3c+bpgonBaiqCiIcyBRut8a95C/Hq3VyL3SXBBf4iw9gPiN+f3nxmL1sUxWUun4=
-X-Received: by 2002:a05:690c:c96:b0:6ea:85ee:b5d4 with SMTP id
- 00721157ae682-6eaddd86d12mr164461237b3.6.1731427022576; Tue, 12 Nov 2024
- 07:57:02 -0800 (PST)
+        bh=wBk1KBzwEOHZKuHnC3LcVYLaBvifyeSlS2dX2zuDsKo=;
+        b=L3fjh8qhSmXddnoVL/cV+POSaMXVwuxDG6u4JumV3jhh/pp7WNSAzjmrWvLOrjUP/X
+         HbWLEuPcA7p7anF3kHZVtyMxiasKwV5EhQHw52sRMDiSYVmYTT/GXO0D9LOOd8c3FScS
+         q6d2jtC4FKISc6TG6vzlHSLgXdN+nn2UFdkEIQVrEmCHrdQU6Q0HsBswzyq0j0HH4y1t
+         zz3H9uObFsHqFhF9g0XB2qzxKS/7Vc7iMnDDBcd9ESjpta3e+I/CzV4Jhj2I0g2QYnNK
+         2KF9gaz16UbLVSw5db7pdxcsKAQARzO2pI6mP3QcmrepKWtFIujIFESN4JZYk1QS0Z1z
+         5jBA==
+X-Forwarded-Encrypted: i=1; AJvYcCURjRMJa05MzsjJeVObm2QngNCxd2sDiGSiw0QmHuOj2nSyBSIMirHf8GGYC4CsC87cV/YuMeXExRD9wcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVhAqFwes+nzZmH42rmue4PBozPpjoPrbqVYGh8yWLcAk/Nae8
+	RcIsBPXTfu2WSXEbIasFvHc6hg5Tk7DzQbewC7yHcRlciIiR5LrW1NWPGMmKWaLY0FhkG+rXaxg
+	NFInRs5hNsOTvFdBEdCl0i8ynbzh2oyxgqDdcbQ==
+X-Google-Smtp-Source: AGHT+IEbIXuO/FqYjARrZep3wROIZJT+00STOjU9kzztmEI5hpPneiVqw/DMdVTNmBDXF4I7LbrGsgy3l8sZTRamFzM=
+X-Received: by 2002:a05:690c:700e:b0:6d4:4a0c:fcf0 with SMTP id
+ 00721157ae682-6eadddbcfd8mr154933787b3.20.1731427028254; Tue, 12 Nov 2024
+ 07:57:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030125512.2884761-1-quic_sibis@quicinc.com>
- <CAPDyKFoY8CnxF7JXzkT9_WXyM-TJhW4kmTw=H8NEzch32N1_7Q@mail.gmail.com>
- <ZyJeuVIbWkohymW5@pluto> <20241106071215.jhnzcn4vkdfr3peg@bogus>
-In-Reply-To: <20241106071215.jhnzcn4vkdfr3peg@bogus>
+References: <20241104190742.276710-1-robh@kernel.org>
+In-Reply-To: <20241104190742.276710-1-robh@kernel.org>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 12 Nov 2024 16:56:26 +0100
-Message-ID: <CAPDyKFr-pmXEhgUgCapzQX3Hn_UAM632TaG8SdkQXaCn5-y42g@mail.gmail.com>
-Subject: Re: [PATCH V5 0/6] firmware: arm_scmi: Misc Fixes
-To: Sudeep Holla <sudeep.holla@arm.com>, Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>, johan@kernel.org, jassisinghbrar@gmail.com, 
-	dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, 
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, konradybcio@kernel.org, 
-	linux-pm@vger.kernel.org, tstrudel@google.com, rafael@kernel.org
+Date: Tue, 12 Nov 2024 16:56:31 +0100
+Message-ID: <CAPDyKFreU6wVnsOwz9nstiQ=0sSKN=xtGOaqotwES5UByxQeKw@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: imx: Use of_property_present() for non-boolean properties
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-pm@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 6 Nov 2024 at 08:12, Sudeep Holla <sudeep.holla@arm.com> wrote:
+On Mon, 4 Nov 2024 at 20:07, Rob Herring (Arm) <robh@kernel.org> wrote:
 >
-> On Wed, Oct 30, 2024 at 04:28:41PM +0000, Cristian Marussi wrote:
-> > On Wed, Oct 30, 2024 at 05:19:39PM +0100, Ulf Hansson wrote:
-> > > On Wed, 30 Oct 2024 at 13:55, Sibi Sankar <quic_sibis@quicinc.com> wrote:
-> > > >
-> > > > The series addresses the kernel warnings reported by Johan at [1] and are
-> > > > are required to X1E cpufreq device tree changes to land.
-> > > >
-> > > > [1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
-> > > >
-> > > > Duplicate levels:
-> > > > arm-scmi arm-scmi.0.auto: Level 2976000 Power 218062 Latency 30us Ifreq 2976000 Index 10
-> > > > arm-scmi arm-scmi.0.auto: Level 3206400 Power 264356 Latency 30us Ifreq 3206400 Index 11
-> > > > arm-scmi arm-scmi.0.auto: Level 3417600 Power 314966 Latency 30us Ifreq 3417600 Index 12
-> > > > arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > > arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > > arm-scmi arm-scmi.0.auto: Level 4012800 Power 528848 Latency 30us Ifreq 4012800 Index 15
-> > > >
-> > > > ^^ exist because SCP reports duplicate values for the highest sustainable
-> > > > freq for perf domains 1 and 2. These are the only freqs that appear as
-> > > > duplicates and will be fixed with a firmware update. FWIW the warnings
-> > > > that we are addressing in this series will also get fixed by a firmware
-> > > > update but they still have to land for devices already out in the wild.
-> > > >
-> > > > V4:
-> > > > * Rework debugfs node creation patch [Ulf/Dmitry]
-> > > > * Reduce report level to dev_info and tag it with FW_BUG [Johan/Dmitry]
-> > > > * Add cc stable and err logs to patch 1 commit message [Johan]
-> > >
-> > > Patch4 and patch5 applied for fixes to my pmdomain tree - and by
-> > > adding a stable tag to them, thanks!
-> > >
-> > > Potentially I could help to take the other patches too, to keep things
-> > > together, but in that case I need confirmation that's okay to do so.
-> >
-> > SCMI patches in these series are all reviewed (all but one even by Sudeep)
-> > so it is really up to Sudeep preference...(who is travelling now so it could
-> > take a bit to reply)
+> The use of of_property_read_bool() for non-boolean properties is
+> deprecated in favor of of_property_present() when testing for property
+> presence.
 >
-> I have added my reviewed by now.
->
-> > ...moreover I am not sure if the SCMI patches in this
-> > series could end up with wome trivial conflicts against the scmi patches
-> > already queued at
-> >
-> >       sudeep/for-next/scmi/updates
-> >
-> > (at least the perf related ones 2 and 3 probably not)
-> >
->
-> I did a quick check and no conflicts were observed. Let me know if you need
-> a branch with first 3 patches, but I need to do that today or after Sunday
-> as I will away from my computer for few more days again from tomorrow.
->
-> Let me know ASAP.
->
-> --
-> Regards,
-> Sudeep
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Sorry for the delay. I have picked up the remaining patches from this
-series. All applied for fixes and by adding stable tags to them,
-thanks!
+Applied for next, thanks!
 
 Kind regards
 Uffe
+
+
+> ---
+>  drivers/pmdomain/imx/gpc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pmdomain/imx/gpc.c b/drivers/pmdomain/imx/gpc.c
+> index 80a4dcc77199..fbb4c90b72c4 100644
+> --- a/drivers/pmdomain/imx/gpc.c
+> +++ b/drivers/pmdomain/imx/gpc.c
+> @@ -411,7 +411,7 @@ static int imx_gpc_probe(struct platform_device *pdev)
+>         pgc_node = of_get_child_by_name(pdev->dev.of_node, "pgc");
+>
+>         /* bail out if DT too old and doesn't provide the necessary info */
+> -       if (!of_property_read_bool(pdev->dev.of_node, "#power-domain-cells") &&
+> +       if (!of_property_present(pdev->dev.of_node, "#power-domain-cells") &&
+>             !pgc_node)
+>                 return 0;
+>
+> @@ -511,7 +511,7 @@ static void imx_gpc_remove(struct platform_device *pdev)
+>         pgc_node = of_get_child_by_name(pdev->dev.of_node, "pgc");
+>
+>         /* bail out if DT too old and doesn't provide the necessary info */
+> -       if (!of_property_read_bool(pdev->dev.of_node, "#power-domain-cells") &&
+> +       if (!of_property_present(pdev->dev.of_node, "#power-domain-cells") &&
+>             !pgc_node)
+>                 return;
+>
+> --
+> 2.45.2
+>
 
