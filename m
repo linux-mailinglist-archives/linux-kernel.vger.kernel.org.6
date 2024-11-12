@@ -1,254 +1,155 @@
-Return-Path: <linux-kernel+bounces-406452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5CB79C5F3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:38:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0BE39C5F03
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:32:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 762101F21979
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:38:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A2F2847F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA18B21D20B;
-	Tue, 12 Nov 2024 17:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DC02144D5;
+	Tue, 12 Nov 2024 17:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LdcL0bKB"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y6MRz86y"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8422321CFA1;
-	Tue, 12 Nov 2024 17:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5EB209F25
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731432714; cv=none; b=siPC0CbbpSxdi/fYNN3el40nsAPsevrOBcIxRIPB0FJTDE37iKsS6FJNOlIaQcGp+88rr+JKxrxn+Ls1Loh7oiAUASQowfWKYA8nLVfqSx+WKI5c+idDg6Kv/cRwWcrrb1swWBJ+eGyhRjCFnFM4zxGHyb3414OxZ1A1si99QZc=
+	t=1731432664; cv=none; b=dgU1oQCwEpcp5PqvX8P6VF6JRPX9ogvyEZEva5OIXbVlPBViSmMTFuK21W0/jrA00DNtG1N2cyA/Ka6CETqxIumLAFBbSSgbTjLY5mNAlXa1KPHsZ/w8pla679N/PSBqqN2SDgdnnSyyb80qbEEaDir/Rz6ITutAjdQrakSuLhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731432714; c=relaxed/simple;
-	bh=3SkKpsd9JurwgvTS9kfmdxX2HkmMsxRIJqM2xEoEqVY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fnjc2z3lU5waHVXF7LuC7ImT1O5KXBQnH37sgGWc4XeJ0OQrFXMCViVZaQiDvXZnY3SwVKjfDIFyxLkpXtY4NDyh8q/X8Vk3Ofj2wO+udzpJHo8+hc4Ej38MzOkOP8S2b/P1OXu/14HPNv+9r826hTygALJYWU7z+gnjX0Mpq58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LdcL0bKB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACCnwCZ010994;
-	Tue, 12 Nov 2024 17:31:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	H0HzRmOKuxsDsObnHNtYOmXokfAPxgB5azaw2lQocr0=; b=LdcL0bKBBoJ/Kukp
-	1chQZ7+5MMWdSefbs09p60TLGBQ8lSvm11fv/1o50w7x+7QswVMC3Ii74crUtAKy
-	TObHdHAoAeS1MutG9fC3UcHMsCgSWos28vVRTjnCJjkWNbnNr5Z6JOSaI0O05hMO
-	LMxwm+G2jDDLHmapY6qfsGtLRBRz+tHLX99e3OvOCLBL0GsvDs3Vv//PXprzhfXY
-	lYfVXC2RznsMVWWaQ5nIqgvXpW+8iiMRFKYItpE80OO7BOGQ35tlLMDl+iRq4yMj
-	PyszRwLokXQZ2fnvbZ5i2OTKvyl0f6MsMR2Ns2sPV3a+sp5QEUpMYIPKn1m00pN8
-	nKEnDQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t11884ux-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 17:31:42 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACHVfgg008117
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 17:31:41 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 12 Nov 2024 09:31:32 -0800
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <akapatra@quicinc.com>, <hariramp@quicinc.com>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <cros-qcom-dts-watchers@chromium.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <quic_vikramsa@quicinc.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: [PATCH v5 5/5] arm64: dts: qcom: qcs6490-rb3gen2-vision-mezzanine: Add vision mezzanine
-Date: Tue, 12 Nov 2024 23:00:32 +0530
-Message-ID: <20241112173032.2740119-6-quic_vikramsa@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241112173032.2740119-1-quic_vikramsa@quicinc.com>
-References: <20241112173032.2740119-1-quic_vikramsa@quicinc.com>
+	s=arc-20240116; t=1731432664; c=relaxed/simple;
+	bh=uHvRxnCwxSPwoWBt7s6p7RnvISj6q1/A38c/hPBn/Oo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=T7eKDusAOMBF8IWQ9VGh2EF0VSYNPtsvRQm8BX/4hj8y8BFbKXRg9yphC1pURyUYmddIvLHuoJadfndOVhtm7BWWTigfuVZwj5IwMWdUn50EtrnbZTnvwDhenvRPbEfWVDIx7c2pp4tmZWVvGHjhgaKuyZULOHfhr6ufoUiBsUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Y6MRz86y; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7b154f71885so471953385a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:31:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1731432660; x=1732037460; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fNnLmwM6k2wna/0wjImN/u+vOWZSQ1LYfyw6a2jXzJ8=;
+        b=Y6MRz86yPlcWXEfyD7YCtcJj35Kuevwrg9TnH7I4AIGVDnQZRAjgt1LgADTvnz4feS
+         GH7nukySUTB8yRjxrDL6gwxxEtN0ddF+sOg8XwHxDk4qRJi9d7E8hd5hfMY4z9LrEzqt
+         hCVQq0U4NPxcm8rK93EvpKZXq22xvtwU5iZmc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731432660; x=1732037460;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fNnLmwM6k2wna/0wjImN/u+vOWZSQ1LYfyw6a2jXzJ8=;
+        b=APtgUi651QliG4DB0UE1XrvzI2BKBiqTuyCkkZiERHX+YG5DxhuxGnX2oh9twO9DP0
+         iJcgylCwtN6fquRwSC/snj0csxUtKeDGvVBO2XqlypeNH3bXywL3JuE2jLNh4qeOFiYm
+         fi5W2oOwCZYk5X08Wy+XpfRmoraokR1WOu3ooJZ9va0c5ZaNiEL34sYfgQuIVwsuF6/Z
+         Jwo0nrMyGocFD3ZDyXKZnMWHJ61bb2VNMANQnK5ro5stm5wNAf36b0MassFR7HtODLWj
+         iYEU7zCa4PrgIJOqOwXgHUJwntgJK6tQ9s8hnNBhdz7mcufAMYG5EovK2For6jXcsxLG
+         tVuQ==
+X-Gm-Message-State: AOJu0YyYoCxeaMwLwRD0oz/Ss01OGp4QqcIEzHCN1LBjzNBgPJJ8HTaP
+	bPowHS2uFn6PSMmX5D6Yxymf3x1SNPZlJyb8jAmMRVL1IvEGo6K3DNRgIHrL1d622vHskvuG/ww
+	=
+X-Google-Smtp-Source: AGHT+IEqc2TDtyerxS7bC/9aGU2bzWGZBxZv6iEwNKljp7OmEq6pHR5Uiz4/K5WvZFBjN8dhnkGfug==
+X-Received: by 2002:a05:620a:4495:b0:7b1:5143:8da1 with SMTP id af79cd13be357-7b331f20600mr2305215085a.43.1731432660551;
+        Tue, 12 Nov 2024 09:31:00 -0800 (PST)
+Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac2dcebsm608292285a.7.2024.11.12.09.30.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 09:30:59 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v3 0/8] media: uvcvideo: Implement the Privacy GPIO as a
+ evdev
+Date: Tue, 12 Nov 2024 17:30:43 +0000
+Message-Id: <20241112-uvc-subdev-v3-0-0ea573d41a18@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: LHU8qh1ONCMzHg5jb-IXRcNzSJ0RJvL_
-X-Proofpoint-GUID: LHU8qh1ONCMzHg5jb-IXRcNzSJ0RJvL_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- bulkscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
- clxscore=1015 priorityscore=1501 adultscore=0 suspectscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120141
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMSQM2cC/13MSw7CIBSF4a2YOxZzL/SBjtyHcUCBtgxaDFiia
+ bp3aRPjY3hO8n8zRBucjXDazRBsctH5MQ+x34Hu1dhZ5kzewJEXhALZlDSLU2NsYvLYFkVVK8S
+ mhBzcgm3dY8Mu17x7F+8+PDc70fq+GfpmEjFkqpJCkLbG1Pys++AHNw0HHzpYpcQ/NaH8qXmuZ
+ WmkwpKUMOKvXpblBSRkygLlAAAA
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
+ Hans de Goede <hdegoede@redhat.com>, Ricardo Ribalda <ribalda@chromium.org>, 
+ stable@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>
+X-Mailer: b4 0.13.0
 
-The Vision Mezzanine for the RB3 ships with an imx577 camera sensor.
-Enable the IMX577 on the vision mezzanine.
+Some notebooks have a button to disable the camera (not to be mistaken
+with the mechanical cover). This is a standard GPIO linked to the
+camera via the ACPI table.
 
-An example media-ctl pipeline for the imx577 is:
+4 years ago we added support for this button in UVC via the Privacy control.
+This has three issues:
+- If the camera has its own privacy control, it will be masked.
+- We need to power-up the camera to read the privacy control gpio.
+- Other drivers have not followed this approach and have used evdev.
 
-media-ctl --reset
-media-ctl -v -V '"imx577 '19-001a'":0[fmt:SRGGB10/4056x3040 field:none]'
-media-ctl -V '"msm_csiphy3":0[fmt:SRGGB10/4056x3040]'
-media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4056x3040]'
-media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4056x3040]'
-media-ctl -l '"msm_csiphy3":1->"msm_csid0":0[1]'
-media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+We tried to fix the power-up issues implementing "granular power
+saving" but it has been more complicated than anticipated...
 
-yavta -B capture-mplane -c -I -n 5 -f SRGGB10P -s 4056x3040 -F /dev/video0
+This patchset implements the Privacy GPIO as a evdev.
 
-Signed-off-by: Hariram Purushothaman <quic_hariramp@quicinc.com>
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+The first patch of this set is already in Laurent's tree... but I
+include it to get some CI coverage.
+
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- arch/arm64/boot/dts/qcom/Makefile             |   4 +
- .../qcs6490-rb3gen2-vision-mezzanine.dtso     | 108 ++++++++++++++++++
- 2 files changed, 112 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtso
+Changes in v3:
+- CodeStyle (Thanks Sakari)
+- Re-implement as input device
+- Make the code depend on UVC_INPUT_EVDEV
+- Link to v2: https://lore.kernel.org/r/20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 9bb8b191aeb5..4ee57b3871dd 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -114,6 +114,10 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-shift-otter.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
-+
-+qcs6490-rb3gen2-vision-mezzanine-dtbs := qcs6490-rb3gen2.dtb qcs6490-rb3gen2-vision-mezzanine.dtbo
-+
-+dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2-vision-mezzanine.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtso b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtso
-new file mode 100644
-index 000000000000..6e2fccca8f11
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtso
-@@ -0,0 +1,108 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+/*
-+ * Camera Sensor overlay on top of rb3gen2 core kit.
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/clock/qcom,camcc-sc7280.h>
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&camcc {
-+	status = "okay";
-+};
-+
-+&camss {
-+	vdda-phy-supply = <&vreg_l10c_0p88>;
-+	vdda-pll-supply = <&vreg_l6b_1p2>;
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* The port index denotes CSIPHY id i.e. csiphy3 */
-+		port@3 {
-+			reg = <3>;
-+			csiphy3_ep: endpoint {
-+				clock-lanes = <7>;
-+				data-lanes = <0 1 2 3>;
-+				remote-endpoint = <&imx577_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&cci1 {
-+	status = "okay";
-+};
-+
-+&cci1_i2c1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	camera@1a {
-+		compatible = "sony,imx577";
-+		reg = <0x1a>;
-+
-+		reset-gpios = <&tlmm 78 GPIO_ACTIVE_LOW>;
-+		pinctrl-names = "default", "suspend";
-+		pinctrl-0 = <&cam2_default>;
-+		pinctrl-1 = <&cam2_suspend>;
-+
-+		clocks = <&camcc CAM_CC_MCLK3_CLK>;
-+		assigned-clocks = <&camcc CAM_CC_MCLK3_CLK>;
-+		assigned-clock-rates = <24000000>;
-+
-+		dovdd-supply  = <&vreg_l18b_1p8>;
-+
-+		port {
-+			imx577_ep: endpoint {
-+				clock-lanes = <7>;
-+				link-frequencies = /bits/ 64 <600000000>;
-+				data-lanes = <0 1 2 3>;
-+				remote-endpoint = <&csiphy3_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&tlmm {
-+	cam2_default: cam2-default-state {
-+		rst-pins {
-+			pins = "gpio78";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-disable;
-+		};
-+
-+		mclk-pins {
-+			pins = "gpio67";
-+			function = "cam_mclk";
-+			drive-strength = <2>;
-+			bias-disable;
-+		};
-+	};
-+
-+	cam2_suspend: cam2-suspend-state {
-+		rst-pins {
-+			pins = "gpio78";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+			output-low;
-+		};
-+
-+		mclk-pins {
-+			pins = "gpio67";
-+			function = "cam_mclk";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+	};
-+};
+Changes in v2:
+- Rebase on top of https://patchwork.linuxtv.org/project/linux-media/patch/20241106-uvc-crashrmmod-v6-1-fbf9781c6e83@chromium.org/
+- Create uvc_gpio_cleanup and uvc_gpio_deinit
+- Refactor quirk: do not disable irq
+- Change define number for MEDIA_ENT_F_GPIO
+- Link to v1: https://lore.kernel.org/r/20241031-uvc-subdev-v1-0-a68331cedd72@chromium.org
+
+---
+Ricardo Ribalda (8):
+      media: uvcvideo: Fix crash during unbind if gpio unit is in use
+      media: uvcvideo: Factor out gpio functions to its own file
+      media: uvcvideo: Re-implement privacy GPIO as an input device
+      Revert "media: uvcvideo: Allow entity-defined get_info and get_cur"
+      media: uvcvideo: Create ancillary link for GPIO subdevice
+      media: v4l2-core: Add new MEDIA_ENT_F_GPIO
+      media: uvcvideo: Use MEDIA_ENT_F_GPIO for the GPIO entity
+      media: uvcvideo: Introduce UVC_QUIRK_PRIVACY_DURING_STREAM
+
+ .../userspace-api/media/mediactl/media-types.rst   |   4 +
+ drivers/media/usb/uvc/Kconfig                      |   2 +-
+ drivers/media/usb/uvc/Makefile                     |   3 +
+ drivers/media/usb/uvc/uvc_ctrl.c                   |  40 +-----
+ drivers/media/usb/uvc/uvc_driver.c                 | 112 +---------------
+ drivers/media/usb/uvc/uvc_entity.c                 |  21 ++-
+ drivers/media/usb/uvc/uvc_gpio.c                   | 144 +++++++++++++++++++++
+ drivers/media/usb/uvc/uvc_status.c                 |  13 +-
+ drivers/media/usb/uvc/uvc_video.c                  |   4 +
+ drivers/media/usb/uvc/uvcvideo.h                   |  31 +++--
+ drivers/media/v4l2-core/v4l2-async.c               |   3 +-
+ include/uapi/linux/media.h                         |   1 +
+ 12 files changed, 223 insertions(+), 155 deletions(-)
+---
+base-commit: 1b3bb4d69f20be5931abc18a6dbc24ff687fa780
+change-id: 20241030-uvc-subdev-89f4467a00b5
+
+Best regards,
 -- 
-2.25.1
+Ricardo Ribalda <ribalda@chromium.org>
 
 
