@@ -1,137 +1,118 @@
-Return-Path: <linux-kernel+bounces-405478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484699C51E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:25:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 116189C51FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:28:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41001F246EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:25:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA46A2862D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03D320D51A;
-	Tue, 12 Nov 2024 09:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66DCC20D4F4;
+	Tue, 12 Nov 2024 09:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ambXO1xz"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="nCiw8iZU"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CCC20B814
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C2520D4E2
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731403518; cv=none; b=jhUCU6i+ye5Y03pAA6I03kBp3JTxeSgEXCLLKIkqplBqadM/uZEMDBhvNO1av/gzKKQtjhaCygpq1Gy2EiDVOjarOt+jw5812q4LlOzvyLCylAeJ0BIobGHJu2GuBfACIT6Fu9qArRzl6OlUcREI2rFEfvPY/hJJBzUsWLqKEUQ=
+	t=1731403728; cv=none; b=OOtJmff5sONhxcd4G+srYUAw4Sc2tI2y+uHqXSCBJpPeZpNevO4Q0Vpw7w4RA1wj0DdgiuEsClpyc1SpNJ2Z1PC9E23BuL3sk7nUt3t/Wgx+hKZr3A37PmQdu3TMjWpb7E7ZZQPMS+qnsPHfrZI+hAfzC9kgOWLBrbxg1nPM7zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731403518; c=relaxed/simple;
-	bh=SMgE+3sWs28SzC4Pv9fVGSgdUWm8ipB2zOE2VBvQZOM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=szt0YppWdsNg6JaR14ndEXdBaQxDbcenZk9RURrH6awkceTxaeOYjieXi+juWthifXBQKU6wCEgFb3cdXSoQvLek8HbJaj55/FAAk6IKO86xfSpNCsdjEdHgWRBfVVJmQuBw3Vz+bB/5w3MOlMtkbQOQfrk5wVPF22wjjm1Tsuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ambXO1xz; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38207c86695so481809f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 01:25:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731403514; x=1732008314; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XblwL0PzEtz1p+RH+PZoSXPcYHiVL6RcENPZ9d+EWkY=;
-        b=ambXO1xzoFmaTj+pPwjaHDhSxDCqahaf21SRjcHwH+6lKNaNZ9pZ7+QLxmMEvQ/fZe
-         WFLhE6Oqhofm25ovJ1AzhcYtiJ1zoxPdiXJlvpiU9u8w2ZH1bG4tLzLJnlBdIKz05j4l
-         iZg/GqSSpxEzRWpkhEmZyto+CJvPbvA8TF/VraLZbI2tPhs3oFoaNIEUHR1Q6ySrk8r0
-         /Tf14KEiJmIgiSuHPPlkhfooDLdcxF3ol52b2P4rxKT5PynsY+qC39qezt7PWOmymrW9
-         vh0e9g2cCME659oJEuppB3HY0euMLGuGoYDc+bL/PjX+eArJhb/6Z4KwGiO1pKKK8BdN
-         z8FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731403514; x=1732008314;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XblwL0PzEtz1p+RH+PZoSXPcYHiVL6RcENPZ9d+EWkY=;
-        b=EBCPAcfQlXES2Ibt/a8xUAR3q9JY6TKS6PrmM1kWob6YZXTH9i5q33fh5aeqi9dneU
-         CtsTUQrttLWyEnEmxE/BtFyMxGJ6jGsMXNl/rSOHdAJHjBzeMC4ZtfbljnKFdhkRy4EM
-         wfgGZXiRg+GxsoKd3U4ut9qD+FjXieMm4VKTTa6thQ2nRluDRpo4/SiNraJ3zLExGh0n
-         DkNl7Uz+vWWz12lfFH2MnpDqtnZ9Vo2Pt5+PoX2JpZNbR8PwrhLAwZhLYoLtiblICsJI
-         P4bu9eQGUaZXOHN7zJ4DBniWnF3F+iJj3C4ckfaKduHWnEXIAwVXWRwslIV/Lc1tOru3
-         GX3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXLHCZms9fS5/1i6fE7fCJwsTkxplhzNyjIXl+Hk6mFS8bhrgKH7F9lcPArcyGzfPahBXOCBZArlu+loVQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLhF/qTZ0fVEjyCjJmiubkll3sIf3vwCk5qGagXNn3sYrjswGW
-	ipogc8j2TcEsUuKVzu/vAmLhBbrn1pAEXiOc4R7Ka4c5I10crip8dqta3TGCFJ4=
-X-Google-Smtp-Source: AGHT+IH4AWBMa8vfF0S/UtOUsgif9MEpVgNttYKPWrjNvh9pZpYY29xpo1rijWgHwhFk0PqGiPd7fw==
-X-Received: by 2002:a5d:5f45:0:b0:37d:3f81:153e with SMTP id ffacd0b85a97d-381f186cbd5mr12768518f8f.14.1731403514167;
-        Tue, 12 Nov 2024 01:25:14 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:50f9:1df6:c2b9:a468])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda04b52sm14728353f8f.101.2024.11.12.01.25.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 01:25:13 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Arnd Bergmann <arnd@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>,  Arnd
- Bergmann <arnd@arndb.de>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  Chuan Liu <chuan.liu@amlogic.com>,
-  Xianwei Zhao <xianwei.zhao@amlogic.com>,
-  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: amlogic: axg-audio: fix Kconfig dependency on
- RESET_MESON_AUX
-In-Reply-To: <20241111102932.3209861-1-arnd@kernel.org> (Arnd Bergmann's
-	message of "Mon, 11 Nov 2024 11:29:21 +0100")
-References: <20241111102932.3209861-1-arnd@kernel.org>
-Date: Tue, 12 Nov 2024 10:25:13 +0100
-Message-ID: <1jmsi42492.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1731403728; c=relaxed/simple;
+	bh=IrfvUkChhPYRCajlEMQkArFbQ6tLDYvdvd1gz7c7f5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OcBW/rBlxmQuUgBW203NmBcaTqQk8v8gkVlgRNEe7S/EG0QRXtQd4oCDbZeOqg2Zu9J4xlWCrUcnWybrjIpgukGiCR2P9dbzXrWde3d949tB9mQdHB40RdH/bkdJRhvBx3UgsBWRsqf9B2g3csV8CeL1VrSTjqQzBqCaO5Rq19Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=nCiw8iZU; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC8wnH3026281;
+	Tue, 12 Nov 2024 10:28:24 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	RBX0wkPtCAIZ/zoNdwhmrm7wwaHeAwtcOpxkNtXwcK4=; b=nCiw8iZU9w34ZRT/
+	fZzJR6AMPkuSzJaxHBZyMBF4gJ3S3XG0euXWX6TRPtXsvsLljIFjLsH5f95eDods
+	t7VXYiU6rrnxq1vD61xWK+RBcHJfCv0qtZKUuX94yXTSuFVrlwwe0Jfb058De5Ms
+	HCD9Ok6BEzVLdyzTcCS5KDeGnH3Z1t/20fhMQdGM6C+QK/XfCKknDXH1tW3j3BDL
+	MMonKdPLvUFVDx5OqwAZdE6BoxCzB7U1vPcFDQ845kfRYTyqDCvMzyhKWZv+2aJj
+	6ZX/VEaOMuTrKoAJlZXTTkIppYUoqucaf8Cg+ereCIlyqVmOwydCKVJzJv5nAqOS
+	PJa+sg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42swr8u40v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 10:28:24 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A916E40056;
+	Tue, 12 Nov 2024 10:27:22 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E1D9028E842;
+	Tue, 12 Nov 2024 10:25:54 +0100 (CET)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 12 Nov
+ 2024 10:25:54 +0100
+Message-ID: <cfb1caed-9402-4148-831d-57c50bdf6a27@foss.st.com>
+Date: Tue, 12 Nov 2024 10:25:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] firewall: remove misplaced semicolon from
+ stm32_firewall_get_firewall
+To: guanjing <guanjing@cmss.chinamobile.com>, <mcoquelin.stm32@gmail.com>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+References: <20241109055049.269163-1-guanjing@cmss.chinamobile.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20241109055049.269163-1-guanjing@cmss.chinamobile.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Mon 11 Nov 2024 at 11:29, Arnd Bergmann <arnd@kernel.org> wrote:
+Hi
 
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> As in most cases, using 'imply' is wrong here and does not prevent
-> build failures since that code may not be visible to a built-in
-> clk driver:
->
-> axg-audio.c:(.text+0x15c): undefined reference to `devm_meson_rst_aux_register'
-
-The function registering the aux driver was in clock in some old version
-(imply was ok at that point) and I forgot to change that when it moved to
-reset.
-
-Thanks for catching this
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-
-Stephen, This fixes the PR you applied. I guess how to pick this up
-depends on how you want to deal with the Fixes tag problem reported by
-Stephen Rothwell.
-
->
-> Replace the incorrt 'imply' with the necessary 'depends on'.
->
-> Fixes: 664988eb47dd ("clk: amlogic: axg-audio: use the auxiliary reset driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On 11/9/24 06:50, guanjing wrote:
+> Remove misplaced colon in stm32_firewall_get_firewall()
+> which results in a syntax error when the code is compiled
+> without CONFIG_STM32_FIREWALL.
+> 
+> Fixes: 5c9668cfc6d7 ("firewall: introduce stm32_firewall framework")
+> Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
 > ---
->  drivers/clk/meson/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index 7cb21fc223b0..febb5d7348ff 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -106,7 +106,7 @@ config COMMON_CLK_AXG_AUDIO
->  	select COMMON_CLK_MESON_SCLK_DIV
->  	select COMMON_CLK_MESON_CLKC_UTILS
->  	select REGMAP_MMIO
-> -	imply RESET_MESON_AUX
-> +	depends on RESET_MESON_AUX
->  	help
->  	  Support for the audio clock controller on AmLogic A113D devices,
->  	  aka axg, Say Y if you want audio subsystem to work.
+>   include/linux/bus/stm32_firewall_device.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/bus/stm32_firewall_device.h b/include/linux/bus/stm32_firewall_device.h
+> index 18e0a2fc3816..5178b72bc920 100644
+> --- a/include/linux/bus/stm32_firewall_device.h
+> +++ b/include/linux/bus/stm32_firewall_device.h
+> @@ -115,7 +115,7 @@ void stm32_firewall_release_access_by_id(struct stm32_firewall *firewall, u32 su
+>   #else /* CONFIG_STM32_FIREWALL */
+>   
+>   int stm32_firewall_get_firewall(struct device_node *np, struct stm32_firewall *firewall,
+> -				unsigned int nb_firewall);
+> +				unsigned int nb_firewall)
+>   {
+>   	return -ENODEV;
+>   }
 
--- 
-Jerome
+Acked-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
+
+Thanks
+Alex
 
