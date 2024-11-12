@@ -1,138 +1,141 @@
-Return-Path: <linux-kernel+bounces-405989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DBD9C59AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:56:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0A29C59AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:56:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1F2284D0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0753284E1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0405C1FBF7D;
-	Tue, 12 Nov 2024 13:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F61D1FC7CC;
+	Tue, 12 Nov 2024 13:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ah81A8my"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hc24ecNC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FEE1FBF51
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13751FBC9B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731419738; cv=none; b=PHfeUF+rAn41odAyE7q5TxV1TC3+SntQaVTWeeJEhKey5aSvcDsA0qdNLfVkuS4bAOaLUE8j0dEyJ6MAWYM418/7rAQ365W20MUpP2iEQ06orV3bbvPFbTLCkLWNSzV0NareJ9kiwbnuDQbxsQFsSLFK0Pz5jR7px9uP5xCriCw=
+	t=1731419772; cv=none; b=Ddm/s52ASGwE4D5QvqNW9fxlYjRhmAgnAwNi/rqQJIhhr1FuJZby3koeGSBHkLlldAwZIYsa6jdp91T6dr2eKPql/F27EbtPra25tfSlFbcT8sa3u2XJa6jcddlbE8mMO+GWg5J0AiIvEThukfipHODEJ5Q/QeFNj/sujwMmze8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731419738; c=relaxed/simple;
-	bh=wVhWepG5ipKBph4MdKxl7IN3Iu15gPli/CQF7GkV1ng=;
+	s=arc-20240116; t=1731419772; c=relaxed/simple;
+	bh=T6YQnYADiOc+eB2ZCcn4o+pCA4TyC4vZ8TSHZ5+kOMU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nsg6BKD/h/U1I0ZWBdfFRGkuoTSBg3cmlheDOOLMymFi3FBIU/W7AZm4oDIZLYP7shLFi6qFpPZbRo6VvafcaEujFwEv0j1HpzwHCjwua2ErFr69E7a6rIHcKq2VgRz30V3AenxBWdML1qd90yIcSsh2RwS0EvFF6Dxee7FkZio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ah81A8my; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B18BC4CECD;
-	Tue, 12 Nov 2024 13:55:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731419737;
-	bh=wVhWepG5ipKBph4MdKxl7IN3Iu15gPli/CQF7GkV1ng=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=duiKLblZANNUfrwFcg/hvzYn6moThGJzkzcwH3wMgh6V2bZ8hm4X+yuXhf1c6/Oc+ISRlci6PIzyoYluHPD/kCtuWSq0c0TXlfjD8xLWE9NrUxBLqF9AhtHQhL00SFiVQgLUUXKJ3GskMd7WIIYMfqrsdiMCDU75nyi+xnFeKEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hc24ecNC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EDD3C4CECD;
+	Tue, 12 Nov 2024 13:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731419771;
+	bh=T6YQnYADiOc+eB2ZCcn4o+pCA4TyC4vZ8TSHZ5+kOMU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ah81A8my9r1ybO6l447XUt9Nxob6kD6xCpF6+nIydADyOimPljoPbmC2GM15jTBbE
-	 AzbWHVKJA/AdahcslpFpnLiMUJhSpewRRDaI9dBvfJ33TMEEO0fOw5zV1qZ2PqCXNB
-	 y2XurDJdgQQkIqa3FuFk2/5iBut+1lfpr8ndhICM=
-Date: Tue, 12 Nov 2024 14:55:34 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] drivers: core: clear wake irq in device_unbind_cleanup
-Message-ID: <2024111213-eradicate-puma-3592@gregkh>
-References: <20241111092131.1693319-1-peng.fan@oss.nxp.com>
- <2024111207-baggie-eskimo-d2b0@gregkh>
- <PAXPR04MB8459A924A74FE917897F9F5288592@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	b=hc24ecNCVjkhpfrV8ycxiIWZhdPjJrw4TacSlWMX6JYcVnUXCfIfAGDEVyqVQ1Y0R
+	 GewWL+5dsT9Es6z5WK3wa070E3ixHzqnYYKEjACP4XL3ljYsfaZF9rJ33UMOs2WbGr
+	 aWAFwEyKQ52ScJcI9k+ybt6QeQ6UB1tckZomd6l3RJYShsHQbWRHMyJ/j5uBUbgFsh
+	 WM/7AH8ERdOv7XykYciWcu3PAL9dyIY4WI4bLjSLZydvaDN4Ilw++FsD+wlKp4Q3+F
+	 c7jwA+4d9HVor1nxvNgt0W1G8PQnb86JLID44Rdf4U//Oh3mfjmscW0cxsDz3cxSTp
+	 JlT+Q5Mpq8sig==
+Date: Tue, 12 Nov 2024 14:56:08 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [RFC 1/3] tick-sched: Remove last_tick and calculate next tick
+ from now
+Message-ID: <ZzNeeCvSFL7OzHKF@localhost.localdomain>
+References: <20241108174839.1016424-1-joel@joelfernandes.org>
+ <20241108174839.1016424-2-joel@joelfernandes.org>
+ <ZzKWvislBnjV9kpf@pavilion.home>
+ <874j4co98w.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459A924A74FE917897F9F5288592@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <874j4co98w.ffs@tglx>
 
-On Tue, Nov 12, 2024 at 01:09:19PM +0000, Peng Fan wrote:
-> Hi Greg
+Le Tue, Nov 12, 2024 at 02:46:23PM +0100, Thomas Gleixner a écrit :
+> On Tue, Nov 12 2024 at 00:43, Frederic Weisbecker wrote:
+> > Le Fri, Nov 08, 2024 at 05:48:34PM +0000, Joel Fernandes (Google) a écrit :
 > 
-> > Subject: Re: [PATCH] drivers: core: clear wake irq in
-> > device_unbind_cleanup
-> > 
-> > On Mon, Nov 11, 2024 at 05:21:30PM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > With dev_pm_clear_wake_irq in device_unbind_cleanup, there is no
-> > need
-> > > to invoke dev_pm_clear_wake_irq in driver remove hook explicitly.
-> > >
-> > > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > Cc: Rob Herring <robh@kernel.org>
-> > > Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >  drivers/base/dd.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/drivers/base/dd.c b/drivers/base/dd.c index
-> > > f0e4b4aba885..ea3a871bdd11 100644
-> > > --- a/drivers/base/dd.c
-> > > +++ b/drivers/base/dd.c
-> > > @@ -26,6 +26,7 @@
-> > >  #include <linux/wait.h>
-> > >  #include <linux/async.h>
-> > >  #include <linux/pm_runtime.h>
-> > > +#include <linux/pm_wakeirq.h>
-> > >  #include <linux/pinctrl/devinfo.h>
-> > >  #include <linux/slab.h>
-> > >
-> > > @@ -556,6 +557,7 @@ static void device_unbind_cleanup(struct
-> > device *dev)
-> > >  		dev->pm_domain->dismiss(dev);
-> > >  	pm_runtime_reinit(dev);
-> > >  	dev_pm_set_driver_flags(dev, 0);
-> > > +	dev_pm_clear_wake_irq(dev);
-> > 
-> > I don't understand, you say you don't need to invoke it, yet you are
-> > calling it here.
+> >> During tick restart, we use last_tick and forward it past now.
+> >>
+> >> Since we are forwarding past now, we can simply use now as a reference
+> >> instead of last_tick. This patch removes last_tick and does so.
+> >>
+> >> This patch potentially does more mul/imul than the existing code,
+> >> as sometimes forwarding past now need not be done if last_tick > now.
+> >> However, the patch is a cleanup which reduces LOC and reduces the size
+> >> of struct tick_sched.
 > 
-> I mean not need to invoke it in driver.remove hook. With this patch, we
-> could remove
-> https://elixir.bootlin.com/linux/v6.11.7/source/drivers/input/touchscreen/ti_am335x_tsc.c#L498
-> and same to other drivers.
-
-But you did not say that, and you would need to make this as part of a
-series.
-
-Also, are you sure that ll drivers want to clear this irq flag?  What is
-wrong with just doing it explicitly in the drivers that need it?
-
-> > 
-> > What commit id does this fix? 
+> May I politely ask you to read and follow the Documentation
+> vs. changelogs?
 > 
-> I am thinking to take this as a improvement, with core code
-> has this, the various drivers no need explicitly invoke it
-> in their own driver remove hook.
+>   https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
 > 
->  And what bug is this resolving?  What
-> > drivers are broken without this?
+> Also
 > 
-> See here:
-> https://lore.kernel.org/all/ZymxvLMkkktRoCXZ@google.com/
+> git grep 'This patch' Documentation/process
+> 
+> might give you a hint.
+> 
+> >> -	/* Forward the time to expire in the future */
+> >> -	hrtimer_forward(&ts->sched_timer, now, TICK_NSEC);
+> >> +	hrtimer_set_expires(&ts->sched_timer, DIV_ROUND_UP_ULL(now, TICK_NSEC) * TICK_NSEC);
+> 
+> How is a division and multiplication in this hotpath helpful? That's
+> awfully slow on 32-bit machines and pointless on 64-bit too.
+> 
+> Using now is also wrong as it breaks the sched_skew_tick distribution by
+> aligning the tick on all CPUs again.
+> 
+> IOW, this "cleanup" is making things worse.
+> 
+> > We don't want to rewrite hrtimer_forward() but, after all, the current expiry is
+> > enough a relevant information.
+> >
+> > How about just this? It's worth it as it now forwards after the real last programmed
+> > tick, which should be close enough from @now with a delta below TICK_NSEC, or even
+> > better @now is below the expiry. Therefore it should resume as just a no-op
+> > or at worst an addition within hrtimer_forward():
+> >
+> > diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+> > index 753a184c7090..ffd0c026a248 100644
+> > --- a/kernel/time/tick-sched.c
+> > +++ b/kernel/time/tick-sched.c
+> > @@ -838,7 +838,6 @@ EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
+> >  static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
+> >  {
+> >  	hrtimer_cancel(&ts->sched_timer);
+> > -	hrtimer_set_expires(&ts->sched_timer, ts->last_tick);
+> >  
+> >  	/* Forward the time to expire in the future */
+> >  	hrtimer_forward(&ts->sched_timer, now, TICK_NSEC);
+> 
+> That's just wrong. ts->sched_timer.expires contains a tick in the
+> future. If tick_nohz_stop_tick() set it to 10 ticks in the future and
+> the CPU goes out of idle due to a device interrupt before the timer
+> expires, then hrtimer_forward() will do nothing because expires is ahead
+> of now.
+> 
+> Which means the CPU is not idle and has no tick until the delayed tick
+> which was set by tick_nohz_stop_tick() expires. Not really correct.
 
-Again, this seems to be a per-driver thing.  What do you break if you
-attempt to do this for all drivers?  What about drivers that share irqs?
+Bah! Yes of course...
 
-How was this tested?  On what platfoms?
-
-thanks,
-
-greg k-h
+> 
+> Thanks,
+> 
+>         tglx
 
