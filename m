@@ -1,158 +1,283 @@
-Return-Path: <linux-kernel+bounces-406128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF85A9C5E13
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:02:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E18959C5F28
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBF1DB3BE2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:03:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43943B285E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F2E200131;
-	Tue, 12 Nov 2024 15:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A622010FC;
+	Tue, 12 Nov 2024 15:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZzPj0Lo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JY1t825z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B301FF056;
-	Tue, 12 Nov 2024 15:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EE41FF7A9;
+	Tue, 12 Nov 2024 15:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423633; cv=none; b=lFngVt+MhRMDMV6wnqCN39+Ci/DndWyUd6HusTqcD9oGch0VAAJ9rSPikOqHvL81qh7KOqYisHsINq05jnR+iVYY4lk6NZIM6G+99XLMPS9WRcipX2WuarNajYkqTLLXqu/iQydTw6QAJdA0dNqyH6DK4rtAp0mq9mQcKeTQA94=
+	t=1731423744; cv=none; b=NVh6OWTVf+k8QoDymdNZ4fj6Wa6PIR2FVhOgdRkRGR+w0KuqPbbjpfv19xlTYIFPNnCA7WYSzH0oDTL+Dp494kRc00d6MSEqSN55CLsXLtYagOvM1ysb513Zy+P92gPjjMB+Nk0hYPkBb52lEwlKYwHjVzAojYZ3tjylAP40ZzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423633; c=relaxed/simple;
-	bh=p116ZlWcJSC5OBPJgPS9UqyA/VfRXQ1FZ2hqv5Zijjg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AgwmS5oCxuDTQf6/eFCbi5O7Xm7xVmJkR9jM84OYBLAwPgVJ7sfpbgNJ8ov6sHCBrxjOxmJKwoXqpTJt/xFkxQouogpM0gIi7IDNev8cv8I/1l82P2QMWx+MnFgV1iqAj9fmvwknrRFefxUUCRdSAKGT4qUlP9Q/r1Uw8dlNLmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZzPj0Lo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B5FFC4CED0;
-	Tue, 12 Nov 2024 15:00:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731423633;
-	bh=p116ZlWcJSC5OBPJgPS9UqyA/VfRXQ1FZ2hqv5Zijjg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UZzPj0LosGFBGATy/AEsLHE97zJ+8eMiIhBd0apa3Nk0BNbSPO5OTDjHz/k8Ri0fw
-	 iCcEwPxjmHeD5ZgfCW2zHPZhSYEyCx3cUQovJfLElNSgV1xUZxEzTvsDMjqwAewCy9
-	 18MpzjmY7A5V0DtOWML20xHDH9va2GLbnH+kHM5N6t2MyS+mgjx07/HzSMz4AV+3dB
-	 XF71WkLvnm5qHwSAuKBXV1yyg6DfVAN+ak54MnbPOCVWOEyWCSm3ujBTFZ3rJsNVcV
-	 be8vyjiVRQfJDzVnRxbhVgYLuPgHP3GW8jdr/d7J78eeDJal8nvkObdM+gcFkvyYPd
-	 7HAPHKbWR/xPw==
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-29538198f2fso2851645fac.1;
-        Tue, 12 Nov 2024 07:00:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU0EL4C+NQnxjV74LrWoBaCbp6zth8Rihdhm10RL5HEcM1NGOV/uaUULfoGS9igmLQRbHLGr09DHfw=@vger.kernel.org, AJvYcCVjbSMdg0J70dmIoVTggYNgW4cfN0/bddGDThJ4O4bk3ErhC+MAt8AFv05yV5RQ2QEvZvpIHnnwtOIMyBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYXD7nZ29CesasctRSUVZwm5doPWiVPaiNG+UBKecATvfFyX6W
-	+7lKHVq8VrMmmYjBssMrXHzggjHBelUkagXDOozscDj5MhHlN5I2TNgkkJWlmX5xE7cpF+Y1UoN
-	BNbGKEotpWTHOgRWALYvZFp8S1S0=
-X-Google-Smtp-Source: AGHT+IFI9GNg7IPdb2tePq/0unuINTg3s7VcqoQ9tRcOl9CoW/yGaLJ9bgvFxb+V6AJAIqz7HyZNKKpxsm54qwn9ze4=
-X-Received: by 2002:a05:6870:46a3:b0:26f:f1ea:6a71 with SMTP id
- 586e51a60fabf-295600992d4mr13179732fac.7.1731423632299; Tue, 12 Nov 2024
- 07:00:32 -0800 (PST)
+	s=arc-20240116; t=1731423744; c=relaxed/simple;
+	bh=tddq7pUZzlNUQNY/CYLff5ZlSGW9MVnVYoZSGuxWwho=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=UcDlyosoy4zwc21pfqHDgcRtQ/1Qpc9WE6SDwWxxccL95jr2v1ok+U3B73vX/GulvFngfZKRe5OEf8tNbPb2HSqYAlifRO4ZdyfJVmF09GnZ2GYISMU1Ffbqt6EodDOKMSkYYmvlOzK4IYlqxr4gxP19CIpLv5/rMpAzHFX8CLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JY1t825z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACCaNSn000954;
+	Tue, 12 Nov 2024 15:02:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xDUk8lt0qJgSqfvLRpmFIpBseHCwrPxvpmQ4cS2Jz48=; b=JY1t825zGvlqbIYT
+	+GNOi3nxnZEZa5GMJoDftkEaQUDRcQzTiYBfyqQiURr+NmnpssJxXQ4B24feIijl
+	BLS87pyAbgSd4TFTt1YwYDYNRi/uEes5a3h1wCI6qZtW5pZmM/PO/ujm+4/6Tnye
+	RWu5IoVvj4fUHOCnN02a2OlcYsHelFhfn8+eArhRpeNm4oLTDBGKfiKjZGL+vQsq
+	sQ1O60nPWXfgDx3liqOulowr7CdQ64tIXVwa1CNajgQRsb3+wK0sIFr8fpcxaQmy
+	GueROBGRPMhhJMu6b9/Dwf9IBk/7/azaeGeRGeJ79dBejLlq4N5EnBqIRPQJ8KI2
+	Sreekw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0gkyh9w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 15:02:07 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACF26fq026813
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 15:02:06 GMT
+Received: from hu-krichai-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 12 Nov 2024 07:02:01 -0800
+From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Date: Tue, 12 Nov 2024 20:31:34 +0530
+Subject: [PATCH v3 2/6] arm64: dts: qcom: qcs6490-rb3gen2: Add node for
+ qps615
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
- <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com> <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
- <CAJZ5v0hJ8NoFgjtnYce99+qjCZc3_ihBojyK1gRrcyU5Fp6inw@mail.gmail.com> <20241112145618.GR22801@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241112145618.GR22801@noisy.programming.kicks-ass.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 12 Nov 2024 16:00:21 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0ihEvOuUWoN++5qYx=KqrRnm4np7_j6hDd=aFnHkkFYZg@mail.gmail.com>
-Message-ID: <CAJZ5v0ihEvOuUWoN++5qYx=KqrRnm4np7_j6hDd=aFnHkkFYZg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
- cpuidle_play_dead() over mwait_play_dead()
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	rafael.j.wysocki@intel.com, len.brown@intel.com, 
-	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com, 
-	gautham.shenoy@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241112-qps615_pwr-v3-2-29a1e98aa2b0@quicinc.com>
+References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
+In-Reply-To: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
+To: <andersson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        "Lorenzo
+ Pieralisi" <lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+	<kw@linux.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "Rob Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        <cros-qcom-dts-watchers@chromium.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <quic_vbadigan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Krishna chaitanya chundru
+	<quic_krichai@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731423711; l=4202;
+ i=quic_krichai@quicinc.com; s=20230907; h=from:subject:message-id;
+ bh=tddq7pUZzlNUQNY/CYLff5ZlSGW9MVnVYoZSGuxWwho=;
+ b=3+JPL9Y2QM7sorWB17mHA5TvWJzwgl/BtbVrRqsMmpDYxCSSG+JHaCZ4ZppzfxjWR4+S2CnGZ
+ V4Pq0Iw35n0CnTN+YLGbeYnyDXBLlXKb0H9ABfuEGk/HkuX1nZXGuOe
+X-Developer-Key: i=quic_krichai@quicinc.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uMq6xajO2Rxqf59ZKflo7AL2tcIirn6B
+X-Proofpoint-GUID: uMq6xajO2Rxqf59ZKflo7AL2tcIirn6B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
+ impostorscore=0 adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411120120
 
-On Tue, Nov 12, 2024 at 3:56=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Tue, Nov 12, 2024 at 02:23:14PM +0100, Rafael J. Wysocki wrote:
-> > On Tue, Nov 12, 2024 at 12:47=E2=80=AFPM Peter Zijlstra <peterz@infrade=
-ad.org> wrote:
-> > >
-> > > On Fri, Nov 08, 2024 at 01:29:08PM +0100, Patryk Wlazlyn wrote:
-> > > > The generic implementation, based on cpuid leaf 0x5, for looking up=
- the
-> > > > mwait hint for the deepest cstate, depends on them to be continuous=
- in
-> > > > range [0, NUM_SUBSTATES-1]. While that is correct on most Intel x86
-> > > > platforms, it is not architectural and may not result in reaching t=
-he
-> > > > most optimized idle state on some of them.
-> > > >
-> > > > Prefer cpuidle_play_dead() over the generic mwait_play_dead() loop =
-and
-> > > > fallback to the later in case of missing enter_dead() handler.
-> > > >
-> > > > Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-> > > > ---
-> > > >  arch/x86/kernel/smpboot.c | 4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> > > > index 44c40781bad6..721bb931181c 100644
-> > > > --- a/arch/x86/kernel/smpboot.c
-> > > > +++ b/arch/x86/kernel/smpboot.c
-> > > > @@ -1416,9 +1416,9 @@ void native_play_dead(void)
-> > > >       play_dead_common();
-> > > >       tboot_shutdown(TB_SHUTDOWN_WFS);
-> > > >
-> > > > -     mwait_play_dead();
-> > > >       if (cpuidle_play_dead())
-> > > > -             hlt_play_dead();
-> > > > +             mwait_play_dead();
-> > > > +     hlt_play_dead();
-> > > >  }
-> > >
-> > > Yeah, I don't think so. we don't want to accidentally hit
-> > > acpi_idle_play_dead().
-> >
-> > Having inspected the code once again, I'm not sure what your concern is=
-.
-> >
-> > :enter.dead() is set to acpi_idle_play_dead() for all states in ACPI
-> > idle - see acpi_processor_setup_cstates() and the role of the type
-> > check is to filter out bogus table entries (the "type" must be 1, 2,
-> > or 3 as per the spec).
-> >
-> > Then cpuidle_play_dead() calls drv->states[i].enter_dead() for the
-> > deepest state where it is set and if this is FFH,
-> > acpi_idle_play_dead() will return an error.  So after the change, the
-> > code above will fall back to mwait_play_dead() then.
-> >
-> > Or am I missing anything?
->
-> So it relies on there being a C2/C3 state enumerated and that being FFh.
-> Otherwise it will find a 'working' state and we're up a creek.
->
-> Typically I expect C2/C3 FFh states will be there on Intel stuff, but it
-> seems awefully random to rely on this hole. AMD might unwittinly change
-> the ACPI driver (they're the main user) and then we'd be up a creek.
->
-> Robustly we'd teach the ACPI driver about FFh and set enter_dead on
-> every state -- but we'd have to double check that with AMD.
->
-> At the same time, intel_idle should then also set enter_dead on all
-> states.
->
-> And then the mwait case is only ever reached if CPUIDLE=3Dn.
+Add QPS615 PCIe switch node which has 3 downstream ports and in one
+downstream port two embedded ethernet devices are present.
 
-So that's why I would prefer intel_idle, if configured, to give
-mwait_play_dead() a hint on the MWAIT hint to use.  Otherwise the
-latter would just fall back to the current method.
+Power to the QPS615 is supplied through two LDO regulators, controlled
+by two GPIOs, these are added as fixed regulators. And the QPS615 is
+configured through i2c.
 
-This would not be bullet-proof, but it would take the opportunity to
-work better if it could.
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 115 +++++++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sc7280.dtsi         |   2 +-
+ 2 files changed, 116 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+index 0d45662b8028..0e890841b600 100644
+--- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
++++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+@@ -202,6 +202,30 @@ vph_pwr: vph-pwr-regulator {
+ 		regulator-min-microvolt = <3700000>;
+ 		regulator-max-microvolt = <3700000>;
+ 	};
++
++	vdd_ntn_0p9: regulator-vdd-ntn-0p9 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDD_NTN_0P9";
++		gpio = <&pm8350c_gpios 2 GPIO_ACTIVE_HIGH>;
++		regulator-min-microvolt = <899400>;
++		regulator-max-microvolt = <899400>;
++		enable-active-high;
++		pinctrl-0 = <&ntn_0p9_en>;
++		pinctrl-names = "default";
++		regulator-enable-ramp-delay = <4300>;
++	};
++
++	vdd_ntn_1p8: regulator-vdd-ntn-1p8 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDD_NTN_1P8";
++		gpio = <&pm8350c_gpios 3 GPIO_ACTIVE_HIGH>;
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		enable-active-high;
++		pinctrl-0 = <&ntn_1p8_en>;
++		pinctrl-names = "default";
++		regulator-enable-ramp-delay = <10000>;
++	};
+ };
+ 
+ &apps_rsc {
+@@ -684,6 +708,75 @@ &mdss_edp_phy {
+ 	status = "okay";
+ };
+ 
++&pcie1_port {
++	pcie@0,0 {
++		compatible = "pci1179,0623";
++		reg = <0x10000 0x0 0x0 0x0 0x0>;
++		#address-cells = <3>;
++		#size-cells = <2>;
++
++		device_type = "pci";
++		ranges;
++		bus-range = <0x2 0xff>;
++
++		vddc-supply = <&vdd_ntn_0p9>;
++		vdd18-supply = <&vdd_ntn_1p8>;
++		vdd09-supply = <&vdd_ntn_0p9>;
++		vddio1-supply = <&vdd_ntn_1p8>;
++		vddio2-supply = <&vdd_ntn_1p8>;
++		vddio18-supply = <&vdd_ntn_1p8>;
++
++		i2c-parent = <&i2c0 0x77>;
++
++		reset-gpios = <&pm8350c_gpios 1 GPIO_ACTIVE_LOW>;
++
++		pcie@1,0 {
++			reg = <0x20800 0x0 0x0 0x0 0x0>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++
++			device_type = "pci";
++			ranges;
++			bus-range = <0x3 0xff>;
++		};
++
++		pcie@2,0 {
++			reg = <0x21000 0x0 0x0 0x0 0x0>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++
++			device_type = "pci";
++			ranges;
++			bus-range = <0x4 0xff>;
++		};
++
++		pcie@3,0 {
++			reg = <0x21800 0x0 0x0 0x0 0x0>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			device_type = "pci";
++			ranges;
++			bus-range = <0x5 0xff>;
++
++			pcie@0,0 {
++				reg = <0x50000 0x0 0x0 0x0 0x0>;
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
++				ranges;
++			};
++
++			pcie@0,1 {
++				reg = <0x50100 0x0 0x0 0x0 0x0>;
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
++				ranges;
++			};
++		};
++	};
++};
++
+ &pmk8350_rtc {
+ 	status = "okay";
+ };
+@@ -812,6 +905,28 @@ lt9611_rst_pin: lt9611-rst-state {
+ 	};
+ };
+ 
++&pm8350c_gpios {
++	ntn_0p9_en: ntn-0p9-en-state {
++		pins = "gpio2";
++		function = "normal";
++
++		bias-disable;
++		input-disable;
++		output-enable;
++		power-source = <0>;
++	};
++
++	ntn_1p8_en: ntn-1p8-en-state {
++		pins = "gpio3";
++		function = "normal";
++
++		bias-disable;
++		input-disable;
++		output-enable;
++		power-source = <0>;
++	};
++};
++
+ &tlmm {
+ 	lt9611_irq_pin: lt9611-irq-state {
+ 		pins = "gpio24";
+diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+index 3d8410683402..82434f085ff0 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+@@ -2279,7 +2279,7 @@ pcie1: pcie@1c08000 {
+ 
+ 			status = "disabled";
+ 
+-			pcie@0 {
++			pcie1_port: pcie@0 {
+ 				device_type = "pci";
+ 				reg = <0x0 0x0 0x0 0x0 0x0>;
+ 				bus-range = <0x01 0xff>;
+
+-- 
+2.34.1
+
 
