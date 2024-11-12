@@ -1,73 +1,111 @@
-Return-Path: <linux-kernel+bounces-405933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 206859C5917
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:31:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6586C9C591B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBDE81F202A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:31:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D7981F21B45
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D46518E057;
-	Tue, 12 Nov 2024 13:27:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3E615444E;
-	Tue, 12 Nov 2024 13:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D20115853D;
+	Tue, 12 Nov 2024 13:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FwFKUhMS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6281713B2A9;
+	Tue, 12 Nov 2024 13:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418020; cv=none; b=uAIS7fmH7bGQIKqrWG6xWPz6WmiNvYlRaItShwUMeJOPjR99pX6CouDSBqmikiXnxkh+MN2tXquUiEitG61kcjXhjKlxmWN6yFainjQyf3EJ+QHGfUFTmhknINorn+2WQP79EcLgjasz536+7QyWR9AVkMK+qSgtpRDDsGQVy0k=
+	t=1731418035; cv=none; b=Uvf/KeIZvUrDstB60cUlDnJWQeUrqZF+H15KDIzH8AkyVNLrYjmOs67NCgRJB7Z48m6VDp+N2akLF8YQjteFvyah21KKg8LS+2RWaP2zwOnOPYTD9vnzS1uxmBwdFlHcjgn9y07ydoMGeFwwbuPwmuOKh5xIEVNPI8IjVKC68U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418020; c=relaxed/simple;
-	bh=KxBO7TK2j7CBcq2xRoLJlH6ltVnB5weCo12QHsW60WA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E4rJmpAIWcuqqadCTvJe6R1rRMqHZBapxGnLMldAOC6ZQkf1UW1Mn56OsY+s5fonto9Xm+OdhcgzqhGTrAy/CTE5ezHgbvlvpGuYUNi6cSkYkQYy6Q2413uIfNTasYnaUBCzK/QgRdsJwCkPEVf0YD44u4fqOf5XXYe434hv4ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ADA9625E3;
-	Tue, 12 Nov 2024 05:27:26 -0800 (PST)
-Received: from arm.com (RQ4T19M611.cambridge.arm.com [10.1.30.79])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F62A3F66E;
-	Tue, 12 Nov 2024 05:26:55 -0800 (PST)
-Date: Tue, 12 Nov 2024 13:26:52 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] kselftest/arm64: Add FPMR coverage to fp-ptrace
-Message-ID: <ZzNXnJ3Jc45CctCs@arm.com>
-References: <20241112-arm64-fp-ptrace-fpmr-v2-0-250b57c61254@kernel.org>
- <20241112-arm64-fp-ptrace-fpmr-v2-3-250b57c61254@kernel.org>
+	s=arc-20240116; t=1731418035; c=relaxed/simple;
+	bh=xZ21dk7cMlNWEVAjsJWU/xLylGLey9NY6rymtgKTphE=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=C5z0O79YofTdIfZfrUv5X5iNOutygawmT3TXS/jbdIAoYoj0CF5BxI2mlsFhsiO2oLXvbzFZnZigY30kO9QSLmoR3Lb38r4eT0ct9q7QEU7IMTxYdUMNeLcLaNrlPQxQluUlenLoUTgmzIPkX1P4gaLd3YdbiKPhItVkmi4Rjjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FwFKUhMS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F52C4CECD;
+	Tue, 12 Nov 2024 13:27:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731418034;
+	bh=xZ21dk7cMlNWEVAjsJWU/xLylGLey9NY6rymtgKTphE=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=FwFKUhMSPaUsM6GTxxDJ6lKxiWdea/L7nldkuVtXbJKQHlgjTvmJd9gSVbyqTmi9y
+	 cS+GzDg454tupMC5zQi8/ulAXgkxLZMH4PJZwACs3ewFSVRiIAbHC0VmsrgllBjlZv
+	 6fWtsAPRVwD5jgRI66XU4iziTycLHLsZDUftRL1qbkxlq8aH3UwbZV5cG+OC9vpDpy
+	 iwkACJ4wQGwWtGLOwcXV1eBXTUzzKiAFBnHR7TjpQRQuVXhJ9tFTg3sClpI+B+QaGg
+	 yYasFN0/9Fws2m6lsN3YmIkaFLOBy0uuxgveDBkgxc4cO9d/fuHlplbcCaHTmeQWcp
+	 +jng6Irl8p2RA==
+Date: Tue, 12 Nov 2024 07:27:12 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112-arm64-fp-ptrace-fpmr-v2-3-250b57c61254@kernel.org>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Renjiang Han <quic_renjiang@quicinc.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-arm-msm@vger.kernel.org, Vikash Garodia <quic_vgarodia@quicinc.com>, 
+ linux-media@vger.kernel.org, 
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20241112-add-venus-for-qcs615-v2-1-e67947f957af@quicinc.com>
+References: <20241112-add-venus-for-qcs615-v2-0-e67947f957af@quicinc.com>
+ <20241112-add-venus-for-qcs615-v2-1-e67947f957af@quicinc.com>
+Message-Id: <173141803295.771794.12897067124135705292.robh@kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: qcom,qcs615-venus: document QCS615
+ venus
 
-On Tue, Nov 12, 2024 at 01:08:16PM +0000, Mark Brown wrote:
-> +	// This has to come after we set PSTATE.SM
-> +check_fpmr_in:
-> +	tbz	x0, #HAVE_FPMR_SHIFT, wait_for_writes
-> +	adrp	x7, fpmr_in
-> +	ldr	x7, [x7, :lo12:fpmr_in]
-> +	msr	FPMR, x7
 
-Did this build for you? I may not have a new enough assembler.
+On Tue, 12 Nov 2024 17:17:57 +0530, Renjiang Han wrote:
+> Add support for Qualcomm video acceleration hardware used for video
+> stream decoding and encoding on QCOM QCS615.
+> 
+> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> ---
+>  .../bindings/media/qcom,qcs615-venus.yaml          | 181 +++++++++++++++++++++
+>  1 file changed, 181 insertions(+)
+> 
 
-fp-ptrace-asm.S:149:6: error: expected writable system register or pstate
- msr FPMR, x7
+My bot found errors running 'make dt_binding_check' on your patch:
 
-I changed it to REG_FPMR locally.
+yamllint warnings/errors:
 
--- 
-Catalin
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/media/qcom,qcs615-venus.example.dts:25:18: fatal error: dt-bindings/clock/qcom,qcs615-videocc.h: No such file or directory
+   25 |         #include <dt-bindings/clock/qcom,qcs615-videocc.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/media/qcom,qcs615-venus.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241112-add-venus-for-qcs615-v2-1-e67947f957af@quicinc.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
