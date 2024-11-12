@@ -1,578 +1,321 @@
-Return-Path: <linux-kernel+bounces-406312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1E09C5D43
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:29:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1369C5D02
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:19:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C8FC1F2553F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:29:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB0DF282D59
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E7C206949;
-	Tue, 12 Nov 2024 16:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7EB20494F;
+	Tue, 12 Nov 2024 16:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="p8ZQsSzU"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A/utayod"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BC8205AAC;
-	Tue, 12 Nov 2024 16:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C41E202649
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731428890; cv=none; b=Ssmr6Gpw36paPyr+N6Xtq5HoT+iNUYj2jM5FLpnA4pWa0KsJ2Qvkk+a3Xqwz/bzzAVXI5Y2mmDj0VPQl5iIBy3v8Nsefq46Vefb4bpimWjcurmwwOaSELqlgzxZMYALd936D4b7IugviQ7N3qdmlCwNyHhDdDg32oLtKOPDnhdg=
+	t=1731428380; cv=none; b=e+pBAH3I5iEz553MSe7JsDRuqkRFIFu/+bscOTjJXehtjimqpD4wZoAnjLanJjsNI7hkHjTxGJ5AN8yGWeWQKO0biVGviQUhO6qXUkOyt4uwvJVmk9K1llapYDmaJlPYAmqoLA8tHqO1/9UlR0sWuRguME01RvNzWWndfa3rHPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731428890; c=relaxed/simple;
-	bh=cXOWCoZgbUHjiPx1rOsTN2HEIIyO7cWP4LmNcTI6AB0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lsV6oPYqMwsfX833KmhlLe6zBjWIkgTGS9KXrIrrBuNulJCbB1zyYhHl1zUDg/rZz5QuSxxx6CphBx+NCD8YEkctHC9QP346yNDpt2g5sM9mcftvwrhsX+r1L0FIMWxxLKhR86srREQ+A2uysdOWI3MK9qmWbJv4Fs+6sl+qnQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=p8ZQsSzU; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACFkHlb019647;
-	Tue, 12 Nov 2024 17:24:42 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	uwZKNWookk4lIC5CFfymDzUSstCH7d0kemwYeVSNYP4=; b=p8ZQsSzU7C/kOWDQ
-	34f21qbE31mcCsqjCoHFIU6xvXnAl/qEOCLem1HvTeZwL+zQSIBqQ+xbk02vdds2
-	OfwmuaT/snHk22EaBo9gB5zHrmUSvsz2WMks4HvX3rQzzlqtmko2BX4bdyvWzDCx
-	y5LmSF9M7O1KckzPve4sEkCxUemm4GigbGh5ruTVTX/y5WkI7ZpiSlZMipkpSKiP
-	J64kAmsv2WS2lYfel3GnpWA5Nnw8XOgNEjTM+p+avT+i955cxvkOqESH/eXSJway
-	2KSVz7LRCkfOUontg2cE7EMYZm5MXKqCEjk51+pYBYj+1KQF0dhcnyVDsKcBHTh1
-	SL1CkQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42sx1knr34-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 17:24:42 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A7A9B4005B;
-	Tue, 12 Nov 2024 17:23:21 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5B3542AC018;
-	Tue, 12 Nov 2024 17:20:30 +0100 (CET)
-Received: from localhost (10.129.178.212) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 12 Nov
- 2024 17:20:30 +0100
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <cassel@kernel.org>,
-        <quic_schintav@quicinc.com>, <fabrice.gasnier@foss.st.com>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Christian Bruel <christian.bruel@foss.st.com>
-Subject: [PATCH 4/5] PCI: stm32: Add PCIe endpoint support for STM32MP25
-Date: Tue, 12 Nov 2024 17:19:24 +0100
-Message-ID: <20241112161925.999196-5-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241112161925.999196-1-christian.bruel@foss.st.com>
-References: <20241112161925.999196-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1731428380; c=relaxed/simple;
+	bh=ldH2X/lqNLkbQu1MQ/ojrKOF6spfTbU6Z9FdL3DF6/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ge7CCZuxqC4owygwgGC+ZyZqw11uDBxaIvUAwb9XNjn4KGuS6OSVjGrdwcy6LIAOeEwXIw40AZjQjKdLFP0kSALXxfmT+A4raQK931Yq31x42RfEy2HCZfYarHQA6pCow9teQ/iNwP3unxW8kDznulbtt4Eo2rjwmHWUw/lHwj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A/utayod; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731428377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=TAg6mxWnF/rANdfdY+YKntZiK5rrIUaXnBNmA5NMRpA=;
+	b=A/utayodtyn5V165RvcFijJWt71M0VczPnpjOXgMU+Bbl64hiK9euj8xaNWZXtWqcvCPuY
+	/0KsbvRMXHlXh6Ae8R++NPrBUDGCKih/nycxp+CqnJMcFnidZNAmXaxIWDA039WrAQwmHH
+	GlqsurplvA8j343mfbIg24Lnw8l1+GA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-78-glquFFaDOTWbTAOeVjhzxA-1; Tue, 12 Nov 2024 11:19:36 -0500
+X-MC-Unique: glquFFaDOTWbTAOeVjhzxA-1
+X-Mimecast-MFC-AGG-ID: glquFFaDOTWbTAOeVjhzxA
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4327bd6bd60so44072725e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:19:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731428375; x=1732033175;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TAg6mxWnF/rANdfdY+YKntZiK5rrIUaXnBNmA5NMRpA=;
+        b=a6uNWWsD9YqZZ1YhGk/C71fTm1rF7fETwK16TuuUCTKBlocsdpjnUwlrqlTfEjAiAD
+         kP5CohVOuwmpqNAgGV7JMN5E2uG5Fgz2RfHZ9fllIo/83xpwGI+B34nv1ZhB8KPapAyA
+         uCTO8CuwGHsK+00kxyVS9mVkHwrPOIjXXGTd19ZP7n4eVFSGyfoXLUS4JaAuS7bywiyO
+         Ivx0Jp1k9IOpbezGjzw/jkLHMqQff1MN2msV5f0FgZa3tq9T7ZOxbOyRH9/0jGr/3MeW
+         zQb4lOVGw4vgf9HxwMif9BSlqEmXPupopEo6dDK1i1K3kBbLi8ovyEgkjLJ+rwq9IWST
+         fCvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdEq+HWgaFz78o/87SH25/mj8WT4/ulNPERB90xkn1BZ8QV7nuJkjZ0sorRyM2pNT8iHN/3x+xospJ1I0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlpwTnBCDZsDu+U56B7NYwzbFB1oY+2i7YZTfvoYFlSL8mGQ/l
+	zQBvXhdKKOL2fN64wKF1WkZS8WGUnA4i+8ni1C6wKW81xpxkUWqtfBafWUhHPNcBXzRNigrT9cj
+	Pq9ABedtRSjQGDMKh35f3ReJ4iUPFPKTfsNX+5cp8CEOjqoUrPXfKz7/MH2CJlw==
+X-Received: by 2002:a05:600c:4e8b:b0:431:44f6:566f with SMTP id 5b1f17b1804b1-432b7501d2bmr149455595e9.13.1731428374672;
+        Tue, 12 Nov 2024 08:19:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEicVwnPHoVYbFbmbCrjTy21vf/mZhYzbGSrVTaOwMXb7YHZA26gxb8YCnptPyCYQvJ/tz7zw==
+X-Received: by 2002:a05:600c:4e8b:b0:431:44f6:566f with SMTP id 5b1f17b1804b1-432b7501d2bmr149455385e9.13.1731428374307;
+        Tue, 12 Nov 2024 08:19:34 -0800 (PST)
+Received: from ?IPV6:2003:cb:c739:8e00:7a46:1b8c:8b13:d3d? (p200300cbc7398e007a461b8c8b130d3d.dip0.t-ipconnect.de. [2003:cb:c739:8e00:7a46:1b8c:8b13:d3d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05c202asm220556165e9.30.2024.11.12.08.19.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 08:19:33 -0800 (PST)
+Message-ID: <c7c3f529-4cd0-4209-b3b9-48a29dfcb08d@redhat.com>
+Date: Tue, 12 Nov 2024 17:19:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] mm: shmem: add large folio support for tmpfs
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: willy@infradead.org, wangkefeng.wang@huawei.com, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, ioworker0@gmail.com, da.gomez@samsung.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1731397290.git.baolin.wang@linux.alibaba.com>
+ <eabd8c89fc1b4807eaf28750e04c44b718ae6487.1731397290.git.baolin.wang@linux.alibaba.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <eabd8c89fc1b4807eaf28750e04c44b718ae6487.1731397290.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add driver to configure the STM32MP25 SoC PCIe Gen2 controller based on the
-DesignWare PCIe core in endpoint mode.
-Uses the common reference clock provided by the host.
+On 12.11.24 08:45, Baolin Wang wrote:
+> Add large folio support for tmpfs write and fallocate paths matching the
+> same high order preference mechanism used in the iomap buffered IO path
+> as used in __filemap_get_folio().
+> 
+> Add shmem_mapping_size_orders() to get a hint for the orders of the folio
+> based on the file size which takes care of the mapping requirements.
+> 
+> Traditionally, tmpfs only supported PMD-sized huge folios. However nowadays
+> with other file systems supporting any sized large folios, and extending
+> anonymous to support mTHP, we should not restrict tmpfs to allocating only
+> PMD-sized huge folios, making it more special. Instead, we should allow
+> tmpfs can allocate any sized large folios.
+> 
+> Considering that tmpfs already has the 'huge=' option to control the huge
+> folios allocation, we can extend the 'huge=' option to allow any sized huge
+> folios. The semantics of the 'huge=' mount option are:
+> 
+> huge=never: no any sized huge folios
+> huge=always: any sized huge folios
+> huge=within_size: like 'always' but respect the i_size
+> huge=advise: like 'always' if requested with fadvise()/madvise()
+> 
+> Note: for tmpfs mmap() faults, due to the lack of a write size hint, still
+> allocate the PMD-sized huge folios if huge=always/within_size/advise is set.
+> 
+> Moreover, the 'deny' and 'force' testing options controlled by
+> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', still retain the same
+> semantics. The 'deny' can disable any sized large folios for tmpfs, while
+> the 'force' can enable PMD sized large folios for tmpfs.
+> 
+> Co-developed-by: Daniel Gomez <da.gomez@samsung.com>
+> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> ---
+>   mm/shmem.c | 91 +++++++++++++++++++++++++++++++++++++++++++++---------
+>   1 file changed, 77 insertions(+), 14 deletions(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 86b2e417dc6f..a3203cf8860f 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -549,10 +549,50 @@ static bool shmem_confirm_swap(struct address_space *mapping,
+>   
+>   static int shmem_huge __read_mostly = SHMEM_HUGE_NEVER;
+>   
+> +/**
+> + * shmem_mapping_size_orders - Get allowable folio orders for the given file size.
+> + * @mapping: Target address_space.
+> + * @index: The page index.
+> + * @write_end: end of a write, could extend inode size.
+> + *
+> + * This returns huge orders for folios (when supported) based on the file size
+> + * which the mapping currently allows at the given index. The index is relevant
+> + * due to alignment considerations the mapping might have. The returned order
+> + * may be less than the size passed.
+> + *
+> + * Return: The orders.
+> + */
+> +static inline unsigned int
+> +shmem_mapping_size_orders(struct address_space *mapping, pgoff_t index, loff_t write_end)
+> +{
+> +	unsigned int order;
+> +	size_t size;
+> +
+> +	if (!mapping_large_folio_support(mapping) || !write_end)
+> +		return 0;
+> +
+> +	/* Calculate the write size based on the write_end */
+> +	size = write_end - (index << PAGE_SHIFT);
+> +	order = filemap_get_order(size);
+> +	if (!order)
+> +		return 0;
+> +
+> +	/* If we're not aligned, allocate a smaller folio */
+> +	if (index & ((1UL << order) - 1))
+> +		order = __ffs(index);
+> +
+> +	order = min_t(size_t, order, MAX_PAGECACHE_ORDER);
+> +	return order > 0 ? BIT(order + 1) - 1 : 0;
+> +}
+> +
+>   static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
+>   					      loff_t write_end, bool shmem_huge_force,
+> +					      struct vm_area_struct *vma,
+>   					      unsigned long vm_flags)
+>   {
+> +	unsigned long within_size_orders;
+> +	unsigned int order;
+> +	pgoff_t aligned_index;
+>   	loff_t i_size;
+>   
+>   	if (HPAGE_PMD_ORDER > MAX_PAGECACHE_ORDER)
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
- drivers/pci/controller/dwc/Kconfig         |  12 +
- drivers/pci/controller/dwc/Makefile        |   1 +
- drivers/pci/controller/dwc/pcie-stm32-ep.c | 433 +++++++++++++++++++++
- 3 files changed, 446 insertions(+)
- create mode 100644 drivers/pci/controller/dwc/pcie-stm32-ep.c
+We can allow all orders up to MAX_PAGECACHE_ORDER, 
+shmem_mapping_size_orders() handles it properly.
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 50a014c2dfd0..29b7f45f82c7 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -470,4 +470,16 @@ config PCIE_STM32
- 
- 	  This driver can also be built as a module. If so, the module
- 	  will be called pcie-stm32.
-+
-+config PCIE_STM32_EP
-+	tristate "STMicroelectronics STM32MP25 PCIe Controller (endpoint mode)"
-+	depends on ARCH_STM32 || COMPILE_TEST
-+	depends on PCI_ENDPOINT
-+	select PCIE_DW_EP
-+	help
-+	  Enables endpoint support for DesignWare core based PCIe controller in found
-+	  in STM32MP25 SoC.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called pcie-stm32-ep.
- endmenu
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index 576d99cb3bc5..caebd98f6dd3 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -29,6 +29,7 @@ obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
- obj-$(CONFIG_PCIE_VISCONTI_HOST) += pcie-visconti.o
- obj-$(CONFIG_PCIE_RCAR_GEN4) += pcie-rcar-gen4.o
- obj-$(CONFIG_PCIE_STM32) += pcie-stm32.o
-+obj-$(CONFIG_PCIE_STM32_EP) += pcie-stm32-ep.o
- 
- # The following drivers are for devices that use the generic ACPI
- # pci_root.c driver but don't support standard ECAM config access.
-diff --git a/drivers/pci/controller/dwc/pcie-stm32-ep.c b/drivers/pci/controller/dwc/pcie-stm32-ep.c
-new file mode 100644
-index 000000000000..9fc43046531d
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pcie-stm32-ep.c
-@@ -0,0 +1,433 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * STMicroelectronics STM32MP25 PCIe endpoint driver.
-+ *
-+ * Copyright (C) 2024 STMicroelectronics
-+ * Author: Christian Bruel <christian.bruel@foss.st.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of_platform.h>
-+#include <linux/of_gpio.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+#include <linux/reset.h>
-+#include "pcie-designware.h"
-+#include "pcie-stm32.h"
-+
-+enum stm32_pcie_ep_link_status {
-+	STM32_PCIE_EP_LINK_DISABLED,
-+	STM32_PCIE_EP_LINK_ENABLED,
-+};
-+
-+struct stm32_pcie {
-+	struct dw_pcie *pci;
-+	struct regmap *regmap;
-+	struct reset_control *rst;
-+	struct phy *phy;
-+	struct clk *clk;
-+	struct gpio_desc *reset_gpio;
-+	enum stm32_pcie_ep_link_status link_status;
-+	unsigned int perst_irq;
-+};
-+
-+static const struct of_device_id stm32_pcie_ep_of_match[] = {
-+	{ .compatible = "st,stm32mp25-pcie-ep" },
-+	{},
-+};
-+
-+static void stm32_pcie_ep_init(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
-+	enum pci_barno bar;
-+
-+	for (bar = BAR_0; bar <= PCI_STD_NUM_BARS; bar++)
-+		dw_pcie_ep_reset_bar(pci, bar);
-+
-+	/* Defer Completion Requests until link started */
-+	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
-+			   STM32MP25_PCIECR_REQ_RETRY_EN,
-+			   STM32MP25_PCIECR_REQ_RETRY_EN);
-+}
-+
-+static int stm32_pcie_enable_link(struct dw_pcie *pci)
-+{
-+	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
-+	int ret;
-+
-+	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
-+			   STM32MP25_PCIECR_LTSSM_EN,
-+			   STM32MP25_PCIECR_LTSSM_EN);
-+
-+	ret = dw_pcie_wait_for_link(pci);
-+	if (ret)
-+		return ret;
-+
-+	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
-+			   STM32MP25_PCIECR_REQ_RETRY_EN,
-+			   0);
-+
-+	return 0;
-+}
-+
-+static void stm32_pcie_disable_link(struct dw_pcie *pci)
-+{
-+	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
-+
-+	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
-+			   STM32MP25_PCIECR_REQ_RETRY_EN,
-+			   STM32MP25_PCIECR_REQ_RETRY_EN);
-+
-+	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR, STM32MP25_PCIECR_LTSSM_EN, 0);
-+}
-+
-+static int stm32_pcie_start_link(struct dw_pcie *pci)
-+{
-+	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
-+	int ret;
-+
-+	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_ENABLED) {
-+		dev_dbg(pci->dev, "Link is already enabled\n");
-+		return 0;
-+	}
-+
-+	ret = stm32_pcie_enable_link(pci);
-+	if (ret) {
-+		dev_err(pci->dev, "PCIe cannot establish link: %d\n", ret);
-+		return ret;
-+	}
-+
-+	stm32_pcie->link_status = STM32_PCIE_EP_LINK_ENABLED;
-+
-+	enable_irq(stm32_pcie->perst_irq);
-+
-+	return 0;
-+}
-+
-+static void stm32_pcie_stop_link(struct dw_pcie *pci)
-+{
-+	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
-+
-+	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_DISABLED) {
-+		dev_dbg(pci->dev, "Link is already disabled\n");
-+		return;
-+	}
-+
-+	disable_irq(stm32_pcie->perst_irq);
-+
-+	stm32_pcie_disable_link(pci);
-+
-+	stm32_pcie->link_status = STM32_PCIE_EP_LINK_DISABLED;
-+}
-+
-+static int stm32_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-+				unsigned int type, u16 interrupt_num)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+
-+	switch (type) {
-+	case PCI_IRQ_INTX:
-+		return dw_pcie_ep_raise_intx_irq(ep, func_no);
-+	case PCI_IRQ_MSI:
-+		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
-+	default:
-+		dev_err(pci->dev, "UNKNOWN IRQ type\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct pci_epc_features stm32_pcie_epc_features = {
-+	.msi_capable = true,
-+	.align = 1 << 16,
-+};
-+
-+static const struct pci_epc_features*
-+stm32_pcie_get_features(struct dw_pcie_ep *ep)
-+{
-+	return &stm32_pcie_epc_features;
-+}
-+
-+static const struct dw_pcie_ep_ops stm32_pcie_ep_ops = {
-+	.init = stm32_pcie_ep_init,
-+	.raise_irq = stm32_pcie_raise_irq,
-+	.get_features = stm32_pcie_get_features,
-+};
-+
-+static const struct dw_pcie_ops dw_pcie_ops = {
-+	.start_link = stm32_pcie_start_link,
-+	.stop_link = stm32_pcie_stop_link,
-+};
-+
-+static int stm32_pcie_enable_resources(struct stm32_pcie *stm32_pcie)
-+{
-+	int ret;
-+
-+	ret = phy_init(stm32_pcie->phy);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_prepare_enable(stm32_pcie->clk);
-+	if (ret)
-+		phy_exit(stm32_pcie->phy);
-+
-+	return ret;
-+}
-+
-+static void stm32_pcie_disable_resources(struct stm32_pcie *stm32_pcie)
-+{
-+	clk_disable_unprepare(stm32_pcie->clk);
-+
-+	phy_exit(stm32_pcie->phy);
-+}
-+
-+static void stm32_pcie_perst_assert(struct dw_pcie *pci)
-+{
-+	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
-+	struct device *dev = pci->dev;
-+
-+	dev_dbg(dev, "PERST asserted by host. Shutting down the PCIe link\n");
-+
-+	/*
-+	 * Do not try to release resources if the PERST# is
-+	 * asserted before the link is started.
-+	 */
-+	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_DISABLED) {
-+		dev_dbg(pci->dev, "Link is already disabled\n");
-+		return;
-+	}
-+
-+	stm32_pcie_disable_link(pci);
-+
-+	stm32_pcie_disable_resources(stm32_pcie);
-+
-+	pm_runtime_put_sync(dev);
-+
-+	stm32_pcie->link_status = STM32_PCIE_EP_LINK_DISABLED;
-+}
-+
-+static void stm32_pcie_perst_deassert(struct dw_pcie *pci)
-+{
-+	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
-+	struct device *dev = pci->dev;
-+	struct dw_pcie_ep *ep = &pci->ep;
-+	int ret;
-+
-+	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_ENABLED) {
-+		dev_dbg(pci->dev, "Link is already enabled\n");
-+		return;
-+	}
-+
-+	dev_dbg(dev, "PERST de-asserted by host. Starting link training\n");
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret < 0) {
-+		dev_err(dev, "pm runtime resume failed: %d\n", ret);
-+		return;
-+	}
-+
-+	ret = stm32_pcie_enable_resources(stm32_pcie);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable resources: %d\n", ret);
-+		pm_runtime_put_sync(dev);
-+		return;
-+	}
-+
-+	ret = dw_pcie_ep_init_registers(ep);
-+	if (ret) {
-+		dev_err(dev, "Failed to complete initialization: %d\n", ret);
-+		stm32_pcie_disable_resources(stm32_pcie);
-+		pm_runtime_put_sync(dev);
-+		return;
-+	}
-+
-+	pci_epc_init_notify(ep->epc);
-+
-+	ret = stm32_pcie_enable_link(pci);
-+	if (ret) {
-+		dev_err(dev, "PCIe Cannot establish link: %d\n", ret);
-+		stm32_pcie_disable_resources(stm32_pcie);
-+		pm_runtime_put_sync(dev);
-+		return;
-+	}
-+
-+	stm32_pcie->link_status = STM32_PCIE_EP_LINK_ENABLED;
-+}
-+
-+static irqreturn_t stm32_pcie_ep_perst_irq_thread(int irq, void *data)
-+{
-+	struct stm32_pcie *stm32_pcie = data;
-+	struct dw_pcie *pci = stm32_pcie->pci;
-+	u32 perst;
-+
-+	perst = gpiod_get_value(stm32_pcie->reset_gpio);
-+	if (perst)
-+		stm32_pcie_perst_assert(pci);
-+	else
-+		stm32_pcie_perst_deassert(pci);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int stm32_add_pcie_ep(struct stm32_pcie *stm32_pcie,
-+			     struct platform_device *pdev)
-+{
-+	struct dw_pcie *pci = stm32_pcie->pci;
-+	struct dw_pcie_ep *ep = &pci->ep;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
-+				 STM32MP25_PCIECR_TYPE_MASK,
-+				 STM32MP25_PCIECR_EP);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret < 0) {
-+		dev_err(dev, "pm runtime resume failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	reset_control_assert(stm32_pcie->rst);
-+	reset_control_deassert(stm32_pcie->rst);
-+
-+	ep->ops = &stm32_pcie_ep_ops;
-+
-+	ret = dw_pcie_ep_init(ep);
-+	if (ret) {
-+		dev_err(dev, "failed to initialize ep: %d\n", ret);
-+		pm_runtime_put_sync(dev);
-+		return ret;
-+	}
-+
-+	ret = stm32_pcie_enable_resources(stm32_pcie);
-+	if (ret) {
-+		dev_err(dev, "failed to enable resources: %d\n", ret);
-+		dw_pcie_ep_deinit(ep);
-+		pm_runtime_put_sync(dev);
-+		return ret;
-+	}
-+
-+	ret = dw_pcie_ep_init_registers(ep);
-+	if (ret) {
-+		dev_err(dev, "Failed to initialize DWC endpoint registers\n");
-+		stm32_pcie_disable_resources(stm32_pcie);
-+		dw_pcie_ep_deinit(ep);
-+		pm_runtime_put_sync(dev);
-+		return ret;
-+	}
-+
-+	pci_epc_init_notify(ep->epc);
-+
-+	return 0;
-+}
-+
-+static int stm32_pcie_probe(struct platform_device *pdev)
-+{
-+	struct stm32_pcie *stm32_pcie;
-+	struct dw_pcie *dw;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	stm32_pcie = devm_kzalloc(dev, sizeof(*stm32_pcie), GFP_KERNEL);
-+	if (!stm32_pcie)
-+		return -ENOMEM;
-+
-+	dw = devm_kzalloc(dev, sizeof(*dw), GFP_KERNEL);
-+	if (!dw)
-+		return -ENOMEM;
-+	stm32_pcie->pci = dw;
-+
-+	dw->dev = dev;
-+	dw->ops = &dw_pcie_ops;
-+
-+	stm32_pcie->regmap = syscon_regmap_lookup_by_compatible("st,stm32mp25-syscfg");
-+	if (IS_ERR(stm32_pcie->regmap))
-+		return dev_err_probe(dev, PTR_ERR(stm32_pcie->regmap),
-+				     "No syscfg specified\n");
-+
-+	stm32_pcie->phy = devm_phy_get(dev, "pcie-phy");
-+	if (IS_ERR(stm32_pcie->phy))
-+		return dev_err_probe(dev, PTR_ERR(stm32_pcie->phy),
-+				     "failed to get pcie-phy\n");
-+
-+	stm32_pcie->clk = devm_clk_get(dev, "core");
-+	if (IS_ERR(stm32_pcie->clk))
-+		return dev_err_probe(dev, PTR_ERR(stm32_pcie->clk),
-+				     "Failed to get PCIe clock source\n");
-+
-+	stm32_pcie->rst = devm_reset_control_get_exclusive(dev, "core");
-+	if (IS_ERR(stm32_pcie->rst))
-+		return dev_err_probe(dev, PTR_ERR(stm32_pcie->rst),
-+				     "Failed to get PCIe reset\n");
-+
-+	stm32_pcie->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_IN);
-+	if (IS_ERR(stm32_pcie->reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(stm32_pcie->reset_gpio),
-+				     "Failed to get reset GPIO\n");
-+
-+	ret = phy_set_mode(stm32_pcie->phy, PHY_MODE_PCIE);
-+	if (ret)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, stm32_pcie);
-+
-+	ret = devm_pm_runtime_enable(dev);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to enable pm runtime %d\n", ret);
-+		return ret;
-+	}
-+
-+	stm32_pcie->perst_irq = gpiod_to_irq(stm32_pcie->reset_gpio);
-+
-+	/* Will be enabled in start_link when device is initialized. */
-+	irq_set_status_flags(stm32_pcie->perst_irq, IRQ_NOAUTOEN);
-+
-+	ret = devm_request_threaded_irq(dev, stm32_pcie->perst_irq, NULL,
-+					stm32_pcie_ep_perst_irq_thread,
-+					IRQF_TRIGGER_RISING |
-+					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-+					"perst_irq", stm32_pcie);
-+	if (ret) {
-+		dev_err(dev, "Failed to request PERST IRQ: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return stm32_add_pcie_ep(stm32_pcie, pdev);
-+}
-+
-+static void stm32_pcie_remove(struct platform_device *pdev)
-+{
-+	struct stm32_pcie *stm32_pcie = platform_get_drvdata(pdev);
-+	struct dw_pcie_ep *ep = &stm32_pcie->pci->ep;
-+
-+	disable_irq(stm32_pcie->perst_irq);
-+
-+	dw_pcie_ep_deinit(ep);
-+
-+	stm32_pcie_disable_resources(stm32_pcie);
-+
-+	pm_runtime_put_sync(&pdev->dev);
-+}
-+
-+static struct platform_driver stm32_pcie_ep_driver = {
-+	.probe = stm32_pcie_probe,
-+	.remove_new = stm32_pcie_remove,
-+	.driver = {
-+		.name = "stm32-ep-pcie",
-+		.of_match_table = stm32_pcie_ep_of_match,
-+	},
-+};
-+
-+module_platform_driver(stm32_pcie_ep_driver);
-+
-+MODULE_AUTHOR("Christian Bruel <christian.bruel@foss.st.com>");
-+MODULE_DESCRIPTION("STM32MP25 PCIe Endpoint Controller driver");
-+MODULE_LICENSE("GPL");
-+MODULE_DEVICE_TABLE(of, stm32_pcie_ep_of_match);
+So maybe we should drop this condition and use instead below where we have
+
+return BIT(HPAGE_PMD_ORDER);
+
+instead something like.
+
+return HPAGE_PMD_ORDER > MAX_PAGECACHE_ORDER ? 0 : BIT(HPAGE_PMD_ORDER);
+
+Ideally, factoring it out somehow
+
+
+int maybe_pmd_order = HPAGE_PMD_ORDER > MAX_PAGECACHE_ORDER ? 0 : 
+BIT(HPAGE_PMD_ORDER);
+
+...
+
+return maybe_pmd_order;
+
+> @@ -564,15 +604,41 @@ static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index
+>   	if (shmem_huge_force || shmem_huge == SHMEM_HUGE_FORCE)
+>   		return BIT(HPAGE_PMD_ORDER);
+
+Why not force-enable all orders (of course, respecting 
+MAX_PAGECACHE_ORDER and possibly VMA)?
+
+>   
+> +	/*
+> +	 * The huge order allocation for anon shmem is controlled through
+> +	 * the mTHP interface, so we still use PMD-sized huge order to
+> +	 * check whether global control is enabled.
+> +	 *
+> +	 * For tmpfs mmap()'s huge order, we still use PMD-sized order to
+> +	 * allocate huge pages due to lack of a write size hint.
+> +	 *
+> +	 * Otherwise, tmpfs will allow getting a highest order hint based on
+> +	 * the size of write and fallocate paths, then will try each allowable
+> +	 * huge orders.
+> +	 */
+>   	switch (SHMEM_SB(inode->i_sb)->huge) {
+>   	case SHMEM_HUGE_ALWAYS:
+> -		return BIT(HPAGE_PMD_ORDER);
+> -	case SHMEM_HUGE_WITHIN_SIZE:
+> -		index = round_up(index + 1, HPAGE_PMD_NR);
+> -		i_size = max(write_end, i_size_read(inode));
+> -		i_size = round_up(i_size, PAGE_SIZE);
+> -		if (i_size >> PAGE_SHIFT >= index)
+> +		if (vma)
+>   			return BIT(HPAGE_PMD_ORDER);
+> +
+> +		return shmem_mapping_size_orders(inode->i_mapping, index, write_end);
+> +	case SHMEM_HUGE_WITHIN_SIZE:
+> +		if (vma)
+> +			within_size_orders = BIT(HPAGE_PMD_ORDER);
+> +		else
+> +			within_size_orders = shmem_mapping_size_orders(inode->i_mapping,
+> +								       index, write_end);
+> +
+> +		order = highest_order(within_size_orders);
+> +		while (within_size_orders) {
+> +			aligned_index = round_up(index + 1, 1 << order);
+> +			i_size = max(write_end, i_size_read(inode));
+> +			i_size = round_up(i_size, PAGE_SIZE);
+> +			if (i_size >> PAGE_SHIFT >= aligned_index)
+> +				return within_size_orders;
+> +
+> +			order = next_order(&within_size_orders, order);
+> +		}
+>   		fallthrough;
+>   	case SHMEM_HUGE_ADVISE:
+>   		if (vm_flags & VM_HUGEPAGE)
+
+I think the point here is that "write" -> no VMA -> vm_flags == 0 -> no 
+code changes needed :)
+
 -- 
-2.34.1
+Cheers,
+
+David / dhildenb
 
 
