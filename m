@@ -1,196 +1,207 @@
-Return-Path: <linux-kernel+bounces-405846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8752D9C580B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:42:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A19D9C5889
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 478572816A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:42:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A300B378E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBF21CD21A;
-	Tue, 12 Nov 2024 12:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E13E1F77A6;
+	Tue, 12 Nov 2024 12:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AE7przNI"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C7cDdtyZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD471F7555
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9A52309AA
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731415339; cv=none; b=an3xnWi6WACYIInx7LaobGo4X2ZaWOZL0OBBVOL0pus5dfo+yDwH2/9AcjWbHr8ZtH38QcZRDQLITvzAbK3xsnPCdcf1jdGEu3s9HNttGwtRXb7J5zv8cxUjYJRx+NUwNvtNH/pAzmRY5aJWXDC8Juz+/MHtgwEasBydSB79KOA=
+	t=1731415329; cv=none; b=e5px8vxdLI39JhExoe7gLSAvSRvh042dwIxnzjk85ZqsSrjSEjmdT2RvBm6r9Rm/TaMm1Q+pTamQBkvjRJYMh63BMul2moWtFbpt/q2lcGd3N1gJPahP2/pW9jONylweL4zBMYL9FWs/6LPf/PTln5btVDfkYA/STUfLbDV3AQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731415339; c=relaxed/simple;
-	bh=vck9A7I4MCyjIJP3zaUhpPQydiIvjOEfosdjxwxSE4A=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=fdm+ntseRKyczVdhHPV/1W8N0Ioud/HNA1+sePndHM4RQqrJR04g3tlepxHfNDCWl+2ezTalf6m+NgrfRasiZ+aEhY704Q8YoTR70ASXrHIiVN1CE8MBm0MQG8qgIYLglQqWt4Riavb1Sv7sLK627ePATIb8UqOlqNqLQRyWXG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AE7przNI; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACCe5Q3021982;
-	Tue, 12 Nov 2024 12:42:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=t1aUO01cDL75CMSISr0QnXUv+8fz
-	xpIW7UT5DA5YzEU=; b=AE7przNIq2r4VCALzvaM24jig9OCPhZCDVlufv21xCiz
-	6RW2tYKm/1GBpHIJKsX2AtsH086QT5WbwGPv0bfqpwiVV3nDjmChQffxYKOu3K+X
-	OZBR2Jwo/XJMaMmFSNwkciYJXBWi/5q5NNzAAw1pHE/aSBFYNu5xmaXmeHfM9Ken
-	9mcNu4grWu1zjYHoOz4gR1wTKB7u/Xa/zcvHwlvoeJmkMugD2+SVIdmW61R08Plz
-	dVOCOnKSYYGq7cMfbfVv0K6fALL9z7BIxpPfxaM7BDet3ZzzHEMFBwQv5cneTT/m
-	afzmDJIP+CJ50N9r1UyFo5w+/HBi5rk6GXN2gN2vvA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42v77h8099-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 12:42:08 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4ACCg8RS026837;
-	Tue, 12 Nov 2024 12:42:08 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42v77h8093-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 12:42:08 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACB25v5008243;
-	Tue, 12 Nov 2024 12:42:07 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tjeyhc9r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 12:42:06 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ACCg5Xn55902632
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Nov 2024 12:42:05 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E357D2004D;
-	Tue, 12 Nov 2024 12:42:04 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2139A2004B;
-	Tue, 12 Nov 2024 12:42:03 +0000 (GMT)
-Received: from li-c9696b4c-3419-11b2-a85c-f9edc3bf8a84.in.ibm.com (unknown [9.109.198.181])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 12 Nov 2024 12:42:02 +0000 (GMT)
-From: Nilay Shroff <nilay@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Nilay Shroff <nilay@linux.ibm.com>, briannorris@chromium.org,
-        kees@kernel.org, nathan@kernel.org, yury.norov@gmail.com,
-        linux@weissschuh.net, gjoyce@ibm.com
-Subject: [PATCH] cpumask: work around false-postive stringop-overread errors
-Date: Tue, 12 Nov 2024 18:11:24 +0530
-Message-ID: <20241112124127.1666300-1-nilay@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-Content-Type: text/plain; charset=UTF-8
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Y55HHuNB4WkWf1SPnuF0iD65_H7nphVF
-X-Proofpoint-GUID: OAaygNV7X9sJQQEp11TIUWLjsyY1oPca
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1731415329; c=relaxed/simple;
+	bh=chn0Og9dknh9NFD1+hug6TJ2cJiq2gS7K5SjC3tf5F0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nytSfZB7hTa1a27xO93PvFiUMIdo5+H35GFGO74n7YlJ2USrgJQWRX1mmfex0fXVQN11omMiSJJ4iMQ0A17ohHAP/crN078EUHJTXwv6nU4vGy4HAGpFoTEPGQHAK4TIS5zIKACqONIOcwjDUBJyH6N/NN40kBrLiN0pAW7O9+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C7cDdtyZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731415326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wDLehEjuNsFPCSJ4jDeCsWR7/ytRVPGdGFIf0zIq5Rk=;
+	b=C7cDdtyZrYtRkivb1E1UR8lSjefeHlmpSn32uXJHdV6CO/FE7/6tv702wgrMwQtDWkxlQk
+	wBFf5sK+43CqqTSnIl5XG3fEPms5IYmymldLwjSegB3D56zM8ThDwTrdy14G+MbjR1AYKs
+	uqYmwF8UapOngQYs7EfClZomtGQqp+A=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-504-CYhE2ZH3OpW_RZMD_IZGgA-1; Tue, 12 Nov 2024 07:42:03 -0500
+X-MC-Unique: CYhE2ZH3OpW_RZMD_IZGgA-1
+X-Mimecast-MFC-AGG-ID: CYhE2ZH3OpW_RZMD_IZGgA
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cbd2cb2f78so110522336d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:42:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731415323; x=1732020123;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wDLehEjuNsFPCSJ4jDeCsWR7/ytRVPGdGFIf0zIq5Rk=;
+        b=R3Q4xh39+mwaS2IJdvMlmjGma9CJ0OV3pqcJgH4A20gn1NN+wNKpJRKljHW4/54jZD
+         xjXfl9g9vLhkhtBjkhYfoV8zuL4Y3wH/NKJFADIlR1Or6vTEz+eUQcZ+Es1Ponazw3YR
+         A+AjhEHDQjtR5Q5U+d6Rr8ldkemwqbVi+bM2kv8vXzm4wawZJ6q9EpZmDwTbI0mOH8vs
+         JRw5OQc7H6S+kjhI+B91xEOhrXJrIJmfR+3+T08GCkh3E/mr18Bblf2jRun7pYG8CjD1
+         8cLwqVNuzXsAN1CXY/eCq8HVwZyM/245B3qJnDs5Ots4UDf267R+j6IficdvIA8NWDcQ
+         CK/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVG1NNzPOc7CgYj/IFweXyiypAz5pGqCHOfplJCoB1uPkb1YCU/DpKVJw9zwHzYhmeBuwh2aoy+nJ+9LGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgMZ/vZd2fVvpgudXqPhbw6Pxfw0xrPxc0AB8mD5RVtZTtvZ+4
+	45fxINN/K7BCDVFrt8Q5iXtuWmDKTzA9kWOIpoeKxc+0GvtB0RJB/+n7BiSnsUS1hJIvlm9tngL
+	NT9MYcjI/V2wapDR4HRaetmIwBHXvtFHljNhuuORqMJc78Hg/h/4q0MzjDktygw==
+X-Received: by 2002:a05:6214:469c:b0:6cb:81ba:8ac1 with SMTP id 6a1803df08f44-6d39e239cc4mr278418006d6.0.1731415323018;
+        Tue, 12 Nov 2024 04:42:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGWKpKe63uXm6m6ge9fO7av9h0wMJ5vFHEYuk+a846d4GvgyTt2A4xoaqDo6lq2M33RyfUSrg==
+X-Received: by 2002:a05:6214:469c:b0:6cb:81ba:8ac1 with SMTP id 6a1803df08f44-6d39e239cc4mr278417706d6.0.1731415322679;
+        Tue, 12 Nov 2024 04:42:02 -0800 (PST)
+Received: from [192.168.88.24] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3983445f0sm69184166d6.83.2024.11.12.04.42.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 04:42:02 -0800 (PST)
+Message-ID: <c9d61267-4bc8-4c1e-a3a2-ff1cbd46f7a5@redhat.com>
+Date: Tue, 12 Nov 2024 13:41:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 phishscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 bulkscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120102
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next PATCH v9 5/8] cn10k-ipsec: Add SA add/del support for
+ outb ipsec crypto offload
+To: Bharat Bhushan <bbhushan2@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sgoutham@marvell.com, gakula@marvell.com,
+ sbhatta@marvell.com, hkelam@marvell.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, jerinj@marvell.com,
+ lcherian@marvell.com, ndabilpuram@marvell.com, sd@queasysnail.net
+References: <20241108045708.1205994-1-bbhushan2@marvell.com>
+ <20241108045708.1205994-6-bbhushan2@marvell.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241108045708.1205994-6-bbhushan2@marvell.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-While building the powerpc code using gcc 13, I came across following
-errors generated for kernel/padata.c file:
 
-  CC      kernel/padata.o
-In file included from ./include/linux/string.h:390,
-                 from ./arch/powerpc/include/asm/paca.h:16,
-                 from ./arch/powerpc/include/asm/current.h:13,
-                 from ./include/linux/thread_info.h:23,
-                 from ./include/asm-generic/preempt.h:5,
-                 from ./arch/powerpc/include/generated/asm/preempt.h:1,
-                 from ./include/linux/preempt.h:79,
-                 from ./include/linux/spinlock.h:56,
-                 from ./include/linux/swait.h:7,
-                 from ./include/linux/completion.h:12,
-                 from kernel/padata.c:14:
-In function ‘bitmap_copy’,
-    inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
-    inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
-  114 | #define __underlying_memcpy     __builtin_memcpy
-      |                                 ^
-./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
-  633 |         __underlying_##op(p, q, __fortify_size);                        \
-      |         ^~~~~~~~~~~~~
-./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
-  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-      |                          ^~~~~~~~~~~~~~~~~~~~
-./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
-  259 |                 memcpy(dst, src, len);
-      |                 ^~~~~~
-kernel/padata.c: In function ‘__padata_set_cpumasks’:
-kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
-  713 |                                  cpumask_var_t pcpumask,
-      |                                  ~~~~~~~~~~~~~~^~~~~~~~
-In function ‘bitmap_copy’,
-    inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
-    inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
-  114 | #define __underlying_memcpy     __builtin_memcpy
-      |                                 ^
-./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
-  633 |         __underlying_##op(p, q, __fortify_size);                        \
-      |         ^~~~~~~~~~~~~
-./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
-  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-      |                          ^~~~~~~~~~~~~~~~~~~~
-./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
-  259 |                 memcpy(dst, src, len);
-      |                 ^~~~~~
-kernel/padata.c: In function ‘__padata_set_cpumasks’:
-kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
-  713 |                                  cpumask_var_t pcpumask,
-      |                                  ~~~~~~~~~~~~~~^~~~~~~~
 
-Apparentrly, above errors only menifests with GCC 13.x and config option
-CONFIG_FORTIFY_SOURCE. Furthermore, if I use gcc 11.x or gcc 12.x then I
-don't encounter above errors. Prima facie, these erros appear to be false-
-positive. Brian informed me that currently some efforts are underway by
-GCC developers to emit more verbose information when GCC detects string
-overflow errors and that might help to further narrow down the root cause
-of this error. So for now, silence these errors using -Wno-stringop-
-overread gcc option while building kernel/padata.c file until we find the
-root cause.
+On 11/8/24 05:57, Bharat Bhushan wrote:
+> This patch adds support to add and delete Security Association
+> (SA) xfrm ops. Hardware maintains SA context in memory allocated
+> by software. Each SA context is 128 byte aligned and size of
+> each context is multiple of 128-byte. Add support for transport
+> and tunnel ipsec mode, ESP protocol, aead aes-gcm-icv16, key size
+> 128/192/256-bits with 32bit salt.
+> 
+> Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
+> ---
+> v8->v9:
+>  - Previous versions were supporting only 64 SAs and a bitmap was
+>    used for same. That limitation is removed from this version.
+>  - Replaced netdev_err with NL_SET_ERR_MSG_MOD in state add flow
+>    as per comment in previous version 
+>  - Changes related to mutex lock removal 
+> 
+> v5->v6:
+>  - In ethtool flow, so not cleanup cptlf if SA are installed and
+>    call netdev_update_features() when all SA's are un-installed.
+>  - Description and comment re-word to replace "inline ipsec"
+>    with "ipsec crypto offload"
+> 
+> v3->v4:
+>  - Added check for crypto offload (XFRM_DEV_OFFLOAD_CRYPTO)
+>    Thanks "Leon Romanovsky" for pointing out
+> 
+> v2->v3:
+>  - Removed memset to zero wherever possible
+>   (comment from Kalesh Anakkur Purayil)
+>  - Corrected error handling when setting SA for inbound
+>    (comment from Kalesh Anakkur Purayil)
+>  - Move "netdev->xfrmdev_ops = &cn10k_ipsec_xfrmdev_ops;" to this patch
+>    This fix build error with W=1
+> 
+>  .../marvell/octeontx2/nic/cn10k_ipsec.c       | 415 ++++++++++++++++++
+>  .../marvell/octeontx2/nic/cn10k_ipsec.h       | 113 +++++
+>  2 files changed, 528 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
+> index e09ce42075c7..ccbcc5001431 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
+> @@ -375,6 +375,391 @@ static int cn10k_outb_cpt_clean(struct otx2_nic *pf)
+>  	return ret;
+>  }
+>  
+> +static void cn10k_cpt_inst_flush(struct otx2_nic *pf, struct cpt_inst_s *inst,
+> +				 u64 size)
+> +{
+> +	struct otx2_lmt_info *lmt_info;
+> +	u64 val = 0, tar_addr = 0;
+> +
+> +	lmt_info = per_cpu_ptr(pf->hw.lmt_info, smp_processor_id());
+> +	/* FIXME: val[0:10] LMT_ID.
+> +	 * [12:15] no of LMTST - 1 in the burst.
+> +	 * [19:63] data size of each LMTST in the burst except first.
+> +	 */
+> +	val = (lmt_info->lmt_id & 0x7FF);
+> +	/* Target address for LMTST flush tells HW how many 128bit
+> +	 * words are present.
+> +	 * tar_addr[6:4] size of first LMTST - 1 in units of 128b.
+> +	 */
+> +	tar_addr |= pf->ipsec.io_addr | (((size / 16) - 1) & 0x7) << 4;
+> +	dma_wmb();
+> +	memcpy((u64 *)lmt_info->lmt_addr, inst, size);
+> +	cn10k_lmt_flush(val, tar_addr);
+> +}
+> +
+> +static int cn10k_wait_for_cpt_respose(struct otx2_nic *pf,
+> +				      struct cpt_res_s *res)
+> +{
+> +	unsigned long timeout = jiffies + msecs_to_jiffies(10000);
+> +
+> +	do {
+> +		if (time_after(jiffies, timeout)) {
+> +			netdev_err(pf->netdev, "CPT response timeout\n");
+> +			return -EBUSY;
+> +		}
+> +	} while (res->compcode == CN10K_CPT_COMP_E_NOTDONE);
 
-Link: https://lore.kernel.org/all/7cbbd751-8332-4ab2-afa7-8c353834772a@linux.ibm.com/
-Cc: briannorris@chromium.org
-Cc: kees@kernel.org
-Cc: nathan@kernel.org
-Cc: yury.norov@gmail.com
-Cc: linux@weissschuh.net
-Cc: gjoyce@ibm.com
-Signed-off-by: Nilay Shroff <nilay@linux.ibm.com>
----
- kernel/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+Why a READ_ONCE() annotation is not needed around the 'res->compcode'
+access?
 
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 87866b037fbe..e5adba7a30f1 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -120,6 +120,7 @@ obj-$(CONFIG_CFI_CLANG) += cfi.o
- obj-$(CONFIG_PERF_EVENTS) += events/
- 
- obj-$(CONFIG_USER_RETURN_NOTIFIER) += user-return-notifier.o
-+CFLAGS_padata.o += $(call cc-disable-warning, stringop-overread)
- obj-$(CONFIG_PADATA) += padata.o
- obj-$(CONFIG_JUMP_LABEL) += jump_label.o
- obj-$(CONFIG_CONTEXT_TRACKING) += context_tracking.o
--- 
-2.45.2
+Possibly more relevant: it looks like this code is busy polling the H/W
+for at most 10s, is that correct? If so that timeout is way too high my
+several order of magnitude. You should likely use usleep_range() or
+sleep_interruptible()
+
+[...]
+> +static int cn10k_ipsec_validate_state(struct xfrm_state *x,
+> +				      struct netlink_ext_ack *extack)
+> +{
+> +	if (x->props.aalgo != SADB_AALG_NONE) {
+> +		NL_SET_ERR_MSG_MOD(extack,
+> +				   "Cannot offload authenticated xfrm states\n");
+
+No '\n' at the end of extack messages.
+
+(many cases below)
+
+Thanks,
+
+Paolo
 
 
