@@ -1,370 +1,280 @@
-Return-Path: <linux-kernel+bounces-405430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5489C5135
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:52:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033389C5142
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:56:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35B6282DBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:52:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78D01B2569B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8162620D51A;
-	Tue, 12 Nov 2024 08:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9499C20B808;
+	Tue, 12 Nov 2024 08:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="TBI9S/6g"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T/MHSKrz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D2920C006;
-	Tue, 12 Nov 2024 08:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731401516; cv=none; b=izbeQBr1ktioYpV8itHJDS2A0Itpa6x93ahQOeEbOYb74FXb8pQutOvLG02rsLt6a23BqA5/fYXUdROLpISmUtKj7Np+N/lS1etovF9fUFczmDRiHt+FoQ+Zrq1TTZ6JE+DQXMNd/gIM3SRSwm0dwxMAakDNX9oMDB2uvycKtqY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731401516; c=relaxed/simple;
-	bh=pYPjOl4Y62ALmekzbz+Ow6DGaG2mwuMEWrvp7WMQ25M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CnFRdZDw2jEsuILMxKBtLljZsfUB2/ADRfg9+xpVCQYEoiUy5WrfA2qsFewAO/YfLUheM4RtAvjlG3Xp9P3Qi9wPZmxsELIrOc7fVDprkY7DvPeTz0ZbVdIQ4DHbmAXh+IEeC3SvcFOCZLXvlIMVcbR8jrP8m8m8zIPxF+L0dDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=TBI9S/6g; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1731401509;
-	bh=g7iLu+7yPrnLIvbqhHlXz2P/Uxc3qWAcXrQd0/3zSUk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TBI9S/6g4M/R4J8bCadEXVtepNGnU8XTgm+EE6uOAm6SDbc0G/7dY7kCPNOXKIxd2
-	 YMqgbRRnhT1d/gu9Q1CReLRY9rHq/q4MGrXMRFAn+JmxWe4hcdCcsLly5Qy1IUYyHB
-	 urfJkwVs0p0nvx9Arkfdd568MC+cnIokV2nUA0OSLSZFX5kOGj2JXOQFmsm/aYDY25
-	 EPz4ZwoKNsVBWl4y6kcgiWrUs0aO9B0F2QD0OGR/b3B1VPGY38VUiooXKKKB23caHm
-	 WbuqCQeLcArg5UkD0qW1a5oav5jDY89QuWZi5T9MEsrMTEiiLhO2alWcEgiejLLjye
-	 cVkkNV/f5uevA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XngBr722rz4x8T;
-	Tue, 12 Nov 2024 19:51:48 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: linux-pm@vger.kernel.org
-Cc: <linuxppc-dev@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>,
-	rafael@kernel.org,
-	viresh.kumar@linaro.org
-Subject: [PATCH] cpufreq: maple: Remove maple driver
-Date: Tue, 12 Nov 2024 19:51:48 +1100
-Message-ID: <20241112085148.415574-1-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.47.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF26120B7FA;
+	Tue, 12 Nov 2024 08:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731401554; cv=fail; b=j9Kt8ud2asLUYWc5l9NdBKjDt1FwUOBrUgEOpdxsV+rDSdSs08RE4xiAVooQyOIjXywV4W0M46daYhEYqFvr7LZSEDEWSEfNZkB0+2oNnv1af1dBtEx0ZbyRe7adG1y7nxHIxJ4YWWjeKF/x9k/8qSijq042hqZ9s2yROnB8wnI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731401554; c=relaxed/simple;
+	bh=uSlde0IslZ+7eWgZl0Lh1BeeTwolt/WpLhvWnnhcfG8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IZfK8Oxl0MJXE66SlqJyj4n1n3sDVZKcZNOfP4pyXtavFCd0B3lJi3dKfls6vQBMm7Y6NXUpu7fbIJjCbh0+b/JiNXS0hfY5A5mYzDhxQSQdsJ1yd/dk0dEHi/ZWwNv4ijVut8kjOWDARArwv+ZBTgHeT9PSp5iLU8kMtpj72J0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T/MHSKrz; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731401550; x=1762937550;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=uSlde0IslZ+7eWgZl0Lh1BeeTwolt/WpLhvWnnhcfG8=;
+  b=T/MHSKrzWNLSjdVM5DIdFgQ4OXKs8R4UT9HJdhSAALdSNwrMpHA8cKzW
+   TB3nsueC0WvCtZglyKAUnxQybsIb5YULk6yjqIROS1JqLXsOfAG8FFREw
+   ZIlexMS8ylU+ZQQQ0/gBGxzQhYvJH9vDCneP0pysgMkrV/fKoh+OjBiwm
+   dxzi5A4OburBYisaDAw6dCvwMWom3VDHGy4+WZdTOb/w/xhXl05+QLZ1o
+   5ud8tmeSz3OpSfO33IvXWQutalgcF3Bw6/LJ81OwjvNv1Tl3OrRdzFn5e
+   E/1qtuZpXqOBwJlg2sNvYsi8PJXk+5rr/+nwKyaB71fQMIP5I1QBXo3hO
+   w==;
+X-CSE-ConnectionGUID: 7uhLEcdqTQqu01EzJ4t1MA==
+X-CSE-MsgGUID: Fcrz7LI9TyGmTMvK367KHA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="18836024"
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="18836024"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 00:52:29 -0800
+X-CSE-ConnectionGUID: DJGyBp0LQKyEmgBphKVp0g==
+X-CSE-MsgGUID: MwdrMK8SR6akR3lsmB1n2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="87761009"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Nov 2024 00:52:29 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 12 Nov 2024 00:52:28 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 12 Nov 2024 00:52:28 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.41) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 12 Nov 2024 00:52:28 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QTiMkE6hNy0xL+Tcgjipu5Ld2U5KkMfb/IL2lgmKPZi/Oogaq5mYXNtTmsdjLVotlBa/yMWSISMw46EwHTz84rWKoAu3M2qv6NUE1+9BrrBYlCe8LDBDO/2VgOR4OrpqAbcBBBQqwYdS7hP2SxdkyAMkUQ++/qsXU4VKee/hZCuRy2xC39NQP75DBveDRkg5IUnDBCK5+vtajJ7GGRtBIaXbQQEazuYkfhzN7KFOkMOjnbLy324Qyc3Ra321MP+bxuWRBcNzd3gHXeDCFkewknb+yBVJ7L1T9VfXN/xhe7NbnYGdBFN3e/900tGTCPcQaRtHAZP5VwnZRfkFPD3unQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uSlde0IslZ+7eWgZl0Lh1BeeTwolt/WpLhvWnnhcfG8=;
+ b=mPo8B0EVwKXCQw59shHyJLghif63wdOLXrbSVmm3zA78Gu1s/HjBoH2gKL31Xk48mFeVI8FMMj0To3PYVy0d4UJUCYn1uFD/famb1eorpttvYXAO73xqNJ5s92g5Yw7jBizenAM1v+amNFg9UBvNFgpwHJqtS2Fc+hqpLCvwLMh9QlOO+zn1NeLQq6umaz6ie5gXcpGswlopKjM13Tv02unjk7V0HadUnUmANTopOyFHGUTIFBRPyY7SJjEYojkWXhCXd5VA4doRggsu3HEo1+zlByrj0Rta8YPakVnDadJZxBTXOep1oglHjwTbdA+PLOD/+sQgwUiOtWbW33vGDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA1PR11MB6098.namprd11.prod.outlook.com (2603:10b6:208:3d6::20)
+ by SA3PR11MB7584.namprd11.prod.outlook.com (2603:10b6:806:305::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Tue, 12 Nov
+ 2024 08:52:26 +0000
+Received: from IA1PR11MB6098.namprd11.prod.outlook.com
+ ([fe80::cbbd:ed55:576c:fd55]) by IA1PR11MB6098.namprd11.prod.outlook.com
+ ([fe80::cbbd:ed55:576c:fd55%3]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
+ 08:52:25 +0000
+From: "Xu, Even" <even.xu@intel.com>
+To: "Aaron, Ma" <aaron.ma@canonical.com>
+CC: "bentiss@kernel.org" <bentiss@kernel.org>, "corbet@lwn.net"
+	<corbet@lwn.net>, "jikos@kernel.org" <jikos@kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Zhang, Rui1"
+	<rui1.zhang@intel.com>, "srinivas.pandruvada@linux.intel.com"
+	<srinivas.pandruvada@linux.intel.com>, "Sun, Xinpeng" <xinpeng.sun@intel.com>
+Subject: RE: [PATCH v1 04/22] HID: intel-thc-hid: intel-thc: Add THC PIO
+ operation APIs
+Thread-Topic: [PATCH v1 04/22] HID: intel-thc-hid: intel-thc: Add THC PIO
+ operation APIs
+Thread-Index: AQHbJexOlqStX2GM7kymeEIvMWZKNLKxt2GAgAACx0CAAArCAIAAAG/AgAGULACAABgnAA==
+Date: Tue, 12 Nov 2024 08:52:25 +0000
+Message-ID: <IA1PR11MB6098FA19368C76792457FD02F4592@IA1PR11MB6098.namprd11.prod.outlook.com>
+References: <20241024081023.1468951-5-even.xu@intel.com>
+ <da650a93-6d21-444b-adb7-045566f53d5a@canonical.com>
+ <IA1PR11MB6098D581A332E576528FD30DF4582@IA1PR11MB6098.namprd11.prod.outlook.com>
+ <1a8f80ab-135e-4e57-b9b7-1940e4bfb4f3@canonical.com>
+ <IA1PR11MB6098DE17D19343A9C077F248F4582@IA1PR11MB6098.namprd11.prod.outlook.com>
+ <53ed1dd8-2949-4f05-a180-39c12fbe2597@canonical.com>
+In-Reply-To: <53ed1dd8-2949-4f05-a180-39c12fbe2597@canonical.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA1PR11MB6098:EE_|SA3PR11MB7584:EE_
+x-ms-office365-filtering-correlation-id: f2467e68-c905-40c7-f68e-08dd02f754c2
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?cGFIVVgyTnNsWUVLRWFnck5QZmdReFhMV3NRb3BxZ3ZKU3lyVURQRFdKUmJj?=
+ =?utf-8?B?MEFqZHh5Y3pEVFBwRm9lT2ZBc3RvYVU5NjRtK2ZOdzF0M2VqaUp0bXQxSDJ3?=
+ =?utf-8?B?UVVZT1NrT2g1eUhrWnpHU3VrQUZBMnRxd1p4YURYemh3WUluS3VCS0dTOWpS?=
+ =?utf-8?B?ckJJVjZJV0hNYjNBNHYwak5yU09nbnJJb1R4UjBxcEhvNDhQR3FPZVBIMnFS?=
+ =?utf-8?B?YWYxRWZFSitSeTc5WnpiUnZQcjR5WXlGMC9Ta1RyaDJEV2JHNzNwUy9aTzM1?=
+ =?utf-8?B?ZXBmOE90cFRwTUtLSWMwVXFKcEZxdEtacm1mSnQybVJiNHlIdFBmSGIyb1BH?=
+ =?utf-8?B?UkFPZ3BWcmR1bHFyNWR0b1dSd2g1cHVOQUVTaEFjSnVyS1lxNFNnRkRNK3V1?=
+ =?utf-8?B?Tm9JZHN1aCtqdWV3RDlDTzRmYU5hRGFmUHBCOEVubFh5ZlNxa1M2M0JhVjFp?=
+ =?utf-8?B?OHhNdUF6VG1ucjd2Y0JSRlRtNk5TcWhDRzJZaGUvdmFtOUlweTZ2MTlwRUZi?=
+ =?utf-8?B?WXZUdjdhQzdZbUhMeC8wZ3JuQTNUWVZIQkMyVTFzWklsUXk1Ym9Cckt4OTln?=
+ =?utf-8?B?WmVrNThHaSszdTllODdaNnJ2RHNSS3ZsQk5TOHVneGpFUlhUZFBvMUU0TnhN?=
+ =?utf-8?B?MVczVVR5bE1RSEdEU05IT0tmWjJhZC82SllpeTdkU1pXVlBiSU5qdm83Qkp2?=
+ =?utf-8?B?a1lHblJXUHJvcWJYQnJzb2ptanBHd09hQmdZVjdOS0p5RU5TZGJHUHBHNklB?=
+ =?utf-8?B?clJ1cGMyRHVKQ092ZFE4Sm9INjh3REVKYzNtVXpxTU5IbGJLdHVNaVlHUXZW?=
+ =?utf-8?B?NklhbXRENENBczlJQ3dzVENySE42dnlueVMzeUdzNUsvOGlGbkM1eGpGYnRs?=
+ =?utf-8?B?dWxLRHBnRUJQaEErZFpsdFVjLy9Dd2ZrdlIzQlRVTnhMUDN5aEFIblREQm5D?=
+ =?utf-8?B?cTVSUzB4MU5uRHVrMGEzOVZHWUJJN25TcThGTllHUTBycXdha2dwYnJmY2Yw?=
+ =?utf-8?B?SnpPV2FnSCtjRE8vME8zcHJqMWpSajdhSW0vV1FLVDBKVFVTTlY4WjZ2RkVT?=
+ =?utf-8?B?cTRkMmo3RlR6MmsxLzQ3U0ZxcjBoOE9qdnVvYUJ1RTc2VjBZZzFkTzhuMSts?=
+ =?utf-8?B?UDZFRUVMVk1ab2JYZjNxWWtEUWtlZk1qQ1d5OGtteUFxVTJyRFRTRFFyVGg0?=
+ =?utf-8?B?UEoyM2VjalRYbXNEZUUrdVZLSzJVWWh6VjM1alRiUTdSZktGcWhmZERlKzdM?=
+ =?utf-8?B?eHFvUmo2bGZXcEtGRlV5eE1aVGRWUko0ZFBya2VCbnNadDgvSEd4ams0T0xM?=
+ =?utf-8?B?V1FJVFVHd0sxb1RhVG1va0JYaEVNR1UrVzAxRmh6MHhuUndNc0xSQmFDWnV1?=
+ =?utf-8?B?VVR0bFM3TWtpSG1lSE1hb1hsb3NpbU5VREhpMWdXYTZCNFRVbW5OcG5sRExp?=
+ =?utf-8?B?Y2lRYmhEbEppZUtPWjdCWVNPVUs5dGZnV3N4Unl4TVhWUjJmdmNRdXZLaXJF?=
+ =?utf-8?B?UG9pRTc3L3JMcEdUWng1aG5iTFNvWXlxOE5CcnZMeWI5SWV5TStvZlM2cGEv?=
+ =?utf-8?B?Sms1U08vcFYvOVZqREJZY1BwOHVxQTBTWDBCb0cyYk9oTUFVb3NvZWhKM1B4?=
+ =?utf-8?B?TXJpL2VYNTl2WFVOaHZieEltMHMrczJST3MzWHJ5ZDBMQmQzRHE5M0E5R3RT?=
+ =?utf-8?B?bUNaa0Y0cWFvMVdEdVNXcGw2dG95c21MMm9tYmdHTTZOeWZwOGJxWHdLV1hK?=
+ =?utf-8?B?ekxQQ0VTUzFUVnliN2luOVA5a2VsTW9reG5vVy9xWEhLQzk4ZGlXNWFNaGpr?=
+ =?utf-8?Q?t4MGbJ+5Xkr5ClATKMX4nQGgXwu1eYMAKlVl8=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB6098.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TFZ0UGtWZlZmb1IxZWJzTG52a29Gdmc4aGlFam9qUnl3SytwUWFjaFZnRU1x?=
+ =?utf-8?B?Z2lTcjJpRVNuVEhqNjAyN2VRSGhGQzJXVVJEMWtub0tveE1TNm9BWklYVFBE?=
+ =?utf-8?B?MnVNRDVpa24valEyRnBIWm4rVjNjN2F2UFdSaDNCQzkvSHlaNm9Sd0dXL3Fz?=
+ =?utf-8?B?eXlQMTNSQ1J2emQrd2N4RnpUbHJyQVlqUG5lOElKeHhJMDNxQ0QvREFHTWpv?=
+ =?utf-8?B?b2ZCQ2hISld1Nk53cERyNzdKWkVEY0JGVnAvS2VIajMzNTNvZVBQS0UzeTcv?=
+ =?utf-8?B?UGFHNDlUYzZFV1RWY2k0aXpzYjVjeWJ2VWFValltZEU3TWpKOTB5QWE5OEhy?=
+ =?utf-8?B?ZFE4NHlqY0V0RjB1VmxmVE4xZVVxMzFFVDhHeG9YT0szMkdrSnVyZXZTcTBt?=
+ =?utf-8?B?bG1VZXBYQmpGdkJvRUJhVEVHekVZZXc4Y3dwRnRUNE85VExkUnNCeE5MNmRq?=
+ =?utf-8?B?U3EyUDVCK2hVMENScmVDNW1INXVhdDZ0V1NYaHNxRll0cmRxVlJRaXFRWmZm?=
+ =?utf-8?B?QW92dG9oWmlmcjhRcnJCUnlxdXJJTHd1aEw5ZmhuU2ZGZk93dWZrNUpHYnhz?=
+ =?utf-8?B?UVZnU1JqU0k2RXEvOFpwSkJFbVp3QjZoMmZxWTVpV2hjditGdC9GYUxSdlh2?=
+ =?utf-8?B?TXAzcnhlZkQyejBpSHpyZjZZWkUveUdGYlU2YUxBZnRGS09pQ01CdHVwc3N2?=
+ =?utf-8?B?eVlIK0dyNTNVSmFBNklPZlRobVNNTi9IR2QwVW1ZanhjU3N0a05BQllablEv?=
+ =?utf-8?B?VVZKa1dwcTVGT3RGQ0xjLzJISml4cjArSkc0ZWIrNHhpL0hNdzhTakFsa1Nj?=
+ =?utf-8?B?cG5VTmd1MWg3bHhYd0oyMzcwcHhIWXBGbS9LUXYwTklXejBIVVduRGxYZ3Zw?=
+ =?utf-8?B?czZkeVhKRHNMNTZlK1ZLUG9NeW9NL1Y4VEVRNVRHdVV1dEdNSUFTaXpWTlBB?=
+ =?utf-8?B?YkpybUtXV2Y5VWVIcUsyc3REdFJ1bDdtZ2pncldJbkNCTDJvZE42cUg5UHoz?=
+ =?utf-8?B?WWVZc3NZS3JIUkp0YWNwbXc4cDNqZGh3cXlJdjVzRWVSTVpNaG1NN2ROU3cr?=
+ =?utf-8?B?NEwxOXlVMWEwaDZFMUZXWGtSTVpCL3UyallYc2lKeUtaTzR5Y3hqQW53enBW?=
+ =?utf-8?B?SjVKNEd6T1RtRVB6QUFPODZXZnlVUElHRHJ2aEJxV3JuOS9EMUR6alZMRVh4?=
+ =?utf-8?B?NEpRUkZ2WWliUjQzdkw4YlBkMFE2OWJIRVkxNmpFTjJ3dDZUQk9yMlZHcTVj?=
+ =?utf-8?B?M2E1aFNWUXd0MFpzazBOM08yZ3JGa0gwTnRRL2pVQkcxeHkzTW1MT2M3SWU0?=
+ =?utf-8?B?SWhubTdqYzArMitsZ2piNVp4YjJzY2hvUEhOWm1tVmpnV2k0cjdVeDlxOEFk?=
+ =?utf-8?B?cHExSEYrYUNlTm90WE9veHUzQ1h3SkltdHpFeXRqMXkzN252Q3pGYUk3ZElk?=
+ =?utf-8?B?TEZvL3AzR09tOFVNRzVCR2xkTGs3SVZOYnhPMzA3aWZ0eXVtdXNPTjBaeTJO?=
+ =?utf-8?B?SDdDaG0xSzZ6U2h0VlV0QnBOUjNBMVdJTVl5QnhDb0cxa1dKdjFSdk16NEow?=
+ =?utf-8?B?anQ3dlhyZ3FrUGhXMElOUTV6VVBadUlZWjRSN1JsRlRFaXF3T1JiUUFYUUFu?=
+ =?utf-8?B?VVlFaWg3UUVkQUJQYlAxZVNPTEUrelhJTThWajNsaTN1WDRjc0hqamFqVnJO?=
+ =?utf-8?B?UnhVNm1tT1ZsNDZoWUtRT2J4T09Ld3BSaXROYWF2R2liUGhWV3NkZVd4OXNx?=
+ =?utf-8?B?NExLSHlXUXJmS1d4U1d5YnJzdEdOWEY0TmxWOElqUy9ocEhzZVJ1Yk43ZUQ0?=
+ =?utf-8?B?RWIva1Job0xWY2JHZWUyNXNIRG1nR2gzL3FRWG9qcVdWTDJkRVNVUDZlUnB1?=
+ =?utf-8?B?b080UkxvdVB4WXZ3NG9tVnA1dWdwcm9ibGRvbzd0RVJYTkI2QWFaR2cySTRh?=
+ =?utf-8?B?RHZ0QlRleDk1RkVOQUlDcHdhSnQ5T24wU0hOS0hxdTdtZUpaVXZlNWdaR3lR?=
+ =?utf-8?B?VVNEZHNCTDErM21IenZ6OHQxOXJ3TWYvbjZINU56NXNKVmtnRjhSbDhsdDEw?=
+ =?utf-8?B?Z05ncU1sVXcrb1FPYUQzekIwSUUra1c4Nnd6NjRNRGxvaWduVzNESWJXU01C?=
+ =?utf-8?Q?aueg=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB6098.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2467e68-c905-40c7-f68e-08dd02f754c2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2024 08:52:25.8112
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: a+vmAOQ/fpnEnBXuOmqHMCjMlei7VwO4oJSbhXZFiroAzU3C37m/gR42Q2Ws8vIBrkVDAYlqcgewLm39KMOPbQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7584
+X-OriginatorOrg: intel.com
 
-This driver is no longer buildable since the PPC_MAPLE platform was
-removed, see commit 62f8f307c80e ("powerpc/64: Remove maple platform").
-
-Remove the driver.
-
-Note that the comment in the driver says it supports "SMU & 970FX
-based G5 Macs", but that's not true, that comment was copied from
-pmac64-cpufreq.c, which still exists and continues to support those
-machines.
-
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- drivers/cpufreq/Kconfig.powerpc |   7 -
- drivers/cpufreq/Makefile        |   1 -
- drivers/cpufreq/maple-cpufreq.c | 242 --------------------------------
- 3 files changed, 250 deletions(-)
- delete mode 100644 drivers/cpufreq/maple-cpufreq.c
-
-The removal commit is in the powerpc/next branch:
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git/log/?h=next
-
-I can take this via the powerpc tree if that's easiest, let me know.
-
-diff --git a/drivers/cpufreq/Kconfig.powerpc b/drivers/cpufreq/Kconfig.powerpc
-index 58151ca56695..eb678fa5260a 100644
---- a/drivers/cpufreq/Kconfig.powerpc
-+++ b/drivers/cpufreq/Kconfig.powerpc
-@@ -17,13 +17,6 @@ config CPU_FREQ_CBE_PMI
- 	  frequencies. Using PMI, the processor will not only be able to run at
- 	  lower speed, but also at lower core voltage.
- 
--config CPU_FREQ_MAPLE
--	bool "Support for Maple 970FX Evaluation Board"
--	depends on PPC_MAPLE
--	help
--	  This adds support for frequency switching on Maple 970FX
--	  Evaluation Board and compatible boards (IBM JS2x blades).
--
- config CPU_FREQ_PMAC
- 	bool "Support for Apple PowerBooks"
- 	depends on ADB_PMU && PPC32
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 0f184031dd12..1a8f787db7e2 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -92,7 +92,6 @@ obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
- obj-$(CONFIG_CPU_FREQ_CBE)		+= ppc-cbe-cpufreq.o
- ppc-cbe-cpufreq-y			+= ppc_cbe_cpufreq_pervasive.o ppc_cbe_cpufreq.o
- obj-$(CONFIG_CPU_FREQ_CBE_PMI)		+= ppc_cbe_cpufreq_pmi.o
--obj-$(CONFIG_CPU_FREQ_MAPLE)		+= maple-cpufreq.o
- obj-$(CONFIG_QORIQ_CPUFREQ)   		+= qoriq-cpufreq.o
- obj-$(CONFIG_CPU_FREQ_PMAC)		+= pmac32-cpufreq.o
- obj-$(CONFIG_CPU_FREQ_PMAC64)		+= pmac64-cpufreq.o
-diff --git a/drivers/cpufreq/maple-cpufreq.c b/drivers/cpufreq/maple-cpufreq.c
-deleted file mode 100644
-index 690da85c4865..000000000000
---- a/drivers/cpufreq/maple-cpufreq.c
-+++ /dev/null
-@@ -1,242 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- *  Copyright (C) 2011 Dmitry Eremin-Solenikov
-- *  Copyright (C) 2002 - 2005 Benjamin Herrenschmidt <benh@kernel.crashing.org>
-- *  and                       Markus Demleitner <msdemlei@cl.uni-heidelberg.de>
-- *
-- * This driver adds basic cpufreq support for SMU & 970FX based G5 Macs,
-- * that is iMac G5 and latest single CPU desktop.
-- */
--
--#undef DEBUG
--
--#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
--
--#include <linux/module.h>
--#include <linux/types.h>
--#include <linux/errno.h>
--#include <linux/kernel.h>
--#include <linux/delay.h>
--#include <linux/sched.h>
--#include <linux/cpufreq.h>
--#include <linux/init.h>
--#include <linux/completion.h>
--#include <linux/mutex.h>
--#include <linux/time.h>
--#include <linux/of.h>
--
--#define DBG(fmt...) pr_debug(fmt)
--
--/* see 970FX user manual */
--
--#define SCOM_PCR 0x0aa001			/* PCR scom addr */
--
--#define PCR_HILO_SELECT		0x80000000U	/* 1 = PCR, 0 = PCRH */
--#define PCR_SPEED_FULL		0x00000000U	/* 1:1 speed value */
--#define PCR_SPEED_HALF		0x00020000U	/* 1:2 speed value */
--#define PCR_SPEED_QUARTER	0x00040000U	/* 1:4 speed value */
--#define PCR_SPEED_MASK		0x000e0000U	/* speed mask */
--#define PCR_SPEED_SHIFT		17
--#define PCR_FREQ_REQ_VALID	0x00010000U	/* freq request valid */
--#define PCR_VOLT_REQ_VALID	0x00008000U	/* volt request valid */
--#define PCR_TARGET_TIME_MASK	0x00006000U	/* target time */
--#define PCR_STATLAT_MASK	0x00001f00U	/* STATLAT value */
--#define PCR_SNOOPLAT_MASK	0x000000f0U	/* SNOOPLAT value */
--#define PCR_SNOOPACC_MASK	0x0000000fU	/* SNOOPACC value */
--
--#define SCOM_PSR 0x408001			/* PSR scom addr */
--/* warning: PSR is a 64 bits register */
--#define PSR_CMD_RECEIVED	0x2000000000000000U   /* command received */
--#define PSR_CMD_COMPLETED	0x1000000000000000U   /* command completed */
--#define PSR_CUR_SPEED_MASK	0x0300000000000000U   /* current speed */
--#define PSR_CUR_SPEED_SHIFT	(56)
--
--/*
-- * The G5 only supports two frequencies (Quarter speed is not supported)
-- */
--#define CPUFREQ_HIGH                  0
--#define CPUFREQ_LOW                   1
--
--static struct cpufreq_frequency_table maple_cpu_freqs[] = {
--	{0, CPUFREQ_HIGH,		0},
--	{0, CPUFREQ_LOW,		0},
--	{0, 0,				CPUFREQ_TABLE_END},
--};
--
--/* Power mode data is an array of the 32 bits PCR values to use for
-- * the various frequencies, retrieved from the device-tree
-- */
--static int maple_pmode_cur;
--
--static const u32 *maple_pmode_data;
--static int maple_pmode_max;
--
--/*
-- * SCOM based frequency switching for 970FX rev3
-- */
--static int maple_scom_switch_freq(int speed_mode)
--{
--	unsigned long flags;
--	int to;
--
--	local_irq_save(flags);
--
--	/* Clear PCR high */
--	scom970_write(SCOM_PCR, 0);
--	/* Clear PCR low */
--	scom970_write(SCOM_PCR, PCR_HILO_SELECT | 0);
--	/* Set PCR low */
--	scom970_write(SCOM_PCR, PCR_HILO_SELECT |
--		      maple_pmode_data[speed_mode]);
--
--	/* Wait for completion */
--	for (to = 0; to < 10; to++) {
--		unsigned long psr = scom970_read(SCOM_PSR);
--
--		if ((psr & PSR_CMD_RECEIVED) == 0 &&
--		    (((psr >> PSR_CUR_SPEED_SHIFT) ^
--		      (maple_pmode_data[speed_mode] >> PCR_SPEED_SHIFT)) & 0x3)
--		    == 0)
--			break;
--		if (psr & PSR_CMD_COMPLETED)
--			break;
--		udelay(100);
--	}
--
--	local_irq_restore(flags);
--
--	maple_pmode_cur = speed_mode;
--	ppc_proc_freq = maple_cpu_freqs[speed_mode].frequency * 1000ul;
--
--	return 0;
--}
--
--static int maple_scom_query_freq(void)
--{
--	unsigned long psr = scom970_read(SCOM_PSR);
--	int i;
--
--	for (i = 0; i <= maple_pmode_max; i++)
--		if ((((psr >> PSR_CUR_SPEED_SHIFT) ^
--		      (maple_pmode_data[i] >> PCR_SPEED_SHIFT)) & 0x3) == 0)
--			break;
--	return i;
--}
--
--/*
-- * Common interface to the cpufreq core
-- */
--
--static int maple_cpufreq_target(struct cpufreq_policy *policy,
--	unsigned int index)
--{
--	return maple_scom_switch_freq(index);
--}
--
--static unsigned int maple_cpufreq_get_speed(unsigned int cpu)
--{
--	return maple_cpu_freqs[maple_pmode_cur].frequency;
--}
--
--static int maple_cpufreq_cpu_init(struct cpufreq_policy *policy)
--{
--	cpufreq_generic_init(policy, maple_cpu_freqs, 12000);
--	return 0;
--}
--
--static struct cpufreq_driver maple_cpufreq_driver = {
--	.name		= "maple",
--	.flags		= CPUFREQ_CONST_LOOPS,
--	.init		= maple_cpufreq_cpu_init,
--	.verify		= cpufreq_generic_frequency_table_verify,
--	.target_index	= maple_cpufreq_target,
--	.get		= maple_cpufreq_get_speed,
--	.attr		= cpufreq_generic_attr,
--};
--
--static int __init maple_cpufreq_init(void)
--{
--	struct device_node *cpunode;
--	unsigned int psize;
--	unsigned long max_freq;
--	const u32 *valp;
--	u32 pvr_hi;
--	int rc = -ENODEV;
--
--	/*
--	 * Behave here like powermac driver which checks machine compatibility
--	 * to ease merging of two drivers in future.
--	 */
--	if (!of_machine_is_compatible("Momentum,Maple") &&
--	    !of_machine_is_compatible("Momentum,Apache"))
--		return 0;
--
--	/* Get first CPU node */
--	cpunode = of_cpu_device_node_get(0);
--	if (cpunode == NULL) {
--		pr_err("Can't find any CPU 0 node\n");
--		goto bail_noprops;
--	}
--
--	/* Check 970FX for now */
--	/* we actually don't care on which CPU to access PVR */
--	pvr_hi = PVR_VER(mfspr(SPRN_PVR));
--	if (pvr_hi != 0x3c && pvr_hi != 0x44) {
--		pr_err("Unsupported CPU version (%x)\n", pvr_hi);
--		goto bail_noprops;
--	}
--
--	/* Look for the powertune data in the device-tree */
--	/*
--	 * On Maple this property is provided by PIBS in dual-processor config,
--	 * not provided by PIBS in CPU0 config and also not provided by SLOF,
--	 * so YMMV
--	 */
--	maple_pmode_data = of_get_property(cpunode, "power-mode-data", &psize);
--	if (!maple_pmode_data) {
--		DBG("No power-mode-data !\n");
--		goto bail_noprops;
--	}
--	maple_pmode_max = psize / sizeof(u32) - 1;
--
--	/*
--	 * From what I see, clock-frequency is always the maximal frequency.
--	 * The current driver can not slew sysclk yet, so we really only deal
--	 * with powertune steps for now. We also only implement full freq and
--	 * half freq in this version. So far, I haven't yet seen a machine
--	 * supporting anything else.
--	 */
--	valp = of_get_property(cpunode, "clock-frequency", NULL);
--	if (!valp)
--		goto bail_noprops;
--	max_freq = (*valp)/1000;
--	maple_cpu_freqs[0].frequency = max_freq;
--	maple_cpu_freqs[1].frequency = max_freq/2;
--
--	/* Force apply current frequency to make sure everything is in
--	 * sync (voltage is right for example). Firmware may leave us with
--	 * a strange setting ...
--	 */
--	msleep(10);
--	maple_pmode_cur = -1;
--	maple_scom_switch_freq(maple_scom_query_freq());
--
--	pr_info("Registering Maple CPU frequency driver\n");
--	pr_info("Low: %d Mhz, High: %d Mhz, Cur: %d MHz\n",
--		maple_cpu_freqs[1].frequency/1000,
--		maple_cpu_freqs[0].frequency/1000,
--		maple_cpu_freqs[maple_pmode_cur].frequency/1000);
--
--	rc = cpufreq_register_driver(&maple_cpufreq_driver);
--
--bail_noprops:
--	of_node_put(cpunode);
--
--	return rc;
--}
--
--module_init(maple_cpufreq_init);
--
--
--MODULE_DESCRIPTION("cpufreq driver for Maple 970FX/970MP boards");
--MODULE_LICENSE("GPL");
--- 
-2.47.0
-
+SGksIEFhcm9uLA0KDQpZZXMsIFRIQyBkcml2ZXJzIGNhbiBzdXBwb3J0IG11bHRpLXRvdWNoLCB3
+ZSB0ZXN0ZWQgb24gV2Fjb20gdG91Y2hzY3JlZW4gYW5kIEVsYW4gdG91Y2hzY3JlZW5zLg0KSW4g
+Z2VuZXJhbCwgdGhvc2UgYXJlIEhJRCBwcm90b2NvbCByZWxhdGVkLCBpZiBzaW5nbGUgdG91Y2gg
+Y2FuIHN1cHBvcnQsIG11bHRpLXRvdWNoIHNob3VsZCBjYW4gYmUgc3VwcG9ydGVkIChJZiBwYW5l
+bCBzdXBwb3J0cykuIA0KRHJpdmVyIG9ubHkgdHJhbnNmZXJzIGRhdGEgYW5kIGRvZXNuJ3QgY2Fy
+ZSBkYXRhIGNvbnRlbnQuDQoNClByZXZpb3VzbHksIEkgbWV0IGEgc2ltaWxhciBwcm9ibGVtIG9u
+IGEgdG91Y2hwYWQsIGFmdGVyIGRlYnVnZ2luZywgSSBmb3VuZDoNCjEuIFRoaXMgdG91Y2hwYWQg
+ZXhwb3NlcyBzZXZlcmFsIEhJRCBjb2xsZWN0aW9uczogTW91c2UgYW5kIFRvdWNoUGFkLg0KMi4g
+SW4gb3JkZXIgdG8gYmVuZWZpdCBVRUZJIGltcGxlbWVudGF0aW9uLCB0aGlzIHRvdWNocGFkIEZX
+IHdpbGwgd29yayBhcyBNb3VzZSBtb2RlIGF0IGJlZ2lubmluZywgc28gVUVGSSBjYW4gZWFzeSB1
+c2UgaXQuDQozLiBBZnRlciBlbnRlciBpbnRvIFdpbmRvd3MsIFdpbmRvd3MgSElEIENsYXNzIGRy
+aXZlciB3aWxsIHNldCBzb21lIHNwZWNpYWwgY29tbWFuZHMgd2hpY2ggY2F1c2UgdG91Y2hwYWQg
+Rlcgc3dpdGNoaW5nIHRvIFRvdWNoUGFkIG1vZGUuDQo0LiBCdXQgb24gTGludXgsIExpbnV4IEhJ
+RCBjb3JlIGRvZXNuJ3QgaGF2ZSB0aG9zZSBzcGVjaWFsIGNvbW1hbmQsIHNvIHRoaXMgdG91Y2hw
+YWQgbGl2ZXMgaW4gTW91c2UgbW9kZSBvbiBMaW51eCBPUywgYW5kIG9ubHkgaGFzIHNpbmdsZSB0
+b3VjaCBmdW5jdGlvbi4NCg0KQ2FuIHlvdSBzaGFyZSBtZSBhbGwgdGhlIGtlcm5lbCBsb2csIHRo
+ZW4gSSBjYW4gZG91YmxlIGNoZWNrPw0KVGhhbmtzIQ0KDQpCZXN0IFJlZ2FyZHMsDQpFdmVuIFh1
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWFyb24gTWEgPGFhcm9u
+Lm1hQGNhbm9uaWNhbC5jb20+DQo+IFNlbnQ6IFR1ZXNkYXksIE5vdmVtYmVyIDEyLCAyMDI0IDM6
+MTYgUE0NCj4gVG86IFh1LCBFdmVuIDxldmVuLnh1QGludGVsLmNvbT4NCj4gQ2M6IGJlbnRpc3NA
+a2VybmVsLm9yZzsgY29yYmV0QGx3bi5uZXQ7IGppa29zQGtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBk
+b2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBaaGFuZywg
+UnVpMQ0KPiA8cnVpMS56aGFuZ0BpbnRlbC5jb20+OyBzcmluaXZhcy5wYW5kcnV2YWRhQGxpbnV4
+LmludGVsLmNvbTsgU3VuLCBYaW5wZW5nDQo+IDx4aW5wZW5nLnN1bkBpbnRlbC5jb20+DQo+IFN1
+YmplY3Q6IFJlOiBbUEFUQ0ggdjEgMDQvMjJdIEhJRDogaW50ZWwtdGhjLWhpZDogaW50ZWwtdGhj
+OiBBZGQgVEhDIFBJTyBvcGVyYXRpb24NCj4gQVBJcw0KPiANCj4gSGkgRXZlbiwNCj4gDQo+IEFm
+dGVyIHRlc3RlZCBvbiA4MDg2OmE4NDgsIHRoZSBtdWx0aXRvdWNoIGRvZXNuJ3Qgd29yayBsaWtl
+IDQgZmluZ2VyIHRvdWNoLA0KPiByb3RhdGlvbiBhbmQgem9vbS4NCj4gDQo+IENvdWxkIGhlbHAg
+Y2hlY2sgaWYgdGhvc2UgZmVhdHVyZXMgY2FuIGJlIHN1cHBvcnRlZD8NCj4gDQo+IFJlZ2FyZHMs
+DQo+IEFhcm9uDQo+IA0KPiANCj4gT24gMTEvMTEvMjQgMzoxMCBQTSwgWHUsIEV2ZW4gd3JvdGU6
+DQo+ID4gSGksIEFhcm9uLA0KPiA+DQo+ID4gVGhhdCdzIE9LLiBHbGFkIHRvIGtub3cgaXQgd29y
+a3MuDQo+ID4gVGhhbmtzIGZvciB0ZXN0aW5nIQ0KPiA+DQo+ID4gQmVzdCBSZWdhcmRzLA0KPiA+
+IEV2ZW4gWHUNCj4gPg0KPiA+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+PiBGcm9t
+OiBBYXJvbiBNYSA8YWFyb24ubWFAY2Fub25pY2FsLmNvbT4NCj4gPj4gU2VudDogTW9uZGF5LCBO
+b3ZlbWJlciAxMSwgMjAyNCAzOjA4IFBNDQo+ID4+IFRvOiBYdSwgRXZlbiA8ZXZlbi54dUBpbnRl
+bC5jb20+DQo+ID4+IENjOiBiZW50aXNzQGtlcm5lbC5vcmc7IGNvcmJldEBsd24ubmV0OyBqaWtv
+c0BrZXJuZWwub3JnOyBsaW51eC0NCj4gPj4gZG9jQHZnZXIua2VybmVsLm9yZzsgbGludXgta2Vy
+bmVsQHZnZXIua2VybmVsLm9yZzsgWmhhbmcsIFJ1aTENCj4gPj4gPHJ1aTEuemhhbmdAaW50ZWwu
+Y29tPjsgc3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5jb207IFN1biwNCj4gPj4gWGlu
+cGVuZyA8eGlucGVuZy5zdW5AaW50ZWwuY29tPg0KPiA+PiBTdWJqZWN0OiBSZTogW1BBVENIIHYx
+IDA0LzIyXSBISUQ6IGludGVsLXRoYy1oaWQ6IGludGVsLXRoYzogQWRkIFRIQw0KPiA+PiBQSU8g
+b3BlcmF0aW9uIEFQSXMNCj4gPj4NCj4gPj4gSGkgRXZlbiwNCj4gPj4NCj4gPj4gU29ycnksIG15
+IGZhdWx0Lg0KPiA+Pg0KPiA+PiBUaGUgcGF0Y2hzZXQgaXMgYXBwbGllZCBvbiA2LjEyLXJjNy4N
+Cj4gPj4gQnVpbGRpbmcsIHdpbGwgbGV0IHlvdSBrbm93IHRoZSB0ZXN0IHJlc3VsdC4NCj4gPj4N
+Cj4gPj4gVGhhbmtzLg0KPiA+PiBBYXJvbg0KPiA+Pg0KPiA+PiBPbiAxMS8xMS8yNCAyOjMxIFBN
+LCBYdSwgRXZlbiB3cm90ZToNCj4gPj4+IEhpLCBBYXJvbiwNCj4gPj4+DQo+ID4+PiBUaGFua3Mg
+Zm9yIHRoZSBpbmZvcm1hdGlvbi4NCj4gPj4+IFRoZSBmaWxlICJpbnRlbC10aGMtaHcuaCIgc2hv
+dWxkIGJlIHRoZXJlLCBpdCB3YXMgYWRkZWQgYnkgIltQQVRDSA0KPiA+Pj4gdjEgMDMvMjJdDQo+
+ID4+IEhJRDogaW50ZWwtdGhjLWhpZDogaW50ZWwtdGhjOiBBZGQgVEhDIHJlZ2lzdGVycyBkZWZp
+bml0aW9uIi4NCj4gPj4+IEkgdGVzdGVkIGl0IG9uIHY2LjExLg0KPiA+Pj4gQW55d2F5LCBsZXQg
+bWUgZG91YmxlIGNoZWNrIHdoYXQncyB3cm9uZyBhbmQgY29tZSBiYWNrIHRvIHlvdS4NCj4gPj4+
+IFRoYW5rcyENCj4gPj4+DQo+ID4+PiBCZXN0IFJlZ2FyZHMsDQo+ID4+PiBFdmVuIFh1DQo+ID4+
+Pg0KPiA+Pj4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+Pj4gRnJvbTogQWFyb24g
+TWEgPGFhcm9uLm1hQGNhbm9uaWNhbC5jb20+DQo+ID4+Pj4gU2VudDogTW9uZGF5LCBOb3ZlbWJl
+ciAxMSwgMjAyNCAyOjE5IFBNDQo+ID4+Pj4gVG86IFh1LCBFdmVuIDxldmVuLnh1QGludGVsLmNv
+bT4NCj4gPj4+PiBDYzogYmVudGlzc0BrZXJuZWwub3JnOyBjb3JiZXRAbHduLm5ldDsgamlrb3NA
+a2VybmVsLm9yZzsgbGludXgtDQo+ID4+Pj4gZG9jQHZnZXIua2VybmVsLm9yZzsgbGludXgtaW5w
+dXRAdmdlci5rZXJuZWwub3I7DQo+ID4+Pj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsg
+WmhhbmcsIFJ1aTEgPHJ1aTEuemhhbmdAaW50ZWwuY29tPjsNCj4gPj4+PiBzcmluaXZhcy5wYW5k
+cnV2YWRhQGxpbnV4LmludGVsLmNvbTsgU3VuLCBYaW5wZW5nDQo+ID4+Pj4gPHhpbnBlbmcuc3Vu
+QGludGVsLmNvbT4NCj4gPj4+PiBTdWJqZWN0OiBSZTogW1BBVENIIHYxIDA0LzIyXSBISUQ6IGlu
+dGVsLXRoYy1oaWQ6IGludGVsLXRoYzogQWRkDQo+ID4+Pj4gVEhDIFBJTyBvcGVyYXRpb24gQVBJ
+cw0KPiA+Pj4+DQo+ID4+Pj4gSGkgRXZlbiwNCj4gPj4+Pg0KPiA+Pj4+IEl0IGZhaWxzIHRvIGJl
+IGFwcGxpZWQgb24gdjYuMTItcmM3Lg0KPiA+Pj4+DQo+ID4+Pj4gVGhlcmUgaXMgbm8gZmlsZSBp
+bnRlbC10aGMtaHcuaC4NCj4gPj4+Pg0KPiA+Pj4+IFJlZ2FyZHMsDQo+ID4+Pj4gQWFyb24NCg0K
 
