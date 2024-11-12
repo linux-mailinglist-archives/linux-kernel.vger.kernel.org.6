@@ -1,64 +1,57 @@
-Return-Path: <linux-kernel+bounces-406518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 205109C6050
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:23:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB119C605C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:26:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC77F1F21607
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 629A828A9A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CBF215F58;
-	Tue, 12 Nov 2024 18:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB5F216446;
+	Tue, 12 Nov 2024 18:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MiNaVJGf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CoDagJq8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B01215F47;
-	Tue, 12 Nov 2024 18:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED774213125;
+	Tue, 12 Nov 2024 18:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731435743; cv=none; b=j1l4KBEQzYA/3oBzYgcknsuGwKy+HgawjOYMe30peg9sJuhL3LQvpDUkekbgHue5xGRwOTi+wtmCHAs0ifS1E9znrzl9845ENOMJyDwJZXKRthKHAeRunk1FOdfenTMfALHoQa5aNQm5QU2pGEDwCv3n0pwRGrGFDO8xVxKqe2Y=
+	t=1731435954; cv=none; b=Y2VA27qB+6QRW3tqQ15Fpm6NmkP5NfuKTbKQbKcCqv1eYbYs10U70wK9ypUba2Zdcy6cqZru0n89dfGsoP4BQ3ad9zg/ZLFSy+PMW8YaJXbTv4sWYXMy3PZtj3JSsQ6n09y6t3+al/S7WxRDG4Dxl8NGXngQRH0XkeO66b905CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731435743; c=relaxed/simple;
-	bh=v9ADCGAr6cULZfeazrrOEhkTHbvDQvHJ16GL+7IJLaA=;
+	s=arc-20240116; t=1731435954; c=relaxed/simple;
+	bh=yrKfGOXX98/cELtVgxzNSD4kt98nETX3Dt/9ZDr29SY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pAZ6NfxYZI4Dvukc7AHil0zPhl6p/XqYjaDTRrHPfLwnA/aSGLkU9XwnZbRjtYy4oBkeX3rz61Aj1mem6a/d3rKZscO4i1B4hfd9Vy3ziovsJW7EOgGExzY18jfJx+/mFN3c6TQ9d7QwJY7oe8RyESSeAkiLWuux5wFWdxxl4xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MiNaVJGf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51BBBC4CECD;
-	Tue, 12 Nov 2024 18:22:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MP2S1kPS3POSgLJf4OjvALRhamQSKV20fifenapFS97eqPJiRyRon32vapJc+oQd//ulmYxyJqJoaY0Rd0XF1tvtwwG+WjKDqHNstSDKIiWhwu2aphboqMrGmKngt+EOecxLVcKsBj8iP+maeSRGY5b5amITBOpFTUC+Dw6QAJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CoDagJq8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E44C4CED6;
+	Tue, 12 Nov 2024 18:25:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731435743;
-	bh=v9ADCGAr6cULZfeazrrOEhkTHbvDQvHJ16GL+7IJLaA=;
+	s=k20201202; t=1731435953;
+	bh=yrKfGOXX98/cELtVgxzNSD4kt98nETX3Dt/9ZDr29SY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MiNaVJGfNjmBjGU2PD3Yq9l1mzQROTpgCvAO4x/sWYsEQx4txYISHdNvUd8SUxfR3
-	 5ET1BWWSRZz6tqjP0+E8F4L52K7f00JRRxvgfae5DT7m+TIkHgMyWMJioxKixrhHjQ
-	 69kyp3WAowD9BKKiFuDzRDRiTk49oFWm1yvkwo8/ELlQUKvb9jZuV6bUBVSXp9mZDa
-	 B4QIg0Xq48jUnYxojYTd/Kbyy1ZiPQl580ie294ke2jKxwckyORK9c4HYdmCAtqvmW
-	 NMkvQtguagSXBP5exdPaZ849D/QLQ3xu4f4vunURjTY78h0HNqs8RUBJu/Yir52oHy
-	 XLSd0CWU9rx+g==
-Date: Tue, 12 Nov 2024 18:22:18 +0000
-From: Simon Horman <horms@kernel.org>
-To: Wenjia Zhang <wenjia@linux.ibm.com>
-Cc: Manas <manas18244@iiitd.ac.in>, Jan Karcher <jaka@linux.ibm.com>,
-	"D. Wythe" <alibuda@linux.alibaba.com>,
-	Tony Lu <tonylu@linux.alibaba.com>,
-	Wen Gu <guwen@linux.alibaba.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, Anup Sharma <anupnewsmail@gmail.com>,
-	linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Remove unused function parameter in __smc_diag_dump
-Message-ID: <20241112182218.GV4507@kernel.org>
-References: <20241109-fix-oops-__smc_diag_dump-v1-1-1c55a3e54ad4@iiitd.ac.in>
- <ae8e61c6-e407-4303-aece-b7ce4060d73e@linux.ibm.com>
- <niqf7e6xbvkloosm7auwb4wlulkfr66dagdfnbigsn3fedclui@qoag5bzbd3ys>
- <538b7781-0d57-45e6-a00a-fb03c0c30a52@linux.ibm.com>
+	b=CoDagJq8V8BhywiH9SWUK9yNn+wPEqeK4ep/tpSx9d4zgCLn4J2J/KOTGBGKSCyjR
+	 RaGXkCY7VTGOe0uJeNJw5YAa49bnrjfEXxkQA7hND6OCiNGeYyXTpi+iFo2Xhu29O+
+	 lL/pMvTJXMKzka+Yyg2UhibCZBinnXLlNQamr+ljIF4zrPM4GNJRk+09omulpyVsAV
+	 dBgV4M9obIbNtfBnxYps/ByfZyxA6KjakZ/aB6wql2w+5Sh45yUjEX5foogA+gEv+W
+	 TFse51KJP5S+RATFTHiIKIPToMPonHImABDcJmVqiR7itg79pmiX+yd9MFwoTWj1kn
+	 eM5fQ+cOrvoZg==
+Date: Tue, 12 Nov 2024 12:25:51 -0600
+From: Rob Herring <robh@kernel.org>
+To: mjchen <mjchen0829@gmail.com>
+Cc: dmitry.torokhov@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	sudeep.holla@arm.com, peng.fan@nxp.com, arnd@arndb.de,
+	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mjchen@nuvoton.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
+Message-ID: <20241112182551.GA1394330-robh@kernel.org>
+References: <20241112053059.3361-1-mjchen0829@gmail.com>
+ <20241112053059.3361-2-mjchen0829@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,37 +60,132 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <538b7781-0d57-45e6-a00a-fb03c0c30a52@linux.ibm.com>
+In-Reply-To: <20241112053059.3361-2-mjchen0829@gmail.com>
 
-On Tue, Nov 12, 2024 at 08:36:13AM +0100, Wenjia Zhang wrote:
+On Tue, Nov 12, 2024 at 05:30:58AM +0000, mjchen wrote:
+> Add YAML bindings for MA35D1 SoC keypad.
 > 
+> Signed-off-by: mjchen <mjchen0829@gmail.com>
+> ---
+>  .../bindings/input/nuvoton,ma35d1-keypad.yaml | 89 +++++++++++++++++++
+>  1 file changed, 89 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
 > 
-> On 11.11.24 16:10, Manas wrote:
-> > On 11.11.2024 15:11, Wenjia Zhang wrote:
+> diff --git a/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml b/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
+> new file mode 100644
+> index 000000000000..71debafc3890
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
+> @@ -0,0 +1,89 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/nuvoton,ma35d1-keypad.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nuvoton MA35D1 Keypad
+> +
+> +maintainers:
+> +  - Ming-jen Chen <mjchen0829@gmail.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/input/matrix-keymap.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: nuvoton,ma35d1-kpi
+> +
+> +  debounce-period:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
+> +    description: |
+> +      Key debounce period select, specified in terms of keypad IP clock cycles.
+> +      Valid values include 0 (no debounce) and specific clock cycle values:
+> +      8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, and 8192.
 
-...
+No need to list the values twice.
 
-> > Thank you Wenjia for reviewing this.
-> > 
-> > Should I make any changes to the commit message if we are going forward
-> > with it
-> > being as a cleanup patch? The commit message itself (barring the cover
-> > letter)
-> > should be enough, I reckon.
-> > 
-> I think it is ok as it is.
+We already have a bunch of debounce time properties. Don't add more. If 
+you have the clock frequency, then you can use the existing 
+"debounce-delay-ms" and convert to register values.
 
-Yes, agreed.
+> +
+> +  nuvoton,key-scan-time:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Set the time it takes to scan each key in the keypad, in clock cycles of the IP.
+> +      This parameter controls how frequently the keypad is scanned, adjusting the response time.
+> +      The valid range is from 1 to 256 clock cycles.
+> +    minimum: 1
+> +    maximum: 256
+> +
+> +  nuvoton,key-scan-time-div:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Set a divider that adjusts the scan time for each key.
+> +      This value scales the time it takes to scan each key
+> +      by multiplying the key-scan-time by the specified factor.
+> +      For example, if you set key-scan-time to 64 cycles and configure key-scan-time-div to 2,
+> +      the scan time for each key will be increased to 128 cycles (64 cycles * 2). time.
+> +    minimum: 1
+> +    maximum: 256
 
-The commit message should be truncated at first scissors ("---").
-Which leaves us with a commit message only describing the removal
-of an unused function parameter. Which, given the discussion in
-this thread, is what we want.
+Again, we have existing properties such as scan-interval, 
+scan-interval-ms, and scan-delay. How is this different? 
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+With a single property in time units, you can solve for how many clock 
+cycles.
 
-> 
-> Thanks,
-> Wenjia
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - linux,keymap
+> +  - debounce-period
+> +  - nuvoton,key-scan-time
+> +  - nuvoton,key-scan-time-div
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/input/input.h>
+> +    keypad@404A0000 {
+> +      compatible = "nuvoton,ma35d1-kpi";
+> +      reg = <0x404A0000 0x10000>;
+> +      interrupts = <79>;
+> +      clocks = <&clk>;
+
+> +      keypad,num-rows = <2>;
+> +      keypad,num-columns = <2>;
+
+Surely these should be required?
+
+> +
+> +      linux,keymap = <
+> +         MATRIX_KEY(0, 0, KEY_ENTER)
+> +         MATRIX_KEY(0, 1, KEY_ENTER)
+> +         MATRIX_KEY(1, 0, KEY_SPACE)
+> +         MATRIX_KEY(1, 1, KEY_Z)
+> +      >;
+> +
+> +      debounce-period = <8>;
+> +      nuvoton,key-scan-time = <1>;
+> +      nuvoton,key-scan-time-div = <24>;
+> +    };
+> -- 
+> 2.25.1
 > 
 
