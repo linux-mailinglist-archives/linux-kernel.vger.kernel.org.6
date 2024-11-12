@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-405215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B4969C4E75
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:59:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE139C4E7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CDDAB20BD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:59:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D4F2873C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392E5209F24;
-	Tue, 12 Nov 2024 05:59:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550CB208960
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D498520ADD9;
+	Tue, 12 Nov 2024 06:01:25 +0000 (UTC)
+Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C6A1A0AFE;
+	Tue, 12 Nov 2024 06:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731391145; cv=none; b=NdbDq+Jlad8i+8QBe7Lg8ay1Njz54OwvbY/jZFwco0ICJE8cNK63YzxveDT0BQ80tQ7uC/Np4vpM2kgeLjc5Pl4qCC6KDnGoLVCWnw7EZvl34eNcTjUmNG9x/fUov1rsYHB0fwMAA/7FIzmR88Uj+qva6VzRo0LlWVhTe4TbKhU=
+	t=1731391285; cv=none; b=raazxSBXhI4Q6dz1tDKtzI7tEbPtYlzOImBU3EVVOYh/1aj6pwhzJYEt5iyPP9IPuMS1ohesaQlFWPgHXawTsjeyqIMZn31trAeRetYxJxFUIKg8R6qbTtaWCAq7FPga8Te/tY64Ohvo8Klr7q97CpxAG+AuJyoYV10quYQ6nHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731391145; c=relaxed/simple;
-	bh=+9DsEu3B8T2u6ZvBX8TyGBuWkYtzv1k7A7MJYS5QaH4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=p0URKJuga3B7V1ZEMgxYUfbMoNNDjAMY1DncQjPwEDnimnyoKhSFmKE9EIEjdStVopqW9aoR7bd3T4l3+W6f24gnQAGli8TLPgFmcKtiQVppSC+oFBn4LdNqJo9W4on0RQ6kAKO7/59PJKjdiXdGedz8NjjJ2v3HlpShnZfdYiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83adc5130e3so565387639f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 21:59:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731391143; x=1731995943;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U33q3ptGykLVXIAYKPBi1XmbTq4SvNjOtCBsD4Dnmoc=;
-        b=QNMpDfLckL9dzx7Cp548ocIfwX69lM7s5ZMvGW1ldrKk5cvSnzMH/ScWuWZ9ka3NVb
-         90eFyo3AwZ5ntCofGrZsDnyh1icRLqdfsEpzq0bVJOdqniveqyzKMPI+iZd51+SYiR7j
-         Gun+4oRvJ73yuJnulSMj55VFCveQjHUQh2lIei5jtaU+ibtW+a+3cILczhHaxeSY4TcQ
-         wcjHXYGiBcTpDIK0p+V1Vvid+I44m3dhuqYPzZ+t6tDoIQOCstaJBR10Mkv5yfXY7lcZ
-         P2wc1MFWvd6WKEFeHM/Mlkv8x2SaKjCA1ao1Fx1OZE2YH4ILSkMmq0K+YnmpVEJ2X9+S
-         NkIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNK0YkkApd00xB3UrlNH39Ipg1U3l5jmEM2yKYxYv/Caaoi7wH1NbnUYZ0+yebrh84xi4qTP5XIIJufR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ2lZEKPBWIvvfrrbi6xTfLGqHhMuoTkx7wtxwOMDML9d4AkQG
-	E49Daov5V44zxJ5ljfJHg6xZXCuXmHIN1wp3Xp1qdaELMIxzmHI7G3+t6QkbaJe6h6jsDSggBBv
-	FLTr21NaM5kS8VtGSGl1Fupoz5dv4qjNn0wYRmbMe29/mTLzS6tkqfpw=
-X-Google-Smtp-Source: AGHT+IESqfpqwkWHyS+1sEUEtImXMTF8pIWANjrD3TQFvAcaYavXkKYrgbUttU7md4GiVnGtLGD2m759PqLSAwPZWXceo040ufXZ
+	s=arc-20240116; t=1731391285; c=relaxed/simple;
+	bh=66qUZLgWuxj88U/ojOcgZSc3hCJottpI1ddRUJ5yBmg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LbqLUraH9qnHu4bjHthA/Olrow59GUZQK0xc7J7v3xL+ce+Xtr9FD26eiWGbvNEXHyOSXbMIj/Q4RGGmgIraxAy+wYDcipYR7Mw/7Q/AzhgD0Jxg9kBsif06tEI/48Cn9sWu4YsFZH2UJltlP31WQmg4mXlsL/OMJgVPprXRrHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee96732ef2b026-1203b;
+	Tue, 12 Nov 2024 14:01:15 +0800 (CST)
+X-RM-TRANSID:2ee96732ef2b026-1203b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee96732ef2aaab-46f56;
+	Tue, 12 Nov 2024 14:01:15 +0800 (CST)
+X-RM-TRANSID:2ee96732ef2aaab-46f56
+From: Luo Yifan <luoyifan@cmss.chinamobile.com>
+To: acme@kernel.org
+Cc: adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com,
+	irogers@google.com,
+	jolsa@kernel.org,
+	kan.liang@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	luoyifan@cmss.chinamobile.com,
+	mark.rutland@arm.com,
+	mingo@redhat.com,
+	namhyung@kernel.org,
+	peterz@infradead.org
+Subject: [PATCH] perf jvmti: Remove unnecessary ret variable in jvmti_write_code
+Date: Tue, 12 Nov 2024 14:01:03 +0800
+Message-Id: <20241112060103.282531-1-luoyifan@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <ZzJErOTawAelWAQd@x1>
+References: <ZzJErOTawAelWAQd@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e4:b0:3a6:c472:765e with SMTP id
- e9e14a558f8ab-3a6f19c9f3bmr181070205ab.11.1731391143362; Mon, 11 Nov 2024
- 21:59:03 -0800 (PST)
-Date: Mon, 11 Nov 2024 21:59:03 -0800
-In-Reply-To: <tencent_202369496E43BB4449F766177026C5536F05@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6732eea7.050a0220.138bd5.00d5.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] possible deadlock in hfsplus_file_extend (2)
-From: syzbot <syzbot+4cba2fd444e9a16ae758@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Following the approach in the jvmti_write_debug_info function, just
+remove the ret variable from jvmti_write_code function. It's safe since
+we don’t really care about the return value of fwrite_unlocked. This
+change makes the code cleaner and more compiler-friendly.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+---
+ tools/perf/jvmti/jvmti_agent.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Reported-by: syzbot+4cba2fd444e9a16ae758@syzkaller.appspotmail.com
-Tested-by: syzbot+4cba2fd444e9a16ae758@syzkaller.appspotmail.com
+diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
+index 526dcaf9f..9b49a880b 100644
+--- a/tools/perf/jvmti/jvmti_agent.c
++++ b/tools/perf/jvmti/jvmti_agent.c
+@@ -363,7 +363,6 @@ jvmti_write_code(void *agent, char const *sym,
+ 	struct jr_code_load rec;
+ 	size_t sym_len;
+ 	FILE *fp = agent;
+-	int ret = -1;
+ 
+ 	/* don't care about 0 length function, no samples */
+ 	if (size == 0)
+@@ -400,7 +399,7 @@ jvmti_write_code(void *agent, char const *sym,
+ 	 */
+ 	rec.code_index = code_generation++;
+ 
+-	ret = fwrite_unlocked(&rec, sizeof(rec), 1, fp);
++	fwrite_unlocked(&rec, sizeof(rec), 1, fp);
+ 	fwrite_unlocked(sym, sym_len, 1, fp);
+ 
+ 	if (code)
+@@ -408,9 +407,7 @@ jvmti_write_code(void *agent, char const *sym,
+ 
+ 	funlockfile(fp);
+ 
+-	ret = 0;
+-
+-	return ret;
++	return 0;
+ }
+ 
+ int
+-- 
+2.27.0
 
-Tested on:
 
-commit:         2d5404ca Linux 6.12-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11d078c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
-dashboard link: https://syzkaller.appspot.com/bug?extid=4cba2fd444e9a16ae758
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=135afe30580000
 
-Note: testing is done by a robot and is best-effort only.
 
