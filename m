@@ -1,177 +1,268 @@
-Return-Path: <linux-kernel+bounces-405190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9FF9C4E13
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:16:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E49F59C4E17
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:19:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1EF01F24F19
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:16:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BA9AB236EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CAF205E31;
-	Tue, 12 Nov 2024 05:16:30 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D58208215;
+	Tue, 12 Nov 2024 05:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Dx9SMsPv"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F8561FD7
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B4B61FD7;
+	Tue, 12 Nov 2024 05:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731388590; cv=none; b=QJzfYAFrASC4mzcZPENiW0qWVE6rmXoTo2YkKODnA8h7eW4ppcMGd9CfjXNMp23kwfdLghH/IVO1/aLyMmWo8k7CHjBeJ7hWlyFz5AifgFUGUBq07GoFD+9ZvxEAmP3/BBp/DWYgN2CuW/LwJRTO93HOCEj4LZasrJMSLfQK2WU=
+	t=1731388730; cv=none; b=C/eb/eenrwu4OHQn9qA5HVh5LZng/zXObpWQoQ/oLoVrqi3NBFYsPL2Fm7qlsMAPy6EFd6Fx3/7t1Sqhqe4b8zmZrGowmfZpqpTNJY6MjP3+0weDeljN9vdSQzZjcRj2q5InU7F8JTrs9G6xOhJsNSDeocL+KYDBX8ZUf7OxubQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731388590; c=relaxed/simple;
-	bh=0h2yxa1BvADATJKbZsHeOUog3m15KVv5gv0l9jl2Wq0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bl+yRle6DcMdnF98K9CdwmuLUgKVs3Ygd9voz91CA+cBSx/fIuB7TmGDe4yJRcCoFoVhYN8KzlHK2CsaD3fzqkuueuVq/ABpIPhPlf9fGYwmy/fXGNoJ6sc6U99y0ltV3YOOwmP3VQR40mhU2zvoRNXTBnTUUTFq9n/+vvBIr1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83ab369a523so616461239f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 21:16:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731388587; x=1731993387;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uRlkjyhqGfVdVXaAn9cBNd99mlZMQn1NrQpSrCI6ISs=;
-        b=IkPuifP5qYrHhM2LfTmtsZJ8BqPb8Pj5s4mzD4NaGKFzdb25UMDsKx7RYyhV+hQ0kw
-         lUDs4V6+Bn8L5gxh+NKoKvLJ7qS+oEtos7iMJ3Dxlk/4jjsZCpFS6SPHjQiKAE6DRur6
-         ax721gD2vVwQtP5+eeu0tOI962NsADFLBOWRSipMZZ6mopXipUlru3gtMBuFawW3Yb5n
-         BN+6zOy/8QChlZkCqvyxQE4EDUWnC8CBKUPYiMRobp9BKQYOgQh78PND0Z/2IZLgwh4q
-         qipPpGE0/xAcBFG0WRDnh1tuO3b4KwL7CJB3a6G2Rap3bjYcUDh+pgSIao6j96n0i6bc
-         rTbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVh0y+sKvYAeP8B8hDnM4f6wUn7Yi3PJUNmQ3sYR0g3hUSlu3NLUPrcI8jTAUCY0VfYzch4PHfbhK5ysCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtAkIzEgf4btDym4EBfzCgIr6qGA0qIMkLobsgwfIcQk0sDsp3
-	rwE6jnqzfKRVYJQ2M1L1B67dg915NJBQR6uw3rIkEnNQ8r8vRIukTuUkRBWfbWsF/xBE5ZMXmIM
-	B3eglpU18gGaY1252jEl5FEf14gzMnYC9R75z98z4tQFE/sYSeh+/oMI=
-X-Google-Smtp-Source: AGHT+IHW5bbCBf/D1lkOcGUXV7pQlpQoKXjDNT/ylQS+rDxz3a+0qK6CBujYqmY/aI0Q5AIAUjyc4i+v2Ct6e9gYIhm8TCiD+c7s
+	s=arc-20240116; t=1731388730; c=relaxed/simple;
+	bh=VEM7Vv4Gy+cVuCgvX9hJ7azFAPZBLTKEPDqPxtkXXFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WAiMfsc7xBZ4hu8SGfkFimH+ARnOWgJ1syRtkpkpnLe6SJ+BfxAHqqnR6JXboLdiLdsLrraN7toySBkcCekCPe2dwIBLJ8AqsRls9kMHxcW0ukU5Pj4XUfUSdq9so9vXYT8C/6VjWW7p/mgnPu+jLCcgvw7HyvnPIneHNyOdWhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Dx9SMsPv; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DC811512;
+	Tue, 12 Nov 2024 06:18:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1731388713;
+	bh=VEM7Vv4Gy+cVuCgvX9hJ7azFAPZBLTKEPDqPxtkXXFQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dx9SMsPv/lQyPMyTNgpXW/NTR2o6UKdFswmvlpW42WM841tpnO4tl3yy1vaJMzsxM
+	 5VgKQGuVNwnYxen4J76jG+vH1RCaXZCdasDt2MVu4Wdz77I25c35vwHKoo5oZ1WpOj
+	 0i2/+Hj07YlebZLZvLTvUK+Z51RKZZrDrkjPEudg=
+Date: Tue, 12 Nov 2024 07:18:36 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: gregkh@linuxfoundation.org, corbet@lwn.net, workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Airlie <airlied@gmail.com>,
+	DRI Development <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] Documentation/CoC: spell out enforcement for
+ unacceptable behaviors
+Message-ID: <20241112051836.GF17916@pendragon.ideasonboard.com>
+References: <20241108161853.12325-1-skhan@linuxfoundation.org>
+ <ZzJkAJEjKidV8Fiz@phenom.ffwll.local>
+ <ba3d5492-e774-452f-9fe0-e68b743c6b0d@linuxfoundation.org>
+ <20241111223538.GD17916@pendragon.ideasonboard.com>
+ <7d14de47-119a-42e4-a911-f8accae4abf1@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19ce:b0:3a6:c1ad:3a02 with SMTP id
- e9e14a558f8ab-3a70c8990e2mr11720555ab.24.1731388586830; Mon, 11 Nov 2024
- 21:16:26 -0800 (PST)
-Date: Mon, 11 Nov 2024 21:16:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6732e4aa.050a0220.5088e.0007.GAE@google.com>
-Subject: [syzbot] [mm?] kernel BUG in resv_map_release (3)
-From: syzbot <syzbot+f525fd79634858f478e7@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, muchun.song@linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7d14de47-119a-42e4-a911-f8accae4abf1@linuxfoundation.org>
 
-Hello,
+On Mon, Nov 11, 2024 at 05:35:11PM -0700, Shuah Khan wrote:
+> On 11/11/24 15:35, Laurent Pinchart wrote:
+> > On Mon, Nov 11, 2024 at 02:50:45PM -0700, Shuah Khan wrote:
+> >> On 11/11/24 13:07, Simona Vetter wrote:
+> >>> On Fri, Nov 08, 2024 at 09:18:53AM -0700, Shuah Khan wrote:
+> >>>> The Code of Conduct committee's goal first and foremost is to bring about
+> >>>> change to ensure our community continues to foster respectful discussions.
+> >>>>
+> >>>> In the interest of transparency, the CoC enforcement policy is formalized
+> >>>> for unacceptable behaviors.
+> >>>>
+> >>>> Update the Code of Conduct Interpretation document with the enforcement
+> >>>> information.
+> >>>>
+> >>>> Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+> >>>> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >>>> Acked-by: Miguel Ojeda <ojeda@kernel.org>
+> >>>> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> >>>> Acked-by: Jonathan Corbet <corbet@lwn.net>
+> >>>> Acked-by: Steven Rostedt <rostedt@goodmis.org>
+> >>>> Acked-by: Dan Williams <dan.j.williams@intel.com>
+> >>>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> >>>
+> >>> I think it's really good to document these details. The freedesktop coc
+> >>> team is going through the same process, we've also done a talk at XDC
+> >>> about all these changes, and I think this helps a lot in transparency and
+> >>> accountability in practice. With that, some thoughts below.
+> > 
+> > I've been thinking about replying to this patch for a few days now. I
+> > think I managed to sleep over it enough to make that possible.
+> > 
+> > I share Sima's opinion here. There is FUD around the CoC and its
+> > enforcement process due to lack of transparency, so I believe
+> > documenting the goals and means is important and will help.
+> 
+> Thank you for your feedback.
+> 
+> >> Thank you Simona for your review and feedback.
+> >>
+> >>>> ---
+> >>>>    .../code-of-conduct-interpretation.rst        | 52 +++++++++++++++++++
+> >>>>    1 file changed, 52 insertions(+)
+> >>>>
+> >>>> diff --git a/Documentation/process/code-of-conduct-interpretation.rst b/Documentation/process/code-of-conduct-interpretation.rst
+> >>>> index 66b07f14714c..21dd1cd871d2 100644
+> >>>> --- a/Documentation/process/code-of-conduct-interpretation.rst
+> >>>> +++ b/Documentation/process/code-of-conduct-interpretation.rst
+> >>>> @@ -156,3 +156,55 @@ overridden decisions including complete and identifiable voting details.
+> >>>>    Because how we interpret and enforce the Code of Conduct will evolve over
+> >>>>    time, this document will be updated when necessary to reflect any
+> >>>>    changes.
+> >>>> +
+> >>>> +Enforcement for Unacceptable Behavior Code of Conduct Violations
+> >>>> +----------------------------------------------------------------
+> >>>> +
+> >>>> +The Code of Conduct committee works to ensure that our community continues
+> >>>> +to be inclusive and fosters diverse discussions and viewpoints, and works
+> >>>> +to improve those characteristics over time. The Code of Conduct committee
+> >>>> +takes measures to restore productive and respectful collaboration when an
+> >>>> +unacceptable behavior has negatively impacted that relationship.
+> >>>> +
+> >>>> +Seek public apology for the violation
+> >>>> +*************************************
+> >>>> +
+> >>>> +The Code of Conduct Committee publicly calls out the behavior in the
+> >>>> +setting in which the violation has taken place, seeking public apology
+> >>>> +for the violation.
+> >>>> +
+> >>>> +A public apology for the violation is the first step towards rebuilding
+> >>>> +the trust. Trust is essential for the continued success and health of the
+> >>>> +community which operates on trust and respect.
+> >>>
+> >>> Personal take, but I think a forced public apology as the primary or at
+> >>> least initial coc enforcement approach is one of the worst.
+> >>
+> >> Seeking public apology is in response to unacceptable behaviors which are
+> >> serious in nature. These incidents are exceedingly rare. When these incidents
+> >> happen, they usually resolve when another developer/community member points
+> >> out the behavior. The individual responds with a voluntary apology to
+> >> mend fences and repair harm.
+> >>
+> >> The CoC  gets involved only when it receives a report which is the case
+> >> when normal paths such as peers pointing out the behavior to repair the
+> >> harm haven't been successful.
+> >>
+> >> This document isn't intended to be a complete summary of all actions the
+> >> CoC takes in response to reports. There is a lot of back and forth with
+> >> the individuals to bring about change before the CoC asks for an apology.
+> 
+> See below clarification on above use of "actions"
+> 
+> >> The CoC seeks public apology only when it is essential to repair the harm.
+> > 
+> > Limiting the CoC committee to seeking public apology, due to what it
+> > means in terms of both process and goal, would deprive the committee
+> > from many useful courses of action. I was expecting you were not limited
+> > to this, and I appreciate that you are stating it clearly here. It is
+> > not however clear from this patch, and I believe it would benefit the
+> > whole community if this was explained better in the document. A more
+> > detailed description of the different means of action and outcomes would
+> > help balance the fact that the proceedings of the CoC committe are not
+> > public.
+>
+> The actions CoC takes prior asking for a public apology are working
+> with the individual to bring about change in their understanding the
+> importance to repair damage caused by the behavior.
+> 
+> Since these are measures to bring about change, the document doesn't
+> go into the details about the logistics.
 
-syzbot found the following issue on:
+I think that's where it falls short. The private proceedings policy that
+governs the CoC committee (I'm not interested here to debate whether
+that is good or not, the question is out of scope) needs in my opinion
+to be offset by more transparency in the procedures documentation to
+avoid the "secret court" image that many attach to the CoC committee. I
+do understand this is not a trivial exercise, as any policy documented
+in writing can have a limiting impact on the actions the CoC committee
+can take, but I believe that this patch, as it stands, gives a wrong and
+possibly damaging impression of the committee's work.
 
-HEAD commit:    906bd684e4b1 Merge tag 'spi-fix-v6.12-rc6' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=146cc0c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=20d60fe605153ebe
-dashboard link: https://syzkaller.appspot.com/bug?extid=f525fd79634858f478e7
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15ae035f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=126cc0c0580000
+> If you have other possible courses of action in mind, please do state
+> them.
+>   
+> > I would like to add that I appreciate the emphasis on rebuilding trust
+> > as a goal, as I also believe trust and respect are essential. This
+> > includes trust that victims will receive the support and protection they
+> > need, trust that authors of behaviour deemed unfit by the community will
+> > be treated fairly, and trust that the community will continuously work
+> > on improving inclusiveness. All three aspects are needed to avoid
+> > driving current and prospective community members away.
+> > 
+> >>> First, a ban or temporary suspension seems too mechanical and not in
+> >>> proportion with the offence of failing to apologize. In my enforcement
+> >>> thus far as maintainer and now also freedesktop.org CoC member we only use
+> >>> punishment if behavior has failed to change _and_ we need to protect the
+> >>> community from further harm. Usually it takes years to get to that point,
+> >>> unless in extremely severe cases (like public harrassment campaigns) or
+> >>> when the person stated that they refuse to even consider changing behavior
+> >>> at all.
+> >>
+> >> Please see above. Public apology is necessary to repair and restore the
+> >> health of the community in these rare cases when an individual doesn't
+> >> understand that their behavior could cause harm. The CoC tries to get
+> >> the individual to realize that offering a public apology is necessary
+> >> to repair the harm and resume respectful and productive discussions.
+> >>
+> >>> Public means you're amping up the stakes and massively increase the odds
+> >>> of people being afraid of their reputation and losing face. In my
+> >>> experience people are a lot more reasonable when you discuss their
+> >>> behavior and what needs to change in private. This even includes the case
+> >>> where a temporary suspension had to be put in place already first, to
+> >>> protect others.
+> >>
+> >> Please see above. The CoC works with the individual prior to taking the step
+> >> of asking for an apology. It is a balancing act between repairing
+> >> the harm caused to the individuals at the receiving end of the public
+> >> unacceptable behavior and working with the individual to understand the
+> >> harm done by such a behavior.
+> >>
+> >> The CoC is mindful of the negative impact of seeking public apology and
+> >> instituting ban could have on individuals.
+> > 
+> > It could also be worth adding that, as Sima pointed out below, public
+> > apology is sometimes not the best option for the victim.
+> 
+> The CoC takes these into consideration during the investigation,
+> before determining the best course of action.
+> 
+> Some people may
+> > be afraid to report bad behaviours if they thought that the story would
+> > be made public by a requirement to apologize publicly. I have total
+> > confidence that the CoC committee will consult with the victim to
+> > determine the best course of action, and that is worth documenting
+> > explicitly.
+> 
+> Thank you for your confidence in the CoC.
+> 
+> Please note that the CoC has the obligation to keep the reports
+> and individual information private. This public apology is specific
+> to a public violation that has taken place on a public email list.
+> The information and details are already public.
+> 
+> The CoC could receive reports from a community member who could be
+> an observer and not the victim. The CoC has the responsibility to
+> investigate all such public violations.
+> 
+> The CoC has the obligation to keep the reports privates. The public
+> part is where the individual who violated the agreed upon Code of
+> Conduct is asked to apologize to in response to the thread in which
+> the violation has taken place.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-906bd684.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/34d4b570061f/vmlinux-906bd684.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/08ae18992ed1/bzImage-906bd684.xz
+-- 
+Regards,
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f525fd79634858f478e7@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at mm/hugetlb.c:1131!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 16399 Comm: syz-executor416 Not tainted 6.12.0-rc6-syzkaller-00169-g906bd684e4b1 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:resv_map_release mm/hugetlb.c:1131 [inline]
-RIP: 0010:resv_map_release+0x1f3/0x290 mm/hugetlb.c:1116
-Code: a4 ff 48 85 db 75 1d e8 ab 1b a4 ff 48 8b 7c 24 08 48 83 c4 18 5b 5d 41 5c 41 5d 41 5e 41 5f e9 e3 ea fa ff e8 8e 1b a4 ff 90 <0f> 0b 4c 89 ef e8 83 a6 05 00 e9 3d ff ff ff 48 89 ef e8 86 a5 05
-RSP: 0018:ffffc9002634f900 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffffff81e95f9b
-RDX: ffff888020d6c880 RSI: ffffffff81e95fc2 RDI: 0000000000000007
-RBP: ffff88802b289860 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff88802b289860
-R13: ffff88802b289860 R14: ffff888033f4ed88 R15: dead000000000100
-FS:  0000000000000000(0000) GS:ffff88806a600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc9bfa142b8 CR3: 000000000df7c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- kref_put include/linux/kref.h:65 [inline]
- hugetlb_vm_op_close+0x4a7/0x5b0 mm/hugetlb.c:5075
- remove_vma+0xa8/0x1a0 mm/vma.c:330
- exit_mmap+0x4e0/0xb30 mm/mmap.c:1937
- __mmput+0x12a/0x480 kernel/fork.c:1348
- mmput+0x62/0x70 kernel/fork.c:1370
- exit_mm kernel/exit.c:571 [inline]
- do_exit+0x9bf/0x2d70 kernel/exit.c:926
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
- get_signal+0x25fb/0x2770 kernel/signal.c:2917
- arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc9bf9be159
-Code: Unable to access opcode bytes at 0x7fc9bf9be12f.
-RSP: 002b:00007fc9bf957178 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00007fc9bfa48338 RCX: 00007fc9bf9be159
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007fc9bfa48338
-RBP: 00007fc9bfa48330 R08: 00007fc9bf9576c0 R09: 00007fc9bf9576c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc9bfa4833c
-R13: 000000000000000b R14: 00007ffda7c51e30 R15: 00007ffda7c51f18
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:resv_map_release mm/hugetlb.c:1131 [inline]
-RIP: 0010:resv_map_release+0x1f3/0x290 mm/hugetlb.c:1116
-Code: a4 ff 48 85 db 75 1d e8 ab 1b a4 ff 48 8b 7c 24 08 48 83 c4 18 5b 5d 41 5c 41 5d 41 5e 41 5f e9 e3 ea fa ff e8 8e 1b a4 ff 90 <0f> 0b 4c 89 ef e8 83 a6 05 00 e9 3d ff ff ff 48 89 ef e8 86 a5 05
-RSP: 0018:ffffc9002634f900 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffffff81e95f9b
-RDX: ffff888020d6c880 RSI: ffffffff81e95fc2 RDI: 0000000000000007
-RBP: ffff88802b289860 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff88802b289860
-R13: ffff88802b289860 R14: ffff888033f4ed88 R15: dead000000000100
-FS:  0000000000000000(0000) GS:ffff88806a700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffda7c52014 CR3: 00000000325ae000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Laurent Pinchart
 
