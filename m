@@ -1,394 +1,123 @@
-Return-Path: <linux-kernel+bounces-406307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D847D9C5D17
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:25:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 516799C5D19
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:25:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686D11F24264
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:25:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DD91F255CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C558205159;
-	Tue, 12 Nov 2024 16:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qwKpaH8h"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11EF205159;
+	Tue, 12 Nov 2024 16:25:46 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FED0205125
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D1D2038B3
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731428729; cv=none; b=jmik5hgb7RIMiuIQNSPu1lOeFwykN+WxzC/4kAkblNsay8VFmIHtNNzN1IB+bpR+GeeIP/6zNUcvk8ZtVUSxWwC5uJ+e2MN4eXf1twqQkFYUKR3yMzwRL4igzA3m1BCnbpUPpAfkzu8r1HPw0i3XbJRNVhkimNEbAqBX+c3YF8w=
+	t=1731428746; cv=none; b=eRPt44MCHxxgwe0wtAl7qx2aNE0CIJw9TPI6+KowXLRqKE6ktRkmsfdDxKzlcYvyzlUJabP1v0bwtOPCOIhXwEfldcyz5kI5/L54I4Iq/7G2M9XekHBMabXUctuaUjIs9oWLvzyzL4Qx7R1tjyAfTT7kuLCtVJaWvbaE7Ie5jRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731428729; c=relaxed/simple;
-	bh=Lj1dVaKfn6KZuwukxE9bf+f2fDaYl29WXxrlgmaLzAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ffnEv8Ky2F6OmTm67HFNX+fYjU9Jg85qfObfTD5+V/0nIYRU3/cd37BWVHLWvhFvMqMf3G1mjHNHYj9D9OKauN0k8Ut8jDkSYAO6hUadjj5AZCF+JbfE64VKfyxo8tt/5HZaxs9UebGnNGxyW5yRcY56B4GNY4sg8hCzCA3P/I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qwKpaH8h; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a6c3bdbebcso161765ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:25:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731428725; x=1732033525; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mID2YwIdPOcSk2daOdRZYR567nuf/vDV1Q8uNLvDSaA=;
-        b=qwKpaH8hFrFHVTow2+6mvs3SsklgH7oW0xsIPukiRC8plk5ScJEXHXdfKkZJwbt4fW
-         XNc+VYc5ahRI2pl95Xhn1v9YG8Q9XvSrgk5WMjBBry99DvUk6ExnbOAt+amjJGLPiWIZ
-         xX/VRkELRyd2yQ0xIWnQH0UPTTPGV4BV4NJfjdWcb5qe1gKltz/84dqGHnXcM0yQ8FR5
-         yOh3gD8j7cEMcFZPRUTTBDxlDw+wJZSXgZdtMFjM1DBkHBZsQd1Tk58zmgRw1ZKQlPLJ
-         eynL7l6KQSKs1odU6V9TWY6jHGNJUm6hkvnmQB/n92hi4EMZCKs+rb5acX/CraKJtT+C
-         UsdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731428725; x=1732033525;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mID2YwIdPOcSk2daOdRZYR567nuf/vDV1Q8uNLvDSaA=;
-        b=SYXbBv7Z2sTK6vsztxdpi37IzTGwX22gxwFGUa6tt91CxPQodhxCmdav+vNJXyBASg
-         9E18bCB6mqRQmlbXOpefaeFzYiFZri3X0sQE5lFlGMR0U5epeMeYNmH4L9BLUBpjc/Ye
-         0MErJ0/RFie6bFZdKSDz1rEQ/dQf0sswgTpfiymCKhNR5jfqnO3A3GHkwr4mw2R/kK3r
-         X6yIILPW0aHlWts/vcvH1Lvx2bpbZMF7Iz3z2H1GmoSFcXEJ8vRKoEWH6MGInNRCgqRv
-         noXV99CcqmFwoFtPV4MD7NvWOPOrm1tQLjfAq7rv89/QeeHINI8SFP4TqLFS9q0D1VsE
-         rbjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGDvGw38Wj65Auy3s0L4LoQ6I98Vuvn01Z4gFpEVZ6JexKf8hhC/hbIjSJ1kigNlr3AULK6tRrb8AiysE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgZdLP7RN5G9cmN9HBjMK+kELtYNCIjln+EniyC0CGffGxy1Qf
-	MESsdcO0MgQV+hkVCBY2K8vGXMRukJ9N4gbq6kNxPBWBJQ+PKet5ryyd0CYAdNoQbjQAInIIOui
-	Yduft+S+P5Ijp4NigYVt2/ympltHzT//IyXSgJAuxiN3AIRRu1lw8slA=
-X-Gm-Gg: ASbGncvjo3xa/2X8YdjjOoyLIBMRvBaND0a0wTUtCN8SxIE2zXoWcv4mRq73ndbzVUs
-	2f4NhB5fXVFkgzd9F0Jd85tyAYAW5uBdWtyqbO522B5qo9cX72cgk8La12HHjHG8=
-X-Google-Smtp-Source: AGHT+IHMpjvOztjJUP2l+AlVCb7Kck2R81RLm/U+9sk1WbODBAVa+E9VpMnbTO65o9P1PoDSOKaRh4amWsgWjLBp8ww=
-X-Received: by 2002:a05:6e02:1ca9:b0:3a6:f1e9:46c6 with SMTP id
- e9e14a558f8ab-3a70de18957mr2524775ab.27.1731428724875; Tue, 12 Nov 2024
- 08:25:24 -0800 (PST)
+	s=arc-20240116; t=1731428746; c=relaxed/simple;
+	bh=aZiuXNhGYziJUKMTs3Fzo+W4onQ1l1VYpMSX9YhIILk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lUZn6XSnFclPeCZgNZ1XDX241NpjSgxQyoSgzkpNVvMwLjWRlo/+jarIulREXX6IF+I/5FZpKtCm9d4AHo585x6HFrrnPyokBHZdqXIR+hdvT4X/mdPY1nt+o5sydFadrHaovMdAdDqZFRfO83qbwdVpQEBiOwkqEz9DPo6CSLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76F80C4CECD;
+	Tue, 12 Nov 2024 16:25:44 +0000 (UTC)
+Date: Tue, 12 Nov 2024 11:26:01 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Boqun
+ Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?UTF-8?B?Qmo=?=
+ =?UTF-8?B?w7Zybg==?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
+ <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
+ Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
+Subject: [for-next][PATCH] samples: rust: fix `rust_print` build making it a
+ combined module
+Message-ID: <20241112112601.58aed250@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026121758.143259-1-irogers@google.com> <20241026121758.143259-4-irogers@google.com>
- <7c1a0bbf-12fd-46ef-9db2-183dfa70a334@linaro.org> <CAP-5=fVODgnWgfCpA7x3B8JFQhkt_unUeTjhWWdSDpKECdTSYg@mail.gmail.com>
- <9bfdc5a0-ed1d-40f6-8a72-6129e1587ca7@linaro.org>
-In-Reply-To: <9bfdc5a0-ed1d-40f6-8a72-6129e1587ca7@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 12 Nov 2024 08:25:13 -0800
-Message-ID: <CAP-5=fXB_GHd8x-c8Q4Y+5=G=YJJBJ+Q7hT6_rGFEzmi7q8nsA@mail.gmail.com>
-Subject: Re: [PATCH v1 3/4] perf record: Skip don't fail for events that don't open
-To: James Clark <james.clark@linaro.org>
-Cc: Leo Yan <leo.yan@arm.com>, Atish Patra <atishp@rivosinc.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, linux-riscv@lists.infradead.org, 
-	beeman@rivosinc.com, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Ben Gainey <ben.gainey@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Junhao He <hejunhao3@huawei.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 6:12=E2=80=AFAM James Clark <james.clark@linaro.org=
-> wrote:
->
->
->
-> On 11/11/2024 5:00 pm, Ian Rogers wrote:
-> > On Mon, Nov 11, 2024 at 7:49=E2=80=AFAM James Clark <james.clark@linaro=
-.org> wrote:
-> >>
-> >>
-> >>
-> >> On 26/10/2024 1:17 pm, Ian Rogers wrote:
-> >>> Whilst for many tools it is an expected behavior that failure to open
-> >>> a perf event is a failure, ARM decided to name PMU events the same as
-> >>> legacy events and then failed to rename such events on a server uncor=
-e
-> >>> SLC PMU. As perf's default behavior when no PMU is specified is to
-> >>> open the event on all PMUs that advertise/"have" the event, this
-> >>> yielded failures when trying to make the priority of legacy and
-> >>> sysfs/json events uniform - something requested by RISC-V and ARM. A
-> >>> legacy event user on ARM hardware may find their event opened on an
-> >>> uncore PMU which for perf record will fail. Arnaldo suggested skippin=
-g
-> >>> such events which this patch implements. Rather than have the skippin=
-g
-> >>> conditional on running on ARM, the skipping is done on all
-> >>> architectures as such a fundamental behavioral difference could lead
-> >>> to problems with tools built/depending on perf.
-> >>>
-> >>> An example of perf record failing to open events on x86 is:
-> >>> ```
-> >>> $ perf record -e data_read,cycles,LLC-prefetch-read -a sleep 0.1
-> >>> Error:
-> >>> Failure to open event 'data_read' on PMU 'uncore_imc_free_running_0' =
-which will be removed.
-> >>> The sys_perf_event_open() syscall returned with 22 (Invalid argument)=
- for event (data_read).
-> >>> "dmesg | grep -i perf" may provide additional information.
-> >>>
-> >>> Error:
-> >>> Failure to open event 'data_read' on PMU 'uncore_imc_free_running_1' =
-which will be removed.
-> >>> The sys_perf_event_open() syscall returned with 22 (Invalid argument)=
- for event (data_read).
-> >>> "dmesg | grep -i perf" may provide additional information.
-> >>>
-> >>
-> >> This makes me wonder if this message was overly wordy to begin with.
-> >> This line is fine:
-> >>
-> >>    Failure to open event 'data_read' on PMU 'uncore_imc_free_running_0=
-'
-> >>    which will be removed.
-> >>
-> >> The next bit about the syscall just repeats. The exit code could be
-> >> included on the previous line. And the dmesg bit is general advice tha=
-t
-> >> could possibly be printed once at the end.
-> >
-> > Thanks for the time spent investigating this!
-> >
-> > I agree on this. I wonder if we should have short and long messages,
-> > or message+help like we do for parse events. One patch series like
-> > this is improving EBUSY:
-> > https://lore.kernel.org/lkml/20241106003007.2112584-1-ctshao@google.com=
-/
-> > The issue with printing at the end is knowing where/when the end is.
-> > Printing once is easy enough.
-> >
-> >>> Error:
-> >>> Failure to open event 'LLC-prefetch-read' on PMU 'cpu' which will be =
-removed.
-> >>> The LLC-prefetch-read event is not supported.
-> >>> [ perf record: Woken up 1 times to write data ]
-> >>> [ perf record: Captured and wrote 2.188 MB perf.data (87 samples) ]
-> >>>
-> >>> $ perf report --stats
-> >>> Aggregated stats:
-> >>>                  TOTAL events:      17255
-> >>>                   MMAP events:        284  ( 1.6%)
-> >>>                   COMM events:       1961  (11.4%)
-> >>>                   EXIT events:          1  ( 0.0%)
-> >>>                   FORK events:       1960  (11.4%)
-> >>>                 SAMPLE events:         87  ( 0.5%)
-> >>>                  MMAP2 events:      12836  (74.4%)
-> >>>                KSYMBOL events:         83  ( 0.5%)
-> >>>              BPF_EVENT events:         36  ( 0.2%)
-> >>>         FINISHED_ROUND events:          2  ( 0.0%)
-> >>>               ID_INDEX events:          1  ( 0.0%)
-> >>>             THREAD_MAP events:          1  ( 0.0%)
-> >>>                CPU_MAP events:          1  ( 0.0%)
-> >>>              TIME_CONV events:          1  ( 0.0%)
-> >>>          FINISHED_INIT events:          1  ( 0.0%)
-> >>> cycles stats:
-> >>>                 SAMPLE events:         87
-> >>> ```
-> >>>
-> >>> Note, if all events fail to open then the data file will contain no
-> >>> samples. This is deliberate as at the point the events are opened
-> >>> there are other events, such as the dummy event for sideband data, an=
-d
-> >>> these events will succeed in opening even if the user specified ones
-> >>
-> >> Is a file with only sideband events useful? Is it possible to fail the
-> >> record command if the event doesn't open anywhere?
-> >>
-> >> I noticed this leads to some different behavior and a libperf warning
-> >> when you have paranoid=3D3:
-> >>
-> >>     $ perf record -e cycles -C 0 -- true
-> >>
-> >>     Error:
-> >>     Failure to open event 'cpu_atom/cycles/u' on PMU 'cpu_atom' which =
-will
-> >>     be removed.
-> >>     ...
-> >>     Consider adjusting /proc/sys/kernel/perf_event_paranoid setting
-> >>     ...
-> >>     libperf: Miscounted nr_mmaps 0 vs 28
-> >>     WARNING: No sample_id_all support, falling back to unordered
-> >>     processing
-> >>     [ perf record: Woken up 1 times to write data ]
-> >>     [ perf record: Captured and wrote 0.021 MB perf.data ]
-> >
-> > So paranoid=3D3 is a Debian extension that Peter Z doesn't agree with
-> > and so isn't enabled in regular kernels. So we're dealing with cycles,
-> > which we'd expect to open or fall-back to a software event like
-> > task-clock. It feels like things could happen better here but that's
-> > not necessarily the fault of this patch.
-> >
->
-> paranoid=3D3 is a bit of a red-herring. I actually meant any paranoid
-> value other than -1. The important part is "-C 0" because only root is
-> allowed to open on a CPU. Or "-a" also causes the issue.
->
-> Previously you got the command failure and the hint about the paranoid
-> value, but now you get the libperf error too and it still makes the file.
->
-> I still don't think a file with only sideband events is useful, I don't
-> think there's even a commandline that you can run currently that results
-> in that? You always need at least one event to open for it to succeed
-> and I'm thinking we could keep that.
 
-You can currently do `perf record -e dummy ...` for example in this
-ARM SPE test (I see similar in offcpu, attr test, intel_pt, switch
-tracking):
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/tests/shell/test_arm_spe.sh?h=3Dperf-tools-next#n94
-If we add a condition that an evlist with only sideband events is
-erroneous, and fail perf record, then I think that will break these
-expectations. Any change like that would at least need to fix up the
-tests, but the tests could be a good indicator that users are also
-doing things like this and that may lead to complaints.
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+rust/for-next
 
-> It would be nice to fix the libperf warning too because it's warning
-> about something that was already warned about.
+Head SHA1: 22193c586b43ee88d66954395885742a6e4a49a9
 
-Do you have something in mind to clean up the warning? Perhaps you can
-send it as a patch.
 
-> >>> don't. Having a mix of open and broken events leads to a problem of
-> >>> identifying different sources of events.
-> >>   >
-> >>
-> >> In my basic test I saw that the opened event was identified correctly =
-in
-> >> perf report, unless you have an example that you encountered that we
-> >> should fix?
-> >
-> > I didn't find any but we also don't tend to test failing to open
-> > events. I could imagine things failing in `perf test` on neoverse
-> > testing given the l3 advertising the cycles event.
-> >
-> >> One place I saw an issue was with auxtrace events. If there's an event
-> >> name clash then you're likely to not be able to open the file afterwar=
-ds
-> >> because the auxtrace code can't handle an event that didn't open. But =
-I
-> >> don't know of any name clashes there (I just faked one for testing), a=
-nd
-> >> maybe that could be fixed up later in the auxtrace code if there is ev=
-er
-> >> a real one.
-> >>
-> >> Other than the above it does seem to work ok.
-> >
-> > Cool, can this be taken as a Tested-by?
-> >
->
-> Yep, although with a caveat that I faked the second cycles PMU that
-> wouldn't open, but I don't think that should make a difference:
->
-> Tested-by: James Clark <james.clark@linaro.org>
+Miguel Ojeda (1):
+      samples: rust: fix `rust_print` build making it a combined module
 
-Thanks James, as this patch is before reapplying the "Prefer
-sysfs/JSON hardware events over legacy" patch, can I take it that the
-tag is for the whole series?
+----
+ samples/rust/Makefile                              | 4 +++-
+ samples/rust/{rust_print.rs =3D> rust_print_main.rs} | 0
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+ rename samples/rust/{rust_print.rs =3D> rust_print_main.rs} (100%)
+---------------------------
+commit 22193c586b43ee88d66954395885742a6e4a49a9
+Author: Miguel Ojeda <ojeda@kernel.org>
+Date:   Mon Nov 11 23:08:05 2024 +0100
 
-> I can also test with the real thing if you like but would take a bit
-> longer as I have to borrow it off Leo.
+    samples: rust: fix `rust_print` build making it a combined module
+   =20
+    The `rust_print` module, when built as a module, fails to build with:
+   =20
+        ERROR: modpost: missing MODULE_LICENSE() in samples/rust/rust_print=
+_events.o
+        ERROR: modpost: "__tracepoint_rust_sample_loaded" [samples/rust/rus=
+t_print.ko] undefined!
+        ERROR: modpost: "rust_do_trace_rust_sample_loaded" [samples/rust/ru=
+st_print.ko] undefined!
+   =20
+    Fix it by building it as a combined one.
+   =20
+    Cc: Masami Hiramatsu <mhiramat@kernel.org>
+    Cc: Alex Gaynor <alex.gaynor@gmail.com>
+    Cc: Mark Rutland <mark.rutland@arm.com>
+    Cc: Boqun Feng <boqun.feng@gmail.com>
+    Cc: Gary Guo <gary@garyguo.net>
+    Cc: Bj=C3=B6rn Roy Baron <bjorn3_gh@protonmail.com>
+    Cc: Benno Lossin <benno.lossin@proton.me>
+    Cc: Andreas Hindborg <a.hindborg@kernel.org>
+    Cc: Alice Ryhl <aliceryhl@google.com>
+    Cc: Trevor Gross <tmgross@umich.edu>
+    Cc: "Linux Next Mailing List" <linux-next@vger.kernel.org>
+    Link: https://lore.kernel.org/20241111220805.708889-1-ojeda@kernel.org
+    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+    Closes: https://lore.kernel.org/all/20241108152149.28459a72@canb.auug.o=
+rg.au/
+    Fixes: 91d39024e1b0 ("rust: samples: add tracepoint to Rust sample")
+    Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-More testing is always good.
-
-Thanks,
-Ian
-
-> > Thanks,
-> > Ian
-> >
-> >>> The issue with legacy events is that on RISC-V they want the driver t=
-o
-> >>> not have mappings from legacy to non-legacy config encodings for each
-> >>> vendor/model due to size, complexity and difficulty to update. It was
-> >>> reported that on ARM Apple-M? CPUs the legacy mapping in the driver
-> >>> was broken and the sysfs/json events should always take precedent,
-> >>> however, it isn't clear this is still the case. It is the case that
-> >>> without working around this issue a legacy event like cycles without =
-a
-> >>> PMU can encode differently than when specified with a PMU - the
-> >>> non-PMU version favoring legacy encodings, the PMU one avoiding legac=
-y
-> >>> encodings.
-> >>>
-> >>> The patch removes events and then adjusts the idx value for each
-> >>> evsel. This is done so that the dense xyarrays used for file
-> >>> descriptors, etc. don't contain broken entries. As event opening
-> >>> happens relatively late in the record process, use of the idx value
-> >>> before the open will have become corrupted, so it is expected there
-> >>> are latent bugs hidden behind this change - the change is best
-> >>> effort. As the only vendor that has broken event names is ARM, this
-> >>> will principally effect ARM users. They will also experience warning
-> >>> messages like those above because of the uncore PMU advertising legac=
-y
-> >>> event names.
-> >>
-> >>
-> >>
-> >>>
-> >>> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> >>> Signed-off-by: Ian Rogers <irogers@google.com>
-> >>> ---
-> >>>    tools/perf/builtin-record.c | 22 +++++++++++++++++-----
-> >>>    1 file changed, 17 insertions(+), 5 deletions(-)
-> >>>
-> >>> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.=
-c
-> >>> index f83252472921..7e99743f7e42 100644
-> >>> --- a/tools/perf/builtin-record.c
-> >>> +++ b/tools/perf/builtin-record.c
-> >>> @@ -1364,6 +1364,7 @@ static int record__open(struct record *rec)
-> >>>        struct perf_session *session =3D rec->session;
-> >>>        struct record_opts *opts =3D &rec->opts;
-> >>>        int rc =3D 0;
-> >>> +     bool skipped =3D false;
-> >>>
-> >>>        evlist__for_each_entry(evlist, pos) {
-> >>>    try_again:
-> >>> @@ -1379,15 +1380,26 @@ static int record__open(struct record *rec)
-> >>>                                pos =3D evlist__reset_weak_group(evlis=
-t, pos, true);
-> >>>                                goto try_again;
-> >>>                        }
-> >>> -                     rc =3D -errno;
-> >>>                        evsel__open_strerror(pos, &opts->target, errno=
-, msg, sizeof(msg));
-> >>> -                     ui__error("%s\n", msg);
-> >>> -                     goto out;
-> >>> +                     ui__error("Failure to open event '%s' on PMU '%=
-s' which will be removed.\n%s\n",
-> >>> +                               evsel__name(pos), evsel__pmu_name(pos=
-), msg);
-> >>> +                     pos->skippable =3D true;
-> >>> +                     skipped =3D true;
-> >>> +             } else {
-> >>> +                     pos->supported =3D true;
-> >>>                }
-> >>> -
-> >>> -             pos->supported =3D true;
-> >>>        }
-> >>>
-> >>> +     if (skipped) {
-> >>> +             struct evsel *tmp;
-> >>> +             int idx =3D 0;
-> >>> +
-> >>> +             evlist__for_each_entry_safe(evlist, tmp, pos) {
-> >>> +                     if (pos->skippable)
-> >>> +                             evlist__remove(evlist, pos);
-> >>> +                     pos->core.idx =3D idx++;
-> >>> +             }
-> >>> +     }
-> >>>        if (symbol_conf.kptr_restrict && !evlist__exclude_kernel(evlis=
-t)) {
-> >>>                pr_warning(
-> >>>    "WARNING: Kernel address maps (/proc/{kallsyms,modules}) are restr=
-icted,\n"
-> >>
->
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index f29280ec4820..c1a5c1655395 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -2,6 +2,8 @@
+ ccflags-y +=3D -I$(src)				# needed for trace events
+=20
+ obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+=3D rust_minimal.o
+-obj-$(CONFIG_SAMPLE_RUST_PRINT)			+=3D rust_print.o rust_print_events.o
++obj-$(CONFIG_SAMPLE_RUST_PRINT)			+=3D rust_print.o
++
++rust_print-y :=3D rust_print_main.o rust_print_events.o
+=20
+ subdir-$(CONFIG_SAMPLE_RUST_HOSTPROGS)		+=3D hostprogs
+diff --git a/samples/rust/rust_print.rs b/samples/rust/rust_print_main.rs
+similarity index 100%
+rename from samples/rust/rust_print.rs
+rename to samples/rust/rust_print_main.rs
 
