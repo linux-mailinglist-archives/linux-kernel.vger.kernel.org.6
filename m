@@ -1,381 +1,413 @@
-Return-Path: <linux-kernel+bounces-405817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BCA99C5775
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:15:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED9B9C585B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7341F2133D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:15:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDC3DB31BB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1FE1F7789;
-	Tue, 12 Nov 2024 12:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CB01F778A;
+	Tue, 12 Nov 2024 12:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F0oOMgpt"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D/aWMQhs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0CE23099A;
-	Tue, 12 Nov 2024 12:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2D723099A;
+	Tue, 12 Nov 2024 12:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731413745; cv=none; b=A2RM7LGmofmhzpStBuvtGUtYQMZ/oCfY/6Yu+cSAe8nMusYupUaTDdfockKOhKwJmF2IKZa0SlnN2pqPuCy6fcTdmy2/lTjZGD00wCWJSzMwJ9pt9vr5JswDQcNYL7MquBlSi3hM6NQ5+LaGGAZCRntnBLl6QMwM6cmKcfDpHfM=
+	t=1731413719; cv=none; b=ng3QY54GkoOhCN4Gbv4ObCgqh7CLyBKt1W9h5HUzE5V8QmBO6lqmX9Al3O+2Wq3Q+Jap/qkN1IZsqU7YQN0KaKjef3E/LGm9jMn8ZO3u254KwkVqQDtkZr+wkloLCXNu5ZygGaXMVso6XZLOoqKZuydytca+J9ePfjoB+wOscVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731413745; c=relaxed/simple;
-	bh=y8wYpJKQPppWOwG+stODco0nODyFQc2893XETWW0e0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dHve5DzuTPi4n63aYnFkHMZg+Cd0gLHHMn31eG/XL1EnVRIcmrXOEYhju7t98grbgLFR/T93GEML4IghSASqRovTsNYAL5uVexeE1imhdQzc/H1nzQNgzF3M/mE6PD3OF2ipP18QvC0Gh8n3Tyfq+onzo8MsoBpefhkEe390JxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F0oOMgpt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC6Ac7t004261;
-	Tue, 12 Nov 2024 12:15:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/1upKaL3B/gyY1s3YNSg8f5Kv6R8Vl0kZB3qVnOQmTQ=; b=F0oOMgptnI79JcQp
-	qwLKaddGlBRY5kwvo6B1vSzHOUTs1lj9Sd62IPPf3xeyOrKK2z1ztQ0n/VizgIC5
-	p1olyqTTII1wXd29n64Poqyx2aneResAgsSdUGJgemKZsn8y68aUzc6z3wdCAWfb
-	DI55cm8tA7yd+JKp3kxLdeEkRMlk93FgimsyO65VL8UodQXrs+aaaoB6bNsrk1KJ
-	eRHewjlqAs6oKZt/br7qT960gCBnZNXTw/Aw8oqo2vUZsvRNifszy5hHbtFn0+Gm
-	dw01A+jbB2qf85T+IjpKgBUI2Wh8XoIoyL/CETFCjCW0nPFCqqxYpk9M+ybdpFZW
-	Zaci3A==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v1h6gvgr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 12:15:26 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACCFPoK002281
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 12:15:25 GMT
-Received: from [10.152.197.144] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
- 2024 04:15:19 -0800
-Message-ID: <374ea155-0970-38bd-470f-cc440ca0bab5@quicinc.com>
-Date: Tue, 12 Nov 2024 17:45:07 +0530
+	s=arc-20240116; t=1731413719; c=relaxed/simple;
+	bh=Jqvk+2JIys7FneqU37gZzMVAjUrVda+nHXaP40mDhXg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=UuTqezJQY16kbXgzgzTYCAoQ/HXSWZ6outIT36G873AELNs+kO5Vv/qJ6j0zic06QNHdeVdFVCS4lS1DGHchoQ62UcppUQUnH9QoZC3bu36GAH4C+5TeUI/QJwUTodCOdZONzE2FVruNxrGChwH6K8yWZ+qu0VImgEavO0lkXhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D/aWMQhs; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731413718; x=1762949718;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Jqvk+2JIys7FneqU37gZzMVAjUrVda+nHXaP40mDhXg=;
+  b=D/aWMQhsaxCyG+hPiX7sMTj5aKIEqyxOvBy7x/O2vpQGttSPtpvMCcMN
+   xijue5+4AOmcGhOl6DTkFsV/f4wbh8bC6qhhhrs7xP8lp0vCoWxTxFX8J
+   0K9laonoKGT8h66MdPPmsbnVjpkj/67VfaasSsWlEBFtmDrO3h9jULl4p
+   Fx6C+pozHRtVIT6HnEuSAGwORxwfLakndhlQtB1Pua8jIR4zE4gpv1ncc
+   8FZrhLT7iwOL0fQw+fCiHBDy+3G1fbFoVDULujj6Q6p/UQIg0mABtVghD
+   v6ZWb8G33C87OujhtHEUPLMYQ4CSWmag6xeDoRYF9O6R7hFf2HYJRvGlt
+   Q==;
+X-CSE-ConnectionGUID: ZVO3F/R8S4CbfRF+hPNnqA==
+X-CSE-MsgGUID: fWa8fad3TGuW5L9M03WL8w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48699568"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="48699568"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 04:15:17 -0800
+X-CSE-ConnectionGUID: 04a7HOqnQ5ubzk1cvmdcbw==
+X-CSE-MsgGUID: nEBB6JovTM+XqQJy3Foi5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="118370516"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 04:15:12 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 12 Nov 2024 14:15:09 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>, 
+    x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
+    Perry Yuan <perry.yuan@amd.com>, LKML <linux-kernel@vger.kernel.org>, 
+    linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, 
+    platform-driver-x86@vger.kernel.org, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Perry Yuan <Perry.Yuan@amd.com>
+Subject: Re: [PATCH v6 05/12] platform/x86: hfi: parse CPU core ranking data
+ from shared memory
+In-Reply-To: <20241104175407.19546-6-mario.limonciello@amd.com>
+Message-ID: <372796b6-0276-bd75-8aa2-75ea7934dfec@linux.intel.com>
+References: <20241104175407.19546-1-mario.limonciello@amd.com> <20241104175407.19546-6-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v13 2/8] mtd: rawnand: qcom: cleanup qcom_nandc driver
-Content-Language: en-US
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-CC: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <richard@nod.at>, <vigneshr@ti.com>,
-        <manivannan.sadhasivam@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241030121919.865716-1-quic_mdalam@quicinc.com>
- <20241030121919.865716-3-quic_mdalam@quicinc.com>
- <871pzh397j.fsf@bootlin.com>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <871pzh397j.fsf@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: FFG0lJqQ5KR-9Tjw0S2SFNIdQrY4v1A7
-X-Proofpoint-GUID: FFG0lJqQ5KR-9Tjw0S2SFNIdQrY4v1A7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0 clxscore=1015
- lowpriorityscore=0 impostorscore=0 spamscore=0 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120099
+Content-Type: multipart/mixed; boundary="8323328-1562858813-1731413709=:961"
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-1562858813-1731413709=:961
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On 11/12/2024 12:00 AM, Miquel Raynal wrote:
-> On 30/10/2024 at 17:49:13 +0530, Md Sadre Alam <quic_mdalam@quicinc.com> wrote:
-> 
->> cleanup qcom_nandc driver as below
-> 
-> Perform a global cleanup of the Qualcomm NAND controller driver with the
-> following improvements:
-Ok
->>
->> - Remove register value indirection api
-> 
-> API
-Ok
-> 
->>
->> - Remove set_reg() api
-> 
-> API
-Ok
-> 
->>
->> - Convert read_loc_first & read_loc_last macro to function
-> 
-> functions
-Ok
-> 
->>
->> - Renamed multiple variables
-> 
-> Rename
-Ok
-> 
-> ...
-> 
->> @@ -549,17 +535,17 @@ struct qcom_nand_host {
->>    * among different NAND controllers.
->>    * @ecc_modes - ecc mode for NAND
->>    * @dev_cmd_reg_start - NAND_DEV_CMD_* registers starting offset
->> - * @is_bam - whether NAND controller is using BAM
->> - * @is_qpic - whether NAND CTRL is part of qpic IP
->> - * @qpic_v2 - flag to indicate QPIC IP version 2
->> + * @supports_bam - whether NAND controller is using BAM
-> 
-> Use the plain letters BAM acronym at least here
-Ok
-> 
->> + * @nandc_part_of_qpic - whether NAND controller is part of qpic IP
->> + * @qpic_version2 - flag to indicate QPIC IP version 2
->>    * @use_codeword_fixup - whether NAND has different layout for boot partitions
->>    */
->>   struct qcom_nandc_props {
->>   	u32 ecc_modes;
->>   	u32 dev_cmd_reg_start;
->> -	bool is_bam;
->> -	bool is_qpic;
->> -	bool qpic_v2;
->> +	bool supports_bam;
->> +	bool nandc_part_of_qpic;
->> +	bool qpic_version2;
->>   	bool use_codeword_fixup;
->>   };
->>   
->> @@ -613,19 +599,11 @@ static void clear_bam_transaction(struct qcom_nand_controller *nandc)
->>   {
->>   	struct bam_transaction *bam_txn = nandc->bam_txn;
->>   
->> -	if (!nandc->props->is_bam)
->> +	if (!nandc->props->supports_bam)
->>   		return;
->>   
->> -	bam_txn->bam_ce_pos = 0;
->> -	bam_txn->bam_ce_start = 0;
->> -	bam_txn->cmd_sgl_pos = 0;
->> -	bam_txn->cmd_sgl_start = 0;
->> -	bam_txn->tx_sgl_pos = 0;
->> -	bam_txn->tx_sgl_start = 0;
->> -	bam_txn->rx_sgl_pos = 0;
->> -	bam_txn->rx_sgl_start = 0;
->> +	memset(&bam_txn->bam_ce_pos, 0, sizeof(u32) * 8);
->>   	bam_txn->last_data_desc = NULL;
->> -	bam_txn->wait_second_completion = false;
->>   
->>   	sg_init_table(bam_txn->cmd_sgl, nandc->max_cwperpage *
->>   		      QPIC_PER_CW_CMD_SGL);
->> @@ -640,17 +618,7 @@ static void qpic_bam_dma_done(void *data)
->>   {
->>   	struct bam_transaction *bam_txn = data;
->>   
->> -	/*
->> -	 * In case of data transfer with NAND, 2 callbacks will be generated.
->> -	 * One for command channel and another one for data channel.
->> -	 * If current transaction has data descriptors
->> -	 * (i.e. wait_second_completion is true), then set this to false
->> -	 * and wait for second DMA descriptor completion.
->> -	 */
->> -	if (bam_txn->wait_second_completion)
->> -		bam_txn->wait_second_completion = false;
->> -	else
->> -		complete(&bam_txn->txn_done);
->> +	complete(&bam_txn->txn_done);
->>   }
->>   
->>   static inline struct qcom_nand_host *to_qcom_nand_host(struct nand_chip *chip)
->> @@ -676,10 +644,9 @@ static inline void nandc_write(struct qcom_nand_controller *nandc, int offset,
->>   	iowrite32(val, nandc->base + offset);
->>   }
->>   
->> -static inline void nandc_read_buffer_sync(struct qcom_nand_controller *nandc,
->> -					  bool is_cpu)
->> +static inline void nandc_dev_to_mem(struct qcom_nand_controller *nandc, bool is_cpu)
-> 
-> No static inline in C code, you can also remove it.
-Ok
-> 
->>   {
->> -	if (!nandc->props->is_bam)
->> +	if (!nandc->props->supports_bam)
->>   		return;
->>   
->>   	if (is_cpu)
->> @@ -694,93 +661,90 @@ static inline void nandc_read_buffer_sync(struct qcom_nand_controller *nandc,
->>   					   DMA_FROM_DEVICE);
->>   }
-> 
-> ...
-> 
->> +/* Helper to check the code word, whether it is last cw or not */
-> 
-> Helper to check whether this is the last CW or not
-Ok
-> 
-> 
->> +static bool qcom_nandc_is_last_cw(struct nand_ecc_ctrl *ecc, int cw)
->> +{
->> +	return cw == (ecc->steps - 1);
->>   }
->>   
->> -static void nandc_set_reg(struct nand_chip *chip, int offset,
->> -			  u32 val)
->> +/**
->> + * nandc_set_read_loc_first() - to set read location first register
->> + * @chip:		NAND Private Flash Chip Data
->> + * @reg_base:		location register base
->> + * @cw_offset:		code word offset
->> + * @read_size:		code word read length
->> + * @is_last_read_loc:	is this the last read location
->> + *
->> + * This function will set location register value
->> + */
-> 
-> ...
-> 
->>   	if (host->use_ecc) {
->> -		cfg0 = (host->cfg0 & ~(7U << CW_PER_PAGE)) |
->> -				(num_cw - 1) << CW_PER_PAGE;
->> +		cfg0 = cpu_to_le32((host->cfg0 & ~(7U << CW_PER_PAGE)) |
->> +				(num_cw - 1) << CW_PER_PAGE);
->>   
->> -		cfg1 = host->cfg1;
->> -		ecc_bch_cfg = host->ecc_bch_cfg;
->> +		cfg1 = cpu_to_le32(host->cfg1);
->> +		ecc_bch_cfg = cpu_to_le32(host->ecc_bch_cfg);
->>   	} else {
->> -		cfg0 = (host->cfg0_raw & ~(7U << CW_PER_PAGE)) |
->> -				(num_cw - 1) << CW_PER_PAGE;
->> +		cfg0 = cpu_to_le32((host->cfg0_raw & ~(7U << CW_PER_PAGE)) |
->> +				(num_cw - 1) << CW_PER_PAGE);
->>   
->> -		cfg1 = host->cfg1_raw;
->> -		ecc_bch_cfg = 1 << ECC_CFG_ECC_DISABLE;
->> +		cfg1 = cpu_to_le32(host->cfg1_raw);
->> +		ecc_bch_cfg = cpu_to_le32(1 << ECC_CFG_ECC_DISABLE);
->>   	}
->>   
->> -	nandc_set_reg(chip, NAND_FLASH_CMD, cmd);
->> -	nandc_set_reg(chip, NAND_DEV0_CFG0, cfg0);
->> -	nandc_set_reg(chip, NAND_DEV0_CFG1, cfg1);
->> -	nandc_set_reg(chip, NAND_DEV0_ECC_CFG, ecc_bch_cfg);
->> -	if (!nandc->props->qpic_v2)
->> -		nandc_set_reg(chip, NAND_EBI2_ECC_BUF_CFG, host->ecc_buf_cfg);
->> -	nandc_set_reg(chip, NAND_FLASH_STATUS, host->clrflashstatus);
->> -	nandc_set_reg(chip, NAND_READ_STATUS, host->clrreadstatus);
->> -	nandc_set_reg(chip, NAND_EXEC_CMD, 1);
->> +	nandc->regs->cmd = cmd;
->> +	nandc->regs->cfg0 = cfg0;
->> +	nandc->regs->cfg1 = cfg1;
->> +	nandc->regs->ecc_bch_cfg = ecc_bch_cfg;
->> +
->> +	if (!nandc->props->qpic_version2)
->> +		nandc->regs->ecc_buf_cfg = cpu_to_le32(host->ecc_buf_cfg);
->> +
->> +	nandc->regs->clrflashstatus = cpu_to_le32(host->clrflashstatus);
->> +	nandc->regs->clrreadstatus = cpu_to_le32(host->clrreadstatus);
->> +	nandc->regs->exec = cpu_to_le32(1);
->>   
->>   	if (read)
->>   		nandc_set_read_loc(chip, cw, 0, 0, host->use_ecc ?
->> @@ -1121,7 +1088,7 @@ static int read_reg_dma(struct qcom_nand_controller *nandc, int first,
->>   	if (first == NAND_DEV_CMD_VLD || first == NAND_DEV_CMD1)
->>   		first = dev_cmd_reg_addr(nandc, first);
->>   
->> -	if (nandc->props->is_bam)
->> +	if (nandc->props->supports_bam)
->>   		return prep_bam_dma_desc_cmd(nandc, true, first, vaddr,
->>   					     num_regs, flags);
->>   
->> @@ -1136,25 +1103,16 @@ static int read_reg_dma(struct qcom_nand_controller *nandc, int first,
->>    * write_reg_dma:	prepares a descriptor to write a given number of
->>    *			contiguous registers
->>    *
->> + * @vaddr:		contnigeous memory from where register value
->> will
-> 
-> Please run a spell checker on your commits.
-Ok
-> 
->> + *			be written
->>    * @first:		offset of the first register in the contiguous block
->>    * @num_regs:		number of registers to write
->>    * @flags:		flags to control DMA descriptor preparation
->>    */
->> -static int write_reg_dma(struct qcom_nand_controller *nandc, int first,
->> -			 int num_regs, unsigned int flags)
->> +static int write_reg_dma(struct qcom_nand_controller *nandc, __le32 *vaddr,
->> +			 int first, int num_regs, unsigned int flags)
->>   {
->>   	bool flow_control = false;
->> -	struct nandc_regs *regs = nandc->regs;
->> -	void *vaddr;
->> -
->> -	vaddr = offset_to_nandc_reg(regs, first);
->> -
->> -	if (first == NAND_ERASED_CW_DETECT_CFG) {
->> -		if (flags & NAND_ERASED_CW_SET)
->> -			vaddr = &regs->erased_cw_detect_cfg_set;
->> -		else
->> -			vaddr = &regs->erased_cw_detect_cfg_clr;
->> -	}
->>   
->>   	if (first == NAND_EXEC_CMD)
->>   		flags |= NAND_BAM_NWD;
->> @@ -1165,7 +1123,7 @@ static int write_reg_dma(struct qcom_nand_controller *nandc, int first,
->>   	if (first == NAND_DEV_CMD_VLD_RESTORE || first == NAND_DEV_CMD_VLD)
->>   		first = dev_cmd_reg_addr(nandc, NAND_DEV_CMD_VLD);
->>   
->> -	if (nandc->props->is_bam)
->> +	if (nandc->props->supports_bam)
->>   		return prep_bam_dma_desc_cmd(nandc, false, first, vaddr,
->>   					     num_regs, flags);
->>   
-> 
-> ...
-> 
->> @@ -2872,38 +2823,38 @@ static int qcom_param_page_type_exec(struct nand_chip *chip,  const struct nand_
->>   	clear_read_regs(nandc);
->>   	clear_bam_transaction(nandc);
->>   
->> -	nandc_set_reg(chip, NAND_FLASH_CMD, q_op.cmd_reg);
->> -
->> -	nandc_set_reg(chip, NAND_ADDR0, 0);
->> -	nandc_set_reg(chip, NAND_ADDR1, 0);
->> -	nandc_set_reg(chip, NAND_DEV0_CFG0, 0 << CW_PER_PAGE
->> -					| 512 << UD_SIZE_BYTES
->> -					| 5 << NUM_ADDR_CYCLES
->> -					| 0 << SPARE_SIZE_BYTES);
->> -	nandc_set_reg(chip, NAND_DEV0_CFG1, 7 << NAND_RECOVERY_CYCLES
->> -					| 0 << CS_ACTIVE_BSY
->> -					| 17 << BAD_BLOCK_BYTE_NUM
->> -					| 1 << BAD_BLOCK_IN_SPARE_AREA
->> -					| 2 << WR_RD_BSY_GAP
->> -					| 0 << WIDE_FLASH
->> -					| 1 << DEV0_CFG1_ECC_DISABLE);
-> 
-> Please fix the coding style. The '|' should be at the end of the line.
-Ok
-Thanks for the review. Will fix all the comments in next revision.
-> 
-> Thanks,
-> Miquèl
+On Mon, 4 Nov 2024, Mario Limonciello wrote:
+
+> From: Perry Yuan <Perry.Yuan@amd.com>
+>=20
+> When `amd_hfi` driver is loaded, it will use PCCT subspace type 4 table
+> to retrieve the shared memory address which contains the CPU core ranking
+> table. This table includes a header that specifies the number of ranking
+> data entries to be parsed and rank each CPU core with the Performance and
+> Energy Efficiency capability as implemented by the CPU power management
+> firmware.
+>=20
+> Once the table has been parsed, each CPU is assigned a ranking score
+> within its class. Subsequently, when the scheduler selects cores, it
+> chooses from the ranking list based on the assigned scores in each class,
+> thereby ensuring the optimal selection of CPU cores according to their
+> predefined classifications and priorities.
+>=20
+> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
+> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/platform/x86/amd/hfi/hfi.c | 196 +++++++++++++++++++++++++++++
+>  1 file changed, 196 insertions(+)
+>=20
+> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/am=
+d/hfi/hfi.c
+> index 2cd71d79a22c9..708d7d18fe2f2 100644
+> --- a/drivers/platform/x86/amd/hfi/hfi.c
+> +++ b/drivers/platform/x86/amd/hfi/hfi.c
+> @@ -18,20 +18,72 @@
+>  #include <linux/io.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> +#include <linux/mailbox_client.h>
+>  #include <linux/mutex.h>
+> +#include <linux/percpu-defs.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/smp.h>
+> +#include <linux/topology.h>
+> +#include <linux/workqueue.h>
+> +
+> +#include <asm/cpu_device_id.h>
+> +
+> +#include <acpi/pcc.h>
+> +#include <acpi/cppc_acpi.h>
+> =20
+>  #define AMD_HFI_DRIVER=09=09"amd_hfi"
+> +#define AMD_HFI_MAILBOX_COUNT=091
+> +#define AMD_HETERO_RANKING_TABLE_VER=092
+> +
+>  #define AMD_HETERO_CPUID_27=090x80000027
+> +
+>  static struct platform_device *device;
+> =20
+> +/**
+> + * struct amd_shmem_info - Shared memory table for AMD HFI
+> + *
+> + * @header:=09The PCCT table header including signature, length flags an=
+d command.
+> + * @version_number:=09=09Version number of the table
+> + * @n_logical_processors:=09Number of logical processors
+> + * @n_capabilities:=09=09Number of ranking dimensions (performance, effi=
+ciency, etc)
+> + * @table_update_context:=09Command being sent over the subspace
+> + * @n_bitmaps:=09=09=09Number of 32-bit bitmaps to enumerate all the API=
+C IDs
+> + *=09=09=09=09This is based on the maximum APIC ID enumerated in the sys=
+tem
+> + * @reserved:=09=09=0924 bit spare
+> + * @table_data:=09=09=09Bit Map(s) of enabled logical processors
+> + *=09=09=09=09Followed by the ranking data for each logical processor
+> + */
+> +struct amd_shmem_info {
+> +=09struct acpi_pcct_ext_pcc_shared_memory header;
+> +=09u32=09version_number=09=09:8,
+> +=09=09n_logical_processors=09:8,
+> +=09=09n_capabilities=09=09:8,
+> +=09=09table_update_context=09:8;
+> +=09u32=09n_bitmaps=09=09:8,
+> +=09=09reserved=09=09:24;
+> +=09u32=09table_data[];
+> +} __packed;
+
+This looks naturally aligned so __packed shouldn't be necessary.
+
+Looks fine otherwise to me,
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+>  struct amd_hfi_data {
+>  =09const char=09*name;
+>  =09struct device=09*dev;
+>  =09struct mutex=09lock;
+> +
+> +=09/* PCCT table related*/
+> +=09struct pcc_mbox_chan=09*pcc_chan;
+> +=09void __iomem=09=09*pcc_comm_addr;
+> +=09struct acpi_subtable_header=09*pcct_entry;
+> +=09struct amd_shmem_info=09*shmem;
+>  };
+> =20
+> +/**
+> + * struct amd_hfi_classes - HFI class capabilities per CPU
+> + * @perf:=09Performance capability
+> + * @eff:=09Power efficiency capability
+> + *
+> + * Capabilities of a logical processor in the ranking table. These capab=
+ilities
+> + * are unitless and specific to each HFI class.
+> + */
+>  struct amd_hfi_classes {
+>  =09u32=09perf;
+>  =09u32=09eff;
+> @@ -40,23 +92,105 @@ struct amd_hfi_classes {
+>  /**
+>   * struct amd_hfi_cpuinfo - HFI workload class info per CPU
+>   * @cpu:=09=09cpu index
+> + * @apic_id:=09=09apic id of the current cpu
+>   * @cpus:=09=09mask of cpus associated with amd_hfi_cpuinfo
+>   * @class_index:=09workload class ID index
+>   * @nr_class:=09=09max number of workload class supported
+> + * @ipcc_scores:=09ipcc scores for each class
+>   * @amd_hfi_classes:=09current cpu workload class ranking data
+>   *
+>   * Parameters of a logical processor linked with hardware feedback class
+>   */
+>  struct amd_hfi_cpuinfo {
+>  =09int=09=09cpu;
+> +=09u32=09=09apic_id;
+>  =09cpumask_var_t=09cpus;
+>  =09s16=09=09class_index;
+>  =09u8=09=09nr_class;
+> +=09int=09=09*ipcc_scores;
+>  =09struct amd_hfi_classes=09*amd_hfi_classes;
+>  };
+> =20
+>  static DEFINE_PER_CPU(struct amd_hfi_cpuinfo, amd_hfi_cpuinfo) =3D {.cla=
+ss_index =3D -1};
+> =20
+> +static int find_cpu_index_by_apicid(unsigned int target_apicid)
+> +{
+> +=09int cpu_index;
+> +
+> +=09for_each_present_cpu(cpu_index) {
+> +=09=09struct cpuinfo_x86 *info =3D &cpu_data(cpu_index);
+> +
+> +=09=09if (info->topo.apicid =3D=3D target_apicid) {
+> +=09=09=09pr_debug("match APIC id %d for CPU index: %d\n",
+> +=09=09=09=09 info->topo.apicid, cpu_index);
+> +=09=09=09return cpu_index;
+> +=09=09}
+> +=09}
+> +
+> +=09return -ENODEV;
+> +}
+> +
+> +static int amd_hfi_fill_metadata(struct amd_hfi_data *amd_hfi_data)
+> +{
+> +=09struct acpi_pcct_ext_pcc_slave *pcct_ext =3D
+> +=09=09(struct acpi_pcct_ext_pcc_slave *)amd_hfi_data->pcct_entry;
+> +=09void __iomem *pcc_comm_addr;
+> +
+> +=09pcc_comm_addr =3D acpi_os_ioremap(amd_hfi_data->pcc_chan->shmem_base_=
+addr,
+> +=09=09=09=09=09amd_hfi_data->pcc_chan->shmem_size);
+> +=09if (!pcc_comm_addr) {
+> +=09=09pr_err("failed to ioremap PCC common region mem\n");
+> +=09=09return -ENOMEM;
+> +=09}
+> +
+> +=09memcpy_fromio(amd_hfi_data->shmem, pcc_comm_addr, pcct_ext->length);
+> +=09iounmap(pcc_comm_addr);
+> +
+> +=09if (amd_hfi_data->shmem->header.signature !=3D PCC_SIGNATURE) {
+> +=09=09pr_err("invalid signature in shared memory\n");
+> +=09=09return -EINVAL;
+> +=09}
+> +=09if (amd_hfi_data->shmem->version_number !=3D AMD_HETERO_RANKING_TABLE=
+_VER) {
+> +=09=09pr_err("invalid version %d\n", amd_hfi_data->shmem->version_number=
+);
+> +=09=09return -EINVAL;
+> +=09}
+> +
+> +=09for (unsigned int i =3D 0; i < amd_hfi_data->shmem->n_bitmaps; i++) {
+> +=09=09u32 bitmap =3D amd_hfi_data->shmem->table_data[i];
+> +
+> +=09=09for (unsigned int j =3D 0; j < BITS_PER_TYPE(u32); j++) {
+> +=09=09=09struct amd_hfi_cpuinfo *info;
+> +=09=09=09int apic_id =3D i * BITS_PER_TYPE(u32) + j;
+> +=09=09=09int cpu_index;
+> +
+> +=09=09=09if (!(bitmap & BIT(j)))
+> +=09=09=09=09continue;
+> +
+> +=09=09=09cpu_index =3D find_cpu_index_by_apicid(apic_id);
+> +=09=09=09if (cpu_index < 0) {
+> +=09=09=09=09pr_warn("APIC ID %d not found\n", apic_id);
+> +=09=09=09=09continue;
+> +=09=09=09}
+> +
+> +=09=09=09info =3D per_cpu_ptr(&amd_hfi_cpuinfo, cpu_index);
+> +=09=09=09info->apic_id =3D apic_id;
+> +
+> +=09=09=09/* Fill the ranking data for each logical processor */
+> +=09=09=09info =3D per_cpu_ptr(&amd_hfi_cpuinfo, cpu_index);
+> +=09=09=09for (unsigned int k =3D 0; k < info->nr_class; k++) {
+> +=09=09=09=09u32 *table =3D amd_hfi_data->shmem->table_data +
+> +=09=09=09=09=09     amd_hfi_data->shmem->n_bitmaps +
+> +=09=09=09=09=09     i * info->nr_class;
+> +
+> +=09=09=09=09info->amd_hfi_classes[k].eff =3D table[apic_id + 2 * k];
+> +=09=09=09=09info->amd_hfi_classes[k].perf =3D table[apic_id + 2 * k + 1]=
+;
+> +=09=09=09}
+> +=09=09}
+> +=09}
+> +
+> +=09return 0;
+> +}
+> +
+>  static int amd_hfi_alloc_class_data(struct platform_device *pdev)
+>  {
+>  =09struct amd_hfi_cpuinfo *hfi_cpuinfo;
+> @@ -73,20 +207,78 @@ static int amd_hfi_alloc_class_data(struct platform_=
+device *pdev)
+> =20
+>  =09for_each_present_cpu(idx) {
+>  =09=09struct amd_hfi_classes *classes;
+> +=09=09int *ipcc_scores;
+> =20
+>  =09=09classes =3D devm_kzalloc(dev,
+>  =09=09=09=09       nr_class_id * sizeof(struct amd_hfi_classes),
+>  =09=09=09=09       GFP_KERNEL);
+>  =09=09if (!classes)
+>  =09=09=09return -ENOMEM;
+> +=09=09ipcc_scores =3D devm_kcalloc(dev, nr_class_id, sizeof(int), GFP_KE=
+RNEL);
+> +=09=09if (!ipcc_scores)
+> +=09=09=09return -ENOMEM;
+>  =09=09hfi_cpuinfo =3D per_cpu_ptr(&amd_hfi_cpuinfo, idx);
+>  =09=09hfi_cpuinfo->amd_hfi_classes =3D classes;
+> +=09=09hfi_cpuinfo->ipcc_scores =3D ipcc_scores;
+>  =09=09hfi_cpuinfo->nr_class =3D nr_class_id;
+>  =09}
+> =20
+>  =09return 0;
+>  }
+> =20
+> +static int amd_hfi_metadata_parser(struct platform_device *pdev,
+> +=09=09=09=09   struct amd_hfi_data *amd_hfi_data)
+> +{
+> +=09struct acpi_pcct_ext_pcc_slave *pcct_ext;
+> +=09struct acpi_subtable_header *pcct_entry;
+> +=09struct mbox_chan *pcc_mbox_channels;
+> +=09struct acpi_table_header *pcct_tbl;
+> +=09struct pcc_mbox_chan *pcc_chan;
+> +=09acpi_status status;
+> +=09int ret;
+> +
+> +=09pcc_mbox_channels =3D devm_kcalloc(&pdev->dev, AMD_HFI_MAILBOX_COUNT,
+> +=09=09=09=09=09 sizeof(*pcc_mbox_channels), GFP_KERNEL);
+> +=09if (!pcc_mbox_channels)
+> +=09=09return -ENOMEM;
+> +
+> +=09pcc_chan =3D devm_kcalloc(&pdev->dev, AMD_HFI_MAILBOX_COUNT,
+> +=09=09=09=09sizeof(*pcc_chan), GFP_KERNEL);
+> +=09if (!pcc_chan)
+> +=09=09return -ENOMEM;
+> +
+> +=09status =3D acpi_get_table(ACPI_SIG_PCCT, 0, &pcct_tbl);
+> +=09if (ACPI_FAILURE(status) || !pcct_tbl)
+> +=09=09return -ENODEV;
+> +
+> +=09/* get pointer to the first PCC subspace entry */
+> +=09pcct_entry =3D (struct acpi_subtable_header *) (
+> +=09=09=09(unsigned long)pcct_tbl + sizeof(struct acpi_table_pcct));
+> +
+> +=09pcc_chan->mchan =3D &pcc_mbox_channels[0];
+> +
+> +=09amd_hfi_data->pcc_chan =3D pcc_chan;
+> +=09amd_hfi_data->pcct_entry =3D pcct_entry;
+> +=09pcct_ext =3D (struct acpi_pcct_ext_pcc_slave *)pcct_entry;
+> +
+> +=09if (pcct_ext->length <=3D 0)
+> +=09=09return -EINVAL;
+> +
+> +=09amd_hfi_data->shmem =3D devm_kzalloc(amd_hfi_data->dev, pcct_ext->len=
+gth, GFP_KERNEL);
+> +=09if (!amd_hfi_data->shmem)
+> +=09=09return -ENOMEM;
+> +
+> +=09pcc_chan->shmem_base_addr =3D pcct_ext->base_address;
+> +=09pcc_chan->shmem_size =3D pcct_ext->length;
+> +
+> +=09/* parse the shared memory info from the pcct table */
+> +=09ret =3D amd_hfi_fill_metadata(amd_hfi_data);
+> +
+> +=09acpi_put_table(pcct_tbl);
+> +
+> +=09return ret;
+> +}
+> +
+>  static const struct acpi_device_id amd_hfi_platform_match[] =3D {
+>  =09{"AMDI0104", 0},
+>  =09{ }
+> @@ -115,6 +307,10 @@ static int amd_hfi_probe(struct platform_device *pde=
+v)
+>  =09if (ret)
+>  =09=09return ret;
+> =20
+> +=09ret =3D amd_hfi_metadata_parser(pdev, amd_hfi_data);
+> +=09if (ret)
+> +=09=09return ret;
+> +
+>  =09return 0;
+>  }
+> =20
+>=20
+--8323328-1562858813-1731413709=:961--
 
