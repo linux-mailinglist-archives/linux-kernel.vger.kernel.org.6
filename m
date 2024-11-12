@@ -1,118 +1,110 @@
-Return-Path: <linux-kernel+bounces-406086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36A09C5ACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:47:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A9D9C5ACC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97F3A2847DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:47:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6611F229A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1C11FA829;
-	Tue, 12 Nov 2024 14:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126B51FF03D;
+	Tue, 12 Nov 2024 14:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="wAN6IKSm"
-Received: from ms11p00im-qufo17281701.me.com (ms11p00im-qufo17281701.me.com [17.58.38.54])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkQhs0Tn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB401FC7F6
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.38.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F47E1FC7F6;
+	Tue, 12 Nov 2024 14:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422796; cv=none; b=B+Qdt9BeXHJsT8WLSrHL8QeTiFLb4AgmmJ6Af2f88B1cIlzp8wc9+ydnVENALb2ktmQeGf0zB4iSDzSNi5Py6hUEFe9AFaJW8gM5Jy1leUV2tDvSbj8TYOkt5nQ30ucH4Nu4vwKEZZ2LZTNdtOplsxJakHSMlwfAvyRwnDWgvMY=
+	t=1731422805; cv=none; b=R04dUG8QuVzGC4Egq4FzmdHgWFxNl7jSQbYKmTBnbpwJ8oN3g136cC1UG4kzdIFOf3Z/nrxYuBcMwiFb+8LoR0tdAHu7c0MW9u/muz5w/o/2kYpLRKhSK0GYFdJdtlENoSjq/IsyLq7w3pwubft3E9nC8vDIF/kDwhVYNkzz8Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422796; c=relaxed/simple;
-	bh=awA7aFBLQ1vqUdnT5lTe7p33n4jdKtIQ+fo43elS3C0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iq4hV/+3ZtotudzeZBrD2T/5NlaupBrkHbyIcdFxQYOsZ26YjNSN8NGaz+hQa/s76885Q7ADe/DmqA8fwyP8Co1/RYdYCbRkzZGCN2djTVMyEgyOsB3fF70rRpoP+BMNinLLMY9cG6XUIuGfh22HxU3965rfpF3EWQnMu93VpCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=wAN6IKSm; arc=none smtp.client-ip=17.58.38.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1731422794;
-	bh=v19lituYZ5eOybH+gnxaoJL6meJAbszu8oTA7JcJvVM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=wAN6IKSmgzw5jmsDrE9HipYtTCGnMgshhTD90VQZVN+3R2ndfyiGBMjkxR3DZtU7T
-	 BUcKP3xBcvi3rj1wh38WhonEXfWCRGA5cnnrvEymAEM3tgDiVWLcAnD/870Pe0ptn0
-	 sgru8DO+KHX4P5WTtx0CRZbCvc+rH/qxP5ffGfJg4EZPQKAYSFy/fnZm3xfkoAfUnA
-	 ZykFjh+rWtYy/W+OC4Vk4v/9AfauXHOQQOxYzwZ7AjR3XPHGYNJ2p/3bHWDwmlm4en
-	 Xp7vWzOtimyUJJejrLPFZApCOKCmfVQ+1dnuLuqhHBlYAD9iIfqXzmQKbYLSKSW2zT
-	 kWjFT50MKnsAA==
-Received: from [192.168.1.26] (ms11p00im-dlb-asmtpmailmevip.me.com [17.57.154.19])
-	by ms11p00im-qufo17281701.me.com (Postfix) with ESMTPSA id 5825674236B;
-	Tue, 12 Nov 2024 14:46:31 +0000 (UTC)
-Message-ID: <2952f37a-7a11-42d9-9b90-4856ed200610@icloud.com>
-Date: Tue, 12 Nov 2024 22:46:27 +0800
+	s=arc-20240116; t=1731422805; c=relaxed/simple;
+	bh=Rni0sSv6wAqcLGvXDH0uudpz1zFl/4EOuSqc/zrd8g4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlMQ7mEES3okQh9WMHz40fOhOy4n3cS6SNS1H1dLrxjp58esrPgxymkMjyfX97BLUQo+Rut5qkiIUqCwtUdi+5CaKj+ZDFv/tWB9tKJNoDo3Ap37+HTiY3UC3PRZS1/b9wR6vvKEow6Gm2iUHSLPgng2dNeeKyuI9WeKlm3N91s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkQhs0Tn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 958B7C4CECD;
+	Tue, 12 Nov 2024 14:46:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731422805;
+	bh=Rni0sSv6wAqcLGvXDH0uudpz1zFl/4EOuSqc/zrd8g4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZkQhs0TnTTOolsfq3/0og5/0zmimIk/Jk1Z6/cPO32boExnuVOvLZ0mzpHnDWlnqa
+	 CcrBOkb9e/cymwiAhurr+P/xWmMP8La9c+QU8qInB9PFafH9phnW/gGiu31E7YOtve
+	 ugLass7ogFo5NS86Jjvc98oxnp8AHDVkep5SqGKPKSNpVDxrLbSDY2z3G7TGr+gWNh
+	 mLOCKsU5oDTE9nxAbh2b7sPjWJ5a4+rVaQj9gsTiyiy49OcxBOHq/n5oew2lGEJhMC
+	 dL6a6IYL4SxQnu/47DhbU2sHwSqYB1fOfwXxVOTabWf9o+5qt4VrhqUBUPEwexzXFJ
+	 47MtVHClMSmyQ==
+Date: Tue, 12 Nov 2024 14:46:42 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Marek =?utf-8?B?TWHFm2xhbmth?= <mmaslanka@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH] ASoC: da7219-aad: Fix detection of plugged jack after
+ resume
+Message-ID: <ZzNqUrlCjvusuDbn@finisterre.sirena.org.uk>
+References: <20241112074048.1762371-1-mmaslanka@google.com>
+ <ZzNVH65o0ue6jn6a@finisterre.sirena.org.uk>
+ <CAGcaFA3SdBVtOiPJQG82YwBX01s5_mJszeM4LNSc5Pn74S2Cvw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] driver core: class: Fix wild pointer dereference in
- API class_dev_iter_next()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
-References: <20241105-class_fix-v1-0-80866f9994a5@quicinc.com>
- <20241105-class_fix-v1-1-80866f9994a5@quicinc.com>
- <2024111205-countable-clamor-d0c7@gregkh>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <2024111205-countable-clamor-d0c7@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Y0CU276VVlOBEkwLR8uXIbCXGGMqwIrK
-X-Proofpoint-ORIG-GUID: Y0CU276VVlOBEkwLR8uXIbCXGGMqwIrK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-12_05,2024-11-12_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 clxscore=1015
- phishscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2411120119
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="F2z0SX+Imc/Vbvmk"
+Content-Disposition: inline
+In-Reply-To: <CAGcaFA3SdBVtOiPJQG82YwBX01s5_mJszeM4LNSc5Pn74S2Cvw@mail.gmail.com>
+X-Cookie: Editing is a rewording activity.
 
-On 2024/11/12 19:43, Greg Kroah-Hartman wrote:
-> On Tue, Nov 05, 2024 at 08:20:22AM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> class_dev_iter_init(struct class_dev_iter *iter, struct class *class, ...)
->> has return type void, but it does not initialize its output parameter @iter
->> when suffers class_to_subsys(@class) error, so caller can not detect the
->> error and call API class_dev_iter_next(@iter) which will dereference wild
->> pointers of @iter's members as shown by below typical usage:
->>
->> // @iter's members are wild pointers
->> struct class_dev_iter iter;
->>
->> // No change in @iter when the error happens.
->> class_dev_iter_init(&iter, ...);
->>
->> // dereference these wild member pointers here.
->> while (dev = class_dev_iter_next(&iter)) { ... }.
->>
->> Actually, all callers of the API have such usage pattern in kernel tree.
->> Fix by memset() @iter in API *_init() and error checking @iter in *_next().
->>
->> Fixes: 7b884b7f24b4 ("driver core: class.c: convert to only use class_to_subsys")
->> Cc: stable@vger.kernel.org
-> 
-> There is no in-kernel broken users of this from what I can tell, right?
-> Otherwise things would have blown up by now, so why is this needed in
-> stable kernels?
-> 
 
-For all callers of the API in current kernel tree, the class should have
-been registered successfully when the API is invoking.
+--F2z0SX+Imc/Vbvmk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-so, could you remove both Fix and stable tag directly?
+On Tue, Nov 12, 2024 at 03:11:07PM +0100, Marek Ma=C5=9Blanka wrote:
+> On Tue, Nov 12, 2024 at 2:16=E2=80=AFPM Mark Brown <broonie@kernel.org> w=
+rote:
 
-> thanks,
-> 
-> greg k-h
+> > This path is also (AFAICT only?) called when registering the jack by
+> > da7219_set_jack(), I'm not immediately seeing the path for resume.  This
+> > suggests that what's going on here is an issue with the machine driver
+> > unregistering the jack over suspend?
 
+> In my case the da7219_set_jack() is directly called from avs_card_resume_=
+post()
+> (sound/soc/intel/avs/boards/da7219.c) so that could be a problem too.
+
+Right, that's the machine driver unregistering the jack over suspend
+thing that I mentioned.  If there's some problem with the jack detection
+being left enabled over suspend then that might need to be addressed in
+the CODEC driver, but probably the machine driver shouldn't be doing
+what it is. =20
+
+--F2z0SX+Imc/Vbvmk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmczalEACgkQJNaLcl1U
+h9BjUQf6A1nLAwGKbuKH8YUNY+bs9sPFOJOKImKcC7FQs7S56A4Rw2uAFUy/1Oql
+JjhgcrkrJUq2svHOyNfSKWD9sI1UUptzSibQIYERXb4fnZ6jK4qpZ+6vI4Y1ppzS
+ukaZBdcrcRaOQIobYIj3/eLTja2pwoC8J4FlZble+cWJYzAPQF1iWRpA8DBtWdlC
+03oI9HWZWMWkpDgbxXrGC2kXkIsL7OYsshjmAfx2vBSE8IILYmnQmjmg1L+o0X0h
+TKt8CbDvDlGSUJcaB0qGxN77q4VOSlFGEaDjmc7UkFYFifVzXkmRF02M31W0cBQQ
+OeoFYgxU2Dn4MEAfD3MeKFGCj8T/BQ==
+=n3fy
+-----END PGP SIGNATURE-----
+
+--F2z0SX+Imc/Vbvmk--
 
