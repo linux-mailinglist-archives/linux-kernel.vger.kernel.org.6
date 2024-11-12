@@ -1,72 +1,64 @@
-Return-Path: <linux-kernel+bounces-405248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E16D9C4F08
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:00:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD159C4EF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:54:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26737B24ED1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:00:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1676281F4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED7320ADC7;
-	Tue, 12 Nov 2024 06:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039B420ADC6;
+	Tue, 12 Nov 2024 06:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="AvHBHolH"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VBgRBsF+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9661E208230;
-	Tue, 12 Nov 2024 06:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578A420A5D0;
+	Tue, 12 Nov 2024 06:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731394791; cv=none; b=EuQOJ7cFJXvvyQQrY7VdUrVLJsvPca/eBa3nP9mddanPi5Ij9sjeDeaKqXaJ85yUWAq8THvvHGaTLKQwc2JEvwi4lCWwcJqGe3aHuulEB+GCHPkx6c1xkV6r9c9kFg5ILJMaux+hqTafUkhTjv4Is/kXpBi+M5B/jsEUufscGUk=
+	t=1731394471; cv=none; b=SH5uu0E//z8d8vEj1epqs6JeuqKnYIz+B7L8QSvPijK99NzcoLO3tKaJDScAWf4tjDJprvFmfu3J7xOQ7fF3Mt21eDDl9dp7LDb11W6HFXAyVN5RhHTEvhlTqM5nyq3LFvu9Il+JBEGYmSZ3wujReubcbRo7rhMYPUuiYaUIIaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731394791; c=relaxed/simple;
-	bh=qDKr1SHqTFXc1zzrF8GzksnSFHcq+7ZM7dwTAabdes4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G2fd4gGQ/WEF/n9aeIBhoHQvmlSKLCDUhk8lI71aaKin4+MqVEJFayg4I0998HZ7ov9tEIPTB+glsz0FXkvwx4erZ1ryO6OAJIlpb3nPv/Wk3AWaPKciVBZnJ3pUCb8E5i5BUxGzupn/sudtMh0+X36aIOX/uCzt7kAeQgI1tQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=AvHBHolH; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC2V0tI026802;
-	Mon, 11 Nov 2024 22:52:34 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=3hHOU+xmmNy0cjln+gRm3o5
-	Z09CstCUYxpA5W75tJb4=; b=AvHBHolHeIZXBXzAZYxQxuqUy/Efbzo45j8zway
-	3uL9bZnDXcjwoS37i3V8AV5CYgZu5kG/Lb9sqqQ29E/58P8JygY55kIR+IVqJSiH
-	v9An1g2tgAtml+DgKF4L+Rn2oqiC6CFsFL5L7dzyfwsz2qszAlD8v1mBru91eoic
-	hDHQpvl1sXzhjLxyqCVu8xYnGcYs8fBPHY420xbXRihOtUPWjYnyukVRgf6X9IZm
-	urjTNfYzulOrioRwijeyiLoemmIL1nMZ8zFipx2ZTAChTUk/vGvN092iJbJ+Tp/8
-	+UcuuHVeU8DeEkV9HNZlwMtgxnX/gSpSVGnUIHGJRxq5DYg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42uxa40bnk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 22:52:34 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 11 Nov 2024 22:52:32 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 11 Nov 2024 22:52:32 -0800
-Received: from localhost.localdomain (unknown [10.111.135.16])
-	by maili.marvell.com (Postfix) with ESMTP id C385A3F707E;
-	Mon, 11 Nov 2024 22:52:31 -0800 (PST)
-From: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
-To: <lpieralisi@kernel.org>, <thomas.petazzoni@bootlin.com>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <salee@marvell.com>, <dingwei@marvell.com>,
-        Jenishkumar Maheshbhai Patel
-	<jpatel2@marvell.com>
-Subject: [PATCH 1/1] dt-bindings: pci: armada: add system controller and MAC reset bit
-Date: Mon, 11 Nov 2024 22:52:29 -0800
-Message-ID: <20241112065229.753466-1-jpatel2@marvell.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1731394471; c=relaxed/simple;
+	bh=kbIwNgbZcymYi2G1mqtY5ucLa1jgluUy+KbsLIwS+GY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HJxze2W5R1VUsyvwK/KzYH+ZSGBMR+cNjAO7Yo2vKrVp3RGWV3CkD0CDlmbg6DsIOnTAN1J6epDfj2dbHmyXgWEcDYvNeoB1iEP/PFZY7mFHIA+KtjmsKYkIO63Q7X94uLtMHlJ6iXz9MTQ3yGffW/VCtwudYuXO9yjb/eOEGVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VBgRBsF+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6341FC4CECD;
+	Tue, 12 Nov 2024 06:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731394470;
+	bh=kbIwNgbZcymYi2G1mqtY5ucLa1jgluUy+KbsLIwS+GY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VBgRBsF+PIoYLpwmI/yzmsWztx4o2CvLGhbxmdiTrxscyF2iK8o8ELZxtX4dJgXsv
+	 4N7s86Gi063qakb7dtnVaEyadiGMRhusokoQsCtWNOiI1Ae2Fq6jgvZlJ78WSdJvAX
+	 UNzPBjptr9ST2lY2ameLR8sodC/wrONl9MbQwj6k9k3mGsGLQbt8WppDHA2yjK173K
+	 l/x8XNDPAxVIFSJehcnradRXhDQA1e+KHRYDvhLOprNDwtDoXHCBehh9nljqzplUQC
+	 Kw9Hwddf+YH3lzOIn0x3Mf8q07di+7lbkLLqNo++Ehp7ukjvVlGM1CSUZzPWigLvLY
+	 opKJGCOQmzZZw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	kernel test robot <lkp@intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86: kvm: add back X86_LOCAL_APIC dependency
+Date: Tue, 12 Nov 2024 07:53:59 +0100
+Message-Id: <20241112065415.3974321-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,44 +66,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: j28e8jnXFbR5Ng1p4bFkYk-VW7Y62nLd
-X-Proofpoint-ORIG-GUID: j28e8jnXFbR5Ng1p4bFkYk-VW7Y62nLd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Adding Armada 7K/8K controller bindings optional system-controller
-and mac-reset-bit-mask needed for linkdown procedure.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
+Enabling KVM now causes a build failure on x86-32 if X86_LOCAL_APIC
+is disabled:
+
+arch/x86/kvm/svm/svm.c: In function 'svm_emergency_disable_virtualization_cpu':
+arch/x86/kvm/svm/svm.c:597:9: error: 'kvm_rebooting' undeclared (first use in this function); did you mean 'kvm_irq_routing'?
+  597 |         kvm_rebooting = true;
+      |         ^~~~~~~~~~~~~
+      |         kvm_irq_routing
+arch/x86/kvm/svm/svm.c:597:9: note: each undeclared identifier is reported only once for each function it appears in
+make[6]: *** [scripts/Makefile.build:221: arch/x86/kvm/svm/svm.o] Error 1
+In file included from include/linux/rculist.h:11,
+                 from include/linux/hashtable.h:14,
+                 from arch/x86/kvm/svm/avic.c:18:
+arch/x86/kvm/svm/avic.c: In function 'avic_pi_update_irte':
+arch/x86/kvm/svm/avic.c:909:38: error: 'struct kvm' has no member named 'irq_routing'
+  909 |         irq_rt = srcu_dereference(kvm->irq_routing, &kvm->irq_srcu);
+      |                                      ^~
+include/linux/rcupdate.h:538:17: note: in definition of macro '__rcu_dereference_check'
+  538 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
+
+Move the dependency to the same place as before.
+
+Fixes: ea4290d77bda ("KVM: x86: leave kvm.ko out of the build if no vendor module is requested")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410060426.e9Xsnkvi-lkp@intel.com/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- Documentation/devicetree/bindings/pci/pci-armada8k.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+Question: is there actually any point in keeping KVM support for 32-bit host
+processors? From what I can tell, the only 32-bit CPUs that support this are
+the rare Atom E6xx and Z5xx models and the even older Yonah/Sossaman "Core
+Duo", everything else is presumably better off just running a 64-bit kernel
+even for 32-bit guests?
+---
+ arch/x86/kvm/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/pci-armada8k.txt b/Documentation/devicetree/bindings/pci/pci-armada8k.txt
-index ff25a134befa..a177b971a9a0 100644
---- a/Documentation/devicetree/bindings/pci/pci-armada8k.txt
-+++ b/Documentation/devicetree/bindings/pci/pci-armada8k.txt
-@@ -24,6 +24,10 @@ Optional properties:
- - phy-names: names of the PHYs corresponding to the number of lanes.
- 	Must be "cp0-pcie0-x4-lane0-phy", "cp0-pcie0-x4-lane1-phy" for
- 	2 PHYs.
-+- marvell,system-controller: address of system controller needed
-+	in order to reset MAC used by link-down handle
-+- marvell,mac-reset-bit-mask: MAC reset bit of system controller
-+	needed in order to reset MAC used by link-down handle
+diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+index 1ed1e4f5d51c..849a03f3ba95 100644
+--- a/arch/x86/kvm/Kconfig
++++ b/arch/x86/kvm/Kconfig
+@@ -19,7 +19,6 @@ if VIRTUALIZATION
  
- Example:
- 
-@@ -45,4 +49,6 @@ Example:
- 		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 		num-lanes = <1>;
- 		clocks = <&cpm_syscon0 1 13>;
-+		marvell,system-controller = <&CP11X_LABEL(syscon0)>;
-+		marvell,mac-reset-bit-mask = <CP11X_PCIEx_MAC_RESET_BIT_MASK(1)>;
- 	};
+ config KVM_X86
+ 	def_tristate KVM if KVM_INTEL || KVM_AMD
+-	depends on X86_LOCAL_APIC
+ 	select KVM_COMMON
+ 	select KVM_GENERIC_MMU_NOTIFIER
+ 	select KVM_ELIDE_TLB_FLUSH_IF_YOUNG
+@@ -93,6 +92,7 @@ config KVM_SW_PROTECTED_VM
+ config KVM_INTEL
+ 	tristate "KVM for Intel (and compatible) processors support"
+ 	depends on KVM && IA32_FEAT_CTL
++	depends on X86_LOCAL_APIC
+ 	help
+ 	  Provides support for KVM on processors equipped with Intel's VT
+ 	  extensions, a.k.a. Virtual Machine Extensions (VMX).
+@@ -130,6 +130,7 @@ config X86_SGX_KVM
+ config KVM_AMD
+ 	tristate "KVM for AMD processors support"
+ 	depends on KVM && (CPU_SUP_AMD || CPU_SUP_HYGON)
++	depends on X86_LOCAL_APIC
+ 	help
+ 	  Provides support for KVM on AMD processors equipped with the AMD-V
+ 	  (SVM) extensions.
 -- 
-2.25.1
+2.39.5
 
 
