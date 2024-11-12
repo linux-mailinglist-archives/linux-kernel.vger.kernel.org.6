@@ -1,118 +1,221 @@
-Return-Path: <linux-kernel+bounces-405744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4697F9C5790
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:20:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CC379C573D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:04:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27FE3B3C054
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:29:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05A10B60BB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5CB215015;
-	Tue, 12 Nov 2024 11:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D706219CA8;
+	Tue, 12 Nov 2024 11:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BYX4f8hM"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X+XgE4BB"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077A12144A8
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD1E21500E
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731410242; cv=none; b=OsJsTJNjTyylIJJ6noiLbyC6MKvECsdV+qrxhIMvj3TJ/NNKMcBOkZL7YDaTqV3qakmtJbzSj9PWs7Uo5C4WopkBcRurAUWv0GKhLrrJAwGKYjuN4UPBJYvy8LWcYUqWn22FbhIOZdmj3hBylVsvyKBMDbBqk7oKFDuDslAfTys=
+	t=1731410270; cv=none; b=U+ARErToi5tI9DO6wVIqj5/YMVepQ05Nl4UBmNyzt+JnueYAIcmyYwd7TDewJGsB97M2W22V3XU0HvfhvHH2pAHUIutQjRFvcD9kgpLKm1i9CdxyDNo0h0B8hmAd79zA39r167ePPmjBS3zfwRHbiv09UXXOX1/RLourZS+3nhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731410242; c=relaxed/simple;
-	bh=FwJ5gUGil3S1ZD9QkCtfYxlbkSFPT8MXJtUT0r746v0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iPeEAR2iOtcqoVtJXZTkH9pdYPHzghPeW+fRleYro6NPNhxfAmAljC/zukrP9fNnk20nZwzdLqzYu5BwiaJmtSMXsGsnwzq/305ewtKV8C2sevRSFZmvo575OTf2Cun80lhw/VmG/SgFQjlCyU7qCdmQWQKGaAm8xy57VsC3us8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BYX4f8hM; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D0B41240008;
-	Tue, 12 Nov 2024 11:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731410238;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FwJ5gUGil3S1ZD9QkCtfYxlbkSFPT8MXJtUT0r746v0=;
-	b=BYX4f8hMOjqs0FgwJhp0tbgDc2sYzMuYwpphFRaehkwiJtgjEbaWFODsGDykHwxXa2UxZy
-	UzgwEYY9Ko7E/mQZBfYO8C70Jlju4yjhK+9z2qg/qBaSQRmRRrKwMRPGrwHBX/TRjwIUwS
-	nUWOZwhGhRp7INlbNNMjeXW/Jf0Y5+E8Pzn4r3qG8/5D+oOZ3fGyZ5bXjOav/kw550sDO8
-	N9S7e6v574je9xdTW3cIwRUAfVRYYTTnOqxcOUUVeLvELmpGK0P/la4NO1YNpnAlqZW7aV
-	bgMh5k23QIByVZ9Na4ffdzeeoTLWXqVI36ftXrEZEAI6lPrBUgBAQs2nnnEvPA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>,  Krzysztof Kozlowski
- <krzk@kernel.org>,  Richard Weinberger <richard@nod.at>,  Vignesh
- Raghavendra <vigneshr@ti.com>,  linux-kernel@vger.kernel.org,
-  linux-mtd@lists.infradead.org,  Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>,  Herve Codina <herve.codina@bootlin.com>,
-  Christopher Cordahi <christophercordahi@nanometrics.ca>
-Subject: Re: [PATCH v2 2/6] memory: ti-aemif: Export aemif_set_cs_timings()
-In-Reply-To: <07cd5d53-ce99-4ada-a7f1-53795eff5c42@bootlin.com> (Bastien
-	Curutchet's message of "Tue, 12 Nov 2024 10:13:38 +0100")
-References: <20241106085507.76425-1-bastien.curutchet@bootlin.com>
-	<20241106085507.76425-3-bastien.curutchet@bootlin.com>
-	<87ttcdr2ym.fsf@bootlin.com>
-	<07cd5d53-ce99-4ada-a7f1-53795eff5c42@bootlin.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Tue, 12 Nov 2024 12:17:17 +0100
-Message-ID: <87y11osnuq.fsf@bootlin.com>
+	s=arc-20240116; t=1731410270; c=relaxed/simple;
+	bh=pX3ZsBEZbDSOWWHgNQFnA+7zErsVd56w2urC4gYof0k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hxBOiNx+7AUvUAQ1ljNzhHIh549kcMWGHLENBoIWSEwrRWB7fiRvOBoKVUJVKhSygYf+A4sB1bjrHxgVrJ21V6xqcqgb9dO8GfRYCWfyh1g/kItVD1OHFzNXZCQEaYM7cKhGfpmbfvzCMyAm/z7035zIUXkQaXQHnk20/PQqYiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X+XgE4BB; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso48924635e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:17:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731410267; x=1732015067; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dWJ4Wcr1DDF3OrOWnRqKL1IZGwMD1FboXeJ/D4aEFDY=;
+        b=X+XgE4BBdIkeP6q12SpSAfL6MbJnpQPSh4EuqoJ2vQvOywfLYISd0SoCTYr3V9XwIQ
+         7DvlWWt7txbdZGfMS8nu6eVQmLXrVTaoBeH/qvwizvcLNE/fswmBCXoggaqDwjRdZmON
+         Hg42O2SxeDm66YNO1rpO72PqxVIUahMk1oMoc8QN423sblreUEzasMuWyJOvo/9gQUij
+         +hGaKPuoNBBUOfDjcfLmyonOyPkqwhdYr3LgmgPBjZfHH1/W5eXgU6GN9htb1OyuCI/O
+         W0iRjgHbNvRyi7ua6zT0uL3s6BkT/j9S1/TI7GrGvYcVjgd5eR75oMYyEsKnbbpNTls/
+         Z8lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731410267; x=1732015067;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dWJ4Wcr1DDF3OrOWnRqKL1IZGwMD1FboXeJ/D4aEFDY=;
+        b=NqG5NJdQb0ZnekzwWCyq4eSdyMPy4AsT74vz2y9rwXHVqxv74oP1ozpO9+mP4nF4Lq
+         3nU+UxQYT0pRzDPOPlmI0o+8YhEXojRasA6DmnvR35Zd6ptrdJg8GOxRUQyMRQl65Yoc
+         NhEaVRuGDQnXxLGA7psT9HXDItpRxsRIHNvtwod96lpji4AM41JlJwyjcCmPEUhz8yDc
+         1og+VrAG/1OWsrrt10GEQuymahqlYeJ7+KNu/RGrG8eiTl5rw0/BKfg5e8tfbGJv36es
+         k891Tm7vlQphxAo1ZlIrfmS6r/jXMn+ANAf+UbtJv7J+GHeyRGA9nIKuLfoUVL/wVm3I
+         uf9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWef6jEZoBppWOuPY1AtyiBAoO7YIK4r9Y8LWI0GsPIWom34LkzfXmMZmoaaOsZWIdIfcmJG6Omwv+CuOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt8rYxuOa7PAHX5AWbXk6TKOu03GNgqhK9thqco2GjMNQAFW7Z
+	kQpBSJJFIzVKwztmGkwb75nfOQboEJLslRw7p/9EdGxIjRsxTcCgJTxdYsd+MzQ=
+X-Google-Smtp-Source: AGHT+IHdyVKh8yiDtEYPmTAcLgcs8M/v+k6vo/2n4BcU3ilUc3c9bFTnx7DhiZaKwNyqsYQKeh+Q7A==
+X-Received: by 2002:a05:600c:35d5:b0:431:5f8c:ccbd with SMTP id 5b1f17b1804b1-432b74fda62mr141755165e9.4.1731410267558;
+        Tue, 12 Nov 2024 03:17:47 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b053ff08sm209961455e9.10.2024.11.12.03.17.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 03:17:47 -0800 (PST)
+Message-ID: <f6e661da-6a8f-4555-881e-264e8518f50c@linaro.org>
+Date: Tue, 12 Nov 2024 11:17:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] media: venus: hfi_parser: avoid OOB access beyond
+ payload word count
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
+ <20241105-venus_oob-v1-2-8d4feedfe2bb@quicinc.com>
+ <474d3c62-5747-45b9-b5c3-253607b0c17a@linaro.org>
+ <9098b8ef-76e0-f976-2f4e-1c6370caf59e@quicinc.com>
+ <f53a359a-cffe-4c3a-9f83-9114d666bf04@linaro.org>
+ <c9783a99-724a-cdf0-7e76-7cbf2c77d63f@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <c9783a99-724a-cdf0-7e76-7cbf2c77d63f@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Bastien,
+On 12/11/2024 08:05, Vikash Garodia wrote:
+> You did not printed the last iteration without the proposed fix. In the last
+> iteration (Myword 1), it would access the data beyond allocated size of somebuf.
+> So we can see how the fix protects from OOB situation.
 
-On 12/11/2024 at 10:13:38 +01, Bastien Curutchet <bastien.curutchet@bootlin=
-.com> wrote:
+Right but the loop _can't_ be correct. What's the point in fixing an OOB 
+in a loop that doesn't work ?
 
-> Hi Miqu=C3=A8l,
->
-> On 11/11/24 8:21 PM, Miquel Raynal wrote:
->> Hello Bastien,
->> On 06/11/2024 at 09:55:03 +01, Bastien Curutchet
->> <bastien.curutchet@bootlin.com> wrote:
->>=20
->>> Export the aemif_set_cs_timing() symbol so it can be used by other
->>> drivers
->>>
->>> Add a spinlock to protect the CS configuration register from concurrent
->>> accesses.
->> What concurrent accesses are you trying to protect yourself against?
->> I fail to see the use case, but TBH I haven't tried hard enough maybe.
->>=20
->
-> The register that handles the CS configuration belongs to the AEMIF
-> component but it will also be accessed by the AEMIF 'children' with the
-> aemif_set_cs_timing() function. So far, concurrent accesses shouldn't
-> occur because the AEMIF configures the CS timings only once and does so
-> before probing its 'children'; but I don't know how things can evolve in
-> the future.
+This is the loop:
 
-Okay, and I guess we can have more than one children, in this case
-indeed we need serialization.
+#define BUF_SIZE 0x20  // BUF_SIZE doesn't really matter
 
->> Also, what justifies the use of a spin-lock in this case?
->>=20
->
-> TBH, I always struggle to choose between mutexes and spin-locks. I chose
-> spin-lock because it only protects one memory-mapped register so I think
-> it doesn't worth going to sleep when waiting for the lock.
+char somebuf[BUF_SIZE];
+u32 *word = somebuf[0];
+u32 words = ARRAY_SIZE(somebuf);
 
-In general, I believe in a path that is not a hot-path and if you can
-sleep, you should go for a mutex.
+while (words > 1) {
+     data = word + 1;  // this
+     word++;           // and this
+     words--;
+}
 
-Cheers,
-Miqu=C3=A8l
+On the first loop
+word = somebuf[0];
+data = somebuf[3];
+
+On the second loop
+word = somebuf[3]; // the same value as *data in the previous loop
+
+and that's just broken because on the second loop *word == *data in the 
+first loop !
+
+That's what my program showed you
+
+word 4 == 0x03020100 data=0x07060504
+
+// word == data from previous loop
+word 3 == 0x07060504 data=0x0b0a0908
+
+// word == data from previous loop
+word 2 == 0x0b0a0908 data=0x0f0e0d0c
+
+The step size, the number of bytes this loop increments is fundamentally 
+wrong because
+
+a) Its a fixed size [1]
+b) *word in loop(n+1) == *data in loop(n)
+
+Which cannot ever parse more than one data item - in effect never loop - 
+in one go.
+
+> For the functionality part, packet from firmware would come as <prop type>
+> followed by <payload for that prop> i.e
+> *word = HFI_PROPERTY_PARAM_CODEC_SUPPORTED
+> *data = payload --> hence here data is pointed to next u32 to point and parse
+> payload for HFI_PROPERTY_PARAM_CODEC_SUPPORTED.
+> likewise for other properties in the same packet
+
+[1]
+
+But we've established that word increments by one word.
+We wouldn't fix this loop by just making it into
+
+while (words > 1) {
+     data = word + 1;
+     word = data + 1;
+     words -= 2;
+}
+
+Because the consumers of the data have different step sizes, different 
+number of bytes they consume for the structs they cast.
+
+=>
+
+case HFI_PROPERTY_PARAM_CODEC_SUPPORTED:
+	parse_codecs(core, data);
+	// consumes sizeof(struct hfi_codec_supported)
+	struct hfi_codec_supported {
+		u32 dec_codecs;
+		u32 enc_codecs;
+	};
+
+
+case HFI_PROPERTY_PARAM_MAX_SESSIONS_SUPPORTED:
+	parse_max_sessions(core, data);
+	// consumes sizeof(struct hfi_max_sessions_supported)
+	struct hfi_max_sessions_supported {
+		u32 max_sessions;
+	};
+
+case HFI_PROPERTY_PARAM_CODEC_MASK_SUPPORTED:
+	parse_codecs_mask(&codecs, &domain, data);
+	// consumes sizeof(struct hfi_codec_mask_supported)
+	struct hfi_codec_mask_supported {
+         	u32 codecs;
+	        u32 video_domains;
+	};
+
+case HFI_PROPERTY_PARAM_UNCOMPRESSED_FORMAT_SUPPORTED:
+	parse_raw_formats(core, codecs, domain, data);
+	// consumes sizeof(struct hfi_uncompressed_format_supported)
+	struct hfi_uncompressed_format_supported {
+		u32 buffer_type;
+		u32 format_entries;
+		struct hfi_uncompressed_plane_info plane_info;
+	};
+
+case HFI_PROPERTY_PARAM_CAPABILITY_SUPPORTED:
+	parse_caps(core, codecs, domain, data);
+	
+	struct hfi_capabilities {
+		u32 num_capabilities;
+		struct hfi_capability data[];
+	};
+
+	where
+	hfi_platform.h:#define MAX_CAP_ENTRIES		32
+
+I'll stop there.
+
+This routine needs a rewrite.
+
+---
+bod
 
