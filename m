@@ -1,112 +1,156 @@
-Return-Path: <linux-kernel+bounces-405123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B4B9C4D37
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:20:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2FF9C4D38
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:20:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AD4C283FCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52A04284D74
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034B0209666;
-	Tue, 12 Nov 2024 03:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68844207A14;
+	Tue, 12 Nov 2024 03:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svfoViJA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="q2E4YcB6"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1C120821D;
-	Tue, 12 Nov 2024 03:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214BA205AD6
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731381573; cv=none; b=HAiOPB+KEd7qSwDb7hxjtXggcEXuScqTar0W8ejA/uvYxPATKMtrG6y9Hulg+kW+YsCut3c5Qr8uz9hxhWHHj27xDks848Lys5Vknoi82Wjl9BArmTYqBkv/UwYGHr5rk4H/nR48XsyJ4m6x5OnIDxiRs5nr9q27MxeuBkAI7Oc=
+	t=1731381603; cv=none; b=D5rmLzfWdkw7VREZuBVHPcY3PYJJjyXwqCVHmsduQpFzEiBoDe/rEj2B0r9y5v/nqcNT5DiNCFrrJi+jJ9ZRI/6/DkhWtapkYfnBgIMKEA+DT6HnOXqK7J1LS5j00DX203Y+duHsMkmYddxMvurm4gTgokgmxSL6BOXmP6/2WO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731381573; c=relaxed/simple;
-	bh=9yuWzaclr6QDV5gbBphLoP+z39ogdab4mruCBMVTZoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eJCg+5+cvAiGeach+sHhQMt54MkNYlu0/gRy+4wfckpKHJkozV/bSzq5fm0ruGydPWT/liHSR1dCUanO6+vN81O7Q6ol9dW0NzEOFR2Pu0kn0T4kIC4FmlkvNAv2BUQAK5hLrzbpJMc2DUfsiNj1BxtrTYiwhpWFOFaBEJdVyTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svfoViJA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E5C4C4CED0;
-	Tue, 12 Nov 2024 03:19:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731381572;
-	bh=9yuWzaclr6QDV5gbBphLoP+z39ogdab4mruCBMVTZoY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=svfoViJAm7VCYxZSyXieIfhm5nwTGGwgDpuUxb/Dz7qENNCCk+JZXD3L21tvANUcg
-	 zENeVCLguuLoYKMSZAKtSpbE2jeZCKOxqIB0JxVZldP45Z3ktdRJZQ8r0BlxInE5C0
-	 KDgdUytLqpDJIzJcbYlKmox+ZH4rPaiRWEg1IxSsCYieiExffA0gbDzhx+uWKWul+O
-	 tBKC5UIzocEDC4JBgxSHIqqlbtf7gz/VsEI4Zz14Xa5ct59hQrc97pMECeFNKgkPNl
-	 z619O7nFH25aCVMWicLPyYnNq4AufIiDswFwwu5kh3ysMK3lmgMrp5pEd68LNHDQPQ
-	 J+wsWvz3tsZmw==
-Date: Mon, 11 Nov 2024 19:19:31 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Lee Trager <lee@trager.us>
-Cc: Alexander Duyck <alexanderduyck@fb.com>, kernel-team@meta.com, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, Sanman Pradhan
- <sanmanpradhan@meta.com>, Al Viro <viro@zeniv.linux.org.uk>, Mohsin Bashir
- <mohsin.bashr@gmail.com>, Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 2/2] eth: fbnic: Add devlink dev flash
- support
-Message-ID: <20241111191931.284b1be4@kernel.org>
-In-Reply-To: <20241111043058.1251632-3-lee@trager.us>
-References: <20241111043058.1251632-1-lee@trager.us>
-	<20241111043058.1251632-3-lee@trager.us>
+	s=arc-20240116; t=1731381603; c=relaxed/simple;
+	bh=H5MhTUzaqEvc7R5sYo+bar5EY0cg4c7zl0PllNDdkpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bjf+ZxtQs61947APmasMqDv7LJcHtFuj5vA3qoUscnCh4cSomIAHEqJrfTIHjxxVXRbvfyjrXS+LxVMcjo1l2+U7dCSDYK4eE64xkfVOAg0gM6wfAFpIULg7GupmznNXeZpxcktt8lttJEaG7FzJ4gZtlPhvd3MPFB8NgGQNsLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=q2E4YcB6; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731381593; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=vAs1rV77DkI2iKDI266dN+In2P7tHRg+caJMvkuicwo=;
+	b=q2E4YcB6AFPKouqq5MU4YBdfnl+C1YwFciMChKeabH3YbejT0QaawoIiCGUZltU67GvLZX6x0PDUVWunqGGLbSbO+KUYod7FMgfwpGB4B75PXBmM7giJ8cILhIx4mVrisYHJJO9F8llFuZ3+CDr0bhyA8E1ut4ivzGjYVg1hNHA=
+Received: from 30.74.144.120(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WJFQ5jo_1731381590 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 12 Nov 2024 11:19:51 +0800
+Message-ID: <87df7d30-6ef1-49d4-9a94-ce78e0ffc5af@linux.alibaba.com>
+Date: Tue, 12 Nov 2024 11:19:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Support large folios for tmpfs
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: willy@infradead.org, wangkefeng.wang@huawei.com, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, ioworker0@gmail.com, da.gomez@samsung.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1731038280.git.baolin.wang@linux.alibaba.com>
+ <3d49fbf8-866f-485b-b7fa-a89bbfb3cd7c@redhat.com>
+ <fabfc6d6-6693-40ca-b2c6-769882b19178@linux.alibaba.com>
+ <d9b23bde-f3c7-4991-8cbe-3915bb9279d0@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <d9b23bde-f3c7-4991-8cbe-3915bb9279d0@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Please drop Al Viro from the CC (!?) and CC the maintainer of the pldm
-library (Jake).
 
-On Sun, 10 Nov 2024 20:28:42 -0800 Lee Trager wrote:
-> +/**
-> + * fbnic_send_package_data - Send record package data to firmware
-> + * @context: PLDM FW update structure
-> + * @data: pointer to the package data
-> + * @length: length of the package data
-> + *
-> + * Send a copy of the package data associated with the PLDM record matching
-> + * this device to the firmware.
-> + *
-> + * Return: zero on success
-> + *	    negative error code on failure
-> + */
 
-can we drop these kdocs please? In the bast case they just repeat 
-the function name ("send package data") 3 times, in the worst case they
-are misleading. This function sends absolutely nothing to the firmware.
+On 2024/11/12 03:47, David Hildenbrand wrote:
+> On 09.11.24 08:12, Baolin Wang wrote:
+>>
+>>
+>> On 2024/11/8 23:30, David Hildenbrand wrote:
+>>> On 08.11.24 05:12, Baolin Wang wrote:
+>>>> Traditionally, tmpfs only supported PMD-sized huge folios. However
+>>>> nowadays
+>>>> with other file systems supporting any sized large folios, and 
+>>>> extending
+>>>> anonymous to support mTHP, we should not restrict tmpfs to allocating
+>>>> only
+>>>> PMD-sized huge folios, making it more special. Instead, we should allow
+>>>> tmpfs can allocate any sized large folios.
+>>>>
+>>>> Considering that tmpfs already has the 'huge=' option to control the 
+>>>> huge
+>>>> folios allocation, we can extend the 'huge=' option to allow any sized
+>>>> huge
+>>>> folios. The semantics of the 'huge=' mount option are:
+>>>>
+>>>> huge=never: no any sized huge folios
+>>>> huge=always: any sized huge folios
+>>>> huge=within_size: like 'always' but respect the i_size
+>>>> huge=advise: like 'always' if requested with fadvise()/madvise()
+>>>>
+>>>> Note: for tmpfs mmap() faults, due to the lack of a write size hint,
+>>>> still
+>>>> allocate the PMD-sized huge folios if huge=always/within_size/advise
+>>>> is set.
+>>>
+>>> So, no fallback to smaller sizes for now in case we fail to allocate a
+>>> PMD one? Of course, this can be added later fairly easily.
+>>
+>> Right. I have no strong preference on this. If no one objects, I can add
+>> a fallback to smaller large folios if the PMD sized allocation fails in
+>> the next version.
+> 
+> I'm fine with a staged approach, to perform this change separately.
 
-> +static int fbnic_send_package_data(struct pldmfw *context, const u8 *data,
-> +				   u16 length)
-> +{
-> +	struct device *dev = context->dev;
-> +
-> +	/* Temp placeholder required by devlink */
+Sure.
 
-Do you mean that the pldm lib requires this callback to exist?
-If yes then make it not require it if it's not necessary?
+>>>> Moreover, the 'deny' and 'force' testing options controlled by
+>>>> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', still retain the
+>>>> same
+>>>> semantics. The 'deny' can disable any sized large folios for tmpfs, 
+>>>> while
+>>>> the 'force' can enable PMD sized large folios for tmpfs.
+>>>>
+>>>> Any comments and suggestions are appreciated. Thanks.
+>>>>
+>>>> Hi David,
+>>>> I did not add a new Kconfig option to control the default behavior of
+>>>> 'huge='
+>>>> in the current version. I have not changed the default behavior at this
+>>>> time, and let's see if there is a need for this.
+>>>
+>>> Likely we want to change the default at some point so people might get a
+>>> benefit in more scenarios automatically. But I did not investigate how
+>>> /tmp is mapped as default by Fedora, for example.
+>>
+>> Personally, adding a cmdline to change the default value might be more
+>> useful than the Kconfig. Anyway, I still want to investigate if there is
+>> a real need.
+> 
+> Likely both will be reasonable to have.
+> 
+> FWIW, "systemctl cat tmp.mount" on a Fedora40 system tells me
+> "Options=mode=1777,strictatime,nosuid,nodev,size=50%%,nr_inodes=1m"
+> 
+> To be precise:
+> 
+> $ grep tmpfs /etc/mtab
+> vendorfw /usr/lib/firmware/vendor tmpfs rw,relatime,mode=755,inode64 0 0
+> devtmpfs /dev devtmpfs 
+> rw,nosuid,size=4096k,nr_inodes=4063361,mode=755,inode64 0 0
+> tmpfs /dev/shm tmpfs rw,nosuid,nodev,inode64 0 0
+> tmpfs /run tmpfs 
+> rw,nosuid,nodev,size=6511156k,nr_inodes=819200,mode=755,inode64 0 0
+> tmpfs /tmp tmpfs 
+> rw,nosuid,nodev,size=16277892k,nr_inodes=1048576,inode64 0 0
+> tmpfs /run/user/100813 tmpfs 
+> rw,nosuid,nodev,relatime,size=3255576k,nr_inodes=813894,mode=700,uid=100813,gid=100813,inode64 0 0
+> 
+> 
+> Having a way to change the default will likely be extremely helpful.
 
-> +	dev_info(dev,
-> +		 "Sending %u bytes of PLDM record package data to firmware\n",
-> +		 length);
-
-Please drop all the dev_*() prints. If something is important enough to
-be reported it should be reported via the devlink info channel, to the
-user. Not to system logs.
-
-> +	return 0;
-> +}
--- 
-pw-bot: cr
+Thanks. I'd like to add a command line option like 
+'transparent_hugepage_shmem' to control the default value.
 
