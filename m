@@ -1,105 +1,161 @@
-Return-Path: <linux-kernel+bounces-405645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E979C55BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:09:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E1A9C5529
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:01:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 577A3B285A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:49:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EF4B284102
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD06221FB8;
-	Tue, 12 Nov 2024 10:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7477622ABFE;
+	Tue, 12 Nov 2024 10:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/PJQnOr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n5NsVYoc"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B75221FAD;
-	Tue, 12 Nov 2024 10:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5AA22ABC5
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731407842; cv=none; b=MrD+tzO7VPpMm7WABNfurMV4CBXXLIseX3incU23B0xW3XWA2mnfALHUqNPbBxOWuzZW7nIe8knUkj9INkrHxRrD0njUZWsB8Mek2W1HuLi6L2G47vaELeKk4WZ11nBYgLSWvb6kMecFsyiTFXbxVY/Y1s3y9ipdjmQ+RMnghGk=
+	t=1731407901; cv=none; b=HYiJl1UWmsOBPbJsWUbiRHjTO+RpwqtztAput+IJ21RSKAEiKaSN07zZI6p8lEOvKj/K8nKyv9vQ7uB+lIgSPoHz+n2pSWD0sEOZ4ZSTZM0bMjdoZ9wD3mTfzOtiYoFrsvWnDB56ugjxl5WKKw5zoxmlIP8/fI0OryxnFe34fkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731407842; c=relaxed/simple;
-	bh=Pj3o9DOYNSuguyP0WWPqdOHvptaSxLOHOGwqMG/NIJA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=elOVIjgZ4Ykz/uQcFN+4H29eqWXMPQjFGRkRi9mWa67JPDQDQRwjQY2HXn2tYkrO1iivRlxd0gcembnQq/kcp+N/ZWKru/bnySwnRTGIkF5Ze0f1heCa9BfBNxw3Z7rsD2ls4yj38Vp/n8py4vkk/BRU2pN1XqwcLzIldzmblw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/PJQnOr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CE7CC4CED8;
-	Tue, 12 Nov 2024 10:37:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731407842;
-	bh=Pj3o9DOYNSuguyP0WWPqdOHvptaSxLOHOGwqMG/NIJA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=B/PJQnOrc6HewsoiJg+mxKl7pfoMkiEB1S9BJuRg0ZaAY/aTArmqxMSI9f2eb2J4+
-	 VDeWeDHIQQAVMWr9JZFAGuGM1S9QoaepEbq9+yG5gPUQ+YqyHLYnHhSL3WZp5aFbCb
-	 cRybI34pnIb/j2xjQW2fpeVifhFEq84biwwoVAfqwUuVICb5BQ8emtC6cXQWVQWCxT
-	 O31g/JYZ+/7oSHfQAWoWC3IvLHNeS9AaKge+QNbHknbBRa6rFES4E5Otlm0tUs9aRX
-	 u0uqDP9i5dwQcQE+dFAorwidM43UDvnTjEieBcN+GQ/7V/OWDFtVj6R2O7iceMq2mZ
-	 omzDh1zHtZGYQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Mikhail Rudenko <mike.rudenko@gmail.com>,
+	s=arc-20240116; t=1731407901; c=relaxed/simple;
+	bh=z2j2I0Qm2rkQ7y5e1vIEopVvmmPdhbqBCsJHGjoqZU4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=T242Z+M2wydj0gEImTIWX2qdtV69roWJ0ASpfL7JguniP3uh5uo/Jwt5WnUWdjb1Bc8Ls0vkcAe7hLMkhVuxxSpLmma3+m1pdfMXtj7R1BRFhL7DnsQDAzEiuU55m9E4yCYdyn6Im3pUgvGXdeDNnOfSdPo0c1HOK337rDaxUyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n5NsVYoc; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so48180075e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:38:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731407898; x=1732012698; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UdrH76534AdnOkkz/8MUO16ELoaDJWuaGxP7kufZ9lk=;
+        b=n5NsVYocWspY1swY0WKdTR+DcOqkCww2+opBnjKha0bJqO1po7lZTo6SrGsPOnNRyA
+         Lf3oBfcNDVv0w7BQdP9xKIyKzNPtpbdJ1HqA8RQNex/5/PyOI++AjKB/2RDVLoMxANh8
+         q8c8ZXkhrOfAuakp/qgAI2d0x0qyJIfRt1nweGEZk1PmYBTETA/aNPEI3KE54Wm/SOTx
+         rSH6OX+iQP3TR6cenQYcLpnlW6kHhfp0RTjWDwJF6rqlVpTmO92S50Il6tc9120y2Crf
+         /QNWGdXXFstdn9IKNK7hjL5skswUdAQwR0NHhDMB2nOS7GR+0mwgw6WDH1zl9ahnenQb
+         TMDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731407898; x=1732012698;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UdrH76534AdnOkkz/8MUO16ELoaDJWuaGxP7kufZ9lk=;
+        b=LvuWoat4DmU6ESu+KUBID2/zlCvj8VSzB+2Y5w7fxPTVP3zsXCbq9uBJm9U7lHq1VI
+         hdJ3XN5cXVLkUEM0qdgFbyvCaUYsNzCpxqiLUE3wzeYejCIoJK87KmKuzKd+ceVlb5Wm
+         PAkNyG29hX9FsPYN0sC/t0bZd1VUHWxVcZ8XmEZO1Ul/UV60dZYgztTGjhKvPVMbVYJe
+         rjTxGxlN30OtOarOjnzQG+7ZGb+aGHuhArC6wkHShLG4PyuYW/cGSYgfsI2SuSeUzjF8
+         LofWxieF2Z78KFvkfEeTGed0pFkbtUqMygxHTiSesJpS3MxXaqMHQCVlm8BcVO4DITf9
+         CPUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNzwGIzDEadwuZq8dMVT6L4VfbdvGBUpPcndgi62kSH638n3CkKQI3RuDylrAO2eKtfTnxrOueg2NQ/V8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc8cDQXLcOWNL8XoxRlaiRlW/pAb8kDngeXBrTyaNUu8MdxRo7
+	QEFnbyfGg/LqEuMS4TrOfZAIUYck3kJ50wuV7idUPDYUcK+AgFmIDpgPLjDKB1U=
+X-Google-Smtp-Source: AGHT+IF1FS9ufu9o4Y4stQLYGJvoNNDm9mRT+SEMwJRqakkQKPd/4nKseuKIJE+lWn0kSfJLNtfHQw==
+X-Received: by 2002:a05:600c:3b22:b0:431:52da:9d67 with SMTP id 5b1f17b1804b1-432b74fdaf9mr140208015e9.3.1731407898314;
+        Tue, 12 Nov 2024 02:38:18 -0800 (PST)
+Received: from pop-os.. ([145.224.90.214])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432bbf436ffsm142270955e9.44.2024.11.12.02.38.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 02:38:17 -0800 (PST)
+From: James Clark <james.clark@linaro.org>
+To: suzuki.poulose@arm.com,
+	oliver.upton@linux.dev,
+	coresight@lists.linaro.org,
+	kvmarm@lists.linux.dev
+Cc: James Clark <james.clark@arm.com>,
+	James Clark <james.clark@linaro.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Shiqi Liu <shiqiliu@hust.edu.cn>,
+	Fuad Tabba <tabba@google.com>,
 	Mark Brown <broonie@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	lgirdwood@gmail.com
-Subject: [PATCH AUTOSEL 6.1 02/12] regulator: rk808: Add apply_bit for BUCK3 on RK809
-Date: Tue, 12 Nov 2024 05:37:04 -0500
-Message-ID: <20241112103718.1653723-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241112103718.1653723-1-sashal@kernel.org>
-References: <20241112103718.1653723-1-sashal@kernel.org>
+	Raghavendra Rao Ananta <rananta@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 06/12] KVM: arm64: Add flag for FEAT_TRF
+Date: Tue, 12 Nov 2024 10:37:05 +0000
+Message-Id: <20241112103717.589952-7-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241112103717.589952-1-james.clark@linaro.org>
+References: <20241112103717.589952-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.116
 Content-Transfer-Encoding: 8bit
 
-From: Mikhail Rudenko <mike.rudenko@gmail.com>
+From: James Clark <james.clark@arm.com>
 
-[ Upstream commit 5e53e4a66bc7430dd2d11c18a86410e3a38d2940 ]
+FEAT_TRF can control trace generation at different ELs so this will
+enable support of exclude/include guest rules when it's present without
+TRBE. With TRBE we'll have to continue to always disable guest trace.
 
-Currently, RK809's BUCK3 regulator is modelled in the driver as a
-configurable regulator with 0.5-2.4V voltage range. But the voltage
-setting is not actually applied, because when bit 6 of
-PMIC_POWER_CONFIG register is set to 0 (default), BUCK3 output voltage
-is determined by the external feedback resistor. Fix this, by setting
-bit 6 when voltage selection is set. Existing users which do not
-specify voltage constraints in their device trees will not be affected
-by this change, since no voltage setting is applied in those cases,
-and bit 6 is not enabled.
-
-Signed-off-by: Mikhail Rudenko <mike.rudenko@gmail.com>
-Link: https://patch.msgid.link/20241017-rk809-dcdc3-v1-1-e3c3de92f39c@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: James Clark <james.clark@arm.com>
+Signed-off-by: James Clark <james.clark@linaro.org>
 ---
- drivers/regulator/rk808-regulator.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/include/asm/kvm_host.h |  2 ++
+ arch/arm64/kvm/debug.c            | 14 ++++++++++----
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
-index 127dc2e2e6903..0763a5bbee2f5 100644
---- a/drivers/regulator/rk808-regulator.c
-+++ b/drivers/regulator/rk808-regulator.c
-@@ -906,6 +906,8 @@ static const struct regulator_desc rk809_reg[] = {
- 		.n_linear_ranges = ARRAY_SIZE(rk817_buck1_voltage_ranges),
- 		.vsel_reg = RK817_BUCK3_ON_VSEL_REG,
- 		.vsel_mask = RK817_BUCK_VSEL_MASK,
-+		.apply_reg = RK817_POWER_CONFIG,
-+		.apply_bit = RK817_BUCK3_FB_RES_INTER,
- 		.enable_reg = RK817_POWER_EN_REG(0),
- 		.enable_mask = ENABLE_MASK(RK817_ID_DCDC3),
- 		.enable_val = ENABLE_MASK(RK817_ID_DCDC3),
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 61ff34e1ffef..5dfc3f4f74b2 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -939,6 +939,8 @@ struct kvm_vcpu_arch {
+ #define HOST_FEAT_HAS_SPE	__kvm_single_flag(feats, BIT(0))
+ /* Save TRBE context if active  */
+ #define HOST_FEAT_HAS_TRBE	__kvm_single_flag(feats, BIT(1))
++/* CPU has Feat_TRF */
++#define HOST_FEAT_HAS_TRF	__kvm_single_flag(feats, BIT(2))
+ 
+ /* Pointer to the vcpu's SVE FFR for sve_{save,load}_state() */
+ #define vcpu_sve_pffr(vcpu) (kern_hyp_va((vcpu)->arch.sve_state) +	\
+diff --git a/arch/arm64/kvm/debug.c b/arch/arm64/kvm/debug.c
+index cf5558806687..fb41ef5d9db9 100644
+--- a/arch/arm64/kvm/debug.c
++++ b/arch/arm64/kvm/debug.c
+@@ -89,10 +89,16 @@ void kvm_arm_init_debug(void)
+ 	    !(read_sysreg_s(SYS_PMBIDR_EL1) & BIT(PMBIDR_EL1_P_SHIFT)))
+ 		host_data_set_flag(HOST_FEAT_HAS_SPE);
+ 
+-	/* Check if we have TRBE implemented and available at the host */
+-	if (cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_TraceBuffer_SHIFT) &&
+-	    !(read_sysreg_s(SYS_TRBIDR_EL1) & TRBIDR_EL1_P))
+-		host_data_set_flag(HOST_FEAT_HAS_TRBE);
++	if (cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_TraceFilt_SHIFT)) {
++		host_data_set_flag(HOST_FEAT_HAS_TRF);
++		/*
++		 * The architecture mandates FEAT_TRF with TRBE, so only need to check
++		 * for TRBE if TRF exists.
++		 */
++		if (cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_TraceBuffer_SHIFT) &&
++		    !(read_sysreg_s(SYS_TRBIDR_EL1) & TRBIDR_EL1_P))
++			host_data_set_flag(HOST_FEAT_HAS_TRBE);
++	}
+ }
+ 
+ /**
 -- 
-2.43.0
+2.34.1
 
 
