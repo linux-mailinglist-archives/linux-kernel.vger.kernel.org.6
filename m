@@ -1,122 +1,113 @@
-Return-Path: <linux-kernel+bounces-405768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC509C56C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:40:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C029C56C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:39:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F782826E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4D261F211CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86602309AB;
-	Tue, 12 Nov 2024 11:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A822309A8;
+	Tue, 12 Nov 2024 11:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y5ZQj0XX"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vknOjlpo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDE223099C;
-	Tue, 12 Nov 2024 11:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653FF23098C;
+	Tue, 12 Nov 2024 11:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731411597; cv=none; b=tgVJ53cw9sXnOUlnoaP2xUelDbZh6GsAfO2WmQoE+ChADw1lNXuVUZkoAj2O/IUbSfUkTu3r0gVbO0If9Yf15DiPPeO98aoh5iJGEy0+I/aDbeL0n/wKSK6XmRPdeqS4aEKuTNfB77a28F1s0m6X2T3MEWtS0mKQUI1KImpPBaQ=
+	t=1731411575; cv=none; b=SicAf4fd6Kbx8vKS5ZzFHvSi0ovq7PB3oW/r/mNJ+INLAi8fT7/pmq7Eo/1RJo4ij765nG7OOQhMblGGTO2A9xQuQpWv11OYdryNV7iDeXLQK49Z8wMMdYxWvZHjKD0AQ2LwAihsH2xj+bBNZm7Z85d7Yw134ciqIXbeMAcnak8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731411597; c=relaxed/simple;
-	bh=l29njM0VLLj2zjM1LLVkaHz48P0kMR7ou0C+/31HP8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VBzt8SG931iRqLTf9u4Za25kOS3lm4RLYbap/u74YExaPn03+n8kO5L1jvxHJOYlQU6fWJ+4x+48ybs8t8RUxn66o8cqaJ+q+he9dcTTVCRWFch/2DwrMSeaZYlObnzLbeJRqwL3z7DDfEFHli277H8TqF4qwiYsor7c0ZspRiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y5ZQj0XX; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cd76c513cso46445275ad.3;
-        Tue, 12 Nov 2024 03:39:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731411595; x=1732016395; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zbpR32eMdhLZ9/UcHkTauMhtF31kw+5SFXtcGereRxE=;
-        b=Y5ZQj0XXKl353eMM7b74g898jP9AIuG80YRnLjqYjXveelielalQpjNvQi+waNEHDW
-         YJLUxQUsRxqS4u5xT0SJYuPTNKr4NeTyH/6jMV9DJmJIhE3YFZnChzaPzvVBLXC3+Ryy
-         viPaZF9cAfcPUpnx+oirLaKd6+lQbVZ8zwP+lbsv7IHf/1UBl4Yg7npJx4y/L3TlYPLP
-         yTxs3q1sMLp65LnXSqeCwJzueGfc6DfvwUrAQv+0d84+uGKrjiN2xuL0AgUn4kgpvhRv
-         tk8QuAb9eOLbGm5uSI/MImPz+e+n5OGY3atjzoqTfizCSqdssxqHc07dQk8yDbcZnSnM
-         egZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731411595; x=1732016395;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zbpR32eMdhLZ9/UcHkTauMhtF31kw+5SFXtcGereRxE=;
-        b=XT4oaXbDay+WAvVqLbID2Vnfohrz+oCrp3jbXbSCNhkyaTtj+/oW2JUcFegH50uykk
-         KM030ZX4IAnTE9/jy4BeUkj2HeEd86nZlB+CIu2693g4ixe8G04WjtOnaxHTL0pLf6Ui
-         soipcyXm+iCYasxbmU8VoUmeJw7rV4usMjA3DTgjxzPtdeNBgOaNROFycJ5omeOpcV8A
-         0nx8NrDBG57jHU7ebgxa85jt2b/t/h5im/u2hGUN3oNXozcXat3FGR/uEnDXJCoAtTvb
-         0Ghy9E8E6dl1olZ22E2tiBwl0u1Hj1dONcC/tmQqVtIRnn47tLU3YVg9Lhd/6NLGUA6q
-         gSFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVf+glwMd6ioyAoIj/t0T23UQpUHRdJ/FdPbiwPArMB/cYysIvM/5Ywh4jn/8/ZsNlQPrWoTpNq1PtthwSL@vger.kernel.org, AJvYcCX1dcPH2bIZt4Is5pWbXp6YY+88EAcPHBYTokyDK/GOuQBhrXoxzt4tBCyhhXzywkZFlRDwcGEnAVQs6o8P@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHfLBTAfXC66V+yVf3UhhBwlIMhPI/CabOH8306hEadEfvpEqg
-	CaN06dL8BKeUUNvzeAP1z1qjy5DJWi1yPNBZtO3FqEO9bUDrs2LS
-X-Google-Smtp-Source: AGHT+IEJUWnViOQdsutAsvxmLVA9eieU6zhVNujDU00xOJ4oGnlIL4fPfE4e0fjknXVIEC2gDlvCBQ==
-X-Received: by 2002:a17:902:ec92:b0:20c:9da6:65af with SMTP id d9443c01a7336-211aba5f33cmr21703735ad.57.1731411595049;
-        Tue, 12 Nov 2024 03:39:55 -0800 (PST)
-Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-21177e87537sm90857905ad.270.2024.11.12.03.39.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 03:39:54 -0800 (PST)
-From: Mohammed Anees <pvmohammedanees2003@gmail.com>
-To: jmoyer@redhat.com,
-	bcrl@kvack.org,
-	brauner@kernel.org,
-	jack@suse.cz,
-	viro@zeniv.linux.org.uk,
-	willy@infradead.org
-Cc: linux-aio@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pvmohammedanees2003@gmail.com
-Subject: [PATCH] fs:aio: Remove TODO comment suggesting hash or array usage in  io_cancel()
-Date: Tue, 12 Nov 2024 17:08:34 +0530
-Message-ID: <20241112113906.15825-1-pvmohammedanees2003@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731411575; c=relaxed/simple;
+	bh=LG7RZyrQQCMMftiyBGThQS+gGDQCRxNRxi5jzF0rtMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=brWwCOwjCsznjZNN8YVHfqjz2OwY0fjMUb+i5tlRk/6ggcuH+fOLpj6CicYXSatqe1s8Yh3p+VY0wp2AMq2t62hV1RMaIp8UEWs7GsaDm8vLBbHO2WqIxQq/usCRGpBRnHmbDHX7VhyAc47O2jO/usl8DfNODsOPi2XuvsLO5Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vknOjlpo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6627CC4CECD;
+	Tue, 12 Nov 2024 11:39:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731411575;
+	bh=LG7RZyrQQCMMftiyBGThQS+gGDQCRxNRxi5jzF0rtMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vknOjlpo6yb1Vp6IvyGWB9fU+5x7MozaZPEx5An53FahQpTAnNO5K4ounXAy8oTiB
+	 TMyhmIa3vhWYr8Y70CpG7AqAsJ6Muua1r2mtSVbGPeuPR0Yb5JXd60v2VL3pSHRStQ
+	 uWb9VIFmeHvu95V7xCVSAH9p70B6Adjzvh7A37xU=
+Date: Tue, 12 Nov 2024 12:39:32 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Brian Norris <briannorris@chromium.org>,
+	Julius Werner <jwerner@chromium.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Gabriel Somlo <somlo@cmu.edu>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Jay Buddhabhatti <jay.buddhabhatti@amd.com>,
+	Ronak Jain <ronak.jain@amd.com>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Praveen Teja Kundanala <praveen.teja.kundanala@amd.com>,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	imx@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, qemu-devel@nongnu.org,
+	linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH] firmware: Switch back to struct platform_driver::remove()
+Message-ID: <2024111223-gizzard-scabby-eb98@gregkh>
+References: <36974feb6035201d53384557259ec72fe311053b.1731397962.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <36974feb6035201d53384557259ec72fe311053b.1731397962.git.u.kleine-koenig@baylibre.com>
 
-The comment suggests a hash or array approach to
-store the active requests. Currently it iterates
-through all the active requests and when found
-deletes the requested request, in the linked list.
-However io_cancel() isnâ€™t a frequently used operation,
-and optimizing it wouldnâ€™t bring a substantial benefit
-to real users and the increased complexity of maintaining
-a hashtable for this would be significant and will slow
-down other operation. Therefore remove this TODO 
-to avoid people spending time improving this.
+On Tue, Nov 12, 2024 at 09:35:20AM +0100, Uwe Kleine-König wrote:
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers.
+> 
+> Convert all platform drivers below drivers/firmware to use .remove(),
+> with the eventual goal to drop struct platform_driver::remove_new(). As
+> .remove() and .remove_new() have the same prototypes, conversion is done
+> by just changing the structure member name in the driver initializer.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+> ---
+> Hello,
+> 
+> I did a single patch for all of drivers/firmware. While I usually prefer
+> to do one logical change per patch, this seems to be overengineering
+> here as the individual changes are really trivial and shouldn't be much
+> in the way for stable backports.
+> 
+> There is no dedicated maintainer for drivers/firmware, maybe Sudeep as
+> biggest committer there can take it? Or would it be sensible to split
+> this patch?
 
-Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
----
- fs/aio.c | 1 -
- 1 file changed, 1 deletion(-)
+I'll just take it now, thanks!
 
-diff --git a/fs/aio.c b/fs/aio.c
-index e8920178b50f..72e3970f4225 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -2191,7 +2191,6 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
- 		return -EINVAL;
- 
- 	spin_lock_irq(&ctx->ctx_lock);
--	/* TODO: use a hash or array, this sucks. */
- 	list_for_each_entry(kiocb, &ctx->active_reqs, ki_list) {
- 		if (kiocb->ki_res.obj == obj) {
- 			ret = kiocb->ki_cancel(&kiocb->rw);
--- 
-2.47.0
-
+greg k-h
 
