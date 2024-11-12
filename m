@@ -1,109 +1,144 @@
-Return-Path: <linux-kernel+bounces-405419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2BE29C5114
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:46:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5B29C5119
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ABE51F22104
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F46A283934
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4148920DD6E;
-	Tue, 12 Nov 2024 08:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB8A20DD6B;
+	Tue, 12 Nov 2024 08:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnSudM2S"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MnZSFvts"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052DE20B215;
-	Tue, 12 Nov 2024 08:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8E820DD46;
+	Tue, 12 Nov 2024 08:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731401111; cv=none; b=KKEZWR0dTUyy6QD/Rf5Vmpq0RIhJxY2KApkCWpLLzsl+XFST6M7xwj/H8VJK5AA7NOH6SnWP8LflqWfMe0d8wHbPizYfx2mAUWAsc4bZ8yqgCS0riUq2T62XTUxkdo24RX/uTXNEAZdxLu9eHZWPj9Bb0j9LALpzZnXvlYdFsTQ=
+	t=1731401151; cv=none; b=cRBaijq4B0wsj8Fv+k7J97/ukZmsKjH+uWjTLloX1N8vyFFdIOxltVxrrhqpyl6fedFYhtRHWiupD9BFxSnUBd0zILtqgKod5xD2YUReyUeiyY89VaQWs3uO3N3GCflc6GUaoVDN2hpTFEA8jdUq1Kzg5cSs1ssEWwxpwnrK/n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731401111; c=relaxed/simple;
-	bh=+BnEF8LUv/eqNV86xexN4WRo2U7oK8QyC02iBSGF8m8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=HlaxHTbWBtUUtY4XTtmqBtGauP8+nz2vtYUap5KzoJLUD5LPB3me12l3JS9eycb7URbEntnxj3YE0WLSKF+9U45c1cErI7q9/1j6Im7Tfx0pHzoGkaUgx0jI+lA/Jee31GoTMqJYzrW5Ok/8lKnlZ6VTQ5bA/JIqPwN81dExdKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fnSudM2S; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43159c9f617so42299315e9.2;
-        Tue, 12 Nov 2024 00:45:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731401108; x=1732005908; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HtIWt92r3jJeIGhTfSwguSlgt6yJwVVrHzPz/W00DbM=;
-        b=fnSudM2SgLkfJMfuIKHrvX9AtcD/uA+OLT3ivdz7EC4C2Uq7OiNvEjnOYY2Pttk8GJ
-         +y1QiZ7m0pZEs1DIafNzTfp6iRHlIg9tD+F/l5dLLBFHvqUSvR9PtXSVxTU7r20g+eQ3
-         eja8cqJ94aRbBUaD+vtfWappIKcxKOqkwg1im0RB/OpUaksSw/AqDZNLrGSwI/+mHuTm
-         sPrQm+YPdUnCpKQJpESkiO3ByDfuLZCy9tqyLI0bQhVC8E8mFB03JxUQ5A4vHikECkbR
-         s4DBCGSjbTd+/5yUrQd8nWlYJ0I7Cn+3GhKaAAnGS2Fw6QbFehIB1+tfJzgQYs7mMqHP
-         +ACw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731401108; x=1732005908;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HtIWt92r3jJeIGhTfSwguSlgt6yJwVVrHzPz/W00DbM=;
-        b=M0P6Vh7/RRzTLU1ExbsBjpvJ/qXxqqJXja5gwv2g1pOOuKuVBqQ7GSEDUYkPf2TPyj
-         lit9373unpB4z3NS9X5WT3BphOiXlAAzio3nfu38Myh2ZqhiUu+w+dITV4a9Prc5hVzS
-         p/AYY8ApPe5Ak0MkOR4U3Uso58US+VtS6vFAw7GH0PoI9PLxkDgLXGozNRTaUrK76CzO
-         bzlFekIMn0fWpNsyzPeZJQwLzJx1K6qeTwYQ98KYWQiwjmWobf4laeb4ztq+XIjbJi1d
-         ebCiP/ZYcI6Guv55BA3cUENU/Q9Vx6UA99v1AF76hWxMXC13E3NFEQUaPdrsxor5a+3c
-         tHUA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/EELReIeh3dn6KBNjr7cY+v8F2+fH5SQZW9NdXmLJP12zKk+5/Of3UOZZ105h52BeOKboNE05y9kgj1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgaNh/RcwqS5qpc4Iw8wEc8qcFFywVMt+zOte/6LbjcQ56gaX6
-	bV8LTm2mfwNM2yPWQoLn1s8EmXsTxUvM/dfb6xdpIXNsol5tKsLu
-X-Google-Smtp-Source: AGHT+IHay0dm2ib+gJdXM+ynt2rX21Iht+AmEHc8l1PfRDsLi9ymes5sYG8R//0630JR2NVx5iq7dA==
-X-Received: by 2002:a05:600c:1909:b0:431:9a68:ec84 with SMTP id 5b1f17b1804b1-432b751827amr125079705e9.23.1731401108010;
-        Tue, 12 Nov 2024 00:45:08 -0800 (PST)
-Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432bbebed39sm133703895e9.19.2024.11.12.00.45.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 00:45:07 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alexander Usyskin <alexander.usyskin@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mei: vsc: Fix typo "maintstepping" -> "mainstepping"
-Date: Tue, 12 Nov 2024 08:45:07 +0000
-Message-Id: <20241112084507.452776-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1731401151; c=relaxed/simple;
+	bh=uDAGSQXAl4RyThWZstFF+HdLRWA2cofSdWvYJ4UhEHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Vn2zU/1VyHEt3EZGhLAwuCBaM6HdLy/aPnu/a5tfdiLeqDwAmYgredqG+1Zj8W0ydgyGWuTSmXqxR7ZlUR0rHyUnFoMf2MvVr8sjBf90BU/TBJsxL/LPJk0vSLaAkfGmdp6OFQ/Mm2YWjhv4xZcvju6myGZOpH/DvbwAj0X6K80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MnZSFvts; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC7imq2022161;
+	Tue, 12 Nov 2024 08:45:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	d3Kx6A+HxO0PSsyRbb6sZh4Cj7WhwVYvP1jvwzlaQPo=; b=MnZSFvtsrDSXZ7km
+	4Aa7TFCUupI/zlza8UxquoA3drr0ZKqL/vHvtLJwLKS1y7rr5KySAqAU3MUWKNtu
+	b6xa+GSPxCVYkO3jLrlRuSFNBKcQUuE+sSRLlgNKoZSCEbwAWxBE9JsmZaJzOosX
+	71GT+d1aiWyP2opmqoEVY8owRXqtdFd6A8TVAXDvONPIPTa3FtvAi2vKKyfgLqef
+	uM+mZL1WC3InQV0IG5PfdNhuhI+ajCPNgCkJpfFFeHtU/pOpW8ySWCSuwcYkCHjM
+	/Me7IyjzZFZtYJtJ8KxvU8KrOMoO5RtVdUWwAm+KtxCUjyzCXEHCUtUmlRSrFU5o
+	FQmnhw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uc60b9yn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 08:45:43 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC8jglg015679
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 08:45:42 GMT
+Received: from [10.151.37.100] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
+ 2024 00:45:38 -0800
+Message-ID: <9297bd0e-f972-41fb-82ab-a4428a64135b@quicinc.com>
+Date: Tue, 12 Nov 2024 14:15:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: remove unused data from gcc-ipq5424.c
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Arnd Bergmann
+	<arnd@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Varadarajan
+ Narayanan" <quic_varada@quicinc.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        Manikanta Mylavarapu
+	<quic_mmanikan@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241111103258.3336183-1-arnd@kernel.org>
+ <r2se3v53h7pnx527bgsswpkjhkqx2csrwlxpzai7l6lanbjjty@e4nljcvgors3>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <r2se3v53h7pnx527bgsswpkjhkqx2csrwlxpzai7l6lanbjjty@e4nljcvgors3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RGwt30XiaRFeSePHvkwoFPjpyTH2omO0
+X-Proofpoint-ORIG-GUID: RGwt30XiaRFeSePHvkwoFPjpyTH2omO0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ phishscore=0 suspectscore=0 impostorscore=0 mlxlogscore=926 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 clxscore=1011 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411120070
 
-There is a typo in a dev_err message. Fix it.
+Hi Arnd,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/misc/mei/vsc-fw-loader.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 11/11/2024 6:11 PM, Dmitry Baryshkov wrote:
+> On Mon, Nov 11, 2024 at 11:32:51AM +0100, Arnd Bergmann wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> The newly added driver causes a warnings when enabling -Wunused-const-variables:
+>>
+>> drivers/clk/qcom/gcc-ipq5424.c:1064:30: error: 'ftbl_gcc_q6_axi_clk_src' defined but not used [-Werror=unused-const-variable=]
+>>   1064 | static const struct freq_tbl ftbl_gcc_q6_axi_clk_src[] = {
+>>        |                              ^~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/clk/qcom/gcc-ipq5424.c:957:30: error: 'ftbl_gcc_qpic_clk_src' defined but not used [-Werror=unused-const-variable=]
+>>    957 | static const struct freq_tbl ftbl_gcc_qpic_clk_src[] = {
+>>        |                              ^~~~~~~~~~~~~~~~~~~~~
+>> drivers/clk/qcom/gcc-ipq5424.c:497:30: error: 'ftbl_gcc_qupv3_2x_core_clk_src' defined but not used [-Werror=unused-const-variable=]
+>>    497 | static const struct freq_tbl ftbl_gcc_qupv3_2x_core_clk_src[] = {
+>>        |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>
+>> In order to hopefully enable this warning by default in the future,
+>> remove the data for now. If it gets used in the future, it can
+>> trivially get added back.
+>>
+>> Fixes: 21b5d5a4a311 ("clk: qcom: add Global Clock controller (GCC) driver for IPQ5424 SoC")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>   drivers/clk/qcom/gcc-ipq5424.c | 18 ------------------
+>>   1 file changed, 18 deletions(-)
+>>
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
 
-diff --git a/drivers/misc/mei/vsc-fw-loader.c b/drivers/misc/mei/vsc-fw-loader.c
-index 0d7e17322869..308b090d81bb 100644
---- a/drivers/misc/mei/vsc-fw-loader.c
-+++ b/drivers/misc/mei/vsc-fw-loader.c
-@@ -334,7 +334,7 @@ static int vsc_identify_silicon(struct vsc_fw_loader *fw_loader)
- 	sub_version = FIELD_GET(VSC_SUBSTEPPING_VERSION_MASK, ack->payload[0]);
- 
- 	if (version != VSC_MAINSTEPPING_VERSION_A) {
--		dev_err(fw_loader->dev, "maintstepping mismatch expected %d got %d\n",
-+		dev_err(fw_loader->dev, "mainstepping mismatch expected %d got %d\n",
- 			VSC_MAINSTEPPING_VERSION_A, version);
- 		return -EINVAL;
- 	}
--- 
-2.39.5
+I already posted a patch here for fixing this [1]
 
+[1] 
+https://lore.kernel.org/lkml/xvkvhu3qvlsjnlkiinbm6wguttpozyvlyy5mbbjcpg7vnhrp7w@trjvrm2zpylk/
+
+Regards,
+  Sricharan
 
