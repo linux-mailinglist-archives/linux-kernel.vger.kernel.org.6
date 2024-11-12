@@ -1,244 +1,448 @@
-Return-Path: <linux-kernel+bounces-406624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB819C6186
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:33:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD5E9C6181
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:32:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6624A28617C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:33:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2B81F2328C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CFC21A4A2;
-	Tue, 12 Nov 2024 19:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B80E218955;
+	Tue, 12 Nov 2024 19:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPTzy/Ba"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgwlqQOP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0BA209F3C;
-	Tue, 12 Nov 2024 19:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5D0200CBB;
+	Tue, 12 Nov 2024 19:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439946; cv=none; b=G7qCR/Ne7ZlNXVx7boCWuoJ3uuvuid8+8lBYM6IC9OkAfxCagqv5QSTKs5RiZJhr2RlP3f/fIuvHStaLSM8JjOibI/0bnR50+HbAUvNxxN62ZNl4f6MILy5lCgodNcSDgponr+ZeKboWCMhBeglWEawDcYnaWz2o+f1ZtoYu1TU=
+	t=1731439937; cv=none; b=prPKGIK0h+cU1+4FjoJX7vQ4OA42vZ/IfI3ekQD305aVyZYC2o+12rWqxdbstrrzjRQ6sRIUzsf7zCMLI7yTd0cyJX6reMTVJJEHynlMLB7N5Hk1+RiiOtiD623exKWmJjqSFuduv0cC/NSo2iwqjBzsas9FL1YXy3+2hdSatJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439946; c=relaxed/simple;
-	bh=r55Z6MOTixhxRiVu8ctWrgWSs1vzPVZVei/U/gnK6Tw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oAfl32bGpO3bA8ysGlwz796by9amCmAZAoGDHHPyS/GrJwdlylnluD6z9LRzI4vIuef721ONyQaSetsfcaVAeUglc1Y7D7q5nHpDwCGfQM3nBysTJBDBl0heD1y4nQfesh9QCWyopcn3oywlbqjz9FXZNkdrOY/RdgA6d0GuHBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HPTzy/Ba; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2e2d09decso58070a91.1;
-        Tue, 12 Nov 2024 11:32:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731439944; x=1732044744; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CxZTbla4niJMH3tL1PwAlNcohgmLARZJ7Xx5m9G3Teg=;
-        b=HPTzy/BaLwTTTJXtA8qpJBmle2WtexUORF3cvGyzl3Li1/Jc2YfzqJAPYT4qusWoEt
-         LPhrWYprpNxeXBjghw6FluJF0+9myNHHsqmQLN5FfCBi9p56jfcw09sGAf7xRqdxA4sM
-         RIUqiJ0F4nXQ5B/hV7Cgq8ZOV2JutV+DxGSNPEJggtxoNqJmrQDDpddpss23TnhI8MJI
-         ykDMf4ujKfCPY6AwLNcEd2SuUSP1B2nki7qkcMOWz0zcQDWao65GesXTwhmFvQSHD1zi
-         afxkmg9c6RjMAEZTKn/rRxM79lHLzYUUpVrQFDniCW5OkmqWpfmPoddzdgUXLjp9mmzk
-         kD/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731439944; x=1732044744;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CxZTbla4niJMH3tL1PwAlNcohgmLARZJ7Xx5m9G3Teg=;
-        b=Oeix2LOplAOZcdyEakYkLWsgh50yFaNfrla8t4GDU80SgOwwwXFtzaUMNToVyU2XWN
-         vhG9ZlCPZ2Ez/KuRG/SrjK6TnM7IXSIuLYNnSisLzoWSK9EFBO2onB+n9W6LoqVcQMT1
-         qFJptEhSIfGxZxy8TcBQe3xM09elv96dM1xDe7HdD2jmIAU058f0RLZDIdbwKW7pKeGm
-         Ha9EHYTFjzyERgvkJX3jGLVOiRc2pek5+gNgL/57oK/hxWRNvSDjP/DShWuCiLcLV1Cd
-         mbaRGvvpmcCk/8CFamXlRjjB3igYviyLp1WBTOTVBm4lkltEPvd/X3ZfeTj1onJdHcsy
-         BfMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXcx3uVXHd4Ph+ejVWGNs8Njh4L7l8A9toRmQD81NxtO8ua2rt3qLmuQMABWkr9nfOR7HLUs5k/8KJReDn@vger.kernel.org, AJvYcCWTM8DZ/YrA/1N9e5SHJrfuD++8UpKJCI0+ba5yskle/kenYYvTC2v2TgEIp2veeoaz9kqmgVUjOkLD@vger.kernel.org, AJvYcCWk/ienGgm5JhgvHKBGQK+RwcY7W2wv4BY0i23fcGLzP2R6iPyLbeAcwEIXY3MKvz0iuHf/XRDS/S0BdF0qEuchzjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRwHG/nq3iHIrX0NwAB9KzEGpGK/f0UK2MBfRdswVjS5qL1/6i
-	uaNlZ9mkWW0Vyw4zM4uIKAzUF+c+NBdMpX2a5UrWK2zvWBu6yNSuZbUliWNn
-X-Google-Smtp-Source: AGHT+IFqiKSGyEZPQe+kbya/qd5AI1ZcrPrnAzkyYfedyIbzQJKFkHklrRh2pQta+hx6XbHOJn//FA==
-X-Received: by 2002:a17:90b:1a91:b0:2e2:c225:4729 with SMTP id 98e67ed59e1d1-2e9b0a3325emr27783101a91.8.1731439944497;
-        Tue, 12 Nov 2024 11:32:24 -0800 (PST)
-Received: from localhost.localdomain ([38.44.237.182])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd17d8sm10988958a91.41.2024.11.12.11.32.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 11:32:24 -0800 (PST)
-From: Denzeel Oliva <wachiturroxd150@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
+	s=arc-20240116; t=1731439937; c=relaxed/simple;
+	bh=PbvVdhdBEXjnTEmDivhqOlUPJQD+aBWqaUCqgKTAKoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LZQ+7vGe9kkqHJzQmMdhIC4zjAJpygnJAkPrWaPjZLTD8FH6G9CpXIl4VmItgnjEHMu66moHQTY/bp679CQ2+eixrsflg1IwAsaMoX1CtiZxCJc4YQOOE6J02UjnFruQv568iDqWxluMRt8IAVCfQ9+Qejl2MQrxod4JEV2eGHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgwlqQOP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0977CC4CECD;
+	Tue, 12 Nov 2024 19:32:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731439936;
+	bh=PbvVdhdBEXjnTEmDivhqOlUPJQD+aBWqaUCqgKTAKoI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=UgwlqQOPbUn+NMAkHsotVB19OCL95wPYWMYvDfvlFxc2tPpATu7Lx6s3OHygfWwok
+	 VgLUzsR6UWHz/b6k57R4Ucao/7TES+nDv0Hzr0FPopvo/ia/5MUQa8Fg7IZJoDHcF3
+	 /+eOyA+kjfu18uf6BaVL2YGtkQnsPRVR4f7Qvzbo0RrDY75UMyNP1M1HbIexQdCiXl
+	 tYttJC4bqO4iE3dH+aZFjPsNdDN+/CqfK+SfHobanSDxM/2DanpR9huDuJV75SUFpK
+	 CR1vMn7H+rWoWK0J+DDuuHugzYXM16PZRabKsBN1k9pF2rGY/yVxkaOPZxyMr02SKe
+	 OhSQ2xNqfrb6A==
+Date: Tue, 12 Nov 2024 13:32:14 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
+	cassel@kernel.org, quic_schintav@quicinc.com,
+	fabrice.gasnier@foss.st.com, linux-pci@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] arm64: dts: Add initial support for Samsung Galaxy S20 FE (r8s)
-Date: Tue, 12 Nov 2024 19:31:49 +0000
-Message-Id: <20241112193149.1262-3-wachiturroxd150@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241112193149.1262-1-wachiturroxd150@gmail.com>
-References: <20241112193149.1262-1-wachiturroxd150@gmail.com>
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] PCI: stm32: Add PCIe host support for STM32MP25
+Message-ID: <20241112193214.GA1852199@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112161925.999196-3-christian.bruel@foss.st.com>
 
-Add initial support for the Samsung Galaxy S20 FE (r8s/SM-G780F) device.
-Its launch was in 2020 and also based on the Exynos 990 SoC.
-It is only configured with 6GB of RAM, although storage options may differ.
+On Tue, Nov 12, 2024 at 05:19:22PM +0100, Christian Bruel wrote:
+> Add driver for the STM32MP25 SoC PCIe Gen2 controller based on the
+> DesignWare PCIe core.
+> Supports MSI via GICv2m, Single Virtual Channel, Single Function
 
-This device tree adds support for the following:
+Add blank lines between paragraphs.  Also applies to other patches in
+the series.
 
-- SimpleFB
-- 6GB RAM
-- Buttons
+> +config PCIE_STM32
+> +	tristate "STMicroelectronics STM32MP25 PCIe Controller (host mode)"
+> +	depends on ARCH_STM32 || COMPILE_TEST
+> +	depends on PCI_MSI
+> +	select PCIE_DW_HOST
+> +	help
+> +	  Enables support for the DesignWare core based PCIe host controller
+> +	  found in STM32MP25 SoC.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called pcie-stm32.
 
-Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
----
- arch/arm64/boot/dts/exynos/Makefile          |   1 +
- arch/arm64/boot/dts/exynos/exynos990-r8s.dts | 115 +++++++++++++++++++
- 2 files changed, 116 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos990-r8s.dts
+Move this so the drivers stay alphabetized.  There's already a
+"STMicroelectronics SPEAr PCIe controller" entry, and this should go
+right next to it.
 
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index 7a934499b..948a2c6cb 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -9,5 +9,6 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos850-e850-96.dtb		\
- 	exynos8895-dreamlte.dtb		\
- 	exynos990-c1s.dtb		\
-+	exynos990-r8s.dtb               \
- 	exynosautov9-sadk.dtb		\
- 	exynosautov920-sadk.dtb
-diff --git a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-new file mode 100644
-index 000000000..b21863bbb
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-@@ -0,0 +1,115 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+/*
-+ * Samsung Galaxy S20 FE (r8s/SM-G780F) device tree source
-+ *
-+ * Copyright (c) 2024, Denzeel Oliva <wachiturroxd150@gmail.com>
-+ */
-+
-+/dts-v1/;
-+#include "exynos990.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/ {
-+	model = "Samsung Galaxy S20 FE";
-+	compatible = "samsung,r8s", "samsung,exynos990";
-+
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		framebuffer0: framebuffer@f1000000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0 0xf1000000 0 (1080 * 2400 * 4)>;
-+			width = <1080>;
-+			height = <2400>;
-+			stride = <(1080 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x0 0x3ab00000>,
-+		      /* Memory hole */
-+		      <0x0 0xc1200000 0x0 0x1ee00000>,
-+		      /* Memory hole */
-+		      <0x0 0xe1900000 0x0 0x1e700000>,
-+		      /* Memory hole - last block */
-+		      <0x08 0x80000000 0x0 0x0c000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		cont_splash_mem: framebuffer@f1000000 {
-+			reg = <0 0xf1000000 0 0x13c6800>;
-+			no-map;
-+		};
-+
-+		abox_reserved: audio@f7fb0000 {
-+			reg = <0 0xf7fb0000 0 0x2a50000>;
-+			no-map;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&key_power &key_voldown &key_volup>;
-+		pinctrl-names = "default";
-+
-+		power-key {
-+			label = "Power";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
-+			wakeup-source;
-+		};
-+
-+		voldown-key {
-+			label = "Volume Down";
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		volup-key {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&pinctrl_alive {
-+	key_power: key-power-pins {
-+		samsung,pins = "gpa2-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_voldown: key-voldown-pins {
-+		samsung,pins = "gpa0-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_volup: key-volup-pins {
-+		samsung,pins = "gpa0-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+};
--- 
-2.34.1
+> +++ b/drivers/pci/controller/dwc/pcie-stm32.c
 
+> +static const struct of_device_id stm32_pcie_of_match[] = {
+> +	{ .compatible = "st,stm32mp25-pcie-rc" },
+> +	{},
+> +};
+
+Most drivers put this near the platform_driver struct that references
+it.
+
+> +static int stm32_pcie_set_max_payload(struct dw_pcie *pci, int mps)
+> +{
+> +	int ret;
+> +	struct device *dev = pci->dev;
+> +	struct pci_dev *pdev = to_pci_dev(dev);
+> +
+> +	if (mps != 128 && mps != 256) {
+> +		dev_err(dev, "Unexpected payload size %d\n", mps);
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = pcie_set_mps(pdev, mps);
+> +	if (ret)
+> +		dev_err(dev, "failed to set mps %d, error %d\n", mps, ret);
+
+MPS config is normally not device-specific, and it's somewhat fragile
+(see pci_configure_mps() and pcie_bus_config), so I kind of hate to
+see more users.  Maybe there's some hardware issue involved here?
+
+> +static int stm32_pcie_start_link(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +	u32 ret;
+> +
+> +	if (stm32_pcie->reset_gpio) {
+> +		/* Make sure PERST# is asserted. */
+> +		gpiod_set_value(stm32_pcie->reset_gpio, 1);
+> +
+> +		/* Deassert PERST# after 100us */
+> +		usleep_range(100, 200);
+
+If this is PCIE_T_PERST_CLK_US, use that.  If not, please add a
+relevant #define with a citation to the spec.
+
+> +		gpiod_set_value(stm32_pcie->reset_gpio, 0);
+> +	}
+> +
+> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+> +				 STM32MP25_PCIECR_LTSSM_EN,
+> +				 STM32MP25_PCIECR_LTSSM_EN);
+> +
+> +	/*
+> +	 * PCIe specification states that you should not issue any config
+> +	 * requests until 100ms after asserting reset, so we enforce that here
+
+I think it says 100ms after *deasserting* reset.  But if you use
+PCIE_T_RRS_READY_MS below, I don't think you even need this comment.
+
+> +	if (stm32_pcie->reset_gpio)
+> +		msleep(100);
+
+I think this is PCIE_T_RRS_READY_MS.
+
+> +static void stm32_pcie_stop_link(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +
+> +	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR, STM32MP25_PCIECR_LTSSM_EN, 0);
+
+With a half-dozen exceptions, this file fits nicely in 80 columns.
+Can you wrap this and the similar exceptions?  No need to break printf
+strings or the regmap strings that can't reasonably be wrapped.
+
+> +	/* Assert PERST# */
+> +	if (stm32_pcie->reset_gpio)
+> +		gpiod_set_value(stm32_pcie->reset_gpio, 1);
+
+Might be nice to include "perst" in the "reset_gpio" name to identify
+it more specifically.
+
+> +}
+> +
+> +static int stm32_pcie_suspend(struct device *dev)
+> +{
+> +	struct stm32_pcie *stm32_pcie = dev_get_drvdata(dev);
+> +
+> +	if (device_may_wakeup(dev) || device_wakeup_path(dev))
+> +		enable_irq_wake(stm32_pcie->wake_irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static int stm32_pcie_resume(struct device *dev)
+> +{
+> +	struct stm32_pcie *stm32_pcie = dev_get_drvdata(dev);
+> +
+> +	if (device_may_wakeup(dev) || device_wakeup_path(dev))
+> +		disable_irq_wake(stm32_pcie->wake_irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static int stm32_pcie_suspend_noirq(struct device *dev)
+> +{
+> +	struct stm32_pcie *stm32_pcie = dev_get_drvdata(dev);
+> +
+> +	stm32_pcie->link_is_up = dw_pcie_link_up(stm32_pcie->pci);
+> +
+> +	stm32_pcie_stop_link(stm32_pcie->pci);
+> +	clk_disable_unprepare(stm32_pcie->clk);
+> +
+> +	if (!device_may_wakeup(dev) && !device_wakeup_path(dev))
+> +		phy_exit(stm32_pcie->phy);
+> +
+> +	return pinctrl_pm_select_sleep_state(dev);
+> +}
+> +
+> +static int stm32_pcie_resume_noirq(struct device *dev)
+> +{
+> +	struct stm32_pcie *stm32_pcie = dev_get_drvdata(dev);
+> +	struct dw_pcie *pci = stm32_pcie->pci;
+> +	struct dw_pcie_rp *pp = &pci->pp;
+> +	int ret;
+> +
+> +	/* init_state was set in pinctrl_bind_pins() before probe */
+> +	if (!IS_ERR(dev->pins->init_state))
+> +		ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
+> +	else
+> +		ret = pinctrl_pm_select_default_state(dev);
+> +
+> +	if (ret) {
+> +		dev_err(dev, "Failed to activate pinctrl pm state: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	if (!device_may_wakeup(dev) && !device_wakeup_path(dev)) {
+> +		ret = phy_init(stm32_pcie->phy);
+> +		if (ret) {
+> +			pinctrl_pm_select_default_state(dev);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	ret = clk_prepare_enable(stm32_pcie->clk);
+> +	if (ret)
+> +		goto clk_err;
+> +
+> +	ret = stm32_pcie_host_init(pp);
+> +	if (ret)
+> +		goto host_err;
+> +
+> +	ret = dw_pcie_setup_rc(pp);
+> +	if (ret)
+> +		goto pcie_err;
+> +
+> +	if (stm32_pcie->link_is_up) {
+> +		ret = stm32_pcie_start_link(stm32_pcie->pci);
+> +		if (ret)
+> +			goto pcie_err;
+> +
+> +		/* Ignore errors, the link may come up later */
+> +		dw_pcie_wait_for_link(stm32_pcie->pci);
+> +	}
+> +
+> +	pinctrl_pm_select_default_state(dev);
+
+Interesting that pcie-stm32.c, pci-tegra.c, and pcie-tegra194.c are
+the only PCI controller drivers that use this.  I have no idea what
+this is; it just makes me wonder if these three are just special, or
+if others should be using it?
+
+> +static int stm32_add_pcie_port(struct stm32_pcie *stm32_pcie,
+> +			       struct platform_device *pdev)
+> +{
+> +	struct dw_pcie *pci = stm32_pcie->pci;
+> +	struct device *dev = pci->dev;
+> +	struct dw_pcie_rp *pp = &pci->pp;
+> +	int ret;
+> +
+> +	ret = phy_set_mode(stm32_pcie->phy, PHY_MODE_PCIE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = phy_init(stm32_pcie->phy);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+> +				 STM32MP25_PCIECR_TYPE_MASK, STM32MP25_PCIECR_RC);
+> +	if (ret)
+> +		goto phy_disable;
+> +
+> +	reset_control_assert(stm32_pcie->rst);
+> +	reset_control_deassert(stm32_pcie->rst);
+
+Is there any reset pulse width requirement here?
+
+> +	ret = clk_prepare_enable(stm32_pcie->clk);
+> +	if (ret) {
+> +		dev_err(dev, "Core clock enable failed %d\n", ret);
+> +		goto phy_disable;
+> +	}
+> +
+> +	pp->ops = &stm32_pcie_host_ops;
+> +	ret = dw_pcie_host_init(pp);
+> +	if (ret) {
+> +		dev_err(dev, "failed to initialize host: %d\n", ret);
+
+Consider making all the messages consistent in terms of sentence
+structure and capitalization.
+
+> +static int stm32_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct stm32_pcie *stm32_pcie;
+> +	struct dw_pcie *dw;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = pdev->dev.of_node;
+> +	int ret;
+> +
+> +	stm32_pcie = devm_kzalloc(dev, sizeof(*stm32_pcie), GFP_KERNEL);
+> +	if (!stm32_pcie)
+> +		return -ENOMEM;
+> +
+> +	dw = devm_kzalloc(dev, sizeof(*dw), GFP_KERNEL);
+> +	if (!dw)
+> +		return -ENOMEM;
+
+Add blank line.
+
+> +static struct platform_driver stm32_pcie_driver = {
+> +	.probe = stm32_pcie_probe,
+> +	.remove_new = stm32_pcie_remove,
+
+Use .remove instead of .remove_new; see 0edb555a65d1 ("platform: Make
+platform_driver::remove() return void").
+
+> +	.driver = {
+> +		.name = "stm32-pcie",
+> +		.of_match_table = stm32_pcie_of_match,
+> +		.pm		= &stm32_pcie_pm_ops,
+> +	},
+> +};
+> +
+> +static bool is_stm32_pcie_driver(struct device *dev)
+> +{
+> +	/* PCI bridge */
+> +	dev = get_device(dev);
+> +
+> +	/* Platform driver */
+> +	dev = get_device(dev->parent);
+> +
+> +	return (dev->driver == &stm32_pcie_driver.driver);
+
+Ugh.  Some MPS/MRRS magic going on here, evidently related to the STM
+integration of DWC IP?
+
+> +static bool apply_mrrs_quirk(struct pci_dev *root_port)
+> +{
+> +	struct dw_pcie_rp *pp;
+> +	struct dw_pcie *dw_pci;
+> +	struct stm32_pcie *stm32_pcie;
+> +
+> +	if (WARN_ON(!root_port) || !is_stm32_pcie_driver(root_port->dev.parent))
+> +		return false;
+> +
+> +	pp = root_port->bus->sysdata;
+> +	dw_pci = to_dw_pcie_from_pp(pp);
+> +	stm32_pcie = to_stm32_pcie(dw_pci);
+> +
+> +	if (!stm32_pcie->limit_downstream_mrrs)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +static void quirk_stm32_pcie_limit_mrrs(struct pci_dev *pci)
+> +{
+> +	struct pci_dev *root_port;
+> +	struct pci_bus *bus = pci->bus;
+> +	int readrq;
+> +	int mps;
+> +
+> +	if (pci_is_root_bus(bus))
+> +		return;
+> +
+> +	root_port = pcie_find_root_port(pci);
+> +
+> +	if (!apply_mrrs_quirk(root_port))
+> +		return;
+> +
+> +	mps = pcie_get_mps(root_port);
+> +
+> +	/*
+> +	 * STM32 PCI controller has a h/w performance limitation on the AXI DDR requests.
+> +	 * Limit the maximum read request size to 256B on all downstream devices.
+
+I guess this is some kind of platform erratum, since there's no way
+for us to discover a limit on supported MRRS values?
+
+> +	readrq = pcie_get_readrq(pci);
+> +	if (readrq > 256) {
+> +		int mrrs = min(mps, 256);
+> +
+> +		pcie_set_readrq(pci, mrrs);
+> +
+> +		pci_info(pci, "Max Read Rq set to %4d (was %4d)\n", mrrs, readrq);
+> +	}
+> +}
+> +
+> +DECLARE_PCI_FIXUP_HEADER(PCI_ANY_ID, PCI_ANY_ID,
+> +			 quirk_stm32_pcie_limit_mrrs);
+> +
+> +static int stm32_dma_limit(struct pci_dev *pdev, void *data)
+> +{
+> +	dev_dbg(&pdev->dev, "set bus_dma_limit");
+> +
+> +	pdev->dev.bus_dma_limit = DMA_BIT_MASK(32);
+
+This is quite unusual and deserves some comment about why we need
+it.
+
+> +	return 0;
+> +}
+> +
+> +static void quirk_stm32_dma_mask(struct pci_dev *pci)
+> +{
+> +	struct pci_dev *root_port;
+> +
+> +	root_port = pcie_find_root_port(pci);
+> +
+> +	if (root_port && is_stm32_pcie_driver(root_port->dev.parent))
+> +		pci_walk_bus(pci->bus, stm32_dma_limit, NULL);
+> +}
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_SYNOPSYS, 0x0550, quirk_stm32_dma_mask);
+
+I guess this applies to [16c3:0550] devices and everything below them?
+It looks like these must be Root Ports?  And they identify as
+PCI_VENDOR_ID_SYNOPSYS instead of PCI_VENDOR_ID_STMICRO (104a)?
+
+Could be added at https://admin.pci-ids.ucw.cz/read/PC/16c3/ if you
+want lspci to name them correctly.
+
+> +++ b/drivers/pci/controller/dwc/pcie-stm32.h
+
+> +#define STM32MP25_PCIECR_EP		0
+
+Ideally would go in the patch that uses it.
+
+> +#define SYSCFG_PCIEPMEMSICR		0x6004
+> +#define SYSCFG_PCIEAERRCMSICR		0x6008
+> +#define SYSCFG_PCIESR1			0x6100
+> +#define SYSCFG_PCIESR2			0x6104
+> +
+> +#define PCIE_CAP_MAX_PAYLOAD_SIZE(x)	((x) << 5)
+> +#define PCIE_CAP_MAX_READ_REQ_SIZE(x)	((x) << 12)
+
+These are all unused, drop them until you need them.
 
