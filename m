@@ -1,139 +1,119 @@
-Return-Path: <linux-kernel+bounces-406562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE9EC9C60D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:52:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE78F9C60D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9399D283F8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:52:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A65281F238DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1F3218954;
-	Tue, 12 Nov 2024 18:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8DC21833C;
+	Tue, 12 Nov 2024 18:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axeVZoYn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="k5bLdzc4"
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6168217455;
-	Tue, 12 Nov 2024 18:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E942178EE;
+	Tue, 12 Nov 2024 18:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731437532; cv=none; b=n270ioK9e9kRYJBAGBQgZJgjuyqQzmH69TSCiLwk0yZ28rzYQ1muIYVH6rhQA2R1UuEyUEIr+s9uaYKmLwQPgLyCrV9RDsNDYuhCiTgDf0HuQNZc3I2Im8MAUA5OQQt/WSNN6eOFW2/785gVGl9bFWSQfrUDuZT298HS/qnvcnA=
+	t=1731437581; cv=none; b=D0hCDkygQ5too9/g8x2lnmRn/0N18NUy5kfIIA+gft+fXUrT1XK4Oums3tZYh12UAt/rlbdpQJk7elXnHldE7b+IPgD+I7thO4DPOR3fAVXtAj7QfPc3G7D2pI5RfD5K7Ox2dh2MTHcbVcE1qIR7ZxajX65C4q+g1X8P7JQVYrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731437532; c=relaxed/simple;
-	bh=lKpYDs3gx8HV/ktP6SJhRTmHZUBnTT2faH7Jw5atD6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p7n6RDL+Q6MQiLYmNm2KCj3cGWs0PxOmoHapVuHYPQ+vTmtSNhrZTXWL1Q9FubPNhRblFsQ1SPZTnSpe5hnKs+TZ08VXzUa6hUF7crAWh/XKFM4rzilJq/KRYlkRKcVCkuzhk3GKfO7wInezyCqv3njX4m+db/uVDR+bo7ru2gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axeVZoYn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE55C4CECD;
-	Tue, 12 Nov 2024 18:52:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731437532;
-	bh=lKpYDs3gx8HV/ktP6SJhRTmHZUBnTT2faH7Jw5atD6I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=axeVZoYnVhXVzTtc/qwb+dFMqZ92LqT9qo0W+++qcjEzaXdJcnzJ7WHvrGhqKtNbM
-	 Dd5FmIihyXANhHN8tZ7uAnuuG6JoHWc+J4+kz0wzGOzvUIinbnOkVbkzl+VZnLjujo
-	 RkUsr1mfwsgFNvVc+2ZG8bADzn5mR0qDQrg9XY6YTTyX3JJO8fF4u/a0SBQnNWDsco
-	 WFSKQzX2aAgbtNgMqM+uU8AkK8SNlaXqw0/4hOVSvBvXsbNmDY0HDRt7aSVJkBNxMj
-	 9bv5oFeGMPx10+8Rao+jJxColh096D/2Dek9NQ/rDlFebm+T0uOWj+y12qfyi5vPU1
-	 PHhwhAf0vWVOw==
-Date: Tue, 12 Nov 2024 08:52:11 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hillf Danton <hdanton@sina.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Marco Elver <elver@google.com>, Zefan Li <lizefan.x@bytedance.com>,
-	tglx@linutronix.de
-Subject: Re: [PATCH v2 1/2] kernfs: Make it possible to use RCU for
- kernfs_node::name lookup.
-Message-ID: <ZzOj2z4g7nzWnCBb@slm.duckdns.org>
-References: <20241112155713.269214-1-bigeasy@linutronix.de>
- <20241112155713.269214-2-bigeasy@linutronix.de>
+	s=arc-20240116; t=1731437581; c=relaxed/simple;
+	bh=soKdLg6m2StKZPAIkHLlrKFJ6LJ8jdKERb4khRLnf5Q=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mjn2igTDatPFDlZCl5yg8pQAyhDllyIK4c+N0eOGI4dkJpgDw8I6wztxGuAbzHWihHa4RbEUTFMq8mYfAEfRSZWX/tyzM7GkDfk8Atoo+T5OSvqmyQ4filPNDvjTUoFdNyxNwRz186LDB4zMS7VViZSBN2clb1gR0QrHHIYQsOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=k5bLdzc4; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1731437580; x=1762973580;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=5HqiESkiyPRctv1Z5UNmLRjLfERKPs9Ag5PX7DOU980=;
+  b=k5bLdzc4LMvV7dq/Z6uyBDE/3nopwlWSOgbO+jd6f5aO7X1rYbf1u/ca
+   slWyDu7gYac0xEKJq1cOcwy/Mv4RBUVAb9m2KJbMoyDrq21GqX2ArT6Y0
+   7kOnZ4F3WEcu8XYlGxjlk+jQcj4xFqHXj/d1bDrvr0EK3oPuzFnH1GheJ
+   k=;
+X-IronPort-AV: E=Sophos;i="6.12,148,1728950400"; 
+   d="scan'208";a="439046312"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.124.125.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 18:52:59 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.17.79:12017]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.38.250:2525] with esmtp (Farcaster)
+ id d25e43a4-f818-4195-acb7-15156c42b891; Tue, 12 Nov 2024 18:52:58 +0000 (UTC)
+X-Farcaster-Flow-ID: d25e43a4-f818-4195-acb7-15156c42b891
+Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 12 Nov 2024 18:52:57 +0000
+Received: from dev-dsk-nsaenz-1b-189b39ae.eu-west-1.amazon.com (10.13.235.138)
+ by EX19D004EUC001.ant.amazon.com (10.252.51.190) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 12 Nov 2024 18:52:53 +0000
+From: Nicolas Saenz Julienne <nsaenz@amazon.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Matt Fleming
+	<matt@codeblueprint.co.uk>, <linux-efi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <stanspas@amazon.de>,
+	<nh-open-source@amazon.com>, Nicolas Saenz Julienne <nsaenz@amazon.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH v2 2/2] x86/efi: Apply EFI Memory Attributes after kexec
+Date: Tue, 12 Nov 2024 18:52:17 +0000
+Message-ID: <20241112185217.48792-2-nsaenz@amazon.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20241112185217.48792-1-nsaenz@amazon.com>
+References: <20241112185217.48792-1-nsaenz@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112155713.269214-2-bigeasy@linutronix.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D039UWB003.ant.amazon.com (10.13.138.93) To
+ EX19D004EUC001.ant.amazon.com (10.252.51.190)
 
-Hello,
+Kexec bypasses EFI's switch to virtual mode. In exchange, it has its own
+routine, kexec_enter_virtual_mode(), which replays the mappings made by
+the original kernel. Unfortunately, that function fails to reinstate
+EFI's memory attributes, which would've otherwise been set after
+entering virtual mode. Remediate this by calling
+efi_runtime_update_mappings() within kexec's routine.
 
-On Tue, Nov 12, 2024 at 04:52:38PM +0100, Sebastian Andrzej Siewior wrote:
-...
-> KERNFS_ROOT_SAME_PARENT is added to signal that the parent never
+Cc: stable@vger.kernel.org
+Fixes: 18141e89a76c ("x86/efi: Add support for EFI_MEMORY_ATTRIBUTES_TABLE")
+Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
 
-Maybe KERNFS_ROOT_INVARIANT_PARENT captures it better?
+---
 
-...
-> @@ -195,13 +191,47 @@ static int kernfs_path_from_node_locked(struct kernfs_node *kn_to,
->   */
->  int kernfs_name(struct kernfs_node *kn, char *buf, size_t buflen)
->  {
-> +	struct kernfs_root *root;
->  
-> +	guard(read_lock_irqsave)(&kernfs_rename_lock);
-> +	if (kn) {
-> +		root = kernfs_root(kn);
-> +		if (WARN_ON_ONCE(root->flags & KERNFS_ROOT_SAME_PARENT))
-> +			kn = NULL;
+Notes:
+- Tested with QEMU/OVMF.
 
-Hmm... does kn need to be set to NULL here?
+ arch/x86/platform/efi/efi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +	}
-> +
-> +	if (!kn)
-> +		return strscpy(buf, "(null)", buflen);
-> +
-> +	return strscpy(buf, kn->parent ? kn->name : "/", buflen);
-...
-> +int kernfs_name_rcu(struct kernfs_node *kn, char *buf, size_t buflen)
-> +{
-> +	struct kernfs_root *root;
-> +
-> +	if (kn) {
-> +		root = kernfs_root(kn);
-> +		if (WARN_ON_ONCE(!(root->flags & KERNFS_ROOT_SAME_PARENT)))
-> +			kn = NULL;
-
-Ah, I suppose it's to keep things symmetric. That's fine.
-
-> +	}
-> +	if (!kn)
-> +		return strscpy(buf, "(null)", buflen);
-> +
-> +	guard(rcu)();
-
-Also, why are guards in different locations? Even when !SAME_PARENT, kn's
-can't jump across roots, so guard there can also be in the same location as
-this one?
-
-...
-> @@ -200,7 +205,10 @@ struct kernfs_node {
->  	 * parent directly.
->  	 */
->  	struct kernfs_node	*parent;
-> -	const char		*name;
-> +	union {
-> +		const char		__rcu *name_rcu;
-> +		const char		*name;
-> +	};
-
-Wouldn't it be simpler if ->name is always __rcu and !SAME_PARENT just
-requires further protection on the read side?
-
-Thanks.
-
+diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+index 375ebd78296a..a7ff189421c3 100644
+--- a/arch/x86/platform/efi/efi.c
++++ b/arch/x86/platform/efi/efi.c
+@@ -765,6 +765,7 @@ static void __init kexec_enter_virtual_mode(void)
+ 
+ 	efi_sync_low_kernel_mappings();
+ 	efi_native_runtime_setup();
++	efi_runtime_update_mappings();
+ #endif
+ }
+ 
 -- 
-tejun
+2.40.1
+
 
