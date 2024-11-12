@@ -1,116 +1,138 @@
-Return-Path: <linux-kernel+bounces-405521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBEBC9C5264
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:48:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FD89C5266
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1CBE2835C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E154283630
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADFE20E03E;
-	Tue, 12 Nov 2024 09:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13EE212163;
+	Tue, 12 Nov 2024 09:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SdAvJzqb"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="izgjO7xQ"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5025E1E4AD;
-	Tue, 12 Nov 2024 09:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B0C1E4AD
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731404916; cv=none; b=G/mBsQghSHqCfmhyiMFNSgsXmjpj3rCgYfbhGcbsWBSoGK1q7yxeEoQO9/Mp0PkbF3pUIhl7+IDMLcfkvQAD+PncE2XAVWHiXHNHJ5Ja1ScUYujRHo/atRoCQg31gKZMDeidnyMdv3T3SvXFbfGXdtDouCSaqLzq9OU5qZ02+No=
+	t=1731404923; cv=none; b=VRERCvgXMWfFO+K8hvr+0qI9pGNcDLUcbPrdxMRaPIjOnxsYTEUazYCgKcg1yJq+fgP8yHQCBlwos29ANrXHiU8YmsokvbmH3p1UKcBGzXQ4Sd3AcYC6ES4xihEnG+4g3KjaiccB0PD+xVjSJF4Gc7WmadCcA4RjvVYuQUbLH20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731404916; c=relaxed/simple;
-	bh=WaWjjsYz9BmIZpqgw1XZyjMywbYmeHHpgSiipOgAzpA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XRStXl4dDGX15akSD6vuEcovqlxXK4g/W/YYYMPE9XkgiaYKXCEuByP1ueuy2+GxNJtnCby7IOAdKnv7XFFLw+30ptRkydlwWO/IvBtn6kyD7nK0FBjQqra2IMm8XsoHmH+d0nr4lPzD2aul8L0hXRE2BxjW/0BWqA9wbKyF+6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SdAvJzqb; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-720c2db824eso5883002b3a.0;
-        Tue, 12 Nov 2024 01:48:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731404914; x=1732009714; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EnhCA+KfybkzGlQJdiXLfcOgUmb8rP+rbO7sRqwJqe8=;
-        b=SdAvJzqb6xvL416fimWzUJ5fm/Z2acSsktxOYUgo9CFEklMB474bnlhvYIlDKSl2nh
-         6bdruJXyOTiRbdOZedRFADoTpxmuYeb03GPzEDOGMsYMPH06gxM8BUus1kyXTC8BzpRw
-         PULbkA7cEEjVc/qfIFyXYLH90DYah7Z6BZ+CUnkkuZ/OGQPXgjr2AomzNsWpIK91jGJZ
-         rBpzPCrbA8IVPW7jlTtOX95IwJzSfAZNKnV/ebqHwxk6Y1CUfiqUMSxGf/K0hTGb8wxU
-         CC9eL7RS5+oW/qOOx16CapLa5QAyhiy3kNb4hDJ6DM4e7WWtWCaJY5N1CFmR3rXRgNiL
-         Hlew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731404914; x=1732009714;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EnhCA+KfybkzGlQJdiXLfcOgUmb8rP+rbO7sRqwJqe8=;
-        b=cCwdWIkxnckNStIersuL2wsvXLmyLp7XTylRh21inOrTgFfC8/wNFxXP3MuRiIs4EG
-         h0wrZsgEH1AvNVpb7i0CR25U1zwms4N+SsQtSOmBXEUoW5k44IVKnxBvqEiqV5mdzLT5
-         bZ1CG8VZdyjtMpI2HvzqY0ZSArkJiB4uXbKhl0Y5gTUVcn77qAH6Bdmbkr6xprdvisS3
-         1lSiHxXsL6KEkHvx7CXXiROCZKXGH/DlprII4uVNmq7HrxS/9REDBEJQWSIVms5hkPaA
-         HfdkzlqrGy8pprluDoN4jqCL1ybnuTeaA2oeCSvp3tUOjoZ2CMc2EMCdfmrxJ86YlXCe
-         DQdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQhWqKVhwxbpBNG4k+4urz05QAyiziXpdatAyzQGtoo5rlqdZTGSSJdjcN/xqbNPESViJiDnEaiVoViTM=@vger.kernel.org, AJvYcCXmcx9GHiMj6QINxdkthUyTEJPdypF9CP+Dpj34QQ8WuEGYg2vO8f7w4QUYNtZK0wALB9Q8/JG942oteWEgeUFW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj0QpJHjJKClkA5kff83U5XHxjQXzFp0XSGaD7P4aljb0hBoIi
-	4I2QAxfYtn0LFQS92AKP4pyAaUqiIjU+v2qreos+HqpaQFj1dp2usg8PuX+I1Ls=
-X-Google-Smtp-Source: AGHT+IHloP3SwFnWfmVSzGduUyRMZMHGhisk1H1OAr/Wbq1gp2qDOnB3PDtglid5zBEShhGqBNypUg==
-X-Received: by 2002:a05:6a00:2e0d:b0:717:86e9:cc34 with SMTP id d2e1a72fcca58-7241328e927mr20123951b3a.8.1731404914213;
-        Tue, 12 Nov 2024 01:48:34 -0800 (PST)
-Received: from fedora.dns.podman ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079aa8e2sm10712102b3a.92.2024.11.12.01.48.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 01:48:33 -0800 (PST)
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: netdev@vger.kernel.org
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>,
-	wireguard@lists.zx2c4.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hangbin Liu <liuhangbin@gmail.com>
-Subject: [PATCHv2 net] selftests: wireguard: load nf_conntrack if it's not present
-Date: Tue, 12 Nov 2024 09:48:27 +0000
-Message-ID: <20241112094828.391002-1-liuhangbin@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1731404923; c=relaxed/simple;
+	bh=LrtAQhxTOMENsDkUTMA8xkgddOLcwv2DtqWpfLXRdSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VXULSIpBZJZvkJg6b3ftIX07tGcr1fHqwxYPuUKn0ldDT20nmBnVz/8VAGjLRN7iyl38xgkf9hw8mvEwEhi9xhFhfuYAhJ0GJzeNlAw6BGZqJazx/TsOWIx/daDqAEc7QTHVFKdQg/posLJPlArvfIH0hBc4PECie0J0Jj9Abkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=izgjO7xQ; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: lina@asahilina.net)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id 2255042118;
+	Tue, 12 Nov 2024 09:48:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
+	s=default; t=1731404914;
+	bh=LrtAQhxTOMENsDkUTMA8xkgddOLcwv2DtqWpfLXRdSo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=izgjO7xQF0rD6dbjle7potQOfb9o9kMeJg2fNMJf8M1tniYhJhTTkLi9xDlxySdyc
+	 as71DhG+oYTmbbnKJZi+c1pgLLJn5MIyXyTvXjwDIbn1OM34NrlPw/Y6r2M2AhPptT
+	 UpcwHIaPq80Dua/+/TLdHrFwMQti+IV+pwkGVnxOl/HYQeGmgCZN8YiI90MakOj4R7
+	 sWW66AMdHFfwtUScOnZQw9Q2NTCrzvo3ekF+2f4F0H+1PLW/dcKT+c9f+vo5Fxa5FO
+	 f5BXMI1vpr7SmkA5NsgJjzx1xz4Dsjw6uWUFTmhKo9eryVEY9wSLk4Tn/Y3LFdVKTZ
+	 o6zLkpX+KOdYA==
+Message-ID: <821d15f9-233e-4b9d-8194-5de1835113c7@asahilina.net>
+Date: Tue, 12 Nov 2024 18:48:33 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: Fix __wp_page_copy_user fallback path for remote mm
+To: Alistair Popple <apopple@nvidia.com>, David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Sergio Lopez Pascual <slp@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+ Dan Williams <dan.j.williams@intel.com>
+References: <20241101-mm-remote-pfn-v1-1-080b609270b7@asahilina.net>
+ <c00226ea-6e29-4432-a1c4-a25e9e05df9c@redhat.com>
+ <2d8380b9-3d03-4263-b5bf-7e0227c83ba9@asahilina.net>
+ <0977a33b-8318-43a5-a5a1-4eb8c93ca270@redhat.com>
+ <64d386e8-6684-4213-8aba-7d1daf94f2cf@asahilina.net>
+ <412298ff-80bc-4111-8c72-29a5263a5d32@redhat.com>
+ <87ttceu0i8.fsf@nvdebian.thelocal>
+Content-Language: en-US
+From: Asahi Lina <lina@asahilina.net>
+In-Reply-To: <87ttceu0i8.fsf@nvdebian.thelocal>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Some distros may not load nf_conntrack by default, which will cause
-subsequent nf_conntrack settings to fail. Let's load this module if it's
-not loaded by default.
 
-Fixes: e7096c131e51 ("net: WireGuard secure network tunnel")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
----
-v2: load the mode directly in case nf_conntrack is build in (Simon Horman)
----
- tools/testing/selftests/wireguard/netns.sh | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/wireguard/netns.sh b/tools/testing/selftests/wireguard/netns.sh
-index 405ff262ca93..fa4dd7eb5918 100755
---- a/tools/testing/selftests/wireguard/netns.sh
-+++ b/tools/testing/selftests/wireguard/netns.sh
-@@ -66,6 +66,7 @@ cleanup() {
- orig_message_cost="$(< /proc/sys/net/core/message_cost)"
- trap cleanup EXIT
- printf 0 > /proc/sys/net/core/message_cost
-+modprobe nf_conntrack
- 
- ip netns del $netns0 2>/dev/null || true
- ip netns del $netns1 2>/dev/null || true
--- 
-2.39.5 (Apple Git-154)
+On 11/11/24 8:24 AM, Alistair Popple wrote:
+> 
+> David Hildenbrand <david@redhat.com> writes:
+> 
+>> On 07.11.24 18:32, Asahi Lina wrote:
+>>> On 11/8/24 2:14 AM, David Hildenbrand wrote:
+>>>> I recall that there is still a problem with false-positives on
+>>>> folio_test_anon() with ZONE_DEVICE pages, so it's maybe not that
+>>>> easy ... and the whole get_dev_pagemap() stuff is nasty.
+> 
+> Specifically FS DAX reuses PAGE_MAPPING_ANON in
+> include/linux/page-flags.h
+> 
+>     /*
+>      * Different with flags above, this flag is used only for fsdax mode.  It
+>      * indicates that this page->mapping is now under reflink case.
+>      */
+>     #define PAGE_MAPPING_DAX_SHARED	((void *)0x1)
+> 
+> FS DAX pages are never anon though, so you could probably test for
+> !vma_is_dax() and/or add an implementation of is_fsdax_page().
+> 
+>>>> Likely we would have to do what GUP does, and temporarily grab a pgmap
+>>>> reference. Gah.
+>>>>
+>>>>
+>>>> So if we sort out the pagemap stuff and the possibly wrong
+>>>> folio_test_anon() on some ZONE_DEVICE pages (but not all, because IIRC
+>>>> DEVICE_PRIVATE can be anon ...), it might be doable.
+> 
+> Correct, DEVICE_PRIVATE and DEVICE_COHERENT pages are always anon (at
+> least for now).
+> 
+>>>> But it sounds ugly, especially because that code might change soon and
+>>>> not require messing with ZONE_DEVICE pages on that level.
+> 
+> Yes, I'm hopoing to get the next version of that series posted this
+> week. I found a couple of other FS DAX bugs that slowed me down.
+> 
+>  - Alistair
+> 
+>>>> And then, we'd not be able to handle VM_PFNMAP cleanly ...
+>>>>
 
+If this is all going to be fixed another way soon then I think there's
+no rush to get a workaround in earlier than that, I just don't want it
+to fall by the wayside.
+
+We have my original patch downstream in libkrunfw (which despite the
+lockdep complaints does work in practice), so we can keep that in until
+the proper solution lands upstream.
+
+Alistair, can you Cc me on future submissions? So I'm reminded to test
+this out (FWIW the case I'm interested in is just `gdb /bin/foo` with
+the whole root filesystem on DAX, though I imagine a statically linked
+foo on a DAX mount by itself is probably an equivalent repro).
+
+~~ Lina
 
