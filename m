@@ -1,126 +1,142 @@
-Return-Path: <linux-kernel+bounces-405869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E209C5852
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:52:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE379C5858
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:54:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72F881F2323B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:52:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D60B8284393
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F087082E;
-	Tue, 12 Nov 2024 12:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0B37083A;
+	Tue, 12 Nov 2024 12:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="k1xRH8iG"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rKpaRSP6"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD1E6F099
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608926F099
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731415926; cv=none; b=nHgdgZQTGW4yuzKSayqfeQID9AXbhH8JU828Aiy1/PCE0y4MKg+l4R+N82M8TIQ/2bh3eRkFQIHJOnzf9/s7sxCrZeIvyhpRBVH5fjTuwlLAD69B0w7KPqGwp74ExAEqm4yJS9nJej7BYTuokF528Dlfk0txT7Dz/7xs/WyV0RI=
+	t=1731416043; cv=none; b=uv+uspoWUz/rPDOQgSaAKdRJ6tlq7J9Dgjn/Usn6Lw2zU2VD5bLQCHrW4h+4sYgzeUh1PRY7oGOj9zQ9zfmtV87dZ+HA25Fry24vZQ9kG/o6BId+h/b22aVs39hEL1zMlT41lHlAoDXTXJH6lN6gt77kROiJyXXwekX5DnrMEZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731415926; c=relaxed/simple;
-	bh=WEQednnW/wFnwxpMGjVhEQb8fNxGWPhIjnN5iKz0fu8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XVgqlCfQC5pYnPGRuXEh7KdEX7D1lEJLtLw4JhBrB6Ezmhyia/lViWjUlwBA0E1cAka55Th3iYgACBIqel3I3m0lEK/3z6j0czcF0E9oyazm8aBhyj7O5qPhyK53BygrfWSEFGshKaDwBnFEE0lbw5XgWR2IqVckPNAeGAwExqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=k1xRH8iG; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1731416043; c=relaxed/simple;
+	bh=M9hxsmKDBDKSSi/jW2NU++UBfd3Bt98xWitaVEtQSBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c4UPhDmuVmRjm9qFu0z+rCICpbf+vM1RBIsO8hXtHYkQ8rZUyB5sa/duUB8oh+SSX1Uk0yGzBjWp2AEXeVHK0r8n0ZQDWD8TtVp5Xll4nxzc//HFKyP7AYu5VnN7EtUM3VJ/dOHI558VkEx1gUKIXqE6E7/QjoZNnFioA1n41I0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rKpaRSP6; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43158625112so49515975e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:52:04 -0800 (PST)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb4fa17044so57476361fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:54:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731415923; x=1732020723; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731416039; x=1732020839; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ItC2fxl3q3F4+PCf0UD7oi85OBnIB0U+ggjyxuMdhdo=;
-        b=k1xRH8iGOWLElFf8WFuDBJRUF0GcrvIyUWvFujlsDqf6Dmgl+8yjulFoivG0Zfb9bj
-         IPCPlICg+s0LAwV5G/SvC1oJSIpeBzAM/WEaVQ+RtZ5q6SjqpcSY3zthzWXNvFpI/J6T
-         LTRDv8KL2rNZGb82OmJ0O67vU6xe5/qLAKE+/mR7gAmUBxTQ2TxOvW1oCasMDBO+6Qhg
-         oykpa0ryFgY6ZeaQZ/z+ie6UAsi0g1CfO2VxkNuaL0qZONNmHhmCQhioRuEdL5tuuqs4
-         PXlKj9KFkKXNBjmDBiaLUgl0cJYIDvGkFbTHa17O89MSzr9X+r5ZNby9UrmlwrEtp9yz
-         VoBA==
+        bh=M9hxsmKDBDKSSi/jW2NU++UBfd3Bt98xWitaVEtQSBs=;
+        b=rKpaRSP6dpqdU37CygyceB8O9HmbypGxrdUcZ3qfF+c+/zdi6Dwe26y/yvBJ45daTk
+         NpBhsRVxmEa1O8Zrd3KJAMVXz2cEIfbG20wpEo28ETXi4LVLL/xbV/6OLNSX6MRQe2xI
+         rNSlRi5i67gAEcAIcp6E/mEigs42syVVlVZ+rsDMvt274E0Rc1XvzCVxkBz2Ox3NwqAK
+         Eu9HDSG9NQFZfeVXireRWXK+Zdn+02RG0fn47+0p40QLDGtEeSxyk/cvXXt1ALy8IDSE
+         qzNAPOMSetEwaMtLY6Ah/D2w/wlVIpuP4hZNnrfcI7DjaZeL/kOLSEIbANn20IKryum7
+         zCRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731415923; x=1732020723;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731416039; x=1732020839;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ItC2fxl3q3F4+PCf0UD7oi85OBnIB0U+ggjyxuMdhdo=;
-        b=F6LZJSGkgiv9VMSVugnc9bhG9X/3ayHDXzTgZMFRhumtb41NgUXwUuUscKKTvhPM/T
-         LOCY/C9KV0LZCse26Y0tNDfd7dVXxil38VOWPRJxIJvh3bEOmO7187Nw1eK8eqapt8R5
-         IrYJ6AJlyafRpgSxPqR7wMNfYqEqm0vKF+JhdIyECybvUmfHZ9MNpTIuG+cLBFpTYHnD
-         2ZJVkgnUp2bvTXX6VwkCgDJehwRa68gwGJ7/1wsQZHsTiG6ukvAO0IuPtuBwJ8mcURUD
-         AxY7/AocR9l9wo2cGrXbwQ8CKbOFTivuUOgavG5FRdabU/MNUVtRMrS++3+QJHpI4X/q
-         i09A==
-X-Forwarded-Encrypted: i=1; AJvYcCU9ghyfIotMtzpypEf2LTg9D/1WWZxP2Q0Oz5h24roInxbVt70G8leEuS1pZ5i3EhS7hNd9/zaOWm0unCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywifs5Zzj9H3zC+UvxAmPeQv0yYnhVs7qOx1TV171n1CTil5uVy
-	c/H0AR+FfShPVOlMVevPz8P7DttQOI+9XdgAuA63YIX0SknOEGEvZjHGwCFCOxI=
-X-Google-Smtp-Source: AGHT+IGP1vWW532uhucbygG3Lp5or8zZuQTeIPnXLHkrmwfWtKfTiCcJOexZfHzCsZL16ncrBwbjCQ==
-X-Received: by 2002:a05:6000:402a:b0:37d:5103:8894 with SMTP id ffacd0b85a97d-381f1881319mr12834957f8f.42.1731415922836;
-        Tue, 12 Nov 2024 04:52:02 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:94a5:ced7:f64:fdaf])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda04ad0sm15287346f8f.100.2024.11.12.04.52.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 04:52:02 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	heiko@sntech.de,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Ye Zhang <ye.zhang@rock-chips.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com
-Subject: Re: (subset) [PATCH v5 0/4] gpio: rockchip: Update the GPIO driver
-Date: Tue, 12 Nov 2024 13:52:01 +0100
-Message-ID: <173141591574.57283.303844773378689063.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241112015408.3139996-1-ye.zhang@rock-chips.com>
-References: <20241112015408.3139996-1-ye.zhang@rock-chips.com>
+        bh=M9hxsmKDBDKSSi/jW2NU++UBfd3Bt98xWitaVEtQSBs=;
+        b=Q2RCnOmz72YCnY/GdJL5WjIT853leEH0yeTbDQ717Gf4KQElgEewzqKntXwR4kJ6zc
+         AHKeQ0kC5eFQTdAVZyNQ30H2D1bai9v38qSWER6K33yvlhUc6F4Iro/0IS8J9kJxk/fp
+         j2JldP0ELpcB+PUNSqDpBx6Pyct/eQQ899hq4kWJUlVMgxmKVG74V6kFQQMdjUeREOkn
+         9AZhgCls8+yXM8A41pNU26myo7cjaOoi3KbdaOmWXqCyElDKOuJrnnyGqk68CdelBekn
+         3drsaX5jfVaV15Ua3LgmErC+V9IoEZfWn/LRPEGCj2XFvrX+2nKGDOMx9ePh0REQ+9D1
+         65GA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSbS7p60F/bIsfXuya8hE3lZ0mSaf8cS/RnaAn3VVm+/qumG0q82kUOUvHN+GcB4OrUNB36kb2ricaGD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfMAp97UBYSir1DaoN0DRezMHiVCPVPT61w4RN3bDdMvZFkpGV
+	iHvXf7Yh9y5rp+iM/3OWJ7Clp1ij+4gyGp1zSdIlolt8nmUwQHE9PeOzu9bVd4gEJ+D0Mk8tsaN
+	0RjXLVeodg3HSiZ0B8C88oH/EMQzaW9Nz32KFaw==
+X-Google-Smtp-Source: AGHT+IGbmE0o5QthwRBQiRAF+JVGWtz10N60VDzpRavWFxo0o78BzJrNfw3tuJBFoTaZr9DjOr15SEHztRHupcY74Sg=
+X-Received: by 2002:a05:651c:1542:b0:2f1:a30c:cd15 with SMTP id
+ 38308e7fff4ca-2ff202ad40fmr80832201fa.36.1731416039490; Tue, 12 Nov 2024
+ 04:53:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20241112015408.3139996-1-ye.zhang@rock-chips.com>
+ <20241112015408.3139996-5-ye.zhang@rock-chips.com> <CAMRc=MfTmpLSEUVTXSu8jf9tyTfQc=iG9NpovFem-qSDOCnagQ@mail.gmail.com>
+ <ZzMwh2GMP-bE7aLO@smile.fi.intel.com> <CAMRc=MePqsQatxNy7p5c3sE4z8RepjjLeFgpppKgEctCU3jAUw@mail.gmail.com>
+In-Reply-To: <CAMRc=MePqsQatxNy7p5c3sE4z8RepjjLeFgpppKgEctCU3jAUw@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 12 Nov 2024 13:53:48 +0100
+Message-ID: <CAMRc=MdY1idv1o_nZFb1fKLpM5DHCPmEu5t5MMa_kV9csLgQWw@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] gpio: rockchip: Set input direction when request irq
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Ye Zhang <ye.zhang@rock-chips.com>, linus.walleij@linaro.org, heiko@sntech.de, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	mika.westerberg@linux.intel.com, tao.huang@rock-chips.com, 
+	finley.xiao@rock-chips.com, tim.chen@rock-chips.com, 
+	elaine.zhang@rock-chips.com, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Nov 12, 2024 at 1:50=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> On Tue, Nov 12, 2024 at 11:40=E2=80=AFAM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > On Tue, Nov 12, 2024 at 09:48:06AM +0100, Bartosz Golaszewski wrote:
+> > > On Tue, Nov 12, 2024 at 2:54=E2=80=AFAM Ye Zhang <ye.zhang@rock-chips=
+.com> wrote:
+> > > >
+> > > > Since the GPIO can only generate interrupts when its direction is s=
+et to
+> > > > input, it is set to input before requesting the interrupt resources=
+.
+> >
+> > ...
+> >
+> > > This looks like a fix to me, do you want it sent for stable? If so,
+> > > please add the Fixes tag and put it first in the series.
+> >
+> > Independently on the resolution on this, can the first three be applied=
+ to
+> > for-next? I think they are valuable from the documentation perspective =
+as
+> > it adds the explanation of the version register bit fields.
+> >
+> > The last one seems to me independent (code wise, meaning no potential
+> > conflicts) to the rest and may be applied to for-current later on.
+> >
+> > --
+> > With Best Regards,
+> > Andy Shevchenko
+> >
+> >
+>
+> There's another issue I see with this patch. It effectively changes
+> the pin's direction behind the back of the GPIOLIB. If a GPIO is
+> requested, its direction set to output and another orthogonal user
+> requests the same pin as input, we'll never update the FLAG_IS_OUT
 
+I meant to say "same pin as interrupt". Sorry for the noise.
 
-On Tue, 12 Nov 2024 09:54:04 +0800, Ye Zhang wrote:
-> GPIO driver support acpi and new version, set input direction in
-> irq_request_resources, fix division error and debounce config error.
-> 
-> Changes since v1:
-> - Split commits with multiple changes into separate commits.
-> - Adjust backportable fix to the forefront.
-> - Modify messages of some commits.
-> 
-> [...]
+Bart
 
-Applied, thanks!
-
-[1/4] gpio: rockchip: explan the format of the GPIO version ID
-      commit: 591ae6bed250e4067db926313ff7279d23a1c7d1
-[2/4] gpio: rockchip: change the GPIO version judgment logic
-      commit: 41209307cad7f14c387c68375a93b50e54261a53
-[3/4] gpio: rockchip: support new version GPIO
-      commit: 8bcbd0379c05c66ce2e842c7e8901aa317cdf04e
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> value and I don't think any subsequent behavior can be considered
+> defined.
+>
+> I applied the first 3 patches as they look alright.
+>
+> Bart
 
