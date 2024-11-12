@@ -1,300 +1,379 @@
-Return-Path: <linux-kernel+bounces-405503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD709C5278
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:53:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7AB9C523D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64D42B30763
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:37:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5C91B30FD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DA820EA2C;
-	Tue, 12 Nov 2024 09:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0595720DD78;
+	Tue, 12 Nov 2024 09:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hCicwtwl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b0kBBUyf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D415620C028;
-	Tue, 12 Nov 2024 09:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97BB20DD6A
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731404186; cv=none; b=DMKLoWd7oBEMCo0w2qyUvEPcWqreaulrcWWF3SH0gQBKIWDZPT/3cgkv7fq1LVNobA8cl7jpBAGzuBLPz6Z8E6QF2kmpl5KvGo3NIxl2pj24qTaVrYtqtu7unT2TBS0U2KQK8PAV4lF7dNyO5ml2AeY3NRNnoWliaXtnpSldAq4=
+	t=1731404243; cv=none; b=o0GFGHfGqqoKyrL+KLUzZd8bWVJhwdKasL19kte7k8d8qtza0QyrzT14KZs53a9NaeyU6cW5mIUso5W7Ww4o+iFulfjoVn+3jIYQR4FRQCTyehVA1ojPoxl45pDDvUaD+lYN6yCh473Oq+5BLd8CbAukUrZdUL61AbvEugEJwIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731404186; c=relaxed/simple;
-	bh=nlukdECBOiLwis2DHpUioNrlfKx3dZvmbDKH42pujAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:CC:From:
-	 In-Reply-To:Content-Type; b=MK2KNXyqnPunSwgDAikq3i8353cqBrDz55lE7f5MAk1Ty4/N46UueDnFZ118nRZjJLwKjANMBAHss5irH913UdlgDEverLnMkWMCk/jP2mfDcIIQ6r9aW/4AfoYeg7RcsxA9CPgCjNBLKgcNiiMZREXOdvAVmqPcsUjdX0OxDtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hCicwtwl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC0UmDY015967;
-	Tue, 12 Nov 2024 09:36:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2ZpX3I5p+siCj0YxIfEOJ5jeJCZMFcu65cINBWGOiVQ=; b=hCicwtwlcEunvWRw
-	GEre6CWl55Gy/+/wQjr+HxhgGrAsY/2mEmRurZiojsU1iwvnhnlL8YDYIdjFdQhh
-	rKbKgN7faEpFfOpp/lMvIoB6EUKVwm/t9kagVpv9nuXjc8X8v8a45oxcQM5DMuQ0
-	8PERmWDhbp1dKA5ODMXnJTd4dhbdcAV1kbVJcQavW0D2JCzKBFSHrAX5zhNgVcEV
-	HmsdJjtUTY44ShxUbcSpGXWJB5Bhh/eI+DliYIK9M9jP9FXmLUjOh8WM2R6aFkep
-	uESJlp+jkjyHMtBX/+3tNsE41VSRTfOBacrWtYUmm0gbk2MYNfkcVI/7UUAfQvq1
-	BNtf5w==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42sytspsmn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 09:36:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC9a62X008015
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 09:36:06 GMT
-Received: from [10.216.16.167] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
- 2024 01:36:00 -0800
-Message-ID: <e541fd10-7037-4cbf-b07a-6cac8a7a9452@quicinc.com>
-Date: Tue, 12 Nov 2024 15:05:57 +0530
+	s=arc-20240116; t=1731404243; c=relaxed/simple;
+	bh=x6RpGeAnIQkUeeqnZeB9oJx8eLP+7qJn7Agivvr1kH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BU8eASDfPNhdpZ1BrOf5C1r+h4bM9XKM6xolFnHmTKyNBEGRMv9fMg8bzRduud2fr30zi81o+0idD+Tks8mxQsJuL8JjrSlaQQXBuCxn9itwQkmHn3DTDkWbwqya/Y12LA7gQeetDJbdQD0c4VBkQ4SOExvsRNtBi9RHmtUdlrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b0kBBUyf; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731404242; x=1762940242;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=x6RpGeAnIQkUeeqnZeB9oJx8eLP+7qJn7Agivvr1kH0=;
+  b=b0kBBUyfBENUJe+rJC4pXXkievIb6u6xKrXdvT6snA8k39iKwmTjx3ug
+   VebbZNx7UcjiVI+bZbzIeuHgTvyN5ponuI6owtUAjLnufpwBuKRWv9wkA
+   rWWw4wgA0MP/8tsTRx61BO5/hLu76dHjnzDNQkF1OsU1hwgWwG+h9Jye8
+   baC4EFnCR73+XPRBPGraYkQ5PJuvZJVy42YsAaSAov2+EeAgxGeOobsTC
+   B4QK7z2zIdoS3ZrBF9MS/Dw800XrlXbrLygQgrB9AzEsctMz5EOwUOUVw
+   lIpNAgAPwTEAD1xTj2Oo3lZqTFU9166tgOnuciZM2/IFjMQCNzWpKUMyh
+   A==;
+X-CSE-ConnectionGUID: kyNUcCWvQzW7OmCPDngnFQ==
+X-CSE-MsgGUID: BsGhLBECTtyq3bUvhuDpZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="31324328"
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="31324328"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 01:37:21 -0800
+X-CSE-ConnectionGUID: hI9Z+u1QTGCwCowQKLlgfg==
+X-CSE-MsgGUID: qS5Oh+8QSOOoIlWEEEnIVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="87726566"
+Received: from lkp-server01.sh.intel.com (HELO bcfed0da017c) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 12 Nov 2024 01:37:11 -0800
+Received: from kbuild by bcfed0da017c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tAnKd-0000fh-1o;
+	Tue, 12 Nov 2024 09:37:07 +0000
+Date: Tue, 12 Nov 2024 17:36:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	willy@infradead.org, liam.howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
+	hughd@google.com, minchan@google.com, jannh@google.com,
+	shakeel.butt@linux.dev, souravpanda@google.com,
+	pasha.tatashin@soleen.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	surenb@google.com
+Subject: Re: [PATCH 2/4] mm: move per-vma lock into vm_area_struct
+Message-ID: <202411121742.VK3YF84e-lkp@intel.com>
+References: <20241111205506.3404479-3-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 6/6] arm64: dts: qcom: Add USB controller and phy nodes
- for IPQ5424
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-References: <20241112091355.2028018-1-quic_varada@quicinc.com>
- <20241112091355.2028018-7-quic_varada@quicinc.com>
-Content-Language: en-US
-CC: <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <gregkh@linuxfoundation.org>,
-        <robh@kernel.org>, <abel.vesa@linaro.org>, <johan+linaro@kernel.org>,
-        <dmitry.baryshkov@linaro.org>, <mantas@8devices.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <quic_kbajaj@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_wcheng@quicinc.com>,
-        <vkoul@kernel.org>, <linux-usb@vger.kernel.org>,
-        <andersson@kernel.org>, <kishon@kernel.org>, <konradybcio@kernel.org>
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-In-Reply-To: <20241112091355.2028018-7-quic_varada@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mQVvx7n5wJYR7Fphuaq76HMSwkCI36fI
-X-Proofpoint-ORIG-GUID: mQVvx7n5wJYR7Fphuaq76HMSwkCI36fI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 suspectscore=0 bulkscore=0 impostorscore=0 phishscore=0
- mlxlogscore=857 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120078
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111205506.3404479-3-surenb@google.com>
+
+Hi Suren,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 931086f2a88086319afb57cd3925607e8cda0a9f]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Suren-Baghdasaryan/mm-introduce-vma_start_read_locked-_nested-helpers/20241112-050531
+base:   931086f2a88086319afb57cd3925607e8cda0a9f
+patch link:    https://lore.kernel.org/r/20241111205506.3404479-3-surenb%40google.com
+patch subject: [PATCH 2/4] mm: move per-vma lock into vm_area_struct
+config: um-defconfig (https://download.01.org/0day-ci/archive/20241112/202411121742.VK3YF84e-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241112/202411121742.VK3YF84e-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411121742.VK3YF84e-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+         |         ^
+   In file included from ipc/msg.c:30:
+   In file included from include/linux/mm.h:1143:
+   In file included from include/linux/huge_mm.h:7:
+   In file included from include/linux/fs.h:33:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:255:10: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+     255 |         case 2: set->sig[1] = -1;
+         |                 ^        ~
+   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
+      24 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from ipc/msg.c:30:
+   In file included from include/linux/mm.h:2234:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from ipc/msg.c:33:
+   In file included from include/linux/security.h:35:
+   In file included from include/linux/bpf.h:31:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:8:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from ipc/msg.c:33:
+   In file included from include/linux/security.h:35:
+   In file included from include/linux/bpf.h:31:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:8:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from ipc/msg.c:33:
+   In file included from include/linux/security.h:35:
+   In file included from include/linux/bpf.h:31:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:8:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> ipc/msg.c:497:20: warning: implicit conversion from 'int' to 'unsigned short' changes value from 32768000 to 0 [-Wconstant-conversion]
+     497 |         msginfo->msgseg = MSGSEG;
+         |                         ~ ^~~~~~
+   include/uapi/linux/msg.h:87:38: note: expanded from macro 'MSGSEG'
+      87 | #define MSGSEG (__MSGSEG <= 0xffff ? __MSGSEG : 0xffff)
+         |                                      ^~~~~~~~
+   include/uapi/linux/msg.h:86:36: note: expanded from macro '__MSGSEG'
+      86 | #define __MSGSEG ((MSGPOOL * 1024) / MSGSSZ) /* max no. of segments */
+         |                   ~~~~~~~~~~~~~~~~~^~~~~~~~
+   63 warnings and 3 errors generated.
+--
+   In file included from drivers/tty/tty_port.c:8:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:8:
+   include/linux/mm.h:877:2: error: call to undeclared function 'vma_lock_init'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     877 |         vma_lock_init(&vma->vm_lock);
+         |         ^
+   include/linux/mm.h:877:2: note: did you mean 'osq_lock_init'?
+   include/linux/osq_lock.h:23:20: note: 'osq_lock_init' declared here
+      23 | static inline void osq_lock_init(struct optimistic_spin_queue *lock)
+         |                    ^
+   In file included from drivers/tty/tty_port.c:8:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:8:
+   include/linux/mm.h:877:22: error: no member named 'vm_lock' in 'struct vm_area_struct'
+     877 |         vma_lock_init(&vma->vm_lock);
+         |                        ~~~  ^
+   include/linux/mm.h:878:7: error: no member named 'vm_lock_seq' in 'struct vm_area_struct'
+     878 |         vma->vm_lock_seq = UINT_MAX;
+         |         ~~~  ^
+   In file included from drivers/tty/tty_port.c:8:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2234:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/tty/tty_port.c:8:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/tty/tty_port.c:8:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/tty/tty_port.c:8:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> drivers/tty/tty_port.c:266:2: warning: implicit conversion from 'unsigned long' to 'unsigned int' changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]
+     266 |         INIT_KFIFO(port->xmit_fifo);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/kfifo.h:136:69: note: expanded from macro 'INIT_KFIFO'
+     136 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : ARRAY_SIZE(__tmp->buf) - 1;\
+         |                       ~                             ~~~~~~~~~~~~~~~~~~~~~~~^~~
+   14 warnings and 3 errors generated.
 
 
+vim +497 ipc/msg.c
 
-On 11/12/2024 2:43 PM, Varadarajan Narayanan wrote:
-> The IPQ5424 SoC has both USB2.0 and USB3.0 controllers. The USB3.0
-> can connect to either of USB2.0 or USB3.0 phy and operate in the
-> respective mode.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
->   arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts |  67 +++++++++
->   arch/arm64/boot/dts/qcom/ipq5424.dtsi       | 153 ++++++++++++++++++++
->   2 files changed, 220 insertions(+)
-> 
+a0d092fc2df845 Pierre Peiffer  2008-04-29  476  
+156d9ed1260ee5 Al Viro         2017-07-09  477  static int msgctl_info(struct ipc_namespace *ns, int msqid,
+156d9ed1260ee5 Al Viro         2017-07-09  478  			 int cmd, struct msginfo *msginfo)
+a0d092fc2df845 Pierre Peiffer  2008-04-29  479  {
+2cafed30f150f7 Davidlohr Bueso 2013-07-08  480  	int err;
+27c331a1746142 Manfred Spraul  2018-08-21  481  	int max_idx;
+5a06a363ef4844 Ingo Molnar     2006-07-30  482  
+5a06a363ef4844 Ingo Molnar     2006-07-30  483  	/*
+5a06a363ef4844 Ingo Molnar     2006-07-30  484  	 * We must not return kernel stack data.
+^1da177e4c3f41 Linus Torvalds  2005-04-16  485  	 * due to padding, it's not enough
+^1da177e4c3f41 Linus Torvalds  2005-04-16  486  	 * to set all member fields.
+^1da177e4c3f41 Linus Torvalds  2005-04-16  487  	 */
+^1da177e4c3f41 Linus Torvalds  2005-04-16  488  	err = security_msg_queue_msgctl(NULL, cmd);
+^1da177e4c3f41 Linus Torvalds  2005-04-16  489  	if (err)
+^1da177e4c3f41 Linus Torvalds  2005-04-16  490  		return err;
+^1da177e4c3f41 Linus Torvalds  2005-04-16  491  
+156d9ed1260ee5 Al Viro         2017-07-09  492  	memset(msginfo, 0, sizeof(*msginfo));
+156d9ed1260ee5 Al Viro         2017-07-09  493  	msginfo->msgmni = ns->msg_ctlmni;
+156d9ed1260ee5 Al Viro         2017-07-09  494  	msginfo->msgmax = ns->msg_ctlmax;
+156d9ed1260ee5 Al Viro         2017-07-09  495  	msginfo->msgmnb = ns->msg_ctlmnb;
+156d9ed1260ee5 Al Viro         2017-07-09  496  	msginfo->msgssz = MSGSSZ;
+156d9ed1260ee5 Al Viro         2017-07-09 @497  	msginfo->msgseg = MSGSEG;
+d9a605e40b1376 Davidlohr Bueso 2013-09-11  498  	down_read(&msg_ids(ns).rwsem);
+72d1e611082eda Jiebin Sun      2022-09-14  499  	if (cmd == MSG_INFO)
+156d9ed1260ee5 Al Viro         2017-07-09  500  		msginfo->msgpool = msg_ids(ns).in_use;
+72d1e611082eda Jiebin Sun      2022-09-14  501  	max_idx = ipc_get_maxidx(&msg_ids(ns));
+72d1e611082eda Jiebin Sun      2022-09-14  502  	up_read(&msg_ids(ns).rwsem);
+72d1e611082eda Jiebin Sun      2022-09-14  503  	if (cmd == MSG_INFO) {
+72d1e611082eda Jiebin Sun      2022-09-14  504  		msginfo->msgmap = min_t(int,
+72d1e611082eda Jiebin Sun      2022-09-14  505  				     percpu_counter_sum(&ns->percpu_msg_hdrs),
+72d1e611082eda Jiebin Sun      2022-09-14  506  				     INT_MAX);
+72d1e611082eda Jiebin Sun      2022-09-14  507  		msginfo->msgtql = min_t(int,
+72d1e611082eda Jiebin Sun      2022-09-14  508  		                     percpu_counter_sum(&ns->percpu_msg_bytes),
+72d1e611082eda Jiebin Sun      2022-09-14  509  				     INT_MAX);
+^1da177e4c3f41 Linus Torvalds  2005-04-16  510  	} else {
+156d9ed1260ee5 Al Viro         2017-07-09  511  		msginfo->msgmap = MSGMAP;
+156d9ed1260ee5 Al Viro         2017-07-09  512  		msginfo->msgpool = MSGPOOL;
+156d9ed1260ee5 Al Viro         2017-07-09  513  		msginfo->msgtql = MSGTQL;
+^1da177e4c3f41 Linus Torvalds  2005-04-16  514  	}
+27c331a1746142 Manfred Spraul  2018-08-21  515  	return (max_idx < 0) ? 0 : max_idx;
+^1da177e4c3f41 Linus Torvalds  2005-04-16  516  }
+2cafed30f150f7 Davidlohr Bueso 2013-07-08  517  
 
-[...]
-
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> index 5e219f900412..d8c045a311c2 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> @@ -233,6 +233,159 @@ intc: interrupt-controller@f200000 {
->   			msi-controller;
->   		};
->   
-> +		qusb_phy_1: phy@71000 {
-> +			compatible = "qcom,ipq5424-qusb2-phy";
-> +			reg = <0 0x00071000 0 0x180>;
-> +			#phy-cells = <0>;
-> +
-> +			clocks = <&gcc GCC_USB1_PHY_CFG_AHB_CLK>,
-> +				<&xo_board>;
-> +			clock-names = "cfg_ahb", "ref";
-> +
-> +			resets = <&gcc GCC_QUSB2_1_PHY_BCR>;
-> +			status = "disabled";
-> +		};
-> +
-> +		usb2: usb2@1e00000 {
-> +			compatible = "qcom,ipq5424-dwc3", "qcom,dwc3";
-> +			reg = <0 0x01ef8800 0 0x400>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges;
-> +
-> +			clocks = <&gcc GCC_USB1_MASTER_CLK>,
-> +				 <&gcc GCC_USB1_SLEEP_CLK>,
-> +				 <&gcc GCC_USB1_MOCK_UTMI_CLK>,
-> +				 <&gcc GCC_USB1_PHY_CFG_AHB_CLK>,
-> +				 <&gcc GCC_CNOC_USB_CLK>;
-> +
-> +			clock-names = "core",
-> +				      "sleep",
-> +				      "mock_utmi",
-> +				      "iface",
-> +				      "cfg_noc";
-> +
-> +			assigned-clocks = <&gcc GCC_USB1_MASTER_CLK>,
-> +					  <&gcc GCC_USB1_MOCK_UTMI_CLK>;
-> +			assigned-clock-rates = <200000000>,
-> +					       <24000000>; > +
-
-Shouldn't this be 19.2MHz ?
-
-> +			interrupts-extended = <&intc GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
-> +					      <&intc GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
-> +					      <&intc GIC_SPI 387 IRQ_TYPE_LEVEL_HIGH>,
-> +					      <&intc GIC_SPI 388 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "pwr_event",
-> +					  "qusb2_phy",
-> +					  "dm_hs_phy_irq",
-> +					  "dp_hs_phy_irq";
-> +
-
-Please check the hs_phy_irq as well and add it if its present.
-
-> +			resets = <&gcc GCC_USB1_BCR>;
-> +			qcom,select-utmi-as-pipe-clk;
-> +			status = "disabled";
-> +
-> +			dwc_1: usb@1e00000 {
-> +				compatible = "snps,dwc3";
-> +				reg = <0 0x01e00000 0 0xe000>;
-> +				clocks = <&gcc GCC_USB1_MOCK_UTMI_CLK>;
-> +				clock-names = "ref";
-
-Another clock in dwc3 node ?
-
-> +				interrupts = <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>;
-> +				phys = <&qusb_phy_1>;
-> +				phy-names = "usb2-phy";
-> +				tx-fifo-resize;
-> +				snps,is-utmi-l1-suspend;
-> +				snps,hird-threshold = /bits/ 8 <0x0>;
-> +				snps,dis_u2_susphy_quirk;
-> +				snps,dis_u3_susphy_quirk;
-> +			};
-> +		};
-> +
-> +		qusb_phy_0: phy@7b000 {
-> +			compatible = "qcom,ipq5424-qusb2-phy";
-> +			reg = <0 0x0007b000 0 0x180>;
-> +			#phy-cells = <0>;
-> +
-> +			clocks = <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-> +				<&xo_board>;
-> +			clock-names = "cfg_ahb", "ref";
-> +
-> +			resets = <&gcc GCC_QUSB2_0_PHY_BCR>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ssphy_0: phy@7d000 {
-> +			compatible = "qcom,ipq5424-qmp-usb3-phy";
-> +			reg = <0 0x0007d000 0 0xa00>;
-> +			#phy-cells = <0>;
-> +
-> +			clocks = <&gcc GCC_USB0_AUX_CLK>,
-> +				 <&xo_board>,
-> +				 <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-> +				 <&gcc GCC_USB0_PIPE_CLK>;
-> +			clock-names = "aux",
-> +				      "ref",
-> +				      "cfg_ahb",
-> +				      "pipe";
-> +
-> +			resets = <&gcc GCC_USB0_PHY_BCR>,
-> +				 <&gcc GCC_USB3PHY_0_PHY_BCR>;
-> +			reset-names = "phy",
-> +				      "phy_phy";
-> +
-> +			#clock-cells = <0>;
-> +			clock-output-names = "usb0_pipe_clk";
-> +
-> +			status = "disabled";
-> +		};
-> +
-> +		usb3: usb3@8a00000 {
-> +			compatible = "qcom,ipq5424-dwc3", "qcom,dwc3";
-> +			reg = <0 0x08af8800 0 0x400>;
-> +
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges;
-> +
-> +			clocks = <&gcc GCC_USB0_MASTER_CLK>,
-> +				 <&gcc GCC_USB0_SLEEP_CLK>,
-> +				 <&gcc GCC_USB0_MOCK_UTMI_CLK>,
-> +				 <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-> +				 <&gcc GCC_CNOC_USB_CLK>;
-> +
-> +			clock-names = "core",
-> +				      "sleep",
-> +				      "mock_utmi",
-> +				      "iface",
-> +				      "cfg_noc";
-> +
-> +			assigned-clocks = <&gcc GCC_USB0_MASTER_CLK>,
-> +					  <&gcc GCC_USB0_MOCK_UTMI_CLK>;
-> +			assigned-clock-rates = <200000000>,
-> +					       <24000000>;
-> +
-
-same comment as above, isn't this supposed to be 19.2MHz ?
-
-> +			interrupts-extended = <&intc GIC_SPI 412 IRQ_TYPE_LEVEL_HIGH>,
-> +					      <&intc GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "pwr_event",
-> +					  "qusb2_phy";
-> +
-
-DP/ DM interrupts ?
-
-> +			resets = <&gcc GCC_USB_BCR>;
-> +			status = "disabled";
-> +
-> +			dwc_0: usb@8a00000 {
-> +				compatible = "snps,dwc3";
-> +				reg = <0 0x08a00000 0 0xcd00>;
-> +				clocks = <&gcc GCC_USB0_MOCK_UTMI_CLK>;
-> +				clock-names = "ref";
-> +				interrupts = <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>;
-> +				phys = <&qusb_phy_0>, <&ssphy_0>;
-> +				phy-names = "usb2-phy", "usb3-phy";
-> +				tx-fifo-resize;
-> +				snps,is-utmi-l1-suspend;
-> +				snps,hird-threshold = /bits/ 8 <0x0>;
-> +				snps,dis_u2_susphy_quirk;
-> +				snps,dis_u3_susphy_quirk;
-
-Disable u1/u2 entry as well please.
-
-Regards,
-Krishna,
-
-> +			};
-> +		};
-> +
->   		timer@f420000 {
->   			compatible = "arm,armv7-timer-mem";
->   			reg = <0 0xf420000 0 0x1000>;
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
