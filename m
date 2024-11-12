@@ -1,106 +1,93 @@
-Return-Path: <linux-kernel+bounces-406399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4249C5E85
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:15:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62BD49C5E8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:16:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E57C280612
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:15:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 287F3281DAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531B721C176;
-	Tue, 12 Nov 2024 17:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775F7213ED4;
+	Tue, 12 Nov 2024 17:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Hn4L25KJ"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOW/S0Zx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF55921A4CB;
-	Tue, 12 Nov 2024 17:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50371FC7C9;
+	Tue, 12 Nov 2024 17:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731431234; cv=none; b=NtiPlmpdek+NDG9DymHwf4U1NPPk8P6eBAZVaTHXdGTsQwy2Qlk/2rn4R08whxgmC/Xf+uhUqODxxNUy96JUQ/YATprk1F859piD4xjjkJZhbKBcpN89eFLf56eL14LLh3wyGCJ1PnPx7qjxHgo9R+O7RHj5QoEN1URvYsuZU4w=
+	t=1731431299; cv=none; b=HymFZHwoyRaEJdMDQcjEf0u7vkcK57hu4i7Pn4FowFo0xsnIzB65iZW4Nk0uCB5ELEMQMQ0BhNz+OY5jdTSSVRG/5r1h28VPT469kkHI4tILhYOlP4IJmFgTUXgzhzvRKcIsDUjz5jn1NNztkNpHlbnjEct3hEKG6pauUz64Icw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731431234; c=relaxed/simple;
-	bh=xaj5KmROuHDs6V1pAE8F+BMNjL9ORFgFyK/RbeoRB2A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ChhJbKVMadounNoSfQbTxjedYenkpo7vUxFk0Q4iFHeRwFTatLS+pYu5reHgHindySw4fGL+hig5o87180UhRqnSd/bvDXLhfkFWuDHnPmgAjpRrFQuak6vRuif0jKNZEqAj7ld4g0595amGDPERB+zVUW5dNyl9rdok9LmnlWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Hn4L25KJ; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8597AE0002;
-	Tue, 12 Nov 2024 17:07:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731431230;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KmB45n0EFDDxVFATGrPwAYkLgt0gPIeYSjIsRXHFoik=;
-	b=Hn4L25KJ6Bk4NzyNodJ2N99gxYyx6ubpJJGX7MCAK3Z3L+1TpHWP+CqFqNoz/FXGe6ixKK
-	FFsatBb6wPQtSbA2DVpmOVpK94HUpgvj8XYYlwK0nSPXphisXAUEeGRsz84iXDKDRUz5Vz
-	wva2wuIa+NGeR7/r9FQsi9Qx6UT7sHPqGVIJxfZfRGym0AJujFs55fpLJdJuksF4UbGeH6
-	ByE9mD8mojXQiM1BlkR2n6PC0WqN1g9yl1tFf0uZqiJXH0OBz+DgK5kWgrGqSlL+nR/6k3
-	UyJIUYuc+VxnaW8QEPmPZ4hZuuKDvp1d+1JpAYblzQK2WNMuug4k1ZDK7VZePw==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	Daniel Machon <daniel.machon@microchip.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v4 9/9] net: stmmac: dwmac_socfpga: This platform has GMAC
-Date: Tue, 12 Nov 2024 18:06:57 +0100
-Message-ID: <20241112170658.2388529-10-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241112170658.2388529-1-maxime.chevallier@bootlin.com>
-References: <20241112170658.2388529-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1731431299; c=relaxed/simple;
+	bh=dwmNeo+TpPs5k1Z5HQ0kcwDKmihQfyb2xjMEnkttJAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bkK4/OXS73IgUr62mVmc8vBpPkkX7VrCBVqeyRE27ogA07uy/QloRSBGXIi8Ky3s2UIp1L3bvQNnaLEhTomtIZshgb0Kz0B3LpW6MexpADpCbLXOptO3ErF/UdjX0tR6DliGaIwrpsbGgzahAryzU8b/QN+z8jEeSnxrXkyoWHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOW/S0Zx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEF56C4CECD;
+	Tue, 12 Nov 2024 17:08:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731431298;
+	bh=dwmNeo+TpPs5k1Z5HQ0kcwDKmihQfyb2xjMEnkttJAw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fOW/S0Zx0MvsLGPcJohR/ODEXmbpbfxHkd/sFs8DEb0UOAd5bMm2XzGLijA8NtnDO
+	 It77jEjw8Wtov+aAsOh8eDjWzZ5ZSrD/YS4PkGi3+5b/FHiYQuRWLYafeDtnp6/Qhi
+	 esDVI28op8Lp5Au65/PxJCeBv1G6KZZd9bQ4jPSU592ktYmTVaQ1/W6Senq3LiW+Cr
+	 GZFPFxqL4PGQO0DYel2nsf6bS/8mUHEhJf5u+f2/mY3VE7+riSPCG26XiyjVQ82ryd
+	 98nx2wNpz+tWudbE67qKz8VhP4ZLP8arGXdXdu6BzTS7vV+7cUSySU9AbtbdXVtAZA
+	 5Bn3tJZ7hJGpg==
+Date: Tue, 12 Nov 2024 17:08:13 +0000
+From: Simon Horman <horms@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, shenjian15@huawei.com,
+	salil.mehta@huawei.com, liuyonglong@huawei.com,
+	wangpeiyang1@huawei.com, chenhao418@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND net 0/7] There are some bugfix for the HNS3
+ ethernet driver
+Message-ID: <20241112170813.GS4507@kernel.org>
+References: <20241107133023.3813095-1-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107133023.3813095-1-shaojijie@huawei.com>
 
-Indicate that dwmac_socfpga has a gmac. This will make sure that
-gmac-specific interrupt processing is done, including timestamp
-interrupt handling. Without this, the external snapshot interrupt is
-never ack'd and we have an interrupt storm on external snapshot event.
+On Thu, Nov 07, 2024 at 09:30:16PM +0800, Jijie Shao wrote:
+> There's a series of bugfix that's been accepted:
+> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=d80a3091308491455b6501b1c4b68698c4a7cd24
+> 
+> However, The series is making the driver poke into IOMMU internals instead of
+> implementing appropriate IOMMU workarounds. After discussion, the series was reverted:
+> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=249cfa318fb1b77eb726c2ff4f74c9685f04e568
+> 
+> But only two patches are related to the IOMMU.
+> Other patches involve only the modification of the driver.
+> This series resends other patches.
 
-Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c | 1 +
- 1 file changed, 1 insertion(+)
+Hi Jijie Shao,
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-index 0745117d5872..248b30d7b864 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-@@ -485,6 +485,7 @@ static int socfpga_dwmac_probe(struct platform_device *pdev)
- 	plat_dat->pcs_init = socfpga_dwmac_pcs_init;
- 	plat_dat->pcs_exit = socfpga_dwmac_pcs_exit;
- 	plat_dat->select_pcs = socfpga_dwmac_select_pcs;
-+	plat_dat->has_gmac = true;
- 
- 	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
- 	if (ret)
--- 
-2.47.0
+Cover letters for patch-sets for Networking do make it into git history,
+e.g. This cover letter [1] became this commit [2]. So please consider a
+subject that will be more meaningful there.
 
+e.g. [PATCH net v2 0/7] net: hns3: implement IOMMU workarounds
+
+Thanks!
+
+[1] [PATCH net v2 0/3] virtio/vsock: Fix memory leaks
+    https://lore.kernel.org/netdev/20241107-vsock-mem-leaks-v2-0-4e21bfcfc818@rbox.co/
+[2] 20bbe5b80249 ("Merge branch 'virtio-vsock-fix-memory-leaks'")
+    https://git.kernel.org/netdev/net/c/20bbe5b80249
+
+...
 
