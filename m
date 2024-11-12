@@ -1,152 +1,138 @@
-Return-Path: <linux-kernel+bounces-406579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B86BC9C643A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:26:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49509C63CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:52:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAD3BB3ED6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:03:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93327B2A1EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7F821832F;
-	Tue, 12 Nov 2024 19:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2581B21832A;
+	Tue, 12 Nov 2024 19:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Jizc66wA"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="k6Y+UXBc"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850CC230994
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B17230994
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731438185; cv=none; b=S6lBhaJH5FUh0F52gz8XBuOVKXhaXrPLu6VN+ikO0UZIqt2C0RhcuHS49nnUM+6k4+6MQZmwdsLhaYvqfaH0J1RtuCBJGm2PxHH06hN1fPYAQq7Z8bXSpmID2AgPICeqObsenf6R3YfNFGTFiVvylfFPVkAR8YV3yJiGoRvcRVk=
+	t=1731438428; cv=none; b=BP31UAv59q1H6VbPvfDtkr2TUAhkXYmASQojFnKP7tm0bftMO0PmuvCo0oihCgC3O0L5LHSe1+PFR/QdVnD21043avFA7/PGLO4QISz4u4qySeIUYf/NV7YmDzOb+ALmM6Yz4T8MCTn2zsIyP1KaQe/07rHTpfNsg236Crx5oSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731438185; c=relaxed/simple;
-	bh=O6vE6qB0NNkRkRyyRecEvVJhd/8SocXQJT0Sotolh6Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y72V8uTr1lzjgxa1nzdviC0GkhVtOTUXcPVqR9c+WfGXs6/HD8TlECl3hSl1hWRuQRkySkMHhV9pJBZJD0rtuEWpnXzHAOAO2Yeu0510eZ4EQlpwK634Z6pXlhVF3u3pAeN0HlU3J1X6EexjJcH64Z6KJDKedCT0KO5XTmQsjx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Jizc66wA; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f84907caso6831234e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:03:02 -0800 (PST)
+	s=arc-20240116; t=1731438428; c=relaxed/simple;
+	bh=J/Yu6vpBU2NGlS8faMi21+g1+8AXNbbd6j08RCBCylE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gRK+6ReM+hdtFWAPuQFdK5FYvM3R1aP1jWJaorfLHBT/W7BYrTEDbIaZ076NnWQ2HJ0+chQumyl7R7DZ0APNSWtQJjuUFplpQXSdrnMqGdAfOYudW7bf8lQVMBZeDZANeUqwVNMqRh6z9mIoXB44KX2R5pWVqxWKisYdXClGqT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=k6Y+UXBc; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-720be27db74so46651b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:07:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731438180; x=1732042980; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xxLqrRJ6SY3aveV57FtrhBS5FEl34yCXiwMcZLGGmPI=;
-        b=Jizc66wABtX4791jYrVWkF+v/bsQ0xPCZpcsArTJMdsCjzydAz/ZGan8RQZY8KUPal
-         8yuyWSkWmQay3u4xVzhcJ0IWRWluq3nlGZtL7KcGnJO7RVp1fsurHbUJztW4RGQGZXeq
-         sde8kprMvDM3BJHqPnAgoXi6t3yDTzp2QOl6Cyxby3H9zDySGaMqF2sHjfPZZcE/H3yp
-         or8EDYJt0RJ8+0a3RLdO1jh4A8eaOYbGyI1Zb1tpilwl0dkvL5pvEU5ra/SjLI3tLc5T
-         mQhqU0JgOJsk3MRAEJNPp4htnUjILg/9ecoU2E/hlREVip21N4PxT0MdkfOiv+TCthe5
-         Voqg==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731438426; x=1732043226; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LsDwXecVIrAlSTQ6V1mobheD8FZMwXU4s1gVF5Uq0Iw=;
+        b=k6Y+UXBcbP8GJE7G0F5joWDFJEISQL1GZLnipw8Vvi/4BjHHBOtmRYzKZl/Dzu/bQX
+         vb1RgAkTLTy7pLrnaQFl0/r2053ZRswx4Qz0ZuN26M3DgyAEO5GnBPsAxcEErbWC/fzz
+         Im7yrOHqyV717GctmXxS/NwoZ6BTctbyEq0i3zPRTUndU5NncQrCDL63B5nDcN+wHveI
+         lLG+XsFDlpHXlA4VVk/D6vSRCqznh68RnGlbCUH3ElxbXugJK82LjD9+gp1Fi2PLY8wK
+         54r/MEx6qNZ57fAceKZGLNPGgE4IzNemQSv7KJ/34rhLRIqxkzXr249clf2+093FP61y
+         O96w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731438180; x=1732042980;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xxLqrRJ6SY3aveV57FtrhBS5FEl34yCXiwMcZLGGmPI=;
-        b=nmUA+nD3lqgMOcX+vYk6IV4tC3mKlxNzJh5+wZfW3hk5VwHsQPHO9nEGDtCEN1khBo
-         gcEepxMWo8o0x+LXZUDWdUPVDDEXOVNnfr/hp6yyXzGl5hjtsS4qDfxi9vDqZWkMaIF7
-         9wRhYK74ZOOwM8gXj6tSMV/K83OAWtfP50VLIuWGBjzfmFy2F1e2S2COKVrkfgLmAxKY
-         dK22EdC9k17rTaQYDb34DhAEMFGiNNOq57XYBn7wIolwFkg+N8B8A5Y6n1idX/2yvKN7
-         kQq2djT1jgCAPLfJ1f4bjgG6RaSfd41EWts8qrfSwlGJsTJqQBgLD2Ig3bfb6y5SvlEa
-         6EjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfY7WaBdXbyIcYLsHRIHCybpRM81ioccpXlFJtnM2MgTXDLFbnrXlaYcX2T6BirsbeyIPNjDuPDGezYPg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySXoKgS2PZNF6llRHf7DfnVJSFJgUYPKPZVu7h7ICbH4sqY/t6
-	G2QFIejfiDqKqeDvgMA0RCqnZpNWvpHBx3tgT57uGb/4yDFf7gDO0Zl7MvmqJYM=
-X-Google-Smtp-Source: AGHT+IGegCbSsynDkWm3rsYBD5mMnXwtIgZREvVK/xN59bUdeTXvfAxtgJBtIFx8BN4RzRbuk8jQ/Q==
-X-Received: by 2002:a05:6512:128a:b0:539:f886:31d6 with SMTP id 2adb3069b0e04-53d862bd946mr8348813e87.2.1731438180306;
-        Tue, 12 Nov 2024 11:03:00 -0800 (PST)
-Received: from [192.168.3.33] (69.36.160.45.gramnet.com.br. [45.160.36.69])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05e5f82sm224106725e9.42.2024.11.12.11.02.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 11:02:59 -0800 (PST)
-Message-ID: <57190fd1401fb6238e4e1efd078c3aaa0314ebac.camel@suse.com>
-Subject: Re: [PATCH] [v2] printk: add dummy printk_force_console_enter/exit
- helpers
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-To: Arnd Bergmann <arnd@kernel.org>, Petr Mladek <pmladek@suse.com>, John
- Ogness <john.ogness@linutronix.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Steven Rostedt <rostedt@goodmis.org>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, linux-kernel@vger.kernel.org
-Date: Tue, 12 Nov 2024 16:02:53 -0300
-In-Reply-To: <20241112142939.724093-1-arnd@kernel.org>
-References: <20241112142748.673772-1-arnd@kernel.org>
-	 <20241112142939.724093-1-arnd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (by Flathub.org) 
+        d=1e100.net; s=20230601; t=1731438426; x=1732043226;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LsDwXecVIrAlSTQ6V1mobheD8FZMwXU4s1gVF5Uq0Iw=;
+        b=LqrAsO/R9B+HV2oa+5qin9e0DcaM3awfmScH4JGNYUu6lSzfFsGqxMbiMRwrBMluTm
+         8cQ5gYXTKNtOliqUbM38xSqaZ8tpNMmpRSaDX4EqFs40N+zhg1C5v+aT+jFOkAV/sepd
+         AhOmobcHhohpxCjSRsBuoku1a5HWA4BZoqxldZqckydJuBbHf0pqAwzOt0mkuY5P2qhS
+         9UU793wajOIciB63G3vLn2DbCtQMGGFbWiLCVRwyHjXYkWXUH1OvRCYr0Y+deGJPVzKA
+         Bqd3UvpGG1Bu9uztHdBBOJCXjnxkQDg9vp2a/0UyPg+MabKHr8sFkEuA4QhDepcvl+WQ
+         IIJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRiaWEeURQhZ63qsSkgL1jfX3B48ZKBAGGN1yRFnQ1hZtT0cMFFTgz0OfTxe3IHukicWoFiDLD/rGgvQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPkstqGc6EbXD0eLMPbrVQveoKtuTf9ew9Zx7hWzyfudtM1vgK
+	egWTVP93789BCVIJnprqKcLH0uFQACSWPyXpL/xdBOWh12+3D8WZG3cOeaB+XyjWxn0K8Bzqg4E
+	QZW+dvooRIjfcxAhtA68nSJB3HwmtM1FYmAHQbw==
+X-Google-Smtp-Source: AGHT+IHB097GZ6fVk/rpRwAIUQNKKHv7J0PFUbREBu/PTKn/4UbitylkvuPDjSzAmny8aHcHd88vY6+lORGpbC6yPhs=
+X-Received: by 2002:a05:6a00:841:b0:71e:6a99:4732 with SMTP id
+ d2e1a72fcca58-724140a67d7mr26723911b3a.11.1731438425637; Tue, 12 Nov 2024
+ 11:07:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241112113422.617954-1-alexghiti@rivosinc.com>
+In-Reply-To: <20241112113422.617954-1-alexghiti@rivosinc.com>
+From: Atish Kumar Patra <atishp@rivosinc.com>
+Date: Tue, 12 Nov 2024 11:06:54 -0800
+Message-ID: <CAHBxVyFUoiBNbJUCieS1cnVyTwUOModNL6b70wbMV4-z3GJEzQ@mail.gmail.com>
+Subject: Re: [PATCH -fixes] drivers: perf: Fix wrong put_cpu() placement
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Atish Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-11-12 at 15:29 +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> The newly added interface is broken when PRINTK is disabled:
->=20
-> drivers/tty/sysrq.c: In function '__handle_sysrq':
-> drivers/tty/sysrq.c:601:9: error: implicit declaration of function
-> 'printk_force_console_enter' [-Wimplicit-function-declaration]
-> =C2=A0 601 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 printk_force=
-_console_enter();
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/tty/sysrq.c:611:25: error: implicit declaration of function
-> 'printk_force_console_exit' [-Wimplicit-function-declaration]
-> =C2=A0 611 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 printk_force_console_exit();
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^~~~~~~~~~~~~~~~~~~~~~~~~
->=20
-> Add empty stub functions for both.
-
-Ouch, indeed, my fault. After disabling prinkt I saw the build errors.
-Thanks for fixing it!
-
-Reviewed-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-Tested-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-
->=20
-> Fixes: ed76c07c6885 ("printk: Introduce FORCE_CON flag")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Tue, Nov 12, 2024 at 3:34=E2=80=AFAM Alexandre Ghiti <alexghiti@rivosinc=
+.com> wrote:
+>
+> Unfortunately, the wrong patch version was merged which places the
+> put_cpu() after enabling a static key, which is not safe as pointed by
+> Will [1], so move put_cpu() before to avoid this.
+>
+> Fixes: 2840dadf0dde ("drivers: perf: Fix smp_processor_id() use in preemp=
+tible code")
+> Reported-by: Atish Patra <atishp@rivosinc.com>
+> Link: https://lore.kernel.org/all/20240827125335.GD4772@willie-the-truck/=
+ [1]
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 > ---
-> v2: realized I sent the wrong version that was missing 'inline'.
-> ---
-> =C2=A0include/linux/printk.h | 8 ++++++++
-> =C2=A01 file changed, 8 insertions(+)
->=20
-> diff --git a/include/linux/printk.h b/include/linux/printk.h
-> index 232e5fd06701..4217a9f412b2 100644
-> --- a/include/linux/printk.h
-> +++ b/include/linux/printk.h
-> @@ -232,6 +232,14 @@ static inline void printk_deferred_exit(void)
-> =C2=A0{
-> =C2=A0}
-> =C2=A0
-> +static inline void printk_force_console_enter(void)
-> +{
-> +}
+>  drivers/perf/riscv_pmu_sbi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
+> index 391ca1422cae..1aa303f76cc7 100644
+> --- a/drivers/perf/riscv_pmu_sbi.c
+> +++ b/drivers/perf/riscv_pmu_sbi.c
+> @@ -1393,8 +1393,9 @@ static int pmu_sbi_device_probe(struct platform_dev=
+ice *pdev)
+>                         goto out_unregister;
+>
+>                 cpu =3D get_cpu();
+> -
+>                 ret =3D pmu_sbi_snapshot_setup(pmu, cpu);
+> +               put_cpu();
 > +
-> +static inline void printk_force_console_exit(void)
-> +{
-> +}
-> +
-> =C2=A0static inline int printk_ratelimit(void)
-> =C2=A0{
-> =C2=A0	return 0;
+>                 if (ret) {
+>                         /* Snapshot is an optional feature. Continue if n=
+ot available */
+>                         pmu_sbi_snapshot_free(pmu);
+> @@ -1408,7 +1409,6 @@ static int pmu_sbi_device_probe(struct platform_dev=
+ice *pdev)
+>                          */
+>                         static_branch_enable(&sbi_pmu_snapshot_available)=
+;
+>                 }
+> -               put_cpu();
+>         }
+>
+>         register_sysctl("kernel", sbi_pmu_sysctl_table);
+> --
+> 2.39.2
+>
 
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
+Tested-by: Atish Patra <atishp@rivosinc.com>
 
