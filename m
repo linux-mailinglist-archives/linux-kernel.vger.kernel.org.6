@@ -1,108 +1,171 @@
-Return-Path: <linux-kernel+bounces-406043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430099C5DB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:51:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03BAF9C5DF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:58:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 969E6B35522
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:31:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDF54B279AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9581FEFBD;
-	Tue, 12 Nov 2024 14:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxFTp8cB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DE11FE0EE;
+	Tue, 12 Nov 2024 14:36:16 +0000 (UTC)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBF31FBC9B
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18291FCF6C;
+	Tue, 12 Nov 2024 14:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731421674; cv=none; b=DqozTqpZlAwxnWZ+dmzFdOpO0N+rxAyxR+m53DNLcEKrZzRBNZOg9OdaaHOTdcHLRoYBE5Jj060fBsOIHt+B4Sn7g0sq03BgB3HdVHN0uFxtTJzwAu9eBpSHxGIC9l88wKv8tbRcR1L06uL+m3tZgFzM1r4tV5n+ksk2TYCCFMk=
+	t=1731422176; cv=none; b=AEWOxDfKWxjEOeqUcwSbj6qa33ndnPkeNU8taA8qqVhUeGOKhss56gBNC0jm+RIfuaTlqV8p+5FHuLl9qRKBwNF0PTrISTUdkBQRVU4XmvfDAdAIyhMC/q9671f+3Rjlz2ENrabFuwacy9nyOTuXzNL4iYDqYb7O+N2ej+pRv8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731421674; c=relaxed/simple;
-	bh=qBlIE7iWTXa5rJmijFAAHJoeXXKYPcqYjkX2GK/+sVU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CBVaFez8LzCZKLCp1iWrJuFSRTN/n+euDYcmyQ20iFV3exfyUmnfS8NAHRGhoGska2DxjY4FlFO2jTOZ3twsXGSw6+r2w+nGY7+89gy0Z16TpwXoK1WvuGt+pdZtoMQ8+sxC8BrM1EfQTh6yIbLuk0JcqhiTJhY3+wkAuw/CG6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bxFTp8cB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22703C4CECD;
-	Tue, 12 Nov 2024 14:27:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731421674;
-	bh=qBlIE7iWTXa5rJmijFAAHJoeXXKYPcqYjkX2GK/+sVU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bxFTp8cBtHoO6vcpYvZrO83xq1+3weben0LT9JA4/AW730+dFkKsp9viMawhdgYno
-	 FiVmAFkw2Px+prCs7h43fm9APNArJuyRFtdxBha/DCFNM4Ryy5c1BxVegrT0oQLaqU
-	 6UNe/F63GSHc2NNswxa7DaQa2sV3Nl2gcA5DV/NGuxezmimIFCVyTCVBteKj0o5RQF
-	 sSiJc5S/M9H5IPbXJkEAA4TUsysgD7yBeJHvCI9ztppwtPqTVeJyiT5Go5+Atmk57y
-	 5L9gLCkx3UIdrjHZcaP1+JHgcmM6zB2aGUKU8V4Dyt6N2HtukB36Z2tbNFpx/fYcsz
-	 s29Bzhfq5u7ug==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Petr Mladek <pmladek@suse.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>,
-	Sreenath Vijayan <sreenath.vijayan@sony.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] printk: add dummy printk_force_console_enter/exit helpers
-Date: Tue, 12 Nov 2024 15:27:34 +0100
-Message-Id: <20241112142748.673772-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1731422176; c=relaxed/simple;
+	bh=Swj4SJsULX+YIa8TLSPmrrh1lNABYWXUZCNeI6pAgC8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ofDxr9m1kuhrYoBrqMLzgQi4hCeteCgYB87n6hb7l/Su4/HlUYqJM2JW61mqyhPfvifg1xD1rP/g82jG1PE7MRJpatxl4nLjklolZocAyh9RwdK0kt16Y0/LlQJ7Fy6eQ6oiJpJsdd4Vq3UdVKf7xjXKTQriAKcaQlcREmsorFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cb7139d9dso53249235ad.1;
+        Tue, 12 Nov 2024 06:36:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731422174; x=1732026974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fU6W7rKC1LDOoPqE+zgv8rY63qL2TykSBZFtxfoHqJQ=;
+        b=b4fG0o/09cBIx8Z6h4prwEcRDFmVomAXLOQC8+FBVg4RDIU1iI6WtVIfqpbzr6aqAt
+         +9eYCkXbWkWUfGbjMPNtMifED+7NJWm7d6sExSUBWg4pfXTYG3GOULVxNYJeqdDE4zFn
+         fBFLo8nlGBLuEmp5H8F9fe1wLwwIeGFCSIcIG4Ur9HiFiWP4rde+iToDhpITnklwqykf
+         XmO5dLnz/ht5BHeZ6wYUcQUZz4ovLsLggZzKd2/9c4chw0cxQBFCsY42RO21jRJx9FeY
+         KHSemnr8JuB4N2cH6X+gpGRTqXVmGOr+VWkWJRD3n29UTJAbgweM0Hps0V0R8LaeGZL7
+         g2ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUKgXyw0OjfYUeFN2UDNDZUi6lfaC6VrY031lvZ9FtNOs2DFepKyL8fLWsTgFn+La0w6wN1hUdXQ8vr@vger.kernel.org, AJvYcCURrRJCinDSGoj1l87h5prVHPB1T3YvXEEcLo1r/LA0ZyFN24SjrUd4si0l23hSBEhqX42smEVQys1dfZeb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXtTVuaA2tfjHHLznWpMF7A1Yww9lnMcYbW4yvJaFNcd0JPaaQ
+	s9oflgf57+6IwEBY3KpgYQNVzB5iNzIsrxl2+clEtx+xumDAnDAkpfXoASedTeNGwQ==
+X-Google-Smtp-Source: AGHT+IEBldIykjeOMBEw6JcPYD1BWPf3DRE9rWz+yBHxL0qv7kC4+C6xg5z6GXyXJDwsL3vajYna2Q==
+X-Received: by 2002:a17:903:2a8b:b0:20c:cd23:449d with SMTP id d9443c01a7336-21183e1eff6mr220783885ad.46.1731422174169;
+        Tue, 12 Nov 2024 06:36:14 -0800 (PST)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com. [209.85.216.41])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e418bfsm94417445ad.169.2024.11.12.06.36.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 06:36:13 -0800 (PST)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2eba31d3aso4337669a91.2;
+        Tue, 12 Nov 2024 06:36:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUgvaXPA9XYnoRtoCvbCwh+/grG+Tp865E/nRl+alZIpNGLewv97gjfnrug954E4r9yJan6WglUX1rUbZ+8@vger.kernel.org, AJvYcCVEn1NLIHaw0i14pE/4Eh0imt5OpGkoqiAYfSgZ0Ps9MfpNgb0s9RBxoioqSZHxKLP6H1w92Hdn0cwi@vger.kernel.org
+X-Received: by 2002:a17:90b:3c0e:b0:2e2:dcea:2b8c with SMTP id
+ 98e67ed59e1d1-2e9b16eeb4emr22784902a91.6.1731422173348; Tue, 12 Nov 2024
+ 06:36:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241111181807.13211-1-tszucs@linux.com> <20241111181807.13211-2-tszucs@linux.com>
+ <c89c2f16-ffb0-4b61-a962-9705f9f1e0e2@kwiboo.se>
+In-Reply-To: <c89c2f16-ffb0-4b61-a962-9705f9f1e0e2@kwiboo.se>
+From: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>
+Date: Tue, 12 Nov 2024 15:36:02 +0100
+X-Gmail-Original-Message-ID: <CA+GksrJzkxffSQbuseGFL0=2PDxV+TRevX0-NOkc6FNYLmNgYA@mail.gmail.com>
+Message-ID: <CA+GksrJzkxffSQbuseGFL0=2PDxV+TRevX0-NOkc6FNYLmNgYA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] arm64: dts: rockchip: Add supported UHS-I rates to
+ sdmmc0 on rock-3b
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, FUKAUMI Naoki <naoki@radxa.com>, Dragan Simic <dsimic@manjaro.org>, 
+	Chukun Pan <amadeus@jmu.edu.cn>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi Jonas,
 
-The newly added interface is broken when PRINTK is disabled:
+Thank you for pointing this out! I haven't noticed this before. I've
+done some testing and I believe I am able to reproduce the issue you
+described, although I cannot confirm the reason.
+The only occasion I encounter any problems is when a UHS SD card or
+SDIO device is connected to sdmmc0 during bootup. Sometimes the device
+is recognized as HS only. Obviously no tuning value reported. Also,
+sdmmc2 cuts out completely. I'm booting from eMMC and when the SD card
+is removed in this state I lose my rootfs. Certainly, this needs more
+attention but it seems to be unrelated to the changes here.
 
-drivers/tty/sysrq.c: In function '__handle_sysrq':
-drivers/tty/sysrq.c:601:9: error: implicit declaration of function 'printk_force_console_enter' [-Wimplicit-function-declaration]
-  601 |         printk_force_console_enter();
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/tty/sysrq.c:611:25: error: implicit declaration of function 'printk_force_console_exit' [-Wimplicit-function-declaration]
-  611 |                         printk_force_console_exit();
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~
+I need more time to check but are you sure this SD card during bootup
+issue is gone with UHS-I disabled?
 
-Add empty stub functions for both.
+Also, in every other case, when you connect any device to sdmmc0 after
+bootup, performance and stability is perfect.
+Interestingly I also don't experience this behavior with an eMMC
+device and / or an SDIO device connected to sdmmc2 during bootup. Only
+sdmmc0 is problematic and only during bootup.
 
-Fixes: ed76c07c6885 ("printk: Introduce FORCE_CON flag")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- include/linux/printk.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Any more thoughts on this are very welcome.
 
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index 232e5fd06701..0f2d7bdcea54 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -232,6 +232,14 @@ static inline void printk_deferred_exit(void)
- {
- }
- 
-+static void printk_force_console_enter(void)
-+{
-+}
-+
-+static void printk_force_console_exit(void)
-+{
-+}
-+
- static inline int printk_ratelimit(void)
- {
- 	return 0;
--- 
-2.39.5
+Kind regards,
+Tamas
 
+
+
+Tam=C3=A1s Sz=C5=B1cs
+tszucs@linux.com
+
+On Mon, Nov 11, 2024 at 8:00=E2=80=AFPM Jonas Karlman <jonas@kwiboo.se> wro=
+te:
+>
+> Hi Tam=C3=A1s,
+>
+> On 2024-11-11 19:17, Tam=C3=A1s Sz=C5=B1cs wrote:
+> > Add all supported UHS-I rates to sdmmc0 and allow 200 MHz maximum clock=
+ to
+> > benefit modern SD cards.
+> >
+> > Signed-off-by: Tam=C3=A1s Sz=C5=B1cs <tszucs@linux.com>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts b/arch/arm=
+64/boot/dts/rockchip/rk3568-rock-3b.dts
+> > index 3d0c1ccfaa79..242af5337cdf 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+> > @@ -670,8 +670,14 @@ &sdmmc0 {
+> >       bus-width =3D <4>;
+> >       cap-sd-highspeed;
+> >       disable-wp;
+> > +     max-frequency =3D <200000000>;
+> >       pinctrl-names =3D "default";
+> >       pinctrl-0 =3D <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
+> > +     sd-uhs-sdr12;
+> > +     sd-uhs-sdr25;
+> > +     sd-uhs-sdr50;
+> > +     sd-uhs-sdr104;
+> > +     sd-uhs-ddr50;
+>
+> There is an issue with io-domain driver not always being probed before
+> mmc driver, this typically result in io-domain being configured wrong,
+> and mmc tuning happen before io-domain is correctly configured.
+>
+> You can usually observe this by looking at the tuning value during boot
+> and comparing it to the tuning value after removing and re-insering a
+> sd-card.
+>
+> Because of this uhs modes was left out from initial DT submission, some
+> cards will work others wont, sd-uhs-sdr50 is known to be working with
+> most cards even with the probe order issue.
+>
+> Also I thought that lower speeds where implied?
+>
+> Regards,
+> Jonas
+>
+> >       vmmc-supply =3D <&vcc3v3_sd>;
+> >       vqmmc-supply =3D <&vccio_sd>;
+> >       status =3D "okay";
+>
 
