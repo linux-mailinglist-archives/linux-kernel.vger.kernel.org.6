@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-405638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C37409C54A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:47:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563DF9C54A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:48:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BCED1F22E03
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:47:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8D42894F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7D121E13C;
-	Tue, 12 Nov 2024 10:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D2321EBB4;
+	Tue, 12 Nov 2024 10:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNLEyjSX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEmfR70P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3417121EB93;
-	Tue, 12 Nov 2024 10:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C129E21F4A8;
+	Tue, 12 Nov 2024 10:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731407823; cv=none; b=ljz44aEuJQunQ4bvdH2HT5bKxGb074ljr41pa2wgAd35nDiXrI6GGyCVgUi3Z7EQ668nQk1N+DfqeDIz9z5FIpSsl4xKCz8RE+AP7A2Ko379krTfDA0XK0pcmLGMUeu1CMFpvWihFy0fottjVZZmQRTeUwCPA5sE8jvJdeHmoRk=
+	t=1731407825; cv=none; b=CjJb1TH1MxK5dBGNf19BanBZH89nc64IE5naYeryc4lr/QQ5//pSfEOaXrXUWd4RfnJbesyPx3NCu0tAlhZ29ponlb+sKnI1mx8OZO7jKKzVRxUtC6CKthmDwOmAcZRQLmv16lMB72pp3Dn/R1ngEVzPAqCu3EfKCXUQfgep7V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731407823; c=relaxed/simple;
-	bh=mH0Xx9pnQKbS/pmT69wEitT1nowdxH6DcNJvkhuFaFM=;
+	s=arc-20240116; t=1731407825; c=relaxed/simple;
+	bh=gAEZS/3PgnLxe2AEnAzYsgWFUX6ph7baMJLD1F4z5E0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HnCQMnlR9uKP+Cm/seGACPJziOrpU7kqSFoHBZtRzkvJZvyCObwcEjdjZtZHzn5x9OT82tVz6RKm6ANYnF5JXWfX50FD/JMqP6adXlLgt7rb1ClCYbl701JkBABMHoyAP+EVDqrfZbAJmT8RU6GZnE1R16EMj+167q/xQUBAq8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNLEyjSX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D44DC4CECD;
-	Tue, 12 Nov 2024 10:37:01 +0000 (UTC)
+	 MIME-Version; b=TdvR0sMoCDuPoxeZkqgdfLseDMV+2pbKKYRj39ByiU8XKCxhxbsOe8eoEzwjV+8/uadjQ/UzoPVe6D0HyWkTDNT1JE1att6MNioDLEDD9ziUT5OYS9QqST27QkGphkUFTDGuQaL8YkxewAFtvb4oNbjsRfVtZaEm0ZpnVK/cp1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tEmfR70P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50FEAC4CECD;
+	Tue, 12 Nov 2024 10:37:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731407823;
-	bh=mH0Xx9pnQKbS/pmT69wEitT1nowdxH6DcNJvkhuFaFM=;
+	s=k20201202; t=1731407825;
+	bh=gAEZS/3PgnLxe2AEnAzYsgWFUX6ph7baMJLD1F4z5E0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DNLEyjSXDZrtRV+ev3con6HglcKKQp/AEA37VoQFI7YRmt+a1vcFucnfV6q10ST0j
-	 58v9D42OQKSLbRv6BvBph3jcsAM+EnRe9Fp7/futZch6RtZ0HHLMPYqyGe57wFGw8v
-	 VUUBiGO+fCfnrx1lxNm5Lzrb48aPZT/IBg0vrPE/Asmv8C2irm49fCQJ4asXZjLHRF
-	 ts6lIb9m1xntL0wQIfoJpnJgQfAFXyITKrCkMdaPBWoGLD8rxmM6j6sykONgrzUVfs
-	 19WQFfSgdBah/dWYAJthdO638Xy1Ce/JtZxvCF0nxWNBcqglUPKulr6sLj2j7qpTG5
-	 3TkajAISCsxOw==
+	b=tEmfR70P9yvPGaHIdbs6tQRmlPMXx1gArFDlVHUknPZWqr+oltqckfePoLeGa1K99
+	 tzeM9qoV2tyfoKyRMFByvqXOHXbHF4BvLSn1wAyR7bN4+5pdxEfZ1lDcbMZq+h0+b8
+	 SZJQfCGU3+nBv/Zsab/3HJHQuWA8PwRGPmyVHzXYADDK4apGIeHQYJUr3IF7YvD/Pr
+	 By3v2ksS9KaleSHoTnW56vK3YakDGykgl3u10KJ+E0Yl5sf4AuZj1cbnsOBEVeyKq8
+	 Ma4TF3UQvTokDjUqfp9uqqUHZmLtysmbSpttN9DmnySKv2WRp6DmtXL1nf5DJHye/A
+	 p1BIF/ez1lLqw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Mingcong Bai <jeffbai@aosc.io>,
+Cc: Markus Petri <mp@mpetri.org>,
 	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	lgirdwood@gmail.com,
@@ -53,9 +53,9 @@ Cc: Mingcong Bai <jeffbai@aosc.io>,
 	end.to.start@mail.ru,
 	me@jwang.link,
 	linux-sound@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 10/15] ASoC: amd: yc: fix internal mic on Xiaomi Book Pro 14 2022
-Date: Tue, 12 Nov 2024 05:36:31 -0500
-Message-ID: <20241112103643.1653381-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 11/15] ASoC: amd: yc: Support dmic on another model of Lenovo Thinkpad E14 Gen 6
+Date: Tue, 12 Nov 2024 05:36:32 -0500
+Message-ID: <20241112103643.1653381-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241112103643.1653381-1-sashal@kernel.org>
 References: <20241112103643.1653381-1-sashal@kernel.org>
@@ -70,26 +70,15 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.60
 Content-Transfer-Encoding: 8bit
 
-From: Mingcong Bai <jeffbai@aosc.io>
+From: Markus Petri <mp@mpetri.org>
 
-[ Upstream commit de156f3cf70e17dc6ff4c3c364bb97a6db961ffd ]
+[ Upstream commit 8c21e40e1e481f7fef6e570089e317068b972c45 ]
 
-Xiaomi Book Pro 14 2022 (MIA2210-AD) requires a quirk entry for its
-internal microphone to be enabled.
+Another model of Thinkpad E14 Gen 6 (21M4)
+needs a quirk entry for the dmic to be detected.
 
-This is likely due to similar reasons as seen previously on Redmi Book
-14/15 Pro 2022 models (since they likely came with similar firmware):
-
-- commit dcff8b7ca92d ("ASoC: amd: yc: Add Xiaomi Redmi Book Pro 15 2022
-  into DMI table")
-- commit c1dd6bf61997 ("ASoC: amd: yc: Add Xiaomi Redmi Book Pro 14 2022
-  into DMI table")
-
-A quirk would likely be needed for Xiaomi Book Pro 15 2022 models, too.
-However, I do not have such device on hand so I will leave it for now.
-
-Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
-Link: https://patch.msgid.link/20241106024052.15748-1-jeffbai@aosc.io
+Signed-off-by: Markus Petri <mp@mpetri.org>
+Link: https://patch.msgid.link/20241107094020.1050935-1-mp@localhost
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
@@ -97,18 +86,18 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 7 insertions(+)
 
 diff --git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/amd/yc/acp6x-mach.c
-index 76f5d926d1eac..e027bc1d35f4f 100644
+index e027bc1d35f4f..f5ca5bdb364c7 100644
 --- a/sound/soc/amd/yc/acp6x-mach.c
 +++ b/sound/soc/amd/yc/acp6x-mach.c
-@@ -381,6 +381,13 @@ static const struct dmi_system_id yc_acp_quirk_table[] = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Redmi Book Pro 15 2022"),
+@@ -227,6 +227,13 @@ static const struct dmi_system_id yc_acp_quirk_table[] = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "21M3"),
  		}
  	},
 +	{
 +		.driver_data = &acp6x_card,
 +		.matches = {
-+			DMI_MATCH(DMI_BOARD_VENDOR, "TIMI"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Xiaomi Book Pro 14 2022"),
++			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "21M4"),
 +		}
 +	},
  	{
