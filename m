@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-406564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE78F9C60D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:53:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FCD89C60E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:58:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A65281F238DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:53:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FF90285438
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8DC21833C;
-	Tue, 12 Nov 2024 18:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82E021832F;
+	Tue, 12 Nov 2024 18:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="k5bLdzc4"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="R2ddoSFD"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E942178EE;
-	Tue, 12 Nov 2024 18:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D36C230994;
+	Tue, 12 Nov 2024 18:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731437581; cv=none; b=D0hCDkygQ5too9/g8x2lnmRn/0N18NUy5kfIIA+gft+fXUrT1XK4Oums3tZYh12UAt/rlbdpQJk7elXnHldE7b+IPgD+I7thO4DPOR3fAVXtAj7QfPc3G7D2pI5RfD5K7Ox2dh2MTHcbVcE1qIR7ZxajX65C4q+g1X8P7JQVYrY=
+	t=1731437879; cv=none; b=L7q9qqN5VL2/aSJyHx4r3KNqApPuQgKNfZtkaxEfDnU98eQ0AFoxe3gEcNzSACWwbHppBmQOIHRnX1SpYwIfP+Kr2uRreFNo4rLqhjHk7jP0tgmxdJc3MZnSeELqPokhY5r7czrDzK3SuTycwl5p/7dqHu3a5zWfwcPthVrCydw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731437581; c=relaxed/simple;
-	bh=soKdLg6m2StKZPAIkHLlrKFJ6LJ8jdKERb4khRLnf5Q=;
+	s=arc-20240116; t=1731437879; c=relaxed/simple;
+	bh=rMnI491dUMNYHdPK+K0pki11PueGIAeB+T2bYNb+lUM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mjn2igTDatPFDlZCl5yg8pQAyhDllyIK4c+N0eOGI4dkJpgDw8I6wztxGuAbzHWihHa4RbEUTFMq8mYfAEfRSZWX/tyzM7GkDfk8Atoo+T5OSvqmyQ4filPNDvjTUoFdNyxNwRz186LDB4zMS7VViZSBN2clb1gR0QrHHIYQsOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=k5bLdzc4; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1731437580; x=1762973580;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=5HqiESkiyPRctv1Z5UNmLRjLfERKPs9Ag5PX7DOU980=;
-  b=k5bLdzc4LMvV7dq/Z6uyBDE/3nopwlWSOgbO+jd6f5aO7X1rYbf1u/ca
-   slWyDu7gYac0xEKJq1cOcwy/Mv4RBUVAb9m2KJbMoyDrq21GqX2ArT6Y0
-   7kOnZ4F3WEcu8XYlGxjlk+jQcj4xFqHXj/d1bDrvr0EK3oPuzFnH1GheJ
-   k=;
-X-IronPort-AV: E=Sophos;i="6.12,148,1728950400"; 
-   d="scan'208";a="439046312"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.124.125.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 18:52:59 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.17.79:12017]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.38.250:2525] with esmtp (Farcaster)
- id d25e43a4-f818-4195-acb7-15156c42b891; Tue, 12 Nov 2024 18:52:58 +0000 (UTC)
-X-Farcaster-Flow-ID: d25e43a4-f818-4195-acb7-15156c42b891
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 12 Nov 2024 18:52:57 +0000
-Received: from dev-dsk-nsaenz-1b-189b39ae.eu-west-1.amazon.com (10.13.235.138)
- by EX19D004EUC001.ant.amazon.com (10.252.51.190) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 12 Nov 2024 18:52:53 +0000
-From: Nicolas Saenz Julienne <nsaenz@amazon.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Matt Fleming
-	<matt@codeblueprint.co.uk>, <linux-efi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <stanspas@amazon.de>,
-	<nh-open-source@amazon.com>, Nicolas Saenz Julienne <nsaenz@amazon.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH v2 2/2] x86/efi: Apply EFI Memory Attributes after kexec
-Date: Tue, 12 Nov 2024 18:52:17 +0000
-Message-ID: <20241112185217.48792-2-nsaenz@amazon.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20241112185217.48792-1-nsaenz@amazon.com>
-References: <20241112185217.48792-1-nsaenz@amazon.com>
+	 MIME-Version:Content-Type; b=F+HDSclbqwwAaZzBsS1VtPH1A1Ktja04O9iwxuzf5iAw/CklhYCqsA5DBus5lLr7uuGDff8OhgVkVzmQijvTmpGHOKLPzsrgSy8v8b13MDw+NiiKZzaluqJq6LoFikUrOg8iP4PDJQAwCtQuKTm0ZV23+A167s+yn1GqVun4B4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=R2ddoSFD; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACI4FSs003711;
+	Tue, 12 Nov 2024 10:57:48 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=S
+	X9LLq7Oi/V0yG82i3Tn8EIsqUTyCont8HwEACyOsQs=; b=R2ddoSFDQmqL0yhpY
+	jUpQRIyGb94ujfIFF1qJwU7Fp60htK3djBp3G3qrX9Mb9CVC+9bU1Kur759v5b/6
+	Ko5erOOKZOuRc+AO1JhAYumlY0TuPcjK27s40evvLM2DeXnoRR7dqIfczqSVsNGZ
+	07USmxEr6N5QDRZsSGzPeiMqgni+t03+HXY+bjaETnHOPTtXt09H9MD4MK+Ynp4N
+	qbC0WebdBpFoUzbRo1DGtoH2oGhg0fPyeGQW3RySJseSzLnqGToFHoJifhIrkUBl
+	W2lIbkU88Ij04o8AqngGGC+udP7Yi3AdsjQRZrhZ+wtSb/tqoyRLnJgcHepXZtV0
+	TUevg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42v9xdreve-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 10:57:48 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 12 Nov 2024 10:57:46 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 12 Nov 2024 10:57:46 -0800
+Received: from hyd1425.marvell.com (unknown [10.29.37.152])
+	by maili.marvell.com (Postfix) with ESMTP id 1F2923F7045;
+	Tue, 12 Nov 2024 10:57:41 -0800 (PST)
+From: Sai Krishna <saikrishnag@marvell.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
+        <gakula@marvell.com>, <lcherian@marvell.com>, <jerinj@marvell.com>,
+        <hkelam@marvell.com>, <sbhatta@marvell.com>, <andrew+netdev@lunn.ch>,
+        <kalesh-anakkur.purayil@broadcom.com>
+CC: Sai Krishna <saikrishnag@marvell.com>
+Subject: [net-next PATCH v3 1/6] octeontx2: Set appropriate PF, VF masks and shifts based on silicon
+Date: Wed, 13 Nov 2024 00:23:21 +0530
+Message-ID: <20241112185326.819546-2-saikrishnag@marvell.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241112185326.819546-1-saikrishnag@marvell.com>
+References: <20241112185326.819546-1-saikrishnag@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,41 +79,209 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: EX19D039UWB003.ant.amazon.com (10.13.138.93) To
- EX19D004EUC001.ant.amazon.com (10.252.51.190)
+X-Proofpoint-GUID: AqPAu2dQa9LVoyvUjDJR2pmcViWpH-2k
+X-Proofpoint-ORIG-GUID: AqPAu2dQa9LVoyvUjDJR2pmcViWpH-2k
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Kexec bypasses EFI's switch to virtual mode. In exchange, it has its own
-routine, kexec_enter_virtual_mode(), which replays the mappings made by
-the original kernel. Unfortunately, that function fails to reinstate
-EFI's memory attributes, which would've otherwise been set after
-entering virtual mode. Remediate this by calling
-efi_runtime_update_mappings() within kexec's routine.
+From: Subbaraya Sundeep <sbhatta@marvell.com>
 
-Cc: stable@vger.kernel.org
-Fixes: 18141e89a76c ("x86/efi: Add support for EFI_MEMORY_ATTRIBUTES_TABLE")
-Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
+Number of RVU PFs on CN20K silicon have increased to 96 from maximum
+of 32 that were supported on earlier silicons. Every RVU PF and VF is
+identified by HW using a 16bit PF_FUNC value. Due to the change in
+Max number of PFs in CN20K, the bit encoding of this PF_FUNC has changed.
 
+This patch handles the change by exporting PF,VF masks and shifts
+present in mailbox module to all other modules.
+
+Also moved the NIX AF register offset macros to other files which
+will be posted in coming patches.
+
+Signed-off-by: Subbaraya Sundeep <sbhatta@marvell.com>
+Signed-off-by: Sai Krishna <saikrishnag@marvell.com>
 ---
+ .../net/ethernet/marvell/octeontx2/af/mbox.c  | 15 ++++++++++
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |  5 ++++
+ .../net/ethernet/marvell/octeontx2/af/rvu.c   |  5 ----
+ .../net/ethernet/marvell/octeontx2/af/rvu.h   | 14 +++++----
+ .../marvell/octeontx2/nic/otx2_common.h       | 11 +------
+ .../ethernet/marvell/octeontx2/nic/otx2_reg.h | 30 -------------------
+ 6 files changed, 30 insertions(+), 50 deletions(-)
 
-Notes:
-- Tested with QEMU/OVMF.
-
- arch/x86/platform/efi/efi.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index 375ebd78296a..a7ff189421c3 100644
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@ -765,6 +765,7 @@ static void __init kexec_enter_virtual_mode(void)
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/mbox.c b/drivers/net/ethernet/marvell/octeontx2/af/mbox.c
+index 1e5aa5397504..791c468a10c5 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/mbox.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/mbox.c
+@@ -13,6 +13,21 @@
+ #include "mbox.h"
+ #include "rvu_trace.h"
  
- 	efi_sync_low_kernel_mappings();
- 	efi_native_runtime_setup();
-+	efi_runtime_update_mappings();
- #endif
++/* Default values of PF and VF bit encodings in PCIFUNC for
++ * CN9XXX and CN10K series silicons.
++ */
++u16 rvu_pcifunc_pf_shift = 10;
++EXPORT_SYMBOL(rvu_pcifunc_pf_shift);
++
++u16 rvu_pcifunc_pf_mask = 0x3F;
++EXPORT_SYMBOL(rvu_pcifunc_pf_mask);
++
++u16 rvu_pcifunc_func_shift;
++EXPORT_SYMBOL(rvu_pcifunc_func_shift);
++
++u16 rvu_pcifunc_func_mask = 0x3FF;
++EXPORT_SYMBOL(rvu_pcifunc_func_mask);
++
+ static const u16 msgs_offset = ALIGN(sizeof(struct mbox_hdr), MBOX_MSG_ALIGN);
+ 
+ void __otx2_mbox_reset(struct otx2_mbox *mbox, int devid)
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
+index 6ea2f3071fe8..38a0badcdb68 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
++++ b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
+@@ -50,6 +50,11 @@
+ #define MBOX_DIR_PFVF_UP	6  /* PF sends messages to VF */
+ #define MBOX_DIR_VFPF_UP	7  /* VF replies to PF */
+ 
++extern u16 rvu_pcifunc_pf_shift;
++extern u16 rvu_pcifunc_pf_mask;
++extern u16 rvu_pcifunc_func_shift;
++extern u16 rvu_pcifunc_func_mask;
++
+ struct otx2_mbox_dev {
+ 	void	    *mbase;   /* This dev's mbox region */
+ 	void	    *hwbase;
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+index 1a97fb9032fa..dcfc27a60b43 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+@@ -400,11 +400,6 @@ static void rvu_update_rsrc_map(struct rvu *rvu, struct rvu_pfvf *pfvf,
+ 	rvu_write64(rvu, BLKADDR_RVUM, reg | (devnum << 16), num_lfs);
  }
  
+-inline int rvu_get_pf(u16 pcifunc)
+-{
+-	return (pcifunc >> RVU_PFVF_PF_SHIFT) & RVU_PFVF_PF_MASK;
+-}
+-
+ void rvu_get_pf_numvfs(struct rvu *rvu, int pf, int *numvfs, int *hwvf)
+ {
+ 	u64 cfg;
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+index e8c6a6fe9bd5..2f19b6b4a23a 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+@@ -41,10 +41,10 @@
+ #define MAX_CPT_BLKS				2
+ 
+ /* PF_FUNC */
+-#define RVU_PFVF_PF_SHIFT	10
+-#define RVU_PFVF_PF_MASK	0x3F
+-#define RVU_PFVF_FUNC_SHIFT	0
+-#define RVU_PFVF_FUNC_MASK	0x3FF
++#define RVU_PFVF_PF_SHIFT	rvu_pcifunc_pf_shift
++#define RVU_PFVF_PF_MASK	rvu_pcifunc_pf_mask
++#define RVU_PFVF_FUNC_SHIFT	rvu_pcifunc_func_shift
++#define RVU_PFVF_FUNC_MASK	rvu_pcifunc_func_mask
+ 
+ #ifdef CONFIG_DEBUG_FS
+ struct dump_ctx {
+@@ -820,7 +820,6 @@ int rvu_alloc_rsrc_contig(struct rsrc_bmap *rsrc, int nrsrc);
+ void rvu_free_rsrc_contig(struct rsrc_bmap *rsrc, int nrsrc, int start);
+ bool rvu_rsrc_check_contig(struct rsrc_bmap *rsrc, int nrsrc);
+ u16 rvu_get_rsrc_mapcount(struct rvu_pfvf *pfvf, int blkaddr);
+-int rvu_get_pf(u16 pcifunc);
+ struct rvu_pfvf *rvu_get_pfvf(struct rvu *rvu, int pcifunc);
+ void rvu_get_pf_numvfs(struct rvu *rvu, int pf, int *numvfs, int *hwvf);
+ bool is_block_implemented(struct rvu_hwinfo *hw, int blkaddr);
+@@ -853,6 +852,11 @@ bool is_sdp_pfvf(u16 pcifunc);
+ bool is_sdp_pf(u16 pcifunc);
+ bool is_sdp_vf(struct rvu *rvu, u16 pcifunc);
+ 
++static inline int rvu_get_pf(u16 pcifunc)
++{
++	return (pcifunc >> RVU_PFVF_PF_SHIFT) & RVU_PFVF_PF_MASK;
++}
++
+ /* CGX APIs */
+ static inline bool is_pf_cgxmapped(struct rvu *rvu, u8 pf)
+ {
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+index 327254e578d5..ee642b4b548e 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+@@ -27,6 +27,7 @@
+ #include "otx2_reg.h"
+ #include "otx2_txrx.h"
+ #include "otx2_devlink.h"
++#include <rvu.h>
+ #include <rvu_trace.h>
+ #include "qos.h"
+ 
+@@ -874,21 +875,11 @@ MBOX_UP_MCS_MESSAGES
+ /* Time to wait before watchdog kicks off */
+ #define OTX2_TX_TIMEOUT		(100 * HZ)
+ 
+-#define	RVU_PFVF_PF_SHIFT	10
+-#define	RVU_PFVF_PF_MASK	0x3F
+-#define	RVU_PFVF_FUNC_SHIFT	0
+-#define	RVU_PFVF_FUNC_MASK	0x3FF
+-
+ static inline bool is_otx2_vf(u16 pcifunc)
+ {
+ 	return !!(pcifunc & RVU_PFVF_FUNC_MASK);
+ }
+ 
+-static inline int rvu_get_pf(u16 pcifunc)
+-{
+-	return (pcifunc >> RVU_PFVF_PF_SHIFT) & RVU_PFVF_PF_MASK;
+-}
+-
+ static inline dma_addr_t otx2_dma_map_page(struct otx2_nic *pfvf,
+ 					   struct page *page,
+ 					   size_t offset, size_t size,
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h
+index e3aee6e36215..858f084b9d47 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h
+@@ -138,36 +138,6 @@
+ #define	NIX_LF_CINTX_ENA_W1S(a)		(NIX_LFBASE | 0xD40 | (a) << 12)
+ #define	NIX_LF_CINTX_ENA_W1C(a)		(NIX_LFBASE | 0xD50 | (a) << 12)
+ 
+-/* NIX AF transmit scheduler registers */
+-#define NIX_AF_SMQX_CFG(a)		(0x700 | (u64)(a) << 16)
+-#define NIX_AF_TL4X_SDP_LINK_CFG(a)	(0xB10 | (u64)(a) << 16)
+-#define NIX_AF_TL1X_SCHEDULE(a)		(0xC00 | (u64)(a) << 16)
+-#define NIX_AF_TL1X_CIR(a)		(0xC20 | (u64)(a) << 16)
+-#define NIX_AF_TL1X_TOPOLOGY(a)		(0xC80 | (u64)(a) << 16)
+-#define NIX_AF_TL2X_PARENT(a)		(0xE88 | (u64)(a) << 16)
+-#define NIX_AF_TL2X_SCHEDULE(a)		(0xE00 | (u64)(a) << 16)
+-#define NIX_AF_TL2X_TOPOLOGY(a)		(0xE80 | (u64)(a) << 16)
+-#define NIX_AF_TL2X_CIR(a)		(0xE20 | (u64)(a) << 16)
+-#define NIX_AF_TL2X_PIR(a)		(0xE30 | (u64)(a) << 16)
+-#define NIX_AF_TL3X_PARENT(a)		(0x1088 | (u64)(a) << 16)
+-#define NIX_AF_TL3X_SCHEDULE(a)		(0x1000 | (u64)(a) << 16)
+-#define NIX_AF_TL3X_SHAPE(a)		(0x1010 | (u64)(a) << 16)
+-#define NIX_AF_TL3X_CIR(a)		(0x1020 | (u64)(a) << 16)
+-#define NIX_AF_TL3X_PIR(a)		(0x1030 | (u64)(a) << 16)
+-#define NIX_AF_TL3X_TOPOLOGY(a)		(0x1080 | (u64)(a) << 16)
+-#define NIX_AF_TL4X_PARENT(a)		(0x1288 | (u64)(a) << 16)
+-#define NIX_AF_TL4X_SCHEDULE(a)		(0x1200 | (u64)(a) << 16)
+-#define NIX_AF_TL4X_SHAPE(a)		(0x1210 | (u64)(a) << 16)
+-#define NIX_AF_TL4X_CIR(a)		(0x1220 | (u64)(a) << 16)
+-#define NIX_AF_TL4X_PIR(a)		(0x1230 | (u64)(a) << 16)
+-#define NIX_AF_TL4X_TOPOLOGY(a)		(0x1280 | (u64)(a) << 16)
+-#define NIX_AF_MDQX_SCHEDULE(a)		(0x1400 | (u64)(a) << 16)
+-#define NIX_AF_MDQX_SHAPE(a)		(0x1410 | (u64)(a) << 16)
+-#define NIX_AF_MDQX_CIR(a)		(0x1420 | (u64)(a) << 16)
+-#define NIX_AF_MDQX_PIR(a)		(0x1430 | (u64)(a) << 16)
+-#define NIX_AF_MDQX_PARENT(a)		(0x1480 | (u64)(a) << 16)
+-#define NIX_AF_TL3_TL2X_LINKX_CFG(a, b)	(0x1700 | (u64)(a) << 16 | (b) << 3)
+-
+ /* LMT LF registers */
+ #define LMT_LFBASE			BIT_ULL(RVU_FUNC_BLKADDR_SHIFT)
+ #define LMT_LF_LMTLINEX(a)		(LMT_LFBASE | 0x000 | (a) << 12)
 -- 
-2.40.1
+2.25.1
 
 
