@@ -1,122 +1,105 @@
-Return-Path: <linux-kernel+bounces-404984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBC89C4B66
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:00:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA669C4B69
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:00:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B75BAB2593C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:59:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8379C2845F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C044A2038CB;
-	Tue, 12 Nov 2024 00:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E652204084;
+	Tue, 12 Nov 2024 01:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="EI8qZFPz"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngKCCbg6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5302038C0
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD19A204036;
+	Tue, 12 Nov 2024 01:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731373181; cv=none; b=qdBQBn1nmhUYIyM43JcwZMeCVpAAZtidDoLD+NwMRsqSrOys5R7jxMk8oq4j/cn0TZyQqjNtLtV0cx1QaqAOzBY5gKv0U8B4fp2vYptXR80FkivCEy9pMOaLhwGPFikYXN3J1fEMddc4gLJMYO3meChQKxcO3ZqTnzE8UMzQsq4=
+	t=1731373222; cv=none; b=mNMB8KVyYo1hOH8aeBzrOUoePgjUmjkghbXcqn3WF0MUBmMa1+OJPK4ve7Gqfv2vKpzkZd+mKxymgyAUnJEjmlnM665aTrZx4MkIcCRMx7xnqYuav/54gNIPzBc+ijlwvApecAfA/mNwDpIo+7J1CvfCfnuldrlVKDIp6e+s/e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731373181; c=relaxed/simple;
-	bh=vl/gZZOX/UQNHQwVhGhWo6Q/nOcInYX8OF9wEj7gD4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qotmsFCohup+BOj8Dxqxd+yuhl+oCAyYGZs2Al1CerFu+LIHN7BZvpnD1aA60rJc601xAPE8tFvwj6751LFamYSVYcX8A8VuIUrXSolcqMh26bDzOzOs0xYBBwVKX+cI4WnTO0sy+aVJixLERgn7OOeWQkJPD8YirREIJROmwm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=EI8qZFPz; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b14554468fso357872385a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:59:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1731373178; x=1731977978; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Dgryruqvz3oynCw+eynUzr+rPfTLudMm2oFpIDaJpIA=;
-        b=EI8qZFPzuxhXEoZltyam9xvlv7GDfzxxFwz/5jVkBe4ansBxzCjTYAYEYS/6dxNKBs
-         8ew/eFno4jz/zR54h+Hg20lAKR69IKI0yiZNBr5JTSghFlUYdfwwAeiSDwSmVQ36WqTn
-         U0/H/QHMzFW6SfNH6nOrO7ar6hqZVLzjQy+94Vu609jF171CRgYNT9/4ao71v+eq5ERX
-         5FMosQjErnWAkWbbzUl5IXiEVnLGrXE/xNmr4H3eEfoZmdiPn5ao6+Jhr5aBXGks25+O
-         LMhPZWMsCRYWQw2Qqoz0hV25EXgM4kgJAdyu/uf58uhQVuF/9OhaEgk3arRx6tt7smsQ
-         exJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731373178; x=1731977978;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dgryruqvz3oynCw+eynUzr+rPfTLudMm2oFpIDaJpIA=;
-        b=RuMtRvZ2H3cumg0lN91b0GDvHfvgaluH1jrtZxsuLkH3SPxdc4K14AN3zQPtV0TAjK
-         H9PzfpArArNnE5aP+j7Olxd+GFY2ygvA0hc90K3UHPntMdZ2cZHwSM3jYITQSOMp4hIw
-         B3TZhtP+cdny8fOFoQqOrnsUTK6CbTcApdkfFXxAqf0xY5jauISprAcsjHXlMnDPfLqH
-         Wxgbgi3wtkzXUBFBnD4JywqYFMLheQtdLD/+K0bqT2uLKWbpExRjWJvOJv9WqRx74QV3
-         OYha/GgcFRYVQ0ynPWRg2XUH3+wIIsRyrTEV+HcHuuYi29UDOAEsBzGOtw7TIYTFOJ47
-         g0iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrZ4j6YK1/d0JI1gZdlS3V8yBK+OofWQDy2J8l8QmyiwzG/XAsDcKU8OPL6ZNDe8VtgM3Sje5+N8Dm6jU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsUjDTnGUWgxUwe99RWV/m/PWVmDpgQhOVH00dEq2bQMtF/Hlz
-	7I1dlwM7FdwEvZ82hphaMTXvQ2YeK0XVEhwYxRhcObF/vovyPQFWWP77bBh81A==
-X-Google-Smtp-Source: AGHT+IHwCd43sTsu98WuNqYuXULodJh8oMVMDF/iNnhpfWU3O1q7dXshmn4PYa1T6jBdvqusm4gnKQ==
-X-Received: by 2002:a05:620a:454d:b0:7b2:5e0:c439 with SMTP id af79cd13be357-7b331ec6103mr2066623485a.30.1731373178443;
-        Mon, 11 Nov 2024 16:59:38 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::2c91])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac63da6sm545393885a.58.2024.11.11.16.59.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 16:59:37 -0800 (PST)
-Date: Mon, 11 Nov 2024 19:59:33 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>
-Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
-	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	lkmm@lists.linux.dev, torvalds@linux-foundation.org
-Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
- case-insensitive filesystem.
-Message-ID: <62634bbe-edd6-4973-a96a-df543f39f240@rowland.harvard.edu>
-References: <20241111164248.1060-1-egyszeregy@freemail.hu>
- <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
- <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
- <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
- <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
- <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
- <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
+	s=arc-20240116; t=1731373222; c=relaxed/simple;
+	bh=8jvHoe4EKiy6FD9P4lh3ZUNiEORm+PtSiSJ+oHh38SY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=YY4MLElkR2b4zsnnWskj3/cYaowe1XEvKzDfHiW6DWvTBagMGxveLFRglF7AMNIYYdX5xJyGeGMceKpoxtuzB67uTEqPaG0eWIX10+LTVvM2oSaYLPn58rP8aBP/7qdg9Nfq3oLapBG4b0Dfhvr5IP8EcfC8HWc+OQ9bmxeXmLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngKCCbg6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69139C4CECF;
+	Tue, 12 Nov 2024 01:00:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731373221;
+	bh=8jvHoe4EKiy6FD9P4lh3ZUNiEORm+PtSiSJ+oHh38SY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ngKCCbg6exlZgZ2yaLi6xjjVtz3/Jsdh7X9VpVOxhoKFyHPOzVNMDVTuotVenBvUl
+	 DFVDwFonTrXV3ek4Yvnak/W5VVUf7KYraz3I3YZ9hIgrs0l72b65xWSvPC1w/qtwHy
+	 BuPmW0LtcCaPyq/d36JPi2W51O14HDjo+XpTRSTGXHIbb7vnsygOwzSkgQ3aYzf7+v
+	 qzvLhjtlW+jlV8zv/4QW5DGCY0zSHVj1iwWy95XXWUh1/5EZd+1EJzTv07cia1tkW8
+	 X1DGWAJ4+yEpy9d/Ne0f+ITpu7LhP1VAEReg8eWE3ku/Y4HpUx9JXS4cz7Yq3A1M3C
+	 3ObC+Hc8p37eA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDFB3809A80;
+	Tue, 12 Nov 2024 01:00:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
+Subject: Re: [PATCH net-next v4 0/6] Side MDIO Support for LAN937x Switches
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173137323151.33228.6980879889205647360.git-patchwork-notify@kernel.org>
+Date: Tue, 12 Nov 2024 01:00:31 +0000
+References: <20241106075942.1636998-1-o.rempel@pengutronix.de>
+In-Reply-To: <20241106075942.1636998-1-o.rempel@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: davem@davemloft.net, andrew@lunn.ch, edumazet@google.com,
+ f.fainelli@gmail.com, kuba@kernel.org, pabeni@redhat.com, olteanv@gmail.com,
+ woojung.huh@microchip.com, arun.ramadoss@microchip.com, conor+dt@kernel.org,
+ krzk+dt@kernel.org, robh+dt@kernel.org, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ UNGLinuxDriver@microchip.com, linux@armlinux.org.uk,
+ devicetree@vger.kernel.org, marex@denx.de
 
-On Mon, Nov 11, 2024 at 10:15:30PM +0100, Szőke Benjamin wrote:
-> warning: the following paths have collided (e.g. case-sensitive paths
-> on a case-insensitive filesystem) and only one from the same
-> colliding group is in the working tree:
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed,  6 Nov 2024 08:59:35 +0100 you wrote:
+> This patch set introduces support for an internal MDIO bus in LAN937x
+> switches, enabling the use of a side MDIO channel for PHY management
+> while keeping SPI as the main interface for switch configuration.
 > 
->   'tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus'
->   'tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus'
+> changes v3:
+> - add "net: dsa: microchip: parse PHY config from device tree" patch
+> 
+> [...]
 
-I support the idea of renaming one of these files.  Not to make things 
-work on case-insensitive filesystems, but simply because having two 
-files with rather long (and almost nonsensical) names that are identical 
-aside from one single letter is an excellent way to confuse users.
+Here is the summary with links:
+  - [net-next,v4,1/6] dt-bindings: net: dsa: microchip: add internal MDIO bus description
+    https://git.kernel.org/netdev/net-next/c/7eb4c2571443
+  - [net-next,v4,2/6] dt-bindings: net: dsa: microchip: add mdio-parent-bus property for internal MDIO
+    https://git.kernel.org/netdev/net-next/c/698b20a679be
+  - [net-next,v4,3/6] net: dsa: microchip: Refactor MDIO handling for side MDIO access
+    https://git.kernel.org/netdev/net-next/c/9afaf0eec2ab
+  - [net-next,v4,4/6] net: dsa: microchip: cleanup error handling in ksz_mdio_register
+    https://git.kernel.org/netdev/net-next/c/8bbba4161b65
+  - [net-next,v4,5/6] net: dsa: microchip: add support for side MDIO interface in LAN937x
+    https://git.kernel.org/netdev/net-next/c/f47e6e1e79a1
+  - [net-next,v4,6/6] net: dsa: microchip: parse PHY config from device tree
+    https://git.kernel.org/netdev/net-next/c/34125ac851b8
 
-Come on -- just look at the error report above.  Can you tell at a 
-glance, without going through and carefully comparing the two strings 
-letter-by-letter, exactly what the difference is?  Do you really think 
-anybody could?
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-I haven't looked to see if there are any other similar examples in the 
-litmus-tests directory, but if there are than they should be changed 
-too.
 
-Alan
 
