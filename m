@@ -1,134 +1,103 @@
-Return-Path: <linux-kernel+bounces-406304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E93B9C5D11
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:23:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C775B9C5D13
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:24:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73BD5282852
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:23:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE161F25245
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3622920514D;
-	Tue, 12 Nov 2024 16:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3DA205159;
+	Tue, 12 Nov 2024 16:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCA5qOzP"
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1F3bxuX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0691B81B8;
-	Tue, 12 Nov 2024 16:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D628A205138;
+	Tue, 12 Nov 2024 16:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731428627; cv=none; b=EFqAs080K28afHsQYKccLXMXy5ew3lSVjcuBT9Jh7AjOJ0LwoP3O+XiAIq5n0PElkoyLdUG/2E0VvQWIqwe3PH5yy4pE+CAH9ywbxm2fU7XjT/tWcDHEp2yoSClfMRVUh+yukucFfFaD+3cRKdcJ3iNaF4qXEd61aUHpvGdhZW0=
+	t=1731428659; cv=none; b=bkl0Pe/YW7HNbGiI3cIXYigL3pCsqMRIBQWgvPSFJI3EpnmuJO7x8jmVNTh5uYM60J+ONQZvp7gN4T6KgaLEaY49HdjwdnBZKUf5bPLYL8GY5u6HjnPDnH3U/hICUI15unf64uA3+9Ccle7ePN4hM/VAOW0Tv7TiFp45INd2ZKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731428627; c=relaxed/simple;
-	bh=zTHHEBahoFgg2D6b85gEFQC7H991Ba1VjVX28zyuJ9E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RSrHh/tVEHvmsn2cegxy6/7sBbHpVccJBeVRv0GWueL8/AqRLZrr7R0aVfBUcgm/hbT+Ht7DcXIwDU11owSgXMd6RQ+nEafYDRBRhoVYe7kSjLQwK8ZbT6lL4Y7oxK/MOJNUUb3yab04aUJDkb07DxTCkOnovHS3u7ed2Vl/KJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCA5qOzP; arc=none smtp.client-ip=209.85.210.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-72041ff06a0so4764434b3a.2;
-        Tue, 12 Nov 2024 08:23:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731428626; x=1732033426; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J5PEATHp+4fkek8PlOaUtNxfBpk60iNVk1kWOvrmMns=;
-        b=jCA5qOzPNxvbHFesMV3Hfy5nVugaBHHovl7YOWwZmhx1VliKNBbxOYAdZkDcAaYiOx
-         K31HZfbnjrZbZLLPkZKYNiuFn99aZw5XBB9Aan1S0rprXeT7c87oDhGWcI+IJZ3NjdEO
-         SygA5PgIO5RQyCNw523L0vnd0vYaOZUkiwAL347CzxaNxw7yqTDc3i2gYzXLSZDlUHWM
-         z72Vtydf6cG1LZKaLaDqJQPMqmJ16rsl1DKsJjd+K05EQho4DsypUUsC/HMDkqDc+txK
-         /GRjjEfcwMkC6phHHL7K+uFuG1HpppN+Bp3zT9pT+jEcdZYRAd+YbXnTxFO1Z/KcZjus
-         LVDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731428626; x=1732033426;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J5PEATHp+4fkek8PlOaUtNxfBpk60iNVk1kWOvrmMns=;
-        b=QcV8hczldGvrOykJvr5JMCYYPDiVbSusTStFT2P3UdYIv4OvT7cstoZXjF/xanM8F2
-         nCcEVtbqvJtcUnKd+DcF1pTwj++hDM58jFXaLkSFY/beUuk+PJ7G0gOO9g6JnD6St+zK
-         AzvknEa14G0R5fkPxmq6Q+RaCA1lkz617C7fzvTRUHdXKEx6xchx+NcTxpBhU7QSKiBB
-         xH9mOJrVvFF0g4ji0zVY/6H24GA0NxKGPrq98u7Xn3g8Ejrb23rrYki5043Oh2Nz/NsI
-         muA1DjRysFbtuOgI/qvvzJzHrP0D0o7MDws7f+rnG436gxoJSMnJiurQzlIUCW/OTOjB
-         blGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTOxjNIAbiiw66/RFtw8E0YwCyhnE4J9TVIYOiSmV0DobuGd6Nx+fMwVV1QtOtNXz7oAC9ZUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiYdegIIh0qbt1NyVvXIVQZ3K4sdb88LVX6RW3MiSrV/zgNe0n
-	mMBJVEPK3dSSg4libN6Dfdjm/fqV/Wcw1BDqQEzA71qE1EVZkpdne74cc047
-X-Google-Smtp-Source: AGHT+IGnRDb+SEeLSHe456d86JAmZ0Jrkmk+sVJHlpYVcNalmC/Zfw9B0radJASlrcXDLAK7VeqK3Q==
-X-Received: by 2002:a05:6a00:3925:b0:71d:f15e:d026 with SMTP id d2e1a72fcca58-7241326dd7emr22576590b3a.3.1731428625538;
-        Tue, 12 Nov 2024 08:23:45 -0800 (PST)
-Received: from tom-QiTianM540-A739.. ([124.127.236.112])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407860a97sm11775646b3a.27.2024.11.12.08.23.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 08:23:45 -0800 (PST)
-From: Qiu-ji Chen <chenqiuji666@gmail.com>
-To: nipun.gupta@amd.com,
-	nikhil.agarwal@amd.com
-Cc: linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	Qiu-ji Chen <chenqiuji666@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] cdx: Fix possible UAF error in driver_override_show()
-Date: Wed, 13 Nov 2024 00:23:38 +0800
-Message-Id: <20241112162338.39689-1-chenqiuji666@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731428659; c=relaxed/simple;
+	bh=s95mfkrvbz5oPWBac8QWmV2twOt3oYg3Jze+97EpbQk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HnkfpzeCq0MKkgXJGHe4BjKnB63qxdk+kZ26CKJjNWVPaTd6fNdAAt2zk1NY15xeZ9GcbNCG/ZIXQbWZraiyT629Wqssul2TPuFxk0RLhmRdJiND78wnItye5b6cJnDao5bUYlFT1GrQSpy1UInB2i4NUk8MleR5PVJgIzgSy2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1F3bxuX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77DCEC4CED5;
+	Tue, 12 Nov 2024 16:24:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731428658;
+	bh=s95mfkrvbz5oPWBac8QWmV2twOt3oYg3Jze+97EpbQk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=q1F3bxuXwt9aUKuGmjhS7Mp3u7p+O1iHz466ZKZnlho8YT/A4+m21yPpl3yA4CKj5
+	 980okCRNMdeQOUgJWzWsI57X729uBj9mqlkvNcWCcKyPOueCvXLwDtdfYmmyiICceq
+	 rBDUu6K1zW2SG7K9zO53B9jeeQYPN2MrYbHiV0t4RngIM3+U9F8Y8iR9ddcLLngEjJ
+	 87BkKbptnSkq8EbLxCfq4jwUy9mq5J2Zrj1JOzpF3ztPdgsI4i4jCSMtZatohwQIWN
+	 ee8K6JCfoBfm9z5Nsu/PpAZ1QDb3T1XnzOkyI5LayKxQZUFD1Rc+JUiQN9Z9jpFYSR
+	 AOHGhn4LldeYA==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-295cee3a962so545732fac.3;
+        Tue, 12 Nov 2024 08:24:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUVCM8chJXiSftVGgi+KmvTbuyAmB3eUBTNCT5ZoyIuuu4hI1a7cgDIsijTgAuvztrzSDxx9B5PlvvqInI=@vger.kernel.org, AJvYcCXTU2IJdJEWSDAST56VsSqq9l3CM6BqV8jSMCuPiTq2Nsk0YjO978448+yRD/f8AYeOyOAE0ZSvzx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIWz4huROTwdw4HLfs9dIlY/+rRlbfZMX4oGUmWxDr5TrdX9Za
+	bxYcXCquJK569AaU8RaGehi732FwMCXNcpeJu977s5efMsve9lvXDG0pJU61IhZgUI307tuyCHY
+	cqk4BZlb8rIw8U180tnQpnTi4w3w=
+X-Google-Smtp-Source: AGHT+IG5ncNWe9E9kh3G8QBT2LnCSvsPqWHFHNXZX3LOhEgK776cpzGzZcqW3BUCEI09DsW/i/kR2tEl9XpBF3yaH4I=
+X-Received: by 2002:a05:6871:292:b0:277:c216:5273 with SMTP id
+ 586e51a60fabf-2956008f7a9mr13343199fac.18.1731428657717; Tue, 12 Nov 2024
+ 08:24:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com> <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
+ <CAJZ5v0ivAk1xrcJgiJnDWnL3GdijSdsuV4K_4ORjnsjPUVAEnA@mail.gmail.com>
+ <20241112121843.GF6497@noisy.programming.kicks-ass.net> <CAJZ5v0iSP4Gh2FwKdkOw20N4hzwQ94+WmnT+3EY94QG3gORWzA@mail.gmail.com>
+ <20241112134959.GG6497@noisy.programming.kicks-ass.net> <CAJZ5v0iYYYpg7MDf8_UmoUuzyiPMoPdjgSJmdBXGYCxVc4icWw@mail.gmail.com>
+ <20241112150809.GK6497@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241112150809.GK6497@noisy.programming.kicks-ass.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 12 Nov 2024 17:24:06 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gvTgR8Y5Rv+Vi2ORbeAGe9h-NxZNUCcn4JeUUsjg0Xyw@mail.gmail.com>
+Message-ID: <CAJZ5v0gvTgR8Y5Rv+Vi2ORbeAGe9h-NxZNUCcn4JeUUsjg0Xyw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, artem.bityutskiy@linux.intel.com, 
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	rafael.j.wysocki@intel.com, len.brown@intel.com, dave.hansen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a data race between the functions driver_override_show() and
-driver_override_store(). In the driver_override_store() function, the
-assignment to ret calls driver_set_override(), which frees the old value
-while writing the new value to dev. If a race occurs, it may cause a
-use-after-free (UAF) error in driver_override_show().
+On Tue, Nov 12, 2024 at 4:08=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Tue, Nov 12, 2024 at 03:56:22PM +0100, Rafael J. Wysocki wrote:
+>
+> > > So given we don't have any such code, why can't we simply fix the cst=
+ate
+> > > parsing we have in mwait_play_dead() and call it a day?
+> >
+> > I'll leave this one to Artem, but there is at least one reason to
+> > avoid doing that I know about: There is no guarantee that whatever has
+> > been found was actually validated.
+>
+> It's a bit daft to explicitly advertise a state in CPUID that's not
+> validated. I realize that MSFT will likely only ever use the ACPI table,
 
-To fix this issue, we adopt a logic similar to the driver_override_show()
-function in vmbus_drv.c, protecting dev within a lock to ensure its value
-remains unchanged.
+Right.
 
-This possible bug is found by an experimental static analysis tool
-developed by our team. This tool analyzes the locking APIs to extract
-function pairs that can be concurrently executed, and then analyzes the
-instructions in the paired functions to identify possible concurrency bugs
-including data races and atomicity violations.
+> but at the same time, the CPUID bits and ACPI tables both come from the
+> same BIOS image, no?
 
-Fixes: 48a6c7bced2a ("cdx: add device attributes")
-Cc: stable@vger.kernel.org
-Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
----
-V2:
-Modified the title and description.
-Removed the changes to cdx_bus_match().
----
- drivers/cdx/cdx.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cdx/cdx.c b/drivers/cdx/cdx.c
-index 07371cb653d3..4af1901c9d52 100644
---- a/drivers/cdx/cdx.c
-+++ b/drivers/cdx/cdx.c
-@@ -470,8 +470,12 @@ static ssize_t driver_override_show(struct device *dev,
- 				    struct device_attribute *attr, char *buf)
- {
- 	struct cdx_device *cdx_dev = to_cdx_device(dev);
-+	ssize_t len;
- 
--	return sysfs_emit(buf, "%s\n", cdx_dev->driver_override);
-+	device_lock(dev);
-+	len = sysfs_emit(buf, "%s\n", cdx_dev->driver_override);
-+	device_unlock(dev);
-+	return len;
- }
- static DEVICE_ATTR_RW(driver_override);
- 
--- 
-2.34.1
-
+Yes, but the list of C-states advertised as supported in CPUID is
+usually longer than the _CST list size (at most 3) ...
 
