@@ -1,233 +1,176 @@
-Return-Path: <linux-kernel+bounces-405687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96C29C554B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:04:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC3F9C54CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 388FA1F21517
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:04:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21D981F2215E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B1820D4F5;
-	Tue, 12 Nov 2024 10:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D002259D5;
+	Tue, 12 Nov 2024 10:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ifzObf1H"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="srcSC2l6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F451C1AD1
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9612822461F;
+	Tue, 12 Nov 2024 10:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731407937; cv=none; b=bnI+T8Xmnh68BM++zrQhoPiMHVH/eu6yxqSdIIkmChiM5h1ZTEIRB8wxTydGMFrglZgdRP8SfsEjE6OrQNPYkB2EOIJxQlY1OGuprXxWP3hNdgHJaPvK01MIzNIZ0IezWlyQA+o+QSBKtcMn9u01l98lmoxECjhRvm/n0Jqj0kQ=
+	t=1731407851; cv=none; b=oPWvIJN2ZzQd4qFFUc0R2+9cALZAoi91KAxDDDpeGazbtl+hDO+fCedsd3Rdy33IRuu7gv+Akt4agVcLSJjK4i4WBfX/CXABt+3u/jrqL8j5CoDJSxbhBtUVidjsQAB9a60seBGvIRuihyBXbRmWAOemYwZBZ1HX2SOcVCTZNfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731407937; c=relaxed/simple;
-	bh=gJX4fpAnmRlIzwVuBDoaMY8pi4WArGBc4Po0d2y33so=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EEYHOe72PZJYW1fNOGCDs4gjhI2e4rCMnTASquPPOg33gFsTy7Z+mUeLgx9Ekc+Mm0AyMpNjGmvsQiCzpoT37rOxWsGzqbBdkSS/opBq3gVl5Si6dn8ZrLYN08h6UPql2cbBYnHZqb/ueCASzj1vkqyaaIIPiUbrAbTRcqmvvOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ifzObf1H; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4316e9f4a40so47495465e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:38:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731407934; x=1732012734; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w4Y12830R+W7ydXEFfviSLc+JWTSWnSDcOvb7pMp1YA=;
-        b=ifzObf1HmwUXyxtXevj8uqE6lPZ2Oz/EAoTAAJoTfrNPu6yY5WBcdAHH95+APFvGlZ
-         lO1ExafcmtOmhluwZK0dDDofU4hgTfSx6L0Gb2Q/LrcfsmW0s1CllnwpkykBu7GP4KZZ
-         gTTUH/AGp24L8dbCsUb79qLyQdFbTAEQXWu+H7mvXomKnxciOhWCHyYgJ63WxThE7E6e
-         cgLQ+2xU3ZkmzxInJcSfoDyYFubTaHIypXHhIRDdHiMZnBSULqdYa5SX0XoChRMhB0BO
-         ngr05vvYfJgYhcs4zt/TDxkSoJIgkQEFgBGMrIP3evd1plP/GYiGAEaPp/ueWWcDEuo5
-         j9Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731407934; x=1732012734;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w4Y12830R+W7ydXEFfviSLc+JWTSWnSDcOvb7pMp1YA=;
-        b=e9FD2GhO629CKF21ACMH1gt6yiRGbayHKBLZuEK7MHULaC1NL5FnrTsAoWNKok4reB
-         hConKzHMPgrxNz9ebuQ+05XYFcrFy9qm7j6D1l829UdjAhbABMJBsTyKWcoGVYQsXoF5
-         YKxxQ/i3h5g3VOA/Besf3bUqooUqrFbiWIluejDUbZaw7+7kZQaWrw/xidLv/OYw2Q0c
-         8nw7tGiywPx87xjuLNsY5KpKYJursd4gunGiExm2Ipd5eYogomzOWduyZ9dESMIQFFRZ
-         cvDmNkEmx7vfGX4knGiXn05PE+tLqQXTAACCryElPNNxpZjDw5dgviGTm63A+v04RaZL
-         3xwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbqK+4qBDYI+HvQt2HiBXhRPjA0iyqoqIG1pfPs60VeG3IZjJLZcWmZ+SnSkF6A16WpI7m3J9s9pVil6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT59r6WJgX1dkemTFyoQkTjZFWANV+doCu0HIGSXwAvxMkD9KN
-	9iR/PRVgBrdz5WUlB5qIh9B+6kCldXAAqd0RFKWM3u5hiJ3ddMUp7upJA4ORRak=
-X-Google-Smtp-Source: AGHT+IFFrkKNgQSMLjx9o9fyzR37XC2Gr6CvPJDOYVlojhp8ArNiU1b7bN0q0qpEMeG5HrMUFygnww==
-X-Received: by 2002:a5d:6c64:0:b0:37d:4a82:6412 with SMTP id ffacd0b85a97d-381f1885db0mr12627127f8f.46.1731407933761;
-        Tue, 12 Nov 2024 02:38:53 -0800 (PST)
-Received: from pop-os.. ([145.224.90.214])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432bbf436ffsm142270955e9.44.2024.11.12.02.38.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 02:38:53 -0800 (PST)
-From: James Clark <james.clark@linaro.org>
-To: suzuki.poulose@arm.com,
-	oliver.upton@linux.dev,
-	coresight@lists.linaro.org,
-	kvmarm@lists.linux.dev
-Cc: James Clark <james.clark@linaro.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	James Morse <james.morse@arm.com>,
-	Shiqi Liu <shiqiliu@hust.edu.cn>,
-	Fuad Tabba <tabba@google.com>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 10/12] KVM: arm64: Don't hit sysregs to see if TRBE is enabled or not
-Date: Tue, 12 Nov 2024 10:37:09 +0000
-Message-Id: <20241112103717.589952-11-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241112103717.589952-1-james.clark@linaro.org>
-References: <20241112103717.589952-1-james.clark@linaro.org>
+	s=arc-20240116; t=1731407851; c=relaxed/simple;
+	bh=6oXqxVNzb22esr4Pq/c2HABoV5wcIRYCadwjZZPLfiA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BLDKrXx8iHDcKqMx5esEQhDtUFOQ502Bu08tAVNyqjT0k95exo8d9mg5hD1a8iZ0dDN7Y3MDhfJCa5JVaqW2uzCH7C7jqX2gekdheDi6Mb87FMzlKZo9tXAWsR+AFvMRxbL0e/o0LXi6KFiCVAKbFV1XS82bheGMzzn6jti1DkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=srcSC2l6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 529F6C4CED7;
+	Tue, 12 Nov 2024 10:37:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731407851;
+	bh=6oXqxVNzb22esr4Pq/c2HABoV5wcIRYCadwjZZPLfiA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=srcSC2l6y5wFr0Fx0zUa9IbpPrDQlq6DN9VLLhS3Qx/fAFbq10d1Ur63j4IRfkkji
+	 2wrQAzYgVZKg24X76g+0tKd0sPRHiO6ROfsz3WhWsJgw8J9ra8uzEc3BpfVNjr0p2Q
+	 hwfNeui9F/meuzxH1SqBek1gyAPpKd2z4i/LDrX6IcPYQIanAtZQKEp4diXQIdlOqu
+	 uT6dYwiSwCy06HlTq1o71Viw1lclVfUQuyGQcFgurq902kaZlsAoW5W/C3DaloG8u3
+	 kcCVC5t0P8kIMWxXU/aa4kcT39L7xZsGHtqsdt5PEe1Yc6XNpF595yIJfJn6cbGR0w
+	 4dBJgT643g+bA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Vishnu Sankar <vishnuocv@gmail.com>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Sasha Levin <sashal@kernel.org>,
+	hmh@hmh.eng.br,
+	ilpo.jarvinen@linux.intel.com,
+	ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 07/12] platform/x86: thinkpad_acpi: Fix for ThinkPad's with ECFW showing incorrect fan speed
+Date: Tue, 12 Nov 2024 05:37:09 -0500
+Message-ID: <20241112103718.1653723-7-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241112103718.1653723-1-sashal@kernel.org>
+References: <20241112103718.1653723-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.116
 Content-Transfer-Encoding: 8bit
 
-Now that the driver tells us whether TRBE was used or not we can use
-that. Except in pKVM where the host isn't trusted we keep the existing
-feature + sysreg check.
+From: Vishnu Sankar <vishnuocv@gmail.com>
 
-Now in the normal nVHE case, TRBE save and restore are gated by flag
-checks on kvm_host_data.
+[ Upstream commit 1be765b292577c752e0b87bf8c0e92aff6699d8e ]
 
-Instead of using a magic value of host_debug_state.trfcr_el1 to
-determine whether to restore, add a flag. This will also simplify the
-logic in the next commit where restoration but no disabling is required.
+Fix for Thinkpad's with ECFW showing incorrect fan speed. Some models use
+decimal instead of hexadecimal for the speed stored in the EC registers.
+For example the rpm register will have 0x4200 instead of 0x1068, here
+the actual RPM is "4200" in decimal.
 
-Signed-off-by: James Clark <james.clark@linaro.org>
+Add a quirk to handle this.
+
+Signed-off-by: Vishnu Sankar <vishnuocv@gmail.com>
+Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+Link: https://lore.kernel.org/r/20241105235505.8493-1-vishnuocv@gmail.com
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/kvm_host.h  |  2 ++
- arch/arm64/kvm/hyp/nvhe/debug-sr.c | 51 +++++++++++++++++++++++-------
- 2 files changed, 41 insertions(+), 12 deletions(-)
+ drivers/platform/x86/thinkpad_acpi.c | 28 +++++++++++++++++++++++++---
+ 1 file changed, 25 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index b1dccac996a6..a8846689512b 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -947,6 +947,8 @@ struct kvm_vcpu_arch {
- #define HOST_STATE_SPE_EN	__kvm_single_flag(state, BIT(0))
- /* TRBLIMITR_EL1_E is set (TRBE trace buffer enabled) */
- #define HOST_STATE_TRBE_EN	__kvm_single_flag(state, BIT(1))
-+/* Hyp modified TRFCR */
-+#define HOST_STATE_RESTORE_TRFCR __kvm_single_flag(state, BIT(2))
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index c2fb19af10705..bedc6cd51f399 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -8213,6 +8213,7 @@ static u8 fan_control_resume_level;
+ static int fan_watchdog_maxinterval;
  
- /* Pointer to the vcpu's SVE FFR for sve_{save,load}_state() */
- #define vcpu_sve_pffr(vcpu) (kern_hyp_va((vcpu)->arch.sve_state) +	\
-diff --git a/arch/arm64/kvm/hyp/nvhe/debug-sr.c b/arch/arm64/kvm/hyp/nvhe/debug-sr.c
-index 578c549af3c6..17c23e52f5f4 100644
---- a/arch/arm64/kvm/hyp/nvhe/debug-sr.c
-+++ b/arch/arm64/kvm/hyp/nvhe/debug-sr.c
-@@ -63,32 +63,55 @@ static void __debug_restore_spe(void)
- 	*host_data_ptr(host_debug_state.pmscr_el1) = 0;
+ static bool fan_with_ns_addr;
++static bool ecfw_with_fan_dec_rpm;
+ 
+ static struct mutex fan_mutex;
+ 
+@@ -8856,7 +8857,11 @@ static ssize_t fan_fan1_input_show(struct device *dev,
+ 	if (res < 0)
+ 		return res;
+ 
+-	return sysfs_emit(buf, "%u\n", speed);
++	/* Check for fan speeds displayed in hexadecimal */
++	if (!ecfw_with_fan_dec_rpm)
++		return sysfs_emit(buf, "%u\n", speed);
++	else
++		return sysfs_emit(buf, "%x\n", speed);
  }
  
--static void __debug_save_trace(u64 *trfcr_el1)
-+static bool __debug_should_save_trace(void)
- {
--	*trfcr_el1 = 0;
-+	/* pKVM reads the state for itself rather than trusting the host */
-+	if (unlikely(is_protected_kvm_enabled())) {
-+		/* Always disable any trace regardless of TRBE */
-+		if (read_sysreg_el1(SYS_TRFCR) &
-+		    (TRFCR_ELx_E0TRE | TRFCR_ELx_ExTRE))
-+			return true;
-+
-+		/*
-+		 * Trace could already be disabled but TRBE buffer
-+		 * might still need to be drained if it was in use.
-+		 */
-+		if (host_data_get_flag(HOST_FEAT_HAS_TRBE))
-+			return read_sysreg_s(SYS_TRBLIMITR_EL1) &
-+			       TRBLIMITR_EL1_E;
+ static DEVICE_ATTR(fan1_input, S_IRUGO, fan_fan1_input_show, NULL);
+@@ -8873,7 +8878,11 @@ static ssize_t fan_fan2_input_show(struct device *dev,
+ 	if (res < 0)
+ 		return res;
+ 
+-	return sysfs_emit(buf, "%u\n", speed);
++	/* Check for fan speeds displayed in hexadecimal */
++	if (!ecfw_with_fan_dec_rpm)
++		return sysfs_emit(buf, "%u\n", speed);
++	else
++		return sysfs_emit(buf, "%x\n", speed);
+ }
+ 
+ static DEVICE_ATTR(fan2_input, S_IRUGO, fan_fan2_input_show, NULL);
+@@ -8949,6 +8958,7 @@ static const struct attribute_group fan_driver_attr_group = {
+ #define TPACPI_FAN_2CTL		0x0004		/* selects fan2 control */
+ #define TPACPI_FAN_NOFAN	0x0008		/* no fan available */
+ #define TPACPI_FAN_NS		0x0010		/* For EC with non-Standard register addresses */
++#define TPACPI_FAN_DECRPM	0x0020		/* For ECFW's with RPM in register as decimal */
+ 
+ static const struct tpacpi_quirk fan_quirk_table[] __initconst = {
+ 	TPACPI_QEC_IBM('1', 'Y', TPACPI_FAN_Q1),
+@@ -8970,6 +8980,7 @@ static const struct tpacpi_quirk fan_quirk_table[] __initconst = {
+ 	TPACPI_Q_LNV3('R', '1', 'F', TPACPI_FAN_NS),	/* L13 Yoga Gen 2 */
+ 	TPACPI_Q_LNV3('N', '2', 'U', TPACPI_FAN_NS),	/* X13 Yoga Gen 2*/
+ 	TPACPI_Q_LNV3('N', '1', 'O', TPACPI_FAN_NOFAN),	/* X1 Tablet (2nd gen) */
++	TPACPI_Q_LNV3('R', '0', 'Q', TPACPI_FAN_DECRPM),/* L480 */
+ };
+ 
+ static int __init fan_init(struct ibm_init_struct *iibm)
+@@ -9010,6 +9021,13 @@ static int __init fan_init(struct ibm_init_struct *iibm)
+ 		tp_features.fan_ctrl_status_undef = 1;
+ 	}
+ 
++	/* Check for the EC/BIOS with RPM reported in decimal*/
++	if (quirks & TPACPI_FAN_DECRPM) {
++		pr_info("ECFW with fan RPM as decimal in EC register\n");
++		ecfw_with_fan_dec_rpm = 1;
++		tp_features.fan_ctrl_status_undef = 1;
 +	}
 +
-+	return host_data_get_flag(HOST_STATE_TRBE_EN);
-+}
+ 	if (gfan_handle) {
+ 		/* 570, 600e/x, 770e, 770x */
+ 		fan_status_access_mode = TPACPI_FAN_RD_ACPI_GFAN;
+@@ -9221,7 +9239,11 @@ static int fan_read(struct seq_file *m)
+ 		if (rc < 0)
+ 			return rc;
  
--	/* Check if the TRBE is enabled */
--	if (!(read_sysreg_s(SYS_TRBLIMITR_EL1) & TRBLIMITR_EL1_E))
--		return;
-+static void __debug_save_trace(void)
-+{
- 	/*
- 	 * Prohibit trace generation while we are in guest.
- 	 * Since access to TRFCR_EL1 is trapped, the guest can't
- 	 * modify the filtering set by the host.
- 	 */
--	*trfcr_el1 = read_sysreg_el1(SYS_TRFCR);
-+	*host_data_ptr(host_debug_state.trfcr_el1) = read_sysreg_el1(SYS_TRFCR);
- 	write_sysreg_el1(0, SYS_TRFCR);
- 	isb();
- 	/* Drain the trace buffer to memory */
- 	tsb_csync();
-+
-+	host_data_set_flag(HOST_STATE_RESTORE_TRFCR);
- }
+-		seq_printf(m, "speed:\t\t%d\n", speed);
++		/* Check for fan speeds displayed in hexadecimal */
++		if (!ecfw_with_fan_dec_rpm)
++			seq_printf(m, "speed:\t\t%d\n", speed);
++		else
++			seq_printf(m, "speed:\t\t%x\n", speed);
  
--static void __debug_restore_trace(u64 trfcr_el1)
-+static void __debug_restore_trace(void)
- {
--	if (!trfcr_el1)
-+	u64 trfcr_el1;
-+
-+	if (!host_data_get_flag(HOST_STATE_RESTORE_TRFCR))
- 		return;
- 
- 	/* Restore trace filter controls */
-+	trfcr_el1 = *host_data_ptr(host_debug_state.trfcr_el1);
-+	*host_data_ptr(host_debug_state.trfcr_el1) = read_sysreg_el1(SYS_TRFCR);
- 	write_sysreg_el1(trfcr_el1, SYS_TRFCR);
-+	host_data_clear_flag(HOST_STATE_RESTORE_TRFCR);
- }
- 
- void __debug_save_host_buffers_nvhe(void)
-@@ -97,9 +120,14 @@ void __debug_save_host_buffers_nvhe(void)
- 	if (__debug_spe_enabled())
- 		__debug_save_spe();
- 
-+	/* Any trace filtering requires TRFCR register */
-+	if (!host_data_get_flag(HOST_FEAT_HAS_TRF))
-+		return;
-+
- 	/* Disable and flush Self-Hosted Trace generation */
--	if (host_data_get_flag(HOST_FEAT_HAS_TRBE))
--		__debug_save_trace(host_data_ptr(host_debug_state.trfcr_el1));
-+	if (__debug_should_save_trace())
-+		__debug_save_trace();
-+
- }
- 
- void __debug_switch_to_guest(struct kvm_vcpu *vcpu)
-@@ -110,8 +138,7 @@ void __debug_switch_to_guest(struct kvm_vcpu *vcpu)
- void __debug_restore_host_buffers_nvhe(struct kvm_vcpu *vcpu)
- {
- 	__debug_restore_spe();
--	if (host_data_get_flag(HOST_FEAT_HAS_TRBE))
--		__debug_restore_trace(*host_data_ptr(host_debug_state.trfcr_el1));
-+	__debug_restore_trace();
- }
- 
- void __debug_switch_to_host(struct kvm_vcpu *vcpu)
+ 		if (fan_status_access_mode == TPACPI_FAN_RD_TPEC_NS) {
+ 			/*
 -- 
-2.34.1
+2.43.0
 
 
