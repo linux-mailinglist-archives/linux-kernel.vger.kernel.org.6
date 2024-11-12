@@ -1,120 +1,149 @@
-Return-Path: <linux-kernel+bounces-405865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 511779C5A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4489C5A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:15:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11FD7B242F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:50:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ADC4B2511F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0848148828;
-	Tue, 12 Nov 2024 12:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z5zdWNpi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1615F70830;
+	Tue, 12 Nov 2024 12:56:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A78113C807
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0409F70817
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731415746; cv=none; b=lbz/kviTfoAA6JFOpIZ47KvImXYEzhgKC+5UIMFRn+Oi8PojiM3MGGvnJdLrQiM+qXhls00fnxlzY/6ZIqTt8Vj/2JBxnh5kowIo21D25HfHkprGWc2gFYJ8r49C+tnAMD65DHnoQGUYzwmv18TyvY7/1w7QUjC5yUOAS1Twt4E=
+	t=1731416166; cv=none; b=Mi63TT3vEa6FBoKtMH/hJ5qvfSPztKCpRiv0S+7FSgLLdVEKyuFaFTQTfdJUUq95M/PnwWkx8NZnqLePDaRHZrSTiNf9IfEeX+LlgXhctKdFlwSJMTukrUDoI+x/idOUcAbQ5BnSsYHKTAia/MgRwTi+sckfCoGHlASjk2FoyaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731415746; c=relaxed/simple;
-	bh=tO2DFX5hpPjovQKxGltnLka0mrtQgk4SmhGgjXzyU7o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fIBuq9EQFSnzVbEjfLPKxpOp4aaSZlEeUVyjSTMSRQ12wmVV6oqdjATWXrX7SoNO5DGnQVj3juIWbevEenM2aIXWMOj1U4dfbLqvHigyB6E/6JPWLVjNcRhXIQTzWeTKW79+L/9f9cQZDJV4tyIdADfFmMJK7F5fU8nSBN8rheU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z5zdWNpi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731415743;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l72p6+5vAW8EV7pNrL52Yl3/6leWAr3UfpwvnjLecyk=;
-	b=Z5zdWNpiRNFILCUuElvbS3NZmuONd22X7NJ4c9VIBh4qUAOJpkIdJRlLqIJWQMpJBerlJP
-	9T7D4jXN7Kh3nppr3+9IZwMXdjKi0oGP6ZMBPDoVlDqKmuEZWXMGdqqNDJ1nL33HtEcuiz
-	GO7GKOZbeJcl7z7ULEsPffrmT7Mqa78=
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
- [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-694-_In2Vy2lP5uMk8hjQ9BzkQ-1; Tue, 12 Nov 2024 07:49:02 -0500
-X-MC-Unique: _In2Vy2lP5uMk8hjQ9BzkQ-1
-X-Mimecast-MFC-AGG-ID: _In2Vy2lP5uMk8hjQ9BzkQ
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3e600565aa1so4278304b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:49:02 -0800 (PST)
+	s=arc-20240116; t=1731416166; c=relaxed/simple;
+	bh=C/eQmWUqyn/d7/ShCEFvViJPbW7wNJ2HnjuCl2Lk53I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rqF6e3WsRm//fnoU2PXw69KjuyC+3ft15sIjHBL4CFr3VrVm290NH8O4VkovqvbpWhBO9ncpJ+hxd8IyxITqmNJtbQa9WwRji4LIfxFxPZ9axdfPbTyOhelCppZMZwEG8OvoT3rouO2TA70zs/bon9+QP2+Y9gGfg38JDmwaCwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6add3a52eso52436965ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:56:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731415741; x=1732020541;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1731416164; x=1732020964;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l72p6+5vAW8EV7pNrL52Yl3/6leWAr3UfpwvnjLecyk=;
-        b=XNPLa+PiySSSxxTkKjVClLnoeTPCaRs5Xl/Y7QAi+CAdwtu+K3+ugKrMhWaQTcwG18
-         lqDMRlpmJn6hzVrSAFT2txb+8H6n1rMgimCXNeD2s+H15k5M37nO/t0dGN98XQG5MvGv
-         Ur4KeaucTo6gLclKu0VANvfMukNASZrGW6cu1Kd7xjL5gCjypoZDMMprLd9J2raMi5Gi
-         d9scscKRVFaBZBOUjAeVqGqDdeZwDTzZ5TAPvz56qVppKvdQisE1n/T+4EZInK9YMvae
-         Mfc0LKv2YIzHZTbcm45uSUuA8pnQCvOlxxP2rEKv0cn7XYZriD0m+8Hiv7EuSZuAAzM4
-         LPOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnjsYBauALyNKrObx82h3lE2huU20+OsdgM+GzGA8t6e7jTXFxQ3insSjWDtEOXlNyUWdJH+3MVT+25CA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKof7XRgOeNR+3DR868egcRhYUHFWX+UrsJA04WvycS4uhDEBL
-	I4Jy0D4mpwlROXAA4WoSZjKyHhvDoCcw4aLaihal6q7kVB3F+R8M/FjpQyMjV2LOdxI7bO7Odcj
-	AkiZoEu96hkbiXwLoVzBGrSAyNq0so7cWaz3uz65cftnOQLDPhQlRK83x7RaboQ==
-X-Received: by 2002:a05:6358:6e88:b0:1ba:5118:ebee with SMTP id e5c5f4694b2df-1c641ea6f2bmr658006355d.8.1731415741584;
-        Tue, 12 Nov 2024 04:49:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEOqIUm2AqLWOl43bH4Dc+V7W9b4DHpDjnOPXRxys0bKVgesz4gERPMAgv1SVGD/ZW/baY3gw==
-X-Received: by 2002:a05:6358:6e88:b0:1ba:5118:ebee with SMTP id e5c5f4694b2df-1c641ea6f2bmr658003955d.8.1731415741304;
-        Tue, 12 Nov 2024 04:49:01 -0800 (PST)
-Received: from [192.168.88.24] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d39643b384sm71399376d6.91.2024.11.12.04.48.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 04:49:00 -0800 (PST)
-Message-ID: <e03fbb80-2f44-465b-9152-d85302b9454a@redhat.com>
-Date: Tue, 12 Nov 2024 13:48:57 +0100
+        bh=fd13ky7VeQx0cLdtaNbeewVPQBzzfGPJFsWVSuR8kYI=;
+        b=IExfPPOJN8aToasUNAE+ThGwVMyY8SCIfY0B0QPqqmPEZnIDvoWbkn2fpJkbqVzWrx
+         mEef8/sQrr/JtFXcT4mm+oO3/llrQ080nuAeRIrCH04d3Qlu1zJqsmTzPatBITviRfjf
+         zpziw9u2HKphw2MR8KXItYKAnwycZpe/qAjPflFN/DMQyJtrpfIXHC9iYj1nbV7AIZzJ
+         KtPmQRC5AwVDzhaBmagFcMFahZAsIUXIzfqdzczNY01QdkM9f9C7ufhjqQ1Fg2DbyTUh
+         gSrPgXeJc3hhRcAuiTnRb/BfqZA0+0jgSMQ1n1+DUGcfcqtQ/F5Fy4EjpeUTaVsdJs0C
+         kavQ==
+X-Gm-Message-State: AOJu0YzUeXy5S3mXVbsESsn7HWL6wjaBKfkA++IRS/QTzrhrYK5QXrf3
+	PHojrIJCyGLmqKLqSzzEeG/ys48JZLGQtaDQeYZBfyZr8IRqtJEQas36xVzkQxaatUwuEcg5JAq
+	QHxnwE11qvhNuxRcTLxXwB4cn2J4QXLJodqTXGBPEokw4GPSq1qIihV0=
+X-Google-Smtp-Source: AGHT+IF9md4o2mO//UkTnPq0a9zLSFteuwdhgjoYiwPJRJ3h7jqfTBATanRCTP3XtcNhK9txXWfW4jXV1Qtr4PTN6p7ExYejvyvs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH v9 6/8] cn10k-ipsec: Process outbound ipsec
- crypto offload
-To: Bharat Bhushan <bbhushan2@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, sgoutham@marvell.com, gakula@marvell.com,
- sbhatta@marvell.com, hkelam@marvell.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, jerinj@marvell.com,
- lcherian@marvell.com, ndabilpuram@marvell.com, sd@queasysnail.net
-References: <20241108045708.1205994-1-bbhushan2@marvell.com>
- <20241108045708.1205994-7-bbhushan2@marvell.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241108045708.1205994-7-bbhushan2@marvell.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a69:b0:3a1:a2b4:6665 with SMTP id
+ e9e14a558f8ab-3a6f25615c4mr124881045ab.12.1731416164136; Tue, 12 Nov 2024
+ 04:56:04 -0800 (PST)
+Date: Tue, 12 Nov 2024 04:56:04 -0800
+In-Reply-To: <20241112123555.561416-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67335064.050a0220.5d845.0004.GAE@google.com>
+Subject: Re: [syzbot] [wpan?] [usb?] BUG: corrupted list in ieee802154_if_remove
+From: syzbot <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> @@ -32,6 +33,16 @@ static bool otx2_xdp_rcv_pkt_handler(struct otx2_nic *pfvf,
->  				     struct otx2_cq_queue *cq,
->  				     bool *need_xdp_flush);
->  
-> +static void otx2_sq_set_sqe_base(struct otx2_snd_queue *sq,
-> +				 struct sk_buff *skb)
-> +{
-> +	if (unlikely(xfrm_offload(skb)))
-> +		sq->sqe_base = sq->sqe_ring->base + sq->sqe_size +
-> +				(sq->head * (sq->sqe_size * 2));
+Hello,
 
-Not blocking, but I don't think the unlikely() is appropriate here and
-below. Some workloads will definitely see more ipsec encrypted packets
-than unencrypted ones.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel BUG in ieee802154_del_iface
 
-Perhaps you could protect such checks with a static_branch enabled when
-at least a SA is configured.
+------------[ cut here ]------------
+kernel BUG at net/core/dev.c:11375!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 7336 Comm: syz.4.73 Not tainted 6.12.0-rc7-syzkaller-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+RIP: 0010:unregister_netdevice_many_notify+0x1d84/0x1da0 net/core/dev.c:11375
+Code: 01 90 48 c7 c7 80 fe 0c 8d 48 c7 c6 60 fe 0c 8d ba 8b 17 00 00 e8 8c 47 c8 f7 90 0f 0b 90 90 e9 67 e8 ff ff e8 9d 51 07 f8 90 <0f> 0b e8 95 51 07 f8 90 0f 0b e8 dd 5e 31 02 66 2e 0f 1f 84 00 00
+RSP: 0018:ffffc90004607160 EFLAGS: 00010293
+RAX: ffffffff898d8813 RBX: 0000000000000002 RCX: ffff88802c1e5a00
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000001
+RBP: ffffc90004607350 R08: ffffffff898d6ca6 R09: 1ffffffff1f98274
+R10: dffffc0000000000 R11: fffffbfff1f98275 R12: dead000000000100
+R13: ffff888028cf06c1 R14: ffffc900046073a0 R15: 1ffff1100519e031
+FS:  00007fc796c396c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005587e87f1950 CR3: 0000000033264000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ unregister_netdevice_many net/core/dev.c:11469 [inline]
+ unregister_netdevice_queue+0x303/0x370 net/core/dev.c:11343
+ rdev_del_virtual_intf_deprecated net/ieee802154/rdev-ops.h:24 [inline]
+ ieee802154_del_iface+0x2c0/0x5c0 net/ieee802154/nl-phy.c:323
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
+ ___sys_sendmsg net/socket.c:2661 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2690
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc795d7e719
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc796c39038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fc795f35f80 RCX: 00007fc795d7e719
+RDX: 0000000004000000 RSI: 0000000020000b00 RDI: 0000000000000005
+RBP: 00007fc795df139e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fc795f35f80 R15: 00007ffe0c919b58
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:unregister_netdevice_many_notify+0x1d84/0x1da0 net/core/dev.c:11375
+Code: 01 90 48 c7 c7 80 fe 0c 8d 48 c7 c6 60 fe 0c 8d ba 8b 17 00 00 e8 8c 47 c8 f7 90 0f 0b 90 90 e9 67 e8 ff ff e8 9d 51 07 f8 90 <0f> 0b e8 95 51 07 f8 90 0f 0b e8 dd 5e 31 02 66 2e 0f 1f 84 00 00
+RSP: 0018:ffffc90004607160 EFLAGS: 00010293
+RAX: ffffffff898d8813 RBX: 0000000000000002 RCX: ffff88802c1e5a00
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000001
+RBP: ffffc90004607350 R08: ffffffff898d6ca6 R09: 1ffffffff1f98274
+R10: dffffc0000000000 R11: fffffbfff1f98275 R12: dead000000000100
+R13: ffff888028cf06c1 R14: ffffc900046073a0 R15: 1ffff1100519e031
+FS:  00007fc796c396c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f392374d440 CR3: 0000000033264000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-/P
+
+Tested on:
+
+commit:         2d5404ca Linux 6.12-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14e7fe30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1503500c6f615d24
+dashboard link: https://syzkaller.appspot.com/bug?extid=985f827280dc3a6e7e92
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15f001a7980000
 
 
