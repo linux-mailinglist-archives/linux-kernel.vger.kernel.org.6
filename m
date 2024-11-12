@@ -1,101 +1,161 @@
-Return-Path: <linux-kernel+bounces-405922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BFD9C58E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:25:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE0529C58E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:26:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C4372830E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:25:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9157F1F218B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DC5143C4C;
-	Tue, 12 Nov 2024 13:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA9014F135;
+	Tue, 12 Nov 2024 13:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WledquTp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2eY277K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3893D433CB;
-	Tue, 12 Nov 2024 13:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F9B143C4C;
+	Tue, 12 Nov 2024 13:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731417926; cv=none; b=ivs9yb3eqqyb9s5LuENS28ay5oS9BEhSONAytGpsdMLN9CyY2g27jib9F+mi5mRxHLuF5GZkESj6hrFT9yi0JWGB+s9LUNfonSyirk5HeNZdS6HNa/A+ty4HMk3VXUkzrXMAICl4eNqFO2gGUOqeq6mknj935hpt6oNw6+YNMZ4=
+	t=1731417994; cv=none; b=UN4t61BoNvIZ/Qr45uCq9jN05qcE6gzTurzhpWkSi4kn5/w4KsitjMkZZwN9l3K0ZmQgcV/wFWRRX9AdRzUlUtn6RMQNWez5n5rhJ2ZgIIbVQnvjthOQf9MIRW4qLLXXk5YvsfbzDuS0/WdU7SiHJ0t7eYBBv/9ktBmKX/6p+50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731417926; c=relaxed/simple;
-	bh=fhzf1jcZSTAtYRSI99xDL2bTyDAMziFUtoPEDRFBo7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QEIUCBs6QTrBKCtusxlzFjcfEgJD0p6osOMyAwF7LeR3lgpB0bEGx0PLewaH1d5aUMqJxopsI9Xi4oOdxKpEHTJEeliNrCPkc+8U83z5YffOBiB6E3V8elxmAsqovbRZsiHVbEKkyCdyIcZzajxHNNUWo1edoRcdEq8o6/509ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WledquTp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AEEEC4CECD;
-	Tue, 12 Nov 2024 13:25:25 +0000 (UTC)
+	s=arc-20240116; t=1731417994; c=relaxed/simple;
+	bh=sqDWvlYnzmw5LmAND0lJq+irtLs9bjKycO9yQSXxH7o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=n4sip+i9gmbqgSsJQ0tlsE6R6gE+fPDCU/R9sG79Xp/aBjx2AeIi22LP1SxmJuohJ6egYmiqtHdygMNvmfFu765cN0rjMQGt7lKWPeXPQ+ZLH2k0v7e8LHl/LC39JKRZKkh9Ye09dehPEaP2+PH8E/FZukw5XjPRBei08ggfgbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2eY277K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 778D0C4CED0;
+	Tue, 12 Nov 2024 13:26:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731417925;
-	bh=fhzf1jcZSTAtYRSI99xDL2bTyDAMziFUtoPEDRFBo7s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WledquTpOzLCn8K1NSvc85m+6IeY7VJhhVTy/4QavsGdoUpzWXffMrNOyd7G6SUfv
-	 9/SXctGeD+w+dGadzhJjYM3Dx4g2DeAiR22gAAKrDHKuMKh/OuXXm8xgxILV32PeSS
-	 v/2h0/icCFAULxX0nwa9PhD+WgIed4gjgyfoKuHYiTuYC22ZIH3jMldHVNNtz2PCTb
-	 qffJQpbIwEoVu3HstbEdOrKqVAiVs1v3PCB8wfT/CKU76RQMJ15xOVe4E/dxBpQ+J5
-	 +nh+XS4A+fD2HdiByuYeQK7efVov589w+Y4CMl8H3YmHw+ezsgyhLPptYQEshJOUpI
-	 osulbbKHU6LcQ==
-Date: Tue, 12 Nov 2024 13:25:22 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kselftest/arm64: Check that SVCR is 0 in signal handlers
-Message-ID: <ZzNXQtbk1NWN6F7f@finisterre.sirena.org.uk>
-References: <20241106-arm64-fpmr-signal-test-v1-1-31fa34ce58fe@kernel.org>
- <ZzM8RrD248eSW5bG@arm.com>
+	s=k20201202; t=1731417993;
+	bh=sqDWvlYnzmw5LmAND0lJq+irtLs9bjKycO9yQSXxH7o=;
+	h=From:Subject:Date:To:Cc:From;
+	b=u2eY277K1Z+ejda+K3q64uVaWGIanQ+OQOkOviyw8rNIM+nuh6K9X8/wOTsCX3IT5
+	 U4grL2kpat1CYVn+deagHXvhrq0Hw7tJ7XgdRSojsEs1R+jQR52KqWMt8wDhMYOCld
+	 OcVCuVF7k426B1dSXuhiLR/hHcRhOAo6T/iN8psTkF+SAVeQ6PNnNovv6VgT/v/KZR
+	 ERtvj4WPMENMTOfefcps47JoqqoGW0Nr6qiVzoM0F6mi2H4TDm9UDVQjE8NWtCceVv
+	 oKYcBw+C9Bou+L1IwAd8WRr5zeR1bm+Rxe0lsSAlOEfGZqp5dl6LDg+qqLTBYADLzY
+	 04JDH+5ZHtcMw==
+From: Daniel Wagner <wagi@kernel.org>
+Subject: [PATCH v3 0/8] blk: refactor queue affinity helpers
+Date: Tue, 12 Nov 2024 14:26:15 +0100
+Message-Id: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l9TdSVVGcv9oOszk"
-Content-Disposition: inline
-In-Reply-To: <ZzM8RrD248eSW5bG@arm.com>
-X-Cookie: Editing is a rewording activity.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHdXM2cC/4XOTQ6CMBAF4KuQri3pDwi44h6GRUun0EgAW2gkh
+ LtbMOqS2b3J5HuzIgfWgEO3aEUWvHFm6EPglwjVregbwEaFjBhhCSkowxa0qKfBYtk9sNDa9GZ
+ acAvdCNbhjOSFLFKZSEpQMMZwbl6Hf68+2cJzDjXTf9kaF8Dl+MHTffut4yd1nmKCcyBprrNMa
+ MpKNzuIFaDd9exn0TBnFguW5leilFCMU1E+wPbQxYNtULVt2xsamRUELAEAAA==
+X-Change-ID: 20240912-refactor-blk-affinity-helpers-7089b95b4b10
+To: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, virtualization@lists.linux.dev, 
+ linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, 
+ mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, 
+ storagedev@microchip.com, linux-nvme@lists.infradead.org, 
+ Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
+As suggested by Christoph I've dropped the special case for hisi_sas v2,
+so the open coded loop will stay. That means for the isolcpus patches, I
+just need to open code that thing there as well. But overall, this should
+be okay and it avoids adding a wierd interface to blk-mq APIs.
 
---l9TdSVVGcv9oOszk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Original cover letter:
 
-On Tue, Nov 12, 2024 at 11:30:14AM +0000, Catalin Marinas wrote:
-> On Wed, Nov 06, 2024 at 05:07:51PM +0000, Mark Brown wrote:
+These patches were part of 'honor isolcpus configuration' [1] series. To
+simplify the review process I decided to send this as separate series
+because I think it's a nice cleanup independent of the isolcpus feature.
 
-> > +		fprintf(stderr, "Unexpected SVCR %llx\n", get_svcr());
-> > +		return 1;
-> > +	}
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
+---
+Changes in v3:
+- dropped the additinal argument in blk_mq_hctx_map_queues.
+  leave open coded version in hisi_sas_v2.
+- splitted "blk-mp: introduce blk_mq_hctx_map_queues" patch into
+  three patches.
+- dropped local variable in pci_device_irq_get_affinity
+- Link to v2: https://lore.kernel.org/r/20241111-refactor-blk-affinity-helpers-v2-0-f360ddad231a@kernel.org
 
-> I think I'll change both printf specifiers to %lx here since in the libc
-> I have installed, uin64_t is an unsigned long (the kernel defines it as
-> unsigned long long). Both gcc and clang complain but the compiler
-> shouldn't matter since the headers come with glibc.
+Changes in v2:
+- added new callback to struct bus_type and call directly the affinity
+  helpers from there.
+- Link to v1: https://lore.kernel.org/r/20240913-refactor-blk-affinity-helpers-v1-0-8e058f77af12@suse.de
 
-Makes sense.  I do wish the compilers were more consistent with
-including these warnings :(
+Changes in v1:
+- renamed blk_mq_dev_map_queues to blk_mq_hctx_map_queues
+- squased 'virito: add APIs for retrieving vq affinity' into
+  'blk-mq: introduce blk_mq_hctx_map_queues'
+- moved hisi_sas changed into a new patch
+- hisi_sas use define instead of hard coded value
+- moved helpers into their matching subsystem, removed
+  blk-mq-pci and blk-mq-virtio files
+- fix spelling/typos
+- fixed long lines in docu (yep new lines in brief descriptions are
+  supported, tested ti)
+- based on the first part of
+  [1] https://lore.kernel.org/all/20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de
 
---l9TdSVVGcv9oOszk
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+Daniel Wagner (8):
+      driver core: bus: add irq_get_affinity callback to bus_type
+      PCI: hookup irq_get_affinity callback
+      virtio: hookup irq_get_affinity callback
+      blk-mp: introduce blk_mq_hctx_map_queues
+      scsi: replace blk_mq_pci_map_queues with blk_mq_hctx_map_queues
+      nvme: replace blk_mq_pci_map_queues with blk_mq_hctx_map_queues
+      virtio: blk/scsi: replace blk_mq_virtio_map_queues with blk_mq_hctx_map_queues
+      blk-mq: remove unused queue mapping helpers
 
------BEGIN PGP SIGNATURE-----
+ block/Makefile                            |  2 --
+ block/blk-mq-cpumap.c                     | 37 +++++++++++++++++++++++++
+ block/blk-mq-pci.c                        | 46 -------------------------------
+ block/blk-mq-virtio.c                     | 46 -------------------------------
+ drivers/block/virtio_blk.c                |  4 +--
+ drivers/nvme/host/fc.c                    |  1 -
+ drivers/nvme/host/pci.c                   |  3 +-
+ drivers/pci/pci-driver.c                  | 14 ++++++++++
+ drivers/scsi/fnic/fnic_main.c             |  3 +-
+ drivers/scsi/hisi_sas/hisi_sas.h          |  1 -
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c    |  4 +--
+ drivers/scsi/megaraid/megaraid_sas_base.c |  3 +-
+ drivers/scsi/mpi3mr/mpi3mr.h              |  1 -
+ drivers/scsi/mpi3mr/mpi3mr_os.c           |  2 +-
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c      |  3 +-
+ drivers/scsi/pm8001/pm8001_init.c         |  2 +-
+ drivers/scsi/pm8001/pm8001_sas.h          |  1 -
+ drivers/scsi/qla2xxx/qla_nvme.c           |  3 +-
+ drivers/scsi/qla2xxx/qla_os.c             |  4 +--
+ drivers/scsi/smartpqi/smartpqi_init.c     |  7 ++---
+ drivers/scsi/virtio_scsi.c                |  3 +-
+ drivers/virtio/virtio.c                   | 19 +++++++++++++
+ include/linux/blk-mq-pci.h                | 11 --------
+ include/linux/blk-mq-virtio.h             | 11 --------
+ include/linux/blk-mq.h                    |  2 ++
+ include/linux/device/bus.h                |  3 ++
+ 26 files changed, 92 insertions(+), 144 deletions(-)
+---
+base-commit: c9af98a7e8af266bae73e9d662b8341da1ec5824
+change-id: 20240912-refactor-blk-affinity-helpers-7089b95b4b10
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmczVzYACgkQJNaLcl1U
-h9ARyAf/ccxPjV6NvV0HX+NR8V0IrCkIUFYkF+JnPeCHw79ymsk9scQ+8HkDFvXA
-OUzbd+d42XjQN4bMm6FK8NF0Be4syfkOUmP5EUx2x4aWMjghJZIpH53hORjDYH8m
-ej9HimaSZlhkVUFEFsYeTgLH/NC0WbGKyW1KlnLpZ3oAZNzXNsRTM+vfKvkijvYn
-nH4NcBHjA/p9duc9XDitUZISNE6sKMAZT0h8dOp6an2S4gSHLx2wLH5//Mbvinja
-NpOzppfqHNEXN2DpGjvgLzEs6fQjRaRXnfno6QOBg6DTO+Qg40ExFexA2YwW43nY
-d0PnQEXkJ4bwC6IVbirTiegjMLaLzA==
-=q9Xo
------END PGP SIGNATURE-----
+Best regards,
+-- 
+Daniel Wagner <wagi@kernel.org>
 
---l9TdSVVGcv9oOszk--
 
