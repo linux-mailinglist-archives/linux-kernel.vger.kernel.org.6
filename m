@@ -1,216 +1,176 @@
-Return-Path: <linux-kernel+bounces-406054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C854A9C5A77
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:35:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC7E9C5A79
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC511F22CBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:35:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C22411F236C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A401FCC67;
-	Tue, 12 Nov 2024 14:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HikdT6Nw"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3957C1FE10A;
+	Tue, 12 Nov 2024 14:35:59 +0000 (UTC)
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692C11F7093
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E971FCC4F;
+	Tue, 12 Nov 2024 14:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422147; cv=none; b=pgEUkPMvzOWch1u/amT/fY7+0Xz4VeqOOo3brmR00EJXkFR534XBt/Be6Os2OTb1uoKGRj4dOfquPW1LLxjzt3QtD1TZOjOBOSgPLIVGPUw4X7A+jUK5wcS19duKv7UAoUUcON1mq5wM9iqdyAuHov6fkux7a5+ZSBuuDLo0Eq4=
+	t=1731422158; cv=none; b=gxTy8EuNpLkznpXRIjqnnBr/TXg8HtINNRuFtoX1E50Yo9pNjYDj+7pMxAFZVc0GL31P5YzSbPwqoMUvexUVP5lyEbuPL1xwk1Vkk7YnVbtI7KnpcfAQd3446zocv+YvMvt4/gZp5/XfP47+9XXBl9kUMsEy3FKLbxiwtMyTLOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422147; c=relaxed/simple;
-	bh=1IlveR25fMmS5/QdrDXCjZiS8/dRkNR5bD6tax0zuHM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M4KubbNZ+G8JJV24ODGllIEjFpp5OAv4sac+gYH/fTz5r5n+qSV4kwdNDxln9pgjxyugNcRPvESlRoqQISqHVz33iBM6L6pFs5wQ4ODQwZCXb/aYEBKtqydKUH8AJ4JgQDe1TnxwEjd37ygGvTg2/Zjq4jX6Tk7kNy54080o2U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HikdT6Nw; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d4c1b1455so3839280f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 06:35:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731422143; x=1732026943; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pVxaA1z9fT6bwML4eXqw0/GJ56n1cvR8YdBgkVNFYhQ=;
-        b=HikdT6NweKqCmBuQKTDtF/+j8J6NbVl+IB1TjX0TAyrnWgkyhN/kqtAsFl/bpHOZFQ
-         ZUnc3NWhRj2HMwH2/vV44xLRAuD4vab/KJawkgxAlInsChie1rY3k7Ywrwmq5j1KdbMJ
-         doUmSMS2yiZ2nYwRSmOV8QL/C5Q076mJAlcPYPlCLTa2QoH1XPiao+7iCFjuPIkbvH4V
-         hC1KkiYsWsXLjsIwElG93OjGJaD1GxdOjZ/z6f40nFMi3Pf05HJRgTdrZcRueJceW2Ny
-         zThVPJn2rZToUsN7nwVowhfVSeHKXUeuO/LQBKEt8TYmJ0TFApLUrd6KupkDZRNHcF2x
-         H7Xw==
+	s=arc-20240116; t=1731422158; c=relaxed/simple;
+	bh=O/QFFDdB0PMXz57l8UUccbGHsIa6UG3BDGFr0OekP5U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rpTkj0p+M3imIlUw8wRkH/PYFAMR3P3uJk+JT7OQTrGaZsOEBaskY0w6Q6iS9KFzU+VxJt3VtOlRrtCJPwwaRQJkpgeiiM5WuO9rC3M87U9EbcxVvSO0TKrWw1VPc3obHxjFdomvhXRl2MjH1IZjDy3I8EsignvKMKMBRUJLlsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e60d3adecbso3043658b6e.2;
+        Tue, 12 Nov 2024 06:35:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731422143; x=1732026943;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pVxaA1z9fT6bwML4eXqw0/GJ56n1cvR8YdBgkVNFYhQ=;
-        b=vGFqeGzzCpbt10SptNyCJ++IDRrAqBumSMtyQRHp6VkZW6fCKZiVCT3LX2assyQ6nz
-         EF7J+gc8U6ZNDOpuPytVTsIu3kji65ZwiA/rNiAmnAVpDaG2LgJI2OwfwRTcgmapvizK
-         Ll/nsIy9XAtLeboPK7XFiPyQ8pMYIx7X7Zwe6HfwdydUE31sYe0kkCrmUyV/7XEtC8iD
-         vrBpg91qVbT0ImZhL56q9AewgPiS61IIpAqw5GaQDHgIojR599U1ED6M5DQ9DD0zLCmM
-         gJhjiEYXwDvAvc4D+YxRNhVsyFP/VzM2gRmpof2O6Za5gpS0k3yzjmC4m8mIMqLNxhL3
-         HvHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlCvMH3DLqCEHLL/IVDZIdZTxQ89XGNakbQyHKvkFvvTtJauqgqzVEnKecLvCnMfeEtlVKEMG24gylJ0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtfcyzYXzN268OXWCflT9viUeo2nchqNs3FERXJKtHudWvgZD/
-	QnZCG+JEheEjdZ3X4X6X7IPVU/jnhuApl496uhpGUqdjvRAXvovlUa3R4ggBpNA=
-X-Google-Smtp-Source: AGHT+IH3nn1DNyejg0QrIXmlhIVJG/2B1Lgrs9dlmIN9VPOR91QgXKaw3SCiFOYSgglSTBaCrt/cBA==
-X-Received: by 2002:a5d:59a3:0:b0:37d:3999:7b4 with SMTP id ffacd0b85a97d-3820811097cmr2114887f8f.17.1731422142732;
-        Tue, 12 Nov 2024 06:35:42 -0800 (PST)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97e46bsm15344100f8f.30.2024.11.12.06.35.42
+        d=1e100.net; s=20230601; t=1731422156; x=1732026956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=McjUok6KfDUiGy+BXB2JFJst16pFs7oxIw6Lr01GESI=;
+        b=Gx53aciJfHfMEuciN8PphC59N2cNiTnYvTP+EDX8YhvjB7hQKKhPHLNvuTCXgDilrV
+         hcILdI7/Ix70TqbLIDvuhMwhsCQ2JfeiK46l/uYbh+yB9ODztPxTJ8VDJMZA0ZjEDzYq
+         rkqSTh5mpZkGbNi/VUId2Wk9e0u3bXb7bWszeJAIKZHfvZQC8GhuM6ZBzWrEIjNtVovv
+         GCZes3cGIaU6GRNauA37JZVB/ZnHlB8a/uo2qYi46jhiY8bmfLNdaiBLQxsg+7bKFaX6
+         oZZSLel7iUyJ2YG0DUooC5GKupMRwHtpqAG0x/n/ZjisMBXHQbLh3Q3D6QHQ+P0wkaaa
+         4wxA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+QHws+W9ZgoQ4fDOK/Un+iQvAsM+15ZFT+4yqVPIrHwM3injZuqJxJb5V3Km3k05avInopT1BxM+8oa+2@vger.kernel.org, AJvYcCX5Dyy+BF6Ydf9JGf/sQbVbew5myNPap2FD0vhgQeAdrGjRlrUCapYR5ZiFVZBeENHl34fp9g3wAq6W@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR3rNjFOvNI1ng48LPYE7Y0Xt1NYztiLxpLLZDAjLuo9iayj8B
+	hrqyv4KhzzslVYqzu3ENu7swoRK0gVwJC3JEpBAQPCvAdgSPNCl+sgkgjoiTl9ZHjQ==
+X-Google-Smtp-Source: AGHT+IEdb2C7EfEG6ZkbRX7xGk6PLJsox15F9HL4LmCArCwFkH9Xj+5yECle6yBdYyPqXqQt34rH4g==
+X-Received: by 2002:a05:6808:3090:b0:3e6:5f3:f0d8 with SMTP id 5614622812f47-3e7946a60a9mr13884685b6e.24.1731422156104;
+        Tue, 12 Nov 2024 06:35:56 -0800 (PST)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com. [209.85.215.179])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f644200sm10615243a12.60.2024.11.12.06.35.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 06:35:42 -0800 (PST)
-Message-ID: <7fdcf601-524b-4530-861d-e4b0f8c1023b@suse.com>
-Date: Tue, 12 Nov 2024 15:35:41 +0100
+        Tue, 12 Nov 2024 06:35:55 -0800 (PST)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ee4c57b037so4203463a12.0;
+        Tue, 12 Nov 2024 06:35:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWWC+Y3tG/2I355ipHOPhM5zVLZa8g4zeWbJwifC+9LRr6O3eiKSmQ/6DQw4mrWvEbkskklKZn2WEj1xNi2@vger.kernel.org, AJvYcCWa/56XbLnROA7uqkqZb1dWLigVxvgPdUISCSa8PQMPrVTS7u86pYDzB4JFenUdKVKRyoKfn0f/E6sT@vger.kernel.org
+X-Received: by 2002:a17:90b:3146:b0:2e2:cf63:224c with SMTP id
+ 98e67ed59e1d1-2e9b17838ddmr19179314a91.35.1731422155186; Tue, 12 Nov 2024
+ 06:35:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/3] module: Don't fail module loading when setting
- ro_after_init section RO failed
-To: Daniel Gomez <da.gomez@samsung.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
- Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Kees Cook <kees@kernel.org>,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>
-References: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
- <CGME20241109103554eucas1p1548e0da57cccb9546a88402f1f5c94be@eucas1p1.samsung.com>
- <164e5f22f8ab59d1d516e3c992efdd9f83ab4819.1731148254.git.christophe.leroy@csgroup.eu>
- <D5HZV4A6SC9A.25U3Q0WUVDJHZ@samsung.com>
- <b74f0845-4916-47eb-945b-eb91ae05fc91@csgroup.eu>
- <D5K3PNXEIKYK.11GZ8BMY02OA4@samsung.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <D5K3PNXEIKYK.11GZ8BMY02OA4@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241111181807.13211-1-tszucs@linux.com> <20241111181807.13211-3-tszucs@linux.com>
+ <9fbdf05c-42e6-4ac5-9542-805200bc8c87@kwiboo.se> <260af427ae64d6f3b02a1579ee83eb3b@manjaro.org>
+In-Reply-To: <260af427ae64d6f3b02a1579ee83eb3b@manjaro.org>
+From: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>
+Date: Tue, 12 Nov 2024 15:35:44 +0100
+X-Gmail-Original-Message-ID: <CA+Gksr+WvS-S+jeYYG=Bo9cemvnJmjsmU4aj9YnD3t8-HY7wbw@mail.gmail.com>
+Message-ID: <CA+Gksr+WvS-S+jeYYG=Bo9cemvnJmjsmU4aj9YnD3t8-HY7wbw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Enable sdmmc2 on rock-3b and
+ set it up for SDIO devices
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Jonas Karlman <jonas@kwiboo.se>, =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, FUKAUMI Naoki <naoki@radxa.com>, Chukun Pan <amadeus@jmu.edu.cn>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/12/24 10:43, Daniel Gomez wrote:
-> On Mon Nov 11, 2024 at 7:53 PM CET, Christophe Leroy wrote:
->>
->>
->> Le 09/11/2024 à 23:17, Daniel Gomez a écrit :
->>> On Sat Nov 9, 2024 at 11:35 AM CET, Christophe Leroy wrote:
->>>> Once module init has succeded it is too late to cancel loading.
->>>> If setting ro_after_init data section to read-only fails, all we
->>>> can do is to inform the user through a warning.
->>>>
->>>> Reported-by: Thomas Gleixner <tglx@linutronix.de>
->>>> Closes: https://protect2.fireeye.com/v1/url?k=d3deb284-b2a35ac3-d3df39cb-74fe485fff30-288375d7d91e4ad9&q=1&e=701066ca-634d-4525-a77d-1a44451f897a&u=https%3A%2F%2Feur01.safelinks.protection.outlook.com%2F%3Furl%3Dhttps%253A%252F%252Flore.kernel.org%252Fall%252F20230915082126.4187913-1-ruanjinjie%2540huawei.com%252F%26data%3D05%257C02%257Cchristophe.leroy%2540csgroup.eu%257C26b5ca7363e54210439b08dd010c4865%257C8b87af7d86474dc78df45f69a2011bb5%257C0%257C0%257C638667874457200373%257CUnknown%257CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%253D%253D%257C0%257C%257C%257C%26sdata%3DZeJ%252F3%252B2Nx%252FBf%252FWLFEkhxKlDhZk8LNkz0fs%252Fg2xMcOjY%253D%26reserved%3D0
->>>> Fixes: d1909c022173 ("module: Don't ignore errors from set_memory_XX()")
->>>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
->>>> ---
->>>>   kernel/module/main.c | 6 +++---
->>>>   1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/kernel/module/main.c b/kernel/module/main.c
->>>> index 2de4ad7af335..1bf4b0db291b 100644
->>>> --- a/kernel/module/main.c
->>>> +++ b/kernel/module/main.c
->>>> @@ -2583,7 +2583,9 @@ static noinline int do_init_module(struct module *mod)
->>>>   #endif
->>>>   	ret = module_enable_rodata_ro_after_init(mod);
->>>>   	if (ret)
->>>> -		goto fail_mutex_unlock;
->>>> +		pr_warn("%s: %s() returned %d, ro_after_init data might still be writable\n",
->>>> +			mod->name, __func__, ret);
->>>> +
->>>>   	mod_tree_remove_init(mod);
->>>>   	module_arch_freeing_init(mod);
->>>>   	for_class_mod_mem_type(type, init) {
->>>> @@ -2622,8 +2624,6 @@ static noinline int do_init_module(struct module *mod)
->>>>   
->>>>   	return 0;
->>>
->>> I think it would make sense to propagate the error. But that would
->>> require changing modprobe.c. What kind of error can we expect when this
->>> happens?
->>
->> AFAIK, on powerpc it fails with EINVAL when
->> - The area is a vmalloc or module area and is a hugepage area
->> - The area is not vmalloc or io register and MMU is not powerpc radix MMU
->>
->> Otherwise it propagates the error from apply_to_existing_page_range(). 
->> IIUC it will return EINVAL when it hits a leaf PTE in upper directories.
-> 
-> Looking at that path I see we can also fail at __apply_to_page_range()
-> -> apply_to_p4d_range() and return with -ENOMEM.
-> 
-> My proposal was to do something like the change below in modprobe:
-> 
-> diff --git a/tools/modprobe.c b/tools/modprobe.c
-> index ec66e6f..8876e27 100644
-> --- a/tools/modprobe.c
-> +++ b/tools/modprobe.c
-> @@ -572,6 +572,11 @@ static int insmod_insert(struct kmod_module *mod, int flags, const char *extra_o
->                 err = 0;
->         else {
->                 switch (err) {
-> +               case -EINVAL:
-> +                       ERR("module '%s'inserted: ro_after_init data might"
-> +                           "still be writable (see dmesg)\n",
-> +                           kmod_module_get_name(mod));
-> +                       break;
->                 case -EEXIST:
->                         ERR("could not insert '%s': Module already in kernel\n",
->                             kmod_module_get_name(mod));
-> 
-> But I think these error codes may be also be reported in other parts
-> such as simplify_symbols() so may not be a good idea after all.
+Hi Jonas, Dragan,
 
-It isn't really possible to make a sensible use of the return code from
-init_module(), besides some basic check for -EEXIST. The problem is that
-any error code from a module's init function is also propagated as
-a result from the syscall.
+I think it was totally fine to disable sdmmc2 at first, especially if
+it couldn=E2=80=99t be tested or wasn=E2=80=99t needed right away. From wha=
+t I=E2=80=99ve
+seen, this board works great even at higher clock speeds than what
+rk356x-base.dtsi suggests. I don=E2=80=99t have access to the RK3568 errata=
+,
+and there don=E2=80=99t seem to be any limits mentioned in the TRM either.
+Overall, this board is doing just fine as it is.
 
-> 
-> Maybe we just need to change the default/catch all error message in
-> modprobe.c and to indicate/include this case:
-> 
-> diff --git a/tools/modprobe.c b/tools/modprobe.c
-> index ec66e6f..3647d37 100644
-> --- a/tools/modprobe.c
-> +++ b/tools/modprobe.c
-> @@ -582,7 +582,8 @@ static int insmod_insert(struct kmod_module *mod, int flags, const char *extra_o
->                             kmod_module_get_name(mod));
->                         break;
->                 default:
-> -                       ERR("could not insert '%s': %s\n", kmod_module_get_name(mod),
-> +                       ERR("could not insert '%s' or inserted with error %s, "
-> +                           "(see dmesg)\n", kmod_module_get_name(mod),
->                             strerror(-err));
->                         break;
->                 }
-> 
-> 
->>
->> On other architectures it can be different, I know some architecture try 
->> to split the pages when they hit hugepages and that can fail.
-> 
-> Is it worth it adding an error code for this case in case we want to
-> report it back?
+Regarding device tree overlays, they would be ideal for implementing
+secondary functions, such as PCIe endpoint mode for users with
+specific requirements. However, the primary functions for PCIe on the
+M2E will be root complex mode, along with SDIO host, etc. In my view,
+the hardware is well-designed and interconnected. Users have a
+reasonable expectation that these primary functions should work
+seamlessly without additional configuration, right out of the box.
 
-I feel that the proposed kernel warning about this situation is
-sufficient and the loader should then return 0 to indicate that the
-module got loaded. It would be more confusing to return an error but
-with the module actually remaining inserted.
+Dragan, what did you mean by SDIO related power timing requirements?
 
-A module loaded without having its RO-after-init section changed
-properly to RO is still fully functional. In practice, if this final
-set_memory_ro() call fails, the system is already in such a state where
-the additional warning is the least of the issues?
+Kind regards,
+Tamas
 
--- 
-Thanks,
-Petr
+
+
+Tam=C3=A1s Sz=C5=B1cs
+tszucs@linux.com
+
+On Tue, Nov 12, 2024 at 5:41=E2=80=AFAM Dragan Simic <dsimic@manjaro.org> w=
+rote:
+>
+> Hello Jonas and Tamas,
+>
+> On 2024-11-11 20:06, Jonas Karlman wrote:
+> > On 2024-11-11 19:17, Tam=C3=A1s Sz=C5=B1cs wrote:
+> >> Enable SDIO on Radxa ROCK 3 Model B M.2 Key E. Add all supported UHS-I
+> >> rates and
+> >> enable 200 MHz maximum clock. Also, allow host wakeup via SDIO IRQ.
+> >>
+> >> Signed-off-by: Tam=C3=A1s Sz=C5=B1cs <tszucs@linux.com>
+> >> ---
+> >>  arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts | 8 +++++++-
+> >>  1 file changed, 7 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+> >> b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+> >> index 242af5337cdf..b7527ba418f7 100644
+> >> --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+> >> +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+> >> @@ -688,14 +688,20 @@ &sdmmc2 {
+> >>      cap-sd-highspeed;
+> >>      cap-sdio-irq;
+> >>      keep-power-in-suspend;
+> >> +    max-frequency =3D <200000000>;
+> >>      mmc-pwrseq =3D <&sdio_pwrseq>;
+> >>      non-removable;
+> >>      pinctrl-names =3D "default";
+> >>      pinctrl-0 =3D <&sdmmc2m0_bus4 &sdmmc2m0_clk &sdmmc2m0_cmd>;
+> >> +    sd-uhs-sdr12;
+> >> +    sd-uhs-sdr25;
+> >> +    sd-uhs-sdr50;
+> >
+> > I thought that lower speeds was implied by uhs-sdr104?
+>
+> Last time I went through the MMC drivers, they were implied.  IIRC,
+> such backward mode compatibility is actually a requirement made by
+> the MMC specification.
+>
+> >>      sd-uhs-sdr104;
+> >> +    sd-uhs-ddr50;
+> >>      vmmc-supply =3D <&vcc3v3_sys2>;
+> >>      vqmmc-supply =3D <&vcc_1v8>;
+> >> -    status =3D "disabled";
+> >> +    wakeup-source;
+> >> +    status =3D "okay";
+> >
+> > This should probably be enabled using an dt-overlay, there is no
+> > SDIO device embedded on the board and the reason I left it disabled
+> > in original board DT submission.
+>
+> Just went through the ROCK 3B schematic, version 1.51, and I think
+> there should be no need for a separate overlay, because sdmmc2 goes
+> to the M.2 slot on the board, which any user can plug an M.2 module
+> into, and the SDIO interface is kind-of self-discoverable.
+>
+> Of course, all that unless there are some horribly looking :) error
+> messages emitted to the kernel log when nothing is actually found,
+> in which case the SDIO/MMC driers should be fixed first.  Also, I'm
+> not sure what do we do with the possible SDIO-related power timing
+> requirements?
 
