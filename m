@@ -1,142 +1,157 @@
-Return-Path: <linux-kernel+bounces-406451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FBF49C6172
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:29:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE1C9C6379
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AD9AB43C85
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:38:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D93DBB3CC5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF04521CF91;
-	Tue, 12 Nov 2024 17:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5777213EC3;
+	Tue, 12 Nov 2024 17:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="GzFa7jLG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QU7yuGbG"
-Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NYKW3wa4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8B321C194;
-	Tue, 12 Nov 2024 17:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977D7213ED4
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731432710; cv=none; b=pb3oml53AXQEJ6/1pdeVPf1shUb+twGw4soexddZitD9i03C+yMS6/mQl5Qvx8pbBclkCkAVp5ispRgYnKZaIKaKTXv7xLd/4sNgkXt/KPsKXETV1/nW4ZpuzYDGzdk+MTQAUu5gHI0cmLXjoODIiKCxr6mwGylGv00N8XFX5zE=
+	t=1731433470; cv=none; b=ZzoadtyiNzRbfSmzGuP6uV0MFnDo8ZbL8VUJ27TP5m6geGOTNoBu00TyF5oI3iVQXT/3cWXr+shv4Ahp26IxWN5Q7RArKNiK+lOHDtZfQahDc7BCeUS/QBPpPRD8g0W/gFrpQjpqvv1ThbfvJbP9FIzHhcu79OkaOHXBjjxlz6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731432710; c=relaxed/simple;
-	bh=5T+mAOmQGUGuwgb0NzVB0VxVq11xmNt5l/I4xqeDOR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bOBgPiRdtqusx+01DTgpCkTDHtPUPm1dTbIGpsShloA/1kQ0rWftjp3xG6bjASyVgHYR3x6kw5LPyahZwPHH0oPB18rPSwZyFs4fvDq69aas0eKRvnNi6qhm/e1VP4L65SUHrh9T7YINBvUGZBdwuZyH8umfPC95A+nDD40UBec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=GzFa7jLG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QU7yuGbG; arc=none smtp.client-ip=202.12.124.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id A8F481D403A6;
-	Tue, 12 Nov 2024 12:31:47 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 12 Nov 2024 12:31:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1731432707; x=
-	1731436307; bh=s6+xxQXvhzXkvyOoCBbCT7VarA6WfiyFPIHUZfxtZUI=; b=G
-	zFa7jLG1cWT/l+QMM28wJShPN4UQW8P05arsOBDfylxJ3/9TgcvjKm/8+v/P/nK3
-	03uIsXlzbXykeGOTpIE3VjMLsPYKJMWY7NaZxUiagiOp+veFi8WiHswObSzIUiIz
-	y6czcrmDoEcRl8Mgq76C22xu0oKlhJ8tF/1f0+340Cua9vYey44vdbCxMl/L3De1
-	XCzokog1Jlvo8fzcEsKAsZI0QJt5yS8d86rHjb6ipT6iCUd7GjkVSujlmrFlwOzM
-	1tUyi2LfUgMfQ0Ij/3GEFaWZNiPwVBKZpZqsKsqpiKMbfR6UGIE7wDENqGKEvV2A
-	bWVytrOCoXb1AD5AqbCEQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1731432707; x=1731436307; bh=s6+xxQXvhzXkvyOoCBbCT7VarA6WfiyFPIH
-	UZfxtZUI=; b=QU7yuGbGwa8Z+V54sn/5JthnsF22tXeINVYQjVTohHgFnensyHA
-	qU9EX5G1JC2dKNfZPfk2JBoYGbWxxmHlXBmz0YvZhd3FOzoupZhX2w5Y2xWNBeQD
-	9AWIQnoXugYQ94QKl6w118Xs3Hveoow1TkmFeEO7OdImRLfnO8vTfbXlsYW877u/
-	GUrHTL9wykAeN3GMrIiuYeaCMCzEbo5e5FtB85iu7wA98cAO2SPHRqflMvxL/HKP
-	SpYV3yUI/VP+EaBe4d77lfb7fwtB1cCj1O0EsX9Vdn1RFS18t7QaksyJYYfQTmJS
-	8uMp/il/TRYI5nRIDqY6SzJoNHsROf3rrEA==
-X-ME-Sender: <xms:A5EzZ0avZxicPbACnSmZZemAPUn-YRcImU-qTENbgTlCjR-VFVrZ4Q>
-    <xme:A5EzZ_agHByMCvQSmPF946IyZqRMBGDX58jO_KqwPYeX43c8R97kI4V3-VMPLD-gX
-    0jXlCBLscGdjDmDs1s>
-X-ME-Received: <xmr:A5EzZ-_k9V50mwznRx6VadZE5yrBuqhZSo-9dbqLRvZgU_cTAZ_YMlzybF3h>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudeggdelkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
-    hfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrih
-    hlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeeg
-    teehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghr
-    tghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehrhigriigrnh
-    hovhdrshdrrgesghhmrghilhdrtghomhdprhgtphhtthhopegrnhhtohhnihhosehophgv
-    nhhvphhnrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
-    dprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggv
-    nhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrse
-    hgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepnhgvthguvghvse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:A5EzZ-qfmO1SZMWEeL67fe3hBFK3DbMlO6b8CFY8a8EF_5OzxSkzrw>
-    <xmx:A5EzZ_oWpN1cgxf0RB6fIhVyMd_w8TWWHYuoyyU9PyS3nWIRc_g0Bg>
-    <xmx:A5EzZ8QA4Ub8--0CtUVQ5m7yxznrX1zxCQ3TFQ2PMIz7wAdi90rgiA>
-    <xmx:A5EzZ_r8ynOAQb2nqebqVpW4ehCb8JoEipI2reWxrn2MMcXdJRI4ZQ>
-    <xmx:A5EzZzfnM5zGEqu92LtUmm3X7pxTRQvHEBMxG5JnTB-H-x7XeJM3jjNI>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 12 Nov 2024 12:31:46 -0500 (EST)
-Date: Tue, 12 Nov 2024 18:31:45 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Cc: Antonio Quartulli <antonio@openvpn.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v11 06/23] ovpn: introduce the ovpn_peer object
-Message-ID: <ZzORATd5hG614dta@hog>
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-6-de4698c73a25@openvpn.net>
- <b7d3ec11-afe4-409c-970e-8bc647364a08@gmail.com>
+	s=arc-20240116; t=1731433470; c=relaxed/simple;
+	bh=RDfArepTU8NJiFtWt6ibJ1faxB56iYRNzWqS2Kgk2uY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PyfCJQCEkhE/+5Cb5q8CEH3JTcet4zmNRy8MykGEYXRinE4bm/9wg4877wfbC6DLSfT185k0Ia3GT49p4d6EcdfzrNrSaMGNL8+SQZqTnCDLI+SYan6LSpmGBL1MpoOlrWUTJ5ZOoUPo/0s8m3N6cQtRFzk1kNRDTcvb0KtuAu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NYKW3wa4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731433465;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eVzX8IrUiHDIGjgNVYIdt2apAWg2olnejFrDZpVW494=;
+	b=NYKW3wa4c8eH6J31r647I8RM3NKO+yUtzg8YY7bogY1zTM1yQsl9VqPRDwY+S9GnF0V2R9
+	qDXJYTA4XTafCKMT8b/o3ZyyOGxDPPwl67+DuaMZBt4wiuXzxutkq5J0KrSGUC5DboRyP2
+	bWE0JSoeJ1jj69cmr2xG1/cSoO2qkm0=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-50-yngErRiNMNykF4SD8RCOFA-1; Tue, 12 Nov 2024 12:44:24 -0500
+X-MC-Unique: yngErRiNMNykF4SD8RCOFA-1
+X-Mimecast-MFC-AGG-ID: yngErRiNMNykF4SD8RCOFA
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4314f1e0f2bso42586935e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:44:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731433463; x=1732038263;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eVzX8IrUiHDIGjgNVYIdt2apAWg2olnejFrDZpVW494=;
+        b=POovqVLlyhSKpO2mzscwZ4MHBFN++gr2wXxswAqpnMTT86fP37sBcqHKYEJPsIGO5V
+         uOsRBDWZwl45Z2VAL34LQIYtzDxg4nezymTMZe9JQJD4UzESHsa46wPoArIf32WakWNx
+         A6zpqK/rPZ5gnvsiqW5vdGGfobU9zDe+KAOKIb8NRPNLZMFZf6SQIRhEjzdb9ieNv2Jq
+         1ys+Wjw4M/gLQBZ1LCEmC3abWfUKYL6vb2zA611oMM5TaqUvfqJsc/RlrxwFQLQBV383
+         8IRO0LZ9AT8+UCWPTZbiNlA02TRa93Hf504C2QTvPY5HiD7PwyPwyGIp+KJyc5Zfhbdm
+         Wyng==
+X-Forwarded-Encrypted: i=1; AJvYcCWja6oNFloyQE5pcxUS4Mgrvr/tpK9YRbAVZEOcXpON4KWj3euLsraPnWK1HjKgUsOzeoJ7pdOF1WBHb1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO+/VdlltmM/CPbV5rV8USQZuEghwWuWtdDLlM6824/LJOUhzg
+	Wo0KuU6Z0hdYN9BFXC0Cc5O775Ah/jRj1NnvSC6ZZOdBOIH+E15510xdLrEVn97ZypsDjjXucu5
+	rcjIuM4O6kXAX3t8iD6VEXHgg5qJg4j62XS5+wObCEamH1RJm0D+2dS5q++Fbp/QQfZksSN9cta
+	BgcH/R+gKLqgg4BfEx/OJSxErxavC3mNR8R0MT
+X-Received: by 2002:a05:600c:6987:b0:431:3a6d:b84a with SMTP id 5b1f17b1804b1-432bcafc5a6mr122920695e9.4.1731433462947;
+        Tue, 12 Nov 2024 09:44:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFk1+sll6qKj8ZxjfW1Guv/zAkO9AMei6W+uBdtH7yxnyBBvnBSeRCXgDgU3LYFUHOhAclwT5YnnRTovc4RLzg=
+X-Received: by 2002:a05:600c:6987:b0:431:3a6d:b84a with SMTP id
+ 5b1f17b1804b1-432bcafc5a6mr122920445e9.4.1731433462644; Tue, 12 Nov 2024
+ 09:44:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b7d3ec11-afe4-409c-970e-8bc647364a08@gmail.com>
+References: <20241030033514.1728937-1-zack.rusin@broadcom.com>
+ <20241030033514.1728937-3-zack.rusin@broadcom.com> <CABgObfaRP6zKNhrO8_atGDLcHs=uvE0aT8cPKnt_vNHHM+8Nxg@mail.gmail.com>
+ <CABQX2QMR=Nsn23zojFdhemR7tvGUz6_UM8Rgf6WLsxwDqoFtxg@mail.gmail.com>
+ <Zy0__5YB9F5d0eZn@google.com> <CABQX2QNxFDhH1frsGpSQjSs3AWSdTibkxPrjq1QC7FGZC8Go-Q@mail.gmail.com>
+ <e3f943a7-a40a-45cb-b0d9-e3ed58344d8b@redhat.com> <CADH9ctD1uf_yBA3NXNQu7TJa_TPhLRN=0YZ3j2gGhgmaFRdCFg@mail.gmail.com>
+ <c3026876-8061-4ab2-9321-97cc05bad510@redhat.com> <CADH9ctBivnvP1tNcatLKzd8EDz8Oo6X65660j8ccxYzk3aFzCA@mail.gmail.com>
+In-Reply-To: <CADH9ctBivnvP1tNcatLKzd8EDz8Oo6X65660j8ccxYzk3aFzCA@mail.gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 12 Nov 2024 18:44:07 +0100
+Message-ID: <CABgObfZEyCQMiq6CKBOE7pAVzUDkWjqT2cgfbwjW-RseH8VkLw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] KVM: x86: Add support for VMware guest specific hypercalls
+To: Doug Covelli <doug.covelli@broadcom.com>
+Cc: Zack Rusin <zack.rusin@broadcom.com>, Sean Christopherson <seanjc@google.com>, 
+	kvm <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "the arch/x86 maintainers" <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Joel Stanley <joel@jms.id.au>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, 
+	"Kernel Mailing List, Linux" <linux-kernel@vger.kernel.org>, 
+	linux-kselftest <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-2024-11-10, 15:38:27 +0200, Sergey Ryazanov wrote:
-> On 29.10.2024 12:47, Antonio Quartulli wrote:
-> > An ovpn_peer object holds the whole status of a remote peer
-> > (regardless whether it is a server or a client).
-> > 
-> > This includes status for crypto, tx/rx buffers, napi, etc.
-> > 
-> > Only support for one peer is introduced (P2P mode).
-> > Multi peer support is introduced with a later patch.
-> 
-> Reviewing the peer creation/destroying code I came to a generic question.
-> Did you consider keeping a single P2P peer in the peers table as well?
-> 
-> Looks like such approach can greatly simply the code by dropping all these
-> 'switch (ovpn->mode)' checks and implementing a unified peer management. The
-> 'peer' field in the main private data structure can be kept to accelerate
-> lookups, still using peers table for management tasks like removing all the
-> peers on the interface teardown.
+Il lun 11 nov 2024, 21:55 Doug Covelli <doug.covelli@broadcom.com> ha scritto:
+>
+> BDOOR_CMD_VCPU_MMIO_HONORS_PAT and BDOOR_CMD_VCPU_LEGACY_X2APIC_OK are not
+> actually backdoor calls - they are flags returned by BDOOR_CMD_GET_VCPU_INFO.
+>
+> BDOOR_CMD_VCPU_MMIO_HONORS_PAT is only ever set to 1 on ESX as it is only
+> relevant for PCI passthru which is not supported on Linux/Windows/macOS.  IIRC
+> this was added over 10 years ago for some Infiniband device vendor to use in
+> their driver although I'm not sure that ever materialized.
 
-It would save a few 'switch(mode)', but force every client to allocate
-the hashtable for no reason at all. That tradeoff doesn't look very
-beneficial to me, the P2P-specific code is really simple. And if you
-keep ovpn->peer to make lookups faster, you're not removing that many
-'switch(mode)'.
+Ok. So I guess false is safe.
 
--- 
-Sabrina
+> BDOOR_CMD_VCPU_LEGACY_X2APIC_OK indicates if it is OK to use x2APIC w/o
+> interrupt remapping (e.g a virtual IOMMU).  I'm not sure if KVM supports this
+> but I think this one can be set to TRUE unconditionally as we have no plans to
+> use KVM_CREATE_IRQCHIP - if anything we would use KVM_CAP_SPLIT_IRQCHIP although
+> my preference would be to handle all APIC/IOAPIC/PIC emulation ourselves
+> provided we can avoid CR8 exits but that is another discussion.
+
+Split irqchip should be the best tradeoff. Without it, moves from cr8
+stay in the kernel, but moves to cr8 always go to userspace with a
+KVM_EXIT_SET_TPR exit. You also won't be able to use Intel
+flexpriority (in-processor accelerated TPR) because KVM does not know
+which bits are set in IRR. So it will be *really* every move to cr8
+that goes to userspace.
+
+> For now I think it makes sense to handle BDOOR_CMD_GET_VCPU_INFO at userlevel
+> like we do on Windows and macOS.
+>
+> BDOOR_CMD_GETTIME/BDOOR_CMD_GETTIMEFULL are similar with the former being
+> deprecated in favor of the latter.  Both do essentially the same thing which is
+> to return the host OS's time - on Linux this is obtained via gettimeofday.  I
+> believe this is mainly used by tools to fix up the VM's time when resuming from
+> suspend.  I think it is fine to continue handling these at userlevel.
+
+As long as the TSC is not involved it should be okay.
+
+Paolo
+
+> > >> Anyway, one question apart from this: is the API the same for the I/O
+> > >> port and hypercall backdoors?
+> > >
+> > > Yeah the calls and arguments are the same.  The hypercall based
+> > > interface is an attempt to modernize the backdoor since as you pointed
+> > > out the I/O based interface is kind of hacky as it bypasses the normal
+> > > checks for an I/O port access at CPL3.  It would be nice to get rid of
+> > > it but unfortunately I don't think that will happen in the foreseeable
+> > > future as there are a lot of existing VMs out there with older SW that
+> > > still uses this interface.
+> >
+> > Yeah, but I think it still justifies that the KVM_ENABLE_CAP API can
+> > enable the hypercall but not the I/O port.
+> >
+> > Paolo
+
 
