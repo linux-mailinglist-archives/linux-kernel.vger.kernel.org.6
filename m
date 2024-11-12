@@ -1,221 +1,174 @@
-Return-Path: <linux-kernel+bounces-406740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6499C63D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:55:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1C89C6480
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:52:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F343B44092
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:05:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 524FDB3E422
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DF221A4A4;
-	Tue, 12 Nov 2024 21:05:16 +0000 (UTC)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C3221A4A4;
+	Tue, 12 Nov 2024 21:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VSxLxg/a"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A0C21745E;
-	Tue, 12 Nov 2024 21:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7FD149DFF;
+	Tue, 12 Nov 2024 21:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731445515; cv=none; b=f5SktIfo8ZjKhP7PR2BeEg5xrVgWGzzsVXhvG/BqvcUB2VXEMJg4yMZlDENxoXwy89nb2aJgBRiP9ugoyOqxx2HRdE0gAibN47bacmE4JbifbAlU+Ru7YWB0/o219TxrtynnzXOFV826mj3d/YPP8DGmSScCnxs3faucszah6g8=
+	t=1731446139; cv=none; b=Fw6QEqQALYwdPvZ5QkIZTSSj5lITQw8T5c1tFGqYBRhLJevYPn9VqgHKmLVQ1SlT0IkUMgFB0rjQTACI3L5/4QAldWVzXHw27uttcziqvgAhYcH2sEKrJkNr4nsqoMykdv317A1+XhZ8pUYnnQ3Z9IUyQVBcs3gOgx8N/JG6Knk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731445515; c=relaxed/simple;
-	bh=Mz4zDUojrg/ba8beeO++QWMcwibvf6eVZyXmiCDU+m8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bdQ51UsgKp3uMsXjgJH6Xpz3Idhc0i1V+JLzbSOC3zq++OOcXl+YPuApeF91mab39FuNe/QRnseEArKP4YTf1XCIDeBNCLCqUaQ5IRsKaTiromz7q5RKQaJx2SX2cHvvXJfAWMWdvzTTQ0BjU8BWP9eGTMsX8OdBMelPFCWdo3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cceb8d8b4so405545ad.1;
-        Tue, 12 Nov 2024 13:05:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731445514; x=1732050314;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qvfLiy46zAAc4YpHFE3RBOLl5fq2FOHK1NiPPVPoB5Q=;
-        b=leax9RzGTMUdkMk3L6lXojEf/Pgv48v4k7YqydE8rZ/Je0lqFLvIZlh1VFI8DbHAkB
-         bHjaFYo3/Y33knr3F3xpIXbVpHP3b+rw0lNI3oRO4bp01rOtJceAlokHIhVbZ+Yn2Gwc
-         Vc7eG8PrLvKvPWLL6uASadVrkKi2MIJOaBnGTSi0PAIbATgA3TQDo+nlHJmXwEiGDtYs
-         84a6R+s3rkpEPBHBjUmzKHf/j6tvKb7MgfE9ei8LMoVO0dqNh+P5Ht+sECTkfcb9Fjdl
-         iyGcc2dsTyGsRGsa2xEaht+UwF0fVvX4j+CZ3HJ/OVQEfyTyOk9aiy4ZpVNKQZyKGIJ+
-         HDMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrGyztvIZQ9Fn2oV69rkX2Duda9KAd6D0ohjOIOcW38Mh9M6/xG1HowjXH4jCdFYbzdPejtjec3rmUFlBm@vger.kernel.org, AJvYcCVLLkcMAL+NOPwkPrf9Sg8TCzb771+BLtgWITCRgBIAUXa+yTgj6nE4zj9FUnbQrQCypElLIdooEGAA@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ+6J/f3ZZJjXnRt91+RFHGXbUv7J4WTkFK6I1xpch70dKfMVZ
-	ermj2yxHbOScI/DKD7nTtGn0axTUJQqgqg/TMnywbWR5FNIdB0r4KngSFq0m
-X-Google-Smtp-Source: AGHT+IHxa5gE5b1F1A7q7oo7jC17jD22gNAknD/zzvYzgfasK6hs4n9unaYyQQtRfEzcphLv8qUO8w==
-X-Received: by 2002:a17:902:c942:b0:20b:c043:3873 with SMTP id d9443c01a7336-2118379faefmr249556005ad.21.1731445513595;
-        Tue, 12 Nov 2024 13:05:13 -0800 (PST)
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com. [209.85.215.179])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177ddf754sm98826165ad.98.2024.11.12.13.05.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 13:05:13 -0800 (PST)
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea7ad1e01fso52021a12.0;
-        Tue, 12 Nov 2024 13:05:12 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWCtovP52fbN/3XfhmpAB+6MjNgX03Pvk5a4wgS1fM4gvnGmH0v7Dk+AI1jbqYlA7VarXlbLODLiXG0@vger.kernel.org, AJvYcCWr5760NkMu+ENdI3ULwtX3Y3zeIPZLx0MQ54ZozReC8hrgHDj4eDUwjsWLtIWGpDmgk6rRSEu7OjncLK5C@vger.kernel.org
-X-Received: by 2002:a17:90b:1e45:b0:2c9:6abd:ca64 with SMTP id
- 98e67ed59e1d1-2e9b1f074b1mr28605933a91.9.1731445512591; Tue, 12 Nov 2024
- 13:05:12 -0800 (PST)
+	s=arc-20240116; t=1731446139; c=relaxed/simple;
+	bh=cgNeAq7GLe8jdj8U9CxiQo/sayDmTho0s9XZQ8phaKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EDq2JD+4Wt5mN/2m6B3C5n6uagVjWIlxgS+GqvGeLcVBqbx2fu4GukQP52L460eoHT9bhMIZFsI13yXFOuY74JcnxzPcJ3l1EAO0gj68NE7TgTSOv+uhmYBt0zKYOy37Pj9YaXjptPC0RLycCFnOc+wQLVxMENZAQNIPLcysJa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VSxLxg/a; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACLCr3x016320;
+	Tue, 12 Nov 2024 21:15:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/tADVTVWYoSeZndEkxjaWqdP520eLRzjYoMvkH0Yfs0=; b=VSxLxg/agVBvzdfP
+	sNT2EbWfW9IqCf2q+5WxGN3kj32qBc3urDvPr+IqmZDl5oYXmiOCWBNxto9ylDYb
+	1XOZW70uxNN4kM6xkMvUK0m0MyzTFyl5YzadBEfKKIGQ+p9NLuSaN0X91cYsD25w
+	BcFZpkJe7pZD3y2ZumRTYdC0sI+YUHPR+J0THOz1wGd0E+f4n2lkJxblPP31wZ1a
+	oNnu4yz874S+R/YD98D0avdg/ofJ2BDXn1CqlEEeUh7T0kL86UdbltxwZwkhUniI
+	+4A88p6b7eZKakL06JSUd8a+XqGUkOHeOoZJT+yulDl1euoE5HWTM50Scd9x7Xw8
+	ZFwrXQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v47y1yeb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 21:15:25 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACLFOqN023337
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 21:15:24 GMT
+Received: from [10.216.22.98] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
+ 2024 13:15:19 -0800
+Message-ID: <5a959c08-cc90-4a05-88b2-e1ee666561e2@quicinc.com>
+Date: Wed, 13 Nov 2024 02:45:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111181807.13211-1-tszucs@linux.com> <20241111181807.13211-3-tszucs@linux.com>
- <9fbdf05c-42e6-4ac5-9542-805200bc8c87@kwiboo.se> <260af427ae64d6f3b02a1579ee83eb3b@manjaro.org>
- <CA+Gksr+WvS-S+jeYYG=Bo9cemvnJmjsmU4aj9YnD3t8-HY7wbw@mail.gmail.com> <303ad3910668e852d6670d1c79dc22e0@manjaro.org>
-In-Reply-To: <303ad3910668e852d6670d1c79dc22e0@manjaro.org>
-From: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>
-Date: Tue, 12 Nov 2024 22:05:00 +0100
-X-Gmail-Original-Message-ID: <CA+GksrLLbfyHdvu1VYB4S+W78C0T1DEWu5W6pP2-g3KdBeT-LQ@mail.gmail.com>
-Message-ID: <CA+GksrLLbfyHdvu1VYB4S+W78C0T1DEWu5W6pP2-g3KdBeT-LQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Enable sdmmc2 on rock-3b and
- set it up for SDIO devices
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, FUKAUMI Naoki <naoki@radxa.com>, Chukun Pan <amadeus@jmu.edu.cn>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] drm/msm/adreno: Setup SMMU aparture for
+ per-process page table
+To: Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson
+	<bjorn.andersson@oss.qualcomm.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Simona Vetter
+	<simona@ffwll.ch>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>
+References: <20241110-adreno-smmu-aparture-v2-0-9b1fb2ee41d4@oss.qualcomm.com>
+ <20241110-adreno-smmu-aparture-v2-2-9b1fb2ee41d4@oss.qualcomm.com>
+ <CAF6AEGvD95RyUXDBjgmoefgO6QyeRw3tpa7EG1MLFKdxcoZ-4g@mail.gmail.com>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <CAF6AEGvD95RyUXDBjgmoefgO6QyeRw3tpa7EG1MLFKdxcoZ-4g@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: v8eAhhWpWJc6NMlkOr28Y0LJkskGPL9I
+X-Proofpoint-GUID: v8eAhhWpWJc6NMlkOr28Y0LJkskGPL9I
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 spamscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411120170
 
-Hi Dragan,
+On 11/11/2024 8:38 PM, Rob Clark wrote:
+> On Sun, Nov 10, 2024 at 9:31 AM Bjorn Andersson
+> <bjorn.andersson@oss.qualcomm.com> wrote:
+>>
+>> Support for per-process page tables requires the SMMU aparture to be
+>> setup such that the GPU can make updates with the SMMU. On some targets
+>> this is done statically in firmware, on others it's expected to be
+>> requested in runtime by the driver, through a SCM call.
+>>
+>> One place where configuration is expected to be done dynamically is the
+>> QCS6490 rb3gen2.
+>>
+>> The downstream driver does this unconditioanlly on any A6xx and newer,
+> 
+> nit, s/unconditioanlly/unconditionally/
+> 
+>> so follow suite and make the call.
+>>
+>> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> 
+> Reviewed-by: Rob Clark <robdclark@gmail.com>
+> 
+> 
+>> ---
+>>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 11 +++++++++++
+>>  1 file changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+>> index 076be0473eb5..75f5367e73ca 100644
+>> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+>> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+>> @@ -572,8 +572,19 @@ struct drm_gem_object *adreno_fw_create_bo(struct msm_gpu *gpu,
+>>
+>>  int adreno_hw_init(struct msm_gpu *gpu)
+>>  {
 
-On Tue, Nov 12, 2024 at 4:16=E2=80=AFPM Dragan Simic <dsimic@manjaro.org> w=
-rote:
->
-> Hello Tamas,
->
-> On 2024-11-12 15:35, Tam=C3=A1s Sz=C5=B1cs wrote:
-> > I think it was totally fine to disable sdmmc2 at first, especially if
-> > it couldn=E2=80=99t be tested or wasn=E2=80=99t needed right away. From=
- what I=E2=80=99ve
-> > seen, this board works great even at higher clock speeds than what
-> > rk356x-base.dtsi suggests. I don=E2=80=99t have access to the RK3568 er=
-rata,
-> > and there don=E2=80=99t seem to be any limits mentioned in the TRM eith=
-er.
-> > Overall, this board is doing just fine as it is.
->
-> Sorry, I'm missing the point of mentioning some clock speeds?  Any
-> chances, please, to clarify that a bit?
+SCM calls into TZ can block for a very long time (seconds). It depends
+on concurrent activities from other drivers like crypto for eg:. So we
+should not do this in the gpu wake up path.
 
-It's all about stress scenarios, right. Sustained transfer at maximum
-clock, multiple SD/MMC blocks used concurrently. That kind of thing.
-Different data rates forced. I hope that answers your question.
+Practically, gpu probe is the better place to do this.
 
->
-> > Regarding device tree overlays, they would be ideal for implementing
-> > secondary functions, such as PCIe endpoint mode for users with
-> > specific requirements. However, the primary functions for PCIe on the
-> > M2E will be root complex mode, along with SDIO host, etc. In my view,
-> > the hardware is well-designed and interconnected. Users have a
-> > reasonable expectation that these primary functions should work
-> > seamlessly without additional configuration, right out of the box.
->
-> That's basically what I referred to in my earlier response, and in my
-> previous response regarding the UART.  Users would expect the Bluetooth
-> part to work as well, but the error messages I mentioned look nasty, so
-> perhaps something should be done about that first.
+-Akhil
 
-I'm not aware of any nasty error messages especially related to UART.
-Well, MMC core will acknowledge when the platform part fails to
-enumerate a device on sdmmc2, but there's nothing wrong with this.
-It's not even an error -- certainly not a nasty one.
+>> +       struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
+>> +       int ret;
+>> +
+>>         VERB("%s", gpu->name);
+>>
+>> +       if (adreno_gpu->info->family >= ADRENO_6XX_GEN1 &&
+>> +           qcom_scm_set_gpu_smmu_aperture_is_available()) {
+>> +               /* We currently always use context bank 0, so hard code this */
+>> +               ret = qcom_scm_set_gpu_smmu_aperture(0);
+>> +               if (ret)
+>> +                       DRM_DEV_ERROR(gpu->dev->dev, "unable to set SMMU aperture: %d\n", ret);
+>> +       }
+>> +
+>>         for (int i = 0; i < gpu->nr_rings; i++) {
+>>                 struct msm_ringbuffer *ring = gpu->rb[i];
+>>
+>>
+>> --
+>> 2.45.2
+>>
 
-[    1.799703] mmc_host mmc2: card is non-removable.
-[    1.935011] mmc_host mmc2: Bus speed (slot 0) =3D 375000Hz (slot req
-400000Hz, actual 375000HZ div =3D 0)
-[    7.195009] mmc_host mmc2: Bus speed (slot 0) =3D 375000Hz (slot req
-375000Hz, actual 375000HZ div =3D 0)
-[   13.029540] mmc2: Failed to initialize a non-removable card
-
->
-> > Dragan, what did you mean by SDIO related power timing requirements?
->
-> Whenever there's an SDIO module, there's usually some required timing
-> of the power rails.  Though, I don't know what's that like with the
-> non-standard M.2 SDIO modules that Radxa sells, which are intended to
-> be used on Radxa boards with "hybrid" M.2 slots.
-
-Ok, I see. Not always. I can't comment on Radxa's SDIO module but I'm
-sure it's reasonably standard. And so is the M.2 Key E on this board.
-Actually, part of the appeal is that all standard buses are very
-nicely wired up. I want everybody to be able to use them.
-
-
->
-> Once again, please use inline replying. [*]
->
-> [*] https://en.wikipedia.org/wiki/Posting_style
->
-> > On Tue, Nov 12, 2024 at 5:41=E2=80=AFAM Dragan Simic <dsimic@manjaro.or=
-g>
-> > wrote:
-> >>
-> >> Hello Jonas and Tamas,
-> >>
-> >> On 2024-11-11 20:06, Jonas Karlman wrote:
-> >> > On 2024-11-11 19:17, Tam=C3=A1s Sz=C5=B1cs wrote:
-> >> >> Enable SDIO on Radxa ROCK 3 Model B M.2 Key E. Add all supported UH=
-S-I
-> >> >> rates and
-> >> >> enable 200 MHz maximum clock. Also, allow host wakeup via SDIO IRQ.
-> >> >>
-> >> >> Signed-off-by: Tam=C3=A1s Sz=C5=B1cs <tszucs@linux.com>
-> >> >> ---
-> >> >>  arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts | 8 +++++++-
-> >> >>  1 file changed, 7 insertions(+), 1 deletion(-)
-> >> >>
-> >> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-> >> >> b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-> >> >> index 242af5337cdf..b7527ba418f7 100644
-> >> >> --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-> >> >> +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-> >> >> @@ -688,14 +688,20 @@ &sdmmc2 {
-> >> >>      cap-sd-highspeed;
-> >> >>      cap-sdio-irq;
-> >> >>      keep-power-in-suspend;
-> >> >> +    max-frequency =3D <200000000>;
-> >> >>      mmc-pwrseq =3D <&sdio_pwrseq>;
-> >> >>      non-removable;
-> >> >>      pinctrl-names =3D "default";
-> >> >>      pinctrl-0 =3D <&sdmmc2m0_bus4 &sdmmc2m0_clk &sdmmc2m0_cmd>;
-> >> >> +    sd-uhs-sdr12;
-> >> >> +    sd-uhs-sdr25;
-> >> >> +    sd-uhs-sdr50;
-> >> >
-> >> > I thought that lower speeds was implied by uhs-sdr104?
-> >>
-> >> Last time I went through the MMC drivers, they were implied.  IIRC,
-> >> such backward mode compatibility is actually a requirement made by
-> >> the MMC specification.
-> >>
-> >> >>      sd-uhs-sdr104;
-> >> >> +    sd-uhs-ddr50;
-> >> >>      vmmc-supply =3D <&vcc3v3_sys2>;
-> >> >>      vqmmc-supply =3D <&vcc_1v8>;
-> >> >> -    status =3D "disabled";
-> >> >> +    wakeup-source;
-> >> >> +    status =3D "okay";
-> >> >
-> >> > This should probably be enabled using an dt-overlay, there is no
-> >> > SDIO device embedded on the board and the reason I left it disabled
-> >> > in original board DT submission.
-> >>
-> >> Just went through the ROCK 3B schematic, version 1.51, and I think
-> >> there should be no need for a separate overlay, because sdmmc2 goes
-> >> to the M.2 slot on the board, which any user can plug an M.2 module
-> >> into, and the SDIO interface is kind-of self-discoverable.
-> >>
-> >> Of course, all that unless there are some horribly looking :) error
-> >> messages emitted to the kernel log when nothing is actually found,
-> >> in which case the SDIO/MMC driers should be fixed first.  Also, I'm
-> >> not sure what do we do with the possible SDIO-related power timing
-> >> requirements?
 
