@@ -1,156 +1,239 @@
-Return-Path: <linux-kernel+bounces-406637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA4C9C61A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:38:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74389C6325
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:14:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F08811F23F57
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:38:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9993B308F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA06A219E47;
-	Tue, 12 Nov 2024 19:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2667F218958;
+	Tue, 12 Nov 2024 19:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DeU6DOEV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iNo0OggE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B575218305;
-	Tue, 12 Nov 2024 19:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F1B20B218
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731440228; cv=none; b=FlNfRkZeNVC2WRmWwR8noO3AEHc0z/IK8a+/4o1kKagXhSpGQDVtKirSH5+fmArtqjQnhI7UrYHky6Hv1cwb7Nti16Jet59POIK2b9s+WeCQnp5q3sOcxoG2nixB53qu4rF+F4kUtrTeboKK7tVJxcFeTWBn1Meve85+zdUOiPs=
+	t=1731440291; cv=none; b=Te263hJRuncCTA+6LvoM1rzUZBuxiWn3x04Q3zLCxSo9spgourg9xsPHDMwI4qVho62d9VlzC7HCiXkMvMHZjeZHJKTr+Aaii2YxfM/qTvzSprIrMScwYx6jOt1KYhwgCAiTZhvp/R2fvvoGnfY7AvhjYF/0OSLHjYIrjKt04pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731440228; c=relaxed/simple;
-	bh=MvA842wnxtbDTsYGnJXaHsPdoSkQmdfaFgGZqeExLMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oZB8GVVy6oEtJDR583qFDqIFfjDW3xs7AwAVFzopNeFLcGB8NVt0ehPTBofYYGTRPWKTQQbntayoUZkAmH1dv2mmLONCOsLPtjkWGFI0d6B0n5GFhJra0/vVANfF3arzbCZDcK9fYZCjpaPdT5fN5xdMEyNIzYx7PnUYVuTUAiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DeU6DOEV; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731440227; x=1762976227;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MvA842wnxtbDTsYGnJXaHsPdoSkQmdfaFgGZqeExLMU=;
-  b=DeU6DOEVQmKyyRt/bsAshQkx3BD5dP0qC2tddI/vF5zaXCWH7WCkNLr0
-   X1spFQnsn0EeJtsXkFTt3j8DgkAgYOCV1xRbqtOdtuyzKFxwpBKerHx9E
-   ADi64hjjh8mzExVTQB+8Tne3OdXpcVT2LZnOFmNAu4WwjQlrcVLoHb3dm
-   XJKdYHN58ZWmb4i83FPSHWl5PS9zlHMoXRp6SkTqcDHocufe8Fl1foGrt
-   zjWdMBv0NpusiOPMpktOoQDNyeP0m3Cg0XKIsVhgjxszyyWfSqOWT1mC2
-   EJCqBxjS6jolfpQ3IrM3smjsCc1sNO5EEOR6rB2MP4npt+sum52oQdlwT
-   A==;
-X-CSE-ConnectionGUID: d/QiJitaTZqhHiEL+esTyQ==
-X-CSE-MsgGUID: vG7RBO5KQ0mWGCn3OH/9Yg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="34165509"
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="34165509"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 11:37:06 -0800
-X-CSE-ConnectionGUID: OzCMgQwtTH69KUudK9Lpjg==
-X-CSE-MsgGUID: J0qTqPYrQl68JqnO1KFuCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="88045687"
-Received: from jairdeje-mobl1.amr.corp.intel.com (HELO [10.124.220.61]) ([10.124.220.61])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 11:37:05 -0800
-Message-ID: <a1863858-a209-4b59-9161-5e57acb566d5@intel.com>
-Date: Tue, 12 Nov 2024 11:37:04 -0800
+	s=arc-20240116; t=1731440291; c=relaxed/simple;
+	bh=uPGX03XvvV+XtqpiDWYPrHffFCLZCQeL5FDfGiGpSGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZjBz4HQYtFKemkTGwF8OSJllcYBPbzNNriCjsxagNfyQkgzcR0FdB3XnUkKMlm5iVTqE0ngZo69ivVo1vcZTwzcXB2nsZTESoNfT0LTbTbBTb+SxUsrBPJUoNc+o62ODmbM9Aw170X8DliW8EQIUeUgLGwbiPzLy/lcIB+676os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iNo0OggE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731440288;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+pEWGwDV42qZ605Ox/qRGT5wCc1jBMka21/Df9UKjYs=;
+	b=iNo0OggErkjfubfYXySEPDyT9frVyA7oAJ8/P5UqN/eehPZOP+5hcBrqo03CaQ3RBE3Iov
+	svqHFqJjRHgeyay/DqxkrasKivF7sf9mkdfHa2U0nPdBaLRT1IaA8ri4OtZd6+2Pn/3lfw
+	7iuW9/fqAhkRDKFceEdxOTFbFki8evo=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-113-sQXeUOb5NqWfBZxRfASG6Q-1; Tue,
+ 12 Nov 2024 14:38:04 -0500
+X-MC-Unique: sQXeUOb5NqWfBZxRfASG6Q-1
+X-Mimecast-MFC-AGG-ID: sQXeUOb5NqWfBZxRfASG6Q
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 64D541955F2C;
+	Tue, 12 Nov 2024 19:38:02 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.120])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8E80D19560A3;
+	Tue, 12 Nov 2024 19:37:59 +0000 (UTC)
+Date: Tue, 12 Nov 2024 14:39:32 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+	linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+Message-ID: <ZzOu9G3whgonO8Ae@bfoster>
+References: <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
+ <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
+ <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
+ <ZzLkF-oW2epzSEbP@infradead.org>
+ <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk>
+ <ZzOEzX0RddGeMUPc@bfoster>
+ <7a4ef71f-905e-4f2a-b3d2-8fd939c5a865@kernel.dk>
+ <3f378e51-87e7-499e-a9fb-4810ca760d2b@kernel.dk>
+ <ZzOiC5-tCNiJylSx@bfoster>
+ <b1dcd133-471f-40da-ab75-d78ea9a8fa4c@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Documentation/CoC: spell out enforcement for
- unacceptable behaviors
-To: Daniel Vetter <daniel@ffwll.ch>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: gregkh@linuxfoundation.org, corbet@lwn.net, workflows@vger.kernel.org,
- rdunlap@infradead.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Linus Torvalds
- <torvalds@linux-foundation.org>, Miguel Ojeda <ojeda@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Steven Rostedt <rostedt@goodmis.org>, Dan Williams
- <dan.j.williams@intel.com>, Theodore Ts'o <tytso@mit.edu>
-References: <20241111163723.9002-1-skhan@linuxfoundation.org>
- <CAKMK7uGS3FJVp690She5d+XbQV5x7yQFPozta4cfnzga-BYAOQ@mail.gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <CAKMK7uGS3FJVp690She5d+XbQV5x7yQFPozta4cfnzga-BYAOQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b1dcd133-471f-40da-ab75-d78ea9a8fa4c@kernel.dk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 11/12/24 11:21, Daniel Vetter wrote:
-> Also, if a maintainer refuses to implement an enforcement decision,
-> will they be sanctioned too? Since this is all an entirely new section
-> and does not touch any of the existing sections I'm also not clear on
-> when one or the other rules apply, and how they interact.
+On Tue, Nov 12, 2024 at 12:08:45PM -0700, Jens Axboe wrote:
+> On 11/12/24 11:44 AM, Brian Foster wrote:
+> > On Tue, Nov 12, 2024 at 10:19:02AM -0700, Jens Axboe wrote:
+> >> On 11/12/24 10:06 AM, Jens Axboe wrote:
+> >>> On 11/12/24 9:39 AM, Brian Foster wrote:
+> >>>> On Tue, Nov 12, 2024 at 08:14:28AM -0700, Jens Axboe wrote:
+> >>>>> On 11/11/24 10:13 PM, Christoph Hellwig wrote:
+> >>>>>> On Mon, Nov 11, 2024 at 04:42:25PM -0700, Jens Axboe wrote:
+> >>>>>>> Here's the slightly cleaned up version, this is the one I ran testing
+> >>>>>>> with.
+> >>>>>>
+> >>>>>> Looks reasonable to me, but you probably get better reviews on the
+> >>>>>> fstests lists.
+> >>>>>
+> >>>>> I'll send it out once this patchset is a bit closer to integration,
+> >>>>> there's the usual chicken and egg situation with it. For now, it's quite
+> >>>>> handy for my testing, found a few issues with this version. So thanks
+> >>>>> for the suggestion, sure beats writing more of your own test cases :-)
+> >>>>>
+> >>>>
+> >>>> fsx support is probably a good idea as well. It's similar in idea to
+> >>>> fsstress, but bashes the same file with mixed operations and includes
+> >>>> data integrity validation checks as well. It's pretty useful for
+> >>>> uncovering subtle corner case issues or bad interactions..
+> >>>
+> >>> Indeed, I did that too. Re-running xfstests right now with that too.
+> >>
+> >> Here's what I'm running right now, fwiw. It adds RWF_UNCACHED support
+> >> for both the sync read/write and io_uring paths.
+> >>
+> > 
+> > Nice, thanks. Looks reasonable to me at first glance. A few randomish
+> > comments inlined below.
+> > 
+> > BTW, I should have also mentioned that fsx is also useful for longer
+> > soak testing. I.e., fstests will provide a decent amount of coverage as
+> > is via the various preexisting tests, but I'll occasionally run fsx
+> > directly and let it run overnight or something to get the op count at
+> > least up in the 100 millions or so to have a little more confidence
+> > there isn't some rare/subtle bug lurking. That might be helpful with
+> > something like this. JFYI.
+> 
+> Good suggestion, I can leave it running overnight here as well. Since
+> I'm not super familiar with it, what would be a good set of parameters
+> to run it with?
+> 
 
-I don't think this is or _should_ take away any ability for a maintainer
-to manage their subsystem.  It's not special at all, actually.
+Most things are on by default, so I'd probably just go with that. -p is
+useful to get occasional status output on how many operations have
+completed and you could consider increasing the max file size with -l,
+but usually I don't use more than a few MB or so if I increase it at
+all.
 
-Let's say the CoC committee recommends "denying patch contributions and
-pull requests". I as a maintainer either actively ignore the
-recommendation or didn't notice the recommendation in my normal email
-flood. I integrate a patch and send it along to the upstream maintainer.
-The upstream maintainer looks over the pull request and like normal
-either pulls it or says no.
+Random other thought: I also wonder if uncached I/O should be an
+exclusive mode more similar to like how O_DIRECT or AIO is implemented.
+But I dunno, maybe it doesn't matter that much (or maybe others will
+have opinions on the fstests list).
 
-If I intentionally disregarded the CoC committee recommendation for good
-reason, I'd be a smart maintainer to note that in the pull request, just
-like any other anomaly.
+Brian
 
-But either way, just like _any_ patch or pull request: there are few
-absolute rules. Breaking userspace is highly discouraged, but allowed in
-some cases.  Going against a CoC recommendation is also discouraged but
-I don't think there should be absolute prohibition against it.
+> >>  #define READ 0
+> >>  #define WRITE 1
+> >> -#define fsxread(a,b,c,d)	fsx_rw(READ, a,b,c,d)
+> >> -#define fsxwrite(a,b,c,d)	fsx_rw(WRITE, a,b,c,d)
+> >> +#define fsxread(a,b,c,d,f)	fsx_rw(READ, a,b,c,d,f)
+> >> +#define fsxwrite(a,b,c,d,f)	fsx_rw(WRITE, a,b,c,d,f)
+> >>  
+> > 
+> > My pattern recognition brain wants to see an 'e' here. ;)
+> 
+> This is a "check if reviewer has actually looked at it" check ;-)
+> 
+> >> @@ -266,7 +273,9 @@ prterr(const char *prefix)
+> >>  
+> >>  static const char *op_names[] = {
+> >>  	[OP_READ] = "read",
+> >> +	[OP_READ_UNCACHED] = "read_uncached",
+> >>  	[OP_WRITE] = "write",
+> >> +	[OP_WRITE_UNCACHED] = "write_uncached",
+> >>  	[OP_MAPREAD] = "mapread",
+> >>  	[OP_MAPWRITE] = "mapwrite",
+> >>  	[OP_TRUNCATE] = "truncate",
+> >> @@ -393,12 +402,14 @@ logdump(void)
+> >>  				prt("\t******WWWW");
+> >>  			break;
+> >>  		case OP_READ:
+> >> +		case OP_READ_UNCACHED:
+> >>  			prt("READ     0x%x thru 0x%x\t(0x%x bytes)",
+> >>  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+> >>  			    lp->args[1]);
+> >>  			if (overlap)
+> >>  				prt("\t***RRRR***");
+> >>  			break;
+> >> +		case OP_WRITE_UNCACHED:
+> >>  		case OP_WRITE:
+> >>  			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
+> >>  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+> >> @@ -784,9 +795,8 @@ doflush(unsigned offset, unsigned size)
+> >>  }
+> >>  
+> >>  void
+> >> -doread(unsigned offset, unsigned size)
+> >> +__doread(unsigned offset, unsigned size, int flags)
+> >>  {
+> >> -	off_t ret;
+> >>  	unsigned iret;
+> >>  
+> >>  	offset -= offset % readbdy;
+> >> @@ -818,23 +828,39 @@ doread(unsigned offset, unsigned size)
+> >>  			(monitorend == -1 || offset <= monitorend))))))
+> >>  		prt("%lld read\t0x%x thru\t0x%x\t(0x%x bytes)\n", testcalls,
+> >>  		    offset, offset + size - 1, size);
+> >> -	ret = lseek(fd, (off_t)offset, SEEK_SET);
+> >> -	if (ret == (off_t)-1) {
+> >> -		prterr("doread: lseek");
+> >> -		report_failure(140);
+> >> -	}
+> >> -	iret = fsxread(fd, temp_buf, size, offset);
+> >> +	iret = fsxread(fd, temp_buf, size, offset, flags);
+> >>  	if (iret != size) {
+> >> -		if (iret == -1)
+> >> -			prterr("doread: read");
+> >> -		else
+> >> +		if (iret == -1) {
+> >> +			if (errno == EOPNOTSUPP && flags & RWF_UNCACHED) {
+> >> +				rwf_uncached = 1;
+> > 
+> > I assume you meant rwf_uncached = 0 here?
+> 
+> Indeed, good catch. Haven't tested this on a kernel without RWF_UNCACHED
+> yet...
+> 
+> > If so, check out test_fallocate() and friends to see how various
+> > operations are tested for support before the test starts. Following that
+> > might clean things up a bit.
+> 
+> Sure, I can do something like that instead. fsx looks pretty old school
+> in its design, was not expecting a static (and single) fd. But since we
+> have that, we can do the probe and check. Just a basic read would be
+> enough, with RWF_UNCACHED set.
+> 
+> > Also it's useful to have a CLI option to enable/disable individual
+> > features. That tends to be helpful to narrow things down when it does
+> > happen to explode and you want to narrow down the cause.
+> 
+> I can add a -U for "do not use uncached".
+> 
+> -- 
+> Jens Axboe
+> 
 
-In the end, the upstream maintainer gets to decide what to do.
 
