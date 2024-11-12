@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-406622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FF19C620F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:02:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB819C6186
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:33:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2F3EB622D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6624A28617C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816D3219C94;
-	Tue, 12 Nov 2024 19:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CFC21A4A2;
+	Tue, 12 Nov 2024 19:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxntRLdD"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPTzy/Ba"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B18218D7C;
-	Tue, 12 Nov 2024 19:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0BA209F3C;
+	Tue, 12 Nov 2024 19:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439941; cv=none; b=XxCxMH2YcjcYFa5WP07idHiy1jfyVDMWEV+TtQvYNYA350XUyLwl0n7SYqXHUpF5Fn6iDCHa4SKYHFEcSKxO0ezPWigvxWzL17vfk9XMsou4otv8fNfq1z3FGwVEi0o/GZvA9BZUVzRmD9Fsbje//i9ceodX6OtdKiZHH3WgiuI=
+	t=1731439946; cv=none; b=G7qCR/Ne7ZlNXVx7boCWuoJ3uuvuid8+8lBYM6IC9OkAfxCagqv5QSTKs5RiZJhr2RlP3f/fIuvHStaLSM8JjOibI/0bnR50+HbAUvNxxN62ZNl4f6MILy5lCgodNcSDgponr+ZeKboWCMhBeglWEawDcYnaWz2o+f1ZtoYu1TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439941; c=relaxed/simple;
-	bh=epgbS9RtzrCVBFjCyJlrkHDQBSeDAigP9kv3ZSBAFXM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PwNmPRaGyT5dYxHJXBwi1mGH8WYpt03bDixfMuQfhEpoX5F/nQnNc5KykahwGLFN5Jc/7MQ85i2J6pkI7osDjahuh1TU2BiQ8Y+cw6c/9O4narF/UaxT1TXyBQmtuKqaDkjlDpxom4arJONRLdjnnm7fFS4rEywjGflc856v7TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kxntRLdD; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1731439946; c=relaxed/simple;
+	bh=r55Z6MOTixhxRiVu8ctWrgWSs1vzPVZVei/U/gnK6Tw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=oAfl32bGpO3bA8ysGlwz796by9amCmAZAoGDHHPyS/GrJwdlylnluD6z9LRzI4vIuef721ONyQaSetsfcaVAeUglc1Y7D7q5nHpDwCGfQM3nBysTJBDBl0heD1y4nQfesh9QCWyopcn3oywlbqjz9FXZNkdrOY/RdgA6d0GuHBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HPTzy/Ba; arc=none smtp.client-ip=209.85.216.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e9b4a4182dso7946a91.0;
-        Tue, 12 Nov 2024 11:32:19 -0800 (PST)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2e2d09decso58070a91.1;
+        Tue, 12 Nov 2024 11:32:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731439939; x=1732044739; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/xfqtm3x7QWKepSmfwDgHi7bBcwjVkW2hTBncGzpNI=;
-        b=kxntRLdD5MP6QOiZyZ+6QD9/1bcb4CWw7GldRkALHmFYNw4XQ/HfE+hoyjuWdAuAZV
-         z3qaLoKrcufxexYAWBSfFvUc373F+9ljdjWiJa1NLkpGjWMs8yYFccoO6qylGPT222y3
-         QISr8YY0HR2xGXfzimMwjB2ascIj1MBMYLckj2wguTnsOltfJk737iV9TBqPEVF4s7KM
-         S9SnVh1mI9cEPYHCc3Bj3HtCxnCTE/bTXQbCgC8ieBrC5YkrN4Z0qI8qRYYvnJZ23KS3
-         +z8r4XP9kWLbIpF/FxAtCeMO8sIPBJPX4dMs2ckBXr9YuDlIvK7wXBftXXDmZrow21s9
-         hEgg==
+        d=gmail.com; s=20230601; t=1731439944; x=1732044744; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CxZTbla4niJMH3tL1PwAlNcohgmLARZJ7Xx5m9G3Teg=;
+        b=HPTzy/BaLwTTTJXtA8qpJBmle2WtexUORF3cvGyzl3Li1/Jc2YfzqJAPYT4qusWoEt
+         LPhrWYprpNxeXBjghw6FluJF0+9myNHHsqmQLN5FfCBi9p56jfcw09sGAf7xRqdxA4sM
+         RIUqiJ0F4nXQ5B/hV7Cgq8ZOV2JutV+DxGSNPEJggtxoNqJmrQDDpddpss23TnhI8MJI
+         ykDMf4ujKfCPY6AwLNcEd2SuUSP1B2nki7qkcMOWz0zcQDWao65GesXTwhmFvQSHD1zi
+         afxkmg9c6RjMAEZTKn/rRxM79lHLzYUUpVrQFDniCW5OkmqWpfmPoddzdgUXLjp9mmzk
+         kD/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731439939; x=1732044739;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6/xfqtm3x7QWKepSmfwDgHi7bBcwjVkW2hTBncGzpNI=;
-        b=bhOkxxxBWTz5DZnbsdpd1Nxd1fTqfxetCm8lMF6OFKGTo3ZH6hGdVwsUkqbpjtbVVp
-         iQPW6Se+q16ISXD9tZYA+i5RkSZ0v/H4GZZ6psmeFCukqY4KjX7zLFaox9xt0CPy8fEa
-         FgNPZ9vZgcKm9bUsWyzsjHdrlsJyXbORo4gz+RcJT/OsBXBI7Jn6U8j8+8LAF3yiq7ek
-         hjvVaFtrsnrD96LkJbgt4k5e4DF+66TV4b/gcavY7OPZxUJu10lmD9BLULWtl0ZelreV
-         OMtyef6LuYANoVYJYcHcmUD0fn7SsW8RILzNzHnyFJGL0nVmXQoiRFfcTcUmoMNkXmaU
-         QUBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVG6k6Jz6B2myMJBtaKSNEeGLaOItn9ZXacUMvaRh+t9k4lAgkQCYYBKxUS+2ul+7Ji113KezSIFCEAinXiFFn5MqE=@vger.kernel.org, AJvYcCVplvQeidvSLoXFuoCc/CShCVjKFu1YuWE27SW1LxY729pQQxGO1xhTXjMfzQHo6KQYcfPMlOR4hkKBI4nc@vger.kernel.org, AJvYcCW+C99lejbuTSfdvLWibVibAMLfb2uKo0dtkRfIUqQlOydKWABtcD90s5DbX9llZOTuhgRj1kIcK2+O@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXBImL0h/80IpW2W9MhrB6BEwoCOo7bVpmlmoZXkepIpCZz4xI
-	6jpx/vwuRZ+Po8utpntlXDTfJzn1fqiXnnqTBCgvgAWv40dgu7x+wYE5d6KQc/U=
-X-Google-Smtp-Source: AGHT+IGrqEyJ1d4NsV9KxFv5AMzPEJx8k6S+eQ2baPGh52LTBwbe4AJ9JiDd7LT5bb2AsJe5Y/M1/w==
-X-Received: by 2002:a17:90b:2647:b0:2e2:b719:d582 with SMTP id 98e67ed59e1d1-2e9b1f64ebbmr26275292a91.14.1731439938703;
-        Tue, 12 Nov 2024 11:32:18 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731439944; x=1732044744;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CxZTbla4niJMH3tL1PwAlNcohgmLARZJ7Xx5m9G3Teg=;
+        b=Oeix2LOplAOZcdyEakYkLWsgh50yFaNfrla8t4GDU80SgOwwwXFtzaUMNToVyU2XWN
+         vhG9ZlCPZ2Ez/KuRG/SrjK6TnM7IXSIuLYNnSisLzoWSK9EFBO2onB+n9W6LoqVcQMT1
+         qFJptEhSIfGxZxy8TcBQe3xM09elv96dM1xDe7HdD2jmIAU058f0RLZDIdbwKW7pKeGm
+         Ha9EHYTFjzyERgvkJX3jGLVOiRc2pek5+gNgL/57oK/hxWRNvSDjP/DShWuCiLcLV1Cd
+         mbaRGvvpmcCk/8CFamXlRjjB3igYviyLp1WBTOTVBm4lkltEPvd/X3ZfeTj1onJdHcsy
+         BfMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXcx3uVXHd4Ph+ejVWGNs8Njh4L7l8A9toRmQD81NxtO8ua2rt3qLmuQMABWkr9nfOR7HLUs5k/8KJReDn@vger.kernel.org, AJvYcCWTM8DZ/YrA/1N9e5SHJrfuD++8UpKJCI0+ba5yskle/kenYYvTC2v2TgEIp2veeoaz9kqmgVUjOkLD@vger.kernel.org, AJvYcCWk/ienGgm5JhgvHKBGQK+RwcY7W2wv4BY0i23fcGLzP2R6iPyLbeAcwEIXY3MKvz0iuHf/XRDS/S0BdF0qEuchzjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRwHG/nq3iHIrX0NwAB9KzEGpGK/f0UK2MBfRdswVjS5qL1/6i
+	uaNlZ9mkWW0Vyw4zM4uIKAzUF+c+NBdMpX2a5UrWK2zvWBu6yNSuZbUliWNn
+X-Google-Smtp-Source: AGHT+IFqiKSGyEZPQe+kbya/qd5AI1ZcrPrnAzkyYfedyIbzQJKFkHklrRh2pQta+hx6XbHOJn//FA==
+X-Received: by 2002:a17:90b:1a91:b0:2e2:c225:4729 with SMTP id 98e67ed59e1d1-2e9b0a3325emr27783101a91.8.1731439944497;
+        Tue, 12 Nov 2024 11:32:24 -0800 (PST)
 Received: from localhost.localdomain ([38.44.237.182])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd17d8sm10988958a91.41.2024.11.12.11.32.16
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd17d8sm10988958a91.41.2024.11.12.11.32.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 11:32:18 -0800 (PST)
+        Tue, 12 Nov 2024 11:32:24 -0800 (PST)
 From: Denzeel Oliva <wachiturroxd150@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
@@ -73,10 +75,12 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] Add support for Samsung Galaxy S20 FE (SM-G780F/r8s) [SoC Exynos990]
-Date: Tue, 12 Nov 2024 19:31:47 +0000
-Message-Id: <20241112193149.1262-1-wachiturroxd150@gmail.com>
+Subject: [PATCH v2 2/2] arm64: dts: Add initial support for Samsung Galaxy S20 FE (r8s)
+Date: Tue, 12 Nov 2024 19:31:49 +0000
+Message-Id: <20241112193149.1262-3-wachiturroxd150@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241112193149.1262-1-wachiturroxd150@gmail.com>
+References: <20241112193149.1262-1-wachiturroxd150@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,48 +89,155 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello :),
+Add initial support for the Samsung Galaxy S20 FE (r8s/SM-G780F) device.
+Its launch was in 2020 and also based on the Exynos 990 SoC.
+It is only configured with 6GB of RAM, although storage options may differ.
 
-I'm a newbie and I started getting interested 1 year ago.
-Well, that's the beginning,
-until I learn more about kernels and the C language,
-which is important in that.
+This device tree adds support for the following:
 
-Well, bluntly, here it is:
+- SimpleFB
+- 6GB RAM
+- Buttons
 
-That Samsung Galaxy S20 FE device is part of the Exynos990 SoC family,
-I saw that Igor supported that processor,
-I took advantage of it.
-
-It has the same functions of:
-
-* CPU
-* pintrl
-* gpio-keys
-* simple-framebuffer
-
-Just enough to reach a shell in an initramfs.
-
-The preferred way to boot the upstream kernel is by using a
-shim bootloader, called uniLoader.
-Changes: - Simply add dts from S20 FE device
-
-Special thanks to Igor for helping me with that :)
-
-Changes in v2:
-- Change author name
-
-Denzeel Oliva (2):
-  dt-bindings: arm: samsung: Add compatible for Samsung Galaxy S20 FE
-    (SM-G780F)
-  arm64: dts: Add initial support for Samsung Galaxy S20 FE (r8s)
-
- .../bindings/arm/samsung/samsung-boards.yaml  |   1 +
- arch/arm64/boot/dts/exynos/Makefile           |   1 +
- arch/arm64/boot/dts/exynos/exynos990-r8s.dts  | 115 ++++++++++++++++++
- 3 files changed, 117 insertions(+)
+Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+---
+ arch/arm64/boot/dts/exynos/Makefile          |   1 +
+ arch/arm64/boot/dts/exynos/exynos990-r8s.dts | 115 +++++++++++++++++++
+ 2 files changed, 116 insertions(+)
  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-r8s.dts
 
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 7a934499b..948a2c6cb 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -9,5 +9,6 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+ 	exynos850-e850-96.dtb		\
+ 	exynos8895-dreamlte.dtb		\
+ 	exynos990-c1s.dtb		\
++	exynos990-r8s.dtb               \
+ 	exynosautov9-sadk.dtb		\
+ 	exynosautov920-sadk.dtb
+diff --git a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
+new file mode 100644
+index 000000000..b21863bbb
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
+@@ -0,0 +1,115 @@
++// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
++/*
++ * Samsung Galaxy S20 FE (r8s/SM-G780F) device tree source
++ *
++ * Copyright (c) 2024, Denzeel Oliva <wachiturroxd150@gmail.com>
++ */
++
++/dts-v1/;
++#include "exynos990.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++
++/ {
++	model = "Samsung Galaxy S20 FE";
++	compatible = "samsung,r8s", "samsung,exynos990";
++
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	chosen {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		framebuffer0: framebuffer@f1000000 {
++			compatible = "simple-framebuffer";
++			reg = <0 0xf1000000 0 (1080 * 2400 * 4)>;
++			width = <1080>;
++			height = <2400>;
++			stride = <(1080 * 4)>;
++			format = "a8r8g8b8";
++		};
++	};
++
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x0 0x80000000 0x0 0x3ab00000>,
++		      /* Memory hole */
++		      <0x0 0xc1200000 0x0 0x1ee00000>,
++		      /* Memory hole */
++		      <0x0 0xe1900000 0x0 0x1e700000>,
++		      /* Memory hole - last block */
++		      <0x08 0x80000000 0x0 0x0c000000>;
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		cont_splash_mem: framebuffer@f1000000 {
++			reg = <0 0xf1000000 0 0x13c6800>;
++			no-map;
++		};
++
++		abox_reserved: audio@f7fb0000 {
++			reg = <0 0xf7fb0000 0 0x2a50000>;
++			no-map;
++		};
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		pinctrl-0 = <&key_power &key_voldown &key_volup>;
++		pinctrl-names = "default";
++
++		power-key {
++			label = "Power";
++			linux,code = <KEY_POWER>;
++			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
++			wakeup-source;
++		};
++
++		voldown-key {
++			label = "Volume Down";
++			linux,code = <KEY_VOLUMEDOWN>;
++			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
++		};
++
++		volup-key {
++			label = "Volume Up";
++			linux,code = <KEY_VOLUMEUP>;
++			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&oscclk {
++	clock-frequency = <26000000>;
++};
++
++&pinctrl_alive {
++	key_power: key-power-pins {
++		samsung,pins = "gpa2-4";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
++	};
++
++	key_voldown: key-voldown-pins {
++		samsung,pins = "gpa0-4";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
++	};
++
++	key_volup: key-volup-pins {
++		samsung,pins = "gpa0-3";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
++	};
++};
 -- 
 2.34.1
 
