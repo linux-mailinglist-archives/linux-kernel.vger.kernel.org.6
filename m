@@ -1,253 +1,213 @@
-Return-Path: <linux-kernel+bounces-406471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FC89C5F76
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:50:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D03A9C5F78
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:51:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EC221F21AEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:50:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0A81F22460
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD95214414;
-	Tue, 12 Nov 2024 17:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFD02144CC;
+	Tue, 12 Nov 2024 17:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="B+n51rI4"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2069.outbound.protection.outlook.com [40.107.21.69])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Wf6PSpPg"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CF5217476;
-	Tue, 12 Nov 2024 17:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731433740; cv=fail; b=WbUJ4+Z/HKmTXKmxoAZePjULPwTEGq0inZGvqTAuR93uWgCGfrFg45anE/XS+Er0gARzWkRgA+x9EVueRw4LmTWl6Nz87gaQGhplbFZifskEaSyZCc2EPlhVx+H1gelT+0WaT7RLe3vXqGW5knbvtv1K59GlsCKn0Gxqpsp9mDU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731433740; c=relaxed/simple;
-	bh=rzBqaC20gv5zajeNqMjcGQwQsIkiSRC77uox8VWftBw=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=BNzy2toFU0F0IMH1cnprpSeIhJ7vHaPVGrHDsfTSZ4aHuYIUKmnnViNDIbU8ve8uL8OJHM4KDiIHbrV1A827JW9F+UbxOCCb4cZ5JIzRvC604i8wlWVQXRRXRUFmBpYkC9yFc6WKWwp7WINQM4CqOcrEwoTPz3gYLavSjPNF4Yo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=B+n51rI4; arc=fail smtp.client-ip=40.107.21.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tDaJTbh7ig3+VMhGSjYy0AUCDQY9Gxb2HrmZ0UPd86shbs3KNg5/MVrVj5QIiKOSxyylrJQN0ZFnsogAIdk2IvhqyhpRdKOieaFPWLPoJN8XqfmHktb0Zw4hjPf7Yfpq7+nlVOXe+BFKgVWkFhi2iuy89tXSU96p8BF/nyOj5FrMEOUCMxmukYftt7W8gDYK5LyZNoA9YEAFLAZuPRmE6jJ5QUm6MhDnwKzkikIzVm8yoCWXpY1ZYQo3M8DQWMbn0At0ZMSHS9Ci4hxakVkGw2aa7+9ConcgNUT2F4RDEo8JkbRGRe45NdEZAOCn2aAF5IvBLWpQUsg4kOdnHrVXjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kBY2RxtR8ubrdRv0IDfaOqn0Ih86F4aKaUUYok1m864=;
- b=UtBAsphfxsfgxHNQfVQSxPeGfUPRdye+Vb4e/EwP3gG3CsnNN09sUhFfU3vo9SirEpuu3Irdqv3+0lWcSIgfg4PvoersruE211ZrJOGm87Nmhw4/PbBSeReTvc23khGuzDzfmwn031xkeGT8svYZcKaWM9+WeKUxjI8tbKAAygAM/D9/e7oSh0DeNA4o5jGAOYAYKSmsV/wH7jVWaX25KccdWFtIfKqf51y6MjQ62yuw4sVpvrjHLIonB9Wir7EdTx92Eww/7Ar7pVJRxUv5tHRjMLJeyRcuWYo+23IMIhUgyYtixYc0mNDBgyJvWhTjTgneG1hF5hmUz0/sB9pE8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kBY2RxtR8ubrdRv0IDfaOqn0Ih86F4aKaUUYok1m864=;
- b=B+n51rI4FCqYkSq35UH4v/6UT/YT8agBmql3B9vIXAjKf+eoPIMqZR9TC0HAX8osZXujAyU1R5hHBFC9V8MKYv/Xvbf46k36BGMErZzdA44CB2gLCG4odBPuCMdC4nICv8NXTrltV4xuA4GIPj17v0vbFUd295o6fNa+B7H+V2ro4+n0Qe6AmqDvHYXDc5+nSTIL7nrlgMRYNiHHAcAnQjTn8shr3KsDLhwpo/g0boV+DJpAwHbvXWeeXtp7YHvAlgAmrH7G5FCn3IgNRS5RGh5VO1Q3PKKu12vdPZr7Q3etLc2BQupd9a4Nn1M0EbAaG+sOY0meWnW0fP1FaJMJhQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS8PR04MB9510.eurprd04.prod.outlook.com (2603:10a6:20b:44a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Tue, 12 Nov
- 2024 17:48:54 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 17:48:54 +0000
-From: Frank Li <Frank.Li@nxp.com>
-Date: Tue, 12 Nov 2024 12:48:18 -0500
-Subject: [PATCH v6 5/5] tools: PCI: Add 'B' option for test doorbell
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241112-ep-msi-v6-5-45f9722e3c2a@nxp.com>
-References: <20241112-ep-msi-v6-0-45f9722e3c2a@nxp.com>
-In-Reply-To: <20241112-ep-msi-v6-0-45f9722e3c2a@nxp.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
- imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org, 
- maz@kernel.org, tglx@linutronix.de, jdmason@kudzu.us, 
- Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731433711; l=1850;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=rzBqaC20gv5zajeNqMjcGQwQsIkiSRC77uox8VWftBw=;
- b=5FmLkMranxnVo7GgjBazbOI4ML8SkJP0I+HYFwOFwUaNYE3Fy66ZH1fXI8Hq9cxnin7N46eBE
- hZZgOxH2tjhBVUHstusghXmo45HX7PbYV1p3KYRFwsCNQx97iOXMPkL
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: SJ0PR03CA0076.namprd03.prod.outlook.com
- (2603:10b6:a03:331::21) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9144212F05;
+	Tue, 12 Nov 2024 17:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731433772; cv=none; b=ae8TAf7nzNt7TPAXnE7TYnXp2o8pMEhjviZsEfbI/V0aXGNJxk2WiwXR6+Llut24uqHuC6NVmgEvca2KyS8M3DOUia8B+YOor8lNiU7Miz+5kA0kch/ndrPSIudlaDNYBX5hoNvEujFRwkasGdhaSYttnjRRxBNYFkSkZ3fiOHM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731433772; c=relaxed/simple;
+	bh=c1v17xoFfsCerNNjyrz6CSJxETYPE5z1Uz4Gqvbilig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZoRlYVtT1rwQyo2gQnSbfmG0JuH4hYyrPkT4h1U79ETMCOrD8kc09iblAeYey4gnTVcVDoZVuAp2wShM2pw7dtcrPoKFKxmBiaqwTixge9sxAoxDGVVodH3mHGh+BlcO4nbuz8EviXptt1BymzQtbTxhxo5RY6EjLlcD7L8YJAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Wf6PSpPg; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 77252710;
+	Tue, 12 Nov 2024 18:49:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1731433750;
+	bh=c1v17xoFfsCerNNjyrz6CSJxETYPE5z1Uz4Gqvbilig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wf6PSpPgqTAzDQNQcMPSOV3o4/3GGt4UjA9e3DMNxpgaLQ+Zurp12bU0TfsN4IwhJ
+	 ZlJuyeL7bTStOrwcC5MhItCasBQSxQkkO3grLYBzFzB0QRwHYBb/iPncgVLqotja8o
+	 /2MM5+GGyB2QhRD8cq5gs5/DCsPHicr0wlczS99c=
+Date: Tue, 12 Nov 2024 19:49:15 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: gregkh@linuxfoundation.org, corbet@lwn.net, workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Airlie <airlied@gmail.com>,
+	DRI Development <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] Documentation/CoC: spell out enforcement for
+ unacceptable behaviors
+Message-ID: <20241112174915.GB806@pendragon.ideasonboard.com>
+References: <20241108161853.12325-1-skhan@linuxfoundation.org>
+ <ZzJkAJEjKidV8Fiz@phenom.ffwll.local>
+ <ba3d5492-e774-452f-9fe0-e68b743c6b0d@linuxfoundation.org>
+ <20241111223538.GD17916@pendragon.ideasonboard.com>
+ <7d14de47-119a-42e4-a911-f8accae4abf1@linuxfoundation.org>
+ <20241112051836.GF17916@pendragon.ideasonboard.com>
+ <ec850949-7987-41ec-ba1f-a0c90b465661@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB9510:EE_
-X-MS-Office365-Filtering-Correlation-Id: 617b773c-ec7c-461d-8b18-08dd034246c0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TlJJNnNnZzdIWjNyTnpub0UwcmFMcWRhTlNjQThOeG53YmcrM04wQlVPLzl6?=
- =?utf-8?B?ZERaMlk4RUxiSVpuSnV6aVF5QjgybHNUdkRpMmd3SDVscmlEOUV3TFlDMXEr?=
- =?utf-8?B?QS9RRDV5RCtmaDBXY3h2RVBlVkg1bi9wWVlHVEJlMG5xVlZIaDR0RTBENURM?=
- =?utf-8?B?RWY4Mmh3cFpQQXJadWx4TkswVlV6QzR6RGxwVmptSlF4c3NIbDB1alZZOWxW?=
- =?utf-8?B?UDl5K3RJeEU2SGlmSllncWhDTW53UU4vdHFEdmxvbHBQVWlsVWZvR3JVT21H?=
- =?utf-8?B?N0REcXJDbFc0NGxOUTZPdnVJYmdhV0tGVUtYZnYxZDFUbHFMcEM2S1V5cW0w?=
- =?utf-8?B?MFp0NUdXU2ovOFVrOXY0Ky9UWDhpVEhlSDQvN3R1Sm1oUnJ2U3JjbENBeUV1?=
- =?utf-8?B?dmdNNzhTTllBVldhRFR2U3R3S1FzMW16N3Fad1hFVXNjM3JUVnBJZS9xSEY0?=
- =?utf-8?B?aGVsc3BQV2hMMC9CV3M1bkx4bWt0dS82bjdCNmtwblByLzhlaWhXQVdERFMz?=
- =?utf-8?B?N0NlUGlQL3c1TVJXbnBhOVkwZ1BHMmo5UklPRWNjQnprdURiZldQQ3NLVGh4?=
- =?utf-8?B?WlE3U3FWd2NmZVFCSEhTZFI4dzJJaWhZRm5TRCtOcVJ2amdTbkJWQXNINjNB?=
- =?utf-8?B?WE9TT2ZHaUY4R2ZXVHU3MVlVNmFJVkZuRkVPUEJoRWlXRjZrRkpJT1gyQXl3?=
- =?utf-8?B?VmF0N21KSkJwMk9WeFZIbXVoRTNWNWg0S1hPQmNoRkV4WDBlVDFQd0xPcXl4?=
- =?utf-8?B?NDNYVGNzTWJpUWtMN1dLMnErQmJJejQxb3Ryb0tJT1JSaTl4ZW5oSXlkbk4z?=
- =?utf-8?B?WmxUejluTjdzeXIrUGJrL0Z0MDc4T1ZocEZRR0NkeXIwRFJQTTltVkFzaE0x?=
- =?utf-8?B?Yk81YTd6S0N5Y21tVHgyeHVRd0F1WE1DMSswV0xKSDBudWN3aHFTcWRQclQ0?=
- =?utf-8?B?UDdQUURHY1RiaDd1cWd1dDM5Q2ZOdkhqblA0T1NYT0dBMUoxMExvbjFEdkRt?=
- =?utf-8?B?Z2U4S1RrcDRoY0N3dVVFLzg1cVdtWVAydCtsSkQxNW9HM0J3MUlHa0RxbWdF?=
- =?utf-8?B?RmI5U2Z3UE9pbU9SL0JXVDUyTm44Z0tocnJreS95bHJsWHBXMk03TkJjTUYr?=
- =?utf-8?B?NzhjcW9KcUNVaDhsMzdFNG53Vk1CNk56eEZ2R3lCUHJyeEQrNGVJSlU2Y2JC?=
- =?utf-8?B?WGF4WXBVU3RaaEpZNlV1Smo4Mjc4UmVjYmVPekFHdW5oa3N4Q25SdHV4MVNi?=
- =?utf-8?B?TE15MFFvckh2Sm51OUU2NVZFZlN6RFp1MHlqQ3UvSXlEZk1MNnhOZUhWOEZ0?=
- =?utf-8?B?eHhkeWFZK1gxMC9WanpiMTl0WHRsbnR2TUcvSG83SmxmbWd5T3plU2ltYlFk?=
- =?utf-8?B?VlhrczVVSDh2VHQ5bk9yOXJETlhvSnloaUE4SithODdPTDYxdVRuQ2FqelBr?=
- =?utf-8?B?OE42MmhKYTRvekJ1U1QxWFVYckNvcE0yOE16SlRVbnM3OFc4c1hCY1kycVRR?=
- =?utf-8?B?WEF5c0gwT0JKMXBiOC9rM01HMFYybUVOMkU4RWVoNzZXQUNQMnZvc01NL0hs?=
- =?utf-8?B?d2wwcVlxYTJBVmRhWFlyVVYxVEtGc3dJWmhUMFdva0lXUDNRd3BqSHhhM3A5?=
- =?utf-8?B?WE1oTFFDWDBiRUpRMldjcVB4dzI2RVNzMTY3VEdDWFVSQkdUUGRmeTRoV2J4?=
- =?utf-8?B?YUNicVRrSE1ld2g2aTk0R0VvMDZsYTFIblZXczZBd0NsZk04MEUzRW5DelpB?=
- =?utf-8?B?ODhNZXVYejJUcldPOU1BL3hJdVF3S3lPVDJKd0tKMDQ5NFgwREp0Zm9sZ2xG?=
- =?utf-8?Q?eJoWV121mKzaCD0p68U4EdSH9UM+toazeTCBA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MFJmSVJMVGtsbkZQeWp3NjRkRXUrK2pSYkZNdVBpYzR0Tk5ucXNaWkY0QnFQ?=
- =?utf-8?B?aWk5bllLNll5c1NYSHM1cUNRQkJyeWwxT2JYZkplZmI4a05rb0UwRTFrTkJZ?=
- =?utf-8?B?aWpBSWF1L1Y1U1BkVW03bHBxSUQveENKRzhuSFhwTkUySnFEWXRISlFNVVEv?=
- =?utf-8?B?TG5KOUpqcEF3T2s5TUNYWjJEU1UwSWFDZHRVK01EZmlOZ0pxUWxGQVFDV3Er?=
- =?utf-8?B?a2R4Slg1YXpib2dDUHp0dFFRSnJiOGs0Y3crSTd1T3F1K01LNlZKNVB1cFVr?=
- =?utf-8?B?SGxpUGJrUkJGeGRWdDQ0OVVkY0g0Q3Y3N3Y0T0F3VGoxVVFmMW1VdGRlb3Vw?=
- =?utf-8?B?VmMybWI5ZDZvM2RFdElHbEcvVVNBeDRqT1Bjb3N2VzNOZDhRL2pCRUJTeGVD?=
- =?utf-8?B?ZnRNV2Q2QUloemFwK0pyblRMK2JDdGQraXRKNitVc1Zqa3FqTFViaWxycFFG?=
- =?utf-8?B?c05IZHlxRlhHQzd6ZkUwTmxpOWdNWlp3dllwM2orZjY2K3dtV21rR2ZOVGRw?=
- =?utf-8?B?aG9kTkk1MnluVkFjSHY3VHAzMUE2REtHNHpqQVl3V1JaQjNOeWJvR3RqVVBZ?=
- =?utf-8?B?NWJPanVaSlRTZTFySmVsMURoelZZMWlyT3RRanhNMVJMU1gxWU9DMDl6Qlg0?=
- =?utf-8?B?dWdxWGZDRE5RVjlveG4wKzZyclNITlhTejNCc3BWbEVjQUxudlMxU2dEeDlo?=
- =?utf-8?B?VEtWdFZMcjVocTJTT296dWZxaGphMjMvdzlTcVNsRFJuK0x5cFhUR1BvNVlG?=
- =?utf-8?B?MzVySisxQVZHVTZkT0pBckxndk1BWFVYUnhaWEJYcHhDZ2dqU1BPdlZnTDNH?=
- =?utf-8?B?R0txWFJBOXJ3L2Q4K01EQUdFSFhhUnc2d05QZXhjaTJLNUYwaE5ZL1liMXo2?=
- =?utf-8?B?TE9OUUt2V3JlZ0N0aUdnbWtsQVlvUVZ4VnZxK0wwakM3MDRhY2l1RmF1RFZ5?=
- =?utf-8?B?ck9vNUx6dVdzZ1U4OTZGNnVia055alJLWk9iUkxUOWt5ejRrRjNUd2JMbFlQ?=
- =?utf-8?B?UklFTkZxZ0l4YnB2ajFsYU05OW5aMXBHS0N1dUhNZVYzTUxsM2t4WGFiOFNx?=
- =?utf-8?B?bWdzTGNLd2htMTllbnZCa1E4cVp5Q0YySXk3OFlWb3h3WVVZS080RUpheDZz?=
- =?utf-8?B?ZFdiWmFWZis2NFB3M2huL3FuaC9sa1pxS21lNytVNngwSzU4a2xwUUJKVGV1?=
- =?utf-8?B?Vm1rTlFMczRWNFpYQ1FNRHBSZkp3Skw4KzdZSGY3S3dKUVZJVFFKanpXaWxQ?=
- =?utf-8?B?WEhUM2c1TFZOeDZ2eERRTGlrTndPRW5lbWV6a1lOdi9XMm41UlFpRmpHdnM4?=
- =?utf-8?B?VjdYcUd0eDBSVjhvMUY4UlRnSDRva3NDYXE1YmpyL1JyK1JZdEpXbXB1WVoy?=
- =?utf-8?B?SHZ5SkdxUWVzT1BVRFBlMml5eFUvdm9zTS9MbHp6R1BNdGZvV3RTQkZFNVNq?=
- =?utf-8?B?ck5aSGJIWEV4YXZONWpDMVY1TkhpTEN4dnVRTnF0cVF5QThNNGovNXNCU2JK?=
- =?utf-8?B?MXZBMjVrRTNZR0doT0tFYnpGV1Y5WjF6d2lTN29Xd3ZUa0czZEdHN21ySEdF?=
- =?utf-8?B?b0JhN2hFVG9TSC9xOWY3QVpVYkVQdlY1Tm5GRXVSS09DVk85aytwcHRRM2tM?=
- =?utf-8?B?TTVMNWpySituaFpsS2N5VW10OEdPSDR2a2oyQWlKaVk3T0ovcWpxdzZFVTJI?=
- =?utf-8?B?Y2hOL0svKzFzWFZZL0FoMDg0bjNoOFpSTnI5NDdoWGsxUW0rOVozRk8zNnRW?=
- =?utf-8?B?ZW96cFpOdFE1V0JNb3VoQ0FXdWxCOVltOHR4U0o0WEZTY3BxRWIyYUd6SHMx?=
- =?utf-8?B?YUlseXBWcCtucWNmamVpbHJpWnovZFpVK214WlFzOHdheDA3WFk0OHJ1cC9U?=
- =?utf-8?B?ZnoxU3ZsK01CRi9UWnNVTWU5VEQyZGc1bVFZTDNJRmRDK3hzemJmN2hTbjI0?=
- =?utf-8?B?d0p5bnRHaWlnbkxHNEwxVkUzZTVQVk9qTUlwU3NwZzZ6a1VLRDk4N3VtOGI3?=
- =?utf-8?B?czA3dGdJdysydWYyVDZ6Mldqc1pGbk5MQUd2TDlqVnFqT0o5Z2tleDUrYmtQ?=
- =?utf-8?B?VFQxRndzTWVNUEFWR1dmMlZYYm1IZ2gvSFhFYk02R21YM0J3MWFGaWorMkx4?=
- =?utf-8?Q?oqYc=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 617b773c-ec7c-461d-8b18-08dd034246c0
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 17:48:54.7259
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k0AOf9R8RwFvzpKJ/zK0Ej/MA9jIrmsjA+HfUQfUf/x2rpVocFgS9MI9RscyAmokBTAaNl7sLKBU5sdTg/iwuQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9510
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ec850949-7987-41ec-ba1f-a0c90b465661@linuxfoundation.org>
 
-Add doorbell test support.
+On Tue, Nov 12, 2024 at 10:44:29AM -0700, Shuah Khan wrote:
+> On 11/11/24 22:18, Laurent Pinchart wrote:
+> > On Mon, Nov 11, 2024 at 05:35:11PM -0700, Shuah Khan wrote:
+> >> On 11/11/24 15:35, Laurent Pinchart wrote:
+> >>> On Mon, Nov 11, 2024 at 02:50:45PM -0700, Shuah Khan wrote:
+> >>>> On 11/11/24 13:07, Simona Vetter wrote:
+> >>>>> On Fri, Nov 08, 2024 at 09:18:53AM -0700, Shuah Khan wrote:
+> >>>>>> The Code of Conduct committee's goal first and foremost is to bring about
+> >>>>>> change to ensure our community continues to foster respectful discussions.
+> >>>>>>
+> >>>>>> In the interest of transparency, the CoC enforcement policy is formalized
+> >>>>>> for unacceptable behaviors.
+> >>>>>>
+> >>>>>> Update the Code of Conduct Interpretation document with the enforcement
+> >>>>>> information.
+> >>>>>>
+> >>>>>> Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+> >>>>>> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >>>>>> Acked-by: Miguel Ojeda <ojeda@kernel.org>
+> >>>>>> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> >>>>>> Acked-by: Jonathan Corbet <corbet@lwn.net>
+> >>>>>> Acked-by: Steven Rostedt <rostedt@goodmis.org>
+> >>>>>> Acked-by: Dan Williams <dan.j.williams@intel.com>
+> >>>>>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> >>>>>
+> >>>>> I think it's really good to document these details. The freedesktop coc
+> >>>>> team is going through the same process, we've also done a talk at XDC
+> >>>>> about all these changes, and I think this helps a lot in transparency and
+> >>>>> accountability in practice. With that, some thoughts below.
+> >>>
+> >>> I've been thinking about replying to this patch for a few days now. I
+> >>> think I managed to sleep over it enough to make that possible.
+> >>>
+> >>> I share Sima's opinion here. There is FUD around the CoC and its
+> >>> enforcement process due to lack of transparency, so I believe
+> >>> documenting the goals and means is important and will help.
+> >>
+> >> Thank you for your feedback.
+> >>
+> >>>> Thank you Simona for your review and feedback.
+> >>>>
+> >>>>>> ---
+> >>>>>>     .../code-of-conduct-interpretation.rst        | 52 +++++++++++++++++++
+> >>>>>>     1 file changed, 52 insertions(+)
+> >>>>>>
+> >>>>>> diff --git a/Documentation/process/code-of-conduct-interpretation.rst b/Documentation/process/code-of-conduct-interpretation.rst
+> >>>>>> index 66b07f14714c..21dd1cd871d2 100644
+> >>>>>> --- a/Documentation/process/code-of-conduct-interpretation.rst
+> >>>>>> +++ b/Documentation/process/code-of-conduct-interpretation.rst
+> >>>>>> @@ -156,3 +156,55 @@ overridden decisions including complete and identifiable voting details.
+> >>>>>>     Because how we interpret and enforce the Code of Conduct will evolve over
+> >>>>>>     time, this document will be updated when necessary to reflect any
+> >>>>>>     changes.
+> >>>>>> +
+> >>>>>> +Enforcement for Unacceptable Behavior Code of Conduct Violations
+> >>>>>> +----------------------------------------------------------------
+> >>>>>> +
+> >>>>>> +The Code of Conduct committee works to ensure that our community continues
+> >>>>>> +to be inclusive and fosters diverse discussions and viewpoints, and works
+> >>>>>> +to improve those characteristics over time. The Code of Conduct committee
+> >>>>>> +takes measures to restore productive and respectful collaboration when an
+> >>>>>> +unacceptable behavior has negatively impacted that relationship.
+> >>>>>> +
+> >>>>>> +Seek public apology for the violation
+> >>>>>> +*************************************
+> >>>>>> +
+> >>>>>> +The Code of Conduct Committee publicly calls out the behavior in the
+> >>>>>> +setting in which the violation has taken place, seeking public apology
+> >>>>>> +for the violation.
+> >>>>>> +
+> >>>>>> +A public apology for the violation is the first step towards rebuilding
+> >>>>>> +the trust. Trust is essential for the continued success and health of the
+> >>>>>> +community which operates on trust and respect.
+> >>>>>
+> >>>>> Personal take, but I think a forced public apology as the primary or at
+> >>>>> least initial coc enforcement approach is one of the worst.
+> >>>>
+> >>>> Seeking public apology is in response to unacceptable behaviors which are
+> >>>> serious in nature. These incidents are exceedingly rare. When these incidents
+> >>>> happen, they usually resolve when another developer/community member points
+> >>>> out the behavior. The individual responds with a voluntary apology to
+> >>>> mend fences and repair harm.
+> >>>>
+> >>>> The CoC  gets involved only when it receives a report which is the case
+> >>>> when normal paths such as peers pointing out the behavior to repair the
+> >>>> harm haven't been successful.
+> >>>>
+> >>>> This document isn't intended to be a complete summary of all actions the
+> >>>> CoC takes in response to reports. There is a lot of back and forth with
+> >>>> the individuals to bring about change before the CoC asks for an apology.
+> >>
+> >> See below clarification on above use of "actions"
+> >>
+> >>>> The CoC seeks public apology only when it is essential to repair the harm.
+> >>>
+> >>> Limiting the CoC committee to seeking public apology, due to what it
+> >>> means in terms of both process and goal, would deprive the committee
+> >>> from many useful courses of action. I was expecting you were not limited
+> >>> to this, and I appreciate that you are stating it clearly here. It is
+> >>> not however clear from this patch, and I believe it would benefit the
+> >>> whole community if this was explained better in the document. A more
+> >>> detailed description of the different means of action and outcomes would
+> >>> help balance the fact that the proceedings of the CoC committe are not
+> >>> public.
+> >>
+> >> The actions CoC takes prior asking for a public apology are working
+> >> with the individual to bring about change in their understanding the
+> >> importance to repair damage caused by the behavior.
+> >>
+> >> Since these are measures to bring about change, the document doesn't
+> >> go into the details about the logistics.
+> > 
+> > I think that's where it falls short. The private proceedings policy that
+> > governs the CoC committee (I'm not interested here to debate whether
+> > that is good or not, the question is out of scope) needs in my opinion
+> > to be offset by more transparency in the procedures documentation to
+> > avoid the "secret court" image that many attach to the CoC committee. I
+> > do understand this is not a trivial exercise, as any policy documented
+> > in writing can have a limiting impact on the actions the CoC committee
+> > can take, but I believe that this patch, as it stands, gives a wrong and
+> > possibly damaging impression of the committee's work.
+> 
+> Thank you Laurent.
+> 
+> Bulk of the Code of Conduct Committee work involves listening, talking,
+> and discussing the best outcomes for all involved parties.
+> 
+> I will add more content to the document distilling the discussion on
+> this thread in the interest of transparency.
 
-Tested-by: Niklas Cassel <cassel@kernel.org>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Change from v3 to v6
-- none
----
- tools/pci/pcitest.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/tools/pci/pcitest.c b/tools/pci/pcitest.c
-index 470258009ddc2..bbe26ebbfd945 100644
---- a/tools/pci/pcitest.c
-+++ b/tools/pci/pcitest.c
-@@ -34,6 +34,7 @@ struct pci_test {
- 	bool		copy;
- 	unsigned long	size;
- 	bool		use_dma;
-+	bool		doorbell;
- };
- 
- static int run_test(struct pci_test *test)
-@@ -147,6 +148,15 @@ static int run_test(struct pci_test *test)
- 			fprintf(stdout, "%s\n", result[ret]);
- 	}
- 
-+	if (test->doorbell) {
-+		ret = ioctl(fd, PCITEST_DOORBELL, 0);
-+		fprintf(stdout, "Ringing doorbell on the EP\t\t");
-+		if (ret < 0)
-+			fprintf(stdout, "TEST FAILED\n");
-+		else
-+			fprintf(stdout, "%s\n", result[ret]);
-+	}
-+
- 	fflush(stdout);
- 	close(fd);
- 	return (ret < 0) ? ret : 1 - ret; /* return 0 if test succeeded */
-@@ -172,7 +182,7 @@ int main(int argc, char **argv)
- 	/* set default endpoint device */
- 	test->device = "/dev/pci-endpoint-test.0";
- 
--	while ((c = getopt(argc, argv, "D:b:m:x:i:deIlhrwcs:")) != EOF)
-+	while ((c = getopt(argc, argv, "D:b:m:x:i:BdeIlhrwcs:")) != EOF)
- 	switch (c) {
- 	case 'D':
- 		test->device = optarg;
-@@ -222,6 +232,9 @@ int main(int argc, char **argv)
- 	case 'd':
- 		test->use_dma = true;
- 		continue;
-+	case 'B':
-+		test->doorbell = true;
-+		continue;
- 	case 'h':
- 	default:
- usage:
-@@ -241,6 +254,7 @@ int main(int argc, char **argv)
- 			"\t-w			Write buffer test\n"
- 			"\t-c			Copy buffer test\n"
- 			"\t-s <size>		Size of buffer {default: 100KB}\n"
-+			"\t-B			Doorbell test\n"
- 			"\t-h			Print this help message\n",
- 			argv[0]);
- 		return -EINVAL;
+Thank you, much appreciated. I think that will be very helpful to
+maximize trust in the process and in the pleasureless but important work
+the committee is doing.
 
 -- 
-2.34.1
+Regards,
 
+Laurent Pinchart
 
