@@ -1,93 +1,203 @@
-Return-Path: <linux-kernel+bounces-405696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB769C55D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:11:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ADE39C56D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BF241F23D99
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:11:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57651B2BAAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EEB21A6E4;
-	Tue, 12 Nov 2024 10:47:08 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C941021CFA5;
+	Tue, 12 Nov 2024 10:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="9oMiat9a"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5727D21A4D7
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5776421CF86;
+	Tue, 12 Nov 2024 10:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731408427; cv=none; b=jA8/j5WxWxUeaEGgNgJ3d/BO5resF8fvWYupKarV7hAzQChv2nhicQHwXj6sdufqA0EKQfjH9o60d6hNni0gBtkhm85B8e6vH9Lda/iRO9DlhNo+4JnkJ3BOMN1fe1CI2YmrBPgJK32R1z8A0UUUQy/hhQ6/+8VXnI/VrvfI9uA=
+	t=1731408528; cv=none; b=qd21qqJmmElRqo8ojXhuW6w60O2LuoOLah6vV4lGTejz7o/ihfBsVPMSM/P6sGMc3UVXmHRqZXFDYcqOGUM6Mquu/bt9q/aqvMI0Lkxt2p9HvwFZx2AFY8Lm1Frnl6inPx3Ag2gw0EIHhF3J8WmMAprPimyzdLpZLMEGqxNfPu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731408427; c=relaxed/simple;
-	bh=rXIKhEU72H1RcLIFpAa7JunqYcnDVMViT+nYxnw87G0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jCe8gHc42F0mhzWnyrkwhMivzDJUiwp4B19WV65rKry+GG0nEg8O19p+QVRj/U7GF7/Bn4IbphzoKDw3NWvVxMa+ZPYqqWjlLIXhMGXI6f2EBA4ufAxkRdT2zJjlryszAtqzlmgWAOfHJGtJYrWfKhvDTPn4uVQrP58PlSlK4c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6bb827478so55508735ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:47:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731408425; x=1732013225;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HUEXXXbZsOV3K4ZOSzag31ZTriNveRJONabbIiA5GQ0=;
-        b=rcRTsI/mJyzKCHMrFLV/CBSFG+XCGAh6mCReomJ9MVrYgjvq6t4wy0oLMNtPe6sTsB
-         VZk551A5Dwmcx2EfvH6e83oqG6nRj0F1NxbZQF9VvRvlgo+kQW/ONF89/dTnSb8py1nJ
-         BtmL0mdhFDbfK/ZL5r2QeC8vpXOajKkMO4Z6YAPGSr14UQsqTh8J1wq5hP+wtBGTzIk8
-         gCnrmGjjMFcMGFbOR+6LSWGMHCobtInG4d/odY001f8BozYbqWuO0qjZxXWdOfatimBD
-         pxze/fltYlSgwatxrU4xRaxdsaWdC1sW5I6wEylMFQ+Zq30pChEOEFMylwA2NUipFEKk
-         v4CA==
-X-Forwarded-Encrypted: i=1; AJvYcCUh/zeKvzMPG3oop07Bto88ebR8vssRdS/K1RYqYY4oJB6xw3g7/jHS9Dn4XGg9Vfe7eBsRkdvtiAaT5OQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+4wJEb2UUXNjryvNtQZKND32hzQZVg6tC1y04vs+bZKZdOiP3
-	EZ8vSqFsAWr0j3JzLKvZyFDY+H8nuY/RpNpYjkseEYaegPwPLbQeQm3qQjMt14FsMjuy4blxQFd
-	IEKLNttm7NApZcgwdwbw7SPzF8ySAjVPvRLmf8q8kuUmHxME4s5s5Ypw=
-X-Google-Smtp-Source: AGHT+IHZGRC9Lswed6EUSybfxVqaJOf5Ywk+UOv55XUcMFxi/KOPeODSaFm/cPcMIYK8XkU96GoiE6/HP0bVsHLMvzgRGZBSw4xe
+	s=arc-20240116; t=1731408528; c=relaxed/simple;
+	bh=Rlz9/2w3HuGHPx/1Dx6dMSeAHh6+zlOAnHthXakqKJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d+wxFEPST5Ua9G2imtY5gPmu/raZSUw7lmZBvPgHQUhG/SMRjxcQKzA//Kzt6f1wTHY+Z2ohooSqsHoW/OuzLTstD66/GmeLrwQFNBgOckKFU/CTS2Q3e8/lQ+ywik9wlXNylXULRWfDcsjiSJe0azdb47AMa7tG3qUtRPQS4Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=9oMiat9a; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=2m7yLhxfZDBBcaSm+o4e0Z6YDFzbc2KbJ1HEoJJMrgE=; b=9oMiat9aS3OnXG3WvYQ6dodxHB
+	c3IKeiuhoIjkbP/vFCRnyEKdsl90Q82eNInauL9GoJFDN6sN/smTp40tdct7YHbmusIztadZeNmT1
+	cMA32aoHjjpu+yKHPZr3sMJE0SXKKv8n09FgEm6HNwnVZ3xYBr/QG8Q0PEvXAJ60wd2xK7/g/atl1
+	5cidNMeMHYtCv1CxH09N+J4oAvA2DozhbCpxbtemIOZsxhUpKlrGweu3bj2lRyvOONLu+cZs+FZJn
+	0/eXYnZJRXoVFmduzywld+K6DGYhoeTbfRx/GqN6A460Lbv1GK1yxOZxQO8CeeS0eOplhyS4GE/fh
+	v+x5pbSg==;
+Date: Tue, 12 Nov 2024 11:48:18 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Mithil Bavishi <bavishimithil@gmail.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman
+ <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
+ <tony@atomide.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jessica Zhang
+ <quic_jesszhan@quicinc.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Thierry Reding
+ <thierry.reding@gmail.com>, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 10/10] ARM: dts: ti: omap: samsung-espresso10: Add
+ initial support for Galaxy Tab 2 10.1
+Message-ID: <20241112114818.1eb238e9@akair>
+In-Reply-To: <20241108200440.7562-11-bavishimithil@gmail.com>
+References: <20241108200440.7562-1-bavishimithil@gmail.com>
+	<20241108200440.7562-11-bavishimithil@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1706:b0:3a0:a311:6773 with SMTP id
- e9e14a558f8ab-3a6f1a4ebd5mr139622835ab.21.1731408425421; Tue, 12 Nov 2024
- 02:47:05 -0800 (PST)
-Date: Tue, 12 Nov 2024 02:47:05 -0800
-In-Reply-To: <0000000000001b6052062139be1c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67333229.050a0220.5d845.0000.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] general protection fault in btrfs_root_node
-From: syzbot <syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, dsterba@suse.cz, ghanshyam1898@gmail.com, 
-	josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quwenruo.btrfs@gmx.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-syzbot has bisected this issue to:
+Am Fri,  8 Nov 2024 20:04:39 +0000
+schrieb Mithil Bavishi <bavishimithil@gmail.com>:
 
-commit 42437a6386ffeaaf200731e73d723ea491f3fe7d
-Author: Josef Bacik <josef@toxicpanda.com>
-Date:   Fri Oct 16 15:29:18 2020 +0000
+> Create a device tree for the 10 inch variants (P5100, P5110, P5113)
+> 
+> Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
+> ---
+>  .../dts/ti/omap/omap4-samsung-espresso10.dts  | 102 ++++++++++++++++++
+>  1 file changed, 102 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/ti/omap/omap4-samsung-espresso10.dts
+> 
+> diff --git a/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso10.dts b/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso10.dts
+> new file mode 100644
+> index 000000000..70bbef468
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso10.dts
+> @@ -0,0 +1,102 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/dts-v1/;
+> +
+> +#include "omap4-samsung-espresso-common.dtsi"
+> +#include <dt-bindings/power/summit,smb347-charger.h>
+> +/ {
+> +	model = "Samsung Galaxy Tab 2 (10 inch)";
+> +	compatible = "samsung,espresso10", "ti,omap4430", "ti,omap4";
+> +
+> +	i2c-gpio-5 {
+> +		smb347: charger@6 {
+> +			compatible = "summit,smb347";
+> +			reg = <0x6>; // 0x0C >> 1
+> +			interrupt-parent = <&gpio2>;
+> +			interrupts = <0 IRQ_TYPE_EDGE_BOTH>;
+> +
+> +			summit,enable-usb-charging;
+> +			summit,enable-charge-control = <SMB3XX_CHG_ENABLE_SW>;
+> +			summit,chip-temperature-threshold-celsius = <120>;
+> +			summit,usb-current-limit-microamp = <1800000>;
+> +		};
+> +	};
+> +
+> +	backlight: backlight {
+> +		compatible = "pwm-backlight";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&backlight_pins>;
+> +		pwms = <&pwm10 0 1600 0>;
+> +		power-supply = <&reg_lcd>;
+> +		enable-gpios = <&gpio3 31 GPIO_ACTIVE_HIGH>;
+> +		brightness-levels = <0 4 8 16 32 64 128 255>;
+> +		default-brightness-level = <7>;
+> +	};
+> +
+> +	panel {
+> +		compatible = "samsung,ltn101al03", "panel-lvds";
+> +		power-supply = <&reg_lcd>;
+> +		width-mm = <223>;
+> +		height-mm = <125>;
+> +		data-mapping = "vesa-24";
+> +		backlight = <&backlight>;
+> +
+> +		panel-timing {
+> +			clock-frequency = <69818000>;
+> +
+> +			hback-porch = <64>;
+> +			hactive = <1280>;
+> +			hfront-porch = <16>;
+> +			hsync-len = <48>;
+> +
+> +			vback-porch = <11>;
+> +			vactive = <800>;
+> +			vfront-porch = <16>;
+> +			vsync-len = <3>;
+> +
+> +			hsync-active = <0>;
+> +			vsync-active = <0>;
+> +			de-active = <1>;
+> +			pixelclk-active = <1>;
+> +		};
+> +
+> +		port {
+> +			panel_in: endpoint {
+> +				remote-endpoint = <&bridge_out>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&i2c3 {
+> +	touchscreen: synaptics-rmi4-i2c@20 {
 
-    btrfs: introduce mount option rescue=ignorebadroots
+touchscreen@20
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16ef335f980000
-start commit:   2d5404caa8c7 Linux 6.12-rc7
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15ef335f980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11ef335f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1503500c6f615d24
-dashboard link: https://syzkaller.appspot.com/bug?extid=9c3e0cdfbfe351b0bc0e
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15a1935f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=158934e8580000
+> +		compatible = "syna,rmi4-i2c";
+> +		reg = <0x20>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		interrupt-parent = <&gpio2>;
+> +		interrupts = <14 IRQ_TYPE_EDGE_FALLING>;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&touch_pins>;
+> +
+> +		avdd-supply = <&reg_touch_ldo_en>;
+not known in schema
 
-Reported-by: syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
-Fixes: 42437a6386ff ("btrfs: introduce mount option rescue=ignorebadroots")
+> +		vdd-supply = <&ldo6>;
+> +
+> +		syna,reset-delay-ms = <200>;
+> +		syna,startup-delay-ms = <200>;
+> +
+> +		touchscreen-size-x = <1279>;
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml:
+horizontal resolution of touchscreen (maximum x coordinate reported + 1)
+
+So this touchscreen reports max 1278?
+
+> +		touchscreen-size-y = <799>;
+
+same question.
+
+And these things belong below rm4-f11 according to
+Documentation/devicetree/bindings/input/syna,rmi4.yaml
+
+Regards,
+Andreas
 
