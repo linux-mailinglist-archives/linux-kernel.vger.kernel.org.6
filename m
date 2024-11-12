@@ -1,54 +1,64 @@
-Return-Path: <linux-kernel+bounces-405523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FD89C5266
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:49:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 097249C5265
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:49:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E154283630
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:49:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2662283660
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13EE212163;
-	Tue, 12 Nov 2024 09:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEA420EA3E;
+	Tue, 12 Nov 2024 09:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="izgjO7xQ"
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z21vGaR8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B0C1E4AD
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC1C20E021
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731404923; cv=none; b=VRERCvgXMWfFO+K8hvr+0qI9pGNcDLUcbPrdxMRaPIjOnxsYTEUazYCgKcg1yJq+fgP8yHQCBlwos29ANrXHiU8YmsokvbmH3p1UKcBGzXQ4Sd3AcYC6ES4xihEnG+4g3KjaiccB0PD+xVjSJF4Gc7WmadCcA4RjvVYuQUbLH20=
+	t=1731404918; cv=none; b=FK1M6BhAZHwKpklAgeCSO2OPy8BZp259BEtlZgyrHrhN1/U4jFpmvYCcuFwD45lvXF8Nvs5DHOcgxQI1j72dFuG+ebFmEMOwHQ13Songbnn0pwMw4xTHW57y2q0qVaPv4Z83mk8bcUUjieuMl8qsiLRJoNJO2r8bOP3GGH4wPkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731404923; c=relaxed/simple;
-	bh=LrtAQhxTOMENsDkUTMA8xkgddOLcwv2DtqWpfLXRdSo=;
+	s=arc-20240116; t=1731404918; c=relaxed/simple;
+	bh=RkKDAdWbtMOyFm3KjYTYuPWh4xG/YdpIQsa4yIHFMPA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VXULSIpBZJZvkJg6b3ftIX07tGcr1fHqwxYPuUKn0ldDT20nmBnVz/8VAGjLRN7iyl38xgkf9hw8mvEwEhi9xhFhfuYAhJ0GJzeNlAw6BGZqJazx/TsOWIx/daDqAEc7QTHVFKdQg/posLJPlArvfIH0hBc4PECie0J0Jj9Abkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=izgjO7xQ; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: lina@asahilina.net)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id 2255042118;
-	Tue, 12 Nov 2024 09:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-	s=default; t=1731404914;
-	bh=LrtAQhxTOMENsDkUTMA8xkgddOLcwv2DtqWpfLXRdSo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=izgjO7xQF0rD6dbjle7potQOfb9o9kMeJg2fNMJf8M1tniYhJhTTkLi9xDlxySdyc
-	 as71DhG+oYTmbbnKJZi+c1pgLLJn5MIyXyTvXjwDIbn1OM34NrlPw/Y6r2M2AhPptT
-	 UpcwHIaPq80Dua/+/TLdHrFwMQti+IV+pwkGVnxOl/HYQeGmgCZN8YiI90MakOj4R7
-	 sWW66AMdHFfwtUScOnZQw9Q2NTCrzvo3ekF+2f4F0H+1PLW/dcKT+c9f+vo5Fxa5FO
-	 f5BXMI1vpr7SmkA5NsgJjzx1xz4Dsjw6uWUFTmhKo9eryVEY9wSLk4Tn/Y3LFdVKTZ
-	 o6zLkpX+KOdYA==
-Message-ID: <821d15f9-233e-4b9d-8194-5de1835113c7@asahilina.net>
-Date: Tue, 12 Nov 2024 18:48:33 +0900
+	 In-Reply-To:Content-Type; b=okYHvRIOfN+1P1HOQCBiekWKHOd0XTlu1WGpS8+ViiNnDpnHu3QCiwFD05ujpDAi4LgsmRWu0SisvQwg7XwWpJN5WCt5Etp5DxAnH1NJJSsADOeKRBi+DB5oVFMr1E8aZLUChsk7Op7M2nt5E/0Gj45i4045jaVv18y7RM668e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z21vGaR8; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731404917; x=1762940917;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=RkKDAdWbtMOyFm3KjYTYuPWh4xG/YdpIQsa4yIHFMPA=;
+  b=Z21vGaR8S0bxLg7pv+7UjCIaJ4xY8SIWH4ff5U78pS8jLPtCp5bzqVS9
+   KH3SQnIfvq/wBzgg+OWh47YAfot8Zx1uB1H3OtLfyfjg/zXPUlUJECiKV
+   Ur9AzXPLVUOEYUR90n9oTxe5gqW8j8qDf4b6B/qjMrgbXzTvJuT/dRXqJ
+   psIUCVpSl6prtNEVAxzZl1oZdabYYhGIvUIN8itHFqDa2xB3nMDsSXlFO
+   j22woOleuP0fI4wA4vZJUWLQ5GzIIMTzTbMJkHd/qPxHSShCOS/SvQTxR
+   f7Zd+2SJ1/J8Mnv8IXNb/dFKRAjOPXcfCbHPvmFMsWQQGy9cMpbXv6Avn
+   A==;
+X-CSE-ConnectionGUID: 0lfzYO3JQCu2JvypOXrc1g==
+X-CSE-MsgGUID: Rp9B4kQFSru/7nqJCeTdLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31191821"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31191821"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 01:48:37 -0800
+X-CSE-ConnectionGUID: PJ+V/aM9QDiOp18bTYckeQ==
+X-CSE-MsgGUID: IvMFK4y9TI6najQuKH7BsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="91394037"
+Received: from mylly.fi.intel.com (HELO [10.237.72.151]) ([10.237.72.151])
+  by fmviesa003.fm.intel.com with ESMTP; 12 Nov 2024 01:48:35 -0800
+Message-ID: <eaca7890-af22-4913-9758-53846ad1ec79@linux.intel.com>
+Date: Tue, 12 Nov 2024 11:48:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,83 +66,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Fix __wp_page_copy_user fallback path for remote mm
-To: Alistair Popple <apopple@nvidia.com>, David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Sergio Lopez Pascual <slp@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
- Dan Williams <dan.j.williams@intel.com>
-References: <20241101-mm-remote-pfn-v1-1-080b609270b7@asahilina.net>
- <c00226ea-6e29-4432-a1c4-a25e9e05df9c@redhat.com>
- <2d8380b9-3d03-4263-b5bf-7e0227c83ba9@asahilina.net>
- <0977a33b-8318-43a5-a5a1-4eb8c93ca270@redhat.com>
- <64d386e8-6684-4213-8aba-7d1daf94f2cf@asahilina.net>
- <412298ff-80bc-4111-8c72-29a5263a5d32@redhat.com>
- <87ttceu0i8.fsf@nvdebian.thelocal>
+Subject: Re: [PATCH v3 1/5] i3c: dw: Add support for AMDI0015 ACPI ID
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Sanket.Goswami@amd.com, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
+ <20241108073323.523805-2-Shyam-sundar.S-k@amd.com>
+ <09cfdd95-c566-4379-be17-2d5e0f0e8357@linux.intel.com>
+ <507a8af4-f128-4d73-9d0f-b8a6a15603d3@amd.com>
 Content-Language: en-US
-From: Asahi Lina <lina@asahilina.net>
-In-Reply-To: <87ttceu0i8.fsf@nvdebian.thelocal>
-Content-Type: text/plain; charset=UTF-8
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <507a8af4-f128-4d73-9d0f-b8a6a15603d3@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+Hi
 
+On 11/12/24 10:48 AM, Shyam Sundar S K wrote:
+>> Am I right this and patch 5/5 can be independent from rest of the series?
+> 
+> Right. 1/5 and 5/5 can be grouped. But rest of the other patches are
+> equally important because they drive the usecase.
+> 
+>>
+>> To me it looks these two patches enable bus communication and thus be
+>> useful without rest of the series while latter need more discussion
+>> (I'll have some notes coming) and Cc'ing linux-acpi.
+> 
+> I have Cc'ed linux-acpi in this revision. Do you have any feedback for
+> patches 2-4 ?
+> 
+Yes, I'm reviewing them and only the patch 2/5 was Cc'ed to linux-acpi.
 
-On 11/11/24 8:24 AM, Alistair Popple wrote:
-> 
-> David Hildenbrand <david@redhat.com> writes:
-> 
->> On 07.11.24 18:32, Asahi Lina wrote:
->>> On 11/8/24 2:14 AM, David Hildenbrand wrote:
->>>> I recall that there is still a problem with false-positives on
->>>> folio_test_anon() with ZONE_DEVICE pages, so it's maybe not that
->>>> easy ... and the whole get_dev_pagemap() stuff is nasty.
-> 
-> Specifically FS DAX reuses PAGE_MAPPING_ANON in
-> include/linux/page-flags.h
-> 
->     /*
->      * Different with flags above, this flag is used only for fsdax mode.  It
->      * indicates that this page->mapping is now under reflink case.
->      */
->     #define PAGE_MAPPING_DAX_SHARED	((void *)0x1)
-> 
-> FS DAX pages are never anon though, so you could probably test for
-> !vma_is_dax() and/or add an implementation of is_fsdax_page().
-> 
->>>> Likely we would have to do what GUP does, and temporarily grab a pgmap
->>>> reference. Gah.
->>>>
->>>>
->>>> So if we sort out the pagemap stuff and the possibly wrong
->>>> folio_test_anon() on some ZONE_DEVICE pages (but not all, because IIRC
->>>> DEVICE_PRIVATE can be anon ...), it might be doable.
-> 
-> Correct, DEVICE_PRIVATE and DEVICE_COHERENT pages are always anon (at
-> least for now).
-> 
->>>> But it sounds ugly, especially because that code might change soon and
->>>> not require messing with ZONE_DEVICE pages on that level.
-> 
-> Yes, I'm hopoing to get the next version of that series posted this
-> week. I found a couple of other FS DAX bugs that slowed me down.
-> 
->  - Alistair
-> 
->>>> And then, we'd not be able to handle VM_PFNMAP cleanly ...
->>>>
-
-If this is all going to be fixed another way soon then I think there's
-no rush to get a workaround in earlier than that, I just don't want it
-to fall by the wayside.
-
-We have my original patch downstream in libkrunfw (which despite the
-lockdep complaints does work in practice), so we can keep that in until
-the proper solution lands upstream.
-
-Alistair, can you Cc me on future submissions? So I'm reminded to test
-this out (FWIW the case I'm interested in is just `gdb /bin/foo` with
-the whole root filesystem on DAX, though I imagine a statically linked
-foo on a DAX mount by itself is probably an equivalent repro).
-
-~~ Lina
+Patchset split would serve better in my opinion enabling basic 
+communication and have an other set concentrating more complex scenario 
+we were try to get input from ACPI folks.
 
