@@ -1,102 +1,199 @@
-Return-Path: <linux-kernel+bounces-406671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E20F9C631C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:11:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EED9C6214
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:03:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ACC5B37FFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C3F1284220
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30982194A1;
-	Tue, 12 Nov 2024 20:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC20219E35;
+	Tue, 12 Nov 2024 20:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ts/mEbFx"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JG/IVoBC"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9004020ADEC
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 20:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CF7218D9C;
+	Tue, 12 Nov 2024 20:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731441735; cv=none; b=aTUodQqFyvwkJ9Ra8hLkJrUgFpCQfDGPBzyr4isox4+jIItbArspzP6Y79lcVxverTg9hNPYJFWyNG6Gm0bFuJQizvZk94kNZHRSM7EqP6tjGPS05F1obAi7kowJCx+7cWj5m64KboXatp6Szn51bLBt0ev/83ggsFYuoAU9Kc0=
+	t=1731441803; cv=none; b=ETZZolwQVjZSkywRvBuhv+7MM1ieTSGNGorp/R0hg4DEya1YllAeODVLupiiYwqvsPjIf/YftAUsAyJ1KPwePOin+A5SpskH1McPDdaM9OZHPdkj3cDB56yZoJuZr5bsYdx+ysIz+f1lKgAUu00NGneCWFkuU3T82EXrC4GzAoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731441735; c=relaxed/simple;
-	bh=DsjL5XWtMu7LOlZcx8scvAGiiIKiZ9tDUiuwStI2eok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=c0GnLgMU6H141aYCfucKWb8njUHBm9YSy5w8kgofDVqMfg4OerYpohQU0oElKvJaQB2RX83DyLNgX7YUivJFLMLM7RParTjDlP3D24f2A+o8h4Xe7AibSppjuwvMhi4T1MWCgHpoQaCgEWUTvyLhHJAl5WAam6xLi7FXtA+gd6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ts/mEbFx; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5ee763f9779so1399837eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:02:11 -0800 (PST)
+	s=arc-20240116; t=1731441803; c=relaxed/simple;
+	bh=+dL5joqQEoOQyTgA9I9iIGbUujcLDHu/Vy8nb3QV2rw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mnyKLXD9fkqFiiBav2gAHUW2gNF32BVlZ1W3JxuizYzS8OYomHsaX7gYr9JWqdgbXwh9B9/Yer3mHihvNT7JRE12ORFT4wb2hP132y2yLB0FC2frRipatWrCyfjclfuO9mggKevvC36f/DB1gbACfo6NxCke5CwkSyA/odDYgjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JG/IVoBC; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6ecaa45af7bso10309897b3.3;
+        Tue, 12 Nov 2024 12:03:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731441730; x=1732046530; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7sig4extPJZ96lJvrKPLyrOLWEJSmKbg3dopfHgQP/c=;
-        b=ts/mEbFxY8PajthwxUh0SHvXAjC9tAF3NkrqRnP0XeLjkumrBKov8OYfg6+Rz76+C3
-         gq2QcSd+T4V905cGYxU1wlMsaXIlTXgXSJT9tcv3nX1BOdhnZQrLpwOIp5C3kvIQhauH
-         Q/Y+bMo/fV9SnWxH3TUiTRetqIUgjnG4Bag9n/iXNNc+gPgqqtW2SR2xb7365Kn1A7bt
-         iiziYyv2LXIw19KIUMRFWPBeqBQ8gv6l8uKtwCfxy6vy8S+jdq7+9CTiVqjuUd5iGyLm
-         ZyPBcQwV0+PABObdLkMVqy5R5sc0MyufZeQpxERWhyRRqCzc7goyPhLDDg2XFMltHhbP
-         HfLA==
+        d=gmail.com; s=20230601; t=1731441799; x=1732046599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L2ikG77xsibCQ/i00CuU3i59fJjIm4fHdwxhmh9JpFE=;
+        b=JG/IVoBCVJEPZ+niXizHfk4sEHDM6YRTGtYMOGvu6x+vu0KYHKxmlBbKtV2aev5mYn
+         LKDjyJVJ5eq6Am7JPwXrM1/1C4626VuF3o46Pe5KTltin+c/AkrF1mfZf/xfERWSzHip
+         AVOMxL16zwkKyq9V8V5NzX1PyChgid350zF6uKncFL9oF0jj4OJk9m2R8UAr89AYqtZO
+         N5J+5Jk2jxQmo9QLvAmfJEniywbO7TXVUHXLzz5BktSnWXunG7LCPAhGogAaCQ6TAxGI
+         bLIS6d+RSCqRA+RDQOXkZy7WLTzj9okvOC+uM/hWzK+yqDpwgYL6gDA1xuXxImeEnImz
+         LMCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731441730; x=1732046530;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7sig4extPJZ96lJvrKPLyrOLWEJSmKbg3dopfHgQP/c=;
-        b=LkOeZt6VciyAVD/H6Ug2oTzadzzJ8MGEd3vac288MNlvo+YBiSB6m4iX/e3vKVTm+I
-         I30Nb1TPVLaZGJvHnFqqAbWJKfDuuMplZCcrK++Tg4d3mEQ5apXbHrCUF9xYRNF9J3ds
-         FUQ8N4l9B/h8hhpKLUKB0vSbCNz5BfurxfsJBowdtztf7Uy309xl57iN9BLqmPYuXT3L
-         3m8+XlPRn1GDkYTVv3JffH/bHaFWuNB1HduXskf6H7WMBPOTH4ckzMz7y9NZAnMTIfUR
-         vlKkjOF6oWn8T6TUmV6J4dcurNGmPj3oR42uFzSDD0KlCwYI9MASnJWfM0xONmGcFbBQ
-         4dWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUV4hYq+ZKXCMQk+7pPwEjnikHFJCk62Zp2W4I6UJ799gXYx5E/y6xoYCmwqAI7BzPId4hhgo9v9KvXvfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjii6yyTj6AGagHp9FROb0p4oxhVy4lUovwiS78KXvq61YlKm4
-	qwDqlwFn2OsL4Sb+yXYxjFYvz4UCAG6sIJwb4NqDRWCa7h205h5Nz1Zrkly7qUk=
-X-Google-Smtp-Source: AGHT+IHvgnmHiHHXULfY05GGiY7fOLLPMb5a5l/JeZR/daEqHCvkzI6U/0uYYnu+Fc6sEEFJ3gXDJw==
-X-Received: by 2002:a05:6820:4c89:b0:5eb:821c:df23 with SMTP id 006d021491bc7-5ee57b96a9bmr12114816eaf.2.1731441730645;
-        Tue, 12 Nov 2024 12:02:10 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ee494fb9a2sm2503376eaf.1.2024.11.12.12.02.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 12:02:09 -0800 (PST)
-Message-ID: <4b48ae8e-4eba-4d86-af8b-2b749c53639f@baylibre.com>
-Date: Tue, 12 Nov 2024 14:02:07 -0600
+        d=1e100.net; s=20230601; t=1731441799; x=1732046599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L2ikG77xsibCQ/i00CuU3i59fJjIm4fHdwxhmh9JpFE=;
+        b=URtZCMLl0wfZL0SjyY80vZDmu9NR4C6OwP0O65KnmCmbMGqiDnwBCka4O9CnGoullJ
+         lLhxhsC1kv3TyarrAAvnayBml0y+dtpRlRqWTUQDXzjNhsH3XEu2mOmnEZ1BlG5IRnHM
+         sX/3gDbReSxpZtmLkSipPamPRF1CTIqXfSC3+f+kKhgWQoKGzHU7Q8y//Gyyvd5N49fd
+         wURt73+iWJUjs4IcQMdOvMD5nLRsuHIX9lsN9RF3hy80HvWWypP94XF+P85C5KuKE7V7
+         b7cRRlWO/rPIRc71EEkD48l1oNxEZDOA+pvOcDmfmlHoXMcsfn7Ppt7PfhkqDx5zTF5L
+         49hA==
+X-Forwarded-Encrypted: i=1; AJvYcCWt1N7FTS101uGMucC9k7CHg7PCr/6c1afNo0/FP85rd4EhQiGkzo5qAhBLVzH9YPId755ojqpoT574iRc=@vger.kernel.org, AJvYcCX6sgEMtHis08ZIaAvTtZJe2dp7oSIxD8yRthJtycZU07BF79nQarVTaD/Y3cGFzTFphVoHTM5idU1aCQ5mxWhv+w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX6QGPhry1fJgU5Lc4VVPoa6qDdd0irJOLffvTrQufRCYhgx5m
+	bIPARD2w6REbsU4UIMKKHJ27kIU7GCdRt4facMLYeIA3RKntE1aYCrdQO8Wk0ZsKpFSQ+KyAGof
+	B7oDrX959W+vUAWcriIWzuRB66NE=
+X-Google-Smtp-Source: AGHT+IFc8p1sQzQ/Ynvtbaa7paWVhq2n5YAsoNjc2mUXJLZALuvjAlL/qgTlYAYyg81M4XdFP774TwnOqIjQp1Oz2qM=
+X-Received: by 2002:a05:690c:7083:b0:6ea:7bbe:56ef with SMTP id
+ 00721157ae682-6ecb32cd97amr3676767b3.16.1731441799584; Tue, 12 Nov 2024
+ 12:03:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 8/8] iio: adc: ad4851: add ad485x driver
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org
-References: <20241111121203.3699-1-antoniu.miclaus@analog.com>
- <20241111121203.3699-9-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241111121203.3699-9-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241108204137.2444151-1-howardchu95@gmail.com>
+ <ZzOg3Xlq2jsG85XQ@x1> <ZzOpvzN-OTLZPyFh@x1> <ZzOy2KjyuMD9AJ3G@x1>
+In-Reply-To: <ZzOy2KjyuMD9AJ3G@x1>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Tue, 12 Nov 2024 12:03:09 -0800
+Message-ID: <CAH0uvojpYb17k6=PeJ6bz9cj2RSYyiDccgm1jnYRGmx4Hw4C=Q@mail.gmail.com>
+Subject: Re: [PATCH v7 00/10] perf record --off-cpu: Dump off-cpu samples directly
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: peterz@infradead.org, namhyung@kernel.org, irogers@google.com, 
+	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/11/24 6:12 AM, Antoniu Miclaus wrote:
-> Add support for the AD485X a fully buffered, 8-channel simultaneous
-> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
-> differential, wide common-mode range inputs.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-> changes in v6 (implemented most of the review comments in v5):
-What is the plan for addressing the rest of the comments?
+Hello,
 
-I don't want to keep making the same comments over and over again.
+On Tue, Nov 12, 2024 at 11:56=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Tue, Nov 12, 2024 at 04:17:19PM -0300, Arnaldo Carvalho de Melo wrote:
+> > I squashed the patch below and I'm trying to apply the other patches to=
+ do some
+> > minimal testing on the feature itself, but the organization of the
+> > patches needs some work.
+>
+> > +++ b/tools/perf/util/bpf_off_cpu.c
+> > @@ -61,6 +61,9 @@ static int off_cpu_config(struct evlist *evlist)
+> >  static void off_cpu_start(void *arg)
+> >  {
+> >       struct evlist *evlist =3D arg;
+> > +     struct evsel *evsel;
+> > +     struct perf_cpu pcpu;
+> > +     int i;
+> >
+> >       /* update task filter for the given workload */
+> >       if (skel->rodata->has_task && skel->rodata->uses_tgid &&
+> > @@ -82,6 +85,8 @@ static void off_cpu_start(void *arg)
+> >       }
+> >
+> >       perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
+> > +             int err;
+> > +
+> >               err =3D bpf_map__update_elem(skel->maps.offcpu_output, &p=
+cpu.cpu, sizeof(__u32),
+> >                                          xyarray__entry(evsel->core.fd,=
+ i, 0),
+> >                                          sizeof(__u32), BPF_ANY);
+>
+> This is not enough, as it in the end tries to use that
+> skel->maps.offcpu_output that is only introduced at a later patch, it
+> seems, not checked yet, but explains the error below:
+>
+>   LD      /tmp/build/perf-tools-next/perf-test-in.o
+>   AR      /tmp/build/perf-tools-next/libperf-test.a
+>   CC      /tmp/build/perf-tools-next/util/parse-events.o
+> util/bpf_off_cpu.c: In function =E2=80=98off_cpu_start=E2=80=99:
+> util/bpf_off_cpu.c:90:54: error: =E2=80=98struct <anonymous>=E2=80=99 has=
+ no member named =E2=80=98offcpu_output=E2=80=99
+>    90 |                 err =3D bpf_map__update_elem(skel->maps.offcpu_ou=
+tput, &pcpu.cpu, sizeof(__u32),
+>       |                                                      ^
+> make[4]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:1=
+06: /tmp/build/perf-tools-next/util/bpf_off_cpu.o] Error 1
+> make[4]: *** Waiting for unfinished jobs....
+> make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:1=
+58: util] Error 2
+> make[2]: *** [Makefile.perf:789: /tmp/build/perf-tools-next/perf-util-in.=
+o] Error 2
+> make[2]: *** Waiting for unfinished jobs....
+>   CC      /tmp/build/perf-tools-next/pmu-events/pmu-events.o
+>   LD      /tmp/build/perf-tools-next/pmu-events/pmu-events-in.o
+> make[1]: *** [Makefile.perf:292: sub-make] Error 2
+> make: *** [Makefile:119: install-bin] Error 2
+> make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+> =E2=AC=A2 [acme@toolbox perf-tools-next]$
+>
+>
+> Ok, at the end of the series it builds, and the 'perf test' entry
+> introduced in this series passes:
+>
+> root@x1:~# perf test off
+> 121: perf record offcpu profiling tests                              : Ok
+> root@x1:~# perf test -v off
+> 121: perf record offcpu profiling tests                              : Ok
+> root@x1:~# perf test -vv off
+> 121: perf record offcpu profiling tests:
+> --- start ---
+> test child forked, pid 1303134
+> Checking off-cpu privilege
+> Basic off-cpu test
+> Basic off-cpu test [Success]
+> Child task off-cpu test
+> Child task off-cpu test [Success]
+> Direct off-cpu test
+> Direct off-cpu test [Success]
+> ---- end(0) ----
+> 121: perf record offcpu profiling tests                              : Ok
+> root@x1:~#
+>
+> But the only examples I could find so far for this feature were on the
+> 'perf test' at the end of this series.
+>
+> I think we need to have some examples in the 'perf-record' man page
+> showing how to use it, explaining the whole process, etc.
+>
+> I'll continue testing it and trying to move things around so that it
+> gets bisectable and testable step by step, documenting the whole
+> process as I go, probably tomorrow.
+>
+> The series with my fixes is at:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git =
+perf-off-cpu77918
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/=
+log/?h=3Dperf-off-cpu
+
+Thank you, I'll use that as the base of v8 :), adding Ian's suggestions.
+
+>
+>
+> - Arnaldo
+
+Thanks,
+Howard
 
