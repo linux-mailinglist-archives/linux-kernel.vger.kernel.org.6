@@ -1,343 +1,466 @@
-Return-Path: <linux-kernel+bounces-405159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE879C4DAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:16:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056989C4DC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:34:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E4A6285294
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:16:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 871C6287A36
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AB4207A03;
-	Tue, 12 Nov 2024 04:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20DA20899C;
+	Tue, 12 Nov 2024 04:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Mx7vVr+Y"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011036.outbound.protection.outlook.com [52.101.129.36])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0w0p1JH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975BB16CD29
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731384979; cv=fail; b=A5UPWpWSPrPl7I4A/zhLvJMss9iU0mTqAxS+I5aa6uZdZ/gcT4p0PcF8H4AZn4b1Ux0N82yeBJMtf3z2iR0OhwcxtD80AmuzserWxemSOhteqjQLAzuATxuyknI8srLY+5KCGXjcmf5asZhGaq/63qR+Wefzw3aXo7w3I4j4wqQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731384979; c=relaxed/simple;
-	bh=ZZlTJ5XlrLI7Q9qThO2g1RxjBUXjqDHXDRW1iMG0sg8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=AP6uyj2JRer73FmCO/r3i8ZrbjoPQxJddPrdhNKglaT5DgyIffxu88MbRFrBOmsVHH7QSmKp9/a/aBWRHleqaPZ2mR00tuXA7Em0q2d3XNexUI2eYcxYgUJrAd68pbTI5HAEjCL20uHaD2KMEF5GvI6yGGshKS8GbM3TdksFdwQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Mx7vVr+Y; arc=fail smtp.client-ip=52.101.129.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iHnwWlRE8cvtwX46jJcbov+RfTkn41PnhfazHiy2QiHPmG9kC1ErrpMSxNWoxNCtTHI+EtqA6FwhvpXbFNE84eXlAj7FCDO2K3AUX/6rhpZBA8J37U5FlTRhszQw5Db7joBqku2jKDjBJEdYTsG+XrxAN4bFa6ENQWct22wZ2LWgB3og+JGwpVdr/ad2S1Iyp2PYw3QhQ8FXoZFww5ysldib26hT5iWkrv/WR4Lsx7h/+JTtALww8NAjqlyO/EGjWY6xlUuc7UoJnI0eY8tyznQxUNBDr5J1+6M+aphpgE43aYh9WmvD0C9CQpIsvghXdg4tA7T+rZQzltT/NL7TZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QnFa9iocdHJ4baaTatKyAF4tSa92k4Eib2WDXY4rHxQ=;
- b=EtbShJ+HdpLeWQscyIOmr3QXm1kwCQxCSLepuUAlCg4myEOtNdjyWc024pD+z9KWq9MHrtWS5k4OK566uA5lkmymxOEYu2SfDM1OjMjvNYN2oI6NHq6K6Yro4EXUjVAVdgQ1RB7LOmrFdzjG7q9Nevt0gBcdp8CuBMYRqJl1URiFhu+O3T1MhJXF3EnVMxh3fQVMOiLVJs59YY3FFWSEDD/3DX9W32aMgHtaBdJvtPRYNtEKa9OAwuWLQrS9Ktnuq5Vm/vFxqbLZPG93N9+cwwvBpST7ShCJbbCi188GK9fPy1FzA7Gfp4D97cKxB6TYwR+3DG3ninTHe4BC+Ps9DQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QnFa9iocdHJ4baaTatKyAF4tSa92k4Eib2WDXY4rHxQ=;
- b=Mx7vVr+Y6reJ/7Sxh5AsNWgsQK1OSA65glILNHMhYhKs5gIrywc3c64SrGGCfW8pn9nZ2w1/vApA3XS8P9hRW0ADCbRXec+BYviXIJKSwnGoIUrtj29LzElyYRkasgJ6c/a/btRxUSJy3onkGyM3khrsLZBhX9Xw/IpXnj6c2SW3b9SdCZFwh9WbG8Uxtp001ulTBKXHJUmWHzoLaK4IJcbN7JbsL2FZEgtP271/GTrXMnxyOXQag7D7aQkyKNGgs1HORiMWulc8HQNJ9B8TeDleM0KiGYmUcb59cj+ulYMzlXVukUUYNad5cZGp53IJkNCxujScvx23GTa+2YhKUA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB7096.apcprd06.prod.outlook.com (2603:1096:405:b5::13)
- by TYZPR06MB6261.apcprd06.prod.outlook.com (2603:1096:400:335::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.20; Tue, 12 Nov
- 2024 04:16:09 +0000
-Received: from TYZPR06MB7096.apcprd06.prod.outlook.com
- ([fe80::6c3a:9f76:c4a5:c2b]) by TYZPR06MB7096.apcprd06.prod.outlook.com
- ([fe80::6c3a:9f76:c4a5:c2b%6]) with mapi id 15.20.8158.011; Tue, 12 Nov 2024
- 04:16:09 +0000
-From: Chunhai Guo <guochunhai@vivo.com>
-To: xiang@kernel.org
-Cc: chao@kernel.org,
-	huyue2@coolpad.com,
-	jefflexu@linux.alibaba.com,
-	dhavale@google.com,
-	linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Chunhai Guo <guochunhai@vivo.com>
-Subject: [PATCH v6] erofs: free pclusters if no cached folio is attached
-Date: Mon, 11 Nov 2024 21:32:35 -0700
-Message-Id: <20241112043235.546164-1-guochunhai@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR04CA0001.apcprd04.prod.outlook.com
- (2603:1096:4:197::12) To TYZPR06MB7096.apcprd06.prod.outlook.com
- (2603:1096:405:b5::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F9341C79;
+	Tue, 12 Nov 2024 04:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731386035; cv=none; b=OSS5KYSZ3AKZEO2FS5dzsgcGMfw9MyoNZsP2zQemRuivLkULDprXQbjRUPmToQjq5VhxJI2jEhFAuTgU9IlITryTxSMezYiv7Og884wselQ7BzGN4Vh6sQhxDukrtGExNWZhFWkxzRNiH6fxUjxaMuzKU7T9DEqjFSiFYPqdgDU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731386035; c=relaxed/simple;
+	bh=1wSD+O/xu2pWXbq3lZLLIALSc/7bm3caBy1zV8NgrLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uH2EX4eBBJj5K9edXnDr2oMQEyLYE6cX0lCDWe2bpwvRIFfujXUUqmnV+Aonpf7Ze6qWduf2+W0yWxKeBGLb0kWI0gA+SdfMbCl5+PSAkfZMWjXjuyAurEv3Iu+F0GV1tgeEefwAi/k2zYpO8uBT0TohdWPGMUdwCO5UzH9rowQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0w0p1JH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F366C4CECD;
+	Tue, 12 Nov 2024 04:33:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731386034;
+	bh=1wSD+O/xu2pWXbq3lZLLIALSc/7bm3caBy1zV8NgrLU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u0w0p1JH1YdusCRBXaAc/VRVwp0F9Ustkoh79Rgzem6zwYsdyflIc06wLl5aq4yyb
+	 F6HCoVVXa9kyIhhT7NB8MuJSdXX2oRSKFHrYgv8eu5fKbk24uaIaMNZn93BmFsNCMl
+	 qcdYma65hrsjvCvtNg+pkH6S47zvEpbblF1Nli/RN9VhgzWpVQ9BdL8QbXfVJsCybk
+	 BEby/kkaGi4Q5KG1a+TcNKZVLLbN/H2IzyaCC0x9TeLq7t9Pw4Z5EIH1E10hTwR3WE
+	 zpFAaAFrPb5VFWEaD3m7hrUe6nNS7yPm0VCz81Wd+n/aMP84+9SdHEkansEkGfD4v3
+	 SbGlPKPV0b3tQ==
+Date: Mon, 11 Nov 2024 22:33:51 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com
+Subject: Re: [PATCH v2 RESEND 3/3] i2c: i2c-qcom-geni: Add Block event
+ interrupt support
+Message-ID: <54iirnbdmcvbg2zpkajuwqjdb6mxlehpvtnq2hmxd4beuh4ish@mbuttdzzvebv>
+References: <20241111140244.13474-1-quic_jseerapu@quicinc.com>
+ <20241111140244.13474-4-quic_jseerapu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB7096:EE_|TYZPR06MB6261:EE_
-X-MS-Office365-Filtering-Correlation-Id: dcad5ccd-e000-4c7d-0d89-08dd02d0bc64
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?N245gvdT+YGGnj+3itqxgOdj3L/7CkX6/ssN+7DzvLA4YCZCRCvyBoRFSoOU?=
- =?us-ascii?Q?A7O2CY57qsOpB5map+Fcr6OVsyDrKsa9J/UYbCYWYYKgnAVPnVSyDhqPhzPk?=
- =?us-ascii?Q?shRDXOXWVfADiafpCPXfnVSUniCFa8p6KsCuOXB+4NPpv36L3fxhcURkuoJ8?=
- =?us-ascii?Q?9NrYJRaPgK5yuqzC3NLemzLSW7uBO6sVzeNdtD7Z55ulW9h3uMqwEqSkG1Xo?=
- =?us-ascii?Q?JSjZfDhTAfyuJ3ARetAhnkhayABdF2a3YvYzs1HWIliRUGFWgvufW9y6L281?=
- =?us-ascii?Q?G8cuSirkvlvQxgzTXuVnhdP4KI4kpx0+MZ6pYmlfgdydUga5cosc8uk41Kcn?=
- =?us-ascii?Q?uO4Kd/wV7KOW9t66NDcq2axss1NU2ZqrzHnlsz0yruKy6VCiOsN4DuZ1oKoW?=
- =?us-ascii?Q?lTKZCJHnQG1Z3fepvgvhcQRNgDkOd/zxpTyGk9Ms8xWWYX52DnYN2hNyRX5f?=
- =?us-ascii?Q?xdKxBQH3QE1icdY22k5N0UL/nZn2ON+JevEK8UEBJsAPcmPWkrNhoIwk9MPN?=
- =?us-ascii?Q?jiWA/UUScjp5lTSgllmEGLeWhDoUau1One+qVtF0BstLQjk+XVZUEaAKIVgC?=
- =?us-ascii?Q?yEPhUDKP/4/Bm9ckuyV/Ce7saEFDYOGkRf0qaX4Cdj8eTrrQ+/Nu/Jo8SaGo?=
- =?us-ascii?Q?WbiZMCDzfp8yczqlRQIgLzjKjxPzk/B7NhCzyCCQ0X697hucJZ7b7LrWrSVQ?=
- =?us-ascii?Q?E8FeSydPKopGDLvHST2fAPW3/b3Th29C88TfGUdVTrZJAJoPvhs4Dz5DxIuL?=
- =?us-ascii?Q?93CsFph8QTElhDYquprQe8/4tfgow1JDfqyXdfbmbM3YuxbXAZAzJApWzldv?=
- =?us-ascii?Q?T/CyuVpXtmP1FiC+yoJFZvOoxCFNKPZUxhI3U/dy4wOLgM4Qj0dJ6zBBkt+q?=
- =?us-ascii?Q?cbZYCoJwBnBqeazJH6FOLoXKcYdQo8kk1cdv7UwrM/hvQMtrO2rkiAIV09Yv?=
- =?us-ascii?Q?CA0rdniO3nfdzYilWwtDiY/W/FQC9CNXGUuelx3GT4V+nCJtEWo3QQ4y5bfy?=
- =?us-ascii?Q?ppZ7bsMDjVkGnSed4Rd0w8Jkq06HWVWxNynyCfxPxD4llWziHSsufCZZb18u?=
- =?us-ascii?Q?+lcEGS1OsZp4RcvMx8V5UZgxlhXx1gwSFB+jYy1yWfGayHhWNaf3Y3+R9axJ?=
- =?us-ascii?Q?AT9une9cXctagAvdMLS7MQVKgITpKC61a90BQ9wRvQaHAB/eYlRaTvkZTepD?=
- =?us-ascii?Q?N0ap29CQALpR2NK/bulSWgxQBWWjYXQD5HOsFEGK3DKEh7KsouyIRYr/buJ4?=
- =?us-ascii?Q?1ti4WvsulMsObGinCur+3VNqbkUt4lNT6x+7aS6UglpselHQtFHiTvUfIEBq?=
- =?us-ascii?Q?EdZNCV4vcR2wBEXUXuqbW4VG7AB6R3y4pAWUPIh6j9L1df8kxRd/uNWALEFS?=
- =?us-ascii?Q?6/sG3gPxq9suCB5Ctav/ZTZghgkZ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB7096.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DIQFdYYIRhgwMzJB4Vs4lps9YLmLgKClputLuTRnXklh9fQbiyecsHtTTzfa?=
- =?us-ascii?Q?VbG+LQIj0FCHbnu52fzSjVZxnRGKDSEoqM9cS+NpzP3CUFrsPXLfWzNqYN7P?=
- =?us-ascii?Q?x/yb2CPWzD1Xf6+okUboRwgNCiFECS2GdNlN3+Vk2KJl/i9aSs33L7tp9TMf?=
- =?us-ascii?Q?dufJF4trvaE0MZEYJWp2dPUVr7//gpAn0noZ/7OLNPkBPlepF8Sy6nYJ2ZNm?=
- =?us-ascii?Q?vTQhmUvHsYAHGZYVGFz4uNoV/WgLT2WCbaqlN+mSWgYpcFh8SzZFeBaisl1I?=
- =?us-ascii?Q?BII8G2lxX0CDnVFRI+0l6LugGBgDA6zSuA/MOAvsCJo+M1YB2iWzviMCH/Qi?=
- =?us-ascii?Q?U0nMD8Xq6Rv415jYkCFJLtEJLhnLdISYWK5CVbdPsX5RPaqAswrbfS3Rpu/D?=
- =?us-ascii?Q?loDQZTs+h6j6HZCojBFufsia4uB8zQG8QPUEG/tJ0lcgpm4x9DtGqODr67WG?=
- =?us-ascii?Q?uf27V5gKA3LOc+4Q9L8S9vfGC9rrnIrn46VYXpUoJNntun12RvbUmn9cB2+o?=
- =?us-ascii?Q?NkIfNW5FBXLEF+KAQlMehdFl79B+kCC4PtyDakvJaNOtwSUX2zERw6JuOri6?=
- =?us-ascii?Q?/yj9frDNv0ogpvci/hDgstLEn7kZ/FtYkNv18dxWg2vmSH2mdojr6xL1eFXT?=
- =?us-ascii?Q?U3yDFIOuOXOQqgH+hKrvuM4NLN3ZWTfMMe0L7G65ndTfbaUTSUdt8VCNhHI0?=
- =?us-ascii?Q?/ujkNWXs55WKNEe9S7InIrMfBlT2LKjrLJn+fIBFMAk5UM7xDzjxd/MvnIw2?=
- =?us-ascii?Q?B8VPk0Z/WE8sMue080Bs40vFODVhIfN7ZyFWJMU9u5voBrEHB8Ga6Q7ChyWl?=
- =?us-ascii?Q?yL/dYWm86hP/1rZB1UhMr+9eXQ96uoBrv5+YPAHmJOjPtYqrGc8FzqJlh1ua?=
- =?us-ascii?Q?lLCUYc3aakRycixohT2y08WCSDw6kykidzvOYHEeXZAYAgMX+HsbkoftUhkb?=
- =?us-ascii?Q?fPhSF0AlIxhJSv1InRnZQMCmpebtIRSXJU94GM2G2zzGT9VHnvg+fRZvKOy7?=
- =?us-ascii?Q?9wuoMbT/+8is5O8ac6ykVaMUGTEUnQfQbA2F5b9Yl4mfzgB2L/9zsc1SaLAL?=
- =?us-ascii?Q?5Kix1mOA9Hc3jsoX2VZabb+bmTIvHIMJ8H4dqsLNVvFDL1O1Ll6wF3Vh+gkf?=
- =?us-ascii?Q?jr7C6rY+xGhFKjYd1YSrTveo+cc0sHS0RCmwhkpR54+IJZIgaFidYu9GpJeT?=
- =?us-ascii?Q?ayvSyijHLac5aklplGlbnosw1CW+A1Mpr97beqFcbn+MxmJUTuINR8YN5lTv?=
- =?us-ascii?Q?/Aen+2h5A7e5y75/XZ/3kSyHgORTKxmyI29B9nZIhrVTVRo1f/9RrcTfnhB6?=
- =?us-ascii?Q?qbjdXSp+MfiuZ8LlpiCoEv3OYkaIQf8M8Sk7kiFulwbLA1sl8VFVlj8srSf7?=
- =?us-ascii?Q?D0sWiJNzwWbtUcuo67HlNtrupjNaODR4XF6PoOvZTv7wEigB2DCTczIeim3O?=
- =?us-ascii?Q?tlIMf7bEIGynahfizwo6/1DVbHsUVldlymbrzTYw1erg+myYx0oKrFbjz9yq?=
- =?us-ascii?Q?wjYXQsK2pZXXtYaF4y5gexbsFu475r4zuv6K11EHbxuu3ePmYhoTRpMsPpNr?=
- =?us-ascii?Q?RHJQtJGmem0iXLZn4Clrv01hM7qgBXA0DCNcaq+i?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dcad5ccd-e000-4c7d-0d89-08dd02d0bc64
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB7096.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 04:16:09.5256
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nxaDI5SI/ID+6brTtnyEHXQQwwsjnNfAPuwG65uGwgpID7yXIgT9qhJJsEsh5nWvf78PJf64reI+9nACTkXj/A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6261
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111140244.13474-4-quic_jseerapu@quicinc.com>
 
-Once a pcluster is fully decompressed and there are no attached cached
-folios, its corresponding `struct z_erofs_pcluster` will be freed. This
-will significantly reduce the frequency of calls to erofs_shrink_scan()
-and the memory allocated for `struct z_erofs_pcluster`.
+On Mon, Nov 11, 2024 at 07:32:44PM +0530, Jyothi Kumar Seerapu wrote:
+> The I2C driver gets an interrupt upon transfer completion.
+> For multiple messages in a single transfer, N interrupts will be
+> received for N messages, leading to significant software interrupt
+> latency. To mitigate this latency, utilize Block Event Interrupt (BEI)
 
-The tables below show approximately a 96% reduction in the calls to
-erofs_shrink_scan() and in the memory allocated for `struct
-z_erofs_pcluster` after applying this patch. The results were obtained
-by performing a test to copy a 4.1GB partition on ARM64 Android devices
-running the 6.6 kernel with an 8-core CPU and 12GB of memory.
+Please rewrite this to the tone that the reader doesn't know what Block
+Event Interrupt is, or that it exists.
 
-1. The reduction in calls to erofs_shrink_scan():
-+-----------------+-----------+----------+---------+
-|                 | w/o patch | w/ patch |  diff   |
-+-----------------+-----------+----------+---------+
-| Average (times) |   11390   |   390    | -96.57% |
-+-----------------+-----------+----------+---------+
+> only when an interrupt is necessary. This means large transfers can be
+> split into multiple chunks of 8 messages internally, without expecting
+> interrupts for the first 7 message completions, only the last one will
+> trigger an interrupt indicating 8 messages completed.
+> 
+> By implementing BEI, multi-message transfers can be divided into
+> chunks of 8 messages, improving overall transfer time.
 
-2. The reduction in memory released by erofs_shrink_scan():
-+-----------------+-----------+----------+---------+
-|                 | w/o patch | w/ patch |  diff   |
-+-----------------+-----------+----------+---------+
-| Average (Byte)  | 133612656 | 4434552  | -96.68% |
-+-----------------+-----------+----------+---------+
+You already wrote this in the paragraph above.
 
-Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
----
-v5 -> v6:
- - Fix issue: free pclusters when no folio is attached.
 
-v4 -> v5:
- - modify subject to be more formal
- - `--pcl->lockref.count == 0` --> `!--pcl->lockref.count`
+Where is this number 8 coming from btw?
 
-v3 -> v4:
- - modify the patch as Gao Xiang suggested in v3.
+> This optimization reduces transfer time from 168 ms to 48 ms for a
+> series of 200 I2C write messages in a single transfer, with a
+> clock frequency support of 100 kHz.
+> 
+> BEI optimizations are currently implemented for I2C write transfers only,
+> as there is no use case for multiple I2C read messages in a single transfer
+> at this time.
+> 
+> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+> ---
+> 
+> v1 -> v2:
+>    - Moved gi2c_gpi_xfer->msg_idx_cnt to separate local variable.
+>    - Updated goto labels for error scenarios in geni_i2c_gpi function
+>    - memset tx_multi_xfer to 0.
+>    - Removed passing current msg index to geni_i2c_gpi.
+>    - Fixed kernel test robot reported compilation issues.    
+> 
+>  drivers/i2c/busses/i2c-qcom-geni.c | 203 +++++++++++++++++++++++++----
+>  1 file changed, 178 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+> index 7a22e1f46e60..04a7d926dadc 100644
+> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> @@ -100,6 +100,10 @@ struct geni_i2c_dev {
+>  	struct dma_chan *rx_c;
+>  	bool gpi_mode;
+>  	bool abort_done;
+> +	bool is_tx_multi_xfer;
+> +	u32 num_msgs;
+> +	u32 tx_irq_cnt;
+> +	struct gpi_i2c_config *gpi_config;
+>  };
+>  
+>  struct geni_i2c_desc {
+> @@ -500,6 +504,7 @@ static int geni_i2c_tx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+>  static void i2c_gpi_cb_result(void *cb, const struct dmaengine_result *result)
+>  {
+>  	struct geni_i2c_dev *gi2c = cb;
+> +	struct gpi_multi_xfer *tx_multi_xfer;
+>  
+>  	if (result->result != DMA_TRANS_NOERROR) {
+>  		dev_err(gi2c->se.dev, "DMA txn failed:%d\n", result->result);
+> @@ -508,7 +513,21 @@ static void i2c_gpi_cb_result(void *cb, const struct dmaengine_result *result)
+>  		dev_dbg(gi2c->se.dev, "DMA xfer has pending: %d\n", result->residue);
+>  	}
+>  
+> -	complete(&gi2c->done);
+> +	if (gi2c->is_tx_multi_xfer) {
 
-v2 -> v3:
- - rename erofs_prepare_to_release_pcluster() to __erofs_try_to_release_pcluster()
- - use trylock in z_erofs_put_pcluster() instead of erofs_try_to_release_pcluster()
+Wouldn't it be cleaner to treat the !is_tx_multi_xfer case as a
+multi-xfer of length 1?
 
-v1: https://lore.kernel.org/linux-erofs/588351c0-93f9-4a04-a923-15aae8b71d49@linux.alibaba.com/
-change since v1:
- - rebase this patch on "sunset z_erofs_workgroup` series
- - remove check on pcl->partial and get rid of `be->try_free`
- - update test results base on 6.6 kernel 
----
- fs/erofs/zdata.c | 57 ++++++++++++++++++++++++++++++++----------------
- 1 file changed, 38 insertions(+), 19 deletions(-)
+> +		tx_multi_xfer = &gi2c->gpi_config->multi_xfer;
+> +
+> +		/*
+> +		 * Send Completion for last message or multiple of NUM_MSGS_PER_IRQ.
+> +		 */
+> +		if ((tx_multi_xfer->irq_msg_cnt == gi2c->num_msgs - 1) ||
+> +		    (!((tx_multi_xfer->irq_msg_cnt + 1) % NUM_MSGS_PER_IRQ))) {
+> +			tx_multi_xfer->irq_cnt++;
+> +			complete(&gi2c->done);
 
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 6b73a2307460..877bce7709d5 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -885,14 +885,11 @@ static void z_erofs_rcu_callback(struct rcu_head *head)
- 			struct z_erofs_pcluster, rcu));
- }
- 
--static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
-+static bool __erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
- 					  struct z_erofs_pcluster *pcl)
- {
--	int free = false;
--
--	spin_lock(&pcl->lockref.lock);
- 	if (pcl->lockref.count)
--		goto out;
-+		return false;
- 
- 	/*
- 	 * Note that all cached folios should be detached before deleted from
-@@ -900,7 +897,7 @@ static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
- 	 * orphan old pcluster when the new one is available in the tree.
- 	 */
- 	if (erofs_try_to_free_all_cached_folios(sbi, pcl))
--		goto out;
-+		return false;
- 
- 	/*
- 	 * It's impossible to fail after the pcluster is freezed, but in order
-@@ -909,8 +906,16 @@ static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
- 	DBG_BUGON(__xa_erase(&sbi->managed_pslots, pcl->index) != pcl);
- 
- 	lockref_mark_dead(&pcl->lockref);
--	free = true;
--out:
-+	return true;
-+}
-+
-+static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
-+					  struct z_erofs_pcluster *pcl)
-+{
-+	bool free;
-+
-+	spin_lock(&pcl->lockref.lock);
-+	free = __erofs_try_to_release_pcluster(sbi, pcl);
- 	spin_unlock(&pcl->lockref.lock);
- 	if (free) {
- 		atomic_long_dec(&erofs_global_shrink_cnt);
-@@ -942,16 +947,25 @@ unsigned long z_erofs_shrink_scan(struct erofs_sb_info *sbi,
- 	return freed;
- }
- 
--static void z_erofs_put_pcluster(struct z_erofs_pcluster *pcl)
-+static void z_erofs_put_pcluster(struct erofs_sb_info *sbi,
-+		struct z_erofs_pcluster *pcl, bool try_free)
- {
-+	bool free = false;
-+
- 	if (lockref_put_or_lock(&pcl->lockref))
- 		return;
- 
- 	DBG_BUGON(__lockref_is_dead(&pcl->lockref));
--	if (pcl->lockref.count == 1)
--		atomic_long_inc(&erofs_global_shrink_cnt);
--	--pcl->lockref.count;
-+	if (!--pcl->lockref.count) {
-+		if (try_free && xa_trylock(&sbi->managed_pslots)) {
-+			free = __erofs_try_to_release_pcluster(sbi, pcl);
-+			xa_unlock(&sbi->managed_pslots);
-+		}
-+		atomic_long_add(!free, &erofs_global_shrink_cnt);
-+	}
- 	spin_unlock(&pcl->lockref.lock);
-+	if (free)
-+		call_rcu(&pcl->rcu, z_erofs_rcu_callback);
- }
- 
- static void z_erofs_pcluster_end(struct z_erofs_decompress_frontend *fe)
-@@ -972,7 +986,7 @@ static void z_erofs_pcluster_end(struct z_erofs_decompress_frontend *fe)
- 	 * any longer if the pcluster isn't hosted by ourselves.
- 	 */
- 	if (fe->mode < Z_EROFS_PCLUSTER_FOLLOWED_NOINPLACE)
--		z_erofs_put_pcluster(pcl);
-+		z_erofs_put_pcluster(EROFS_I_SB(fe->inode), pcl, false);
- 
- 	fe->pcl = NULL;
- }
-@@ -1274,6 +1288,7 @@ static int z_erofs_decompress_pcluster(struct z_erofs_decompress_backend *be,
- 	int i, j, jtop, err2;
- 	struct page *page;
- 	bool overlapped;
-+	bool try_free = true;
- 
- 	mutex_lock(&pcl->lock);
- 	be->nr_pages = PAGE_ALIGN(pcl->length + pcl->pageofs_out) >> PAGE_SHIFT;
-@@ -1331,9 +1346,12 @@ static int z_erofs_decompress_pcluster(struct z_erofs_decompress_backend *be,
- 		/* managed folios are still left in compressed_bvecs[] */
- 		for (i = 0; i < pclusterpages; ++i) {
- 			page = be->compressed_pages[i];
--			if (!page ||
--			    erofs_folio_is_managed(sbi, page_folio(page)))
-+			if (!page)
- 				continue;
-+			if (erofs_folio_is_managed(sbi, page_folio(page))) {
-+				try_free = false;
-+				continue;
-+			}
- 			(void)z_erofs_put_shortlivedpage(be->pagepool, page);
- 			WRITE_ONCE(pcl->compressed_bvecs[i].page, NULL);
- 		}
-@@ -1379,6 +1397,11 @@ static int z_erofs_decompress_pcluster(struct z_erofs_decompress_backend *be,
- 	/* pcluster lock MUST be taken before the following line */
- 	WRITE_ONCE(pcl->next, Z_EROFS_PCLUSTER_NIL);
- 	mutex_unlock(&pcl->lock);
-+
-+	if (z_erofs_is_inline_pcluster(pcl))
-+		z_erofs_free_pcluster(pcl);
-+	else
-+		z_erofs_put_pcluster(sbi, pcl, try_free);
- 	return err;
- }
- 
-@@ -1401,10 +1424,6 @@ static int z_erofs_decompress_queue(const struct z_erofs_decompressqueue *io,
- 		owned = READ_ONCE(be.pcl->next);
- 
- 		err = z_erofs_decompress_pcluster(&be, err) ?: err;
--		if (z_erofs_is_inline_pcluster(be.pcl))
--			z_erofs_free_pcluster(be.pcl);
--		else
--			z_erofs_put_pcluster(be.pcl);
- 	}
- 	return err;
- }
--- 
-2.34.1
+Why? You're removing the wait_for_completion_timeout() from
+geni_i2c_gpi_xfer() when is_tx_multi_xfer is set.
 
+> +		}
+> +		tx_multi_xfer->irq_msg_cnt++;
+> +	} else {
+> +		complete(&gi2c->done);
+> +	}
+>  }
+>  
+>  static void geni_i2c_gpi_unmap(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+> @@ -526,7 +545,42 @@ static void geni_i2c_gpi_unmap(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+>  	}
+>  }
+>  
+> -static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+> +/**
+> + * gpi_i2c_multi_desc_unmap() - unmaps the buffers post multi message TX transfers
+> + * @dev: pointer to the corresponding dev node
+> + * @gi2c: i2c dev handle
+> + * @msgs: i2c messages array
+> + * @peripheral: pointer to the gpi_i2c_config
+> + */
+> +static void gpi_i2c_multi_desc_unmap(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[],
+> +				     struct gpi_i2c_config *peripheral)
+> +{
+> +	u32 msg_xfer_cnt, wr_idx = 0;
+> +	struct gpi_multi_xfer *tx_multi_xfer = &peripheral->multi_xfer;
+> +
+> +	/*
+> +	 * In error case, need to unmap all messages based on the msg_idx_cnt.
+> +	 * Non-error case unmap all the processed messages.
+
+What is the benefit of this optimization, compared to keeping things
+simple and just unmap all buffers at the end of geni_i2c_gpi_xfer()?
+
+> +	 */
+> +	if (gi2c->err)
+> +		msg_xfer_cnt = tx_multi_xfer->msg_idx_cnt;
+> +	else
+> +		msg_xfer_cnt = tx_multi_xfer->irq_cnt * NUM_MSGS_PER_IRQ;
+> +
+> +	/* Unmap the processed DMA buffers based on the received interrupt count */
+> +	for (; tx_multi_xfer->unmap_msg_cnt < msg_xfer_cnt; tx_multi_xfer->unmap_msg_cnt++) {
+> +		if (tx_multi_xfer->unmap_msg_cnt == gi2c->num_msgs)
+> +			break;
+> +		wr_idx = tx_multi_xfer->unmap_msg_cnt % QCOM_GPI_MAX_NUM_MSGS;
+> +		geni_i2c_gpi_unmap(gi2c, &msgs[tx_multi_xfer->unmap_msg_cnt],
+> +				   tx_multi_xfer->dma_buf[wr_idx],
+> +				   tx_multi_xfer->dma_addr[wr_idx],
+> +				   NULL, (dma_addr_t)NULL);
+> +		tx_multi_xfer->freed_msg_cnt++;
+> +	}
+> +}
+> +
+> +static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[],
+>  			struct dma_slave_config *config, dma_addr_t *dma_addr_p,
+>  			void **buf, unsigned int op, struct dma_chan *dma_chan)
+>  {
+> @@ -538,26 +592,48 @@ static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+>  	enum dma_transfer_direction dma_dirn;
+>  	struct dma_async_tx_descriptor *desc;
+>  	int ret;
+> +	struct gpi_multi_xfer *gi2c_gpi_xfer;
+> +	dma_cookie_t cookie;
+> +	u32 msg_idx;
+>  
+>  	peripheral = config->peripheral_config;
+> -
+> -	dma_buf = i2c_get_dma_safe_msg_buf(msg, 1);
+> -	if (!dma_buf)
+> -		return -ENOMEM;
+> +	gi2c_gpi_xfer = &peripheral->multi_xfer;
+> +	dma_buf = gi2c_gpi_xfer->dma_buf[gi2c_gpi_xfer->buf_idx];
+> +	addr = gi2c_gpi_xfer->dma_addr[gi2c_gpi_xfer->buf_idx];
+> +	msg_idx = gi2c_gpi_xfer->msg_idx_cnt;
+> +
+> +	dma_buf = i2c_get_dma_safe_msg_buf(&msgs[msg_idx], 1);
+> +	if (!dma_buf) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+>  
+>  	if (op == I2C_WRITE)
+>  		map_dirn = DMA_TO_DEVICE;
+>  	else
+>  		map_dirn = DMA_FROM_DEVICE;
+>  
+> -	addr = dma_map_single(gi2c->se.dev->parent, dma_buf, msg->len, map_dirn);
+> +	addr = dma_map_single(gi2c->se.dev->parent, dma_buf,
+> +			      msgs[msg_idx].len, map_dirn);
+>  	if (dma_mapping_error(gi2c->se.dev->parent, addr)) {
+> -		i2c_put_dma_safe_msg_buf(dma_buf, msg, false);
+> -		return -ENOMEM;
+> +		i2c_put_dma_safe_msg_buf(dma_buf, &msgs[msg_idx], false);
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	if (gi2c->is_tx_multi_xfer) {
+> +		if (((msg_idx + 1) % NUM_MSGS_PER_IRQ))
+> +			peripheral->flags |= QCOM_GPI_BLOCK_EVENT_IRQ;
+> +		else
+> +			peripheral->flags &= ~QCOM_GPI_BLOCK_EVENT_IRQ;
+> +
+> +		/* BEI bit to be cleared for last TRE */
+> +		if (msg_idx == gi2c->num_msgs - 1)
+> +			peripheral->flags &= ~QCOM_GPI_BLOCK_EVENT_IRQ;
+>  	}
+>  
+>  	/* set the length as message for rx txn */
+> -	peripheral->rx_len = msg->len;
+> +	peripheral->rx_len = msgs[msg_idx].len;
+>  	peripheral->op = op;
+>  
+>  	ret = dmaengine_slave_config(dma_chan, config);
+> @@ -575,7 +651,8 @@ static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+>  	else
+>  		dma_dirn = DMA_DEV_TO_MEM;
+>  
+> -	desc = dmaengine_prep_slave_single(dma_chan, addr, msg->len, dma_dirn, flags);
+> +	desc = dmaengine_prep_slave_single(dma_chan, addr, msgs[msg_idx].len,
+> +					   dma_dirn, flags);
+>  	if (!desc) {
+>  		dev_err(gi2c->se.dev, "prep_slave_sg failed\n");
+>  		ret = -EIO;
+> @@ -585,15 +662,48 @@ static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+>  	desc->callback_result = i2c_gpi_cb_result;
+>  	desc->callback_param = gi2c;
+>  
+> -	dmaengine_submit(desc);
+> -	*buf = dma_buf;
+> -	*dma_addr_p = addr;
+> +	if (!((msgs[msg_idx].flags & I2C_M_RD) && op == I2C_WRITE)) {
+> +		gi2c_gpi_xfer->msg_idx_cnt++;
+> +		gi2c_gpi_xfer->buf_idx = (msg_idx + 1) % QCOM_GPI_MAX_NUM_MSGS;
+> +	}
+> +	cookie = dmaengine_submit(desc);
+> +	if (dma_submit_error(cookie)) {
+> +		dev_err(gi2c->se.dev,
+> +			"%s: dmaengine_submit failed (%d)\n", __func__, cookie);
+> +		ret = -EINVAL;
+> +		goto err_config;
+> +	}
+>  
+> +	if (gi2c->is_tx_multi_xfer) {
+> +		dma_async_issue_pending(gi2c->tx_c);
+> +		if ((msg_idx == (gi2c->num_msgs - 1)) ||
+> +		    (gi2c_gpi_xfer->msg_idx_cnt >=
+> +		     QCOM_GPI_MAX_NUM_MSGS + gi2c_gpi_xfer->freed_msg_cnt)) {
+> +			ret = gpi_multi_desc_process(gi2c->se.dev, gi2c_gpi_xfer,
+
+A function call straight into the GPI driver? I'm not entirely familiar
+with the details of the dmaengine API, but this doesn't look correct.
+
+> +						     gi2c->num_msgs, XFER_TIMEOUT,
+> +						     &gi2c->done);
+> +			if (ret) {
+> +				dev_err(gi2c->se.dev,
+> +					"I2C multi write msg transfer timeout: %d\n",
+> +					ret);
+> +				gi2c->err = ret;
+> +				goto err_config;
+> +			}
+> +		}
+> +	} else {
+> +		/* Non multi descriptor message transfer */
+> +		*buf = dma_buf;
+> +		*dma_addr_p = addr;
+> +	}
+>  	return 0;
+>  
+>  err_config:
+> -	dma_unmap_single(gi2c->se.dev->parent, addr, msg->len, map_dirn);
+> -	i2c_put_dma_safe_msg_buf(dma_buf, msg, false);
+> +	dma_unmap_single(gi2c->se.dev->parent, addr,
+> +			 msgs[msg_idx].len, map_dirn);
+> +	i2c_put_dma_safe_msg_buf(dma_buf, &msgs[msg_idx], false);
+> +
+> +out:
+> +	gi2c->err = ret;
+>  	return ret;
+>  }
+>  
+> @@ -605,6 +715,7 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>  	unsigned long time_left;
+>  	dma_addr_t tx_addr, rx_addr;
+>  	void *tx_buf = NULL, *rx_buf = NULL;
+> +	struct gpi_multi_xfer *tx_multi_xfer;
+>  	const struct geni_i2c_clk_fld *itr = gi2c->clk_fld;
+>  
+>  	config.peripheral_config = &peripheral;
+> @@ -618,6 +729,34 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>  	peripheral.set_config = 1;
+>  	peripheral.multi_msg = false;
+>  
+> +	gi2c->gpi_config = &peripheral;
+> +	gi2c->num_msgs = num;
+> +	gi2c->is_tx_multi_xfer = false;
+> +	gi2c->tx_irq_cnt = 0;
+> +
+> +	tx_multi_xfer = &peripheral.multi_xfer;
+> +	memset(tx_multi_xfer, 0, sizeof(struct gpi_multi_xfer));
+> +
+> +	/*
+> +	 * If number of write messages are four and higher then
+
+Why four?
+
+> +	 * configure hardware for multi descriptor transfers with BEI.
+> +	 */
+> +	if (num >= MIN_NUM_OF_MSGS_MULTI_DESC) {
+> +		gi2c->is_tx_multi_xfer = true;
+> +		for (i = 0; i < num; i++) {
+> +			if (msgs[i].flags & I2C_M_RD) {
+> +				/*
+> +				 * Multi descriptor transfer with BEI
+> +				 * support is enabled for write transfers.
+> +				 * Add BEI optimization support for read
+> +				 * transfers later.
+
+Prefix this comment with "TODO:"
+
+> +				 */
+> +				gi2c->is_tx_multi_xfer = false;
+> +				break;
+> +			}
+> +		}
+> +	}
+> +
+>  	for (i = 0; i < num; i++) {
+>  		gi2c->cur = &msgs[i];
+>  		gi2c->err = 0;
+> @@ -628,14 +767,16 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>  			peripheral.stretch = 1;
+>  
+>  		peripheral.addr = msgs[i].addr;
+> +		if (i > 0 && (!(msgs[i].flags & I2C_M_RD)))
+> +			peripheral.multi_msg = false;
+>  
+> -		ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
+> +		ret =  geni_i2c_gpi(gi2c, msgs, &config,
+>  				    &tx_addr, &tx_buf, I2C_WRITE, gi2c->tx_c);
+>  		if (ret)
+>  			goto err;
+>  
+>  		if (msgs[i].flags & I2C_M_RD) {
+> -			ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
+> +			ret =  geni_i2c_gpi(gi2c, msgs, &config,
+>  					    &rx_addr, &rx_buf, I2C_READ, gi2c->rx_c);
+>  			if (ret)
+>  				goto err;
+> @@ -643,18 +784,26 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>  			dma_async_issue_pending(gi2c->rx_c);
+>  		}
+>  
+> -		dma_async_issue_pending(gi2c->tx_c);
+> -
+> -		time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
+> -		if (!time_left)
+> -			gi2c->err = -ETIMEDOUT;
+> +		if (!gi2c->is_tx_multi_xfer) {
+> +			dma_async_issue_pending(gi2c->tx_c);
+> +			time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
+
+By making this conditional on !is_tx_multi_xfer transfers, what makes
+the loop wait for the transfer to complete before you below unmap the
+buffers?
+
+> +			if (!time_left) {
+> +				dev_err(gi2c->se.dev, "%s:I2C timeout\n", __func__);
+> +				gi2c->err = -ETIMEDOUT;
+> +			}
+> +		}
+>  
+>  		if (gi2c->err) {
+>  			ret = gi2c->err;
+>  			goto err;
+>  		}
+>  
+> -		geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
+> +		if (!gi2c->is_tx_multi_xfer) {
+> +			geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
+> +		} else if (gi2c->tx_irq_cnt != tx_multi_xfer->irq_cnt) {
+> +			gi2c->tx_irq_cnt = tx_multi_xfer->irq_cnt;
+> +			gpi_i2c_multi_desc_unmap(gi2c, msgs, &peripheral);
+> +		}
+>  	}
+>  
+>  	return num;
+> @@ -663,7 +812,11 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>  	dev_err(gi2c->se.dev, "GPI transfer failed: %d\n", ret);
+>  	dmaengine_terminate_sync(gi2c->rx_c);
+>  	dmaengine_terminate_sync(gi2c->tx_c);
+> -	geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
+> +	if (gi2c->is_tx_multi_xfer)
+> +		gpi_i2c_multi_desc_unmap(gi2c, msgs, &peripheral);
+> +	else
+> +		geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
+> +
+
+As above, it would be nice if multi-xfer was just a special case with a
+single buffer; rather than inflating the cyclomatic complexity.
+
+Regards,
+Bjorn
+
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.17.1
+> 
+> 
 
