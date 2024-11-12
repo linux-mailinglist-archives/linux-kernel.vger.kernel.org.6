@@ -1,64 +1,69 @@
-Return-Path: <linux-kernel+bounces-405467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5AA69C51C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:21:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882149C5211
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:32:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 780F81F231AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:21:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96D57B2C22A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E909320C03B;
-	Tue, 12 Nov 2024 09:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CCC20CCFF;
+	Tue, 12 Nov 2024 09:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="NSPJ3oVX"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="vICjfThp"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7851D20C01C;
-	Tue, 12 Nov 2024 09:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20A720822B;
+	Tue, 12 Nov 2024 09:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731403265; cv=none; b=dXJk1P3wLi5FHL18zgJ4Mt6P0IrBizC4khmqjxqVt7I9+x3itMrF/ZEeh79/EVTQRiiES2y3Ru074rdE1R9Lnz1Zy+s6253fNyrEpR5mAsybtLSmc5L7ssj1//PFpn5rkIOynyTo2RfRHLMtK1CUAOxKr1TgXFEVkSxV8NxIQk4=
+	t=1731403297; cv=none; b=s1VTZQuOZwO9PnDDQv64K23xmTxzjLrXxhiUjkovEmLtUaWdPk3koY2mgzNFRLON8X2pzUoxwsgNsW0VctlwJspb3uFgbGaLPArJ+LYVW6GClMfF+WQi0obI6qxxjG9V80COjrxHKsceikH9wOFGQ1kOaPdD622Yq+lJqze7/cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731403265; c=relaxed/simple;
-	bh=X0nkcWscmQlrmf+TLY0Wg9gFcUpK0Cen4YMwGoVDmeY=;
+	s=arc-20240116; t=1731403297; c=relaxed/simple;
+	bh=q6sUNujCAGQ84ZsUtouhoj460+E/ZoNqg/e8MU8HfMI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cJEA6Qva/srpE1cb9DN50FdE8CKbSLb9nOmMPo3ESy4kDdBLjTIrZEdxhCyZvDMIto7GPARRG4+spmys/6HErIXpWgl2bdPx96jPl6V3SwqZjQQnR2+Tfjhr4GKAU8pNo9K/aytQsn27mdGThbd5aua1YEaXxxlYSH7tw2kqs+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=NSPJ3oVX; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 8714F1FA05;
-	Tue, 12 Nov 2024 10:20:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1731403259;
-	bh=nqTjLk1zD6oeEo+651Nbriswu6CCF85fypmhG0chddQ=; h=From:To:Subject;
-	b=NSPJ3oVXgNMobw7T+l2Hku9TkGxCiTqJdgAI4bhJFLR+/7GBaNWzVcJc2OHxi+jhd
-	 eS5NBfYRXfeB/c4L1T8+1iI7/DOR0QzWps2Dar7yw/mR8VebEwukyu+zKkKLy/a19Y
-	 lj4ISO32bml8ylATCB8ThOn2GRpHZoPqiFjxohKUFRseWRksJWfZDlif7iIl/+nW0u
-	 UdpbMzg+paTWriTKQw+FePelFAPwZ6WO0BG5+DqbD1qxvovo4EtrsFGo3HTZw1EyCD
-	 D55R9dwj/KQaeCimXmeqqjDxWoFRN15B9HJelZY5soybi4pkkq0Jh1URdKnU731rgm
-	 TXWjYwdLln1SQ==
-Date: Tue, 12 Nov 2024 10:20:54 +0100
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <frank.li@nxp.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
-	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-	Adam Ford <aford173@gmail.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Mark Brown <broonie@kernel.org>, ulf.hansson@linaro.org
-Subject: Re: clk_imx8mp_audiomix_runtime_resume Kernel panic regression on
- v6.12
-Message-ID: <20241112092054.GA18139@francesco-nb>
-References: <20241007132555.GA53279@francesco-nb>
- <20241112075958.GA8092@francesco-nb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M9sOxv1FpiIytEZQQUVSYchGX/s5R7FqUtcS/AuzoqoXEM0gpYJ+QE5riWxh51b73RrBMlZo5HXjojaVLT/oU2Qjg0wgyE3/Eu92C+BufF8qS5eQVkZFJVms8qMOpCKbXEobY8dYtd/XR9acAGD+KfIHlx0Qz5r85QcqMi28qIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=vICjfThp; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1NDuG/Ek6UwySU5b5S9VUet0r8r0uWRHJmv4yhmBVac=; b=vICjfThpB44W/UUdv+m/03XqST
+	kRqQU358wC2WI5j6oEd8cUW80bnT9aTrEjBnSdiEqtH9kn/nqh5uOjLmdrECxfhHGwxIKJRv2VjKA
+	kJsiVla4+ogKtXR0sRTSMZOpq/9MZDHLtEa7ZyN1o52dpwrgQYqlFtoGndKN73UvlH9q6I04malso
+	YD0niXMR5e9Eq8FUasGM64qwKva0Ng3OiLSGnfmSRbysk4YgIgPltJZqyVwdAdfLuSQIIOClBjyEN
+	YJlpdPb3vaVmHC/F216LKeiYlWD01YisBirqDKOCCFCFXygPQYq4I9MIGEKy24RicEwfCEirNJinm
+	PlBeVOlQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59910)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tAn5P-0003oM-2J;
+	Tue, 12 Nov 2024 09:21:24 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tAn5M-0007LA-34;
+	Tue, 12 Nov 2024 09:21:20 +0000
+Date: Tue, 12 Nov 2024 09:21:20 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
+Cc: andrew@lunn.ch, gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, salee@marvell.com,
+	dingwei@marvell.com
+Subject: Re: [PATCH 1/1] arm64: dts: marvell: mcbin: fix PCIe reset property
+Message-ID: <ZzMeELwScAMdrkQ6@shell.armlinux.org.uk>
+References: <20241112072049.765097-1-jpatel2@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,27 +72,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241112075958.GA8092@francesco-nb>
+In-Reply-To: <20241112072049.765097-1-jpatel2@marvell.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Nov 12, 2024 at 08:59:58AM +0100, Francesco Dolcini wrote:
-> On Mon, Oct 07, 2024 at 03:25:55PM +0200, Francesco Dolcini wrote:
-> > it seems that an old regression is back on v6.12, reproduced on -rc2
-> > (not sure about rc1).
-> > 
-> > The original report is from https://lore.kernel.org/all/20240424164725.GA18760@francesco-nb/
-> > and it was fixed with https://lore.kernel.org/all/1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com/.
-> > 
-> > Is it now back?
+On Mon, Nov 11, 2024 at 11:20:49PM -0800, Jenishkumar Maheshbhai Patel wrote:
+> Set reset gpio to active high
 > 
-> I was able to reproduce this issue once more, this time with 6.11.7.
-> As I wrote in another email the issue is not systematic as it used to
-> be.
+> Fixes: b83e1669adce ("arm64: dts: marvell: mcbin: add support for PCIe")
 > 
-> Any idea?
+> Signed-off-by: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
+> ---
+>  arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi b/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> index c864df9ec84d..a8c732a47360 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> @@ -181,7 +181,7 @@ &cp0_pcie0 {
+>  	pinctrl-0 = <&cp0_pcie_pins>;
+>  	num-lanes = <4>;
+>  	num-viewport = <8>;
+> -	reset-gpios = <&cp0_gpio2 20 GPIO_ACTIVE_LOW>;
+> +	reset-gpios = <&cp0_gpio2 20 GPIO_ACTIVE_HIGH>;
 
-Frank, Shengjiu, could it be that the udelay(5) in imx_pgc_power_up() is
-too short and therefore we have such non-systematic failures?
+Is this change due to switching the driver to use the reset controller?
+If so, NAK to all the changes - DT files are meant to be forwards
+compatible (older DT are supposed to work with newer kernels) and it
+would seem this would break that rule.
 
-Francesco
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
