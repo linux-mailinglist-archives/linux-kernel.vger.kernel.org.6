@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-406163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9B69C5B9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:15:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC019C5BA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:16:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1154F2831C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:15:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC211F21767
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9671FF7BF;
-	Tue, 12 Nov 2024 15:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D88200B80;
+	Tue, 12 Nov 2024 15:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="m8CVMls3"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="O+q0NhC5"
+Received: from pv50p00im-ztdg10011901.me.com (pv50p00im-ztdg10011901.me.com [17.58.6.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A9043AA1
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED2C2003D5
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731424474; cv=none; b=PVm28xeUN2P2csKEiru+ZvfdiyHCjUwjcDUChprlZr8GzU0rAubY8rXX4rmGC9GNAkPSVRuSaielY6uj5tB8q+hUzfAgyu1oAZcA4TLlrvMB5POECRdPINgcHAeUkOI5F+5tNw1/olTktAzkk1JRByLhhJcT3nKnyzRLv7jPWyw=
+	t=1731424532; cv=none; b=sofJGuTI6DSK8hnbwr83w5zb3YuuWCDVOwDPBBiWMVFl0IK/TBVnBrISxtEWkDA2ldeOMyfDEU4vMdgrhYAyg9rMoJ5tS9QRDQ4DdFItbeXgErvLW8MKEmwVBWIUyQ7DF4WFlsgCpNyQ46RkiZvNfn6LEVnLzmgMT/s98oYHQKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731424474; c=relaxed/simple;
-	bh=b2KM3R1Q5tQG+JKB9eoj1tjOdl35CzW7T7sGig8ZyQ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RJK2UGZ5LAoA4S+RAic0o+F8XFpdwGlutmDcB5hLKsK8hHaii6ZxxsmL+M5L5+48TdDcWmhzVFroZBUTLaQFgktG12exIfq5N1zemx28qfqjvPGH5fQ1Vd3N1DoXp86XUQ55yYrYn7M7KFsSASPFfoan1/XJhPxUl5zezcogCfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=m8CVMls3; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-28cdd9d8d01so2957330fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:14:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731424470; x=1732029270; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZMz623KukwCRCwVdjpn5ENIcLZ5bWxNUSBajZwamIfs=;
-        b=m8CVMls3qPXS5X0gxPKc+sUz0i93RXeB/trkUqPNNMIkZ/X7cEqqC3gnwVQCMf/9zP
-         9iTngcAMrrETBwE5+JB5uzrz/VeSXcG8ckHh6qZ8lgRYBir3xNIhBHqFnBd/cL0i+p0g
-         3kUvqoedmF7z1NuS8vxnVXycECFlwhJYJE/RcA/vU9nnViv1gpdS0n5JvpF9PK2jFvpJ
-         Cj4wTTFpov3HnXtNz5ZFJ3QJLaDpyS9X2y7HrWaoienTTgkHSl4pMbLART6xBLRi8tDO
-         q3SU61Hf5cqv0WNfutU8ZW9FhrhAEggvkLvMdLCrA3bziIQdfOzNgTWu1r8ZXqlrvsSs
-         I81w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731424470; x=1732029270;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZMz623KukwCRCwVdjpn5ENIcLZ5bWxNUSBajZwamIfs=;
-        b=ckZ1GWhZ6xgcVpd3YeGHPAmiTofIU2cL4UBbJ+r7nmWyTTkOlcG7bJk+58hjhW4e2q
-         GoCgfu9SCVbDeyH7hiWKkPOqx9eE6LWPoftRjZbikCGJTiIwbzN9hoy1Wxm07i2MGWEZ
-         I30jDZQhUQinnYDR3zd7c28bmyViTwutVPoD2RuVPmjF9dFCbatLiE/JE7W48y/WXDt3
-         Sqjd4sXqlOtVRJS48UTjfREcEE5MbDE3ZeNIGSBJN4pPa/jMjjY7FDAXT1PPBq1FFr7l
-         gpLWPDQMXBNe/zHD3P2upcpHlomrSrr+ppDcwvlogXqK/wcMuePBAY/GMYI6eKWkLuZ8
-         az3g==
-X-Forwarded-Encrypted: i=1; AJvYcCV/gUXWRcWjv6Ku8AaT9ZT0aRRj6q+tVcca/D7v6v6j4rNZQbmTQB+v4CnPjlsVBJ+AVZuWe5BSeeRL6jM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR48Bnobso5GrU8c8cgzdyHLhv4J3NdyWH+FjPJgcORaBq3s2j
-	FoxG5Bhm2pTzoYN1skgmqkqqDrPj3yvWsKuMpa8dB0K6kFtT8/+3U8ibZr7G+qvSqgHsv//Q+fl
-	NwOM=
-X-Google-Smtp-Source: AGHT+IHT/p345mEZBMk5iEPlL4UdfBp49t0367lnxgs3ykjFrEFDJjYG+ulQ12gnvLQ/q/yMlk8/Ag==
-X-Received: by 2002:a05:6870:1d1:b0:278:3de:c8de with SMTP id 586e51a60fabf-295cd08c5cdmr3167596fac.24.1731424470364;
-        Tue, 12 Nov 2024 07:14:30 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546ed7ab3sm3542727fac.42.2024.11.12.07.14.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 07:14:29 -0800 (PST)
-Message-ID: <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk>
-Date: Tue, 12 Nov 2024 08:14:28 -0700
+	s=arc-20240116; t=1731424532; c=relaxed/simple;
+	bh=/SKsG+DPlDXd4H4lkEVlrdtGk0N07IDuhAp3EdF+6IA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YMWfgXt17uNcegGO/ZOxUqU1EA1hfbDSbwpm6/Rp5dskgZ5Jsu9Oxw50mG+Ur9GKwAg3SEwO79R9bytY/dplW5BIE3JMxHpvALn26PjRtBhCwtCAgzimAU0goyxui1Cb0P8V09slZ5EvqVqmWqa7+99vDIax6q0mxWgijCyip4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=O+q0NhC5; arc=none smtp.client-ip=17.58.6.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1731424530;
+	bh=k2JOSRBRsqmpWpGJa5UvRFiQHBKoGOzxBeKlHNvbkPw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:
+	 x-icloud-hme;
+	b=O+q0NhC53PoNX6YUtlhYinEDc0Oyj+v7IdcnpiGuXF82dFjmPlnRrRtpF8L8t0/UQ
+	 pnLC01YIz0n7Mo4XL+3Dukmtf78jkknbH9s67QfmKAuHoy+3eBskPFrdSnB6P1mYKi
+	 Shwx/6Xj0UzLOx0O/b4xDfdBLjmlmcBkP5Yd2mzhNOdIQMFlZuZ5zHyEN5sA3hDQf3
+	 ovUC6VGIJip349cVriSYHvqmsDJuftQcCPoj1cSdImFlmE8AxAcLYNBAAPyfLWoPVy
+	 l0YNAzs4F4fhVhu1sE5ZuMaa3MwljivUCAwW/booy8eEyXYTBxw4m2apTAJWhdUvOO
+	 YlWU4mmjY5XTw==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011901.me.com (Postfix) with ESMTPSA id 913EB3A03E4;
+	Tue, 12 Nov 2024 15:15:26 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH v2 0/2] driver core: class: Fix bug and code improvements
+ for class APIs
+Date: Tue, 12 Nov 2024 23:15:11 +0800
+Message-Id: <20241112-class_fix-v2-0-73d198d0a0d5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
- linux-kernel@vger.kernel.org, willy@infradead.org
-References: <20241110152906.1747545-1-axboe@kernel.dk>
- <20241110152906.1747545-9-axboe@kernel.dk>
- <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
- <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
- <ZzIfwmGkbHwaSMIn@infradead.org>
- <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
- <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
- <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
- <ZzLkF-oW2epzSEbP@infradead.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZzLkF-oW2epzSEbP@infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP9wM2cC/03M0QrCIBTG8VcZ5zpDZbPZVe8RI5zTdqC0PCXF8
+ N2zQdDl/+PjtwC5hI5g3yyQXEbCGGrITQN2NuHsGE61QXLZCsFbZi+G6OTxxbzYqXHSbjRSQv3
+ fkqvzah2H2jPSI6b3SmfxXX9K96dkwTjrea+U11q3pjvcn2gx2K2NVxhKKR8VIvLopAAAAA==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Proofpoint-ORIG-GUID: xppyJXySun7Z1BkdHVzLW3M45YMtGZly
+X-Proofpoint-GUID: xppyJXySun7Z1BkdHVzLW3M45YMtGZly
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-12_05,2024-11-12_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=545
+ mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2411120122
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-On 11/11/24 10:13 PM, Christoph Hellwig wrote:
-> On Mon, Nov 11, 2024 at 04:42:25PM -0700, Jens Axboe wrote:
->> Here's the slightly cleaned up version, this is the one I ran testing
->> with.
-> 
-> Looks reasonable to me, but you probably get better reviews on the
-> fstests lists.
+This patch series is to
 
-I'll send it out once this patchset is a bit closer to integration,
-there's the usual chicken and egg situation with it. For now, it's quite
-handy for my testing, found a few issues with this version. So thanks
-for the suggestion, sure beats writing more of your own test cases :-)
+- Fix an potential wild pointer dereference bug for API:
+  class_dev_iter_next()
 
+- Improve the following APIs:
+  class_for_each_device()
+  class_find_device()
+
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Changes in v2:
+- Remove both fix and stable tag for patch 1/3
+- drop patch 3/3
+- Link to v1: https://lore.kernel.org/r/20241105-class_fix-v1-0-80866f9994a5@quicinc.com
+
+---
+Zijun Hu (2):
+      driver core: class: Fix wild pointer dereference in API class_dev_iter_next()
+      driver core: class: Correct WARN() message in APIs class_(for_each|find)_device()
+
+ drivers/base/class.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+---
+base-commit: 9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
+change-id: 20241104-class_fix-f176bd9eba22
+
+Best regards,
 -- 
-Jens Axboe
+Zijun Hu <quic_zijuhu@quicinc.com>
+
 
