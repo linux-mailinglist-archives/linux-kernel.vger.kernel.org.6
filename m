@@ -1,112 +1,78 @@
-Return-Path: <linux-kernel+bounces-406761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B02C49C6384
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:37:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD899C638D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7492E285079
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:37:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406F9284A90
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE9521A4B9;
-	Tue, 12 Nov 2024 21:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A66B21A4CE;
+	Tue, 12 Nov 2024 21:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJ+ErNK+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgWIf6nu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9412204930;
-	Tue, 12 Nov 2024 21:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E176421A4AD;
+	Tue, 12 Nov 2024 21:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731447449; cv=none; b=QqhjRDczpE/jdx6oaCbF5DlSXKDHlMLuqurEimcyrTa0XCyy+4YRDR7m+HBqvb5Zh26p/ce5yeHF7iyUHIRXLyqv7DTBxxHPuicp8jtq7jbk2/yc3KdEVCyJUIrPmPTSCnlQ4jypBd2zAWqLtjWAFTjhKuGmZK5Ex4k69FktENY=
+	t=1731447508; cv=none; b=dzwyuc4cTiURUpdlWn0CCOUORITiaB42AxKjSr4JKuaJpPvzvt8FtTVpNoqYTgdIBv1A9odOdvd+2kc2OoGV83uD2zOEm4+a7SPD/ihVNIuGd3pUdbw++mn5nuYi7JVXzD93D2S0btjRhxcyiDS7qvNOPG5vurtbcvqDHnX6R50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731447449; c=relaxed/simple;
-	bh=lZl3O4OaN8VLN+d/4PXg/BbsljeYpKRWf3B0Ywm3OPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gPwjoqF4QsOCC4P6FVktVBsETF7e5KCo17olll/tCz/PISCySHMI+LvEKzpcmgHg69h7wWufNIO/vrgDM+wpJxq5UybiKhZCOfg0Dg/0NqCVB5//p8zW1+0AeyT01+Z1ey027l+4TeQiwYdffG/J0ZDvwag6aMZ6f8fDJKefnNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJ+ErNK+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0426CC4CECD;
-	Tue, 12 Nov 2024 21:37:28 +0000 (UTC)
+	s=arc-20240116; t=1731447508; c=relaxed/simple;
+	bh=gEN8uXETejN0E4QO3cZhAuE7L6ECcR/9dXB6mbXEnzU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=hYdGR8GbgWQ6mUYG/C8Dtv6dUaFslN9k0Y9qI5B0YUf+RTVV0m7ccnrDpTJQ/B0QRT0waJj/JDY4u8FmkCvqDDf5gHiNQ3Q+0FncKP1V9pnvEzFLK09BkaWq+OTx2BWLOGIQ/FipJ1cWvKgNBkzY7xD5lYJ9ZCSJORh0s1Bpc5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgWIf6nu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9D0FC4CECD;
+	Tue, 12 Nov 2024 21:38:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731447449;
-	bh=lZl3O4OaN8VLN+d/4PXg/BbsljeYpKRWf3B0Ywm3OPQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UJ+ErNK+T0TDxgPGhvB7PkdRX8STjXXXVxnULzn6grDSF0NCrBOCDiYb/kW6b3w+i
-	 Qm272rewCc8KWGm37SCmRMJMs+E0fl+W3pUbyZ+yWm2oiiBqzzp0tmmXCUz4txz927
-	 zqoRb7XQrsXqn2YOUx8CwmBOkz9ViSBLrmZn2ryAkSiKHeSeixL1ZwrSph3LDIl96r
-	 iHfZktBz6a/jOuCHR4+MBDHwAD177iGoSdcPKOyzpnk6HwvkYdJlJE7g94ZqJIhJg2
-	 U0wjJ/nlChYXfyUPzun10DqA6sSWBTlvqdU8zsHR3u+QaAr9tW+kFAHd83T6Bq/BJn
-	 O06kQCWMBQF7w==
-Date: Tue, 12 Nov 2024 22:37:26 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Zqiang <qiang.zhang1211@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Uladzislau Rezki <urezki@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 2/2] rcu/nocb: Fix missed RCU barrier on deoffloading
-Message-ID: <ZzPKlujDt20gMkY3@pavilion.home>
-References: <20241106153213.38896-1-frederic@kernel.org>
- <20241106153213.38896-3-frederic@kernel.org>
- <68c39e33-6281-4978-ba4e-131c6336aa7e@amd.com>
+	s=k20201202; t=1731447507;
+	bh=gEN8uXETejN0E4QO3cZhAuE7L6ECcR/9dXB6mbXEnzU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=UgWIf6nuv8LYbGT5QxugQAtyvXcjPGcD02dtwO+emTcU1sQpuv5kf8bf4vY9Uj+xn
+	 MKfVy6eGD8zKa0it1NXlziv5CjIvsN3uksncddBEaE3BdrZWzDKVTAe/dYlJ/UrkVH
+	 omqTY/+G6Uh68tpKkdn0MsAOZO0bCW/t+kWStIsU8wNaDsqAwqIEduzJanoAbcl9As
+	 dwWphg6PSr3iJE3BF4kY5zryVBLGY1r/GcGq9JSn/3g4Hc3VcC9AZmBFXZ5+lFZPDt
+	 I0OW5FdvWlfxsH53dIcpDkcE4EDYNFH8fY7S8bUYIrmcHQUI1oFmzwrpI29W73qjkJ
+	 Dzb9M0IH3Q+QQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34BE73809A80;
+	Tue, 12 Nov 2024 21:38:39 +0000 (UTC)
+Subject: Re: [GIT PULL] Landlock fix for v6.12-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241109194158.422529-1-mic@digikod.net>
+References: <20241109194158.422529-1-mic@digikod.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241109194158.422529-1-mic@digikod.net>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.12-rc7
+X-PR-Tracked-Commit-Id: 03197e40a22c2641a1f9d1744418cd29f4954b83
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 92dda329e337b7ab9cb63f4563dd7a21d001e47c
+Message-Id: <173144751773.678506.5852131497022270582.pr-tracker-bot@kernel.org>
+Date: Tue, 12 Nov 2024 21:38:37 +0000
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Daniel Burgener <dburgener@linux.microsoft.com>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <68c39e33-6281-4978-ba4e-131c6336aa7e@amd.com>
 
-Le Mon, Nov 11, 2024 at 01:07:16PM +0530, Neeraj Upadhyay a écrit :
-> 
-> > diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-> > index 16865475120b..2605dd234a13 100644
-> > --- a/kernel/rcu/tree_nocb.h
-> > +++ b/kernel/rcu/tree_nocb.h
-> > @@ -891,7 +891,18 @@ static void nocb_cb_wait(struct rcu_data *rdp)
-> >  	swait_event_interruptible_exclusive(rdp->nocb_cb_wq,
-> >  					    nocb_cb_wait_cond(rdp));
-> >  	if (kthread_should_park()) {
-> > -		kthread_parkme();
-> > +		/*
-> > +		 * kthread_park() must be preceded by an rcu_barrier().
-> > +		 * But yet another rcu_barrier() might have sneaked in between
-> > +		 * the barrier callback execution and the callbacks counter
-> > +		 * decrement.
-> > +		 */
-> > +		if (rdp->nocb_cb_sleep) {
-> 
-> Is READ_ONCE() not required here?
+The pull request you sent on Sat,  9 Nov 2024 20:41:58 +0100:
 
-No because it can't be written concurrently at this point. The value observed
-here if kthread_should_park() must have been written locally on the previous
-call to nocb_cb_wait().
+> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.12-rc7
 
-Thanks.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/92dda329e337b7ab9cb63f4563dd7a21d001e47c
 
+Thank you!
 
-> 
-> 
-> - Neeraj
-> 
-> > +			rcu_nocb_lock_irqsave(rdp, flags);
-> > +			WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
-> > +			rcu_nocb_unlock_irqrestore(rdp, flags);
-> > +			kthread_parkme();
-> > +		}
-> >  	} else if (READ_ONCE(rdp->nocb_cb_sleep)) {
-> >  		WARN_ON(signal_pending(current));
-> >  		trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("WokeEmpty"));
-> 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
