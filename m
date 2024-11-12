@@ -1,756 +1,468 @@
-Return-Path: <linux-kernel+bounces-406610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 022709C6164
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:25:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E779C615B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:24:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 867EF1F23175
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:25:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B50851F21B8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB81321949E;
-	Tue, 12 Nov 2024 19:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CF4219E38;
+	Tue, 12 Nov 2024 19:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="JAtIVvuO"
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PZgxswnj"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694871FEFCB
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02A8219E24
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439517; cv=none; b=FB628LrMMbzdi4BWg3+VqIDbu5OtlrMQNPDVzu+1EQ1KoXSUY8qtkhJ+pKWvBHxGZe/nAonPc24cKrdw1cZG1Ixi7o9TKN7tS7Yjjrpel3ZPCidzvPvftOhyZ3wEirzlL27c+Mc2xE5hVJ55oN5B+0nWnzX+udUXiMm6hRs2NkY=
+	t=1731439306; cv=none; b=L9N/tDHsGUMZCzJYOjVz9Tmm0RS57hbzCKrbIb4fIk5PY2eYt+V3/6UcrPukA/b/53HLr5DxMViG2cqCxReAugBQ8WpHulMPYGHpWo6trQ5Ygb1S6uT+1dt9fEaJksxCkSM2UDkFAbCoqqBrITHmCTKYuYNuzPCIh1MxKJIKCjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439517; c=relaxed/simple;
-	bh=YFD5FN+7YLa8F3GAqEjBx0mr37qvdEJmwA7HiSOzhGg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GA4wLf1hwk7lCIkzM8pPd8L9xGDkwG0W6QDWZldziNV2+fzj4Ola5D1Niq3uvNjBhI4twAWwUekveAkwwicrji5T6QDo8HBrTfrx46w2kmycXe/VqQVOhGb4OkTX49UEvKsZ8nu7MFCCOyx/d9Yz58fxEdFi1y/URfFZmtB7LDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=JAtIVvuO; arc=none smtp.client-ip=84.16.66.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Xnx725jHrzKMD;
-	Tue, 12 Nov 2024 20:19:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1731439166;
-	bh=bvTdCc0E+I9qLTspFx/fKqlU6pECXZowjya0LuxzuX8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JAtIVvuOxBUwW5sWpNHARR34tCexPD/ETX9sSo0SAZoG1zMYGu89xiyOxmQ6RE+3N
-	 biPyDE+iPLtCl38lbEUqt2+vf8v0kBiyDXx6AdTvcZIlczfkr+6vL78zCziTGFKmA7
-	 pH5bXVWB4UKs3rvZsiUt0QTzoqc9nSVpD2Wt3q/s=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Xnx712BxTztkh;
-	Tue, 12 Nov 2024 20:19:25 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Serge Hallyn <serge@hallyn.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Alejandro Colomar <alx@kernel.org>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Christian Heimes <christian@python.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Elliott Hughes <enh@google.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Eric Chiang <ericchiang@google.com>,
-	Fan Wu <wufan@linux.microsoft.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Jan Kara <jack@suse.cz>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jordan R Abrahams <ajordanr@google.com>,
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Luca Boccassi <bluca@debian.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Scott Shell <scottsh@microsoft.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Steve Dower <steve.dower@python.org>,
-	Steve Grubb <sgrubb@redhat.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-	Xiaoming Ni <nixiaoming@huawei.com>,
-	Yin Fengwei <fengwei.yin@intel.com>,
-	kernel-hardening@lists.openwall.com,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v21 6/6] samples/check-exec: Add an enlighten "inc" interpreter and 28 tests
-Date: Tue, 12 Nov 2024 20:18:58 +0100
-Message-ID: <20241112191858.162021-7-mic@digikod.net>
-In-Reply-To: <20241112191858.162021-1-mic@digikod.net>
-References: <20241112191858.162021-1-mic@digikod.net>
+	s=arc-20240116; t=1731439306; c=relaxed/simple;
+	bh=GHzaBYuHOU+ykK86bYoizo+ip8yRn07DOvalhHIjFWQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WBn2W3/xg4Pe2cHIHMEH2+97O/Y/tGcVskdsif5iEw4SIo6Y6DRrzXX7UaG614de1h3OwbqtLBObjyej8KTVRZjj6aJzNhHxwtAyLpDf0zvNwESEFa8U3t4MbRvsaL++rP3w2wil+Sdy1tXq394UkUmM2+7BxtvC5dz0YZzBzcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PZgxswnj; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ee7e87f6e4so4487313a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:21:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731439303; x=1732044103; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=W8E8hvRUbANQxvdQA+FQn+tu9MYQOb26X7vdR/xDtMY=;
+        b=PZgxswnjkeJFIFbNS1cZhBP/4JPP4Msb7eWm/Oi0m/z60KjwvzAZgkbbRwpb3gWWpU
+         Vcu9syUNDCqIA77dB/kATpNI8viQSr0lyqnz3lFs1hoyajnwooEs+Gj/FM7O03Rfy4y3
+         R22Sor90ShLHMaOaJJnr8uWfDKZzlR5J9WAfX3C1Sea828aYul6+d6pS9jLihcGKUbUA
+         3sHFYEe1+lUidI+vqDiZXAW54pj3BvLU6MAHTlW2ttwxYSr3JLSoriqjrkarzdpFsLhs
+         ebWMjQMAe4qbBVwhvRd2jHFfztkuVkk0CvQummoYjtdD5ZWOLYZ21/8NkfmnBu+vbiDs
+         mCQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731439303; x=1732044103;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W8E8hvRUbANQxvdQA+FQn+tu9MYQOb26X7vdR/xDtMY=;
+        b=vHbFCN2zgJwsZ4pT8sNX23ey0u5b0HFzc3ORBrS2I8bfMOrd29efWrTjSLCuN5XTS0
+         zcNFNtE2NOKFnZkhJvXCEttQKKY3RaI1AQLsSOA77lvIZlcfjNAkgPOW6ufBS3xdiNqZ
+         INB6/kSJSxmqPKxVf8GKUDCs31lkvlhgvi3Oot99ZZnPd89gS7h60IRv2AnllGR7hw4j
+         xJ0A/zNIKXlwN+dZdzW1N7ZnPJEKn5/BxMbMra/RYHLcFT+jhl9/HHeyRk6Y4iTt8Zc5
+         6Vu5dmtHv0os7bhak2/hRWkrhjfnX1m1OgAb6cfJQpgALYEBaeu+Tg0XV3ZKdcqQcNgX
+         Zpsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjBbpW/xeMpZfAm9dHe597hsChZn0H3/rp8CSqcBl155XEWgeTOAl3/SqFmFHvoMNUrf4k160q/gyW9GI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIZ83sGnS3z9gXKn0/d0oS2Xvr6Qm5v054wv7i6FqvQqoDnGRU
+	66qmx429h/UWVfR5O9SVfg7Y6Pwo5j2WFLRkG26jrXzI8IXKoHjUZsldfFYtUYLWW4RqzUuWget
+	5oPqlJthl8EvLV7uWehRAkd8rdpMAJGYhncxh9g==
+X-Google-Smtp-Source: AGHT+IFxvsUZbRq6EBtiU4eI2evzjD88r74nk+AjKhdkZj9oL44QuKfvXT1iJBItUh7aJXP7Hr1lnN3+lnV2Bq1t860=
+X-Received: by 2002:a17:90b:2dcc:b0:2e2:e6bf:cd64 with SMTP id
+ 98e67ed59e1d1-2e9b16e66fcmr21666806a91.5.1731439302973; Tue, 12 Nov 2024
+ 11:21:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <CALE0LRvJ-n77oU=O9__NdSLw2v33zMK+WYkn2LcwWMwHCbohQw@mail.gmail.com>
+ <CAC_iWjJEXU+dodjvWQYM9ohPa3P2p0bFG=exGoi-iYFrLLbCTA@mail.gmail.com>
+ <CALE0LRtUz8hd4pdR9sX2Sb6tOn=K4wkRnGG9B7f72qU8JFQSYQ@mail.gmail.com>
+ <CAC_iWjJLSSTO0Ca7rgOWAHfWzbkBkKHkQedRUbcwsoU0dtrsGA@mail.gmail.com>
+ <CALE0LRvN3tYgWig1XnCiAZvdzE8x=cdLanGxbUvpPr5nfexSPQ@mail.gmail.com>
+ <CAC_iWjL4mp-sTsp5a+yFkUauXuMvZ1yoTAk_60nm-CCKUgwayw@mail.gmail.com>
+ <CALE0LRsYXXaao2uCUMFkd8Y6f5Mxgoc-Qpft_y8wWW3ZiekbbA@mail.gmail.com>
+ <CAC_iWjL+J9tNxEdh0AoYD19h013N4nk=KmaT=RACo4-oVwuRCA@mail.gmail.com>
+ <CALE0LRu2oDSo6KOhO2fTDMiqX7iqjqNjNGD_67MJFS7BJWqT_w@mail.gmail.com>
+ <CALE0LRvFT3fDdoBLXHK2e47cibD02pxXAuZ83rTqEfrzU3HnKA@mail.gmail.com>
+ <CAC_iWj+STZib+VOZrQtZk95skWzyLqe7_HpNM60G6axNa3Lnnw@mail.gmail.com>
+ <CALE0LRsqc6L9EunhOyvyOR_KgG28zb10YBR1qN2qgZ9iJvaHEw@mail.gmail.com>
+ <CAC_iWjKLqDFb1wSUQ1uMqOfbeRtzGNX9gyTHtQy5-71WvBiiLA@mail.gmail.com>
+ <CALE0LRt7cwwwQ0Rh+0qJsUzTsNULEQSYgAoviQp5F5SXeJk8LQ@mail.gmail.com>
+ <CAC_iWjKkdS71Fh3LZ0CJR-vnC+PwGKGndxjU3WjjUPnZ84DYWg@mail.gmail.com>
+ <CALE0LRt2ct8onNyPvTNzy3Ps1kqduqx-OMmnQse-SXsk5M451Q@mail.gmail.com> <CALE0LRsA==Art8xqRQfPQq0HP6ebtYTuQ677t-BV7fDZB3grWg@mail.gmail.com>
+In-Reply-To: <CALE0LRsA==Art8xqRQfPQq0HP6ebtYTuQ677t-BV7fDZB3grWg@mail.gmail.com>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Date: Tue, 12 Nov 2024 21:21:06 +0200
+Message-ID: <CAC_iWj+4G3LG0XpsygS+MYJU9+oPhftOnPAfkOnEgn+GgTp2OA@mail.gmail.com>
+Subject: Re: optee-based efi runtime variable service on TI j784s4 platforms
+To: Enric Balletbo i Serra <eballetb@redhat.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Sumit Garg <sumit.garg@linaro.org>, linux-efi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	op-tee@lists.trustedfirmware.org, Manorit Chawdhry <m-chawdhry@ti.com>, 
+	Udit Kumar <u-kumar1@ti.com>, "Menon, Nishanth" <nm@ti.com>, 
+	Masahisa Kojima <kojima.masahisa@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add a very simple script interpreter called "inc" that can evaluate two
-different commands (one per line):
-- "?" to initialize a counter from user's input;
-- "+" to increment the counter (which is set to 0 by default).
+Hi Enric
 
-It is enlighten to only interpret executable files according to
-AT_EXECVE_CHECK and the related securebits:
+[...]
 
-  # Executing a script with RESTRICT_FILE is only allowed if the script
-  # is executable:
-  ./set-exec -f -- ./inc script-exec.inc # Allowed
-  ./set-exec -f -- ./inc script-noexec.inc # Denied
+> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > ... stuck here ... traces indicates never outs from the efi_setup, so
+> > > > looks like hungs
+> > > >
+> > > > Let me try with BeaglePlay and read a bit more, as I feel I'm a bit
+> > > > lost right now.
+> > >
+> > > Sure, let me know if you need anything else.
+> > >
+> >
+> > Same behaviour on BeaglePlay, so either it's currently broken or I'm
+> > making the same mistake in my process on both boards.
+> >
+> > Ilias, by chance, do you have in which versions did you test?
+> >
+>
+> So it looks like it is a problem with edk2 and/or edk2-platform, since
+> reverting those repositories back to September, things started to look
+> a lot better and I'm able to see en UEFI variables programmed.
+>
+> FWIW I just found this project [1] from you, thank you for it. Turns
+> out that it is easy to reproduce the issue I'm facing even with qemu.
+> I'll try to bisect what's the problem and report properly.
 
-  # Executing stdin with DENY_INTERACTIVE is only allowed if stdin is an
-  # executable regular file:
-  ./set-exec -i -- ./inc -i < script-exec.inc # Allowed
-  ./set-exec -i -- ./inc -i < script-noexec.inc # Denied
+There were recently some patches in EDK2 changing some aspects and you
+also have to update edk2-platforms & OP-TEE [0] to test this, but this
+is not merged yet.  I did try those changes and they worked fine. When
+you bisect why EDK2 is broken please let me know otherwise I'll have a
+look.
 
-  # However, a pipe is not executable and it is then denied:
-  cat script-noexec.inc | ./set-exec -i -- ./inc -i # Denied
+>
+> Thank you very much for your guidance and support.
 
-  # Executing raw data (e.g. command argument) with DENY_INTERACTIVE is
-  # always denied.
-  ./set-exec -i -- ./inc -c "+" # Denied
-  ./inc -c "$(<script-ask.inc)" # Allowed
+You're welcome.
+Keep in mind that [1] is _very_ hacky and it's just testing variable
+accesses in the firmware since U-Boot emulates the RPMB, not QEMU. IOW
+it's fine to use it and test U-Boot but the changes won't survive
+ExitBootServris and won't work in Linux.
 
-  # To directly execute a script, we can update $PATH (used by `env`):
-  PATH="${PATH}:." ./script-exec.inc
+>
+> Cheers,
+>   Enric
+>
+> [1] https://git.linaro.org/people/ilias.apalodimas/efi_optee_variables.git/
 
-  # To execute several commands passed as argument:
+[0] https://github.com/tianocore/edk2/pull/6116
+[1] https://git.linaro.org/people/ilias.apalodimas/efi_optee_variables.git/
 
-Add a complete test suite to check the script interpreter against all
-possible execution cases:
-
-  make TARGETS=exec kselftest-install
-  ./tools/testing/selftests/kselftest_install/run_kselftest.sh
-
-Fix ktap_helpers.sh to gracefully ignore optional argument.
-
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Serge Hallyn <serge@hallyn.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241112191858.162021-7-mic@digikod.net
----
-
-Changes since v20:
-* Rename AT_CHECK to AT_EXECVE_CHECK.
-
-Changes since v19:
-* New patch.
----
- samples/Kconfig                               |   4 +-
- samples/check-exec/.gitignore                 |   1 +
- samples/check-exec/Makefile                   |   1 +
- samples/check-exec/inc.c                      | 205 ++++++++++++++++++
- samples/check-exec/run-script-ask.inc         |   8 +
- samples/check-exec/script-ask.inc             |   4 +
- samples/check-exec/script-exec.inc            |   3 +
- samples/check-exec/script-noexec.inc          |   3 +
- tools/testing/selftests/exec/.gitignore       |   2 +
- tools/testing/selftests/exec/Makefile         |  14 +-
- .../selftests/exec/check-exec-tests.sh        | 205 ++++++++++++++++++
- .../selftests/kselftest/ktap_helpers.sh       |   2 +-
- 12 files changed, 448 insertions(+), 4 deletions(-)
- create mode 100644 samples/check-exec/inc.c
- create mode 100755 samples/check-exec/run-script-ask.inc
- create mode 100755 samples/check-exec/script-ask.inc
- create mode 100755 samples/check-exec/script-exec.inc
- create mode 100644 samples/check-exec/script-noexec.inc
- create mode 100755 tools/testing/selftests/exec/check-exec-tests.sh
-
-diff --git a/samples/Kconfig b/samples/Kconfig
-index efa28ceadc42..84a9d4e8d947 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -296,7 +296,9 @@ config SAMPLE_CHECK_EXEC
- 	depends on CC_CAN_LINK && HEADERS_INSTALL
- 	help
- 	  Build a tool to easily configure SECBIT_EXEC_RESTRICT_FILE and
--	  SECBIT_EXEC_DENY_INTERACTIVE.
-+	  SECBIT_EXEC_DENY_INTERACTIVE, and a simple script interpreter to
-+	  demonstrate how they should be used with execveat(2) +
-+	  AT_EXECVE_CHECK.
- 
- source "samples/rust/Kconfig"
- 
-diff --git a/samples/check-exec/.gitignore b/samples/check-exec/.gitignore
-index 3f8119112ccf..cd759a19dacd 100644
---- a/samples/check-exec/.gitignore
-+++ b/samples/check-exec/.gitignore
-@@ -1 +1,2 @@
-+/inc
- /set-exec
-diff --git a/samples/check-exec/Makefile b/samples/check-exec/Makefile
-index d9f976e3ff98..c4f08ad0f8e3 100644
---- a/samples/check-exec/Makefile
-+++ b/samples/check-exec/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: BSD-3-Clause
- 
- userprogs-always-y := \
-+	inc \
- 	set-exec
- 
- userccflags += -I usr/include
-diff --git a/samples/check-exec/inc.c b/samples/check-exec/inc.c
-new file mode 100644
-index 000000000000..94b87569d2a2
---- /dev/null
-+++ b/samples/check-exec/inc.c
-@@ -0,0 +1,205 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Very simple script interpreter that can evaluate two different commands (one
-+ * per line):
-+ * - "?" to initialize a counter from user's input;
-+ * - "+" to increment the counter (which is set to 0 by default).
-+ *
-+ * See tools/testing/selftests/exec/check-exec-tests.sh and
-+ * Documentation/userspace-api/check_exec.rst
-+ *
-+ * Copyright © 2024 Microsoft Corporation
-+ */
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <linux/fcntl.h>
-+#include <linux/prctl.h>
-+#include <linux/securebits.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/prctl.h>
-+#include <unistd.h>
-+
-+/* Returns 1 on error, 0 otherwise. */
-+static int interpret_buffer(char *buffer, size_t buffer_size)
-+{
-+	char *line, *saveptr = NULL;
-+	long long number = 0;
-+
-+	/* Each command is the first character of a line. */
-+	saveptr = NULL;
-+	line = strtok_r(buffer, "\n", &saveptr);
-+	while (line) {
-+		if (*line != '#' && strlen(line) != 1) {
-+			fprintf(stderr, "# ERROR: Unknown string\n");
-+			return 1;
-+		}
-+		switch (*line) {
-+		case '#':
-+			/* Skips shebang and comments. */
-+			break;
-+		case '+':
-+			/* Increments and prints the number. */
-+			number++;
-+			printf("%lld\n", number);
-+			break;
-+		case '?':
-+			/* Reads integer from stdin. */
-+			fprintf(stderr, "> Enter new number: \n");
-+			if (scanf("%lld", &number) != 1) {
-+				fprintf(stderr,
-+					"# WARNING: Failed to read number from stdin\n");
-+			}
-+			break;
-+		default:
-+			fprintf(stderr, "# ERROR: Unknown character '%c'\n",
-+				*line);
-+			return 1;
-+		}
-+		line = strtok_r(NULL, "\n", &saveptr);
-+	}
-+	return 0;
-+}
-+
-+/* Returns 1 on error, 0 otherwise. */
-+static int interpret_stream(FILE *script, char *const script_name,
-+			    char *const *const envp, const bool restrict_stream)
-+{
-+	int err;
-+	char *const script_argv[] = { script_name, NULL };
-+	char buf[128] = {};
-+	size_t buf_size = sizeof(buf);
-+
-+	/*
-+	 * We pass a valid argv and envp to the kernel to emulate a native
-+	 * script execution.  We must use the script file descriptor instead of
-+	 * the script path name to avoid race conditions.
-+	 */
-+	err = execveat(fileno(script), "", script_argv, envp,
-+		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
-+	if (err && restrict_stream) {
-+		perror("ERROR: Script execution check");
-+		return 1;
-+	}
-+
-+	/* Reads script. */
-+	buf_size = fread(buf, 1, buf_size - 1, script);
-+	return interpret_buffer(buf, buf_size);
-+}
-+
-+static void print_usage(const char *argv0)
-+{
-+	fprintf(stderr, "usage: %s <script.inc> | -i | -c <command>\n\n",
-+		argv0);
-+	fprintf(stderr, "Example:\n");
-+	fprintf(stderr, "  ./set-exec -fi -- ./inc -i < script-exec.inc\n");
-+}
-+
-+int main(const int argc, char *const argv[], char *const *const envp)
-+{
-+	int opt;
-+	char *cmd = NULL;
-+	char *script_name = NULL;
-+	bool interpret_stdin = false;
-+	FILE *script_file = NULL;
-+	int secbits;
-+	bool deny_interactive, restrict_file;
-+	size_t arg_nb;
-+
-+	secbits = prctl(PR_GET_SECUREBITS);
-+	if (secbits == -1) {
-+		/*
-+		 * This should never happen, except with a buggy seccomp
-+		 * filter.
-+		 */
-+		perror("ERROR: Failed to get securebits");
-+		return 1;
-+	}
-+
-+	deny_interactive = !!(secbits & SECBIT_EXEC_DENY_INTERACTIVE);
-+	restrict_file = !!(secbits & SECBIT_EXEC_RESTRICT_FILE);
-+
-+	while ((opt = getopt(argc, argv, "c:i")) != -1) {
-+		switch (opt) {
-+		case 'c':
-+			if (cmd) {
-+				fprintf(stderr, "ERROR: Command already set");
-+				return 1;
-+			}
-+			cmd = optarg;
-+			break;
-+		case 'i':
-+			interpret_stdin = true;
-+			break;
-+		default:
-+			print_usage(argv[0]);
-+			return 1;
-+		}
-+	}
-+
-+	/* Checks that only one argument is used, or read stdin. */
-+	arg_nb = !!cmd + !!interpret_stdin;
-+	if (arg_nb == 0 && argc == 2) {
-+		script_name = argv[1];
-+	} else if (arg_nb != 1) {
-+		print_usage(argv[0]);
-+		return 1;
-+	}
-+
-+	if (cmd) {
-+		/*
-+		 * Other kind of interactive interpretations should be denied
-+		 * as well (e.g. CLI arguments passing script snippets,
-+		 * environment variables interpreted as script).  However, any
-+		 * way to pass script files should only be restricted according
-+		 * to restrict_file.
-+		 */
-+		if (deny_interactive) {
-+			fprintf(stderr,
-+				"ERROR: Interactive interpretation denied.\n");
-+			return 1;
-+		}
-+
-+		return interpret_buffer(cmd, strlen(cmd));
-+	}
-+
-+	if (interpret_stdin && !script_name) {
-+		script_file = stdin;
-+		/*
-+		 * As for any execve(2) call, this path may be logged by the
-+		 * kernel.
-+		 */
-+		script_name = "/proc/self/fd/0";
-+		/*
-+		 * When stdin is used, it can point to a regular file or a
-+		 * pipe.  Restrict stdin execution according to
-+		 * SECBIT_EXEC_DENY_INTERACTIVE but always allow executable
-+		 * files (which are not considered as interactive inputs).
-+		 */
-+		return interpret_stream(script_file, script_name, envp,
-+					deny_interactive);
-+	} else if (script_name && !interpret_stdin) {
-+		/*
-+		 * In this sample, we don't pass any argument to scripts, but
-+		 * otherwise we would have to forge an argv with such
-+		 * arguments.
-+		 */
-+		script_file = fopen(script_name, "r");
-+		if (!script_file) {
-+			perror("ERROR: Failed to open script");
-+			return 1;
-+		}
-+		/*
-+		 * Restricts file execution according to
-+		 * SECBIT_EXEC_RESTRICT_FILE.
-+		 */
-+		return interpret_stream(script_file, script_name, envp,
-+					restrict_file);
-+	}
-+
-+	print_usage(argv[0]);
-+	return 1;
-+}
-diff --git a/samples/check-exec/run-script-ask.inc b/samples/check-exec/run-script-ask.inc
-new file mode 100755
-index 000000000000..3ea3e15fbd5a
---- /dev/null
-+++ b/samples/check-exec/run-script-ask.inc
-@@ -0,0 +1,8 @@
-+#!/usr/bin/env sh
-+
-+DIR="$(dirname -- "$0")"
-+
-+PATH="${PATH}:${DIR}"
-+
-+set -x
-+"${DIR}/script-ask.inc"
-diff --git a/samples/check-exec/script-ask.inc b/samples/check-exec/script-ask.inc
-new file mode 100755
-index 000000000000..f48252ab07c1
---- /dev/null
-+++ b/samples/check-exec/script-ask.inc
-@@ -0,0 +1,4 @@
-+#!/usr/bin/env inc
-+
-+?
-++
-diff --git a/samples/check-exec/script-exec.inc b/samples/check-exec/script-exec.inc
-new file mode 100755
-index 000000000000..525e958e1c20
---- /dev/null
-+++ b/samples/check-exec/script-exec.inc
-@@ -0,0 +1,3 @@
-+#!/usr/bin/env inc
-+
-++
-diff --git a/samples/check-exec/script-noexec.inc b/samples/check-exec/script-noexec.inc
-new file mode 100644
-index 000000000000..525e958e1c20
---- /dev/null
-+++ b/samples/check-exec/script-noexec.inc
-@@ -0,0 +1,3 @@
-+#!/usr/bin/env inc
-+
-++
-diff --git a/tools/testing/selftests/exec/.gitignore b/tools/testing/selftests/exec/.gitignore
-index a32c63bb4df1..7f3d1ae762ec 100644
---- a/tools/testing/selftests/exec/.gitignore
-+++ b/tools/testing/selftests/exec/.gitignore
-@@ -11,9 +11,11 @@ non-regular
- null-argv
- /check-exec
- /false
-+/inc
- /load_address.*
- !load_address.c
- /recursion-depth
-+/set-exec
- xxxxxxxx*
- pipe
- S_I*.test
-diff --git a/tools/testing/selftests/exec/Makefile b/tools/testing/selftests/exec/Makefile
-index 8713d1c862ae..45a3cfc435cf 100644
---- a/tools/testing/selftests/exec/Makefile
-+++ b/tools/testing/selftests/exec/Makefile
-@@ -10,9 +10,9 @@ ALIGN_PIES        := $(patsubst %,load_address.%,$(ALIGNS))
- ALIGN_STATIC_PIES := $(patsubst %,load_address.static.%,$(ALIGNS))
- ALIGNMENT_TESTS   := $(ALIGN_PIES) $(ALIGN_STATIC_PIES)
- 
--TEST_PROGS := binfmt_script.py
-+TEST_PROGS := binfmt_script.py check-exec-tests.sh
- TEST_GEN_PROGS := execveat non-regular $(ALIGNMENT_TESTS)
--TEST_GEN_PROGS_EXTENDED := false
-+TEST_GEN_PROGS_EXTENDED := false inc set-exec script-exec.inc script-noexec.inc
- TEST_GEN_FILES := execveat.symlink execveat.denatured script subdir
- # Makefile is a run-time dependency, since it's accessed by the execveat test
- TEST_FILES := Makefile
-@@ -26,6 +26,8 @@ EXTRA_CLEAN := $(OUTPUT)/subdir.moved $(OUTPUT)/execveat.moved $(OUTPUT)/xxxxx*
- 
- include ../lib.mk
- 
-+CHECK_EXEC_SAMPLES := $(top_srcdir)/samples/check-exec
-+
- $(OUTPUT)/subdir:
- 	mkdir -p $@
- $(OUTPUT)/script: Makefile
-@@ -45,3 +47,11 @@ $(OUTPUT)/load_address.static.0x%: load_address.c
- 		-fPIE -static-pie $< -o $@
- $(OUTPUT)/false: false.c
- 	$(CC) $(CFLAGS) $(LDFLAGS) -static $< -o $@
-+$(OUTPUT)/inc: $(CHECK_EXEC_SAMPLES)/inc.c
-+	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
-+$(OUTPUT)/set-exec: $(CHECK_EXEC_SAMPLES)/set-exec.c
-+	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
-+$(OUTPUT)/script-exec.inc: $(CHECK_EXEC_SAMPLES)/script-exec.inc
-+	cp $< $@
-+$(OUTPUT)/script-noexec.inc: $(CHECK_EXEC_SAMPLES)/script-noexec.inc
-+	cp $< $@
-diff --git a/tools/testing/selftests/exec/check-exec-tests.sh b/tools/testing/selftests/exec/check-exec-tests.sh
-new file mode 100755
-index 000000000000..87102906ae3c
---- /dev/null
-+++ b/tools/testing/selftests/exec/check-exec-tests.sh
-@@ -0,0 +1,205 @@
-+#!/usr/bin/env bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Test the "inc" interpreter.
-+#
-+# See include/uapi/linux/securebits.h, include/uapi/linux/fcntl.h and
-+# samples/check-exec/inc.c
-+#
-+# Copyright © 2024 Microsoft Corporation
-+
-+set -u -e -o pipefail
-+
-+EXPECTED_OUTPUT="1"
-+exec 2>/dev/null
-+
-+DIR="$(dirname $(readlink -f "$0"))"
-+source "${DIR}"/../kselftest/ktap_helpers.sh
-+
-+exec_direct() {
-+	local expect="$1"
-+	local script="$2"
-+	shift 2
-+	local ret=0
-+	local out
-+
-+	# Updates PATH for `env` to execute the `inc` interpreter.
-+	out="$(PATH="." "$@" "${script}")" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for direct file execution: ${ret}"
-+		return 1
-+	fi
-+	if [[ ${ret} -eq 0 && "${out}" != "${EXPECTED_OUTPUT}" ]]; then
-+		echo "ERROR: Wrong output for direct file execution: ${out}"
-+		return 1
-+	fi
-+}
-+
-+exec_indirect() {
-+	local expect="$1"
-+	local script="$2"
-+	shift 2
-+	local ret=0
-+	local out
-+
-+	# Script passed as argument.
-+	out="$("$@" ./inc "${script}")" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for indirect file execution: ${ret}"
-+		return 1
-+	fi
-+	if [[ ${ret} -eq 0 && "${out}" != "${EXPECTED_OUTPUT}" ]]; then
-+		echo "ERROR: Wrong output for indirect file execution: ${out}"
-+		return 1
-+	fi
-+}
-+
-+exec_stdin_reg() {
-+	local expect="$1"
-+	local script="$2"
-+	shift 2
-+	local ret=0
-+	local out
-+
-+	# Executing stdin must be allowed if the related file is executable.
-+	out="$("$@" ./inc -i < "${script}")" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for stdin regular file execution: ${ret}"
-+		return 1
-+	fi
-+	if [[ ${ret} -eq 0 && "${out}" != "${EXPECTED_OUTPUT}" ]]; then
-+		echo "ERROR: Wrong output for stdin regular file execution: ${out}"
-+		return 1
-+	fi
-+}
-+
-+exec_stdin_pipe() {
-+	local expect="$1"
-+	shift
-+	local ret=0
-+	local out
-+
-+	# A pipe is not executable.
-+	out="$(cat script-exec.inc | "$@" ./inc -i)" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for stdin pipe execution: ${ret}"
-+		return 1
-+	fi
-+}
-+
-+exec_argument() {
-+	local expect="$1"
-+	local ret=0
-+	shift
-+	local out
-+
-+	# Script not coming from a file must not be executed.
-+	out="$("$@" ./inc -c "$(< script-exec.inc)")" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for arbitrary argument execution: ${ret}"
-+		return 1
-+	fi
-+	if [[ ${ret} -eq 0 && "${out}" != "${EXPECTED_OUTPUT}" ]]; then
-+		echo "ERROR: Wrong output for arbitrary argument execution: ${out}"
-+		return 1
-+	fi
-+}
-+
-+exec_interactive() {
-+	exec_stdin_pipe "$@"
-+	exec_argument "$@"
-+}
-+
-+ktap_test() {
-+	ktap_test_result "$*" "$@"
-+}
-+
-+ktap_print_header
-+ktap_set_plan 28
-+
-+# Without secbit configuration, nothing is changed.
-+
-+ktap_print_msg "By default, executable scripts are allowed to be interpreted and executed."
-+ktap_test exec_direct 0 script-exec.inc
-+ktap_test exec_indirect 0 script-exec.inc
-+
-+ktap_print_msg "By default, executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-exec.inc
-+
-+ktap_print_msg "By default, non-executable scripts are allowed to be interpreted, but not directly executed."
-+# We get 126 because of direct execution by Bash.
-+ktap_test exec_direct 126 script-noexec.inc
-+ktap_test exec_indirect 0 script-noexec.inc
-+
-+ktap_print_msg "By default, non-executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-noexec.inc
-+
-+ktap_print_msg "By default, interactive commands are allowed to be interpreted."
-+ktap_test exec_interactive 0
-+
-+# With only file restriction: protect non-malicious users from inadvertent errors (e.g. python ~/Downloads/*.py).
-+
-+ktap_print_msg "With -f, executable scripts are allowed to be interpreted and executed."
-+ktap_test exec_direct 0 script-exec.inc ./set-exec -f --
-+ktap_test exec_indirect 0 script-exec.inc ./set-exec -f --
-+
-+ktap_print_msg "With -f, executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-exec.inc ./set-exec -f --
-+
-+ktap_print_msg "With -f, non-executable scripts are not allowed to be executed nor interpreted."
-+# Direct execution of non-executable script is alwayse denied by the kernel.
-+ktap_test exec_direct 1 script-noexec.inc ./set-exec -f --
-+ktap_test exec_indirect 1 script-noexec.inc ./set-exec -f --
-+
-+ktap_print_msg "With -f, non-executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-noexec.inc ./set-exec -f --
-+
-+ktap_print_msg "With -f, interactive commands are allowed to be interpreted."
-+ktap_test exec_interactive 0 ./set-exec -f --
-+
-+# With only denied interactive commands: check or monitor script content (e.g. with LSM).
-+
-+ktap_print_msg "With -i, executable scripts are allowed to be interpreted and executed."
-+ktap_test exec_direct 0 script-exec.inc ./set-exec -i --
-+ktap_test exec_indirect 0 script-exec.inc ./set-exec -i --
-+
-+ktap_print_msg "With -i, executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-exec.inc ./set-exec -i --
-+
-+ktap_print_msg "With -i, non-executable scripts are allowed to be interpreted, but not directly executed."
-+# Direct execution of non-executable script is alwayse denied by the kernel.
-+ktap_test exec_direct 1 script-noexec.inc ./set-exec -i --
-+ktap_test exec_indirect 0 script-noexec.inc ./set-exec -i --
-+
-+ktap_print_msg "With -i, non-executable stdin is not allowed to be interpreted."
-+ktap_test exec_stdin_reg 1 script-noexec.inc ./set-exec -i --
-+
-+ktap_print_msg "With -i, interactive commands are not allowed to be interpreted."
-+ktap_test exec_interactive 1 ./set-exec -i --
-+
-+# With both file restriction and denied interactive commands: only allow executable scripts.
-+
-+ktap_print_msg "With -fi, executable scripts are allowed to be interpreted and executed."
-+ktap_test exec_direct 0 script-exec.inc ./set-exec -fi --
-+ktap_test exec_indirect 0 script-exec.inc ./set-exec -fi --
-+
-+ktap_print_msg "With -fi, executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-exec.inc ./set-exec -fi --
-+
-+ktap_print_msg "With -fi, non-executable scripts are not allowed to be interpreted nor executed."
-+# Direct execution of non-executable script is alwayse denied by the kernel.
-+ktap_test exec_direct 1 script-noexec.inc ./set-exec -fi --
-+ktap_test exec_indirect 1 script-noexec.inc ./set-exec -fi --
-+
-+ktap_print_msg "With -fi, non-executable stdin is not allowed to be interpreted."
-+ktap_test exec_stdin_reg 1 script-noexec.inc ./set-exec -fi --
-+
-+ktap_print_msg "With -fi, interactive commands are not allowed to be interpreted."
-+ktap_test exec_interactive 1 ./set-exec -fi --
-+
-+ktap_finished
-diff --git a/tools/testing/selftests/kselftest/ktap_helpers.sh b/tools/testing/selftests/kselftest/ktap_helpers.sh
-index 79a125eb24c2..14e7f3ec3f84 100644
---- a/tools/testing/selftests/kselftest/ktap_helpers.sh
-+++ b/tools/testing/selftests/kselftest/ktap_helpers.sh
-@@ -40,7 +40,7 @@ ktap_skip_all() {
- __ktap_test() {
- 	result="$1"
- 	description="$2"
--	directive="$3" # optional
-+	directive="${3:-}" # optional
- 
- 	local directive_str=
- 	[ ! -z "$directive" ] && directive_str="# $directive"
--- 
-2.47.0
-
+Cheers
+/Ilias
+>
+>
+> > Thanks,
+> >   Enric
+> > > /Ilias
+> > > >
+> > > > > >
+> > > > > > => optee_rpmb read test 4
+> > > > > > D/TC:? 0 tee_ta_init_pseudo_ta_session:303 Lookup pseudo TA
+> > > > > > 023f8f1a-292a-432b-8fc4-de8471358067
+> > > > > > D/TC:? 0 ldelf_load_ldelf:110 ldelf load address 0x40007000
+> > > > > > D/LD:  ldelf:142 Loading TS 023f8f1a-292a-432b-8fc4-de8471358067
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #3 (syscall_get_property)
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #5 (syscall_open_ta_session)
+> > > > > > D/TC:? 0 ldelf_syscall_open_bin:135 > ldelf_syscall_open_bin
+> > > > > > D/TC:? 0 ldelf_syscall_open_bin:164 Lookup user TA ELF
+> > > > > > 023f8f1a-292a-432b-8fc4-de8471358067 (early TA)
+> > > > > > D/TC:? 0 ldelf_syscall_open_bin:168 res=0
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #7 (syscall_invoke_ta_command)
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #11 (syscall_mask_cancellation)
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #7 (syscall_invoke_ta_command)
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 492 bytes
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #3 (syscall_get_property)
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #8 (syscall_check_access_rights)
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > F/TC:? 0 read_compressed:178 532 bytes
+> > > > > > F/TC:? 0 read_compressed:178 924 bytes
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #8 (syscall_check_access_rights)
+> > > > > > F/TC:? 0 read_compressed:178 248 bytes
+> > > > > > F/TC:? 0 read_compressed:178 760 bytes
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #6 (syscall_close_ta_session)
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #3 (syscall_get_property)
+> > > > > > D/LD:  ldelf:176 ELF (023f8f1a-292a-432b-8fc4-de8471358067) at 0x40048000
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #33 (syscall_cryp_random_number_generate)
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #8 (syscall_check_access_rights)
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #8 (syscall_check_access_rights)
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #4 (syscall_get_property_name_to_index)
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #8 (syscall_check_access_rights)
+> > > > > > F/TC:? 0 trace_syscall:147 syscall #41 (syscall_storage_obj_open)
+> > > > > > D/TC:? 0 rpmb_fs_open_internal:2356 >>> rpmb_fs_open_internal
+> > > > > > D/TC:? 0 tee_rpmb_init:1205 >>> core/tee/tee_rpmb_fs.c:1205
+> > > > > > D/TC:? 0 tee_rpmb_init:1214 >>> core/tee/tee_rpmb_fs.c:1214
+> > > > > > D/TC:? 0 tee_rpmb_init:1253 >>> core/tee/tee_rpmb_fs.c:1253
+> > > > > > D/TC:? 0 legacy_rpmb_init:1142 Trying legacy RPMB init
+> > > > > > D/TC:? 0 rpmb_set_dev_info:1111 RPMB: Syncing device information
+> > > > > > D/TC:? 0 rpmb_set_dev_info:1113 RPMB: RPMB size is 32*128 KB
+> > > > > > D/TC:? 0 rpmb_set_dev_info:1114 RPMB: Reliable Write Sector Count is 1
+> > > > > > D/TC:? 0 rpmb_set_dev_info:1116 RPMB: CID
+> > > > > > D/TC:? 0 rpmb_set_dev_info:1117 000000009e93ab30  13 01 4e 47 31 4d 31
+> > > > > > 35  4c 10 27 91 28 07 a9 00
+> > > > > > D/TC:? 0 legacy_rpmb_init:1162 RPMB INIT: Deriving key
+> > > > > > D/TC:? 0 tee_rpmb_key_gen:308 RPMB: Using test key
+> > > > > > D/TC:? 0 legacy_rpmb_init:1176 RPMB INIT: Verifying Key
+> > > > > > F/TC:? 0 plat_prng_add_jitter_entropy:68 0x61
+> > > > > > D/TC:? 0 legacy_rpmb_init:1180 Found working RPMB device
+> > > > > > D/TC:? 0 tee_rpmb_init:1205 >>> core/tee/tee_rpmb_fs.c:1205
+> > > > > > D/TC:? 0 tee_rpmb_init:1214 >>> core/tee/tee_rpmb_fs.c:1214
+> > > > > > D/TC:? 0 tee_rpmb_read:1362 Read 1 block at index 0
+> > > > > > D/TC:? 0 tee_rpmb_write_blk:1494 Write 1 block at index 0
+> > > > > > D/TC:? 0 tee_rpmb_init:1205 >>> core/tee/tee_rpmb_fs.c:1205
+> > > > > > D/TC:? 0 tee_rpmb_init:1214 >>> core/tee/tee_rpmb_fs.c:1214
+> > > > > > D/TC:? 0 tee_rpmb_init:1205 >>> core/tee/tee_rpmb_fs.c:1205
+> > > > > > D/TC:? 0 tee_rpmb_init:1214 >>> core/tee/tee_rpmb_fs.c:1214
+> > > > > > D/TC:? 0 tee_rpmb_read:1362 Read 1 block at index 0
+> > > > > > E/TC:? 0 rpmb_fs_setup:2143 **** Clearing Storage ****
+> > > > > > D/TC:? 0 tee_rpmb_write_blk:1494 Write 1 block at index 2
+> > > > > > F/TC:? 0 plat_prng_add_jitter_entropy:68 0xD3
+> > > > > > D/TC:? 0 tee_rpmb_read:1362 Read 1 block at index 0
+> > > > > > D/TC:? 0 tee_rpmb_write_blk:1494 Write 1 block at index 0
+> > > > > > D/TC:? 0 tee_rpmb_read:1362 Read 8 blocks at index 2
+> > > > > > F/TC:? 0 dump_fat:1951 flags 0x2, size 0, address 0, filename ''
+> > > > > > D/TC:? 0 read_fat:2221 fat_address 0
+> > > > > > D/TC:? 0 tee_rpmb_read:1362 Read 8 blocks at index 2
+> > > > > > F/TC:? 0 plat_prng_add_jitter_entropy:68 0x18
+> > > > > > E/TA:  read_persist_value:338 Can't open named object value, res = 0xffff0008
+> > > > > > D/TC:? 0 tee_ta_invoke_command:798 Error: ffff0008 of 4
+> > > > > > D/TC:? 0 tee_ta_close_session:460 csess 0x9e925a50 id 1
+> > > > > > D/TC:? 0 tee_ta_close_session:479 Destroy session
+> > > > > > D/TC:? 0 destroy_context:318 Destroy TA ctx (0x9e9259f0)
+> > > > > > Failed to read persistent value
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > > > Cheers
+> > > > > > > /Ilias
+> > > > > > >
+> > > > > > > > => optee_rpmb read test 4
+> > > > > > > > D/TC:? 0 tee_ta_init_pseudo_ta_session:303 Lookup pseudo TA
+> > > > > > > > 023f8f1a-292a-432b-8fc4-de8471358067
+> > > > > > > > D/TC:? 0 ldelf_load_ldelf:110 ldelf load address 0x40007000
+> > > > > > > > D/LD:  ldelf:142 Loading TS 023f8f1a-292a-432b-8fc4-de8471358067
+> > > > > > > > F/TC:? 0 trace_syscall:147 syscall #3 (syscall_get_property)
+> > > > > > > > F/TC:? 0 trace_syscall:147 syscall #5 (syscall_open_ta_session)
+> > > > > > > > D/TC:? 0 ldelf_syscall_open_bin:163 Lookup user TA ELF
+> > > > > > > > 023f8f1a-292a-432b-8fc4-de8471358067 (early TA)
+> > > > > > > > D/TC:? 0 ldelf_syscall_open_bin:167 res=0
+> > > > > > > > F/TC:? 0 trace_syscall:147 syscall #7 (syscall_invoke_ta_command)
+> > > > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > > > F/TC:? 0 trace_syscall:147 syscall #11 (syscall_mask_cancellation)
+> > > > > > > > F/TC:? 0 trace_syscall:147 syscall #7 (syscall_invoke_ta_command)
+> > > > > > > >
+> > > > > > > > => efidebug query -bs -rt -nv
+> > > > > > > > MMC: no card present
+> > > > > > > > mmc_init: -123, time 2002
+> > > > > > > > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
+> > > > > > > > D/TC:? 0 spm_handle_scall:859 Received FFA version
+> > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > >
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > >
+> > > > > > > > > > Thanks
+> > > > > > > > > > /Ilias
+> > > > > > > > > > >
+> > > > > > > > > > > => efidebug query -bs -rt -nv
+> > > > > > > > > > > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:859 Received FFA version
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > > > ... stuck here ... I need to reset the board
+> > > > > > > > > > >
+> > > > > > > > > > > Will continue to see if I can get more useful messages
+> > > > > > > > > > >
+> > > > > > > > > > > Thanks,
+> > > > > > > > > > >   Enric
+> > > > > > > > > > >
+> > > > > > > > > > > > Thanks
+> > > > > > > > > > > > /Ilias
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > I'll try to add some more prints to verify if REE is used as a store
+> > > > > > > > > > > > > system, I assume this should say something about RPMB. Am I right with
+> > > > > > > > > > > > > this?
+> > > > > > > > > > > >
+> > > > > > > > > > > >
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > > And tracing the function calls gives me that:
+> > > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > >       tee_stmm_efi_probe() {
+> > > > > > > > > > > > > > > > >              tee_client_open_context() {
+> > > > > > > > > > > > > > > > >                optee_get_version() {
+> > > > > > > > > > > > > > > > >                  tee_get_drvdata(); (ret=0xffff000002e55800)
+> > > > > > > > > > > > > > > > >                } (ret=0xd)
+> > > > > > > > > > > > > > > > >                tee_ctx_match(); (ret=0x1)
+> > > > > > > > > > > > > > > > >                optee_smc_open() {
+> > > > > > > > > > > > > > > > >                  tee_get_drvdata(); (ret=0xffff000002e55800)
+> > > > > > > > > > > > > > > > >                  optee_open() {
+> > > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=0xffff000002e55800)
+> > > > > > > > > > > > > > > > >                  } (ret=0x0)
+> > > > > > > > > > > > > > > > >                } (ret=0x0)
+> > > > > > > > > > > > > > > > >              } (ret=0xffff000004e71c80)
+> > > > > > > > > > > > > > > > >              tee_client_open_session() {
+> > > > > > > > > > > > > > > > >                optee_open_session() {
+> > > > > > > > > > > > > > > > >                  tee_get_drvdata(); (ret=0xffff000002e55800)
+> > > > > > > > > > > > > > > > >                  optee_get_msg_arg() {
+> > > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=0xffff000002e55800)
+> > > > > > > > > > > > > > > > >                    tee_shm_get_va(); (ret=0xffff000002909000)
+> > > > > > > > > > > > > > > > >                  } (ret=0xffff000002909000)
+> > > > > > > > > > > > > > > > >                  tee_session_calc_client_uuid(); (ret=0x0)
+> > > > > > > > > > > > > > > > >                  optee_to_msg_param(); (ret=0x0)
+> > > > > > > > > > > > > > > > >                  optee_smc_do_call_with_arg() {
+> > > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=0xffff000002e55800)
+> > > > > > > > > > > > > > > > >                    tee_shm_get_va(); (ret=0xffff000002909000)
+> > > > > > > > > > > > > > > > >                    tee_shm_get_va(); (ret=0xffff000002909060)
+> > > > > > > > > > > > > > > > >                    optee_cq_wait_init(); (ret=0xffff000002e55910)
+> > > > > > > > > > > > > > > > >                    optee_smccc_smc(); (ret=0xffff0004)
+> > > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=0xffff000002e55800)
+> > > > > > > > > > > > > > > > >                    optee_smccc_smc(); (ret=0xffff0004)
+> > > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=0xffff000002e55800)
+> > > > > > > > > > > > > > > > >                    optee_smccc_smc(); (ret=0xffff0004)
+> > > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=0xffff000002e55800)
+> > > > > > > > > > > > > > > > >                    optee_smccc_smc(); (ret=0xffff0004)
+> > > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=0xffff000002e55800)
+> > > > > > > > > > > > > > > > >                    optee_smccc_smc(); (ret=0xffff0004)
+> > > > > > > > > > > > > > > > >      ... continues sending this forever ...
+> > > > > > > > > > > > > > > > >      ... Hit ^C to stop recording ...
+> > > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=0xffff000002e55800)
+> > > > > > > > > > > > > > > > >                    optee_smccc_smc() {
+> > > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > > [1] https://docs.u-boot.org/en/latest/develop/uefi/uefi.html#using-op-tee-for-efi-variables
+> > > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > > Thanks in advance,
+> > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > The most common problem with this is miscompiling the tee_supplicant
+> > > > > > > > > > > > > > > > application.
+> > > > > > > > > > > > > > > > Since we don't know if the system has an RPMB, we emulate it in the
+> > > > > > > > > > > > > > > > tee_supplicant. How did you get the supplicant and can you check if it
+> > > > > > > > > > > > > > > > was compiled with RPMB_EMU=0 or 1?
+> > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > I'm using the tee-supplicant provided by the fedora package which is
+> > > > > > > > > > > > > > > built with ` -DRPMB_EMU=0`, I think that's correct, right?
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > Yes, this is correct. We fixed the Fedora package to compile the
+> > > > > > > > > > > > > > supplicant correctly a while back.
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > [0] https://www.linaro.org/blog/uefi-secureboot-in-u-boot/
+> > > > > > > > > > > > > > [1] https://apalos.github.io/Protected%20UEFI%20variables%20with%20U-Boot.html#Protected%20UEFI%20variables%20with%20U-Boot
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > Regards
+> > > > > > > > > > > > > > /Ilias
+> > > > > > > > > > > > > > > Thanks,
+> > > > > > > > > > > > > > >    Enric
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > Thanks
+> > > > > > > > > > > > > > > > /Ilias
+> > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > >    Enric
+> > > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > >
+> > > > > > > > > > > >
+> > > > > > > > > > >
+> > > > > > > > > >
+> > > > > > > >
+> > > > > > >
+> > > > > >
+> > > > >
+> > > >
+> > >
+>
 
