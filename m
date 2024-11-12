@@ -1,136 +1,130 @@
-Return-Path: <linux-kernel+bounces-406145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A36CF9C5F29
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:36:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4529C5E7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:13:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17A1FB262BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:09:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7177EB3EA4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD672010EB;
-	Tue, 12 Nov 2024 15:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05BF203700;
+	Tue, 12 Nov 2024 15:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="tMbAGiyA"
-Received: from pv50p00im-tydg10021701.me.com (pv50p00im-tydg10021701.me.com [17.58.6.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="fqrrWSgJ"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B06201011
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3155D201254;
+	Tue, 12 Nov 2024 15:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423964; cv=none; b=bI0RUmWLzx9NFS3G5tL7hS/vxw8/7vAN7bg3MMp7PA+EVHfq7iSPrFV2oZEOTUtnMPq0QsoHc5/kaIJezddfn8YhEZTrWVL/jJfXMECws9Da6ngIo514MaiHo+rY4zrrJQDSHsKs6jH4sAJQ0WG4jdzKNoEPCDVqnMmjrV6lgU0=
+	t=1731424037; cv=none; b=s8x3GMWfY2XcC5N19yqZ8boBtL1Ql3TNhusoNpxcf8pJ9JxedsOex2A9G4aoABpiiSP46v0WNrNUg41c+z4MbAoEeGrpmTKLcJ6jpix027LbYJ9D8tZZYAcQSa8dn3vyn233XAWcVp5SJ3O5pTiZ64cmxWig02ki2ZgftX9su/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423964; c=relaxed/simple;
-	bh=CiKypDlwM8sVOJy8bpgngsCBsOX0TAO4x3tdC9Z3GZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QYv4f4756qc3RJOPYG0h63f7xR2XrlOFsqzUiKvbybE+MIN/GdMDxcbqy/FPNwczPfKM+rN+suyUKQe42eGIN3M30X38B02U4aEYi/xxXbHRxkjwk7CcEYJQepveoHJiAAUIVQ6gE5PRISelWZVxLBo/k+t0VqiAggslgPoCl6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=tMbAGiyA; arc=none smtp.client-ip=17.58.6.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1731423962;
-	bh=XorazmH3mbRA6gmyPuFX63LufteZd2QGwsYoXHaDemQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=tMbAGiyAjBo+qZkKlCGLbR2/loFAqPZq+WEVxuXTwxTblKe+fbADQUb36k1fm4fzx
-	 +ruV2iBxZw8jFDF4kb9dU7Mjg5+vDqV1Zp1FbMdpG6Qbw5qO5JTtXpwg16c5jqCG4Y
-	 hVE7218sLTdxXPF+qiffE1B7ybSjsWshtOng6sKnuNJcwoEhEc1ai3PQ2bi32U5GlE
-	 sAI0ZbRAtFEbnDLMWQe9icAKwOgPRdKUtfZlBrsTu00MRukUiXVgw7A9jE8sZvbx69
-	 NlRPJGKF0Ou3J0qvVFsTnCEcri5Gl0Q/mUgOscev6U27awjIAxSz3NF7EHbUl7//DE
-	 Kdq+3sHEjzJrg==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-tydg10021701.me.com (Postfix) with ESMTPSA id 0F0603A101D;
-	Tue, 12 Nov 2024 15:05:57 +0000 (UTC)
-Message-ID: <9db43c73-cdbb-4a89-ad1c-c05baf632a72@icloud.com>
-Date: Tue, 12 Nov 2024 23:05:53 +0800
+	s=arc-20240116; t=1731424037; c=relaxed/simple;
+	bh=UgfHaQNJ/vZu+gvqoCH5hpkye2Wjg7yXuMPQhphPEos=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=O/jaC6DCgm3X59H1AvIILo1huJAmHmatoNQUt0t5hrXHJc5TF5/Z0pSdpwDebVN0J9rQDwhMZGRY9dK+qbxGo+bbr3yIW/BIdR2N/9cr7cJH/K55D5NTsa0S2aAUkJG7mveHdq02txSCfFjrP3vMxds82s6KrKU4OORvVp5UXlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=fqrrWSgJ; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] driver core: class: Fix wild pointer dereference in
- API class_dev_iter_next()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
-References: <20241105-class_fix-v1-0-80866f9994a5@quicinc.com>
- <20241105-class_fix-v1-1-80866f9994a5@quicinc.com>
- <2024111205-countable-clamor-d0c7@gregkh>
- <2952f37a-7a11-42d9-9b90-4856ed200610@icloud.com>
- <2024111230-erratic-clay-7565@gregkh>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <2024111230-erratic-clay-7565@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 9Wrctp99loJh0h8kHn2eRsK-RRstRV4g
-X-Proofpoint-ORIG-GUID: 9Wrctp99loJh0h8kHn2eRsK-RRstRV4g
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-12_05,2024-11-12_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- suspectscore=0 spamscore=0 clxscore=1015 malwarescore=0 phishscore=0
- mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2411120121
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1731424032;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/JzPROz1nsHbGEclfKh8jf9jsrbMpci++OmYF8hXYss=;
+	b=fqrrWSgJDCXj9QX3GYICI4bGW449R0E70n9ccimyXlQonBWFc8GQnB/AFmy3YcZfR/h+Or
+	Y7Y6fSJbiv0PNMjhKraNdLtn7kY0Q7GJtVES+zk333uiQZ5wVJnWQLQ/+KqEUuUQUyfzVP
+	O1XpYYzJg/b/snCU7RndlbCaQ90yja24QDUCJ6jrE08UrjqP88d5nsmIDQMNJKZc2AabhS
+	2mposGDaIvnsWzTKkrA943iqABdAQc0MslxbrNNUygk4nN+CzGXUSepa257eyNDkWP0Tnj
+	A9/NKqiO+xHcSiutZpnSf4FW6Crb6yJ7SZDMSJT8d6pEy9wkcTtlWg54jiO8Mw==
+Date: Tue, 12 Nov 2024 16:07:10 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: =?UTF-8?Q?Tam=C3=A1s_Sz=C5=B1cs?= <tszucs@linux.com>
+Cc: Jonas Karlman <jonas@kwiboo.se>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, FUKAUMI Naoki
+ <naoki@radxa.com>, Chukun Pan <amadeus@jmu.edu.cn>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Enable UART8 on rock-3b
+In-Reply-To: <CA+GksrJLpeU8x-kjR1Ng3ySf+giiufCsJuBssng9qoX1PjAunA@mail.gmail.com>
+References: <20241111181807.13211-1-tszucs@linux.com>
+ <20241111181807.13211-4-tszucs@linux.com>
+ <4ba81dfa-f276-4e05-b46b-92f50dbcfcc4@kwiboo.se>
+ <CA+GksrJLpeU8x-kjR1Ng3ySf+giiufCsJuBssng9qoX1PjAunA@mail.gmail.com>
+Message-ID: <9330ebb370780c001fd2aaee49aec9e8@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 2024/11/12 22:57, Greg Kroah-Hartman wrote:
-> On Tue, Nov 12, 2024 at 10:46:27PM +0800, Zijun Hu wrote:
->> On 2024/11/12 19:43, Greg Kroah-Hartman wrote:
->>> On Tue, Nov 05, 2024 at 08:20:22AM +0800, Zijun Hu wrote:
->>>> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>>>
->>>> class_dev_iter_init(struct class_dev_iter *iter, struct class *class, ...)
->>>> has return type void, but it does not initialize its output parameter @iter
->>>> when suffers class_to_subsys(@class) error, so caller can not detect the
->>>> error and call API class_dev_iter_next(@iter) which will dereference wild
->>>> pointers of @iter's members as shown by below typical usage:
->>>>
->>>> // @iter's members are wild pointers
->>>> struct class_dev_iter iter;
->>>>
->>>> // No change in @iter when the error happens.
->>>> class_dev_iter_init(&iter, ...);
->>>>
->>>> // dereference these wild member pointers here.
->>>> while (dev = class_dev_iter_next(&iter)) { ... }.
->>>>
->>>> Actually, all callers of the API have such usage pattern in kernel tree.
->>>> Fix by memset() @iter in API *_init() and error checking @iter in *_next().
->>>>
->>>> Fixes: 7b884b7f24b4 ("driver core: class.c: convert to only use class_to_subsys")
->>>> Cc: stable@vger.kernel.org
->>>
->>> There is no in-kernel broken users of this from what I can tell, right?
->>> Otherwise things would have blown up by now, so why is this needed in
->>> stable kernels?
->>>
->>
->> For all callers of the API in current kernel tree, the class should have
->> been registered successfully when the API is invoking.
-> 
-> Great, so the existing code is just fine :)
-> 
->> so, could you remove both Fix and stable tag directly?
-> 
-> Nope, sorry.  Asking a maintainer that gets hundreds of patches to
-> hand-edit them does not scale.
->
-okay, let me send a updated revision now.
+Hello Tamas,
 
-> But really, as all in-kernel users are just fine, why add additional
-> code if it's not needed?  THat's just going to increase our maintance
-> burden for the next 40+ years for no good reason.
-> 
+On 2024-11-12 15:35, Tamás Szűcs wrote:
+> I agree; it's not possible to tell if the user will use a PCIe/USB,
+> PCIe/UART, SDIO/UART, perhaps USB/UART device, or any other HIF
+> combination. The way I see it is UART8 is hardwired to the M2E, so
+> there is a reasonable expectation that it should work too if need be.
 
-IMO, this fix is very necessary for the API.
+Please correct me if I'm wrong, but isn't this UART supposed to be
+used for the Bluetooth part of an SDIO WiFi + Bluetooth module, in
+form of a non-standard M.2 module that Radxa sells?
 
-> thanks,
-> 
-> greg k-h
+With that in mind, I see very little sense in just enabling the UART,
+without defining the entire Bluetooth interface, which AFAIK produces
+nasty looking error messages in the kernel log when there's actually
+nothing connected to the UART.
 
+As a side note, please use inline replying. [*]
+
+[*] https://en.wikipedia.org/wiki/Posting_style
+
+> On Mon, Nov 11, 2024 at 8:12 PM Jonas Karlman <jonas@kwiboo.se> wrote:
+>> 
+>> Hi Tamás,
+>> 
+>> On 2024-11-11 19:17, Tamás Szűcs wrote:
+>> > Enable UART lines on Radxa ROCK 3 Model B M.2 Key E.
+>> >
+>> > Signed-off-by: Tamás Szűcs <tszucs@linux.com>
+>> > ---
+>> >  arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >
+>> > diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+>> > index b7527ba418f7..61d4ba2d312a 100644
+>> > --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+>> > +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+>> > @@ -732,7 +732,7 @@ &uart8 {
+>> >       pinctrl-names = "default";
+>> >       pinctrl-0 = <&uart8m0_xfer &uart8m0_ctsn &uart8m0_rtsn>;
+>> >       uart-has-rtscts;
+>> > -     status = "disabled";
+>> > +     status = "okay";
+>> 
+>> This should probably be enabled using an dt-overlay, there is no UART
+>> device embedded on the board and the reason I left it disabled in
+>> original board DT submission.
+>> 
+>> On second thought maybe they should be enabled, think PCIe and USB 
+>> lines
+>> on the M.2 Key E is already enabled by default. I probably only tested
+>> with a pcie/usb wifi/bt card and not a sido/uart wifi/bt card.
+>> 
+>> >  };
+>> >
+>> >  &usb_host0_ehci {
 
