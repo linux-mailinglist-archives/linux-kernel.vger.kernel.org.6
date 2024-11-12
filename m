@@ -1,81 +1,74 @@
-Return-Path: <linux-kernel+bounces-405728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051AA9C564E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:23:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC55B9C56D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:43:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A5961F215C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:23:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A9D3B31FD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767F21FA847;
-	Tue, 12 Nov 2024 11:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7BD215C73;
+	Tue, 12 Nov 2024 11:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Zf7Wpbgl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBsrsGNC"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500701FA839
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DF62141C4;
+	Tue, 12 Nov 2024 11:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731409424; cv=none; b=bvT+GzjXbQ7ymRlFZzdtOmSHd1ldCBVk+jdz6sS9pfkDwpyZReVszlHizx2H6PzubUtcrLCCoKYz24Hu9lWY2aePmxyCSY66dOx3gHWNfo91vU+s2nJ5KkB33qpTO/I8JAoRBeWRzds0ckvDAeI/sR9Yhodx+T5ZH3xEew4/JK8=
+	t=1731409401; cv=none; b=RrkSb+r0DJ566wi47pI+1deKKNik5yVZSGG4Lojqq6FLYda9lQJc/r63zIdGcyJILlRWtGd2qpg5+9YeF6dsJZEjlrpf41blqwr5gkF+aK3/ccJVTOPYsIzf1zxpcAxiEKI7p9PshPq4+bstetmZGLbH/30kmZIA6CIZmFDgPXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731409424; c=relaxed/simple;
-	bh=G0Qe2OADcAQsfACZt2BcP1eMIcjortGkp4YDbkFFOYU=;
+	s=arc-20240116; t=1731409401; c=relaxed/simple;
+	bh=53Nqbs9za9XY0KG8sAX7ob6M8swycoF5/HqMt++y1Rw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NxcAd0WxXFrRp1opP+aRP54PCuaFcNPfrGgbsHdGK2+kAUyF5PLPhpOw2fPCtVEpXlCEjjAUPa3R93rdx0TYLmzJH4RghiTex365q7tnJNE0/FCOS4eUQslzhIrhS3T0Th3Mvp+jRXGsWqGO+1wG6rh6gi+lJ4WP/cLwvoJ+Lv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Zf7Wpbgl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC6Acnq004270
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:03:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	d7fGoZsQujJug+U+jHgYocLKquVR4HJgVH5ELiDsVtU=; b=Zf7WpbglOftzO5UU
-	RfZHbfYkITaFaGhwrV1yrBSs5M1xbbNUQsN9bUq3jv/mxRma5h2n9xa7b9OOge1p
-	JVBehQDw3O2+TXgrm2j/wjWhyvSmuEZLZah0sos6cURsHaY9x5d5sqcl3rRR72ez
-	1oE+dpjtDYrITI997+zOZhZnB3DapTO7XzzxaU2Z/sWCUmyxhvJJPycxes3QeMv0
-	hfBrCC7NEEDXIwTkRzAs6oobyqXTBHhY/gG60sXF778vhrVmr0cCm6jg06HYfQh/
-	Fd8p+aCBGwAnjzID8jAiY4GrYffP2HM527rmH+KATLNEctonMd76aFi/CJfPCvxg
-	L/KrcQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v1h6gpue-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:03:42 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d3742af01eso1866146d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:03:42 -0800 (PST)
+	 In-Reply-To:Content-Type; b=l1+QnLdMiTUACMRNi4a/kNPnzLhM9gpbQIqh5CNrVFityPrmO9FRelSnWNkDoSj2gwsFx3G1MSXBBYEBmmUPviGoTfUVWLGNf6XuSAVGoyeoqEIwhGK6Z+Iq18t7ysHQ8dE9lVkNa1tM5l6i/d8NiLv8Fncyj5mDvBHbUMKi/k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBsrsGNC; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c9388a00cfso7019286a12.3;
+        Tue, 12 Nov 2024 03:03:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731409397; x=1732014197; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=iPcFHCJG8NGsuskBY+kZ5XWMDYsQmMFc2+wJS3PWRtM=;
+        b=TBsrsGNCGk9wGUczYwdxhKT0zJUEn7ROZV1GnPh4oSwovZ2FI+qwRJY3ata6Bp0EBr
+         UNKLXgbI7V4gFtcSwHXDn6Ce/4wlC41CZXiVLjWjVAbjOPdPGTMlOmIxvZULhf/CHl6h
+         g9fAhp+XOz7iqIRliTnd+hy+eO/oi4q4pMFd6McwXZN3WCCPtG2JaSVuo4Bn8wiAPj5D
+         hJu6xOF5ejn5wV9ER0XU4pUxyoPw+KTq8AhtQyYLqQ7gSaDNvTvfqLgQ6OgmWcLVXLI1
+         a7IgtaBLbITN3zEdncNxw8gm9Duabnl5Y7iC4rAh56ImkQRlHmCR9NQIInY9K1ShMhV8
+         Ee9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731409421; x=1732014221;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d7fGoZsQujJug+U+jHgYocLKquVR4HJgVH5ELiDsVtU=;
-        b=ePEuZyDvYHkWGGypIOMdfsp8814BoZv01UG6ZDSZn+J7Ne8+X1ZKFf6HwVi6tW47LJ
-         Vida+r9ebmsc5xYKynv98jFPul+4OvoFdxiVvE3adHSM5kwLNeArQCRQcwejq5fQrL3X
-         w7Q5S/Zwbgl2OK9xv/dC/QdebYzWkGm1nQFqnu/g80puiXSWkUSA/LGVvjJ25Hl5/DkV
-         sMDKTcz1N/G/5XMJY2MVQ1jJNY0ZKxkeM6ztzeO9+1ZymEnxXKHDwIeGgNvC8L2RH0qC
-         m5Plh8IAEDcgQ/7Vsmm8YVDIXUkwEybV0li2E3VG/jdXQjPNhoBWSi0UYnOs8lEgs9GE
-         OtTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrT9nrEhpHyZQ9GHRzGCpaZwtCayi8YIIAPDyYkTAsEzFMky2eyUlXkW7MhU0gULUXnITDUL3l9IZUvg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwegxnJmU9F4Fk3S8d8r+K95tCjUudWMmMBkEL2JOufWiBRIP79
-	zEi5i5V2tu1lS47vGSkACmyZ+g7Y8KK+6ob/NLYv7ZaKlqBNgjfHdDE2CvywdKxK+4IPt/IqdkO
-	svXzY1F70Qrc8VBc8FGthly427S2n6MzKeZrdE6itomL1gfz0YaJMeHll/95uzW8=
-X-Received: by 2002:a05:620a:4441:b0:7b3:2107:397 with SMTP id af79cd13be357-7b331dc992cmr795518185a.15.1731409421124;
-        Tue, 12 Nov 2024 03:03:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF1fhQJCIFJPwzZ+PR7cMWjAglUJ/e3/68X4A0MvFsQcnHnwg/lt4fE0sGY44qyhmK5ZwJw9g==
-X-Received: by 2002:a05:620a:4441:b0:7b3:2107:397 with SMTP id af79cd13be357-7b331dc992cmr795515285a.15.1731409420681;
-        Tue, 12 Nov 2024 03:03:40 -0800 (PST)
-Received: from [192.168.123.190] (public-gprs527294.centertel.pl. [31.61.178.255])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf1d2cf5c5sm3562974a12.31.2024.11.12.03.03.07
+        d=1e100.net; s=20230601; t=1731409397; x=1732014197;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iPcFHCJG8NGsuskBY+kZ5XWMDYsQmMFc2+wJS3PWRtM=;
+        b=HKLQLzVjfxWI/2v1QySAPkdk2tAuUqCob1xlt2jH4Om+7vRiIE3upTTw2pyrOjzum9
+         1x4s9ZExyxo7MYMTF+y7f9PAEnp4t7W2XJ/geymUWQpL6MnQj6MAG//2NHpZSR515nio
+         5YxwDuZSvAgScGdgkH3zzltMaKhkQbQGXwDqyZW85QDlWvHNNNhugAdElTLpSuuKJg79
+         8/p93xE2swc1Cr9BJUPpyybASQX9F97bwqht6F4ybbAed1obEmwKbg4zMUsaYM4QGlcW
+         6JC3K0PxnDe0WyHoPCRmm0dcgPoAvo41lz4xyXeYlQ13FgG1q1TtnmxOBQtZC7tVzHyL
+         OmCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUI5HVDka+zEuctGwFlCPt4SDYOQj6vyDrl3KFZQDLnb7+X+vFz6wkCA/9FFrJFnxAyoq28gg7Ok/vxBYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt4KIVXKwD7dD4m2xJxbKBl1PWg9fgigoXofbsc6bXwoh02ncf
+	rrhIQum1Gm8jmAMyWttE7Ym3g/PgcK8+ja/HfrdFp+L8DYU/CaUS
+X-Google-Smtp-Source: AGHT+IHX4cUH9pyL7LKsapletYqx2kvV8JoES6EsVn/ceuKd30jkLRNMQcJatb/QouJT6jLYgTQnMA==
+X-Received: by 2002:a05:6402:254b:b0:5cf:45c2:981a with SMTP id 4fb4d7f45d1cf-5cf45c29904mr4046359a12.34.1731409397257;
+        Tue, 12 Nov 2024 03:03:17 -0800 (PST)
+Received: from ?IPV6:2a02:3100:a46e:ea00:90f0:9049:6891:55f? (dynamic-2a02-3100-a46e-ea00-90f0-9049-6891-055f.310.pool.telefonica.de. [2a02:3100:a46e:ea00:90f0:9049:6891:55f])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03c4ecaesm5872673a12.70.2024.11.12.03.03.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 03:03:40 -0800 (PST)
-Message-ID: <6565a4ec-6db6-4442-a07f-ace467c47395@oss.qualcomm.com>
-Date: Tue, 12 Nov 2024 12:02:49 +0100
+        Tue, 12 Nov 2024 03:03:16 -0800 (PST)
+Message-ID: <f8ec2c77-33fa-45a8-9b6b-4be15e5f3658@gmail.com>
+Date: Tue, 12 Nov 2024 12:03:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,107 +76,153 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 7/7] arm64: dts: qcom: ipq5424: Add thermal zone nodes
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        Konrad Dybcio <konradybcio@gmail.com>, srinivas.kandagatla@linaro.org,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org,
-        daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
-        andersson@kernel.org, konradybcio@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
-References: <20241104124413.2012794-1-quic_mmanikan@quicinc.com>
- <20241104124413.2012794-8-quic_mmanikan@quicinc.com>
- <91ea0f03-9bbe-491d-9056-ebd9fdc73bfa@oss.qualcomm.com>
- <8cb665f5-4885-4853-804a-7313decc719c@quicinc.com>
- <2c7ece9d-95e8-4d01-a9da-c1d5d7388771@gmail.com>
- <fc676574-ffac-40d2-aa47-8d7cb61b5e3f@quicinc.com>
- <9bd3d4e2-aba1-423c-946a-f5c60da71497@oss.qualcomm.com>
- <f5ceee66-9d09-44f9-9217-3abd467d1086@quicinc.com>
+Subject: Re: [PATCH net v1 1/2] net: phy: Introduce phy_update_eee() to update
+ eee_cfg values
+To: Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+ Andrew Lunn <andrew@lunn.ch>, Russell King <linux@armlinux.org.uk>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20241112072447.3238892-1-yong.liang.choong@linux.intel.com>
+ <20241112072447.3238892-2-yong.liang.choong@linux.intel.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <f5ceee66-9d09-44f9-9217-3abd467d1086@quicinc.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <20241112072447.3238892-2-yong.liang.choong@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: l9cSkdWu3zOZkpL795gWAG-I8LrYo2pX
-X-Proofpoint-GUID: l9cSkdWu3zOZkpL795gWAG-I8LrYo2pX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0 clxscore=1015
- lowpriorityscore=0 impostorscore=0 spamscore=0 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120090
+Content-Transfer-Encoding: 7bit
 
-
-
-On 11-Nov-24 12:51, Manikanta Mylavarapu wrote:
+On 12.11.2024 08:24, Choong Yong Liang wrote:
+> The commit fe0d4fd9285e ("net: phy: Keep track of EEE configuration")
+> introduced eee_cfg, which is used to check the existing settings against
+> the requested changes. When the 'ethtool --show-eee' command is issued,
+> it reads the values from eee_cfg. However, the 'show-eee' command does
+> not show the correct result after system boot-up, link up, and link down.
 > 
-> 
-> On 11/7/2024 8:17 PM, Konrad Dybcio wrote:
->> On 6.11.2024 11:25 AM, Manikanta Mylavarapu wrote:
->>>
->>>
->>> On 11/6/2024 2:42 PM, Konrad Dybcio wrote:
->>>>
->>>>
->>>> On 11/6/24 09:47, Manikanta Mylavarapu wrote:
->>>>>
->>>>>
->>>>> On 11/4/2024 7:21 PM, Konrad Dybcio wrote:
->>>>>> On 4.11.2024 1:44 PM, Manikanta Mylavarapu wrote:
->>>>>>> Add thermal zone nodes for sensors present in IPQ5424.
->>>>>>>
->>>>>>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->>>>>>> ---
->>>>>> [...]
->>>>>>
->>>>>>> +
->>>>>>> +        cpu3-thermal {
->>>>>>> +            polling-delay-passive = <0>;
->>>>>>> +            polling-delay = <0>;
->>>>>>> +            thermal-sensors = <&tsens 13>;
->>>>>>> +
->>>>>>> +            trips {
->>>>>>> +                cpu-critical {
->>>>>>> +                    temperature = <120000>;
->>>>>>> +                    hysteresis = <9000>;
->>>>>>> +                    type = "critical";
->>>>>>> +                };
->>>>>>> +
->>>>>>> +                cpu-passive {
->>>>>>> +                    temperature = <110000>;
->>>>>>> +                    hysteresis = <9000>;
->>>>>>> +                    type = "passive";
->>>>>>
->>>>>> You have a passive trip point without passive polling
->>>>>>
->>>>>
->>>>> Okay, will remove this.
->>>>
->>>> You most likely want to preserve it, while keeping a sensible
->>>> polling frequency, so that userspace will be aware of the current
->>>> CPU temperature. <100> sounds like a sensible value here.
->>>>
->>>> Konrad
->>>
->>> Temperature sensor's present in IPQ5424 supports interrupts.
->>
->> Correct.
->>
->>> Hence no need to configure polling frequency.
->>
->> No, that interrupt firing signifies crossing the temp threshold (meaning
->> no updates beyond that) or the tsens watchdog barking.
->>
->> Konrad
-> 
-> An interrupt fires when the temperature crosses a threshold.
 
-Which means you can't monitor the temperature at runtime
-without polling..
+In stmmac_ethtool_op_get_eee() you have the following:
 
-Konrad
+edata->tx_lpi_timer = priv->tx_lpi_timer;
+edata->tx_lpi_enabled = priv->tx_lpi_enabled;
+return phylink_ethtool_get_eee(priv->phylink, edata);
+
+You have to call phylink_ethtool_get_eee() first, otherwise the manually
+set values will be overridden. However setting tx_lpi_enabled shouldn't
+be needed if you respect phydev->enable_tx_lpi.
+
+> For system boot-up, the commit 49168d1980e2
+> ("net: phy: Add phy_support_eee() indicating MAC support EEE") introduced
+> phy_support_eee to set eee_cfg as the default value. However, the values
+> set were not always correct, as after autonegotiation or speed changes,
+> the selected speed might not be supported by EEE.
+> 
+> phy_update_eee() was introduced to update the correct values for eee_cfg
+> during link up and down, ensuring that 'ethtool --show-eee' shows
+> the correct status.
+> 
+> Fixes: fe0d4fd9285e ("net: phy: Keep track of EEE configuration")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+> ---
+>  drivers/net/phy/phy_device.c | 24 ++++++++++++++++++++++++
+>  include/linux/phy.h          |  2 ++
+>  2 files changed, 26 insertions(+)
+> 
+> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> index 499797646580..94dadf011ca6 100644
+> --- a/drivers/net/phy/phy_device.c
+> +++ b/drivers/net/phy/phy_device.c
+> @@ -3016,6 +3016,30 @@ void phy_support_eee(struct phy_device *phydev)
+>  }
+>  EXPORT_SYMBOL(phy_support_eee);
+>  
+> +/**
+> + * phy_update_eee - Update the Energy Efficient Ethernet (EEE) settings
+> + * @phydev: target phy_device struct
+> + * @tx_lpi_enabled: boolean indicating if Low Power Idle (LPI) for
+> + * transmission is enabled.
+> + * @eee_enabled: boolean indicating if Energy Efficient Ethernet (EEE) is
+> + * enabled.
+> + * @tx_lpi_timer: the Low Power Idle (LPI) timer value (in microseconds) for
+> + * transmission.
+> + *
+> + * Description:
+> + * This function updates the Energy Efficient Ethernet (EEE) settings for the
+> + * specified PHY device. It is typically called during link up and down events
+> + * to configure the EEE parameters according to the current link state.
+> + */
+> +void phy_update_eee(struct phy_device *phydev, bool tx_lpi_enabled,
+> +		    bool eee_enabled, u32 tx_lpi_timer)
+> +{
+> +	phydev->eee_cfg.tx_lpi_enabled = tx_lpi_enabled;
+> +	phydev->eee_cfg.eee_enabled = eee_enabled;
+> +	phydev->eee_cfg.tx_lpi_timer = tx_lpi_timer;
+> +}
+> +EXPORT_SYMBOL(phy_update_eee);
+> +
+>  /**
+>   * phy_support_sym_pause - Enable support of symmetrical pause
+>   * @phydev: target phy_device struct
+> diff --git a/include/linux/phy.h b/include/linux/phy.h
+> index a98bc91a0cde..6c300ba47a2d 100644
+> --- a/include/linux/phy.h
+> +++ b/include/linux/phy.h
+> @@ -2004,6 +2004,8 @@ void phy_advertise_eee_all(struct phy_device *phydev);
+>  void phy_support_sym_pause(struct phy_device *phydev);
+>  void phy_support_asym_pause(struct phy_device *phydev);
+>  void phy_support_eee(struct phy_device *phydev);
+> +void phy_update_eee(struct phy_device *phydev, bool tx_lpi_enabled,
+> +		    bool eee_enabled, u32 tx_lpi_timer);
+>  void phy_set_sym_pause(struct phy_device *phydev, bool rx, bool tx,
+>  		       bool autoneg);
+>  void phy_set_asym_pause(struct phy_device *phydev, bool rx, bool tx);
+
 
