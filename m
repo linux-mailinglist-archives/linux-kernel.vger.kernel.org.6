@@ -1,155 +1,136 @@
-Return-Path: <linux-kernel+bounces-405263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06DEE9C4F3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:16:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CC99C4F4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34111F215FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A78E2281827
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A8920A5D9;
-	Tue, 12 Nov 2024 07:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="cQhDfvj+"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910F620B1F0;
+	Tue, 12 Nov 2024 07:19:10 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259284C66;
-	Tue, 12 Nov 2024 07:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8375820ADD4
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731395758; cv=none; b=SkiLS4JxYr3Ekt1jGQnXDv18ryRmNkougZP1o6kw2YNlvvrhsfNdPbqwRjdqc/f5+1kd/WbL03BCXAusGwncZdrc1NrlHZywKo7uHzV/9O2p4Q+7WZgxMFp1pZKDkWMce7ybBT42cdxf/Q0waXLDCoFzl9P8gbSSVbbaeV585pk=
+	t=1731395950; cv=none; b=Wmip2tgZvBC3f3Za9b5tABjLqeN/4P6/geCwEdE3EoxN5XXFKKasktvdQ8D9NZVhrNexSxzFxx2WkdA2imoO0sd1aJ13Tv+uLr6Sq7BvZz52DvlJI2FcLhMGip5opry6TwUJjte07z5QM6hgAKyjHBGZHUU2Awc/DEy2NoS7+nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731395758; c=relaxed/simple;
-	bh=liliEvd9ddHo2X14IIvSZ1Kn2E1WmCo2dfpJ2tBnXXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YRVNqAzsK6JgtQKMklBWC1Keik9O7jfj7+J/eInd9wgoRjLHxgjUHaIWhJRcjHJODDO/tJvQCfgnxZreZ4HkFHAiEnHxJDMvRmXV3q3X6lznZqRK1mxbvGJpQ1uU87+3nMjlrFSbo7Tc8vTF5xq4WVKjtXEk0mumZ5XqZ1GZnRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=cQhDfvj+; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [10.106.0.15] (unknown [103.155.100.14])
+	s=arc-20240116; t=1731395950; c=relaxed/simple;
+	bh=76xbpcZxfKnQKxcIbxF4rUKygZAb+/RF0H6O+QjZFrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RXah1qfnnmKZWOqsBThO/Z5NyabQZnPhwiAbViRjj2ZdmzJzZeE3oebP9BE6x8TpjEEZpbK0iM5dGgxU2obrGv5w3eFqmrZz40H/E+BY3A74aTud6muAOJltLfgxfhSDfbvBMVIp2Nlv7RAUPaJGIwGlwy4UTfUmOLT1GZ6/hMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tAlAl-00029k-RZ; Tue, 12 Nov 2024 08:18:47 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tAlAk-000N82-10;
+	Tue, 12 Nov 2024 08:18:46 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id AFA8B3F136;
-	Tue, 12 Nov 2024 07:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1731395752;
-	bh=zLx7YEby17Ysu5FXkGYZBmRyjc793eGzAB0RXrS6JJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=cQhDfvj+QH1Xp3HFKyLefv6GUEyQIWuSZ/81Q74Ms4rNarHcaRfM9vBim2kpJTQUh
-	 CY9HJXS9asGRlc/DWWWcv4K7jr6wR8L9zwGw+MYI4drinIS82jkm8VfGXzeAXStvCX
-	 A6qTUsVX94gPIuACe2LIC0ZvkntMWKFcHOTwl2ULogSsAQl3OIYpY1L6l5Y1xfL+wm
-	 8fiYCZvU5SxMz4FZFI7Um94rCjCr7zq7hBadKB3rPNA7y+1nN00Qm4DV2zIAwo3n+k
-	 xa2vzAlwCsUFiGh3Db9VFIvA/ND9GSfQy+DDmE03f3DRw3k3bO2EokSVeYC9z4gIPm
-	 Z4Q4+fZLNcQPg==
-Message-ID: <53ed1dd8-2949-4f05-a180-39c12fbe2597@canonical.com>
-Date: Tue, 12 Nov 2024 15:15:42 +0800
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 2C92437111E;
+	Tue, 12 Nov 2024 07:16:04 +0000 (UTC)
+Date: Tue, 12 Nov 2024 08:16:02 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ
+ voltage
+Message-ID: <20241112-hulking-smiling-pug-c6fd4d-mkl@pengutronix.de>
+References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
+ <20241111101011.30e04701@kernel.org>
+ <fatpdmg5k2vlwzr3nhz47esxv7nokzdebd7ziieic55o5opzt6@axccyqm6rjts>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v1 04/22] HID: intel-thc-hid: intel-thc: Add THC PIO
- operation APIs
-To: "Xu, Even" <even.xu@intel.com>
-Cc: "bentiss@kernel.org" <bentiss@kernel.org>, "corbet@lwn.net"
- <corbet@lwn.net>, "jikos@kernel.org" <jikos@kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Zhang, Rui1" <rui1.zhang@intel.com>,
- "srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>,
- "Sun, Xinpeng" <xinpeng.sun@intel.com>
-References: <20241024081023.1468951-5-even.xu@intel.com>
- <da650a93-6d21-444b-adb7-045566f53d5a@canonical.com>
- <IA1PR11MB6098D581A332E576528FD30DF4582@IA1PR11MB6098.namprd11.prod.outlook.com>
- <1a8f80ab-135e-4e57-b9b7-1940e4bfb4f3@canonical.com>
- <IA1PR11MB6098DE17D19343A9C077F248F4582@IA1PR11MB6098.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Aaron Ma <aaron.ma@canonical.com>
-In-Reply-To: <IA1PR11MB6098DE17D19343A9C077F248F4582@IA1PR11MB6098.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Hi Even,
-
-After tested on 8086:a848, the multitouch doesn't work like 4 finger 
-touch, rotation and zoom.
-
-Could help check if those features can be supported?
-
-Regards,
-Aaron
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2dmhaauk3amznaiq"
+Content-Disposition: inline
+In-Reply-To: <fatpdmg5k2vlwzr3nhz47esxv7nokzdebd7ziieic55o5opzt6@axccyqm6rjts>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-On 11/11/24 3:10 PM, Xu, Even wrote:
-> Hi, Aaron,
->
-> That's OK. Glad to know it works.
-> Thanks for testing!
->
-> Best Regards,
-> Even Xu
->
->> -----Original Message-----
->> From: Aaron Ma <aaron.ma@canonical.com>
->> Sent: Monday, November 11, 2024 3:08 PM
->> To: Xu, Even <even.xu@intel.com>
->> Cc: bentiss@kernel.org; corbet@lwn.net; jikos@kernel.org; linux-
->> doc@vger.kernel.org; linux-kernel@vger.kernel.org; Zhang, Rui1
->> <rui1.zhang@intel.com>; srinivas.pandruvada@linux.intel.com; Sun, Xinpeng
->> <xinpeng.sun@intel.com>
->> Subject: Re: [PATCH v1 04/22] HID: intel-thc-hid: intel-thc: Add THC PIO operation
->> APIs
->>
->> Hi Even,
->>
->> Sorry, my fault.
->>
->> The patchset is applied on 6.12-rc7.
->> Building, will let you know the test result.
->>
->> Thanks.
->> Aaron
->>
->> On 11/11/24 2:31 PM, Xu, Even wrote:
->>> Hi, Aaron,
->>>
->>> Thanks for the information.
->>> The file "intel-thc-hw.h" should be there, it was added by "[PATCH v1 03/22]
->> HID: intel-thc-hid: intel-thc: Add THC registers definition".
->>> I tested it on v6.11.
->>> Anyway, let me double check what's wrong and come back to you.
->>> Thanks!
->>>
->>> Best Regards,
->>> Even Xu
->>>
->>>> -----Original Message-----
->>>> From: Aaron Ma <aaron.ma@canonical.com>
->>>> Sent: Monday, November 11, 2024 2:19 PM
->>>> To: Xu, Even <even.xu@intel.com>
->>>> Cc: bentiss@kernel.org; corbet@lwn.net; jikos@kernel.org; linux-
->>>> doc@vger.kernel.org; linux-input@vger.kernel.or;
->>>> linux-kernel@vger.kernel.org; Zhang, Rui1 <rui1.zhang@intel.com>;
->>>> srinivas.pandruvada@linux.intel.com; Sun, Xinpeng
->>>> <xinpeng.sun@intel.com>
->>>> Subject: Re: [PATCH v1 04/22] HID: intel-thc-hid: intel-thc: Add THC
->>>> PIO operation APIs
->>>>
->>>> Hi Even,
->>>>
->>>> It fails to be applied on v6.12-rc7.
->>>>
->>>> There is no file intel-thc-hw.h.
->>>>
->>>> Regards,
->>>> Aaron
+--2dmhaauk3amznaiq
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ
+ voltage
+MIME-Version: 1.0
 
+On 12.11.2024 07:39:12, Sean Nyekjaer wrote:
+> On Mon, Nov 11, 2024 at 10:10:11AM +0100, Jakub Kicinski wrote:
+> > On Mon, 11 Nov 2024 09:54:48 +0100 Sean Nyekjaer wrote:
+> > > This series adds support for setting the nWKRQ voltage.
+> >=20
+> > There is no need to CC netdev@ on pure drivers/net/can changes.
+> > Since these changes are not tagged in any way I have to manually
+> > go and drop all of them from our patchwork.
+
+Does the prefix "can-next" help, i.e.:
+
+| [PATCH can-next v2 0/2]
+
+which can be configured via:
+
+| b4 prep --set-prefixes "can-next"
+
+> Oh sorry for that.
+> I'm using b4's --auto-to-cc feature, any way to fix that?
+
+You can manually trim the list of Cc: using:
+
+| b4 prep --edit-cover
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--2dmhaauk3amznaiq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmczAK8ACgkQKDiiPnot
+vG9RuQf+Nj+pyf7e2gKIkxeZr+ao11kZrMz4UOp00qlZNwshVskI6oUB8/t0cDxD
+qJO7Rfs1u4FqzvVsrB7yvtJZCxFNQrgIiUwEGJAP1Kp1/+/JKBoFkWVlvdCY1Olg
+3Tden0OB9T5P99cBQ4aJMQjma/TRuAnC0RNhURVGhDGqwlr7SPorfRXH0G4s7vni
+lFqRQ9CLH4pz5r2RbnVNFC0JQcyqZZAXr9j+r4U9RMg9BI80ATaAXK6aHJUP0nES
+QjM/aXXdI6OEQII9i+LobAqUlGiCoyAhTcLiClOwhl2bWst5TMe5Ntu1x5qpGNQS
+jYpaZnAnmBDkTVlYJw+kzDpVKcL0+w==
+=Y/tF
+-----END PGP SIGNATURE-----
+
+--2dmhaauk3amznaiq--
 
