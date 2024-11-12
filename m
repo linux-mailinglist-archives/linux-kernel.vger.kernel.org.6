@@ -1,348 +1,184 @@
-Return-Path: <linux-kernel+bounces-406197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E414B9C5BFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:36:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE87F9C5C00
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3106283BC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:36:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75A691F22E3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5409E201255;
-	Tue, 12 Nov 2024 15:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E85A201262;
+	Tue, 12 Nov 2024 15:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="FwAcnIOx"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2041.outbound.protection.outlook.com [40.107.22.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="lppQmzAN"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9182010FB;
-	Tue, 12 Nov 2024 15:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731425727; cv=fail; b=OTjx6lxXmHwytacPJ6UCANLmrlw3RkAiq2xfunSTClttrAZTBMXTNhvaGTqmKoDa4pfWdrz7DnJ2gy46k9kic/61t1K3/IL+qnXep36EzSyfdIEVnZvdVbA7xK0RTBpHTPKQVCxCO9B4Sfr9/00QMfM7NtFTuDvoTOfO78jSaOk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731425727; c=relaxed/simple;
-	bh=2NfP612M40WygUGWb3auduWrDiDWediVy+EMNj1GmPY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OnuqSqQvcyTfMCJdDmQEwiKIz1gvlhgqoHnfXvRf/8d6xXtuBijqdwEVwnZDLlHDBReJ1t1QQKN7NeSHhjZHFXv36tGo6AjbdzDr+QSYXjILzaPRKV75WFVFIoVcWqKZJW07Xhi3okmAukpoxROg/vmQRdv6N6F9K3SskMHDhtI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=FwAcnIOx; arc=fail smtp.client-ip=40.107.22.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gseoILOtNnJ+MXVsXoruPsI6Pp/g2oUbh6JHPbSZn89wUdIvXug2BkNt1+G8PPw6DBN7gOpksyTDyXOfuSvUVcowRWrIVlBW3ZPafut8RPSEiwhlsGlHmyVGhjTCofWOzuhamHRxwtixL+FpmX4G1yzFH1nchptb3wpkaC3ds5D1JEcu7AB39kog7AwXzH5rXNk/U/66EQpDVCyAvwaGlMibi9mfpSf+n31pHSZRj7PbcPq/AybigR1HNCb1CPLI2u1qVw5DFNckCvQeLWA+x5eVL32AfI42mouuZBfukaI06vgVGy0vkmFSHCUNlHagTnWUhLG6VKuKHIQpKSyFRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ocFZxKn5mFltDR4m/tkJHQ+yZDpmnSgARskCSJ8fMYQ=;
- b=alssp0TmGqnB8R/Ud2yNvhaXZSVz5Yd1lpU0FwOhRMmdMCljBLt5OUVl3lnfMFtAQyi9cpfiHhNHFsDFCbd4Ouq1V+cJkfqx7ZmZXVRdMw2oFEzjiIu5xkZMbHEcgSnOFlfvP1638cMw5CTbO+vrUPtNJOOPdrAio6iNt0fao0NhuH1d8r2VEMBpiu4hqjMhuOvJnTzC2b3WYujVOHQBSsNEfkTaEn8AA4o1QFLPeHNT454fcM+3I/lyTGMln3Ow8UzAQR7yansP6lqWXLGv+XDV0GBATZykL87gQLtUxhp/M5ue2VUrZR5Ti0U+/eVT/RQ+bmCmACrr+pwzSZpRjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
- dkim=pass header.d=axis.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ocFZxKn5mFltDR4m/tkJHQ+yZDpmnSgARskCSJ8fMYQ=;
- b=FwAcnIOx6GEYeY428v8FpsHIuW/Y/ULN6mE0+sqTWLRBL+6QP9+uoVw9+DFPUZ/GQlTQGtRklik8bo34chNu0BaOm/DtPorYNcj786ISWdNkhAbWP9RxqanNuddOhHyaNiFoFMBTXyANceD8RuzSzytzSszVEHjit+td4Qixp0g=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axis.com;
-Received: from DU0PR02MB9585.eurprd02.prod.outlook.com (2603:10a6:10:41d::20)
- by AM9PR02MB6580.eurprd02.prod.outlook.com (2603:10a6:20b:2cf::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Tue, 12 Nov
- 2024 15:35:20 +0000
-Received: from DU0PR02MB9585.eurprd02.prod.outlook.com
- ([fe80::b1a:32b1:13cb:e576]) by DU0PR02MB9585.eurprd02.prod.outlook.com
- ([fe80::b1a:32b1:13cb:e576%7]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 15:35:20 +0000
-Message-ID: <303bd71a-bb38-4afa-a9e2-046425084b69@axis.com>
-Date: Tue, 12 Nov 2024 16:35:18 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] iio: light: Add support for TI OPT4060 color
- sensor
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- rickard.andersson@axis.com, kernel@axis.com
-References: <20241106120036.986755-1-perdaniel.olsson@axis.com>
- <20241106120036.986755-3-perdaniel.olsson@axis.com>
- <20241109150955.7526c416@jic23-huawei>
-Content-Language: en-US
-From: Per-Daniel Olsson <perdaniel.olsson@axis.com>
-In-Reply-To: <20241109150955.7526c416@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BE1P281CA0131.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:7a::8) To DU0PR02MB9585.eurprd02.prod.outlook.com
- (2603:10a6:10:41d::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24EA201260
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731425731; cv=none; b=nzhn+gvjm/BAwpGXrmRb6PDfwhafaTtNQVvv50+2+coRgRNaooX1qgvXAmmfoV2t3gbjMR6QhOo1HkcyfL5ewi28zt7CssQ0cvUnuBXrLYDcbYPppHMrUU/4MLnEKotw/de7ptedAo1Qn8XLWGjEVueQkYUI1XrwSY1N3dopoQA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731425731; c=relaxed/simple;
+	bh=UYeXT/AwePy9sTmZKwKEffySuj7xikS7S0DtVBnKEQA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kdXqd/wuV4AFfrToFzV+7jDtyukunGeOxrPryOC+ND2EbH7FPS/FFq9J1dTK8n2TL36kOFZ+WoRZRnq5P3SHQer2L9PZiptsOQUw9cmlyXiJhf0npYNA1THl51GHEov7FRcBMOdIuof3B+H+29A83RID40fAAXOCDlJUJ26qp2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=lppQmzAN; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7b14443a71eso448404185a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:35:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1731425729; x=1732030529; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bVzxNeB2db4M6YgRn5UBfiImbmQIKHlXCeQ683sEK/o=;
+        b=lppQmzANW7t6EnuqK76h8ogDftZwOLx4Y6K7zyeICk6UYaj1aPHD40lHYhyhvlI/fV
+         BikhxLz2kSzbVWg7duGSaDd5SZKunfcOUf4wjeQMwGW4njPZ+nEfS+JJNa0/hzqzILBG
+         inofZjzX6oM9wY0OstBLGMMpZjNWtEhHl6gwarJrNeEmIK6qqoEHaRheOvJZ95tpWSnq
+         Bv3OUTfZWOuixWiuYHX+7CFnoqzut/VUTwCvaNnc1MZJ3KX9MJfIwj/RYpG0cpfBSsop
+         Fht5uL8pG7jwcS3DBL8lWfu1OBRtwTwOTjBw8oyUCQE4r345sUocEx7+3jab/rs/dx6y
+         OVeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731425729; x=1732030529;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bVzxNeB2db4M6YgRn5UBfiImbmQIKHlXCeQ683sEK/o=;
+        b=ZzYlma+qfg/0uIh3p9LAhiiJ+IeLvkupq2+Aof56qgTkE4TqLnyGYm9NPOs0UZ6VbS
+         DfRrq+Phre/mDXx2Qx0X+cCV1ljjOGdY4co4pKqwO9FgXIzf2RM7IK181MWOCiIpoKs9
+         QrLUzu+chbHoo/wyNgewAmdHzw6jZ+rRuhpxIZ8YJt8HlORnm4p5Bhm/ti7PBIZD/VRy
+         oYu4Ydr4UV496LEppRXiu5u8QX93Ul6YXugrLpnY9Y9Os6NUwTtgAQHoLY6JVVGn5hh3
+         Xpb7uWRmofpVELWxpxQWSy3GWcfvaKVS9fjpjiYAFM5Ol0YNwdRIppOFzNlyCLQqSWre
+         Brow==
+X-Forwarded-Encrypted: i=1; AJvYcCWAOqg6U73/6pK5FzNh7KMxXAEC2yoqiTXmYKB1H/IXF4Vumg1O1Et+DqHQR5wbImZkneWeIrvv+d4tMiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5bKiJtKf6swH5l/fbVcGRd4Z02UboeyR3u6QCr8CFyyfrLjGR
+	l7RUK72z8wP5Gjm5jkQXSU6UdX90tRRQ/VupRYlZX4EsW+2Il/0QIifbtf9odA==
+X-Google-Smtp-Source: AGHT+IHybDqzPi0+fdFMR/GnS2iUaULMc0zt9E4K9RWsWx3q/KhAXWdD+VJbesoisRQydZ8c4UTwPg==
+X-Received: by 2002:a05:620a:269b:b0:7ac:b04e:34c6 with SMTP id af79cd13be357-7b331f20654mr2548341785a.50.1731425728749;
+        Tue, 12 Nov 2024 07:35:28 -0800 (PST)
+Received: from rowland.harvard.edu ([140.247.12.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac56eb2sm597032685a.51.2024.11.12.07.35.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 07:35:28 -0800 (PST)
+Date: Tue, 12 Nov 2024 10:35:25 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>,
+	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
+	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
+	dlustig@nvidia.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	lkmm@lists.linux.dev, torvalds@linux-foundation.org
+Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
+ case-insensitive filesystem.
+Message-ID: <75a5a694-1313-44b1-baff-d72559ac9039@rowland.harvard.edu>
+References: <20241111164248.1060-1-egyszeregy@freemail.hu>
+ <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
+ <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
+ <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
+ <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
+ <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
+ <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
+ <62634bbe-edd6-4973-a96a-df543f39f240@rowland.harvard.edu>
+ <61075efa-8d53-455b-bba3-e88bbf4da0a5@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR02MB9585:EE_|AM9PR02MB6580:EE_
-X-MS-Office365-Filtering-Correlation-Id: fe3a162c-307b-4dd8-71d4-08dd032f9dd8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MS9iOGZIKzR5WnVrckNqeEZ1M1l5aWl6S0E4TGNDbzBoUmVKbGNHcVhSM2JO?=
- =?utf-8?B?UHgyVm85T3pmWjdxdzdwRXBKL21xRWRHSzhMSmd3UWFidngwbHM4ekF5L21x?=
- =?utf-8?B?UmN3UjJsQ3dvODZhZXJyUDZQejRRbnpNUXk2V2lwSGdUZmtLQXROTUpsUEYr?=
- =?utf-8?B?QzVpU29HaVV2NGwwSnJLS0dKSUE1SldrTHpVMW1zRXpES1lqU1RuQXBqVWo0?=
- =?utf-8?B?SXJlVnloQUtLZTlQSXNaaWZ1N0FKV0hUeFp0b3R6K1hwRzhYS0JWR2RqVUtr?=
- =?utf-8?B?YjdaVmozMkhQYlVOKzJaU3BhUjlkWEFBVnRpKzNwcGtrdnJNU1BpdXk5bFZw?=
- =?utf-8?B?cHBtaXNqMVRTWXh0NlpSTWo5VHZLb2ZYb0JrY05TQVV4eU0rNEdsVjhjZGwr?=
- =?utf-8?B?ckQvODh6U0lEV0dUdFJOSXRLRmVDQkpmOUU4bElJQXFrT3U3MkluSU5VM24x?=
- =?utf-8?B?cy85c1lZSHNxRENmU24raWpCclZjbkdNMmViT1dqRjZFQzEzTjAyTXVhS2NU?=
- =?utf-8?B?MUVRN3d4bVROVWhpQnJKQzdzcnMxYm8yUys4S0RDT0FkZTU4RUhJTUtGREcx?=
- =?utf-8?B?NFNyM1VNcGxiV1BWL0JMMm1XcVlQN09HL2hqcUNiVTczamtTQjNXK0N2ZW1U?=
- =?utf-8?B?MjFJUWZQcGNDTTJzWXBmOUdWZVZjNFhNMFVuNjZVSnRhd1laOFpTSnIzZTlw?=
- =?utf-8?B?MW9waDhocitVZHVPL2ljU3puUDZtcDFjZXRwWVA0czMxaTUvbG44dFJCWi9M?=
- =?utf-8?B?WWlEWnl5RUM1QjUzVXZpSDU0aVRaVERJeDNhNXBlQnhRTllVNnMzZzBvUEM5?=
- =?utf-8?B?YStweFVJZ3BNQ3lXb0JOV05aRHNrcjBvZld4RXo5d1pRakZJWFBFMDFTQ09r?=
- =?utf-8?B?c1VwdTFuZm9YOTBZSU53THcrZE83REh0cHJzMFZKbVg2U0lIYkdaK0p5ZWdC?=
- =?utf-8?B?UTJwU0kyM21wcWpvY2kxOEpYV2VDSFgrekhVeXhyVTVPdVl0RjE4dVk0V2c2?=
- =?utf-8?B?K0hERXlmVktVYjk4Zk43NkRVc1dzb0ZBN2RuM0JTL043SXFobW9laXpGZEc0?=
- =?utf-8?B?WXBRb1lkL0ZDNDJ2dU1KaG5la1poaVRkTWdWUnZ3ekN5eXlZT1lDTkEzQXZz?=
- =?utf-8?B?WFNocVExc1NwOVdxVGE4b2NycG9qTWkzVlRqZ1czd2pDN2d4UmtTTmVjVTJ3?=
- =?utf-8?B?Z1ZSWGZnaTdiL2Mzb1dSQUhUZFZiQjlwc05zZWp1UGFQNlUrcjBmVWlSWm9i?=
- =?utf-8?B?aDhXcmdSbTlMT1hFak9rWm94TEl6SVZMNnJZbXdmSEp2dFhQdFJvZWVQWVdP?=
- =?utf-8?B?d0wzYnc2bm9tQzVWcitWUGVHK2NlY2k0NlR5ZnozVU9oYWc3NUNoejA0WXVw?=
- =?utf-8?B?dHdIQ2FGSEZYOGZqMWlkUG9YZTRueEk4bjJLeVVyblhFcUg2RG9JY0xSSnBJ?=
- =?utf-8?B?L21KNzNsamVxK3FFZFZpUjFsWUdScGNUenB3T2pXcm8wOGJoaWVtKzJrV2NZ?=
- =?utf-8?B?eWpFV0NPU0JmNFFReDFBN1IzejJmSGxRWjRUblB3b2hWbXVvOS9WeklLV2ZP?=
- =?utf-8?B?SUt2VEVLUzZiRFc0YUJTcTZXRlkrTlZKdXQzNWVCT2xNbTdGa0FpVklBZ0oz?=
- =?utf-8?B?SzNRUW9SVUN2SGpLSnZsZXBjV3hhb04yMTcvNWtaN0RZTStVYjU4ODJiUVRo?=
- =?utf-8?B?UUxnMGNUY0N5WTJ1cklDUDdoTjRsaGtnQzhRSmhYVFZJRjFWMzRlOUdCakdv?=
- =?utf-8?Q?pPmhkJ2viSyM8pYjeNE0BOydEhB95lnJUMGAcB/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR02MB9585.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TW1ndC9jUmc1cGhKbUgzdUpYN21ZZTljbzd3dVJCZ3hTY2pTS2taR1NERElJ?=
- =?utf-8?B?em5tNm1SYnJSdkM0amhoRUIxZkxEQ2hxUklHYmdZSk80VzZEc3JwbGNuNkd0?=
- =?utf-8?B?OTFobGx3VXNCSmxaQVl2RDNrM3grRmNlMzFNYVVnbHlpTGViMGRNZklHTUNC?=
- =?utf-8?B?UDcrMVJ5a3NHVVZSZmpRNXE0aEZlNDhaQWt4RTNPZGl2SiszM2NCYUc2NC80?=
- =?utf-8?B?STA4WHFKTXd5VUp5UmUvUWhXUnFQejJaK3FJTzA1ZFJTdGQ5cXFmaVcveGRn?=
- =?utf-8?B?VHZjUVBFa29lK2plNGphK2lIMnlQcVJrU0VpSjE3cDFCR1p2cFVtK0xCSS92?=
- =?utf-8?B?WlR2SmV6S3duaDd0ZldCUmh5QUZNTHpXcnBqbnRySkdwZEJpOFU3SkhPaXN3?=
- =?utf-8?B?d0RpMXlGa2t3cXhOZ0J1bjkzaS9Ga1hFUVRad1liaytkeDVxSFV3d2Z4QUhL?=
- =?utf-8?B?cVNPaENLbTlmeFZ3N1FnVDdOaUpRR2NQQ21IRTB6VUNjSVRuTXR5SGF2N0N2?=
- =?utf-8?B?UzdVN3pTYUlDVE1LSDcxQ2ZVR2t3NmxIMmxpc3NsWGZtNUR1QTNwQkJlZGl1?=
- =?utf-8?B?bGF2Y0kwTkVvM1pMMkZKbGNVYkRPRmFTZE83RXNWUGlUM2M2ZDBNY3o0S0cv?=
- =?utf-8?B?bVM4NVBKR0t2azB1VXpabjBxRjlFQVB0dU12WUc0cWFQV2wySnlBTkxGTFNT?=
- =?utf-8?B?MytiMmhTRVJRSkFzZTVSazV5aHNsSXo4Qk16ZGtaK01YaEFnMDFtTkliQWpm?=
- =?utf-8?B?TjlBdkRZbGRCLzNkeUtXSnphSHpIMjRpUGhGbFdjeFAybjMwa3lWdU4zRGdE?=
- =?utf-8?B?c3VBNzhWMmk4SHBaYjdpRzFUcndTa3JlM3pnY3R5K2JDTGVmdHVSMTVhSlFN?=
- =?utf-8?B?ekN2alhUTEpXdGZXWkI5cEljZ0VJdDg0b0l6SGRPdlRYdWIvWUZ6b21oVERC?=
- =?utf-8?B?a0FYRlBMalB3TTlzT1dVSjV5Nzk4aUozVW1HNG9GblJtUVNPOWFiM01uMzB2?=
- =?utf-8?B?UWpwMVBEZURidzJFQm8zWUl4T29xSlJ3MkJNWUFNNWpabE9rZlZ1RXpjVDBU?=
- =?utf-8?B?ODhoN0R3ZHdmQkNPNmNsN1ZhekZYMDY1cEw5U2dsbGJJSTV4eTkybjVLeU5n?=
- =?utf-8?B?UERnb01kU1ZmTGNnWkJoQUlRRzZ5K0FNYlNubGxKbkdQQ0lJQjRYaVRMamJr?=
- =?utf-8?B?VG51Q1VCWW9rV1lxSFg5bzdESkdZR051NkQvdDNXNnhNdDNVK3VBdnZidmpy?=
- =?utf-8?B?eVJLcnI1MndWQk5lUVA1TkxhdU9IZnpIdmJ2Z0pmVG4xdE5BdWJZWG5NSzZr?=
- =?utf-8?B?UmNVdk12aDVqRjNPaFRGYUdQUnFQa1lUZXRIb1BrK3NLY1VqVUVGNm9zOU5Y?=
- =?utf-8?B?V2hvL202akxBU2thclJiSEtZNklLaWw5ckpQWHRaUm5XSnZ0aFJjSTlUcWgy?=
- =?utf-8?B?d3hrRGg1ZWM4eFg3Z1M1OVNNem5aSTl1QjRONG1NTE1oblR4Uy91UjdLK2g5?=
- =?utf-8?B?REpid0g1UTVSYTNTTmpqdWVFYlBsVUVBRmlNVkljQVhoY1hJZlVqOExKT2Jl?=
- =?utf-8?B?ME0xNjZPbjZvQVhXeUhaRzd2WXc3NjdJMzI3Tm1zdDVrNmgrR1l6dGZWNER2?=
- =?utf-8?B?YXhpMTZXNUk2VmVDSVdUd1R3VlpZUVV6Rlh1blFNTUhOeUFJTXRITSt6VTZy?=
- =?utf-8?B?Nlh3ZlBIZHBmQkE0VkgwUVlRZ0s0cTh6Um0zWmowK1JyNGtEL04ramhDK3RU?=
- =?utf-8?B?OVhjcGJtNmFneThRR0Q3N0EvbTlMNW9tMVVyMGl6d0Y3VThwanIxMkJDNTAz?=
- =?utf-8?B?ejZ6V1dHWXBuTnY1MnVxMkdxY0t6Ymk3bDQ4TXNZeS9wRTRiazBFeGp3MW11?=
- =?utf-8?B?a3NLNTVTL0pQQ3ZQaldlSmczelJsamdjcTN4VGhrNlNpaitVUzBkajFnSHY5?=
- =?utf-8?B?VU0xV3k2aWllV1NxWXVVdWpKL3JaQ0Vtc3BjNGp4cGZQMmlWbjdzZjJOZ0hC?=
- =?utf-8?B?Q2Q4RUZOekhBTGF0UFhkL2ltUUdETmV0dVdYdFR5N2NOa2IrbkFNUWdjazc2?=
- =?utf-8?B?cGViYUxzdEs0cDZCQlRhdFJBUkd3Q0Q0SEZmMThzMTc3NkRkSjZPd0lSWHFO?=
- =?utf-8?Q?wo9E=3D?=
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe3a162c-307b-4dd8-71d4-08dd032f9dd8
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR02MB9585.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 15:35:20.6261
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7/QuWppBOnpZ2lYGvcvgF+euNAEc6rQT5xim5BiKMItMz+18pE7gcsH4yUTIJq0w
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR02MB6580
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <61075efa-8d53-455b-bba3-e88bbf4da0a5@paulmck-laptop>
 
-On 11/9/24 16:09, Jonathan Cameron wrote:
-> On Wed, 6 Nov 2024 13:00:36 +0100
-> Per-Daniel Olsson <perdaniel.olsson@axis.com> wrote:
+On Mon, Nov 11, 2024 at 08:20:05PM -0800, Paul E. McKenney wrote:
+> On Mon, Nov 11, 2024 at 07:59:33PM -0500, Alan Stern wrote:
+> > On Mon, Nov 11, 2024 at 10:15:30PM +0100, Szőke Benjamin wrote:
+> > > warning: the following paths have collided (e.g. case-sensitive paths
+> > > on a case-insensitive filesystem) and only one from the same
+> > > colliding group is in the working tree:
+> > > 
+> > >   'tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus'
+> > >   'tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus'
+> > 
+> > I support the idea of renaming one of these files.  Not to make things 
+> > work on case-insensitive filesystems, but simply because having two 
+> > files with rather long (and almost nonsensical) names that are identical 
+> > aside from one single letter is an excellent way to confuse users.
+> > 
+> > Come on -- just look at the error report above.  Can you tell at a 
+> > glance, without going through and carefully comparing the two strings 
+> > letter-by-letter, exactly what the difference is?  Do you really think 
+> > anybody could?
+> > 
+> > I haven't looked to see if there are any other similar examples in the 
+> > litmus-tests directory, but if there are than they should be changed 
+> > too.
 > 
->> Add support for Texas Instruments OPT4060 RGBW Color sensor.
->>
->> Signed-off-by: Per-Daniel Olsson <perdaniel.olsson@axis.com>
-> Hi Per-Daniel
-> 
-> Main comment in here is that the ABI is standard (though oddly
-> missing in some cases from the main ABI doc). Annoyingly the
-> docs build process (try make htmldocs) does not work if there
-> are multiple entries for the same ABI, so we need to ensure that
-> the documentation for common ABI is in just one place.
-> That makes device specific ABI docs tricky, so instead we tend
-> to use extra rst files in Documentation/iio/ to provide more details.
-> 
-> Jonathan
-> 
-Hi Jonathan,
+> It does jump out at me,
 
-Thank you for your code comments, I will fix those in the next version.
-I have been trying to understand what I should do in
-Documentation/ABI/testing/sysfs-bus-iio but I don't really get it. See
-my questions below.
+Maybe this means you've spent too much of your life concentrating on 
+these files!  :-)
 
-/ P-D
+>  but even if it didn't, the usual use of tab
+> completion and copy/paste should make it a non-problem, not?
 
+Those things help when people want to type in a filename.  They do not 
+help when people are trying to read the filenames, figure out what the 
+difference between them is, compare a name mentioned in one place to a 
+name mentioned in another place, or understand how the names are related 
+to the file contents.
+
+> find . -print | tr 'A-Z' 'a-z' | sort | uniq -c | sort -k1nr | awk '{ if ($1 > 1) print }'
 > 
->> ---
->>  .../ABI/testing/sysfs-bus-iio-light-opt4060   |   66 +
->>  drivers/iio/light/Kconfig                     |   13 +
->>  drivers/iio/light/Makefile                    |    1 +
->>  drivers/iio/light/opt4060.c                   | 1282 +++++++++++++++++
->>  4 files changed, 1362 insertions(+)
->>  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-light-opt4060
->>  create mode 100644 drivers/iio/light/opt4060.c
->>
->> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-light-opt4060 b/Documentation/ABI/testing/sysfs-bus-iio-light-opt4060
->> new file mode 100644
->> index 000000000000..187e750602ee
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-bus-iio-light-opt4060
->> @@ -0,0 +1,66 @@
->> +What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_red_raw
+> The output for the kernel and the github litmus repo are shown below.
 > 
-> Huh... This is general ABI but not present in the sysfs-bus-iio
-> where it should be.  There are some control parameters on these channels
-> but not the actual channels.
+> 							Thanx, Paul
 > 
-> Please add them there instead of in a device specific file.
-> Also group the 3 colors together as done for intensity_x, _y, _z
->
-
-So you want me to add 4 lines for in_intensity_X_raw where X is red, green,
-blue and clear? Should I add those together with a description in the end of
-the file or some place where I find similar definitions? The closest I can
-find is in_intensityY_raw (line 1629 in the version of the file I'm looking at).
-I also can't find the entries for in_intensity_red/green/blue_scale? I can find
-in_intensity_x/y/z_scale but those were added in a commit for the as73211 driver
-and as far as I can understand from the driver, x, y and z are coordinates and
-not some kind of unknown variables in that context. I'm sorry for what I assume
-are really stupid questions, but I just don't get it...
-
-Basically I think I need to add the following 7 lines to the file:
-
-What:    /sys/bus/iio/devices/iio:deviceX/in_intensity_red_raw
-What:    /sys/bus/iio/devices/iio:deviceX/in_intensity_green_raw
-What:    /sys/bus/iio/devices/iio:deviceX/in_intensity_blue_raw
-What:    /sys/bus/iio/devices/iio:deviceX/in_intensity_clear_raw
-What:    /sys/bus/iio/devices/iio:deviceX/in_intensity_red_scale
-What:    /sys/bus/iio/devices/iio:deviceX/in_intensity_green_scale
-What:    /sys/bus/iio/devices/iio:deviceX/in_intensity_blue_scale
-
-Is that correct? Should the _raw ones be added in the groups starting on line 1629?
-Should the _scale ones be added to the group starting on line 469?
-
->> +KernelVersion:
->> +Contact:	linux-iio@vger.kernel.org
->> +Description:
->> +		Unit-less raw value for red intensity.
->> +
->> +What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_red_scale
->> +KernelVersion:
->> +Contact:	linux-iio@vger.kernel.org
->> +Description:
->> +		Decimal value for the red component of the light. The value
->> +		is normalized to give the relative red component
->> +		independently of the light intensity.
+> ------------------------------------------------------------------------
 > 
-> I'm not sure I understand this text.   Also why Decimal?
-> Maybe something like:
+> For the kernel:
 > 
-> "Scales the raw value so that for a particular test light source, typically
-> white, the measurement intensity is the same across different colour channels."
+> ------------------------------------------------------------------------
 > 
+>       2 ./include/uapi/linux/netfilter_ipv4/ipt_ecn.h
+>       2 ./include/uapi/linux/netfilter_ipv4/ipt_ttl.h
+>       2 ./include/uapi/linux/netfilter_ipv6/ip6t_hl.h
+>       2 ./include/uapi/linux/netfilter/xt_connmark.h
+>       2 ./include/uapi/linux/netfilter/xt_dscp.h
+>       2 ./include/uapi/linux/netfilter/xt_mark.h
+>       2 ./include/uapi/linux/netfilter/xt_rateest.h
+>       2 ./include/uapi/linux/netfilter/xt_tcpmss.h
+>       2 ./net/netfilter/xt_dscp.c
+>       2 ./net/netfilter/xt_hl.c
+>       2 ./net/netfilter/xt_rateest.c
+>       2 ./net/netfilter/xt_tcpmss.c
 
-Your text is also not totally correct, but probably better. The parameters are
-first scaled the way you describe but then divided by the sum of the 3 RGB channels.
-This to give an estimate of the color ratio between the three color components
-independently of the light intensity. A decimal value between 1.0 and 0 will be
-returned. Is this the type of oddity that should be documented in an rst file, the
-way you described further down?
+Those are all fine.  The filenames are nice and short, and the case 
+differences really do stand out because they affect entire words, not 
+just a single letter in the middle of a long string of letters.
 
->>  The raw value for red
->> +		is multiplied by 2.4 before being normalized, this to adapt
->> +		to the relative sensitivity of the red filter of the sensor.
->> +		The factor for green is 1.0 and the factor for blue is 1.3.
-> An unfortunately characteristic of the ABI docs is we can't have duplication so
-> once this is moved to the general docs this detail will have to go in favour
-> of generality.  You could add a little 'footnote' to the entry to say that
-> for this particular device the meaning is this.
-> 
-> 
->> +
->> +What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_green_raw
->> +KernelVersion:
->> +Contact:	linux-iio@vger.kernel.org
->> +Description:
->> +		Unit-less raw value for green intensity.
->> +
->> +What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_green_scale
->> +KernelVersion:
->> +Contact:	linux-iio@vger.kernel.org
->> +Description:
->> +		Decimal value for the green component of the light. The
->> +		value is normalized to give the relative green component
->> +		independently of the light intensity. The raw value for
->> +		green is multiplied by 1.0 before being normalized, this to
->> +		adapt to the relative sensitivity of the green filter of
->> +		the sensor. The factor for red is 2.4 and the factor for
->> +		blue is 1.3.
->> +
->> +What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_blue_raw
->> +KernelVersion:
->> +Contact:	linux-iio@vger.kernel.org
->> +Description:
->> +		Unit-less raw value for blue intensity.
->> +
->> +What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_blue_scale
->> +KernelVersion:
->> +Contact:	linux-iio@vger.kernel.org
->> +Description:
->> +		Decimal value for the blue component of the light. The
->> +		value is normalized to give the relative blue component
->> +		independently of the light intensity. The raw value for
->> +		blue is multiplied by 1.3 before being normalized, this to
->> +		adapt to the relative sensitivity of the blue filter of the
->> +		sensor. The factor for red is 2.4 and the factor for green
->> +		is 1.0.
->> +
->> +What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_clear_raw
->> +KernelVersion:
->> +Contact:	linux-iio@vger.kernel.org
->> +Description:
->> +		Unit-less raw value for clear intensity.
->> +
->> +What:		/sys/bus/iio/devices/iio:deviceX/in_illuminance_input
-> This is already in the main ABI doc. 
->> +KernelVersion:
->> +Contact:	linux-iio@vger.kernel.org
->> +Description:
->> +		Lux value for the light illuminance. The value is
->> +		calculated using the wide spectrum green channel and
->> +		multiplied by 2.15e-3.
-> It may be worth capturing these details in an rst file under 
-> Documentation/iio/  Just remember to add an entry in the index.rst file
-> there so that they get included in the docs buidl.
->
+>       2 ./tools/memory-model/litmus-tests/z6.0+pooncelock+pooncelock+pombonce.litmus
 
-Ok, I can describe this in an rst file.
- 
-...
+This stands for the files we're talking about, right?  It needs help.
+
+> ------------------------------------------------------------------------
+> 
+> For the github litmus repo, almost all of which are automatically
+> generated:
+
+I'm not so concerned about these.  A litmus test repo isn't in the same 
+category as a kernel source directory.  Maybe it wouldn't hurt to make 
+some of them more distinguishable (I haven't looked at the original 
+names to tell), but they're not our problem here and now.
+
+Alan
 
