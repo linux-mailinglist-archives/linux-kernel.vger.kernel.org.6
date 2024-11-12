@@ -1,207 +1,229 @@
-Return-Path: <linux-kernel+bounces-405845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A19D9C5889
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:04:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 290079C5818
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:44:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A300B378E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:42:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC201F22AC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E13E1F77A6;
-	Tue, 12 Nov 2024 12:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E047A1FA83D;
+	Tue, 12 Nov 2024 12:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C7cDdtyZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fyG7KD2k";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="g49ZDPUs"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9A52309AA
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731415329; cv=none; b=e5px8vxdLI39JhExoe7gLSAvSRvh042dwIxnzjk85ZqsSrjSEjmdT2RvBm6r9Rm/TaMm1Q+pTamQBkvjRJYMh63BMul2moWtFbpt/q2lcGd3N1gJPahP2/pW9jONylweL4zBMYL9FWs/6LPf/PTln5btVDfkYA/STUfLbDV3AQk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731415329; c=relaxed/simple;
-	bh=chn0Og9dknh9NFD1+hug6TJ2cJiq2gS7K5SjC3tf5F0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nytSfZB7hTa1a27xO93PvFiUMIdo5+H35GFGO74n7YlJ2USrgJQWRX1mmfex0fXVQN11omMiSJJ4iMQ0A17ohHAP/crN078EUHJTXwv6nU4vGy4HAGpFoTEPGQHAK4TIS5zIKACqONIOcwjDUBJyH6N/NN40kBrLiN0pAW7O9+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C7cDdtyZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731415326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wDLehEjuNsFPCSJ4jDeCsWR7/ytRVPGdGFIf0zIq5Rk=;
-	b=C7cDdtyZrYtRkivb1E1UR8lSjefeHlmpSn32uXJHdV6CO/FE7/6tv702wgrMwQtDWkxlQk
-	wBFf5sK+43CqqTSnIl5XG3fEPms5IYmymldLwjSegB3D56zM8ThDwTrdy14G+MbjR1AYKs
-	uqYmwF8UapOngQYs7EfClZomtGQqp+A=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-504-CYhE2ZH3OpW_RZMD_IZGgA-1; Tue, 12 Nov 2024 07:42:03 -0500
-X-MC-Unique: CYhE2ZH3OpW_RZMD_IZGgA-1
-X-Mimecast-MFC-AGG-ID: CYhE2ZH3OpW_RZMD_IZGgA
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cbd2cb2f78so110522336d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:42:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731415323; x=1732020123;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wDLehEjuNsFPCSJ4jDeCsWR7/ytRVPGdGFIf0zIq5Rk=;
-        b=R3Q4xh39+mwaS2IJdvMlmjGma9CJ0OV3pqcJgH4A20gn1NN+wNKpJRKljHW4/54jZD
-         xjXfl9g9vLhkhtBjkhYfoV8zuL4Y3wH/NKJFADIlR1Or6vTEz+eUQcZ+Es1Ponazw3YR
-         A+AjhEHDQjtR5Q5U+d6Rr8ldkemwqbVi+bM2kv8vXzm4wawZJ6q9EpZmDwTbI0mOH8vs
-         JRw5OQc7H6S+kjhI+B91xEOhrXJrIJmfR+3+T08GCkh3E/mr18Bblf2jRun7pYG8CjD1
-         8cLwqVNuzXsAN1CXY/eCq8HVwZyM/245B3qJnDs5Ots4UDf267R+j6IficdvIA8NWDcQ
-         CK/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVG1NNzPOc7CgYj/IFweXyiypAz5pGqCHOfplJCoB1uPkb1YCU/DpKVJw9zwHzYhmeBuwh2aoy+nJ+9LGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgMZ/vZd2fVvpgudXqPhbw6Pxfw0xrPxc0AB8mD5RVtZTtvZ+4
-	45fxINN/K7BCDVFrt8Q5iXtuWmDKTzA9kWOIpoeKxc+0GvtB0RJB/+n7BiSnsUS1hJIvlm9tngL
-	NT9MYcjI/V2wapDR4HRaetmIwBHXvtFHljNhuuORqMJc78Hg/h/4q0MzjDktygw==
-X-Received: by 2002:a05:6214:469c:b0:6cb:81ba:8ac1 with SMTP id 6a1803df08f44-6d39e239cc4mr278418006d6.0.1731415323018;
-        Tue, 12 Nov 2024 04:42:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGWKpKe63uXm6m6ge9fO7av9h0wMJ5vFHEYuk+a846d4GvgyTt2A4xoaqDo6lq2M33RyfUSrg==
-X-Received: by 2002:a05:6214:469c:b0:6cb:81ba:8ac1 with SMTP id 6a1803df08f44-6d39e239cc4mr278417706d6.0.1731415322679;
-        Tue, 12 Nov 2024 04:42:02 -0800 (PST)
-Received: from [192.168.88.24] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3983445f0sm69184166d6.83.2024.11.12.04.42.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 04:42:02 -0800 (PST)
-Message-ID: <c9d61267-4bc8-4c1e-a3a2-ff1cbd46f7a5@redhat.com>
-Date: Tue, 12 Nov 2024 13:41:58 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7511F7555;
+	Tue, 12 Nov 2024 12:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731415419; cv=fail; b=jhVjDXxGExfvrl3pui6JyP/0wVwjggBYosx2IbeA7vfwmZBpof7HHPXn0LgvmWPQpCNdjKziJ+hSfOXIa1NlD/HeeNFjuGa4/yA6eYDs00a+WLBeiF4wErB4Bj/tXF/P/gnov00f1UBRSrUkShfPN99t8W2F9cSEqQXD8CX0FxE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731415419; c=relaxed/simple;
+	bh=GzBn6DsZG0F3yOhU4+gFN0pAV3ZY6VdRn6hKI2bEsmU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=M/wSkHQqTQoVKHhnHE4QsyCW+hhE2WveSOXR9cXt9SMyNnF0PLWHvhAGTIdSFwANH0IwtA1kLVz/gZN7nIaIwb/mPl9cPEmLdEI8oFWTnTxcKT6X/7/5UBcrSKKx472K9ZgX22szMUvd0d0xvojWTSBnmvC2LpC4hfWJLmk+xa8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fyG7KD2k; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=g49ZDPUs; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACCfi1s030414;
+	Tue, 12 Nov 2024 12:43:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2023-11-20; bh=/GdC+r0WTA5yBONR
+	B5h0C5uGmuFkE7K32bwY+Q164L4=; b=fyG7KD2kN/1tJKwM3tQwGl/xO/2rE2BF
+	7J4L6QM2wso9LxXd7RPcWJgW0GHHpFAlMlffTAsd1j/X/abmlsG20VT7+lKCgWDO
+	8mzoNBXeGtcpRSv42PxR3+GtgjMZu9qRGDg2z+dfodUMZzjBWk6ajYzCzm8YqPI8
+	Gj2zf6p1DEL9cwwury9FbHYMGixJpNERDdmJv++X1cj3925v3u/nx1hzpAFQJEH3
+	v/iMbIARTti5btzYFt9IRixtpph5uqbvhRkko4VDwvJP8Y+GRGnK7yRokQNxXLuk
+	KD+d4cgtXpkXp/kSMhCT7pf3G+P/bYHx4pi5ZCv3oQ2aRtYtCpA+EQ==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42t0kbv922-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 12 Nov 2024 12:43:09 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACCUS3F036106;
+	Tue, 12 Nov 2024 12:43:09 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2047.outbound.protection.outlook.com [104.47.56.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42sx67u7r0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 12 Nov 2024 12:43:09 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LNWuC25KsyqZ8JQwL+yWebRgAanjxk/kFgQwT36HVPb0rS4UQMzeQGxcnFkhk5uBTZVw6rfHxlvNg0mJaFUar/o9FLdZpj9pTJ1ipymMMtrLTY5E9a9FQ+DfxsSChd7bGNUNT9GFZjZV/yZLbXXdjAenAs9OrADk//FKnzN+1CgzHeJHTxiQr+/YO5JRWbx++tKXt42yBGillQ/g9mdKcKASuQUcF5FRJ78jV7sAoH1Lxy8/ty2qXcD5F8XrFay+W7yCXd40nD5a5tuhSCENFXKnVJuxnRNLnkFQLabCxvO4CoL0bOe6W9rJ9sSLtn0qvh8pqLS8Dq2rdObghsc2MQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/GdC+r0WTA5yBONRB5h0C5uGmuFkE7K32bwY+Q164L4=;
+ b=M0lPgoeXAOU+IIJpwnccMn2JmXFtAPXTvJZsPZuG9/jAc1PgIM9Hj+eiWR6//YPMlor6TlpeKjhlUhXeRCALzySTmEx1AUWw4bfnSAp7orWhKLBoqI07s3ygNdyVJpR4X7AQfJwJCtQX1YEGsW6qJpjCk6g5A8RTbcwWYzQAL/eHTwXy7aS+Gpu3IgfB2A/acX4NOS3XlnxiDMv16gq85c6cNKwk+2MkPK77hzUsBBIqm94hykVFWdK7OBhRVgf4Mgvs2mxSYCGnuevrklabjB4NCdY4JOH7AFWD2IVwO37A4FqZfnu/1LK9BaPEgz+YAY3XqQzxUIFGGp7ushK9kg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/GdC+r0WTA5yBONRB5h0C5uGmuFkE7K32bwY+Q164L4=;
+ b=g49ZDPUsPi3eegHV0GrCTCIehzZVIhIxE20jyKYPux3uqNtmliuiRDGH7xDTdIdlOfBU2oWOZConuuEgucv58KduBUHAOSgCqrZmW89HXRJoOhBZKLLYu3mhj9DeUenPyovB1udrwzpWT1ed66OTZ53Q4rSSAkEZeRrKVCw9uZU=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by SA2PR10MB4809.namprd10.prod.outlook.com (2603:10b6:806:113::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Tue, 12 Nov
+ 2024 12:43:06 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
+ 12:43:06 +0000
+From: John Garry <john.g.garry@oracle.com>
+To: axboe@kernel.dk, song@kernel.org, yukuai3@huawei.com, hch@lst.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, martin.petersen@oracle.com,
+        John Garry <john.g.garry@oracle.com>
+Subject: [PATCH v4 0/5] RAID 0/1/10 atomic write support
+Date: Tue, 12 Nov 2024 12:42:51 +0000
+Message-Id: <20241112124256.4106435-1-john.g.garry@oracle.com>
+X-Mailer: git-send-email 2.31.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0220.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c1::15) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH v9 5/8] cn10k-ipsec: Add SA add/del support for
- outb ipsec crypto offload
-To: Bharat Bhushan <bbhushan2@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, sgoutham@marvell.com, gakula@marvell.com,
- sbhatta@marvell.com, hkelam@marvell.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, jerinj@marvell.com,
- lcherian@marvell.com, ndabilpuram@marvell.com, sd@queasysnail.net
-References: <20241108045708.1205994-1-bbhushan2@marvell.com>
- <20241108045708.1205994-6-bbhushan2@marvell.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241108045708.1205994-6-bbhushan2@marvell.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SA2PR10MB4809:EE_
+X-MS-Office365-Filtering-Correlation-Id: e072b229-e2d2-4825-c3b0-08dd03178e17
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jgRcLFhOAexprObfUMYFuQUtyF7tq36LdXrYi/b4jdzuSZkdJF6wOXoA+KuY?=
+ =?us-ascii?Q?YVJCxOAo+h5YSW2kLC0Yb+9z5m8o2dknFqXtIPrVKsHtbBLHzjV8GDpYBtet?=
+ =?us-ascii?Q?23sIqDayo3W99+C4vgQ3KJTZSX18frdgfxDpP416qxaD5mdAuqHw0euE8p9+?=
+ =?us-ascii?Q?l7C20qzRUVMTd5RpBc3DCsgB9uTbEQ/1uewLOFVVQeaCI9XuhU4P4+uN5ExP?=
+ =?us-ascii?Q?tIKxmCZ+ky9Z3uwt9et3FnxNuNSR2j539mZXka+dTbKbxiAwGFYwQArEvfKZ?=
+ =?us-ascii?Q?DfhfQSO0BtdaAmLhdkMWMtsDoaw9ZKwmcVkDHulG3VQUcBolFagEUW8R0e2c?=
+ =?us-ascii?Q?9Pv8sDLKAZj1Sr/IEERSHM+OP6fAJ3Y9ctrXKy9zlI7AfJI+53gXU9M1NDVG?=
+ =?us-ascii?Q?QYvtYtJnKU3HZS5BuFO0Ynf0LZrX3jE1onngiWqJQPGbQRBdS/C4nSREi7vJ?=
+ =?us-ascii?Q?IVCJlC2aCT6dpNwYQn6DLTHBF4aWCU06AaHufcv8f2HKSEUZcwncy/v26AiZ?=
+ =?us-ascii?Q?Rm0UXia8iRO6U9xYVHlFQ2nWlkzGytkwN+JGFveGvOLBt2miJ76jsMoycX3Y?=
+ =?us-ascii?Q?LuPacqZkYU24KfQyrNq7FStkuLVUfBtQUiiwZYot+sBU3dEMuzRubTStHNtE?=
+ =?us-ascii?Q?UgcnqTRQmm2O18b5QdDNh72XDHyVGSWEhFRrQhbTn3JMml+emZ+JPHygNGa9?=
+ =?us-ascii?Q?vKICsZ/nQz6nGHMnxM9dBDxoteIYVC8kIWS6lrtl5DjYJzcEV1O0qPZ262+A?=
+ =?us-ascii?Q?eNoJ+j3FReSbUszxsQa/ALqvvK2JGB+wqlWu2fLQDrX8RUH/KQRkxCcCMg7j?=
+ =?us-ascii?Q?7Yma20/RMdGckJea4b7N1V/zaOj+zJ34JAHgHoJe0cmiLuE3+XCWHRs4/ofs?=
+ =?us-ascii?Q?2KLUfGfDA40hSMgUNC7/dtL5NCTpt/zg8KWvIrvBr0DMYI/EN+JD08JPAdPd?=
+ =?us-ascii?Q?vPbGjFXw0xvPszodJeit4mwc+QvH73r3kS9aWITeHF82JPb3FIOkR3dwfRsG?=
+ =?us-ascii?Q?AQPHyXGKYKOOa7vJavAwv0mvU69w84BaQJlcsq+zqXqieAOlxr6VYDGe68lA?=
+ =?us-ascii?Q?6qfBE5d8GD73gASK9E6qbDFnWaypAzTyNKaiwKOgo9pUQg6UMwWsGkAU2lts?=
+ =?us-ascii?Q?xT4gDLN32YSP21K7RUfcD0y8k18+oBAKFnSFY3zieEoUIUZ5VJLkfu0KeTkd?=
+ =?us-ascii?Q?Zoe1ayMB1OCdxZmpOsGuEry2HNfx/LBdcobI402DAaPC6NtCWJntxo8WhJgK?=
+ =?us-ascii?Q?w9rlmgVd4JmTn7J5ibFzyw9IUuyxk/5gCbeJEL6EE8/owP3HHx8k2edCUwiK?=
+ =?us-ascii?Q?X30TCiwddUFzHAJhtkWFiUPN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5IYaT2Vi1bbS26LOHznzMZ6lZhMRLkp59vEk3BUpQiD27UShAANWZyUvC6w0?=
+ =?us-ascii?Q?5NHV9I3Lvu7PaeJRDeO9ANIvDdEBnWdHZ77TQ/BPC63MSxBYJohZRrB0Plni?=
+ =?us-ascii?Q?+bivr+a+kXcN3MUbLvBw1OJIpiBNE7haMo5mc603fy83W1RZGxyt8wlYnLdy?=
+ =?us-ascii?Q?VQOeP5+unUUmXcWY9hJtOJxuVUdCVsMxg+XOhhF/1hHgR1DEB9tIEPOh8iED?=
+ =?us-ascii?Q?J4CPA1qkl5bHLaIPl/Fu1YKZgKBKBFSHjx2wBhdjRBvjYxwY/8/iiLgiLIie?=
+ =?us-ascii?Q?V8DAFrvQPQWF1hLO6EIRlO3ktRWuJvMjarMmMsdLCH91HcP+MixFUQMXFi8X?=
+ =?us-ascii?Q?tllu8zpiK9h02y6XTi1evD6T3kO2hcunuPhQ71I8+LQBrovYy4tGVffvXtAn?=
+ =?us-ascii?Q?d32RZrMGJAwrXnng8DYJ7w3x+tKw2JX/CZtL2Qm0swfTrV9mDu5eowkKLj0t?=
+ =?us-ascii?Q?STw0F/lj9m8aEwQ1LwNSOuPtEJwwEYpkkMIwePTVoVDpoRihn1RUjaMqGqhI?=
+ =?us-ascii?Q?UaHHHiSgEj8E9RxsbtX11SB/TIBo6TPFWfKh1X/YqT3va02vHK4MOi95ttLV?=
+ =?us-ascii?Q?4hgGHmGMTrya0M95pknmVm3DzF3dw0UqT0z8hhulA47NVsHRgIoNxdoxyoZA?=
+ =?us-ascii?Q?bbbPOqZpz27XLUT9faWeMpr2JqvUCOOdQHWdJTZ/FaUQF8BBZ3c79wgVodE3?=
+ =?us-ascii?Q?CtatKYCueyXFr4uFdCLf7Kz+puF1HZduax4XKOviVAyfFH8W/gJGJpV8Nppi?=
+ =?us-ascii?Q?f4tpefrVe+w8P06gyJ1lY3v/HZS16rE3sV+DU0BLuJWsa4lITJFC7CA4Vi+5?=
+ =?us-ascii?Q?UHErK3wSqQvPBwdApSi5AcjHWHbBCRTL84hOAEnDn5WuPHWydDVoy9n6OQaK?=
+ =?us-ascii?Q?akgkvD25Lkq+UZFE9FBCPndrjpMCUIzurEQdgJj2vfQWxetYzxTfgZaWE3DK?=
+ =?us-ascii?Q?dx7V+URSCFLPjGyYRRoR4XjTan2WDqB/EScOqs732vfVWaFBnlV6GBmNDHfy?=
+ =?us-ascii?Q?3GXKDVNRhIMgDLW1Jul046w95VvgbqfaOOsb5mC3tDWrc6nG/frenAgG15fk?=
+ =?us-ascii?Q?0BnTUZ4UAXAsYS1u+PRXntP8575X/X1xXkAA0TtJSgxYPApk+9Yjl6xXXTdp?=
+ =?us-ascii?Q?pQQ1ymK2Azm3KoEDaPAmdwHL8RM+WEuqfOM1txlMbtAHcHoSR4zzycIJZ+eJ?=
+ =?us-ascii?Q?3o1wbviVMwNXEa1uqvh8Amxvyk1ojOdD/8fk3ZunhHuCgZ5+NU0ZK+eg6XNJ?=
+ =?us-ascii?Q?4M8l86lNmgDTBHk6zRpoTNTSZTZvbgMm6w+6uQRBLnUY7vTMKsExRQnEnVwr?=
+ =?us-ascii?Q?j5pHZPDbE2UY384jYezZfJvLDt56kRzNhrQHKQOSby2n2t4NrpgJRfdwLZrI?=
+ =?us-ascii?Q?w5njyJwqC3/NxLmtcypR1f/+rTWzRCFrgoXBX3B997AVjAOD1pZwje8tl94y?=
+ =?us-ascii?Q?7VmMpLb1xOP1hPTcp++6lI43DdfFmmlZeyZoB5mirMBcs17wXt5AF6fSVaem?=
+ =?us-ascii?Q?+KemKiPSvcqGPV7Q0BiCPcZi4TsVKfhiNYnPwMpku9gI1jYlM38H3iM1zxJ3?=
+ =?us-ascii?Q?j1fH5d8xLhfCZwWIwjytbSdinrpEZwqKO2p+DHlpET+NiZN623yQxh9kcZoL?=
+ =?us-ascii?Q?cA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	cOsqFn1sXM+hWLfkzHFYDP8TF90XA+ocZTv4AyfPqxlz424dNV2qCyLwmFLHMuiNsjO4STbatMm1m4S+ZtRy6f8CemIocFoilzkw10KYxPiAw64DVArQg7XdJDBQyIjDsAzW2OaLgq/gjcoUoLMF1KgcSpbeh0ydyyhk/Ziywz1hCyfYJb2ru2HWTisLAwD1GvUFd8U7P4apFvt/YJnmgRFAUgvnultD46YEjdFPgzT+GvI+sV5NN15CPK3EJ0cFlxTpSgzbCcQn0BNDr/U7eefp48GFlNGLOKnpl4qZq4oQOMXaMFolTl9wwv9eUXPsM/S+VhgmhhpUKziGvnetByFwyFJDPG9A14RYIM4azNWWsTIoDxjC9cck6syodX0E4IWLCPWEFqfix4I4lPsuTUHUYPpLGRftpZkKhslBraHoc9wyUyjKYE2vUzBKyyd9+dsx4mnhisGqs8BpeUorApXqBtBhM7kXEnoJYPfrTmlZ/Hc3OTKqgAdw63JCrpleHjM98E8fZ0/ur82x7AlmJ1B/XNcyIn4C4YPA8/Q5BNxR/DOSmi9L+66i8qd74OZgfhFxJOUHkGk4rebF72s98XNZwIc7DQHx9Q/xEHDhxDk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e072b229-e2d2-4825-c3b0-08dd03178e17
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 12:43:06.0956
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VsJNZfebx/poJ1Dq7WSm8BequLkuL3/Jk1sfielxghC4M5SvHn6eTfW77a4OG/QEAh1V+GQOD5zt5Jqn54y1Bg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4809
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-12_05,2024-11-08_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 phishscore=0 mlxlogscore=984 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2411120102
+X-Proofpoint-GUID: pm32M1Zhhuhyyn-NhdCp6z3hUbEGWDlD
+X-Proofpoint-ORIG-GUID: pm32M1Zhhuhyyn-NhdCp6z3hUbEGWDlD
 
+This series introduces atomic write support for software RAID 0/1/10.
 
+The main changes are to ensure that we can calculate the stacked device
+request_queue limits appropriately for atomic writes. Fundamentally, if
+some bottom does not support atomic writes, then atomic writes are not
+supported for the top device. Furthermore, the atomic writes limits are
+the lowest common supported limits from all bottom devices.
 
-On 11/8/24 05:57, Bharat Bhushan wrote:
-> This patch adds support to add and delete Security Association
-> (SA) xfrm ops. Hardware maintains SA context in memory allocated
-> by software. Each SA context is 128 byte aligned and size of
-> each context is multiple of 128-byte. Add support for transport
-> and tunnel ipsec mode, ESP protocol, aead aes-gcm-icv16, key size
-> 128/192/256-bits with 32bit salt.
-> 
-> Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
-> ---
-> v8->v9:
->  - Previous versions were supporting only 64 SAs and a bitmap was
->    used for same. That limitation is removed from this version.
->  - Replaced netdev_err with NL_SET_ERR_MSG_MOD in state add flow
->    as per comment in previous version 
->  - Changes related to mutex lock removal 
-> 
-> v5->v6:
->  - In ethtool flow, so not cleanup cptlf if SA are installed and
->    call netdev_update_features() when all SA's are un-installed.
->  - Description and comment re-word to replace "inline ipsec"
->    with "ipsec crypto offload"
-> 
-> v3->v4:
->  - Added check for crypto offload (XFRM_DEV_OFFLOAD_CRYPTO)
->    Thanks "Leon Romanovsky" for pointing out
-> 
-> v2->v3:
->  - Removed memset to zero wherever possible
->   (comment from Kalesh Anakkur Purayil)
->  - Corrected error handling when setting SA for inbound
->    (comment from Kalesh Anakkur Purayil)
->  - Move "netdev->xfrmdev_ops = &cn10k_ipsec_xfrmdev_ops;" to this patch
->    This fix build error with W=1
-> 
->  .../marvell/octeontx2/nic/cn10k_ipsec.c       | 415 ++++++++++++++++++
->  .../marvell/octeontx2/nic/cn10k_ipsec.h       | 113 +++++
->  2 files changed, 528 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-> index e09ce42075c7..ccbcc5001431 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-> @@ -375,6 +375,391 @@ static int cn10k_outb_cpt_clean(struct otx2_nic *pf)
->  	return ret;
->  }
->  
-> +static void cn10k_cpt_inst_flush(struct otx2_nic *pf, struct cpt_inst_s *inst,
-> +				 u64 size)
-> +{
-> +	struct otx2_lmt_info *lmt_info;
-> +	u64 val = 0, tar_addr = 0;
-> +
-> +	lmt_info = per_cpu_ptr(pf->hw.lmt_info, smp_processor_id());
-> +	/* FIXME: val[0:10] LMT_ID.
-> +	 * [12:15] no of LMTST - 1 in the burst.
-> +	 * [19:63] data size of each LMTST in the burst except first.
-> +	 */
-> +	val = (lmt_info->lmt_id & 0x7FF);
-> +	/* Target address for LMTST flush tells HW how many 128bit
-> +	 * words are present.
-> +	 * tar_addr[6:4] size of first LMTST - 1 in units of 128b.
-> +	 */
-> +	tar_addr |= pf->ipsec.io_addr | (((size / 16) - 1) & 0x7) << 4;
-> +	dma_wmb();
-> +	memcpy((u64 *)lmt_info->lmt_addr, inst, size);
-> +	cn10k_lmt_flush(val, tar_addr);
-> +}
-> +
-> +static int cn10k_wait_for_cpt_respose(struct otx2_nic *pf,
-> +				      struct cpt_res_s *res)
-> +{
-> +	unsigned long timeout = jiffies + msecs_to_jiffies(10000);
-> +
-> +	do {
-> +		if (time_after(jiffies, timeout)) {
-> +			netdev_err(pf->netdev, "CPT response timeout\n");
-> +			return -EBUSY;
-> +		}
-> +	} while (res->compcode == CN10K_CPT_COMP_E_NOTDONE);
+Flag BLK_FEAT_ATOMIC_WRITES_STACKED is introduced to enable atomic writes
+for stacked devices selectively. This ensures that we can analyze and test
+atomic writes support per individual md/dm personality (prior to
+enabling).
 
-Why a READ_ONCE() annotation is not needed around the 'res->compcode'
-access?
+Based on 0b4ace9da58d (for-6.13/block) nvme-multipath: don't bother
+clearing max_hw_zone_append_sectors
 
-Possibly more relevant: it looks like this code is busy polling the H/W
-for at most 10s, is that correct? If so that timeout is way too high my
-several order of magnitude. You should likely use usleep_range() or
-sleep_interruptible()
+Differences to v3:
+- Add RB tags from Christoph and Kuai (thanks!)
+- Rebase
 
-[...]
-> +static int cn10k_ipsec_validate_state(struct xfrm_state *x,
-> +				      struct netlink_ext_ack *extack)
-> +{
-> +	if (x->props.aalgo != SADB_AALG_NONE) {
-> +		NL_SET_ERR_MSG_MOD(extack,
-> +				   "Cannot offload authenticated xfrm states\n");
+Differences to v2:
+- Refactor blk_stack_atomic_writes_limits() (Christoph)
+- Relocate RAID 1/10 BB check (Kuai)
+- Add RB tag from Christoph (Thanks!)
+- Set REQ_ATOMIC for RAID 1/10
 
-No '\n' at the end of extack messages.
+John Garry (5):
+  block: Add extra checks in blk_validate_atomic_write_limits()
+  block: Support atomic writes limits for stacked devices
+  md/raid0: Atomic write support
+  md/raid1: Atomic write support
+  md/raid10: Atomic write support
 
-(many cases below)
+ block/blk-settings.c   | 132 +++++++++++++++++++++++++++++++++++++++++
+ drivers/md/raid0.c     |   1 +
+ drivers/md/raid1.c     |  14 ++++-
+ drivers/md/raid10.c    |  14 ++++-
+ include/linux/blkdev.h |   4 ++
+ 5 files changed, 161 insertions(+), 4 deletions(-)
 
-Thanks,
-
-Paolo
+-- 
+2.31.1
 
 
