@@ -1,298 +1,545 @@
-Return-Path: <linux-kernel+bounces-405436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EACF9C514C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:58:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8329E9C5150
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:59:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E397E1F22C2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4346B282FA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B1120C02B;
-	Tue, 12 Nov 2024 08:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C0220C01C;
+	Tue, 12 Nov 2024 08:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="vAw5cr0c"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020122.outbound.protection.outlook.com [52.101.128.122])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YqaWEDla"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A4E20BB48;
-	Tue, 12 Nov 2024 08:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.122
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731401891; cv=fail; b=HuAZlyCjplN9h4qO0zBARwZxChHBSAQ1BNKomeMNG2KDeO6hYqldguPdKMCUM9vXCu3lPCNJg5wW3bwTN4T6UhsZS3Whj1JPxW+GqknyJL2gh1UZze6Yfux0fk9dKIcW3kfZEJ71kLihU0r/cxnncFM8xNYg2yPCVpnBpNkosK4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731401891; c=relaxed/simple;
-	bh=fddGPi3hdZkWYvvB8qG3Wdg56twuTRVZtAsP08cf2mY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ari6ZNFid/ldRdmy3m+oUxnCp0Y5GN/wAFgX28xxLD1ztHQ0CrsH7E9edkAzJcxISqhtFTqU8Qukm+Ji5RBth5IH9RP32g08xKV4EXz33IXU4S/alM3bmS2rc1QMTYyq+LNxJBYTaItTovhcDtHZ1nMM7wM4HVwosA7qKOUD2H4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=vAw5cr0c; arc=fail smtp.client-ip=52.101.128.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zP3cadDrW53JG1A317vJupJnbo9awHC21+V+KXB4R7leZh6f3vlVR3CYsM8By5jkjourpbwNTG0krV5A4t+w23G3IXVwWhIxWnLZR3QYACHZ2K4xWvbTJ3f4kZXieEfCGx/lVnqZOqywkLMfsuA+3uQp2RJf7qDcLijde9fhJqbVSAJfe8tQgBBnmfYti5+DaAknDtrc/WxS6n54uNX3w0AMi+NEVqkqS/28fvAihK3UkW3cFf00VfosLwZNr4vB3kF+k8CehimWSEvlQpWcAj3+jcYzY0W/Z7I6MM/9XTTaMrcLvUSf9w3pPixUQ/9uCNO9lhhVZnrd/JrpJaR2iQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4mab5Ghv6pURrAfMcFp9Tq0aBoxqStyoSgNbVv47clw=;
- b=RQz3EASoWL2EncgU6pB6OrhMa+T/0Q1mdzIb5y9WtImwb2DgGc2DiAi9pd+IcEjIGVyYyoXP31xOazn3H3fz45kr4FRJi9T9SG3DLwrD7hKVoCwVBhsGtk/RaXVezpiX/L8agQXy9Hvn7iEUxMRWm9u9nYXj6yMXp6+vQXMGKGVhkF7ZZ/LNfPQcg47bDO93iG/Y5kv2/aIIGboQh3vH6ca1Ju+OaIk+ouTOgrKjLjILqEjbvSlgOq/4HDzHPHbd7udCs6aUhbrAsaZWwttnnkbNHyZ3EpGyhHi7jXv+JB4x7Nx2MAT73xuqHzoTz55HFbjyYtd+V2miazYvV9PgpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4mab5Ghv6pURrAfMcFp9Tq0aBoxqStyoSgNbVv47clw=;
- b=vAw5cr0cnrI0/6HnCMhfH2SVFdOmUUoM7grFDNpvWVex+oa1/McXVkuBqE9UItWHXFEFzChk6Gin134k3zvVRch8qe+8NG972ricS8KlaO/QGzYW3OzTCVdvrlEXgvx0ekM+EK/lilJ4mxcq9GfoBc+mT8lfq8IuvMB3ySOoyn2c1cU5a8ldiW3yJddrO5eEqTx2mF+puWOsttr+berHIlm2d6zqQDqkX0R+AHb4wkhLyb9e7ntiP2LWVlTQAH3cQy1kXjRtS/w8rH7QTPc0Rte7+Dc0FcA82RCRZ+QetmmGuQD8cldN2rGsxu/bJ3tlBobTVNPe+vaemhsOwu7Vsg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
- by TYZPR03MB8534.apcprd03.prod.outlook.com (2603:1096:405:6a::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.26; Tue, 12 Nov
- 2024 08:58:06 +0000
-Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
- ([fe80::ac4e:718:3b03:3123]) by TYZPR03MB6896.apcprd03.prod.outlook.com
- ([fe80::ac4e:718:3b03:3123%5]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 08:58:06 +0000
-Message-ID: <00e16b73-ddbe-4d9c-b485-9ed2a1e10087@amlogic.com>
-Date: Tue, 12 Nov 2024 16:58:00 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 0/4] Pinctrl: A4: Add pinctrl driver
-Content-Language: en-US
-To: neil.armstrong@linaro.org, Linus Walleij <linus.walleij@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241101-a4_pinctrl-v4-0-efd98edc3ad4@amlogic.com>
- <27aa3716-1d28-4da8-80e6-212d7f94d193@linaro.org>
- <84bbb8b3-d638-47e5-a0e9-371e9e56c89f@amlogic.com>
- <97e2b1e4-1763-42c4-a3f0-986492ecfd97@linaro.org>
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-In-Reply-To: <97e2b1e4-1763-42c4-a3f0-986492ecfd97@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR01CA0004.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::22) To TYZPR03MB6896.apcprd03.prod.outlook.com
- (2603:1096:400:289::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ED620BB5C
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731401931; cv=none; b=lxqj+r39R0DeAMlAuvY5WPVvhSvU/p7zp+9qu9v9gZEsHN2y5PPRq/NkFG1XnhXYpTA4aHrKt3rH++pF8pHdrflzo8AowTogzsX57k5oTD4H2BREHxCARAawqbf9X3wVge2dlxxbXJT4miiK5WmAlhnNvXY8HAHwNDxm+7EM32U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731401931; c=relaxed/simple;
+	bh=reEMUAi1QnDqIWb4QcQl+4DP5qs65V5sOCNGSMiDabU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZVLcKvFerqxvVOxhsGk54nRWNtL/W/5RXeuguuRrSAn+gWyG+zoLZM0Tn9oNXo5dSdRhZuUNuQ5HYLITvso/ppeLDIALlBxzDRmOpxH0RrSaJJEP6uzvOYxF/h3+kzSLnKvcPOivvaI29CreHkiMd5qe5k7aN44EpuCRVabP+8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YqaWEDla; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731401927;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LPptTmbxDsypCGvPECMl6oSCV1GXbmYdDQ4GWXHyOFo=;
+	b=YqaWEDlanLqKJV7k87mpKVXiUg/gUqOhk/foESXwx42FsBmV+I/Y9NwzUBbKi7ns8wwF+k
+	PbDp7bMzlXKjJU96cQCx/8FDPBwZry0yGF43gQSSGSd+v63DEwyTArAsLPfTpagkkR5lVx
+	byC/JgvOPfU0yRuBtTOBya34yBxWnnM=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-670-2Oh0r4GgMEKHY-VDT5S59Q-1; Tue, 12 Nov 2024 03:58:46 -0500
+X-MC-Unique: 2Oh0r4GgMEKHY-VDT5S59Q-1
+X-Mimecast-MFC-AGG-ID: 2Oh0r4GgMEKHY-VDT5S59Q
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-539f49f2443so4882171e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:58:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731401925; x=1732006725;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LPptTmbxDsypCGvPECMl6oSCV1GXbmYdDQ4GWXHyOFo=;
+        b=rtVU4Xddn+Mir85i5MIZDPpHP8QmIf5WQbOxQk6PdJdIccea9FHt1ySH5/0icVhhca
+         jXLRPaAZC9wRwzfqwEORuN2kYCAqt84OFwWrLhJ+n2xxLd+6wYDlvBc7VO4FRHwDsrb3
+         0tOAIigQgpNT1mJdPTa5njLcfrSt+mNF6hA+UZ3Gq3j0UgAW28HvdL4I3zP8uHxRAvQx
+         DPlTuDvRhi3INz4xMdHhkt0jAcCfHoU059wx1A9/swdsXtgLc5BhfFEvicTNIlvG1cv2
+         xT8GXJSIz+lAX1LHfFiQ7SAcnR7b81QzIx+qnmRy5iLJIDqgWlt+hKYuqENwXJmBNwrG
+         39Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbZTO+Vs0edRAZLfDsOzmG4vUKI9oYNBMpmR1xSOxexQqdb4IUbnndDVX0buudj8PNjNgowTU8DWezj1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHS2WsE1s6CYS5Wrz6N15eUYyhso++7W8fcR04ahGOuloCMjRv
+	JECSrQSLYklJPOklj3RhrSrCLZW78tuiC5XBn50j1/fGx+c142HjWb6rD+iRK76Jbt90Cs6jtUx
+	kdo1hjHblcYmGZpXlBnjxsQoJcpf4JVptyVcaZBqEVT5kfVr7AwRUzUtygLEM2g==
+X-Received: by 2002:a05:6512:230e:b0:536:a4f1:d214 with SMTP id 2adb3069b0e04-53d862c6e44mr11355536e87.19.1731401924687;
+        Tue, 12 Nov 2024 00:58:44 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHESdaruTqKXD8wNS5cPcSQBu3Jt/KOIsg2NV8sVzgjBpgWNkRHfN86pa3KSfybNzE1Ut550w==
+X-Received: by 2002:a05:6512:230e:b0:536:a4f1:d214 with SMTP id 2adb3069b0e04-53d862c6e44mr11355505e87.19.1731401923910;
+        Tue, 12 Nov 2024 00:58:43 -0800 (PST)
+Received: from sgarzare-redhat (host-79-46-200-129.retail.telecomitalia.it. [79.46.200.129])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a4ab89sm701336966b.64.2024.11.12.00.58.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 00:58:43 -0800 (PST)
+Date: Tue, 12 Nov 2024 09:58:39 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Konstantin Shkolnyy <kshk@linux.ibm.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
+Subject: Re: [PATCH v5 3/3] vsock/test: verify socket options after setting
+ them
+Message-ID: <bltkmoxf6xsknimf6ccrxuritfc3ipxhbqkibq7jzddg6yewcv@ijcc44qmqsm3>
+References: <20241108011726.213948-1-kshk@linux.ibm.com>
+ <20241108011726.213948-4-kshk@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|TYZPR03MB8534:EE_
-X-MS-Office365-Filtering-Correlation-Id: 59548d11-6247-4420-a849-08dd02f81f7e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZFJyTU8zTDFiY3NEK1JDVEFnVFBnNE9tRVRMUzQxUXpGNm5IK3I1TFVGbzVW?=
- =?utf-8?B?MHp3TVQxM1VMQmtNVDhBaWx4SFFwTDlrZXkyL3FqYkt4M3hjcjhnZ3ZQdEZp?=
- =?utf-8?B?YkhCRk5mTzZLbDRLcHAvRytNekozRmJXaDl6bERVUWNvK2J1WWtDUzQ3Zk84?=
- =?utf-8?B?Wi9mZlRLdUo1UmFYQ3VoTGdwN2VlTGhGWndiaFJMa0k2NzNOYjMveWFUcGtP?=
- =?utf-8?B?bUl0WnphdTN0cjhIcUYwbTlRckZDOUZicnh2ZUhrRUNSWUNoM2hjd05lYjNR?=
- =?utf-8?B?SzVQOVBaNnIvMk1hOE1aVHZwQmx5YU04WlBjMkxHdkFXS1E5bHV3enVjN25z?=
- =?utf-8?B?aE9vUDZneTJMRC9iOTBKSTBBNWxLK3ZQMzh6c3llZWoza1N0TWpRaXJyYVdp?=
- =?utf-8?B?Zmt1V1pya0hlTEQxa0xqVnJ6alNrQWdSZkJlR0tzNHRlQ2FSczcxSDBQY1R2?=
- =?utf-8?B?b2RJbVJmT1dyWUF5MUtFOVIxT1d4ZTh6eGhaZFg5SmRmWkFLMlJRRmZmRWRW?=
- =?utf-8?B?THVnMFdmdWJBdFgweHJxSWpBQWRtVDZJS3dIRENxbFp3b2FMUjJvR2x1OEgy?=
- =?utf-8?B?NHVkaDVXd1BlMkVTMURtOFIwa3hBUUdqbkRCczAvWlNIVzB3c2dUOTlPdkNs?=
- =?utf-8?B?Z0EyQ0wwUHhzSUtxWmwrY0k5Q1pEMHlDQTRBczdnN2JaVzFxbERWY2t3YVA4?=
- =?utf-8?B?dHkyZWFiNk1nM2oySTB2ZXh2Q3N5b0FyM0hWSUZBSzR6clJ2UGxVM2ZsY2V0?=
- =?utf-8?B?M2F5MnNtUExEQTdpZWJ0Ty9IY2Q3b3hVbFlhMjUyUnA2QU12YjJONmJXWUJN?=
- =?utf-8?B?bVgrVEE1eUF0TUN4MWdQK1FScVdSKzZkSjBDUWtQK0dKa3FKOW1EdWlDb2Vv?=
- =?utf-8?B?em1ERFdkdDlaTzdyc1pXVXIvZVQ3bURwcENxZ2pLTGtYRGJYK0VQN1dXR1Vh?=
- =?utf-8?B?aTRQcWRySk11c0x6ekxVeEdqcHVycTRsSWVVaWo5NURHV2NnRTZ5NGlFYmZD?=
- =?utf-8?B?dm1GR2VTY1pvNmhkeE1QampmcUdqVnpJTjY0MVlhZXJCT0RuZ2NYZkhzakJ0?=
- =?utf-8?B?dmFjcWg5V0xISjNNOVc4bHVOVUZCWVo0cDgzb2xablZLeFVlb1pGb1VjanRl?=
- =?utf-8?B?bHlzUGd5a3NMUTg4QU83OXQxclNFZlNLUFZTZnVZaXBvY21kclF5bmp6QTZm?=
- =?utf-8?B?STBPT0c1MWMvTFJQRE9SK3VwamRGOWxwQ0J1YVNCN0svWFZ4MEV1ckorSGQ1?=
- =?utf-8?B?Umo2UlZaZnlZbnRCZ2RUYkxrdUROc1VNZVFlYi9GWk5uMXVMa3cvWHNHRkx1?=
- =?utf-8?B?MDFiTnZwQmkyM2ZKWTdOeHdHdFVIRDd1bDhTMUNSeTRyZVh1VDhJU2ZSbmR2?=
- =?utf-8?B?OHkzUHZIZmdmTzFmelkreUNHbW9yZjY3TGEwZ28wZXh6bTZVRVlCaGUwTlkv?=
- =?utf-8?B?YllaUmJMcURGYnFBUDJPNm1kTTVCb1FwRFU5d3U0eWtlZkRGTGxPQnRieFRl?=
- =?utf-8?B?SCt2Yks3NW5WQ1hEcnR6Q0s4VE1keWp3Yyt4bHVYT0kvZ2N6TllUaEtZMXVW?=
- =?utf-8?B?aUhUdU1iQUFmNlI4OFJ3bStSaSt3ZG4vbkhMZ2MwenNZY1JQS1VFcjJrcERF?=
- =?utf-8?B?QzFrMlhyYWlLVUIzQitkUStpajJ2cmdEUjVPOG9oNkhwMEF5YUZsWDhKTFNC?=
- =?utf-8?B?OG4vZ0tWM1I3bUFEakd2eXRNZVBNSkwxcU04S0oyck5YczhacUE5TFhmYk1p?=
- =?utf-8?Q?kjfKdapHF/JDc/59MnfSTdYRjgORSCdNFLgh/cW?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bHpINk9DbHA4M0tkUWdtcXVpSk41WFZ0RFBBSGg4ZCsyTjUzMlJSdU05UTlY?=
- =?utf-8?B?RnZ6ZThlaG5kVEpWQzdwY2pBeUlreXpvNUVPZWNVN1o1ejRCR0kwb1VUYVMv?=
- =?utf-8?B?RGR0alg0YytVVWdudlVYUzNZYVhPTVBKTHJyTENMSmxBV0wvTVdyN3FlWkNs?=
- =?utf-8?B?WDVCNE1TT1pVZm80bmpUdkpkWkx0TzJRWGxLVTJWTk1JaHdJVFVxZG1udTY3?=
- =?utf-8?B?Vk80cmNkNlR2aHZjTkFwQ0tOcHU5NnJiNnE2VW9hajdrTHNXcHhJOGlNRXlP?=
- =?utf-8?B?YjZ3cVpTZzFyTDJ4MjFSSE1pVWJrV0xSNnNGY3lTSzk5K3hKcys4b0txL0dh?=
- =?utf-8?B?cG1NclJHTTN1SjVkV1JmRm04NlJCdW1xd2dwT2hIVTZibFgvVWFMYnlZY0tz?=
- =?utf-8?B?NGs4Qm0rc0pkYlVUUlZjbkVydUUraTluNU5PQTJ2cjQ2MXNlZXlkektZRjhX?=
- =?utf-8?B?bXRNeXFuQTZLeTkwZnBaREpNMDdJMGl6MmcrY1lFSTg1T09uamhsR0dJREhO?=
- =?utf-8?B?ZzBqMUhsWjVFb3E2SDVUbUU4bzRuYlh1enRFcGF3T1pvTVE5TmF1Rnc4SzFC?=
- =?utf-8?B?dERRRzRVTlMwZHY3NEQvM3dScUJlNVF0MHVxcUVZRU5yWTNFaUhYelo3OWJV?=
- =?utf-8?B?TWxGN01meUJPcFpDRjdWR1FacFBpdWE4UWZrYVQ0bjJpZVZsZUljcGlJVW1T?=
- =?utf-8?B?WWlKVDJEbEZWdHMrUm9IWUowL2hyTmpsckVIbURURDE1c1craE5ISkRnMlRr?=
- =?utf-8?B?Q243UjIxekFmRnFxczkyVnZlaVBrT3RPdUQzSWVQdk1hSDNxYUdWUDRuRlQ3?=
- =?utf-8?B?Vlp1R3NRb29SZmVvdks5ZEQvSFFaWUh6MFh5QnJYUWRoMjUxYUNSNEYyK1BZ?=
- =?utf-8?B?andiby9ZUWhNc2s0LzgwR3dmcnZFOU5mMTUzZlRnUFdBeWZreVN5UERJdmVV?=
- =?utf-8?B?YTgyaVZrcmkxVVhPRlQ1Y0ViYm5IT1YwTGRUZDBWaUVSbXZZaXJha0tPSWNW?=
- =?utf-8?B?SEZ4VXMxbW5EZ2JGM2FhUld0cnhoUC9vVEZETDROQ0gwaU5LK1dGcnpLK0Zk?=
- =?utf-8?B?ZWw5cmdKQ3d0OW9Id1FaZU9HU2g4WWFmQ2tidkNOajFBam1oa1FqaFdMdmVq?=
- =?utf-8?B?NHp4UHBDeW1FM0huRStiVzZFRVU1S3B0VXRiWmZ6bkVwQVRXMnR5ZTRVZjZB?=
- =?utf-8?B?c2ZrVXMrSzFzVU9BeVYwWkZWTHp4RW9ZTFF1ODg4dDMzR3ZySlp2TTE2aTlP?=
- =?utf-8?B?ZGxHanJsWjlJK21vVDdyZFJiUmZhRnU5alg3VUIrUWMrM0RNOGl2RmdUTzFW?=
- =?utf-8?B?bG02MGdQdGJ3RzhTenFxRzQ5L2pXTXFXOVUyQzlhMW9ha2xuN05FeFJDLzB1?=
- =?utf-8?B?UTBVNGVnVVBsQ2tDTklVd0xRdkpHamV1UEhQbGtFVlloaFhJNmwrK0YwZThX?=
- =?utf-8?B?ZE54TWY1ZU1ERUF3ZlpFTlhjbTBYbzl1NnFxazFLRC9RVTlyRU9adHh5Smg1?=
- =?utf-8?B?N0lXR0FiajJVcWZMcWVJaU1wSWNhaUVma2RVLzVpVlIzdi9YRjFEc2tudHVy?=
- =?utf-8?B?TVFFM2hxZDhZaVNUM1FKL3U1L1RROXJGWlNpenhsbTFiN0ZTZ2I0TWZDOW9I?=
- =?utf-8?B?eDlCQUgwNTlGbFJHbkUwQm1BQy9GVWM5cUR6TVBpMjZvS0pmL1BTUjkvQXll?=
- =?utf-8?B?RWJ4NG54UDFieGxaWWxlbVNhQ1IxaWpCNFUxSnRucDFIam5LWHRTTGp5VTBE?=
- =?utf-8?B?Rk1YWDlvcDFYTGxETzlFYWxWbGp5RmNQNm1TKzRKVWlxMzJQUFBhaWhtaWp0?=
- =?utf-8?B?dnJHWTFjQi8zODE5TWV2ejhzb0JaOFQ0ZjV6MGUxN25aOE9UMCtsS2lRdTB1?=
- =?utf-8?B?RE43TzZ1aDF4UHVveEhJdVFvOU5vQVI0TjhjQitCZ1N1dVZtMEhPMlRiSmxO?=
- =?utf-8?B?OEJGRTBYWTFpc0NIZ205SkxaM2VyeHA1NllnaU1VZkdxbUJWYktsSlNHbzgw?=
- =?utf-8?B?TXlSQXVOU2JkNnl0ZW5ZaXJwSWJhQmNUVm05UVZSVlprQXF0M2tQR3Z4bEw2?=
- =?utf-8?B?dTJNcmNXWHNhemlGckRneU9vSnVrTkp4WVJrU2xhUUdFblFSd3phUXRaeWZy?=
- =?utf-8?B?TzZldGxtY2N0L29vY1pmazJYSGsyZTQxQ3lHckpkT2tXaUJSOStZMGlWdU03?=
- =?utf-8?B?Ymc9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59548d11-6247-4420-a849-08dd02f81f7e
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 08:58:06.2037
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rYpBBgnkIhX8hnaUHAtXb/8jOMDmYCdDFHUXT2WP7RZXUWKVjQXOO8ojiK52ZD8ku11QNGfLzR/5DH/uFH7URBb3ZVVxG63Ah3HXGAMO6SI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB8534
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241108011726.213948-4-kshk@linux.ibm.com>
 
-Hi Neil,
-    Thanks for your reply.
+On Thu, Nov 07, 2024 at 07:17:26PM -0600, Konstantin Shkolnyy wrote:
+>Replace setsockopt() calls with calls to functions that follow
+>setsockopt() with getsockopt() and check that the returned value and its
+>size are the same as have been set.
+>
+>Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
+>---
+> tools/testing/vsock/Makefile              |   8 +-
+> tools/testing/vsock/control.c             |   8 +-
+> tools/testing/vsock/msg_zerocopy_common.c |   8 +-
+> tools/testing/vsock/util_socket.c         | 149 ++++++++++++++++++++++
+> tools/testing/vsock/util_socket.h         |  19 +++
+> tools/testing/vsock/vsock_perf.c          |  24 ++--
+> tools/testing/vsock/vsock_test.c          |  40 +++---
+> 7 files changed, 208 insertions(+), 48 deletions(-)
+> create mode 100644 tools/testing/vsock/util_socket.c
+> create mode 100644 tools/testing/vsock/util_socket.h
+>
+>diff --git a/tools/testing/vsock/Makefile b/tools/testing/vsock/Makefile
+>index 6e0b4e95e230..1ec0b3a67aa4 100644
+>--- a/tools/testing/vsock/Makefile
+>+++ b/tools/testing/vsock/Makefile
+>@@ -1,12 +1,12 @@
+> # SPDX-License-Identifier: GPL-2.0-only
+> all: test vsock_perf
+> test: vsock_test vsock_diag_test vsock_uring_test
+>-vsock_test: vsock_test.o vsock_test_zerocopy.o timeout.o control.o util.o msg_zerocopy_common.o
+>-vsock_diag_test: vsock_diag_test.o timeout.o control.o util.o
+>-vsock_perf: vsock_perf.o msg_zerocopy_common.o
+>+vsock_test: vsock_test.o vsock_test_zerocopy.o timeout.o control.o util.o msg_zerocopy_common.o util_socket.o
+>+vsock_diag_test: vsock_diag_test.o timeout.o control.o util.o util_socket.o
+>+vsock_perf: vsock_perf.o msg_zerocopy_common.o util_socket.o
 
-On 2024/11/12 16:24, Neil Armstrong wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> On 11/11/2024 04:26, Xianwei Zhao wrote:
->> Hi Neil,
->>     Thanks for your reply.
->>
->> On 2024/11/10 20:24, Neil Armstrong wrote:
->>> [ EXTERNAL EMAIL ]
->>>
->>> Hi,
->>>
->>> Le 01/11/2024 à 09:27, Xianwei Zhao via B4 Relay a écrit :
->>>> Add pinctrl driver support for Amloigc A4 SoC
->>>>
->>>> I want to find out what kind of solution is feasible to
->>>> meet the needs of all parties. This RFC verion is one of them.
->>>>
->>>> All of Amogic SoCs GPIO device requirement is met here by
->>>> adding GPIO bank definition instead of the pin definition.
->>>> Binding header files will no longer be added to future
->>>> SoCs's pin devices.
->>>>
->>>> The pinctrl software only adds insterface of of_xlate to support
->>>> for transformation without affecting the overall framework and
->>>> is compatible with previous drivers.
->>>>
->>>> The code in DTS file is also readable when using GPIO, as below:
->>>>
->>>> reset-gpios = <&gpio AMLOGIC_GPIO(AMLOGIC_GPIO_X, 6) GPIO_ACTIVE_LOW>;
->>>
->>> Fine, but why not use 3 cells instead of this macro ? Since you 
->>> introduced the
->>> custom xlate, parsing the 3 cells would be easier that using a macro:
->>>
->>> reset-gpios = <&gpio AMLOGIC_GPIO_X 6 GPIO_ACTIVE_LOW>;
->>>
->>> Neil
->>
->> I was prepared to do this before, mainly later considering 
->> incompatible binding, using the original two parameter passing
->>
->> If use three parameters, I  need to modify the corresponding binding 
->> property. in file:
->> Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
->>
->>        "#gpio-cells":
->>          const: 2
->> It must be compatible with the current number of parameters(3)
-> 
-> Yes, you may move the #gpio-cells definition out of the common yaml
-> and define them in the soc spefic yaml and set it to 3 for a4.
-> 
+I would add the new functions to check setsockopt in util.c
 
-I can modify 
-Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml 
-file
-change
-         "#gpio-cells":
-           const: 2
-to
-         "#gpio-cells":
-           enum: [2, 3]
+vsock_perf is more of a tool to measure performance than a test, so
+we can avoid calling these checks there, tests should cover all
+cases regardless of vsock_perf.
 
-  and make it to compatible with subsequent ones. Do you feel OK?
+>
+> vsock_uring_test: LDLIBS = -luring
+>-vsock_uring_test: control.o util.o vsock_uring_test.o timeout.o msg_zerocopy_common.o
+>+vsock_uring_test: control.o util.o vsock_uring_test.o timeout.o msg_zerocopy_common.o util_socket.o
+>
+> CFLAGS += -g -O2 -Werror -Wall -I. -I../../include 
+> -I../../../usr/include -Wno-pointer-sign -fno-strict-overflow 
+> -fno-strict-aliasing -fno-common -MMD -U_FORTIFY_SOURCE -D_GNU_SOURCE
+> .PHONY: all test clean
+>diff --git a/tools/testing/vsock/control.c b/tools/testing/vsock/control.c
+>index d2deb4b15b94..f1fd809ac9d5 100644
+>--- a/tools/testing/vsock/control.c
+>+++ b/tools/testing/vsock/control.c
+>@@ -27,6 +27,7 @@
+>
+> #include "timeout.h"
+> #include "control.h"
+>+#include "util_socket.h"
+>
+> static int control_fd = -1;
+>
+>@@ -50,7 +51,6 @@ void control_init(const char *control_host,
+>
+> 	for (ai = result; ai; ai = ai->ai_next) {
+> 		int fd;
+>-		int val = 1;
+>
+> 		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+> 		if (fd < 0)
+>@@ -65,11 +65,9 @@ void control_init(const char *control_host,
+> 			break;
+> 		}
+>
+>-		if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
+>-			       &val, sizeof(val)) < 0) {
+>-			perror("setsockopt");
+>+		if (!setsockopt_int_check(fd, SOL_SOCKET, SO_REUSEADDR, 1,
+>+				"setsockopt SO_REUSEADDR"))
+> 			exit(EXIT_FAILURE);
+>-		}
+>
+> 		if (bind(fd, ai->ai_addr, ai->ai_addrlen) < 0)
+> 			goto next;
+>diff --git a/tools/testing/vsock/msg_zerocopy_common.c b/tools/testing/vsock/msg_zerocopy_common.c
+>index 5a4bdf7b5132..4edb1b6974c0 100644
+>--- a/tools/testing/vsock/msg_zerocopy_common.c
+>+++ b/tools/testing/vsock/msg_zerocopy_common.c
+>@@ -13,15 +13,13 @@
+> #include <linux/errqueue.h>
+>
+> #include "msg_zerocopy_common.h"
+>+#include "util_socket.h"
+>
+> void enable_so_zerocopy(int fd)
+> {
+>-	int val = 1;
+>-
+>-	if (setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &val, sizeof(val))) {
+>-		perror("setsockopt");
+>+	if (!setsockopt_int_check(fd, SOL_SOCKET, SO_ZEROCOPY, 1,
+>+			"setsockopt SO_ZEROCOPY"))
+> 		exit(EXIT_FAILURE);
+>-	}
+> }
+>
+> void vsock_recv_completion(int fd, const bool *zerocopied)
+>diff --git a/tools/testing/vsock/util_socket.c b/tools/testing/vsock/util_socket.c
+>new file mode 100644
+>index 000000000000..e791da160624
+>--- /dev/null
+>+++ b/tools/testing/vsock/util_socket.c
+>@@ -0,0 +1,149 @@
+>+// SPDX-License-Identifier: GPL-2.0-only
+>+/*
+>+ * Socket utility functions.
+>+ *
+>+ * Copyright IBM Corp. 2024
+>+ */
+>+#include <errno.h>
+>+#include <inttypes.h>
+>+#include <stdio.h>
+>+#include <string.h>
+>+#include <sys/socket.h>
+>+#include "util_socket.h"
+>+
+>+/* Set "unsigned long long" socket option and check that it's indeed set */
+>+bool setsockopt_ull_check(int fd, int level, int optname,
+>+	unsigned long long val, char const *errmsg)
+>+{
+>+	unsigned long long chkval;
+>+	socklen_t chklen;
+>+	int err;
+>+
+>+	err = setsockopt(fd, level, optname, &val, sizeof(val));
+>+	if (err) {
+>+		fprintf(stderr, "setsockopt err: %s (%d)\n",
+>+				strerror(errno), errno);
+>+		goto fail;
+>+	}
+>+
+>+	chkval = ~val; /* just make storage != val */
+>+	chklen = sizeof(chkval);
+>+
+>+	err = getsockopt(fd, level, optname, &chkval, &chklen);
+>+	if (err) {
+>+		fprintf(stderr, "getsockopt err: %s (%d)\n",
+>+				strerror(errno), errno);
+>+		goto fail;
+>+	}
+>+
+>+	if (chklen != sizeof(chkval)) {
+>+		fprintf(stderr, "size mismatch: set %zu got %d\n", sizeof(val),
+>+				chklen);
+>+		goto fail;
+>+	}
+>+
+>+	if (chkval != val) {
+>+		fprintf(stderr, "value mismatch: set %llu got %llu\n", val,
+>+				chkval);
+>+		goto fail;
+>+	}
+>+	return true;
+>+fail:
+>+	fprintf(stderr, "%s  val %llu\n", errmsg, val);
+>+	return false;
+>+}
+>+
+>+/* Set "int" socket option and check that it's indeed set */
+>+bool setsockopt_int_check(int fd, int level, int optname, int val,
+>+		char const *errmsg)
+>+{
+>+	int chkval;
+>+	socklen_t chklen;
+>+	int err;
+>+
+>+	err = setsockopt(fd, level, optname, &val, sizeof(val));
+>+	if (err) {
+>+		fprintf(stderr, "setsockopt err: %s (%d)\n",
+>+				strerror(errno), errno);
+>+		goto fail;
+>+	}
+>+
+>+	chkval = ~val; /* just make storage != val */
+>+	chklen = sizeof(chkval);
+>+
+>+	err = getsockopt(fd, level, optname, &chkval, &chklen);
+>+	if (err) {
+>+		fprintf(stderr, "getsockopt err: %s (%d)\n",
+>+				strerror(errno), errno);
+>+		goto fail;
+>+	}
+>+
+>+	if (chklen != sizeof(chkval)) {
+>+		fprintf(stderr, "size mismatch: set %zu got %d\n", sizeof(val),
+>+				chklen);
+>+		goto fail;
+>+	}
+>+
+>+	if (chkval != val) {
+>+		fprintf(stderr, "value mismatch: set %d got %d\n",
+>+				val, chkval);
+>+		goto fail;
+>+	}
+>+	return true;
+>+fail:
+>+	fprintf(stderr, "%s val %d\n", errmsg, val);
+>+	return false;
+>+}
+>+
+>+static void mem_invert(unsigned char *mem, size_t size)
+>+{
+>+	size_t i;
+>+
+>+	for (i = 0; i < size; i++)
+>+		mem[i] = ~mem[i];
+>+}
+>+
+>+/* Set "timeval" socket option and check that it's indeed set */
+>+bool setsockopt_timeval_check(int fd, int level, int optname,
+>+		struct timeval val, char const *errmsg)
+>+{
+>+	struct timeval chkval;
+>+	socklen_t chklen;
+>+	int err;
+>+
+>+	err = setsockopt(fd, level, optname, &val, sizeof(val));
+>+	if (err) {
+>+		fprintf(stderr, "setsockopt err: %s (%d)\n",
+>+				strerror(errno), errno);
+>+		goto fail;
+>+	}
+>+
+>+	 /* just make storage != val */
+>+	chkval = val;
+>+	mem_invert((unsigned char *) &chkval, sizeof(chkval));
+>+	chklen = sizeof(chkval);
+>+
+>+	err = getsockopt(fd, level, optname, &chkval, &chklen);
+>+	if (err) {
+>+		fprintf(stderr, "getsockopt err: %s (%d)\n",
+>+				strerror(errno), errno);
+>+		goto fail;
+>+	}
+>+
+>+	if (chklen != sizeof(chkval)) {
+>+		fprintf(stderr, "size mismatch: set %zu got %d\n", sizeof(val),
+>+				chklen);
+>+		goto fail;
+>+	}
+>+
+>+	if (memcmp(&chkval, &val, sizeof(val)) != 0) {
+>+		fprintf(stderr, "value mismatch: set %ld:%ld got %ld:%ld\n",
+>+				val.tv_sec, val.tv_usec,
+>+				chkval.tv_sec, chkval.tv_usec);
+>+		goto fail;
+>+	}
+>+	return true;
+>+fail:
+>+	fprintf(stderr, "%s val %ld:%ld\n", errmsg, val.tv_sec, val.tv_usec);
+>+	return false;
+>+}
+>diff --git a/tools/testing/vsock/util_socket.h b/tools/testing/vsock/util_socket.h
+>new file mode 100644
+>index 000000000000..38cf3decb15c
+>--- /dev/null
+>+++ b/tools/testing/vsock/util_socket.h
+>@@ -0,0 +1,19 @@
+>+/* SPDX-License-Identifier: GPL-2.0-only */
+>+/*
+>+ * Socket utility functions.
+>+ *
+>+ * Copyright IBM Corp. 2024
+>+ */
+>+#ifndef UTIL_SOCKET_H
+>+#define UTIL_SOCKET_H
+>+
+>+#include <stdbool.h>
+>+
+>+bool setsockopt_ull_check(int fd, int level, int optname,
+>+		unsigned long long val, char const *errmsg);
+>+bool setsockopt_int_check(int fd, int level, int optname, int val,
+>+		char const *errmsg);
+>+bool setsockopt_timeval_check(int fd, int level, int optname,
+>+		struct timeval val, char const *errmsg);
 
-> Neil
-> 
->>
->>>
->>>>
->>>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
->>>> ---
->>>> Changes in v4:
->>>> - Add interface of of_xlate support.
->>>> - Add const for some variable.
->>>> - Link to v3: 
->>>> https://lore.kernel.org/r/20241018-a4_pinctrl-v3-0-e76fd1cf01d7@amlogic.com
->>>>
->>>> Changes in v3:
->>>> - Remove head file from binding.
->>>> - Move GPIO define to file *.c.
->>>> - Link to v2: 
->>>> https://lore.kernel.org/r/20241014-a4_pinctrl-v2-0-3e74a65c285e@amlogic.com
->>>>
->>>> Changes in v2:
->>>> - Use one marco instead of all pin define.
->>>> - Add unit name for dts node.
->>>> - Link to v1: 
->>>> https://lore.kernel.org/all/20240611-a4_pinctrl-v1-0-dc487b1977b3@amlogic.com/
->>>>
->>>> ---
->>>> Xianwei Zhao (4):
->>>>        dt-bindings: pinctrl: Add support for Amlogic A4 SoCs
->>>>        pinctrl: meson: add interface of of_xlate
->>>>        pinctrl: meson: Add driver support for Amlogic A4 SoCs
->>>>        arm64: dts: amlogic: a4: add pinctrl node
->>>>
->>>>   .../bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml |    2 +
->>>>   arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        |   36 +
->>>>   drivers/pinctrl/meson/Kconfig                      |    6 +
->>>>   drivers/pinctrl/meson/Makefile                     |    1 +
->>>>   drivers/pinctrl/meson/pinctrl-amlogic-a4.c         | 1321 
->>>> ++++++++++++++++++++
->>>>   drivers/pinctrl/meson/pinctrl-meson.c              |    4 +
->>>>   drivers/pinctrl/meson/pinctrl-meson.h              |    4 +
->>>>   include/dt-bindings/gpio/amlogic-gpio.h            |   50 +
->>>>   8 files changed, 1424 insertions(+)
->>>> ---
->>>> base-commit: 58e2d28ed28e5bc8836f8c14df1f94c27c1f9e2f
->>>> change-id: 20241012-a4_pinctrl-09d1b2a17e47
->>>>
->>>> Best regards,
->>>
-> 
+We call of them in the same way in the tests:
+
+if (!setsockopt...check(...))
+     exit(EXIT_FAILURE);
+
+So, what about making them void and calling exit in the functions?
+
+We already do this in other functions.
+
+Thanks for this work!
+Stefano
+
+>+
+>+#endif /* UTIL_SOCKET_H */
+>diff --git a/tools/testing/vsock/vsock_perf.c b/tools/testing/vsock/vsock_perf.c
+>index 8e0a6c0770d3..b117e043b87b 100644
+>--- a/tools/testing/vsock/vsock_perf.c
+>+++ b/tools/testing/vsock/vsock_perf.c
+>@@ -21,6 +21,7 @@
+> #include <sys/mman.h>
+>
+> #include "msg_zerocopy_common.h"
+>+#include "util_socket.h"
+>
+> #define DEFAULT_BUF_SIZE_BYTES	(128 * 1024)
+> #define DEFAULT_TO_SEND_BYTES	(64 * 1024)
+>@@ -88,13 +89,16 @@ static unsigned long memparse(const char *ptr)
+>
+> static void vsock_increase_buf_size(int fd)
+> {
+>-	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_MAX_SIZE,
+>-		       &vsock_buf_bytes, sizeof(vsock_buf_bytes)))
+>-		error("setsockopt(SO_VM_SOCKETS_BUFFER_MAX_SIZE)");
+>+	if (!setsockopt_ull_check(fd, AF_VSOCK,
+>+			SO_VM_SOCKETS_BUFFER_MAX_SIZE, vsock_buf_bytes,
+>+			"setsockopt(SO_VM_SOCKETS_BUFFER_MAX_SIZE)"))
+>+		exit(EXIT_FAILURE);
+>+
+>+	if (!setsockopt_ull_check(fd, AF_VSOCK,
+>+			SO_VM_SOCKETS_BUFFER_SIZE, vsock_buf_bytes,
+>+			"setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)"))
+>+		exit(EXIT_FAILURE);
+>
+>-	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
+>-		       &vsock_buf_bytes, sizeof(vsock_buf_bytes)))
+>-		error("setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
+> }
+>
+> static int vsock_connect(unsigned int cid, unsigned int port)
+>@@ -183,10 +187,10 @@ static void run_receiver(int rcvlowat_bytes)
+>
+> 	vsock_increase_buf_size(client_fd);
+>
+>-	if (setsockopt(client_fd, SOL_SOCKET, SO_RCVLOWAT,
+>-		       &rcvlowat_bytes,
+>-		       sizeof(rcvlowat_bytes)))
+>-		error("setsockopt(SO_RCVLOWAT)");
+>+
+>+	if (!setsockopt_int_check(client_fd, SOL_SOCKET, SO_RCVLOWAT,
+>+			rcvlowat_bytes, "setsockopt(SO_RCVLOWAT)"))
+>+		exit(EXIT_FAILURE);
+>
+> 	data = malloc(buf_size_bytes);
+>
+>diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
+>index c7af23332e57..3764dca1118e 100644
+>--- a/tools/testing/vsock/vsock_test.c
+>+++ b/tools/testing/vsock/vsock_test.c
+>@@ -27,6 +27,7 @@
+> #include "timeout.h"
+> #include "control.h"
+> #include "util.h"
+>+#include "util_socket.h"
+>
+> static void test_stream_connection_reset(const struct test_opts *opts)
+> {
+>@@ -444,17 +445,14 @@ static void test_seqpacket_msg_bounds_server(const struct test_opts *opts)
+>
+> 	sock_buf_size = SOCK_BUF_SIZE;
+>
+>-	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_MAX_SIZE,
+>-		       &sock_buf_size, sizeof(sock_buf_size))) {
+>-		perror("setsockopt(SO_VM_SOCKETS_BUFFER_MAX_SIZE)");
+>+	if (!setsockopt_ull_check(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_MAX_SIZE,
+>+			sock_buf_size,
+>+			"setsockopt(SO_VM_SOCKETS_BUFFER_MAX_SIZE)"))
+> 		exit(EXIT_FAILURE);
+>-	}
+>
+>-	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
+>-		       &sock_buf_size, sizeof(sock_buf_size))) {
+>-		perror("setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
+>+	if (!setsockopt_ull_check(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
+>+		       sock_buf_size, "setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)"))
+> 		exit(EXIT_FAILURE);
+>-	}
+>
+> 	/* Ready to receive data. */
+> 	control_writeln("SRVREADY");
+>@@ -586,10 +584,9 @@ static void test_seqpacket_timeout_client(const struct test_opts *opts)
+> 	tv.tv_sec = RCVTIMEO_TIMEOUT_SEC;
+> 	tv.tv_usec = 0;
+>
+>-	if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (void *)&tv, sizeof(tv)) == -1) {
+>-		perror("setsockopt(SO_RCVTIMEO)");
+>+	if (!setsockopt_timeval_check(fd, SOL_SOCKET, SO_RCVTIMEO, tv,
+>+			"setsockopt(SO_RCVTIMEO)"))
+> 		exit(EXIT_FAILURE);
+>-	}
+>
+> 	read_enter_ns = current_nsec();
+>
+>@@ -855,9 +852,8 @@ static void test_stream_poll_rcvlowat_client(const struct test_opts *opts)
+> 		exit(EXIT_FAILURE);
+> 	}
+>
+>-	if (setsockopt(fd, SOL_SOCKET, SO_RCVLOWAT,
+>-		       &lowat_val, sizeof(lowat_val))) {
+>-		perror("setsockopt(SO_RCVLOWAT)");
+>+	if (!setsockopt_int_check(fd, SOL_SOCKET, SO_RCVLOWAT,
+>+		       lowat_val, "setsockopt(SO_RCVLOWAT)")) {
+> 		exit(EXIT_FAILURE);
+> 	}
+>
+>@@ -1383,11 +1379,9 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
+> 	/* size_t can be < unsigned long long */
+> 	sock_buf_size = buf_size;
+>
+>-	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
+>-		       &sock_buf_size, sizeof(sock_buf_size))) {
+>-		perror("setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
+>+	if (!setsockopt_ull_check(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
+>+		       sock_buf_size, "setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)"))
+> 		exit(EXIT_FAILURE);
+>-	}
+>
+> 	if (low_rx_bytes_test) {
+> 		/* Set new SO_RCVLOWAT here. This enables sending credit
+>@@ -1396,9 +1390,8 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
+> 		 */
+> 		recv_buf_size = 1 + VIRTIO_VSOCK_MAX_PKT_BUF_SIZE;
+>
+>-		if (setsockopt(fd, SOL_SOCKET, SO_RCVLOWAT,
+>-			       &recv_buf_size, sizeof(recv_buf_size))) {
+>-			perror("setsockopt(SO_RCVLOWAT)");
+>+		if (!setsockopt_int_check(fd, SOL_SOCKET, SO_RCVLOWAT,
+>+			       recv_buf_size, "setsockopt(SO_RCVLOWAT)")) {
+> 			exit(EXIT_FAILURE);
+> 		}
+> 	}
+>@@ -1442,9 +1435,8 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
+> 		recv_buf_size++;
+>
+> 		/* Updating SO_RCVLOWAT will send credit update. */
+>-		if (setsockopt(fd, SOL_SOCKET, SO_RCVLOWAT,
+>-			       &recv_buf_size, sizeof(recv_buf_size))) {
+>-			perror("setsockopt(SO_RCVLOWAT)");
+>+		if (!setsockopt_int_check(fd, SOL_SOCKET, SO_RCVLOWAT,
+>+			       recv_buf_size, "setsockopt(SO_RCVLOWAT)")) {
+> 			exit(EXIT_FAILURE);
+> 		}
+> 	}
+>-- 
+>2.34.1
+>
+
 
