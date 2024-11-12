@@ -1,128 +1,149 @@
-Return-Path: <linux-kernel+bounces-406696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F7F9C6263
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:17:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB549C6264
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:17:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC4D1F22855
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:17:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D080028455C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D5F219CAD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9F7219E3E;
 	Tue, 12 Nov 2024 20:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2xc+vaE"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NwE1Fl6p"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DB1217472;
-	Tue, 12 Nov 2024 20:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91E519F115;
+	Tue, 12 Nov 2024 20:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731442650; cv=none; b=E5g7tek/m0HqrWG2K0wDKVyvh51rMCRWNW+lnIzz77IhlXo3JyWtEyYpJbfvrf7Rhvxxbqva7LZkbpff7JkAs3poL84uy0oCHX1Ss0kCyFHjhVs1BRNblwCP7q/WWUWDMKUFDrisRB9X9+F8eSs+3IhriXxXAmukypqxnoxrROM=
+	t=1731442651; cv=none; b=TvgwZrVwQRIaexgKtx7Fsy9Pt/eNTO3Mbcfph5DtVEnGaGBvtdfeTXOjy0eWX1WCaeDBA7/O33uCA5MoMbewbt4PVNbZHWKjQzo8bJ0a7vEFHa5e/VUhT3VQ0OFIivpX6ytSwThcCyoPE+DHJTIAEt5NXmcAc/T5CygM0Dc+kmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731442650; c=relaxed/simple;
-	bh=ro9XVelZ3atKDO/u4sqphYozEmJwXP0Y25GX8YrxCNE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ibFwZbM2LsqOA6KKJ1qRamdmbY4KxhhaAiZFuDCHMFK8lLd4u63qD+4HPqT7rLiWJz3vus8Nt/xUR7Qt65X1tQ9FZWd7Gw/ZArPiCJ+SJg/RquqpY+YtgkTDrANietKg0UXKmVrxG2LVbpfdzNCxJmcwpRL8SbZOiRSplJoO7io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H2xc+vaE; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e31af47681so4949487a91.2;
-        Tue, 12 Nov 2024 12:17:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731442648; x=1732047448; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PAV4PtAR/JvIHDDtRPtqXDMU9krT20z0Uly9xUY2Osg=;
-        b=H2xc+vaEcGXICICqn6AH2j2NUHQr4M8UK8Mo5V5PmWYwK/2nTWH33rbNUpiGey+rk5
-         HlE1iQ+ZIEeIqj4ScOvnUe6QrTto3carUdvx7nA6IX+YHvdgSRbrQF/PxMboCcNLcVjm
-         TrVMPQ573GG4h4wT0efc6qmzaEby08PWoPWPwvL4D5H/1pfophLdNaBVurOFI47tk+9T
-         ms8O5a5Xg2z0EIvq3nwkr/3e2ankUpsFEtx9ZfuPccRgGHcM42lhQRiW50NekTUMEDvZ
-         Hb7/PJ64DYIqWzqZUmT0MH7pVvGzsDRnWqtaiIEf3t70VdAobFl/+2R0ITkRQK5oXs0/
-         E34A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731442648; x=1732047448;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PAV4PtAR/JvIHDDtRPtqXDMU9krT20z0Uly9xUY2Osg=;
-        b=NeMM0tr+sAgso4Fkb7YuIyEnI2IduBHU7i9SuoTtUJH7IHZHCBrTvQrhYGGZXoZvZn
-         Qgseqefmk6YjzmEDriGwXOs2fsGSo3Y6+ggLAtsk8jqgV+zphOXY+j8BOYRmwFUjb6QQ
-         vQlmyOfO3SFIxY5TtvVUSzfXOfeONlNdKZgjOFOxWQECvnp9F7MlSA3gufB8qSP+S0kn
-         WI0US7IIYWIzVpe7Mqz/yZdFRbBtL8BHo/7ZT50xCUCy6d0BzOWaaleMbIzmaUWeg6PK
-         S0QrPtKTQgLgaZe/JJrq+JUKlLxrlXdrVTJ8Y8tMCUsaMBRv9hTj/D8pyxyOHVK0lqFV
-         7rIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhYlbGrJnyIFDJ0uT8ThPm9xJsfj1usSGBGsCib7bjn0ESJJif/NNnPX3pUc66pGPT4OjYEoof77zOQ+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8nI9aB4ijD6osjPRKvIEE3g8TyslduNChlEmSbSyu4ZnTx9be
-	3t5nU63Fquh75PJD5qD4MWc1aklhqafohmLhCVKOGJWT8DIC1JApfe04JA==
-X-Google-Smtp-Source: AGHT+IG4pSArWmfi9/g0Lb01DMUNRFD8V+J8yE0IVXQgs1FDijI2suaAlk8iweiDkD/IfXiuQhl8bw==
-X-Received: by 2002:a17:90b:2dc4:b0:2e2:ca4d:9164 with SMTP id 98e67ed59e1d1-2e9f2c77136mr399395a91.12.1731442648032;
-        Tue, 12 Nov 2024 12:17:28 -0800 (PST)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:23d:98b3:efff:2469:dece:37c7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9b26b9bd8sm9062075a91.5.2024.11.12.12.17.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 12:17:27 -0800 (PST)
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Suraj Sonawane <surajsonawane0215@gmail.com>
-Subject: [PATCH] gpio: gpio-exar: replace division condition with direct comparison
-Date: Wed, 13 Nov 2024 01:46:59 +0530
-Message-Id: <20241112201659.16785-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731442651; c=relaxed/simple;
+	bh=QOM1SncF/0wvo5h5vR+fjDqEBF/TMWPHc3ABRK9nA8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MQnRttHLWC5/Pzh+Xr8iRt7ILA7VFQT7peTyp53ArfQKT4+mZ70+RbEAKoxY2BsNO1j2I+ekSC5L/M1AndJjTXSIvxprdkpfrCKwSkJNMBeehzhlT7+7RCypHcih6oLN4hSym+NfaINb+ciDJDGUVT3SlUeikbp9hrAb4RWravQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NwE1Fl6p; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731442650; x=1762978650;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QOM1SncF/0wvo5h5vR+fjDqEBF/TMWPHc3ABRK9nA8Y=;
+  b=NwE1Fl6pGWCd2ZITKqFDelDSEHyK+bluEZrPpBQPKCQdINBc6LOxR9jm
+   vfsbeUvWOWutfTXCpLcGguL6AY6yiSE+IB2I5+a14O8++av5PCeIX1bZx
+   0tLfc9uqT7ptTVjyxXS56X4fTGmX70TUCwDaLyoW6w55BH67D2drH04WT
+   9UNUf7hXVfeVGcoOl8+RjDLdiAZxfHNRNe+UTxpUATS/pkf2R8klnFUho
+   E2PpeTw7DF4EwURuIiZGrZiPUgwumnfF+50i48EGZPD45DxjmGwNtlOkN
+   6K/gnsSymWFY1T/Z9el7ZZ5U0KQeEVKppqCp98SCaac9H1yj9o2v5Dozy
+   g==;
+X-CSE-ConnectionGUID: o0QoXIeOTdePzUEu+MG++g==
+X-CSE-MsgGUID: r3HHHQISTlmUE9Ohm3c29Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31268263"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31268263"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 12:17:30 -0800
+X-CSE-ConnectionGUID: C2Y4q5K/QAib5ewk6kBiTg==
+X-CSE-MsgGUID: +j7j5hQeS6COyRTBgTtW/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
+   d="scan'208";a="87538518"
+Received: from jairdeje-mobl1.amr.corp.intel.com (HELO [10.124.220.61]) ([10.124.220.61])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 12:17:29 -0800
+Message-ID: <4df744b9-041a-4ed7-aa34-a78923f79cf9@intel.com>
+Date: Tue, 12 Nov 2024 12:17:28 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/25] x86/virt/tdx: Add SEAMCALL wrappers for TDX TD
+ creation
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
+ seanjc@google.com
+Cc: yan.y.zhao@intel.com, isaku.yamahata@gmail.com, kai.huang@intel.com,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
+ reinette.chatre@intel.com, Isaku Yamahata <isaku.yamahata@intel.com>,
+ Sean Christopherson <sean.j.christopherson@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Yuan Yao <yuan.yao@intel.com>
+References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
+ <20241030190039.77971-7-rick.p.edgecombe@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241030190039.77971-7-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Fix an issue detected by the Smatch tool:
+On 10/30/24 12:00, Rick Edgecombe wrote:
+> +u64 tdh_mng_create(u64 tdr, u64 hkid)
+> +{
+> +	struct tdx_module_args args = {
+> +		.rcx = tdr,
+> +		.rdx = hkid,
+> +	};
+> +	clflush_cache_range(__va(tdr), PAGE_SIZE);
+> +	return seamcall(TDH_MNG_CREATE, &args);
+> +}
+> +EXPORT_SYMBOL_GPL(tdh_mng_create);
 
-drivers/gpio/gpio-exar.c:52 exar_offset_to_sel_addr() warn:
-replace divide condition 'pin / 8' with 'pin >= 8'
-drivers/gpio/gpio-exar.c:62 exar_offset_to_lvl_addr() warn:
-replace divide condition 'pin / 8' with 'pin >= 8'
+I'd _prefer_ that this explain why the clflush is there.
 
-The division 'pin / 8' was used to check if the pin number is 8 or greater,
-which can be confusing and less readable. Replacing it with 'pin >= 8'
-makes the code clearer by directly comparing the pin number. This also
-removes reliance on integer division, which can be harder to understand
-and may introduce subtle bugs in the future.
-
-Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
----
- drivers/gpio/gpio-exar.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
-index 5170fe759..400cc3a0b 100644
---- a/drivers/gpio/gpio-exar.c
-+++ b/drivers/gpio/gpio-exar.c
-@@ -49,7 +49,7 @@ exar_offset_to_sel_addr(struct exar_gpio_chip *exar_gpio, unsigned int offset)
- {
- 	unsigned int pin = exar_gpio->first_pin + (offset % 16);
- 	unsigned int cascaded = offset / 16;
--	unsigned int addr = pin / 8 ? EXAR_OFFSET_MPIOSEL_HI : EXAR_OFFSET_MPIOSEL_LO;
-+	unsigned int addr = pin >= 8 ? EXAR_OFFSET_MPIOSEL_HI : EXAR_OFFSET_MPIOSEL_LO;
- 
- 	return addr + (cascaded ? exar_gpio->cascaded_offset : 0);
- }
-@@ -59,7 +59,7 @@ exar_offset_to_lvl_addr(struct exar_gpio_chip *exar_gpio, unsigned int offset)
- {
- 	unsigned int pin = exar_gpio->first_pin + (offset % 16);
- 	unsigned int cascaded = offset / 16;
--	unsigned int addr = pin / 8 ? EXAR_OFFSET_MPIOLVL_HI : EXAR_OFFSET_MPIOLVL_LO;
-+	unsigned int addr = pin >= 8 ? EXAR_OFFSET_MPIOLVL_HI : EXAR_OFFSET_MPIOLVL_LO;
- 
- 	return addr + (cascaded ? exar_gpio->cascaded_offset : 0);
- }
--- 
-2.34.1
-
+The other goofy thing here is why it's getting a physical address passed
+in.  It's my old 32-bit paranoia kicking in, but everything that has a
+valid virtual address _also_ has a valid physical address.  The inverse
+is not true, though.  So I like to keep things as pointers as long as
+possible.
 
