@@ -1,264 +1,562 @@
-Return-Path: <linux-kernel+bounces-405748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019BB9C568A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:31:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDCC69C56CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B511C282009
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:31:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E99D1F21A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426371CD1FF;
-	Tue, 12 Nov 2024 11:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D2323099C;
+	Tue, 12 Nov 2024 11:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="hO7wlBau"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2086.outbound.protection.outlook.com [40.107.215.86])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W7E0Bx5d"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362901CD1EE
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731410656; cv=fail; b=UIyrqjjl8WJ3bV4LU0Yd1dLUEsK385pZoFVSySFHSsi5n2WGILDgAZuYFWERpKBNB3m7XJcE0VumII/3GgCmTvnvbZUM6pvOGoKM1fg9QAkAwjH72bMx8eKTGYkgwFyw8ZJrhR1g3aqsx66fKDB85E9GKU8lLaBj65mAX/2Gr78=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731410656; c=relaxed/simple;
-	bh=LkQi/TAMvBpgpLUbh+HyHlmfIWAsGP6xlzas6Y2eVXw=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=HLzLsWtQ+e/Di5IfysjiErkCJDeHlZq0NYa9O2m8JbJK/LXkxqqoUtSLOX07tWZ4JfdvuYwATZd+dJyp8p9ASi1N1yBlPaDDNw+QPFMjJQnHioxjHEe2ZiH2Iy6TLaKWIeuxNkkNsdHivt6hR4P3CBUljCjBgIIXA/hLy/tm5U8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=hO7wlBau; arc=fail smtp.client-ip=40.107.215.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XGvaebhFllnpLVUTNxyQKzhBtxAQOj2hkQhkSZbPiDN2STIboy0HOphDvQyENZasa2G261SOk4OUcVYgbQPK4qO7O3vkpmBKH2gICFWUNc+RIgTjDxE+uijx4UOxWaMVzlvgRn8rOUrfE+JLhrVyNb9qKvISlPqXhmotBPWPKlX+MfKi9z8gy+BnY5rVgJWhKklO/jTGHiDUYv6l6ymWkhxOdehLkkP1SkAnKxqyOdAul9UJyCvREiL83tDK+jvFH+ZIxKED+Wayp+B0ZzPD6HtRdYqyQ8DoBnth+RkkNCvzBQO/Pialj4RdIGn02IYZrPGmVJpbsfzOm1Z0xNeBjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E/1/UxBloOLNJMsMuCZVi5UF3yiF3HPmHn1WM2SYY5c=;
- b=DO09jtMsqR1Xl5QmcFRZNRJKpl6atvPHZYv2cVkk3PlNyCqoo3xe3BxnlyJIC9P06LMmT3Ra8IF/1vNA7VhDSAZcrgK4IZEYjSapaUzsxXZO3uyojVR0gxjrO1EsRHF/cFeQ2mGs0nH1V44Jq0IwEK+8AR/CBeQOW5IVJr4UQFfAxqJEIQhZFRvf6FaZIWwfjQtNgrVCa1qUpJMu6u/LQzK1ugwswgpmH6ObGEnKRV9ZylxFuibDF7Yia0dXDFUhVVK6hdlOC+ujonOPq1UTcgLs7SmVR4QK1Mvy/vKiGh+AfO8TFzzdkyd7xvnparbOUtzfgmr36DNLfdT5cIRcEw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E/1/UxBloOLNJMsMuCZVi5UF3yiF3HPmHn1WM2SYY5c=;
- b=hO7wlBauLTzYDMt0l/betyPfoNxmMFfmqJhA11PmKaIoKM5R/a/5DkkTpNZFsnFwyALeiZJUNaluQluKw9cXLOxLQgh/wjWxw9o/azpdqr0qGjI9LSPLIBI2dVDlFs2tXx3smyDc5X36D+MOqmjCXSzk/GnpnDnYr/WuJIm5Rwc2cb1rTmb0Dxcn8hRl44QbG58LKH3mGcFAo5iwf4sTYmtxvRKqKgcKBbtU+D3JceGZ9fiKhOMWyR4CIoC5fx6+mLWhbI2RXYtp4gi7Kb28r/7DBR7Lj40vF5TUnkfRIWxbgQhQ4Ezp1RuqitpazOVRZ4aa3232OHewoqc7Y6QG1g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB7096.apcprd06.prod.outlook.com (2603:1096:405:b5::13)
- by SEYPR06MB6613.apcprd06.prod.outlook.com (2603:1096:101:169::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.16; Tue, 12 Nov
- 2024 11:24:10 +0000
-Received: from TYZPR06MB7096.apcprd06.prod.outlook.com
- ([fe80::6c3a:9f76:c4a5:c2b]) by TYZPR06MB7096.apcprd06.prod.outlook.com
- ([fe80::6c3a:9f76:c4a5:c2b%6]) with mapi id 15.20.8158.011; Tue, 12 Nov 2024
- 11:24:10 +0000
-From: Chunhai Guo <guochunhai@vivo.com>
-To: xiang@kernel.org
-Cc: chao@kernel.org,
-	huyue2@coolpad.com,
-	jefflexu@linux.alibaba.com,
-	dhavale@google.com,
-	linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Chunhai Guo <guochunhai@vivo.com>
-Subject: [PATCH v2] erofs: add sysfs node to drop internal caches
-Date: Tue, 12 Nov 2024 04:40:34 -0700
-Message-Id: <20241112114034.618402-1-guochunhai@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR04CA0014.apcprd04.prod.outlook.com
- (2603:1096:4:197::18) To TYZPR06MB7096.apcprd06.prod.outlook.com
- (2603:1096:405:b5::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AA323099F
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731411651; cv=none; b=Hhy4jwk1fjb7+vHYqHvpFhQFzPP4EIZnF9XVbQ2mwOkhgZoJ7qtlXhh5l2N5HxFnB/BaBrDba1xWTIvNCxI7nU2BYexoWgV96h3rqBk9tsDO+EUtMSPt+5W7ndb3ErjK77GLOg24GhisNUBVno2b/TrHLCu99aAnEXSrRheQ2IM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731411651; c=relaxed/simple;
+	bh=vHgkenzsCQXX9PX6ypfG761zRwXX4YKH2lFtCKf8WQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=anGPoGeK8/mzuQNTdHx3iW8M9Q6GqtR0K1awIcXQgBHZztqfOnRSp8nDkthuCmWJGgo9tKuNHv8dZ54yNntajn5A9Tscm/0tJSX7xJFobScZ42q/p0DqBUrKc8ZC2iJXx4dz3QzDg7tJts0rAUovojBt5T/jeXVqnNxG66KpOQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W7E0Bx5d; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731411648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/jnA9Ys6dc6Gn0ztBuizpqw1l3pWhxfq+N40Kv0pH/A=;
+	b=W7E0Bx5ddrInJY5CubjrLdNmJ4WPpU6nd46F4IGUlWNQq/38SMWk2weo9/1RtF9++YdApy
+	ucsfY/N9s6gsFY5KcIpdFmCDmhJfXB1XARBmT2yH461FckSdnQVrTiwEIKkY0DmCwMlODa
+	XdSxX7EmZ7DnhbpU1Um4YUsvyAbyAxY=
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
+ [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-203-AAoXrASYOVadiQMCugfrtw-1; Tue, 12 Nov 2024 06:40:47 -0500
+X-MC-Unique: AAoXrASYOVadiQMCugfrtw-1
+X-Mimecast-MFC-AGG-ID: AAoXrASYOVadiQMCugfrtw
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5eb636b8d85so6729eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:40:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731411646; x=1732016446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/jnA9Ys6dc6Gn0ztBuizpqw1l3pWhxfq+N40Kv0pH/A=;
+        b=PpQrps2wgUOH+z2GKkYgZrD3GQ5r6z46P4PDx+dIAdZm2n7PjBynp8robVyt0gVrcj
+         wPIxppHoq9/ELj2+VR0G6y3YDohVLfWOkpHdtogS9GVxTf7cCgwMJMPMbPhpHOYqL0Iy
+         CWK9XGhfheG+1pHEZosVPNAs6vf+3KWB1zPrbJh7kAfq3BpR35sE5DPyf0kIs+x7OQZB
+         12goLKoGTL2MgVYvYeq0SEBuzYjg3NDBUbH81oLcbez0yvHC6Sy383qb1ZUiBbPXXjKO
+         3aM1AXi5IIceyV58Od+kmSHAbxnTnk2tBotiCqZlF/nLbwht2KDOYfoj3Dc2pXoZ1ePv
+         rtMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWO+9X01IJZ8lrF9JRG4upD//OzlhnmRW09b8pqnGuB48swjHyz7RLF8k6ClPR/7GPNLT3BShEZSD459vo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHI1q0LDq0tnGrhU3F8xephgUKVmVbVangNMw2LP7eb4ypZ6gW
+	s/RWZgC1imwNP+Ky6DL3P3CjZTk7rQlZbtw15Ln6bZsysNrxjCw85gkQKjq1Fkg3xDtGw5RinXP
+	gouNe/mOZ2++zGLzMtSUHm8ZMZH0YGe5jJ0EAzlzhbU0n6q3RhgQycnPmu3HnDzX05q3Icb29DN
+	kRDpLI4K9HGpsJbnyiuSqifyWDmS9TmOrdbstO
+X-Received: by 2002:a4a:c90f:0:b0:5eb:bbb9:b7f0 with SMTP id 006d021491bc7-5ee57c5e731mr1739028eaf.1.1731411646165;
+        Tue, 12 Nov 2024 03:40:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGDiA59SC8TzPOSTALBs34rwli0vXtNdrmCAcwYQ73ykZNZ4pEo+t5ga9um7n1iSSr/GhMj2lXiI4E8nnEjOIo=
+X-Received: by 2002:a4a:c90f:0:b0:5eb:bbb9:b7f0 with SMTP id
+ 006d021491bc7-5ee57c5e731mr1739021eaf.1.1731411645684; Tue, 12 Nov 2024
+ 03:40:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB7096:EE_|SEYPR06MB6613:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b7ec70b-9820-4d51-443e-08dd030c8722
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SNwdJ3Mqo8kfX2DRWz1KfVsKRus5CBB+ZPiEB6BwQzSFzbE9v2e3Casn9jLv?=
- =?us-ascii?Q?ExVIXUbg4J79ZG7O1UjS9PQkF1/XisGDraEZ2YKHbIeY0/PBCJn144utlgRY?=
- =?us-ascii?Q?atec17zpLx59Tzg+g+Bq5TOksQLppvvjmR+48qmi6+rkDkgi4bq31WPoaUwW?=
- =?us-ascii?Q?1MukpUoTVLkrsc3zF77woOhylxe7dCYKlXNHsaT7jBs5EAHfTiwhZOoqqOTP?=
- =?us-ascii?Q?i46ByWl9RVKo6QyueHgUU8aqsQQa9+yqYGOb+SYGKPlPe+lhRAFX1x1Q9Nvj?=
- =?us-ascii?Q?/PRb6bYIKkwyy4G8RJ9rU8HK+JZ5ydZYO1yA+vga+7p3g4EeBrHZof+MmjTp?=
- =?us-ascii?Q?UOuBhKmDvNA1wrzZAg+KOhDK2rM+dpNpZEVhkKVjuVKQS3+gxMCrCXvYRtK6?=
- =?us-ascii?Q?ZzRHDHypYM9TPgABOVYilMjj4hhyC6R67kAmMa5EHjRv4hGrFSH3+aBN+ZOF?=
- =?us-ascii?Q?P7BdNFq33s8AK9JNTSty4+/gNxIiMkr9w+JoesaLwmmocP84lyC6sxELynuc?=
- =?us-ascii?Q?VysxrUsc0Igm8CZ5R9X94AKmZ3PgtgqbTwN4MBtfjnduJkPmihLTM5ILu38B?=
- =?us-ascii?Q?IqrfdRQ2GXg36rSfIMeHUqKXCUM4mrHjGxE2KnajDLWkgKAaGoK6lqliNSlq?=
- =?us-ascii?Q?IdnFvr/RLhIYC69eAfm1CRiBKfoYIVMLJnF29rJZPoV4WXUX/J8APKcGZ2x4?=
- =?us-ascii?Q?M+box+dNUWSPzq+cyCpuxUxtNydlerO6Y0DAt2z5Q4x+jBWi+0vMaPBssiOS?=
- =?us-ascii?Q?7FR2U6mue+ceN6U/zKkYmnmWHjfDZ2nDBaJZslpm1oGeSV/jAF2Q5LIXelXQ?=
- =?us-ascii?Q?CviO0d1TVCHaGx9f+Mij0Vk/my7SMNLQMb1CPw6wnMeoFLPo+pZH1Oxrbqob?=
- =?us-ascii?Q?VWpeVE0ilMGEBfqCSCIYCnzQyC2syo1/NrgJpU56pYxjekgR0uUAho88RS8c?=
- =?us-ascii?Q?Lpblkok5DOuyFpY7hKesDvG5MCLEcWP9BDPO5QfQ8WCYIjDsz3HfYXlYk6/0?=
- =?us-ascii?Q?oMSdIvq/dYNK1OGoqrhTk40YZZVRv7ZUQXY3tFBurUiMZDWgyoVgJR+J5AjN?=
- =?us-ascii?Q?G8CLUECCZcbCTbxXEDeFGvakR38DNhrGJO1SdZVAM4CeAtBXapN7TOnTGQT8?=
- =?us-ascii?Q?Jgioh8VWfP/CC0qjQ2bMAksL0ylPw2qHcpcBPt10585ijNBe29Agec8sENlz?=
- =?us-ascii?Q?iqeFAyJVDspAvzjNfgWuwRg9+iyBaIxxyZ8LdoYE2aoH0vQ75m59d3a2YybW?=
- =?us-ascii?Q?dXPrT/gWEtFZbFFEYVSSLPJNdB1VKsbgrV4psn/K9ezqYbHiyur0wsKgDx7X?=
- =?us-ascii?Q?Tqros3MjIGMbvuWJPtxHLTaNR1MLkqIiArpQkcrGwEpf5NJSUZAJMbSqMFEZ?=
- =?us-ascii?Q?u/p2ADk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB7096.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HbJZDJoDFq2uD3fGruxNEYL6xVCFxWlgz99rqJIuLVf7wb9NJRTwyVXuzdfS?=
- =?us-ascii?Q?pSWLnf6Quwxbo71JYHV0ICnpmaRvs8VWm4gDI7bmtsK3NNwPdNEzE3z2bO/t?=
- =?us-ascii?Q?kSKMrPPBGUuV+MLSqTyKu2QP9jMbr8KHsMGD6I73B4tOtpLFm71QckGTnWE1?=
- =?us-ascii?Q?CKwjNegG7okQBDgATIU9y7DbjPo2hEvGv97BLp2Onvonhn0pqYNRj+uaQ28r?=
- =?us-ascii?Q?K8DQEf7ApI7/SnQs5tynafV9cBXGmnj/hbLBTRhu23JA/c0CR0TrrSkCZVnF?=
- =?us-ascii?Q?VVVApKJ3JP3XyytmcdXiR7QwhA9pgbcDxSsbyQ023r9gMMHg1oRmnJcd9Nw+?=
- =?us-ascii?Q?Tl91DIHxzrqF39oE8shqYleOqhZL87zp2p5bBJ35x2qbK4D5WhvQNtqmbmrI?=
- =?us-ascii?Q?kD06DB5ji0nxsKxSOjA95JKInDNKPTDpxUNKZk+6hs7mrxwuJVIpSCa5s2rG?=
- =?us-ascii?Q?3MgsYWPdEQurBs46besZBaeKkb2EPw5YOYUGTb1hODSG0YCA/JkCl5PZbm7B?=
- =?us-ascii?Q?Xrn06DQDECoE3bHiiurdw3dpDgONGeJS72ZdhjYzI/I/sc0q+zAUxLt8JY/j?=
- =?us-ascii?Q?1k/gEAe2tULESalI9Mr96T1awUioP8TldG29fXhx3eWbUHr8D9HsQw2m7vP3?=
- =?us-ascii?Q?PxRWkwniYH538Dk33NvzbWOiJmyHWRWzk8Ku3i7RkdX1fPLI5oVIh5ZtGO8a?=
- =?us-ascii?Q?JXoFfzdC/vVzOQ/iMtsnrWCk0rOEGmM+nWkZm1JGW/+08oNEJ875DRIVGn+1?=
- =?us-ascii?Q?LwVuXxyr1D4Sc7YuFmVB0h7vHyfuVK/bKN79zbfvXHGxuI6di9OTvzfFK9uK?=
- =?us-ascii?Q?ICs1S4l4E1AuK8G/cWKTWySxR1QCfoSUpinVSQ0/uxWyt/nqr+pPp/Ar74yh?=
- =?us-ascii?Q?+Ws0nhPtOTjSCt6ELxeN69FFr6gXda1WqJitLdw5FPQS4XXpIMhr2DNYKN0s?=
- =?us-ascii?Q?8hEo6XrhR0UUM1oGTfltE4P5pDIMdyxGfEDPnz4f/8Y18CKkLzg9l/6Tpi6d?=
- =?us-ascii?Q?oOdvXJ/3MNvB73OsGCJ+pDBYmlW+r6t3+OyrQ6ILN9KFijvmpbhXnJ9sIqxR?=
- =?us-ascii?Q?kGyCSXqxJoru+RKON8GccRrXDyh7RWyuPxvWgpz1b5TlnurQLK+zCWx1ueRH?=
- =?us-ascii?Q?9uzuK1R18wnzyW3bv8O5sm83PhvEG2/4yQFEdiPg89X31njVY8UmVFwYwTjT?=
- =?us-ascii?Q?Bj453u+wzEF6LlGc9YuRdwNrgv9Qgrg6aMJDd8fyjjFS9kGfyvs/NAJRfQV7?=
- =?us-ascii?Q?S7AYsS6WPYLPe2/A86m4fhRKRI61eGjCTn2oa6m0wsQQXaofLC1+KjeKnq19?=
- =?us-ascii?Q?r3CerkfppAH0Ws6kOWgSDSFlaX7LBDcwaYW9RsrMXvocJ59OK6KThsV/l1e+?=
- =?us-ascii?Q?dQlKVJoZRZbuChNiFLQ/F40zpfBDTSY1UrM4oWzhogcnXDo/XX83T9niyTDo?=
- =?us-ascii?Q?r/YupfxEfyQS+aVwtn+nFZiBQ6LGZ5DLSEiGVgOKzMsC0r7JUhw4qLnpwqRE?=
- =?us-ascii?Q?X1bpJ/K9KdaX7B9q/6zM8f1kbqzbf6cikhrFO5hypfrX+65BqVa0m5huEdVw?=
- =?us-ascii?Q?pe6h62EY+zPtHqDtHRaGy3UvC79vq9SeAQ61rUkg?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b7ec70b-9820-4d51-443e-08dd030c8722
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB7096.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 11:24:09.9533
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IHMWIDkhNEju+MAYPmcuYMKYjmtes55S4HI8O+e1YJQjAurBSElVSGC5RJhg2lhoDmuwmoHMPlfbSVR9xEQ0jQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6613
+References: <CALE0LRvJ-n77oU=O9__NdSLw2v33zMK+WYkn2LcwWMwHCbohQw@mail.gmail.com>
+ <CAC_iWjJEXU+dodjvWQYM9ohPa3P2p0bFG=exGoi-iYFrLLbCTA@mail.gmail.com>
+ <CALE0LRtUz8hd4pdR9sX2Sb6tOn=K4wkRnGG9B7f72qU8JFQSYQ@mail.gmail.com>
+ <CAC_iWjJLSSTO0Ca7rgOWAHfWzbkBkKHkQedRUbcwsoU0dtrsGA@mail.gmail.com>
+ <CALE0LRvN3tYgWig1XnCiAZvdzE8x=cdLanGxbUvpPr5nfexSPQ@mail.gmail.com>
+ <CAC_iWjL4mp-sTsp5a+yFkUauXuMvZ1yoTAk_60nm-CCKUgwayw@mail.gmail.com>
+ <CALE0LRsYXXaao2uCUMFkd8Y6f5Mxgoc-Qpft_y8wWW3ZiekbbA@mail.gmail.com>
+ <CAC_iWjL+J9tNxEdh0AoYD19h013N4nk=KmaT=RACo4-oVwuRCA@mail.gmail.com> <CALE0LRu2oDSo6KOhO2fTDMiqX7iqjqNjNGD_67MJFS7BJWqT_w@mail.gmail.com>
+In-Reply-To: <CALE0LRu2oDSo6KOhO2fTDMiqX7iqjqNjNGD_67MJFS7BJWqT_w@mail.gmail.com>
+From: Enric Balletbo i Serra <eballetb@redhat.com>
+Date: Tue, 12 Nov 2024 12:40:34 +0100
+Message-ID: <CALE0LRvFT3fDdoBLXHK2e47cibD02pxXAuZ83rTqEfrzU3HnKA@mail.gmail.com>
+Subject: Re: optee-based efi runtime variable service on TI j784s4 platforms
+To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Sumit Garg <sumit.garg@linaro.org>, linux-efi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	op-tee@lists.trustedfirmware.org, Manorit Chawdhry <m-chawdhry@ti.com>, 
+	Udit Kumar <u-kumar1@ti.com>, "Menon, Nishanth" <nm@ti.com>, 
+	Masahisa Kojima <kojima.masahisa@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a sysfs node to drop compression-related caches, currently used to
-drop in-memory pclusters and compressed folios.
+Hi again,
 
-Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
----
-v1: https://lore.kernel.org/linux-erofs/fabdfe9f-9293-45c2-8cf2-3d86c248ab4c@linux.alibaba.com
-change since v1:
- - Change subject as suggested by Gao Xiang.
- - Use different bits to indicate different meanings in the sysfs node.
----
- Documentation/ABI/testing/sysfs-fs-erofs | 11 +++++++++++
- fs/erofs/internal.h                      |  2 ++
- fs/erofs/sysfs.c                         | 15 +++++++++++++++
- fs/erofs/zdata.c                         |  1 -
- 4 files changed, 28 insertions(+), 1 deletion(-)
+On Tue, Nov 12, 2024 at 9:17=E2=80=AFAM Enric Balletbo i Serra
+<eballetb@redhat.com> wrote:
+>
+> Hi,
+>
+> On Mon, Nov 11, 2024 at 3:26=E2=80=AFPM Ilias Apalodimas
+> <ilias.apalodimas@linaro.org> wrote:
+> >
+> > On Mon, 11 Nov 2024 at 16:13, Enric Balletbo i Serra
+> > <eballetb@redhat.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > Thanks a lot for your support.
+> >
+> > You're welcome. FWIW I did test this in the past with an AM62x SoC.
+> >
+>
+> Thanks for the info, maybe I can give it a try with my BeaglePlay then...
+>
+> > >
+> > > On Mon, Nov 11, 2024 at 12:01=E2=80=AFPM Ilias Apalodimas
+> > > <ilias.apalodimas@linaro.org> wrote:
+> > > >
+> > > > On Mon, 11 Nov 2024 at 10:21, Enric Balletbo i Serra
+> > > > <eballetb@redhat.com> wrote:
+> > > > >
+> > > > > Hi Ilias,
+> > > > >
+> > > > > On Sat, Nov 9, 2024 at 1:31=E2=80=AFAM Ilias Apalodimas
+> > > > > <ilias.apalodimas@linaro.org> wrote:
+> > > > > >
+> > > > > > On Fri, 8 Nov 2024 at 23:11, Enric Balletbo i Serra <eballetb@r=
+edhat.com> wrote:
+> > > > > > >
+> > > > > > > Hi Ilias,
+> > > > > > >
+> > > > > > > Thanks for your quick answer.
+> > > > > > >
+> > > > > > > On Fri, Nov 8, 2024 at 4:48=E2=80=AFPM Ilias Apalodimas
+> > > > > > > <ilias.apalodimas@linaro.org> wrote:
+> > > > > > > >
+> > > > > > > > Hi Enric,
+> > > > > > > >
+> > > > > > > > On Fri, 8 Nov 2024 at 12:26, Enric Balletbo i Serra <eballe=
+tb@redhat.com> wrote:
+> > > > > > > > >
+> > > > > > > > > Hi all,
+> > > > > > > > >
+> > > > > > > > > I'm looking for any advice/clue to help me to progress on=
+ enabling
+> > > > > > > > > TEE-base EFI Runtime Variable Service on TI a j784s4 plat=
+forms.
+> > > > > > > > >
+> > > > > > > > > I basically followed the steps described in u-boot docume=
+ntation [1],
+> > > > > > > > > I enabled some debugging messages but I think I'm at the =
+point that
+> > > > > > > > > the problem might be in the StandaloneMM application, and=
+ I'm not sure
+> > > > > > > > > how to debug it.
+> > > > > > > > >
+> > > > > > > > > What I see is that when I run the tee-supplicant daemon, =
+it looks like
+> > > > > > > > > the tee_client_open_session() call loops forever and the =
+tee_stmm_efi
+> > > > > > > > > driver never ends to probe.
+> > > > > > > > >
+> > > > > > > > > With debug enabled I got the following messages.
+> > > > > > > >
+> > > > > > > > I assume reading and storing variables already works in U-B=
+oot right?
+> > > > > > > >
+> > > > > > >
+> > > > > > > Reading and storing variables to the RPMB partition in U-Boot=
+ works,
+> > > > > > > that's using the mmc rpmb command from u-boot,
+> > > > > >
+> > > > > > Are you talking about env variables? Perhaps you store them in =
+the mmc
+> > > > > > and not the RPMB partition?
+> > > > > > There's some information here [0]
+> > > > > >
+> > > > > > > But setting
+> > > > > > > CONFIG_EFI_MM_COMM_TEE=3Dy in u-boot I end with a similar beh=
+aviour
+> > > > > > > (although I'm not able to debug at u-boot level) What I see i=
+s that
+> > > > > > > u-boot gets stuck
+> > > > > > > when bootefi bootmgr is invoqued. I can also reproduce the is=
+sue with
+> > > > > > > bootefi hello.
+> > > > > > >
+> > > > > > > =3D> run bootcmd
+> > > > > > >   Scanning for bootflows in all bootdevs
+> > > > > > >   Seq  Method       State   Uclass    Part  Name             =
+         Filename
+> > > > > > >   ---  -----------  ------  --------  ----  -----------------=
+-------
+> > > > > > > ----------------
+> > > > > > >   Scanning global bootmeth 'efi_mgr':
+> > > > > > > ( gets stuck here)
+> > > > > > >
+> > > > > > > or
+> > > > > > >
+> > > > > > > =3D> bootefi hello
+> > > > > > > (gets stuck)
+> > > > > > >
+> > > > > > > To debug I disabled CONFIG_EFI_MM_COMM_TEE to not get stuck a=
+nd bypass
+> > > > > > > the error and go to Linux. My understanding is that
+> > > > > > > CONFIG_EFI_MM_COMM_TEE is only required to read/write efi var=
+iables at
+> > > > > > > u-boot level but OPTEE is running the StandaloneMM service. A=
+m I
+> > > > > > > right?
+> > > > > >
+> > > > > > U-Boot has two ways of storing EFI variables [0] . You can eith=
+er
+> > > > > > store them in a file or the RPMB partition. The correct thing t=
+o do,
+> > > > > > since you want to use the RPMB, is enable CONFIG_EFI_MM_COMM_TE=
+E. I am
+> > > > > > not sure why the hand happens, but one thing we can improve is =
+figure
+> > > > > > out why it hangs and print a useful message.
+> > > > > > There are a number of reasons that might lead to a failure. Is =
+the
+> > > > > > RPMB key programmed on your board? Have a look at this [1] in c=
+ase it
+> > > > > > helps
+> > > > > >
+> > > > > > >
+> > > > > > > > >
+> > > > > > > > > # tee-supplicant
+> > > > > > > > > D/TC:? 0 tee_ta_init_session_with_context:557 Re-open tru=
+sted service
+> > > > > > > > > 7011a688-ddde-4053-a5a9-7b3c4ddf13b8
+> > > > > > > > > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
+> > > > > > > > > D/TC:? 0 spm_handle_scall:859 Received FFA version
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > >
+> > > > > > If I had to guess, OP-TEE doesn't store the variables in the RP=
+MB, can
+> > > > > > you compile it with a bit more debugging enabled?
+> > > > > >
+> > > > >
+> > > > > Here is a log with CFG_TEE_CORE_LOG_LEVEL=3D4, CFG_TEE_CORE_DEBUG=
+=3Dy and
+> > > > > CFG_TEE_TA_LOG_LEVEL=3D4
+> > > > >
+> > > > > https://paste.centos.org/view/eed83a5b
+> > > > >
+> > > > > At the beginning of the log I see
+> > > > >
+> > > > > D/TC:0 0 check_ta_store:449 TA store: "REE"
+> > > > >
+> > > > > Which looks wrong to me as I built optee with:
+> > > > >   CFG_REE_FS=3Dn
+> > > > >   CFG_RPMB_FS_DEV_ID=3D0
+> > > > >   CFG_RPMB_FS=3Dy
+> > > >
+> > > > Yes it does look wrong. Our compilation flags are
+> > > > CFG_RPMB_FS=3Dy CFG_RPMB_FS_DEV_ID=3D0 CFG_RPMB_WRITE_KEY=3Dy
+> > > > CFG_RPMB_TESTKEY=3Dy CFG_REE_FS=3Dn CFG_CORE_ARM64_PA_BITS=3D48
+> > > > CFG_SCTLR_ALIGNMENT_CHECK=3Dn
+> > > >
+> > >
+> > > Mine are very similar
+> > >
+> > > make CROSS_COMPILE=3D"$CC32" CROSS_COMPILE64=3D"$CC64" \
+> > >     PLATFORM=3Dk3-j784s4 CFG_ARM64_core=3Dy CFG_CONSOLE_UART=3D0x8 \
+> > >     CFG_RPMB_FS_DEV_ID=3D0 CFG_REE_FS=3Dn CFG_RPMB_FS=3Dy \
+> > >     CFG_RPMB_WRITE_KEY=3Dy CFG_RPMB_TESTKEY=3Dy \
+> > >     CFG_STMM_PATH=3DBL32_AP_MM.fd \
+> > >     CFG_CORE_HEAP_SIZE=3D524288 CFG_CORE_DYN_SHM=3Dy CFG_SCTLR_ALIGNM=
+ENT_CHECK=3Dn \
+> > >     CFG_TEE_CORE_LOG_LEVEL=3D4 CFG_TEE_CORE_DEBUG=3Dy CFG_TEE_TA_LOG_=
+LEVEL=3D4
+> > >
+> > > There is a difference with CFG_CORE_ARM64_PA_BITS=3D48 , my platform =
+defines it to
+> > >
+> > >    core/arch/arm/plat-k3/conf.mk:$(call force,CFG_CORE_ARM64_PA_BITS,=
+36)
+> > >
+> > > But I don't think this is the problem.
+> > >
+> > > > The testkey etc aren't required if your board has a way of reading =
+the
+> > > > RPMB key from a secure location -- in fact, using the testkey is no=
+t
+> > > > secure. Is the RPMB programmed on your board? Also can you make sur=
+e
+> > > > CFG_RPMB_FS_DEV_ID needs to be 0? How many sd interfaces your board
+> > > > has?
+> > >
+> > > My board has two interfaces, an eMMC and a SD-card, 0 is indeed the
+> > > eMMC and I'm using the testkey which I assume was programmed the firs=
+t
+> > > time I booted with all this. Unfortunately I lost the traces. But,
+> > > optee_rpmb works. I.e:
+> > >
+> > >      =3D> optee_rpmb write test 1234
+> > >      =3D> optee_rpmb read test 4
+> > >      Read 4 bytes, value =3D 1234
+> > >
+> > >
+> > > > IOW in U-Boot does 'mmc dev 0 && mmc info' print information for th=
+e
+> > > > RPMB partition?
+> > > >
+> > >
+> > >     =3D> mmc dev 0
+> > >     switch to partitions #0, OK
+> > >     mmc0(part 0) is current device
+> > >     =3D> mmc info
+> > >     Device: mmc@4f80000
+> > >     Manufacturer ID: 13
+> > >     OEM: 4e
+> > >     Name: G1M15L
+> > >     Bus Speed: 200000000
+> > >     Mode: HS400 (200MHz)
+> > >     Rd Block Len: 512
+> > >     MMC version 5.1
+> > >     High Capacity: Yes
+> > >     Capacity: 29.6 GiB
+> > >     Bus Width: 8-bit DDR
+> > >     Erase Group Size: 512 KiB
+> > >     HC WP Group Size: 8 MiB
+> > >     User Capacity: 29.6 GiB WRREL
+> > >     Boot Capacity: 31.5 MiB ENH
+> > >     RPMB Capacity: 4 MiB ENH
+> > >     Boot area 0 is not write protected
+> > >     Boot area 1 is not write protected
+> > >     =3D> mmc list
+> > >     mmc@4f80000: 0 (eMMC)
+> > >     mmc@4fb0000: 1
+> > >
+> > > Any interaction with efi gives me the same result (printenv -e,
+> > > efidebug, bootefi ...)
+> >
+> > Yes, that makes sense, because variables fail to initialize -- which
+> > is a core part of bringing up the EFI subsystem.
+> >
+> > Can you recompile op-tee with CFG_RPMB_RESET_FAT and try again?
+> >
+>
+> Unfortunately that didn't help, but I don't see this code being run.
+> Who sets for the first place the uefi variables, is this u-boot
+> writing them to the rpmb? or is optee itself?
+>
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-erofs b/Documentation/ABI/testing/sysfs-fs-erofs
-index 284224d1b56f..44d863cd07b5 100644
---- a/Documentation/ABI/testing/sysfs-fs-erofs
-+++ b/Documentation/ABI/testing/sysfs-fs-erofs
-@@ -16,3 +16,14 @@ Description:	Control strategy of sync decompression:
- 		  readahead on atomic contexts only.
- 		- 1 (force on): enable for readpage and readahead.
- 		- 2 (force off): disable for all situations.
-+
-+What:		/sys/fs/erofs/<disk>/drop_caches
-+Date:		November 2024
-+Contact:	"Guo Chunhai" <guochunhai@vivo.com>
-+Description:	Writing to this will drop compression-related caches,
-+		currently used to drop in-memory pclusters and
-+		compressed folios:
-+
-+		- 1 : drop in-memory compressed folios
-+		- 2 : drop in-memory pclusters
-+		- 3 : drop in-memory pclusters and compressed folios
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 3905d991c49b..0328e6b98c1b 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -450,6 +450,8 @@ static inline void erofs_pagepool_add(struct page **pagepool, struct page *page)
- void erofs_release_pages(struct page **pagepool);
- 
- #ifdef CONFIG_EROFS_FS_ZIP
-+#define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
-+
- extern atomic_long_t erofs_global_shrink_cnt;
- void erofs_shrinker_register(struct super_block *sb);
- void erofs_shrinker_unregister(struct super_block *sb);
-diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
-index 63cffd0fd261..01d509e43827 100644
---- a/fs/erofs/sysfs.c
-+++ b/fs/erofs/sysfs.c
-@@ -10,6 +10,7 @@
- 
- enum {
- 	attr_feature,
-+	attr_drop_caches,
- 	attr_pointer_ui,
- 	attr_pointer_bool,
- };
-@@ -57,11 +58,13 @@ static struct erofs_attr erofs_attr_##_name = {			\
- 
- #ifdef CONFIG_EROFS_FS_ZIP
- EROFS_ATTR_RW_UI(sync_decompress, erofs_mount_opts);
-+EROFS_ATTR_FUNC(drop_caches, 0200);
- #endif
- 
- static struct attribute *erofs_attrs[] = {
- #ifdef CONFIG_EROFS_FS_ZIP
- 	ATTR_LIST(sync_decompress),
-+	ATTR_LIST(drop_caches),
- #endif
- 	NULL,
- };
-@@ -163,6 +166,18 @@ static ssize_t erofs_attr_store(struct kobject *kobj, struct attribute *attr,
- 			return -EINVAL;
- 		*(bool *)ptr = !!t;
- 		return len;
-+	case attr_drop_caches:
-+		ret = kstrtoul(skip_spaces(buf), 0, &t);
-+		if (ret)
-+			return ret;
-+		if (t < 1 || t > 3)
-+			return -EINVAL;
-+
-+		if (t & 1)
-+			invalidate_mapping_pages(MNGD_MAPPING(sbi), 0, -1);
-+		if (t & 2)
-+			z_erofs_shrink_scan(sbi, ~0UL);
-+		return len;
- 	}
- 	return 0;
- }
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 877bce7709d5..01f147505487 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -119,7 +119,6 @@ static inline unsigned int z_erofs_pclusterpages(struct z_erofs_pcluster *pcl)
- 	return PAGE_ALIGN(pcl->pclustersize) >> PAGE_SHIFT;
- }
- 
--#define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
- static bool erofs_folio_is_managed(struct erofs_sb_info *sbi, struct folio *fo)
- {
- 	return fo->mapping == MNGD_MAPPING(sbi);
--- 
-2.34.1
+I tried to compare the behaviour between optee_rpmb (works) and
+efidebug (doesn't worrk). I see that the first thing optee_rpmb
+command does is open a session against the TA application, something
+that efidebug doesn't do, shouldn't efidebug do the same to access to
+the rpmb device and read or write the efi variables?
+
+=3D> optee_rpmb read test 4
+D/TC:? 0 tee_ta_init_pseudo_ta_session:303 Lookup pseudo TA
+023f8f1a-292a-432b-8fc4-de8471358067
+D/TC:? 0 ldelf_load_ldelf:110 ldelf load address 0x40007000
+D/LD:  ldelf:142 Loading TS 023f8f1a-292a-432b-8fc4-de8471358067
+F/TC:? 0 trace_syscall:147 syscall #3 (syscall_get_property)
+F/TC:? 0 trace_syscall:147 syscall #5 (syscall_open_ta_session)
+D/TC:? 0 ldelf_syscall_open_bin:163 Lookup user TA ELF
+023f8f1a-292a-432b-8fc4-de8471358067 (early TA)
+D/TC:? 0 ldelf_syscall_open_bin:167 res=3D0
+F/TC:? 0 trace_syscall:147 syscall #7 (syscall_invoke_ta_command)
+F/TC:? 0 read_compressed:178 1024 bytes
+F/TC:? 0 read_compressed:178 1024 bytes
+F/TC:? 0 read_compressed:178 1024 bytes
+F/TC:? 0 read_compressed:178 1024 bytes
+F/TC:? 0 trace_syscall:147 syscall #11 (syscall_mask_cancellation)
+F/TC:? 0 trace_syscall:147 syscall #7 (syscall_invoke_ta_command)
+
+=3D> efidebug query -bs -rt -nv
+MMC: no card present
+mmc_init: -123, time 2002
+D/TC:? 0 load_stmm:297 stmm load address 0x40004000
+D/TC:? 0 spm_handle_scall:859 Received FFA version
+D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+
+
+
+>
+> > Thanks
+> > /Ilias
+> > >
+> > > =3D> efidebug query -bs -rt -nv
+> > > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
+> > > D/TC:? 0 spm_handle_scall:859 Received FFA version
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > ... stuck here ... I need to reset the board
+> > >
+> > > Will continue to see if I can get more useful messages
+> > >
+> > > Thanks,
+> > >   Enric
+> > >
+> > > > Thanks
+> > > > /Ilias
+> > > > >
+> > > > > I'll try to add some more prints to verify if REE is used as a st=
+ore
+> > > > > system, I assume this should say something about RPMB. Am I right=
+ with
+> > > > > this?
+> > > >
+> > > >
+> > > > >
+> > > > > > > > >
+> > > > > > > > > And tracing the function calls gives me that:
+> > > > > > > > >
+> > > > > > > > >       tee_stmm_efi_probe() {
+> > > > > > > > >              tee_client_open_context() {
+> > > > > > > > >                optee_get_version() {
+> > > > > > > > >                  tee_get_drvdata(); (ret=3D0xffff000002e5=
+5800)
+> > > > > > > > >                } (ret=3D0xd)
+> > > > > > > > >                tee_ctx_match(); (ret=3D0x1)
+> > > > > > > > >                optee_smc_open() {
+> > > > > > > > >                  tee_get_drvdata(); (ret=3D0xffff000002e5=
+5800)
+> > > > > > > > >                  optee_open() {
+> > > > > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002=
+e55800)
+> > > > > > > > >                  } (ret=3D0x0)
+> > > > > > > > >                } (ret=3D0x0)
+> > > > > > > > >              } (ret=3D0xffff000004e71c80)
+> > > > > > > > >              tee_client_open_session() {
+> > > > > > > > >                optee_open_session() {
+> > > > > > > > >                  tee_get_drvdata(); (ret=3D0xffff000002e5=
+5800)
+> > > > > > > > >                  optee_get_msg_arg() {
+> > > > > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002=
+e55800)
+> > > > > > > > >                    tee_shm_get_va(); (ret=3D0xffff0000029=
+09000)
+> > > > > > > > >                  } (ret=3D0xffff000002909000)
+> > > > > > > > >                  tee_session_calc_client_uuid(); (ret=3D0=
+x0)
+> > > > > > > > >                  optee_to_msg_param(); (ret=3D0x0)
+> > > > > > > > >                  optee_smc_do_call_with_arg() {
+> > > > > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002=
+e55800)
+> > > > > > > > >                    tee_shm_get_va(); (ret=3D0xffff0000029=
+09000)
+> > > > > > > > >                    tee_shm_get_va(); (ret=3D0xffff0000029=
+09060)
+> > > > > > > > >                    optee_cq_wait_init(); (ret=3D0xffff000=
+002e55910)
+> > > > > > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
+> > > > > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002=
+e55800)
+> > > > > > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
+> > > > > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002=
+e55800)
+> > > > > > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
+> > > > > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002=
+e55800)
+> > > > > > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
+> > > > > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002=
+e55800)
+> > > > > > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
+> > > > > > > > >      ... continues sending this forever ...
+> > > > > > > > >      ... Hit ^C to stop recording ...
+> > > > > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002=
+e55800)
+> > > > > > > > >                    optee_smccc_smc() {
+> > > > > > > > >
+> > > > > > > > > [1] https://docs.u-boot.org/en/latest/develop/uefi/uefi.h=
+tml#using-op-tee-for-efi-variables
+> > > > > > > > >
+> > > > > > > > > Thanks in advance,
+> > > > > > > >
+> > > > > > > > The most common problem with this is miscompiling the tee_s=
+upplicant
+> > > > > > > > application.
+> > > > > > > > Since we don't know if the system has an RPMB, we emulate i=
+t in the
+> > > > > > > > tee_supplicant. How did you get the supplicant and can you =
+check if it
+> > > > > > > > was compiled with RPMB_EMU=3D0 or 1?
+> > > > > > > >
+> > > > > > >
+> > > > > > > I'm using the tee-supplicant provided by the fedora package w=
+hich is
+> > > > > > > built with ` -DRPMB_EMU=3D0`, I think that's correct, right?
+> > > > > > >
+> > > > > >
+> > > > > > Yes, this is correct. We fixed the Fedora package to compile th=
+e
+> > > > > > supplicant correctly a while back.
+> > > > > >
+> > > > > > [0] https://www.linaro.org/blog/uefi-secureboot-in-u-boot/
+> > > > > > [1] https://apalos.github.io/Protected%20UEFI%20variables%20wit=
+h%20U-Boot.html#Protected%20UEFI%20variables%20with%20U-Boot
+> > > > > >
+> > > > > >
+> > > > > > Regards
+> > > > > > /Ilias
+> > > > > > > Thanks,
+> > > > > > >    Enric
+> > > > > > >
+> > > > > > > > Thanks
+> > > > > > > > /Ilias
+> > > > > > > >
+> > > > > > > > >    Enric
+> > > > > > > > >
+> > > > > > > >
+> > > > > > >
+> > > > > >
+> > > > >
+> > > >
+> > >
+> >
 
 
