@@ -1,204 +1,123 @@
-Return-Path: <linux-kernel+bounces-406011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6BA19C5A12
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:16:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E10899C5A1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:19:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40AF91F23481
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:16:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A64A12836FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDFD71FC7D0;
-	Tue, 12 Nov 2024 14:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="iWlROZva"
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B4A7F477
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D731FCC4D;
+	Tue, 12 Nov 2024 14:19:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734CD7F477;
+	Tue, 12 Nov 2024 14:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731420975; cv=none; b=rhS1C2hon2pUG7encJzsoHQajkuSEB97jkJjehZd+eML/zEmdlXrec2lOdF44EbypuQpifk25FoGcY6sdzFdu7B+E7eMjZBdIDSuad7ek/FPjM5bkpjOin/fydZAgo0oGr4Q3uH8tYbEgZak4RXozArRsFlNNpHVxaQiW5iY23o=
+	t=1731421162; cv=none; b=CF48GQSSd12VpG80M9JhGvRTy8lBShN8eg4YS/nsx0UKJmWIg2bOY+viZ/46y1GuDW3tSvmpN18Ona1nekXwUGHh7tFSyunJejj98Lq2F4e7hfo/2jbte3v+hJyqbOfVkLX0864iDGtWhQ+NGG+9veybF1n8idJ7HZ0No6n5XUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731420975; c=relaxed/simple;
-	bh=XpOotAdpt0XBu2S2xXqrIVvyOx0WvsisqjSWMtFrzFI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s9eEM398STaChtx3VYhBjy/6ScnpN8GeXukTQbehUTZN1bf3+gRG30ttT1L+B2I08EECEJiH0qpvpOCGBu9MWqRr5X+3ZJTwgzBSdMAS2XEHVkh7uympX042IvMJM7mREMUMaWtlljt5wl1Ul7Fujv94xlLS/wy9Ylg2anrFEyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=iWlROZva; arc=none smtp.client-ip=207.171.184.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1731420973; x=1762956973;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=acm1kyvqupguFjJWytnDbuQ5A0QhLVvL3XceyiCM+CM=;
-  b=iWlROZvaWelJ8r2nIMqNbgi2WovE98l+5Gpu7OYvLZE3v+toHWXQdQL5
-   duHoMaMtxXsH8I4OaNueyYkd6GhA/pTp7/pougV7wZUOUnKbzMt9p7h9y
-   Q8DXFVrkO2NVmToKRXFtW67c35krJny1jJwvfzptyOGr8S9OxEqUU5Xm8
-   k=;
-X-IronPort-AV: E=Sophos;i="6.12,148,1728950400"; 
-   d="scan'208";a="469329413"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 14:16:05 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:56879]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.18.85:2525] with esmtp (Farcaster)
- id 9c695df4-969b-4e86-bbb0-610ddcc3be65; Tue, 12 Nov 2024 14:16:05 +0000 (UTC)
-X-Farcaster-Flow-ID: 9c695df4-969b-4e86-bbb0-610ddcc3be65
-Received: from EX19EXOUWC001.ant.amazon.com (10.250.64.135) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 12 Nov 2024 14:16:05 +0000
-Received: from EX19MTAUWC001.ant.amazon.com (10.250.64.174) by
- EX19EXOUWC001.ant.amazon.com (10.250.64.135) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 12 Nov 2024 14:16:04 +0000
-Received: from email-imr-corp-prod-pdx-all-2c-475d797d.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.34 via Frontend Transport; Tue, 12 Nov 2024 14:16:04 +0000
-Received: from dev-dsk-pjy-1a-76bc80b3.eu-west-1.amazon.com (dev-dsk-pjy-1a-76bc80b3.eu-west-1.amazon.com [10.15.97.110])
-	by email-imr-corp-prod-pdx-all-2c-475d797d.us-west-2.amazon.com (Postfix) with ESMTP id 7D8D5A0126;
-	Tue, 12 Nov 2024 14:16:04 +0000 (UTC)
-Received: by dev-dsk-pjy-1a-76bc80b3.eu-west-1.amazon.com (Postfix, from userid 22993570)
-	id 1332D2084A; Tue, 12 Nov 2024 14:16:04 +0000 (UTC)
-From: Puranjay Mohan <pjy@amazon.com>
-To: Mike Kravetz <mike.kravetz@oracle.com>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [RFC PATCH 5.10.y] mm: hugetlb: call huge_pte_offset with i_mmap_rwsem held
-Date: Tue, 12 Nov 2024 14:16:01 +0000
-Message-ID: <20241112141601.34540-1-pjy@amazon.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1731421162; c=relaxed/simple;
+	bh=VhrTi7q5aURo2kniteHKbRgC9LQ2hKX+q6dxYEmI/cg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f1IHcu75nWSoDStexn7Pgfd+9HgdKX7688IpcF0WkFwt2uQWY2TAGno6hRzmgk+mY6YNoAbAnMqlqGTgludP6oLEqt8wTma7lQWF6pAcMn5ChwTkRNEBdZE+I7TxmwGgMTiUqdy9E09jvDxWsmnbNiocQzno8DA/EBQxFH+O0MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BBC425E3;
+	Tue, 12 Nov 2024 06:19:48 -0800 (PST)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 214F13F66E;
+	Tue, 12 Nov 2024 06:19:17 -0800 (PST)
+Message-ID: <607a731c-41e9-497a-a08c-f718339610ae@arm.com>
+Date: Tue, 12 Nov 2024 14:19:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: rockchip: Fix vdd_gpu voltage constraints on
+ PinePhone Pro
+To: Dragan Simic <dsimic@manjaro.org>, linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, stable@vger.kernel.org
+References: <0718feb8e95344a0b615f61e6d909f6e105e3bf9.1731264205.git.dsimic@manjaro.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <0718feb8e95344a0b615f61e6d909f6e105e3bf9.1731264205.git.dsimic@manjaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-huge_pte_offset() walks the page table to the find the pte associated
-with the huge page. the PMD page can be shared with another process and
-pmd unsharing is possible (so the PUD-ranged pgtable page can go away
-while the page table walk is under way. It can be done by a pmd unshare
-with a follow up munmap() on the other process).
+On 10/11/2024 6:44 pm, Dragan Simic wrote:
+> The regulator-{min,max}-microvolt values for the vdd_gpu regulator in the
+> PinePhone Pro device dts file are too restrictive, which prevents the highest
+> GPU OPP from being used, slowing the GPU down unnecessarily.  Let's fix that
+> by making the regulator-{min,max}-microvolt values less strict, using the
+> voltage range that the Silergy SYR838 chip used for the vdd_gpu regulator is
+> actually capable of producing. [1][2]
 
-Protect against this race by taking i_mmap_rwsem while the page table
-walk is going on and till the pointer to the PMD is being used.
+Specifying the absolute limits which the regulator driver necessarily 
+already knows doesn't seem particularly useful... Moreover, the RK3399 
+datasheet specifies the operating range for GPU_VDD as 0.80-1.20V, so at 
+the very least, allowing the regulator to go outside that range seems 
+inadvisable. However there's a separate datasheet for the RK3399-T 
+variant, which does specify this 875-975mV range and a maximum GPU clock 
+of 600MHz, along with the same 1.5GHz max. Cortex-A72 clock as 
+advertised for RK3399S, so it seems quite possible that these GPU 
+constraints here are in fact intentional as well. Obviously users are 
+free to overclock and overvolt if they wish - I do for my 
+actively-cooled RK3399 board :) - but it's a different matter for 
+mainline to force it upon them.
 
-The upstream kernel has a new lock [1] for fixing this issue and
-backporting the whole series is not trivial. This patch is my attempt at
-fixing this issue and I am sending this as an RFC to receive feedback if we
-can fix it using another method.
+Thanks,
+Robin.
 
-Once I receive the feedback and we have a path forward, I will send that
-patch to all stable branches that have this issue.
-
-[1] https://lwn.net/Articles/908092/
-
-Here is an example kernel panic due to the issue being fixed in this
-patch:
-
- Unable to handle kernel paging request at virtual address ffffffffc0000698
- Mem abort info:
- ESR = 0x96000004
- EC = 0x25: DABT (current EL), IL = 32 bits
- SET = 0, FnV = 0
- EA = 0, S1PTW = 0
- Data abort info:
- ISV = 0, ISS = 0x00000004
- CM = 0, WnR = 0
- swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000000729ec000
- [ffffffffc0000698] pgd=0000000000000000, p4d=0000000000000000
- Internal error: Oops: 96000004 [#1] SMP
- Modules linked in: xt_tcpmss ip6table_filter tcp_diag [.....]
- CPU: 3 PID: 62456 Comm: postgres Not tainted 5.10.184-175.731.amzn2.aarch64 #1
- Hardware name: Amazon EC2 caspianr1g.16xlarge/, BIOS 1.0 11/1/2018
- pstate: 80400005 (Nzcv daif +PAN -UAO -TCO BTYPE=--)
- pc : huge_pte_offset+0x88/0x118
- lr : hugetlb_fault+0x60/0x5f0
- sp : ffff80001c6d3d00
- x29: ffff80001c6d3d00 x28: ffff0003cdfa0000
- x27: 0000000000000000 x26: ffff0003ce90d6a8
- x25: 0000000000000007 x24: 00000a60da660000
- x23: ffff0003ce90d640 x22: ffff800012256ed8
- x21: 00000a60da600000 x20: ffff00040388d130
- x19: ffff00040388d130 x18: 0000000000000000
- x17: 0000000000000000 x16: 0000000000000000
- x15: 0000000000000000 x14: 0000000000000000
- x13: 0000000000000000 x12: 0000000000000000
- x11: 0000000000000000 x10: 0000000000000000
- x9 : ffff800010345880 x8 : 0000000000000000
- x7 : 0000000040000000 x6 : 0000000040000000
- x5 : 0000000000000183 x4 : 00000000000000d3
- x3 : ffffffffc0000000 x2 : 0000000000200000
- x1 : 00000a60da600000 x0 : ffffffffc0000698
- Call trace:
- huge_pte_offset+0x88/0x118
- handle_mm_fault+0x1b0/0x240
- do_page_fault+0x150/0x420
- do_translation_fault+0xb8/0xf4
- do_mem_abort+0x48/0xa8
- el0_da+0x44/0x80
- el0_sync_handler+0xe0/0x120
- Code: eb00005f 54000380 d3557424 8b040c60 (f8647863)
- ---[ end trace 6cffaf3375de3ad9 ]---
- Kernel panic - not syncing: Oops: Fatal exception
- SMP: stopping secondary CPUs
- Kernel Offset: disabled
- CPU features: 0x0804800e,7a00a238
- Memory Limit: 2048 MB
- ---[ end Kernel panic - not syncing: Oops: Fatal exception ]---
-
-Signed-off-by: Puranjay Mohan <pjy@amazon.com>
----
- mm/hugetlb.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 02b7c8f9b0e87..a991b62afac4e 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4545,7 +4545,9 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 	struct address_space *mapping;
- 	int need_wait_lock = 0;
- 	unsigned long haddr = address & huge_page_mask(h);
-+	mapping = vma->vm_file->f_mapping;
- 
-+	i_mmap_lock_read(mapping);
- 	ptep = huge_pte_offset(mm, haddr, huge_page_size(h));
- 	if (ptep) {
- 		/*
-@@ -4556,10 +4558,13 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 		entry = huge_ptep_get(ptep);
- 		if (unlikely(is_hugetlb_entry_migration(entry))) {
- 			migration_entry_wait_huge(vma, mm, ptep);
-+			i_mmap_unlock_read(mapping);
- 			return 0;
--		} else if (unlikely(is_hugetlb_entry_hwpoisoned(entry)))
-+		} else if (unlikely(is_hugetlb_entry_hwpoisoned(entry))) {
-+			i_mmap_unlock_read(mapping);
- 			return VM_FAULT_HWPOISON_LARGE |
- 				VM_FAULT_SET_HINDEX(hstate_index(h));
-+		}
- 	}
- 
- 	/*
-@@ -4573,8 +4578,6 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 	 * is OK, as huge_pte_alloc will return the same value unless
- 	 * something has changed.
- 	 */
--	mapping = vma->vm_file->f_mapping;
--	i_mmap_lock_read(mapping);
- 	ptep = huge_pte_alloc(mm, haddr, huge_page_size(h));
- 	if (!ptep) {
- 		i_mmap_unlock_read(mapping);
--- 
-2.40.1
-
+> This also eliminates the following error messages from the kernel log:
+> 
+>    core: _opp_supported_by_regulators: OPP minuV: 1100000 maxuV: 1150000, not supported by regulator
+>    panfrost ff9a0000.gpu: _opp_add: OPP not supported by regulators (800000000)
+> 
+> These changes to the regulator-{min,max}-microvolt values make the PinePhone
+> Pro device dts consistent with the dts files for other Rockchip RK3399-based
+> boards and devices.  It's possible to be more strict here, by specifying the
+> regulator-{min,max}-microvolt values that don't go outside of what the GPU
+> actually may use, as the consumer of the vdd_gpu regulator, but those changes
+> are left for a later directory-wide regulator cleanup.
+> 
+> [1] https://files.pine64.org/doc/PinePhonePro/PinephonePro-Schematic-V1.0-20211127.pdf
+> [2] https://www.t-firefly.com/download/Firefly-RK3399/docs/Chip%20Specifications/DC-DC_SYR837_838.pdf
+> 
+> Fixes: 78a21c7d5952 ("arm64: dts: rockchip: Add initial support for Pine64 PinePhone Pro")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> ---
+>   arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+> index 1a44582a49fb..956d64f5b271 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+> @@ -410,8 +410,8 @@ vdd_gpu: regulator@41 {
+>   		pinctrl-names = "default";
+>   		pinctrl-0 = <&vsel2_pin>;
+>   		regulator-name = "vdd_gpu";
+> -		regulator-min-microvolt = <875000>;
+> -		regulator-max-microvolt = <975000>;
+> +		regulator-min-microvolt = <712500>;
+> +		regulator-max-microvolt = <1500000>;
+>   		regulator-ramp-delay = <1000>;
+>   		regulator-always-on;
+>   		regulator-boot-on;
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
