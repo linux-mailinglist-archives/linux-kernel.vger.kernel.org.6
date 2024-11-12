@@ -1,153 +1,158 @@
-Return-Path: <linux-kernel+bounces-404999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0056F9C4B91
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:13:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A40919C4B98
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:18:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1060B21884
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:13:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D94B1F238F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B4720370F;
-	Tue, 12 Nov 2024 01:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF4B204936;
+	Tue, 12 Nov 2024 01:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IaxTe/nb"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGjE8eYm"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A605234;
-	Tue, 12 Nov 2024 01:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684332010E3;
+	Tue, 12 Nov 2024 01:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731373979; cv=none; b=gRMMrK0Af7V9BMR32mDLU75K3zcF+1DjFVIqhKIg3QYuxw78aheXrk7goybd9/vTtI8YuM0ecqOzwI/UXTjNM9hQR7Mu2qLY5SBHNTPUi1QVn6nbjkxYnGpe6BingadlGiv6vdECDSq6jkYy47KPJ3bGrCwtDXm45oV/LCXLbUk=
+	t=1731374294; cv=none; b=F1nIZb2374LtZyFMWGrLM0oZoXHfLtWsy0d2MQ2uhFU46GS78kNX6CScUXA6IZrilE6cHA1D4q/o1eJFskiKHM6Q/yDyCnqC9/xSBs+oHaEsXwj1mepIowSHCRGCalUGXeSci1D6z+DN9YRAEINHTGA5UI+YvaNXccFsz/i1HwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731373979; c=relaxed/simple;
-	bh=ftmn0imYn37BRWPPROC0VBNKjMLbbrW8+cDXcgpP2SE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qsHNtLdxQUkQDXt4SlG++gJzeWpxRgtgV3Q6C9+lTIgBToYllo+9L3SMVYMfA83Loyb6tFg43FWABq8lRMt3y9mUUV8Ewf200t8sAIANQXtEyxaYyoBa9TfqZimK6xP3LTTcCR26DHUMcXeNMRK35uebpettzl5SHvJiOKZ/uiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IaxTe/nb; arc=none smtp.client-ip=209.85.215.180
+	s=arc-20240116; t=1731374294; c=relaxed/simple;
+	bh=t13VTO4fFyiMFGbz+q+sUUKDddqPat8+PPWtPUpS8M0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UwiW+3+OuVgDNTK/0Nmopf2ZO3fbBQ94wo8gkRgZbM1i7oVQURLmQKTFJp8hafsOJbYSmJRCwj0u7mZjPQu0Cvl4X7aHaWbBwUo/fH9aeEww6SuIocd/Dbveu+zJolFCXZaKhjKwhnaXysns00CAxzjusOg2tFUC+WDbsH1vd18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KGjE8eYm; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7f3da2c2cb5so3571904a12.2;
-        Mon, 11 Nov 2024 17:12:57 -0800 (PST)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb4ec17f5cso37288261fa.3;
+        Mon, 11 Nov 2024 17:18:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731373977; x=1731978777; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HeFGGUGpEi1sr9HlTgC6+whcNglqJKLIMlkMEduoEoI=;
-        b=IaxTe/nbP2rLpcYIFD1Dhcq2i5L3sB11Y83ZDbpfUCRIGwcy9C1PMLM0J2AwPu1lMG
-         wT/0TY8FKVOFmdnq5AvQNQb/8BkurdJl+xqA9v92X/ZWYIOKeU7fvoWZQcV7peGfQuiu
-         5otGo1WhfEKNEulvzzMqGjmZYGtmH67bT7nJ6fkeuBFJ0ckCa8nKAtGPGAW+mGbwyVGh
-         EP4WFpxBaCkeoDEaODru/X/rXJ83JmtA+wAagwkHmhcW/wjkbyRnS/chEXXT5tIlDn9U
-         nRxY6mt+S1GQLDW+QS3/9Rw7ZsoeV5z1fWQNzd/2xMRg4EN8zKa8ZwCtykKBYpl7KVdE
-         N1Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731373977; x=1731978777;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1731374290; x=1731979090; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HeFGGUGpEi1sr9HlTgC6+whcNglqJKLIMlkMEduoEoI=;
-        b=hpJEW53v9tUScURS4FuG9JQbYkoKoVaKtIxQuxt7sytUSzVjI0InQ570DVlLJDcPqX
-         2YW/N35hlcn97G8uPTd/iXjuY+gMevDEbeiIa0tgnhPkksH5eGPqig0WRUJV4nxEn+4Q
-         ZsIahGQfbUH8pBv+6RSmWNQ+jaHf05FZhg1EvtJNPqZp6GdFgcsC54nkRm/20BoF+TWW
-         A7yg3XJ9xUy4KqdDxHIhon0ypJt91KM0nY+gGcPAyX+kTnC7JxeAU6jRD5r48DqIWgL3
-         k3WZ49aB/UjrXtOH0qRvGfhl6wQrgPFEAlIEskOmffkqRFWxoyqcWpzPvsd+22V42u3x
-         nN4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ6KKZ/d/fozxnL7HxGfbWJS5H+CkJiuZNot7hNX9WauRGkutgUtzFbHM3GnQdStAW8TizAycu2F8uUF+Q@vger.kernel.org, AJvYcCWh4E+lhiUknZ4QVG2zb1E/GeXych6De6vem/uG67tOHtdrU1S5ucqUMicAWPEJcNfu/I70AY1BWfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHkDlA8ZJ59KldtEU+0De+1hXOmRfc2GIAzO+XF+pp9c/6zAam
-	h4nJyNRMk754PuwsqUQotNU5+0yiEJNSaYd/gjBY8pb6qk/5ZNoq
-X-Google-Smtp-Source: AGHT+IHV65Fyb7uDakHlevNL5cpnf3GAtcrRB1pAKYFi4Ty++DVmIHYNNPVEBBb8riwugg9HJnK1ug==
-X-Received: by 2002:a17:90b:3811:b0:2e2:bf7f:3369 with SMTP id 98e67ed59e1d1-2e9b16eb57bmr19784671a91.5.1731373977187;
-        Mon, 11 Nov 2024 17:12:57 -0800 (PST)
-Received: from archie.me ([103.124.138.80])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a5fd329sm11378008a91.37.2024.11.11.17.12.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 17:12:56 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id A0CDE4209E61; Tue, 12 Nov 2024 08:12:52 +0700 (WIB)
-Date: Tue, 12 Nov 2024 08:12:52 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Suren Baghdasaryan <surenb@google.com>,
-	Hillf Danton <hdanton@sina.com>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	SeongJae Park <sj@kernel.org>
-Subject: Re: [PATCH] docs/mm: add VMA locks documentation
-Message-ID: <ZzKrlEAjzZ80M0ik@archie.me>
-References: <20241107190137.58000-1-lorenzo.stoakes@oracle.com>
- <Zy4DQmWHpC_QMGTP@archie.me>
- <b81e4cc2-fc86-4ed2-996a-ad78a3524f31@lucifer.local>
- <0d540192-3372-48ff-99fc-e8bfb960e3bf@lucifer.local>
+        bh=B3x1XD5BHJdM36ghcfeo4S6goN5EOgmQYPBVkMxbxS4=;
+        b=KGjE8eYmlE/R0ReGAiYZX3vZmZdur+ZXhGiZITMz8A1VyM3Z2/esQen/KMRHKLAby5
+         FnRqrRZqY1MY8gbp6JxVeoSkJi576O4vHXW9A8l7HflqlNPbujkEbTjhTmtCG3yDRXHn
+         18VL+PteHKzBpyUnHcMmaBEf3mn9jNf6XWXmI6NjFwI0SXpUG6B5eSlNEhBo4Iy1cwAY
+         X+3V6v75eScNbfgjaOZrKtuDWHBoq4Is1SumtHdhdqqNKTjWgwAZ0tHVTcPG57QKONXk
+         6r8WlCRhTs8Km9jCQ2PCMwAdy/FTRIMNm2qfrKA67aG9nNTyQH/Ka10q+Z+H5fncSPu7
+         fZkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731374290; x=1731979090;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B3x1XD5BHJdM36ghcfeo4S6goN5EOgmQYPBVkMxbxS4=;
+        b=e+6QEFQmN54mcCzaQozujfRdHfTQ5Ym/HmOEKGi1HlK0TC4ALNDQK/UalSnHJ8iUDO
+         jEaofRCLlmVSGaUhqBGDEZx8cwjJ2wcFd65VCtmOvamWkndCLSYPDw/P3IgAMiVSe6xv
+         ZyFi8+LIZF3qqXB0UkhlH4WFYrUChePUglc9Q1mP/wXBp4KPSxTPIDpN7nK17l3H2Rjb
+         8LhuEJsOi8r7lFCYXx+hekdBWBreFwFrNAw/AhXwQ8mm3GiAnIOOaDExKXkuGOn/Fc20
+         HzzW5mSRXP5ZUhdJFYXVgx4cuaN/KOQioA1Ri9InciXIA8/ANI0nIdak9c6yp1Zx9lxX
+         0IMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUD0P31gb1f0jZubB/5+qF/RqSd96w7pAN7DcIzdFzJG0g+TVAlpaRGfKdJocI30wUR22B9xOTRwgjMtLXg@vger.kernel.org, AJvYcCUaz9L9dEJKp3iDyitOg57aPAfoFPy8b5x3Yip2l2G34MV2BNuhrL03guGMw/jHDL63Oj6bwJsIHPY=@vger.kernel.org, AJvYcCUykP+u9Gb/tYYce/2VTDz3oAeypCDo1xVPCL+4MJgMd/4c8NUqHrnLU49rsNe7ASgn7/lyXlU2aesvcdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJHSY29EqUJQclqz8R5u8lbqgeuUVpWUkm8Eo4VgAmf7w1iCf6
+	HrG0v98cx0AR1h7aPFPJ/D4mAOWyYWWjgvlo8/6mrpEyqO/HKZgmj/uwnx2hHDqrEgfCi/41KPA
+	HplebkE9UcfmtvmA63Q8V6yxpEWsVAaIeZZ0=
+X-Google-Smtp-Source: AGHT+IEwmboXLYvo02CMnnfmlr/DRNkR3zFp3GjNXL5pQnbWlS6gXAv2UwZYAn/D0Ru9vsEvZRK1Oo4bidFSWEiW98I=
+X-Received: by 2002:a05:651c:88a:b0:2fb:5014:c939 with SMTP id
+ 38308e7fff4ca-2ff42750f6bmr3074981fa.41.1731374290279; Mon, 11 Nov 2024
+ 17:18:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+Gp0QloTQ6LSDedi"
-Content-Disposition: inline
-In-Reply-To: <0d540192-3372-48ff-99fc-e8bfb960e3bf@lucifer.local>
-
-
---+Gp0QloTQ6LSDedi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20241031211411.58726-1-yesanishhere@gmail.com>
+ <ZyQ5OJM8k1rGog2R@archie.me> <CABCoZhCapQBCj=UJ78XWtzier5m34zX+bwSo4bPxEVkOdZSxRA@mail.gmail.com>
+ <ZzKnMLe-L7bOe9Tw@archie.me>
+In-Reply-To: <ZzKnMLe-L7bOe9Tw@archie.me>
+From: anish kumar <yesanishhere@gmail.com>
+Date: Mon, 11 Nov 2024 17:17:58 -0800
+Message-ID: <CABCoZhC5w-uUgmsqb_m2t98NF5oftuoDTThvthoRK8m97bM+MA@mail.gmail.com>
+Subject: Re: [PATCH V4] Docs/sound: Update codec-to-codec documentation
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
+	corbet@lwn.net, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 08, 2024 at 12:34:23PM +0000, Lorenzo Stoakes wrote:
-> On Fri, Nov 08, 2024 at 12:29:15PM +0000, Lorenzo Stoakes wrote:
-> > On Fri, Nov 08, 2024 at 07:25:38PM +0700, Bagas Sanjaya wrote:
-> > > On Thu, Nov 07, 2024 at 07:01:37PM +0000, Lorenzo Stoakes wrote:
-> > > > +.. note:: In instances where the architecture supports fewer page =
-tables than
-> > > > +   five the kernel cleverly 'folds' page table levels, that is ski=
-ps them within
-> > > > +   the logic, regardless we can act as if there were always five.
+On Mon, Nov 11, 2024 at 4:54=E2=80=AFPM Bagas Sanjaya <bagasdotme@gmail.com=
+> wrote:
+>
+> On Sun, Nov 10, 2024 at 01:30:12PM -0800, anish kumar wrote:
+> > On Thu, Oct 31, 2024 at 7:13=E2=80=AFPM Bagas Sanjaya <bagasdotme@gmail=
+.com> wrote:
 > > >
-> > > What are being skipped if e.g. we only have 3 or 4 page tables?
+> > > On Thu, Oct 31, 2024 at 02:14:11PM -0700, anish kumar wrote:
+> > > > Updated documentation to provide more details
+> > > > for codec-to-codec connection especially around
+> > > > the scenarios and DAPM core details for C2C
+> > > > creation.
+> > > "Describe in more detail codec-to-codec connection, especially on
+> > > use cases and DAPM core details for C2C creation."
+> >
+> > Sorry, I like the way it is written.
+>
+> What do you mean?
+>
+> > > > +An ALSA-based audio system typically involves playback and capture
+> > > > +functionality, where users may require audio file playback through
+> > > > +speakers or recording from microphones. However, certain systems
+> > > > +necessitate audio data routing directly between components, such a=
+s FM
+> > > > +radio to speakers, without CPU involvement. For such scenarios, AS=
+oC(
+> > > > +ALSA system on chip) provides a mechanism known as codec-to-codec =
+(C2C)
+> > > "For such scenarios, ASoC (ALSA system on chip) ..."
+> > > > +connections, leveraging the Dynamic Audio Power Management (DAPM)
+> > > > +framework to facilitate direct data transfers between codecs.
+> > > > <snipped>...
+> > > > +To better understand the configuration inspired by the setup found=
+ in
+> > > > +``sound/soc/samsung/speyside.c``, here are several key points:
+> > > > +
+> > > > +1. The presence of ``c2c_params`` informs the DAPM core that the D=
+AI link
+> > > > +   represents a C2C connection.
+> > > > +
+> > > > +2. ``c2c_params`` can be an array, and ``num_c2c_params`` defines =
+the size
+> > > > +   of this array.
+> > > > +
+> > > > +3. If ``num_c2c_params`` is 1:
+> > > > +
+> > > > +   - The C2C DAI is configured with the provided ``snd_soc_pcm_str=
+eam``
+> > > > +     parameters.
+> > > > +
+> > > > +4. If ``num_c2c_params`` is greater than 1:
+> > > > +
+> > > > +   - A kcontrol is created, allowing the user to select the index =
+of the
+> > > > +     ``c2c_params`` array to be used.
 > > >
-> > > Confused...
+> > > I guess #3 and #4 can be combined, i.e. "If ``num_c2c_params`` is 1, =
+...;
+> > > otherwise if ``num_c2c_params`` is greater than 1, ...".
 > >
-> > Page table levels, see [0].
-> >
-> > Typically achieved through stubbing functions out, etc. So in the code =
-you
-> > actually write and _conceptually_ there are five levels, only in the fi=
-nal
-> > compile you might have things like p4d_present(), p4d_clear() etc. squa=
-shed by
-> > the compiler into nothing.
->=20
-> I have updated this note to be a little clearer and to explicitly state
-> this. Thanks!
+> > I like it this way.
+>
+> Sorry again but what do you mean? Keep it as-is?
 
-Thanks for clarifying.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---+Gp0QloTQ6LSDedi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZzKrkAAKCRD2uYlJVVFO
-o+QEAQC3UUEVhh8+C8OxopbfJxfhQ2VLPMXNmz8Pj5PI6SrwiwEAyWHohtsNEZLZ
-noRnYz2AfUf9iN/zzJYJsrQcPjyjxAI=
-=BwYe
------END PGP SIGNATURE-----
-
---+Gp0QloTQ6LSDedi--
+Yes it is more developer friendly.
+>
+> Confused...
+>
+> --
+> An old man doll... just what I always wanted! - Clara
 
