@@ -1,157 +1,633 @@
-Return-Path: <linux-kernel+bounces-406459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE1C9C6379
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:34:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F13FD9C62BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D93DBB3CC5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:44:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AB65B35083
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5777213EC3;
-	Tue, 12 Nov 2024 17:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5E0213EFC;
+	Tue, 12 Nov 2024 17:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NYKW3wa4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R+k0hYBs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977D7213ED4
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FA82139A1
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731433470; cv=none; b=ZzoadtyiNzRbfSmzGuP6uV0MFnDo8ZbL8VUJ27TP5m6geGOTNoBu00TyF5oI3iVQXT/3cWXr+shv4Ahp26IxWN5Q7RArKNiK+lOHDtZfQahDc7BCeUS/QBPpPRD8g0W/gFrpQjpqvv1ThbfvJbP9FIzHhcu79OkaOHXBjjxlz6o=
+	t=1731433660; cv=none; b=jaH5EAqFUamqspNbPfJPLDHjOOI+0lW9qlz8vRPrWBw0DP8ROoOyRmCqD9vCJzmPL72xJkNS0pD08WvaumVJSbxIX6cfJer3jFUp2dStNjINJhLW+IxnhRe5TcX6tHaMDUr5xq7tDWnmfB9+Ohsn49S95i+QWhS71CX6H8Xm9BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731433470; c=relaxed/simple;
-	bh=RDfArepTU8NJiFtWt6ibJ1faxB56iYRNzWqS2Kgk2uY=;
+	s=arc-20240116; t=1731433660; c=relaxed/simple;
+	bh=9CIbmtkBnwDOa194fJrdfbPlEwol1OUacHCHUplIoxE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PyfCJQCEkhE/+5Cb5q8CEH3JTcet4zmNRy8MykGEYXRinE4bm/9wg4877wfbC6DLSfT185k0Ia3GT49p4d6EcdfzrNrSaMGNL8+SQZqTnCDLI+SYan6LSpmGBL1MpoOlrWUTJ5ZOoUPo/0s8m3N6cQtRFzk1kNRDTcvb0KtuAu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NYKW3wa4; arc=none smtp.client-ip=170.10.133.124
+	 To:Cc:Content-Type; b=OUfHasGyyahno0dkags6MRvRxI7sBl9RLC8I0ju6lA599OKinCVLQWDkig85l2xiWyFXdpy/CpYSA6mAIKXQtWfVCJTm+8zhGiqu8vue2RvQidXSEkvCGsQ8JAcXsJXoPogwhKZpJN9zW9HW0TSX6IzWXtmTpzz2tAQbjZqPfBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R+k0hYBs; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731433465;
+	s=mimecast20190719; t=1731433656;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=eVzX8IrUiHDIGjgNVYIdt2apAWg2olnejFrDZpVW494=;
-	b=NYKW3wa4c8eH6J31r647I8RM3NKO+yUtzg8YY7bogY1zTM1yQsl9VqPRDwY+S9GnF0V2R9
-	qDXJYTA4XTafCKMT8b/o3ZyyOGxDPPwl67+DuaMZBt4wiuXzxutkq5J0KrSGUC5DboRyP2
-	bWE0JSoeJ1jj69cmr2xG1/cSoO2qkm0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Fi02c7cMfZo/ph0LI2Ys+XfiBl+lurtCayq4ptv4hRM=;
+	b=R+k0hYBsL+mOIYheRo3RK+lkj6klkPjEW1QQAolafn7o6cV+AYBwVYCZp8U9jaf414WgND
+	50a+e5/WUCoqXa74N+KaDbYWoRzbVZ+A46LMUI+2wjN2QM+expEtczWT/JJ/AYvjN6A7a2
+	JRBgN2+yVzaHcmTB8ENxAUbR9th+b5A=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-50-yngErRiNMNykF4SD8RCOFA-1; Tue, 12 Nov 2024 12:44:24 -0500
-X-MC-Unique: yngErRiNMNykF4SD8RCOFA-1
-X-Mimecast-MFC-AGG-ID: yngErRiNMNykF4SD8RCOFA
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4314f1e0f2bso42586935e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:44:24 -0800 (PST)
+ us-mta-465-3JOXegLVOyKRMHAZxvMSGA-1; Tue, 12 Nov 2024 12:47:35 -0500
+X-MC-Unique: 3JOXegLVOyKRMHAZxvMSGA-1
+X-Mimecast-MFC-AGG-ID: 3JOXegLVOyKRMHAZxvMSGA
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5eba8d039acso99233eaf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:47:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731433463; x=1732038263;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eVzX8IrUiHDIGjgNVYIdt2apAWg2olnejFrDZpVW494=;
-        b=POovqVLlyhSKpO2mzscwZ4MHBFN++gr2wXxswAqpnMTT86fP37sBcqHKYEJPsIGO5V
-         uOsRBDWZwl45Z2VAL34LQIYtzDxg4nezymTMZe9JQJD4UzESHsa46wPoArIf32WakWNx
-         A6zpqK/rPZ5gnvsiqW5vdGGfobU9zDe+KAOKIb8NRPNLZMFZf6SQIRhEjzdb9ieNv2Jq
-         1ys+Wjw4M/gLQBZ1LCEmC3abWfUKYL6vb2zA611oMM5TaqUvfqJsc/RlrxwFQLQBV383
-         8IRO0LZ9AT8+UCWPTZbiNlA02TRa93Hf504C2QTvPY5HiD7PwyPwyGIp+KJyc5Zfhbdm
-         Wyng==
-X-Forwarded-Encrypted: i=1; AJvYcCWja6oNFloyQE5pcxUS4Mgrvr/tpK9YRbAVZEOcXpON4KWj3euLsraPnWK1HjKgUsOzeoJ7pdOF1WBHb1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO+/VdlltmM/CPbV5rV8USQZuEghwWuWtdDLlM6824/LJOUhzg
-	Wo0KuU6Z0hdYN9BFXC0Cc5O775Ah/jRj1NnvSC6ZZOdBOIH+E15510xdLrEVn97ZypsDjjXucu5
-	rcjIuM4O6kXAX3t8iD6VEXHgg5qJg4j62XS5+wObCEamH1RJm0D+2dS5q++Fbp/QQfZksSN9cta
-	BgcH/R+gKLqgg4BfEx/OJSxErxavC3mNR8R0MT
-X-Received: by 2002:a05:600c:6987:b0:431:3a6d:b84a with SMTP id 5b1f17b1804b1-432bcafc5a6mr122920695e9.4.1731433462947;
-        Tue, 12 Nov 2024 09:44:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFk1+sll6qKj8ZxjfW1Guv/zAkO9AMei6W+uBdtH7yxnyBBvnBSeRCXgDgU3LYFUHOhAclwT5YnnRTovc4RLzg=
-X-Received: by 2002:a05:600c:6987:b0:431:3a6d:b84a with SMTP id
- 5b1f17b1804b1-432bcafc5a6mr122920445e9.4.1731433462644; Tue, 12 Nov 2024
- 09:44:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731433654; x=1732038454;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fi02c7cMfZo/ph0LI2Ys+XfiBl+lurtCayq4ptv4hRM=;
+        b=VXHGj4WFmUuJhCWt4OCusGhN/xZcRZ+IVTbkH6uIYNkO9saSJOJsdq/bqkOiaxvZAH
+         95rOY2XSKDl0rUYHENBFTJovQATI2q7t9R15rM+s7uZNev2ChUebbFWD7I2Mr8zgXZgy
+         jmIWMCHZkxzoCsK4D6uJaK9VDiPCzxVQtzyD5IGoglrkjEiSHs8oIbwljRbal02I/Lql
+         h0BcpFlh1dkM+ZQ+7KBzzZ7CdZAPm5Ia8Nh8JM1ujm2U9ZhJ0cyU52ps7DL+QcReLsTk
+         Cm71prxLj8Nj2oZm4Ucl+TnbGE7ksjt3xmfPI27UtPr/652PFNdu1IbJmP1nFLxTIdNj
+         QaQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTmuzX/4UdsMCuQXz1/kMDcXcOKLU62gAN9cHL+F0Hc8qxTmGJwRkJpoajbP3lK2nxjeydljPTWA6+Ni4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHCH8pzvjknxQlBaGUQqsxFyRKUr9iCBZMKtFNKNAt5ObT5cNO
+	7SSBMkSZr0CeF9zbUsoTm32UTVQ+G9d2S3eHQatCENS0AW2bv8yXtzUB9yV+sazlIq4VcqBJ5f3
+	oiKhaQMS6m6ohIh1Ve2daC+GrqqUWLd6tDO0e1ay5bbZ047O8qF772PhKMGpaR67sEn2qXcQjsh
+	0+TR8I78eKcQ1iBKGrjdN0xkwoZHHz8zuC0ixZ
+X-Received: by 2002:a05:6820:b45:b0:5ed:ee42:1b00 with SMTP id 006d021491bc7-5ee57c31ea2mr1851657eaf.1.1731433654182;
+        Tue, 12 Nov 2024 09:47:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFOoURhaOmkiA2ZoXle+9Es26RUW6+mhFgNzO5A514CCL/A75yNHbSskZSQaDdbB/O9MFL8JRdqJtpVQ9INtx8=
+X-Received: by 2002:a05:6820:b45:b0:5ed:ee42:1b00 with SMTP id
+ 006d021491bc7-5ee57c31ea2mr1851654eaf.1.1731433653700; Tue, 12 Nov 2024
+ 09:47:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030033514.1728937-1-zack.rusin@broadcom.com>
- <20241030033514.1728937-3-zack.rusin@broadcom.com> <CABgObfaRP6zKNhrO8_atGDLcHs=uvE0aT8cPKnt_vNHHM+8Nxg@mail.gmail.com>
- <CABQX2QMR=Nsn23zojFdhemR7tvGUz6_UM8Rgf6WLsxwDqoFtxg@mail.gmail.com>
- <Zy0__5YB9F5d0eZn@google.com> <CABQX2QNxFDhH1frsGpSQjSs3AWSdTibkxPrjq1QC7FGZC8Go-Q@mail.gmail.com>
- <e3f943a7-a40a-45cb-b0d9-e3ed58344d8b@redhat.com> <CADH9ctD1uf_yBA3NXNQu7TJa_TPhLRN=0YZ3j2gGhgmaFRdCFg@mail.gmail.com>
- <c3026876-8061-4ab2-9321-97cc05bad510@redhat.com> <CADH9ctBivnvP1tNcatLKzd8EDz8Oo6X65660j8ccxYzk3aFzCA@mail.gmail.com>
-In-Reply-To: <CADH9ctBivnvP1tNcatLKzd8EDz8Oo6X65660j8ccxYzk3aFzCA@mail.gmail.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 12 Nov 2024 18:44:07 +0100
-Message-ID: <CABgObfZEyCQMiq6CKBOE7pAVzUDkWjqT2cgfbwjW-RseH8VkLw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] KVM: x86: Add support for VMware guest specific hypercalls
-To: Doug Covelli <doug.covelli@broadcom.com>
-Cc: Zack Rusin <zack.rusin@broadcom.com>, Sean Christopherson <seanjc@google.com>, 
-	kvm <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "the arch/x86 maintainers" <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Joel Stanley <joel@jms.id.au>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, 
-	"Kernel Mailing List, Linux" <linux-kernel@vger.kernel.org>, 
-	linux-kselftest <linux-kselftest@vger.kernel.org>
+References: <CALE0LRvJ-n77oU=O9__NdSLw2v33zMK+WYkn2LcwWMwHCbohQw@mail.gmail.com>
+ <CAC_iWjJEXU+dodjvWQYM9ohPa3P2p0bFG=exGoi-iYFrLLbCTA@mail.gmail.com>
+ <CALE0LRtUz8hd4pdR9sX2Sb6tOn=K4wkRnGG9B7f72qU8JFQSYQ@mail.gmail.com>
+ <CAC_iWjJLSSTO0Ca7rgOWAHfWzbkBkKHkQedRUbcwsoU0dtrsGA@mail.gmail.com>
+ <CALE0LRvN3tYgWig1XnCiAZvdzE8x=cdLanGxbUvpPr5nfexSPQ@mail.gmail.com>
+ <CAC_iWjL4mp-sTsp5a+yFkUauXuMvZ1yoTAk_60nm-CCKUgwayw@mail.gmail.com>
+ <CALE0LRsYXXaao2uCUMFkd8Y6f5Mxgoc-Qpft_y8wWW3ZiekbbA@mail.gmail.com>
+ <CAC_iWjL+J9tNxEdh0AoYD19h013N4nk=KmaT=RACo4-oVwuRCA@mail.gmail.com>
+ <CALE0LRu2oDSo6KOhO2fTDMiqX7iqjqNjNGD_67MJFS7BJWqT_w@mail.gmail.com>
+ <CALE0LRvFT3fDdoBLXHK2e47cibD02pxXAuZ83rTqEfrzU3HnKA@mail.gmail.com>
+ <CAC_iWj+STZib+VOZrQtZk95skWzyLqe7_HpNM60G6axNa3Lnnw@mail.gmail.com>
+ <CALE0LRsqc6L9EunhOyvyOR_KgG28zb10YBR1qN2qgZ9iJvaHEw@mail.gmail.com>
+ <CAC_iWjKLqDFb1wSUQ1uMqOfbeRtzGNX9gyTHtQy5-71WvBiiLA@mail.gmail.com>
+ <CALE0LRt7cwwwQ0Rh+0qJsUzTsNULEQSYgAoviQp5F5SXeJk8LQ@mail.gmail.com>
+ <CAC_iWjKkdS71Fh3LZ0CJR-vnC+PwGKGndxjU3WjjUPnZ84DYWg@mail.gmail.com> <CALE0LRt2ct8onNyPvTNzy3Ps1kqduqx-OMmnQse-SXsk5M451Q@mail.gmail.com>
+In-Reply-To: <CALE0LRt2ct8onNyPvTNzy3Ps1kqduqx-OMmnQse-SXsk5M451Q@mail.gmail.com>
+From: Enric Balletbo i Serra <eballetb@redhat.com>
+Date: Tue, 12 Nov 2024 18:47:22 +0100
+Message-ID: <CALE0LRsA==Art8xqRQfPQq0HP6ebtYTuQ677t-BV7fDZB3grWg@mail.gmail.com>
+Subject: Re: optee-based efi runtime variable service on TI j784s4 platforms
+To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Sumit Garg <sumit.garg@linaro.org>, linux-efi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	op-tee@lists.trustedfirmware.org, Manorit Chawdhry <m-chawdhry@ti.com>, 
+	Udit Kumar <u-kumar1@ti.com>, "Menon, Nishanth" <nm@ti.com>, 
+	Masahisa Kojima <kojima.masahisa@socionext.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il lun 11 nov 2024, 21:55 Doug Covelli <doug.covelli@broadcom.com> ha scritto:
+Hi Ilias,
+
+
+On Tue, Nov 12, 2024 at 5:03=E2=80=AFPM Enric Balletbo i Serra
+<eballetb@redhat.com> wrote:
 >
-> BDOOR_CMD_VCPU_MMIO_HONORS_PAT and BDOOR_CMD_VCPU_LEGACY_X2APIC_OK are not
-> actually backdoor calls - they are flags returned by BDOOR_CMD_GET_VCPU_INFO.
->
-> BDOOR_CMD_VCPU_MMIO_HONORS_PAT is only ever set to 1 on ESX as it is only
-> relevant for PCI passthru which is not supported on Linux/Windows/macOS.  IIRC
-> this was added over 10 years ago for some Infiniband device vendor to use in
-> their driver although I'm not sure that ever materialized.
-
-Ok. So I guess false is safe.
-
-> BDOOR_CMD_VCPU_LEGACY_X2APIC_OK indicates if it is OK to use x2APIC w/o
-> interrupt remapping (e.g a virtual IOMMU).  I'm not sure if KVM supports this
-> but I think this one can be set to TRUE unconditionally as we have no plans to
-> use KVM_CREATE_IRQCHIP - if anything we would use KVM_CAP_SPLIT_IRQCHIP although
-> my preference would be to handle all APIC/IOAPIC/PIC emulation ourselves
-> provided we can avoid CR8 exits but that is another discussion.
-
-Split irqchip should be the best tradeoff. Without it, moves from cr8
-stay in the kernel, but moves to cr8 always go to userspace with a
-KVM_EXIT_SET_TPR exit. You also won't be able to use Intel
-flexpriority (in-processor accelerated TPR) because KVM does not know
-which bits are set in IRR. So it will be *really* every move to cr8
-that goes to userspace.
-
-> For now I think it makes sense to handle BDOOR_CMD_GET_VCPU_INFO at userlevel
-> like we do on Windows and macOS.
->
-> BDOOR_CMD_GETTIME/BDOOR_CMD_GETTIMEFULL are similar with the former being
-> deprecated in favor of the latter.  Both do essentially the same thing which is
-> to return the host OS's time - on Linux this is obtained via gettimeofday.  I
-> believe this is mainly used by tools to fix up the VM's time when resuming from
-> suspend.  I think it is fine to continue handling these at userlevel.
-
-As long as the TSC is not involved it should be okay.
-
-Paolo
-
-> > >> Anyway, one question apart from this: is the API the same for the I/O
-> > >> port and hypercall backdoors?
+> On Tue, Nov 12, 2024 at 4:07=E2=80=AFPM Ilias Apalodimas
+> <ilias.apalodimas@linaro.org> wrote:
+> >
+> > On Tue, 12 Nov 2024 at 16:39, Enric Balletbo i Serra
+> > <eballetb@redhat.com> wrote:
 > > >
-> > > Yeah the calls and arguments are the same.  The hypercall based
-> > > interface is an attempt to modernize the backdoor since as you pointed
-> > > out the I/O based interface is kind of hacky as it bypasses the normal
-> > > checks for an I/O port access at CPL3.  It would be nice to get rid of
-> > > it but unfortunately I don't think that will happen in the foreseeable
-> > > future as there are a lot of existing VMs out there with older SW that
-> > > still uses this interface.
+> > > On Tue, Nov 12, 2024 at 2:23=E2=80=AFPM Ilias Apalodimas
+> > > <ilias.apalodimas@linaro.org> wrote:
+> > > >
+> > > > [...]
+> > > >
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > Unfortunately that didn't help, but I don't see this code b=
+eing run.
+> > > > > >
+> > > > > > That's weird, look below.
+> > > > > >
+> > > > > > > > Who sets for the first place the uefi variables, is this u-=
+boot
+> > > > > > > > writing them to the rpmb? or is optee itself?
+> > > > > >
+> > > > > > U-Boot sets the variables, but it does so via StandAloneMM.
+> > > > > >
+> > > > > > > >
+> > > > > > >
+> > > > > > > I tried to compare the behaviour between optee_rpmb (works) a=
+nd
+> > > > > > > efidebug (doesn't worrk). I see that the first thing optee_rp=
+mb
+> > > > > > > command does is open a session against the TA application, so=
+mething
+> > > > > > > that efidebug doesn't do, shouldn't efidebug do the same to a=
+ccess to
+> > > > > > > the rpmb device and read or write the efi variables?
+> > > > > > >
+> > > > > >
+> > > > > > That's a bit more complicated and explained to one of the blog =
+posts I
+> > > > > > pasted above.
+> > > > > > We do open an OP-TEE session, but not for talking to a TA. We s=
+end the
+> > > > > > messages to StandAloneMM, which then usese OPTEE RPMB APIs to w=
+rite
+> > > > > > the flash.
+> > > > > >
+> > > > > > The weird thing is why OP-TEE does not format your RPMB when co=
+mpiling
+> > > > > > with that flag.
+> > > > > > If done correctly, OP-TEE will wipe the RPMB contents the first=
+ time
+> > > > > > it tries to access it.
+> > > > > >
+> > > > >
+> > > > > It does if I call optee_rpmb command
+> > > > >
+> > > > > E/TC:? 0 rpmb_fs_setup:2143 **** Clearing Storage ****
+> > > > >
+> > > > > But I don't see any attempt to write efi variables to the rpmb
+> > > > > partition if I use the normal boot workflow or calling any efi co=
+mmand
+> > > > > from the prompt.
+> > > > >
+> > > > > I think I need to read a bit more about all the pieces because I =
+might
+> > > > > miss something.
+> > > >
+> > > > You don't need the command above to store variables. You need this =
+in
+> > > > case you need to use the RPMB from the command line.
+> > > > Do a 'printenv -e && setenv -e -bs -rt -nv test test1 && printenv -=
+e'.
+> > > > Does that work ?
+> > > >
+> > >
+> > > No, `printenv -e` gets stuck. This is the log with some debug message=
+s I added.
+> > >
+> > > =3D> printenv -e
+> > > > lib/efi_loader/efi_setup.c:227 Initialize once only
+> > >   > lib/efi_loader/efi_setup.c:234 Set up console modes
+> > >   > lib/efi_loader/efi_setup.c:242 Proble block devices to find the E=
+SP
+> > > MMC: no card present
+> > > mmc_init: -123, time 2002
+> > >   > lib/efi_loader/efi_setup.c:249 Initialize variable services
+> > >      > lib/efi_loader/efi_var_mem.c:223 efi_allocate_pages
+> > >      > lib/efi_loader/efi_var_mem.c:236 efi_create_event
+> > >   < lib/efi_loader/efi_var_mem.c:244 - ret=3D0
+> > > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
 > >
-> > Yeah, but I think it still justifies that the KVM_ENABLE_CAP API can
-> > enable the hypercall but not the I/O port.
+> > Please try again with the FAT reset config flag in OP-TEE and without
+> > doing any reads and writes from the U-Boot console
 > >
-> > Paolo
+> > > D/TC:? 0 spm_handle_scall:859 Received FFA version
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > ... stuck here ... traces indicates never outs from the efi_setup, so
+> > > looks like hungs
+> > >
+> > > Let me try with BeaglePlay and read a bit more, as I feel I'm a bit
+> > > lost right now.
+> >
+> > Sure, let me know if you need anything else.
+> >
+>
+> Same behaviour on BeaglePlay, so either it's currently broken or I'm
+> making the same mistake in my process on both boards.
+>
+> Ilias, by chance, do you have in which versions did you test?
+>
+
+So it looks like it is a problem with edk2 and/or edk2-platform, since
+reverting those repositories back to September, things started to look
+a lot better and I'm able to see en UEFI variables programmed.
+
+FWIW I just found this project [1] from you, thank you for it. Turns
+out that it is easy to reproduce the issue I'm facing even with qemu.
+I'll try to bisect what's the problem and report properly.
+
+Thank you very much for your guidance and support.
+
+Cheers,
+  Enric
+
+[1] https://git.linaro.org/people/ilias.apalodimas/efi_optee_variables.git/
+
+
+> Thanks,
+>   Enric
+> > /Ilias
+> > >
+> > > > >
+> > > > > =3D> optee_rpmb read test 4
+> > > > > D/TC:? 0 tee_ta_init_pseudo_ta_session:303 Lookup pseudo TA
+> > > > > 023f8f1a-292a-432b-8fc4-de8471358067
+> > > > > D/TC:? 0 ldelf_load_ldelf:110 ldelf load address 0x40007000
+> > > > > D/LD:  ldelf:142 Loading TS 023f8f1a-292a-432b-8fc4-de8471358067
+> > > > > F/TC:? 0 trace_syscall:147 syscall #3 (syscall_get_property)
+> > > > > F/TC:? 0 trace_syscall:147 syscall #5 (syscall_open_ta_session)
+> > > > > D/TC:? 0 ldelf_syscall_open_bin:135 > ldelf_syscall_open_bin
+> > > > > D/TC:? 0 ldelf_syscall_open_bin:164 Lookup user TA ELF
+> > > > > 023f8f1a-292a-432b-8fc4-de8471358067 (early TA)
+> > > > > D/TC:? 0 ldelf_syscall_open_bin:168 res=3D0
+> > > > > F/TC:? 0 trace_syscall:147 syscall #7 (syscall_invoke_ta_command)
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 trace_syscall:147 syscall #11 (syscall_mask_cancellation=
+)
+> > > > > F/TC:? 0 trace_syscall:147 syscall #7 (syscall_invoke_ta_command)
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 492 bytes
+> > > > > F/TC:? 0 trace_syscall:147 syscall #3 (syscall_get_property)
+> > > > > F/TC:? 0 trace_syscall:147 syscall #8 (syscall_check_access_right=
+s)
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > F/TC:? 0 read_compressed:178 532 bytes
+> > > > > F/TC:? 0 read_compressed:178 924 bytes
+> > > > > F/TC:? 0 trace_syscall:147 syscall #8 (syscall_check_access_right=
+s)
+> > > > > F/TC:? 0 read_compressed:178 248 bytes
+> > > > > F/TC:? 0 read_compressed:178 760 bytes
+> > > > > F/TC:? 0 trace_syscall:147 syscall #6 (syscall_close_ta_session)
+> > > > > F/TC:? 0 trace_syscall:147 syscall #3 (syscall_get_property)
+> > > > > D/LD:  ldelf:176 ELF (023f8f1a-292a-432b-8fc4-de8471358067) at 0x=
+40048000
+> > > > > F/TC:? 0 trace_syscall:147 syscall #33 (syscall_cryp_random_numbe=
+r_generate)
+> > > > > F/TC:? 0 trace_syscall:147 syscall #8 (syscall_check_access_right=
+s)
+> > > > > F/TC:? 0 trace_syscall:147 syscall #8 (syscall_check_access_right=
+s)
+> > > > > F/TC:? 0 trace_syscall:147 syscall #4 (syscall_get_property_name_=
+to_index)
+> > > > > F/TC:? 0 trace_syscall:147 syscall #8 (syscall_check_access_right=
+s)
+> > > > > F/TC:? 0 trace_syscall:147 syscall #41 (syscall_storage_obj_open)
+> > > > > D/TC:? 0 rpmb_fs_open_internal:2356 >>> rpmb_fs_open_internal
+> > > > > D/TC:? 0 tee_rpmb_init:1205 >>> core/tee/tee_rpmb_fs.c:1205
+> > > > > D/TC:? 0 tee_rpmb_init:1214 >>> core/tee/tee_rpmb_fs.c:1214
+> > > > > D/TC:? 0 tee_rpmb_init:1253 >>> core/tee/tee_rpmb_fs.c:1253
+> > > > > D/TC:? 0 legacy_rpmb_init:1142 Trying legacy RPMB init
+> > > > > D/TC:? 0 rpmb_set_dev_info:1111 RPMB: Syncing device information
+> > > > > D/TC:? 0 rpmb_set_dev_info:1113 RPMB: RPMB size is 32*128 KB
+> > > > > D/TC:? 0 rpmb_set_dev_info:1114 RPMB: Reliable Write Sector Count=
+ is 1
+> > > > > D/TC:? 0 rpmb_set_dev_info:1116 RPMB: CID
+> > > > > D/TC:? 0 rpmb_set_dev_info:1117 000000009e93ab30  13 01 4e 47 31 =
+4d 31
+> > > > > 35  4c 10 27 91 28 07 a9 00
+> > > > > D/TC:? 0 legacy_rpmb_init:1162 RPMB INIT: Deriving key
+> > > > > D/TC:? 0 tee_rpmb_key_gen:308 RPMB: Using test key
+> > > > > D/TC:? 0 legacy_rpmb_init:1176 RPMB INIT: Verifying Key
+> > > > > F/TC:? 0 plat_prng_add_jitter_entropy:68 0x61
+> > > > > D/TC:? 0 legacy_rpmb_init:1180 Found working RPMB device
+> > > > > D/TC:? 0 tee_rpmb_init:1205 >>> core/tee/tee_rpmb_fs.c:1205
+> > > > > D/TC:? 0 tee_rpmb_init:1214 >>> core/tee/tee_rpmb_fs.c:1214
+> > > > > D/TC:? 0 tee_rpmb_read:1362 Read 1 block at index 0
+> > > > > D/TC:? 0 tee_rpmb_write_blk:1494 Write 1 block at index 0
+> > > > > D/TC:? 0 tee_rpmb_init:1205 >>> core/tee/tee_rpmb_fs.c:1205
+> > > > > D/TC:? 0 tee_rpmb_init:1214 >>> core/tee/tee_rpmb_fs.c:1214
+> > > > > D/TC:? 0 tee_rpmb_init:1205 >>> core/tee/tee_rpmb_fs.c:1205
+> > > > > D/TC:? 0 tee_rpmb_init:1214 >>> core/tee/tee_rpmb_fs.c:1214
+> > > > > D/TC:? 0 tee_rpmb_read:1362 Read 1 block at index 0
+> > > > > E/TC:? 0 rpmb_fs_setup:2143 **** Clearing Storage ****
+> > > > > D/TC:? 0 tee_rpmb_write_blk:1494 Write 1 block at index 2
+> > > > > F/TC:? 0 plat_prng_add_jitter_entropy:68 0xD3
+> > > > > D/TC:? 0 tee_rpmb_read:1362 Read 1 block at index 0
+> > > > > D/TC:? 0 tee_rpmb_write_blk:1494 Write 1 block at index 0
+> > > > > D/TC:? 0 tee_rpmb_read:1362 Read 8 blocks at index 2
+> > > > > F/TC:? 0 dump_fat:1951 flags 0x2, size 0, address 0, filename ''
+> > > > > D/TC:? 0 read_fat:2221 fat_address 0
+> > > > > D/TC:? 0 tee_rpmb_read:1362 Read 8 blocks at index 2
+> > > > > F/TC:? 0 plat_prng_add_jitter_entropy:68 0x18
+> > > > > E/TA:  read_persist_value:338 Can't open named object value, res =
+=3D 0xffff0008
+> > > > > D/TC:? 0 tee_ta_invoke_command:798 Error: ffff0008 of 4
+> > > > > D/TC:? 0 tee_ta_close_session:460 csess 0x9e925a50 id 1
+> > > > > D/TC:? 0 tee_ta_close_session:479 Destroy session
+> > > > > D/TC:? 0 destroy_context:318 Destroy TA ctx (0x9e9259f0)
+> > > > > Failed to read persistent value
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > > > Cheers
+> > > > > > /Ilias
+> > > > > >
+> > > > > > > =3D> optee_rpmb read test 4
+> > > > > > > D/TC:? 0 tee_ta_init_pseudo_ta_session:303 Lookup pseudo TA
+> > > > > > > 023f8f1a-292a-432b-8fc4-de8471358067
+> > > > > > > D/TC:? 0 ldelf_load_ldelf:110 ldelf load address 0x40007000
+> > > > > > > D/LD:  ldelf:142 Loading TS 023f8f1a-292a-432b-8fc4-de8471358=
+067
+> > > > > > > F/TC:? 0 trace_syscall:147 syscall #3 (syscall_get_property)
+> > > > > > > F/TC:? 0 trace_syscall:147 syscall #5 (syscall_open_ta_sessio=
+n)
+> > > > > > > D/TC:? 0 ldelf_syscall_open_bin:163 Lookup user TA ELF
+> > > > > > > 023f8f1a-292a-432b-8fc4-de8471358067 (early TA)
+> > > > > > > D/TC:? 0 ldelf_syscall_open_bin:167 res=3D0
+> > > > > > > F/TC:? 0 trace_syscall:147 syscall #7 (syscall_invoke_ta_comm=
+and)
+> > > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > > F/TC:? 0 read_compressed:178 1024 bytes
+> > > > > > > F/TC:? 0 trace_syscall:147 syscall #11 (syscall_mask_cancella=
+tion)
+> > > > > > > F/TC:? 0 trace_syscall:147 syscall #7 (syscall_invoke_ta_comm=
+and)
+> > > > > > >
+> > > > > > > =3D> efidebug query -bs -rt -nv
+> > > > > > > MMC: no card present
+> > > > > > > mmc_init: -123, time 2002
+> > > > > > > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
+> > > > > > > D/TC:? 0 spm_handle_scall:859 Received FFA version
+> > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > > > > >
+> > > > > > >
+> > > > > > >
+> > > > > > > >
+> > > > > > > > > Thanks
+> > > > > > > > > /Ilias
+> > > > > > > > > >
+> > > > > > > > > > =3D> efidebug query -bs -rt -nv
+> > > > > > > > > > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:859 Received FFA version
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct reque=
+st
+> > > > > > > > > > ... stuck here ... I need to reset the board
+> > > > > > > > > >
+> > > > > > > > > > Will continue to see if I can get more useful messages
+> > > > > > > > > >
+> > > > > > > > > > Thanks,
+> > > > > > > > > >   Enric
+> > > > > > > > > >
+> > > > > > > > > > > Thanks
+> > > > > > > > > > > /Ilias
+> > > > > > > > > > > >
+> > > > > > > > > > > > I'll try to add some more prints to verify if REE i=
+s used as a store
+> > > > > > > > > > > > system, I assume this should say something about RP=
+MB. Am I right with
+> > > > > > > > > > > > this?
+> > > > > > > > > > >
+> > > > > > > > > > >
+> > > > > > > > > > > >
+> > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > And tracing the function calls gives me tha=
+t:
+> > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > >       tee_stmm_efi_probe() {
+> > > > > > > > > > > > > > > >              tee_client_open_context() {
+> > > > > > > > > > > > > > > >                optee_get_version() {
+> > > > > > > > > > > > > > > >                  tee_get_drvdata(); (ret=3D=
+0xffff000002e55800)
+> > > > > > > > > > > > > > > >                } (ret=3D0xd)
+> > > > > > > > > > > > > > > >                tee_ctx_match(); (ret=3D0x1)
+> > > > > > > > > > > > > > > >                optee_smc_open() {
+> > > > > > > > > > > > > > > >                  tee_get_drvdata(); (ret=3D=
+0xffff000002e55800)
+> > > > > > > > > > > > > > > >                  optee_open() {
+> > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=
+=3D0xffff000002e55800)
+> > > > > > > > > > > > > > > >                  } (ret=3D0x0)
+> > > > > > > > > > > > > > > >                } (ret=3D0x0)
+> > > > > > > > > > > > > > > >              } (ret=3D0xffff000004e71c80)
+> > > > > > > > > > > > > > > >              tee_client_open_session() {
+> > > > > > > > > > > > > > > >                optee_open_session() {
+> > > > > > > > > > > > > > > >                  tee_get_drvdata(); (ret=3D=
+0xffff000002e55800)
+> > > > > > > > > > > > > > > >                  optee_get_msg_arg() {
+> > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=
+=3D0xffff000002e55800)
+> > > > > > > > > > > > > > > >                    tee_shm_get_va(); (ret=
+=3D0xffff000002909000)
+> > > > > > > > > > > > > > > >                  } (ret=3D0xffff00000290900=
+0)
+> > > > > > > > > > > > > > > >                  tee_session_calc_client_uu=
+id(); (ret=3D0x0)
+> > > > > > > > > > > > > > > >                  optee_to_msg_param(); (ret=
+=3D0x0)
+> > > > > > > > > > > > > > > >                  optee_smc_do_call_with_arg=
+() {
+> > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=
+=3D0xffff000002e55800)
+> > > > > > > > > > > > > > > >                    tee_shm_get_va(); (ret=
+=3D0xffff000002909000)
+> > > > > > > > > > > > > > > >                    tee_shm_get_va(); (ret=
+=3D0xffff000002909060)
+> > > > > > > > > > > > > > > >                    optee_cq_wait_init(); (r=
+et=3D0xffff000002e55910)
+> > > > > > > > > > > > > > > >                    optee_smccc_smc(); (ret=
+=3D0xffff0004)
+> > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=
+=3D0xffff000002e55800)
+> > > > > > > > > > > > > > > >                    optee_smccc_smc(); (ret=
+=3D0xffff0004)
+> > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=
+=3D0xffff000002e55800)
+> > > > > > > > > > > > > > > >                    optee_smccc_smc(); (ret=
+=3D0xffff0004)
+> > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=
+=3D0xffff000002e55800)
+> > > > > > > > > > > > > > > >                    optee_smccc_smc(); (ret=
+=3D0xffff0004)
+> > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=
+=3D0xffff000002e55800)
+> > > > > > > > > > > > > > > >                    optee_smccc_smc(); (ret=
+=3D0xffff0004)
+> > > > > > > > > > > > > > > >      ... continues sending this forever ...
+> > > > > > > > > > > > > > > >      ... Hit ^C to stop recording ...
+> > > > > > > > > > > > > > > >                    tee_get_drvdata(); (ret=
+=3D0xffff000002e55800)
+> > > > > > > > > > > > > > > >                    optee_smccc_smc() {
+> > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > [1] https://docs.u-boot.org/en/latest/devel=
+op/uefi/uefi.html#using-op-tee-for-efi-variables
+> > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > Thanks in advance,
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > The most common problem with this is miscompi=
+ling the tee_supplicant
+> > > > > > > > > > > > > > > application.
+> > > > > > > > > > > > > > > Since we don't know if the system has an RPMB=
+, we emulate it in the
+> > > > > > > > > > > > > > > tee_supplicant. How did you get the supplican=
+t and can you check if it
+> > > > > > > > > > > > > > > was compiled with RPMB_EMU=3D0 or 1?
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > I'm using the tee-supplicant provided by the fe=
+dora package which is
+> > > > > > > > > > > > > > built with ` -DRPMB_EMU=3D0`, I think that's co=
+rrect, right?
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Yes, this is correct. We fixed the Fedora package=
+ to compile the
+> > > > > > > > > > > > > supplicant correctly a while back.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > [0] https://www.linaro.org/blog/uefi-secureboot-i=
+n-u-boot/
+> > > > > > > > > > > > > [1] https://apalos.github.io/Protected%20UEFI%20v=
+ariables%20with%20U-Boot.html#Protected%20UEFI%20variables%20with%20U-Boot
+> > > > > > > > > > > > >
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Regards
+> > > > > > > > > > > > > /Ilias
+> > > > > > > > > > > > > > Thanks,
+> > > > > > > > > > > > > >    Enric
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > Thanks
+> > > > > > > > > > > > > > > /Ilias
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > >    Enric
+> > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > >
+> > > > > > > > > > > >
+> > > > > > > > > > >
+> > > > > > > > > >
+> > > > > > > > >
+> > > > > > >
+> > > > > >
+> > > > >
+> > > >
+> > >
+> >
 
 
