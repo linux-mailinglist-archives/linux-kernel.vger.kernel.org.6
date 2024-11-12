@@ -1,289 +1,182 @@
-Return-Path: <linux-kernel+bounces-406216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF8E9C5F4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:41:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D26AA9C5DAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:49:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 324A0B327E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:45:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 697ECB422C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624892022E0;
-	Tue, 12 Nov 2024 15:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D4C202635;
+	Tue, 12 Nov 2024 15:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NqePmODn"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ISu8rXWG"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2048.outbound.protection.outlook.com [40.107.100.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E236D2003D1
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731426331; cv=none; b=JOyZN9Mlqt55bY3DugNNzLgV6JIzGCzDuzL7YDmAASn5pXWu/DhHBfJ6InX8G7P+TalGaL0E2Km699r8r3L5xO0XmSGFkHK4nl3Hz84orEcWKDyuFwD3B6cGwT3aOsahfqFtM0deeWPCWZqvEXECY5Fwf6EZWyvU7lZldlL50r0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731426331; c=relaxed/simple;
-	bh=JoJn0kWkrBvLHCNGdd/jBKtVGGQDbYIlRzmWn/4fDHM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G/yqMOB7P/GrrIEt82Fyq8OF41FDk5YSn35G9DPB+j7DPA4DzF19FxRMj+vyQ+sRUvxstMHYindJsmjC3nh+YGry2dfV6AwbwdASJ+vn67NGrvZArbc5NPfXjYdP3NdnBKq4hinJqbBIZqszBzBPCeMWLpV8hrtSyRhEHj+5T0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NqePmODn; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-460969c49f2so313561cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:45:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731426329; x=1732031129; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LC0oAB3hsBtzyot9DwM7yE0bq5av8B40/ay1VJm5kIY=;
-        b=NqePmODn6oQbKBB8GTg7I6rIeCZVPqRXjy46nMLkc/bLgrNm8aqLrBzaJd4qzxXgpP
-         Ee4QRoN63ngmPvWRrwUMjntiuIEU0kvxrfMBTdbqgMpgixsr60jaPeqmD814p0Tdo0J7
-         m7m64EMQEi9/YrDjOb3TtiuKQa2oRb8lg4Apcu26adMI6/37Un1aqWAHiSCG7G0kbNzw
-         KQ05bi7xhR0pmE2J2VMSAJuSmpyivTlZazMvcP3aJcGP00pmtANahCXL4jzzeMEEy3dj
-         IPdNpyOYz1Xc96bRTcLRzMJSqjLckB/0WmGklcDf80RPr8pbQYC0liuXGeKRPiuLBmHq
-         vuyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731426329; x=1732031129;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LC0oAB3hsBtzyot9DwM7yE0bq5av8B40/ay1VJm5kIY=;
-        b=u0P/7F9VMNW6xt+2ZSnd3iotXXONNl8aRunkmvI3SJ1bBg7rGyvg7FmoZHQIC07VAR
-         ageTuOJgfwijhd8eRFOGFJXKncF1dHDdrD169BnxoIMcJW69cWeV8Equo8KTHRygUut9
-         a25z28cP5UUaVndgIu6F/Wyya2i5RAJCBB9Iir6oH2j59N6oZbqz2Jk9vsGDcyQLxPAO
-         g0crHQHztyTPn1X/FbZFTrNhT5+DyBSLDoOyTZ6YBt0Dzczb9IrX+Bp9ASOcbL396yrD
-         48zHKQ8Biv8XoCHzjv0IMiyRiKC8+LcSjEZtZj1DTLqwEWH1RMYulFvbegcBMyuIGfto
-         mdqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXThrDt3QCw/L8kY2ySDezNgX64fNkF6pTZnFANd8sF1yRCBmnOKZPg+6faq4LvgLoWHUafYo+VGsGQl6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJvtRxFVY3nTBm8ZwL+c7Wi9NV6+wBXZokGYCBfVPnSdq8Habm
-	0RqWrNSyYZ7T2UAa/H8qJ/tIKkpDxBEfmJQa3USGygFXRgpNl7o9oolmIvLuPSMAgGTOqINEbiJ
-	ddEEnRfRbZbT8wHd1Bn0BzF4Ss1qLPceuoYib
-X-Gm-Gg: ASbGncu2seexs1gESpKcGwdu9HRWO84FrRf2bqWgbMH4DRBpb+jTdDj1dvDc98cxpX7
-	2o7HU50jV9rMrObBSA7nTsuadA/Zx7sL8rF4Igq7e/o4yRETWcUHODR6Zfpjt3Q==
-X-Google-Smtp-Source: AGHT+IHITYhV1PsQizhz8Y+qiNc1Fv3ooQCiIBNrErc3MxHIp7FJycJEqDOHsW5Ie2/I+HtgciMvWSgYDyi1lwxy5Cc=
-X-Received: by 2002:a05:622a:4b0f:b0:460:b4e3:49e with SMTP id
- d75a77b69052e-4634288b366mr2509591cf.9.1731426328226; Tue, 12 Nov 2024
- 07:45:28 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5482003D1;
+	Tue, 12 Nov 2024 15:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731426367; cv=fail; b=V9qjnaRHH3JU4h27ATiIvsKBgLrTe8sKRAWClPVVcWeAsENULiG8lMg0O0yY/5UQ7OtGflNoKgdZXo73j8z5XcDDFYRNUM0Az9pSp/uwxPm0xbKh3DX2VWxLHcoAdf32eOFRznm64vUNAukf2gO7Qp+dY8zLlHsKjyakWCw8QWU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731426367; c=relaxed/simple;
+	bh=o5HiOfm88phVx0Qz8JS95rEKdf0pu8SN7tD1BxiB68U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kLiCKwrdddVi0JCBZEf/FgeSEX9idg6esukmjH71th1fanJCEEp4pHLaKT3zweImuDyR6H1FH7wCdRf/F1et91Up0Oqh2Q/6NAcpsc/3KHIHCDBy7dH5x8a44N5l28z+2aUwcx1gXjs+kuvTg2C4DJUKHcmy591ZJHnhOXs8PP8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ISu8rXWG; arc=fail smtp.client-ip=40.107.100.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LFRawjATwbt8v4TkwynINihlItIf3ZI7U8xgaUxA1MwPv45x8OJidcpkrj0k6Rn2LfvcHTB7Ihi6HDg1OkScYwbx+kiu+BNAGIE+lWgR9qJMJIvF+Ae6s6u2nhwgEjmU1KOrmWA2DOYYsWzxe9YGLMIakXPmtCK0qkzaNFndf5eLxRpKAvDyZdWtbIyeJWrsTPgodH8vzHd7HjYBMCBKz1D4plzYAjUdDClVmWFv/VrC694yPacf7E5kCHtNGY+T3EMhlHhwTpLNzX0An8Cq7nplVBeVR2uJzTq68F8z9unhGhrgrEtWcDCkH0di0A0hxx92+6JOaCEVoVRDOiZOYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jaPGy7f7qwAkFHdXRZDR1TWf1Lu4RCFWWeJfEYpR3hc=;
+ b=sBZON5y2eJxVxUTui0Yq0htiw6SN7GLEpWTfELu120jovMfnLx3MpwajkQdNyNxLHBvFtIXoMrNoTEKX8NRjlm1tiP5vVZyNr44xc60hrlnz7QCA9QsUv0zJ7HnT5QMwX+09pzl+qrisr8jHEQQEsqvE/nZGUbYrCkQuOGnW+TRJtK70U9iVkUj33fb+U+Fg5zTwdRNBCItkZX93azb3ETZtHr8kGM1mA3LHYJQlMG73/Y53VCJVPhzNFKBRIgnZQQh+hFe4WdzSiLDvPW/23qlvIxMVuKriz+rwW8BSAG12PKJqiUKvs7chXhCPOrBHk/S8QI/Md0jFW3x1MyEOvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jaPGy7f7qwAkFHdXRZDR1TWf1Lu4RCFWWeJfEYpR3hc=;
+ b=ISu8rXWGIebSJADOmml3UzKTFn2Y4f1DsmgibrsELqtAwUmfYSG3YDh/yVjJcjSLM5W1MtgnocqoNF70KP9kpQ57WFD8A4f6LgQ3CYqRGyNFh0Oc6lGwsbKD6oHpR5asjAWMK8QOkxTXuqq/PnAivJrBYtr1DvzidIr7Fkf/qTm9bPtEciZ2JDjhdbE0KsZowzQ8yiztwjdKvbO2wMeEr1p7OLmUCIYav9cO4cfpoQTX9zcFgFsvl8OqcWriBc9lsSQJzCrG9YOJ4WIfI45ggkGp+drHlYgWZBierBqdrGdGlJr2xKRVsHgulR9L8JnNgUTjLYagl+n+HnY/MgWv7g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by CYYPR12MB8891.namprd12.prod.outlook.com (2603:10b6:930:c0::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27; Tue, 12 Nov
+ 2024 15:45:54 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
+ 15:45:52 +0000
+Date: Tue, 12 Nov 2024 11:45:51 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, corbet@lwn.net, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, will@kernel.org,
+	robin.murphy@arm.com, dwmw2@infradead.org, shuah@kernel.org,
+	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	baolu.lu@linux.intel.com, eric.auger@redhat.com,
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
+	yi.l.liu@intel.com, aik@amd.com, zhangfei.gao@linaro.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v7 02/13] iommufd: Move _iommufd_object_alloc helper to a
+ sharable file
+Message-ID: <20241112154551.GA50895@nvidia.com>
+References: <cover.1730836219.git.nicolinc@nvidia.com>
+ <2f4f6e116dc49ffb67ff6c5e8a7a8e789ab9e98e.1730836219.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2f4f6e116dc49ffb67ff6c5e8a7a8e789ab9e98e.1730836219.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BLAPR03CA0030.namprd03.prod.outlook.com
+ (2603:10b6:208:32b::35) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111205506.3404479-1-surenb@google.com> <20241111205506.3404479-5-surenb@google.com>
- <fdb2bd2e-eaac-482b-bf32-641f9df7a5fc@suse.cz>
-In-Reply-To: <fdb2bd2e-eaac-482b-bf32-641f9df7a5fc@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 12 Nov 2024 07:45:17 -0800
-Message-ID: <CAJuCfpHpqfk-WUKOH0v_5bFasxqhACRCKdYCoTW791zNUMQ6+g@mail.gmail.com>
-Subject: Re: [PATCH 4/4] mm: move lesser used vma_area_struct members into the
- last cacheline
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, hannes@cmpxchg.org, 
-	mjguzik@gmail.com, oliver.sang@intel.com, mgorman@techsingularity.net, 
-	david@redhat.com, peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, 
-	paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, 
-	hughd@google.com, minchan@google.com, jannh@google.com, 
-	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CYYPR12MB8891:EE_
+X-MS-Office365-Filtering-Correlation-Id: d85ae96e-3b16-4e03-d040-08dd033116a5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qkIw4VvTrRWV03h9nf6xNNHWrswKYguDxxDvOULcjWu4FxQ4rUS2YpFhkPOG?=
+ =?us-ascii?Q?QCJJ/FTwwYbqQ7RbvSkYaB+COrDxiZGacQenzbuZzwGL/D69FOFUGJzyChb2?=
+ =?us-ascii?Q?F6QpPkc1QGIVUry23wlwxM8RXKCmW9KltRCAUVwxJk2DG/YfJHIqWEW5guw8?=
+ =?us-ascii?Q?lV0iLAOH2YZzUfuWFn16u3jvx4qx2KO3DlfZFIf6fzNT9im6X8Wh23FVPGgO?=
+ =?us-ascii?Q?Dxnxvcdq28qgAaQLllv2L24oTdmJyWDus94sQqYpQqFsVYLwKfUY2CLEuQqd?=
+ =?us-ascii?Q?qsDyg2RBk02p/lS8cVsu56GCTaipRsLEj5GWVcYArumfhjBNY7JTfvqxY8Gz?=
+ =?us-ascii?Q?85fADo37r1o5yxhvP7EOgr7YPW8P4Y1yh86uHBymQJJ4lkXxRW/TA0FNUM8H?=
+ =?us-ascii?Q?jz75RJW4Zp442ck1XBJ2xXstu//d4PvAFg7Go8eK3MdiAZxBaZqxOO7+vr3D?=
+ =?us-ascii?Q?oBLosyETHxm2dik4XqECbb/0IdjsddIzY7DVBCBkY14O0PnbUvJrmjF/LekR?=
+ =?us-ascii?Q?ZNdfUh2hgbkepmAiViTUPVErhsKhuT7mB7rbARXhh5sx9xCxnPFsW77ySPJU?=
+ =?us-ascii?Q?nyO+E3DYxF8FSJ7lDzS3vj68k/Iu1Lfz5AeFlOvBuCtpMjWGA9IkeojCYSA5?=
+ =?us-ascii?Q?eZmgKsVAnNHWpXasPud36psdOBxk8MF8Vp34Z/gpLMuA8+Qr6H9Ybbmd5mP/?=
+ =?us-ascii?Q?qi+vr3Z/HhSFxO8kLtAQGKmzmfqMNB+mEBFqcgn4KhGwl+/oKk0wjF1Bg8IH?=
+ =?us-ascii?Q?cdmSEMZ/lzSHJfIT6UCgHKc6D3QleIbCYHCWvexPWyWaoGU9N5gDYqIxWpm/?=
+ =?us-ascii?Q?+ogHRAh9cckrjcqGfsUGcWN7B9/HryuplzXHU1dvdeiIVhAyVo2CYi8JvBlT?=
+ =?us-ascii?Q?7l12Sjw6svSFxmXzaIGaPUxmsM5j6j3YE47Cz3jZRGzhWsh17cLa+rfCz0Na?=
+ =?us-ascii?Q?ec7ZtHvkfkupnGY6lxaat9FAlkwx+Sb3ybhJclvppqxxNH4Q3oIJJVj0rXpi?=
+ =?us-ascii?Q?6eaBgEIfue87wUCVUnW4GQIJhRye87uEED7RCwHxS+jOlby68K/2Ft+zrZvA?=
+ =?us-ascii?Q?r5qJjcZxMDY4qi+y89AUkdb5Qu2unepi+aTO7zr+q51xOatdmnWtsOQo2Z4v?=
+ =?us-ascii?Q?xZ8Nz5ywVPMNW3Jmfhn8EchVJxu53xWTgU4dG0p5X7H6af2msqfXCEC0XnKd?=
+ =?us-ascii?Q?kJSlYFDBAP3tIKgVflu04WG/RqqP6jf+01He7OZD87Ki3JApv4cfogtPUXve?=
+ =?us-ascii?Q?Qi1IuZPGY5ryyjz09cgBemUiFyX9oCy7L0CaiblGaH7OQLaj+UlchqrL2+35?=
+ =?us-ascii?Q?8wiJZ//K2P2rEtLjbHWsrxE2?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yN4AIhOuXxeAXDoeE81wAjbRLZ/9TKpb93BCFswNP9isWdSy+O2NUndYQZ9J?=
+ =?us-ascii?Q?1GAvs7lRwQysapL5FomSTUzrr/wzVXVKFuMUIrtamOCEj0TNCtWxcarAaPZ2?=
+ =?us-ascii?Q?Ifb5iNiqNPexSDlft8Qz+nE6QihjpfSabWwxXRRQP33ERBzAhwfi+UEfOneY?=
+ =?us-ascii?Q?ku/kE3lao8IITtNMJHd3MOJw/Cxsdvx00aDAmJA0R46zwHo/GzfjfQVe2MGJ?=
+ =?us-ascii?Q?Kk/4h0nW1nwtkw/Ku9Uhtew1sh/1ng2+DX01eDwNjA4a90Hq1avuGoj2hPxi?=
+ =?us-ascii?Q?E4dDUFyDPVjWdW42QbZZRj9GeC0u8iivzqlLCKGUwliQ4Cu9SoqBr5RM7vv1?=
+ =?us-ascii?Q?eh8YKedlJGA5G4Hggd+6UhbsiQ9C/ZSWDZqstCXXTSNEkehs/Eon/f5OyvV+?=
+ =?us-ascii?Q?Dk5pYLVyvFf2ozXHrt8LW3OxwjpK+KTe6XQgY/2PziMW/0Mi0UNrs+u4Hr7h?=
+ =?us-ascii?Q?qLHKh4Jua4d4i0R6MBC4GSnFOmKX0wnfmTgTWByJyf2NPfiG2XFcUzE+M7p4?=
+ =?us-ascii?Q?WmzltLN+UlIZz8uhYl+S6gBLR7/dTtDi3NIPfiNtRJ2Q/UtXpfyY/77AwJhc?=
+ =?us-ascii?Q?JBZdfhWVLlj8DgNGngmttdqnnULhJfXU2+1wx0hsEji/hiZEE6D0RiGph12d?=
+ =?us-ascii?Q?bAiez5dMzr/EPzKy+WrCPrzUgu4Ag3IACQ8fUeFs3J0A2zUH8VZWkOGQre/s?=
+ =?us-ascii?Q?7+RWIPG5cYgCCqmokVKxGePfqdwKsyzQSlJ8baYTPr+RvBh4nYu9mQEyooGf?=
+ =?us-ascii?Q?Z0FSiEsnKZfgQMFe62vsntp1i3XQhZzs5XIlgktHC8MihhgVu59cWjd+YpQf?=
+ =?us-ascii?Q?zB8kTCQF55jf44mTxgbIuLfddEFYfy2w46Nl16hDP2Rv2Snke0bDeRCL8SFj?=
+ =?us-ascii?Q?o1xCk4fIEI7zXJLNad3yJ1nC6CG8mWEYQxN828GscxNxSb9MXBz3/QvdOmov?=
+ =?us-ascii?Q?Ya6gLMgRY4NMNx+Vnnx+Pry6cmlIKjCbCIYpoeqTueGX0Ivotfz43oAdh0yv?=
+ =?us-ascii?Q?ynGw50qQo7nfd5chEY2w1cK8GjcumUhfbrR03WysWr+veL/atTcpwbWDPpBF?=
+ =?us-ascii?Q?DxAeo3E/mzy9lQ7r7DR14hDncCfjnYNGf5ZqfpY3pam2gymuxnfHvkjL4lzE?=
+ =?us-ascii?Q?wYgjJMNloCuPAb1kPikl/ZAHM2dBEFL4N9LOyEX48xqdpyN0RBS6t28TsFJ6?=
+ =?us-ascii?Q?F2DXSSKu74pgSl26cmvj452f556G7ih7nkkVkTVxWPzcNxKxrtAF//Nl7uj0?=
+ =?us-ascii?Q?2exNTKxDZMQqwrEhX7tnNmxfPr4GCLFzwnyQLfbf7kkvsbfO3RPkksNqkhUv?=
+ =?us-ascii?Q?3+qh/6Xy0R8XixAttp5b4x/Vz3T4OmRfGUUlss+0e7WceOA3imFL2unTO36w?=
+ =?us-ascii?Q?aVRkM4iT2BGbMECvfiDMd1VjDonaQ/bfYP1x1UJzsqUrn1ylJtAN+UFZxuGR?=
+ =?us-ascii?Q?4lRVPnrkMDf7A2BOi54cBXOwFsOoMTZIbagIObUjnMcpTBnAVjkQsThfBJaL?=
+ =?us-ascii?Q?wZCknnTOdkrvk7mW+AtWhfrAWWukv0NAzvhDmdVVWPhwfC7nimNFp7ftqeIF?=
+ =?us-ascii?Q?62eHTcqvuAY81tFnFKc59jLgcolPjlkkauNzCFEh?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d85ae96e-3b16-4e03-d040-08dd033116a5
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 15:45:52.7006
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2lnAs15rRVIe/faQCGQEAaqXVGWUFegDk5zHz2ynWRIaJADWNB8EtIkOMhD0oKgE
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8891
 
-On Tue, Nov 12, 2024 at 2:07=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 11/11/24 21:55, Suren Baghdasaryan wrote:
-> > Move several vma_area_struct members which are rarely or never used
-> > during page fault handling into the last cacheline to better pack
-> > vm_area_struct. As a result vm_area_struct will fit into 3 cachelines
-> > as opposed to 4 cachelines before this change. New vm_area_struct layou=
-t:
-> >
-> > struct vm_area_struct {
-> >       union {
-> >               struct {
-> >                       long unsigned int vm_start;      /*     0     8 *=
-/
-> >                       long unsigned int vm_end;        /*     8     8 *=
-/
-> >               };                                       /*     0    16 *=
-/
-> >               struct callback_head vm_rcu ;            /*     0    16 *=
-/
-> >       } __attribute__((__aligned__(8)));               /*     0    16 *=
-/
-> >       struct mm_struct *         vm_mm;                /*    16     8 *=
-/
-> >       pgprot_t                   vm_page_prot;         /*    24     8 *=
-/
-> >       union {
-> >               const vm_flags_t   vm_flags;             /*    32     8 *=
-/
-> >               vm_flags_t         __vm_flags;           /*    32     8 *=
-/
-> >       };                                               /*    32     8 *=
-/
-> >       bool                       detached;             /*    40     1 *=
-/
-> >
-> >       /* XXX 3 bytes hole, try to pack */
-> >
-> >       unsigned int               vm_lock_seq;          /*    44     4 *=
-/
-> >       struct list_head           anon_vma_chain;       /*    48    16 *=
-/
-> >       /* --- cacheline 1 boundary (64 bytes) --- */
-> >       struct anon_vma *          anon_vma;             /*    64     8 *=
-/
-> >       const struct vm_operations_struct  * vm_ops;     /*    72     8 *=
-/
-> >       long unsigned int          vm_pgoff;             /*    80     8 *=
-/
-> >       struct file *              vm_file;              /*    88     8 *=
-/
-> >       void *                     vm_private_data;      /*    96     8 *=
-/
-> >       atomic_long_t              swap_readahead_info;  /*   104     8 *=
-/
-> >       struct mempolicy *         vm_policy;            /*   112     8 *=
-/
-> >
-> >       /* XXX 8 bytes hole, try to pack */
-> >
-> >       /* --- cacheline 2 boundary (128 bytes) --- */
-> >       struct vma_lock       vm_lock (__aligned__(64)); /*   128     4 *=
-/
-> >
-> >       /* XXX 4 bytes hole, try to pack */
-> >
-> >       struct {
-> >               struct rb_node     rb (__aligned__(8));  /*   136    24 *=
-/
-> >               long unsigned int  rb_subtree_last;      /*   160     8 *=
-/
-> >       } __attribute__((__aligned__(8))) shared;        /*   136    32 *=
-/
-> >       struct vm_userfaultfd_ctx  vm_userfaultfd_ctx;   /*   168     0 *=
-/
->
-> I don't see anon_name in the output, I thought it was added for Android? =
-:)
+On Tue, Nov 05, 2024 at 12:04:18PM -0800, Nicolin Chen wrote:
 
-Yes, this output is generated with defconfig. That's why you see some
-holes in this structure. On my x86 machine I have non-zero
-vm_userfaultfd_ctx and numab_state, on Android I have
-vm_userfaultfd_ctx and anon_name.
+> --- a/drivers/iommu/iommufd/Makefile
+> +++ b/drivers/iommu/iommufd/Makefile
+> @@ -13,3 +13,4 @@ iommufd-$(CONFIG_IOMMUFD_TEST) += selftest.o
+>  
+>  obj-$(CONFIG_IOMMUFD) += iommufd.o
+>  obj-$(CONFIG_IOMMUFD_DRIVER) += iova_bitmap.o
+> +obj-$(CONFIG_IOMMUFD_DRIVER_CORE) += driver.o
 
->
-> >
-> >       /* size: 192, cachelines: 3, members: 17 */
-> >       /* sum members: 153, holes: 3, sum holes: 15 */
-> >       /* padding: 24 */
->
-> Instead you seem to have padding so an attempt to use SLAB_TYPESAFE_BY_RC=
-U
-> should use that and not add more up to 256 pages.
+This gives a wonky module name of "driver.ko", I'm going to adjust it
+to this:
 
-Yes, thanks for the tip about SLAB_TYPESAFE_BY_RCU freelist. In actual
-configurations where I saw SLAB_TYPESAFE_BY_RCU causing this structure
-to grow I had less padding at the end.
+-obj-$(CONFIG_IOMMUFD_DRIVER_CORE) += driver.o
++
++iommufd_driver-y := driver.o
++obj-$(CONFIG_IOMMUFD_DRIVER_CORE) += iommufd_driver.o
 
-> Perhaps this pahole output wasn't generated with a fully representative c=
-onfig?
-
-You are right. I'll replace it with the actual output from my x86
-setup (Android probably has a smaller interested audience).
-
->
-> >       /* forced alignments: 3, forced holes: 2, sum forced holes: 12 */
-> > } __attribute__((__aligned__(64)));
-> >
-> >
-> > Memory consumption per 1000 VMAs becomes 48 pages:
-> >
-> >     slabinfo after vm_area_struct changes:
-> >      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
-> >      vm_area_struct   ...    192   42    2 : ...
-> >
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  include/linux/mm_types.h | 37 ++++++++++++++++++-------------------
-> >  1 file changed, 18 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > index 789bccc05520..c3755b680911 100644
-> > --- a/include/linux/mm_types.h
-> > +++ b/include/linux/mm_types.h
-> > @@ -733,16 +733,6 @@ struct vm_area_struct {
-> >       unsigned int vm_lock_seq;
-> >  #endif
-> >
-> > -     /*
-> > -      * For areas with an address space and backing store,
-> > -      * linkage into the address_space->i_mmap interval tree.
-> > -      *
-> > -      */
-> > -     struct {
-> > -             struct rb_node rb;
-> > -             unsigned long rb_subtree_last;
-> > -     } shared;
-> > -
-> >       /*
-> >        * A file's MAP_PRIVATE vma can be in both i_mmap tree and anon_v=
-ma
-> >        * list, after a COW of one of the file pages.  A MAP_SHARED vma
-> > @@ -762,14 +752,6 @@ struct vm_area_struct {
-> >       struct file * vm_file;          /* File we map to (can be NULL). =
-*/
-> >       void * vm_private_data;         /* was vm_pte (shared mem) */
-> >
-> > -#ifdef CONFIG_ANON_VMA_NAME
-> > -     /*
-> > -      * For private and shared anonymous mappings, a pointer to a null
-> > -      * terminated string containing the name given to the vma, or NUL=
-L if
-> > -      * unnamed. Serialized by mmap_lock. Use anon_vma_name to access.
-> > -      */
-> > -     struct anon_vma_name *anon_name;
-> > -#endif
-> >  #ifdef CONFIG_SWAP
-> >       atomic_long_t swap_readahead_info;
-> >  #endif
-> > @@ -782,11 +764,28 @@ struct vm_area_struct {
-> >  #ifdef CONFIG_NUMA_BALANCING
-> >       struct vma_numab_state *numab_state;    /* NUMA Balancing state *=
-/
-> >  #endif
-> > -     struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-> >  #ifdef CONFIG_PER_VMA_LOCK
-> >       /* Unstable RCU readers are allowed to read this. */
-> >       struct vma_lock vm_lock ____cacheline_aligned_in_smp;
-> >  #endif
-> > +     /*
-> > +      * For areas with an address space and backing store,
-> > +      * linkage into the address_space->i_mmap interval tree.
-> > +      *
-> > +      */
-> > +     struct {
-> > +             struct rb_node rb;
-> > +             unsigned long rb_subtree_last;
-> > +     } shared;
-> > +#ifdef CONFIG_ANON_VMA_NAME
-> > +     /*
-> > +      * For private and shared anonymous mappings, a pointer to a null
-> > +      * terminated string containing the name given to the vma, or NUL=
-L if
-> > +      * unnamed. Serialized by mmap_lock. Use anon_vma_name to access.
-> > +      */
-> > +     struct anon_vma_name *anon_name;
-> > +#endif
-> > +     struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-> >  } __randomize_layout;
-> >
-> >  #ifdef CONFIG_NUMA
->
+Thanks,
+Jason
 
