@@ -1,112 +1,134 @@
-Return-Path: <linux-kernel+bounces-406341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133F69C5D9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:44:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D099C5DA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:45:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAFBF2814F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:44:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB34F282802
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0FE206E61;
-	Tue, 12 Nov 2024 16:44:25 +0000 (UTC)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DC3207202;
+	Tue, 12 Nov 2024 16:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="dz6Czezm"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E828206949
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEED7206E9D
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731429864; cv=none; b=geuBU5+IpURlORoP/Gyfqx+9oCV3NFBXa5vRp5ViC/V8UZD9lU5CSc7K/v5CWZwVZWg0hNbY6JaveWPY+Xn4gjcAmvhT9DJyGH5a+YUBLXJzaqq88OPnJYYEwPg8asdd/cj2mgvKjNNg9hy0OgoNqqtVUgmqJ6Ip8xgCRJhApME=
+	t=1731429919; cv=none; b=K3Q+ALPh1lWNl+F4UHvNQLNHCb/L8GbnLxU/ewL4WaIKehDf9juv8TrBfRQM+wjtB3FWG7gyLHNItU0SGNHWGcosLi+2aEQK7A6izo7+StbfU1t3/i3JCcBBCc1CzpLeyAkThDAVzmLbeKqfbaSCf5ChdXO+1iKxuem0oZTmHSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731429864; c=relaxed/simple;
-	bh=5dOQGx+gwTFo3YZ6rPXpccV6zQZFHM5N+yigQEmgv1Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D3lNDDiwa211rA6c7VsEhtaLKkX36vKMc8H7Go2raGIu/CtayCgcq2oU0aZ8rDQz6/k8c/ddcOZWapLZL3Ndo86eZ7SrrIUh8YNIraPE6Jk1Rjk8hyvDAc4EfqvevCFat5iC5JHa3uUbD93avGzB4sE5RuJ6AQqmZrnRWTy+Zdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ea1407e978so52416957b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:44:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731429860; x=1732034660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7zTjZnNxgN7bW2/C60743NYitcoHzCR9nvm3BqV+HmI=;
-        b=UBnOo+ILd5b3rcs+fdQ2HVLyJq6kQPB415m/al5Nib8I0vPWMvo+ghm58EJqVFKmbp
-         Ff3Ng3YH0dPatRYQ9iXAqBZp8DRhrH29FUle7j8Hfsr0/1uzJfZTnv4uvPNEd1+UoABM
-         Ga0hwBi4PwDics6wJzo0N9y/xQ6Gf57kS8QAlLHKIjyD8dSePe9U1NHgGhtUNgkitqcA
-         MrxNrN8yKjxhOJ8+x4PPUB/2CHaMRGyrlPwzdZfjKWI/r9aGl1pE5W8B8jekHeaYzfpg
-         LASRjrJlTaQmGwDE7ntWbBHA8rdUP2d5W+dnVX7ZwtK3a29NVoxbyPghyHIrKifhY7a1
-         z49w==
-X-Forwarded-Encrypted: i=1; AJvYcCV3eo19UOCA3umMp5ZIu89V1zpRLkajjeqJDFEXVZgYOquVRZKo3qCWfh4tDV9oHjXyOwqOX81hls1hxZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxijNFuhlp9hbSZhMReNF2i70AuKLbRBSZrQkv3kGvaBH7G0Aaj
-	GblSEXNwVJ0CZvVfHNLns51BN5QWSua8Q/fls1lcH46cCUYbze4+Lg3OGSZG
-X-Google-Smtp-Source: AGHT+IFau37ho6H492cvCl0gxFCgo8xumgYDt7olx931oBx5J8507OAE1cZuUGlXy4oQ+KYa6EY/7w==
-X-Received: by 2002:a05:690c:3609:b0:6e3:26dd:1bf5 with SMTP id 00721157ae682-6eadddac491mr171587817b3.20.1731429860621;
-        Tue, 12 Nov 2024 08:44:20 -0800 (PST)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eace8f0bdbsm26073897b3.47.2024.11.12.08.44.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 08:44:20 -0800 (PST)
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e28fe07e97dso5948528276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:44:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWGrholljjW871kkHuWw0hpTQXIv4WGP16SN24lRYmvsI7f+nx/+8Vq889OL3fn26iLSBTrqL3+0MerHIk=@vger.kernel.org
-X-Received: by 2002:a05:690c:c93:b0:6e3:3336:7932 with SMTP id
- 00721157ae682-6eaddf8dc3emr154639957b3.27.1731429859569; Tue, 12 Nov 2024
- 08:44:19 -0800 (PST)
+	s=arc-20240116; t=1731429919; c=relaxed/simple;
+	bh=BU8SAKQYYL8r7gG8XVr4DhdTnDYI57qUJDwd90+MhkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OA+fxecIyT3soUMnGznSkM25vnpZlRk5qZYpEd6BlE6APXr2+iA/smtyUcXHkqsftc/rEIY1t4rVsmbDFsE2gZC1GtPDZinegWgWV1gmctF+ZPTZPzF1s7E+lbC3PUMTbm/0ZnLpfJf4TKpUft9mPg38HdnO1QLx/sxSWb2Mq3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=dz6Czezm; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=f9JaviCbLXmyeAuQ/U0n+aUYuMEEP12gJE4r6O2lA6Y=; b=dz6CzezmviA0qhKwz4iETP5x++
+	60lndbluRwU2y7LIH/85fO/EIxtU0DTh93U+Loi47xtk4d5Hxt32CLMbrYemVc0eYVEz2ljYazoHw
+	oI1VjVYYPwbdxUpwpB757Rn5ZlzzdK8eGro/nIUB+rBY1xqaFITK8rI9vvwYxQ2MX3ski8MVtLDMf
+	v0c46+ni+C2Nm1P2Y619iYPRJB2UOnhErPAcP3S8Z3uAd7DDT5L+WID89wr9hDhGLiftrIZ89SXbq
+	LNMa8ZgeGN8fpHIvQN+nFyZitDtl4aMlfFN19uO7dlCNb86S+0RjiXk/OVhjaizKOUZXi2sAJrJ4p
+	qFs4H62g==;
+Received: from [179.118.191.54] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tAu0X-005xVV-V4; Tue, 12 Nov 2024 17:44:50 +0100
+Message-ID: <0829825f-6e6e-465e-aa3c-444d57bd115e@igalia.com>
+Date: Tue, 12 Nov 2024 13:44:43 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1097d054ed4c67f714679de1253e45a034e647a0.1731425416.git.geert+renesas@glider.be>
- <338c06d8-627e-4ca9-b5d0-6ce87b5cc83c@sifive.com>
-In-Reply-To: <338c06d8-627e-4ca9-b5d0-6ce87b5cc83c@sifive.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 12 Nov 2024 17:44:07 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX-MV1W2MBV0WQuXkEU-qvfbsb_pcAFrHCGWUFT7TYd6Q@mail.gmail.com>
-Message-ID: <CAMuHMdX-MV1W2MBV0WQuXkEU-qvfbsb_pcAFrHCGWUFT7TYd6Q@mail.gmail.com>
-Subject: Re: [PATCH] irqchip: THEAD_C901_ACLINT_SSWI should depend on ARCH_THEAD
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Inochi Amaoto <inochiama@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v9 2/2] drm/amdgpu: Enable async flip on overlay
+ planes
+To: Harry Wentland <harry.wentland@amd.com>
+Cc: kernel-dev@igalia.com, Daniel Stone <daniel@fooishbar.org>,
+ Xaver Hugl <xaver.hugl@gmail.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>,
+ Xinhui Pan <Xinhui.Pan@amd.com>, joshua@froggi.es,
+ Leo Li <sunpeng.li@amd.com>, Maxime Ripard <mripard@kernel.org>,
+ Simon Ser <contact@emersion.fr>, dmitry.baryshkov@linaro.org,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, ville.syrjala@linux.intel.com,
+ Alex Deucher <alexander.deucher@amd.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>
+References: <20241101-tonyk-async_flip-v9-0-681814efbfbe@igalia.com>
+ <20241101-tonyk-async_flip-v9-2-681814efbfbe@igalia.com>
+ <3a97b828-2864-45fd-9fa1-5341bd456d3e@amd.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <3a97b828-2864-45fd-9fa1-5341bd456d3e@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Samuel,
+Hi Harry, thanks for the reply!
 
-On Tue, Nov 12, 2024 at 5:38=E2=80=AFPM Samuel Holland
-<samuel.holland@sifive.com> wrote:
-> On 2024-11-12 9:31 AM, Geert Uytterhoeven wrote:
-> > The T-HEAD ACLINT S-mode IPI Interrupt Controller is only present on
-> > T-HEAD SoCs.  Hence add a dependency on ARCH_THEAD, to prevent asking
->
-> This is not correct. This interrupt controller is part of the T-HEAD CPU =
-IP, so
-> it is included in SoCs from other vendors (Allwinner, Sophgo, etc.) that =
-use
-> T-HEAD CPUs as well.
+Em 11/11/2024 18:10, Harry Wentland escreveu:
+> On 2024-11-01 14:23, André Almeida wrote:
+>> amdgpu can handle async flips on overlay planes, so allow it for atomic
+>> async checks.
+>>
+>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+>> ---
+>>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 3 +--
+>>   1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+>> index 495e3cd70426db0182cb2811bc6d5d09f52f8a4b..4c6aed5ca777d76245f5f2865046f0f598be342a 100644
+>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+>> @@ -1266,8 +1266,7 @@ static int amdgpu_dm_plane_atomic_async_check(struct drm_plane *plane,
+>>   	struct drm_plane_state *new_plane_state;
+>>   	struct dm_crtc_state *dm_new_crtc_state;
+>>   
+>> -	/* Only support async updates on cursor planes. */
+>> -	if (plane->type != DRM_PLANE_TYPE_CURSOR)
+>> +	if (plane->type != DRM_PLANE_TYPE_CURSOR && plane->type != DRM_PLANE_TYPE_OVERLAY)
+> 
+> This wouldn't just be called for flips, though, but could also be
+> called for updates on a plane, right? Those could cause for problems.
+> 
 
-In that case I am withdrawing this patch.
-Thanks for the explanation!
+I see, I think you are right and can be called from a non-flip commmit.
 
-Gr{oetje,eeting}s,
+> There's also nothing special about OVERLAY vs PRIMARY planes, other
+> than that amdgpu needs a PRIMARY plane, IIRC. So updates on PRIMARY
+> planes should also work (or not).
+> 
 
-                        Geert
+Right, the PRIMARY plane type is already supported for every DRM driver 
+in the API so I didn't explicitly added it here.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> Maybe this should check that we're actually dealing with a simple
+> flip, i.e., a simple surface address update.
+> 
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Right, that makes sense to me, thanks!
+
+> Harry
+> 
+>>   		return -EINVAL;
+>>   
+>>   	new_plane_state = drm_atomic_get_new_plane_state(state, plane);
+>>
+> 
+
 
