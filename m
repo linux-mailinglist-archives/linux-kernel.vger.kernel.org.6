@@ -1,63 +1,70 @@
-Return-Path: <linux-kernel+bounces-406862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0B29C6597
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:58:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E865F9C653B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:35:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91C31B31CDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:32:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E35C1F23807
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FC421C165;
-	Tue, 12 Nov 2024 23:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA26A21B441;
+	Tue, 12 Nov 2024 23:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYsog4D+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="ylgF4mzc"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D303F61FD7;
-	Tue, 12 Nov 2024 23:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E782213135
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731454325; cv=none; b=LywXE8mwbB4pOyg+q9+PmIC4p7yYnUvV6JIsdRkl3PxlqdjN6wTVUK/fFSwjg1RIN4CjRo6JMc8iyKOQPiE3TBCSqNTlFhHYdSHjZzayy7wMecntXMMMt48UrkXKAiAC6wIl5Ea5mqND6BiaWImaPq0rtLjiJLkm7LDOpXqgA8Y=
+	t=1731454527; cv=none; b=Nq/Ob7kFZwDUrRPb4p6s8iLbv0mC4zT2KCtZmsBSe6ak5W7gvKUhasr+OUU/5nzctwr5cBGCstTZWFQ0bd+4Ik83quT3a5TAWC6H5CDy4aEkbEeNm8nlXOylS1aJ6PzyzNBJECOGLJX3cvuWXLpRoSZfRdA3RGqrwJgIGZxAUV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731454325; c=relaxed/simple;
-	bh=BTvBKA7o2+woAUiRxBLS40rKUjsEcAiQ9VqZLBbUmrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ZylUvgtFaK6jSoppVWcNmkN0qhlfA5sSTAVaeUL6+vpw2vj8E2m7uS2+jpgbzeD6Wi7Bdg5ImBhbfuV2OCWxgCqYPN7aR+c1fXn9LA+4JLJlmT4wNGUKQA00zUJd+Hx8uaaT0DM3X7awMsb9mI93Jl6VfGe26qk0edbcN9nIoNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYsog4D+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4672BC4CECD;
-	Tue, 12 Nov 2024 23:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731454324;
-	bh=BTvBKA7o2+woAUiRxBLS40rKUjsEcAiQ9VqZLBbUmrE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=YYsog4D+277jiwZhlVlCacEoGamSkpVNXWnGtbKRpfna7MnsC8HGrc/uTQCQcPbzP
-	 7ADCvdgD3pzncivgfu1/CqIV0s2VFysMw8Ys6ymIKTBdO5e5izvIQqHNqid+aVafFb
-	 xOPG1HF7cR3fDsfWgEuUAWa5XySUyhBOVfa3pfVlh7kn7HCfVIhcTXOZrVUz8gtQET
-	 SJwb4qyLet69DRVK959P1+9OwEPjNarseYJsxSogiLb8zbyeJID5aVxVlLweqYAeHH
-	 73QYm24dVwNBiDE+jCJkO2sJOd9Yk1K6UKjKcSpxvDF6ewuI2Hi86pXvTT2ATR2uNU
-	 OEifPxd/OyFNg==
-Date: Tue, 12 Nov 2024 17:32:02 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] PCI: dwc: Add support for new pci function op
-Message-ID: <20241112233202.GA1868078@bhelgaas>
+	s=arc-20240116; t=1731454527; c=relaxed/simple;
+	bh=5QYxYmoaC0h97bCzFt7dyutECUXaQwbJKnIzfwNwwLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XDjyEiykGb7AWAeMYd7NKos0mTaH9+C0/k3C7Cc+V1VtYJ2Y7Ce5DAD83eQdOfU8niWMnfZ8xXTed2Qn7LnISYZG33Jkc/xpGNcebR2AujvS7xRbG5r7MFksch6ww2TfKQjlG5YKVQ2g2HphZoIBoyR9jylNmK5CoELefFTau6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=ylgF4mzc; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
+Date: Wed, 13 Nov 2024 10:33:14 +1100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
+	t=1731454521;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gMbHqD+H0zd72SUEwYPmsE9R4wTLK4oFNYpLilDoG38=;
+	b=ylgF4mzcsM/CWq/YKvClifTLZH7vCdLAWKIqWnIPHm1D13CdUREyoniFOn+mElVbgLLUyR
+	Xz8KqJTTLDqDbgFRzFKuEpaY8K7sgvva0GGzq2I7veWNTf7CsjeyAJzCfwffGZiKK7L2g/
+	+xH6RouQQVtZGcTwIJ08yjwnxzDkECI66BD28PLVZFY5QaF5DbO5Tyv7CIgxLhZOSifrJs
+	CG3bnLO17WXI3WFwurYU9klwutqfWvMCsmna79NYtHZWSrl7exUSIwfl8cy8H1NZPhf3QS
+	SIPSaGNgiza2lEJdNE7UH+rS3FOjXovzHJEGLDL+JnixRk3MFJuyMQBw8SZ01A==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: John Watts <contact@jookia.org>
+To: Parthiban <parthiban@linumiz.com>
+Cc: Andre Przywara <andre.przywara@arm.com>,
+	Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Samuel Holland <samuel@sholland.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/sun4i: Workaround TCON TOP conflict between DE0 and
+ DE1
+Message-ID: <ZzPluoI7xSTwhNcm@titan>
+References: <20241108-tcon_fix-v1-1-616218cc0d5f@jookia.org>
+ <20241108115357.691b77b0@donnerap.manchester.arm.com>
+ <Zy4SKCBwce3q0yj5@titan>
+ <b26b9d86-4ff9-4543-85ce-176dccfbfa05@linumiz.com>
+ <Zy4c9BFcrz2JVU6k@titan>
+ <ZzNCsFiAiACFrQhE@titan>
+ <f0d5b314-cfcc-4856-8d6e-09e437c075ec@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,95 +73,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241112-qps615_pwr-v3-4-29a1e98aa2b0@quicinc.com>
+In-Reply-To: <f0d5b314-cfcc-4856-8d6e-09e437c075ec@linumiz.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 12, 2024 at 08:31:36PM +0530, Krishna chaitanya chundru wrote:
-> Add the support for stop_link() and  start_link() function op.
+Hi there,
 
-When you update the series for the build issue, also update the
-subject line here so it's more useful by itself, e.g.,
-
-  PCI: dwc: Implement .start_link(), .stop_link() hooks
-
-Seems like the .host_start_link() bits might be a separate patch?
-They're not mentioned in this commit log and don't look directly
-related.
-
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware-host.c | 18 ++++++++++++++++++
->  drivers/pci/controller/dwc/pcie-designware.h      | 16 ++++++++++++++++
->  2 files changed, 34 insertions(+)
+On Tue, Nov 12, 2024 at 10:43:44PM +0530, Parthiban wrote:
+> #define TCON_TOP_PORT_DE0_MSK                   GENMASK(1, 0)
+> #define TCON_TOP_PORT_DE1_MSK                   GENMASK(5, 4)
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 3e41865c7290..d7e7f782390a 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -691,10 +691,28 @@ void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int devfn,
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_own_conf_map_bus);
->  
-> +static int dw_pcie_op_start_link(struct pci_bus *bus)
-> +{
-> +	struct dw_pcie_rp *pp = bus->sysdata;
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +
-> +	return dw_pcie_host_start_link(pci);
-> +}
-> +
-> +static void dw_pcie_op_stop_link(struct pci_bus *bus)
-> +{
-> +	struct dw_pcie_rp *pp = bus->sysdata;
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +
-> +	dw_pcie_host_stop_link(pci);
-> +}
-> +
->  static struct pci_ops dw_pcie_ops = {
->  	.map_bus = dw_pcie_own_conf_map_bus,
->  	.read = pci_generic_config_read,
->  	.write = pci_generic_config_write,
-> +	.start_link = dw_pcie_op_start_link,
-> +	.stop_link = dw_pcie_op_stop_link,
->  };
->  
->  static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 347ab74ac35a..b88b4edafcc3 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -433,6 +433,8 @@ struct dw_pcie_ops {
->  	enum dw_pcie_ltssm (*get_ltssm)(struct dw_pcie *pcie);
->  	int	(*start_link)(struct dw_pcie *pcie);
->  	void	(*stop_link)(struct dw_pcie *pcie);
-> +	int	(*host_start_link)(struct dw_pcie *pcie);
-> +	void	(*host_stop_link)(struct dw_pcie *pcie);
->  };
->  
->  struct dw_pcie {
-> @@ -665,6 +667,20 @@ static inline void dw_pcie_stop_link(struct dw_pcie *pci)
->  		pci->ops->stop_link(pci);
->  }
->  
-> +static inline int dw_pcie_host_start_link(struct dw_pcie *pci)
-> +{
-> +	if (pci->ops && pci->ops->host_start_link)
-> +		return pci->ops->host_start_link(pci);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline void dw_pcie_host_stop_link(struct dw_pcie *pci)
-> +{
-> +	if (pci->ops && pci->ops->host_stop_link)
-> +		pci->ops->host_stop_link(pci);
-> +}
-> +
->  static inline enum dw_pcie_ltssm dw_pcie_get_ltssm(struct dw_pcie *pci)
->  {
->  	u32 val;
-> 
-> -- 
-> 2.34.1
-> 
+> references towards DE0 and DE1 is for DE itself, not the mixers in the
+> current implementation.
+
+So the datasheet says it's for DE0/DE1 but the Allwinner driver and mainline
+driver assume it's for mixers. There's a conflation between mixer and DE in
+this case, especially because everywhere mixer1 is used on the A133 it is
+switched to DE1. I'm also unaware of the R40 having two DEs which kind of
+confirms this might be a typo. If anyone has actually tested the second output
+of this it would help find out if it actually means DE1 or mixer1.
+
+> Handling for mixer0 <-> lcd1 and mixer1 <-> lcd0 also needs to set
+> DE2TCON_MUX in de clock, which is missing now.
+
+Hmm. Are you sure? Looking at the Allwinner drivers it has the method
+de_top_set_de2tcon_mux in
+drivers/video/fbdev/sunxi/disp2/disp/de/lowlevel_v33x/de330/de_top.c
+which I think means it's for DE3? But I don't see it called anywhere?
+
+This might be worth discussing in the DE3 patchset.
+
+> sun8i_tcon_top_set_hdmi_src for R40 already sets these values via quirks.
+> i.e controlling the port muxing. Also D1 quirks is same as R40. So the
+> original changes to make the DE1 point to TVx can also done in this quirk
+> without hardcoded value?
+
+In this case I'm using an LCD which isn't HDMI, so I'm not too sure how much
+this would help. Having it as a quirk also seems a bit overkill if this is a
+general preventative fix, especially since Allwinner doesn't seem to test their
+functionality. Relying on it seems like a mistake in this case.
+
+My other thought is that when sun8i_tcon_top_de_config is called it could do
+something. But I'm not sure what that something would actually be, given it may
+be called twice in an (I assume) unknown order.
+
+Say, if mixer1 is set as TV0 and and mixer0 is set as TV1 we would try to set mixer1
+first, see that mixer0 is already set to TV0 then ... error? Even though the
+final configuration doesn't have any conflicts.
+
+I was thinking something like this for my next patch:
+
+	/*
+	 * Make sure that by default DE0 and DE1 are set to different outputs,
+	 * otherwise we get a strange tinting or unusable display on the T113.
+	*/
+	reg = readl(regs + TCON_TOP_PORT_SEL_REG);
+	reg &= ~TCON_TOP_PORT_DE0_MSK;
+	reg |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 0);
+	reg &= ~TCON_TOP_PORT_DE1_MSK;
+	reg |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, 1);
+	writel(reg, regs + TCON_TOP_PORT_SEL_REG);
+
+Perhaps this could be hidden behind a quirk? I would have to check to see which
+chips have this behaviour, I'm not sure if it's a bug specific to the T113 or
+D1/T113 or R40 too.
+
+Also noting at the top of the file that DE0 and DE1 mean mixer0 and mixer1
+might be good to reduce confusion.
+
+What do you think? :)
+
+> Thanks,
+> Parthiban
+
+Thanks for your input!
+
+John Watts
 
