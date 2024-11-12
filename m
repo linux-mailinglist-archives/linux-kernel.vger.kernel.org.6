@@ -1,222 +1,116 @@
-Return-Path: <linux-kernel+bounces-405983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63139C5991
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:52:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4793A9C599D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725151F233F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:52:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D7DC284BD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC5E1FC7CB;
-	Tue, 12 Nov 2024 13:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284741FBF64;
+	Tue, 12 Nov 2024 13:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Aa2V97Gu"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YVHuN7m7"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6721F1FBF55
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691B11FBCBC;
+	Tue, 12 Nov 2024 13:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731419550; cv=none; b=bafZ5OElhIYM34Xk2rRHLAmxIIKI74dqfGZCCB59sKC5ssFWIbiwWegTL8KK5VRsD00ikYe30snzUbkTi/hn/avHnBs6JoZG4ZcquWmuU5AeB5VSz9oYWhzBm5cRz495CotIY575dX56TAyFi1K1vGuyM7E9S9/1Ajz5IxzTTjc=
+	t=1731419677; cv=none; b=iEil5rznQ0UL/uR3995calO/vPg2v4ah3EYG13tsgEiqwcKG31NibYXNl6y729NbYm73A89ZH/FsExdcyqVx0p73Z3GKF5OYR16fUvP8WICighCjKTdm/a5PUmz28dy96N0Aj0avNolUMhas9fozWDXDoScHK59g6jlQ8uoAOmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731419550; c=relaxed/simple;
-	bh=7dL1Ei8s8LcEly9MeawI6sWofkKiP6SlNezkoxADASs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jxX4ld+Ie/03w08XqJevPpxl3ZadYMHLPVAUSiOWQbiK/ZbkeJr24kt+d5OZW1uaL99tJJnyF7Qa08syqyxj2m0kfTwPiuZ2amVaUoHq6fSZuFHVZZgwrV8XHBL9l6VanmZ1yosQT1mORi67Ir7jbhTAmKcrI4V8qt/Kr50OmZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Aa2V97Gu; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9ed49ec0f1so964961466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:52:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1731419547; x=1732024347; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=caVXeJrdHRZKvkmt5CrTO9g9Z2IsueyYvYdQUlvgtKU=;
-        b=Aa2V97GucIBWlWXsuFjzV0ATr4ZQ5OXbH9a+UOjaadwKd3jIuyOFKbRErJo3oEREN1
-         2dIN+HwMoJnb5Q2IXf9p+41v0OLYUrXIXZYnIgPaEnb7/tBmtIC5KwbzTjwNG6cT0EMW
-         vXcUWz/2OaThv/1pt71i+WcNMsedjbJOu45cOqh/OOkIRnV2/JeKfBf0572muJuWHd40
-         mNz5YInn8X4VdzcY8R8u1A4HgI2y84gPCNMEW5nsbs8i1FbkeFjAWSx4nkwRhmRQ7Ctt
-         YH09L/OVy/EXD2QR0jG3vDkwH+K+hd92sX9wkVjT4EgN1TYGFEvnbewpFfc22Nr7Pjru
-         hmJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731419547; x=1732024347;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=caVXeJrdHRZKvkmt5CrTO9g9Z2IsueyYvYdQUlvgtKU=;
-        b=pdX7BPxZaCxru4wYkNfZBK+1bDqQECvMY+isvtCXoqxoWTILPp8B1xCsMas4tyT/GI
-         W0CI+jwlh525LyIImcrWc4jOEeO5UYMiC/pI8+/XniUhjjR21aQ56kNGNwcCXPIfgKcq
-         F/UVBeE6uxQEi5R3pMAc69VoykXMxqUZB6Ho8lzubPZ4m55XXqvlYsTeFPnwwmvH+LMl
-         MssIR8nopjEje+pcvU097BKswFy/pACr5OECBRW6oSLgGwcxK0ZmCaSjpnLaafDNSeuN
-         +qvnIfA0yAaKuMjaE9zydZLcx8R/0PQ/24PclaAehN+4XM2vhcobBPZwpvu24jNL6BPj
-         8B2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXty9ZLXgWKM1LPIeqtnMXstmdaJF/d3uZuf2kOdrnJHWFm/cUSV5tez7xKu6dH52AK+19RYmrQVnNLch8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGbj7Pw1XJDwiIoehA7DXpyMriKS4aTY/6Fy05EXTlYvsuqgPT
-	Ek82JvxqzEKPm7nAk3psHOKCQGr/VswogPxDUGznHhK3OU79u0QbNBD8OoiElqE=
-X-Google-Smtp-Source: AGHT+IFJkboknrQASMJfThfzI2bREfLg6hevUW0NS36sBjniM2EHuevaQMV/FcVYiCCY8jGNNaTksA==
-X-Received: by 2002:a17:907:3e0a:b0:a99:403e:2578 with SMTP id a640c23a62f3a-aa1b1024ddfmr282939266b.5.1731419546739;
-        Tue, 12 Nov 2024 05:52:26 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:e829:c484:5241:93b2? ([2001:67c:2fbc:1:e829:c484:5241:93b2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0e2d979sm732456866b.181.2024.11.12.05.52.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 05:52:26 -0800 (PST)
-Message-ID: <0a5e0d83-2fd5-4281-8aea-7f5c80aee06b@openvpn.net>
-Date: Tue, 12 Nov 2024 14:52:50 +0100
+	s=arc-20240116; t=1731419677; c=relaxed/simple;
+	bh=rpxkM6gpo4MMArNHaYrI67rjGFHShjJaUXVq85AD6Og=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D5vdEVTUkKvF8k7ZDxv4U31fe0SfW1tIkoEWJ41ensJPXapPcFTTnYtCYvOV409v1OsNK4Vx7lr3cC3HeHdCbg2t5dZc8qmGxpX6zvNUv8MEfhFjhGB/w0uLQBgG29j8MJrZR166zHC5VnAAtn7r+P0n9TZU9pawQln/VBU1OKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YVHuN7m7; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731419671; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=J0yoky5hVi3m0oetpcrW8t6Yucb2Ph3LMUU2z7W3hCI=;
+	b=YVHuN7m7uxlieR/w02yOOLWfiwfr+J/WvNCgziGtb3cjZ7UGqgoITQPI7GAJkFIBeRWkisnM4qqsUHkUT/7oNLbTSc0iJZNNUGuRBh05KgvNkyJ5X/FeYLg5FJArLzcSPFQI905vTNKWNQ9If3zxFSOgbHj5irnEv60TmoxbphQ=
+Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WJHmH-E_1731419670 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 12 Nov 2024 21:54:31 +0800
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+To: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	bhelgaas@google.com,
+	kbusch@kernel.org
+Cc: mahesh@linux.ibm.com,
+	oohall@gmail.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com,
+	xueshuai@linux.alibaba.com
+Subject: [PATCH v2 0/2] PCI/AER: Report fatal errors of RCiEP and EP if link recoverd
+Date: Tue, 12 Nov 2024 21:54:17 +0800
+Message-ID: <20241112135419.59491-1-xueshuai@linux.alibaba.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 17/23] ovpn: add support for peer floating
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-17-de4698c73a25@openvpn.net> <Zyiu7d5X7GcTK3Hq@hog>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <Zyiu7d5X7GcTK3Hq@hog>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+changes since v1:
+- rewrite commit log per Bjorn
+- refactor aer_get_device_error_info to reduce duplication per Keith
+- fix to avoid reporting fatal errors twice for root and downstream ports per Keith
 
+The AER driver has historically avoided reading the configuration space of an
+endpoint or RCiEP that reported a fatal error, considering the link to that
+device unreliable. Consequently, when a fatal error occurs, the AER and DPC
+drivers do not report specific error types, resulting in logs like:
 
-On 04/11/2024 12:24, Sabrina Dubroca wrote:
-> 2024-10-29, 11:47:30 +0100, Antonio Quartulli wrote:
->> +static int ovpn_peer_reset_sockaddr(struct ovpn_peer *peer,
->> +				    const struct sockaddr_storage *ss,
->> +				    const u8 *local_ip)
->> +	__must_hold(&peer->lock)
->> +{
->> +	struct ovpn_bind *bind;
->> +	size_t ip_len;
->> +
->> +	/* create new ovpn_bind object */
->> +	bind = ovpn_bind_from_sockaddr(ss);
->> +	if (IS_ERR(bind))
->> +		return PTR_ERR(bind);
->> +
->> +	if (local_ip) {
->> +		if (ss->ss_family == AF_INET) {
->> +			ip_len = sizeof(struct in_addr);
->> +		} else if (ss->ss_family == AF_INET6) {
->> +			ip_len = sizeof(struct in6_addr);
->> +		} else {
->> +			netdev_dbg(peer->ovpn->dev, "%s: invalid family for remote endpoint\n",
->> +				   __func__);
-> 
-> ratelimited since that can be triggered from packet processing?
+  pcieport 0000:30:03.0: EDR: EDR event received
+  pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
+  pcieport 0000:30:03.0: DPC: ERR_FATAL detected
+  pcieport 0000:30:03.0: AER: broadcast error_detected message
+  nvme nvme0: frozen state error detected, reset controller
+  nvme 0000:34:00.0: ready 0ms after DPC
+  pcieport 0000:30:03.0: AER: broadcast slot_reset message
 
-ACK
+AER status registers are sticky and Write-1-to-clear. If the link recovered
+after hot reset, we can still safely access AER status of the error device.
+In such case, report fatal errors which helps to figure out the error root
+case.
 
-> 
-> 
-> [...]
->> +void ovpn_peer_float(struct ovpn_peer *peer, struct sk_buff *skb)
->> +{
-> [...]
->> +
->> +	switch (family) {
->> +	case AF_INET:
->> +		sa = (struct sockaddr_in *)&ss;
->> +		sa->sin_family = AF_INET;
->> +		sa->sin_addr.s_addr = ip_hdr(skb)->saddr;
->> +		sa->sin_port = udp_hdr(skb)->source;
->> +		salen = sizeof(*sa);
->> +		break;
->> +	case AF_INET6:
->> +		sa6 = (struct sockaddr_in6 *)&ss;
->> +		sa6->sin6_family = AF_INET6;
->> +		sa6->sin6_addr = ipv6_hdr(skb)->saddr;
->> +		sa6->sin6_port = udp_hdr(skb)->source;
->> +		sa6->sin6_scope_id = ipv6_iface_scope_id(&ipv6_hdr(skb)->saddr,
->> +							 skb->skb_iif);
->> +		salen = sizeof(*sa6);
->> +		break;
->> +	default:
->> +		goto unlock;
->> +	}
->> +
->> +	netdev_dbg(peer->ovpn->dev, "%s: peer %d floated to %pIScp", __func__,
-> 
->                                                %u for peer->id?
-> 
-> and ratelimited too, probably.
-> 
-> (also in ovpn_peer_update_local_endpoint in the previous patch)
+- Patch 1/2 identifies the error device by SOURCE ID register
+- Patch 2/3 reports the AER status if link recoverd.
 
-Technically we don't expect that frequent float/endpoint updates, but 
-should they happen..better to be protected.
+After this patch set, the logs like:
 
-ACK
+  pcieport 0000:30:03.0: EDR: EDR event received
+  pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
+  pcieport 0000:30:03.0: DPC: ERR_FATAL detected
+  pcieport 0000:30:03.0: AER: broadcast error_detected message
+  nvme nvme0: frozen state error detected, reset controller
+  pcieport 0000:30:03.0: waiting 100 ms for downstream link, after activation
+  nvme 0000:34:00.0: ready 0ms after DPC
+  nvme 0000:34:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Data Link Layer, (Receiver ID)
+  nvme 0000:34:00.0:   device [144d:a804] error status/mask=00000010/00504000
+  nvme 0000:34:00.0:    [ 4] DLP                    (First)
+  pcieport 0000:30:03.0: AER: broadcast slot_reset message
 
-> 
->> +		   peer->id, &ss);
->> +	ovpn_peer_reset_sockaddr(peer, (struct sockaddr_storage *)&ss,
->> +				 local_ip);
-> 
-> skip the rehash if this fails? peer->bind will still be the old one so
-> moving it to the new hash chain won't help (the lookup will fail).
+Shuai Xue (2):
+  PCI/DPC: Run recovery on device that detected the error
+  PCI/AER: Report fatal errors of RCiEP and EP if link recoverd
 
-Yeah, it makes sense.
-
-Thanks a lot.
-Regards,
+ drivers/pci/pci.h      |  5 +++--
+ drivers/pci/pcie/aer.c | 11 +++++++----
+ drivers/pci/pcie/dpc.c | 32 +++++++++++++++++++++++++-------
+ drivers/pci/pcie/edr.c | 35 ++++++++++++++++++-----------------
+ drivers/pci/pcie/err.c |  9 +++++++++
+ 5 files changed, 62 insertions(+), 30 deletions(-)
 
 -- 
-Antonio Quartulli
-OpenVPN Inc.
+2.39.3
 
 
