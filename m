@@ -1,228 +1,144 @@
-Return-Path: <linux-kernel+bounces-405037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6420A9C4C44
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:12:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0057B9C4C52
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:14:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D62EB2338D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B95A428A562
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F4E204F78;
-	Tue, 12 Nov 2024 02:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271F3205132;
+	Tue, 12 Nov 2024 02:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bZtLlYKI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DD3BE6C;
-	Tue, 12 Nov 2024 02:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="m0apb0Y7"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF8D20493F
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731377188; cv=none; b=q/aloF+NCTK3l/2oO99SFIv7ftNhREqSffrjEMTOT1gZgi4bkGvGQu5f5P5N6jODbKdN4xtNDA+0Cq4gMMp7vTQRocnsGiBXPf2TQl4DGKvVTpdkLK/RzsQcCEUVev1ofDGDlB+iz5VDE9M3zBbY8Lg0M1UqfSnMAy8edubl4iI=
+	t=1731377659; cv=none; b=KIyRVfFKjA1wuX6UvMQl7FsDP8EFPXN5mGh2sbsmLFprfHaNZC2ooQGnCpS3646sRw0KAFdw/QcWUXFVreCMobLSZLgnqdCzHObNo1VLemGo1ICdknZuFSrcfYI/2PUaeBvfAHMpuyLindJ/KW9wQMqibGy+H6K7sxmXbFBsJ88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731377188; c=relaxed/simple;
-	bh=le60pk5t+ql1d86bbmJN4sCll8pchLZj4uleZWk86Aw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DvxO38kb6dwhY3a8jBwW2lk+xVqT6dYFw6GYqhgmwEDyDA8icVcT+PhRftuUtVIB0V05LJofaKAN+VoJRM6kUHJ6UGUxoyIy86XqrOVlCWWJxo5OA2QhCoKlCo0wF24+NkUybaZLKwC3OnZBhHWA0pFgj3djTPpIYl3tZBeS3Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bZtLlYKI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABCqp6X018012;
-	Tue, 12 Nov 2024 02:05:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=5qaLcLQeV1PB7ymPPGtVOm0b
-	VLvm/RinEOKBQ/M+eNA=; b=bZtLlYKISIvK1G4XdFhDYMb22nBFQHqoQe/aWTNJ
-	qmNEokJJqJr16VKxDDJP/7SwTaW2E5wt4iSlLhl362bYJxbA83Y9tnVjQrUfz+fF
-	hpHYttmb7WeleAfDMlFkAxcImXYzYl+mJ9AqIuJ1oGx1eg2YSpfxYgo/cCxOMiet
-	JPquyCNX3EtEetfOFU9mGpIuyuFv8vv5uqnlVEQCj/IYBdh60+ff35DMKrj5MrJE
-	8ymOkQcaQtA4OXViWLfU1F3DmybV9UdGfm3J/5qE6sDlSS3HaQIq6TwKFx26v1MR
-	LlgZm/dsNmwei/jS3MtG8qOtfhBIf+Wa7p/jiRuKQPwvPg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42syax5ugu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 02:05:51 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC25oQ2019406
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 02:05:50 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 11 Nov 2024 18:05:49 -0800
-Date: Mon, 11 Nov 2024 18:05:49 -0800
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel
-	<sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Andy Yan
-	<andy.yan@rock-chips.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        "Mark
- Rutland" <mark.rutland@arm.com>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, "Olof
- Johansson" <olof@lixom.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Will
- Deacon" <will@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Melody Olvera
-	<quic_molvera@quicinc.com>,
-        Shivendra Pratap <quic_spratap@quicinc.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        Stephen Boyd <swboyd@chromium.org>, <linux-pm@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH v8 0/6] Implement vendor resets for PSCI SYSTEM_RESET2
-Message-ID: <20241111151958898-0800.eberman@hu-eberman-lv.qualcomm.com>
-References: <20241107-arm-psci-system_reset2-vendor-reboots-v8-0-e8715fa65cb5@quicinc.com>
+	s=arc-20240116; t=1731377659; c=relaxed/simple;
+	bh=YZtWTu/zKddH1thW2fycyh7s6Px0dUPMUAY0bA+VDds=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eAJccjauPza6As6AGvhE3eey6sitq8Fp0TJvpUabrkef+r78rWjQmDt3tq8shA8rT0J/YGV/OSQMaRJQ84N7S5XecAOlWzV6YG8rXnRmE6HbE5Al0/T6pfPX0JN46Qi2uBV8xSRBEkBLMNLrmnZcgKCSFYZChaIXrHpl1ITCJu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=m0apb0Y7; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=V08AQ
+	xCCDv8oQUiPYDMmFjoKFMM9mpRrXxMWxLM/XBU=; b=m0apb0Y7FrkGVkghybzhz
+	/wlzTqOXI+kThlgQLTOCUpI9ZQwgNLjVgZ4HQQ6M2ariqlZ0+3xzum/WCGc8yNUR
+	o9LGUBVyLrVB1RELaI/bRaiTqsM0GeSZGyeIah7pPPmjjXIU4iPtzB1M+bCHOw6A
+	L9vrvQaPop5QY6ZCxi26Fc=
+Received: from localhost.localdomain (unknown [111.48.58.13])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3_4hwuTJnfZjdGw--.189S2;
+	Tue, 12 Nov 2024 10:12:02 +0800 (CST)
+From: 412574090@163.com
+To: sudipm.mukherjee@gmail.com,
+	mpe@ellerman.id.au,
+	davem@davemloft.net,
+	andreas@gaisler.com,
+	James.Bottomley@HansenPartnership.com,
+	deller@gmx.de,
+	dlemoal@kernel.org,
+	cassel@kernel.org,
+	ojeda@kernel.org,
+	edumazet@google.com,
+	martin.petersen@oracle.co,
+	perex@perex.cz,
+	t.sailer@alumni.ethz.ch,
+	andrew+netdev@lunn.ch
+Cc: linux-kernel@vger.kernel.org,
+	xiongxin@kylinos.cn,
+	weiyufeng <weiyufeng@kylinos.cn>
+Subject: [PATCH v2 0/4] add new iomem type for parport devcie
+Date: Tue, 12 Nov 2024 10:11:49 +0800
+Message-Id: <20241112021153.18146-1-412574090@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241107-arm-psci-system_reset2-vendor-reboots-v8-0-e8715fa65cb5@quicinc.com>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: QeGcJ48pikCpZg6Q21XjJza7qu7Q5-Np
-X-Proofpoint-GUID: QeGcJ48pikCpZg6Q21XjJza7qu7Q5-Np
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- bulkscore=0 malwarescore=0 spamscore=0 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 priorityscore=1501 clxscore=1015 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120015
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3_4hwuTJnfZjdGw--.189S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CFyfAr13GFyDtrWxtw4ruFg_yoW8ur4Dpa
+	y8Xr97u3yDtFW7CF1UAw4fuFWYqa1xZry0ga47K3s09a1akFWUJw4UAF4qkF98tF1UtFy3
+	tr1UtF1xCF17ZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jTVbkUUUUU=
+X-CM-SenderInfo: yursklauqziqqrwthudrp/xtbBXwmUAGcxnjyANgABsB
 
-Hi Lorenzo,
+From: weiyufeng <weiyufeng@kylinos.cn>
 
-I haven't seen response on our question about how reboot_mode enum and
-reboot command string are supposed to interact. Let's make a call
-ourselves and merge?
+For parallel port devices, the device type may be based on iomem, while
+existing parallel port drivers only support the ioport type. This series
+provides support for the iomem type of parallel port devices.
 
-Thanks,
-Elliot
+In order to have this feature available, a number of changes are needed:
+  - Patch 1: Modify the kernel print function to a standard format.
 
-On Thu, Nov 07, 2024 at 03:38:24PM -0800, Elliot Berman wrote:
-> The PSCI SYSTEM_RESET2 call allows vendor firmware to define additional
-> reset types which could be mapped to the reboot argument.
-> 
-> Setting up reboot on Qualcomm devices can be inconsistent from chipset
-> to chipset. Generally, there is a PMIC register that gets written to
-> decide the reboot type. There is also sometimes a cookie that can be
-> written to indicate that the bootloader should behave differently than a
-> regular boot. These knobs evolve over product generations and require 
-> more drivers. Qualcomm firmwares are beginning to expose vendor
-> SYSTEM_RESET2 types to simplify driver requirements from Linux.
-> 
-> Add support in PSCI to statically wire reboot mode commands from
-> userspace to a vendor reset and cookie value using the device tree. The
-> DT bindings are similar to reboot mode framework except that 2
-> integers are accepted (the type and cookie). Also, reboot mode framework
-> is intended to program the cookies, but not actually reboot the host.
-> PSCI SYSTEM_RESET2 does both. I've not added support for reading ACPI
-> tables since I don't have any device which provides them + firmware that
-> supports vendor SYSTEM_RESET2 types.
-> 
-> Lorenzo and I are also looking for some feedback on whether it is safe
-> to perform a vendor SYSTEM_RESET2 irrespective of the enum reboot_mode:
-> 
-> https://lore.kernel.org/all/Zw5ffeYW5uRpsaG3@lpieralisi/
-> 
-> Previous discussions around SYSTEM_RESET2:
-> - https://lore.kernel.org/lkml/20230724223057.1208122-2-quic_eberman@quicinc.com/T/
-> - https://lore.kernel.org/all/4a679542-b48d-7e11-f33a-63535a5c68cb@quicinc.com/
-> 
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> 
-> Changes in v8:
-> - Code style nits from Stephen
-> - Add rb3gen2
-> - Link to v7: https://lore.kernel.org/r/20241028-arm-psci-system_reset2-vendor-reboots-v7-0-a4c40b0ebc54@quicinc.com
-> 
-> Changes in v7:
-> - Code style nits from Stephen
-> - Dropped unnecessary hunk from the sa8775p-ride patch
-> - Link to v6: https://lore.kernel.org/r/20241018-arm-psci-system_reset2-vendor-reboots-v6-0-50cbe88b0a24@quicinc.com
-> 
-> Changes in v6:
-> - Rebase to v6.11 and fix trivial conflicts in qcm6490-idp
-> - Add sa8775p-ride support (same as qcm6490-idp)
-> - Link to v5: https://lore.kernel.org/r/20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com
-> 
-> Changes in v5:
-> - Drop the nested "items" in prep for future dtschema tools
-> - Link to v4: https://lore.kernel.org/r/20240611-arm-psci-system_reset2-vendor-reboots-v4-0-98f55aa74ae8@quicinc.com
-> 
-> Changes in v4:
-> - Change mode- properties from uint32-matrix to uint32-array
-> - Restructure the reset-types node so only the restriction is in the
->   if/then schemas and not the entire definition
-> - Link to v3: https://lore.kernel.org/r/20240515-arm-psci-system_reset2-vendor-reboots-v3-0-16dd4f9c0ab4@quicinc.com
-> 
-> Changes in v3:
-> - Limit outer number of items to 1 for mode-* properties
-> - Move the reboot-mode for psci under a subnode "reset-types"
-> - Fix the DT node in qcm6490-idp so it doesn't overwrite the one from
->   sc7820.dtsi
-> - Link to v2: https://lore.kernel.org/r/20240414-arm-psci-system_reset2-vendor-reboots-v2-0-da9a055a648f@quicinc.com
-> 
-> Changes in v2:
-> - Fixes to schema as suggested by Rob and Krzysztof
-> - Add qcm6490 idp as first Qualcomm device to support
-> - Link to v1: https://lore.kernel.org/r/20231117-arm-psci-system_reset2-vendor-reboots-v1-0-03c4612153e2@quicinc.com
-> 
-> Changes in v1:
-> - Reference reboot-mode bindings as suggeted by Rob.
-> - Link to RFC: https://lore.kernel.org/r/20231030-arm-psci-system_reset2-vendor-reboots-v1-0-dcdd63352ad1@quicinc.com
-> 
-> ---
-> Elliot Berman (6):
->       dt-bindings: power: reset: Convert mode-.* properties to array
->       dt-bindings: arm: Document reboot mode magic
->       firmware: psci: Read and use vendor reset types
->       arm64: dts: qcom: qcm6490-idp: Add PSCI SYSTEM_RESET2 types
->       arm64: dts: qcom: qcs6490-rb3gen2: Add PSCI SYSTEM_RESET2 types
->       arm64: dts: qcom: sa8775p-ride: Add PSCI SYSTEM_RESET2 types
-> 
->  Documentation/devicetree/bindings/arm/psci.yaml    |  43 +++++++++
->  .../bindings/power/reset/nvmem-reboot-mode.yaml    |   4 +
->  .../devicetree/bindings/power/reset/qcom,pon.yaml  |   7 ++
->  .../bindings/power/reset/reboot-mode.yaml          |   4 +-
->  .../bindings/power/reset/syscon-reboot-mode.yaml   |   4 +
->  arch/arm64/boot/dts/qcom/qcm6490-idp.dts           |   7 ++
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts       |   7 ++
->  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi         |   7 ++
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi              |   2 +-
->  arch/arm64/boot/dts/qcom/sc7280.dtsi               |   2 +-
->  drivers/firmware/psci/psci.c                       | 104 +++++++++++++++++++++
->  11 files changed, 187 insertions(+), 4 deletions(-)
-> ---
-> base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
-> change-id: 20231016-arm-psci-system_reset2-vendor-reboots-cc3ad456c070
-> 
-> Best regards,
-> -- 
-> Elliot Berman <quic_eberman@quicinc.com>
-> 
+  - Patch 2: change struct parport member base to iobase for ioport
+    type. because in Patch 4,mapbase member will be added to struct
+    parport.
+
+  - Patch 3: struct parport_data added for simplify data initialization.
+
+  - Patch 4: iomem type for parport added.
+
+Best regards,
+weiyufeng
+
+Changes v1 -> v2:
+  - Patch1
+    No changes
+
+  - Patch2
+    fix compilation error issues
+
+  - Patch3
+    No changes
+
+  - Patch4
+    add iounmap and release_mem_region for mapbase_hi
+
+weiyufeng (4):
+  parport: use standard kernel printing functions
+  parport: change struct parport member to iobase
+  parport: add parport_data struct
+  parport: add iomem type for parport
+
+ arch/powerpc/include/asm/parport.h      |   5 +-
+ arch/sparc/include/asm/parport_64.h     |  13 +-
+ drivers/ata/pata_parport/bpck6.c        |   2 +-
+ drivers/ata/pata_parport/pata_parport.c |   2 +-
+ drivers/auxdisplay/ks0108.c             |   4 +-
+ drivers/net/hamradio/baycom_epp.c       |  12 +-
+ drivers/net/hamradio/baycom_par.c       |   6 +-
+ drivers/net/plip/plip.c                 |   2 +-
+ drivers/parisc/superio.c                |   9 +-
+ drivers/parport/daisy.c                 |   2 +-
+ drivers/parport/parport_cs.c            |  73 +--
+ drivers/parport/parport_gsc.c           |   8 +-
+ drivers/parport/parport_ip32.c          |   8 +-
+ drivers/parport/parport_mfc3.c          |   2 +-
+ drivers/parport/parport_pc.c            | 699 ++++++++++++++----------
+ drivers/parport/parport_serial.c        |   7 +-
+ drivers/parport/parport_sunbpp.c        |  24 +-
+ drivers/parport/procfs.c                |   2 +-
+ drivers/parport/share.c                 |   6 +-
+ drivers/scsi/imm.c                      |   8 +-
+ drivers/scsi/ppa.c                      |  10 +-
+ include/linux/parport.h                 |  30 +-
+ include/linux/parport_pc.h              | 109 +++-
+ sound/drivers/mts64.c                   |   6 +-
+ sound/drivers/portman2x4.c              |   6 +-
+ 25 files changed, 642 insertions(+), 413 deletions(-)
+
+-- 
+2.25.1
+
 
