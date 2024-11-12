@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-406257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F419C5D1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:26:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAEE9C5CB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:02:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0E1BBA3959
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:02:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC177283C05
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C38C206E76;
-	Tue, 12 Nov 2024 15:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88CF207203;
+	Tue, 12 Nov 2024 15:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhODKlZ3"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhQUZYXV"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CA9206E6E;
-	Tue, 12 Nov 2024 15:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96009206E9B;
+	Tue, 12 Nov 2024 15:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731427117; cv=none; b=KhrVvOSR4a/7Q9S4Q1SDpof4k3ry5lZzqEcOtIpN33PgTmkzMYO7O+5TtlFi8zfUExonu6ZTzfN0WbfWS6q5vjOWQo90+NPud4YrD/3tEDvbVyrNJCgtkmmPKD9st0/2rNKKZ3yayxI51V2cSBMeLHnsvTtXUyi2r8qbBp6X1MQ=
+	t=1731427120; cv=none; b=XYplMtBWuOEzseh9EG3iH+vXaihXAOX6BQ4IwMS9C5hWtyw+oIAFQ9LcBlHO2Tzu2bcsOzdZ9RY0GBhChUzB/28Ff8JbY6wuGtPBvCPJSv8hhEnyt26nwKxIWVe4q1JjNifgXshEf1SpEClnzf+RONWdSxlrsyGHKWnLZxMqdEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731427117; c=relaxed/simple;
-	bh=kx9RV/7hh8OxwyU6O/CqIX9Yzgup8/L0Sqd2aGul450=;
+	s=arc-20240116; t=1731427120; c=relaxed/simple;
+	bh=O4AvFer74LkEoJ32uQUsWCZt7z9HiKEdzSP0dkJ7rZc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W5Ja3ZBv0Xq+R6E/xbhSp6PoTR9VaPMm0YJmMD56uPgtgpNld6iHicgCLMsGSYuv+joZEuQEXYxouNWME1ZQQdjdyrpEn7+/PnwTsJQP/9b4hDAMWzSitoi2R9HBvxqO26dVHNBFMZMfOjxaxJIRyzAP5KW1i71imvcpgb7rBlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhODKlZ3; arc=none smtp.client-ip=209.85.128.47
+	 MIME-Version; b=nnoPCu1OS/B+pi56IIhRp/DeGZiyqUp4A947FS/qMXYtCM3I9XrJUHOScWXcLsB1dNEoW3qGe3btjdEF5isCm4bOpNkf3C4n73t1WbDIaaKwuwAF3QeU/EdOhgaQnmk7FW2Uel8idvjBfN3MJwUiwq2g6mZ4E2vjUXvtpz4S7r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhQUZYXV; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so51784405e9.1;
-        Tue, 12 Nov 2024 07:58:35 -0800 (PST)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d4ba20075so3930943f8f.0;
+        Tue, 12 Nov 2024 07:58:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731427114; x=1732031914; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731427117; x=1732031917; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jKbcoc75O9Cb98zpsIShjH5Q68sP76O0sTpNDdmUgyw=;
-        b=DhODKlZ3B+oSCMcRT7Iy8x+r1xllM4m1xtrqb5GCG/LVmfrxkpeyXh1XU95+jmNwt7
-         aPXZ7l0SDhXSbGKLILVBwUKahCyphbW9sUBKTaYSMwgfzTzUv+4DGsRnl5Dumk6bjdjk
-         dfFU7HmQ2adbC5FWBxYCNObD3Gfzpfg2u6HXXH2cvbAUMjJqKul1pEWcLdjhdT9lE3sC
-         Ysr7kgz24D7lglyMT3XFrRz7oahnRZBlCzUrmZnr3cvyBhB7fY1matZ68F5PMIEAQ5Fg
-         6wCZPHn4hbKce62/vbzsyYCXINeOP8eX7vcr9VXyEYs+cPn6HGVKSOikn7hjB+rrvPRz
-         Ehsw==
+        bh=YdY3Vsmu+IF4zfDZEiWUDqDaXm10hp+1m/IbDQWsUjk=;
+        b=mhQUZYXVz6NXeOfHKXlobY2zySWtMvCgUQVKzf/obSf+d0ZMWEisp7YCl6Hbc+dlO4
+         2tHPJ2sxxu9f3GR4wek5+ZgJbDTr1VX6FbJ6kdj89gFi0fDBlfCxesPfrIkAQacAwTKP
+         P3C1TSfghcsLcK8gJDTRR1YH3sHhQ3FXzY+/21hotWiityb9c7Dl7BhPI7RdcmDkhLZ9
+         iNIuqVyCbfGOf7se9JV8iiBwPHKL/sOTXfXgSDawdPfpT3FQ7w1VrlTQNZ5GEdp6G8Fj
+         +fetrOe9Hvoh0P9JTmUqUxRTAfkKJJAKQZJvlTzNCpcAAWtnch87ICfXYQY+HbKdhPwg
+         MvFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731427114; x=1732031914;
+        d=1e100.net; s=20230601; t=1731427117; x=1732031917;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jKbcoc75O9Cb98zpsIShjH5Q68sP76O0sTpNDdmUgyw=;
-        b=RSlEWcqPrn+MPtR0N7B08C/S8OqBfzY1DABZpOPpLb3oDrsdw67qJSkjywSYlmVQBH
-         BKz3OEUlVU7Cd5nv3GEFUjD5UMJD8N87d5K+7OnMityl/W/69navb7MqnakFz/wjisdg
-         DV1FiI3Sy3dRO9dyuCp3sEEnXrODnV37AKATVExyrUWxa60na4WoC189OTv+pFxyMGEi
-         dmnC9DZaX9EcP46oX3Rg8PkHpgdpcx9wdfZ+5ZwfwB2/IHnSD5vLBgAuEIfoIpw/KFqo
-         IIgwzmQFNthnr5R5DuO/mPvolORuRKvm02W7U6fhYjCfJSmCXos4v0abbhCmfBgZjx1w
-         KJuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWTzuPShf/FRqVBa1uv8XGR4eIuTh3dQ5DyiDFmo+TXDZe+nyCOic367mLfmMhAnpFED8k9UBKXlc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLrFTm6Cva9ci8ykSJWVy4+SlvgdIU+0uXbXqBevIAXxYgiq1j
-	0e/ji0TB9pmB4e+aVb/pLCq+0PguRgPcGplUMB0/YcS6zlhBMVWX
-X-Google-Smtp-Source: AGHT+IHFM0NmW34275yJbQeBGl/55ILfHlCyt7SGKx4KH7xPXJmZehxAQekfXV7mMWXzQaSI1omRNw==
-X-Received: by 2002:a05:6000:402a:b0:37d:5103:8894 with SMTP id ffacd0b85a97d-381f1881319mr13351957f8f.42.1731427114129;
-        Tue, 12 Nov 2024 07:58:34 -0800 (PST)
+        bh=YdY3Vsmu+IF4zfDZEiWUDqDaXm10hp+1m/IbDQWsUjk=;
+        b=f7YK4vRUfieO+IE5ePv7+xJLR7hSFfKDnJiY8deim8Ur37iJ6Gjor0rhX0JeKAx1QO
+         b/diiRrk0FzlgYRCupg9m+RAzhmaReopotqtxbJ8QzJKorLXC3CCxguXTqqzKHHKpz4L
+         BywLrtagtM02bT35U2ygBQI9+o0MUutuqb11Qi7+AzA+IJLixKVvAamu/zGq517Z5GNU
+         Fwteup/iHPjEp86Kzx9vtMlnnh1nTGQaXkwfo1Q1MAtyd9HQ+T9sr2Li7y3/beNVjbrI
+         Eyh8FrrUo4jH1F5YQGe4xQrfGWj3fU3wTum6Pd77wK/xsZRH9aVFyP4afEXpFelJFIZa
+         eykg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKXFHwN2ZgfCYM31ZhW2IxiBmasHD2ey5KEKWvKnY5EDdKm+1krbgSt1g/+QvdPtW/G6j6gAy8mqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsJK2sl2JgMptkOCs79eNgOhd0IjcDHN0K6chfcdt7zr9pxzaM
+	zFOa3wvnmKuPQGlrIeixb3/thKW/ECfwPW3RXd567YuTkcibEZf8
+X-Google-Smtp-Source: AGHT+IEk5cRyDkDwbtRzoRMZemPPxSCgDgj1ja1/Qas1wY9h9mscgWXEcczgtTnkR7b7cd4xSSzqtw==
+X-Received: by 2002:a05:6000:4009:b0:382:424:94ff with SMTP id ffacd0b85a97d-38204249572mr4094085f8f.18.1731427116898;
+        Tue, 12 Nov 2024 07:58:36 -0800 (PST)
 Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381edc1104asm15991136f8f.88.2024.11.12.07.58.32
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381edc1104asm15991136f8f.88.2024.11.12.07.58.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 07:58:33 -0800 (PST)
+        Tue, 12 Nov 2024 07:58:36 -0800 (PST)
 From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
 To: gregkh@linuxfoundation.org,
 	andreyknvl@gmail.com,
@@ -77,9 +77,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-usb@vger.kernel.org,
 	snovitoll@gmail.com,
 	usb-storage@lists.one-eyed-alien.net
-Subject: [PATCH v2 3/8] drivers/usb/host: refactor min/max with min_t/max_t
-Date: Tue, 12 Nov 2024 20:58:12 +0500
-Message-Id: <20241112155817.3512577-4-snovitoll@gmail.com>
+Subject: [PATCH v2 4/8] drivers/usb/misc: refactor min with min_t
+Date: Tue, 12 Nov 2024 20:58:13 +0500
+Message-Id: <20241112155817.3512577-5-snovitoll@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241112155817.3512577-1-snovitoll@gmail.com>
 References: <2024111251-spill-hatchback-72da@gregkh>
@@ -92,63 +92,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Ensure type safety by using min_t/max_t instead of casted min/max.
+Ensure type safety by using min_t() instead of min().
+
+Also add the explicit `unsigned int` as scripts/checkpatch.pl warns about:
+
+	WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
 
 Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
 ---
- drivers/usb/host/ehci-hcd.c     | 2 +-
- drivers/usb/host/oxu210hp-hcd.c | 4 ++--
- drivers/usb/host/r8a66597-hcd.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/misc/usbtest.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/ehci-hcd.c b/drivers/usb/host/ehci-hcd.c
-index cbc0b86fcc36..6de79ac5e6a4 100644
---- a/drivers/usb/host/ehci-hcd.c
-+++ b/drivers/usb/host/ehci-hcd.c
-@@ -547,7 +547,7 @@ static int ehci_init(struct usb_hcd *hcd)
- 		 * make problems:  throughput reduction (!), data errors...
- 		 */
- 		if (park) {
--			park = min(park, (unsigned) 3);
-+			park = min_t(unsigned int, park, 3);
- 			temp |= CMD_PARK;
- 			temp |= park << 8;
- 		}
-diff --git a/drivers/usb/host/oxu210hp-hcd.c b/drivers/usb/host/oxu210hp-hcd.c
-index ca3859463ba1..eaa34ee0a535 100644
---- a/drivers/usb/host/oxu210hp-hcd.c
-+++ b/drivers/usb/host/oxu210hp-hcd.c
-@@ -902,7 +902,7 @@ static int oxu_buf_alloc(struct oxu_hcd *oxu, struct ehci_qtd *qtd, int len)
+diff --git a/drivers/usb/misc/usbtest.c b/drivers/usb/misc/usbtest.c
+index caf65f8294db..8d379ae835bc 100644
+--- a/drivers/usb/misc/usbtest.c
++++ b/drivers/usb/misc/usbtest.c
+@@ -2021,7 +2021,8 @@ static struct urb *iso_alloc_urb(
  
- 	/* Find a suitable available data buffer */
- 	for (i = 0; i < BUFFER_NUM;
--			i += max(a_blocks, (int)oxu->db_used[i])) {
-+			i += max_t(int, a_blocks, oxu->db_used[i])) {
+ 	for (i = 0; i < packets; i++) {
+ 		/* here, only the last packet will be short */
+-		urb->iso_frame_desc[i].length = min((unsigned) bytes, maxp);
++		urb->iso_frame_desc[i].length = min_t(unsigned int,
++							bytes, maxp);
+ 		bytes -= urb->iso_frame_desc[i].length;
  
- 		/* Check all the required blocks are available */
- 		for (j = 0; j < a_blocks; j++)
-@@ -3040,7 +3040,7 @@ static int oxu_hcd_init(struct usb_hcd *hcd)
- 		 * make problems:  throughput reduction (!), data errors...
- 		 */
- 		if (park) {
--			park = min(park, (unsigned) 3);
-+			park = min_t(unsigned int, park, 3);
- 			temp |= CMD_PARK;
- 			temp |= park << 8;
- 		}
-diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
-index 6576515a29cd..d693fdfaa542 100644
---- a/drivers/usb/host/r8a66597-hcd.c
-+++ b/drivers/usb/host/r8a66597-hcd.c
-@@ -1336,7 +1336,7 @@ static void packet_read(struct r8a66597 *r8a66597, u16 pipenum)
- 		buf = (void *)urb->transfer_buffer + urb->actual_length;
- 		urb_len = urb->transfer_buffer_length - urb->actual_length;
- 	}
--	bufsize = min(urb_len, (int) td->maxpacket);
-+	bufsize = min_t(int, urb_len, td->maxpacket);
- 	if (rcv_len <= bufsize) {
- 		size = rcv_len;
- 	} else {
+ 		urb->iso_frame_desc[i].offset = maxp * i;
 -- 
 2.34.1
 
