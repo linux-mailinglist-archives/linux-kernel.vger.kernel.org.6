@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-406778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F669C6574
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:48:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96BD99C6532
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:32:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE383B2FF9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:48:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53DEAB2E81C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061ED21A4AD;
-	Tue, 12 Nov 2024 21:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E848C21A4A7;
+	Tue, 12 Nov 2024 21:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q+BKtKOS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L96mEZur"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9F61531C4;
-	Tue, 12 Nov 2024 21:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5592170DF;
+	Tue, 12 Nov 2024 21:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731448101; cv=none; b=JQ+0rsT/4Xcmgk4u3033hiTusMjFj7lXstYtcWwuzEzErTYJ3KbcPkPxErjqiLxeZKTkgVeDiqveQuPqz4VxaDbTvjUZT5NBVK12X+Vu0dKMSQQG6E0TTSgEXDgf5+B1JKXeRbxX0wSoOOi0nbjpLJ5ZzcpaZ5EbtXxrMkJ0kAs=
+	t=1731448385; cv=none; b=rLCTtUtu9uxpZY0ATJnLGivAbeObbCExK+a5QRHQy3mjWRenjhmooIVu/Seatw+X2zLAbYlrhEhaSRsyTl5Wv9W31bq1Auju6P1Xl/MJGDohgbSolWKZxz5Yc47nlxz7S4mFtDGyVwDuNWZa7XuenSzFOvmRIL51cD98vQUGqAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731448101; c=relaxed/simple;
-	bh=lw8zICoswkgeMSGHN3Ubcpal3X9B8IwqRNZ1wT7ecpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=rMeCJG0yRVmIUfFyt2POfZy0IgEK7dx35py88Cbnt0UFduAnvcYnFEN1bVfgDuQTw3kKjbmP+8yWiC2C6yGxV7xfFgNOaTvdlGim7Sg5JeWo2OMbIeJExcJyL10s3H5HTvGjakfyw0/MSsmseHm/BgHP1tmjP5YJMteikle9o5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q+BKtKOS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFFDC4CECD;
-	Tue, 12 Nov 2024 21:48:20 +0000 (UTC)
+	s=arc-20240116; t=1731448385; c=relaxed/simple;
+	bh=Cpq6m42ZBOwGk09BWFODZ3n4FLE2EVPtB3Tnhvqv+7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fFD4F0EFxFSv/78SQOSOiCdN4OE40snZdVwjzY+8M6Dv8hIs/OzVm2gBXiazAoHjf9QC+k9ZeVj5yDCKdJieQqBO04GIvVF3gIkXJQ3BuDfva+37KA+tWen5Y6vcwYzeOqNAzwshHe1nZnD9LJcjl3kitKn10e692f9xTdK3Wz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L96mEZur; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F91C4CECD;
+	Tue, 12 Nov 2024 21:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731448100;
-	bh=lw8zICoswkgeMSGHN3Ubcpal3X9B8IwqRNZ1wT7ecpo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Q+BKtKOSVQGX0Wy7XL5gB0l1an6/h1w0RDoCqOhLdPTNgWrZVTcPaCw7HdjoxOP2y
-	 H2+xkH9RpaBqyyQxmOPLIny93E1Rby0bF5eX/cEHHsLqW7frT43ztNiDaDxAxSCBU/
-	 s6KV7vX+HB6o0uA4hDi4Bfb1g/n+Bt+bh0C0D/EnI0TDBE/mssNimGcb0KXRWTKpB/
-	 qzIv9nBXtsdHoJVRE76ZUw4MoWcBW73s6p5A91kcwJ0BCcRKmiVpNiZvcg83g+shrj
-	 d1ySqhkmJZM14SeFwaWvV/VeQXSMYM2hErkoP2y2Z/vbOTZVLxdCYZ+UEvY3VeD8W9
-	 x5DcbIBHmQqIA==
-Date: Tue, 12 Nov 2024 15:48:19 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
-	Aditya Prabhune <aprabhune@nvidia.com>,
-	Hannes Reinecke <hare@suse.de>, Arun Easi <aeasi@marvell.com>,
-	Jonathan Chocron <jonnyc@amazon.com>,
-	Bert Kenward <bkenward@solarflare.com>,
-	Matt Carlson <mcarlson@broadcom.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Jean Delvare <jdelvare@suse.de>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] PCI/sysfs: Change read permissions for VPD
- attributes
-Message-ID: <20241112214819.GA1862173@bhelgaas>
+	s=k20201202; t=1731448385;
+	bh=Cpq6m42ZBOwGk09BWFODZ3n4FLE2EVPtB3Tnhvqv+7E=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=L96mEZurnQMIAYAhAd4kXZCMvLVCYQA/qGVdk9Us6r1OBtniUkUi1QntDPcuxWpfS
+	 gN5cOf+UQSojoMcAWMcl1wyasAgRZCETsFaR/PvuWij3+luwAZD3hbSkDSZHkvdPUx
+	 FKfbeeDopISYavdT0aLeiO6XIdcYtSZlx0xPZegSicARxzhjOI2TYApjGecgQHnMEa
+	 7f9vnHLGj5Y9+Pn2ZNL3gqy7LSj+LaJvQiDS5E8SBbnRAAtynwRsEGQYOWMamkFqcz
+	 el0GW1jBRQVdo7NUXOdCKrcZedoZdCtbKzdPqjrbynHUnX7k8d6BLyC1cDb6+qJgiq
+	 Qym4QidTn0mxw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 84E8ECE0FA5; Tue, 12 Nov 2024 13:53:04 -0800 (PST)
+Date: Tue, 12 Nov 2024 13:53:04 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>,
+	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
+	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
+	dlustig@nvidia.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	lkmm@lists.linux.dev, torvalds@linux-foundation.org
+Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
+ case-insensitive filesystem.
+Message-ID: <e3a5aa0a-2c8b-4679-9344-64135df63fe1@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
+ <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
+ <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
+ <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
+ <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
+ <62634bbe-edd6-4973-a96a-df543f39f240@rowland.harvard.edu>
+ <61075efa-8d53-455b-bba3-e88bbf4da0a5@paulmck-laptop>
+ <75a5a694-1313-44b1-baff-d72559ac9039@rowland.harvard.edu>
+ <de5485b8-6d88-46f6-b982-cdfb3cf80a13@paulmck-laptop>
+ <25cee4ed-1115-42d4-8422-ed7f7f4ff389@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241112072604.GH71181@unreal>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <25cee4ed-1115-42d4-8422-ed7f7f4ff389@rowland.harvard.edu>
 
-On Tue, Nov 12, 2024 at 09:26:04AM +0200, Leon Romanovsky wrote:
-> On Tue, Nov 12, 2024 at 07:44:09AM +0100, Heiner Kallweit wrote:
-> > On 12.11.2024 01:34, Stephen Hemminger wrote:
-> > > On Mon, 11 Nov 2024 14:41:04 -0600
-> > > Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > 
-> > >> On Thu, Nov 07, 2024 at 08:56:56PM +0200, Leon Romanovsky wrote:
-> > >>> From: Leon Romanovsky <leonro@nvidia.com>
-> > >>>
-> > >>> The Vital Product Data (VPD) attribute is not readable by regular
-> > >>> user without root permissions. Such restriction is not really needed
-> > >>> for many devices in the world, as data presented in that VPD is not
-> > >>> sensitive and access to the HW is safe and tested.
-> > >>>
-> > >>> This change aligns the permissions of the VPD attribute to be accessible
-> > >>> for read by all users, while write being restricted to root only.
-> > >>>
-> > >>> For the driver, there is a need to opt-in in order to allow this
-> > >>> functionality.  
-> > >>
-> > >> I don't think the use case is very strong (and not included at all
-> > >> here).
-> > >>
-> > >> If we do need to do this, I think it's a property of the device, not
-> > >> the driver.
-> > > 
-> > > I remember some broken PCI devices, which will crash if VPD is read.
-> > > Probably not worth opening this can of worms.
+On Tue, Nov 12, 2024 at 03:20:00PM -0500, Alan Stern wrote:
+> On Tue, Nov 12, 2024 at 10:26:37AM -0800, Paul E. McKenney wrote:
+> > We do have a rule for the filenames in that directory that most of
+> > them follow (I am looking at *you*, "dep+plain.litmus"!).  So we have
+> > a few options:
 > > 
-> > These crashes shouldn't occur any longer. There are two problematic cases:
-> > 1. Reading past end of VPD
-> >    This used to crash certain devices and was fixed by stop reading at
-> >    the VPD end tag.
-> > 2. Accessing VPD if device firmware isn't correctly loaded and initialized
-> >    This affects certain LSI devices, which are blacklisted so that PCI core
-> >    prevents VPD access.
+> > 1.	Status quo.  (How boring!!!)
+> > 
+> > 2.	Come up with a better rule mapping the litmus-test file
+> > 	contents to the filename, and rename things to follow that rule.
+> > 	(Holy bikeshedding, Batman!)
+> > 
+> > 3.	Keep it simple and keep the current rule, but make the
+> > 	combination of spin_lock() and smp_mb__after_spinlock()
+> > 	have a greater Hamming distance from "lock".  Szőke's
+> > 	patch changed only one of the filenames containing "Lock".
+> > 	(Bikeshedding, but narrower scope.)
+> > 
+> > 4.	One of the above, but bring the litmus tests not following
+> > 	the rule into compliance.
+> > 
+> > 5.	Give up on the idea of the name reflecting the contents of the
+> > 	file, and just number them or something.  (More bikeshedding
+> > 	and a different form of confusion.)
+> > 
+> > 6.	#5, but accompanied by some tool or script that allows easy
+> > 	searching of the litmus tests by pattern of interaction.
+> > 	(Easy for *me* to say!)
+> > 
+> > 7.	Something else entirely.
+> > 
+> > Thoughts?
 > 
-> Thanks for the information.
-> 
-> Bjorn,
-> 
-> After this response, do you still think that v0 [1] is not the right way
-> to change the read permission?
-> 
-> [1] https://lore.kernel.org/all/65791906154e3e5ea12ea49127cf7c707325ca56.1730102428.git.leonro@nvidia.com/
+> Thumbs up for 3.
 
-Yes, I still think it's unnecessarily risky to make VPD readable
-by ordinary users.  This is a pretty niche use case.
+Very good!  Any nominations for the lucky replacement for "Lock"?
 
-Bjorn
+							Thanx, Paul
 
