@@ -1,236 +1,113 @@
-Return-Path: <linux-kernel+bounces-405152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAED79C4D95
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:09:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD0D9C4D9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:09:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D1571F2372A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:09:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BF9FB24E4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42961208230;
-	Tue, 12 Nov 2024 04:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8459E209682;
+	Tue, 12 Nov 2024 04:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWMa90aM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nG+2Mm1O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7664720494F;
-	Tue, 12 Nov 2024 04:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C768920494F;
+	Tue, 12 Nov 2024 04:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731384561; cv=none; b=UIf0MFSM76uamdbiyDHYb17L3Uvk/1PG4kTtqyoI887IqWewCayksd8SsZGUFL1Lbc2laW6UYG4MBOr6/SkivmiWXoDK4ZWMma6ERkGw1jv+7YTDgKMmqASpyUnQcOovX0Bepi5HpiAANi8/FXq150RHLq9wbU5eAFohXqoIyUo=
+	t=1731384572; cv=none; b=epIkVjrv6k7X3uf9qGXO5OYZREgIeeyfPxIHlm+R4mV96StauzM2ZYR8eYWz2sjZy1aehnKV/bMTp2cYMRyi0KDivzn0I3YmatulqnukQqPuezq1Rz2/sVI0Frz62NI4jYBZN9mR66N3pp5TPbXQp2pfso7nDgZxBNwcY9lNzPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731384561; c=relaxed/simple;
-	bh=pR0BtV89O5c28HlJXTslOQmSq8i0VdMQqs5jp/cnj4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EZ+PO2hECXLNpL1y9OJDOrdblEPkvJkZWPeaQjB0JWM4d0zQCQdbPSA5WZ7obRHBLWyDXel76iWK/kGvjGEpszqxvfybWWuvNiUh9zSXjNysL7mfbvC/vI3JpkEpjCwd61b2bD3Fu5lOJcVOvexurRB83P1iKje6pPcMBMrLIRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eWMa90aM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B6EAC4AF09;
-	Tue, 12 Nov 2024 04:09:21 +0000 (UTC)
+	s=arc-20240116; t=1731384572; c=relaxed/simple;
+	bh=MhV+41Cp3i9m4j99lu/WCXY/MLivraTlLiNGgddAmok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UfuwnLJqr8qTcYGIbCQqWozXVPssJtYsnrYVYV7L8PSFUXW3E/XL+R51qFvdTHSiqGQicY1DGU1shSXtVjrr+03TrHCSb12yqfheXdDV34zaC/H5oyj5QHCHJzFFnfkOIOnwllzlHBKxm3t0lmrE/zTDQ5LaEUSEqOR56otWK7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nG+2Mm1O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40975C4CECD;
+	Tue, 12 Nov 2024 04:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731384561;
-	bh=pR0BtV89O5c28HlJXTslOQmSq8i0VdMQqs5jp/cnj4M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eWMa90aM8vmXm3QDmMl7620F2UhYvu7a6kfzejmyc+ZsWSOU2KND7KWoXmAEyW6RZ
-	 tlqXMNrWThUaB+pyOstes05Jevr/4rfWHADdNxVMXrRDMaYGzcfSgUFG3H95VSrvOo
-	 AXuo4cYVPEBVVoh+64JGORTU4dldDEKvKCXFF5e5fykR5tYhK7BFgCo9YZiJjqIov+
-	 7JM8VH0Snux9uCnCdEXibzYa2D3NRY/RoSoW9ze0XjuL+Uv64seT2hF2zC/qBGdmcS
-	 TjnUMjJAD2hV4S6Bt3o68aq+W42276DtW5jr9W05naxj/SVDLi/cRY2AY3txoZx6t3
-	 cdfpdbWXDte5Q==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb388e64b0so46833881fa.0;
-        Mon, 11 Nov 2024 20:09:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUpjJrzQX/cBoBPWZywmlYR9NR0Ft1NdXDLzFczDXwatIoz/rKJxmWhF1ESlg4XA5jhDnNvObEISxF16S46QQ==@vger.kernel.org, AJvYcCUwgLHeIIlKSs66SOfW+OFyEkLZOpK5S7tQSpHSDmyoZv3YeSIkl+uw4zZm4GlsExRPfA49+mOXI0Deaa8=@vger.kernel.org, AJvYcCVgXwncbS88Up1LWyKVVYUsKTGfr5ZVj4YfmjIcJygGChiLsn1kZpVC2x281Eny1Tp1Rl6Xsab66kWUXpPD@vger.kernel.org, AJvYcCWUyc2XVh4egDLGUfZdv9SKZwMvdKaRXieU1PuDW8JrjeZDa64ckprndrIJP77Gfdh06WkI2pRBm5W+BvbE9rQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIw3QQUvrSVGwiL03rg5pKNyEH7usenoXMf2dUJVN6jSKk7nPi
-	5i7DGmy7J1Y7yXgUtR8dzFLygwUkm/4ReYADsu9OZqBjBCVrwG3ZzrWGgu2tjlxkz8/6YumojiC
-	WYu/t/MyicGroAaRlYtAi8nU7NFQ=
-X-Google-Smtp-Source: AGHT+IHCz5Kq6glWndE0YFj2o5thdpPMvoFZsNuNTIzXPJG19tiU0tqQWVzQvxPj8BIf5QDsKUvqgDusa+OmiJvxhUw=
-X-Received: by 2002:a05:651c:198a:b0:2fb:4c5c:3f7d with SMTP id
- 38308e7fff4ca-2ff426972bemr5425751fa.5.1731384559779; Mon, 11 Nov 2024
- 20:09:19 -0800 (PST)
+	s=k20201202; t=1731384572;
+	bh=MhV+41Cp3i9m4j99lu/WCXY/MLivraTlLiNGgddAmok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nG+2Mm1Ok7247hKiGkUlNBLIvm7L0Y8WWZKof6UD2P7ncgXCeLiNU0B5X91JqD1oN
+	 ZMybVpVEZ8Ep13s9W0AMvilXCWh+EoImzoqvdETjREQcsXBWusjwzW7RmTgx8tcLhz
+	 PrLncDjHZCPRvRkWDa4QE4W2l9IjyNdsRL8o/uCpruMYQks7xMATRckKFntbuYiB4D
+	 H95WCHX0X9FQax1l/9v+jPZNaVmDxRWXR9pBgZKS64KIptKMEwO6djWCTfGzNxd4Dq
+	 yyexiS175fDpNRmOwDIT+lQ3VCcaGEBOPgcXuz/a3/UzAbc64oNwwxTs8yI9Mhsedx
+	 yrRvan3rXLyQw==
+Date: Mon, 11 Nov 2024 22:09:29 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com
+Subject: Re: [PATCH v2 RESEND 2/3] i2c: qcom_geni: Update compile
+ dependenices for qcom geni
+Message-ID: <3fkfjeif3e4z3utcim5dou2obwjoagtr3z2bnwkywa2xlm4jrb@jon6mwtp4ahv>
+References: <20241111140244.13474-1-quic_jseerapu@quicinc.com>
+ <20241111140244.13474-3-quic_jseerapu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030170106.1501763-21-samitolvanen@google.com> <20241030170106.1501763-39-samitolvanen@google.com>
-In-Reply-To: <20241030170106.1501763-39-samitolvanen@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 12 Nov 2024 13:08:43 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR9c+EEsOvPPn4qSq3gAFskYOXVd=dg8O+bKeeC-HMifw@mail.gmail.com>
-Message-ID: <CAK7LNAR9c+EEsOvPPn4qSq3gAFskYOXVd=dg8O+bKeeC-HMifw@mail.gmail.com>
-Subject: Re: [PATCH v5 18/19] kbuild: Add gendwarfksyms as an alternative to genksyms
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111140244.13474-3-quic_jseerapu@quicinc.com>
 
-On Thu, Oct 31, 2024 at 2:01=E2=80=AFAM Sami Tolvanen <samitolvanen@google.=
-com> wrote:
->
-> When MODVERSIONS is enabled, allow selecting gendwarfksyms as the
-> implementation, but default to genksyms.
->
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> Acked-by: Neal Gompa <neal@gompa.dev>
+On Mon, Nov 11, 2024 at 07:32:43PM +0530, Jyothi Kumar Seerapu wrote:
+> I2C_QCOM_GENI is having compile dependencies on QCOM_GPI_DMA and
+> so update I2C_QCOM_GENI to depends on QCOM_GPI_DMA.
+> 
+
+Given that this is a separate patch, your wording can only be
+interpreted as this being an existing problem.
+
+> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
 > ---
->  kernel/module/Kconfig  | 25 ++++++++++++++++++++++++-
->  scripts/Makefile       |  2 +-
->  scripts/Makefile.build | 41 +++++++++++++++++++++++++++++++++--------
->  3 files changed, 58 insertions(+), 10 deletions(-)
->
-> diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
-> index f9e5f82fa88b..e6b2427e5c19 100644
-> --- a/kernel/module/Kconfig
-> +++ b/kernel/module/Kconfig
-> @@ -169,13 +169,36 @@ config MODVERSIONS
->           make them incompatible with the kernel you are running.  If
->           unsure, say N.
->
-> +choice
-> +       prompt "Module versioning implementation"
-> +       depends on MODVERSIONS
-> +       default GENKSYMS
-> +       help
-> +         Select the tool used to calculate symbol versions for modules.
-> +
-> +         If unsure, select GENKSYMS.
-> +
-> +config GENKSYMS
-> +       bool "genksyms (from source code)"
-> +       help
-> +         Calculate symbol versions from pre-processed source code using
-> +         genksyms.
-> +
-> +         If unsure, say Y.
-> +
->  config GENDWARFKSYMS
-> -       bool
-> +       bool "gendwarfksyms (from debugging information)"
->         depends on DEBUG_INFO
->         # Requires full debugging information, split DWARF not supported.
->         depends on !DEBUG_INFO_REDUCED && !DEBUG_INFO_SPLIT
->         # Requires ELF object files.
->         depends on !LTO
-> +       help
-> +         Calculate symbol versions from DWARF debugging information usin=
-g
-> +         gendwarfksyms. Requires DEBUG_INFO to be enabled.
-> +
-> +         If unsure, say N.
-> +endchoice
->
->  config ASM_MODVERSIONS
->         bool
-> diff --git a/scripts/Makefile b/scripts/Makefile
-> index d7fec46d38c0..8533f4498885 100644
-> --- a/scripts/Makefile
-> +++ b/scripts/Makefile
-> @@ -53,7 +53,7 @@ hostprogs +=3D unifdef
->  targets +=3D module.lds
->
->  subdir-$(CONFIG_GCC_PLUGINS) +=3D gcc-plugins
-> -subdir-$(CONFIG_MODVERSIONS) +=3D genksyms
-> +subdir-$(CONFIG_GENKSYMS) +=3D genksyms
->  subdir-$(CONFIG_GENDWARFKSYMS) +=3D gendwarfksyms
->  subdir-$(CONFIG_SECURITY_SELINUX) +=3D selinux
->  subdir-$(CONFIG_SECURITY_IPE) +=3D ipe
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index 8f423a1faf50..d2a0440cdb79 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -107,18 +107,31 @@ cmd_cpp_i_c       =3D $(CPP) $(c_flags) -o $@ $<
->  $(obj)/%.i: $(obj)/%.c FORCE
->         $(call if_changed_dep,cpp_i_c)
->
-> +getexportsymbols =3D $(NM) $(1) | sed -n 's/.* __export_symbol_\(.*\)/$(=
-2)/p'
-> +
-> +gendwarfksyms =3D scripts/gendwarfksyms/gendwarfksyms    \
-> +       $(if $(1), --symtypes $(2))                     \
-> +       $(if $(KBUILD_GENDWARFKSYMS_STABLE), --stable)
-> +
->  genksyms =3D scripts/genksyms/genksyms           \
->         $(if $(1), -T $(2))                     \
->         $(if $(KBUILD_PRESERVE), -p)            \
->         -r $(or $(wildcard $(2:.symtypes=3D.symref)), /dev/null)
->
->  # These mirror gensymtypes_S and co below, keep them in synch.
-> +ifdef CONFIG_GENDWARFKSYMS
-> +symtypes_dep_c =3D $(obj)/%.o
-> +cmd_gensymtypes_c =3D $(if $(skip_gendwarfksyms),,       \
-> +       $(call getexportsymbols,$(2:.symtypes=3D.o),\1) | \
-> +       $(gendwarfksyms) $(2:.symtypes=3D.o))
-> +else
->  cmd_gensymtypes_c =3D $(CPP) -D__GENKSYMS__ $(c_flags) $< | $(genksyms)
-> +endif # CONFIG_GENDWARFKSYMS
->
->  quiet_cmd_cc_symtypes_c =3D SYM $(quiet_modtag) $@
->        cmd_cc_symtypes_c =3D $(call cmd_gensymtypes_c,true,$@) >/dev/null
->
-> -$(obj)/%.symtypes : $(obj)/%.c FORCE
-> +$(obj)/%.symtypes : $(obj)/%.c $(symtypes_dep_c) FORCE
->         $(call cmd,cc_symtypes_c)
->
->  # LLVM assembly
-> @@ -314,19 +327,31 @@ $(obj)/%.ll: $(obj)/%.rs FORCE
->  # This is convoluted. The .S file must first be preprocessed to run guar=
-ds and
->  # expand names, then the resulting exports must be constructed into plai=
-n
->  # EXPORT_SYMBOL(symbol); to build our dummy C file, and that gets prepro=
-cessed
-> -# to make the genksyms input.
-> +# to make the genksyms input or compiled into an object for gendwarfksym=
-s.
->  #
->  # These mirror gensymtypes_c and co above, keep them in synch.
-> -cmd_gensymtypes_S =3D                                                   =
-      \
-> -   { echo "\#include <linux/kernel.h>" ;                                =
-    \
-> -     echo "\#include <asm/asm-prototypes.h>" ;                          =
-    \
-> -     $(NM) $@ | sed -n 's/.* __export_symbol_\(.*\)/EXPORT_SYMBOL(\1);/p=
-' ; } | \
-> -    $(CPP) -D__GENKSYMS__ $(c_flags) -xc - | $(genksyms)
-> +getasmexports =3D                                                       =
-         \
-> +   { echo "\#include <linux/kernel.h>" ;                               \
-> +     echo "\#include <linux/string.h>" ;                               \
-> +     echo "\#include <asm/asm-prototypes.h>" ;                         \
-> +     $(call getexportsymbols,$(2:.symtypes=3D.o),EXPORT_SYMBOL(\1);) ; }
-> +
-> +ifdef CONFIG_GENDWARFKSYMS
-> +cmd_gensymtypes_S =3D                                                   =
- \
-> +       $(getasmexports) |                                              \
-> +       $(CC) $(c_flags) -c -o $(2:.symtypes=3D.gendwarfksyms.o) -xc -;  =
- \
-> +       $(call getexportsymbols,$(2:.symtypes=3D.o),\1) |                =
- \
-> +       $(gendwarfksyms) $(2:.symtypes=3D.gendwarfksyms.o)
+> 
+> v1 -> v2: 
+> 	This patch is added in v2 to address the kernel test robot
+> 	reported compilation error.
+> 	ERROR: modpost: "gpi_multi_desc_process" [drivers/i2c/busses/i2c-qcom-geni.ko] undefined! 
 
-
-I do not want to see crazy suffix replacements like this.
-
-I decided to delete this.
-https://lore.kernel.org/linux-kbuild/20241111171753.2917697-2-masahiroy@ker=
-nel.org/T/#u
+But as far as I can tell you introduce this problem in patch 3. If so
+this addition should be part of patch 3.
 
 
 
---=20
-Best Regards
-Masahiro Yamada
+Also, you have different subject prefix for patch 2 and 3, yet they
+relate to the same driver. Not pretty.
+
+Regards,
+Bjorn
+
+> 
+> drivers/i2c/busses/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index 0aa948014008..87634a682855 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -1049,6 +1049,7 @@ config I2C_QCOM_GENI
+>  	tristate "Qualcomm Technologies Inc.'s GENI based I2C controller"
+>  	depends on ARCH_QCOM || COMPILE_TEST
+>  	depends on QCOM_GENI_SE
+> +	depends on QCOM_GPI_DMA
+>  	help
+>  	  This driver supports GENI serial engine based I2C controller in
+>  	  master mode on the Qualcomm Technologies Inc.'s SoCs. If you say
+> -- 
+> 2.17.1
+> 
+> 
 
