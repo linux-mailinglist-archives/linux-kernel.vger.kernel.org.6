@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-406439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1632E9C5F0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:33:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE4F9C5F12
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:34:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA803284790
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:33:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8761F23D13
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAB2216DFF;
-	Tue, 12 Nov 2024 17:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C558C218939;
+	Tue, 12 Nov 2024 17:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hDcS1nLj"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GMMPzQtx"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF4F2144D2
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB64217304
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731432666; cv=none; b=YPcmz5YHsg7cf9isHcvvvaxGLm2BNEDmJpbhGWqvmTvrSofex72OU26Aftdc94Ht5R4KsZ5PtRSXw7pZ9SAMOqSBpdvRcn2pTRZ1JCeTNKyYZ8P9pyt0VLn/ml/SVPRsRvk8fOXSCmZPsYMvZDVAk2hHCSsh4nf5sjZWoiRuXas=
+	t=1731432670; cv=none; b=Q6Q2X+OU+g66Y2n3nqnxAhXZ6BgTWuK55X9LsAbEbAqXEjkxbPWuA1IeZMBKW2itVqcAtvUJ7GeERk/Ipr1PZZN8CQbrFHfgszxwyEv6LgaQDBXg6p3hx+lli7deMVSzSWvI0DNfNfSOHtImg6M7WajhllZ1QBw2/g/Oug2pzYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731432666; c=relaxed/simple;
-	bh=ARE05qnYrbG1PaurfMt4sWTURGohFvkDjj+xaPdokqc=;
+	s=arc-20240116; t=1731432670; c=relaxed/simple;
+	bh=PElbl8uW8Fa0oaZt4+kEmvtPpbNU7LixpWE5F/F/xAU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tlBTJasY/sGQQi4cJ1a8SxYmXq2Q+aHSoVdxJj5TwXKu4LtubVCRtBQUJZ8eRDcfUz85x/5Jd/O1xLJXe18MhWPPW08eRaV3GOUgPuxM1yGZj+8wEXsT+GB7iZkZcKhCbswaqAugVdo/WpWoLbPxIgUlWgGB1NkKP1l8yh84RtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hDcS1nLj; arc=none smtp.client-ip=209.85.222.174
+	 In-Reply-To:To:Cc; b=rMq5UToi7UDADeaSayfOoKJknLzrpdl6MyBuXLjzWjNjn1DFInLlnzZRpZXtQYQSl1rVeKrkjm91e9HIIrrYMsk2djgsI4GF1+rmkmnuBE2IKwauwIxEsszmeMj6VwOLO+il2u3+QbhxZU+gvcHvFX9MaOl7H9DYM/toa6EXoWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GMMPzQtx; arc=none smtp.client-ip=209.85.222.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b1b224f6c6so429548485a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:31:04 -0800 (PST)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b155da5b0cso419868285a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:31:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731432664; x=1732037464; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1731432666; x=1732037466; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2vaVDRM1V2OFL5Lfp0Tp3fV8e2l0lPm3Um6LzAvGga4=;
-        b=hDcS1nLjvJL051sV9jI6NIwcChetZa+6iPVRhLK3y9FWSZBAoFk3CcjfwMiVIFmADL
-         N6rGVuX3/1GH+GMuLsjWnZ1Iax+LgdM+Kb/m/rxTLUI/PxdEhaac9tnI0pTy5474H7J7
-         8BOjCodnjkPWU+GWrvPjKUHiArbVlF2tVSeno=
+        bh=1P5DVRMjbEuaaQXC+PIiJu+9ELqOWJV7Errw4E0pPWQ=;
+        b=GMMPzQtx5jeo66Sffyt8xdT3OfgAfVyUhH0oS1fb84n6oy8N5/PUkSOKcKNZRItFrI
+         NsS30kudoPtF8SQdP6aQaZR0dhzAu43fmecp32HS09NWqKgcT+Hugxw0e+flndcd2SY4
+         I1MpZRkQwTM03Ca4+mKuzpx08K5vRH1eaCqME=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731432664; x=1732037464;
+        d=1e100.net; s=20230601; t=1731432666; x=1732037466;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2vaVDRM1V2OFL5Lfp0Tp3fV8e2l0lPm3Um6LzAvGga4=;
-        b=CNkoFukyPQ6uCxk3KdhWCosf1GfjL0J7NZJt4GFBtHw6WGOv/p9eVYmEh8+MLQK1ha
-         LR75jOrNbVOYzKbUNcm1/6LBbZQ33NcNr8D3/xbBbedBNfve19KNeZrXcevRpjxigngz
-         Ddm1ebMRmuNgPEhqW8LsFOJRQjhNspLC9foLxhd4XsRQFSLsEQFdA+Ro0AvtGhAZG/2P
-         qUClI9v0whI4JZePGsQZfAClqi/Lg2pdGpgiBUpJTjgFRoAHCIZRcVKgx1KHyMnNbgBT
-         BJGICAMC2Dqza5fSdDCNwhGnSmR6EOSuTJeLv/SIrxox+QgTKxKCWKWj+5iiiNW4tYKI
-         jbBg==
-X-Gm-Message-State: AOJu0YxWDd1Zv/2aYMBDrtyJCLTxSZm9dizwCNIwNvG6ZRxFClyqgQhJ
-	BRqp75sxxyoJE2/P+Wtb2w5MJPHczW4VDYcjRZoV0UpKYm9klP9Y+Vq3Iqhxywm1MJlPwVk2D/g
+        bh=1P5DVRMjbEuaaQXC+PIiJu+9ELqOWJV7Errw4E0pPWQ=;
+        b=Vz6GfDLu+riqPti+3w9HXM0Eb2BpR9EoLgncC6kT+FUff02sf6P+OMkDTvCgVkv8kZ
+         Jn801N6ghzErxOBb3WUdkxUtvOw9QzGJGGemq7PJxDx7dyqxmUZLPDE/RzpEbySCWTdO
+         kVS7TD7uSTQ6+2rqAvmq3so+Wld4x6rhOf4EquSwfHSD6ZjwIpcRzD6vwmrGCmXs3e11
+         sIcfiFylqdcTr4wFO37c7EG6f/ro5WyhqZlwNgZ3bFLPGX+DON6Z0DUi8/lpojLK2yjC
+         NBDTwdyJURASxm+Xd49siNZrWgHEgPHtk55i4zPymwoLmg3hgHCZ5iXiPIYByvvPbUx3
+         4JRA==
+X-Gm-Message-State: AOJu0Yx4+/3iMrkd5wCOcVceTRoFBnh9fZ4E2p48SIW1ZijQ5ipk0g+4
+	v3DrMEI1IJyF4d4D/CWIu/hg3X4IyCivmgLtiAHOCn6O0Npg4cHj75Lh/qkOSBoHw8ch134/I+E
 	=
-X-Google-Smtp-Source: AGHT+IGUTjDChRDa1wzOvaVmFTddH5hipHL9tXZqCooGO5Ga3pReVfa85TjuhqS2jvbpEsS9IJI3eg==
-X-Received: by 2002:a05:620a:1a25:b0:7ab:3ec9:f4c7 with SMTP id af79cd13be357-7b331eafd8fmr2426728285a.35.1731432663499;
-        Tue, 12 Nov 2024 09:31:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEcAtMGtdgkDsLT0VyNL58SyBI46+EinyYYZVvqJr9WyHwssspAfr3QBpctZQDfTxZjHPLGXQ==
+X-Received: by 2002:a05:620a:2a06:b0:7b1:51e9:ed77 with SMTP id af79cd13be357-7b34baf0ef3mr325476585a.10.1731432666627;
+        Tue, 12 Nov 2024 09:31:06 -0800 (PST)
 Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac2dcebsm608292285a.7.2024.11.12.09.31.02
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac2dcebsm608292285a.7.2024.11.12.09.31.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 09:31:02 -0800 (PST)
+        Tue, 12 Nov 2024 09:31:06 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 12 Nov 2024 17:30:46 +0000
-Subject: [PATCH v3 3/8] media: uvcvideo: Re-implement privacy GPIO as an
- input device
+Date: Tue, 12 Nov 2024 17:30:49 +0000
+Subject: [PATCH v3 6/8] media: v4l2-core: Add new MEDIA_ENT_F_GPIO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241112-uvc-subdev-v3-3-0ea573d41a18@chromium.org>
+Message-Id: <20241112-uvc-subdev-v3-6-0ea573d41a18@chromium.org>
 References: <20241112-uvc-subdev-v3-0-0ea573d41a18@chromium.org>
 In-Reply-To: <20241112-uvc-subdev-v3-0-0ea573d41a18@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -86,357 +85,64 @@ Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
  Hans de Goede <hdegoede@redhat.com>, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-Reimplement privacy GPIO as an input device.
-
-This is an attempt to unify how we notify userspace about a camera that
-is covered.
-
-Replace the previous V4L2_CID_PRIVACY control with evdev
-SW_CAMERA_LENS_COVER.
-
-This has some main benefits:
-- It unifies behaviour with other drivers.
-- It allows reading the privacy events without powering up the camera.
-- It allows reading the privacy gpio and the internal gpio control (if
-  present).
-
-Although this introduces an ABI change, we have only seen ChromeOS using
-this feature.
+Add a new media entity type to define a GPIO entity. This can be used to
+represent the privacy switch GPIO associated to a sensor.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/uvc/Kconfig      |  2 +-
- drivers/media/usb/uvc/Makefile     |  6 ++-
- drivers/media/usb/uvc/uvc_ctrl.c   | 20 ----------
- drivers/media/usb/uvc/uvc_driver.c |  3 +-
- drivers/media/usb/uvc/uvc_entity.c |  6 +++
- drivers/media/usb/uvc/uvc_gpio.c   | 76 +++++++++++++-------------------------
- drivers/media/usb/uvc/uvc_status.c | 13 +++++--
- drivers/media/usb/uvc/uvcvideo.h   | 15 +++++---
- 8 files changed, 59 insertions(+), 82 deletions(-)
+ Documentation/userspace-api/media/mediactl/media-types.rst | 4 ++++
+ drivers/media/v4l2-core/v4l2-async.c                       | 3 ++-
+ include/uapi/linux/media.h                                 | 1 +
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/uvc/Kconfig b/drivers/media/usb/uvc/Kconfig
-index 579532272fd6..cdbba7fd5bee 100644
---- a/drivers/media/usb/uvc/Kconfig
-+++ b/drivers/media/usb/uvc/Kconfig
-@@ -17,6 +17,6 @@ config USB_VIDEO_CLASS_INPUT_EVDEV
- 	depends on USB_VIDEO_CLASS=INPUT || INPUT=y
- 	help
- 	  This option makes USB Video Class devices register an input device
--	  to report button events.
-+	  to report button events and privacy GPIO.
+diff --git a/Documentation/userspace-api/media/mediactl/media-types.rst b/Documentation/userspace-api/media/mediactl/media-types.rst
+index 6332e8395263..7ede3954a96a 100644
+--- a/Documentation/userspace-api/media/mediactl/media-types.rst
++++ b/Documentation/userspace-api/media/mediactl/media-types.rst
+@@ -24,6 +24,7 @@ Types and flags used to represent the media graph elements
+ .. _MEDIA-ENT-F-CAM-SENSOR:
+ .. _MEDIA-ENT-F-FLASH:
+ .. _MEDIA-ENT-F-LENS:
++.. _MEDIA-ENT-F-GPIO:
+ .. _MEDIA-ENT-F-ATV-DECODER:
+ .. _MEDIA-ENT-F-TUNER:
+ .. _MEDIA-ENT-F-IF-VID-DECODER:
+@@ -100,6 +101,9 @@ Types and flags used to represent the media graph elements
+     *  -  ``MEDIA_ENT_F_LENS``
+        -  Lens controller entity.
  
- 	  If you are in doubt, say Y.
-diff --git a/drivers/media/usb/uvc/Makefile b/drivers/media/usb/uvc/Makefile
-index 85514b6e538f..b36b124da7a8 100644
---- a/drivers/media/usb/uvc/Makefile
-+++ b/drivers/media/usb/uvc/Makefile
-@@ -1,8 +1,10 @@
- # SPDX-License-Identifier: GPL-2.0
- uvcvideo-objs  := uvc_driver.o uvc_queue.o uvc_v4l2.o uvc_video.o uvc_ctrl.o \
--		  uvc_status.o uvc_isight.o uvc_debugfs.o uvc_metadata.o \
--		  uvc_gpio.o
-+		  uvc_status.o uvc_isight.o uvc_debugfs.o uvc_metadata.o
- ifeq ($(CONFIG_MEDIA_CONTROLLER),y)
- uvcvideo-objs  += uvc_entity.o
- endif
-+ifeq ($(CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV),y)
-+uvcvideo-objs  += uvc_gpio.o
-+endif
- obj-$(CONFIG_USB_VIDEO_CLASS) += uvcvideo.o
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 4fe26e82e3d1..b98f4778d8aa 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -350,14 +350,6 @@ static const struct uvc_control_info uvc_ctrls[] = {
- 				| UVC_CTRL_FLAG_RESTORE
- 				| UVC_CTRL_FLAG_AUTO_UPDATE,
- 	},
--	{
--		.entity		= UVC_GUID_EXT_GPIO_CONTROLLER,
--		.selector	= UVC_CT_PRIVACY_CONTROL,
--		.index		= 0,
--		.size		= 1,
--		.flags		= UVC_CTRL_FLAG_GET_CUR
--				| UVC_CTRL_FLAG_AUTO_UPDATE,
--	},
- };
- 
- static const u32 uvc_control_classes[] = {
-@@ -827,15 +819,6 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
- 		.v4l2_type	= V4L2_CTRL_TYPE_BOOLEAN,
- 		.data_type	= UVC_CTRL_DATA_TYPE_BOOLEAN,
- 	},
--	{
--		.id		= V4L2_CID_PRIVACY,
--		.entity		= UVC_GUID_EXT_GPIO_CONTROLLER,
--		.selector	= UVC_CT_PRIVACY_CONTROL,
--		.size		= 1,
--		.offset		= 0,
--		.v4l2_type	= V4L2_CTRL_TYPE_BOOLEAN,
--		.data_type	= UVC_CTRL_DATA_TYPE_BOOLEAN,
--	},
- 	{
- 		.entity		= UVC_GUID_UVC_PROCESSING,
- 		.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
-@@ -2718,9 +2701,6 @@ static int uvc_ctrl_init_chain(struct uvc_video_chain *chain)
- 		} else if (UVC_ENTITY_TYPE(entity) == UVC_ITT_CAMERA) {
- 			bmControls = entity->camera.bmControls;
- 			bControlSize = entity->camera.bControlSize;
--		} else if (UVC_ENTITY_TYPE(entity) == UVC_EXT_GPIO_UNIT) {
--			bmControls = entity->gpio.bmControls;
--			bControlSize = entity->gpio.bControlSize;
- 		}
- 
- 		/* Remove bogus/blacklisted controls */
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 5b48768a4f7f..d6c12be49b5c 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -2171,6 +2171,7 @@ static int uvc_probe(struct usb_interface *intf,
- 	if (media_device_register(&dev->mdev) < 0)
- 		goto error;
- #endif
++    *  -  ``MEDIA_ENT_F_GPIO``
++       -  GPIO controller entity.
 +
- 	/* Save our data pointer in the interface data. */
- 	usb_set_intfdata(intf, dev);
+     *  -  ``MEDIA_ENT_F_ATV_DECODER``
+        -  Analog video decoder, the basic function of the video decoder is
+ 	  to accept analogue video from a wide variety of sources such as
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index ee884a8221fb..8a902fc897d1 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -320,7 +320,8 @@ static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
+ 	struct media_link *link;
  
-@@ -2182,7 +2183,7 @@ static int uvc_probe(struct usb_interface *intf,
- 			 ret);
- 	}
- 
--	ret = uvc_gpio_init_irq(dev);
-+	ret = uvc_gpio_init(dev);
- 	if (ret < 0) {
- 		dev_err(&dev->udev->dev,
- 			"Unable to request privacy GPIO IRQ (%d)\n", ret);
-diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
-index cc68dd24eb42..c1b69f9eaa56 100644
---- a/drivers/media/usb/uvc/uvc_entity.c
-+++ b/drivers/media/usb/uvc/uvc_entity.c
-@@ -56,7 +56,13 @@ static int uvc_mc_create_links(struct uvc_video_chain *chain,
- 	return 0;
- }
- 
-+static const struct v4l2_subdev_core_ops uvc_subdev_core_ops = {
-+	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-+	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
-+};
-+
- static const struct v4l2_subdev_ops uvc_subdev_ops = {
-+	.core = &uvc_subdev_core_ops,
- };
- 
- void uvc_mc_cleanup_entity(struct uvc_entity *entity)
-diff --git a/drivers/media/usb/uvc/uvc_gpio.c b/drivers/media/usb/uvc/uvc_gpio.c
-index 453739acbe8f..80096022ad08 100644
---- a/drivers/media/usb/uvc/uvc_gpio.c
-+++ b/drivers/media/usb/uvc/uvc_gpio.c
-@@ -7,57 +7,29 @@
- 
- #include <linux/kernel.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/input.h>
- #include "uvcvideo.h"
- 
--static void uvc_gpio_event(struct uvc_device *dev)
--{
--	struct uvc_entity *unit = dev->gpio_unit;
--	struct uvc_video_chain *chain;
--	u8 new_val;
--
--	if (!unit)
--		return;
--
--	new_val = gpiod_get_value_cansleep(unit->gpio.gpio_privacy);
--
--	/* GPIO entities are always on the first chain. */
--	chain = list_first_entry(&dev->chains, struct uvc_video_chain, list);
--	uvc_ctrl_status_event(chain, unit->controls, &new_val);
--}
--
--static int uvc_gpio_get_cur(struct uvc_device *dev, struct uvc_entity *entity,
--			    u8 cs, void *data, u16 size)
--{
--	if (cs != UVC_CT_PRIVACY_CONTROL || size < 1)
--		return -EINVAL;
--
--	*(u8 *)data = gpiod_get_value_cansleep(entity->gpio.gpio_privacy);
--
--	return 0;
--}
--
--static int uvc_gpio_get_info(struct uvc_device *dev, struct uvc_entity *entity,
--			     u8 cs, u8 *caps)
--{
--	if (cs != UVC_CT_PRIVACY_CONTROL)
--		return -EINVAL;
--
--	*caps = UVC_CONTROL_CAP_GET | UVC_CONTROL_CAP_AUTOUPDATE;
--	return 0;
--}
--
- static irqreturn_t uvc_gpio_irq(int irq, void *data)
- {
- 	struct uvc_device *dev = data;
-+	struct uvc_gpio *uvc_gpio = &dev->gpio_unit->gpio;
-+	int new_val;
-+
-+	new_val = gpiod_get_value_cansleep(uvc_gpio->gpio_privacy);
-+	if (new_val < 0)
-+		return IRQ_HANDLED;
-+
-+	input_report_switch(dev->input, SW_CAMERA_LENS_COVER, new_val);
-+	input_sync(dev->input);
- 
--	uvc_gpio_event(dev);
- 	return IRQ_HANDLED;
- }
- 
- int uvc_gpio_parse(struct uvc_device *dev)
- {
--	struct uvc_entity *unit;
- 	struct gpio_desc *gpio_privacy;
-+	struct uvc_entity *unit;
- 	int irq;
- 
- 	gpio_privacy = devm_gpiod_get_optional(&dev->intf->dev, "privacy",
-@@ -67,23 +39,17 @@ int uvc_gpio_parse(struct uvc_device *dev)
- 
- 	irq = gpiod_to_irq(gpio_privacy);
- 	if (irq < 0)
--		return dev_err_probe(&dev->udev->dev, irq,
-+		return dev_err_probe(&dev->intf->dev, irq,
- 				     "No IRQ for privacy GPIO\n");
- 
- 	unit = uvc_alloc_new_entity(dev, UVC_EXT_GPIO_UNIT,
--				    UVC_EXT_GPIO_UNIT_ID, 0, 1);
-+				    UVC_EXT_GPIO_UNIT_ID, 0, 0);
- 	if (IS_ERR(unit))
- 		return PTR_ERR(unit);
- 
- 	unit->gpio.gpio_privacy = gpio_privacy;
- 	unit->gpio.irq = irq;
--	unit->gpio.bControlSize = 1;
--	unit->gpio.bmControls = (u8 *)unit + sizeof(*unit);
--	unit->gpio.bmControls[0] = 1;
--	unit->get_cur = uvc_gpio_get_cur;
--	unit->get_info = uvc_gpio_get_info;
- 	strscpy(unit->name, "GPIO", sizeof(unit->name));
--
- 	list_add_tail(&unit->list, &dev->entities);
- 
- 	dev->gpio_unit = unit;
-@@ -91,22 +57,32 @@ int uvc_gpio_parse(struct uvc_device *dev)
- 	return 0;
- }
- 
--int uvc_gpio_init_irq(struct uvc_device *dev)
-+int uvc_gpio_init(struct uvc_device *dev)
- {
- 	struct uvc_entity *unit = dev->gpio_unit;
-+	int init_val;
- 	int ret;
- 
- 	if (!unit || unit->gpio.irq < 0)
+ 	if (sd->entity.function != MEDIA_ENT_F_LENS &&
+-	    sd->entity.function != MEDIA_ENT_F_FLASH)
++	    sd->entity.function != MEDIA_ENT_F_FLASH &&
++	    sd->entity.function != MEDIA_ENT_F_GPIO)
  		return 0;
  
-+	init_val = gpiod_get_value_cansleep(unit->gpio.gpio_privacy);
-+	if (init_val < 0)
-+		return init_val;
-+
- 	ret = request_threaded_irq(unit->gpio.irq, NULL, uvc_gpio_irq,
- 				   IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
- 				   IRQF_TRIGGER_RISING,
- 				   "uvc_privacy_gpio", dev);
-+	if (ret)
-+		return ret;
-+
-+	input_report_switch(dev->input, SW_CAMERA_LENS_COVER, init_val);
-+	input_sync(dev->input);
+ 	if (!n->sd) {
+diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
+index 1c80b1d6bbaf..d3d045e52d78 100644
+--- a/include/uapi/linux/media.h
++++ b/include/uapi/linux/media.h
+@@ -84,6 +84,7 @@ struct media_device_info {
+ #define MEDIA_ENT_F_CAM_SENSOR			(MEDIA_ENT_F_OLD_SUBDEV_BASE + 1)
+ #define MEDIA_ENT_F_FLASH			(MEDIA_ENT_F_OLD_SUBDEV_BASE + 2)
+ #define MEDIA_ENT_F_LENS			(MEDIA_ENT_F_OLD_SUBDEV_BASE + 3)
++#define MEDIA_ENT_F_GPIO			(MEDIA_ENT_F_OLD_SUBDEV_BASE + 6)
  
--	unit->gpio.initialized = !ret;
-+	unit->gpio.initialized = true;
- 
--	return ret;
-+	return 0;
- }
- 
- void uvc_gpio_deinit(struct uvc_device *dev)
-diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
-index 06c867510c8f..319f472213f6 100644
---- a/drivers/media/usb/uvc/uvc_status.c
-+++ b/drivers/media/usb/uvc/uvc_status.c
-@@ -44,7 +44,7 @@ static int uvc_input_init(struct uvc_device *dev)
- 	struct input_dev *input;
- 	int ret;
- 
--	if (!uvc_input_has_button(dev))
-+	if (!uvc_input_has_button(dev) && !dev->gpio_unit)
- 		return 0;
- 
- 	input = input_allocate_device();
-@@ -59,8 +59,15 @@ static int uvc_input_init(struct uvc_device *dev)
- 	usb_to_input_id(dev->udev, &input->id);
- 	input->dev.parent = &dev->intf->dev;
- 
--	__set_bit(EV_KEY, input->evbit);
--	__set_bit(KEY_CAMERA, input->keybit);
-+	if (uvc_input_has_button(dev)) {
-+		__set_bit(EV_KEY, input->evbit);
-+		__set_bit(KEY_CAMERA, input->keybit);
-+	}
-+
-+	if (dev->gpio_unit) {
-+		__set_bit(EV_SW, input->evbit);
-+		__set_bit(SW_CAMERA_LENS_COVER, input->swbit);
-+	}
- 
- 	if ((ret = input_register_device(input)) < 0)
- 		goto error;
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 91ed59b54d9a..06c4d514d02c 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -15,6 +15,7 @@
- #include <linux/videodev2.h>
- #include <linux/workqueue.h>
- #include <media/media-device.h>
-+#include <media/v4l2-ctrls.h>
- #include <media/v4l2-device.h>
- #include <media/v4l2-event.h>
- #include <media/v4l2-fh.h>
-@@ -229,12 +230,10 @@ struct uvc_entity {
- 			u8  *bmControlsType;
- 		} extension;
- 
--		struct {
--			u8  bControlSize;
--			u8  *bmControls;
--			struct gpio_desc *gpio_privacy;
-+		struct uvc_gpio {
- 			int irq;
- 			bool initialized;
-+			struct gpio_desc *gpio_privacy;
- 		} gpio;
- 	};
- 
-@@ -821,8 +820,14 @@ size_t uvc_video_stats_dump(struct uvc_streaming *stream, char *buf,
- 			    size_t size);
- 
- /* gpio */
-+#ifdef CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV
- int uvc_gpio_parse(struct uvc_device *dev);
--int uvc_gpio_init_irq(struct uvc_device *dev);
-+int uvc_gpio_init(struct uvc_device *dev);
- void uvc_gpio_deinit(struct uvc_device *dev);
-+#else
-+static inline int uvc_gpio_parse(struct uvc_device *dev) {return 0; }
-+static inline int uvc_gpio_init(struct uvc_device *dev) {return 0; }
-+static inline void uvc_gpio_deinit(struct uvc_device *dev) {};
-+#endif
- 
- #endif
+ /*
+  * Digital TV, analog TV, radio and/or software defined radio tuner functions.
 
 -- 
 2.47.0.277.g8800431eea-goog
