@@ -1,233 +1,87 @@
-Return-Path: <linux-kernel+bounces-406584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB659C6107
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:08:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC7AC9C6115
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:13:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1B02853A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:08:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A23451F22E4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50E32185A0;
-	Tue, 12 Nov 2024 19:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F47218929;
+	Tue, 12 Nov 2024 19:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LwTiiZkt"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nswQ7FZ5"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23800217659
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A90721790E
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731438531; cv=none; b=Z7dLCHjsHv0Zrr3cjo8UUUlEwA/mURka/KFbWaYdaifYO6TCuR/B09cV3j5yJvwAKAh1RBd9gMqgcmgJhk9gZoG5V372HoFsZRmKtFw4MWqzO5fZfW8v66MDpVvWf8ontYi5y8sV5bDg9goFzsuAEDJr5BWm0yMHVtNg2UFULX8=
+	t=1731438826; cv=none; b=MCNt/5oExEkNrm03TTSIpGQDEOIEtrmGTUjXCLyZD6JbtK9E29iBUnk2Ddji0dRJGRE1ohLv6qjTWQRZUdkXDxAVgQKJrQqcbOZxcN2BE7C5W5OoL2vIujeulbW+E/MuRdD8QSGcGOflppzmLCyWM5aG+d7OMNmro5p23KdRq4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731438531; c=relaxed/simple;
-	bh=eBTaB4haV1+fSAnpXlnmJPonxx05FWC9EMFbUs9j2+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=spqV9BMFE1q6DTeLwyHGODvrW6MQnVTrYq6xq+ZRlATxQS0gK95TQziK8KSjsEOnBlVv9o7yMHquRVQM+WRA7yfyDYiCcfzBV54/vkNd7u4sz/1XGe5UBtpupEZt7VAUlm1JH0I9wTSfY6gMtbHTdYbueWiPIAlc1aHEhr8unjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LwTiiZkt; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e5f533e1c2so3786916b6e.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:08:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731438527; x=1732043327; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D2L7Qc7cWvztIAJNQU15qiNixT/BI8zR+cXMMeIYHYo=;
-        b=LwTiiZkt+VCGzeCcLOD2cfdUkTUxBSeBTSiufKCHowuLFSXh0U7dkvYiaRls+OVChd
-         /IndjGkRrtXwmv+QH0neUcKKBzBKi6qCOKjhmBN7RViQqV0L2XylxL5NnaNfZCDd1QqY
-         lH146t9Ol5f89rLAvrZuxljQdXuAJ4VX45UtJzRTXomKQednR430nM64t/ELvandZU8n
-         24DRgbMjG/YLWid+jNkrLBVjagyFMqunye10eT+HKasiVHx7tq+F4X/bOXlpaeYsdAtC
-         XjVnTunVtbeFwV/uKJ++w8vT432YcwbbkIoMZx5Fuen8Sj04WIWfcooJM7I3P+6fBU3k
-         BDvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731438527; x=1732043327;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D2L7Qc7cWvztIAJNQU15qiNixT/BI8zR+cXMMeIYHYo=;
-        b=d+O5t/jwhQzYGcSic1XrQtwz8v3RNKGg3AAPopXvi7Ut4wkjnRaBQWHTsQTOhQjVh3
-         B5Ln5xkbKZjh9kiSpeiFXytXPztoGwp1cxX72/ZloD8h1JRsrvjYtgUlqXM4ezGWo2Jb
-         WFe4pJbvAdIeVfGwt3aDFazTql9rh6Ggld04ojy70WrNIgVUeSoZOJwLexLNk7lYbt1B
-         oK+yyh5marHoS557//voZ0hABhVBQAWlGscYW51G6yOMS14zXRuoWKYOIxG4PbZIHbvE
-         RIEwl5PelyEdVwlZHWQpp+MZxbphgzqWzyyOk8ciL9bwCYHLNELn63eAsg7DVkPFGsU9
-         QbSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuc9b+ls1KVd24rgPUb9G6627i7W3UeANorB66Ojj7D9SERjbunjFROzMhLD45+zc2azPDf796CwSD914=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxyDOnPM/eAqmb7Ngkwbet7Ffg22nhwVVpgZsrQif3iV/ZqVF1
-	gMdE74CBa/MATZllMz/XRGK0pdCqrCqCNa1L3Mg6ewbVO2F9jjDaRF6Y1hYzohU=
-X-Google-Smtp-Source: AGHT+IHoD/uu9DK4NnbrmBtV1ufstZJ55RPP5+LQ3aAZ0f5dnSCso4iUv4jnAvRgbKIUMZBidnJMoA==
-X-Received: by 2002:a05:6808:1790:b0:3e6:263b:9108 with SMTP id 5614622812f47-3e7946adb92mr15187907b6e.22.1731438527201;
-        Tue, 12 Nov 2024 11:08:47 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e7b0955af5sm22182b6e.4.2024.11.12.11.08.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 11:08:46 -0800 (PST)
-Message-ID: <b1dcd133-471f-40da-ab75-d78ea9a8fa4c@kernel.dk>
-Date: Tue, 12 Nov 2024 12:08:45 -0700
+	s=arc-20240116; t=1731438826; c=relaxed/simple;
+	bh=z1I5Cnt8bb1hnH7BOsE+i9L1a9bYVhfqsKiQQEDYkbo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RvFjwmFaYqm4TyjzWkjSaF2B4EMJ/AHASqdF3Md5bu9/gxaNOhN6Y9JNLSf18OXdho9V2TAE2LRQHUMX3lYjPnlBu9lyMl/taFO36lTYu1efZiNYy/2h5hR2GYjFSmEwQe4gBQCu2LUapnCVLZyaqPmniRkDHVoPKxxGUY2bTVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nswQ7FZ5; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731438822;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k2wfruU0o5MqkGZQlyyUPdYIgcNLexv/NYFlVrUjaf0=;
+	b=nswQ7FZ5qmBP/kugTAbcuj0+xAIgf8NB4/n/qS3hx7IGc3FCjrj6Xi6HelVeSqxa95yf2M
+	6vYQz+5m1TTXmuhzGgcvf60p4YozmyoaeEF9pr1o/FbiSZVf8GjmQ3izmZlzs9iysdMUcL
+	Rc8270A+I3YuY34i3envIE3Ka6Buct0=
+From: Oliver Upton <oliver.upton@linux.dev>
+To: tabba@google.com,
+	maz@kernel.org,
+	kvmarm@lists.linux.dev,
+	James Clark <james.clark@linaro.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	=?UTF-8?q?Pierre-Cl=C3=A9ment=20Tosi?= <ptosi@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Pass on SVE mapping failures
+Date: Tue, 12 Nov 2024 11:13:27 -0800
+Message-Id: <173143830153.1780821.3252624992091199319.b4-ty@linux.dev>
+In-Reply-To: <20241112105604.795809-1-james.clark@linaro.org>
+References: <20241112105604.795809-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
-To: Brian Foster <bfoster@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
- "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
- linux-kernel@vger.kernel.org, willy@infradead.org
-References: <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
- <ZzIfwmGkbHwaSMIn@infradead.org>
- <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
- <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
- <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
- <ZzLkF-oW2epzSEbP@infradead.org>
- <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk> <ZzOEzX0RddGeMUPc@bfoster>
- <7a4ef71f-905e-4f2a-b3d2-8fd939c5a865@kernel.dk>
- <3f378e51-87e7-499e-a9fb-4810ca760d2b@kernel.dk> <ZzOiC5-tCNiJylSx@bfoster>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZzOiC5-tCNiJylSx@bfoster>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 11/12/24 11:44 AM, Brian Foster wrote:
-> On Tue, Nov 12, 2024 at 10:19:02AM -0700, Jens Axboe wrote:
->> On 11/12/24 10:06 AM, Jens Axboe wrote:
->>> On 11/12/24 9:39 AM, Brian Foster wrote:
->>>> On Tue, Nov 12, 2024 at 08:14:28AM -0700, Jens Axboe wrote:
->>>>> On 11/11/24 10:13 PM, Christoph Hellwig wrote:
->>>>>> On Mon, Nov 11, 2024 at 04:42:25PM -0700, Jens Axboe wrote:
->>>>>>> Here's the slightly cleaned up version, this is the one I ran testing
->>>>>>> with.
->>>>>>
->>>>>> Looks reasonable to me, but you probably get better reviews on the
->>>>>> fstests lists.
->>>>>
->>>>> I'll send it out once this patchset is a bit closer to integration,
->>>>> there's the usual chicken and egg situation with it. For now, it's quite
->>>>> handy for my testing, found a few issues with this version. So thanks
->>>>> for the suggestion, sure beats writing more of your own test cases :-)
->>>>>
->>>>
->>>> fsx support is probably a good idea as well. It's similar in idea to
->>>> fsstress, but bashes the same file with mixed operations and includes
->>>> data integrity validation checks as well. It's pretty useful for
->>>> uncovering subtle corner case issues or bad interactions..
->>>
->>> Indeed, I did that too. Re-running xfstests right now with that too.
->>
->> Here's what I'm running right now, fwiw. It adds RWF_UNCACHED support
->> for both the sync read/write and io_uring paths.
->>
+On Tue, 12 Nov 2024 10:56:03 +0000, James Clark wrote:
+> This function can fail but its return value isn't passed onto the
+> caller. Presumably this could result in a broken state.
 > 
-> Nice, thanks. Looks reasonable to me at first glance. A few randomish
-> comments inlined below.
 > 
-> BTW, I should have also mentioned that fsx is also useful for longer
-> soak testing. I.e., fstests will provide a decent amount of coverage as
-> is via the various preexisting tests, but I'll occasionally run fsx
-> directly and let it run overnight or something to get the op count at
-> least up in the 100 millions or so to have a little more confidence
-> there isn't some rare/subtle bug lurking. That might be helpful with
-> something like this. JFYI.
 
-Good suggestion, I can leave it running overnight here as well. Since
-I'm not super familiar with it, what would be a good set of parameters
-to run it with?
+Applied to next, thanks!
 
->>  #define READ 0
->>  #define WRITE 1
->> -#define fsxread(a,b,c,d)	fsx_rw(READ, a,b,c,d)
->> -#define fsxwrite(a,b,c,d)	fsx_rw(WRITE, a,b,c,d)
->> +#define fsxread(a,b,c,d,f)	fsx_rw(READ, a,b,c,d,f)
->> +#define fsxwrite(a,b,c,d,f)	fsx_rw(WRITE, a,b,c,d,f)
->>  
-> 
-> My pattern recognition brain wants to see an 'e' here. ;)
+[1/1] KVM: arm64: Pass on SVE mapping failures
+      https://git.kernel.org/kvmarm/kvmarm/c/60ad25e14ab5
 
-This is a "check if reviewer has actually looked at it" check ;-)
-
->> @@ -266,7 +273,9 @@ prterr(const char *prefix)
->>  
->>  static const char *op_names[] = {
->>  	[OP_READ] = "read",
->> +	[OP_READ_UNCACHED] = "read_uncached",
->>  	[OP_WRITE] = "write",
->> +	[OP_WRITE_UNCACHED] = "write_uncached",
->>  	[OP_MAPREAD] = "mapread",
->>  	[OP_MAPWRITE] = "mapwrite",
->>  	[OP_TRUNCATE] = "truncate",
->> @@ -393,12 +402,14 @@ logdump(void)
->>  				prt("\t******WWWW");
->>  			break;
->>  		case OP_READ:
->> +		case OP_READ_UNCACHED:
->>  			prt("READ     0x%x thru 0x%x\t(0x%x bytes)",
->>  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
->>  			    lp->args[1]);
->>  			if (overlap)
->>  				prt("\t***RRRR***");
->>  			break;
->> +		case OP_WRITE_UNCACHED:
->>  		case OP_WRITE:
->>  			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
->>  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
->> @@ -784,9 +795,8 @@ doflush(unsigned offset, unsigned size)
->>  }
->>  
->>  void
->> -doread(unsigned offset, unsigned size)
->> +__doread(unsigned offset, unsigned size, int flags)
->>  {
->> -	off_t ret;
->>  	unsigned iret;
->>  
->>  	offset -= offset % readbdy;
->> @@ -818,23 +828,39 @@ doread(unsigned offset, unsigned size)
->>  			(monitorend == -1 || offset <= monitorend))))))
->>  		prt("%lld read\t0x%x thru\t0x%x\t(0x%x bytes)\n", testcalls,
->>  		    offset, offset + size - 1, size);
->> -	ret = lseek(fd, (off_t)offset, SEEK_SET);
->> -	if (ret == (off_t)-1) {
->> -		prterr("doread: lseek");
->> -		report_failure(140);
->> -	}
->> -	iret = fsxread(fd, temp_buf, size, offset);
->> +	iret = fsxread(fd, temp_buf, size, offset, flags);
->>  	if (iret != size) {
->> -		if (iret == -1)
->> -			prterr("doread: read");
->> -		else
->> +		if (iret == -1) {
->> +			if (errno == EOPNOTSUPP && flags & RWF_UNCACHED) {
->> +				rwf_uncached = 1;
-> 
-> I assume you meant rwf_uncached = 0 here?
-
-Indeed, good catch. Haven't tested this on a kernel without RWF_UNCACHED
-yet...
-
-> If so, check out test_fallocate() and friends to see how various
-> operations are tested for support before the test starts. Following that
-> might clean things up a bit.
-
-Sure, I can do something like that instead. fsx looks pretty old school
-in its design, was not expecting a static (and single) fd. But since we
-have that, we can do the probe and check. Just a basic read would be
-enough, with RWF_UNCACHED set.
-
-> Also it's useful to have a CLI option to enable/disable individual
-> features. That tends to be helpful to narrow things down when it does
-> happen to explode and you want to narrow down the cause.
-
-I can add a -U for "do not use uncached".
-
--- 
-Jens Axboe
+--
+Best,
+Oliver
 
