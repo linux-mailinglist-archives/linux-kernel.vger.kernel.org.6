@@ -1,109 +1,88 @@
-Return-Path: <linux-kernel+bounces-405501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F12D9C5283
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:56:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4419C524E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:45:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99A4FB251AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:36:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC8AFB21241
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6FE2101A4;
-	Tue, 12 Nov 2024 09:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7BF20E03A;
+	Tue, 12 Nov 2024 09:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOLYUtt9"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4apR92S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1364620E329;
-	Tue, 12 Nov 2024 09:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3918820DD71;
+	Tue, 12 Nov 2024 09:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731404123; cv=none; b=t1OUDmLp48snFMq3ukgW44oV37qxhoXr5NC2ViwoqkGG0x/KpyeRX4Fs0ah6+pTV57kazY5/k8pzrB5QctOIWKwApAJq0WEX7aZ7Vbz08nDbgttL43Wok2ETDo/VT5gEgFGaSBt14gLulwhFmutixAZSdCne7Gz3Oxs3fB6il7I=
+	t=1731404142; cv=none; b=pkeXKkbebjjUj7AIyC99Ag/K27B21OHBjrZF6Nsif8RChaOExQpOs/0CME27QjkmkzzkMnUdwIUVcI0JprZO5DthT506F9FAku8YiNew74yh3pt8YUnfW1Z81Y5quGbCXa+vtEnSW4oHJqtWOhkHNNMZ2wQgYe+YFXa2mca0eb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731404123; c=relaxed/simple;
-	bh=vGPlqcSPU1Ljbo6MVJlNin87hJ6NVZcYBJCBN5t2cvw=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=RBemWSUJgAebJy5fNygTCXvOXaL3Nr/T6EK43bosGithike9B2X/lxSmDcimRm5fjJO9YS+y3LQ7UJ0XY8yehhIKz1kTqpRFSqPa5uq69j0grhqZR4Gl7qGgc4YAjUruUdAU3vHrVkix71Kjf6O3Mr7phGJbU4veJaGNiWKsWwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IOLYUtt9; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e7e73740so5040563e87.3;
-        Tue, 12 Nov 2024 01:35:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731404120; x=1732008920; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ze8znBzx95/1mVbeSUuR2PwFDl3INI4uOBO4YGJc4h8=;
-        b=IOLYUtt9cU1RWbP2zeeAoBSgMn/9lSE/Ieb0HFKSmHxFd6z8ald4PWY2SA+t15CPuM
-         VcCv4roT9JCwvkyPl+8yShwLU6bdb3c/VeyfN0RaHlkBqkCjgHJdo5z0wKHWNza778Z3
-         2+oQl2kSjtOAzvKqNeVp2xpVNnJsaYNo3WDGCeNJbs/H6SW6l+0UIN8i7xuCpl2QcEoM
-         VszYbBFNN9ifQdI5RvaOrOOC4XpjusDrwpBKUF45/B90k+x3S9vn9W9AJjtnKVLG2y5U
-         ezitR/xJcGzW01RrsqDf4cpRHHaFMiRq2w9ygqVZSGTTDmLsPVMxyR2GlEb+7Hp4Wqvq
-         nb/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731404120; x=1732008920;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ze8znBzx95/1mVbeSUuR2PwFDl3INI4uOBO4YGJc4h8=;
-        b=o9YOC4lnd2fy6bYrWpzzecihw/V14upXy8FZeYnvIJKOqkCI06wZb1sZnG6VX7xTsm
-         2wrsrJy0RZbx6NVAtYcjz7j5vSs6O/wTew2HLhimWye+TW8lee2Se05ftkhV0oZ3cQJD
-         5KO5B99PJaZ1m4mO/H+Pc/7h7lgNZsHj9EcA/s/cLOb7HQ1E3xq7GZj9UVmxF+nTVIyu
-         c2llw6z+AVy//lAF9z95W/EhdAJ+LVwmOQSG+LW9qbUghApOUtLxqz/dL7W1R+adsDw1
-         Cf+zCJdX1kDvjnpSqQ0iqcLiXrfm2AxMK6apB5xn939PQ03+L1Bt8k0SYdZ6EJWy/oY3
-         PhPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWT41xB+9N9iBHmLnLWooHarm2OlEksFBzHum+f8t0Eui1P5DsZ69sJM0xDTSWcChU6rfYXzOFD@vger.kernel.org, AJvYcCWpu2W8BEvj02xpuJ8C6VZEqS8reeMK9gFWUcm2PlHT4ytlXaE+sW83uNn5qAhwKeD8UWc7R5hqxBRZarI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5YA0BHrJhyF/G/BPmkn/ZCNRZ62504cL8OjVbIYkjwI3xQGlq
-	KvIVYQvo37+w0Q1h6tUj9yvLdoB6k00J66gQKkyRv4ce87GWg/7eZ/QS5g==
-X-Google-Smtp-Source: AGHT+IEEwipBRRYM44kkvqb98L+jAuiJoiwiqXDsJ0QQclEcwHZVZq2c6ZQMj2haKU6x12FIyFifGA==
-X-Received: by 2002:a05:6512:39ca:b0:53c:6999:1782 with SMTP id 2adb3069b0e04-53d9a42e0demr915826e87.37.1731404119558;
-        Tue, 12 Nov 2024 01:35:19 -0800 (PST)
-Received: from imac ([2a02:8010:60a0:0:a1ef:92f5:9114:b131])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa737721sm243242925e9.36.2024.11.12.01.35.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 01:35:19 -0800 (PST)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Jan Stancek <jstancek@redhat.com>
-Cc: kuba@kernel.org,  pabeni@redhat.com,  davem@davemloft.net,
-  edumazet@google.com,  horms@kernel.org,  netdev@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] tools: ynl: extend CFLAGS to keep options from
- environment
-In-Reply-To: <265b2d5d3a6d4721a161219f081058ed47dc846a.1731399562.git.jstancek@redhat.com>
-	(Jan Stancek's message of "Tue, 12 Nov 2024 09:21:33 +0100")
-Date: Tue, 12 Nov 2024 09:35:07 +0000
-Message-ID: <m2o72ku75g.fsf@gmail.com>
-References: <cover.1731399562.git.jstancek@redhat.com>
-	<265b2d5d3a6d4721a161219f081058ed47dc846a.1731399562.git.jstancek@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1731404142; c=relaxed/simple;
+	bh=nie12rw9CwbepLn54gqeZhJx6b+/ZLsWWbYuZNDp/D4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iJ1MHSTH24Sc+6B0r2uqiC9EouNRe/886+YK82yp2BXzizIN4lgxFjpj+wViErqg0EMfHHkwGctZjSPChrUYLr8mgk0ThmGZMKIwRbh+ianrhRbUvxYt6R0QzAktJugjJd/qI/QG5+XCD44luaztDo1lpbE9Qwl2FLzvzpPfjdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4apR92S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BFC4C4CECD;
+	Tue, 12 Nov 2024 09:35:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731404141;
+	bh=nie12rw9CwbepLn54gqeZhJx6b+/ZLsWWbYuZNDp/D4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q4apR92SJFTuIKPjcGyTYqSTGnMYlc3WZe77JROgA4ZBbFMq+umVdDEsU/ZDuPfZn
+	 NaBh7dFUZ2oaPbSMqtxIlIXYEAOW8rcXEdNE7MtgSMXfhYl2m9f9ALbEG0nZ1CXkKn
+	 wAf3AqgdcIjdgGq2cUxlDO8DhUMHvZaoH7OmjydYDiC2i+uHdm53o5QM4Dqxip/sde
+	 DLj8Wi1UJvtKpNaJLLOThLy3UL3N15icYakZRucDFy5Wky8XI+FNcU1aLVnOfV5JlI
+	 OOBdR77qG27RgsgvUsklIBojl5S+uIkq84//oziELuWs9lK899MsZU52AaE7NbeLYE
+	 G4LxeTGgwHLAg==
+Date: Tue, 12 Nov 2024 10:35:37 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Omar Sandoval <osandov@osandov.com>
+Cc: kernel-team@fb.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 0/4] proc/kcore: performance optimizations
+Message-ID: <20241112-lohnt-bestanden-d0a0ae380679@brauner>
+References: <cover.1731115587.git.osandov@fb.com>
+ <20241111-umgebaut-freifahrt-cb0882051b88@brauner>
+ <ZzJIJ4QFNj_KPPHK@telecaster>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZzJIJ4QFNj_KPPHK@telecaster>
 
-Jan Stancek <jstancek@redhat.com> writes:
+On Mon, Nov 11, 2024 at 10:08:39AM -0800, Omar Sandoval wrote:
+> On Mon, Nov 11, 2024 at 10:00:54AM +0100, Christian Brauner wrote:
+> > On Fri, 08 Nov 2024 17:28:38 -0800, Omar Sandoval wrote:
+> > > From: Omar Sandoval <osandov@fb.com>
+> > > 
+> > > Hi,
+> > > 
+> > > The performance of /proc/kcore reads has been showing up as a bottleneck
+> > > for drgn. drgn scripts often spend ~25% of their time in the kernel
+> > > reading from /proc/kcore.
+> > > 
+> > > [...]
+> > 
+> > A bit too late for v6.13, I think but certainly something we can look at
+> > for v6.14. And great that your stepping up to maintain it!
+> 
+> Thanks, v6.14 is totally fine!
+> 
+> I have a quick question on logistics. /proc/kcore typically only gets a
+> handful of patches per cycle, if any, so should we add fsdevel to the
+> MAINTAINERS entry so I can ask you to queue up patches in the vfs tree
+> once I've reviewed them? Or should I send pull requests somewhere?
 
-> Package build environments like Fedora rpmbuild introduced hardening
-> options (e.g. -pie -Wl,-z,now) by passing a -spec option to CFLAGS
-> and LDFLAGS.
->
-> ynl Makefiles currently override CFLAGS but not LDFLAGS, which leads
-> to a mismatch and build failure:
->         CC sample devlink
->   /usr/bin/ld: devlink.o: relocation R_X86_64_32 against symbol `ynl_devlink_family' can not be used when making a PIE object; recompile with -fPIE
->   /usr/bin/ld: failed to set dynamic section sizes: bad value
->   collect2: error: ld returned 1 exit status
->
-> Extend CFLAGS to support hardening options set by build environment.
->
-> Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> Acked-by: Jakub Kicinski <kuba@kernel.org>
-
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+You can do that as you please. I can just pick them up once you've acked
+them. I'm happy to do that.
 
