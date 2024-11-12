@@ -1,204 +1,160 @@
-Return-Path: <linux-kernel+bounces-406849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BB49C6595
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:58:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA37A9C65A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:01:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30C97B32665
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:23:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7C09B3C46D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E53B21B42A;
-	Tue, 12 Nov 2024 23:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F136D21D20A;
+	Tue, 12 Nov 2024 23:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="adzMrfGK"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qKsxBg6K"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D077221A4BA
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCACE21CFA4
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731453781; cv=none; b=pB3Bw1+D+3vy66XPKnI2JmAIvQhmINWrLrUIKB3I/FNJm5OC/iqkz/jtpccESChCaVUz2YG0u5/TTFRquanu+9UVaL4c7m2mvRlESn3m/WsAfWGOvZ0FyyZ2mYKFV4pbSDfe9qankF1nesiZF4etRMmgDemWG7unHUX9jDT4uJY=
+	t=1731453787; cv=none; b=AUxAJsbNs/NuJ9tO2Dg5t4s3BpH8yBksBa4qLPnLCxO/ZnFxPPFyzIn+gI/QICvBaMqDcYl9/5W5bFz4r1fCnL7JvdJJPGzIKn/IN39GxqSV/rHqpeuQ2ZeAHuBmyNVB4/j1/KqxYH/t4sVXxMRSfWL6Jve7jHQzzkxUHe6oV1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731453781; c=relaxed/simple;
-	bh=CUjyFOj39YorU1rHLO0sTkR/yrPmMys639+m5J7tLN0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ShlqA4jtln1YnBL8J3gx11FNug/OmJfqDnwby/YCSVxDYYHH2Kn0vPYZVPAIKK7CRPfb3EgFEXTN+J0tEuIXcctFq4fLpLkIbkVP30bnwtOT8e3kiHTgfF1hP1nfJt3FL7w1ZHX4t6n7r+cAHRS0b8XNHC/Oi33C3GN3Vvi9A4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=adzMrfGK; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1731453787; c=relaxed/simple;
+	bh=ayby78yQOyjOz6ls+yE5cxTfghhQvc3yyzZlL7gs+bU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qDDLc7+oZTIEw0oUFkpwQBqjecUHQDldMa3L3vPdxdBW6C12/c39UvoNXy2H7AcTu2/XRdHj0Cd9EvXwnVGSx7rDvPPeeCsofirNxaSkmDJD3E8aCQnUKeS5JlymR73E7HCuUYnedwaxWf+lHJFhl1hD/71+u+qU8EzhEB3I9ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qKsxBg6K; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20d15285c87so68238775ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:22:59 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2e2bb354e91so6498038a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:23:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731453779; x=1732058579; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=M3XmrVnp9BElk4dkMvhlaiUVjoXVs8lQYv4BslpgjjQ=;
-        b=adzMrfGKv3R86VQHmtPH2a4nXSmcs/Wa2KNi1wMCjbSp+1yUnnNum2U0j1ApxzbR9n
-         BdZ2ZLDeOT/kLD5p97AEFXQfbyA/vOzolvvgXJTzdR8tq5a+3mFWP2UweXuxAT6SgOCJ
-         VQr1AG8si8z+hJ7ljXpArDp+uW2FVHwHcO+Cc73/VyNNIwv9m6WtyG0IXaKZUwdzkwNP
-         41Fb8ilSJmb30qR/mc/oKpcTrZpoasYbIMfJGvYSYGQfOyPYPtB2qIx3PJo48CrG1E0F
-         fZmhTvB+STdSng5sPVnxmXZHkZrXc5Lddplm7y+dr1rFjfi+JczNkjic+9WDGGe+GnPs
-         j+Lw==
+        d=google.com; s=20230601; t=1731453785; x=1732058585; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WmL++hD8fgHMSusvyHDFwqq57StgWysj/njcEHmccMk=;
+        b=qKsxBg6KK1KzmbyM0Qc41DcpDFnsE0GF+9Cuu59tvTI93sVv9ldwTQ8gYUTB/lQUgN
+         scdqqDh3wEvmDuaHzVOIvpddU+ghfl63E/8FIMrxDuR1X5iPb3oVEDLZd8s60mOTIsh5
+         S9LH10gSP4qPwq0olBcEx1YoV6dwVMe6f0dN3X6J3BdjT8IfRYvF8hvsN/XpVZhnftib
+         K3CNOt/g+lPNfsPBbYgPOi6XcCY9pSKCccqyowLLfc7PRMbDN/nxdXtE+6eVkKE52g5+
+         08mfOQjmYBpvAWFEPMwTMvCQM21GBLGbLRexMe2h2Kno1gPP+vt7VPv1TPJ9Y390UeFu
+         qt4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731453779; x=1732058579;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M3XmrVnp9BElk4dkMvhlaiUVjoXVs8lQYv4BslpgjjQ=;
-        b=d20TyFJquMsEmuviP4psksCPQ4nxZrJx8hon9HMd7ESkEi3iwkeLP/CzxKmewTNePa
-         iIfTZn9NArpM7YAsMDhDYu9vIU8qa9/1AmVdRaoSe3MTTlEGo44iKvZl3wW/T7qr7y9t
-         HmOY5vK5b+8VUYfMve6Zw11tF7hQpWkDNhua8wdqdy1m0gkIHEG+NdBILXI/Vba3JOyQ
-         bf0VFjeDp1A8my8uCaIcFMkHomN5gQDu0KJA098CWdBROagViS5ioX/QTsZ8bDavlgbC
-         mfs1ZaP5AN/8JZjgnZn4S3MChp2FAkTdnUW1XN9JIba7MI0PmomDrawb6uuL5uuGEnsV
-         1Puw==
-X-Gm-Message-State: AOJu0Yyz0z/+CflBqtBAZZV75IVZZm0puDS0fQsN8TKCQFviBkT7in8R
-	kCwXO00sHFr9v17KskzOZvizqlWEMCrBYI21azuM5+ZnzZGQsYxiGWSHOcufSZJluysmlK3A5/h
-	qrOcecyed58dKM1oJofqrzLpBH1jCXtui8ZCTHcgzM4I7Dexk3EsTITUPQnKdUi7SGMwn4U16NI
-	7AE2To3QtwuntQPLxcVmDX0W3am5VHOGqoxSRcY+4f/Zy9d+sYpm2tk+sg0w2AHEZ3rRg=
-X-Google-Smtp-Source: AGHT+IF2kbOD4BHMEB3iS4+dImR1c6aIsq4fWNz5V3AwFhnCHHU8DBkF+Bb8Sq+TGS3yZfnleGeVHPFj3xex974ZfQ==
+        d=1e100.net; s=20230601; t=1731453785; x=1732058585;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WmL++hD8fgHMSusvyHDFwqq57StgWysj/njcEHmccMk=;
+        b=L4R8qOq5Bq1b7c5CQZKwAnYQ31uMqr8JiqXKM74fe0+rIYIYjRxLbQM2TMgNabR4Dz
+         h/yLsL+dMsdA/a9zllkcFPZcPJpRZcIfYUhmQJ758zRoYaJ4A9hQEpMK9GwzdIFM2Ckq
+         cn4iio37+lgv7tF2WN380KuHlS/SDUT4OCDvn2JpGseC++XsJ+yYD962ot0SP8yLdpcf
+         BGlMJsSk4L5N55Na443uWjXAWwhAfsrIAAzHVaRz3a52RgS0/Vhs/VB7BKQtBnNqR3HU
+         wH8ZpIOAZ+P/1tFD0FV9/RCO5D27QZ+XHFkmYmhQ1HDe1kRaLlZse8eTdiqCRQop/4q4
+         zydg==
+X-Gm-Message-State: AOJu0YyiJ6G0uSbD9dfTxRqcnGncLobX9n7UdKeLCuSRuKkPwwAzpgEb
+	HCfd+Qop1Buz2qxFfOuoSfE0BEAIgk1q+2R9/3OaY65yixOX/KrzX+9Noxq0u7m2/8G0Sozkb0S
+	NEZQNcetip4DCLKgVpKnTSka62TtOgs5onWH2+iP+Q8tfbvaN7qJg9D08fv8kxD+Jfg1kC1A8wq
+	bLdnwb6yr2TYCUswJMamUZqtMdXv9PNLRBN6uszhCIBy39jdJ6dv978wL1/+7kciHCnZE=
+X-Google-Smtp-Source: AGHT+IEKIx/zzlZD9qfrCEEtWDHbsmZlYa32pBSY0nOxUmKrJ4QniZXwOwxKWzCDaGQhHEeyreWYnDeyUdJT3VYCwQ==
 X-Received: from dionnaglaze.c.googlers.com ([fda3:e722:ac3:cc00:36:e7b8:ac13:c9e8])
- (user=dionnaglaze job=sendgmr) by 2002:a17:903:683:b0:20c:da66:3884 with SMTP
- id d9443c01a7336-211835a0b65mr368175ad.9.1731453778925; Tue, 12 Nov 2024
- 15:22:58 -0800 (PST)
-Date: Tue, 12 Nov 2024 23:22:39 +0000
+ (user=dionnaglaze job=sendgmr) by 2002:a17:90b:2ec3:b0:2e2:bb49:1052 with
+ SMTP id 98e67ed59e1d1-2e9e4c7f1aamr70975a91.4.1731453784634; Tue, 12 Nov 2024
+ 15:23:04 -0800 (PST)
+Date: Tue, 12 Nov 2024 23:22:41 +0000
+In-Reply-To: <20241112232253.3379178-1-dionnaglaze@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241112232253.3379178-1-dionnaglaze@google.com>
 X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Message-ID: <20241112232253.3379178-1-dionnaglaze@google.com>
-Subject: [PATCH v6 0/8] Add SEV firmware hotloading
+Message-ID: <20241112232253.3379178-3-dionnaglaze@google.com>
+Subject: [PATCH v6 2/8] KVM: SVM: Fix snp_context_create error reporting
 From: Dionna Glaze <dionnaglaze@google.com>
-To: linux-kernel@vger.kernel.org, x86@kernel.org
-Cc: linux-coco@lists.linux.dev, Dionna Glaze <dionnaglaze@google.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Brijesh Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, 
+	Ashish Kalra <ashish.kalra@amd.com>
+Cc: linux-coco@lists.linux.dev, Dionna Glaze <dionnaglaze@google.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, John Allen <john.allen@amd.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Danilo Krummrich <dakr@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Tianfei zhang <tianfei.zhang@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>, stable@vger.kernel.org, kvm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-The SEV-SNP API specifies a command for hotloading the SEV firmware.
-when no SEV or SEV-ES guests are running. The firmware hotloading
-support is dependent on the firmware_upload API for better ease-of-use,
-and to not necessarily require SEV firmware hotloading support when
-building the ccp driver.
+Failure to allocate should not return -ENOTTY.
+Command failure has multiple possible error modes.
 
-For safety, there are steps the kernel should take before allowing a
-firmware to be committed:
+Fixes: 136d8bc931c8 ("KVM: SEV: Add KVM_SEV_SNP_LAUNCH_START command")
 
-1. Writeback invalidate all.
-2. Data fabric flush.
-3. All GCTX pages must be updated successfully with SNP_GUEST_STATUS
+CC: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Borislav Petkov <bp@alien8.de>
+CC: Dave Hansen <dave.hansen@linux.intel.com>
+CC: Ashish Kalra <ashish.kalra@amd.com>
+CC: Tom Lendacky <thomas.lendacky@amd.com>
+CC: John Allen <john.allen@amd.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "David S. Miller" <davem@davemloft.net>
+CC: Michael Roth <michael.roth@amd.com>
+CC: Luis Chamberlain <mcgrof@kernel.org>
+CC: Russ Weight <russ.weight@linux.dev>
+CC: Danilo Krummrich <dakr@redhat.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: Tianfei zhang <tianfei.zhang@intel.com>
+CC: Alexey Kardashevskiy <aik@amd.com>
+CC: stable@vger.kernel.org
 
-The snp_context_create function had the possibility to leak GCTX pages,
-so the first patch fixes that bug in KVM. The second patch fixes the
-error reporting for snp_context_create.
+Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
+---
+ arch/x86/kvm/svm/sev.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-The ccp driver must continue to be unloadable, so the third patch in
-this series fixes a cyclic refcount bug in firmware_loader.
-
-The support for hotloading in ccp introduces new error values that can
-be returned to user space, but there was an existing bug with firmware
-error code number assignments, so the fourth patch fixes the uapi
-definitions while adding the new needed error codes.
-
-The fifth patch adds a new GCTX API for managing SNP context pages and
-how they relate to the ASID allocated to the VM. This is needed because
-once firmware is hotloaded, all GCTX pages must be updated before the
-firmware is committed in order to avoid VM corruption. The ASID
-association is to bound the number of pages that ccp must have capacity
-to track.
-
-The sixth patch adds SEV_CMD_DOWNLOAD_FIRMWARE_EX support with its
-required cache invalidation steps. The command is made accessible not
-through the ioctl interface, but with the firmware_upload API to prefer
-the more generic API. The upload does _not_ commit the firmware since
-there is necessary follow-up logic that should run before commit, and
-a separate use of SNP_COMMIT also updates REPORTED_TCB, which might not
-be what the operator wants. User space has to coordinate certificate
-availability before updating REPORTED_TCB to provide correct behavior
-for the extended guest request GHCB API.
-When the firmware successfully updates, the GCTX pages are all
-refreshed by iterating over the tracked pages from the GTX API.
-If any single page's update fails, the drive treats itself as if the
-firmware were in a bad state and needs an immediate restore. All
-commands that are not DOWNLOAD_FIRMWARE_EX will fail with
-RESTORE_REQUIRED, similar to SEV FW on older PSP bootloaders.
-
-The seventh and eight patches are a small cleanup of how to manage
-access to the SEV device that follows a similar pattern to kvm. This is
-needed to not conflate access permissions with the GCTX API.
-
-The ninth patch switches KVM over to use the new GCTX API.
-
-The last patch avoids platform initialization for KVM VM guests when
-vm_type is not legacy SEV/SEV-ES.
-
-The KVM_EXIT for requesting certificates on extended guest request is
-not part of this patch series. Any such support must be designed with
-races between SNP_COMMIT and servicing extended guest requests such that
-the REPORTED_TCB in an attestation_report always correctly corresponds
-to the certificates returned by the extended guest request handler.
-
-Changes from v5:
-  - Fixed attribution for Alexey's error patch.
-  - Removed the new access-checking method in favor of taking the device
-    fd in the new API. A follow-up series should clean up the already
-    existing over-checking of the fd.
-  - Removed unnecessary name change in kvm.
-  - Added comment about probe field use in KVM.
-  - Added more error checking for asid argument values.
-  - Made GCTX->guest context, asid->ASID changes in comments.
-Changes from v4:
-  - Added a snp_context_create error message fix to KVM.
-  - Added a PSP error code fix from Alexey Kardashevskiy.
-  - Changed tracking logic from command inspection to an explicit
-    guest context API.
-  - Switched KVM's SNP context management to the new API.
-  - Separated sev_issue_cmd_external_user's permission logic into a
-    different function that should be used to instead dominate calls
-    that derive from external user actions.
-  - Switched KVM to the new function to complete the deprecation of
-    sev_issue_cmd_external_user.
-  - Squashed download_firmware_ex and firmare_upload API instantiation
-    since the former wasn't self-contained.
-Changes from v3:
-  - Removed added init_args field since it was duplicative of probe.
-  - Split ccp change into three changes.
-  - Included Alexey Kardashevskiy's memset(data_ex, 0, sizeof(*data_ex))
-    fix.
-Changes from v2:
-  - Fix download_firmware_ex struct definition to be the proper size,
-    and clear to 0 before using. Thanks to Alexey Kardashevskiy.
-Changes from v1:
-  - Fix double-free with incorrect goto label on error.
-  - checkpatch cleanup.
-  - firmware_loader comment cleanup and one-use local variable inlining.
-
-Alexey Kardashevskiy (1):
-  crypto: ccp: Fix uapi definitions of PSP errors
-
-Dionna Glaze (7):
-  KVM: SVM: Fix gctx page leak on invalid inputs
-  KVM: SVM: Fix snp_context_create error reporting
-  firmware_loader: Move module refcounts to allow unloading
-  crypto: ccp: Add GCTX API to track ASID assignment
-  crypto: ccp: Add DOWNLOAD_FIRMWARE_EX support
-  KVM: SVM: Use new ccp GCTX API
-  KVM: SVM: Delay legacy platform initialization on SNP
-
- arch/x86/kvm/svm/sev.c                      |  72 ++---
- drivers/base/firmware_loader/sysfs_upload.c |  16 +-
- drivers/crypto/ccp/Kconfig                  |  10 +
- drivers/crypto/ccp/Makefile                 |   1 +
- drivers/crypto/ccp/sev-dev.c                | 186 ++++++++++++-
- drivers/crypto/ccp/sev-dev.h                |  35 +++
- drivers/crypto/ccp/sev-fw.c                 | 281 ++++++++++++++++++++
- include/linux/psp-sev.h                     |  72 +++++
- include/uapi/linux/psp-sev.h                |  21 +-
- 9 files changed, 614 insertions(+), 80 deletions(-)
- create mode 100644 drivers/crypto/ccp/sev-fw.c
-
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 357906375ec59..d0e0152aefb32 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -2171,7 +2171,7 @@ static void *snp_context_create(struct kvm *kvm, struct kvm_sev_cmd *argp)
+ 	/* Allocate memory for context page */
+ 	context = snp_alloc_firmware_page(GFP_KERNEL_ACCOUNT);
+ 	if (!context)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	data.address = __psp_pa(context);
+ 	rc = __sev_issue_cmd(argp->sev_fd, SEV_CMD_SNP_GCTX_CREATE, &data, &argp->error);
+@@ -2179,7 +2179,7 @@ static void *snp_context_create(struct kvm *kvm, struct kvm_sev_cmd *argp)
+ 		pr_warn("Failed to create SEV-SNP context, rc %d fw_error %d",
+ 			rc, argp->error);
+ 		snp_free_firmware_page(context);
+-		return NULL;
++		return ERR_PTR(rc);
+ 	}
+ 
+ 	return context;
+@@ -2227,8 +2227,8 @@ static int snp_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
+ 		return -EINVAL;
+ 
+ 	sev->snp_context = snp_context_create(kvm, argp);
+-	if (!sev->snp_context)
+-		return -ENOTTY;
++	if (IS_ERR(sev->snp_context))
++		return PTR_ERR(sev->snp_context);
+ 
+ 	start.gctx_paddr = __psp_pa(sev->snp_context);
+ 	start.policy = params.policy;
 -- 
 2.47.0.277.g8800431eea-goog
 
