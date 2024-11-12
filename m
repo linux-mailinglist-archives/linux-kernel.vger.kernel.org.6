@@ -1,130 +1,155 @@
-Return-Path: <linux-kernel+bounces-406244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E839C5C8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:58:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD48A9C5DA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:47:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C793B2832E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:57:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6DBAB46016
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11892038C1;
-	Tue, 12 Nov 2024 15:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AD72040AE;
+	Tue, 12 Nov 2024 15:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="clL0Xkn+"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TWVGjLo4"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B202003D5;
-	Tue, 12 Nov 2024 15:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BDD20409A
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731426995; cv=none; b=DQHUzYwKGS+rtykiUfAcmxZ+THSpAohbCLwVvu4JiRgqrVrBGmEusKkh7MH+zxh/usXzSijdG+leK1V4O8G5w3qSkWBqaZPxRICHzjZD8c8hK4thlovozRmrxfVwRt2FjDuPvaWloM6JMz0XXm3QfP50yRzoBu22mbwv5a9qdHo=
+	t=1731427025; cv=none; b=eQ4fMgzaIFxEZDgAtZtvO0yYyGgyY78JX+7QBIhgZkFV7lk8zgbZN19t3zkuS1qcW7xOoL2Z4jlKMw5u1zHHMKOtO6ihFjrPKMM9LJFAwRbKl26BWTAAgKLP5Z6TH8BoIJqxmdcGeJePzHYSN9VlNESHIhVflOQ6tGJNV7Y2cPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731426995; c=relaxed/simple;
-	bh=89Cz8hDnIDcexn3u1F3fL0Sas85eVLi4uuuYUJ9dnJw=;
+	s=arc-20240116; t=1731427025; c=relaxed/simple;
+	bh=VAA1g9rl5BaF/kPLFoBaEIyM0NZnhRw8AObDrZkEUk8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jujw4llwNqm5uaLXOjksCBCHUzirMeBWjhUne6cxiwZui9Rhbi51HOAbXJAhAuQWizYVM3nM4zTiHd+skqkSG79qMQe2q0arGlQX71rW4PYNmPMFUNBHowHCGIkbqUiK5hvIk1x5THjbKPJclbq907g5LRUuRkWka3fr3hLSVdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=clL0Xkn+; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-460a23ad00eso57239361cf.0;
-        Tue, 12 Nov 2024 07:56:33 -0800 (PST)
+	 To:Cc:Content-Type; b=mVQOkkcEs0v1agwWKtLD6M7t2TBwcr3A3ogiiq96jXcSLKYAgLAHTu0hvOfsa1h+o7aad4jzbiIyWrv0eKjXsoOTGYcZTGm6RCs50nBVQu54NJwzYWxF1WrwI938QPnET3YAATb2ERL1nU2KIOuW0yY4aDFmCjVsKf02XKZ3Q6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TWVGjLo4; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e28fea0f5b8so5256007276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:57:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731426992; x=1732031792; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4c6Jzp6I8iJr+q2ssZkuQOaV1YsODxTk+KgFq2+saP8=;
-        b=clL0Xkn+cuLXoPWV0ox8UQjl+iVbu/TZyIqlZtl0vCOtXVPOwa9nYtL8FdKgAImo9H
-         wLadxmVNx5p6n9fWowchbv9bIXgBoH+lYVcJGqTx2lzZcReVsrYxEr+CoN/SkM0Z/DDk
-         H5rFgUPKuiV+ZlvJ2joNBW+Bm86wG+/TwNFLQ+8visHJxuEuCKQ99WJfwtGS/6oibhK/
-         BhFxl7C7a/BNTGnp364A1SHveW66YRKXhXVPA1uiEXF+D0DsCukz7QJMl0UDP86x73sm
-         qGnvFBjwLlEckWSopyLgbwfdNL+iTjcu4ysHKijPnfQeMdeKb17g38mG1p+ZppSIvYLI
-         QyyA==
+        d=linaro.org; s=google; t=1731427022; x=1732031822; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LvLeNnoi9Q/2tIEpsYYZ7QLjjHPm2C2yqmvXawnq7e4=;
+        b=TWVGjLo437KtZ1N0ot1zyu62Sx8PpjHsiGo+8LrlwBzdvuaPjwkwn55aFkeTNWfMdo
+         nbyfMEGrnsX60ddYxvqJKEppHssAh2UGoGgxUd1P3YE3qHgwTidc58bZi1BRaUb4RS9h
+         WAWsZ/58I8+wM9xhwpVg+aCbyDBUylz+tr4MUugA4sIo/XwMlGH8t5aw6y8V3gY8AubF
+         F3wZ7eeV+TUcVP+uJ8fP7eWBxXXoCTmVn0dDfnJUd+bqPnWAohQxwJVXw+r7kbY+Occ3
+         ngNlmMr+dZa/foW8TqfyH6w9PFpGrOapgn/mMOtv9zTvLdR2y3OncvXOyr+zF4OQyfVw
+         eO5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731426992; x=1732031792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4c6Jzp6I8iJr+q2ssZkuQOaV1YsODxTk+KgFq2+saP8=;
-        b=FYYiNPE4LU7AS1/HnxFj7HlWf7D7oI+XRvwotmOUr8XR1aAH07mlwj4qfTUPjFPlwP
-         jQ+ETtQS0Op+rjdXcJFvYXaqSq4EUMXKQ6ZN/I+jzvGFVg9WSlRmcO4aPy7ukm00L0a/
-         UWGdXX7XzM2XUA/Gq/Mtyv0S55VF7lLlXWhPD+MitT86eJhRV7UvnNIqw0vF7O/lckUn
-         GvZNy0QXI1ib9TY0UGSCuZB6aWQrxWmtmND/qXYe2JN9RdUzGf5OYXntKgW8rKMwEWku
-         J7jryT7s5dmTM0q5oZbsdBzvcpy/5/aOchD9w1SNA+F4etr0B1HnUJ+4DnJ5iEuOwxSE
-         mRzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoKmj4c1trYOpjpPtSKVFMtItBsTmHnkAOEGOsegCFU5C4ZHHe/MMP7OPybKhRiBTTqIcU90W3FN1tVnM5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDiA4XRU4ToEwasEXozDIGnegMKgKmFl9oMsZesC+/POU6Dg+/
-	wE+cmRPDoEEvPiU2uKP7NTVJ0cwQzcpUHdEl3gM3IYEl22URqPTpIiiSVbhZShXozvj49xW5fSf
-	SnZOhtT/dJ295g+I+Y1AaHbvVmI0=
-X-Google-Smtp-Source: AGHT+IENfGvbIkArwXHI4JqBeWhQis6oDVSKsu36X37iI8nb9GDSHg/lzYvBrN0QkrhAvA1pzyy7neruVd3QIb1+0LA=
-X-Received: by 2002:ac8:690e:0:b0:461:1679:9062 with SMTP id
- d75a77b69052e-46309a6de7emr347673041cf.9.1731426992493; Tue, 12 Nov 2024
- 07:56:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731427022; x=1732031822;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LvLeNnoi9Q/2tIEpsYYZ7QLjjHPm2C2yqmvXawnq7e4=;
+        b=rJ1i/D0uszlC9t3C3c71683OOBZsKaZ70WJBlwEMWrYj1QQwIn1R+pF7yOtjqnd1RN
+         m8cHwOnKPl/51yM4Ocy5hQy07sqA5UxTVNuaKTCT4KTN6g11VMTBOv/ta0oamjqOrlQ1
+         MKAvEslcKUdWxtEvavkS9LPOXBRuUDRtgbCV11IRczNa7NRSBtY+wQL4pOyG2UgDhCAi
+         trrFfQnr+BdUvQeRRpsQcCVOihjiMsSXUISidtj006zzX2KODxTNS8iT7HKsXIasFzFK
+         RKoir7CWVR55+g9fv4bT79/2+JxSmOlaXVDtFX1HqRdeLIGIigPwctWtVxX9uuTqZfZ8
+         +dJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaPs/MntebS6RfgN/ttQut36WGnKWOFbgJ7P8u+u3IM27/usvcdu7R7px0qPzI9pb+AVW97kITZuCo2XA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCpbB8M4FEqerWAPWtjQEzImNxHUKMfFVCF4qhe0jS0Q4vrXYo
+	eJi2GiziGgJhQNIexOjJmLYumj0EBGCdok93jWM4Uy+Vd5BjjZAiu9sEyYnUPYCelc+miHq9tY0
+	zFGEqy1f4D/jl9pHpJAvjILdDDdmR/6z7I3lDWA==
+X-Google-Smtp-Source: AGHT+IH5CCJQlrbtWhzwNwEuVmBy3c+bpgonBaiqCiIcyBRut8a95C/Hq3VyL3SXBBf4iw9gPiN+f3nxmL1sUxWUun4=
+X-Received: by 2002:a05:690c:c96:b0:6ea:85ee:b5d4 with SMTP id
+ 00721157ae682-6eaddd86d12mr164461237b3.6.1731427022576; Tue, 12 Nov 2024
+ 07:57:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101135452.19359-1-erin.shepherd@e43.eu> <20241101135452.19359-2-erin.shepherd@e43.eu>
-In-Reply-To: <20241101135452.19359-2-erin.shepherd@e43.eu>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 12 Nov 2024 16:56:20 +0100
-Message-ID: <CAOQ4uxjrR9is3E4RqMa3u=Gd-1NMZuBjv+GVJ-eMQiP-Mer9GA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] pseudofs: add support for export_ops
-To: Erin Shepherd <erin.shepherd@e43.eu>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	christian@brauner.io, paul@paul-moore.com, bluca@debian.org
+References: <20241030125512.2884761-1-quic_sibis@quicinc.com>
+ <CAPDyKFoY8CnxF7JXzkT9_WXyM-TJhW4kmTw=H8NEzch32N1_7Q@mail.gmail.com>
+ <ZyJeuVIbWkohymW5@pluto> <20241106071215.jhnzcn4vkdfr3peg@bogus>
+In-Reply-To: <20241106071215.jhnzcn4vkdfr3peg@bogus>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 12 Nov 2024 16:56:26 +0100
+Message-ID: <CAPDyKFr-pmXEhgUgCapzQX3Hn_UAM632TaG8SdkQXaCn5-y42g@mail.gmail.com>
+Subject: Re: [PATCH V5 0/6] firmware: arm_scmi: Misc Fixes
+To: Sudeep Holla <sudeep.holla@arm.com>, Sibi Sankar <quic_sibis@quicinc.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>, johan@kernel.org, jassisinghbrar@gmail.com, 
+	dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, konradybcio@kernel.org, 
+	linux-pm@vger.kernel.org, tstrudel@google.com, rafael@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 1, 2024 at 2:55=E2=80=AFPM Erin Shepherd <erin.shepherd@e43.eu>=
- wrote:
+On Wed, 6 Nov 2024 at 08:12, Sudeep Holla <sudeep.holla@arm.com> wrote:
 >
-> Pseudo-filesystems might reasonably wish to implement the export ops
-> (particularly for name_to_handle_at/open_by_handle_at); plumb this
-> through pseudo_fs_context
+> On Wed, Oct 30, 2024 at 04:28:41PM +0000, Cristian Marussi wrote:
+> > On Wed, Oct 30, 2024 at 05:19:39PM +0100, Ulf Hansson wrote:
+> > > On Wed, 30 Oct 2024 at 13:55, Sibi Sankar <quic_sibis@quicinc.com> wrote:
+> > > >
+> > > > The series addresses the kernel warnings reported by Johan at [1] and are
+> > > > are required to X1E cpufreq device tree changes to land.
+> > > >
+> > > > [1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+> > > >
+> > > > Duplicate levels:
+> > > > arm-scmi arm-scmi.0.auto: Level 2976000 Power 218062 Latency 30us Ifreq 2976000 Index 10
+> > > > arm-scmi arm-scmi.0.auto: Level 3206400 Power 264356 Latency 30us Ifreq 3206400 Index 11
+> > > > arm-scmi arm-scmi.0.auto: Level 3417600 Power 314966 Latency 30us Ifreq 3417600 Index 12
+> > > > arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+> > > > arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+> > > > arm-scmi arm-scmi.0.auto: Level 4012800 Power 528848 Latency 30us Ifreq 4012800 Index 15
+> > > >
+> > > > ^^ exist because SCP reports duplicate values for the highest sustainable
+> > > > freq for perf domains 1 and 2. These are the only freqs that appear as
+> > > > duplicates and will be fixed with a firmware update. FWIW the warnings
+> > > > that we are addressing in this series will also get fixed by a firmware
+> > > > update but they still have to land for devices already out in the wild.
+> > > >
+> > > > V4:
+> > > > * Rework debugfs node creation patch [Ulf/Dmitry]
+> > > > * Reduce report level to dev_info and tag it with FW_BUG [Johan/Dmitry]
+> > > > * Add cc stable and err logs to patch 1 commit message [Johan]
+> > >
+> > > Patch4 and patch5 applied for fixes to my pmdomain tree - and by
+> > > adding a stable tag to them, thanks!
+> > >
+> > > Potentially I could help to take the other patches too, to keep things
+> > > together, but in that case I need confirmation that's okay to do so.
+> >
+> > SCMI patches in these series are all reviewed (all but one even by Sudeep)
+> > so it is really up to Sudeep preference...(who is travelling now so it could
+> > take a bit to reply)
 >
-> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-> ---
->  fs/libfs.c                | 1 +
->  include/linux/pseudo_fs.h | 1 +
->  2 files changed, 2 insertions(+)
+> I have added my reviewed by now.
 >
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 46966fd8bcf9..698a2ddfd0cb 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -669,6 +669,7 @@ static int pseudo_fs_fill_super(struct super_block *s=
-, struct fs_context *fc)
->         s->s_blocksize_bits =3D PAGE_SHIFT;
->         s->s_magic =3D ctx->magic;
->         s->s_op =3D ctx->ops ?: &simple_super_operations;
-> +       s->s_export_op =3D ctx->eops;
->         s->s_xattr =3D ctx->xattr;
->         s->s_time_gran =3D 1;
->         root =3D new_inode(s);
-> diff --git a/include/linux/pseudo_fs.h b/include/linux/pseudo_fs.h
-> index 730f77381d55..2503f7625d65 100644
-> --- a/include/linux/pseudo_fs.h
-> +++ b/include/linux/pseudo_fs.h
-> @@ -5,6 +5,7 @@
+> > ...moreover I am not sure if the SCMI patches in this
+> > series could end up with wome trivial conflicts against the scmi patches
+> > already queued at
+> >
+> >       sudeep/for-next/scmi/updates
+> >
+> > (at least the perf related ones 2 and 3 probably not)
+> >
 >
->  struct pseudo_fs_context {
->         const struct super_operations *ops;
-> +       const struct export_operations *eops;
->         const struct xattr_handler * const *xattr;
->         const struct dentry_operations *dops;
->         unsigned long magic;
+> I did a quick check and no conflicts were observed. Let me know if you need
+> a branch with first 3 patches, but I need to do that today or after Sunday
+> as I will away from my computer for few more days again from tomorrow.
+>
+> Let me know ASAP.
+>
 > --
-> 2.46.1
->
->
+> Regards,
+> Sudeep
+
+Sorry for the delay. I have picked up the remaining patches from this
+series. All applied for fixes and by adding stable tags to them,
+thanks!
+
+Kind regards
+Uffe
 
