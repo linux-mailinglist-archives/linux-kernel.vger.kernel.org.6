@@ -1,122 +1,122 @@
-Return-Path: <linux-kernel+bounces-405763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3C39C56B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:36:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC509C56C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:40:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C5AB282719
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:36:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F782826E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3561B4F04;
-	Tue, 12 Nov 2024 11:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86602309AB;
+	Tue, 12 Nov 2024 11:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMf4fMJI"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y5ZQj0XX"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9E723098E;
-	Tue, 12 Nov 2024 11:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDE223099C;
+	Tue, 12 Nov 2024 11:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731411292; cv=none; b=c0bivMnj3l0xLjVQBFf5tpm0L4pLjKkhNugq15i1BAa5bLfe3kFTv5LL5nmTzQBe9UpZ3sUo/OjPGcVOWKBLKsSVTBmCnk1CR2mvcUUc2nE2fhVTvFrJAd2t5BPKkCnAb5XoP9yx3D7slNaHrruBuxTTtPYg2KlvPOSz6p052SI=
+	t=1731411597; cv=none; b=tgVJ53cw9sXnOUlnoaP2xUelDbZh6GsAfO2WmQoE+ChADw1lNXuVUZkoAj2O/IUbSfUkTu3r0gVbO0If9Yf15DiPPeO98aoh5iJGEy0+I/aDbeL0n/wKSK6XmRPdeqS4aEKuTNfB77a28F1s0m6X2T3MEWtS0mKQUI1KImpPBaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731411292; c=relaxed/simple;
-	bh=tGWkef8oRPVbKIm8lxPB39He4I6ZPEkKKg+zvLwwrKg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VMHakSFlRlT6DiLViIO7/UQZjQHFXh0QpcdiCGPLZfK9K7lxliQAYv2pjDzPH+xmzHo//vyiQH+lCFMoR8bsfm6Ksj70UDb8hPM66E8k5oevl2XSeaLvCAVVyYAvYxw0/XBF3q+fWfxwE9/ZHQShpSvEFRe9c4QDNNtXS/Ljrbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gMf4fMJI; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1731411597; c=relaxed/simple;
+	bh=l29njM0VLLj2zjM1LLVkaHz48P0kMR7ou0C+/31HP8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VBzt8SG931iRqLTf9u4Za25kOS3lm4RLYbap/u74YExaPn03+n8kO5L1jvxHJOYlQU6fWJ+4x+48ybs8t8RUxn66o8cqaJ+q+he9dcTTVCRWFch/2DwrMSeaZYlObnzLbeJRqwL3z7DDfEFHli277H8TqF4qwiYsor7c0ZspRiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y5ZQj0XX; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20caea61132so47585675ad.2;
-        Tue, 12 Nov 2024 03:34:50 -0800 (PST)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cd76c513cso46445275ad.3;
+        Tue, 12 Nov 2024 03:39:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731411290; x=1732016090; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731411595; x=1732016395; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BBciCWF098p8Q9R480GusPAiYwzzotgDMxNExmqOzhg=;
-        b=gMf4fMJIhckfnIQszAjyfl6/JQWB9qr/t6yaPbqDzn6IhZqNHVDfrPevUYFQmsNcmV
-         VGO1Z7GuJwgxTwmQhVziI15DAKby1/fcWvQULeKwxuvJIuO2kI4gSmje5VPPZyNDXINb
-         Kf7rvtowq7vh4aSr0Rxs+hHd3NosoWUfQPMo4jEUlkgLGuqGwcmG47DYvXCkhCLBNaF3
-         1ihHRKlLqayXJFGQiLXviYIUpTWGMGITXlV3/CGmUUxAUiJQzho/UPfkxKl5zuRNq81L
-         CQkyquuVPBDP/nOmZSRZ7KNIIeq3waDRfhBTqACB+3cF+Yg3cxrQOR3xMnYUOIylXCkZ
-         dKQg==
+        bh=zbpR32eMdhLZ9/UcHkTauMhtF31kw+5SFXtcGereRxE=;
+        b=Y5ZQj0XXKl353eMM7b74g898jP9AIuG80YRnLjqYjXveelielalQpjNvQi+waNEHDW
+         YJLUxQUsRxqS4u5xT0SJYuPTNKr4NeTyH/6jMV9DJmJIhE3YFZnChzaPzvVBLXC3+Ryy
+         viPaZF9cAfcPUpnx+oirLaKd6+lQbVZ8zwP+lbsv7IHf/1UBl4Yg7npJx4y/L3TlYPLP
+         yTxs3q1sMLp65LnXSqeCwJzueGfc6DfvwUrAQv+0d84+uGKrjiN2xuL0AgUn4kgpvhRv
+         tk8QuAb9eOLbGm5uSI/MImPz+e+n5OGY3atjzoqTfizCSqdssxqHc07dQk8yDbcZnSnM
+         egZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731411290; x=1732016090;
+        d=1e100.net; s=20230601; t=1731411595; x=1732016395;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BBciCWF098p8Q9R480GusPAiYwzzotgDMxNExmqOzhg=;
-        b=rGq2RfA1/UYsy6C8N1wTpHCE5R7ROqf7UfUu8tGCKVMMsqsYwNhdZ7yjP9trY9e+w8
-         vkicgJv/YXye2RSVMWloMcvn0yxLyDaIhUODy2Bypu4qPBYuTuO9x8e+tRMH13SBzZjr
-         yzjaFs3ae+UwvsXkd6eZHTLMCDJ5jixKvmj/0SgLyuN/IsoVTMj2CSoHK8qUoAA/OtHK
-         v4hqyjHu9aScU3089MCZTv88J+3M0Ef7GLJrl2f9iSWX7xMPTOy6V6H+i84eCgY80LVe
-         ieGCgXvHQqdBn6mMFhMCjF5djmgh7FXoBFWd8BLquJxcV1V6PRTxgjZL6LgxLPot+xIw
-         X42A==
-X-Forwarded-Encrypted: i=1; AJvYcCUrW8nYPiLMxDEg6g/76B+aOtsXIR3rRFjzW6a4KvkvSzwA+bcBOtjaioTe1RJKr4J6uuAE2HWBBIH7oVSK0I9F@vger.kernel.org, AJvYcCW6GCYygZS/j/gIUFp2vnWYF7h5ICjKB7AitQB3lGGyVwQq7Qh95EGwH4iHpmw5yiE0fVmHdZYVSkz+pKs=@vger.kernel.org, AJvYcCWbZMjvjlPk3h5h+JIa1yYAmInohA4blntKCzduQnjHDBVZR9MbVU0ntvi9hYnINd/0+eksZM+X@vger.kernel.org, AJvYcCXhxIxwkSBCZ1E+ungnTphAqtC1SZs2Yg2CDCnzRHtMEoMU2mFsCMXDxf0FU1cWDxcnJ45T33+a@vger.kernel.org
-X-Gm-Message-State: AOJu0YyntLHwJEZjhcMj0yxBYbtFIg7G3U5jb9V7f4uzsi6vc4bilG2x
-	gwRiruY77hADs+g6Ab68RN5IBFW/+1Lkj0SjaFRM8Ll/pO4EE/dUQyjZxJceAzY=
-X-Google-Smtp-Source: AGHT+IE3TJwzhFldsUlkBu1cbuT+lJaCxhF62RVb0VmyLIfgheqvWGnc4SfZmeez3miWxOIdNgnJOw==
-X-Received: by 2002:a17:90b:3911:b0:2e2:f04d:9f0d with SMTP id 98e67ed59e1d1-2e9b170c3camr21923226a91.16.1731411290233;
-        Tue, 12 Nov 2024 03:34:50 -0800 (PST)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a348dd6sm12466928a91.0.2024.11.12.03.34.46
+        bh=zbpR32eMdhLZ9/UcHkTauMhtF31kw+5SFXtcGereRxE=;
+        b=XT4oaXbDay+WAvVqLbID2Vnfohrz+oCrp3jbXbSCNhkyaTtj+/oW2JUcFegH50uykk
+         KM030ZX4IAnTE9/jy4BeUkj2HeEd86nZlB+CIu2693g4ixe8G04WjtOnaxHTL0pLf6Ui
+         soipcyXm+iCYasxbmU8VoUmeJw7rV4usMjA3DTgjxzPtdeNBgOaNROFycJ5omeOpcV8A
+         0nx8NrDBG57jHU7ebgxa85jt2b/t/h5im/u2hGUN3oNXozcXat3FGR/uEnDXJCoAtTvb
+         0Ghy9E8E6dl1olZ22E2tiBwl0u1Hj1dONcC/tmQqVtIRnn47tLU3YVg9Lhd/6NLGUA6q
+         gSFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVf+glwMd6ioyAoIj/t0T23UQpUHRdJ/FdPbiwPArMB/cYysIvM/5Ywh4jn/8/ZsNlQPrWoTpNq1PtthwSL@vger.kernel.org, AJvYcCX1dcPH2bIZt4Is5pWbXp6YY+88EAcPHBYTokyDK/GOuQBhrXoxzt4tBCyhhXzywkZFlRDwcGEnAVQs6o8P@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHfLBTAfXC66V+yVf3UhhBwlIMhPI/CabOH8306hEadEfvpEqg
+	CaN06dL8BKeUUNvzeAP1z1qjy5DJWi1yPNBZtO3FqEO9bUDrs2LS
+X-Google-Smtp-Source: AGHT+IEJUWnViOQdsutAsvxmLVA9eieU6zhVNujDU00xOJ4oGnlIL4fPfE4e0fjknXVIEC2gDlvCBQ==
+X-Received: by 2002:a17:902:ec92:b0:20c:9da6:65af with SMTP id d9443c01a7336-211aba5f33cmr21703735ad.57.1731411595049;
+        Tue, 12 Nov 2024 03:39:55 -0800 (PST)
+Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-21177e87537sm90857905ad.270.2024.11.12.03.39.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 03:34:49 -0800 (PST)
-From: Jeongjun Park <aha310510@gmail.com>
-To: pablo@netfilter.org,
-	kadlec@netfilter.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	kaber@trash.net,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
+        Tue, 12 Nov 2024 03:39:54 -0800 (PST)
+From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+To: jmoyer@redhat.com,
+	bcrl@kvack.org,
+	brauner@kernel.org,
+	jack@suse.cz,
+	viro@zeniv.linux.org.uk,
+	willy@infradead.org
+Cc: linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH net] netfilter: ipset: add missing range check in bitmap_ip_uadt
-Date: Tue, 12 Nov 2024 20:34:34 +0900
-Message-Id: <20241112113434.58975-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	pvmohammedanees2003@gmail.com
+Subject: [PATCH] fs:aio: Remove TODO comment suggesting hash or array usage in  io_cancel()
+Date: Tue, 12 Nov 2024 17:08:34 +0530
+Message-ID: <20241112113906.15825-1-pvmohammedanees2003@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-In the bitmap_ip_uadt function, if ip is greater than ip_to, they are swapped.
-However, there is no check to see if ip is smaller than map->first, which
-causes an out-of-bounds vulnerability. Therefore, you need to add a missing
-bounds check to prevent out-of-bounds.
+The comment suggests a hash or array approach to
+store the active requests. Currently it iterates
+through all the active requests and when found
+deletes the requested request, in the linked list.
+However io_cancel() isn’t a frequently used operation,
+and optimizing it wouldn’t bring a substantial benefit
+to real users and the increased complexity of maintaining
+a hashtable for this would be significant and will slow
+down other operation. Therefore remove this TODO 
+to avoid people spending time improving this.
 
-Cc: <stable@vger.kernel.org>
-Reported-by: syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
-Fixes: 72205fc68bd1 ("netfilter: ipset: bitmap:ip set type support")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
 ---
- net/netfilter/ipset/ip_set_bitmap_ip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/aio.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/net/netfilter/ipset/ip_set_bitmap_ip.c b/net/netfilter/ipset/ip_set_bitmap_ip.c
-index e4fa00abde6a..705c316b001a 100644
---- a/net/netfilter/ipset/ip_set_bitmap_ip.c
-+++ b/net/netfilter/ipset/ip_set_bitmap_ip.c
-@@ -178,7 +178,7 @@ bitmap_ip_uadt(struct ip_set *set, struct nlattr *tb[],
- 		ip_to = ip;
- 	}
+diff --git a/fs/aio.c b/fs/aio.c
+index e8920178b50f..72e3970f4225 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -2191,7 +2191,6 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
+ 		return -EINVAL;
  
--	if (ip_to > map->last_ip)
-+	if (ip < map->first_ip || ip_to > map->last_ip)
- 		return -IPSET_ERR_BITMAP_RANGE;
- 
- 	for (; !before(ip_to, ip); ip += map->hosts) {
---
+ 	spin_lock_irq(&ctx->ctx_lock);
+-	/* TODO: use a hash or array, this sucks. */
+ 	list_for_each_entry(kiocb, &ctx->active_reqs, ki_list) {
+ 		if (kiocb->ki_res.obj == obj) {
+ 			ret = kiocb->ki_cancel(&kiocb->rw);
+-- 
+2.47.0
+
 
