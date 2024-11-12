@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-405509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE0229C5240
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:42:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35279C5243
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:42:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 119CA1F221E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:42:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8689282703
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5D320E022;
-	Tue, 12 Nov 2024 09:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DA820E007;
+	Tue, 12 Nov 2024 09:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OlxQ5vyn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Jkkw+Cci"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DC020D4F4;
-	Tue, 12 Nov 2024 09:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC2F20DD47
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731404528; cv=none; b=ekYq6uRPoOT366rJvfGutfk+vcIAw27Nf+b2GUAWYu9YH9bof6NHAXLZDXGBailRe3yxyJWqgoHp+HtA5jfpWQcQzhKLsVgczXhYkpgQIZG7CslqjOfkvfI0YJkaZSEwBmMUNeIfLlimKgfs/+FStj1hal0Yz1d0JK22+b1DydU=
+	t=1731404558; cv=none; b=YKvdOkU3lqsaKwf2EKJ5z+cf+HLy1858+JewCWxMzg6QMxUoTEDm1WxrH/oQV2vJnQEtbcmfuf7prVKyIF+rphHru3vkVoSNl7rRSyKLQFUHKgJk/N1z4jTcsRehJiqMT1mZ9QJSAjgNw52GCY3Rlw8rurScv3wBxSBC/yYNsVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731404528; c=relaxed/simple;
-	bh=Zdm0ZFsz1QDD9ewH8lNkrlGMRhqE2Mfq+pNsouDTEMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nSOcUQqP3A68NNr7kU/SsCEy7J3ZJ0XYuzrXNa6DGVXRdbIcG1wk3Aon9eRLVoB6Tjaio9hEEZ1bbFrZ5vBD8Apiqz9Liypc7hW6e7nrPE1jL2avCUeSYeKxcEdobc6/pUb1Ct66W/suUPX20S34811Fg9bGVezL5JuoonZCNq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OlxQ5vyn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58354C4CECD;
-	Tue, 12 Nov 2024 09:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731404527;
-	bh=Zdm0ZFsz1QDD9ewH8lNkrlGMRhqE2Mfq+pNsouDTEMs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OlxQ5vyn15uxfFSBHSFYs1sD0zKcvDQCPBjaT6ee4NRWmYiCCxbKW2S8PZ/I815dq
-	 NbmzS1F+hNdJlh6X2fDZRd+Hb0dm2++tn6Kfsw3QDWKJK4u2wWqZRpkHneKPw9urxQ
-	 s2WILodJ4v8bIFVPC6ZQQUcEh2PUMJzkfTraNCDA0iKG4bq25/dCnMolB9OSwNc/33
-	 BRGMQDEC8mnoewBOF/mip5vLyxDv0XTEavgdbwkEKWmgOOYHeQb1L9DGHRRHEvvxai
-	 F5qRT+mk7gpS6EG26DvepGQFzNeAmEiWRjcBfOouWSGgRK0vpowrYr+tUpK+3AOioD
-	 TK8wo7QaUogAA==
-Date: Tue, 12 Nov 2024 10:42:02 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Karel Zak <kzak@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Ian Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v3 0/2] fs: allow statmount to fetch the subtype and
- devname
-Message-ID: <20241112-vielzahl-grasen-51280e378f23@brauner>
-References: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
- <20241111-ruhezeit-renovieren-d78a10af973f@brauner>
- <5418c22b64ac0d8d469d8f9725f1b7685e8daa1b.camel@kernel.org>
+	s=arc-20240116; t=1731404558; c=relaxed/simple;
+	bh=mIhSHldPVqBpyw3G4Fo9cIpHCQSoiGXt+whYMri+MNM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FytYyWWtnbIC/Ym7ha4VXXSOO44fxQkLuhwAMaSEHKYLv3QrdUZYVGgC4eunRwjRy6mSXcm0PWOvEOUwBaQFOa7Hs2DzfgVegN7TNl6DprwR7yFqDNr7Yi6gTygNsw+bLADcy4DIHin3Kqnj0K3lx8u1wZLbgFt/OS+ZBFdcv1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Jkkw+Cci; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731404553; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=voksCnbA+4EpaI3K9bQUHmFEWIROIUAhEOXE8dJ5UrU=;
+	b=Jkkw+CciuCuvdXMfIocdejdynT4hV0yPeYKbdTfo440VT1IjeFHGGReZzMulqvW4/ycvEflFEFKdtxFZejy31DXxdeOPavevLC/jdHgSFOerk0PYf9iHyp52KFq1Rwps4Hw+Mkr6883+AwGI65NciJanj3d3eKxzFhrRN1X6dTw=
+Received: from 30.221.128.202(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJGo4pJ_1731404551 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 12 Nov 2024 17:42:32 +0800
+Message-ID: <fabdfe9f-9293-45c2-8cf2-3d86c248ab4c@linux.alibaba.com>
+Date: Tue, 12 Nov 2024 17:42:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5418c22b64ac0d8d469d8f9725f1b7685e8daa1b.camel@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] erofs: add sysfs node to drop all compression-related
+ caches
+To: Chunhai Guo <guochunhai@vivo.com>, xiang@kernel.org
+Cc: chao@kernel.org, huyue2@coolpad.com, jefflexu@linux.alibaba.com,
+ dhavale@google.com, linux-erofs@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20241112091403.586545-1-guochunhai@vivo.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20241112091403.586545-1-guochunhai@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 11, 2024 at 08:42:26AM -0500, Jeff Layton wrote:
-> On Mon, 2024-11-11 at 10:17 +0100, Christian Brauner wrote:
-> > On Thu, 07 Nov 2024 16:00:05 -0500, Jeff Layton wrote:
-> > > Meta has some internal logging that scrapes /proc/self/mountinfo today.
-> > > I'd like to convert it to use listmount()/statmount(), so we can do a
-> > > better job of monitoring with containers. We're missing some fields
-> > > though. This patchset adds them.
-> > > 
-> > > 
-> > 
-> > I know Karel has been wanting this for libmount as well. Thanks for
-> > doing this! It would be nice if you could also add some selftests!
-> > 
+Hi Chunhai,
+
+On 2024/11/12 17:14, Chunhai Guo wrote:
+> Add a sysfs node to drop all compression-related caches, including
+> pclusters and attached compressed pages.
+
+subject: erofs: add sysfs node to drop internal caches
+
+Add a sysfs node to drop compression-related caches, currently
+used to drop in-memory pclusters and compressed folios.
+
+I don't think it really drops `compressed folios`, also see
+my comment below:
+
 > 
-> (cc'ing Karel)
+> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+> ---
+>   Documentation/ABI/testing/sysfs-fs-erofs |  7 +++++++
+>   fs/erofs/sysfs.c                         | 11 +++++++++++
+>   2 files changed, 18 insertions(+)
 > 
-> Thanks. We may need to tweak this a bit, based on Miklos' comments
-> about how empty strings are handled now, but it shouldn't be too big a
-> change.
-> 
-> I actually have a related question about libmount: glibc doesn't
-> currently provide syscall wrappers for statmount() and listmount().
+> diff --git a/Documentation/ABI/testing/sysfs-fs-erofs b/Documentation/ABI/testing/sysfs-fs-erofs
+> index 284224d1b56f..b66a3f6d3fdf 100644
+> --- a/Documentation/ABI/testing/sysfs-fs-erofs
+> +++ b/Documentation/ABI/testing/sysfs-fs-erofs
+> @@ -16,3 +16,10 @@ Description:	Control strategy of sync decompression:
+>   		  readahead on atomic contexts only.
+>   		- 1 (force on): enable for readpage and readahead.
+>   		- 2 (force off): disable for all situations.
+> +
+> +What:		/sys/fs/erofs/<disk>/drop_caches
+> +Date:		November 2024
+> +Contact:	"Guo Chunhai" <guochunhai@vivo.com>
+> +Description:	Writing 1 to this will cause the erofs to drop all
+> +		compression-related caches, including pclusters and attached
+> +		compressed pages. Any other value is invalid.
+> diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
+> index 63cffd0fd261..f068f01437d5 100644
+> --- a/fs/erofs/sysfs.c
+> +++ b/fs/erofs/sysfs.c
+> @@ -10,6 +10,7 @@
+>   
+>   enum {
+>   	attr_feature,
+> +	attr_drop_caches,
+>   	attr_pointer_ui,
+>   	attr_pointer_bool,
+>   };
+> @@ -57,11 +58,13 @@ static struct erofs_attr erofs_attr_##_name = {			\
+>   
+>   #ifdef CONFIG_EROFS_FS_ZIP
+>   EROFS_ATTR_RW_UI(sync_decompress, erofs_mount_opts);
+> +EROFS_ATTR_FUNC(drop_caches, 0200);
+>   #endif
+>   
+>   static struct attribute *erofs_attrs[] = {
+>   #ifdef CONFIG_EROFS_FS_ZIP
+>   	ATTR_LIST(sync_decompress),
+> +	ATTR_LIST(drop_caches),
+>   #endif
+>   	NULL,
+>   };
+> @@ -163,6 +166,14 @@ static ssize_t erofs_attr_store(struct kobject *kobj, struct attribute *attr,
+>   			return -EINVAL;
+>   		*(bool *)ptr = !!t;
+>   		return len;
+> +	case attr_drop_caches:
+> +		ret = kstrtoul(skip_spaces(buf), 0, &t);
+> +		if (ret)
+> +			return ret;
+> +		if (t != 1)
+> +			return -EINVAL;
 
-I think it'll be a bit until glibc exposes those system calls because I
-think they are special-purpose in a lot of ways. But also because glibc
-usually takes a while to add new system call wrappers.
+		if (t & 2)
+			z_erofs_shrink_scan(sbi, ~0UL);
 
-> Would it make sense to have libmount provide those? We could copy the
+		if (t & 1)
+			invalidate_mapping_pages(EROFS_I_SB(inode)->managed_cache->i_mapping, 0, -1);
 
-I think libmount may not necessarily provide direct syscall wrappers but
-will expose new api functionality. This is at least what I gather from
-all the discussions on util-linux.
+or you could export MNGD_MAPPING macros again.
 
-> wrappers in tools/testing/selftests/filesystems/statmount/statmount.h
-> to libmount.h.
-> 
-> It's error-prone and a pain to roll these yourself, and that would make
-
-As with most system calls.
-
-> things simpler until someone is ready to do something for glibc.
-> 
-> Another idea might be to start a new userland header file that is just
-> a collection of static inline wrappers for syscalls that aren't
-> packaged in glibc.e.g.  pidfd_open also doesn't have glibc bindings, so
-> we could add that there too.
-
-Oh? What glibc version are you on? pidfd_open() et al should all have
-glibc wrappers afaik. It just always takes a while:
-
-        > cat /usr/include/x86_64-linux-gnu/sys/pidfd.h | grep pidfd
-        extern int pidfd_open (__pid_t __pid, unsigned int __flags) __THROW;
-        extern int pidfd_getfd (int __pidfd, int __targetfd,
-        extern int pidfd_send_signal (int __pidfd, int __sig, siginfo_t *__info,
-        extern pid_t pidfd_getpid (int __fd) __THROW;
+Thanks,
+Gao Xiang
 
