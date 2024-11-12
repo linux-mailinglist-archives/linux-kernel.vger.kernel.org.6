@@ -1,198 +1,139 @@
-Return-Path: <linux-kernel+bounces-406529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09EDD9C6079
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:33:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3AE99C6084
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:34:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FF231F218BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98B29282C01
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD979217452;
-	Tue, 12 Nov 2024 18:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A14218301;
+	Tue, 12 Nov 2024 18:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="sfv+N2Lc"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ZSd7Tal6"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5DC2076A9
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF69A217452
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731436414; cv=none; b=i3DqT2O79we4c9QPDkFpvu88jo8i06RAGc7eKNHArEr1Wq+fGGpUg4e3IxpY6CAnIGFzQxQ8unbp7GKkilAjTccuXvv6oCTkb15obJZE+svhotkTOw+tcDObQRnXMLj6q2Wo9ASlY4hHMVU7hGrMe+2OWdZpJz+P//uRfguMShA=
+	t=1731436467; cv=none; b=V8mKb81CkC6vcWWyrU8ANE5F3Q+Z8+pRgyk+W8gcWUuFb5OYuFIeeVb7acTOBzNoDWjDsj4oxw72YpTZN/pDSoSSI5fn7L5eqeS69QeXAKlgaCKhv1+orrRyQR62aR+/lBVnjY4O+l0ihyVG3aKemg8haKopQqESbTQhtmh1R04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731436414; c=relaxed/simple;
-	bh=L4EB3bK9nF1eUw9gq5osQzL/652ZBBgHHJ66oumcjGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HDEmREG7KnWU9bIKon1pA4LhObSpSgLzOsAT1MBXJ7lq37hvd90+owpWos8K+h10rCVR3qAzDhCs4OpEjnlhM9YsjuLJb/q0fG2erW10yxo253ENFyHgF21HOMtalNB61hm2AGypn74flnsvmFukuMAI6GgIrzzRsfUUcAPdpYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=sfv+N2Lc; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a4e5a7b026so21498045ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:33:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google; t=1731436411; x=1732041211; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=p465dKIJ4IYYDjMn3gNfZlw1GvGQG1PiuuM4JHiNnig=;
-        b=sfv+N2LckY8DvnJ/yM7fTpDXUGtANMjkP5MlVo1ovwRLLBLzrSpt86Iid0u8flBqUt
-         8zWhpSygQ54Cz4939YPbk5p6OhoXU2Aswp/zU1w9FwTQu3nzE+ghAgefF1182TkLuqRm
-         +BHPbdnPUDhlJqv4idFFsSTZS+t8EOxgHHFmk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731436411; x=1732041211;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p465dKIJ4IYYDjMn3gNfZlw1GvGQG1PiuuM4JHiNnig=;
-        b=shQhOtWk4vj/6wpHfxE5I4QrIUp2QLmNVn3oG31a4fLPzdg6X9FNjX/c0KdaO+/5ZM
-         L7Ki+h/az6/AJzPD/gtiKUkPr83OYOe3iRFXDqA3qVniLBiJ1jQruLiZCoBOteUf5Z69
-         toiBjyGtBSWEBBkXBbk9Xn8/nHsLp8Bd98ccIhoxCYp1I46mnL3HdguLwu/kQEsdOiDQ
-         dkdwAUoZcivEWxeFdZbP44ak3lF4sqoU9arVyqXfrtCsNtlqRtXAKsChSv6ZKq5yIKUg
-         qH53H4LsjeCCjpft7Bn/5cTy+mZoxTT53+AdfkTd2qX2cExcCzvvzQp6JBmmUfZTUJa7
-         1sRw==
-X-Gm-Message-State: AOJu0YyfLbDpUodhrSvZ17rySOcwH4hLghrUzVeR0TqjZRJOuOr/cdpu
-	m2gkJ4/N1TQqO7/TmFxWNSQQ08lsaNEweNHRTgZzXaKwFOfRoBB/QcIhmO0io/k=
-X-Google-Smtp-Source: AGHT+IFohZ+rcHRINBALHVrUbT+FrIFEIH8SSF1HmPhttDNm2ZpTiMe7OaLYyKBnsmW1fiivpULbcg==
-X-Received: by 2002:a05:6e02:2148:b0:3a3:b3f4:af42 with SMTP id e9e14a558f8ab-3a7156f751amr955065ab.7.1731436411491;
-        Tue, 12 Nov 2024 10:33:31 -0800 (PST)
-Received: from localhost (222.121.121.34.bc.googleusercontent.com. [34.121.121.222])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6f987e056sm22827805ab.64.2024.11.12.10.33.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 10:33:30 -0800 (PST)
-Date: Tue, 12 Nov 2024 18:33:30 +0000
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC 1/3] tick-sched: Remove last_tick and calculate next tick
- from now
-Message-ID: <20241112183330.GA2061573@google.com>
-References: <20241108174839.1016424-1-joel@joelfernandes.org>
- <20241108174839.1016424-2-joel@joelfernandes.org>
- <ZzKWvislBnjV9kpf@pavilion.home>
+	s=arc-20240116; t=1731436467; c=relaxed/simple;
+	bh=N0c1AAbtePVSIawYLO3q1m7P6uw9XKLYSSRostz+3OQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tgj0zuonDE0Gzrh1FRsFJe1bPux9WdtlraUxLhqRnFaV6mpY9je0b17GWSm11DL91ZPc1+ju5W689mKoSOyoLbb8low8dn/WvPQUW8NhiyBAXoVAxaHRjcqUoTpHFzHwbtfQ0KDeXUrUUInsQmvKo/WzCgORuaCqduYEOhssuK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ZSd7Tal6; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1731436454;
+	bh=N0c1AAbtePVSIawYLO3q1m7P6uw9XKLYSSRostz+3OQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ZSd7Tal6uncyzkCLszuWlsuHp0Htz1BcIfaA7ab67Z2Fvb/rQVsHHSDaDetTeZWEn
+	 b1XkfbT1hhjqo+1k5rXt2rUijbRZGZnSsruu9YuSOLFdgHsSdSCQ/s+k5C5fZ6TxxG
+	 Xc6RDnMkt4wtuZ3e7AyexjzW/6pduXD6WMw+GaPQ=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v2 0/7] drm/amd: Switch over to struct drm_edid
+Date: Tue, 12 Nov 2024 19:34:09 +0100
+Message-Id: <20241112-amdgpu-drm_edid-v2-0-1399dc0f0469@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZzKWvislBnjV9kpf@pavilion.home>
+X-B4-Tracking: v=1; b=H4sIAKGfM2cC/2WNQQ6CMBBFr0JmbQ2tWKkr72GIqZ0pnYVAWkAN4
+ e5WXLp8L/nvL5AoMiU4FwtEmjlx32VQuwJcsF1LgjEzqFJVpZZHYR/YDpPA+LgRMoqDQqMN+nt
+ tDOTVEMnzaytem8yB09jH93Ywy6/9tWpZ/7VmKUphyWrtpD85X12exCklF6aw72iEZl3XD7xmj
+ JGzAAAA
+X-Change-ID: 20240615-amdgpu-drm_edid-32d969dfb899
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, 
+ jinzh <jinzh@github.amd.com>, Aric Cyr <Aric.Cyr@amd.com>, 
+ Alan Liu <HaoPing.Liu@amd.com>, Tony Cheng <Tony.Cheng@amd.com>, 
+ Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Harry Wentland <Harry.Wentland@amd.com>, 
+ Melissa Wen <mwen@igalia.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731436454; l=2732;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=N0c1AAbtePVSIawYLO3q1m7P6uw9XKLYSSRostz+3OQ=;
+ b=DSan8VeZ7z6jB8KBMTo1YdJljrXaXmpIwmBYKc4f+pXlBmb7Gc3xQgOb8/t/+Sr+ybouB/T2u
+ w8012xFrELoDJzXSW3yrth4Kwa64Dvu6H1KIVEjBjxpgrwRw8+vKYJ6
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Tue, Nov 12, 2024 at 12:43:58AM +0100, Frederic Weisbecker wrote:
-> Le Fri, Nov 08, 2024 at 05:48:34PM +0000, Joel Fernandes (Google) a �crit :
-> > During tick restart, we use last_tick and forward it past now.
-> > 
-> > Since we are forwarding past now, we can simply use now as a reference
-> > instead of last_tick. This patch removes last_tick and does so.
-> > 
-> > This patch potentially does more mul/imul than the existing code,
-> > as sometimes forwarding past now need not be done if last_tick > now.
-> 
-> Which is not uncommon if idle exited because of a non-timer interrupt
-> (remote wake up IPI or hardware interrupt).
-> 
-> It's also cheaper with hrtimer_forward() if now - last_tick < TICK_NSEC
-> which is not uncommon either if idle exited because of a wake-up from the tick
-> (schedule_timeout for example).
-> 
-> > However, the patch is a cleanup which reduces LOC and reduces the size
-> > of struct tick_sched.
-> 
-> Reducing the overhead of idle exit and consolidating its code within existing
-> forward API is more important than a per-cpu field.
-> 
-> > 
-> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > ---
-> >  kernel/time/tick-sched.c | 7 ++-----
-> >  kernel/time/tick-sched.h | 1 -
-> >  kernel/time/timer_list.c | 1 -
-> >  3 files changed, 2 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-> > index 71a792cd8936..52a4eda664cf 100644
-> > --- a/kernel/time/tick-sched.c
-> > +++ b/kernel/time/tick-sched.c
-> > @@ -837,11 +837,9 @@ EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
-> >  
-> >  static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
-> >  {
-> > +	/* Set the time to expire on the next tick and not some far away future. */
-> >  	hrtimer_cancel(&ts->sched_timer);
-> > -	hrtimer_set_expires(&ts->sched_timer, ts->last_tick);
-> > -
-> > -	/* Forward the time to expire in the future */
-> > -	hrtimer_forward(&ts->sched_timer, now, TICK_NSEC);
-> > +	hrtimer_set_expires(&ts->sched_timer, DIV_ROUND_UP_ULL(now, TICK_NSEC) * TICK_NSEC);
-> 
-> We don't want to rewrite hrtimer_forward() but, after all, the current expiry is
-> enough a relevant information.
+The AMD DRM drivers use 'struct edid', raw pointers and even custom
+structs to represent EDID data.
+Uniformly switch to the safe and recommended "struct drm_edid".
 
-Thanks, do you envision any way we can get past the sched_skew_tick issue
-Thomas mentioned, if we still want to do something like this patch?
+Some uses of "struct edid" are left because some ad-hoc parsing is still
+being done inside the drivers.
 
-> How about just this? It's worth it as it now forwards after the real last programmed
-> tick, which should be close enough from @now with a delta below TICK_NSEC, or even
-> better @now is below the expiry. Therefore it should resume as just a no-op
-> or at worst an addition within hrtimer_forward():
-> 
-> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-> index 753a184c7090..ffd0c026a248 100644
-> --- a/kernel/time/tick-sched.c
-> +++ b/kernel/time/tick-sched.c
-> @@ -838,7 +838,6 @@ EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
->  static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
->  {
->  	hrtimer_cancel(&ts->sched_timer);
-> -	hrtimer_set_expires(&ts->sched_timer, ts->last_tick);
->  
->  	/* Forward the time to expire in the future */
->  	hrtimer_forward(&ts->sched_timer, now, TICK_NSEC);
+Patches 1 and 2 delete some dead code.
+The remaining patches perform the actual conversion in steps.
 
-For completeness, as we discussed on other thread and Thomas mentioned, we
-break code if doing this.
+If some patches are already acceptable as they are, I'd be happy for
+those to be picked up from the series.
 
-> As for removing last_tick, I think it's a precious debugging information. But
-> it's lagging behind the record of the first time only the tick got stopped within
-> the last trip to idle. So it could become this instead:
-> 
-> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-> index 753a184c7090..af013f7733b2 100644
-> --- a/kernel/time/tick-sched.c
-> +++ b/kernel/time/tick-sched.c
-> @@ -1042,12 +1041,11 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
->  	if (!tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
->  		calc_load_nohz_start();
->  		quiet_vmstat();
-> -
-> -		ts->last_tick = hrtimer_get_expires(&ts->sched_timer);
->  		tick_sched_flag_set(ts, TS_FLAG_STOPPED);
->  		trace_tick_stop(1, TICK_DEP_MASK_NONE);
->  	}
->  
-> +	ts->last_tick = hrtimer_get_expires(&ts->sched_timer);
->  	ts->next_tick = expires;
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- Remove a wrong kfree(struct drm_edid);
+- Drop patch "drm/edid: constify argument of drm_edid_is_valid()"
+- Add missing call to drm_edid_connector_update()
+- Drop drm_edid_equal()
+- Add patch to remove edid_extract_panel_id()
+- Link to v1: https://lore.kernel.org/r/20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net
 
-Are you suggesting we roll this part of your diff into a new patch (to
-improve debug)? I could do that with attribution to you. But I guess I don't
-understand this particular part of your diff.
+---
+Thomas Weißschuh (7):
+      drm/amd/display: Remove spurious declaration of dm_helpers_get_sbios_edid()
+      drm/amd/display: Remove EDID members of ddc_service
+      drm/amd/display: Use struct edid in dc_link_add_remote_sink()
+      drm/amdgpu: Switch amdgpu_connector to struct drm_edid
+      drm/amd/display: Switch dc_sink to struct drm_edid
+      drm/amd/display: Drop opencoded edid panel id extraction
+      drm/amd/display: Switch dc_link_add_remote_sink() to struct drm_edid
 
-If the tick was already stopped, how does
-hrtimer_get_expires(&ts->sched_timer) change since the last time the tick was
-stopped? ->last_tick should be set only when the tick was last running and a
-stop was attempted? Otherwise your diff might set ->last_tick well into the
-future after the tick was already stopped, AFAICS.
+ drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c     | 55 +++++++++++-----------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h           |  3 +-
+ drivers/gpu/drm/amd/amdgpu/dce_v10_0.c             |  4 +-
+ drivers/gpu/drm/amd/amdgpu/dce_v11_0.c             |  4 +-
+ drivers/gpu/drm/amd/amdgpu/dce_v6_0.c              |  4 +-
+ drivers/gpu/drm/amd/amdgpu/dce_v8_0.c              |  4 +-
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 20 ++------
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c  | 36 +++++---------
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  6 +--
+ .../gpu/drm/amd/display/dc/core/dc_link_exports.c  |  5 +-
+ drivers/gpu/drm/amd/display/dc/dc.h                |  8 ++--
+ drivers/gpu/drm/amd/display/dc/dc_ddc_types.h      |  7 ---
+ drivers/gpu/drm/amd/display/dc/dc_types.h          |  5 --
+ drivers/gpu/drm/amd/display/dc/dm_helpers.h        |  4 +-
+ drivers/gpu/drm/amd/display/dc/inc/link.h          |  3 +-
+ .../gpu/drm/amd/display/dc/link/link_detection.c   | 49 ++++++++++---------
+ .../gpu/drm/amd/display/dc/link/link_detection.h   |  3 +-
+ 17 files changed, 92 insertions(+), 128 deletions(-)
+---
+base-commit: 377dda2cff59825079aee3906aa4904779747b0b
+change-id: 20240615-amdgpu-drm_edid-32d969dfb899
 
-thanks,
-
- - Joel
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
 
