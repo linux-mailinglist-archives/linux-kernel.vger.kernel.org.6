@@ -1,176 +1,127 @@
-Return-Path: <linux-kernel+bounces-406055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC7E9C5A79
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:36:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1159C5AC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:46:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C22411F236C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:36:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37797B44728
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3957C1FE10A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF32B1FEFC4;
 	Tue, 12 Nov 2024 14:35:59 +0000 (UTC)
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PThhpsVR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E971FCC4F;
-	Tue, 12 Nov 2024 14:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3581FCF55;
+	Tue, 12 Nov 2024 14:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422158; cv=none; b=gxTy8EuNpLkznpXRIjqnnBr/TXg8HtINNRuFtoX1E50Yo9pNjYDj+7pMxAFZVc0GL31P5YzSbPwqoMUvexUVP5lyEbuPL1xwk1Vkk7YnVbtI7KnpcfAQd3446zocv+YvMvt4/gZp5/XfP47+9XXBl9kUMsEy3FKLbxiwtMyTLOw=
+	t=1731422159; cv=none; b=LUYMBPLBZY2AF3FlPVDbCemVzOjtctYP+Rq2T6QDtMLQLPqhv178zRPrApwjzlNagvcu/ermn9CBSd3ldNkdAsnbRwhZeQ5GpUWT1cQytiskbnkoAyKpjjOXdBqu2ZXheWyf1xCcxEu1N7I5NFv7oxNpdpOCSJHiL6dHbLgfPSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422158; c=relaxed/simple;
-	bh=O/QFFDdB0PMXz57l8UUccbGHsIa6UG3BDGFr0OekP5U=;
+	s=arc-20240116; t=1731422159; c=relaxed/simple;
+	bh=Z2NJKOZ80m23Hs6ZpODlXPTw2PK6JAxwWTKiu7L1XNw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rpTkj0p+M3imIlUw8wRkH/PYFAMR3P3uJk+JT7OQTrGaZsOEBaskY0w6Q6iS9KFzU+VxJt3VtOlRrtCJPwwaRQJkpgeiiM5WuO9rC3M87U9EbcxVvSO0TKrWw1VPc3obHxjFdomvhXRl2MjH1IZjDy3I8EsignvKMKMBRUJLlsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e60d3adecbso3043658b6e.2;
-        Tue, 12 Nov 2024 06:35:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731422156; x=1732026956;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=McjUok6KfDUiGy+BXB2JFJst16pFs7oxIw6Lr01GESI=;
-        b=Gx53aciJfHfMEuciN8PphC59N2cNiTnYvTP+EDX8YhvjB7hQKKhPHLNvuTCXgDilrV
-         hcILdI7/Ix70TqbLIDvuhMwhsCQ2JfeiK46l/uYbh+yB9ODztPxTJ8VDJMZA0ZjEDzYq
-         rkqSTh5mpZkGbNi/VUId2Wk9e0u3bXb7bWszeJAIKZHfvZQC8GhuM6ZBzWrEIjNtVovv
-         GCZes3cGIaU6GRNauA37JZVB/ZnHlB8a/uo2qYi46jhiY8bmfLNdaiBLQxsg+7bKFaX6
-         oZZSLel7iUyJ2YG0DUooC5GKupMRwHtpqAG0x/n/ZjisMBXHQbLh3Q3D6QHQ+P0wkaaa
-         4wxA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+QHws+W9ZgoQ4fDOK/Un+iQvAsM+15ZFT+4yqVPIrHwM3injZuqJxJb5V3Km3k05avInopT1BxM+8oa+2@vger.kernel.org, AJvYcCX5Dyy+BF6Ydf9JGf/sQbVbew5myNPap2FD0vhgQeAdrGjRlrUCapYR5ZiFVZBeENHl34fp9g3wAq6W@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR3rNjFOvNI1ng48LPYE7Y0Xt1NYztiLxpLLZDAjLuo9iayj8B
-	hrqyv4KhzzslVYqzu3ENu7swoRK0gVwJC3JEpBAQPCvAdgSPNCl+sgkgjoiTl9ZHjQ==
-X-Google-Smtp-Source: AGHT+IEdb2C7EfEG6ZkbRX7xGk6PLJsox15F9HL4LmCArCwFkH9Xj+5yECle6yBdYyPqXqQt34rH4g==
-X-Received: by 2002:a05:6808:3090:b0:3e6:5f3:f0d8 with SMTP id 5614622812f47-3e7946a60a9mr13884685b6e.24.1731422156104;
-        Tue, 12 Nov 2024 06:35:56 -0800 (PST)
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com. [209.85.215.179])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f644200sm10615243a12.60.2024.11.12.06.35.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 06:35:55 -0800 (PST)
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ee4c57b037so4203463a12.0;
-        Tue, 12 Nov 2024 06:35:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWWC+Y3tG/2I355ipHOPhM5zVLZa8g4zeWbJwifC+9LRr6O3eiKSmQ/6DQw4mrWvEbkskklKZn2WEj1xNi2@vger.kernel.org, AJvYcCWa/56XbLnROA7uqkqZb1dWLigVxvgPdUISCSa8PQMPrVTS7u86pYDzB4JFenUdKVKRyoKfn0f/E6sT@vger.kernel.org
-X-Received: by 2002:a17:90b:3146:b0:2e2:cf63:224c with SMTP id
- 98e67ed59e1d1-2e9b17838ddmr19179314a91.35.1731422155186; Tue, 12 Nov 2024
- 06:35:55 -0800 (PST)
+	 To:Cc:Content-Type; b=QmztT1WSQb6YZrAmMWSx3vthmvvBKN9GJ7jATir9mie8wQixOzYQA/nABkffZByDgvmKPtuIQ5Mz0+AAJtJkAraqT+A/gYhEL1xFOi1aVACeoqUA1jz6ZuNw9ucNCzyBQFog5z2gqpOnTGtQXIq/3IvbInpwsNpwYx9ra4w8298=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PThhpsVR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0157AC4CED0;
+	Tue, 12 Nov 2024 14:35:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731422159;
+	bh=Z2NJKOZ80m23Hs6ZpODlXPTw2PK6JAxwWTKiu7L1XNw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PThhpsVRXNp9m1870inWzUgadxqlcDbDb2l5xeQ/CvLQJec9dbfmnqbuUa7RLoVC3
+	 bouFA1eMND7HmoShFhH/6BuNj2ZSQ6D5+SFeqDZ6qZ1U63ZtEpJ4gmQmSXvKSzehhR
+	 puAVV+GUuFwbp4fgUSZveLUT6kmXtR+JQHg6edVtwqYp1RwtR9uGgzKeObYoSgskDm
+	 wbqECTvloNFv6vKxXaJ1vJdNFjRpHc7fbiUgTexSCcbh+W5vlAlwEKgBocsUEyyA/P
+	 9pzD2D90SiXvqbDUdfi+7X19gx+6cIr3AjaulUJjmO0lk5fraCM9Cuz6ZoFlF+CD3Y
+	 aSb7mTvr/JJnQ==
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e33a8c84b9aso2075964276.0;
+        Tue, 12 Nov 2024 06:35:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVBGsKzVDa7yY5C7hU6o1OAheV1i14RgBtjD0rQGN/I4oLe+Bu4UdezI1nOkFsh7cFuTgZ5j9gyOHVSMhsv@vger.kernel.org, AJvYcCVNBICYNR0n9LG78tezWYHR1quJTf/t0ywuThzBb9yCRqkwRZkOR/6NaIAFwjZLAVNqzBOd43YAYbFa@vger.kernel.org, AJvYcCXlvJXxtzMlA3DyxLjwzb/FIjOo/DhJb8Xd2UyWk02MazMrZC3I2R6A/GArHeJm6etlNFiSCc6OI6zI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIugYKYFRF1Qyp4xFipcBNlImdr1iF+IQGjDJCA65ig03wvEFe
+	MKuSGJ2vAZ0NSqf8LJBdmnMFdHxitmlKG1IW98pwd5RfNg/6bIKJE8v70/ZtE3e03sZZfka9n19
+	SSsXpTwUfjKfFd/Ecukl+UmNEzg==
+X-Google-Smtp-Source: AGHT+IFI5tDoN6E7Kqk7Gw+xDL7rKQexAuiQ6Yq/THb9/Zw6ePjvaoIFxIHVn5lbaA5+r4C6IEYEi87Hkak2D5U5HD8=
+X-Received: by 2002:a05:6902:3401:b0:e30:b345:9a09 with SMTP id
+ 3f1490d57ef6-e337f9054f4mr12761822276.50.1731422158152; Tue, 12 Nov 2024
+ 06:35:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111181807.13211-1-tszucs@linux.com> <20241111181807.13211-3-tszucs@linux.com>
- <9fbdf05c-42e6-4ac5-9542-805200bc8c87@kwiboo.se> <260af427ae64d6f3b02a1579ee83eb3b@manjaro.org>
-In-Reply-To: <260af427ae64d6f3b02a1579ee83eb3b@manjaro.org>
-From: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>
-Date: Tue, 12 Nov 2024 15:35:44 +0100
-X-Gmail-Original-Message-ID: <CA+Gksr+WvS-S+jeYYG=Bo9cemvnJmjsmU4aj9YnD3t8-HY7wbw@mail.gmail.com>
-Message-ID: <CA+Gksr+WvS-S+jeYYG=Bo9cemvnJmjsmU4aj9YnD3t8-HY7wbw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Enable sdmmc2 on rock-3b and
- set it up for SDIO devices
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Jonas Karlman <jonas@kwiboo.se>, =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, FUKAUMI Naoki <naoki@radxa.com>, Chukun Pan <amadeus@jmu.edu.cn>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241112072704.767569-1-jpatel2@marvell.com>
+In-Reply-To: <20241112072704.767569-1-jpatel2@marvell.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 12 Nov 2024 08:35:47 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL8JVhWNC4qefysLm+4uHYmR2Arwq3wTumS3XV=ncgU3g@mail.gmail.com>
+Message-ID: <CAL_JsqL8JVhWNC4qefysLm+4uHYmR2Arwq3wTumS3XV=ncgU3g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] dt-bindings: pci: change reset to reset controller phandle
+To: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
+Cc: thomas.petazzoni@bootlin.com, lpieralisi@kernel.org, kw@linux.com, 
+	manivannan.sadhasivam@linaro.org, bhelgaas@google.com, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, salee@marvell.com, dingwei@marvell.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jonas, Dragan,
-
-I think it was totally fine to disable sdmmc2 at first, especially if
-it couldn=E2=80=99t be tested or wasn=E2=80=99t needed right away. From wha=
-t I=E2=80=99ve
-seen, this board works great even at higher clock speeds than what
-rk356x-base.dtsi suggests. I don=E2=80=99t have access to the RK3568 errata=
-,
-and there don=E2=80=99t seem to be any limits mentioned in the TRM either.
-Overall, this board is doing just fine as it is.
-
-Regarding device tree overlays, they would be ideal for implementing
-secondary functions, such as PCIe endpoint mode for users with
-specific requirements. However, the primary functions for PCIe on the
-M2E will be root complex mode, along with SDIO host, etc. In my view,
-the hardware is well-designed and interconnected. Users have a
-reasonable expectation that these primary functions should work
-seamlessly without additional configuration, right out of the box.
-
-Dragan, what did you mean by SDIO related power timing requirements?
-
-Kind regards,
-Tamas
-
-
-
-Tam=C3=A1s Sz=C5=B1cs
-tszucs@linux.com
-
-On Tue, Nov 12, 2024 at 5:41=E2=80=AFAM Dragan Simic <dsimic@manjaro.org> w=
-rote:
+On Tue, Nov 12, 2024 at 1:27=E2=80=AFAM Jenishkumar Maheshbhai Patel
+<jpatel2@marvell.com> wrote:
 >
-> Hello Jonas and Tamas,
+> replace reset bit mask and system controller
+> with reset controller and reset bit phandle
+
+The diff tells us "what" already. The commit msg needs to answer "why".
+
+The DT is an ABI. You can't just replace property(ies) with a new
+property. There's exceptions if there are no platforms in use or
+similar.
+
+This binding needs to be converted to dtschema before adding to it.
+
 >
-> On 2024-11-11 20:06, Jonas Karlman wrote:
-> > On 2024-11-11 19:17, Tam=C3=A1s Sz=C5=B1cs wrote:
-> >> Enable SDIO on Radxa ROCK 3 Model B M.2 Key E. Add all supported UHS-I
-> >> rates and
-> >> enable 200 MHz maximum clock. Also, allow host wakeup via SDIO IRQ.
-> >>
-> >> Signed-off-by: Tam=C3=A1s Sz=C5=B1cs <tszucs@linux.com>
-> >> ---
-> >>  arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts | 8 +++++++-
-> >>  1 file changed, 7 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-> >> b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-> >> index 242af5337cdf..b7527ba418f7 100644
-> >> --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-> >> +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-> >> @@ -688,14 +688,20 @@ &sdmmc2 {
-> >>      cap-sd-highspeed;
-> >>      cap-sdio-irq;
-> >>      keep-power-in-suspend;
-> >> +    max-frequency =3D <200000000>;
-> >>      mmc-pwrseq =3D <&sdio_pwrseq>;
-> >>      non-removable;
-> >>      pinctrl-names =3D "default";
-> >>      pinctrl-0 =3D <&sdmmc2m0_bus4 &sdmmc2m0_clk &sdmmc2m0_cmd>;
-> >> +    sd-uhs-sdr12;
-> >> +    sd-uhs-sdr25;
-> >> +    sd-uhs-sdr50;
-> >
-> > I thought that lower speeds was implied by uhs-sdr104?
+> Signed-off-by: Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
+> ---
+>  Documentation/devicetree/bindings/pci/pci-armada8k.txt | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
 >
-> Last time I went through the MMC drivers, they were implied.  IIRC,
-> such backward mode compatibility is actually a requirement made by
-> the MMC specification.
+> diff --git a/Documentation/devicetree/bindings/pci/pci-armada8k.txt b/Doc=
+umentation/devicetree/bindings/pci/pci-armada8k.txt
+> index a177b971a9a0..a9a71d77b261 100644
+> --- a/Documentation/devicetree/bindings/pci/pci-armada8k.txt
+> +++ b/Documentation/devicetree/bindings/pci/pci-armada8k.txt
+> @@ -24,10 +24,9 @@ Optional properties:
+>  - phy-names: names of the PHYs corresponding to the number of lanes.
+>         Must be "cp0-pcie0-x4-lane0-phy", "cp0-pcie0-x4-lane1-phy" for
+>         2 PHYs.
+> -- marvell,system-controller: address of system controller needed
+> -       in order to reset MAC used by link-down handle
+> -- marvell,mac-reset-bit-mask: MAC reset bit of system controller
+> -       needed in order to reset MAC used by link-down handle
+> +- resets: phandle reset controller with int reset controller bit.
+> +         needed in order to reset MAC used by link-down handle.
+> +
 >
-> >>      sd-uhs-sdr104;
-> >> +    sd-uhs-ddr50;
-> >>      vmmc-supply =3D <&vcc3v3_sys2>;
-> >>      vqmmc-supply =3D <&vcc_1v8>;
-> >> -    status =3D "disabled";
-> >> +    wakeup-source;
-> >> +    status =3D "okay";
-> >
-> > This should probably be enabled using an dt-overlay, there is no
-> > SDIO device embedded on the board and the reason I left it disabled
-> > in original board DT submission.
+>  Example:
 >
-> Just went through the ROCK 3B schematic, version 1.51, and I think
-> there should be no need for a separate overlay, because sdmmc2 goes
-> to the M.2 slot on the board, which any user can plug an M.2 module
-> into, and the SDIO interface is kind-of self-discoverable.
+> @@ -49,6 +48,5 @@ Example:
+>                 interrupts =3D <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+>                 num-lanes =3D <1>;
+>                 clocks =3D <&cpm_syscon0 1 13>;
+> -               marvell,system-controller =3D <&CP11X_LABEL(syscon0)>;
+> -               marvell,mac-reset-bit-mask =3D <CP11X_PCIEx_MAC_RESET_BIT=
+_MASK(1)>;
+> +               resets =3D <&CP11X_LABEL(pcie_mac_reset) CP11X_PCIEx_MAC_=
+RESET_BIT(0)>;
+>         };
+> --
+> 2.25.1
 >
-> Of course, all that unless there are some horribly looking :) error
-> messages emitted to the kernel log when nothing is actually found,
-> in which case the SDIO/MMC driers should be fixed first.  Also, I'm
-> not sure what do we do with the possible SDIO-related power timing
-> requirements?
 
