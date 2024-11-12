@@ -1,160 +1,233 @@
-Return-Path: <linux-kernel+bounces-406458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7E39C5F50
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:43:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D96A9C611B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:16:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22A3F2813CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:42:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B5BBB34DD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21E02139BC;
-	Tue, 12 Nov 2024 17:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EDC214422;
+	Tue, 12 Nov 2024 17:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzpJ5zv9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NfnSOfX1"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32285213129;
-	Tue, 12 Nov 2024 17:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4391B2141A1
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731433369; cv=none; b=j5gZX2XaBJ7G6maoJtD7DBpu2O9r+hn/utkTM/FjwOyj2nn0oh4MJXAc01C2Ntx09b0Jnj/ZEjBVjn1T6J9MIJMSQiLqyXECMwjJTmTtbB3JWMOkas39KOM0AA35TGLBGQMK9u/BirZl8cD6cqtDc/l1J12XKRg1RWjm+J8v2y4=
+	t=1731433474; cv=none; b=t3/S+WIXhxuUySArXfinYMfomiEpIJLb7amxpPDPIISulw7yWSXxp6/H0P/9yG2k97uEeursiFJV7gVPc+vI5Kpqciix4gicSSOqzYLeV6S1ZWJ3wHtHkgotnHUtM6PaRzM1hsExPk577E2Lfqh1yO78xAKj6DuMPdvjPcd4Unw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731433369; c=relaxed/simple;
-	bh=2g9RLk/eByRvc3GAQn2FlMlvwsm275EqT0VhDfAPt+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dzwEV/jWgUP3eVWf0ERm6nIHNjPpiqNVDzSEmmOtNoQ9p6/v56vLQeciBMzE6NrzeG7mUOgQDzQir174xBFFZrhhWwMQoQF2n1picCaUbJhoGIfl54CrR/5t9UVrp12uTdcbjN8FN4I2w+qKbVbPjPnLeYjyI9EdVPlfElSDLsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzpJ5zv9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C5EC4CECD;
-	Tue, 12 Nov 2024 17:42:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731433368;
-	bh=2g9RLk/eByRvc3GAQn2FlMlvwsm275EqT0VhDfAPt+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gzpJ5zv9qJkbiZYOmz3PN80bcaMjjjojSSZTuQbhvZkJ8SLHfbJiZJoQWxYRaXlhw
-	 Rr/oVDD3e3zSO94h0jpw60oN+5oOGQAUL10y7XuNUjLEHhEE60Eg0TR5jfy6k6Gccw
-	 RwxDlgJbhVw9D0QGIQl4X2Gksi2svAjEDW6+crBExBdgy41QOA3Xa0EgzzUHq9/7V0
-	 0dK/OncfK+/4BN4877O35q6TMICZVOyvMUd9vIBWbcrO+MAlIShfR6wu09ROqQaNFE
-	 mQJuzROLOro5OlT++ySAwYjIZsG3bkScGpd4/Fo5dns4Ebx0gQWLtJSEAEFAuhxvKy
-	 y1oXOi9DOJjdw==
-Date: Tue, 12 Nov 2024 17:42:43 +0000
-From: Simon Horman <horms@kernel.org>
-To: Lee Trager <lee@trager.us>
-Cc: Alexander Duyck <alexanderduyck@fb.com>,
-	Jakub Kicinski <kuba@kernel.org>, kernel-team@meta.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Sanman Pradhan <sanmanpradhan@meta.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Mohsin Bashir <mohsin.bashr@gmail.com>,
-	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 2/2] eth: fbnic: Add devlink dev flash support
-Message-ID: <20241112174243.GU4507@kernel.org>
-References: <20241111043058.1251632-1-lee@trager.us>
- <20241111043058.1251632-3-lee@trager.us>
+	s=arc-20240116; t=1731433474; c=relaxed/simple;
+	bh=y4lqmUbMc1YD6SObguGdeCheozLDWGjBcGm+iitzX+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m+q4t06siDBKFesxYDbiTVuRLUUpxz7soiLpRwPk8rULmykX6LcpCkv//FOmfF778KzFTPYXRNRrKCGceEyi7Vi4YTnL1TRUXMpYoqye1wvI2XO0GPVKnXLDki75OSlTxeZkAP4UrJ1Hm3+QPRlTmDR1RRBi9CgsgOzx+DMKrFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NfnSOfX1; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a3b4663e40so22085665ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:44:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1731433471; x=1732038271; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6CO66k8vdkf1/7W/1z4gXCToQvhnpm1AaGiCOH2Lt4I=;
+        b=NfnSOfX1DbC0/j0XDzmcXmQycvkUhOlDpseuM6hjn8bp4GwKCDEaRk0KdTKLF+jfON
+         tQ6tMsn36JKFVu29d9fu5SyKnytDsoR06NKuNgSVkNuhDTLw2TbjWbBxQM1gIjAvygWu
+         jaWzXNhPhR9+lakXb8K1VNLTZQr4mhs2HJKFQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731433471; x=1732038271;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6CO66k8vdkf1/7W/1z4gXCToQvhnpm1AaGiCOH2Lt4I=;
+        b=XJ6LHmawV5NzXpj9lBKqbIGNizKfSyL5B9nQjLCH++pRAt0FqPkulLAzSjnvpNrhBl
+         mtUTCD2Max8EFnyt0M8JxWmBU28Lj/civSX+vcwoKuFI7XmLGuHzS21ZI+/nPPcecx6x
+         NChvxcIe8fspLdWQOpJwbQRNoX7Tvt3loI9TlK9W33xal+EsQ5iEKzAFwdf6JZqpCCGh
+         RWj1EIJEZhvzXQGIQIZrSninKntkxo5rYSkzZSp3S+z0zQOxxFaZH0QfwKnfDTCg2sx4
+         2Lwnl2cUVCJYDt/lROIN/C64p7bBjcml8FpjPpuvSe2mz6RbjacWmbnUdRHEROVODxWG
+         KedA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6fyFhK3FNQy+zVxnvPhCb0Wl5Y14jSkhFxp/ivBua34JGGdaQ/2WdLiEMO3ysoEdXVu9d7Vcrsj1R1cs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzVs1Zd7HKTV79+43H1twZHSqsK6ZmiAd3eE3hUlipnG9bFyWT
+	thkgidi2FI+KpVMeNrRnF8KZmdPA04p37lUkLnegoiVKf4F5p8Wx57OGzxEM/Q4=
+X-Google-Smtp-Source: AGHT+IECbH3zWN1YuCJheg/fgVRxjKKKOBSvEmpjxoBY/JlifdtX6pbym1LtHeex/CjxSfjeXuUQAQ==
+X-Received: by 2002:a05:6e02:214e:b0:3a2:f7b1:2f70 with SMTP id e9e14a558f8ab-3a6f1a759aamr171429245ab.21.1731433471302;
+        Tue, 12 Nov 2024 09:44:31 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6f984cc0fsm23324225ab.48.2024.11.12.09.44.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 09:44:30 -0800 (PST)
+Message-ID: <ec850949-7987-41ec-ba1f-a0c90b465661@linuxfoundation.org>
+Date: Tue, 12 Nov 2024 10:44:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111043058.1251632-3-lee@trager.us>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation/CoC: spell out enforcement for unacceptable
+ behaviors
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: gregkh@linuxfoundation.org, corbet@lwn.net, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Dan Williams
+ <dan.j.williams@intel.com>, Dave Airlie <airlied@gmail.com>,
+ DRI Development <dri-devel@lists.freedesktop.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241108161853.12325-1-skhan@linuxfoundation.org>
+ <ZzJkAJEjKidV8Fiz@phenom.ffwll.local>
+ <ba3d5492-e774-452f-9fe0-e68b743c6b0d@linuxfoundation.org>
+ <20241111223538.GD17916@pendragon.ideasonboard.com>
+ <7d14de47-119a-42e4-a911-f8accae4abf1@linuxfoundation.org>
+ <20241112051836.GF17916@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241112051836.GF17916@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 10, 2024 at 08:28:42PM -0800, Lee Trager wrote:
-> fbnic supports updating firmware using a PLDM image signed and distributed
-> by Meta. PLDM images are written into stored flashed. Flashing does not
-> interrupt operation.
+On 11/11/24 22:18, Laurent Pinchart wrote:
+> On Mon, Nov 11, 2024 at 05:35:11PM -0700, Shuah Khan wrote:
+>> On 11/11/24 15:35, Laurent Pinchart wrote:
+>>> On Mon, Nov 11, 2024 at 02:50:45PM -0700, Shuah Khan wrote:
+>>>> On 11/11/24 13:07, Simona Vetter wrote:
+>>>>> On Fri, Nov 08, 2024 at 09:18:53AM -0700, Shuah Khan wrote:
+>>>>>> The Code of Conduct committee's goal first and foremost is to bring about
+>>>>>> change to ensure our community continues to foster respectful discussions.
+>>>>>>
+>>>>>> In the interest of transparency, the CoC enforcement policy is formalized
+>>>>>> for unacceptable behaviors.
+>>>>>>
+>>>>>> Update the Code of Conduct Interpretation document with the enforcement
+>>>>>> information.
+>>>>>>
+>>>>>> Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+>>>>>> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>>>> Acked-by: Miguel Ojeda <ojeda@kernel.org>
+>>>>>> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+>>>>>> Acked-by: Jonathan Corbet <corbet@lwn.net>
+>>>>>> Acked-by: Steven Rostedt <rostedt@goodmis.org>
+>>>>>> Acked-by: Dan Williams <dan.j.williams@intel.com>
+>>>>>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+>>>>>
+>>>>> I think it's really good to document these details. The freedesktop coc
+>>>>> team is going through the same process, we've also done a talk at XDC
+>>>>> about all these changes, and I think this helps a lot in transparency and
+>>>>> accountability in practice. With that, some thoughts below.
+>>>
+>>> I've been thinking about replying to this patch for a few days now. I
+>>> think I managed to sleep over it enough to make that possible.
+>>>
+>>> I share Sima's opinion here. There is FUD around the CoC and its
+>>> enforcement process due to lack of transparency, so I believe
+>>> documenting the goals and means is important and will help.
+>>
+>> Thank you for your feedback.
+>>
+>>>> Thank you Simona for your review and feedback.
+>>>>
+>>>>>> ---
+>>>>>>     .../code-of-conduct-interpretation.rst        | 52 +++++++++++++++++++
+>>>>>>     1 file changed, 52 insertions(+)
+>>>>>>
+>>>>>> diff --git a/Documentation/process/code-of-conduct-interpretation.rst b/Documentation/process/code-of-conduct-interpretation.rst
+>>>>>> index 66b07f14714c..21dd1cd871d2 100644
+>>>>>> --- a/Documentation/process/code-of-conduct-interpretation.rst
+>>>>>> +++ b/Documentation/process/code-of-conduct-interpretation.rst
+>>>>>> @@ -156,3 +156,55 @@ overridden decisions including complete and identifiable voting details.
+>>>>>>     Because how we interpret and enforce the Code of Conduct will evolve over
+>>>>>>     time, this document will be updated when necessary to reflect any
+>>>>>>     changes.
+>>>>>> +
+>>>>>> +Enforcement for Unacceptable Behavior Code of Conduct Violations
+>>>>>> +----------------------------------------------------------------
+>>>>>> +
+>>>>>> +The Code of Conduct committee works to ensure that our community continues
+>>>>>> +to be inclusive and fosters diverse discussions and viewpoints, and works
+>>>>>> +to improve those characteristics over time. The Code of Conduct committee
+>>>>>> +takes measures to restore productive and respectful collaboration when an
+>>>>>> +unacceptable behavior has negatively impacted that relationship.
+>>>>>> +
+>>>>>> +Seek public apology for the violation
+>>>>>> +*************************************
+>>>>>> +
+>>>>>> +The Code of Conduct Committee publicly calls out the behavior in the
+>>>>>> +setting in which the violation has taken place, seeking public apology
+>>>>>> +for the violation.
+>>>>>> +
+>>>>>> +A public apology for the violation is the first step towards rebuilding
+>>>>>> +the trust. Trust is essential for the continued success and health of the
+>>>>>> +community which operates on trust and respect.
+>>>>>
+>>>>> Personal take, but I think a forced public apology as the primary or at
+>>>>> least initial coc enforcement approach is one of the worst.
+>>>>
+>>>> Seeking public apology is in response to unacceptable behaviors which are
+>>>> serious in nature. These incidents are exceedingly rare. When these incidents
+>>>> happen, they usually resolve when another developer/community member points
+>>>> out the behavior. The individual responds with a voluntary apology to
+>>>> mend fences and repair harm.
+>>>>
+>>>> The CoC  gets involved only when it receives a report which is the case
+>>>> when normal paths such as peers pointing out the behavior to repair the
+>>>> harm haven't been successful.
+>>>>
+>>>> This document isn't intended to be a complete summary of all actions the
+>>>> CoC takes in response to reports. There is a lot of back and forth with
+>>>> the individuals to bring about change before the CoC asks for an apology.
+>>
+>> See below clarification on above use of "actions"
+>>
+>>>> The CoC seeks public apology only when it is essential to repair the harm.
+>>>
+>>> Limiting the CoC committee to seeking public apology, due to what it
+>>> means in terms of both process and goal, would deprive the committee
+>>> from many useful courses of action. I was expecting you were not limited
+>>> to this, and I appreciate that you are stating it clearly here. It is
+>>> not however clear from this patch, and I believe it would benefit the
+>>> whole community if this was explained better in the document. A more
+>>> detailed description of the different means of action and outcomes would
+>>> help balance the fact that the proceedings of the CoC committe are not
+>>> public.
+>>
+>> The actions CoC takes prior asking for a public apology are working
+>> with the individual to bring about change in their understanding the
+>> importance to repair damage caused by the behavior.
+>>
+>> Since these are measures to bring about change, the document doesn't
+>> go into the details about the logistics.
 > 
-> On host reboot the newly flashed UEFI driver will be used. To run new
-> control or cmrt firmware the NIC must be power cycled.
+> I think that's where it falls short. The private proceedings policy that
+> governs the CoC committee (I'm not interested here to debate whether
+> that is good or not, the question is out of scope) needs in my opinion
+> to be offset by more transparency in the procedures documentation to
+> avoid the "secret court" image that many attach to the CoC committee. I
+> do understand this is not a trivial exercise, as any policy documented
+> in writing can have a limiting impact on the actions the CoC committee
+> can take, but I believe that this patch, as it stands, gives a wrong and
+> possibly damaging impression of the committee's work.
 > 
-> Signed-off-by: Lee Trager <lee@trager.us>
 
-...
+Thank you Laurent.
 
-> diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
+Bulk of the Code of Conduct Committee work involves listening, talking,
+and discussing the best outcomes for all involved parties.
 
-...
+I will add more content to the document distilling the discussion on
+this thread in the interest of transparency.
 
-> +/**
-> + * fbnic_flash_component - Flash a component of the QSPI
-> + * @context: PLDM FW update structure
-> + * @component: The component table to send to FW
-> + *
-> + * Map contents of component and make it available for FW to download
-> + * so that it can update the contents of the QSPI Flash.
-> + *
-> + * Return: zero on success
-> + *	    negative error code on failure
-> + */
-> +static int fbnic_flash_component(struct pldmfw *context,
-> +				 struct pldmfw_component *component)
-> +{
-> +	const u8 *data = component->component_data;
-> +	u32 size = component->component_size;
-> +	struct fbnic_fw_completion *fw_cmpl;
-> +	struct device *dev = context->dev;
-> +	struct pci_dev *pdev = to_pci_dev(dev);
-> +	u16 id = component->identifier;
-> +	const char *component_name;
-> +	int retries = 2;
-> +	int err;
-> +
-> +	struct devlink *devlink;
-> +	struct fbnic_dev *fbd;
+thanks,
+-- Shuah
 
-Hi Lee,
 
-Please consider arranging local variables in reverse xmas tree order -
-longest line to shortest. Without any blank lines. I think that in this
-case that could be:
 
-	const u8 *data = component->component_data;
-	u32 size = component->component_size;
-	struct fbnic_fw_completion *fw_cmpl;
-	struct device *dev = context->dev;
-	u16 id = component->identifier;
-	const char *component_name;
-	struct devlink *devlink;
-	struct fbnic_dev *fbd;
-	struct pci_dev *pdev;
-	int retries = 2;
-	int err;
-
-	N.B. pdev is initialised below.
-
-> +
-> +	switch (id) {
-> +	case QSPI_SECTION_CMRT:
-> +		component_name = "boot1";
-> +		break;
-> +	case QSPI_SECTION_CONTROL_FW:
-> +		component_name = "boot2";
-> +		break;
-> +	case QSPI_SECTION_OPTION_ROM:
-> +		component_name = "option-rom";
-> +		break;
-> +	default:
-> +		dev_err(dev, "Unknown component ID %u\n", id);
-> +		return -EINVAL;
-> +	}
-> +
-> +	fw_cmpl = kzalloc(sizeof(*fw_cmpl), GFP_KERNEL);
-> +	if (!fw_cmpl)
-> +		return -ENOMEM;
-> +
-> +	pdev = to_pci_dev(dev);
-> +	fbd = pci_get_drvdata(pdev);
-> +	devlink = priv_to_devlink(fbd);
-
-...
 
