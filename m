@@ -1,193 +1,131 @@
-Return-Path: <linux-kernel+bounces-406879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47AB9C6579
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:49:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 252539C657F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8518B2824AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:49:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D21881F25A4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF4321CF85;
-	Tue, 12 Nov 2024 23:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4EE21CF82;
+	Tue, 12 Nov 2024 23:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WuFVYI1+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cE2mp39U"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C2620ADC6;
-	Tue, 12 Nov 2024 23:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795A721A6EE
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731455341; cv=none; b=sW3sp4w1zRDFUwHgSksZx/xsvv6cgpYeuiJi0Ii2ZRyAdOuB27VP+i+kyY529nObPG75LsCmxCCXdxQJL/UgnTDMhMz2lTKLGyhEgCJiS3F+OSeXX9Q2gPsZ/k8/7PqPdBw0tuVunz0Fioec7EAg4motpa05Rf7jVsrkDyK6Si0=
+	t=1731455432; cv=none; b=XCLbeFH06MBHT446HiTt5MOFS8mI8MUeEoK/CMqGOXetKSgDkugdX4xxjBSbLhAgeGnEt0HWch+vfXjP7BS/8Vt8Y0nnoReROqrHPX6vMPUXENG/rmTlyQIb+5qQw9k09zphJLQYdeDjra1EzlQBJMp5RibDUx2cDBpMmeguGPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731455341; c=relaxed/simple;
-	bh=cDlrFqORAmp5emql+69NznXzQgn4UDJSwI2wrBQJcFc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=bPCra+PvJMIBKXpwJSsqf8jCLBQfax0ow75+xl8EGvHE/yq8j5SOVT8H66+nlfIcpnJ3RJVhnJf7rGG7UQ7GU90k28Id+/uEH++e8AR3KO93T/Rt4f+xMv6KqMnN1/kTedmA1xybX/Iw92JmopBNfk7xezOCm8E5Hl5gLwQWgK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WuFVYI1+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8C33C4CECD;
-	Tue, 12 Nov 2024 23:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731455340;
-	bh=cDlrFqORAmp5emql+69NznXzQgn4UDJSwI2wrBQJcFc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WuFVYI1+IKCTbvtt0oi5mmbx/JgG2Q5My3qVWGqXPgigrZ90ssTNhFrFXGGpoXcwK
-	 9VF7f4pN8D6Fu53tVAa781dvqB9b3hBqmf1xFnPh+HdUlZKTWWDa6VFgirtFYcvrVV
-	 ceVSBA2Irj3jEJX5Lw/a8T6HLcM4ILPWjcWQpNWwUJLSpUPf2XKUT+eyBtA7r53H/A
-	 gaNN7fNjo4/lMrMG4SGphYw3Btd4hYXejlKg03u49nbDSd9wxhV4em0m+yl4EV8e0d
-	 S44VLS0bRxzs1dMCkLrKvuNfVZg/Lu9hqynl+372WdpcSHsyU9ipsKw0rffGP4QnZV
-	 H+wsTFnES1aiQ==
-Date: Wed, 13 Nov 2024 08:48:57 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
- <mark.rutland@arm.com>, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v18 16/17] Documentation: probes: Update fprobe on
- function-graph tracer
-Message-Id: <20241113084857.962b4af542fe700542ace929@kernel.org>
-In-Reply-To: <20241101101448.10a3a0a9@gandalf.local.home>
-References: <172991731968.443985.4558065903004844780.stgit@devnote2>
-	<172991752671.443985.17111177875574390269.stgit@devnote2>
-	<20241101101448.10a3a0a9@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731455432; c=relaxed/simple;
+	bh=jGUpsTFomPWWXjw46qZdwcX2deTWeyqCjUsdBykdJDs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FNYUhXfCrHFL0yXgRAvnWVt/FOM71RU0FrdUG+FW1aH8zhM3/3eTkjCLtJ35GI3RaGvtl6M1fKy33n3aEoQ86Um3miI+h1MCqswiBsu7j+Jf31wl4o1CZUI83i4I0hyKSl1j//iftABdUP/eLXPFgSzzNNTVobwhqE1fhAlLAbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=cE2mp39U; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b1539faa0bso406552585a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:50:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1731455429; x=1732060229; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pW4qOuulsceYOUAjEJcoBjEr83Bo1JfDsK+YY4/2dLw=;
+        b=cE2mp39UmruhVSbqSdTUKP3ZntEeFK3I/bIBI+xCdVxM36dsMSXY8Fgl9Q7H0wiZar
+         9eKOxy5hKMaTQNNoRPNhhIDW4MN1rPCpJFQV8/YVnomW/GZsxNgq1kHrcweAo8HKu794
+         TDTF8jic3hUlrlRCZy5M32Mye1MUXPl6+ToN0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731455429; x=1732060229;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pW4qOuulsceYOUAjEJcoBjEr83Bo1JfDsK+YY4/2dLw=;
+        b=gbSQ8eueHi+aQO9e9RjU+C9ZuWj0XJTQ8oLos33VEUQeQvu24jRF/cpIl6o6D+dKAN
+         WDgHPlpk4axdycNi63FqeZnuQoI12EofpngAhudHH6MyTPi41IfcP/W5GuAP68egHy0O
+         2+oZD8D4kc+Y7un7aRPj5VqnbnFvu3ggLZg1m6VXUiDQhKjgnexxHQUQ8ASkbvgLhczl
+         hjOfeL6wl3Uzwz6o9ECooQRTE5UvAmyEQjvPQG3PxBG2PAcBBhepcN93khbOgyFpaDih
+         XUlS+XmbJHyVcOXbQ3N/6ByH8kAH5IWL7HQMTup2TeoHRu8u+lrrZgFEZGGk4WH0ZwYe
+         vTLg==
+X-Gm-Message-State: AOJu0YxYM2PpSrWNHULwNIjxDxzjPZ4bW9tFSltJCWwf+rTx845yUklU
+	Z7BmKzYBuA45aqz2QIl3dD2J3QOUfqJJm2OI8DVpaMJTRnUiMSDZoWiu2xIzL1em4KQU8AELhj6
+	VfbDMEZsdxA67xvaw53JNU3MfMxQXk/ukrYPa8g8YwknWngNDhwYusZk/jI5sFOQVqKtnDzTLnL
+	kaE3P8skFxEdL9Xik+0RcCU2M+PfjqCv/aKM2XEJPEjjX6rcEdxqDT
+X-Google-Smtp-Source: AGHT+IHGZMFCkebkrnfaoDI+6pcdjcBsJC+I6PNu9SuimG9cg17ChQxVCcXVN8XZtd0cIcvmhI+yKw==
+X-Received: by 2002:a05:620a:4482:b0:7a1:df6f:3625 with SMTP id af79cd13be357-7b3528cf50fmr98703885a.37.1731455428946;
+        Tue, 12 Nov 2024 15:50:28 -0800 (PST)
+Received: from amakhalov-build-vm.. ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32acae4d6sm640019485a.79.2024.11.12.15.50.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 15:50:28 -0800 (PST)
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	virtualization@lists.linux.dev
+Cc: ajay.kaher@broadcom.com,
+	Alexey Makhalov <alexey.makhalov@broadcom.com>,
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Subject: [PATCH] MAINTAINERS: update Alexey Makhalov's email address
+Date: Tue, 12 Nov 2024 23:50:13 +0000
+Message-Id: <20241112235013.331902-1-alexey.makhalov@broadcom.com>
+X-Mailer: git-send-email 2.39.4
+In-Reply-To: <20240926174337.1139107-1-alexey.makhalov@broadcom.com>
+References: <20240926174337.1139107-1-alexey.makhalov@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 1 Nov 2024 10:14:48 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Fix a typo in an email address.
 
-> On Sat, 26 Oct 2024 13:38:46 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Update fprobe documentation for the new fprobe on function-graph
-> > tracer. This includes some bahvior changes and pt_regs to
-> > ftrace_regs interface change.
-> > 
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >  Changes in v2:
-> >   - Update @fregs parameter explanation.
-> > ---
-> >  Documentation/trace/fprobe.rst |   42 ++++++++++++++++++++++++++--------------
-> >  1 file changed, 27 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/Documentation/trace/fprobe.rst b/Documentation/trace/fprobe.rst
-> > index 196f52386aaa..f58bdc64504f 100644
-> > --- a/Documentation/trace/fprobe.rst
-> > +++ b/Documentation/trace/fprobe.rst
-> > @@ -9,9 +9,10 @@ Fprobe - Function entry/exit probe
-> >  Introduction
-> >  ============
-> >  
-> > -Fprobe is a function entry/exit probe mechanism based on ftrace.
-> > -Instead of using ftrace full feature, if you only want to attach callbacks
-> > -on function entry and exit, similar to the kprobes and kretprobes, you can
-> > +Fprobe is a function entry/exit probe mechanism based on the function-graph
-> > +tracer.
-> 
-> You could still say "ftrace" as function-graph is part of the "ftrace"
-> infrastructure. But I don't care either way.
-> 
-> > +Instead of tracing all functions, if you want to attach callbacks on specific
-> > +function entry and exit, similar to the kprobes and kretprobes, you can
-> >  use fprobe. Compared with kprobes and kretprobes, fprobe gives faster
-> >  instrumentation for multiple functions with single handler. This document
-> >  describes how to use fprobe.
-> > @@ -91,12 +92,14 @@ The prototype of the entry/exit callback function are as follows:
-> >  
-> >  .. code-block:: c
-> >  
-> > - int entry_callback(struct fprobe *fp, unsigned long entry_ip, unsigned long ret_ip, struct pt_regs *regs, void *entry_data);
-> > + int entry_callback(struct fprobe *fp, unsigned long entry_ip, unsigned long ret_ip, struct ftrace_regs *fregs, void *entry_data);
-> >  
-> > - void exit_callback(struct fprobe *fp, unsigned long entry_ip, unsigned long ret_ip, struct pt_regs *regs, void *entry_data);
-> > + void exit_callback(struct fprobe *fp, unsigned long entry_ip, unsigned long ret_ip, struct ftrace_regs *fregs, void *entry_data);
-> >  
-> > -Note that the @entry_ip is saved at function entry and passed to exit handler.
-> > -If the entry callback function returns !0, the corresponding exit callback will be cancelled.
-> > +Note that the @entry_ip is saved at function entry and passed to exit
-> > +handler.
-> > +If the entry callback function returns !0, the corresponding exit callback
-> > +will be cancelled.
-> >  
-> >  @fp
-> >          This is the address of `fprobe` data structure related to this handler.
-> > @@ -112,12 +115,10 @@ If the entry callback function returns !0, the corresponding exit callback will
-> >          This is the return address that the traced function will return to,
-> >          somewhere in the caller. This can be used at both entry and exit.
-> >  
-> > -@regs
-> > -        This is the `pt_regs` data structure at the entry and exit. Note that
-> > -        the instruction pointer of @regs may be different from the @entry_ip
-> > -        in the entry_handler. If you need traced instruction pointer, you need
-> > -        to use @entry_ip. On the other hand, in the exit_handler, the instruction
-> > -        pointer of @regs is set to the current return address.
-> > +@fregs
-> > +        This is the `ftrace_regs` data structure at the entry and exit. This
-> > +        includes the function parameters, or the return values. So user can
-> > +        access thos values via appropriate `ftrace_regs_*` APIs.
-> >  
-> >  @entry_data
-> >          This is a local storage to share the data between entry and exit handlers.
-> > @@ -125,6 +126,17 @@ If the entry callback function returns !0, the corresponding exit callback will
-> >          and `entry_data_size` field when registering the fprobe, the storage is
-> >          allocated and passed to both `entry_handler` and `exit_handler`.
-> >  
-> > +Entry data size and exit handlers on the same function
-> > +======================================================
-> > +
-> > +Since the entry data is passed via per-task stack and it is has limited size,
-> 
-> 						"and it has limited size"
+Reported-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Closes: https://lore.kernel.org/all/20240925-rational-succinct-vulture-cca9fb@lemur/T/
+Signed-off-by: Alexey Makhalov <alexey.makhalov@broadcom.com>
+---
+ MAINTAINERS | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Ah, I missed updating this document patch in v19. Need to fix that.
-
-Thank you!
-
-
-> 
-> > +the entry data size per probe is limited to `15 * sizeof(long)`. You also need
-> > +to take care that the different fprobes are probing on the same function, this
-> > +limit becomes smaller. The entry data size is aligned to `sizeof(long)` and
-> > +each fprobe which has exit handler uses a `sizeof(long)` space on the stack,
-> > +you should keep the number of fprobes on the same function as small as
-> > +possible.
-> 
-> -- Steve
-> 
-> > +
-> >  Share the callbacks with kprobes
-> >  ================================
-> >  
-> > @@ -165,8 +177,8 @@ This counter counts up when;
-> >   - fprobe fails to take ftrace_recursion lock. This usually means that a function
-> >     which is traced by other ftrace users is called from the entry_handler.
-> >  
-> > - - fprobe fails to setup the function exit because of the shortage of rethook
-> > -   (the shadow stack for hooking the function return.)
-> > + - fprobe fails to setup the function exit because of failing to allocate the
-> > +   data buffer from the per-task shadow stack.
-> >  
-> >  The `fprobe::nmissed` field counts up in both cases. Therefore, the former
-> >  skips both of entry and exit callback and the latter skips the exit
-> 
-
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 21fdaa19229a..bfc902d7925a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17503,7 +17503,7 @@ F:	include/uapi/linux/ppdev.h
+ PARAVIRT_OPS INTERFACE
+ M:	Juergen Gross <jgross@suse.com>
+ R:	Ajay Kaher <ajay.kaher@broadcom.com>
+-R:	Alexey Makhalov <alexey.amakhalov@broadcom.com>
++R:	Alexey Makhalov <alexey.makhalov@broadcom.com>
+ R:	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+ L:	virtualization@lists.linux.dev
+ L:	x86@kernel.org
+@@ -24691,7 +24691,7 @@ F:	drivers/misc/vmw_balloon.c
+ 
+ VMWARE HYPERVISOR INTERFACE
+ M:	Ajay Kaher <ajay.kaher@broadcom.com>
+-M:	Alexey Makhalov <alexey.amakhalov@broadcom.com>
++M:	Alexey Makhalov <alexey.makhalov@broadcom.com>
+ R:	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+ L:	virtualization@lists.linux.dev
+ L:	x86@kernel.org
+@@ -24719,7 +24719,7 @@ F:	drivers/scsi/vmw_pvscsi.h
+ VMWARE VIRTUAL PTP CLOCK DRIVER
+ M:	Nick Shi <nick.shi@broadcom.com>
+ R:	Ajay Kaher <ajay.kaher@broadcom.com>
+-R:	Alexey Makhalov <alexey.amakhalov@broadcom.com>
++R:	Alexey Makhalov <alexey.makhalov@broadcom.com>
+ R:	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+ L:	netdev@vger.kernel.org
+ S:	Supported
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.39.4
+
 
