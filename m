@@ -1,136 +1,158 @@
-Return-Path: <linux-kernel+bounces-406129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC6B9C5E76
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:12:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF85A9C5E13
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:02:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F32C7B426C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:03:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBF1DB3BE2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D032003CB;
-	Tue, 12 Nov 2024 15:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F2E200131;
+	Tue, 12 Nov 2024 15:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mrhzn39U"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZzPj0Lo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2032003A9;
-	Tue, 12 Nov 2024 15:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B301FF056;
+	Tue, 12 Nov 2024 15:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423661; cv=none; b=Iz+tNBBuIIX1GAsbvf3bpEOybgKAC56fIfURozBWFGJ7AJwf2MJz7BX637EzG6o6Wq3uJz9pct870ny5I87ns+I/MrOuGhCSNHkwOLJ7xCxdVRkqJHnzw5HiaCzmp23P9/T+L03oGfIeSwLx1dM4BmNIKBf3Ah6oRwxAu8f5P+w=
+	t=1731423633; cv=none; b=lFngVt+MhRMDMV6wnqCN39+Ci/DndWyUd6HusTqcD9oGch0VAAJ9rSPikOqHvL81qh7KOqYisHsINq05jnR+iVYY4lk6NZIM6G+99XLMPS9WRcipX2WuarNajYkqTLLXqu/iQydTw6QAJdA0dNqyH6DK4rtAp0mq9mQcKeTQA94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423661; c=relaxed/simple;
-	bh=fq9G1Hsbr7N1585fJCE6/DPAyIA64ydEht/eAP8gtHo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NPxZBa9JSz+pGKhdrrP5UuPYk77V06ldwYsyt/WkrycgM4zCrhO0PzN4lyvWM5218ZVSil17oYF5jvF5xpLsDVykqZ80geUV695hlXbE2eDUXP4746HohtJ/EPwcLEUh7hjAD8F3PyzZZRZozWk9HH/Um5m0mhmOxemte7MABs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mrhzn39U; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d43a9bc03so3971873f8f.2;
-        Tue, 12 Nov 2024 07:00:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731423658; x=1732028458; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IqmvX+SxdAffVmub2S37622rNo2JHBYGCOpSigKS02o=;
-        b=mrhzn39U/UcdaELLW2h1TshleyEzmIq4YnMdhvrB7NtovLgP2aC7SeEvjiGyV5yD+A
-         kjjr5hIQJ0l6Y3VlrugqKZjcde6NJoWt7dSPhdWAhXLIOTm/qZ5hjYoELXmiLeG5pf2H
-         mh5TU2+3jbF+AjVjhD8tPeowNsEu2F5Ax9C4wiVDDuzri/H/ObqcLYjMiwBKMhV7QNxw
-         TSeWRu10pSE9Y0sjnB25OZiYMyS1EBK0wEWZMH+Iq/7hi9SgloRPY9MiwVcAi9eSf+12
-         p30TtTkfOE27ffHH6zyvD30uWAcYoh/TGWw5Rt4FiSvXguNoL6SD/VY7fk5nEhKPpfSf
-         /Xig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731423658; x=1732028458;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IqmvX+SxdAffVmub2S37622rNo2JHBYGCOpSigKS02o=;
-        b=IpVZTsWOgjBADN8UTUOpt6DtmdvuysW1KpPNgsljuAhOs1g7dPb/9eZ4Lldb4BCE7D
-         XdgcoJdVYS8CK+jyaPPyye5SAhMAUmpW3LGKTuOvZ7E2zr2UYn9yRzlnKE84KS9lLmJt
-         gR/iMek5IMWnsDVhZ+fWPTBOfSgkKI9BJARm8sJNYgHp6caorTZLqhhaJCLZ9KkMaonw
-         CihvyeF6NxO0wDdLJcSFQRx8Y5LyWlByZsd/I3w4gOHS7ch+RMRhA819vfCnL9S8GA1Z
-         V/nXWTKC0A+GCb1UkRLeAWHjdLNDvjVr7eocWLfqFUyw3f6v2eLTqeNQaCHfVEcJOaxS
-         3Afw==
-X-Forwarded-Encrypted: i=1; AJvYcCVuOe4Q1h4IOUPbiOr9z39rBPLEcbssafKEAIT7ECOVJ491v9Os+2Ure/0U03lUE6QQnjssPwradM7pNjg=@vger.kernel.org, AJvYcCWWKrSZCIAooXqlE7WHYlmYvFxTTX+gpU84+EmlK7+vNcDJRzD48ekT7gtQwSfw2SrXaqXw37Rq@vger.kernel.org, AJvYcCXs3AaONZjS9qV5aHZqtjoPA4zUlcVYBrrJQO/JNDBoB9DSgWhKCFcd2LtFHpB2ZXt1eXwavqJlpa0GJxEC@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywak3mSRfOOZh4mw9cDgUvoZ2cUjMSAH34rn6ilKJJcn3lo+U/P
-	RPMII9cT1G3cUkQavrcCKs+q8bfAao+/6WuHiU25wVVwvWn9hTgT
-X-Google-Smtp-Source: AGHT+IGNrcNi9F65h6+8t+PRAUL0bPu2V2+blpIe8qyC+KpDDsoflYU289CxmYaEJHlUtJiROE6UcQ==
-X-Received: by 2002:a05:6000:18af:b0:36c:ff0c:36d7 with SMTP id ffacd0b85a97d-381f1863104mr14709742f8f.2.1731423656111;
-        Tue, 12 Nov 2024 07:00:56 -0800 (PST)
-Received: from partp-nb.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda05f89sm15537386f8f.98.2024.11.12.07.00.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 07:00:55 -0800 (PST)
-From: Parth Pancholi <parth105105@gmail.com>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Cc: Parth Pancholi <parth.pancholi@toradex.com>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: [PATCH] kbuild: switch from lz4c to lz4 for compression
-Date: Tue, 12 Nov 2024 16:00:06 +0100
-Message-Id: <20241112150006.265900-1-parth105105@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731423633; c=relaxed/simple;
+	bh=p116ZlWcJSC5OBPJgPS9UqyA/VfRXQ1FZ2hqv5Zijjg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AgwmS5oCxuDTQf6/eFCbi5O7Xm7xVmJkR9jM84OYBLAwPgVJ7sfpbgNJ8ov6sHCBrxjOxmJKwoXqpTJt/xFkxQouogpM0gIi7IDNev8cv8I/1l82P2QMWx+MnFgV1iqAj9fmvwknrRFefxUUCRdSAKGT4qUlP9Q/r1Uw8dlNLmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZzPj0Lo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B5FFC4CED0;
+	Tue, 12 Nov 2024 15:00:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731423633;
+	bh=p116ZlWcJSC5OBPJgPS9UqyA/VfRXQ1FZ2hqv5Zijjg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UZzPj0LosGFBGATy/AEsLHE97zJ+8eMiIhBd0apa3Nk0BNbSPO5OTDjHz/k8Ri0fw
+	 iCcEwPxjmHeD5ZgfCW2zHPZhSYEyCx3cUQovJfLElNSgV1xUZxEzTvsDMjqwAewCy9
+	 18MpzjmY7A5V0DtOWML20xHDH9va2GLbnH+kHM5N6t2MyS+mgjx07/HzSMz4AV+3dB
+	 XF71WkLvnm5qHwSAuKBXV1yyg6DfVAN+ak54MnbPOCVWOEyWCSm3ujBTFZ3rJsNVcV
+	 be8vyjiVRQfJDzVnRxbhVgYLuPgHP3GW8jdr/d7J78eeDJal8nvkObdM+gcFkvyYPd
+	 7HAPHKbWR/xPw==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-29538198f2fso2851645fac.1;
+        Tue, 12 Nov 2024 07:00:32 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU0EL4C+NQnxjV74LrWoBaCbp6zth8Rihdhm10RL5HEcM1NGOV/uaUULfoGS9igmLQRbHLGr09DHfw=@vger.kernel.org, AJvYcCVjbSMdg0J70dmIoVTggYNgW4cfN0/bddGDThJ4O4bk3ErhC+MAt8AFv05yV5RQ2QEvZvpIHnnwtOIMyBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYXD7nZ29CesasctRSUVZwm5doPWiVPaiNG+UBKecATvfFyX6W
+	+7lKHVq8VrMmmYjBssMrXHzggjHBelUkagXDOozscDj5MhHlN5I2TNgkkJWlmX5xE7cpF+Y1UoN
+	BNbGKEotpWTHOgRWALYvZFp8S1S0=
+X-Google-Smtp-Source: AGHT+IFI9GNg7IPdb2tePq/0unuINTg3s7VcqoQ9tRcOl9CoW/yGaLJ9bgvFxb+V6AJAIqz7HyZNKKpxsm54qwn9ze4=
+X-Received: by 2002:a05:6870:46a3:b0:26f:f1ea:6a71 with SMTP id
+ 586e51a60fabf-295600992d4mr13179732fac.7.1731423632299; Tue, 12 Nov 2024
+ 07:00:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com> <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
+ <CAJZ5v0hJ8NoFgjtnYce99+qjCZc3_ihBojyK1gRrcyU5Fp6inw@mail.gmail.com> <20241112145618.GR22801@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241112145618.GR22801@noisy.programming.kicks-ass.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 12 Nov 2024 16:00:21 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0ihEvOuUWoN++5qYx=KqrRnm4np7_j6hDd=aFnHkkFYZg@mail.gmail.com>
+Message-ID: <CAJZ5v0ihEvOuUWoN++5qYx=KqrRnm4np7_j6hDd=aFnHkkFYZg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	rafael.j.wysocki@intel.com, len.brown@intel.com, 
+	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com, 
+	gautham.shenoy@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Parth Pancholi <parth.pancholi@toradex.com>
+On Tue, Nov 12, 2024 at 3:56=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Tue, Nov 12, 2024 at 02:23:14PM +0100, Rafael J. Wysocki wrote:
+> > On Tue, Nov 12, 2024 at 12:47=E2=80=AFPM Peter Zijlstra <peterz@infrade=
+ad.org> wrote:
+> > >
+> > > On Fri, Nov 08, 2024 at 01:29:08PM +0100, Patryk Wlazlyn wrote:
+> > > > The generic implementation, based on cpuid leaf 0x5, for looking up=
+ the
+> > > > mwait hint for the deepest cstate, depends on them to be continuous=
+ in
+> > > > range [0, NUM_SUBSTATES-1]. While that is correct on most Intel x86
+> > > > platforms, it is not architectural and may not result in reaching t=
+he
+> > > > most optimized idle state on some of them.
+> > > >
+> > > > Prefer cpuidle_play_dead() over the generic mwait_play_dead() loop =
+and
+> > > > fallback to the later in case of missing enter_dead() handler.
+> > > >
+> > > > Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+> > > > ---
+> > > >  arch/x86/kernel/smpboot.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> > > > index 44c40781bad6..721bb931181c 100644
+> > > > --- a/arch/x86/kernel/smpboot.c
+> > > > +++ b/arch/x86/kernel/smpboot.c
+> > > > @@ -1416,9 +1416,9 @@ void native_play_dead(void)
+> > > >       play_dead_common();
+> > > >       tboot_shutdown(TB_SHUTDOWN_WFS);
+> > > >
+> > > > -     mwait_play_dead();
+> > > >       if (cpuidle_play_dead())
+> > > > -             hlt_play_dead();
+> > > > +             mwait_play_dead();
+> > > > +     hlt_play_dead();
+> > > >  }
+> > >
+> > > Yeah, I don't think so. we don't want to accidentally hit
+> > > acpi_idle_play_dead().
+> >
+> > Having inspected the code once again, I'm not sure what your concern is=
+.
+> >
+> > :enter.dead() is set to acpi_idle_play_dead() for all states in ACPI
+> > idle - see acpi_processor_setup_cstates() and the role of the type
+> > check is to filter out bogus table entries (the "type" must be 1, 2,
+> > or 3 as per the spec).
+> >
+> > Then cpuidle_play_dead() calls drv->states[i].enter_dead() for the
+> > deepest state where it is set and if this is FFH,
+> > acpi_idle_play_dead() will return an error.  So after the change, the
+> > code above will fall back to mwait_play_dead() then.
+> >
+> > Or am I missing anything?
+>
+> So it relies on there being a C2/C3 state enumerated and that being FFh.
+> Otherwise it will find a 'working' state and we're up a creek.
+>
+> Typically I expect C2/C3 FFh states will be there on Intel stuff, but it
+> seems awefully random to rely on this hole. AMD might unwittinly change
+> the ACPI driver (they're the main user) and then we'd be up a creek.
+>
+> Robustly we'd teach the ACPI driver about FFh and set enter_dead on
+> every state -- but we'd have to double check that with AMD.
+>
+> At the same time, intel_idle should then also set enter_dead on all
+> states.
+>
+> And then the mwait case is only ever reached if CPUIDLE=3Dn.
 
-Replace lz4c with lz4 for kernel image compression.
-Although lz4 and lz4c are functionally similar, lz4c has been
-deprecated upstream since 2018. Since as early as Ubuntu 16.04 and
-Fedora 25, lz4 and lz4c have been packaged together, making it safe
-to update the requirement from lz4c to lz4. Consequently, some
-distributions and build systems, such as OpenEmbedded, have fully
-transitioned to using lz4. OpenEmbedded core adopted this change in
-commit fe167e082cbd ("bitbake.conf: require lz4 instead of lz4c"),
-causing compatibility issues when building the mainline kernel in
-the latest OpenEmbedded environment, as seen in the errors below.
-This change maintains compatibility with current kernel builds
-because both tools have a similar command-line interface while
-fixing the mainline kernel build failures with the latest master
-OpenEmbedded builds associated with the mentioned compatibility
-issues.
+So that's why I would prefer intel_idle, if configured, to give
+mwait_play_dead() a hint on the MWAIT hint to use.  Otherwise the
+latter would just fall back to the current method.
 
-LZ4     arch/arm/boot/compressed/piggy_data
-/bin/sh: 1: lz4c: not found
-...
-...
-ERROR: oe_runmake failed
-
-Cc: stable@vger.kernel.org
-Link: https://github.com/lz4/lz4/pull/553
-Suggested-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
----
- Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Makefile b/Makefile
-index 79192a3024bf..7630f763f5b2 100644
---- a/Makefile
-+++ b/Makefile
-@@ -508,7 +508,7 @@ KGZIP		= gzip
- KBZIP2		= bzip2
- KLZOP		= lzop
- LZMA		= lzma
--LZ4		= lz4c
-+LZ4		= lz4
- XZ		= xz
- ZSTD		= zstd
- 
--- 
-2.34.1
-
+This would not be bullet-proof, but it would take the opportunity to
+work better if it could.
 
