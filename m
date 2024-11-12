@@ -1,274 +1,133 @@
-Return-Path: <linux-kernel+bounces-406620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7429C6177
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:30:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FF19C620F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:02:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B121F22E95
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:30:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2F3EB622D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE19209F2C;
-	Tue, 12 Nov 2024 19:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816D3219C94;
+	Tue, 12 Nov 2024 19:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3+lKv/I4"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxntRLdD"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C518214424
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 19:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B18218D7C;
+	Tue, 12 Nov 2024 19:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439843; cv=none; b=clQvITFhpoW0YBlr5c2EhUiMQhAss7PJ5SzBIhYoBAAzVvEo3dwmYKDvflQ1gANPlzG/o75vLaumLeoCL9mxVNq/7es0PYAfKWdkbfo+BOw+tBgGb1hcmThw9qDkWghRbCy9ahDMXXxUWYzzA50VxYmtMZBSh/zXw/SFUGX32K0=
+	t=1731439941; cv=none; b=XxCxMH2YcjcYFa5WP07idHiy1jfyVDMWEV+TtQvYNYA350XUyLwl0n7SYqXHUpF5Fn6iDCHa4SKYHFEcSKxO0ezPWigvxWzL17vfk9XMsou4otv8fNfq1z3FGwVEi0o/GZvA9BZUVzRmD9Fsbje//i9ceodX6OtdKiZHH3WgiuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439843; c=relaxed/simple;
-	bh=Bw7yG7hIAVf72qATOe9KuIJdJ1BLU50StvC3OShE7x8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tBwGXpsuOYS8lI5OelO3S2xZ2MhBBdlKC56LIaRt8+YM5MQ71y7H0TFh3XXt2la+vW+ChvV86w+8MOB8q7rHrn4KccDZ5odONkxmomygD1oDVpgbkrlLrR+aJ8HHe9QdQzRY1DtHW65rU1K766vYZALPvkNylJtntJjOaR4AiM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3+lKv/I4; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9ed0ec0e92so823131566b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:30:41 -0800 (PST)
+	s=arc-20240116; t=1731439941; c=relaxed/simple;
+	bh=epgbS9RtzrCVBFjCyJlrkHDQBSeDAigP9kv3ZSBAFXM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PwNmPRaGyT5dYxHJXBwi1mGH8WYpt03bDixfMuQfhEpoX5F/nQnNc5KykahwGLFN5Jc/7MQ85i2J6pkI7osDjahuh1TU2BiQ8Y+cw6c/9O4narF/UaxT1TXyBQmtuKqaDkjlDpxom4arJONRLdjnnm7fFS4rEywjGflc856v7TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kxntRLdD; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e9b4a4182dso7946a91.0;
+        Tue, 12 Nov 2024 11:32:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731439840; x=1732044640; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QL7/5I0UejJahIrSSQ2JJZpj8WRu9ElaZGQSA2O5d9w=;
-        b=3+lKv/I4ri80aauRz3wguYdXoxJIJbkHJbPOlhbvUznrYZBRHpI9lnBVCdpBjCD5MN
-         6kylzl0ZNSYgsX8htAdDv0Ghw5pa2nWfE9chs0R5lwpZAfRl2Vc7swSyVGchHZZW4i/q
-         o7s1Qs/xoN5+jhQRZ7DQhULM/1SbE8L60gvcO9DEcTVOai/8/OUtklX2ccvkT1kLVic7
-         TGQZbr1w6k9Ll6q3Z5LaIW5dSxyLgfN208ZSFhpuQntgpwmtv1DbRuBq5FUz29SE1d3q
-         NwtaEEANVYzhbeTK2NBFLZqm1mEZILG96GosEiQHLwTzLWjnXyhZ3cuyHcgbpDjcsvh/
-         5QkQ==
+        d=gmail.com; s=20230601; t=1731439939; x=1732044739; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6/xfqtm3x7QWKepSmfwDgHi7bBcwjVkW2hTBncGzpNI=;
+        b=kxntRLdD5MP6QOiZyZ+6QD9/1bcb4CWw7GldRkALHmFYNw4XQ/HfE+hoyjuWdAuAZV
+         z3qaLoKrcufxexYAWBSfFvUc373F+9ljdjWiJa1NLkpGjWMs8yYFccoO6qylGPT222y3
+         QISr8YY0HR2xGXfzimMwjB2ascIj1MBMYLckj2wguTnsOltfJk737iV9TBqPEVF4s7KM
+         S9SnVh1mI9cEPYHCc3Bj3HtCxnCTE/bTXQbCgC8ieBrC5YkrN4Z0qI8qRYYvnJZ23KS3
+         +z8r4XP9kWLbIpF/FxAtCeMO8sIPBJPX4dMs2ckBXr9YuDlIvK7wXBftXXDmZrow21s9
+         hEgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731439840; x=1732044640;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QL7/5I0UejJahIrSSQ2JJZpj8WRu9ElaZGQSA2O5d9w=;
-        b=jIuSuICKJsVpxqT+QHdsBR2nEQsSUFRm8K7Y1e4kFV9wwDAR61D1HhuPlLTuMwpnHb
-         9hXlmOSY72Lj0THDuvu7w1865+aOD7YhM8kqJ6cNsOPunjjKMPoh6BZrNfFcWpI+9Wx6
-         x4KsSe5bIpiHQ8gYP+2HhU24cM8KgKEONoTooTBOyLOWZIKSi3OLekbT8+zdwp/pBTcL
-         FnOZUM0Lf44za7gQwCyTvD/bxNYLSDtxz5rfxcnizwbErdghGeH1gJEkLMxbqcxPml6h
-         Af3U7NowFEFA/mdZfCoMrRD48/0OUYYEp0xgdJJegCOPlO+Zq75zS9G+eFCkMntrwcoF
-         ukjw==
-X-Gm-Message-State: AOJu0YyfakH402pdFCXxhEeraTM/B86TUWgKS/vZcf4xVjqUbqJjjN+5
-	34hc27q2LKuCc+D9oY62TNQVROLl6OTIQQujB9gBgJ9mN/W0Hh1Ylja3g/8naiZlCftgcKBMqQz
-	ck9n2oYMdKyY6XxXDQT6S7TUWT4Xoe8w2WCk4
-X-Google-Smtp-Source: AGHT+IEF19hOX8AadWSfBjs29gQgzK5yh9aRT0DGOB4INyutV+2Swu8IcpZilSblZ2WeukCIwk/EeYtI9W/CghAwC1s=
-X-Received: by 2002:a17:907:9494:b0:a9a:8042:bbb8 with SMTP id
- a640c23a62f3a-a9eeffeeeb1mr1736395566b.47.1731439839427; Tue, 12 Nov 2024
- 11:30:39 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731439939; x=1732044739;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6/xfqtm3x7QWKepSmfwDgHi7bBcwjVkW2hTBncGzpNI=;
+        b=bhOkxxxBWTz5DZnbsdpd1Nxd1fTqfxetCm8lMF6OFKGTo3ZH6hGdVwsUkqbpjtbVVp
+         iQPW6Se+q16ISXD9tZYA+i5RkSZ0v/H4GZZ6psmeFCukqY4KjX7zLFaox9xt0CPy8fEa
+         FgNPZ9vZgcKm9bUsWyzsjHdrlsJyXbORo4gz+RcJT/OsBXBI7Jn6U8j8+8LAF3yiq7ek
+         hjvVaFtrsnrD96LkJbgt4k5e4DF+66TV4b/gcavY7OPZxUJu10lmD9BLULWtl0ZelreV
+         OMtyef6LuYANoVYJYcHcmUD0fn7SsW8RILzNzHnyFJGL0nVmXQoiRFfcTcUmoMNkXmaU
+         QUBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVG6k6Jz6B2myMJBtaKSNEeGLaOItn9ZXacUMvaRh+t9k4lAgkQCYYBKxUS+2ul+7Ji113KezSIFCEAinXiFFn5MqE=@vger.kernel.org, AJvYcCVplvQeidvSLoXFuoCc/CShCVjKFu1YuWE27SW1LxY729pQQxGO1xhTXjMfzQHo6KQYcfPMlOR4hkKBI4nc@vger.kernel.org, AJvYcCW+C99lejbuTSfdvLWibVibAMLfb2uKo0dtkRfIUqQlOydKWABtcD90s5DbX9llZOTuhgRj1kIcK2+O@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXBImL0h/80IpW2W9MhrB6BEwoCOo7bVpmlmoZXkepIpCZz4xI
+	6jpx/vwuRZ+Po8utpntlXDTfJzn1fqiXnnqTBCgvgAWv40dgu7x+wYE5d6KQc/U=
+X-Google-Smtp-Source: AGHT+IGrqEyJ1d4NsV9KxFv5AMzPEJx8k6S+eQ2baPGh52LTBwbe4AJ9JiDd7LT5bb2AsJe5Y/M1/w==
+X-Received: by 2002:a17:90b:2647:b0:2e2:b719:d582 with SMTP id 98e67ed59e1d1-2e9b1f64ebbmr26275292a91.14.1731439938703;
+        Tue, 12 Nov 2024 11:32:18 -0800 (PST)
+Received: from localhost.localdomain ([38.44.237.182])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd17d8sm10988958a91.41.2024.11.12.11.32.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 11:32:18 -0800 (PST)
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Add support for Samsung Galaxy S20 FE (SM-G780F/r8s) [SoC Exynos990]
+Date: Tue, 12 Nov 2024 19:31:47 +0000
+Message-Id: <20241112193149.1262-1-wachiturroxd150@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107232457.4059785-1-dionnaglaze@google.com>
- <20241107232457.4059785-9-dionnaglaze@google.com> <d49430ec-8701-72c1-36ab-4d9e612ac443@amd.com>
-In-Reply-To: <d49430ec-8701-72c1-36ab-4d9e612ac443@amd.com>
-From: Dionna Amalie Glaze <dionnaglaze@google.com>
-Date: Tue, 12 Nov 2024 11:30:26 -0800
-Message-ID: <CAAH4kHaQ0hh03aSPQ1N6t4zYwFMi6f0QOOa8sQoJqnobZhSD2w@mail.gmail.com>
-Subject: Re: [PATCH v5 08/10] KVM: SVM: move sev_issue_cmd_external_user to
- new API
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ashish Kalra <ashish.kalra@amd.com>, John Allen <john.allen@amd.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
-	linux-coco@lists.linux.dev, Michael Roth <michael.roth@amd.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
-	Danilo Krummrich <dakr@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Tianfei zhang <tianfei.zhang@intel.com>, 
-	Alexey Kardashevskiy <aik@amd.com>, kvm@vger.kernel.org, linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 12, 2024 at 7:52=E2=80=AFAM Tom Lendacky <thomas.lendacky@amd.c=
-om> wrote:
->
-> On 11/7/24 17:24, Dionna Glaze wrote:
-> > ccp now prefers all calls from external drivers to dominate all calls
-> > into the driver on behalf of a user with a successful
-> > sev_check_external_user call.
->
-> Would it be simpler to have the new APIs take an fd for an argument,
-> instead of doing this rework?
+Hello :),
 
-Simpler but I think worse?
-The choice of using sev_do_cmd versus __sev_issue_cmd in kvm's
-implementation is the matter of dominance of access checking.
-There's no need to check the fd in the activate function or
-decommission function. It's not needed to be checked in a loop for
-snp_launch_update.
-I can either complete the removal of __sev_issue_cmd in this patch or
-move to make the context creation function take an fd. What do you
-think is better?
+I'm a newbie and I started getting interested 1 year ago.
+Well, that's the beginning,
+until I learn more about kernels and the C language,
+which is important in that.
 
+Well, bluntly, here it is:
 
->
-> Thanks,
-> Tom
->
-> >
-> > CC: Sean Christopherson <seanjc@google.com>
-> > CC: Paolo Bonzini <pbonzini@redhat.com>
-> > CC: Thomas Gleixner <tglx@linutronix.de>
-> > CC: Ingo Molnar <mingo@redhat.com>
-> > CC: Borislav Petkov <bp@alien8.de>
-> > CC: Dave Hansen <dave.hansen@linux.intel.com>
-> > CC: Ashish Kalra <ashish.kalra@amd.com>
-> > CC: Tom Lendacky <thomas.lendacky@amd.com>
-> > CC: John Allen <john.allen@amd.com>
-> > CC: Herbert Xu <herbert@gondor.apana.org.au>
-> > CC: "David S. Miller" <davem@davemloft.net>
-> > CC: Michael Roth <michael.roth@amd.com>
-> > CC: Luis Chamberlain <mcgrof@kernel.org>
-> > CC: Russ Weight <russ.weight@linux.dev>
-> > CC: Danilo Krummrich <dakr@redhat.com>
-> > CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > CC: "Rafael J. Wysocki" <rafael@kernel.org>
-> > CC: Tianfei zhang <tianfei.zhang@intel.com>
-> > CC: Alexey Kardashevskiy <aik@amd.com>
-> >
-> > Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
-> > ---
-> >  arch/x86/kvm/svm/sev.c       | 18 +++++++++++++++---
-> >  drivers/crypto/ccp/sev-dev.c | 12 ------------
-> >  include/linux/psp-sev.h      | 27 ---------------------------
-> >  3 files changed, 15 insertions(+), 42 deletions(-)
-> >
-> > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> > index d0e0152aefb32..cea41b8cdabe4 100644
-> > --- a/arch/x86/kvm/svm/sev.c
-> > +++ b/arch/x86/kvm/svm/sev.c
-> > @@ -528,21 +528,33 @@ static int sev_bind_asid(struct kvm *kvm, unsigne=
-d int handle, int *error)
-> >       return ret;
-> >  }
-> >
-> > -static int __sev_issue_cmd(int fd, int id, void *data, int *error)
-> > +static int sev_check_external_user(int fd)
-> >  {
-> >       struct fd f;
-> > -     int ret;
-> > +     int ret =3D 0;
-> >
-> >       f =3D fdget(fd);
-> >       if (!fd_file(f))
-> >               return -EBADF;
-> >
-> > -     ret =3D sev_issue_cmd_external_user(fd_file(f), id, data, error);
-> > +     if (!file_is_sev(fd_file(f)))
-> > +             ret =3D -EBADF;
-> >
-> >       fdput(f);
-> >       return ret;
-> >  }
-> >
-> > +static int __sev_issue_cmd(int fd, int id, void *data, int *error)
-> > +{
-> > +     int ret;
-> > +
-> > +     ret =3D sev_check_external_user(fd);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     return sev_do_cmd(id, data, error);
-> > +}
-> > +
-> >  static int sev_issue_cmd(struct kvm *kvm, int id, void *data, int *err=
-or)
-> >  {
-> >       struct kvm_sev_info *sev =3D &to_kvm_svm(kvm)->sev_info;
-> > diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.=
-c
-> > index f92e6a222da8a..67f6425b7ed07 100644
-> > --- a/drivers/crypto/ccp/sev-dev.c
-> > +++ b/drivers/crypto/ccp/sev-dev.c
-> > @@ -2493,18 +2493,6 @@ bool file_is_sev(struct file *p)
-> >  }
-> >  EXPORT_SYMBOL_GPL(file_is_sev);
-> >
-> > -int sev_issue_cmd_external_user(struct file *filep, unsigned int cmd,
-> > -                             void *data, int *error)
-> > -{
-> > -     int rc =3D file_is_sev(filep) ? 0 : -EBADF;
-> > -
-> > -     if (rc)
-> > -             return rc;
-> > -
-> > -     return sev_do_cmd(cmd, data, error);
-> > -}
-> > -EXPORT_SYMBOL_GPL(sev_issue_cmd_external_user);
-> > -
-> >  void sev_pci_init(void)
-> >  {
-> >       struct sev_device *sev =3D psp_master->sev_data;
-> > diff --git a/include/linux/psp-sev.h b/include/linux/psp-sev.h
-> > index ed85c0cfcfcbe..b4164d3600702 100644
-> > --- a/include/linux/psp-sev.h
-> > +++ b/include/linux/psp-sev.h
-> > @@ -860,30 +860,6 @@ int sev_platform_init(struct sev_platform_init_arg=
-s *args);
-> >   */
-> >  int sev_platform_status(struct sev_user_data_status *status, int *erro=
-r);
-> >
-> > -/**
-> > - * sev_issue_cmd_external_user - issue SEV command by other driver wit=
-h a file
-> > - * handle.
-> > - *
-> > - * This function can be used by other drivers to issue a SEV command o=
-n
-> > - * behalf of userspace. The caller must pass a valid SEV file descript=
-or
-> > - * so that we know that it has access to SEV device.
-> > - *
-> > - * @filep - SEV device file pointer
-> > - * @cmd - command to issue
-> > - * @data - command buffer
-> > - * @error: SEV command return code
-> > - *
-> > - * Returns:
-> > - * 0 if the SEV successfully processed the command
-> > - * -%ENODEV    if the SEV device is not available
-> > - * -%ENOTSUPP  if the SEV does not support SEV
-> > - * -%ETIMEDOUT if the SEV command timed out
-> > - * -%EIO       if the SEV returned a non-zero return code
-> > - * -%EBADF     if the file pointer is bad or does not grant access
-> > - */
-> > -int sev_issue_cmd_external_user(struct file *filep, unsigned int id,
-> > -                             void *data, int *error);
-> > -
-> >  /**
-> >   * file_is_sev - returns whether a file pointer is for the SEV device
-> >   *
-> > @@ -1043,9 +1019,6 @@ sev_guest_activate(struct sev_data_activate *data=
-, int *error) { return -ENODEV;
-> >
-> >  static inline int sev_guest_df_flush(int *error) { return -ENODEV; }
-> >
-> > -static inline int
-> > -sev_issue_cmd_external_user(struct file *filep, unsigned int id, void =
-*data, int *error) { return -ENODEV; }
-> > -
-> >  static inline bool file_is_sev(struct file *filep) { return false; }
-> >
-> >  static inline void *psp_copy_user_blob(u64 __user uaddr, u32 len) { re=
-turn ERR_PTR(-EINVAL); }
+That Samsung Galaxy S20 FE device is part of the Exynos990 SoC family,
+I saw that Igor supported that processor,
+I took advantage of it.
 
+It has the same functions of:
 
+* CPU
+* pintrl
+* gpio-keys
+* simple-framebuffer
 
---
--Dionna Glaze, PhD, CISSP, CCSP (she/her)
+Just enough to reach a shell in an initramfs.
+
+The preferred way to boot the upstream kernel is by using a
+shim bootloader, called uniLoader.
+Changes: - Simply add dts from S20 FE device
+
+Special thanks to Igor for helping me with that :)
+
+Changes in v2:
+- Change author name
+
+Denzeel Oliva (2):
+  dt-bindings: arm: samsung: Add compatible for Samsung Galaxy S20 FE
+    (SM-G780F)
+  arm64: dts: Add initial support for Samsung Galaxy S20 FE (r8s)
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |   1 +
+ arch/arm64/boot/dts/exynos/Makefile           |   1 +
+ arch/arm64/boot/dts/exynos/exynos990-r8s.dts  | 115 ++++++++++++++++++
+ 3 files changed, 117 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-r8s.dts
+
+-- 
+2.34.1
+
 
