@@ -1,100 +1,125 @@
-Return-Path: <linux-kernel+bounces-406326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF4C9C5D79
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:38:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD409C5D7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2280A28265C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:38:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D91E91F22221
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC33205E12;
-	Tue, 12 Nov 2024 16:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD27A206E6E;
+	Tue, 12 Nov 2024 16:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dUr53ITm"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="dOWdH7Ot"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C217120651E;
-	Tue, 12 Nov 2024 16:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6239A206972
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731429492; cv=none; b=PEq2+rH/pdGEUHtK9meAyP1e+akZ7RdBLuGOBokO/TaHUvv+iDAIGnipRdyb9nlN09jr1qAtqTm8bmtdtmUK6M/gk1g05kqOV9w++iUx7NSGKnbRzdBWBnw3OD0Wdq32qGy5CW2Mjse5OhB8k6zLJvt49cuqJxIyJTJjOwoSK04=
+	t=1731429496; cv=none; b=NJ0hCkYTP7gUrV9D5VvBn2ywM7dVMqee33fqToj6q3QsIvU13F1nQmtoUFxYMJirm3324mS3klqLDc59YzmKsS6bxgZq2xf5ZOmUKr6koSs2S1m71wH+gDS5gW8npLceldJHtZMHj4mT5tFxScCiiXrTFaoZ4yatXzc8act8i7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731429492; c=relaxed/simple;
-	bh=KUhNk2z9MDkRfzqWZ5qmFgqq+TTg1/DVZofrq9PuuqU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DuBjgWPiQ7P0ZlzWYdMwF61wRjbe+vao952E7npqcpHHSlAjGJzC/ilj+LaIDeF5FGEw+LwkCeHY8jRdQW6gboBAmXeifqgiPaFclJg1EbKWjyZUXMiD+9dopA//Zdcb/YmNOdX8iLSXcsQWFwNrz3/n28ZbzDdrrBozBvcuaFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dUr53ITm; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a9ed49edd41so1015271166b.0;
-        Tue, 12 Nov 2024 08:38:10 -0800 (PST)
+	s=arc-20240116; t=1731429496; c=relaxed/simple;
+	bh=8WBgyMeYHgvEhtU9GzLxGVFWkhAn8EufhAFbO2fRa7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cGmWYZXMw/bt0c4UUVj50djbeWPVCqDn4rppAM1LsfbArPLHxnz+W8o7LVz2X3ohPtDD6+U+l6XP0ZV8NDeCZfbjkU9LXYikZIphf6LP/AW77UEI3lGTIpoGwEHDauaS+e8PQ5V4s69QyhI4F3GEe/ULLlhViQ7uzuOyZiWDUm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=dOWdH7Ot; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a4c303206eso21754505ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:38:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731429489; x=1732034289; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KUhNk2z9MDkRfzqWZ5qmFgqq+TTg1/DVZofrq9PuuqU=;
-        b=dUr53ITmK5MTR6KMKoD21/ogM4j3Ict1J/5BLsPN3SqP4crKh+J5zC34dg/MZprDA2
-         KRo8lDQSUcV1lTJppfWHLKd2mBKakokXgek1sPxOfrluup6rSAOfK5jiHCGQWdc56sN8
-         gFK1hw6rubpVgRoHcCfM2xXEdE+UZgKvHpdz2wOyZCj3yX1S7ohLVrxkDNFOaHY3nFKi
-         9JF2aGTEu60WOsGirUvc2W08hyRVyCUlQZZ1w2X7KeCcC1IGSLO1C4xjFptg6SleiSYw
-         sV3UF6pfwVskV2Rjq8VbyAo2jcSHij83W7e1sYuHgCBGzAlaPyOMgRJQOV3+fXL9XKe5
-         kFdQ==
+        d=sifive.com; s=google; t=1731429493; x=1732034293; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/QahbWCS8hTGwqMrLrcuosaa/aqoxJrXN4Zy2WrZ7yI=;
+        b=dOWdH7OtLheHyA8pbDg01GTSpxR6LMy8DVEabgzbwbqpyIzkrBsM3Lyd8qcNnqCweA
+         SjxJNxY6sKJddRfygh4tvzRV+PfL099vCP2wxtSUpRZuadPCzE68i3LhkGrtoZn4qKum
+         mqUn1tGaUmKHFQk3Fi9cCKQPwObbxYJ0S3AOzWRhMIokfLttvw2b7FN59bRuvc92XjSB
+         Idl4ud+tZQAxY64Da1VOmX98BxU6b6mRROvMTkSQ9i8CeTcwA/qN0GxDX7yae5+HaoAY
+         ufav2NZjR8dP5elfespBjgKpa2EBJsWfhLlom/cRMaf0odbtL+cf5iljwpUX8R5UudQE
+         2pUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731429489; x=1732034289;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KUhNk2z9MDkRfzqWZ5qmFgqq+TTg1/DVZofrq9PuuqU=;
-        b=IBMYLisR9zNjUB+4vM/GWK6uxJhS3RClco8FnuprTGtNdByVwg1VrnaKBJs1ohTUku
-         X8LT+m0eNQaCYdsb+L0x6p/TDu/nvDj1w1dVeMu9VJfroxa1UpxSaPxEjKice5pRIM1Y
-         JgZxgZGsr3KWLJTbwFrSOgHkS6/FimmvwJBPE5FIg9Kf3WngKBmFVk8e3EuSheC5Twea
-         98c5rHgCSEHEMFFYVJgVkOn2UAyO8tD3DdekBYGTO8PX/DwSL3oNjcaVGnBvJjWzc5jl
-         LxH3RDO0uxnL/AWI8GklOHEvinkb/hcSun9x++eNzVhqDxSSt/XCJn6HERpUL3aVspAo
-         Fx7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXGZ+BD6kJ+kDaCkmUuKp0FVHlsS+E4hBMAAIKU2xMiGFgzRzozNgQfkiSXERK08swja/HNJvGg@vger.kernel.org, AJvYcCXXPyPzx+746Axtk/WU3Wpi5C4DvBSxoGMcwJyU1SbEDk8Mp4hCJG48OQOyHbUgumle5HLyKItfNRyOcW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyooMWPTBD2PQGmuh//eGIlCNxHGkHssx6F/DxPX/DCMRvWi6HO
-	whZOBC/8cUSsu3sdNo+LWURZAV/jWz7NQhUdNhdD6m7ZGM9wrBY9+aa3QAfnQUqAjpzJfPVEL48
-	WGppigtDuCfiVHWGhxN5lHydKwt8=
-X-Google-Smtp-Source: AGHT+IGbNgg3vPZwBtH2bYSkjboNf0KX35TdzEpbztlVIlIcHPgEXMYbOAhhZurjqxNtiFg2VefOBdmGUge2VCCob8s=
-X-Received: by 2002:a17:907:3f97:b0:a99:d3f4:ff3b with SMTP id
- a640c23a62f3a-a9eeff4101emr1489398266b.27.1731429488749; Tue, 12 Nov 2024
- 08:38:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731429493; x=1732034293;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/QahbWCS8hTGwqMrLrcuosaa/aqoxJrXN4Zy2WrZ7yI=;
+        b=BUYopcQ0uP7bU6N9uDYtAfN4VNmaQPEwd8yuPE/bmf2exeJX2OX3w/zhBLHzlk4yZK
+         BSa5gNBSf9BKVupgbszgrrvMFCXASMTOYmKXG8E9aLWKZFqOJZMB0JVEmuW2pXTXQk/2
+         ubrr9tpiB3MivZot8E+QVcbaEUoxaEjZvxXRgqcapUFpp+HgWvda/DC2RWBYxtQ0mRON
+         z7WHn7i9M+dYVCxPxULSkDEdVilZauPdS2EtICPp7HaHlwYkA/kpBj4MtCM4gmCxGx5B
+         c5gTLVroxB01drU5R3OI6gZzyM86QWActnyWyqqPE9sn9V+FU/U4FzW7Lm2YeQmm8FxN
+         N9tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeiWuhAhr7tDD/osuoP6g+6DUUC9QB8VucExoQc8jwZcPsoIThWkM4vIlQqVzHiqb40WMGy+iczagcLP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSWBtglTQp0RqJVdvNat3rtK+lvhqE7Rg4z6QI/jMGNRcsEEZc
+	7OUMBdB3nGKJCqXvxBXZG0H99rWFA8WqTQNuxcISJC+MRYqid2E3p1H4mvWTPJA=
+X-Google-Smtp-Source: AGHT+IEPZhlfK7Hi/4/C4KwHmgKsIykg4Irr6nbun1DGbSR/22naNCY+Y0aibSThLAOZQc43u005DQ==
+X-Received: by 2002:a05:6e02:1f03:b0:3a5:e532:799d with SMTP id e9e14a558f8ab-3a6f19e86dcmr169417395ab.3.1731429493390;
+        Tue, 12 Nov 2024 08:38:13 -0800 (PST)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de787414a1sm2152236173.45.2024.11.12.08.38.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 08:38:13 -0800 (PST)
+Message-ID: <338c06d8-627e-4ca9-b5d0-6ce87b5cc83c@sifive.com>
+Date: Tue, 12 Nov 2024 10:38:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018081636.1379390-1-chenqiuji666@gmail.com> <BL1PR12MB53333B4078E3C1C1AEC49AD99D582@BL1PR12MB5333.namprd12.prod.outlook.com>
-In-Reply-To: <BL1PR12MB53333B4078E3C1C1AEC49AD99D582@BL1PR12MB5333.namprd12.prod.outlook.com>
-From: Qiu-ji Chen <chenqiuji666@gmail.com>
-Date: Wed, 13 Nov 2024 00:37:57 +0800
-Message-ID: <CANgpojV8U4UenoKc8kT8LGUnWmyu5yYMo_2fzY4C9R+EdMj_jg@mail.gmail.com>
-Subject: Re: [PATCH] cdx: Fix atomicity violation in cdx_bus_match() and cdx_probe()
-To: "Agarwal, Nikhil" <nikhil.agarwal@amd.com>
-Cc: "Gupta, Nipun" <Nipun.Gupta@amd.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"baijiaju1990@gmail.com" <baijiaju1990@gmail.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>, 
-	Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] irqchip: THEAD_C901_ACLINT_SSWI should depend on
+ ARCH_THEAD
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Inochi Amaoto <inochiama@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1097d054ed4c67f714679de1253e45a034e647a0.1731425416.git.geert+renesas@glider.be>
+From: Samuel Holland <samuel.holland@sifive.com>
+Content-Language: en-US
+In-Reply-To: <1097d054ed4c67f714679de1253e45a034e647a0.1731425416.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi Geert,
 
-We have addressed the concurrency issue in the match driver interface
-at a higher level, as detailed in the
-[https://lore.kernel.org/all/20241112163041.40083-1-chenqiuji666@gmail.com/].
-Due to the widespread nature of the issue, it is more appropriate to
-resolve it by adding a lock at the higher level.
+On 2024-11-12 9:31 AM, Geert Uytterhoeven wrote:
+> The T-HEAD ACLINT S-mode IPI Interrupt Controller is only present on
+> T-HEAD SoCs.  Hence add a dependency on ARCH_THEAD, to prevent asking
 
-Therefore, in v2, we have removed the changes to the cdx_bus_match()
-function, as the higher-level fix conflicts with those changes.
-
-Kindly refrain from merging the v1 of this patch. Thank you.
+This is not correct. This interrupt controller is part of the T-HEAD CPU IP, so
+it is included in SoCs from other vendors (Allwinner, Sophgo, etc.) that use
+T-HEAD CPUs as well.
 
 Regards,
-Qiu-ji Chen
+Samuel
+
+> the user about this driver when configuring a kernel without T-HEAD SoC
+> support.
+> 
+> Fixes: 25caea955cc95050 ("irqchip: Add T-HEAD C900 ACLINT SSWI driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/irqchip/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index 28c19bde55206847..3f4cfcbecc5a4041 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -617,6 +617,7 @@ config THEAD_C900_ACLINT_SSWI
+>  	bool "THEAD C9XX ACLINT S-mode IPI Interrupt Controller"
+>  	depends on RISCV
+>  	depends on SMP
+> +	depends on ARCH_THEAD || COMPILE_TEST
+>  	select IRQ_DOMAIN_HIERARCHY
+>  	select GENERIC_IRQ_IPI_MUX
+>  	help
+
 
