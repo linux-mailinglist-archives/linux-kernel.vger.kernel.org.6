@@ -1,85 +1,62 @@
-Return-Path: <linux-kernel+bounces-405592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACB69C5357
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:27:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597A89C5445
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:39:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BAA028826A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:27:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A03F9B33A18
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42E61F26E3;
-	Tue, 12 Nov 2024 10:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74D62139BC;
+	Tue, 12 Nov 2024 10:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NsKjAOpw"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrygTCVx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F1320B20B
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F8B20B20B;
+	Tue, 12 Nov 2024 10:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731407145; cv=none; b=LzlHA61Zy3mtDKNEKtTF/OP9nDqaSc2xMoRmyjDGQncGgQW5q8XMdWMmr6v32NpoZ86SiFCzEybB8ggogO8jjC4+VwA/covFGhYjQDM3Zb4zj8cTuqpB+k3F2d0ke3wCGcDovSSqcno3RW1w09US9cSrd2StJM9yAkU/umPjEFQ=
+	t=1731407152; cv=none; b=C+EdKJMBKr8hckdSc88TTLnPGPJ0ut0ouIjEOkzIlMiP1V50yf6fmKHDkX2687gfGd2tyN7eQKmD5H3zZS3g0o9jSo2FETK12JcGRbSczIzSzJLOeEvKa+p0yVj0cZiy9YLuIyT4/mVHgMH0aW9Snb9hs+ODbszrsY2MdufHflo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731407145; c=relaxed/simple;
-	bh=1D1zZKYCSlaEhy1+5tHVx44PwVRCFIMTedpvlyE0kik=;
+	s=arc-20240116; t=1731407152; c=relaxed/simple;
+	bh=hDtwxlx263Ka4x+zd3cQnDTdGx8NUTZ76VVOto/UNHo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t9ZuLPJb3LWaDtgRvkgpQGG8Ja/Pv/5lxbfkNT0gL/UvSy8cxw6DUBSBTCxN+voMfbZT7IlTM7ZZ/jf9sFeGFmxCdlANbwP2HMbRwYBTF/AIqm9xrQUmmj3Ci0RyNBeVEpgsDIeRg15zOwTjun/Y9oSf2lAw0vrhC6TaLUYeU4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NsKjAOpw; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d55f0cf85so3650291f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:25:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731407141; x=1732011941; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/5yHXIwIHCW+JAcYCylm65WJUcWQ5bSuDUNscIOTBvE=;
-        b=NsKjAOpwPdPiiYFJnoCR3kUbdhlIsAUz5KJsbdXS4WVj/sKUhvXRMgY8X7UQ+4N6AC
-         NMaJ/SkkWeAoOf/OgdrZ5dzTJ4CpjVJf79i1KcoDhlFp+Sxhy5gE31fHIxdGYp2O591Y
-         YZHts2iclJF6uU6VCX/q10hKP776dBRbbedFmtuFPdZEjiFp0f8p+dpkeu5463UQtvx0
-         nktO8apSndE0TjVTHDd9ERelyqB7UF7oJX2OuA3vk6m70QHexuPWgWc5Rqf+VpjyLJCq
-         Lnlkwp3th31IlfaBYKDuRUkt16/QJYyCxRio3+tOq7TSQ2al6PheGIgakumvYJvNkdW/
-         ELgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731407141; x=1732011941;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/5yHXIwIHCW+JAcYCylm65WJUcWQ5bSuDUNscIOTBvE=;
-        b=I0H2BU9teZw15AR1DGnXgfk/5jrN0uH7FGYY3eXdR4qPSLoeZWsMb5LjzQx+SpfrUD
-         f/xi3LZZNJOQJmsdPrJDAOvu3aIATxUrkHeEfxWcSZQpvML66mHoA8cOPSw6/WAsxkEW
-         gvakjzUV10ztrEWnlUwPVscSuv1c4n97krZX7Qm95lEhwmYT0pKr6w1aNHvXEkYyu/1G
-         oqaOqC2PS5FD5jmPwTfUg6+CGdJqHtEcfkQDWBownbJzKRn/FZ4/nfHbLcifTVpN1EYy
-         pmD73nUCEnjjTuZ+mYGnriich4mX5EIC5IoXe7823tQ2MfZPPGnHTr6H1PXPtkvCARin
-         7mQw==
-X-Gm-Message-State: AOJu0YwtVsg8dfjwmJrBO1kV0/HO7Oqu6imbZhgGxs/fl8F4kAgG1euP
-	pB1nN6ldK0/2ddz5vI3naMtzKdbexW7k5AidUVkW3OFStowcAzyWnSr0Cfip6Cw=
-X-Google-Smtp-Source: AGHT+IGIYd2CmmVqWiZ5wMCAwv4CjM91gTS2b3teNaxRcn9X2Z86zV570IB+s6/7CCxiw+pEV6x29w==
-X-Received: by 2002:a05:6000:184e:b0:381:df72:52cd with SMTP id ffacd0b85a97d-381f1822aadmr14787560f8f.23.1731407141024;
-        Tue, 12 Nov 2024 02:25:41 -0800 (PST)
-Received: from pathway.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda03696sm15200653f8f.87.2024.11.12.02.25.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 02:25:40 -0800 (PST)
-Date: Tue, 12 Nov 2024 11:25:38 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Chris Down <chris@chrisdown.name>
-Cc: linux-kernel@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=dErmzHwA/z3Z8xXxP4jj5F58jritvZhzySa8p9sTCh4t/sowDSl9f926fxEj5ghhUlRAALcf3veVuCMt7nEhTychOTWfud4bONenSyrE6yroPGXQZoSxA0sj7JTNU5GvYPuAUnAgfogfEgitXt4xujMx/otG9z4OXcFEl07jtd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrygTCVx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C33B8C4CECD;
+	Tue, 12 Nov 2024 10:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731407151;
+	bh=hDtwxlx263Ka4x+zd3cQnDTdGx8NUTZ76VVOto/UNHo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PrygTCVxO8Ug/Sqh08YMfEsbHdJWvaU+4DkKvprpp4RXqbu+S8Ijzm/FugVZUiF/b
+	 Tq+rDTnODyp1NwRVrWDXjLxfu2jAuj28ZBJgaMg/DSYfP2Lc4vtLz4RkPJLDB6pL99
+	 iXLuIZUDjQ1fFVKbyHlA3KaIez7Vjkbf8KtN0v6tlJ8KviYJ5Q9UTAJpGs5zoMNA4N
+	 rGNyqymfUyTOgl614+7GFCrkvWHASyFk0UbXP/qQ4Ull2iTahUqgtq5LZocmjMQcuz
+	 MD+zcxQNtsjKQQqEx7vTseLidXj9apzU7aNjZ+xMhbd6bq21aZeHAOyOFt6lOok1A3
+	 2vYkxv3xTgCOQ==
+Date: Tue, 12 Nov 2024 11:25:45 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
-Subject: Re: [PATCH v6 03/11] printk: console: Implement core per-console
- loglevel infrastructure
-Message-ID: <ZzMtCVlLVLnwghQB@pathway.suse.cz>
-References: <cover.1730133890.git.chris@chrisdown.name>
- <28d8dff56bc15b2a41f0d2035701ccb11df22610.1730133890.git.chris@chrisdown.name>
- <Zy4368zf-sJyyzja@pathway.suse.cz>
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
+	tglx@linutronix.de, jdmason@kudzu.us
+Subject: Re: [PATCH v5 3/5] PCI: endpoint: pci-epf-test: Add doorbell test
+ support
+Message-ID: <ZzMtKUFi30_o6SwL@ryzen>
+References: <20241108-ep-msi-v5-0-a14951c0d007@nxp.com>
+ <20241108-ep-msi-v5-3-a14951c0d007@nxp.com>
+ <ZzIYAIGjHQJqR5Qt@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,144 +65,147 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zy4368zf-sJyyzja@pathway.suse.cz>
+In-Reply-To: <ZzIYAIGjHQJqR5Qt@ryzen>
 
-On Fri 2024-11-08 17:10:31, Petr Mladek wrote:
-> On Mon 2024-10-28 16:45:37, Chris Down wrote:
-> It would be nice to describe the basic logic in the commit message.
-> And also the handling when the global console_loglevel is modified
-> via sysrq. Something like:
+On Mon, Nov 11, 2024 at 03:43:12PM +0100, Niklas Cassel wrote:
+> On Fri, Nov 08, 2024 at 02:43:30PM -0500, Frank Li wrote:
 > 
-> <proposal>
-> This commit adds the internal infrastructure to support per-console
-> log levels, which will be configurable through sysfs and the kernel
-> command line in future commits.
-> 
-> The global `console_loglevel` is preserved and used as the default log
-> level for all consoles. Each console can override this global level
-> with its own specific log level stored in `struct console`. To
-> override the global level, the per-console log level must be greater
-> than 0; otherwise, the default value of -1 ensures the global level
-> is used.
-> 
-> The existing `ignore_loglevel` command line parameter will override
-> both the global and per-console log levels.
-> </proposal>
-> 
-> > --- a/kernel/printk/printk.c
-> > +++ b/kernel/printk/printk.c
-> > @@ -1287,9 +1287,62 @@ module_param(ignore_loglevel, bool, S_IRUGO | S_IWUSR);
-> > +enum loglevel_source
-> > +console_effective_loglevel_source(const struct console *con)
-> > +{
-> > +	if (WARN_ON_ONCE(!con))
-> > +		return LLS_GLOBAL;
-> > +
-> > +	if (ignore_loglevel)
-> > +		return LLS_IGNORE_LOGLEVEL;
-> > +
-> > +	if (per_console_loglevel_is_set(con))
-> > +		return LLS_LOCAL;
-> > +
-> > +	return LLS_GLOBAL;
-> > +}
-> 
-> The @con parameter is nice. But it makes it hard to add lockdep
-> checks. So, I suggest to pass the console specific loglevel
-> as the parameter, like:
-> 
-> enum loglevel_source
-> console_effective_loglevel_source(int con_level)
-> {
-> 	if (ignore_loglevel)
-> 		return LLS_IGNORE_LOGLEVEL;
-> 
-> 	if (is_valid_per_console_loglevel(con_level))
-> 		return LLS_LOCAL;
-> 
-> 	return LLS_GLOBAL;
-> }
-> 
-> int console_effective_loglevel(int con_level)
-> {
-> 	enum loglevel_source source;
-> 	int level;
-> 
-> 	source = console_effective_loglevel_source(con_level);
-> 
-> 	switch (source) {
-> 	case LLS_IGNORE_LOGLEVEL:
-> 		level = CONSOLE_LOGLEVEL_MOTORMOUTH;
-> 		break;
-> 	case LLS_LOCAL:
-> 		level = con_level;
-> 		break;
-> 	case LLS_GLOBAL:
-> 		level = console_level;
-> 		break;
-> 	default:
-> 		pr_warn("Unhandled console loglevel source: %d", source);
-> 		level = console_level;
-> 		break;
-> 	}
-> 
-> 	return level;
-> }
-> 
-> static bool suppress_message_printing(int level, int con_level)
-> {
-> 	return level >= console_effective_loglevel(con_level);
-> }
-> 
-> >  
-> >  #ifdef CONFIG_BOOT_PRINTK_DELAY
-> > @@ -2975,7 +3042,7 @@ bool printk_get_next_message(struct printk_message *pmsg, struct console *con,
-> >  	pmsg->dropped = r.info->seq - seq;
-> >  
-> >  	/* Never suppress when used in devkmsg_read() */
-> > -	if (con && suppress_message_printing(r.info->level))
-> > +	if (con && suppress_message_printing(r.info->level, con))
-> 
-> We could read the con_level at the beginning of the funcion. We
-> already read there the CON_EXTENDED attribute:
-> 
-> 	int con_level:
-> 
-> 	if (con) {
-> 		is_extended = console_srcu_read_flags(con) & CON_EXTENDED;
-> 		con_level = console_srcu_read_loglevel(con);
-> 	} else {
-> 		/* Used only by devkmsg_read(). */
-> 		is_extended = true;
-> 		con_level = LOGLEVEL_DEFAULT;
+> Perhaps create a helper function so that you don't need to duplicate it.
 
-Or we could do:
+Something like this on top of your series:
 
-	} else {
-		/* Used only by devkmsg_read(). Show all messages there. */
-		is_extended = true;
-		con_level = CONSOLE_LOGLEVEL_MOTORMOUTH;
-
-The LOGLEVE_DEFAULT would cause using the global loglevel.
-But we want to force showing the message.
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index 8ede7aded03ee..b1707b4425432 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -656,16 +656,25 @@ static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test,
+ 	}
+ }
+ 
+-static void pci_epf_enable_doorbell(struct pci_epf_test *epf_test, struct pci_epf_test_reg *reg)
++static int pci_epf_get_doorbell_addr(struct pci_epf_test *epf_test,
++				     enum pci_barno bar, u64 *db_base,
++				     u64 *db_offset)
+ {
+-	enum pci_barno bar = reg->doorbell_bar;
+ 	struct pci_epf *epf = epf_test->epf;
+-	struct pci_epc *epc = epf->epc;
+-	struct pci_epf_bar db_bar;
+ 	struct msi_msg *msg;
+-	u64 doorbell_addr;
++	u64 doorbell_addr, mask;
+ 	u32 align;
+-	int ret;
++
++	if (bar < BAR_0 || bar == epf_test->test_reg_bar || !epf->db_msg)
++		return -EINVAL;
++
++	msg = &epf->db_msg[0].msg;
++	doorbell_addr = msg->address_hi;
++	doorbell_addr <<= 32;
++	doorbell_addr |= msg->address_lo;
++
++	if (!doorbell_addr)
++		return -EINVAL;
+ 
+ 	align = epf_test->epc_features->align;
+ 	align = align ? align : 128;
+@@ -673,17 +682,28 @@ static void pci_epf_enable_doorbell(struct pci_epf_test *epf_test, struct pci_ep
+ 	if (epf_test->epc_features->bar[bar].type == BAR_FIXED)
+ 		align = max(epf_test->epc_features->bar[bar].fixed_size, align);
+ 
+-	if (bar < BAR_0 || bar == epf_test->test_reg_bar || !epf->db_msg) {
++	mask = align - 1;
++	*db_base = doorbell_addr & ~mask;
++	*db_offset = doorbell_addr & mask;
++
++	return 0;
++}
++
++static void pci_epf_enable_doorbell(struct pci_epf_test *epf_test, struct pci_epf_test_reg *reg)
++{
++	enum pci_barno bar = reg->doorbell_bar;
++	struct pci_epf *epf = epf_test->epf;
++	struct pci_epc *epc = epf->epc;
++	struct pci_epf_bar db_bar;
++	u64 db_base, db_offset;
++	int ret;
++
++	if (pci_epf_get_doorbell_addr(epf_test, bar, &db_base, &db_offset)) {
+ 		reg->status |= STATUS_DOORBELL_ENABLE_FAIL;
+ 		return;
+ 	}
+ 
+-	msg = &epf->db_msg[0].msg;
+-	doorbell_addr = msg->address_hi;
+-	doorbell_addr <<= 32;
+-	doorbell_addr |= msg->address_lo;
+-
+-	db_bar.phys_addr = round_down(doorbell_addr, align);
++	db_bar.phys_addr = db_base;
+ 	db_bar.barno = bar;
+ 	db_bar.size = epf->bar[bar].size;
+ 	db_bar.flags = epf->bar[bar].flags;
+@@ -1015,9 +1035,7 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+ 	ret = pci_epf_alloc_doorbell(epf, 1);
+ 	if (!ret) {
+ 		struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
+-		struct msi_msg *msg = &epf->db_msg[0].msg;
+-		u32 align = epc_features->align;
+-		u64 doorbell_addr;
++		u64 db_base, db_offset;
+ 		enum pci_barno bar;
+ 
+ 		bar = pci_epc_get_next_free_bar(epc_features, test_reg_bar + 1);
+@@ -1031,17 +1049,15 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+ 			return 0;
+ 		}
+ 
+-		align = align ? align : 128;
+-
+-		if (epf_test->epc_features->bar[bar].type == BAR_FIXED)
+-			align = max(epf_test->epc_features->bar[bar].fixed_size, align);
+-
+-		doorbell_addr = msg->address_hi;
+-		doorbell_addr <<= 32;
+-		doorbell_addr |= msg->address_lo;
++		if (pci_epf_get_doorbell_addr(epf_test, bar, &db_base,
++					      &db_offset)) {
++			dev_err(&epf->dev, "Failed to get doorbell address\n");
++			free_irq(epf->db_msg[0].virq, epf_test);
++			return 0;
++		}
+ 
+-		reg->doorbell_addr = doorbell_addr & (align - 1);
+-		reg->doorbell_data = msg->data;
++		reg->doorbell_addr = db_offset;
++		reg->doorbell_data = epf->db_msg[0].msg.data;
+ 		reg->doorbell_bar = bar;
+ 	}
+ 
 
 
-> 	}
-> 
-> Note that I have used LOGLEVEL_DEFAULT instead of the hardcoded -1.
-> IMHO, it is better to use a NAME and LOGLEVEL_DEFAULT is defined as -1
-> and the name more or less fits here.
-> 
-> and then do:
-> 
-> 	if (con && suppress_message_printing(r.info->level, con_level))
 
-and then we do not need to check the @con here.
+> 
+> Also one function is doing:
+> reg->doorbell_addr = doorbell_addr & (align - 1);
+> 
+> to align, the other one is doing:
+> round_down(doorbell_addr, align);
+> 
+> Which seems to be a bit inconsistent.
 
-This idea came when I was looking at resolving conflicts against the patchset
-which removed the hack in sysrq code, see
-https://lore.kernel.org/r/20241105-printk-loud-con-v2-0-bd3ecdf7b0e4@suse.com
+I now see why you did this.
+One function is using the db offset, and the other is using the db base.
 
-Best Regards,
-Petr
+I strongly suggest that you rename:
+reg->doorbell_addr to reg->doorbell_offset
+and
+PCI_ENDPOINT_TEST_DB_ADDR to PCI_ENDPOINT_TEST_DB_OFFSET
+
+since the current names are very confusing.
+
+
+Kind regards,
+Niklas
 
