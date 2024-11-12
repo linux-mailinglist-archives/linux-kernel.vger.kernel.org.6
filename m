@@ -1,123 +1,198 @@
-Return-Path: <linux-kernel+bounces-405372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB7E9C507A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:24:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0666D9C506D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:21:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F95DB23D55
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:22:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEEAD285CE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A6879C4;
-	Tue, 12 Nov 2024 08:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0v5PZOew"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFB620B210
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3B820C02B;
+	Tue, 12 Nov 2024 08:21:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8043720C009;
+	Tue, 12 Nov 2024 08:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731399690; cv=none; b=PIGp5Qlvfdi+u1SDC16h4oblZDKjFdkiEiZGMbUDtVzHNTpwoz6id0/5jwh+TmpwUcZ1oTU41ya+4iJKaWpgHF39xLxI8Z+GZ2cSmnyhwK12s211JWlE4L8dcSnSqrpKvLusF0m6QnDVJ2zF6BnK2N0sowG15wIWrQ7pwmCyf2U=
+	t=1731399681; cv=none; b=FO+0h+GU0M0EAabm97G2WYFPPna3tB96Boheqp9oi/7C3CSjsCF3WwOzM2agsEvmP+7Cya+zhAsrYes68SSXlSQ7kzEVUcSq8qhs6wAknP1D4Oo7okpD9iqv979lLnubdMuaoHiZWaL6KxL7CYLHW+QUg4sq/k4lUKH+GcGLwaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731399690; c=relaxed/simple;
-	bh=Uxzxm5ea5xyHccq62Yr8rtYysd3AkZ+x2y27FL++Qw4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OnnOs1ccCUCEQsaNQYf+YJHWHubRjatJ6MRLxG/UjRTTnEM+Y1B5RLlV7NTABKWT2nLVpZariJGjCgLiEAHb+RL9NPkCt3ulN3Irbv7KeV4Qd9f5ozCY80pX4AAnMB9SuITFbocGqF5QHbJWD4wZtjadQHiMAykU+5sQJRM6tC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0v5PZOew; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so49838381fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:21:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731399687; x=1732004487; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uxzxm5ea5xyHccq62Yr8rtYysd3AkZ+x2y27FL++Qw4=;
-        b=0v5PZOewnXNMIdupPz+O1NmLMT+kOh55EY7kqbY8UxxOOViMlNzZF7NSjaHlbcJCCk
-         yRY+8Y7tz3V0PiVhVizAesF7nT0RMNw4fnKBn7or2ol75REiFLQTGzS84W9hIhaztz13
-         5q6+najOuboE+nlpxgvlifMvcYzaQx50kMKJP265PVot0qBragZD8LHioxL+VVMSd44a
-         6pu35zDBbvCBNla29XnRInO+AgVT2CPIvxXnSbNkDLDvuUkeg8hrbviRJLDP5XMVPGa2
-         avvwbNTPYa2huqbTf2o7RW0pd4q29i8m38X2Tdz5z2JUFw1Ua5UrlzMty0H3pHBACRoX
-         G4Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731399687; x=1732004487;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Uxzxm5ea5xyHccq62Yr8rtYysd3AkZ+x2y27FL++Qw4=;
-        b=vVm3ofspeCKT3ZkuTfL17sMZ89rdxF1q94x8ZtYkFO/Oshll6hqEZJZDuzjNI2rum6
-         KRLLs2WowyQLW/A/OkcjFJtBm2uxBxyk9AGa2CTHDeZCI903s9xBdhmIXrIBYIiBo13G
-         LvLp83HO0ZPQfR9B2ASiPHMUeq7MHTYdh3ehrhvQ0TzpLTK30jLxJSmf4BNVEON2IZNC
-         Sx4uTVK29uiNnoacGmimX6cEH85yIWk8SmoUG4GR9kjOukTHaSpWm2/q1ZPIIoHxiOsa
-         wwHEF50NaIyHt/LEw4WOs5hjvPWatMGctZqAUSxf5GlYmzHUSaW6gXfegitBnfltk3Du
-         zJ9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWv7ysy1djAIM89riiAdaW21tsuNklxCCVpENTmTW1sLciSlUAhuYXgudRpyrVExRrvAwSsw9dyCxs0RBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqpOOHQmpxYRhkd/aWeanlUzyqRfS3K0aEBUw+wekn3xHlXUty
-	pAXzir2DAlFgYkB2tOZ1uC508+92vUj806fHZ0kHp0cD1yJ4M4KjofyZNal8JwfzUZjWH9XPo33
-	9ITxykqYlHWelrPzMiXEDz4UcVxDeN5us/uRKDw==
-X-Google-Smtp-Source: AGHT+IFVGYhhtVdJltvrb5Q3HzqGHbeIDyhkfpyNVBE5lnUQtDNCEzpgZ2uC+RjR4w6nR+0eNq+zBdPYraWQBKs5YAQ=
-X-Received: by 2002:a2e:a9a4:0:b0:2fb:4abb:6fe1 with SMTP id
- 38308e7fff4ca-2ff2015279fmr68829801fa.4.1731399686821; Tue, 12 Nov 2024
- 00:21:26 -0800 (PST)
+	s=arc-20240116; t=1731399681; c=relaxed/simple;
+	bh=uwoun4OOl8XruolRVALC6myjgpm3tS2FLog1+GGP+/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cIvXi47Y9HugYE4B8Lqp/9eg/wMcdJhrSDgBicQfLNGJmIVC/c5YQkOEVAxt0REyCW8mPaAMe5QWxuGHSLHQAQGG9bYotOE33/T6MD2pzqyWdiGnJ83SLTvAHn03xbzWjK22Qjau1p6j2qcHulWuIkJlLKKd2pqLTbbGasmMIVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60E4912FC;
+	Tue, 12 Nov 2024 00:21:48 -0800 (PST)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E001C3F6A8;
+	Tue, 12 Nov 2024 00:21:16 -0800 (PST)
+Message-ID: <c4631fdd-0b01-4bda-9e9f-6ac974e27b68@arm.com>
+Date: Tue, 12 Nov 2024 09:21:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008160947.81045-1-brgl@bgdev.pl> <55ecee09-196a-4c7a-b7cf-61c19737735b@linaro.org>
- <CAMRc=MeTgFaySBFya2e=CYnrXL6R7s9D1DRq+RxKcsf56xMc+g@mail.gmail.com> <CAMRc=MdVUtff7wLV7mxsoXEBY7pUvULuJH1GvJCJgCRj0OpCBg@mail.gmail.com>
-In-Reply-To: <CAMRc=MdVUtff7wLV7mxsoXEBY7pUvULuJH1GvJCJgCRj0OpCBg@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 12 Nov 2024 09:21:15 +0100
-Message-ID: <CAMRc=McMA_iN4QH006-kBEpAwMUKa5=ke+iYpmJJvtihWLQAVQ@mail.gmail.com>
-Subject: Re: [PATCH] i2c: qup: use generic device property accessors
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, neil.armstrong@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v0.1 6/6] cpufreq: intel_pstate: Add basic EAS
+ support on hybrid platforms
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Len Brown <len.brown@intel.com>, Morten Rasmussen
+ <morten.rasmussen@arm.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+References: <3607404.iIbC2pHGDl@rjwysocki.net>
+ <115421572.nniJfEyVGO@rjwysocki.net>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <115421572.nniJfEyVGO@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 1, 2024 at 3:20=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
->
-> On Fri, Oct 25, 2024 at 10:04=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.=
-pl> wrote:
-> >
-> > On Tue, Oct 22, 2024 at 2:05=E2=80=AFPM <neil.armstrong@linaro.org> wro=
-te:
-> > >
-> > > On 08/10/2024 18:09, Bartosz Golaszewski wrote:
-> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > >
-> > > > There's no reason for this driver to use OF-specific property helpe=
-rs.
-> > > > Drop the last one in favor of the generic variant and no longer inc=
-lude
-> > > > of.h.
-> > > >
-> > > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > LGTM
-> > >
-> > > Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> >
-> > Andi, can you pick this up, please?
-> >
-> > Bart
->
-> Any reason why this simple change cannot be picked up?
->
-> Bartosz
+On 08/11/2024 17:46, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Modify intel_pstate to register stub EM perf domains for CPUs on
+> hybrid platforms via em_dev_register_perf_domain() and to use
+> em_dev_expand_perf_domain() introduced previously for adding new
+> CPUs to existing EM perf domains when those CPUs become online for
+> the first time after driver initialization.
+> 
+> This change is targeting platforms (for example, Lunar Lake) where
+> "small" CPUs (E-cores) are always more energy-efficient than the "big"
+> or "performance" CPUs (P-cores) when run at the same HWP performance
+> level, so it is sufficient to tell the EAS that E-cores are always
+> preferred (so long as there is enough spare capacity on one of them
+> to run the given task).
 
-I'll take it through my tree for v6.13 if there's no response in the
-following days.
+By treating all big CPUs (ignoring the different itmt prio values
+between them) we would have a system in which PD's are not in sync with
+the asym_cap_list* or the CPU capacities of individual CPUs and sched
+groups within the sched domain. Not sure if we want to go this way?
 
-Bart
+* used by misfit handling - 22d5607400c6 ("sched/fair: Check if a task
+has a fitting CPU when updating misfit")
+
+> Accordingly, the perf domains are registered per CPU type (that is,
+> all P-cores belong to one perf domain and all E-cores belong to another
+> perf domain) and they are registered only if asymmetric CPU capacity is
+> enabled.  Each perf domain has a one-element states table and that
+> element only contains the relative cost value (the other fields in
+> it are not initialized, so they are all equal to zero), and the cost
+> value for the E-core perf domain is lower.
+
+[...]
+
+> +static int hybrid_pcore_cost(struct device *dev, unsigned long freq,
+> +			     unsigned long *cost)
+> +{
+> +	/*
+> +	 * The number used here needs to be higher than the analogous
+> +	 * one in hybrid_ecore_cost() below.  The units and the actual
+> +	 * values don't matter.
+> +	 */
+> +	*cost = 2;
+> +	return 0;
+
+So you're not tying this to HFI energy scores?
+
+> +}
+> +
+> +static int hybrid_ecore_cost(struct device *dev, unsigned long freq,
+> +			     unsigned long *cost)
+> +{
+> +	*cost = 1;
+> +	return 0;
+> +}
+> +
+> +static struct hybrid_em_perf_domain perf_domains[HYBRID_NR_TYPES] = {
+> +	[HYBRID_PCORE] = { .cb.get_cost = hybrid_pcore_cost, },
+> +	[HYBRID_ECORE] = { .cb.get_cost = hybrid_ecore_cost, }
+> +};
+> +
+> +static bool hybrid_register_perf_domain(struct hybrid_em_perf_domain *pd)
+> +{
+> +	/*
+> +	 * Registering EM perf domains without asymmetric CPU capacity
+> +	 * support enabled is wasteful, so don't do that.
+> +	 */
+> +	if (!hybrid_max_perf_cpu)
+> +		return false;
+> +
+> +	pd->dev = get_cpu_device(cpumask_first(&pd->cpumask));
+> +	if (!pd->dev)
+> +		return false;
+> +
+> +	if (em_dev_register_perf_domain(pd->dev, 1, &pd->cb, &pd->cpumask, false)) {
+> +		pd->dev = NULL;
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+
+What are the issues in case you would use the existing ways (non-stub)
+to setup the EM?
+
+static int intel_pstate_get_cpu_cost()
+
+static void intel_pstate_register_em(struct cpufreq_policy *policy)
+
+  struct em_data_callback em_cb = EM_ADV_DATA_CB(NULL,
+                                              intel_pstate_get_cpu_cost)
+
+  em_dev_register_perf_domain(get_cpu_device(policy->cpu), 1,
+                              &em_cb, policy->related_cpus, 1);
+                                      ^^^^^^^^^^^^^^^^^^^^*
+
+static void intel_pstate_set_register_em_fct(void)
+
+  default_driver->register_em = intel_pstate_register_em
+
+static int __init intel_pstate_init(void)
+
+  ...
+  intel_pstate_set_register_em_fct()
+  ...
+
+I guess one issue is the per-CPU policy as an argument to
+em_dev_register_perf_domain() (*) ?
+
+> +static void hybrid_register_all_perf_domains(void)
+> +{
+> +	enum hybrid_cpu_type type;
+> +
+> +	for (type = HYBRID_PCORE; type < HYBRID_NR_TYPES; type++)
+> +		hybrid_register_perf_domain(&perf_domains[type]);
+> +}
+> +
+> +static void hybrid_add_to_perf_domain(int cpu, enum hybrid_cpu_type type)
+> +{
+> +	struct hybrid_em_perf_domain *pd = &perf_domains[type];
+> +
+> +	guard(mutex)(&hybrid_capacity_lock);
+> +
+> +	if (cpumask_test_cpu(cpu, &pd->cpumask))
+> +		return;
+> +
+> +	cpumask_set_cpu(cpu, &pd->cpumask);
+> +	if (pd->dev)
+> +		em_dev_expand_perf_domain(pd->dev, cpu);
+> +	else if (hybrid_register_perf_domain(pd))
+> +		em_rebuild_perf_domains();
+
+I assume that the 'if' and the 'else if' condition here are only taken
+when the CPU is brought online after boot?
+
+[...]
 
