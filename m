@@ -1,121 +1,127 @@
-Return-Path: <linux-kernel+bounces-405150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCD59C4D90
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:06:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F309C4D92
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F352287124
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:06:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F12D286A7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC4120822C;
-	Tue, 12 Nov 2024 04:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D9920821D;
+	Tue, 12 Nov 2024 04:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNBgoJHA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvAfu4os"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DEB2038BA;
-	Tue, 12 Nov 2024 04:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855411553AB;
+	Tue, 12 Nov 2024 04:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731384364; cv=none; b=Nb34lfNHGvnPRflQTewyy3HozSqRipuRyitIxmzKubfDKc0PiNuVO4OVqymny7OhHkwjdcP/t24Qsab/m3wm77kzUhppt3ajbptnZCcNnDFjEwa2QTrxs+rzAHQMZU8+gABYvrjTfDmjJ9Rx4YmF0FiYFlsS0xeSequ1ib7qxGs=
+	t=1731384525; cv=none; b=ZZyL5gNX14cikgZQCx1DMMczhzGfCvbNF5ZPS+3hLSEhTGHI6JQevV7YmImT0BxiT/MERLlm7C7KDrZC+Mn+srQoYNx913E9UMdFB20otShek+JYRfazzneOLjsFePjqWI76pCw5tTAdJuLaBhlgNUoPDPzy2qMnjMO7ILk1Q18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731384364; c=relaxed/simple;
-	bh=FHke1KQcD8QEibCAXGq1prANLtcdE3Qip9NGZ8so138=;
+	s=arc-20240116; t=1731384525; c=relaxed/simple;
+	bh=x44oSdF0nwBPGTpVBEx+1NZSMpUJQedkRCb7nBMhKMw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UenylDrgpgjFXOCgLSvzlmd2x/++tICZQkpzv7b3VbARKJ+CMuA5s3dV+J84w+DM1Qnt/GbQB/++ZH/aobS+zjHMQHamlkEXqWS1MIP9NVPvaXsaoXqnPu6/YCo4qOqDqtiJsJFECJJ7aiKYt1uVm/vPlyAUWKoiCAHSWS3OOQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNBgoJHA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0B53C4CEDF;
-	Tue, 12 Nov 2024 04:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731384363;
-	bh=FHke1KQcD8QEibCAXGq1prANLtcdE3Qip9NGZ8so138=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZNBgoJHA5wNXMNUg4ZyDtVJvytVDggGjakai+NsKjE0ReEkscttntk9VX7BxIbVMV
-	 fxLGj9TqkVKzwWWAzV4m2N5m88UmWWPelrFG07R5YjVgTyvStLJGX1pDx3Tkbokh8w
-	 9bIUeQ+ZZkPMBLz3uESazlqU6/8zyt4NoMj9/mvBMcOjZytXiR9QVyvbW9mXyz6FL2
-	 ab14YpfFFrd7BZ4q91LGn7JZAmJ38GYhSzNL2hQ6Nj4b3ujJ6pLa6OWnbDBQJ/Pu/r
-	 EAgOz1gS2mpc3R6OEydFWaqVWOEzvpEtodT6jlnW1yid76Gf5EJLQps8aeF9TpZ8xq
-	 yurKCto9PRbbw==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb559b0b00so41988091fa.0;
-        Mon, 11 Nov 2024 20:06:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU3dCKsvVPf6R/cnOnITmn8V39EsTy3wIANjusanJHtLeI4zNoFraBLXYHDF4CwaSMoc1vr2TSZ2vOx3c1U1w==@vger.kernel.org, AJvYcCV4DMYH5Jr8IB7BKhjq4R7D2kNb8/S+5PUaqGtdtdEqYmfzmFoxmcZx+ZY75bgz0V5hPpeG7esZdVHOdG4=@vger.kernel.org, AJvYcCWaHes3ZkyttVnKVtYzK6WEN5sPUleLUAL2MMp5a4EUJ4U4rRb1piGJrketAV1QZ1ZFpbqqIkQ/1T0kIic6woU=@vger.kernel.org, AJvYcCWfQCoN/iR2gWDMjQZfQTCSQPq8mRLHpu/eNFaK6FQ2ST6Kn103B4rmyWzqAu4r4NVu1w9bLKovwUJDbA43@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyyowl4PtYQJt8aWBygIYmPZigYdPwY4FLjyp/itmU8l4hu2Ywp
-	ckKLrrbPN/dcXqMl56070x6Ugup5oqiwuyqlmVCUD/Fy7hIj9zIv2DtGW1+UJYZyErx5HhK+KSJ
-	6Qrt/UvdgxoWJiofIrsmf5gdmmaA=
-X-Google-Smtp-Source: AGHT+IFaRU5m6t+1lg1Mo1HuXiGTzkpRRzVCu43z16mgHhFLkoiREKNarCRpBVHxgtf18ImVdw8EvH+O6j07/ZYcwMM=
-X-Received: by 2002:a05:651c:988:b0:2fb:8df3:2291 with SMTP id
- 38308e7fff4ca-2ff2016d246mr72169041fa.16.1731384362113; Mon, 11 Nov 2024
- 20:06:02 -0800 (PST)
+	 To:Cc:Content-Type; b=FYB8YDW1oiI8a9ZA6Vqa6gNeKNLn4hktV8JO75HE67G+4oU+c7zzQG4stwhbefqy+jxqtJJsJBgaetRoStyNNS4o66FFlC8PNNHA6kfL51bGC9PrVNQFNX6itrIN6UHl+/2i6VqGkEb26bwJJwOnREFvDJ9gO5n0bamqxtT6Zkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvAfu4os; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ee386ce3dfso4699929a12.1;
+        Mon, 11 Nov 2024 20:08:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731384523; x=1731989323; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LQnNufH5nF3Uw0ZlVqwMJJAJ0p73ToD5HmlOSlkMruU=;
+        b=DvAfu4osCTM4opfBPon2MxO38MzFhjIZzs+03MOkmoCO1Elg5bbx6ghHgv7z/Xfsng
+         LHjm09+44/GPhAFHue87eqAaKTo9mv/dumMU0ZzTLKp5YM/UH+yv6qg08CEufOrV0O38
+         MbKo6AJtjN8JjRbF2RhtxsfEuqmw7QsCFZEQXSeOiM0DtzZdZ9l3Idcmi60QYSe44DtN
+         aFIFbAmg7HJIU21eQVNJuE+9bCh8cFy++b3HjGryaoIKp8+C+DYmnMyx1qms/fB3nfwK
+         JnbdLDLi24eK7ZkwG4EOoEY5PK3Zc5tvzaVNWtSx2vpCkphu6A4UbBpop1f03GLonsI1
+         nHsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731384523; x=1731989323;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LQnNufH5nF3Uw0ZlVqwMJJAJ0p73ToD5HmlOSlkMruU=;
+        b=E1Kusk7EvD5B4VwH4sjzE4cuQW0AfKWU2ftGji2rqSSjX/X2H59BA9vYJh7rNh4ruM
+         +E7Ec518HoscxHdLvfCSEtdz6+sq3pNsYo+wFktMKR1aSbA8F4XraiX1/K4tnAZePi+j
+         iA9eoljOn6BxroOXsXfwRbx45qRuBNebf94jCa4cTmP2tZtOo9+txIwPUw8UwULU7uVo
+         epuOe+k4z3jce6iW/azL+iicL/evGfTO9mCEhnJOasrIdrkmM1q98d93u80MYttGpnMz
+         TFfmAvr2LieArt8AHUFRRna4X0qpSEv+2cuG4fhTqm/Y/PYgg1VOXc/3MP1Pt8UYZJw7
+         +tsg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0UmDITSbP+bEyZGccT5GVakZ85jSeuoF6lk4H/ce76zjmmMCY1mMoxO7wAsh1LYPF+e2ZBsTk7OwIaPgE@vger.kernel.org, AJvYcCXth4hKWZaBpRW5WihTXp/r2C4+qScS3L6xuyGXvlBYr54nXHBwGIz6bTRahX+kXU1R9kg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBb+OVuLvMW2JhTUUi1ejKNUx1+I7xpp3IgVpIoh3qC4pcU9zo
+	f0znA8s5yXbx9scEX6WzOz093UVynxv601SQ+5YKNmOe0OZE0075Xjw8dsHpRnT9UEDOaeyx0MT
+	Io7xVSqYkKdCzKZHZss0fCdZ65Ho=
+X-Google-Smtp-Source: AGHT+IGDJzpDc0ps2CN5aFTmaMRmVqKuqF3PMSugsWmzNm2gbi/ZWw5m9L49BoCN3W855CARtjc7/i563+qpLL66Gqg=
+X-Received: by 2002:a17:90b:4b45:b0:2e0:8780:ecb with SMTP id
+ 98e67ed59e1d1-2e9b1f64d99mr23732679a91.12.1731384522738; Mon, 11 Nov 2024
+ 20:08:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030170106.1501763-21-samitolvanen@google.com> <20241030170106.1501763-22-samitolvanen@google.com>
-In-Reply-To: <20241030170106.1501763-22-samitolvanen@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 12 Nov 2024 13:05:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAShVzrE6uhXxZ7HepKhmOJYsZeigq6w19jRN3OH-T_Jyg@mail.gmail.com>
-Message-ID: <CAK7LNAShVzrE6uhXxZ7HepKhmOJYsZeigq6w19jRN3OH-T_Jyg@mail.gmail.com>
-Subject: Re: [PATCH v5 01/19] scripts: move genksyms crc32 implementation to a
- common include
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20241111024814.272940-1-luoyifan@cmss.chinamobile.com>
+In-Reply-To: <20241111024814.272940-1-luoyifan@cmss.chinamobile.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 11 Nov 2024 20:08:30 -0800
+Message-ID: <CAEf4BzYgqb=NcSCJiJQEPUPhE02cUZqaFdYc4FJXvQUeXxhHJA@mail.gmail.com>
+Subject: Re: [PATCH] bpftool: Fix incorrect format specifier for var
+To: Luo Yifan <luoyifan@cmss.chinamobile.com>
+Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 31, 2024 at 2:01=E2=80=AFAM Sami Tolvanen <samitolvanen@google.=
-com> wrote:
+On Sun, Nov 10, 2024 at 6:48=E2=80=AFPM Luo Yifan <luoyifan@cmss.chinamobil=
+e.com> wrote:
 >
-> To avoid duplication between host programs, move the crc32 code to a
-> shared header file.
-
-
-Only the motivation to use this long table is to keep compatibility
-between genksyms and gendwarfksyms.
-I do not think this should be exposed to other programs.
-
-
-If you avoid the code duplication, you can do
-
-// scripts/gendwarfksyms/crc.c
-#include "../genksyms/crc.c"
-
-
-
-
-
+> In cases where the SIGNED condition is met, the variable var is still
+> used as an unsigned long long. Therefore, the %llu format specifier
+> should be used to avoid incorrect data print. This patch fixes it.
 >
-> Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> Acked-by: Neal Gompa <neal@gompa.dev>
+> Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+> ---
+>  tools/bpf/bpftool/btf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
+> index 7d2af1ff3..ff58ff85e 100644
+> --- a/tools/bpf/bpftool/btf.c
+> +++ b/tools/bpf/bpftool/btf.c
+> @@ -283,7 +283,7 @@ static int dump_btf_type(const struct btf *btf, __u32=
+ id,
+>                                 jsonw_end_object(w);
+>                         } else {
+>                                 if (btf_kflag(t))
+> -                                       printf("\n\t'%s' val=3D%lldLL", n=
+ame,
+> +                                       printf("\n\t'%s' val=3D%lluLL", n=
+ame,
+>                                                (unsigned long long)val);
 
-Does this Ack add any value?
+the fix should be casting to (long long) instead
 
-Acked-by is meaningful only when it is given by someone who
-maintains the relevant area or has established a reputation.
+pw-bot: cr
 
-$ git grep "Neal Gompa"
-$ git shortlog -n -s | grep "Neal Gompa"
-     2 Neal Gompa
-
-His Ack feels more like "I like it" rather than a qualified endorsement.
-
-
-
---
-Best Regards
-Masahiro Yamada
+>                                 else
+>                                         printf("\n\t'%s' val=3D%lluULL", =
+name,
+> --
+> 2.27.0
+>
+>
+>
 
