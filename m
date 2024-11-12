@@ -1,119 +1,137 @@
-Return-Path: <linux-kernel+bounces-405821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4B79C5932
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:35:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6606F9C5788
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:18:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E218B33CE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D7151F2283F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8ED01F77A9;
-	Tue, 12 Nov 2024 12:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5701F7788;
+	Tue, 12 Nov 2024 12:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="fRkhHYqO"
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="azM7U5Iw"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6E51CD21C
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5485784D2B;
+	Tue, 12 Nov 2024 12:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731414008; cv=none; b=KDEYQxIkNIZjym4MUZHf3NbpV7qR3uHFtyNMgnLTolhIY3BncDLSHQXJKnUTT35asiGcZ9DMeUGaSclQckRBiZYkxU7fspLGv715RDybqy9fOL2X16dAx7egO4Hvwbpn97SagbvE90Rm09lb8b2JbXUs4IgRcxoMQGF7mpZkj+Q=
+	t=1731413929; cv=none; b=gNazkfKrDLl2/DgvX3UG0r6ld+IX+uhco4BUVtn9S7li2xaewcVxQ2VEiIivS4Jiwt5TcK62rneO8roSympShmf2h7Gl/x5gVLs2dgv8Vix/lPkNuBIIHWmKCiivL3ib3Kt6PLCEqnKy580zUiRLSy9E1de8uTJHNtK7dUgYdQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731414008; c=relaxed/simple;
-	bh=ietY/lc7pHJehIxNjb/cHHmxBkc9G1x+uH0fJMdVt0A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U/C0sF6HSxuo+n0GXOAh8VoV610EOCuV1MiHhshkV3SsA7+e21eosIeSHvs9uLQmAB/11UXNB+278zuSDm06cXNUAhk4BPljQzV3NjRrNMd8uLyDW/q8/gjfp0xxBcC4fm5B1Bq6tIa7pHt6rRBRPwNcVAWFDrWLJTZ2gberivs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=fRkhHYqO; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from localhost (82-65-169-98.subs.proxad.net [82.65.169.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id CE3154091E;
-	Tue, 12 Nov 2024 12:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1731414003;
-	bh=PgWyUcFT7aNUzUoaPKDygEVO+qbiVM6Rumh+NKkKa6U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version;
-	b=fRkhHYqOgJ2Y+CALRHc5CFXbGS+HC5cfgB0W0HpgV95/ItJsaGsyiDC0lzTlAp+c0
-	 56qxqEmiFdatQmA3vJARHruCGsSZsrYVHm89EDs6KiL1g0Gc5jBIRXht8x3pYzaGFu
-	 xWtcyJUa+ToYpZiqznHA6vQce43iWX3MyFTNRmaXGAsIzJWTOvBRPFLRqPgxWwDIdU
-	 SwyEnK6H7xAqYYqfVH3jkMANaGGuaJRVdnGC0BzsxvHY/c2DD5UqVQmkEbAgfBEuBd
-	 Wsz1sfOPtbITVkcBCI/hwjBETi0eTE8eAczXXV5+HOSV42l+Zf0ZjrWhT5/RNnW76h
-	 dpoyGBbgJULPw==
-From: Agathe Porte <agathe.porte@canonical.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Agathe Porte <agathe.porte@canonical.com>
-Subject: [PATCH v3 1/1] ufs: ufs_sb_private_info: remove unused s_{2,3}apb fields
-Date: Tue, 12 Nov 2024 13:18:25 +0100
-Message-ID: <20241112122000.35610-2-agathe.porte@canonical.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241112122000.35610-1-agathe.porte@canonical.com>
-References: <20241112122000.35610-1-agathe.porte@canonical.com>
+	s=arc-20240116; t=1731413929; c=relaxed/simple;
+	bh=wbVHGtRugFym72R5V63xDjxYOfwCu+w7zmQD9sXa4vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tomdAtc3WLfF38fXyW1iH2XxVifWMLgIDkPWuITxbtljcRxLvvvZflx5BWW0a74c9UNIgfsIPzqithaGTt7MeLWbPzXh3kZAw9kyTV8l2df+n+RyhEZB61mcNyvVeujzq3Xg7lFD0R6FjOZqLSLr0zUiywbf97kCjgJvKVULegw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=azM7U5Iw; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=7922zFMt6vaxnu1/CkiAwabM2nK+b5lhyNnrOylVdDY=; b=azM7U5Iw2XTuAkoW+Bx/f6K/mS
+	yd/W+W0G3T2abJJotFez/8VIgca9yvDA+61YVMAZ9uwmKizeI5641h67NuuVEB3mf6EiydiwztZgG
+	AkrL6PC1PgEbVSGIy4MvLlcLe/F0rlcWSIZFXNjZdPYSLF+Umkjre5q3malwbqOgTldG0M2e74whb
+	f3codcIXKRv0L6e35VDleGG/wDusyGj+LlmNiOctcwX2mAxJnduxirqYVP9UY+8+SPTuuPNGc2mLb
+	MlPBP00cAqC4VNA1CARWRYiJoptjKwFc0HDLLVjo7Pc6RYgJseYE7yJxvhs+bh4g9DBXSDTuRIeGt
+	ebAm/X4Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tApr2-0000000ENAn-0Lh5;
+	Tue, 12 Nov 2024 12:18:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 826A1300478; Tue, 12 Nov 2024 13:18:43 +0100 (CET)
+Date: Tue, 12 Nov 2024 13:18:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	rafael.j.wysocki@intel.com, len.brown@intel.com,
+	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
+Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+Message-ID: <20241112121843.GF6497@noisy.programming.kicks-ass.net>
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com>
+ <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
+ <CAJZ5v0ivAk1xrcJgiJnDWnL3GdijSdsuV4K_4ORjnsjPUVAEnA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0ivAk1xrcJgiJnDWnL3GdijSdsuV4K_4ORjnsjPUVAEnA@mail.gmail.com>
 
-These two fields are populated and stored as a "frequently used value"
-in ufs_fill_super, but are not used afterwards in the driver.
+On Tue, Nov 12, 2024 at 01:03:49PM +0100, Rafael J. Wysocki wrote:
+> On Tue, Nov 12, 2024 at 12:47 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Fri, Nov 08, 2024 at 01:29:08PM +0100, Patryk Wlazlyn wrote:
+> > > The generic implementation, based on cpuid leaf 0x5, for looking up the
+> > > mwait hint for the deepest cstate, depends on them to be continuous in
+> > > range [0, NUM_SUBSTATES-1]. While that is correct on most Intel x86
+> > > platforms, it is not architectural and may not result in reaching the
+> > > most optimized idle state on some of them.
+> > >
+> > > Prefer cpuidle_play_dead() over the generic mwait_play_dead() loop and
+> > > fallback to the later in case of missing enter_dead() handler.
+> > >
+> > > Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+> > > ---
+> > >  arch/x86/kernel/smpboot.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> > > index 44c40781bad6..721bb931181c 100644
+> > > --- a/arch/x86/kernel/smpboot.c
+> > > +++ b/arch/x86/kernel/smpboot.c
+> > > @@ -1416,9 +1416,9 @@ void native_play_dead(void)
+> > >       play_dead_common();
+> > >       tboot_shutdown(TB_SHUTDOWN_WFS);
+> > >
+> > > -     mwait_play_dead();
+> > >       if (cpuidle_play_dead())
+> > > -             hlt_play_dead();
+> > > +             mwait_play_dead();
+> > > +     hlt_play_dead();
+> > >  }
+> >
+> > Yeah, I don't think so. we don't want to accidentally hit
+> > acpi_idle_play_dead().
+> 
+> Fair enough.
+> 
+> Then we are back to the original approach though:
+> 
+> https://lore.kernel.org/linux-pm/20241029101507.7188-3-patryk.wlazlyn@linux.intel.com/
 
-Moreover, one of the shifts triggers UBSAN: shift-out-of-bounds when
-apbshift is 12 because 12 * 3 = 36 and 1 << 36 does not fit in the 32
-bit integer used to store the value.
+Well, that won't be brilliant for hybrid systems where the available
+states are different per CPU.
 
-Closes: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2087853
-Signed-off-by: Agathe Porte <agathe.porte@canonical.com>
----
- fs/ufs/super.c  | 4 ----
- fs/ufs/ufs_fs.h | 4 ----
- 2 files changed, 8 deletions(-)
+Also, all of this is a bit of a trainwreck... AFAICT AMD wants IO based
+idle (per the 2018 commit). So they want the ACPI thing.
 
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index bc625788589c..7ea1a4c07ba2 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -1240,11 +1240,7 @@ static int ufs_fill_super(struct super_block *sb, void *data, int silent)
- 	else
- 		uspi->s_apbshift = uspi->s_bshift - 2;
- 
--	uspi->s_2apbshift = uspi->s_apbshift * 2;
--	uspi->s_3apbshift = uspi->s_apbshift * 3;
- 	uspi->s_apb = 1 << uspi->s_apbshift;
--	uspi->s_2apb = 1 << uspi->s_2apbshift;
--	uspi->s_3apb = 1 << uspi->s_3apbshift;
- 	uspi->s_apbmask = uspi->s_apb - 1;
- 	uspi->s_nspfshift = uspi->s_fshift - UFS_SECTOR_BITS;
- 	uspi->s_nspb = uspi->s_nspf << uspi->s_fpbshift;
-diff --git a/fs/ufs/ufs_fs.h b/fs/ufs/ufs_fs.h
-index ef9ead44776a..0905f9a16b91 100644
---- a/fs/ufs/ufs_fs.h
-+++ b/fs/ufs/ufs_fs.h
-@@ -775,12 +775,8 @@ struct ufs_sb_private_info {
- 
- 	__u32	s_fpbmask;	/* fragments per block mask */
- 	__u32	s_apb;		/* address per block */
--	__u32	s_2apb;		/* address per block^2 */
--	__u32	s_3apb;		/* address per block^3 */
- 	__u32	s_apbmask;	/* address per block mask */
- 	__u32	s_apbshift;	/* address per block shift */
--	__u32	s_2apbshift;	/* address per block shift * 2 */
--	__u32	s_3apbshift;	/* address per block shift * 3 */
- 	__u32	s_nspfshift;	/* number of sector per fragment shift */
- 	__u32	s_nspb;		/* number of sector per block */
- 	__u32	s_inopf;	/* inodes per fragment */
--- 
-2.43.0
+But on Intel we really don't want HLT, and had that MWAIT, but that has
+real problems with KEXEC. And I don't think we can rely on INTEL_IDLE=y.
 
+The ACPI thing doesn't support FFh states for it's enter_dead(), should
+it?
+
+Anyway, ideally x86 would grow a new instruction to offline a CPU, both
+MWAIT and HLT have problems vs non-maskable interrupts.
+
+I really don't know what is best here, maybe moving that whole CPUID
+loop to boot, store the value in a per-cpu mwait_play_dead_hint. Have
+AMD explicitly clear the value, and avoid mwait when 0 -- hint 0 is
+equal to HLT anyway.
+
+But as said, we need a new instruction.
 
