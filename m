@@ -1,139 +1,226 @@
-Return-Path: <linux-kernel+bounces-404955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15BE9C4B20
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:47:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E409C4AEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:33:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 985C1B2AF6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:33:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C82512827B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE371FC7D0;
-	Tue, 12 Nov 2024 00:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4546F1F7090;
+	Tue, 12 Nov 2024 00:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pa7TRIPo"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1zsDvua"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7A01FBF5E;
-	Tue, 12 Nov 2024 00:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ADF1F26EB;
+	Tue, 12 Nov 2024 00:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731371538; cv=none; b=rckgHcvZBKyOaSyDgGYsg19roAxEENSbMY3MclWVGWVCDnl3CY0OA/zQ89twEIeO34JJ9XKjuvKG9fQkAEUoCV+dL8wttALoz7MfQfUbipkoANpN/DmoAoKxCk17ocOLG8BzV6POYkcH7O1rpXywrCpJOn1Qs5dIu7KgO4+9ZxQ=
+	t=1731371418; cv=none; b=kv1IZNqhsiNJNk+uxP1UEOTIhjbw/VAsxvTlaVa4Dm2EK/XQ9ZeuAP8ywe1Z4x79CVvS2xLlGdNnPVr/wvwT/nKODSaymeJYS+t6bW4g/Gxq36ZLUwtqHt5eUeMiWgtW8UyACoRd+ipyR8l3OvCfx3KjY8E9KZ2FMajPKGH1w70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731371538; c=relaxed/simple;
-	bh=608tm2R7Oc/eF9PLqP0r6nJQxjsfMHcOlJ1z6oI6Ibk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LhQRTE0IN29wmlUfRAj8h4IwwC1WPGdy6l1f3ZzcBkJTgH4CrXjxP5UGvQfJrpsHQO8lUi1q3z7K+MHIqNS0wOcHI/rdOODScUIz8qQC7dKHM9oyuq7BcTFFQHP0rh9m5omGj5F45NT7TYY1Fcp+KW2fSiC+z4/ofxvtl3mOm3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pa7TRIPo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABCPWrr028389;
-	Tue, 12 Nov 2024 00:32:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=gPpfOxhXkE/A6VBxpiNoly
-	P5/EmzyjJBIUhUxlbnVmI=; b=pa7TRIPoPNMWqJtmv2mp5mo2jjR8XgtKmCJOt0
-	D2JMm2v21AF3ahK9KFvF5qfHKv6O6oSIUmI7ukTUlpFlrmnKPp0ZQtPQmBmgYvhz
-	WeMe1wa3VTGb5i6AE0BDbTLkCPGPjAwtGXo2SOcUSJMdQbuJM08fBNgQ9KYz1r7z
-	tqX29B7t8HeuTzE7e8mdThjp5sft4vlIvLJaqm2ILqbOIh0JIavmeDwJfj+BWBrY
-	zakobt3UL6kCltSmT3hWE2aPbIT1Nozl1Lqy+766W3926BKLsJXnaBtS9n9ZxXSw
-	sAY4c49b+wLidjMHvnR7Sve4isnQ+gRS+5pQRK0vTelrlurg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0wjwg0h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 00:32:08 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC0W7dJ010079
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 00:32:07 GMT
-Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 11 Nov 2024 16:32:06 -0800
-From: Melody Olvera <quic_molvera@quicinc.com>
-To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Adam Skladowski <a39.skl@gmail.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>,
-        Vladimir Lypak <vladimir.lypak@gmail.com>,
-        Danila Tikhonov <danila@jiaxyga.com>,
-        Raviteja Laggyshetty
-	<quic_rlaggysh@quicinc.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Melody Olvera
-	<quic_molvera@quicinc.com>,
-        Mike Tipton <quic_mdtipton@quicinc.com>,
-        "Abel
- Vesa" <abel.vesa@linaro.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        "Satya
- Durga Srinivasu Prabhala" <quic_satyap@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 0/2] interconnect: qcom: Introduce interconnects for SM8750
+	s=arc-20240116; t=1731371418; c=relaxed/simple;
+	bh=V83T9rsRDVwJq3z6X/c7c2hPEWoKo7exrEVZtV2JS9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kg8NP0nXQAOMthgfqhZf8XZv7t7+9kTewQTqUNNyl2VoxwwT2z7bMkPfq+H60R0YSA3tg/plfr8Nq/jHfRdkxcjpn/OOy+JJ0K4iKKLYQbucuqifCAD6X2UvJsT3PsHt31CXdhQcXC0/4LT7lSXqnmD/cfAkXa9pl3oGQeHHxns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1zsDvua; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11249C4CECF;
+	Tue, 12 Nov 2024 00:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731371418;
+	bh=V83T9rsRDVwJq3z6X/c7c2hPEWoKo7exrEVZtV2JS9A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I1zsDvuaZksUyu6y9UYrQFBxj+6jCdWhhth1eDt54E14FFcLgLOIeq15b99kdx8PX
+	 9WZb6FmbNrIAaOQTkTn73bI9nspntd/CfoAFqzEYohO+wFMhJVrDMHnXy3AEMZyKsh
+	 NTFHpfLrO/GoH/RoZRi0D8n18IS46b8hzmQvuxH4Gzrs9c+fEFM4RS+B+lYaIxVsnV
+	 UzJ0E1D0/GOMZaCLC55h88FhLml8fZfObleEJF5lUlV2xjO3NYxX0rgKZZ0DT/sM+Z
+	 PxCuFdnsW+lqUwSaa2P2sxUt9DsL2MziCm2Z6PKWt+uEFhBHRD5+xoXKG8E1vDobI2
+	 GBMuXNDnmDmDg==
 Date: Mon, 11 Nov 2024 16:30:15 -0800
-Message-ID: <20241112003017.2805670-1-quic_molvera@quicinc.com>
-X-Mailer: git-send-email 2.46.1
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Amit Shah <amit@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"Shah, Amit" <Amit.Shah@amd.com>,
+	"Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
+	"kai.huang@intel.com" <kai.huang@intel.com>,
+	"Das1, Sandipan" <Sandipan.Das@amd.com>,
+	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+	"Moger, Babu" <Babu.Moger@amd.com>,
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Message-ID: <20241112003015.qxuufx6jrfeoqfak@jpoimboe>
+References: <20241111163913.36139-1-amit@kernel.org>
+ <20241111163913.36139-2-amit@kernel.org>
+ <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+ <LV3PR12MB9265A6B2030DAE155E7B560B94582@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20241111203906.a2y55qoi767hcmht@jpoimboe>
+ <20241111204038.63ny4i74irngw2si@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3sjZchpe_eywrDHufnK3KJ2okMYvh17z
-X-Proofpoint-ORIG-GUID: 3sjZchpe_eywrDHufnK3KJ2okMYvh17z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- malwarescore=0 mlxlogscore=806 spamscore=0 impostorscore=0 adultscore=0
- phishscore=0 suspectscore=0 clxscore=1011 bulkscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411120003
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241111204038.63ny4i74irngw2si@jpoimboe>
 
-Add interconnect support for SM8750 SoC.
+On Mon, Nov 11, 2024 at 12:40:41PM -0800, Josh Poimboeuf wrote:
+> On Mon, Nov 11, 2024 at 12:39:09PM -0800, Josh Poimboeuf wrote:
+> > This is why it's important to spell out all the different cases in the
+> > comments.  I was attempting to document the justifications for the
+> > existing behavior.
+> > 
+> > You make some good points, though backing up a bit, I realize my comment
+> > was flawed for another reason: the return thunks only protect the
+> > kernel, but RSB filling on context switch is meant to protect user
+> > space.
+> > 
+> > So, never mind...
+> 
+> That said, I still think the comments need an update.  I'll try to come
+> up with something later.
 
-The Qualcomm Technologies, Inc. SM8750 SoC is the latest in the line of
-consumer mobile device SoCs. See more at:
-https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/images/company/news-media/media-center/press-kits/snapdragon-summit-2024/day-1/documents/Snapdragon8EliteProductBrief.pdf
+Here are some clarifications to the comments.  Amit, feel free to
+include this in your next revision.
 
-Changes in V2:
-- updating style to be consistent with other interconnect drivers
-- removed dead code
+----8<----
 
-Raviteja Laggyshetty (2):
-  dt-bindings: interconnect: add interconnect bindings for SM8750
-  interconnect: qcom: Add interconnect provider driver for SM8750
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: [PATCH] x86/bugs: Update insanely long comment about RSB attacks
 
- .../interconnect/qcom,sm8750-rpmh.yaml        |  136 ++
- drivers/interconnect/qcom/Kconfig             |    9 +
- drivers/interconnect/qcom/Makefile            |    2 +
- drivers/interconnect/qcom/sm8750.c            | 1585 +++++++++++++++++
- drivers/interconnect/qcom/sm8750.h            |  132 ++
- .../interconnect/qcom,sm8750-rpmh.h           |  143 ++
- 6 files changed, 2007 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,sm8750-rpmh.yaml
- create mode 100644 drivers/interconnect/qcom/sm8750.c
- create mode 100644 drivers/interconnect/qcom/sm8750.h
- create mode 100644 include/dt-bindings/interconnect/qcom,sm8750-rpmh.h
+The long comment above the setting of X86_FEATURE_RSB_CTXSW is a bit
+confusing.  It starts out being about context switching specifically,
+but then goes on to describe "user -> kernel" mitigations, which aren't
+necessarily limited to context switches.
 
+Clarify that it's about *all* RSB attacks and their mitigations.
 
-base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+For consistency, add the "guest -> host" mitigations as well.  Then the
+comment above spectre_v2_determine_rsb_fill_type_at_vmexit() can be
+removed and the overall line count is reduced.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+ arch/x86/kernel/cpu/bugs.c | 59 ++++++++++++--------------------------
+ 1 file changed, 19 insertions(+), 40 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 47a01d4028f6..fbdfa151b7a9 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1581,26 +1581,6 @@ static void __init spec_ctrl_disable_kernel_rrsba(void)
+ 
+ static void __init spectre_v2_determine_rsb_fill_type_at_vmexit(enum spectre_v2_mitigation mode)
+ {
+-	/*
+-	 * Similar to context switches, there are two types of RSB attacks
+-	 * after VM exit:
+-	 *
+-	 * 1) RSB underflow
+-	 *
+-	 * 2) Poisoned RSB entry
+-	 *
+-	 * When retpoline is enabled, both are mitigated by filling/clearing
+-	 * the RSB.
+-	 *
+-	 * When IBRS is enabled, while #1 would be mitigated by the IBRS branch
+-	 * prediction isolation protections, RSB still needs to be cleared
+-	 * because of #2.  Note that SMEP provides no protection here, unlike
+-	 * user-space-poisoned RSB entries.
+-	 *
+-	 * eIBRS should protect against RSB poisoning, but if the EIBRS_PBRSB
+-	 * bug is present then a LITE version of RSB protection is required,
+-	 * just a single call needs to retire before a RET is executed.
+-	 */
+ 	switch (mode) {
+ 	case SPECTRE_V2_NONE:
+ 		return;
+@@ -1818,43 +1798,42 @@ static void __init spectre_v2_select_mitigation(void)
+ 	pr_info("%s\n", spectre_v2_strings[mode]);
+ 
+ 	/*
+-	 * If Spectre v2 protection has been enabled, fill the RSB during a
+-	 * context switch.  In general there are two types of RSB attacks
+-	 * across context switches, for which the CALLs/RETs may be unbalanced.
++	 * In general there are two types of RSB attacks:
+ 	 *
+-	 * 1) RSB underflow
++	 * 1) RSB underflow ("Intel Retbleed")
+ 	 *
+ 	 *    Some Intel parts have "bottomless RSB".  When the RSB is empty,
+ 	 *    speculated return targets may come from the branch predictor,
+ 	 *    which could have a user-poisoned BTB or BHB entry.
+ 	 *
+-	 *    AMD has it even worse: *all* returns are speculated from the BTB,
+-	 *    regardless of the state of the RSB.
++	 *    When IBRS or eIBRS is enabled, the "user -> kernel" attack is
++	 *    mitigated by the IBRS branch prediction isolation properties, so
++	 *    the RSB buffer filling wouldn't be necessary to protect against
++	 *    this type of attack.
+ 	 *
+-	 *    When IBRS or eIBRS is enabled, the "user -> kernel" attack
+-	 *    scenario is mitigated by the IBRS branch prediction isolation
+-	 *    properties, so the RSB buffer filling wouldn't be necessary to
+-	 *    protect against this type of attack.
++	 *    The "user -> user" attack is mitigated by RSB filling on context
++	 *    switch.
+ 	 *
+-	 *    The "user -> user" attack scenario is mitigated by RSB filling.
++	 *    The "guest -> host" attack is mitigated by IBRS or eIBRS.
+ 	 *
+ 	 * 2) Poisoned RSB entry
+ 	 *
+ 	 *    If the 'next' in-kernel return stack is shorter than 'prev',
+ 	 *    'next' could be tricked into speculating with a user-poisoned RSB
+-	 *    entry.
++	 *    entry.  Speculative Type Confusion ("AMD retbleed") can also
++	 *    create poisoned RSB entries.
+ 	 *
+-	 *    The "user -> kernel" attack scenario is mitigated by SMEP and
+-	 *    eIBRS.
++	 *    The "user -> kernel" attack is mitigated by SMEP and eIBRS.
+ 	 *
+-	 *    The "user -> user" scenario, also known as SpectreBHB, requires
+-	 *    RSB clearing.
++	 *    The "user -> user" attack, also known as SpectreBHB, requires RSB
++	 *    clearing.
+ 	 *
+-	 * So to mitigate all cases, unconditionally fill RSB on context
+-	 * switches.
+-	 *
+-	 * FIXME: Is this pointless for retbleed-affected AMD?
++	 *    The "guest -> host" attack is mitigated by eIBRS (not IBRS!) or
++	 *    RSB clearing on vmexit.  Note that eIBRS implementations with
++	 *    X86_BUG_EIBRS_PBRSB still need "lite" RSB clearing which retires
++	 *    a single CALL before the first RET.
+ 	 */
++
+ 	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+ 	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
+ 
 -- 
-2.46.1
+2.47.0
 
 
