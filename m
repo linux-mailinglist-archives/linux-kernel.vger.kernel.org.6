@@ -1,174 +1,131 @@
-Return-Path: <linux-kernel+bounces-405245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D9F9C4F02
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:58:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8CC9C4F03
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:59:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 059D8B20F70
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:58:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9E581F251B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 06:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9688E20ADD5;
-	Tue, 12 Nov 2024 06:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="klQryMFF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YwY90BSy";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="klQryMFF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YwY90BSy"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1675C1A00D2;
-	Tue, 12 Nov 2024 06:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6271B81B8;
+	Tue, 12 Nov 2024 06:59:00 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFEFF1A00D2;
+	Tue, 12 Nov 2024 06:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731394710; cv=none; b=V8aKWEn+eQWH22vw5p0anfYikBznDiEPPCsXxY+yyYRbhdiyTd7vbuhMh7bT41HQtfigDwD6DcgYvwxPR7fPR4UkAssXZxYh5HDHY9kHMxFHJUIo2VTs6PJIbjIEbfqo+M+bTBXGzT49A9APWD9NlFtv4ZmwOJtjOeu9kK8XtEo=
+	t=1731394740; cv=none; b=bb4lQWzu9lA5rldMu9gUff9YmioJYtOlirObrWHLEWywD1ttMMCoGyBYODakYIYDEQXUcyOaRsL16WlonInrMAexfwnNaBNPEU0obmZlVSaC9je6vx2J1xaGtWBFZvhCCPrrrS5ifzzqPBw3/vHVKbVH94t4Eb0jmfIVDWu3qXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731394710; c=relaxed/simple;
-	bh=AZIV42PJsKg2EthXhisl/ikXjtCsixe0A2InWQkcTUA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hEkp4KHfmdnjnuVlTSWT53DLhoEshncLYEmu5DhXO8Ue91zL43J+ymHFzq5myIrbEqblBrnxHOQHenYr9Fdugkf4/WYhYFwxqVOVbwWi9eqd7XxLT58KwFjGaF15g9G5i5lx/ethNK/aeUFc1wciC74/TIbLApysFr2xE95+KlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=klQryMFF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YwY90BSy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=klQryMFF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YwY90BSy; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 144B21F451;
-	Tue, 12 Nov 2024 06:58:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731394706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=40YRUFJlt6S1W6poVrnNRAeQUnvx+RFpH6nmn561DnU=;
-	b=klQryMFFTjJ4aKyiodpHPrJfDrwWLFe0e7BBgKoNeWSgoEnO571lTFDVbGI9xYhOOQ9+SP
-	CWi/QypGXYuMapGjiu4zW0nnL1CPKwPvn7DPdWqsTFBVScPDY9WaYMOqQLqq6+wxEKpQTv
-	3kdjT2D6wBG6Z93KZU8nh0tAv1Oyo7M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731394706;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=40YRUFJlt6S1W6poVrnNRAeQUnvx+RFpH6nmn561DnU=;
-	b=YwY90BSy2HQ37zRtrJD3zuI3zBSgszz/egWdpNT3Mq3yArFOSavyIvYgTZKmN4GuXWrKd0
-	R8egC6smso8uDtDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=klQryMFF;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=YwY90BSy
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731394706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=40YRUFJlt6S1W6poVrnNRAeQUnvx+RFpH6nmn561DnU=;
-	b=klQryMFFTjJ4aKyiodpHPrJfDrwWLFe0e7BBgKoNeWSgoEnO571lTFDVbGI9xYhOOQ9+SP
-	CWi/QypGXYuMapGjiu4zW0nnL1CPKwPvn7DPdWqsTFBVScPDY9WaYMOqQLqq6+wxEKpQTv
-	3kdjT2D6wBG6Z93KZU8nh0tAv1Oyo7M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731394706;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=40YRUFJlt6S1W6poVrnNRAeQUnvx+RFpH6nmn561DnU=;
-	b=YwY90BSy2HQ37zRtrJD3zuI3zBSgszz/egWdpNT3Mq3yArFOSavyIvYgTZKmN4GuXWrKd0
-	R8egC6smso8uDtDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A4B0013301;
-	Tue, 12 Nov 2024 06:58:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id m2BdJpH8Mme6bQAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 12 Nov 2024 06:58:25 +0000
-Message-ID: <32402888-28ea-436a-b958-7136123f2c0c@suse.de>
-Date: Tue, 12 Nov 2024 07:58:25 +0100
+	s=arc-20240116; t=1731394740; c=relaxed/simple;
+	bh=NuNcNThvqK+Myni+fSAxbqsTc+OtZApgJqibiVY2ro4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JIYTQUuWKEB5+/CdoNivz7ZBAl4eQ+apNvv84wQOPy7GIcdgt2a+TVfUJj8TYyNUzoActVvmhRvhh851RfEQsSv77zw+7cB10aQPS77yoDpDmCduKR/8QYllAO8UgaC3xUGv7ASw04BkOZ4P07kj2yKt6YtYt3M9ySzJqnQ5hgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee36732fcadf14-db73a;
+	Tue, 12 Nov 2024 14:58:53 +0800 (CST)
+X-RM-TRANSID:2ee36732fcadf14-db73a
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea6732fcadbd7-4b9b4;
+	Tue, 12 Nov 2024 14:58:53 +0800 (CST)
+X-RM-TRANSID:2eea6732fcadbd7-4b9b4
+From: Luo Yifan <luoyifan@cmss.chinamobile.com>
+To: acme@kernel.org
+Cc: adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com,
+	irogers@google.com,
+	jolsa@kernel.org,
+	kan.liang@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	mark.rutland@arm.com,
+	mingo@redhat.com,
+	namhyung@kernel.org,
+	peterz@infradead.org,
+	Luo Yifan <luoyifan@cmss.chinamobile.com>
+Subject: [PATCH] perf jvmti: Properly handle return value checks in jvmti_write_code
+Date: Tue, 12 Nov 2024 14:58:51 +0800
+Message-Id: <20241112065851.282787-1-luoyifan@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20241112064704.282702-1-luoyifan@cmss.chinamobile.com>
+References: <20241112064704.282702-1-luoyifan@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] block: Rework bio_split() return value
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, song@kernel.org,
- yukuai3@huawei.com, hch@lst.de
-Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
- Johannes.Thumshirn@wdc.com
-References: <20241111112150.3756529-1-john.g.garry@oracle.com>
- <20241111112150.3756529-2-john.g.garry@oracle.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20241111112150.3756529-2-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 144B21F451
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
 
-On 11/11/24 12:21, John Garry wrote:
-> Instead of returning an inconclusive value of NULL for an error in calling
-> bio_split(), return a ERR_PTR() always.
-> 
-> Also remove the BUG_ON() calls, and WARN_ON_ONCE() instead. Indeed, since
-> almost all callers don't check the return code from bio_split(), we'll
-> crash anyway (for those failures).
-> 
-> Fix up the only user which checks bio_split() return code today (directly
-> or indirectly), blk_crypto_fallback_split_bio_if_needed(). The md/bcache
-> code does check the return code in cached_dev_cache_miss() ->
-> bio_next_split() -> bio_split(), but only to see if there was a split, so
-> there would be no change in behaviour here (when returning a ERR_PTR()).
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->   block/bio.c                 | 10 ++++++----
->   block/blk-crypto-fallback.c |  2 +-
->   2 files changed, 7 insertions(+), 5 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+Following the approach in the jvmti_write_debug_info function, add
+some return value checks in jvmti_write_code.
 
-Cheers,
+Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+---
+ tools/perf/jvmti/jvmti_agent.c | 27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
-Hannes
+diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
+index 526dcaf9f..b52466a0c 100644
+--- a/tools/perf/jvmti/jvmti_agent.c
++++ b/tools/perf/jvmti/jvmti_agent.c
+@@ -361,9 +361,8 @@ jvmti_write_code(void *agent, char const *sym,
+ {
+ 	static int code_generation = 1;
+ 	struct jr_code_load rec;
+-	size_t sym_len;
++	size_t sret, sym_len;
+ 	FILE *fp = agent;
+-	int ret = -1;
+ 
+ 	/* don't care about 0 length function, no samples */
+ 	if (size == 0)
+@@ -400,17 +399,25 @@ jvmti_write_code(void *agent, char const *sym,
+ 	 */
+ 	rec.code_index = code_generation++;
+ 
+-	ret = fwrite_unlocked(&rec, sizeof(rec), 1, fp);
+-	fwrite_unlocked(sym, sym_len, 1, fp);
+-
+-	if (code)
+-		fwrite_unlocked(code, size, 1, fp);
++	sret = fwrite_unlocked(&rec, sizeof(rec), 1, fp);
++	if (sret != 1)
++		goto error;
+ 
+-	funlockfile(fp);
++	sret = fwrite_unlocked(sym, sym_len, 1, fp);
++	if (sret != 1)
++		goto error;
+ 
+-	ret = 0;
++	if (code) {
++		sret = fwrite_unlocked(code, size, 1, fp);
++		if (sret != 1)
++			goto error;
++	}
+ 
+-	return ret;
++	funlockfile(fp);
++	return 0;
++error:
++	funlockfile(fp);
++	return -1;
+ }
+ 
+ int
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.33.0
+
+
+
 
