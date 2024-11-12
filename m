@@ -1,883 +1,738 @@
-Return-Path: <linux-kernel+bounces-405692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1139C575C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:11:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ADD79C5758
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C22C1B421F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:06:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F261EB27724
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F3C213EFE;
-	Tue, 12 Nov 2024 10:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A05322B3B1;
+	Tue, 12 Nov 2024 10:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NUFzcjcp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="blxAxkYN"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ED521262C;
-	Tue, 12 Nov 2024 10:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B1422B394
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731408013; cv=none; b=K553Werrn2sqmthq5xar/iRf8y8qwFDG4WLLj6yMqy+LQHFCTGnbNs2gZtZUjb/5T5F5w07/wUCnLQAIH1xbM0rG7BXx7V4W3b2XRSjDpX+hXesUTCSiYUkaQdQ2T2VjCS7/3vNSYL3Y32ItfL8fP9yF3xRr9GrkY+hCWD/9dsE=
+	t=1731407867; cv=none; b=a8TfnBy5oUNbOb67NPpiDYv69vfX5N/9omYStOIt69VYHZX2J0q82fJpZRGCfyejlLvm6QSUgDUoQmupMBgImwBs9WtdnpiD+lGtpRN3wErakfYUIrCx64+A1HRL0a2g95GClEFupV1OfORhq/UIisH/E2P0474Igvc595qxqeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731408013; c=relaxed/simple;
-	bh=Zb5i9owDw8/KOSed3dh1lNdNn+WVJyJAVts4HQvVNRc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QOTb9bAJjFdrEO0+eqR0+yQ3lEWs49sMS1N3AvBue44wIQ1rCUqgHh7T592WeIXtWV7vU8aQydgHDspb0YpUrXLdtk/MLHihqWPAEgbDnTC1JhV4b4FFP8B+okjjdvny4TiKkrGZh6KfUWjG2L8SSQtEphRdY07F21dKjuCN6dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NUFzcjcp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B5BC4CECD;
-	Tue, 12 Nov 2024 10:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731408012;
-	bh=Zb5i9owDw8/KOSed3dh1lNdNn+WVJyJAVts4HQvVNRc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NUFzcjcpiF6m4qb1vx4zHVUI0aX0Rff2kkMJn+9VqIiFhET7XPw6y3quy/Y6LvZST
-	 Hl1A67zoGwUi17GRn/80gP2ZkP20EV8nnjHbOuLKyfo6jHvyDO5l3M97QHPGvpzDc+
-	 f01QA751xd3nOLJDyd99p5z64oF4GJA6Z0CYPppo=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org
-Subject: [PATCH 6.11 000/184] 6.11.8-rc1 review
-Date: Tue, 12 Nov 2024 11:19:18 +0100
-Message-ID: <20241112101900.865487674@linuxfoundation.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731407867; c=relaxed/simple;
+	bh=bW78dTWX9Qdb7v4q4NxHdr2HgNtnEWktMrCmjJq8Vas=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GIyLRQJO/O9R9OGR882e+CbEmfJ/AyLxCzl4Yp7UubsnJqvi43b4zN9dNxXAeNumkbkk59qPJvxzfHM8ees3grX0Pwqu/ogRz4w95nsy/BGq2MxK1HCfkAKGZuq9vfZ432tA7UMKGuH1urGq2iCNQlXgJHW/fFpy7k3MqlkV9js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=blxAxkYN; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43152b79d25so45587965e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:37:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731407863; x=1732012663; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FTySTtAsqRGnf147MrhkPg4Yh5sLBUeHvDRhHluNO/0=;
+        b=blxAxkYNqMBKxHhoLItiljd2CgQpEPx8UHa+Phdzcv82lQVFIOJDP6oaFfz+6j+1lR
+         1lDprBk27ieKH6qgNqCk6Z+poVIDQQlUAslMIDRn7aKVTbn9ufEARoEpiJy4Nbg0rQde
+         fLb7hl8BJpXwBV++KhYfuY/JN2CXpUZ5/d2fwMAUMDId5+dOqttPy6rtnITHvmMk6sUt
+         TFQ/lnSSEJTvawaGTP/K7osmx9wFqDKFnuXWAVfj/SsEE98JtQ5U/XxD21EWGkwPV2Oz
+         p/mH6qLPV/vhM4oj9McB23d5uQ4H3mdPbMvM9hi+RHRKkuyKk3H/8UX1GmddysY0o3CS
+         0O9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731407863; x=1732012663;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FTySTtAsqRGnf147MrhkPg4Yh5sLBUeHvDRhHluNO/0=;
+        b=ta1VCddl+nJ1rZb0D8i1TaoXRjCS3z9ans1N1/jyRiahcHAVlxcrxThQbt9wWwYQzb
+         EiIIpU3wT6HEk6YZD/5wzVYDFamYQ4/EpeIMSK9RAqQiK5oLjYgCHZa/01NacdRrCvcH
+         HV2Zp64Bn3XLuPP2HuPpRt11aagqYwpnq8qKtvq1jXC8Tr90ZT686wnG4923WF+crjZI
+         lbcgRWrGyl8kFEwle1+1O9tD4BaF0GMd+Lds2u4lf2b8bmJIkDZtS4J5EseXmCAA+TfK
+         IvTvlFeAqbUmW4SXwswHo1XlRgmcET4qgPpbU0Lo6ad57WEC5rNryOQlcOOdFT1E2zj4
+         oKnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkoO0Wur7Yl2JXNkiy7LH0USmOWhYkXgmTBgfLcH4fxc80Zhf1KfH/aAIC8NVwqMOcsvgaMJQlUOir/7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxigaw1/rOj63cRGK4/LPOL9CKiE1K9JK1hj3spAnewazS/gdg5
+	NR/k+WJQj4iMD7ka8YMg6qawhfQE2qRdTxJ/DuleSvLG/wRRS0RG+l7nn909N+0=
+X-Google-Smtp-Source: AGHT+IG3AoajTzlMTh78KdXie6xiKiy9y1tlxJvV6HKuAEEgWLas977mJIXVOTovDOUvWczXHedD1g==
+X-Received: by 2002:a05:600c:354c:b0:42c:acb0:ddbd with SMTP id 5b1f17b1804b1-432b74fd80fmr132067245e9.7.1731407863433;
+        Tue, 12 Nov 2024 02:37:43 -0800 (PST)
+Received: from pop-os.. ([145.224.90.214])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432bbf436ffsm142270955e9.44.2024.11.12.02.37.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 02:37:42 -0800 (PST)
+From: James Clark <james.clark@linaro.org>
+To: suzuki.poulose@arm.com,
+	oliver.upton@linux.dev,
+	coresight@lists.linaro.org,
+	kvmarm@lists.linux.dev
+Cc: James Clark <james.clark@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Shiqi Liu <shiqiliu@hust.edu.cn>,
+	Fuad Tabba <tabba@google.com>,
+	James Morse <james.morse@arm.com>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 02/12] tools: arm64: Update sysreg.h header files
+Date: Tue, 12 Nov 2024 10:37:01 +0000
+Message-Id: <20241112103717.589952-3-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241112103717.589952-1-james.clark@linaro.org>
+References: <20241112103717.589952-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.8-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.11.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.11.8-rc1
-X-KernelTest-Deadline: 2024-11-14T10:19+00:00
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This is the start of the stable review cycle for the 6.11.8 release.
-There are 184 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Thu, 14 Nov 2024 10:18:19 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.8-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.11.8-rc1
-
-Hyunwoo Kim <v4bel@theori.io>
-    vsock/virtio: Initialization of the dangling pointer occurring in vsk->trans
-
-Hyunwoo Kim <v4bel@theori.io>
-    hv_sock: Initializing vsk->trans to NULL to prevent a dangling pointer
-
-Paul E. McKenney <paulmck@kernel.org>
-    xtensa: Emulate one-byte cmpxchg
-
-Mingcong Bai <jeffbai@aosc.io>
-    ASoC: amd: yc: fix internal mic on Xiaomi Book Pro 14 2022
-
-Nirmoy Das <nirmoy.das@intel.com>
-    drm/xe/guc/tlb: Flush g2h worker in case of tlb timeout
-
-Nirmoy Das <nirmoy.das@intel.com>
-    drm/xe/ufence: Flush xe ordered_wq in case of ufence timeout
-
-Nirmoy Das <nirmoy.das@intel.com>
-    drm/xe: Move LNL scheduling WA to xe_device.h
-
-Badal Nilawar <badal.nilawar@intel.com>
-    drm/xe/guc/ct: Flush g2h worker in case of g2h response timeout
-
-Christoph Hellwig <hch@lst.de>
-    block: fix queue limits checks in blk_rq_map_user_bvec for real
-
-Christoph Hellwig <hch@lst.de>
-    block: rework bio splitting
-
-Johan Hovold <johan+linaro@kernel.org>
-    firmware: qcom: scm: suppress download mode error
-
-Mukesh Ojha <quic_mojha@quicinc.com>
-    firmware: qcom: scm: Refactor code to support multiple dload mode
-
-Muhammad Usama Anjum <usama.anjum@collabora.com>
-    selftests: hugetlb_dio: check for initial conditions to skip in the start
-
-Andrei Vagin <avagin@google.com>
-    ucounts: fix counter leak in inc_rlimit_get_ucounts()
-
-Andrew Kanner <andrew.kanner@gmail.com>
-    ocfs2: remove entry once instead of null-ptr-dereference in ocfs2_xa_remove()
-
-Marc Zyngier <maz@kernel.org>
-    irqchip/gic-v3: Force propagation of the active state with a read-back
-
-Umang Jain <umang.jain@ideasonboard.com>
-    staging: vchiq_arm: Use devm_kzalloc() for vchiq_arm_state allocation
-
-Umang Jain <umang.jain@ideasonboard.com>
-    staging: vchiq_arm: Use devm_kzalloc() for drv_mgmt allocation
-
-Mika Westerberg <mika.westerberg@linux.intel.com>
-    thunderbolt: Fix connection issue with Pluggable UD-4VPD dock
-
-Qiang Yu <quic_qianyu@quicinc.com>
-    clk: qcom: gcc-x1e80100: Fix halt_check for pipediv2 clocks
-
-Johan Hovold <johan+linaro@kernel.org>
-    clk: qcom: videocc-sm8350: use HW_CTRL_TRIGGER for vcodec GDSCs
-
-Benoît Monin <benoit.monin@gmx.fr>
-    USB: serial: option: add Quectel RG650V
-
-Reinhard Speyerer <rspmn@arcor.de>
-    USB: serial: option: add Fibocom FG132 0x0112 composition
-
-Jack Wu <wojackbb@gmail.com>
-    USB: serial: qcserial: add support for Sierra Wireless EM86xx
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    USB: serial: io_edgeport: fix use after free in debug printk
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    usb: typec: fix potential out of bounds in ucsi_ccg_update_set_new_cam_cmd()
-
-Rex Nie <rex.nie@jaguarmicro.com>
-    usb: typec: qcom-pmic: init value of hdr_len/txbuf_len earlier
-
-Roger Quadros <rogerq@kernel.org>
-    usb: dwc3: fix fault at system suspend if device was already runtime suspended
-
-Zijun Hu <quic_zijuhu@quicinc.com>
-    usb: musb: sunxi: Fix accessing an released usb phy
-
-Mika Westerberg <mika.westerberg@linux.intel.com>
-    thunderbolt: Add only on-board retimers when !CONFIG_USB4_DEBUGFS_MARGINING
-
-Hugh Dickins <hughd@google.com>
-    mm/thp: fix deferred split unqueue naming and locking
-
-Wei Yang <richard.weiyang@gmail.com>
-    mm/mlock: set the correct prev on failure
-
-SeongJae Park <sj@kernel.org>
-    mm/damon/core: handle zero schemes apply interval
-
-SeongJae Park <sj@kernel.org>
-    mm/damon/core: handle zero {aggregation,ops_update} intervals
-
-SeongJae Park <sj@kernel.org>
-    mm/damon/core: avoid overflow in damon_feed_loop_next_input()
-
-Roman Gushchin <roman.gushchin@linux.dev>
-    signal: restore the override_rlimit logic
-
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
-    objpool: fix to make percpu slot allocation more robust
-
-Qi Xi <xiqi2@huawei.com>
-    fs/proc: fix compile warning about variable 'vmcore_mmap_ops'
-
-Barnabás Czémán <barnabas.czeman@mainlining.org>
-    clk: qcom: clk-alpha-pll: Fix pll post div mask when width is not set
-
-Abel Vesa <abel.vesa@linaro.org>
-    clk: qcom: gcc-x1e80100: Fix USB MP SS1 PHY GDSC pwrsts flags
-
-Liu Peibao <loven.liu@jaguarmicro.com>
-    i2c: designware: do not hold SCL low when I2C_DYNAMIC_TAR_UPDATE is not set
-
-Trond Myklebust <trond.myklebust@hammerspace.com>
-    filemap: Fix bounds checking in filemap_read()
-
-Benoit Sevens <bsevens@google.com>
-    media: uvcvideo: Skip parsing frames of type UVC_VS_UNDEFINED in uvc_parse_format
-
-Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-    platform/x86/amd/pmf: Add SMU metrics table support for 1Ah family 60h model
-
-Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-    platform/x86/amd/pmf: Update SMU metrics table for 1AH family series
-
-Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-    platform/x86/amd/pmf: Relocate CPU ID macros to the PMF header
-
-Filipe Manana <fdmanana@suse.com>
-    btrfs: reinitialize delayed ref list after deleting it from the list
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: fix per-subvolume RO/RW flags with new mount API
-
-Haisu Wang <haisuwang@tencent.com>
-    btrfs: fix the length of reserved qgroup to free
-
-Pavan Kumar Linga <pavan.kumar.linga@intel.com>
-    idpf: fix idpf_vc_core_init error path
-
-Pavan Kumar Linga <pavan.kumar.linga@intel.com>
-    idpf: avoid vport access in idpf_get_link_ksettings
-
-Gautam Menghani <gautam@linux.ibm.com>
-    KVM: PPC: Book3S HV: Mask off LPCR_MER for a vCPU before running it to avoid spurious interrupts
-
-Koichiro Den <koichiro.den@gmail.com>
-    mm/slab: fix warning caused by duplicate kmem_cache creation in kmem_buckets_create
-
-Mark Rutland <mark.rutland@arm.com>
-    arm64: smccc: Remove broken support for SMCCCv1.3 SVE discard hint
-
-Mark Rutland <mark.rutland@arm.com>
-    arm64: Kconfig: Make SME depend on BROKEN for now
-
-Mark Brown <broonie@kernel.org>
-    arm64/sve: Discard stale CPU state when handling SVE traps
-
-Geliang Tang <geliang@kernel.org>
-    mptcp: use sock_kfree_s instead of kfree
-
-Stefan Wahren <wahrenst@gmx.net>
-    net: vertexcom: mse102x: Fix possible double free of TX skb
-
-Jinjie Ruan <ruanjinjie@huawei.com>
-    net: wwan: t7xx: Fix off-by-one error in t7xx_dpmaif_rx_buf_alloc()
-
-Kalesh Singh <kaleshsingh@google.com>
-    tracing: Fix tracefs mount options
-
-Roberto Sassu <roberto.sassu@huawei.com>
-    nfs: Fix KMSAN warning in decode_getfattr_attrs()
-
-Bart Van Assche <bvanassche@acm.org>
-    scsi: ufs: core: Start the RTC update work later
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: usb-audio: Add quirk for HP 320 FHD Webcam
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    mptcp: no admin perm to list endpoints
-
-Mikulas Patocka <mpatocka@redhat.com>
-    dm: fix a crash if blk_alloc_disk fails
-
-Zichen Xie <zichenxie0106@gmail.com>
-    dm-unstriped: cast an operand to sector_t to prevent potential uint32_t overflow
-
-Ming-Hung Tsai <mtsai@redhat.com>
-    dm cache: fix potential out-of-bounds access on the first resume
-
-Ming-Hung Tsai <mtsai@redhat.com>
-    dm cache: optimize dirty bit checking with find_next_bit when resizing
-
-Ming-Hung Tsai <mtsai@redhat.com>
-    dm cache: fix out-of-bounds access to the dirty bitset when resizing
-
-Ming-Hung Tsai <mtsai@redhat.com>
-    dm cache: fix flushing uninitialized delayed_work on cache_ctr error
-
-Ming-Hung Tsai <mtsai@redhat.com>
-    dm cache: correct the number of origin blocks to match the target length
-
-David Gstir <david@sigma-star.at>
-    KEYS: trusted: dcp: fix NULL dereference in AEAD crypto operation
-
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-    thermal/drivers/qcom/lmh: Remove false lockdep backtrace
-
-Antonio Quartulli <antonio@mandelbit.com>
-    drm/amdgpu: prevent NULL pointer dereference if ATIF is not supported
-
-Lijo Lazar <lijo.lazar@amd.com>
-    drm/amdgpu: Fix DPX valid mode check on GC 9.4.3
-
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu: Adjust debugfs register access permissions
-
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu: add missing size check in amdgpu_debugfs_gprwave_read()
-
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu: Adjust debugfs eviction and IB access permissions
-
-Jann Horn <jannh@google.com>
-    drm/panthor: Be stricter about IO mapping flags
-
-Liviu Dudau <liviu.dudau@arm.com>
-    drm/panthor: Lock XArray when getting entries for the VM
-
-Aurabindo Pillai <aurabindo.pillai@amd.com>
-    drm/amd/display: parse umc_info or vram_info based on ASIC
-
-Kenneth Feng <kenneth.feng@amd.com>
-    drm/amd/pm: correct the workload setting
-
-Brendan King <brendan.king@imgtec.com>
-    drm/imagination: Break an object reference loop
-
-Brendan King <brendan.king@imgtec.com>
-    drm/imagination: Add a per-file PVR context list
-
-Tom Chung <chiahsuan.chung@amd.com>
-    drm/amd/display: Fix brightness level not retained over reboot
-
-Kenneth Feng <kenneth.feng@amd.com>
-    drm/amd/pm: always pick the pptable from IFWI
-
-Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-    rpmsg: glink: Handle rejected intent request better
-
-Jarkko Sakkinen <jarkko@kernel.org>
-    tpm: Lock TPM chip in tpm_pm_suspend() first
-
-Erik Schumacher <erik.schumacher@iris-sensing.com>
-    pwm: imx-tpm: Use correct MODULO value for EPWM mode
-
-Balasubramani Vivekanandan <balasubramani.vivekanandan@intel.com>
-    drm/xe: Set mask bits for CCS_MODE register
-
-Matthew Brost <matthew.brost@intel.com>
-    drm/xe: Drop VM dma-resv lock on xe_sync_in_fence_get failure in exec IOCTL
-
-Matthew Brost <matthew.brost@intel.com>
-    drm/xe: Fix possible exec queue leak in exec IOCTL
-
-Namjae Jeon <linkinjeon@kernel.org>
-    ksmbd: fix slab-use-after-free in smb3_preauth_hash_rsp
-
-Jinjie Ruan <ruanjinjie@huawei.com>
-    ksmbd: Fix the missing xa_store error check
-
-Namjae Jeon <linkinjeon@kernel.org>
-    ksmbd: check outstanding simultaneous SMB operations
-
-Namjae Jeon <linkinjeon@kernel.org>
-    ksmbd: fix slab-use-after-free in ksmbd_smb2_session_create
-
-Thomas Mühlbacher <tmuehlbacher@posteo.net>
-    can: {cc770,sja1000}_isa: allow building on x86_64
-
-Marc Kleine-Budde <mkl@pengutronix.de>
-    can: mcp251xfd: mcp251xfd_ring_alloc(): fix coalescing configuration when switching CAN modes
-
-Marc Kleine-Budde <mkl@pengutronix.de>
-    can: mcp251xfd: mcp251xfd_get_tef_len(): fix length calculation
-
-Marc Kleine-Budde <mkl@pengutronix.de>
-    can: m_can: m_can_close(): don't call free_irq() for IRQ-less devices
-
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-    media: v4l2-ctrls-api: fix error handling for v4l2_g_ctrl()
-
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-    media: v4l2-tpg: prevent the risk of a division by zero
-
-Hans Verkuil <hverkuil@xs4all.nl>
-    media: vivid: fix buffer overwrite when using > 32 buffers
-
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-    media: pulse8-cec: fix data timestamp at pulse8_setup()
-
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-    media: av7110: fix a spectre vulnerability
-
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-    media: cx24116: prevent overflows on SNR calculus
-
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-    media: s5p-jpeg: prevent buffer overflows
-
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-    media: ar0521: don't overflow when checking PLL values
-
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-    media: mgb4: protect driver against spectre
-
-Hans Verkuil <hverkuil-cisco@xs4all.nl>
-    media: dvb-core: add missing buffer index check
-
-Jyri Sarha <jyri.sarha@linux.intel.com>
-    ASoC: SOF: sof-client-probes-ipc4: Set param_size extension bits
-
-Amelie Delaunay <amelie.delaunay@foss.st.com>
-    ASoC: stm32: spdifrx: fix dma channel release in stm32_spdifrx_remove
-
-Icenowy Zheng <uwu@icenowy.me>
-    thermal/of: support thermal zones w/o trips subnode
-
-Emil Dahl Juhl <emdj@bang-olufsen.dk>
-    tools/lib/thermal: Fix sampling handler context ptr
-
-Murad Masimov <m.masimov@maxima.ru>
-    ALSA: firewire-lib: fix return value on fail in amdtp_tscm_init()
-
-Johannes Thumshirn <johannes.thumshirn@wdc.com>
-    scsi: sd_zbc: Use kvzalloc() to allocate REPORT ZONES buffer
-
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-    media: adv7604: prevent underflow condition when reporting colorspace
-
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-    media: dvb_frontend: don't play tricks with underflow values
-
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-    media: dvbdev: prevent the risk of out of memory access
-
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-    media: stb0899_algo: initialize cfr before using it
-
-Jarosław Janik <jaroslaw.janik@gmail.com>
-    Revert "ALSA: hda/conexant: Mute speakers at suspend / shutdown"
-
-Wentao Liang <Wentao_liang_g@163.com>
-    drivers: net: ionic: add missed debugfs cleanup to ionic_probe() error path
-
-Eric Dumazet <edumazet@google.com>
-    net/smc: do not leave a dangling sk pointer in __smc_create()
-
-David Howells <dhowells@redhat.com>
-    rxrpc: Fix missing locking causing hanging calls
-
-Johan Jonker <jbx6244@gmail.com>
-    net: arc: rockchip: fix emac mdio node support
-
-Johan Jonker <jbx6244@gmail.com>
-    net: arc: fix the device for dma_map_single/dma_unmap_single
-
-Philo Lu <lulie@linux.alibaba.com>
-    virtio_net: Update rss when set queue
-
-Philo Lu <lulie@linux.alibaba.com>
-    virtio_net: Sync rss config to device when virtnet_probe
-
-Philo Lu <lulie@linux.alibaba.com>
-    virtio_net: Add hash_key_length check
-
-Philo Lu <lulie@linux.alibaba.com>
-    virtio_net: Support dynamic rss indirection table size
-
-Pablo Neira Ayuso <pablo@netfilter.org>
-    netfilter: nf_tables: wait for rcu grace period on net_device removal
-
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-    net: stmmac: Fix unbalanced IRQ wake disable warning on single irq case
-
-Diogo Silva <diogompaissilva@gmail.com>
-    net: phy: ti: add PHY_RST_AFTER_CLK_EN flag
-
-Peiyang Wang <wangpeiyang1@huawei.com>
-    net: hns3: fix kernel crash when uninstalling driver
-
-Vitaly Lifshits <vitaly.lifshits@intel.com>
-    e1000e: Remove Meteor Lake SMBUS workarounds
-
-Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-    i40e: fix race condition by adding filter's intermediate sync state
-
-Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-    ice: change q_index variable type to s16 to store -1 value
-
-Dario Binacchi <dario.binacchi@amarulasolutions.com>
-    can: c_can: fix {rx,tx}_errors statistics
-
-Suraj Gupta <suraj.gupta2@amd.com>
-    net: xilinx: axienet: Enqueue Tx packets in dql before dmaengine starts
-
-Wei Fang <wei.fang@nxp.com>
-    net: enetc: allocate vf_state during PF probes
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: properly validate chunk size in sctp_sf_ootb()
-
-Suraj Gupta <suraj.gupta2@amd.com>
-    dt-bindings: net: xlnx,axi-ethernet: Correct phy-mode property value
-
-Vladimir Oltean <vladimir.oltean@nxp.com>
-    net: dpaa_eth: print FD status in CPU endianness in dpaa_eth_fd tracepoint
-
-Wei Fang <wei.fang@nxp.com>
-    net: enetc: set MAC address to the VF net_device
-
-ChiYuan Huang <cy_huang@richtek.com>
-    regulator: rtq2208: Fix uninitialized use of regulator_config
-
-Chen Ridong <chenridong@huawei.com>
-    security/keys: fix slab-out-of-bounds in key_task_permission
-
-Mike Snitzer <snitzer@kernel.org>
-    nfs: avoid i_lock contention in nfs_clear_invalid_mapping
-
-Trond Myklebust <trond.myklebust@hammerspace.com>
-    NFS: Further fixes to attribute delegation a/mtime changes
-
-Trond Myklebust <trond.myklebust@hammerspace.com>
-    NFS: Fix attribute delegation behaviour on exclusive create
-
-NeilBrown <neilb@suse.de>
-    NFSv3: only use NFS timeout for MOUNT when protocols are compatible
-
-NeilBrown <neilb@suse.de>
-    sunrpc: handle -ENOTCONN in xs_tcp_setup_socket()
-
-Corey Hickey <bugfood-c@fatooh.org>
-    platform/x86/amd/pmc: Detect when STB is not available
-
-Jiri Kosina <jikos@kernel.org>
-    HID: core: zero-initialize the report buffer
-
-Diederik de Haas <didi.debian@cknow.org>
-    arm64: dts: rockchip: Correct GPIO polarity on brcm BT nodes
-
-Heiko Stuebner <heiko@sntech.de>
-    ARM: dts: rockchip: Fix the realtek audio codec on rk3036-kylin
-
-Heiko Stuebner <heiko@sntech.de>
-    ARM: dts: rockchip: Fix the spi controller on rk3036
-
-Heiko Stuebner <heiko@sntech.de>
-    ARM: dts: rockchip: drop grf reference from rk3036 hdmi
-
-Heiko Stuebner <heiko@sntech.de>
-    ARM: dts: rockchip: fix rk3036 acodec node
-
-Heiko Stuebner <heiko@sntech.de>
-    arm64: dts: rockchip: remove orphaned pinctrl-names from pinephone pro
-
-Qingqing Zhou <quic_qqzhou@quicinc.com>
-    firmware: qcom: scm: Return -EOPNOTSUPP for unsupported SHM bridge enabling
-
-Xinqi Zhang <quic_xinqzhan@quicinc.com>
-    firmware: arm_scmi: Fix slab-use-after-free in scmi_bus_notifier()
-
-Marek Vasut <marex@denx.de>
-    arm64: dts: imx8mp-phyboard-pollux: Set Video PLL1 frequency to 506.8 MHz
-
-Peng Fan <peng.fan@nxp.com>
-    arm64: dts: imx8mp: correct sdhc ipg clk
-
-Alexander Stein <alexander.stein@ew.tq-group.com>
-    arm64: dts: imx8-ss-vpu: Fix imx8qm VPU IRQs
-
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-    arm64: dts: qcom: sm8450 fix PIPE clock specification for pcie1
-
-Heiko Stuebner <heiko@sntech.de>
-    arm64: dts: rockchip: remove num-slots property from rk3328-nanopi-r2s-plus
-
-Heiko Stuebner <heiko@sntech.de>
-    arm64: dts: rockchip: Fix LED triggers on rk3308-roc-cc
-
-Heiko Stuebner <heiko@sntech.de>
-    arm64: dts: rockchip: Remove #cooling-cells from fan on Theobroma lion
-
-Heiko Stuebner <heiko@sntech.de>
-    arm64: dts: rockchip: Remove undocumented supports-emmc property
-
-Sergey Bostandzhyan <jin@mediatomb.cc>
-    arm64: dts: rockchip: Add DTS for FriendlyARM NanoPi R2S Plus
-
-Heiko Stuebner <heiko@sntech.de>
-    arm64: dts: rockchip: Fix bluetooth properties on Rock960 boards
-
-Heiko Stuebner <heiko@sntech.de>
-    arm64: dts: rockchip: Fix bluetooth properties on rk3566 box demo
-
-Heiko Stuebner <heiko@sntech.de>
-    arm64: dts: rockchip: Drop regulator-init-microvolt from two boards
-
-Heiko Stuebner <heiko@sntech.de>
-    arm64: dts: rockchip: fix i2c2 pinctrl-names property on anbernic-rg353p/v
-
-Diederik de Haas <didi.debian@cknow.org>
-    arm64: dts: rockchip: Fix reset-gpios property on brcm BT nodes
-
-Diederik de Haas <didi.debian@cknow.org>
-    arm64: dts: rockchip: Fix wakeup prop names on PineNote BT node
-
-Diederik de Haas <didi.debian@cknow.org>
-    arm64: dts: rockchip: Remove hdmi's 2nd interrupt on rk3328
-
-Rajendra Nayak <quic_rjendra@quicinc.com>
-    EDAC/qcom: Make irq configuration optional
-
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-    firmware: qcom: scm: fix a NULL-pointer dereference
-
-Sam Edwards <cfsworks@gmail.com>
-    arm64: dts: rockchip: Designate Turing RK1's system power controller
-
-Dragan Simic <dsimic@manjaro.org>
-    arm64: dts: rockchip: Start cooling maps numbering from zero on ROCK 5B
-
-Dragan Simic <dsimic@manjaro.org>
-    arm64: dts: rockchip: Move L3 cache outside CPUs in RK3588(S) SoC dtsi
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    arm64: dts: rockchip: Fix rt5651 compatible value on rk3399-sapphire-excavator
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    arm64: dts: rockchip: Fix rt5651 compatible value on rk3399-eaidk-610
-
-
--------------
-
-Diffstat:
-
- .../devicetree/bindings/net/xlnx,axi-ethernet.yaml |   2 +-
- Documentation/netlink/specs/mptcp_pm.yaml          |   1 -
- Makefile                                           |   4 +-
- arch/arm/boot/dts/rockchip/rk3036-kylin.dts        |   4 +-
- arch/arm/boot/dts/rockchip/rk3036.dtsi             |  14 +-
- arch/arm64/Kconfig                                 |   1 +
- arch/arm64/boot/dts/freescale/imx8-ss-vpu.dtsi     |   4 +-
- .../dts/freescale/imx8mp-phyboard-pollux-rdk.dts   |  12 ++
- arch/arm64/boot/dts/freescale/imx8mp.dtsi          |   6 +-
- arch/arm64/boot/dts/freescale/imx8qxp-ss-vpu.dtsi  |   8 ++
- arch/arm64/boot/dts/qcom/sm8450.dtsi               |   2 +-
- arch/arm64/boot/dts/rockchip/Makefile              |   1 +
- arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi    |   1 -
- arch/arm64/boot/dts/rockchip/rk3308-roc-cc.dts     |   4 +-
- .../boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts   |  30 +++++
- arch/arm64/boot/dts/rockchip/rk3328.dtsi           |   3 +-
- arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi      |   1 -
- arch/arm64/boot/dts/rockchip/rk3399-eaidk-610.dts  |   2 +-
- .../boot/dts/rockchip/rk3399-pinephone-pro.dts     |   2 -
- arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi   |   2 +-
- .../dts/rockchip/rk3399-sapphire-excavator.dts     |   2 +-
- .../boot/dts/rockchip/rk3566-anbernic-rg353p.dts   |   2 +-
- .../boot/dts/rockchip/rk3566-anbernic-rg353v.dts   |   2 +-
- arch/arm64/boot/dts/rockchip/rk3566-box-demo.dts   |   6 +-
- arch/arm64/boot/dts/rockchip/rk3566-lubancat-1.dts |   1 -
- arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi  |   6 +-
- arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi |   2 +-
- arch/arm64/boot/dts/rockchip/rk3568-lubancat-2.dts |   1 -
- arch/arm64/boot/dts/rockchip/rk3568-roc-pc.dts     |   3 -
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi      |  20 +--
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts    |   4 +-
- .../arm64/boot/dts/rockchip/rk3588-toybrick-x0.dts |   1 -
- .../arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi |   1 +
- arch/arm64/kernel/fpsimd.c                         |   1 +
- arch/arm64/kernel/smccc-call.S                     |  35 +----
- arch/powerpc/kvm/book3s_hv.c                       |  12 ++
- arch/xtensa/Kconfig                                |   1 +
- arch/xtensa/include/asm/cmpxchg.h                  |   2 +
- block/blk-map.c                                    |  56 +++-----
- block/blk-merge.c                                  | 146 ++++++++-------------
- block/blk-mq.c                                     |  11 +-
- block/blk.h                                        |  69 ++++++----
- drivers/char/tpm/tpm-chip.c                        |   4 -
- drivers/char/tpm/tpm-interface.c                   |  32 +++--
- drivers/clk/qcom/clk-alpha-pll.c                   |   2 +-
- drivers/clk/qcom/gcc-x1e80100.c                    |  12 +-
- drivers/clk/qcom/videocc-sm8350.c                  |   4 +-
- drivers/edac/qcom_edac.c                           |   8 +-
- drivers/firmware/arm_scmi/bus.c                    |   7 +-
- drivers/firmware/qcom/Kconfig                      |  11 --
- drivers/firmware/qcom/qcom_scm.c                   |  77 +++++++++--
- drivers/firmware/smccc/smccc.c                     |   4 -
- drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c           |   4 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c        |  10 +-
- drivers/gpu/drm/amd/amdgpu/aqua_vanjaram.c         |   2 +-
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  15 +++
- drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c |   4 +-
- drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c          |  49 +++++--
- drivers/gpu/drm/amd/pm/swsmu/inc/amdgpu_smu.h      |   4 +-
- drivers/gpu/drm/amd/pm/swsmu/smu11/arcturus_ppt.c  |   5 +-
- drivers/gpu/drm/amd/pm/swsmu/smu11/navi10_ppt.c    |   5 +-
- .../drm/amd/pm/swsmu/smu11/sienna_cichlid_ppt.c    |   5 +-
- drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c   |   4 +-
- drivers/gpu/drm/amd/pm/swsmu/smu12/renoir_ppt.c    |   4 +-
- .../gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c   |  20 ++-
- .../gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c   |   5 +-
- .../gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c   |  74 +----------
- drivers/gpu/drm/amd/pm/swsmu/smu_cmn.c             |   8 ++
- drivers/gpu/drm/amd/pm/swsmu/smu_cmn.h             |   2 +
- drivers/gpu/drm/imagination/pvr_context.c          |  33 +++++
- drivers/gpu/drm/imagination/pvr_context.h          |  21 +++
- drivers/gpu/drm/imagination/pvr_device.h           |  10 ++
- drivers/gpu/drm/imagination/pvr_drv.c              |   3 +
- drivers/gpu/drm/imagination/pvr_vm.c               |  22 +++-
- drivers/gpu/drm/imagination/pvr_vm.h               |   1 +
- drivers/gpu/drm/panthor/panthor_device.c           |   4 +
- drivers/gpu/drm/panthor/panthor_mmu.c              |   2 +
- drivers/gpu/drm/xe/regs/xe_gt_regs.h               |   2 +-
- drivers/gpu/drm/xe/xe_device.h                     |  14 ++
- drivers/gpu/drm/xe/xe_exec.c                       |  13 +-
- drivers/gpu/drm/xe/xe_gt_ccs_mode.c                |   6 +
- drivers/gpu/drm/xe/xe_gt_tlb_invalidation.c        |   2 +
- drivers/gpu/drm/xe/xe_guc_ct.c                     |   9 ++
- drivers/gpu/drm/xe/xe_wait_user_fence.c            |   7 +
- drivers/hid/hid-core.c                             |   2 +-
- drivers/i2c/busses/i2c-designware-common.c         |   6 +-
- drivers/i2c/busses/i2c-designware-core.h           |   1 +
- drivers/irqchip/irq-gic-v3.c                       |   7 +
- drivers/md/dm-cache-target.c                       |  59 +++++----
- drivers/md/dm-unstripe.c                           |   4 +-
- drivers/md/dm.c                                    |   4 +-
- drivers/media/cec/usb/pulse8/pulse8-cec.c          |   2 +-
- drivers/media/common/v4l2-tpg/v4l2-tpg-core.c      |   3 +
- drivers/media/dvb-core/dvb_frontend.c              |   4 +-
- drivers/media/dvb-core/dvb_vb2.c                   |   8 +-
- drivers/media/dvb-core/dvbdev.c                    |  17 ++-
- drivers/media/dvb-frontends/cx24116.c              |   7 +-
- drivers/media/dvb-frontends/stb0899_algo.c         |   2 +-
- drivers/media/i2c/adv7604.c                        |  26 ++--
- drivers/media/i2c/ar0521.c                         |   4 +-
- drivers/media/pci/mgb4/mgb4_cmt.c                  |   2 +
- .../media/platform/samsung/s5p-jpeg/jpeg-core.c    |  17 ++-
- drivers/media/test-drivers/vivid/vivid-core.c      |   2 +-
- drivers/media/test-drivers/vivid/vivid-core.h      |   4 +-
- drivers/media/test-drivers/vivid/vivid-ctrls.c     |   2 +-
- drivers/media/test-drivers/vivid/vivid-vid-cap.c   |   2 +-
- drivers/media/usb/uvc/uvc_driver.c                 |   2 +-
- drivers/media/v4l2-core/v4l2-ctrls-api.c           |  17 ++-
- drivers/net/can/c_can/c_can_main.c                 |   7 +-
- drivers/net/can/cc770/Kconfig                      |   2 +-
- drivers/net/can/m_can/m_can.c                      |   3 +-
- drivers/net/can/sja1000/Kconfig                    |   2 +-
- drivers/net/can/spi/mcp251xfd/mcp251xfd-ring.c     |   8 +-
- drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c      |  10 +-
- drivers/net/ethernet/arc/emac_main.c               |  27 ++--
- drivers/net/ethernet/arc/emac_mdio.c               |   9 +-
- .../net/ethernet/freescale/dpaa/dpaa_eth_trace.h   |   2 +-
- drivers/net/ethernet/freescale/enetc/enetc_pf.c    |  18 +--
- drivers/net/ethernet/freescale/enetc/enetc_vf.c    |   9 +-
- drivers/net/ethernet/hisilicon/hns3/hnae3.c        |   5 +-
- drivers/net/ethernet/intel/e1000e/ich8lan.c        |  17 +--
- drivers/net/ethernet/intel/i40e/i40e.h             |   1 +
- drivers/net/ethernet/intel/i40e/i40e_debugfs.c     |   1 +
- drivers/net/ethernet/intel/i40e/i40e_main.c        |  12 +-
- drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c  |   3 +-
- drivers/net/ethernet/intel/ice/ice_fdir.h          |   4 +-
- drivers/net/ethernet/intel/idpf/idpf.h             |   4 +-
- drivers/net/ethernet/intel/idpf/idpf_ethtool.c     |  11 +-
- drivers/net/ethernet/intel/idpf/idpf_lib.c         |   5 +-
- drivers/net/ethernet/intel/idpf/idpf_virtchnl.c    |   3 +-
- .../net/ethernet/pensando/ionic/ionic_bus_pci.c    |   1 +
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   1 +
- drivers/net/ethernet/vertexcom/mse102x.c           |   5 +-
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c  |   4 +-
- drivers/net/phy/dp83848.c                          |   2 +
- drivers/net/virtio_net.c                           | 119 ++++++++++++++---
- drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c         |   2 +-
- drivers/platform/x86/amd/pmc/pmc.c                 |   5 +
- drivers/platform/x86/amd/pmf/core.c                |  21 ++-
- drivers/platform/x86/amd/pmf/pmf.h                 |  55 ++++++++
- drivers/platform/x86/amd/pmf/spc.c                 |  52 +++++---
- drivers/pwm/pwm-imx-tpm.c                          |   4 +-
- drivers/regulator/rtq2208-regulator.c              |   2 +-
- drivers/rpmsg/qcom_glink_native.c                  |  10 +-
- drivers/scsi/sd_zbc.c                              |   3 +-
- drivers/soc/qcom/llcc-qcom.c                       |   3 +
- drivers/staging/media/av7110/av7110.h              |   4 +-
- drivers/staging/media/av7110/av7110_ca.c           |  25 ++--
- .../vc04_services/interface/vchiq_arm/vchiq_arm.c  |   6 +-
- drivers/thermal/qcom/lmh.c                         |   7 +
- drivers/thermal/thermal_of.c                       |  21 ++-
- drivers/thunderbolt/retimer.c                      |   2 +
- drivers/thunderbolt/usb4.c                         |   2 +-
- drivers/ufs/core/ufshcd.c                          |  10 +-
- drivers/usb/dwc3/core.c                            |  25 ++--
- drivers/usb/musb/sunxi.c                           |   2 -
- drivers/usb/serial/io_edgeport.c                   |   8 +-
- drivers/usb/serial/option.c                        |   6 +
- drivers/usb/serial/qcserial.c                      |   2 +
- .../usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c    |   8 +-
- drivers/usb/typec/ucsi/ucsi_ccg.c                  |   2 +
- fs/btrfs/bio.c                                     |  30 +++--
- fs/btrfs/delayed-ref.c                             |   2 +-
- fs/btrfs/inode.c                                   |   2 +-
- fs/btrfs/super.c                                   |  25 +---
- fs/nfs/inode.c                                     |  70 ++++++----
- fs/nfs/nfs4proc.c                                  |   4 +
- fs/nfs/super.c                                     |  10 +-
- fs/ocfs2/xattr.c                                   |   3 +-
- fs/proc/vmcore.c                                   |   9 +-
- fs/smb/server/connection.c                         |   1 +
- fs/smb/server/connection.h                         |   1 +
- fs/smb/server/mgmt/user_session.c                  |  15 ++-
- fs/smb/server/server.c                             |  20 +--
- fs/smb/server/smb_common.c                         |  10 +-
- fs/smb/server/smb_common.h                         |   2 +-
- fs/tracefs/inode.c                                 |  12 +-
- include/linux/arm-smccc.h                          |  32 +----
- include/linux/bio.h                                |   4 +-
- include/linux/soc/qcom/llcc-qcom.h                 |   2 +
- include/linux/user_namespace.h                     |   3 +-
- include/net/netfilter/nf_tables.h                  |   4 +
- include/trace/events/rxrpc.h                       |   1 +
- kernel/signal.c                                    |   3 +-
- kernel/ucount.c                                    |   9 +-
- lib/objpool.c                                      |  18 ++-
- mm/damon/core.c                                    |  42 ++++--
- mm/filemap.c                                       |   2 +-
- mm/huge_memory.c                                   |  35 +++--
- mm/internal.h                                      |  10 +-
- mm/memcontrol-v1.c                                 |  25 ++++
- mm/memcontrol.c                                    |   8 +-
- mm/migrate.c                                       |   4 +-
- mm/mlock.c                                         |   9 +-
- mm/page_alloc.c                                    |   1 -
- mm/slab_common.c                                   |  31 +++--
- mm/swap.c                                          |   4 +-
- mm/vmscan.c                                        |   4 +-
- net/mptcp/mptcp_pm_gen.c                           |   1 -
- net/mptcp/pm_userspace.c                           |   3 +-
- net/netfilter/nf_tables_api.c                      |  41 +++++-
- net/rxrpc/conn_client.c                            |   4 +
- net/sctp/sm_statefuns.c                            |   2 +-
- net/smc/af_smc.c                                   |   4 +-
- net/sunrpc/xprtsock.c                              |   1 +
- net/vmw_vsock/hyperv_transport.c                   |   1 +
- net/vmw_vsock/virtio_transport_common.c            |   1 +
- security/keys/keyring.c                            |   7 +-
- security/keys/trusted-keys/trusted_dcp.c           |   9 +-
- sound/firewire/tascam/amdtp-tascam.c               |   2 +-
- sound/pci/hda/patch_conexant.c                     |   2 -
- sound/soc/amd/yc/acp6x-mach.c                      |   7 +
- sound/soc/sof/sof-client-probes-ipc4.c             |   1 +
- sound/soc/stm/stm32_spdifrx.c                      |   2 +-
- sound/usb/mixer.c                                  |   1 +
- sound/usb/quirks.c                                 |   2 +
- tools/lib/thermal/sampling.c                       |   2 +
- tools/testing/selftests/mm/hugetlb_dio.c           |  19 ++-
- 218 files changed, 1518 insertions(+), 865 deletions(-)
-
+From: James Clark <james.clark@arm.com>
+
+Created with the following:
+
+  cp include/linux/kasan-tags.h tools/include/linux/
+  cp arch/arm64/include/asm/sysreg.h tools/arch/arm64/include/asm/
+
+Update the tools copy of sysreg.h so that the next commit to add a new
+register doesn't have unrelated changes in it. Because the new version
+of sysreg.h includes kasan-tags.h, that file also now needs to be copied
+into tools.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: James Clark <james.clark@arm.com>
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+ tools/arch/arm64/include/asm/sysreg.h | 398 +++++++++++++++++++++++++-
+ tools/include/linux/kasan-tags.h      |  15 +
+ 2 files changed, 405 insertions(+), 8 deletions(-)
+ create mode 100644 tools/include/linux/kasan-tags.h
+
+diff --git a/tools/arch/arm64/include/asm/sysreg.h b/tools/arch/arm64/include/asm/sysreg.h
+index cd8420e8c3ad..345e81e0d2b3 100644
+--- a/tools/arch/arm64/include/asm/sysreg.h
++++ b/tools/arch/arm64/include/asm/sysreg.h
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/bits.h>
+ #include <linux/stringify.h>
++#include <linux/kasan-tags.h>
+ 
+ #include <asm/gpr-num.h>
+ 
+@@ -108,6 +109,9 @@
+ #define set_pstate_ssbs(x)		asm volatile(SET_PSTATE_SSBS(x))
+ #define set_pstate_dit(x)		asm volatile(SET_PSTATE_DIT(x))
+ 
++/* Register-based PAN access, for save/restore purposes */
++#define SYS_PSTATE_PAN			sys_reg(3, 0, 4, 2, 3)
++
+ #define __SYS_BARRIER_INSN(CRm, op2, Rt) \
+ 	__emit_inst(0xd5000000 | sys_insn(0, 3, 3, (CRm), (op2)) | ((Rt) & 0x1f))
+ 
+@@ -123,6 +127,37 @@
+ #define SYS_DC_CIGSW			sys_insn(1, 0, 7, 14, 4)
+ #define SYS_DC_CIGDSW			sys_insn(1, 0, 7, 14, 6)
+ 
++#define SYS_IC_IALLUIS			sys_insn(1, 0, 7, 1, 0)
++#define SYS_IC_IALLU			sys_insn(1, 0, 7, 5, 0)
++#define SYS_IC_IVAU			sys_insn(1, 3, 7, 5, 1)
++
++#define SYS_DC_IVAC			sys_insn(1, 0, 7, 6, 1)
++#define SYS_DC_IGVAC			sys_insn(1, 0, 7, 6, 3)
++#define SYS_DC_IGDVAC			sys_insn(1, 0, 7, 6, 5)
++
++#define SYS_DC_CVAC			sys_insn(1, 3, 7, 10, 1)
++#define SYS_DC_CGVAC			sys_insn(1, 3, 7, 10, 3)
++#define SYS_DC_CGDVAC			sys_insn(1, 3, 7, 10, 5)
++
++#define SYS_DC_CVAU			sys_insn(1, 3, 7, 11, 1)
++
++#define SYS_DC_CVAP			sys_insn(1, 3, 7, 12, 1)
++#define SYS_DC_CGVAP			sys_insn(1, 3, 7, 12, 3)
++#define SYS_DC_CGDVAP			sys_insn(1, 3, 7, 12, 5)
++
++#define SYS_DC_CVADP			sys_insn(1, 3, 7, 13, 1)
++#define SYS_DC_CGVADP			sys_insn(1, 3, 7, 13, 3)
++#define SYS_DC_CGDVADP			sys_insn(1, 3, 7, 13, 5)
++
++#define SYS_DC_CIVAC			sys_insn(1, 3, 7, 14, 1)
++#define SYS_DC_CIGVAC			sys_insn(1, 3, 7, 14, 3)
++#define SYS_DC_CIGDVAC			sys_insn(1, 3, 7, 14, 5)
++
++/* Data cache zero operations */
++#define SYS_DC_ZVA			sys_insn(1, 3, 7, 4, 1)
++#define SYS_DC_GVA			sys_insn(1, 3, 7, 4, 3)
++#define SYS_DC_GZVA			sys_insn(1, 3, 7, 4, 4)
++
+ /*
+  * Automatically generated definitions for system registers, the
+  * manual encodings below are in the process of being converted to
+@@ -162,6 +197,84 @@
+ #define SYS_DBGDTRTX_EL0		sys_reg(2, 3, 0, 5, 0)
+ #define SYS_DBGVCR32_EL2		sys_reg(2, 4, 0, 7, 0)
+ 
++#define SYS_BRBINF_EL1(n)		sys_reg(2, 1, 8, (n & 15), (((n & 16) >> 2) | 0))
++#define SYS_BRBINFINJ_EL1		sys_reg(2, 1, 9, 1, 0)
++#define SYS_BRBSRC_EL1(n)		sys_reg(2, 1, 8, (n & 15), (((n & 16) >> 2) | 1))
++#define SYS_BRBSRCINJ_EL1		sys_reg(2, 1, 9, 1, 1)
++#define SYS_BRBTGT_EL1(n)		sys_reg(2, 1, 8, (n & 15), (((n & 16) >> 2) | 2))
++#define SYS_BRBTGTINJ_EL1		sys_reg(2, 1, 9, 1, 2)
++#define SYS_BRBTS_EL1			sys_reg(2, 1, 9, 0, 2)
++
++#define SYS_BRBCR_EL1			sys_reg(2, 1, 9, 0, 0)
++#define SYS_BRBFCR_EL1			sys_reg(2, 1, 9, 0, 1)
++#define SYS_BRBIDR0_EL1			sys_reg(2, 1, 9, 2, 0)
++
++#define SYS_TRCITECR_EL1		sys_reg(3, 0, 1, 2, 3)
++#define SYS_TRCACATR(m)			sys_reg(2, 1, 2, ((m & 7) << 1), (2 | (m >> 3)))
++#define SYS_TRCACVR(m)			sys_reg(2, 1, 2, ((m & 7) << 1), (0 | (m >> 3)))
++#define SYS_TRCAUTHSTATUS		sys_reg(2, 1, 7, 14, 6)
++#define SYS_TRCAUXCTLR			sys_reg(2, 1, 0, 6, 0)
++#define SYS_TRCBBCTLR			sys_reg(2, 1, 0, 15, 0)
++#define SYS_TRCCCCTLR			sys_reg(2, 1, 0, 14, 0)
++#define SYS_TRCCIDCCTLR0		sys_reg(2, 1, 3, 0, 2)
++#define SYS_TRCCIDCCTLR1		sys_reg(2, 1, 3, 1, 2)
++#define SYS_TRCCIDCVR(m)		sys_reg(2, 1, 3, ((m & 7) << 1), 0)
++#define SYS_TRCCLAIMCLR			sys_reg(2, 1, 7, 9, 6)
++#define SYS_TRCCLAIMSET			sys_reg(2, 1, 7, 8, 6)
++#define SYS_TRCCNTCTLR(m)		sys_reg(2, 1, 0, (4 | (m & 3)), 5)
++#define SYS_TRCCNTRLDVR(m)		sys_reg(2, 1, 0, (0 | (m & 3)), 5)
++#define SYS_TRCCNTVR(m)			sys_reg(2, 1, 0, (8 | (m & 3)), 5)
++#define SYS_TRCCONFIGR			sys_reg(2, 1, 0, 4, 0)
++#define SYS_TRCDEVARCH			sys_reg(2, 1, 7, 15, 6)
++#define SYS_TRCDEVID			sys_reg(2, 1, 7, 2, 7)
++#define SYS_TRCEVENTCTL0R		sys_reg(2, 1, 0, 8, 0)
++#define SYS_TRCEVENTCTL1R		sys_reg(2, 1, 0, 9, 0)
++#define SYS_TRCEXTINSELR(m)		sys_reg(2, 1, 0, (8 | (m & 3)), 4)
++#define SYS_TRCIDR0			sys_reg(2, 1, 0, 8, 7)
++#define SYS_TRCIDR10			sys_reg(2, 1, 0, 2, 6)
++#define SYS_TRCIDR11			sys_reg(2, 1, 0, 3, 6)
++#define SYS_TRCIDR12			sys_reg(2, 1, 0, 4, 6)
++#define SYS_TRCIDR13			sys_reg(2, 1, 0, 5, 6)
++#define SYS_TRCIDR1			sys_reg(2, 1, 0, 9, 7)
++#define SYS_TRCIDR2			sys_reg(2, 1, 0, 10, 7)
++#define SYS_TRCIDR3			sys_reg(2, 1, 0, 11, 7)
++#define SYS_TRCIDR4			sys_reg(2, 1, 0, 12, 7)
++#define SYS_TRCIDR5			sys_reg(2, 1, 0, 13, 7)
++#define SYS_TRCIDR6			sys_reg(2, 1, 0, 14, 7)
++#define SYS_TRCIDR7			sys_reg(2, 1, 0, 15, 7)
++#define SYS_TRCIDR8			sys_reg(2, 1, 0, 0, 6)
++#define SYS_TRCIDR9			sys_reg(2, 1, 0, 1, 6)
++#define SYS_TRCIMSPEC(m)		sys_reg(2, 1, 0, (m & 7), 7)
++#define SYS_TRCITEEDCR			sys_reg(2, 1, 0, 2, 1)
++#define SYS_TRCOSLSR			sys_reg(2, 1, 1, 1, 4)
++#define SYS_TRCPRGCTLR			sys_reg(2, 1, 0, 1, 0)
++#define SYS_TRCQCTLR			sys_reg(2, 1, 0, 1, 1)
++#define SYS_TRCRSCTLR(m)		sys_reg(2, 1, 1, (m & 15), (0 | (m >> 4)))
++#define SYS_TRCRSR			sys_reg(2, 1, 0, 10, 0)
++#define SYS_TRCSEQEVR(m)		sys_reg(2, 1, 0, (m & 3), 4)
++#define SYS_TRCSEQRSTEVR		sys_reg(2, 1, 0, 6, 4)
++#define SYS_TRCSEQSTR			sys_reg(2, 1, 0, 7, 4)
++#define SYS_TRCSSCCR(m)			sys_reg(2, 1, 1, (m & 7), 2)
++#define SYS_TRCSSCSR(m)			sys_reg(2, 1, 1, (8 | (m & 7)), 2)
++#define SYS_TRCSSPCICR(m)		sys_reg(2, 1, 1, (m & 7), 3)
++#define SYS_TRCSTALLCTLR		sys_reg(2, 1, 0, 11, 0)
++#define SYS_TRCSTATR			sys_reg(2, 1, 0, 3, 0)
++#define SYS_TRCSYNCPR			sys_reg(2, 1, 0, 13, 0)
++#define SYS_TRCTRACEIDR			sys_reg(2, 1, 0, 0, 1)
++#define SYS_TRCTSCTLR			sys_reg(2, 1, 0, 12, 0)
++#define SYS_TRCVICTLR			sys_reg(2, 1, 0, 0, 2)
++#define SYS_TRCVIIECTLR			sys_reg(2, 1, 0, 1, 2)
++#define SYS_TRCVIPCSSCTLR		sys_reg(2, 1, 0, 3, 2)
++#define SYS_TRCVISSCTLR			sys_reg(2, 1, 0, 2, 2)
++#define SYS_TRCVMIDCCTLR0		sys_reg(2, 1, 3, 2, 2)
++#define SYS_TRCVMIDCCTLR1		sys_reg(2, 1, 3, 3, 2)
++#define SYS_TRCVMIDCVR(m)		sys_reg(2, 1, 3, ((m & 7) << 1), 1)
++
++/* ETM */
++#define SYS_TRCOSLAR			sys_reg(2, 1, 1, 0, 4)
++
++#define SYS_BRBCR_EL2			sys_reg(2, 4, 9, 0, 0)
++
+ #define SYS_MIDR_EL1			sys_reg(3, 0, 0, 0, 0)
+ #define SYS_MPIDR_EL1			sys_reg(3, 0, 0, 0, 5)
+ #define SYS_REVIDR_EL1			sys_reg(3, 0, 0, 0, 6)
+@@ -202,15 +315,38 @@
+ #define SYS_ERXCTLR_EL1			sys_reg(3, 0, 5, 4, 1)
+ #define SYS_ERXSTATUS_EL1		sys_reg(3, 0, 5, 4, 2)
+ #define SYS_ERXADDR_EL1			sys_reg(3, 0, 5, 4, 3)
++#define SYS_ERXPFGF_EL1			sys_reg(3, 0, 5, 4, 4)
++#define SYS_ERXPFGCTL_EL1		sys_reg(3, 0, 5, 4, 5)
++#define SYS_ERXPFGCDN_EL1		sys_reg(3, 0, 5, 4, 6)
+ #define SYS_ERXMISC0_EL1		sys_reg(3, 0, 5, 5, 0)
+ #define SYS_ERXMISC1_EL1		sys_reg(3, 0, 5, 5, 1)
++#define SYS_ERXMISC2_EL1		sys_reg(3, 0, 5, 5, 2)
++#define SYS_ERXMISC3_EL1		sys_reg(3, 0, 5, 5, 3)
+ #define SYS_TFSR_EL1			sys_reg(3, 0, 5, 6, 0)
+ #define SYS_TFSRE0_EL1			sys_reg(3, 0, 5, 6, 1)
+ 
+ #define SYS_PAR_EL1			sys_reg(3, 0, 7, 4, 0)
+ 
+ #define SYS_PAR_EL1_F			BIT(0)
++/* When PAR_EL1.F == 1 */
+ #define SYS_PAR_EL1_FST			GENMASK(6, 1)
++#define SYS_PAR_EL1_PTW			BIT(8)
++#define SYS_PAR_EL1_S			BIT(9)
++#define SYS_PAR_EL1_AssuredOnly		BIT(12)
++#define SYS_PAR_EL1_TopLevel		BIT(13)
++#define SYS_PAR_EL1_Overlay		BIT(14)
++#define SYS_PAR_EL1_DirtyBit		BIT(15)
++#define SYS_PAR_EL1_F1_IMPDEF		GENMASK_ULL(63, 48)
++#define SYS_PAR_EL1_F1_RES0		(BIT(7) | BIT(10) | GENMASK_ULL(47, 16))
++#define SYS_PAR_EL1_RES1		BIT(11)
++/* When PAR_EL1.F == 0 */
++#define SYS_PAR_EL1_SH			GENMASK_ULL(8, 7)
++#define SYS_PAR_EL1_NS			BIT(9)
++#define SYS_PAR_EL1_F0_IMPDEF		BIT(10)
++#define SYS_PAR_EL1_NSE			BIT(11)
++#define SYS_PAR_EL1_PA			GENMASK_ULL(51, 12)
++#define SYS_PAR_EL1_ATTR		GENMASK_ULL(63, 56)
++#define SYS_PAR_EL1_F0_RES0		(GENMASK_ULL(6, 1) | GENMASK_ULL(55, 52))
+ 
+ /*** Statistical Profiling Extension ***/
+ #define PMSEVFR_EL1_RES0_IMP	\
+@@ -274,6 +410,8 @@
+ #define SYS_ICC_IGRPEN0_EL1		sys_reg(3, 0, 12, 12, 6)
+ #define SYS_ICC_IGRPEN1_EL1		sys_reg(3, 0, 12, 12, 7)
+ 
++#define SYS_ACCDATA_EL1			sys_reg(3, 0, 13, 0, 5)
++
+ #define SYS_CNTKCTL_EL1			sys_reg(3, 0, 14, 1, 0)
+ 
+ #define SYS_AIDR_EL1			sys_reg(3, 1, 0, 0, 7)
+@@ -286,7 +424,6 @@
+ #define SYS_PMCNTENCLR_EL0		sys_reg(3, 3, 9, 12, 2)
+ #define SYS_PMOVSCLR_EL0		sys_reg(3, 3, 9, 12, 3)
+ #define SYS_PMSWINC_EL0			sys_reg(3, 3, 9, 12, 4)
+-#define SYS_PMSELR_EL0			sys_reg(3, 3, 9, 12, 5)
+ #define SYS_PMCEID0_EL0			sys_reg(3, 3, 9, 12, 6)
+ #define SYS_PMCEID1_EL0			sys_reg(3, 3, 9, 12, 7)
+ #define SYS_PMCCNTR_EL0			sys_reg(3, 3, 9, 13, 0)
+@@ -369,6 +506,7 @@
+ 
+ #define SYS_SCTLR_EL2			sys_reg(3, 4, 1, 0, 0)
+ #define SYS_ACTLR_EL2			sys_reg(3, 4, 1, 0, 1)
++#define SYS_SCTLR2_EL2			sys_reg(3, 4, 1, 0, 3)
+ #define SYS_HCR_EL2			sys_reg(3, 4, 1, 1, 0)
+ #define SYS_MDCR_EL2			sys_reg(3, 4, 1, 1, 1)
+ #define SYS_CPTR_EL2			sys_reg(3, 4, 1, 1, 2)
+@@ -382,12 +520,15 @@
+ #define SYS_VTCR_EL2			sys_reg(3, 4, 2, 1, 2)
+ 
+ #define SYS_TRFCR_EL2			sys_reg(3, 4, 1, 2, 1)
+-#define SYS_HDFGRTR_EL2			sys_reg(3, 4, 3, 1, 4)
+-#define SYS_HDFGWTR_EL2			sys_reg(3, 4, 3, 1, 5)
++#define SYS_VNCR_EL2			sys_reg(3, 4, 2, 2, 0)
+ #define SYS_HAFGRTR_EL2			sys_reg(3, 4, 3, 1, 6)
+ #define SYS_SPSR_EL2			sys_reg(3, 4, 4, 0, 0)
+ #define SYS_ELR_EL2			sys_reg(3, 4, 4, 0, 1)
+ #define SYS_SP_EL1			sys_reg(3, 4, 4, 1, 0)
++#define SYS_SPSR_irq			sys_reg(3, 4, 4, 3, 0)
++#define SYS_SPSR_abt			sys_reg(3, 4, 4, 3, 1)
++#define SYS_SPSR_und			sys_reg(3, 4, 4, 3, 2)
++#define SYS_SPSR_fiq			sys_reg(3, 4, 4, 3, 3)
+ #define SYS_IFSR32_EL2			sys_reg(3, 4, 5, 0, 1)
+ #define SYS_AFSR0_EL2			sys_reg(3, 4, 5, 1, 0)
+ #define SYS_AFSR1_EL2			sys_reg(3, 4, 5, 1, 1)
+@@ -449,24 +590,49 @@
+ 
+ #define SYS_CONTEXTIDR_EL2		sys_reg(3, 4, 13, 0, 1)
+ #define SYS_TPIDR_EL2			sys_reg(3, 4, 13, 0, 2)
++#define SYS_SCXTNUM_EL2			sys_reg(3, 4, 13, 0, 7)
++
++#define __AMEV_op2(m)			(m & 0x7)
++#define __AMEV_CRm(n, m)		(n | ((m & 0x8) >> 3))
++#define __SYS__AMEVCNTVOFF0n_EL2(m)	sys_reg(3, 4, 13, __AMEV_CRm(0x8, m), __AMEV_op2(m))
++#define SYS_AMEVCNTVOFF0n_EL2(m)	__SYS__AMEVCNTVOFF0n_EL2(m)
++#define __SYS__AMEVCNTVOFF1n_EL2(m)	sys_reg(3, 4, 13, __AMEV_CRm(0xA, m), __AMEV_op2(m))
++#define SYS_AMEVCNTVOFF1n_EL2(m)	__SYS__AMEVCNTVOFF1n_EL2(m)
+ 
+ #define SYS_CNTVOFF_EL2			sys_reg(3, 4, 14, 0, 3)
+ #define SYS_CNTHCTL_EL2			sys_reg(3, 4, 14, 1, 0)
++#define SYS_CNTHP_TVAL_EL2		sys_reg(3, 4, 14, 2, 0)
++#define SYS_CNTHP_CTL_EL2		sys_reg(3, 4, 14, 2, 1)
++#define SYS_CNTHP_CVAL_EL2		sys_reg(3, 4, 14, 2, 2)
++#define SYS_CNTHV_TVAL_EL2		sys_reg(3, 4, 14, 3, 0)
++#define SYS_CNTHV_CTL_EL2		sys_reg(3, 4, 14, 3, 1)
++#define SYS_CNTHV_CVAL_EL2		sys_reg(3, 4, 14, 3, 2)
+ 
+ /* VHE encodings for architectural EL0/1 system registers */
++#define SYS_BRBCR_EL12			sys_reg(2, 5, 9, 0, 0)
+ #define SYS_SCTLR_EL12			sys_reg(3, 5, 1, 0, 0)
++#define SYS_CPACR_EL12			sys_reg(3, 5, 1, 0, 2)
++#define SYS_SCTLR2_EL12			sys_reg(3, 5, 1, 0, 3)
++#define SYS_ZCR_EL12			sys_reg(3, 5, 1, 2, 0)
++#define SYS_TRFCR_EL12			sys_reg(3, 5, 1, 2, 1)
++#define SYS_SMCR_EL12			sys_reg(3, 5, 1, 2, 6)
+ #define SYS_TTBR0_EL12			sys_reg(3, 5, 2, 0, 0)
+ #define SYS_TTBR1_EL12			sys_reg(3, 5, 2, 0, 1)
+ #define SYS_TCR_EL12			sys_reg(3, 5, 2, 0, 2)
++#define SYS_TCR2_EL12			sys_reg(3, 5, 2, 0, 3)
+ #define SYS_SPSR_EL12			sys_reg(3, 5, 4, 0, 0)
+ #define SYS_ELR_EL12			sys_reg(3, 5, 4, 0, 1)
+ #define SYS_AFSR0_EL12			sys_reg(3, 5, 5, 1, 0)
+ #define SYS_AFSR1_EL12			sys_reg(3, 5, 5, 1, 1)
+ #define SYS_ESR_EL12			sys_reg(3, 5, 5, 2, 0)
+ #define SYS_TFSR_EL12			sys_reg(3, 5, 5, 6, 0)
++#define SYS_FAR_EL12			sys_reg(3, 5, 6, 0, 0)
++#define SYS_PMSCR_EL12			sys_reg(3, 5, 9, 9, 0)
+ #define SYS_MAIR_EL12			sys_reg(3, 5, 10, 2, 0)
+ #define SYS_AMAIR_EL12			sys_reg(3, 5, 10, 3, 0)
+ #define SYS_VBAR_EL12			sys_reg(3, 5, 12, 0, 0)
++#define SYS_CONTEXTIDR_EL12		sys_reg(3, 5, 13, 0, 1)
++#define SYS_SCXTNUM_EL12		sys_reg(3, 5, 13, 0, 7)
+ #define SYS_CNTKCTL_EL12		sys_reg(3, 5, 14, 1, 0)
+ #define SYS_CNTP_TVAL_EL02		sys_reg(3, 5, 14, 2, 0)
+ #define SYS_CNTP_CTL_EL02		sys_reg(3, 5, 14, 2, 1)
+@@ -477,6 +643,183 @@
+ 
+ #define SYS_SP_EL2			sys_reg(3, 6,  4, 1, 0)
+ 
++/* AT instructions */
++#define AT_Op0 1
++#define AT_CRn 7
++
++#define OP_AT_S1E1R	sys_insn(AT_Op0, 0, AT_CRn, 8, 0)
++#define OP_AT_S1E1W	sys_insn(AT_Op0, 0, AT_CRn, 8, 1)
++#define OP_AT_S1E0R	sys_insn(AT_Op0, 0, AT_CRn, 8, 2)
++#define OP_AT_S1E0W	sys_insn(AT_Op0, 0, AT_CRn, 8, 3)
++#define OP_AT_S1E1RP	sys_insn(AT_Op0, 0, AT_CRn, 9, 0)
++#define OP_AT_S1E1WP	sys_insn(AT_Op0, 0, AT_CRn, 9, 1)
++#define OP_AT_S1E1A	sys_insn(AT_Op0, 0, AT_CRn, 9, 2)
++#define OP_AT_S1E2R	sys_insn(AT_Op0, 4, AT_CRn, 8, 0)
++#define OP_AT_S1E2W	sys_insn(AT_Op0, 4, AT_CRn, 8, 1)
++#define OP_AT_S12E1R	sys_insn(AT_Op0, 4, AT_CRn, 8, 4)
++#define OP_AT_S12E1W	sys_insn(AT_Op0, 4, AT_CRn, 8, 5)
++#define OP_AT_S12E0R	sys_insn(AT_Op0, 4, AT_CRn, 8, 6)
++#define OP_AT_S12E0W	sys_insn(AT_Op0, 4, AT_CRn, 8, 7)
++#define OP_AT_S1E2A	sys_insn(AT_Op0, 4, AT_CRn, 9, 2)
++
++/* TLBI instructions */
++#define TLBI_Op0	1
++
++#define TLBI_Op1_EL1	0	/* Accessible from EL1 or higher */
++#define TLBI_Op1_EL2	4	/* Accessible from EL2 or higher */
++
++#define TLBI_CRn_XS	8	/* Extra Slow (the common one) */
++#define TLBI_CRn_nXS	9	/* not Extra Slow (which nobody uses)*/
++
++#define TLBI_CRm_IPAIS	0	/* S2 Inner-Shareable */
++#define TLBI_CRm_nROS	1	/* non-Range, Outer-Sharable */
++#define TLBI_CRm_RIS	2	/* Range, Inner-Sharable */
++#define TLBI_CRm_nRIS	3	/* non-Range, Inner-Sharable */
++#define TLBI_CRm_IPAONS	4	/* S2 Outer and Non-Shareable */
++#define TLBI_CRm_ROS	5	/* Range, Outer-Sharable */
++#define TLBI_CRm_RNS	6	/* Range, Non-Sharable */
++#define TLBI_CRm_nRNS	7	/* non-Range, Non-Sharable */
++
++#define OP_TLBI_VMALLE1OS		sys_insn(1, 0, 8, 1, 0)
++#define OP_TLBI_VAE1OS			sys_insn(1, 0, 8, 1, 1)
++#define OP_TLBI_ASIDE1OS		sys_insn(1, 0, 8, 1, 2)
++#define OP_TLBI_VAAE1OS			sys_insn(1, 0, 8, 1, 3)
++#define OP_TLBI_VALE1OS			sys_insn(1, 0, 8, 1, 5)
++#define OP_TLBI_VAALE1OS		sys_insn(1, 0, 8, 1, 7)
++#define OP_TLBI_RVAE1IS			sys_insn(1, 0, 8, 2, 1)
++#define OP_TLBI_RVAAE1IS		sys_insn(1, 0, 8, 2, 3)
++#define OP_TLBI_RVALE1IS		sys_insn(1, 0, 8, 2, 5)
++#define OP_TLBI_RVAALE1IS		sys_insn(1, 0, 8, 2, 7)
++#define OP_TLBI_VMALLE1IS		sys_insn(1, 0, 8, 3, 0)
++#define OP_TLBI_VAE1IS			sys_insn(1, 0, 8, 3, 1)
++#define OP_TLBI_ASIDE1IS		sys_insn(1, 0, 8, 3, 2)
++#define OP_TLBI_VAAE1IS			sys_insn(1, 0, 8, 3, 3)
++#define OP_TLBI_VALE1IS			sys_insn(1, 0, 8, 3, 5)
++#define OP_TLBI_VAALE1IS		sys_insn(1, 0, 8, 3, 7)
++#define OP_TLBI_RVAE1OS			sys_insn(1, 0, 8, 5, 1)
++#define OP_TLBI_RVAAE1OS		sys_insn(1, 0, 8, 5, 3)
++#define OP_TLBI_RVALE1OS		sys_insn(1, 0, 8, 5, 5)
++#define OP_TLBI_RVAALE1OS		sys_insn(1, 0, 8, 5, 7)
++#define OP_TLBI_RVAE1			sys_insn(1, 0, 8, 6, 1)
++#define OP_TLBI_RVAAE1			sys_insn(1, 0, 8, 6, 3)
++#define OP_TLBI_RVALE1			sys_insn(1, 0, 8, 6, 5)
++#define OP_TLBI_RVAALE1			sys_insn(1, 0, 8, 6, 7)
++#define OP_TLBI_VMALLE1			sys_insn(1, 0, 8, 7, 0)
++#define OP_TLBI_VAE1			sys_insn(1, 0, 8, 7, 1)
++#define OP_TLBI_ASIDE1			sys_insn(1, 0, 8, 7, 2)
++#define OP_TLBI_VAAE1			sys_insn(1, 0, 8, 7, 3)
++#define OP_TLBI_VALE1			sys_insn(1, 0, 8, 7, 5)
++#define OP_TLBI_VAALE1			sys_insn(1, 0, 8, 7, 7)
++#define OP_TLBI_VMALLE1OSNXS		sys_insn(1, 0, 9, 1, 0)
++#define OP_TLBI_VAE1OSNXS		sys_insn(1, 0, 9, 1, 1)
++#define OP_TLBI_ASIDE1OSNXS		sys_insn(1, 0, 9, 1, 2)
++#define OP_TLBI_VAAE1OSNXS		sys_insn(1, 0, 9, 1, 3)
++#define OP_TLBI_VALE1OSNXS		sys_insn(1, 0, 9, 1, 5)
++#define OP_TLBI_VAALE1OSNXS		sys_insn(1, 0, 9, 1, 7)
++#define OP_TLBI_RVAE1ISNXS		sys_insn(1, 0, 9, 2, 1)
++#define OP_TLBI_RVAAE1ISNXS		sys_insn(1, 0, 9, 2, 3)
++#define OP_TLBI_RVALE1ISNXS		sys_insn(1, 0, 9, 2, 5)
++#define OP_TLBI_RVAALE1ISNXS		sys_insn(1, 0, 9, 2, 7)
++#define OP_TLBI_VMALLE1ISNXS		sys_insn(1, 0, 9, 3, 0)
++#define OP_TLBI_VAE1ISNXS		sys_insn(1, 0, 9, 3, 1)
++#define OP_TLBI_ASIDE1ISNXS		sys_insn(1, 0, 9, 3, 2)
++#define OP_TLBI_VAAE1ISNXS		sys_insn(1, 0, 9, 3, 3)
++#define OP_TLBI_VALE1ISNXS		sys_insn(1, 0, 9, 3, 5)
++#define OP_TLBI_VAALE1ISNXS		sys_insn(1, 0, 9, 3, 7)
++#define OP_TLBI_RVAE1OSNXS		sys_insn(1, 0, 9, 5, 1)
++#define OP_TLBI_RVAAE1OSNXS		sys_insn(1, 0, 9, 5, 3)
++#define OP_TLBI_RVALE1OSNXS		sys_insn(1, 0, 9, 5, 5)
++#define OP_TLBI_RVAALE1OSNXS		sys_insn(1, 0, 9, 5, 7)
++#define OP_TLBI_RVAE1NXS		sys_insn(1, 0, 9, 6, 1)
++#define OP_TLBI_RVAAE1NXS		sys_insn(1, 0, 9, 6, 3)
++#define OP_TLBI_RVALE1NXS		sys_insn(1, 0, 9, 6, 5)
++#define OP_TLBI_RVAALE1NXS		sys_insn(1, 0, 9, 6, 7)
++#define OP_TLBI_VMALLE1NXS		sys_insn(1, 0, 9, 7, 0)
++#define OP_TLBI_VAE1NXS			sys_insn(1, 0, 9, 7, 1)
++#define OP_TLBI_ASIDE1NXS		sys_insn(1, 0, 9, 7, 2)
++#define OP_TLBI_VAAE1NXS		sys_insn(1, 0, 9, 7, 3)
++#define OP_TLBI_VALE1NXS		sys_insn(1, 0, 9, 7, 5)
++#define OP_TLBI_VAALE1NXS		sys_insn(1, 0, 9, 7, 7)
++#define OP_TLBI_IPAS2E1IS		sys_insn(1, 4, 8, 0, 1)
++#define OP_TLBI_RIPAS2E1IS		sys_insn(1, 4, 8, 0, 2)
++#define OP_TLBI_IPAS2LE1IS		sys_insn(1, 4, 8, 0, 5)
++#define OP_TLBI_RIPAS2LE1IS		sys_insn(1, 4, 8, 0, 6)
++#define OP_TLBI_ALLE2OS			sys_insn(1, 4, 8, 1, 0)
++#define OP_TLBI_VAE2OS			sys_insn(1, 4, 8, 1, 1)
++#define OP_TLBI_ALLE1OS			sys_insn(1, 4, 8, 1, 4)
++#define OP_TLBI_VALE2OS			sys_insn(1, 4, 8, 1, 5)
++#define OP_TLBI_VMALLS12E1OS		sys_insn(1, 4, 8, 1, 6)
++#define OP_TLBI_RVAE2IS			sys_insn(1, 4, 8, 2, 1)
++#define OP_TLBI_RVALE2IS		sys_insn(1, 4, 8, 2, 5)
++#define OP_TLBI_ALLE2IS			sys_insn(1, 4, 8, 3, 0)
++#define OP_TLBI_VAE2IS			sys_insn(1, 4, 8, 3, 1)
++#define OP_TLBI_ALLE1IS			sys_insn(1, 4, 8, 3, 4)
++#define OP_TLBI_VALE2IS			sys_insn(1, 4, 8, 3, 5)
++#define OP_TLBI_VMALLS12E1IS		sys_insn(1, 4, 8, 3, 6)
++#define OP_TLBI_IPAS2E1OS		sys_insn(1, 4, 8, 4, 0)
++#define OP_TLBI_IPAS2E1			sys_insn(1, 4, 8, 4, 1)
++#define OP_TLBI_RIPAS2E1		sys_insn(1, 4, 8, 4, 2)
++#define OP_TLBI_RIPAS2E1OS		sys_insn(1, 4, 8, 4, 3)
++#define OP_TLBI_IPAS2LE1OS		sys_insn(1, 4, 8, 4, 4)
++#define OP_TLBI_IPAS2LE1		sys_insn(1, 4, 8, 4, 5)
++#define OP_TLBI_RIPAS2LE1		sys_insn(1, 4, 8, 4, 6)
++#define OP_TLBI_RIPAS2LE1OS		sys_insn(1, 4, 8, 4, 7)
++#define OP_TLBI_RVAE2OS			sys_insn(1, 4, 8, 5, 1)
++#define OP_TLBI_RVALE2OS		sys_insn(1, 4, 8, 5, 5)
++#define OP_TLBI_RVAE2			sys_insn(1, 4, 8, 6, 1)
++#define OP_TLBI_RVALE2			sys_insn(1, 4, 8, 6, 5)
++#define OP_TLBI_ALLE2			sys_insn(1, 4, 8, 7, 0)
++#define OP_TLBI_VAE2			sys_insn(1, 4, 8, 7, 1)
++#define OP_TLBI_ALLE1			sys_insn(1, 4, 8, 7, 4)
++#define OP_TLBI_VALE2			sys_insn(1, 4, 8, 7, 5)
++#define OP_TLBI_VMALLS12E1		sys_insn(1, 4, 8, 7, 6)
++#define OP_TLBI_IPAS2E1ISNXS		sys_insn(1, 4, 9, 0, 1)
++#define OP_TLBI_RIPAS2E1ISNXS		sys_insn(1, 4, 9, 0, 2)
++#define OP_TLBI_IPAS2LE1ISNXS		sys_insn(1, 4, 9, 0, 5)
++#define OP_TLBI_RIPAS2LE1ISNXS		sys_insn(1, 4, 9, 0, 6)
++#define OP_TLBI_ALLE2OSNXS		sys_insn(1, 4, 9, 1, 0)
++#define OP_TLBI_VAE2OSNXS		sys_insn(1, 4, 9, 1, 1)
++#define OP_TLBI_ALLE1OSNXS		sys_insn(1, 4, 9, 1, 4)
++#define OP_TLBI_VALE2OSNXS		sys_insn(1, 4, 9, 1, 5)
++#define OP_TLBI_VMALLS12E1OSNXS		sys_insn(1, 4, 9, 1, 6)
++#define OP_TLBI_RVAE2ISNXS		sys_insn(1, 4, 9, 2, 1)
++#define OP_TLBI_RVALE2ISNXS		sys_insn(1, 4, 9, 2, 5)
++#define OP_TLBI_ALLE2ISNXS		sys_insn(1, 4, 9, 3, 0)
++#define OP_TLBI_VAE2ISNXS		sys_insn(1, 4, 9, 3, 1)
++#define OP_TLBI_ALLE1ISNXS		sys_insn(1, 4, 9, 3, 4)
++#define OP_TLBI_VALE2ISNXS		sys_insn(1, 4, 9, 3, 5)
++#define OP_TLBI_VMALLS12E1ISNXS		sys_insn(1, 4, 9, 3, 6)
++#define OP_TLBI_IPAS2E1OSNXS		sys_insn(1, 4, 9, 4, 0)
++#define OP_TLBI_IPAS2E1NXS		sys_insn(1, 4, 9, 4, 1)
++#define OP_TLBI_RIPAS2E1NXS		sys_insn(1, 4, 9, 4, 2)
++#define OP_TLBI_RIPAS2E1OSNXS		sys_insn(1, 4, 9, 4, 3)
++#define OP_TLBI_IPAS2LE1OSNXS		sys_insn(1, 4, 9, 4, 4)
++#define OP_TLBI_IPAS2LE1NXS		sys_insn(1, 4, 9, 4, 5)
++#define OP_TLBI_RIPAS2LE1NXS		sys_insn(1, 4, 9, 4, 6)
++#define OP_TLBI_RIPAS2LE1OSNXS		sys_insn(1, 4, 9, 4, 7)
++#define OP_TLBI_RVAE2OSNXS		sys_insn(1, 4, 9, 5, 1)
++#define OP_TLBI_RVALE2OSNXS		sys_insn(1, 4, 9, 5, 5)
++#define OP_TLBI_RVAE2NXS		sys_insn(1, 4, 9, 6, 1)
++#define OP_TLBI_RVALE2NXS		sys_insn(1, 4, 9, 6, 5)
++#define OP_TLBI_ALLE2NXS		sys_insn(1, 4, 9, 7, 0)
++#define OP_TLBI_VAE2NXS			sys_insn(1, 4, 9, 7, 1)
++#define OP_TLBI_ALLE1NXS		sys_insn(1, 4, 9, 7, 4)
++#define OP_TLBI_VALE2NXS		sys_insn(1, 4, 9, 7, 5)
++#define OP_TLBI_VMALLS12E1NXS		sys_insn(1, 4, 9, 7, 6)
++
++/* Misc instructions */
++#define OP_GCSPUSHX			sys_insn(1, 0, 7, 7, 4)
++#define OP_GCSPOPCX			sys_insn(1, 0, 7, 7, 5)
++#define OP_GCSPOPX			sys_insn(1, 0, 7, 7, 6)
++#define OP_GCSPUSHM			sys_insn(1, 3, 7, 7, 0)
++
++#define OP_BRB_IALL			sys_insn(1, 1, 7, 2, 4)
++#define OP_BRB_INJ			sys_insn(1, 1, 7, 2, 5)
++#define OP_CFP_RCTX			sys_insn(1, 3, 7, 3, 4)
++#define OP_DVP_RCTX			sys_insn(1, 3, 7, 3, 5)
++#define OP_COSP_RCTX			sys_insn(1, 3, 7, 3, 6)
++#define OP_CPP_RCTX			sys_insn(1, 3, 7, 3, 7)
++
+ /* Common SCTLR_ELx flags. */
+ #define SCTLR_ELx_ENTP2	(BIT(60))
+ #define SCTLR_ELx_DSSBS	(BIT(44))
+@@ -555,16 +898,14 @@
+ /* Position the attr at the correct index */
+ #define MAIR_ATTRIDX(attr, idx)		((attr) << ((idx) * 8))
+ 
+-/* id_aa64pfr0 */
+-#define ID_AA64PFR0_EL1_ELx_64BIT_ONLY		0x1
+-#define ID_AA64PFR0_EL1_ELx_32BIT_64BIT		0x2
+-
+ /* id_aa64mmfr0 */
+ #define ID_AA64MMFR0_EL1_TGRAN4_SUPPORTED_MIN	0x0
++#define ID_AA64MMFR0_EL1_TGRAN4_LPA2		ID_AA64MMFR0_EL1_TGRAN4_52_BIT
+ #define ID_AA64MMFR0_EL1_TGRAN4_SUPPORTED_MAX	0x7
+ #define ID_AA64MMFR0_EL1_TGRAN64_SUPPORTED_MIN	0x0
+ #define ID_AA64MMFR0_EL1_TGRAN64_SUPPORTED_MAX	0x7
+ #define ID_AA64MMFR0_EL1_TGRAN16_SUPPORTED_MIN	0x1
++#define ID_AA64MMFR0_EL1_TGRAN16_LPA2		ID_AA64MMFR0_EL1_TGRAN16_52_BIT
+ #define ID_AA64MMFR0_EL1_TGRAN16_SUPPORTED_MAX	0xf
+ 
+ #define ARM64_MIN_PARANGE_BITS		32
+@@ -572,6 +913,7 @@
+ #define ID_AA64MMFR0_EL1_TGRAN_2_SUPPORTED_DEFAULT	0x0
+ #define ID_AA64MMFR0_EL1_TGRAN_2_SUPPORTED_NONE		0x1
+ #define ID_AA64MMFR0_EL1_TGRAN_2_SUPPORTED_MIN		0x2
++#define ID_AA64MMFR0_EL1_TGRAN_2_SUPPORTED_LPA2		0x3
+ #define ID_AA64MMFR0_EL1_TGRAN_2_SUPPORTED_MAX		0x7
+ 
+ #ifdef CONFIG_ARM64_PA_BITS_52
+@@ -582,11 +924,13 @@
+ 
+ #if defined(CONFIG_ARM64_4K_PAGES)
+ #define ID_AA64MMFR0_EL1_TGRAN_SHIFT		ID_AA64MMFR0_EL1_TGRAN4_SHIFT
++#define ID_AA64MMFR0_EL1_TGRAN_LPA2		ID_AA64MMFR0_EL1_TGRAN4_52_BIT
+ #define ID_AA64MMFR0_EL1_TGRAN_SUPPORTED_MIN	ID_AA64MMFR0_EL1_TGRAN4_SUPPORTED_MIN
+ #define ID_AA64MMFR0_EL1_TGRAN_SUPPORTED_MAX	ID_AA64MMFR0_EL1_TGRAN4_SUPPORTED_MAX
+ #define ID_AA64MMFR0_EL1_TGRAN_2_SHIFT		ID_AA64MMFR0_EL1_TGRAN4_2_SHIFT
+ #elif defined(CONFIG_ARM64_16K_PAGES)
+ #define ID_AA64MMFR0_EL1_TGRAN_SHIFT		ID_AA64MMFR0_EL1_TGRAN16_SHIFT
++#define ID_AA64MMFR0_EL1_TGRAN_LPA2		ID_AA64MMFR0_EL1_TGRAN16_52_BIT
+ #define ID_AA64MMFR0_EL1_TGRAN_SUPPORTED_MIN	ID_AA64MMFR0_EL1_TGRAN16_SUPPORTED_MIN
+ #define ID_AA64MMFR0_EL1_TGRAN_SUPPORTED_MAX	ID_AA64MMFR0_EL1_TGRAN16_SUPPORTED_MAX
+ #define ID_AA64MMFR0_EL1_TGRAN_2_SHIFT		ID_AA64MMFR0_EL1_TGRAN16_2_SHIFT
+@@ -610,6 +954,19 @@
+ #define SYS_GCR_EL1_RRND	(BIT(16))
+ #define SYS_GCR_EL1_EXCL_MASK	0xffffUL
+ 
++#ifdef CONFIG_KASAN_HW_TAGS
++/*
++ * KASAN always uses a whole byte for its tags. With CONFIG_KASAN_HW_TAGS it
++ * only uses tags in the range 0xF0-0xFF, which we map to MTE tags 0x0-0xF.
++ */
++#define __MTE_TAG_MIN		(KASAN_TAG_MIN & 0xf)
++#define __MTE_TAG_MAX		(KASAN_TAG_MAX & 0xf)
++#define __MTE_TAG_INCL		GENMASK(__MTE_TAG_MAX, __MTE_TAG_MIN)
++#define KERNEL_GCR_EL1_EXCL	(SYS_GCR_EL1_EXCL_MASK & ~__MTE_TAG_INCL)
++#else
++#define KERNEL_GCR_EL1_EXCL	SYS_GCR_EL1_EXCL_MASK
++#endif
++
+ #define KERNEL_GCR_EL1		(SYS_GCR_EL1_RRND | KERNEL_GCR_EL1_EXCL)
+ 
+ /* RGSR_EL1 Definitions */
+@@ -716,6 +1073,22 @@
+ 
+ #define PIRx_ELx_PERM(idx, perm)	((perm) << ((idx) * 4))
+ 
++/*
++ * Permission Overlay Extension (POE) permission encodings.
++ */
++#define POE_NONE	UL(0x0)
++#define POE_R		UL(0x1)
++#define POE_X		UL(0x2)
++#define POE_RX		UL(0x3)
++#define POE_W		UL(0x4)
++#define POE_RW		UL(0x5)
++#define POE_XW		UL(0x6)
++#define POE_RXW		UL(0x7)
++#define POE_MASK	UL(0xf)
++
++/* Initial value for Permission Overlay Extension for EL0 */
++#define POR_EL0_INIT	POE_RXW
++
+ #define ARM64_FEATURE_FIELD_BITS	4
+ 
+ /* Defined for compatibility only, do not add new users. */
+@@ -789,15 +1162,21 @@
+ /*
+  * For registers without architectural names, or simply unsupported by
+  * GAS.
++ *
++ * __check_r forces warnings to be generated by the compiler when
++ * evaluating r which wouldn't normally happen due to being passed to
++ * the assembler via __stringify(r).
+  */
+ #define read_sysreg_s(r) ({						\
+ 	u64 __val;							\
++	u32 __maybe_unused __check_r = (u32)(r);			\
+ 	asm volatile(__mrs_s("%0", r) : "=r" (__val));			\
+ 	__val;								\
+ })
+ 
+ #define write_sysreg_s(v, r) do {					\
+ 	u64 __val = (u64)(v);						\
++	u32 __maybe_unused __check_r = (u32)(r);			\
+ 	asm volatile(__msr_s(r, "%x0") : : "rZ" (__val));		\
+ } while (0)
+ 
+@@ -827,6 +1206,8 @@
+ 	par;								\
+ })
+ 
++#define SYS_FIELD_VALUE(reg, field, val)	reg##_##field##_##val
++
+ #define SYS_FIELD_GET(reg, field, val)		\
+ 		 FIELD_GET(reg##_##field##_MASK, val)
+ 
+@@ -834,7 +1215,8 @@
+ 		 FIELD_PREP(reg##_##field##_MASK, val)
+ 
+ #define SYS_FIELD_PREP_ENUM(reg, field, val)		\
+-		 FIELD_PREP(reg##_##field##_MASK, reg##_##field##_##val)
++		 FIELD_PREP(reg##_##field##_MASK,	\
++			    SYS_FIELD_VALUE(reg, field, val))
+ 
+ #endif
+ 
+diff --git a/tools/include/linux/kasan-tags.h b/tools/include/linux/kasan-tags.h
+new file mode 100644
+index 000000000000..4f85f562512c
+--- /dev/null
++++ b/tools/include/linux/kasan-tags.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_KASAN_TAGS_H
++#define _LINUX_KASAN_TAGS_H
++
++#define KASAN_TAG_KERNEL	0xFF /* native kernel pointers tag */
++#define KASAN_TAG_INVALID	0xFE /* inaccessible memory tag */
++#define KASAN_TAG_MAX		0xFD /* maximum value for random tags */
++
++#ifdef CONFIG_KASAN_HW_TAGS
++#define KASAN_TAG_MIN		0xF0 /* minimum value for random tags */
++#else
++#define KASAN_TAG_MIN		0x00 /* minimum value for random tags */
++#endif
++
++#endif /* LINUX_KASAN_TAGS_H */
+-- 
+2.34.1
 
 
