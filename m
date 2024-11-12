@@ -1,261 +1,196 @@
-Return-Path: <linux-kernel+bounces-405844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BBF49C5807
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:41:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8752D9C580B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:42:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BADE281D77
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:41:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 478572816A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7BD1F77AE;
-	Tue, 12 Nov 2024 12:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBF21CD21A;
+	Tue, 12 Nov 2024 12:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IZ9tKnGE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AE7przNI"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAAE1F779E
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD471F7555
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731415294; cv=none; b=ZfLrButhMhz0vH+xWb7/5kXhEBEbz5q5G8aErOnWS2Ti2D6ru1a2b1nM2WrT+s/PkfRynEqFloEkxrIcKIb6GaN4KW0Uh8q0JjL6yCnFfl3t2Fe0wFRuUnGn+s89WdqwzkcdCcQnjCvMsYjyTNwei4uPrPAzUVrBo83vhgyDTxw=
+	t=1731415339; cv=none; b=an3xnWi6WACYIInx7LaobGo4X2ZaWOZL0OBBVOL0pus5dfo+yDwH2/9AcjWbHr8ZtH38QcZRDQLITvzAbK3xsnPCdcf1jdGEu3s9HNttGwtRXb7J5zv8cxUjYJRx+NUwNvtNH/pAzmRY5aJWXDC8Juz+/MHtgwEasBydSB79KOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731415294; c=relaxed/simple;
-	bh=Bs1byzgH5hh7+R8J4kFIiZBpuVkOnAvf4P2jvHt8PCY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1XAKvB1OtV+YLTvl6sW2EOPTMpqRLNFqqSFscOUp4ZXkAV47U+Qfp7QoLIXgtnV5nFqYcMBgtmNWUA6g+ER9MHImzzfuoekP1JpcqmX2SSz5pIlnLmSnJoNWmQwbyLtZwHWE4HiVdD//6oYDrUJcQLPiSwAn5zLjnlcw6cEpKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IZ9tKnGE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731415291;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1wcYhvchpj++GWPtIMb6T8g2NQojM6fwpi715hYIVjM=;
-	b=IZ9tKnGEz6nih9Wr6OUgfLLjd6bz4d7nSLf1A/JsyU1dqwtViVokpTqwV8mO73EO9fPFjb
-	+5rKgMeAEaSxDiff9jiOfSSVbgEHOn2c2grNqbA1sxwK2aKK6+yXKeJBXfaCOzfQ5wBva+
-	sE/+Q+WWLM57f1UEI0mWuXsdMJQkjv8=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-Fh6wjDiwP8anUIph856OFQ-1; Tue,
- 12 Nov 2024 07:41:27 -0500
-X-MC-Unique: Fh6wjDiwP8anUIph856OFQ-1
-X-Mimecast-MFC-AGG-ID: Fh6wjDiwP8anUIph856OFQ
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BB91F1956080;
-	Tue, 12 Nov 2024 12:41:24 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.80.108])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ABC5030000DF;
-	Tue, 12 Nov 2024 12:41:20 +0000 (UTC)
-Date: Tue, 12 Nov 2024 07:41:17 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de
-Subject: Re: [PATCH] sched/fair: Dequeue sched_delayed tasks when waking to a
- busy CPU
-Message-ID: <20241112124117.GA336451@pauld.westford.csb>
-References: <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
- <20241106135346.GL24862@noisy.programming.kicks-ass.net>
- <20241106141420.GZ33184@noisy.programming.kicks-ass.net>
- <d2b90fa283d1655d73576eb392949d9b1539070d.camel@gmx.de>
- <bd737a9a498638b253d6e273cbbea108b6c5a4b0.camel@gmx.de>
- <982456f0abca321b874b7974bdf17d1a605c3d38.camel@gmx.de>
- <5280774bce7343c43904ae3df4403942092f5562.camel@gmx.de>
- <20241107140945.GA34695@noisy.programming.kicks-ass.net>
- <750542452c4f852831e601e1b8de40df4b108d9a.camel@gmx.de>
- <5a4cb3e4ab698fe2d8419e28d61e292dcd0c8fad.camel@gmx.de>
+	s=arc-20240116; t=1731415339; c=relaxed/simple;
+	bh=vck9A7I4MCyjIJP3zaUhpPQydiIvjOEfosdjxwxSE4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=fdm+ntseRKyczVdhHPV/1W8N0Ioud/HNA1+sePndHM4RQqrJR04g3tlepxHfNDCWl+2ezTalf6m+NgrfRasiZ+aEhY704Q8YoTR70ASXrHIiVN1CE8MBm0MQG8qgIYLglQqWt4Riavb1Sv7sLK627ePATIb8UqOlqNqLQRyWXG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AE7przNI; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACCe5Q3021982;
+	Tue, 12 Nov 2024 12:42:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=t1aUO01cDL75CMSISr0QnXUv+8fz
+	xpIW7UT5DA5YzEU=; b=AE7przNIq2r4VCALzvaM24jig9OCPhZCDVlufv21xCiz
+	6RW2tYKm/1GBpHIJKsX2AtsH086QT5WbwGPv0bfqpwiVV3nDjmChQffxYKOu3K+X
+	OZBR2Jwo/XJMaMmFSNwkciYJXBWi/5q5NNzAAw1pHE/aSBFYNu5xmaXmeHfM9Ken
+	9mcNu4grWu1zjYHoOz4gR1wTKB7u/Xa/zcvHwlvoeJmkMugD2+SVIdmW61R08Plz
+	dVOCOnKSYYGq7cMfbfVv0K6fALL9z7BIxpPfxaM7BDet3ZzzHEMFBwQv5cneTT/m
+	afzmDJIP+CJ50N9r1UyFo5w+/HBi5rk6GXN2gN2vvA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42v77h8099-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 12:42:08 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4ACCg8RS026837;
+	Tue, 12 Nov 2024 12:42:08 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42v77h8093-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 12:42:08 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACB25v5008243;
+	Tue, 12 Nov 2024 12:42:07 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tjeyhc9r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 12:42:06 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ACCg5Xn55902632
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 12 Nov 2024 12:42:05 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E357D2004D;
+	Tue, 12 Nov 2024 12:42:04 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2139A2004B;
+	Tue, 12 Nov 2024 12:42:03 +0000 (GMT)
+Received: from li-c9696b4c-3419-11b2-a85c-f9edc3bf8a84.in.ibm.com (unknown [9.109.198.181])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 12 Nov 2024 12:42:02 +0000 (GMT)
+From: Nilay Shroff <nilay@linux.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Nilay Shroff <nilay@linux.ibm.com>, briannorris@chromium.org,
+        kees@kernel.org, nathan@kernel.org, yury.norov@gmail.com,
+        linux@weissschuh.net, gjoyce@ibm.com
+Subject: [PATCH] cpumask: work around false-postive stringop-overread errors
+Date: Tue, 12 Nov 2024 18:11:24 +0530
+Message-ID: <20241112124127.1666300-1-nilay@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
+Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Y55HHuNB4WkWf1SPnuF0iD65_H7nphVF
+X-Proofpoint-GUID: OAaygNV7X9sJQQEp11TIUWLjsyY1oPca
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5a4cb3e4ab698fe2d8419e28d61e292dcd0c8fad.camel@gmx.de>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=999 phishscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 bulkscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411120102
 
-On Tue, Nov 12, 2024 at 08:05:04AM +0100 Mike Galbraith wrote:
-> On Fri, 2024-11-08 at 01:24 +0100, Mike Galbraith wrote:
-> > On Thu, 2024-11-07 at 15:09 +0100, Peter Zijlstra wrote:
-> > > On Thu, Nov 07, 2024 at 03:02:36PM +0100, Mike Galbraith wrote:
-> > > > On Thu, 2024-11-07 at 10:46 +0100, Mike Galbraith wrote:
-> > > > > On Thu, 2024-11-07 at 05:03 +0100, Mike Galbraith wrote:
-> > > > > > 
-> > > > > > I built that patch out of curiosity, and yeah, set_next_task_fair()
-> > > > > > finding a cfs_rq->curr ends play time pretty quickly.
-> > > > > 
-> > > > > The below improved uptime, and trace_printk() says it's doing the
-> > > > > intended, so I suppose I'll add a feature and see what falls out.
-> > > > 
-> > > > From netperf, I got.. number tabulation practice.  Three runs of each
-> > > > test with and without produced nothing but variance/noise.
-> > > 
-> > > Make it go away then.
-> > > 
-> > > If you could write a Changelog for you inspired bit and stick my cleaned
-> > > up version under it, I'd be much obliged.
-> > 
-> > Salut, much obliged for eyeball relief.
-> 
-> Unfortunate change log place holder below aside, I think this patch may
-> need to be yanked as trading one not readily repeatable regression for
-> at least one that definitely is, and likely multiple others.
-> 
-> (adds knob)
->
+While building the powerpc code using gcc 13, I came across following
+errors generated for kernel/padata.c file:
 
-Yes, I ws just coming here to reply. I have the results from the first
-version of the patch (I don't think the later one fundemtally changed
-enough that it will matter but those results are still pending).
+  CC      kernel/padata.o
+In file included from ./include/linux/string.h:390,
+                 from ./arch/powerpc/include/asm/paca.h:16,
+                 from ./arch/powerpc/include/asm/current.h:13,
+                 from ./include/linux/thread_info.h:23,
+                 from ./include/asm-generic/preempt.h:5,
+                 from ./arch/powerpc/include/generated/asm/preempt.h:1,
+                 from ./include/linux/preempt.h:79,
+                 from ./include/linux/spinlock.h:56,
+                 from ./include/linux/swait.h:7,
+                 from ./include/linux/completion.h:12,
+                 from kernel/padata.c:14:
+In function â€˜bitmap_copyâ€™,
+    inlined from â€˜cpumask_copyâ€™ at ./include/linux/cpumask.h:839:2,
+    inlined from â€˜__padata_set_cpumasksâ€™ at kernel/padata.c:730:2:
+./include/linux/fortify-string.h:114:33: error: â€˜__builtin_memcpyâ€™ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
+  114 | #define __underlying_memcpy     __builtin_memcpy
+      |                                 ^
+./include/linux/fortify-string.h:633:9: note: in expansion of macro â€˜__underlying_memcpyâ€™
+  633 |         __underlying_##op(p, q, __fortify_size);                        \
+      |         ^~~~~~~~~~~~~
+./include/linux/fortify-string.h:678:26: note: in expansion of macro â€˜__fortify_memcpy_chkâ€™
+  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
+      |                          ^~~~~~~~~~~~~~~~~~~~
+./include/linux/bitmap.h:259:17: note: in expansion of macro â€˜memcpyâ€™
+  259 |                 memcpy(dst, src, len);
+      |                 ^~~~~~
+kernel/padata.c: In function â€˜__padata_set_cpumasksâ€™:
+kernel/padata.c:713:48: note: source object â€˜pcpumaskâ€™ of size [0, 256]
+  713 |                                  cpumask_var_t pcpumask,
+      |                                  ~~~~~~~~~~~~~~^~~~~~~~
+In function â€˜bitmap_copyâ€™,
+    inlined from â€˜cpumask_copyâ€™ at ./include/linux/cpumask.h:839:2,
+    inlined from â€˜__padata_set_cpumasksâ€™ at kernel/padata.c:730:2:
+./include/linux/fortify-string.h:114:33: error: â€˜__builtin_memcpyâ€™ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
+  114 | #define __underlying_memcpy     __builtin_memcpy
+      |                                 ^
+./include/linux/fortify-string.h:633:9: note: in expansion of macro â€˜__underlying_memcpyâ€™
+  633 |         __underlying_##op(p, q, __fortify_size);                        \
+      |         ^~~~~~~~~~~~~
+./include/linux/fortify-string.h:678:26: note: in expansion of macro â€˜__fortify_memcpy_chkâ€™
+  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
+      |                          ^~~~~~~~~~~~~~~~~~~~
+./include/linux/bitmap.h:259:17: note: in expansion of macro â€˜memcpyâ€™
+  259 |                 memcpy(dst, src, len);
+      |                 ^~~~~~
+kernel/padata.c: In function â€˜__padata_set_cpumasksâ€™:
+kernel/padata.c:713:48: note: source object â€˜pcpumaskâ€™ of size [0, 256]
+  713 |                                  cpumask_var_t pcpumask,
+      |                                  ~~~~~~~~~~~~~~^~~~~~~~
 
-Not entirely surprisingly we've traded a ~10% rand write regression for
-5-10% rand read regression. This makes sense to me since the reads are
-more likely to be synchronous and thus be more buddy-like and benefit
-from flipping back and forth on the same cpu.  
+Apparentrly, above errors only menifests with GCC 13.x and config option
+CONFIG_FORTIFY_SOURCE. Furthermore, if I use gcc 11.x or gcc 12.x then I
+don't encounter above errors. Prima facie, these erros appear to be false-
+positive. Brian informed me that currently some efforts are underway by
+GCC developers to emit more verbose information when GCC detects string
+overflow errors and that might help to further narrow down the root cause
+of this error. So for now, silence these errors using -Wno-stringop-
+overread gcc option while building kernel/padata.c file until we find the
+root cause.
 
-I'd probably have to take the reads over the writes in such a trade off :)
+Link: https://lore.kernel.org/all/7cbbd751-8332-4ab2-afa7-8c353834772a@linux.ibm.com/
+Cc: briannorris@chromium.org
+Cc: kees@kernel.org
+Cc: nathan@kernel.org
+Cc: yury.norov@gmail.com
+Cc: linux@weissschuh.net
+Cc: gjoyce@ibm.com
+Signed-off-by: Nilay Shroff <nilay@linux.ibm.com>
+---
+ kernel/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-> tbench 8
-> 
-> NO_MIGRATE_DELAYED    3613.49 MB/sec
-> MIGRATE_DELAYED       3145.59 MB/sec
-> NO_DELAY_DEQUEUE      3355.42 MB/sec
-> 
-> First line is DELAY_DEQUEUE restoring pre-EEVDF tbench throughput as
-> I've mentioned it doing, but $subject promptly did away with that and
-> then some.
->
-
-Yep, that's not pretty. 
-
-> I thought I might be able to do away with the reservation like side
-> effect of DELAY_DEQUEUE by borrowing h_nr_delayed from...
-> 
->      sched/eevdf: More PELT vs DELAYED_DEQUEUE
-> 
-> ...for cgroups free test config, but Q/D poke at idle_cpu() helped not
-> at all.
->
-
-I wonder if the last_wakee stuff could be leveraged here (an idle thought,
-so to speak). Haven't looked closely enough. 
-
-
-Cheers,
-Phil
-
-> > ---snip---
-> > 
-> > Phil Auld (Redhat) reported an fio benchmark regression having been found
-> > to have been caused by addition of the DELAY_DEQUEUE feature, suggested it
-> > may be related to wakees losing the ability to migrate, and confirmed that
-> > restoration of same indeed did restore previous performance.
-> > 
-> > (de-uglified-a-lot-by)
-> > 
-> > Reported-by: Phil Auld <pauld@redhat.com>
-> > Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
-> > Link: https://lore.kernel.org/lkml/20241101124715.GA689589@pauld.westford.csb/
-> > Signed-off-by: Mike Galbraith <efault@gmx.de>
-> > ---
-> >  kernel/sched/core.c  |   48 +++++++++++++++++++++++++++++-------------------
-> >  kernel/sched/sched.h |    5 +++++
-> >  2 files changed, 34 insertions(+), 19 deletions(-)
-> > 
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -3783,28 +3783,38 @@ ttwu_do_activate(struct rq *rq, struct t
-> >   */
-> >  static int ttwu_runnable(struct task_struct *p, int wake_flags)
-> >  {
-> > -       struct rq_flags rf;
-> > -       struct rq *rq;
-> > -       int ret = 0;
-> > -
-> > -       rq = __task_rq_lock(p, &rf);
-> > -       if (task_on_rq_queued(p)) {
-> > -               update_rq_clock(rq);
-> > -               if (p->se.sched_delayed)
-> > -                       enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
-> > -               if (!task_on_cpu(rq, p)) {
-> > -                       /*
-> > -                        * When on_rq && !on_cpu the task is preempted, see if
-> > -                        * it should preempt the task that is current now.
-> > -                        */
-> > -                       wakeup_preempt(rq, p, wake_flags);
-> > +       CLASS(__task_rq_lock, rq_guard)(p);
-> > +       struct rq *rq = rq_guard.rq;
-> > +
-> > +       if (!task_on_rq_queued(p))
-> > +               return 0;
-> > +
-> > +       update_rq_clock(rq);
-> > +       if (p->se.sched_delayed) {
-> > +               int queue_flags = ENQUEUE_DELAYED | ENQUEUE_NOCLOCK;
-> > +
-> > +               /*
-> > +                * Since sched_delayed means we cannot be current anywhere,
-> > +                * dequeue it here and have it fall through to the
-> > +                * select_task_rq() case further along the ttwu() path.
-> > +                */
-> > +               if (rq->nr_running > 1 && p->nr_cpus_allowed > 1) {
-> > +                       dequeue_task(rq, p, DEQUEUE_SLEEP | queue_flags);
-> > +                       return 0;
-> >                 }
-> > -               ttwu_do_wakeup(p);
-> > -               ret = 1;
-> > +
-> > +               enqueue_task(rq, p, queue_flags);
-> > +       }
-> > +       if (!task_on_cpu(rq, p)) {
-> > +               /*
-> > +                * When on_rq && !on_cpu the task is preempted, see if
-> > +                * it should preempt the task that is current now.
-> > +                */
-> > +               wakeup_preempt(rq, p, wake_flags);
-> >         }
-> > -       __task_rq_unlock(rq, &rf);
-> > +       ttwu_do_wakeup(p);
-> >  
-> > -       return ret;
-> > +       return 1;
-> >  }
-> >  
-> >  #ifdef CONFIG_SMP
-> > --- a/kernel/sched/sched.h
-> > +++ b/kernel/sched/sched.h
-> > @@ -1779,6 +1779,11 @@ task_rq_unlock(struct rq *rq, struct tas
-> >         raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
-> >  }
-> >  
-> > +DEFINE_LOCK_GUARD_1(__task_rq_lock, struct task_struct,
-> > +                   _T->rq = __task_rq_lock(_T->lock, &_T->rf),
-> > +                   __task_rq_unlock(_T->rq, &_T->rf),
-> > +                   struct rq *rq; struct rq_flags rf)
-> > +
-> >  DEFINE_LOCK_GUARD_1(task_rq_lock, struct task_struct,
-> >                     _T->rq = task_rq_lock(_T->lock, &_T->rf),
-> >                     task_rq_unlock(_T->rq, _T->lock, &_T->rf),
-> > 
-> > 
-> 
-
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 87866b037fbe..e5adba7a30f1 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -120,6 +120,7 @@ obj-$(CONFIG_CFI_CLANG) += cfi.o
+ obj-$(CONFIG_PERF_EVENTS) += events/
+ 
+ obj-$(CONFIG_USER_RETURN_NOTIFIER) += user-return-notifier.o
++CFLAGS_padata.o += $(call cc-disable-warning, stringop-overread)
+ obj-$(CONFIG_PADATA) += padata.o
+ obj-$(CONFIG_JUMP_LABEL) += jump_label.o
+ obj-$(CONFIG_CONTEXT_TRACKING) += context_tracking.o
 -- 
+2.45.2
 
 
