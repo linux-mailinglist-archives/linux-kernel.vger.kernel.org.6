@@ -1,132 +1,157 @@
-Return-Path: <linux-kernel+bounces-406666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2CC9C61EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:56:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 756159C61ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:56:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 100F81F24780
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:56:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B7C32879D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1BE219C8D;
-	Tue, 12 Nov 2024 19:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0A9218955;
+	Tue, 12 Nov 2024 19:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="CvjabDkU"
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cjji7FbN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9733B20898E;
-	Tue, 12 Nov 2024 19:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBE1217F47;
+	Tue, 12 Nov 2024 19:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731441348; cv=none; b=jdNk8zqzyQ9oc7PSv23JPZ5awWuumjTP4yndSi8aIaA5gvW47/2nzQyE9j0tRCObm7Ddazps8Pli99R1Qa5j7Zi1NJt8mlW/zOBRFov4SPw3JeHUph+/Jt+kuud8ylAYmIwMVlzabCL5YibFgoNiIOQpZ3AHtbXouL0GZU18/rM=
+	t=1731441374; cv=none; b=Cnu9dRQIBRSoYYueKl/TccJaeOT9YQdq7EUFcVOhntnf+Jmt6cEgJyU9iEgCfa7r6Hrez5cBwNFA5BAP1v7TgUhsgaNLEzcB/3iO5Y93ht6xTxVG/z8xCGJ7js10pWQaTD1kD4bnlc2lpdhoaKuSHFTnfHsCGBM1Vhyo+Azw90s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731441348; c=relaxed/simple;
-	bh=c94xZUz5BVRzxe1+uUbcC3auFTeo4NkaFnXe7tuvETA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UXvLcUx++nHWX661IHTRZ3BksKvQZtqwapdt1LdohmOk2Zayu2QTUyq/VZUIg/GHLkMKG7509Mg0Zxlz7wl072NXdRwvdE9X3dLJyc29ZUy+aLP7a1DZyuAv2a7S7Cv+/q4icY9iCUaz+aKSywQoqn+4ya05wKP1vnu5Q9wt8gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=CvjabDkU; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sendonly@marcansoft.com)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id 03D693FA6A;
-	Tue, 12 Nov 2024 19:55:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-	s=default; t=1731441334;
-	bh=c94xZUz5BVRzxe1+uUbcC3auFTeo4NkaFnXe7tuvETA=;
-	h=From:Date:Subject:To:Cc;
-	b=CvjabDkUJUSSXOJExrmb9n9jBWbldd3zbnbE9fOlnTjyQwUZCmqg0TUWhnljH/jH5
-	 CcPFuMlQTtrFxrcpE6B/sP5SsTJXWIaKQWLYknOW3VBEXE+ES6/Z6nugx+eK8q15J7
-	 K0LiHQZFuXYs635KqwUosvSHPxw/lcwFZrWLln45qW+hxK232vdZOFUcrp/QQrYxhQ
-	 VJeqgt36Ge5gSb6vYokcL9Q9bPcNj9mYvjhhx82H8NldKKR/X8Gj21XI7sGBBtSJ8o
-	 hmhEr4yzK73oc6tpjRpFH1XuPjKwyZxNG0r+Vsbr29YmWbLZbqKzIXFugT1CRrt1rb
-	 cYRj70mJJn26A==
-From: Asahi Lina <lina@asahilina.net>
-Date: Wed, 13 Nov 2024 04:55:32 +0900
-Subject: [PATCH] fuse: dax: No-op writepages callback
+	s=arc-20240116; t=1731441374; c=relaxed/simple;
+	bh=5g5ru0B5TVy4XXj2/HCwnGGtF/Djy83t4qR2r/ThSV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b1o8780N6mALAvNu3zZ9MRksMzLlU0cGgy0iDR8xzj64h/m2Ildy8dHy800w/MzL7Liipa2Z5CrzgAou2Wu/mSgob2XVTs1pUd7SPgiD521StpYunI+j1HEmBx5T5wz+j5t3aMGyi8lc9keQc46TA0i9FfwBr/kM904EwN5409E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cjji7FbN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1AC0C4CECD;
+	Tue, 12 Nov 2024 19:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731441373;
+	bh=5g5ru0B5TVy4XXj2/HCwnGGtF/Djy83t4qR2r/ThSV0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cjji7FbNWW8nHyG+3EmBLBPgFQtDZNIP5hZOLpbNssVCDWYTpXUay/FpgWWQ9OfH6
+	 MPwbGvswxQ5H8fwAcZzPaIHBsw8EnktUe5oXu74ewe2wQznR8u4z0YM+HW+RODRY1Y
+	 p6z0WY1c0E5Dmdqg92RryyLYB5R40B880z3tU8JJyqg74tQo+siv5C4S1zY57PBbG4
+	 Q1nZ6tfMmUo1NLCVeMON663s103xNfrPI2iZ+fH/flebJiHK+JEG6bDnnNOgvywooR
+	 2JbXDbR1DZb00qTwt2suHvlXreDEfUs3jlNTrms+du/CVX0cvKByssNss3Xzd9ew0N
+	 zB+PghsIVHGYw==
+Date: Tue, 12 Nov 2024 16:56:08 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, namhyung@kernel.org, irogers@google.com,
+	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 00/10] perf record --off-cpu: Dump off-cpu samples
+ directly
+Message-ID: <ZzOy2KjyuMD9AJ3G@x1>
+References: <20241108204137.2444151-1-howardchu95@gmail.com>
+ <ZzOg3Xlq2jsG85XQ@x1>
+ <ZzOpvzN-OTLZPyFh@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241113-dax-no-writeback-v1-1-ee2c3a8d9f84@asahilina.net>
-X-B4-Tracking: v=1; b=H4sIALOyM2cC/x3MQQqAIBBA0avErBtoUqS6SrRQm2oILDQqiO6et
- HyL/x9IHIUTdMUDkU9JsoUMKgvwiw0zo4zZUFe1JiKFo70xbHhFOdhZv6ImNs4p0zbOQ872yJP
- c/7If3vcDv70xw2IAAAA=
-X-Change-ID: 20241113-dax-no-writeback-41e6bb3698bc
-To: Miklos Szeredi <miklos@szeredi.hu>, 
- Dan Williams <dan.j.williams@intel.com>
-Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, 
- Matthew Wilcox <willy@infradead.org>, Sergio Lopez Pascual <slp@redhat.com>, 
- asahi@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Asahi Lina <lina@asahilina.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731441333; l=2006;
- i=lina@asahilina.net; s=20240902; h=from:subject:message-id;
- bh=c94xZUz5BVRzxe1+uUbcC3auFTeo4NkaFnXe7tuvETA=;
- b=RITMZ3OffyOGQq+meVQPdwN87olVlNUBbNxkxDcqPQQ/ROTA+RYl1EH63EH5poTnKOMEOUEBi
- mvNOmc+uGmjD2yAbLq0Or+s4ebqCvcJ14c21zu/Ww52zWMgLazBtDyC
-X-Developer-Key: i=lina@asahilina.net; a=ed25519;
- pk=tpv7cWfUnHNw5jwf6h4t0gGgglt3/xcwlfs0+A/uUu8=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZzOpvzN-OTLZPyFh@x1>
 
-When using FUSE DAX with virtiofs, cache coherency is managed by the
-host. Disk persistence is handled via fsync() and friends, which are
-passed directly via the FUSE layer to the host. Therefore, there's no
-need to do dax_writeback_mapping_range(). All that ends up doing is a
-cache flush operation, which is not caught by KVM and doesn't do much,
-since the host and guest are already cache-coherent.
-
-Since dax_writeback_mapping_range() checks that the inode block size is
-equal to PAGE_SIZE, this fixes a spurious WARN when virtiofs is used
-with a mismatched guest PAGE_SIZE and virtiofs backing FS block size
-(this happens, for example, when it's a tmpfs and the host and guest
-have a different PAGE_SIZE). FUSE DAX does not require any particular FS
-block size, since it always performs DAX mappings in aligned 2MiB
-blocks.
-
-See discussion in [1].
-
-[1] https://lore.kernel.org/lkml/20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net/T/#u
-
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Asahi Lina <lina@asahilina.net>
----
- fs/fuse/dax.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-index 12ef91d170bb3091ac35a33d2b9dc38330b00948..15cf7bb20b5ebf15451190dac2fcc2e841148e6c 100644
---- a/fs/fuse/dax.c
-+++ b/fs/fuse/dax.c
-@@ -777,11 +777,8 @@ ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
- static int fuse_dax_writepages(struct address_space *mapping,
- 			       struct writeback_control *wbc)
- {
--
--	struct inode *inode = mapping->host;
--	struct fuse_conn *fc = get_fuse_conn(inode);
--
--	return dax_writeback_mapping_range(mapping, fc->dax->dev, wbc);
-+	/* nothing to flush, fuse cache coherency is managed by the host */
-+	return 0;
- }
+On Tue, Nov 12, 2024 at 04:17:19PM -0300, Arnaldo Carvalho de Melo wrote:
+> I squashed the patch below and I'm trying to apply the other patches to do some
+> minimal testing on the feature itself, but the organization of the
+> patches needs some work.
  
- static vm_fault_t __fuse_dax_fault(struct vm_fault *vmf, unsigned int order,
+> +++ b/tools/perf/util/bpf_off_cpu.c
+> @@ -61,6 +61,9 @@ static int off_cpu_config(struct evlist *evlist)
+>  static void off_cpu_start(void *arg)
+>  {
+>  	struct evlist *evlist = arg;
+> +	struct evsel *evsel;
+> +	struct perf_cpu pcpu;
+> +	int i;
+>  
+>  	/* update task filter for the given workload */
+>  	if (skel->rodata->has_task && skel->rodata->uses_tgid &&
+> @@ -82,6 +85,8 @@ static void off_cpu_start(void *arg)
+>  	}
+>  
+>  	perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
+> +		int err;
+> +
+>  		err = bpf_map__update_elem(skel->maps.offcpu_output, &pcpu.cpu, sizeof(__u32),
+>  					   xyarray__entry(evsel->core.fd, i, 0),
+>  					   sizeof(__u32), BPF_ANY);
 
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241113-dax-no-writeback-41e6bb3698bc
+This is not enough, as it in the end tries to use that
+skel->maps.offcpu_output that is only introduced at a later patch, it
+seems, not checked yet, but explains the error below:
 
-Cheers,
-~~ Lina
+  LD      /tmp/build/perf-tools-next/perf-test-in.o
+  AR      /tmp/build/perf-tools-next/libperf-test.a
+  CC      /tmp/build/perf-tools-next/util/parse-events.o
+util/bpf_off_cpu.c: In function ‘off_cpu_start’:
+util/bpf_off_cpu.c:90:54: error: ‘struct <anonymous>’ has no member named ‘offcpu_output’
+   90 |                 err = bpf_map__update_elem(skel->maps.offcpu_output, &pcpu.cpu, sizeof(__u32),
+      |                                                      ^
+make[4]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:106: /tmp/build/perf-tools-next/util/bpf_off_cpu.o] Error 1
+make[4]: *** Waiting for unfinished jobs....
+make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:158: util] Error 2
+make[2]: *** [Makefile.perf:789: /tmp/build/perf-tools-next/perf-util-in.o] Error 2
+make[2]: *** Waiting for unfinished jobs....
+  CC      /tmp/build/perf-tools-next/pmu-events/pmu-events.o
+  LD      /tmp/build/perf-tools-next/pmu-events/pmu-events-in.o
+make[1]: *** [Makefile.perf:292: sub-make] Error 2
+make: *** [Makefile:119: install-bin] Error 2
+make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+⬢ [acme@toolbox perf-tools-next]$ 
 
+
+Ok, at the end of the series it builds, and the 'perf test' entry
+introduced in this series passes:
+
+root@x1:~# perf test off
+121: perf record offcpu profiling tests                              : Ok
+root@x1:~# perf test -v off
+121: perf record offcpu profiling tests                              : Ok
+root@x1:~# perf test -vv off
+121: perf record offcpu profiling tests:
+--- start ---
+test child forked, pid 1303134
+Checking off-cpu privilege
+Basic off-cpu test
+Basic off-cpu test [Success]
+Child task off-cpu test
+Child task off-cpu test [Success]
+Direct off-cpu test
+Direct off-cpu test [Success]
+---- end(0) ----
+121: perf record offcpu profiling tests                              : Ok
+root@x1:~#
+
+But the only examples I could find so far for this feature were on the
+'perf test' at the end of this series.
+
+I think we need to have some examples in the 'perf-record' man page
+showing how to use it, explaining the whole process, etc.
+
+I'll continue testing it and trying to move things around so that it
+gets bisectable and testable step by step, documenting the whole
+process as I go, probably tomorrow.
+
+The series with my fixes is at:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git perf-off-cpu77918
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/?h=perf-off-cpu
+
+
+- Arnaldo
 
