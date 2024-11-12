@@ -1,113 +1,163 @@
-Return-Path: <linux-kernel+bounces-405153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD0D9C4D9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:09:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1061A9C4DA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:10:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BF9FB24E4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:09:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A0CDB23868
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8459E209682;
-	Tue, 12 Nov 2024 04:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72975208962;
+	Tue, 12 Nov 2024 04:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nG+2Mm1O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4BKgPpq"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C768920494F;
-	Tue, 12 Nov 2024 04:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1B32076D7;
+	Tue, 12 Nov 2024 04:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731384572; cv=none; b=epIkVjrv6k7X3uf9qGXO5OYZREgIeeyfPxIHlm+R4mV96StauzM2ZYR8eYWz2sjZy1aehnKV/bMTp2cYMRyi0KDivzn0I3YmatulqnukQqPuezq1Rz2/sVI0Frz62NI4jYBZN9mR66N3pp5TPbXQp2pfso7nDgZxBNwcY9lNzPI=
+	t=1731384617; cv=none; b=f8teym1NUJpg4GZs1RyYPq58RRTZxqW8rfgpWQzj8D63eO4vyLW5fgkVmEs1iA36pSBZHO/OlAktYRAtoKmOcwXtj6JHrJtYnXx9OP2J3uDfJPucJe8wvqb463buN4hTq2w0+NED4wc86HpIrEu7CUKrmYRczBGyNRbEkSAxUXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731384572; c=relaxed/simple;
-	bh=MhV+41Cp3i9m4j99lu/WCXY/MLivraTlLiNGgddAmok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UfuwnLJqr8qTcYGIbCQqWozXVPssJtYsnrYVYV7L8PSFUXW3E/XL+R51qFvdTHSiqGQicY1DGU1shSXtVjrr+03TrHCSb12yqfheXdDV34zaC/H5oyj5QHCHJzFFnfkOIOnwllzlHBKxm3t0lmrE/zTDQ5LaEUSEqOR56otWK7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nG+2Mm1O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40975C4CECD;
-	Tue, 12 Nov 2024 04:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731384572;
-	bh=MhV+41Cp3i9m4j99lu/WCXY/MLivraTlLiNGgddAmok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nG+2Mm1Ok7247hKiGkUlNBLIvm7L0Y8WWZKof6UD2P7ncgXCeLiNU0B5X91JqD1oN
-	 ZMybVpVEZ8Ep13s9W0AMvilXCWh+EoImzoqvdETjREQcsXBWusjwzW7RmTgx8tcLhz
-	 PrLncDjHZCPRvRkWDa4QE4W2l9IjyNdsRL8o/uCpruMYQks7xMATRckKFntbuYiB4D
-	 H95WCHX0X9FQax1l/9v+jPZNaVmDxRWXR9pBgZKS64KIptKMEwO6djWCTfGzNxd4Dq
-	 yyexiS175fDpNRmOwDIT+lQ3VCcaGEBOPgcXuz/a3/UzAbc64oNwwxTs8yI9Mhsedx
-	 yrRvan3rXLyQw==
-Date: Mon, 11 Nov 2024 22:09:29 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com
-Subject: Re: [PATCH v2 RESEND 2/3] i2c: qcom_geni: Update compile
- dependenices for qcom geni
-Message-ID: <3fkfjeif3e4z3utcim5dou2obwjoagtr3z2bnwkywa2xlm4jrb@jon6mwtp4ahv>
-References: <20241111140244.13474-1-quic_jseerapu@quicinc.com>
- <20241111140244.13474-3-quic_jseerapu@quicinc.com>
+	s=arc-20240116; t=1731384617; c=relaxed/simple;
+	bh=Dh0Rge16au2bgrUgJitkpfwaIhhWpmio6WByFkkHRtI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TCSNLjI4kdbCzF42NHo+yA9JyJcjybDxcWcRRmjd56bBfqFTr9oVIy+7zMuZmcQ412gUV/MM2bj7TTE4wl7en4N+m0ZwggpjbLszKu5hUOEBhX7iFEEpJMdnXnp8KpMmNFXN3XGYEo1CDpO17J7K8xUAT29uT9Z0cY4pQWzBZOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4BKgPpq; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ea85f7f445so51346847b3.0;
+        Mon, 11 Nov 2024 20:10:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731384615; x=1731989415; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DsmubN01hyDUEhQ6tv783ePv53ofcUVY2RqcZdf3yEo=;
+        b=H4BKgPpqGjAJgJ3kI5rNJgvCMtWFSpE0QxOAiprbBS/3r/seXc2kid/TRioB7ZKyKS
+         Q3zJNGd4wl7iHb92Pe52M22CNc2bLID7Xlo+DCdts/vLI3eMHK9L7wFPJSs4zl4ZKtXP
+         lBG5zw+fpZhnnyJFhvsjcKGCL9S1op18xogwQ2gDMqKXA2lv8bHds7w+AAIEWRurfISL
+         WulZDpXR3zX1KKhkrz8FmPPDt5+eEyy75i2KZKd5WyFE7KdG4leeJ3E02gCaGQ4/WzOw
+         6QOMOzsEnF0NBRuvyMIf5bXox5RRw3ZA/Dvak7jz3uOkAhrPyYdux8zo5ZNt5oXo+g5x
+         0+0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731384615; x=1731989415;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DsmubN01hyDUEhQ6tv783ePv53ofcUVY2RqcZdf3yEo=;
+        b=NpITAByoFtUwKDdzyT8RAq5zhqoo48MCvzm8sZh5PsXf31n47yV6qVoBLfBgml+Eq1
+         5iAaBcLLdEXjQG7pw/zl3byA7Eu7h5smWuue4qdWi9xQJRAX37IL+61ouuDQ5AVdU/Cz
+         v7reQcS+XDb9k6/inbsheOd1U54gnOIyqKjtArMFxtGuHrvFEqadeYTbp8Pqqt7d9n0e
+         pZGN1bAsQ1AXPsgtMd2BkgL2H+FShsjZn5Wi2RNKq66VPY+iRWpWITg/9DfkQS0qdPEG
+         FWEvmalqyzG6bgGlUdX1msK8aWtcO012PsU/EpFzBjkL1Xptpb2QH8zio3XUC2hqAtUM
+         B36w==
+X-Forwarded-Encrypted: i=1; AJvYcCU3FOpgCJNJHiVJRfrfzCM9oMx5cjjzAeUsMi1KOYV9htLxL9fjLjNLQ0bgvcN35itbl8MNV3VF4kUsXQOY@vger.kernel.org, AJvYcCV6+hSiZ8GF71TzIQWKIV6BK8to1iT/Dzt/REWsjXiHYjJ1FvAyK2yYS1Kfey2rAn75MAwhYwR9aDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtBB9utSD9dfsZmhFUAmd4P0sYP/zd6oW4dWjkpvX7UKxvGAXT
+	ymTNzGeLys9SgAksCshGlrTTjkehp+GCnYp8+mhV/EBSuqp6odHsPaQBjfwMZPo99BcifMQgQdF
+	ZhMHrzQYKUNcThRShdv4kY8cGbSmcoiWm
+X-Google-Smtp-Source: AGHT+IEEd9e7KYmg9hOChPdcooKIfQet+Ec2imFxx6bP82VRvCibSsbb8ecrhexu0TZ29275WhqN4tjEisNPdXIjqY0=
+X-Received: by 2002:a05:690c:6b11:b0:6e2:ab93:8c68 with SMTP id
+ 00721157ae682-6eadddaf35cmr135388027b3.25.1731384615059; Mon, 11 Nov 2024
+ 20:10:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111140244.13474-3-quic_jseerapu@quicinc.com>
+References: <20241111210316.15357-1-rosenp@gmail.com> <20241111193222.00ae2f3e@kernel.org>
+In-Reply-To: <20241111193222.00ae2f3e@kernel.org>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 11 Nov 2024 20:10:04 -0800
+Message-ID: <CAKxU2N-VHmVerombZ77uOHApi0aGBFi46oC1eoGTm5sakCVc4w@mail.gmail.com>
+Subject: Re: [PATCHv2 net-next] net: use pdev instead of OF funcs
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Vladimir Oltean <olteanv@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Pantelis Antoniou <pantelis.antoniou@gmail.com>, Marcin Wojtas <marcin.s.wojtas@gmail.com>, 
+	Byungho An <bh74.an@samsung.com>, Kevin Brace <kevinbrace@bracecomputerlab.com>, 
+	Francois Romieu <romieu@fr.zoreil.com>, Michal Simek <michal.simek@amd.com>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Zhao Qiang <qiang.zhao@nxp.com>, 
+	"open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, 
+	"open list:FREESCALE SOC FS_ENET DRIVER" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 11, 2024 at 07:32:43PM +0530, Jyothi Kumar Seerapu wrote:
-> I2C_QCOM_GENI is having compile dependencies on QCOM_GPI_DMA and
-> so update I2C_QCOM_GENI to depends on QCOM_GPI_DMA.
-> 
+On Mon, Nov 11, 2024 at 7:32=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Mon, 11 Nov 2024 13:03:16 -0800 Rosen Penev wrote:
+> > --- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c
+> > +++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c
+> > @@ -111,7 +111,7 @@ static int sxgbe_platform_probe(struct platform_dev=
+ice *pdev)
+> >       }
+> >
+> >       /* Get the SXGBE common INT information */
+> > -     priv->irq  =3D irq_of_parse_and_map(node, 0);
+> > +     priv->irq =3D platform_get_irq(pdev, 0);
+> >       if (priv->irq <=3D 0) {
+> >               dev_err(dev, "sxgbe common irq parsing failed\n");
+> >               goto err_drv_remove;
+> > @@ -122,7 +122,7 @@ static int sxgbe_platform_probe(struct platform_dev=
+ice *pdev)
+> >
+> >       /* Get the TX/RX IRQ numbers */
+> >       for (i =3D 0, chan =3D 1; i < SXGBE_TX_QUEUES; i++) {
+> > -             priv->txq[i]->irq_no =3D irq_of_parse_and_map(node, chan+=
++);
+> > +             priv->txq[i]->irq_no =3D platform_get_irq(pdev, chan++);
+> >               if (priv->txq[i]->irq_no <=3D 0) {
+> >                       dev_err(dev, "sxgbe tx irq parsing failed\n");
+> >                       goto err_tx_irq_unmap;
+> > @@ -130,14 +130,14 @@ static int sxgbe_platform_probe(struct platform_d=
+evice *pdev)
+> >       }
+> >
+> >       for (i =3D 0; i < SXGBE_RX_QUEUES; i++) {
+> > -             priv->rxq[i]->irq_no =3D irq_of_parse_and_map(node, chan+=
++);
+> > +             priv->rxq[i]->irq_no =3D platform_get_irq(pdev, chan++);
+> >               if (priv->rxq[i]->irq_no <=3D 0) {
+> >                       dev_err(dev, "sxgbe rx irq parsing failed\n");
+> >                       goto err_rx_irq_unmap;
+> >               }
+> >       }
+> >
+> > -     priv->lpi_irq =3D irq_of_parse_and_map(node, chan);
+> > +     priv->lpi_irq =3D platform_get_irq(pdev, chan);
+> >       if (priv->lpi_irq <=3D 0) {
+> >               dev_err(dev, "sxgbe lpi irq parsing failed\n");
+> >               goto err_rx_irq_unmap;
+>
+> Coccicheck wants you to drop the errors:
+>
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c:116:2-9: line 116 is =
+redundant because platform_get_irq() already prints an error
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c:127:3-10: line 127 is=
+ redundant because platform_get_irq() already prints an error
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c:135:3-10: line 135 is=
+ redundant because platform_get_irq() already prints an error
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c:142:2-9: line 142 is =
+redundant because platform_get_irq() already prints an error
 
-Given that this is a separate patch, your wording can only be
-interpreted as this being an existing problem.
+I looked at the output. The error checks need changing too.
 
-> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-> ---
-> 
-> v1 -> v2: 
-> 	This patch is added in v2 to address the kernel test robot
-> 	reported compilation error.
-> 	ERROR: modpost: "gpi_multi_desc_process" [drivers/i2c/busses/i2c-qcom-geni.ko] undefined! 
-
-But as far as I can tell you introduce this problem in patch 3. If so
-this addition should be part of patch 3.
-
-
-
-Also, you have different subject prefix for patch 2 and 3, yet they
-relate to the same driver. Not pretty.
-
-Regards,
-Bjorn
-
-> 
-> drivers/i2c/busses/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index 0aa948014008..87634a682855 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -1049,6 +1049,7 @@ config I2C_QCOM_GENI
->  	tristate "Qualcomm Technologies Inc.'s GENI based I2C controller"
->  	depends on ARCH_QCOM || COMPILE_TEST
->  	depends on QCOM_GENI_SE
-> +	depends on QCOM_GPI_DMA
->  	help
->  	  This driver supports GENI serial engine based I2C controller in
->  	  master mode on the Qualcomm Technologies Inc.'s SoCs. If you say
-> -- 
-> 2.17.1
-> 
-> 
+>
+> You can make it a separate patch in a series, for clarity.
+I don't think it's enough to warrant its own commit.
+> --
+> pw-bot: cr
 
