@@ -1,290 +1,414 @@
-Return-Path: <linux-kernel+bounces-405410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63449C50EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E10479C50D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9673B281DE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:41:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1487281CB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003572139AF;
-	Tue, 12 Nov 2024 08:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6873720EA2C;
+	Tue, 12 Nov 2024 08:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KgJomKfY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XMCBjQUU"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293BC20E037;
-	Tue, 12 Nov 2024 08:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDB120D507
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731400662; cv=none; b=u7ZIz07w0t5NGvyHwl2bsGyYkZynaMGkoskgD833iHw57o9h0EmUFDff/KnhPhX1jC1msNaYJQie39xYrcZGPjsWk3V8SavsVBm/DmkL9/MhdTb+PKcvRlaxwfhTQMFFcjP+b1odgCzapBCYhQNBGor/smst2ZeQSU9ZKXmZTZk=
+	t=1731400633; cv=none; b=sfhWqZwUq3Weh+9at7KfaIFg/qdd3+gZ45e/24kOE4XGH4hBBlKXY8jkxY2lKvNfZoJ3unjvfSHdReCtbwPaSKzFYuezgG0am7c1PDYQyBHmIvQoew7Sa6sLYEkRqiz0SjDNRn6+f6kVQgwAzsrerfFNbNyZEtVClkHel5gkL0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731400662; c=relaxed/simple;
-	bh=yGbQ5LZb3K4ouo5/IVAj2bIoOta5TOuCDkkqCTX1MBY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fWv6PRULYCzzdJsa6uxs+O5oxMMeeXlwmf9ekLGhiuHpSPnkM1y8DpX0Lx+j5Ku7AFw0nirUIU46h0MBXhrCkUQR+Q8ml4VRxjwMRQyUcThsVu7Y0fURkgpuveWkuehfxMdGIHX3eeBwadGA6cDMnQ+vlQEkG2/pE34uoF8gwK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KgJomKfY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65949C4CECD;
-	Tue, 12 Nov 2024 08:37:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731400661;
-	bh=yGbQ5LZb3K4ouo5/IVAj2bIoOta5TOuCDkkqCTX1MBY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KgJomKfY1M/clGWIldKgie6WiUJKvPQKYIt3trliGbZClmuleMbaVEG7VOiiShFcG
-	 VEQf9GSvURM8/Y0riDsThFBmry4YzI30Dw00Kal7J0QO4vmwLZLZ01yh+b30RpEi6w
-	 Q0fLBOkANsi6wRpyZwdnbO+Gk7/ZACJjXUYZSiIhSOnWyrjqIFAou+6UMiiyxrqnyQ
-	 T0Dj28WPVMimqTf9dc/ltBxkoUH0z7lyTSbXPPJBVQJMwP5xwGp5nyPRqZab8a3EC8
-	 Bz9+ZnKB5qFm/YKhc7obU9hFIiQSS9H9ZD9IRt85xZ/jauCknWfGeq2uRaXumxbmgl
-	 H24AXPL8ZOeUg==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	repnop@google.com,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v2 bpf-next 4/4] selftest/bpf: Test inode local storage recursion prevention
-Date: Tue, 12 Nov 2024 00:37:00 -0800
-Message-ID: <20241112083700.356299-5-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241112083700.356299-1-song@kernel.org>
-References: <20241112083700.356299-1-song@kernel.org>
+	s=arc-20240116; t=1731400633; c=relaxed/simple;
+	bh=cygnrUq9k3e5dqDZepXwtHPhJI5XV7QYArniw2Y4IuY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SPZi79/VNELkAN08O32M/qYaJaFBF5RociNpY65rQBZ9A75y2TIbFI8nIsm3Fs6uiY4SpRieh759/cmcZZ7NquOKBOJqwYjTtLo0B/C01xGHncQyIGfMnY7zDGiBu5IL4+yGBGE8p+PsJDgYLBVJHO/T8SWCFJet5ndMGJjHSSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XMCBjQUU; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43159c9f617so42238735e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 00:37:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731400630; x=1732005430; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QlQtebEgB86dVhqxQ00g8xwqSY7KjW1J9erC3DabT68=;
+        b=XMCBjQUUZrseYqt7P6vEKxQiXrcp/5SvHsvWzTBVBJIBUj8jDKZpCGic3DRdHC0nCv
+         GnDkhfHUUrnc1ymPPAcimYiSs8+pFnt47EmddkiKWffWXIPGIUSv9KReDbXad7g+iTO3
+         clN6JX10NgYCMsg13Qy1Doax5COvk2VSaYu6jMh7dtqDVy2h9RIhsx3YH+kUInt0jcBb
+         b1n43FcO2HJg48rBbO6YDYQPvU0ie+muSrG7DbHaGa2vp39JyuFJacr7ogKke9PP99RZ
+         DvV3jq75hAof1Dvwt+pEebPxSgiEohz20VxCi7wejCmhs+qDZun8VjxGX6r8GN2ugfiO
+         sTWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731400630; x=1732005430;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QlQtebEgB86dVhqxQ00g8xwqSY7KjW1J9erC3DabT68=;
+        b=id5wP4Wi661AIqrPJnC5PNRqeEWFFxTg8UcmG0k8JgjPAlyTnCQqzsA335LNXOUzF4
+         rSQRx3LTCn3Cp4f18QXmXoO4Z0+b/m33ky4OF8td9JOWkApjaGnQsFGqRu7yEAmBGaOs
+         eGvWNwQqqhW2JQ2SkQyAGawsXiHAFYmcMLeecVC42ndSU4yaNKUkx7QYrUFDOJXDdTcA
+         DBRtESvHfX8FhoYzgyYmOa4+w9xSDbsofQgx1EvS4T8e2IVNvDUndh3pqNkMVGBzwmh7
+         cCdrIw8S+52CYeYaBiGB2tU0jwBFIJwzNCIGTwZX+qLmT1Oz7zKMVaP9Edbnlimw2VIO
+         8lrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRcQHXpL/HG57zc1uc1fBdBam3pVimRTeo1VmOezR+etvL24sXCMajST/BtKuMZ3WbabkzH3F/h3HnWf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmVQpSFZPJPrEkR6boeotXxzTuo2qUzFt67qIG9kV/xbe6PwLF
+	O7yAzR/POA94lRdSBoOU13LdmcVNHCK4qjp162mY2fTxnvUuFPSqNcdMOxCNtc0=
+X-Google-Smtp-Source: AGHT+IFzDHkJMsiPY/G7pxE8S7GTZggldEzwx+YMOP/7/uY3NLuy5dZgZ2YEbvlJHaRdqr51oMUYZw==
+X-Received: by 2002:a05:600c:3b82:b0:431:50fa:89c4 with SMTP id 5b1f17b1804b1-432b74fdef5mr135892675e9.3.1731400629260;
+        Tue, 12 Nov 2024 00:37:09 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:50f9:1df6:c2b9:a468])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa73a2d8sm232645355e9.41.2024.11.12.00.37.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 00:37:08 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
+ Hilman <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] clk: meson: Fix glitch occurs when setting up
+ glitch-free mux
+In-Reply-To: <20241111-fix_glitch_free-v2-3-0099fd9ad3e5@amlogic.com> (Chuan
+	Liu via's message of "Mon, 11 Nov 2024 11:37:03 +0800")
+References: <20241111-fix_glitch_free-v2-0-0099fd9ad3e5@amlogic.com>
+	<20241111-fix_glitch_free-v2-3-0099fd9ad3e5@amlogic.com>
+Date: Tue, 12 Nov 2024 09:37:08 +0100
+Message-ID: <1jzfm426h7.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Add selftest for recursion prevention logic of bpf local storage.
+On Mon 11 Nov 2024 at 11:37, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
 
-When inode local storage function is traced, helpers that access inode
-local storage should return -EBUSY.
+> From: Chuan Liu <chuan.liu@amlogic.com>
+>
+> glitch-free mux has two clock channels (channel 0 and channel 1) with
+> the same configuration. When the frequency needs to be changed, the two
+> channels ping-pong to ensure clock continuity and suppress glitch.
+>
+> The glitch-free mux configuration with CLK_SET_RATE_GATE enables the mux
+> to perform ping-pong switching to suppress glitches.
+>
+> Fixes: 84af914404db ("clk: meson: a1: add Amlogic A1 Peripherals clock
+> controller driver")
+> Fixes: 14ebb3154b8f ("clk: meson: axg: add Video Clocks")
+> Fixes: f06ac3ed04e8 ("clk: meson: c3: add c3 clock peripherals controller
+> driver")
+> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+> Fixes: fac9a55b66c9 ("clk: meson-gxbb: Add MALI clocks")
+> Fixes: 57b55c76aaf1 ("clk: meson: S4: add support for Amlogic S4 SoC
+> peripheral clock controller")
 
-The recurring program is attached to inode_storage_lookup(). This is not
-an ideal target for recursion tests. However, given that the target
-function have to take "struct inode *" argument, there isn't a better
-target function for the tests.
+Same remarks.
 
-Test results showed that inode_storage_lookup() is inlined in s390x.
-Work around this by adding this test to DENYLIST.s390x.
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> ---
+>  drivers/clk/meson/a1-peripherals.c |  8 ++++----
+>  drivers/clk/meson/axg.c            | 12 ++++++++----
+>  drivers/clk/meson/c3-peripherals.c |  4 ++--
+>  drivers/clk/meson/g12a.c           | 12 ++++++++----
+>  drivers/clk/meson/gxbb.c           | 12 ++++++++----
+>  drivers/clk/meson/s4-peripherals.c | 20 ++++++++++----------
+>  6 files changed, 40 insertions(+), 28 deletions(-)
+>
+> diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
+> index 4b9686916b17..7f515e002adb 100644
+> --- a/drivers/clk/meson/a1-peripherals.c
+> +++ b/drivers/clk/meson/a1-peripherals.c
+> @@ -423,7 +423,7 @@ static struct clk_regmap dspa_a = {
+>  			&dspa_a_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -471,7 +471,7 @@ static struct clk_regmap dspa_b = {
+>  			&dspa_b_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -569,7 +569,7 @@ static struct clk_regmap dspb_a = {
+>  			&dspb_a_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -617,7 +617,7 @@ static struct clk_regmap dspb_b = {
+>  			&dspb_b_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> index a1217dff40fa..e2d3266f4b45 100644
+> --- a/drivers/clk/meson/axg.c
+> +++ b/drivers/clk/meson/axg.c
+> @@ -1077,7 +1077,8 @@ static struct clk_regmap axg_vpu_0 = {
+>  		 * We want to avoid CCF to disable the VPU clock if
+>  		 * display has been set by Bootloader
+>  		 */
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1126,7 +1127,8 @@ static struct clk_regmap axg_vpu_1 = {
+>  		 * We want to avoid CCF to disable the VPU clock if
+>  		 * display has been set by Bootloader
+>  		 */
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1194,7 +1196,8 @@ static struct clk_regmap axg_vapb_0 = {
+>  			&axg_vapb_0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1242,7 +1245,8 @@ static struct clk_regmap axg_vapb_1 = {
+>  			&axg_vapb_1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
+> index 4566c2aeeb19..27343a73a521 100644
+> --- a/drivers/clk/meson/c3-peripherals.c
+> +++ b/drivers/clk/meson/c3-peripherals.c
+> @@ -1364,7 +1364,7 @@ static struct clk_regmap hcodec_0 = {
+>  			&hcodec_0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1411,7 +1411,7 @@ static struct clk_regmap hcodec_1 = {
+>  			&hcodec_1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index 4d3b064d09fc..21a25001e904 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -2746,7 +2746,8 @@ static struct clk_regmap g12a_vpu_0 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vpu_0_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -2790,7 +2791,8 @@ static struct clk_regmap g12a_vpu_1 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vpu_1_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -3035,7 +3037,8 @@ static struct clk_regmap g12a_vapb_0 = {
+>  			&g12a_vapb_0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -3083,7 +3086,8 @@ static struct clk_regmap g12a_vapb_1 = {
+>  			&g12a_vapb_1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index dfa9ffc61b41..812b3e20c366 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -1543,7 +1543,8 @@ static struct clk_regmap gxbb_vpu_0 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &gxbb_vpu_0_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1591,7 +1592,8 @@ static struct clk_regmap gxbb_vpu_1 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &gxbb_vpu_1_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1674,7 +1676,8 @@ static struct clk_regmap gxbb_vapb_0 = {
+>  			&gxbb_vapb_0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1726,7 +1729,8 @@ static struct clk_regmap gxbb_vapb_1 = {
+>  			&gxbb_vapb_1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+> index 79e0240d58e6..cf10be40141d 100644
+> --- a/drivers/clk/meson/s4-peripherals.c
+> +++ b/drivers/clk/meson/s4-peripherals.c
+> @@ -1466,7 +1466,7 @@ static struct clk_regmap s4_vdec_p0 = {
+>  			&s4_vdec_p0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1516,7 +1516,7 @@ static struct clk_regmap s4_vdec_p1 = {
+>  			&s4_vdec_p1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1586,7 +1586,7 @@ static struct clk_regmap s4_hevcf_p0 = {
+>  			&s4_hevcf_p0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1636,7 +1636,7 @@ static struct clk_regmap s4_hevcf_p1 = {
+>  			&s4_hevcf_p1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1712,7 +1712,7 @@ static struct clk_regmap s4_vpu_0 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &s4_vpu_0_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1756,7 +1756,7 @@ static struct clk_regmap s4_vpu_1 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &s4_vpu_1_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1921,7 +1921,7 @@ static struct clk_regmap s4_vpu_clkc_p0 = {
+>  			&s4_vpu_clkc_p0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1969,7 +1969,7 @@ static struct clk_regmap s4_vpu_clkc_p1 = {
+>  			&s4_vpu_clkc_p1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -2049,7 +2049,7 @@ static struct clk_regmap s4_vapb_0 = {
+>  			&s4_vapb_0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -2097,7 +2097,7 @@ static struct clk_regmap s4_vapb_1 = {
+>  			&s4_vapb_1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- tools/testing/selftests/bpf/DENYLIST.s390x    |  1 +
- .../bpf/prog_tests/inode_local_storage.c      | 72 +++++++++++++++
- .../bpf/progs/inode_storage_recursion.c       | 90 +++++++++++++++++++
- 3 files changed, 163 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
- create mode 100644 tools/testing/selftests/bpf/progs/inode_storage_recursion.c
-
-diff --git a/tools/testing/selftests/bpf/DENYLIST.s390x b/tools/testing/selftests/bpf/DENYLIST.s390x
-index 3ebd77206f98..6b8c9c9ec754 100644
---- a/tools/testing/selftests/bpf/DENYLIST.s390x
-+++ b/tools/testing/selftests/bpf/DENYLIST.s390x
-@@ -1,5 +1,6 @@
- # TEMPORARY
- # Alphabetical order
- get_stack_raw_tp                         # user_stack corrupted user stack                                             (no backchain userspace)
-+inode_localstorage/recursion             # target function (inode_storage_lookup) is inlined on s390)
- stacktrace_build_id                      # compare_map_keys stackid_hmap vs. stackmap err -2 errno 2                   (?)
- verifier_iterating_callbacks
-diff --git a/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c b/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
-new file mode 100644
-index 000000000000..a9d9f77216f4
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include <stdio.h>
-+#include <sys/stat.h>
-+#include <test_progs.h>
-+#include "inode_storage_recursion.skel.h"
-+
-+#define TDIR "/tmp/inode_local_storage"
-+#define TDIR_PARENT "/tmp"
-+
-+static void test_recursion(void)
-+{
-+	struct inode_storage_recursion *skel;
-+	struct bpf_prog_info info;
-+	__u32 info_len = sizeof(info);
-+	int err, prog_fd, map_fd, inode_fd = -1;
-+	long value;
-+
-+	skel = inode_storage_recursion__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open_and_load"))
-+		return;
-+
-+	skel->bss->test_pid = getpid();
-+
-+	err = inode_storage_recursion__attach(skel);
-+	if (!ASSERT_OK(err, "skel_attach"))
-+		goto out;
-+
-+	err = mkdir(TDIR, 0755);
-+	if (!ASSERT_OK(err, "mkdir " TDIR))
-+		goto out;
-+
-+	inode_fd = open(TDIR_PARENT, O_RDONLY | O_CLOEXEC);
-+	if (!ASSERT_OK_FD(inode_fd, "open inode_fd"))
-+		goto out;
-+
-+	/* Detach so that the following lookup won't trigger
-+	 * trace_inode_storage_lookup and further change the values.
-+	 */
-+	inode_storage_recursion__detach(skel);
-+	map_fd = bpf_map__fd(skel->maps.inode_map);
-+	err = bpf_map_lookup_elem(map_fd, &inode_fd, &value);
-+	ASSERT_OK(err, "lookup inode_map");
-+
-+	/* Check trace_inode_mkdir for the reason that value == 201 */
-+	ASSERT_EQ(value, 201, "inode_map value");
-+	ASSERT_EQ(skel->bss->nr_del_errs, 1, "bpf_task_storage_delete busy");
-+
-+	prog_fd = bpf_program__fd(skel->progs.trace_inode_mkdir);
-+	memset(&info, 0, sizeof(info));
-+	err = bpf_prog_get_info_by_fd(prog_fd, &info, &info_len);
-+	ASSERT_OK(err, "get prog info");
-+	ASSERT_EQ(info.recursion_misses, 0, "trace_inode_mkdir prog recursion");
-+
-+	prog_fd = bpf_program__fd(skel->progs.trace_inode_storage_lookup);
-+	memset(&info, 0, sizeof(info));
-+	err = bpf_prog_get_info_by_fd(prog_fd, &info, &info_len);
-+	ASSERT_OK(err, "get prog info");
-+	ASSERT_EQ(info.recursion_misses, 3, "trace_inode_storage_lookup prog recursion");
-+
-+out:
-+	rmdir(TDIR);
-+	close(inode_fd);
-+	inode_storage_recursion__destroy(skel);
-+}
-+
-+void test_inode_localstorage(void)
-+{
-+	if (test__start_subtest("recursion"))
-+		test_recursion();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/inode_storage_recursion.c b/tools/testing/selftests/bpf/progs/inode_storage_recursion.c
-new file mode 100644
-index 000000000000..0ad36f8c6e04
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/inode_storage_recursion.c
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+#ifndef EBUSY
-+#define EBUSY 16
-+#endif
-+
-+char _license[] SEC("license") = "GPL";
-+int nr_del_errs;
-+int test_pid;
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_INODE_STORAGE);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__type(key, int);
-+	__type(value, long);
-+} inode_map SEC(".maps");
-+
-+/* inode_storage_lookup is not an ideal hook for recursion tests, as it
-+ * is static and more likely to get inlined. However, there isn't a
-+ * better function for the test. This is because we need to call
-+ * bpf_inode_storage_* helpers with an inode intput. Unlike task local
-+ * storage, for which we can use bpf_get_current_task_btf() to get task
-+ * pointer with BTF, for inode local storage, we need the get the inode
-+ * pointer from function arguments. Other functions, such as,
-+ * bpf_local_storage_get() does not take inode as input.
-+ */
-+SEC("fentry/inode_storage_lookup")
-+int BPF_PROG(trace_inode_storage_lookup, struct inode *inode)
-+{
-+	struct task_struct *task = bpf_get_current_task_btf();
-+	long *ptr;
-+	int err;
-+
-+	if (!test_pid || task->pid != test_pid)
-+		return 0;
-+
-+	/* This doesn't have BPF_LOCAL_STORAGE_GET_F_CREATE, so it will
-+	 * not trigger on the first call of bpf_inode_storage_get() below.
-+	 *
-+	 * This is called twice, recursion_misses += 2.
-+	 */
-+	ptr = bpf_inode_storage_get(&inode_map, inode, 0, 0);
-+	if (ptr) {
-+		*ptr += 1;
-+
-+		/* This is called once, recursion_misses += 1. */
-+		err = bpf_inode_storage_delete(&inode_map, inode);
-+		if (err == -EBUSY)
-+			nr_del_errs++;
-+	}
-+
-+	return 0;
-+}
-+
-+SEC("fentry/security_inode_mkdir")
-+int BPF_PROG(trace_inode_mkdir, struct inode *dir,
-+	     struct dentry *dentry,
-+	     int mode)
-+{
-+	struct task_struct *task = bpf_get_current_task_btf();
-+	long *ptr;
-+
-+	if (!test_pid || task->pid != test_pid)
-+		return 0;
-+
-+	/* Trigger trace_inode_storage_lookup, the first time */
-+	ptr = bpf_inode_storage_get(&inode_map, dir, 0,
-+				    BPF_LOCAL_STORAGE_GET_F_CREATE);
-+
-+	/* trace_inode_storage_lookup cannot get ptr, so *ptr is 0.
-+	 * Set ptr to 200.
-+	 */
-+	if (ptr && !*ptr)
-+		*ptr = 200;
-+
-+	/* Trigger trace_inode_storage_lookup, the second time.
-+	 * trace_inode_storage_lookup can now get ptr and increase the
-+	 * value. Now the value is 201.
-+	 */
-+	bpf_inode_storage_get(&inode_map, dir, 0,
-+			      BPF_LOCAL_STORAGE_GET_F_CREATE);
-+
-+	return 0;
-+
-+}
 -- 
-2.43.5
-
+Jerome
 
