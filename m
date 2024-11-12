@@ -1,334 +1,152 @@
-Return-Path: <linux-kernel+bounces-406239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20769C5C82
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:56:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F7FD9C5E12
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:02:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0CAB2841CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:55:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B6A3BA0156
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEED92040AC;
-	Tue, 12 Nov 2024 15:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EA220125F;
+	Tue, 12 Nov 2024 15:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TwrRpEL8"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2074.outbound.protection.outlook.com [40.107.212.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="A/tPLfXD"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BF4202635;
-	Tue, 12 Nov 2024 15:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731426737; cv=fail; b=BpKR0aToVOTUEotglA00jrNt4q2Nkcm8IW6n/ScEYdP5OUN8sVfLwkheVroZIKG6w4PyrwZsqeXZPcMT97wk3zTGSSJJg4usabgcXR9XB5aymdjW/AcrA8tc5yAq7Ue/GR9/XZCSsfnDkgPFR0n9gPGjRkmLiXLyXOzCpET7iMU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731426737; c=relaxed/simple;
-	bh=V2EfbQaFRI/+/G+HfoHFgcwVj6sgNW+ddgwfl5T6AB4=;
-	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
-	 Content-Type:MIME-Version; b=cLhsjWxLu8F3KdXZxTn8s73BZdBtCQxGhgBv+fyjbgPsMreKzV3KGpnqTJLoyamgQ/E+HA70XCp7BHGcmNJCQ7cd9w34bckiok3t3rray4HgiQtkfxPGtyoqFB2cMZVzNeWdsox7fWxv6GZMJoKJKHnQPy1xWgU+5f/oDiYGROI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TwrRpEL8; arc=fail smtp.client-ip=40.107.212.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kS73lk4QAxoW3tzxoSXeVGgoORnvpBXCgm462v18meCDOUK8Ftwpc+Gs/wreyLNPPrAD7HdLOgKZfraBtg+0+R7byvN7SO0kgszHb85gAxzzwfssPw354cGfHLSQmXKanH1MGPjBfBZjpTiibeIs7P8gBSeMtCWwLWb0m3bHwBYjRNZU8OQuVxRFtxCz8YQywpUVNy6SqcI7gsdDh4Ehi15t7IfAry3PAo/tdSRB00G+GJAm3EbD/NQtg7uHU3gxXiiE8Ip0KK0xjOBCDyO6Ar+lU/UF3h7EuyFFc3JM9lLPP3iR6Mwij+5hTbFZMyvfLA3qqEOKIUaKuDmqD65bJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l8GhQPqLXgCxHTkVGssDEkonLnR4NoFlhQOL4nGoCug=;
- b=rkagahRBUXpNCCZ1rIl/SJ8CiJ8zYrDzNDHYqiZZoXG9G6bs7zfmKhPvsI51WUjUDhsdqCYbhPUmKoRMyDOPEIFBWtIcTUZFnHJlEpAN977A0ui/BjgOHbIiSoTZ1Ka3wk7eriGQgaoWZXLnlxgDSt8r7DNvQRkyP07M9DMKuyF21SgEQn/5GqCg4ncq/PObNnw0q6idEuEZvCJd4ZqRXjgvNGOWXE7GtCyHAGoU7QztXBWTcClMTD5BuvLYqQ1G/VrFIeyXQ22Q/UHHh7Pu/Kq8sT0RDHZaB5+9QBxymcXn9OUtnO3VP4kgO7UDl4lWrXNHq31GtGWFQR0Lyw/9iA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l8GhQPqLXgCxHTkVGssDEkonLnR4NoFlhQOL4nGoCug=;
- b=TwrRpEL8mKhUqje6R1n24CnaAJufjfb9vz8eq9JByWMYjO16VWJXFvI5wqfeU2wR64VB/NU86D1tKO0WKJPN5bryx4XqMrYJJ2uaCjNNsdjbgrX6EQyrD8EibQDi36T8nSIFPPKbsJEuYoU2vrOjGhpTT4zlh+iyOWWY94cXXdo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by DS0PR12MB7655.namprd12.prod.outlook.com (2603:10b6:8:11e::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Tue, 12 Nov
- 2024 15:52:11 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 15:52:11 +0000
-Message-ID: <d49430ec-8701-72c1-36ab-4d9e612ac443@amd.com>
-Date: Tue, 12 Nov 2024 09:52:07 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To: Dionna Glaze <dionnaglaze@google.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Ashish Kalra <ashish.kalra@amd.com>, John Allen <john.allen@amd.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>
-Cc: linux-coco@lists.linux.dev, Michael Roth <michael.roth@amd.com>,
- Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>,
- Danilo Krummrich <dakr@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Tianfei zhang <tianfei.zhang@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
- kvm@vger.kernel.org, linux-crypto@vger.kernel.org
-References: <20241107232457.4059785-1-dionnaglaze@google.com>
- <20241107232457.4059785-9-dionnaglaze@google.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH v5 08/10] KVM: SVM: move sev_issue_cmd_external_user to
- new API
-In-Reply-To: <20241107232457.4059785-9-dionnaglaze@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR16CA0045.namprd16.prod.outlook.com
- (2603:10b6:805:ca::22) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8A6204F8D
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731426757; cv=none; b=Oixka36Nv7aFGwATLHoTU415vxMmeqJYGrPtkXjZH8RphNhAMutIf1VH50nwdR5++cJkQIu0TcwrNiq6DlGq6F3TO+yp2UEheVTyOeHX7GrAWj1kq/0OMvPiOXPKvYA4yhcsCOoLZTBe6Y/gJ+paFeJSpgcdrIEebOyw7zSTEs0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731426757; c=relaxed/simple;
+	bh=Tl1x5Bk+jUwBokslkn6nOHImIaTZVlEvg+0B1tgEYwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dgTBJ3rd81kk946/d92kHByN6z9vjTPFgZNyvZDh7xvqoxg1wEk5zR6k6mZXnNz4mzhiLSXQFXcDxagpZe19Zu7zkvVxNKMFzmismQMpUypAogIcjatlnUffQA17b98sOq4qrF0BoNSgf+vuWK3qnnw8UlmASWM5BxKbCC6pcZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=A/tPLfXD; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b157c9ad12so406546585a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:52:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1731426753; x=1732031553; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1XEndPtU5GDkMHoEO1w7O3RQK19ymAjkNoxM3jg4QLk=;
+        b=A/tPLfXDJwRPCJBs9Gz3OdJLtmImtfMPu+JWHpbDzwwkf8EH770c7/eLM/35mpa7Wu
+         3yCkskezdXfn+p+E+4fgcl7DMe4Xvv5yfgpNBqQNCVcZFe0YzxK01ovacFsPiD1saoqo
+         yJ3OsbfX6DEijrCxRlNtsgZgr2pMnM4mS+wXfKOguQDJJ6KYuq9U/JDrOIQ36zxtCPyh
+         ZL4QeSebS5JOCwczM/yd/fY7yRM73xEAKxYGoDzfekyX6NMxWTwDphO0ZLuRnu00yggY
+         39kVcLdMVZ0NqyVKbC3+dcAzz8EAojbQ1X1kiwjnulwi6mpxzQAivy0PdwuIxSH5W8Yg
+         ZPgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731426753; x=1732031553;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1XEndPtU5GDkMHoEO1w7O3RQK19ymAjkNoxM3jg4QLk=;
+        b=Y3gmNNdK7259kvfm4RRHugsThn/vwQXHvs/yTvXJYXuDVJNmcXNP+2gomvT5Sn6PqS
+         uitHhSKo50If9SamSSQ7CgtQ1fzleoWlcDrvk7wCp7RCVIsRu47JEKBOX1e7wM/NdzMn
+         sI2cdJe80htcaE0CBx+jtwQmBnjTcg63XtJlvTBftyQq6hNsdcbWRRkO5JjAN1jirrMj
+         0iDWjuaiB0F1qqU9hoIdunObEfisqVLa6/VSnKT7LvB+icVz2U7DJ+YH5map1X4HR/CX
+         p3wekUluPRVehzgKTbr4m2QoaojOOt7ZJXi7iqbjhWlXhpadtTmveurz/m461PFZx2v3
+         Eiyg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3SjRyqXZJ06/oAzEGpyLp+57OJdfUTJWR1MXtOytRasmw/KYNdX2+9XXW7UJFtjbxTrj/ydBJYFzKAMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhpm6ceb6CD8Uj9rWNGQ7468t20Kc+V/iG3aizXxhokyunsSLy
+	36sBdw8tkSr5bL/sQBQrxmGs/lh9AwE2nYwNBgAk3C1bu2EyUEy6jZ6gYIke1A==
+X-Google-Smtp-Source: AGHT+IGx09QnY+a4QJcLEf4HugOufvp4qILo6Oon7AWW2cEFrH62MxQ9c2KHoGuxelT2bD8VHWHiRQ==
+X-Received: by 2002:a05:622a:1901:b0:45f:bca0:b8d2 with SMTP id d75a77b69052e-4630932b3efmr232082961cf.20.1731426753453;
+        Tue, 12 Nov 2024 07:52:33 -0800 (PST)
+Received: from rowland.harvard.edu ([140.247.12.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ff46d293sm76541571cf.47.2024.11.12.07.52.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 07:52:32 -0800 (PST)
+Date: Tue, 12 Nov 2024 10:52:30 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: gregkh@linuxfoundation.org, oneukum@suse.com,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	syzbot+9760fbbd535cee131f81@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v4] usb/cdc-wdm: fix memory info leak in wdm_read
+Message-ID: <824e839d-ee72-4923-bc88-e9cc58201b07@rowland.harvard.edu>
+References: <2024111232-relative-bottom-4995@gregkh>
+ <20241112132931.3504749-1-snovitoll@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|DS0PR12MB7655:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7cec05f8-e40c-4a8c-85f9-08dd0331f80d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|1800799024|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YUVTL1ZPN3ZadTZSUEI2b1B4NFZGVmYycVp0Z0JDSk1qRTNsZlgydDl5Y09E?=
- =?utf-8?B?R2lZNU40Q1FFNVVZTk16SEx2T3c4Q3FPcjRVbkJHTlEvUWpvM3VZbkc5SVNx?=
- =?utf-8?B?NlIzNzNZakMyS2lObE85b1BvQ0wrUnpqR3pQaHV6cUZTV04wU1B0WXNiR0NX?=
- =?utf-8?B?NHduKzY2NEFheGVFTjNPZ0s1dlYyOHl6ZFpnK1c2RGFNQ2s3dHFTckYyL1pJ?=
- =?utf-8?B?emRidU5wdlUweFJIRDlTVWM4RjdPQnludGVOV3ZINzdESi90YUF2NmxjcHZU?=
- =?utf-8?B?RmE3ZVM5QkhBNWh4ZFhpRGtVNVR5NDBIYWhkSzVrVEVKekZFZ2NQbmdrMFBR?=
- =?utf-8?B?T2t0WXE2aWxteHB1WmpJOCtwNHQrMEdEdlRQdFphWXV5WjdvdWxxeS9KRncy?=
- =?utf-8?B?NGJhSDhzYWY5TS8wVTl3VC9FWUl3M3dlVkJjeDRKVW53cGg3RWtPS29Db2Fn?=
- =?utf-8?B?cURPTTlKeWx1OFNFMEowd2RQRlg5YzJHMk8zV3YrbGpIWjU2T0tKYzdFQjhV?=
- =?utf-8?B?SHI1bnZsVjRCUGQ5NDA0b25LSzQyNGJJOGVsQlA3RGkwT1d3RTFrVncxYmpx?=
- =?utf-8?B?Q1ZKcFBRREEvS1ltOXJSRytCYUlHTDVTQXgzMmVuWWRab2pKQk16V2pGbEZU?=
- =?utf-8?B?NmdKZDlpb1lwYW9VbE5PTHBQRng1bXloNll3QktLeGwrMVIyNGlkMVFFTGhG?=
- =?utf-8?B?V21vSFR5M1VUeSt6NFRDcGpaVVF3WGRFWUFoZFpYMzhSY2prM3RWbUdPQmpv?=
- =?utf-8?B?WEs0cldTbWhxYml5L1pMUzJ2R1VmeEFCNmlWUy9iWmZ0Z3ZXaGQvOVQvM1pk?=
- =?utf-8?B?NndidGw1UDZxdVB3YktwTEpUYXJzZXhpK3h0enZhWS9OU0NHSXc2NVozTjJJ?=
- =?utf-8?B?blN1RjR6MmNSVG85Wko0M2ZBNHpGMWpNV1F1UUIycVl4V1dsamdiNUZzOTFM?=
- =?utf-8?B?eDhrUkozaS8yYVVuZlFtdFY5SnVBN3lNRFdvRm1rajZWMVBVdUp1VFd1Njl6?=
- =?utf-8?B?bUtMU1RvdEhTN3EvMXhLQzIxWkYxbjVWK0xheTBXYURzNW5MeHlQRU8wWDhS?=
- =?utf-8?B?RHl2bGZNKzJTTGEyVFBjbTNQZU5MOWJlZjU2bnFzTjRRTm1iUnBOayszencr?=
- =?utf-8?B?QkNZdkFMWWlEUFhlbkVLbGY0MEJCUWk5NFFFSGlBV2IvTWdObXo1eEQ4TlJR?=
- =?utf-8?B?RXNhUlUxZU1ORUVZZWlzSy9QLytNSmNqTE5SY3JscFN5RzdSaldnK3dZMml5?=
- =?utf-8?B?cGdITUhZMWgxR0srbm8vV0VjUzV5Q01tNjkvTnUxNEp4UllwZnk0a1JsdVlD?=
- =?utf-8?B?bHBNdmZWSzIvbTVMREV2bGdqMW5EbGp0c1N2aEcvQVZYcFhna0huc0dBQncw?=
- =?utf-8?B?ZlVoN1prV0pXWk0rOWtjeFhSLzJCbEJEQm1sTm1mVW41MVdrWGR0aWlEd1pn?=
- =?utf-8?B?dkpKN2FPYjNBNld6c2tvR2hOMFIyRGZ3YVgrdU1LMEczUGJrYlNCc1Zub1Bq?=
- =?utf-8?B?VjMvMmZJK2NYaFBLWE5MeGNodlFvK1hmaUsvMjFFTk0zejRIWnZ3NCtFcnF6?=
- =?utf-8?B?R3NSQkt4TlhQUExvbnBXZE92K0hoKzI3YUQycGk3bHFGNHlYR1BIVGlEWU9z?=
- =?utf-8?B?WldnekFpRWJNa1pZWDRpbUxWSk9DSklyWk9rSTAyekFUeEhYdlczdUlzRHlZ?=
- =?utf-8?B?c2FQRVI1eTlQOU1EbUdkSzUzem5QdEVZTWlPc3hzeFlWb1hubTRJdTFrNUU5?=
- =?utf-8?B?d2gxNnRabHY2SG5zQTBsOVdMQ0JsUG1aVkJhODJNNGQ0U1VhTURCaExWbVNi?=
- =?utf-8?Q?yvOgpPn/hD3KrMpYGbnw247q9OhnfMoeyJ46s=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZnV1bktIT2xtK1BYZU9jSDRUaTNSSmRlTGZHdWJyRTRXdk9CbDZHK04rRVNG?=
- =?utf-8?B?NUJsSXFONEJKRHZxSUJCR2FEUGErbWV5Q3A4R053RnZ5c1N1WEpTUzVNNDJr?=
- =?utf-8?B?YzZaeFd1R2JxZjRNNWxFQzJrR25TU1hqSkFjR0lPV0xQS0hXQVNJMGR1R1hD?=
- =?utf-8?B?c0pLMUc5THRVd0NQS1BNWUltVkpORnhxTGhZUkdNMUtUMEtNUGR5VjJmRmpq?=
- =?utf-8?B?ejg4eTVtN1c3Uy9pRXZuMEhLck5Od0lsTU1neDJKMWl3UEV1VDBwRjNnWGpx?=
- =?utf-8?B?YUl2Y2FGU0Y4YkdoV0JubnZ6TlVsM0M3cVMyVFhBK0JxZldzNGJab0RGVjFZ?=
- =?utf-8?B?Z3BpWUhDRzA1VlZ6L0ROMGExVTZyMU1qajRsTFkvS0ZXMmUxNXRYOHhseWEw?=
- =?utf-8?B?VkxpdStEczZwMHFCd2h3U011OHdONndaSkdBMnFVZTBWUy9VNzltTTBTRjhI?=
- =?utf-8?B?d2trMUlPSGdWNWh5TzZOb0tRNE9lVFYyL2YwVU1CQmxCY1RkOE9KdnB3OEda?=
- =?utf-8?B?eWxYYW56RytOZDFiaHVUOFNSRFJ4eW9NM3NORjRHTU1RV0ZIQ1VjUnpRSVgv?=
- =?utf-8?B?OUtFUnl4eEZJNlIyTnJud3lsNU1vYXliZDV5V2FHQjRXMFE4ejlNOW9hY1ZN?=
- =?utf-8?B?VzBmdlkvR1NpTFZMaWVReU5abk1YTzVpZFNTTWI5ZXFUYUh3MCtPbWV3cU1S?=
- =?utf-8?B?dVg1QXNUOGlDZXZHeVBDNVVYUHRORUZsR0RaazRXdDFDcWR2NEcwbXFqMlZZ?=
- =?utf-8?B?M2NmS0xlY2VaVkhwVDVvaWphbDFJbGY4Qld6YzNQUyttSXpOeDdQNkNVNnhC?=
- =?utf-8?B?c0d2dnRjU0twZGhIby9od0RTN2ExYVBBaDN2U1d6dWRWbmgwUDdBMUxER25z?=
- =?utf-8?B?STZQS256SS9GMDd1SVFISFg4UFFES0V2UTcxcVpieXlsY2NXaEVpZmpWUmRW?=
- =?utf-8?B?UlZEdzNKWkdOZmdXS0ZqZTBySitKZWN1NG1YOWt5VzVVaFFURGZYZ0JsV0d3?=
- =?utf-8?B?OFlpK3ltWHQvQjR0OUdQZXRnenpGdGJmV3FoNjNFQVcxS2taTW1wUnE4ajNt?=
- =?utf-8?B?YmliaEVuRUFLcTFsN1kxL0laaENFVnV6Qmt5RVBRU1VQb2VrZ1JCMWlPTHdl?=
- =?utf-8?B?clVDNDYxaGtJNFJ4U00rWVU3WEJ6bWx1MnZBTjJWYUxtNWI4aGFkd053YTBZ?=
- =?utf-8?B?R0J4by9GTnJUcW1zMlBoNXpzdVlWQ2VzMjgzYk9hV25MUmxYRFB0QmxDSGlv?=
- =?utf-8?B?Umsyc1QvRzR1S2FjTTEvTGJnOVg1bVNCS2c2bjMxMkJnVGlHVVFqaGltNjNT?=
- =?utf-8?B?ODRXT0xHR09pMVYvUTlxRWE2QXJZQXQyK3BrY2xrWk82Rm1reXI3NGRSNzBZ?=
- =?utf-8?B?b01CL1NYZm91UjYrTEgrREh4YzBQcjU5ZTM1T2oyVS9OYXljRFhXMTVoYTRK?=
- =?utf-8?B?TldUWEZFZVNZS0M1U1RCNFBZV3lnQzdKbDF0LzhtVkxxNmh0cUZyNjltU1F3?=
- =?utf-8?B?NGZTbU1RcEVPY0RHQitmWFlIRUR4Wm5jZjI0Mi91VGN1cFcyYzBEcEp3bFF6?=
- =?utf-8?B?Y2lQMWRMRVpRbnM5bFlmazJIWE9BOEdJcWlKY1phMFEwVjRoVmRCSUtKTGtW?=
- =?utf-8?B?YXVuWHE0UTFKT1g0R1duNDYyam85RHRvcmtySjl0TjRJa1ZmZXZoVDg3UnRn?=
- =?utf-8?B?dm90VS85MmZRcldxeklRL1ZXQXRzZk04MmRVbGxmcWpaMlZ5bTAxL1lyY1V6?=
- =?utf-8?B?UFFKRWdHRUVpL3Q0b1lqV0VRbXp3WUE2Y3kwK0Y3SjBMVHlIanpkamREakxa?=
- =?utf-8?B?L0gvTGplRXlCSndDWGlEb1kzSG9waDVFSnBTeEM1NVB6SXVyYVVBMUZUbEYr?=
- =?utf-8?B?bExmTUF0VHJaTkx0ZWYrNEtBL2wzdU8zdGxVUVozTXdwWFk4bHRxbjBsdkhj?=
- =?utf-8?B?U1NJUEd0MnQxcHdmOCtsUUh0OEdiQUhvTU44eEo2RFVIbnVaTGxDaG1zS1Yy?=
- =?utf-8?B?TFR0RUkrdzd1Rmg5QjNkRmZCZGNlYkdCaktneFRNR0VBdVJhRDdNWkRZTFE1?=
- =?utf-8?B?SktVUVkyMjZRblFFSUZQSkdiY2tCcnUrdlc1RUpUN1htUVV1RW1oOWZPaEFZ?=
- =?utf-8?Q?bZJmYvJa7b0mU6gL3WUvkW7nX?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7cec05f8-e40c-4a8c-85f9-08dd0331f80d
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 15:52:10.8204
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8kXTS7PCU3r2TmrFKDHEOATHnNqJj8ey5r66i7P3rAPkoRI9FUNz7XQJ3acxkFij7B8qHbiTgj1r60FRgu4qGA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7655
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112132931.3504749-1-snovitoll@gmail.com>
 
-On 11/7/24 17:24, Dionna Glaze wrote:
-> ccp now prefers all calls from external drivers to dominate all calls
-> into the driver on behalf of a user with a successful
-> sev_check_external_user call.
-
-Would it be simpler to have the new APIs take an fd for an argument,
-instead of doing this rework?
-
-Thanks,
-Tom
-
+On Tue, Nov 12, 2024 at 06:29:31PM +0500, Sabyrzhan Tasbolatov wrote:
+> syzbot reported "KMSAN: kernel-infoleak in wdm_read", though there is no
+> reproducer and the only report for this issue.
 > 
-> CC: Sean Christopherson <seanjc@google.com>
-> CC: Paolo Bonzini <pbonzini@redhat.com>
-> CC: Thomas Gleixner <tglx@linutronix.de>
-> CC: Ingo Molnar <mingo@redhat.com>
-> CC: Borislav Petkov <bp@alien8.de>
-> CC: Dave Hansen <dave.hansen@linux.intel.com>
-> CC: Ashish Kalra <ashish.kalra@amd.com>
-> CC: Tom Lendacky <thomas.lendacky@amd.com>
-> CC: John Allen <john.allen@amd.com>
-> CC: Herbert Xu <herbert@gondor.apana.org.au>
-> CC: "David S. Miller" <davem@davemloft.net>
-> CC: Michael Roth <michael.roth@amd.com>
-> CC: Luis Chamberlain <mcgrof@kernel.org>
-> CC: Russ Weight <russ.weight@linux.dev>
-> CC: Danilo Krummrich <dakr@redhat.com>
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> CC: "Rafael J. Wysocki" <rafael@kernel.org>
-> CC: Tianfei zhang <tianfei.zhang@intel.com>
-> CC: Alexey Kardashevskiy <aik@amd.com>
+> The check:
 > 
-> Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
+> 	if (cntr > count)
+> 		cntr = count;
+> 
+> only limits `cntr` to `count` (the number of bytes requested by
+> userspace), but it doesn't verify that `desc->ubuf` actually has `count`
+> bytes. This oversight can lead to situations where `copy_to_user` reads
+> uninitialized data from `desc->ubuf`.
+> 
+> This patch makes sure `cntr` respects` both the `desc->length` and the
+> `count` requested by userspace, preventing any uninitialized memory from
+> leaking into userspace.
+
 > ---
->  arch/x86/kvm/svm/sev.c       | 18 +++++++++++++++---
->  drivers/crypto/ccp/sev-dev.c | 12 ------------
->  include/linux/psp-sev.h      | 27 ---------------------------
->  3 files changed, 15 insertions(+), 42 deletions(-)
+>  drivers/usb/class/cdc-wdm.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index d0e0152aefb32..cea41b8cdabe4 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -528,21 +528,33 @@ static int sev_bind_asid(struct kvm *kvm, unsigned int handle, int *error)
->  	return ret;
->  }
+> diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
+> index 86ee39db013f..5a500973b463 100644
+> --- a/drivers/usb/class/cdc-wdm.c
+> +++ b/drivers/usb/class/cdc-wdm.c
+> @@ -598,8 +598,9 @@ static ssize_t wdm_read
+>  		spin_unlock_irq(&desc->iuspin);
+>  	}
+
+Note that the code immediately before the "if" statement which ends here 
+does:
+
+	cntr = READ_ONCE(desc->length);
+
+And the code at the end of the "if" block does:
+
+		cntr = desc->length;
+
+(while holding the spinlock).  Thus it is guaranteed that either way, 
+cntr is equal to desc->length when we reach this point.
+
 >  
-> -static int __sev_issue_cmd(int fd, int id, void *data, int *error)
-> +static int sev_check_external_user(int fd)
->  {
->  	struct fd f;
-> -	int ret;
-> +	int ret = 0;
->  
->  	f = fdget(fd);
->  	if (!fd_file(f))
->  		return -EBADF;
->  
-> -	ret = sev_issue_cmd_external_user(fd_file(f), id, data, error);
-> +	if (!file_is_sev(fd_file(f)))
-> +		ret = -EBADF;
->  
->  	fdput(f);
->  	return ret;
->  }
->  
-> +static int __sev_issue_cmd(int fd, int id, void *data, int *error)
-> +{
-> +	int ret;
-> +
-> +	ret = sev_check_external_user(fd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sev_do_cmd(id, data, error);
-> +}
-> +
->  static int sev_issue_cmd(struct kvm *kvm, int id, void *data, int *error)
->  {
->  	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
-> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-> index f92e6a222da8a..67f6425b7ed07 100644
-> --- a/drivers/crypto/ccp/sev-dev.c
-> +++ b/drivers/crypto/ccp/sev-dev.c
-> @@ -2493,18 +2493,6 @@ bool file_is_sev(struct file *p)
->  }
->  EXPORT_SYMBOL_GPL(file_is_sev);
->  
-> -int sev_issue_cmd_external_user(struct file *filep, unsigned int cmd,
-> -				void *data, int *error)
-> -{
-> -	int rc = file_is_sev(filep) ? 0 : -EBADF;
-> -
-> -	if (rc)
-> -		return rc;
-> -
-> -	return sev_do_cmd(cmd, data, error);
-> -}
-> -EXPORT_SYMBOL_GPL(sev_issue_cmd_external_user);
-> -
->  void sev_pci_init(void)
->  {
->  	struct sev_device *sev = psp_master->sev_data;
-> diff --git a/include/linux/psp-sev.h b/include/linux/psp-sev.h
-> index ed85c0cfcfcbe..b4164d3600702 100644
-> --- a/include/linux/psp-sev.h
-> +++ b/include/linux/psp-sev.h
-> @@ -860,30 +860,6 @@ int sev_platform_init(struct sev_platform_init_args *args);
->   */
->  int sev_platform_status(struct sev_user_data_status *status, int *error);
->  
-> -/**
-> - * sev_issue_cmd_external_user - issue SEV command by other driver with a file
-> - * handle.
-> - *
-> - * This function can be used by other drivers to issue a SEV command on
-> - * behalf of userspace. The caller must pass a valid SEV file descriptor
-> - * so that we know that it has access to SEV device.
-> - *
-> - * @filep - SEV device file pointer
-> - * @cmd - command to issue
-> - * @data - command buffer
-> - * @error: SEV command return code
-> - *
-> - * Returns:
-> - * 0 if the SEV successfully processed the command
-> - * -%ENODEV    if the SEV device is not available
-> - * -%ENOTSUPP  if the SEV does not support SEV
-> - * -%ETIMEDOUT if the SEV command timed out
-> - * -%EIO       if the SEV returned a non-zero return code
-> - * -%EBADF     if the file pointer is bad or does not grant access
-> - */
-> -int sev_issue_cmd_external_user(struct file *filep, unsigned int id,
-> -				void *data, int *error);
-> -
->  /**
->   * file_is_sev - returns whether a file pointer is for the SEV device
->   *
-> @@ -1043,9 +1019,6 @@ sev_guest_activate(struct sev_data_activate *data, int *error) { return -ENODEV;
->  
->  static inline int sev_guest_df_flush(int *error) { return -ENODEV; }
->  
-> -static inline int
-> -sev_issue_cmd_external_user(struct file *filep, unsigned int id, void *data, int *error) { return -ENODEV; }
-> -
->  static inline bool file_is_sev(struct file *filep) { return false; }
->  
->  static inline void *psp_copy_user_blob(u64 __user uaddr, u32 len) { return ERR_PTR(-EINVAL); }
+> -	if (cntr > count)
+> -		cntr = count;
+> +	/* Ensure cntr does not exceed available data in ubuf. */
+> +	cntr = min_t(size_t, count, desc->length);
+
+And therefore this line does exactly the same computation as the code 
+you removed.  Except for one thing: At this point the spinlock is not 
+held, and your new code does not call READ_ONCE().  That is an 
+oversight.
+
+Since the new code does the same thing as the old code, it cannot 
+possibly fix any bugs.
+
+(Actually there is one other thing to watch out for: the difference 
+between signed and unsigned values.  Here cntr and desc->length are 
+signed whereas count is unsigned.  In theory that could cause problems 
+-- it might even be related to the cause of the original bug report.  
+Can you prove that desc->length will never be negative?)
+
+Alan Stern
 
