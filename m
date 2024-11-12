@@ -1,94 +1,175 @@
-Return-Path: <linux-kernel+bounces-405321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B919C4FDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:49:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADB09C4FE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:49:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B8B6282961
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:49:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BAD11F214BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590EC20B811;
-	Tue, 12 Nov 2024 07:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC591CEEB3;
+	Tue, 12 Nov 2024 07:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="U9zeIuSG"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbwDuuvz"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A49520ADC0;
-	Tue, 12 Nov 2024 07:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDF320BB59;
+	Tue, 12 Nov 2024 07:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731397445; cv=none; b=Kgp2MOXKeOBaLrnd2IB6MdY1QnSkoPlpfCSkxN+U2eutolzQICdc1MxWn4t6Rzsfw/qCnlNWGtWUuHLlgMnnV1dj6wotBawHgy7+HqwBzjKLoB3OWxcIWQVz7vdf4yePA72HtfXRRI54AdIo0tUY51NIFchXuELuo2wevmxrB20=
+	t=1731397509; cv=none; b=S8YR5awIOLR/kpwHY7AjPuTD+PSfabDUFdamKQ3SdGWjWuOqdZboXPfOM5GDDHSr/c/XXhXYLCC0rAblxR07tGf0MA3VUUipgIMV+0snU9pNUzKw07R4HLWoC0ROBwaHNiAkC6xBlE9jRpnDZ9+31DnDOKEMajOyXsXdTRnPCCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731397445; c=relaxed/simple;
-	bh=gYK8Sr5oh64mtihPCqd1kqaMIT1tBWPjHL4NQqEPAb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UGY/pby93wG0+ENTMSkJKXjdREJhDoEEoUgbPg+swiyg69+mLh4jnLcYlvSDUOuSw3OXo0vIrkXtEdkr74Pmki/rzcj9c77rWG/LvXh2jzwCElo5M+PXkYyEEltX8Bw2aI8FcsfJYVpzQt3ul5uLBS3FwvRfn6nah+SuB+eP3wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=U9zeIuSG; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID; bh=AsWwEEvmw/bdBxEEFaD+tDkgRMXNBIOX6N+pznhzV4k=; b=U9zeIu
-	SGrGXjoQErw2vKerYTqZX06+8gI5WNy1r/v8gY34qXPX/JWYfUwnLiGnC8rPSM7JOW0bPgqNqTWhQ
-	3zPwMMztceWhILwN2makGTOK6iFTQa/ualdVj7eOtyFK4KbKSrqa0CWb2f5DRMNcqgm2E4SsWLCNS
-	gR+wdLYlfwVYZEtB9vKUcEfFz+S5NBYSWXqAT9GPTQKUA2iDU54KN881gNUsxbt7XdxCojJDYdXYc
-	v6gVhqCuVeKp2IJ3wQI6RbAbBn+e9o2TL2H1N2dbcx19Zs+OaAOa+P7KLUKPC3vewxztQb3Fp9e63
-	X6fQ+AZHNU/NFGIOhvV1z5Zp7x2g==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1tAlZB-0003Cs-DP; Tue, 12 Nov 2024 08:44:01 +0100
-Received: from [185.17.218.86] (helo=Seans-MacBook-Pro.local)
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1tAlZA-000PqT-2H;
-	Tue, 12 Nov 2024 08:44:00 +0100
-Date: Tue, 12 Nov 2024 08:44:00 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ
- voltage
-Message-ID: <lfgpif7zqwr3ojopcnxmktdhfpeui5yjrxp5dbzhlz7h3ewhle@3lbg553ujfgq>
-References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
- <20241112-bizarre-cuttlefish-of-excellence-ff4e83-mkl@pengutronix.de>
+	s=arc-20240116; t=1731397509; c=relaxed/simple;
+	bh=6Co9+HFhkrAyybpuUDGbybmXfat+6GD47OYnwCaf5jw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=khCgzn1DwhJ/2/ScmIljzz4wRoLNrOFMFwwalWt2Fs9PukjqM42xIhLnB46ns9GP5H8Koj7UU1r0q3IbPNbc5o8ZG9TH/OCERduh4rrdoHVCzt3dSDRnH18U81vsoFfK5Gcb8vRjQSrWd2BQxD8IobN3foJN+xu+cIZpHf07KBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CbwDuuvz; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539fe02c386so6067220e87.0;
+        Mon, 11 Nov 2024 23:45:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731397506; x=1732002306; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PvuH9yhCeBMlG36zLRmS+IcsMk1yHd7W71vxP6lAfWA=;
+        b=CbwDuuvzV4zy5kimXk75YgkfJQfN4NC8aZCxb1pViLSJmbuWG7koEY7PVMsoH55Fqo
+         cDumSaWy/Bh8onpRtGYGHgaM+3a3hns2A+JRPOY47Ph0dnoG/QNGbfKKjZG/l8KNloFe
+         qFzWl2WQUK+cCT3ErRTjU7fqsKS2rOnfDqVQgDg8Uansnjgti8rJzCAgkmHzuCW9HxFz
+         dqwNNn2F6pHJ/PKxDVZM9mvIcf/EyyBcbqhQG38Nn8OwC3YRPHYIan1y9ZBI9jF37ANc
+         QIJ2ci0TG3MrrCyGbC28DHoLZmZmSz2NsZpetDBggatJQIU7M15xXr1LReGQUUObwYxe
+         HUYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731397506; x=1732002306;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PvuH9yhCeBMlG36zLRmS+IcsMk1yHd7W71vxP6lAfWA=;
+        b=bHg2YLROEfmcHqF+VwIF9FvD6ZKvo1XQupNgCjf6q0wy8xSfZS/7cZXwiqNzRNff+5
+         kM0dYlxFVPZfd/i1PELG8SbwHWBoVnYTTSR+EarZXiODi/hBhcdL8bxDXQN4LZGu4ZHE
+         YGsJpIfUESEzZtGdDmcFFHyCftKTU5RnBEad9wzYlVxeRQbjrBLOj1Jw/WTjuzvKRtk1
+         +0c3pMmq8z0i1QKO2thKyOgjbrv2/+QpSPB53mRvYC1oN5tXhv0pngUkIZNbv+Viebiy
+         yq6Oubn6qhc5LNqc58/h74txmJUVCzTiDkn67YYIN2/yuEDRWpzi8aKFVla/dTVaEApF
+         YWoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWLnTIHkfhrzoU5in2PZqZO/GPetbQMyqyjYObu/sY08pxCwKKYMsafqPxjX0yNsc4kBhn3O42QBzU@vger.kernel.org, AJvYcCVybPZQ6UErfO4gK0phn4ZLzb9r1rxBcMtVgi4Q8Edo4WJ2f4/8d6lsT0K9KeoEhbVs6YzDGl/+mpOO@vger.kernel.org, AJvYcCW7x8MFfaRF6EFUGvgyL+0t1H6OLUA1ycmpHLusCfNIfaJULWHNlxJQAaCmqE7sJhzGKCZX0U/uIehMTw==@vger.kernel.org, AJvYcCWuSlSGniHIDQJnjTIiBW0ehQ0AY2KUl7XMOFNGqHZvHrCWkAkclpXQa5j7AcYTTdikhpK8lL//LyQsjT8y@vger.kernel.org, AJvYcCX0CsxxeeUCQ3NR0xn0Y5fhOrgccNODGaZSpzf3MyVK8OHisH2wsGkfk2eC4w9fEcfvxMipvj83v9b3@vger.kernel.org, AJvYcCXZHkqqYK+tkDN40Vzb/VXMI3Wdm8RoOtPbMWqrUygUdHXeJCXZWFMRMDsjQvAIrLgNniubLG35GNydM0nG@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC+1j8Fy/EMjQ9+OFLKXd7feNnC9fYyCJ4Drm4B7SxbRnLFj1p
+	QNGq9NoXmD7Q4UoSDYus6knan4PgYUp854vw37T56ELEzN4eLihe
+X-Google-Smtp-Source: AGHT+IGMIr+lUOiAWgiLqS9sR2Hcfvkf2KB7t1d9QR2hVKbD3J5J6DiuP1/RdyjRc4cRHYP/8VQpkg==
+X-Received: by 2002:a05:6512:3e17:b0:539:ede3:827f with SMTP id 2adb3069b0e04-53d85f231c6mr5858903e87.24.1731397505707;
+        Mon, 11 Nov 2024 23:45:05 -0800 (PST)
+Received: from ?IPV6:2001:678:a5c:1202:4fb5:f16a:579c:6dcb? (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff178eec81sm19427331fa.33.2024.11.11.23.45.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 23:45:05 -0800 (PST)
+Message-ID: <70772ce5-9dca-418e-9714-80ba4ae28959@gmail.com>
+Date: Tue, 12 Nov 2024 08:45:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241112-bizarre-cuttlefish-of-excellence-ff4e83-mkl@pengutronix.de>
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27455/Mon Nov 11 10:58:33 2024)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/7] Adjust symbol ordering in text output section
+To: Rong Xu <xur@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+ Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>,
+ Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>,
+ Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>,
+ Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+ Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>,
+ Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>,
+ workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Maksim Panchenko <max4bolt@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>,
+ Krzysztof Pszeniczny <kpszeniczny@google.com>,
+ Sriraman Tallam <tmsriram@google.com>, Stephane Eranian
+ <eranian@google.com>, x86@kernel.org, linux-arch@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20241026051410.2819338-1-xur@google.com>
+ <20241026051410.2819338-4-xur@google.com>
+ <44193ca7-9d31-4b58-99cc-3300a6ad5289@gmail.com>
+ <CAF1bQ=ShjoEQZGPjDoy_B6wZdD_jr-RevVXwEDPA_-o-Ba0Omg@mail.gmail.com>
+ <e7cd2746-0ad8-452f-aa12-e3a37e8a9288@gmail.com>
+ <CAF1bQ=SYeeKLUTfbqw-KH1rHJCj_CfJBuk+mZUrnnb7aDjRV2A@mail.gmail.com>
+ <CAF1bQ=R18HLC2vjCGj+M=VYidrVzz3RT=U8cckXgpgrxc0kG0Q@mail.gmail.com>
+Content-Language: en-US, sv-SE
+From: Klara Modin <klarasmodin@gmail.com>
+In-Reply-To: <CAF1bQ=R18HLC2vjCGj+M=VYidrVzz3RT=U8cckXgpgrxc0kG0Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Marc,
-
-On Tue, Nov 12, 2024 at 08:38:26AM +0100, Marc Kleine-Budde wrote:
-> On 11.11.2024 09:54:48, Sean Nyekjaer wrote:
-> > This series adds support for setting the nWKRQ voltage.
+On 2024-11-12 06:38, Rong Xu wrote:
+> I compared the System.map files from Klara Modin. The linker script is
+> doing what I expected: relocating the unlikely executed functions to the
+> beginning of the .text section.
 > 
-> IIRC the yaml change should be made before the driver change. Please
-> make the yaml changes the 1st patch in the series.
+> However, the problem is with the _stext symbol. It belongs to the
+> .text section, so
+> it is positioned after the unlikely (or hot) functions. But it really
+> needs to be
+> the start of the text section.
 > 
-> Marc
+> I checked all vmlinux.lds.S in arch/, I found that most archs
+> explicitly assign _stext to the same address as _text, with the
+> following 3 exceptions:
+>    arch/sh/kernel/vmlinux.lds.S
+>    arch/mips/kernel/vmlinux.lds.S
+>    arch/sparc/kernel/vmlinux.lds.S
+> 
+> Note that we already partially handled arch/sparc/kernel/vmlinux.lds.S
+> for sparc64.
+> But we need to handle sparc32 also.
+> 
+> Additionally, the boot/compressed/vmlinux.lds.S also the TEXT_TEXT
+> template. However,
+> I presume these files do not generate the .text.unlikely. or
+> .text.hot.* sections.
+> 
+> I sent the following patch to Klara because I don't have an
+> environment to build and test.
+> ====================
+> diff --git a/arch/mips/kernel/vmlinux.lds.S b/arch/mips/kernel/vmlinux.lds.S
+> index 9ff55cb80a64..5f130af44247 100644
+> --- a/arch/mips/kernel/vmlinux.lds.S
+> +++ b/arch/mips/kernel/vmlinux.lds.S
+> @@ -61,6 +61,7 @@ SECTIONS
+>          /* read-only */
+>          _text = .;      /* Text and read-only data */
+>          .text : {
+> +               _stext = .;
+>                  TEXT_TEXT
+>                  SCHED_TEXT
+>                  LOCK_TEXT
+> ======================
+> 
+> If Klara confirms the fix, I will send the patch for review.
+> 
+> Thanks,
+> 
+> -Rong
 > 
 
-I know, so I have added, prerequisite-change-id as pr the b4 manual.
+This does indeed fix the issue for me.
 
-/Sean
+Thanks,
+Tested-by: Klara Modin <klarasmodin@gmail.com>
 
