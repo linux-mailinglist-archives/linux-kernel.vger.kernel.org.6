@@ -1,106 +1,135 @@
-Return-Path: <linux-kernel+bounces-406156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B759C5B8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:13:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A9F9C5B91
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7221A2819CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:13:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0E81F212DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526B0200CBE;
-	Tue, 12 Nov 2024 15:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10802003A2;
+	Tue, 12 Nov 2024 15:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ip0xutgi"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gN8R0y5r"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1963E43AA1;
-	Tue, 12 Nov 2024 15:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1BF1FF053;
+	Tue, 12 Nov 2024 15:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731424286; cv=none; b=K3RoQTmID49L+633hUuFuHsBTaMb9Z4MECV7Wgtlza7RC0J9jUV1BLoOj6bBAgo4w0aNAzATfJkpVo5FVCyEScsHiXcXS1Qgke9HvrouZ9mvIcEvAXMYxn3T6AsoyEWFsVGdip40EdlpNlBo5z+39RdQReYGEtCNRb9wIoJu+NY=
+	t=1731424344; cv=none; b=pCYWuglR8RAsS75avrHmcjChcC87nMiHFiR2eQgiXTDQ/Ww6g85nCifuxX4BHy6JvGt3+cKzWlVrscVDnbnCvi3ps380hIrR+cxI8XnxRLnU4DuDydAP+vmq9XfdmFHEtpcHe73gO2RFhLACNkPO81ZW3312uyVhEXS+t55kMYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731424286; c=relaxed/simple;
-	bh=mNQcuKMKs9WkN4Bp/Cnr0be/5mklf3kyEQiJd0Xw/5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pftcbjy5D2igLgDhFut/Zmd0iB5e0R8ARxiVPp5bwqBsa8L2Q1ZcWxSxuPtuLjCq645kUElc0By6vPy0chfsksiQ1cNwSwE2aa7Q5azawoqQ73TZjlwkCwobTidhDXGoFp2kLKL+e/XJvNROuq6nPRSdUfLnr4cXF/Nklv0vETI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ip0xutgi; arc=none smtp.client-ip=217.70.183.195
+	s=arc-20240116; t=1731424344; c=relaxed/simple;
+	bh=FvYDxemAYWoX77GN8sFeA7OVWjIqbPCJa5r4+zu85Rg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U591I1JSHk12rAWW9ctAYHwxo6F0aP3/glU0tVudP243BZCXAF5tGw/cJfzv/VYhu9WBT8VKWtT0aWP02h4AEE9kDMgnsN1awVjXNvXUWu+xSNuXJ3pFKhkyMDm8VEt3fdR2pFWBydDbr7TC8HqOkvFKFDHMh4fU6I+pyduJ1FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gN8R0y5r; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5A5C660007;
-	Tue, 12 Nov 2024 15:11:22 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5AAF7240006;
+	Tue, 12 Nov 2024 15:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731424282;
+	t=1731424339;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wtYYv5PUbJ77a03efiZ4pQ9s9mVP5SQ4dp9o7vG+bhc=;
-	b=ip0xutgijU+5oT3vaZ6qMbY0/Fd203OE2X0js6IeT2uBer4qH4NhdW0Ilz5pAnd9EmLJPz
-	pIVPx/xI3i+a/p8AZnJlHecfe7y43RYDZDemGavd2j7rj9dCkf0uNnLxhfhykN4YGHXYtT
-	yG0YD6B2WzNcegL4UodEG8+FHkCPL1VMB+7Uem12woajXS5AGAnBDrvijxywl6QzKicKZO
-	jxuCLRGjM7MLnAfETa1LGC2JsHeyiNgBCPCCNkZ2Ips6daXEMdoflOuu85L76xlmTYgsEq
-	N3INL4Gp32+huKZRBHLYaviVUQo+bhJ4hPZVaFVkV6IsrAMpYYcCk6jLJcQ6sg==
-From: alexandre.belloni@bootlin.com
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] rtc: ab-eoz9: fix abeoz9_rtc_read_alarm
-Date: Tue, 12 Nov 2024 16:11:18 +0100
-Message-ID: <20241112151119.3451611-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.47.0
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7/ZZ+GzA9JnknmCSiZ4KAoFAxIWZALm0qPy9dvBIJSk=;
+	b=gN8R0y5rBADWu+wo+lGHeMRwjS1282FydlI9vD3kgvpHQWTYsItwv0ODr3pyxeUUL9/IZL
+	szxsyvU9qROe3EZH29OPtqpzNY1CGgw47LbshgwpkgUVX6VO2bWsajgC4TmMcGHH7r9LlY
+	G33EvbRmjGx8br4vfR0EeyZkdPYjWhhRewSY/WUDxk+ZEvI08pmAojF8qfmADEABnJxIG+
+	qoyc+4hqVEjd2XnEyLTv/JnKdPv8cfU++ryF0rzS0cTh8FTuDEnlZfczRSAd+U2jb3EZf+
+	mfFl/EYf15RQtHk91p5j5TX+qAfHgPZIWoTiawRO5TblLOHnhgPxrTSLqjvRdg==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: cathycai0714@gmail.com, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+ Avi Fishman <avifishman70@gmail.com>
+Cc: cathy.cai@unisoc.com, cixi.geng1@unisoc.com,
+ David Miller <davem@davemloft.net>, edumazet@google.com, kuba@kernel.org,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-stm32@st-md-mailman.stormreply.com, mcoquelin.stm32@gmail.com,
+ Network Development <netdev@vger.kernel.org>, pabeni@redhat.com,
+ wade.shu@unisoc.com, xuewen.yan94@gmail.com, zhiguo.niu@unisoc.com,
+ Alexandre Torgue <alexandre.torgue@st.com>,
+ Murali <murali.somarouthu@dell.com>, Tomer Maimon <tmaimon77@gmail.com>,
+ "Silva, L Antonio" <Luis.A.Silva@dell.com>,
+ Arias Pablo <Pablo_Arias@dell.com>,
+ Somarouthu Murali <Murali_Somarouthu@dell.com>, uri.trichter@nuvoton.com
+Subject: Re: [RFC PATCH] net: stmmac: Fix the problem about interrupt storm
+Date: Tue, 12 Nov 2024 16:12:17 +0100
+Message-ID: <7732873.EvYhyI6sBW@fw-rgant>
+In-Reply-To:
+ <CAKKbWA6zRee9Rzee-ebLnEAvwLqnmsPswGaUo_ineyzw-b=EgQ@mail.gmail.com>
+References:
+ <CAKKbWA7e0TmU4z4O8tHfwE=dvqPFaZbSPjxR-==fQSsNq6ELCQ@mail.gmail.com>
+ <CAKKbWA6zRee9Rzee-ebLnEAvwLqnmsPswGaUo_ineyzw-b=EgQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-GND-Sasl: romain.gantois@bootlin.com
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Hello,
 
-abeoz9_rtc_read_alarm assumes we always read the alarm in 12-hour mode
-while abeoz9_rtc_set_alarm will always set it in 24-hour mode.
+On dimanche 3 novembre 2024 20:00:54 heure normale d=E2=80=99Europe central=
+e Avi=20
+=46ishman wrote:
+> Hi all,
+>=20
+=2E..
+> >  Yes. It could also happen between the dev_open() and
+> >=20
+> > clear_bit(STMMAC_DOWN) calls.
+> > Although we did not reproduce this scenario, it should have happened
+> > if we had increased
+> > the number of test samples. In addition, I found that other people had
+> > similar problems before.
+> > The link is:
+> > https://lore.kernel.org/all/20210208140820.10410-11-Sergey.Semin@baikal=
+ele
+> > ctronics.ru/>=20
+> > > Moreover, it seems strange to me that stmmac_interrupt()
+> > > unconditionnally
+> > > ignores interrupts when the driver is in STMMAC_DOWN state. This seems
+> > > like
+> > > dangerous behaviour, since it could cause IRQ storm issues whenever
+> > > something in the driver sets this state. I'm not too familiar with the
+> > > interrupt handling in this driver, but maybe stmmac_interrupt() could
+> > > clear interrupts unconditionnally in the STMMAC_DOWN state?
+> >=20
+> > Clear interrupts unconditionally in the STMMAC_DOWN state directly
+> > certainly won't cause this problem.
+> > This may be too rough, maybe this design has other considerations.
+>=20
+> But then after the dev_open() you might miss interrupt, no?
 
-We could support 12-hour mode in both functions but it seems very unlikely
-that the RTC would be set to 12-hour mode now as the driver has been
-setting it to 24-hour mode for a while now. The setting is undefined at
-power-up and unchanged by subsequent resets which doesn't help us.
+Indeed, but in any case, unconditionally returning from an IRQ handler with=
+out=20
+clearing any interrupt flags seems like very strange behavior to me.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
-Changes in v2:
- - remove left over from development
+Disabling and reenabling interrupts as you suggested does seem like a
+good solution for this particular scenario, but it doesn't solve the more
+general issue of the dangerous way stmmac_interrupt handles this.
 
+Maybe the setting and clearing of this STMMAC_DOWN bit should
+be wrapped in some kind of handler which also disables all interrupts?
 
- drivers/rtc/rtc-ab-eoz9.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Best Regards
 
-diff --git a/drivers/rtc/rtc-ab-eoz9.c b/drivers/rtc/rtc-ab-eoz9.c
-index 02f7d0711287..84c5f77808c5 100644
---- a/drivers/rtc/rtc-ab-eoz9.c
-+++ b/drivers/rtc/rtc-ab-eoz9.c
-@@ -64,7 +64,7 @@
- #define ABEOZ9_BIT_ALARM_MIN		GENMASK(6, 0)
- #define ABEOZ9_REG_ALARM_HOURS		0x12
- #define ABEOZ9_BIT_ALARM_HOURS_PM	BIT(5)
--#define ABEOZ9_BIT_ALARM_HOURS		GENMASK(4, 0)
-+#define ABEOZ9_BIT_ALARM_HOURS		GENMASK(5, 0)
- #define ABEOZ9_REG_ALARM_DAYS		0x13
- #define ABEOZ9_BIT_ALARM_DAYS		GENMASK(5, 0)
- #define ABEOZ9_REG_ALARM_WEEKDAYS	0x14
-@@ -231,8 +231,6 @@ static int abeoz9_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alarm)
- 	alarm->time.tm_sec = bcd2bin(FIELD_GET(ABEOZ9_BIT_ALARM_SEC, regs[0]));
- 	alarm->time.tm_min = bcd2bin(FIELD_GET(ABEOZ9_BIT_ALARM_MIN, regs[1]));
- 	alarm->time.tm_hour = bcd2bin(FIELD_GET(ABEOZ9_BIT_ALARM_HOURS, regs[2]));
--	if (FIELD_GET(ABEOZ9_BIT_ALARM_HOURS_PM, regs[2]))
--		alarm->time.tm_hour += 12;
- 
- 	alarm->time.tm_mday = bcd2bin(FIELD_GET(ABEOZ9_BIT_ALARM_DAYS, regs[3]));
- 
--- 
-2.47.0
+=2D-=20
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
 
