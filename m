@@ -1,156 +1,259 @@
-Return-Path: <linux-kernel+bounces-405356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1209C503C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:03:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A4069C5046
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:06:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F332E1F21541
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA12B1F225ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBC020A5E2;
-	Tue, 12 Nov 2024 08:03:46 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74E320B1F8;
+	Tue, 12 Nov 2024 08:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AEJtsguf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A0219D067;
-	Tue, 12 Nov 2024 08:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF72B207A14;
+	Tue, 12 Nov 2024 08:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731398625; cv=none; b=N6udRoZJm6Xr8fheIAmqEkhzp04vBIcczDz7zr8eb8kKs/Q/mMbb1ZPPL9HojBfdpNPliHYevGAYCvi9gIp8X89sXvoeR0X7ELE0YAvK+GFf7Fiu4jGazm3n4eefJ0K6Ate7kFucVqw+xKVovMWLAUkrELzvfxBSi3GQ/lrgZs8=
+	t=1731398751; cv=none; b=YdRknBjtPOIQSlDkDDwgIcV50A7T/AFeAmbtrr6oJp8guKY5D/MQIKKXcd8Bw/nD1T6xr7PJbwy5o8dp/fkIFRrasFAtI2eF9fuX5/Qv3yH7O2xrKw4lmnuhx14TRSuCH0BtsnEgJfcoT/ililIhJcizlr/qv9iZ1426B/QMvPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731398625; c=relaxed/simple;
-	bh=2Wm92elPAtztDmT3Kx85R9bXNVMbAhWA0esUZf8fJzo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TjHuyWdg7PDjU507g1UczESCnkS4aJz+/RQuqmKzxIgxBvgMfWApWIOkdNA+z9M7TdCAp46TZczbyBlCX4OP6VcUQ+KT7DuDeO2A/OS4N3erqNqhFFSz0H1dLz2wZQNXwc/lbFEsfcRtAplBAHxVyfD+0+5mADqAu66wUpZnx78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xnf4J5ktSz10Mf1;
-	Tue, 12 Nov 2024 16:01:04 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id B6B071800F2;
-	Tue, 12 Nov 2024 16:03:32 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
- (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 12 Nov
- 2024 16:03:31 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <visitorckw@gmail.com>, <brendan.higgins@linux.dev>,
-	<davidgow@google.com>, <rmoar@google.com>, <skhan@linuxfoundation.org>,
-	<rf@opensource.cirrus.com>, <linux-kselftest@vger.kernel.org>,
-	<kunit-dev@googlegroups.com>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v2] kunit: string-stream: Fix a UAF bug in kunit_init_suite()
-Date: Tue, 12 Nov 2024 16:03:14 +0800
-Message-ID: <20241112080314.407966-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731398751; c=relaxed/simple;
+	bh=IeB/4XzrOyimQ4eBaOEL5hd1GPkvU5aH7HCprMBSaR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UGit1S0fNCHSqjGkYdlCySnQhVZ3CRsYfBlRMgTHn9PbyBYyNVmhHePAJLr/exPE8lAPg6OQz2Pgyde7fpvh0ITMdRYaOcPliYaDn+3WwVB8thRagifeKCbpCnUSG2c2TvSLADkf6ih5q3Hl5CVtgb5pcFFeg2WrZjiEim2u4g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AEJtsguf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC1BSK5032123;
+	Tue, 12 Nov 2024 08:05:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lrd1dDuetkCSIDjAFPNOoc+ysmrRPIiHLNI+nAu1p+U=; b=AEJtsguf+L7YK3wb
+	7WV3XNjODMdNqawW/M6iBb4u2JkOfs+XKwqsLnj3ekaVJ9m9jw8jmdYH2u9fP2VV
+	4tVhy0N6VsFfbb/rNDU84e5QYDnItTz/6N+pmGRfvUq7qkK9ajA0GDqo/xIk2em6
+	eD6CEPTsaAbIS5BKxrM4mRofUo4MI6qfqmcaBNG6CKDmGVtShAWVO3rg5Qs/cNfN
+	2+8NibQAZyMKqpg5IgJMK9LsICObyLjnpHIo+/6a+IJDWO4P/YMRmGdoJIIB7Nlf
+	Yu+VDOUo7k1j1nRoz48WtoH+ffOHdJ+HpyjJhM0JTwEZa1IT8O5akuS28E+fn0EJ
+	CdXrEg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0gkxg5j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 08:05:45 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC85icl023067
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 08:05:45 GMT
+Received: from [10.216.26.111] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
+ 2024 00:05:42 -0800
+Message-ID: <c9783a99-724a-cdf0-7e76-7cbf2c77d63f@quicinc.com>
+Date: Tue, 12 Nov 2024 13:35:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 2/4] media: venus: hfi_parser: avoid OOB access beyond
+ payload word count
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
+ <20241105-venus_oob-v1-2-8d4feedfe2bb@quicinc.com>
+ <474d3c62-5747-45b9-b5c3-253607b0c17a@linaro.org>
+ <9098b8ef-76e0-f976-2f4e-1c6370caf59e@quicinc.com>
+ <f53a359a-cffe-4c3a-9f83-9114d666bf04@linaro.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <f53a359a-cffe-4c3a-9f83-9114d666bf04@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KHd7DbBJrH5cRN5YDxjG3K12YSMFFBKw
+X-Proofpoint-GUID: KHd7DbBJrH5cRN5YDxjG3K12YSMFFBKw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
+ impostorscore=0 adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411120065
 
-In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
-kunit_suite_for_each_test_case() loop, the "suite->log = stream"
-has assigned before, and the error path only free the suite->log's stream
-memory but not set it to NULL, so the later string_stream_clear() of
-suite->log in kunit_init_suite() will cause below UAF bug.
 
-Set stream pointer to NULL after free to fix it.
+On 11/12/2024 5:13 AM, Bryan O'Donoghue wrote:
+> On 11/11/2024 14:36, Vikash Garodia wrote:
+>>> int hfi_parser(void *buf, int size)
+>>> {
+>>>          int word_count = size >> 2;
+>>>          uint32_t*my_word = (uint32_t*)buf;
+>> Make this as below and it should lead to OOB
+>> uint32_t*my_word = (uint32_t*)buf + 1
+>>
+>> Regards,
+>> Vikash
+> 
+> How does this code make sense ?
+> 
+> 
+>         while (words_count) {
+>                 data = word + 1;
+> 
+>                 switch (*word) {
+>                 case HFI_PROPERTY_PARAM_CODEC_SUPPORTED:
+>                         parse_codecs(core, data);
+>                         init_codecs(core);
+>                         break;
+>                 case HFI_PROPERTY_PARAM_MAX_SESSIONS_SUPPORTED:
+>                         parse_max_sessions(core, data);
+>                         break;
+>                 case HFI_PROPERTY_PARAM_CODEC_MASK_SUPPORTED:
+>                         parse_codecs_mask(&codecs, &domain, data);
+>                         break;
+>                 case HFI_PROPERTY_PARAM_UNCOMPRESSED_FORMAT_SUPPORTED:
+>                         parse_raw_formats(core, codecs, domain, data);
+>                         break;
+>                 case HFI_PROPERTY_PARAM_CAPABILITY_SUPPORTED:
+>                         parse_caps(core, codecs, domain, data);
+>                         break;
+>                 case HFI_PROPERTY_PARAM_PROFILE_LEVEL_SUPPORTED:
+>                         parse_profile_level(core, codecs, domain, data);
+>                         break;
+>                 case HFI_PROPERTY_PARAM_BUFFER_ALLOC_MODE_SUPPORTED:
+>                         parse_alloc_mode(core, codecs, domain, data);
+>                         break;
+>                 default:
+>                         break;
+>                 }
+> 
+>                 word++;
+>                 words_count--;
+>         }
+> 
+> 
+> word[] = { 0, 1, 2, 3 };
+> 
+> words_count = 4;
+> 
+> while(words_count);
+> 
+>     data = word + 1;
+> 
+>     switch(*word) {
+>     case WHATEVER:
+>         do_something(param, data);
+>     }
+> 
+>     word++;
+>     words_count--;
+> }
+> 
+> // iteration 0
+> data = 1;
+> *word = 0;
+> 
+> // iteration 1
+> data = 2;
+> *word = 1;
+> 
+> ????
+> 
+> How can the step size of word be correct ?
+> 
+> Do we ever actually process more than one pair here ?
+> 
+> #include <stdio.h>
+> #include <stdint.h>
+> 
+> char somebuf[16];
+> 
+> void init(char *buf, int len)
+> {
+>         int i;
+>         char c = 0;
+> 
+>         for (i = 0; i < len; i++)
+>                 buf[i] = c++;
+> }
+> 
+> int hfi_parser(void *buf, int size)
+> {
+>         int word_count = size >> 2;
+>         uint32_t *my_word = (uint32_t*)buf, *data;
+> 
+>         printf("Size %d word_count %d\n", size, word_count);
+> 
+>         while (word_count > 1) {
+>                 data = my_word + 1;
+>                 printf("Myword %d == 0x%08x data=0x%08x\n", word_count,
+> *my_word, *data);
+>                 my_word++;
+>                 word_count--;
+>         }
+> }
+> 
+> int main(int argc, char *argv[])
+> {
+>         int i;
+> 
+>         init(somebuf, sizeof(somebuf));
+>         for (i = 0; i < sizeof(somebuf); i++)
+>                 printf("%x = %x\n", i, somebuf[i]);
+> 
+>         hfi_parser(somebuf, sizeof(somebuf));
+> 
+>         return 0;
+> }
+> 
+> 0 = 0
+> 1 = 1
+> 2 = 2
+> 3 = 3
+> 4 = 4
+> 5 = 5
+> 6 = 6
+> 7 = 7
+> 8 = 8
+> 9 = 9
+> a = a
+> b = b
+> c = c
+> d = d
+> e = e
+> f = f
+> Size 16 word_count 4
+> Myword 4 == 0x03020100 data=0x07060504
+> Myword 3 == 0x07060504 data=0x0b0a0908
+> Myword 2 == 0x0b0a0908 data=0x0f0e0d0c
+You did not printed the last iteration without the proposed fix. In the last
+iteration (Myword 1), it would access the data beyond allocated size of somebuf.
+So we can see how the fix protects from OOB situation.
 
-	Unable to handle kernel paging request at virtual address 006440150000030d
-	Mem abort info:
-	  ESR = 0x0000000096000004
-	  EC = 0x25: DABT (current EL), IL = 32 bits
-	  SET = 0, FnV = 0
-	  EA = 0, S1PTW = 0
-	  FSC = 0x04: level 0 translation fault
-	Data abort info:
-	  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-	  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-	  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-	[006440150000030d] address between user and kernel address ranges
-	Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-	Dumping ftrace buffer:
-	   (ftrace buffer empty)
-	Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
-	CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
-	Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
-	Hardware name: linux,dummy-virt (DT)
-	pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-	pc : string_stream_clear+0x54/0x1ac
-	lr : string_stream_clear+0x1a8/0x1ac
-	sp : ffffffc080b47410
-	x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
-	x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
-	x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
-	x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
-	x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
-	x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
-	x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
-	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
-	x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
-	x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
-	Call trace:
-	 string_stream_clear+0x54/0x1ac
-	 __kunit_test_suites_init+0x108/0x1d8
-	 kunit_exec_run_tests+0xb8/0x100
-	 kunit_module_notify+0x400/0x55c
-	 notifier_call_chain+0xfc/0x3b4
-	 blocking_notifier_call_chain+0x68/0x9c
-	 do_init_module+0x24c/0x5c8
-	 load_module+0x4acc/0x4e90
-	 init_module_from_file+0xd4/0x128
-	 idempotent_init_module+0x2d4/0x57c
-	 __arm64_sys_finit_module+0xac/0x100
-	 invoke_syscall+0x6c/0x258
-	 el0_svc_common.constprop.0+0x160/0x22c
-	 do_el0_svc+0x44/0x5c
-	 el0_svc+0x48/0xb8
-	 el0t_64_sync_handler+0x13c/0x158
-	 el0t_64_sync+0x190/0x194
-	Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
-	---[ end trace 0000000000000000 ]---
-	Kernel panic - not syncing: Oops: Fatal exception
+For the functionality part, packet from firmware would come as <prop type>
+followed by <payload for that prop> i.e
+*word = HFI_PROPERTY_PARAM_CODEC_SUPPORTED
+*data = payload --> hence here data is pointed to next u32 to point and parse
+payload for HFI_PROPERTY_PARAM_CODEC_SUPPORTED.
+likewise for other properties in the same packet
 
-Cc: stable@vger.kernel.org
-Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
-Suggested-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
-v2:
-- Correct the fix way.
-- Add Suggested-by.
----
- lib/kunit/debugfs.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
-index d548750a325a..b25d214b93e1 100644
---- a/lib/kunit/debugfs.c
-+++ b/lib/kunit/debugfs.c
-@@ -212,8 +212,11 @@ void kunit_debugfs_create_suite(struct kunit_suite *suite)
- 
- err:
- 	string_stream_destroy(suite->log);
--	kunit_suite_for_each_test_case(suite, test_case)
-+	suite->log = NULL;
-+	kunit_suite_for_each_test_case(suite, test_case) {
- 		string_stream_destroy(test_case->log);
-+		test_case->log = NULL;
-+	}
- }
- 
- void kunit_debugfs_destroy_suite(struct kunit_suite *suite)
--- 
-2.34.1
-
+Regards
+Vikash
 
