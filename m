@@ -1,211 +1,168 @@
-Return-Path: <linux-kernel+bounces-405593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597A89C5445
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:39:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B11209C536C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:28:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A03F9B33A18
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7720B288C88
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74D62139BC;
-	Tue, 12 Nov 2024 10:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDC2213EFE;
+	Tue, 12 Nov 2024 10:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrygTCVx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UWrPSaA6"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F8B20B20B;
-	Tue, 12 Nov 2024 10:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB357213EDD;
+	Tue, 12 Nov 2024 10:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731407152; cv=none; b=C+EdKJMBKr8hckdSc88TTLnPGPJ0ut0ouIjEOkzIlMiP1V50yf6fmKHDkX2687gfGd2tyN7eQKmD5H3zZS3g0o9jSo2FETK12JcGRbSczIzSzJLOeEvKa+p0yVj0cZiy9YLuIyT4/mVHgMH0aW9Snb9hs+ODbszrsY2MdufHflo=
+	t=1731407191; cv=none; b=LtUi7LaRr8hIBBsw3dqpP+HmOb9Tbwcumt92vjtgry5pos/9Sm5NetmRXY6wfU4u9cRNR8QnOJ+X4IX/Nk9wFj4PpAd7OlLbw6TpQDEW8uYZrauwcWKiHSAuSLzG4QDwQ4c4e6gyvbGW4l8tJ9RlsW5o0xi35xlKs2hbdSOg6cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731407152; c=relaxed/simple;
-	bh=hDtwxlx263Ka4x+zd3cQnDTdGx8NUTZ76VVOto/UNHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dErmzHwA/z3Z8xXxP4jj5F58jritvZhzySa8p9sTCh4t/sowDSl9f926fxEj5ghhUlRAALcf3veVuCMt7nEhTychOTWfud4bONenSyrE6yroPGXQZoSxA0sj7JTNU5GvYPuAUnAgfogfEgitXt4xujMx/otG9z4OXcFEl07jtd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrygTCVx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C33B8C4CECD;
-	Tue, 12 Nov 2024 10:25:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731407151;
-	bh=hDtwxlx263Ka4x+zd3cQnDTdGx8NUTZ76VVOto/UNHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PrygTCVxO8Ug/Sqh08YMfEsbHdJWvaU+4DkKvprpp4RXqbu+S8Ijzm/FugVZUiF/b
-	 Tq+rDTnODyp1NwRVrWDXjLxfu2jAuj28ZBJgaMg/DSYfP2Lc4vtLz4RkPJLDB6pL99
-	 iXLuIZUDjQ1fFVKbyHlA3KaIez7Vjkbf8KtN0v6tlJ8KviYJ5Q9UTAJpGs5zoMNA4N
-	 rGNyqymfUyTOgl614+7GFCrkvWHASyFk0UbXP/qQ4Ull2iTahUqgtq5LZocmjMQcuz
-	 MD+zcxQNtsjKQQqEx7vTseLidXj9apzU7aNjZ+xMhbd6bq21aZeHAOyOFt6lOok1A3
-	 2vYkxv3xTgCOQ==
-Date: Tue, 12 Nov 2024 11:25:45 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
-	tglx@linutronix.de, jdmason@kudzu.us
-Subject: Re: [PATCH v5 3/5] PCI: endpoint: pci-epf-test: Add doorbell test
- support
-Message-ID: <ZzMtKUFi30_o6SwL@ryzen>
-References: <20241108-ep-msi-v5-0-a14951c0d007@nxp.com>
- <20241108-ep-msi-v5-3-a14951c0d007@nxp.com>
- <ZzIYAIGjHQJqR5Qt@ryzen>
+	s=arc-20240116; t=1731407191; c=relaxed/simple;
+	bh=kuZHpQVynWF0dMml92KBBRYvg0segfgTnuEueyOfqWI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iZe7s0/ZLRtXal+gmpX+zcNBOFZZFbpMXKYgRKvczZ2gYQhDuHdLfIIYPFIqblsE8XfSMQamg2Mt581qviHuYdVoykblnHzelStkLQpYUvd8sWqmAiTt5vQ6eMnYScmGA/U813y3tjrhnSIu1tK34caui1Re+qIYzy1OPxs+7KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=UWrPSaA6; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1731407189; x=1762943189;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kuZHpQVynWF0dMml92KBBRYvg0segfgTnuEueyOfqWI=;
+  b=UWrPSaA6VtQMT4SBetV7/d0pF1/EbG9rDgpKgHfN5RYkCwDPB1L7n7ke
+   wBwkc+CREN8/Uj0wzxfztMDsJyBu/+7OyqOS31d1CjBVfx8gYoFUhQWkp
+   GMRvJnhOui9qdPqdWbAp6OMPNtn8othv02ARdkk4MLsmvzJ9WKkHI5I3j
+   TP2lWUjodq/jgl59eydYikdHBTR8+XGHMTAW7BCluwz9vv7JgTIz2Hlhl
+   xdujAlzBrcAy8usrLPEmd1xx5D2CSeVPAWEt9J260cC43Qo4h0WjD4CzK
+   cwCX6E3/fPOrIDD4ZHjGJ9E91iEc7jE7Sm7wIawWC+40d8546i/xhNC7h
+   Q==;
+X-CSE-ConnectionGUID: 3LJNlechSByP7VxoY/Eupw==
+X-CSE-MsgGUID: 9ycbmhISRkmmNQwzqMXIaQ==
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="201628733"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Nov 2024 03:26:22 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 12 Nov 2024 03:26:20 -0700
+Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 12 Nov 2024 03:26:17 -0700
+Date: Tue, 12 Nov 2024 10:26:17 +0000
+From: Daniel Machon <daniel.machon@microchip.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: Andrew Lunn <andrew@lunn.ch>, <UNGLinuxDriver@microchip.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Lars Povlsen <lars.povlsen@microchip.com>, "Steen
+ Hegelund" <Steen.Hegelund@microchip.com>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>, <jacob.e.keller@intel.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH net-next 7/7] net: lan969x: add function for configuring
+ RGMII port devices
+Message-ID: <20241112102617.lhb5ou7kxlqm7qhk@DEN-DL-M70577>
+References: <20241106-sparx5-lan969x-switch-driver-4-v1-0-f7f7316436bd@microchip.com>
+ <20241106-sparx5-lan969x-switch-driver-4-v1-7-f7f7316436bd@microchip.com>
+ <6fee4db6-0085-4ce8-a6b5-050fddd0bc5a@lunn.ch>
+ <20241108085320.fqbell5bfx3roey4@DEN-DL-M70577>
+ <Zy32_Bs7gDAtay5V@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <ZzIYAIGjHQJqR5Qt@ryzen>
+In-Reply-To: <Zy32_Bs7gDAtay5V@shell.armlinux.org.uk>
 
-On Mon, Nov 11, 2024 at 03:43:12PM +0100, Niklas Cassel wrote:
-> On Fri, Nov 08, 2024 at 02:43:30PM -0500, Frank Li wrote:
+Hi Russel,
+
+> > Hi Andrew,
+> >
+> > > > +     if (conf->phy_mode == PHY_INTERFACE_MODE_RGMII ||
+> > > > +         conf->phy_mode == PHY_INTERFACE_MODE_RGMII_TXID)
+> > > > +             rx_delay = true;
+> > > > +
+> > > > +     if (conf->phy_mode == PHY_INTERFACE_MODE_RGMII ||
+> > > > +         conf->phy_mode == PHY_INTERFACE_MODE_RGMII_RXID)
+> > > > +             tx_delay = true;
+> > >
+> > > O.K, now warning bells are ringing in this reviews head.
+> > >
+> > > What i don't see is the value you pass to the PHY? You obviously need
+> > > to mask out what the MAC is doing when talking to the PHY, otherwise
+> > > both ends will add delays.
+> > >
+> >
+> > What value should be passed to the PHY?
+> >
+> > We (the MAC) add the delays based on the PHY modes - so does the PHY.
+> >
+> > RGMII, we add both delays.
+> > RGMII_ID, the PHY adds both delays.
+> > RGMII_TXID, we add the rx delay, the PHY adds the tx delay.
+> > RGMII_RXID, we add the tx delay, the PHY adds the rx delay.
+> >
+> > Am I missing something here? :-)
 > 
-> Perhaps create a helper function so that you don't need to duplicate it.
-
-Something like this on top of your series:
-
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 8ede7aded03ee..b1707b4425432 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -656,16 +656,25 @@ static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test,
- 	}
- }
- 
--static void pci_epf_enable_doorbell(struct pci_epf_test *epf_test, struct pci_epf_test_reg *reg)
-+static int pci_epf_get_doorbell_addr(struct pci_epf_test *epf_test,
-+				     enum pci_barno bar, u64 *db_base,
-+				     u64 *db_offset)
- {
--	enum pci_barno bar = reg->doorbell_bar;
- 	struct pci_epf *epf = epf_test->epf;
--	struct pci_epc *epc = epf->epc;
--	struct pci_epf_bar db_bar;
- 	struct msi_msg *msg;
--	u64 doorbell_addr;
-+	u64 doorbell_addr, mask;
- 	u32 align;
--	int ret;
-+
-+	if (bar < BAR_0 || bar == epf_test->test_reg_bar || !epf->db_msg)
-+		return -EINVAL;
-+
-+	msg = &epf->db_msg[0].msg;
-+	doorbell_addr = msg->address_hi;
-+	doorbell_addr <<= 32;
-+	doorbell_addr |= msg->address_lo;
-+
-+	if (!doorbell_addr)
-+		return -EINVAL;
- 
- 	align = epf_test->epc_features->align;
- 	align = align ? align : 128;
-@@ -673,17 +682,28 @@ static void pci_epf_enable_doorbell(struct pci_epf_test *epf_test, struct pci_ep
- 	if (epf_test->epc_features->bar[bar].type == BAR_FIXED)
- 		align = max(epf_test->epc_features->bar[bar].fixed_size, align);
- 
--	if (bar < BAR_0 || bar == epf_test->test_reg_bar || !epf->db_msg) {
-+	mask = align - 1;
-+	*db_base = doorbell_addr & ~mask;
-+	*db_offset = doorbell_addr & mask;
-+
-+	return 0;
-+}
-+
-+static void pci_epf_enable_doorbell(struct pci_epf_test *epf_test, struct pci_epf_test_reg *reg)
-+{
-+	enum pci_barno bar = reg->doorbell_bar;
-+	struct pci_epf *epf = epf_test->epf;
-+	struct pci_epc *epc = epf->epc;
-+	struct pci_epf_bar db_bar;
-+	u64 db_base, db_offset;
-+	int ret;
-+
-+	if (pci_epf_get_doorbell_addr(epf_test, bar, &db_base, &db_offset)) {
- 		reg->status |= STATUS_DOORBELL_ENABLE_FAIL;
- 		return;
- 	}
- 
--	msg = &epf->db_msg[0].msg;
--	doorbell_addr = msg->address_hi;
--	doorbell_addr <<= 32;
--	doorbell_addr |= msg->address_lo;
--
--	db_bar.phys_addr = round_down(doorbell_addr, align);
-+	db_bar.phys_addr = db_base;
- 	db_bar.barno = bar;
- 	db_bar.size = epf->bar[bar].size;
- 	db_bar.flags = epf->bar[bar].flags;
-@@ -1015,9 +1035,7 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 	ret = pci_epf_alloc_doorbell(epf, 1);
- 	if (!ret) {
- 		struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
--		struct msi_msg *msg = &epf->db_msg[0].msg;
--		u32 align = epc_features->align;
--		u64 doorbell_addr;
-+		u64 db_base, db_offset;
- 		enum pci_barno bar;
- 
- 		bar = pci_epc_get_next_free_bar(epc_features, test_reg_bar + 1);
-@@ -1031,17 +1049,15 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 			return 0;
- 		}
- 
--		align = align ? align : 128;
--
--		if (epf_test->epc_features->bar[bar].type == BAR_FIXED)
--			align = max(epf_test->epc_features->bar[bar].fixed_size, align);
--
--		doorbell_addr = msg->address_hi;
--		doorbell_addr <<= 32;
--		doorbell_addr |= msg->address_lo;
-+		if (pci_epf_get_doorbell_addr(epf_test, bar, &db_base,
-+					      &db_offset)) {
-+			dev_err(&epf->dev, "Failed to get doorbell address\n");
-+			free_irq(epf->db_msg[0].virq, epf_test);
-+			return 0;
-+		}
- 
--		reg->doorbell_addr = doorbell_addr & (align - 1);
--		reg->doorbell_data = msg->data;
-+		reg->doorbell_addr = db_offset;
-+		reg->doorbell_data = epf->db_msg[0].msg.data;
- 		reg->doorbell_bar = bar;
- 	}
- 
-
-
-
+> What if the board routing adds the necessary delays?
 > 
-> Also one function is doing:
-> reg->doorbell_addr = doorbell_addr & (align - 1);
+> From Documentation/networking/phy.rst:
+> "
+> * PHY_INTERFACE_MODE_RGMII: the PHY is not responsible for inserting any
+>   internal delay by itself, it assumes that either the Ethernet MAC (if capable)
+>   or the PCB traces insert the correct 1.5-2ns delay
+> ...
+
+Ack. The case where the PCB traces add the delay is certainly not
+handled with the current changes.
+
+> For cases where the PHY is not capable of providing this delay, but the
+> Ethernet MAC driver is capable of doing so, the correct phy_interface_t value
+> should be PHY_INTERFACE_MODE_RGMII, and the Ethernet MAC driver should be
+> configured correctly in order to provide the required transmit and/or receive
+> side delay from the perspective of the PHY device. Conversely, if the Ethernet
+> MAC driver looks at the phy_interface_t value, for any other mode but
+> PHY_INTERFACE_MODE_RGMII, it should make sure that the MAC-level delays are
+> disabled."
 > 
-> to align, the other one is doing:
-> round_down(doorbell_addr, align);
+> The point here is that you have three entities that can deal with the
+> required delays - the PHY, the board, and the MAC.
 > 
-> Which seems to be a bit inconsistent.
+> PHY_INTERFACE_MODE_RGMII* passed to phylink/phylib tells the PHY how it
+> should program its delay capabilities.
+> 
+> We're then down to dealing with the MAC and board induced delays. Many
+> implementations use the rx-internal-delay-ps and tx-internal-delay-ps
+> properties defined in the ethernet-controller.yaml DT binding to
+> control the MAC delays.
+> 
+> However, there are a few which use PHY_INTERFACE_MODE_RGMII* on the MAC
+> end, but in this case, they always pass PHY_INTERFACE_MODE_RGMII to
+> phylib to stop the PHY adding any delays.
+> 
+> However, we don't have a way at present for DSA/phylink etc to handle a
+> MAC that wants to ddd its delays with the PHY set to
+> PHY_INTERFACE_MODE_RGMII.
+> 
+> Thanks.
 
-I now see why you did this.
-One function is using the db offset, and the other is using the db base.
+Right, so using the {rx,tx}-internal-delay-ps allows me to configure the
+MAC delays, or skip them entirely, in case the PCB adds them.
 
-I strongly suggest that you rename:
-reg->doorbell_addr to reg->doorbell_offset
-and
-PCI_ENDPOINT_TEST_DB_ADDR to PCI_ENDPOINT_TEST_DB_OFFSET
+Thanks!
 
-since the current names are very confusing.
+/Daniel
 
-
-Kind regards,
-Niklas
 
