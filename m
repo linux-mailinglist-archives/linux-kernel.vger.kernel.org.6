@@ -1,114 +1,112 @@
-Return-Path: <linux-kernel+bounces-406614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5954A9C6372
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:31:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A959A9C62CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23037B84966
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:26:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B20ABA8403
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6967219485;
-	Tue, 12 Nov 2024 19:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190CD21895E;
+	Tue, 12 Nov 2024 19:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIXDw/f0"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ePtVwZ0+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F6NzJROR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C128A218D7B;
-	Tue, 12 Nov 2024 19:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140D81FEFCB;
+	Tue, 12 Nov 2024 19:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439548; cv=none; b=krI7tQJm7u2fEeF6030K5y7NFUfA4C8y69sur3gXqLtZD/fvWUAit11SJppducFAoT3clz4jocXAWdBuoPc/0wkgH3GagHHXaJkmpk/c9ZVkDBtyoK4V2utGeSHoMyfyeFUtNU1RKWriKLs2eXPf76Eu5ALOE9Plj4yH50WQVro=
+	t=1731439637; cv=none; b=W/tjNFs8kkwzCggq86E+HFmrc+rXlLeJZQMvN8h9jgTbz5+lHldNA7PJaI2osbeqNGYOEXGvf2iBp3T8lFEDG9fF/D8f4aO43VET9mSewXsIXIAdtaBB6fl3DI3LTh02UGRtcroCznmRzXpKqSmZg1ESuo3ZUczfOLXD67rlFfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439548; c=relaxed/simple;
-	bh=qgKutzNu4CE+HFlPUmtW2SxT4kOeImo/BSnUuZYkoTc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZOiz/iihqZE7D4z0jyM6mwdJG5cd+OaHj2yn7/4CEjiSElXdfZcLq5dT8Yi8s7xJ39MjTGS9Ir+uMy7VRUTIr/BVMmqulOvRR2kgY0i4UlYpuWdJx7Y1pC8re0cA+n6gWONzvf87/QdTJ/1KqGYRJnuWl8XSpGZDvKiiRvkU+mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nIXDw/f0; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4609beb631aso47861751cf.2;
-        Tue, 12 Nov 2024 11:25:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731439545; x=1732044345; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/BQa33967CJui7gGVWn1/nvmGci6WcK8oCxA2wwMlUo=;
-        b=nIXDw/f0rechdai/rOABx1dVUpOSv+cclPWd6Yhm4DxEHSHaMyWMwzjN/qMJE4MS24
-         szK/qc0Il5fyPHZageQUu4jTu92ZRhpCJe+WuVY9pEbZVPsNEHugOWOBLPkJgBHWg5zK
-         gGjNT59iLlkgXfGin+x7O+e2KDTxbOMfv+Aqni5zAYYhgdbMA1mucT5JmMbdCWy/DOGz
-         eR5PfgCZBVTP5A4f+UCh9e0oJDP77ilDeK841KVR9WbUdyXW7EqVL9R3oc9jwNLyceSR
-         jyzxZQmgErJ7NfZtSziSv5TcGVRaUTz4SPx3kIchIUs5Xw+MAOzQvsF8f0XlgyPapQk1
-         OXbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731439545; x=1732044345;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/BQa33967CJui7gGVWn1/nvmGci6WcK8oCxA2wwMlUo=;
-        b=FZLWEuvzOM8fnwDGEXMf59Wo97J5hnl/61bMXjcdp4OKPtRJRZ16XZekR/SYolTavp
-         UshqCIi9eprm1Tcyi0KiD5tlZ9CRqOpj60IMtinKahcffxdqhXSV3yltQL+ojPs9ZJlV
-         9/bPLSzhUwis2ihlNo8m4nCgPdBgA8C2RDmTbAo202NcMZznIMUwlOQ0rTKdgDD5T5en
-         wpOddz5yyLUNaYUodFd1GriR8m5p8MYmpi97MCJ4FQkAT8r/lYbS8Os8Z0BMoX5O/svs
-         1rfXiNJ1j9rvqINjsp6TajvtNyliVRDzeTU4GPdpwetwXTaAHHCGLNcxzIvYrKvTZeUr
-         DX1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXLMeFO3U8NXsSjza9GutKo5fDxLI4TaJ5c69F/2hv2ulmyvAb+8AN+z/sqdriAkMcyh8RlPZ7Fsn7rO04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUEM2zfTGY1wxtoK7hh6tQFWNTAln1TD1oNgVRvj3nEZK67WAa
-	llKSr6C3orGY2SGJNFdvUqQHSCh12fUHbksAo2R18uQ4EGILwEDS
-X-Google-Smtp-Source: AGHT+IFa4scHKQw0vxqFfbsFP6SZgS67FdUsmV8xlXJjW92bTgRhnfaD7t2mhmb2DAt4UWJukfrg4A==
-X-Received: by 2002:ac8:7fc3:0:b0:462:d75a:e2f0 with SMTP id d75a77b69052e-46309319448mr199818891cf.7.1731439545603;
-        Tue, 12 Nov 2024 11:25:45 -0800 (PST)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2620:10d:c091:600::1:2ba5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ff5e14f9sm78395581cf.86.2024.11.12.11.25.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 11:25:44 -0800 (PST)
-From: Tamir Duberstein <tamird@gmail.com>
-Subject: [PATCH 0/2] xarray: extract __xa_cmpxchg_raw
-Date: Tue, 12 Nov 2024 14:25:35 -0500
-Message-Id: <20241112-xarray-insert-cmpxchg-v1-0-dc2bdd8c4136@gmail.com>
+	s=arc-20240116; t=1731439637; c=relaxed/simple;
+	bh=YH2brv/TyQOjMwxIm4UxeA2thGe7AjZYl4hzRDIP7UE=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=ZwFE+l1kLYGNG3Dxkmncn6wuJU/H2fNNNlO6v0UmiTTu/d2JE5qBBDrQi0R7KqXJjdjpk/uIRbm/vuIzqayBc8PxsiqjiatwsON55Nl2uF+ksa5dJvzN4lYC2hSRjGbWkJKnYijeQ4SlT1eO9jL7/S/oerHtixGhImV8yTCqVJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ePtVwZ0+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F6NzJROR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 12 Nov 2024 19:27:12 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731439634;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=NeVVdBt8XYDcUZLK3uAH/HralHizCbqojlNYwwxGb94=;
+	b=ePtVwZ0+d2AxX/YFsXBZ3a7oaIY8CzEgHPCb5CJlb5ZSeUIKQUunspJx6utRiwYVRTJB8U
+	A3QwAvAvsXsBpappPTflHcIb+YtQ8wkBCA9H2vBjNKS0BeUnxUgncPvjQZ8IN4lF6zk6wJ
+	TtIGGUWWICjWEulyqAytwrTB5Byi4ffqzqEADemgM4NXIbjF+TFQsBr5WTHLNX42blzyVt
+	N7bPRaAzWwmwyS/M7TTp/Pjubi2jvFKrQ65y17fAYys6Ig3loZv/utEM8OYOrglYIR++hU
+	eNPaENfO1Sn+X332sRs2EnLBuDeyPT0Y5bHHZI5vTrfOJAyvmjaryNMT7ZC1+Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731439634;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=NeVVdBt8XYDcUZLK3uAH/HralHizCbqojlNYwwxGb94=;
+	b=F6NzJRORatEXcdEXjfcwJqMm2OW5wdYMcTnsUuuBKGIJFBUhKC5zxxFDvkk7Brw6VjO1Me
+	4DCdtA1BDGSLRcAw==
+From: "tip-bot2 for Thorsten Blum" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/sgx] x86/sgx: Use vmalloc_array() instead of vmalloc()
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>, Kai Huang <kai.huang@intel.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <173143963304.32228.265321628400891478.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAK+rM2cC/x3MQQqEMAxA0atI1gbaOip4FXERYkazsEoqUhHvP
- mWWf/H+A0lMJcFQPWByadI9lvB1BbxSXAR1Lg3BhY93ocFMZnSjxgJP5O3IvC7Yur7rPM3EnqH
- Yw+Sr+f8dp/f9AXhhkdFnAAAA
-X-Change-ID: 20241023-xarray-insert-cmpxchg-507661adac1c
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
 
-This series reduces duplication between __xa_cmpxchg and __xa_insert by
-extracting a new function that does not coerce zero entries to null on
-the return path.
+The following commit has been merged into the x86/sgx branch of tip:
 
-The new function may be used by the upcoming Rust xarray abstraction in
-its reservation API where it is useful to tell the difference between
-zero entries and null slots.
+Commit-ID:     f060c89dc1a3cfb6db3894e1d96980a568aa355c
+Gitweb:        https://git.kernel.org/tip/f060c89dc1a3cfb6db3894e1d96980a568aa355c
+Author:        Thorsten Blum <thorsten.blum@linux.dev>
+AuthorDate:    Tue, 12 Nov 2024 19:26:34 +01:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Tue, 12 Nov 2024 11:11:42 -08:00
 
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+x86/sgx: Use vmalloc_array() instead of vmalloc()
+
+Use vmalloc_array() instead of vmalloc() to calculate the number of
+bytes to allocate.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Acked-by: Kai Huang <kai.huang@intel.com>
+Link: https://lore.kernel.org/all/20241112182633.172944-2-thorsten.blum%40linux.dev
 ---
-Tamir Duberstein (2):
-      xarray: extract xa_zero_to_null
-      xarray: extract helper from __xa_{insert,cmpxchg}
+ arch/x86/kernel/cpu/sgx/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- lib/xarray.c | 50 +++++++++++++++++++++++++-------------------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
----
-base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
-change-id: 20241023-xarray-insert-cmpxchg-507661adac1c
-
-Best regards,
--- 
-Tamir Duberstein <tamird@gmail.com>
-
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 9ace844..1a59e59 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -630,7 +630,7 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 	if (!section->virt_addr)
+ 		return false;
+ 
+-	section->pages = vmalloc(nr_pages * sizeof(struct sgx_epc_page));
++	section->pages = vmalloc_array(nr_pages, sizeof(struct sgx_epc_page));
+ 	if (!section->pages) {
+ 		memunmap(section->virt_addr);
+ 		return false;
 
