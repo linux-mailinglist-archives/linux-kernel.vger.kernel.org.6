@@ -1,116 +1,217 @@
-Return-Path: <linux-kernel+bounces-405531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E149C5298
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:00:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF589C52E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:14:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D38CB26982
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:55:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32807B274F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4F020E329;
-	Tue, 12 Nov 2024 09:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C1120EA28;
+	Tue, 12 Nov 2024 09:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NLM+QhvL"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KZ9ZZ6RS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503EF1E4AD;
-	Tue, 12 Nov 2024 09:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E12520E314;
+	Tue, 12 Nov 2024 09:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731405293; cv=none; b=B3Pm/8Y/fQYYlYfww8SaeWW0Nhd1Qblsgh/yVfJM2YtopNMi4saMBNS1a3kIC5NhPBYTdP5CJ5u1rL5Sy+W2FXBhRODi5n3S4bQXXESb55LLtwc34tY24reZza2ZlpNUiZ2v9DZva9VipeltaK0aPTa1KOHCXqIraRFSSQEEeq0=
+	t=1731405498; cv=none; b=ZZlZR/Tb+YNOS5XCR6t8wABYluu0B6Qn6JtI/8Xq8ctg0aIpVTK1k2PbTjo8BzpW1unmrzCkybeJqykylxn47Dcsp87wNSPyxqxSawmZREJ2sRyZf1Lud6f8DqYeFYtZxiNM4lsudz+UnCyKQ3ZM16+byghLr2raE/Xc02ZgSSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731405293; c=relaxed/simple;
-	bh=/UP/yZkPRx3ksy8REvHcWTGDFGN+/6SFJSjOIYISfGA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=UOHBhaRwQmPVfT1Ymfvs41vYj8EmuWkcH+LJ3U3kjCwpUjhFFrYqqJd+To+KGBXnvRwisuiEzXH4gNOByGgoER9lYBz8ypuUPHwe2b+d/cr296Q7/8YHGa3WLCrhYPK/K+4+abxdl4d18mdbK1oPxBA+EHuW6+c73qRmXIiUdlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NLM+QhvL; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315eac969aso30971735e9.1;
-        Tue, 12 Nov 2024 01:54:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731405290; x=1732010090; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qaivvDChRb0InDJ8FMMWKeFE9ZD3AcLndPDWrjVqzRQ=;
-        b=NLM+QhvLEahbKphah1oF5eKJ75uI99agV+cNz4Fz4SL+La2V14YpgU0MTPwQRDRc76
-         f0LAm3ORrtngRRMu0cLdN3yBM9AjwEC1F4kLKiJO+DKQfYgaGWI0xyFT/OaMd2ZN8wBi
-         369h3rYeYZ3J5UZPqm5kvOi1VHMaDjTcUQgRAUcYDNjccFMfV7OxtUv5NctnONxMjGJZ
-         qSsf6J//8iZzXL5RbNUSTHixCWrDP4F3kMhQuRfZl8pSZyExOZbN9RdJOhxpcSaPSWjP
-         NWYpaz2ihLUKvUKIhoAUKSxUDe3HJqCSVVR0795sTRnD7Yl4vUn9G6zBOTNQhQciT0VK
-         r/8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731405290; x=1732010090;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qaivvDChRb0InDJ8FMMWKeFE9ZD3AcLndPDWrjVqzRQ=;
-        b=pKva1J8B1hptmgvjWmbYReMYUNvSB9EzTp7ClgBNbXnATuwHQrjwZOSS3B2zSYIOY7
-         db03JhC0bzBNmX1/WDzZp55lGWfbWNx+HTPaHP54YfZu94JwmarTeNE0/gW8CHd+1Ctc
-         rLiLNWSR3pkUgYyQAdR2ooQPzZe8CcyDK2ssuVnzru4lWODCaCKO2RnpgFV9HW6TqjCA
-         nCDQy/E6+8+Vfq2serwcT1HxgLgZbM5Kzea86UFhPWgj3aXEPVeze977epMvISrR0YxE
-         tP1Io+ua0NOSaVMPb2qgPkTzPz3hkh2MeNWmmLtSUb1UaFvbB6KIvGbx96ZIR8ss7x/2
-         JzPw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9F3i3n1loBjYRKk+BPO33CQPlyuDQbyXP/ZaR9RirdcQZmFH/BwWQuDWdqoHj96Lz/O+r7Nodval3E6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ0SPnvthe8Anj4Dufbt6ky6UgVpZrf8Xo86sKoUd0l4KoCYET
-	Sm3KFvT0gZWJbRIlR34hFFYpaft0Zb+L8ffwiORsBekwcRrdJ9kVt+Tn3vmTf6+yjw==
-X-Google-Smtp-Source: AGHT+IH6q+2c0ZvH4Mqyc5GpFUfzI4kxFJ9JrF8Pz4fdBojwceABr9m8BAiE7+L6NGf3ItAa2jqiGA==
-X-Received: by 2002:a05:600c:3ba9:b0:431:47e7:9f45 with SMTP id 5b1f17b1804b1-432b686ec45mr142761445e9.11.1731405290361;
-        Tue, 12 Nov 2024 01:54:50 -0800 (PST)
-Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa74bab3sm238757095e9.43.2024.11.12.01.54.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 01:54:50 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Gabriel Krisman Bertazi <gabriel@krisman.be>,
-	Christian Brauner <brauner@kernel.org>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mm: shmem: Fix error checking on utf8_parse_version failures
-Date: Tue, 12 Nov 2024 09:54:49 +0000
-Message-Id: <20241112095449.461196-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1731405498; c=relaxed/simple;
+	bh=T1svJdA2RSCktG62BP7iuMSDRBK2CKeXOkbU+hwo0uU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DLL2ArKxvm9iISt1Rz34fbMK/XWhQ2a1fRLnbqBwRCTSzMQA1DiULBYBCcIHObgW35x9KqrGiJ/Goa+i9S7BpFCBWX6e9VKaMiB/Bu5QbcXYWFxzdZWA05DGLKlYvpVeDBGqRh2vrY52fN70GaOp0BqMCwJquLcszcwmUmjJ+K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KZ9ZZ6RS; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731405498; x=1762941498;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T1svJdA2RSCktG62BP7iuMSDRBK2CKeXOkbU+hwo0uU=;
+  b=KZ9ZZ6RS3SXsENXGbaPh9u9DcXDWdyfjn/KVDKk4QpBVFi+9hYroeXW9
+   gm+ypstqlc4l8X029YeYNppCdI+aiflUO8UuCPTlkXY9woYWXJWaopKOF
+   sp06H8EiSv/2eKruU/5EqOaUR3d1DmT1cJ95WTLhEJo7fcRxjmqrOlFpE
+   cUS1+xhJ2H6OX+P2bID+s1xxKQLvdh9Sw3o9wuyvpG6bXABfluGs+gVdA
+   AIO1eXIlR43xDMqzVYwafBY7uBZAxEGCktZHSUJ3yAdWheasebg8neDNS
+   Hn4xxkFQMoRYuJaz4o1uyC8w4jmuNlGCRbhSXa9Qlocr0VT3wuO9x7Mj7
+   g==;
+X-CSE-ConnectionGUID: pDz7vmrKTk6UYGgCVQdITw==
+X-CSE-MsgGUID: PslXD8PJScyQdLqAk6Ej3g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31086983"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31086983"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 01:58:17 -0800
+X-CSE-ConnectionGUID: FaS6+EqdRNe8kc0FYh0DbA==
+X-CSE-MsgGUID: iVSSNiulTDuEulpxbAozzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="87788734"
+Received: from lkp-server01.sh.intel.com (HELO bcfed0da017c) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 12 Nov 2024 01:58:12 -0800
+Received: from kbuild by bcfed0da017c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tAnf0-0000gv-02;
+	Tue, 12 Nov 2024 09:58:10 +0000
+Date: Tue, 12 Nov 2024 17:57:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: mjchen <mjchen0829@gmail.com>, dmitry.torokhov@gmail.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	sudeep.holla@arm.com, peng.fan@nxp.com, arnd@arndb.de,
+	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mjchen@nuvoton.com
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 2/2] input: keypad: add new keypad driver for MA35D1
+Message-ID: <202411121749.9xapQvza-lkp@intel.com>
+References: <20241112053059.3361-3-mjchen0829@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112053059.3361-3-mjchen0829@gmail.com>
 
-Currently the error check on the call to utf8_parse_version is always
-false because version is an unsigned int and this can never be less
-than zero. Because version is required to be an unsigned int, fix the
-issue by casting it to int just for the error check.
+Hi mjchen,
 
-Fixes: 58e55efd6c72 ("tmpfs: Add casefold lookup support")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- mm/shmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 7987deb2be9b..b69e1d8816fa 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -4377,7 +4377,7 @@ static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_parameter *
- 				       "in the format: utf8-<version number>");
- 
- 		version = utf8_parse_version(version_str);
--		if (version < 0)
-+		if ((int)version < 0)
- 			return invalfc(fc, "Invalid UTF-8 version: %s", version_str);
- 	}
- 
+[auto build test ERROR on dtor-input/next]
+[also build test ERROR on dtor-input/for-linus robh/for-next soc/for-next linus/master v6.12-rc7 next-20241112]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/mjchen/dt-bindings-input-Add-Nuvoton-MA35D1-keypad/20241112-133327
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
+patch link:    https://lore.kernel.org/r/20241112053059.3361-3-mjchen0829%40gmail.com
+patch subject: [PATCH v2 2/2] input: keypad: add new keypad driver for MA35D1
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20241112/202411121749.9xapQvza-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241112/202411121749.9xapQvza-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411121749.9xapQvza-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/input/keyboard/ma35d1_keypad.c: In function 'ma35d1_keypad_scan_matrix':
+>> drivers/input/keyboard/ma35d1_keypad.c:83:53: warning: left shift count >= width of type [-Wshift-count-overflow]
+      83 |         pressed_keys  = key_event[0] | key_event[1] << 32;
+         |                                                     ^~
+   drivers/input/keyboard/ma35d1_keypad.c:84:53: warning: left shift count >= width of type [-Wshift-count-overflow]
+      84 |         released_keys = key_event[2] | key_event[3] << 32;
+         |                                                     ^~
+   drivers/input/keyboard/ma35d1_keypad.c: In function 'ma35d1_keypad_open':
+>> drivers/input/keyboard/ma35d1_keypad.c:130:16: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+     130 |         val |= FIELD_PREP(KCOL, (keypad->kpi_col - 1)) | FIELD_PREP(KROW, (keypad->kpi_row - 1));
+         |                ^~~~~~~~~~
+
+
+vim +/FIELD_PREP +130 drivers/input/keyboard/ma35d1_keypad.c
+
+    59	
+    60	static void ma35d1_keypad_scan_matrix(struct ma35d1_keypad *keypad, unsigned int status)
+    61	{
+    62		struct input_dev *input_dev = keypad->input_dev;
+    63		unsigned int code;
+    64		unsigned int key;
+    65		unsigned long pressed_keys = 0, released_keys = 0;
+    66		unsigned int row_shift = get_count_order(keypad->kpi_col);
+    67		unsigned short *keymap = input_dev->keycode;
+    68		unsigned long key_event[4];
+    69		unsigned int index;
+    70	
+    71		/* Read key event status */
+    72		key_event[0] = readl(keypad->mmio_base + KPI_KPE0);
+    73		key_event[1] = readl(keypad->mmio_base + KPI_KPE1);
+    74		key_event[2] = readl(keypad->mmio_base + KPI_KRE0);
+    75		key_event[3] = readl(keypad->mmio_base + KPI_KRE1);
+    76	
+    77		/* Clear key event status */
+    78		writel(key_event[0], (keypad->mmio_base + KPI_KPE0));
+    79		writel(key_event[1], (keypad->mmio_base + KPI_KPE1));
+    80		writel(key_event[2], (keypad->mmio_base + KPI_KRE0));
+    81		writel(key_event[3], (keypad->mmio_base + KPI_KRE1));
+    82	
+  > 83		pressed_keys  = key_event[0] | key_event[1] << 32;
+    84		released_keys = key_event[2] | key_event[3] << 32;
+    85	
+    86		/* Process pressed keys */
+    87		for_each_set_bit(index, &pressed_keys, KEY_EVENT_BITS) {
+    88			code = MATRIX_SCAN_CODE(index / 8, (index % 8), row_shift);
+    89			key = keymap[code];
+    90	
+    91			input_event(input_dev, EV_MSC, MSC_SCAN, code);
+    92			input_report_key(input_dev, key, 1);
+    93		}
+    94	
+    95		/* Process released keys */
+    96		for_each_set_bit(index, &released_keys, KEY_EVENT_BITS) {
+    97			code = MATRIX_SCAN_CODE(index / 8, (index % 8), row_shift);
+    98			key = keymap[code];
+    99	
+   100			input_event(input_dev, EV_MSC, MSC_SCAN, code);
+   101			input_report_key(input_dev, key, 0);
+   102		}
+   103	
+   104		input_sync(input_dev);
+   105	}
+   106	
+   107	static irqreturn_t ma35d1_keypad_interrupt(int irq, void *dev_id)
+   108	{
+   109		struct ma35d1_keypad *keypad = dev_id;
+   110		unsigned int  kstatus;
+   111	
+   112		kstatus = readl(keypad->mmio_base + KPI_STATUS);
+   113	
+   114		if (kstatus & (PKEY_INT | RKEY_INT)) {
+   115			ma35d1_keypad_scan_matrix(keypad, kstatus);
+   116		} else {
+   117			if (kstatus & PDWAKE)
+   118				writel(PDWAKE, (keypad->mmio_base + KPI_STATUS));
+   119		}
+   120	
+   121		return IRQ_HANDLED;
+   122	}
+   123	
+   124	static int ma35d1_keypad_open(struct input_dev *dev)
+   125	{
+   126		struct ma35d1_keypad *keypad = input_get_drvdata(dev);
+   127		unsigned int val, config;
+   128	
+   129		val = RKINTEN | PKINTEN | INTEN | ENKP;
+ > 130		val |= FIELD_PREP(KCOL, (keypad->kpi_col - 1)) | FIELD_PREP(KROW, (keypad->kpi_row - 1));
+   131	
+   132		if (keypad->debounce_val > 0)
+   133			config = FIELD_PREP(PRESCALE, (keypad->pre_scale - 1)) |
+   134				 FIELD_PREP(DB_CLKSEL, keypad->debounce_val);
+   135		else
+   136			config = FIELD_PREP(PRESCALE, (keypad->pre_scale - 1));
+   137	
+   138		val |= config;
+   139	
+   140		writel(val, keypad->mmio_base + KPI_CONF);
+   141		writel((keypad->pre_scale_divider - 1),	keypad->mmio_base + KPI_PRESCALDIV);
+   142	
+   143		return 0;
+   144	}
+   145	
+
 -- 
-2.39.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
