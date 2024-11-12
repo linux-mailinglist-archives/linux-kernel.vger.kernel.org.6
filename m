@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-405265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB64D9C4F49
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:19:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19789C4F50
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:21:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 554F2B212C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:19:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50DFE28349D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFF0207A14;
-	Tue, 12 Nov 2024 07:19:08 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4654B20B1E6;
+	Tue, 12 Nov 2024 07:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVmzKoMM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF9319EED4
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D81A83A14;
+	Tue, 12 Nov 2024 07:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731395947; cv=none; b=V1bOZ98YiHegP6w+RdMsP37K/oxlCGQSHnbOfgDZRwxHpUDhjU0Wb3yJ4f7zca1aTWgpcC92aLwfQ9A4tZBvg1J9hYUpzRVnrWbVAzbaUamwsyjAbbaDr2yWNsPeiTl3XehObrEYNWxQF40R9xv1XxpErnvspZSPE3ApGA6fu5I=
+	t=1731396047; cv=none; b=WMvQMHYDY+eko0GGrrCR9VcX3kl/M62cKGUTuLJt9E2vD541N+O3Lw9D4Vo65eGUlZylLaKGUy2gwfhiF+kybUbQ+idnZs8vyo4C5Kc4HPNInlpkLdRz/u9UJTiS/+CcvzCFDJQkN29eNOUg/3DZcdDB7hKfnv9UbZ/t+dyyllY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731395947; c=relaxed/simple;
-	bh=+4zF+I5UVkznq+MwkXTk3TvFz3Fj3uOIqamwDRxd6tg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Y2ns3a3uwXuWAWW8rJ/hSqmAP2qh3JVCYbbrIZPKZ6oIc/CrmIuiS6KW4o0uz2vShhcwj6hu2TX+uYxj7H/yvRVcjRRLz+6P152ojWKZD0h9uGOnVdgpjkWt9mdvQ7AvmhZyQrgo2OZBHL9esECPzCwRLF1VZFVk60mkuq/MVLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a4e80ccd1bso56681685ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:19:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731395945; x=1732000745;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2mpeObwQvE4CpcJBlgp4+m7ylk6uy6K6IVGUb1AoJuo=;
-        b=AmjPmejWgE+W/w1/QRHV50D3dZYX2SXhm8i7aOrPGswEEjySI6Go8/siNy/ec/mWzd
-         1H24RIz03pXVq2erIeQ5QSMSC8wEmDFkE64GPQg7rF7cL7GiHg5Xt9mJsEif3tVT3CnW
-         BrJ0/v24rcbk8HEwKVuE699GHPNW4LCyOu6aB4GqNvsoQM3e8Vyd89DKl8KpCpSCWcv8
-         s1A/smteAQxrpGZv4IVw21s2dpDicjOjiKUfcXarz2GVw/yaKgwrBDP0DcaGR4xdOTD6
-         sQa0hkSG8ErKnfrFJrBK9mqVQxndkzChEyV2p5ULEOEnehT4ALktxTelAdZXolu386Mn
-         Ah9w==
-X-Forwarded-Encrypted: i=1; AJvYcCU2W5pr+a5Ql6/u8QXBA+tF+Zt1xZGzuBLnjlaCbTG4BR/irhv10Ku9hHQocitoAnnCSCYDJEtWZosVFv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF6u4UMQvmiBG3fTHoV0xbVMIlSDUwstKQFIOWHoTlhCpXivZX
-	V7r8zQiKxLY5HCEnaidL8Z+g3beKDIv+LZrvItm2ahU/8VjMelDXgVsjFUsX3BQPx93XmaGRrk6
-	5uhxZVPA59oJHmJpcSvk/2HpwFwccFV7qVQbF23S42J75Z87qC1AX0xk=
-X-Google-Smtp-Source: AGHT+IGGdltFSF9otbWIiMMlwDZRPg2bZ543HSOG9b0hu+m8AfvpICqafwJCX0SRwAq4IQ+gFk0Z04zG3QIUqnXWi5iYX9w9RGz1
+	s=arc-20240116; t=1731396047; c=relaxed/simple;
+	bh=iebmt1JJ4nc2KqO33nu0BylpM0uwrbfzxJxK70i+S/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DpEsODAwdz8M2xm+mUqQhNdBY8eiomYMqwm3lZKBREcg34xcePz9aF2KHH7CvZfrBu+01bWj0tFsFeHExaH4chAPrstMoq1OzQqBaCaboM0mPXpa5OEB4mwci/inrBQ5zj8f+fMk0LCcqzByHxH/h8IqsgmIYLHm6LrIEM+lSXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVmzKoMM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A7FFC4CED6;
+	Tue, 12 Nov 2024 07:20:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731396047;
+	bh=iebmt1JJ4nc2KqO33nu0BylpM0uwrbfzxJxK70i+S/0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dVmzKoMMLI1p5lld2AzbKA0OKhkaVTgahMbznY+ch5wqmWfYCEBoHJ5ZIQ8i4OEW7
+	 y0SB4PSstnJw8hURXljSVh3nG8HHVe3dC7gqHVMQQXmgFoRfx3x8hsZ36yggo7YlVq
+	 2q0lrQ8rdvyycCXVFgnX8tvivhS3iXRbVyFR1p3rkwOgGKPIQ2kftduBV0NwjkeMS6
+	 +NoAmsvdHq/cRMRpCO7yQhqTp7kgXfnEETQD/OipD9b2Ni66FEyjDAneYRjzAw6sNL
+	 U2vmfYx6TwAoyvedmOw9NUrF5kwpsNBTikX0r/vBN3EeyzUVC53eAjFgH0BRIJSoUB
+	 HtyTui/+hEy9g==
+Date: Tue, 12 Nov 2024 09:20:40 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Joerg Roedel <joro@8bytes.org>, ill Deacon <will@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v3 00/17] Provide a new two step DMA mapping API
+Message-ID: <20241112072040.GG71181@unreal>
+References: <cover.1731244445.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c244:0:b0:3a6:ab32:7417 with SMTP id
- e9e14a558f8ab-3a6f1994673mr133680085ab.1.1731395945502; Mon, 11 Nov 2024
- 23:19:05 -0800 (PST)
-Date: Mon, 11 Nov 2024 23:19:05 -0800
-In-Reply-To: <20241112064621.uOkpD%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67330169.050a0220.5088e.0009.GAE@google.com>
-Subject: Re: [syzbot] [wpan?] [usb?] BUG: corrupted list in ieee802154_if_remove
-From: syzbot <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1731244445.git.leon@kernel.org>
 
-Hello,
+On Sun, Nov 10, 2024 at 03:46:47PM +0200, Leon Romanovsky wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+<...>
 
-Reported-by: syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com
-Tested-by: syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com
+> ----------------------------------------------------------------------------
+> The code can be downloaded from:
+> https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git tag:dma-split-nov-09
 
-Tested on:
+<...>
 
-commit:         2d5404ca Linux 6.12-rc7
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=134afea7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1503500c6f615d24
-dashboard link: https://syzkaller.appspot.com/bug?extid=985f827280dc3a6e7e92
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17b1f4e8580000
+> 
+> Christoph Hellwig (6):
+>   PCI/P2PDMA: Refactor the p2pdma mapping helpers
+>   dma-mapping: move the PCI P2PDMA mapping helpers to pci-p2pdma.h
+>   iommu: generalize the batched sync after map interface
+>   iommu/dma: Factor out a iommu_dma_map_swiotlb helper
+>   dma-mapping: add a dma_need_unmap helper
+>   docs: core-api: document the IOVA-based API
+> 
+> Leon Romanovsky (11):
+>   dma-mapping: Add check if IOVA can be used
+>   dma: Provide an interface to allow allocate IOVA
+>   dma-mapping: Implement link/unlink ranges API
+>   mm/hmm: let users to tag specific PFN with DMA mapped bit
+>   mm/hmm: provide generic DMA managing logic
+>   RDMA/umem: Store ODP access mask information in PFN
+>   RDMA/core: Convert UMEM ODP DMA mapping to caching IOVA and page
+>     linkage
+>   RDMA/umem: Separate implicit ODP initialization from explicit ODP
+>   vfio/mlx5: Explicitly use number of pages instead of allocated length
+>   vfio/mlx5: Rewrite create mkey flow to allow better code reuse
+>   vfio/mlx5: Enable the DMA link API
 
-Note: testing is done by a robot and is best-effort only.
+Robin,
+
+All technical concerns were handled and this series is ready to be merged.
+
+Robin, can you please Ack the dma-iommu patches?
+
+Thanks
 
