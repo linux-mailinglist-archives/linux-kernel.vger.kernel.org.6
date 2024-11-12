@@ -1,99 +1,85 @@
-Return-Path: <linux-kernel+bounces-405962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16AAC9C5954
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:41:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE479C5955
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:42:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1A1F1F21CF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:41:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 642FB282FE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4313D167D80;
-	Tue, 12 Nov 2024 13:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAD3158DC0;
+	Tue, 12 Nov 2024 13:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iAgJux5M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdTHs3Lb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C493143736;
-	Tue, 12 Nov 2024 13:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843F9142633;
+	Tue, 12 Nov 2024 13:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418772; cv=none; b=BeH8xUl24OW2GFIbuUF0l1teR9BLTMmpOYymU1JD0ZkFABxqmIIMt8q+4JSaHoZFEvH/QCpLvWNCGrxAZ4gqGaWCyI7iBVl9q6wuBmAv8lytHSwcyocUzPzBqolbiYL/aiF90NMGPV6pryNhPHhtAHiHvkKGKXTvazaX7+ON8lA=
+	t=1731418830; cv=none; b=C5VetoR0F3RrSCAdqTleYZnsszYlYrb6P3iM1PtfAozpjEOCgcTI09r+YOuPriSwlff3Ip99NyRgulhVrAJbutTvBzq1+by+ryzqp23GuCDX7djp9GzTj5HQ/kZk2EKERdZypLQX+91KAN0b0BYC2XmdGfEqsoIURJJdYbhPadc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418772; c=relaxed/simple;
-	bh=bG++P6YTndM6Oq13+GniO3tcZGi4NAOAiRA9v3JLvPM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hDhYWscyJnBDvyGZZzJpGnd7ylYzkY78Ix4zGZF5TjAy3TTJQn3F58vUxstBRRX6dtvW36+bNikRgLPVGA0xascDSBCXxkjbUDYTDvZZZSFqLh4Zfq3YPUA/WEYYnGwDuH8mLoreSmKx7QtSbyptq/oNFAMbKMX6av0ebezm5/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iAgJux5M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3260C4CECD;
-	Tue, 12 Nov 2024 13:39:29 +0000 (UTC)
+	s=arc-20240116; t=1731418830; c=relaxed/simple;
+	bh=vn5HadZZJqgXEsUauuMsbRcdotaIqBAdXUbV3GKDiMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NS4karXbOOsqWtroeBF8RZlBXchqNrCZqK8+mWb/DZHzeJratEMiXuLML1nU2I5tzYYRzUKObbZdb7UPn9y8Pv0XqinPMq4rYBxqFKy1nIo6xWwMfleNK8A9wY+fXYFAssfslbdVqz14TWG/9kljq4ZJqWp6i1QlG5EcBT0XfM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdTHs3Lb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A8DC4CECD;
+	Tue, 12 Nov 2024 13:40:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731418772;
-	bh=bG++P6YTndM6Oq13+GniO3tcZGi4NAOAiRA9v3JLvPM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iAgJux5MBbkuO3UAHsragB93KtVH4746+HzjwSTXlyzYfWwnO7r48PSHSopalXI2h
-	 WLMbB3YPqY9UQagcXPAPLiogA0RTBHZHAIk+6lzemJTv6yHjMPGMpAe0aMUb5sA78K
-	 FbQQg4BuZYPN+K20g2qxEaNCoxgA+PZ+bV29YdnFwVazJTPSkBdmWnciNW48u7YSji
-	 JmDiPhggvMNGYcM1dSJJETHneEK4z8HXXqNHH0t6xHRxtgObLhMYyLyyVte+1fTJ8s
-	 JuhAAauh2xCCRBlaTKU/STMz3tNcYtJWx+BNpiLVpr3Ne8Z1gIwBzBV0wpBHColvMd
-	 3M7IAwrITvB3g==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Ian Kent <raven@themaw.net>,
-	Josef Bacik <josef@toxicpanda.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and sb_source
-Date: Tue, 12 Nov 2024 14:39:21 +0100
-Message-ID: <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
-References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+	s=k20201202; t=1731418830;
+	bh=vn5HadZZJqgXEsUauuMsbRcdotaIqBAdXUbV3GKDiMY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SdTHs3LbK0M+Hq+UjYfMeKDW1lua79bw72xAzshy5r3kk6Y2xC0BNQ6P2Ws5WgQ1R
+	 ujVTxPuBJX4ILpNbPETb8Q/DaseKW8SoDPwM7ZTbELS9Kdzd8F3z8Bs4r4gDy9vJYv
+	 9MD5vb8T5bP60dP/5Xv056Utb1IC3GrNRgxsTmeS5GbRb3xoOgRVD+2EujMeNqBtu0
+	 /Ak86KZc4NiPPHiFSP3EMj8yy4L6KVS2gPMukSx5xo3O2XbU11c/Zih3mu/brVTpeO
+	 EUxQS6rtf+YMCZUOhuAvwzTPsK2nQQmRTbKgaFeDYfGEhjbfKSS5pKhzOtsw7rdfWj
+	 gDpGHq2oVtPvA==
+Date: Tue, 12 Nov 2024 13:40:25 +0000
+From: Simon Horman <horms@kernel.org>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, andrew+netdev@lunn.ch,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pkshih@realtek.com, larry.chiu@realtek.com
+Subject: Re: [PATCH net-next 2/2] rtase: Fix error code in rtase_init_one()
+Message-ID: <20241112134025.GN4507@kernel.org>
+References: <20241111025532.291735-1-justinlai0215@realtek.com>
+ <20241111025532.291735-3-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1316; i=brauner@kernel.org; h=from:subject:message-id; bh=bG++P6YTndM6Oq13+GniO3tcZGi4NAOAiRA9v3JLvPM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQbR/X4xQj8q3Su3p/5a1olf1zb4sj7EkZCfs1Wq9QSD 3f/z7zUUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBF/H0aG7p1pr0sX5rhc3xW0 a0pnmcgk5/jl87P2dnfsbDzL9vdZKiPDc8kD/+a1v97eqcO//Of921+myMev3FFg96Ww68aDVxW yrAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111025532.291735-3-justinlai0215@realtek.com>
 
-On Mon, 11 Nov 2024 10:09:54 -0500, Jeff Layton wrote:
-> Meta has some internal logging that scrapes /proc/self/mountinfo today.
-> I'd like to convert it to use listmount()/statmount(), so we can do a
-> better job of monitoring with containers. We're missing some fields
-> though. This patchset adds them.
+On Mon, Nov 11, 2024 at 10:55:32AM +0800, Justin Lai wrote:
+> Change the return type of rtase_check_mac_version_valid() to int. Add
+> error handling for when rtase_check_mac_version_valid() returns an error.
 > 
-> 
+> Fixes: a36e9f5cfe9e ("rtase: Add support for a pci table in this module")
+> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Hi Justin,
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+The cited commit appears to be present in net. So I think that this fix
+needs to also be targeted at net rather than net-next.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Also, I think this patch is doing too much for a fix.  I think that
+changing the return type of rtase_check_mac_version_valid() and updating
+the names of the labels should be omitted from a revised version of this
+patch for net.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+...
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/3] fs: don't let statmount return empty strings
-      https://git.kernel.org/vfs/vfs/c/75ead69a7173
-[2/3] fs: add the ability for statmount() to report the fs_subtype
-      https://git.kernel.org/vfs/vfs/c/ed9d95f691c2
-[3/3] fs: add the ability for statmount() to report the sb_source
-      https://git.kernel.org/vfs/vfs/c/d31cea0ab403
+-- 
+pw-bot: changes-requested
 
