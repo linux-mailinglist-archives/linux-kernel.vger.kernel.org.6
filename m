@@ -1,94 +1,80 @@
-Return-Path: <linux-kernel+bounces-405734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29369C5663
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:26:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAFE09C5667
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:26:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31A3B1F21AC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:26:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BAC11F219F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695562141B9;
-	Tue, 12 Nov 2024 11:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718BB216DE2;
+	Tue, 12 Nov 2024 11:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tfh5Jh1L";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+BujC0L1";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tfh5Jh1L";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+BujC0L1"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TpFueb/F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE742141A2;
-	Tue, 12 Nov 2024 11:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB31214436
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731409776; cv=none; b=V06+NJZTBdVdeJJaL3Q0/LQ2dILIEBmfKLmmlmKc3Twt1Vn0Gjj7hIrr3GppfdYpCHCN6CsTNpiCdptOZANni3NhkRdGQwFMf8yJR1605ppWpSp9YHILU4TUA/6ji4EwAw6Yh5TSlnnXL+aCAyFCBjqH3mQoGZNUg+TMXct2xIo=
+	t=1731409831; cv=none; b=Q1D2nnuSvfBifQEhU6Z1qociwoQ9tHDh2pHVBialAW5RSznY20XiLhBOLbZGzg+UonadU+Kb0u+s7pyur5Pk6gKUwrx/NhbGW4T1lDETvRsylifyG7AzKXxU8DgLHmVvtq0AKuEeSRSBvz6T+pBqbRbzMbrmCYNJ7GsSg8QaTBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731409776; c=relaxed/simple;
-	bh=uvU86PZmsTw7fLmxJyD27WBfsIY4qydtW6qXekwUqJQ=;
+	s=arc-20240116; t=1731409831; c=relaxed/simple;
+	bh=JgWrCTXz86cjF0ahpur6UVM4IKYvXBrSsKiOXqEnnX4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VOwHgy9ZVSkxW/T4xIMC8st6nfRBSRATaYNo06FIy4mxvzML4XGbg73UAmaMb9hrpcXmejhEvscO6RBEYglwRqJ8Blk9Bu35NEnuY6y7NmeA3xIgCEoXmw2QzYFNmEkdUH6VdpEXS5y9rZa+NPDUJtKuBQAnGAc6WMJkxcnpgZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tfh5Jh1L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+BujC0L1; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tfh5Jh1L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+BujC0L1; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0380C215D5;
-	Tue, 12 Nov 2024 11:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731409767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=obAKjZsATWCK01NK+6eN8TmzQ9cSCMzQvVRjbkDNz/RFbMIMuZdjag6r5wB320zKYwVS1ht1PNjmNF2dnmaXvIh4jL1xH29kCuqMiBGIg1iFOjPXp2/wffyndlnImDnMUqZu7om/90XmNZcQFICXstOOgFU5z8GSPVArZc1U3tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TpFueb/F; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731409828;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=z7Z2UQlbAHlFmfwFU/o6qE0CBbboWdDKwMbTIfHRy04=;
-	b=Tfh5Jh1LsY55iCTuS8r3sNq89ZmdVjMM3II27wyqK8j1Jw/lvsSH+nZZmNlNT3l2Afwcw5
-	WSmBMjM5n+OHSeONm/aXqGq8l4YwNlov1Okc+3ZsTFPEtFOEeXOHVRxH3JbrDZvBKNCFm6
-	vKyYnVLuIqWKFEYsymDMuYHE2bU9HQ8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731409767;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=z7Z2UQlbAHlFmfwFU/o6qE0CBbboWdDKwMbTIfHRy04=;
-	b=+BujC0L11HpxMYY8xeM5+In+jZIrRfAlIK5RMdnNY5p4M/o8MhSPk+ojXq1HPW9Y+TN9pP
-	aX0qtSQDomnrfJBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731409767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=z7Z2UQlbAHlFmfwFU/o6qE0CBbboWdDKwMbTIfHRy04=;
-	b=Tfh5Jh1LsY55iCTuS8r3sNq89ZmdVjMM3II27wyqK8j1Jw/lvsSH+nZZmNlNT3l2Afwcw5
-	WSmBMjM5n+OHSeONm/aXqGq8l4YwNlov1Okc+3ZsTFPEtFOEeXOHVRxH3JbrDZvBKNCFm6
-	vKyYnVLuIqWKFEYsymDMuYHE2bU9HQ8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731409767;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=z7Z2UQlbAHlFmfwFU/o6qE0CBbboWdDKwMbTIfHRy04=;
-	b=+BujC0L11HpxMYY8xeM5+In+jZIrRfAlIK5RMdnNY5p4M/o8MhSPk+ojXq1HPW9Y+TN9pP
-	aX0qtSQDomnrfJBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 72E6A13301;
-	Tue, 12 Nov 2024 11:09:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id a/OeGmY3M2eDPgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 12 Nov 2024 11:09:26 +0000
-Message-ID: <5f95c0d7-01a4-485d-a9d7-1a39acf9c680@suse.cz>
-Date: Tue, 12 Nov 2024 12:09:24 +0100
+	bh=MginGWETi2H3aRboKWAqgKyTMFlHOXDBT6vgmNx/v4g=;
+	b=TpFueb/FuZJsTpV+ICKMvKbSsJpIccqIKZTSjkUJzp5fQcEDGscNRnNxLwrhIllO7v0Uop
+	1ridL1MQZWMg15iibl/RF7u8o8BGgaELIc05fzJzw3Z527Sf7WInjsnLZuIR017hkr8jeL
+	GTqDXF4wvyQGQ80niMfhGtQSo+MrzNQ=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-481-MVNF75n0Mo2W-hUfgyXc9w-1; Tue, 12 Nov 2024 06:10:27 -0500
+X-MC-Unique: MVNF75n0Mo2W-hUfgyXc9w-1
+X-Mimecast-MFC-AGG-ID: MVNF75n0Mo2W-hUfgyXc9w
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d5116f0a6so3088965f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:10:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731409826; x=1732014626;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MginGWETi2H3aRboKWAqgKyTMFlHOXDBT6vgmNx/v4g=;
+        b=HDFIb69gHuZfOu/gMJFB+CsfInug6Dzqyv7V32YTjIMgzjsUET2TA2JQNd20Kypml6
+         stYYCYTjBHi38gzz6PI32dVfomhRRgeePz5qiG3mPwwDLqezsQJNWfzoBSgXDU0fFRfH
+         aLU/7fg4VKgmGiQJmOOhpp8qgWw6KMiKWIGtIsUGvErC6MmZm6B05CstsNexQmGFsD2W
+         DdUvN971CguApuDd0EnRdWE75gAv+2pQtg9wci7s9OtaCF2mHTQIloHQ0qSL7DO6Hr5+
+         JzqYavZnmFKYSyCe1ipbzsHYDKwS/BOYblH691wYLeEjvyk5caosTY946JwbgfRogeA/
+         ZlQA==
+X-Gm-Message-State: AOJu0Yx/KAWVg2R2VA+yeLNdfxF4Ap/A2WJfDLGP2O2S4X7EKSUyD0/B
+	pkGa6p5EYgC4bAKLNl7zRggs4fLA0olSpXfyI1zGsogM9cGBdWyFpGL3H9ApXyXPX57WLYvD1+0
+	PD5jTCZIXF1lXKSWFRn2H3caoCE3GoBWkYvMfJBIMvQgEBOPP0E96W1MCOYLEow==
+X-Received: by 2002:a5d:648f:0:b0:37d:46fa:d1d3 with SMTP id ffacd0b85a97d-381f186d11amr14002792f8f.34.1731409826256;
+        Tue, 12 Nov 2024 03:10:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGOsohEx/JDBmfWzlps27AmO7dmgLiD/4MM2L9pB/atzh4nhI9pEMbwBztz+lIu3iHRMoK+IA==
+X-Received: by 2002:a5d:648f:0:b0:37d:46fa:d1d3 with SMTP id ffacd0b85a97d-381f186d11amr14002765f8f.34.1731409825862;
+        Tue, 12 Nov 2024 03:10:25 -0800 (PST)
+Received: from ?IPV6:2003:cb:c739:8e00:7a46:1b8c:8b13:d3d? (p200300cbc7398e007a461b8c8b130d3d.dip0.t-ipconnect.de. [2003:cb:c739:8e00:7a46:1b8c:8b13:d3d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed99a0efsm15178034f8f.58.2024.11.12.03.10.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 03:10:23 -0800 (PST)
+Message-ID: <b0949317-9be5-49e4-9390-2ff1ca1b1ed9@redhat.com>
+Date: Tue, 12 Nov 2024 12:10:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,188 +82,161 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] perf lock contention: Resolve slab object name
- using BPF
+Subject: Re: [PATCH v3 2/8] binder: concurrent page installation
+To: Carlos Llamas <cmllamas@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+ Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
+ Barry Song <v-songbaohua@oppo.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>
+References: <20241108191057.3288442-1-cmllamas@google.com>
+ <20241108191057.3288442-3-cmllamas@google.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-To: Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
- Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>,
- bpf@vger.kernel.org, Stephane Eranian <eranian@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Kees Cook <kees@kernel.org>
-References: <20241108061500.2698340-1-namhyung@kernel.org>
- <20241108061500.2698340-4-namhyung@kernel.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241108061500.2698340-4-namhyung@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241108191057.3288442-3-cmllamas@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,intel.com,infradead.org,vger.kernel.org,google.com,linux.dev,gmail.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
 
-On 11/8/24 07:14, Namhyung Kim wrote:
-> The bpf_get_kmem_cache() kfunc can return an address of the slab cache
-> (kmem_cache).  As it has the name of the slab cache from the iterator,
-> we can use it to symbolize some dynamic kernel locks in a slab.
+On 08.11.24 20:10, Carlos Llamas wrote:
+> Allow multiple callers to install pages simultaneously by downgrading
+> the mmap_sem to non-exclusive mode. Races to the same PTE are handled
+> using get_user_pages_remote() to retrieve the already installed page.
+> This method significantly reduces contention in the mmap semaphore.
 > 
-> Before:
->   root@virtme-ng:/home/namhyung/project/linux# tools/perf/perf lock con -abl sleep 1
->    contended   total wait     max wait     avg wait            address   symbol
+> To ensure safety, vma_lookup() is used (instead of alloc->vma) to avoid
+> operating on an isolated VMA. In addition, zap_page_range_single() is
+> called under the alloc->mutex to avoid racing with the shrinker.
 > 
->            2      3.34 us      2.87 us      1.67 us   ffff9d7800ad9600    (mutex)
->            2      2.16 us      1.93 us      1.08 us   ffff9d7804b992d8    (mutex)
->            4      1.37 us       517 ns       343 ns   ffff9d78036e6e00    (mutex)
->            1      1.27 us      1.27 us      1.27 us   ffff9d7804b99378    (mutex)
->            2       845 ns       599 ns       422 ns   ffffffff9e1c3620   delayed_uprobe_lock (mutex)
->            1       845 ns       845 ns       845 ns   ffffffff9da0b280   jiffies_lock (spinlock)
->            2       377 ns       259 ns       188 ns   ffffffff9e1cf840   pcpu_alloc_mutex (mutex)
->            1       305 ns       305 ns       305 ns   ffffffff9e1b4cf8   tracepoint_srcu_srcu_usage (mutex)
->            1       295 ns       295 ns       295 ns   ffffffff9e1c0940   pack_mutex (mutex)
->            1       232 ns       232 ns       232 ns   ffff9d7804b7d8d8    (mutex)
->            1       180 ns       180 ns       180 ns   ffffffff9e1b4c28   tracepoint_srcu_srcu_usage (mutex)
->            1       165 ns       165 ns       165 ns   ffffffff9da8b3a0   text_mutex (mutex)
+> Many thanks to Barry Song who posted a similar approach [1].
 > 
-> After:
->   root@virtme-ng:/home/namhyung/project/linux# tools/perf/perf lock con -abl sleep 1
->    contended   total wait     max wait     avg wait            address   symbol
+> Link: https://lore.kernel.org/all/20240902225009.34576-1-21cnbao@gmail.com/ [1]
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Barry Song <v-songbaohua@oppo.com>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> ---
+>   drivers/android/binder_alloc.c | 64 +++++++++++++++++++++-------------
+>   1 file changed, 40 insertions(+), 24 deletions(-)
 > 
->            2      1.95 us      1.77 us       975 ns   ffff9d5e852d3498   &task_struct (mutex)
->            1      1.18 us      1.18 us      1.18 us   ffff9d5e852d3538   &task_struct (mutex)
->            4      1.12 us       354 ns       279 ns   ffff9d5e841ca800   &kmalloc-cg-512 (mutex)
->            2       859 ns       617 ns       429 ns   ffffffffa41c3620   delayed_uprobe_lock (mutex)
->            3       691 ns       388 ns       230 ns   ffffffffa41c0940   pack_mutex (mutex)
->            3       421 ns       164 ns       140 ns   ffffffffa3a8b3a0   text_mutex (mutex)
->            1       409 ns       409 ns       409 ns   ffffffffa41b4cf8   tracepoint_srcu_srcu_usage (mutex)
->            2       362 ns       239 ns       181 ns   ffffffffa41cf840   pcpu_alloc_mutex (mutex)
->            1       220 ns       220 ns       220 ns   ffff9d5e82b534d8   &signal_cache (mutex)
->            1       215 ns       215 ns       215 ns   ffffffffa41b4c28   tracepoint_srcu_srcu_usage (mutex)
-> 
-> Note that the name starts with '&' sign for slab objects to inform they
-> are dynamic locks.  It won't give the accurate lock or type names but
-> it's still useful.  We may add type info to the slab cache later to get
-> the exact name of the lock in the type later.
-> 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-
-<snip>
-
-> diff --git a/tools/perf/util/bpf_skel/lock_contention.bpf.c b/tools/perf/util/bpf_skel/lock_contention.bpf.c
-> index fd24ccb00faec0ba..b5bc37955560a58e 100644
-> --- a/tools/perf/util/bpf_skel/lock_contention.bpf.c
-> +++ b/tools/perf/util/bpf_skel/lock_contention.bpf.c
-> @@ -123,6 +123,8 @@ struct mm_struct___new {
->  	struct rw_semaphore mmap_lock;
->  } __attribute__((preserve_access_index));
->  
-> +extern struct kmem_cache *bpf_get_kmem_cache(u64 addr) __ksym __weak;
+> diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+> index 7241bf4a3ff2..2ab520c285b3 100644
+> --- a/drivers/android/binder_alloc.c
+> +++ b/drivers/android/binder_alloc.c
+> @@ -221,26 +221,14 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+>   				      struct binder_lru_page *lru_page,
+>   				      unsigned long addr)
+>   {
+> +	struct vm_area_struct *vma;
+>   	struct page *page;
+> -	int ret = 0;
+> +	long npages;
+> +	int ret;
+>   
+>   	if (!mmget_not_zero(alloc->mm))
+>   		return -ESRCH;
+>   
+> -	/*
+> -	 * Protected with mmap_sem in write mode as multiple tasks
+> -	 * might race to install the same page.
+> -	 */
+> -	mmap_write_lock(alloc->mm);
+> -	if (binder_get_installed_page(lru_page))
+> -		goto out;
+> -
+> -	if (!alloc->vma) {
+> -		pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
+> -		ret = -ESRCH;
+> -		goto out;
+> -	}
+> -
+>   	page = alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
+>   	if (!page) {
+>   		pr_err("%d: failed to allocate page\n", alloc->pid);
+> @@ -248,19 +236,47 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+>   		goto out;
+>   	}
+>   
+> -	ret = vm_insert_page(alloc->vma, addr, page);
+> -	if (ret) {
+> +	mmap_read_lock(alloc->mm);
+> +	vma = vma_lookup(alloc->mm, addr);
+> +	if (!vma || vma != alloc->vma) {
+> +		__free_page(page);
+> +		pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
+> +		ret = -ESRCH;
+> +		goto unlock;
+> +	}
 > +
->  /* control flags */
->  const volatile int has_cpu;
->  const volatile int has_task;
-> @@ -496,8 +498,23 @@ int contention_end(u64 *ctx)
->  		};
->  		int err;
->  
-> -		if (aggr_mode == LOCK_AGGR_ADDR)
-> -			first.flags |= check_lock_type(pelem->lock, pelem->flags);
-> +		if (aggr_mode == LOCK_AGGR_ADDR) {
-> +			first.flags |= check_lock_type(pelem->lock,
-> +						       pelem->flags & LCB_F_TYPE_MASK);
-> +
-> +			/* Check if it's from a slab object */
-> +			if (bpf_get_kmem_cache) {
-> +				struct kmem_cache *s;
-> +				struct slab_cache_data *d;
-> +
-> +				s = bpf_get_kmem_cache(pelem->lock);
-> +				if (s != NULL) {
-> +					d = bpf_map_lookup_elem(&slab_caches, &s);
-> +					if (d != NULL)
-> +						first.flags |= d->id;
-> +				}
+> +	ret = vm_insert_page(vma, addr, page);
+> +	switch (ret) {
+> +	case -EBUSY:
+> +		/*
+> +		 * EBUSY is ok. Someone installed the pte first but the
+> +		 * lru_page->page_ptr has not been updated yet. Discard
+> +		 * our page and look up the one already installed.
+> +		 */
+> +		ret = 0;
+> +		__free_page(page);
+> +		npages = get_user_pages_remote(alloc->mm, addr, 1, 0, &page, NULL);
 
-Is this being executed as part of obtaining a perf event record, or as part
-of a postprocessing pass? I'm not familiar enough with the code to be certain.
+This will trigger a page fault if we don't find what we expect (are 
+races with e.g., MADV_DONTNEED possible?), is that really desired or not 
+a problem?
 
-- if it's part of perf event record, can you just store 's' and defer
-resolving the cache by bpf_map_lookup_elem() to postprocessing?
-- if it's postprocessing, it would be too late for bpf_get_kmem_cache() as
-the object might be gone already?
+-- 
+Cheers,
 
-The second alternative would be worse as it could miss the cache or
-misattribute (in case page is reallocated by another cache), the first is
-just less efficient than possible.
-
-> +			}
-> +		}
->  
->  		err = bpf_map_update_elem(&lock_stat, &key, &first, BPF_NOEXIST);
->  		if (err < 0) {
+David / dhildenb
 
 
