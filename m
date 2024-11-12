@@ -1,149 +1,252 @@
-Return-Path: <linux-kernel+bounces-406323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C249C5D67
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:36:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 468B09C5D63
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:35:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE8851F21ECE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:36:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 056EF1F21756
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587BD206949;
-	Tue, 12 Nov 2024 16:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB274206067;
+	Tue, 12 Nov 2024 16:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A++erLGG"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P0NIsD0a"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D932309BF;
-	Tue, 12 Nov 2024 16:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5087A2309BF
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731429371; cv=none; b=BagcUivPoOgXDAFCjie/co6xwgC0U4L8zFnLMhrsu8B1wTWr9JfkJYNb9+ErGSgndzGA7kfzySL3b/a2+vHNB00VvSUm+60Y8rUNSn+JKSjPko9Kb3N8BXSa6VvGhDGZEfIYC+WPuI7AqmG3HhFGIKeXQaDa/d6fabqFKykvSYo=
+	t=1731429292; cv=none; b=H/Ep2m2Vfl+41rzYRXq70Cwlz8dcNWG4rna+E9nsagSfPqLFlgOtRtD2E98+YStZS1VFdwz9OjLMUleU5V/RXKgjmrXFKuzMPbS0s4wYfPr+JWKy/lLFfRqfYjOirgEz+0vmPESQY6RURk1mfR8zAs77/8OYl3wMjMOU2QlnywU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731429371; c=relaxed/simple;
-	bh=9ZoYAtxk59bGM/XIHyrszcd3j+PhG3oXS4rbt/EjZoQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=ZdpAPrqXo6sQODE7uNhnmsXgrHlSnYP5UI4JTfgGnO9k6E4Cxnu3lMPrzZ4ef67CHlqUkzJQQp1SWQXvg/SzJ7MKLfHwUnqGW1wQc3hpgiR/hwGKNP3gkx6OLrjglpLVD7Dn/UpN++sKilIf48DPQJzOxsApiZWzYbBjHXr0Hzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A++erLGG; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACFAK8P001109;
-	Tue, 12 Nov 2024 16:36:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=7g5rlVuQ+EnvnyrhwnvqSxB556CU
-	zYtmzbdYIHLZin0=; b=A++erLGGMTbItNWUGA1r4KZErFCgyW3vKiXK5ZYdIZ/F
-	ZkVR5tAVXcYhfgG2W2hoVM4UPsFWenzp8cIsxrYBlKjjXKXgyd/1lxs4nBfxfzO8
-	1m5QTVacZvgz1qt7ucsO/3cToOIWd6bIpZfI4eKwX6TTswc6z5kp6ESVrjEkE7al
-	41EMmKm6kf4gQLMBWWD/z0RcI76wfxq+kdEtB1eOzj0DiqFSlqHl4j6zIGusiLEd
-	FqX9wtTMhmRnJ2VmYqOzFENlwzg0SXIe1jYaTWgnUbGCc8XL2JG4PT8G4B/jFYhu
-	39grtOLfJC6X8/pAJaQHiCOzr1q6ULXAtogkZK88wA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42v9dv0br5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 16:36:02 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACFucsY018059;
-	Tue, 12 Nov 2024 16:36:01 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tk2mvjka-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 16:36:01 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ACGa1rF18219702
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Nov 2024 16:36:01 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3582858063;
-	Tue, 12 Nov 2024 16:36:01 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DE84758056;
-	Tue, 12 Nov 2024 16:36:00 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.167.4])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 12 Nov 2024 16:36:00 +0000 (GMT)
-Message-ID: <da138eda4ad9d96a8e8d1d1cfb9cc5ac380b94cb.camel@linux.ibm.com>
-Subject: [GIT PULL] integrity: subsystem fixes for v6.12
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel
- <linux-kernel@vger.kernel.org>,
-        Roberto Sassu
- <roberto.sassu@huaweicloud.com>
-Date: Tue, 12 Nov 2024 11:36:00 -0500
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Domb7dLK_OFCWwq4nrbRWUwy6gO38JFq
-X-Proofpoint-ORIG-GUID: Domb7dLK_OFCWwq4nrbRWUwy6gO38JFq
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1731429292; c=relaxed/simple;
+	bh=maejiSruHV87Y+aXMuzBMKh+5AM/W/xMedlQ3gYipAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cNSh5Kaka5coIDHrNYdMuo8cvgs6Du7KawLj1qabfTd3XFuCcmrARGL5biVWhwBIW7hj0MiTvxujT0Vf9qU5TDVduoZ1Q6NkHsrrJeqQy0dm9CMBvGShRoykdtRnqMOqyWW1T9nM8XP/oQombxDfW4QfP2tf21Bigo0sum2zbVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P0NIsD0a; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731429289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rKB5Z1lLpeLT0LZ+NAjLFKIK23L71bpb9LtJKKAzd7w=;
+	b=P0NIsD0aFbLQ0F8odQeqgz3NykreQxLZHovu/it9JRaDBeQlYk/ZHSCMs1KSwI28KhvEF+
+	qITKMtV69PiKTwPvauIQajwxCJ6usEXP2aiZmManV4oUzV8p9aL2yAjEVZ5c03iIsP1z47
+	sgAgQ7GkV5eADIJxorHU1EOqrXJxMTg=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-381-gwL-hOU5MVeY31HFqQOAlA-1; Tue,
+ 12 Nov 2024 11:34:47 -0500
+X-MC-Unique: gwL-hOU5MVeY31HFqQOAlA-1
+X-Mimecast-MFC-AGG-ID: gwL-hOU5MVeY31HFqQOAlA
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ABAB61956096;
+	Tue, 12 Nov 2024 16:34:44 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.120])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 28C6330000DF;
+	Tue, 12 Nov 2024 16:34:41 +0000 (UTC)
+Date: Tue, 12 Nov 2024 11:36:14 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 12/16] ext4: add RWF_UNCACHED write support
+Message-ID: <ZzOD_qV5tpv9nbw7@bfoster>
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-13-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- lowpriorityscore=0 phishscore=0 bulkscore=0 malwarescore=0 adultscore=0
- priorityscore=1501 mlxscore=0 impostorscore=0 mlxlogscore=999 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411120133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111234842.2024180-13-axboe@kernel.dk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Linus,
+On Mon, Nov 11, 2024 at 04:37:39PM -0700, Jens Axboe wrote:
+> IOCB_UNCACHED IO needs to prune writeback regions on IO completion,
+> and hence need the worker punt that ext4 also does for unwritten
+> extents. Add an io_end flag to manage that.
+> 
+> If foliop is set to foliop_uncached in ext4_write_begin(), then set
+> FGP_UNCACHED so that __filemap_get_folio() will mark newly created
+> folios as uncached. That in turn will make writeback completion drop
+> these ranges from the page cache.
+> 
+> Now that ext4 supports both uncached reads and writes, add the fop_flag
+> FOP_UNCACHED to enable it.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/ext4/ext4.h    |  1 +
+>  fs/ext4/file.c    |  2 +-
+>  fs/ext4/inline.c  |  7 ++++++-
+>  fs/ext4/inode.c   | 18 ++++++++++++++++--
+>  fs/ext4/page-io.c | 28 ++++++++++++++++------------
+>  5 files changed, 40 insertions(+), 16 deletions(-)
+> 
+...
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 54bdd4884fe6..afae3ab64c9e 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -1138,6 +1138,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+>  	int ret, needed_blocks;
+>  	handle_t *handle;
+>  	int retries = 0;
+> +	fgf_t fgp_flags;
+>  	struct folio *folio;
+>  	pgoff_t index;
+>  	unsigned from, to;
+> @@ -1164,6 +1165,15 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+>  			return 0;
+>  	}
+>  
+> +	/*
+> +	 * Set FGP_WRITEBEGIN, and FGP_UNCACHED if foliop contains
+> +	 * foliop_uncached. That's how generic_perform_write() informs us
+> +	 * that this is an uncached write.
+> +	 */
+> +	fgp_flags = FGP_WRITEBEGIN;
+> +	if (*foliop == foliop_uncached)
+> +		fgp_flags |= FGP_UNCACHED;
+> +
+>  	/*
+>  	 * __filemap_get_folio() can take a long time if the
+>  	 * system is thrashing due to memory pressure, or if the folio
+> @@ -1172,7 +1182,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+>  	 * the folio (if needed) without using GFP_NOFS.
+>  	 */
+>  retry_grab:
+> -	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
+> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
+>  					mapping_gfp_mask(mapping));
+>  	if (IS_ERR(folio))
+>  		return PTR_ERR(folio);
 
-Sorry for the delay in sending these changes.  There's just a couple of cha=
-nges:
-one bug fix, one performance improvement, and the use of static_assert.
+JFYI, I notice that ext4 cycles the folio lock here in this path and
+thus follows up with a couple checks presumably to accommodate that. One
+is whether i_mapping has changed, which I assume means uncached state
+would have been handled/cleared externally somewhere..? I.e., if an
+uncached folio is somehow truncated/freed without ever having been
+written back?
 
-- The bug fix addresses "only a cosmetic change" commit, which didn't take =
-into
-account the original 'ima' template definition.
+The next is a folio_wait_stable() call "in case writeback began ..."
+It's not immediately clear to me if that is possible here, but taking
+that at face value, is it an issue if we were to create an uncached
+folio, drop the folio lock, then have some other task dirty and
+writeback the folio (due to a sync write or something), then have
+writeback completion invalidate the folio before we relock it here?
 
-- The performance improvement limits the atomic_read().
+Brian
 
-thanks,
-
-Mimi
-
-The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
-
-  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/
-tags/integrity-v6.12
-
-for you to fetch changes up to 08ae3e5f5fc8edb9bd0c7ef9696ff29ef18b26ef:
-
-  integrity: Use static_assert() to check struct sizes (2024-10-09 22:49:40=
- -
-0400)
-
-----------------------------------------------------------------
-integrity-v6.12
-
-----------------------------------------------------------------
-Gustavo A. R. Silva (1):
-      integrity: Use static_assert() to check struct sizes
-
-Mateusz Guzik (1):
-      evm: stop avoidably reading i_writecount in evm_file_release
-
-Samasth Norway Ananda (1):
-      ima: fix buffer overrun in ima_eventdigest_init_common
-
- security/integrity/evm/evm_main.c         |  3 ++-
- security/integrity/ima/ima_template_lib.c | 14 ++++++++++----
- security/integrity/integrity.h            |  4 ++++
- 3 files changed, 16 insertions(+), 5 deletions(-)
+> @@ -2903,6 +2913,7 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+>  	struct folio *folio;
+>  	pgoff_t index;
+>  	struct inode *inode = mapping->host;
+> +	fgf_t fgp_flags;
+>  
+>  	if (unlikely(ext4_forced_shutdown(inode->i_sb)))
+>  		return -EIO;
+> @@ -2926,8 +2937,11 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+>  			return 0;
+>  	}
+>  
+> +	fgp_flags = FGP_WRITEBEGIN;
+> +	if (*foliop == foliop_uncached)
+> +		fgp_flags |= FGP_UNCACHED;
+>  retry:
+> -	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
+> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
+>  			mapping_gfp_mask(mapping));
+>  	if (IS_ERR(folio))
+>  		return PTR_ERR(folio);
+> diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+> index ad5543866d21..10447c3c4ff1 100644
+> --- a/fs/ext4/page-io.c
+> +++ b/fs/ext4/page-io.c
+> @@ -226,8 +226,6 @@ static void ext4_add_complete_io(ext4_io_end_t *io_end)
+>  	unsigned long flags;
+>  
+>  	/* Only reserved conversions from writeback should enter here */
+> -	WARN_ON(!(io_end->flag & EXT4_IO_END_UNWRITTEN));
+> -	WARN_ON(!io_end->handle && sbi->s_journal);
+>  	spin_lock_irqsave(&ei->i_completed_io_lock, flags);
+>  	wq = sbi->rsv_conversion_wq;
+>  	if (list_empty(&ei->i_rsv_conversion_list))
+> @@ -252,7 +250,7 @@ static int ext4_do_flush_completed_IO(struct inode *inode,
+>  
+>  	while (!list_empty(&unwritten)) {
+>  		io_end = list_entry(unwritten.next, ext4_io_end_t, list);
+> -		BUG_ON(!(io_end->flag & EXT4_IO_END_UNWRITTEN));
+> +		BUG_ON(!(io_end->flag & (EXT4_IO_END_UNWRITTEN|EXT4_IO_UNCACHED)));
+>  		list_del_init(&io_end->list);
+>  
+>  		err = ext4_end_io_end(io_end);
+> @@ -287,14 +285,15 @@ ext4_io_end_t *ext4_init_io_end(struct inode *inode, gfp_t flags)
+>  
+>  void ext4_put_io_end_defer(ext4_io_end_t *io_end)
+>  {
+> -	if (refcount_dec_and_test(&io_end->count)) {
+> -		if (!(io_end->flag & EXT4_IO_END_UNWRITTEN) ||
+> -				list_empty(&io_end->list_vec)) {
+> -			ext4_release_io_end(io_end);
+> -			return;
+> -		}
+> -		ext4_add_complete_io(io_end);
+> +	if (!refcount_dec_and_test(&io_end->count))
+> +		return;
+> +	if ((!(io_end->flag & EXT4_IO_END_UNWRITTEN) ||
+> +	    list_empty(&io_end->list_vec)) &&
+> +	    !(io_end->flag & EXT4_IO_UNCACHED)) {
+> +		ext4_release_io_end(io_end);
+> +		return;
+>  	}
+> +	ext4_add_complete_io(io_end);
+>  }
+>  
+>  int ext4_put_io_end(ext4_io_end_t *io_end)
+> @@ -348,7 +347,7 @@ static void ext4_end_bio(struct bio *bio)
+>  				blk_status_to_errno(bio->bi_status));
+>  	}
+>  
+> -	if (io_end->flag & EXT4_IO_END_UNWRITTEN) {
+> +	if (io_end->flag & (EXT4_IO_END_UNWRITTEN|EXT4_IO_UNCACHED)) {
+>  		/*
+>  		 * Link bio into list hanging from io_end. We have to do it
+>  		 * atomically as bio completions can be racing against each
+> @@ -417,8 +416,13 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
+>  submit_and_retry:
+>  		ext4_io_submit(io);
+>  	}
+> -	if (io->io_bio == NULL)
+> +	if (io->io_bio == NULL) {
+>  		io_submit_init_bio(io, bh);
+> +		if (folio_test_uncached(folio)) {
+> +			ext4_io_end_t *io_end = io->io_bio->bi_private;
+> +			io_end->flag |= EXT4_IO_UNCACHED;
+> +		}
+> +	}
+>  	if (!bio_add_folio(io->io_bio, io_folio, bh->b_size, bh_offset(bh)))
+>  		goto submit_and_retry;
+>  	wbc_account_cgroup_owner(io->io_wbc, &folio->page, bh->b_size);
+> -- 
+> 2.45.2
+> 
+> 
 
 
