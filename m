@@ -1,253 +1,360 @@
-Return-Path: <linux-kernel+bounces-406446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9D79C5F1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:36:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA8DD9C5F3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 579A4281130
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:36:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A989E28272A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C4E219E4D;
-	Tue, 12 Nov 2024 17:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573D0213ED5;
+	Tue, 12 Nov 2024 17:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VlqhZfrh"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="uZsD40JD"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCB6219E34
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2459209664;
+	Tue, 12 Nov 2024 17:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731432690; cv=none; b=JmQuD8quKC0ga4QzdBeXB+w43vSdIZYChX9QDRqDdgZHiCUMG4bGq+LIefCdYBkDuJJGSn6PmpafElqQIu38fXrj4rnXlx4z6Q1egrs/LdFVzFo8JoNwRi2xq+xMPeG7fIY9BeXUhqJMXqjK1o7rrv7raSqHk56NtjIXFwQJ7tM=
+	t=1731432789; cv=none; b=kePQbzVA4LyM5hXCQjzkCcvl44nx6eYIpti7R3pYBNBY1o9x7MrolwDzOGTp0ciVmQhgBymPRWvX1sWqS2reeOjmZFpNxb4osCr/qs85wCAw5MTmv1K578XJLyKeTJAqp886XADr7+6OcorxK4+B7rliOnoPKqX+fdvH6pUV7Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731432690; c=relaxed/simple;
-	bh=ycVEup3OHbZpb8QT5+l0bFBNjeJ1pj3efCUYGy/ltCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ahvGXLByqhg0wY7hra08mJ31eDkoGBx90O16cEFFO132mRdCzlC5FrNse2QcU/jUB4sVt0EjvxfW6yTc/7BPzz4s/iSKh13fRLHsG6BquJyBNt3qTrzv/iCCp5cptMmV24/OEXM9gqPwundevSDUPVkKEIjhXe3d+ApN+4kJdqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VlqhZfrh; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cdbe608b3so61060335ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:31:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731432686; x=1732037486; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fI0dnkfI30Hz4AiV9HLb+qwYWhV2B4MukkmqKKi0GYY=;
-        b=VlqhZfrhYQKwkB7m7BkO27w4ImsV5vLUNSKz6odStlMYTID38Lq3wYkyv+FVPoAYJk
-         hSuRHYyYD+Zg6EsyxBABKsiwZTu9DPKkrVrJqHEvzmq5xcXM9w+2Qd93v0X3ltDheUr2
-         ytnni6c0kxKIvYiEb2L2/WfXnv3VHbESs6ccw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731432686; x=1732037486;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fI0dnkfI30Hz4AiV9HLb+qwYWhV2B4MukkmqKKi0GYY=;
-        b=V1FhdtDqKYjprXevjyOYsiL/yEN2PeBilgWKXvAcARDwPyKwGMC0kHd1Lg4kCnW4ln
-         zBjasP0yD/VjuAFkTbI5H8zwE47SUtBqCtgW16xmvlPxJUbkAa13c7I/J0SN9WBTnA1J
-         HlKSym0xOK71Mf0D/L2BE8bIZVeL9wMqWA8aTfiF7pfJF20sPxgHNNUNiMc8sFWdJQcV
-         q0V7gT8GnwiJ2mo+yiMsRElwkl5XtLV/+eGPl6iR6QGcdqTgRuIObe3JneyIajp/yehP
-         Jedog3V967u8T3PtHPGVRxGrliule/mBq2v9m4A4S9MsKxMb8KxGcZ1MOq5FFxCLALzb
-         zC/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUNKVP0tAAsbXsp8ux8Gh04VzArAPQiMa4HweY60Nft8QlU65p0xLxOBmezLo/Gecyc/kp17IuRa5heMy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+PJ0s+1UEAoAj7wZtMCh61UnNZlMTAC8z79G1YO+J2lY1YCGd
-	1Qvhf78E0+1LJwTVU8ItUqK/IzGaK+Ym5v08eF3VO6QXDAQQ3WjP90H8UH060z0N9yQxj4I1EZk
-	=
-X-Google-Smtp-Source: AGHT+IGRon3W9Vgik6JVWnvMN5DcAwxaIaiNGwiSbg/SCo+RAG3Zo7StX4bejNd/tFJ3D6SHdim55A==
-X-Received: by 2002:a17:902:ea05:b0:20c:d5d9:95dc with SMTP id d9443c01a7336-211ab9c4a9amr43899545ad.40.1731432686126;
-        Tue, 12 Nov 2024 09:31:26 -0800 (PST)
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com. [209.85.215.175])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e41639sm96631985ad.135.2024.11.12.09.31.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 09:31:25 -0800 (PST)
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea7e2ff5ceso4158602a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:31:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWRLDI7zWEj8EezykbdRQu7wJpSq9bZOOcaVu1GpqiKTj4MRtjOm/T7Md3AIgJnz1sbXPFeCWa5xPhLWpE=@vger.kernel.org
-X-Received: by 2002:a17:90b:3e8c:b0:2e0:cac6:15f7 with SMTP id
- 98e67ed59e1d1-2e9e4930710mr4676383a91.0.1731432684259; Tue, 12 Nov 2024
- 09:31:24 -0800 (PST)
+	s=arc-20240116; t=1731432789; c=relaxed/simple;
+	bh=ZMippwGJIxIyDlx7CchqU2+81i9sMtpxdtNshqEH+FA=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=rvoTc8Hk+ZpX0s5a78myB8hmVwbPiG9buPqbvvyWvZmwpe6H8HRg4lLx3qZh+aT9PKeyvtxkUQEmsyArYZAneJ6uygbd5DqTzTUKv+R4awR9hlQpPuqS2sPRvL1p6X4vL8eWv+gNcL/Aoar8zPuO6t0fCGqSyEfWwJ9ZhK1+7+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=uZsD40JD; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 460B6E45C8;
+	Tue, 12 Nov 2024 17:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1731432784;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z2MTZMjG68b3T6cJYBnCLBnnuL4jBK+EhuaLspP8FtU=;
+	b=uZsD40JDUj+xKRaOPkpL6nf3J8klFmsRTOn6vreQuN1wSp87ovX6mpEFCQOBx58K8QYta7
+	VzVeaQ4h8EQJbmNZQR+3u28BgKJQqiIQ0wd/2yJ5UmCqdzO49ZieHlQVATtN9X/viRhm5C
+	AUV+br4PKChFi23R1r9xuXklYwx3712wZPJxv46CzHpYZklv7+Oe2u+rTRzoIQ//eVZ0Lv
+	cEqWoiXSf3J2nKS3tXALl0/PqfhhoPBizRmQRGV2ZBEXo3Ih9UrwyCPjV+BH13swivY/EO
+	WX28pBohIXGSjWiBqxQgD7VOTo/Kymv3m11hIsYqhRGe8YX1N9lteGUehAvx8g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org> <a644fed4-aff5-4514-8e35-d6cab642d3dd@redhat.com>
-In-Reply-To: <a644fed4-aff5-4514-8e35-d6cab642d3dd@redhat.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 12 Nov 2024 18:31:11 +0100
-X-Gmail-Original-Message-ID: <CANiDSCtecYwfzSGDOHAtkdSrDb5WjtxAQMikH=tLPqngGXbBkw@mail.gmail.com>
-Message-ID: <CANiDSCtecYwfzSGDOHAtkdSrDb5WjtxAQMikH=tLPqngGXbBkw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a subdevice
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 12 Nov 2024 18:33:04 +0100
+From: barnabas.czeman@mainlining.org
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
+ <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Amit Kucheria <amitk@kernel.org>, Thara Gopinath
+ <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz
+ Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
+ <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Srinivas Kandagatla
+ <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+ =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
+Subject: Re: [PATCH v5 08/10] arm64: dts: qcom: Add initial support for
+ MSM8917
+In-Reply-To: <ZzOQEgLLhkH-IymV@linaro.org>
+References: <20241112-msm8917-v5-0-3ca34d33191b@mainlining.org>
+ <20241112-msm8917-v5-8-3ca34d33191b@mainlining.org>
+ <ZzOQEgLLhkH-IymV@linaro.org>
+Message-ID: <8d4cddf01b29cbd4b86c13081bb1ce0d@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Hans
-
-On Mon, 11 Nov 2024 at 13:59, Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi Ricardo, Et al.,
->
-> On 8-Nov-24 9:25 PM, Ricardo Ribalda wrote:
-> > Some notebooks have a button to disable the camera (not to be mistaken
-> > with the mechanical cover). This is a standard GPIO linked to the
-> > camera via the ACPI table.
-> >
-> > 4 years ago we added support for this button in UVC via the Privacy control.
-> > This has two issues:
-> > - If the camera has its own privacy control, it will be masked
-> > - We need to power-up the camera to read the privacy control gpio.
->
-> Thinking more about this I think we need to start with looking at the userspace
-> API for privacy controls, define how we want that to look and then go from
-> there.
->
-> The reason I'm writing this is because due to my work in drivers/platform/x86
-> (pdx86) on EC / ACPI / WMI drivers for non chromebooks I am aware of at least
-> 4 different methods camera on/off (aka privacy) toggles are being reported
-> to userspace at the moment. Adding a v4l2-ctrl on a subdev instead of directly
-> on /dev/video# would be adding a 5th method which seems highly undesirable.
->
-> Instead I would like to first focus on fixing these userspace API
-> inconsistencies agreeing on a single API we want to use everywhere
-> going forward. We don't need to fix all drivers at once, but IMHO we
-> should agree on what the API should look like and document that and
-> any future drivers implementing camera privacy control related code
-> then must use the new API.
->
-> Lets start with the 3 APIs I'm currently aware of:
->
-> 1. uvcvideo driver exporting V4L2_CID_PRIVACY on /dev/video#
-> uvcvideo seems to be the only user of this CID (i)
->
-> 2. pdx86 drivers exporting an input evdev with EV_SW,
-> SW_CAMERA_LENS_COVER. This is somewhat of a special case
-> for some Dell laptops with an electro-mechanical shutter
-> operated by the EC. But this is not also used by
-> hp-wmi.c where it does not necessarily indicate the
-> status of a mechanical cover, but also possibly simply
-> disconnecting the camera from the USB bus.
->
-> 3. pdx86 drivers exporting an input evdev with EV_KEY,
-> KEY_CAMERA_ACCESS_ENABLE, KEY_CAMERA_ACCESS_DISABLE
-> These KEY codes are based on offical the HUTRR72 HID/HUT
-> extension and as such may also be send by USB/I2C/BT HID
-> devices.
->
-> The only user outside of hid-input.c is the recently added
-> drivers/platform/x86/lenovo-wmi-camera.c driver and I'm
-> wondering if that should not use SW_CAMERA_LENS_COVER
-> instead. I'll ask the driver author about how this
->
-> 4. pdx86 drivers exporting an input evdev with EV_KEY,
-> KEY_CAMERA. Note this 4th method lacks information on if
-> the camera was enabled or disabled. In many cases this
-> is send to indicate that the EC has either dropped
-> a UVC camera of the bus, or added it to the bus.
-> Ideally we would have some helper checking for internal
-> UVC camera presence and turn this into 2 or 3.
->
-> TL;DR: it a mess.
->
-> Circling back to this patch-set, note how 3 of the 4
-> currently in use variants today use in input evdev.
->
-> I think that using an input evdev (shared with the
-> snapshot button if present) will give us a nice out for
-> the power-management issue with the V4L2_CID_PRIVACY,
-> while at the same time giving a nice opportunity to
-> standardize on a single userspace API.
->
-> My proposal would be to standardize on SW_CAMERA_LENS_COVER
-> I realize that the GPIO does not always indicate a lens
-> cover, but the resulting black frames are the same result
-> as if there were a lens cover and looking at:
->
-> https://support.hp.com/ie-en/document/ish_3960099-3335046-16
->
-> and then the second picture when expanding "Locate and use
-> the webcam privacy switch" that does look like it may be
-> an actual cover which reports back its state through a GPIO.
->
-> The reason why I'm not in favor of using
-> KEY_CAMERA_ACCESS_ENABLE + KEY_CAMERA_ACCESS_DISABLE is that
-> looking at the HUTRR72 it talks about:
-> "Enables programmatic access to camera device"
-> which suggests that it is a request to the OS / desktop-
-> environment to block camera access at the software level,
-> rather then reporting back that a hw-level block is in place.
->
-> And since these may be used by any HID device we are not of
-> control in how these will be used.
->
-> Ricardo, what do you think of instead of using a v4l-subdev,
-> using an input evdev (shared with the existing one) reporting
-> SW_CAMERA_LENS_COVER ?  The v4l-subdev approach will need
-> userspace changes anyways and if we are going to make userspace
-> changes we might as well use the best API available.
-
-I just sent a patchset using SW_CAMERA_LENS_COVER
-
-I guess the internal uvc privacy (UVC_CT_PRIVACY_CONTROL) shall NOT be
-converted to evdev:
-- If we do so, we cannot differentiate external gpio and internal, for
-devices that have both
-- There is no warranty that we will get a uvc_event when the control
-changes, so we would have to constantly poll the device
-
-Regards!
-
-
-
->
-> One downside of going the evdev route is that it is a bit
-> harder for userspace to map the evdev to a camera:
->
-> 1. For the various WMI interfaces this already is impossible,
-> and just to show a notification it is not necessary (using
-> an external cam will make things weird though).
->
-> 2. For UVC cameras mapping the evdev to the /dev/video#
-> node can still be done by looking if they share a parent
-> USB interface. This is e.g. already done in apps like
-> xawtv looking at the PCI parent to pair up /dev/video#
-> for video capture with the ALSA interface exposed for
-> sound by bttv cards.
->
-> 3. We can maybe do something at the media-controller
-> level to help userspace linking a camera to its evdev node.
-> This would also be helpful for the existing WMI interfaces.
->
-> Regards,
->
-> Hans
->
->
->
-> i) With the exception of drivers/media/pci/intel/ivsc/mei_csi.c
-> which has a V4L2_CID_PRIVACY control which always reads 0, so
-> I guess we can / should probably drop that.
->
->
->
-> p.s.
->
-> I do plan to also get back to you on the actually powermanagement
-> discussion. But only so many hours in a day, so it will probably
-> be a couple of days.
->
->
-
-
---
-Ricardo Ribalda
+On 2024-11-12 18:27, Stephan Gerhold wrote:
+> On Tue, Nov 12, 2024 at 04:49:38PM +0100, Barnabás Czémán wrote:
+>> From: Otto Pflüger <otto.pflueger@abscue.de>
+>> 
+>> Add initial support for MSM8917 SoC.
+>> 
+>> Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
+>> [reword commit, rebase, fix schema errors]
+>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> ---
+>>  arch/arm64/boot/dts/qcom/msm8917.dtsi | 1974 
+>> +++++++++++++++++++++++++++++++++
+>>  1 file changed, 1974 insertions(+)
+>> 
+>> diff --git a/arch/arm64/boot/dts/qcom/msm8917.dtsi 
+>> b/arch/arm64/boot/dts/qcom/msm8917.dtsi
+>> new file mode 100644
+>> index 
+>> 0000000000000000000000000000000000000000..cf0a0eec1141e11faca0ee9705d6348ab32a0f50
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/msm8917.dtsi
+>> @@ -0,0 +1,1974 @@
+>> [...]
+>> +		domain-idle-states {
+>> +			cluster_sleep_0: cluster-sleep-0 {
+>> +				compatible = "domain-idle-state";
+>> +				arm,psci-suspend-param = <0x41000023>;
+>> +				entry-latency-us = <700>;
+>> +				exit-latency-us = <650>;
+>> +				min-residency-us = <1972>;
+>> +			};
+>> +
+>> +			cluster_sleep_1: cluster-sleep-1 {
+>> +				compatible = "domain-idle-state";
+>> +				arm,psci-suspend-param = <0x41000043>;
+>> +				entry-latency-us = <240>;
+>> +				exit-latency-us = <280>;
+>> +				min-residency-us = <806>;
+>> +			};
+> 
+> I think my comment here is still open:
+> 
+> This is strange, the deeper sleep state has lower timings than the
+> previous one?
+> 
+>> +
+>> +			cluster_sleep_2: cluster-sleep-2 {
+>> +				compatible = "domain-idle-state";
+>> +				arm,psci-suspend-param = <0x41000053>;
+>> +				entry-latency-us = <700>;
+>> +				exit-latency-us = <1000>;
+>> +				min-residency-us = <6500>;
+>> +			};
+>> +		};
+>> +
+>> [...]
+>> +		restart@4ab000 {
+>> +			compatible = "qcom,pshold";
+>> +			reg = <0x004ab000 0x4>;
+>> +		};
+> 
+> This one too:
+> 
+> You have PSCI for shutting down, do you actually need this?
+Yes, power off is not working without this.
+> 
+>> +
+>> +		tlmm: pinctrl@1000000 {
+>> +			compatible = "qcom,msm8917-pinctrl";
+>> +			reg = <0x01000000 0x300000>;
+>> +			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+>> +			gpio-controller;
+>> +			gpio-ranges = <&tlmm 0 0 134>;
+>> +			#gpio-cells = <2>;
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <2>;
+>> +
+>> [...]
+>> +			sdc1_clk_on: sdc1-clk-on-state {
+>> +				pins = "sdc1_clk";
+>> +				bias-disable;
+>> +				drive-strength = <16>;
+>> +			};
+>> +
+>> +			sdc1_clk_off: sdc1-clk-off-state {
+>> +				pins = "sdc1_clk";
+>> +				bias-disable;
+>> +				drive-strength = <2>;
+>> +			};
+>> +
+>> +			sdc1_cmd_on: sdc1-cmd-on-state {
+>> +				pins = "sdc1_cmd";
+>> +				bias-disable;
+>> +				drive-strength = <10>;
+>> +			};
+>> +
+>> +			sdc1_cmd_off: sdc1-cmd-off-state {
+>> +				pins = "sdc1_cmd";
+>> +				bias-disable;
+>> +				drive-strength = <2>;
+>> +			};
+>> +
+>> +			sdc1_data_on: sdc1-data-on-state {
+>> +				pins = "sdc1_data";
+>> +				bias-pull-up;
+>> +				drive-strength = <10>;
+>> +			};
+>> +
+>> +			sdc1_data_off: sdc1-data-off-state {
+>> +				pins = "sdc1_data";
+>> +				bias-pull-up;
+>> +				drive-strength = <2>;
+>> +			};
+>> +
+>> +			sdc1_rclk_on: sdc1-rclk-on-state {
+>> +				pins = "sdc1_rclk";
+>> +				bias-pull-down;
+>> +			};
+>> +
+>> +			sdc1_rclk_off: sdc1-rclk-off-state {
+>> +				pins = "sdc1_rclk";
+>> +				bias-pull-down;
+>> +			};
+>> +
+>> +			sdc2_clk_on: sdc2-clk-on-state {
+>> +				pins = "sdc2_clk";
+>> +				drive-strength = <16>;
+>> +				bias-disable;
+>> +			};
+>> +
+>> +			sdc2_clk_off: sdc2-clk-off-state {
+>> +				pins = "sdc2_clk";
+>> +				bias-disable;
+>> +				drive-strength = <2>;
+>> +			};
+>> +
+>> +			sdc2_cmd_on: sdc2-cmd-on-state {
+>> +				pins = "sdc2_cmd";
+>> +				bias-pull-up;
+>> +				drive-strength = <10>;
+>> +			};
+>> +
+>> +			sdc2_cmd_off: sdc2-cmd-off-state {
+>> +				pins = "sdc2_cmd";
+>> +				bias-pull-up;
+>> +				drive-strength = <2>;
+>> +			};
+> 
+> These are not referenced anywhere? Not here in the sdhc_X nodes, and
+> also not in your msm8917-xiaomi-riva.dts. Would also recommend
+> consolidating these to a single node like in msm8916.dtsi, see commit
+> c943e4c58b2f ("arm64: dts: qcom: msm8916/39: Consolidate SDC pinctrl").
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c943e4c58b2ffb0dcd497f8b12f284f5e8fc477e
+> 
+>> +
+>> +			sdc2_cd_on: cd-on-state {
+>> +				pins = "gpio67";
+>> +				function = "gpio";
+>> +				drive-strength = <2>;
+>> +				bias-pull-up;
+>> +			};
+>> +
+>> +			sdc2_cd_off: cd-off-state {
+>> +				pins = "gpio67";
+>> +				function = "gpio";
+>> +				drive-strength = <2>;
+>> +				bias-disable;
+>> +			};
+> 
+> It does not make sense to have different on/off states for the card
+> detect (CD) pin of the SD card. It needs to work even when the SD card
+> is suspended so we can detect insertions/removals. Also should be 
+> placed
+> in the board-specific DT part.
+> 
+> See commit dfbda20dabaa ("arm64: dts: qcom: msm8916/39: Fix SD card
+> detect pinctrl").
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=dfbda20dabaa1f284abd550035db5887384c8e4c
+> 
+> 
+>> +
+>> +			sdc2_data_on: sdc2-data-on-state {
+>> +				pins = "sdc2_data";
+>> +				bias-pull-up;
+>> +				drive-strength = <10>;
+>> +			};
+>> +
+>> +			sdc2_data_off: sdc2-data-off-state {
+>> +				pins = "sdc2_data";
+>> +				bias-pull-up;
+>> +				drive-strength = <2>;
+>> +			};
+>> +
+>> [...]
+>> +		blsp1_i2c4: i2c@78b8000 {
+>> +			compatible = "qcom,i2c-qup-v2.2.1";
+>> +			reg = <0x078b8000 0x500>;
+>> +			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&gcc GCC_BLSP1_QUP4_I2C_APPS_CLK>,
+>> +				 <&gcc GCC_BLSP1_AHB_CLK>;
+>> +			clock-names = "core", "iface";
+>> +			dmas = <&blsp1_dma 10>, <&blsp1_dma 11>;
+>> +			dma-names = "tx", "rx";
+>> +			pinctrl-0 = <&blsp1_i2c4_default>;
+>> +			pinctrl-1 = <&blsp1_i2c4_sleep>;
+>> +			pinctrl-names = "default", "sleep";
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +			status = "disabled";
+>> +		};
+>> +
+>> +		blsp2_i2c5: i2c@7af5000 {
+> 
+> This is actually blsp2_i2c1 if you look at the clock name below:
+> 
+>> +			compatible = "qcom,i2c-qup-v2.2.1";
+>> +			reg = <0x07af5000 0x600>;
+>> +			interrupts = <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&gcc GCC_BLSP2_QUP1_I2C_APPS_CLK>,
+> 
+> here ^
+> 
+> But I realize now that the pinctrl functions are consecutively numbered
+> without the BLSP number. Sorry for the confusion.
+> 
+> Basically:
+>   - blsp1_i2c2 == blsp_i2c2
+>   - blsp2_i2c1 == blsp_i2c5
+> 
+> Looking at some other examples upstream I guess you can choose between
+> one of the following options:
+> 
+>  1. msm8974/msm8976/msm8996/msm8998: Use &blspX_i2cY labels for the 
+> i2c@
+>     node and pinctrl and only have the slightly confusing pinctrl
+>     function. E.g. this in msm8976.dtsi:
+> 
+> 			/* 4 (not 6!) interfaces per QUP, BLSP2 indexes are numbered (n)+4 
+> */
+> 			blsp2_i2c2_default: blsp2-i2c2-default-state {
+> 				pins = "gpio22", "gpio23";
+> 				function = "blsp_i2c6";
+> 				drive-strength = <2>;
+> 				bias-disable;
+> 			};
+> 
+>     Note how blsp2_i2c2 == blsp_i2c6.
+> 
+>  2. msm8994: Use &blspX_i2cY labels for the i2c@ node, but keep pinctrl
+>     named &i2cN_default. E.g. this in msm8994.dtsi:
+> 
+> 		blsp2_i2c1: i2c@f9963000 {
+> 			/* ... */
+> 			pinctrl-names = "default", "sleep";
+> 			pinctrl-0 = <&i2c7_default>;
+> 			pinctrl-1 = <&i2c7_sleep>;
+> 			/* ... */
+> 		};
+> 
+>     Note how blsp2_i2c1 == i2c7_default here.
+> 
+>  3. msm8953: Use &i2c_N labels everywhere like on downstream. E.g. this
+>     in msm8953.dtsi. This is pretty much what you had originally:
+> 
+> 		i2c_5: i2c@7af5000 {
+> 			/* ... */
+> 			pinctrl-names = "default", "sleep";
+> 			pinctrl-0 = <&i2c_5_default>;
+> 			pinctrl-1 = <&i2c_5_sleep>;
+> 			/* ... */
+> 		};
+> 
+> All of these are fine for me. Feel free to pick the one you prefer. But
+> let's not introduce a new confusing variant of this. :-)
+> 
+> Thanks,
+> Stephan
 
