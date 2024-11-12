@@ -1,234 +1,222 @@
-Return-Path: <linux-kernel+bounces-406752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5288A9C635C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:25:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8EC59C6363
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:26:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 037F52845F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E294284AA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914D821A4D2;
-	Tue, 12 Nov 2024 21:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499F221A4CC;
+	Tue, 12 Nov 2024 21:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QtPc88R6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YiE6FMiq"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2067.outbound.protection.outlook.com [40.107.244.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73242170DD;
-	Tue, 12 Nov 2024 21:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731446689; cv=none; b=Z4mgJ05NZOWI4u09sBwRqzr4tz8tZeBGoOMqd1/Z3if469h1WLDxWBAQj2I45gePKhFKHiXMGy4EFde5ZbiUGuo+6BT596psnmKxCeasKz8Z4SmH8tA2nRxO9nI72r35C8zHHDzNkH9hHmfRhCfmHJn51muE5sHocioV9t8HaUE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731446689; c=relaxed/simple;
-	bh=IcTJgLodvSURGaK4wqAzdTDDMij+U5Fu23bdAxDaorg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=DWTEyq+Sd95Y7DQ8JMyZgSZ4MtZjkIxhmqxdoSM2FA9kz+1AyBjaRLMrSHRbduwM/FuJUnltNwXnDb9XLeWMZ3t0L0YHPx2bXrTfUcFfx2FhHe1hjDr9uY6CP6U29m3S83/+8gotlVIOLKITLZc/aNBqvoBpY0YGFLTfKSzSihM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QtPc88R6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2543BC4CECD;
-	Tue, 12 Nov 2024 21:24:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731446689;
-	bh=IcTJgLodvSURGaK4wqAzdTDDMij+U5Fu23bdAxDaorg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=QtPc88R6MNDMn8zqqI1B9uJrVb9jLqWL5ToBEKV+RxMCJW92huc1DxZg2adpjHUX6
-	 aZXq1kKE5zX0Ey1E4e4vSCGjuQHgMygguL5X0C657sxGqYbq8uohO+xYAJWTAq0DU8
-	 MN7w8BxC0H4dGiAF6lN4zyDAtx9UuMgT7D/NMc7vxIcaI6BGjRL9Ao7rwzzoySl0bm
-	 egE33GKzO7eo9qaJgvFU1cCBXXWbCOOhT+vWZJbaIKP+pqu9UXi864epLTZgyK+BtS
-	 g9zhmeVR3mFnD4xcc+F6UqPNkcqJ9X6nPcUKODln2QB8sd+DBYdTKPe2ULK6pmVXda
-	 JxCGpcywl/irA==
-Date: Tue, 12 Nov 2024 15:24:47 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mathias Nyman <mathias.nyman@linux.intel.com>,
-	Fenghua Yu <fenghua.yu@intel.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	Peter Chen <peter.chen@kernel.org>,
-	Pawel Laszczak <pawell@cadence.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v1 1/1] usb: cdns3: Synchronise PCI IDs via common data
- base
-Message-ID: <20241112212447.GA1861184@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B898E219E5F;
+	Tue, 12 Nov 2024 21:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731446783; cv=fail; b=o9iw4YeQvKd3KU6b79SVFU+1qgmU8NFKgG7h5GxNnyGLUqaoa6v4yCdK4dM9bA2XEU2NCPypw2OsjjqGOrRcd+Hj6uzF5W2zcIcEEQQNDQ1OaWOF4OVuNraTUjRuLCyU6lZx+60EzO6svaPkiXyhsZnwg5zvppPIZlK5+U50YN8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731446783; c=relaxed/simple;
+	bh=cPur6Z2r1H+TCdOTikok0p/UMl0G7tRjx4HK+nKLYSg=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=rU9kLC8b7sb9OHLar+IvHd9HYq/jceKjG/RVaTRQjUvXaR74sMJBPc/6tS2Iu/0zNLl3vK2gv65GwdocJVKZGIITuf5ajJaB8WcE9DvbkKVxFX/flQDRo7eihiEiR2xmEPxAAvfDra8O4wC9lc1bW/bOJodcNvYEMRrQqDSV91I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YiE6FMiq; arc=fail smtp.client-ip=40.107.244.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DKFL5yrIoJ+SDff+VE0yUUSHQT2dxrdA/wKkykX8n81pqtlau0Cq9BNTk0WPYGeozKnz4sXa/bUubwb3c9QZyCSIn45UXLZCb+UN3WUjpAUh/4c67LxW9sdBv3HtUV+6Cp+rhYwAlZZfLsDexgORfP69JUtvufYVGxCR1Hk87Ip23MWXYnCY8v1SuTyovG8XaD4V4+WC2GlU2Hc73YW9ih9dBXYwQc6ZqpNSpYa8thOkWgrFMsbI9XxyffOYn8AhM4q8owMDZZjGVlQw6SuQJvXJt9unvZzoin/pApS7QTeis0Pqeb8wJFoQG8dkr/Se8EUojm4F7G59HlxZLVFDvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yq70ZJp/kTBTHdCQnDlUM3qq+Ns+Vk0kDnAkzGXm0tE=;
+ b=U/uYnhX+gEgpHgMJEtmDNILugx7wKoKdVh1rI8IGuqAWoGvQnm4hfpKO+0U4INAjzP+G/B9xoabAOD4fSbbRSY3E5uCyW/YE+PP4fub+1V7LNSAnGMDZdJ0C+2shU+/eXgXAEz7rXStnGkD+EFRB6IuzXqlqSe4MTdf0n4q/drbrzB/DApWOqUYB9MGcShtlJRnMDyu9c0gsMnWyIY47bQP9Y76+nX2ZB7yiyMnkgM7uY5lcY4X+mdRSDPCBKWBfRF2EqfXIGBznFhk4lDqBzIMwN7X4NaDJXno5SB3dF8+wrm8U8Y37Bwy4wm0mi3i32ShifuqFDGLq34CPoZaWbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yq70ZJp/kTBTHdCQnDlUM3qq+Ns+Vk0kDnAkzGXm0tE=;
+ b=YiE6FMiqaOJMtZa8IBqlp9iApMqWq82VaUr+gxFlw/Af3JnYRzq0Ocv4z2KYh5OKgC/J5v82UDnPU7rTMwuWcO1+OTLm6nd2PnqNcoUMmm7YUIQT1HClIlo6f3I0dWSw5AUBA2znT4o25YeEJLWblojlN9vLw9t8euOZiOuTeHk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by MN2PR12MB4238.namprd12.prod.outlook.com (2603:10b6:208:199::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.25; Tue, 12 Nov
+ 2024 21:26:17 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
+ 21:26:17 +0000
+Message-ID: <308f26c5-d47c-df63-19eb-59ebbf1e16dd@amd.com>
+Date: Tue, 12 Nov 2024 15:26:14 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Dionna Amalie Glaze <dionnaglaze@google.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-coco@lists.linux.dev, Ashish Kalra <ashish.kalra@amd.com>,
+ John Allen <john.allen@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, Michael Roth
+ <michael.roth@amd.com>, Luis Chamberlain <mcgrof@kernel.org>,
+ Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Tianfei zhang <tianfei.zhang@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
+ kvm@vger.kernel.org
+References: <20241107232457.4059785-1-dionnaglaze@google.com>
+ <20241107232457.4059785-10-dionnaglaze@google.com>
+ <43be0a16-0a06-d7fb-3925-4337fb38e9e9@amd.com>
+ <CAAH4kHasdYwboG+zgR=MaTRBKyNmwpvBQ-ChRY18=EiBBSdFXQ@mail.gmail.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v5 09/10] KVM: SVM: Use new ccp GCTX API
+In-Reply-To: <CAAH4kHasdYwboG+zgR=MaTRBKyNmwpvBQ-ChRY18=EiBBSdFXQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR13CA0097.namprd13.prod.outlook.com
+ (2603:10b6:806:24::12) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112160125.2340972-1-andriy.shevchenko@linux.intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|MN2PR12MB4238:EE_
+X-MS-Office365-Filtering-Correlation-Id: 417fd434-5965-41a9-d40d-08dd0360a4c9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Zm92MEM2aHF5MzNBNlpjMjNEODQrVlcrQWRMK3N4aitzZ3RTbHluMjNrK3gz?=
+ =?utf-8?B?cisrZndIWFlWS1NFYkdVVTJ2Z1hDOG5uQTRPKzk3MncvS2crNUw0R2trcWt5?=
+ =?utf-8?B?UVdHNlFhc3RqS3hITmdDMEh1NnpwUHJrRFhnZG02Vm5YTkNHMExXdnlHS0px?=
+ =?utf-8?B?UFJnUmR2ckUvenV4OS9yMGN6RGY2TFZFQTlnbmlmckFscmt2cGVTQlpSSFFT?=
+ =?utf-8?B?U0FoZXpKL25yN1BnWkdoci9JVUFtbVpCV1htbzh1S2dSNXVoU2RDS3JBMU0z?=
+ =?utf-8?B?bGZqekpIbk5ZRnErVS9UbjN2TlVTQklza3NVZ2h1NFdXT1o2QkY4QXNxcktR?=
+ =?utf-8?B?WkZiU0NVenArb0Z0ZFJTTXllcE1FRE51Vm1YMitRRS9MS1gwclcvNjdpL0RF?=
+ =?utf-8?B?UHZMc3BOTXlLSmRwNTA5TXVhMjI2VFo1cWVrRE5oejc5ZkdZaTRJNitGUWJD?=
+ =?utf-8?B?RVpDWUY1WmhYbCt5b2E2QkNMTDN0RTVGbUl3MVlySHBlY3dQVTVzWWhYRlFG?=
+ =?utf-8?B?SXF3cklFcGhBalh0ekRwRE9PWUpxR2Q0RktPbmFYWDl6S00vWTNHc1FRd3JO?=
+ =?utf-8?B?SDJVYWZRaGd0Y2JBSWdDMnpHMGgzMFpxdVlVelp2VnVBd3FSYksweWZwV2Q3?=
+ =?utf-8?B?c1R1bHBUTG93cWNYRTdrSzBvWTVxTTZzaE5yYURUeEh1andrQXBheWFPYzBn?=
+ =?utf-8?B?bk1BcGVDaTlIN0dPS3cyTUtmckJmaHpmdlZiZXYva1JsWlRGcEpieWZtWitk?=
+ =?utf-8?B?QUpUc0s5TzA5b3U2dzVVVzVubzl0V0VYNEFoL3J1bTdDd1hVenZ5c2FSNnVl?=
+ =?utf-8?B?TVV3cGVuSk5qRHZMZ0I5TmNneklCbE9aR1p5U2RUMFU1ODBkOXpZYVhJVEdr?=
+ =?utf-8?B?aForM1BOUFJhNEd6YVRqaitORU03Z0VlQmVTOG1RWUdUaElLT1FmaHdiV1JK?=
+ =?utf-8?B?T3poV0JCcCtPSCttdU1mQUtFdWxuaGlxM1I1eS83djV5dHlpaXI5YXlDOHFV?=
+ =?utf-8?B?RDBxYlpwVGVXMGp0cXhSSlpLWngxanNrdWtSVmZKTi8rY2ViZ2Y0R0Z1TWE1?=
+ =?utf-8?B?VzdTUy9TK1VJSHY0QTdxWnNUWlJjK3Z5OXQwUDUzUk9sN0tSdE1JKyszeFhp?=
+ =?utf-8?B?emozZG5QWnEyRjJqNVRpUmhycGE4ZmFwaXhWNERQdlR2VW9OTlBISDdhTG5v?=
+ =?utf-8?B?QURLemM3TGlkS3hqb1NBR205WTB3bHltZjV2OFFwcXhabnM5SEhqRkhDVkdX?=
+ =?utf-8?B?bnQra1lQTHg5dEVZd0tpMzNRV0s4NnE3QkJNTWhjSVZHdWdLM09hN1UxTUJF?=
+ =?utf-8?B?eHpRSUZGcUJrcGtXdG9CMUl0WXhCZlcyYldialRrRHBWcHVSUzRMVzJvM1BU?=
+ =?utf-8?B?Y1BIdnpTRGhydWJLOFQxQXVNVkZQSmViLytMNnNDZWxVOWZiQWFMN1p1QXdk?=
+ =?utf-8?B?SFJCWjdIelY0UER6dGRuTmE5QlhtWGI1dXhJM3B6WUFHc1NYbFpNUVVuTitk?=
+ =?utf-8?B?MnNIM1U4ZmprVkY2eWwvWE1WVk15MkhBdnJEQ0VhZHB3UXIra3pJTnRpRWxH?=
+ =?utf-8?B?Vk95YzFlK1k2REdIcGMzUHpXU3dmdE9MVDBxcXk0ZVJPb1o3cURSWW9nQzMv?=
+ =?utf-8?B?ck80djhUVWxxSmZzL2dXVWs1R1lma05UVTlWbENqazVjQkVBZko4R2VVK214?=
+ =?utf-8?B?K0xlZy8xbm8yeW5EWGJQelU4ZTNCTHVMdkN6MFRjWHFxY3ZHZ3BqdmhPRmd6?=
+ =?utf-8?Q?YYiefUwDyHBmmBrOVj/2fB5PGcb5U4TrpbCNcp0?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cWtBV1VmWFVNMENDaXdYbnMxUk5KU1BDYyt2YkpHcW1Qa3RKb2I1T3Q0NTBr?=
+ =?utf-8?B?NmtZVHp4R3RFVy9oV3FrM0U5WEVUMjNGYk5sZENnelpqakpYUldmS3hwK1U2?=
+ =?utf-8?B?VmVZZnpxZnpYeE9TT2twVzQzdzcyMlVQcFRBMHJoWCsvS3pmWkZCanJoKzUr?=
+ =?utf-8?B?WUtOelJuMmF5eWo2dms4S01Makt3VWNXYU5CVlRMeDlxZjBzMU9HMXBudXMz?=
+ =?utf-8?B?dXc5OE5ib3NJamZDN0tMWlVlNnhOSkMzSlVtNlFyUzFKT1c2QXJoajVyMlhs?=
+ =?utf-8?B?Q2RobXNWMFpVS2kvOUNXTzVjVGQ4d0phajc2REthWmxUbUw1dS93QnpXekd1?=
+ =?utf-8?B?M1RSckhWZm9NNnBNSnJKbTIwaGNFQ0dkejJuYzNlTnFSYjFqNlRqWEtSaHRU?=
+ =?utf-8?B?aWh2MmtaMm43YWFkbVkzZVhMRlk2QTRPUkt2NExubDFmcDMzdzhaMzRaWXhx?=
+ =?utf-8?B?aHpVUmhnMEpPSVpXV3FvWGRJS0VMeWhHU2NZaUo0Zkx5Qmd2cm5HR0JMdG1r?=
+ =?utf-8?B?cmU3ejNBTjQxY0toajk3ejRVVkZjQUdhaXQzMmFRZTNxWGlIMVE0RFhqQkNs?=
+ =?utf-8?B?TGVxY3R6QVlFQzJRZGFLZjFidWtXYkRGR0l0REdEWUkwZGtlWTNhbjhwUFNR?=
+ =?utf-8?B?YUNsVWhpZUdreUFGN0Nybi9xZ0NjUkRNY0VlSEJKUmZQRFBNaW5oYnlHWkNI?=
+ =?utf-8?B?UW1TMzVWVmdHUHh1U3FmcURienBpR1ZmZU0wMytpazhyQ0h2ZnhqS3lRL21i?=
+ =?utf-8?B?K2JGUmt2WUpEY29KK2c5dkt4YU5ieS9zeVV5QjFzeWEvL09oL3NBQnZ0MTJJ?=
+ =?utf-8?B?N0pOQVRmT3l1OFA4VUVpdnRqZGNCcUZNQUpQL25pSGtYcWJodXZMbmp4NGlZ?=
+ =?utf-8?B?ZUtzOGxpQ0pYU2ZRWmZZYStmQ0NYY1R5NjhmSDdFOEFiSU5Kb3VaOGkzc1JE?=
+ =?utf-8?B?cjhCcVZESWRVNkxsMG12L2RtalZlSWJza2xkTG1QbGJNOG12NW5nd045TmJD?=
+ =?utf-8?B?VnJVUk52RFc0YzQrYjY5QW14M0duR3Rpc3hwSDhLeTk2YzM5cytJajRWVWpp?=
+ =?utf-8?B?eTdVMFNzREFEdnQwN0Y3V1Ixc0ZmaWxXMmxrY1I3QkJlSm90UXp3MHhJQXVJ?=
+ =?utf-8?B?elo0clJpRUNDbHhUaEg2a1A1Mk5uQXExYzlwL1V5S2pFK3EvZjY2WVV5NzNZ?=
+ =?utf-8?B?UGdnMWdmeENwWlVhMkVhcSt6RDg1SmtIN1NycXE3Q2ZBY3hmS3djWVJFb2Iw?=
+ =?utf-8?B?TjdodDJhT0JVQUpic0hPdXQzWHROQ2NzOGdUeXB3RVlDZ0lmT0FDUWhHRllx?=
+ =?utf-8?B?NHVhbjIzZGpGMFdwQjBmRDIxY1gzSzdFZ1FGRGR2OFJJOGNLOWV3MjBTZFlO?=
+ =?utf-8?B?Zy84K1NzMm53OWtlV1FQWkRjQ0xrSWh5NmFiM01qRDhGSndqTnArRzVpa0x4?=
+ =?utf-8?B?QkdjTW5zNFlHUk93UEtvNk9qQk1senh0SENKNVBGckFONDdhbHIyT25DeWhC?=
+ =?utf-8?B?QklkanVoVVAvZDRlZzJqWDlzUVFLTkprQXZ1dkdGNGJmUitkaDh0ZEZCcUh2?=
+ =?utf-8?B?TjRiNTB3SUUrMTQ3alNlRVhOaWxiNFJva0ZHTUpHQlV6a25mNUdOWk45NjVS?=
+ =?utf-8?B?bC9URVVsVHBSNUF4bVYzWHQ0VW9uemF1RlUvOVY1ekRqeHFhcGxKLzV2VTE3?=
+ =?utf-8?B?N3pyRTNEOWtZUnpGNlVRV2hCbFc5THJxdXMwVy9vSmFPNmZNWmJ1OUpYeE9t?=
+ =?utf-8?B?T2JCVUluR29HaGV2UVAvZWljakc1RGFNZEZySjZTeHZ2T29ydXNaZjE3MkhE?=
+ =?utf-8?B?SlB4ZW51b1FpSnRKQ2VQSU90MmhuNHpmV3RsM2pYZlQ3T3BlZFl1YlJBZmo2?=
+ =?utf-8?B?Q3NtZ0g1anRjSjB0cHE1R1A0OVJjWjQ1V0MreHBQNjVoM21xR0QvRjdEbnlu?=
+ =?utf-8?B?VFlQck9XWkZJTythTk1lZGs5TkJpNXdSOGZxVDAyZSt3SkM4bVVXYUR6RGdu?=
+ =?utf-8?B?MEk1SXRZSGVxbnBjV3MvdmQ4YklzY2oxdEU4MUNyK3dWamhwL1VxWTZpQXdK?=
+ =?utf-8?B?RzNKU2VNMVFxVU5uZ1pKOHpaamtFSG9sbG1GNjIzR1g4ZTdncjdmSzNKcHNk?=
+ =?utf-8?Q?vFt4naCytrRjxAHXgcgodonMm?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 417fd434-5965-41a9-d40d-08dd0360a4c9
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 21:26:17.5052
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qfDGJnslO8Edgs91G9CI5kUk3aFYeHo4/jsNaYJDuxNuBD7Jxk1RcmZlZqw+jp27UTEHgOkJGs8Hr4cF1ksqTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4238
 
-On Tue, Nov 12, 2024 at 06:01:25PM +0200, Andy Shevchenko wrote:
-> There are a few places in the kernel where PCI IDs for different Cadence
-> USB controllers are being used. Besides different naming, they duplicate
-> each other. Make this all in order by providing common definitions via
-> PCI IDs database and use in all users. While doing that, rename
-> definitions as Roger suggested.
+On 11/12/24 13:33, Dionna Amalie Glaze wrote:
+>>> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+>>> index cea41b8cdabe4..d7cef84750b33 100644
+>>> --- a/arch/x86/kvm/svm/sev.c
+>>> +++ b/arch/x86/kvm/svm/sev.c
+>>> @@ -89,7 +89,7 @@ static unsigned int nr_asids;
+>>>  static unsigned long *sev_asid_bitmap;
+>>>  static unsigned long *sev_reclaim_asid_bitmap;
+>>>
+>>> -static int snp_decommission_context(struct kvm *kvm);
+>>> +static int kvm_decommission_snp_context(struct kvm *kvm);
+>>
+>> Why the name change? It seems like it just makes the patch a bit harder
+>> to follow since there are two things going on.
+>>
 > 
-> Suggested-by: Roger Quadros <rogerq@kernel.org>
-> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
-Looks like maybe something for the USB tree?
-
-> ---
->  drivers/usb/cdns3/cdns3-pci-wrap.c       |  4 +---
->  drivers/usb/cdns3/cdnsp-pci.c            | 26 +++++++++---------------
->  drivers/usb/gadget/udc/cdns2/cdns2-pci.c |  3 +--
->  drivers/usb/host/xhci-pci.c              |  5 ++---
->  include/linux/pci_ids.h                  |  4 ++++
->  5 files changed, 18 insertions(+), 24 deletions(-)
+> KVM and ccp both seem to like to name their functions starting with
+> sev_ or snp_, and it's particularly hard to determine provenance.
 > 
-> diff --git a/drivers/usb/cdns3/cdns3-pci-wrap.c b/drivers/usb/cdns3/cdns3-pci-wrap.c
-> index 591d149de8f3..3b3b3dc75f35 100644
-> --- a/drivers/usb/cdns3/cdns3-pci-wrap.c
-> +++ b/drivers/usb/cdns3/cdns3-pci-wrap.c
-> @@ -37,8 +37,6 @@ struct cdns3_wrap {
->  #define PCI_DRIVER_NAME		"cdns3-pci-usbss"
->  #define PLAT_DRIVER_NAME	"cdns-usb3"
->  
-> -#define PCI_DEVICE_ID_CDNS_USB3	0x0100
-> -
->  static struct pci_dev *cdns3_get_second_fun(struct pci_dev *pdev)
->  {
->  	struct pci_dev *func;
-> @@ -189,7 +187,7 @@ static void cdns3_pci_remove(struct pci_dev *pdev)
->  }
->  
->  static const struct pci_device_id cdns3_pci_ids[] = {
-> -	{ PCI_VDEVICE(CDNS, PCI_DEVICE_ID_CDNS_USB3) },
-> +	{ PCI_VDEVICE(CDNS, PCI_DEVICE_ID_CDNS_USBSS) },
->  	{ 0, }
->  };
->  
-> diff --git a/drivers/usb/cdns3/cdnsp-pci.c b/drivers/usb/cdns3/cdnsp-pci.c
-> index 2d05368a6745..a51144504ff3 100644
-> --- a/drivers/usb/cdns3/cdnsp-pci.c
-> +++ b/drivers/usb/cdns3/cdnsp-pci.c
-> @@ -28,12 +28,6 @@
->  #define PCI_DRIVER_NAME		"cdns-pci-usbssp"
->  #define PLAT_DRIVER_NAME	"cdns-usbssp"
->  
-> -#define PCI_DEVICE_ID_CDNS_USB3		0x0100
-> -#define PCI_DEVICE_ID_CDNS_UDC		0x0200
-> -
-> -#define PCI_CLASS_SERIAL_USB_CDNS_USB3	(PCI_CLASS_SERIAL_USB << 8 | 0x80)
-> -#define PCI_CLASS_SERIAL_USB_CDNS_UDC	PCI_CLASS_SERIAL_USB_DEVICE
-> -
->  static struct pci_dev *cdnsp_get_second_fun(struct pci_dev *pdev)
->  {
->  	/*
-> @@ -41,10 +35,10 @@ static struct pci_dev *cdnsp_get_second_fun(struct pci_dev *pdev)
->  	 * Platform has two function. The fist keeps resources for
->  	 * Host/Device while the secon keeps resources for DRD/OTG.
->  	 */
-> -	if (pdev->device == PCI_DEVICE_ID_CDNS_UDC)
-> -		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_USB3, NULL);
-> -	if (pdev->device == PCI_DEVICE_ID_CDNS_USB3)
-> -		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_UDC, NULL);
-> +	if (pdev->device == PCI_DEVICE_ID_CDNS_USBSSP)
-> +		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_USBSS, NULL);
-> +	if (pdev->device == PCI_DEVICE_ID_CDNS_USBSS)
-> +		return pci_get_device(pdev->vendor, PCI_DEVICE_ID_CDNS_USBSSP, NULL);
->  
->  	return NULL;
->  }
-> @@ -221,12 +215,12 @@ static const struct dev_pm_ops cdnsp_pci_pm_ops = {
->  };
->  
->  static const struct pci_device_id cdnsp_pci_ids[] = {
-> -	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_UDC),
-> -	  .class = PCI_CLASS_SERIAL_USB_CDNS_UDC },
-> -	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_UDC),
-> -	  .class = PCI_CLASS_SERIAL_USB_CDNS_USB3 },
-> -	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB3),
-> -	  .class = PCI_CLASS_SERIAL_USB_CDNS_USB3 },
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSSP),
-> +	  .class = PCI_CLASS_SERIAL_USB_DEVICE },
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSSP),
-> +	  .class = PCI_CLASS_SERIAL_USB_CDNS },
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSS),
-> +	  .class = PCI_CLASS_SERIAL_USB_CDNS },
->  	{ 0, }
->  };
->  
-> diff --git a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
-> index b1a8f772467c..e589593b4cbf 100644
-> --- a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
-> +++ b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
-> @@ -15,7 +15,6 @@
->  #include "cdns2-gadget.h"
->  
->  #define PCI_DRIVER_NAME		"cdns-pci-usbhs"
-> -#define PCI_DEVICE_ID_CDNS_USB2	0x0120
->  #define PCI_BAR_DEV		0
->  #define PCI_DEV_FN_DEVICE	0
->  
-> @@ -113,7 +112,7 @@ static const struct dev_pm_ops cdns2_pci_pm_ops = {
->  };
->  
->  static const struct pci_device_id cdns2_pci_ids[] = {
-> -	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB2),
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB),
->  	  .class = PCI_CLASS_SERIAL_USB_DEVICE },
->  	{ 0, }
->  };
-> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-> index 47c4f70793e4..b21474e81482 100644
-> --- a/drivers/usb/host/xhci-pci.c
-> +++ b/drivers/usb/host/xhci-pci.c
-> @@ -82,8 +82,6 @@
->  #define PCI_DEVICE_ID_ASMEDIA_3042_XHCI			0x3042
->  #define PCI_DEVICE_ID_ASMEDIA_3242_XHCI			0x3242
->  
-> -#define PCI_DEVICE_ID_CDNS_SSP				0x0200
-> -
->  static const char hcd_name[] = "xhci_hcd";
->  
->  static struct hc_driver __read_mostly xhci_pci_hc_driver;
-> @@ -475,8 +473,9 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
->  		if (pdev->device == 0x9203)
->  			xhci->quirks |= XHCI_ZHAOXIN_TRB_FETCH;
->  	}
-> +
->  	if (pdev->vendor == PCI_VENDOR_ID_CDNS &&
-> -	    pdev->device == PCI_DEVICE_ID_CDNS_SSP)
-> +	    pdev->device == PCI_DEVICE_ID_CDNS_USBSSP)
->  		xhci->quirks |= XHCI_CDNS_SCTX_QUIRK;
->  
->  	/* xHC spec requires PCI devices to support D3hot and D3cold */
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index e4bddb927795..d2402bf4aea2 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -121,6 +121,7 @@
->  #define PCI_CLASS_SERIAL_USB_OHCI	0x0c0310
->  #define PCI_CLASS_SERIAL_USB_EHCI	0x0c0320
->  #define PCI_CLASS_SERIAL_USB_XHCI	0x0c0330
-> +#define PCI_CLASS_SERIAL_USB_CDNS	0x0c0380
->  #define PCI_CLASS_SERIAL_USB_DEVICE	0x0c03fe
->  #define PCI_CLASS_SERIAL_FIBER		0x0c04
->  #define PCI_CLASS_SERIAL_SMBUS		0x0c05
-> @@ -2421,6 +2422,9 @@
->  #define PCI_VENDOR_ID_QCOM		0x17cb
->  
->  #define PCI_VENDOR_ID_CDNS		0x17cd
-> +#define PCI_DEVICE_ID_CDNS_USBSS	0x0100
-> +#define PCI_DEVICE_ID_CDNS_USB		0x0120
-> +#define PCI_DEVICE_ID_CDNS_USBSSP	0x0200
->  
->  #define PCI_VENDOR_ID_ARECA		0x17d3
->  #define PCI_DEVICE_ID_ARECA_1110	0x1110
-> -- 
-> 2.43.0.rc1.1336.g36b5255a03ac
+> snp_decommision_context and sev_snp_guest_decommission... which is
+> from where? It's weird to me.
+
+I guess I don't see the problem, a quick git grep -w of the name will
+show you where each is. Its a static function in the file, so if
+anything just changing/shortening the name to decommission_snp_context()
+would be better (especially since nothing in the svm directory should
+have a name that starts with kvm_).
+
+Thanks,
+Tom
+
+> 
+>> Thanks,
+>> Tom
+>>
+> 
 > 
 
