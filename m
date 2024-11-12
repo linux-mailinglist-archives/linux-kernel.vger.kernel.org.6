@@ -1,119 +1,147 @@
-Return-Path: <linux-kernel+bounces-404940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E9C19C4AB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:27:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2B39C4ACD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43FE5285AF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:27:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40EFD1F23907
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6411EABB1;
-	Tue, 12 Nov 2024 00:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B49F1F6680;
+	Tue, 12 Nov 2024 00:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="so89ehvv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JkWHtz4f"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DTUXqxZj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739B9481B6;
-	Tue, 12 Nov 2024 00:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADD51EE01E;
+	Tue, 12 Nov 2024 00:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731371257; cv=none; b=m0hcFVv51SDbpllFnwl9lw+8tVDVPNvfaVvhGK/2qTm/MlYZjkpNW78wx29JY/G53P8uXz1Hn6eUEvcgVzj0YEyjEzNMp+Trn7eGgoi7ehjbSQn6q6qZk8KOKj14L4IZ5k1JX2TPKDuX63Rnc3B0rQ+oRWA5Cbgesmw2VYxgYh8=
+	t=1731371305; cv=none; b=Tnuu/BrdJ/VrOHuhFEhbOI8vMUnNoYrU0IFpUE912qROT70m2vl3PP+M4qNVEgMsoBpUyWhjGlUI1ms3fSWwGuEkkUB9v7vZjFCAy+Lo9VZNKeTg32GNA5uA0S4DPzk9YkT2WBfmXZobKOAJJ2CQqb+8jR1S56dqbsIk4rPKeBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731371257; c=relaxed/simple;
-	bh=a7/TgUjMn6ho1gjy0uGqBCS6T/+OApJpN/TXKYjdtzc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Sjt9zmhisCNJEMHVIE+JVe2UuM6yC7aJ+yXRZKp3Z/3JcrLRBoZQgtEcCG19ZfUimfIMBYagR9OOO2JOtcb1BHD/lwjCDnf1I/VW9rgLhPoMoWsJf5dAPqAzEAwdLIwv9/0bvsf2rhULcie1z05pRltmJp8PUJbDW4Jo+OceXAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=so89ehvv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JkWHtz4f; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731371253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8/0EJRWuUesVbgPQELwMXBSRdd+j7HBi2B68aTjNQ9c=;
-	b=so89ehvvA7R75zntRGjF5hL0pJ83el6oavrDsxd+ai3WNSrONU9u16lQXPlFUoKMLuBII2
-	pXS7vdUNlq4ZAygg/vviwNTGJ3seryQRbMap5g6vXS1XPLg1ZQPQLlAX4+emQGcBKanS0I
-	9aHNy/JDIad3LaZOkASphAmUOxC8pmaUL4ieykA64rB/Pu6SxHAuxma0tGATSkFJpuF6SW
-	CAK9UAkK7+aGHnbBx4J5T7TW+P1Wbq4UyZGpy7EkxU0z5FjELbKjbQxVWOlEKEujE5MHDY
-	2sS//6qgJvLhZxFDbYI3qWi4uWO6e0WHxPeqMtySzJIT+Sih35v9VQZ3J45npw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731371253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8/0EJRWuUesVbgPQELwMXBSRdd+j7HBi2B68aTjNQ9c=;
-	b=JkWHtz4fiuaeDZLc6VD3fQS0SqHrs0Ba/1rvgg5JrwNWxgsPY0QjECPIMzWaNhbJ3i2Z8X
-	43zlv97uIsYkFiCA==
-To: Peter Zijlstra <peterz@infradead.org>, Len Brown <lenb@kernel.org>
-Cc: x86@kernel.org, rafael@kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Len Brown <len.brown@intel.com>,
- stable@vger.kernel.org
-Subject: Re: [PATCH] x86/cpu: Add INTEL_LUNARLAKE_M to X86_BUG_MONITOR
-In-Reply-To: <20241111162316.GH22801@noisy.programming.kicks-ass.net>
-References: <20241108135206.435793-1-lenb@kernel.org>
- <20241108135206.435793-3-lenb@kernel.org>
- <20241111162316.GH22801@noisy.programming.kicks-ass.net>
-Date: Tue, 12 Nov 2024 01:27:06 +0100
-Message-ID: <87jzd9nvol.ffs@tglx>
+	s=arc-20240116; t=1731371305; c=relaxed/simple;
+	bh=a5y5UQhDLZtQhfp0kyQsgcLSFYEFlXcbP9yOekeQoLQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eB8Up7E4TxlxfInFyCFh4TxIlJtVy/iojaBL7AafbgArQQk5tnviOF/DALWZmHkSGsXLvcTjcTnvfADTMaMAnIL2TVo+RgocE7mY/v65xGgw5pswkpDAwx0CBCdFDCX5PPwW7US61WmTuOI4eWhdrT411OTtBnw0b5j4IIh98/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DTUXqxZj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABGK4i7023176;
+	Tue, 12 Nov 2024 00:28:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=z/POHtmN/E7HPK6fi+VLJh
+	/ax+5c754knTUKNMlshcQ=; b=DTUXqxZjnIACQLgeIsE/njXuckc24ciiYGqMhT
+	WYiOOah18U2a6tOetKW+TYaKBFRn9qFNrEqDPdzu67yLgVe2fw90fG6h+Ntt2mMg
+	goMxOOlJlcCxjfc9hjTud/jO7Bt4Dk2GsrYJmru5Bvlb+YTTkuz5XsRa8D86IZ/S
+	OeeNul3g7MhwNlmrNqqvHZD07bVqriN35ZshIMFsLc0et9WSgq/lgB2uU1HaDdWp
+	8SAzRit+CzFWPvuoW6w+kwBfx8A1BeDsr4AK6Cn91FZ/TauhZC1A529de3heOCxV
+	BJvt87eCCUIhJRFM0ya3leyuDyZAdXzaREwWhwk9dFhtWW7w==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uc60a9pa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 00:28:18 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC0SH5P032442
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 00:28:17 GMT
+Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 11 Nov 2024 16:28:17 -0800
+From: Melody Olvera <quic_molvera@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Trilok Soni
+	<quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>
+Subject: [PATCH v2 0/7] clks: qcom: Introduce clks for SM8750
+Date: Mon, 11 Nov 2024 16:28:00 -0800
+Message-ID: <20241112002807.2804021-1-quic_molvera@quicinc.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OiXQ6Y5vHDZ1oe-hmxEeeBWNM7vi8PL2
+X-Proofpoint-ORIG-GUID: OiXQ6Y5vHDZ1oe-hmxEeeBWNM7vi8PL2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ phishscore=0 suspectscore=0 impostorscore=0 mlxlogscore=593 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411120002
 
-On Mon, Nov 11 2024 at 17:23, Peter Zijlstra wrote:
-> On Fri, Nov 08, 2024 at 08:49:31AM -0500, Len Brown wrote:
->> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
->> index 766f092dab80..910cb2d72c13 100644
->> --- a/arch/x86/kernel/smpboot.c
->> +++ b/arch/x86/kernel/smpboot.c
->> @@ -1377,6 +1377,9 @@ void smp_kick_mwait_play_dead(void)
->>  		for (i = 0; READ_ONCE(md->status) != newstate && i < 1000; i++) {
->>  			/* Bring it out of mwait */
->>  			WRITE_ONCE(md->control, newstate);
->> +			/* If MONITOR unreliable, send IPI */
->> +			if (boot_cpu_has_bug(X86_BUG_MONITOR))
->> +				__apic_send_IPI(cpu, RESCHEDULE_VECTOR);
->>  			udelay(5);
->>  		}
->
-> Going over that code again, mwait_play_dead() is doing __mwait(.exc=0)
-> with IRQs disabled.
+Add GCC, RPMH, and TCSR clocks for the SM8750 SoC.
 
-And the APIC is shut down. So it won't react on the IPI either.
+The Qualcomm Technologies, Inc. SM8750 SoC is the latest in the line of
+consumer mobile device SoCs. See more at:
+https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/images/company/news-media/media-center/press-kits/snapdragon-summit-2024/day-1/documents/Snapdragon8EliteProductBrief.pdf
 
-> So that IPI you're trying to send there won't do no nothing :-/
->
-> Now that comment there says MCE/NMI/SMI are still open (non-maskable
-> etc.) so perhaps prod it on the NMI vector?
->
-> This does seem to suggest the above code path wasn't actually tested.
+Changes in V2:
+- removed unneeded rpmh macros, bcm ops
+- renamed CXO_PAD to CXO
+- ordered rpmh compatibles in alpha order
+- reordered clk_alpha_pll regs
+- removed redundant bindings for sm8750
+- revised gcc driver for pcie 0
 
-I'm not sure whether that's just a suggestion :)
+Taniya Das (7):
+  dt-bindings: clock: qcom-rpmhcc: Add RPMHCC for SM8750
+  clk: qcom: rpmh: Add support for SM8750 rpmh clocks
+  clk: qcom: clk-alpha-pll: Add support for controlling Taycan PLLs
+  dt-bindings: clock: qcom: Add SM8750 GCC
+  clk: qcom: Add support for GCC clock controller on SM8750
+  dt-bindings: clock: qcom: Document the SM8750 TCSR Clock Controller
+  clk: qcom: Add TCSR clock driver for SM8750
 
-> Perhaps mark your local machine with BUG_MONITOR, remove the md->control
-> WRITE_ONCE() and try kexec to test it?
->
-> Thomas, any other thoughts?
+ .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml      |    2 +
+ .../bindings/clock/qcom,sm8650-gcc.yaml       |    8 +-
+ drivers/clk/qcom/Kconfig                      |   17 +
+ drivers/clk/qcom/Makefile                     |    2 +
+ drivers/clk/qcom/clk-alpha-pll.c              |   14 +
+ drivers/clk/qcom/clk-alpha-pll.h              |    7 +
+ drivers/clk/qcom/clk-rpmh.c                   |   28 +-
+ drivers/clk/qcom/gcc-sm8750.c                 | 3274 +++++++++++++++++
+ drivers/clk/qcom/tcsrcc-sm8750.c              |  147 +
+ include/dt-bindings/clock/qcom,sm8750-gcc.h   |  226 ++
+ include/dt-bindings/clock/qcom,sm8750-tcsr.h  |   15 +
+ 12 files changed, 3738 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sm8750.c
+ create mode 100644 drivers/clk/qcom/tcsrcc-sm8750.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8750-gcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm8750-tcsr.h
 
-NMI should work. See exc_nmi():
 
-	if (arch_cpu_is_offline(smp_processor_id())) {
-		if (microcode_nmi_handler_enabled())
-			microcode_offline_nmi_handler();
-		return;
-	}
+base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+-- 
+2.46.1
 
-Thanks,
-
-        tglx
 
