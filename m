@@ -1,209 +1,93 @@
-Return-Path: <linux-kernel+bounces-406677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623BB9C6221
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:06:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B5B09C6225
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:07:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E14928336E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:06:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 506FF282B67
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E6E21A4B8;
-	Tue, 12 Nov 2024 20:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B27219C96;
+	Tue, 12 Nov 2024 20:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TMSCUEiW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="bM22XmXE"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDF6219E4B;
-	Tue, 12 Nov 2024 20:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0FB217472;
+	Tue, 12 Nov 2024 20:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731441935; cv=none; b=i6cfxHe+b6tS5QnT4erZfM/4/tHRF1L2UnLYBzPFgZYw4DXnJpURgezOip7zduZcetZdP2+LTakCeN8XuJ2E5jDbErd8CL0KkpbDjPMtXyKtRfUr1Fd8ZXLvKuwEPg+VZTrxIZKzaD/vwq6U7NZ2V5XdNaXJ0jpnQdCe3e8cu8g=
+	t=1731442037; cv=none; b=mR3PJfFJxNRRQO5Vl25LdhXB9/H++/nAJ5bxpIPmH7JN9Cvnrdp2Td9FFUVHTcjh8iT4ZwQVmNNiHq7XjRU6WITPBaLOGyOO6cZptW5Xy4qgai0boMnbVy+obK2XDPfyPtYnajtJXIS5NIWyKNmxTBqtchQweAGVdY55Nz5liXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731441935; c=relaxed/simple;
-	bh=Cq+CudWUdl20P1UptTJIpNh3ZMbsdBx5USN5K16iLqw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rVa0MRwvCHaTOHy1sZSiE/ZW3GKH2KTs05nAx3EQJskLBoRXRxhXiL81s3OUVOzyqTZRvm+AMFQ1goF/vUCUcFLlBtuBseqbuoCxaNPt5SlOejnA4GZ/cUmghH8yZQE6S5yZDmIsJ9Dgtjx35aZ2pUEIu7uHURjLcEqwPJ5C+hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TMSCUEiW; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731441934; x=1762977934;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Cq+CudWUdl20P1UptTJIpNh3ZMbsdBx5USN5K16iLqw=;
-  b=TMSCUEiWQd+2HVDxvELFwr7JXyXCgLolep2+k1sM0ohcxn+v9FCDaSQ2
-   AcWqNLnjEL1ztxIHs/22zxu6ag6sXXxebgne9lBynMbOlPQsC2VXTUN9y
-   QZ5D2UrpIkmNjXrDg/GR93HbNYaZXjV8vtxUbD90KlRkrZlHnvQJxwF4g
-   j9WTO8CWVEdpSCVqrxqNgZQ++VOTwOfm8nmnFH0fN5Zo7W4H2JQCOmQvy
-   EeOfn+SszO7vvlp4ZJ6reR5ZeURfbxMn604A8USCtCo3H3x9MxziVJCeb
-   oXHEQYWyC684PwfvFMotav/yz5QRynVXHPs/G5SMewuw47ZLU9KkRBwJ6
-   w==;
-X-CSE-ConnectionGUID: aaa6oFb+Rhuz2BD8Y0xDQw==
-X-CSE-MsgGUID: qgKd7vnhR5W06w4/aRdmXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31394369"
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="31394369"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 12:05:34 -0800
-X-CSE-ConnectionGUID: tkAXR3AtRW2GiaCljlymiw==
-X-CSE-MsgGUID: DV3NjrWhSc+v7VHCkgAOiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="92710367"
-Received: from mwajdecz-mobl.ger.corp.intel.com ([10.245.85.128])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 12:05:31 -0800
-From: Michal Wajdeczko <michal.wajdeczko@intel.com>
-To: intel-xe@lists.freedesktop.org
-Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] libfs: Provide simple_read_from|write_to_iomem()
-Date: Tue, 12 Nov 2024 21:04:52 +0100
-Message-Id: <20241112200454.2211-3-michal.wajdeczko@intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20241112200454.2211-1-michal.wajdeczko@intel.com>
-References: <20241112200454.2211-1-michal.wajdeczko@intel.com>
+	s=arc-20240116; t=1731442037; c=relaxed/simple;
+	bh=VN4DPZ/Ubeh3yRvty7vLKSmzphCNXMsWhZKtu8onML8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NjvHHsOkyA3zbVolDvN+vTvfwzmLyD8IOusea/ZmaA3BN9yTlb+7DodklxpGrTvnCWswJwZdBZtERxYpwhB2DQ7r9HxH+0Jp3wdi3A3+lXWwL6aVzdGl9X2aRDjN0tM/tTrngNlpfFnG/5nR49vo5/EDZRhLgqqJUya6CYZFRvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=bM22XmXE; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D3E66403E4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1731442029; bh=u02gc8HT0igfeDobZAawC06098CdEuav8BmYMyCYA70=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=bM22XmXEfD+b/s4fGla3r+FP9+37fjjLLmC3Jv9po3J7gvVjV2VcKaOIVIGSzQ2fz
+	 scZDvVLPZ9+pE4lP1qedM12m9uK3WjDZks0AWQes/XqF2cV8LypoXvzO0n8nhM4auy
+	 ZxmVlqKsCgbPRqdTo3Q8ZX+BP/O+d/+qsq9Rw8hBf0t0NbX/lJvDX2auOpDWQ41YHp
+	 2XWPA/j1TX4MGm+3j5tlMnQGYGS+KL6ZEuHTNx0xshP6G8o55oYgkVCxMH5OGD7HiF
+	 TxGdC62h16ShwQpSqtkC8BgnDqYjNQfHurT965EhCC/Cq6YK5X+3kM1DtpOkAK6Tj/
+	 AmaCjMFJ7PFoA==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id D3E66403E4;
+	Tue, 12 Nov 2024 20:07:08 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-next@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3] docs: bug-bisect: add a note about bisecting -next
+In-Reply-To: <ec19d5fc503ff7db3d4c4ff9e97fff24cc78f72a.1730808651.git.linux@leemhuis.info>
+References: <ec19d5fc503ff7db3d4c4ff9e97fff24cc78f72a.1730808651.git.linux@leemhuis.info>
+Date: Tue, 12 Nov 2024 13:07:08 -0700
+Message-ID: <87v7wsqkr7.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-New functions are similar to simple_read_from|write_to_buffer()
-but work on the I/O memory instead. Will allow wider code reuse.
+Thorsten Leemhuis <linux@leemhuis.info> writes:
 
-Signed-off-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
----
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Matthew Brost <matthew.brost@intel.com>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- fs/libfs.c         | 78 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h |  5 +++
- 2 files changed, 83 insertions(+)
+> Explicitly mention how to bisect -next, as nothing in the kernel tree
+> currently explains that bisects between -next versions won't work well
+> and it's better to bisect between mainline and -next.
+>
+> Co-developed-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
+> ---
+> v3
+> - add a optional 'that' for readability/understandability
+>
+> v2:
+> - slightly change patch descption
+> - make the text more how-toish to better match the rest of the document
+>
+> v1: https://lore.kernel.org/all/20241022-doc-bisect-next-v1-1-196c0a60d554@kernel.org/
+> - initial release
+> ---
+>  Documentation/admin-guide/bug-bisect.rst | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 46966fd8bcf9..1c7343f1147f 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1095,6 +1095,84 @@ void simple_release_fs(struct vfsmount **mount, int *count)
- }
- EXPORT_SYMBOL(simple_release_fs);
- 
-+/**
-+ * simple_read_from_iomem() - copy data from the I/O memory to user space
-+ * @to: the user space buffer to read to
-+ * @count: the maximum number of bytes to read
-+ * @ppos: the current position in the buffer
-+ * @from: the I/O memory to read from
-+ * @available: the size of the iomem memory
-+ *
-+ * The simple_read_from_iomem() function reads up to @count bytes from the
-+ * I/O memory @from at offset @ppos into the user space address starting at @to.
-+ *
-+ * Return: On success, the number of bytes read is returned and the offset
-+ * @ppos is advanced by this number, or negative value is returned on error.
-+ */
-+ssize_t simple_read_from_iomem(void __user *to, size_t count, loff_t *ppos,
-+			       const void __iomem *from, size_t available)
-+{
-+	struct iov_iter iter;
-+	loff_t pos = *ppos;
-+	size_t copied;
-+
-+	if (pos < 0)
-+		return -EINVAL;
-+	if (pos >= available || !count)
-+		return 0;
-+	if (count > available - pos)
-+		count = available - pos;
-+	if (import_ubuf(ITER_DEST, to, count, &iter))
-+		return -EFAULT;
-+
-+	copied = copy_iomem_to_iter(from + pos, count, &iter);
-+	if (!copied)
-+		return -EFAULT;
-+
-+	*ppos = pos + copied;
-+	return copied;
-+}
-+EXPORT_SYMBOL(simple_read_from_iomem);
-+
-+/**
-+ * simple_write_to_iomem() - copy data from user space to the I/O memory
-+ * @to: the I/O memory to write to
-+ * @available: the size of the I/O memory
-+ * @ppos: the current position in the buffer
-+ * @from: the user space buffer to read from
-+ * @count: the maximum number of bytes to read
-+ *
-+ * The simple_write_to_iomem() function reads up to @count bytes from the user
-+ * space address starting at @from into the I/O memory @to at offset @ppos.
-+ *
-+ * Return: On success, the number of bytes written is returned and the offset
-+ * @ppos is advanced by this number, or negative value is returned on error.
-+ */
-+ssize_t simple_write_to_iomem(void __iomem *to, size_t available, loff_t *ppos,
-+			      const void __user *from, size_t count)
-+{
-+	struct iov_iter iter;
-+	loff_t pos = *ppos;
-+	size_t copied;
-+
-+	if (pos < 0)
-+		return -EINVAL;
-+	if (pos >= available || !count)
-+		return 0;
-+	if (count > available - pos)
-+		count = available - pos;
-+	if (import_ubuf(ITER_SOURCE, (void __user *)from, count, &iter))
-+		return -EFAULT;
-+
-+	copied = copy_iomem_from_iter(to + pos, count, &iter);
-+	if (!copied)
-+		return -EFAULT;
-+
-+	*ppos = pos + copied;
-+	return copied;
-+}
-+EXPORT_SYMBOL(simple_write_to_iomem);
-+
- /**
-  * simple_read_from_buffer - copy data from the buffer to user space
-  * @to: the user space buffer to read to
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3559446279c1..2cc73c5961b0 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3426,6 +3426,11 @@ extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
- extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
- 		const void __user *from, size_t count);
- 
-+ssize_t simple_read_from_iomem(void __user *to, size_t count, loff_t *ppos,
-+			       const void __iomem *from, size_t available);
-+ssize_t simple_write_to_iomem(void __iomem *to, size_t available, loff_t *ppos,
-+			      const void __user *from, size_t count);
-+
- struct offset_ctx {
- 	struct maple_tree	mt;
- 	unsigned long		next_offset;
--- 
-2.43.0
+Applied, thanks.
 
+jon
 
