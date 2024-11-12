@@ -1,112 +1,280 @@
-Return-Path: <linux-kernel+bounces-406718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301D59C62AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:38:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1FE9C6319
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD1F1F24706
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:38:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59B48B3F3B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF62621A4B8;
-	Tue, 12 Nov 2024 20:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1D7219E4C;
+	Tue, 12 Nov 2024 20:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USeBs3QR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BA0pKXCt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168641FC7F8;
-	Tue, 12 Nov 2024 20:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837E91FC7F8;
+	Tue, 12 Nov 2024 20:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731443877; cv=none; b=CfTQF+6GA2Txxbd1iXmy8BLwPdWCOtDykDClTTIll4XuCgXxre2RR+hNIIdrbHpD8dCZMpUktZXLXM60U0EVt710iWxpvDVh7x3au17BrS0761p31imTERiAwJ/Mx2GYsSqMuwcSHKfbce3AhMN0AZgJCM4Yv0R8P/SBenG4qYM=
+	t=1731443928; cv=none; b=EX0i88APVNNrnWQFxJbMeyS7GpiMCExBKLCzU1j5syjrYB+yFHKcDBMkLV4s30CgV+JJCvmeE2W6ph6mfW+EHVpMXf5SQorVYwmXVvPaPV4dVW8/MUc/RbKU0QITmpOpFSYfBNjOWU5o4KTJQnCpgjVM9LW+uQPklxTmp/W+9H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731443877; c=relaxed/simple;
-	bh=yXBDDpX5Nne0KSFPur1AW9EtsgTTkx8cGH0nAt0Vycs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nhvbFR+lNgFHzLF7xiSb1nyDCdfKILk8/V3CjW/rL8nLhdAFHREk5eOFED/ADNGeE+svO3Gk1712VoICXq83j+DqVLk7XL5IrLhfNw7eidlAtBK5G1nvM+iolGsxy8TibiTZHkK70DgktRtT+BkAekiAyFAR/RtyOO/FGGSgD1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USeBs3QR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9154AC4CED6;
-	Tue, 12 Nov 2024 20:37:56 +0000 (UTC)
+	s=arc-20240116; t=1731443928; c=relaxed/simple;
+	bh=wjtOHj4y8gsqVuXZ+1yV34w0MIivyofWbJzXM/nn8Sw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=M1cqj1jQ6/5S2Xnk9MQlTnHU1tnUvhFv/adtCVG1Xy/Z+JD8EtbD+guaRTPEhpAWCnLOyKG58A6tvfzPoY3T0IBhJXQ187b0YfV1yWdSFiASgpUfrb+kdRcDsHU+iwuNVLKBRF28K4oc0F/UctFKI7lIsKBtlCw1Qu+ulOrauzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BA0pKXCt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9EE4C4CECD;
+	Tue, 12 Nov 2024 20:38:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731443876;
-	bh=yXBDDpX5Nne0KSFPur1AW9EtsgTTkx8cGH0nAt0Vycs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=USeBs3QR23XbScpzlIffNzG4YsWtAyjxwrvL0yj8dpsNyQAnjz4OLZZaYAmVCGP4g
-	 Li7UzwF1xDJLTWZYdfixfh6JllwlgoyfMltaOqYwxr9rE0Qa74Jvm/CjpREf2CY/js
-	 v4NeqnNV2H+HXodpCbr2p2fk/CwExunUIzMXFJ9S4XzDOT28KuiaGvpgVA6qkjo8yJ
-	 JGd81ZcExboPKV1UofT/tnjIuvvobQJ4EzFowaVguQnkYh+qYzdm+u1YQS5CgILOYA
-	 9oyRVRr9s++46/WH7Tw08P7yyWyCh41lcHT32ZN7ECZzebdE5AXrJXJ40bkHtv7TxF
-	 xQuurUvtXx0TA==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-288a90e4394so2742963fac.0;
-        Tue, 12 Nov 2024 12:37:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWONwfCeq8+b8ggVM6dIrYoLMHZJdwD6ZzoMkDXgyMqVY0t+J5vtU/nhakr8UIqDCRVT/dQW76vonuE0ps=@vger.kernel.org, AJvYcCXyskEYRSLQTAZadogRjqKLeIuyo040Nia2bwVTuZOlD3wC5TpFT9UKU4u/Ev2+GOR3idZFEFvSfz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3XOWuT8p1bACGyNq4sMoA7pYxwJHgYtcxsNY7zOLvQIuFebRv
-	0zZw6J4B3lL0x4r7G0+24GjWosEfytaeKP/lBE9zQqBq+31YZYPOPqc1EF1BWCZiBNn8YVEhazi
-	itALJdZdHE/23Pi0KJ6V8mWCZr3A=
-X-Google-Smtp-Source: AGHT+IHL/xn7TOVpywsJHQV5/rwJ6UZraf60gBSPf4x7lNnuMczYaXhJ9AMeuIXwT8aF/VQUxmqsfEhzfuXIy7UYV38=
-X-Received: by 2002:a05:6871:401:b0:277:f5d8:b77b with SMTP id
- 586e51a60fabf-295cd224ff1mr4260117fac.32.1731443875870; Tue, 12 Nov 2024
- 12:37:55 -0800 (PST)
+	s=k20201202; t=1731443928;
+	bh=wjtOHj4y8gsqVuXZ+1yV34w0MIivyofWbJzXM/nn8Sw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=BA0pKXCtrB6bXbyJc5/bhgCtmP1XSUID+NiHe7zHFrfqvpmWNmF3D2aGum5+nECng
+	 ggnZjjkiI/iYLRk/th4/W0JVBEVMULjtkB8St8Kx1uCBHzG34Nx/m99Ef/askGXsDU
+	 6xaSAQ2ZBZWMTfP2PWG1zRXCtZQ2myZ6YJJMGK/bP6BOcEHUh2Dzao/hgug/rpXh78
+	 KLUfrHT09PAtDVAulD20wOIJkubxpKul2IdQky38pwjhKiGJ0oQS3JWXGFmHGQioue
+	 YFVVAXSVCFa/ON+B9KPjFHzyvYvNfUIthQAM40xLCtyFnVY9YYLPhlplKru4Dx7WT1
+	 eGv70+SZ+xadA==
+Date: Tue, 12 Nov 2024 14:38:46 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
+	cassel@kernel.org, quic_schintav@quicinc.com,
+	fabrice.gasnier@foss.st.com, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] PCI: stm32: Add PCIe endpoint support for STM32MP25
+Message-ID: <20241112203846.GA1856246@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <35e572d9-1152-406a-9e34-2525f7548af9@arm.com>
-In-Reply-To: <35e572d9-1152-406a-9e34-2525f7548af9@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 12 Nov 2024 21:37:44 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hXG46ph5F4JE5M=VymVdNx=_4Uyvy4QZos-ydLYzODfQ@mail.gmail.com>
-Message-ID: <CAJZ5v0hXG46ph5F4JE5M=VymVdNx=_4Uyvy4QZos-ydLYzODfQ@mail.gmail.com>
-Subject: Re: [PATCH] sched/cpufreq: Ensure sd is rebuilt for EAS check
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pierre Gondois <pierre.gondois@arm.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm <linux-pm@vger.kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Valentin Schneider <vschneid@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112161925.999196-5-christian.bruel@foss.st.com>
 
-On Sat, Nov 9, 2024 at 1:24=E2=80=AFAM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> Ensure sugov_eas_rebuild_sd() is always called when sugov_init()
-> succeeds. The out goto initialized sugov without forcing the rebuild.
->
-> Previously the missing call to sugov_eas_rebuild_sd() could lead to EAS
-> not being enabled on boot when it should have been, because it requires
-> all policies to be controlled by schedutil while they might not have
-> been initialized yet.
->
-> Fixes: e7a1b32e43b1 ("cpufreq: Rebuild sched-domains when removing cpufre=
-q driver")
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> ---
->  kernel/sched/cpufreq_schedutil.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_sche=
-dutil.c
-> index c6ba15388ea7..28c77904ea74 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -783,9 +783,8 @@ static int sugov_init(struct cpufreq_policy *policy)
->         if (ret)
->                 goto fail;
->
-> -       sugov_eas_rebuild_sd();
-> -
->  out:
-> +       sugov_eas_rebuild_sd();
->         mutex_unlock(&global_tunables_lock);
->         return 0;
->
-> --
+On Tue, Nov 12, 2024 at 05:19:24PM +0100, Christian Bruel wrote:
+> Add driver to configure the STM32MP25 SoC PCIe Gen2 controller based on the
+> DesignWare PCIe core in endpoint mode.
+> Uses the common reference clock provided by the host.
 
-Applied as 6.13 material, thanks!
+> +++ b/drivers/pci/controller/dwc/Kconfig
+
+> +config PCIE_STM32_EP
+> +	tristate "STMicroelectronics STM32MP25 PCIe Controller (endpoint mode)"
+> +	depends on ARCH_STM32 || COMPILE_TEST
+> +	depends on PCI_ENDPOINT
+> +	select PCIE_DW_EP
+> +	help
+> +	  Enables endpoint support for DesignWare core based PCIe controller in found
+> +	  in STM32MP25 SoC.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called pcie-stm32-ep.
+
+Move as for the host mode entry.
+
+> +++ b/drivers/pci/controller/dwc/pcie-stm32-ep.c
+
+> +static const struct of_device_id stm32_pcie_ep_of_match[] = {
+> +	{ .compatible = "st,stm32mp25-pcie-ep" },
+> +	{},
+> +};
+
+Move next to stm32_pcie_ep_driver.
+
+> +static void stm32_pcie_ep_init(struct dw_pcie_ep *ep)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +	enum pci_barno bar;
+> +
+> +	for (bar = BAR_0; bar <= PCI_STD_NUM_BARS; bar++)
+
+Most users just use "bar = 0".  BAR_0 is 0, but there's no real
+connection with PCI_STD_NUM_BARS, so I think 0 is probably better.
+
+Looks like this should be "bar < PCI_STD_NUM_BARS"?
+
+> +		dw_pcie_ep_reset_bar(pci, bar);
+> +
+> +	/* Defer Completion Requests until link started */
+
+Not sure what a Completion Request is.  Is this some internal STM or
+DWC thing?  Or is this related to Request Retry Status completions for
+config requests?
+
+> +	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+> +			   STM32MP25_PCIECR_REQ_RETRY_EN,
+> +			   STM32MP25_PCIECR_REQ_RETRY_EN);
+> +}
+
+> +static int stm32_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+> +				unsigned int type, u16 interrupt_num)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> +
+> +	switch (type) {
+> +	case PCI_IRQ_INTX:
+> +		return dw_pcie_ep_raise_intx_irq(ep, func_no);
+> +	case PCI_IRQ_MSI:
+> +		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
+> +	default:
+> +		dev_err(pci->dev, "UNKNOWN IRQ type\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+
+Is the compiler not smart enough to notice that this is unreachable?
+
+> +static void stm32_pcie_perst_deassert(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +	struct device *dev = pci->dev;
+> +	struct dw_pcie_ep *ep = &pci->ep;
+> +	int ret;
+> +
+> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_ENABLED) {
+> +		dev_dbg(pci->dev, "Link is already enabled\n");
+> +		return;
+> +	}
+> +
+> +	dev_dbg(dev, "PERST de-asserted by host. Starting link training\n");
+> +
+> +	ret = pm_runtime_resume_and_get(dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "pm runtime resume failed: %d\n", ret);
+> +		return;
+> +	}
+> +
+> +	ret = stm32_pcie_enable_resources(stm32_pcie);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to enable resources: %d\n", ret);
+> +		pm_runtime_put_sync(dev);
+> +		return;
+> +	}
+> +
+> +	ret = dw_pcie_ep_init_registers(ep);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to complete initialization: %d\n", ret);
+> +		stm32_pcie_disable_resources(stm32_pcie);
+> +		pm_runtime_put_sync(dev);
+> +		return;
+> +	}
+> +
+> +	pci_epc_init_notify(ep->epc);
+> +
+> +	ret = stm32_pcie_enable_link(pci);
+> +	if (ret) {
+> +		dev_err(dev, "PCIe Cannot establish link: %d\n", ret);
+> +		stm32_pcie_disable_resources(stm32_pcie);
+> +		pm_runtime_put_sync(dev);
+> +		return;
+> +	}
+> +
+> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_ENABLED;
+> +}
+
+> +static int stm32_add_pcie_ep(struct stm32_pcie *stm32_pcie,
+> +			     struct platform_device *pdev)
+> +{
+> +	struct dw_pcie *pci = stm32_pcie->pci;
+> +	struct dw_pcie_ep *ep = &pci->ep;
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
+> +
+> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+> +				 STM32MP25_PCIECR_TYPE_MASK,
+> +				 STM32MP25_PCIECR_EP);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = pm_runtime_resume_and_get(dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "pm runtime resume failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	reset_control_assert(stm32_pcie->rst);
+> +	reset_control_deassert(stm32_pcie->rst);
+> +
+> +	ep->ops = &stm32_pcie_ep_ops;
+> +
+> +	ret = dw_pcie_ep_init(ep);
+> +	if (ret) {
+> +		dev_err(dev, "failed to initialize ep: %d\n", ret);
+> +		pm_runtime_put_sync(dev);
+> +		return ret;
+> +	}
+> +
+> +	ret = stm32_pcie_enable_resources(stm32_pcie);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable resources: %d\n", ret);
+> +		dw_pcie_ep_deinit(ep);
+> +		pm_runtime_put_sync(dev);
+> +		return ret;
+> +	}
+> +
+> +	ret = dw_pcie_ep_init_registers(ep);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to initialize DWC endpoint registers\n");
+> +		stm32_pcie_disable_resources(stm32_pcie);
+> +		dw_pcie_ep_deinit(ep);
+> +		pm_runtime_put_sync(dev);
+> +		return ret;
+> +	}
+
+Consider gotos for the error cases with a cleanup block at the end.
+There's a fair bit of repetition there as more things get initialized,
+and it's error-prone to extend this in the future.
+
+Same applies in stm32_pcie_perst_deassert().
+
+> +	pci_epc_init_notify(ep->epc);
+> +
+> +	return 0;
+> +}
+> +
+> +static int stm32_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct stm32_pcie *stm32_pcie;
+> +	struct dw_pcie *dw;
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
+> +
+> +	stm32_pcie = devm_kzalloc(dev, sizeof(*stm32_pcie), GFP_KERNEL);
+> +	if (!stm32_pcie)
+> +		return -ENOMEM;
+> +
+> +	dw = devm_kzalloc(dev, sizeof(*dw), GFP_KERNEL);
+> +	if (!dw)
+> +		return -ENOMEM;
+
+Add blank line here.
+
+> +	stm32_pcie->pci = dw;
+
+> +static struct platform_driver stm32_pcie_ep_driver = {
+> +	.probe = stm32_pcie_probe,
+> +	.remove_new = stm32_pcie_remove,
+
+.remove().
+
+> +	.driver = {
+> +		.name = "stm32-ep-pcie",
+> +		.of_match_table = stm32_pcie_ep_of_match,
+> +	},
+> +};
 
