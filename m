@@ -1,247 +1,135 @@
-Return-Path: <linux-kernel+bounces-406802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE819C6435
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:24:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 335399C6439
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:26:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AFF52822C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:24:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBB15283042
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8591E21A6FF;
-	Tue, 12 Nov 2024 22:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E932F21B426;
+	Tue, 12 Nov 2024 22:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wQcviIGh"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NWRNPBSy"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4890221A4DC
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 22:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B24218335
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 22:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731450268; cv=none; b=msv1FS4y0vsUhKmMGnCrtPdDqAvOcO3CnnNt0iVULKaVOLmlYvmLNQ6jFkYqkU+Uy/sZtdcVHjbvsnj0/Ev1Ya7st968ORgGgNMEWT1m7vJfCc22SYSyDXrSMqBWcDL/wSOQjdeO//Cpxy0FjaxS+YEUk+tfY47lhyNpiSvqGls=
+	t=1731450344; cv=none; b=buiq3E6/d1eoXkvuYt16CYD81C6xjp80Z1mQMu0mA3uJhC40LV7UmoWYTTMAFW0BLORhzd5gYNaW5TXQFE/QJXWp0iE5vVciAY4fy4S5HKz536D/oBOwVWMPPyVshm8OGqq/VocmtkSqrBkKDEPt8TDWhH/cGZBsj8XFkWOBzX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731450268; c=relaxed/simple;
-	bh=/wlansXT8ic1VdGrktjv6oyEADi9JxkCX7zQgwP+2Lg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rSCEoLMPINqZBZIFbHPhTRGtY63RQny+eKVnw5EUpfJx8J3EOyRb6jajQGdJbMJtr3lZihYmQ9hG3WWTWxwv9nfmv4MGHVftC/04g/7rW7NmJi2Jh8l3RSST4BDfeD/oBocQbx2MZJewWX3tsYaAgpUVkdTpyIHXKZ5i9DD1XV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wQcviIGh; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1731450344; c=relaxed/simple;
+	bh=8GeByDS2uWdcqA65FmwK3WTf4oaQxq60Il3v1AwTHuc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nPsV03xsM0nHR09KoSmioTgdhzjiv6AA7+AAH3dA1XxAt4mkAuQQZP4g04RcsmSYiIn43FIzOVYibdBWGncTFoJZQjuKlrvUK+bqWa2Hh6W/cdAMZUBAe/ZFNKMhA/DJ4Uas00+hA1ULMLJjk+g2af43QlitvIs3O57OfxFLGL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NWRNPBSy; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20ca4877690so20025ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:24:27 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ea90b6ee2fso106775867b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:25:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731450266; x=1732055066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XrbUWlz/10HI8HCWywPHxZR9oOzLRJKPdLGJRk3v8wY=;
-        b=wQcviIGhyMH7BttYPzkOspFSDnDLhfdZR6TXRGgyTRUTuxp6ILrQir0hzaFrGR1i+3
-         Hf6RiUqIRV72eZNDya/IDhaySuCC28epWyYD0nr5FBi4FdJVb4IPigYRaNH45SkJa3Av
-         zGvJrkemAzmZHy6VWbeEl6xxGvNB0sEmp9spo2HI6G8llbv5aJVy/2d0piHM5bsEg8lG
-         7wyPl9KxffDqx6PxQZQ8Nimli7IB7DTnpSuQd0R/fQjtbg8BPEeYjBrGq4XXNVUPJPUp
-         UIUOH6ZAdaXQknS8Ar7XVmw4/n+EM//qhYULysXjDGOxWCfEXsiq/MNfFXamqo4cdRSB
-         Va5w==
+        d=google.com; s=20230601; t=1731450342; x=1732055142; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=H7FlcnUnWshiI10WLNfiJyYyEzpkvJ7Zo+urE+6Owno=;
+        b=NWRNPBSyqSL80sRyNn07z3O69ab7oFJVw8a2cuSH+AONG2K/NouE3mVS7V3kk8V3k5
+         ZqVijh5XcJOsgAoVz9EXdTXsfYI1ePU1FIwz10fKDqAMaezsrzgS19b7pVMLIN8m1gZc
+         ZWMGtgSSDMT4lueZU1D/YPOp3dsSBDwgqiCmSKWHMPddIF6VVeYQCmloySyhcuWd55M5
+         B2pPWk4O1edBIzeh7FRiMmd0gh0QKIjzbpydhSwlA1D/KelufSzyqwhg4G0uOLIG/lu5
+         yYsZqLYdorWt3vhT0snXa13GpYxbiT/0k02dcAnpTvAQvF9SHHJgc+mTixD9zD6kEq+6
+         O3BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731450266; x=1732055066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XrbUWlz/10HI8HCWywPHxZR9oOzLRJKPdLGJRk3v8wY=;
-        b=ocl/z8gRPHhLE+aBgV11uZWlTJ2jlKZMAiU6GJjhulx9TcXe6Oikas3Wz1t3h1oatD
-         texrwhIl2UeJsDHtDzzHtvCd7qoWtIqLUUg+jBur59NXann+mKKuLCWNwI+USUWgaCe7
-         v1C6Y28Ycdg2Lu+l3TIVah1DpRnqqeSk/R2GlmaRiiY9a/rZEuvua2yLbRT+lGXxnvkY
-         mAR/c/nIpzljNrLS4XGW2T8kFhUuWeS8goCKPyiVe4ZLUgyTbaICm6euqFouNgg5YaZs
-         laO9393mTjVyXDqLeISgAMiWudH5s/H/3cMaSBtNBWA+HVMTpfxROrCQImM12ULwbE0o
-         sW9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXYIV3s4pYR0ZSJYRTBJ/uyORO3ei1nXwXxD83YtYWM0OAAy3T3rxO0a33WsmqqMQaNJ5QNqHL/Gt05JIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdgJo1zsJxM91/bNz9gdB0Uz6OXNd7gf38h9fa9qHZszmT7lE1
-	yTucm0nnwCNUU9TaUrJTwb3Mucttr11684y+h4Wy5ydi9jRN8m8p5hzllYlZ92WMigeRSqv1ae1
-	/cxl9v7DKg9gEziuM40u5ZHwgiLXl7dcOl6LT
-X-Gm-Gg: ASbGncue0pKfYJDNhTleu8q+8Q3WRLq6JyjhDdpHYoqwxaVj/lJUAmT1x5kG/SUB6sj
-	8Rs1BOrp1Mid4XjCi99a0mSoJnPYE9h4UWOTcQGN55iIy9PZa8RjI+OOwLf8HyNc=
-X-Google-Smtp-Source: AGHT+IHVjOXDPek3bTfzpcjqhyl6dO+VgXJqAYZyQMTiOm5YzMnjDVAcfOTw1GP054zeGixwaVYPsd6ThcCJdKkbUoY=
-X-Received: by 2002:a17:903:2449:b0:20b:81bb:4a81 with SMTP id
- d9443c01a7336-211b70725d1mr132885ad.7.1731450266232; Tue, 12 Nov 2024
- 14:24:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731450342; x=1732055142;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H7FlcnUnWshiI10WLNfiJyYyEzpkvJ7Zo+urE+6Owno=;
+        b=ekDseD5wpgruSmwzu5rm/ayZZzQw85IdbtR+KhetBTcM8xP16+qwpZBdeZPl28hw7T
+         ZqR9jNp/1cxjC3Omb4I10e+JwT2Lq4kfPXXnjiUpJW+n2zf2mdxgHN60HKeMH+hLsYex
+         GBLNALkeKy+3RUUZHDDsFVl7I8ga9lUbuyTBlXPsLvbRi0pWEstccjF1oVYx3BD52xi0
+         JXJx/GA1InMkbRn9ZqZaFKycLmT9M5swjpb99QwF2R8OJAnZuxuwDxZcalTfeal+GUxt
+         EPMHDY0jlntL0SGmGbZPUE5PKG4ZFgZ/8qyc/pUTNuALV3muXzj/I8KmWxq1c9vXqOKU
+         +0ew==
+X-Gm-Message-State: AOJu0YyPHr3bfZj24GriA4Un5pVWale6vx0r8kwAdniqpTQNHVIrjNPb
+	ZHVeh/BsS4liaLznNqL9xOXdCzxwVNBGSgbh9977Z09uBRfdJXv3b/LjWbPPQIHm73YqOf56GjY
+	hhm3NbQ1uJStksPALMfXh9Oi5k9uDSxtv3EU6a8ZHNNdZOSNv2yElbW81YgPx3cU7qx6s+Sl4N2
+	x9p0ba8AfJw2/+7g76ZPS8q6n6Q2N8xcCTTJf2dENy/UwOPg==
+X-Google-Smtp-Source: AGHT+IEsuXSSvASgeovpBF0z8r+wVpgV2+7vhFt1qJRBztwwWEZl+9HACMovEJOSePyI6bw1Ja5nt4bz4jgE
+X-Received: from dynamight.c.googlers.com ([fda3:e722:ac3:cc00:c8:f494:ac12:264])
+ (user=jdenose job=sendgmr) by 2002:a05:6902:1342:b0:e2b:da82:f695 with SMTP
+ id 3f1490d57ef6-e35ed2520d6mr507276.6.1731450341240; Tue, 12 Nov 2024
+ 14:25:41 -0800 (PST)
+Date: Tue, 12 Nov 2024 22:25:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241026121758.143259-1-irogers@google.com> <20241026121758.143259-4-irogers@google.com>
- <20241112195343.GA404636@e132581.arm.com>
-In-Reply-To: <20241112195343.GA404636@e132581.arm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 12 Nov 2024 14:24:15 -0800
-Message-ID: <CAP-5=fXuyZbn3Jiq=RQaLTqybgji50Ko8jrpsinFqo+OOPBeRw@mail.gmail.com>
-Subject: Re: [PATCH v1 3/4] perf record: Skip don't fail for events that don't open
-To: Leo Yan <leo.yan@arm.com>
-Cc: Atish Patra <atishp@rivosinc.com>, linux-riscv@lists.infradead.org, 
-	beeman@rivosinc.com, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Ze Gao <zegao2021@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Ben Gainey <ben.gainey@arm.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Junhao He <hejunhao3@huawei.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+Message-ID: <20241112222516.1.I7fa78e6acbbed56ed5677f5e2dacc098a269d955@changeid>
+Subject: [PATCH] ACPI: video: force native for Apple MacbookPro11,2 and Air7,2
+From: Jonathan Denose <jdenose@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-acpi@vger.kernel.org, Jonathan Denose <jdenose@google.com>, 
+	Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 11:53=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
->
-> On Sat, Oct 26, 2024 at 05:17:57AM -0700, Ian Rogers wrote:
-> >
-> > Whilst for many tools it is an expected behavior that failure to open
-> > a perf event is a failure, ARM decided to name PMU events the same as
-> > legacy events and then failed to rename such events on a server uncore
-> > SLC PMU. As perf's default behavior when no PMU is specified is to
-> > open the event on all PMUs that advertise/"have" the event, this
-> > yielded failures when trying to make the priority of legacy and
-> > sysfs/json events uniform - something requested by RISC-V and ARM. A
-> > legacy event user on ARM hardware may find their event opened on an
-> > uncore PMU which for perf record will fail. Arnaldo suggested skipping
-> > such events which this patch implements. Rather than have the skipping
-> > conditional on running on ARM, the skipping is done on all
-> > architectures as such a fundamental behavioral difference could lead
-> > to problems with tools built/depending on perf.
-> >
-> > An example of perf record failing to open events on x86 is:
-> > ```
-> > $ perf record -e data_read,cycles,LLC-prefetch-read -a sleep 0.1
-> > Error:
-> > Failure to open event 'data_read' on PMU 'uncore_imc_free_running_0' wh=
-ich will be removed.
-> > The sys_perf_event_open() syscall returned with 22 (Invalid argument) f=
-or event (data_read).
-> > "dmesg | grep -i perf" may provide additional information.
-> >
-> > Error:
-> > Failure to open event 'data_read' on PMU 'uncore_imc_free_running_1' wh=
-ich will be removed.
-> > The sys_perf_event_open() syscall returned with 22 (Invalid argument) f=
-or event (data_read).
-> > "dmesg | grep -i perf" may provide additional information.
-> >
-> > Error:
-> > Failure to open event 'LLC-prefetch-read' on PMU 'cpu' which will be re=
-moved.
-> > The LLC-prefetch-read event is not supported.
-> > [ perf record: Woken up 1 times to write data ]
-> > [ perf record: Captured and wrote 2.188 MB perf.data (87 samples) ]
-> >
-> > $ perf report --stats
-> > Aggregated stats:
-> >                TOTAL events:      17255
-> >                 MMAP events:        284  ( 1.6%)
-> >                 COMM events:       1961  (11.4%)
-> >                 EXIT events:          1  ( 0.0%)
-> >                 FORK events:       1960  (11.4%)
-> >               SAMPLE events:         87  ( 0.5%)
-> >                MMAP2 events:      12836  (74.4%)
-> >              KSYMBOL events:         83  ( 0.5%)
-> >            BPF_EVENT events:         36  ( 0.2%)
-> >       FINISHED_ROUND events:          2  ( 0.0%)
-> >             ID_INDEX events:          1  ( 0.0%)
-> >           THREAD_MAP events:          1  ( 0.0%)
-> >              CPU_MAP events:          1  ( 0.0%)
-> >            TIME_CONV events:          1  ( 0.0%)
-> >        FINISHED_INIT events:          1  ( 0.0%)
-> > cycles stats:
-> >               SAMPLE events:         87
-> > ```
->
-> Thanks for James reminding me.  Tested on AVA platform:
->
-> # tree /sys/bus/event_source/devices/arm_dsu_*/events
->   ...
->   /sys/bus/event_source/devices/arm_dsu_9/events
->   =E2=94=9C=E2=94=80=E2=94=80 bus_access
->   =E2=94=9C=E2=94=80=E2=94=80 bus_cycles
->   =E2=94=9C=E2=94=80=E2=94=80 cycles
->   =E2=94=9C=E2=94=80=E2=94=80 l3d_cache
->   =E2=94=9C=E2=94=80=E2=94=80 l3d_cache_allocate
->   =E2=94=9C=E2=94=80=E2=94=80 l3d_cache_refill
->   =E2=94=9C=E2=94=80=E2=94=80 l3d_cache_wb
->   =E2=94=94=E2=94=80=E2=94=80 memory_error
->
-> # ./perf record -- sleep 0.1
->  Error:
->  Failure to open event 'cycles:PH' on PMU 'arm_dsu_0' which will be
->  removed.
->  cycles:PH: PMU Hardware doesn't support sampling/overflow-interrupts.
->  Try 'perf stat'
->  Error:
->  Failure to open event 'cycles:PH' on PMU 'arm_dsu_1' which will be
->  removed.
->  cycles:PH: PMU Hardware doesn't support sampling/overflow-interrupts.
->  Try 'perf stat'
->  ...
->  Error:
->  Failure to open event 'cycles:PH' on PMU 'arm_dsu_15' which will be
->  removed.
->  cycles:PH: PMU Hardware doesn't support sampling/overflow-interrupts.
->  Try 'perf stat'
->  [ perf record: Woken up 1 times to write data ]
->  [ perf record: Captured and wrote 0.008 MB perf.data (8 samples) ]
->
-> # ./perf report --stats
->
->  Aggregated stats:
->                 TOTAL events:         67
->                  MMAP events:         40  (59.7%)
->                  COMM events:          1  ( 1.5%)
->                SAMPLE events:          8  (11.9%)
->               KSYMBOL events:          6  ( 9.0%)
->             BPF_EVENT events:          6  ( 9.0%)
->        FINISHED_ROUND events:          1  ( 1.5%)
->              ID_INDEX events:          1  ( 1.5%)
->            THREAD_MAP events:          1  ( 1.5%)
->               CPU_MAP events:          1  ( 1.5%)
->             TIME_CONV events:          1  ( 1.5%)
->         FINISHED_INIT events:          1  ( 1.5%)
->  cycles:P stats:
->                SAMPLE events:          8
->
-> # ./perf stat -- sleep 0.1
->
->  Performance counter stats for 'sleep 0.1':
->
->               0.87 msec task-clock                       #    0.009 CPUs =
-utilized
->                  1      context-switches                 #    1.148 K/sec
->                  0      cpu-migrations                   #    0.000 /sec
->                 52      page-faults                      #   59.685 K/sec
->            877,835      instructions                     #    1.14  insn =
-per cycle
->                                                   #    0.25  stalled cycl=
-es per insn
->            772,102      cycles                           #  886.210 M/sec
->            191,914      stalled-cycles-frontend          #   24.86% front=
-end cycles idle
->            219,183      stalled-cycles-backend           #   28.39% backe=
-nd cycles idle
->            184,099      branches                         #  211.307 M/sec
->              8,548      branch-misses                    #    4.64% of al=
-l branches
->
->        0.101623529 seconds time elapsed
->
->        0.001645000 seconds user
->        0.000000000 seconds sys
->
-> Tested-by: Leo Yan <leo.yan@arm.com>
+There is a bug in the Macbook Pro 11,2 and Air 7,2 firmware similar to
+what is described in:
 
-Thanks Leo! As the Tested-by makes sense only if you've applied all 4
-patches, which your testing and James' testing shows you've both done,
-I'll add the tags to all 4 patches. I'll do likewise with Atish,
-rebase and resend the patches.
+commit 7dc918daaf29 ("ACPI: video: force native for Apple
+MacbookPro9,2")
 
-Thanks,
-Ian
+This bug causes their backlights not to come back after resume.
+
+This commit adds DMI quirks to select the working native intel firmware
+interface such that the backlght comes back on after resume.
+
+Signed-off-by: Jonathan Denose <jdenose@google.com>
+---
+
+ drivers/acpi/video_detect.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
+index 015bd8e66c1cf..d507d5e084354 100644
+--- a/drivers/acpi/video_detect.c
++++ b/drivers/acpi/video_detect.c
+@@ -549,6 +549,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "iMac12,2"),
+ 		},
+ 	},
++	{
++	 .callback = video_detect_force_native,
++	 /* Apple MacBook Air 7,2 */
++	 .matches = {
++		DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
++		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookAir7,2"),
++		},
++	},
+ 	{
+ 	 .callback = video_detect_force_native,
+ 	 /* Apple MacBook Air 9,1 */
+@@ -565,6 +573,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookPro9,2"),
+ 		},
+ 	},
++	{
++	 .callback = video_detect_force_native,
++	 /* Apple MacBook Pro 11,2 */
++	 .matches = {
++		DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
++		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookPro11,2"),
++		},
++	},
+ 	{
+ 	 /* https://bugzilla.redhat.com/show_bug.cgi?id=1217249 */
+ 	 .callback = video_detect_force_native,
+-- 
+2.47.0.277.g8800431eea-goog
+
 
