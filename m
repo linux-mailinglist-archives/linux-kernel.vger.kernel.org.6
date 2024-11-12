@@ -1,116 +1,120 @@
-Return-Path: <linux-kernel+bounces-405481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52F869C525B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:47:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B06C29C528E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:59:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4F33B23435
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:26:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F050B23BF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E989120ADF7;
-	Tue, 12 Nov 2024 09:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAE320E03D;
+	Tue, 12 Nov 2024 09:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CTk/j1Pg"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R0nHnUxR"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E156320CCF2
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E014D20DD72;
+	Tue, 12 Nov 2024 09:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731403597; cv=none; b=tVgNpPJWobahsgrlPqXuc2luLjglgwSGVT/lAR2NRqSjlLEvNNtsCdqhsNbm44xH7efVLVzU5IFAtzZpbZMu9zAfl0boqPbP3tl4Ov6J07IkxDygy9bbSg87SnZLfs9yAIK89iugK5nWi0Fa+PSUPMOlDCOwZv4wp/Aj8Tz7Pg8=
+	t=1731404120; cv=none; b=bN5YICvHSQAG/7IJSBiVN2tPG9G+F2gibgl3rdyLepxuOSfe6JyNu27gy92shxR9zNSmeH7frRLMU6DZUGifZ2q4iiFNS9Tw16hbIUGDE3sqkEiGce/uN52PdayKVCgX5DxhjFnKHnb/HUfsM+8XZQle+b4kqtaoyGM4qPSnXyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731403597; c=relaxed/simple;
-	bh=+kDIQLpWOAJrdT0VJOv1P4HLYT7ZhsY78MMEfYJjgzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rZtmi/h7N6Ein4IFEHEr4USvqey+VeIRyXIvitgMBv6QfEAFgcmzw1/mLJWRp02PzDhLU2kxzeGPtIjtCbsgyAl7vZpfPDcXwO9wIGxqA35j+oFR0sJ+UmMIS73cSRQ/BQNVRJceLRqB1JfXNU0dgTDoKEk9Bt/a/DBoOj26eHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CTk/j1Pg; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2eb9dde40so4386220a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 01:26:35 -0800 (PST)
+	s=arc-20240116; t=1731404120; c=relaxed/simple;
+	bh=bI9jM4fM/qrZMNswUV8/w2E5EoB21/DlDLMUd7obgKs=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=ZkudZLcrDCUgrs/FmplgHUeGzUVRxN23vPEAwLMojVFm62MjjGwASKq2QY6hw+21yE0vDoy6EeCh0AGN9ui0PA7A8BzJGlrOlBT7G9J5Fq0Lrf94r8xBlCTBFJZ6QeRLUumB9EV7q7W4o32rqBGZX0weHHU+klQ67KRSWRdKLnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R0nHnUxR; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e7e73740so5040521e87.3;
+        Tue, 12 Nov 2024 01:35:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731403595; x=1732008395; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=neEfcsmYwWR1TZN8OSygR364mITFwbMFoBamEQa+xj4=;
-        b=CTk/j1PgVcsedqB5hxPpDIKdYlAicUK3XXknLTUCEeJLvuQ2cZLNVkRkj89Mgn1NB9
-         jabgOae0FQoYkbNsy2Os0yx3xQRUaSLFBfA7QdzwfcKeKRl8Q310c6E/oRuWMtb5RhID
-         Jn5KHzjBl67APDqE7FR2eKfsAbefdtjXzVNZh2NxRRikd1YOcu7r3yDonlrOILoOaeay
-         J/JvpBn/WDU8r40rfNUxLyxz1jxpFEhTQNH31Fg+HmxMXUKq7SRBF0OURR8IOLG0jXRq
-         cf3QdCdJfWADWIZAb6SVeC39IY/Vn1pHBUudCSOJkmk3OIOCwih4xhufTRuvDXR7vfA0
-         G+2w==
+        d=gmail.com; s=20230601; t=1731404117; x=1732008917; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :message-id:date:in-reply-to:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QwUs+aMkdkwpkiVWNCOrQgRTu0W2Xnb6aJtMbSxwnYg=;
+        b=R0nHnUxRZ3FciysD/BZetXxiw4ulpdP/7E8MrEDLNpOoVs4XlvIEqxaWeyI3bCsCvK
+         eC9aXRSizCiP8uouAlkGwX1RtISuGkC+S3BPJCCp234Mr+SCSUyZrZT8ONi+HDiynzHp
+         qBMFrO7b+x3zc2Fo6mJ197htvQkzM5+nlnRc+h+qBWLmjmJ5UNJAC2XRPJt5LTR/ILoU
+         55FTx8L4QEtEwolQgKDXPq8oUI+53MzL+Jy+bSlgJ9ItU9ml3PAs9cDNJjrPdJOHX5t+
+         KSZIefFEur9pQUDdYOWggyeWM5qa9chLdazP+YfAwSsE1vDu+tMf8ViweIIvBFjNlcbr
+         q4qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731403595; x=1732008395;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=neEfcsmYwWR1TZN8OSygR364mITFwbMFoBamEQa+xj4=;
-        b=X/BK04mRDNk/eqIDOp5g8mlLUS2KTE0iuLoobbYdNH+/GxxBpL09MSZ9sfBFa9aaJh
-         WLqCLsc+WCORBWybMETdtlYh4VXimSOe1iHYEEUfcKfIoU4jdOn+HuwjMDwllEcGnXTE
-         6AOIAt6lMK+bCSVwkukI7obOXrLc9gQWE8agwCtIxMHbeGhNKNQ5rNulEBXByodoAuPf
-         3zr7Q6NykKCAfFkXfYpVwoDOftTHqaS6rtQFRLQxfiAY6lTNSRAAqbwkNKpA/RKzW/n8
-         QgHFj3cQwKTDLP76B1CBkTteArLoB32FiCGXhuSz2xqnOnWL4TTKWwmxlm08n5k/0pG8
-         BAcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKGdk6CiaJN2ZwSp1TgLsfZGPRe4tQ2EOc043DMT+XzQ2CM4t3LD5ud8AbLeNZ3kv49q5HVydS0/nxmpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/sKYAAqHrQKud58hE5q7br1iGQpXrD/LhWUDfsHbvnfZnZA8Q
-	lo5k9VQoUApqYlcxiXJUS1hDYcC6djKTCxJV8pNjphRy++6U1SPSwzlhfYulbi0=
-X-Google-Smtp-Source: AGHT+IHcXyqu2j2PaAR73HECUuaJ0QnRAysFXoaVxI2tNJrJDuAJHUTPD6v5KyKDtf7mAXJ/PNPOUg==
-X-Received: by 2002:a17:90b:3883:b0:2e2:9522:278f with SMTP id 98e67ed59e1d1-2e9b1748229mr19548653a91.32.1731403595212;
-        Tue, 12 Nov 2024 01:26:35 -0800 (PST)
-Received: from localhost ([122.172.86.146])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5feb50bsm10027153a91.53.2024.11.12.01.26.32
+        d=1e100.net; s=20230601; t=1731404117; x=1732008917;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :message-id:date:in-reply-to:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QwUs+aMkdkwpkiVWNCOrQgRTu0W2Xnb6aJtMbSxwnYg=;
+        b=eqXA3v5lftXtTaKPMurATaCYRlrnEgwB+mIM++xMwY/GSFLEVLap+99R+j0kJq5pWi
+         RkSve62h8xOsUQsX31D45V4ZujMFDuGxzaW1HkBhR2tsYwntbtxh9fSUOz72sEbGkiO3
+         +lOjr885eMltoOIa0XZPgev6cpU8cYWjJz8U7tFPzNo4Rh1QoQtNx+Qd7Pk0ezdZa2DS
+         Od83MgIOfyDdicYHxlGYcadFWwe61LZWdM1gTzWFyrlB3ct7ZoAyEx1EM43H7kcWEumc
+         f/AtZesUKYi70jNtcPj22EghDRfy4/8SKq6dSZDNllPukDciQklfNoFfm7p4VZcy9brj
+         gCKA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/B0GP+QAozs/eYQb09IWsL+rDyvNRC7eqSC+tQKQGQTKoDx+TSPJmpK2Zcv2D6f9MpX6faw4c@vger.kernel.org, AJvYcCWnepKflc2y/1ZGxLnNMshM+hsCCQU5bz7ZpwexaYRnyfcbhjKOyuMFeqm2RTHyHDSFZPpVLSpYrIhWAqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDIcD4Pvj9maIttrBwcmwXCQh3dSa+tnr0D6GS7fR5IH9sJfiO
+	TFfEWBQxCvmIJ5MHrmdebUmh02eBC+2XFGyi88AHjnvJ/a8zDbBaErKcxw==
+X-Google-Smtp-Source: AGHT+IGVkROvgPTuaXcye6PfO0q+/Im+e2txwVXXStZ+KU27XlkGrkShXQKuD4JasR3jJVcGh3tfbw==
+X-Received: by 2002:a05:6512:280c:b0:539:d428:fbf2 with SMTP id 2adb3069b0e04-53d9a40b5c5mr1127524e87.13.1731404116336;
+        Tue, 12 Nov 2024 01:35:16 -0800 (PST)
+Received: from imac ([2a02:8010:60a0:0:a1ef:92f5:9114:b131])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97075fsm14744416f8f.14.2024.11.12.01.35.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 01:26:33 -0800 (PST)
-Date: Tue, 12 Nov 2024 14:56:30 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, rafael@kernel.org
-Subject: Re: [PATCH] cpufreq: maple: Remove maple driver
-Message-ID: <20241112092630.imled7fmhqgkjbru@vireshk-i7>
-References: <20241112085148.415574-1-mpe@ellerman.id.au>
+        Tue, 12 Nov 2024 01:35:15 -0800 (PST)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Jan Stancek <jstancek@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>,  pabeni@redhat.com,
+  davem@davemloft.net,  edumazet@google.com,  horms@kernel.org,
+  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] tools: ynl: two patches to ease building with rpmbuild
+In-Reply-To: <CAASaF6zsC59x-wCRKNmdPEB7NOwtqLf6=AgJ-UO1xFYxCG11gQ@mail.gmail.com>
+	(Jan Stancek's message of "Tue, 12 Nov 2024 09:16:07 +0100")
+Date: Tue, 12 Nov 2024 09:26:57 +0000
+Message-ID: <m2wmh8u7j2.fsf@gmail.com>
+References: <cover.1730976866.git.jstancek@redhat.com>
+	<20241111155246.17aa0199@kernel.org>
+	<CAASaF6zsC59x-wCRKNmdPEB7NOwtqLf6=AgJ-UO1xFYxCG11gQ@mail.gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112085148.415574-1-mpe@ellerman.id.au>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 12-11-24, 19:51, Michael Ellerman wrote:
-> This driver is no longer buildable since the PPC_MAPLE platform was
-> removed, see commit 62f8f307c80e ("powerpc/64: Remove maple platform").
-> 
-> Remove the driver.
-> 
-> Note that the comment in the driver says it supports "SMU & 970FX
-> based G5 Macs", but that's not true, that comment was copied from
-> pmac64-cpufreq.c, which still exists and continues to support those
-> machines.
-> 
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> ---
->  drivers/cpufreq/Kconfig.powerpc |   7 -
->  drivers/cpufreq/Makefile        |   1 -
->  drivers/cpufreq/maple-cpufreq.c | 242 --------------------------------
->  3 files changed, 250 deletions(-)
->  delete mode 100644 drivers/cpufreq/maple-cpufreq.c
-> 
-> The removal commit is in the powerpc/next branch:
->   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git/log/?h=next
-> 
-> I can take this via the powerpc tree if that's easiest, let me know.
+Jan Stancek <jstancek@redhat.com> writes:
 
-Please take it via the powerpc tree:
+> On Tue, Nov 12, 2024 at 12:52=E2=80=AFAM Jakub Kicinski <kuba@kernel.org>=
+ wrote:
+>>
+>> One thing I keep thinking about, maybe you already read this, is to
+>> add  some sort of spec search path and install the specs under /usr.
+>> So the user can simply say --family X on the CLI without specifying
+>> the fs full path to the YAML file. Would you be willing to send a patch
+>> for this?
+>
+> I can look at adding--family option (atm. for running ynl in-tree).
+>
+> One thing I wasn't sure about (due to lacking install target) was whether
+> you intend to run ynl always from linux tree.
+>
+> If you're open to adding 'install' target, I think that should be somethi=
+ng
+> to look at as well. It would make packaging less fragile, as I'm currently
+> handling all that on spec side.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Hi Jan,
 
--- 
-viresh
+I am happy to work with you on adding an install target, plus some other
+UX improvements like --family.
+
+Thanks,
+Donald.
 
