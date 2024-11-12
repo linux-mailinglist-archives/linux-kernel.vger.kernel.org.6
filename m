@@ -1,177 +1,155 @@
-Return-Path: <linux-kernel+bounces-406213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302E39C5C2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:44:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C54F9C5C31
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:44:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E431E282BD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:44:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59FD282D3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F96202630;
-	Tue, 12 Nov 2024 15:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C165D2022E2;
+	Tue, 12 Nov 2024 15:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Ps90XVo+"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IcSl+8h2"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B386201275
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7168220127A;
+	Tue, 12 Nov 2024 15:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731426230; cv=none; b=myRG7Gp12YMd6xybZW1bQeYcA32vBA5zXmcDdTxMAVck0EkF5ODG/+VJr3QYDREQ4zLDFL6fP2qkaexAp+c7+IRElrLnI9//ovvmkvusG90ggia2AeY/16KqsYtMwRFV/QePrrJ35cOmtjwFFd4wDpBsxqk6L2qETWeTRnqgszo=
+	t=1731426267; cv=none; b=b3Haw8DHtbf6Php0mo+ZUNPpv8JkJQ78VJs4ifqy32wx++oEXY/nK6NRq/KqDJgzWnJorp7lYmD9+ft3RKCyir6jl57h//AU2IaDETUY/JNllFCBUGA8EWrQTDZ8bidTdtVuE91av+Z9i5b5uRs+MxQtiqSuaPAsrjoDzoN5Ssk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731426230; c=relaxed/simple;
-	bh=sugKUR1x6AisW4skOVA3ZjQCFFcMRgfFJpnbc5pgqRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QG6UbKuSh82DUvwAdlDrVJBnUdnsjB6IAczNJKA11GHQ8U/RLoynYnIWy0K0cJjTu3qJIcyJDkZZnUL9iZqIzuPM3V/mfRZu7oBn7fJPO8IN/2dfy1yqeI1R7ItW+tlY7hs1GfwiNl42cFv50MtnxGuq0owJq47O0tckqkZ3lZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Ps90XVo+; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c937b5169cso2494420a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:43:47 -0800 (PST)
+	s=arc-20240116; t=1731426267; c=relaxed/simple;
+	bh=fS4J7yDzI39PL8ZoMu2IAbRx82SFhb6U/y0jz6ClThc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dLPCjfgA3bviMRNJkQfgRSPb+yCFhu7I1+GjSMbhNnaVmndd101KZKIMzlJ0RHEOhkoGNK6swf23VwcJxgmLl9/dfodizv7nHuEqatrAtJzca/ba/LN/Tlr5ouJiujr6+y5Xvcsw0XqBCaemkIN472XBPBNqwLyYRHk7llQIUJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IcSl+8h2; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso73519415e9.0;
+        Tue, 12 Nov 2024 07:44:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1731426226; x=1732031026; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8FjR/IXLb5vtI7LPCkZUeh9a8brNlsLs1nKW+B8ZeXc=;
-        b=Ps90XVo+t2KmLOgFV/0jzOWxEm52L2OZgBoSUGhE6MJkngQClGvA1ApBfqL8mIAExG
-         y7GueizeTt5kAaNOEgwjB3uvprtzW3fwYDpcH/ms5uozhL2MzOqcDdJ5QKe6hSuDM/ty
-         PSm3D9casrO98JpJNhuGLDYu1JGEoJ1E8T0slayxLIVqeJP+HxiBFy0zMUFwGm0+W1PN
-         cCHBKrxNMZ7xcKsnimDu2gtFyPLsERKU/y2DhX8W31mo5tPlw8ocFDfgM7tcQ6rl4tQu
-         ye8JGhA8iKDY91JsH8O2IYsgXpRPP38EyGxVACGVcCFJaDpUqZa5lOkaaBRDN609EB13
-         GbEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731426226; x=1732031026;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1731426264; x=1732031064; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8FjR/IXLb5vtI7LPCkZUeh9a8brNlsLs1nKW+B8ZeXc=;
-        b=djRfCiAW1o6PDlw8ChIcj/O5sO/VBBPE5khLd+SCj/ITrm5rizTqUM4Axa5eKoYWM0
-         ybbB9NJTcwQdqN01fLOjMI3MbxDUx3Sw/v0WWxIXambT4HEwwZ9Q3F9aNNy0sdwIELH/
-         e7Ht+dMgJGAcz7mYWqqvdej7DB4HmvH4iJi9E9oAez7Wr+CcdkbttBDkq3QsmLBmTWfR
-         IkjsaNutKco+0m/JxILz9oQZRdT0f7IxiOuhlBK28xXswM/KHXglPtV6Fmjb2LNfUvp/
-         4dWIMuEEsw2ho7lue7LK0Eiq0Imeqd6LsEyYBY0ijTLkQms2qmjWJT9ZPwVm7keuVncm
-         6Y2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV/poS7+ccOXksVl1jbl0Os25dU/p3Ipt0BD4mm6964vTxaVtTpgRC5AE11dLlUGaD3j0qytZTI1BEDJ1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWlW44KYLB5iR1chZasyrkMJFFwHmi1mcdpERMWcDVNWMpgNuC
-	pjxFOPC8jhaY+sch/SLDcMA08z7UfY9/AWyDvQ0UiCIyiLp0ro1MCeDax3d+zA4=
-X-Google-Smtp-Source: AGHT+IGQPjVckld30sw712EyVfRtKY34CfCHYQtIVY+84TH6Fted4MlGcMFRQCkafp+/3JEJyW1jbw==
-X-Received: by 2002:a05:6402:27c7:b0:5ce:df98:ea7d with SMTP id 4fb4d7f45d1cf-5cf096f5c1amr17884562a12.8.1731426226420;
-        Tue, 12 Nov 2024 07:43:46 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:e829:c484:5241:93b2? ([2001:67c:2fbc:1:e829:c484:5241:93b2])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03c4ec9fsm6129828a12.61.2024.11.12.07.43.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 07:43:45 -0800 (PST)
-Message-ID: <816d8b43-8c19-4a4c-9e37-98a3415848b5@openvpn.net>
-Date: Tue, 12 Nov 2024 16:44:09 +0100
+        bh=ETNP9yNkXTf1tz0U03wjmJSDsqqTZhQALvrSEprwsMI=;
+        b=IcSl+8h2U6nzlqpHyki4u68mQQcowXhrqkBVDzN/0udL7MWj4qeJ3HiuCVL9AXulKW
+         787zjW+ayklakDUY7AK54ZsxV+P9nYE1N7vacL1EiHq6LHcnyJBvDs7ON3EjLqv2aj9v
+         8jdxvN4clpcOSit3ooyopw8CuqnVHWGWyH335/scm9h1lqoLAlQQ1PeSO6BVJ5fmaaF+
+         SIzLc7sXbGi/SatoY0PK7jXoFJ0xwtC+ACo1qoIJcYVCthaa6z3ZBrOt4/LcEWHCo4hm
+         X9EheTme7m2IzIxyUZ7kQi6iUV9yJ+YV1dm3GaU7iDNG1yhWoZGfzOzgTSPsVCc1FJYY
+         tUPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731426264; x=1732031064;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ETNP9yNkXTf1tz0U03wjmJSDsqqTZhQALvrSEprwsMI=;
+        b=BsVhx4RUsQTk3LXueUBrRTGeTo8dc8e/tRNw99yL7R/+wc3iobsP//+k3n+fNMQ4qd
+         B+UpPtZuFCqK9yZc8hzgsMMbv20QW0O3mzhkLc51vxh8jTZWvjJBVX7uQn2/XNjJUjb4
+         cuNnUEd7hT0By5+Eg2n8pwgjwjkIMNyFUkbjbFyFwU7rLvwAWL0sSkYCaq2FvT3Y86wq
+         Gmlx5f/C0LvJ1IQ2TBIJWLN3W9rrHcf1D29jYs7QAY+h72JylfytbqicwWouYPdxYk07
+         6GAO7N84u+wHW1UKoGKLpmg2z9t8tEZc8dbZ9jVtkki6qkI6G2vvcSASlFMF+4ML3MCR
+         p1+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2jX1z9t/GmanxndeeQSbgiSJp63MZQaLu85/MudHqA50Mx+3/luwtEGSPCkp30dMLbNW8i6YLc5op@vger.kernel.org, AJvYcCUbULUm84PZOBGtpNLbMgn809ZM/tANdAznSjwMk55WaI6yaPB8T8V27Z+IBIDfZgOksQAIUd5ANo+DN7/C@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEZKTGyj5G1gRRAZrAQGDqqSOcvv7ex7J0NcHzWXUB0+nolYy3
+	P6cU7f3Zcc47tA+k9BkTsitwAWiPp6Xzp7LVWQ1iPflRADnvM4wh8G9GNbtEQo+AMm+FON0aZPV
+	OLUHxMh/jMr5bKjoqAmwpePn+frg=
+X-Google-Smtp-Source: AGHT+IE61eEBj4n6mhK0OCpunvztbqR9xM2DivLuqQVsFuGTsrkTKylWTl3i9wckZHzRDbO8a4R0t2xJPPlSIT/M268=
+X-Received: by 2002:a5d:47aa:0:b0:382:6d2:d86c with SMTP id
+ ffacd0b85a97d-38206d2d8bcmr4284365f8f.37.1731426263576; Tue, 12 Nov 2024
+ 07:44:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 20/23] ovpn: kill key and notify userspace in
- case of IV exhaustion
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-20-de4698c73a25@openvpn.net> <Zyn0aYyPVaaQJg3r@hog>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <Zyn0aYyPVaaQJg3r@hog>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241016111624.5229-1-linmaxi@gmail.com> <20241107050307.GA287288@mit.edu>
+In-Reply-To: <20241107050307.GA287288@mit.edu>
+From: Max Brener <linmaxi@gmail.com>
+Date: Tue, 12 Nov 2024 17:44:11 +0200
+Message-ID: <CAJcXncXSLsHah+7KvtEHK-Y0xD5K-b3yCSAFiYfibmmZnc4P1Q@mail.gmail.com>
+Subject: Re: [RESEND v2] ext4: Optimization of no-op ext4_truncate triggers
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/11/2024 11:33, Sabrina Dubroca wrote:
-> 2024-10-29, 11:47:33 +0100, Antonio Quartulli wrote:
->> +int ovpn_nl_key_swap_notify(struct ovpn_peer *peer, u8 key_id)
->> +{
-> [...]
->> +
->> +	nla_nest_end(msg, k_attr);
->> +	genlmsg_end(msg, hdr);
->> +
->> +	genlmsg_multicast_netns(&ovpn_nl_family, dev_net(peer->ovpn->dev), msg,
->> +				0, OVPN_NLGRP_PEERS, GFP_ATOMIC);
->> +
-> 
-> Is openvpn meant to support moving the device to a different netns? In
-> that case I'm not sure the netns the ovpn netdevice is in is the right
-> one, the userspace client will be in the encap socket's netns instead
-> of the netdevice's?
-> 
-> (same thing in the next patch)
+=E2=80=AB=D7=91=D7=AA=D7=90=D7=A8=D7=99=D7=9A =D7=99=D7=95=D7=9D =D7=94=D7=
+=B3, 7 =D7=91=D7=A0=D7=95=D7=91=D7=B3 2024 =D7=91-7:03 =D7=9E=D7=90=D7=AA =
+=E2=80=AATheodore Ts'o=E2=80=AC=E2=80=8F <=E2=80=AAtytso@mit.edu=E2=80=AC=
+=E2=80=8F>:=E2=80=AC
+>
+> On Wed, Oct 16, 2024 at 02:16:24PM +0300, Max Brener wrote:
+> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219306
+> > v1: https://lore.kernel.org/lkml/20240926221103.24423-1-linmaxi@gmail.c=
+om/T/
+> >
+> > Changes from last version: Moved vfs-level changes to be ext4-level,
+> > and improved the description of the patch.
+> >
+> > This patch enables skipping no-op 'ext4_truncate' calls. Analyzing the =
+kernel
+> > with ftrace shows ext4_truncate is being sometimes called without makin=
+g any
+> > impact, and sometimes userspace programs might call ext4_truncate in ve=
+in. By
+> > detecting these calls and skipping them, cpu time is saved.
+> >
+> > I'll fix this by skipping ext4_truncate call in 'ext4_setattr' when the=
+ file's size
+> > hasn't changed AND it hasn't been truncated since the last disk space p=
+reallocation.
+> > It is meant to consider the case when ext4_truncate is being called to =
+truncate
+> > preallocated blocks too. Notice that so far, the condition to triggerin=
+g
+> > ext4_truncate by the user was: if (attr->ia_size <=3D oldsize) which me=
+ans it is
+> > being triggered when attr->ia_size =3D=3D oldsize regardless of whether=
+ there are
+> > preallocated blocks or not - if there are none, then the call is redund=
+ant.
+> >
+> > Steps:
+> > 1.Add a new inode state flag: EXT4_STATE_TRUNCATED
+> > 2.Clear the flag when ext4_fallocate is being called with FALLOC_FL_KEE=
+P_SIZE flag
+> > to enable using ext4_truncate again, to remove preallocated disk space =
+that may
+> > have resulted from this call.
+> > 3.Set EXT4_STATE_TRUNCATED when ext4_truncated is called successfully.
+> > 4.Don't skip ext4_truncate in ext4_setattr when the size of the file ha=
+s either been
+> > reduced OR stayed the same, but hasn't been truncated yet. This is in o=
+rder to allow
+> > truncating of preallocated blocks.
+>
+> This patch is still not quite right.  See Jan's comment from [1]:
+>
+>    Agreed as well. I'll also note that keeping such flag uptodate is not =
+as
+>    simple as it seems because there are various places that may be alloca=
+ting
+>    blocks beyond EOF (for example extending writes) and that rely on
+>    ext4_truncate() removing them so one needs to be careful to capture al=
+l the
+>    places where the "truncated" state needs to be cleared.
+>
+> [1] https://lore.kernel.org/all/20240930095601.x66iqw74bxffytgq@quack3/
+>
+>                                                 - Ted
 
-Well, moving between netns's may not be among the most common use cases, 
-but I can see people doing all kind of weird things, if not forbidden.
-
-Hence, I would not assume the netdevice to always stay in the same netns 
-all time long.
-
-This said, what you say assumes that the userspace process won't change 
-netns after having added the peer.
-I think we can live with that.
-
-I will change this call to use the sock's netns then.
-
-Thanks a lot!
-
-Regards,
-
-> 
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
-
+Okay I understand now, I initially thought any preallocation is necessarily=
+ done
+through a VFS interface. Now that I see preallocations are done at mballoc,
+what I can offer is to clear the TRUNCATED flag at ext4_mb_new_blocks().
+Would that be ok in your opinion?
 
