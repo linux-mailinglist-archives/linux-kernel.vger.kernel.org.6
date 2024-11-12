@@ -1,367 +1,308 @@
-Return-Path: <linux-kernel+bounces-405937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264479C5AF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:54:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3951A9C5981
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:49:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A778B45E49
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:32:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0634B44960
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F6F14D718;
-	Tue, 12 Nov 2024 13:29:29 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123B114A60D;
+	Tue, 12 Nov 2024 13:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QnMeUxCL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF3214A0AA
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C70175D29;
+	Tue, 12 Nov 2024 13:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418168; cv=none; b=INTalXUu+3VwxNizVGbjtyuWmwdnef7YnSU9Efc2qaXzMlZd5ugWFbR18yar4seOyfMyLp1MCQHn8d1DBijUVrM4xb4BZGuzmeUAnE5+yRqYl0FOOLFfxHvcoC37ddV4IkWEZWZ9AMIXqbvpMBNdrK8LyCYoohx/+t5WknxJB6M=
+	t=1731418007; cv=none; b=q/9SH/bk6k538z148wJTu4oqRtD+8lnX+Q2DsGQ4n/6tAdQabmDd6R5i96xT3YeE/sW3WwxIGO1gRbGa3BkDQCqnvwkzmtFcfCOHXrsQim91DRGTPa8o2tuhDH1xHWrTG0Bepsq7PpwoRUCSKCQjshE0lCUvXAevmVK4gUrnkQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418168; c=relaxed/simple;
-	bh=zy2p2xOJEBiWV8WLDdq3PmOk14afMKy1yudfTZUn+x8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iCockKjQh714Tql6xwVfOGEnNVemBJNtg/6s7bPEH6uU1BR4H0YIolLganmQ0UFrYD7RNYn9XqpwMl99bKL8m02AGta6XjeSVf+xI/CQ2BjbokmjNOizjvE+J2kDhXAMCgHtyDklQomZ5BLmB8ghbJ+8MYK8ZPEf82v9p4ERWQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XnnMJ5clwz1ypZK;
-	Tue, 12 Nov 2024 21:29:32 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6A99E14011D;
-	Tue, 12 Nov 2024 21:29:21 +0800 (CST)
-Received: from localhost.huawei.com (10.169.71.169) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 12 Nov 2024 21:29:19 +0800
-From: Yongbang Shi <shiyongbang@huawei.com>
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 drm-dp 1/5] drm/hisilicon/hibmc: add dp aux in hibmc
-Date: Tue, 12 Nov 2024 21:23:44 +0800
-Message-ID: <20241112132348.2631150-2-shiyongbang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20241112132348.2631150-1-shiyongbang@huawei.com>
-References: <20241112132348.2631150-1-shiyongbang@huawei.com>
+	s=arc-20240116; t=1731418007; c=relaxed/simple;
+	bh=oIMbZ9ptwU5KFKmKrw/D9b3binA2sVxMb9XxonfGc1g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=blXvRAYL95Kn0rOXy+wK0ZtAg4vw/xl1uhgS08w60zKHCvTd7273bjwcPHa0N5h8u6Erh6L3QLNWJf0V93fwclic9GXwvZNiwJFhmX6x39CB2UeuGx2zxPDJ4vr2arcIfaxSxELv9K6TSzfHrBLWWZn36/JGklXrfIbkHGT8w68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QnMeUxCL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F58C4CED9;
+	Tue, 12 Nov 2024 13:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731418006;
+	bh=oIMbZ9ptwU5KFKmKrw/D9b3binA2sVxMb9XxonfGc1g=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=QnMeUxCLzClWOU2bu8KffM7OELAykYwejmx5ZQGXbb8lC2AjkU51ueq8tuQq9rqaw
+	 OJxmri0LNftIWxmM7rhqB5233k1FOEt7PX+eqchs3SBFDY6Lx7RdA2+T/bd0iwoUcX
+	 5y050vofS4HARtDQ0CmCuqJPPPlalTbaTYaQqUNblsyn+qJ/uk2855WFT2H26+K2JG
+	 dutqUOfkUSO1QhF7CAqfaTV492jLBbpw9jePva4XNw7Nb2AYpg7lHPcU+K5GMC7LDx
+	 2bSGPR6+fhGzXYrLYOosuxoG4X7yaaQs5JsRE/VAYX60F7OpGJ7b0c94TTq3RROpvn
+	 dJnFCC1fWVrtw==
+From: Daniel Wagner <wagi@kernel.org>
+Date: Tue, 12 Nov 2024 14:26:20 +0100
+Subject: [PATCH v3 5/8] scsi: replace blk_mq_pci_map_queues with
+ blk_mq_hctx_map_queues
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241112-refactor-blk-affinity-helpers-v3-5-573bfca0cbd8@kernel.org>
+References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
+In-Reply-To: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, virtualization@lists.linux.dev, 
+ linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, 
+ mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, 
+ storagedev@microchip.com, linux-nvme@lists.infradead.org, 
+ Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
-From: baihan li <libaihan@huawei.com>
+Replace all users of blk_mq_pci_map_queues with the more generic
+blk_mq_hctx_map_queues. This in preparation to retire
+blk_mq_pci_map_queues.
 
-Add dp aux read/write functions. They are basic functions
-and will be used later.
-
-Signed-off-by: Baihan Li <libaihan@huawei.com>
-Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
 ---
-ChangeLog:
-v3 -> v4:
-  - retun error codes in  result incorrect branch, suggested by Dmitry Baryshkov.
-  - replacing all ret= with returns, suggested by Dmitry Baryshkov.
-  - moving the comment below the judgment statement, suggested by Dmitry Baryshkov.
-  - moving definations to the source file and clearing headers, suggested by Dmitry Baryshkov.
-  - reanaming dp_prefix to hibmc_dp_prefix, suggested by Dmitry Baryshkov.
-  - changing hibmc_dp_reg_write_field to static inline and lock, suggested by Dmitry Baryshkov.
-  - moving some structs to later patch, suggested by Dmitry Baryshkov.
-v2 -> v3:
-  - put the macro definations in latter patch where they are actually used, suggested by Dmitry Baryshkov.
-  - rename some macro definations to make them sensible, suggested by Dmitry Baryshkov.
-  - using FIELD_PREP and FIELD_GET, suggested by Dmitry Baryshkov.
-  - using DP_DPCD_REV_foo, suggested by Dmitry Baryshkov.
-  - fix build errors reported by kernel test robot <lkp@intel.com>
-    Closes: https://lore.kernel.org/oe-kbuild-all/202410250305.UHKDhtxy-lkp@intel.com/
-v1 -> v2:
-  - using drm_dp_aux frame implement dp aux read and write functions, suggested by Jani Nikula.
-  - using drm dp header files' dp macros instead, suggested by Andy Yan.
-  v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
----
- drivers/gpu/drm/hisilicon/hibmc/Makefile     |   3 +-
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c  | 164 +++++++++++++++++++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h |  39 +++++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h  |  27 +++
- 4 files changed, 232 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+ drivers/scsi/fnic/fnic_main.c             | 3 +--
+ drivers/scsi/hisi_sas/hisi_sas.h          | 1 -
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c    | 4 ++--
+ drivers/scsi/megaraid/megaraid_sas_base.c | 3 +--
+ drivers/scsi/mpi3mr/mpi3mr.h              | 1 -
+ drivers/scsi/mpi3mr/mpi3mr_os.c           | 2 +-
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c      | 3 +--
+ drivers/scsi/pm8001/pm8001_init.c         | 2 +-
+ drivers/scsi/pm8001/pm8001_sas.h          | 1 -
+ drivers/scsi/qla2xxx/qla_nvme.c           | 3 +--
+ drivers/scsi/qla2xxx/qla_os.c             | 4 ++--
+ drivers/scsi/smartpqi/smartpqi_init.c     | 7 +++----
+ 12 files changed, 13 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-index d25c75e60d3d..8770ec6dfffd 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
-+++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
--hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o
-+hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
-+	       dp/dp_aux.o
+diff --git a/drivers/scsi/fnic/fnic_main.c b/drivers/scsi/fnic/fnic_main.c
+index adec0df24bc475ea4d7d8089ea0f75fe96746956..74a782780cc4f8b298168bb14809973a8206095f 100644
+--- a/drivers/scsi/fnic/fnic_main.c
++++ b/drivers/scsi/fnic/fnic_main.c
+@@ -16,7 +16,6 @@
+ #include <linux/spinlock.h>
+ #include <linux/workqueue.h>
+ #include <linux/if_ether.h>
+-#include <linux/blk-mq-pci.h>
+ #include <scsi/fc/fc_fip.h>
+ #include <scsi/scsi_host.h>
+ #include <scsi/scsi_transport.h>
+@@ -601,7 +600,7 @@ void fnic_mq_map_queues_cpus(struct Scsi_Host *host)
+ 		return;
+ 	}
  
- obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
-new file mode 100644
-index 000000000000..16bdfefbf255
---- /dev/null
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0-or-laterHIBMC_BYTES_IN_U32
-+// Copyright (c) 2024 Hisilicon Limited.
-+
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/minmax.h>
-+#include <drm/drm_device.h>
-+#include <drm/drm_print.h>
-+#include "dp_comm.h"
-+#include "dp_reg.h"
-+
-+#define HIBMC_AUX_CMD_REQ_LEN		GENMASK(7, 4)
-+#define HIBMC_AUX_CMD_ADDR		GENMASK(27, 8)
-+#define HIBMC_AUX_CMD_I2C_ADDR_ONLY	BIT(28)
-+#define HIBMC_BYTES_IN_U32		4
-+#define HIBMC_AUX_I2C_WRITE_SUCCESS	0x1
-+#define HIBMC_DP_MIN_PULSE_NUM		0x9
-+#define BITS_IN_U8			8
-+
-+static inline void hibmc_dp_aux_reset(struct hibmc_dp_dev *dp)
-+{
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_DPTX_RST_CTRL, HIBMC_DP_CFG_AUX_RST_N, 0x0);
-+	usleep_range(10, 15);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_DPTX_RST_CTRL, HIBMC_DP_CFG_AUX_RST_N, 0x1);
-+}
-+
-+static void hibmc_dp_aux_read_data(struct hibmc_dp_dev *dp, u8 *buf, u8 size)
-+{
-+	u32 reg_num;
-+	u32 value;
-+	u32 num;
-+	u8 i, j;
-+
-+	reg_num = DIV_ROUND_UP(size, HIBMC_BYTES_IN_U32);
-+	for (i = 0; i < reg_num; i++) {
-+		/* number of bytes read from a single register */
-+		num = min(size - i * HIBMC_BYTES_IN_U32, HIBMC_BYTES_IN_U32);
-+		value = readl(dp->base + HIBMC_DP_AUX_RD_DATA0 + i * HIBMC_BYTES_IN_U32);
-+		/* convert the 32-bit value of the register to the buffer. */
-+		for (j = 0; j < num; j++)
-+			buf[i * HIBMC_BYTES_IN_U32 + j] = value >> (j * BITS_IN_U8);
-+	}
-+}
-+
-+static void hibmc_dp_aux_write_data(struct hibmc_dp_dev *dp, u8 *buf, u8 size)
-+{
-+	u32 reg_num;
-+	u32 value;
-+	u32 num;
-+	u8 i, j;
-+
-+	reg_num = DIV_ROUND_UP(size, HIBMC_BYTES_IN_U32);
-+	for (i = 0; i < reg_num; i++) {
-+		/* number of bytes written to a single register */
-+		num = min_t(u8, size - i * HIBMC_BYTES_IN_U32, HIBMC_BYTES_IN_U32);
-+		value = 0;
-+		/* obtain the 32-bit value written to a single register. */
-+		for (j = 0; j < num; j++)
-+			value |= buf[i * HIBMC_BYTES_IN_U32 + j] << (j * BITS_IN_U8);
-+		/* writing data to a single register */
-+		writel(value, dp->base + HIBMC_DP_AUX_WR_DATA0 + i * HIBMC_BYTES_IN_U32);
-+	}
-+}
-+
-+static u32 hibmc_dp_aux_build_cmd(const struct drm_dp_aux_msg *msg)
-+{
-+	u32 aux_cmd = msg->request;
-+
-+	if (msg->size)
-+		aux_cmd |= FIELD_PREP(HIBMC_AUX_CMD_REQ_LEN, (msg->size - 1));
-+	else
-+		aux_cmd |= FIELD_PREP(HIBMC_AUX_CMD_I2C_ADDR_ONLY, 1);
-+
-+	aux_cmd |= FIELD_PREP(HIBMC_AUX_CMD_ADDR, msg->address);
-+
-+	return aux_cmd;
-+}
-+
-+/* ret >= 0, ret is size; ret < 0, ret is err code */
-+static int hibmc_dp_aux_parse_xfer(struct hibmc_dp_dev *dp, struct drm_dp_aux_msg *msg)
-+{
-+	u32 buf_data_cnt;
-+	u32 aux_status;
-+
-+	aux_status = readl(dp->base + HIBMC_DP_AUX_STATUS);
-+	msg->reply = FIELD_GET(HIBMC_DP_CFG_AUX_STATUS, aux_status);
-+
-+	if (aux_status & HIBMC_DP_CFG_AUX_TIMEOUT)
-+		return -ETIMEDOUT;
-+
-+	/* only address */
-+	if (!msg->size)
-+		return 0;
-+
-+	if (msg->reply != DP_AUX_NATIVE_REPLY_ACK)
-+		return -EIO;
-+
-+	buf_data_cnt = FIELD_GET(HIBMC_DP_CFG_AUX_READY_DATA_BYTE, aux_status);
-+
-+	switch (msg->request) {
-+	case DP_AUX_NATIVE_WRITE:
-+		return msg->size;
-+	case DP_AUX_I2C_WRITE | DP_AUX_I2C_MOT:
-+		if (buf_data_cnt == HIBMC_AUX_I2C_WRITE_SUCCESS)
-+			return msg->size;
-+		else
-+			return FIELD_GET(HIBMC_DP_CFG_AUX, aux_status);
-+	case DP_AUX_NATIVE_READ:
-+	case DP_AUX_I2C_READ | DP_AUX_I2C_MOT:
-+		buf_data_cnt--;
-+		if (buf_data_cnt != msg->size) {
-+			/* only the successful part of data is read */
-+			return -EBUSY;
-+		}
-+
-+		/* all data is successfully read */
-+		hibmc_dp_aux_read_data(dp, msg->buffer, msg->size);
-+		return msg->size;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+/* ret >= 0 ,ret is size; ret < 0, ret is err code */
-+static ssize_t hibmc_dp_aux_xfer(struct drm_dp_aux *aux, struct drm_dp_aux_msg *msg)
-+{
-+	struct hibmc_dp_dev *dp = container_of(aux, struct hibmc_dp_dev, aux);
-+	u32 aux_cmd;
-+	int ret;
-+	u32 val; /* val will be assigned at the beginning of readl_poll_timeout function */
-+
-+	writel(0, dp->base + HIBMC_DP_AUX_WR_DATA0);
-+	writel(0, dp->base + HIBMC_DP_AUX_WR_DATA1);
-+	writel(0, dp->base + HIBMC_DP_AUX_WR_DATA2);
-+	writel(0, dp->base + HIBMC_DP_AUX_WR_DATA3);
-+
-+	hibmc_dp_aux_write_data(dp, msg->buffer, msg->size);
-+
-+	aux_cmd = hibmc_dp_aux_build_cmd(msg);
-+	writel(aux_cmd, dp->base + HIBMC_DP_AUX_CMD_ADDR);
-+
-+	/* enable aux transfer */
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_REQ, 0x1);
-+	ret = readl_poll_timeout(dp->base + HIBMC_DP_AUX_REQ, val,
-+				 !(val & HIBMC_DP_CFG_AUX_REQ), 50, 5000);
-+	if (ret) {
-+		hibmc_dp_aux_reset(dp);
-+		return ret;
-+	}
-+
-+	return hibmc_dp_aux_parse_xfer(dp, msg);
-+}
-+
-+void hibmc_dp_aux_init(struct hibmc_dp_dev *dp)
-+{
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_SYNC_LEN_SEL, 0x0);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_TIMER_TIMEOUT, 0x1);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_MIN_PULSE_NUM,
-+				 HIBMC_DP_MIN_PULSE_NUM);
-+
-+	dp->aux.transfer = hibmc_dp_aux_xfer;
-+	dp->aux.is_remote = 0;
-+	drm_dp_aux_init(&dp->aux);
-+}
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
-new file mode 100644
-index 000000000000..eff4c39fa7e5
---- /dev/null
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
-@@ -0,0 +1,39 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* Copyright (c) 2024 Hisilicon Limited. */
-+
-+#ifndef DP_COMM_H
-+#define DP_COMM_H
-+
-+#include <linux/types.h>
-+#include <linux/bitops.h>
-+#include <linux/errno.h>
-+#include <linux/mutex.h>
-+#include <linux/kernel.h>
-+#include <linux/bitfield.h>
-+#include <linux/io.h>
-+#include <drm/display/drm_dp_helper.h>
-+
-+struct hibmc_dp_dev {
-+	struct drm_dp_aux aux;
-+	struct drm_device *dev;
-+	void __iomem *base;
-+	struct mutex lock; /* protects concurrent RW in hibmc_dp_reg_write_field() */
-+};
-+
-+static inline void hibmc_dp_reg_write_field(struct hibmc_dp_dev *dp, u32 offset, u32 mask, u32 val)
-+{
-+	u32 value;
-+
-+	mutex_lock(&dp->lock);
-+
-+	value = readl(dp->base + offset);
-+	value &= ~mask;
-+	value |= FIELD_PREP(mask, val);
-+	writel(value, dp->base + offset);
-+
-+	mutex_unlock(&dp->lock);
-+}
-+
-+void hibmc_dp_aux_init(struct hibmc_dp_dev *dp);
-+
-+#endif
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-new file mode 100644
-index 000000000000..f3e6781e111a
---- /dev/null
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* Copyright (c) 2024 Hisilicon Limited. */
-+
-+#ifndef DP_REG_H
-+#define DP_REG_H
-+
-+#define HIBMC_DP_AUX_CMD_ADDR			0x50
-+#define HIBMC_DP_AUX_WR_DATA0			0x54
-+#define HIBMC_DP_AUX_WR_DATA1			0x58
-+#define HIBMC_DP_AUX_WR_DATA2			0x5c
-+#define HIBMC_DP_AUX_WR_DATA3			0x60
-+#define HIBMC_DP_AUX_RD_DATA0			0x64
-+#define HIBMC_DP_AUX_REQ			0x74
-+#define HIBMC_DP_AUX_STATUS			0x78
-+#define HIBMC_DP_DPTX_RST_CTRL			0x700
-+
-+#define HIBMC_DP_CFG_AUX_SYNC_LEN_SEL		BIT(1)
-+#define HIBMC_DP_CFG_AUX_TIMER_TIMEOUT		BIT(2)
-+#define HIBMC_DP_CFG_AUX_MIN_PULSE_NUM		GENMASK(13, 9)
-+#define HIBMC_DP_CFG_AUX_REQ			BIT(0)
-+#define HIBMC_DP_CFG_AUX_RST_N			BIT(4)
-+#define HIBMC_DP_CFG_AUX_TIMEOUT		BIT(0)
-+#define HIBMC_DP_CFG_AUX_READY_DATA_BYTE	GENMASK(16, 12)
-+#define HIBMC_DP_CFG_AUX			GENMASK(24, 17)
-+#define HIBMC_DP_CFG_AUX_STATUS			GENMASK(11, 4)
-+
-+#endif
+-	blk_mq_pci_map_queues(qmap, l_pdev, FNIC_PCI_OFFSET);
++	blk_mq_hctx_map_queues(qmap, &l_pdev->dev, FNIC_PCI_OFFSET);
+ }
+ 
+ static int fnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
+index d223f482488fc6cebc2838e92ae7ec70fb4e1437..010479a354eeeb47bbee24102e450aa3b7ea6197 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas.h
++++ b/drivers/scsi/hisi_sas/hisi_sas.h
+@@ -9,7 +9,6 @@
+ 
+ #include <linux/acpi.h>
+ #include <linux/blk-mq.h>
+-#include <linux/blk-mq-pci.h>
+ #include <linux/clk.h>
+ #include <linux/debugfs.h>
+ #include <linux/dmapool.h>
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index 4cd3a3eab6f1c47c962565a74cd7284dad1db12e..7858c807be5eacb70ded5ec9399c6531a4ef6116 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -3322,8 +3322,8 @@ static void hisi_sas_map_queues(struct Scsi_Host *shost)
+ 		if (i == HCTX_TYPE_POLL)
+ 			blk_mq_map_queues(qmap);
+ 		else
+-			blk_mq_pci_map_queues(qmap, hisi_hba->pci_dev,
+-					      BASE_VECTORS_V3_HW);
++			blk_mq_hctx_map_queues(qmap, &hisi_hba->pci_dev->dev,
++					       BASE_VECTORS_V3_HW);
+ 		qoff += qmap->nr_queues;
+ 	}
+ }
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index 8e75e2e279a40ae5fdc6b7b07a7aed15241a8d54..0180bb56de52bb57f15fae22df0d413cdd576ba3 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -37,7 +37,6 @@
+ #include <linux/poll.h>
+ #include <linux/vmalloc.h>
+ #include <linux/irq_poll.h>
+-#include <linux/blk-mq-pci.h>
+ 
+ #include <scsi/scsi.h>
+ #include <scsi/scsi_cmnd.h>
+@@ -3193,7 +3192,7 @@ static void megasas_map_queues(struct Scsi_Host *shost)
+ 	map = &shost->tag_set.map[HCTX_TYPE_DEFAULT];
+ 	map->nr_queues = instance->msix_vectors - offset;
+ 	map->queue_offset = 0;
+-	blk_mq_pci_map_queues(map, instance->pdev, offset);
++	blk_mq_hctx_map_queues(map, &instance->pdev->dev, offset);
+ 	qoff += map->nr_queues;
+ 	offset += map->nr_queues;
+ 
+diff --git a/drivers/scsi/mpi3mr/mpi3mr.h b/drivers/scsi/mpi3mr/mpi3mr.h
+index 81bb408ce56d8f9599e6f62276666bedce6d0d32..57ccea42ece1ecf1c471ee744213453b13db0ea1 100644
+--- a/drivers/scsi/mpi3mr/mpi3mr.h
++++ b/drivers/scsi/mpi3mr/mpi3mr.h
+@@ -12,7 +12,6 @@
+ 
+ #include <linux/blkdev.h>
+ #include <linux/blk-mq.h>
+-#include <linux/blk-mq-pci.h>
+ #include <linux/delay.h>
+ #include <linux/dmapool.h>
+ #include <linux/errno.h>
+diff --git a/drivers/scsi/mpi3mr/mpi3mr_os.c b/drivers/scsi/mpi3mr/mpi3mr_os.c
+index 5f2f67acf8bf3194cb8ec78904096ffb4bdd7ff2..e898b476af6dc84eb150ec867e6be8dd1b2d4d8a 100644
+--- a/drivers/scsi/mpi3mr/mpi3mr_os.c
++++ b/drivers/scsi/mpi3mr/mpi3mr_os.c
+@@ -4042,7 +4042,7 @@ static void mpi3mr_map_queues(struct Scsi_Host *shost)
+ 		 */
+ 		map->queue_offset = qoff;
+ 		if (i != HCTX_TYPE_POLL)
+-			blk_mq_pci_map_queues(map, mrioc->pdev, offset);
++			blk_mq_hctx_map_queues(map, &mrioc->pdev->dev, offset);
+ 		else
+ 			blk_mq_map_queues(map);
+ 
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+index f2a55aa5fe65036a3beabae5c0c6e9db835d2aab..efb95fcef7ed71fc5daea215508e04b602d31663 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -53,7 +53,6 @@
+ #include <linux/pci.h>
+ #include <linux/interrupt.h>
+ #include <linux/raid_class.h>
+-#include <linux/blk-mq-pci.h>
+ #include <linux/unaligned.h>
+ 
+ #include "mpt3sas_base.h"
+@@ -11890,7 +11889,7 @@ static void scsih_map_queues(struct Scsi_Host *shost)
+ 		 */
+ 		map->queue_offset = qoff;
+ 		if (i != HCTX_TYPE_POLL)
+-			blk_mq_pci_map_queues(map, ioc->pdev, offset);
++			blk_mq_hctx_map_queues(map, &ioc->pdev->dev, offset);
+ 		else
+ 			blk_mq_map_queues(map);
+ 
+diff --git a/drivers/scsi/pm8001/pm8001_init.c b/drivers/scsi/pm8001/pm8001_init.c
+index 33e1eba62ca12c2555419197ecdbebad817e4a6d..035e102979f0de34b637be81e0f64b588a3893c8 100644
+--- a/drivers/scsi/pm8001/pm8001_init.c
++++ b/drivers/scsi/pm8001/pm8001_init.c
+@@ -101,7 +101,7 @@ static void pm8001_map_queues(struct Scsi_Host *shost)
+ 	struct blk_mq_queue_map *qmap = &shost->tag_set.map[HCTX_TYPE_DEFAULT];
+ 
+ 	if (pm8001_ha->number_of_intr > 1) {
+-		blk_mq_pci_map_queues(qmap, pm8001_ha->pdev, 1);
++		blk_mq_hctx_map_queues(qmap, &pm8001_ha->pdev->dev, 1);
+ 		return;
+ 	}
+ 
+diff --git a/drivers/scsi/pm8001/pm8001_sas.h b/drivers/scsi/pm8001/pm8001_sas.h
+index ced6721380a85345a74a87ebd2facdaa513f8768..c46470e0cf63b7b18b9572c8d6b4f4ddf489aa2b 100644
+--- a/drivers/scsi/pm8001/pm8001_sas.h
++++ b/drivers/scsi/pm8001/pm8001_sas.h
+@@ -56,7 +56,6 @@
+ #include <scsi/sas_ata.h>
+ #include <linux/atomic.h>
+ #include <linux/blk-mq.h>
+-#include <linux/blk-mq-pci.h>
+ #include "pm8001_defs.h"
+ 
+ #define DRV_NAME		"pm80xx"
+diff --git a/drivers/scsi/qla2xxx/qla_nvme.c b/drivers/scsi/qla2xxx/qla_nvme.c
+index 8f4cc136a9c9c46f5f2d5408f9b7688ef520a8a3..2b2eeec159880d0178eb07455a7eac0e63d66af4 100644
+--- a/drivers/scsi/qla2xxx/qla_nvme.c
++++ b/drivers/scsi/qla2xxx/qla_nvme.c
+@@ -8,7 +8,6 @@
+ #include <linux/delay.h>
+ #include <linux/nvme.h>
+ #include <linux/nvme-fc.h>
+-#include <linux/blk-mq-pci.h>
+ #include <linux/blk-mq.h>
+ 
+ static struct nvme_fc_port_template qla_nvme_fc_transport;
+@@ -841,7 +840,7 @@ static void qla_nvme_map_queues(struct nvme_fc_local_port *lport,
+ {
+ 	struct scsi_qla_host *vha = lport->private;
+ 
+-	blk_mq_pci_map_queues(map, vha->hw->pdev, vha->irq_offset);
++	blk_mq_hctx_map_queues(map, &vha->hw->pdev->dev, vha->irq_offset);
+ }
+ 
+ static void qla_nvme_localport_delete(struct nvme_fc_local_port *lport)
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 7f980e6141c28282d4c4a0123dda96e36e1f180e..acf26d09fa4563409d50fbba118f3b37732a7c8b 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -13,7 +13,6 @@
+ #include <linux/mutex.h>
+ #include <linux/kobject.h>
+ #include <linux/slab.h>
+-#include <linux/blk-mq-pci.h>
+ #include <linux/refcount.h>
+ #include <linux/crash_dump.h>
+ #include <linux/trace_events.h>
+@@ -8070,7 +8069,8 @@ static void qla2xxx_map_queues(struct Scsi_Host *shost)
+ 	if (USER_CTRL_IRQ(vha->hw) || !vha->hw->mqiobase)
+ 		blk_mq_map_queues(qmap);
+ 	else
+-		blk_mq_pci_map_queues(qmap, vha->hw->pdev, vha->irq_offset);
++		blk_mq_hctx_map_queues(qmap, &vha->hw->pdev->dev,
++				       vha->irq_offset);
+ }
+ 
+ struct scsi_host_template qla2xxx_driver_template = {
+diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+index 870f37b7054644426a2695e857c45a0a12aff051..501af16d872b1295071a99208248f1d83f072ab5 100644
+--- a/drivers/scsi/smartpqi/smartpqi_init.c
++++ b/drivers/scsi/smartpqi/smartpqi_init.c
+@@ -19,7 +19,6 @@
+ #include <linux/bcd.h>
+ #include <linux/reboot.h>
+ #include <linux/cciss_ioctl.h>
+-#include <linux/blk-mq-pci.h>
+ #include <scsi/scsi_host.h>
+ #include <scsi/scsi_cmnd.h>
+ #include <scsi/scsi_device.h>
+@@ -6547,10 +6546,10 @@ static void pqi_map_queues(struct Scsi_Host *shost)
+ 	struct pqi_ctrl_info *ctrl_info = shost_to_hba(shost);
+ 
+ 	if (!ctrl_info->disable_managed_interrupts)
+-		return blk_mq_pci_map_queues(&shost->tag_set.map[HCTX_TYPE_DEFAULT],
+-			      ctrl_info->pci_dev, 0);
++		blk_mq_hctx_map_queues(&shost->tag_set.map[HCTX_TYPE_DEFAULT],
++				       &ctrl_info->pci_dev->dev, 0);
+ 	else
+-		return blk_mq_map_queues(&shost->tag_set.map[HCTX_TYPE_DEFAULT]);
++		blk_mq_map_queues(&shost->tag_set.map[HCTX_TYPE_DEFAULT]);
+ }
+ 
+ static inline bool pqi_is_tape_changer_device(struct pqi_scsi_dev *device)
+
 -- 
-2.33.0
+2.47.0
 
 
