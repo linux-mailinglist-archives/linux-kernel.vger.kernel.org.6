@@ -1,60 +1,65 @@
-Return-Path: <linux-kernel+bounces-406787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D389C63F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:04:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C18A49C63FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:04:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2BF1F234C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8773A282615
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C084921B426;
-	Tue, 12 Nov 2024 22:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B92A21CF84;
+	Tue, 12 Nov 2024 22:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dt3sFz3P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rLaHEMOa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2154D21B424;
-	Tue, 12 Nov 2024 22:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F1D21C183;
+	Tue, 12 Nov 2024 22:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731449014; cv=none; b=oqzpZNpx/An3xDqEHdMUccL+ZDVaqeZnaFv2t0w2aeG8/yzUXjYyQpwEV36Z3ohQ/9r7MTztl2QnqxGPkqfQP36mxoj2p0GB2EVKf5cZYQqKP9bRJMj/A/oYoJhogBXM4LAcIufirEnhz49bqjTcVePGTih6fkni1fwt3LpW0V8=
+	t=1731449015; cv=none; b=hMbp+2bntZ0GxYtkGoTKNlobSnSp1x1TKs99+5iwuCUDDWgDxwk2Az8Hh4dI1LlNiSp5Z//A2j+92IMNqAZpHgjlVrvKheg9QLWMHtHGnxrm80ys9cDma5e2d7Hl/3cTT2h28EqLWK2+oNQL71rmzrJ2AULHfhKpnVPLfws9ISs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731449014; c=relaxed/simple;
-	bh=VoyiItH2WzLyLZQuXSJwnl9oyXEH+P6ej+K6mLzRhBs=;
+	s=arc-20240116; t=1731449015; c=relaxed/simple;
+	bh=KeJGsxNdwMDblU+WLQlC0Bhbh2V9aAhYOvAhwgxySbI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=syK79vz3umGRnDjg7ZyOcLgVxsI3CXrAYER+wxLHsHwhx5Da/gEx4f6aWr7v1FGfv3N7HlHa++e9TqUoTV67Ov9ez6E1VGn2oZa9cNB2nYMS/LGXYO8YY9wINsHtBPVcbljflpP/dtlXtX5pMQSMF9Qn1csz/608l1cxUmE84Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dt3sFz3P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DF3CC4CEDD;
-	Tue, 12 Nov 2024 22:03:32 +0000 (UTC)
+	 MIME-Version:Content-Type; b=o6yPnyYAlA7HIhSF/KZTCJWDLNYvBr1/rtBBpgTpXkQ3IBHGyVNd+nhN/H1LPeZFkbBufGOb5qZs9UrY2mtG119DPDw+1uzovNAcQ8dxHBAs9qKqNRg59gl86HjFPiT6K3aIFT9SUwxnkSuyU0zlFF9k9Mdwi+kj56fSgwe7fkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rLaHEMOa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06974C4CECD;
+	Tue, 12 Nov 2024 22:03:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731449013;
-	bh=VoyiItH2WzLyLZQuXSJwnl9oyXEH+P6ej+K6mLzRhBs=;
+	s=k20201202; t=1731449015;
+	bh=KeJGsxNdwMDblU+WLQlC0Bhbh2V9aAhYOvAhwgxySbI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dt3sFz3P3Oc+XSmVHStBAHRgT/T/d4sV/0hlPA83AF1uWI3ifhghOFcCuKhxFmuDN
-	 oLdxG8sMbllOJ+qi1NG7Iszi4pEV637bK50DTkk9Xnuw3DjxZvwMZsU0qfYX6i+G5H
-	 Jm3BWRF361XUccp04psTF76b6u1F1B8+iJVj2rDg8q7rcOUT0Pw7aKQqzzsIcX9yC8
-	 WfywI8FRWfmD4NNQq/Sva7D/hw1e0UOe+L+ybP83pebzxnNGDNYlbjvxRlew8/+xUo
-	 4rUylMxVc8WOflLloPBhsbXctDHzBzN7UcryAVRJ1E5vhEPQ7Z46hXBQzkitfjKBy3
-	 yGgPBebCdw4Ww==
+	b=rLaHEMOa+bLds5ARNZvbtZ+aASRK5VG+VxxvHp5Su/q8bLn1/VwS/Wfvw8BInYQHy
+	 JHE9zH/yXvXsTkVdh5cyHDLt0nPIIu3KsSQtg3rbGmcG73AMo5y/8GWE7rS3mEPBRL
+	 nIELYwSMGCDfa2d88xmum2FXIyZ/CCVtu/X98zJLue6P6ZMUDJG39HTc3yEKNFoL7b
+	 2KsLJ7NSGvw47dNK2ZU6guzA28UAgsL/UcPqz6PH99CfomgeOQLpTtbP+ibEyK1QRi
+	 N6+iDMBK7JQH5ZFBA+tTA6zwxUdfE8azPkeD/NQC5jaf69uIQXAVNOrj8Aj9Lymywn
+	 DKP3O4hl6Mvdg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Gabor Juhos <j4g8y7@gmail.com>
+To: konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Qiang Yu <quic_qianyu@quicinc.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: arm: qcom: add missing elements to the SoC list
-Date: Tue, 12 Nov 2024 16:03:26 -0600
-Message-ID: <173144900028.331728.332393464841439368.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	quic_cang@quicinc.com,
+	quic_mrana@quicinc.com,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: (subset) [PATCH v9 1/1] arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
+Date: Tue, 12 Nov 2024 16:03:28 -0600
+Message-ID: <173144900026.331728.17768587034144952108.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241029-qcom-missing-socs-v1-1-c5bf587b0afc@gmail.com>
-References: <20241029-qcom-missing-socs-v1-1-c5bf587b0afc@gmail.com>
+In-Reply-To: <20241105073615.3076979-1-quic_qianyu@quicinc.com>
+References: <20241105073615.3076979-1-quic_qianyu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,17 +70,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 29 Oct 2024 18:35:25 +0100, Gabor Juhos wrote:
-> There are multiple compatible strings defined in the json schema
-> for SoCs which are not included in the SoC elements list. Extend
-> the list with those items for completeness.
+On Mon, 04 Nov 2024 23:36:14 -0800, Qiang Yu wrote:
+> Describe PCIe3 controller and PHY. Also add required system resources like
+> regulators, clocks, interrupts and registers configuration for PCIe3.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] dt-bindings: arm: qcom: add missing elements to the SoC list
-      commit: 64d2571a3751b83cde7f4843fb2a69b8c19e168b
+[1/1] arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
+      commit: f8af195beeb0096cdcd1610ac70b544fa1831f2e
 
 Best regards,
 -- 
