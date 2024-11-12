@@ -1,119 +1,99 @@
-Return-Path: <linux-kernel+bounces-405959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2999C594D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:40:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FD49C5951
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:41:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AD71281E43
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:40:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D5B1F225D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E24B1531C8;
-	Tue, 12 Nov 2024 13:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1026156F3F;
+	Tue, 12 Nov 2024 13:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CLPs44Cy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXc2Ku8/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D00146588;
-	Tue, 12 Nov 2024 13:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D11E146588;
+	Tue, 12 Nov 2024 13:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418754; cv=none; b=RN3eFiSCrvGgEb4+WAONfokxbUne9TfCszxw7B2hrloBkT1fqKRUS+yGhKM4TP9twAk9uFZflsSFZY74tV3hjdvlTwYc9Au2VodGTfqAa5ZY5vknPH6WtjBNO0UxIDQ8/RtodqMBot33XIu4E4/SUJAhUkFu6wtzb1n0jygvn+U=
+	t=1731418758; cv=none; b=JPsWngXwV+ZENCOui6le1RQQ2hQZqCIUVf/7RGP15+fyNtXI4xvMV0nwViEy8Ih+Mdw8XaY2rkJHHH/2W0tZxJ5ESkrlveCc01RYq2UWsS3eoXyN8C/i5vDn/h0mca/DLUcdSqc1FnupmvFdqJ2hNYopj3/134cLLXd+Gnid4VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418754; c=relaxed/simple;
-	bh=QWqvc1LvXeG+SmqZ+bxT10cWUO4NqhHVKuykl2vk67c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZiknC7k1P9TdLBUk+e3YfeVWlNFIrjaZLWfAmKIIZ2w/WdlAJcftrlzOX6JmRmnwypRAluqmNWxDNmK/4uBxvVLLhOK9I7d5MSVvnixNriCAYxicEIQIcMObFat6dMBSGxEWAx7JFQ6YkUnMQ5Gs6+gJHXPMnkCt/3cPwNX6Zxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CLPs44Cy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACC5fYG024633;
-	Tue, 12 Nov 2024 13:39:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=3CUTZrt1mOHGDtCBesRayO
-	vBKBMMBt3I9DYvj+AcyT8=; b=CLPs44CyFjqLaD0+LrqKXIhVz3+E+YL+iewgHw
-	CFdPOX9y8Chd3BQD5rvZZQ/47gKzoUZSd3d95r0zIda7jXeawFxYQI5yHCG27VCJ
-	ZsYJ2ImmHSELtqJoyN2fM+dAOALsaU+D4Ppa746A4afT5PZAy4SF80CUAYN8UYFJ
-	JZudlikNIPGBANUOe32Yeyra8CwoQPx8o9gkuJ5T3LheICfrpkTo+uuovgyac3dJ
-	dFxY25uWnnxshht3j10zFRUXGDbBEN8A6odUQI00TEbDX3qdWyOark+YD1KXTMP2
-	HxSWw0hbl7UQ/0tssX/JjuwCQUSEXEz3ayXFJrDzA1CnoGAA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0gkyar9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 13:39:08 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACDd8rm023814
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 13:39:08 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 12 Nov 2024 05:39:02 -0800
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <krzk+dt@kernel.org>
-CC: <quic_vikramsa@quicinc.com>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: [PATCH v2 0/1] media: qcom: camss: Re-structure camss_link_entities 
-Date: Tue, 12 Nov 2024 19:08:45 +0530
-Message-ID: <20241112133846.2397017-1-quic_vikramsa@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1731418758; c=relaxed/simple;
+	bh=HTj17UKyqcpA32aPMJQ3rZjYn3JmkdLEXjK/gMdzqCA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yxw5TQwRx1z6u7aqRkvEoEgpJHqytDS2mL5bAOY3YxQTzqROx/m2TFJbLC6vIOYBA447sd9FFaCT8ajP8fQbLTM9EBhg+6OawifDyrU+jH2Ct2akQTq30+L0YjHnqR+BqAEFgBi73Makmtcj7yLdeiqH9kEm1CZBQUfgornarGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXc2Ku8/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F80C4CEDB;
+	Tue, 12 Nov 2024 13:39:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731418757;
+	bh=HTj17UKyqcpA32aPMJQ3rZjYn3JmkdLEXjK/gMdzqCA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eXc2Ku8/olNbsZEVPMf2palHyjma7qRQoxzHjERM5iQpNDbcxZLbXo/UiBevB+Lhh
+	 E9q4n3mKGwqFVZnPiAD8J90B76XifpzX5JUdf7pWSe2puJS2CpVs4p3LE8FaG5BBLq
+	 dSQyWUNosd/dgF8MyFLvZsYNE5cLRX4dEMyNAlm169VZcYicVeKGIWsUCClemBMSaN
+	 bQdI4axDcgspd7KUkNBWTWB3Z019OKfBFBkqJEHw7PzLq8YHz+/P3NfGLWh60Qsi9Q
+	 MlGLLuoyNih0/rVkWkTasPlMXZAUpsVAxW9VY8a+DiCeHTwvtwZy2mXF8SwJ/KtqKA
+	 NONyY4J+evjsw==
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e28fd8cdfb8so5410042276.3;
+        Tue, 12 Nov 2024 05:39:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUpPYnvUF4Ur9iYUthXLFbxIXea0CXiwwSvJsPyHke5L47cFqy76jAIQx0u04uZQZYG+CnXlqiPZuBB@vger.kernel.org, AJvYcCWTH7BuEJ/0UcYrbQfin/l7jE1k8mJ1MfHw/c5HJtn/96pCitmjkPDPNY3cqLVJB03M6JAStH5RH6AmrY7J@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg1nSH5vPyt4696s5nTgJYBQ9Or7qTv6buz8uDoCXiZYMutD9b
+	kYxi4ou5beS+RNo2eZNYPqA5UKcVkVNDVKtOJhV7HI1Byf79GGtnlexBgyfLSI85WuWFEommi+W
+	fUW5X6Hb9qAvLC7izeL3ogJMPQw==
+X-Google-Smtp-Source: AGHT+IGc8OfE6fahX5PrDtu1pkdAInjlDFVeCPxxhNJ8gOu0N6jx2xL+Bj/4hQIgNw4xoSxx9H8K2P1VyeuKsAdP/ss=
+X-Received: by 2002:a05:6902:150b:b0:e29:1630:785c with SMTP id
+ 3f1490d57ef6-e337f840d8emr15583204276.10.1731418756964; Tue, 12 Nov 2024
+ 05:39:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: G34tJmpS5oxOELAXmS2FWHsZl9_WbRU0
-X-Proofpoint-GUID: G34tJmpS5oxOELAXmS2FWHsZl9_WbRU0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=642 lowpriorityscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411120109
+References: <20241110-of-alias-v2-0-16da9844a93e@beagleboard.org>
+In-Reply-To: <20241110-of-alias-v2-0-16da9844a93e@beagleboard.org>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 12 Nov 2024 07:39:06 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+72Q6LyOj1va_qcyCVkSRwqGNvBFfB9NNOgYXasAFYJQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+72Q6LyOj1va_qcyCVkSRwqGNvBFfB9NNOgYXasAFYJQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Update aliases when added or removed
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: Saravana Kannan <saravanak@google.com>, d-gole@ti.com, jkridner@beagleboard.org, 
+	lorforlinux@beagleboard.org, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Andrew Davis <afd@ti.com>, robertcnelson@beagleboard.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Refactor the camss_link_entities function by breaking it down into
-three distinct functions. Each function will handle the linking of
-a specific entity separately, enhancing readability.
+On Sat, Nov 9, 2024 at 1:52=E2=80=AFPM Ayush Singh <ayush@beagleboard.org> =
+wrote:
+>
+> Currently the list of aliases is not updated when a DT overlay that adds
+> an alias is loaded or unloaded. This break drivers (e.g. serial) that
+> rely on of_alias_get_id().
 
-Changes in V2:
-- Declared variables in reverse christmas tree order.
-- Functionally decomposed link error message.
-- Link to v1: https://lore.kernel.org/linux-arm-msm/20241111173845.1773553-1-quic_vikramsa@quicinc.com/ 
+Drivers use the non-existent alias numbers for instances without an
+alias. So what happens if an index is already in use and then an
+overlay uses the same index.
 
-  To: Robert Foss <rfoss@kernel.org>
-  To: Todor Tomov <todor.too@gmail.com>
-  To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-  To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-  Cc: linux-arm-msm@vger.kernel.org
-  Cc: linux-media@vger.kernel.org
-  Cc: linux-kernel@vger.kernel.org
+I don't see how this can work reliably unless the alias name doesn't
+exist in the base DT.
 
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> This picks up the original patch series from Geert Uytterhoeven.
+>
+> I have not added unittests in this version since I am not sure if kunit
+> tests should be added, or if the runtime unittests (CONFIG_OF_UNITTEST)
+> need to be added. Additionally, it would be great if someone can inform
+> me how to run the runtime unittests since the unittests seem to fail in
+> my current setup (tried running on qemu x86_64 and beagleplay).
 
-Vikram Sharma (1):
-  media: qcom: camss: Restructure camss_link_entities
+You enable the config and boot.
 
- drivers/media/platform/qcom/camss/camss-vfe.c |   6 +-
- drivers/media/platform/qcom/camss/camss.c     | 196 ++++++++++++------
- drivers/media/platform/qcom/camss/camss.h     |   4 +
- 3 files changed, 138 insertions(+), 68 deletions(-)
-
--- 
-2.25.1
-
+Rob
 
