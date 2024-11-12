@@ -1,147 +1,130 @@
-Return-Path: <linux-kernel+bounces-406514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E199C6044
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:20:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27DF9C6046
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:22:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B22E41F219D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68505283F39
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EDF215C77;
-	Tue, 12 Nov 2024 18:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F5D1CFEB8;
+	Tue, 12 Nov 2024 18:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JRR969yy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NdaroC8Q"
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431F12144DD;
-	Tue, 12 Nov 2024 18:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB24C215C68
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731435641; cv=none; b=q3zPfrXEKAeDDsysYL9BJduqDyX8ANE3YEucc3IIXj48U9kF9sg0+Q1dKoXwv2NLINc1+BcrS2W2j6Olxyln4gpqzIG/IAgKNxmTMRrXJzI3uW25n7tfu1zolSkuw3Z7yZte7XBSx0AxaX2fUAuYdx98YrZH8Hc22Pd4F3VNMuk=
+	t=1731435733; cv=none; b=UndTV7OHwhehTcyBq5YNnyGXfU7dhO2WikKB2sJUUgjWjl9dy8yTbgbLuA5+ccpJMhhxB+e2hkPW2FWB33xe71NnqdaccAExyL5OAI8pRQ9wngYv7fMelbDKSD+yR8XTFKPrsQybXqYo74c84PPry7kIEPMhRyL/Ipa33xIAFEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731435641; c=relaxed/simple;
-	bh=b2U5OCtPn243qzcSw8tXDTqbUUCT3bK/gESUj9nSDJY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F85l8EMtTd35oqQU/AHWvdI7XfVnttcz0A7hdZIERDd+7OFxW/2MdrEHwaxvLostqXOSZYRlrp+RQQhJPojnXDlX72TQ8MxyYqnUTQg2e5o9q8E3jvPPjAgMMtulw6rtHbVipAJ2/DUPu5OxI8pHxE4tlMpoB0m5dylLUuK/gZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JRR969yy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACIKUtL025930;
-	Tue, 12 Nov 2024 18:20:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=KTk+4n3XFtqzo27e40D42y
-	x3XCpHUbe/GUT3YGxz1aU=; b=JRR969yyNeetp5qHcy5s2WHBIH32BocDaOSOgc
-	ft/y99m4F8XoOKRJeu/Z+haZc34uzDAh1QFoh6oDB5tHDGNR3Cyh0Zg7ysADTkrm
-	tE64KoriaZK0auOu418GOdN0pHzRrIFQ0d5x7EgtL+QEVf/AyLBCQloYqIYx9Myu
-	W8k5ktySo92n4FKAkzMa7fMJZyFmQ9PA91Smzr8/ri7n0snNB8+lK18TfEDGK8Ck
-	jqIfdJOt3exwOZCMPO2M8zWUCRUor9fenOcGyqLvDV3Yg443+QxAAz227GA3ryGK
-	3FsFQngz1Pv9sJ19DQYBTrVFxblWMbRmAmXCHZKcxt4XHxTA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v4kqsgjb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 18:20:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACIKa19013701
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 18:20:36 GMT
-Received: from hu-kriskura-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 12 Nov 2024 10:20:33 -0800
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <quic_ppratap@quicinc.com>, <quic_jackp@quicinc.com>,
-        Krishna Kurapati
-	<quic_kriskura@quicinc.com>
-Subject: [PATCH] usb: dwc3: core: Set force_gen1 bit for all applicable SuperSpeed ports
-Date: Tue, 12 Nov 2024 23:50:18 +0530
-Message-ID: <20241112182018.199392-1-quic_kriskura@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731435733; c=relaxed/simple;
+	bh=0kqB7wh0qZCmy5RkK8FrNaWAcNJ+DzxqPtW9Qea4PQQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tQAV/WC9hDaCwuHY2Obt5oDqoEoR4awLZsNvCHjS33z6TgYfGlzjcZGFpVnoNoKOQZQmDC7IlqLNGwrhYbHIoRcCCNyW2rVBpvdpA9dCL0YXbb6uE5IALlfOa1bP86/YPvao54ij2PtYnTYBiAI5nofat/4bgpZ6JJDpG74Prjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NdaroC8Q; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-aa1e51ce601so148950166b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:22:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731435729; x=1732040529; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0kqB7wh0qZCmy5RkK8FrNaWAcNJ+DzxqPtW9Qea4PQQ=;
+        b=NdaroC8QloQllscJcNuY7/jSUIWBbNBSabLUvLD1lFSMLzHRaUYvv83fhakLOb4O6N
+         HEPmrMfX4YDSLfzYOkrYBCHArT9D/pzTRBVsK1xcSn38nkqfWEgqaUjMsECazEBE7t+L
+         j75zsOXRhuH4uIfxNWc9pape451IUXBaDExU6j7cb/UuMSqLf9kf9qBuUPIzcPtBqzmX
+         pRNOjEHISN+QeIpxo9awpJIr4/H5qRwELmSYZRL3hm1L0v0OVLsjzuyG2s9sMxrP/FTG
+         LagDyfy2bdM8WugG0U1zp2NqVV2HlBK8crUMuW8HKn0PpXb0t8GjGgjkeFOaVGXPqe3X
+         mGOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731435729; x=1732040529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0kqB7wh0qZCmy5RkK8FrNaWAcNJ+DzxqPtW9Qea4PQQ=;
+        b=BrNRXFjyA8Qe+mC2XdstJcHfnrhVf4gOs7UZrsTBxP4YG+CAxymM/34i9pmG1xBl7E
+         Vsrq/W8jnYYx32ogVHyujSsgVPb9AXQlI2v+/R/c/FGQV2vGlHEWHWP0GXFP3AOOyLGa
+         KRdFvb0o4mtyHzDAVe3jBWGOLX7v0/EMNQa1NCt9eB/Sv677OO9g56hPCBI73yJDPYMw
+         XWVjthdz15DJZrwESRdUxPNvR2bOyfk1unzn3Fqq9XN2ArEWVLTintcXsfDhDUkP8rDz
+         f7c4TT3FhHtO9DuxNAhLdrXe2JEqAktarcN/HEXTl+BTs+7aXEAYOCAQr5r8wJXEEEQL
+         13fg==
+X-Forwarded-Encrypted: i=1; AJvYcCVe2kJQkXiYpPPJke3CcxgXF8IFI507Phs3W3Y9OD58l79JQ33BkrZq3GMS05NCq5lJJ12XLlajedN19zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuCXF8PfBX0+AwdxUHbGCe66uxxmNWsj8o20qdq7ZHU4SJ70VC
+	Oir8XIlPQgqxUrtQCVz6rgxTReCzEyEkRlso5mQD1Cq9YZ8vcsv5LIyrzRtiE09YfxwT7ZTAXkT
+	N3qXpyB4cC32e36IquGgmhggRon2ZrorHnWr1Uw==
+X-Google-Smtp-Source: AGHT+IFopeyjGv+2IcaDu/O9c406pUCR34qegYphrOsLMDpGo3pZJSsDhkl22PD4xCJ/njRvaU7GTkZY9bsNIdI8ZxI=
+X-Received: by 2002:a17:907:3e8d:b0:a99:4c68:a03c with SMTP id
+ a640c23a62f3a-a9eefeeccd6mr1665213766b.22.1731435728842; Tue, 12 Nov 2024
+ 10:22:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: tJ3mDsj8LH6jJGDcBM4RDNfYQ74BAmCz
-X-Proofpoint-GUID: tJ3mDsj8LH6jJGDcBM4RDNfYQ74BAmCz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- adultscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- malwarescore=0 spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=873
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120146
+References: <20241112163041.40083-1-chenqiuji666@gmail.com> <2024111214-casing-gong-5c78@gregkh>
+In-Reply-To: <2024111214-casing-gong-5c78@gregkh>
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+Date: Wed, 13 Nov 2024 02:21:57 +0800
+Message-ID: <CANgpojUSQzmcKcJxQo4WkWF8A_vFVwRrG2x=n0Q7cJuA3ZKgGQ@mail.gmail.com>
+Subject: Re: [PATCH] driver core: Fix concurrency issue in match driver interface.
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: rafael@kernel.org, linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently if the maximum-speed is set to Super Speed for a 3.1 Gen2
-capable controller, the FORCE_GEN1 bit of LLUCTL register is set only
-for one SuperSpeed port (or the first port) present. Modify the logic
-to set the FORCE_GEN1 bit for all ports if speed is being limited to
-Gen-1.
+Hi, Greg
 
-Suggested-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
----
-Suggestion provided for the same at:
-https://lore.kernel.org/all/20230517003037.i7hsg6k5fn4eyvgf@synopsys.com/
+The driver_override is updated by driver_set_override(), a function
+provided by the driver core. In driver_set_override(), the
+driver_override is updated while holding the device_lock. Therefore,
+locking is required when calling match to prevent the driver_override
+from being modified within driver_set_override().
 
-This patch has only been compile tested due to unavailability of
-hardware at the moment.
+It=E2=80=99s fine to add locks in these two functions. The second half of
+__driver_attach already performs lock and unlock operations, and the
+device_driver_attach function in bind_store also has lock and unlock
+operations. So, when calling the bind_store function and
+__driver_attach, these are environments without locks, where adding
+locks is appropriate.
 
- drivers/usb/dwc3/core.c | 10 +++++++---
- drivers/usb/dwc3/core.h |  2 +-
- 2 files changed, 8 insertions(+), 4 deletions(-)
+In the current core code, among the three calls to
+driver_match_device, two are not locked and one is locked. Therefore,
+adding locks in the lower-level driver would conflict with the already
+locked path in the upper-level function, causing a potential deadlock.
+Thus, locking cannot be added in the lower-level driver. In the call
+chain from __device_attach to __device_attach_driver to
+driver_match_device, the call to __device_attach_driver is already
+protected by a lock, so the call to driver_match_device in this chain
+is locked. If we add locks in the lower-level driver, it could lead to
+a deadlock due to the upper-level lock.
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 9b888d33e64d..67aefdbe1d5f 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -1470,9 +1470,13 @@ static int dwc3_core_init(struct dwc3 *dwc)
- 	if (hw_mode != DWC3_GHWPARAMS0_MODE_GADGET &&
- 	    (DWC3_IP_IS(DWC31)) &&
- 	    dwc->maximum_speed == USB_SPEED_SUPER) {
--		reg = dwc3_readl(dwc->regs, DWC3_LLUCTL);
--		reg |= DWC3_LLUCTL_FORCE_GEN1;
--		dwc3_writel(dwc->regs, DWC3_LLUCTL, reg);
-+		int i;
-+
-+		for (i = 0; i < dwc->num_usb3_ports; i++) {
-+			reg = dwc3_readl(dwc->regs, DWC3_LLUCTL(i));
-+			reg |= DWC3_LLUCTL_FORCE_GEN1;
-+			dwc3_writel(dwc->regs, DWC3_LLUCTL(i), reg);
-+		}
- 	}
- 
- 	return 0;
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index eaa55c0cf62f..296cbe85a494 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -179,7 +179,7 @@
- #define DWC3_OEVTEN		0xcc0C
- #define DWC3_OSTS		0xcc10
- 
--#define DWC3_LLUCTL		0xd024
-+#define DWC3_LLUCTL(n)		(0xd024 + ((n) * 0x80))
- 
- /* Bit fields */
- 
--- 
-2.34.1
+Changing the string checking process to a driver core function doesn't
+help, because this checking function needs to hold the device_lock to
+prevent updates by the driver_set_override() function, and it would
+still be called in the implementation of the match interface.
+Essentially, it would still involve adding a lock at the lower level.
+As mentioned earlier, there is already a locked path for the match
+interface at the upper level, which could lead to a deadlock. From our
+perspective, it seems impossible to modify this locked path at the
+upper level to be lock-free, so we did not choose the solution of
+adding a lock at the lower-level driver.
 
+Therefore, we recommend adding locks to all three calls to
+driver_match_device in the upper-level code to ensure consistency and
+prevent modifications to the driver_override field during the
+driver_set_override function call, fixing the data race issue. Based
+on your feedback, we have updated the description in v2. Thank you for
+your discussion.
+
+Regards,
+Qiu-ji Chen
 
