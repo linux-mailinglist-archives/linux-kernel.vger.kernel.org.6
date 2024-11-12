@@ -1,176 +1,240 @@
-Return-Path: <linux-kernel+bounces-405877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B759C5861
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:58:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D30CA9C5867
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:59:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E4A284B41
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:58:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63EF21F234BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983EF14A60D;
-	Tue, 12 Nov 2024 12:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894081369A8;
+	Tue, 12 Nov 2024 12:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UMbRfcML"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eLq0XgtU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F8413212A;
-	Tue, 12 Nov 2024 12:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E328A70831;
+	Tue, 12 Nov 2024 12:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731416238; cv=none; b=nSf0Ge0zugp6UpUtylRYm5GsOqlS1JqQvdBQLWwIfH9aIjRnroyFQ8sYACsI+9KJCtEUreksXbHTLb8CWL9PSuIAcTjEplrsFso2FXxxoTAOVZeiCPTBWmrNClNQNOZ9enuTl43rKcWIt4EdrdfEL7oIkkQpqiKB4oTOyDRjpQQ=
+	t=1731416327; cv=none; b=B7gQNCczbRmzLpgQsva8EiMi0LsJIA4tVfNkBrokzmVJJVegnczRdVvV/h8NAhx2kCQ5Dlg8L08/vQe8Ss3DSMT+Ithb81Iv0w/+nAN2Hql8yiVkiJ/puWGn2J5Ly5wxJnwpsmjC4rb+E1lb/n5Uplrp67ZbU6Gt+neYHjgExws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731416238; c=relaxed/simple;
-	bh=aumUC1jKWcDK+qq7WwJfwJihetxm0F5JvzlC4NdgWL0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lGo+IT61rwjumL1BqBKN92DE5aoGdJVxPzzd2WBTqyrsFvue/ea01we6+ZLLxdv55imhaDIFCXzqtBVSwejcf1LMu6V0mXox3ULo8M622Xvb5kLrRjoEEgzXFibecPyFu4EjMGO6Dv+VGF92Eq9FFS6NLp2/g7SxtF3Qe9iZX/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UMbRfcML; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 79DD9C4CED0;
-	Tue, 12 Nov 2024 12:57:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731416237;
-	bh=aumUC1jKWcDK+qq7WwJfwJihetxm0F5JvzlC4NdgWL0=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=UMbRfcMLxlHLC9J6QqIpTiZG5I3hsJ0dtv1tA+Q3k3fLdEEWRcJDFDa9G0wJmEAfi
-	 jXzewQL8uQXlq6k39xbp81V3ZfA+lvW9TpcC+sfLkeVLzt2NTUQQG9Pu4R26TthLCu
-	 /PMFf3MoGxGqL/pqxpJvr9pMAEvAOJy7qDP8CQWRQGqFdvboj+0Ll5VjC7vgBFbrw/
-	 kB+KalbqrjbITzoxfFy5YA0SNjcgziRpbZhzGW7Wqed8rzva7F8Bh+66xkOxuqX38+
-	 LrE1M8vndsYVugf3K+rjrVR0jr3Ih69BjYXQf1KTxXDX1U8/oKxq4MAhYBJQ3cDoDb
-	 kQUgSsWOJUM9w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA44D32D8D;
-	Tue, 12 Nov 2024 12:57:17 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Tue, 12 Nov 2024 20:57:13 +0800
-Subject: [PATCH v2] clk: meson: Fix the determine rate error in
- clk_regmap_divider_ro_ops
+	s=arc-20240116; t=1731416327; c=relaxed/simple;
+	bh=XsVrg/tycUyf1pge9uDquJ8kbJ4hI9A1otOr9vuWvsw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G0eVK3yydQG2bKYTPsddzQjT7Anl7axOmafRHZ3BY8Hv0wiGFHl2Lf45/ZSUg9Y4vXkzS1P3xavCfmf67x1ndqpIU806xEXgkiGs3ODBYTbxzTC0scYjh46S5rTg9F4WEfOdGSOVywU/n516ttIqXmfkysAFVAIhSMycQtM7rYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eLq0XgtU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC9FhLh002987;
+	Tue, 12 Nov 2024 12:58:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6TFRQuks3xEPKLnmUVkx3quSMzhADnexEjI/TmNuYo4=; b=eLq0XgtU5E3qcGUO
+	78N+NPsqjatL+swhGTmIHtpvaykiNh+ys7s47Kcm7l3GPkGo4T4VKAwfKMVVZozR
+	DEvJCaUi0umrjgCXc6HhLQjCAMAN75JKdcxYDnyPhhqmliSwHY/n9NQ1RifAD6a7
+	jmF511bSfbL+3Qco103KFi2qvhZOo5BuC6NMXri1Y99DE2Lc0lVq3vYQ6KXKgMdU
+	gL6DQQ9YpOwZq/qZnO4vDfGq44uxFihiWkMLSOyS+z+uM7ELIhUMejcLkYawZQ30
+	nuc7iqTkcNSEMkowyrZqdbH6NrAEeRB10cK/9NSzyhwdlemviGbc3vTYxZ4JhKYG
+	PAWz0w==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v47y0jd4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 12:58:41 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACCwend000586
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 12:58:40 GMT
+Received: from [10.216.11.168] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
+ 2024 04:58:37 -0800
+Message-ID: <410e1531-6c1b-fb29-2748-eca57fc13481@quicinc.com>
+Date: Tue, 12 Nov 2024 18:28:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241112-fix_childclk_of_roclk_has_been_tampered_with-v2-1-64f8009cdf2a@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAKhQM2cC/52NQQ6DIBBFr2JYl0aooU1XvUdjCAyDTKpiwNg2x
- rsXPUL/at4k/7+VZUyEmd2rlSVcKFMcC8hTxSCYsUNOrjCTtWxECff00RCod9C/dPQ6xf0IJmu
- LOOrZDBMmdPpNc+BKOAug5OXaKFYmp4Slf+iebeFAeY7pe9gXsX//FC2Cl8YNhFXeO7D1wwx97
- AjOEAfWbtv2A6RiwUTqAAAA
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Jian Hu <jian.hu@amlogic.com>, Dmitry Rokosov <ddrokosov@sberdevices.ru>, 
- Yu Tu <yu.tu@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731416235; l=3076;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=8AI+tmYmNulgS0Oos4nPr/9f/YnCkFdoNAlNOvZiX+k=;
- b=WNYt8589v61xwco+HqIDwnC1iODrOIA0rq+V7GBT46G5LTeEwTBownMkgl0abQ1O51r4LdNy9
- gE/wSujgJ5GCiKjMCC4QQU+iisFAWMUD223v2rIPbgsygenS6PSUYTV
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
-
-From: Chuan Liu <chuan.liu@amlogic.com>
-
-The rate determined by calling clk_regmap_divider_ro_ops with
-clk_regmap_div_determine_rate is not RO, which will result in the
-unexpected modification of the frequency of its children when setting
-the rate of a clock that references clk_regmap_divider_ro_ops.
-
-Fiexs: ea11dda9e091 ("clk: meson: add regmap clocks")
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
----
-Background: During the execution of clk_set_rate(), the function 
-clk_core_round_rate_nolock() is called to calculate the matching rate
-and save it to 'core->new_rate'. At the same time, it recalculates and
-updates its 'child->newrate'. Finally, clk_change_rate() is called to
-set all 'new_rates'.
----
-Changes in v2:
-- Remove the CLK_DIVIDER_READ_ONLY judgment logic in
-clk_regmap_div_determine_rate().
-- Add clk_regmap_div_ro_determine_rate().
-- Link to v1: https://lore.kernel.org/r/20241111-fix_childclk_of_roclk_has_been_tampered_with-v1-1-f8c1b6ffdcb0@amlogic.com
----
- drivers/clk/meson/clk-regmap.c | 36 ++++++++++++++++++++----------------
- 1 file changed, 20 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-index 07f7e441b916..edf65ca92c7a 100644
---- a/drivers/clk/meson/clk-regmap.c
-+++ b/drivers/clk/meson/clk-regmap.c
-@@ -80,21 +80,6 @@ static int clk_regmap_div_determine_rate(struct clk_hw *hw,
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
--	unsigned int val;
--	int ret;
--
--	/* if read only, just return current value */
--	if (div->flags & CLK_DIVIDER_READ_ONLY) {
--		ret = regmap_read(clk->map, div->offset, &val);
--		if (ret)
--			return ret;
--
--		val >>= div->shift;
--		val &= clk_div_mask(div->width);
--
--		return divider_ro_determine_rate(hw, req, div->table,
--						 div->width, div->flags, val);
--	}
- 
- 	return divider_determine_rate(hw, req, div->table, div->width,
- 				      div->flags);
-@@ -127,9 +112,28 @@ const struct clk_ops clk_regmap_divider_ops = {
- };
- EXPORT_SYMBOL_NS_GPL(clk_regmap_divider_ops, CLK_MESON);
- 
-+static int clk_regmap_div_ro_determine_rate(struct clk_hw *hw,
-+					    struct clk_rate_request *req)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(clk->map, div->offset, &val);
-+	if (ret)
-+		return ret;
-+
-+	val >>= div->shift;
-+	val &= clk_div_mask(div->width);
-+
-+	return divider_ro_determine_rate(hw, req, div->table, div->width,
-+					 div->flags, val);
-+}
-+
- const struct clk_ops clk_regmap_divider_ro_ops = {
- 	.recalc_rate = clk_regmap_div_recalc_rate,
--	.determine_rate = clk_regmap_div_determine_rate,
-+	.determine_rate = clk_regmap_div_ro_determine_rate,
- };
- EXPORT_SYMBOL_NS_GPL(clk_regmap_divider_ro_ops, CLK_MESON);
- 
-
----
-base-commit: 664988eb47dd2d6ae1d9e4188ec91832562f8f26
-change-id: 20241111-fix_childclk_of_roclk_has_been_tampered_with-61dbcc623746
-
-Best regards,
--- 
-Chuan Liu <chuan.liu@amlogic.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 2/4] media: venus: hfi_parser: avoid OOB access beyond
+ payload word count
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
+ <20241105-venus_oob-v1-2-8d4feedfe2bb@quicinc.com>
+ <474d3c62-5747-45b9-b5c3-253607b0c17a@linaro.org>
+ <9098b8ef-76e0-f976-2f4e-1c6370caf59e@quicinc.com>
+ <f53a359a-cffe-4c3a-9f83-9114d666bf04@linaro.org>
+ <c9783a99-724a-cdf0-7e76-7cbf2c77d63f@quicinc.com>
+ <f6e661da-6a8f-4555-881e-264e8518f50c@linaro.org>
+Content-Language: en-US
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <f6e661da-6a8f-4555-881e-264e8518f50c@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 68L1PboUyIa3j1Kv36ekw9PdVCYRr26j
+X-Proofpoint-GUID: 68L1PboUyIa3j1Kv36ekw9PdVCYRr26j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 spamscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411120105
 
 
+On 11/12/2024 4:47 PM, Bryan O'Donoghue wrote:
+> On 12/11/2024 08:05, Vikash Garodia wrote:
+>> You did not printed the last iteration without the proposed fix. In the last
+>> iteration (Myword 1), it would access the data beyond allocated size of somebuf.
+>> So we can see how the fix protects from OOB situation.
+> 
+> Right but the loop _can't_ be correct. What's the point in fixing an OOB in a
+> loop that doesn't work ?
+> 
+> This is the loop:
+> 
+> #define BUF_SIZE 0x20  // BUF_SIZE doesn't really matter
+> 
+> char somebuf[BUF_SIZE];
+> u32 *word = somebuf[0];
+> u32 words = ARRAY_SIZE(somebuf);
+> 
+> while (words > 1) {
+>     data = word + 1;  // this
+>     word++;           // and this
+>     words--;
+> }
+> 
+> On the first loop
+> word = somebuf[0];
+> data = somebuf[3];
+> 
+> On the second loop
+> word = somebuf[3]; // the same value as *data in the previous loop
+> 
+> and that's just broken because on the second loop *word == *data in the first
+> loop !
+> 
+> That's what my program showed you
+> 
+> word 4 == 0x03020100 data=0x07060504
+> 
+> // word == data from previous loop
+> word 3 == 0x07060504 data=0x0b0a0908
+> 
+> // word == data from previous loop
+> word 2 == 0x0b0a0908 data=0x0f0e0d0c
+> 
+> The step size, the number of bytes this loop increments is fundamentally wrong
+> because
+> 
+> a) Its a fixed size [1]
+> b) *word in loop(n+1) == *data in loop(n)
+> 
+> Which cannot ever parse more than one data item - in effect never loop - in one go.
+In the second iteration, the loop would not match with any case and would try to
+match the case by incrementing word. Let say the first word is
+"HFI_PROPERTY_PARAM_CODEC_SUPPORTED" followed by 2 words (second and third word)
+of payload step size. At this point, now when the loop runs again with second
+word and third word, it would not match any case. Again at 4th word, it would
+match a case and process the payload.
+One thing that we can do here is to increment the word count with the step size
+of the data consumed ? This way 2nd and 3rd iteration can be skipped as we know
+that there would not be any case in those words.
+
+Regards,
+Vikash
+> 
+>> For the functionality part, packet from firmware would come as <prop type>
+>> followed by <payload for that prop> i.e
+>> *word = HFI_PROPERTY_PARAM_CODEC_SUPPORTED
+>> *data = payload --> hence here data is pointed to next u32 to point and parse
+>> payload for HFI_PROPERTY_PARAM_CODEC_SUPPORTED.
+>> likewise for other properties in the same packet
+> 
+> [1]
+> 
+> But we've established that word increments by one word.
+> We wouldn't fix this loop by just making it into
+> 
+> while (words > 1) {
+>     data = word + 1;
+>     word = data + 1;
+>     words -= 2;
+> }
+> 
+> Because the consumers of the data have different step sizes, different number of
+> bytes they consume for the structs they cast.
+> 
+> =>
+> 
+> case HFI_PROPERTY_PARAM_CODEC_SUPPORTED:
+>     parse_codecs(core, data);
+>     // consumes sizeof(struct hfi_codec_supported)
+>     struct hfi_codec_supported {
+>         u32 dec_codecs;
+>         u32 enc_codecs;
+>     };
+> 
+> 
+> case HFI_PROPERTY_PARAM_MAX_SESSIONS_SUPPORTED:
+>     parse_max_sessions(core, data);
+>     // consumes sizeof(struct hfi_max_sessions_supported)
+>     struct hfi_max_sessions_supported {
+>         u32 max_sessions;
+>     };
+> 
+> case HFI_PROPERTY_PARAM_CODEC_MASK_SUPPORTED:
+>     parse_codecs_mask(&codecs, &domain, data);
+>     // consumes sizeof(struct hfi_codec_mask_supported)
+>     struct hfi_codec_mask_supported {
+>             u32 codecs;
+>             u32 video_domains;
+>     };
+> 
+> case HFI_PROPERTY_PARAM_UNCOMPRESSED_FORMAT_SUPPORTED:
+>     parse_raw_formats(core, codecs, domain, data);
+>     // consumes sizeof(struct hfi_uncompressed_format_supported)
+>     struct hfi_uncompressed_format_supported {
+>         u32 buffer_type;
+>         u32 format_entries;
+>         struct hfi_uncompressed_plane_info plane_info;
+>     };
+> 
+> case HFI_PROPERTY_PARAM_CAPABILITY_SUPPORTED:
+>     parse_caps(core, codecs, domain, data);
+>     
+>     struct hfi_capabilities {
+>         u32 num_capabilities;
+>         struct hfi_capability data[];
+>     };
+> 
+>     where
+>     hfi_platform.h:#define MAX_CAP_ENTRIES        32
+> 
+> I'll stop there.
+> 
+> This routine needs a rewrite.
+> 
+> ---
+> bod
 
