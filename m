@@ -1,169 +1,168 @@
-Return-Path: <linux-kernel+bounces-406222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD169C5C46
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:49:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B5559C5CAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:01:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 722341F23750
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:49:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A827B81054
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA160202F92;
-	Tue, 12 Nov 2024 15:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419972038B1;
+	Tue, 12 Nov 2024 15:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zNzmJssO"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2085.outbound.protection.outlook.com [40.107.236.85])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="HLWjNDjm"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14D2202653;
-	Tue, 12 Nov 2024 15:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731426546; cv=fail; b=Jbd2anqvGzCH3Q6qHJjJTD4ndtcXrkFP2RhEMWjV+9UHkoxrFLevYPCHKqix9VrP0rD4+F8y5YgiE5oGA9x5w2FB9uRGMcEqPNRJL1vzbB2Ay5RysfYG/80R3idh/boAjwSW97qIA53c8wOsuRr1C7qYvjG5Lx4yJDNtrJYoTMA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731426546; c=relaxed/simple;
-	bh=f0L+45HUeFI+tGRS4PpIf7D4hTe3pKMlhrB9hL69H2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=pxM5R2M4aK15jYdrCC/93Rlr8vI6gEjWBbYOjUDNK8NLDgeLV68GPmZnJoKCNVuMmgT/MGNkNkFVgXRIMtW/gbAZzUAa3aK5wku3k8pqX/3BVJkhskAlLs6AWEmejZmjH4Pk09b7hN5CEiEzCwQtnKIhs9eLNsihRJbbkprRlo4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zNzmJssO; arc=fail smtp.client-ip=40.107.236.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aH+safw1XmuCcg6KvHHx9dJrAkvZqbDX4bQ3EcqRo43HBuEomd8m3Wy3TO6uADdCFjgfp2bwi9Y304iVSdf20SrJT4VpME8w63etAgC+UzMrjaj89lvIQxc90jmYywb1LX2jPlcrKPJ4e1zyy1UMw776eb9FudFKK28SXcVWPmeB0peadzFP3Eq7mEgNHEtSff1qXKei/aTkyPcDI1S7QFfCbP26daV2hwp1JLMDmID06lpOHBk2AzhMAhVuc3rY1psNKAawlXpi8Z7mR/Qn8l1Loi1Hmi3TsJUbs57+4TYgvWIk5kQBKj03Y6erP1TFUmRvAI+TYcl8yryaQ2yJ9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VbqA1vCn8cUmdIKqvOxMtuHdUAgq1JNu4fe/27tRaSM=;
- b=bFiyYJaBIFH6f3etJ+qUj0PvJL2UkvdBgrIQByUGoehtfAAPDwYgRqRLzc2p6d3yWMhzOCMz2++Xuui9p2JzxfmS0yjvVdhjZYlbUqrCf0j/7NIWss8hH7F7/ETi9DkiEFugSxR9ohWx+0G+hqRTFJPjYFRSMf4ag55xTSTrsnG3j8yl77b5M7Gmn9nKB9qT3NxdoSdnPt1cq8r4JhiWH8kvA8qFNobvLvp6Sl84RzSqgvUAAGV/jBPZqs9EBQnxfdMFqxWBszYP7yRvXaMRU965izF4ctZfRAR/4dKAR4o4Lh7J+gr+3HE8/xRjg67+YXpuB3azlkNAOsKpmo5t4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VbqA1vCn8cUmdIKqvOxMtuHdUAgq1JNu4fe/27tRaSM=;
- b=zNzmJssOeqA4ZEoh3/nnoxeKw0bnZNJ9FnUW0VWaSaFmyS1TuqyEClskcmuDHQKORWEO4R6usxfI87Xl0g+0k8hhdAEVwZt4WgNr8JfDyIvBRHDBg+fjMMxZp8KCOhSJ2qQjmHgoKz5p9tnGqtT7vb1twLW7A6C+RoZKJB8RY9g=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- IA0PR12MB7700.namprd12.prod.outlook.com (2603:10b6:208:430::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Tue, 12 Nov
- 2024 15:49:01 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 15:49:01 +0000
-Date: Tue, 12 Nov 2024 10:48:57 -0500
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: bp@alien8.de, tony.luck@intel.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, mingo@redhat.com, hpa@zytor.com,
-	sohil.mehta@intel.com, nik.borisov@suse.com, x86@kernel.org,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 7/8] x86/mce/amd: Remove unnecessary NULL pointer
- initializations
-Message-ID: <20241112154857.GE3017802@yaz-khff2.amd.com>
-References: <20241025024602.24318-1-qiuxu.zhuo@intel.com>
- <20241111060428.44258-1-qiuxu.zhuo@intel.com>
- <20241111060428.44258-8-qiuxu.zhuo@intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111060428.44258-8-qiuxu.zhuo@intel.com>
-X-ClientProxiedBy: BN9PR03CA0683.namprd03.prod.outlook.com
- (2603:10b6:408:10e::28) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8328C202652;
+	Tue, 12 Nov 2024 15:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731426588; cv=none; b=Mx17NHtX0r7ZHp0buGWd8yYzIhvJNPVj7jjag21OYwaUTnIfoi6zEzZYb3gzXLHFF9dtK7oDldf5l6qxfaNKwWju07TJNZ2k32VF0IYlzpTLUyrEvYPeCh2HKz1+mBM4Ag3FC75lEy3PrggrO3WoZrXwi0piHJ+PeTYbIVe6EZw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731426588; c=relaxed/simple;
+	bh=o+bLyPhu3w+N/hvDM9vKce7HeWdpAdo8lJzvKMuwlo8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Wt80F5IgoEsIEKsxa2JWjXRK2LDvzOY8EyU4XdSizHmPnygbRRLus5SDf5eSfCWiJXd2fn+APHLtOg2WNtMFxQleEwXgYieZ8Z3nvPX19G4Hd9SaMTVAC0tIRP8SsNEHy7p+k3yqTXMtiZG+YzUyxKK8GuEQ9nu9WQwqAmJuHNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=HLWjNDjm; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [192.168.93.162] (254C22F6.nat.pool.telekom.hu [37.76.34.246])
+	by mail.mainlining.org (Postfix) with ESMTPSA id A5115E45C8;
+	Tue, 12 Nov 2024 15:49:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1731426578;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Qu//iSPzUBdNgP61SB2krwbvYfULdUWHcbv4ONQcf7g=;
+	b=HLWjNDjmV+4OZmWRSvsccwf5+xCS4gY7x1pmYvSnCJy7LiQfsFGDmsdeRlnx+gnSRmJq9G
+	1xnScc6RDaoyP2rtZtOx+lGsyb9kb7PTsESyXpr4o92BdTv0r379jfKnnCqIKFGfDRRILi
+	okSVHlRFtUsVX06grOQhPXNlv9MKrDsNZK8QdqyksRT6H92CXdauRT9ryAxqAkgc3x8hLv
+	J0rSR7ikiFFYDT0AbLkeABwOJievzJUiSse6y8MhLaIK5ZDGdgXYsJF6YAdnIq7ncQYDZr
+	kz3NwpPBHgzCeW9Jb7RVnKuDqgjI9JoUQg9u0wuihhGSg39yD0xr4viw9533yg==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH v5 00/10] Add MSM8917/PM8937/Redmi 5A
+Date: Tue, 12 Nov 2024 16:49:30 +0100
+Message-Id: <20241112-msm8917-v5-0-3ca34d33191b@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|IA0PR12MB7700:EE_
-X-MS-Office365-Filtering-Correlation-Id: 664ea350-a306-4d46-01f9-08dd03318722
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZOj9shCiMNOPA6JzWAIsL9E7wbIetvaPDjObrbEtU8EiLTDQM37qTRtjjAXA?=
- =?us-ascii?Q?J8JkKmq+wmphfNToSXui0DK0bMSaJodq5sepjg8yS+symVtEzgMmEDM7n89d?=
- =?us-ascii?Q?fNWi5DG0SrN2a6fL3jXvdeb2TrXa0UaxVZuvn4gBKWwvRvexLZug/gvhPgsa?=
- =?us-ascii?Q?vqfgixvwgcmi3nNKiEmJ3HNYpJnZdM8n+OK2q/B88gfDN0eW0XV3VK8x5qX/?=
- =?us-ascii?Q?R5oM3ls5awLrGJuX2MnyXQlJYZa2aNaUV0ROu6Szb1OgrXBBq5NtNE6DEuKc?=
- =?us-ascii?Q?hrxzb9gstm6DzKU8P/XJwXCQEa698xZG/bnmrf7+mhN5iV7AxRcU9Iuq0F3I?=
- =?us-ascii?Q?InkSaiTToh21eaVF22Un03XLxl6ZwnD6rAzra0X8/XmYroDQVUePIjV3UJvP?=
- =?us-ascii?Q?V5Tf4lV38ghFC4sSsVa5rMTy61M97dxc3nDii2QKp+iT7dCI4JMMOK7Jdjr2?=
- =?us-ascii?Q?GLf0dt/GPtr4Vf90qjfI8MbvIWCMJK0QRFW/gNw/5UO14MfuCuV+bs8XldYk?=
- =?us-ascii?Q?RmGzBGus0WH8/JWhROguaPGfpR5wBZ1XkNFr4MLTMsSQeYTusbeSF0A2BpUQ?=
- =?us-ascii?Q?+GznO6oiLCde1yKWrSXrs4JxfdbcZzyG2NkBqtuT4mWYZATseXT/lrQwR7n8?=
- =?us-ascii?Q?nnCdb/rTGus0Bj6uNqiZJ0OouN5wE3ZiEguDwq+nAubHSOIQQLY3UqHZky97?=
- =?us-ascii?Q?EE1mNhcoTZmyLNrxzFL2Tcwcglt5pJKYEV7JfRTqSNh9yRAp7+NiUrA4nBJ+?=
- =?us-ascii?Q?gCZ6FeA9y/H6Q195TUmXHrgQHfRparEgsO8wgOmpk5RKUTHkiFnRlmz7Yjlb?=
- =?us-ascii?Q?GkfXnCf0s4YeRIMTrzfmHDsOL6KQr7EV+YJ7yqYtxYoznVkYeo4UukDU6C2+?=
- =?us-ascii?Q?/OBdGuOMhYCi0pMkc/yGoxcNccf014CqcPnWriAKejO8f7jtivHtYZg1KofM?=
- =?us-ascii?Q?JUkGERtL8bcdBW576h2T5AL8WKi2qx/wJJ2yQRWz8M4aQmJwDIrvy38T22Xi?=
- =?us-ascii?Q?x9T1XiMYInL2NZGrpwZYd94feH8OFl+kEllLXMFmCZzUnAA9SFks91cb/8zp?=
- =?us-ascii?Q?7Km1j4kyleDJoJmsqziq6DbGtFxLSP9GJHK9vq9UwcNPJmuI1CuI8XZENWde?=
- =?us-ascii?Q?tbdANZM4ATT9DeY2FsH66rKF1wWptumxlGqnf8D6Epdv+ghPP425NCCI2Mby?=
- =?us-ascii?Q?G6gki4Ue8F18UaHlBcNGvLgFdUhdDmiSzwlMRZrROJIXmW1OHd8ATy6GanMm?=
- =?us-ascii?Q?JkhNGVO28ZaEB1DeUunJRwlov1xC4ZqdKLVWEdKlNz/dO46Se5CVLZ335w7J?=
- =?us-ascii?Q?78XtxLmZnUzLF7Im8lkt5/NX?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?suUJR7gPsHvPnBWusetASLbnEYPtUgQEdoYVD/qCNJKScLCzDWL/8lsOh/mj?=
- =?us-ascii?Q?+cBv7Dl7w2IYg4sFtRegPwhny0Od94JkjauJkx0PuQz3o6NSoAnxFTVtkrG0?=
- =?us-ascii?Q?gkg3J39wtWjbu79DGYKiq/XmeZYF75gIM5/XZo36QBA029hS3ADGzLq4h8t/?=
- =?us-ascii?Q?fzeE09npOgcSqmNE+bslaGylnGrf3OmyYXAOloIvd/cOlqhmHkQM+vO52ACy?=
- =?us-ascii?Q?cwNRn2FynXiZALjNdOdA4ajvG6RETnmWaG3jhEaAfoe05sZO7QSNWIoWdh7x?=
- =?us-ascii?Q?10fT39GaGuz3VSPR/9pPzcj5JXqXuZoF+Q3ADzfip+ynQIK+lXOAw0Wbx0o9?=
- =?us-ascii?Q?GPT2QEgHnc1fQPco6570A5+tvjLUMlXtoTV9bKZV4WvwNgD7eA6OmT5KMG7G?=
- =?us-ascii?Q?LNDL39tZl9bSW675Nvh90MUkNua+FB1TQNBnlM+ERy3ylFI+olju57MF5mVU?=
- =?us-ascii?Q?N4jVDxuBl5wOLMeLr2aFA3K9V5ARFS4DsimQ5ZviamQ1PLXIExNmRTYzBcoe?=
- =?us-ascii?Q?p1WL67LRAUS/UuSQ5txxJ2j1kwx38A1Bq5QEmYAhPiF90vTiQE1GbHi5wWGa?=
- =?us-ascii?Q?iU2SNMDAPtWC/52W7aDWg9v++QbS8Q7xkGpDmRn0B2l89oKO85teZjx2ONGs?=
- =?us-ascii?Q?qbjGW8sM35DpxmqwzO+q5ZPBxmYt8OGIOxVecUewJ/5xj4D0A5Sa0g2UWJo/?=
- =?us-ascii?Q?CNN6e8LbigUqmJcTEJJrLFk7gDTSzgNleIcrHHYBrUR1DhADD/2j2CM3d1zc?=
- =?us-ascii?Q?0qzWzYWfsRQREHuvVwZIAi57fG2W3r8Eg0S/WMgXxzs2ekYnnMxnPDSEnuow?=
- =?us-ascii?Q?EewM7n9f/X5etl48z0eUX26L8lqViww1knHX+8r/qwEavmTX3LOTrXtZDsP9?=
- =?us-ascii?Q?lXbIvhe4Zh+E/l1xT6m2Wcf96CdOZNyMGxigBOycy5m7Kz7NoGiiSlFiowDE?=
- =?us-ascii?Q?tqyQf5/4mXvlw31rTQiTs6Aav3mGCVSafTgeJwfI0Nk8vvfImCUaHW1WbL1L?=
- =?us-ascii?Q?qXET0axszWEey2U6mfBKHAplHWrUcbQdY286d4vM1KsDOTwLgrjxPSutsdo/?=
- =?us-ascii?Q?tPetnLkvfhoD4vc1lIx4SCZNIc7g58sbTUE1SnxHtpIsYwJNM7AJVSygLSbx?=
- =?us-ascii?Q?BrrSsphH5lxB4zlvv4IPyed5Nq1M/F/Mh5Ul1UtLnQrTTy4V3ZuPdvY9qv8s?=
- =?us-ascii?Q?oeCUoK0Qys9zRpHdVt1KYk1xUsvo+FqZmsMq8z30bjjy3m2E9kUm6OgrkOxY?=
- =?us-ascii?Q?lL4uGWd/ruVYb2tQRUGg/zf7dSs9hVZ7Di5znZHuhYwbA56/sGJhRk4k+lrM?=
- =?us-ascii?Q?Xs5WAHCyU5nFlHrh9/5zSPlKqnHJOQtI5BBwowBbd7MIElo8Otue+5kD8GuY?=
- =?us-ascii?Q?9PEaBxATQh5L0SQuizogHPz/mutndOeolF2L+SU88423Tp6Kd7L57uEkKAmv?=
- =?us-ascii?Q?p2xRVbSfHcRxkJdcPXZGQzoWbImrzQoGm35/IPmQsqx+QIBQZ1COSWFOBELc?=
- =?us-ascii?Q?Zi9uycoyRI80MobKTumrR56w8xCGA/l6dzsuYCRf3hqn2UNwD1jGy6eN0Ytw?=
- =?us-ascii?Q?HNPd8TOF1Q3MSMLx4eD83JfED1YHdtW+cFMYlnNU?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 664ea350-a306-4d46-01f9-08dd03318722
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 15:49:01.3389
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uMEM4LsImQIwnVm2J+0jHuXsPHxpI8Du/IGvIvmJDkTq72MfBkMqxIZNx6juhh12TZek0i3VfRwglgjpo2RkeA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7700
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAp5M2cC/23Oy2rDMBAF0F8JWldFo0clddX/KF2M9XAGajlIx
+ SQE/3vlbGxIlneYc2furKVKqbHP053VtFCjufRg3k4snLGMiVPsmUkhNQjwfGqT82A52KCiyFm
+ jkaxvX2rKdH00ff/0fKb2N9fbo3iBbfrcsQAXPENWASE6l8zXhFR+qVAZ3+c6sq1okQesYMeyY
+ 4fCmozo/AAvsdoxCLtj1fFHjMFgiN664SXWR3x4W2+Xh+S90NZLfMbruv4DZvkLZFoBAAA=
+X-Change-ID: 20241019-msm8917-17c3d0ff4a52
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Dang Huynh <danct12@riseup.net>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731426576; l=3290;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=o+bLyPhu3w+N/hvDM9vKce7HeWdpAdo8lJzvKMuwlo8=;
+ b=Pu1mi9W2VcF8ZrGc4N9x0/wzvJt5pszAXQYfcfDZ3zIqNAGK0UVo0o9JufythIXzVUmEUY7ym
+ WhG27o9DB/9Duh/GwJTet/kyXprt+HVIUkfz3vOmt6ZdwgTrUhJB3Y6
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-On Mon, Nov 11, 2024 at 02:04:27PM +0800, Qiuxu Zhuo wrote:
-> Remove unnecessary NULL pointer initializations from variables that
-> are already initialized before use.
-> 
-> Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-> Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
-> Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-> ---
+This patch series add support for MSM8917 soc with PM8937 and
+Xiaomi Redmi 5A (riva).
 
-Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+Changes in v5:
+- msm8917:
+  - Remove aliases.
+  - Rename spi, i2c labels and pins.
+  - Remove clock-frequency from timers
+  - Remove unused mpss_mem region.
+  - Use mboxes where it can be used, only smd-edge uses qcom,ipc.
+- msm8917-xiaomi-riva: Follow i2c label changes.
+- Link to v4: https://lore.kernel.org/r/20241109-msm8917-v4-0-8be9904792ab@mainlining.org
 
-Thanks,
-Yazen
+Changes in v4:
+- msm8917 pinctrl: Fix gpio regexp in the schema.
+- msm8937 tsens: Rename ops_msm8976 to ops_common and use it for msm8937.
+- msm8917: fix address padding, naming and ordering, remove polling-delays.
+- Remove applied patches from the series.
+- Link to v3: https://lore.kernel.org/r/20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org
+
+Changes in v3:
+- msm8917-xiaomi-riva: Fix issues addressed by Konrad.
+- msm8917: Fix node addresses, orders of some properties.
+- pm8937: simplify vadc channels.
+- msm8917 pinctrl: Fix schema issues addressed by Krzysztof. 
+- Remove applied tcsr patch from this series.
+- Reword some commit title.
+- Link to v2: https://lore.kernel.org/r/20241031-msm8917-v2-0-8a075faa89b1@mainlining.org
+
+Changes in v2:
+- Add msm8937 tsens support.
+- Fix issues addressed by reviews.
+- Link to v1: https://lore.kernel.org/r/20241019-msm8917-v1-0-f1f3ca1d88e5@mainlining.org
+
+---
+Barnabás Czémán (7):
+      dt-bindings: pinctrl: qcom: Add MSM8917 pinctrl
+      dt-bindings: thermal: tsens: Add MSM8937
+      thermal/drivers/qcom/tsens-v1: Add support for MSM8937 tsens
+      dt-bindings: iommu: qcom,iommu: Add MSM8917 IOMMU to SMMUv1 compatibles
+      dt-bindings: nvmem: Add compatible for MS8917
+      dt-bindings: arm: qcom: Add Xiaomi Redmi 5A
+      arm64: dts: qcom: Add Xiaomi Redmi 5A
+
+Dang Huynh (1):
+      arm64: dts: qcom: Add PM8937 PMIC
+
+Otto Pflüger (2):
+      pinctrl: qcom: Add MSM8917 tlmm pinctrl driver
+      arm64: dts: qcom: Add initial support for MSM8917
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
+ .../devicetree/bindings/iommu/qcom,iommu.yaml      |    1 +
+ .../devicetree/bindings/nvmem/qcom,qfprom.yaml     |    1 +
+ .../bindings/pinctrl/qcom,msm8917-pinctrl.yaml     |  160 ++
+ .../devicetree/bindings/thermal/qcom-tsens.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts   |  297 +++
+ arch/arm64/boot/dts/qcom/msm8917.dtsi              | 1974 ++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/pm8937.dtsi               |  152 ++
+ drivers/pinctrl/qcom/Kconfig.msm                   |    6 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-msm8917.c             | 1620 ++++++++++++++++
+ drivers/thermal/qcom/tsens-v1.c                    |   21 +-
+ drivers/thermal/qcom/tsens.c                       |    3 +
+ drivers/thermal/qcom/tsens.h                       |    2 +-
+ 15 files changed, 4239 insertions(+), 8 deletions(-)
+---
+base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+change-id: 20241019-msm8917-17c3d0ff4a52
+
+Best regards,
+-- 
+Barnabás Czémán <barnabas.czeman@mainlining.org>
+
 
