@@ -1,119 +1,126 @@
-Return-Path: <linux-kernel+bounces-406202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738FD9C5C0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:38:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0999C5C15
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 16:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33582281FD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:38:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C314F1F23452
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F9F2022E8;
-	Tue, 12 Nov 2024 15:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AAE2022CA;
+	Tue, 12 Nov 2024 15:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bie21zXU"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="n+25dFhC"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645742022D6
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B7F1FEFA8;
+	Tue, 12 Nov 2024 15:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731425903; cv=none; b=hvsjw9uV4OVm1rhS+g/RC2Wd8fh4ZuLq43nholKaBN5hQuacQGTygFFjRT331+sXQJZCHmjAGFvTQnD2sHG1dVN3daQ0b7enBTen6qHgJaA1hsJp0D1Vdy9sAQMcUf/rdbZTueLZ1w5o5nsrrz+hcrEwJAWpjW1ZvheeGPqK6S8=
+	t=1731425994; cv=none; b=WWQkbWaWc1fjU3NvqUBhYJePTCWGppcqbRE/dnseAFnXslOX9KuhQTMFEwgNZwxEe+sc4CIC+zcIzHBHrunSN7ZPAmhEcxFXAaBck0AL8qPUYGdt35hAHkxeOWEv6VXdIIDc2DZWHa86qYAYqsrbDHnE5LUALHgTgNfTYZxnF4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731425903; c=relaxed/simple;
-	bh=/JqgBTdvRwSGK8eOVAs/6HIFEqq9Bti4PaqUniteh9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Huo6ue4xqJFLJD/l3+ew9OxwKMP/AEP7s64Ck/ooJUy6w9z9pC5QO4fBdGWZfHahxN0NdXfYJhOyTsDsBxtUV8fFetImwKLW8+/DyO+wsRpNezASBm+I5qiSy01Iiq8wHiELoX39vehZlnK0e79pRZ6i6X27mStAWNmpCb/StpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bie21zXU; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-460969c49f2so309871cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:38:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731425901; x=1732030701; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/JqgBTdvRwSGK8eOVAs/6HIFEqq9Bti4PaqUniteh9I=;
-        b=Bie21zXUNZipTVnQ8mvvGJfxgJcJyggI5Lp16nBNEb7XMyWd0jcphadhiMYCi46DjZ
-         BNZtlPEJya1ipa+Jx9hI9GG/mzaAn4MuVcu8N0CEQqZXuuIRI65NaZqapL+7XNFgywOp
-         svNakTw6ZPMCkFf7eVPZuUVJfIyOnhuU6p7iOSegFKQ9ASPJPr27p1/hn+AJPXxoT1F3
-         rLsht8VYQGocQ8SOvX3Bbi9Mu2Cl0P3HxjuUwG6KoSG5fdEP3+QT+cgakptuniMNgNAw
-         IN2bcOtCDHDUziphi2kJ96G0JOA1jFyDFe3gwnaupEBkMrdY9LzF8x8LVU+5HGPw/wWJ
-         kH4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731425901; x=1732030701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/JqgBTdvRwSGK8eOVAs/6HIFEqq9Bti4PaqUniteh9I=;
-        b=h8WHRkpbZuMiG19RHggVsiehS5uxhojnt+oX4zO7Rlav0SsfTPHdJrQ6WUO+JHmWsH
-         JUFEAbHP8Ep79VQrYtKpaAaNrI6l+xv4U2HAcY338oGcMY2njepQt399OXMmPFVphRqr
-         PN86uDFmlLAFNvl7aK0VVpSC5MEqCqEY9Lv5D7hEJnL3KNyAaXdGvEMrNx5cq+udxMp9
-         Pb/3G3JXvqJdxA3Dt76D+9Xu8FzhGA/pP0Bkl9s9bBBPF4/ONLnGcLk8tAKCS0dRDnpt
-         qRMOX9tPu33Rvn28/aHBcILECW40+J1iLp6buR/o+scVngaHK91ZMaIFUFMKI4mFKVjT
-         QKLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwFHj5OQzi8pI1T9nw0cf7mrqZ8sIgrHXBp8oSJPDtRJJybhW9Q8PRQYvRYsXhtAsqYkUSjUzMexX7s5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmQr/FPgsfc5zlaUkwJ7HalJXaOwEbMn5CvSrkA3oKmpeiO3x0
-	1PHg7gtHjOTjoLS3RZkQI2Z1WAM6I+/o0/PGFqFImkSoZ+infrkg0A2L2EYMwvLQseaIPucP5EF
-	5Wim50hqJWlm/EgLUMrpzKqo0vDdb9DAAEYkw
-X-Gm-Gg: ASbGncuI/uUDQFpD/t2Ey0eYuwVwezqAu6wMp7XW6w7vxYbMHKVwUTT518fGMYGn0QY
-	ZMwDXRxBYE78RhMI05lv0ozNokvUmht2LPnC8GDHdD1LKB9nUt6tisdDVKk8q9A==
-X-Google-Smtp-Source: AGHT+IHUzTnNuTgHD++1wwv0TlqxOZDUnSUEsiVLrKzmwtbuaHLsHnNii9tgVcNny3YBSiqEcNw+ojp2iDX2vnVLjr4=
-X-Received: by 2002:a05:622a:4b0f:b0:460:b4e3:49e with SMTP id
- d75a77b69052e-4634288b366mr2486921cf.9.1731425900989; Tue, 12 Nov 2024
- 07:38:20 -0800 (PST)
+	s=arc-20240116; t=1731425994; c=relaxed/simple;
+	bh=fvrNxzwDp2P3iPosrFRowJKvdfK7Cu3AryWdKt0N3Ls=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eiCp7cBwobU3vo5wU7Oz8Wk7qNMvBr63xuPwkwFsyC6GpfjFpFMBexEh696PyvIkbHydEzLqKyIhE+PpfByQPTPwmBcI2BIlM33k0fpxO/t3xH4pwGq9+SJ1+ZNOIvbvIlYF4NRowj3MtxIHnFrj4UjYcqEDG/3KRPODh+vyd6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=n+25dFhC; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=yC4PgO0iUg1E/9QX5QiVdbAl0FhMlHnWwAy+hx8zLyU=;
+	t=1731425993; x=1732635593; b=n+25dFhCEMsvZSJ+77KWS4+QeyK3HpzmWVj3lDZbVhXkBVK
+	iw9POVHy/1O36NwC8m1YrTkNw3NHwxlqSP4OnvNlw1HVcJrhFevAeT1Zzw0BH9QJCIARISV+Mpfc4
+	MXLu/wyejOcVmwSzslUW3HyOeo2xwD920oTB+yRrnbU3e8DALso3CO/h62kbtIoE19sMz88YsiMwu
+	GrMRaMlywOCenNPEtD8R76dNEr9QyRTPe4dsCq0HfLImkZgdwpwDnnl/5Z9GgdAwrhxuo9Z3EsHku
+	RzmrbxbfjTCFOtw5f059uYS4yw7gpTSYHLSMD6Epp+51Y+YKGO9IdivU7Wk7wpIQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tAszb-000000031hp-0UTN;
+	Tue, 12 Nov 2024 16:39:47 +0100
+Message-ID: <59b318b2d6719a009189e10949df35f855790d63.camel@sipsolutions.net>
+Subject: Re: [PATCH v5 09/17] wifi: cc33xx: Add main.c
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Nemanov, Michael" <michael.nemanov@ti.com>, Kalle Valo
+ <kvalo@kernel.org>,  "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sabeeh Khan <sabeeh-khan@ti.com>
+Date: Tue, 12 Nov 2024 16:39:45 +0100
+In-Reply-To: <2dbf1cba-0b16-413b-947e-dacf32c85687@ti.com>
+References: <20241107125209.1736277-1-michael.nemanov@ti.com>
+	 <20241107125209.1736277-10-michael.nemanov@ti.com>
+	 <685d782d68bfc664c4fcc594dff96546ffc30e5f.camel@sipsolutions.net>
+	 <2dbf1cba-0b16-413b-947e-dacf32c85687@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111205506.3404479-1-surenb@google.com> <561f69f7-147f-4f34-ac2b-aa1c8c3dae7b@lucifer.local>
-In-Reply-To: <561f69f7-147f-4f34-ac2b-aa1c8c3dae7b@lucifer.local>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 12 Nov 2024 07:38:09 -0800
-Message-ID: <CAJuCfpHpkEYG0=8rarDCQ9V=BhxTA2KCvSwKMwp4kdbpgk7sCw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] move per-vma lock into vm_area_struct
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
-	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, 
-	oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com, 
-	peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, 
-	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
-	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
-	souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-malware-bazaar: not-scanned
 
-On Tue, Nov 12, 2024 at 1:39=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Mon, Nov 11, 2024 at 12:55:02PM -0800, Suren Baghdasaryan wrote:
-> > Back when per-vma locks were introduces, vm_lock was moved out of
-> > vm_area_struct in [1] because of the performance regression caused by
-> > false cacheline sharing. Recent investigation [2] revealed that the
-> > regressions is limited to a rather old Broadwell microarchitecture and
-> > even there it can be mitigated by disabling adjacent cacheline
-> > prefetching, see [3].
->
-> Sorry to nag + add workload, but could you also add changes to the
-> Documentation/mm/process_addrs.rst file to reflect this as part of the
-> series? It'd be really cool to have the change as part of your series, so
-> when it lands we update the documentation with it.
->
-> This change fundamentally changes internals that are documented there so =
-it
-> makes sense to :)
+On Tue, 2024-11-12 at 17:34 +0200, Nemanov, Michael wrote:
+>=20
+> > > +static int parse_control_message(struct cc33xx *cc,
+> > > +				 const u8 *buffer, size_t buffer_length)
+> > > +{
+> > > +	u8 *const end_of_payload =3D (u8 *const)buffer + buffer_length;
+> > > +	u8 *const start_of_payload =3D (u8 *const)buffer;
+> >=20
+> > I don't think the "u8 *const" is useful here, and the cast is awkward.
+> > If anything you'd want "const u8 *const" (which should make it not need
+> > the cast), but the const you have adds no value... do you even know wha=
+t
+> > it means? ;-)
+> >=20
+>=20
+> My intent was to express that start and end pointers are fixed and will=
+=20
+> not change in the loop below. When reading this again I agree this hurts=
+=20
+> more than it helps, I'll drop it.
 
-Yep, I already prepared the documentation patch to be included in v2.
-Sorry for missing it the first time around and thanks for the
-reminder.
+Well, I don't even mind the const so much rather than the cast, I'd
+probably not have commented on it if it were
 
->
-> Thanks!
+	const u8 *const end_of_payload =3D buffer + buffer_length;
+	const u8 *const start_of_payload =3D buffer;
+
+I'd still think the second const (for the variable) isn't all that
+useful, but really the lack of first const (for the object pointed to)
+makes the casts necessary and (IMHO) that's what hurts.
+
+> const u8 *buffer in the prototype illustrates that parse_control_message=
+=20
+> will not change the data so I'll keep it if there a re no objections.
+
+Sure.
+
+> > > +	struct NAB_header *nab_header;
+> >=20
+> > surely checkpatch complained about CamelCase or so with the struct name
+> > like that?
+> >=20
+>=20
+> Double-checked, no warnings from checkpatch:
+
+Hah, ok :) I'm surprised because it complained about _Generic in my
+patch, and that's something you really can't even change since it's C11
+standard ...
+
+johannes
 
