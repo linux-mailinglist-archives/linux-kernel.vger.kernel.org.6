@@ -1,73 +1,51 @@
-Return-Path: <linux-kernel+bounces-406095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7A39C5AE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:51:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DFF19C5AEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:52:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F695284193
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:51:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F08E82823A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A5D1FF60D;
-	Tue, 12 Nov 2024 14:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81181FF050;
+	Tue, 12 Nov 2024 14:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MMWaQqzU"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="j5+6yYWc"
+Received: from pv50p00im-ztdg10021101.me.com (pv50p00im-ztdg10021101.me.com [17.58.6.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2952E1FEFAC
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4131FF039
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423086; cv=none; b=AyVuujSKUeqwMwb91Jf3cRfe5wGGpQi+5i/KCoCZQTAhFqU0EWKP9S7hPjsNyAfJHZ4fKVL4A16+5dO7ErEfpIuYkyvv89fIwK+hYiq90AlWs5bfLL4/LjmjQ498nAcPnI28fsNPEyJ08xYD87qCaRkhVe78wqcYX7loGqca+zQ=
+	t=1731423105; cv=none; b=nTv/MLuinnpyy3RDl4eBuP1Cb87rCTfr12agzxIAjGNRTjo4DlGiO+qB9j3o+9TQ5LXvA46Xs9Ox0bG9P7aNwB6eO5tk5M9KXqTvrNucED1bqj8OSbN+4NXlMEPJ8wvXt30QlQ2xU7Cfn8BII5dMvZlebU3HTChNrnQhMaRtQuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423086; c=relaxed/simple;
-	bh=mqQhsAaxwWysPBIhvxpmHkNJDSNibPBlWN5Kv3bKH+U=;
+	s=arc-20240116; t=1731423105; c=relaxed/simple;
+	bh=cnFTCrNHTZ0oqP7oWQdSuORcvJ7CSPnfCRJKOfwrbP4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JLvdlpBLF0fhEIGy0LAh0y/QMSIlnjidNkEEkKTT33i6CAWX3b2xwW93aGvIHC9Ec8kFbrdYCQ4BN9du8oSJrjlv9/3NWpjEAQAUtxmFCD9urJrBRx4/IlEyTZx/uBEyscL99S3jBimO0P6lTMBVW2b2FLWq9O9NWWlB8I0VuUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MMWaQqzU; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-715716974baso3557028a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 06:51:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731423083; x=1732027883; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gvE32TaYAXjgECParzeSgw6HkypztPHssnr8m+v8i78=;
-        b=MMWaQqzUDQDT1sfOfxiY65TAT9MMPmlRKLKvFdLPP9pl0T2umtwURHkpfFLHRNLmE9
-         7Io/SDzMfM+TIjkbKoYHts7giQXM3zhPvoh40kX35s+fR6leqO2JoxMskuIDVSQ9TT35
-         cYX1rXUdLYaBsw5hKJhFJPAnf7ZQXiA91bKRLYr5AhN5oWQd+MEetGjPyquQW+GlOMPu
-         xAQwUpy5NF/CwOvvWtipGB99muWOWB4/pLa4Z+O/YnjYf9fi1jq6jNHtARZ6pVfwCxfH
-         F5e2KmWCPHnQzFUZWHH5JR+8/yatUNWuKdmermCkmnUBCV+EMOkrfKrhhRhbNL/LD+07
-         G08A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731423083; x=1732027883;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gvE32TaYAXjgECParzeSgw6HkypztPHssnr8m+v8i78=;
-        b=seClRY1G1aMmXbf6/kxxl3cMCigYaEnT5VLPycWMxELC4+H9a0b58SH0xe6vKKTqhg
-         4kE1JOuz+BnzfhBoSUKyPA2KNjG8Mu+wAH4At2nmQAMr3JYE5/nKoRe8HTBmccmD5uWp
-         7KdSKQPvyx+sYLyfxoFbmABDOJImgmu9rW8UEuleirR4y78tYP71p1SKJcThCt80mY2u
-         pS6PDqjhCg1qXQKLlysN/UVEHA/ZRiMiSaeZQasq1+OumbYhMX5/FGX8V9F5k2Rhi1SG
-         9FR+H3iO7q25hwYHM1pBY6SB76/YcYl5itusoyrmPetfZT7nx2qLzpMiXH7Xy/5WLdV8
-         32Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHYtiCmT9S2pXB2mO1EKsMemJ8LU6Q6eL9p+Ua8XPGGiTpFo4RD5CqJi/JOlOjZvRW5cwHtMmu7MyHTRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4QSvh1eA2V2ap3OzEJCNn/zqubFCqpgw/r2CbJjJImz9JnXbS
-	Ubz6oWOLocf3I/4vAud0gv5ZCOgBCquLE9ICKMlIuTdbWrNULwx1OIyKZwd1nGU=
-X-Google-Smtp-Source: AGHT+IH7Ryn2K78a+7vMPHSR7u3Kh0PU/404i9EkCLLhxngvy6O/IjGB1rfvrkuz3xsVwrzASt/5mA==
-X-Received: by 2002:a05:6830:6d86:b0:710:f1cd:b237 with SMTP id 46e09a7af769-71a1c2860eemr14833704a34.20.1731423083214;
-        Tue, 12 Nov 2024 06:51:23 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a10833f05sm2722374a34.31.2024.11.12.06.51.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 06:51:22 -0800 (PST)
-Message-ID: <20b661ee-a7aa-4116-a0ec-96da9343af61@kernel.dk>
-Date: Tue, 12 Nov 2024 07:51:21 -0700
+	 In-Reply-To:Content-Type; b=hYzX1mBRz3ZQLvxldeLhm5uCmuDqvpyt/3f9se4I9fqpwMDSCjzs4pMWY8Vuf4V3v2CgUHvGGEtHPWAlaAx3CY29apbbDVVNd5eoz+Fb9kv1ndPqZAYFNHqrDNXizlqEuPEZouCiPhENJ2GtXJDjO6vnFflluketb2W3h5baRqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=j5+6yYWc; arc=none smtp.client-ip=17.58.6.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1731423103;
+	bh=lhw7gLuX5PSbNju25BD4nqQppSgpS4xwSxhlDI2syaE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=j5+6yYWcIpYp7WBDvsK8QTPrj2Zla2cFP0xjaJhlbrv/dDGh9jk25lbpaHw3WMwmw
+	 JjzLVzR90FJjZ0djFwMtkkJ8EpzNQli4JrcLZEdHnSegsQv4lmt4xjFs1A1IK1LbaI
+	 d7+TfW0N2sVIqd4JAEGW8i1Et8yxDdHe8OzW0nmEnglax/iqpDc697jSsebztqjb3y
+	 bXaYk6Q201rsjgVujqoTG2wkcwkUTjqi32VtudRpberR6m8MJ0UBV1APTauPMXBeDz
+	 xyrp3jG1QEdjJHxmXHjDfUtWGxlynTP6/vkmuS2LyUNOxFFmhXjeQRASh2/4r5SuIq
+	 xrSpfZXdbZiww==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10021101.me.com (Postfix) with ESMTPSA id 8D8FCD002B9;
+	Tue, 12 Nov 2024 14:51:39 +0000 (UTC)
+Message-ID: <2824dfcd-0f8d-4d5e-a687-9b0398ba1458@icloud.com>
+Date: Tue, 12 Nov 2024 22:51:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,186 +53,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/16] mm/filemap: make buffered writes work with
- RWF_UNCACHED
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
- kirill@shutemov.name, linux-btrfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
-References: <20241111234842.2024180-1-axboe@kernel.dk>
- <20241111234842.2024180-11-axboe@kernel.dk>
- <ZzKn4OyHXq5r6eiI@dread.disaster.area>
- <0487b852-6e2b-4879-adf1-88ba75bdecc0@kernel.dk>
- <ZzMLmYNQFzw9Xywv@dread.disaster.area>
+Subject: Re: [PATCH 3/3] driver core: class: Delete a redundant check in APIs
+ class_(for_each|find)_device()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241105-class_fix-v1-0-80866f9994a5@quicinc.com>
+ <20241105-class_fix-v1-3-80866f9994a5@quicinc.com>
+ <2024111230-diabetic-stubbed-102b@gregkh>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZzMLmYNQFzw9Xywv@dread.disaster.area>
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <2024111230-diabetic-stubbed-102b@gregkh>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: nVX73SZH8YtkDraQrJsATGDIvw7NcwPf
+X-Proofpoint-GUID: nVX73SZH8YtkDraQrJsATGDIvw7NcwPf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-12_05,2024-11-12_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=898
+ mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2411120119
 
-On 11/12/24 1:02 AM, Dave Chinner wrote:
-> On Mon, Nov 11, 2024 at 06:27:46PM -0700, Jens Axboe wrote:
->> On 11/11/24 5:57 PM, Dave Chinner wrote:
->>> On Mon, Nov 11, 2024 at 04:37:37PM -0700, Jens Axboe wrote:
->>>> If RWF_UNCACHED is set for a write, mark new folios being written with
->>>> uncached. This is done by passing in the fact that it's an uncached write
->>>> through the folio pointer. We can only get there when IOCB_UNCACHED was
->>>> allowed, which can only happen if the file system opts in. Opting in means
->>>> they need to check for the LSB in the folio pointer to know if it's an
->>>> uncached write or not. If it is, then FGP_UNCACHED should be used if
->>>> creating new folios is necessary.
->>>>
->>>> Uncached writes will drop any folios they create upon writeback
->>>> completion, but leave folios that may exist in that range alone. Since
->>>> ->write_begin() doesn't currently take any flags, and to avoid needing
->>>> to change the callback kernel wide, use the foliop being passed in to
->>>> ->write_begin() to signal if this is an uncached write or not. File
->>>> systems can then use that to mark newly created folios as uncached.
->>>>
->>>> Add a helper, generic_uncached_write(), that generic_file_write_iter()
->>>> calls upon successful completion of an uncached write.
->>>
->>> This doesn't implement an "uncached" write operation. This
->>> implements a cache write-through operation.
+On 2024/11/12 19:45, Greg Kroah-Hartman wrote:
+> On Tue, Nov 05, 2024 at 08:20:24AM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
 >>
->> It's uncached in the sense that the range gets pruned on writeback
->> completion.
-> 
-> That's not the definition of "uncached". Direct IO is, by
-> definition, "uncached" because it bypasses the cache and is not
-> coherent with the contents of the cache.
-
-I grant you it's not the best word in the world to describe it, but it
-is uncached in the sense that it's not persistent in cache. It does very
-much use the page cache as the synchronization point, exactly to avoid
-the pitfalls of the giant mess that is O_DIRECT. But it's not persistent
-in cache, whereas write-through very much traditionally is. Hence I
-think uncached is a much better word than write-through, though as
-mentioned I'll be happy to take other suggestions. Write-through isn't
-it though, as the uncached concept is as much about reads as it is about
-writes.
-
-> This IO, however, is moving the data coherently through the cache
-> (both on read and write).  The cached folios are transient - i.e.
-> -temporarily resident- in the cache whilst the IO is in progress -
-> but this behaviour does not make it "uncached IO".
-> 
-> Calling it "uncached IO " is simply wrong from any direction I look
-> at it....
-
-As mentioned, better words welcome :-)
-
->> For write-through, I'd consider that just the fact that it
->> gets kicked off once dirtied rather than wait for writeback to get
->> kicked at some point.
+>> Delete redundant check (!@class) in both API class_for_each_device() and
+>> class_find_device() with below reasons:
 >>
->> So I'd say write-through is a subset of that.
-> 
-> I think the post-IO invalidation that these IOs do is largely
-> irrelevant to how the page cache processes the write. Indeed,
-> from userspace, the functionality in this patchset would be
-> implemented like this:
-> 
-> oneshot_data_write(fd, buf, len, off)
-> {
-> 	/* write into page cache */
-> 	pwrite(fd, buf, len, off);
-> 
-> 	/* force the write through the page cache */
-> 	sync_file_range(fd, off, len, SYNC_FILE_RANGE_WRITE | SYNC_FILE_RANGE_WAIT_AFTER);
-> 
-> 	/* Invalidate the single use data in the cache now it is on disk */
-> 	posix_fadvise(fd, off, len, POSIX_FADV_DONTNEED);
-> }
-
-Right, you could do that, it'd obviously just be much slower as you lose
-the pipelining of the writes. This is the reason for the patch, after
-all.
-
-> Allowing the application to control writeback and invalidation
-> granularity is a much more flexible solution to the problem here;
-> when IO is sequential, delayed allocation will be allowed to ensure
-> large contiguous extents are created and that will greatly reduce
-> file fragmentation on XFS, btrfs, bcachefs and ext4. For random
-> writes, it'll submit async IOs in batches...
-> 
-> Given that io_uring already supports sync_file_range() and
-> posix_fadvise(), I'm wondering why we need an new IO API to perform
-> this specific write-through behaviour in a way that is less flexible
-> than what applications can already implement through existing
-> APIs....
-
-Just to make it available generically, it's just a read/write flag after
-all. And yes, you can very much do this already with io_uring, just by
-linking the ops. But the way I see it, it's a generic solution to a
-generic problem.
-
->>> That also gives us a common place for adding cache write-through
->>> trigger logic (think writebehind trigger logic similar to readahead)
->>> and this is also a place where we could automatically tag mapping
->>> ranges for reclaim on writeback completion....
+>> - The check is covered by later check (!@sp).
+>> - Callers are unlikely to call both APIs with NULL class argument.
+>> - Make parameter check consistent with all of other class APIs.
 >>
->> I appreciate that you seemingly like the concept, but not that you are
->> also seemingly trying to commandeer this to be something else. Unless
->> you like the automatic reclaiming as well, it's not clear to me.
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>>  drivers/base/class.c | 4 ----
+>>  1 file changed, 4 deletions(-)
+>>
+>> diff --git a/drivers/base/class.c b/drivers/base/class.c
+>> index e81da280af74..120d3aeb52fe 100644
+>> --- a/drivers/base/class.c
+>> +++ b/drivers/base/class.c
+>> @@ -408,8 +408,6 @@ int class_for_each_device(const struct class *class, const struct device *start,
+>>  	struct device *dev;
+>>  	int error = 0;
+>>  
+>> -	if (!class)
+>> -		return -EINVAL;
+>>  	if (!sp) {
+>>  		WARN(1, "%s called for class '%s' before it was registered",
+>>  		     __func__, class->name);
 > 
-> I'm not trying to commandeer anything.
+> Now, if I pass in NULL for class, I get an odd warning, AND the kernel
+> crashes with the dereference of class->name.
+> 
 
-No? You're very much trying to steer it in a direction that you find
-better. There's a difference between making suggestions, or speaking
-like you are sitting on the ultimate truth.
+yes. you are right.
 
-> Having thought about it more, I think this new API is unneccesary
-> for custom written applications to perform fine grained control of
-> page cache residency of one-shot data. We already have APIs that
-> allow applications to do exactly what this patchset is doing. rather
-> than choosing to modify whatever benchmark being used to use
-> existing APIs, a choice was made to modify both the applicaiton and
-> the kernel to implement a whole new API....
-> 
-> I think that was the -wrong choice-.
-> 
-> I think this partially because the kernel modifications are don't
-> really help further us towards the goal of transparent mode
-> switching in the page cache.
-> 
-> Read-through should be a mode that the readahead control activates,
-> not be something triggered by a special read() syscall flag. We
-> already have access patterns and fadvise modes guiding this.
-> Write-through should be controlled in a similar way.
-> 
-> And making the data being read and written behave as transient page
-> caceh objects should be done via an existing fadvise mode, too,
-> because the model you have implemented here exactly matches the 
-> definition of FADV_NOREUSE:
-> 
-> 	POSIX_FADV_NOREUSE
->               The specified data will be accessed only once.
-> 
-> Having a new per-IO flag that effectively collides existing
-> control functionality into a single inflexible API bit doesn't
-> really make a whole lot of sense to me.
-> 
-> IOWs, I'm not questioning whether we need rw-through modes and/or
-> IO-transient residency for page cache based IO - it's been on our
-> radar for a while. I'm more concerned that the chosen API in this
-> patchset is a poor one as it cannot replace any of the existing
-> controls we already have for these sorts of application directed
-> page cache manipulations...
+i did not notice "class->name" in warning message.
 
-We'll just have to disagree, then. Per-file settings is fine for sync
-IO, for anything async per-io is the way to go. It's why we have things
-like RWF_NOWAIT as well, where O_NONBLOCK exists too. I'd argue that
-RWF_NOWAIT should always have been a thing, and O_NONBLOCK is a mistake.
-That's why RWF_UNCACHED exists. And yes, the FADV_NOREUSE was already
-discussed with Willy and Yu, and I already did a poc patch to just
-unconditionally set RWF_UNCACHED for FADV_NOREUSE enabled files. While
-it's not exactly the same concept, I think the overlap is large enough
-that it makes sense to do that. Especially since, historically,
-FADV_NOREUSE has been largely a no-op and even know it doesn't have well
-defined semantics.
+> So this is not ok :(
+> 
+>> @@ -456,8 +454,6 @@ struct device *class_find_device(const struct class *class, const struct device
+>>  	struct class_dev_iter iter;
+>>  	struct device *dev;
+>>  
+>> -	if (!class)
+>> -		return NULL;
+>>  	if (!sp) {
+>>  		WARN(1, "%s called for class '%s' before it was registered",
+>>  		     __func__, class->name);
+> 
+> Same here, this change is going to break things if people get it wrong,
+> please leave both of these as-is.
+> 
 
--- 
-Jens Axboe
+okay. agree with you.
+
+> thanks,
+> 
+> greg k-h
+
 
