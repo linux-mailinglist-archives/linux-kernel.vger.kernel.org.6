@@ -1,124 +1,110 @@
-Return-Path: <linux-kernel+bounces-405777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2FA9C56DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:45:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF549C56E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:45:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6240D1F22415
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:45:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64DB21F22A13
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E1E1CD1E7;
-	Tue, 12 Nov 2024 11:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE061BCA11;
+	Tue, 12 Nov 2024 11:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="en/EoVJG"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="O0pUXGRL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8461B1AFB35;
-	Tue, 12 Nov 2024 11:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B9A19E992
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731411884; cv=none; b=Q9qgDGxXmp1vyx9TMcT0QuEFTtZgVmUc7zIVXc+1mZBQx5i+iQOZIwuDEgZ0f51P6MdsaHfZn+FbPLP32j+uiFBuPD/+Tq5Xp7SDG+b2KmiNOvdHU04HzjM86cclwlPeoxLYqJlPjec+DwiIuwpWJzzjuEPYwlSTdFPRJ0uiS5I=
+	t=1731411932; cv=none; b=ayjzdiFeGK+h1xQaaGIj8eaW2sQU09HRArby82PnGuCpEi55UE2fQo/yCTG3QuxjjYpfxutoyUxf5sW4AvHfSncvETFviU+12HByCsdMoAp8Htq4WkiPo+GbETgYkRW0MZhdij+psMe1qhDjOMiPviaoRa9Nr0h9O2e0XX2Rgqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731411884; c=relaxed/simple;
-	bh=HBGmd7LnHZIxSyRepcDAui8bwvx6IpwO6m4FZ6iG2uc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A1gj1k+AV1HyZ9LXwCW2ofQxYE0ofxXspuE3K8AaUsIAYqfgViejm2N0nQoYQL5h8pe5gqMIr0XZteO90kNZdnmLtFQjIl0J+8RvJwm64bGNvKz2zEBzlrZSusTwJJC4ehMoVXMwbzKQ24BZiIcBESJK8doeFqBctmOolZ2bI+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=en/EoVJG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E23E5C4CED6;
-	Tue, 12 Nov 2024 11:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731411883;
-	bh=HBGmd7LnHZIxSyRepcDAui8bwvx6IpwO6m4FZ6iG2uc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=en/EoVJGtxE/JmGWj/z+UEHRFXJf5ZmJnVRF6367gtmPvaTzHzKjobiz+VxME5tc3
-	 Nn7mO3MeFiiG1K76L/TsBRHjWPuAq16Se62Ui9ekgR1eLpFwaaqgEKMW6jhWXtQipB
-	 sBXKjD/BD8UU0W79Plxbw92ZuEQ0bkDb+9yDzY6qZDrkQqaI1xxog22gc0JvORA+K+
-	 JYJ7PNIoxsThXJUyRyrMbNgHWyRyiH3gh6YsE8d9RljKqTPAWAWQQXDvI64vUV4QsJ
-	 wgc3WbDgtlhkpM3wTOsgYmuRZTLHDFPyNkEabKDlGpbgCbQRAbVeWaggE1T9Vr7sNJ
-	 KMjNL8vMjMVzw==
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5ebc27fdc30so2740125eaf.2;
-        Tue, 12 Nov 2024 03:44:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUGXCo4BjkaBJG6F1UapRJX69eUbVttYrHZSL5oKa3SifSk1CDra3d3y3YBr5CWPwUtAryIDrmi@vger.kernel.org, AJvYcCUzP9byHqI6lNVHyTxlxaweEpPOAimCHtSphfU3xMIxAaviat5Ymy/JgbO8oILoa5LmmEYRrJeX9kw=@vger.kernel.org, AJvYcCVCx/YkQq3Xm/bQkGXuu6afxp4ONhZR4oXeQSlSRkCiplB/FI10y8axZZxnmYqNJP8FaIjLj72RAcLCvlc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4Zf2nv3V0G2n6oEaJYhLXvex6KUbuX9eX+CZ1FNAjNiwBa378
-	vIOnlpEaGmJvTaaUA7dWVOz7jxq7GAWuBezuEvuXHMTtfHlvnqe3EX302tm+n9M0SKP9lUp3y9n
-	YnwGGJdO1DDDUapxCFp3S2J6zqX4=
-X-Google-Smtp-Source: AGHT+IHEnNMF4ElCmn3oKj+4IzNKQ36nGCs61M4QPp9bDjMbO5EIPJrMfsrdGOSy3nYtlqKj3LwzZO5tLssIhs9m2BI=
-X-Received: by 2002:a05:6820:2910:b0:5ed:fc18:910f with SMTP id
- 006d021491bc7-5ee57c4092fmr10724745eaf.3.1731411883196; Tue, 12 Nov 2024
- 03:44:43 -0800 (PST)
+	s=arc-20240116; t=1731411932; c=relaxed/simple;
+	bh=7LI280z4fmODV2SHNnr/yWCyaQ36kuShQQJYP5jJPDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLexefG94En1H0JCXqan9x/xunN6YvUtOUmh2gtFuCNKdxEHzfLHu65goZA6B9hPHzMdBY4AlsR6YxbV5nEyNxThgW+P4/7XwJnxAGy16BmoVtoq9RZYrkqRfC2bIdQ+SJp4VMZfDkVIBJ34jHD+v7htvNSETv8oVXrVoQ9+0Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=O0pUXGRL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94087C4CECD;
+	Tue, 12 Nov 2024 11:45:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731411932;
+	bh=7LI280z4fmODV2SHNnr/yWCyaQ36kuShQQJYP5jJPDY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O0pUXGRLhCM8PDVlopg/DMcLkRuFJEcBROtqMnyk8L9zXmUCuDrVys+qBiboT00ZV
+	 uaBGdTM0baEX8qXDeZ5bbT6Gy2hK0ArFAYczse+SLpJPwiaM8rk0zdoLyWNzymBifx
+	 yaF6SBO2dmMvIVYQRudiFwUkoaz3L/HpLczvx+as=
+Date: Tue, 12 Nov 2024 12:45:29 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH 3/3] driver core: class: Delete a redundant check in APIs
+ class_(for_each|find)_device()
+Message-ID: <2024111230-diabetic-stubbed-102b@gregkh>
+References: <20241105-class_fix-v1-0-80866f9994a5@quicinc.com>
+ <20241105-class_fix-v1-3-80866f9994a5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111162316.GH22801@noisy.programming.kicks-ass.net>
- <20241112053722.356303-1-lenb@kernel.org> <351549432f8d766842dec74ccab443077ea0af91.1731389117.git.len.brown@intel.com>
-In-Reply-To: <351549432f8d766842dec74ccab443077ea0af91.1731389117.git.len.brown@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 12 Nov 2024 12:44:30 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0j1gvwoYS-YaOQWh0bQ3x5=54npiYj8erq68dM92+ad-g@mail.gmail.com>
-Message-ID: <CAJZ5v0j1gvwoYS-YaOQWh0bQ3x5=54npiYj8erq68dM92+ad-g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] x86/cpu: Add INTEL_LUNARLAKE_M to X86_BUG_MONITOR
-To: Len Brown <lenb@kernel.org>
-Cc: peterz@infradead.org, tglx@linutronix.de, x86@kernel.org, 
-	rafael@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Len Brown <len.brown@intel.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105-class_fix-v1-3-80866f9994a5@quicinc.com>
 
-On Tue, Nov 12, 2024 at 6:37=E2=80=AFAM Len Brown <lenb@kernel.org> wrote:
->
-> From: Len Brown <len.brown@intel.com>
->
-> Under some conditions, MONITOR wakeups on Lunar Lake processors
-> can be lost, resulting in significant user-visible delays.
->
-> Add LunarLake to X86_BUG_MONITOR so that wake_up_idle_cpu()
-> always sends an IPI, avoiding this potential delay.
->
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219364
->
-> Cc: stable@vger.kernel.org # 6.11
-> Signed-off-by: Len Brown <len.brown@intel.com>
-
-So again
-
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-and see one super-minor nit below.
-
+On Tue, Nov 05, 2024 at 08:20:24AM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> Delete redundant check (!@class) in both API class_for_each_device() and
+> class_find_device() with below reasons:
+> 
+> - The check is covered by later check (!@sp).
+> - Callers are unlikely to call both APIs with NULL class argument.
+> - Make parameter check consistent with all of other class APIs.
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 > ---
->  arch/x86/kernel/cpu/intel.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> index e7656cbef68d..284cd561499c 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -586,7 +586,9 @@ static void init_intel(struct cpuinfo_x86 *c)
->              c->x86_vfm =3D=3D INTEL_WESTMERE_EX))
->                 set_cpu_bug(c, X86_BUG_CLFLUSH_MONITOR);
->
-> -       if (boot_cpu_has(X86_FEATURE_MWAIT) && c->x86_vfm =3D=3D INTEL_AT=
-OM_GOLDMONT)
-> +       if (boot_cpu_has(X86_FEATURE_MWAIT) &&
-> +           (c->x86_vfm =3D=3D INTEL_ATOM_GOLDMONT
-> +            || c->x86_vfm =3D=3D INTEL_LUNARLAKE_M))
+>  drivers/base/class.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/base/class.c b/drivers/base/class.c
+> index e81da280af74..120d3aeb52fe 100644
+> --- a/drivers/base/class.c
+> +++ b/drivers/base/class.c
+> @@ -408,8 +408,6 @@ int class_for_each_device(const struct class *class, const struct device *start,
+>  	struct device *dev;
+>  	int error = 0;
+>  
+> -	if (!class)
+> -		return -EINVAL;
+>  	if (!sp) {
+>  		WARN(1, "%s called for class '%s' before it was registered",
+>  		     __func__, class->name);
 
-I would put the || at the end of the previous line, that is
+Now, if I pass in NULL for class, I get an odd warning, AND the kernel
+crashes with the dereference of class->name.
 
-> +           (c->x86_vfm =3D=3D INTEL_ATOM_GOLDMONT ||
-> +            c->x86_vfm =3D=3D INTEL_LUNARLAKE_M))
+So this is not ok :(
 
->                 set_cpu_bug(c, X86_BUG_MONITOR);
->
->  #ifdef CONFIG_X86_64
-> --
-> 2.43.0
->
+> @@ -456,8 +454,6 @@ struct device *class_find_device(const struct class *class, const struct device
+>  	struct class_dev_iter iter;
+>  	struct device *dev;
+>  
+> -	if (!class)
+> -		return NULL;
+>  	if (!sp) {
+>  		WARN(1, "%s called for class '%s' before it was registered",
+>  		     __func__, class->name);
+
+Same here, this change is going to break things if people get it wrong,
+please leave both of these as-is.
+
+thanks,
+
+greg k-h
 
