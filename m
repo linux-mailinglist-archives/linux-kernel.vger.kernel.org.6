@@ -1,217 +1,991 @@
-Return-Path: <linux-kernel+bounces-405535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3519C5297
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:00:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A729C52A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDFDB284FA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:00:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD3131F222D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5F820E325;
-	Tue, 12 Nov 2024 10:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9EF20FA8B;
+	Tue, 12 Nov 2024 10:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WQRhNUdY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z0Jg6BwN"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADA215539F
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CEB1F26F8;
+	Tue, 12 Nov 2024 10:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731405635; cv=none; b=BRTTwmfpaXuECsbL2hhtLV2+YhKnxFjZe5H1XvD9h/3yXJIFgPmaBmjyQuUjn5bzg6ScFoEXR8DHJg/VUF6lR8vUUz0/juxPUwRTnvoMX4nT4DgvMSx/ByqHUbe/AR4lAikaP2JeFNZGt+RkS0uhBqGlqfIMBZFjD/+3K/2vnDo=
+	t=1731405859; cv=none; b=ju3spTqqMZ3XexlE/vqrKWtmbSlxEoWZJs8JtASzUeXbeVrswclDkZq2Gl+2u4pzB8T6XuRXMp6xq259dDVkFiblpUjqkk6Q7ANSGKNWcWLwKNILYJ8qt5ZH23I+XhMD3Ko9wDiTuz6F2d/m1iozMR+C19meGmRAjWnGGyF3vJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731405635; c=relaxed/simple;
-	bh=PZpWwIaqpEkf0GddjPCXdhQFVh+zdBbtaLAf1Q8J9LE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dxbugxYRwEOiSgCMDH14n4J6+HCBHVGX1zPXEejgqayHD2xKfcBjfCWTaZJGN41fj1sAAKcD06sQr13CqKIlJ/4yTRwohR3uqVNdyerh/79/hjY6DFYLZmp5iSOal33Cp9WKGOeXRHX5s1SZpY4iqA+Once59N31scP4JVx5qw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WQRhNUdY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731405632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/g7kvUmEiFxKI9h6mQjPf5Uq7FOJ+DtGygEwGMCj0Pc=;
-	b=WQRhNUdY+4Ni38QYyREPqXbmBRvkaytVXsB+UZ5/oclIq+Z8MTi6P/tLuVy2mEcgIPzWcm
-	XiosG6XUZR2EE2psxFiL1oaWr6sihxqrZ+YE95gvcvfKwkzstl1TsTB6mebnHDmVBcZKKy
-	Lfc7a2CTs3gWfIJjPDNREjCaakXtNZk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-237-k94AFCU-ONmWYcAh_ALF3A-1; Tue, 12 Nov 2024 05:00:30 -0500
-X-MC-Unique: k94AFCU-ONmWYcAh_ALF3A-1
-X-Mimecast-MFC-AGG-ID: k94AFCU-ONmWYcAh_ALF3A
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-431518e6d8fso39525915e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:00:30 -0800 (PST)
+	s=arc-20240116; t=1731405859; c=relaxed/simple;
+	bh=919agNdlK1V2GIBvMk3kZwm6DZu8s9b3dR01G58PRI0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qLHejglN0dJ6f61CS2rEuMnvQdlpkSEB5VJ9EWsHkSsX0nINKmeEx6u+FCZ3GSS+gRw+Z2NPbBBYL0RvK16vWpt3DzHaSoZglPm8qQpYKv2/dAPf7Sbz30zLLAcldb38pDhxBUSc8CPZG+i48rVp7JZMknpCk4en/kkISy5wCrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z0Jg6BwN; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c767a9c50so52592775ad.1;
+        Tue, 12 Nov 2024 02:04:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731405857; x=1732010657; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y96nOR+p86gk9dHM8WUv6cNXj22r1+e0au19T7evl8k=;
+        b=Z0Jg6BwNni79o32uF0S6BK4MWNB5TYpZ+fIp/Z54Hz4rJOfWG/lFl4BtMSwI8cLTVq
+         uUqRl4HLkk7e9mb7KNpS3FcSEbgiKwxAHVLqZbzkgQwsGL/IWiZa7P859xoBASA3y+n0
+         bebu9BpxPGRy8lRzgp9GB2ygZPwL/uy4KQKnJgCdFb52zX3YIRXElmvZlAiVFpSBxuoE
+         TnRhr1BKMVZbq/W8XicgbNiv5jV4co0FVEzufsoW5cUSgKd4x9GKGDfJ9q2KcuRMErfn
+         cVhDX6C0Qs9p+X8Ylrk84iXBLFE5C/3uLGz2RnIslFF86EmX/5YDrqm+7JwDuaImtODP
+         ukQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731405630; x=1732010430;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/g7kvUmEiFxKI9h6mQjPf5Uq7FOJ+DtGygEwGMCj0Pc=;
-        b=X/MNJEwtJrgTVdlI6RvceeyEy6UamN8XBC8k75HSj4vTZhlGaFP2svinN9hrTwiBYl
-         GUzsjD9L0b4KgFHCI0axYJClO7CL1U992osc1K7icH1PQOCRKZF2hrjpO3MTvEwMU8L6
-         NRa090LyeobQiy0Jjismc4xL/kA5eIRQZoOP5WKKsgdGnl7kOq4odU33ByR/sCGRYoMw
-         q5W81kMRSuvRw3EFss90Cvmp2Ds0HZTg+B8GsdQX00tl1DI5IVaXCqEWSaNYXlr8gF/l
-         QnEeXLY+eRvgasQ0KTzaoLgZVo6DlEy3cROZaLesOarZzVKY97LvAnF4wYreQ/2s+EMt
-         My+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX4sq/diPvr2BCZEFU5sGrjTlbng27a2atg/UIUvAgPmHYU/IYnnJ1z29DGccRO1hEbz61YJMYnA5mZ1Pc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnWc3yYC325dcCOMrexdJV+puJKCwEmrlGsJVugcJo+pwl82ag
-	CzHHSkcHsZXiDYxhjXTyqmtgc6Vq9I1VLHkT0WLrIdZAsIB4TGWdJKjJ0Wlt3lcQ21xjHDhDer+
-	jKF8C9x73J4qvbe134C5lln7Ww1b5WQD1xspNYJ1CehqaK30lQ4je6CFstvztzA==
-X-Received: by 2002:a05:600c:4587:b0:431:52a3:d9ea with SMTP id 5b1f17b1804b1-432b74a0c04mr143719845e9.0.1731405629738;
-        Tue, 12 Nov 2024 02:00:29 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEqTqPH/uell8dxfDHzR5SZujlJDZ25L/v3M3oMrYgW7GP8h3EzFcDSVtowC6DEhh3Ic5I10Q==
-X-Received: by 2002:a05:600c:4587:b0:431:52a3:d9ea with SMTP id 5b1f17b1804b1-432b74a0c04mr143719395e9.0.1731405629258;
-        Tue, 12 Nov 2024 02:00:29 -0800 (PST)
-Received: from ?IPV6:2003:cb:c739:8e00:7a46:1b8c:8b13:d3d? (p200300cbc7398e007a461b8c8b130d3d.dip0.t-ipconnect.de. [2003:cb:c739:8e00:7a46:1b8c:8b13:d3d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda0411csm14784067f8f.95.2024.11.12.02.00.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 02:00:28 -0800 (PST)
-Message-ID: <50578e9d-6562-4f0f-af7c-cabfb875bbb7@redhat.com>
-Date: Tue, 12 Nov 2024 11:00:27 +0100
+        d=1e100.net; s=20230601; t=1731405857; x=1732010657;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y96nOR+p86gk9dHM8WUv6cNXj22r1+e0au19T7evl8k=;
+        b=LjcN+c4dR93SoohxPhADgy5GeWaGe5+Pz1JcYEdquFH2mJCXjXm8WTzxHBsZmyLfkj
+         pzKHNGw/rXzTOEQ3rsYZaq+kx+SeteC6VL1YZat5KaQvb9O5t00k30UmaDIWflO8Te7o
+         UCKoOaNVvgDjpd2EBsNqRqyFfZs4wKSK8VN1rMZKd7dy6BAmD2GiQEHVqYOn5HdRq98D
+         3FCtGSWT/TDm32qb8jm9JBKd7odOcyFBQYeV5OcapXk0jXWrOeoPWvAzXv5VASAMMMw9
+         1Ivc5mlffoQsYKpsdDov7H5EWDsjQj7qcS9gKh99fz/8pNfLZP+aZQckkmzeUqX5JhnS
+         xoZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWc4JCYdpaPe+/qGiAASjuxQ9CZXpvikJP+E2v/7OmQ88godz53nz1KG6PDTkqC1PiO8CGfUXK9/u2HUfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjZYc4A6oo43ZKoDLz6OZfQkqoqoPiIWWn0wDPebBRumMHb7ih
+	vq3W23dT7rLKcwmlz0w3WyQk99YPPO8MgrObTWXCp9mMukNZnhi4
+X-Google-Smtp-Source: AGHT+IGKPpY2kb/OUf45FJeV7K6d/PT715CH+JD4/8/7CpdB/wzl+XcripUSmpER+MwqdZJumkzyXw==
+X-Received: by 2002:a17:903:41c6:b0:202:cbf:2d6f with SMTP id d9443c01a7336-21183db6b71mr180672835ad.57.1731405856465;
+        Tue, 12 Nov 2024 02:04:16 -0800 (PST)
+Received: from mythos-cloud.. ([121.185.170.145])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc7e96sm90595825ad.42.2024.11.12.02.04.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 02:04:16 -0800 (PST)
+From: Moon Yeounsu <yyyynoom@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	kuba@kernel.org,
+	andrew@lunn.ch
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Moon Yeounsu <yyyynoom@gmail.com>
+Subject: [PATCH net-next v3] net: dlink: add support for reporting stats via `ethtool -S`
+Date: Tue, 12 Nov 2024 19:03:28 +0900
+Message-ID: <20241112100328.134730-1-yyyynoom@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Fix __wp_page_copy_user fallback path for remote mm
-To: Asahi Lina <lina@asahilina.net>, Alistair Popple <apopple@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Sergio Lopez Pascual <slp@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
- Dan Williams <dan.j.williams@intel.com>
-References: <20241101-mm-remote-pfn-v1-1-080b609270b7@asahilina.net>
- <c00226ea-6e29-4432-a1c4-a25e9e05df9c@redhat.com>
- <2d8380b9-3d03-4263-b5bf-7e0227c83ba9@asahilina.net>
- <0977a33b-8318-43a5-a5a1-4eb8c93ca270@redhat.com>
- <64d386e8-6684-4213-8aba-7d1daf94f2cf@asahilina.net>
- <412298ff-80bc-4111-8c72-29a5263a5d32@redhat.com>
- <87ttceu0i8.fsf@nvdebian.thelocal>
- <821d15f9-233e-4b9d-8194-5de1835113c7@asahilina.net>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <821d15f9-233e-4b9d-8194-5de1835113c7@asahilina.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12.11.24 10:48, Asahi Lina wrote:
-> 
-> 
-> On 11/11/24 8:24 AM, Alistair Popple wrote:
->>
->> David Hildenbrand <david@redhat.com> writes:
->>
->>> On 07.11.24 18:32, Asahi Lina wrote:
->>>> On 11/8/24 2:14 AM, David Hildenbrand wrote:
->>>>> I recall that there is still a problem with false-positives on
->>>>> folio_test_anon() with ZONE_DEVICE pages, so it's maybe not that
->>>>> easy ... and the whole get_dev_pagemap() stuff is nasty.
->>
->> Specifically FS DAX reuses PAGE_MAPPING_ANON in
->> include/linux/page-flags.h
->>
->>      /*
->>       * Different with flags above, this flag is used only for fsdax mode.  It
->>       * indicates that this page->mapping is now under reflink case.
->>       */
->>      #define PAGE_MAPPING_DAX_SHARED	((void *)0x1)
->>
->> FS DAX pages are never anon though, so you could probably test for
->> !vma_is_dax() and/or add an implementation of is_fsdax_page().
->>
->>>>> Likely we would have to do what GUP does, and temporarily grab a pgmap
->>>>> reference. Gah.
->>>>>
->>>>>
->>>>> So if we sort out the pagemap stuff and the possibly wrong
->>>>> folio_test_anon() on some ZONE_DEVICE pages (but not all, because IIRC
->>>>> DEVICE_PRIVATE can be anon ...), it might be doable.
->>
->> Correct, DEVICE_PRIVATE and DEVICE_COHERENT pages are always anon (at
->> least for now).
->>
->>>>> But it sounds ugly, especially because that code might change soon and
->>>>> not require messing with ZONE_DEVICE pages on that level.
->>
->> Yes, I'm hopoing to get the next version of that series posted this
->> week. I found a couple of other FS DAX bugs that slowed me down.
->>
->>   - Alistair
->>
->>>>> And then, we'd not be able to handle VM_PFNMAP cleanly ...
->>>>>
-> 
-> If this is all going to be fixed another way soon then I think there's
-> no rush to get a workaround in earlier than that, I just don't want it
-> to fall by the wayside.
-> 
-> We have my original patch downstream in libkrunfw (which despite the
-> lockdep complaints does work in practice)
+This patch consolidates previously unused statistics and
+adds support reporting them through `ethtool -S`.
 
-I assume it's sufficient to deadlock when a writer pops up after you 
-succeeded with the first read-locking, and before you start the second 
-read-locking. IIRC, rwsem is a fair lock, so read-locking when 
-already-read-locked is not guaranteed to work.
+Before applying the patch:
+$ ethtool -S enp36s0
+> no stats available
 
-That's why lockdep complains.
+After applying the patch:
+$ ethtool -S enp36s0
+> NIC statistics:
+     tx_jumbo_frames: 0
+     rx_jumbo_frames: 0
+     tcp_checksum_errors: 0
+     udp_checksum_errors: 0
+     ip_checksum_errors: 0
+     tx_multicast_bytes: 0
+     rx_multicast_bytes: 0
+     rmon_collisions: 0
+     rmon_crc_align_errors: 0
+     rmon_tx_bytes: 0
+     rmon_rx_bytes: 0
+     rmon_tx_packets: 0
+     rmon_rx_packets: 0
 
+$ ethtool -S enp36s0 --all-groups
+> Standard stats for enp36s0:
+eth-mac-FramesTransmittedOK: 0
+eth-mac-SingleCollisionFrames: 0
+eth-mac-MultipleCollisionFrames: 0
+eth-mac-FramesReceivedOK: 0
+eth-mac-FrameCheckSequenceErrors: 0
+eth-mac-OctetsTransmittedOK: 0
+eth-mac-FramesWithDeferredXmissions: 0
+eth-mac-LateCollisions: 0
+eth-mac-FramesAbortedDueToXSColls: 0
+eth-mac-CarrierSenseErrors: 0
+eth-mac-OctetsReceivedOK: 0
+eth-mac-FramesLostDueToIntMACRcvError: 0
+eth-mac-MulticastFramesXmittedOK: 0
+eth-mac-BroadcastFramesXmittedOK: 0
+eth-mac-FramesWithExcessiveDeferral: 0
+eth-mac-MulticastFramesReceivedOK: 0
+eth-mac-BroadcastFramesReceivedOK: 0
+eth-mac-InRangeLengthErrors: 0
+eth-mac-FrameTooLongErrors: 0
+eth-ctrl-MACControlFramesTransmitted: 0
+eth-ctrl-MACControlFramesReceived: 0
+rmon-etherStatsUndersizePkts: 0
+rmon-etherStatsFragments: 0
+rmon-etherStatsJabbers: 0
+rx-rmon-etherStatsPkts64Octets: 0
+rx-rmon-etherStatsPkts65to127Octets: 0
+rx-rmon-etherStatsPkts128to255Octets: 0
+rx-rmon-etherStatsPkts256to511Octets: 0
+rx-rmon-etherStatsPkts512to1023Octets: 0
+rx-rmon-etherStatsPkts1024to1518Octets: 0
+tx-rmon-etherStatsPkts64Octets: 0
+tx-rmon-etherStatsPkts65to127Octets: 0
+tx-rmon-etherStatsPkts128to255Octets: 0
+tx-rmon-etherStatsPkts256to511Octets: 0
+tx-rmon-etherStatsPkts512to1023Octets: 0
+tx-rmon-etherStatsPkts1024to1518Octets: 0
+
+Additionally, the previous code did not manage statistics
+in a structured manner, so this patch:
+
+1. Added `u64` type stat counters to the `netdev_private` struct.
+2. Defined a `dlink_stats` struct for managing statistics.
+3. Registered standard statistics and driver-specific statistics
+separately.
+4. Compressing repetitive tasks through loops.
+
+The code previously blocked by the `#ifdef MEM_MAPPING` preprocessor
+directive has been enabled. This section relates to RMON statistics and
+does not cause issues when activated. Removing unnecessary preprocessor
+directives simplifies the code path and makes it more intuitive.
+
+Tested-on: D-Link DGE-550T Rev-A3
+Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
+---
+ drivers/net/ethernet/dlink/dl2k.c | 625 +++++++++++++++++++++++++-----
+ drivers/net/ethernet/dlink/dl2k.h |  85 ++++
+ 2 files changed, 610 insertions(+), 100 deletions(-)
+
+diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
+index d0ea92607870..d664017f3a70 100644
+--- a/drivers/net/ethernet/dlink/dl2k.c
++++ b/drivers/net/ethernet/dlink/dl2k.c
+@@ -99,6 +99,414 @@ static const struct net_device_ops netdev_ops = {
+ 	.ndo_tx_timeout		= rio_tx_timeout,
+ };
+ 
++static const struct ethtool_rmon_hist_range dlink_rmon_ranges[] = {
++	{    0,    64 },
++	{   65,   127 },
++	{  128,   255 },
++	{  256,   511 },
++	{  512,  1023 },
++	{ 1024,  1518 },
++	{ }
++};
++
++#define STATS_SIZE		ARRAY_SIZE(stats)
++#define RMON_STATS_SIZE		ARRAY_SIZE(rmon_stats)
++#define CTRL_STATS_SIZE		ARRAY_SIZE(ctrl_stats)
++#define MAC_STATS_SIZE		ARRAY_SIZE(mac_stats)
++
++static const struct dlink_stats stats[] = {
++	{
++		.string = "tx_jumbo_frames",
++		.stat_offset = offsetof(struct netdev_private,
++					tx_jumbo_frames),
++		.size = sizeof(u16),
++		.regs = TxJumboFrames
++	},
++	{
++		.string = "rx_jumbo_frames",
++		.stat_offset = offsetof(struct netdev_private,
++					rx_jumbo_frames),
++		.size = sizeof(u16),
++		.regs = RxJumboFrames
++	},
++	{
++		.string = "tcp_checksum_errors",
++		.stat_offset = offsetof(struct netdev_private,
++					tcp_checksum_errors),
++		.size = sizeof(u16),
++		.regs = TCPCheckSumErrors
++	},
++	{
++		.string = "udp_checksum_errors",
++		.stat_offset = offsetof(struct netdev_private,
++					udp_checksum_errors),
++		.size = sizeof(u16),
++		.regs = UDPCheckSumErrors
++	},
++	{
++		.string = "ip_checksum_errors",
++		.stat_offset = offsetof(struct netdev_private,
++					ip_checksum_errors),
++		.size = sizeof(u16),
++		.regs = IPCheckSumErrors
++	},
++	{
++		.string = "tx_multicast_bytes",
++		.stat_offset = offsetof(struct netdev_private,
++					tx_multicast_bytes),
++		.size = sizeof(u32),
++		.regs = McstOctetXmtOk
++	},
++	{
++		.string = "rx_multicast_bytes",
++		.stat_offset = offsetof(struct netdev_private,
++					rx_multicast_bytes),
++		.size = sizeof(u32),
++		.regs = McstOctetRcvOk
++	},
++	{
++		.string = "rmon_collisions",
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_collisions),
++		.size = sizeof(u32),
++		.regs = EtherStatsCollisions
++	},
++	{
++		.string = "rmon_crc_align_errors",
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_crc_align_errors),
++		.size = sizeof(u32),
++		.regs = EtherStatsCRCAlignErrors
++	},
++	{
++		.string = "rmon_tx_bytes",
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_tx_bytes),
++		.size = sizeof(u32),
++		.regs = EtherStatsOctetsTransmit
++	},
++	{
++		.string = "rmon_rx_bytes",
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_rx_bytes),
++		.size = sizeof(u32),
++		.regs = EtherStatsOctets
++	},
++	{
++		.string = "rmon_tx_packets",
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_tx_packets),
++		.size = sizeof(u32),
++		.regs = EtherStatsPktsTransmit
++	},
++	{
++		.string = "rmon_rx_packets",
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_rx_packets),
++		.size = sizeof(u32),
++		.regs = EtherStatsPkts
++	}
++}, ctrl_stats[] = {
++	{
++		.data_offset = offsetof(struct ethtool_eth_ctrl_stats,
++					MACControlFramesTransmitted),
++		.stat_offset = offsetof(struct netdev_private,
++					tx_mac_control_frames),
++		.size = sizeof(u16),
++		.regs = MacControlFramesXmtd
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_ctrl_stats,
++					MACControlFramesReceived),
++		.stat_offset = offsetof(struct netdev_private,
++					rx_mac_control_frames),
++		.size = sizeof(u16),
++		.regs = MacControlFramesRcvd
++	}
++}, mac_stats[] = {
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					FramesTransmittedOK),
++		.stat_offset = offsetof(struct netdev_private,
++					tx_packets),
++		.size = sizeof(u32),
++		.regs = FramesXmtOk,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					FramesReceivedOK),
++		.stat_offset = offsetof(struct netdev_private,
++					rx_packets),
++		.size = sizeof(u32),
++		.regs = FramesRcvOk,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					OctetsTransmittedOK),
++		.stat_offset = offsetof(struct netdev_private,
++					tx_bytes),
++		.size = sizeof(u32),
++		.regs = OctetXmtOk,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					OctetsReceivedOK),
++		.stat_offset = offsetof(struct netdev_private,
++					rx_bytes),
++		.size = sizeof(u32),
++		.regs = OctetRcvOk,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					SingleCollisionFrames),
++		.stat_offset = offsetof(struct netdev_private,
++					single_collisions),
++		.size = sizeof(u32),
++		.regs = SingleColFrames,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					MultipleCollisionFrames),
++		.stat_offset = offsetof(struct netdev_private,
++					multi_collisions),
++		.size = sizeof(u32),
++		.regs = MultiColFrames,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					LateCollisions),
++		.stat_offset = offsetof(struct netdev_private,
++					late_collisions),
++		.size = sizeof(u32),
++		.regs = LateCollisions,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					FrameTooLongErrors),
++		.stat_offset = offsetof(struct netdev_private,
++					rx_frames_too_long_errors),
++		.size = sizeof(u16),
++		.regs = FrameTooLongErrors,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					InRangeLengthErrors),
++		.stat_offset = offsetof(struct netdev_private,
++					rx_in_range_length_errors),
++		.size = sizeof(u16),
++		.regs = InRangeLengthErrors,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					FrameCheckSequenceErrors),
++		.stat_offset = offsetof(struct netdev_private,
++					rx_frames_check_seq_errors),
++		.size = sizeof(u16),
++		.regs = FramesCheckSeqErrors,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					FramesLostDueToIntMACRcvError),
++		.stat_offset = offsetof(struct netdev_private,
++					rx_frames_lost_errors),
++		.size = sizeof(u16),
++		.regs = FramesLostRxErrors,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					FramesAbortedDueToXSColls),
++		.stat_offset = offsetof(struct netdev_private,
++					tx_frames_abort),
++		.size = sizeof(u16),
++		.regs = FramesAbortXSColls,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					CarrierSenseErrors),
++		.stat_offset = offsetof(struct netdev_private,
++					tx_carrier_sense_errors),
++		.size = sizeof(u16),
++		.regs = CarrierSenseErrors,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					MulticastFramesXmittedOK),
++		.stat_offset = offsetof(struct netdev_private,
++					tx_multicast_frames),
++		.size = sizeof(u32),
++		.regs = McstFramesXmtdOk,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					MulticastFramesReceivedOK),
++		.stat_offset = offsetof(struct netdev_private,
++					rx_multicast_frames),
++		.size = sizeof(u32),
++		.regs = McstFramesRcvdOk,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					BroadcastFramesXmittedOK),
++		.stat_offset = offsetof(struct netdev_private,
++					tx_broadcast_frames),
++		.size = sizeof(u16),
++		.regs = BcstFramesXmtdOk,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					BroadcastFramesReceivedOK),
++		.stat_offset = offsetof(struct netdev_private,
++					rx_broadcast_frames),
++		.size = sizeof(u16),
++		.regs = BcstFramesRcvdOk,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					FramesWithDeferredXmissions),
++		.stat_offset = offsetof(struct netdev_private,
++					tx_frames_deferred),
++		.size = sizeof(u32),
++		.regs = FramesWDeferredXmt,
++	},
++	{
++		.data_offset = offsetof(struct ethtool_eth_mac_stats,
++					FramesWithExcessiveDeferral),
++		.stat_offset = offsetof(struct netdev_private,
++					tx_frames_excessive_deferral),
++		.size = sizeof(u16),
++		.regs = FramesWEXDeferal,
++	},
++}, rmon_stats[] = {
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					undersize_pkts),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_under_size_packets),
++		.size = sizeof(u32),
++		.regs = EtherStatsUndersizePkts
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					fragments),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_fragments),
++		.size = sizeof(u32),
++		.regs = EtherStatsFragments
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					fragments),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_fragments),
++		.size = sizeof(u32),
++		.regs = EtherStatsFragments
++	},
++	{
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_jabbers),
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					jabbers),
++		.size = sizeof(u32),
++		.regs = EtherStatsJabbers
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					hist_tx[0]),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_tx_byte_64),
++		.size = sizeof(u32),
++		.regs = EtherStatsPkts64OctetTransmit
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					hist[0]),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_rx_byte_64),
++		.size = sizeof(u32),
++		.regs = EtherStats64Octets
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					hist_tx[1]),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_tx_byte_65to127),
++		.size = sizeof(u32),
++		.regs = EtherStats65to127OctetsTransmit
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					hist[1]),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_rx_byte_64to127),
++		.size = sizeof(u32),
++		.regs = EtherStatsPkts65to127Octets
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					hist_tx[2]),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_tx_byte_128to255),
++		.size = sizeof(u32),
++		.regs = EtherStatsPkts128to255OctetsTransmit
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					hist[2]),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_rx_byte_128to255),
++		.size = sizeof(u32),
++		.regs = EtherStatsPkts128to255Octets
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					hist_tx[3]),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_tx_byte_256to511),
++		.size = sizeof(u32),
++		.regs = EtherStatsPkts256to511OctetsTransmit
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					hist[3]),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_rx_byte_256to511),
++		.size = sizeof(u32),
++		.regs = EtherStatsPkts256to511Octets
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					hist_tx[4]),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_tx_byte_512to1023),
++		.size = sizeof(u32),
++		.regs = EtherStatsPkts512to1023OctetsTransmit
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					hist[4]),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_rx_byte_512to1203),
++		.size = sizeof(u32),
++		.regs = EtherStatsPkts512to1023Octets
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					hist_tx[5]),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_tx_byte_1204to1518),
++		.size = sizeof(u32),
++		.regs = EtherStatsPkts1024to1518OctetsTransmit
++	},
++	{
++		.data_offset = offsetof(struct ethtool_rmon_stats,
++					hist[5]),
++		.stat_offset = offsetof(struct netdev_private,
++					rmon_rx_byte_1204to1518),
++		.size = sizeof(u32),
++		.regs = EtherStatsPkts1024to1518Octets
++	}
++};
++
+ static int
+ rio_probe1 (struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+@@ -137,17 +545,17 @@ rio_probe1 (struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto err_out_dev;
+ 	np->eeprom_addr = ioaddr;
+ 
+-#ifdef MEM_MAPPING
+ 	/* MM registers range. */
+ 	ioaddr = pci_iomap(pdev, 1, 0);
+ 	if (!ioaddr)
+ 		goto err_out_iounmap;
+-#endif
++
+ 	np->ioaddr = ioaddr;
+ 	np->chip_id = chip_idx;
+ 	np->pdev = pdev;
+ 	spin_lock_init (&np->tx_lock);
+ 	spin_lock_init (&np->rx_lock);
++	spin_lock_init(&np->stats_lock);
+ 
+ 	/* Parse manual configuration */
+ 	np->an_enable = 1;
+@@ -287,9 +695,7 @@ rio_probe1 (struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	dma_free_coherent(&pdev->dev, TX_TOTAL_SIZE, np->tx_ring,
+ 			  np->tx_ring_dma);
+ err_out_iounmap:
+-#ifdef MEM_MAPPING
+ 	pci_iounmap(pdev, np->ioaddr);
+-#endif
+ 	pci_iounmap(pdev, np->eeprom_addr);
+ err_out_dev:
+ 	free_netdev (dev);
+@@ -1064,65 +1470,44 @@ rio_error (struct net_device *dev, int int_status)
+ 	}
+ }
+ 
++#define READ_STAT(S, B, I) (*((u64 *)(((void *)B) + (S)[I].stat_offset)))
++#define READ_DATA(S, B, I) (*((u64 *)(((void *)B) + (S)[I].data_offset)))
++
++#define GET_STATS(STATS, SIZE)					\
++	for (int i = 0; i < (SIZE); i++) {				\
++		if (STATS[i].size == sizeof(u32))			\
++			READ_STAT(STATS, np, i) = dr32(STATS[i].regs);	\
++		else							\
++			READ_STAT(STATS, np, i) = dr16(STATS[i].regs);	\
++	}
++
++#define CLEAR_STATS(STATS, SIZE)					\
++	for (int i = 0; i < (SIZE); i++) {				\
++		if (STATS[i].size == sizeof(u32))			\
++			dr32(STATS[i].regs);				\
++		else							\
++			dr16(STATS[i].regs);				\
++	}
++
+ static struct net_device_stats *
+ get_stats (struct net_device *dev)
+ {
+ 	struct netdev_private *np = netdev_priv(dev);
+ 	void __iomem *ioaddr = np->ioaddr;
+-#ifdef MEM_MAPPING
+-	int i;
+-#endif
+-	unsigned int stat_reg;
++	unsigned long flags;
++
++	spin_lock_irqsave(&np->stats_lock, flags);
+ 
+ 	/* All statistics registers need to be acknowledged,
+ 	   else statistic overflow could cause problems */
+ 
+-	dev->stats.rx_packets += dr32(FramesRcvOk);
+-	dev->stats.tx_packets += dr32(FramesXmtOk);
+-	dev->stats.rx_bytes += dr32(OctetRcvOk);
+-	dev->stats.tx_bytes += dr32(OctetXmtOk);
+-
+-	dev->stats.multicast = dr32(McstFramesRcvdOk);
+-	dev->stats.collisions += dr32(SingleColFrames)
+-			     +  dr32(MultiColFrames);
+-
+-	/* detailed tx errors */
+-	stat_reg = dr16(FramesAbortXSColls);
+-	dev->stats.tx_aborted_errors += stat_reg;
+-	dev->stats.tx_errors += stat_reg;
+-
+-	stat_reg = dr16(CarrierSenseErrors);
+-	dev->stats.tx_carrier_errors += stat_reg;
+-	dev->stats.tx_errors += stat_reg;
+-
+-	/* Clear all other statistic register. */
+-	dr32(McstOctetXmtOk);
+-	dr16(BcstFramesXmtdOk);
+-	dr32(McstFramesXmtdOk);
+-	dr16(BcstFramesRcvdOk);
+-	dr16(MacControlFramesRcvd);
+-	dr16(FrameTooLongErrors);
+-	dr16(InRangeLengthErrors);
+-	dr16(FramesCheckSeqErrors);
+-	dr16(FramesLostRxErrors);
+-	dr32(McstOctetXmtOk);
+-	dr32(BcstOctetXmtOk);
+-	dr32(McstFramesXmtdOk);
+-	dr32(FramesWDeferredXmt);
+-	dr32(LateCollisions);
+-	dr16(BcstFramesXmtdOk);
+-	dr16(MacControlFramesXmtd);
+-	dr16(FramesWEXDeferal);
+-
+-#ifdef MEM_MAPPING
+-	for (i = 0x100; i <= 0x150; i += 4)
+-		dr32(i);
+-#endif
+-	dr16(TxJumboFrames);
+-	dr16(RxJumboFrames);
+-	dr16(TCPCheckSumErrors);
+-	dr16(UDPCheckSumErrors);
+-	dr16(IPCheckSumErrors);
++	GET_STATS(stats, STATS_SIZE);
++	GET_STATS(rmon_stats, RMON_STATS_SIZE);
++	GET_STATS(ctrl_stats, CTRL_STATS_SIZE);
++	GET_STATS(mac_stats, MAC_STATS_SIZE);
++
++	spin_unlock_irqrestore(&np->stats_lock, flags);
++
+ 	return &dev->stats;
+ }
+ 
+@@ -1131,53 +1516,15 @@ clear_stats (struct net_device *dev)
+ {
+ 	struct netdev_private *np = netdev_priv(dev);
+ 	void __iomem *ioaddr = np->ioaddr;
+-#ifdef MEM_MAPPING
+-	int i;
+-#endif
+ 
+ 	/* All statistics registers need to be acknowledged,
+ 	   else statistic overflow could cause problems */
+-	dr32(FramesRcvOk);
+-	dr32(FramesXmtOk);
+-	dr32(OctetRcvOk);
+-	dr32(OctetXmtOk);
+-
+-	dr32(McstFramesRcvdOk);
+-	dr32(SingleColFrames);
+-	dr32(MultiColFrames);
+-	dr32(LateCollisions);
+-	/* detailed rx errors */
+-	dr16(FrameTooLongErrors);
+-	dr16(InRangeLengthErrors);
+-	dr16(FramesCheckSeqErrors);
+-	dr16(FramesLostRxErrors);
+-
+-	/* detailed tx errors */
+-	dr16(FramesAbortXSColls);
+-	dr16(CarrierSenseErrors);
+-
+-	/* Clear all other statistic register. */
+-	dr32(McstOctetXmtOk);
+-	dr16(BcstFramesXmtdOk);
+-	dr32(McstFramesXmtdOk);
+-	dr16(BcstFramesRcvdOk);
+-	dr16(MacControlFramesRcvd);
+-	dr32(McstOctetXmtOk);
+-	dr32(BcstOctetXmtOk);
+-	dr32(McstFramesXmtdOk);
+-	dr32(FramesWDeferredXmt);
+-	dr16(BcstFramesXmtdOk);
+-	dr16(MacControlFramesXmtd);
+-	dr16(FramesWEXDeferal);
+-#ifdef MEM_MAPPING
+-	for (i = 0x100; i <= 0x150; i += 4)
+-		dr32(i);
+-#endif
+-	dr16(TxJumboFrames);
+-	dr16(RxJumboFrames);
+-	dr16(TCPCheckSumErrors);
+-	dr16(UDPCheckSumErrors);
+-	dr16(IPCheckSumErrors);
++
++	CLEAR_STATS(stats, STATS_SIZE);
++	CLEAR_STATS(rmon_stats, RMON_STATS_SIZE);
++	CLEAR_STATS(ctrl_stats, CTRL_STATS_SIZE);
++	CLEAR_STATS(mac_stats, MAC_STATS_SIZE);
++
+ 	return 0;
+ }
+ 
+@@ -1328,11 +1675,91 @@ static u32 rio_get_link(struct net_device *dev)
+ 	return np->link_status;
+ }
+ 
++static void get_ethtool_stats(struct net_device *dev,
++			      struct ethtool_stats __always_unused *__,
++			      u64 *data)
++{
++	struct netdev_private *np = netdev_priv(dev);
++
++	get_stats(dev);
++
++	for (int i = 0, j = 0; i < STATS_SIZE; i++)
++		data[j++] = READ_STAT(stats, np, i);
++}
++
++static void get_ethtool_rmon_stats(struct net_device *dev,
++				   struct ethtool_rmon_stats *rmon_base,
++				   const struct ethtool_rmon_hist_range **ranges)
++{
++	struct netdev_private *np = netdev_priv(dev);
++
++	get_stats(dev);
++
++	for (int i = 0; i < RMON_STATS_SIZE; i++)
++		READ_DATA(rmon_stats, rmon_base, i) = READ_STAT(rmon_stats, np, i);
++
++	*ranges = dlink_rmon_ranges;
++}
++
++static void get_ethtool_ctrl_stats(struct net_device *dev,
++				   struct ethtool_eth_ctrl_stats *ctrl_base)
++{
++	struct netdev_private *np = netdev_priv(dev);
++
++	get_stats(dev);
++
++	if (ctrl_base->src != ETHTOOL_MAC_STATS_SRC_AGGREGATE)
++		return;
++
++	for (int i = 0; i < CTRL_STATS_SIZE; i++)
++		READ_DATA(ctrl_stats, ctrl_base, i) = READ_STAT(ctrl_stats, np, i);
++}
++
++static void get_ethtool_mac_stats(struct net_device *dev,
++				  struct ethtool_eth_mac_stats *mac_base)
++{
++	struct netdev_private *np = netdev_priv(dev);
++
++	get_stats(dev);
++
++	if (mac_base->src != ETHTOOL_MAC_STATS_SRC_AGGREGATE)
++		return;
++
++	for (int i = 0; i < MAC_STATS_SIZE; i++)
++		READ_DATA(mac_stats, mac_base, i) = READ_STAT(mac_stats, np, i);
++}
++
++static void get_strings(struct net_device *dev, u32 stringset, u8 *data)
++{
++	switch (stringset) {
++	case ETH_SS_STATS:
++		for (int i = 0; i < STATS_SIZE; i++)
++			ethtool_puts(&data, stats[i].string);
++		break;
++	}
++}
++
++static int get_sset_count(struct net_device *dev, int sset)
++{
++	switch (sset) {
++	case ETH_SS_STATS:
++		return STATS_SIZE;
++	}
++
++	return 0;
++}
++
+ static const struct ethtool_ops ethtool_ops = {
+ 	.get_drvinfo = rio_get_drvinfo,
+ 	.get_link = rio_get_link,
+ 	.get_link_ksettings = rio_get_link_ksettings,
+ 	.set_link_ksettings = rio_set_link_ksettings,
++	.get_ethtool_stats = get_ethtool_stats,
++	.get_rmon_stats = get_ethtool_rmon_stats,
++	.get_eth_ctrl_stats = get_ethtool_ctrl_stats,
++	.get_eth_mac_stats = get_ethtool_mac_stats,
++	.get_strings = get_strings,
++	.get_sset_count = get_sset_count
+ };
+ 
+ static int
+@@ -1798,9 +2225,7 @@ rio_remove1 (struct pci_dev *pdev)
+ 				  np->rx_ring_dma);
+ 		dma_free_coherent(&pdev->dev, TX_TOTAL_SIZE, np->tx_ring,
+ 				  np->tx_ring_dma);
+-#ifdef MEM_MAPPING
+ 		pci_iounmap(pdev, np->ioaddr);
+-#endif
+ 		pci_iounmap(pdev, np->eeprom_addr);
+ 		free_netdev (dev);
+ 		pci_release_regions (pdev);
+diff --git a/drivers/net/ethernet/dlink/dl2k.h b/drivers/net/ethernet/dlink/dl2k.h
+index 195dc6cfd895..346c912df411 100644
+--- a/drivers/net/ethernet/dlink/dl2k.h
++++ b/drivers/net/ethernet/dlink/dl2k.h
+@@ -46,6 +46,7 @@
+    In general, only the important configuration values or bits changed
+    multiple times should be defined symbolically.
+ */
++
+ enum dl2x_offsets {
+ 	/* I/O register offsets */
+ 	DMACtrl = 0x00,
+@@ -146,6 +147,14 @@ enum dl2x_offsets {
+ 	EtherStatsPkts1024to1518Octets = 0x150,
+ };
+ 
++struct dlink_stats {
++	char string[ETH_GSTRING_LEN];
++	size_t data_offset;
++	size_t stat_offset;
++	size_t size;
++	enum dl2x_offsets regs;
++};
++
+ /* Bits in the interrupt status/mask registers. */
+ enum IntStatus_bits {
+ 	InterruptStatus = 0x0001,
+@@ -374,6 +383,82 @@ struct netdev_private {
+ 	void __iomem *eeprom_addr;
+ 	spinlock_t tx_lock;
+ 	spinlock_t rx_lock;
++
++	spinlock_t stats_lock;
++	struct {
++		u64 tx_jumbo_frames;
++		u64 rx_jumbo_frames;
++
++		u64 tcp_checksum_errors;
++		u64 udp_checksum_errors;
++		u64 ip_checksum_errors;
++		u64 tx_packets;
++		u64 rx_packets;
++
++		u64 tx_bytes;
++		u64 rx_bytes;
++
++		u64 single_collisions;
++		u64 multi_collisions;
++		u64 late_collisions;
++
++		u64 rx_frames_too_long_errors;
++		u64 rx_in_range_length_errors;
++		u64 rx_frames_check_seq_errors;
++		u64 rx_frames_lost_errors;
++
++		u64 tx_frames_abort;
++		u64 tx_carrier_sense_errors;
++
++		u64 tx_multicast_bytes;
++		u64 rx_multicast_bytes;
++
++		u64 tx_multicast_frames;
++		u64 rx_multicast_frames;
++
++		u64 tx_broadcast_frames;
++		u64 rx_broadcast_frames;
++
++		u64 tx_broadcast_bytes;
++		u64 rx_broadcast_bytes;
++
++		u64 tx_mac_control_frames;
++		u64 rx_mac_control_frames;
++
++		u64 tx_frames_deferred;
++		u64 tx_frames_excessive_deferral;
++
++		u64 rmon_collisions;
++		u64 rmon_crc_align_errors;
++		u64 rmon_under_size_packets;
++		u64 rmon_fragments;
++		u64 rmon_jabbers;
++
++		u64 rmon_tx_bytes;
++		u64 rmon_rx_bytes;
++
++		u64 rmon_tx_packets;
++		u64 rmon_rx_packets;
++
++		u64 rmon_tx_byte_64;
++		u64 rmon_rx_byte_64;
++
++		u64 rmon_tx_byte_65to127;
++		u64 rmon_rx_byte_64to127;
++
++		u64 rmon_tx_byte_128to255;
++		u64 rmon_rx_byte_128to255;
++
++		u64 rmon_tx_byte_256to511;
++		u64 rmon_rx_byte_256to511;
++
++		u64 rmon_tx_byte_512to1023;
++		u64 rmon_rx_byte_512to1203;
++
++		u64 rmon_tx_byte_1204to1518;
++		u64 rmon_rx_byte_1204to1518;
++	};
++
+ 	unsigned int rx_buf_sz;		/* Based on MTU+slack. */
+ 	unsigned int speed;		/* Operating speed */
+ 	unsigned int vlan;		/* VLAN Id */
 -- 
-Cheers,
-
-David / dhildenb
+2.47.0
 
 
