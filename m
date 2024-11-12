@@ -1,140 +1,91 @@
-Return-Path: <linux-kernel+bounces-406691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812309C624C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:12:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5769C6254
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:13:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389981F231E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:12:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9384C281BA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8683219CAB;
-	Tue, 12 Nov 2024 20:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4A8219E4B;
+	Tue, 12 Nov 2024 20:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PimX1dvG"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="I36W98i9"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD07920B7F2
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 20:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B858219E57;
+	Tue, 12 Nov 2024 20:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731442349; cv=none; b=XT5Qj6iMdx+bo62V+iiHPnN1R6U/yry6O0rRAQoW53zS7aUXwN1LIg/JmhBXQDt7a3KTIMJXIgh+rovGYQvNItsMSZHDGzcBh5A3gvWqRj58fNEnuqNLgbZoPtNVnOrAj+FZLQR7JtQdgiX4GKt31KyeHF6Zsw1itoA3Ido19Ss=
+	t=1731442366; cv=none; b=AZ2liNOuBJNkGqdFc3+yw3DjZtlC9rwBx+jMv1Za/4az9QqpBfWbVO7Kpa7of5pbkMTLJx80oubwf2rNkmTuZwrwSbr2LwUqg7dQWcY5BEGEZrh2ZR1yV1vSrSpqS3wDIT0kigRawz6AEjlHR8eQL6QiXq49h8v4gq9xc0gSDQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731442349; c=relaxed/simple;
-	bh=bPv/feaj5Glj0pCE0a7gtustT0zmFafSOmethJidReU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qkGh0L6aWXPSZjDi6B9nVomW29OB8p7p22pXeS0xxHkmt90/yyh0ABiYMJCt5Zz6yGOVMpIbxdJw20gOp5XzisB+RZhvkEejq4ERywhlhr8v71surjeiLakzo/aWaIncxN3IakGuPldO1904zJBjiSw9v9knUGUU7qQOLgbPVeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PimX1dvG; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e60825aa26so3636103b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:12:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731442345; x=1732047145; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Dl6oW+royBVKzJh6c3nIJ5U6CjfR2o5cVhOS2LXCTeg=;
-        b=PimX1dvG4+SY+HOhJqrNDzieDq007r98POZ9V4XmKYNGB3Eh9R1XmfKUXb5dgxfPaP
-         w2i5UK7WMfg046ERjmeILTQOTTCQi7jmID5T3FnUOEs0Euk7bel3HThScgpHi7Mpxu+A
-         3AirrmeEmB9fG5KKGfahPXtyqmMU0kUBcPVpZu7NZOxJIQt+GA+FYRd8y/tgALk1bfKH
-         3ZmzK0NJ2xi1J1IFxxd3DtmwZ1ImrC2zIDJft38iPoC9YlmHp39+JhGpC5kF25ij/4l5
-         fUeXmHUKHlr+YkTu4VXCgCdpDlCfBvu6K6sPq/fMxZVgAhVXzDgPOi8fkg99+w0y0He0
-         xt+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731442345; x=1732047145;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dl6oW+royBVKzJh6c3nIJ5U6CjfR2o5cVhOS2LXCTeg=;
-        b=Io9tTidiH9mCczAl+2zV4G3ymHFw05ZJwqKORAwf0ghDMZKj00j/Bl9c1P++QRt5gL
-         MoX9zZLLEvswBMOyGcHLPfJC4OrP5FZHWtfhyXqTIAXPHrHIZysSl7rGII14HiMY7WO7
-         QBm3sfdXAPFv8f5rloCpoS6N/fUlHundh7CFp8370C1EOumEfvkpAa6aQgVHYyqtqVE0
-         8w6k9zudwHy+Ub6q8TLpSmdz5wtsI5VY4fuAbuvL3diw0iIm5lYcZd3WTQRIX9C3BgWB
-         x89YUGGId2otXrZx+hokawK03gpzWo+Ujk8MDC9xlsATcWcxXG1rgKmoZapKe9asc7My
-         LreA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGL4mRv3Ed2wmOc6Xov+yt1jeJY9Wh8Vlv//Xj2mX3TCyVIntXW5sqSGeS4IWL6JSYlNzkVp5iUK+UMgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGbdGlqd6TvaSc9swaj58a3FSU3+U3RNbp7eGI7wueS5mMgD+I
-	cMWhzzdrPhG+ogchEnhsNd9Lqxlm1uICjHSdWdo6D+9t8ReVhh+eFpL3m/pAmKg=
-X-Google-Smtp-Source: AGHT+IEUK1lwL53dpSjHoatFyNXNN93/2KKOkopUDAWIapQKMOXvlEOPLtpAZYQbhUpekTLpeop8UA==
-X-Received: by 2002:a05:6808:11c7:b0:3e5:d591:c9a9 with SMTP id 5614622812f47-3e7947031famr17094130b6e.26.1731442345040;
-        Tue, 12 Nov 2024 12:12:25 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e7b096b5dcsm47591b6e.20.2024.11.12.12.12.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 12:12:24 -0800 (PST)
-Message-ID: <35d88f91-b4bd-426e-aa75-40741b8c3bd0@baylibre.com>
-Date: Tue, 12 Nov 2024 14:12:22 -0600
+	s=arc-20240116; t=1731442366; c=relaxed/simple;
+	bh=7E+MCjcMxZ9hrldEY1WGxt+s38Bf/hlAZRNYwyxcytw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=otl26H43lw0bo61bWyG9hF+wmd77kOmQ9ov29RWXWf+exn7SZrM2E4h6Uot8RQMR2lBV0lQSLQnhDzYAT/X6/BeoYm1/dsNnf5iSruGCOt0FHOujhnZc4gHVrWCneYgMHheygAFJAipqEQQYlbrvR53bAiixL+oMbgFIcM++GR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=I36W98i9; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CF2EF403E4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1731442364; bh=7E+MCjcMxZ9hrldEY1WGxt+s38Bf/hlAZRNYwyxcytw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=I36W98i9M1HmB6s8VdQcVvfJWzGxqGDQWxKXslivaORSlIOyCZyG7pFT0c/LgBCeA
+	 w4qQksF0QXWA3Nwv+QBy8PctQah38iHqllovC1/IGfN488NowKruGjRkvo+Uw4w/zl
+	 snKYa2fSSOE3JHCT742mOnhKydb4brnuG5F9o+QRKZa69sSkBcb1ZBntkC9JRjLScj
+	 4I+ScA8O13NIQFap/7Vpt5WP20pdsg1bbCy7dRtONMA3Xmxj/kCDocabB5XtxMQpKE
+	 Hu7aP/mn7TO0tNrrLkSyM+E75RB/V7BQdfZY10g4NOcFicYvPLO53ptZwGwq3sexe7
+	 OfHixR43l8v7g==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id CF2EF403E4;
+	Tue, 12 Nov 2024 20:12:43 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dongliang Mu <dzm91@hust.edu.cn>, si.yanteng@linux.dev, Alex Shi
+ <alexs@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Dongliang Mu <dzm91@hust.edu.cn>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] docs/zh_CN: fix one sentence in llvm.rst
+In-Reply-To: <20241107013615.374757-1-dzm91@hust.edu.cn>
+References: <20241107013615.374757-1-dzm91@hust.edu.cn>
+Date: Tue, 12 Nov 2024 13:12:43 -0700
+Message-ID: <87ed3gqkhw.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/8] iio: adc: adi-axi-adc: add oversampling
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org
-References: <20241111121203.3699-1-antoniu.miclaus@analog.com>
- <20241111121203.3699-7-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241111121203.3699-7-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 
-On 11/11/24 6:12 AM, Antoniu Miclaus wrote:
-> Add support for enabling/disabling oversampling.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-> changes in v6:
->  - add support for oversampling enable/disable.
->  drivers/iio/adc/adi-axi-adc.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
-> index 9bf967d5b730..8ec668f59c88 100644
-> --- a/drivers/iio/adc/adi-axi-adc.c
-> +++ b/drivers/iio/adc/adi-axi-adc.c
-> @@ -46,6 +46,7 @@
->  #define    ADI_AXI_ADC_CTRL_DDR_EDGESEL_MASK	BIT(1)
->  
->  #define ADI_AXI_ADC_REG_CNTRL_3			0x004c
-> +#define   AD485X_CNTRL_3_CUSTOM_CTRL_OS_EN_MSK	BIT(2)
->  #define   AD485X_CNTRL_3_CUSTOM_CTRL_PACKET_FORMAT_MSK	GENMASK(1, 0)
->  #define   AD485X_PACKET_FORMAT_20BIT		0x0
->  #define   AD485X_PACKET_FORMAT_24BIT		0x1
-> @@ -341,6 +342,14 @@ static int axi_adc_data_size_set(struct iio_backend *back, unsigned int size)
->  				  AD485X_CNTRL_3_CUSTOM_CTRL_PACKET_FORMAT_MSK, val);
->  }
->  
-> +static int axi_adc_oversampling_en(struct iio_backend *back, bool en)
-> +{
-> +	struct adi_axi_adc_state *st = iio_backend_get_priv(back);
-> +
-> +	return regmap_update_bits(st->regmap, ADI_AXI_ADC_REG_CNTRL_3,
-> +				  AD485X_CNTRL_3_CUSTOM_CTRL_OS_EN_MSK, en);
-
-This needs FIELD_PREP() to apply the correct shift to en.
-
-> +}
-> +
->  static struct iio_buffer *axi_adc_request_buffer(struct iio_backend *back,
->  						 struct iio_dev *indio_dev)
->  {
-> @@ -390,6 +399,7 @@ static const struct iio_backend_ops adi_axi_adc_ops = {
->  	.chan_status = axi_adc_chan_status,
->  	.interface_type_get = axi_adc_interface_type_get,
->  	.data_size_set = axi_adc_data_size_set,
-> +	.oversampling_en = axi_adc_oversampling_en,
->  	.debugfs_reg_access = iio_backend_debugfs_ptr(axi_adc_reg_access),
->  	.debugfs_print_chan_status = iio_backend_debugfs_ptr(axi_adc_debugfs_print_chan_status),
->  };
-
+RG9uZ2xpYW5nIE11IDxkem05MUBodXN0LmVkdS5jbj4gd3JpdGVzOg0KDQo+IEFjY29yZGluZyB0
+byBKaW5qaWUgUnVhbiwgdGhlIGRlc2NyaXB0aW9uIGFib3V0IHRoZSBwcmVidWlsdCBsbHZtIGlz
+DQo+IGluY29ycmVjdC4gRml4IHRoaXMgc2VudGVuY2Ugd2l0aCBuZXcgdW5kZXJzdGFuZGluZy4N
+Cj4NCj4gTGluazogaHR0cHM6Ly9ncm91cHMuZ29vZ2xlLmNvbS9nL2h1c3Qtb3Mta2VybmVsLXBh
+dGNoZXMvYy9HYk41UmtWckJoby9tLzJzQzlyQXc3QlFBSg0KPiBTaWduZWQtb2ZmLWJ5OiBEb25n
+bGlhbmcgTXUgPGR6bTkxQGh1c3QuZWR1LmNuPg0KPiAtLS0NCj4gIERvY3VtZW50YXRpb24vdHJh
+bnNsYXRpb25zL3poX0NOL2tidWlsZC9sbHZtLnJzdCB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvRG9jdW1l
+bnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04va2J1aWxkL2xsdm0ucnN0IGIvRG9jdW1lbnRhdGlv
+bi90cmFuc2xhdGlvbnMvemhfQ04va2J1aWxkL2xsdm0ucnN0DQo+IGluZGV4IGY3MTA5MjE0NGEy
+Ni4uZjg3ZTAxODFkOGU3IDEwMDY0NA0KPiAtLS0gYS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9u
+cy96aF9DTi9rYnVpbGQvbGx2bS5yc3QNCj4gKysrIGIvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlv
+bnMvemhfQ04va2J1aWxkL2xsdm0ucnN0DQo+IEBAIC0xODgsNyArMTg4LDcgQEAgTExWTSDlubbk
+uI3mlK/mjIEgTGludXgg5YaF5qC45omA5pyJ5Y+v5pSv5oyB55qE5p625p6E77yM5ZCM5qC377yM
+5Y2z5L2/IExMVk0gDQo+ICANCj4gIOaIkeS7rOWcqCBga2VybmVsLm9yZyA8aHR0cHM6Ly9rZXJu
+ZWwub3JnL3B1Yi90b29scy9sbHZtLz5gXyDmj5DkvpvpooTnvJbor5HnmoTnqLPlrprniYggTExW
+TeOAgg0KPiAg6L+Z5Lqb54mI5pys5bey57uP6ZKI5a+5IExpbnV4IOWGheaguOaehOW7uu+8jOS9
+v+eUqOmFjee9ruaWh+S7tuaVsOaNrui/m+ihjOS8mOWMluOAguebuOi+g+S6juWFtuS7luWPkeih
+jOeJiOS4reeahCBMTFZN77yM5a6D5Lus5bqU6K+lDQo+IC3og73mj5Dpq5jlhoXmoLjmnoTlu7rm
+l7bpl7TjgIINCj4gK+iDveaPkOmrmOWGheaguOaehOW7uuaViOeOh+OAgg0KDQpBcHBsaWVkLCB0
+aGFua3MuDQoNCmpvbg0K
 
