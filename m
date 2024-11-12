@@ -1,142 +1,118 @@
-Return-Path: <linux-kernel+bounces-405752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A63D29C571F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:59:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5109C5800
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:40:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24C5CB616E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:32:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14377B2BA96
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1020D1FA82E;
-	Tue, 12 Nov 2024 11:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADBA1FB752;
+	Tue, 12 Nov 2024 11:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XDA9agfM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXu2u/OP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261F01F77B6
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D9F1FB745;
+	Tue, 12 Nov 2024 11:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731410862; cv=none; b=uGD/UPEJHSOTesT0U7/g7+ptwf8OAX86CWm20vBEcf0RpUcHYqpytKZkGuv/HjgHt2NNva2mS/I7k1r1VKMp0ldg26cqEmBat82z9u7XomrzbtkCkhGT/aQ5TrBAjz/txrmtV/Y78sLIFk79G50KczAEzVoVz/1kZdxrZMq2I44=
+	t=1731410911; cv=none; b=r3GapHeZ0WDHRZWBMA2tjfV/PQIdIur4B8QrhYqOyc2tV5AuJLeXGDTaJw5cGH6mv8u0cqb1AAzQQ3QnLpsFGxuSS/RTmIEyheL2L2Zij+kEv8ahNXql1Cg/S9JTidz40g4r8uw9OGCPY+vwBg9SowvtCGZxSovz28gJbELr5As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731410862; c=relaxed/simple;
-	bh=IwFPI0wS/zSh9KO3kInJdnvla0lwEg1CpwDSNeOb+RE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ep1lUMyk9a5jR63NCmdCKcJL3+kzJCLm8LmBsdEiPkUTLF9TDuNbC1K+jMJbm88c/LG7eF51FvD/fYhdbGFbr6CgTT8+B/sdWf88WerK3z9prC4bhFH22L4bD00vGdMO/X3vHPY7/6FzUQWe9mAggxnpyB8VD5jiHV1ANWmZSPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XDA9agfM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC1vUld005359
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:27:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8FysoUKQCmcH3GBytp0zaytK1t5Y0Chtzi5AW8BBt9k=; b=XDA9agfMHtXL6wLl
-	wlAyhlRmH6aKjDOaNi4pwo+i0ZyDxWtXtEMyxGFMPikmhUlM7+jUmB++LXavl4Ev
-	snNGQ+Ky8cPerfbaRAVgBFt6SarshXIzQdCtL10aroiPc4hGug2sReVpLN8G23UD
-	0aZVDzCpMMb15k1p/SpLOzKQvcNFwMOkbBNVq6nqkMtvbRkSODTAGnD4QsVGnapN
-	Z1iHD0uHZxa5jkA/Aeg0sD0Zu0S8TY4UG2rnlTkeYYirbrTkTtUW+5+VhFxWoJnd
-	hMJyaEGsXe0fs95bOiQxhXbeKq2z2oJCnQTx3QmjPrbnxx32W8RQBrkq1+fec5Ev
-	hyN96A==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uwt5h950-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 11:27:40 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2e320038b5aso156009a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:27:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731410859; x=1732015659;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8FysoUKQCmcH3GBytp0zaytK1t5Y0Chtzi5AW8BBt9k=;
-        b=WdmUVN2A16ld62is6FP7wtrts2MjkRAmS2uauX/be+d21H3E4r9H2voe/UzcsVD/mW
-         9q9jwn1cUijDUgyoBQT/8KVAr2ZNj1RENm0VsgzXdM8AwRgEnZFVXYd4tSZORmsVkoN9
-         co4W/rzqA7lnxQgrUkRtxbA1DaOIT7ACP4brrFY3o797oPLlve7sEdEDtvV66zwheuEV
-         4gQBNvo4aPu+gYhuHzep9XF8IneWZBTcerb0UbYU1cBXeEkWE9WCXyrTigVNQOL2nZAV
-         D1+66gGck7koqtbfDGSaKqNqYpP3uq5HMmVQQJCrGxjV4qoy5Vn3yw4GWok31mZOG4MZ
-         OLLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwEqRWSSf/o8+BE3xLoZ2i2+z3RAGg3ljgJl9CDZNZofMqTOu3ZfXDqBlzRWFu2f3yaBgdHDtOShBACOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9F2kGm9QU0V+8GAZA5DRGMCAGNOGDv5ZeRYuc/roey4xrQuv4
-	5PUEDkwhVYLTzcZitv1OMz76TGHbJwXKDwENCDmm74cbJ1Bs07OE99V0SgjZZ5PKoumFnP8tvAb
-	uHXLRzPgv3QKAru348HRP/+57xqE4r/nzqYA2ZnL7ysUF5gLfqNqINTO1uoPw4sY=
-X-Received: by 2002:a17:902:f646:b0:207:14b3:11a7 with SMTP id d9443c01a7336-211835ad362mr97306255ad.14.1731410859553;
-        Tue, 12 Nov 2024 03:27:39 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGFFqOC1u19hi/xuXAev00tu4AN5Xhtkx8dXOV2vADFYDwPCJfvX72qKqUQDtVAeXkB3P4NrQ==
-X-Received: by 2002:a17:902:f646:b0:207:14b3:11a7 with SMTP id d9443c01a7336-211835ad362mr97306155ad.14.1731410859221;
-        Tue, 12 Nov 2024 03:27:39 -0800 (PST)
-Received: from [192.168.123.190] (public-gprs527294.centertel.pl. [31.61.178.255])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0def4b5sm711984766b.146.2024.11.12.03.27.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 03:27:37 -0800 (PST)
-Message-ID: <341a864e-d3b4-4b79-8b91-79ff6f06879a@oss.qualcomm.com>
-Date: Tue, 12 Nov 2024 12:27:19 +0100
+	s=arc-20240116; t=1731410911; c=relaxed/simple;
+	bh=+rzAkXFKFxYH+EnmyNDNya6LAZlVy/3NQRETZ1zHyYk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=npt3/A2QNyOidSdU2eKTyw6WQdpulINju2vL3tHkW0cY0xCHpPb8P9ShZd+8ZMIQPRS1xvc5OwTlrzyoWcslY7XiHF+DtyojA+Y+OdceGTnetSOq6+AQoOIFzc4D4OV872Bqyd9+IkQh2tuF0NpyoT0QmAFTFjPE7O4Gr7GEJX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXu2u/OP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EAFFC4CED5;
+	Tue, 12 Nov 2024 11:28:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731410911;
+	bh=+rzAkXFKFxYH+EnmyNDNya6LAZlVy/3NQRETZ1zHyYk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fXu2u/OPjK5l0K+49bnnoFRlE737V3V1gZ/h6jU0Yon2lJEv5Patge6noxvncDZCH
+	 /X3qC16XU2oIwuCQqMno2qdEtgV7vgEsCNszr2mIPylyQBiiPr1+8l9erAhwzyvdSo
+	 tx/xnBHoSHwzBomOGRnoEmkBP0oFjt5ewG0fM8XmbbLnCV2VHbrfgOZmf67lsPOkUH
+	 6lya0PRHqXoGNvmoJuaTxKcb50uBe7eB0WBKHbl/o1igs9tczVMTCvquiwNLvyhVJa
+	 sZJEpXpDwJHFMHBZdLNJkAanxWrInIHtqzSP36ybp6AdNBUwV0Ve1hEYTcE54jccDS
+	 J/uMgsfGnsx1Q==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-288a90e4394so2402584fac.0;
+        Tue, 12 Nov 2024 03:28:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW/QU7fOftD/44dpU4c518cFpKDeo01XgdWSrM0vt4tTSRWZqZNXsky/NoKsadTgXM96JytWxsbr6Y=@vger.kernel.org, AJvYcCWE7ZycQ8VzsAqUalQ4ZjgxkTAefuCnhvlT7ieH7If9XwA8M/s3IYB9cuEla9o2cAIPY1ZfzAuufKIm+NI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFK0Z/iZVkaUs1kWN9Pr7FiTqLFw0G5y0WaWVQZnrOUkr8K63u
+	G6cb60UrzBaOZ1zdNl3jRX5/HVJ0P+JBL/tTe/SgwEilchYfR89GqXIMXhndkucyi98pmNCPzVQ
+	0+jiO3OG+P8XP6m0Z7M/CCSGdpBo=
+X-Google-Smtp-Source: AGHT+IFzIl81X9l1J1cMQQc0Xa4o3EgXz++fT9wjADyYD45hT5g2bIGGRbkEQwmly2Ab2PmaOzRgoiGFDBw9vh8W0a4=
+X-Received: by 2002:a05:6870:c153:b0:277:caf7:3631 with SMTP id
+ 586e51a60fabf-295ccf347e7mr2290421fac.5.1731410910755; Tue, 12 Nov 2024
+ 03:28:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: qcom: qcs8300: Add ADSP and CDSP0 fastrpc nodes
-To: Ling Xu <quic_lxu5@quicinc.com>, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org
-Cc: quic_kuiw@quicinc.com, quic_ekangupt@quicinc.com, kernel@quicinc.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20241112074945.2615209-1-quic_lxu5@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241112074945.2615209-1-quic_lxu5@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: jvKUpwy9pDjH1XJlABMmD7yDquoPfKdX
-X-Proofpoint-ORIG-GUID: jvKUpwy9pDjH1XJlABMmD7yDquoPfKdX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=885
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 adultscore=0 suspectscore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120093
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241108122909.763663-4-patryk.wlazlyn@linux.intel.com> <b6ab357c-1562-4035-ad3a-2159d2c8c1fa@intel.com>
+ <ee9b0a70-6f44-4203-bba9-c07d94444ad6@linux.intel.com>
+In-Reply-To: <ee9b0a70-6f44-4203-bba9-c07d94444ad6@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 12 Nov 2024 12:28:14 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gmg_6OnzR6BNm+3Mx0Wzsf2nPQEZDutYu_-Px-TsvX-w@mail.gmail.com>
+Message-ID: <CAJZ5v0gmg_6OnzR6BNm+3Mx0Wzsf2nPQEZDutYu_-Px-TsvX-w@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] intel_idle: Provide enter_dead() handler for SRF
+To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, Dave Hansen <dave.hansen@intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	rafael.j.wysocki@intel.com, len.brown@intel.com, 
+	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Nov 12, 2024 at 12:18=E2=80=AFPM Patryk Wlazlyn
+<patryk.wlazlyn@linux.intel.com> wrote:
+>
+> > This series has said multiple times how the old algorithm is wrong.  Bu=
+t
+> > it never actually _fixed_ the bad algorithm, only worked around it.
+> >
+> > Does mwait_play_dead() itself need to get fixed?
+>
+> I don't think so. The old algorithm gives fairly good heuristic for compu=
+ting
+> the mwait hint for the deepest cstate. Even though it's not guaranteed to=
+ work,
+> it does work on most of the platforms that don't early return. I think we=
+ should
+> leave it, but prefer idle_driver.
 
+IOW, as a fallback mechanism, it is as good as it gets.
 
-On 12-Nov-24 08:49, Ling Xu wrote:
-> Add ADSP and CDSP0 fastrpc nodes for QCS8300 platform.
-> 
-> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
-> ---
+As the primary source of information though, not quite.
 
-[...]
-
-
-> +				fastrpc {
-> +					compatible = "qcom,fastrpc";
-> +					qcom,glink-channels = "fastrpcglink-apps-dsp";
-> +					label = "cdsp";
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					compute-cb@1 {
-> +						compatible = "qcom,fastrpc-compute-cb";
-> +						reg = <1>;
-> +						iommus = <&apps_smmu 0x19c1 0x0440>,
-> +							 <&apps_smmu 0x1dc1 0x0440>,
-> +							 <&apps_smmu 0x1961 0x0400>,
-> +							 <&apps_smmu 0x1d61 0x0400>,
-> +							 <&apps_smmu 0x1981 0x0440>,
-> +							 <&apps_smmu 0x1d81 0x0440>;
-
-If you do SID & ~MASK, many of these come out to the same
-value. Could you try to simplify the entries?
-
-Konrad
+> >> Define the enter_dead() handler for SRF.
+> >
+> > This effectively gets the mwait hints from ______ instead of using the
+> > calculation in mwait_play_dead().
+>
+> Ok.
+>
+> >> +static __cpuidle int intel_idle_enter_dead(struct cpuidle_device *dev=
+,
+> >> +                       int index)
+> >> +{
+> >> +    struct cpuidle_driver *drv =3D cpuidle_get_cpu_driver(dev);
+> >> +    struct cpuidle_state *state =3D &drv->states[index];
+> >> +    unsigned long eax =3D flg2MWAIT(state->flags);
+> >> +
+> >> +    /* Retruns only in case of an error. */
+> >
+> >        ^ returns?
+>
+> Yup. Will fix.
+>
+>
 
