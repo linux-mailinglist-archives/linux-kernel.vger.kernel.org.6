@@ -1,188 +1,118 @@
-Return-Path: <linux-kernel+bounces-405806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091A69C5735
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:03:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8679C5832
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:48:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C69A1F21470
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:03:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66625B34B1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7211CD1F1;
-	Tue, 12 Nov 2024 12:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879CC1CD1F4;
+	Tue, 12 Nov 2024 12:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3Pd3ABGH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JdEx4DhL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AMxeTR4F";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="96WniaZO"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQI6kudP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2361AFB35;
-	Tue, 12 Nov 2024 12:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7CC23098E;
+	Tue, 12 Nov 2024 12:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731412977; cv=none; b=Px3N5ewOmlr9R+S2VVEFECX4qCxndb0NyeZW6ow+jEezHI1gJQPuGfRvgd0YCKHdOPNFC2qu+b7l3aupQ/GU7wY2lnyMytwk+vYInlUiYFU/g7okYUB2psaSAcWZP5msLMXY59FFnWMnWBYb8+rHmYHI5yrnFFetFA9O2hsKK24=
+	t=1731413044; cv=none; b=tDdYiFRatS6MvZkGW27i7/M2vSkaMd4HiWhRojz+jtpQk6gfOanbX+L6nizK/rsNlkwk95fM9fe3AqXC6SkfTHNuwqc0chirxkCadGxOIeFlS210zQtrh2lrKoQAyQGaK/lafDikNh/n2ULgEK+FPNAq7QUmcrjPJbO4Wba5FS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731412977; c=relaxed/simple;
-	bh=Y/JW144yIBVf+KBNkSwHhfAPV7r+kikoSSCqNcfhfcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6eYZlXOjiQdJhnlbrjs4wWe9GgSxyrmvIPjtmJbEossSCa5p5Us/QFxG1NYhiHPU4BHWszRYUyYTb6dTcQQdN6OlsPNYDE1EFVhUXLiXfSIVMglq+sBf+ym+8EwaoyYaVSUAO3MvKUXNSOD3d3Uuhhs+lknz1aD1fBOtlCHyXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3Pd3ABGH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JdEx4DhL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AMxeTR4F; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=96WniaZO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EF8FB2128B;
-	Tue, 12 Nov 2024 12:02:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731412974; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AeFtWbLIO4INsUn3shyTdNpyYjkXRHvqq8ej5oL8n+Q=;
-	b=3Pd3ABGHZF67gQB1ZdiTehkHtkGZp8HEBVTfLV8MnkjTeTAZgQTODqwZybsqqyG1TLF5Ty
-	iDVnuNShRxHIpND6WtfG15kFqF/FAfxCEa0eniOQB+NckQB8sKxxKlsXxPkGnM8UBlOJMv
-	vQBSqE2QlU/oAKPuJd9vAI0gooQgkqU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731412974;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AeFtWbLIO4INsUn3shyTdNpyYjkXRHvqq8ej5oL8n+Q=;
-	b=JdEx4DhLgoRIBX/QSaB3HCBteBS5NMAYzOgPQSgOB/IwMtcxyIyM1bQMiUceFHvEBgw40q
-	DmpQdJ9QcZph8HAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=AMxeTR4F;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=96WniaZO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731412972; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AeFtWbLIO4INsUn3shyTdNpyYjkXRHvqq8ej5oL8n+Q=;
-	b=AMxeTR4FHlltp5A/KQ2c3UHxxhzfrE9ubSOKGlCRXf8D9mHj3IGLzsTXsqrKy5K8bM3BMT
-	6gG9LkWZF4BIOOav9ts5t9M8FbPsdHoVZguVGiJdXcpgJwVJFiQrK5EhFRJ5k4XYbX2ODy
-	McY8jkcwKNNlZxSYH2dzGIrVB0kTTSE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731412972;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AeFtWbLIO4INsUn3shyTdNpyYjkXRHvqq8ej5oL8n+Q=;
-	b=96WniaZOgUDDX1mB/gz5cww6a0Fpo3X1rGfVnqUeKjRpA+pGair9VHpx2c7XjTjBG1aWbN
-	kyayI0qwBtp1w+Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DE6A813721;
-	Tue, 12 Nov 2024 12:02:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4nEINuxDM2dOUAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 12 Nov 2024 12:02:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 79829A08D0; Tue, 12 Nov 2024 13:02:52 +0100 (CET)
-Date: Tue, 12 Nov 2024 13:02:52 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mohammed Anees <pvmohammedanees2003@gmail.com>
-Cc: jmoyer@redhat.com, bcrl@kvack.org, brauner@kernel.org, jack@suse.cz,
-	viro@zeniv.linux.org.uk, willy@infradead.org, linux-aio@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs:aio: Remove TODO comment suggesting hash or array
- usage in  io_cancel()
-Message-ID: <20241112120252.a75tg4xqszn7nou3@quack3>
-References: <20241112113906.15825-1-pvmohammedanees2003@gmail.com>
+	s=arc-20240116; t=1731413044; c=relaxed/simple;
+	bh=jheorv6fJJSb6NBSDHmhexL0d4nOHuMAgKpQkpYjd/8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SGzr5dVRFZWNzlYD6xWzBnWzE/wZPmBe9zM9gjsNiV2GXKeD4dqZ6Hhhks261FNbFopUIuz8hMVu/IKtkVZ0lkeh0SGfrE7PC63Kpbd3NCBsmpD0HbnsHeRaOEnWeD8k0Wrav3dPS1zNNbIABnv3GmWNterR5NeghdDfhEBOoWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQI6kudP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F7AEC4CED0;
+	Tue, 12 Nov 2024 12:04:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731413043;
+	bh=jheorv6fJJSb6NBSDHmhexL0d4nOHuMAgKpQkpYjd/8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mQI6kudP6zbCuy5x2UmyII8Hb73UAW1KytGo5uzBxB5CmIhYr47+G/Jp+vFf//rQR
+	 rqDQGxl1q8nB+34JtalLI1yNQwp0+FwtdzpT/ClXWHbzmrzyBxv9PuNWosq8qC8br7
+	 rIMV3tP2fWVPdyo5Y6kCHtAWjObUZE/uW2u4+V5ynmTgIORXa5sA8Hr5J8hPygM6vr
+	 Wdbr/d4f4JTCJ4wAyoIgb8ZqpE/NBRK6S+RQsDwKMcXWRK1FePQvnoM7HILM+npeg1
+	 GxnCsJgZ8ZE7Zs0B/8bWLLieobYj7dnYDhWdLZlAzbwVRqvkxQf9GZTfxLY/DkihVp
+	 o5tKEMMqaJzsA==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-295cee3a962so314672fac.3;
+        Tue, 12 Nov 2024 04:04:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVKLL0Yc1EE0RjAhhXPRGdpYkSPa3QW3ca8ykUuylVvBKEDMOH7FP2KmAMWZijgGsj5NqKQN+tAwVfPoBg=@vger.kernel.org, AJvYcCWA35Sj96lfR8ET2FZtuZDQztGQvuPweJpmORc8/S4cQmHnG9tW5oPULyUE3b8xHcqTrCnzCdmCn7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ6fs53YLFNPmQjctw8tqlSoNAqkJOO4l7icWH89oonTxNAPNI
+	MQ5EaovI1d+PPmmV50I+yIb1encuaMIBaRgyIJc4ghCamssW4jQqHmWAPI9zKJfRUwFe6V7/0WB
+	06IGh5B76qaHQGDIKXHxdczpzxAI=
+X-Google-Smtp-Source: AGHT+IENpXQkMHH23ACo9n/vAgMDWqUhHkWc+RO8r5rbWjlZFELAMv3e355Fa9OtRBC6KoodummyOV3pYMqq2xXMGBs=
+X-Received: by 2002:a05:6871:689:b0:288:2906:6882 with SMTP id
+ 586e51a60fabf-2956026059amr13876658fac.29.1731413042740; Tue, 12 Nov 2024
+ 04:04:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241112113906.15825-1-pvmohammedanees2003@gmail.com>
-X-Rspamd-Queue-Id: EF8FB2128B
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com> <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 12 Nov 2024 13:03:49 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0ivAk1xrcJgiJnDWnL3GdijSdsuV4K_4ORjnsjPUVAEnA@mail.gmail.com>
+Message-ID: <CAJZ5v0ivAk1xrcJgiJnDWnL3GdijSdsuV4K_4ORjnsjPUVAEnA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	rafael.j.wysocki@intel.com, len.brown@intel.com, 
+	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 12-11-24 17:08:34, Mohammed Anees wrote:
-> The comment suggests a hash or array approach to
-> store the active requests. Currently it iterates
-> through all the active requests and when found
-> deletes the requested request, in the linked list.
-> However io_cancel() isn’t a frequently used operation,
-> and optimizing it wouldn’t bring a substantial benefit
-> to real users and the increased complexity of maintaining
-> a hashtable for this would be significant and will slow
-> down other operation. Therefore remove this TODO 
-> to avoid people spending time improving this.
-> 
-> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
+On Tue, Nov 12, 2024 at 12:47=E2=80=AFPM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+>
+> On Fri, Nov 08, 2024 at 01:29:08PM +0100, Patryk Wlazlyn wrote:
+> > The generic implementation, based on cpuid leaf 0x5, for looking up the
+> > mwait hint for the deepest cstate, depends on them to be continuous in
+> > range [0, NUM_SUBSTATES-1]. While that is correct on most Intel x86
+> > platforms, it is not architectural and may not result in reaching the
+> > most optimized idle state on some of them.
+> >
+> > Prefer cpuidle_play_dead() over the generic mwait_play_dead() loop and
+> > fallback to the later in case of missing enter_dead() handler.
+> >
+> > Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+> > ---
+> >  arch/x86/kernel/smpboot.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> > index 44c40781bad6..721bb931181c 100644
+> > --- a/arch/x86/kernel/smpboot.c
+> > +++ b/arch/x86/kernel/smpboot.c
+> > @@ -1416,9 +1416,9 @@ void native_play_dead(void)
+> >       play_dead_common();
+> >       tboot_shutdown(TB_SHUTDOWN_WFS);
+> >
+> > -     mwait_play_dead();
+> >       if (cpuidle_play_dead())
+> > -             hlt_play_dead();
+> > +             mwait_play_dead();
+> > +     hlt_play_dead();
+> >  }
+>
+> Yeah, I don't think so. we don't want to accidentally hit
+> acpi_idle_play_dead().
 
-Looks good. Feel free to add:
+Fair enough.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Then we are back to the original approach though:
 
-								Honza
-
-> ---
->  fs/aio.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/aio.c b/fs/aio.c
-> index e8920178b50f..72e3970f4225 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -2191,7 +2191,6 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
->  		return -EINVAL;
->  
->  	spin_lock_irq(&ctx->ctx_lock);
-> -	/* TODO: use a hash or array, this sucks. */
->  	list_for_each_entry(kiocb, &ctx->active_reqs, ki_list) {
->  		if (kiocb->ki_res.obj == obj) {
->  			ret = kiocb->ki_cancel(&kiocb->rw);
-> -- 
-> 2.47.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+https://lore.kernel.org/linux-pm/20241029101507.7188-3-patryk.wlazlyn@linux=
+.intel.com/
 
