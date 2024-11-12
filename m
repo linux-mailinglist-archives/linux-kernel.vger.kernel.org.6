@@ -1,119 +1,171 @@
-Return-Path: <linux-kernel+bounces-405719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEDD29C5838
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:48:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C83949C578C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9064B349D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:20:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F6D7B43068
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6677E215C42;
-	Tue, 12 Nov 2024 10:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2899D1C303A;
+	Tue, 12 Nov 2024 11:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ul1n2rFb"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="3+fZvTfh"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A15D2139AF
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0D2176AB9;
+	Tue, 12 Nov 2024 11:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731409003; cv=none; b=AguYkvAZFkKkY01hMCqSMxEWvim0jd8ziP543hLPzcG0jVW+b0ede3mjX20wnF6QA74oxl/aC4aCE10rXEBfQ5BW4WNJkyU8BTRTq1sGRp3j0psSYbq3ionEb4WH8if0pAgnxRcQY4O1k3ZJcpGSQ0Jq5M4046ah7pzEPT1+Wt8=
+	t=1731409241; cv=none; b=OoLRxx5pczsx/MtmFELxf61TJB0vRXfMZmgMz23nyqLnsKLsSlLgpZKTxj/INb0L2GvWL74z3wnQD76GdoCFMuLuznimt1qVmdWR970A6vGIz20wBkTmN+lHqDQ71yec6l4z0hfVrjs0gngk2Md9EzwL3cEb2WRyKPZ07QwhZd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731409003; c=relaxed/simple;
-	bh=JZxAEgGxHQWBt6q+QSSE/uiFAiC7QtIJ1zAHsyKz/F8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Jpm9rDdw9HiJB6u3iXCaTnDB8+c8joBV6ll4gpoLDOEd1HV0kd6bTONbFtH7lgEOTOVmMNQ0OWOx9TzB/SBwRpEy+S5fgx6638GrtDYogJC6KgrCM1duq+yJXAZ4IqnPGyW2c0O/QrJ40ipSkKSFmJxeOOambTxvAjfD99F1nLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ul1n2rFb; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso45675215e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:56:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731408999; x=1732013799; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SUZb9Z1/W7ca2STbTF5/tGFSoH8Cx+ksuikIOfGFMUI=;
-        b=Ul1n2rFbKAKXuugOk982oy8PQNh5cydFaE3XUKSH8kN4qg08KofsAkDQ7HSm+U/v6N
-         W41R+ZDBlGer1Ef9pltoelzSqIxGA1khzx+8eWqQnehR666HrT+xhMuPj9zl0cBtGxF0
-         cX8Fr0Vl3aCekzaEq/qZB4+XnetVekIw9ybGIni1FOD4KvNGRulV73yXGd0QWgATqiuW
-         fbaivbmmlH4GAHUF3PMBi9tFH2/IqjD3VhuUBE/KbtjQF2TW0ZX8In6L4a/NzMoUXG/D
-         gJMYYQVwgX0uD9dZLCZYOeecj+IaZ1mDZoupOvuhBOKVLgR6KlaWz09TwKulM16BKJIu
-         SNaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731408999; x=1732013799;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SUZb9Z1/W7ca2STbTF5/tGFSoH8Cx+ksuikIOfGFMUI=;
-        b=h0DuvgZ5uUjxY5WZ/VNMBFFcJiEwPpbjyQrkqxdjlaObs+sy3LpOfC5s419kymBVcw
-         WA+Jb/jEelMhZPT+xi37VItJE06Rj79GN1dxNt0lRAouQrl/zeeiMI6Wf/mQj+3nZGU0
-         92mTdIYe1KTk8ialjAWfp7zNkLdcyMEl0Nh8t8BlfCP6u0uxGaQ34vEcGjfMQCiQbxef
-         a/84BuK0VyAc00kbpMyrmgaxoMXlIBUiSOB6xT/AQ02AnbQg7ufib+Txpb0oyylM084e
-         Yx9EAjttZf/DKqIJlckLIzgQJI2fh3aDhn+UF0FJ1COek0xznBTS8judC8kEiYKO6XgJ
-         lwGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGMva4IHfYckQHsQP3zIdo+TcnsAQ9uJRDUZ/kzDLuDGEMFax2Cx2sYDAGODImzIJSiGd3GSszZDWA/qE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmBHALndDtDWsjwNMREpSYSv75smYt3vJHQQ/6R5SasE0d2JIb
-	SOwr4ZDbzzRrIbsDOxfSQpwDL8/1ZFmhZBdfmnQ8wg+yUtE+hGx4g7QfRJXSO2g=
-X-Google-Smtp-Source: AGHT+IHvq8za4ODwagi9eMCX58JHSHwa35A0vD53q9ShdqUM3Ry91k3zNmwqMO4C+mOEfDBMTSJnrw==
-X-Received: by 2002:a05:6000:2a88:b0:381:f443:21bf with SMTP id ffacd0b85a97d-381f4432609mr10071022f8f.2.1731408999580;
-        Tue, 12 Nov 2024 02:56:39 -0800 (PST)
-Received: from pop-os.. ([145.224.90.214])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed970fb7sm14943629f8f.21.2024.11.12.02.56.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 02:56:39 -0800 (PST)
-From: James Clark <james.clark@linaro.org>
-To: tabba@google.com,
-	maz@kernel.org,
-	kvmarm@lists.linux.dev,
-	oliver.upton@linux.dev
-Cc: James Clark <james.clark@linaro.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	=?UTF-8?q?Pierre-Cl=C3=A9ment=20Tosi?= <ptosi@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: arm64: Pass on SVE mapping failures
-Date: Tue, 12 Nov 2024 10:56:03 +0000
-Message-Id: <20241112105604.795809-1-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731409241; c=relaxed/simple;
+	bh=6xltTxIc3dL8ojJsa6+29StrQZ+TjyHYq0S7+fghi+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NFgW2XmuTL2kcohmBpmbe5BsJP2qPRGOpT8anj8/fgXu2YNqmW8YLC+9v2dcJ6bf317DGsYf3+doJqf8cph9M6NkfDZmXWezFep9CIPwb+OHRveOPTC8pWdg2xvgISZGY82J10FCZXtDHOW28n0K2txCNm7PrUkgu/3yFj53SA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=3+fZvTfh; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=YtxLTw5kSIDpnwlLunhMSE644mddKUogsO/CKyTzGwA=; b=3+fZvTfhSVJE3s4JsNShU4N2y3
+	so/a28xas0WQ9ryvVJbX+rNj6JddLE1ZzskYhWOpBnvYESPLCUyIHb+JD6sAywKt3yOhJnVahXMpP
+	KsxD19SOH9sTQRXiKxeRcytmwGEkF+hl5MIpe3v8PH/yfVyIvw/E/WxJfjVm5Ct9KDgDOrfnCaI2I
+	VCf1CFpWVeytn289y6o6rTw9OQXBxj43vfWByd/EZwMC56QtEY+iAU+sbtU2lN9QwAg+UTA1w6icY
+	sUKhKlvPJyJ+m64r2VW+yNhMSWjTESmj94gNrbGtvylugNn4TcyY8P4aesKrW9GygMOSAQnBZqrWJ
+	2REeeEFA==;
+Date: Tue, 12 Nov 2024 12:00:20 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Mithil Bavishi <bavishimithil@gmail.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman
+ <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
+ <tony@atomide.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jessica Zhang
+ <quic_jesszhan@quicinc.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Thierry Reding
+ <thierry.reding@gmail.com>, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 08/10] ARM: dts: ti: omap: samsung-espresso7: Add
+ initial support for Galaxy Tab 2 7.0
+Message-ID: <20241112120020.7f9e0680@akair>
+In-Reply-To: <20241108200440.7562-9-bavishimithil@gmail.com>
+References: <20241108200440.7562-1-bavishimithil@gmail.com>
+	<20241108200440.7562-9-bavishimithil@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This function can fail but its return value isn't passed onto the
-caller. Presumably this could result in a broken state.
+Hi Mithil,
 
-Fixes: 66d5b53e20a6 ("KVM: arm64: Allocate memory mapped at hyp for host sve state in pKVM")
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- arch/arm64/kvm/hyp/nvhe/setup.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Am Fri,  8 Nov 2024 20:04:37 +0000
+schrieb Mithil Bavishi <bavishimithil@gmail.com>:
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/setup.c b/arch/arm64/kvm/hyp/nvhe/setup.c
-index 8fec099c2775..cbdd18cd3f98 100644
---- a/arch/arm64/kvm/hyp/nvhe/setup.c
-+++ b/arch/arm64/kvm/hyp/nvhe/setup.c
-@@ -146,8 +146,7 @@ static int recreate_hyp_mappings(phys_addr_t phys, unsigned long size,
- 			return ret;
- 	}
- 
--	pkvm_create_host_sve_mappings();
--	return 0;
-+	return pkvm_create_host_sve_mappings();
- }
- 
- static void update_nvhe_init_params(void)
--- 
-2.34.1
+> Create a device tree for the 7 inch variants (P3100, P3110, P3113)
+> 
+> Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
+> ---
+>  .../dts/ti/omap/omap4-samsung-espresso7.dts   | 70 +++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/ti/omap/omap4-samsung-espresso7.dts
+> 
+> diff --git a/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso7.dts b/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso7.dts
+> new file mode 100644
+> index 000000000..be3d7a82f
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso7.dts
+> @@ -0,0 +1,70 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/dts-v1/;
+> +
+> +#include "omap4-samsung-espresso-common.dtsi"
+> +
+> +/ {
+> +	model = "Samsung Galaxy Tab 2 (7 inch)";
+> +	compatible = "samsung,espresso7", "ti,omap4430", "ti,omap4";
+> +
+> +	backlight: backlight {
+> +		compatible = "pwm-backlight";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&backlight_pins>;
+> +		pwms = <&pwm10 0 1200 0>;
+> +		power-supply = <&reg_lcd>;
+> +		enable-gpios = <&gpio3 31 GPIO_ACTIVE_HIGH>;
+> +		brightness-levels = <0 4 8 16 32 64 128 255>;
+> +		default-brightness-level = <2>;
+> +	};
+> +
+> +	panel {
+> +		compatible = "samsung,ltn070nl01", "panel-lvds";
+> +		power-supply = <&reg_lcd>;
+> +		width-mm = <154>;
+> +		height-mm = <90>;
+> +		data-mapping = "vesa-24";
+> +		backlight = <&backlight>;
+> +
+> +		panel-timing {
+> +			clock-frequency = <47255554>;
+> +
+> +			hback-porch = <210>;
+> +			hactive = <1024>;
+> +			hfront-porch = <186>;
+> +			hsync-len = <50>;
+> +
+> +			vback-porch = <11>;
+> +			vactive = <600>;
+> +			vfront-porch = <24>;
+> +			vsync-len = <10>;
+> +
+> +			hsync-active = <0>;
+> +			vsync-active = <0>;
+> +			de-active = <1>;
+> +			pixelclk-active = <1>;
+> +			syncclk-active = <0>;
+> +		};
+> +
+> +		port {
+> +			panel_in: endpoint {
+> +				remote-endpoint = <&bridge_out>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&i2c3 {
+> +	touchscreen@48 {
+> +		compatible = "melfas,mms136";
+> +		reg = <0x48>;
+> +		interrupt-parent = <&gpio2>;
+> +		interrupts = <14 IRQ_TYPE_EDGE_FALLING>;
+> +		touchscreen-size-x = <1023>;
 
+Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml:
+horizontal resolution of touchscreen (maximum x coordinate reported + 1)
+
+So this touchscreen reports max 1022?
+
+> +		touchscreen-size-y = <599>;
+
+same question.
+
+Regards,
+Andreas
 
