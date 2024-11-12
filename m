@@ -1,135 +1,118 @@
-Return-Path: <linux-kernel+bounces-406804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335399C6439
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:26:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A70DD9C643F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBB15283042
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D1F41F23672
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E932F21B426;
-	Tue, 12 Nov 2024 22:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0930B21A6EE;
+	Tue, 12 Nov 2024 22:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NWRNPBSy"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YOZ0HGR+"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B24218335
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 22:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717C6218335;
+	Tue, 12 Nov 2024 22:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731450344; cv=none; b=buiq3E6/d1eoXkvuYt16CYD81C6xjp80Z1mQMu0mA3uJhC40LV7UmoWYTTMAFW0BLORhzd5gYNaW5TXQFE/QJXWp0iE5vVciAY4fy4S5HKz536D/oBOwVWMPPyVshm8OGqq/VocmtkSqrBkKDEPt8TDWhH/cGZBsj8XFkWOBzX4=
+	t=1731450424; cv=none; b=s9d+eghoEp+pjkXG7YbyLLtTUVKfDYglKxSFLIy0cxNLtrx7Fz6bM/KwOl476InsaLKJsPDGhGM6Ui/TsqChOQX+ZxTWJ/Dom2bMv9joYIDOu7xt6zvjNOsCM3QFYJc5W9DxaVSu4Lo2fpjKKq2YVxNE/Rif2KjWB+shinJ3YGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731450344; c=relaxed/simple;
-	bh=8GeByDS2uWdcqA65FmwK3WTf4oaQxq60Il3v1AwTHuc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nPsV03xsM0nHR09KoSmioTgdhzjiv6AA7+AAH3dA1XxAt4mkAuQQZP4g04RcsmSYiIn43FIzOVYibdBWGncTFoJZQjuKlrvUK+bqWa2Hh6W/cdAMZUBAe/ZFNKMhA/DJ4Uas00+hA1ULMLJjk+g2af43QlitvIs3O57OfxFLGL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NWRNPBSy; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ea90b6ee2fso106775867b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:25:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731450342; x=1732055142; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=H7FlcnUnWshiI10WLNfiJyYyEzpkvJ7Zo+urE+6Owno=;
-        b=NWRNPBSyqSL80sRyNn07z3O69ab7oFJVw8a2cuSH+AONG2K/NouE3mVS7V3kk8V3k5
-         ZqVijh5XcJOsgAoVz9EXdTXsfYI1ePU1FIwz10fKDqAMaezsrzgS19b7pVMLIN8m1gZc
-         ZWMGtgSSDMT4lueZU1D/YPOp3dsSBDwgqiCmSKWHMPddIF6VVeYQCmloySyhcuWd55M5
-         B2pPWk4O1edBIzeh7FRiMmd0gh0QKIjzbpydhSwlA1D/KelufSzyqwhg4G0uOLIG/lu5
-         yYsZqLYdorWt3vhT0snXa13GpYxbiT/0k02dcAnpTvAQvF9SHHJgc+mTixD9zD6kEq+6
-         O3BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731450342; x=1732055142;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H7FlcnUnWshiI10WLNfiJyYyEzpkvJ7Zo+urE+6Owno=;
-        b=ekDseD5wpgruSmwzu5rm/ayZZzQw85IdbtR+KhetBTcM8xP16+qwpZBdeZPl28hw7T
-         ZqR9jNp/1cxjC3Omb4I10e+JwT2Lq4kfPXXnjiUpJW+n2zf2mdxgHN60HKeMH+hLsYex
-         GBLNALkeKy+3RUUZHDDsFVl7I8ga9lUbuyTBlXPsLvbRi0pWEstccjF1oVYx3BD52xi0
-         JXJx/GA1InMkbRn9ZqZaFKycLmT9M5swjpb99QwF2R8OJAnZuxuwDxZcalTfeal+GUxt
-         EPMHDY0jlntL0SGmGbZPUE5PKG4ZFgZ/8qyc/pUTNuALV3muXzj/I8KmWxq1c9vXqOKU
-         +0ew==
-X-Gm-Message-State: AOJu0YyPHr3bfZj24GriA4Un5pVWale6vx0r8kwAdniqpTQNHVIrjNPb
-	ZHVeh/BsS4liaLznNqL9xOXdCzxwVNBGSgbh9977Z09uBRfdJXv3b/LjWbPPQIHm73YqOf56GjY
-	hhm3NbQ1uJStksPALMfXh9Oi5k9uDSxtv3EU6a8ZHNNdZOSNv2yElbW81YgPx3cU7qx6s+Sl4N2
-	x9p0ba8AfJw2/+7g76ZPS8q6n6Q2N8xcCTTJf2dENy/UwOPg==
-X-Google-Smtp-Source: AGHT+IEsuXSSvASgeovpBF0z8r+wVpgV2+7vhFt1qJRBztwwWEZl+9HACMovEJOSePyI6bw1Ja5nt4bz4jgE
-X-Received: from dynamight.c.googlers.com ([fda3:e722:ac3:cc00:c8:f494:ac12:264])
- (user=jdenose job=sendgmr) by 2002:a05:6902:1342:b0:e2b:da82:f695 with SMTP
- id 3f1490d57ef6-e35ed2520d6mr507276.6.1731450341240; Tue, 12 Nov 2024
- 14:25:41 -0800 (PST)
-Date: Tue, 12 Nov 2024 22:25:17 +0000
+	s=arc-20240116; t=1731450424; c=relaxed/simple;
+	bh=QyKjGhc/LiH6qXL92TWk4AycrwmNV4ge/bHG2jksKek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTNlByDsRU0TPGINvS0kEWxVo6Luwll4xNMq3Yw2jOjB3O4p8A4fn1EsC4Hb+9THAXDj6lB+SIXJjvuiAA0kOcyF+RnG5gIn9dcWeYkd+Hau6dHLIQl57ov8tQERT/l1LcyxKKQn6+Qm1aWpdP2rRD3CtRIU089eE6lg4ObZGtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=YOZ0HGR+; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=s0UdRsicpoVTDAuGsmFohQLpfAXGAQppr0GRBNzIM8I=; b=YOZ0HGR+B3c134eJR92ia9yRie
+	lnZHb5Gz9jBAVV21fqjqQzf+Tib2CGKpEj8SzaGgH3obV9TsFbcxAcyyAI8g+pzrMqKDIdafkd7LS
+	w4FcJX3sXjRPgEDGXny4bNU5JKPhuqy7TSdaucUkJfx4+1Wj7GFfUC+NEh+8DmCta4FQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tAzLV-00D5bz-Gl; Tue, 12 Nov 2024 23:26:49 +0100
+Date: Tue, 12 Nov 2024 23:26:49 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Divya Koppera <divya.koppera@microchip.com>,
+	arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	richardcochran@gmail.com
+Subject: Re: [PATCH net-next v3 1/5] net: phy: microchip_ptp : Add header
+ file for Microchip ptp library
+Message-ID: <53c8b505-f992-4c2e-b2c0-616152b447c3@lunn.ch>
+References: <20241112133724.16057-1-divya.koppera@microchip.com>
+ <20241112133724.16057-2-divya.koppera@microchip.com>
+ <37bba7bc-0d6f-4655-abd7-b6c86b12193a@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Message-ID: <20241112222516.1.I7fa78e6acbbed56ed5677f5e2dacc098a269d955@changeid>
-Subject: [PATCH] ACPI: video: force native for Apple MacbookPro11,2 and Air7,2
-From: Jonathan Denose <jdenose@google.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: linux-acpi@vger.kernel.org, Jonathan Denose <jdenose@google.com>, 
-	Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37bba7bc-0d6f-4655-abd7-b6c86b12193a@linux.dev>
 
-There is a bug in the Macbook Pro 11,2 and Air 7,2 firmware similar to
-what is described in:
+> I believe, the current design of mchp_ptp_clock has some issues:
+> 
+> struct mchp_ptp_clock {
+>         struct mii_timestamper     mii_ts;             /*     0    48 */
+>         struct phy_device *        phydev;             /*    48     8 */
+>         struct sk_buff_head        tx_queue;           /*    56    24 */
+>         /* --- cacheline 1 boundary (64 bytes) was 16 bytes ago --- */
+>         struct sk_buff_head        rx_queue;           /*    80    24 */
+>         struct list_head           rx_ts_list;         /*   104    16 */
+>         spinlock_t                 rx_ts_lock          /*   120     4 */
+>         int                        hwts_tx_type;       /*   124     4 */
+>         /* --- cacheline 2 boundary (128 bytes) --- */
+>         enum hwtstamp_rx_filters   rx_filter;          /*   128     4 */
+>         int                        layer;              /*   132     4 */
+>         int                        version;            /*   136     4 */
+> 
+>         /* XXX 4 bytes hole, try to pack */
+> 
+>         struct ptp_clock *         ptp_clock;          /*   144     8 */
+>         struct ptp_clock_info      caps;               /*   152   184 */
+>         /* --- cacheline 5 boundary (320 bytes) was 16 bytes ago --- */
+>         struct mutex               ptp_lock;           /*   336    32 */
+>         u16                        port_base_addr;     /*   368     2 */
+>         u16                        clk_base_addr;      /*   370     2 */
+>         u8                         mmd;                /*   372     1 */
+> 
+>         /* size: 376, cachelines: 6, members: 16 */
+>         /* sum members: 369, holes: 1, sum holes: 4 */
+>         /* padding: 3 */
+>         /* last cacheline: 56 bytes */
+> };
+> 
+> tx_queue will be splitted across 2 cache lines and will have spinlock on the
+> cache line next to `struct sk_buff * next`. That means 2 cachelines
+> will have to fetched to have an access to it - may lead to performance
+> issues.
+> 
+> Another issue is that locks in tx_queue and rx_queue, and rx_ts_lock
+> share the same cache line which, again, can have performance issues on
+> systems which can potentially have several rx/tx queues/irqs.
+> 
+> It would be great to try to reorder the struct a bit.
 
-commit 7dc918daaf29 ("ACPI: video: force native for Apple
-MacbookPro9,2")
+Dumb question: How much of this is in the hot patch? If this is only
+used for a couple of PTP packets per second, do we care about a couple
+of cache misses per second? Or will every single packet the PHY
+processes be affected by this?
 
-This bug causes their backlights not to come back after resume.
-
-This commit adds DMI quirks to select the working native intel firmware
-interface such that the backlght comes back on after resume.
-
-Signed-off-by: Jonathan Denose <jdenose@google.com>
----
-
- drivers/acpi/video_detect.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
-index 015bd8e66c1cf..d507d5e084354 100644
---- a/drivers/acpi/video_detect.c
-+++ b/drivers/acpi/video_detect.c
-@@ -549,6 +549,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
- 		DMI_MATCH(DMI_PRODUCT_NAME, "iMac12,2"),
- 		},
- 	},
-+	{
-+	 .callback = video_detect_force_native,
-+	 /* Apple MacBook Air 7,2 */
-+	 .matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookAir7,2"),
-+		},
-+	},
- 	{
- 	 .callback = video_detect_force_native,
- 	 /* Apple MacBook Air 9,1 */
-@@ -565,6 +573,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
- 		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookPro9,2"),
- 		},
- 	},
-+	{
-+	 .callback = video_detect_force_native,
-+	 /* Apple MacBook Pro 11,2 */
-+	 .matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookPro11,2"),
-+		},
-+	},
- 	{
- 	 /* https://bugzilla.redhat.com/show_bug.cgi?id=1217249 */
- 	 .callback = video_detect_force_native,
--- 
-2.47.0.277.g8800431eea-goog
-
+	Andrew
 
