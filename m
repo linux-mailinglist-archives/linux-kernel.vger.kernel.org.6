@@ -1,54 +1,87 @@
-Return-Path: <linux-kernel+bounces-406512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011869C6199
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:36:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9699C9C6266
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:18:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79B18B683C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:18:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1801BA72DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B90E217905;
-	Tue, 12 Nov 2024 18:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDD5217915;
+	Tue, 12 Nov 2024 18:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Lmg4rfNI"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01505216449;
-	Tue, 12 Nov 2024 18:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="de6F0h7+"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353A9213125;
+	Tue, 12 Nov 2024 18:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731435484; cv=none; b=aUcp6Yu6ElAw0rPreU+NIEobSjlWNxYOHcpwrGHWFrGk7G/iE5UX10dMZGrsCdg5fSwAfjaPgHmlKmrm+aQDHCr9xmYbtG8bDky8N2ae0xTPrfByMYcva45quGdYjyJvhpu9/QYQsZW9AHWgYmIXejzlAWz4+xZ63JJV3m06450=
+	t=1731435742; cv=none; b=OxGeJSjWTqtAxCGB3Kx1ymibDkHJkEcTEjxo8iWBrNog4PS4khIK/Y4ut9uqVODmrOzlt+xOGPM3awflLuCyQcxvuYcOALKeLndNsErEMJNqTJQM3lV0qkObZuh4CqWxgheWHaW5ilfo1wgb7TgumOLiwE/pthbGgkN2AOVUaws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731435484; c=relaxed/simple;
-	bh=osPNVirkNM5xqTLDAHs2JoexATW4FTnt1jKV4aslXms=;
-	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=A6XD2oNXc3SLPRTfLvFhGnuOyf4EZdrkTKV3FJJK0ogHjA8rczMJZd/zpwS8FPhD/hLie6elp7l1EMtK5lak1Uy5TAE2PDYsG4112O3gxSVH31/gptx8S0bzJLaNFEHELDkXmu1orbjIoxYosqZjfG+DFzTZO2/oooSqZMUR3SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Lmg4rfNI; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from skinsburskii-cloud-desktop.internal.cloudapp.net (unknown [40.64.70.95])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 90ED4238AF4D;
-	Tue, 12 Nov 2024 10:18:01 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 90ED4238AF4D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1731435481;
-	bh=VMNZsKLVoyYK8cODP7SJX/vrUgYhh2czgAioy3TYuFE=;
-	h=Subject:From:To:Cc:Date:From;
-	b=Lmg4rfNIUU8VybLrpDonDPJF0QBHGG8ELpVlLp10Ib/C6XYNQCrDCn+j/+AKA0I5j
-	 c+9CJ0ABQ6I9P5WiXviwgdjv+/UzsCWf61+3r+Hpf5gmPqUp/+CUNEdpvEY+z1AQQl
-	 FhOhZvhIB8FwXl1PQyxqVKQPltb194WIx3ZJgAds=
-Subject: [PATCH] x86/hyperv: Set X86_FEATURE_TSC_RELIABLE unconditionally
-From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-To: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, x86@kernel.org, hpa@zytor.com,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 12 Nov 2024 18:18:01 +0000
-Message-ID: 
- <173143547242.3415.16207372030310222687.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1731435742; c=relaxed/simple;
+	bh=dm411aeuElhk98z7KlbEChgibpFt0Ls8H3nVP5qWzns=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=odd9561Wb0qYniyWBC1jtAEAtBPNonHvFj4YlWvE/BRNQnRaa+puKDVEqu7GIPQtYsbcI3gU1DweTjE0d8R6Wb4vWt6dKmh8F9afO7zryjMw7RlzFUrQIoA89bsid4UU0M5B/lnQyhSUr7TsUfua2r2epuP/hh+EC7FOBrdRYOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=de6F0h7+; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431688d5127so47834425e9.0;
+        Tue, 12 Nov 2024 10:22:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731435739; x=1732040539; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rGw8I43GoIEdw75f9gcID3EPkPrgfiDyB1X473+QaOg=;
+        b=de6F0h7+D7Aj+IXEmLqLMeI4+B+KJJYz5dtynCic+UpeeMiKkmsovwtwdINNnlXksQ
+         K/gY76AYXUknbhs+LvhEpqb1r4tLRPKn7ipSRoAghwz5kttCOq+CYEPdWTWM7D3IIo5i
+         d/FUBfoTAHgFi4kFTX0SrC6NR2OQweebFvd1fQW9DXt638JlvWSHeWPr6fp1JcInv2yZ
+         MMB0M9DTbplhAubksMlqawi8kk3wdqTEmA8tfxJSHJN/IwyNVF5+7x7W6qfYy/dUXo8F
+         VWYdpGEA0kcT0d17dHWm8WGvTdGnee06jgDliRDHxIKgOPGM/5uk2ibpDBulOTp45fRm
+         1fOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731435739; x=1732040539;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rGw8I43GoIEdw75f9gcID3EPkPrgfiDyB1X473+QaOg=;
+        b=riBfQCtkSeOMv2yGvObaMJgqEOfZut7kqbriO7wvhtrCNw8ML93t2BzkcvjR9sn6yC
+         dobrjjY/yaBsaxQknGSswXOWmln5Lf3vun34Ew+hLODB1dnrd4aWKydBWNcujA0yI5Ds
+         /L01ZiTNBkbw3NAAtANmc7uzEFgLYkux5w9qsyneJ+H486s/kLE2zCeesErHHxo7CzIc
+         L9K/Qg5c52hVCNOe7n9iTYbnfQDXdmy8Hqa0Oi4LPqP4VFxJFnGvMsAOdhKKB5Fhqw+I
+         avaW5nDF15ehxzqxiXX98ngBtsJuacDO5ixb0Cn9S912N2n8StGesp54rnVCxQvD6q0A
+         6YJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRE7Vr2cf4R8s0gIrf1ZXNR3zO+WvDWwLly1mB1XjnQf4nrshaiAAksLEcPLZSbvVvWl/jfNwDd04QJlZv@vger.kernel.org, AJvYcCVRuA8tQ8T+d2FTLUpALeH/Ta2EXgvbyhWegBWIGwMqaAE8y8dVLITstv1ZUJ+nGOCr3zjWqYmz0fW3K7CW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1OqhBFw5rJRuCHlDbaIJGyuFwGSf/jF+hVxH949u9VTir/jP8
+	qHriI++qSj4GRwPMkoCbJn3yIjX8iJnnTx+A+lAutSmmZfW2yMm6
+X-Google-Smtp-Source: AGHT+IHQJ9DcCw2M41pZGval9nx2PIlFgi2G38OFndiORIwfTgf0326SaoN/rywDWnrSrr2FwxlJzQ==
+X-Received: by 2002:a05:600c:4507:b0:431:5c1c:71b6 with SMTP id 5b1f17b1804b1-432b750a433mr165118395e9.17.1731435739344;
+        Tue, 12 Nov 2024 10:22:19 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97e62csm15903604f8f.37.2024.11.12.10.22.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 10:22:18 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] drm/msm/a5xx: remove null pointer check on pdev
+Date: Tue, 12 Nov 2024 18:22:18 +0000
+Message-Id: <20241112182218.1119158-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,48 +89,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Enable X86_FEATURE_TSC_RELIABLE by default as X86_FEATURE_TSC_RELIABLE is
-independent from invariant TSC and should have never been gated by the
-HV_ACCESS_TSC_INVARIANT privilege.
+The call chain on a5xx_gpu_init is such that pdev is not going to be
+null, so the null check on pdev can be removed. This also cleans up
+a static analysis warning where pdev is dereferenced before the null
+check which cannot actually occur.
 
-To elaborate, the HV_ACCESS_TSC_INVARIANT privilege allows certain types of
-guests to opt-in to invariant TSC by writing the
-HV_X64_MSR_TSC_INVARIANT_CONTROL register. Not all guests will have this
-privilege and the hypervisor will automatically opt-in certain types of
-guests (e.g. EXO partitions) to invariant TSC, but this functionality is
-unrelated to the TSC reliability.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
 ---
- arch/x86/kernel/cpu/mshyperv.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index d18078834ded..14412afcc398 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -515,7 +515,7 @@ static void __init ms_hyperv_init_platform(void)
- 	machine_ops.crash_shutdown = hv_machine_crash_shutdown;
- #endif
- #endif
--	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) {
-+	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT)
- 		/*
- 		 * Writing to synthetic MSR 0x40000118 updates/changes the
- 		 * guest visible CPUIDs. Setting bit 0 of this MSR  enables
-@@ -526,8 +526,8 @@ static void __init ms_hyperv_init_platform(void)
- 		 * is called.
- 		 */
- 		wrmsrl(HV_X64_MSR_TSC_INVARIANT_CONTROL, HV_EXPOSE_INVARIANT_TSC);
--		setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
--	}
-+
-+	setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
+V2: rewrite Subject, remove null check on pdev
+
+---
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+index ee89db72e36e..4edf9109d1d8 100644
+--- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+@@ -1760,11 +1760,6 @@ struct msm_gpu *a5xx_gpu_init(struct drm_device *dev)
+ 	unsigned int nr_rings;
+ 	int ret;
  
- 	/*
- 	 * Generation 2 instances don't support reading the NMI status from
-
+-	if (!pdev) {
+-		DRM_DEV_ERROR(dev->dev, "No A5XX device is defined\n");
+-		return ERR_PTR(-ENXIO);
+-	}
+-
+ 	a5xx_gpu = kzalloc(sizeof(*a5xx_gpu), GFP_KERNEL);
+ 	if (!a5xx_gpu)
+ 		return ERR_PTR(-ENOMEM);
+-- 
+2.39.5
 
 
