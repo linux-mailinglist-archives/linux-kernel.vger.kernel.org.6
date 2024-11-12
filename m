@@ -1,118 +1,169 @@
-Return-Path: <linux-kernel+bounces-405556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3CC9C52DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:12:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6FD09C52DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:13:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66A771F22A4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:12:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899741F231FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7977820E337;
-	Tue, 12 Nov 2024 10:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FBE21265F;
+	Tue, 12 Nov 2024 10:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sf0hPrYB"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HjlcHIwc"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E36E2123DC;
-	Tue, 12 Nov 2024 10:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95EF1A256C;
+	Tue, 12 Nov 2024 10:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731406348; cv=none; b=CO3nAWsMCsr3cNE5djqtsGpRxmJvttaIZdK6sFNn6K41VxaDJULcvP9VVdw9IRDAVfjmW4jckMz9OYq/HZZHWg7WUlqKQhmfxxyTrGL3M37jXkJC+ew0Mc5OdMaPhMsJPzXcpp9Z+j4ypWrgyPystVSvmFGMOhlPB/2xDsBr5rM=
+	t=1731406360; cv=none; b=mPqrdB5FTpwuPf00iNM5ydtA9gFmWnaJuLBNMk+hNziA+awoE0ZZke8uVLXIvbXDkmFj+SFvgUqur9vUBRcHJ2ACS39+AfCxoXgo/S6Ur5OTU2WvDWvxcrGoH5kwpv0rowDiV5AM/eAktGFaXKV7j5rP1jmzS3yyhrhwpazK3kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731406348; c=relaxed/simple;
-	bh=lrclKszYRsv2TFhiNgHUYKis9sZV2lC17OkxDG08BdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UA/cAy8NFAcWv7+a3cR3J6BdNvSN10NjUg/eCow+oKNJ5COBTUeGVZeo/qZwSiEefwAb+lbf3Kfjm7fhKoXhLB/C/DggjWzD3HOc49c4GFcZz9e2HQJWtwKOinccR65WtpJ8B60JzCd3jDl7HeiaJxah9CRguxmdABqM0eXlXWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sf0hPrYB; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d63a79bb6so3618599f8f.0;
-        Tue, 12 Nov 2024 02:12:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731406346; x=1732011146; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pxM4gTQSQABswxwP+nf/NclermLnvfNjsT0wLCiH6gI=;
-        b=Sf0hPrYBOJ7JeyVLOIGUxr9CR3uBkmwRLZG59J5fJUfWMWaXLjQ7ZyOuFihkYnRH9l
-         o933V5ZksDrwiXnCiICmz9OpL6h370OsDx7A6R5JPKkHv2+v3YPBOLB2bKWC+jkEWZT+
-         7X6J8UvCwkyImzbWBjCJSuzMSN9CQSbN/iZOFa9a/NRp6fk6/CK7TupCEou5dUOSvJ3P
-         Pv1YnJB5RVjcHX+SWaZC70TjQpjtMcDBf1HH2KOawvqPyHb0pLu4xOdPa+thJ9D6DmjD
-         tOQe6IOLXz6En5CdHiN5XnMO/p/QHRmzb69fWYPY5g39UfTFSKQHSCYPoGxjPxwQ3+Lf
-         4Z6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731406346; x=1732011146;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pxM4gTQSQABswxwP+nf/NclermLnvfNjsT0wLCiH6gI=;
-        b=bOg+TFprfDWSi8TJuxodULGM36ElO5g5R3zDXCaN9SytvwfhNU/tGmWqttZDIgpRVV
-         1OiRylEsI5uSLCOM02x759aSBE2naDb5tyKBE+ROqCDr5IUolZYGiNyBVEYVceMdSyyY
-         hydGITioJZSvMpI/oMn+9nmDq29awu7aYugryeRROl62cADi+cJ0g/dhbmMdvGHDk+Fg
-         epGqFY9DCa9cW+X7RfMcwK3Zllch6OHK0fwNrY9zgWhvNcNmkyMZmHlNo8SofxQdC8hH
-         I20uwClIQFqCTo7SUAe1b60Cp/X86ETz4UXs86A5bMfZZRzQFuRkfDE/6ZLHBTNRFmhW
-         CQWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW47nSC5K60yEBAe9qcDFWtA4xVMHcyLIDIPZQ1PUq0xo2DCVDue5Hnt/1BEJAvav3lg21v0nTI0xhIYlSXcDA=@vger.kernel.org, AJvYcCXVv51cjZrnf6CiCw+1CRik+C4tZ0pfQRBhssq8JNtcCAzBr2IcDlKL/KpGbbd2uYkgBb5hgjXeDv0mVsYz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1z4Tu+onzcLcBh53706djA1HIgGi0sEeH3LmA0pE91kOn+u24
-	HrDpZ8Jt3HZs9tj1t+zL0dAJ9nvuiJ67LRsAvKdAiaFYjaWEqqpj
-X-Google-Smtp-Source: AGHT+IF2lKwcu2657ck5gxeudUjTWht1t6K5qHLNTn06ITYmACxEnF6yEezmxaFASANVfwEza7fpUw==
-X-Received: by 2002:a05:6000:1844:b0:368:3731:1613 with SMTP id ffacd0b85a97d-381f172108dmr11334219f8f.13.1731406345364;
-        Tue, 12 Nov 2024 02:12:25 -0800 (PST)
-Received: from [192.168.1.248] ([194.120.133.65])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-432b0562ccdsm200920345e9.23.2024.11.12.02.12.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 02:12:25 -0800 (PST)
-Message-ID: <13db01a1-1c8b-4d56-ac2d-9f39082c2644@gmail.com>
-Date: Tue, 12 Nov 2024 10:12:24 +0000
+	s=arc-20240116; t=1731406360; c=relaxed/simple;
+	bh=10Vohnv0zoyoiQfJYw14Zr7DLSul2HBIMs87Qfknm0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fOW11d+oPUzcpnabDtyZrS4OVVUDj4bPWjjlIOK1GHaOjKdJpKhdBUkPGcvsitS5kqW0QJM0Oi+PCRC90I8BlSnwaGdiIApmNvc98Pw3e7YOKyVb9YHX0xax/PzG34Nh8O5jkcQEVhB7TmzLQ9dIyCe7+a0iel9UG6R5er49zWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HjlcHIwc; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2BB89E0008;
+	Tue, 12 Nov 2024 10:12:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731406356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BfZKRXZxR++lyRy1azbMldOQBrgpbj6acG83Qn22+g4=;
+	b=HjlcHIwcSXIt5eP+c7DKoz7xXiQIL5UUSMNhPCw2ksAJBF/yqWMqI9Q97zAQl1cZz/HD+V
+	lOcqojQQdH7J4OL+eBF7XCZcUPt5VZzX0gp9XAV11+8drcphQo2rM4/hF4M3Yl69VrJaTw
+	RFGNjndrOA4a0CxBcVnQxvDAa/w2gryISher10lChmLvuu/qDkCvR2uaq0TzKDOPv++YbQ
+	0zyj1Cp/TweI5jCJlvc3D6QQYFrWHkoAyLibTJujri2mJ/0Fm31jHCynHN8WnSUrDDhO6w
+	dfuwGkjQg+mLAr3+I5NQiukXWPgDkI8a0YJPWT1SbBNIoPbJ9V7ZitprBIQ/dQ==
+Date: Tue, 12 Nov 2024 11:12:32 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
+ kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
+ Cochran <richardcochran@gmail.com>, Radu Pirea
+ <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
+ Gospodarek <andy@greyhouse.net>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, donald.hunter@gmail.com,
+ danieller@nvidia.com, ecree.xilinx@gmail.com, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+ Willem de Bruijn <willemb@google.com>, Shannon Nelson
+ <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>, Jacob
+ Keller <jacob.e.keller@intel.com>
+Subject: Re: [PATCH net-next v19 03/10] ptp: Add phc source and helpers to
+ register specific PTP clock or get information
+Message-ID: <20241112111232.1637f814@kmaincent-XPS-13-7390>
+In-Reply-To: <20241111150609.2b0425f6@kernel.org>
+References: <20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com>
+	<20241030-feature_ptp_netnext-v19-3-94f8aadc9d5c@bootlin.com>
+	<20241111150609.2b0425f6@kernel.org>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] mm: shmem: Fix error checking on utf8_parse_version
- failures
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
- Christian Brauner <brauner@kernel.org>,
- Gabriel Krisman Bertazi <gabriel@krisman.be>,
- Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241112095449.461196-1-colin.i.king@gmail.com>
- <3b865b4a-5d82-4d11-a60c-f4bea6cd25c0@igalia.com>
-Content-Language: en-US
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <3b865b4a-5d82-4d11-a60c-f4bea6cd25c0@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On 12/11/2024 10:06, André Almeida wrote:
-> Hi Colin,
-> 
-> Em 12/11/2024 06:54, Colin Ian King escreveu:
->> Currently the error check on the call to utf8_parse_version is always
->> false because version is an unsigned int and this can never be less
->> than zero. Because version is required to be an unsigned int, fix the
->> issue by casting it to int just for the error check.
-> 
-> Why is it required to be an unsigned int?
+On Mon, 11 Nov 2024 15:06:09 -0800
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-It's being passed to various functions that expect unsigned int, so I 
-presume it was intended to be of that type.
+> On Wed, 30 Oct 2024 14:54:45 +0100 Kory Maincent wrote:
+> > @@ -41,6 +43,11 @@ struct ptp_clock {
+> >  	struct ptp_clock_info *info;
+> >  	dev_t devid;
+> >  	int index; /* index into clocks.map */
+> > +	enum hwtstamp_source phc_source;
+> > +	union { /* Pointer of the phc_source device */
+> > +		struct net_device *netdev;
+> > +		struct phy_device *phydev;
+> > +	}; =20
+>=20
+> Storing the info about the "user" (netdev, phydev) in the "provider"
+> (PHC) feels too much like a layering violation. Why do you need this?
 
-Colin
+The things is that, the way to manage the phc depends on the "user".
+ndo_hwtstamp_set for netdev and phy_hwtstamp_set for phydev.
+https://elixir.bootlin.com/linux/v6.11.6/source/net/core/dev_ioctl.c#L323
 
-> 
->>
->> Fixes: 58e55efd6c72 ("tmpfs: Add casefold lookup support")
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> Another fix was already sent: https://lore.kernel.org/lkml/20241111- 
-> unsignedcompare1601569-v1-1-c4a9c3c75a52@gmail.com/
+Before PHC was managed by the driver "user" so there was no need for this
+information as the core only gives the task to the single "user". This didn=
+'t
+really works when there is more than one user possible on the net topology.
 
+> In general I can't shake the feeling that we're trying to configure=20
+> the "default" PHC for a narrow use case, while the goal should be=20
+> to let the user pick the PHC per socket.
+
+Indeed PHC per socket would be neat but it would need a lot more work and I=
+ am
+even not sure how it should be done. Maybe with a new cmsg structure contai=
+ning
+the information of the PHC provider?
+In any case the new ETHTOOL UAPI is ready to support multiple PHC at the sa=
+me
+time when it will be supported.
+This patch series is something in the middle, being able to enable all the =
+PHC
+on a net topology but only one at a time.
+
+> > +/**
+> > + * netdev_ptp_clock_register() - Register a PTP hardware clock driver =
+for
+> > + *				 a net device
+> > + *
+> > + * @info: Structure describing the new clock.
+> > + * @dev:  Pointer of the net device. =20
+>=20
+> > +/**
+> > + * ptp_clock_from_netdev() - Does the PTP clock comes from netdev
+> > + *
+> > + * @ptp:  The clock obtained from net/phy_ptp_clock_register().
+> > + *
+> > + * Return: True if the PTP clock comes from netdev, false otherwise. =
+=20
+>=20
+> > +/**
+> > + * ptp_clock_netdev() - Obtain the net_device reference of PTP clock =
+=20
+>=20
+> nit: pick one way to spell netdev ?
+
+Yup indeed.
+=20
+> > +	ret =3D ptp_clock_get(dev, ptp);
+> > +	if (ret)
+> > +		return ERR_PTR(ret); =20
+>=20
+> why do you take references on the ptp device?
+
+Because we only select one PHC at a time on the net topology.
+We need to avoid the selected PTP pointer being freed.
+
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
