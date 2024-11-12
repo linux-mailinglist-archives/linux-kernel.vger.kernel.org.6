@@ -1,167 +1,87 @@
-Return-Path: <linux-kernel+bounces-406688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F0559C63E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:58:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 133CF9C6464
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:40:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBD5ABE2D47
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:11:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAEDAB440E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE97219CB4;
-	Tue, 12 Nov 2024 20:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1009C219CAB;
+	Tue, 12 Nov 2024 20:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NNgq+tKe"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="r0ia7Rf7"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D14920B7F2
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 20:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246891A76D2;
+	Tue, 12 Nov 2024 20:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731442269; cv=none; b=n2g8YXX4NkeC4TI2xpsXDwfDJiwVYt5jqkGFwANaR03hfkzi7bviZKORB1TMYRUT/UYxzM3lXG0PEVgwzHb8BMaqwQRyQu4ihVCLwWQ8Cih/nz3jCLoPeavueB6pNaZXnYgpe3xfdpStI6INsPtGCLEveJslbzTBRdHiL0tIMMA=
+	t=1731442330; cv=none; b=VDKkIrXz+IyoLoHks583Mp61zmhirDgBzsVpzs9M0+70gqmdNj3udXIZSaZ8BiFvIoDfoKVI57GMGnqnSXGHZJJ/Yb409NeWjkztgHXYuRdNiKAdwKLVLXcs1dXcb6bmcw4N4RsZtEU/jZcf9E2NqD8kVwgI0tjcP2nx53xhqf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731442269; c=relaxed/simple;
-	bh=fteZp6EQzbZ911bBZrJ6izyV2r05kYP0Pbayo+oFsoc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Jd39NPtPr1j7uJzDRu9KjuYMreflnkDYnVfDGih0OVPm0m+JTOBQl6+aevYv2W7v/CimTZ7yBF+od98VyP7k/ie65N2nw7qbLadAPvXkwiWb5zc1ieOKOkM264ULMO+5v0TebkRgJOzdmweBWo/cKu4fudFVPThpGpLg8aaB7uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NNgq+tKe; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-28847f4207dso2845329fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:11:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731442266; x=1732047066; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JbULEEF6aEIKAIsr8AyCaOWu9fse79T/kPGd6JJ3qrc=;
-        b=NNgq+tKeUvh6Mvuzx9PNbxxx+sZYwO6lvLj5chZLNXCxsDR9/8p8easKSPVhwTSUIk
-         9azGamJBkTwCb69IsSu0gSj7BNCnDUGj8E/wO9tuNko2IOZ6YOZM/+VSAKpsqXtGu3RQ
-         IoB5NQzIYkSYz68qaff3g9fJc0TmPGnKALXomif7/+j0XsD5Qu5Z4elLpl1tLUCtedtQ
-         7C9IgvxC6j3oILuQYFy40uV6h+VXNruN2TIOhkY5f0c6teHYTgaoqO631+0xJAJf4K60
-         A5gQabP4XgeM6/YT2teJxCekLVo5BC+/qwJ6hfIk+V5EYS/h8JOGfBnEFDnLt7Lv5HA9
-         5tfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731442266; x=1732047066;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JbULEEF6aEIKAIsr8AyCaOWu9fse79T/kPGd6JJ3qrc=;
-        b=b9TE1+g0LiyIarMvqUPAJtiOwg3QtUTF7FwDhqCdNbGA9BVczSbKd123Nm3aUmDf3K
-         s8TqHv4LzQKRPGjbhdZvv8b//DsGQlN2d4RQ2RjkHLvmdh+mMPZiM36g9HUHSdV5EAQn
-         jfxhXT9so/Mg7YNzUg3QA0Jxhb2ay3a8VweGrynvHFJk+8Do/4jerSsxNzV4uv+/bG5J
-         UvdW5ePEG9Xr82GoMybDoJC3l790QovZovJl26coW5kJSiKfNVupELKaYrF1FCUj7KcF
-         qNBGaz9zrvJVzYZBJL3T23joEWUfrMiHM8ZE7999fFSCNWXmGUNLzBVhmjSJHQcYLm/5
-         JXbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWnd8U8NhktHxp8xd8F3pS+1yt9vf/7Kj4C2WGPC1X4PX6gHB5k12m6RxlY4ZJBo6nJLiQr3mT5+b4QWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY/MFZwSgKXmAgPv0VPPpH0+1xsU5Yk0S8Jb5ES2+i4enr2bFi
-	+46CB3XqEX91yFXS8I/Ah7DG8x4q1yCXVi9D4abzSe+vs0Tvk/VbmLefNuSJs8g=
-X-Google-Smtp-Source: AGHT+IGoJL24zLoc7lvgsozAskpdsa9m6cU2yrPoyHpCZDMO49GHOItUjTiLdNCCiXLwQXg7LdgbkQ==
-X-Received: by 2002:a05:6871:378f:b0:27b:5890:bd38 with SMTP id 586e51a60fabf-295e8ccb3b6mr417797fac.7.1731442266484;
-        Tue, 12 Nov 2024 12:11:06 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-295e92c5ab0sm55643fac.39.2024.11.12.12.11.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 12:11:05 -0800 (PST)
-Message-ID: <c42a631a-4d07-44ec-9cec-862ca25af15e@baylibre.com>
-Date: Tue, 12 Nov 2024 14:11:05 -0600
+	s=arc-20240116; t=1731442330; c=relaxed/simple;
+	bh=Fu/1Rg21Fzm0n9/O98bf05emGXukx/vTkSyf0y3r0qo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ligNinFzZ68m2uzQSnk9LjcqLa0snDX2D/q+gABxSz1DsdmbN+1D6Pn3ISL/4RFOjouMGUZN/uQX5/yxYabsDaBTmWNKleSdQ9Q+IlD404FN7W+kz6GDkzpeWB39N3KeSC1EVmwXSCNnBhwxo6TxAk34mmNf8F5O7kGDWqdfmRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=r0ia7Rf7; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2FB50403E4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1731442328; bh=Fu/1Rg21Fzm0n9/O98bf05emGXukx/vTkSyf0y3r0qo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=r0ia7Rf7FAZyI4nJFwj77F2Pqf3jumnN6ehnVylqM7eNlhsKlNwfSdkp+7n+I7TrG
+	 m7zrey0jzQOzZOxGoC1DuF5qb5jkEoj6jDCAIINek3nvSeGL6tAS3tR4IBfox+53xJ
+	 IN2A9n6HtEYbrEya4CrdFf9QYoUzQFKDkjaZl9kpRraj3pHoV+41S6jYE0TmJbguQc
+	 yAQgMNthoKRywfKPC2jilolx6/T/qBtDTFN3WWg3yG/v0nH6ixDh+BRT6zE/l4D/IC
+	 tIehhc0KjrYR/SyWk4DbxE/q4fTniIf27E0j04y1lYXAL+gUNfgqjPM7zq/peJC+SY
+	 24ufMcXZi4bIQ==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 2FB50403E4;
+	Tue, 12 Nov 2024 20:12:08 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: David Lechner <dlechner@baylibre.com>, anish kumar
+ <yesanishhere@gmail.com>, broonie@kernel.org,
+ u.kleine-koenig@pengutronix.de, Jonathan.Cameron@huawei.com,
+ pstanner@redhat.com
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2] Documentation: devres: add missing mailbox helpers
+In-Reply-To: <8dee409f-4b38-4168-9316-1fd15c97fc89@baylibre.com>
+References: <20241106235217.94718-1-yesanishhere@gmail.com>
+ <8dee409f-4b38-4168-9316-1fd15c97fc89@baylibre.com>
+Date: Tue, 12 Nov 2024 13:12:07 -0700
+Message-ID: <87ikssqkiw.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/8] iio: adc: adi-axi-adc: set data format
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org
-References: <20241111121203.3699-1-antoniu.miclaus@analog.com>
- <20241111121203.3699-6-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241111121203.3699-6-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 11/11/24 6:12 AM, Antoniu Miclaus wrote:
-> Add support for selecting the data format within the AXI ADC ip.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-> changes in v6:
->  - use switch case
->  - add macro definition for packet format mask and sizes 
->  drivers/iio/adc/adi-axi-adc.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
-> index f6475bc93796..9bf967d5b730 100644
-> --- a/drivers/iio/adc/adi-axi-adc.c
-> +++ b/drivers/iio/adc/adi-axi-adc.c
-> @@ -45,6 +45,12 @@
->  #define ADI_AXI_ADC_REG_CTRL			0x0044
->  #define    ADI_AXI_ADC_CTRL_DDR_EDGESEL_MASK	BIT(1)
->  
-> +#define ADI_AXI_ADC_REG_CNTRL_3			0x004c
-> +#define   AD485X_CNTRL_3_CUSTOM_CTRL_PACKET_FORMAT_MSK	GENMASK(1, 0)
-> +#define   AD485X_PACKET_FORMAT_20BIT		0x0
-> +#define   AD485X_PACKET_FORMAT_24BIT		0x1
-> +#define   AD485X_PACKET_FORMAT_32BIT		0x2
-> +
->  #define ADI_AXI_ADC_REG_DRP_STATUS		0x0074
->  #define   ADI_AXI_ADC_DRP_LOCKED		BIT(17)
->  
-> @@ -312,6 +318,29 @@ static int axi_adc_interface_type_get(struct iio_backend *back,
->  	return 0;
->  }
->  
-> +static int axi_adc_data_size_set(struct iio_backend *back, unsigned int size)
-> +{
-> +	struct adi_axi_adc_state *st = iio_backend_get_priv(back);
-> +	unsigned int val;
-> +
-> +	switch (size) {
+David Lechner <dlechner@baylibre.com> writes:
 
-What happened to 16 bit for 16-bit chips?
+> On 11/6/24 5:52 PM, anish kumar wrote:
+>> mailbox api's were missing from the devres documentation.
+>> This patch adds them.
+>
+> I've been wondering... Is it really that useful to have all
+> of the devn_ functions listed in the documentation?
 
-Ideally there should be an identification register we can read or
-a compatible string from the devicetree that says if the HDL was
-compiled for a 16-bit or 20-bit chip and we would have two different
-versions of this function and pick one based on what HDL is being
-used.
+Not particularly, no.
 
-> +	case 20:
-> +		val = AD485X_PACKET_FORMAT_20BIT;
-> +		break;
-> +	case 24:
-> +		val = AD485X_PACKET_FORMAT_24BIT;
-> +		break;
-> +	case 32:
-> +		val = AD485X_PACKET_FORMAT_32BIT;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return regmap_update_bits(st->regmap, ADI_AXI_ADC_REG_CNTRL_3,
-> +				  AD485X_CNTRL_3_CUSTOM_CTRL_PACKET_FORMAT_MSK, val);
-> +}
-> +
->  static struct iio_buffer *axi_adc_request_buffer(struct iio_backend *back,
->  						 struct iio_dev *indio_dev)
->  {
-> @@ -360,6 +389,7 @@ static const struct iio_backend_ops adi_axi_adc_ops = {
->  	.test_pattern_set = axi_adc_test_pattern_set,
->  	.chan_status = axi_adc_chan_status,
->  	.interface_type_get = axi_adc_interface_type_get,
-> +	.data_size_set = axi_adc_data_size_set,
->  	.debugfs_reg_access = iio_backend_debugfs_ptr(axi_adc_reg_access),
->  	.debugfs_print_chan_status = iio_backend_debugfs_ptr(axi_adc_debugfs_print_chan_status),
->  };
+Far better would be to use the docs build system to bring in the
+kerneldoc comments that are there for at least a good subset of those
+functions.
 
+Thanks,
+
+jon
 
