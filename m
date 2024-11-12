@@ -1,103 +1,225 @@
-Return-Path: <linux-kernel+bounces-405568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C089C52F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:17:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E229C530B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:19:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05CF3281FF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:17:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7287B283563
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4A72141CB;
-	Tue, 12 Nov 2024 10:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7C12123FE;
+	Tue, 12 Nov 2024 10:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MmqZTv+o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gAXzuSO0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8037A2123E1
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83AB2123EA
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731406510; cv=none; b=mDGCKwOZw1Kj1BwXtf5iiUK//ZEUj3WdmJqeb5F9Rj9Q8hHouHyfyxTwXZvGAmKZZcGXLlVJiMszQREy3TwDM9qYZ2cKxTLno00tIFYoqMMPz7EQ/ZH8oElVIPC27SKjmtznVtOMzdz/wEwm9bekV4iYvk0GvLrKGsT5s9hC+ew=
+	t=1731406538; cv=none; b=LW9Iu/nH8wYlSuEH/rTo/LBJRAYSsoj7IsNSQEf20C8OserFRIMcFVQR6EEjjeddg8R3V/W18/gCTD6GZFho7Mz/qB5d6rHQCTeTYoIxlh7WzqB44lNP3K9H++0MZVd9orNmJpc92rn71amJq1xy4WpeYF2P2LHkC7PRU9dm3S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731406510; c=relaxed/simple;
-	bh=3q4iw0X8CIIZSET8d9LVRHez80oiBXEYI6La10ZBs2s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G45GWeeZe4RcROPK3TG12q8XVHbxdAThXAED/G6ZajeqbRGLMkw3ccrBsUMSZSF/nnJzEbJlpDe4hFRXBe5a/zJ2lZPRq7OiZV+PHSPld5CU8/SbNHPP+Pa6/LH9w9YuMnFfxgVWAAvnmbs0E/CVHCnvYnxeMSZeMFQfDiu6hkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MmqZTv+o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B59C4CEDD;
-	Tue, 12 Nov 2024 10:15:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731406510;
-	bh=3q4iw0X8CIIZSET8d9LVRHez80oiBXEYI6La10ZBs2s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MmqZTv+oK5ggXcxbbPaIytID0MnR9Z2nrjYzXB3+wpepvmvSvgIonMh8zC7xU1vjy
-	 OSKV2ifImFEeH3hp69d10SIfmX0CtriSBEmp3FM7PUgHJgXX6rhPZetvTEnabV8FIs
-	 JWXpR9JlGNAE0hx3N753JEFWtSvNAkZ8Dg3LR8TDmRayt4Np1xO+uswWokfyTi3X71
-	 86Zm2TDGVhCBse3WCbFXYzflLzFrubZEFtuDwmtzoz2+EHaFtv1w5QFf8ONdQq7NLr
-	 OgtEbmUg+ZVtcBOTH+MWdvevmouuLwrKL1usDKkEiQmI9arsBGE30wnquPPYb/pvE0
-	 RDjWTM5mW98nQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tAnvP-00000000JdO-1ULZ;
-	Tue, 12 Nov 2024 11:15:07 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Dongjiu Geng <gengdongjiu1@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	qemu-arm@nongnu.org,
-	qemu-devel@nongnu.org
-Subject: [PATCH v3 15/15] docs: acpi_hest_ghes: fix documentation for CPER size
-Date: Tue, 12 Nov 2024 11:14:59 +0100
-Message-ID: <817b8a3146385c911de003911ebef922ed397839.1731406254.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <cover.1731406254.git.mchehab+huawei@kernel.org>
-References: <cover.1731406254.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1731406538; c=relaxed/simple;
+	bh=guooStJXMaoDbFn7X3kTw0Ev4pBjDl2YVD85exGZwWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hcwjzAwaBHo38NaAZRJ3L3duwQ3/CS+6RqPXeUIUoi0u+qjevcQ/Wf9UDWglO4BsR8FaFWEVcVfBY7RmmPsy/H87WuhP7cO2CtV9aBe8xMsfYez9kQ8bjtepPPo/Ax18WFLhDcd1+KH5cQwOPsdsxlOyzJ9s0LkamVwHAJANpow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gAXzuSO0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731406535;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BqdPdoNBYDYxp2NGpvmW30sz/k0Y1JvkYQr+xowAiyM=;
+	b=gAXzuSO0WeNgS/BMmIFFJTmzts97v6eH8R+WMen6+BQRj7j8XhQUtcfFuMZeaF5oJlUcBe
+	NoUvV8KawXacHGfw5Pve/y+ouIXwXcLhlWAzUZoErdwd9QZMrq6wc/geraU1dsJC86swus
+	QokW77L8h7kjjbJd5lRqVB92Yv11ViI=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-90-v7Fywjj1MVWmUPQCIBD58Q-1; Tue,
+ 12 Nov 2024 05:15:30 -0500
+X-MC-Unique: v7Fywjj1MVWmUPQCIBD58Q-1
+X-Mimecast-MFC-AGG-ID: v7Fywjj1MVWmUPQCIBD58Q
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 263E619560AE;
+	Tue, 12 Nov 2024 10:15:28 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.9])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DD6BD30001A2;
+	Tue, 12 Nov 2024 10:15:19 +0000 (UTC)
+Date: Tue, 12 Nov 2024 18:15:14 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH V2 3/3] block: model freeze & enter queue as lock for
+ supporting lockdep
+Message-ID: <ZzMqsmCVwfSHC7Vb@fedora>
+References: <20241025003722.3630252-1-ming.lei@redhat.com>
+ <20241025003722.3630252-4-ming.lei@redhat.com>
+ <CGME20241029111338eucas1p2bd56c697b825eef235604e892569207e@eucas1p2.samsung.com>
+ <ca16370e-d646-4eee-b9cc-87277c89c43c@samsung.com>
+ <ZyEGLdg744U_xBjp@fedora>
+ <6551c33f-b9e1-45ab-b420-d022d6e4e402@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6551c33f-b9e1-45ab-b420-d022d6e4e402@samsung.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-While the spec defines a CPER size of 4KiB for each record,
-currently it is set to 1KiB. Fix the documentation and add
-a pointer to the macro name there, as this may help to keep
-it updated.
+On Tue, Nov 12, 2024 at 09:36:40AM +0100, Marek Szyprowski wrote:
+> On 29.10.2024 16:58, Ming Lei wrote:
+> > On Tue, Oct 29, 2024 at 12:13:35PM +0100, Marek Szyprowski wrote:
+> >> On 25.10.2024 02:37, Ming Lei wrote:
+> >>> Recently we got several deadlock report[1][2][3] caused by
+> >>> blk_mq_freeze_queue and blk_enter_queue().
+> >>>
+> >>> Turns out the two are just like acquiring read/write lock, so model them
+> >>> as read/write lock for supporting lockdep:
+> >>>
+> >>> 1) model q->q_usage_counter as two locks(io and queue lock)
+> >>>
+> >>> - queue lock covers sync with blk_enter_queue()
+> >>>
+> >>> - io lock covers sync with bio_enter_queue()
+> >>>
+> >>> 2) make the lockdep class/key as per-queue:
+> >>>
+> >>> - different subsystem has very different lock use pattern, shared lock
+> >>>    class causes false positive easily
+> >>>
+> >>> - freeze_queue degrades to no lock in case that disk state becomes DEAD
+> >>>     because bio_enter_queue() won't be blocked any more
+> >>>
+> >>> - freeze_queue degrades to no lock in case that request queue becomes dying
+> >>>     because blk_enter_queue() won't be blocked any more
+> >>>
+> >>> 3) model blk_mq_freeze_queue() as acquire_exclusive & try_lock
+> >>> - it is exclusive lock, so dependency with blk_enter_queue() is covered
+> >>>
+> >>> - it is trylock because blk_mq_freeze_queue() are allowed to run
+> >>>     concurrently
+> >>>
+> >>> 4) model blk_enter_queue() & bio_enter_queue() as acquire_read()
+> >>> - nested blk_enter_queue() are allowed
+> >>>
+> >>> - dependency with blk_mq_freeze_queue() is covered
+> >>>
+> >>> - blk_queue_exit() is often called from other contexts(such as irq), and
+> >>> it can't be annotated as lock_release(), so simply do it in
+> >>> blk_enter_queue(), this way still covered cases as many as possible
+> >>>
+> >>> With lockdep support, such kind of reports may be reported asap and
+> >>> needn't wait until the real deadlock is triggered.
+> >>>
+> >>> For example, lockdep report can be triggered in the report[3] with this
+> >>> patch applied.
+> >>>
+> >>> [1] occasional block layer hang when setting 'echo noop > /sys/block/sda/queue/scheduler'
+> >>> https://bugzilla.kernel.org/show_bug.cgi?id=219166
+> >>>
+> >>> [2] del_gendisk() vs blk_queue_enter() race condition
+> >>> https://lore.kernel.org/linux-block/20241003085610.GK11458@google.com/
+> >>>
+> >>> [3] queue_freeze & queue_enter deadlock in scsi
+> >>> https://lore.kernel.org/linux-block/ZxG38G9BuFdBpBHZ@fedora/T/#u
+> >>>
+> >>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> >>> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> >> This patch landed yesterday in linux-next as commit f1be1788a32e
+> >> ("block: model freeze & enter queue as lock for supporting lockdep").
+> >> In my tests I found that it introduces the following 2 lockdep warnings:
+> >>
+> >> > ...
+> >>
+> >>
+> >> 2. On QEMU's ARM64 virt machine, observed during system suspend/resume
+> >> cycle:
+> >>
+> >> # time rtcwake -s10 -mmem
+> >> rtcwake: wakeup from "mem" using /dev/rtc0 at Tue Oct 29 11:54:30 2024
+> >> PM: suspend entry (s2idle)
+> >> Filesystems sync: 0.004 seconds
+> >> Freezing user space processes
+> >> Freezing user space processes completed (elapsed 0.007 seconds)
+> >> OOM killer disabled.
+> >> Freezing remaining freezable tasks
+> >> Freezing remaining freezable tasks completed (elapsed 0.004 seconds)
+> >>
+> >> ======================================================
+> >> WARNING: possible circular locking dependency detected
+> >> 6.12.0-rc4+ #9291 Not tainted
+> >> ------------------------------------------------------
+> >> rtcwake/1299 is trying to acquire lock:
+> >> ffff80008358a7f8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x1c/0x28
+> >>
+> >> but task is already holding lock:
+> >> ffff000006136d68 (&q->q_usage_counter(io)#5){++++}-{0:0}, at:
+> >> virtblk_freeze+0x24/0x60
+> >>
+> >> which lock already depends on the new lock.
+> >>
+> >>
+> >> the existing dependency chain (in reverse order) is:
+> > This one looks a real thing, at least the added lockdep code works as
+> > expected, also the blk_mq_freeze_queue() use in virtio-blk's ->suspend()
+> > is questionable. I will take a further look.
+> 
+> Did you find a way to fix this one? I still observe such warnings in my 
+> tests, even though your lockdep fixes are already merged to -next: 
+> https://lore.kernel.org/all/20241031133723.303835-1-ming.lei@redhat.com/
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Acked-by: Igor Mammedov <imammedo@redhat.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- docs/specs/acpi_hest_ghes.rst | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+The lockdep fixes in ->next is just for making the added lockdep work
+correctly, and virtio-blk is another story.
 
-diff --git a/docs/specs/acpi_hest_ghes.rst b/docs/specs/acpi_hest_ghes.rst
-index 68f1fbe0a4af..c3e9f8d9a702 100644
---- a/docs/specs/acpi_hest_ghes.rst
-+++ b/docs/specs/acpi_hest_ghes.rst
-@@ -67,8 +67,10 @@ Design Details
- (3) The address registers table contains N Error Block Address entries
-     and N Read Ack Register entries. The size for each entry is 8-byte.
-     The Error Status Data Block table contains N Error Status Data Block
--    entries. The size for each entry is 4096(0x1000) bytes. The total size
--    for the "etc/hardware_errors" fw_cfg blob is (N * 8 * 2 + N * 4096) bytes.
-+    entries. The size for each entry is defined at the source code as
-+    ACPI_GHES_MAX_RAW_DATA_LENGTH (currently 1024 bytes). The total size
-+    for the "etc/hardware_errors" fw_cfg blob is
-+    (N * 8 * 2 + N * ACPI_GHES_MAX_RAW_DATA_LENGTH) bytes.
-     N is the number of the kinds of hardware error sources.
+It might be fine to annotate it with blk_mq_freeze_queue_no_owner(),
+but it looks very fragile to call freeze queue in ->suspend(), and the lock
+is just kept as being grabbed in the whole suspend code path.
+
+Can you try the following patch?
+
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 194417abc105..21488740eb15 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -1594,6 +1594,7 @@ static int virtblk_freeze(struct virtio_device *vdev)
  
- (4) QEMU generates the ACPI linker/loader script for the firmware. The
--- 
-2.47.0
+ 	/* Ensure no requests in virtqueues before deleting vqs. */
+ 	blk_mq_freeze_queue(vblk->disk->queue);
++	blk_mq_unfreeze_queue(vblk->disk->queue);
+ 
+ 	/* Ensure we don't receive any more interrupts */
+ 	virtio_reset_device(vdev);
+@@ -1617,8 +1618,6 @@ static int virtblk_restore(struct virtio_device *vdev)
+ 		return ret;
+ 
+ 	virtio_device_ready(vdev);
+-
+-	blk_mq_unfreeze_queue(vblk->disk->queue);
+ 	return 0;
+ }
+ #endif
+
+
+
+Thanks,
+Ming
 
 
