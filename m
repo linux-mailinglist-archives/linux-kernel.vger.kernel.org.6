@@ -1,98 +1,95 @@
-Return-Path: <linux-kernel+bounces-407343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E269C6C44
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:02:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E50449C6C5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7F8AB25E05
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:57:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2131B2B4E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5341FAC35;
-	Wed, 13 Nov 2024 09:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFE1165EE3;
+	Wed, 13 Nov 2024 09:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7x0/6xI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qkZC/IAf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139CA1FA84D;
-	Wed, 13 Nov 2024 09:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35681F77A9;
+	Wed, 13 Nov 2024 09:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731491791; cv=none; b=HMy3Lk2lPgevqq8P+35uC72VySU22mbgy7ZBSbmUSM4vUKRW0zrt1/NOpVvn1bfaDbQOp+lpga/GUKwmfkhSCwkD62/ZRsubdr3/92xvOfW4IRvxmlMK1DWE5ZZDt8LnbmnFMdeCHwnBWio3c58Y1+SevLrvIr9Qt6ls3/TogkY=
+	t=1731491842; cv=none; b=l0vYLby5NspGvTXkHOX0M9LdtlGMvWzB9p2lDlTevENCBUS4PRTlhR7osfExTzOBwJG7iqHLhcRD79v6MzTEp8lOpgqe2QSBoHYiGptXEVMnulV22JuSZHUKiRdO0RlQZxsBZJdCLFr5Xn3Jo0LM+NCuYzBnPf2XZv2bMcutb4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731491791; c=relaxed/simple;
-	bh=bvx8jAcX/A6fZXCDUJE05Wfh/AAiBpU4qvm1jooy1E4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d8I32E7CtVkPiB2qiYg9qcOGpRHOHl+k73fRI4Vt8qnZEsR2lgjlo3oy5Mwwq3ZsZYoGeGiQvsiyfpUD6Aziz8zVaLHV/pflW1Aw+UNF0fq6qyyQmcVNoDQiVSz1lXzrf44dne7RT5+TAbiMers0G6GF/AxGSVq9hVdHYchhBxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7x0/6xI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EFC5C4CED0;
-	Wed, 13 Nov 2024 09:56:30 +0000 (UTC)
+	s=arc-20240116; t=1731491842; c=relaxed/simple;
+	bh=+lb4EswthuHZhq9iPat5KkW6f8dgsekT3CokYDW6u2s=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cILqNGUdW8i9iLFFXaO2sCnhZwd7844HuFRSXqf5Nfd6U425uK3q3AMVgWr7LLUSTl68IDwYn99T64I8cf0/FgbXZO1Yx4X++6tha44fVcH6UtqK57Ct7J2PDDZZwaKc+vNkBmiS++0VWEA0QCHQCseJQiw7PbjAR3C3eqMy9cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qkZC/IAf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1858EC4CED2;
+	Wed, 13 Nov 2024 09:57:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731491790;
-	bh=bvx8jAcX/A6fZXCDUJE05Wfh/AAiBpU4qvm1jooy1E4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H7x0/6xIKMp6G4IfpEco4TyZMuxyONQeQ7Wkn3OERHbdcdW1Vln4bMxBh0encVtSE
-	 TgfjRxKtemHVXre0/gVws8b5Vil/5a2Hx6CkSYaSUBjTDzu8AtIKDSNYGpOOdT1jfD
-	 NTq4orBTdQMJv8g853vrmEGOSamTCOIaXT1gmmbEqTadJGtT0IUJGOS5AMdYNPGYZ2
-	 xcZ+7YBEd8gMXkUAzx9DoOUxPHoYLfzJnldgtjNAIpPtp+8G1q+cxJHYZog0jmOXCF
-	 uTxk71dGz4SNuZe9v7zs85rSTmmaY7YFNsOM7IO31j2yS9JfQjUR4uBWw8/wgHGSfl
-	 S3Y15DCVHvO4A==
-Date: Wed, 13 Nov 2024 01:56:29 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>,
-	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC PATCH 3/3] module: pre-test setting ro_after_init data
- read-only
-Message-ID: <ZzR3zWzO2AoeiF8P@bombadil.infradead.org>
-References: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
- <a32f2390caf6e0d157ffea6e04f5e5d8629620c2.1731148254.git.christophe.leroy@csgroup.eu>
- <ZzO6cNo2MalF92OV@bombadil.infradead.org>
- <fa0f038e-3066-49de-bcab-97a779735665@csgroup.eu>
+	s=k20201202; t=1731491840;
+	bh=+lb4EswthuHZhq9iPat5KkW6f8dgsekT3CokYDW6u2s=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=qkZC/IAfB2besI01xurtIx8LGvWGXxntKzqryWKXcpskWNO4iSPEGKWHMzmQy6XWu
+	 f9mrKF9RzlkYaxyhuNzRF0tGL+ICWaH0W3k+rA+Wx2btITnjFcYdmKurhKT21yHlfH
+	 UulqW1HZpAKJHG+Q0BJ2rf/VrG1kzTFh+qvtC8L7aj+gUVREMiYdkepV9N0qPbzHoc
+	 qTgmK27eXyyI23POry74YR+3v/gAT2EfC7ERh/MmIMgxAedzvua8Z53sy4lQbFUu9s
+	 pKquAJ2cqXD+f7wZlEb0pJjruY5hUbKv6MJTdzGx6Ip1tPVXdF3Xpfqa1uSCmad6hj
+	 LQU8TkOpl6OjQ==
+Date: Wed, 13 Nov 2024 10:57:18 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Charles Wang <charles.goodix@gmail.com>
+cc: robh@kernel.org, krzk@kernel.org, hbarnor@chromium.org, 
+    dianders@chromium.org, conor.dooley@microchip.com, 
+    dmitry.torokhov@gmail.com, bentiss@kernel.org, linux-input@vger.kernel.org, 
+    devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/2] dt-bindings: input: Goodix GT7986U SPI HID
+ Touchscreen
+In-Reply-To: <20241111075000.111509-1-charles.goodix@gmail.com>
+Message-ID: <nycvar.YFH.7.76.2411131057010.20286@cbobk.fhfr.pm>
+References: <20241111075000.111509-1-charles.goodix@gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fa0f038e-3066-49de-bcab-97a779735665@csgroup.eu>
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Nov 13, 2024 at 07:49:24AM +0100, Christophe Leroy wrote:
+On Mon, 11 Nov 2024, Charles Wang wrote:
+
+> The Goodix GT7986U touch controller report touch data according to the
+> HID protocol through the SPI bus. However, it is incompatible with
+> Microsoft's HID-over-SPI protocol.
 > 
+> The patchset introduces the following two changes:
+> 1) Add goodix,gt7986u-spifw.yaml.
+> 2) Modify the driver to align with the device binding file.
 > 
-> Le 12/11/2024 à 21:28, Luis Chamberlain a écrit :
-> > On Sat, Nov 09, 2024 at 11:35:37AM +0100, Christophe Leroy wrote:
-> > > diff --git a/kernel/module/main.c b/kernel/module/main.c
-> > > index 1bf4b0db291b..b603c9647e73 100644
-> > > --- a/kernel/module/main.c
-> > > +++ b/kernel/module/main.c
-> > > @@ -2582,7 +2582,7 @@ static noinline int do_init_module(struct module *mod)
-> > >   	rcu_assign_pointer(mod->kallsyms, &mod->core_kallsyms);
-> > >   #endif
-> > >   	ret = module_enable_rodata_ro_after_init(mod);
-> > > -	if (ret)
-> > > +	if (WARN_ON_ONCE(ret))
-> > 
-> > Do we want panic on warn systems to crash with this?
-> > 
+> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> ---
+> Changes in v4:
+> - Fix dt build warnings.
+> - Modify the driver to align with the device binding file.
 > 
-> I would say yes, for two reasons:
-> 1/ It should never happen
-> 2/ Such systems care about security and don't want vulnerable systems
+> Changes in v3:
+> - Split the commit into two patches.
+> 
+> Changes in v2:
+> - Change compatible to 'goodix,gt7986u-spifw'.
+> - Remove 'goodix,hid-report-addr' property.
+> - Change additionalProperties to unevaluatedProperties.
+> - v1: https://lore.kernel.org/all/20241025114642.40793-2-charles.goodix@gmail.com/
 
-OK thanks for thinking about this.
+Now queued in hid.git#for-6.13/goodix. Thanks,
 
-I think making this clear in the commit log would help as people these
-days scream at random WARN_ON_ONCE() sprinkles.
+-- 
+Jiri Kosina
+SUSE Labs
 
-  Luis
 
