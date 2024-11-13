@@ -1,240 +1,117 @@
-Return-Path: <linux-kernel+bounces-407908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A559C775B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:37:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D21F9C775E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:37:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D52B1F29C8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CEF2281866
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D941114F114;
-	Wed, 13 Nov 2024 15:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410B41632D9;
+	Wed, 13 Nov 2024 15:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="REYajD4K"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ETZwWDqb"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7675E148FED
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A711E16087B
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731511832; cv=none; b=NfYYCNb69xMVxPtvqdUS6stMpnVCiEpmbWZwU33fDd2X+D8EdDoMpCN1K3tXej08+Ff8ow3ZmJAmmG+qSM5o4d1OJr8wN2KYVgdBgBNRRHD3jq5nFX28SqTlzYCaDFnvE1oGtpDsWHM/4V9EIUQjPQjJq5QB0292dMThOehoOw0=
+	t=1731511858; cv=none; b=BW+K9nOyKzeISembqcE9s3JamRexs55muuiVGQvijrwX1cdr8nqMl23utKhkc/te4NDTYUGleHqIZ5jGr6+kWyQyMKWy31zlL8YZ28M5GDupWwe3D+TlcA0ya7hoj1gASRnxBoCfh6hOGNJIejc0Z+rh0rZykRxKbU+2Bx/Cg0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731511832; c=relaxed/simple;
-	bh=Cdo5Fg3asTFFASSZuRY+El6jWs0u8Ob8ki4UqcFnV9E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pLIKq1M0PPVd8iO0PckT2ACA69FMHlD98qjHsdexRZEI/pfUMiSEPkUphRahgfsM9pg0F9vGIbzm5pBx6Ziry6snxHageYGoHymPZT3R7aRaltG2rW20NjGQMIjxkkf/uc5SwPaOfLqu2PVfb0+sBPiAjl4UkK+rq5uQZ7r9pGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=REYajD4K; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4608dddaa35so313471cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:30:30 -0800 (PST)
+	s=arc-20240116; t=1731511858; c=relaxed/simple;
+	bh=haEridOgQHCmmtKLPgrZed4sltMc33ZVnB/hDcfhsf0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qf1DBUnr+9YYWfobxtkytaroAr9H+2oUm4ZS1TImkehcl6XDmQLrnKqYaLCJ3nwrG5r1XWmg15oo+pEWOWzo+sQwPZz8zdZdaGUAxdk2EthSr8vVHCiew8kblB/R3sP7MgSfvxrfFov3SRd9/lzV3qzvv4bqn0bvPpqvdIZ7Kvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ETZwWDqb; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d6a2aa748so4308979f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:30:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731511829; x=1732116629; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731511855; x=1732116655; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5BbbffFEdpPTuuw0SdeJQjv4E7gg7EUGlV/WAkAH+3E=;
-        b=REYajD4K3Mbvp58G2Lko+pGQIBQaI1tVpo7WNlAMjzLnIrIajnywKa88ch3dUU+nlr
-         MSSAPoj8xJ0hNjNSsTh9XzCtM4Ji3fiAHNhJK1ROzng/r2dARokAE2Vng4B5EGomrnZr
-         8oody38dTXHNbCpBIggO+tIF8iorBa43qhfNn3dZ+1qrs+hBWy2p6ds5ye2b6nUlYlvt
-         gCnhioCs0pjEE3FMWfboTMU6tycqJS//XaydPUVTNdfKAxlxJva3bFaNUCOw3/dSJ3hk
-         Deut82BiSotAX0qF2oYvRvnIYH85WJy80rGbbRcyrhK1UMdJ8Krw/48L6kq5JdVCwqbt
-         OUbQ==
+        bh=n5Is3Oh7ydLFl6T+vL0M6CtHoi+ednqbxLHSW9hK3aU=;
+        b=ETZwWDqb24MUuuUSC7MFruZgjDSWo/DYFNBvtZr/iE0bV9WAlDgysLACcmSf+DvXL1
+         g23xtQSWaPt8T3Xw62YqfHzdzHVXlpUA2phI50orTbxGhz75EscLlFTJtg6srC4LCyK8
+         BBJeLkM/7lY9vOwTaOgUgfqklhU1oR3AmDY2Xqehv8VMMYUykGl11Ts45lhoimG78ZGP
+         5cST2tzGOGgUqL8YP3rMwjgIpKxWeEnisTH/1vaqqUk9fgYNZ9jwRYCtM/zrmAxl/K+V
+         OfCjAVFTTg71gvSWQ13LqM9aMl+gYbP+SP4ruHQyPifXcg65D/aGBGy+QAdZRBcWh74e
+         VLQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731511829; x=1732116629;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731511855; x=1732116655;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5BbbffFEdpPTuuw0SdeJQjv4E7gg7EUGlV/WAkAH+3E=;
-        b=KA9Nupx7bX63fYD+xmraLb76yeLXsxuAXJm/Dzg3V+Lz2sBxiWMQMTZLGzeY87TZS1
-         vqDkyZtKMmQKZAIYXigUyeHWy+3vzd6Gq9SNHGA5DDVx2NlQKO7dxo8k3pGuqFliDOn7
-         z/f55V+weU1bhWBOHaFQ1PeUDxR2/PSQ3GKmIK3EdHEZoPpoG3mDc+G8dpbJUDh9kcNI
-         0iffHPsZluA3/w8bNT+DbZhAOGehSud3+4ukJjOckPaH4sigIDBNfTy9hTbKyivO91wE
-         kAxKMTr235S7k/ZMwJejIxbEk+JlkvJYvmUnPCZDTDfAPh9JHwDhOBUR/zfUIycrU4Nb
-         tyYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuUgE0N+yyhAc04dI1q2F6OirUB3AZ8aHr8XVYcjCGYeO7AuBPRmgpuJQFvI6aqtD85pUcfZ3TCQV7Qnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRfOqUBqnH+S/tNFQCO9c7QJtdHBdwDb8VfbBxcqm3roIcPz3I
-	HZkMciDPt5zglzjlAV7ZzHKNB5HDg2yLM/ekEPFNo41GRXlRKb/Fb5ShmEqmkNBVl0ldIv5l9BR
-	TAa2vGT7bYrXehjodF0Z5RrMlHG7vW8ZjSLvf
-X-Gm-Gg: ASbGncvZrf4ecmAytsGGoja0zCPNNMPy+MugAymmdXFrhBErpOI4bxQ3C2O8FSnIblW
-	Sf/Sg2zw3w0vIdfkkwbgRuOPZKVHCQJo=
-X-Google-Smtp-Source: AGHT+IGz40KmLuNbxr1emImpXj3jJtsfK43R22qhvzAF8QhGBtb3EYXrWEmJ3so6kTbs7jEjbk5bchWT0D8Dx0lKbXY=
-X-Received: by 2002:a05:622a:47c6:b0:461:679f:f1ba with SMTP id
- d75a77b69052e-4634bca4e56mr3610881cf.20.1731511828953; Wed, 13 Nov 2024
- 07:30:28 -0800 (PST)
+        bh=n5Is3Oh7ydLFl6T+vL0M6CtHoi+ednqbxLHSW9hK3aU=;
+        b=M8xJK8KQR/7cQ2jG3lv32hX0kOaswU8of7yDpVTn2gWr2N+SQxIW0GYijXX/32CG1I
+         8S2MgDQMrf2/QWUM2MEAmDejfUrG5ZBf3tnpFqMsNqQ3FlcBPz515y3lTIsNxjz7yETw
+         Nq0Ia88s7B7iEBtYAgguf3dN1E9rG11CfaJy4YmPK0ZY+uPv4u18fta7JGT6Sl0+dyrF
+         kX7FRlon6IEPunD/4ZnUEJfO35CtRrIKxXcOTqInKzsH1cKsGfMmRtSAcLZHA3Q3rioa
+         4BIlYvqqPZyccJE7rs3izyk621gqGzdFFSEbao952FvHBgnGbgG8wtVIjFnniqIue8QK
+         eE3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXEMK0el0OSE0S2GfG8+wRCWbJ43BeTLem9Z9A1E1AnYQSAZcV0jOA1c8odSJS1+Qgs6TAESSKePMgHlLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVY5Wzb426Sq+6UoRUGhVD1jajymzHWhRo/yipcRn1aScRKw+8
+	7I7+d0JGZXfwJDWVFipLndaSo7PabyR4OiLRtpQr/iyuEHf56kZBx3Ka+sg65AQ=
+X-Google-Smtp-Source: AGHT+IFxiR/WL41z6iEsuMbw3qc6EJEwdN3TZBFGtfwYiY7iyMeJYUsl2YzrRMkMb4yvLW4eiUSS/A==
+X-Received: by 2002:a05:6000:2aa:b0:37e:f1ed:67e8 with SMTP id ffacd0b85a97d-381f186dd5cmr16703079f8f.35.1731511854613;
+        Wed, 13 Nov 2024 07:30:54 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:1b75:191:f7eb:da75])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ea4ebsm18689381f8f.69.2024.11.13.07.30.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 07:30:53 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org,
+	Conor Dooley <conor@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/1] polarfire gpio driver follow-ups
+Date: Wed, 13 Nov 2024 16:30:51 +0100
+Message-ID: <173151177291.90710.9989301559939159522.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241113-ramble-blaspheme-b303dbf37271@spud>
+References: <20241113-ramble-blaspheme-b303dbf37271@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112194635.444146-1-surenb@google.com> <20241112194635.444146-2-surenb@google.com>
- <16442026-5237-4dcd-9343-99a242ddb7a7@lucifer.local>
-In-Reply-To: <16442026-5237-4dcd-9343-99a242ddb7a7@lucifer.local>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 13 Nov 2024 07:30:17 -0800
-Message-ID: <CAJuCfpFNVpmG-jaERY5Y5jSFWAVWk8NMJ=Gs0nSn+cmdADTUmg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] mm: introduce vma_start_read_locked{_nested} helpers
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
-	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, 
-	oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com, 
-	peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, 
-	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
-	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
-	souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 13, 2024 at 6:10=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Tue, Nov 12, 2024 at 11:46:31AM -0800, Suren Baghdasaryan wrote:
-> > Introduce helper functions which can be used to read-lock a VMA when
-> > holding mmap_lock for read. Replace direct accesses to vma->vm_lock
-> > with these new helpers.
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  include/linux/mm.h | 20 ++++++++++++++++++++
-> >  mm/userfaultfd.c   | 14 ++++++--------
-> >  2 files changed, 26 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index fecd47239fa9..01ce619f3d17 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -722,6 +722,26 @@ static inline bool vma_start_read(struct vm_area_s=
-truct *vma)
-> >       return true;
-> >  }
-> >
-> > +/*
-> > + * Use only while holding mmap_read_lock which guarantees that nobody =
-can lock
-> > + * the vma for write (vma_start_write()) from under us.
-> > + */
-> > +static inline void vma_start_read_locked_nested(struct vm_area_struct =
-*vma, int subclass)
-> > +{
-> > +     mmap_assert_locked(vma->vm_mm);
-> > +     down_read_nested(&vma->vm_lock->lock, subclass);
-> > +}
-> > +
-> > +/*
-> > + * Use only while holding mmap_read_lock which guarantees that nobody =
-can lock
-> > + * the vma for write (vma_start_write()) from under us.
-> > + */
-> > +static inline void vma_start_read_locked(struct vm_area_struct *vma)
-> > +{
-> > +     mmap_assert_locked(vma->vm_mm);
-> > +     down_read(&vma->vm_lock->lock);
-> > +}
->
-> Hm, but why would we want to VMA read lock under mmap read lock again? mm=
-ap
-> read lock will exclude VMA writers so it seems sort of redundant to do
-> this, is it because callers expect to then release the mmap read lock
-> afterwards or something?
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Yes, that's the pattern used there. They kinda downgrade from mmap to
-vma lock to make it more local.
 
->
-> It feels like a quite specialist case that maybe is worth adding an
-> additional comment to because to me it seems entirely redundant - the who=
-le
-> point of the VMA locks is to be able to avoid having to take an mmap lock
-> on read.
->
-> Something like 'while the intent of VMA read locks is to avoid having to
-> take mmap locks at all, there exist certain circumstances in which we wou=
-ld
-> need to hold the mmap read to begin with, and these helpers provide that
-> functionality'.
+On Wed, 13 Nov 2024 12:01:03 +0000, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> Yo,
+> 
+> I realised last week, while rebasing the interrupt portion of the
+> driver, that coregpio a compatible in the kernel as well as a dts user.
+> Given how long the driver has taken to even get partially accepted, I
+> waited to get it to gpio/for-next rather than showing up with last
+> minute additions to it.
+> 
+> [...]
 
-Ok, I'll try documenting these functions better.
+Applied, thanks!
 
->
-> Also, I guess naming is hard, but _locked here strikes me as confusing as
-> I'd read this as if the locked refer to the VMA lock rather than the mmap
-> lock.
->
-> It also speaks to the need for some additional comment so nobody walks aw=
-ay
-> thinking they _must_ take a VMA read lock _as well as_ an mmap read lock
-> before reading from a VMA.
->
-> Again, naming, hard :>)
+[1/1] gpio: mpfs: add CoreGPIO support
+      commit: 65e936372d8f56f9faf3879925738cecc0a5f7e7
 
-I'm open to suggestions.
-
->
-> > +
-> >  static inline void vma_end_read(struct vm_area_struct *vma)
-> >  {
-> >       rcu_read_lock(); /* keeps vma alive till the end of up_read */
-> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > index 60a0be33766f..55019c11b5a8 100644
-> > --- a/mm/userfaultfd.c
-> > +++ b/mm/userfaultfd.c
-> > @@ -86,13 +86,11 @@ static struct vm_area_struct *uffd_lock_vma(struct =
-mm_struct *mm,
-> >       vma =3D find_vma_and_prepare_anon(mm, address);
-> >       if (!IS_ERR(vma)) {
-> >               /*
-> > +              * While holding mmap_lock we can't fail
-> >                * We cannot use vma_start_read() as it may fail due to
-> > -              * false locked (see comment in vma_start_read()). We
-> > -              * can avoid that by directly locking vm_lock under
-> > -              * mmap_lock, which guarantees that nobody can lock the
-> > -              * vma for write (vma_start_write()) under us.
-> > +              * false locked (see comment in vma_start_read()).
->
-> Nit but 'as it may fail due to false locked' reads strangely.
-
-replace with "overflow"?
-
->
-> >                */
-> > -             down_read(&vma->vm_lock->lock);
-> > +             vma_start_read_locked(vma);
->
-> Do we even need this while gross 'this is an exception to the rule' comme=
-nt now
-> we have new helpers?
->
-> Isn't it somewhat self-documenting now and uffd is no longer a special
-> snowflake?
-
-Ack.
-
->
->
-> >       }
-> >
-> >       mmap_read_unlock(mm);
-> > @@ -1480,10 +1478,10 @@ static int uffd_move_lock(struct mm_struct *mm,
-> >                * See comment in uffd_lock_vma() as to why not using
-> >                * vma_start_read() here.
-> >                */
-> > -             down_read(&(*dst_vmap)->vm_lock->lock);
-> > +             vma_start_read_locked(*dst_vmap);
-> >               if (*dst_vmap !=3D *src_vmap)
-> > -                     down_read_nested(&(*src_vmap)->vm_lock->lock,
-> > -                                      SINGLE_DEPTH_NESTING);
-> > +                     vma_start_read_locked_nested(*src_vmap,
-> > +                                             SINGLE_DEPTH_NESTING);
-> >       }
-> >       mmap_read_unlock(mm);
-> >       return err;
-> > --
-> > 2.47.0.277.g8800431eea-goog
-> >
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
