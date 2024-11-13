@@ -1,120 +1,206 @@
-Return-Path: <linux-kernel+bounces-407453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 830BE9C6DDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:28:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3C09C6D99
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:17:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96875B22C0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:16:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 541DF1F27BE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EAB4201276;
-	Wed, 13 Nov 2024 11:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BEA1FF5F9;
+	Wed, 13 Nov 2024 11:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OGkfWs8n"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G7sO5d9X"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A27820101A
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 11:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5D61F81A0;
+	Wed, 13 Nov 2024 11:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731496431; cv=none; b=bBIeIZvaXSidyTDyM/Ne8ZaWnEt1ED3Zrhn7a0Xfxt1VtNrl2gRrYGXPZa9P+EwaBK3pPvDM1ehS9ZsgcdgFNJHJ2AqiRBaLYJHWrqCsjpgpqom2Wv98qqb0uf9qRJqXCUtwLh8ml1KCHvZ4HKxpJwmYECV+qO8Wan6TqkffzBE=
+	t=1731496484; cv=none; b=kadoXCGGNsGLyDzcsmcBx/mE6YLsWmtngU3ot5TOTGWd+W8Xf3yGjg+vVQLxObyomBgneP42WG/kDczaflMbpssJcyx6vLbujs7tJXR3kVOsmjJSrnO3RlNoKrfXzymEl2XJrHHpE7ukQmwxkPodafio3zpnpdccFQnG9WO0C9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731496431; c=relaxed/simple;
-	bh=K6heUnefBx/XysT0GjVkCXMhMdWh5uOzZ6wBvj9D3h4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GrVF4QewTX0szu5g6h+RXtpIGbUiu0cDmVVcVJYCGS/OyQW7cb8J7rS25VciooBCZ4ZLIT8SNGupnLMBACGvff5r/G/2jUO5OvvBz27CFrhfHVecuy2+8naWYkobCvrgLEUfcY5dAz0Gnu/Sy9q09zlU8/QJh8KWFg90V5G/F6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OGkfWs8n; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731496428;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K6heUnefBx/XysT0GjVkCXMhMdWh5uOzZ6wBvj9D3h4=;
-	b=OGkfWs8nDk3f93k/Pz63mt8iGsQPkSpSxmlh+nINKN2uu647zTSG7Zg8Bld8TQ+g9h6Jav
-	rf+PhyGbxHg5ZVt/bafkdxiOBJNYPCE0gurN81loHSZL6FHDBVClpP/AIaq//GI/eeG+E/
-	TNhQWrAdHGvJRlvM+TEg2sPTa2VRR44=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-425-oYuecEeOORGQhrbRHuuO7Q-1; Wed, 13 Nov 2024 06:13:47 -0500
-X-MC-Unique: oYuecEeOORGQhrbRHuuO7Q-1
-X-Mimecast-MFC-AGG-ID: oYuecEeOORGQhrbRHuuO7Q
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a99fff1ad9cso543224166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 03:13:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731496426; x=1732101226;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K6heUnefBx/XysT0GjVkCXMhMdWh5uOzZ6wBvj9D3h4=;
-        b=urEL2TOkRqrOIaETcpOKGHcurRmwgDQGrHuSVixmVmQPeeZC2P1cZ6A2UxSbVUmGAP
-         tFzO/+SxBRTSWAWjMmd8NwpoJnBR96/LLYc5ViQplOY0iv9vHuRJlBqw4RO28wUsPCKG
-         ceCeIkfjBI2S0n91JG/JPqstZVmYS79p4itXTFlMZmpTPgNXd84F+PV7JyHFQGZ03kl/
-         0GgUJgVVW/ufT8m3Q1Qwk4FeOVNycg8+MoHvKcxnAmoPuPxl5QPLOuevHM5l0cDPdbbM
-         7F8JBPr2aqOWxt+Gnd2HGItmFl41xS5TO/fqsG0Czax7pm0xOJoYjUTrWzqRQhV/NwS6
-         ITDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWN6Um4hJXQ86v1sNoHuPFYwZ9TeiGHdomiF3RMif84kZmLS1GFM1Pw70fjjj4Z7wgbyN7kJ6Avx6EeITs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8QBfTbS77JCJmziqJnS7PkfBXl1iqRzT1kaSjUYYrx0P/3Sz7
-	jT53JnssQbktt2l/wKAovpqAcISHay7WcZZ6Rqt8/XVGXpyU/YZdV4Q4u1FIXFjUmbbJ/6XH/vu
-	LNBweml//Y0la5V5Vg1mLlrRX/BYoRgcQrA0RmPO54W8fvRKSmAfd+GDHnntGEQ==
-X-Received: by 2002:a17:907:3d8f:b0:a9a:c769:5a5 with SMTP id a640c23a62f3a-aa1c57ef3a8mr647384866b.50.1731496426128;
-        Wed, 13 Nov 2024 03:13:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGqADmkP2C4rClEcqwx1wtnRk3ZcRtmjUzRFnnm4W6YT+sh8g87gsJHxjBz3mkMGvBqlF78hQ==
-X-Received: by 2002:a17:907:3d8f:b0:a9a:c769:5a5 with SMTP id a640c23a62f3a-aa1c57ef3a8mr647382366b.50.1731496425619;
-        Wed, 13 Nov 2024 03:13:45 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a176e1sm854010866b.31.2024.11.13.03.13.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 03:13:45 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 4D08E164CF1F; Wed, 13 Nov 2024 12:13:44 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Maciej
- Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev
- <sdf@fomichev.me>, Magnus Karlsson <magnus.karlsson@intel.com>,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v4 12/19] xdp: add generic
- xdp_build_skb_from_buff()
-In-Reply-To: <20241107161026.2903044-13-aleksander.lobakin@intel.com>
-References: <20241107161026.2903044-1-aleksander.lobakin@intel.com>
- <20241107161026.2903044-13-aleksander.lobakin@intel.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Wed, 13 Nov 2024 12:13:44 +0100
-Message-ID: <87wmh7wfmf.fsf@toke.dk>
+	s=arc-20240116; t=1731496484; c=relaxed/simple;
+	bh=PygadtJ8XMmF3ltdrWRVPVNp5MWyjiYC2lFKvmwRmzw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b5vs7Va5kAcV8MfidFJxglx7oyEAgdy1b/+zlLED+S1h/QfdPhROtnJiSlaeJYaChjz2QDlC+gQ/tcyDIe8lHhaeN0kuah/ixpnrBv6y96F4BT3vDWL5uZnR2PKxKpulwlf6t7EBewE/sKnEZa56h+UiP+NA8xojGZgGtKK3m0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G7sO5d9X; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AD9Ong2001153;
+	Wed, 13 Nov 2024 11:14:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=ZUyO+u8Z2jtYTkTlOHgInS32/R72W8NgA+0
+	qRwX6hbU=; b=G7sO5d9X+QVLLfF8jNV4E24NF2In+RZc4iZ1GNxN9DQ4NxTt8/j
+	H//geigs9E++KVMfBXqCpGL3V2NfbgOBB6zdGM1XuxDJ3XumxXSwFM1e4OXWTzHK
+	6frWg7HwI6UutKcvBviZx6RbisuoClhTVmMJMsuyhy4eyODWVL+YjjsKccmCbTWr
+	Jq4d9uLFAYjPDr3axIMHmM7X3kaI3PqL8alJKlf/HrM99S7lDBk/Kl3wp/br6bGH
+	CW33NmW/9DnLJH3qgf1qKwIc+1FALfXc6/+rVMptEXDa0Niwqv7AvqV6vaSIcsJ+
+	YryXsCogHWMTQK4MGL0RgM9LWI/MjMe15BQ==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vsf309db-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 11:14:15 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADBEDm6001981;
+	Wed, 13 Nov 2024 11:14:13 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 42t0tkkj3b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 11:14:13 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4ADBEDDD001974;
+	Wed, 13 Nov 2024 11:14:13 GMT
+Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4ADBECKO001973
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 11:14:13 +0000
+Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 393357)
+	id BDAC740C0C; Wed, 13 Nov 2024 19:14:11 +0800 (CST)
+From: Ziqi Chen <quic_ziqichen@quicinc.com>
+To: quic_asutoshd@quicinc.com, quic_cang@quicinc.com, bvanassche@acm.org,
+        mani@kernel.org, beanhuo@micron.com, avri.altman@wdc.com,
+        junwoo80.lee@samsung.com, martin.petersen@oracle.com,
+        quic_ziqichen@quicinc.com, quic_nguyenb@quicinc.com,
+        quic_nitirawa@quicinc.com, quic_rampraka@quicinc.com
+Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
+        Peter Wang <peter.wang@mediatek.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Andrew Halaney <ahalaney@redhat.com>,
+        Maramaina Naresh <quic_mnaresh@quicinc.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] scsi: ufs: core: Add ufshcd_send_bsg_uic_cmd() for UFS BSG
+Date: Wed, 13 Nov 2024 19:14:00 +0800
+Message-Id: <20241113111409.935032-1-quic_ziqichen@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: UamAJxEcB0CA94Cf4crBtsM3a1Q4YSc_
+X-Proofpoint-GUID: UamAJxEcB0CA94Cf4crBtsM3a1Q4YSc_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ bulkscore=0 phishscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
+ clxscore=1011 mlxscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411130098
 
-Alexander Lobakin <aleksander.lobakin@intel.com> writes:
+User layer applications can send UIC GET/SET commands via the BSG
+framework, and if the user layer application sends a UIC SET command
+to the PA_PWRMODE attribute, a power mode change shall be initiated
+in UniPro and two interrupts shall be triggered if the power mode is
+successfully changed, i.e., UIC Command Completion interrupt and UIC
+Power Mode interrupt.
 
-> The code which builds an skb from an &xdp_buff keeps multiplying itself
-> around the drivers with almost no changes. Let's try to stop that by
-> adding a generic function.
-> Unlike __xdp_build_skb_from_frame(), always allocate an skbuff head
-> using napi_build_skb() and make use of the available xdp_rxq pointer to
-> assign the Rx queue index. In case of PP-backed buffer, mark the skb to
-> be recycled, as every PP user's been switched to recycle skbs.
->
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+The current UFS BSG code calls ufshcd_send_uic_cmd() directly, with
+which the second interrupt, i.e., UIC Power Mode interrupt, shall be
+treated as unhandled interrupt. In addition, after the UIC command is
+completed, user layer application has to poll UniPro and/or M-PHY state
+machine to confirm the power mode change is finished.
 
-Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+Add a new wrapper function ufshcd_send_bsg_uic_cmd() and call it from
+ufs_bsg_request() so that if a UIC SET command is targeting the PA_PWRMODE
+attribute it can be redirected to ufshcd_uic_pwr_ctrl().
+
+Signed-off-by: Can Guo <quic_cang@quicinc.com>
+Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
+---
+V1 -> V2: Rebased on Linux 6.13
+---
+ drivers/ufs/core/ufs_bsg.c     |  2 +-
+ drivers/ufs/core/ufshcd-priv.h |  1 +
+ drivers/ufs/core/ufshcd.c      | 36 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 38 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/ufs/core/ufs_bsg.c b/drivers/ufs/core/ufs_bsg.c
+index 433d0480391e..6c09d97ae006 100644
+--- a/drivers/ufs/core/ufs_bsg.c
++++ b/drivers/ufs/core/ufs_bsg.c
+@@ -170,7 +170,7 @@ static int ufs_bsg_request(struct bsg_job *job)
+ 		break;
+ 	case UPIU_TRANSACTION_UIC_CMD:
+ 		memcpy(&uc, &bsg_request->upiu_req.uc, UIC_CMD_SIZE);
+-		ret = ufshcd_send_uic_cmd(hba, &uc);
++		ret = ufshcd_send_bsg_uic_cmd(hba, &uc);
+ 		if (ret)
+ 			dev_err(hba->dev, "send uic cmd: error code %d\n", ret);
+ 
+diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-priv.h
+index 7aea8fbaeee8..9ffd94ddf8c7 100644
+--- a/drivers/ufs/core/ufshcd-priv.h
++++ b/drivers/ufs/core/ufshcd-priv.h
+@@ -84,6 +84,7 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
+ 			    u8 **buf, bool ascii);
+ 
+ int ufshcd_send_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd);
++int ufshcd_send_bsg_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd);
+ 
+ int ufshcd_exec_raw_upiu_cmd(struct ufs_hba *hba,
+ 			     struct utp_upiu_req *req_upiu,
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index e338867bc96c..c01f4b0c1b4f 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -4319,6 +4319,42 @@ static int ufshcd_uic_pwr_ctrl(struct ufs_hba *hba, struct uic_command *cmd)
+ 	return ret;
+ }
+ 
++/**
++ * ufshcd_send_bsg_uic_cmd - Send UIC commands requested via BSG layer and retrieve the result
++ * @hba: per adapter instance
++ * @uic_cmd: UIC command
++ *
++ * Return: 0 only if success.
++ */
++int ufshcd_send_bsg_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd)
++{
++	int ret;
++
++	if (hba->quirks & UFSHCD_QUIRK_BROKEN_UIC_CMD)
++		return 0;
++
++	ufshcd_hold(hba);
++
++	if (uic_cmd->argument1 == UIC_ARG_MIB(PA_PWRMODE) &&
++	    uic_cmd->command == UIC_CMD_DME_SET) {
++		ret = ufshcd_uic_pwr_ctrl(hba, uic_cmd);
++		goto out;
++	}
++
++	mutex_lock(&hba->uic_cmd_mutex);
++	ufshcd_add_delay_before_dme_cmd(hba);
++
++	ret = __ufshcd_send_uic_cmd(hba, uic_cmd);
++	if (!ret)
++		ret = ufshcd_wait_for_uic_cmd(hba, uic_cmd);
++
++	mutex_unlock(&hba->uic_cmd_mutex);
++
++out:
++	ufshcd_release(hba);
++	return ret;
++}
++
+ /**
+  * ufshcd_uic_change_pwr_mode - Perform the UIC power mode chage
+  *				using DME_SET primitives.
+-- 
+2.34.1
 
 
