@@ -1,164 +1,106 @@
-Return-Path: <linux-kernel+bounces-407378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95AC9C6CC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:23:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 055719C6C9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:16:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6459B2E603
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:16:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF3E02896CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C16E1FB89E;
-	Wed, 13 Nov 2024 10:16:02 +0000 (UTC)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7191FB3FD;
+	Wed, 13 Nov 2024 10:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kQJsX5Gm"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5152B18A6DE;
-	Wed, 13 Nov 2024 10:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2514518A6DE
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731492962; cv=none; b=qaK9tKkrn/Tc8jcNu8xdHFEEM7XUyqvUCs2+x8owEYxfZsYfS9mZ6fLV3q2Pg0q+ysBg/JwSujk5kQAMTbeNvn6AdAOEEB1EP1WvnIWAAaE1T23vzGZLWSZSJ62qCRqLJpoKqb88nKERwQgRZzTYxDiECvv+M1qaok3aQa5F20w=
+	t=1731492981; cv=none; b=AVoX6PnjzSCHnZZ8k9jhyNGEGVBu4W9RBMy+fo1QFL0wuGFd8Zgw2/F/qNX0mUoc1kQP0qfr7epE+66P/gxqu4DoRf9sQOBIR/uo1q61J3SE0r+Q8dAUHS/scwUHArZN7pVaHeWBpykEp2UcePmlW8wsSnKO08uiefZRAxeSsgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731492962; c=relaxed/simple;
-	bh=8zKUrMnMRzDAMBUHJQHzWOsN10KZz08WEg+SvH++MtE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KgUcUjYcPEAJICCX1c8G0JAFhOph2XZtZIGR41XLPqGl8tQRwtPMtyhXCcm8Ejue4NQSrCzIKrLBpUOIoeMkG5izIHNPsaYIwmR0UEUu4iEjt86rNi86T/DwGPgkicNNglDgJZ2j8M9UwrE4ef/m414bmu/s5riwjpXu//q4fhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e35e0543b07so1651944276.2;
-        Wed, 13 Nov 2024 02:15:59 -0800 (PST)
+	s=arc-20240116; t=1731492981; c=relaxed/simple;
+	bh=j3qFw05rD17QyA9UhxFYZ9b7cVvjCQTg7bQIEaZoBH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fzF+2QB3/94YwtLCu9inVG2x6hQ4rGNgsC9liF3zAgnqSQ8Q4yBvBcF+jCtAli1vhdGYC8RWaRG3+sTikpyxXk4fSK/nO5AreRsf3n7b/ebeNKY1Sae82QT70ym+J20zzwwxnsd+1b6We8sMNnz3/BX+KtPlpJGrZqWPwlVOxSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kQJsX5Gm; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so56450815e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:16:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731492977; x=1732097777; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=A/s6vyJT3HK78gb+ChTyaGH3ZjuHobo/DAVRQSopMWU=;
+        b=kQJsX5GmZRueKVgGMC/VJ4Vmr/Y6odTIMTMOCmHtVn9VmqB4xq4TvIMYp4ur5oWglg
+         VJzjLMS9TZY37f34D4l8ACE0q76CCFeSaWRC9aJtDgS56StISnz5wCkZxmWz9zTaCLRG
+         +6ZJ1OH0YgNj6UmW4HrU8R3MjGnTrJnmgxUsQqdFWJ//TWfuO51pSpUmkka7jWA4Nc7O
+         7DHfHFnzPu1vST7QBJqNWOksak+mEYnuxh5mCeJEH/fDRNPpLAOCib2hxFKAM1Ub7xE+
+         KFDfY63q9XRqAvCB08MtTMx/ETAiSKJWV7riZHXRJT7LN0Od8pOrseQCpe4X9x6x50bm
+         G9kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731492957; x=1732097757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=km5VKNF+KUEDoH6tmM2tqgAPxy8fVSjcu9J5PorMtVg=;
-        b=P6IlBB1Iwc+dIHnirek5tygFWX7U0Np/uadQ4zXtzH+Eyo2aCgY5GM/RT5e9e8fcUw
-         rxir/oOonV0x4VIPFLgM/RhWnwYP/Sasg+hTBnuCNTBin5raFNoBa9OIeGYZstVGzP9D
-         EsWqwzRysLA27aumF0U8euGxyHxvpSlQQymo0SMqhoegDFnI5/iEOy94as8qVQkWXypH
-         SiyMqJdc/GWEoNmbziR2xb5nE7p3oVA264Hr6ifwhdIuK6AkRVVSizAhi7EBLsMc09/l
-         bZ3seaXxWkM2NQqGEYiDuj8iyoyR3BZjNLjh7DZhOqfW/A+vwgKwxPlGsO+yYj8J7VeS
-         J6dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdCXxKLsLoj5Poo9X1eFZIimCSMJdwAdffZxayWw6DZKPG2yvyKkL4b4sN8XdcJ6BX83d0QINS9CnC@vger.kernel.org, AJvYcCWa0TfzM0yEXgWsxLM4hym90cy5bMEnqf19oqtxiEXIcVDd2e83QwhpWPalaCbYcFHDl0DEwcwqlEpfgi5q@vger.kernel.org
-X-Gm-Message-State: AOJu0YylA1ZeUb1djE1YayVMTdhAMMuAtePMOSgd+P+Q2pSW9KL2j6kW
-	P6mRfBtzl0TlB12OYC2PJYbTs5ZKsvzImES4i5rxY+kcGJdbo4U86oN69jdt
-X-Google-Smtp-Source: AGHT+IFKgX06FyGkJf7uyCmYKNh9UI+r324BqO1EXdjX7f3Co+sDRKuRLboQzePPuhFt7mrtvHifJw==
-X-Received: by 2002:a05:690c:9c0a:b0:6e2:7dd:af66 with SMTP id 00721157ae682-6eca4684497mr65436877b3.19.1731492957679;
-        Wed, 13 Nov 2024 02:15:57 -0800 (PST)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ecb1088369sm4868977b3.90.2024.11.13.02.15.55
+        d=1e100.net; s=20230601; t=1731492977; x=1732097777;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A/s6vyJT3HK78gb+ChTyaGH3ZjuHobo/DAVRQSopMWU=;
+        b=QqHzaFSy6wgrZ5ShmIrNSoPpVlAZk9yfK+HjrUtqAfPpIAtFDFxfhWHbnTpDwIoFcF
+         TKcLddTL4RrFv9GfiZPg/5QsCVcnG8vA8Mmmx9L6Ie6WkLub2W8YxtehKpHpIaSzRnOG
+         yBcKD78DJsMQ5Beyg3a8b58887WPCbblOFpAxyEabxQ81veCDwtCrsO224AJrSwe8Xu0
+         +YgYozEBgA0jagX9buKCTBvW/V/qRpqlBbG8XwtIYHImqigUg6pUUV5lqPcsSW2oRU60
+         JYa5zQjj/+j9aMdtYv4urssrOgGptbZncmMe6CV+blTlaOB2YdG0it0J1r+dQ3oT+p7n
+         wXGg==
+X-Gm-Message-State: AOJu0YyiNEUcftMejAh/+3O9OP26Icp5NCSm6/agFX3maxOzO0kO3iHT
+	nOxFq0E2E+jPTojJiZDe1e0vBbIWg+Gj6+VZSkV4PSK7mEQAkMc0QXw87dVcriw8Q3+6vD/ns1k
+	G
+X-Google-Smtp-Source: AGHT+IG/4tFCvVhHPznah4g0OCv3JfJsSppJiv4m7DTwOF29E9X2LqJwM3JVZZBEfKJHxUqIGgjOJg==
+X-Received: by 2002:a05:600c:5125:b0:430:52ec:1e41 with SMTP id 5b1f17b1804b1-432d4ab80d5mr24665935e9.17.1731492977366;
+        Wed, 13 Nov 2024 02:16:17 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-432d552ea45sm19002365e9.44.2024.11.13.02.16.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 02:15:55 -0800 (PST)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ea7c9226bbso67155427b3.3;
-        Wed, 13 Nov 2024 02:15:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU1ZYvu8qTNSv4GmMy+fjG73CitifclQAQMAEndsv5GbQufejIMKaJhqgMazRVDVpPw5v4/ovJj/KNa@vger.kernel.org, AJvYcCXpUZ4x+NpinA0RvXG0ZMhKtYXhwKcP2/0lKijOkkQCZVK9+9m2yP/Y+E2hQda4LFVP3bweo3QMrhsjhXiQ@vger.kernel.org
-X-Received: by 2002:a05:690c:445:b0:6e3:8760:29ba with SMTP id
- 00721157ae682-6eca4c04f0bmr65699147b3.36.1731492955605; Wed, 13 Nov 2024
- 02:15:55 -0800 (PST)
+        Wed, 13 Nov 2024 02:16:17 -0800 (PST)
+Message-ID: <01f2d980-79d9-42b6-871a-a95b8245f514@linaro.org>
+Date: Wed, 13 Nov 2024 11:16:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112-am64-overlay-bool-v1-0-b9d1faff444e@solid-run.com>
- <CAL_JsqJAQswTo2eWxLw62wqb-2i=_9W84_v_tW+TSW4kgNK3_A@mail.gmail.com> <288deac4-5387-4492-9e9c-cabf77b9c0ba@solid-run.com>
-In-Reply-To: <288deac4-5387-4492-9e9c-cabf77b9c0ba@solid-run.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 13 Nov 2024 11:15:44 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWUJ-nQkD-tm07uWX_TTy5Fy5JLsvedcoJ50Hi7=WnEpg@mail.gmail.com>
-Message-ID: <CAMuHMdWUJ-nQkD-tm07uWX_TTy5Fy5JLsvedcoJ50Hi7=WnEpg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] of: add support for value "false" to of_property_read_bool
-To: Josua Mayer <josua@solid-run.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jon Nettleton <jon@solid-run.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, Rabeeh Khoury <rabeeh@solid-run.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clocksource: Remove redundant casts
+To: Tang Bin <tangbin@cmss.chinamobile.com>, verdun@hpe.com,
+ nick.hawkins@hpe.com, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org
+References: <20241107074619.2714-1-tangbin@cmss.chinamobile.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20241107074619.2714-1-tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Josua,
+On 07/11/2024 08:46, Tang Bin wrote:
+> In the function gxp_timer_init, the 'int' type cast
+> in front of the PTR_ERR() macro is redundant, thus
+> remove it.
+> 
+> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+> ---
 
-On Wed, Nov 13, 2024 at 10:41=E2=80=AFAM Josua Mayer <josua@solid-run.com> =
-wrote:
-> Am 12.11.24 um 14:46 schrieb Rob Herring:
-> > On Tue, Nov 12, 2024 at 12:41=E2=80=AFAM Josua Mayer <josua@solid-run.c=
-om> wrote:
-> >> Boolean type properties are usually considered true if present and fal=
-se
-> >> when they do not exist. This works well for many in-tree board dts and
-> >> existing drivers.
-> >>
-> >> When users need to overrride boolean values from included dts,
-> >> /delete-property/ is recommend. This however does not work in overlays
-> >> (addons).
-> > As soon as someone needs to delete a non-boolean property, we're back
-> > to the same problem.
->
-> Properties can be reassigned any value, e.g. a driver default if needed.
-> It should never be necessary to delete a property,
-> since a suitable value may be specified instead.
->
-> Booleans have two valid values, true and false,
-> but somehow we cannot assign false, we can just delete the property.
->
-> > If you want to fix it, you need to fix it for any
-> > property.
-> /delete-property/ is a language keyword used during compilation.
-> When inspecting a .dtbo no trace of /delete-property/ is left.
+Applied, thanks
 
-That is the current behavior. But dtc could be modified to emit new
-special __deleted_properties__ and __deleted_nodes__ nodes, just like
-it already creates special __symbols__, __fixups__, and __local_fixups__
-nodes.
 
-> Hence we can't "fix" deleting properties through overlays.
-> We can only "fix" (re-)assigning false to a boolean property.
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-So nothing prevents adding a way for a .dtbo to contain a list of
-properties and/or nodes to delete...
-
-> >> Geert pointed out [1] that there are several invitations for using
-> >> strings "true" and "false" on boolean properties: [1], [2], [3].
->
-> > There's always bad examples...
-> >
-> >> Add support for a string value "false" to be considered false on boole=
-an
-> >> properties by changing of_property_read_bool implementation.
->
-> > Any existing s/w will treat 'foo =3D "false"' as true. It's an ABI.
->
-> I was reading through the device-tree specification, it makes absolutely
-> no mention of a boolean type.
->
-> I believe of_property_read_bool should be capable of deriving false
-> from a present property.
->
-> What is up to now called bool in the kernel / device-tree,
-> is actually of_property_present, or conversationally of_node_has_flag.
-
-Indeed, so of_property_read_bool() is a misnomer, as it does
-not read the actual value from the property, unlike all other
-of_property_read_*() methods.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
