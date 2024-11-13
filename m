@@ -1,149 +1,114 @@
-Return-Path: <linux-kernel+bounces-408101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCFBE9C7ADD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:16:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1C49C7AFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:24:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAF2FB347D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:59:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B83DB34E79
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B9D2036F2;
-	Wed, 13 Nov 2024 17:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0CF206046;
+	Wed, 13 Nov 2024 17:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jJpwRD+0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQhXqMwj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58ADF202F91
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51503202631;
+	Wed, 13 Nov 2024 17:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731520605; cv=none; b=k0AEjzkDa1gfYKtrv4s2gxoNjZIz9TwKvCCczzoYFuAKFzI0nROHwl6dV3+el/KZuohQui/6KzQCxetsQP39jhN0mkSdizsIJ8NOf692tvcY4RboiLW5nSX7TdMXLasrkD0wiH/hjo3jW4HxudVavLvvAZKUMa4+C6d7g9Yq6M4=
+	t=1731520661; cv=none; b=ZnWNHl5YlbpVcHaurJk5aNvtysQ0rGsoT7i3NWvIX3kaQZ5bX+DPNHloNk+Y4wY3r/4p11Y/S9GvxM3s8bF9fEuISpx63qpAyrDAXLwyC9JdI+LClGIrbOk2EOHTzlhMITBz9g1RgZlBXloSm6cMEN8xsOJ2LvLkIAHgBnECioc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731520605; c=relaxed/simple;
-	bh=FEV2hlU+GGeEhstZyQekhJeZok1pVholE2R83wVEZXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5r0jGMvstQsyrBMQt0nDIySGxY3SJcL766DJwgTpoMHAF2ndJGhD+SRWTk+W1fOqzmo8q53IMxCK8ox6Vj2y1DF7YGvT8OhZjUj1OjujXw7eb4oqkWKdvO2IBdqfG3laUWliYXGjAFSBpuzqZzFf6S/kpJG2HHB0WXPK+SdUdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jJpwRD+0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731520599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ED4P6NsWli087xm4vi4x4cRp52cJJf0X5FBYEB8bznw=;
-	b=jJpwRD+0dJib3ALvpe0HMOrSqWeW5QPuOAt0wcaEWjt5JF4Y7XXAvTDvdRrYbXmTDiLNwM
-	dLbnX+J56uSK4ZjtNwZ9+VOJnpbIDWiAN8vl0gffomsD/HjZ2poSzIwf7Vvne8oyIAvlzu
-	9tYxx3uu64cTIMlsPyQXrpU1CadvXBs=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-284-G-z9g5VYMD2r6Je6OGIpNw-1; Wed, 13 Nov 2024 12:56:38 -0500
-X-MC-Unique: G-z9g5VYMD2r6Je6OGIpNw-1
-X-Mimecast-MFC-AGG-ID: G-z9g5VYMD2r6Je6OGIpNw
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3e60970ed1dso7178971b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:56:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731520596; x=1732125396;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ED4P6NsWli087xm4vi4x4cRp52cJJf0X5FBYEB8bznw=;
-        b=I1oUP+azgCjBaLORu7RhujWsPTM3jkhhokGnmaBfedAeNEYxLMYeKKIURz6kQGUeop
-         OfI8tFbsIwx5eHgUIMAHjXqnWl/8XGvCN6npPx8XTalfYqOMsjXYllu5eNvBYhjBsuod
-         HYB2Xwz/fp/Dsyg3Tg9Vd7FrC2F+a00qI9sUKiZmSw7LmpVizkU5bRFdIMcxSLUaCD8B
-         WzOxeMpl0UrFp5L6k5EBeXOyRe8y+dIwidfSBfceg0mgyPhe2olJNaBuOW6/n5QR7R6Z
-         fsZ8SABx8OBL+Y4YX7N5sDSQiQ61rHoLQJdgU/o+rl6FyiBTXiE8OF9HBgi2SmiVTGkX
-         kBmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+bKNpMbFZko2oKqdNixHahCeJreLi2o4izx7VX0qc/31FSqqpSSq/SOSi9pZlxnHADGhiZ/Ru0F8CwQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxfHSR7qsr7atiPKupiU++C5wKS3gBIbH9CiXoqwNS4MlxqfcS
-	V5IuoaUQdKoRSlGJ65zoNL4t3ujxauVaB3wL4lWek5XKn4y2ljnw9sRUhUgO5Bz/whA4LtLMcAI
-	neGQTLwpPQA1hp/Sx8gJJ85QOW9qrMRhTQM1H9HWnla8L3q5IDcNLM45p7yTtow==
-X-Received: by 2002:a05:6808:210b:b0:3e5:fc09:7f51 with SMTP id 5614622812f47-3e7b0a6ecb1mr3667600b6e.9.1731520596162;
-        Wed, 13 Nov 2024 09:56:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH4VBL0HBnl2w17tqrXf/BlWXKTcO2I1zi+/iAk9osNVNVd0ENy5K0Fn0z3PGUlANNI5aIeog==
-X-Received: by 2002:a05:6808:210b:b0:3e5:fc09:7f51 with SMTP id 5614622812f47-3e7b0a6ecb1mr3667559b6e.9.1731520595819;
-        Wed, 13 Nov 2024 09:56:35 -0800 (PST)
-Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3cf934d85sm24269446d6.33.2024.11.13.09.56.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 09:56:34 -0800 (PST)
-Date: Wed, 13 Nov 2024 12:56:31 -0500
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, "Kirill A . Shutemov" <kirill@shutemov.name>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Houghton <jthoughton@google.com>,
-	Huang Ying <ying.huang@intel.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>,
-	Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Rik van Riel <riel@surriel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Mel Gorman <mgorman@techsingularity.net>, x86@kernel.org,
-	Ingo Molnar <mingo@redhat.com>, linuxppc-dev@lists.ozlabs.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v5 0/7] mm/mprotect: Fix dax puds
-Message-ID: <ZzToT6kkN0kkh-ww@x1n>
-References: <20240812181225.1360970-1-peterx@redhat.com>
- <CAG48ez0NNph0Zp2aZ+c1T+U940CvwxcQ+jyEhp3KYZLSWPSrNw@mail.gmail.com>
- <ZzTWQqr-zFQz0HHY@x1n>
- <07ba2a86-f22b-43aa-a542-f1a182656b63@redhat.com>
+	s=arc-20240116; t=1731520661; c=relaxed/simple;
+	bh=hsej9QZ2ZJJ5VqKk63f8ryGQSXEiV+HHzptb0uSPdo8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U4TO3H9VPk8jzcVo5KlCkSM5dCEF4t/YoohlKKp0pPmfRHlVB2uVhuSRZf2TTss5zft3vxDPqV2JP3p/153m2YpTYgdAZWkf47aGwjYoKaUFWllsy72pOUAYTcrdPF4oG0phtYYY1Aa6hL6gDiCEP07b1ZW6/p7OlTrmamKulXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQhXqMwj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67B13C4CED0;
+	Wed, 13 Nov 2024 17:57:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731520661;
+	bh=hsej9QZ2ZJJ5VqKk63f8ryGQSXEiV+HHzptb0uSPdo8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VQhXqMwjpPCkrPrnlZicj4GTGfR/K+KldpPHdjD2omQxPmHz0tFKEm41XQcXgxDAa
+	 3wQRG7WsdxDifZtXCHF6AjdB9W4hj3ijfX1FsWDfgGDLwyyuhiDI5AlF7slaAA39c/
+	 HMHY7iXqMgt8aTKRXmiGoF+0XZ/fc26IiAKsadKJxlSttopgEyK22KoE10KS/nPFYa
+	 nTG/Eslh8XF+TrJMULR2yXLDfyOq3Nwna6IlgbU9XBAFUSrmRb/JtJ4Mg/gQZI4Tsu
+	 zd5QPE49iqk3FGnPLrbyI9y2Yfl3M2CbJUpxPU3hojao3PlQaLYf3ljhPFk4mEOFoC
+	 E9uGDGLZbNc+g==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Kiseok Jo <kiseok.jo@irondevice.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Tang Bin <tangbin@cmss.chinamobile.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] [v2] ASoC: sma1307: fix uninitialized variable refence
+Date: Wed, 13 Nov 2024 18:57:13 +0100
+Message-Id: <20241113175734.2443315-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <07ba2a86-f22b-43aa-a542-f1a182656b63@redhat.com>
 
-On Wed, Nov 13, 2024 at 05:42:15PM +0100, David Hildenbrand wrote:
-> On 13.11.24 17:39, Peter Xu wrote:
-> > On Mon, Nov 11, 2024 at 10:20:59PM +0100, Jann Horn wrote:
-> > > On Mon, Aug 12, 2024 at 8:12 PM Peter Xu <peterx@redhat.com> wrote:
-> > > > Dax supports pud pages for a while, but mprotect on puds was missing since
-> > > > the start.  This series tries to fix that by providing pud handling in
-> > > > mprotect().  The goal is to add more types of pud mappings like hugetlb or
-> > > > pfnmaps.  This series paves way for it by fixing known pud entries.
-> > > 
-> > > Do people actually use hardware where they can use PUD THP mappings
-> > > for DAX? I thought that was just some esoteric feature that isn't
-> > > actually usable on almost any system.
-> > > Was I wrong about that?
-> > 
-> > I did run it with a qemu emulated nvdimm device.  Though in reality I've no
-> > idea on how many people are using it..
-> 
-> I wonder if we still have to support it ... or could disable it+rip it out.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Note that in my previous email, I also mentioned mremap() for PMD on dax
-too.  If that's a real problem, it won't be fixed even if dropping dax PUD
-support.
+When firmware loading is disabled, gcc warns that the local
+'fw' variable fails to get initialized:
 
-And we definitely want to understand whether there're still users on pud
-dax to consider dropping anything.. it could still be that both mprotect()
-and mremap() are not yet used in the current use cases.
+sound/soc/codecs/sma1307.c: In function 'sma1307_setting_loaded.isra':
+sound/soc/codecs/sma1307.c:1717:12: error: 'fw' is used uninitialized [-Werror=uninitialized]
+ 1717 |         if (!fw) {
+      |            ^
+sound/soc/codecs/sma1307.c:1712:32: note: 'fw' was declared here
+ 1712 |         const struct firmware *fw;
 
-Thanks,
+Check the return code from request_firmware() to ensure that the
+firmware is correctly set, and drop the incorrect release_firmware()
+on that uninitialized data.
 
+Fixes: 576c57e6b4c1 ("ASoC: sma1307: Add driver for Iron Device SMA1307")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+[v2] check error value correctly
+---
+ sound/soc/codecs/sma1307.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/sound/soc/codecs/sma1307.c b/sound/soc/codecs/sma1307.c
+index 81638768ac12..f2cea6186d98 100644
+--- a/sound/soc/codecs/sma1307.c
++++ b/sound/soc/codecs/sma1307.c
+@@ -1711,13 +1711,13 @@ static void sma1307_setting_loaded(struct sma1307_priv *sma1307, const char *fil
+ {
+ 	const struct firmware *fw;
+ 	int *data, size, offset, num_mode;
++	int ret;
+ 
+-	request_firmware(&fw, file, sma1307->dev);
++	ret = request_firmware(&fw, file, sma1307->dev);
+ 
+-	if (!fw) {
+-		dev_err(sma1307->dev, "%s: failed to read \"%s\"\n",
+-			__func__, setting_file);
+-		release_firmware(fw);
++	if (ret) {
++		dev_err(sma1307->dev, "%s: failed to read \"%s\": %pe\n",
++			__func__, setting_file, ERR_PTR(ret));
+ 		sma1307->set.status = false;
+ 		return;
+ 	} else if ((fw->size) < SMA1307_SETTING_HEADER_SIZE) {
 -- 
-Peter Xu
+2.39.5
 
 
