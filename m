@@ -1,140 +1,130 @@
-Return-Path: <linux-kernel+bounces-407073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7949C9C683C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:51:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 936E49C683F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:51:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 070C1B229C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:51:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EE3DB24328
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D66316D9AA;
-	Wed, 13 Nov 2024 04:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EEB170A20;
+	Wed, 13 Nov 2024 04:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PGfu7bkX"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="my525b8f"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196F9433CE
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 04:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FDC1531C8;
+	Wed, 13 Nov 2024 04:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731473490; cv=none; b=KqemweuSPLzfid4k/ANUbV68oNd/2R2QRQH8gHmDl+qrw1O5bmxkbNo6UAlhzOL+UE0KLj8pycyQKUu1b+WhjF94ZORI7uehWk5pugBJiLk+SxA6Jp7taTzpqgYCEN+2ijHDzndvu5gwkdaowID+pPKm3aRv3nrisyPG264PIjk=
+	t=1731473507; cv=none; b=A75QpPiaPeSbU+l718R3NjQR3GRMTAaiccyvd4l0P1QIzz20ub0kl7NPzXIfuajQVQStRq2o4AQiSYQR7nCOFfH4fdMALDFj10jERoNBc49GXtG2YcUcODmNUBSw705pOCeqa1iLYu8hhWW9y4uNrDIpMAzFzHLYmo2ndV/HTRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731473490; c=relaxed/simple;
-	bh=l0c4oi/lRVU0xacNIBmUnJ8MqVpO06c6BsKZLfNXWao=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AliUnOfdnw8pS7dVqo/R9XVq385HyHSeu6emeCnxjzAZBAA3RoRYBZJG1n0kDJYC+wkGZQiuHSDVo7UFruX6RKBhURGt7ZuY98JToRFQKSy0ORuf3qR4ZNY0H2GpPkNrU8/w/C/Rd/zdbac5YIXI39wUJaaJyFArpMssSGczXko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PGfu7bkX; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso1088783466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 20:51:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731473486; x=1732078286; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UpLXALlzKEchFhHx055mxHWuvzO7Fxzz+fkVfPWjj3A=;
-        b=PGfu7bkXeWaIMV60tbxMOvwEAUB2V78xNw9kRILVc5yDJ24G4Ojtykvk1B3R1c5e5R
-         JBvj8KOn3nJ0C7QKggGHkoAJbqfUVHORkM3CZ0iXYhZEX0AIhExU80EjCLH0J0xn+beC
-         mAG/NJCsQJzychAonFf3hq2fluTWQ5PO0fr2TS3rO5yMXz5SVY9GPPoJiD4rAiPsQ96N
-         Fa1U3DBEyXqo9Za96VOyWPzYiEtHb75q8MDHq8ynmlB54NNLCND8hNYyMq3NfIEQEvUX
-         ejfasMLCr4ZFsy7T5ia2q3g3h35ULUueYPfwuG21h7pQLRAHOPMpTTnK0LzmU3phrfb9
-         MUjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731473486; x=1732078286;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UpLXALlzKEchFhHx055mxHWuvzO7Fxzz+fkVfPWjj3A=;
-        b=t/HJRXh9RWmhaNfi3xFSMkgL+X1NyatJZMBFZbZdS77xJBdZgAePM18iAx+U5jxns1
-         bHa8IVX3MFlFjHdbCCfvxnqfpCFsaKBZZ5WDVP0UvcaTsCQMW7wuKfRTIHIOXnXMAIxH
-         WBIuX48HZkpKp5kbuTBebHCwwSk8Nld3euveUmq8/EafNsBmAoSHEGWe94AfpaL7ztwX
-         Mxi3HVZcat8/kVRRp+KkYknj7uNw366MpWb9aMCCSAU+1HBj5H66/sbMuhwda2soUbpI
-         iBkAtblJQ4zCOjflihd+C6RhCQdAtQyDK1ABLU2NtsiLMQhVpuEtCLxPM43LMYUtLlKD
-         Nscw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGYbPSp7jQNuC9C2IASSEBnSY0LlWBJhhbB+dBxfzxxWDMZpgSUqfgJ4IqeALWWtUw19qvJDXeH8VSQb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxnlSQIXJiqMp4KBs6U8I6VNEOZdX/Vg/3zReBw6VjadBkwvM/
-	fV55CxfRIEwGjQ1qHxdEg3QAj+LpijybZ22svV/nBfhYnyasfrLdx7F06FHG6qAyRz5YWRO6ydh
-	eM+UZxA9RklTdNZhIaZ7UgzSg7TUNV7nvUPs=
-X-Google-Smtp-Source: AGHT+IEuMJK/b6RMPc2Z5S8NSxqpfpKwrEjaoecAxmYJnqCdahkftPa9sU7FbYEMc13TpQneZMMHWPiTo/Zlopl5vkM=
-X-Received: by 2002:a17:906:6a20:b0:a99:529d:81ae with SMTP id
- a640c23a62f3a-a9ef00239c8mr1839737466b.55.1731473486274; Tue, 12 Nov 2024
- 20:51:26 -0800 (PST)
+	s=arc-20240116; t=1731473507; c=relaxed/simple;
+	bh=/1pRHDRrAZ9iIpgY02t018pfdsaFQcMvD4hdZMbo7HU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ksB7lCMg/40/kdcpWxgCADvc5bnEdNldIaExL00usu6sTWPb0FkDBKCiEpizjGLo1/bLrcvFKkSHpxmOqgoktC/pEe57wYil2+YNJsVeGqHjhIK8wwFVbcBSObp6isj9SbEHBoe0xzTRdg9xtBzqAKblI4wJwVB4FRba4oT217o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=my525b8f; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731473504; x=1763009504;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/1pRHDRrAZ9iIpgY02t018pfdsaFQcMvD4hdZMbo7HU=;
+  b=my525b8fTuK9mWUDIApCLvb5ceZTRv3cWfnCIkIw00FyatQAJPTBXnH9
+   CjudvjkhcYM2K0uhZ0w1B+lgLI6tKovhd14X6jCEdNdR/tTP6be3cqT74
+   vaomgmE7o7tOUMgh92qOwpTkJH3UDEmbjW/ceqeSba43e07hT6aXG57A6
+   b6W1YvZJ1bdPEinKl7ffPvWM6hnf6r70gGc/K5UKGiv0msT4H0m7vFZ84
+   +rCfGQvlLRR00P0RUcR0vIlPn1qu2O48e5x6bC6FR8t083KKzKONTIMfV
+   KVlUYqXvDFlQ+ClEtL0eUTrAaGMoLtBMwYa56mvPiaKHK9IvwcMiS5eLA
+   g==;
+X-CSE-ConnectionGUID: NDFbj/vuTh66TdvzTxGAIg==
+X-CSE-MsgGUID: Da7KH1rKTsaiMoYTCAXmKA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="30746307"
+X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
+   d="scan'208";a="30746307"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 20:51:43 -0800
+X-CSE-ConnectionGUID: XRPXDymmT0C0dzE/kkXdkA==
+X-CSE-MsgGUID: hvvj7OAnTYm4tn+HILU6Lw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
+   d="scan'208";a="92518723"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.111.153])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 20:51:43 -0800
+Date: Tue, 12 Nov 2024 20:51:41 -0800
+From: Alison Schofield <alison.schofield@intel.com>
+To: Suraj Sonawane <surajsonawane0215@gmail.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+	dave.jiang@intel.com, ira.weiny@intel.com, rafael@kernel.org,
+	lenb@kernel.org, nvdimm@lists.linux.dev, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] acpi: nfit: vmalloc-out-of-bounds Read in
+ acpi_nfit_ctl
+Message-ID: <ZzQwXXSwioLsG8vv@aschofie-mobl2.lan>
+References: <20241112052035.14122-1-surajsonawane0215@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820163512.1096301-1-qyousef@layalina.io> <20240820163512.1096301-6-qyousef@layalina.io>
-In-Reply-To: <20240820163512.1096301-6-qyousef@layalina.io>
-From: John Stultz <jstultz@google.com>
-Date: Tue, 12 Nov 2024 20:51:15 -0800
-Message-ID: <CANDhNCrU3uuA137Udvh+RfC9ELhc7scjR=Oacosbyw+b68AR3Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 05/16] sched: cpufreq: Remove magic 1.25 headroom from sugov_apply_dvfs_headroom()
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112052035.14122-1-surajsonawane0215@gmail.com>
 
-On Tue, Aug 20, 2024 at 9:35=E2=80=AFAM Qais Yousef <qyousef@layalina.io> w=
-rote:
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_sche=
-dutil.c
-> index 575df3599813..303b0ab227e7 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -187,13 +187,28 @@ static unsigned int get_next_freq(struct sugov_poli=
-cy *sg_policy,
->   * to run at adequate performance point.
->   *
->   * This function provides enough headroom to provide adequate performanc=
-e
-> - * assuming the CPU continues to be busy.
-> + * assuming the CPU continues to be busy. This headroom is based on the
-> + * dvfs_update_delay of the cpufreq governor or min(curr.se.slice, TICK_=
-US),
-> + * whichever is higher.
->   *
-> - * At the moment it is a constant multiplication with 1.25.
-> + * XXX: Should we provide headroom when the util is decaying?
->   */
-> -static inline unsigned long sugov_apply_dvfs_headroom(unsigned long util=
-)
-> +static inline unsigned long sugov_apply_dvfs_headroom(unsigned long util=
-,  int cpu)
->  {
-> -       return util + (util >> 2);
-> +       struct rq *rq =3D cpu_rq(cpu);
-> +       u64 delay;
-> +
-> +       /*
-> +        * What is the possible worst case scenario for updating util_avg=
-, ctx
-> +        * switch or TICK?
-> +        */
-> +       if (rq->cfs.h_nr_running > 1)
-> +               delay =3D min(rq->curr->se.slice/1000, TICK_USEC);
+On Tue, Nov 12, 2024 at 10:50:35AM +0530, Suraj Sonawane wrote:
+> Fix an issue detected by syzbot with KASAN:
+> 
+> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/
+> core.c:416 [inline]
+> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
+> drivers/acpi/nfit/core.c:459
+> 
+> The issue occurs in `cmd_to_func` when the `call_pkg->nd_reserved2`
+> array is accessed without verifying that `call_pkg` points to a
+> buffer that is sized appropriately as a `struct nd_cmd_pkg`. This
+> could lead to out-of-bounds access and undefined behavior if the
+> buffer does not have sufficient space.
+> 
+> To address this issue, a check was added in `acpi_nfit_ctl()` to
+> ensure that `buf` is not `NULL` and `buf_len` is greater than or
+> equal to `sizeof(struct nd_cmd_pkg)` before casting `buf` to
+> `struct nd_cmd_pkg *`. This ensures safe access to the members of
+> `call_pkg`, including the `nd_reserved2` array.
+> 
+> This change preventing out-of-bounds reads.
+> 
+> Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
+> Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+> Fixes: 2d5404caa8c7 ("Linux 6.12-rc7")
+> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
 
-Nit: this fails to build on 32bit due to the u64 division.
+Suraj,
 
-Need something like:
-       if (rq->cfs.h_nr_running > 1) {
-               u64 slice =3D rq->curr->se.slice;
+The fixes tag needs to be where the issue originated, not
+where you discovered it (which I'm guessing was using 6.12-rc7).
 
-               do_div(slice, 1000);
-               delay =3D min(slice, TICK_USEC);
-       } else
-...
+Here's how I find the tag:
 
-thanks
--john
+$ git blame drivers/acpi/nfit/core.c | grep call_pkg | grep buf
+ebe9f6f19d80d drivers/acpi/nfit/core.c (Dan Williams       2019-02-07 14:56:50 -0800  458) 		call_pkg = buf;
+
+$ git log -1 --pretty=fixes ebe9f6f19d80d
+Fixes: ebe9f6f19d80 ("acpi/nfit: Fix bus command validation")
+
+I think ^ should be your Fixes tag. 
+
+
+
+snip
+
+> 
 
