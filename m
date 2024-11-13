@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-407535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF209C6F1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:35:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 331059C6F2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:37:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 495ACB2EF5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:07:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E91E6B2E312
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC572038CD;
-	Wed, 13 Nov 2024 12:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CF72071E8;
+	Wed, 13 Nov 2024 12:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2W8dYcu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cvBh+5xX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FDA2038DC;
-	Wed, 13 Nov 2024 12:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54E4206E98;
+	Wed, 13 Nov 2024 12:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731499448; cv=none; b=cE4VVe0soCqj4PA2rTaq55ltS5F/RcR/rJ2zew4LV8iOB68+cy+njENIxkkFgDSK0OgykmP86sVtq06TBN1/Owgl4cDKLpizHpoWGHT7aK1mxHka9F/DEqyr+yN2Qu1ualN8lUn7l83L2UIOI3qYlsyZG+GbOohK7p3KWkYu1OY=
+	t=1731499475; cv=none; b=TaGAFnPGGIWn+qvkQ/3HNJnzE9czGWEzBVuXjOMxg3Hk4IPbILr4dWAWUxekIPDOr5TsyHCxpg6DQdDUGKFsiTZWOf0WNd/Ev39tpgKlFofCScjyprdWucCwfLsPtbTgaKik3MTuBJCZaZhVABcwUJ9VrySGss4HW6aOmivtP34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731499448; c=relaxed/simple;
-	bh=zimZ9HPJGkJizGvih0IRUV4F/vn8f9eeAOk9pvKpxB0=;
+	s=arc-20240116; t=1731499475; c=relaxed/simple;
+	bh=EksfeHfE5OxceSeBDdxXOcQohfdRlh4FbXI+VQhs/I4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AbGA/qRTD+/5IV1zB/xNusKKJvZ2o89+2gx1Fx2O2gIEq/BB7a5RQ3C3zQ9bqe4BGRTgWK86X3bUCdupyg7UgC6gY8AIbRzSxf+FDAah46X0N2eO/yL0NWtvxnaZu7XAPWjF+tfDhIxmIzAHG88A8+wBWSMt5k+DHkH1RuL05+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2W8dYcu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CCEEC4CED5;
-	Wed, 13 Nov 2024 12:04:08 +0000 (UTC)
+	 To:Cc:Content-Type; b=Hp2MqjLBimyE8clGbFTvmOi67ikIth0hIQ1P2vw6p1C0zoxUrhE36F2PSqQudri1ZA1mDm14KurBlns5sssfVLTNvB3gruj85DXFZs/OqqMLhAhIf/Oo5lDEW/Bf/P4QvuBWjC+EJc0t0d2+wK9c9wshDP4jbWfkim6SRPpLTWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cvBh+5xX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57051C4CECD;
+	Wed, 13 Nov 2024 12:04:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731499448;
-	bh=zimZ9HPJGkJizGvih0IRUV4F/vn8f9eeAOk9pvKpxB0=;
+	s=k20201202; t=1731499474;
+	bh=EksfeHfE5OxceSeBDdxXOcQohfdRlh4FbXI+VQhs/I4=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=j2W8dYcu/+VHe60hd193lvrhH8p3+8AlOzNxySEpCHzVerzGQWJq4N7TDRmd+8j0u
-	 fnFyuzpgia+x13HtSsZc5/ABp5HCnPI/p5oYEIHy8Z1X/KWCMtNjO8J8FKThUvZgZe
-	 lkC/cjKyTOPOZu0eBhQX5+YK2A9nwrNuBD1NXDg/u1Fs9zc1iYaJAA2cwWVb3k1vET
-	 4eqZjahOCqR97QUMOPRBIDJ9662O/vl/mjZeh0hDWTf5qtdGTiPFvajJBV+aFPm7YH
-	 iUwPI3T95DPEM0v5grWbVRN0loZVmdTFBMb5pZXDg6dbKZvfCKEDC0FxHsU2u8dlpY
-	 qypac9AZlUnmQ==
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2884e7fadb8so3392324fac.2;
-        Wed, 13 Nov 2024 04:04:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXUse4D5kKvxoQEq8jt9Q/u6lrrYsTaDq5zbbVvRkOHaDy4bwMLi5up7Jz4VRL6ugzAEDZ3AYK7W3+x@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+PoG/2VLs1futw8D68ne9mDPfJlYG9k/jBxNa1+xoCpW2EGUw
-	U4quN9Al41vxCtw+Ruy3qr74j+9jAth/pHABhMWC7gU4gRnqwEUxBNtZv+PKdRPGCBxL6798wI4
-	qBfi7WA7tsZ0DEQliEyXHhQtBpQc=
-X-Google-Smtp-Source: AGHT+IGR3F9Ud9nAhyCawnQV7OOgqFhCKNKzqVF1mSBVYicb4T3jhpuZ8JFXB8nNZDZ14osz/3b6bBmSx0ZK2IeRmPA=
-X-Received: by 2002:a05:6871:5213:b0:25e:24a0:4c96 with SMTP id
- 586e51a60fabf-295600661d2mr17838227fac.11.1731499447257; Wed, 13 Nov 2024
- 04:04:07 -0800 (PST)
+	b=cvBh+5xXD3KNJT6Z7lRFegT0diIMWzdiESIMOHpu9A+md3s/GgNcSz5IhAi3qlpOt
+	 IH86y+qwyJC8t+oQoTAsgLNEhoAjfxm5WRu6BrpUjgwbyq/CWyUknie5UWr2fIaC+j
+	 MfVvCwyqu7mBdccqFiYMIGRNbGS/Z9WMl13XPmwkvo3p4RKU0jx8v5irGu0+ef94Fy
+	 2vZD92NrOyFNo9k94l9MAS6uOXwUu/3tDe4ne+hOWoRWTAEJoUPGoGzV57MV8pFWlB
+	 ab1XTIIUiKKeEPSMiW50BdV/h6dIUnAF88bF7VKF0dFTYqTX8eyhSrZ/pcq+ar1utU
+	 7srsF0klyOdrg==
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5eb60f6b4a7so1688123eaf.0;
+        Wed, 13 Nov 2024 04:04:34 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU8NBTmcq0wWBTs0jJNciwxkB6msfq2QOI+n4N4uKQNts5gDXL0zUV0dcaV3qih2TiSx9Vvv/ZIKFtcT2I=@vger.kernel.org, AJvYcCXJsSRG2ZTqKzXoXTu4bQrYyq0RESqZxQtmjnBJCIlqlRqlR+eFn6YdjVgbwpmAKNuxji/bA4GZF2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBpxFf5JvE/4xSEbVbMmyCu886j03jpw5XkCpeZ5pNbjj623Xd
+	fc0FX26gDRUIwqA+6AsoYmY8637OwIDqO6I0urvKx8UoKtGK7eQkrKWOvoKJ4+sflkxxcDol7gI
+	R+eCQZHrnSkUZ8HP5McBY0QU5i3Y=
+X-Google-Smtp-Source: AGHT+IEVnHr+c75j4Ah7GnM0xUmsz3sBmxC+FHCASwiIDokT/u783ordaOVkTzX3xXr5WWrmsrP01jBvzoauQ4lNfbk=
+X-Received: by 2002:a05:6820:2909:b0:5eb:db1c:a860 with SMTP id
+ 006d021491bc7-5ee57c788f0mr12165235eaf.8.1731499473711; Wed, 13 Nov 2024
+ 04:04:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112222516.1.I7fa78e6acbbed56ed5677f5e2dacc098a269d955@changeid>
-In-Reply-To: <20241112222516.1.I7fa78e6acbbed56ed5677f5e2dacc098a269d955@changeid>
+References: <20241112235946.368082-1-srinivas.pandruvada@linux.intel.com>
+In-Reply-To: <20241112235946.368082-1-srinivas.pandruvada@linux.intel.com>
 From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 13 Nov 2024 13:03:55 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hXbLaw7vqLGxjpnAgen4r1sz6neKWk2gEzi97DX95cBg@mail.gmail.com>
-Message-ID: <CAJZ5v0hXbLaw7vqLGxjpnAgen4r1sz6neKWk2gEzi97DX95cBg@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: video: force native for Apple MacbookPro11,2 and Air7,2
-To: Jonathan Denose <jdenose@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org, 
-	Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 13 Nov 2024 13:04:22 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hpcSOFndaSMvrdz5ryFcF65PEkpC+8Hh9nWzcQP7JNDw@mail.gmail.com>
+Message-ID: <CAJZ5v0hpcSOFndaSMvrdz5ryFcF65PEkpC+8Hh9nWzcQP7JNDw@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: intel_pstate: Update Balance performance EPP for
+ Granite Rapids
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 11:25=E2=80=AFPM Jonathan Denose <jdenose@google.co=
-m> wrote:
+On Wed, Nov 13, 2024 at 1:00=E2=80=AFAM Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
 >
-> There is a bug in the Macbook Pro 11,2 and Air 7,2 firmware similar to
-> what is described in:
+> Update EPP default for balance_performance to 32. This will give better
+> performance out of box using Intel P-State powersave governor while still
+> offering power savings compared to performance governor.
 >
-> commit 7dc918daaf29 ("ACPI: video: force native for Apple
-> MacbookPro9,2")
+> This is in line with what has already been done for Emerald Rapids and
+> Sapphire Rapids.
 >
-> This bug causes their backlights not to come back after resume.
->
-> This commit adds DMI quirks to select the working native intel firmware
-> interface such that the backlght comes back on after resume.
->
-> Signed-off-by: Jonathan Denose <jdenose@google.com>
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 > ---
+>  drivers/cpufreq/intel_pstate.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
->  drivers/acpi/video_detect.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
-> index 015bd8e66c1cf..d507d5e084354 100644
-> --- a/drivers/acpi/video_detect.c
-> +++ b/drivers/acpi/video_detect.c
-> @@ -549,6 +549,14 @@ static const struct dmi_system_id video_detect_dmi_t=
-able[] =3D {
->                 DMI_MATCH(DMI_PRODUCT_NAME, "iMac12,2"),
->                 },
->         },
-> +       {
-> +        .callback =3D video_detect_force_native,
-> +        /* Apple MacBook Air 7,2 */
-> +        .matches =3D {
-> +               DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
-> +               DMI_MATCH(DMI_PRODUCT_NAME, "MacBookAir7,2"),
-> +               },
-> +       },
->         {
->          .callback =3D video_detect_force_native,
->          /* Apple MacBook Air 9,1 */
-> @@ -565,6 +573,14 @@ static const struct dmi_system_id video_detect_dmi_t=
-able[] =3D {
->                 DMI_MATCH(DMI_PRODUCT_NAME, "MacBookPro9,2"),
->                 },
->         },
-> +       {
-> +        .callback =3D video_detect_force_native,
-> +        /* Apple MacBook Pro 11,2 */
-> +        .matches =3D {
-> +               DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
-> +               DMI_MATCH(DMI_PRODUCT_NAME, "MacBookPro11,2"),
-> +               },
-> +       },
->         {
->          /* https://bugzilla.redhat.com/show_bug.cgi?id=3D1217249 */
->          .callback =3D video_detect_force_native,
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
+e.c
+> index cd2ac1ba53d2..f1db73a52bae 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -3658,6 +3658,8 @@ static const struct x86_cpu_id intel_epp_default[] =
+=3D {
+>         X86_MATCH_VFM(INTEL_ALDERLAKE_L, HWP_SET_DEF_BALANCE_PERF_EPP(102=
+)),
+>         X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X, HWP_SET_DEF_BALANCE_PERF_EP=
+P(32)),
+>         X86_MATCH_VFM(INTEL_EMERALDRAPIDS_X, HWP_SET_DEF_BALANCE_PERF_EPP=
+(32)),
+> +       X86_MATCH_VFM(INTEL_GRANITERAPIDS_X, HWP_SET_DEF_BALANCE_PERF_EPP=
+(32)),
+> +       X86_MATCH_VFM(INTEL_GRANITERAPIDS_D, HWP_SET_DEF_BALANCE_PERF_EPP=
+(32)),
+>         X86_MATCH_VFM(INTEL_METEORLAKE_L, HWP_SET_EPP_VALUES(HWP_EPP_POWE=
+RSAVE,
+>                       179, 64, 16)),
+>         X86_MATCH_VFM(INTEL_ARROWLAKE, HWP_SET_EPP_VALUES(HWP_EPP_POWERSA=
+VE,
 > --
 
 Applied as 6.13 material, thanks!
