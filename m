@@ -1,74 +1,51 @@
-Return-Path: <linux-kernel+bounces-407746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363449C73E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:28:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C609C72CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FE5DB32A2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:09:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE223282626
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFAB2040AB;
-	Wed, 13 Nov 2024 14:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD5F201254;
+	Wed, 13 Nov 2024 14:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="x/Ru2AZs"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="HNA470DB"
+Received: from mr85p00im-hyfv06011401.me.com (mr85p00im-hyfv06011401.me.com [17.58.23.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D178201011
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD021DF272
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731506845; cv=none; b=SytKA1UM8pHkJbqMe1SxO5hvLsdvnnRLiWTgzZYzOcxUqgzgK258no/T2rGS+w2rFX8czl8divnfcMkF9XiWpjA7q+z5WNZ+PmbISW+Ug3ewAbJtak+qUjIBF/y4t1PtbqpBaRkQzAReczZlTXadahR1/DG8ZDpg8zeoMrmoehI=
+	t=1731506852; cv=none; b=WmuSC98YHboz7jxJJlu1hrTho4pYx68etNMrg46Rr8+sJv3IFqxTDovoK9sob0TeqgMWcTDEDaIGfgVxa0rA9a/2Mtsn/3cuUdRVor+TLxEYc86QjtBleOJwU+8tPv7FWL8gH6/IZ7+/5UsZyestOdaPWghhLDhY8Whqk0ezAGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731506845; c=relaxed/simple;
-	bh=ykh+gbXXjUPYIb0/IDp+NZWtxDsg78jTSltiMDxCiP4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=unxpmbzPcIcirA+uuLZME+AUsAFel5KODUBQ7gzZN29Qbq358jsxJOM22TLZREeLWyJEWGgELSB9KD2GU0a6aH09QI6bLdotqK8LXFv+dpevqV0DXsUfYjNDydHPeGzPzZlMDu6J31FwOQPbopnMArwuzVuJmeOO0uK8/aiZx0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=x/Ru2AZs; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-260e6298635so346573fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:07:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731506841; x=1732111641; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=C7W+yd2pa7dbAq2BPJ7ZVQ3S890XNBOMrajqML3cc6g=;
-        b=x/Ru2AZs+B6HVBItb0dwyPIXrvILulKExUQTlvjuqZUo6FstrNDUTGntOFKUyva+sO
-         FXRNqmvwBlv+N6sR/cqu51ga8u803o2DygizRSG9nSg+R2JgPZnNKCE7so5/omwP24wd
-         d8Tl2edy6WBab9PUMrJ0SMG0t/upmko6iVogDcna1EqMjmUtbFnlcLOSEftxPtmexiIQ
-         WY1K6RNX12nWNSuJL4lFcIJgwqODcinbAuMuq12zctXIcLgT0Kso3Zd5kYTHOuuZBFSJ
-         V8Q4ZBxtj90TbZYizD9LfVommFAtjG3uMOO2fPWBuUlI5DYtcL5KFduduRhFE+wNnO1R
-         b1tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731506841; x=1732111641;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C7W+yd2pa7dbAq2BPJ7ZVQ3S890XNBOMrajqML3cc6g=;
-        b=C5xfLVl9Uo+tpOySrgamMRG3PT2l+LcDy2/AWarC465AXpzeDcqwZPTfeBY+YiC8bd
-         EJicudtUhW1XjyS3B5XuQDpldqCk4wOG3EEZpUadoCGXwfVlVAHtl/DYti/3POj5T38a
-         +tJ7MuMi5E6JoMMFlHY1Dqr2YqkDLJslQUL848a+PhdJkP+lUpvo9FYG9qGW5eguLp0f
-         wCS+KWhtIMXhYDZtETaPSYf9aB6+jL4je4QM7uhKVn0n6Ph83BLjghv20hfwbOwWYnQX
-         Awu1usERVeppD/ShjmAMGhZgT5zxMICklzNmnehbUAElunVO+I/nq46Jxf4ya8hr3KL/
-         K/mA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNJ0B0V/r1anHGj2gcb/Zo6QFSwsDBaZLSfOjNmx6gln30puDnEglKqDd8yZvF13HyHL3P8O3QSAHIC7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIoH03OFBGvl4LR07vtpCB7k28z4j6Yvull240Pz+oudvHmRuI
-	n0/cOQtD/igS+bIz+/5PcBRSzjNsqU59zFjgdsY6Lq7vjunPDRqHydX/2xt3BAsVH4jULfqNL2S
-	7Zao=
-X-Google-Smtp-Source: AGHT+IEhQtwJqw8FYkoHlxC5JPevShyCoOPyIG4UY1W3uspVlh/+ActuzVEUskOUpaeDpHYJeA9Tgw==
-X-Received: by 2002:a05:6870:198d:b0:27b:a693:fa11 with SMTP id 586e51a60fabf-2955c59baebmr11328407fac.19.1731506841530;
-        Wed, 13 Nov 2024 06:07:21 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-295e8f5f81esm714501fac.20.2024.11.13.06.07.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 06:07:20 -0800 (PST)
-Message-ID: <27cd53e0-981e-42f0-b965-e9e2cf3d5894@kernel.dk>
-Date: Wed, 13 Nov 2024 07:07:19 -0700
+	s=arc-20240116; t=1731506852; c=relaxed/simple;
+	bh=stbjx1OqrDDsatYoJ9pZlLu6qgH1KqQ3f80ZqrV4Zbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZOgqVrKNI1kNiimFP3X8bX0UuYqqMnu5u76nzVVmTtKU+uSW/VymmE7XWH7z/Ras/pGreEAZ6Xx03nsQgPSlWck64JylLse4u1Uyeg4DdM1U20fowwrs07xiFzHNAUKrM7Y5rfRNa2pM3JN7G4mVm9Cu6T4XiV+xBmAOWay34sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=HNA470DB; arc=none smtp.client-ip=17.58.23.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1731506850;
+	bh=qVTlSyyjtvQdM64Zmm10e/DxGtBRJlNHmSajdSWe2lo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=HNA470DBfzz4N5AHrnQMa61v3cSoeFwhC2ag3WFKPR8QArwpmrsW+VGzZsV3G3kIF
+	 PtdoD5M4CF7rmiavulR0BatATR9c/nPZpJtpw66uYbCfGWiyLmMLVgL3SsZ8ZgxjsX
+	 ABo0r3UEXPsBu1yQN/BiawlDu+3ZJ2nfb9CbOrUQbdvT3OAORKHzashJa6bEfmuE0A
+	 uN5AYZEIHLm+/Wm1mJOwsbxCmrh5Rb7O07dKRds8CxJBCOSVnm0Hzf4Rc48pm7VL5N
+	 Q0ms4RA36mjdF312jNniNok25ejsMKTLbG4w87eh/ZzMRBuBIPWMlirTHgWKNM0Cb6
+	 wRpVGVOhlCooA==
+Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
+	by mr85p00im-hyfv06011401.me.com (Postfix) with ESMTPSA id 70DB2357AEEB;
+	Wed, 13 Nov 2024 14:07:27 +0000 (UTC)
+Message-ID: <e69c7536-f184-4588-bdec-62b79d39c411@icloud.com>
+Date: Wed, 13 Nov 2024 22:07:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,75 +53,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
-From: Jens Axboe <axboe@kernel.dk>
-To: Brian Foster <bfoster@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
- "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
- linux-kernel@vger.kernel.org, willy@infradead.org
-References: <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
- <ZzLkF-oW2epzSEbP@infradead.org>
- <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk> <ZzOEzX0RddGeMUPc@bfoster>
- <7a4ef71f-905e-4f2a-b3d2-8fd939c5a865@kernel.dk>
- <3f378e51-87e7-499e-a9fb-4810ca760d2b@kernel.dk> <ZzOiC5-tCNiJylSx@bfoster>
- <b1dcd133-471f-40da-ab75-d78ea9a8fa4c@kernel.dk> <ZzOu9G3whgonO8Ae@bfoster>
- <f26d1d04-3dfb-40d3-b878-9c731459650d@kernel.dk> <ZzO4wUTNQk-Hh-sT@bfoster>
- <d74ea306-29d6-4829-9b3f-d76dfac0b912@kernel.dk>
+Subject: Re: [PATCH] kernel/resource: Simplify API __devm_release_region()
+ implementation
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
+ ",Mika Westerberg" <mika.westerberg@linux.intel.com>,
+ ",Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20241017-release_region_fix-v1-1-84a3e8441284@quicinc.com>
 Content-Language: en-US
-In-Reply-To: <d74ea306-29d6-4829-9b3f-d76dfac0b912@kernel.dk>
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <20241017-release_region_fix-v1-1-84a3e8441284@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: N5buc-DrvC8-TQnn4bUTJ7H0UX7w60aX
+X-Proofpoint-ORIG-GUID: N5buc-DrvC8-TQnn4bUTJ7H0UX7w60aX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-12_09,2024-11-13_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 spamscore=0 clxscore=1015 malwarescore=0 phishscore=0
+ mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2411130120
 
-On 11/12/24 1:25 PM, Jens Axboe wrote:
->>>>>> BTW, I should have also mentioned that fsx is also useful for longer
->>>>>> soak testing. I.e., fstests will provide a decent amount of coverage as
->>>>>> is via the various preexisting tests, but I'll occasionally run fsx
->>>>>> directly and let it run overnight or something to get the op count at
->>>>>> least up in the 100 millions or so to have a little more confidence
->>>>>> there isn't some rare/subtle bug lurking. That might be helpful with
->>>>>> something like this. JFYI.
->>>>>
->>>>> Good suggestion, I can leave it running overnight here as well. Since
->>>>> I'm not super familiar with it, what would be a good set of parameters
->>>>> to run it with?
->>>>>
->>>>
->>>> Most things are on by default, so I'd probably just go with that. -p is
->>>> useful to get occasional status output on how many operations have
->>>> completed and you could consider increasing the max file size with -l,
->>>> but usually I don't use more than a few MB or so if I increase it at
->>>> all.
->>>
->>> When you say default, I'd run it without arguments. And then it does
->>> nothing :-)
->>>
->>> Not an fs guy, I never run fsx. I run xfstests if I make changes that
->>> may impact the page cache, writeback, or file systems.
->>>
->>> IOW, consider this a "I'm asking my mom to run fsx, I need to be pretty
->>> specific" ;-)
->>>
->>
->> Heh. In that case I'd just run something like this:
->>
->> 	fsx -p 100000 <file>
->>
->> ... and see how long it survives. It may not necessarily be an uncached
->> I/O problem if it fails, but depending on how reproducible a failure is,
->> that's where a cli knob comes in handy.
+On 2024/10/17 23:34, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> OK good, will give that a spin.
+> Simplify __devm_release_region() implementation by dedicated
+> API devres_release() which have below advantages than current
+> __release_region() + devres_destroy():
+> 
+> It is simpler if __devm_release_region() is undoing what
+> __devm_request_region() did, otherwise, it can avoid wrong and
+> undesired __release_region().
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+> linux-next tree has similar fixes as shown below:
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=0ee4dcafda9576910559f0471a3d6891daf9ab92
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
+> ---
+>  kernel/resource.c | 3 +--
 
-Ran overnight, no issues seen. Just terminated the process. For funsies,
-I also added RWF_UNCACHED support to qemu and had the vm booted with
-that as well, to get some host side testing too. Everything looks fine.
-This is running:
+Hi Andrew,
 
-https://git.kernel.dk/cgit/linux/log/?h=buffered-uncached.7
+There are no maintainer or supporter for kernel/resource.c according to
+get_maintainer.pl.
 
-which is the current branch.
+could you please code review for this patch?
 
--- 
-Jens Axboe
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/kernel/resource.c b/kernel/resource.c
+> index b730bd28b422..8d619c449a73 100644
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -1673,8 +1673,7 @@ void __devm_release_region(struct device *dev, struct resource *parent,
+>  {
+>  	struct region_devres match_data = { parent, start, n };
+>  
+> -	__release_region(parent, start, n);
+> -	WARN_ON(devres_destroy(dev, devm_region_release, devm_region_match,
+> +	WARN_ON(devres_release(dev, devm_region_release, devm_region_match,
+>  			       &match_data));
+>  }
+>  EXPORT_SYMBOL(__devm_release_region);
+> 
+> ---
+> base-commit: 9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
+> change-id: 20241017-release_region_fix-2aa7f93367e0
+> 
+> Best regards,
+
 
