@@ -1,123 +1,108 @@
-Return-Path: <linux-kernel+bounces-407739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 651329C7265
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:06:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2359C727C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B8DE1F20F76
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:06:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FB712817B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45D8200135;
-	Wed, 13 Nov 2024 14:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2864A2022E1;
+	Wed, 13 Nov 2024 14:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uXobA+d5"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="BdOMMl+8"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B8138DE9
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239241F1301
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731506791; cv=none; b=qO0luhnTpEMkNKPriQFCbMemu7qpBBm4fJLIGXbkS3WueuFNzhvpAOfkADvCmLSmTfmlaKkvCzYbW+Cng2P24dqwt9kPwUr+/jJP51bYUdwK7lWNrfwNEFMabkJBMkdxyAQUhqVBklJX8zyXyXXGh42xEsc51rVc649Jyd3lCz8=
+	t=1731506801; cv=none; b=B2D1+d4M0FNV9J1ktrSNqxRnsbd382VgOH/KIeFhrX5qTjCm2dSGQP+5Z9EkXJt+AU2n6AZRmd/3tuSTQ1HNmo82fyZ1W9Oiy/lGvEEXmutyYkBrnFD46v1TOlZiEWaEGJ7fd6yOQJKDIKwmYD0MewgZDVEY/+eVhItERoWHFGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731506791; c=relaxed/simple;
-	bh=eRDM6glYNPJ3JRSGjE8zGy2sCOXwrE90ctHKVf3hhxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYOOeCeHKHBo4SFPNoxUlHS3av2Wd5LAbyRGHxXF6LC7ZDlnwxvoK8GhbYuqrhs/v13im7UEta0t8t9MiQeuF5BYKqH/1oWdkoo6j+AJoGGhHGHRjv0G+74v7txJonP7bl84y0TxhAQDmyUUAgLyNQw4AtZ+SavOwKfuKY8RaNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uXobA+d5; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f84907caso7863988e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:06:29 -0800 (PST)
+	s=arc-20240116; t=1731506801; c=relaxed/simple;
+	bh=0fKqLzIm9Uj3vOox3uGDqxyOpl89mjm6yXUiBVRqWGY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VztTdDXTcE68jtteZRJM1U92lF9Ln9nefPniCA7sjbDq3AJLy5Vu1V0tKwRsoL7X2tW7fV9sUOi+/atwcqDL8ZCYhxYNqDPiZqmY0hSp/5MCU618dKihDEsDDn4LS5RoMuSrAyIXDKlLV6KJE/iZ/imCsk5/n+GnkLNdSsmOSRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=BdOMMl+8; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4609beb631aso53664511cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:06:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731506788; x=1732111588; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8UHoqGF0l3GD0aOweZBHSDKHmHKw99KAviUGfHjwDo4=;
-        b=uXobA+d50nHfU/aP8f3uJsK/KSMuHtTD3mKeYy6ZJH8qYLOMLF1sRNS2AyH/tz/d8l
-         tHNZh5O36Oo8dFE3zAopi1VokSL4CzoGNtTwKH1gHKQ88CAt3go70ifjuD5Nob1M5Sj9
-         186tv6demHi5yJHxfsrPJ+hoyVy/DX2/jh74lNYX0dG8ljzaMh1hP9X0g/5TGa8wcCNb
-         Pj91MYt+ecz/Y6bslsrQXF2JVZQiHz4kBdp/RGZjwHAL9R45nMmKlfGeceutva4+9KRu
-         85uuX3r2XLvPVdMAMDssVSQsdCIgQEVo9O/Y3HdPwHmjBrdh8s6j9pFU5EoqOo2z9Mw0
-         re8w==
+        d=szeredi.hu; s=google; t=1731506799; x=1732111599; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n04eXx3+VgfYdeuuioz28LYYOMFjDIC5FvbOZurOlmg=;
+        b=BdOMMl+8DcJ0YT2jMBFUkp8jfRPnc5mlnBmrY4nKC50iTFr4Oc/ei5I+ANrE94Kfsv
+         MVRNEgpW7KI9Ravs63VB3z/G0XLimMbqF+BJVSRO/03qMW91PsOhu2V/Uha5BOo+YHnF
+         mliX4JwkHkdweCz3VIKRv6jACVuDRm4Yzjzoo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731506788; x=1732111588;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8UHoqGF0l3GD0aOweZBHSDKHmHKw99KAviUGfHjwDo4=;
-        b=S7zRtxC8Vb/qUPK41EfMFbZzutkeFXlWPM/FH9FEi69+R0tL6VQhkYqxaZxeSX3V68
-         lVZ6/w36/O/5hK9vZkxxaBQPq/dJVGkKUwZOuUw49Ll+BRLpZL/tPxvimnb3l70OBQdI
-         nuGWU8PTHi6rGG21tDeY3QqZRN89xrr/JaU0P31DBQYwTlrkBvGXErr/2LDWJ66aUhx6
-         1VXRtjlLcVXY8MLNX4W+L0amNzMEDVFESglSFd1+27diix+mEh1G9HEGkYwuwsW+WMVh
-         3sdD6WZM708HKDTa5AGGkUxecdKYpZo45WQwEcHb0ClRAbLIVvC8JUdaM1dRvsm6gg04
-         ZR9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWkJGKgNT2HahqhL9XKv0OwiLu2ZcAJIzesa9O5xsZPt7yRr4QLX/YfeH5K/SzEIk3n67yu969PgcjK9lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy03WN2Jlyt+ylzo2Wr1+uV5A0kR2Cjbp36Fdd0RE12DH9hGf+
-	hA+g1pgBEQJEn29EbBLig26y559sAYfwrwZn6xuESwddh9peWWCy4GSq0E1zPdk=
-X-Google-Smtp-Source: AGHT+IGc5jEArT2BsF6zReSswVNVhl7F1+SW1eg++sx7YhaW7IQQvQ1DgvHdR9iSCclM1XFzIp7s/Q==
-X-Received: by 2002:a05:6512:3c96:b0:53b:1f90:576f with SMTP id 2adb3069b0e04-53d862c5c4cmr9786278e87.22.1731506787427;
-        Wed, 13 Nov 2024 06:06:27 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d5541824sm25621365e9.31.2024.11.13.06.06.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 06:06:27 -0800 (PST)
-Date: Wed, 13 Nov 2024 17:06:23 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Simon Horman <horms@kernel.org>
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] xfrm: Add error handling when nla_put_u32()
- returns an error
-Message-ID: <ae4f3c01-2cd5-4ac1-acdf-ba70a47c3bfb@stanley.mountain>
-References: <20241112233613.6444-1-everestkc@everestkc.com.np>
- <20241113105939.GY4507@kernel.org>
- <81088611-41d9-4472-94e6-3170418156c9@stanley.mountain>
+        d=1e100.net; s=20230601; t=1731506799; x=1732111599;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n04eXx3+VgfYdeuuioz28LYYOMFjDIC5FvbOZurOlmg=;
+        b=TxVtFdMJZG9OZrBIoN7hLhqwLgNvC0rZdyTcCAkOnPXkA0dNvXbufnZDNuEoU1q1wq
+         hYkNZW/KBqrW0hFURibjThnVq6GuWdfjwbcRZ2YTlB5I9y2bUyY+kmH1rBaXyCoAWB+k
+         VHHQMSQ/vR4pc4zTzfiRUoDD2F7LkxYh3cI+7b3/z4SIRK3Pa4vwoqy7A5iLvyGRpV6p
+         c4VHnFPTO1dlW5T2yXkSSnJCx9CW1iWmeMK6kl1KcH7QZahtoRgXetQCT0KN7nUJLQAc
+         f+cGZTDevzcnP1XBsEoVs3Uj9zBH5yzD9rwcGwD2TEaEuYsc/xSqGx9WN11uB5wuAUrK
+         6c1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVySYSOuaGN0CJ2tc/c5qzffdivTF4yPPaId9lqDKsDgbcdeO8ueP4vu3Yc4ox4kkcoK1pozkVC27LuwIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJewGmoMBVrlRl8m47Vfn7zELoEYHKfmHbJ7bPjdTmBqRMXIsE
+	E+TNhEFyt8JuFTgVouM1GRvQ2BLBQr/m/fK//hRgCxbnFO5Pno9R/ijOWVlcbIz4BbRZGZ8VxnM
+	oywyR3tYqpTt5s0Enr+Hu+ANM712zVheDtD2PcQ==
+X-Google-Smtp-Source: AGHT+IE9sec09qw2zVttuq0nP6xfpMnoEoUsplj7ka4DCtOBnPV+eGR/dUV+Y7nCGe35sDuh+bK9ggo3ciB3werkemA=
+X-Received: by 2002:a05:622a:1302:b0:460:ae0f:470c with SMTP id
+ d75a77b69052e-46309428d0bmr261546011cf.47.1731506798976; Wed, 13 Nov 2024
+ 06:06:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81088611-41d9-4472-94e6-3170418156c9@stanley.mountain>
+References: <20241112-statmount-v1-1-d98090c4c8be@kernel.org>
+In-Reply-To: <20241112-statmount-v1-1-d98090c4c8be@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 13 Nov 2024 15:06:28 +0100
+Message-ID: <CAJfpeguRoXumEm6bkXdj8dtp3apSonhoaK7QFPaWAX+q7QniuQ@mail.gmail.com>
+Subject: Re: [PATCH] samples: add a mountinfo program to demonstrate statmount()/listmount()
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Josef Bacik <josef@toxicpanda.com>, Ian Kent <raven@themaw.net>, 
+	David Howells <dhowells@redhat.com>, Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Here are the relevant lines from my email generator script.  The script
-greps to see if netdev is in the CC list but wireless isn't.  Then it
-looks up the FIXES_HASH.  You have to have to have done a recent fetch
-obviously.  My process doesn't work very well for patchsets.
+On Tue, 12 Nov 2024 at 22:21, Jeff Layton <jlayton@kernel.org> wrote:
 
-regards,
-dan carpenter
+> +               /* Walk the returned mntids and print info about each */
+> +               for (i = 0; i < count; ++i) {
+> +                       int ret = dump_mountinfo(mntid[i], mnt_ns_id);
+> +
+> +                       if (ret != 0)
+> +                               return ret;
+> +               }
+> +               /* Set up last_mnt_id to pick up where we left off */
+> +               last_mnt_id = mntid[count - 1] + 1;
 
-if grep -q netdev $MAIL_FILE && ! grep -q wireless $MAIL_FILE ; then
-    if [ "$FIXES_COMMIT" != "" ] ; then
-        if git merge-base --is-ancestor $FIXES_COMMIT net/main ; then
-            TREE=" net"
-        elif git merge-base --is-ancestor $FIXES_COMMIT net-next/main ; then
-            TREE=" net-next"
-        fi
-    else
-        TREE=" net-next"
-    fi
-fi
+The +1 is wrong, see do_listmount(), which already increments the last ID:
 
-if [ "$TREE" == "" ] ; then
-    if [ "$FIXES_COMMIT" != "" ] ; then
-        if ! git merge-base --is-ancestor $FIXES_COMMIT origin/master ; then
-            TREE=" next"
-        fi
-    fi
-fi
+        first = mnt_find_id_at(ns, last_mnt_id + 1);
 
-git format-patch HEAD^ --stdout | sed -e "s/Subject: \[PATCH\]/Subject: [PATCH${TREE}]/" >> $MAIL_FILE
+I also have some ideas for "cooked" interfaces that are easier to use.
+See here:
 
+    https://lore.kernel.org/all/CAJfpegsMahRZBk2d2vRLgO8ao9QUP28BwtfV1HXp5hoTOH6Rvw@mail.gmail.com/
+    https://lore.kernel.org/all/CAJfpeguMViqawKfJtM7_M9=m+6WsTcPfa_18t_rM9iuMG096RA@mail.gmail.com/
 
+I can do an incremental patch to add these ideas to this example.
+
+Thanks,
+Miklos
 
