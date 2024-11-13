@@ -1,400 +1,178 @@
-Return-Path: <linux-kernel+bounces-408131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E259C7B75
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:45:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9B69C7AC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:13:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62697B36D78
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB7BB28B01F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0320A203712;
-	Wed, 13 Nov 2024 18:10:38 +0000 (UTC)
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48685204014;
+	Wed, 13 Nov 2024 18:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OMYkdEoV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC855206E7B;
-	Wed, 13 Nov 2024 18:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28E2202630
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731521437; cv=none; b=AywFGSbSn0mjzHW1WX7cvHbOPTnw+KIyRAAm8wzNs6gUuuhdxICmu6EVgBEWHw6MGKtQFIwQCMCr5SFshuxPvVWD7XqjuuoPTBm0feIATVlNRoGyIzk0i3xe6gYz/QjZJxDPooU5QeyEzXBBIt8gcBTykrgSZjBxW7QCLcX3hEg=
+	t=1731521481; cv=none; b=OJJKVLTINCued8zY9YKoqI58uc2W4DWq7Iwf8LfUNTy8dwVtRF6y7iVRqbwLKKeDJAPDRTRyAp/KvPVGV7XhNKpC7itK1oM1iDwSL8rtjNQBNLkerp1yeVMjZQXrSHWy0Rf0SMs/1P3lXKDUWWriQBfVrkccC8y/UVRXdlffPbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731521437; c=relaxed/simple;
-	bh=sxkYSzChD2KL7wXRjIQIdhlk+izDvva5zC1VGgqvZTc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Pd91GzaOgWGKsALcoURyIob8KFTuAn35NGPbm24qcpCvfG9WzkJuEWxTul6p9UeSa6yxVQEdG7oL36jFqs5QFvdqQbrJacjd55kMIXDqVB3DcHyrmMcHGuBWs2KyKH6IwhrAwtfOC1bNCbVpgkRdgDVeCzgjK21yc8w3URu7Kg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ee020ec76dso5383657a12.3;
-        Wed, 13 Nov 2024 10:10:35 -0800 (PST)
+	s=arc-20240116; t=1731521481; c=relaxed/simple;
+	bh=GfyaBzsQaxbrDn9GkteBDYEIG6fY5LTY2BMi1OO6/hI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HvWcJH7uTAo8ylHem5HEXRTjTdhFNSmRtHcsW4LnvsA6F9qp7DtSagn02Paob8vjfkUeQjc2NG8aX69epVAGKn1legKO1xAtOleJlISDv4ecqGx3c+btbXwQJ2pz/uV3gX8yys7WfbJ8s4zQtIAIAWXwc3UNpjvNZceiVrZd0Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OMYkdEoV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731521478;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VewxfuCQAz2e8hyqcp+K3zDr+wxn5nG+1x8oL8KmYr8=;
+	b=OMYkdEoVkFgB4Wub+d0Mz3aO7f07/SAIR6zgu+o6C/Q0AgagnNOnTul939ylYrrLXE9V/u
+	aIQPQ+IyIImU95tKw9AcWy01S+gTXALfov+VLj8uUMmKChDll9QwzEFyKGZFhXzIgOgCdI
+	c1HCtbDmgwPNrvz2apUWWtFOKMz/rVE=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-345-0xfLa54jO1KXcXKhdpRy5Q-1; Wed, 13 Nov 2024 13:11:17 -0500
+X-MC-Unique: 0xfLa54jO1KXcXKhdpRy5Q-1
+X-Mimecast-MFC-AGG-ID: 0xfLa54jO1KXcXKhdpRy5Q
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d49887a2cso565540f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:11:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731521434; x=1732126234;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cz0T9AbfZgbmKpprExlqT2DT5An0GqdvFLFyhhI41U0=;
-        b=FjJQNeTsaXQUZel201htyoQjdafXzJ+V0C9pWeaoMskTSlfMRX1gdTANcnvK0p19AV
-         Vm1JHwgNaz9snxI3KrKn5DhBS8lEWcoNtG6v/QW/wJ5gFC8ML43udV9Is54jd4c99+bV
-         eYFBoXGAXogErf3zx7ahC4197Vded5uvYSbITcDaCFclse50okrwgF9a4xO7kZuHMmE+
-         h/iLlviMdcN2lucGy3jtEKi/bQKA/YZKuNs3Y5tlYf6bGmF9QfR+8+YKm5WHi/OWjq7V
-         n2gFPlJQDqRTPwBcqMzEMuAKfilx08izj4+uAFaOkL8kyWL+9N5vD9bMv1DP7GLmAkqP
-         zUaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3//Z+5hQiBBS1+P0WNgnCWFSPr7JOXlAuhMlcr25muIHfAPppJ7CHOawn/cW2hBBTeukH7xCLsJBfkKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJbmu76AkTRxuPzPDgTm1vQR/fHqcZrphKd0mJUzVuEMKzU7O5
-	TlnHbKKG+AY+UAjww4Mef4e2F8Djim3fegktvdtJcQvuguwTQfW4aTtHBJo=
-X-Google-Smtp-Source: AGHT+IEtrVG3hXaKBRK0DbNxb1Lvw6Q7m1cl95IxZfG7DsUiZpK3HPNH0ePZTipvlnqV8QpLWUxGog==
-X-Received: by 2002:a17:90b:2248:b0:2cd:4593:2a8e with SMTP id 98e67ed59e1d1-2e9b171ff77mr27258984a91.15.1731521434531;
-        Wed, 13 Nov 2024 10:10:34 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9f3ea574dsm1775381a91.7.2024.11.13.10.10.33
+        d=1e100.net; s=20230601; t=1731521476; x=1732126276;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VewxfuCQAz2e8hyqcp+K3zDr+wxn5nG+1x8oL8KmYr8=;
+        b=kTwf7TKQ7IFlT321fY+uOVc3eSDCo82E9F1ZGGwxYpDSQiVO5rZPgG0mZnsl8oIRp3
+         CLSd7dFNehMZQQwoT4ajBvgupgHWnVZ0k/W+frG3mRThKEtw0RqojdM3fb7BTRrZa7Fg
+         XuPqpCeht5ThcZhcu2TTalHV+tkbTueg4IsPnegQOIeiIAccr9zkcUTwcWQchzWt2H3W
+         YzMFnlznydsLxcxX43igWAFoRJJTCaL4necTk4QlsBgvlEeb14RCs2aSxWV8jcXmu3vN
+         Tez/aHOsIfz8VNMIxl1FeVUWQS5FmKrhJTwfMXRzRJINhowgTjvmB6Ngiv1GqN56USFr
+         lESg==
+X-Forwarded-Encrypted: i=1; AJvYcCVb19aCRyuhTbfO2W8lk41kXVoi2mFvkzbjOcI2eWhlDTiNLgYaa+OVgSIxze/tPa1edQGA5gNbW2nhp8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya1cJYRB07ljT9wCYvUPkTVLgmJQ5xGrgUZhtdJf3sjUbL1p9A
+	w1hdE94s5DwHRAFOqD++FTNrtZVOx5YnO+T0aWembWicaPL1QR+qjhA7NuQZ5xY1C0F30ZJISAJ
+	DMeiDIO57GY1Vzh1EgjK5NP761qf8mJexaiFzacBGh6rozCFjCBjQMgNz/L8jiA==
+X-Received: by 2002:a5d:6482:0:b0:381:f596:767a with SMTP id ffacd0b85a97d-38213fffc48mr308243f8f.12.1731521476255;
+        Wed, 13 Nov 2024 10:11:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGF8uZppBytmLF63T+fKBgKHNNYYjeLf5PwMN7OvReEObKbV3FfIPXk02/SLRoUJgOqSKX8ug==
+X-Received: by 2002:a5d:6482:0:b0:381:f596:767a with SMTP id ffacd0b85a97d-38213fffc48mr308206f8f.12.1731521475819;
+        Wed, 13 Nov 2024 10:11:15 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-4-194.as13285.net. [80.47.4.194])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97e46bsm18730859f8f.30.2024.11.13.10.11.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 10:10:34 -0800 (PST)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	horms@kernel.org,
-	donald.hunter@gmail.com,
-	andrew+netdev@lunn.ch,
-	kory.maincent@bootlin.com,
-	sdf@fomichev.me,
-	nicolas.dichtel@6wind.com
-Subject: [PATCH net-next 7/7] ethtool: regenerate uapi header from the spec
-Date: Wed, 13 Nov 2024 10:10:23 -0800
-Message-ID: <20241113181023.2030098-8-sdf@fomichev.me>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241113181023.2030098-1-sdf@fomichev.me>
-References: <20241113181023.2030098-1-sdf@fomichev.me>
+        Wed, 13 Nov 2024 10:11:14 -0800 (PST)
+Date: Wed, 13 Nov 2024 18:11:12 +0000
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <llong@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH 2/2] sched/deadline: Correctly account for allocated
+ bandwidth during hotplug
+Message-ID: <ZzTrwJoTetlt2Anj@jlelli-thinkpadt14gen4.remote.csb>
+References: <20241113125724.450249-1-juri.lelli@redhat.com>
+ <20241113125724.450249-3-juri.lelli@redhat.com>
+ <8e55c640-c931-4b9c-a501-c5b0a654a420@redhat.com>
+ <ZzTWkZJktDMlwQEW@jlelli-thinkpadt14gen4.remote.csb>
+ <b7c75f06-1ab5-48c4-b2fb-521508f20f9b@redhat.com>
+ <c30adf62-3012-46fe-ae52-2f6de1e20718@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <c30adf62-3012-46fe-ae52-2f6de1e20718@redhat.com>
 
-No functional changes. Mostly the following formatting:
-- extra docs
-- extra enums
-- XXX_MAX = __XXX_CNT - 1 -> XXX_MAX = (__XXX_CNT - 1)
-- newlines
+On 13/11/24 11:50, Waiman Long wrote:
+> 
+> On 11/13/24 11:42 AM, Waiman Long wrote:
+> > 
+> > On 11/13/24 11:40 AM, Juri Lelli wrote:
+> > > On 13/11/24 11:06, Waiman Long wrote:
+> > > 
+> > > ...
+> > > 
+> > > > This part can still cause a failure in one of test cases in my cpuset
+> > > > partition test script. In this particular case, the CPU to be
+> > > > offlined is an
+> > > > isolated CPU with scheduling disabled. As a result, total_bw is
+> > > > 0 and the
+> > > > __dl_overflow() test failed. Is there a way to skip the
+> > > > __dl_overflow() test
+> > > > for isolated CPUs? Can we use a null total_bw as a proxy for that?
+> > > Can you please share the repro script? Would like to check locally what
+> > > is going on.
+> > 
+> > Just run tools/testing/selftests/cgroup/test_cpuset_prs.sh.
+> 
+> The failing test is
+> 
+>         # Remote partition offline tests
+>         " C0-3:S+ C1-3:S+ C2-3     .    X2-3   X2-3 X2-3:P2:O2=0 .   0
+> A1:0-1,A2:1,A3:3 A1:P0,A3:P2 2-3"
+> 
+> You can remove all the previous lines in the TEST_MATRIX to get to failed
+> test case immediately eliminating unnecessary noise in your testing.
 
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
----
- .../uapi/linux/ethtool_netlink_generated.h    | 89 ++++++++++++-------
- 1 file changed, 56 insertions(+), 33 deletions(-)
+So, IIUC this test is doing the following
 
-diff --git a/include/uapi/linux/ethtool_netlink_generated.h b/include/uapi/linux/ethtool_netlink_generated.h
-index d5c95a115603..bf78c00ac76e 100644
---- a/include/uapi/linux/ethtool_netlink_generated.h
-+++ b/include/uapi/linux/ethtool_netlink_generated.h
-@@ -1,23 +1,43 @@
- /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* Do not edit directly, auto-generated from: */
-+/*	Documentation/netlink/specs/ethtool.yaml */
-+/* YNL-GEN uapi header */
-+
- #ifndef _UAPI_LINUX_ETHETOOL_NETLINK_GENERATED_H
- #define _UAPI_LINUX_ETHETOOL_NETLINK_GENERATED_H
- 
-+#define ETHTOOL_FAMILY_NAME	"ethtool"
-+#define ETHTOOL_FAMILY_VERSION	1
-+
- enum {
- 	ETHTOOL_UDP_TUNNEL_TYPE_VXLAN,
- 	ETHTOOL_UDP_TUNNEL_TYPE_GENEVE,
- 	ETHTOOL_UDP_TUNNEL_TYPE_VXLAN_GPE,
- 
--	__ETHTOOL_UDP_TUNNEL_TYPE_CNT
-+	/* private: */
-+	__ETHTOOL_UDP_TUNNEL_TYPE_CNT,
-+	ETHTOOL_UDP_TUNNEL_TYPE_MAX = (__ETHTOOL_UDP_TUNNEL_TYPE_CNT - 1)
- };
- 
-+/**
-+ * enum ethtool_header_flags
-+ * @ETHTOOL_FLAG_COMPACT_BITSETS: use compact bitsets in reply
-+ * @ETHTOOL_FLAG_OMIT_REPLY: provide optional reply for SET or ACT requests
-+ * @ETHTOOL_FLAG_STATS: request statistics, if supported by the driver
-+ */
- enum ethtool_header_flags {
--	ETHTOOL_FLAG_COMPACT_BITSETS	= 1 << 0,	/* use compact bitsets in reply */
--	ETHTOOL_FLAG_OMIT_REPLY		= 1 << 1,	/* provide optional reply for SET or ACT requests */
--	ETHTOOL_FLAG_STATS		= 1 << 2,	/* request statistics, if supported by the driver */
-+	ETHTOOL_FLAG_COMPACT_BITSETS = 1,
-+	ETHTOOL_FLAG_OMIT_REPLY = 2,
-+	ETHTOOL_FLAG_STATS = 4,
- };
- 
- enum {
--	ETHTOOL_TCP_DATA_SPLIT_UNKNOWN = 0,
-+	ETHTOOL_PHY_UPSTREAM_TYPE_MAC,
-+	ETHTOOL_PHY_UPSTREAM_TYPE_PHY,
-+};
-+
-+enum ethtool_tcp_data_split {
-+	ETHTOOL_TCP_DATA_SPLIT_UNKNOWN,
- 	ETHTOOL_TCP_DATA_SPLIT_DISABLED,
- 	ETHTOOL_TCP_DATA_SPLIT_ENABLED,
- };
-@@ -30,7 +50,7 @@ enum {
- 	ETHTOOL_A_HEADER_PHY_INDEX,
- 
- 	__ETHTOOL_A_HEADER_CNT,
--	ETHTOOL_A_HEADER_MAX = __ETHTOOL_A_HEADER_CNT - 1
-+	ETHTOOL_A_HEADER_MAX = (__ETHTOOL_A_HEADER_CNT - 1)
- };
- 
- enum {
-@@ -40,7 +60,7 @@ enum {
- 	ETHTOOL_A_BITSET_BIT_VALUE,
- 
- 	__ETHTOOL_A_BITSET_BIT_CNT,
--	ETHTOOL_A_BITSET_BIT_MAX = __ETHTOOL_A_BITSET_BIT_CNT - 1
-+	ETHTOOL_A_BITSET_BIT_MAX = (__ETHTOOL_A_BITSET_BIT_CNT - 1)
- };
- 
- enum {
-@@ -48,7 +68,7 @@ enum {
- 	ETHTOOL_A_BITSET_BITS_BIT,
- 
- 	__ETHTOOL_A_BITSET_BITS_CNT,
--	ETHTOOL_A_BITSET_BITS_MAX = __ETHTOOL_A_BITSET_BITS_CNT - 1
-+	ETHTOOL_A_BITSET_BITS_MAX = (__ETHTOOL_A_BITSET_BITS_CNT - 1)
- };
- 
- enum {
-@@ -60,7 +80,7 @@ enum {
- 	ETHTOOL_A_BITSET_MASK,
- 
- 	__ETHTOOL_A_BITSET_CNT,
--	ETHTOOL_A_BITSET_MAX = __ETHTOOL_A_BITSET_CNT - 1
-+	ETHTOOL_A_BITSET_MAX = (__ETHTOOL_A_BITSET_CNT - 1)
- };
- 
- enum {
-@@ -69,7 +89,7 @@ enum {
- 	ETHTOOL_A_STRING_VALUE,
- 
- 	__ETHTOOL_A_STRING_CNT,
--	ETHTOOL_A_STRING_MAX = __ETHTOOL_A_STRING_CNT - 1
-+	ETHTOOL_A_STRING_MAX = (__ETHTOOL_A_STRING_CNT - 1)
- };
- 
- enum {
-@@ -77,7 +97,7 @@ enum {
- 	ETHTOOL_A_STRINGS_STRING,
- 
- 	__ETHTOOL_A_STRINGS_CNT,
--	ETHTOOL_A_STRINGS_MAX = __ETHTOOL_A_STRINGS_CNT - 1
-+	ETHTOOL_A_STRINGS_MAX = (__ETHTOOL_A_STRINGS_CNT - 1)
- };
- 
- enum {
-@@ -87,7 +107,7 @@ enum {
- 	ETHTOOL_A_STRINGSET_STRINGS,
- 
- 	__ETHTOOL_A_STRINGSET_CNT,
--	ETHTOOL_A_STRINGSET_MAX = __ETHTOOL_A_STRINGSET_CNT - 1
-+	ETHTOOL_A_STRINGSET_MAX = (__ETHTOOL_A_STRINGSET_CNT - 1)
- };
- 
- enum {
-@@ -95,7 +115,7 @@ enum {
- 	ETHTOOL_A_STRINGSETS_STRINGSET,
- 
- 	__ETHTOOL_A_STRINGSETS_CNT,
--	ETHTOOL_A_STRINGSETS_MAX = __ETHTOOL_A_STRINGSETS_CNT - 1
-+	ETHTOOL_A_STRINGSETS_MAX = (__ETHTOOL_A_STRINGSETS_CNT - 1)
- };
- 
- enum {
-@@ -105,7 +125,7 @@ enum {
- 	ETHTOOL_A_STRSET_COUNTS_ONLY,
- 
- 	__ETHTOOL_A_STRSET_CNT,
--	ETHTOOL_A_STRSET_MAX = __ETHTOOL_A_STRSET_CNT - 1
-+	ETHTOOL_A_STRSET_MAX = (__ETHTOOL_A_STRSET_CNT - 1)
- };
- 
- enum {
-@@ -114,7 +134,7 @@ enum {
- 	ETHTOOL_A_PRIVFLAGS_FLAGS,
- 
- 	__ETHTOOL_A_PRIVFLAGS_CNT,
--	ETHTOOL_A_PRIVFLAGS_MAX = __ETHTOOL_A_PRIVFLAGS_CNT - 1
-+	ETHTOOL_A_PRIVFLAGS_MAX = (__ETHTOOL_A_PRIVFLAGS_CNT - 1)
- };
- 
- enum {
-@@ -182,7 +202,7 @@ enum {
- 	ETHTOOL_A_LINKINFO_TRANSCEIVER,
- 
- 	__ETHTOOL_A_LINKINFO_CNT,
--	ETHTOOL_A_LINKINFO_MAX = __ETHTOOL_A_LINKINFO_CNT - 1
-+	ETHTOOL_A_LINKINFO_MAX = (__ETHTOOL_A_LINKINFO_CNT - 1)
- };
- 
- enum {
-@@ -199,7 +219,7 @@ enum {
- 	ETHTOOL_A_LINKMODES_RATE_MATCHING,
- 
- 	__ETHTOOL_A_LINKMODES_CNT,
--	ETHTOOL_A_LINKMODES_MAX = __ETHTOOL_A_LINKMODES_CNT - 1
-+	ETHTOOL_A_LINKMODES_MAX = (__ETHTOOL_A_LINKMODES_CNT - 1)
- };
- 
- enum {
-@@ -213,7 +233,7 @@ enum {
- 	ETHTOOL_A_LINKSTATE_EXT_DOWN_CNT,
- 
- 	__ETHTOOL_A_LINKSTATE_CNT,
--	ETHTOOL_A_LINKSTATE_MAX = __ETHTOOL_A_LINKSTATE_CNT - 1
-+	ETHTOOL_A_LINKSTATE_MAX = (__ETHTOOL_A_LINKSTATE_CNT - 1)
- };
- 
- enum {
-@@ -222,7 +242,7 @@ enum {
- 	ETHTOOL_A_DEBUG_MSGMASK,
- 
- 	__ETHTOOL_A_DEBUG_CNT,
--	ETHTOOL_A_DEBUG_MAX = __ETHTOOL_A_DEBUG_CNT - 1
-+	ETHTOOL_A_DEBUG_MAX = (__ETHTOOL_A_DEBUG_CNT - 1)
- };
- 
- enum {
-@@ -232,7 +252,7 @@ enum {
- 	ETHTOOL_A_WOL_SOPASS,
- 
- 	__ETHTOOL_A_WOL_CNT,
--	ETHTOOL_A_WOL_MAX = __ETHTOOL_A_WOL_CNT - 1
-+	ETHTOOL_A_WOL_MAX = (__ETHTOOL_A_WOL_CNT - 1)
- };
- 
- enum {
-@@ -244,7 +264,7 @@ enum {
- 	ETHTOOL_A_FEATURES_NOCHANGE,
- 
- 	__ETHTOOL_A_FEATURES_CNT,
--	ETHTOOL_A_FEATURES_MAX = __ETHTOOL_A_FEATURES_CNT - 1
-+	ETHTOOL_A_FEATURES_MAX = (__ETHTOOL_A_FEATURES_CNT - 1)
- };
- 
- enum {
-@@ -276,6 +296,7 @@ enum {
- enum {
- 	ETHTOOL_A_PROFILE_UNSPEC,
- 	ETHTOOL_A_PROFILE_IRQ_MODERATION,
-+
- 	__ETHTOOL_A_PROFILE_CNT,
- 	ETHTOOL_A_PROFILE_MAX = (__ETHTOOL_A_PROFILE_CNT - 1)
- };
-@@ -362,7 +383,6 @@ enum {
- 
- 	__ETHTOOL_A_TS_STAT_CNT,
- 	ETHTOOL_A_TS_STAT_MAX = (__ETHTOOL_A_TS_STAT_CNT - 1)
--
- };
- 
- enum {
-@@ -412,7 +432,7 @@ enum {
- 	ETHTOOL_A_CABLE_TEST_HEADER,
- 
- 	__ETHTOOL_A_CABLE_TEST_CNT,
--	ETHTOOL_A_CABLE_TEST_MAX = __ETHTOOL_A_CABLE_TEST_CNT - 1
-+	ETHTOOL_A_CABLE_TEST_MAX = (__ETHTOOL_A_CABLE_TEST_CNT - 1)
- };
- 
- enum {
-@@ -433,7 +453,7 @@ enum {
- 	ETHTOOL_A_CABLE_TEST_TDR_CFG_PAIR,
- 
- 	__ETHTOOL_A_CABLE_TEST_TDR_CFG_CNT,
--	ETHTOOL_A_CABLE_TEST_TDR_CFG_MAX = __ETHTOOL_A_CABLE_TEST_TDR_CFG_CNT - 1
-+	ETHTOOL_A_CABLE_TEST_TDR_CFG_MAX = (__ETHTOOL_A_CABLE_TEST_TDR_CFG_CNT - 1)
- };
- 
- enum {
-@@ -443,7 +463,7 @@ enum {
- 	ETHTOOL_A_CABLE_TEST_TDR_NTF_NEST,
- 
- 	__ETHTOOL_A_CABLE_TEST_TDR_NTF_CNT,
--	ETHTOOL_A_CABLE_TEST_TDR_NTF_MAX = __ETHTOOL_A_CABLE_TEST_TDR_NTF_CNT - 1
-+	ETHTOOL_A_CABLE_TEST_TDR_NTF_MAX = (__ETHTOOL_A_CABLE_TEST_TDR_NTF_CNT - 1)
- };
- 
- enum {
-@@ -452,7 +472,7 @@ enum {
- 	ETHTOOL_A_CABLE_TEST_TDR_CFG,
- 
- 	__ETHTOOL_A_CABLE_TEST_TDR_CNT,
--	ETHTOOL_A_CABLE_TEST_TDR_MAX = __ETHTOOL_A_CABLE_TEST_TDR_CNT - 1
-+	ETHTOOL_A_CABLE_TEST_TDR_MAX = (__ETHTOOL_A_CABLE_TEST_TDR_CNT - 1)
- };
- 
- enum {
-@@ -580,6 +600,9 @@ enum {
- 	ETHTOOL_A_C33_PSE_PW_LIMIT_UNSPEC,
- 	ETHTOOL_A_C33_PSE_PW_LIMIT_MIN,
- 	ETHTOOL_A_C33_PSE_PW_LIMIT_MAX,
-+
-+	__ETHTOOL_A_C33_PSE_PW_LIMIT_CNT,
-+	__ETHTOOL_A_C33_PSE_PW_LIMIT_MAX = (__ETHTOOL_A_C33_PSE_PW_LIMIT_CNT - 1)
- };
- 
- enum {
-@@ -613,7 +636,7 @@ enum {
- 	ETHTOOL_A_RSS_START_CONTEXT,
- 
- 	__ETHTOOL_A_RSS_CNT,
--	ETHTOOL_A_RSS_MAX = (__ETHTOOL_A_RSS_CNT - 1),
-+	ETHTOOL_A_RSS_MAX = (__ETHTOOL_A_RSS_CNT - 1)
- };
- 
- enum {
-@@ -662,8 +685,8 @@ enum {
- };
- 
- enum {
--	ETHTOOL_MSG_USER_NONE,
--	ETHTOOL_MSG_STRSET_GET,
-+	ETHTOOL_MSG_USER_NONE = 0,
-+	ETHTOOL_MSG_STRSET_GET = 1,
- 	ETHTOOL_MSG_LINKINFO_GET,
- 	ETHTOOL_MSG_LINKINFO_SET,
- 	ETHTOOL_MSG_LINKMODES_GET,
-@@ -710,12 +733,12 @@ enum {
- 	ETHTOOL_MSG_PHY_GET,
- 
- 	__ETHTOOL_MSG_USER_CNT,
--	ETHTOOL_MSG_USER_MAX = __ETHTOOL_MSG_USER_CNT - 1
-+	ETHTOOL_MSG_USER_MAX = (__ETHTOOL_MSG_USER_CNT - 1)
- };
- 
- enum {
--	ETHTOOL_MSG_KERNEL_NONE,
--	ETHTOOL_MSG_STRSET_GET_REPLY,
-+	ETHTOOL_MSG_KERNEL_NONE = 0,
-+	ETHTOOL_MSG_STRSET_GET_REPLY = 1,
- 	ETHTOOL_MSG_LINKINFO_GET_REPLY,
- 	ETHTOOL_MSG_LINKINFO_NTF,
- 	ETHTOOL_MSG_LINKMODES_GET_REPLY,
-@@ -763,7 +786,7 @@ enum {
- 	ETHTOOL_MSG_PHY_NTF,
- 
- 	__ETHTOOL_MSG_KERNEL_CNT,
--	ETHTOOL_MSG_KERNEL_MAX = __ETHTOOL_MSG_KERNEL_CNT - 1
-+	ETHTOOL_MSG_KERNEL_MAX = (__ETHTOOL_MSG_KERNEL_CNT - 1)
- };
- 
- #endif /* _UAPI_LINUX_ETHETOOL_NETLINK_GENERATED_H */
--- 
-2.47.0
+# echo +cpuset >cgroup/cgroup.subtree_control
+# mkdir cgroup/A1
+# echo 0-3 >cgroup/A1/cpuset.cpus
+# echo +cpuset >cgroup/A1/cgroup.subtree_control
+# mkdir cgroup/A1/A2
+# echo 1-3 >cgroup/A1/A2/cpuset.cpus
+# echo +cpuset >cgroup/A1/A2/cgroup.subtree_control
+# mkdir cgroup/A1/A2/A3
+# echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus
+# echo 2-3 >cgroup/A1/cpuset.cpus.exclusive
+# echo 2-3 >cgroup/A1/A2/cpuset.cpus.exclusive
+# echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus.exclusive
+# echo isolated >cgroup/A1/A2/A3/cpuset.cpus.partition
+
+With the last command, we get to one root domain with span: 0-1,4-7 (in
+my setup with 8 CPUs) and no root domain for 2,3, since they are
+isolated.
+
+The test then tries to hotplug CPU 2, but fails to do so and so the
+reported error.
+
+total_bw for CPU 2 and CPU 3 is indeed 0, and I guess we could special
+case this as you suggest (nothing to really worry about if we don't have
+DEADLINE tasks affined to these CPUs). But I would have expected the
+fair server contribution to still show up in total_bw, so this is
+something a need to check.
+
+Thanks,
+Juri
 
 
