@@ -1,233 +1,770 @@
-Return-Path: <linux-kernel+bounces-407470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D03599C6DD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:27:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2C99C6DF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:36:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C8B2B2F487
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:23:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AA6DB303FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB10E1FDFAE;
-	Wed, 13 Nov 2024 11:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E39E1FF5FA;
+	Wed, 13 Nov 2024 11:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f6HsbNO7"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="GqpR5kub"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D00A1F80AF
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 11:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731497031; cv=none; b=AlSP5BeXTzOqbD7y6a414aDkFba9jq+TMrxF5uBOnokXPpQPrJXU3rCN5/LgqdR4ejE3V5KHz2H6pcgbsJbxwS9Wl2C3z/jpoOmgTl9zi2vpzfb9Ec2EOVqbAwzdOZj51gbbDkgSJkXS67ZmMnrVbabQ1YPWzNLK5Vonpi3fz28=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731497031; c=relaxed/simple;
-	bh=gWwB35iDRGO3IreJbI3AA3gNoaf9ATe6VJvXYYnUzYk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nH/GZOQ9Byw9+Tzmu41n+ctQ3EMYe4TbVd9zBuPWPew2Dxh0j84zGVIV7VnYMy5cY9R8vHlqVtq21C6WRA9JSaXzAQHHuwzEvfKrCrdJxA4z3RvbFDIkSuOdWcEInsclBlRUX7J7xnOt77LZDahbr3QXyfMl8HqOtStnH7EtLsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f6HsbNO7; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-513d1a9552cso2801775e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 03:23:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731497028; x=1732101828; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wXWDlI2EiF1lhgwDYvtN/ziCfOh4o3dD2YqZ6uItYPM=;
-        b=f6HsbNO76xk8YVt4B0QpIimOteyouzS/acBcQqaCvUnUdr36GzgTsQlDu8h79ZvP/h
-         Uu/IEhQIjXjl7UMT2P8+xhzyf2tzfZdLoGVowH9PkY1UynRYEbbbCuXyicdQLBsVtNHp
-         vwBM3/gRX0FLUcUXDYqtu6wxw0KGuYzeCiqJCB4fcKQh+FTrk0lY0d3j/TBTvgBlpQYT
-         raSgxkm5AlJkttusYjpZX/fRlEGj929E5ksrQN88g061a3owxZJblrNQsDuL1CCyJkV/
-         XrDtI1240fMnozq/CfB0bSeInbB1kKiamJmtr47gf0zM8r1zhyID2N6t67yq7oXs3GWd
-         WnnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731497028; x=1732101828;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wXWDlI2EiF1lhgwDYvtN/ziCfOh4o3dD2YqZ6uItYPM=;
-        b=r8XqMLV/bkGQgrUUGRDVtXGoWJELMqbHUMbOr+gC1x9pcE/y+wkSrIOLWgWUh3JAIq
-         I/p+sz22USOjWPtVshSHwcYarA2V7EAhNI8GlW0CqacCSVOh/VGowOE1UAhCpv1yvP/s
-         63ye0C66W4jLkpzR+QYV57XBo2/+eMABZWxvZXECGFb4vlHfjMu/o8z51luA5Nf7Cc7r
-         mkKVWwylRO01py/508V5ZfTmfSZUoeJ63lyozYd8I7Gfw1lPMwWWAMefrj2f3k9uHrXg
-         WSOvihC+pgTNXKZlybOAzzgMFJ8/cN+api6DSL/cHiEShtwGesXPVDO31vWwbo0hFToc
-         WNGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXs/qYZqFyaxL+zO/TeQ+K6Hyg14akObaHvPYSuGbZpTpJSBfYTQsKnYxR0rxXam/TbdEDx787E3Govuvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbLdxwOx/wwU07quzI2EExX3D7Sv/DpOyrs5kn52yZY6Sctq6q
-	N125RXQhGhjq8Cm8ZE4lZRoOyurHtaC4Bnh7VjlnxKABF3piTbJsT5wla6WI03sAW2ZAVOvQxYJ
-	F7XRwwb2hjPHSPauSzM9EMQl81LHY/nSTEDy2MVA00L7pWsRKmvM=
-X-Google-Smtp-Source: AGHT+IGGvLM8pgT//CkiY3rwXUQ9Fmj5zh9FjBQ10Hd8Z1Gm2Iz1Wpdr0yutxfe0P/2ydOyLzCuMYm0QtK/SbauAP1k=
-X-Received: by 2002:a05:6122:1697:b0:50c:5683:ad56 with SMTP id
- 71dfb90a1353d-51401ba3348mr18377003e0c.3.1731497028273; Wed, 13 Nov 2024
- 03:23:48 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCB31F80AF;
+	Wed, 13 Nov 2024 11:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731497173; cv=pass; b=S8ZIl/FhNIYkXuEtkLIrl38ZsEnq8zF9O61k8YzkZf3jZCPm4zedOH3NlDiUP6Mzwxzcbw4KqREGVe2VTpzVvjNPhhyZE+3Nd2GQKkncBTrNUF4v4+ezWF8+pI/RtsSSZaQZCZ2d5ybd3XpzbbNvrnu5r++qFvvZ4RCsuW4jjIA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731497173; c=relaxed/simple;
+	bh=/MDMMHvnfzrRN4VnXVVwOrTCp0Akujmd9RTY74kqoy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fPAdH+J2QdgY0ZvXVyaE+RVW5LsjSYxhItKubDQzTYJZwHoLy5GOT0fWA0TElYsDI+Hf+2j8PUK6aIJxpbnQSywMXDm/Z4/A7fNLkRISVJ2FO9cOUSuhSsJlrV+METjgP/siKK7LwmrrhM5t8UHvn5g/z/PjAwL4O11G89TbQp4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=GqpR5kub; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731497148; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BDFEJf9GIyc4RHxJc8XYPSIMPBRTPpS63EDM4lQT1P/iFJBtXJQ8SnrvkX/SVWPBKzJwFc4I4TViVIcQGIA+FAqmp2bVMATDrGbRTojf4LufHlbc3+D7MO+czPwEg/+dT53cDi5eTVO/T2TJHkihgetXdyM0+ZwBzWFWjxZhbA0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731497148; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=so4J+9LwW3+lm6S1phPy5Hzfwcdrtp8EKkXN9WNrtks=; 
+	b=MQptmNTYW+Ujjk/h0UqHjk+7D6tsLTGfxawRc/KG7JwPpkWB7lI0FZEVcgFfhM3sHDac7xk6Saft98qxT6XK9gpt8dZpgu3UAcg3DdXLtC6yOCv3tjQUGB5sYG+0NFCE9HR6PC209Hx9PLeU3QBNUqPbyCE3N1d6wvlUNi5a0iQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
+	dmarc=pass header.from=<sebastian.fricke@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731497148;
+	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=so4J+9LwW3+lm6S1phPy5Hzfwcdrtp8EKkXN9WNrtks=;
+	b=GqpR5kubUHm5LQj0FzFBMAqfBFFeAwi4UhHVzMrdXibRYptHktRotDv34YxX30Qd
+	UnvR5UkM174CkQLFYXprpoUL7VmRT3REWpxhTALUpc7UOrqV8jpwEMbbLsow054/HoS
+	HMxVvtLlck+VPkk2k0YtqgOO56duPDf3pr8w6cZA=
+Received: by mx.zohomail.com with SMTPS id 1731497137493340.80122145821576;
+	Wed, 13 Nov 2024 03:25:37 -0800 (PST)
+Date: Wed, 13 Nov 2024 12:25:33 +0100
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: bagasdotme@gmail.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl,
+	mchehab@kernel.org, kernel@collabora.com, bob.beckett@collabora.com,
+	nicolas.dufresne@collabora.com
+Subject: Re: [PATCH v2 1/2] docs: Add debugging section to process
+Message-ID: <20241113112533.eph4c63exgjqsgh7@basti-XPS-13-9310>
+References: <20241028-media_docs_improve_v3-v2-0-f350f98e1870@collabora.com>
+ <20241028-media_docs_improve_v3-v2-1-f350f98e1870@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112101844.263449965@linuxfoundation.org>
-In-Reply-To: <20241112101844.263449965@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 13 Nov 2024 16:53:37 +0530
-Message-ID: <CA+G9fYvtaB2Zmr6mWr03p2WF-ozf6JVSZVyPj03qEZHt8_VzyQ@mail.gmail.com>
-Subject: Re: [PATCH 6.1 00/98] 6.1.117-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="6zqfebw3lp2d5uji"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241028-media_docs_improve_v3-v2-1-f350f98e1870@collabora.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/231.456.83
+X-ZohoMailClient: External
 
-On Tue, 12 Nov 2024 at 15:57, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+
+--6zqfebw3lp2d5uji
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+Hey Jonathan,
+
+right after sending I noticed two lines that I didn't shrink to 80 chars
+... see below ...
+
+On 13.11.2024 12:15, Sebastian Fricke wrote:
+>This idea was formed after noticing that new developers experience
+>certain difficulty to navigate within the multitude of different
+>debugging options in the Kernel and while there often is good
+>documentation for the tools, the developer has to know first that they
+>exist and where to find them.
+>Add a general debugging section to the Kernel documentation, as an
+>easily locatable entry point to other documentation and as a general
+>guideline for the topic.
 >
-> This is the start of the stable review cycle for the 6.1.117 release.
-> There are 98 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+>Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
+>---
+> .../driver_development_debugging_guide.rst         | 214 ++++++++++++++++
+> Documentation/process/debugging/index.rst          |  65 +++++
+> .../debugging/userspace_debugging_guide.rst        | 278 +++++++++++++++++++++
+> Documentation/process/index.rst                    |   8 +-
+> 4 files changed, 562 insertions(+), 3 deletions(-)
 >
-> Responses should be made by Thu, 14 Nov 2024 10:18:19 +0000.
-> Anything received after that time might be too late.
+>diff --git a/Documentation/process/debugging/driver_development_debugging_guide.rst b/Documentation/process/debugging/driver_development_debugging_guide.rst
+>new file mode 100644
+>index 000000000000..bfeefb242b03
+>--- /dev/null
+>+++ b/Documentation/process/debugging/driver_development_debugging_guide.rst
+>@@ -0,0 +1,214 @@
+>+.. SPDX-License-Identifier: GPL-2.0
+>+
+>+========================================
+>+Debugging advice for driver development
+>+========================================
+>+
+>+This document serves as a general starting point and lookup for debugging device
+>+drivers.
+>+While this guide focuses on debugging that requires re-compiling the
+>+module/kernel, the :doc:`userspace debugging guide
+>+</process/debugging/userspace_debugging_guide>` will guide
+>+you through tools like dynamic debug, ftrace and other tools useful for
+>+debugging issues and behavior.
+>+For general debugging advice, see the :doc:`general advice document
+>+</process/debugging/index>`.
+>+
+>+.. contents::
+>+    :depth: 3
+>+
+>+The following sections show you the available tools.
+>+
+>+printk() & friends
+>+------------------
+>+
+>+These are derivatives of printf() with varying destinations and support for
+>+being dynamically turned on or off, or lack thereof.
+>+
+>+Simple printk()
+>+~~~~~~~~~~~~~~~
+>+
+>+The classic, can be used to great effect for quick and dirty development
+>+of new modules or to extract arbitrary necessary data for troubleshooting.
+>+
+>+Prerequisite: ``CONFIG_PRINTK`` (usually enabled by default)
+>+
+>+**Pros**:
+>+
+>+- No need to learn anything, simple to use
+>+- Easy to modify exactly to your needs (formatting of the data (See:
+>+  :doc:`/core-api/printk-formats`), visibility in the log)
+>+- Can cause delays in the execution of the code (beneficial to confirm whether
+>+  timing is a factor)
+>+
+>+**Cons**:
+>+
+>+- Requires rebuilding the kernel/module
+>+- Can cause delays in the execution of the code (which can cause issues to be
+>+  not reproducible)
+>+
+>+For the full documentation see :doc:`/core-api/printk-basics`
+>+
+>+Trace_printk
+>+~~~~~~~~~~~~
+>+
+>+Prerequisite: ``CONFIG_DYNAMIC_FTRACE`` & ``#include <linux/ftrace.h>``
+>+
+>+It is a tiny bit less comfortable to use than printk(), because you will have
+>+to read the messages from the trace file (See: :ref:`read_ftrace_log`
+>+instead of from the kernel log, but very useful when printk() adds unwanted
+>+delays into the code execution, causing issues to be flaky or hidden.)
+>+
+>+If the processing of this still causes timing issues then you can try
+>+trace_puts().
+>+
+>+For the full Documentation see trace_printk()
+>+
+>+dev_dbg
+>+~~~~~~~
+>+
+>+Print statement, which can be targeted by
+>+:ref:`process/debugging/userspace_debugging_guide:dynamic debug` that contains
+>+additional information about the device used within the context.
+>+
+>+**When is it appropriate to leave a debug print in the code?**
+>+
+>+Permanent debug statements have to be useful for a developer to troubleshoot
+>+driver misbehavior. Judging that is a bit more of an art than a science, but
+>+some guidelines are in the :ref:`Coding style guidelines
+>+<process/coding-style:13) printing kernel messages>`. In almost all cases the
+>+debug statements shouldn't be upstreamed, as a working driver is supposed to be
+>+silent.
+>+
+>+Custom printk
+>+~~~~~~~~~~~~~
+>+
+>+Example::
+>+
+>+  #define core_dbg(fmt, arg...) do { \
+>+	  if (core_debug) \
+>+		  printk(KERN_DEBUG pr_fmt("core: " fmt), ## arg); \
+>+	  } while (0)
+>+
+>+**When should you do this?**
+>+
+>+It is better to just use a pr_debug(), which can later be turned on/off with
+>+dynamic debug. Additionally, a lot of drivers activate these prints via a
+>+variable like ``core_debug`` set by a module parameter. However, Module
+>+parameters `are not recommended anymore
+>+<https://lore.kernel.org/all/2024032757-surcharge-grime-d3dd@gregkh>`_.
+>+
+>+Ftrace
+>+------
+>+
+>+Creating a custom Ftrace tracepoint
+>+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>+
+>+A tracepoint adds a hook into your code that will be called and logged when the
+>+tracepoint is enabled. This can be used, for example, to trace hitting a
+>+conditional branch or to dump the internal state at specific points of the code
+>+flow during a debugging session.
+>+
+>+Here is a basic description of :ref:`how to implement new tracepoints
+>+<trace/tracepoints:usage>`.
+>+
+>+For the full event tracing documentation see :doc:`/trace/events`
+>+
+>+For the full Ftrace documentation see :doc:`/trace/ftrace`
+>+
+>+DebugFS
+>+-------
+>+
+>+Prerequisite: ``CONFIG_DEBUG_FS` & `#include <linux/debugfs.h>``
+>+
+>+DebugFS differs from the other approaches of debugging, as it doesn't write
+>+messages to the kernel log nor add traces to the code. Instead it allows the
+>+developer to handle a set of files.
+>+With these files you can either store values of variables or make
+>+register/memory dumps or you can make these files writable and modify
+>+values/settings in the driver.
+>+
+>+Possible use-cases among others:
+>+
+>+- Store register values
+>+- Keep track of variables
+>+- Store errors
+>+- Store settings
+>+- Toggle a setting like debug on/off
+>+- Error injection
+>+
+>+This is especially useful, when the size of a data dump would be hard to digest
+>+as part of the general kernel log (for example when dumping raw bitstream data)
+>+or when you are not interested in all the values all the time, but with the
+>+possibility to inspect them.
+>+
+>+The general idea is:
+>+
+>+- Create a directory during probe (``struct dentry *parent =
+>+  debugfs_create_dir("my_driver", NULL);``)
+>+- Create a file (``debugfs_create_u32("my_value", 444, parent, &my_variable);``)
+>+
+>+  - In this example the file is found in ``/sys/kernel/debug/my_driver/my_value``
+>+    (with read permissions for user/group/all)
+>+  - any read of the file will return the current contents of the variable
+>+    ``my_variable``
+>+
+>+- Clean up the folder when removing the device
+>+  (``debugfs_remove_recursive(parent);``)
+>+
+>+For the full documentation see :doc:`/filesystems/debugfs`.
+>+
+>+KASAN, UBSAN, lockdep and other error checkers
+>+----------------------------------------------
+>+
+>+KASAN (Kernel Address Sanitizer)
+>+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>+
+>+Prerequisite: ``CONFIG_KASAN``
+>+
+>+KASAN is a dynamic memory error detector that helps to find use-after-free and
+>+out-of-bounds bugs. It uses compile-time instrumentation to check every memory
+>+access.
+>+
+>+For the full documentation see :doc:`/dev-tools/kasan`.
+>+
+>+UBSAN (Undefined Behavior Sanitizer)
+>+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>+
+>+Prerequisite: ``CONFIG_UBSAN``
+>+
+>+UBSAN relies on compiler instrumentation and runtime checks to detect undefined
+>+behavior. It is designed to find a variety of issues, including signed integer
+>+overflow, array index out of bounds, and more.
+>+
+>+For the full documentation see :doc:`/dev-tools/ubsan`
+>+
+>+lockdep (Lock Dependency Validator)
+>+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>+
+>+Prerequisite: ``CONFIG_DEBUG_LOCKDEP``
+>+
+>+lockdep is a runtime lock dependency validator that detects potential deadlocks
+>+and other locking-related issues in the kernel.
+>+It tracks lock acquisitions and releases, building a dependency graph that is
+>+analyzed for potential deadlocks.
+>+lockdep is especially useful for validating the correctness of lock ordering in
+>+the kernel.
+>+
+>+device coredump
+>+---------------
+>+
+>+Prerequisite: ``#include <linux/devcoredump.h>``
+>+
+>+Provides the infrastructure for a driver to provide arbitrary data to userland.
+>+It is most often used in conjunction with udev or similar userland application
+>+to listen for kernel uevents, which indicate that the dump is ready. Udev has
+>+rules to copy that file somewhere for long-term storage and analysis, as by
+>+default, the data for the dump is automatically cleaned up after 5 minutes.
+>+That data is analyzed with driver-specific tools or GDB.
+>+
+>+You can find an example implementation at:
+>+`drivers/media/platform/qcom/venus/core.c
+>+<https://elixir.bootlin.com/linux/v6.11.6/source/drivers/media/platform/qcom/venus/core.c#L30>`__
+>+
+>+**Copyright** ©2024 : Collabora
+>diff --git a/Documentation/process/debugging/index.rst b/Documentation/process/debugging/index.rst
+>new file mode 100644
+>index 000000000000..77ec17d1c119
+>--- /dev/null
+>+++ b/Documentation/process/debugging/index.rst
+>@@ -0,0 +1,65 @@
+>+.. SPDX-License-Identifier: GPL-2.0
+>+
+>+============================================
+>+Debugging advice for Linux Kernel developers
+>+============================================
+>+
+>+.. toctree::
+>+   :maxdepth: 1
+>+
+>+   driver_development_debugging_guide
+>+   userspace_debugging_guide
+>+
+>+.. only::  subproject and html
+>+
+>+   Indices
+>+   =======
+>+
+>+   * :ref:`genindex`
+>+
+>+General debugging advice
+>+========================
+>+
+>+Depending on the issue, a different set of tools is available to track down the
+>+problem or even to realize whether there is one in the first place.
+>+
+>+As a first step you have to figure out what kind of issue you want to debug.
+>+Depending on the answer, your methodology and choice of tools may vary.
+>+
+>+Do I need to debug with limited access?
+>+---------------------------------------
+>+
+>+Do you have limited access to the machine or are you unable to stop the running
+>+execution?
+>+
+>+In this case your debugging capability depends on built-in debugging support of
+>+provided distro kernel.
+>+The :doc:`/process/debugging/userspace_debugging_guide` provides a brief
+>+overview over range of possible debugging tools in that situation. You can
+>+check the capability of your kernel, in most cases, by looking into config file
+>+within the /boot folder.
+>+
+>+Do I have root access to the system?
+>+------------------------------------
+>+
+>+Are you easily able to replace the module in question or to install a new
+>+kernel?
+>+
+>+In that case your range of available tools is a lot bigger, you can find the
+>+tools in the :doc:`/process/debugging/driver_development_debugging_guide`.
+>+
+>+Is timing a factor?
+>+-------------------
+>+
+>+It is important to understand if the problem you want to debug manifests itself
+>+consistently (i.e. given a set of inputs you always get the same, incorrect
+>+output), or inconsistently. If it manifests itself inconsistently, some timing
+>+factor might be at play. If inserting delays into the code does change the
+>+behavior, then quite likely timing is a factor.
+>+
+>+When timing does alter the outcome of the code execution using a simple
+>+printk() for debugging purposes may not work, a similar alternative is to use
+>+trace_printk() , which logs the debug messages to the trace file instead of the
+>+kernel log.
+>+
+>+**Copyright** ©2024 : Collabora
+>diff --git a/Documentation/process/debugging/userspace_debugging_guide.rst b/Documentation/process/debugging/userspace_debugging_guide.rst
+>new file mode 100644
+>index 000000000000..a7c94407bcae
+>--- /dev/null
+>+++ b/Documentation/process/debugging/userspace_debugging_guide.rst
+>@@ -0,0 +1,278 @@
+>+.. SPDX-License-Identifier: GPL-2.0
+>+
+>+==========================
+>+Userspace debugging advice
+>+==========================
+>+
+>+A brief overview of common tools to debug the Linux Kernel from userspace.
+>+For debugging advice aimed at driver developer go :doc:`here
+>+</process/debugging/driver_development_debugging_guide>`.
+>+For general debugging advice, see :doc:`general advice document
+>+</process/debugging/index>`.
+>+
+>+.. contents::
+>+    :depth: 3
+>+
+>+The following sections show you the available tools.
+>+
+>+Dynamic debug
+>+-------------
+>+
+>+Mechanism to filter what ends up in the kernel log by dis-/en-abling log
+>+messages.
+>+
+>+Prerequisite: ``CONFIG_DYNAMIC_DEBUG``
+>+
+>+Dynamic debug is only able to target:
+>+
+>+- pr_debug()
+>+- dev_dbg()
+>+- print_hex_dump_debug()
+>+- print_hex_dump_bytes()
+>+
+>+Therefore the usability of this tool is, as of now, quite limited as there is
+>+no uniform rule for adding debug prints to the codebase, resulting in a variety
+>+of ways these prints are implemented.
+>+
+>+Also, note that most debug statements are implemented as a variation of
+>+dprintk(), which have to be activated via a parameter in respective module,
+>+dynamic debug is unable to do that step for you.
+>+
+>+Here is one example, that enables all available pr_debug() 's within the file::
+>+
+>+  $ alias ddcmd='echo $* > /proc/dynamic_debug/control'
+>+  $ ddcmd '-p; file v4l2-h264.c +p'
+>+  $ grep =p /proc/dynamic_debug/control
+>+   drivers/media/v4l2-core/v4l2-h264.c:372 [v4l2_h264]print_ref_list_b =p
+>+   "ref_pic_list_b%u (cur_poc %u%c) %s"
+>+   drivers/media/v4l2-core/v4l2-h264.c:333 [v4l2_h264]print_ref_list_p =p
+>+   "ref_pic_list_p (cur_poc %u%c) %s\n"
+>+
+>+**When should you use this over Ftrace ?**
+>+
+>+- When the code contains one of the valid print statements (see above) or when
+>+  you have added multiple pr_debug() statements during development
+>+- When timing is not an issue, meaning if multiple pr_debug() statements in
+>+  the code won't cause delays
+>+- When you care more about receiving specific log messages than tracing the
+>+  pattern of how a function is called
+>+
+>+For the full documentation see :doc:`/admin-guide/dynamic-debug-howto`
+>+
+>+Ftrace
+>+------
+>+
+>+Prerequisite: ``CONFIG_DYNAMIC_FTRACE``
+>+
+>+This tool uses the tracefs file system for the control files and output files,
+>+that file system will be mounted as a ``tracing`` folder, which can be found in
+>+either ``/sys/kernel/`` or ``/sys/debug/kernel/``.
+>+
+>+Some of the most important operations for debugging are:
+>+
+>+- You can perform a function trace by adding a function name to the
+>+  ``set_ftrace_filter`` file (which accepts any function name found within the
+>+  ``available_filter_functions`` file) or you can specifically disable certain
+>+  functions by adding their names to the ``set_ftrace_notrace`` file (More info
+>+  at: :ref:`trace/ftrace:dynamic ftrace`).
+>+- In order to find out where the calls originates from you can activate the
+>+  ``func_stack_trace`` option under ``options/func_stack_trace``.
+>+- Tracing the children of a function call and showing the return values is
+>+  possible by adding the desired function in the ``set_graph_function`` file
+>+  (requires config ``FUNCTION_GRAPH_RETVAL``) more info at
+>+  :ref:`trace/ftrace:dynamic ftrace with the function graph tracer`.
+>+
+>+For the full Ftrace documentation see :doc:`/trace/ftrace`
+>+
+>+Or you could also trace for specific events by :ref:`using event tracing
+>+<trace/events:2. using event tracing>`, which can be defined as described here:
+>+:ref:`Creating a custom Ftrace tracepoint
+>+<process/debugging/driver_development_debugging_guide:ftrace>`.
+>+
+>+For the full Ftrace event tracing documentation see :doc:`/trace/events`
+>+
+>+.. _read_ftrace_log:
+>+
+>+Reading the ftrace log
+>+~~~~~~~~~~~~~~~~~~~~~~
+>+
+>+The ``trace`` file can be read just like any other file (``cat``, ``tail``, ``head``,
+>+``vim``, etc.), the size of the file is limited by the ``buffer_size_kb`` (``echo
+>+1000 > buffer_size_kb``). The :ref:`trace/ftrace:trace_pipe` will behave
+>+similar to the ``trace`` file, but whenever you read from the file the content is
+>+consumed.
+>+
+>+Kernelshark
+>+~~~~~~~~~~~
+>+
+>+A GUI interface to visualize the traces as a graph and list view from the
+>+output of the `trace-cmd
+>+<https://git.kernel.org/pub/scm/utils/trace-cmd/trace-cmd.git/>`__ application.
+>+
+>+For the full documentation see `<https://kernelshark.org/Documentation.html>`__
+>+
+>+Perf & alternatives
+>+-------------------
+>+
+>+The tools mentioned above provide ways to inspect kernel code, results, variable values, etc.
+
+Ah ... I missed that one ...
+
+>+Sometimes you have to find out first where to look and for those cases, a box of
+>+performance tracking tools can help you to frame the issue.
+>+
+>+Why should you do a performance analysis?
+>+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>+
+>+A performance analysis is a good first step when among other reasons:
+>+
+>+- you cannot define the issue
+>+- you do not know where it occurs
+>+- the running system should not be interrupted or it is a remote system, where
+>+  you cannot install a new module/kernel
+>+
+>+How to do a simple analysis with linux tools?
+>+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>+
+>+For the start of a performance analysis, you can start with the usual tools
+>+like:
+>+
+>+- ``top`` / ``htop`` / ``atop`` (*get an overview of the system load, see spikes on
+>+  specific processes*)
+
+.. and that line got a bit longer by changing `..` to ``..`` ...
+
+but I think that should be the last issue that I missed, could you fix
+that while applying? I have provided the fixup patch as attachment.
+
+Regards,
+Sebastian
+
+>+- ``mpstat -P ALL`` (*look at the load distribution among CPUs*)
+>+- ``iostat -x`` (*observe input and output devices utilization and performance*)
+>+- ``vmstat`` (*overview of memory usage on the system*)
+>+- ``pidstat`` (*similar to* ``vmstat`` *but per process, to dial it down to the
+>+  target*)
+>+- ``strace -tp $PID`` (*once you know the process, you can figure out how it
+>+  communicates with the Kernel*)
+>+
+>+These should help to narrow down the areas to look at sufficiently.
+>+
+>+Diving deeper with perf
+>+~~~~~~~~~~~~~~~~~~~~~~~
+>+
+>+The **perf** tool provides a series of metrics and events to further dial down
+>+on issues.
+>+
+>+Prerequisite: build or install perf on your system
+>+
+>+Gather statistics data for finding all files starting with ``gcc`` in ``/usr``::
+>+
+>+  # perf stat -d find /usr -name 'gcc*' | wc -l
+>+
+>+   Performance counter stats for 'find /usr -name gcc*':
+>+
+>+     1277.81 msec    task-clock             #    0.997 CPUs utilized
+>+     9               context-switches       #    7.043 /sec
+>+     1               cpu-migrations         #    0.783 /sec
+>+     704             page-faults            #  550.943 /sec
+>+     766548897       cycles                 #    0.600 GHz                         (97.15%)
+>+     798285467       instructions           #    1.04  insn per cycle              (97.15%)
+>+     57582731        branches               #   45.064 M/sec                       (2.85%)
+>+     3842573         branch-misses          #    6.67% of all branches             (97.15%)
+>+     281616097       L1-dcache-loads        #  220.390 M/sec                       (97.15%)
+>+     4220975         L1-dcache-load-misses  #    1.50% of all L1-dcache accesses   (97.15%)
+>+     <not supported> LLC-loads
+>+     <not supported> LLC-load-misses
+>+
+>+   1.281746009 seconds time elapsed
+>+
+>+   0.508796000 seconds user
+>+   0.773209000 seconds sys
+>+
+>+
+>+  52
+>+
+>+The availability of events and metrics depends on the system you are running.
+>+
+>+For the full documentation see
+>+`<https://perf.wiki.kernel.org/index.php/Main_Page>`__
+>+
+>+Perfetto
+>+~~~~~~~~
+>+
+>+A set of tools to measure and analyze how well applications and systems perform.
+>+You can use it to:
+>+
+>+* identify bottlenecks
+>+* optimize code
+>+* make software run faster and more efficiently.
+>+
+>+**What is the difference between perfetto and perf?**
+>+
+>+* perf is tool as part of and specialized for the Linux Kernel and has CLI user
+>+  interface.
+>+* perfetto cross-platform performance analysis stack, has extended
+>+  functionality into userspace and provides a WEB user interface.
+>+
+>+For the full documentation see `<https://perfetto.dev/docs/>`__
+>+
+>+Kernel panic analysis tools
+>+---------------------------
+>+
+>+  To capture the crash dump please use ``Kdump`` & ``Kexec``. Below you can find
+>+  some advice for analysing the data.
+>+
+>+  For the full documentation see the :doc:`/admin-guide/kdump/kdump`
+>+
+>+  In order to find the corresponding line in the code you can use `faddr2line
+>+  <https://elixir.bootlin.com/linux/v6.11.6/source/scripts/faddr2line>`__, note
+>+  that you need to enable ``CONFIG_DEBUG_INFO`` for that to work.
+>+
+>+  An alternative to using ``faddr2line`` is the use of ``objdump`` (and it's
+>+  derivatives for the different platforms like ``aarch64-linux-gnu-objdump``),
+>+  take this line as an example:
+>+
+>+  ``[  +0.000240]  rkvdec_device_run+0x50/0x138 [rockchip_vdec]``.
+>+
+>+  We can find the corresponding line of code by executing::
+>+
+>+    aarch64-linux-gnu-objdump -dS drivers/staging/media/rkvdec/rockchip-vdec.ko | grep rkvdec_device_run\>: -A 40
+>+    0000000000000ac8 <rkvdec_device_run>:
+>+     ac8:	d503201f 	nop
+>+     acc:	d503201f 	nop
+>+    {
+>+     ad0:	d503233f 	paciasp
+>+     ad4:	a9bd7bfd 	stp	x29, x30, [sp, #-48]!
+>+     ad8:	910003fd 	mov	x29, sp
+>+     adc:	a90153f3 	stp	x19, x20, [sp, #16]
+>+     ae0:	a9025bf5 	stp	x21, x22, [sp, #32]
+>+        const struct rkvdec_coded_fmt_desc *desc = ctx->coded_fmt_desc;
+>+     ae4:	f9411814 	ldr	x20, [x0, #560]
+>+        struct rkvdec_dev *rkvdec = ctx->dev;
+>+     ae8:	f9418015 	ldr	x21, [x0, #768]
+>+        if (WARN_ON(!desc))
+>+     aec:	b4000654 	cbz	x20, bb4 <rkvdec_device_run+0xec>
+>+        ret = pm_runtime_resume_and_get(rkvdec->dev);
+>+     af0:	f943d2b6 	ldr	x22, [x21, #1952]
+>+        ret = __pm_runtime_resume(dev, RPM_GET_PUT);
+>+     af4:	aa0003f3 	mov	x19, x0
+>+     af8:	52800081 	mov	w1, #0x4                   	// #4
+>+     afc:	aa1603e0 	mov	x0, x22
+>+     b00:	94000000 	bl	0 <__pm_runtime_resume>
+>+        if (ret < 0) {
+>+     b04:	37f80340 	tbnz	w0, #31, b6c <rkvdec_device_run+0xa4>
+>+        dev_warn(rkvdec->dev, "Not good\n");
+>+     b08:	f943d2a0 	ldr	x0, [x21, #1952]
+>+     b0c:	90000001 	adrp	x1, 0 <rkvdec_try_ctrl-0x8>
+>+     b10:	91000021 	add	x1, x1, #0x0
+>+     b14:	94000000 	bl	0 <_dev_warn>
+>+        *bad = 1;
+>+     b18:	d2800001 	mov	x1, #0x0                   	// #0
+>+     ...
+>+
+>+  Meaning, in this line from the crash dump::
+>+
+>+    [  +0.000240]  rkvdec_device_run+0x50/0x138 [rockchip_vdec]
+>+
+>+  I can take the ``0x50`` as offset, which I have to add to the base address
+>+  of the corresponding function, which I find in this line::
+>+
+>+    0000000000000ac8 <rkvdec_device_run>:
+>+
+>+  The result of ``0xac8 + 0x50 = 0xb18``
+>+  And when I search for that address within the function I get the
+>+  following line::
+>+
+>+    *bad = 1;
+>+    b18:      d2800001        mov     x1, #0x0
+>+
+>+**Copyright** ©2024 : Collabora
+>diff --git a/Documentation/process/index.rst b/Documentation/process/index.rst
+>index 6455eba3ef0c..aa12f2660194 100644
+>--- a/Documentation/process/index.rst
+>+++ b/Documentation/process/index.rst
+>@@ -72,13 +72,15 @@ beyond).
+> Dealing with bugs
+> -----------------
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.1.117-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.1.y
-> and the diffstat can be found below.
+>-Bugs are a fact of life; it is important that we handle them properly.
+>-The documents below describe our policies around the handling of a couple
+>-of special classes of bugs: regressions and security problems.
+>+Bugs are a fact of life; it is important that we handle them properly. The
+>+documents below provide general advice about debugging and describe our
+>+policies around the handling of a couple of special classes of bugs:
+>+regressions and security problems.
 >
-> thanks,
+> .. toctree::
+>    :maxdepth: 1
 >
-> greg k-h
+>+   debugging/index
+>    handling-regressions
+>    security-bugs
+>    cve
+>
+>-- 
+>2.25.1
+
+--6zqfebw3lp2d5uji
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0001-fixup-docs-Add-debugging-section-to-process.patch"
+
+From dd1658eb423fa2b6f1c4dc0e759e885743a16659 Mon Sep 17 00:00:00 2001
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+Date: Wed, 13 Nov 2024 12:22:56 +0100
+Subject: [PATCH] fixup! docs: Add debugging section to process
+
+---
+ .../process/debugging/userspace_debugging_guide.rst   | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/process/debugging/userspace_debugging_guide.rst b/Documentation/process/debugging/userspace_debugging_guide.rst
+index a7c94407bcae..61d7ee968687 100644
+--- a/Documentation/process/debugging/userspace_debugging_guide.rst
++++ b/Documentation/process/debugging/userspace_debugging_guide.rst
+@@ -114,9 +114,10 @@ For the full documentation see `<https://kernelshark.org/Documentation.html>`__
+ Perf & alternatives
+ -------------------
+ 
+-The tools mentioned above provide ways to inspect kernel code, results, variable values, etc.
+-Sometimes you have to find out first where to look and for those cases, a box of
+-performance tracking tools can help you to frame the issue.
++The tools mentioned above provide ways to inspect kernel code, results,
++variable values, etc. Sometimes you have to find out first where to look and
++for those cases, a box of performance tracking tools can help you to frame the
++issue.
+ 
+ Why should you do a performance analysis?
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -134,8 +135,8 @@ How to do a simple analysis with linux tools?
+ For the start of a performance analysis, you can start with the usual tools
+ like:
+ 
+-- ``top`` / ``htop`` / ``atop`` (*get an overview of the system load, see spikes on
+-  specific processes*)
++- ``top`` / ``htop`` / ``atop`` (*get an overview of the system load, see
++  spikes on specific processes*)
+ - ``mpstat -P ALL`` (*look at the load distribution among CPUs*)
+ - ``iostat -x`` (*observe input and output devices utilization and performance*)
+ - ``vmstat`` (*overview of memory usage on the system*)
+-- 
+2.25.1
 
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.1.117-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 41a729e6f9a934c7236c526524847c3b92f331d4
-* git describe: v6.1.116-99-g41a729e6f9a9
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.1=
-16-99-g41a729e6f9a9
-
-## Test Regressions (compared to v6.1.113-359-g17b301e6e4bc)
-
-## Metric Regressions (compared to v6.1.113-359-g17b301e6e4bc)
-
-## Test Fixes (compared to v6.1.113-359-g17b301e6e4bc)
-
-## Metric Fixes (compared to v6.1.113-359-g17b301e6e4bc)
-
-## Test result summary
-total: 174222, pass: 141185, fail: 3150, skip: 29700, xfail: 187
-
-## Build Summary
-* arc: 10 total, 10 passed, 0 failed
-* arm: 269 total, 269 passed, 0 failed
-* arm64: 81 total, 81 passed, 0 failed
-* i386: 55 total, 51 passed, 4 failed
-* mips: 52 total, 50 passed, 2 failed
-* parisc: 8 total, 8 passed, 0 failed
-* powerpc: 64 total, 62 passed, 2 failed
-* riscv: 22 total, 22 passed, 0 failed
-* s390: 28 total, 28 passed, 0 failed
-* sh: 20 total, 20 passed, 0 failed
-* sparc: 14 total, 14 passed, 0 failed
-* x86_64: 65 total, 65 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+--6zqfebw3lp2d5uji--
 
