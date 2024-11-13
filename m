@@ -1,95 +1,73 @@
-Return-Path: <linux-kernel+bounces-407336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A94A9C6C1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:55:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 422F49C6C20
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:56:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A789DB29DD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:55:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 199A6B20B0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB7C1F9A9F;
-	Wed, 13 Nov 2024 09:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85B91F81A8;
+	Wed, 13 Nov 2024 09:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jwD8zBD+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sNoc5gOq";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jwD8zBD+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sNoc5gOq"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XzeYPeAk"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7528B1F9A88;
-	Wed, 13 Nov 2024 09:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC4F18A951
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731491524; cv=none; b=W2mZSH6krxezRb6AHWGXan5riK8sb7egG+N8H1ZUg4AVMxOJmAf8nUAmwxxYs1EkN+5yIQCEbEazhthV9h3ON+8U3MnrJdJwJjpYQifjS0rULeRV3N8sujQ6erKh1vPy/C6Qy9YrxQdr6d2Yb/c2XNfA83izSRqdhRsDM3QeKs0=
+	t=1731491607; cv=none; b=XfKEDUBQ/gOir/5XQCX49ENtdYhitFJzmh3o8/BNlI0tl7hSmvGpL+/ughEnuvGynSAKE9kV2i76Hj8nSxQbb/tLpj5Q5O0gpc7UQpZr5rXTSQG7fUSl9qsmsENevuKeve79hHr2Url9W7DIPWGMo/cI6TrZ9m112B0+PIrSyO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731491524; c=relaxed/simple;
-	bh=IFNIBl0VTxuzzi6XsWdk3q0iWZTGogl1p2ysg4YbHfk=;
+	s=arc-20240116; t=1731491607; c=relaxed/simple;
+	bh=Uug7HgmHCE18MUaMvJMyzBCDFL3S+vw07GzHBz1/g/c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rrKBajErewJ0I1zrIUnyBVyUx3H3Vqf4/xRJ78t7D3fVupWHDasnVG0DKXcliZFsTZ2jFwqFG6Zb/DdjeiZcdJiMFoTr/1K2tJqOMK4Ny3uDRRF32rFeLeQAmOm/MGGC56pqLYp0DMDZ5gvvqjBvVbENmsLHghK4Dgmop2P5z+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jwD8zBD+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sNoc5gOq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jwD8zBD+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sNoc5gOq; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9BDE61F44E;
-	Wed, 13 Nov 2024 09:52:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731491520; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9u+NB9BalEQqk52ZyuyFFi4Aabx8cwdfVcWV7jA/8ZU=;
-	b=jwD8zBD+7TLVq0Jl3wxTBY3/X9q6doxXBUP1NqgMdTd9YfxKvWcl3eXaRQYqrzOc56vZQO
-	/ZQMQMuE1A1BuRmPQb2j5EDoHpbpGy9/oPwhIHrIh8FRH5DrUhodkWi7bRlaBLeXXku/LR
-	NK0jnCyZr78TnLQiCDcFOG+eV8jhKSA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731491520;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9u+NB9BalEQqk52ZyuyFFi4Aabx8cwdfVcWV7jA/8ZU=;
-	b=sNoc5gOqveYMjQScvBQYt3veOBuH4Rj/SGILe63oII59XOt31Usp++u3gfFEG9VkAfeKra
-	4ipvXI/OGkTeKEAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=jwD8zBD+;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=sNoc5gOq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731491520; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9u+NB9BalEQqk52ZyuyFFi4Aabx8cwdfVcWV7jA/8ZU=;
-	b=jwD8zBD+7TLVq0Jl3wxTBY3/X9q6doxXBUP1NqgMdTd9YfxKvWcl3eXaRQYqrzOc56vZQO
-	/ZQMQMuE1A1BuRmPQb2j5EDoHpbpGy9/oPwhIHrIh8FRH5DrUhodkWi7bRlaBLeXXku/LR
-	NK0jnCyZr78TnLQiCDcFOG+eV8jhKSA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731491520;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9u+NB9BalEQqk52ZyuyFFi4Aabx8cwdfVcWV7jA/8ZU=;
-	b=sNoc5gOqveYMjQScvBQYt3veOBuH4Rj/SGILe63oII59XOt31Usp++u3gfFEG9VkAfeKra
-	4ipvXI/OGkTeKEAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6468A13A6E;
-	Wed, 13 Nov 2024 09:52:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9LX2F8B2NGdhFgAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 13 Nov 2024 09:52:00 +0000
-Message-ID: <a04aec90-b526-4e0f-af3d-affefc4b6cf3@suse.de>
-Date: Wed, 13 Nov 2024 10:52:00 +0100
+	 In-Reply-To:Content-Type; b=bbty+/wtycsiknTbZzlor2/aaGn8IhzAGb3BGKipkRhnFmhP9W9o+fp2MpCL9CmOXGvH5pcGmbyCwZNMcqRxkxjjCiHyt2yfpcEqAZD9uRlo6+98/P9FFhqavrC/Zdy37idE+yCpUCDJKrZn/ql1mobheLo6F/ZX067aX1Ms08w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XzeYPeAk; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53a097aa3daso6466532e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 01:53:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731491604; x=1732096404; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kRiI8ug3AYbE8oUaAFF3LUV+ji3WnDg4RK6r/3kZnGA=;
+        b=XzeYPeAkMtcM/xTlsf0bb330SHvo1qoae5C5ycWP1mLxnAt8X5rU6Ni7WjKQFjN7r7
+         8KCUKxwY+DZ41/EM8qb5RVifMABJBrB6d1uFndxW4l5fLxrTI1YHObBtHeGbxx6ry7r/
+         Ap14PZS4zyAsxPv+tiZzmVt+xJUx0TNEWbh7ro5W2AcNLWS9cerpN0MyVr9iDRGDMLnS
+         dn9oH1zjc7gsO9/qzwFc4/uNDijse3DVhlk/WcorArNRzeUjZRYBLLxtBvKcVK0kM06c
+         xEW8miQ8xXw9/d5LEjvRiFrkyR5iNdPJZHxrRtd7RRUb34ivaK5Bfnqy73pndnFo2ojQ
+         Bklw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731491604; x=1732096404;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kRiI8ug3AYbE8oUaAFF3LUV+ji3WnDg4RK6r/3kZnGA=;
+        b=aWzsvb9HFQPQ6U7/2/AHCBlOymO8AI07D5ImQYMk+zWVmxvbW3bsu4uHCYHhg9fZGR
+         iyRbnAgFgs9rorQUjf+2PyhRzwkF9I2QY/P4VFtgY4iO0ZtftYbNGSRz2kwHbrGaZFjf
+         GMC0seRLD2bOAJ4/WOt2iBns28Ezmep9nqFsuryuAkX5Rpj+C8cNl4hS81PLaMdscs0p
+         yZvPCZf96FhjfzZQb7zgi9SNqgZJ9l4XBJoyb54TRuvcrwpO+Vbf/seG5gAMakg6Ka8c
+         W2f6Ue2xrTIqRLznpL+A3EGT+I/BmCj4YrJmrs+eEI5vJp3PUHXk/sJLK80oYS2o9EBk
+         xWlw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRxmUG4rshI81F2rKp4h38k9hzfKPwaX3kt3pTKt+4vdQnSfpFIagR7uKBcqPGSxJ0Bvpok/WxHfynmhU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8Ky66z21f55A+p+ECswkNQCNxMlmfsuDRXfO1uFoif7c0Ks1X
+	bvnVKMzgX1etj/jwbZrBPTAfoWmUKx5bPKN0VdazdFdY6VQRQxca65fcZr31WJA=
+X-Google-Smtp-Source: AGHT+IFp2XO8/M1hfYDyTXRtoRIwGiCo6RswIKBUnV2CYhn1kxcSXeWiw9nYRa78XmlRcQ91ayRAOg==
+X-Received: by 2002:a19:7708:0:b0:53d:a000:1817 with SMTP id 2adb3069b0e04-53da000188emr717956e87.22.1731491603427;
+        Wed, 13 Nov 2024 01:53:23 -0800 (PST)
+Received: from [192.168.0.48] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d55051easm18906635e9.24.2024.11.13.01.53.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 01:53:23 -0800 (PST)
+Message-ID: <7f8172ee-8285-4e7c-8ba3-826a5516fa9b@linaro.org>
+Date: Wed, 13 Nov 2024 09:53:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,79 +75,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/8] blk-mq: remove unused queue mapping helpers
-To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Bjorn Helgaas <bhelgaas@google.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, virtualization@lists.linux.dev,
- linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com,
- mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
- storagedev@microchip.com, linux-nvme@lists.infradead.org
-References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
- <20241112-refactor-blk-affinity-helpers-v3-8-573bfca0cbd8@kernel.org>
+Subject: Re: [PATCH v4 3/3] media: qcom: camss: Add MSM8953 resources
+To: barnabas.czeman@mainlining.org,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Vladimir Lypak <vladimir.lypak@gmail.com>
+References: <20241103-camss-msm8953-v4-0-48d0ec75958d@mainlining.org>
+ <20241103-camss-msm8953-v4-3-48d0ec75958d@mainlining.org>
+ <6833ebc6-9210-471a-8ca6-5f3605155f33@linaro.org>
+ <412b3252f1ca795fbcfaf5e466e94642@mainlining.org>
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20241112-refactor-blk-affinity-helpers-v3-8-573bfca0cbd8@kernel.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <412b3252f1ca795fbcfaf5e466e94642@mainlining.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 9BDE61F44E
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
 
-On 11/12/24 14:26, Daniel Wagner wrote:
-> There are no users left of the pci and virtio queue mapping helpers.
-> Thus remove them.
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->   block/Makefile                |  2 --
->   block/blk-mq-pci.c            | 46 -------------------------------------------
->   block/blk-mq-virtio.c         | 46 -------------------------------------------
->   include/linux/blk-mq-pci.h    | 11 -----------
->   include/linux/blk-mq-virtio.h | 11 -----------
->   5 files changed, 116 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+On 13/11/2024 08:01, barnabas.czeman@mainlining.org wrote:
+>> I see that you do reuse csiphy_res_8x16 for this platform support, in
+>> this case let me ask you to double check/test that the "vdda" regulator
+>> is actually a CSIPHY regulator, and if so, please move the registration
+>> of the regulators to csiphy_res_8x16 as a preceding change.
+> It is placed in CSID at downstream and this is the documentation of
+> the downstream property:
+> - qcom,mipi-csi-vdd-supply : should contain regulator to be used for
+>      this csid core
+> so it should be a csid regulator as i understand.
+> It is also placed at CSIDs in msm8953-camera.dtsi
 
-Cheers,
+No, the regulator(s) supply voltage to the PHY.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Make sure you have:
+
+commit 44fdbb9d1a3892db92b2c9cf5f46e32ca4095d92
+Author: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Date:   Fri Sep 27 00:19:56 2024 +0300
+
+     media: qcom: camss: add management of supply regulators to CSIPHY
+
+and give the change a try.
+
+---
+bod
 
