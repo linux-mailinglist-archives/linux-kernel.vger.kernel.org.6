@@ -1,125 +1,106 @@
-Return-Path: <linux-kernel+bounces-408143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BDEF9C7BBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:58:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C409C7BA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:52:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8012B34C9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:20:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C53CB28541
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AED5202638;
-	Wed, 13 Nov 2024 18:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FE0202630;
+	Wed, 13 Nov 2024 18:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ECDy28lY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lszNiP/L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3263C20125C
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37866FC5;
+	Wed, 13 Nov 2024 18:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731521982; cv=none; b=pKnD9jhz9SCAL0y8WrzST8BjS+LG5tMv+F5XPD00jeJ1XUmg2K91lEu56rTPYLQgmlMjW5NS4qwuhrFVl02vuEriYUwEZuNv0T5LqukcdAP+kmpjF1T9rQPocXJP/YIwMXl/qtbmB3z2UvmjITbZhrZLybqXNn2vliF5doY7GAk=
+	t=1731522071; cv=none; b=HxWIIS+NqAQaHu6bIuf97dbni1pLAbucZmhIEwtwK+sKW7F6xf+oGnu00DacEFX8xjw/Yeol4KWBeB0NOVeaU0G2oZDNTwQbrFjNRhADf3Pslajn5KjiievEbz08yUiSf0q6YqyJmUc/28GYsSFPm3OruiVzgoopieMz0Knw2AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731521982; c=relaxed/simple;
-	bh=he7PZ11vgkkKFwqChZr6a3LHZsCGCrxCQFWeyDR2zM0=;
+	s=arc-20240116; t=1731522071; c=relaxed/simple;
+	bh=CTwldctg5Cu9Oulth5HBZldCUbDkKQugx9mEgCxO5H4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JIxbhfn4lLGCf5/6zCPknROZBcteBbklygxVz1nyhRbW28qlXN9rz+csWnrPaw7KEev9Uuf0OPKotrF/MXgSW+rdImJjP9nmTYqJDAKo5rlmL3UZQh0C5V7VTDdzsc01jg/41NljX6KaTzueskPtntI8gj35y0ekgnX7yqL0n0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ECDy28lY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731521980;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/XStPcwU28nRliHCrzV+elVqEzbDdwWRfdYSMPsom20=;
-	b=ECDy28lYu8ytEoK2WhZHDrS6U4/kXabf4Ec3UMAJYsKSbkMIR1iEYX3aE2FkinYJGuTkxr
-	89BbHTj5QlsFUC/BKx+QF685umooouLnhpt03AJ7h18LDVx/wFYDdftrfhbb2EWlV2HPP6
-	wdmgEOqiXsz0aB4hDfHIVz51twxij9k=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-279-PBDdrrqZN1uNHPUkgNlkFA-1; Wed,
- 13 Nov 2024 13:19:38 -0500
-X-MC-Unique: PBDdrrqZN1uNHPUkgNlkFA-1
-X-Mimecast-MFC-AGG-ID: PBDdrrqZN1uNHPUkgNlkFA
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D91171955EE8;
-	Wed, 13 Nov 2024 18:19:36 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.80.158])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5883019560A3;
-	Wed, 13 Nov 2024 18:19:33 +0000 (UTC)
-Date: Wed, 13 Nov 2024 13:19:30 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Joseph Salisbury <joseph.salisbury@oracle.com>
-Cc: peterz@infradead.org, mingo@kernel.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	Steven Rostedt <rostedt@goodmis.org>, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION] sched/fair: Add lag based placement
-Message-ID: <20241113181930.GD402105@pauld.westford.csb>
-References: <58289b1c-8a56-4607-8632-d36aef1fc5dd@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LspGciWWICXA5RjWLac/J9XaPEeZbm5VefhXeVM6hhdyz0VAHdkoMdHke1r106tjzyIWTaBVGT9h36N6rWX5eYBbBDl8YaOgxtk62WUHG9YBWppaGaEqD0rHhX63CWpbIac3XwcuymL2L9te57hZCnAPGi06WmUHpgunvm6G/Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lszNiP/L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 405EFC4CEC3;
+	Wed, 13 Nov 2024 18:21:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731522071;
+	bh=CTwldctg5Cu9Oulth5HBZldCUbDkKQugx9mEgCxO5H4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lszNiP/LjLULDQrS6+bV7NWVajJxjFXkPWKIZx5isNWd8VzQjpjnm6V4pU8qvuYs9
+	 MkZ2RQhWwPV5ehBKyQ/X72ABK34o1u6wFtXWheLNNcAqyXH7yxyiCWjvKc5MADyFXW
+	 t3dRjttQADQ0Dj0jI575/xxLZux68z0xMhUPMuKfL4BdN7WT80Hb6lUDVzQtsTitad
+	 r1Xk21Ip8PupZBqWhvSenPNL5orJhhEvcBqCOTGVzoh6IFV/kPtbM3N+g3x5oatb/Q
+	 b4aOGzOC/7FGQo58x0GucbJFEoLPhT7YPzVEp8L2sQicOCMbYz3VrD0SOaHLJoiGV3
+	 8qrrRSmYGP8vg==
+Date: Wed, 13 Nov 2024 11:21:09 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCH 1/2] scripts/min-tool-version.sh: Raise minimum clang
+ version to 19.1.0 for s390
+Message-ID: <20241113182109.GA3713382@thelio-3990X>
+References: <20241113154013.961113-1-hca@linux.ibm.com>
+ <20241113154013.961113-2-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <58289b1c-8a56-4607-8632-d36aef1fc5dd@oracle.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20241113154013.961113-2-hca@linux.ibm.com>
 
-Hi,
+On Wed, Nov 13, 2024 at 04:40:12PM +0100, Heiko Carstens wrote:
+> Raise minimum clang version to 19.1.0 for s390 so that various inline
+> assembly format flags can be used. The missing format flags were
+> implemented with llvm-project commit 9c75a981554d ("[SystemZ] Implement A,
+> O and R inline assembly format flags (#80685)").
+> 
+> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
 
-On Wed, Nov 13, 2024 at 01:03:00PM -0500 Joseph Salisbury wrote:
-> Hello,
-> 
-> During performance testing, we found a regression of ~9% performance with
-> the TPCC benchmark.   This performance regression was introduced in
-> v6.6-rc1.  After a bisect, the following commit was identified as the cause
-> of the regression:
-> 
-> 86bfbb7ce4f6 ("sched/fair: Add lag based placement")
-> 
-> I was hoping to get some feedback from the scheduler folks.  Do you think
-> gathering any additional data will help diagnose this issue?  Are there any
-> tunable options that can changed to see how performance is affected?
-> 
+Oof, this is quite new but now that kernel.org has LLVM binaries
+available, I do not think this is an unreasonable ask, especially if it
+makes your life easier with code maintenance.
 
-You can try turning off the PLACE_LAG sched feature:
+Acked-by: Nathan Chancellor <nathan@kernel.org>
 
-    echo NO_PLACE_LAG > /sys/kernel/debug/sched/features
+One question: Is it worth dropping the mention about CC=clang for
+clang-18 and older in Documentation/kbuild/llvm.rst? Maybe it is better
+to leave it around for a bit just in case people read the newer
+documentation while working on an older kernel?
 
-It's not what I'd call a tunable but it would allow you to test w/o it and
-see what it does.  It should allow you to switch back and forth easily for
-testing. 
-
-
-Cheers,
-Phil
-
+> ---
+>  scripts/min-tool-version.sh | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Thanks,
+> diff --git a/scripts/min-tool-version.sh b/scripts/min-tool-version.sh
+> index 91c91201212c..2dc674a74624 100755
+> --- a/scripts/min-tool-version.sh
+> +++ b/scripts/min-tool-version.sh
+> @@ -25,7 +25,7 @@ gcc)
+>  	;;
+>  llvm)
+>  	if [ "$SRCARCH" = s390 ]; then
+> -		echo 15.0.0
+> +		echo 19.1.0
+>  	elif [ "$SRCARCH" = loongarch ]; then
+>  		echo 18.0.0
+>  	else
+> -- 
+> 2.45.2
 > 
-> Joe
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-
--- 
-
 
