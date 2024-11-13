@@ -1,147 +1,114 @@
-Return-Path: <linux-kernel+bounces-408421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA509C7E95
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:00:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6963B9C7EAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:04:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E139E1F22325
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:00:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 933F2B22021
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA7318C356;
-	Wed, 13 Nov 2024 22:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8EC18C019;
+	Wed, 13 Nov 2024 23:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="es1G9CGd"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="eG9Qqb6b"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62842AE84;
-	Wed, 13 Nov 2024 22:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501532AF12;
+	Wed, 13 Nov 2024 23:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731538797; cv=none; b=hGRRbKDkYZs1a32yujidoFdY8WyUwuMx/WvABpo8Aeeasp8c0OH+qSYBNS2a+w+4bZ8EyqKO0s0w4y9xcJdQPht/HFC26lvE7B+JxVdcopr10u6PUKlewX83/sVme9x65Lmf/TQSiXszTEqrYAH+ac3GdE8gjj0l/PQZsdWE6jk=
+	t=1731539071; cv=none; b=bZPkX8apgEw5ceBnpZZVYY2BfHp/Km7x7wB3OWdmXiaI94cmf0CBvKxuijDadsimeAEWVwbj14ZnXbsssrYkVFwevfCo8gZ3Y4OGzQTTkN0lCXLvgrnshH+GnMwAvICFHzVU5oIgCSajjl9393eyZB3PSCC+s8ajoBM2ZSg4eRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731538797; c=relaxed/simple;
-	bh=P4o6noBwxKclWruPKIEJq7jRNQ6JmEK4g7sgUwx8fCw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ehDQOvF5jZLWqOSd9LxD0RwcO+MdNMQwgh9oWhE8v2wCeEmrsNBXxNVB1WSQ+g/yolrTFCoLjKVgL3Fam1AlsYXz/hGofrPq5dW1WeK9MkQQVeS58ooAknA7oGshNHEA36/TWjrFEHrHb2eADcKRJjPRiI2E76yzkvnCFGYuj90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=es1G9CGd; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so7377665e87.3;
-        Wed, 13 Nov 2024 14:59:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731538794; x=1732143594; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GPnoa5kJESuIfhZM4IZ9Nt1wIRz5hW1xyaJdPQqT+Bo=;
-        b=es1G9CGdLlgmiL9z20rzaaLbgtcPEUZHcwyiuWQ/mdyMWal2jkA9s2VixXUGv75rWr
-         FIE7REJboxvFvkam+SsZTTOQ9teZu6vRQjr/1A1inXnVv5flo+r5A408CPICb1eq8WtC
-         WxpN3mhIGNRxSQCa1gsGVYyuSrV00h0P9VO9WAwgUpTViy4wjqm5+EFUnLohUmLCXd7H
-         L3VnKEebeAz9M4Yzjo5vHAyJwnCF5CCwf5gMD+/hpkuGN2N8F6Z2Z1zXcmetfD0JwoRv
-         0lUSwDapHevs1bYI12GE61Fx44dh3j/ou2AROYb2gXeMyzjsi7NGXPGnTFSBdB/RgmiG
-         unKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731538794; x=1732143594;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GPnoa5kJESuIfhZM4IZ9Nt1wIRz5hW1xyaJdPQqT+Bo=;
-        b=ox0YPCQrNasN+ihw+MJ+JudlI8SMRV1ISAxJiZFOVP/FH9dK4vfEo96XL31OHJShVn
-         3/Yn/ASNN8xAW2f/2oZkVhz0ri7l7wCc8JWuMVWugl6CC0Q28QxuNxNefG5lRDlmdlKm
-         /OO6vXbC777i+IgPbX1s83YhcV2JzNHRQU1nbxYXGyj6tCaIHsTqllJMrCFQq101gN0S
-         UEt+2FumuPHsKp5VxMGXPvIeFcKegY2K74QHCsKuNo0234RhDHN92iuRgyur/B8fleUF
-         FDrD4csbYhCG+93AH5ibJv+9gLK5I3NJik0fI8CqiDiSKjENsKAzkaTHdzkMFbRXGOAJ
-         78gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnOhpphszSeHitwJRE3jhe7RHMCYwZadp0pAYr7g+HC/fSTIUVs3FpwrS798Ok1eOILN1InYN5YYkqpcjI@vger.kernel.org, AJvYcCVdIP8bPaixnyrDm7MjzPbwmVGQg9sv27y2CZfC1XxaHHa3LC18PBfZo5JTTxwbafDfkck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGA7cCjMCTRtbN+lKowbdSC8/0l1ldsZ7UY2nWzBG1aeDu9myU
-	snc5l9sA3x3dEGDQeR34KhAWEaBhfBV4eiju+QIKsS+WiKyf6PGi7XPwn/Qa54X1xjLote9Nvqf
-	SUVdZrP7WVABuINtLBg7Rw0GEYp78x7Un
-X-Google-Smtp-Source: AGHT+IE86IQhayL6ZlO/ZiGdLIHBHsrEAa3BnTxjnXJ9fRF16YRt4VJQ/gbI4u/usQc9PCC7lpP1oW0Js9MK47xC7EM=
-X-Received: by 2002:ac2:43a2:0:b0:53d:a132:c68f with SMTP id
- 2adb3069b0e04-53da132c789mr1442601e87.47.1731538793422; Wed, 13 Nov 2024
- 14:59:53 -0800 (PST)
+	s=arc-20240116; t=1731539071; c=relaxed/simple;
+	bh=uR9NATavVdqBFxZjrZU/rolzN5aVtKkj87DhUnu+qvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pYmYi2GH7rpyECxwI9edykFqhHaEwOWxKA64Fw5ByF9yPbjxu1cuFKq/nhSGtwP3YgLkQm0dFYNj3sY6BxRDtZtaWrRjEdF7p6ZzipC7isVyaigRJe1rFbKb7nSU+Nm3NQF2Sl2mgv/KM5O8hjMmEx8m9oOQ0SvarBtNF8bt6ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=eG9Qqb6b; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ze0AbtK166ELiFcHD2qD6VO3tkL8ltMTzPW7ESfMS2I=; b=eG9Qqb6b4qVRwKx52HYWlCGQKu
+	EKNAe1TNUzisKBHDy1aiDZ/rhiH45kTi4ANYu8UHm7NWUxw4bIez0/AWCrJYhLAnHuXqBOckLFNxy
+	JVTOalp3dA0usILZ2AbpvZ8HzS66mMB51z1Sg6zQ9BHebEa7t0bQsYqzJFmE5jo03Aq1wSj7xhDC/
+	LM/K0U5kYR6eiGuQ8om9rgMSEDZ5S4DJIWou57URgZQW8iqyJQTDyfcn/H8iA0IqdVxvJWb3GHANS
+	yKdqLCnCbmLgikI85penRw5urAVNhGhuKzRLiTb0EU4zXbSssYRASXFxZLmBxSGE4tQtGAJWLuC7s
+	vUfPz2Bg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBMPR-0000000EgPX-3yG9;
+	Wed, 13 Nov 2024 23:04:26 +0000
+Date: Wed, 13 Nov 2024 23:04:25 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Ricardo Robaina <rrobaina@redhat.com>, audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org, eparis@redhat.com, rgb@redhat.com
+Subject: Re: [PATCH v1] audit: fix suffixed '/' filename matching in
+  __audit_inode_child()
+Message-ID: <20241113230425.GJ3387508@ZenIV>
+References: <20241105123807.1257948-1-rrobaina@redhat.com>
+ <2d9292c28df34c50c1c0d1cbf6ce3b52@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zxk2wNs4sxEIg-4d@andrea> <13f60db0-b334-4638-a768-d828ecf7c8d0@paulmck-laptop>
- <Zxor8xosL-XSxnwr@andrea> <ZxujgUwRWLCp6kxF@andrea> <ZzT9NR7mlSZQHzpD@andrea>
-In-Reply-To: <ZzT9NR7mlSZQHzpD@andrea>
-From: Puranjay Mohan <puranjay12@gmail.com>
-Date: Wed, 13 Nov 2024 23:59:42 +0100
-Message-ID: <CANk7y0gdNGM36Er9vq42-YouoGVVQ4gp0yvgVHarm0-NFC2i1w@mail.gmail.com>
-Subject: Re: Some observations (results) on BPF acquire and release
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, puranjay@kernel.org, bpf@vger.kernel.org, 
-	lkmm@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2d9292c28df34c50c1c0d1cbf6ce3b52@paul-moore.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Nov 13, 2024 at 8:25=E2=80=AFPM Andrea Parri <parri.andrea@gmail.co=
-m> wrote:
->
-> [...]
->
-> > I guess the next question (once clarified the intentions for the R
-> > and Z6.3 tests seen earlier) is "Does BPF really care about 2+2W
-> > and B-cumulativity for store-release?"; I mentioned some tradeoff,
-> > but in the end this is a call for the BPF community.
->
-> Interpreting the radio silence as an unanimous "No, it doesn't", please f=
-ind
-> tentative fixes/patch (on top of the bpf_acquire_release branch cited in =
-an
-> earlier post) at the bottom of this email.
->
-> While testing the changes in question, I noticed an (unrelated) omission =
-in
-> the current PPO relation; the second patch below addresses that.
->
-> Both patches were tested using the "BPF catalogue" available in the tree =
-at
-> stake: as expected, the only differences in outcomes were for the new/add=
-ed
-> five tests.
->
-> Please use and integrate according to your preference, any feedback welco=
-me.
+On Mon, Nov 11, 2024 at 05:06:43PM -0500, Paul Moore wrote:
 
-Hi Andrea
+> This is completely untested, I didn't even compile it, but what about
+> something like the following?  We do add an extra strlen(), but that is
+> going to be faster than the alloc/copy.
+> 
+> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+> index 470041c49a44..c30c2ee9fb77 100644
+> --- a/kernel/auditfilter.c
+> +++ b/kernel/auditfilter.c
+> @@ -1320,10 +1320,13 @@ int audit_compare_dname_path(const struct qstr *dname, const char *path, int par
+>                 return 1;
+>  
+>         parentlen = parentlen == AUDIT_NAME_FULL ? parent_len(path) : parentlen;
+> -       if (pathlen - parentlen != dlen)
+> -               return 1;
+> -
+>         p = path + parentlen;
+> +       pathlen = strlen(p);
 
-Sorry for the silence and a huge thanks for working on this and fixing
-the cat file.
+Huh?  We have
+        pathlen = strlen(path);
+several lines prior to this.  So unless parentlen + path manages to exceed
+strlen(path) (in which case your strlen() is really asking for trouble),
+this is simply
+	pathlen -= parentlen;
 
-I have applied your patches and modified them to add the new tests to
-kinds.txt and shelf.py
-now these tests will run with all other tests using 'make cata-bpf-test'
-
-All 175 tests, including new tests added by you, pass :D
-
-make cata-bpf-test
-
-_build/default/internal/herd_catalogue_regression_test.exe \
-        -j 32 \
-        -herd-timeout 16.0 \
-        -herd-path _build/install/default/bin/herd7 \
-        -libdir-path ./herd/libdir \
-        -kinds-path catalogue/bpf/tests/kinds.txt \
-        -shelf-path catalogue/bpf/shelf.py \
-        test
-herd7 catalogue bpf tests: OK
+What am I missing here?  And while we are at it,
+	parentlen = parentlen == AUDIT_NAME_FULL ? parent_len(path) : parentlen;
+is a bloody awful way to spell
+	if (parentlen == AUDIT_NAME_FULL)
+		parentlen = parent_len(path);
+What's more, parent_len(path) starts with *yet* *another* strlen(path),
+followed by really awful crap - we trim the trailing slashes (if any),
+then search for the last slash before that...  is that really worth
+the chance to skip that strncmp()?
 
 
-I have pushed it and sent a PR so we can get all this merged to master.
-https://github.com/herd/herdtools7/pull/1050
+> +       if (p[pathlen - 1] == '/')
+> +               pathlen--;
+> +
+> +       if (pathlen != dlen)
+> +               return 1;
+>  
+>         return strncmp(p, dname->name, dlen);
 
-P.S. - I am writing this using gmail so the formatting might be
-broken, sorry for that.
-
-Thanks,
-Puranjay Mohan
+... which really should've been memcmp(), at that.
 
