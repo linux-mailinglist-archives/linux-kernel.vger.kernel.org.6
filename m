@@ -1,170 +1,98 @@
-Return-Path: <linux-kernel+bounces-406897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36CC9C6630
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:44:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89DF79C65DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:21:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D73EFB26B54
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 500062855C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9C7175A5;
-	Wed, 13 Nov 2024 00:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7102D5CB8;
+	Wed, 13 Nov 2024 00:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dd+EnqGt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWKpQeoN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEAE111A8;
-	Wed, 13 Nov 2024 00:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BFF23AB;
+	Wed, 13 Nov 2024 00:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731457231; cv=none; b=QRR4uxPHybgHRbfrvm4KaTcnbV/45OVpIGSz/ET2LEbdPi/xRjPTRK/wWr8l3jmgtjBNlUKCX99qSiZcxD1GEtjJqeEUUf2RpMqxWYjVMN0mhiqJAA9OTYqfGwkMAVcZh03m80hTBT+kwsnuMdbOmT1Rn04tVifZHPYGg+2SkDk=
+	t=1731457277; cv=none; b=ikTJyZtMV40fi/eeD8gIdqiPAv411ZFcEmALlD7fEu/iTa0q4HVOUunZgpdv/CDpAmBjy5VaOdp017rnqN0+mqA0u4Hw9pG7pegv8zeW0Nro3DbECzUxxLugdTWn449Xws3B3EUx38Ik91sMdzw+vLYGuOzMOGTxc3jmYZqSpmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731457231; c=relaxed/simple;
-	bh=U94oJ0uEMfUxRXqTJjsuVBAwBmiQJyiQkMU4nMqnbtI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TxdQiV2lYCzl9QOOuoZ+XqjsJ7mG8Rac7CLjVgX5cqGaDF43bNCGc/0BsGD+yrX+zlx8wvKkcuXep7OFJmF1coR+Hiqkf2LCWmWi2ZxSPMLqKhj/JDfukkeYL5+mc2rKLLXuGPNsYdDlHqgeQKx2NWB8vgnEs9eKCbbJGIn5/58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dd+EnqGt; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731457230; x=1762993230;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=U94oJ0uEMfUxRXqTJjsuVBAwBmiQJyiQkMU4nMqnbtI=;
-  b=dd+EnqGtxJb0QjkcnSaeHnU8gVrVr2E3hVMZD8af6rC3YY9DemZjU1un
-   FVIwEkoDNulEY+0ZZUgaeeVYfR5dYkOG5JfpGIVVbAMiqLFA6ZBBRscb4
-   0FQpOYx5ttd3rLU3R4RWNHSbyuMSiFci/xDULwp8juIkRikbevR9aUSvY
-   PnrO+uI+iuHnHiotY9f6r3khgxKRZSPtgqaymXpo87jsAgQiHrDN8mOWj
-   LsDn9fSmTW/0ps8owUtjRFyGx6Lm2Tm8grH3PBe6CwiFst1/G9RIPlaE6
-   AJmG9bI1D+0uOo9/XaCOmUytIYDiF9VeHz2qCm4ASCqFiCL0bMq3Kx+FF
-   w==;
-X-CSE-ConnectionGUID: p1GeMIaCQ2i1ijVTcIfZyQ==
-X-CSE-MsgGUID: tWYdhAfKQQaUyM6hx0XqVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="30722538"
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="30722538"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 16:20:21 -0800
-X-CSE-ConnectionGUID: lCJuHIFDQ56vdpWT52eddw==
-X-CSE-MsgGUID: 7n8fioSORDCteWdnd3uKOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="87815919"
-Received: from jairdeje-mobl1.amr.corp.intel.com (HELO [10.124.220.61]) ([10.124.220.61])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 16:20:20 -0800
-Message-ID: <aff59a1a-c8e7-4784-b950-595875bf6304@intel.com>
-Date: Tue, 12 Nov 2024 16:20:19 -0800
+	s=arc-20240116; t=1731457277; c=relaxed/simple;
+	bh=KJ51AifgLpojBmlX5fPQBdlRAar0/5FKRY8S60gkj+A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jxJcNQU0ARSG7zfRJWDqZYZz63gVtju7YIyY3oCH9zSsk7oPXaHXf8HkKJIahTXEAju4TIitSnqjlZmTrUfcT9npUJ58UJbiCC1NkZmA/ffKpctqkznFOaRPwr+corgCGLOMhaHKlx+HeqgFshaEmiwR/+gnXAQ1HR2mPv5Bl3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XWKpQeoN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A25A5C4CECD;
+	Wed, 13 Nov 2024 00:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731457276;
+	bh=KJ51AifgLpojBmlX5fPQBdlRAar0/5FKRY8S60gkj+A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XWKpQeoNUSuZ1eaz/pkGOdmUheq8Yqvbu4pL4PjsKW0jGpant8T2Fu1WP08AA8X0z
+	 XH9uTC6NNk1Mcyp3eveqO9RuQ4Jl6odOqgwx3iQeUrVq224hA1cv4csstTJIHzaGHF
+	 AmScKmMYCvBUpPNPhL2iujkIHBZbqAfgEHoRvA+u6UPtKWJ+obUZSAQyXuGZhx2wLV
+	 u8am2Bb+QwlAA+cZ90oEzuZZcdlLA87FSq5ywPugcyFLbL8WfWSQTG8k5Lr6uXMzMS
+	 C0T1KG3HwyLqPUBeRgwdq3NOaNhvYJZmuKy7c/Tc4EYtWnEn3HMFnS+ejFqjVGDEc6
+	 bP3kosu+2+aGA==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Dima Kogan <dima@secretsauce.net>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] perf-probe: Improbe non-C language support
+Date: Wed, 13 Nov 2024 09:21:13 +0900
+Message-ID:  <173145727287.2747044.14103970580490941023.stgit@mhiramat.roam.corp.google.com>
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/25] x86/virt/tdx: Add SEAMCALL wrappers for TDX page
- cache management
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
- seanjc@google.com
-Cc: yan.y.zhao@intel.com, isaku.yamahata@gmail.com, kai.huang@intel.com,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
- reinette.chatre@intel.com, Isaku Yamahata <isaku.yamahata@intel.com>,
- Sean Christopherson <sean.j.christopherson@intel.com>,
- Binbin Wu <binbin.wu@linux.intel.com>, Yuan Yao <yuan.yao@intel.com>
-References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
- <20241030190039.77971-9-rick.p.edgecombe@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241030190039.77971-9-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 10/30/24 12:00, Rick Edgecombe wrote:
-> +u64 tdh_phymem_page_reclaim(u64 page, u64 *rcx, u64 *rdx, u64 *r8)
-> +{
-> +	struct tdx_module_args args = {
-> +		.rcx = page,
-> +	};
-> +	u64 ret;
+Hi,
 
-This isn't quite what I'm looking for in these wrappers.
+Here is the 3rd version of patches for perf probe to improve non-C language
+(e.g. Rust, Go) support.
 
-For instance:
+This ported the last patch on top of tmp.perf-tools-next, and add a fix patch
+for compilation errors.
 
-> +	/*
-> +	 * Additional error information:
-> +	 *
-> +	 *  - RCX: page type
-> +	 *  - RDX: owner
-> +	 *  - R8:  page size (4K, 2M or 1G)
-> +	 */
-> +	*rcx = args.rcx;
-> +	*rdx = args.rdx;
-> +	*r8 = args.r8;
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git tmp.perf-tools-next
 
-If this were, instead:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/?h=tmp.perf-tools-next
 
-u64 tdh_phymem_page_reclaim(u64 page, u64 *type, u64 *owner, u64 *size)
-{
-	...
-	*type = args.rcx;
-	*owner = args.rdx;
-	*size = args.r8;
+Thank you,
 
-Then you wouldn't need the comment in the first place.  Then you could
-also be thinking about adding _some_ kind of type safety to the
-arguments.  The 'size' or the 'type' could totally be enums.
+---
 
-There's really zero value in having wrappers like these.  They don't
-have any type safety or add any readability or make the seamcall easier
-to use.  There's almost no value in having these versus just exporting
-seamcall_ret() itself.
+Masami Hiramatsu (Google) (2):
+      perf-probe: Replace unacceptable characters when generating event name
+      perf disasm: Fix compilation error with stubs
+
+
+ tools/perf/util/disasm.c       |    7 ++++---
+ tools/perf/util/probe-event.c  |   32 +++++++++++++++++++++++++-------
+ tools/perf/util/probe-event.h  |    3 ++-
+ tools/perf/util/probe-finder.c |   15 +++++++++++++++
+ tools/perf/util/probe-finder.h |    5 +++++
+ 5 files changed, 51 insertions(+), 11 deletions(-)
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
