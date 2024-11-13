@@ -1,217 +1,191 @@
-Return-Path: <linux-kernel+bounces-407616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D1E9C706B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:20:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D6C9C7054
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:12:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93231B32871
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:59:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3F03B28346
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411382022D5;
-	Wed, 13 Nov 2024 12:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67431179954;
+	Wed, 13 Nov 2024 12:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fG5gbnmH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efIva08s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25DC200C99
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 12:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EEC6088F;
+	Wed, 13 Nov 2024 12:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731502668; cv=none; b=hnu/BWOIAC1TE43c3SERX/uJJsc6ya9JEIxutfZ3ZLAB3w44lnhhdeb6j9ICHb7ARepfqSWxqek35HFsXljQx+3sUBznhDUK/0zS8HGwtMFf/1keZK3oYK9R3ToWXqPFvd/AR0KLO2TCMh70Yb/kw2cnf7sllhTco8nSmIWrhDo=
+	t=1731502649; cv=none; b=DVea0CmVBcRYPkBAxCUuuhQoBfDgbkNXXfd3G1a8acbcQ7b/YREib3vOjxbnHkKcFJtu0W3rrQzuTYtOg5uYJZi8O50Qs+vG2LShfdLLgyayDVoCYwgKqlOJ3lQsq0S5Pa2vWKl3F2tYAX+rBHMU/Q8UcotSY5jLb6IUis4n6ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731502668; c=relaxed/simple;
-	bh=9nV2wbY1mZo4SXjTdUYtTCKYi2JHtTS+27/gUn4nJy4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aJjCDEfdZ3PbP20YAJyOx6tIPbhznXhe3/3zA7PlYXGdEa/K7UX78ghFLLLpQCZT5d0JhwgLLviOZ7ILs3jpnVlEaZu5g8gGY+IPuQyeyKJFNEwNZb4j9hQUa7VR/d+wIqp3gPlmTkJG2CUeAQ/7xTmcopjm85BXYuC/6EeAjjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fG5gbnmH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731502665;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UYnZeUkvuRlw5kkscfU39eHV0gLyojkwTRfIApRGBUQ=;
-	b=fG5gbnmHJHOo6gUaMD44d/esXf0o2/cQU4IZmIMFKrOds2i+3xAI0Bq8s3IIPUI7+txLG8
-	VKV9+UYy7teJdj1TNGAPolficrejAJ+OqaagB9lbCNyaBeWWSTZpuM1+h71oxhzMAh/o89
-	3pTXUNGLb26hAh2WT/qGKzmVNxiHK8I=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-67-b5KWInG8PDCLym97RFCvQg-1; Wed, 13 Nov 2024 07:57:44 -0500
-X-MC-Unique: b5KWInG8PDCLym97RFCvQg-1
-X-Mimecast-MFC-AGG-ID: b5KWInG8PDCLym97RFCvQg
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d95264eb4so3861764f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 04:57:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731502663; x=1732107463;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UYnZeUkvuRlw5kkscfU39eHV0gLyojkwTRfIApRGBUQ=;
-        b=CN+5Ge2HarL1zTqOTEoscXSqQEU20gT3yNs7c/Vn0Lpv9ije9UR4zQQfZoRmUkmLWS
-         /LfHCrqALJbVADvy6csBEXOhUxCHszpc/QnPebvrOrwVEjkLGktlKFcamclJ851+qLIV
-         pPfmKTtMJObwj4l64gbIGJ1TkshCXg2e2BrDFZGx40neApLUU7ZT26nvR/EyVtnPFbKM
-         AO5B/bdFBnVXIEsR6eXYDR3kjoi1pXb/tz1ixr3KLsES60qa4h7ja1QrYlmdLqMuM9wO
-         m3azyWFNkkPvZy2tDIejoSwMXW4EpMQsG7HE0BWDFyWKfWgLNwBt8KLBzkmTg6vPCXb+
-         L2mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoRFupMtGOE2FPuFXKU28T6fQCTH8sNfieO5qGOD0LscyzDLjOPFuM8CLui0llHbTuBjtvYjfRZr1Xl8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1Ip6R8DaZMqTqi4xHZO1i840cXyvdZDWC+TFyeU0nvdZoyNEn
-	WnROIoa8JmwZJa0yPKLDopw6d9/2iplY931N8yLszbGTrI0J7cln41bf6qH86pYvf5J3dCWjkmS
-	5EUjDgTuJ39WwOH/+lRQRcpOyMzEw+azxGrvGEaz0UoijA6OCrlm1jC4RaF1sNw==
-X-Received: by 2002:a05:6000:1887:b0:37d:9476:45f6 with SMTP id ffacd0b85a97d-3820df5bd22mr2507902f8f.7.1731502663447;
-        Wed, 13 Nov 2024 04:57:43 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEHrumD/OT1idbJaqmC3Z6XovpgeNb263RD6kDIiP4jRdzbHk85f8YsC09RkcCYCsxeE36n+w==
-X-Received: by 2002:a05:6000:1887:b0:37d:9476:45f6 with SMTP id ffacd0b85a97d-3820df5bd22mr2507882f8f.7.1731502663056;
-        Wed, 13 Nov 2024 04:57:43 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-4-194.as13285.net. [80.47.4.194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed997391sm18486834f8f.45.2024.11.13.04.57.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 04:57:41 -0800 (PST)
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <longman@redhat.com>,
-	Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Cc: Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH 1/2] sched/deadline: Restore dl_server bandwidth on non-destructive root domain changes
-Date: Wed, 13 Nov 2024 12:57:22 +0000
-Message-ID: <20241113125724.450249-2-juri.lelli@redhat.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241113125724.450249-1-juri.lelli@redhat.com>
-References: <20241113125724.450249-1-juri.lelli@redhat.com>
+	s=arc-20240116; t=1731502649; c=relaxed/simple;
+	bh=kufeckISsNhYdD+EXqrcRBtcik7Z28DuIhzYM013Ouo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mz0ewgjND3xPD7ezoAQZczdPQ61fu2Y1sl225KdwGSZy2TpkceT8s5saF8OTjN5o7kmZWvW5Llj8nH1eGgm1vKP+xDalhgyu/pHFG/AySjvfjtFWfCCh9S9WwroXMrIYV34Z2eHcBNOoMhlBqjuDzEf8b15wd3gAaSMfRmgnOUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efIva08s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A587C4CECF;
+	Wed, 13 Nov 2024 12:57:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731502649;
+	bh=kufeckISsNhYdD+EXqrcRBtcik7Z28DuIhzYM013Ouo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=efIva08sMQZ4IhNeVQ3ER804zEMIRhL+uoDBCR5d83GeYtLIDQDA1gLCN+HGNu4HI
+	 QPyiZmlh0sKX++ofC5gJIx3KZHzlbZCxfEfqkf3IuBgIFYNiT3pwr++3Zit+EY+hrC
+	 kBWJzOZpOrj4lUm8H1h68Iity0E7OKMJxadm2vIMP4kAdCiLCIqFEOFo4LBsznYRTP
+	 YZ6t1F0m12tqhosGnO4aW7CbEWYK5isYNxeZuVW9T9NNqR0Ab0wUphrQFCQQbUtZqh
+	 PQhTqOtBmJn2ZC5hhIKTON3EoQIPFH9UxoZrLEYpcQqZfvU1Hq4kY3lQVjABJ0ceo2
+	 AVxwkHGYF2ZKg==
+Date: Wed, 13 Nov 2024 13:57:23 +0100
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 3/3] firmware/psci: Allow specifying an S2RAM state
+ through CPU_SUSPEND
+Message-ID: <ZzSiM6Pn6A9e1QUD@lpieralisi>
+References: <20241028-topic-cpu_suspend_s2ram-v1-0-9fdd9a04b75c@oss.qualcomm.com>
+ <20241028-topic-cpu_suspend_s2ram-v1-3-9fdd9a04b75c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028-topic-cpu_suspend_s2ram-v1-3-9fdd9a04b75c@oss.qualcomm.com>
 
-When root domain non-destructive changes (e.g., only modifying one of
-the existing root domains while the rest is not touched) happen we still
-need to clear DEADLINE bandwidth accounting so that it's then properly
-restore taking into account DEADLINE tasks associated to each cpuset
-(associated to each root domain). After the introduction of dl_servers,
-we fail to restore such servers contribution after non-destructive
-changes (as they are only considered on destructive changes when
-runqueues are attached to the new domains).
+On Mon, Oct 28, 2024 at 03:22:59PM +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Certain firmware implementations (such as the ones found on Qualcomm
+> SoCs between roughly 2015 and 2023) expose an S3-like S2RAM state
+> through the CPU_SUSPEND call.
+> 
+> This works exactly like SYSTEM_SUSPEND. The PSCI spec describes that
+> call as optional (and only introduced in PSCIv1.0), so not all
+> platforms expose it.
+> 
+> Marking a DT-described "domain-idle-state" as such isn't currently
+> well accounted for in the PSCI idle topology infrastructure: the
+> cpuidle and genpd framework are deeply intertwined, and trying to
+> separate them would cause more havoc than good.
 
-Fix this by making sure we iterate over the dl_server attached to
-domains that have not been destroyed and add them bandwidth contribution
-back correctly.
+I don't understand what you mean here please elaborate.
 
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
----
- include/linux/sched/deadline.h |  2 +-
- kernel/cgroup/cpuset.c         |  2 +-
- kernel/sched/deadline.c        | 18 +++++++++++++-----
- kernel/sched/topology.c        | 10 ++++++----
- 4 files changed, 21 insertions(+), 11 deletions(-)
+The part of the story I understand is that you have a system (well,
+firmware for an extended set of systems) that does not implement
+SYSTEM_SUSPEND but can reach a S2R like system state through the
+CPU_SUSPEND call. Firmware works in OS-initiated mode, idle-states
+should allow you to define idle states that allow the system to
+enter the S2R state through CPUidle.
 
-diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-index 3a912ab42bb5..82c966a55856 100644
---- a/include/linux/sched/deadline.h
-+++ b/include/linux/sched/deadline.h
-@@ -33,7 +33,7 @@ static inline bool dl_time_before(u64 a, u64 b)
- 
- struct root_domain;
- extern void dl_add_task_root_domain(struct task_struct *p);
--extern void dl_clear_root_domain(struct root_domain *rd);
-+extern void dl_clear_root_domain(struct root_domain *rd, bool restore);
- 
- #endif /* CONFIG_SMP */
- 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 142303abb055..4d3603a99db3 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -954,7 +954,7 @@ static void dl_rebuild_rd_accounting(void)
- 	 * Clear default root domain DL accounting, it will be computed again
- 	 * if a task belongs to it.
- 	 */
--	dl_clear_root_domain(&def_root_domain);
-+	dl_clear_root_domain(&def_root_domain, false);
- 
- 	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
- 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 9ce93d0bf452..e53208a50279 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2968,13 +2968,21 @@ void dl_add_task_root_domain(struct task_struct *p)
- 	task_rq_unlock(rq, p, &rf);
- }
- 
--void dl_clear_root_domain(struct root_domain *rd)
-+void dl_clear_root_domain(struct root_domain *rd, bool restore)
- {
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&rd->dl_bw.lock, flags);
-+	guard(raw_spinlock_irqsave)(&rd->dl_bw.lock);
- 	rd->dl_bw.total_bw = 0;
--	raw_spin_unlock_irqrestore(&rd->dl_bw.lock, flags);
-+
-+	if (restore) {
-+		int i;
-+
-+		for_each_cpu(i, rd->span) {
-+			struct sched_dl_entity *dl_se = &cpu_rq(i)->fair_server;
-+
-+			if (dl_server(dl_se))
-+				rd->dl_bw.total_bw += dl_se->dl_bw;
-+		}
-+	}
- }
- 
- #endif /* CONFIG_SMP */
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 9748a4c8d668..e9e7a7c43dd6 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -2721,12 +2721,14 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
- 
- 				/*
- 				 * This domain won't be destroyed and as such
--				 * its dl_bw->total_bw needs to be cleared.  It
--				 * will be recomputed in function
--				 * update_tasks_root_domain().
-+				 * its dl_bw->total_bw needs to be cleared.
-+				 * Tasks contribution will be then recomputed
-+				 * in function dl_update_tasks_root_domain(),
-+				 * dl_servers contribution in function
-+				 * dl_restore_server_root_domain().
- 				 */
- 				rd = cpu_rq(cpumask_any(doms_cur[i]))->rd;
--				dl_clear_root_domain(rd);
-+				dl_clear_root_domain(rd, true);
- 				goto match1;
- 			}
- 		}
--- 
-2.47.0
+Please explain to me what's missing.
 
+> Instead, allow the specifying of a single CPU_SUSPEND sleep param
+> under the /psci node that shall be treated exactly like SYSTEM_SUSPEND
+> from Linux's POV. As a bonus, this way we also don't have to fight
+> with the genpd idle governor to avoid taking the S3-like state into
+> consideration.
+
+That's not acceptable. I want to understand what's preventing this
+system to enter that state through suspend2idle and the mainline code.
+
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  drivers/firmware/psci/psci.c | 36 +++++++++++++++++++++++++++++++-----
+>  1 file changed, 31 insertions(+), 5 deletions(-)
+
+NACK
+
+> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> index 0e622aa5ad58bbe69dfc3a71bced597618e73f15..20ae6a6d59a9f276db75260b6ca1a5827e443782 100644
+> --- a/drivers/firmware/psci/psci.c
+> +++ b/drivers/firmware/psci/psci.c
+> @@ -78,6 +78,7 @@ struct psci_0_1_function_ids get_psci_0_1_function_ids(void)
+>  
+>  static u32 psci_cpu_suspend_feature;
+>  static bool psci_system_reset2_supported;
+> +static u32 psci_s2ram_suspend_param;
+>  
+>  static inline bool psci_has_ext_power_state(void)
+>  {
+> @@ -519,10 +520,10 @@ static int psci_system_suspend_begin(suspend_state_t state)
+>  	return 0;
+>  }
+>  
+> -static const struct platform_suspend_ops psci_suspend_ops = {
+> -	.valid          = suspend_valid_only_mem,
+> -	.enter          = psci_system_suspend_enter,
+> -	.begin          = psci_system_suspend_begin,
+> +static const struct platform_suspend_ops psci_system_suspend_ops = {
+> +	.valid = suspend_valid_only_mem,
+> +	.enter = psci_system_suspend_enter,
+> +	.begin = psci_system_suspend_begin,
+>  };
+>  
+>  static void __init psci_init_system_reset2(void)
+> @@ -545,7 +546,7 @@ static void __init psci_init_system_suspend(void)
+>  	ret = psci_features(PSCI_FN_NATIVE(1_0, SYSTEM_SUSPEND));
+>  
+>  	if (ret != PSCI_RET_NOT_SUPPORTED)
+> -		suspend_set_ops(&psci_suspend_ops);
+> +		suspend_set_ops(&psci_system_suspend_ops);
+>  }
+>  
+>  static void __init psci_init_cpu_suspend(void)
+> @@ -673,6 +674,17 @@ static int __init psci_probe(void)
+>  
+>  typedef int (*psci_initcall_t)(const struct device_node *);
+>  
+> +static int psci_cpu_suspend_s2ram_enter(suspend_state_t state)
+> +{
+> +	return psci_cpu_suspend_enter(psci_s2ram_suspend_param);
+> +}
+> +
+> +static const struct platform_suspend_ops psci_cpu_suspend_s2ram_ops = {
+> +	.valid = suspend_valid_only_mem,
+> +	.enter = psci_cpu_suspend_s2ram_enter,
+> +	.begin = psci_system_suspend_begin,
+> +};
+> +
+>  /*
+>   * PSCI init function for PSCI versions >=0.2
+>   *
+> @@ -686,6 +698,20 @@ static int __init psci_0_2_init(const struct device_node *np)
+>  	if (err)
+>  		return err;
+>  
+> +	/*
+> +	 * Some firmwares expose S2RAM entry through a custom suspend param.
+> +	 *
+> +	 * If found, register a suspend handler instead of registering the
+> +	 * idle state with cpuidle.
+> +	 */
+> +	err = of_property_read_u32(np, "arm,psci-s2ram-param", &psci_s2ram_suspend_param);
+> +	if (!err) {
+> +		suspend_set_ops(&psci_cpu_suspend_s2ram_ops);
+> +	} else if (err != -EINVAL) {
+> +		pr_err("Couldn't read the S2RAM PSCI suspend param: %d\n",
+> +		       psci_s2ram_suspend_param);
+> +	}
+> +
+>  	/*
+>  	 * Starting with v0.2, the PSCI specification introduced a call
+>  	 * (PSCI_VERSION) that allows probing the firmware version, so
+> 
+> -- 
+> 2.47.0
+> 
 
