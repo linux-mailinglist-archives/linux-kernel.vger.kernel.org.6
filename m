@@ -1,131 +1,80 @@
-Return-Path: <linux-kernel+bounces-407822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8BD09C74C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:50:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 187A09C74C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADE4B282AA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3BD41F21E81
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7354A13B5AE;
-	Wed, 13 Nov 2024 14:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA5612DD8A;
+	Wed, 13 Nov 2024 14:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZrmdHTvr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1BF256d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F091923A0
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164E02AE93
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731509406; cv=none; b=Cd4i4Zt9S0remNd0XqAGEGlBciXqE9GoZEYGj0MrffGFZxQU7TJsnqO5j+MMJVAXK6h3e6B/B7EQCIg5JAkUxV9M6l6xooPxke9Bdy9bihUt4wrj8apnokPTM6Qsz8VohZSnqAq3rFtTesjplx/QNoOvS4udUczEKOu5HXVOaJs=
+	t=1731509438; cv=none; b=WBq6FBllvfl3jjPFbindDskui2UGxo3OpaHgmTzO6CrB/ROhPOanGcSerh83H9uYn6+Lp6/397j9iSgoB6OBq+4QWTnFcvyBkOaKBsAI3sYu9vOSnyCyVC4RFgFoJ29urTm982fxKk5dKvxQe2mjR7/ztZNnR9+a0iYhXmSN0NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731509406; c=relaxed/simple;
-	bh=F2V5lIDP4k54VyPQnx3tm95pRjfvhQH0+t+YIFhROXk=;
+	s=arc-20240116; t=1731509438; c=relaxed/simple;
+	bh=X8mFCQYnvJSNUc4OPD3wmYeYdZokj4EvkEqhXAx/ILc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DZUcr9g+9KvXkF9dpP/Q214CuSC2zx7enQv06Teic07xsgQP1QN8Tz/zdvOAC0iSCw5eRDOM+E7mfEL4cCIMdxp4/vIxwxQAG5NuPHlzek+CjIhfwE2I/PhgzBlEvELYVzcPhUvWyhHOjtafUmw9cmt3n9HD0DQvtktd041QLfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZrmdHTvr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731509404;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qpxWVmY9AA9sdaBT+FLe6ZwkY7JoCZPnsSDxJdlaOIA=;
-	b=ZrmdHTvrg5hcohsxIDu0O1w0zhuowxohobfUtK/zYvipcbOlAfu1fXEJlwbFT4GwsMhSuq
-	NMj/SbOOVgnWlGXkm9bwQBTxENR526e2az4ot1C/l+SpiQg5C0y7gAdOnLy7GRbMVqgCaI
-	mpJQZ27jl/HRv4Fvz9C+Wj040cHY+b4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-17-XxBfO6eVPySTqvx-YwciSg-1; Wed, 13 Nov 2024 09:50:02 -0500
-X-MC-Unique: XxBfO6eVPySTqvx-YwciSg-1
-X-Mimecast-MFC-AGG-ID: XxBfO6eVPySTqvx-YwciSg
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d609ef9f7so4000276f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:50:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731509401; x=1732114201;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qpxWVmY9AA9sdaBT+FLe6ZwkY7JoCZPnsSDxJdlaOIA=;
-        b=vEhd0OD6FtXXmzkBkp4GyvslnEMoGRXhfIfvrkQa1JQQJGUogYrGkLBpfjd5momzVf
-         R1WlpkGbVtZEiAQT6w94biV+ioSMoAM+STcuM8tdIbD9p/azu2wpnMclqf2LThS2+JAS
-         aWnFFsBjq0xAKCeTLxOf8A0c4i2C+31OC/6WH8ljQRjt5la7BKQGb2FwMy7OQklqDZLV
-         fmJRs4ZjpXLfNq5+43kndY1itCp4bYJYgUgTHfC9HRognvbYWIO5WYg/6gr4Vz1e6iOi
-         9vIkGIZbIZVX9FQDoZ96Ephxxg/gTLg5tJgaxWTqDyJ3RmxKx4tF0XpTkCH/v/N4M3nb
-         v6gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhjoGJMQi5Lj5cld6Cey1AFUVxIV6Mu1P4O8joWTzWk9QHg6mSE6zSMX4YZaPWaHC6G7wJ0kzj0TT7gPA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOjRmJJVc9T1+1Url5SAz6PsWoZtdCRfK0JHbw1UrSyQaAiAKc
-	je8CdqeHE0gpiKjSvBXx627CtrEXsfYtuN0Ova5QcHGI+4IMrV5Yg+zs4ZSg7oL8kVcfd6GC8HW
-	qcooIWKld1BF7BrDOdDmILRd1LfnATyI/Iewm/8RblMv/nPKDr4Ie/1bdA3feEQ==
-X-Received: by 2002:a05:6000:1ac6:b0:37c:d11f:c591 with SMTP id ffacd0b85a97d-3820df610a7mr2091463f8f.17.1731509401491;
-        Wed, 13 Nov 2024 06:50:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG/XkX2Eyjenwpa71zbx3wPsBlk1LKkpMGBXi84BvxwbrswsvZkqwBZ4ckZuWMD7vSuPV2lwA==
-X-Received: by 2002:a05:6000:1ac6:b0:37c:d11f:c591 with SMTP id ffacd0b85a97d-3820df610a7mr2091441f8f.17.1731509401092;
-        Wed, 13 Nov 2024 06:50:01 -0800 (PST)
-Received: from redhat.com ([2.55.171.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ea647sm18300658f8f.68.2024.11.13.06.49.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 06:50:00 -0800 (PST)
-Date: Wed, 13 Nov 2024 09:49:56 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: virtualization@lists.linux.dev, Si-Wei Liu <si-wei.liu@oracle.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Eugenio Perez Martin <eperezma@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH vhost 2/2] vdpa/mlx5: Fix suboptimal range on iotlb
- iteration
-Message-ID: <20241113094920-mutt-send-email-mst@kernel.org>
-References: <20241021134040.975221-1-dtatulea@nvidia.com>
- <20241021134040.975221-3-dtatulea@nvidia.com>
- <20241113013149-mutt-send-email-mst@kernel.org>
- <195f8d81-36d8-4730-9911-5797f41c58ad@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IkVuUYMAEEpzKBkrflpq9SwVXNiXt7oCske9KMK8WwSrorhjPG/Fi1JlWzsKafUV7J/rA48yZfqJe76ztL7RFv8BlFdNj/m3tRdfbuk3k8izWbvkKhOywEqe3WVRbBxIdlQQRXNqDQJH6Py2h9r9K+0KrwY6SR+JvhBIkKl0rUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1BF256d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B9A5C4CEC3;
+	Wed, 13 Nov 2024 14:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731509436;
+	bh=X8mFCQYnvJSNUc4OPD3wmYeYdZokj4EvkEqhXAx/ILc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u1BF256dqBCOfPSJxtWXwsWYkq9pOmz9p7YArJwkjYw3oYspvTu0nsQEZuMSxQI3A
+	 COLTzkzN6fnH5qxO6XOEnlGHGkOKFZM8goMlIY0yYV60X8X+5qv4bFQbkGzuydawup
+	 QcpIzFAC90rq5N1KjbxBZUxkmHr/ElNHSDekUPbVaRyegzIwG9IlP8aW4OV/2NEK0P
+	 5sv5ycb7mUZHVjrnmKFThzmAfOeMCOVSnz/KRCQom6x9Tkcxkn7C1KIHeoxYfPH+vf
+	 9G8cxO25dQ/TxQzTWYexRl5k4RtCP7MeOXBCtE1CfgERoACOJC60rlWHq/E5KVhvC1
+	 jSe1EUEStWMGA==
+Date: Wed, 13 Nov 2024 15:50:33 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
+	paulmck@kernel.org, mingo@kernel.org, bigeasy@linutronix.de,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, efault@gmx.de,
+	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com
+Subject: Re: [PATCH v2 1/6] rcu: fix header guard for rcu_all_qs()
+Message-ID: <ZzS8uUYDllho-fKu@localhost.localdomain>
+References: <20241106201758.428310-1-ankur.a.arora@oracle.com>
+ <20241106201758.428310-2-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <195f8d81-36d8-4730-9911-5797f41c58ad@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106201758.428310-2-ankur.a.arora@oracle.com>
 
-On Wed, Nov 13, 2024 at 03:33:35PM +0100, Dragos Tatulea wrote:
+Le Wed, Nov 06, 2024 at 12:17:53PM -0800, Ankur Arora a écrit :
+> rcu_all_qs() is defined for !CONFIG_PREEMPT_RCU but the declaration
+> is conditioned on CONFIG_PREEMPTION.
 > 
+> With CONFIG_PREEMPT_LAZY, CONFIG_PREEMPTION=y does not imply
+> CONFIG_PREEMPT_RCU=y.
 > 
-> On 13.11.24 07:32, Michael S. Tsirkin wrote:
-> > On Mon, Oct 21, 2024 at 04:40:40PM +0300, Dragos Tatulea wrote:
-> >> From: Si-Wei Liu <si-wei.liu@oracle.com>
-> >>
-> >> The starting iova address to iterate iotlb map entry within a range
-> >> was set to an irrelevant value when passing to the itree_next()
-> >> iterator, although luckily it doesn't affect the outcome of finding
-> >> out the granule of the smallest iotlb map size. Fix the code to make
-> >> it consistent with the following for-loop.
-> >>
-> >> Fixes: 94abbccdf291 ("vdpa/mlx5: Add shared memory registration code")
-> > 
-> > 
-> > But the cover letter says "that's why it does not have a fixes tag".
-> > Confused.
-> Sorry about that. Patch is fine with fixes tag, I forgot to drop that
-> part of the sentence from the cover letter.
+> Decouple the two.
 > 
-> Let me know if I need to resend something.
-> 
-> Thanks,
-> Dragos
+> Cc: Paul E. McKenney <paulmck@kernel.org>
+> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 
-But why does it need the fixes tag? That one means "if you have
-that hash, you need this patch". Pls do not abuse it for
-optimizations.
-
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
