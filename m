@@ -1,174 +1,233 @@
-Return-Path: <linux-kernel+bounces-407647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 132C79C708D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:26:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C44D9C7090
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:27:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA0342859FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:26:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3631F21498
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F521EE018;
-	Wed, 13 Nov 2024 13:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NKXgmslH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091A61DF737;
-	Wed, 13 Nov 2024 13:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342811E377C;
+	Wed, 13 Nov 2024 13:27:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BEB1DF992;
+	Wed, 13 Nov 2024 13:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731504391; cv=none; b=kTh+nTYJ9MYNUBdExkREcaQ0EXI9WegdLZ6ZcPEvMgGE4tqq8AlXcLIgw0hl6AstkCM7HlnG5XIHbSBmhiJ9N2u1awRJ0BAUmHKBYSgzFu2faqAGyc4DwIgXE1rCrDHv7eaJwvM803Yb4P5MqVepAHa5cwIsU7mhqtEoe7Ltk84=
+	t=1731504432; cv=none; b=YIDXCbTQmJZkDwHnf7vgC8FXOhoYxpvizlmPwxLzh/aJKkFKlkDPovsW8rqgO7umuOEp2Wwlcs6gQlvXe4NGZPY2TCiOoycZuIue7Fv5vtqwkB9FLN8d+9fh2VGnjJxQmutnztKspOdICrXDtJ1L8JVIHm78BZDJKx8r4zLe8cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731504391; c=relaxed/simple;
-	bh=OYPuaE2+AnUxXcJi5nXMxJhfuKUqJgkZ5AbDTz/mMms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uEOSiuUrWQ6BIBOchLx2M8Mp4H7gM9yUS9Q8ZrD5I0TtwAuAzt7CdGX+CbQ0NNnXEL/Www0laMLsKUSS05MIz3pL6XRhcIpdSfhPyS0wBfDj5/wgvskHNmRMSp7acWF8h4jZRZbnoORyeMgQn6/F6pK3vqNm0TrIkjFtJV0uC2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NKXgmslH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E717C4CECD;
-	Wed, 13 Nov 2024 13:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731504390;
-	bh=OYPuaE2+AnUxXcJi5nXMxJhfuKUqJgkZ5AbDTz/mMms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NKXgmslHh7yaccvhogJAePw2LjZfji15iqQ2t5WPDLuuldRRNzcb3xTb5iirqMWw7
-	 7MPrCryJxt2sz85HC/EK7LJeMfj/xr1WRWpitbl8i4Qw5RkAO56eNUqV+1fKf4MRnx
-	 VnXO7+6aqbal13ZFyfl98OHJPDBvcHECJl7nspmyL13xw2FuF9Rd2xsn0o2Vs0gvNy
-	 2oXRkuRsfAdyiQvJ7hepTwe03cZ+O2N9Ckn1QEKJsqetvpPOXnx93wMQbHOaQzfhpW
-	 Q2vvvyVPBWbz6XfEmAcjkbp+m1N4WoT+IgYshqr9O45WKJuiybVmJ3KKZPkyxs6Imv
-	 7u+I53MphrjjA==
-Date: Wed, 13 Nov 2024 14:26:26 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Erin Shepherd <erin.shepherd@e43.eu>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	christian@brauner.io, paul@paul-moore.com, bluca@debian.org
-Subject: Re: [PATCH 4/4] pidfs: implement fh_to_dentry
-Message-ID: <20241113-entnimmt-weintrauben-3b0b4a1a18b7@brauner>
-References: <20241101135452.19359-1-erin.shepherd@e43.eu>
- <20241101135452.19359-5-erin.shepherd@e43.eu>
- <20241113-erlogen-aussehen-b75a9f8cb441@brauner>
- <65e22368-d4f8-45f5-adcb-4d8c297ae293@e43.eu>
+	s=arc-20240116; t=1731504432; c=relaxed/simple;
+	bh=9d+e3lBIDxZImn7IN5EFIXhLnDccxYDpONKaPnp7V9E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aZkcYJRO1R5uR4o/n1/kpgiPZPuaKAZQTStIyap2j3wllJnJ1sCQ2U2JxrVTWT8dWyFkQ9Y93tTKT9rm5DOWZLC10JAG1ne3swWCedljSFgFAZ1HeZZ0A7GgLQqJ2jcl6pfRJwJHFuWv9nVy61f5/hUg75bsz6Q5daOhQrmgXaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E1BC1655;
+	Wed, 13 Nov 2024 05:27:38 -0800 (PST)
+Received: from [10.1.29.78] (Suzukis-MBP.cambridge.arm.com [10.1.29.78])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AAF6B3F66E;
+	Wed, 13 Nov 2024 05:27:06 -0800 (PST)
+Message-ID: <6424c536-2f2c-4a59-8b6d-f610201dc7a7@arm.com>
+Date: Wed, 13 Nov 2024 13:27:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <65e22368-d4f8-45f5-adcb-4d8c297ae293@e43.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] coresight: Add support to get static id for system
+ trace sources
+Content-Language: en-GB
+To: Mao Jinlong <quic_jinlmao@quicinc.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20241104115604.14522-1-quic_jinlmao@quicinc.com>
+ <20241104115604.14522-3-quic_jinlmao@quicinc.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20241104115604.14522-3-quic_jinlmao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 13, 2024 at 02:06:56PM +0100, Erin Shepherd wrote:
-> On 13/11/2024 13:09, Christian Brauner wrote:
+On 04/11/2024 11:56, Mao Jinlong wrote:
+> Dynamic trace id was introduced in coresight subsystem, so trace id is
+> allocated dynamically. However, some hardware ATB source has static trace
+> id and it cannot be changed via software programming. For such source,
+> it can call coresight_get_static_trace_id to get the fixed trace id from
+> device node and pass id to coresight_trace_id_get_static_system_id to
+> reserve the id.
 > 
-> > Hm, a pidfd comes in two flavours:
-> >
-> > (1) thread-group leader pidfd: pidfd_open(<pid>, 0)
-> > (2) thread pidfd:              pidfd_open(<pid>, PIDFD_THREAD)
-> >
-> > In your current scheme fid->pid = pid_nr(pid) means that you always
-> > encode a pidfs file handle for a thread pidfd no matter if the provided
-> > pidfd was a thread-group leader pidfd or a thread pidfd. This is very
-> > likely wrong as it means users that use a thread-group pidfd get a
-> > thread-specific pid back.
-> >
-> > I think we need to encode (1) and (2) in the pidfs file handle so users
-> > always get back the correct type of pidfd.
-> >
-> > That very likely means name_to_handle_at() needs to encode this into the
-> > pidfs file handle.
+> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> Reviewed-by: Mike Leach <mike.leach@linaro.org>
+> ---
+>   .../hwtracing/coresight/coresight-platform.c  |  6 +++
+>   .../hwtracing/coresight/coresight-trace-id.c  | 39 +++++++++++++------
+>   .../hwtracing/coresight/coresight-trace-id.h  |  9 +++++
+>   include/linux/coresight.h                     |  1 +
+>   4 files changed, 44 insertions(+), 11 deletions(-)
 > 
-> I guess a question here is whether a pidfd handle encodes a handle to a pid
-> in a specific mode, or just to a pid in general? The thought had occurred
-> to me while I was working on this initially, but I felt like perhaps treating
-> it as a property of the file descriptor in general was better.
-> 
-> Currently open_by_handle_at always returns a thread-group pidfd (since
-> PIDFD_THREAD) isn't set, regardless of what type of pidfd you passed to
-> name_to_handle_at. I had thought that PIDFD_THREAD/O_EXCL would have been
+> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+> index 64e171eaad82..633d96b9577a 100644
+> --- a/drivers/hwtracing/coresight/coresight-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> @@ -796,6 +796,12 @@ int coresight_get_cpu(struct device *dev)
+>   }
+>   EXPORT_SYMBOL_GPL(coresight_get_cpu);
+>   
+> +int coresight_get_static_trace_id(struct device *dev, u32 *id)
+> +{
+> +	return fwnode_property_read_u32(dev_fwnode(dev), "arm,static-trace-id", id);
+> +}
+> +EXPORT_SYMBOL_GPL(coresight_get_static_trace_id);
+> +
+>   struct coresight_platform_data *
+>   coresight_get_platform_data(struct device *dev)
+>   {
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
+> index d98e12cb30ec..df8fe50b413f 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+> @@ -12,6 +12,12 @@
+>   
+>   #include "coresight-trace-id.h"
+>   
+> +enum trace_id_flags {
+> +	TRACE_ID_ANY = 0x0,
+> +	TRACE_ID_PREFER_ODD = 0x1,
+> +	TRACE_ID_REQ_STATIC = 0x2,
+> +};
+> +
+>   /* Default trace ID map. Used in sysfs mode and for system sources */
+>   static DEFINE_PER_CPU(atomic_t, id_map_default_cpu_ids) = ATOMIC_INIT(0);
+>   static struct coresight_trace_id_map id_map_default = {
+> @@ -74,16 +80,18 @@ static int coresight_trace_id_find_odd_id(struct coresight_trace_id_map *id_map)
+>    * Otherwise allocate next available ID.
+>    */
+>   static int coresight_trace_id_alloc_new_id(struct coresight_trace_id_map *id_map,
+> -					   int preferred_id, bool prefer_odd_id)
+> +					   int preferred_id, unsigned int flags)
+>   {
+>   	int id = 0;
+>   
+>   	/* for backwards compatibility, cpu IDs may use preferred value */
+> -	if (IS_VALID_CS_TRACE_ID(preferred_id) &&
+> -	    !test_bit(preferred_id, id_map->used_ids)) {
+> -		id = preferred_id;
+> -		goto trace_id_allocated;
+> -	} else if (prefer_odd_id) {
+> +	if (IS_VALID_CS_TRACE_ID(preferred_id)) {
+> +		if (!test_bit(preferred_id, id_map->used_ids)) {
+> +			id = preferred_id;
+> +			goto trace_id_allocated;
+> +		} else if (flags & TRACE_ID_REQ_STATIC)
+> +			return -EINVAL;
 
-I don't think you're returning a thread-groupd pidfd from
-open_by_handle_at() in your scheme. After all you're encoding the tid in
-pid_nr() so you'll always find the struct pid for the thread afaict. If
-I'm wrong could you please explain how you think this works? I might
-just be missing something obvious.
+nit: EBUSY sounds like a better choice here ? Requested ID is not
+available.
 
-> passed through to f->f_flags on the restored pidfd, but upon checking I see that
-> it gets filtered out in do_dentry_open.
+Additionally, do we need to handle a case where the preferred_id is
+not valid ? I think we silently allocate a new trace id in such case ?
 
-It does, but note that __pidfd_prepare() raises it explicitly on the
-file afterwards. So it works fine.
+Rest looks good to me.
 
-> 
-> I feel like leaving it up to the caller of open_by_handle_at might be better
-> (because they are probably better informed about whether they want poll() to
-> inform them of thread or process exit) but I could lean either way.
+Suzuki
 
-So in order to decode a pidfs file handle you want the caller to have to
-specify O_EXCL in the flags argument of open_by_handle_at()? Is that
-your idea?
 
-> 
-> >> +static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
-> >> +					 struct fid *gen_fid,
-> >> +					 int fh_len, int fh_type)
-> >> +{
-> >> +	int ret;
-> >> +	struct path path;
-> >> +	struct pidfd_fid *fid = (struct pidfd_fid *)gen_fid;
-> >> +	struct pid *pid;
-> >> +
-> >> +	if (fh_type != FILEID_INO64_GEN || fh_len < PIDFD_FID_LEN)
-> >> +		return NULL;
-> >> +
-> >> +	pid = find_get_pid_ns(fid->pid, &init_pid_ns);
-> >> +	if (!pid || pid->ino != fid->ino || pid_vnr(pid) == 0) {
-> >> +		put_pid(pid);
-> >> +		return NULL;
-> >> +	}
-> > I think we can avoid the premature reference bump and do:
-> >
-> > scoped_guard(rcu) {
-> >         struct pid *pid;
-> >
-> > 	pid = find_pid_ns(fid->pid, &init_pid_ns);
-> > 	if (!pid)
-> > 		return NULL;
-> >
-> > 	/* Did the pid get recycled? */
-> > 	if (pid->ino != fid->ino)
-> > 		return NULL;
-> >
-> > 	/* Must be resolvable in the caller's pid namespace. */
-> > 	if (pid_vnr(pid) == 0)
-> > 		return NULL;
-> >
-> > 	/* Ok, this is the pid we want. */
-> > 	get_pid(pid);
-> > }
-> 
-> I can go with that if preferred. I was worried a bit about making the RCU
-> critical section too large, but of course I'm sure there are much larger
-> sections inside the kernel.
 
-This is perfectly fine. Don't worry about it.
 
-> 
-> >> +
-> >> +	ret = path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
-> >> +	if (ret < 0)
-> >> +		return ERR_PTR(ret);
-> >> +
-> >> +	mntput(path.mnt);
-> >> +	return path.dentry;
-> >>  }
-> 
-> Similarly here i should probably refactor this into dentry_from_stashed in
-> order to avoid a needless bump-then-drop of path.mnt's reference count
+> +	} else if (flags & TRACE_ID_PREFER_ODD) {
+>   	/* may use odd ids to avoid preferred legacy cpu IDs */
+>   		id = coresight_trace_id_find_odd_id(id_map);
+>   		if (id)
+> @@ -153,7 +161,7 @@ static int _coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map
+>   	 */
+>   	id = coresight_trace_id_alloc_new_id(id_map,
+>   					     CORESIGHT_LEGACY_CPU_TRACE_ID(cpu),
+> -					     false);
+> +					     TRACE_ID_ANY);
+>   	if (!IS_VALID_CS_TRACE_ID(id))
+>   		goto get_cpu_id_out_unlock;
+>   
+> @@ -188,14 +196,14 @@ static void _coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_ma
+>   	DUMP_ID_MAP(id_map);
+>   }
+>   
+> -static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map)
+> +static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map,
+> +					int preferred_id, unsigned int traceid_flags)
+>   {
+>   	unsigned long flags;
+>   	int id;
+>   
+>   	spin_lock_irqsave(&id_map->lock, flags);
+> -	/* prefer odd IDs for system components to avoid legacy CPU IDS */
+> -	id = coresight_trace_id_alloc_new_id(id_map, 0, true);
+> +	id = coresight_trace_id_alloc_new_id(id_map, preferred_id, traceid_flags);
+>   	spin_unlock_irqrestore(&id_map->lock, flags);
+>   
+>   	DUMP_ID(id);
+> @@ -255,10 +263,19 @@ EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id_map);
+>   
+>   int coresight_trace_id_get_system_id(void)
+>   {
+> -	return coresight_trace_id_map_get_system_id(&id_map_default);
+> +	/* prefer odd IDs for system components to avoid legacy CPU IDS */
+> +	return coresight_trace_id_map_get_system_id(&id_map_default, 0,
+> +			TRACE_ID_PREFER_ODD);
+>   }
+>   EXPORT_SYMBOL_GPL(coresight_trace_id_get_system_id);
+>   
+> +int coresight_trace_id_get_static_system_id(int trace_id)
+> +{
+> +	return coresight_trace_id_map_get_system_id(&id_map_default,
+> +			trace_id, TRACE_ID_REQ_STATIC);
+> +}
+> +EXPORT_SYMBOL_GPL(coresight_trace_id_get_static_system_id);
+> +
+>   void coresight_trace_id_put_system_id(int id)
+>   {
+>   	coresight_trace_id_map_put_system_id(&id_map_default, id);
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/drivers/hwtracing/coresight/coresight-trace-id.h
+> index 9aae50a553ca..db68e1ec56b6 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
+> @@ -116,6 +116,15 @@ int coresight_trace_id_read_cpu_id_map(int cpu, struct coresight_trace_id_map *i
+>    */
+>   int coresight_trace_id_get_system_id(void);
+>   
+> +/**
+> + * Allocate a CoreSight static trace ID for a system component.
+> + *
+> + * Used to allocate static IDs for system trace sources such as dummy source.
+> + *
+> + * return: Trace ID or -EINVAL if allocation is impossible.
+> + */
+> +int coresight_trace_id_get_static_system_id(int id);
+> +
+>   /**
+>    * Release an allocated system trace ID.
+>    *
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index c13342594278..129795873072 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -662,6 +662,7 @@ void coresight_relaxed_write64(struct coresight_device *csdev,
+>   void coresight_write64(struct coresight_device *csdev, u64 val, u32 offset);
+>   
+>   extern int coresight_get_cpu(struct device *dev);
+> +extern int coresight_get_static_trace_id(struct device *dev, u32 *id);
+>   
+>   struct coresight_platform_data *coresight_get_platform_data(struct device *dev);
+>   struct coresight_connection *
 
-No, what you have now is fine. I wouldn't add a specific helper for
-this. In contrast to the pid the pidfs mount never goes away.
 
