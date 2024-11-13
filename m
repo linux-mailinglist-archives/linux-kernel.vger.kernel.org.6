@@ -1,101 +1,174 @@
-Return-Path: <linux-kernel+bounces-407646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCBD9C70CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:36:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 132C79C708D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:26:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4DFBB28AAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:25:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA0342859FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4905A1E7640;
-	Wed, 13 Nov 2024 13:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F521EE018;
+	Wed, 13 Nov 2024 13:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZMSfxy1J"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NKXgmslH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8F91E048F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091A61DF737;
+	Wed, 13 Nov 2024 13:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731504326; cv=none; b=DyOS68na6/6PbHFY3F1whYyyn2vAhLqUe3z+ZaG7Jzt4Z2Apcnjph/SlRRYs/bY6cELgmXUxDrHaU9n4sZroV80mGk46WOQysPoTaSkV7PSyBRQEa+kYY+wwjtAks7/2EJaRd6lt+20jKPK8sDM7zeSbPGP0GdO+2bqv55ZFmJg=
+	t=1731504391; cv=none; b=kTh+nTYJ9MYNUBdExkREcaQ0EXI9WegdLZ6ZcPEvMgGE4tqq8AlXcLIgw0hl6AstkCM7HlnG5XIHbSBmhiJ9N2u1awRJ0BAUmHKBYSgzFu2faqAGyc4DwIgXE1rCrDHv7eaJwvM803Yb4P5MqVepAHa5cwIsU7mhqtEoe7Ltk84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731504326; c=relaxed/simple;
-	bh=tdm8/Adv+5ZGDymXWImoKTuoeLBiyC6kmUm06DeTBBg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kmVWQZiTrndEQOXL164nefqDAFa1En+kp0+em8plh3XMQZXtVfDkC6tMZXXNw6XeKedhkC8UsXfD37in969Qz/zK1kBb+9NwglOPxYdafx7Evf6Y01uEXiqgCWxn3UeLETNv6JqCWApeuxzYekol+/ZQhdaLQO8ZWESsWIpFw+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZMSfxy1J; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso64183291fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:25:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731504323; x=1732109123; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tdm8/Adv+5ZGDymXWImoKTuoeLBiyC6kmUm06DeTBBg=;
-        b=ZMSfxy1JTsbmg4qE5PXwmnmHtp9WZnLl2sATgck7XMFp1elK++P0LEdIJXhh4HRmbV
-         Ufg4bj6NXxGW+XUpQ1xkWGGFvQsnDm7MXqv+oUaPBAQg822JJ4U0844R3S5NXIE6HW90
-         tC7f6Auh+3Lu9ZX/v+FHyla95yyj4Rd2xshrsXQHTjX0lOvvRq0bNMvFd5JIWd3DvrTu
-         d8ipHONVSyvsqpXcdW1BnudjPBJWDvDoxWave+gSd4q3YDdvFPhOPdedm9Gy5USLVo9Y
-         gjDtGSmyoE/333NxeYv3bPm3nnzTLJvkb0O/EuTLsNtN9HlgIcDQ8xPVHAxkA0Xrq8NE
-         dhgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731504323; x=1732109123;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tdm8/Adv+5ZGDymXWImoKTuoeLBiyC6kmUm06DeTBBg=;
-        b=slcwscTiHfKBG34PT8YknzUCWHBQrdQiGLiikIKV7q2WcfA9P3MmhLKiyxkGJiU+Ka
-         pClXJoMV6O+DhnRuoUgfRP2yFZsVZDGBP/BR4nFJtkYSB6m4efbe8KLF9n3a3mUKC3Ri
-         kDPFmn2CxJ+FRAAb1rRRWlYLEi82SpmJEYxyiN8m71BJpL8VXmN0w2DGFwUllF1YxR7J
-         YKPKEdmQVeu2EgywEFuQ8iRa0u5j2oOEt/CvWhwnHd91qSdAcB3R9qud/VvIdF4rkE4R
-         52rZfEWYijjm9s8b0mVkOb0R7nmBYbKEfG7RYtsPUMsxc0NkwmkLiTvWfSPxQwXgQjU0
-         co3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXOKbwhzwBetnSRu3W5UBjJp5sxdDfnTxoUpID/TeR+wnaobhK0xety5mNOIMv4GtsxdWq/iAreRQ4Qc/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyFldy87dBVyaCzS3bF7bpHKZUzndLyxDm83LPDRWFNaSSq2/7
-	nSHfFn2c80sSGnPdsS83yL8SyPSwvq6ZOswcsnPk/QS/dgL2G+Qd04es0GPID6PW4z/7pXWKxOk
-	6Wm+sQzpLNhNb+nuoHZBPe5qBYEWm3M+NgbKtSw==
-X-Google-Smtp-Source: AGHT+IHX8+zHy2cRQuozOk3orjfKceKGL6x8ZLfWGh9apX7pumtVpc991puIgqUN2OLaLTkg6vBcgQb/2f4+fVGfe7I=
-X-Received: by 2002:a2e:a90c:0:b0:2f3:f7cf:2f01 with SMTP id
- 38308e7fff4ca-2ff4c674adamr15664021fa.41.1731504323148; Wed, 13 Nov 2024
- 05:25:23 -0800 (PST)
+	s=arc-20240116; t=1731504391; c=relaxed/simple;
+	bh=OYPuaE2+AnUxXcJi5nXMxJhfuKUqJgkZ5AbDTz/mMms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uEOSiuUrWQ6BIBOchLx2M8Mp4H7gM9yUS9Q8ZrD5I0TtwAuAzt7CdGX+CbQ0NNnXEL/Www0laMLsKUSS05MIz3pL6XRhcIpdSfhPyS0wBfDj5/wgvskHNmRMSp7acWF8h4jZRZbnoORyeMgQn6/F6pK3vqNm0TrIkjFtJV0uC2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NKXgmslH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E717C4CECD;
+	Wed, 13 Nov 2024 13:26:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731504390;
+	bh=OYPuaE2+AnUxXcJi5nXMxJhfuKUqJgkZ5AbDTz/mMms=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NKXgmslHh7yaccvhogJAePw2LjZfji15iqQ2t5WPDLuuldRRNzcb3xTb5iirqMWw7
+	 7MPrCryJxt2sz85HC/EK7LJeMfj/xr1WRWpitbl8i4Qw5RkAO56eNUqV+1fKf4MRnx
+	 VnXO7+6aqbal13ZFyfl98OHJPDBvcHECJl7nspmyL13xw2FuF9Rd2xsn0o2Vs0gvNy
+	 2oXRkuRsfAdyiQvJ7hepTwe03cZ+O2N9Ckn1QEKJsqetvpPOXnx93wMQbHOaQzfhpW
+	 Q2vvvyVPBWbz6XfEmAcjkbp+m1N4WoT+IgYshqr9O45WKJuiybVmJ3KKZPkyxs6Imv
+	 7u+I53MphrjjA==
+Date: Wed, 13 Nov 2024 14:26:26 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Erin Shepherd <erin.shepherd@e43.eu>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	christian@brauner.io, paul@paul-moore.com, bluca@debian.org
+Subject: Re: [PATCH 4/4] pidfs: implement fh_to_dentry
+Message-ID: <20241113-entnimmt-weintrauben-3b0b4a1a18b7@brauner>
+References: <20241101135452.19359-1-erin.shepherd@e43.eu>
+ <20241101135452.19359-5-erin.shepherd@e43.eu>
+ <20241113-erlogen-aussehen-b75a9f8cb441@brauner>
+ <65e22368-d4f8-45f5-adcb-4d8c297ae293@e43.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111023412.3466161-1-ye.zhang@rock-chips.com> <20241111023412.3466161-5-ye.zhang@rock-chips.com>
-In-Reply-To: <20241111023412.3466161-5-ye.zhang@rock-chips.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 13 Nov 2024 14:25:11 +0100
-Message-ID: <CACRpkdYSBTvMdQtJrLza2=--dz49Xz667h7p15P+5zVm5nji5g@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] gpio: rockchip: Set input direction when request irq
-To: Ye Zhang <ye.zhang@rock-chips.com>
-Cc: brgl@bgdev.pl, heiko@sntech.de, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com, 
-	andriy.shevchenko@linux.intel.com, tao.huang@rock-chips.com, 
-	finley.xiao@rock-chips.com, tim.chen@rock-chips.com, 
-	elaine.zhang@rock-chips.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <65e22368-d4f8-45f5-adcb-4d8c297ae293@e43.eu>
 
-On Mon, Nov 11, 2024 at 3:34=E2=80=AFAM Ye Zhang <ye.zhang@rock-chips.com> =
-wrote:
+On Wed, Nov 13, 2024 at 02:06:56PM +0100, Erin Shepherd wrote:
+> On 13/11/2024 13:09, Christian Brauner wrote:
+> 
+> > Hm, a pidfd comes in two flavours:
+> >
+> > (1) thread-group leader pidfd: pidfd_open(<pid>, 0)
+> > (2) thread pidfd:              pidfd_open(<pid>, PIDFD_THREAD)
+> >
+> > In your current scheme fid->pid = pid_nr(pid) means that you always
+> > encode a pidfs file handle for a thread pidfd no matter if the provided
+> > pidfd was a thread-group leader pidfd or a thread pidfd. This is very
+> > likely wrong as it means users that use a thread-group pidfd get a
+> > thread-specific pid back.
+> >
+> > I think we need to encode (1) and (2) in the pidfs file handle so users
+> > always get back the correct type of pidfd.
+> >
+> > That very likely means name_to_handle_at() needs to encode this into the
+> > pidfs file handle.
+> 
+> I guess a question here is whether a pidfd handle encodes a handle to a pid
+> in a specific mode, or just to a pid in general? The thought had occurred
+> to me while I was working on this initially, but I felt like perhaps treating
+> it as a property of the file descriptor in general was better.
+> 
+> Currently open_by_handle_at always returns a thread-group pidfd (since
+> PIDFD_THREAD) isn't set, regardless of what type of pidfd you passed to
+> name_to_handle_at. I had thought that PIDFD_THREAD/O_EXCL would have been
 
-> Since the GPIO can only generate interrupts when its direction is set to
-> input, it is set to input before requesting the interrupt resources.
->
-> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+I don't think you're returning a thread-groupd pidfd from
+open_by_handle_at() in your scheme. After all you're encoding the tid in
+pid_nr() so you'll always find the struct pid for the thread afaict. If
+I'm wrong could you please explain how you think this works? I might
+just be missing something obvious.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> passed through to f->f_flags on the restored pidfd, but upon checking I see that
+> it gets filtered out in do_dentry_open.
 
-Yours,
-Linus Walleij
+It does, but note that __pidfd_prepare() raises it explicitly on the
+file afterwards. So it works fine.
+
+> 
+> I feel like leaving it up to the caller of open_by_handle_at might be better
+> (because they are probably better informed about whether they want poll() to
+> inform them of thread or process exit) but I could lean either way.
+
+So in order to decode a pidfs file handle you want the caller to have to
+specify O_EXCL in the flags argument of open_by_handle_at()? Is that
+your idea?
+
+> 
+> >> +static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
+> >> +					 struct fid *gen_fid,
+> >> +					 int fh_len, int fh_type)
+> >> +{
+> >> +	int ret;
+> >> +	struct path path;
+> >> +	struct pidfd_fid *fid = (struct pidfd_fid *)gen_fid;
+> >> +	struct pid *pid;
+> >> +
+> >> +	if (fh_type != FILEID_INO64_GEN || fh_len < PIDFD_FID_LEN)
+> >> +		return NULL;
+> >> +
+> >> +	pid = find_get_pid_ns(fid->pid, &init_pid_ns);
+> >> +	if (!pid || pid->ino != fid->ino || pid_vnr(pid) == 0) {
+> >> +		put_pid(pid);
+> >> +		return NULL;
+> >> +	}
+> > I think we can avoid the premature reference bump and do:
+> >
+> > scoped_guard(rcu) {
+> >         struct pid *pid;
+> >
+> > 	pid = find_pid_ns(fid->pid, &init_pid_ns);
+> > 	if (!pid)
+> > 		return NULL;
+> >
+> > 	/* Did the pid get recycled? */
+> > 	if (pid->ino != fid->ino)
+> > 		return NULL;
+> >
+> > 	/* Must be resolvable in the caller's pid namespace. */
+> > 	if (pid_vnr(pid) == 0)
+> > 		return NULL;
+> >
+> > 	/* Ok, this is the pid we want. */
+> > 	get_pid(pid);
+> > }
+> 
+> I can go with that if preferred. I was worried a bit about making the RCU
+> critical section too large, but of course I'm sure there are much larger
+> sections inside the kernel.
+
+This is perfectly fine. Don't worry about it.
+
+> 
+> >> +
+> >> +	ret = path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
+> >> +	if (ret < 0)
+> >> +		return ERR_PTR(ret);
+> >> +
+> >> +	mntput(path.mnt);
+> >> +	return path.dentry;
+> >>  }
+> 
+> Similarly here i should probably refactor this into dentry_from_stashed in
+> order to avoid a needless bump-then-drop of path.mnt's reference count
+
+No, what you have now is fine. I wouldn't add a specific helper for
+this. In contrast to the pid the pidfs mount never goes away.
 
