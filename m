@@ -1,147 +1,115 @@
-Return-Path: <linux-kernel+bounces-408035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5689A9C79D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:21:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71AFF9C795A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:55:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8A84B2CC07
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:50:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E6E282955
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE9F1DFE06;
-	Wed, 13 Nov 2024 16:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEE91FF5F2;
+	Wed, 13 Nov 2024 16:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vly5IlJu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EBHpjLZQ"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5BA16DEA2
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5418770829
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731516612; cv=none; b=A4+P8TDfYgxB3DzCkC2rx/i9fGA1g+cRm3ctzvM0M57+XqViL0uulL3IrrZE0rI3YBKCNPe0riVDb1bSFBrIXnZ7w8brvwWtx40Z31AbU3u+vygB93JXzxFpDLgkUF9QGyYsi7hO0zkyRE2x5cBaxSFqx1k/YIqPF+vq6NdFZOA=
+	t=1731516928; cv=none; b=B3bqBcqa64vTg6hmSSthWSWbyNsAB7XR3PciYeKrK67d42/573sHeZxjSAkSGScr8+zmJex5uZeAsmgNYmkmo+GCbhOV/6dEZ6XhZ77SnIEThzBKaD8J7MdSCi+Qo199G+Q0hb54cAxZYWI156amcPXcdYrviL0bmfMwPcmeBe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731516612; c=relaxed/simple;
-	bh=EW2dt4u4f+4Lo5MovdMlHFcVBcY8DGZB3JoAN1l2EQo=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gJxlJF2REYNnz4yOw0sFjo7p/D1eNViWVLkngZNnvyDepMiU3jJ+C8p4aSBNxYwqd6hPMCGtWt6c56Jvb5cou5hH8T/3fKP5Xd/NGHUqguoQ8eKIcJMCsIrzZJk46GoNXC5KNVVFbO8c7BTp/vyFjzCuhIb5UkvEquCk1VeqvEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vly5IlJu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731516610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=05s4oWNKFdaj5fgh/SGPavDFEuEiB9rS0OJ8HR13gHY=;
-	b=Vly5IlJux2FAWocr+/uk8WhNuOkN9YeC8F9cyFB7x4wDpIVpXgzPkBXt+g+9BNTqAjSTtr
-	Zdr3IeKAmn5i3vMC58o8gb7wqOeD6RRgsjx+aXxYa5Vo1amhy8k3In7NGyMF0Zsks+HzHH
-	P9fAOJmsxzyFBdkO02jZMoxIE7zCqqo=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-546-AfJeWCI0P0eS68h2WDeiNw-1; Wed, 13 Nov 2024 11:50:09 -0500
-X-MC-Unique: AfJeWCI0P0eS68h2WDeiNw-1
-X-Mimecast-MFC-AGG-ID: AfJeWCI0P0eS68h2WDeiNw
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83aa6bcd7b3so855817039f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:50:09 -0800 (PST)
+	s=arc-20240116; t=1731516928; c=relaxed/simple;
+	bh=/Tjor6KKk4xz4p2UNnx1L3Hj+WRdCr3/2Kvmk9fys44=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fXkRgnKKG8HLu7FFo0YacxKryN4IkR34FXyt9qC2HNRMMxLqIml9BS7rMf4yYRaMm12bOsox4XufuarMW6YXMhrq/SfYyh6peGN4rEQjmLDpqG/kb944/sAxmy6OxSnqJfL6BRLm0EP7pF9oAq6lAZa405fixho9kfQbXMxHimE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EBHpjLZQ; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e60e57a322so4304596b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:55:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731516924; x=1732121724; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x1zaQxPIwogRJjHGN9609O4s9HbrZpDwx8BCPdVZsJE=;
+        b=EBHpjLZQXj+/e9GYrmZ4S9I0jW3osiycHkIQghrBVC7gZamF8+BeHKvn6J/5pWoV6p
+         Ex7mFXp15e6Wnm7A680mbc0sv6oZB0yTP79m1S0YCEdVfhR+v8w6Bt79hTgTReYfGdWY
+         s2QcizovsOdJTuyyQBiwau1UTV4fFkHhpCNu4snMETQtlVRX+/dYJpVuMHx1pQcbWhMf
+         NNKOhaDDN+Vl6tB5XOnhUC00NZiwV/2Qo/s7qTLjsa+nipMDhigjeuVE5CuPqWYo3J+1
+         T6Pua4rviHOwKCPWkWNvxLSIhKUyJGSGZggJW1NldJ1/BpUtsRtmCu7F6cHqSZw9Ovg5
+         JCvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731516608; x=1732121408;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=05s4oWNKFdaj5fgh/SGPavDFEuEiB9rS0OJ8HR13gHY=;
-        b=lR8r/mqEVWVml7U0Qk6KPQGGaP2bMeAES2NhU2OkGN7w+OqM24MfObOQFdl4aa40eL
-         0Pwh+BxhhxzuNLkipzka1Ofnbh8e8Sn2e+/EQ+OkWVeC8DwkBS/+vkjC7TnFcBYzCpQe
-         jDNbHJGj0uytjrUhBXYUGNy5yuvJG+NbQDeE7YdFXOU2Hsx9RjfromR/VDHMSb7bazrA
-         T2ogW4EzntyrzwtMaI1es6BgITQZ4K/hAtorvTFpV6+nMCn/Q54j4FuXg9sGDzeS6qry
-         f7nX4AR/5tYZ1KZjxDB9w5wgHxl9U4EMXHOy1jujMK4hfK1uHWpJifBkX4fVNdk4gWbX
-         lbcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvGznD2qIODyuzGUMwZooHxYFRx+BjDBuupldjmko0VbgorAZKnjZbGP1cwRo//FfZeSEMiXz+VHFzb5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9VXb24J7SZqquMY4s2ov6csQx3af3haL9bN4qVp/DLbpycR9W
-	CEC9CvCwg7Q5b3hWx4BPTAGslocpxr7lj/dio0G7x6T3a7S0TkqnPDLmwhRM8Ap1jpVruHsrmuE
-	jim0bmcmv+wDtk3iRbZztHspjzO2C376JRMmEJsvwduEaqbdWkQ7dZa6nodY1bA==
-X-Received: by 2002:a05:6602:3407:b0:82a:9cab:9be1 with SMTP id ca18e2360f4ac-83e033538f3mr2423351439f.12.1731516608422;
-        Wed, 13 Nov 2024 08:50:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH7l+QLffK/cVeiuqm6Xzcx7aCFWBqZmbfWM+eCeA2GW4bG7/8ljaIQOJOy01BtTb/K9amXGA==
-X-Received: by 2002:a05:6602:3407:b0:82a:9cab:9be1 with SMTP id ca18e2360f4ac-83e033538f3mr2423344939f.12.1731516607705;
-        Wed, 13 Nov 2024 08:50:07 -0800 (PST)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de7874396bsm2950837173.46.2024.11.13.08.50.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 08:50:07 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <c30adf62-3012-46fe-ae52-2f6de1e20718@redhat.com>
-Date: Wed, 13 Nov 2024 11:50:05 -0500
+        d=1e100.net; s=20230601; t=1731516924; x=1732121724;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x1zaQxPIwogRJjHGN9609O4s9HbrZpDwx8BCPdVZsJE=;
+        b=SSXlXCaqVyz27jqZ90bO/5K2LaN2MV/fqaK6kw+fv66VS4XuqZU+iQpF7Mic9TBind
+         4PtR6fC4ptUj/STi4PU923YafAJQlAsKgKmHxd+snwxCjLRg+BkNyhVRg2GJ2X/iKPOK
+         XT8elGMA9lFh6NkPi5moVbNAsWQR7nxLK391kcI/0r2ZP0MTc7eVhTbH+uAIJ58Q1ZtB
+         FvTWr6CgKz52Z/DQqBLqHdlCC/IXws0JSdi6u8ajKQJoYScFAOJRlYNGkrtl4rhUx6f9
+         VRyz3YxIMQeIC8Slx6MuTR8Y0s9cjAQcQJa+4/n07Z2PGaMF00OI9a3KyzYruVn518um
+         GYXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpBtguBhx19Ii2E4iYakoPPJLYFdUwYyNRFxp8FZjfRnR/FwsD0tKJa/Ss61e55FIwJ8RaPYy+oskkkLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5+EJaG/PnpF+pmM5oPS0AN1QepvLAEY+xxBecaZE3eh5pwu2X
+	PzmgMEA1mycN4DSeY0RnMz3OobkF5EtnimPvIwQ0qgES6QqygjGwVDwambArrIU=
+X-Google-Smtp-Source: AGHT+IE1xuqZj09odVIcRE3lFsD/PKcU5+G/h9X7w5dwUoGWic8F3HSh6Ho0wCSYo0NNczzVP7u5Hg==
+X-Received: by 2002:a05:6870:6107:b0:287:c014:c979 with SMTP id 586e51a60fabf-295600989c8mr17393653fac.13.1731516924484;
+        Wed, 13 Nov 2024 08:55:24 -0800 (PST)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-295e8fe5c61sm873432fac.23.2024.11.13.08.55.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 08:55:24 -0800 (PST)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH 0/2] iio: adc: ad4695: move dt-bindings header
+Date: Wed, 13 Nov 2024 10:55:18 -0600
+Message-Id: <20241113-iio-adc-ad4695-move-dt-bindings-header-v1-0-aba1f0f9b628@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] sched/deadline: Correctly account for allocated
- bandwidth during hotplug
-To: Waiman Long <llong@redhat.com>, Juri Lelli <juri.lelli@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-References: <20241113125724.450249-1-juri.lelli@redhat.com>
- <20241113125724.450249-3-juri.lelli@redhat.com>
- <8e55c640-c931-4b9c-a501-c5b0a654a420@redhat.com>
- <ZzTWkZJktDMlwQEW@jlelli-thinkpadt14gen4.remote.csb>
- <b7c75f06-1ab5-48c4-b2fb-521508f20f9b@redhat.com>
-Content-Language: en-US
-In-Reply-To: <b7c75f06-1ab5-48c4-b2fb-521508f20f9b@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPbZNGcC/x2NwQqDMBAFf0X23IVuTBX7K6WH6K76DiYlKVIQ/
+ 73BwxzmMnNQsQwr9GwOyrajIMUqcmtoWkNcjKHVyd2dF5GWgcRBp4rvhgdvaTfWL4+IirgUXi2
+ oZdZucM7mXqX1VGOfbDN+1+j1Ps8/vhsUhngAAAA=
+To: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.1
 
+During review, no one caught that the dt-bindings header was not in the
+preferred location when the bindings were created. Move the header to
+the correct location.
 
-On 11/13/24 11:42 AM, Waiman Long wrote:
->
-> On 11/13/24 11:40 AM, Juri Lelli wrote:
->> On 13/11/24 11:06, Waiman Long wrote:
->>
->> ...
->>
->>> This part can still cause a failure in one of test cases in my cpuset
->>> partition test script. In this particular case, the CPU to be 
->>> offlined is an
->>> isolated CPU with scheduling disabled. As a result, total_bw is 0 
->>> and the
->>> __dl_overflow() test failed. Is there a way to skip the 
->>> __dl_overflow() test
->>> for isolated CPUs? Can we use a null total_bw as a proxy for that?
->> Can you please share the repro script? Would like to check locally what
->> is going on.
->
-> Just run tools/testing/selftests/cgroup/test_cpuset_prs.sh.
+---
+David Lechner (2):
+      iio: adc: ad4695: move dt-bindings header
+      dt-bindings: iio: adc: adi,ad4695: change include path
 
-The failing test is
+ Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml | 7 ++++---
+ Documentation/iio/ad4695.rst                              | 2 +-
+ MAINTAINERS                                               | 2 +-
+ drivers/iio/adc/ad4695.c                                  | 2 +-
+ include/dt-bindings/iio/{ => adc}/adi,ad4695.h            | 0
+ 5 files changed, 7 insertions(+), 6 deletions(-)
+---
+base-commit: 9dd2270ca0b38ee16094817f4a53e7ba78e31567
+change-id: 20241113-iio-adc-ad4695-move-dt-bindings-header-d6922ef7d134
 
-         # Remote partition offline tests
-         " C0-3:S+ C1-3:S+ C2-3     .    X2-3   X2-3 X2-3:P2:O2=0 .   0 
-A1:0-1,A2:1,A3:3 A1:P0,A3:P2 2-3"
-
-You can remove all the previous lines in the TEST_MATRIX to get to 
-failed test case immediately eliminating unnecessary noise in your testing.
-
-Cheers,
-Longman
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
 
