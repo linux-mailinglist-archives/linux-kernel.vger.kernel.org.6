@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-407828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418DC9C74E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:58:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44AA99C76E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:25:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBDEA1F23D58
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:58:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E277B2BB93
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57E713AA2D;
-	Wed, 13 Nov 2024 14:57:59 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEEC13AD33;
+	Wed, 13 Nov 2024 14:58:19 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6280E2AD21;
-	Wed, 13 Nov 2024 14:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3491CAAC
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731509879; cv=none; b=KMKXUw5+D4rmMuQ4uy3kolYtmeJ+lw+We0l/MsnY1Zgrc3r2HhJkhHEtqt4kzX+TwtR4NKNMKBDKE3E6fM/F7msu8d3vFlxf92Kz6gsKY3Y6T8xVsDqDASHovvaHnojhZ9OplJrOp1BnreR7OrbMFDrTlRfFW0HKejVUKEUPACA=
+	t=1731509899; cv=none; b=B64erbgMaA9deLgXHIHAMzPiGJQ0TZKflALxFHKCmBYA3a4ncql5QfSf6PjaneTgQksmpJXUpbs6bp1rTK7meqW3ustvZ0sEinbN4qlWbbowHy+RHrzEXPgPukztJw2fUyShh3qSoWdCqLk/U91xTnovF1QFV5MwIt640ldECcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731509879; c=relaxed/simple;
-	bh=5JCFyov5MKCRlAdKii3E/dCxGF/WwSiXXi37DywlQL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tGe3g6aArfd9QhH/i7Er7UyZJMtaYGm4aWBI0VS15FOe+ZMOHtHRaP5fXw8Q+O3kBKR8TNzBpDB7xvTFF88lPLKrIXXGGGuGUBBnD87eMpy0UBCyCsXPpHoVFpfRuDM/PEOMHijW5bLc9RakReyUpuFiwcpit4+HCE9udUBB7SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4340FC4CEC3;
-	Wed, 13 Nov 2024 14:57:57 +0000 (UTC)
-Date: Wed, 13 Nov 2024 09:58:16 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Michael Pratt <mcpratt@pm.me>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Peter
- Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
- <vschneid@redhat.com>, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH RESEND 2 1/1] sched/syscalls: Allow setting niceness
- using sched_param struct
-Message-ID: <20241113095816.6ed4cefd@gandalf.local.home>
-In-Reply-To: <82xsONg6yQRk_uyZ0-JkTqF2OjxuM4J8IgoNm45Xc6IXAvtX2lPKYxffzZ9GrhIA1TPhpvFoHx9wqWaH3nQyKWRcBggGIsc_61rMDyfMrOE=@pm.me>
-References: <20241111070152.9781-1-mcpratt@pm.me>
-	<20241111070152.9781-2-mcpratt@pm.me>
-	<20241112103438.57ab1727@gandalf.local.home>
-	<e3Nl9UdWoWuPJauA6X3vNj71jDUwHZYS5b5WSmKCHrU7AyivFG5oLkrL-ewb3IjoQyUouDgZO2T-3WEzBIJ9Uru1AcEDTaVsRzHrukUfto8=@pm.me>
-	<20241112193617.169fefbc@gandalf.local.home>
-	<82xsONg6yQRk_uyZ0-JkTqF2OjxuM4J8IgoNm45Xc6IXAvtX2lPKYxffzZ9GrhIA1TPhpvFoHx9wqWaH3nQyKWRcBggGIsc_61rMDyfMrOE=@pm.me>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731509899; c=relaxed/simple;
+	bh=exdh0jen8gJ9mpwejxT+xqA37fK0mhqlMiPwb78cBzc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cbLg41UusFItNhIGv+6AXa9BJka2+jsocbGCDg0v4NlhSppc86K2ojDix75HAc+jQY4jqY181B88R/uQx919JPGjZGXxAKbmMygARDpKlAkr5l5IldwdKjMJZOmoJI7js68XJsUpAe8Y6Qk4doEJta/N0OMu8zsK+pqPkO1o7b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6ca616500so76504225ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:58:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731509897; x=1732114697;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8GJ/SEsOZ1L2zRPT0EKbNi1emDrxhVhdS5kZc6L38K8=;
+        b=Dq1C052ZHQgWCFm4hSnNU1ylSG411VdigWgkPPae2VL8aN+B75SxHeRaofdVLkeeBC
+         qAnWBWOXuZcK3+eoJAIlbq7TvSRlQDCh02dz3gQOP+ijz9Yi4o3qaC9ew+XwCltzUyZr
+         ApCGVkmEooQW5RCpj0khrlNv1WthZepP7n/szJxswKkldwc5050eTyIe1bsUoj7xnG1w
+         ra3mNc/Pp+QceGHeDEGE4zgKxQBWKvFxgy2jFszWSUuVLU236Jg/Gptde34KPcWe1cEY
+         nelviJPadFkVaKpsabuSM4eAyI/OtcG9CEpYEXpPG0i+oEHCvhzOOhbyrJ5xbAgg4QmH
+         2mxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKSQfOUy1jcvDiEb72/63KxfXPT/qb24ZGl28Y3FlJaWM8qDn8YKZjgFymfYMCLvq8sOmFHtcPuDrvUks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE5Oe+jX/DIvIwnOiH+hjD81PG+aexxZjxieMtqeMJc7D5xo0G
+	J8wcrxmnr/Ko7Ipb1gfuEUbdnb+2DnHxzGP+zU1aooIhEQogXbLenUJylH/SEryMg/4aTrW5OWM
+	B9aKYy7qCGeEReu4Dvbw4t46CfZFyZn240TpxvW/7fAoMiXaI1ddHSA0=
+X-Google-Smtp-Source: AGHT+IFdpJh7swVHysfoFHkNwIHE7i3Gm322gFw+xNV0Im9qT4AgjHK3u54DyfAuje5rwqoW2/jpSgUiJFCeBK78tF2+EyGpGd8U
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1949:b0:3a6:bb36:ac1f with SMTP id
+ e9e14a558f8ab-3a6f1a45467mr205631175ab.22.1731509897270; Wed, 13 Nov 2024
+ 06:58:17 -0800 (PST)
+Date: Wed, 13 Nov 2024 06:58:17 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6734be89.050a0220.1324f8.0049.GAE@google.com>
+Subject: [syzbot] Monthly crypto report (Nov 2024)
+From: syzbot <syzbot+listbb9cdfe92636134be785@syzkaller.appspotmail.com>
+To: davem@davemloft.net, herbert@gondor.apana.org.au, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 13 Nov 2024 06:04:59 +0000
-Michael Pratt <mcpratt@pm.me> wrote:
+Hello crypto maintainers/developers,
 
-> > $ man sched_setscheduler
-> > [..]
-> > SCHED_OTHER the standard round-robin time-sharing policy;
-> > 
-> > SCHED_BATCH for "batch" style execution of processes; and
-> > 
-> > SCHED_IDLE for running very low priority background jobs.
-> > 
-> > For each of the above policies, param->sched_priority must be 0.
-> > 
-> > 
-> > Where we already document that the sched_priority "must be 0".  
-> 
-> I think we should all agree that documentation is a summary of development,
-> not the other way around. Not only that, but this is poor documentation.
-> The kernel is subject to change, imagine using the word "always"
-> for design decisions that are not standardized.
-> A more appropriate description would be
-> "for each policy, sched_priority must be within the range
-> provided by the return of [the query system calls]"
-> just as POSIX describes the relationship.
-> 
-> As far as I can see, the "must be 0" requirement is completely arbitrary,
-> or, if there is a reason, it must be a fairly poor one.
-> However, I do recognize that the actual static priority cannot change,
-> hence the adjustment to niceness instead is the obvious intention
-> to any attempt to adjust the priority on the kernel-side from userspace.
-> 
-> I consider this patch to be a fix for a design decision
-> that makes no sense when reading about the intended purpose
-> of these values, not that it's the only way to achieve the priority adjustment.
-> If anyone considers that something this simple should have been done already,
-> the fact that documentation would have to be adjusted should not block it.
-> Besides, a well-written program would already have been using
-> the functions that return the accepted range before executing
-> the sched_setscheduler() system call with a value that would be rejected.
-> 
-> Am I really the only one to read that you can't set the priority
-> with this system call when I can do it on the command line with the "nice" program
-> which uses a different system call, and ask "what's the point of this restriction?"
+This is a 31-day syzbot report for the crypto subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/crypto
 
-Honestly, I would actually prefer your change. But modifying an existing
-API is above my pay grade ;-)   I think you really need Linus to answer that.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 4 issues are still open and 107 have already been fixed.
 
-Linus?
+Some of the still happening issues:
 
--- Steve
+Ref Crashes Repro Title
+<1> 228     Yes   BUG: unable to handle kernel paging request in crypto_skcipher_encrypt
+                  https://syzkaller.appspot.com/bug?extid=026f1857b12f5eb3f9e9
+<2> 15      Yes   KMSAN: uninit-value in sw842_compress
+                  https://syzkaller.appspot.com/bug?extid=17cae3c0a5b0acdc327d
+<3> 6       Yes   BUG: unable to handle kernel paging request in crypto_shash_update
+                  https://syzkaller.appspot.com/bug?extid=e46f29a4b409be681ad9
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
