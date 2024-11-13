@@ -1,129 +1,168 @@
-Return-Path: <linux-kernel+bounces-407125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E3E79C6925
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:15:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 274329C6928
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:16:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8225FB25856
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:15:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E17DB284A3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CB917A922;
-	Wed, 13 Nov 2024 06:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5614D1779BD;
+	Wed, 13 Nov 2024 06:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmCQpJzd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fzw1Vwo0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218555680;
-	Wed, 13 Nov 2024 06:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640A3BA34;
+	Wed, 13 Nov 2024 06:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731478544; cv=none; b=PwyLvtLJ8gH7fS6fXuTFG3xqDRK8NHLwC5eyDAZq1dO8oXM6LTdoQ9obiY7O4IqdRc7zTA5r7/19FAg7dJ2n3EaJ7r3eSFf7yP3WdLWkelQAvHYzGuwh5IJ82z+byM58EaQJmck+ddecMUs3gbbDML4xBMsuCM2IjcvXRoDM07Y=
+	t=1731478604; cv=none; b=jMFMYM/UVPw2WgDECY9nw8o2mLXCCc48pJy8dRgqGbE59qmDdbhHDpKwzRwGfpB5646+SjLItFWwm/YGJeixHSl+zZcj6X9Y4jpiIM65DsLqTW+7RU/cEuOvJrTKOsLPPeNw5IWLkUHHTJq9zZdnMLhph9Kv9aJtofGQS9Se+/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731478544; c=relaxed/simple;
-	bh=GjHWsGBW2+fujolM2tMANHwifuU0meTtmmBJ4b3ZT90=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=DwuAmxN7pKZPiDB7sQz+k5vGu2hhlf4zUxmtCEB8N69YY368mn/jeZVlrpMTVfeWcqqhM9LDrQQBqrwNwKtuLdJY7J9y86gigfGWxieHHjiDR6qhWuPugO9GqQJbIrPm2T2q/g1kz5sOGY75i9INV93yH3c6mkEmUDbJd9DIjn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmCQpJzd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79179C4CECD;
-	Wed, 13 Nov 2024 06:15:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731478543;
-	bh=GjHWsGBW2+fujolM2tMANHwifuU0meTtmmBJ4b3ZT90=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=qmCQpJzd2ahwxFIOLRTrnGuJ+kFeMPsYIBS0aPzc4h3BS7MXPwxBhDuBL8P5XaAVZ
-	 ABagjtywQEbi2AV19TGV+hMZuv1BAQm/m7PQ3X0xMx8RZoKhIjSZgsZR2Y2kxJlviP
-	 awiL8oQ4Ow5oejzqmbTw1b1ZSiSncj/UAPO9/8WPAYy/NS0oPsBGMY3Vlgud8GBW1z
-	 crzmwWXyqMqr4FtgIhDnkpiNeBkVZiK2OgEqFbei6V0tj6sgIZOAKw4NGehTYpWXZi
-	 JFe8U+7qEtRnPbGFGznPKuQ12JJwPgCrsG4BE+fCaNz518ZMDIZ7pnY2xSV9Ri/qxX
-	 QumlFfgbrpnSw==
-Date: Wed, 13 Nov 2024 00:15:41 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1731478604; c=relaxed/simple;
+	bh=FHM81tIBFRM5Ie/WaKTJyJFIO0yMk+P49yMfam4MxIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=llb5/So8XwWDxR+xnMzPHLcGFCe91tG3DTyJNUj+MrjbQAgENVv8KflBqiByPgMNbFAVGMVq4TGvp7B/7h6HaY5a5MiejwkufM0brHGD1gWGpPO7Cam3OCAiYi5EeI3W1QC1uxdVB7X9vjclg6hJTdf/LqOYMyKBwbSUJp6/zB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fzw1Vwo0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731478596;
+	bh=7Zd64h1B5pjZvnuqa9Jo0l6S6S6sUxdlNThU4gjHi6Q=;
+	h=Date:From:To:Cc:Subject:From;
+	b=fzw1Vwo0Zoz3jnYT50IaQdNXDQ+kHMaMOXKn9BF/Ef0TkKbfHL9C3ZccoCV3F9blZ
+	 brSG1bDLWn590MdzkCzaI3PUjqctTohyZOPmTBi9P82p0pMEUGTn4Exn72sGc41EPn
+	 Ug3eqhZqCDbm4yWg2k9v44YYz382bOLMqsGQ932eZfdWPlQMJVLhz7JSKJ/wuaWs1t
+	 PPOQAlg9OLsfOalXQj3iwMIJO+sCZo7MG1ZmmxhoIr/NdSDdri6Z3oofqWfT1d2KqJ
+	 opiXD+pXUa7oLc9d3M6BKCPf+SJ+PpHyMElNSUI4D55uUcqGTac4x0v2uOwHLpv7p9
+	 NcsO75iwUy7OQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XpCjJ5Z0Cz4wbR;
+	Wed, 13 Nov 2024 17:16:36 +1100 (AEDT)
+Date: Wed, 13 Nov 2024 17:16:38 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Aliet Exposito Garcia
+ <aliet.exposito@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the rust tree with the ftrace tree
+Message-ID: <20241113171638.5d1343e5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: krzk+dt@kernel.org, mcoquelin.stm32@gmail.com, davem@davemloft.net, 
- conor+dt@kernel.org, pabeni@redhat.com, richardcochran@gmail.com, 
- devicetree@vger.kernel.org, joabreu@synopsys.com, edumazet@google.com, 
- linux-kernel@vger.kernel.org, kuba@kernel.org, schung@nuvoton.com, 
- yclu4@nuvoton.com, ychuang3@nuvoton.com, 
- linux-stm32@st-md-mailman.stormreply.com, openbmc@lists.ozlabs.org, 
- linux-arm-kernel@lists.infradead.org, alexandre.torgue@foss.st.com, 
- netdev@vger.kernel.org, andrew+netdev@lunn.ch
-To: Joey Lu <a0987203069@gmail.com>
-In-Reply-To: <20241113051857.12732-2-a0987203069@gmail.com>
-References: <20241113051857.12732-1-a0987203069@gmail.com>
- <20241113051857.12732-2-a0987203069@gmail.com>
-Message-Id: <173147854152.3007386.10475661912425454611.robh@kernel.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: net: nuvoton: Add schema for MA35
- family GMAC
+Content-Type: multipart/signed; boundary="Sig_/phQEpWEK1bGSpa3TGyrFSzq";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/phQEpWEK1bGSpa3TGyrFSzq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 13 Nov 2024 13:18:55 +0800, Joey Lu wrote:
-> Create initial schema for Nuvoton MA35 family Gigabit MAC.
-> 
-> Signed-off-by: Joey Lu <a0987203069@gmail.com>
-> ---
->  .../bindings/net/nuvoton,ma35d1-dwmac.yaml    | 170 ++++++++++++++++++
->  1 file changed, 170 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml
-> 
+Hi all,
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Today's linux-next merge of the rust tree got a conflict in:
 
-yamllint warnings/errors:
+  rust/kernel/lib.rs
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml: ignoring, error in schema: properties: compatible
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml: properties:compatible: [{'items': [{'enum': ['nuvoton,ma35d1-dwmac']}, {'const': 'snps,dwmac-3.70a'}]}] is not of type 'object', 'boolean'
-	from schema $id: http://json-schema.org/draft-07/schema#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml: properties:compatible: [{'items': [{'enum': ['nuvoton,ma35d1-dwmac']}, {'const': 'snps,dwmac-3.70a'}]}] is not of type 'object', 'boolean'
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml: properties:clock-names: 'oneOf' conditional failed, one must be fixed:
-	[{'const': 'stmmaceth'}, {'const': 'ptp_ref'}] is too long
-	[{'const': 'stmmaceth'}, {'const': 'ptp_ref'}] is too short
-	False schema does not allow 2
-	1 was expected
-	hint: "minItems" is only needed if less than the "items" list length
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml: properties:clocks: 'oneOf' conditional failed, one must be fixed:
-	[{'description': 'MAC clock'}, {'description': 'PTP clock'}] is too long
-	[{'description': 'MAC clock'}, {'description': 'PTP clock'}] is too short
-	False schema does not allow 2
-	1 was expected
-	hint: "minItems" is only needed if less than the "items" list length
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml: 'oneOf' conditional failed, one must be fixed:
-	'unevaluatedProperties' is a required property
-	'additionalProperties' is a required property
-	hint: Either unevaluatedProperties or additionalProperties must be present
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.example.dtb: /example-0/ethernet@40120000: failed to match any schema with compatible: ['nuvoton,ma35d1-dwmac']
-Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.example.dtb: /example-1/ethernet@40130000: failed to match any schema with compatible: ['nuvoton,ma35d1-dwmac']
+between commit:
 
-doc reference errors (make refcheckdocs):
+  ad37bcd965fd ("rust: add tracepoint support")
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241113051857.12732-2-a0987203069@gmail.com
+from the ftrace tree and commit:
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+  ce1c54fdff7c ("rust: kernel: move `FromBytes` and `AsBytes` traits to a n=
+ew `transmute` module")
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+from the rust tree.
 
-pip3 install dtschema --upgrade
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+--=20
+Cheers,
+Stephen Rothwell
 
+diff --cc rust/kernel/lib.rs
+index 5dc3f2c11031,bf8d7f841f94..000000000000
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@@ -60,7 -56,7 +63,8 @@@ pub mod str
+  pub mod sync;
+  pub mod task;
+  pub mod time;
+ +pub mod tracepoint;
++ pub mod transmute;
+  pub mod types;
+  pub mod uaccess;
+  pub mod workqueue;
+@@@ -89,32 -85,9 +93,32 @@@ pub trait Module: Sized + Sync + Send=20
+      fn init(module: &'static ThisModule) -> error::Result<Self>;
+  }
+ =20
+ +/// A module that is pinned and initialised in-place.
+ +pub trait InPlaceModule: Sync + Send {
+ +    /// Creates an initialiser for the module.
+ +    ///
+ +    /// It is called when the module is loaded.
+ +    fn init(module: &'static ThisModule) -> impl init::PinInit<Self, erro=
+r::Error>;
+ +}
+ +
+ +impl<T: Module> InPlaceModule for T {
+ +    fn init(module: &'static ThisModule) -> impl init::PinInit<Self, erro=
+r::Error> {
+ +        let initer =3D move |slot: *mut Self| {
+ +            let m =3D <Self as Module>::init(module)?;
+ +
+ +            // SAFETY: `slot` is valid for write per the contract with `p=
+in_init_from_closure`.
+ +            unsafe { slot.write(m) };
+ +            Ok(())
+ +        };
+ +
+ +        // SAFETY: On success, `initer` always fully initialises an insta=
+nce of `Self`.
+ +        unsafe { init::pin_init_from_closure(initer) }
+ +    }
+ +}
+ +
+  /// Equivalent to `THIS_MODULE` in the C API.
+  ///
+- /// C header: [`include/linux/export.h`](srctree/include/linux/export.h)
++ /// C header: [`include/linux/init.h`](srctree/include/linux/init.h)
+  pub struct ThisModule(*mut bindings::module);
+ =20
+  // SAFETY: `THIS_MODULE` may be used from all threads within a module.
+
+--Sig_/phQEpWEK1bGSpa3TGyrFSzq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc0REYACgkQAVBC80lX
+0Gxsegf/R97g7fD2p7OnMLV8l4qPmLZg3ThuQORm4Sm7an69nANyUSzAMe1+5YNA
+9foUACb5LT9m/wp8O8DxlWuZjw6ojP7fEQq6+7jICaa9JQjm0nsZZnp8Tcw0+et5
+k7dx/lKQXuKzsxoxjizGQWjen99zN7G+3AaiBPC32EmWFgFNEVdyCtDFHdqgZxZ8
+clK+WsWvEwmcwHLPplLSZET4toF3MVwmxS/uHiFi8MfL/zZBT9Mb/dMDtGA/m/4B
+2/NGzNHCxZqmkpJruruG9Gs3PbzsjDCLzgGNUlWCWHrZ2+8ikRTfjtDF01UHifA2
+Yt7Ii6xZnd8ra3FACKPTiSuIpwNMnA==
+=f3vH
+-----END PGP SIGNATURE-----
+
+--Sig_/phQEpWEK1bGSpa3TGyrFSzq--
 
