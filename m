@@ -1,127 +1,152 @@
-Return-Path: <linux-kernel+bounces-408180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F2629C7B7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:46:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7062C9C7B84
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:47:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62BEE2892EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:46:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33DCD28967C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B242040AD;
-	Wed, 13 Nov 2024 18:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA55A20402F;
+	Wed, 13 Nov 2024 18:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="agLeTEUf"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iTSUZEO+"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5130E16F0EB
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E960C201113;
+	Wed, 13 Nov 2024 18:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731523564; cv=none; b=vAMSa+cRTrHQiuFuUqHlH3Oe/vsdLb4O0x5pwsHOVScNaCPDd7JOV+2b7PmZD9qyagyfdP8imB2ZcufHq229CUS6iCfCfUNlFnWGV3nYj+3IqJsg7uhM0zEgAZx4REKFhkW79tuVkRPcvJCTpIY9Ly6C1e/Q7M7dXijQMiZopUk=
+	t=1731523621; cv=none; b=Y7UPKNvCG+h2LDdLZa0Ntx2r70N6SvfjbpVzPkN/tcQuqacsuYJBOy8TnJ7Q7Yg8QbANMRbL8M1EsscTMByaxYzMOVFD1acQFcGsIhXx0mm/Z3XefkAGpHLOk2HYWgcIXQSfY3Sz6UGzkPdfLeomlNKHkOsDaRekSd9bcytIoWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731523564; c=relaxed/simple;
-	bh=qJpxyAs4H+dTLoeEZp4VwJIFz2j9VXgI9Zeo2ZAExbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WZSK8uwExCIoHiu7+gJKBm1EdE++uRx0j25yt9VhRC9/c2UBfs5sH5cheivfKP2/uzF2fgXJMbIpSH5zt0AcMv018pqLNzySDDzOi9u1qvlNFByA+z+i/wNsj9OSAqOrGznGRj5yeH+pKlW+Fo6T9MwC/xSF03tgLjAqdfYs23o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=agLeTEUf; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-28854674160so3141713fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:46:01 -0800 (PST)
+	s=arc-20240116; t=1731523621; c=relaxed/simple;
+	bh=XU9d3rKo9WSucMjqxcPq+qWWtgplPMCrxxBOfEENDU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=daoiZDLD5ny+ojOB934kImtUolFqJ0w9BhQWfNQ7Wi9kEs5mpRGwTKqys0uyEPNjiteC3TpRUZ+91bxTTSd6ZGRt8P+NgfNGPTM6tAAvjcJ0CplfPY6SGLzXUe8qkaLNhW/0woed+WvyNfL/mGvXRi22BuPQwbjYsNLSBquSqzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iTSUZEO+; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cbcd71012so84946265ad.3;
+        Wed, 13 Nov 2024 10:46:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731523560; x=1732128360; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mJ7Y/M/QGwKyB5CvuHkhSVy962R5KxlMZ/Ip0/+E6l8=;
-        b=agLeTEUfStG/SX5jUqWSsYj/dB3fR/2DLhiNGYufvz2ex0Zd9/vxeCEMmw7dd3RmDW
-         LUm5VWMTPeXf3ge4H1Cqru8HdrMmQQYDskEnYp2rBBedrFaV7pCb847eIrm4K3DxSeMa
-         N64H5jiG0cbHDY6gNICEdWroO7+/Bk07v0p50SbxUWFMxEn3OmcHOdfDW/NeGJMJImul
-         j7R07k0AOPf0fy4bccU6qS/BfvXapK/jEfvxliKN00uDF2laPh41HxbEaaKzdAjfeBaL
-         8lyufTGBRYrKJ/05rPTpUcy0LDekRpCpND51sPh8Bgo03yaSLUv7APpryml0IgqLmfk5
-         v2wQ==
+        d=gmail.com; s=20230601; t=1731523619; x=1732128419; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P33VoikjBm5duNkx8xaeWrHYF0P7DMXAt94tpC31J2w=;
+        b=iTSUZEO+dFygJOo9EhXc5n5rJQbJBPkmCA/i0Ezyommu42NNnn9UmtcofYAEiR0nwH
+         2CqsZHNO/NsIMNprMESalvTBh+TNKHoZEnbWI34y+bByQibAaJRqiSce1iYYSO7xxiCc
+         DdikANeVYeoNG0RSOZ0TlDo374woAiGIR+Kzm5GsFRLD6r1ATyQkNraytDIEPRVZoZPJ
+         TUmVrKgjp+EhswHcxMXmUL7OKmHthlaVLMM3sUr+oyp8JkoVUTKzwvjz1Scfw7k8Cq+Z
+         eyGaSSVZKAgboXg10Wp9dQSwl35ZeDGDj2DBeO6g/9GiJ05p/HxEICsxiXBcQ2iMeIQY
+         ni6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731523560; x=1732128360;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mJ7Y/M/QGwKyB5CvuHkhSVy962R5KxlMZ/Ip0/+E6l8=;
-        b=nlKfC/WRsGuJDZfA+SNjdPe8kGrLydkCZkYwnrkqaXDa2TUVql7xqqmvigf/AU3O7p
-         GfBfwgQrudLc9F72uwKcF5VSA8HX0ppTJN4RcgnYM1H9dnX1ST6sOiFzVPOtgu3Q/KV4
-         qDfp86RGQiVheRQAqbaRvnCLGRU8Hl4+vrwxq5yPGNxZrfIAWHkMSWU/AEQT6+mjUwMJ
-         gqInvwlVzAHkSqKpt0X82kfbdFcVy6yfJkesT5WtZN2C1l3i59ksWzz+3nhxt8kRvGLW
-         jz2g1JKrvbmMf2hSPJuO05yK08WJsw7Y0adtwkp2Gw7V4fsgmYQrTcJF6KyTHXJZglpL
-         oHvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWofsldXrJSJNtpvKghkn48oWAiu+IioTEL4RPWL9n02wd3EwZrhJ6DQtwV7f1I0Rdbo8RRIuOXiHquvn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDNMXxt6L0plxXqwmASsLUY5cxKtxkzMJAtNlp69JT695g0eeP
-	HLBacVyFkaRseEJFTMIUcap/Hkvy0NcOiSjsBu+b40MksFmtyoe7HH1TUv5aqTqQOmG0zBfidIN
-	L
-X-Google-Smtp-Source: AGHT+IGDnM8FDvc9dksVkdxOZk5+ligG6UwLyNCFDFxzr3nHZV7huFdENqO8b10hbKcokqz9jofFmQ==
-X-Received: by 2002:a05:6870:70a2:b0:288:a953:a5c7 with SMTP id 586e51a60fabf-295e8d6a2bamr4648440fac.14.1731523560424;
-        Wed, 13 Nov 2024 10:46:00 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a600a23cfsm827198a34.66.2024.11.13.10.45.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 10:46:00 -0800 (PST)
-Message-ID: <ad1b7946-02c4-4447-9b4b-1d57200f482f@baylibre.com>
-Date: Wed, 13 Nov 2024 12:45:59 -0600
+        d=1e100.net; s=20230601; t=1731523619; x=1732128419;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P33VoikjBm5duNkx8xaeWrHYF0P7DMXAt94tpC31J2w=;
+        b=E9gfDx3daOZ3YDm53rjh8lZXIfa8og9Npop/2Kh2krGrWQp+VZSyVg3rF2JUzrA9wx
+         MRqdpFSQ0lsxC1POdDvaxpr1HeOUtalRCb6qMqkdRRoQuDfq8e64+DqZhMuX7RQ1MAJB
+         ImJQzpjTrrCmFu/2BnGjYgGeyKF/PDgJ4djRHw8T2dTM0ROrVFptYqx/9mHmSxnRcCmQ
+         2BvlySxAbwI47t56JOWcoVRJhfZiqO94bWZagOJSJU/TbKEB7N6FxFz1qpPyTke6nmrQ
+         TE+Dm241jj+KS/t7GI7Ha92wuy1sPURwhZjrcckSip99NMG+ib/ri8aSVRmobDdkX2qc
+         xC+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVLdYGnw9xmWtXLdvHeA+JcFYGWuxxhv956eMPLhYVrMq1Yg7fp2YqDQMmCLVXX1tdWEqOiZDuYA/djBTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFwrYtxakD4dqarm6E0vTUIU/BQnC/ver2eLWr/wdAOvV++yIb
+	LE/xGpIyKEKrGHBBOxe1fymRQBECbwRO2xRS5FS9oREECARPzUCQ
+X-Google-Smtp-Source: AGHT+IHESQD1jBpzjbnA/pf42bGNBuRxJp/9iSWTwNWV8tGcuqkW41O0ErYSq1usag76kbEloGDkIQ==
+X-Received: by 2002:a17:902:e750:b0:20b:b238:9d02 with SMTP id d9443c01a7336-2118354cf5dmr297936795ad.33.1731523619145;
+        Wed, 13 Nov 2024 10:46:59 -0800 (PST)
+Received: from localhost ([38.141.211.103])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc7d1csm114256955ad.51.2024.11.13.10.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 10:46:58 -0800 (PST)
+From: Ragavendra <ragavendra.bn@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	unicorn_wang@outlook.com,
+	inochiama@outlook.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ragavendra <ragavendra.bn@gmail.com>
+Subject: [PATCH] clk:sophgo: Remove uninitialized variable for CV1800 PLL
+Date: Wed, 13 Nov 2024 10:46:17 -0800
+Message-ID: <20241113184617.3745423-1-ragavendra.bn@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: iio: adc: adi,ad4695: change include
- path
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Jonathan Cameron
- <jic23@kernel.org>, devicetree@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Michael Hennerich <michael.hennerich@analog.com>
-References: <20241113-iio-adc-ad4695-move-dt-bindings-header-v1-0-aba1f0f9b628@baylibre.com>
- <20241113-iio-adc-ad4695-move-dt-bindings-header-v1-2-aba1f0f9b628@baylibre.com>
- <173152191678.1024361.7493718883312810903.robh@kernel.org>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <173152191678.1024361.7493718883312810903.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/13/24 12:18 PM, Rob Herring (Arm) wrote:
-> 
-> On Wed, 13 Nov 2024 10:55:20 -0600, David Lechner wrote:
->> Change the include path for the adi,ad4695.h header since it has been
->> moved to the include/dt-bindings/iio/adc/ directory.
->>
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
->> ---
->>  Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml | 7 ++++---
->>  1 file changed, 4 insertions(+), 3 deletions(-)
->>
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> Documentation/devicetree/bindings/iio/adc/adi,ad4695.example.dts:19:18: fatal error: dt-bindings/iio/adc/adi,ad4695.h: No such file or directory
->    19 |         #include <dt-bindings/iio/adc/adi,ad4695.h>
->       |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Updating the detected value to 0 in the ipll_find_rate and removing it
+from the method parameters as it does not depend on external input.
+Updating the calls to ipll_find_rate as well and removing the u32 val
+variable from ipll_determine_rate.
 
-Is this testing this patch without the other patch from this series?
+Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
+Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
+---
+ drivers/clk/sophgo/clk-cv18xx-pll.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-I did run make `dt_binding_check DT_SCHEMA_FILES=adi,ad4695.yaml ...`
-locally before sending the patch, so wasn't expecting an error here.
+diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
+index 29e24098bf5f..350195d4ac46 100644
+--- a/drivers/clk/sophgo/clk-cv18xx-pll.c
++++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
+@@ -45,14 +45,13 @@ static unsigned long ipll_recalc_rate(struct clk_hw *hw,
+ }
+ 
+ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+-			  unsigned long prate, unsigned long *rate,
+-			  u32 *value)
++			  unsigned long prate, unsigned long *rate)
+ {
+ 	unsigned long best_rate = 0;
+ 	unsigned long trate = *rate;
+ 	unsigned long pre_div_sel = 0, div_sel = 0, post_div_sel = 0;
+ 	unsigned long pre, div, post;
+-	u32 detected = *value;
++	u32 detected = 0;
+ 	unsigned long tmp;
+ 
+ 	for_each_pll_limit_range(pre, &limit->pre_div) {
+@@ -77,7 +76,6 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+ 		detected = PLL_SET_PRE_DIV_SEL(detected, pre_div_sel);
+ 		detected = PLL_SET_POST_DIV_SEL(detected, post_div_sel);
+ 		detected = PLL_SET_DIV_SEL(detected, div_sel);
+-		*value = detected;
+ 		*rate = best_rate;
+ 		return 0;
+ 	}
+@@ -87,11 +85,10 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+ 
+ static int ipll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ {
+-	u32 val;
+ 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
+ 
+ 	return ipll_find_rate(pll->pll_limit, req->best_parent_rate,
+-			      &req->rate, &val);
++			      &req->rate);
+ }
+ 
+ static void pll_get_mode_ctrl(unsigned long div_sel,
+@@ -134,7 +131,7 @@ static int ipll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long flags;
+ 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
+ 
+-	ipll_find_rate(pll->pll_limit, parent_rate, &rate, &detected);
++	ipll_find_rate(pll->pll_limit, parent_rate, &rate);
+ 	pll_get_mode_ctrl(PLL_GET_DIV_SEL(detected),
+ 			  ipll_check_mode_ctrl_restrict,
+ 			  pll->pll_limit, &detected);
+-- 
+2.46.1
 
-I know that normally we should be including the header change in the same
-patch as the .yaml file, but in this case, I had to make an exception
-because the same header is also included in a .c file. It seemed better
-to not break compiling .c files rather than follow the rule strictly.
 
