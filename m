@@ -1,125 +1,107 @@
-Return-Path: <linux-kernel+bounces-407186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75749C69E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:26:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D7E09C69CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:23:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D001282200
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:26:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55D05B22AC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBA818B494;
-	Wed, 13 Nov 2024 07:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E14R1s5j"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A0118453C;
+	Wed, 13 Nov 2024 07:23:26 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DAF18A94C;
-	Wed, 13 Nov 2024 07:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B52230987;
+	Wed, 13 Nov 2024 07:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731482679; cv=none; b=dmLp2misXLYawvWaActbhKwkFoOxndoxvyZ483PEFgcniaqB13OriAwoDPWOQGZdwqj4KrQ+sePsGWbf9hGjb1rS1K07qukabLtrTE77nthuzkbDfOH3cEIMOm8QcSE9AM9UkZvuQM4CNfvMi1J7dspW96+gPsccKLzbbcaYsYU=
+	t=1731482605; cv=none; b=UWBVb1nlrZFa27i6ocE4otHe7MNV/mcDCcG/lwdu0JZJzKDLQAem+bblNUsZTktNMX2acqvp7SI88MbZrVRCOAAc9iJENXp5Jjq1V3D3EkJ1eH7NFRrX/VWLD78UahmzvIc5ISi9T2Hptt0mq04rH+pbMCfmfj4BsO/OlrwpdBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731482679; c=relaxed/simple;
-	bh=mKQs3h/9RhTBc87IZ94AN0IVaIXmiTqrouVO/V8+0Rk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ufCIyoIgUjIDrKyZaVYgRZ/A86M7/VjIoBfTSCXJLsPxCwnuw7Vvkbh3VtyL6FfDmAWVkWsM7ck8ajANtBczBJ6fhQ6BEN+Z+mI2M9n8U52vIBG4oZuQBaPJOmUYRNirTyyEpeKEyaN3e9A2dO9c+2vxF9V9ucEYeaNq9QIR8jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E14R1s5j; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACMRqWS003799;
-	Wed, 13 Nov 2024 07:24:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sgXywXTXEiv18D5jxxPkfjXNoouy6DO/ATfUle8emnU=; b=E14R1s5jimpFJMii
-	tizkWajCiFSZm9oNa7cRJWOys4HwtRiwSgsdO4CNvCaXYucRYgxHIt1ZU8PN0Nqx
-	5E9+XzIGRWnLLSfjiEgzyLrAYm9qF6ShVhzUXZP/GEgJT0euZHXpcVSSsD9iOS8j
-	lke30r61nih0GzDKNT96/F648+yqLNKFkzLSRjRIm7EwuiOXF+IJVMEJPSWLDCnq
-	OFndVjrM4bFGPIR27n9nyNuNJtjrcqMDnPIhDIUpNCEi6YKcpv5kEoFesIlriXSe
-	sJjzzK80cVSdfjd6//RzBjVw6nVpC9VpFlXCeSxcmtwPxugfacEobjrMq4DuFTOc
-	0stfTw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0gm1ujc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 07:24:30 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AD7OU2n003863
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 07:24:30 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 12 Nov 2024 23:24:23 -0800
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <mantas@8devices.com>, <quic_rohiagar@quicinc.com>,
-        <quic_kriskura@quicinc.com>, <manivannan.sadhasivam@linaro.org>,
-        <abel.vesa@linaro.org>, <quic_kbajaj@quicinc.com>,
-        <quic_varada@quicinc.com>, <quic_wcheng@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-CC: Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v2 5/6] dt-bindings: usb: qcom,dwc3: Add IPQ5424 to USB DWC3 bindings
-Date: Wed, 13 Nov 2024 12:53:15 +0530
-Message-ID: <20241113072316.2829050-6-quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241113072316.2829050-1-quic_varada@quicinc.com>
-References: <20241113072316.2829050-1-quic_varada@quicinc.com>
+	s=arc-20240116; t=1731482605; c=relaxed/simple;
+	bh=F0+Jlt97pUkHoEEibR8wMNxG7oRS5mCf9icrpgkxRiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NBLMQdE6ZoLuDkHlTXH5PGjVE2ZeKTlBf74vLd7+e9z411A1Rpc2bf3TOke9nOhiB7OVCRUmpNL23a69Zgm599b8pZY4eEuSjlr3bO/oypcbJ0W9UjkBlwkAT4Soy+oycb6q5+MzSx78X4IJyBSxc+jt9h2rSE0CYBvfW/XJq0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XpF881V3sz1SFmy;
+	Wed, 13 Nov 2024 15:21:28 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 99D62140203;
+	Wed, 13 Nov 2024 15:23:18 +0800 (CST)
+Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
+ (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 13 Nov
+ 2024 15:23:17 +0800
+Message-ID: <c5654255-5708-4c04-8311-ccd52f771277@huawei.com>
+Date: Wed, 13 Nov 2024 15:23:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: CPPC: fix bug that causes the value written in cpc
+ register to be wrong.
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+	<rafael@kernel.org>, <lenb@kernel.org>
+CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <fanghao11@huawei.com>
+References: <20241113024933.2100519-1-zhenglifeng1@huawei.com>
+ <dfe6ca13-7c4b-4204-b3fb-7390eca3b18b@rivosinc.com>
+From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+In-Reply-To: <dfe6ca13-7c4b-4204-b3fb-7390eca3b18b@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pZXqVY4upz_9l08Hy7g8LC0xSrY6b45b
-X-Proofpoint-GUID: pZXqVY4upz_9l08Hy7g8LC0xSrY6b45b
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=608 lowpriorityscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411130064
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-Update dt-bindings to add IPQ5424 to USB DWC3 controller list.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
-v2: Add 'Acked-by: Conor Dooley'
----
- Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-index 935e204b607b..2622a1f3bcab 100644
---- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-@@ -16,6 +16,7 @@ properties:
-           - qcom,ipq4019-dwc3
-           - qcom,ipq5018-dwc3
-           - qcom,ipq5332-dwc3
-+          - qcom,ipq5424-dwc3
-           - qcom,ipq6018-dwc3
-           - qcom,ipq8064-dwc3
-           - qcom,ipq8074-dwc3
--- 
-2.34.1
+On 2024/11/13 15:05, Clément Léger wrote:
+> 
+> 
+> On 13/11/2024 03:49, Lifeng Zheng wrote:
+>> With these codes, the value written in cpc register will be the result of
+>> the OR operatiion on input value and prev_val. This will causes the value
+>> to be wrong.
+>>
+>> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+>> ---
+>>  drivers/acpi/cppc_acpi.c | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+>> index 01192fd047a6..f69ef7cc0caf 100644
+>> --- a/drivers/acpi/cppc_acpi.c
+>> +++ b/drivers/acpi/cppc_acpi.c
+>> @@ -1146,7 +1146,6 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+>>  			return -EFAULT;
+>>  		}
+>>  		val = MASK_VAL_WRITE(reg, prev_val, val);
+>> -		val |= prev_val;
+> 
+> Hi Lifeng,
+> 
+> Indeed, MASK_VAL_WRITE() already takes care of ORing prev_val with the
+> register mask. You can also add a Fixes:
+> 
+> Fixes: 60949b7b8054 ("ACPI: CPPC: Fix MASK_VAL() usage")
+> 
+> Thanks,
+> 
+> Clément
+> 
+>>  	}
+>>  
+>>  	switch (size) {
+> 
 
+Thanks for reminder. I'll add this Fixes and resend this patch.
 
