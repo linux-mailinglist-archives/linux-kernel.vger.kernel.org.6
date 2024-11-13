@@ -1,159 +1,216 @@
-Return-Path: <linux-kernel+bounces-407697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83709C7138
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:46:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEDFD9C713A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 902951F2204F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:46:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E07F2893F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B01202F8E;
-	Wed, 13 Nov 2024 13:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2353C2038B3;
+	Wed, 13 Nov 2024 13:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="WCeInxCK"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b9qUd4aD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADC4200BB3;
-	Wed, 13 Nov 2024 13:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BA0200BB3
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731505404; cv=none; b=ZME0eFQQRljAPxpyNhhfCm1yhoXLk+isR3iOp1Upw761pIRR6wd70EH93+1DTVQORG9im1+qojapMg4p10O4/UFaCbwAs25se31T+JW8/p3AEwJuQfZXa3MaIBCZnUaLGdYaPPkB5An0pae+j79euDCGFVSPxJeTIyGme/QstRg=
+	t=1731505429; cv=none; b=EGgeW4tqeZFoAFsiMBGFazKwBi+LunXtu1eo/znsJtarhWb35xu0GoJXwAiUcKgz4mGhUbjaB/IT4spxp7t9ELWYTKkVoVBXrEu0yUg6K0hkFcnZ1FH6xKdzF0MCIMyqtm4hfnWm4jlCxSKTpqlHVXKPMbJafapKfqrhYSzTXYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731505404; c=relaxed/simple;
-	bh=u5YVrP3nczRJpu41rn9d4vOPEiWOIjTy/hjJEz9yjb0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lvGtg2+cfdp+ZXXTLKqv33umE0kzb/UuygB4IzTgqc/lE7sUYjW8Z+KDZ6l99QYHCCfhFEel3LeHEon7yR4D+Ab5r1sq9HvqddhawvHhGGNjXX7pkJTxHRtoNNSlohlhsahz+tQocDNeJ1VxNSj+PSaEuOdGlGmoczx+5x4DvHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=WCeInxCK; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=5rX2E+J5HWFJVUuUUuInY7s21x9CXCBGKKQe1+Qu+y0=; t=1731505402;
-	x=1731937402; b=WCeInxCKbaSrb0WI5E7SSYoNgnCatc+zUUJvFHKieZ5l8+XEjjI5P/MSFblSu
-	w+1WVlvO7xXYEUfQreuY6KXeN4WRkEI8p2QcjRibY9ErslXWgg/PXFCsvxQbepQFpPz8dzBpDm0sP
-	5496MmXItsNundQBtJlSd1YklCHWhcsCyNH2THy0P5DeHVy51eGsEEOS3BNuDCQhdkpwhtkFUtLQA
-	SFePsUf3FsftxHulEbK+IjcxIm64T6rug6nmj+YMnvRHWMYr9MQi5u5uJ8S8Ha0fqiRwfJobRbddE
-	JYYPB/rRWtTY1REasxnB8N121DC7soyCYoLORxUAfTjxj9i5tA==;
-Received: from [2a02:8108:8980:2478:87e9:6c79:5f84:367d]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1tBDeL-0007aw-Cl; Wed, 13 Nov 2024 14:43:13 +0100
-Message-ID: <a376347c-60f4-4c91-bf94-67eafa77492b@leemhuis.info>
-Date: Wed, 13 Nov 2024 14:43:12 +0100
+	s=arc-20240116; t=1731505429; c=relaxed/simple;
+	bh=+zMnvloxaCSpMvgyYqLs2QHpUg7QBnvW/fUxPVrsfkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jJ1WulJ/eCR95wGLcWwyTjKDJfQ8A49aE20D1sxAUIj/E+ozh2OBD3++yQliwYyFGNOTUtmAzlpAM5U9hPnhO4TRoBjCggxlrFS3X6hyFXoyVK9Ovz5/aQMJaHBtMK2YdkclcBRA44uD0uHjxlnRMsj3D8ZahQpRz7fUE30JZRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b9qUd4aD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731505425;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HmOevJufZu4mgzJjDlfEl6PeJBrFET9QpgN5rfl3zyI=;
+	b=b9qUd4aDNeJsHB41SZ9JGVWgaRggwOFYkyC+zouyTNAnyA+Taucg7Frct1pmo7FkQSEeHQ
+	7bPOyBRwnn+cdRhoxyInLiTIuz3X13bGpQJyl2KBvOxCw+trxaSzaaVkZzf8zUkkmvwB2O
+	j3K5X9EO3eZgqfJ8hdrh9NiIhDhnYp8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-62-h_azobdlPSW14nOoMzrrTg-1; Wed,
+ 13 Nov 2024 08:43:39 -0500
+X-MC-Unique: h_azobdlPSW14nOoMzrrTg-1
+X-Mimecast-MFC-AGG-ID: h_azobdlPSW14nOoMzrrTg
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0C7841955F3A;
+	Wed, 13 Nov 2024 13:43:36 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.80.158])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5F6FC19560A3;
+	Wed, 13 Nov 2024 13:43:31 +0000 (UTC)
+Date: Wed, 13 Nov 2024 08:43:28 -0500
+From: Phil Auld <pauld@redhat.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH 1/2] sched/deadline: Restore dl_server bandwidth on
+ non-destructive root domain changes
+Message-ID: <20241113134328.GA402105@pauld.westford.csb>
+References: <20241113125724.450249-1-juri.lelli@redhat.com>
+ <20241113125724.450249-2-juri.lelli@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] docs: reminder to not expose potentially private email
- addresses
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <f5bc0639a20d6fac68062466d5e3dd0519588d08.1731486825.git.linux@leemhuis.info>
- <20241113102619.GC29944@pendragon.ideasonboard.com>
- <b160f728-b34f-433d-8cc4-677605990936@leemhuis.info>
- <CAKMK7uGwK0OYu+cVJnUVd5nMZRG8jJBXJUuo0xFXdyrubJFW4g@mail.gmail.com>
- <20241113124010.7e7edaa1@foz.lan>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: en-MW
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <20241113124010.7e7edaa1@foz.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1731505402;30f7daa2;
-X-HE-SMSGID: 1tBDeL-0007aw-Cl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113125724.450249-2-juri.lelli@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 13.11.24 12:40, Mauro Carvalho Chehab wrote:
-> Em Wed, 13 Nov 2024 11:59:39 +0100
-> Simona Vetter <simona.vetter@ffwll.ch> escreveu:
->> On Wed, 13 Nov 2024 at 11:55, Thorsten Leemhuis <linux@leemhuis.info> wrote:
->>> On 13.11.24 11:26, Laurent Pinchart wrote:  
->>>>> +Note, remember to respect other people's privacy when adding these tags:
->>>>> +
->>>>> + - Only specify email addresses, if owners explicitly permitted their use or
->>>>> +   are fine with exposing them to the public based on previous actions found in
->>>>> +   the lore archives. 
+Hi Juri,
+
+On Wed, Nov 13, 2024 at 12:57:22PM +0000 Juri Lelli wrote:
+> When root domain non-destructive changes (e.g., only modifying one of
+> the existing root domains while the rest is not touched) happen we still
+> need to clear DEADLINE bandwidth accounting so that it's then properly
+> restore taking into account DEADLINE tasks associated to each cpuset
+
+"restored, taking ..."  ?
+
+> (associated to each root domain). After the introduction of dl_servers,
+> we fail to restore such servers contribution after non-destructive
+> changes (as they are only considered on destructive changes when
+> runqueues are attached to the new domains).
 > 
-> There is no comma between "addresses" and "if".
+> Fix this by making sure we iterate over the dl_server attached to
+> domains that have not been destroyed and add them bandwidth contribution
+> back correctly.
 > 
-> "previous actions" sounds a little to vague. Also, the text doesn't cover
-> everything, as lore archives may contain gaps.  I would, instead be clear:
+> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+
+
+Looks good to me. 
+
+
+Reviewed-by: Phil Auld <pauld@redhat.com>
+
+
+> ---
+>  include/linux/sched/deadline.h |  2 +-
+>  kernel/cgroup/cpuset.c         |  2 +-
+>  kernel/sched/deadline.c        | 18 +++++++++++++-----
+>  kernel/sched/topology.c        | 10 ++++++----
+>  4 files changed, 21 insertions(+), 11 deletions(-)
 > 
-> 	 - Only specify email addresses if owners explicitly permitted their use or
-> 	   if such e-mail was previously used publicly for Linux contributions, which
-> 	   can be checked by looking at the lore archives and at the git log. 
+> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
+> index 3a912ab42bb5..82c966a55856 100644
+> --- a/include/linux/sched/deadline.h
+> +++ b/include/linux/sched/deadline.h
+> @@ -33,7 +33,7 @@ static inline bool dl_time_before(u64 a, u64 b)
+>  
+>  struct root_domain;
+>  extern void dl_add_task_root_domain(struct task_struct *p);
+> -extern void dl_clear_root_domain(struct root_domain *rd);
+> +extern void dl_clear_root_domain(struct root_domain *rd, bool restore);
+>  
+>  #endif /* CONFIG_SMP */
+>  
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 142303abb055..4d3603a99db3 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -954,7 +954,7 @@ static void dl_rebuild_rd_accounting(void)
+>  	 * Clear default root domain DL accounting, it will be computed again
+>  	 * if a task belongs to it.
+>  	 */
+> -	dl_clear_root_domain(&def_root_domain);
+> +	dl_clear_root_domain(&def_root_domain, false);
+>  
+>  	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
+>  
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 9ce93d0bf452..e53208a50279 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -2968,13 +2968,21 @@ void dl_add_task_root_domain(struct task_struct *p)
+>  	task_rq_unlock(rq, p, &rf);
+>  }
+>  
+> -void dl_clear_root_domain(struct root_domain *rd)
+> +void dl_clear_root_domain(struct root_domain *rd, bool restore)
+>  {
+> -	unsigned long flags;
+> -
+> -	raw_spin_lock_irqsave(&rd->dl_bw.lock, flags);
+> +	guard(raw_spinlock_irqsave)(&rd->dl_bw.lock);
+>  	rd->dl_bw.total_bw = 0;
+> -	raw_spin_unlock_irqrestore(&rd->dl_bw.lock, flags);
+> +
+> +	if (restore) {
+> +		int i;
+> +
+> +		for_each_cpu(i, rd->span) {
+> +			struct sched_dl_entity *dl_se = &cpu_rq(i)->fair_server;
+> +
+> +			if (dl_server(dl_se))
+> +				rd->dl_bw.total_bw += dl_se->dl_bw;
+> +		}
+> +	}
+>  }
+>  
+>  #endif /* CONFIG_SMP */
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 9748a4c8d668..e9e7a7c43dd6 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -2721,12 +2721,14 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
+>  
+>  				/*
+>  				 * This domain won't be destroyed and as such
+> -				 * its dl_bw->total_bw needs to be cleared.  It
+> -				 * will be recomputed in function
+> -				 * update_tasks_root_domain().
+> +				 * its dl_bw->total_bw needs to be cleared.
+> +				 * Tasks contribution will be then recomputed
+> +				 * in function dl_update_tasks_root_domain(),
+> +				 * dl_servers contribution in function
+> +				 * dl_restore_server_root_domain().
+>  				 */
+>  				rd = cpu_rq(cpumask_any(doms_cur[i]))->rd;
+> -				dl_clear_root_domain(rd);
+> +				dl_clear_root_domain(rd, true);
+>  				goto match1;
+>  			}
+>  		}
+> -- 
+> 2.47.0
 > 
-> I added "git log there" because, in practice, nobody has the time to double-check
-> what e-mails are public: developers rely that scripts/checkpatch.pl will
-> check git log when creating the Cc: list.
+> 
 
-Thx. I went with a slightly changed variant for now, hope that's okay:
+-- 
 
-"""
-Only specify email addresses if owners explicitly permitted their use or
-if the addresses have previously been used publicly for contributions to
-the Linux kernel found in the lore archives or the commit history.
-"""
-
-Regarding the other points Simona and Laurent brought up: many thx for
-that, I will take a closer look soon (I need to check if the suggested
-approaches really work; while at it I also want to check if
-5.Posting.rst mentions the "no tag forgeries" aspect at all; from a
-quick look that seems to be missing, so I might add a patch that puts it
-in an appropriate place).
-
-Ciao, Thorsten
 
