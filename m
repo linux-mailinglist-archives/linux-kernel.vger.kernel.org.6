@@ -1,107 +1,151 @@
-Return-Path: <linux-kernel+bounces-408000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0C459C7891
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:19:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1E09C7897
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:21:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90E832823DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:19:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01135282837
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBDF15FD16;
-	Wed, 13 Nov 2024 16:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B501632D4;
+	Wed, 13 Nov 2024 16:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XDyCz8qe"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k9WJD7cf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AF37580C
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE7B13B5AE;
+	Wed, 13 Nov 2024 16:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731514764; cv=none; b=qchktlB7vD2RxmFxGv6AwBCS3EP5ihMBNZ6Y0C6XRcLYXtt7paU906NkGW9Y6hI59f3ZkaXqVfySuB7NdKQ9keXDwi+h577dndsIPMPkQgIEOyy4yWktRb9iBvhl+ZDVxhgAPP63xJ5Ds3MRJq0o/hdIPd3gpnUjEvT6wKbYBKY=
+	t=1731514857; cv=none; b=YuObzCjlUZ1lY3ylPW7Xegt4dYEbvk7w4uI/psW9VSD/ZQ5FlioGWWZGrXdPm7Jj/7sQ+FoPJJ5zk2FBg8BWh9Zbe+nNqJ/amw7QvXOgKvPPTJ7wKfFlOrg/5++dwyB4z9UhZCh74mf5mlyWgoOntTLZSxS3U8BXhQjbqSHvZos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731514764; c=relaxed/simple;
-	bh=nQyxwU5QgfGswnw+i5IfFlcaTMTHduoouxVX/8n+73U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LenQHjGBNmZKgsR5I3oohBeKDpgk3XguHRkst9HVe5VSBn4sf1NZQUfRo//+/dczN4GzjqHxlFXmrVWOzpGnU+bSnk4+xfWqENTqwBxeFFLuZhIvDOK2nOedkli+IyfS77oKmVqF6D0Edy0HnZBlI+Af6Mrm2Qq7+HyyDrWG9iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XDyCz8qe; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-460b295b9eeso238001cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:19:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731514762; x=1732119562; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nQyxwU5QgfGswnw+i5IfFlcaTMTHduoouxVX/8n+73U=;
-        b=XDyCz8qeGNYnNP45SnbtyeruA8lGyN5VRU6r0Wda2+It9mcq57tZrcB7eooJwsZi86
-         TURvFhZiJ2HXNIgkHJIGic0A+4UxHvkTtwIXtIvcjMkqvp7t1LO68e0rcsbKMrmrbyNl
-         UUdnZ8pE6HN/QK3yi4FhdqHJeUBLE8psDHOdXOI7Pt4PsoSo1xeRVezBZYjeTQlCJ7jl
-         JMFt6TTA4vH012x5IwyxBMbU1jGXOdrKzEbMIGvy3xcNMdQS0OeIHkAujA+HFZhIR4Cj
-         gdZFOR1hzconhD9oEzY4e13qQo32PinzvZXVMx1RgUOH7WKJTYjp8MOAF8XQAF2H2KHf
-         3SmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731514762; x=1732119562;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nQyxwU5QgfGswnw+i5IfFlcaTMTHduoouxVX/8n+73U=;
-        b=dy6OgRZR6/Wishad9rndogp+Z1KTrtISSo1DJ/d60s8xzCoya5CKu0Ai+Fm3KM0zcS
-         N5ghSez0vjG7YFvsj5cDhMtTzz6ydsV7HxzhKff8qFRQXAISt3Bcmsy4aF+SNOFFEIAS
-         zABXd1/0UsE+X9QqLvuf2FATAGkoBgQbhenZhdQ9tr16+VNRqNHe/RMwvaO5oiBHOmCZ
-         9kKFcFjnT0/g0VEWmQ1iNQkn7fqv5eq7z/ZjiKhb5o6f+FMeoxw//dJsllYTizkM89De
-         PbT/WaZLMRCtm9kQ3HTp5zC7cU7ZwEc8+YZcvSfid+p6z5frktt0vAhQJaNUwTNoppFM
-         Jv9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW7Mrt7rkMNBwvo+DgUObNwL0vSsaSukvTlaP1Piw8MeRAp6peqRxxZ9n05yJTZuqxEmb/HjS4BJE895S4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb+sgiHyc8WlAvdGZ6ddXDGEN/JgxnqcKU7j24lsxjsOF+bppD
-	8MNQqrzDHapgod6ltr/7B2CCiRZ5nAcUfaKAPiBYWnWvZl6qhT5Vd2+y0nNx5k/qPglo03F57Y8
-	syPmWshYuS017FwdYtZXKyRPIMmyAtv9+9PE3
-X-Gm-Gg: ASbGncuBEpLCAFcSPPEtHbquWRwIFW0aNdp+y6s+P/jQvtBotk+QqiAJ/vxF5XA6o4Q
-	rCnNvfJ1fNTW8pCGL48sQ59V7+7TA7eJQunSMrv31ANdwEjUk8QgUO9b1NyquogSu
-X-Google-Smtp-Source: AGHT+IHIDFFlxroCqvlH4RVNE6BpwL2INEGY264/PvCYdMcri5C9Dssgza+g1nj17+KeBBrq5tNvsAiPYpNx/GQ7jDY=
-X-Received: by 2002:a05:622a:4e8b:b0:460:e2d9:b745 with SMTP id
- d75a77b69052e-4634ca2ad70mr3065251cf.3.1731514762234; Wed, 13 Nov 2024
- 08:19:22 -0800 (PST)
+	s=arc-20240116; t=1731514857; c=relaxed/simple;
+	bh=lRGhAJ/9VWeaVLsscQ7KSa1mJkIIRLqg+5970adWr8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BGIB+sMpwETigv6B2bwdb9Dvrh8yUCVA20TB1tF1mdZ6p89y7EqC+LtxD58ehEklKIKEmTnPv4VZui4JkIytmalHVNne05tvO4OciX7ixppsKsv3JAB1voeKoRGXgsEPAKIQkTLGkqkbwijgf1JcEJODI8bh39ld7UbwnlWvDh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k9WJD7cf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AD9sjn5014823;
+	Wed, 13 Nov 2024 16:20:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jhWCMul96BfcVa7FrwzASwBJCYOs19YcscRz15aAOTs=; b=k9WJD7cfdksNOSry
+	XDKbRb1OF39xOi/gDP9Q/8NUoXtOmAK4+IkB/dAzlmMdyFXLCnSO+UVgTwAAhsHw
+	zNdf5YDJ+QlVtW0H4KxdoGnixD6WVnUGql1datOA9QRNKxfNAbOSYloVAsWu++Es
+	uRe3Bn0WvsfcRO7E40G4f/mo2Fy2KRQxRTRl3KRGexTG7SbrOMS6+n61hknwcExo
+	eCT4lym+FIABBuad0rcIo3Zgc70qQaQsEnbkBOm8N0eaf1XReDlJMPWTIpRda6Sd
+	q+WN2E23xSlyChHLZw768QfgJTsoxD9ppA9nfRAZmG/wnWy5chyPZkXaFTaB8KvR
+	8Ijp+Q==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v47y4kkq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 16:20:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ADGKoMc027314
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 16:20:50 GMT
+Received: from [10.216.38.88] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 13 Nov
+ 2024 08:20:48 -0800
+Message-ID: <f383c25d-fb76-4e3e-b900-7156f608bef0@quicinc.com>
+Date: Wed, 13 Nov 2024 21:50:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <LV3PR12MB92658EA6CCF18F90DAAA168394532@LV3PR12MB9265.namprd12.prod.outlook.com>
- <f3ddabdc-39fa-45fa-97fd-d8508c2229c9@amazon.com> <CA+i-1C1zN_GcLagTRgfJqT6uFoZaMZj1NUfxkvP7eG=VGQ0GGQ@mail.gmail.com>
- <LV3PR12MB926503BA63C616562E508D8C945A2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <CA+i-1C2JXYUBnE7fn6df0=KR4KeD0VgwO5Cc2xRhO8rBqC_p+Q@mail.gmail.com> <LV3PR12MB92653337C2377D640BF81F84945A2@LV3PR12MB9265.namprd12.prod.outlook.com>
-In-Reply-To: <LV3PR12MB92653337C2377D640BF81F84945A2@LV3PR12MB9265.namprd12.prod.outlook.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Wed, 13 Nov 2024 17:19:11 +0100
-Message-ID: <CA+i-1C2mJYwQYF9WrCjBTO0rfyNtDW=r8ZTpMwySrKSniVtXSg@mail.gmail.com>
-Subject: Re: [PATCH v2 19/35] Documentation/x86: Document the new attack
- vector controls
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: "Manwaring, Derek" <derekmn@amazon.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"jpoimboe@kernel.org" <jpoimboe@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>, 
-	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"x86@kernel.org" <x86@kernel.org>, "mlipp@amazon.at" <mlipp@amazon.at>, 
-	"canellac@amazon.at" <canellac@amazon.at>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: cfg80211: fix WARN_ON during CAC cancelling
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241113-mlo_dfs_fix-v1-1-e4326736347b@quicinc.com>
+ <d0eb18d4a302e4be5251106fbfa8f5e10dd36477.camel@sipsolutions.net>
+ <383a616d-50c7-4538-9e94-fc8526405c94@quicinc.com>
+ <6b59e7a5f90b85dfc9146fa2cbdfe56c0a307a3e.camel@sipsolutions.net>
+Content-Language: en-US
+From: Aditya Kumar Singh <quic_adisi@quicinc.com>
+In-Reply-To: <6b59e7a5f90b85dfc9146fa2cbdfe56c0a307a3e.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: aV1_pOQ84zU9uMKCZAQn2AGxwE74mRkn
+X-Proofpoint-GUID: aV1_pOQ84zU9uMKCZAQn2AGxwE74mRkn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=857 spamscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411130136
 
-On Wed, 13 Nov 2024 at 17:00, Kaplan, David <David.Kaplan@amd.com> wrote:
-> I wonder what would happen if there was a mitigation that was required when switching to another guest, but not to the broader host address space.
+On 11/13/24 21:18, Johannes Berg wrote:
+> On Wed, 2024-11-13 at 20:13 +0530, Aditya Kumar Singh wrote:
+>> On 11/13/24 14:59, Johannes Berg wrote:
+>>>>
+>>>> diff --git a/net/wireless/mlme.c b/net/wireless/mlme.c
+>>>> index a5eb92d93074e6ce1e08fcc2790b80cf04ff08f8..2a932a036225a3e0587cf5c18a4e80e91552313b 100644
+>>>> --- a/net/wireless/mlme.c
+>>>> +++ b/net/wireless/mlme.c
+>>>> @@ -1112,10 +1112,6 @@ void cfg80211_cac_event(struct net_device *netdev,
+>>>>    	struct cfg80211_registered_device *rdev = wiphy_to_rdev(wiphy);
+>>>>    	unsigned long timeout;
+>>>>    
+>>>> -	if (WARN_ON(wdev->valid_links &&
+>>>> -		    !(wdev->valid_links & BIT(link_id))))
+>>>> -		return;
+>>>> -
+>>>>    	trace_cfg80211_cac_event(netdev, event, link_id);
+>>>>    
+>>>>    	if (WARN_ON(!wdev->links[link_id].cac_started &&
+>>>>
+>>>
+>>> This really doesn't seem right.
+>>>
+>>> Perhaps the order in teardown should be changed?
+>>
+>> I thought about it but couldn't really come down to a convincing approach.
+>>
+>> The thing is when CAC in ongoing and hostapd process is killed, there is
+>> no specific event apart from link delete which hostapd sends.
+>>
+> 
+> so we do have link removal, why doesn't that work?
 
-This is already the case for the mitigations that "go the other way":
-IBPB protects the incoming domain from the outgoing one, but L1D flush
-protects the outgoing from the incoming. So when you exit to the
-unrestricted address space it never makes sense to flush L1D (everyone
-trusts the kernel) but e.g. guest->guest still needs one.
+Because link ID is cleared from the bitmap well before link stop is 
+called. As mentioned in commit message, this is the flow -
 
-> that may not be covered by asi_exit.
+nl80211_remove_link
+   > cfg80211_remove_link                -> link ID gets updated here
+     > ieee80211_del_intf_link
+       > ieee80211_vif_set_links
+         > ieee80211_vif_update_links
+           > ieee80211_link_stop         -> this ultimately tries to stop
+					   CAC if it is ongoing.
 
-That's right, these other mitigations are part of asi_enter.
+> 
+>> Will it be
+>> okay to add a new NL command to stop radar detection? Something opposite
+>> of what start_radar_detection command does?
+>>
+> 
+> No, obviously not.
+> 
+> johannes
+
+
+-- 
+Aditya
 
