@@ -1,173 +1,124 @@
-Return-Path: <linux-kernel+bounces-408111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED2D9C7A8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:02:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28229C7A88
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:02:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66B051F23406
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 679CA2820E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5FF15E5B5;
-	Wed, 13 Nov 2024 18:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4EC204014;
+	Wed, 13 Nov 2024 17:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="LPJJLnqH"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mI6TKBDw"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70321209F2D
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A17F1FF7C7
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731520809; cv=none; b=SyjYxruBa83LpYpQ0aDB5M2feuCVv6GEMeHgrs7+sggk1CFRz2kKW07uJ11TNdmPkQPjYt9TrjkxpXdJgj8MA/NdzQU3nd6ot7rgwgs/H7ZBUwgkMR8t5/XWqfnGRhqXoW5NcolSJzqWTEgCWZJ5vzfx2v9LhKsLc32EGAOG2pc=
+	t=1731520792; cv=none; b=hp+Rb7MwOd8yP8Re3msVgp83V0aSk2bHnENJYee5DxtdVADgI+baPqscHLMERIjiAlv5/Q5MS9SaWg0HKAkYeZYWArM/32T063cGdJNzrtsZA2fybALPrMFMKpAg7/AJ3JL+ZUsgUPFWbSotH5yHNAvx/Jgbr/A590w612+LrMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731520809; c=relaxed/simple;
-	bh=nwvluWG1Za1oEdNoLMNcHLY1yMaG8dbQ3bUpxtsWhvw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OYq7SSxHKyz8gYRiTzVFAqQE5ZhVXDftyoPJeMCYLnuf9RxVRKZHSv9Bvds/AUZZ4LNZk3lWBxBQCd7ZTJc9fdZaORaB39HZ29HZDJVztKds1NUzV33QWLUvlyHR6Y/RsbYGxeWZrz27Ms7ioPUArFFJcpQAv42oVz9M/yUsX3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=LPJJLnqH; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4ADHxYB33897551
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 13 Nov 2024 09:59:38 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4ADHxYB33897551
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1731520779;
-	bh=yzCt+5eNmezlEy4mRsnpAtCpm07XvZ+ueQJAh+t2w7U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LPJJLnqHRrCLWR0YVTQJrtNUboPjKUPm8OyNnJonyybGcpzN/QwpRN1UYkD9xHOLI
-	 d/me6+kfJ83JTX879ycSZr6V+9OD+x0Ua4Sm/vfA4B5MZsSfZ7+kHNfjDkSpNCR2/6
-	 eF6h9beGIU1jEVQLfb/ltyk/XbzzkJ+agJdDxFQtShhnZkd8yDlJXJXsU1AR3zg4h8
-	 wwMOtBqECHIBi59MKZ+SVCAVwPLECaKTNhwJZHFjJcUTQB3KK562hLtDL1j7pBnLIo
-	 VMibjhzSljyfMOesTKLX+CWmIRzIbW9A9ZyeHtgHkkrJqz77hWX8hodKBZxiYqQA+K
-	 sYv2/S/BM21SQ==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        peterz@infradead.org, andrew.cooper3@citrix.com
-Subject: [PATCH v4 1/1] x86/fred: Clear WFE in missing-ENDBRANCH #CPs
-Date: Wed, 13 Nov 2024 09:59:34 -0800
-Message-ID: <20241113175934.3897541-1-xin@zytor.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731520792; c=relaxed/simple;
+	bh=+250bRNDlld8S7rsq44UUhCgM2fdzYbVqUp4Y8cI7jQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZTuOuzDMm6Hs8RmFVZVlB9Xsl9C319sD61qKMcdukwVc0iJ/3bqDBhm64jZ7C/Lqa2EeBEhk7sh9sxP1kvceM3xslQBlfa8NJOOO0ypLxs/4MJD9l2YlzZzL04P6kJtYfif6NDVh7Wmy2mF7eB0W78epb8Jct9gOsgqvM3IPmgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mI6TKBDw; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a51c1a58-2ebf-4e1d-a1eb-46c23b953a36@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731520788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BrB0ZjmNU676+Oj7exilRh1EOZSwKds+rDuh0m8Ii8o=;
+	b=mI6TKBDwmcY+cAsToeMzU6hd0eUCSZrZyEnrlbj6WTzZ7qKDiQqkp6BzERg491a5Xzzw5i
+	aMeDsUdg7R0a5M3uttOWF9+iS/8iKIQ7PXnvflSekyKTg1SE5y1RQqfH01InlaEWGh8WFe
+	2JsyeyheTCuKqiCsjvNWFRraWNJ/ilg=
+Date: Wed, 13 Nov 2024 17:59:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v4 3/7] octeon_ep: add protective null checks in napi
+ callbacks for cn9k cards
+To: Shinas Rasheed <srasheed@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: hgani@marvell.com, sedara@marvell.com, vimleshk@marvell.com,
+ thaller@redhat.com, wizhao@redhat.com, kheib@redhat.com, egallen@redhat.com,
+ konguyen@redhat.com, horms@kernel.org,
+ Veerasenareddy Burru <vburru@marvell.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Satananda Burla <sburla@marvell.com>,
+ Abhijit Ayarekar <aayarekar@marvell.com>
+References: <20241113111319.1156507-1-srasheed@marvell.com>
+ <20241113111319.1156507-4-srasheed@marvell.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20241113111319.1156507-4-srasheed@marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-An indirect branch instruction sets the CPU indirect branch tracker
-(IBT) into WAIT_FOR_ENDBRANCH (WFE) state, and WFE stays asserted
-across the instruction boundary.  When decoder finds an instruction
-and WFE is set, and the instruction is not the appropriate ENDBR, it
-raises a #CP fault.
+On 13/11/2024 11:13, Shinas Rasheed wrote:
+> During unload, at times the OQ parsed in the napi callbacks
+> have been observed to be null, causing system crash.
+> Add protective checks to avoid the same, for cn9k cards.
+> 
+> Fixes: 1f2c2d0cee02 ("octeon_ep: add hardware configuration APIs")
+> Signed-off-by: Shinas Rasheed <srasheed@marvell.com>
+> ---
+> V4:
+>    - No changes
+> 
+> V3: https://lore.kernel.org/all/20241108074543.1123036-4-srasheed@marvell.com/
+>    - Added back "Fixes" to the changelist
+> 
+> V2: https://lore.kernel.org/all/20241107132846.1118835-4-srasheed@marvell.com/
+>    - Split into a separate patch
+>    - Added more context
+> 
+> V1: https://lore.kernel.org/all/20241101103416.1064930-3-srasheed@marvell.com/
+> 
+>   drivers/net/ethernet/marvell/octeon_ep/octep_cn9k_pf.c | 9 ++++++++-
+>   1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_cn9k_pf.c b/drivers/net/ethernet/marvell/octeon_ep/octep_cn9k_pf.c
+> index b5805969404f..b87336b2e4b9 100644
+> --- a/drivers/net/ethernet/marvell/octeon_ep/octep_cn9k_pf.c
+> +++ b/drivers/net/ethernet/marvell/octeon_ep/octep_cn9k_pf.c
+> @@ -617,7 +617,14 @@ static irqreturn_t octep_rsvd_intr_handler_cn93_pf(void *dev)
+>   static irqreturn_t octep_ioq_intr_handler_cn93_pf(void *data)
+>   {
+>   	struct octep_ioq_vector *vector = (struct octep_ioq_vector *)data;
+> -	struct octep_oq *oq = vector->oq;
+> +	struct octep_oq *oq;
+> +
+> +	if (!vector)
+> +		return IRQ_HANDLED;
 
-For the kernel IBT no ENDBR selftest where #CPs are deliberately
-triggered, the WFE state of the interrupted context needs to be
-cleared to let execution continue.  Otherwise when the CPU resumes
-from the instruction that just caused the previous #CP, another
-missing-ENDBRANCH #CP is raised and the CPU enters a dead loop.
+Sorry for not flagging in previous review, but the question is again the
+same - how that can happen? This function is irq handler, which is
+called from octep_ioq_intr_handler() only if ioq_vector was properly
+resolved. This check makes no sense here.
 
-This is not a problem with IDT because it doesn't preserve WFE and
-IRET doesn't set WFE.  But FRED provides space on the entry stack
-(in an expanded CS area) to save and restore the WFE state, thus the
-WFE state is no longer clobbered, so software must clear it.
-
-Clear WFE to avoid dead looping in ibt_clear_fred_wfe() and the
-!ibt_fatal code path when execution is allowed to continue.
-
-Clobbering WFE in any other circumstance is a security-relevant bug.
-
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
----
-
-Change since v3:
-* Fix a typo and a grammar issue (Ingo Molnar).
-
-Changes since v2:
-* Explain why the FRED-specific code in ibt_clear_fred_wfe() doesn't
-  do any FRED checks (Dave Hansen).
-* ibt_clear_fred_wfe() needs to be inside the ibt_selftest_noendbr
-  path (Andrew Cooper & Dave Hansen).
-* Simplify the changelog and comment, create an IBT WFE document
-  in Documentation/ later (Dave Hansen).
-* Rewrite changelog based on feedbacks from Dave and Andrew.
-
-Changes since v1:
-* Rewrite the comment of ibt_clear_fred_wfe() using Andrew Cooper's
-  write-up (Andrew Cooper).
-* Unconditionally clear WFE in missing-ENDBRANCH #CPs (Peter Zijlstra).
-* Don't check X86_FEATURE_FRED in ibt_clear_fred_wfe() (Dave Hansen &
-  Andrew Cooper).
----
- arch/x86/kernel/cet.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-index d2c732a34e5d..303bf74d175b 100644
---- a/arch/x86/kernel/cet.c
-+++ b/arch/x86/kernel/cet.c
-@@ -81,6 +81,34 @@ static void do_user_cp_fault(struct pt_regs *regs, unsigned long error_code)
- 
- static __ro_after_init bool ibt_fatal = true;
- 
-+/*
-+ * By definition, all missing-ENDBRANCH #CPs are a result of WFE && !ENDBR.
-+ *
-+ * For the kernel IBT no ENDBR selftest where #CPs are deliberately triggered,
-+ * the WFE state of the interrupted context needs to be cleared to let execution
-+ * continue.  Otherwise when the CPU resumes from the instruction that just
-+ * caused the previous #CP, another missing-ENDBRANCH #CP is raised and the CPU
-+ * enters a dead loop.
-+ *
-+ * This is not a problem with IDT because it doesn't preserve WFE and IRET doesn't
-+ * set WFE.  But FRED provides space on the entry stack (in an expanded CS area)
-+ * to save and restore the WFE state, thus the WFE state is no longer clobbered,
-+ * so software must clear it.
-+ */
-+static void ibt_clear_fred_wfe(struct pt_regs *regs)
-+{
-+	/*
-+	 * No need to do any FRED checks.
-+	 *
-+	 * For IDT event delivery, the high-order 48 bits of CS are pushed
-+	 * as 0s into the stack, and later IRET ignores these bits.
-+	 *
-+	 * For FRED, a test to check if fred_cs.wfe is set would be dropped
-+	 * by compilers.
-+	 */
-+	regs->fred_cs.wfe = 0;
-+}
-+
- static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
- {
- 	if ((error_code & CP_EC) != CP_ENDBR) {
-@@ -90,6 +118,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
- 
- 	if (unlikely(regs->ip == (unsigned long)&ibt_selftest_noendbr)) {
- 		regs->ax = 0;
-+		ibt_clear_fred_wfe(regs);
- 		return;
- 	}
- 
-@@ -97,6 +126,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
- 	if (!ibt_fatal) {
- 		printk(KERN_DEFAULT CUT_HERE);
- 		__warn(__FILE__, __LINE__, (void *)regs->ip, TAINT_WARN, regs, NULL);
-+		ibt_clear_fred_wfe(regs);
- 		return;
- 	}
- 	BUG();
-
-base-commit: 5283b49a869ba4d60e8b7fc4d353955512404bec
--- 
-2.47.0
+> +	oq = vector->oq;
+> +
+> +	if (!oq || !(oq->napi))
+> +		return IRQ_HANDLED;
+>   
+>   	napi_schedule_irqoff(oq->napi);
+>   	return IRQ_HANDLED;
 
 
