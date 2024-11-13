@@ -1,156 +1,147 @@
-Return-Path: <linux-kernel+bounces-407355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B3799C6C49
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:03:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A30A9C6C54
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:04:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B892C288587
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:03:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9866A1F223D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD33C1FB898;
-	Wed, 13 Nov 2024 10:03:27 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25C71FB898;
+	Wed, 13 Nov 2024 10:04:45 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66B41FB88B
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D511FAC48
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731492207; cv=none; b=s43vh1/fgfisY17UUg6Bg2KTAqh8H1inr73lReIpzyuwjn5GuGtzR58/mWLe7w2s61M1/kqxypFErdldsjK0VTmkdO6lKGA3Hx7jIPrsVej782JjxV8eLzxdkPcx+GKn0NgQvrwQlMgVwVhwfYZuQ6PSdbp3z80mxcgTDhJnpu4=
+	t=1731492285; cv=none; b=j7h/MZUSGt/jT3VhwyHSlTDKhluMG+BeSQdGO0e7VlfOfTe/+TgXATs/rbKM/7u/aziAQBRLBxxqmCwx8uIAVV68/ar4ycaHUZGRUs6V5dFX33kXBUT1syPa1r8rLOqbPdedP9FeMQd6V91Ukl1DGb8Dq66yU/bBBRoKiI7rK3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731492207; c=relaxed/simple;
-	bh=wsdwC3CS6Hd8xHiLIAPYBss7Mnv9WRYVickFvP64SOU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eCB/P1X26WFoQk1XcW9RMiR/iSgNvqOEF8etE2EJQXW1wDG52PwH+7H+d/Pn6xz+ErJ0Ne5UuJE7fHK0OcvKD3JZaS7eGPBR63mt214XDPEaOcC1vL8x+9ChYGdppauffE5Zx4YsQ5c93b+EYaFRRNH8WS8OVZKdQmAT99duRFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83ac1f28d2bso783790039f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:03:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731492205; x=1732097005;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YGwSr4FzZWJcuo3AWm+R4LEyOz9xOpfNp/jKix3RJZU=;
-        b=sHPyUlTQDFCB9ufyzpWERvLc4MM22XhIRvb2VxiM+MmuIFV7ZVlNG5sLP87HaDTteU
-         M0ZgT6aHDGXAXkh40/BBP8HviIB1vdtso/jsYR00Tj51JwjaiUdgiGy0F5FUS56N0UZS
-         VOL/cU41YMJBY6Ch+e4Uc5uK6lYARO6JaW7xyjFAKHq01YSlYMPJDnpoxhEffzIMFKI7
-         zuIxCg6I/1p+NYxubXyf3QH0trTs60lAXSrK1cF1zGuWWRZAZl9rBuXqlHQo086NjKAW
-         CaEa+1IQ+onhO/Wc5hEQDFWZQtVjOwCEB64H0rrBMkdWfsWYPBDduIbRuwlzoQFNqOnC
-         sXsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNDcOtn6O+UeYQxu2t0LbEGOiG79mj38BkWO1qzmJkwpOB7UCh9wVaYMClsoHkDMceVZmB1kQ8hWrQwHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPxFIf7xkI0icHanEdnYQqDKCsPXf5fQPP/t/NeRzNJydKryFt
-	Plfi4x0g1ZUPK2FLJL4ptM0KA+SKDxenMJu2PuSVR1gViZQcppPCdOjj77smaIRkomZem5yWdpo
-	XZG5PvBAWo+KjZNiuh2vtzVbo985YUE9dTwPLfKffelppmyXVnZlsAmg=
-X-Google-Smtp-Source: AGHT+IHhDLkTrVT18M9FC5IesYfllKbhptcngWt2H3ROIa8ndTrDYfl9yr8GeXAqbjxFAWY69hQMzxSX75OLnXOZqhgTI56Q0LwK
+	s=arc-20240116; t=1731492285; c=relaxed/simple;
+	bh=OMCl4faX7DqYL8ryflTHRUkYk3SaxsPfTGCTjB3mB+g=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LS9HGQ0o735dwGF0RzGT8QPT8NPnmv9xMUx+Xf84m5xuj5UPdTwKY1v6AaiS5KoC14CJzMmavOAwDpqU48Vu6365IbTewbO5vz0FiZKqZbGKaSmWLWVONDSDfJtMhnFKSfWDoxkVfuoU00RWlLEnOApkI2o8sTY0kxryZOtJB3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tBAE9-0007LF-0u; Wed, 13 Nov 2024 11:03:57 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tBAE4-000YV1-2h;
+	Wed, 13 Nov 2024 11:03:52 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tBAE4-000387-2O;
+	Wed, 13 Nov 2024 11:03:52 +0100
+Message-ID: <6d8a0d8916e185090423d42217262450ee948088.camel@pengutronix.de>
+Subject: Re: [PATCH v15 2/3] i2c: aspeed: support AST2600 i2c new register
+ mode driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, "brendan.higgins@linux.dev"
+	 <brendan.higgins@linux.dev>, "benh@kernel.crashing.org"
+	 <benh@kernel.crashing.org>, "joel@jms.id.au" <joel@jms.id.au>, 
+	"andi.shyti@kernel.org"
+	 <andi.shyti@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org"
+	 <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"andrew@codeconstruct.com.au"
+	 <andrew@codeconstruct.com.au>, "andriy.shevchenko@linux.intel.com"
+	 <andriy.shevchenko@linux.intel.com>, "linux-i2c@vger.kernel.org"
+	 <linux-i2c@vger.kernel.org>, "openbmc@lists.ozlabs.org"
+	 <openbmc@lists.ozlabs.org>, "devicetree@vger.kernel.org"
+	 <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	 <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	 <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>
+Date: Wed, 13 Nov 2024 11:03:52 +0100
+In-Reply-To: <OS8PR06MB7541739C4D1E69C0981CBCB4F25A2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20241007035235.2254138-1-ryan_chen@aspeedtech.com>
+	 <20241007035235.2254138-3-ryan_chen@aspeedtech.com>
+	 <6aea003a286162c465d0ee7681988b3697feb103.camel@pengutronix.de>
+	 <OS8PR06MB7541739C4D1E69C0981CBCB4F25A2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1:b0:3a2:6cd7:3250 with SMTP id
- e9e14a558f8ab-3a6f19c1b01mr218864055ab.10.1731492204891; Wed, 13 Nov 2024
- 02:03:24 -0800 (PST)
-Date: Wed, 13 Nov 2024 02:03:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6734796c.050a0220.2a2fcc.0007.GAE@google.com>
-Subject: [syzbot] [net?] WARNING in netlink_ack_tlv_fill
-From: syzbot <syzbot+d4373fa8042c06cefa84@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello,
+On Mi, 2024-11-13 at 07:43 +0000, Ryan Chen wrote:
+> > Subject: Re: [PATCH v15 2/3] i2c: aspeed: support AST2600 i2c new
+> > register
+> > mode driver
+> >=20
+> > On Mo, 2024-10-07 at 11:52 +0800, Ryan Chen wrote:
+> > > Add i2c new register mode driver to support AST2600 i2c new
+> > > register
+> > > mode. AST2600 i2c controller have legacy and new register mode.
+> > > The
+> > > new register mode have global register support 4 base clock for
+> > > scl
+> > > clock selection, and new clock divider mode. The new register
+> > > mode
+> > > have separate register set to control i2c controller and target.
+> > > This
+> > > patch is for i2c controller mode driver.
+> > >=20
+> > > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> > > ---
+> > > =C2=A0drivers/i2c/busses/Kconfig       |   11 +
+> > > =C2=A0drivers/i2c/busses/Makefile      |    1 +
+> > > =C2=A0drivers/i2c/busses/i2c-ast2600.c | 1032
+> > > ++++++++++++++++++++++++++++++
+> > > =C2=A03 files changed, 1044 insertions(+)
+> > > =C2=A0create mode 100644 drivers/i2c/busses/i2c-ast2600.c
+> > >=20
+> > [...]
+> > > diff --git a/drivers/i2c/busses/i2c-ast2600.c
+> > > b/drivers/i2c/busses/i2c-ast2600.c
+> > > new file mode 100644
+> > > index 000000000000..17ba0ee77c27
+> > > --- /dev/null
+> > > +++ b/drivers/i2c/busses/i2c-ast2600.c
+> > > @@ -0,0 +1,1032 @@
+> > [...]
+> > > +static int ast2600_i2c_probe(struct platform_device *pdev) {
+> > [...]
+> > > +	i2c_bus->rst =3D devm_reset_control_get_shared(dev, NULL);
+> > > +	if (IS_ERR(i2c_bus->rst))
+> > > +		return dev_err_probe(dev, PTR_ERR(i2c_bus->rst),
+> > > "Missing reset
+> > > +ctrl\n");
+> > > +
+> > > +	reset_control_deassert(i2c_bus->rst);
+> >=20
+> > The shared reset should be asserted again in ast2600_i2c_remove().
+> >=20
+> Hello,
+> It is share reset, if unbond driver and asserted the reset, it will
+> affect others driver running (which is share with the same reset.)
 
-syzbot found the following issue on:
+Shared reset_control_deassert/assert are refcounted, like
+clk_enable/disable, see [1]. The reset line will only be asserted when
+the last driver calls reset_control_assert.
 
-HEAD commit:    4861333b4217 bonding: add ESP offload features when slaves..
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10f26ea7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea5200d154f868aa
-dashboard link: https://syzkaller.appspot.com/bug?extid=d4373fa8042c06cefa84
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d19e30580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1733c35f980000
+[1] https://docs.kernel.org/driver-api/reset.html#shared-and-exclusive-rese=
+ts
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4263c9834cd5/disk-4861333b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/14c4f9ec4615/vmlinux-4861333b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6cc8fe1b802d/bzImage-4861333b.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d4373fa8042c06cefa84@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5845 at net/netlink/af_netlink.c:2210 netlink_ack_tlv_fill+0x1a8/0x560 net/netlink/af_netlink.c:2209
-Modules linked in:
-CPU: 1 UID: 0 PID: 5845 Comm: syz-executor685 Not tainted 6.12.0-rc6-syzkaller-01230-g4861333b4217 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-RIP: 0010:netlink_ack_tlv_fill+0x1a8/0x560 net/netlink/af_netlink.c:2209
-Code: 00 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 0d 48 89 df e8 db b3 2a f8 48 8b 4c 24 10 4c 8b 3b 4d 39 fd 73 2c e8 c9 ed c0 f7 90 <0f> 0b 90 49 bf 00 00 00 00 00 fc ff df e9 9f 00 00 00 e8 b1 ed c0
-RSP: 0018:ffffc90003b47780 EFLAGS: 00010293
-RAX: ffffffff89d3ec97 RBX: ffff88807d437718 RCX: ffff888030185a00
-RDX: 0000000000000000 RSI: 00000000ffffffde RDI: 0000000000000000
-RBP: ffffc90003b47850 R08: ffffffff89d3ec3c R09: 0000000000000074
-R10: 6f702064656c6961 R11: 6620657475626972 R12: 1ffff92000768ef4
-R13: ffff88803169461c R14: ffffc90003b479c0 R15: ffff888031694620
-FS:  0000555569f6a380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000066abb0 CR3: 0000000079386000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- netlink_dump_done+0x513/0x970 net/netlink/af_netlink.c:2250
- netlink_dump+0x91f/0xe10 net/netlink/af_netlink.c:2351
- netlink_recvmsg+0x6bb/0x11d0 net/netlink/af_netlink.c:1983
- sock_recvmsg_nosec net/socket.c:1051 [inline]
- sock_recvmsg+0x22f/0x280 net/socket.c:1073
- __sys_recvfrom+0x246/0x3d0 net/socket.c:2267
- __do_sys_recvfrom net/socket.c:2285 [inline]
- __se_sys_recvfrom net/socket.c:2281 [inline]
- __x64_sys_recvfrom+0xde/0x100 net/socket.c:2281
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff37dd17a79
-Code: ff e8 cb 01 00 00 66 2e 0f 1f 84 00 00 00 00 00 90 80 3d 11 66 07 00 00 41 89 ca 74 1c 45 31 c9 45 31 c0 b8 2d 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 67 c3 66 0f 1f 44 00 00 55 48 83 ec 20 48 89
-RSP: 002b:00007ffda0631f18 EFLAGS: 00000246 ORIG_RAX: 000000000000002d
-RAX: ffffffffffffffda RBX: 00007ffda0631fa4 RCX: 00007ff37dd17a79
-RDX: 0000000000001000 RSI: 00007ffda0631f90 RDI: 0000000000000003
-RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffda0631f90
-R13: 00007ffda0633178 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+regards
+Philipp
 
