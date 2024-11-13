@@ -1,143 +1,106 @@
-Return-Path: <linux-kernel+bounces-407686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF5F9C72EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:11:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C332D9C72BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:09:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FEB0B31E02
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:42:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 182B4B33282
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87441213135;
-	Wed, 13 Nov 2024 13:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB09420100C;
+	Wed, 13 Nov 2024 13:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="KEjLizSz"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OtFUw7RA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E893620EA5B
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182841EF928
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731504990; cv=none; b=jEH9gaYwdzc6OJdxB0RvXLuz5rL5hK31yrKXXxQdmXvoeSBKRCWt9cfW+CKDNcoWbUBatb+lzPTNQ3qT6p5yKre7OeHSKfrb0zG0NNMnMi8stvwat9o5BsnPpQHhl2TuuHqrYudelGI5tyCfzDl2zwgd8js+VnVxFDJd3/1QMlg=
+	t=1731505166; cv=none; b=rrGkmzomLXXkdopb7Cbkrf+/L79lo8y4v1I02EG1q8xFYOdK4jwvMJ3Zig8gb8HdXPINalsN/kh1M20y8ksGuOyxBfErDeyJXbfGMYYlY+0tqhO8hBd/CmjQ5jWAyYB6yjvpkjmqSAqe5cQXImCk65sZrzJwZIm59Y3V9bBZVlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731504990; c=relaxed/simple;
-	bh=exW6eK3eaXk+DXlub2dHP9Tox8AThO8iFMIJzBh5YXo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IOyThwXQjXUUa58P4tp0cz9FUXLwcUw1bwlq0IWAmdxEXVY+X0rOusYyntRQ9a1/EJcFeikwBMIGB0JZtxWi5p2Fj7UC5HSgX+psKTWN/ZMMdyY+E2M072WBM+lbRoGsF3fy1hGGnK5Hj0O7A2VAADL3YXo321MPjV65SQOHzQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=KEjLizSz; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso86137055e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:36:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731504985; x=1732109785; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Um0kOcEA9In9ecd/yltR9Z4whYJVqjtgwtExr6i7tVQ=;
-        b=KEjLizSzR8b0rn3gF0ImGpD6YJG1n4Zzp1UgMC8aRtv0KYhFcbNudANr8VGYJ6J1vo
-         tAmD9zf32ZApQ+sZh6fe/AD6W5tbTVR8FAgCy1aIkIpLKdCXltxAOS7hUSYw5mxbfWNd
-         0v+BHH1hVdqkOz2JHWVeM+S2E5D9ZP7+eaBrBTfK3wWikJHa9tdamVsD3kmMyE3gKfkA
-         GD97EtoLMbd00GyBsOZmPhfKE0+Jl5PkAKmRuU0vf2KqZYaUGWYPTYBw84weDjAGErGl
-         EicNchyLAP7qaImFCAe7BxySG4opPscntuqHYiKbsKW+rWtTSqeWQaGFNcNm+X0ATm7C
-         puog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731504985; x=1732109785;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Um0kOcEA9In9ecd/yltR9Z4whYJVqjtgwtExr6i7tVQ=;
-        b=vywhMdFPS8NdMyJ2deBLg9AKr31Okx2HJL/UkcC8fzag72LNfSzdSNLHObRHMWpKsn
-         ynVFuVbOA4VarnxsuypI3XOHtqBexr9QZoNZ6H5jld7lXXeS92psW7BfA0QXm9XBE//j
-         VMP2bkAvcoozvRcrQwLBRp/StK8yRr7VWv+l1oTF6yKv6FSUKKgwg6f1IgL802HgOzgH
-         dZARZ650KKyYbXYBv8twqxZRCqyPVLh0c0m31wWAtmxtCD2Q2YJv2Ed2u6qv2VihI1WG
-         Wut52e88M6Z8xLR6jJ/2VIMyCU+E9zUEldVlKJsjJu+laOtm4e/WcgYPeyw2jYUjil1a
-         dBPw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7LNVfAFhdP6amk7ZQyXL7SFqLuWtVS356nR0GYG+Gyq3r1L7Ee54Ro9VlpvRftsLWN8PgYvKarIe458E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2/ZfdJcRdc1OFk0WFv8oulaLpaBZmf2sl7JnuQLqUh0rfyMKa
-	SIVTO7KyxIJLwPms7OaHQhUBr0VCh5dLcCngXRhG+rG4aHaZXcFFT0P/NwSgYsw=
-X-Google-Smtp-Source: AGHT+IHruw+WkNL7bCkO7isKLwDz9qR5vna8+fxDLeEPt204ctQzamk/M+Mn2zf6E0gzAvPUU1G0+A==
-X-Received: by 2002:a05:600c:4683:b0:42a:a6b8:f09f with SMTP id 5b1f17b1804b1-432b7518d0bmr204533015e9.23.1731504985256;
-        Wed, 13 Nov 2024 05:36:25 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d54e2f2esm25664165e9.1.2024.11.13.05.36.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 05:36:24 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	biju.das.jz@bp.renesas.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	magnus.damm@gmail.com,
-	linus.walleij@linaro.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	p.zabel@pengutronix.de
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 20/25] ASoC: dt-bindings: renesas,rz-ssi: Document the Renesas RZ/G3S SoC
-Date: Wed, 13 Nov 2024 15:35:35 +0200
-Message-Id: <20241113133540.2005850-21-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1731505166; c=relaxed/simple;
+	bh=PUyWdRAPor1HzPSdiot0ngp/W3MbSaespHAsyVU7718=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XovMNdtSBcg9Izk2lBFwzskMVUME3kbjP2jiEXhVJPi+tyUXu3F4pf0kOGTdHPU3ycMabrrJ+tMnO5xOfMEhiigap3pv9YYu/b22n16ejGxYBqbF5nZR9fKrmrZZHXX9XDswYvyCN22Rm01k6tx4roIIT2WDFGihD0tF42fpawI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OtFUw7RA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A240C4CECD;
+	Wed, 13 Nov 2024 13:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731505165;
+	bh=PUyWdRAPor1HzPSdiot0ngp/W3MbSaespHAsyVU7718=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OtFUw7RAXuI0Ss8WniSQQV7EGUxzQ7nhdrikjhDDVJ6cwGec5TZniWU4I7AKRDxFy
+	 o+CsrdZkJeEFpi/m0PCqeww84iFuN+89ytAAFByeP9+PVArtjfaRfJ0ZOVPM1ee4V5
+	 jKyIQpFy71Wdwj0tqovCFicX7PxtoxceB5hDm8GvK3ayLAXazocu/qfV1x2CdbO8gQ
+	 nO3mfGFbgzw4r2YAANCnllOtmTqJGypOK4oiiok5jBN8HrNmT2Q/n4esHqZ3pWsUoN
+	 bswIfp2QvWbgEi6wZqpnJyG1xNfgFPIp2z8YaFz+wTPWvvXOmXwoDjqKoGfFGjzGzo
+	 oyoyBXTeL968g==
+Date: Wed, 13 Nov 2024 13:39:22 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Suraj Sonawane <surajsonawane0215@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: aat2870-regulator: replace division condition
+ with direct comparison
+Message-ID: <ZzSsCoYy-Cs7d_Q7@finisterre.sirena.org.uk>
+References: <20241112202041.16980-1-surajsonawane0215@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nLVQnhLQ/VajP+vb"
+Content-Disposition: inline
+In-Reply-To: <20241112202041.16980-1-surajsonawane0215@gmail.com>
+X-Cookie: Editing is a rewording activity.
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The SSI IP variant present on the Renesas RZ/G3S SoC is similar to the
-one found on the Renesas RZ/G2{UL, L, LC} SoCs. Add documentation for
-it.
+--nLVQnhLQ/VajP+vb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+On Wed, Nov 13, 2024 at 01:50:41AM +0530, Suraj Sonawane wrote:
+> Fix an issue detected by the Smatch tool:
+>=20
+> drivers/regulator/aat2870-regulator.c:142 aat2870_get_regulator() warn:
+> replace divide condition '(id - 1) / 2' with '(id - 1) >=3D 2'
+>=20
+> The division '(id - 1) / 2' was used to check if the regulator ID
+> is greater than or equal to 2, which can be confusing and less
+> readable. Replacing it with '(id - 1) >=3D 2' makes the code clearer
 
-Changes in v3:
-- none
+This is absolute nonsense, the tool should be fixed instead.  Writing a=20
+division as a shift when the intent is a division is a microoptimisation
+which modern compilers really should figure out where it's relevant.
 
-Changes in v2:
-- collected tags
+> -	ri->voltage_addr =3D (id - AAT2870_ID_LDOA) / 2 ?
+> +	ri->voltage_addr =3D (id - AAT2870_ID_LDOA) >=3D 2 ?
+>  			   AAT2870_LDO_CD : AAT2870_LDO_AB;
 
- Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Neither version of this is particularly readable, but the new form here
+seems fairly clearly worse rather than better.
 
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-index f4610eaed1e1..cab615f79ee4 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-+++ b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-@@ -19,6 +19,7 @@ properties:
-           - renesas,r9a07g043-ssi  # RZ/G2UL and RZ/Five
-           - renesas,r9a07g044-ssi  # RZ/G2{L,LC}
-           - renesas,r9a07g054-ssi  # RZ/V2L
-+          - renesas,r9a08g045-ssi  # RZ/G3S
-       - const: renesas,rz-ssi
- 
-   reg:
--- 
-2.39.2
+--nLVQnhLQ/VajP+vb
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc0rAkACgkQJNaLcl1U
+h9ClDgf9F4AxWYIVBbx058j1yhrt2sJBOo5GQxOaNO1IpCmhAIYS8yFXLylbbGYs
+Mx96eQMGubs7yJwMJtj4dD7MKe4UsFg/WyAv9XoQbhgVuJli9WdfxNsD9WOxi0Pf
+pcmoQWDwlgzBfkSCLHdsWRIoedBzaggjlA8qL4oy37G01eUmEOiSIKLszPWxau61
+sT3Vflpgo1Am2AhvZRIHqv9K5Q4027+alpxPhEqXZNL4dBxIjsbmE7JYRF8eI0Mo
+76VcyEr/mh90nj5yysfWH/vMbz53b1jaem3Bn15jUj+Dx9QYx6PmcjHT16QPp0Fj
+M3aVnSDg1j+8C6y0pUCRztUNuDoc5A==
+=0SWd
+-----END PGP SIGNATURE-----
+
+--nLVQnhLQ/VajP+vb--
 
