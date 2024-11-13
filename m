@@ -1,132 +1,149 @@
-Return-Path: <linux-kernel+bounces-406966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA36A9C66C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:36:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD519C66C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 736EE285AB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:36:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E569CB2BA41
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F0227456;
-	Wed, 13 Nov 2024 01:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFB629CFB;
+	Wed, 13 Nov 2024 01:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bPB8r2ji"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I29yc5bJ"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4592217BD9
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 01:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65252BA34;
+	Wed, 13 Nov 2024 01:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731461758; cv=none; b=JHDSK0M882HrR+B4sFOjIIA+u6TBgUHu/V9ONO2GtIqmN20ygDYfl4loZqbNIrI8Ff59vKfeug+jWb9rfRKBl2qEMVUrPrmlpAAjeYr2FapdK7BGmXTLKsaw7mwZ6zfwAZwYt5wqPiCABOBdpbwg9pqxWwckkBAHypcjKiVySF8=
+	t=1731461808; cv=none; b=BXLfoBxhPy4wySaH+K2QNyDxM88qClSIyNTpqDRPZNx1G8xv7kU5hIKqqSbKb+c1xK3P7FI1+gup7K6jF5DvykQF1PLQKeJzK3dLWNeF2dJnBGrKwYu/B36ul7fAIF5LSFaHBFceajDC79pk7FMvGPJOkdPzvbjTLh8iXe63QSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731461758; c=relaxed/simple;
-	bh=Hai8CbjxxvC65Grfw0z9wldwL8Fsqy9AZwn2qJq5h1c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lsm5Vc813R8dneaDe9BijD2my3qg5fbOakdEP1QcZFzlJvsWYF8/RzIVvzoetSA0zj2pge/V8UM3wCyoagFYJ5c0gbaRJNvDEzp2MVnhIzlxTiABSJuhV/BFSey+oFYW5S3B8T/Afd+JsHAvdERMf6dM4WoitRcOiSodRa00MlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bPB8r2ji; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731461754;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mGkqVBD/cl5HjbeUZbHpW2I5be/ruvQ0biy0GT7rtWM=;
-	b=bPB8r2jikwZhj6I3VmCrQBEXqE+e/WEiXoIOMsjWZgtuDI++aqdEJrO6COlUCddadJSLui
-	swdS9KW+cOHPCS3Rg1mPqCybIDVxpJQVuIFK7yNHvSLJIuvljzlQZ+Kgpj6HqtkP/EM/dI
-	F+lhGVn3BRLyoJ8j5nUZhyR4TGjwpDw=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-680-iHACsJidPwePa56v2fi2UA-1; Tue, 12 Nov 2024 20:35:52 -0500
-X-MC-Unique: iHACsJidPwePa56v2fi2UA-1
-X-Mimecast-MFC-AGG-ID: iHACsJidPwePa56v2fi2UA
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-71e648910e9so8580990b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:35:52 -0800 (PST)
+	s=arc-20240116; t=1731461808; c=relaxed/simple;
+	bh=jQ7vjQitYIwVRV5qo3X4jTdA0nSn7aCAbVKckDNIqhA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FRbk0pq0fIkop0VeRQuDoCmNgOesPSiE0GyJcEIOH6tJ/OVxo1PkR8vWvYJP9QQpAAkTw2Kj7JSyHaz1u8ctK6ZrTju/BjJRZb9t507z7miR6hlJRfWpIHwaphW8szGa1qx0JVO/vox7msL86JnwVljPZafd4a3FnQqc7DeXHQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I29yc5bJ; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4314fa33a35so51729195e9.1;
+        Tue, 12 Nov 2024 17:36:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731461805; x=1732066605; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r0He/ui9X3lLXTLqSVc28T6+iNWPPBcnJC+uzdT9cME=;
+        b=I29yc5bJJM9MQ+1VgrAuqnHJvnEa9UMZjSrXJjg8GhZubMXSiV+3NVjvOLGqtV9er+
+         LnJYfTFrJuUe9pgrJMJA+GvklvSu9OkRiIo4755NkXMnpSWY71TENhlmWhSdqTTGEO9R
+         gRNPHIdO6p1UavNGdhKGmFVIwJ+KA568/ZEOWYO9+PHE7zAKeh8jxrtCfrHuQnNRI81s
+         cZG2Div3VNKnsQFtO9ohe4eaErBgr2Dz21hQ6Xf643GOMyratDDTFRw2tAq9VVCsBnb4
+         aAXtbmxFY9wRs36M6JnU8J04EJUreOf5ewvKL6BX7zx5LRMcv9AjuGpawTEl/Oy66T75
+         R16g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731461751; x=1732066551;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mGkqVBD/cl5HjbeUZbHpW2I5be/ruvQ0biy0GT7rtWM=;
-        b=r4UQPC+QqV1Ni9khTAeJdr2w6LAWDqOthpS1nFxABbopd/s3pymxD7DzEVyRWpRc6H
-         SRzL0t/AhG7kDa5oZQ7jv8gZb+cSy3XHN2ppSR6KixCDQsFEC01zao5OuwYYHasbL5uc
-         BxF4DIoM9JzKuK5sgxKdN6slhdIPo0M3T5b2dKCtA0SLKujNWISVvIt9pNWTHxbyneEy
-         JJVdTGQ4gfH4uC3A6JViahaakF912d7bf81UJwi6kdL2cGxCBmqrZ4L6bOeOS46LLHWw
-         4e8t76lWA3hfrfyqgy6XMT4jDGPHnrKzbUWi6UeUPPQh8qrwfQ1eYTPhcA7fk3dHCUdO
-         fTUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuLgkdQQh9DBPfHJJu9G2PPqEXPUCcxLR1Mu1AArAVP6kHJrhLu29EqUe83xGGfnPxFDmcdfOzqDm7aJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUx0H+/pdTFxL0fERGm9CJOJBvbTIogpMYTPBtGYBdNBOzKhZw
-	UNOi4wJhNPMsNOJE2V4HVwIiAjQBAtLCM6L917MZWTKtqWQXOVRqyazt8oZ7wuPeXi6CWSefSaY
-	sdy8w5Bo+QGTQ2fGaJGAxV4OnMd0pyM1WwkMUu6/FE+0va39Xzn/4t6wJfD9FdZlY1kz/NVpUg3
-	tgy8JKP8V4JINiAIIA4foWGJQjlVSf66SKFO4F
-X-Received: by 2002:a05:6a21:339a:b0:1db:ec3e:c959 with SMTP id adf61e73a8af0-1dc2292f6fcmr26523383637.10.1731461751498;
-        Tue, 12 Nov 2024 17:35:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGZH7pMNwQm2PurwVVeyExbh2UXkF+eg1HiSNrj9jmjuk8eRgNriNhqFYzaWC3Qe2loS5SKWogSrS5vWm8Txp8=
-X-Received: by 2002:a05:6a21:339a:b0:1db:ec3e:c959 with SMTP id
- adf61e73a8af0-1dc2292f6fcmr26523358637.10.1731461751071; Tue, 12 Nov 2024
- 17:35:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731461805; x=1732066605;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r0He/ui9X3lLXTLqSVc28T6+iNWPPBcnJC+uzdT9cME=;
+        b=mQ7wuU3EPxR781yc9ZV50L1y3WBtyKk19xYIICXp6KTaBt6mObVu9MTGNNDFdUBxd+
+         2LKhLGmrzdSpHPAsB/I1uTddZUgla5VqHPl2wUhssPILVhv2zf04ye28JQ4baTH50WEX
+         eowH+a13BM8MU6wOS/L66WRqb827UBsJ6Ikv5IRmgRVWOTZutEgG9w/ISnK+B1qAz8Gs
+         eQxecqNLuKpwp/A4Pj0kzakVJ8pN9k1cfV4M1HuwTFb+wtkq6R6XBzrmbxl6yZ3nHcYM
+         wOI26Xd4pSdw4Drw8BDsvanLpDiErc0W3pUW2UgldBqPu4DpJPksUIJ8DzSvcqIwSyGx
+         UrLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAfExDBXd65c3YWzeN34a3oKhYJgMg/cLtZL0PSyI01fvNBgstFtSvgNjZOjadsFHj0f5aXFzFAesDxa4oOwZB@vger.kernel.org, AJvYcCWyDMTHWEQwYvzGHncQRk2gumQc3e6UMCWK3jzMUi7BCGwoR+LGXbrt2t2EfpnOPfhCwJgpQbIMCIX9Uko=@vger.kernel.org, AJvYcCX/BkABEXd4bcuxK6wvIQSTcP3whxfNkvw+ubbieHGKjr64xtBvxknb51lQ+w625oLZ9I3RYYeC@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoMcfxvWqTu99rT2VhCFvAVoLaQiQL+N6RvEX0dULy+MqWbp/h
+	szItvpYNZubIkmXZ6kglawraJgvVEnBnP3VdMIofaw59xBiB6Bf0
+X-Google-Smtp-Source: AGHT+IFJ3TyFzXqhDuVU7DJUr9rylVz4qYboLBexKwMmYF8kWN714xioYIohZpiK5XEDRhdObS7OuQ==
+X-Received: by 2002:a5d:47c7:0:b0:37c:d54b:a39a with SMTP id ffacd0b85a97d-3820812de92mr3323488f8f.33.1731461804463;
+        Tue, 12 Nov 2024 17:36:44 -0800 (PST)
+Received: from [192.168.0.2] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed970729sm16681031f8f.15.2024.11.12.17.36.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 17:36:43 -0800 (PST)
+Message-ID: <e543a3de-44f1-4a2d-90ef-1786e222f0d8@gmail.com>
+Date: Wed, 13 Nov 2024 03:37:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111025538.2837-1-jasowang@redhat.com> <20241111022931-mutt-send-email-mst@kernel.org>
- <CACGkMEuCx=ht2Q75xJ11EGsjuZPWcTTpGh7OyVEHCOhGDB5f7A@mail.gmail.com> <20241112164527-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20241112164527-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 13 Nov 2024 09:35:39 +0800
-Message-ID: <CACGkMEt-mD8=wkTLua2-3c6bSYzWfp+m4TW8Pm_oe063gsWqMA@mail.gmail.com>
-Subject: Re: [PATCH] virtio_ring: skip cpu sync when mapping fails
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 06/23] ovpn: introduce the ovpn_peer object
+To: Sabrina Dubroca <sd@queasysnail.net>,
+ Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-6-de4698c73a25@openvpn.net>
+ <b7d3ec11-afe4-409c-970e-8bc647364a08@gmail.com> <ZzORATd5hG614dta@hog>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <ZzORATd5hG614dta@hog>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 13, 2024 at 5:46=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> On Mon, Nov 11, 2024 at 04:36:52PM +0800, Jason Wang wrote:
-> > On Mon, Nov 11, 2024 at 3:30=E2=80=AFPM Michael S. Tsirkin <mst@redhat.=
-com> wrote:
-> > >
-> > > On Mon, Nov 11, 2024 at 10:55:38AM +0800, Jason Wang wrote:
-> > > > There's no need to sync DMA for CPU on mapping errors. So this patc=
-h
-> > > > skips the CPU sync in the error handling path of DMA mapping.
-> > > >
-> > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > >
-> > > DMA sync is idempotent.
-> > > Extra work for slow path.  Why do we bother?
-> >
-> > dma_map_sg() did this, since current virtio hack sg mappings to per
-> > page mapping, we lose such optimization.
-> >
-> > Actually the path is not necessarily slowpath in some setups like
-> > swiotlb or VDUSE.
-> >
-> > Thanks
->
-> I don't get how it's not a slowpath. Example?
+On 12.11.2024 19:31, Sabrina Dubroca wrote:
+> 2024-11-10, 15:38:27 +0200, Sergey Ryazanov wrote:
+>> On 29.10.2024 12:47, Antonio Quartulli wrote:
+>>> An ovpn_peer object holds the whole status of a remote peer
+>>> (regardless whether it is a server or a client).
+>>>
+>>> This includes status for crypto, tx/rx buffers, napi, etc.
+>>>
+>>> Only support for one peer is introduced (P2P mode).
+>>> Multi peer support is introduced with a later patch.
+>>
+>> Reviewing the peer creation/destroying code I came to a generic question.
+>> Did you consider keeping a single P2P peer in the peers table as well?
+>>
+>> Looks like such approach can greatly simply the code by dropping all these
+>> 'switch (ovpn->mode)' checks and implementing a unified peer management. The
+>> 'peer' field in the main private data structure can be kept to accelerate
+>> lookups, still using peers table for management tasks like removing all the
+>> peers on the interface teardown.
+> 
+> It would save a few 'switch(mode)', but force every client to allocate
+> the hashtable for no reason at all. That tradeoff doesn't look very
+> beneficial to me, the P2P-specific code is really simple. And if you
+> keep ovpn->peer to make lookups faster, you're not removing that many
+> 'switch(mode)'.
 
-I'm not sure how to define slowpath but a possible example is when we
-reach the swiotlb limitation, in this case. vring_map_one_sg() can
-fail easily.
+Looking at the done review, I can retrospectively conclude that I 
+personally do not like short 'switch' statements and special handlers :)
 
-Thanks
+Seriously, this module has a highest density of switches per KLOC from 
+what I have seen before and a major part of it dedicated to handle the 
+special case of P2P connection. What together look too unusual, so it 
+feels like a flaw in the design. I racked my brains to come up with a 
+better solution and failed. So I took a different approach, inviting 
+people to discuss item pieces of the code to find a solution 
+collectively or to realize that there is no better solution for now.
 
->
-> --
-> MST
->
->
+The problem is that all these hash tables become inefficient with the 
+single entry (P2P case). I was thinking about allocating a table with a 
+single bin, but it still requires hash function run to access the 
+indexed entry.
 
+
+And back to the hashtable(s) size for the MP mode. 8k-bins table looks a 
+good choice for a normal server with 1-2Gb uplink serving up to 1k 
+connections. But it sill unclear, how this choice can affect 
+installations with a bigger number of connections? Or is this module 
+applicable for embedded solutions? E.g. running a couple of VPN servers 
+on a home router with a few actual connections looks like a waste of 
+RAM. I was about to suggest to use rhashtable due to its dynamic sizing 
+feature, but the module needs three tables. Any better idea?
+
+--
+Sergey
 
