@@ -1,74 +1,54 @@
-Return-Path: <linux-kernel+bounces-408338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678BB9C7D99
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:23:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0828F9C7D8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:19:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C8B7B2D407
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:18:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0FBF28460A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123E7208225;
-	Wed, 13 Nov 2024 21:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF6D204F7F;
+	Wed, 13 Nov 2024 21:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="TiMwg/yU"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lpwLU5Po"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC0F206E7B
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 21:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A883B1CAAC;
+	Wed, 13 Nov 2024 21:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731532693; cv=none; b=NBb3b1WrMRvpTSedTobmYm3PdRxO68iPjDoXz7ne0EiJ18FzOeOs63D2fkXlBSCMkSg/EtyoMfGF8nWYTvt2tDSOIyZp/691ANuZf5mPGBEH0xUZ0/XMzHsrNUfDdHPanK8Je6EImWUuiW2HmEvkAZLZ/hCey1fmh83F5ZT6/+o=
+	t=1731532780; cv=none; b=O2DE/HLUx1mA7wqM0AyaxI9icVP5bGr5Ca5dETluzBubtov5BAbOBnl3Hm/oTVMqnZ86eMk+sPAHVa6esHNxKs9JLPd3l2AX0SpTIi86Rbk/IS1oBdR2Yq/K1U+EWZ3IZUDj9yYck7ZHO4ENTt7IZTbZb+upWkUqzcqw8ifCdJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731532693; c=relaxed/simple;
-	bh=f6dori5l/j78KrvEqw9PZullPMp0BknMmMOtu9U8qi8=;
+	s=arc-20240116; t=1731532780; c=relaxed/simple;
+	bh=Xnkx+ud7MT+lNJixC4oX9rkrb41wOIzfnm164tP+p8M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c9koxDRjBKHdP5MT6XQ3P36akaEZ51viyvCY4vlRWJf+OT6433CZDh2ENAH1vHCW9YpvMGfvurI0wp1Pmh2cK+0IPFq4hnHT0Mh6q7vKKOkugg7jqUwLoFwItSOptVwc6HjtikX7Wja/7odlI/4ATi9y8lMUM76esb4pGUGbVZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=TiMwg/yU; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b155da5b0cso517437785a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:18:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731532690; x=1732137490; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dEq6Xm9vC0u0FZtqckrn5kDwb1c/gkCi+Dl7LfGpdSg=;
-        b=TiMwg/yUkVnXUhmDp43kRduGIV/dyLib2LyObLH081e9N+GuOg4nE/GRXP0RfzAUeI
-         eVNIt470SKEl10XJ2+E2x0tHxHUBlnEh1GJS8y0nBzS6J7oFcAayVdbVYpUMwhHF+lK/
-         cWXnsn6j+CVxUNbV6bZzqHXX+OP+tRnnSsNmtp9vjYUnieb2NjvwSgJh+uGsm4F5y9h7
-         lgTtHklXenpH0bvkktrNZo8IuiX/SsPPZKLp4xp1IL5sJJerKr4UXBen2KDVfFYLUe9v
-         z/RiE/1J67JFoqRhCzzxSqMz2MDB1DVxxxd4BW3p1z98fZWpWCjEPJrAICuCJVBWui5c
-         V+Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731532690; x=1732137490;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dEq6Xm9vC0u0FZtqckrn5kDwb1c/gkCi+Dl7LfGpdSg=;
-        b=usPpkitr46g9vVXjqTrFpRpssIn3QI9Fh0aKIHdiDtERgXbaYv5pqPr3DLbzy4+X3z
-         NC+JpXSUXeslgkH1jDGZ43RCh5LYgBAjdKyWh2P+T12TFkL9bhM7iD/4LeSF0xfnxQhx
-         fB6+ZUvHnm5kkYx/MGUoaVVrc2wTBfua9IWykAM2SfExE+Pe5HJijwKaUBHA2kmJNqq8
-         7upvt+1u4PnSKfuvJywIZ1MMc3BYSPkahQQafXGlitdaM7dNjupJHEzTa7KU6dK1LYgm
-         3iyuW/9kUvRSE8xcJ13jiwKt7nuOgFy3H4riyZ/mcAkH5j/Fb2fM+rwKsYo2nxmWWDYI
-         678Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV32rPvhWPLAgUls+2L4QLQL/nmq2WzGRZe/dRrIn96DoUZ7jt4phMzYXd1Dt1bPuVNQ0hUYwKLmAP0w5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwrzFPaiMIsaE6ml7wd/+gx9mq+J2avdL7/nGqlc9HG+mUAUCw
-	imawHOFBPKGldxNP0GpegKnPtldRWu2jKLL48rqy/TMI6I6If0BRZEK7xCK2Fw4IN5nnrn0o6js
-	Q
-X-Google-Smtp-Source: AGHT+IHFSpQjlUsjk+2YOLoGfSo3p++v0v/Xnn1uMBjGnraxgrkmUvtPg3uLcuW6zLUhDH0SAPOG/w==
-X-Received: by 2002:a05:620a:2441:b0:7b1:4f3c:3a3e with SMTP id af79cd13be357-7b34bbc2468mr835009785a.40.1731532689818;
-        Wed, 13 Nov 2024 13:18:09 -0800 (PST)
-Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac2db0asm731208285a.26.2024.11.13.13.18.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 13:18:09 -0800 (PST)
-Message-ID: <43a95a8f-6677-4d41-b71f-83454b39d304@baylibre.com>
-Date: Wed, 13 Nov 2024 16:18:07 -0500
+	 In-Reply-To:Content-Type; b=E3+08RJ9JWmF+eu7OXMeYUgwB5EFyP4foiqvbNMkJBAqvcs5LRBGqkVYKirO3AzKX4fTKXnQpWYb3BFC9nAqf2bUw9r5gTwdz1+Ej+qjZem7V3Jw4nu9gooJHhsyvmIqleqZmoOct0TEx4RQrqsSVWgZ9YVdSRoHDdMzGTN4O+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lpwLU5Po; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id BKlotv64F8oLZBKlotu3kl; Wed, 13 Nov 2024 22:19:29 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731532769;
+	bh=TDv5op1nCFSok/ZUX3+h1wOcNYLnkA7ktCcMWA0xhyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=lpwLU5PocBrbY9gmopxCCa19aFtl10hCyApKF5cO8jzJU6eVkccrk0oHAlFbjIXbW
+	 YSjVe6ItTuXfvIvgTTLMxlFlqdtIx30GgfGBT+K/9kaqkn3bIcutYwfb6oU4ARszXy
+	 6OE/7CVc8/AmCbuK2JpTpC+DhJio7aV89Cjx+PktvHeqSxy3fQJ6hgLUphJ7VBXF8R
+	 9oiKKhSVo5cBDYo1HU7ZreMYElhD5TSRjDEBoQYU/kb4Hzh9ckbjREjUFv0rCI/mWH
+	 N95xpUsGTsNjWHYBTxXaLzyI0ZLIRiObOnBq+JP8CFrqIhKFMfitpY9hWHZcgATZzA
+	 kSJqMrpecJHaA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 13 Nov 2024 22:19:29 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <71348ac9-07bf-460f-a200-653f57ed4061@wanadoo.fr>
+Date: Wed, 13 Nov 2024 22:19:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,68 +56,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] iio: adc: ad4695: add new regmap callbacks, timing
- improvements
-To: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241111-tgamblin-ad4695_improvements-v1-0-698af4512635@baylibre.com>
-Content-Language: en-US
-From: Trevor Gamblin <tgamblin@baylibre.com>
-In-Reply-To: <20241111-tgamblin-ad4695_improvements-v1-0-698af4512635@baylibre.com>
+Subject: Re: [PATCH] drm/bridge: Constify struct i2c_device_id
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jagan Teki <jagan@amarulasolutions.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Douglas Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <bdba1f49b4b48e22628482b49ce81f8e1f0d97b1.1731445901.git.christophe.jaillet@wanadoo.fr>
+ <20241112224335.GA29944@pendragon.ideasonboard.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241112224335.GA29944@pendragon.ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Le 12/11/2024 à 23:43, Laurent Pinchart a écrit :
+> Hi Christophe,
+> 
+> Thank you for the patch.
+> 
+> On Tue, Nov 12, 2024 at 10:12:25PM +0100, Christophe JAILLET wrote:
+>> 'struct i2c_device_id' is not modified in these drivers.
+>>
+>> Constifying this structure moves some data to a read-only section, so
+>> increase overall security.
+>>
+>> On a x86_64, with allmodconfig, as an example:
+>> Before:
+>> ======
+>>     text	   data	    bss	    dec	    hex	filename
+>>    15566	    987	     32	  16585	   40c9	drivers/gpu/drm/bridge/chipone-icn6211.o
+>>
+>> After:
+>> =====
+>>     text	   data	    bss	    dec	    hex	filename
+>>    15630	    923	     32	  16585	   40c9	drivers/gpu/drm/bridge/chipone-icn6211.o
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Compile tested-only.
+>> ---
+>>   drivers/gpu/drm/bridge/chipone-icn6211.c   | 2 +-
+>>   drivers/gpu/drm/bridge/lontium-lt9211.c    | 2 +-
+>>   drivers/gpu/drm/bridge/lontium-lt9611.c    | 2 +-
+>>   drivers/gpu/drm/bridge/lontium-lt9611uxc.c | 2 +-
+>>   drivers/gpu/drm/bridge/ti-sn65dsi83.c      | 2 +-
+>>   drivers/gpu/drm/bridge/ti-sn65dsi86.c      | 2 +-
+> 
+> While at it, could you address drivers/gpu/drm/i2c/tda9950.c too ? If I
+> were to push a tad more, there are only two other drivers in the kernel
+> with the same issues outside of drivers/gpu/ according to
 
-On 2024-11-11 10:59, Trevor Gamblin wrote:
-> The AD4695 driver currently operates all SPI reads/writes at the speed
-> appropriate for register access, rather than the max rate for the bus.
-> Data reads should ideally operate at the latter speed, but making this
-> change universally makes it possible for data to be corrupted during use
-> and for unexpected behavior to occur on driver subsequent driver
-> binds/unbinds. To solve this, introduce custom regmap bus callbacks for
-> the driver that explicitly set a lower speed only for these operations.
->
-> The first patch in this series is a fix introduced after discovering the
-> corresponding issue during testing of the callbacks. This is a timing
-> fix that ensures the AD4695 datasheet's timing specs are met, as before
-> the busy signal would sometimes fail to toggle again following the end
-> of the conversion sequence. Adding an extra delay in the form of a blank
-> transfer before every CS deassert in ad4695_buffer_preenable() allows
-> this requirement to be met.
->
-> The second patch is an improvement that increases the robustness of the
-> exit message in ad4695_exit_conversion_mode(), this time by adding a
-> delay before the actual exit command. This helps avoid the possibility
-> that the exit message will be read as data, causing corruption on some
-> buffered reads.
->
-> For additional context, see:
-> https://lore.kernel.org/linux-iio/20241028163907.00007e12@Huawei.com/
->
-> Suggested-by: David Lechner <dlechner@baylibre.com>
-> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
-> ---
-> Trevor Gamblin (3):
->        iio: adc: ad4695: fix buffered read timing in ad4695_buffer_preenable()
->        iio: adc: ad4695: make ad4695_exit_conversion_mode() more robust
->        iio: adc: ad4695: add custom regmap bus callbacks
->
->   drivers/iio/adc/Kconfig  |   2 +-
->   drivers/iio/adc/ad4695.c | 135 ++++++++++++++++++++++++++++++++++++++++-------
->   2 files changed, 118 insertions(+), 19 deletions(-)
-> ---
-> base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
-> change-id: 20241111-tgamblin-ad4695_improvements-7a32a6268c26
->
-> Best regards,
+Hi Laurent,
 
-FYI, there is now a v2, so if anyone's currently reviewing this, please 
-don't spend any additional time. v2:
+this is in my todo list. I wanted to send it separately because all 
+these files are in gpu/drm/bridge/ and tda9950.c is in gpu/drm/.
 
-https://lore.kernel.org/linux-iio/20241113-tgamblin-ad4695_improvements-v2-0-b6bb7c758fc4@baylibre.com/T/#
+Most of the times, maintainers ask for separate patches when several 
+drivers are patched. For such clean-ups, I try at least to group them by 
+directory.
 
+Same answer the other files in input and sound. Patches will be sent in 
+a few days.
+
+I've also sent one for the documentation [1] and will send one for 
+const_structs.checkpatch as well.
+
+CJ
+
+[1]: 
+https://lore.kernel.org/linux-kernel/c8e6da4adb7381ee27e8e11854c9d856382cdc93.1731445244.git.christophe.jaillet@wanadoo.fr/
+
+> 
+> $ git grep '^static struct i2c_device_id'
+> drivers/gpu/drm/bridge/chipone-icn6211.c:static struct i2c_device_id chipone_i2c_id[] = {
+> drivers/gpu/drm/bridge/lontium-lt9211.c:static struct i2c_device_id lt9211_id[] = {
+> drivers/gpu/drm/bridge/lontium-lt9611.c:static struct i2c_device_id lt9611_id[] = {
+> drivers/gpu/drm/bridge/lontium-lt9611uxc.c:static struct i2c_device_id lt9611uxc_id[] = {
+> drivers/gpu/drm/bridge/ti-sn65dsi83.c:static struct i2c_device_id sn65dsi83_id[] = {
+> drivers/gpu/drm/bridge/ti-sn65dsi86.c:static struct i2c_device_id ti_sn65dsi86_id[] = {
+> drivers/gpu/drm/i2c/tda9950.c:static struct i2c_device_id tda9950_ids[] = {
+> drivers/input/keyboard/cypress-sf.c:static struct i2c_device_id cypress_sf_id_table[] = {
+> sound/soc/codecs/cs42l51-i2c.c:static struct i2c_device_id cs42l51_i2c_id[] = {
+> 
+> :-)
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+>>   6 files changed, 6 insertions(+), 6 deletions(-)
+
+...
+
+CJ
 
