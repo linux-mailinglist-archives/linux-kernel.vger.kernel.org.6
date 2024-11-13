@@ -1,227 +1,118 @@
-Return-Path: <linux-kernel+bounces-407877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625B29C76B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:24:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A56199C76B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21FF728392E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:24:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C1A5283AD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B39F14B06C;
-	Wed, 13 Nov 2024 15:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9702003A2;
+	Wed, 13 Nov 2024 15:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZaXq2ZJ7"
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZvypvoiL"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4D6167296
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2D9155308
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731511313; cv=none; b=R6sH5yBUosTKA5xZaoL6h9qJEt+NVDEf/UQuZNliJhq0cOzPOjMyKXT4jm+AlrBnyZlFUqpjQOvsGh4aUswGTCrWxVtrLzzCiGGiMSyCtNiC9NsQpAD3EUYyGVkqb4ot6TSAfiac5QkXmtnjAsqXeESuHg3C6AefM+Yzap2E4y0=
+	t=1731511346; cv=none; b=FBeJVn72F0X7zlDP/KDFsFNKxencV42wWiPnJI+cCiO6PXBHCmNxyu/B8Ss0vSPAtzR6uKF2FE/XRgTtn/VbNIhpbrPu1Q+OJOnefypFPNq/qTkO9Qbiksf0kkwqzzzOI/sq8y7nJtebh5i46fuVdWqeaFSPc97ShY0N8MHu8So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731511313; c=relaxed/simple;
-	bh=oQqLj+VTG52Pd8JpuUEISAjkJSUrTrwueurA5xER+Qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2AJgsSBAhY2m+MeoZRdkMp4UMN1EQN/H1oaAkIaNYHFW6pJn4J3LWS9GdyXHg+5WkN52OZuR61XbIWrEc9tkTddMeLMtIlKg5ThVE3466uUzWF2v7p4GQfXzrGYwLNSt2hVlORUyyl8oeO/iPnMWZhzcOG0H2LIoEmcazmeRd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZaXq2ZJ7; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XpRpN2n0nzpPM;
-	Wed, 13 Nov 2024 16:21:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1731511308;
-	bh=jjAbEbcMySB+5Dq2slVS7gS9u4ZlQ2TKG5y+0STveNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZaXq2ZJ7B1AxWTWiQ6a8wWVNQ+PYgUTTajpNs6/os/UM5l6BwL2w2L69DnzrLQ+Xu
-	 uynFLpcTj2mvRQak4nYaVr02NmIFyPITeB1LWzTHB5DWDrbokFJ75IO2vmoQr4U/L7
-	 QsYd6Uy++HS//FMbOxYqwlE1v6KmLauZTJK+AsGU=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XpRpM3hdMzbrt;
-	Wed, 13 Nov 2024 16:21:47 +0100 (CET)
-Date: Wed, 13 Nov 2024 16:21:47 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Francis Laniel <flaniel@linux.microsoft.com>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Charles Zaffery <czaffery@roblox.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, 
-	Kees Cook <kees@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v2 12/14] landlock: Log TCP bind and connect denials
-Message-ID: <20241113.oThieDiehaa8@digikod.net>
-References: <20241022161009.982584-1-mic@digikod.net>
- <20241022161009.982584-13-mic@digikod.net>
- <2345615.iZASKD2KPV@pwmachine>
+	s=arc-20240116; t=1731511346; c=relaxed/simple;
+	bh=HhOwop9BJOKj5T+Nes36w0KnTxUb3W599pW6+HWRufM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=se5uPmK+JiarzYqxpk55HG68tvZSX7h7qj4CHSO9pFoEDFGOX7fjCNyRZNBtwCG18J8zYNDN9UWE48C4jbCh5vVPoDpXC/tbTHyXWQmk5V9/aSeHCxze5T+xPqI58FOXzerNDgI419AWAhywdTbFqvsgnIvVPXzBVkqvPUMVqw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZvypvoiL; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4314c452180so5522615e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:22:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731511342; x=1732116142; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kyz8CAV7UjnZy1sBo5de6wt5Xr9fxxfh9Ju5xZPyESI=;
+        b=ZvypvoiLGObdI4KrWN+1x9ps2JqhAUf1HvISHylTFaTGM+hD6xJQ3JQEjTa9kgZbQY
+         kKYZFhV1jiNqV4yrfToK9XZJwvRSmIqmlrtK2W0zJEu3lSXPBbKvP8SB83qag+dwC0TM
+         xzIbvJPeV3oKe90AUlHit41TVUWwiv8wmlr7xDJa05q93n5a4nAmCjflysbPN40Kx4pl
+         SDTsLcEKzGj8O7ipUyyeZHYW9Rjx5Dj73ZKIIBHxqYhjOWZx2ixvxXernl3iZWNCtSiQ
+         2gISQUDpUP1ZtpNa1hiiMjxHKllwBDxkYQp9cghn4NTlVHumlKmLA/l4n/AiEC77/Z9s
+         mOog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731511342; x=1732116142;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kyz8CAV7UjnZy1sBo5de6wt5Xr9fxxfh9Ju5xZPyESI=;
+        b=c5iGv0mzrcijIC67InUZ/AlaSEximxJNzaSbtpFoeQibm1Tb8DIK66ts6fUVAk2Wzr
+         T1lQGwobnZGGS8BuWNHcdQRD0JiTT9DSrRmpR0lp4vWjL4hWoASYh53wvGDudRLwmA6O
+         drJsr6d++162ZYGDDO6qRY8gV5XrPckFIyvCP37JxabgUBMVtSbAt0ItZJFBKScwrZrF
+         11wUg6/PCs2d7sej6K5SkmKPjf8+tYRhWakGlKl4AK3wpX28kZGAHO2KLyOubhtztgue
+         tkAyToohqgc9By5YG7XnjbmSoABsYGFK1BMfaq8ey782czeifAuAupygdAzlqaySkxJ/
+         vYnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXR2HZZ0lDf22hbGHt/7GX5pZczyoB4TmUbT8yZQMOUzd42mpiWItRs5/M0KEWpQo7VgiXG1c2gU/W8ckU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAkS8q//pr2Z2yU4kKWbhVrOHKbFlkA8uM5TNNveIQF/BNH9E5
+	qN84bqFOWSyTDWdEI9okvGz13dkHdmR9tGCmh7vsdGgiatDbOokyUPOnoKxwbzQ=
+X-Google-Smtp-Source: AGHT+IGkBBKScUdnq+eFrrUWl5WZg/WDJVAp06eoD/G82CPwKOfPCXQv+8oY7dXz8ArJe9wVy2UbvQ==
+X-Received: by 2002:a05:6000:1f87:b0:37d:443b:7ca4 with SMTP id ffacd0b85a97d-381f0f5e2ddmr18929643f8f.14.1731511342593;
+        Wed, 13 Nov 2024 07:22:22 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-432d54e2cbesm28265185e9.4.2024.11.13.07.22.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 07:22:22 -0800 (PST)
+Message-ID: <cfe27773-383f-4178-9aea-d92c2bcf8991@linaro.org>
+Date: Wed, 13 Nov 2024 16:22:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/10] thermal/drivers/qcom/tsens-v1: Add support for
+ MSM8937 tsens
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20241113-msm8917-v6-0-c348fb599fef@mainlining.org>
+ <20241113-msm8917-v6-5-c348fb599fef@mainlining.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20241113-msm8917-v6-5-c348fb599fef@mainlining.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2345615.iZASKD2KPV@pwmachine>
-X-Infomaniak-Routing: alpha
 
-On Fri, Oct 25, 2024 at 05:25:45PM +0200, Francis Laniel wrote:
-> Le mardi 22 octobre 2024, 18:10:07 CEST Mickaël Salaün a écrit :
-> > Add audit support to socket_bind and socket_connect hooks.
-> > 
-> > Audit record sample:
-> > 
-> >   DENY:    domain=4533720601 blockers=net_connect_tcp daddr=127.0.0.1
-> > dest=80 SYSCALL: arch=c000003e syscall=42 success=no exit=-13 ...
-> > 
-> > Cc: Günther Noack <gnoack@google.com>
-> > Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> > Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > Link: https://lore.kernel.org/r/20241022161009.982584-13-mic@digikod.net
-> > ---
-> >  security/landlock/audit.c | 11 +++++++++
-> >  security/landlock/audit.h |  1 +
-> >  security/landlock/net.c   | 52 ++++++++++++++++++++++++++++++++++++---
-> >  3 files changed, 60 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-> > index 898c95ebe847..c31a4a8719ee 100644
-> > --- a/security/landlock/audit.c
-> > +++ b/security/landlock/audit.c
-> > @@ -41,6 +41,12 @@ static const char *const fs_access_strings[] = {
-> >  };
-> >  static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
-> > 
-> > +static const char *const net_access_strings[] = {
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_NET_BIND_TCP)] = "net_bind_tcp",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_NET_CONNECT_TCP)] = "net_connect_tcp",
-> > +};
-> > +static_assert(ARRAY_SIZE(net_access_strings) == LANDLOCK_NUM_ACCESS_NET);
-> > +
-> >  static __attribute_const__ const char *
-> >  get_blocker(const enum landlock_request_type type,
-> >  	    const unsigned long access_bit)
-> > @@ -58,6 +64,11 @@ get_blocker(const enum landlock_request_type type,
-> >  		if (WARN_ON_ONCE(access_bit >= ARRAY_SIZE(fs_access_strings)))
-> >  			return "unknown";
-> >  		return fs_access_strings[access_bit];
-> > +
-> > +	case LANDLOCK_REQUEST_NET_ACCESS:
-> > +		if (WARN_ON_ONCE(access_bit >= ARRAY_SIZE(net_access_strings)))
-> > +			return "unknown";
-> > +		return net_access_strings[access_bit];
-> >  	}
-> > 
-> >  	WARN_ON_ONCE(1);
-> > diff --git a/security/landlock/audit.h b/security/landlock/audit.h
-> > index 320394fd6b84..1075b0c8401f 100644
-> > --- a/security/landlock/audit.h
-> > +++ b/security/landlock/audit.h
-> > @@ -18,6 +18,7 @@ enum landlock_request_type {
-> >  	LANDLOCK_REQUEST_PTRACE = 1,
-> >  	LANDLOCK_REQUEST_FS_CHANGE_LAYOUT,
-> >  	LANDLOCK_REQUEST_FS_ACCESS,
-> > +	LANDLOCK_REQUEST_NET_ACCESS,
-> >  };
-> > 
-> >  /*
-> > diff --git a/security/landlock/net.c b/security/landlock/net.c
-> > index 27872d0f7e11..c21afd6e0b4d 100644
-> > --- a/security/landlock/net.c
-> > +++ b/security/landlock/net.c
-> > @@ -7,10 +7,12 @@
-> >   */
-> > 
-> >  #include <linux/in.h>
-> > +#include <linux/lsm_audit.h>
-> >  #include <linux/net.h>
-> >  #include <linux/socket.h>
-> >  #include <net/ipv6.h>
-> > 
-> > +#include "audit.h"
-> >  #include "common.h"
-> >  #include "cred.h"
-> >  #include "limits.h"
-> > @@ -56,6 +58,10 @@ static int current_check_access_socket(struct socket
-> > *const sock, };
-> >  	const struct landlock_ruleset *const dom =
-> >  		landlock_match_ruleset(landlock_get_current_domain(), any_net);
-> > +	struct lsm_network_audit audit_net = {};
-> > +	struct landlock_request request = {
-> > +		.type = LANDLOCK_REQUEST_NET_ACCESS,
-> > +	};
-> > 
-> >  	if (!dom)
-> >  		return 0;
-> > @@ -72,18 +78,49 @@ static int current_check_access_socket(struct socket
-> > *const sock,
-> > 
-> >  	switch (address->sa_family) {
-> >  	case AF_UNSPEC:
-> > -	case AF_INET:
-> > +	case AF_INET: {
-> > +		const struct sockaddr_in *addr4;
-> > +
-> >  		if (addrlen < sizeof(struct sockaddr_in))
-> >  			return -EINVAL;
-> > -		port = ((struct sockaddr_in *)address)->sin_port;
-> > +
-> > +		addr4 = (struct sockaddr_in *)address;
-> > +		port = addr4->sin_port;
-> > +
-> > +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
-> > +			audit_net.dport = port;
-> > +			audit_net.v4info.daddr = addr4->sin_addr.s_addr;
-> > +		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
-> > +			audit_net.sport = port;
-> > +			audit_net.v4info.saddr = addr4->sin_addr.s_addr;
-> > +		} else {
-> > +			WARN_ON_ONCE(1);
-> > +		}
-> >  		break;
-> > +	}
-> > 
-> >  #if IS_ENABLED(CONFIG_IPV6)
-> > -	case AF_INET6:
-> > +	case AF_INET6: {
-> > +		const struct sockaddr_in6 *addr6;
-> > +
-> >  		if (addrlen < SIN6_LEN_RFC2133)
-> >  			return -EINVAL;
-> > -		port = ((struct sockaddr_in6 *)address)->sin6_port;
-> > +
-> > +		addr6 = (struct sockaddr_in6 *)address;
-> > +		port = addr6->sin6_port;
-> > +		audit_net.v6info.saddr = addr6->sin6_addr;
+On 13/11/2024 16:11, Barnabás Czémán wrote:
+> Add support for tsens v1.4 block what can be found in
+> MSM8937 and MSM8917.
 > 
-> You set this for all access_request, but not for IPv4, is this done on 
-> purpose?
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
 
-Indeed, this is a bug, I'll remove this line.  Thanks!
+Applied, thanks
 
-> 
-> > +
-> > +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
-> > +			audit_net.dport = port;
-> > +			audit_net.v6info.daddr = addr6->sin6_addr;
-> > +		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
-> > +			audit_net.sport = port;
-> > +			audit_net.v6info.saddr = addr6->sin6_addr;
-> > +		} else {
-> > +			WARN_ON_ONCE(1);
-> > +		}
-> >  		break;
-> > +	}
-> >  #endif /* IS_ENABLED(CONFIG_IPV6) */
-> > 
-> >  	default:
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
