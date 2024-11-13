@@ -1,245 +1,134 @@
-Return-Path: <linux-kernel+bounces-407826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93AC49C74D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:55:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9719D9C74DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238091F2126A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:55:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E8791F2264B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE327346F;
-	Wed, 13 Nov 2024 14:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTxWzViJ"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D862F12DD8A;
+	Wed, 13 Nov 2024 14:56:19 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9284A1CAAC;
-	Wed, 13 Nov 2024 14:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C192AD21
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731509699; cv=none; b=Sj+dwBA93rsWgNo+9IH8gNsRWs7zWbbjRa8Oj5EzVPuFOLfVXW2DhRj3clwGqXVJmr2BnekEmkcTu5Li0AZkIbWKnvnS8X0WwGG3XsLAipHjPPLIaWFimFPCOLSEZv31rHB9CG3lThVwNvXfPcqAH6SWkNMVJzD/FRZtJ7ohvUU=
+	t=1731509779; cv=none; b=BFJfqbx5VB/JgDU0G7qFIcErPirU8jct06I7burSVow2syBX9LPw9WhRAkmxIfdwV7ygpVLbwwQI8BPfzmj6WBXuAmVogLhdVZQIwoMKbSE9QSpzxgJrJs/wPgXIk4IBkKON2U+dBk8U797k0PGuC8KohUNWmh3y+QHioOJz6RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731509699; c=relaxed/simple;
-	bh=HgtTdevTgzmXe3ndxnmilmTemjMYR9RjaVxlqOTn1LM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MF3UG+V11/iVrJl5Pkt8t5feUKckKEE1QYVwZb6Ig98rTJLvBmOcbSYTo31P+5/FDBc4e6S+MmiL4hSPYFeE20RM7mTHnho1Hu/rQ+dgqahG0lIapyhelwtyalMYhew0uuL/M9BhTVR9CCnOmbHwxiVPdl+k4u6BOb+IiSeZCSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HTxWzViJ; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53da2140769so751385e87.3;
-        Wed, 13 Nov 2024 06:54:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731509696; x=1732114496; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ISWTcci1pQC9mjxzaFrD2zlmilnEBrr730jv2qJZhlE=;
-        b=HTxWzViJ3nqrdPmWAXRtqKsnbtLjXMPEFxrp6/63Wy4Bs7jjM1TDF/3VJjxEw8D0wv
-         khTULswzQC5Kad8lVw1013N58UbzjTTIqOs+bQcAg901nHpHSqtZNZxIgV/DDLSpqDtN
-         7gPAlmso5uR9IZX4KjZ6MBAM5Us7nxoh/0p4Wjab5dEjR7xlji3SJeug7dDx9IoeOSxj
-         9RORCRXlu+cZmEg/PUHD9JnDLJu68aVgMAzNQxMEIYJ6sfPdw/BzL7lrm2d3pXX99Igo
-         DssjWbisvIb9l7GiMyG2CGmq1d5yI0/dYq08XLOu+EngHJAa4dglFCYhphkbfftgG5Ab
-         9gug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731509696; x=1732114496;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ISWTcci1pQC9mjxzaFrD2zlmilnEBrr730jv2qJZhlE=;
-        b=DASTtndJJh9B8gKPyVahAzFHv5/sP+iLfamrtAEAKqqsyAsCP7wlT/ecdMP5E7FEzX
-         Zs0w3FT+qnLDXUMNFeDVHu2IfccE50OPsdS0OqUER1kF01Z5O02xIxOYrZLbYGrKpKB0
-         aqkyC2etV8ZI3OLuESzkqFmPhTrkZohwZYr7JIr7Jv2e2XdaHhCOcbvyXK1TOuSdl7XT
-         HySISV4oqeYX84ikVs6GhOQGYuoKB4h+EpHTP/txvgxBetPznmRkbYR3l0gZ21X+7cNW
-         HZ9GqgHY3k+KmVkLPlDU00X5uPNk8S+CRI8IoF+rcVGwrKcL7bBBoxlAchm/6oTiko0/
-         pBqw==
-X-Forwarded-Encrypted: i=1; AJvYcCURGJNa/cFsRX9HYTrknttEEvoufIj4Lz0EFcuyURxGG68Y3Rny1H4IGMvKovGxDQLWVo6Yo5/653oaCQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvj8VvsEu8OFqybZmgLid/h6YpBaIi5CifFC5pympD0qjQkIa4
-	revJH2yuOUqI4QLsNTSa6GiG2vcIYI1lbv4/Jja9720DgM99x1T5dSuDmHjfUmXwzPI4DD8AAZm
-	5zQ60K39gxBAsD8e0zGR+j797pVA=
-X-Google-Smtp-Source: AGHT+IE3ZaVdwMJSuVUEHMJrxcp2ZIiddTnixGuOw1pZGBbo7gewhx8o9K/jjLQXww/HCoDw+891xHpZ/pAB/uK/CME=
-X-Received: by 2002:a05:6512:3e0b:b0:52e:987f:cfc6 with SMTP id
- 2adb3069b0e04-53d862ebfadmr8612416e87.51.1731509695440; Wed, 13 Nov 2024
- 06:54:55 -0800 (PST)
+	s=arc-20240116; t=1731509779; c=relaxed/simple;
+	bh=ZFiMeblYhyawTki15sRENgZujlQpHHU3ZE7JYgt4Kcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L2aEIbdmSCRjHrMjPaecPnwQTedxJsXZNjLyXRMIAdZelmih5dwVZIO5/2L/Y2/L5UiNulTtYHQ7UGzaWgKiIBGhlMbDmtOAzoYdewQw+nVjtblNz2w/HIFPXpN/84HYLYqCSg1aoXy43bMfAGUo+SAnd7Bc+JcEd5XyYqg0FyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tBEmj-000000000Gz-3QDa;
+	Wed, 13 Nov 2024 09:55:57 -0500
+Date: Wed, 13 Nov 2024 09:55:57 -0500
+From: Rik van Riel <riel@surriel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+ luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+ mingo@redhat.com, x86@kernel.org, kernel-team@meta.com, hpa@zytor.com,
+ bigeasy@linutronix.de
+Subject: Re: [PATCh 0/3] x86,tlb: context switch optimizations
+Message-ID: <20241113095557.2d60a073@imladris.surriel.com>
+In-Reply-To: <20241113095550.GBZzR3pg-RhJKPDazS@fat_crate.local>
+References: <20241109003727.3958374-1-riel@surriel.com>
+	<20241113095550.GBZzR3pg-RhJKPDazS@fat_crate.local>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKFNMomm9UjJxdxADBDTL4ksvY7Bycs3WV=cqYmJu_TuUi7crA@mail.gmail.com>
- <tencent_5ED37D036BA97D43A6A4549765F77C86CE05@qq.com>
-In-Reply-To: <tencent_5ED37D036BA97D43A6A4549765F77C86CE05@qq.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Wed, 13 Nov 2024 23:54:39 +0900
-Message-ID: <CAKFNMok4ycxT48mUzNGkfvhw+evbSsUJ6U2MuTUSGwC1f_YcNQ@mail.gmail.com>
-Subject: Re: [PATCH] nilfs2: fix a uaf in nilfs_find_entry
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
-	syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
+Sender: riel@surriel.com
 
-On Wed, Nov 13, 2024 at 11:28=E2=80=AFAM Edward Adam Davis wrote:
->
-> On Tue, 12 Nov 2024 23:38:11 +0900, Ryusuke Konishi wrote:
-> > On Tue, Nov 12, 2024 at 7:56=E2=80=AFPM Edward Adam Davis wrote:
-> > >
-> > > The i_size value of the directory "cgroup.controllers" opened by open=
-at is 0,
-> > > which causes 0 to be returned when calculating the last valid byte in
-> > > nilfs_last_byte(), which ultimately causes kaddr to move forward by r=
-eclen
-> > > (its value is 32 in this case), which ultimately triggers the uaf whe=
-n
-> > > accessing de->rec_len in nilfs_find_entry().
-> > >
-> > > To avoid this issue, add a check for i_size in nilfs_lookup().
-> > >
-> > > Reported-by: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com
-> > > Closes: https://syzkaller.appspot.com/bug?extid=3D96d5d14c47d97015c62=
-4
-> > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> > > ---
-> > >  fs/nilfs2/namei.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> >
-> > Hi Edward, thanks for the debugging help and patch suggestion.
-> >
-> > But this fix is incorrect.
-> >
-> > Reproducers are not creating the situation where i_size =3D=3D 0.
-> > In my debug message output inserted in the while loop of
-> > nilfs_find_entry(), i_size was a corrupted large value like this:
-> >
-> > NILFS (loop0): nilfs_find_entry: isize=3D422212465065984,
-> > npages=3D103079215104, n=3D0, last_byte=3D0, reclen=3D32
-> >
-> > This is different from your debug result, because the type of i_size
-> > in the debug patch you sent to syzbot is "%u".
-> > The type of inode->i_size is "loff_t", which is "long long".
-> > Therefore, the output format specification for i_size in the debug
-> > output should be "%lld".
-> Yes, you are right, I ignore the type of i_size.
-> >
-> > If you look at the beginning of nilfs_find_entry(), you can see that
-> > your check is double-checked:
-> >
-> > struct nilfs_dir_entry *nilfs_find_entry(struct inode *dir,
-> >                 const struct qstr *qstr, struct folio **foliop)
-> > {
-> >         ...
-> >         unsigned long npages =3D dir_pages(dir);
-> Yes, now I noticed dir_pages().
-> >         ..
-> >
-> >         if (npages =3D=3D 0)
-> >                 goto out;
-> >         ...
-> >
-> > Here, dir_pages() returns 0 if i_size is 0, so it jumps to "out" and
-> > returns ERR_PTR(-ENOENT).
-> >
-> > I'm still debugging, but one problem is that the implementation of
-> > nilfs_last_byte() is incorrect.
-> > In the following part, the local variable "last_byte" is not of type
-> > "loff_t", so depending on the value, it may be truncated and return a
-> > wrong value (0 in this case):
-> >
-> > static unsigned int nilfs_last_byte(struct inode *inode, unsigned long =
-page_nr)
-> > {
-> >         unsigned int last_byte =3D inode->i_size;
-> >         ...
-> > }
-> >
-> > If this is the only problem, the following fix will be effective. (To
-> > complete this fix, I think we need to think more carefully about
-> > whether it's okay for i_size to have any value, especially since
-> > loff_t is a signed type):
-> >
-> > diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-> > index a8602729586a..6bc8f474a3e5 100644
-> > --- a/fs/nilfs2/dir.c
-> > +++ b/fs/nilfs2/dir.c
-> > @@ -70,7 +70,7 @@ static inline unsigned int nilfs_chunk_size(struct
-> > inode *inode)
-> >   */
-> >  static unsigned int nilfs_last_byte(struct inode *inode, unsigned long=
- page_nr)
-> >  {
-> > -       unsigned int last_byte =3D inode->i_size;
-> > +       loff_t last_byte =3D inode->i_size;
-> >
-> >         last_byte -=3D page_nr << PAGE_SHIFT;
-> >         if (last_byte > PAGE_SIZE)
-> >
-> I have noticed nilfs_last_byte(), I have other concerns about it, such
-> as the chance of last_byte overflowing when i_size is too small and page_=
-nr
-> is too large, or that it will be negative after being type-adjusted to lo=
-ff_t.
-> So, maybe following fix is more rigorous.
->
-> diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-> index a8602729586a..0dbcf91538fd 100644
-> --- a/fs/nilfs2/dir.c
-> +++ b/fs/nilfs2/dir.c
-> @@ -70,9 +70,10 @@ static inline unsigned int nilfs_chunk_size(struct ino=
-de *inode)
->   */
->  static unsigned int nilfs_last_byte(struct inode *inode, unsigned long p=
-age_nr)
->  {
-> -       unsigned int last_byte =3D inode->i_size;
-> +       loff_t last_byte =3D inode->i_size;
->
-> -       last_byte -=3D page_nr << PAGE_SHIFT;
-> +       if (last_byte > page_nr << PAGE_SHIFT)
-> +               last_byte -=3D page_nr << PAGE_SHIFT;
->         if (last_byte > PAGE_SIZE)
->                 last_byte =3D PAGE_SIZE;
->         return last_byte;
-> BR,
-> Edward
+On Wed, 13 Nov 2024 10:55:50 +0100
+Borislav Petkov <bp@alien8.de> wrote:
 
-nilfs_last_byte itself does not return an error and is a function that
-assumes that i_size is larger than the offset calculated from page_nr,
-so let's limit the modification of this function to correcting bit
-loss in assignment.
+> On Fri, Nov 08, 2024 at 07:27:47PM -0500, Rik van Riel wrote:
+> > While profiling switch_mm_irqs_off with several workloads,
+> > it appears there are two hot spots that probably don't need
+> > to be there. =20
+>=20
+> One of those three is causing the below here, zapping them from tip.
+>=20
 
-If any caller is missing the necessary range check, add that check to
-the caller. I will check again for omissions, but please let me know
-if there are any callers that seem to have problems (I hope there
-aren't any).
+TL;DR: __text_poke ends up sending IPIs with interrupts disabled.
 
-To extend the bits of last_byte, declare last_byte as "u64" instead of "lof=
-f_t".
-In assignments, the bit pattern is maintained regardless of whether it
-is signed or not, and declaring it as u64 also avoids the problem of
-negative i_size here.
+> [    3.186469]  on_each_cpu_cond_mask+0x50/0x90
+> [    3.186469]  flush_tlb_mm_range+0x1a8/0x1f0
+> [    3.186469]  ? cpu_bugs_smt_update+0x14/0x1f0
+> [    3.186469]  __text_poke+0x366/0x5d0
 
-Comparisons between unsigned and signed integers may introduce
-warnings in syntax checks at build time such as "make W=3D2" depending
-on the environment, and may be reported by bots at a later date, so I
-would like to maintain comparisons between unsigned integers.
-(PAGE_SIZE is an unsigned constant)
+Here is an alternative to avoid __text_poke() from calling
+on_each_cpu_cond_mask() with IRQs disabled:
 
-If the problem of negative i_size is actually a problem, I think we
-should add a sanity check for i_size_read(inode) < 0 to the function
-that reads inodes from block devices (such as
-nilfs_read_inode_common).  So, I would like to deal with that
-separately.
+---8<---
+=46rom e872edeaad14c793036f290afc28000281e1b76a Mon Sep 17 00:00:00 2001
+From: Rik van Riel <riel@surriel.com>
+Date: Wed, 13 Nov 2024 09:51:16 -0500
+Subject: [PATCH] x86/alternatives: defer poking_mm TLB flush to next use
 
-I have already tested a change that modifies only the last_byte type
-to "u64" with syzbot, but if you could proceed with creating a patch
-that includes the commit log in this direction, I would like to adopt
-it.
+Instead of doing a TLB flush of the poking_mm after we have
+already switched back to the prev mm, we can simply increment
+the tlb_gen for the poking_mm at unuse time.
 
-Thanks,
-Ryusuke Konishi
+This will cause switch_mm_irqs_off to flush the TLB next time
+it loads the poking_mm, in the unlikely case that poking_mm still
+has an ASID on that CPU by then.
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+---
+ arch/x86/kernel/alternative.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index d17518ca19b8..f3caf5bc4df9 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -1830,6 +1830,9 @@ static inline void unuse_temporary_mm(temp_mm_state_t=
+ prev_state)
+ 	lockdep_assert_irqs_disabled();
+ 	switch_mm_irqs_off(NULL, prev_state.mm, current);
+=20
++	/* Force a TLB flush next time poking_mm is used. */
++	inc_mm_tlb_gen(poking_mm);
++
+ 	/*
+ 	 * Restore the breakpoints if they were disabled before the temporary mm
+ 	 * was loaded.
+@@ -1940,14 +1943,6 @@ static void *__text_poke(text_poke_f func, void *add=
+r, const void *src, size_t l
+ 	 */
+ 	unuse_temporary_mm(prev);
+=20
+-	/*
+-	 * Flushing the TLB might involve IPIs, which would require enabled
+-	 * IRQs, but not if the mm is not used, as it is in this point.
+-	 */
+-	flush_tlb_mm_range(poking_mm, poking_addr, poking_addr +
+-			   (cross_page_boundary ? 2 : 1) * PAGE_SIZE,
+-			   PAGE_SHIFT, false);
+-
+ 	if (func =3D=3D text_poke_memcpy) {
+ 		/*
+ 		 * If the text does not match what we just wrote then something is
+--=20
+2.45.2
+
 
