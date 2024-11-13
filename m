@@ -1,121 +1,118 @@
-Return-Path: <linux-kernel+bounces-407401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5229C6D05
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:38:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9679C6CE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:30:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1E8CB2A4F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:36:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1E191F211A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925841FF03B;
-	Wed, 13 Nov 2024 10:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646C21FCF7E;
+	Wed, 13 Nov 2024 10:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="ncQAHZ1v"
-Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="alZC04e0"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084781C8FB3;
-	Wed, 13 Nov 2024 10:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ECE1F80C5
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731494181; cv=none; b=NsNVJ9u9I33ZfCqeKWD96PBQFHZjO3bCtrDZqdjEn6dvAn+P9eY+IqSngZL3PAAdyr8UWsKQaKaGJCSW2QpP4Ia8bUzBMkOruCICLngEqGBhUdd6ytddscl8mc4L0SiSqcIc+h0M+SMtNVKV1aqFtFyA/sa0TpEtfClTi2TYlk8=
+	t=1731493833; cv=none; b=SrOFXa+QIm67SRVWYyCrQjmoc18rKg8rDe3t4XmaG8pbanm27TC//ed5K87s11FIkXHxLuFDUZXM6mCBMRr9fRkyxyQ5nq3NigwCDbNEi0DIkNR5aRFgi1w6/JibvhIpLK6sTebzKYXPscYBTulsrlqK7+/l++mkyWF2SSyJqgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731494181; c=relaxed/simple;
-	bh=XkTIs7nu4bLDcQiU5a9HztKYuqyVNXyBCU1tsEqpHA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=It0HbAhUshFPnEbolKO48e8iCnzskasAgiLS/ZGjXdiG+aoRN144DwMr/IEp/b7yf1bvQUZTLueQZFv0FZ9CqB+2Q2akA4hYR17qCIrACJi9KSHzEDqxXmIdbeBV3mUBAZNp/BZrHk+/XeG5veL6T0jX3bIUmwcC/fDGu6bGyUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=ncQAHZ1v; arc=none smtp.client-ip=178.154.239.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net [IPv6:2a02:6b8:c11:1115:0:640:1385:0])
-	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 1B22761E78;
-	Wed, 13 Nov 2024 13:29:59 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id tTI4S8ROdeA0-nKNhkP8v;
-	Wed, 13 Nov 2024 13:29:58 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1731493798; bh=+cXUpe34/1kdGa6zXYoByQOZBAwAbSaDWTGSuPHsosY=;
-	h=In-Reply-To:To:From:Cc:Date:References:Subject:Message-ID;
-	b=ncQAHZ1vGLgEv0GiuJj4jHUvB7Oirh3rh8jmyzWiosC/lpFJdOy69f7DZGYaQGOm5
-	 fCZ04tSJZPXOjF2yO1Akm7GbFOROt9x0IzCDWX6wVdU3bry6twML466CBLQ0/0hGCG
-	 3ziNnurxFbUQOVgfhDYvWemNOZ4QkX2zkUUVvl4Y=
-Authentication-Results: mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <6ff1052f-76d5-42a4-bf0c-ec587ca4faa4@yandex.ru>
-Date: Wed, 13 Nov 2024 13:29:55 +0300
+	s=arc-20240116; t=1731493833; c=relaxed/simple;
+	bh=nI2QXRDzyPnMBaJNq4JBRnqkSaWwKlsycEp06ZxVQc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTrv5qsGl4vjoJuZ9SpTwfG+gy+WKrsBiJ0lUjetr413HsOQgpGdNr0UZoh6njJU19anhMh1v4tEJLSqrUr/avKo3f3gGEgVaWtH9aRX3QQSfCtl45NoYGEp8MKMBTi2pkYKA5RBme/07Mo5u48j0Y/2y7TJ2jHpHf4AFtT/2PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=alZC04e0; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so56562035e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:30:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731493830; x=1732098630; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sQbvCdfXhjIPC76cjEbTBJxaacMeps+mMlD7b48V7zw=;
+        b=alZC04e0dA+XlbucA0x1xaXomEBxKzVHRU60lqwtpSHJPqLhhnxTGpzvFvcgvhPG8M
+         1nQTj+TTrw6u3aBk44ivvksFoJmHZ9gQqj5vE6i4QnckPaBwqQPQ64ELY2q7hKBoLQg5
+         JEV0iSO669ioi84nvwbORNKkN09MH21SQmRkor3nT2FESnqNBAL2gJxDll3plGwFE7HQ
+         2ELF48suqQRA+xXtC6uAPsmzs6MabB3LSF2KEsZsmY67zvoLdtSmj2UVERFtBRPybNvD
+         6Rvuoj1apUUa1WOEdrpGJTrUHiMph2HqGxio1yDtYKE8qtHM4QYIv0TrX+sGeU2tyWyf
+         As0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731493830; x=1732098630;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sQbvCdfXhjIPC76cjEbTBJxaacMeps+mMlD7b48V7zw=;
+        b=vbXkpSCS1qi7XDP1M+/n3xa5dtd+5yOGIQmK0zNVF+hC7xyeGYN7kyyyxiFCOhzdiF
+         mHaF4dVE2rw57u3ys7UuEduFm+WYreey32kJKudTPxucvckQoYImvkzPyzYCBnC2d1ii
+         qocQOsIPd9eSMpmhJ+59TYDRo//tFy5WFR/x4tF5lqcSN/W22/SVIxDeNnKNfch1F2aR
+         a0OHjP74h6cqOzu1rhWWTViRPPPu1oLBv5ZsWI1914Gt+LgzFtHTq76usOw8zKp7uQDX
+         BcEpGVJ35S3eTpSb5rNAZn5eAzys4kr72QIb8aY0mM7ASAya8y13KfA7g0MkYDH4ioTh
+         YKEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfTkI0oXAETQvhCvr0kyM9JvFpsge5YKsZT0SD/IhNDPscQu6hE8zcWPiBmVSF7VQPrWIAm1IW4YLSXcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYO5/nacClA4Vgh4TBiC8tAtiUs1br7S1iMBYu+olcrMuu/JkT
+	4nT91eoU5ilGqPz79e5cvoAZmn6fGbFnESYEHPyEEi5gJOaGSwKAax7vaUUFp/A=
+X-Google-Smtp-Source: AGHT+IFUNQ8Zh6sbKj9z0wCIf3In4hLgTckA1X3VX4W7ImZT4cpNZybWG87co6pyVYw41wxIIG7a0w==
+X-Received: by 2002:a05:600c:1f1b:b0:431:60ac:9b0c with SMTP id 5b1f17b1804b1-432d4ad33demr19747595e9.20.1731493829988;
+        Wed, 13 Nov 2024 02:30:29 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d54e0ee4sm20268395e9.1.2024.11.13.02.30.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 02:30:29 -0800 (PST)
+Date: Wed, 13 Nov 2024 11:30:27 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: John Ogness <john.ogness@linutronix.de>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v2] printk: add dummy printk_force_console_enter/exit
+ helpers
+Message-ID: <ZzR_rDN80j8sD7d-@pathway.suse.cz>
+References: <20241112142939.724093-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mac802154: add a check for slave data list before delete
-Content-Language: en-MW
-To: Lizhi Xu <lizhi.xu@windriver.com>, miquel.raynal@bootlin.com
-Cc: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com,
- horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-wpan@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, stefan@datenfreihafen.org,
- syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <87a5e4u35q.fsf@bootlin.com>
- <20241112134145.959501-1-lizhi.xu@windriver.com>
-From: Dmitry Antipov <dmantipov@yandex.ru>
-Autocrypt: addr=dmantipov@yandex.ru; keydata=
- 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
- A/UwwXBRuvydGV0=
-In-Reply-To: <20241112134145.959501-1-lizhi.xu@windriver.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112142939.724093-1-arnd@kernel.org>
 
-On 11/12/24 4:41 PM, Lizhi Xu wrote:
+On Tue 2024-11-12 15:29:15, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The newly added interface is broken when PRINTK is disabled:
+> 
+> drivers/tty/sysrq.c: In function '__handle_sysrq':
+> drivers/tty/sysrq.c:601:9: error: implicit declaration of function 'printk_force_console_enter' [-Wimplicit-function-declaration]
+>   601 |         printk_force_console_enter();
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/tty/sysrq.c:611:25: error: implicit declaration of function 'printk_force_console_exit' [-Wimplicit-function-declaration]
+>   611 |                         printk_force_console_exit();
+>       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Add empty stub functions for both.
+> 
+> Fixes: ed76c07c6885 ("printk: Introduce FORCE_CON flag")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
->   	mutex_lock(&sdata->local->iflist_mtx);
-> +	if (list_empty(&sdata->local->interfaces)) {
-> +		mutex_unlock(&sdata->local->iflist_mtx);
-> +		return;
-> +	}
->   	list_del_rcu(&sdata->list);
->   	mutex_unlock(&sdata->local->iflist_mtx);
+Thanks a lot for the fix!
 
-Note https://syzkaller.appspot.com/text?tag=ReproC&x=12a9f740580000 makes an
-attempt to connect the only device. How this is expected to work if there are
-more than one device?
+I have just pushed it into printk/linux.git,
+branch for-6.13-force-console.
 
-Dmitry
-
+Best Regards,
+Petr
 
