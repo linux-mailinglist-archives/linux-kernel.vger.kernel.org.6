@@ -1,118 +1,271 @@
-Return-Path: <linux-kernel+bounces-407057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5ECF9C67F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:04:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DE19C67E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:55:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB77285159
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:04:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E45BBB23AA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E3E16F910;
-	Wed, 13 Nov 2024 04:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6402142659;
+	Wed, 13 Nov 2024 03:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aH8CGpx1"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="afbjvbbm"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010039.outbound.protection.outlook.com [52.101.128.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F211B42AA9
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 04:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731470662; cv=none; b=nGa68lALBxJNzQ496xdRs1OQeArEon4Iy3TMXiZpZfaVzECKXPpG9QcaMP4jFT2kaSfjZWG2ht8Zj98mIhH1C4QthlhBL5BWluxe4GUe0C7pRoDRRnhPxN1O4C21qpwGUiqIeDbvvRUZdNsVB1pWGlkvhSKBsmakyhkxgyMK0QU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731470662; c=relaxed/simple;
-	bh=vPFOHp2CC6TEPHTGA6cKL8S6kkkxXN/ztLmi6PWlB+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBcPdYz0bAbm7mqKRmgIt/o+QPqJ5s25hzVqjYtJd2eUxVZwz/RsJAOZoSHyJ7xQMK9GH5A43gM35go1l1ZpLGx+bmWjnEjMZU8/UU6XafPKjlJBSzmqX4FcMtw5jY7cBDDUfKN/DrXYOrl85ZLBVk0mva6GZODfch7/cvx6kHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aH8CGpx1; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so5453927b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 20:04:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731470660; x=1732075460; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mw8a3ViX6RzOGhfbloDj6IPahlwyKfVtIHPZfv2Tt0E=;
-        b=aH8CGpx1r86nbSjQO2QS3j8B/5C0/qDd9Nku4C0fDailDZvulDc2oJyz9qF0bONEIJ
-         UM+mk4Z9+m2nqj8GIVBWY07gvg3PKoFX0jldCHXfiuyp1w1N5Uz6/XbN0BKQkRx7mR6g
-         lEA5GLbSHTebjbSe464r1iJ6Nxs1e99nl1Auw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731470660; x=1732075460;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mw8a3ViX6RzOGhfbloDj6IPahlwyKfVtIHPZfv2Tt0E=;
-        b=HQc4qSA+5MOiCkdMbc2VRADr+7ageUmXrXSiqkh9USiEvsDhvKv7TdRnIzNmtS6Lz2
-         QvZQ0Q7U9RJLRquk5gd6AKlmxYu7dI1jiTADL3mbXCeAqGnKR3dgzrdST+zT49sm9OGz
-         M7At/USG9r7j4Q9hIaywc+dZKIMq6QhLG6bg8MGnBnsExBFoKgT0wKnWsGuBYjOOJSj7
-         BrYi3yeGGjzwCx54+hRXVgouAEayJLPvaRPVpJpLUlVXo5nxY0NttF2wNCjqRgkVvp+7
-         wOC/v888AS3VHsmLS1r+Yd7cGtCeumUsKrwkMkF8kODXH7aFZv7kvdUopm9uvfvRYAeV
-         QvBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUETrjZ3bJzLf9TKzeYzI1nOgenkmd/uVqJvwL9hVIZcsOP2tH2+hmxL+yO3P/c8QP8muOK2RfDcU8MQkA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyogjheRX/ZcTCorTRmRXNYHYomRkTfz5NqMb/a6HRzzdCNmwuo
-	YmZaa4cecqBm6uqID7capzuU7c4CLwPuNlec8LCGeiqiHuj2a/mGhxft0VBUvw==
-X-Google-Smtp-Source: AGHT+IG8CWAumD+73fyZuH+m6h5Xv3epqXIbma2P3c0T8RCJudcTZUOyJksgkbPEM64Ab+qVl165uQ==
-X-Received: by 2002:a05:6a00:b85:b0:71e:db72:3c87 with SMTP id d2e1a72fcca58-72457a2a4e6mr2353946b3a.20.1731470660039;
-        Tue, 12 Nov 2024 20:04:20 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:9e09:d4e8:509d:405b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079aa994sm12541029b3a.129.2024.11.12.20.04.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 20:04:19 -0800 (PST)
-Date: Wed, 13 Nov 2024 13:04:15 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: ext4: possible circular locking dependency at
- ext4_xattr_inode_create
-Message-ID: <20241113040415.GF1458936@google.com>
-References: <20241112073421.GD1458936@google.com>
- <20241112152957.GA317364@mit.edu>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ACE70819
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 03:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731470144; cv=fail; b=qaF0PHkzn+6X/ob/G8pPSe4bAyrUgI+Ri3uUCNvSb9gxMODKHF/w1kTPpJOivAztINrqZ5OwDf6iVFweUbTnoqIZ4TjRC7nsBZEmv8CAr018PAj/qQ4nzLcwFFs13+i0ae16Bvc4nTS9MrYY5LGOdEoaSP7FfHlRBr98ovClw2A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731470144; c=relaxed/simple;
+	bh=+5FAkRGblN30ncL4xXrETGLzAOlJ7m8laKgdp97URs8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Ok05RXYPNUGBN2epGGn80mEVZcSJDk7FmXyMgqpGmvvK3CGd8hB1LRInKuheWLeiKwlwlwkkId8MVd64GtkFMeWv4b1VGh+wF2/POPpoLqGK+9eVCQtoNBfmROa1DQ63891sbmRQD05RkStlZUdXNKpAHblG4E9dnm3EQtEJugk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=afbjvbbm; arc=fail smtp.client-ip=52.101.128.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WdZV189kjEbcTo5EYIui/iIVxNCE6PieX/Z9ife26LTDkoNLC1SE66MtdqxHAOcnibOfAvOxEIGEwhr8Dvj7QHoSV7pmueEfybWwl3hm9TUORBW8hcdM7g6oviUN3wUHtIm+5GpS4VjryTpMLDyksUCo/sXrwtRdRW8bXmYwXos5S+SAEWhHeOPICT6LbwrhJbJZgKOlDRkU0Il9UNlrk2kX47XpvGpred5DeuWJBuvsC7JDO4wyIVbHq8cB1YHHFTHHnrJJSSnZjt/+seYsy0ybhcDS/okVv2eslcgvaAsSAbC537akSSsqYuoRVLtlrODll/5wOLCDJ+jwZJHtJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uDjBDGM9sl7HR7f182CjRzeEADxB6c8tQaOxxCyTI8I=;
+ b=g36juR4Iju9fS/9u0ENBdpsN0vgd5K1ZVpg29keLSrJ3TDmngbQ/mXMBaPIDeLpaoITF2Bg4XNzHNGPipOD4xLbxqqedWaU968Ahvb/KedAeRgIvqi77Ib7v9O5XAV8POU6Tu57E/Pw/S7NJ2zFw0fFgqMLJO7DCBK5SAU1Lg00I9Q+O3SxWShlB7rSDXTdhkKgTYMWuHbO9e0ABs8TW0+mH6tKFPmP18UA5v1PiGLdZj4oSFAepeRAgqsfyIsyOEHz4FbOfUz8KIH4Gi0qDU+DDaNR6I+3D/k8W9aHnyAF4tBNH3JNzIPpRfjz4rJIXbGxsifoHNkjA7P9w34HFgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uDjBDGM9sl7HR7f182CjRzeEADxB6c8tQaOxxCyTI8I=;
+ b=afbjvbbmRBBfI7xGRwOEsZi2Wp4fc9lMb+MOoDN3Q1kYbwrQW1i3VlB1Uc9mD+vbzyqdM9QKVDkUzf4Y4ScQVGnox6LGuG/jiB6GllWi7gmIlYNBEVwn5EFae20htT2bM6EiJh8qNrqumRqu8WNW1ew/u2ThmKFyby9Nxt6/45RYzo1GIJw7Q/pURhotQZhmjtewgFnHea9V8+mlRo1P9Ivk842f+XSI4UP0IQuTAnE8V6HIZmEHZkeVFHsWR/gqnKXgzR2PjnRkJzAinmpgSKNP7MfDjJUmxHDIDCK3QJvHUje0fFZWQW+t4tlaRgxnlqI1d/QeDOmXIbT6SeYTzg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB7096.apcprd06.prod.outlook.com (2603:1096:405:b5::13)
+ by KL1PR06MB6735.apcprd06.prod.outlook.com (2603:1096:820:fb::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.15; Wed, 13 Nov
+ 2024 03:55:37 +0000
+Received: from TYZPR06MB7096.apcprd06.prod.outlook.com
+ ([fe80::6c3a:9f76:c4a5:c2b]) by TYZPR06MB7096.apcprd06.prod.outlook.com
+ ([fe80::6c3a:9f76:c4a5:c2b%6]) with mapi id 15.20.8158.011; Wed, 13 Nov 2024
+ 03:55:37 +0000
+From: Chunhai Guo <guochunhai@vivo.com>
+To: xiang@kernel.org
+Cc: chao@kernel.org,
+	huyue2@coolpad.com,
+	jefflexu@linux.alibaba.com,
+	dhavale@google.com,
+	linux-erofs@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Chunhai Guo <guochunhai@vivo.com>
+Subject: [PATCH v3] erofs: add sysfs node to drop internal caches
+Date: Tue, 12 Nov 2024 21:11:48 -0700
+Message-Id: <20241113041148.749129-1-guochunhai@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0088.apcprd03.prod.outlook.com
+ (2603:1096:4:7c::16) To TYZPR06MB7096.apcprd06.prod.outlook.com
+ (2603:1096:405:b5::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112152957.GA317364@mit.edu>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB7096:EE_|KL1PR06MB6735:EE_
+X-MS-Office365-Filtering-Correlation-Id: 332b4ef8-e957-4c7d-bd42-08dd03970859
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+JCNc0hYYmJ3fmSZRx1GtF+1hHa+rtnP1Tdx0uUCAHyRw/rFxcO9xuU6i7oC?=
+ =?us-ascii?Q?+ZpFWWn1f1z2SqFwoWvjWUuMoVjs4vlFI8xcbXxIGtDQbzoLIp3qjzVJ4r5P?=
+ =?us-ascii?Q?YNY2b2pK8hRJlLsOapNfVg1ymA1cuPhb6A/RTqTrr1ct8rgy9YaLrhtSPn9q?=
+ =?us-ascii?Q?x9v6iK4GmvhEdABBJD3TQDWD2zaM7zzt4Yi41WAwG3FX30vnJlP3/H1bjDyr?=
+ =?us-ascii?Q?z7S+Au9uHQ919UfG6++a+HYa9k7PDSSGPNYN/Wytt4r2CRt7MPRtuuCOpReu?=
+ =?us-ascii?Q?MRGA2tbNjAEs3DK97jPxs5oGsNajOj9h0SNdu/p83wil8pXwK8yJbJfguiFH?=
+ =?us-ascii?Q?PVbLWg2LlYpXWlWwUYL/L3x/OckUpcUWvO0yLRS+6b6B2R7/4hBJcVNgJBe4?=
+ =?us-ascii?Q?Z3f00GWTyqsizegpFsmZGaHqEgfH8cPnBaV3/kgfvjC+3QvwFNpMAJXBRmQ8?=
+ =?us-ascii?Q?zsrCO1hOq5r7laZS5g905uB9KBpTWl2W40N/DM2DC+mM9Dj6sgHDr532ZBn7?=
+ =?us-ascii?Q?8lop44u/UhkHumjuGzirk7h3J5yDWF+mmR0TFm24ZlXarCsElKW91tfkscdC?=
+ =?us-ascii?Q?i/F8owUgq+Ie/z74k02yhH39I8jy0VmenDGNYs2pIbPbyQv294u5pfFb/mBZ?=
+ =?us-ascii?Q?nWHh/spQawS/IQSHJiL5x9FOJy5Z4gvW6VmJStIru91ThB3wvt5hzg4t3Mxs?=
+ =?us-ascii?Q?a/7cwdGTluG1sfGyxEO8bx46zJkzMoTgayNhbYmiTjs5HgXN+qyWABjx7DkB?=
+ =?us-ascii?Q?xXUmX6CuzEJ8io8/dHGJTf1W393y6TESXDm8c6sa7z5B9Ihds7LqPEOlVYAm?=
+ =?us-ascii?Q?gpOkojjg+dtUAr0w2jTpSQhixKkgqpbEBGhwH/mOQItBcCYyhx9Sp4oEyoHw?=
+ =?us-ascii?Q?aMMb80TH1NtFj4jwYt0bKmmECAhIhfURXnlPTEjsp1mxyB9Csp2D2ucDFUVq?=
+ =?us-ascii?Q?yaVP64gnScFhO8K4pOPCBa8ExG+FXgfJpz42vc9xL81HjEsDdc1b/Q2NrxMM?=
+ =?us-ascii?Q?jCltF/isnZr7IHAeiEAplB/I1UbtlK/wSsW+I377/BHcYIeooyRqU2mIVtTY?=
+ =?us-ascii?Q?OLYhNgb/IoUb/dpDoOU2tMnuthGGRkhVGm87WJ8qqbfyVbZHB/zkMeuoHd07?=
+ =?us-ascii?Q?Hku5u6gEznAuYS0g4bwtd2MJp+lx3h54cEHGTva6h40q4p+2ObwTcXiV5PrU?=
+ =?us-ascii?Q?s81p6gyZ0EWgKV3aiNSeWWjPspeUSpuEWZG5U9lHVLm1t9vk10+/Ku3Tlaky?=
+ =?us-ascii?Q?5GfBMNgOmE6hgP3DR+PwhAFVfjw2jl2Sy7YF8b9x4PzougU+2/vx7jbnzdyH?=
+ =?us-ascii?Q?KsvHzF8I0s1S2MdiG0EoiAtyGLewCypuWu3TDOAyGrrLar7paOqkNEgu2ppx?=
+ =?us-ascii?Q?w/Ts8xw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB7096.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zLoiU7faCOhcvms3M9FhPIXZzoN6QpytegjpTcMY5tJKL3Jiht/G76W2xOdN?=
+ =?us-ascii?Q?HjyoepYoIDjcsbMD5zjRzeFBloOKrTGelA0kvypvUyOA/HAMdU9iKkcdXc5q?=
+ =?us-ascii?Q?W4wYZtcJOeRKiXDtjf6EPKslQ0gt3Bw+EwASHsj7RiOtJWezcnMpgMj8rTff?=
+ =?us-ascii?Q?jTBtsQXlfqRDbcEUU7YkCtYdzIZxAYF5t9AzEMkteqJaWzuYOnL2hRyCYDho?=
+ =?us-ascii?Q?biTbN2SrXplYMaOd4UZFANWOL6ajQ6Ucqx4l5J61orCdJzX/ANmvS5aF1bMN?=
+ =?us-ascii?Q?prsy9SQBQSFLiOvh9Lc6qbZnTCPS26mYgPlaj0XO83NNBxdQmNKZCfkgA0rx?=
+ =?us-ascii?Q?u0Caq28srkmwNZzM0GwJdLvfXieTHL2hF3yHp9Xvc1QsBv1eQ2PywislVzBG?=
+ =?us-ascii?Q?SECry5aIOnvGjgZa94s5I+Cl4TsTtsGqDx3YnfAerentpVaNY1V2kximqww2?=
+ =?us-ascii?Q?7HXeHPuROmhQodEdYCRH4/EdOtBz7YCThi7ju+hMP/PDwFP2Dfd/wpqgH+8r?=
+ =?us-ascii?Q?UfV+FrGEuhzF/lSgkMMH5TG6bDgEIQsYIdEqMuFbQ62wQk6WZAksIcO30iMM?=
+ =?us-ascii?Q?QAQQ53r6k7D0BcXxeWXokV/Nbcqlm0JwEUS7bQzRugo4dFkLXXZFWHhoLjrY?=
+ =?us-ascii?Q?ms7703P/y5eTGpCPHakC54VQcy3tjLtfD3NuSvp3kR+Sfd7TuegW5bsNMqT0?=
+ =?us-ascii?Q?fCO0ZTLQaneNXIT8Cdn5EDJLurN2NCaodO/r1x/qzlZ/iD6zvcqLkT1sxgtj?=
+ =?us-ascii?Q?MsF/UkWpsEIATA2d4dc3cTJGs7MoL7c0E2+qs2ODSo9iyvDyz14L9fe6wOFJ?=
+ =?us-ascii?Q?ol/CsAlTgJuxW9hhnhdDGiWimFXFkB3bqjMDvq+GMCKgEpleueVdWDvLtFPy?=
+ =?us-ascii?Q?MyHLJMm0+sy8AziHLxPCcEvoAvMymcnudfHJP7E3BiXV0tlZstwowVHaYspn?=
+ =?us-ascii?Q?LWzfaQZJBOwSDJGbbnYq+tqwmIaUR0rR3uCx6zwl9lWnguOU+7FS3So1IWGe?=
+ =?us-ascii?Q?Tq3LcLCfdZOLn8d+H7IWtBLgw4TtkIxbnXY3Ovoaln9YayTvVM4jbzF/z34y?=
+ =?us-ascii?Q?7a2Cs8x2NRZNz3Q3w7wonJOYwZQMIJN/v8NFmbZPimI5NKc3mdOqkp0dltxz?=
+ =?us-ascii?Q?YyQJnKx3F8N3+P28uzkG+c+OmFDxt7ea5YpQIoGTO7o8RFibtAnShq6WP4sb?=
+ =?us-ascii?Q?GKi+BCnMHAaKHRvh2muVknLUofRoYzlo1u/8tsdt54olPdZxjlflZDEWu0fq?=
+ =?us-ascii?Q?FxXP7YFSk8H6E+IxMqv7V4qlg5xBuSWhBXsa30u3xV3j+XBsMGihivXZX0Hk?=
+ =?us-ascii?Q?wuyOyA+nDG6UwTY0Gm+6fv7whSQVI3uj4HMRtbyQ1p/o5hBlqUDCuYcViZN0?=
+ =?us-ascii?Q?MDIKzkmCSdJiBVM1DdAjesyRprzJGcBHjmE0G67MKfgioBp+JBkSJbeqw/fh?=
+ =?us-ascii?Q?QrcHfkhtGdruDqqr9upKLNeIxvzjRdOuve0Lx4L3kjt/EdWA6Qi/+WPl2DGu?=
+ =?us-ascii?Q?UZ32HZuzqVdBPjNhu5YlFqGaHWcrRfMpFpU79dQqsv1vNiTDJ6PHpn1tFOKh?=
+ =?us-ascii?Q?YozAaUvVTS6R6dmolhH8G63AkcJQ+L+6U+rJItQJ?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 332b4ef8-e957-4c7d-bd42-08dd03970859
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB7096.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2024 03:55:37.3146
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Yv9jQd5LckDT1Um3Y6lKR9zFDo/nguw/u2pHId1ApJzwXUdwDHyZ3ZdThXXW6RfEMpfAzBs5lHQdsqn2hYDweQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6735
 
-Hi Ted,
+Add a sysfs node to drop compression-related caches, currently used to
+drop in-memory pclusters and cached compressed folios.
 
-On (24/11/12 10:29), Theodore Ts'o wrote:
-> > I've a following syzkaller report (no reproducer); the report is
-> > against 5.15, but the same call-chain seems possible in current
-> > upstream as well.  So I suspect that maybe ext4_xattr_inode_create()
-> > should take nested inode_lock (I_MUTEX_XATTR) instead.  Does the
-> > patch below make any sense?
-> 
-> These syzkaller reports result from mounting a corrupted (fuzzed) file
-> system typically when an inode is used in multiple contexts (e.g., as
-> a directory and an EA inode, etc.) at the same time.
+Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+---
+v2->v3:
+ - All cached folios should be disconnected before invalidating.
+ - Only add sysfs node when CONFIG_EROFS_FS_ZIP is enabled.
 
-I certainly see your point, and I don't argue.
+v1: https://lore.kernel.org/linux-erofs/fabdfe9f-9293-45c2-8cf2-3d86c248ab4c@linux.alibaba.com
+v1->v2:
+ - Change subject as suggested by Gao Xiang.
+ - Use different bits to indicate different meanings in the sysfs node.
+---
+ Documentation/ABI/testing/sysfs-fs-erofs | 11 +++++++++++
+ fs/erofs/internal.h                      |  2 ++
+ fs/erofs/sysfs.c                         | 18 ++++++++++++++++++
+ fs/erofs/zdata.c                         |  1 -
+ 4 files changed, 31 insertions(+), 1 deletion(-)
 
-> I'd have to take a closer look to see if it makes sense, but in
-> general, very often whenever we try to fix one of these it ends up
-> triggering some other syzkaller failure.
+diff --git a/Documentation/ABI/testing/sysfs-fs-erofs b/Documentation/ABI/testing/sysfs-fs-erofs
+index 284224d1b56f..b134146d735b 100644
+--- a/Documentation/ABI/testing/sysfs-fs-erofs
++++ b/Documentation/ABI/testing/sysfs-fs-erofs
+@@ -16,3 +16,14 @@ Description:	Control strategy of sync decompression:
+ 		  readahead on atomic contexts only.
+ 		- 1 (force on): enable for readpage and readahead.
+ 		- 2 (force off): disable for all situations.
++
++What:		/sys/fs/erofs/<disk>/drop_caches
++Date:		November 2024
++Contact:	"Guo Chunhai" <guochunhai@vivo.com>
++Description:	Writing to this will drop compression-related caches,
++		currently used to drop in-memory pclusters and cached
++		compressed folios:
++
++		- 1 : invalidate cached compressed folios
++		- 2 : drop in-memory pclusters
++		- 3 : drop in-memory pclusters and cached compressed folios
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 3905d991c49b..0328e6b98c1b 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -450,6 +450,8 @@ static inline void erofs_pagepool_add(struct page **pagepool, struct page *page)
+ void erofs_release_pages(struct page **pagepool);
+ 
+ #ifdef CONFIG_EROFS_FS_ZIP
++#define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
++
+ extern atomic_long_t erofs_global_shrink_cnt;
+ void erofs_shrinker_register(struct super_block *sb);
+ void erofs_shrinker_unregister(struct super_block *sb);
+diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
+index 63cffd0fd261..4145b732d30f 100644
+--- a/fs/erofs/sysfs.c
++++ b/fs/erofs/sysfs.c
+@@ -10,6 +10,7 @@
+ 
+ enum {
+ 	attr_feature,
++	attr_drop_caches,
+ 	attr_pointer_ui,
+ 	attr_pointer_bool,
+ };
+@@ -57,11 +58,13 @@ static struct erofs_attr erofs_attr_##_name = {			\
+ 
+ #ifdef CONFIG_EROFS_FS_ZIP
+ EROFS_ATTR_RW_UI(sync_decompress, erofs_mount_opts);
++EROFS_ATTR_FUNC(drop_caches, 0200);
+ #endif
+ 
+ static struct attribute *erofs_attrs[] = {
+ #ifdef CONFIG_EROFS_FS_ZIP
+ 	ATTR_LIST(sync_decompress),
++	ATTR_LIST(drop_caches),
+ #endif
+ 	NULL,
+ };
+@@ -163,6 +166,21 @@ static ssize_t erofs_attr_store(struct kobject *kobj, struct attribute *attr,
+ 			return -EINVAL;
+ 		*(bool *)ptr = !!t;
+ 		return len;
++#ifdef CONFIG_EROFS_FS_ZIP
++	case attr_drop_caches:
++		ret = kstrtoul(skip_spaces(buf), 0, &t);
++		if (ret)
++			return ret;
++		if (t < 1 || t > 3)
++			return -EINVAL;
++
++		if (t & 2)
++			z_erofs_shrink_scan(sbi, ~0UL);
++
++		if (t & 1)
++			invalidate_mapping_pages(MNGD_MAPPING(sbi), 0, -1);
++		return len;
++#endif
+ 	}
+ 	return 0;
+ }
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 877bce7709d5..01f147505487 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -119,7 +119,6 @@ static inline unsigned int z_erofs_pclusterpages(struct z_erofs_pcluster *pcl)
+ 	return PAGE_ALIGN(pcl->pclustersize) >> PAGE_SHIFT;
+ }
+ 
+-#define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
+ static bool erofs_folio_is_managed(struct erofs_sb_info *sbi, struct folio *fo)
+ {
+ 	return fo->mapping == MNGD_MAPPING(sbi);
+-- 
+2.34.1
 
-I see, the one-liner that I posted sort of looks like an addition to
-d1bc560e9a9c7 which landed in ext4 recently.
-
-> And, these sorts of things don't actually result in actual security
-> problems (at worst, a hang / denial of service attack), and the right
-> thing to do is to just run fsck on the !@#?!? file system before
-> mounting the thing.
-
-So in our particular case reboot is a bad scenario.  Looking at reports
-from the fleet I see a bunch of hung-task reboots with ext4 frames,
-e.g. ext4_update_i_disksize()->down_write()->schedule() /* forever */,
-but I can't claim that this is the deadlock that syzkaller has reported,
-it very well might not be.
 
