@@ -1,314 +1,233 @@
-Return-Path: <linux-kernel+bounces-407170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6CF9C69A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:02:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A59A9C69A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:04:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CDB21F24EF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:02:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE65F283F54
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212FF18593A;
-	Wed, 13 Nov 2024 07:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FFE17D341;
+	Wed, 13 Nov 2024 07:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m2WpGeDg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CpgP73Aq";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="i4bLNeBK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CpgP73Aq";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="i4bLNeBK"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E703230996;
-	Wed, 13 Nov 2024 07:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5508B230996;
+	Wed, 13 Nov 2024 07:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731481328; cv=none; b=IFuAHbcFQq7xlIbWwho4DhZpTd+4wclKT8MeAFPBIdik3dZ5vJ34qfhFUi6KbTJIxzJVtAWwY+ALYPJsV40GgpIhElxbfcHChYWH1oajJ/iGFWZL2qmAeGvvz0eSOS0cCzHD0gNaJK/cMN3x+amuFQ3Y4qZaoc271TIJM23VKkU=
+	t=1731481481; cv=none; b=kBPvhYRuKJvkpAGLqc3jT4WjKy7W3y463j7h3omFhgF9bJaYxQkZhI4kwrBtGidq7tAOZtNgK0vREsbsA/mxq7yNE+/hlz+Lji7Im3i6+Hg36WlNRc+KxBGSW/1yQ9prr6JgeTG4TMBFiYLl4kWvHZv+zBvzPMYi4+bEF6yTN9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731481328; c=relaxed/simple;
-	bh=UdoAME4GN59VqM33vpVWFh5bPZvi2bHRijA3qBsysFE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K98RBBSo68le0/0sy0swgK6rZlcK+dD9xpeDkZDyglXXGFpZuWl1g4bIfLs2PeL1nWEHnM4/k72WswNIecQEsEK/LBxkJKQxpbwB+S2OR96PkttZL7yJMABilu+XfQQcucFp+a2WSTG/yxqUtYVR51S/PXyTFruoeCfd9UgHgw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m2WpGeDg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACMS6RV019322;
-	Wed, 13 Nov 2024 07:01:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=VvV/bpHM+sl/aBVkRsDepmI3
-	ENDt94Z7ytMRVdSGL0s=; b=m2WpGeDgK3R6+dBSOE2HIxnkgV+gi6Mvyd2zShjo
-	XDXWQEKj9s5poiSkYNafDQqv8GVZ2PM/I5EM9jwS5pUQPilmVefabos4lxEho7/b
-	tPU7r7zx2wHH7p12qOx/X05P7NV0LbUEh8G2M5jYH1yEu2b58fJUa4CMy35r5DZC
-	WDYTMWcz4m/Pdbj0Y/xwVtHuFPcxv3ZfybyCi3py0lgB/0LVzSaLYHFBQbUg5BbP
-	3bYk55bfTpQd6Zx39xyL5KQ7jNBYS2dnuJppVkKg0LHd1CZucdntfQFJsNsiZmPj
-	jxfDWaNVagBdkd7VlKEmKkn6N9fpCesus4F8onMKgK57/g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v4kqu37r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 07:01:57 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AD71utn000633
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 07:01:56 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 12 Nov 2024 23:01:50 -0800
-Date: Wed, 13 Nov 2024 12:31:46 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-CC: <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <gregkh@linuxfoundation.org>,
-        <robh@kernel.org>, <abel.vesa@linaro.org>, <johan+linaro@kernel.org>,
-        <dmitry.baryshkov@linaro.org>, <mantas@8devices.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <quic_kbajaj@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_wcheng@quicinc.com>,
-        <vkoul@kernel.org>, <linux-usb@vger.kernel.org>,
-        <andersson@kernel.org>, <kishon@kernel.org>, <konradybcio@kernel.org>
-Subject: Re: [PATCH v1 6/6] arm64: dts: qcom: Add USB controller and phy
- nodes for IPQ5424
-Message-ID: <ZzRO2uXHCRVqqq08@hu-varada-blr.qualcomm.com>
-References: <20241112091355.2028018-1-quic_varada@quicinc.com>
- <20241112091355.2028018-7-quic_varada@quicinc.com>
- <e541fd10-7037-4cbf-b07a-6cac8a7a9452@quicinc.com>
- <ZzNEecwbh63soh5J@hu-varada-blr.qualcomm.com>
+	s=arc-20240116; t=1731481481; c=relaxed/simple;
+	bh=2eO2wsILqAPIvH5dKfhHblSv9b5HCaATpy6xktLY0eI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Bw+ivGEjAodTb5VX9QRPNuhMeJdUGPZe7l90IW1/RtivbBVs1AoBPNvVFQtjHK5+PVtM60n73L/wn9Jf3YIUWnopNtMbTlyQg5hWZB+YoCedtQXCGxET39PsghAMd3hw8c9w9eoUPKSj8B3AfEZmYuC9B1f34hvXTEyME9dHPwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CpgP73Aq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=i4bLNeBK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CpgP73Aq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=i4bLNeBK; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6CF24211E0;
+	Wed, 13 Nov 2024 07:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731481477; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3usIAWkA34t3JRyZdefu9oCpw+12iEGeWsQ+oEtopkw=;
+	b=CpgP73AqTLH7uAuFdbuak5hmStPIgRgIbczNtA5hdK2WENsPXrTHMH85D8/qQB+syfPwCy
+	Xna3iDdvSj+RqGeBEtdP5YR0FlwGggo+kVUwj6RFb3TTTjk18hhUMHvbuKVfL/7vs51XBl
+	L9F+DjQFUz7dsk8yLON5TnT46EN51a8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731481477;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3usIAWkA34t3JRyZdefu9oCpw+12iEGeWsQ+oEtopkw=;
+	b=i4bLNeBK91BgOr950ylkGkUNVccaV2T81QG5hTLDiDQXW9gTnO7z/n9fCH2BWjkE8FodDs
+	5QdGwSWKVvjG/mCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731481477; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3usIAWkA34t3JRyZdefu9oCpw+12iEGeWsQ+oEtopkw=;
+	b=CpgP73AqTLH7uAuFdbuak5hmStPIgRgIbczNtA5hdK2WENsPXrTHMH85D8/qQB+syfPwCy
+	Xna3iDdvSj+RqGeBEtdP5YR0FlwGggo+kVUwj6RFb3TTTjk18hhUMHvbuKVfL/7vs51XBl
+	L9F+DjQFUz7dsk8yLON5TnT46EN51a8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731481477;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3usIAWkA34t3JRyZdefu9oCpw+12iEGeWsQ+oEtopkw=;
+	b=i4bLNeBK91BgOr950ylkGkUNVccaV2T81QG5hTLDiDQXW9gTnO7z/n9fCH2BWjkE8FodDs
+	5QdGwSWKVvjG/mCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 16C5513AC3;
+	Wed, 13 Nov 2024 07:04:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GYNsMYNPNGcrEgAAD6G6ig
+	(envelope-from <colyli@suse.de>); Wed, 13 Nov 2024 07:04:35 +0000
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZzNEecwbh63soh5J@hu-varada-blr.qualcomm.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mOsWURAirdCvSrraPqNZiNyzC3qRAdMs
-X-Proofpoint-GUID: mOsWURAirdCvSrraPqNZiNyzC3qRAdMs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- adultscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- malwarescore=0 spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=963
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411130061
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: bcache: fix oops bug in cache_set_flush
+From: Coly Li <colyli@suse.de>
+In-Reply-To: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
+Date: Wed, 13 Nov 2024 15:04:15 +0800
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+ linux-bcache <linux-bcache@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D57B37C5-3241-483B-83DE-483243984E60@suse.de>
+References: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
+To: liequan che <liequanche@gmail.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	APPLE_MAILER_COMMON(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Nov 12, 2024 at 05:35:13PM +0530, Varadarajan Narayanan wrote:
-> On Tue, Nov 12, 2024 at 03:05:57PM +0530, Krishna Kurapati wrote:
-> >
-> >
-> > On 11/12/2024 2:43 PM, Varadarajan Narayanan wrote:
-> > > The IPQ5424 SoC has both USB2.0 and USB3.0 controllers. The USB3.0
-> > > can connect to either of USB2.0 or USB3.0 phy and operate in the
-> > > respective mode.
-> > >
-> > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts |  67 +++++++++
-> > >   arch/arm64/boot/dts/qcom/ipq5424.dtsi       | 153 ++++++++++++++++++++
-> > >   2 files changed, 220 insertions(+)
-> > >
-> >
-> > [...]
-> >
-> > > diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> > > index 5e219f900412..d8c045a311c2 100644
-> > > --- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> > > @@ -233,6 +233,159 @@ intc: interrupt-controller@f200000 {
-> > >   			msi-controller;
-> > >   		};
-> > > +		qusb_phy_1: phy@71000 {
-> > > +			compatible = "qcom,ipq5424-qusb2-phy";
-> > > +			reg = <0 0x00071000 0 0x180>;
-> > > +			#phy-cells = <0>;
-> > > +
-> > > +			clocks = <&gcc GCC_USB1_PHY_CFG_AHB_CLK>,
-> > > +				<&xo_board>;
-> > > +			clock-names = "cfg_ahb", "ref";
-> > > +
-> > > +			resets = <&gcc GCC_QUSB2_1_PHY_BCR>;
-> > > +			status = "disabled";
-> > > +		};
-> > > +
-> > > +		usb2: usb2@1e00000 {
-> > > +			compatible = "qcom,ipq5424-dwc3", "qcom,dwc3";
-> > > +			reg = <0 0x01ef8800 0 0x400>;
-> > > +			#address-cells = <2>;
-> > > +			#size-cells = <2>;
-> > > +			ranges;
-> > > +
-> > > +			clocks = <&gcc GCC_USB1_MASTER_CLK>,
-> > > +				 <&gcc GCC_USB1_SLEEP_CLK>,
-> > > +				 <&gcc GCC_USB1_MOCK_UTMI_CLK>,
-> > > +				 <&gcc GCC_USB1_PHY_CFG_AHB_CLK>,
-> > > +				 <&gcc GCC_CNOC_USB_CLK>;
-> > > +
-> > > +			clock-names = "core",
-> > > +				      "sleep",
-> > > +				      "mock_utmi",
-> > > +				      "iface",
-> > > +				      "cfg_noc";
-> > > +
-> > > +			assigned-clocks = <&gcc GCC_USB1_MASTER_CLK>,
-> > > +					  <&gcc GCC_USB1_MOCK_UTMI_CLK>;
-> > > +			assigned-clock-rates = <200000000>,
-> > > +					       <24000000>; > +
-> >
-> > Shouldn't this be 19.2MHz ?
->
-> XO is 24MHz in this SoC.
->
-> > > +			interrupts-extended = <&intc GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
-> > > +					      <&intc GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
-> > > +					      <&intc GIC_SPI 387 IRQ_TYPE_LEVEL_HIGH>,
-> > > +					      <&intc GIC_SPI 388 IRQ_TYPE_LEVEL_HIGH>;
-> > > +			interrupt-names = "pwr_event",
-> > > +					  "qusb2_phy",
-> > > +					  "dm_hs_phy_irq",
-> > > +					  "dp_hs_phy_irq";
-> > > +
-> >
-> > Please check the hs_phy_irq as well and add it if its present.
->
-> Will add.
+Hi Liequan,
 
-Checked with HW team, there is no hs_phy_irq in this case.
+> 2024=E5=B9=B411=E6=9C=8813=E6=97=A5 14:25=EF=BC=8Cliequan che =
+<liequanche@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> Signed-off-by: cheliequan <cheliequan@inspur.com>
+>=20
+>   If the bcache cache disk contains damaged btree data,
+> when the bcache cache disk partition is directly operated,
+> the system-udevd service is triggered to call the bcache-register
+> program to register the bcache device,resulting in kernel oops.
+>=20
 
-> > > +			resets = <&gcc GCC_USB1_BCR>;
-> > > +			qcom,select-utmi-as-pipe-clk;
-> > > +			status = "disabled";
-> > > +
-> > > +			dwc_1: usb@1e00000 {
-> > > +				compatible = "snps,dwc3";
-> > > +				reg = <0 0x01e00000 0 0xe000>;
-> > > +				clocks = <&gcc GCC_USB1_MOCK_UTMI_CLK>;
-> > > +				clock-names = "ref";
-> >
-> > Another clock in dwc3 node ?
+What is the kernel version ?=20
 
-Not sure if I understand the above comment. Per bindings [1] a
-clock entry is expected in this node.
+Interesting that why the btree node checking code during registration =
+doesn=E2=80=99t cache the meta data error.
 
-1 - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/usb/snps,dwc3.yaml#n57
 
-Thanks
-Varada
 
-> > > +				interrupts = <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>;
-> > > +				phys = <&qusb_phy_1>;
-> > > +				phy-names = "usb2-phy";
-> > > +				tx-fifo-resize;
-> > > +				snps,is-utmi-l1-suspend;
-> > > +				snps,hird-threshold = /bits/ 8 <0x0>;
-> > > +				snps,dis_u2_susphy_quirk;
-> > > +				snps,dis_u3_susphy_quirk;
-> > > +			};
-> > > +		};
-> > > +
-> > > +		qusb_phy_0: phy@7b000 {
-> > > +			compatible = "qcom,ipq5424-qusb2-phy";
-> > > +			reg = <0 0x0007b000 0 0x180>;
-> > > +			#phy-cells = <0>;
-> > > +
-> > > +			clocks = <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-> > > +				<&xo_board>;
-> > > +			clock-names = "cfg_ahb", "ref";
-> > > +
-> > > +			resets = <&gcc GCC_QUSB2_0_PHY_BCR>;
-> > > +			status = "disabled";
-> > > +		};
-> > > +
-> > > +		ssphy_0: phy@7d000 {
-> > > +			compatible = "qcom,ipq5424-qmp-usb3-phy";
-> > > +			reg = <0 0x0007d000 0 0xa00>;
-> > > +			#phy-cells = <0>;
-> > > +
-> > > +			clocks = <&gcc GCC_USB0_AUX_CLK>,
-> > > +				 <&xo_board>,
-> > > +				 <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-> > > +				 <&gcc GCC_USB0_PIPE_CLK>;
-> > > +			clock-names = "aux",
-> > > +				      "ref",
-> > > +				      "cfg_ahb",
-> > > +				      "pipe";
-> > > +
-> > > +			resets = <&gcc GCC_USB0_PHY_BCR>,
-> > > +				 <&gcc GCC_USB3PHY_0_PHY_BCR>;
-> > > +			reset-names = "phy",
-> > > +				      "phy_phy";
-> > > +
-> > > +			#clock-cells = <0>;
-> > > +			clock-output-names = "usb0_pipe_clk";
-> > > +
-> > > +			status = "disabled";
-> > > +		};
-> > > +
-> > > +		usb3: usb3@8a00000 {
-> > > +			compatible = "qcom,ipq5424-dwc3", "qcom,dwc3";
-> > > +			reg = <0 0x08af8800 0 0x400>;
-> > > +
-> > > +			#address-cells = <2>;
-> > > +			#size-cells = <2>;
-> > > +			ranges;
-> > > +
-> > > +			clocks = <&gcc GCC_USB0_MASTER_CLK>,
-> > > +				 <&gcc GCC_USB0_SLEEP_CLK>,
-> > > +				 <&gcc GCC_USB0_MOCK_UTMI_CLK>,
-> > > +				 <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-> > > +				 <&gcc GCC_CNOC_USB_CLK>;
-> > > +
-> > > +			clock-names = "core",
-> > > +				      "sleep",
-> > > +				      "mock_utmi",
-> > > +				      "iface",
-> > > +				      "cfg_noc";
-> > > +
-> > > +			assigned-clocks = <&gcc GCC_USB0_MASTER_CLK>,
-> > > +					  <&gcc GCC_USB0_MOCK_UTMI_CLK>;
-> > > +			assigned-clock-rates = <200000000>,
-> > > +					       <24000000>;
-> > > +
-> >
-> > same comment as above, isn't this supposed to be 19.2MHz ?
->
-> XO is 24MHz in this SoC.
->
-> > > +			interrupts-extended = <&intc GIC_SPI 412 IRQ_TYPE_LEVEL_HIGH>,
-> > > +					      <&intc GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH>;
-> > > +			interrupt-names = "pwr_event",
-> > > +					  "qusb2_phy";
-> > > +
-> >
-> > DP/ DM interrupts ?
->
-> Will add.
->
-> > > +			resets = <&gcc GCC_USB_BCR>;
-> > > +			status = "disabled";
-> > > +
-> > > +			dwc_0: usb@8a00000 {
-> > > +				compatible = "snps,dwc3";
-> > > +				reg = <0 0x08a00000 0 0xcd00>;
-> > > +				clocks = <&gcc GCC_USB0_MOCK_UTMI_CLK>;
-> > > +				clock-names = "ref";
-> > > +				interrupts = <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>;
-> > > +				phys = <&qusb_phy_0>, <&ssphy_0>;
-> > > +				phy-names = "usb2-phy", "usb3-phy";
-> > > +				tx-fifo-resize;
-> > > +				snps,is-utmi-l1-suspend;
-> > > +				snps,hird-threshold = /bits/ 8 <0x0>;
-> > > +				snps,dis_u2_susphy_quirk;
-> > > +				snps,dis_u3_susphy_quirk;
-> >
-> > Disable u1/u2 entry as well please.
->
-> Will add.
->
-> Thanks
-> Varada
->
+> crash> bt
+> PID: 7773     TASK: ffff49cc44d69340  CPU: 57   COMMAND: =
+"kworker/57:2"
+> #0 [ffff800046373800] machine_kexec at ffffbe5039eb54a8
+> #1 [ffff8000463739b0] __crash_kexec at ffffbe503a052824
+> #2 [ffff8000463739e0] crash_kexec at ffffbe503a0529cc
+> #3 [ffff800046373a60] die at ffffbe5039e9445c
+> #4 [ffff800046373ac0] die_kernel_fault at ffffbe5039ec698c
+> #5 [ffff800046373af0] __do_kernel_fault at ffffbe5039ec6a38
+> #6 [ffff800046373b20] do_page_fault at ffffbe503ac76ba4
+> #7 [ffff800046373b70] do_translation_fault at ffffbe503ac76ebc
+> #8 [ffff800046373b90] do_mem_abort at ffffbe5039ec68ac
+> #9 [ffff800046373bc0] el1_abort at ffffbe503ac669bc
+> #10 [ffff800046373bf0] el1_sync_handler at ffffbe503ac671d4
+> #11 [ffff800046373d30] el1_sync at ffffbe5039e82230
+> #12 [ffff800046373d50] cache_set_flush at ffffbe50121fa4c4 [bcache]
+> #13 [ffff800046373da0] process_one_work at ffffbe5039f5af68
+> #14 [ffff800046373e00] worker_thread at ffffbe5039f5b3c4
+> #15 [ffff800046373e50] kthread at ffffbe5039f634b8
+> crash> dis cache_set_flush+0x94
+> 0xffffbe50121fa4c8 <cache_set_flush+148>:       str     x23, [x20, =
+#512]
+>=20
+> ---
+> drivers/md/bcache/super.c | 16 ++++++++++------
+> 1 file changed, 10 insertions(+), 6 deletions(-)
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index fd97730479d8..8a41dfcf9fb6 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -1741,8 +1741,10 @@ static void cache_set_flush(struct closure *cl)
+>       if (!IS_ERR_OR_NULL(c->gc_thread))
+>               kthread_stop(c->gc_thread);
+>=20
+> -       if (!IS_ERR(c->root))
+> -               list_add(&c->root->list, &c->btree_cache);
+> +       if (!IS_ERR_OR_NULL(c->root)) {
+> +               if (!list_empty(&c->root->list))
+> +                       list_add(&c->root->list, &c->btree_cache);
+> +       }
+>=20
+>       /*
+>        * Avoid flushing cached nodes if cache set is retiring
+> @@ -1750,10 +1752,12 @@ static void cache_set_flush(struct closure =
+*cl)
+>        */
+>       if (!test_bit(CACHE_SET_IO_DISABLE, &c->flags))
+>               list_for_each_entry(b, &c->btree_cache, list) {
+> -                       mutex_lock(&b->write_lock);
+> -                       if (btree_node_dirty(b))
+> -                               __bch_btree_node_write(b, NULL);
+> -                       mutex_unlock(&b->write_lock);
+> +                       if (!IS_ERR_OR_NULL(b)) {
+
+The above check is not safe.=20
+
+
+
+> +                               mutex_lock(&b->write_lock);
+> +                               if (btree_node_dirty(b))
+> +                                       __bch_btree_node_write(b, =
+NULL);
+> +                               mutex_unlock(&b->write_lock);
+> +                       }
+>               }
+>=20
+>       if (ca->alloc_thread)
+> --
+> 2.33.0
+
+
+Thanks.
+
+Coly Li=
 
