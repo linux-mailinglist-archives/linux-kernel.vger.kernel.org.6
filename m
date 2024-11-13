@@ -1,79 +1,95 @@
-Return-Path: <linux-kernel+bounces-407001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7529C674B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:30:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079D19C6755
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:31:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E5BD1F2429C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:30:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BACC8B28289
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D95C136E37;
-	Wed, 13 Nov 2024 02:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDD01494B1;
+	Wed, 13 Nov 2024 02:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmMo5/Ly"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="feOhwpX2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8784213D298;
-	Wed, 13 Nov 2024 02:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4E7138490;
+	Wed, 13 Nov 2024 02:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731465005; cv=none; b=t98zSbXmeEqjtJ1GiWTEWiW0EPaFbTApLY7omtABVBhmqT8IRrB1bLSuQzrA4i85g5kwuryN4C4wkZJcHd3Fbv1MgUA3Igtkid7aw2JNsG/DNNBtVWCBJaHvIH5kJcLjVlGRZF/4KNxqQYu6s5MqV7hKAURcbil3Crbq4vpmuvU=
+	t=1731465021; cv=none; b=HHmpLhvn+thFV5fCEV6ecRSB1u8ejohyvX2h5gaDsrFS6zKR/JCFMqPyOYdYUqSH7ebEEWnf9WoZUKMb7H8QHGW2FMWF3YJjXnX9dxeWRAMBU9q+5STMWfXPoPIuDwn0kcX0mZ2wiXRj350qfIxuXIZs3u+if0FcSTfFYw+dc6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731465005; c=relaxed/simple;
-	bh=QrH1vsXxPmKUIgFhBG22at+Mfz/KG7y9qZwPZ422Yz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dSKZkdpD9aYljMHd5RmS2LkWjy28ScMzdMFpUPvnilXHlVPBuv6Ii8LT4xvYKMy6oxVeZMharDWPYXCGngG736uPVJfFIJEzNfJ383ErYbjp4FJdntNNPsrA4EimGfzhQCkoM62X9QIUCbJpIPuUCuw07TmmJ7aaRHc8UWxCjIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmMo5/Ly; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D50BC4CECD;
-	Wed, 13 Nov 2024 02:30:04 +0000 (UTC)
+	s=arc-20240116; t=1731465021; c=relaxed/simple;
+	bh=v6OQIy9Hl1pwKmQg3qf6IxbnJp06j/iW9BVgDYe9rrU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=hLot9v9P7DARGLY1wylY6PGjfYjVy0qsYChmGfAocwoFPzzZJt+5kYjCVC/P4/S8RTT+2W2JAyyMu1IA/1gnEk15LD30OIZz/hSdzoOZbBlE/V7bJ4Hy69eufGgTkGdre5lW456d3latcxJPSkM4AvPReUYSsQs9Mx3N2Hk+2WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=feOhwpX2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75435C4CED4;
+	Wed, 13 Nov 2024 02:30:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731465005;
-	bh=QrH1vsXxPmKUIgFhBG22at+Mfz/KG7y9qZwPZ422Yz4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cmMo5/Lyd9SZ1+UkxUMAiPO1gwiG/NOh5+/ecdySorlwg6UHEFIJhv+kLYn4JgLAt
-	 vqbYrgswKUC3xEbkeJ3l26b8SjunMtsfECSpDFNGBCAx9r+gqxiM8zNTJocIk283vU
-	 wnk/JjsO1lm8azV7b7sVwAVBTM55s8vethK118eWJMEHBKcRhsGsgJgHWb6eKnTyK8
-	 L5f/+uT4/+LAZzLwhZ85NstOsegsXUSZ2+3saBdsmO+9JkK99VJXrVe0OlxKTaKBDW
-	 4+AIeDY8+8cDoChqKbtgNCH/tW8pFZWq3rWJFOSpfaZoHZGhf2GxhHnUDO+/uaH2n0
-	 V43Zl3Oc92RjA==
-Date: Tue, 12 Nov 2024 18:30:03 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Nelson Escobar <neescoba@cisco.com>
-Cc: John Daley <johndale@cisco.com>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Christian Benvenuti <benve@cisco.com>,
- Satish Kharat <satishkh@cisco.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next v3 0/7] enic: Use all the resources configured
- on VIC
-Message-ID: <20241112183003.534e5275@kernel.org>
-In-Reply-To: <20241108-remove_vic_resource_limits-v3-0-3ba8123bcffc@cisco.com>
-References: <20241108-remove_vic_resource_limits-v3-0-3ba8123bcffc@cisco.com>
+	s=k20201202; t=1731465021;
+	bh=v6OQIy9Hl1pwKmQg3qf6IxbnJp06j/iW9BVgDYe9rrU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=feOhwpX290G5stkY6INCBhbBjRetwysewjLmlZvWyfXIJyudi8Mc8GRhbLqHhiTxo
+	 UzHVtQdZ/jXB4yNpyZ3zF8EXrmGfA7kuVcCeLtZSyMKuJK8XjZiAsyF+GWDfbMwXmU
+	 eC09Klvq9Sq53XneR2Y8JYasFMwd2P+bJN0DM+m12cN+FuhZlGDpGN0ZZV9rCPS8LL
+	 JG2C5jXsj6Ep+jMLxFopx1zFXcDjPHEVrEloXPxvjOqEZGh3c4pYwiIETmz4MZDfe0
+	 PoR8vLMk/r/FcrLUNVeK+iaQkFV08o3QrpETCrPDH+YUfd0StRQmCWHYueevr5JFut
+	 0DMpKIQI+t/eQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB8193809A80;
+	Wed, 13 Nov 2024 02:30:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3] MAINTAINERS: Re-add cancelled Renesas driver sections
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173146503153.759199.11051453348644644535.git-patchwork-notify@kernel.org>
+Date: Wed, 13 Nov 2024 02:30:31 +0000
+References: <4b2105332edca277f07ffa195796975e9ddce994.1731319098.git.geert+renesas@glider.be>
+In-Reply-To: <4b2105332edca277f07ffa195796975e9ddce994.1731319098.git.geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: gregkh@linuxfoundation.org, paul.barker.ct@bp.renesas.com,
+ niklas.soderlund@ragnatech.se, claudiu.beznea.uj@bp.renesas.com,
+ yoshihiro.shimoda.uh@renesas.com, James.Bottomley@hansenpartnership.com,
+ arnd@arndb.de, sergei.shtylyov@gmail.com, linux-renesas-soc@vger.kernel.org,
+ netdev@vger.kernel.org, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org, horms@kernel.org, cassel@kernel.org,
+ niklas.soderlund+renesas@ragnatech.se
 
-On Fri, 08 Nov 2024 21:47:46 +0000 Nelson Escobar wrote:
-> Allow users to configure and use more than 8 rx queues and 8 tx queues
-> on the Cisco VIC.
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 11 Nov 2024 11:03:21 +0100 you wrote:
+> Removing full driver sections also removed mailing list entries, causing
+> submitters of future patches to forget CCing these mailing lists.
 > 
-> This series changes the maximum number of tx and rx queues supported
-> from 8 to the hardware limit of 256, and allocates memory based on the
-> number of resources configured on the VIC.
+> Hence re-add the sections for the Renesas Ethernet AVB, R-Car SATA, and
+> SuperH Ethernet drivers.  Add people who volunteered to maintain these
+> drivers (thanks a lot!), and mark all of them as supported.
+> 
+> [...]
 
-You don't seem to be responding to feedback. You don't have to agree
-with all the feedback you get (unless its from the maintainers ;))
-but if you don't I'll just assume that you take it at face value
-and will address..
+Here is the summary with links:
+  - [v3] MAINTAINERS: Re-add cancelled Renesas driver sections
+    https://git.kernel.org/netdev/net/c/2b99b2532593
+
+You are awesome, thank you!
 -- 
-pw-bot: cr
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
