@@ -1,118 +1,245 @@
-Return-Path: <linux-kernel+bounces-407825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58EA9C74D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:54:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93AC49C74D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:55:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6647228175C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:54:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238091F2126A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8520F7083F;
-	Wed, 13 Nov 2024 14:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE327346F;
+	Wed, 13 Nov 2024 14:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PgUkGrrA"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTxWzViJ"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A27F23A0
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9284A1CAAC;
+	Wed, 13 Nov 2024 14:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731509653; cv=none; b=q3BTPytRB1+dt1r+mfuyAdI1IxE4QLowjKWbHo0aJHKlZPvR2/yh98Xywr4ltZQT7iZ0F+sBxStezom4Q3kBtO6CfuMeDnj/9CptM4548CoDfqHmR02MNXy9VfPicVNvkWv1LE3/fLh/7p+xc4ED+wtmqQbHT0+GH2Woz2Dl5Mc=
+	t=1731509699; cv=none; b=Sj+dwBA93rsWgNo+9IH8gNsRWs7zWbbjRa8Oj5EzVPuFOLfVXW2DhRj3clwGqXVJmr2BnekEmkcTu5Li0AZkIbWKnvnS8X0WwGG3XsLAipHjPPLIaWFimFPCOLSEZv31rHB9CG3lThVwNvXfPcqAH6SWkNMVJzD/FRZtJ7ohvUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731509653; c=relaxed/simple;
-	bh=t9CLY7xZ/euV4YdMH/kaMgQLgWy4KBQHWDVjKzpAfAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BUk/AFCtIoUt+21ENIuByqTPsH6rVrUQlKfS5iecH2647KkKBuPDRKOfhE43uCP/Gs6gn9VuGKyK9Ey6x/nbmQoQUN1ug9kN0jPP3b/DvIlTriFaR/4stzjK8qdsd+lv6t8nAbIP+Z2Ob3tIrb1IK77dRg3Zy2yVw8OxeR1/rDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PgUkGrrA; arc=none smtp.client-ip=209.85.208.178
+	s=arc-20240116; t=1731509699; c=relaxed/simple;
+	bh=HgtTdevTgzmXe3ndxnmilmTemjMYR9RjaVxlqOTn1LM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MF3UG+V11/iVrJl5Pkt8t5feUKckKEE1QYVwZb6Ig98rTJLvBmOcbSYTo31P+5/FDBc4e6S+MmiL4hSPYFeE20RM7mTHnho1Hu/rQ+dgqahG0lIapyhelwtyalMYhew0uuL/M9BhTVR9CCnOmbHwxiVPdl+k4u6BOb+IiSeZCSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HTxWzViJ; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso97340861fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:54:11 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53da2140769so751385e87.3;
+        Wed, 13 Nov 2024 06:54:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731509650; x=1732114450; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPsqq3GsgW5QLtdw2wIeuLt0KF0vtG6d+ArqDrwNOtQ=;
-        b=PgUkGrrAsZQwQsTRUPUDs7dsI33bYnjB3j0AYxrZp74HJ+xX+pG1uedNe1DZZL1JTy
-         8FxkPKkj6j2TTACyW+mlEUIPCrg/Ptb8aOjiESLTxHeEoQJtNuUbaYf5IgOSSMXPf7IU
-         2XHUxcrbVR7fBu7C/Jh3QBj8cg/2BzQRFVysT94o1GZr7fNlKsbnH6cQpx+UPLVmxdTr
-         /qwP/KH6UhtdXApZKOpHl0WBMig2wvPEQzmrwwz/BxF5ZapYNlLpM8RdkF/iw6yMuFLq
-         T5Nq6E7sJUtn1GjOfVzmcsk/NrSyLzLPdc/jwo4VUH6YQyanXy2oj9PhIRStK9IPVjV5
-         1Lng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731509650; x=1732114450;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1731509696; x=1732114496; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cPsqq3GsgW5QLtdw2wIeuLt0KF0vtG6d+ArqDrwNOtQ=;
-        b=nhFpEAffyqaMr3L6RJ7ygHK134C8YFiZsPfRmVtfABCYRNXXJ/BkLY4XzEWDEghwF5
-         yb7zthvI6q8Gjmw/4eURReyZiiMDkSW6YTV6jXIo4BxUh6RAKLkBpBMQuRobuv0ac+q6
-         uJyzg5a0Qa1MzCNMl2DeS12aN0xuSnGwOMCbxTbmWzcv3Dcy8V0HqPPTNj45BkdHKw7l
-         TnGnFZpzmftP8KKIMBNSDLN360S4yvs9yFTolV20/EmuQX2ibV65z6Vj2TKukrgza3pd
-         wzLvD2WGMWPG17AqffDpIdJplXmf2USMKcwE0CTWjnPz9G4/MLjp1EmkWjLLJ3YuB3pz
-         nbBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYrZAf6xASQ7+Qs/GYm3PuW6lxRouYOqsqPu0OL4zcUjzCJzA6leViSfjMQevv2zUk9mA1rUlhB8Fhjp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAbLsxhRq/eUlApX40mccxGKUE2X0IRoryruYU3jYNqnmWEODW
-	LMnElS4hdvvUZbfvnky8KnokHryyBifG7bJle6BFkz92/II++C2U
-X-Google-Smtp-Source: AGHT+IFyJLrsSDJUOCNHFogeMgexCMp5IS+HXBgXMCDqPwZeB+ErCgI7Ol9mjj8/kWudvB2qEEyAeQ==
-X-Received: by 2002:a05:651c:554:b0:2fb:4f8e:efd with SMTP id 38308e7fff4ca-2ff2028a97amr155476111fa.32.1731509649214;
-        Wed, 13 Nov 2024 06:54:09 -0800 (PST)
-Received: from f (cst-prg-85-239.cust.vodafone.cz. [46.135.85.239])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a4b5f1sm893784266b.60.2024.11.13.06.54.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 06:54:08 -0800 (PST)
-Date: Wed, 13 Nov 2024 15:53:54 +0100
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, 
-	willy@infradead.org, liam.howlett@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
-	hannes@cmpxchg.org, oliver.sang@intel.com, mgorman@techsingularity.net, 
-	david@redhat.com, peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, 
-	paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, 
-	hughd@google.com, minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
-	souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v2 2/5] mm: move per-vma lock into vm_area_struct
-Message-ID: <hcwwxvl4bzyejjtdmrzwvwfyejzi2so2kke2b5yls3z2o67gou@67hxetrsr5ec>
-References: <20241112194635.444146-1-surenb@google.com>
- <20241112194635.444146-3-surenb@google.com>
- <637370b8-3e3e-4457-81d6-5913a3ff1d4e@lucifer.local>
+        bh=ISWTcci1pQC9mjxzaFrD2zlmilnEBrr730jv2qJZhlE=;
+        b=HTxWzViJ3nqrdPmWAXRtqKsnbtLjXMPEFxrp6/63Wy4Bs7jjM1TDF/3VJjxEw8D0wv
+         khTULswzQC5Kad8lVw1013N58UbzjTTIqOs+bQcAg901nHpHSqtZNZxIgV/DDLSpqDtN
+         7gPAlmso5uR9IZX4KjZ6MBAM5Us7nxoh/0p4Wjab5dEjR7xlji3SJeug7dDx9IoeOSxj
+         9RORCRXlu+cZmEg/PUHD9JnDLJu68aVgMAzNQxMEIYJ6sfPdw/BzL7lrm2d3pXX99Igo
+         DssjWbisvIb9l7GiMyG2CGmq1d5yI0/dYq08XLOu+EngHJAa4dglFCYhphkbfftgG5Ab
+         9gug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731509696; x=1732114496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ISWTcci1pQC9mjxzaFrD2zlmilnEBrr730jv2qJZhlE=;
+        b=DASTtndJJh9B8gKPyVahAzFHv5/sP+iLfamrtAEAKqqsyAsCP7wlT/ecdMP5E7FEzX
+         Zs0w3FT+qnLDXUMNFeDVHu2IfccE50OPsdS0OqUER1kF01Z5O02xIxOYrZLbYGrKpKB0
+         aqkyC2etV8ZI3OLuESzkqFmPhTrkZohwZYr7JIr7Jv2e2XdaHhCOcbvyXK1TOuSdl7XT
+         HySISV4oqeYX84ikVs6GhOQGYuoKB4h+EpHTP/txvgxBetPznmRkbYR3l0gZ21X+7cNW
+         HZ9GqgHY3k+KmVkLPlDU00X5uPNk8S+CRI8IoF+rcVGwrKcL7bBBoxlAchm/6oTiko0/
+         pBqw==
+X-Forwarded-Encrypted: i=1; AJvYcCURGJNa/cFsRX9HYTrknttEEvoufIj4Lz0EFcuyURxGG68Y3Rny1H4IGMvKovGxDQLWVo6Yo5/653oaCQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvj8VvsEu8OFqybZmgLid/h6YpBaIi5CifFC5pympD0qjQkIa4
+	revJH2yuOUqI4QLsNTSa6GiG2vcIYI1lbv4/Jja9720DgM99x1T5dSuDmHjfUmXwzPI4DD8AAZm
+	5zQ60K39gxBAsD8e0zGR+j797pVA=
+X-Google-Smtp-Source: AGHT+IE3ZaVdwMJSuVUEHMJrxcp2ZIiddTnixGuOw1pZGBbo7gewhx8o9K/jjLQXww/HCoDw+891xHpZ/pAB/uK/CME=
+X-Received: by 2002:a05:6512:3e0b:b0:52e:987f:cfc6 with SMTP id
+ 2adb3069b0e04-53d862ebfadmr8612416e87.51.1731509695440; Wed, 13 Nov 2024
+ 06:54:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <637370b8-3e3e-4457-81d6-5913a3ff1d4e@lucifer.local>
+References: <CAKFNMomm9UjJxdxADBDTL4ksvY7Bycs3WV=cqYmJu_TuUi7crA@mail.gmail.com>
+ <tencent_5ED37D036BA97D43A6A4549765F77C86CE05@qq.com>
+In-Reply-To: <tencent_5ED37D036BA97D43A6A4549765F77C86CE05@qq.com>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Wed, 13 Nov 2024 23:54:39 +0900
+Message-ID: <CAKFNMok4ycxT48mUzNGkfvhw+evbSsUJ6U2MuTUSGwC1f_YcNQ@mail.gmail.com>
+Subject: Re: [PATCH] nilfs2: fix a uaf in nilfs_find_entry
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
+	syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 13, 2024 at 02:28:16PM +0000, Lorenzo Stoakes wrote:
-> On Tue, Nov 12, 2024 at 11:46:32AM -0800, Suren Baghdasaryan wrote:
-> > Back when per-vma locks were introduces, vm_lock was moved out of
-> > vm_area_struct in [1] because of the performance regression caused by
-> > false cacheline sharing. Recent investigation [2] revealed that the
-> > regressions is limited to a rather old Broadwell microarchitecture and
-> > even there it can be mitigated by disabling adjacent cacheline
-> > prefetching, see [3].
-> 
-> I don't see a motivating reason as to why we want to do this? We increase
-> memory usage here which is not good, but later lock optimisation mitigates
-> it, but why wouldn't we just do the lock optimisations and use less memory
-> overall?
-> 
+On Wed, Nov 13, 2024 at 11:28=E2=80=AFAM Edward Adam Davis wrote:
+>
+> On Tue, 12 Nov 2024 23:38:11 +0900, Ryusuke Konishi wrote:
+> > On Tue, Nov 12, 2024 at 7:56=E2=80=AFPM Edward Adam Davis wrote:
+> > >
+> > > The i_size value of the directory "cgroup.controllers" opened by open=
+at is 0,
+> > > which causes 0 to be returned when calculating the last valid byte in
+> > > nilfs_last_byte(), which ultimately causes kaddr to move forward by r=
+eclen
+> > > (its value is 32 in this case), which ultimately triggers the uaf whe=
+n
+> > > accessing de->rec_len in nilfs_find_entry().
+> > >
+> > > To avoid this issue, add a check for i_size in nilfs_lookup().
+> > >
+> > > Reported-by: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=3D96d5d14c47d97015c62=
+4
+> > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > > ---
+> > >  fs/nilfs2/namei.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> >
+> > Hi Edward, thanks for the debugging help and patch suggestion.
+> >
+> > But this fix is incorrect.
+> >
+> > Reproducers are not creating the situation where i_size =3D=3D 0.
+> > In my debug message output inserted in the while loop of
+> > nilfs_find_entry(), i_size was a corrupted large value like this:
+> >
+> > NILFS (loop0): nilfs_find_entry: isize=3D422212465065984,
+> > npages=3D103079215104, n=3D0, last_byte=3D0, reclen=3D32
+> >
+> > This is different from your debug result, because the type of i_size
+> > in the debug patch you sent to syzbot is "%u".
+> > The type of inode->i_size is "loff_t", which is "long long".
+> > Therefore, the output format specification for i_size in the debug
+> > output should be "%lld".
+> Yes, you are right, I ignore the type of i_size.
+> >
+> > If you look at the beginning of nilfs_find_entry(), you can see that
+> > your check is double-checked:
+> >
+> > struct nilfs_dir_entry *nilfs_find_entry(struct inode *dir,
+> >                 const struct qstr *qstr, struct folio **foliop)
+> > {
+> >         ...
+> >         unsigned long npages =3D dir_pages(dir);
+> Yes, now I noticed dir_pages().
+> >         ..
+> >
+> >         if (npages =3D=3D 0)
+> >                 goto out;
+> >         ...
+> >
+> > Here, dir_pages() returns 0 if i_size is 0, so it jumps to "out" and
+> > returns ERR_PTR(-ENOENT).
+> >
+> > I'm still debugging, but one problem is that the implementation of
+> > nilfs_last_byte() is incorrect.
+> > In the following part, the local variable "last_byte" is not of type
+> > "loff_t", so depending on the value, it may be truncated and return a
+> > wrong value (0 in this case):
+> >
+> > static unsigned int nilfs_last_byte(struct inode *inode, unsigned long =
+page_nr)
+> > {
+> >         unsigned int last_byte =3D inode->i_size;
+> >         ...
+> > }
+> >
+> > If this is the only problem, the following fix will be effective. (To
+> > complete this fix, I think we need to think more carefully about
+> > whether it's okay for i_size to have any value, especially since
+> > loff_t is a signed type):
+> >
+> > diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
+> > index a8602729586a..6bc8f474a3e5 100644
+> > --- a/fs/nilfs2/dir.c
+> > +++ b/fs/nilfs2/dir.c
+> > @@ -70,7 +70,7 @@ static inline unsigned int nilfs_chunk_size(struct
+> > inode *inode)
+> >   */
+> >  static unsigned int nilfs_last_byte(struct inode *inode, unsigned long=
+ page_nr)
+> >  {
+> > -       unsigned int last_byte =3D inode->i_size;
+> > +       loff_t last_byte =3D inode->i_size;
+> >
+> >         last_byte -=3D page_nr << PAGE_SHIFT;
+> >         if (last_byte > PAGE_SIZE)
+> >
+> I have noticed nilfs_last_byte(), I have other concerns about it, such
+> as the chance of last_byte overflowing when i_size is too small and page_=
+nr
+> is too large, or that it will be negative after being type-adjusted to lo=
+ff_t.
+> So, maybe following fix is more rigorous.
+>
+> diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
+> index a8602729586a..0dbcf91538fd 100644
+> --- a/fs/nilfs2/dir.c
+> +++ b/fs/nilfs2/dir.c
+> @@ -70,9 +70,10 @@ static inline unsigned int nilfs_chunk_size(struct ino=
+de *inode)
+>   */
+>  static unsigned int nilfs_last_byte(struct inode *inode, unsigned long p=
+age_nr)
+>  {
+> -       unsigned int last_byte =3D inode->i_size;
+> +       loff_t last_byte =3D inode->i_size;
+>
+> -       last_byte -=3D page_nr << PAGE_SHIFT;
+> +       if (last_byte > page_nr << PAGE_SHIFT)
+> +               last_byte -=3D page_nr << PAGE_SHIFT;
+>         if (last_byte > PAGE_SIZE)
+>                 last_byte =3D PAGE_SIZE;
+>         return last_byte;
+> BR,
+> Edward
 
-Where would you put the lock in that case though?
+nilfs_last_byte itself does not return an error and is a function that
+assumes that i_size is larger than the offset calculated from page_nr,
+so let's limit the modification of this function to correcting bit
+loss in assignment.
 
-With the patchset it sticks with the affected vma, so no false-sharing
-woes concerning other instances of the same struct.
+If any caller is missing the necessary range check, add that check to
+the caller. I will check again for omissions, but please let me know
+if there are any callers that seem to have problems (I hope there
+aren't any).
 
-If you make them separately allocated and packed, they false-share
-between different vmas using them (in fact this is currently happening).
-If you make sure to pad them, that's 64 bytes per obj, majority of which
-is empty space.
+To extend the bits of last_byte, declare last_byte as "u64" instead of "lof=
+f_t".
+In assignments, the bit pattern is maintained regardless of whether it
+is signed or not, and declaring it as u64 also avoids the problem of
+negative i_size here.
+
+Comparisons between unsigned and signed integers may introduce
+warnings in syntax checks at build time such as "make W=3D2" depending
+on the environment, and may be reported by bots at a later date, so I
+would like to maintain comparisons between unsigned integers.
+(PAGE_SIZE is an unsigned constant)
+
+If the problem of negative i_size is actually a problem, I think we
+should add a sanity check for i_size_read(inode) < 0 to the function
+that reads inodes from block devices (such as
+nilfs_read_inode_common).  So, I would like to deal with that
+separately.
+
+I have already tested a change that modifies only the last_byte type
+to "u64" with syzbot, but if you could proceed with creating a patch
+that includes the commit log in this direction, I would like to adopt
+it.
+
+Thanks,
+Ryusuke Konishi
 
