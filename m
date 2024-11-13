@@ -1,289 +1,252 @@
-Return-Path: <linux-kernel+bounces-407165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5FBE9C6990
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:56:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E46A9C6993
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:57:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A5E3B26B28
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E29721F253A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7C117D36A;
-	Wed, 13 Nov 2024 06:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8ED18133F;
+	Wed, 13 Nov 2024 06:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="gG3jeR1f"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020140.outbound.protection.outlook.com [52.101.128.140])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GdOo8JDZ"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2057.outbound.protection.outlook.com [40.107.96.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7010F175D5D;
-	Wed, 13 Nov 2024 06:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE3617C992;
+	Wed, 13 Nov 2024 06:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731481000; cv=fail; b=El2dIZbeyyFXAG2PkbaMdrzltM+Ad5gM0KWXr+g7xc1gAE5c1uOK/Gj4hBo6QY4+C0LVT5LTqwFGTASp/8dUhDxa/L6UkOdIPXM79lKqg573ITiP3xy1/vo+9du9O7f/StzqYmhIluwihvge/3UM6bX6S9LVBkJMVQr23G61oxg=
+	t=1731481031; cv=fail; b=FyTmQae4jn8LwUJ4SUy5t81BhbQpEQnYLueBG02f/LO6WREKBPX5FTMCy6pFVN8XRGNrgv2S4kkC6uqUG6y0mNTUi5xCuBUQCyCPK41oHVx8JqaGZzWeBcU/g+DlprTmzFBCQJ6Wk2XJ9IyPTOqUclNK4VqM9djwWD+LTH33DWU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731481000; c=relaxed/simple;
-	bh=qLaFt94kkN75ufqNhllM9nC1gmU9E45erR5YSlRSJJg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=S2C6juPr2yO+HgmYQZsRYs0iJhzhpTMivN4Fde6OPJq5nVZyC1TEHfTIXB9D5U1pq0qI0Jo4j2IJYGD9csSt0f92m0NIf7xhmpX8+Uk6fCFDc/7VWv4BN2SSJCu3B9uSbDXcN4vyFGt17eqygAx+XPqu6R1F16jaxroGSVd8U1A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=gG3jeR1f; arc=fail smtp.client-ip=52.101.128.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	s=arc-20240116; t=1731481031; c=relaxed/simple;
+	bh=0gx3NPsnC5kAc75Jd25H1lWiNOhuDneAfMTIzEP08l0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a1WJ7iFII6yXzvq6dVyezV/erobnBWvPed06Z1lscMoFfjWEfRKNT+SfmsGXK43RGnqh0Y+xyC2LvWxqGOw3w+VNEknHptKpKWhXGL+0ksNTHEtMZnzhnZ8rmC4Pc6pcVTKJA7/k2N8/IyEhVARnP8AVfQsSxlyR8TI0BFyIoA8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GdOo8JDZ; arc=fail smtp.client-ip=40.107.96.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KtM4ivHIRRzPdbULriix/XfW4J8GOc0dmxQAneE/qtGM94umgmWAClEb7VHHwrOBPjmqoPlEpRmcM8ZKZ3orZWyQmHg7LhUFK5u/LcEX4ae6JhrYxJz/9KrHMz1exYEpIemoprDjE07R4CGByOVC4Hf2rcG/KoxS12W+jjfiXschaaUFzeqxKnGdFO9z3rdfV5552jHVa0rv3yPz6Uz5RVrjL/ttNWQbGzW+p3kjKLuOo4KxZSRv1NVX/MYeLrou2/a+njlU3JdjUj+b5TtJxiG4iKOpqiwambzEwlzJEevFdADlp9Qo7gNJ6ogJ4pvzAKOpvOwRR4BA+Cs982o0zg==
+ b=SKCkFeVWmZQUoAHzbN2y7qx7BORyAeY10z7q5+ex1yBDCU01Ahi+ykurbfyWL4feXGtq9Wcbs0xmCkY62xmwGY+C42oEPpTo1phL7NfTQSjCLVcpDtjTb3KEqi3EzdOYyenS8R2Tnd9i/lManhZHREfXVwEko3KvZ9fG1IL2S6c/7MxTzgcaFBXwEfB+oCNdF+r5cj+0gSq48sO1ymQKRZWIXxQfpxpvAksBNwvkHuhvsWWtgByeF1zt6iSjNt+DGAEuh3wEN4388LteNBbAf50YCg1bfqzuq5Fe1In5dz2QwyMHtgrfPsSowG/lKkmRoyxFsFVBYwbMTqXOE1miPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BUKN+fEuN4Y5I/RBQj0NdhTgdsXGIktrhT8DVNjjRO8=;
- b=AkBfexM0QCKqm95bN8jKayJJ5tVAF8FOWsWwAhJKC63uObLw9E8Vwe1admBRiRKACKilafoJJDjWrbd/typoIyNcaKNJWRl5zSNMZnFpoaL3xj+uz2QorsyNH7HVuH81HkGqq1XhAGwiTbJLdy/qKGXvKpTkWzRd/D044CW1tEuJU+Wcx0BtqZn9xPL23CrKUFkdCL9kdZl64oZBWgRQXd7l0kBagA8fcwYig/KgyZJYdaC2R015K5aDeZ675cESlhIqSm3m1rHu3WK7jbrh1dzeb40VIYctsQdHhHYRuZI04qKnWYa5peBv19DaetWO/DjRbAPOgisaP8RnZ+NA5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
+ bh=IRm/7x4Qg2mLRotFUPHNCuT9RUvBUb1a/mLmrkR+PQc=;
+ b=rwd5vm3mf0M0PQazPvs92Jr8TGVupQTZNwEwcDqqsYWmmRuaSpiaU5+yRw9mlOSgFaS/6AFpjbbXBlsuoteX/E7Cw4hOzvpLfIP8o5bYT/0qeaaK54na/AuJC6MBYBWUdIM9l8yPZCTtYWhYLH8v0TDVmWiJR2u1amfRrUW2AJ+08sIKij77FrQIFTtmT1JvQRXmM0mE30TL+MeaTabuctQJbZ34AgAJLYQMAB9lp8HZThIOLv9lnkeb5g27y+RF1txxTeQ7eCirO13jitbVYcQ+tfcWUsKpymE/+LZDHqqfD/wcmCFaOpYu2ZQO+HwNG0JcL2kOfvbC50sXonNC3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BUKN+fEuN4Y5I/RBQj0NdhTgdsXGIktrhT8DVNjjRO8=;
- b=gG3jeR1fWjgFnjvwQUrbqF7KCojPSE8m68LMAIfTtUthCKSq0wgcbH5DTza+6Ofyihy1xOnjufc77+yOHJeixEAzgCEHTDVV6w7bwpkkebuePGXQjtftuqgQXNYc8F/XpmMQOQq2cYuhL7jR14QcsV52nFgOD4fmdM3zhuF3sI9hsOgEWqsZlCZbjRUm154jXzCV22MP+0K7BRzE2+UdNPxV+jSZtSDaR5uKn9ZwKWlFez2Mro5JJB2Qn3wo+2WJEe5c6bAaPawRTEXUaohSpXEdzKERT7hGotFINLWD8B7QzZTPwBFTO/cNI+scQMkmVsMlJZZmNyp9G+4jvl3sdA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by SEYPR03MB8497.apcprd03.prod.outlook.com (2603:1096:101:20b::7) with
+ bh=IRm/7x4Qg2mLRotFUPHNCuT9RUvBUb1a/mLmrkR+PQc=;
+ b=GdOo8JDZuEyCL+4ezv0kLGKda+iWawkpWvzOIMiBLiX6BiEaJIhA6z9NPXv49DRPeLHqRbgJOXmXjSVk3mlbSrtKXfrwHHg6EBlZ5GH3yQlSuuR6CXL+HAIq8seGrYIvaa9S9SS3NrOAo4SqwcFB9ufuBmYHbYAuoPtSP7+3tbo=
+Received: from BN9PR03CA0199.namprd03.prod.outlook.com (2603:10b6:408:f9::24)
+ by SJ0PR12MB7065.namprd12.prod.outlook.com (2603:10b6:a03:4ae::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Wed, 13 Nov
- 2024 06:56:31 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca%6]) with mapi id 15.20.8158.013; Wed, 13 Nov 2024
- 06:56:30 +0000
-Message-ID: <da391fec-738a-4044-a598-fee1137dfa5c@amlogic.com>
-Date: Wed, 13 Nov 2024 14:55:50 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: meson: Fix the determine rate error in
- clk_regmap_divider_ro_ops
-To: neil.armstrong@linaro.org, Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jian Hu <jian.hu@amlogic.com>, Dmitry Rokosov <ddrokosov@sberdevices.ru>,
- Yu Tu <yu.tu@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241112-fix_childclk_of_roclk_has_been_tampered_with-v2-1-64f8009cdf2a@amlogic.com>
- <35307d7a-a110-430d-9ba5-808a05450adb@linaro.org>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <35307d7a-a110-430d-9ba5-808a05450adb@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR06CA0236.apcprd06.prod.outlook.com
- (2603:1096:4:ac::20) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Wed, 13 Nov
+ 2024 06:57:04 +0000
+Received: from BN2PEPF0000449E.namprd02.prod.outlook.com
+ (2603:10b6:408:f9:cafe::b3) by BN9PR03CA0199.outlook.office365.com
+ (2603:10b6:408:f9::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29 via Frontend
+ Transport; Wed, 13 Nov 2024 06:57:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF0000449E.mail.protection.outlook.com (10.167.243.149) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Wed, 13 Nov 2024 06:57:03 +0000
+Received: from airavat.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 13 Nov
+ 2024 00:57:01 -0600
+From: Raju Rangoju <Raju.Rangoju@amd.com>
+To: <linux-usb@vger.kernel.org>
+CC: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
+	<linux-kernel@vger.kernel.org>, Raju Rangoju <Raju.Rangoju@amd.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH v3] usb: xhci: quirk for data loss in ISOC transfers
+Date: Wed, 13 Nov 2024 12:26:32 +0530
+Message-ID: <20241113065632.150451-1-Raju.Rangoju@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEYPR03MB8497:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46a007d4-8da7-4bb4-1a24-08dd03b04d8a
+X-MS-TrafficTypeDiagnostic: BN2PEPF0000449E:EE_|SJ0PR12MB7065:EE_
+X-MS-Office365-Filtering-Correlation-Id: 948660c1-a36c-451c-56d3-08dd03b06156
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q0I1M2xPTFhpUVRndTVWZHFYRHhqZ2xsL2VycVVxRStJUXc2c2xCd0hTZmJU?=
- =?utf-8?B?WUhZS3BZRi9vQ2lNN0J3YitsYjdHT1Zqa3dwMkdpZTR3bzNYQ3lCMVViZ0dr?=
- =?utf-8?B?d3VuenhzZldDcVo5WVU1a1JPM1lvTjhMYUhWbEN6eHVLSTZNT1FKcDZaY25l?=
- =?utf-8?B?M1lqUUd3OEFkSjhwYjdxRHNqVDhhc1dLa1AwbG5BbFlWckFGN3kvVEpOQ2Er?=
- =?utf-8?B?VDAvWmI5UDRNZUc4S3I3c2xoSlJFRm9ucklERnR2RFRUQzBNQ3B3QndyMlBl?=
- =?utf-8?B?MGF6amxSTThSOTVLQ1NHWTZzbWQ3RWE2SEtleDlZTFNaOGhwSUthVSt6czhL?=
- =?utf-8?B?aXVLRC9WT2tzYVFxVEh0cUVWWkVEVXhMNElZeWZLaVZHS05XVFhMSzhYT3JU?=
- =?utf-8?B?bTdmU1RkWis3YkE3dXMzVmsxLzNJams1L1RYTC9TWVhHUTRSMW83aGdKRGJa?=
- =?utf-8?B?cSsrUHNaQVZVVEpIb3RoeHUwREN6b0VzT21sa0hwUDg1VnIzRE5qdEhWRXVF?=
- =?utf-8?B?eDlVeUVhRCtkSWpRWEtOZnRLRkVkcnNkeEtFaEtPSTBlRlVQNDVjVzFVTWZv?=
- =?utf-8?B?amQwK3ZkUVlVZjV6d1gzSmcyU2hqUHliUXpwTnlCdUlBdHNxbEIwWVljSEhD?=
- =?utf-8?B?Z1lieThDVW1CdFlITFJrdERtMDY3TFNSeEZydDVGRVYxSDlVcFNLbnRMQzNp?=
- =?utf-8?B?Nk1sNlFMcWFmY3Mwdk5kQ1hFcTBTK21XbXZqTGhNem1wS1Z0SStlRG1QMWpk?=
- =?utf-8?B?RC9pSGNHZGZHVUFoSW5ETEhLV0FXWkhndDRjSThBdTZjQ1kyNEdjMUtWaTJC?=
- =?utf-8?B?REpsdnJ3VEVFcXJsUHJjUzhGZ201enlmSjZXaEEwN2cxb1E4a0ZhTEVhSTFh?=
- =?utf-8?B?MFFqWFFtUk82UklXM0ZjVjZOb01wQVFuMDdUR0dEb2EwZDZRWHl0aGYwcmph?=
- =?utf-8?B?b1hCOUNXVUJvZUVPRHZJU3V3TS94MWcrQ0VtU2FEZ3gzVW42UkNrUU0xdjhv?=
- =?utf-8?B?a1YzT2hFYk1TNHhwWnpqV0VONHNmcnRyczRpQW9VQXF1cVVKdHpzc1cyNUx0?=
- =?utf-8?B?QWtJS2p3bHAvUDVnd3c5YnRaTnZBTlhmMjhJbnJWa2hCQWRaYit5ZXl2cDBT?=
- =?utf-8?B?WklzNHJWZWRrSGVSVnIzOUZYN2pyTVAzRDBMRS8xQWYvT1c3aWZFN3BYK1ZR?=
- =?utf-8?B?MTNhOVNGRWh2OTVMUTdveFo4Tkdpd014TElDbnQ4Sm55cWhxdUlkR1dFZElW?=
- =?utf-8?B?ejJxdkpjVXpGTnJoSnByUnZTdldobG9zdHc3K2M1dVBUYUNtVW5zT2RoMU03?=
- =?utf-8?B?b3dZd0VqNk9JRWRpQ2hDS1kxaWllV2JDWW1icGZpYm96Z3NaWmpaSldyNmdP?=
- =?utf-8?B?VlJ4dEovalFzSGU4R0hid0YyQ25jQWl5WnJrbm9DcWxIdno3K2lUZkJibmFN?=
- =?utf-8?B?bHRqMVBCY2pXNlN3Qjh6dEZrT1VqLzRlZ0V3SVRDem9ZRU83bjJlOXNsVWhI?=
- =?utf-8?B?dmdQdHdpSitYT0FwNUh0NjF1UElnMjYwM1kwYnFrRFFFN0tzTWNtOW1KU0l0?=
- =?utf-8?B?MDFnYzMvRGQzTTVKWFhSU3RKck5yZmVoV3I3NFdHRTl5WVFZOE1nQUZXUDdn?=
- =?utf-8?B?aVZvb1ZvM292S1B3NmRQMG42M0hTakp5Q3U4MnhoSEtPUi9oL0FpTW93YURy?=
- =?utf-8?B?WTlNWTg0eGN3R2E1cDB3dWxSaWhLVTQweU5HRGx2aHJxWjMvbFloZ2hkQ0NB?=
- =?utf-8?Q?Gx5cj1M52Ot63db6DAVsrMjkOT4a0xQD9jTgmYy?=
+	=?us-ascii?Q?wE1+hSIVe/KqL030Gq3mT20BrDAQ4FEV7XnuCR9gDActO/dMKBCeWoRS7LGU?=
+ =?us-ascii?Q?6E8mnzNECcFfTLGfgH7g6wl9LvwjvUJaehJOqv1iGpWUctJdon4idE3ygLg5?=
+ =?us-ascii?Q?7qgCfsrUEQw80v6D/iUtffpYpXyYfmoMjtNmyoS8eWNnGLFyM7D0mb0+WDC0?=
+ =?us-ascii?Q?88Qm5EG3hDFKb9tXA5fo7PYoQAipAxnY/xrieUaAFaPd6tmdnGRJlrCNkgkA?=
+ =?us-ascii?Q?zxdr6Tz77BiTfRteJKl7MPq3cIo5IkvvXZzCCe2JoV+864xKqQOjExXCMGFW?=
+ =?us-ascii?Q?yA9hMxEbpG09zz+shMt7vr0gRytWLEKGUdwiUADqmYn0fHWuqbWhP5e4ux95?=
+ =?us-ascii?Q?r66U2I6UzvLOvDYDaxEVyUO6irt8drCvU7znmqRib7OeD0hfQDUIMZiIKMzl?=
+ =?us-ascii?Q?F7hWI1CZeQ7bKY31SgRtbR/Pfxhimc9m0hYdfULuqisFGvyrPYt4IouE293S?=
+ =?us-ascii?Q?Dqg5lOIbWvbFRkQIV3gnjStx8NojNVvHa8FRkeq8VTRG8wAXznNyPjPW4ueG?=
+ =?us-ascii?Q?gT1Ih0bl3Dgwn6c6OIh6c1cegl5WuvE7ivZYxMnKxFkhsAtdW1smpTw3uQpI?=
+ =?us-ascii?Q?SpC7s9RFz0x6r1XymFFr90WWupLSBwnd9xXUW23TH88pxpZr2BbBuO5/7i0o?=
+ =?us-ascii?Q?OfeLpKiPHwLHO/vLLSjhlS9ndGU0TI38sya75o2G32xFJrZMtruXetRAsFrE?=
+ =?us-ascii?Q?FpkMWuzQawEu9nK4L3j7FQz/Bt+MYq7hv5271fffS7xV9Qz3FeBZFc6dRjQc?=
+ =?us-ascii?Q?oxuO8tof9c7hIC/k1qGvdpXFIIqQ6wVX0EOCC3J+Jwfs7mQbIRbEcIqm1nWR?=
+ =?us-ascii?Q?iscJ5alQUmiMZ24A3pdBC2UmOUvnbM/6kfGv2iixUPFmfgOFTe7zT5HlK7fQ?=
+ =?us-ascii?Q?sIjrs3CrRHgejtcgVoMebTVB4FdPCDH7RvTcov2tkojV4dEH10+SlmcLHj/p?=
+ =?us-ascii?Q?XbrUtLMf+HderY8wmd4bmvAGL9fUuQI8EGmRDhaHMSmVzWAj4GCtNsS9GC01?=
+ =?us-ascii?Q?OzJ2iYnGF8swHfIYqJM2irYFAGBqwDpOUUQa8lvPy+SLJ1sqo3FiyRR5XyrS?=
+ =?us-ascii?Q?FUotE2yCH/7bCKA9UYC+4aOF7oStUtfJyYtpQiBXrrQLwgTKjrsnehUXxNAS?=
+ =?us-ascii?Q?pwYoLR/msXRFfWTiKStMMTuQtqdQjkN9UhMlApp2oG97DOLOcjrX3mXMnIlf?=
+ =?us-ascii?Q?NT9BIH4rL2ektRuR0l8gx7eTgkb+CA4DhgGOjpPtcDZL+5RXzAX/GrdCwoCO?=
+ =?us-ascii?Q?J1ss6JZuXtp2U5Wqs9nbuLicvSMMh1T97CFJ0cWj3nTyQSS0MbajFcrL0XHN?=
+ =?us-ascii?Q?NhDAWGwJ/+1afGz6FXlU0hSoTyfTuKQwATbU6e4/W6o3d3pzab9W3X+QhjMl?=
+ =?us-ascii?Q?OOZCfrQHNLqAmFCcCcL8NcQYqDCwa+qeEC5lwPKFy9mxreBYtQ=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Szh0L0V4ZEdvS1BQNXBRVWN0VkNabnJoSDFOLzB2Z2RmdXhtaGd3M1FHbkk1?=
- =?utf-8?B?Y3BMR3grN05lcGc5Ukl1MGwrR0swMkJ0d2l0UkthRUpPaG5DVDhkcjRpeDF6?=
- =?utf-8?B?UjBYaURSL3ZuNTIvYmZWSi9aa3BGeHdVRWo3YjNkSjJQRW9EemRLVEF2bkU0?=
- =?utf-8?B?UkdDaHQ2RUprTk03SDhPSEp2Zko1a1BsK3VuOC9CREcyaCtJWHRlbUMvb2x6?=
- =?utf-8?B?dFBxZEtwVG9RTDQybm1ObFVpZ011Wk9OeDZHbEpFektjNDN6c0RwbmFWcVVk?=
- =?utf-8?B?bmhaemxJK0hNcHNRcVNOMkZibW1YV2hUb2F4YitTVnRPR0RIOVp4RThKVnFU?=
- =?utf-8?B?TWFOekdQYitkNEFvZFBZVlBoMFl6QmNDS2s4bzdTV1gzQThVSncvMk9keFRy?=
- =?utf-8?B?dTNRUlljZlJuc0d1VmZaSXZlUmtGY1lNdUFFYmVQTVp5Ukc0WXFHK3Y5c2hu?=
- =?utf-8?B?OVMvK0NyZ2hRRjl3U0dtNU9yalBwclA3Y3lWUzIwMDkzWjdUaVJyRXp5RmRo?=
- =?utf-8?B?YzQ0UTdRcGxnU1dpa2hyWWhMS1VvTVh6VHU5NFc0bEIxVDlGd1hCVzgrNEkw?=
- =?utf-8?B?OUZ4MEdoRm5WRzQ5YTN5NTNoMFZka1pwU0ErVitvTnRjY25FVUZWZUVZUlFj?=
- =?utf-8?B?OGhUZTRoZXhsaFV3dVBZNW8rcFlPendrbk5rMXVPUHUzSHk4cjhzM3I0Q0U0?=
- =?utf-8?B?N1V0UW01S2pLQ3ZtMkFZdEJIY3R2RjFpZzNjM29QV0UxTXpTVmhrNXFISDMz?=
- =?utf-8?B?U1lUZmlwR2NGaHVnTzEvTE83Sk9MZ1pqWkJGdktpN1dEeTF5OW5EbHJmSnFB?=
- =?utf-8?B?TjloTHkyby9GcmRscTZzSk1vZnpWRXZWUzRRRlBrQ0Z3OW40MERvUGp4bjA3?=
- =?utf-8?B?ZlFuVHdFTTRFbXBnb3VUcS9PNHgyWGxwOG1BUWIyMXNRaWNTWUxrNkR3b2ZR?=
- =?utf-8?B?OC93WmkrRjg5ZlA1M2ZFMUNoTVJIU205c2F2RmdRdWxSYnNPenoxR2RoWThN?=
- =?utf-8?B?T0hJRXpycERKRGxUb29XOWhWbkU4bmtXN2RJdFJvSXMyL2VUZWdLSHlUcjRy?=
- =?utf-8?B?ZHppaklEdlRYZGM4NEgrRFpZT2ZwZjEyOHlIeTZaMDdSNWxsS3FHdFFkeU5y?=
- =?utf-8?B?eDZ1NmprdmNidjJJWXNpckN3VCs2N0laeHg4ckppY2t4czhKcEFFSU1UQUVi?=
- =?utf-8?B?MnpkS3d1Nzg1bjg0N1Z2aTFpdjZTMHJkaTdpNXdaWENvaGZRSUoyeHBvc3RV?=
- =?utf-8?B?NGtjeUNldXkvcE0wNWJIVWw4UXRyOTBxWDNrbTJFZ3d5VXlrUHVsK1M0eEc0?=
- =?utf-8?B?Z2c5b2tNNnFVZlZOTnNGVlVaS0NVWlE2VDFVU1BLeFU2dU8vNUVMczVxd01N?=
- =?utf-8?B?M3plditxbUpCaVZhQVNXdVRpVWNoMzVPRm9taE8xWnJOQVJnK1lVNitMaDFI?=
- =?utf-8?B?Mk1MRElucGFmZytWSlRxRnpwdTlHSnowaGN2V005MkU0MEo0dmQ4L1FwdThV?=
- =?utf-8?B?YUo1NzU5N21idDBoNEZYUVJYcElseEZRSmdDVkRSV2hwakgrcno3QnBvUlp3?=
- =?utf-8?B?RmhlUHhRbHY3T3N5K1hOOFpjMFZEUzl4eTk5M0pGVENHcEhHdkhscitZK2dW?=
- =?utf-8?B?L29rMFVlS29VRWV1eGtnOGM1eG1wUjRiRFgwL3grbDVMMFdZKy9nRUtNRjBo?=
- =?utf-8?B?NjJ5Zk1Yc3B2MDhtdER1MXNtdjYzL1B1VDR1TkY3OHo4UnFMU3FwL2xDb0ND?=
- =?utf-8?B?MjRDTkl4Zmk4Tm56LytMcWUwZDhFQm43OEhWME5DQlEvWTB2WGZHeHlrZ0Ji?=
- =?utf-8?B?Q0hFaFVmWGdZK1hQZGFEbzNIb05CUWNPNlE3UzZsNmVXME9GeTg2YURtWSsv?=
- =?utf-8?B?NDlNSkxvNlNtN2d4K0tEV01zWWQ2ZkJkcHRKVXZjU2VZMTJZdDRlNWZydTNQ?=
- =?utf-8?B?RFhlbzlzcmR4clZtRkZnM2RQNlMyR05ydHlzVEhpbWZaRzdlQVlsc3ZFZEsv?=
- =?utf-8?B?WVdGMFAxZHczTUJ6VHJYQmxCeisrRW5wNXFPWHlRN3BIOEVIL3RaV2ZBWnFX?=
- =?utf-8?B?bFE3dlVLd1Y0YVVMcDZveHhucElpeDZQWkt3UEJCQk5uWVpia2ZzNnI5NFZV?=
- =?utf-8?Q?6IPnVsF9iLS5s6CTG+BHr+NLl?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46a007d4-8da7-4bb4-1a24-08dd03b04d8a
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2024 06:56:30.8439
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2024 06:57:03.7872
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OzZn16BuZfwRByk/QX8tG96glUu4+zux5Z64lCCtVq+9sfRR5QcPU+v54MW/WCl27vRcyNq/JRqHZBUgeqcD7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB8497
+X-MS-Exchange-CrossTenant-Network-Message-Id: 948660c1-a36c-451c-56d3-08dd03b06156
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF0000449E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7065
 
+During the High-Speed Isochronous Audio transfers, xHCI
+controller on certain AMD platforms experiences momentary data
+loss. This results in Missed Service Errors (MSE) being
+generated by the xHCI.
 
-On 11/12/2024 9:24 PM, Neil Armstrong wrote:
-> [ EXTERNAL EMAIL ]
->
-> On 12/11/2024 13:57, Chuan Liu via B4 Relay wrote:
->> From: Chuan Liu <chuan.liu@amlogic.com>
->>
->> The rate determined by calling clk_regmap_divider_ro_ops with
->> clk_regmap_div_determine_rate is not RO, which will result in the
->> unexpected modification of the frequency of its children when setting
->> the rate of a clock that references clk_regmap_divider_ro_ops.
->>
->> Fiexs: ea11dda9e091 ("clk: meson: add regmap clocks")
->> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
->> ---
->> Background: During the execution of clk_set_rate(), the function
->> clk_core_round_rate_nolock() is called to calculate the matching rate
->> and save it to 'core->new_rate'. At the same time, it recalculates and
->> updates its 'child->newrate'. Finally, clk_change_rate() is called to
->> set all 'new_rates'.
->> ---
->> Changes in v2:
->> - Remove the CLK_DIVIDER_READ_ONLY judgment logic in
->> clk_regmap_div_determine_rate().
->> - Add clk_regmap_div_ro_determine_rate().
->> - Link to v1: 
->> https://lore.kernel.org/r/20241111-fix_childclk_of_roclk_has_been_tampered_with-v1-1-f8c1b6ffdcb0@amlogic.com
->> ---
->>   drivers/clk/meson/clk-regmap.c | 36 
->> ++++++++++++++++++++----------------
->>   1 file changed, 20 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/clk/meson/clk-regmap.c 
->> b/drivers/clk/meson/clk-regmap.c
->> index 07f7e441b916..edf65ca92c7a 100644
->> --- a/drivers/clk/meson/clk-regmap.c
->> +++ b/drivers/clk/meson/clk-regmap.c
->> @@ -80,21 +80,6 @@ static int clk_regmap_div_determine_rate(struct 
->> clk_hw *hw,
->>   {
->>       struct clk_regmap *clk = to_clk_regmap(hw);
->>       struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
->> -     unsigned int val;
->> -     int ret;
->> -
->> -     /* if read only, just return current value */
->> -     if (div->flags & CLK_DIVIDER_READ_ONLY) {
->
-> You're breaking current code by no more checking this flag,
-> the new clk_regmap_div_ro_determine_rate() is fine, but you should call
-> it from here if CLK_DIVIDER_READ_ONLY is set.
+The root cause of the MSE is attributed to the ISOC OUT endpoint
+being omitted from scheduling. This can happen either when an IN
+endpoint with a 64ms service interval is pre-scheduled prior to
+the ISOC OUT endpoint or when the interval of the ISOC OUT
+endpoint is shorter than that of the IN endpoint. Consequently,
+the OUT service is neglected when an IN endpoint with a service
+interval exceeding 32ms is scheduled concurrently (every 64ms in
+this scenario).
 
-My idea is that the newly added clk_regmap_div_ro_determine_rate()
-implements the functionality of handling CLK_DIVIDER_READ_ONLY in
-clk_regmap_div_determine_rate(). If we still keep the logic for
-handling CLK_DIVIDER_READ_ONLY here, it will make
-clk_regmap_div_determine_rate() ambiguous and easily confused.
+This issue is particularly seen on certain older AMD platforms.
+To mitigate this problem, it is recommended to adjust the service
+interval of the IN endpoint to not exceed 32ms (interval 8). This
+adjustment ensures that the OUT endpoint will not be bypassed,
+even if a smaller interval value is utilized.
 
->
-> Neil
->
->> -             ret = regmap_read(clk->map, div->offset, &val);
->> -             if (ret)
->> -                     return ret;
->> -
->> -             val >>= div->shift;
->> -             val &= clk_div_mask(div->width);
->> -
->> -             return divider_ro_determine_rate(hw, req, div->table,
->> -                                              div->width, 
->> div->flags, val);
->> -     }
->>
->>       return divider_determine_rate(hw, req, div->table, div->width,
->>                                     div->flags);
->> @@ -127,9 +112,28 @@ const struct clk_ops clk_regmap_divider_ops = {
->>   };
->>   EXPORT_SYMBOL_NS_GPL(clk_regmap_divider_ops, CLK_MESON);
->>
->> +static int clk_regmap_div_ro_determine_rate(struct clk_hw *hw,
->> +                                         struct clk_rate_request *req)
->> +{
->> +     struct clk_regmap *clk = to_clk_regmap(hw);
->> +     struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
->> +     unsigned int val;
->> +     int ret;
->> +
->> +     ret = regmap_read(clk->map, div->offset, &val);
->> +     if (ret)
->> +             return ret;
->> +
->> +     val >>= div->shift;
->> +     val &= clk_div_mask(div->width);
->> +
->> +     return divider_ro_determine_rate(hw, req, div->table, div->width,
->> +                                      div->flags, val);
->> +}
->> +
->>   const struct clk_ops clk_regmap_divider_ro_ops = {
->>       .recalc_rate = clk_regmap_div_recalc_rate,
->> -     .determine_rate = clk_regmap_div_determine_rate,
->> +     .determine_rate = clk_regmap_div_ro_determine_rate,
->>   };
->>   EXPORT_SYMBOL_NS_GPL(clk_regmap_divider_ro_ops, CLK_MESON);
->>
->>
->> ---
->> base-commit: 664988eb47dd2d6ae1d9e4188ec91832562f8f26
->> change-id: 
->> 20241111-fix_childclk_of_roclk_has_been_tampered_with-61dbcc623746
->>
->> Best regards,
->
+Cc: stable@vger.kernel.org
+Signed-off-by: Raju Rangoju <Raju.Rangoju@amd.com>
+---
+Changes since v2:
+ - added stable tag to backport to all stable kernels
+
+Changes since v1:
+ - replaced hex values with pci device names
+ - corrected the commit message
+
+ drivers/usb/host/xhci-mem.c |  5 +++++
+ drivers/usb/host/xhci-pci.c | 25 +++++++++++++++++++++++++
+ drivers/usb/host/xhci.h     |  1 +
+ 3 files changed, 31 insertions(+)
+
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index d2900197a49e..4892bb9afa6e 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -1426,6 +1426,11 @@ int xhci_endpoint_init(struct xhci_hcd *xhci,
+ 	/* Periodic endpoint bInterval limit quirk */
+ 	if (usb_endpoint_xfer_int(&ep->desc) ||
+ 	    usb_endpoint_xfer_isoc(&ep->desc)) {
++		if ((xhci->quirks & XHCI_LIMIT_ENDPOINT_INTERVAL_9) &&
++		    usb_endpoint_xfer_int(&ep->desc) &&
++		    interval >= 9) {
++			interval = 8;
++		}
+ 		if ((xhci->quirks & XHCI_LIMIT_ENDPOINT_INTERVAL_7) &&
+ 		    udev->speed >= USB_SPEED_HIGH &&
+ 		    interval >= 7) {
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index cb07cee9ed0c..82657ca30030 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -69,12 +69,22 @@
+ #define PCI_DEVICE_ID_INTEL_TITAN_RIDGE_4C_XHCI		0x15ec
+ #define PCI_DEVICE_ID_INTEL_TITAN_RIDGE_DD_XHCI		0x15f0
+ 
++#define PCI_DEVICE_ID_AMD_ARIEL_TYPEC_XHCI		0x13ed
++#define PCI_DEVICE_ID_AMD_ARIEL_TYPEA_XHCI		0x13ee
++#define PCI_DEVICE_ID_AMD_STARSHIP_XHCI			0x148c
++#define PCI_DEVICE_ID_AMD_FIREFLIGHT_15D4_XHCI		0x15d4
++#define PCI_DEVICE_ID_AMD_FIREFLIGHT_15D5_XHCI		0x15d5
++#define PCI_DEVICE_ID_AMD_RAVEN_15E0_XHCI		0x15e0
++#define PCI_DEVICE_ID_AMD_RAVEN_15E1_XHCI		0x15e1
++#define PCI_DEVICE_ID_AMD_RAVEN2_XHCI			0x15e5
+ #define PCI_DEVICE_ID_AMD_RENOIR_XHCI			0x1639
+ #define PCI_DEVICE_ID_AMD_PROMONTORYA_4			0x43b9
+ #define PCI_DEVICE_ID_AMD_PROMONTORYA_3			0x43ba
+ #define PCI_DEVICE_ID_AMD_PROMONTORYA_2			0x43bb
+ #define PCI_DEVICE_ID_AMD_PROMONTORYA_1			0x43bc
+ 
++#define PCI_DEVICE_ID_ATI_NAVI10_7316_XHCI		0x7316
++
+ #define PCI_DEVICE_ID_ASMEDIA_1042_XHCI			0x1042
+ #define PCI_DEVICE_ID_ASMEDIA_1042A_XHCI		0x1142
+ #define PCI_DEVICE_ID_ASMEDIA_1142_XHCI			0x1242
+@@ -284,6 +294,21 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 	if (pdev->vendor == PCI_VENDOR_ID_NEC)
+ 		xhci->quirks |= XHCI_NEC_HOST;
+ 
++	if (pdev->vendor == PCI_VENDOR_ID_AMD &&
++	    (pdev->device == PCI_DEVICE_ID_AMD_ARIEL_TYPEC_XHCI ||
++	     pdev->device == PCI_DEVICE_ID_AMD_ARIEL_TYPEA_XHCI ||
++	     pdev->device == PCI_DEVICE_ID_AMD_STARSHIP_XHCI ||
++	     pdev->device == PCI_DEVICE_ID_AMD_FIREFLIGHT_15D4_XHCI ||
++	     pdev->device == PCI_DEVICE_ID_AMD_FIREFLIGHT_15D5_XHCI ||
++	     pdev->device == PCI_DEVICE_ID_AMD_RAVEN_15E0_XHCI ||
++	     pdev->device == PCI_DEVICE_ID_AMD_RAVEN_15E1_XHCI ||
++	     pdev->device == PCI_DEVICE_ID_AMD_RAVEN2_XHCI))
++		xhci->quirks |= XHCI_LIMIT_ENDPOINT_INTERVAL_9;
++
++	if (pdev->vendor == PCI_VENDOR_ID_ATI &&
++	    pdev->device == PCI_DEVICE_ID_ATI_NAVI10_7316_XHCI)
++		xhci->quirks |= XHCI_LIMIT_ENDPOINT_INTERVAL_9;
++
+ 	if (pdev->vendor == PCI_VENDOR_ID_AMD && xhci->hci_version == 0x96)
+ 		xhci->quirks |= XHCI_AMD_0x96_HOST;
+ 
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index f0fb696d5619..fa69f7ac09b5 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1624,6 +1624,7 @@ struct xhci_hcd {
+ #define XHCI_ZHAOXIN_HOST	BIT_ULL(46)
+ #define XHCI_WRITE_64_HI_LO	BIT_ULL(47)
+ #define XHCI_CDNS_SCTX_QUIRK	BIT_ULL(48)
++#define XHCI_LIMIT_ENDPOINT_INTERVAL_9	BIT_ULL(49)
+ 
+ 	unsigned int		num_active_eps;
+ 	unsigned int		limit_active_eps;
+-- 
+2.34.1
+
 
