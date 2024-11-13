@@ -1,35 +1,36 @@
-Return-Path: <linux-kernel+bounces-407349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E1C9C6C4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:03:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E301C9C6C39
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:59:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AD60B2C4B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A833C28B862
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8615F1F892C;
-	Wed, 13 Nov 2024 09:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED3A1F80DF;
+	Wed, 13 Nov 2024 09:59:41 +0000 (UTC)
 Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09101F80A6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F208165EE3
 	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731491982; cv=none; b=u3LD84Oy+M+wwwl75y2wA8YRA4fOrrmCULgpDMBfTQ4O8GZDQaN8MlUuLg0P8Qlv6docZzrwNycQTRwXNAf40VltsTqRXtbm5oePWEv8BGsM8H98nLLROq6SFUYdUPwn1E3MCrhFnH+wNepisimRC9IyZ/+6rJoki0toTn/j5Nk=
+	t=1731491981; cv=none; b=u+JWcZxFkkGJAAuP763NIBYvt1hwqVpDG2xy45NMS6BUC6gmECbyiIZpK7PpYjlNGvz07FH2vZ/vP/MgQs+UIIHHi3Mth9BN7RXgvpue/OkGjY8K3ReLXcSYnNiKglzIMGEryFOdXp6Hmt7suVppKWx+XVqOFv46AvWUNdB7yOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731491982; c=relaxed/simple;
-	bh=Dbca+qTtnE/QA1lb4gzic01lV4bRBZrUctAfrdeLSyM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pUMmO4OVzWIHOqIt/VWcZPwK/tUlo1kQMNu6kOrwyOkQRvayYJrrXgllEN7g4RFvwT84Pa9VjJav5/2gAqQ4OxNYDYdlAhaP/ZZkcSkji1m2C22IPI6RG2JcnhPurjMHEE6n7Pu3bp30MPN/LzThG+0szFXXi1eHDVtD+w6RJP0=
+	s=arc-20240116; t=1731491981; c=relaxed/simple;
+	bh=6C1QP2gJgqYJ/2f5Bg/aloP7+r144md0o+QUvUbaNpw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=pg3cGwU9G8ekdRm0HA4tNfcer47bwY0cl9Cdx7P04LGsLzjcXyVly3iDjSPZui863qEAVzWwOqp7oZ49dBtB342JnCya9USYhX2q23KMMdSdRLrmsxSpwKu4YwvEQO7MGXRk9Mr2sDCqXFbpGOGLE/qqCNPFME6EAG5WnQGE64M=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
 Received: from ubt.. (unknown [210.73.53.31])
-	by APP-05 (Coremail) with SMTP id zQCowADHr7p4eDRnlmI4Ag--.57753S2;
-	Wed, 13 Nov 2024 17:59:20 +0800 (CST)
+	by APP-05 (Coremail) with SMTP id zQCowADHr7p4eDRnlmI4Ag--.57753S3;
+	Wed, 13 Nov 2024 17:59:21 +0800 (CST)
 From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
 To: Palmer Dabbelt <palmer@dabbelt.com>,
 	Albert Ou <aou@eecs.berkeley.edu>,
@@ -39,10 +40,12 @@ To: Palmer Dabbelt <palmer@dabbelt.com>,
 Cc: linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V5 0/3] riscv: mm: Add soft-dirty and uffd-wp support
-Date: Wed, 13 Nov 2024 17:58:30 +0800
-Message-Id: <20241113095833.1805746-1-zhangchunyan@iscas.ac.cn>
+Subject: [PATCH V5 1/3] riscv: mm: Prepare for reusing PTE RSW bit(9)
+Date: Wed, 13 Nov 2024 17:58:31 +0800
+Message-Id: <20241113095833.1805746-2-zhangchunyan@iscas.ac.cn>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241113095833.1805746-1-zhangchunyan@iscas.ac.cn>
+References: <20241113095833.1805746-1-zhangchunyan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,75 +53,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADHr7p4eDRnlmI4Ag--.57753S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Aw17trWrtr4xKryUZF4UXFb_yoW8Aw4xpa
-	93Kwn8trW5Ar1xtrs3CrnF9r15W3Z3J3s8GrWft34ktws8JF4jvr9YkF1fJry8X3WY9r90
-	9F45Cry5u3yvyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
-	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l
-	c2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
-	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvj
-	xUyZmRDUUUU
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAYAB2c0cpIT4wAAsO
+X-CM-TRANSID:zQCowADHr7p4eDRnlmI4Ag--.57753S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZFW8uFykAr4DZF1UuF1fCrg_yoW8AryDpF
+	s5CF9YkFWrCrySkay2yFn2gr4UA398K34agry8ur4UJas8t3yUZ39xK347Xay8Xa1vvF93
+	GFWvg345ury3Jw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPFb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
+	8067AKxVWUGwA2048vs2IY020Ec7CjxVAFwI0_JFI_Gr1l8cAvFVAK0II2c7xJM28CjxkF
+	64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIE
+	c7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I
+	8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCF
+	s4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4
+	vE14v_GFWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
+	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
+	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
+	14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
+	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUsNBM
+	UUUUU
+X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiBgsAB2c0cpgTSwAAsr
 
-This patchset adds soft dirty and userfaultfd write protect tracking 
-support for RISC-V.
+The PTE bit(9) on RISC-V is reserved for software, it is used by devmap
+now which has to be disabled if we want to use bit(9) for other features,
+since there's no more free PTE bit on RISC-V now.
 
-As described in the patches, we are trying to utilize only one free PTE
-bit(9) to support three kernel features (devmap, soft-dirty, uffd-wp).
-Users cannot have them supported at the same time (have to select
-one when building the kernel).
+So to make ARCH_HAS_PTE_DEVMAP selectable, this patch uses it as
+the build condition of devmap definitions.
 
-This patchset has been tested with:
-1) The kselftest mm suite in which soft-dirty, madv_populate,
-test_unmerge_uffd_wp, and uffd-unit-tests run and pass, and no regressions
-are observed in any of the other tests.
+Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+---
+ arch/riscv/include/asm/pgtable-64.h   | 2 +-
+ arch/riscv/include/asm/pgtable-bits.h | 6 ++++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-2) CRIU:
-- 'criu check --feature mem_dirty_track' returns supported;
-- incremental_dumps[1] and simple_loop [2] dump and restores work fine;
-- zdtm test suite can run under host mode.
-
-This patchset applies on top of v6.12-rc7.
-
-V5:
-- Fixed typos and corrected some words in Kconfig and commit message;
-- Removed pte_wrprotect() from pte_swp_mkuffd_wp(), this is a copy-paste error;
-- Added Alex's Reviewed-by tag in patch 2.
-
-V4:
-- Added bit(4) descriptions into "Format of swap PTE".
-
-V3:
-- Fixed the issue reported by kernel test irobot <lkp@intel.com>.
-
-V1 -> V2:
-- Add uffd-wp supported;
-- Make soft-dirty uffd-wp and devmap mutually exclusive which all use the same PTE bit;
-- Add test results of CRIU in the cover-letter.
-
-[1] https://www.criu.org/Incremental_dumps
-[2] https://asciinema.org/a/232445
-
-Chunyan Zhang (3):
-  riscv: mm: Prepare for reusing PTE RSW bit(9)
-  riscv: mm: Add soft-dirty page tracking support
-  riscv: mm: Add uffd write-protect support
-
- arch/riscv/Kconfig                    |  34 ++++++-
- arch/riscv/include/asm/pgtable-64.h   |   2 +-
- arch/riscv/include/asm/pgtable-bits.h |  31 ++++++
- arch/riscv/include/asm/pgtable.h      | 133 +++++++++++++++++++++++++-
- 4 files changed, 197 insertions(+), 3 deletions(-)
-
+diff --git a/arch/riscv/include/asm/pgtable-64.h b/arch/riscv/include/asm/pgtable-64.h
+index 0897dd99ab8d..babb8d2b0f0b 100644
+--- a/arch/riscv/include/asm/pgtable-64.h
++++ b/arch/riscv/include/asm/pgtable-64.h
+@@ -398,7 +398,7 @@ static inline struct page *pgd_page(pgd_t pgd)
+ #define p4d_offset p4d_offset
+ p4d_t *p4d_offset(pgd_t *pgd, unsigned long address);
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#if defined(CONFIG_TRANSPARENT_HUGEPAGE) && defined(CONFIG_ARCH_HAS_PTE_DEVMAP)
+ static inline int pte_devmap(pte_t pte);
+ static inline pte_t pmd_pte(pmd_t pmd);
+ 
+diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
+index a8f5205cea54..5bcc73430829 100644
+--- a/arch/riscv/include/asm/pgtable-bits.h
++++ b/arch/riscv/include/asm/pgtable-bits.h
+@@ -19,7 +19,13 @@
+ #define _PAGE_SOFT      (3 << 8)    /* Reserved for software */
+ 
+ #define _PAGE_SPECIAL   (1 << 8)    /* RSW: 0x1 */
++
++#ifdef CONFIG_ARCH_HAS_PTE_DEVMAP
+ #define _PAGE_DEVMAP    (1 << 9)    /* RSW, devmap */
++#else
++#define _PAGE_DEVMAP	0
++#endif /* CONFIG_ARCH_HAS_PTE_DEVMAP */
++
+ #define _PAGE_TABLE     _PAGE_PRESENT
+ 
+ /*
 -- 
 2.34.1
 
