@@ -1,85 +1,84 @@
-Return-Path: <linux-kernel+bounces-407960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4BB9C7951
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:52:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B69EA9C7977
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:59:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 432E7B35BE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:57:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E686AB2D5AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB08B166F06;
-	Wed, 13 Nov 2024 15:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A161586CB;
+	Wed, 13 Nov 2024 15:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ehznu/bs"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UPYDmsoy"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A1C1632C0;
-	Wed, 13 Nov 2024 15:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74728156C5F
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731513414; cv=none; b=ZjCwCXYn4HeXi/lPIRFGOwvHGBUylJB8QzKp7c62WbZgTDBRfPGBdbLBiy01qICfXuvSi6GGssrxcOt56/9Mt4tUPX5afPUIlNXuYuWnOrIrru9NfUjbLSyBwnPiZbvNj3ffjgjoSJD6y0etwlFcf4DAz7o4fONqLAwewxgpTaE=
+	t=1731513561; cv=none; b=Ij6CViIyeu7m3T5H504bvWcp81XesFl9LYidYSGqDsiKXJBUtJl+Y+4VV66eWoBE3MfyP93w33NKHwXg7GezyTUsJchrCTXAI1kpeRk503STahQzJIJIwMzlmznWV+cOz/ePoEXYImCDDU+6kp8dNz2u45HQPO0fNQAgMxJ4c90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731513414; c=relaxed/simple;
-	bh=AWVBAE6GkeOxo3grGiyNzxsNeZyTdxtpxenoz96dMuw=;
-	h=Message-ID:Date:From:To:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=su7BDZYvQMe597GfDq0cLmroeNvNbKy4I3ysBB3yiP2tsH6qdU1dapH/cXEYORvEvTTLu/ULo68fYMOYRMuFCGUqVjsM/ua37MsOqjIE2dxJzGpXeWHMKv3xB8sO4uvSEpqCcbMxruWdS6GLse6iHFyZ5qIDij4btELyjaT2i2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ehznu/bs; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43155afca99so5709965e9.1;
-        Wed, 13 Nov 2024 07:56:52 -0800 (PST)
+	s=arc-20240116; t=1731513561; c=relaxed/simple;
+	bh=AubKqEIlyx+TnbDxU/5gR1LMWuRmYxVvtetJ5krokC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MWRIBRmDjE/9RSFjZtoAZ4dUboNMAw1aSduisoZICtxwQign7WGhh/SoDqN5e3UmNUhQ4HH3sZxt/b4vjRYD0dDAYhvSTnolp2WtmBrlk4R/NGGNMnGTVFlxHbyQQLYu+KFmU8RjQRY8ybQu9jwXcE7a7RpIJUdFD3lvg+EJpDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UPYDmsoy; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315abed18aso60682845e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:59:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731513411; x=1732118211; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:to
-         :from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=bJIphfUdq+yWEh+Qc0geVkF6Ht47rK0Zz4xAXQ8/Ir8=;
-        b=Ehznu/bsHT0atPulpku4WC8cYP1mtgbFPZuI8BssKhZ/Osm9VuIBtOFF4EaOxpsoPg
-         JpPbUQw/F8sDlXW6vSMhPFfuGSMA5l42OjwtnhZo4+xbEE4PWwFWEtJoiZtUbK1SLyxo
-         NuxFlNZdAHsQKzwSbHHequeQb4gyrBwFB7AJ8GJzm5mNup+3IoDuQ1UdV+ctkXnZmt2j
-         7ZPjR/0zDMUVA8m3DqDzjOENONQIUIMCwMcdSD1pUBeg0xCIUClGWfWzc8bYPYgWy5lK
-         gCsJpu57UxZnD1YauJgpzEMrSCuAAG+KkSd7jOAyzyH+cGMekxteyfw6O429fLLSkxhD
-         PKhw==
+        d=suse.com; s=google; t=1731513558; x=1732118358; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OP2jHPolkA60IHwRUFOeCcmip167g9Fn3A0uTf1j6qM=;
+        b=UPYDmsoyfzGm4azW5zN0fIFqDoTIdShkdVZ0xQWvAtHPQRR2kOq+nCXzdaK7O5ulnu
+         EId9vYFJcvVCRwAjFIcaok7Nq3+ip9+VqI9JVgqA7VPv8rR95Hn8tqkUNRQwQezX+nzJ
+         f6nD2QMM5HqdZDI2Sb4RVqNvWyv7p4w7Zb+IaEQ3CgxtbqVXG4S3oWQWOlwqUn4oYFOE
+         EnvDIt/4JEfwCnBoWu6G9G+wjC2oYxvrp6oPPUry1Lrq/QwdfkLneRyFnQmGkB/JxP46
+         f/SUSs15jOon5wCIe9X1kgLj8jIlPNVFaVqqlpoXAeZZBa6acbeJZfZojtX39lU8twVD
+         ng9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731513411; x=1732118211;
-        h=in-reply-to:content-disposition:mime-version:references:subject:to
-         :from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1731513558; x=1732118358;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bJIphfUdq+yWEh+Qc0geVkF6Ht47rK0Zz4xAXQ8/Ir8=;
-        b=CPR+ztYmMyM8nNB34hZi9jzjYiIzMAognIrWmjwm7cHOc+PsO2MeQRFwyLrsm7EVxG
-         YOO4SeBwhAGpKAh+wWFyOSfp9zqra5TOmHd/Kv2hfOSZEbCgMdxqJkgWA6xS2rspjcu+
-         9hvflLnrEC9nhvhDm4ak8MdPw5frlhonke1von5zkZSXW54LN/7fmLtb5Dh/k+H5MlVt
-         2nB7uFgmcQQfCRei+70VYkI65SbO4g4uCQ+xMeyrTjLWT7KlzP1j4G7+UFhvQvhIIczd
-         TnbJnCafGrNu7lYzpjhx2lLnOB4GZ/qoXmKbiwwVBwpTyUDNN9BGEiSIjTqAMhbjykfg
-         n7hA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfNRMZFAhkx9DmmgmsytevS1x4sN8xafADM3tqBFWsqJF2qnuZ07w0DQQ+i0OyxIms+sEL69NgF4p9@vger.kernel.org, AJvYcCW3VlfMDpnZeQB0iJyWuKbGOWc89hCffp2lYDqinUscmWxXZSqEev9Bbq3PCa7oegVPmiPWE1mCTjQ=@vger.kernel.org, AJvYcCWts+Mh9mvnlrBXJAt3PR2iVbdK1X14cspn5EyQt4/9bCvbYrhjbRTTGKM7MYcxBuSeSZHJ3H/VgttpHD/R@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtO/C1Gzpu2drWuN0pOpiIypBK90EQw4WKUaEZ4TnJJZ7+PFKe
-	oB3tKTFa7QiXTATjvVfsmrV1xoPGyGGsJyIT7Jr1qR/vwGDPhAwJR74I7g==
-X-Google-Smtp-Source: AGHT+IEQudECMomeQpuJIJZMwRxIPD8qUjKG77S8dHua+jbgex+J787o8CJngwMb4N0QE3uTCPQbug==
-X-Received: by 2002:a05:600c:3b9c:b0:431:52da:9d89 with SMTP id 5b1f17b1804b1-432b743575emr175835315e9.1.1731513410586;
-        Wed, 13 Nov 2024 07:56:50 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ea5c1sm19055209f8f.81.2024.11.13.07.56.49
+        bh=OP2jHPolkA60IHwRUFOeCcmip167g9Fn3A0uTf1j6qM=;
+        b=mnxybFGtnOdn/5cYfCHb3OIW30he3iWtqb4miukBEQdpoa2PthAJgYutFnVo7R6fsS
+         DJodsCz5qMyFZlYRvjmC/aIQuvHNYnpA0uXr6ccpdN2+QL2JtbEI/+gF2uiErhD8bXGL
+         OjIXColjii2JJV9tZfGjxl9BOrm8HIphj5qYKghaedW8KDeiL+AHwEZ6BiSTnQ4xL8ZV
+         S9RMsi3GK+LtZ0CgoDix9D656r/Z1OQw4W38fx2mjtYED24aIsytR/OdJu8ByI4HpxJx
+         l+1fk00bSVrGBwqpGn/f4fAImorwqhvmQAv7PvEQRZjaVi4vTeTvu3v3kKnVWsTJqw3W
+         BHhQ==
+X-Gm-Message-State: AOJu0YwLmXgzIfpO/fgEQtnpvEPkzsuzP5lAEBZenRRV0Ro5Ep/X3VJz
+	MTpDS3+L67mR08UILbEu+ujcEQPHoeyWehfHkt7RdDrtHBSMdpDqh1Rpr+afB20=
+X-Google-Smtp-Source: AGHT+IFb2OimMqpjE95mm3JqqnEb6gH2Ami4WFE/7CBkEofTXMeScTGZZv2LGnN0d4jZuaTip2quGQ==
+X-Received: by 2002:a05:6000:1f87:b0:37c:d20d:447c with SMTP id ffacd0b85a97d-381f186cbc9mr18022959f8f.29.1731513557721;
+        Wed, 13 Nov 2024 07:59:17 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda051c6sm18544656f8f.99.2024.11.13.07.59.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 07:56:50 -0800 (PST)
-Message-ID: <6734cc42.df0a0220.4521f.ac78@mx.google.com>
-X-Google-Original-Message-ID: <ZzTMPdUmY-UczeEc@Ansuel-XPS.>
-Date: Wed, 13 Nov 2024 16:56:45 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lorenzo Bianconi <lorenzo@kernel.org>, upstream@airoha.com
-Subject: Re: [PATCH v3 1/3] dt-bindings: thermal: Add support for Airoha
- EN7581 thermal sensor
-References: <20241018104839.13296-1-ansuelsmth@gmail.com>
+        Wed, 13 Nov 2024 07:59:17 -0800 (PST)
+Date: Wed, 13 Nov 2024 16:59:15 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Chris Down <chris@chrisdown.name>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
+Subject: register_device: was: Re: [PATCH v6 06/11] printk: console:
+ Introduce sysfs interface for per-console loglevels
+Message-ID: <ZzTM04qQXOg2RsOa@pathway.suse.cz>
+References: <cover.1730133890.git.chris@chrisdown.name>
+ <0312cd1e80e68a1450a194ebce27728cdf497575.1730133890.git.chris@chrisdown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,19 +87,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018104839.13296-1-ansuelsmth@gmail.com>
+In-Reply-To: <0312cd1e80e68a1450a194ebce27728cdf497575.1730133890.git.chris@chrisdown.name>
 
-On Fri, Oct 18, 2024 at 12:48:04PM +0200, Christian Marangi wrote:
-> Add support for Airoha EN7581 thermal sensor and monitor. This is a
-> simple sensor for the CPU or SoC Package that provide thermal sensor and
-> trip point for hot low and critical condition to fire interrupt and
-> react on the abnormal state.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> A sysfs interface under /sys/class/console/ is created that permits
+> viewing and configuring per-console attributes. This is the main
+> interface with which we expect users to interact with and configure
+> per-console loglevels.
 
-Any news with this series? Everything wrong with the thermal core small
-patch?
+> diff --git a/kernel/printk/sysfs.c b/kernel/printk/sysfs.c
+> new file mode 100644
+> index 000000000000..e24590074861
+> --- /dev/null
+> +++ b/kernel/printk/sysfs.c
+> +ATTRIBUTE_GROUPS(console_sysfs);
+> +
+> +static void console_classdev_release(struct device *dev)
+> +{
+> +	kfree(dev);
+> +}
+> +
+> +void console_register_device(struct console *con)
+> +{
+> +	/*
+> +	 * We might be called from register_console() before the class is
+> +	 * registered. If that happens, we'll take care of it in
+> +	 * printk_late_init.
+> +	 */
+> +	if (IS_ERR_OR_NULL(console_class))
+> +		return;
+> +
+> +	if (WARN_ON(con->classdev))
+> +		return;
+> +
+> +	con->classdev = kzalloc(sizeof(struct device), GFP_KERNEL);
+> +	if (!con->classdev)
+> +		return;
+> +
+> +	device_initialize(con->classdev);
+> +	dev_set_name(con->classdev, "%s%d", con->name, con->index);
+> +	dev_set_drvdata(con->classdev, con);
+> +	con->classdev->release = console_classdev_release;
+> +	con->classdev->class = console_class;
+> +	if (device_add(con->classdev))
+> +		put_device(con->classdev);
 
-Ansuel
+Honestly, I am not sure how to review this. I am not familiar with
+these APIs. I have spent few hours trying to investigate various
+drivers but I did not find any similar use case. I tried to look
+for documentation but I did not find any good HOWTO.
+
+It seems to work but it is the only thing that I could
+say about it ;-)
+
+Just by chance, do you have any pointers into a code or
+documentation which could help me to feel more comfortable?
+
+> +}
+> +
+
+Best Regards,
+Petr
 
