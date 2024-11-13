@@ -1,153 +1,127 @@
-Return-Path: <linux-kernel+bounces-407439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CDB9C6D70
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:09:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAEA79C6DD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:27:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5926A1F21714
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:09:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D9A9B27AFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048CF1FE0EB;
-	Wed, 13 Nov 2024 11:09:27 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841161FF7B5;
+	Wed, 13 Nov 2024 11:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kAb+8xex"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297D91C8776
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 11:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B701FA256;
+	Wed, 13 Nov 2024 11:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731496166; cv=none; b=M2y0z3Nbx/ydKiiBuMpZbjn0iHKs22f+GwrELj2sGMu+JNKJyYeUUI8NzaLBVYEgemklm+0PoKUo8eTtHgkWBdbLvgs8skObCiVUx3m3kS+7hbjQzXVmtUAF0weKkxOL7KUziytskeLWA+ck5XzmB8FBvL/SVrrrmyeWShowey4=
+	t=1731496720; cv=none; b=WdDjTy6G558FpeUVxDoByth7RNHhJdACZNEgBNnTuIZXXzH96UTx0UMQ7/aLfe4ADMOm/gEs7SfUIQGU4VL1qt86bBEcG2fRyra/31KWv518/CfTgh/ihMWlfMN5eHVwrzobfgckXEgIC6YkyPH7GcSxuiHrshyhwqhPHA58ZQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731496166; c=relaxed/simple;
-	bh=Z3n0MkozxdLvDabgHIO27oKJv54AUTi6ImE4McQ8nvc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oEGxvH9lqhYIei0lORNCaVYESkXJTsjzcgg5yT+1bxdXMsCgGsKSHJEYCym54o3zNOLtthmz2PJXvRUyYDNprIKP+PiPSEcWXsajhGsx/ziCQvMcSvITBvUnaBKcKZpIseEXPF/4Y4NvtbUcyA/c9a4cgJCDlfRUK40AT4fGtRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6bce8a678so75589085ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 03:09:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731496164; x=1732100964;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GfF/G9cnhwvMUP6H86DXf6nG/Ikj1CW47KP+JSx0ZUY=;
-        b=S6qyTr7uOHM/uNUFNhcwiEt1kmyEgWnChC9yOW0TjLkspP5Tt0vQySdPZTE94jqUog
-         +QIkuwt4FtUKzcLlnubyhCjFuVcYlhebAWYJK1vBm68s0yuZtzn45jhnnC9OdWHQUqMM
-         3PnmafPFkFvLnD0ea/zYC5PS1SY6+/juAKJmmVBnczwMrzHXce6Dx2XYsySSh7nmwfAP
-         NYWpne5qkaCSSXLWPLk2hsfaCIpDFT7/Cj991QvkkBvh8dZCVdWfG6Ez82/JAQA8OUgQ
-         hhfMJSO3vIQs1YFpw5+VkqSsLvlFgpMtfEPY05hmbBJphKWiduwjES2kDDYcCvCvLgVc
-         +7uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYQ3J865NNJzAynD4Zq56uvIIck0wwyYZP9f/HpTFJkjpbe074WY8I9SI7dFEYR9LCGkIWLIHEsopsNI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz0pJnCExYAtU1yXAYwBG1Kjr8+mopq/zq+5Ubq3/IpiYwDyPZ
-	XVp05EPnwqHwxQ6QMkyEgU25OMHzEdBx7Ao9C1WWgfmo0liDw3eo5hcMn1Xp7GzbEdOLkcJnRbS
-	HeToBBOKGIXiwGiClkWo+9PnT51V3KeZEH0PwcQeO1dN9s/LQUFfl6mI=
-X-Google-Smtp-Source: AGHT+IHH1eyWXxHDHBiknKLp7TDtXntCXptfR6oLh09ETCyVRiQRAfUcnSjHx6Bs2IAd6A3TKNf03NFvySsx+hBeJnI3k3I6O6My
+	s=arc-20240116; t=1731496720; c=relaxed/simple;
+	bh=Ake7dgqJyZ++HhUsp0JvPQunF4zAFC6jaCfOHSqyUr4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lRQS2LUc8kx9EQij5/MUVaJILR4YPgljDthatgVznVVqLcIP9uo/0s+IPep0RniWSGC3xJE8G5E3mYVOd+lreJA5GKe/86qntaEPW2LB0sY1Jclpc65yJyCV8VYPR8ZIVHiVTajwiVnrhlPW6JiZ8XFM+unri+IS3zfOh1Q7skE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kAb+8xex; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4ADB9xps2473553
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 13 Nov 2024 05:09:59 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731496199;
+	bh=gj6T3+0yCPgphcaSMUSbs+1SKIXkJ3ZDcoZDqgW4U/Y=;
+	h=From:To:CC:Subject:Date;
+	b=kAb+8xexK/LWFgyWs6DM0PPbc5UzVzvJOgwFz2/q5tIvPqss8AQc5mbeG2AwXN9Ta
+	 elhLa3mvanzGwPDPwaOXIQR+xwkYzwXNWXlACCaADHgFY03AQuxvx9fgywae7cCIoM
+	 S2ajFsw7TnqAaBMFygmiE7ZNCmcFUk924v77Rh3Y=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4ADB9xxN006449;
+	Wed, 13 Nov 2024 05:09:59 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 13
+ Nov 2024 05:09:59 -0600
+Received: from fllvsmtp7.itg.ti.com (10.64.40.31) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 13 Nov 2024 05:09:59 -0600
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+	by fllvsmtp7.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4ADB9xqV096947;
+	Wed, 13 Nov 2024 05:09:59 -0600
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 4ADB9wec021255;
+	Wed, 13 Nov 2024 05:09:58 -0600
+From: MD Danish Anwar <danishanwar@ti.com>
+To: <conor+dt@kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
+        <ssantosh@kernel.org>, <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <s-anna@ti.com>, <kristo@kernel.org>,
+        <srk@ti.com>, Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH v3 0/2] Add Clocks for ICSSG
+Date: Wed, 13 Nov 2024 16:39:53 +0530
+Message-ID: <20241113110955.3876045-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fe3:b0:3a0:a070:b81 with SMTP id
- e9e14a558f8ab-3a71578efe5mr22795055ab.23.1731496164388; Wed, 13 Nov 2024
- 03:09:24 -0800 (PST)
-Date: Wed, 13 Nov 2024 03:09:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673488e4.050a0220.1324f8.0019.GAE@google.com>
-Subject: [syzbot] [mm?] KCSAN: data-race in mprotect_fixup / page_vma_mapped_walk
-From: syzbot <syzbot+d7f40a3262f9ec8994ed@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello,
+This series adds clocks for ICSSG for AM64x.
 
-syzbot found the following issue on:
+PATCH 1/2 Adds the dt binding necessary to add clocks to the device tree.
+It adds the `clocks` in the dt binding of ICSSG node. Each ICSSG instance
+has 7 clocks available to them as per AM64x TRM [1] Section 6.4.3 Table 
+6-398. They are not added in the dt bindings yet. This patch adds all
+available clocks to ICSSG bindings. 
 
-HEAD commit:    3022e9d00ebe Merge tag 'sched_ext-for-6.12-rc7-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a441a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=29fedde79f609854
-dashboard link: https://syzkaller.appspot.com/bug?extid=d7f40a3262f9ec8994ed
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+PATCH 2/2 Adds the required clock to the ICSSG nodes. It also changes the
+clock used from clock 20 (ICSSG_ICLK) to clock 0 (ICSSG_CORE). This patch
+adds the clock-names, assigned-clocks and assigned-clock-parents to icssg
+nodes.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+More details on clocks can be found at [2]
+There is no additional driver changes needed for this binding change.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/12ca7a216979/disk-3022e9d0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3afa2bcfd596/vmlinux-3022e9d0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a91dd258e5ba/bzImage-3022e9d0.xz
+Changes from v2 to v3:
+*) Modified commit message of PATCH 1/2 to state why clocks are being added
+to the binding.
+*) Added all available clocks to ICSSG bindings. Earlier only two clocks
+were added.
+*) Added all available clocks to AM64x DTS. Earlier only two clocks were
+added.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d7f40a3262f9ec8994ed@syzkaller.appspotmail.com
+Changes from v1 to v2:
+*) Dropped assigned-clocks and assigned-clock-parents from DT binding as
+suggested by Krzysztof Kozlowski
 
-==================================================================
-BUG: KCSAN: data-race in mprotect_fixup / page_vma_mapped_walk
+[1] https://www.ti.com/lit/pdf/spruim2
+[2] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/am64x/clocks.html#clocks-for-pru-icssg0-device
+v1 https://lore.kernel.org/all/20241107104557.1442800-1-danishanwar@ti.com/
+v2 https://lore.kernel.org/all/20241108142946.2286098-1-danishanwar@ti.com/
 
-write to 0xffff888114e57160 of 8 bytes by task 3992 on cpu 0:
- vm_flags_init include/linux/mm.h:862 [inline]
- vm_flags_reset include/linux/mm.h:874 [inline]
- mprotect_fixup+0x419/0x5e0 mm/mprotect.c:677
- do_mprotect_pkey+0x653/0x960 mm/mprotect.c:838
- __do_sys_mprotect mm/mprotect.c:859 [inline]
- __se_sys_mprotect mm/mprotect.c:856 [inline]
- __x64_sys_mprotect+0x48/0x60 mm/mprotect.c:856
- x64_sys_call+0x26cf/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:11
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+MD Danish Anwar (2):
+  dt-bindings: soc: ti: pruss: Add clocks for ICSSG
+  arm64: dts: ti: k3-am64-main: Switch ICSSG clock to core clock
 
-read to 0xffff888114e57160 of 8 bytes by task 3979 on cpu 1:
- is_vm_hugetlb_page include/linux/hugetlb_inline.h:11 [inline]
- page_vma_mapped_walk+0xa3/0x9f0 mm/page_vma_mapped.c:188
- remove_migration_pte+0x6f9/0x9c0 mm/migrate.c:253
- rmap_walk_anon+0x28f/0x440 mm/rmap.c:2635
- rmap_walk+0x5b/0x70 mm/rmap.c:2713
- remove_migration_ptes mm/migrate.c:373 [inline]
- migrate_folio_move mm/migrate.c:1388 [inline]
- migrate_pages_batch+0x1374/0x1910 mm/migrate.c:1898
- migrate_pages_sync mm/migrate.c:1964 [inline]
- migrate_pages+0xff1/0x1820 mm/migrate.c:2073
- do_mbind mm/mempolicy.c:1390 [inline]
- kernel_mbind mm/mempolicy.c:1533 [inline]
- __do_sys_mbind mm/mempolicy.c:1607 [inline]
- __se_sys_mbind+0xf76/0x1160 mm/mempolicy.c:1603
- __x64_sys_mbind+0x78/0x90 mm/mempolicy.c:1603
- x64_sys_call+0x2b4d/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:238
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-value changed: 0x0000000000100077 -> 0x0000000000100070
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 3979 Comm: syz.3.175 Not tainted 6.12.0-rc7-syzkaller-00012-g3022e9d00ebe #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-==================================================================
+ .../devicetree/bindings/soc/ti/ti,pruss.yaml  | 10 +++++++++
+ arch/arm64/boot/dts/ti/k3-am64-main.dtsi      | 22 +++++++++++++++++--
+ 2 files changed, 30 insertions(+), 2 deletions(-)
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+base-commit: bd05b9a700c10473c2f52bf12c5c5938c30e80b0
+-- 
+2.34.1
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
