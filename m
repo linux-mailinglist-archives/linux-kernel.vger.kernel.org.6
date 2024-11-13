@@ -1,110 +1,173 @@
-Return-Path: <linux-kernel+bounces-408107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027D99C7A7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:01:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED2D9C7A8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:02:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB227281079
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:01:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66B051F23406
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39E6205120;
-	Wed, 13 Nov 2024 17:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5FF15E5B5;
+	Wed, 13 Nov 2024 18:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VToI0X0o"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="LPJJLnqH"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2594374C4;
-	Wed, 13 Nov 2024 17:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70321209F2D
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731520753; cv=none; b=parRFJKVF483gbkVB0hqfjt3h+RsRNLgj1nTom4JWyQX6MdAuMBdQlpLIyyzkeyHFUx367Yf4PYFUlzXOHYROAuZDLPeMovxibDjtiFEhBYHfsyP/oBD55Iu8FY2qppSnJyPdJY8ecCa5nJCcYPTbhhprV1gH9KikDiIQZAfooI=
+	t=1731520809; cv=none; b=SyjYxruBa83LpYpQ0aDB5M2feuCVv6GEMeHgrs7+sggk1CFRz2kKW07uJ11TNdmPkQPjYt9TrjkxpXdJgj8MA/NdzQU3nd6ot7rgwgs/H7ZBUwgkMR8t5/XWqfnGRhqXoW5NcolSJzqWTEgCWZJ5vzfx2v9LhKsLc32EGAOG2pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731520753; c=relaxed/simple;
-	bh=FvI8dNWt1XzzwNR9jrLk1P2nfJK1ic/KFVBxI1WuEDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=umwmkD/S7y2IPg4qvtcdnOPDlM4aVyNypRD5uOIxW53pq5S06L1hTrFzK5WoMQskt1ZWw0jIEyD8HVrSOtIjfMpltiSRQB9/d8JEvmK1vcpGsPemXjklSzvoDa52pCJoAdxB8NyclnUY8EkH1/If2V5u9TbU/NnrHOTOKUvMyzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VToI0X0o; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2113da91b53so53432035ad.3;
-        Wed, 13 Nov 2024 09:59:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731520751; x=1732125551; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7QU6eCVp1bzsezZotXldnZDkljMrGl4ICLAg+W/F8jg=;
-        b=VToI0X0oXv2d6Ogv0d/GgZJXcKB+ryUDfWLGd1QA7UX8xTOA+atULWk0AxLkACGefu
-         McsfjvwyeLZBQBwZ6SqAth6WQRZwaIoDs45SvJxF4nFZIyfa6zrpTgLb+WlW/L32mV6s
-         VLZA3yL2xI6vzAi4zlaQygSP7Ao/UnfG9jvqN5ZMEvwWUB12xyotbTH1NB9zubBVRt4P
-         AGJ9OtQ/f3PvIhVdgR6e3DuC/bdqpMewjzXYxNu5fQM8tshQR6c0hxJSWVszkulNx+rL
-         fFbKm42M0W0mAhRLkCdznX6cGUQ+HHx++rE1C9bd6gjRZYKss5OzXLC5UPenVVnpbB9w
-         eGHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731520751; x=1732125551;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7QU6eCVp1bzsezZotXldnZDkljMrGl4ICLAg+W/F8jg=;
-        b=n+pWcOw2WRc0S9XBARDiB8P0gLhWPlUgvMQkGIJBVaGicrLAIT/hjxflS0D5pLF5ip
-         S9n2fuukGH+y1l+I5wrZ2CNLM6iz8mLjn27NJgcuc/kBoQYujYLEkEP9zlav6uHtZDuZ
-         tJRd4JjbeWXtmF5AUkJ5ChoDb1eD4GrwOgAY9V6sa1qb6UgdjSNJmB8kcMFe/UgeIduG
-         MbBXgbre/rb8DVfx5qhepfX0xk8+3vXrHiT723RaITeHrFxhFfEtnBIUEYyDwxXWVG9z
-         p9rLT/9fqr8Z0iKCt+uq2pXcEvnOCIgXYg8BnIvLthP+4cR9S711qZkdQXuuqYfzPlKr
-         SmEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnpnSOd6W9h3rU9sC8eh7Kq9/K0FQ2c2/LvPNFrBPLkX+FRqcR52ISS4km4xkQbJ+7ZS3NjrcYgMAe/Io5RnDU@vger.kernel.org, AJvYcCW6GLw3YNT52RvoBtOHgeIqyPn4sR7QERq896IlXrWRNGuKxVbUFDUTbVFU9iwKjpQsDSAnLHDIrBgMP1n6@vger.kernel.org, AJvYcCXgfDrAq/9szz+qfMmFkrh+nORhN+v6Q1zz1yom9W+zzScioBvmBIr+9b0aiiiMxfipIso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkbcVvfB7eDn5ugsk+AS0e4C6FgcYaDV6aWrqtoWNEWMoZGzfF
-	Bz982kfyT3kXaAdbqhomZSE6y2YLQiCrh//sSK0wCtLuWIVCzAQ=
-X-Google-Smtp-Source: AGHT+IEkhNrGbY20mPHNStDw/5A5v5/HFu2nkrc8z587y6bTl9+lun4HaV3eMTadxeZDuPuoOWsDWw==
-X-Received: by 2002:a17:902:ce89:b0:20b:a10c:9bdf with SMTP id d9443c01a7336-21183d67d05mr308594605ad.32.1731520751230;
-        Wed, 13 Nov 2024 09:59:11 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e45839sm112845395ad.143.2024.11.13.09.59.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 09:59:10 -0800 (PST)
-Date: Wed, 13 Nov 2024 09:59:10 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, ebpf@linuxfoundation.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>,
-	Petar Penkov <ppenkov@google.com>, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 10/10] selftests/bpf: remove
- test_flow_dissector.sh
-Message-ID: <ZzTo7mTsFfbBIihU@mini-arch>
-References: <20241113-flow_dissector-v1-0-27c4df0592dc@bootlin.com>
- <20241113-flow_dissector-v1-10-27c4df0592dc@bootlin.com>
+	s=arc-20240116; t=1731520809; c=relaxed/simple;
+	bh=nwvluWG1Za1oEdNoLMNcHLY1yMaG8dbQ3bUpxtsWhvw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OYq7SSxHKyz8gYRiTzVFAqQE5ZhVXDftyoPJeMCYLnuf9RxVRKZHSv9Bvds/AUZZ4LNZk3lWBxBQCd7ZTJc9fdZaORaB39HZ29HZDJVztKds1NUzV33QWLUvlyHR6Y/RsbYGxeWZrz27Ms7ioPUArFFJcpQAv42oVz9M/yUsX3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=LPJJLnqH; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4ADHxYB33897551
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Wed, 13 Nov 2024 09:59:38 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4ADHxYB33897551
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024101701; t=1731520779;
+	bh=yzCt+5eNmezlEy4mRsnpAtCpm07XvZ+ueQJAh+t2w7U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LPJJLnqHRrCLWR0YVTQJrtNUboPjKUPm8OyNnJonyybGcpzN/QwpRN1UYkD9xHOLI
+	 d/me6+kfJ83JTX879ycSZr6V+9OD+x0Ua4Sm/vfA4B5MZsSfZ7+kHNfjDkSpNCR2/6
+	 eF6h9beGIU1jEVQLfb/ltyk/XbzzkJ+agJdDxFQtShhnZkd8yDlJXJXsU1AR3zg4h8
+	 wwMOtBqECHIBi59MKZ+SVCAVwPLECaKTNhwJZHFjJcUTQB3KK562hLtDL1j7pBnLIo
+	 VMibjhzSljyfMOesTKLX+CWmIRzIbW9A9ZyeHtgHkkrJqz77hWX8hodKBZxiYqQA+K
+	 sYv2/S/BM21SQ==
+From: "Xin Li (Intel)" <xin@zytor.com>
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, andrew.cooper3@citrix.com
+Subject: [PATCH v4 1/1] x86/fred: Clear WFE in missing-ENDBRANCH #CPs
+Date: Wed, 13 Nov 2024 09:59:34 -0800
+Message-ID: <20241113175934.3897541-1-xin@zytor.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241113-flow_dissector-v1-10-27c4df0592dc@bootlin.com>
 
-On 11/13, Alexis Lothoré (eBPF Foundation) wrote:
-> Now that test_flow_dissector.sh has been converted to test_progs, remove
-> the legacy test.
-> 
-> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+An indirect branch instruction sets the CPU indirect branch tracker
+(IBT) into WAIT_FOR_ENDBRANCH (WFE) state, and WFE stays asserted
+across the instruction boundary.  When decoder finds an instruction
+and WFE is set, and the instruction is not the appropriate ENDBR, it
+raises a #CP fault.
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+For the kernel IBT no ENDBR selftest where #CPs are deliberately
+triggered, the WFE state of the interrupted context needs to be
+cleared to let execution continue.  Otherwise when the CPU resumes
+from the instruction that just caused the previous #CP, another
+missing-ENDBRANCH #CP is raised and the CPU enters a dead loop.
+
+This is not a problem with IDT because it doesn't preserve WFE and
+IRET doesn't set WFE.  But FRED provides space on the entry stack
+(in an expanded CS area) to save and restore the WFE state, thus the
+WFE state is no longer clobbered, so software must clear it.
+
+Clear WFE to avoid dead looping in ibt_clear_fred_wfe() and the
+!ibt_fatal code path when execution is allowed to continue.
+
+Clobbering WFE in any other circumstance is a security-relevant bug.
+
+Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+---
+
+Change since v3:
+* Fix a typo and a grammar issue (Ingo Molnar).
+
+Changes since v2:
+* Explain why the FRED-specific code in ibt_clear_fred_wfe() doesn't
+  do any FRED checks (Dave Hansen).
+* ibt_clear_fred_wfe() needs to be inside the ibt_selftest_noendbr
+  path (Andrew Cooper & Dave Hansen).
+* Simplify the changelog and comment, create an IBT WFE document
+  in Documentation/ later (Dave Hansen).
+* Rewrite changelog based on feedbacks from Dave and Andrew.
+
+Changes since v1:
+* Rewrite the comment of ibt_clear_fred_wfe() using Andrew Cooper's
+  write-up (Andrew Cooper).
+* Unconditionally clear WFE in missing-ENDBRANCH #CPs (Peter Zijlstra).
+* Don't check X86_FEATURE_FRED in ibt_clear_fred_wfe() (Dave Hansen &
+  Andrew Cooper).
+---
+ arch/x86/kernel/cet.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+index d2c732a34e5d..303bf74d175b 100644
+--- a/arch/x86/kernel/cet.c
++++ b/arch/x86/kernel/cet.c
+@@ -81,6 +81,34 @@ static void do_user_cp_fault(struct pt_regs *regs, unsigned long error_code)
+ 
+ static __ro_after_init bool ibt_fatal = true;
+ 
++/*
++ * By definition, all missing-ENDBRANCH #CPs are a result of WFE && !ENDBR.
++ *
++ * For the kernel IBT no ENDBR selftest where #CPs are deliberately triggered,
++ * the WFE state of the interrupted context needs to be cleared to let execution
++ * continue.  Otherwise when the CPU resumes from the instruction that just
++ * caused the previous #CP, another missing-ENDBRANCH #CP is raised and the CPU
++ * enters a dead loop.
++ *
++ * This is not a problem with IDT because it doesn't preserve WFE and IRET doesn't
++ * set WFE.  But FRED provides space on the entry stack (in an expanded CS area)
++ * to save and restore the WFE state, thus the WFE state is no longer clobbered,
++ * so software must clear it.
++ */
++static void ibt_clear_fred_wfe(struct pt_regs *regs)
++{
++	/*
++	 * No need to do any FRED checks.
++	 *
++	 * For IDT event delivery, the high-order 48 bits of CS are pushed
++	 * as 0s into the stack, and later IRET ignores these bits.
++	 *
++	 * For FRED, a test to check if fred_cs.wfe is set would be dropped
++	 * by compilers.
++	 */
++	regs->fred_cs.wfe = 0;
++}
++
+ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
+ {
+ 	if ((error_code & CP_EC) != CP_ENDBR) {
+@@ -90,6 +118,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
+ 
+ 	if (unlikely(regs->ip == (unsigned long)&ibt_selftest_noendbr)) {
+ 		regs->ax = 0;
++		ibt_clear_fred_wfe(regs);
+ 		return;
+ 	}
+ 
+@@ -97,6 +126,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
+ 	if (!ibt_fatal) {
+ 		printk(KERN_DEFAULT CUT_HERE);
+ 		__warn(__FILE__, __LINE__, (void *)regs->ip, TAINT_WARN, regs, NULL);
++		ibt_clear_fred_wfe(regs);
+ 		return;
+ 	}
+ 	BUG();
+
+base-commit: 5283b49a869ba4d60e8b7fc4d353955512404bec
+-- 
+2.47.0
+
 
