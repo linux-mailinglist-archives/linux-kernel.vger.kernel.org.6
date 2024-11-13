@@ -1,78 +1,108 @@
-Return-Path: <linux-kernel+bounces-408348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82BB49C7DB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:36:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841E29C7DB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:38:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 115A9B24A53
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:36:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3041A1F22528
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF5B18BC1C;
-	Wed, 13 Nov 2024 21:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2932B18B49C;
+	Wed, 13 Nov 2024 21:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyPXLPpF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jvNdBQLx"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39361865FC;
-	Wed, 13 Nov 2024 21:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF18A1885A0;
+	Wed, 13 Nov 2024 21:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731533759; cv=none; b=TBsxdmDFWmuFwyR0LwPYgSDWEoS9EoAV0zjreu8+ZDFsjRVLFVs2ABObKOtVspiEH7mn0bxc9kq/rjqAX/tlFfo//vdC/g0LanXsHMD08Yld79wekLW6yvr8AvCtgdlvho8+aPq9kAV5RdTKNgqUZzfdnx6fB36glObY4kyTNJQ=
+	t=1731533896; cv=none; b=TY1RmMtL/Emi9C6hls/ZDMUHONRmgbbeYlHX4bnf9+2jeY4ZMtFvuhKBh69Air2KydOm7Gn2dZ2fE5ZtSGR1LJYVn2X2w7b34mAXPowXPlYC+C1DG5A2wc7fdqavvqfkN1+IQGCy0xcF15lCVnnp88ej+KnnTuAkqN5tGwDJir0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731533759; c=relaxed/simple;
-	bh=kFUf2WiBHLV7e9+O6AbQ0bJDckduwRhjdX073xkDfzA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=tcNavmD3cbq+ygz+l78n/xEwyPn3swr8JE22C/Hk9/h2v0WybGTCiqU5Vz+GJMVfJdj4Dj6hAbL9lOUS96dQn9hQRmR0rnr/w5Swwn1sPfddcUWUiZLzlBO3PIlzWgi6UH3ie4ncaGVnwrhfEwfXH6Dw7ow6rq1k4SN/puv72qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyPXLPpF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55BA4C4CEC3;
-	Wed, 13 Nov 2024 21:35:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731533759;
-	bh=kFUf2WiBHLV7e9+O6AbQ0bJDckduwRhjdX073xkDfzA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=TyPXLPpFzQJS13RcBjYBErmO0VhVkO2xfEll+c9hrXj2ecQcBnuUuyAQLN4lRLsmr
-	 KrHi7sTEgLZ7Qs1alacaLNTuppN9V8Lbc46vQgde1PWbwY0nHCZ3QuCD1Hqf24YAc1
-	 kX+W/bs2wrCHEDl6fXrh+MUr7RhcVP27J1rRvSoO3kql8e30b9C1W89BgR6ueyKMv0
-	 nnM56GVGYi7ErFl4qwV8pMUx4q//hWVfHdd7cYmrkvJpNjkAVH1pi4GYLRmeiJgAJ9
-	 e809G8JliKK9zO14fv9nKEA7Ct5utVQhELxM1A1UqEoD+sZGFPJG8pSPOPDpEIyCdT
-	 dtRL98Avzr0KQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFC43809A80;
-	Wed, 13 Nov 2024 21:36:10 +0000 (UTC)
-Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-6.12-rc8
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <D5LASMVLQDYH.2EDC5DH6YIDTG@kernel.org>
-References: <D5LASMVLQDYH.2EDC5DH6YIDTG@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <D5LASMVLQDYH.2EDC5DH6YIDTG@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-6.12-rc8
-X-PR-Tracked-Commit-Id: 423893fcbe7e9adc875bce4e55b9b25fc1424977
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4ba05b0e857d1f78f92084a15e618ea89a318089
-Message-Id: <173153376966.1393977.13024225536362594859.pr-tracker-bot@kernel.org>
-Date: Wed, 13 Nov 2024 21:36:09 +0000
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Anton Mitterer <calestyo@scientia.org>
+	s=arc-20240116; t=1731533896; c=relaxed/simple;
+	bh=8L8J70hf2Y/mAspTSsmcFL255gESOKlAA65yLG0uyTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJJ3dmq05sRmlqy/CkfC/E3ButbTvMvlj9MSW83wDYQK9KnYowMZjcXG/GokzfZyavWcHxa06Rmlk1XAnDI1edqMooS+fMXX2NvSWUD1jt73GUfFr47j4wTrc6xuOnxWRGMZr69wO6eJoWm7EekBVd4laX7gYjAxLlBYuJRMsq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jvNdBQLx; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EB5C840E015E;
+	Wed, 13 Nov 2024 21:38:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id yFzOMRc6JvpF; Wed, 13 Nov 2024 21:38:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731533878; bh=NZCMLtfVZdHoMFJ0ejzOMzzP2EZVeEmj1gX1lmvPPwU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jvNdBQLxh6OZ3lk3MJqxIZO1sdjCbFDAGcp+PRjptEojiz+RVfQ2DaXE3sp1BPbJG
+	 K+W5yoJCgSPBRIQyOBbcwDfLU7Oti76XChecSmCBboGrfw0h5D9RpCdREoZp7N7yEe
+	 EnGfuyCBtKYvAovJ59aqp9o6VahvQQiXDynbKV7WAoeeMBOpcSkuWlge8ZQTL4yB7+
+	 U0S0mnxiUcEQqcOtXgd86mUS4NYcPNeDDz4q/8qVFLMY5MWTkfTeZllZftGleBAeYK
+	 V8epK4sM+R4PyR7OVgT34PtjFH0VvVmXd/eFJf3pB2zIGnSvwwo0BJFFh2oz65CDnO
+	 aw6/La3LwL+97P2PA74bm7Vn43qEKLy9GlgW5DITBOG8UqvgWI0D6DOV7muFZaXMF3
+	 AhMQktbvhT2SYAnacegQ/r7tr2/DoMc756SRlsfNCykhZCtKxVV8uf8eQQJp+1F4Il
+	 JOUHm0pyUhEfZ8YmHcOKA70xBHhK35cWTLjjqV+a3XECWfy3jZJGupUxkGlv/DGfkv
+	 vvKQlysMbJNU+nKtQofC8ndbqTd3TvGyETwVAWRt2ZZlQo9unTkkrAX5nqTJDLN8nA
+	 b4L8QcYDxBaJVfEgaY2jGECoGP690tp8g5/9EPTb2B+6ZB2sZcJNqWgDQiJvwlLcgn
+	 k7uJmVLtEegGMkcQb3hsoNQg=
+Received: from zn.tnic (p200300ea973a31a9329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:31a9:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C031240E015F;
+	Wed, 13 Nov 2024 21:37:32 +0000 (UTC)
+Date: Wed, 13 Nov 2024 22:37:24 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, Amit Shah <amit@kernel.org>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+	linux-doc@vger.kernel.org, amit.shah@amd.com,
+	thomas.lendacky@amd.com, tglx@linutronix.de, peterz@infradead.org,
+	pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, mingo@redhat.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
+	pbonzini@redhat.com, daniel.sneddon@linux.intel.com,
+	kai.huang@intel.com, sandipan.das@amd.com,
+	boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
+	david.kaplan@amd.com, dwmw@amazon.co.uk
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Message-ID: <20241113213724.GJZzUcFKUHCiqGLRqp@fat_crate.local>
+References: <20241111163913.36139-1-amit@kernel.org>
+ <20241111163913.36139-2-amit@kernel.org>
+ <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+ <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+ <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
+ <20241112115811.GAZzNC08WU5h8bLFcf@fat_crate.local>
+ <20241113212440.slbdllbdvbnk37hu@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241113212440.slbdllbdvbnk37hu@jpoimboe>
 
-The pull request you sent on Wed, 13 Nov 2024 21:29:16 +0200:
+On Wed, Nov 13, 2024 at 01:24:40PM -0800, Josh Poimboeuf wrote:
+> There are a lot of subtle details to this $#!tstorm, and IMO we probably
+> wouldn't be having these discussions in the first place if the comment
+> lived in the docs, as most people seem to ignore them...
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-6.12-rc8
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4ba05b0e857d1f78f92084a15e618ea89a318089
-
-Thank you!
+That's why I'm saying point to the docs from the code. You can't have a big
+fat comment in the code about this but everything else in the hw-vuln docs.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
