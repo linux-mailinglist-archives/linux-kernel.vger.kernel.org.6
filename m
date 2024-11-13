@@ -1,117 +1,97 @@
-Return-Path: <linux-kernel+bounces-407526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257089C6E94
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:05:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5164E9C6E96
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:05:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D08531F219CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:05:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16A21283DC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7ED20606E;
-	Wed, 13 Nov 2024 12:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F04200B89;
+	Wed, 13 Nov 2024 12:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUhuN9hF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2TfbbRJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BCD206071;
-	Wed, 13 Nov 2024 12:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57DB1FF7D9;
+	Wed, 13 Nov 2024 12:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731499225; cv=none; b=GCvh8ebV7u7GE0yUh66tmM2pbVdnSOGy+m3OPYuROQGeDclcixTX9mQXX7/KDuRvNBqLf0juZTvdxNMyhImLrhQs/xWq3Z8TZ4RKb7LdzWHpuDs/3I3eIssLwv3JqIokzkP0h8Sn1iUzSg+8vHxvql9c28vuaPJeq/TJ27qSmCY=
+	t=1731499279; cv=none; b=n4mNjTRDmhU8y3sYIpjFu+vP0McL0C6nx1IF3xtcHuVMgO3FX+b+dYNVqG3/MAReWr9Vg48pqP1dJxraeddx8j7sujHH8vssocRjUsWBLeTcor1odj1C7JMbO4EIgJKAldIWrt+ecpsRRWYBPbZG2uMKB97fl9sz3GQPvc/kTXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731499225; c=relaxed/simple;
-	bh=THI3YLBzXVja+TcFlUWeFwf4xpf6z18cL1jh+zfVypY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Qnce3I5wBUyw2Mw4QA6m7QXSgVBF/8AnqQ/LfBRDNvau74BxNB4gFCIRoWZF1TfUHRWJz1/Lod1DzDxvHF7SFGbWqtwsNJPIUPyLXx/crrdh8c4c5xkMIZBezj53YuxprU24336RqLW+sty8z8eG8oJBGNBwIc6teyl8xdtMCWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUhuN9hF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 645E3C4CECD;
-	Wed, 13 Nov 2024 12:00:24 +0000 (UTC)
+	s=arc-20240116; t=1731499279; c=relaxed/simple;
+	bh=+4NqzRrH1f3+zQnre34AsrBtFGySoLyIECrBwT6P6Vg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k3p1aTY8FCiUIxYmp/5yBSwjf3rzqlDU+RJOs0aAEMDi7Ytlcz4trQdfnqsFbmGMcB8RvRS2VOWwgCqtZe6G0gC/7GJqEZjb/0gRGgUsh1RObGMXiez7cJF6z6GcHnLtBgF4AnGuSIRo4LGtvRwTIQYPujcSlvNVxv3PsPdWiXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2TfbbRJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D895DC4CECD;
+	Wed, 13 Nov 2024 12:01:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731499224;
-	bh=THI3YLBzXVja+TcFlUWeFwf4xpf6z18cL1jh+zfVypY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=kUhuN9hFEeo7b725W8ffKt4JqVNuKS6YltTF3ubb9VnGMjiPs2rRqttQbvEh50la8
-	 AIpgdAFHs65SfXrxlGzGCamHOP7yZx6v8mCP0R+uB/v9YMrxxTn4N1tpYOQSQO+I3l
-	 hpfmkNdgd/0hM3LXVwy+PDJmjyHTOwc0FRnY8doNtW1uFKL8HLTtlTLBug0zDLl6sh
-	 Z1z1gJEDIJB4i5VPv6ZB86S/VeenrfHFj3SgwdB9nf6CRJurzgzqd7hlQNxbQyavDH
-	 E8auEoGJqtFaiqqJoh2GAFkt77rTLJP4BslagGldx6INHbHZ//QsQ1ulg6VJf/FORj
-	 rmVs6trt+M60g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADF03809A80;
-	Wed, 13 Nov 2024 12:00:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1731499278;
+	bh=+4NqzRrH1f3+zQnre34AsrBtFGySoLyIECrBwT6P6Vg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=N2TfbbRJ3Iys+sIVp3i6yoHrKehUuCdoBi06ktTLT4Xpv7miyo/eIgQajZYxjm2XJ
+	 CNRpkW//fRNCy1KZ9ArREbxzNR7RxTbH1I0SHPLB3tAYHvfhs3x/4YlfLMfniFknzO
+	 rcj0cvP5vF7z/U0zxfdCm9+Q1bO0i2p4Lt9AXlptlC3HEXoAAQ5GwLx2MINTZuMXY1
+	 7aH3JEivXOaZEL14SvyVeDWrtKu78b5Lvcj3gEdo2DUAokD4z1UMzKEJioL/bJ+WZe
+	 hmEFSbySptq/GOHPyie7fV/otugBvN7boWbwttUu6co6VKkBJAKA1Q4sWaUs9OfLSH
+	 ZAuTQwzvxAFsQ==
+From: Conor Dooley <conor@kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] polarfire gpio driver follow-ups
+Date: Wed, 13 Nov 2024 12:01:03 +0000
+Message-ID: <20241113-ramble-blaspheme-b303dbf37271@spud>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=880; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=5qboaS+pJgvFjqKM3T0QsCZuSJyVY4J++h5ijdg6c1A=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOkmU/6H1qfes/E2nileHu8YFDiz+Gz4j/K6LbucQt7Iz 7KZMMG8o5SFQYyDQVZMkSXxdl+L1Po/Ljuce97CzGFlAhnCwMUpABOpLGdkmPTiUM+ajLKfs6b5 HXux9VZcVll5gfwC45/crFsUWkx8vjD8z1aq/XXnzPaC3RdrXkRKhOhxFcTL2LcsjtNruPJQfks BLwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next PATCH v12 00/12] Introduce RVU representors  
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173149923475.1192742.13198903073889976671.git-patchwork-notify@kernel.org>
-Date: Wed, 13 Nov 2024 12:00:34 +0000
-References: <20241107160839.23707-1-gakula@marvell.com>
-In-Reply-To: <20241107160839.23707-1-gakula@marvell.com>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
- davem@davemloft.net, pabeni@redhat.com, jiri@resnulli.us,
- edumazet@google.com, sgoutham@marvell.com, sbhatta@marvell.com,
- hkelam@marvell.com
 
-Hello:
+From: Conor Dooley <conor.dooley@microchip.com>
 
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+Yo,
 
-On Thu, 7 Nov 2024 21:38:27 +0530 you wrote:
-> This series adds representor support for each rvu devices.
-> When switchdev mode is enabled, representor netdev is registered
-> for each rvu device. In implementation of representor model,
-> one NIX HW LF with multiple SQ and RQ is reserved, where each
-> RQ and SQ of the LF are mapped to a representor. A loopback channel
-> is reserved to support packet path between representors and VFs.
-> CN10K silicon supports 2 types of MACs, RPM and SDP. This
-> patch set adds representor support for both RPM and SDP MAC
-> interfaces.
-> 
-> [...]
+I realised last week, while rebasing the interrupt portion of the
+driver, that coregpio a compatible in the kernel as well as a dts user.
+Given how long the driver has taken to even get partially accepted, I
+waited to get it to gpio/for-next rather than showing up with last
+minute additions to it.
 
-Here is the summary with links:
-  - [net-next,v12,01/12] octeontx2-pf: RVU representor driver
-    https://git.kernel.org/netdev/net-next/c/222a4eea9c6b
-  - [net-next,v12,02/12] octeontx2-pf: Create representor netdev
-    https://git.kernel.org/netdev/net-next/c/3937b7308d4f
-  - [net-next,v12,03/12] octeontx2-pf: Add basic net_device_ops
-    https://git.kernel.org/netdev/net-next/c/22f858796758
-  - [net-next,v12,04/12] octeontx2-af: Add packet path between representor and VF
-    https://git.kernel.org/netdev/net-next/c/683645a2317e
-  - [net-next,v12,05/12] octeontx2-pf: Get VF stats via representor
-    https://git.kernel.org/netdev/net-next/c/940754a21dec
-  - [net-next,v12,06/12] octeontx2-pf: Add support to sync link state between representor and VFs
-    https://git.kernel.org/netdev/net-next/c/b8fea84a0468
-  - [net-next,v12,07/12] octeontx2-pf: Configure VF mtu via representor
-    https://git.kernel.org/netdev/net-next/c/3392f9190373
-  - [net-next,v12,08/12] octeontx2-pf: Add representors for sdp MAC
-    https://git.kernel.org/netdev/net-next/c/2f7f33a09516
-  - [net-next,v12,09/12] octeontx2-pf: Add devlink port support
-    https://git.kernel.org/netdev/net-next/c/9ed0343f561e
-  - [net-next,v12,10/12] octeontx2-pf: Implement offload stats ndo for representors
-    https://git.kernel.org/netdev/net-next/c/d8dec30b5165
-  - [net-next,v12,11/12] octeontx2-pf: Adds TC offload support
-    https://git.kernel.org/netdev/net-next/c/6c40ca957fe5
-  - [net-next,v12,12/12] Documentation: octeontx2: Add Documentation for RVU representors
-    https://git.kernel.org/netdev/net-next/c/6050b04dca8e
+Cheers,
+Conor.
 
-You are awesome, thank you!
+v2:
+- drop maintainers patch, it was applied on v1
+- use non-of match data acquisition function
+
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Linus Walleij <linus.walleij@linaro.org>
+CC: Bartosz Golaszewski <brgl@bgdev.pl>
+CC: linux-kernel@vger.kernel.org
+CC: linux-gpio@vger.kernel.org
+
+Conor Dooley (1):
+  gpio: mpfs: add CoreGPIO support
+
+ drivers/gpio/gpio-mpfs.c | 38 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 5 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.45.2
 
 
