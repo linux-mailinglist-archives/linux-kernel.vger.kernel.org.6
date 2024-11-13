@@ -1,261 +1,169 @@
-Return-Path: <linux-kernel+bounces-407498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949799C6E53
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:55:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A6D29C6E37
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:53:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C7F71F216F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:55:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9687B24DC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A369202F90;
-	Wed, 13 Nov 2024 11:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215C52003D1;
+	Wed, 13 Nov 2024 11:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YVETseHF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AqLoH2Ff"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2053.outbound.protection.outlook.com [40.107.94.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEC0202647;
-	Wed, 13 Nov 2024 11:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731498791; cv=none; b=SrmH6ERMV74ncHnA3/rMDrS4PJLZulvDR+BHbFfsCoy25CbVreOXwFqQ/Lmw84AvJoLCPGlIzNjGfxv/fDLg/Ex429kVm5uRohJhwAIG6IZIJ99cpBWH9aW3B2veWnw/+DCT2FmWN96oy9TtxzAMH3IDoph5hE4zYCXwEdmAoU4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731498791; c=relaxed/simple;
-	bh=46/Ey+YEHt4Pvbsre6EY4dkMGTbt3Z0H9At3392O4dk=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=CtxqXpXmfXrmvUDB764/axYQytH3uA/WeOproUYGwSWf+YHzOwjBt0MHZ5W20eWgYv++9U2we0p2dcrTqn6Xq8BQp5t+3Z6xr/VUf9l9IQ94Q3wos8QBsIa4drrOH23fEAl+mw2dNeiamKO89apVbqHuwkICSmH1lsXdKMIAVXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YVETseHF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AD7usm5030530;
-	Wed, 13 Nov 2024 11:52:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=0BfW0mwwK/RB1gSytGAIpA
-	He7yoP9uFrYSI4uI6UUZ4=; b=YVETseHFCG8cug3yuQ0XMx2vgGGMoiQ9BSrcpU
-	LWSkFkCpEOdGmhoPP2T1j9T9p+Q1xFTUSAUxNy5cc8x/x/YyoYUGOYuWk0+vqU+n
-	yfZoei37uOdHTblWQ1rWs+AGxlhDeCVPo4iloZThaYVaKJitiSj0bZSBc+k27X2F
-	SrlQzdnEdAVv6Y4r0orZnibUBijEp44OhlZard+lgvuzkc0GXYS+LIVMwlE552xf
-	tZ4fOYrg5vC/CDaSTZWBOxZroZjLobCI+bD+ca0qV05M8GBDCn5XhmMNTKQZCXs8
-	yKV8ml2UOCL0wz8pnmdfSvVIoh8dHmHH/1t40rAV/4BchM8A==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vr5y0k41-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 11:52:47 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ADBqkNv023365
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 11:52:46 GMT
-Received: from robotics-lnxbld017.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 13 Nov 2024 03:52:39 -0800
-From: Fange Zhang <quic_fangez@quicinc.com>
-Subject: [PATCH v2 0/9] Add display support for QCS615 platform
-Date: Wed, 13 Nov 2024 19:51:42 +0800
-Message-ID: <20241113-add-display-support-for-qcs615-platform-v2-0-2873eb6fb869@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD671BD9DC;
+	Wed, 13 Nov 2024 11:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731498767; cv=fail; b=cgiH73rvtNQcxDDA23p56/atNv8h0cbWMfCHg2ozt2kejyElkE1nlCw6G0Cit1yDm9a9+QYJ4nF/W1qKXLA26uPYVef+fVMBlOx9TifJx2f2kArdT+12DSItMcIo29HO0I+WeupZeCA6yOwCFphCV97NgGoM/vny8IBFexPi9tY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731498767; c=relaxed/simple;
+	bh=M6tnjUWtqIBY8m3M8ci0ysd9GW2BQMfclNJQU5u6VV8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dix98ZCl7dNeBsUrCq4JS0DFfWZNHg62vSFphNARYd6CZ579R/LGh5PBgZy04MKvUVP9bZuY0+932GA10LUsdgjF98zJjg9ZAJzhacfwqdhRI6Mp698Zux7/cgv9aOWYEaoH2lI5HrzTB2JJZU4TcXxvo2k3bux+EtfMkqwo8Qk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AqLoH2Ff; arc=fail smtp.client-ip=40.107.94.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pqI0Xov9dXBWaAWYq4KqW3jelDObaqv/cus4pJyI+r0YCx0AVAZVFNcL+BOq2qbxqEonfIwR9WvKqhqTYSeWGOXDnGf9RMETd1tqxVFVo0fPh+l0Tgx3zkTiPCbL+r3y5SuwPXGY+od+g7/KrPf/pngLiDjcQLplGDrgYnKq+4WgduPdbaVBRSS/PPzdRdgXAOowgIahX+g8heuWcRy4Mr/j7HsRhMxvz053N+tCCo8DFosaj3NzUmUMk2NX8bXG87ryX2HmBR3u18xGZTlwhQljoxmKUmBKx3ukaDXM0RbzaxEAhV/6mWKcGqun+H4f6S53ikKngh8Fs6xKwowFWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+oUUHd5pbyXWGf1x2EV/E/BKMUk00W9JA52hzgHBS14=;
+ b=Rqka/sgFBf5olReMYwm09YGkrH0ZeStYfxtAdWkTm8E3XpqaTlWgpsQjOoSV/k/GgY2z/0G3T5HKCBIctXkArvP+lRyQNT7ncO32YkOvUyl/6UhTMUPu34xDGuMANIl2HU+RS58e1LD26OPBsCMWqdbZ5VB6iD15BHgGTN8uXlonfbPlhuDVTllDNLTphx/kYbQyfppF8zpyPVFqc73qlQm7HzlNIZMJvkk36UZEh1pQlLU4b0C8WuxFpKKR/Y/qt7d0dEDC5UPW3WKP4MlUQsSriWW2Nc461VEsevHPHYfOnjVUYEpziYf1xbspSIH7nqXGqHXiHxPFJoSgazHCBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+oUUHd5pbyXWGf1x2EV/E/BKMUk00W9JA52hzgHBS14=;
+ b=AqLoH2FfSk7F1OeZvNLvxM0mblYeECvTZHYs6uky//dwvcGSu1KmNBieIPEm4eDiJqf6e8/L1VBYdtDl3ztrM6TDTxbCY9NdKC2fMdAfHcLASBY0vJEG/JIE3ii0upBODPQBDS6ZuqKQzj5vSxeVnk/E/fHRrtJDcsz/eUIztds=
+Received: from BYAPR06CA0006.namprd06.prod.outlook.com (2603:10b6:a03:d4::19)
+ by CH3PR12MB7548.namprd12.prod.outlook.com (2603:10b6:610:144::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Wed, 13 Nov
+ 2024 11:52:42 +0000
+Received: from MWH0EPF000989E8.namprd02.prod.outlook.com
+ (2603:10b6:a03:d4:cafe::33) by BYAPR06CA0006.outlook.office365.com
+ (2603:10b6:a03:d4::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29 via Frontend
+ Transport; Wed, 13 Nov 2024 11:52:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MWH0EPF000989E8.mail.protection.outlook.com (10.167.241.135) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Wed, 13 Nov 2024 11:52:42 +0000
+Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 13 Nov 2024 05:52:37 -0600
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>
+CC: <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
+	<yung-chuan.liao@linux.intel.com>, <pierre-louis.bossart@linux.dev>,
+	<alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>, <Basavaraj.Hiregoudar@amd.com>,
+	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>,
+	<mario.limonciello@amd.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Subject: [PATCH 0/6] Add generic AMD Soundwire machine driver for Legacy(No
+Date: Wed, 13 Nov 2024 17:22:17 +0530
+Message-ID: <20241113115223.3274868-1-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOKSNGcC/5WS3YrbMBCFXyX4ugoa/dkOpfQ9lsXImlEjaluJ5
- Jhul7x7ZSdL6c9FcnkG5jujo/NeZUqBcnXYvVeJlpBDnIoQn3aVO9rpG7GARVeCCwUAgllEhiG
- fBvvG8uV0imlmPiZ2dtmAZmU+FzkyUytC4xoCzatCOyXy4cfm9PJ604nOl2I434bVSDnbzfCw+
- 7z5cSE+uG6I7jvDFBZKbFFMMIk1GIsc26b+WkAuTG7v4vhldXuKpZ5lAVdrDl2Ywhzs0N1z6Mr
- Du7vHohlnLSI1WPcN7/lDWM2lAF7vW61FOWtd6c7nn8d4eWS9ABolJeyFNsooyeBGWNBi+cvw0
- AnNR0rjeAvKxWlOcRjWrGR5VI2yFyik9uifJuLMpoiU2QIF1QtjWmcdN0L9g+ptJlbEGObDrhV
- tT9b3VFvnSApTlyUATSCJS+8Naa5VY6u1WseQ55jetk4vsHXrHpB8uL7bfeTqFkTrlVd/3Le5L
- OI3mcOtEHfyfwuxAhV5Cy1gj/gX8Hq9/gKb8v4YjAMAAA==
-X-Change-ID: 20241112-add-display-support-for-qcs615-platform-674ed6c8e150
-To: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, "Li
- Liu" <quic_lliu6@quicinc.com>,
-        Fange Zhang <quic_fangez@quicinc.com>,
-        "Xiangxu Yin" <quic_xiangxuy@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731498757; l=6520;
- i=quic_fangez@quicinc.com; s=20241014; h=from:subject:message-id;
- bh=46/Ey+YEHt4Pvbsre6EY4dkMGTbt3Z0H9At3392O4dk=;
- b=6GdQhj6KMBQNAYuNIJNpiHQtoIuTK338b3Rw1IX8rd3mzJvdK4uAC7VccJSAl1JZWAAz5lxml
- Z0Ysi0MYuRwDL6FkZ8LWdNt9Ra/0Cu9ZSIOHi8acoyI/0rSEUOvqFs7
-X-Developer-Key: i=quic_fangez@quicinc.com; a=ed25519;
- pk=tJv8Cz0npA34ynt53o5GaQfBC0ySFhyb2FGj+V2Use4=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DuMNqlqN2PUdarahakdHA5NO9rCAFoqr
-X-Proofpoint-GUID: DuMNqlqN2PUdarahakdHA5NO9rCAFoqr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- adultscore=0 clxscore=1011 suspectscore=0 lowpriorityscore=0 bulkscore=0
- mlxlogscore=963 malwarescore=0 spamscore=0 impostorscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411130102
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E8:EE_|CH3PR12MB7548:EE_
+X-MS-Office365-Filtering-Correlation-Id: d981d179-4c6f-460b-3025-08dd03d9ae63
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?06/vVSX2ku7t/8x7MI9ZQgCoT6Ehrrv6vZdRldoYU4sSEjpwhGevYzDPf96m?=
+ =?us-ascii?Q?Ywn1dzSSNa/xvG4XYPm7R+YJuthFlxTBafFQRwc4xQg5Fcily83V2nUOSw4N?=
+ =?us-ascii?Q?iEWRvfjqC1i90KqOUfyKztYwvin038wiFoEZ/jjrJ5IvDTUU3XM7gn7mCmc9?=
+ =?us-ascii?Q?FOmDQORmytaLXKfke1/4bdJCrqRmZlJO5VcBD+BmK20cxy0q5Aekkmhwufj3?=
+ =?us-ascii?Q?T3C3Is2s3nQmWc5gu1OP9xq+IhgVfuL5Jb0NmRuap4EcNQyoJc6uEQ9E0zlh?=
+ =?us-ascii?Q?aiTQcuAlhhg0uk4LSTQg3gI71KeslxC5n2Ya2xr/xfiwoRFIm6shDcZzbYk5?=
+ =?us-ascii?Q?81nrnkY2LVDcnbqTAM38DQExuFS2rT0Kk5j0RuSS858FJUe+tUY0VWJKokdd?=
+ =?us-ascii?Q?JEoqCMD4VPh9bXN3XrAw2eDZxKvxFCBT0I4wVL+cyw2qkIMivp6XLnD9JBds?=
+ =?us-ascii?Q?rSDj4mLyEn2XXDzaSZScZCbHolpt+QZbzLrANihzZDmeS9zoEyQeRtsByLY5?=
+ =?us-ascii?Q?f+Iil8LL/t/Fflw5QdiDiQxcvEIlLLXHykDbY5B5If1/5cG8dMMWBLfSKYsR?=
+ =?us-ascii?Q?Da+zSRe1CmwoPPI4YcNkHJ2EQ9Izx6KcByXktVq2c8koSv9Pks5S++LkuESe?=
+ =?us-ascii?Q?imQsTVqiR9QcWzvRvIuGPThbPPED7pPdGxGgBLr2NIKt9WfVGV7Fhwn2ewnh?=
+ =?us-ascii?Q?OZN4gaqiO+VtP4363nNmSaePse+Pn5oYZpl6TkYMMfudguOEuVs6HyqsnNxI?=
+ =?us-ascii?Q?Ec63gMoQtprRQpYfv3OYq4BcHpKCR8desKYLy/TYW2E9frx+I2ARDTGoGKV9?=
+ =?us-ascii?Q?NadV4kwePGknc7jd4Jw1YZmuujz4TGpiZRplbdM+TLXVbcA2qoaZ/z8YxtTP?=
+ =?us-ascii?Q?+3wQHv8WkHiYsWWlVuVrXPmdlXYxV4D1/sMItD9yO2C5ApQMfulxEThDIjUE?=
+ =?us-ascii?Q?vkVCCuUWuWvo7Zfy4nZPWCWWWynk1Ur35FoS8dfx9zndMZWCiY/7BZZ88Xf4?=
+ =?us-ascii?Q?+wc0S2WoEXYObg3knl5OF/OtXt9vVagZlO7HZB4eegKgDZOoLykg6ZRNP12G?=
+ =?us-ascii?Q?nSYS+5t6pMomUSBFt0Haiebkux44vqfoHbTQnWLyzLLdO8GRd9Rbk9Iazkbp?=
+ =?us-ascii?Q?yKyey9yBUCQNugF+8I2PQ0rFHNJRFZxdLCe6CoUZfvQm2mDDAtaP3Gs/JteD?=
+ =?us-ascii?Q?9ZTQaYJdO/Vcbn2/lip92utAbCGllbS1hWmpJOD/RuMax1EWBvMmMZ0zWAEt?=
+ =?us-ascii?Q?Dz+GqOg80BQK5LMHRIJZKim5GSWzheNCGSpPD90bXdNNSI9V42sGvn0tcPPT?=
+ =?us-ascii?Q?8hOUSJubj1HY5I61HXEnq4KcmZVaeoYsbgEXSSA8WS5vBA0Z1pVOtYNOHbhs?=
+ =?us-ascii?Q?VRvYFrRpFPkm3kszGERwGQtmRib05O+X2BSVD6TgcE42GAYb2g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2024 11:52:42.3438
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d981d179-4c6f-460b-3025-08dd03d9ae63
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989E8.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7548
 
-This series aims to enable display on the QCS615 platform
+This patch series add SoundWire machines for RT711, RT714, RT1316 and
+RT722 codecs for ACP 6.3 platform. Also, it adds a generic SoundWire
+machine driver code for legacy(No DSP) stack.
 
-1.Add MDSS & DPU support for QCS615     
-2.Add DSI support for QCS615            
+Vijendar Mukunda (6):
+  ASoC: amd: acp: add rt722 based soundwire machines
+  ASoC: amd: acp: add RT711, RT714 & RT1316 support for acp 6.3 platform
+  ASoC: amd: ps: add soundwire machines for acp6.3 platform
+  ASoC: amd: acp: move get_acp63_cpu_pin_id() to common file
+  ASoC: amd: acp: add soundwire machine driver for legacy stack
+  ASoC: amd: ps: fix the pcm device numbering for acp 6.3 platform
 
-Note:
-items still being confirmed
-- missing reg_bus_bw
-- missing refgen supply
+ sound/soc/amd/acp/Kconfig                |  29 ++
+ sound/soc/amd/acp/Makefile               |   4 +
+ sound/soc/amd/acp/acp-sdw-legacy-mach.c  | 486 +++++++++++++++++++++++
+ sound/soc/amd/acp/acp-sdw-mach-common.c  |  64 +++
+ sound/soc/amd/acp/acp-sdw-sof-mach.c     |  49 +--
+ sound/soc/amd/acp/amd-acp63-acpi-match.c |  54 +++
+ sound/soc/amd/acp/soc_amd_sdw_common.h   |   4 +
+ sound/soc/amd/mach-config.h              |   1 +
+ sound/soc/amd/ps/pci-ps.c                |   1 +
+ sound/soc/amd/ps/ps-sdw-dma.c            |   2 +
+ 10 files changed, 646 insertions(+), 48 deletions(-)
+ create mode 100644 sound/soc/amd/acp/acp-sdw-legacy-mach.c
+ create mode 100644 sound/soc/amd/acp/acp-sdw-mach-common.c
 
-This patch series depends on below patch series:
-- rpmhcc
-https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-2-3d716ad0d987@quicinc.com/
-- gcc
-https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-4-3d716ad0d987@quicinc.com/
-- base
-https://lore.kernel.org/all/20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com/
-- Apps SMMU
-https://lore.kernel.org/all/20241105032107.9552-4-quic_qqzhou@quicinc.com/
-- I2C
-https://lore.kernel.org/all/20241111084331.2564643-1-quic_vdadhani@quicinc.com/
-- dispcc
-https://lore.kernel.org/all/20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com/
-- dispcc dts
-https://lore.kernel.org/lkml/20241108-qcs615-mm-dt-nodes-v1-0-b2669cac0624@quicinc.com/
-
-Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
-Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
----
-Changes in v2:
-- Added b4 check and check passed
-- Added necessary blank line
-- Added correct S-o-B
-- Added correct maintainer
-- Added correct To&Cc
-- Added QCS615 DP controller comment in commit message
-- Added comments for dsi_dp_hpd_cfg_pins and dsi_dp_cdet_cfg_pins
-- Added missing port@1 for connector
-- Changed patch order
-- Changed 0 to QCOM_ICC_TAG_ALWAYS for mdss interconnects
-- Changed 0 to GPIO_ACTIVE_HIGH for GPIO flags
-- Fix indent issue
-- Fix sorted issue
-- Moved anx_7625 to same node
-- Moved status to last
-- Renamed dsi0_hpd_cfg_pins to dsi_dp_hpd_cfg_pins
-- Renamed dsi0_cdet_cfg_pins to dsi_dp_cdet_cfg_pins
-- Renamed anx_7625_1 to dsi_anx_7625
-- Removed extra blank line
-- Removed absent block
-- Removed merge_3d value
-- Removed redundant annotation
-- Removed unsupported dsi clk in dsi0_opp_table
-- Removed dp_hpd_cfg_pins node
-- Splited patch according to requirements
-- Link to v2: https://lore.kernel.org/r/20241014-add_display_support_for_qcs615-v1-0-4efa191dbdd4@quicinc.com
-
----
-Li Liu (9):
-      dt-bindings: display/msm: Add QCS615 DSI phy
-      dt-bindings: display/msm: dsi-controller-main: Document QCS615
-      dt-bindings: display/msm: Add QCS615 MDSS & DPU
-      drm/msm/dpu: Add QCS615 support
-      drm/msm: mdss: Add QCS615 support
-      drm/msm/dsi: Add support for QCS615
-      arm64: dts: qcom: Add display support for QCS615
-      arm64: dts: qcom: Add display support for QCS615 RIDE board
-      arm64: defconfig: Enable SX150X for QCS615 ride board
-
- .../bindings/display/msm/dsi-controller-main.yaml  |   1 +
- .../bindings/display/msm/dsi-phy-14nm.yaml         |   1 +
- .../bindings/display/msm/qcom,qcs615-dpu.yaml      | 118 +++++++++
- .../bindings/display/msm/qcom,qcs615-mdss.yaml     | 252 ++++++++++++++++++++
- arch/arm64/boot/dts/qcom/qcs615-ride.dts           | 109 +++++++++
- arch/arm64/boot/dts/qcom/qcs615.dtsi               | 186 ++++++++++++++-
- arch/arm64/configs/defconfig                       |   1 +
- .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_qcs615.h | 263 +++++++++++++++++++++
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |   1 +
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
- drivers/gpu/drm/msm/dsi/dsi_cfg.c                  |  17 ++
- drivers/gpu/drm/msm/dsi/dsi_cfg.h                  |   1 +
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.c              |   2 +
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.h              |   1 +
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c         |  21 ++
- drivers/gpu/drm/msm/msm_mdss.c                     |   7 +
- 17 files changed, 982 insertions(+), 1 deletion(-)
----
-base-commit: 929beafbe7acce3267c06115e13e03ff6e50548a
-change-id: 20241112-add-display-support-for-qcs615-platform-674ed6c8e150
-prerequisite-message-id: <20241022-qcs615-clock-driver-v4-2-3d716ad0d987@quicinc.com>
-prerequisite-patch-id: cd9fc0a399ab430e293764d0911a38109664ca91
-prerequisite-patch-id: 07f2c7378c7bbd560f26b61785b6814270647f1b
-prerequisite-patch-id: a57054b890d767b45cca87e71b4a0f6bf6914c2f
-prerequisite-patch-id: 5a8e9ea15a2c3d60b4dbdf11b4e2695742d6333c
-prerequisite-message-id: <20241022-qcs615-clock-driver-v4-4-3d716ad0d987@quicinc.com>
-prerequisite-patch-id: cd9fc0a399ab430e293764d0911a38109664ca91
-prerequisite-patch-id: 07f2c7378c7bbd560f26b61785b6814270647f1b
-prerequisite-patch-id: a57054b890d767b45cca87e71b4a0f6bf6914c2f
-prerequisite-patch-id: 5a8e9ea15a2c3d60b4dbdf11b4e2695742d6333c
-prerequisite-message-id: <20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com>
-prerequisite-patch-id: 09782474af7eecf1013425fd34f9d2f082fb3616
-prerequisite-patch-id: 04ca722967256efddc402b7bab94136a5174b0b9
-prerequisite-patch-id: 82481c82a20345548e2cb292d3098ed51843b809
-prerequisite-patch-id: 3bd8edd83297815fcb1b81fcd891d3c14908442f
-prerequisite-patch-id: fc1cfec4ecd56e669c161c4d2c3797fc0abff0ae
-prerequisite-message-id: <20241105032107.9552-4-quic_qqzhou@quicinc.com>
-prerequisite-patch-id: aaa7214fe86fade46ae5c245e0a44625fae1bad3
-prerequisite-patch-id: 4db9f55207af45c6b64fff4f8929648a7fb44669
-prerequisite-patch-id: 89ce719a863bf5e909989877f15f82b51552e449
-prerequisite-message-id: <20241111084331.2564643-1-quic_vdadhani@quicinc.com>
-prerequisite-patch-id: 3f9489c89f3e632abfc5c3ca2e8eca2ce23093b0
-prerequisite-message-id: <20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com>
-prerequisite-patch-id: 748a4e51bbedae9c6ebdbd642b2fd1badf958788
-prerequisite-patch-id: 72a894a3b19fdbd431e1cec9397365bc5b27abfe
-prerequisite-patch-id: da2b7a74f1afd58833c6a9a4544a0e271720641f
-prerequisite-patch-id: 40b79fe0b9101f5db3bddad23551c1123572aee5
-prerequisite-patch-id: cb93e5798f6bfe8cc3044c4ce973e3ae5f20dc6b
-prerequisite-patch-id: 13b0dbf97ac1865d241791afb4b46a28ca499523
-prerequisite-patch-id: 807019bedabd47c04f7ac78e9461d0b5a6e9131b
-prerequisite-patch-id: 8e2e841401fefbd96d78dd4a7c47514058c83bf2
-prerequisite-patch-id: 125bb8cb367109ba22cededf6e78754579e1ed03
-prerequisite-patch-id: b3cc42570d5826a4704f7702e7b26af9a0fe57b0
-prerequisite-patch-id: df8e2fdd997cbf6c0a107f1871ed9e2caaa97582
-prerequisite-message-id: <20241108-qcs615-mm-dt-nodes-v1-0-b2669cac0624@quicinc.com>
-prerequisite-patch-id: bcb1328b70868bb9c87c0e4c48e5c9d38853bc60
-prerequisite-patch-id: 8844a4661902eb44406639a3b7344416a0c88ed9
-
-Best regards,
 -- 
-fangez <quic_fangez@quicinc.com>
+2.34.1
 
 
