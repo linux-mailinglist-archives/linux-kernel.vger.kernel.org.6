@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-408108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02BE39C7A83
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:01:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027D99C7A7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:01:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABC441F236F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:01:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB227281079
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE922071E9;
-	Wed, 13 Nov 2024 17:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JfR47I9n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D349C20514D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39E6205120;
 	Wed, 13 Nov 2024 17:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731520754; cv=none; b=LHvHmYYBHqCGJHFiTKR/vrnahtHsvB2otDDCs+hhyiQb8mQ4y49E12GJMl5CexCAvAf7yxEms8F4qlzgbUE8WlxjDduGp4YspsWTQK3AiOsGkasLZZan05L8hOhj5/xwujFA6f3StRC9IHqJh3bO2cYVKjfziOJKLJQop1ttPlg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731520754; c=relaxed/simple;
-	bh=kvruL1GdSBx8iandcR56wwKSMO8JMiEGXVsrb7k0A/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zjc8sbl1Bk+E8Z5KXyTfivJUzKs6mfVnosJ3P9226myyw22YLRmEHFAOdL5vf8xACeuFK4Dttft3PFXd8z6Y/IA0mvPQeAhZ0U32OyPmf6+opQzhqkEvGiaHfuka4/4bJVbaHJ+3oya5gnrrA+ViRm1mqenMmljhpKam8Iz834c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JfR47I9n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 462DDC4CEC3;
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VToI0X0o"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2594374C4;
 	Wed, 13 Nov 2024 17:59:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731520753;
-	bh=kvruL1GdSBx8iandcR56wwKSMO8JMiEGXVsrb7k0A/M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JfR47I9ni6SRUhA2VcKNUa5Zv8rMdbJKqQZKpEUklGnFSHV1zpUdFP04UKVVYMSrN
-	 HAn68Cp+Txg8bxLkRDJ5We6Iv8sJmUarkZxB0S3QXIjeS26xx4+15G7UwuMIOIhTvc
-	 6sMIJha7+nJckfN9I8P5C0ecmtlnSLP5yoLHstQ9Pt0TELguTk8PB5dKOfiDTZqXJG
-	 yhE0EoKXNfyr3n7zHkxUtJRIuPWn1MtOZKKUeVw1E+V4Yj1NSrgs9TT8E3dYp2VW5v
-	 ICCciIufsu6mPdGr70zrhBAkdDtkNr58hKK+JEhM9aDbDt1kqedQHXCe4PbTUlSrNc
-	 zygohYDtkZqAw==
-Date: Wed, 13 Nov 2024 17:59:09 +0000
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] xfrm: Add error handling when nla_put_u32()
- returns an error
-Message-ID: <20241113175909.GB4507@kernel.org>
-References: <20241112233613.6444-1-everestkc@everestkc.com.np>
- <20241113105939.GY4507@kernel.org>
- <81088611-41d9-4472-94e6-3170418156c9@stanley.mountain>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731520753; cv=none; b=parRFJKVF483gbkVB0hqfjt3h+RsRNLgj1nTom4JWyQX6MdAuMBdQlpLIyyzkeyHFUx367Yf4PYFUlzXOHYROAuZDLPeMovxibDjtiFEhBYHfsyP/oBD55Iu8FY2qppSnJyPdJY8ecCa5nJCcYPTbhhprV1gH9KikDiIQZAfooI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731520753; c=relaxed/simple;
+	bh=FvI8dNWt1XzzwNR9jrLk1P2nfJK1ic/KFVBxI1WuEDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=umwmkD/S7y2IPg4qvtcdnOPDlM4aVyNypRD5uOIxW53pq5S06L1hTrFzK5WoMQskt1ZWw0jIEyD8HVrSOtIjfMpltiSRQB9/d8JEvmK1vcpGsPemXjklSzvoDa52pCJoAdxB8NyclnUY8EkH1/If2V5u9TbU/NnrHOTOKUvMyzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VToI0X0o; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2113da91b53so53432035ad.3;
+        Wed, 13 Nov 2024 09:59:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731520751; x=1732125551; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7QU6eCVp1bzsezZotXldnZDkljMrGl4ICLAg+W/F8jg=;
+        b=VToI0X0oXv2d6Ogv0d/GgZJXcKB+ryUDfWLGd1QA7UX8xTOA+atULWk0AxLkACGefu
+         McsfjvwyeLZBQBwZ6SqAth6WQRZwaIoDs45SvJxF4nFZIyfa6zrpTgLb+WlW/L32mV6s
+         VLZA3yL2xI6vzAi4zlaQygSP7Ao/UnfG9jvqN5ZMEvwWUB12xyotbTH1NB9zubBVRt4P
+         AGJ9OtQ/f3PvIhVdgR6e3DuC/bdqpMewjzXYxNu5fQM8tshQR6c0hxJSWVszkulNx+rL
+         fFbKm42M0W0mAhRLkCdznX6cGUQ+HHx++rE1C9bd6gjRZYKss5OzXLC5UPenVVnpbB9w
+         eGHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731520751; x=1732125551;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7QU6eCVp1bzsezZotXldnZDkljMrGl4ICLAg+W/F8jg=;
+        b=n+pWcOw2WRc0S9XBARDiB8P0gLhWPlUgvMQkGIJBVaGicrLAIT/hjxflS0D5pLF5ip
+         S9n2fuukGH+y1l+I5wrZ2CNLM6iz8mLjn27NJgcuc/kBoQYujYLEkEP9zlav6uHtZDuZ
+         tJRd4JjbeWXtmF5AUkJ5ChoDb1eD4GrwOgAY9V6sa1qb6UgdjSNJmB8kcMFe/UgeIduG
+         MbBXgbre/rb8DVfx5qhepfX0xk8+3vXrHiT723RaITeHrFxhFfEtnBIUEYyDwxXWVG9z
+         p9rLT/9fqr8Z0iKCt+uq2pXcEvnOCIgXYg8BnIvLthP+4cR9S711qZkdQXuuqYfzPlKr
+         SmEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnpnSOd6W9h3rU9sC8eh7Kq9/K0FQ2c2/LvPNFrBPLkX+FRqcR52ISS4km4xkQbJ+7ZS3NjrcYgMAe/Io5RnDU@vger.kernel.org, AJvYcCW6GLw3YNT52RvoBtOHgeIqyPn4sR7QERq896IlXrWRNGuKxVbUFDUTbVFU9iwKjpQsDSAnLHDIrBgMP1n6@vger.kernel.org, AJvYcCXgfDrAq/9szz+qfMmFkrh+nORhN+v6Q1zz1yom9W+zzScioBvmBIr+9b0aiiiMxfipIso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkbcVvfB7eDn5ugsk+AS0e4C6FgcYaDV6aWrqtoWNEWMoZGzfF
+	Bz982kfyT3kXaAdbqhomZSE6y2YLQiCrh//sSK0wCtLuWIVCzAQ=
+X-Google-Smtp-Source: AGHT+IEkhNrGbY20mPHNStDw/5A5v5/HFu2nkrc8z587y6bTl9+lun4HaV3eMTadxeZDuPuoOWsDWw==
+X-Received: by 2002:a17:902:ce89:b0:20b:a10c:9bdf with SMTP id d9443c01a7336-21183d67d05mr308594605ad.32.1731520751230;
+        Wed, 13 Nov 2024 09:59:11 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e45839sm112845395ad.143.2024.11.13.09.59.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 09:59:10 -0800 (PST)
+Date: Wed, 13 Nov 2024 09:59:10 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, ebpf@linuxfoundation.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>,
+	Petar Penkov <ppenkov@google.com>, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 10/10] selftests/bpf: remove
+ test_flow_dissector.sh
+Message-ID: <ZzTo7mTsFfbBIihU@mini-arch>
+References: <20241113-flow_dissector-v1-0-27c4df0592dc@bootlin.com>
+ <20241113-flow_dissector-v1-10-27c4df0592dc@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <81088611-41d9-4472-94e6-3170418156c9@stanley.mountain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241113-flow_dissector-v1-10-27c4df0592dc@bootlin.com>
 
-On Wed, Nov 13, 2024 at 04:10:15PM +0300, Dan Carpenter wrote:
-> On Wed, Nov 13, 2024 at 10:59:39AM +0000, Simon Horman wrote:
-> > On Tue, Nov 12, 2024 at 04:36:06PM -0700, Everest K.C. wrote:
-> > > Error handling is missing when call to nla_put_u32() fails.
-> > > Handle the error when the call to nla_put_u32() returns an error.
-> > > 
-> > > The error was reported by Coverity Scan.
-> > > Report:
-> > > CID 1601525: (#1 of 1): Unused value (UNUSED_VALUE)
-> > > returned_value: Assigning value from nla_put_u32(skb, XFRMA_SA_PCPU, x->pcpu_num)
-> > > to err here, but that stored value is overwritten before it can be used
-> > > 
-> > > Fixes: 1ddf9916ac09 ("xfrm: Add support for per cpu xfrm state handling.")
-> > > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> > 
-> > Reviewed-by: Simon Horman <horms@kernel.org>
-> > 
-> > For future reference, I think the appropriate target for this tree
-> > is ipsec-next rather than next.
-> > 
-> > 	Subject: [PATCH ipsec-next] xfrm: ...
+On 11/13, Alexis Lothoré (eBPF Foundation) wrote:
+> Now that test_flow_dissector.sh has been converted to test_progs, remove
+> the legacy test.
 > 
-> All these trees are a pain in the butt to track.  It's fine for people who only
-> work in one tree but for people doing static checker stuff, then we have to
-> deal with all 388 trees in linux-next.
-> 
-> I've changed my scripts to add [next] to my patches if Linus hasn't merged the
-> commit from the Fixes tag.  I still add net and net-next by hand but I'm going
-> to just automate that as well because doing it by hand has been failure prone.
-> 
-> But then if we try to add all the ipsec or whatever trees, it just becomes
-> unworkable.  I started to write a script which would look do the --is-ancestor
-> check based on the Fixes tag, but it take forever to update the git trees.  I
-> wasn't able to figure out a way to make this work.
-> 
-> Also once Linus merges the commit, there is no way to tell which tree the commit
-> goes to so it only applies to linux-next.  For networking, I already have the
-> script that greps the patch for -w net and grep -vw wireless.  But I don't want
-> to maintain a list greps for everyone's tree.
-> 
-> A lot of this scripting could be built into the CI system.  The CI system is
-> already doing some scripting based on the subject but we could do it based on
-> the Fixes tag instead.  If there isn't a Fixes tag, then it should go to
-> net-next.
+> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
 
-Hi Dan,
-
-I take your point that this is not very friendly to people sending
-the occasional patch (towards Networking). And certainly there
-is room to improve the CI.
-
-FWIIW, my goto when preparing patches is something like the following.
-Because at least for Networking, we do try to make MAINTAINERS reflect
-reality:
-
-./scripts/get_maintainer.pl --scm net/xfrm/xfrm_user.c
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 
