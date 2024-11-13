@@ -1,140 +1,183 @@
-Return-Path: <linux-kernel+bounces-407406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC4C9C6D0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:42:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B179C6D1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B19E8281821
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:42:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B34BB29E8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2539F1FE0EF;
-	Wed, 13 Nov 2024 10:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10FD21FEFD9;
+	Wed, 13 Nov 2024 10:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yBgvYHlZ"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="n+iRLP5Q"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4D01FB89A
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECEE1FEFAB;
+	Wed, 13 Nov 2024 10:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731494531; cv=none; b=o0nUr6od6zTvrD0oQes+wI9w96b1uPy5RPN4ZiUuktogJHbPvht8szjr8JJmQfdRiT+YFpTgus76DYDces6RMj7aESMj1IdbmZcAz7nbAhUqA1i6M6/IkGVFBcIcJ+WYexNQzjMUTehQ+Fdt8mITobBbDMtqLiCFbUDdJj/0MzQ=
+	t=1731494599; cv=none; b=VNbdl6fNHiQYLwki9nlMAN1RNz/iZWzZq6iJS+AIUBbuIyMG+Qkd3w5eAE9cCnpyUxRfIqhoAj4NqXYUeFJ0zzXwziRRkJINJX9bW6esEu3IuDAYZ3F5HgbxWAWpPNdpyRQSnDu7X9IewzK0p4Zxj2Xq9pn+Eg+fZW7rdFlE+mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731494531; c=relaxed/simple;
-	bh=AqumPSQGax77GBO9IatO8rErpe6+RT+R0gHdz967x50=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ewwYWlH0Bw4smlYbfmkObszkb/G616fnVqfWopLdneIlN6xUAgCp6Hf5a/ezdadhsdXpzPTZixmvuj7YoZCramXeTXuNlbw2JYdbTzlwysM21h0pbouFUxvQY9ngG5CDiGr7NqmxCIVMTNybHLd8gmwNzpHlJ14fxHWrIJwThfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yBgvYHlZ; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c948c41edeso9209510a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:42:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731494527; x=1732099327; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BpKNnFSJuu8mX4fv2nmuYeZ5VRhQuVqxMggvr0piqwA=;
-        b=yBgvYHlZK7BcsecRjQVL4tytSpec52M5qxXtTaU99IMgh8Y9zKgRCoZ1LdT4IpYDUo
-         xlLlUqnU+jSxVxprqUEXFcE3mPq3jBKBYX90m8BIVnJL9CrsZR9sxxhjxYrQGbkM4E7q
-         3+irDhnmChnQUi85TY9e/hoUTs8SOn0yNOGBuPNSADAKTv255b5y0IznZSphCXNc4oUB
-         B8SdMTzwFFTyVRt+yh614rhCVPOzl+akzy6h+FxknM4HbI961zHv+VOYIRs8xV35OlpZ
-         PmNqayNaED4J/cl9X4usPflGhrH03yFL6oVZP6wmD0wrWI2wvdpLCr7RIIHF4+zF4I4V
-         JnEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731494527; x=1732099327;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BpKNnFSJuu8mX4fv2nmuYeZ5VRhQuVqxMggvr0piqwA=;
-        b=RcLGLr9M049N4nHcoKTItIQQYVT/LhJVmbjumvVVKAVNREPlU/CB02ADPXEgLEr+BH
-         gkxEeWAUKnecLSyXwvxdp3gogdtETK1ZL2HguIuKevSvIqLacOLjhwbiM7YWzZJBwevp
-         JBJwBNTMaKtt4exv6GDeDfBbGMyzPYjcAY2MWPJ8ex97hPQxvUKjTmWSvgFG7hCx0MsU
-         H4jCHlCL2hZHuaB2Lwv5YeTtxWQYeJGLmO2OFrcugJU+j4T6GncCHIv5rda4Y2B923F+
-         4Mab6ZKvHPd/zY2o09g05swNpBupx3aFkdXu0mo1Iwe9cQVGn25BivhtdELSzE/NsbrZ
-         lvaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgBygJRD/jlb1AKaj8uP2v2WKvnsfeJpS3AnqC7XHs+veqSQtAFzhuc4lN9YjIDQi2M87yU9VNSnG3qg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9DiksUwiSbfU4mEehOBmUQN0PpXU3GgNvD2fb2VcXzazDnrkW
-	cr3FQF+4o8Wg3j+dzuoCOU4JkQqDAJ+S6I7yjTH14V3yIQU+qL2JZSECDDYJuyU=
-X-Google-Smtp-Source: AGHT+IGkvSzEORJMBip4kLqyw4g2XZQP9hZKEvJR8NJ1wbFa9hcYRPzrgSUKiBVjVht7VAmBjdnAUQ==
-X-Received: by 2002:a17:907:5ca:b0:a99:ee1c:f62f with SMTP id a640c23a62f3a-aa1f8075b6amr218093766b.34.1731494525232;
-        Wed, 13 Nov 2024 02:42:05 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.214])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a4a452sm845869366b.51.2024.11.13.02.42.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 02:42:04 -0800 (PST)
-Message-ID: <e81bcabd-11fc-45f7-abfd-05b569b1c18f@linaro.org>
-Date: Wed, 13 Nov 2024 10:42:03 +0000
+	s=arc-20240116; t=1731494599; c=relaxed/simple;
+	bh=h40xhQ46kbUAWQX1WtBL9x9b1UvY110yo1B+sqO7KaA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cUydEUAm/KXExzkxk5POEs5mcAIV/+FiUY8b6KjV2HgxyHHqDj0D5AtbzhiuBbFJgku3+1XYNSFaScxfkEYjUWv8GLpg4DlblmocqA4n1qpSdsoknLK4Dad+m8vtHdUswBELCwp05XnZBW1/fM20Sx9B5NC1+WKKuP5ITA2D+xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=n+iRLP5Q; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1B14CFF804;
+	Wed, 13 Nov 2024 10:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731494595;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Ixrjd5uZ9x2LFF0ZoaV1n0QKwuapda4UZQIU/cTO4co=;
+	b=n+iRLP5Q4VlQ32AYwug3P/LoBvB7lIWa4X3UE//5tEFCB72k0eue63oBEUPwsWMMRFoBXZ
+	dL0oSc7UjffMBdrarFA4jMdYfU1MPNMF/WLlAHFp5WIam0v8lvg7yP32x+pTjXvPB2vkMq
+	IWlN6SIub6d1LGUHdsbH95SSPLkLxE4e25/37dDQRydokW4KbKTxFdei0thC7rH91Tt+8C
+	qaqehhKbQZH9dOE2PvBtDXmTM5NYzC8nRz5m4ZKHXTI1ugh6wgjDwik54Tm5ztMmRR4MIo
+	1lS4L0cI/chqhclho1six/yAqvJbhmNwZKtdQO049Tg9Yv/Wz5EXpTFu5lYYgQ==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Date: Wed, 13 Nov 2024 11:43:05 +0100
+Subject: [PATCH] arm64: dts: ti: k3-j784s4: use ti,j7200-padconf compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/2] [PATCH v4 0/2] perf arm-spe: Add support for SPE
- Data Source packet on AmpereOne
-To: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
- Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Graham Woodward <graham.woodward@arm.com>
-References: <20241108202946.16835-1-ilkka@os.amperecomputing.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241108202946.16835-1-ilkka@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241113-j784s4-s2r-pinctrl-v1-1-19aeb62739bc@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIALiCNGcC/x3MQQqDQAxA0atI1gYm01DFq4gLmcaaUkZJRASZu
+ 3fo8i3+v8HFVByG5gaTU123XEFtA2md81tQX9UQQ2Si0OOn69kZPRrumtNhX3zyQ2hOMRAnqOF
+ usuj1n45TKT/vQCOYZAAAAA==
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, gregory.clement@bootlin.com, 
+ thomas.petazzoni@bootlin.com, richard.genoud@bootlin.com, u-kumar1@ti.com, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: thomas.richard@bootlin.com
 
+Like on j7200, pinctrl contexts shall be saved and restored during
+suspend-to-ram.
 
+So use ti,j7200-padconf compatible.
 
-On 08/11/2024 8:29 pm, Ilkka Koskinen wrote:
-> v1:
-> 	* https://lore.kernel.org/all/20241024233035.7979-1-ilkka@os.amperecomputing.com/
-> 
-> v2:
-> 	* Doesn't use read_cpuid_implementor() anymore as that was broken and
-> 	  unnecessary.
-> 	* Convert AmpereOne source field to matching common source fields to
-> 	  avoid duplicating the code.
-> 	* Rebased on top of perf-tools-next/perf-tools-next (ba993e5ada1d)
-> 	* https://lore.kernel.org/all/20241031213533.11148-1-ilkka@os.amperecomputing.com/
-> 
-> v3:
-> 	* Changed source mapping to simple switch statement
-> 	* Dropped is_xyz() stuff
-> 	* Added table to map midr to data source decoding function
-> 	* https://lore.kernel.org/all/20241106193740.6159-1-ilkka@os.amperecomputing.com/
-> 
-> v4:
-> 	* Split midr/decoding function table
-> 	* Made AmpereOne DS decoding function to ignore unknown sources
-> 	* https://lore.kernel.org/all/20241108010911.58412-1-ilkka@os.amperecomputing.com/
-> 
-> v5:
-> 	* Moved data_source_handles[] to fix the build issue
-> 
-> Ilkka Koskinen (2):
->    perf arm-spe: Prepare for adding data source packet implementations
->      for other cores
->    perf arm-spe: Add support for SPE Data Source packet on AmpereOne
-> 
->   .../util/arm-spe-decoder/arm-spe-decoder.h    |  9 ++
->   tools/perf/util/arm-spe.c                     | 86 ++++++++++++++++---
->   2 files changed, 83 insertions(+), 12 deletions(-)
-> 
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+Use ti,j7200-padconf compatible to save and restore pinctrl contexts during
+suspend-to-ram.
+---
+ arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi       |  6 +++---
+ arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi | 12 ++++++------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+index e73bb750b09a..b25d9a6aff2c 100644
+--- a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+@@ -230,7 +230,7 @@ main_gpio_intr: interrupt-controller@a00000 {
+ 	};
+ 
+ 	main_pmx0: pinctrl@11c000 {
+-		compatible = "pinctrl-single";
++		compatible = "ti,j7200-padconf", "pinctrl-single";
+ 		/* Proxy 0 addressing */
+ 		reg = <0x00 0x11c000 0x00 0x120>;
+ 		#pinctrl-cells = <1>;
+@@ -240,7 +240,7 @@ main_pmx0: pinctrl@11c000 {
+ 
+ 	/* TIMERIO pad input CTRLMMR_TIMER*_CTRL registers */
+ 	main_timerio_input: pinctrl@104200 {
+-		compatible = "pinctrl-single";
++		compatible = "ti,j7200-padconf", "pinctrl-single";
+ 		reg = <0x00 0x104200 0x00 0x50>;
+ 		#pinctrl-cells = <1>;
+ 		pinctrl-single,register-width = <32>;
+@@ -249,7 +249,7 @@ main_timerio_input: pinctrl@104200 {
+ 
+ 	/* TIMERIO pad output CTCTRLMMR_TIMERIO*_CTRL registers */
+ 	main_timerio_output: pinctrl@104280 {
+-		compatible = "pinctrl-single";
++		compatible = "ti,j7200-padconf", "pinctrl-single";
+ 		reg = <0x00 0x104280 0x00 0x20>;
+ 		#pinctrl-cells = <1>;
+ 		pinctrl-single,register-width = <32>;
+diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
+index 2c97d1c7ebcd..36341665177f 100644
+--- a/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
+@@ -76,7 +76,7 @@ mcu_ram: sram@41c00000 {
+ 	};
+ 
+ 	wkup_pmx0: pinctrl@4301c000 {
+-		compatible = "pinctrl-single";
++		compatible = "ti,j7200-padconf", "pinctrl-single";
+ 		/* Proxy 0 addressing */
+ 		reg = <0x00 0x4301c000 0x00 0x034>;
+ 		#pinctrl-cells = <1>;
+@@ -85,7 +85,7 @@ wkup_pmx0: pinctrl@4301c000 {
+ 	};
+ 
+ 	wkup_pmx1: pinctrl@4301c038 {
+-		compatible = "pinctrl-single";
++		compatible = "ti,j7200-padconf", "pinctrl-single";
+ 		/* Proxy 0 addressing */
+ 		reg = <0x00 0x4301c038 0x00 0x02c>;
+ 		#pinctrl-cells = <1>;
+@@ -94,7 +94,7 @@ wkup_pmx1: pinctrl@4301c038 {
+ 	};
+ 
+ 	wkup_pmx2: pinctrl@4301c068 {
+-		compatible = "pinctrl-single";
++		compatible = "ti,j7200-padconf", "pinctrl-single";
+ 		/* Proxy 0 addressing */
+ 		reg = <0x00 0x4301c068 0x00 0x120>;
+ 		#pinctrl-cells = <1>;
+@@ -103,7 +103,7 @@ wkup_pmx2: pinctrl@4301c068 {
+ 	};
+ 
+ 	wkup_pmx3: pinctrl@4301c190 {
+-		compatible = "pinctrl-single";
++		compatible = "ti,j7200-padconf", "pinctrl-single";
+ 		/* Proxy 0 addressing */
+ 		reg = <0x00 0x4301c190 0x00 0x004>;
+ 		#pinctrl-cells = <1>;
+@@ -125,7 +125,7 @@ wkup_gpio_intr: interrupt-controller@42200000 {
+ 
+ 	/* MCU_TIMERIO pad input CTRLMMR_MCU_TIMER*_CTRL registers */
+ 	mcu_timerio_input: pinctrl@40f04200 {
+-		compatible = "pinctrl-single";
++		compatible = "ti,j7200-padconf", "pinctrl-single";
+ 		reg = <0x00 0x40f04200 0x00 0x28>;
+ 		#pinctrl-cells = <1>;
+ 		pinctrl-single,register-width = <32>;
+@@ -136,7 +136,7 @@ mcu_timerio_input: pinctrl@40f04200 {
+ 
+ 	/* MCU_TIMERIO pad output CTRLMMR_MCU_TIMERIO*_CTRL registers */
+ 	mcu_timerio_output: pinctrl@40f04280 {
+-		compatible = "pinctrl-single";
++		compatible = "ti,j7200-padconf", "pinctrl-single";
+ 		reg = <0x00 0x40f04280 0x00 0x28>;
+ 		#pinctrl-cells = <1>;
+ 		pinctrl-single,register-width = <32>;
 
+---
+base-commit: eff6d7cad08c4ce4e3456fd7f8f1d94c81cd2b63
+change-id: 20241108-j784s4-s2r-pinctrl-643e1ac2014c
+
+Best regards,
+-- 
+Thomas Richard <thomas.richard@bootlin.com>
 
 
