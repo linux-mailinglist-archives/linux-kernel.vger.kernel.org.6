@@ -1,97 +1,106 @@
-Return-Path: <linux-kernel+bounces-407650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F309C70B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:32:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54939C709A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:28:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7481BB29B28
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:28:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A590283A70
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934DB1E7640;
-	Wed, 13 Nov 2024 13:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF38F1EBA0A;
+	Wed, 13 Nov 2024 13:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lV/FIheQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aznUntei"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7ED1E048F;
-	Wed, 13 Nov 2024 13:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A646C1E377C
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731504486; cv=none; b=Ofj7+JdXp7jrppIwKhYx78+U1Mpup7ZPkZu5MbhKZA2F+dB/Xy2A686U3UwzS40WalQhK7AwPidxWyUzI2c3uHxPGyQtB5d7N0GWhF8H+ioi3ccghVidobMZxk2WhzF6V2/CR5zXKICNiisjQmpMN5nJEE2ZzQDcseL9oS2eCsM=
+	t=1731504510; cv=none; b=SDsFUIBMEdD+3vUTbxYHe98rIrH1kkOp/TmSDF8G7MWnIXMW9/lGiHaTMY7qIJNIAwPKDXdZgz4ChrKCBeRTF/ID/8haq+aa2gfoKqC+eZUuXfA8HuhU6IQc/Am+KVy0oSifxKrfp0/8MLcLe1zdASv4dMcb6/i/seL8XrxoTHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731504486; c=relaxed/simple;
-	bh=elX+ZHmOcEeivade5jXD1KIVyZS9cWV5j7qwFXSgjzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RnqcnP0rB8c5XtcfGC4a4ZOUIvmU0GJB9UL359a8Z117ciK1JyCMZts9cwygJCPKdJ+Ek0bnaeuYk3FIWRRlhMgjE45a/e/g58Ip7MTR5vgp2H9nhKFoPc6WzGWGBQRtgctHidd5B8Z+dXkQqJc/lqc1DChjXsuNv7+jaLcO9aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lV/FIheQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29D2AC4CECD;
-	Wed, 13 Nov 2024 13:28:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731504485;
-	bh=elX+ZHmOcEeivade5jXD1KIVyZS9cWV5j7qwFXSgjzo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lV/FIheQxNj+lJvsSNfmcYJLiSCWj+ZUa9nD6eBbqpeqyIbexlDOfikRIHZkCPu2a
-	 90hMuKsU75gsUlA7QavMoXmFr8XwQRke12H1lqbxaDfOeTfHhz0qwtNDLvwqv8DSRq
-	 SIHm6Cqojp4u5Y4VbnI5neDQYsz90qM4he5OxrWcxLWqIp/7f6CUxnKaMo/O7cc5ZE
-	 qKwk3dlal67bPa9KVyBv2EPQIJ8SDc46gt2rFdKf94CU9rBoeinoxDIR3UMOXZMp0+
-	 HrvkcGeM+927Oebm5SObrCZ8BlphcmzhjtJSLRpNAuym2WTqtYJEgDmdvaNwzdaR3x
-	 jZlEaBH99Qx4Q==
-Date: Wed, 13 Nov 2024 13:28:01 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.11 000/184] 6.11.8-rc1 review
-Message-ID: <ZzSpYbIWGFAGlE5M@finisterre.sirena.org.uk>
-References: <20241112101900.865487674@linuxfoundation.org>
+	s=arc-20240116; t=1731504510; c=relaxed/simple;
+	bh=k1iJJsP4fxx81YgiXQugBdedKb3vFmcw2IIeFVVTfWc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G+dOTmHeNLIoOqnbGjJNpCb6p6bNLLqaDORBhJLVkUFzIutOE95/mV979SW8cfDimyR+5DeVF/9NbiS2Cr4f5JkRArXS1HnwE2vgvSRVOftFJTre+TyxZfPJgjK7qAF2LGnd+MEks8Ybf/wNse3dEt1dv2u40vxL6qB3uqFAfDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aznUntei; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ff3232ee75so36226741fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:28:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731504507; x=1732109307; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k1iJJsP4fxx81YgiXQugBdedKb3vFmcw2IIeFVVTfWc=;
+        b=aznUnteixRWDVvI6G7u+MzIzMmL7kvszPN1cd9mps46/4t5euFumMBh9pndD0vo6aB
+         1mJO6Rdq0GqOFNN4jXvnsiBnd8dvBotC/oQ6b/4Rv6cmQkhXeqMzmf9l4J24wM+QYASq
+         EMo44LvbVgTYIoF7I1FRXcamKXbrIKKE4kl8d0sFLNe+GF5ReXM9sGNBbXp03CU0aISn
+         tiuPPWol2Jz/aCMRrU+REwwPSSHp/lglFjnMQP4r0RHdVBlYjR5tLoK1F5dP/7tw2ftP
+         EVeQN69H/lBNMAsca91uABvBlrqDHdC8g1/tBeJfg0eYztYfgiDGPiwokol3w4QwWg6C
+         tnxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731504507; x=1732109307;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k1iJJsP4fxx81YgiXQugBdedKb3vFmcw2IIeFVVTfWc=;
+        b=JYy7sjtSZTaLM5YWL4jyK15f8x7MUu8GB15pWuufIOv+ceLFc2QBu5bkBzLFHfAag2
+         dFyPHgz5C049EXn0Ae/YVJ0w3ybpdXJ1x3wB5bzWEmHqfiE7K+qdT798yzA/eAxFEjne
+         zLX3aXdkJ7JewdxBKkmyxFBr5wy/32v8nPUzpXDxJbEmh4uX0NNZQMtRzYhSSyEcNtPP
+         R49XimvgVkVsIdvuCzF3dYWk84WXe5psA47VBzXpM/Fg1EYEJLu3A0qMElM9tm1gTWro
+         n4ZPENX56O0rs+boPX4UkZyL/Ko4PHBzWrNM0c884UR467yqGAHnfFsv27lg0uCPS4vY
+         6DwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUKguGihwLyDDKdpM0sF+10asQSEozr9kTojmIECMTKeKwMWqkbm+I5aJrapoYnYYcVRJns7+OsvXxbwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf8A4dh60czRKgJxOq6U2NCuqehdi/M9NOgJl6nWDPNg6b6U02
+	JSFU/2uVCgUGwRxik67tzBP8Twf6kueKtTjMUN7A3wkiOzq30cZ459Bcnp+DU+76hSA3Mwsez1s
+	5/wqMvlVSGnssB/UlQOc8sub7w9cXJNEYRvjDhw==
+X-Google-Smtp-Source: AGHT+IEkgrAvnkTJ5cspkFy9GX1VNIhsj0Q/QVeiK2QhR4qOF90RwckXKqpwSLqoIaSOg2O9mBFnXHSu7X0RYkS3Jm8=
+X-Received: by 2002:a2e:a542:0:b0:2fb:4994:b31a with SMTP id
+ 38308e7fff4ca-2ff20128504mr98330701fa.8.1731504506913; Wed, 13 Nov 2024
+ 05:28:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vVLSGE5mh4uJUqpU"
-Content-Disposition: inline
-In-Reply-To: <20241112101900.865487674@linuxfoundation.org>
-X-Cookie: Editing is a rewording activity.
+References: <20241111085354.26576-1-ot_cathy.xu@mediatek.com>
+In-Reply-To: <20241111085354.26576-1-ot_cathy.xu@mediatek.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 13 Nov 2024 14:28:15 +0100
+Message-ID: <CACRpkdaUYuNBANWyTcwbE2fS-STyGiV4hzOQ7rS=Q1cc2O5b6A@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mediatek: Add support for MT8196
+To: ot907280 <ot_cathy.xu@mediatek.com>
+Cc: matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	sean.wang@kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	Guodong Liu <guodong.liu@mediatek.corp-partner.google.com>, 
+	Guodong Liu <guodong.liu@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Nov 11, 2024 at 9:54=E2=80=AFAM ot907280 <ot_cathy.xu@mediatek.com>=
+ wrote:
 
---vVLSGE5mh4uJUqpU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> From: Guodong Liu <guodong.liu@mediatek.corp-partner.google.com>
+>
+> Add register address for each pin config.
+> Add the function for each pin.
+>
+> Signed-off-by: Guodong Liu <guodong.liu@mediatek.com>
+> Cathy Xu <ot_cathy.xu@mediatek.com>
 
-On Tue, Nov 12, 2024 at 11:19:18AM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.8 release.
-> There are 184 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+This looks fine, but there are no device tree bindings for mt8196?
+What do you expect me to do here, I can't merge a device tree
+based driver for a hardware without DT bindings.
 
-Tested-by: Mark Brown <broonie@kernel.org>
-
---vVLSGE5mh4uJUqpU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc0qWEACgkQJNaLcl1U
-h9APnQf+PRH6hVTgMs8VPCESgoAbAA8YCBsePTKfeKAsOA/0vK6OR0HLlyVRT+Hu
-r+HWtuI9IuF/EkbI8/g4ou571hU1fPDioFwBw9YEPdgtu/UORY+5lIZGcKufbWb7
-hpMTs3yybJ/WAvSlicLyxN4Vd9Z7lXj81rZ7XF4Me/B8mccdRQTDopniBP/y12vB
-aH8/bkwdRSKqkXnkxdNtyaAfNiGoMq9oJpE5SajA665O3pl619RN3/c37TGDboMA
-J7Mw5Bct2tDO1EYGVxT5RwoE/IMUy6gsbISAkFACePepZoYRiZlzFGcLsKPQfeRI
-fbMnBqIe/Db+NrgPOyhAvFyD8FujEw==
-=5vWv
------END PGP SIGNATURE-----
-
---vVLSGE5mh4uJUqpU--
+Yours,
+Linus Walleij
 
