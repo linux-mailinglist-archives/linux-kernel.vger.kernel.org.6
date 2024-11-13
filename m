@@ -1,163 +1,99 @@
-Return-Path: <linux-kernel+bounces-408117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB42A9C7AA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:06:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8610F9C7AB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:08:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F8EB28631B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:06:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B99EB34B94
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F628205127;
-	Wed, 13 Nov 2024 18:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B7C200CBE;
+	Wed, 13 Nov 2024 18:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+PSwtbZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NEdMKSrZ"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701A21FEFA0;
-	Wed, 13 Nov 2024 18:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A031531EA;
+	Wed, 13 Nov 2024 18:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731521047; cv=none; b=nMyvKvNyiWjrJwMlaLiTcQ1gL3CAo+3O8N8x8ZzRfaoxrcDsmfiIM5Us1+5uae1dJUACMA7hwFtTXz2XtLaQpvyhP1jjxa1xl30QXUWeKHEQbGmrHWDRC7dr/qUr1CDqmR7a6G00q+dwD8CL8ODoXVxP0BcPZxjWJ0KdUBWPpWA=
+	t=1731521165; cv=none; b=K2KqMMiI/Bj6nyf4K6Rjz8kCWAcpLdyYU3omPMi9yXmrOouwyItulRg2/W8GMmB9/C73KhnaeabBbVngLrOtfLQO+68tcDzh8B7s5ofl0v/SjqBk9ria46jX2iUS62IXBsABRihyzUQoakMlnFfl6i6uT9L3JFPn4H8vZNJLWII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731521047; c=relaxed/simple;
-	bh=nhpDZhwOTC7eq1C5andGhd85RsJd8uDMIHm6QrWJbRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cP1cHNpE+ZW2OTK+K/1euTkxaano+weMXpvne7A+VwPDES1KZul8t+fsWDaQk/Zz7a7XnQYPmlEBx/PHCbcQ/T4tQuiTH7V1EzdEc97YqYLQqRkHGThn5kp7OU+vISy6FZGH2NZwyebtAxvIoRpYpGzoYC2/aZbCtwDNMe1nlTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+PSwtbZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC10DC4CEC3;
-	Wed, 13 Nov 2024 18:04:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731521047;
-	bh=nhpDZhwOTC7eq1C5andGhd85RsJd8uDMIHm6QrWJbRs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z+PSwtbZVHbcyPrMdnmwJ8aIqQWdg4o0ysf4aXQgGrCOJS7yST7kceJCqvR9XqqsF
-	 +IwVbKONTuZZ7up1wumL3Uj3RrxwEblLjdllO9MvmZY3SU1mXOhgzROj9Ck3bPk4yg
-	 Bduj2rZSf+V6p2MQ1ri8ZTZ0p+JQxg5hiwFbK+2P+Ay8ckqqYoizvhzqLM+DcnFOyl
-	 iTKKERLYcR3zr0zQX+kT9U+e4Q78OPL6rphVL29JadjTEp2krzHouC8zq7HCSt5wtM
-	 s1s2Tgl9x7YMp7wZFkvzNx44qLyeBfeT+aWtaHusrxpJgUTwgifK0ixwK66LWJp5IQ
-	 OzmihPx61K0Nw==
-Date: Wed, 13 Nov 2024 12:04:05 -0600
-From: Rob Herring <robh@kernel.org>
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 4/5] pinctrl: meson: Add driver support for Amlogic A4
- SoCs
-Message-ID: <20241113180405.GA653353-robh@kernel.org>
-References: <20241113-a4_pinctrl-v6-0-35ba2401ee35@amlogic.com>
- <20241113-a4_pinctrl-v6-4-35ba2401ee35@amlogic.com>
+	s=arc-20240116; t=1731521165; c=relaxed/simple;
+	bh=JaqV1dr57LyYbXyZU6ILQL5E6HKv/dyFHKLDnZ3tWJQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qwe6flrQ4F7VJjQEoNF82KroWk9tylsikTgI6Q8q8QPUadeqy/JrAmL7ib1NgwUpsps37nZwQIFTA5uI1tqkbz6OKQQoKHqcGuxIQSQ1bqAlrl5l8jh4Ury0M9zASz8zHz5OowXuKDxMVriv4yxnMXg0Fq4rqDd/D9Bqlpt4xTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NEdMKSrZ; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2d83f15f3so261003a91.0;
+        Wed, 13 Nov 2024 10:06:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731521164; x=1732125964; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JaqV1dr57LyYbXyZU6ILQL5E6HKv/dyFHKLDnZ3tWJQ=;
+        b=NEdMKSrZBcSRdC2F6fJMgF5Gw/LdnuCdP1zItH15djwPMXFhPPtXbe+b1idIh9UBmM
+         qeuchQzhwxMlNS5ejK8FQYHoaXYwzQiM/2eWYzH/fH8FjTGzdyD/5eDUCx++yPAnkWwb
+         OmJIuw3VBCpIupup2TYM7MiLO04YRZu6lbYHFpedZA7lnBSnsh8PU6XJo4OU0JRusslx
+         YHddMXhDa7QHEgynSwbp9Ehw4nKRo0Ek4+3ykns4YXj5CaS+40tIqiDcdFMQefZwsykL
+         b8UiIxOJGK+yzwC9dow7VTNbRBmo+lSTKyc2LGPzoxsA8O7r+24I6hpiQJ0u7TJqOP7T
+         cfgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731521164; x=1732125964;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JaqV1dr57LyYbXyZU6ILQL5E6HKv/dyFHKLDnZ3tWJQ=;
+        b=cMAJeQrvjnaw0GDdwBoh4RjyXS5rYO80yBqVyzVtC+ACPo0GY5LV6gxyWDZc2LSRrP
+         eSG/PL0VQ2bPdAHxaeHPneIeFXiHUnUVYb+anjTuoAOLHh4bnn4VZkr3Vq9XTVSGHeEs
+         qYj8ZEGzA6OVLOzAsc8OlkfMB9vvpm3/e54Yl0fHrbkbNeUZGMui0TpyNyIz/5F5xehd
+         SwGs62wCgXmUXWnQEi6VvaNzPAhWlpUA50OB6Fr42UnVdT1bcqtUCn8knlB4r+l3PIjW
+         aXXesqlMKWB3xk+2fUEe3YZoxE++PYpf/j26PT6TLYf1iZRn7i5OAg4smrkFo+rDlGIW
+         sgpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxbzbiQ8guzVELCCDxc6k28G4sHnvNrWI0TFJGvP9i7k+EIl/T5uGTrEDaa+A+YyfJb4ANry2HbILtmjE=@vger.kernel.org, AJvYcCWyBX4iZ0ynXPDOFNFQj6Gx4wh6UyQhZEwU8ifFXuJoAO6pFhwVvROs39mqjm/CanD5uq4BHRNKtG3nDg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNeEwLx0X1YY1h3Xo2DKAmgILTnGlGSdDriAg4yPGzB0bhUMon
+	0+LNJw42od59VQCHKmGdC7cyclW7Vz7gfTYdLh13AlgeuMEn8TCpDATBiLFSzKonkX21N1OOQvN
+	W2dQPGucVNdj9SAcLrj3SPsjR1tw=
+X-Google-Smtp-Source: AGHT+IF2d0vxhvyyFYqiuZsgcfsFWHCBBrLnPWw9IgtkkbYk2Q7Z1Qe0qRNnceq1xzCbFbirWwKf/JpYFZtQNBE33zc=
+X-Received: by 2002:a17:90b:1a8a:b0:2e2:a60f:289e with SMTP id
+ 98e67ed59e1d1-2e9b14884dcmr11774955a91.0.1731521163613; Wed, 13 Nov 2024
+ 10:06:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113-a4_pinctrl-v6-4-35ba2401ee35@amlogic.com>
+References: <20241113171334.7ac7a6a6@canb.auug.org.au>
+In-Reply-To: <20241113171334.7ac7a6a6@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 13 Nov 2024 19:05:51 +0100
+Message-ID: <CANiq72n8+VF7MMmf8LJ2obsNjWFidhvw=+_2X2Nnio-VKs=ZQw@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the rust tree with the ftrace tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 13, 2024 at 03:29:42PM +0800, Xianwei Zhao wrote:
-> Add a new pinctrl driver for Amlogic A4 SoCs which share
-> the same register layout as the previous Amlogic S4.
-> 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->  drivers/pinctrl/meson/Kconfig              |    6 +
->  drivers/pinctrl/meson/Makefile             |    1 +
->  drivers/pinctrl/meson/pinctrl-amlogic-a4.c | 1324 ++++++++++++++++++++++++++++
->  3 files changed, 1331 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
-> index cc397896762c..3e90bb5ec442 100644
-> --- a/drivers/pinctrl/meson/Kconfig
-> +++ b/drivers/pinctrl/meson/Kconfig
-> @@ -67,6 +67,12 @@ config PINCTRL_MESON_S4
->  	select PINCTRL_MESON_AXG_PMX
->  	default y
->  
-> +config PINCTRL_AMLOGIC_A4
-> +	tristate "Amlogic A4 SoC pinctrl driver"
-> +	depends on ARM64
-> +	select PINCTRL_MESON_AXG_PMX
-> +	default y
-> +
->  config PINCTRL_AMLOGIC_C3
->  	tristate "Amlogic C3 SoC pinctrl driver"
->  	depends on ARM64
-> diff --git a/drivers/pinctrl/meson/Makefile b/drivers/pinctrl/meson/Makefile
-> index 9e538b9ffb9b..c92a65a83344 100644
-> --- a/drivers/pinctrl/meson/Makefile
-> +++ b/drivers/pinctrl/meson/Makefile
-> @@ -10,5 +10,6 @@ obj-$(CONFIG_PINCTRL_MESON_AXG) += pinctrl-meson-axg.o
->  obj-$(CONFIG_PINCTRL_MESON_G12A) += pinctrl-meson-g12a.o
->  obj-$(CONFIG_PINCTRL_MESON_A1) += pinctrl-meson-a1.o
->  obj-$(CONFIG_PINCTRL_MESON_S4) += pinctrl-meson-s4.o
-> +obj-$(CONFIG_PINCTRL_AMLOGIC_A4) += pinctrl-amlogic-a4.o
->  obj-$(CONFIG_PINCTRL_AMLOGIC_C3) += pinctrl-amlogic-c3.o
->  obj-$(CONFIG_PINCTRL_AMLOGIC_T7) += pinctrl-amlogic-t7.o
-> diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
-> new file mode 100644
-> index 000000000000..edc5f2ba2c8a
-> --- /dev/null
-> +++ b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
-> @@ -0,0 +1,1324 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-> +/*
-> + * Pin controller and GPIO driver for Amlogic A4 SoC.
-> + *
-> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
-> + * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> + *         Huqiang Qin <huqiang.qin@amlogic.com>
-> + */
-> +
-> +#include "pinctrl-meson.h"
-> +#include "pinctrl-meson-axg-pmx.h"
-> +#include <dt-bindings/gpio/amlogic-gpio.h>
-> +
-> +/* Standard port */
-> +
-> +#define GPIOE_0				0
-> +#define GPIOE_1				1
-> +
-> +#define GPIOD_0				2
-> +#define GPIOD_1				3
-> +#define GPIOD_2				4
-> +#define GPIOD_3				5
-> +#define GPIOD_4				6
-> +#define GPIOD_5				7
-> +#define GPIOD_6				8
-> +#define GPIOD_7				9
-> +#define GPIOD_8				10
-> +#define GPIOD_9				11
-> +#define GPIOD_10			12
-> +#define GPIOD_11			13
-> +#define GPIOD_12			14
-> +#define GPIOD_13			15
-> +#define GPIOD_14			16
-> +#define GPIOD_15			17
+On Wed, Nov 13, 2024 at 7:13=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> ++rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint=
+_reasons
 
-The conversion from bank+index to a single index space seems less than 
-ideal, and looks like a work-around to fit into the existing driver from 
-a brief look at it.
+Looks good to me (ideally they would be sorted, but it does not
+matter) -- thanks!
 
-If there's not really banks of GPIOs here, then DT shouldn't have them 
-either. The question is does anything need to know the bank number 
-and/or index? If it's only for human readability (and matching to 
-datasheet), then just something like this can be done:
-
-#define GPIOD(n) (2 + (n))
-
-Rob
+Cheers,
+Miguel
 
