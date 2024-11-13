@@ -1,156 +1,177 @@
-Return-Path: <linux-kernel+bounces-407938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B8E9C779F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:48:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6051D9C77B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:49:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09138281BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 204DB282169
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D61884D13;
-	Wed, 13 Nov 2024 15:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1492715ADA4;
+	Wed, 13 Nov 2024 15:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tF0iuYO0"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lK7cZPYj"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F318070833
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6E2143744
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731512876; cv=none; b=YW/Qx2HQKWAlmRA7IOJI8D9GIyMMW6qpQDfIKTN2EJvY6CiGp4YL54CSq1Ag6qVfAQSFOrw8xXsIxl1cvjPpdAW4VcDopBafW24Plw7TYT0HqQQtf2Dpfcl7qws9ZjRFhB/vlE6qeLuIG3QuYpwHqsY8HAcVsR83ZnV3cQjFknM=
+	t=1731512920; cv=none; b=jB4aFVChkb9U2nr+6XAuEhhj+YFuvrWQxvE/9NrpxhwEt2q86L2yXa6fKEguB+B8eFyemVLKwZP9zAMru+uuO7qdwMlImEeVAb4E0F8S5NEeofr76bU2VHvfKSEV2KuTpl7X3ETvNdE4kngMT8MOTxDVwAocfQSjV7u9AqD0rOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731512876; c=relaxed/simple;
-	bh=aZanYtoH2JtS2g8af3PpzbKTAzHp5hOKXOITzZ2ZP+0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=bwi/3ulBC3SXQkQpTn/loT7FWTU+E8h1RL0e8jRfXDdOZlDT6OmtUqXwBQ9hyZX4BjcBKbwSu3XW5tcBtNBxTnfs8RrncHDic6f6ZwtszqwAIIUaRS6Uy23IfJMQP4uy71aeDsZfqxSQADZp9pSkv64wTbykh5C+2J04KJp587s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tF0iuYO0; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-460a8d1a9b7so261771cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:47:53 -0800 (PST)
+	s=arc-20240116; t=1731512920; c=relaxed/simple;
+	bh=q5ar/iDTvRrWUmUGLZmHHecZgDsI6qhIEaT2LGKwJWY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HBR3arJv3493uqGWbVs3bq3lGIm42LBDKee4BVl89dWvCl0s2l3LNs0ngI+xGuzzdDI5kGOQkyfC+E3LA/wsW2UBEquXtiBhh4axBPY6pg9uEKRLqrnWW36YnmFJM3YN2zby5RkWsGFLLKdM9Klxyz40Ko+yAf3omo8S0F4ShWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lK7cZPYj; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso57100025e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:48:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731512873; x=1732117673; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PIGBOTsMnscnNMh+xLfadwOTEgGK5dsWKgIHabjBrcw=;
-        b=tF0iuYO0lP3DVodr6nfs7boeB7Fn0FrHwjHKz8TM/t2yavPjCeGA18+cHyPgvrRjA3
-         9PFQCWm5kFMqLuGm44tSKgxnBslZWhxebkDr9VvCMecV8adX2gzRF8+nYKKuUV28n0nz
-         Nj0cS7TAzSqGW626xfnPLaX1rZpP5dhCMlYNx03wPaLRzU5L15LsrXjoOYOcm8BZoUJc
-         1qZMx56Mra8PXXk8b7oHmQloRceJ8oZGu+7K9cRV20dM6QyqhV2xJghtFmAaemD1A4xl
-         1CZZCDRLM6ltbuy8Y5kZtpxqtE6U+jXMdn7eUzDrEUuDMLUl4f2Nha94lhcIdPzzjqJO
-         Nf2Q==
+        d=linaro.org; s=google; t=1731512917; x=1732117717; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IUw1QAWMH+tzja5s7eVHANVh4+/fXkKybRoiIH2f4Kk=;
+        b=lK7cZPYjHKDvBcnY6yAbhSoQP1zYAyVR2eRczenLzotiDOY5+6A/LlTWZP/BSoq+iF
+         9sdqeOP1t6ikJrodtMHzAgjst2S3q1fmN/LmV5n4PrwmLMQggtV7UfI+YhxZZ26ZuUk5
+         LlkyH3V2e+2uWPUUmpA1a/O2YTKANe9IKsrCqy7eM+hfutmAWjtghBBaVxhFFV/eGrEz
+         jpEYu5whFiI81E4hWEBlgeL5dKcaud9LZj5m9qcKi5YNEr+jss2itmgqge97lu6uREow
+         PyJb8V80QeC0U1BsIJ6ZW077EGL4fmwwFcvv7aCr+s2Vhc+GW3i7JMt8arq/D1ZVghkv
+         TPPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731512873; x=1732117673;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PIGBOTsMnscnNMh+xLfadwOTEgGK5dsWKgIHabjBrcw=;
-        b=DDhuv0HtAu++ngc31YEM98pSHstyjSQdpkCe2ea6CeDpcwRC8DCviIwTe68Yt2fVL/
-         hZbwd/3oZOf52f4LaIw/wjSR1v0sftphT0sNfMJL5vT3rjdepMu9vJxCiEDeZhTRZUqx
-         aySv4e0aQMWG4tHGELNQa6YE1GVj8X2y+JImnsafr3T7Qy/4yF9PYOlnEkY3TrbCj0z/
-         gWV2KDk3z/uMfMLpudgbLIF5Z6X51zzRf0spVBFUh50aqzpK5S0j+Q8G7wo9YbWaekN9
-         rSapEyxpfrsjMAD552XROpKntpSmSEK5hLbGr418hliVLWduRteS/mqsYq4wr6HyMrXH
-         fBsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMNcmhoDbt8UeDA8GavXkURNaLUjP1neSGpOfITYvCaJ7uQTKEqWx3iTXx7q5iapFXPoFLjtoKIQXk/98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziimKBGm1R5TqB5RCcUVlJbC68kME8U7iPBHgwoXCofwaJ/v2A
-	iVhWitRVMMzOZenD2rvSfZ1wI10HuqBHw+3jToVtTraeNPjA0uiS5jffQVMMtoeOiE7iKzh2zPE
-	aDNUwj18d8aBs/A05vB1DuZ6AXf+thm3CAAvX
-X-Gm-Gg: ASbGnct0UMBvp5l9VLdGQ/UJi6q6GZ+fNBe4vp5dvZVcLYR9FqcbVUzLDPWPhcpLroU
-	UwaDjg9uLyoRnN16nrnaPWIxhh22QD1k=
-X-Google-Smtp-Source: AGHT+IHsSjvVs37dTOPQ3ErUpR9I/gQJNeIrUh7ZMqQExz8MALQ2x9yDJvhWkgfyU4Kq0PkEtMwp2O/D/tQ8ohR1+N8=
-X-Received: by 2002:ac8:5915:0:b0:462:ffaa:938d with SMTP id
- d75a77b69052e-4634bbeba0emr3417911cf.10.1731512872451; Wed, 13 Nov 2024
- 07:47:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731512917; x=1732117717;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IUw1QAWMH+tzja5s7eVHANVh4+/fXkKybRoiIH2f4Kk=;
+        b=i48DCXABLbcq+zaAmQpyK3vAw4I2qu/ocGmA/xaZZRWSxyx8TSW1URPFoOuR7OeorZ
+         vyPH2loLHZnHL1iV2mQ22AbwTNPINdTUohhVgC7ZWs4dMXrphsztFJpD+KpDlqoQYuSQ
+         sRvITCU84K9PbpPc8xpIxPY75NDcK16amQoajBPxlhHIiOycnCmMexcgVRGnFEMqj3uC
+         pet3l9teORUKDb4HjJVq0yz0aVd6tDiQCqLhulzduziGqrwCeoM6qg7EauUZ0xj7q9WX
+         mcHvc8GE4ifP66j3vqI6n+EKv73b6KmlWnPrv0+aHYC3eIq6v709F0kUGruBEqXu5ZkC
+         Xtig==
+X-Forwarded-Encrypted: i=1; AJvYcCVeAumjo7QzeOmb7aRGJQOa/Qur0KmAVQ5ThTUpyRMrtZ0lihI4yXCiKlkE2UAeybiOCDP4fYw2ZNtGoK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8tXepmh24Y8nbmJZWDjjIQpin7lkGXD548NKZb9bzdBWSmnmi
+	91OlUFwk9YIToFVB8oH0KAWlWNOEE8TQzPe/5tpF1AMI2E2V9+1dvtP3eay8lW0=
+X-Google-Smtp-Source: AGHT+IH0+AWN4BjMUB0SBHWOf+erLPiGOfP4Vhtzv6UNHG9sRcGrOAMATKFvSgWIXqDkAA6diXrhkg==
+X-Received: by 2002:a05:600c:3b09:b0:431:3bf9:3ebb with SMTP id 5b1f17b1804b1-432b7518365mr174183885e9.24.1731512916955;
+        Wed, 13 Nov 2024 07:48:36 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d54f772asm28445345e9.18.2024.11.13.07.48.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 07:48:36 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH RFC 0/8] drm/msm: adreno: add support for DDR bandwidth
+ scaling via GMU
+Date: Wed, 13 Nov 2024 16:48:26 +0100
+Message-Id: <20241113-topic-sm8x50-gpu-bw-vote-v1-0-3b8d39737a9b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112194635.444146-1-surenb@google.com> <20241112194635.444146-5-surenb@google.com>
- <54b8d0b9-a1c7-4c1b-a588-2e5308a977fb@suse.cz> <sdfh56itaffzhpk4rft2tsjm7r44auhjomfthzgxzrmj5632eq@noi2uhgp3a3h>
- <ZzSwM5qwStadOZvv@casper.infradead.org> <k26pa6fhn2j6bgfwtcdp6u5vk25mkclitzvqqeqvji77k4lqop@yowwrqusmdyp>
- <CAJuCfpHjuMWCzeONq2YOOkr1JGH=E=xn=BAcjQyo_=P1cz=crA@mail.gmail.com> <aa4i3inhnkyi6yazttb55khbm7swt7xq2sklmhp5y63kxw7bsc@i4wlyyzoo7h3>
-In-Reply-To: <aa4i3inhnkyi6yazttb55khbm7swt7xq2sklmhp5y63kxw7bsc@i4wlyyzoo7h3>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 13 Nov 2024 07:47:41 -0800
-Message-ID: <CAJuCfpF_fEVwyDAStueNoEW=MNS5MoLPc1RaQMaOHZxODmw_0A@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] mm: make vma cache SLAB_TYPESAFE_BY_RCU
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org, 
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, hannes@cmpxchg.org, 
-	mjguzik@gmail.com, oliver.sang@intel.com, mgorman@techsingularity.net, 
-	david@redhat.com, peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, 
-	paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, 
-	hughd@google.com, minchan@google.com, jannh@google.com, 
-	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAErKNGcC/x3MOQqAMBBA0avI1A4kUVFsBQ9gKxYuE51CExI3E
+ O9usHzF/w94ckweyugBRyd7NluAjCMYl36bCXkKBiVUKqVMcDeWR/RrcWcCZ3vgcOFpdkKdkVB
+ KU96nOYTcOtJ8/+sWmrqC7n0/p3iwQG8AAAA=
+X-Change-ID: 20241113-topic-sm8x50-gpu-bw-vote-f5e022fe7a47
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+ Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Connor Abbott <cwabbott0@gmail.com>, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2538;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=q5ar/iDTvRrWUmUGLZmHHecZgDsI6qhIEaT2LGKwJWY=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnNMpQHfZA+OfH5dhI3Gcmtq6DXWsnzInwZjcWDscU
+ ZhNgKiOJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZzTKUAAKCRB33NvayMhJ0SoqD/
+ 0Wl7nGwBx5diixbfRAKseyZLMQI98FN2EGblsvC/puVSEMBW18WDGREytVJd3yTHuJtPmFzmHyiLJf
+ dLI0WQF51+NXC0ajolKmjb3KxPVgQtUHbj8G8wwdy87tzH6ZB2z2pPzQslSrfxu8mOPvZCYrp3rlRG
+ JinePEUnhGB2j/k4cdSD3MS/ORJooFkaI3XgkpstUMFpkNcIt8WoJTjD+6r7JJocf8SWLVO2v2bExL
+ pjAwc+ZQmPElvskwFp4bAD1vMzNGY32d1g4Pq0T+bWcF5rgLQ2MpiId3mgX/3/omDj6K9pNPgfqoxa
+ ErNrYM0fHk7mxqLgKwCIZBHT8BJ+vETGWg6WR4JTuSyNtjQ9mC8KD8J4ND7xZHYV67ThTQQwZdUoPE
+ jWsnFcw8soPKl9ODMl++OVEav9gJRd7PI5uw6K46CkhgtqHKI3Q0OrDQGVzAI8IgBvvG1dbWPEVhpk
+ CCO5Hwo+8J7QGYqQDQ3I5hkeCOFxkwrKdrnGEKWS1xzH+V4tpoK6PdW8O6pgdXrjSzLQjVWZT+sTFP
+ yW5atSi3PTIf1x//rC7Tfg9W6Jxm16yQ/RypoGo7uHDYdoRfMuBqOXJ1+tmF9+qCE7OpG+r5p683AA
+ w52u68BWH5eDkEAYU+dDzq+srKhru5N6Pb3VmK2qWL9eo8G0NjbEKKZ6TQMA==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-On Wed, Nov 13, 2024 at 7:29=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> * Suren Baghdasaryan <surenb@google.com> [241113 10:25]:
-> > On Wed, Nov 13, 2024 at 7:23=E2=80=AFAM 'Liam R. Howlett' via kernel-te=
-am
-> > <kernel-team@android.com> wrote:
-> > >
-> > > * Matthew Wilcox <willy@infradead.org> [241113 08:57]:
-> > > > On Wed, Nov 13, 2024 at 07:38:02AM -0500, Liam R. Howlett wrote:
-> > > > > > Hi, I was wondering if we actually need the detached flag. Coul=
-dn't
-> > > > > > "detached" simply mean vma->vm_mm =3D=3D NULL and we save 4 byt=
-es? Do we ever
-> > > > > > need a vma that's detached but still has a mm pointer? I'd hope=
- the places
-> > > > > > that set detached to false have the mm pointer around so it's n=
-ot inconvenient.
-> > > > >
-> > > > > I think the gate vmas ruin this plan.
-> > > >
-> > > > But the gate VMAs aren't to be found in the VMA tree.  Used to be t=
-hat
-> > > > was because the VMA tree was the injective RB tree and so VMAs coul=
-d
-> > > > only be in one tree at a time.  We could change that now!
-> > >
-> > > \o/
-> > >
-> > > >
-> > > > Anyway, we could use (void *)1 instead of NULL to indicate a "detac=
-hed"
-> > > > VMA if we need to distinguish between a detached VMA and a gate VMA=
-.
-> > >
-> > > I was thinking a pointer to itself vma->vm_mm =3D vma, then a check f=
-or
-> > > this, instead of null like we do today.
-> >
-> > The motivation for having a separate detached flag was that vma->vm_mm
-> > is used when read/write locking the vma, so it has to stay valid even
-> > when vma gets detached. Maybe we can be more cautious in
-> > vma_start_read()/vma_start_write() about it but I don't recall if
-> > those were the only places that was an issue.
->
-> We have the mm form the callers though, so it could be passed in?
+The Adreno GMU Management Unit (GMU) can also vote for DDR Bandwidth
+along the Frequency and Power Domain level, but by default we leave the
+OPP core scale the interconnect ddr path.
 
-Let me try and see if something else blows up. When I was implementing
-per-vma locks I thought about using vma->vm_mm to indicate detached
-state but there were some issues that caused me reconsider.
+While scaling the interconnect path was sufficient, newer GPUs
+like the A750 requires specific vote parameters and bandwidth to
+achieve full functionnality.
 
->
-> >
-> > >
-> > > Either way, we should make it a function so it's easier to reuse for
-> > > whatever we need in the future, wdyt?
-> > >
-> > > To unsubscribe from this group and stop receiving emails from it, sen=
-d an email to kernel-team+unsubscribe@android.com.
-> > >
+In order to get the vote values to be used by the GPU Management
+Unit (GMU), we need to parse all the possible OPP Bandwidths and
+create a vote value to be send to the appropriate Bus Control
+Modules (BCMs) declared in the GPU info struct.
+The added dev_pm_opp_get_bandwidth() is used in this case.
+
+The vote array will then be used to dynamically generate the GMU
+bw_table sent during the GMU power-up.
+
+Those entries will then be used by passing the appropriate
+bandwidth level when voting for a GPU frequency.
+
+This will make sure all resources are equally voted for a
+same OPP, whatever decision is done by the GMU, it will
+ensure all resources votes are synchronized.
+
+Tested on SM8650 and SM8550 platforms.
+
+Any feedback is welcome.
+
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Neil Armstrong (8):
+      opp: core: implement dev_pm_opp_get_bandwidth
+      drm/msm: adreno: add GMU_BW_VOTE quirk
+      drm/msm: adreno: add plumbing to generate bandwidth vote table for GMU
+      drm/msm: adreno: dynamically generate GMU bw table
+      drm/msm: adreno: find bandwidth index of OPP and set it along freq index
+      drm/msm: adreno: enable GMU bandwidth for A740 and A750
+      arm64: qcom: dts: sm8550: add interconnect and opp-peak-kBps for GPU
+      arm64: qcom: dts: sm8650: add interconnect and opp-peak-kBps for GPU
+
+ arch/arm64/boot/dts/qcom/sm8550.dtsi      |  11 ++
+ arch/arm64/boot/dts/qcom/sm8650.dtsi      |  14 +++
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c |  26 ++++-
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c     | 180 +++++++++++++++++++++++++++++-
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.h     |  14 ++-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |   1 +
+ drivers/gpu/drm/msm/adreno/a6xx_hfi.c     |  54 ++++++---
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h   |   1 +
+ drivers/opp/core.c                        |  25 +++++
+ include/linux/pm_opp.h                    |   7 ++
+ 10 files changed, 314 insertions(+), 19 deletions(-)
+---
+base-commit: 86313a9cd152330c634b25d826a281c6a002eb77
+change-id: 20241113-topic-sm8x50-gpu-bw-vote-f5e022fe7a47
+
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
+
 
