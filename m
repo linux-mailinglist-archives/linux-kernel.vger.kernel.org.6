@@ -1,376 +1,165 @@
-Return-Path: <linux-kernel+bounces-407187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43AF9C69EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:26:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881039C69CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:23:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 734D02862A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A901F254C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8640D18BC35;
-	Wed, 13 Nov 2024 07:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A648F188013;
+	Wed, 13 Nov 2024 07:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZKfuNwJ+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="obMkOGJz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MC8s0ZhX";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="obMkOGJz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MC8s0ZhX"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B3E189916;
-	Wed, 13 Nov 2024 07:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64852173347;
+	Wed, 13 Nov 2024 07:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731482686; cv=none; b=Z2Yg8hPkw7PlqukErwDoeWx7jXthGfzwgVNXFaAoPrh9adAtoapYSG4vgGjERpCbFGofgXuyPKUDFdUWyFz729NutSixLE9LExD5pkhb6/emtmvFS7FsRyVGKIJhecBHuc938Kcz6iqr/sZN7C3OarJlMjuGD3Q+nJnPmjrDhjc=
+	t=1731482607; cv=none; b=qhNwJ2FtgOpw4GIwjPeQsBX0ISoVrrUjshuUwFXiQXcVSBVsBehcguAfVQWbZ0Ur8Zm2+iqjxPxsYl8ThewctWL6CanJ4PcjO0+/9aDiNdIWrNKssttqOwh17jw2QG/oNQzpwC19J5tp6vWHLOBPUs1uKuC3do3k3XeS3xpX1cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731482686; c=relaxed/simple;
-	bh=2K/0iVdAzteMa18znwWL0iuSTFy9Pm5ZvASmA4F7+08=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L13jrWe0xYEVswANUwO6hM79Hndbp6mS/cgzvUev0HXr0uV2toMek+X3xbJkhd0x6ChGh+frBJy3GXUzz6hJV29nLop+hkawRdvk1IJFEMd+3J7udpsSZVJdb1maBTUUHN90Mo4UdXQcvouUJ8/u4kOBDo1ufsmperVVimD+cwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZKfuNwJ+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACNSu4V026721;
-	Wed, 13 Nov 2024 07:24:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	a5UHNVoWXaPCMcdfJjFCxoF2nnSHgsxacYHtIHFeee4=; b=ZKfuNwJ+b7WdvQSE
-	7XVSz6hCjMMpMxbn+VbpUKlptO7Vw2yYH0iwVz1fFNb0bosknwW3+Y/rglXFuzR9
-	RvvKLZx3r7+lSL1dGh3DYE6SzsHB84v+FdKtiGfg7iHOXlWQ93PwY/NTCOclWeD4
-	7DQyiwr53Y1VVbMtgZe0mX3WhyNsBjMHf2bVg3gUiJA3PKMlhK5vzBGzUHILyZdJ
-	5hz2G+iGiDrQbiUMoFrejTwsvvCJXKkO2OnzLG8I5KDkE3JlQh46U4jD/l6Qsppe
-	vAiw3B63p0LTdBAFjINhoWZvO/6nV50wa0j0+PKjbmjTVWYDuyiyQSbEnrYFkxCC
-	2yvCrQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vgqqs01b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 07:24:37 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AD7Oa7n017193
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 07:24:36 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 12 Nov 2024 23:24:30 -0800
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <mantas@8devices.com>, <quic_rohiagar@quicinc.com>,
-        <quic_kriskura@quicinc.com>, <manivannan.sadhasivam@linaro.org>,
-        <abel.vesa@linaro.org>, <quic_kbajaj@quicinc.com>,
-        <quic_varada@quicinc.com>, <quic_wcheng@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-Subject: [PATCH v2 6/6] arm64: dts: qcom: Add USB controller and phy nodes for IPQ5424
-Date: Wed, 13 Nov 2024 12:53:16 +0530
-Message-ID: <20241113072316.2829050-7-quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241113072316.2829050-1-quic_varada@quicinc.com>
-References: <20241113072316.2829050-1-quic_varada@quicinc.com>
+	s=arc-20240116; t=1731482607; c=relaxed/simple;
+	bh=XsHh/+otLT6HYF6875AIRZpU053cbVkpKVqjpeA1SKA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EBKpDtvxVuYBrk97rhn8K1Yr2j/3b1PRqMpiMxLxFt4msdPtg5W5KatVsPkWetm9IpmizXhXIBZXGzarU8Xh4M0sxadVxBsD+BnTtSt7DoLJj3Hj5qzdud3tMcP91Msv8hTStQcdkmrhU/lfWI4KZzBYJzIJNHY6nnLVnkDuCbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=obMkOGJz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MC8s0ZhX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=obMkOGJz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MC8s0ZhX; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5357F1F365;
+	Wed, 13 Nov 2024 07:23:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731482603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l9YhU7Pxoqk+/Pk7EE+7jItH3Q6nJ6Scb14DoHYDzaY=;
+	b=obMkOGJzZBJUeod2Au1Vuysl8OJ52TRnCzUngajC6n0lAw38W8KMH9AeypK01UPDiGqclG
+	OJGvN9BMEjIg1f3gCe6VGHyLtTbZUiBeaUnLpHSRHTsYbkrEztwjNx9tPw913MC7tkb72J
+	AJqveFmfaTJ9cSjsawRRm2b1oFBuHSA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731482603;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l9YhU7Pxoqk+/Pk7EE+7jItH3Q6nJ6Scb14DoHYDzaY=;
+	b=MC8s0ZhXFB/uImHsx/ugtgkhUcK3nISJ/ybkHgFaKcSIxPS+7AlagWufVaj37L2sQY6LMm
+	LK/H5nij6rP/8EDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=obMkOGJz;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MC8s0ZhX
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731482603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l9YhU7Pxoqk+/Pk7EE+7jItH3Q6nJ6Scb14DoHYDzaY=;
+	b=obMkOGJzZBJUeod2Au1Vuysl8OJ52TRnCzUngajC6n0lAw38W8KMH9AeypK01UPDiGqclG
+	OJGvN9BMEjIg1f3gCe6VGHyLtTbZUiBeaUnLpHSRHTsYbkrEztwjNx9tPw913MC7tkb72J
+	AJqveFmfaTJ9cSjsawRRm2b1oFBuHSA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731482603;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l9YhU7Pxoqk+/Pk7EE+7jItH3Q6nJ6Scb14DoHYDzaY=;
+	b=MC8s0ZhXFB/uImHsx/ugtgkhUcK3nISJ/ybkHgFaKcSIxPS+7AlagWufVaj37L2sQY6LMm
+	LK/H5nij6rP/8EDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 242B513301;
+	Wed, 13 Nov 2024 07:23:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rQJvB+tTNGe1FwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 13 Nov 2024 07:23:23 +0000
+Date: Wed, 13 Nov 2024 08:23:22 +0100
+Message-ID: <87r07fsil1.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warnings after merge of the sound tree
+In-Reply-To: <20241113173111.16c0aecc@canb.auug.org.au>
+References: <20241028193731.4b0c3788@canb.auug.org.au>
+	<20241113173111.16c0aecc@canb.auug.org.au>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: MwrDIQhS9g4SIvdEx2SZoA0pJGxhYwBZ
-X-Proofpoint-GUID: MwrDIQhS9g4SIvdEx2SZoA0pJGxhYwBZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- impostorscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 mlxlogscore=999
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411130064
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 5357F1F365
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[auug.org.au:email,suse.de:mid,suse.de:dkim];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-The IPQ5424 SoC has both USB2.0 and USB3.0 controllers. The USB3.0
-can connect to either of USB2.0 or USB3.0 phy and operate in the
-respective mode.
+On Wed, 13 Nov 2024 07:31:11 +0100,
+Stephen Rothwell wrote:
+> 
+> Hi all,
+> 
+> On Mon, 28 Oct 2024 19:37:31 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > 
+> > After merging the sound tree, today's linux-next build (htmldocs)
+> > produced these warnings:
+> > 
+> > include/sound/compress_driver.h:176: warning: Function parameter or struct member 'task_create' not described in 'snd_compr_ops'
+> > include/sound/compress_driver.h:176: warning: Function parameter or struct member 'task_start' not described in 'snd_compr_ops'
+> > include/sound/compress_driver.h:176: warning: Function parameter or struct member 'task_stop' not described in 'snd_compr_ops'
+> > include/sound/compress_driver.h:176: warning: Function parameter or struct member 'task_free' not described in 'snd_compr_ops'
+> > include/uapi/sound/compress_offload.h:151: warning: Function parameter or struct member 'reserved' not described in 'snd_compr_task'
+> > include/uapi/sound/compress_offload.h:180: warning: Function parameter or struct member 'reserved' not described in 'snd_compr_task_status'
+> > 
+> > Introduced by commit
+> > 
+> >   04177158cf98 ("ALSA: compress_offload: introduce accel operation mode")
+> 
+> I am still seeing these warnings.
 
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
-v2: Add dm/dp_hs_phy_irq to usb3@8a00000 node
-    Add u1/u2-entry quirks to usb@8a00000 node
----
- arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts |  67 +++++++++
- arch/arm64/boot/dts/qcom/ipq5424.dtsi       | 159 ++++++++++++++++++++
- 2 files changed, 226 insertions(+)
+Thanks for reminder.  I submitted the fix patch now.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-index d4d31026a026..3d50a419139d 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-@@ -16,12 +16,71 @@ / {
- 	aliases {
- 		serial0 = &uart1;
- 	};
-+
-+	regulator_fixed_3p3: s3300 {
-+		compatible = "regulator-fixed";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-name = "fixed_3p3";
-+	};
-+
-+	regulator_fixed_1p8: s1800 {
-+		compatible = "regulator-fixed";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-name = "fixed_1p8";
-+	};
-+
-+	regulator_fixed_0p925: s0925 {
-+		compatible = "regulator-fixed";
-+		regulator-min-microvolt = <925000>;
-+		regulator-max-microvolt = <925000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-name = "fixed_0p925";
-+	};
-+
-+};
-+
-+&dwc_0 {
-+	dr_mode = "host";
-+};
-+
-+&dwc_1 {
-+	dr_mode = "host";
-+};
-+
-+&qusb_phy_0 {
-+	vdd-supply = <&regulator_fixed_0p925>;
-+	vdda-pll-supply = <&regulator_fixed_1p8>;
-+	vdda-phy-dpdm-supply = <&regulator_fixed_3p3>;
-+
-+	status = "okay";
-+};
-+
-+&qusb_phy_1 {
-+	vdd-supply = <&regulator_fixed_0p925>;
-+	vdda-pll-supply = <&regulator_fixed_1p8>;
-+	vdda-phy-dpdm-supply = <&regulator_fixed_3p3>;
-+
-+	status = "okay";
- };
- 
- &sleep_clk {
- 	clock-frequency = <32000>;
- };
- 
-+&ssphy_0 {
-+	vdda-pll-supply = <&regulator_fixed_1p8>;
-+	vdda-phy-supply = <&regulator_fixed_0p925>;
-+
-+	status = "okay";
-+};
-+
- &tlmm {
- 	sdc_default_state: sdc-default-state {
- 		clk-pins {
-@@ -53,6 +112,14 @@ &uart1 {
- 	status = "okay";
- };
- 
-+&usb2 {
-+	status = "okay";
-+};
-+
-+&usb3 {
-+	status = "okay";
-+};
-+
- &xo_board {
- 	clock-frequency = <24000000>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index 5e219f900412..f8afd6f0412d 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -233,6 +233,165 @@ intc: interrupt-controller@f200000 {
- 			msi-controller;
- 		};
- 
-+		qusb_phy_1: phy@71000 {
-+			compatible = "qcom,ipq5424-qusb2-phy";
-+			reg = <0 0x00071000 0 0x180>;
-+			#phy-cells = <0>;
-+
-+			clocks = <&gcc GCC_USB1_PHY_CFG_AHB_CLK>,
-+				<&xo_board>;
-+			clock-names = "cfg_ahb", "ref";
-+
-+			resets = <&gcc GCC_QUSB2_1_PHY_BCR>;
-+			status = "disabled";
-+		};
-+
-+		usb2: usb2@1e00000 {
-+			compatible = "qcom,ipq5424-dwc3", "qcom,dwc3";
-+			reg = <0 0x01ef8800 0 0x400>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			clocks = <&gcc GCC_USB1_MASTER_CLK>,
-+				 <&gcc GCC_USB1_SLEEP_CLK>,
-+				 <&gcc GCC_USB1_MOCK_UTMI_CLK>,
-+				 <&gcc GCC_USB1_PHY_CFG_AHB_CLK>,
-+				 <&gcc GCC_CNOC_USB_CLK>;
-+
-+			clock-names = "core",
-+				      "sleep",
-+				      "mock_utmi",
-+				      "iface",
-+				      "cfg_noc";
-+
-+			assigned-clocks = <&gcc GCC_USB1_MASTER_CLK>,
-+					  <&gcc GCC_USB1_MOCK_UTMI_CLK>;
-+			assigned-clock-rates = <200000000>,
-+					       <24000000>;
-+
-+			interrupts-extended = <&intc GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 387 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 388 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "pwr_event",
-+					  "qusb2_phy",
-+					  "dm_hs_phy_irq",
-+					  "dp_hs_phy_irq";
-+
-+			resets = <&gcc GCC_USB1_BCR>;
-+			qcom,select-utmi-as-pipe-clk;
-+			status = "disabled";
-+
-+			dwc_1: usb@1e00000 {
-+				compatible = "snps,dwc3";
-+				reg = <0 0x01e00000 0 0xe000>;
-+				clocks = <&gcc GCC_USB1_MOCK_UTMI_CLK>;
-+				clock-names = "ref";
-+				interrupts = <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>;
-+				phys = <&qusb_phy_1>;
-+				phy-names = "usb2-phy";
-+				tx-fifo-resize;
-+				snps,is-utmi-l1-suspend;
-+				snps,hird-threshold = /bits/ 8 <0x0>;
-+				snps,dis_u2_susphy_quirk;
-+				snps,dis_u3_susphy_quirk;
-+			};
-+		};
-+
-+		qusb_phy_0: phy@7b000 {
-+			compatible = "qcom,ipq5424-qusb2-phy";
-+			reg = <0 0x0007b000 0 0x180>;
-+			#phy-cells = <0>;
-+
-+			clocks = <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-+				<&xo_board>;
-+			clock-names = "cfg_ahb", "ref";
-+
-+			resets = <&gcc GCC_QUSB2_0_PHY_BCR>;
-+			status = "disabled";
-+		};
-+
-+		ssphy_0: phy@7d000 {
-+			compatible = "qcom,ipq5424-qmp-usb3-phy";
-+			reg = <0 0x0007d000 0 0xa00>;
-+			#phy-cells = <0>;
-+
-+			clocks = <&gcc GCC_USB0_AUX_CLK>,
-+				 <&xo_board>,
-+				 <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-+				 <&gcc GCC_USB0_PIPE_CLK>;
-+			clock-names = "aux",
-+				      "ref",
-+				      "cfg_ahb",
-+				      "pipe";
-+
-+			resets = <&gcc GCC_USB0_PHY_BCR>,
-+				 <&gcc GCC_USB3PHY_0_PHY_BCR>;
-+			reset-names = "phy",
-+				      "phy_phy";
-+
-+			#clock-cells = <0>;
-+			clock-output-names = "usb0_pipe_clk";
-+
-+			status = "disabled";
-+		};
-+
-+		usb3: usb3@8a00000 {
-+			compatible = "qcom,ipq5424-dwc3", "qcom,dwc3";
-+			reg = <0 0x08af8800 0 0x400>;
-+
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			clocks = <&gcc GCC_USB0_MASTER_CLK>,
-+				 <&gcc GCC_USB0_SLEEP_CLK>,
-+				 <&gcc GCC_USB0_MOCK_UTMI_CLK>,
-+				 <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-+				 <&gcc GCC_CNOC_USB_CLK>;
-+
-+			clock-names = "core",
-+				      "sleep",
-+				      "mock_utmi",
-+				      "iface",
-+				      "cfg_noc";
-+
-+			assigned-clocks = <&gcc GCC_USB0_MASTER_CLK>,
-+					  <&gcc GCC_USB0_MOCK_UTMI_CLK>;
-+			assigned-clock-rates = <200000000>,
-+					       <24000000>;
-+
-+			interrupts-extended = <&intc GIC_SPI 412 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "pwr_event",
-+					  "qusb2_phy",
-+					  "dm_hs_phy_irq",
-+					  "dp_hs_phy_irq";
-+
-+			resets = <&gcc GCC_USB_BCR>;
-+			status = "disabled";
-+
-+			dwc_0: usb@8a00000 {
-+				compatible = "snps,dwc3";
-+				reg = <0 0x08a00000 0 0xcd00>;
-+				clocks = <&gcc GCC_USB0_MOCK_UTMI_CLK>;
-+				clock-names = "ref";
-+				interrupts = <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>;
-+				phys = <&qusb_phy_0>, <&ssphy_0>;
-+				phy-names = "usb2-phy", "usb3-phy";
-+				tx-fifo-resize;
-+				snps,is-utmi-l1-suspend;
-+				snps,hird-threshold = /bits/ 8 <0x0>;
-+				snps,dis_u2_susphy_quirk;
-+				snps,dis_u3_susphy_quirk;
-+				snps,dis-u1-entry-quirk;
-+				snps,dis-u2-entry-quirk;
-+			};
-+		};
-+
- 		timer@f420000 {
- 			compatible = "arm,armv7-timer-mem";
- 			reg = <0 0xf420000 0 0x1000>;
--- 
-2.34.1
 
+Takashi
 
