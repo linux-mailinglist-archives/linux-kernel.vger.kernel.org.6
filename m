@@ -1,79 +1,72 @@
-Return-Path: <linux-kernel+bounces-407417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE2F9C6D29
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:52:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0D819C6D2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:52:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3521F23E29
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:52:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80370B28AFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B62A1FCF7C;
-	Wed, 13 Nov 2024 10:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151D91FF041;
+	Wed, 13 Nov 2024 10:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iMs3tmyU"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2YyxFRX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6811230984
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7117E1FEFAB;
+	Wed, 13 Nov 2024 10:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731495134; cv=none; b=Ffg5NUi9/EBDBdG1hOBuGm+v7eRjRq7MjuxjhFQp5NSk1v8HC+ynftfWOQRptBYMozVb/PNvQS4CC0Oi722cW2VacyoGLoOAwy+X/relqzmb5L0fvTHb+n5bp9j7tfKeAhgTe73+xE9oECczxpxhjQRxJ1D4rMJPGKyK+Zhez1s=
+	t=1731495136; cv=none; b=FMZ7Udw/pEQMNiK4H69GPb/vTm4cVNp+/DiYRa1mlE/WvSLb31XhFzjM2j/wtKUHcLVpdT8n61VV+3bdcUUDJOmO8k4DFM5URxqXmbO41b+gH0hZfbyLY5ljrpq84V3OS5tpv7GhWa3RltbSk6FxYLYB7id8ZRWh69HMdomzBug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731495134; c=relaxed/simple;
-	bh=DXmkaewXV+jbmtfOFtF+vCWWc8QJDcVY8+FgkFNdz3s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hNQ84Uvw3NfkLQjM1/yvYHvMsqmBejADCKSJSmARYcfVuWrc05K3BluxGobFgdfrqJtOBX3WQ33SHZlh1ToV48CbUC1nehLJcoXF28zdPZDeg//Ru3aAaX+/aUAMH2vbYe3DQPv3NegCkDgplzT4Dm+Dw3LjskA2d8Ev2vw8fB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iMs3tmyU; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EB1632000A;
-	Wed, 13 Nov 2024 10:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731495130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DXmkaewXV+jbmtfOFtF+vCWWc8QJDcVY8+FgkFNdz3s=;
-	b=iMs3tmyUKGNew47ufeH21OT0z6vZVymsxg845TFTftjh4l9pwPZORX8Xdi+/VlrXkRI2xG
-	HfKlhRAMr7T7+abHhE0zh/aJiQkLvIt0v6mxhjat9whvT9qmqN1szesxM4ukFqpfbhxy+W
-	p+cnuUwkBlbN3ehRqdMJhJnSoL/uqQKdxdUZDtGm4IW5g/VkqHPoS4nlSkvjNX/2trNWSB
-	bFYAmdtHXJF2RFaw3Ahltj6g7obARkvIaNyCH592iApg0+8FgG6wCVDh9RWcq4j/L3066g
-	zob9VdNHFwtZ+LawXC8+Dh0HjJqBds2j2g0HO71UPZro53ZpLTdmgZu/HitFuA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>,  Krzysztof Kozlowski
- <krzk@kernel.org>,  Richard Weinberger <richard@nod.at>,  Vignesh
- Raghavendra <vigneshr@ti.com>,  linux-kernel@vger.kernel.org,
-  linux-mtd@lists.infradead.org,  Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>,  Herve Codina <herve.codina@bootlin.com>,
-  Christopher Cordahi <christophercordahi@nanometrics.ca>
-Subject: Re: [PATCH v3 2/7] memory: ti-aemif: Create aemif_set_cs_timings()
-In-Reply-To: <20241113094938.44817-3-bastien.curutchet@bootlin.com> (Bastien
-	Curutchet's message of "Wed, 13 Nov 2024 10:49:33 +0100")
-References: <20241113094938.44817-1-bastien.curutchet@bootlin.com>
-	<20241113094938.44817-3-bastien.curutchet@bootlin.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Wed, 13 Nov 2024 11:52:07 +0100
-Message-ID: <87cyizquco.fsf@bootlin.com>
+	s=arc-20240116; t=1731495136; c=relaxed/simple;
+	bh=fR202e2OmToW9x6LjGPbI1AnscN4fiyqn1l3j0n2C+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bdJFys+iMMqBddLvgsPMsUfKDviUmbsbFEgElYD1q6s9mPL04iQV/sr8nBb3EzmY0RyAPrE7suS75uIjZOI1G6Usai8n65S2EYFuKglaQhn6oDgJyKZUzBvnb0WecOf+mtvsg28bPvyoaSwyLP9XL+Its2Op48pBSPpyosUS8Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2YyxFRX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302C4C4CECD;
+	Wed, 13 Nov 2024 10:52:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731495136;
+	bh=fR202e2OmToW9x6LjGPbI1AnscN4fiyqn1l3j0n2C+0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I2YyxFRX29UbbNn3Od/QlvIAmLBFSWYBBQx26yntcglGDdEwRcqY8yG1bPf9xp5lX
+	 P/roEqjIQLNOFwtl0EK6O6AOk76mwvGiLd4Q+vY/e8B5fXNjxyD6KmCF4jaV/US0br
+	 +wjokjWJac8SUcxIvwukm+k5Cmw+lI83m8HhycrgLRqlmf/roaKu8dK4KFrjNguYHY
+	 ZDrKl7skUe3inUuno6xr93uAtz29uNR2v990TjTBK3hXzhI8BWNv6/S7Vw94hi0TBv
+	 UPoJgzki41S7/x4HcoBQJlCsc8j7ComO/s84HsVS5tut4TCP8s8OdP9Hpp4oVOsrbA
+	 BZ5rVniwCM0cg==
+Date: Wed, 13 Nov 2024 10:52:11 +0000
+From: Simon Horman <horms@kernel.org>
+To: Luo Yifan <luoyifan@cmss.chinamobile.com>
+Cc: kuba@kernel.org, donald.hunter@gmail.com, davem@davemloft.net,
+	edumazet@google.com, linux-kernel@vger.kernel.org,
+	pabeni@redhat.com, sfr@canb.auug.org.au, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] ynl: samples: Fix the wrong format specifier
+Message-ID: <20241113105211.GX4507@kernel.org>
+References: <20241112080236.092f5578@kernel.org>
+ <20241113011142.290474-1-luoyifan@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113011142.290474-1-luoyifan@cmss.chinamobile.com>
 
-On 13/11/2024 at 10:49:33 +01, Bastien Curutchet <bastien.curutchet@bootlin.com> wrote:
+On Wed, Nov 13, 2024 at 09:11:42AM +0800, Luo Yifan wrote:
+> Make a minor change to eliminate a static checker warning. The type
+> of s->ifc is unsigned int, so the correct format specifier should be
+> %u instead of %d.
+> 
+> Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
 
-> Create an aemif_set_cs_timings() function to isolate the setting of a
-> chip select timing configuration and ease its exportation.
->
-> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
