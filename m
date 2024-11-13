@@ -1,78 +1,76 @@
-Return-Path: <linux-kernel+bounces-408277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF009C7CD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:22:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B131D9C7CD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31E012847DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:22:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 755B1284526
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10C420E33A;
-	Wed, 13 Nov 2024 20:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F142123C8;
+	Wed, 13 Nov 2024 20:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IWgr1zLO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DmyJn2Gw"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hyf4ZxZi";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PrOwGeo2"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAA220A5D2;
-	Wed, 13 Nov 2024 20:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F12A20B7F1;
+	Wed, 13 Nov 2024 20:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731529257; cv=none; b=T7N64Jo0QqgY3wtOFRUWaAZReszu1DO77YThR2OaWYZ90Y3wQoY/cDH6lVeRh1W/486jtET8AVC/JXzQmQ07pg6LCznHOu1G9ZjJfad6jASDNNj19lsc0fn5FkM/7hRC/gsqevOIe1hKiNhzdNK/gb7aOolt2GZlkdS0U2aYETs=
+	t=1731529257; cv=none; b=RUzIDa170/csgA8OFkm11E1tT9oGK2ZSGdnxi33wtOXFhDie7Ah2HTEnos9p4ZGwP/xoK9ae2BQDyOyOwYN2QEaClLLCMhkhtb6IibG7coLBrUhAkNpn3gwbJh9sbMP2WldrbMI3dtaTmUnHFB5z36NPWFQ7QO64+x0uNvBe9TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731529257; c=relaxed/simple;
-	bh=Kft1Z1EYVKngKkNcoMvtAJiKX9uz22Z5q3n6uDXXkKI=;
+	bh=GUOtGj4BVWrNihtFbLsuXnaGd8H/mdTz7pFySYtiUwo=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Xuae1ggnQpJr3EDr9voiKC+oielA87QhoVKOzlUoB3f+p+XzRY/K9TcwXFqo5C62VqhunkRJlwHQStgW8sMuzHpyT9aOLkpQAykKGunXYyd/CL1LQM1wlwUFkQeQwEsPHjV+dkGH6QJcdQrhnGy8BEPv4mpIIlNS5pXF7/x0q8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IWgr1zLO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DmyJn2Gw; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=iZrDUN9NULkXJ1optICNxnbNdtHQLOSNWQ2bcw8hijGJ842UeeGDleyIsggl1OJzsQ/YksiArZkyganHwS695KJU4CCvh+f0IlM3zzU6kd4g/8+2kxQaVCXqezvrrX1UEYCrO/8Uci1ghRvstVGALnEfebLQ6lGuTuH2o57cNC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hyf4ZxZi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PrOwGeo2; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 13 Nov 2024 20:20:52 -0000
+Date: Wed, 13 Nov 2024 20:20:54 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731529253;
+	s=2020; t=1731529254;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lB0mAv0ja15zZABjC06qmH+bu3/Z+zzsoTDtiDfjbgQ=;
-	b=IWgr1zLOK2kqmtH8Ki6R/jcUh+wSN4rBTGlwg5XnpQF8wQHqdp8dN3+HQ4eSC9GQ2zhuaC
-	cRkJqyBoup7hg4JUAf2Q/B2e0IPdb8e3Kee0xmUpKE1qC2Rikj1F3COnFcWVpZMBGoaybK
-	CLIDe7sxehO9Iq+WDXPczIS0fVM8sIjerLQ/RXxOD0Bz3muqrCATDW0nRX73tiP02qIMiZ
-	pFWe9SGV56ceqKtoAWbds0gLPSeBMYFSTuv73qL1WVvJZshChTuOb30AHNNY+AfM+VgWVY
-	xN6413GWOB+lGYnwBamA+ma+237Cn3nKdDfbEK2BXbjqdiCW1vtSmMLIsKBqWQ==
+	bh=/wB/6JMDNOzv36oKOzdH+D8CQIDHL+74ug7JPuqS+a8=;
+	b=hyf4ZxZizGqzLa/Gp8Zsy7HG9yEltd8D5o/5CHq0BDOqdbm6tfHCKDn9YLk4aEmaeLwXHJ
+	IWxnmZxumH7iw0kVqv84cMUORX65O6DyjTkm0kO9RfA6wv/bza1tLEeNY7lV6/pPKDC/rn
+	4qJBwPjrdQwL/0xd0gy71ZEvkTk1SIJYiZO+ES2tTgAixtjifFpAxFWova7G72xh70txRY
+	T9DDgs9ZbnSozu72qV5wMrqthcof8yFrxy9UA0fNfp32U1BoOfQ62AvYzYgiR0B339OtWQ
+	YDrLD0Xsew/uvweuGy0Sdsqx4e9LnCfe3thnImNCbXCYqJ86JHTkJsoKp0DMfw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731529253;
+	s=2020e; t=1731529254;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lB0mAv0ja15zZABjC06qmH+bu3/Z+zzsoTDtiDfjbgQ=;
-	b=DmyJn2GwdZGj0kTVdZ6IlzZQxPbkwYM8Q0SOHbhBfAiULyTnorqZDfcOhbjfzlOtAnSj3P
-	nSkznUCKM3rbeSDg==
-From: "tip-bot2 for Dr. David Alan Gilbert" <tip-bot2@linutronix.de>
+	bh=/wB/6JMDNOzv36oKOzdH+D8CQIDHL+74ug7JPuqS+a8=;
+	b=PrOwGeo2QnrrlTMlOuDDmjcmf9jf4r7TrmK9v6J1N0IQjxyymm6CSBmvGAN91LgTSLZKHy
+	YHd0k3VXQBYBV5Dg==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] clocksource/drivers/dw_apb: Remove unused
- dw_apb_clockevent functions
-Cc: "Dr. David Alan Gilbert" <linux@treblig.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241025203101.241709-1-linux@treblig.org>
-References: <20241025203101.241709-1-linux@treblig.org>
+Subject: [tip: timers/core] Merge tag 'timers-v6.13-rc1' of
+ https://git.linaro.org/people/daniel.lezcano/linux into timers/core
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <8d402321-96f1-47f7-9347-a850350d60de@linaro.org>
+References: <8d402321-96f1-47f7-9347-a850350d60de@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173152925296.32228.3697535630081020156.tip-bot2@tip-bot2>
+Message-ID: <173152925403.32228.8860008565950381348.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,102 +80,45 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     1d58f7f3a1373734b2e86a246edcf1cd39359f3e
-Gitweb:        https://git.kernel.org/tip/1d58f7f3a1373734b2e86a246edcf1cd39359f3e
-Author:        Dr. David Alan Gilbert <linux@treblig.org>
-AuthorDate:    Fri, 25 Oct 2024 21:31:01 +01:00
-Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
-CommitterDate: Wed, 13 Nov 2024 13:49:33 +01:00
+Commit-ID:     228ad72e7660e99821fd430a04ac31d7f8fe9fc4
+Gitweb:        https://git.kernel.org/tip/228ad72e7660e99821fd430a04ac31d7f8fe9fc4
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Wed, 13 Nov 2024 21:09:35 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 13 Nov 2024 21:09:35 +01:00
 
-clocksource/drivers/dw_apb: Remove unused dw_apb_clockevent functions
+Merge tag 'timers-v6.13-rc1' of https://git.linaro.org/people/daniel.lezcano/linux into timers/core
 
-dw_apb_clockevent_pause(), dw_apb_clockevent_resume() and
-dw_apb_clockevent_stop() have been unused since 2021's
-commit 1b79fc4f2bfd ("x86/apb_timer: Remove driver for deprecated
-platform")
+Pull clocksource/event updates from Daniel Lezcano:
 
-Remove them.
+  - Remove unused dw_apb_clockevent_[pause|resume|stop] functions as
+    they are unused since 2021 (David Alan Gilbert)
 
-(Some of the other clockevent functions are still called by
-dw_apb_timer_of.c  so I guess it is still in use?)
+  - Make the sp804 driver user selectable as they may be unused on some
+    platforms (Mark Brown)
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-Link: https://lore.kernel.org/r/20241025203101.241709-1-linux@treblig.org
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+  - Don't fail if the ti-dm does not describe an interrupt in the DT as
+    this could be a normal situation if the PWM is used (Judith Mendez)
+
+  - Always use cluster 0 counter as a clocksource on a multi-cluster
+    system to prevent problems related to the time shifting between
+    clusters if multiple per cluster clocksource is used (Paul Burton)
+
+  - Move the RaLink system tick counter from the arch directory to the
+    clocksource directory (Sergio Paracuellos)
+
+  - Convert the owl-timer bindings into yaml schema (Ivaylo Ivanov)
+
+  - Fix child node refcount handling on the TI DM by relying on the
+    __free annotation to automatically release the refcount on the node
+    (Javier Carrasco)
+
+  - Remove pointless cast in the GPX driver as PTR_ERR already does that
+    (Tang Bin)
+
+  - Use of_property_present() for non-boolean properties where it is
+    possible in the different drivers (Rob Herring)
+
+Link: https://lore.kernel.org/lkml/8d402321-96f1-47f7-9347-a850350d60de@linaro.org
 ---
- drivers/clocksource/dw_apb_timer.c | 39 +-----------------------------
- include/linux/dw_apb_timer.h       |  3 +--
- 2 files changed, 42 deletions(-)
-
-diff --git a/drivers/clocksource/dw_apb_timer.c b/drivers/clocksource/dw_apb_timer.c
-index f5f24a9..3a55ae5 100644
---- a/drivers/clocksource/dw_apb_timer.c
-+++ b/drivers/clocksource/dw_apb_timer.c
-@@ -68,25 +68,6 @@ static inline void apbt_writel_relaxed(struct dw_apb_timer *timer, u32 val,
- 	writel_relaxed(val, timer->base + offs);
- }
- 
--static void apbt_disable_int(struct dw_apb_timer *timer)
--{
--	u32 ctrl = apbt_readl(timer, APBTMR_N_CONTROL);
--
--	ctrl |= APBTMR_CONTROL_INT;
--	apbt_writel(timer, ctrl, APBTMR_N_CONTROL);
--}
--
--/**
-- * dw_apb_clockevent_pause() - stop the clock_event_device from running
-- *
-- * @dw_ced:	The APB clock to stop generating events.
-- */
--void dw_apb_clockevent_pause(struct dw_apb_clock_event_device *dw_ced)
--{
--	disable_irq(dw_ced->timer.irq);
--	apbt_disable_int(&dw_ced->timer);
--}
--
- static void apbt_eoi(struct dw_apb_timer *timer)
- {
- 	apbt_readl_relaxed(timer, APBTMR_N_EOI);
-@@ -285,26 +266,6 @@ dw_apb_clockevent_init(int cpu, const char *name, unsigned rating,
- }
- 
- /**
-- * dw_apb_clockevent_resume() - resume a clock that has been paused.
-- *
-- * @dw_ced:	The APB clock to resume.
-- */
--void dw_apb_clockevent_resume(struct dw_apb_clock_event_device *dw_ced)
--{
--	enable_irq(dw_ced->timer.irq);
--}
--
--/**
-- * dw_apb_clockevent_stop() - stop the clock_event_device and release the IRQ.
-- *
-- * @dw_ced:	The APB clock to stop generating the events.
-- */
--void dw_apb_clockevent_stop(struct dw_apb_clock_event_device *dw_ced)
--{
--	free_irq(dw_ced->timer.irq, &dw_ced->ced);
--}
--
--/**
-  * dw_apb_clockevent_register() - register the clock with the generic layer
-  *
-  * @dw_ced:	The APB clock to register as a clock_event_device.
-diff --git a/include/linux/dw_apb_timer.h b/include/linux/dw_apb_timer.h
-index 82ebf92..f8811c4 100644
---- a/include/linux/dw_apb_timer.h
-+++ b/include/linux/dw_apb_timer.h
-@@ -34,9 +34,6 @@ struct dw_apb_clocksource {
- };
- 
- void dw_apb_clockevent_register(struct dw_apb_clock_event_device *dw_ced);
--void dw_apb_clockevent_pause(struct dw_apb_clock_event_device *dw_ced);
--void dw_apb_clockevent_resume(struct dw_apb_clock_event_device *dw_ced);
--void dw_apb_clockevent_stop(struct dw_apb_clock_event_device *dw_ced);
- 
- struct dw_apb_clock_event_device *
- dw_apb_clockevent_init(int cpu, const char *name, unsigned rating,
 
