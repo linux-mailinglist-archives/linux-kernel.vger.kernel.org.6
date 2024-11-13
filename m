@@ -1,460 +1,118 @@
-Return-Path: <linux-kernel+bounces-407875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20939C7694
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:23:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D192C9C76A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:23:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40CC11F230B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88AC81F22F28
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6E470835;
-	Wed, 13 Nov 2024 15:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A281EF955;
+	Wed, 13 Nov 2024 15:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HG1pYTaw"
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="av6kxhkq"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB75313B791
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB47167296
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731511303; cv=none; b=IsKLHC23CeSNpgqnDT1VDMhGVKIFVPQUb8JZwNiV61b1pniMjxq02W/WYEqttndjkco2jvuJHOFGmiDEUaDufXWMZEQv8neyPfHNG8UM/neEEuHkgwhLEk4u/YTmfo2BbItM9cOqJOiEaaFSJETCKaiFu47qYoLFaL8H5UQtaW0=
+	t=1731511307; cv=none; b=CA1Hm7TxZTxm7SPE94B+aLCl08gZR7Ef2H3vVhTiZ92MJK/G9WHZzKj8d45h1dzEfyxJmSRJGGBd/dZc5pr3Hq1NzjYZl1387RwdHQuDcwKPwLiTxXID5GOgN4BvuqllJc4epdFzglRgSq/xm5lodWwXZysODHTD+y1KNKMUZwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731511303; c=relaxed/simple;
-	bh=WGghjI6cThBnu0b5EM2jNNMbAl6iCF8Cs8L4IKBgifA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=banehVBCkGHPRGOA0vPbNaTjUO/0EhwtQ4emVnMgCiSPghp8VFPcsqj3JmkAQRKJZVQKMEoWJnCPsX9SiFvpBKDGRKnE8tOcIsQRwKitsLSmNm/54akDq3xG7nDcU7FRlGnWzFF/mlYyOABCLaNlfAOPWOOG/l3YhVjbVjdCjBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HG1pYTaw; arc=none smtp.client-ip=185.125.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XpRp93hfSznj9;
-	Wed, 13 Nov 2024 16:21:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1731511297;
-	bh=YbnAIknfu1TEUOLxVgxcWpBBsI4APXs72jc4RFha1kU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HG1pYTawMwHq7xn887x4SSi/M5cD4ZqL7tR5WiD7Ux8y7QlgUpSNBpyYHEjiKybUy
-	 3ufXxJdQRH2KzAZX65G2oAyhhZUVbd+JxrJ8piq1Vw8TPNMNiaRJucRnV+yiTL5yNA
-	 rFwQMiI2JMRCMvgI40XLFWvEj48k4ZlO9CoUmohk=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XpRp83bkFzkHH;
-	Wed, 13 Nov 2024 16:21:36 +0100 (CET)
-Date: Wed, 13 Nov 2024 16:21:35 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Francis Laniel <flaniel@linux.microsoft.com>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Charles Zaffery <czaffery@roblox.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, 
-	Kees Cook <kees@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v2 10/14] landlock: Log file-related denials
-Message-ID: <20241113.Sheez6xieyij@digikod.net>
-References: <20241022161009.982584-1-mic@digikod.net>
- <20241022161009.982584-11-mic@digikod.net>
- <8501854.T7Z3S40VBb@pwmachine>
+	s=arc-20240116; t=1731511307; c=relaxed/simple;
+	bh=4LiMDBZ2BaPjcm4lQLrzPw+4IHjcexyzPDS6D111VAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jHHRdhL/zcrNgeXXWv9aeDvjVsGYGLV1dQOEyPYtHgVeiwOHCZZF4KRQn9cqJR/Os76QhpC2M8VxubxSRwudS5Fx0spEZOEV7y8JOC+vAM/bWLq/vh6IA0yKfgRMg2/UH4A2ltE/vXbLu5WW9wDck2f9FVYDN+JSt2HsOt55en8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=av6kxhkq; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43159c9f617so56722995e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:21:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731511302; x=1732116102; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xLqCtJgmoEWkkcExSIoN42a3vq6u8JMDyejdpawvuLI=;
+        b=av6kxhkquD5lNUzRIl2Q7dWCqz8TqW1Xk76y4g5PBwDlF88eseVChV8fSAf4PSJtCv
+         VC9HBc+8Ts+QYOaw+FpRA/LLFkpcAP+9MtZUGUPfYwH3F9KZlPuSzWptcrE72iztK7MO
+         smQIorFRn4vTKtKtaFa8nMCIu5njbW1U1HZ6oxoxZ6hrxCB+VHJrYOS/Z48QhsWuG8Q0
+         ziLqD/kSQgeJ+T5RxibpCIyk2RZ0Cb2ei+M8ftHDbeme+VIrPWdBy569IZjxD3XktzG5
+         noOIh0VF3DWjoyskH3yfXvOhRKl0tdeYlnjhtcCj3OZ7bZ7ueRf/ovZVdQaW3oFJUrv5
+         8trg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731511302; x=1732116102;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xLqCtJgmoEWkkcExSIoN42a3vq6u8JMDyejdpawvuLI=;
+        b=E5FIyG0293FnTrnRQ3RXdQVjTOPv3KXv/FbGQvHCm9Cpa0xuNSc9vQfyjDzbfwNonn
+         bni/HJ4JY1o5/FyeUOAxG7KRiklcJ39OC8YhIfwsv9s076tP1R6TT9ZjXzKIm3D4eKk7
+         y+lvbCZyc7wzt2MyZafGFBalKJQ2S8BFTbWJBFkiKy0E6xikMHMCx9hwRrk5+yRndtQ6
+         ZphFnm2z+x9c2DrNw8NgZvKKWV/0lp47ds2HZB/49yo7A3KXKBF2EI3ajROiSE4AkZQ3
+         0DZkHu2llWB12CYN9tlQ1LkB2IyjPMIS5YSBzr8SGrWu/PKWuEcgKBP+Y83722tLaVmm
+         9Hdw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9ucOd3c0i0ThGyQeZFyo8nD6mt6SdojC5vwAXmcrOsYVJetV+W1nUy9EJ9UGeoaj/jedq1tJwpJzg4IY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLUGdz/Jq1tbyhjoKarRfKvS3YXtOk+pv0lYhf12FydVP+JRKM
+	ypmrPMhm3cmU9TZ//x1anfVPMRY2RGIOb2cHeobheXOKb+6EXcW+T/Kchh52BMo=
+X-Google-Smtp-Source: AGHT+IF0lRtjI2o7jj//l+xrcNOBKkeWPvh0yXKVaf2XDugcQj/I02Vc/Dy2jhxuVt1mr7E9yNfsxg==
+X-Received: by 2002:a05:600c:4f4e:b0:430:5760:2fe with SMTP id 5b1f17b1804b1-432b75183d1mr175593615e9.22.1731511301811;
+        Wed, 13 Nov 2024 07:21:41 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-432d48bb442sm21749305e9.1.2024.11.13.07.21.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 07:21:41 -0800 (PST)
+Message-ID: <3193901b-c006-4feb-af72-d8f74f2d6428@linaro.org>
+Date: Wed, 13 Nov 2024 16:21:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 04/10] dt-bindings: thermal: tsens: Add MSM8937
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20241113-msm8917-v6-0-c348fb599fef@mainlining.org>
+ <20241113-msm8917-v6-4-c348fb599fef@mainlining.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20241113-msm8917-v6-4-c348fb599fef@mainlining.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8501854.T7Z3S40VBb@pwmachine>
-X-Infomaniak-Routing: alpha
 
-On Fri, Oct 25, 2024 at 05:23:48PM +0200, Francis Laniel wrote:
-> Le mardi 22 octobre 2024, 18:10:05 CEST Mickaël Salaün a écrit :
-> > Add audit support for path_mkdir, path_mknod, path_symlink, path_unlink,
-> > path_rmdir, path_truncate, path_link, path_rename, and file_open hooks.
-> > 
-> > Audit record sample for a link action:
-> > 
-> >   DENY:     domain=4533720568 blockers=fs_refer path="/usr/bin" dev="vda2"
-> > ino=351 DOM_INFO: domain=4533720568 parent=0 pid=325 uid=0
-> > exe="/root/sandboxer" comm="sandboxer" DENY:     domain=4533720568
-> > blockers=fs_make_reg,fs_refer path="/usr/local" dev="vda2" ino=365 SYSCALL:
-> >  arch=c000003e syscall=265 success=no exit=-13 ...
-> > 
-> > Cc: Günther Noack <gnoack@google.com>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > Link: https://lore.kernel.org/r/20241022161009.982584-11-mic@digikod.net
-> > ---
-> > 
-> > Changes since v2:
-> > * Revamp logging and support the path_link and path_rename hooks.
-> > * Add KUnit tests.
-> > 
-> > Changes since v1:
-> > * Move audit code to the ptrace patch.
-> > ---
-> >  security/landlock/audit.c | 173 ++++++++++++++++++++++++++++++++++++--
-> >  security/landlock/audit.h |   9 ++
-> >  security/landlock/fs.c    |  64 +++++++++++---
-> >  3 files changed, 229 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-> > index 4cd9407459d2..9c8b6c246884 100644
-> > --- a/security/landlock/audit.c
-> > +++ b/security/landlock/audit.c
-> > @@ -7,23 +7,55 @@
-> > 
-> >  #include <kunit/test.h>
-> >  #include <linux/audit.h>
-> > +#include <linux/bitops.h>
-> >  #include <linux/lsm_audit.h>
-> >  #include <linux/pid.h>
-> >  #include <linux/uidgid.h>
-> > +#include <uapi/linux/landlock.h>
-> > 
-> >  #include "audit.h"
-> > +#include "common.h"
-> >  #include "cred.h"
-> >  #include "domain.h"
-> >  #include "ruleset.h"
-> > 
-> > -static const char *get_blocker(const enum landlock_request_type type)
-> > +static const char *const fs_access_strings[] = {
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] = "fs_execute",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)] = "fs_write_file",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_READ_FILE)] = "fs_read_file",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_READ_DIR)] = "fs_read_dir",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_REMOVE_DIR)] = "fs_remove_dir",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_REMOVE_FILE)] = "fs_remove_file",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_CHAR)] = "fs_make_char",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_DIR)] = "fs_make_dir",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_REG)] = "fs_make_reg",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_SOCK)] = "fs_make_sock",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_FIFO)] = "fs_make_fifo",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_BLOCK)] = "fs_make_block",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_SYM)] = "fs_make_sym",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_REFER)] = "fs_refer",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] = "fs_truncate",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] = "fs_ioctl_dev",
-> > +};
-> > +static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
-> > +
-> > +static __attribute_const__ const char *
-> > +get_blocker(const enum landlock_request_type type,
-> > +	    const unsigned long access_bit)
-> >  {
-> >  	switch (type) {
-> >  	case LANDLOCK_REQUEST_PTRACE:
-> > +		WARN_ON_ONCE(access_bit != -1);
-> >  		return "ptrace";
-> > 
-> >  	case LANDLOCK_REQUEST_FS_CHANGE_LAYOUT:
-> > +		WARN_ON_ONCE(access_bit != -1);
-> >  		return "fs_change_layout";
-> > +
-> > +	case LANDLOCK_REQUEST_FS_ACCESS:
-> > +		if (WARN_ON_ONCE(access_bit >= ARRAY_SIZE(fs_access_strings)))
-> > +			return "unknown";
-> > +		return fs_access_strings[access_bit];
-> >  	}
-> > 
-> >  	WARN_ON_ONCE(1);
-> > @@ -31,9 +63,20 @@ static const char *get_blocker(const enum
-> > landlock_request_type type) }
-> > 
-> >  static void log_blockers(struct audit_buffer *const ab,
-> > -			 const enum landlock_request_type type)
-> > +			 const enum landlock_request_type type,
-> > +			 const access_mask_t access)
-> >  {
-> > -	audit_log_format(ab, "%s", get_blocker(type));
-> > +	const unsigned long access_mask = access;
-> > +	unsigned long access_bit;
-> > +	size_t i = 0;
-> > +
-> > +	for_each_set_bit(access_bit, &access_mask, BITS_PER_TYPE(access)) {
-> > +		audit_log_format(ab, "%s%s", (i == 0) ? "" : ",",
-> > +				 get_blocker(type, access_bit));
-> > +		i++;
-> > +	}
-> > +	if (i == 0)
-> > +		audit_log_format(ab, "%s", get_blocker(type, -1));
-> >  }
-> > 
-> >  static void log_node(struct landlock_hierarchy *const node)
-> > @@ -121,9 +164,110 @@ static void test_get_hierarchy(struct kunit *const
-> > test)
-> > 
-> >  #endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
-> > 
-> > +static size_t get_denied_layer(const struct landlock_ruleset *const domain,
-> > +			       access_mask_t *const access_request,
-> > +			       const layer_mask_t (*const layer_masks)[],
-> > +			       const size_t layer_masks_size)
-> > +{
-> > +	const unsigned long access_req = *access_request;
+On 13/11/2024 16:11, Barnabás Czémán wrote:
+> Document the compatible string for tsens v1.4 block found in MSM8937.
 > 
-> Nit: should access_request being checked for not being NULL?
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
 
-This is not necessary because this helper is private and the pointer is
-always refering to the stack.
 
-> 
-> > +	unsigned long access_bit;
-> > +	access_mask_t missing = 0;
-> > +	long youngest_layer = -1;
-> > +
-> > +	for_each_set_bit(access_bit, &access_req, layer_masks_size) {
-> > +		const access_mask_t mask = (*layer_masks)[access_bit];
-> > +		long layer;
-> > +
-> > +		if (!mask)
-> > +			continue;
-> > +
-> > +		/* __fls(1) == 0 */
-> > +		layer = __fls(mask);
-> > +		if (layer > youngest_layer) {
-> > +			youngest_layer = layer;
-> > +			missing = BIT(access_bit);
-> > +		} else if (layer == youngest_layer) {
-> > +			missing |= BIT(access_bit);
-> > +		}
-> > +	}
-> > +
-> > +	*access_request = missing;
-> > +	if (youngest_layer == -1)
-> > +		return domain->num_layers - 1;
-> > +
-> > +	return youngest_layer;
-> > +}
-> > +
-> > +#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
-> > +
-> > +static void test_get_denied_layer(struct kunit *const test)
-> > +{
-> > +	const struct landlock_ruleset dom = {
-> > +		.num_layers = 5,
-> > +	};
-> > +	const layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {
-> > +		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] = BIT(0),
-> > +		[BIT_INDEX(LANDLOCK_ACCESS_FS_READ_FILE)] = BIT(1),
-> > +		[BIT_INDEX(LANDLOCK_ACCESS_FS_READ_DIR)] = BIT(1) | BIT(0),
-> > +		[BIT_INDEX(LANDLOCK_ACCESS_FS_REMOVE_DIR)] = BIT(2),
-> > +	};
-> > +	access_mask_t access;
-> > +
-> > +	access = LANDLOCK_ACCESS_FS_EXECUTE;
-> > +	KUNIT_EXPECT_EQ(test, 0,
-> > +			get_denied_layer(&dom, &access, &layer_masks,
-> > +					 sizeof(layer_masks)));
-> > +	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_EXECUTE);
-> > +
-> > +	access = LANDLOCK_ACCESS_FS_READ_FILE;
-> > +	KUNIT_EXPECT_EQ(test, 1,
-> > +			get_denied_layer(&dom, &access, &layer_masks,
-> > +					 sizeof(layer_masks)));
-> > +	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_READ_FILE);
-> > +
-> > +	access = LANDLOCK_ACCESS_FS_READ_DIR;
-> > +	KUNIT_EXPECT_EQ(test, 1,
-> > +			get_denied_layer(&dom, &access, &layer_masks,
-> > +					 sizeof(layer_masks)));
-> > +	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_READ_DIR);
-> > +
-> > +	access = LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_READ_DIR;
-> > +	KUNIT_EXPECT_EQ(test, 1,
-> > +			get_denied_layer(&dom, &access, &layer_masks,
-> > +					 sizeof(layer_masks)));
-> > +	KUNIT_EXPECT_EQ(test, access,
-> > +			LANDLOCK_ACCESS_FS_READ_FILE |
-> > +				LANDLOCK_ACCESS_FS_READ_DIR);
-> > +
-> > +	access = LANDLOCK_ACCESS_FS_EXECUTE | LANDLOCK_ACCESS_FS_READ_DIR;
-> > +	KUNIT_EXPECT_EQ(test, 1,
-> > +			get_denied_layer(&dom, &access, &layer_masks,
-> > +					 sizeof(layer_masks)));
-> > +	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_READ_DIR);
-> > +
-> > +	access = LANDLOCK_ACCESS_FS_WRITE_FILE;
-> > +	KUNIT_EXPECT_EQ(test, 4,
-> > +			get_denied_layer(&dom, &access, &layer_masks,
-> > +					 sizeof(layer_masks)));
-> > +	KUNIT_EXPECT_EQ(test, access, 0);
-> > +}
-> > +
-> > +#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
-> > +
-> >  static bool is_valid_request(const struct landlock_request *const request)
-> >  {
-> > -	if (WARN_ON_ONCE(!request->layer_plus_one))
-> > +	if (WARN_ON_ONCE(!(!!request->layer_plus_one ^ !!request->access)))
-> > +		return false;
-> > +
-> > +	if (request->access) {
-> > +		if (WARN_ON_ONCE(!request->layer_masks))
-> > +			return false;
-> > +	} else {
-> > +		if (WARN_ON_ONCE(request->layer_masks))
-> > +			return false;
-> > +	}
-> > +
-> > +	if (WARN_ON_ONCE(!!request->layer_masks ^ !!request-
-> >layer_masks_size))
-> >  		return false;
-> > 
-> >  	return true;
-> > @@ -140,6 +284,7 @@ void landlock_log_denial(const struct landlock_ruleset
-> > *const domain, {
-> >  	struct audit_buffer *ab;
-> >  	struct landlock_hierarchy *youngest_denied;
-> > +	access_mask_t missing;
-> > 
-> >  	if (WARN_ON_ONCE(!domain || !domain->hierarchy || !request))
-> >  		return;
-> > @@ -155,9 +300,24 @@ void landlock_log_denial(const struct landlock_ruleset
-> > *const domain, if (!ab)
-> >  		return;
-> > 
-> > -	youngest_denied = get_hierarchy(domain, request->layer_plus_one - 1);
-> > +	missing = request->access;
-> > +	if (missing) {
-> > +		size_t youngest_layer;
-> > +
-> > +		/* Gets the nearest domain that denies the request. */
-> > +		if (request->layer_masks) {
-> > +			youngest_layer = get_denied_layer(
-> > +				domain, &missing, request->layer_masks,
-> > +				request->layer_masks_size);
-> > +		}
-> > +		youngest_denied = get_hierarchy(domain, youngest_layer);
-> 
-> If request->layer_masks is 0, it is possible to call get_hierarchy() with
-> uninitialized youngest_layer, is this wanted?
+Applied, thanks
 
-Well spotted. This patch seems indeed buggy because I created several
-patches touching the same function, but the final code (with all the
-patches applied) always initializes youngest_denied.  The current calls
-to landlock_log_denial() also always set request->layer_mask, but I'll
-fix this patch to avoid confusion.
 
-> 
-> > +	} else {
-> > +		youngest_denied =
-> > +			get_hierarchy(domain, request->layer_plus_one - 1);
-> > +	}
-> > +
-> >  	audit_log_format(ab, "domain=%llu blockers=", youngest_denied->id);
-> > -	log_blockers(ab, request->type);
-> > +	log_blockers(ab, request->type, missing);
-> >  	audit_log_lsm_data(ab, &request->audit);
-> >  	audit_log_end(ab);
-> > 
-> > @@ -204,6 +364,7 @@ void landlock_log_drop_domain(const struct
-> > landlock_ruleset *const domain) static struct kunit_case test_cases[] = {
-> >  	/* clang-format off */
-> >  	KUNIT_CASE(test_get_hierarchy),
-> > +	KUNIT_CASE(test_get_denied_layer),
-> >  	{}
-> >  	/* clang-format on */
-> >  };
-> > diff --git a/security/landlock/audit.h b/security/landlock/audit.h
-> > index 6f5ad04b83c2..25fc8333cddc 100644
-> > --- a/security/landlock/audit.h
-> > +++ b/security/landlock/audit.h
-> > @@ -11,11 +11,13 @@
-> >  #include <linux/audit.h>
-> >  #include <linux/lsm_audit.h>
-> > 
-> > +#include "access.h"
-> >  #include "ruleset.h"
-> > 
-> >  enum landlock_request_type {
-> >  	LANDLOCK_REQUEST_PTRACE = 1,
-> >  	LANDLOCK_REQUEST_FS_CHANGE_LAYOUT,
-> > +	LANDLOCK_REQUEST_FS_ACCESS,
-> >  };
-> > 
-> >  /*
-> > @@ -33,6 +35,13 @@ struct landlock_request {
-> >  	 * extra one is useful to detect uninitialized field.
-> >  	 */
-> >  	size_t layer_plus_one;
-> > +
-> > +	/* Required field for configurable access control. */
-> > +	access_mask_t access;
-> > +
-> > +	/* Required fields for requests with layer masks. */
-> > +	const layer_mask_t (*layer_masks)[];
-> > +	size_t layer_masks_size;
-> >  };
-> > 
-> >  #ifdef CONFIG_AUDIT
-> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > index a099167d2347..7f69bed9e095 100644
-> > --- a/security/landlock/fs.c
-> > +++ b/security/landlock/fs.c
-> > @@ -730,6 +730,7 @@ static void test_is_eacces_with_write(struct kunit
-> > *const test) *     those identified by @access_request_parent1).  This
-> > matrix can *     initially refer to domain layer masks and, when the
-> > accesses for the *     destination and source are the same, to requested
-> > layer masks. + * @log_request_parent1: Audit request to fill if the related
-> > access is denied. * @dentry_child1: Dentry to the initial child of the
-> > parent1 path.  This *     pointer must be NULL for non-refer actions (i.e.
-> > not link nor rename). * @access_request_parent2: Similar to
-> > @access_request_parent1 but for a @@ -738,6 +739,7 @@ static void
-> > test_is_eacces_with_write(struct kunit *const test) *     the source.  Must
-> > be set to 0 when using a simple path request. * @layer_masks_parent2:
-> > Similar to @layer_masks_parent1 but for a refer *     action.  This must be
-> > NULL otherwise.
-> > + * @log_request_parent2: Audit request to fill if the related access is
-> > denied. * @dentry_child2: Dentry to the initial child of the parent2 path. 
-> > This *     pointer is only set for RENAME_EXCHANGE actions and must be NULL
-> > *     otherwise.
-> > @@ -757,10 +759,12 @@ static bool is_access_to_paths_allowed(
-> >  	const struct path *const path,
-> >  	const access_mask_t access_request_parent1,
-> >  	layer_mask_t (*const layer_masks_parent1)[LANDLOCK_NUM_ACCESS_FS],
-> > -	const struct dentry *const dentry_child1,
-> > +	struct landlock_request *const log_request_parent1,
-> > +	struct dentry *const dentry_child1,
-> >  	const access_mask_t access_request_parent2,
-> >  	layer_mask_t (*const layer_masks_parent2)[LANDLOCK_NUM_ACCESS_FS],
-> > -	const struct dentry *const dentry_child2)
-> > +	struct landlock_request *const log_request_parent2,
-> > +	struct dentry *const dentry_child2)
-> >  {
-> >  	bool allowed_parent1 = false, allowed_parent2 = false, is_dom_check,
-> >  	     child1_is_directory = true, child2_is_directory = true;
-> > @@ -907,6 +911,24 @@ static bool is_access_to_paths_allowed(
-> >  	}
-> >  	path_put(&walker_path);
-> > 
-> > +	if (!allowed_parent1 && log_request_parent1) {
-> > +		log_request_parent1->type = LANDLOCK_REQUEST_FS_ACCESS,
-> > +		log_request_parent1->audit.type = LSM_AUDIT_DATA_PATH,
-> > +		log_request_parent1->audit.u.path = *path;
-> > +		log_request_parent1->access = access_request_parent1;
-> > +		log_request_parent1->layer_masks = layer_masks_parent1;
-> > +		log_request_parent1->layer_masks_size =
-> > +			ARRAY_SIZE(*layer_masks_parent1);
-> > +	}
-> > +	if (!allowed_parent2 && log_request_parent2) {
-> > +		log_request_parent2->type = LANDLOCK_REQUEST_FS_ACCESS,
-> > +		log_request_parent2->audit.type = LSM_AUDIT_DATA_PATH,
-> > +		log_request_parent2->audit.u.path = *path;
-> > +		log_request_parent2->access = access_request_parent2;
-> > +		log_request_parent2->layer_masks = layer_masks_parent2;
-> > +		log_request_parent2->layer_masks_size =
-> > +			ARRAY_SIZE(*layer_masks_parent2);
-> > +	}
-> 
-> You may want to add a function to set these fields in log_request.
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-There would only be two calls to this function and with at least four
-arguments, so for simplicity, I don't think it's worth it.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
