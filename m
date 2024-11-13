@@ -1,206 +1,97 @@
-Return-Path: <linux-kernel+bounces-407649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923739C70B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:32:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F309C70B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8F62B27246
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:27:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7481BB29B28
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F8B1EBA0A;
-	Wed, 13 Nov 2024 13:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934DB1E7640;
+	Wed, 13 Nov 2024 13:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zqv6mmGq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Uop5wDUD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lV/FIheQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6391DF726;
-	Wed, 13 Nov 2024 13:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7ED1E048F;
+	Wed, 13 Nov 2024 13:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731504471; cv=none; b=FbOje6nuBzxqLh1D//OSrpHFaazHqaBBNAcHaZqfXVo5alqBU6QEkITENdM4VoOQPEhyODY8crunZ36riniALWk5yvA/Zx1xFfhaeQvMhaH4rGwVmSHkZ8gJBZt6SZpFSrluWTG2zRp5Myp1K6aDxIuEyxVNOxN/Prennlwjjsg=
+	t=1731504486; cv=none; b=Ofj7+JdXp7jrppIwKhYx78+U1Mpup7ZPkZu5MbhKZA2F+dB/Xy2A686U3UwzS40WalQhK7AwPidxWyUzI2c3uHxPGyQtB5d7N0GWhF8H+ioi3ccghVidobMZxk2WhzF6V2/CR5zXKICNiisjQmpMN5nJEE2ZzQDcseL9oS2eCsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731504471; c=relaxed/simple;
-	bh=J9yxasEbYowNRW4nZJbnWfVL09gPm+1ief1daBCuv/k=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=hBk+VcIv3mye5krtwlhdhOJTdm1oW1WwXEC+BObroSqoESoEkf4r2wphX/IFojFIbuigVxO6hhpAHl4SMtPXqDbYlSw7gyPzfomROs+ruQKWLsSzpGgomPGlMCEj0PISCgf1s6vFLbXanXuk3l7smxRFBp6IwFWIamf6lvgdtl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zqv6mmGq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Uop5wDUD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 13 Nov 2024 13:27:46 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731504467;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wnB/L9/F1cKPIDEoxPYFJ8A8etC5YOv19oQZSUDH6do=;
-	b=Zqv6mmGqAgZvCLfnmW5jpsOhCiv5jPhno9J8PkVJfNT44zHmI+GhrxA+x1QXCnM3pzIeeF
-	v3HtOzvAgfHFbwYYT3g4L6ds/ioBEPAdkqTcyMl4uOB4iI87Cy/EEPTSCz7KjDDLdc/ULr
-	pYBMHNIIro35GToglutzsb/hHKh/1Iu5jyqEetmFitKDpd4w8od4/HNzWf5yFhssEy+BXv
-	mlD8iI23mIA1l+4Hb03uoE+17RjvVzJnxOCjW3noHXTK49RyIOg3HFc9UFcQNZVzro86Ws
-	ySurvEEB2g0Ju1x9htZB4MGEr5/mXMw5vES5lcK25W9eHI8qz+xU2omJtZ+RAQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731504467;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wnB/L9/F1cKPIDEoxPYFJ8A8etC5YOv19oQZSUDH6do=;
-	b=Uop5wDUDI5s3I5uHJWGqyaDZTuLU/EUwf9TAqbmgB4moxS5w0aQVLGQ9Hxpxd0H71Xqj4g
-	6QJFSUUBhcaNIDDg==
-From: "tip-bot2 for Baoquan He" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/mm: Fix a kdump kernel failure on SME system
- when CONFIG_IMA_KEXEC=y
-Cc: Baoquan He <bhe@redhat.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Tom Lendacky <thomas.lendacky@amd.com>,  <stable@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240911081615.262202-3-bhe@redhat.com>
-References: <20240911081615.262202-3-bhe@redhat.com>
+	s=arc-20240116; t=1731504486; c=relaxed/simple;
+	bh=elX+ZHmOcEeivade5jXD1KIVyZS9cWV5j7qwFXSgjzo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnqcnP0rB8c5XtcfGC4a4ZOUIvmU0GJB9UL359a8Z117ciK1JyCMZts9cwygJCPKdJ+Ek0bnaeuYk3FIWRRlhMgjE45a/e/g58Ip7MTR5vgp2H9nhKFoPc6WzGWGBQRtgctHidd5B8Z+dXkQqJc/lqc1DChjXsuNv7+jaLcO9aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lV/FIheQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29D2AC4CECD;
+	Wed, 13 Nov 2024 13:28:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731504485;
+	bh=elX+ZHmOcEeivade5jXD1KIVyZS9cWV5j7qwFXSgjzo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lV/FIheQxNj+lJvsSNfmcYJLiSCWj+ZUa9nD6eBbqpeqyIbexlDOfikRIHZkCPu2a
+	 90hMuKsU75gsUlA7QavMoXmFr8XwQRke12H1lqbxaDfOeTfHhz0qwtNDLvwqv8DSRq
+	 SIHm6Cqojp4u5Y4VbnI5neDQYsz90qM4he5OxrWcxLWqIp/7f6CUxnKaMo/O7cc5ZE
+	 qKwk3dlal67bPa9KVyBv2EPQIJ8SDc46gt2rFdKf94CU9rBoeinoxDIR3UMOXZMp0+
+	 HrvkcGeM+927Oebm5SObrCZ8BlphcmzhjtJSLRpNAuym2WTqtYJEgDmdvaNwzdaR3x
+	 jZlEaBH99Qx4Q==
+Date: Wed, 13 Nov 2024 13:28:01 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.11 000/184] 6.11.8-rc1 review
+Message-ID: <ZzSpYbIWGFAGlE5M@finisterre.sirena.org.uk>
+References: <20241112101900.865487674@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173150446683.32228.2872819048173531578.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vVLSGE5mh4uJUqpU"
+Content-Disposition: inline
+In-Reply-To: <20241112101900.865487674@linuxfoundation.org>
+X-Cookie: Editing is a rewording activity.
 
-The following commit has been merged into the x86/urgent branch of tip:
 
-Commit-ID:     8d9ffb2fe65a6c4ef114e8d4f947958a12751bbe
-Gitweb:        https://git.kernel.org/tip/8d9ffb2fe65a6c4ef114e8d4f947958a127=
-51bbe
-Author:        Baoquan He <bhe@redhat.com>
-AuthorDate:    Wed, 11 Sep 2024 16:16:15 +08:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 13 Nov 2024 14:11:33 +01:00
+--vVLSGE5mh4uJUqpU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-x86/mm: Fix a kdump kernel failure on SME system when CONFIG_IMA_KEXEC=3Dy
+On Tue, Nov 12, 2024 at 11:19:18AM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.8 release.
+> There are 184 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-The kdump kernel is broken on SME systems with CONFIG_IMA_KEXEC=3Dy enabled.
-Debugging traced the issue back to
+Tested-by: Mark Brown <broonie@kernel.org>
 
-  b69a2afd5afc ("x86/kexec: Carry forward IMA measurement log on kexec").
+--vVLSGE5mh4uJUqpU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Testing was previously not conducted on SME systems with CONFIG_IMA_KEXEC
-enabled, which led to the oversight, with the following incarnation:
+-----BEGIN PGP SIGNATURE-----
 
-...
-  ima: No TPM chip found, activating TPM-bypass!
-  Loading compiled-in module X.509 certificates
-  Loaded X.509 cert 'Build time autogenerated kernel key: 18ae0bc7e79b6470012=
-2bb1d6a904b070fef2656'
-  ima: Allocated hash algorithm: sha256
-  Oops: general protection fault, probably for non-canonical address 0xcfacfd=
-fe6660003e: 0000 [#1] PREEMPT SMP NOPTI
-  CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc2+ #14
-  Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.20.0 05/03/2023
-  RIP: 0010:ima_restore_measurement_list
-  Call Trace:
-   <TASK>
-   ? show_trace_log_lvl
-   ? show_trace_log_lvl
-   ? ima_load_kexec_buffer
-   ? __die_body.cold
-   ? die_addr
-   ? exc_general_protection
-   ? asm_exc_general_protection
-   ? ima_restore_measurement_list
-   ? vprintk_emit
-   ? ima_load_kexec_buffer
-   ima_load_kexec_buffer
-   ima_init
-   ? __pfx_init_ima
-   init_ima
-   ? __pfx_init_ima
-   do_one_initcall
-   do_initcalls
-   ? __pfx_kernel_init
-   kernel_init_freeable
-   kernel_init
-   ret_from_fork
-   ? __pfx_kernel_init
-   ret_from_fork_asm
-   </TASK>
-  Modules linked in:
-  ---[ end trace 0000000000000000 ]---
-  ...
-  Kernel panic - not syncing: Fatal exception
-  Kernel Offset: disabled
-  Rebooting in 10 seconds..
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc0qWEACgkQJNaLcl1U
+h9APnQf+PRH6hVTgMs8VPCESgoAbAA8YCBsePTKfeKAsOA/0vK6OR0HLlyVRT+Hu
+r+HWtuI9IuF/EkbI8/g4ou571hU1fPDioFwBw9YEPdgtu/UORY+5lIZGcKufbWb7
+hpMTs3yybJ/WAvSlicLyxN4Vd9Z7lXj81rZ7XF4Me/B8mccdRQTDopniBP/y12vB
+aH8/bkwdRSKqkXnkxdNtyaAfNiGoMq9oJpE5SajA665O3pl619RN3/c37TGDboMA
+J7Mw5Bct2tDO1EYGVxT5RwoE/IMUy6gsbISAkFACePepZoYRiZlzFGcLsKPQfeRI
+fbMnBqIe/Db+NrgPOyhAvFyD8FujEw==
+=5vWv
+-----END PGP SIGNATURE-----
 
-Adding debug printks showed that the stored addr and size of ima_kexec buffer
-are not decrypted correctly like:
-
-  ima: ima_load_kexec_buffer, buffer:0xcfacfdfe6660003e, size:0xe48066052d5df=
-359
-
-Three types of setup_data info
-
-  =E2=80=94 SETUP_EFI,
-  - SETUP_IMA, and
-  - SETUP_RNG_SEED
-
-are passed to the kexec/kdump kernel. Only the ima_kexec buffer
-experienced incorrect decryption. Debugging identified a bug in
-early_memremap_is_setup_data(), where an incorrect range calculation
-occurred due to the len variable in struct setup_data ended up only
-representing the length of the data field, excluding the struct's size,
-and thus leading to miscalculation.
-
-Address a similar issue in memremap_is_setup_data() while at it.
-
-  [ bp: Heavily massage. ]
-
-Fixes: b3c72fc9a78e ("x86/boot: Introduce setup_indirect")
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Acked-by: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: <stable@kernel.org>
-Link: https://lore.kernel.org/r/20240911081615.262202-3-bhe@redhat.com
----
- arch/x86/mm/ioremap.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 70b02fc..8d29163 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -656,7 +656,8 @@ static bool memremap_is_setup_data(resource_size_t phys_a=
-ddr,
- 		paddr_next =3D data->next;
- 		len =3D data->len;
-=20
--		if ((phys_addr > paddr) && (phys_addr < (paddr + len))) {
-+		if ((phys_addr > paddr) &&
-+		    (phys_addr < (paddr + sizeof(struct setup_data) + len))) {
- 			memunmap(data);
- 			return true;
- 		}
-@@ -718,7 +719,8 @@ static bool __init early_memremap_is_setup_data(resource_=
-size_t phys_addr,
- 		paddr_next =3D data->next;
- 		len =3D data->len;
-=20
--		if ((phys_addr > paddr) && (phys_addr < (paddr + len))) {
-+		if ((phys_addr > paddr) &&
-+		    (phys_addr < (paddr + sizeof(struct setup_data) + len))) {
- 			early_memunmap(data, sizeof(*data));
- 			return true;
- 		}
+--vVLSGE5mh4uJUqpU--
 
