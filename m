@@ -1,141 +1,121 @@
-Return-Path: <linux-kernel+bounces-407912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1042A9C7989
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:04:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A16A49C7917
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:42:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA5ADB4438E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:38:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08629B448BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6415D202651;
-	Wed, 13 Nov 2024 15:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D810204F82;
+	Wed, 13 Nov 2024 15:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Stjyxz47"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K7fTlxtC"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C615786AE3
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325081632F9
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731511878; cv=none; b=hO3ZLsfTwdjg+2YAy5G4mzFqPOw08NjuJ3rpmkhOBrFn8TsWjJ0RCT9uri6YX4c6jzZ63/UHQYy1Q0z4XzASow5Pnsp9wR1QyzY/LJ0i75u/YT2BjTHiT7VVopFOp0sG0j2HgfUQQ45k2qpqgV4eUrumXCipnTaqsE0umqSBByU=
+	t=1731511920; cv=none; b=TT1qCAWbOP5etxmUmruht5UcWL396sB5c5UJ90YCR9KXGkwEwXR9Lb1qKfZ2pdeYhsGBjpjXf5L32aYBbSdOnq9Tw5FEvWWH3EOXmvzwMF1U5sDYyIYRWhLPSguPdJYeDzaUuOiHJXB8LHxPga5Bp+gSZWedUOWrspHgcxXCAg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731511878; c=relaxed/simple;
-	bh=RvXTp4UNuJGHLkucYvm5XdasIt0xr3Qw7sFTtmIlVZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLzeRqB+c4TvocZGyL+ziX42piBJ9eVBHRoD8g3j5DiXr9EUSj62ts+VM0YQenejjqmZsNGFqMQFdthc0Ur6KLtQtnG2rcA7b7eR8H9q5K8ZDdg51DX51aceHkfboKpRAs7L7YSZpjIdS6EerJOtB19bJFcdihN7M24v3Jpq27M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Stjyxz47; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3A57C4CEC3;
-	Wed, 13 Nov 2024 15:31:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731511878;
-	bh=RvXTp4UNuJGHLkucYvm5XdasIt0xr3Qw7sFTtmIlVZ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Stjyxz47DR4cx1M5q+cHF7bQecXvM6yO+vEtRMop7x+qP2rcBXjznD/avjOzqJQET
-	 ob7H43DaXP0LSAZ69hUqXMKXprkNLuHbq2erEdxtoOMnFJAKJhWXKBXs4DISoYQnvv
-	 +fNfPynTAf327aJFLVzwJ515KEsJl9SOgXBZgePLGLwAnoPgFfbPf0Qu6cjZoV8ctX
-	 h4anEwyriH8hAgMHJuiLaNZsWirIG4YSJBynb6NFIHERY4wfMBwVIq8+o2OhN7neD6
-	 LuuaZVtl8lfXr1V/aYS+CYp/LW+LZKZVqhg5o8Hk1wfLCr5WGVXzdqoDi+P0aq5h3f
-	 5hk8usfBuUK7A==
-Date: Wed, 13 Nov 2024 16:31:15 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	paulmck@kernel.org, mingo@kernel.org, bigeasy@linutronix.de,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, efault@gmx.de,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com
-Subject: Re: [PATCH v2 3/6] rcu: limit PREEMPT_RCU configurations
-Message-ID: <ZzTGQ_zTS8NrxjW9@localhost.localdomain>
-References: <20241106201758.428310-1-ankur.a.arora@oracle.com>
- <20241106201758.428310-4-ankur.a.arora@oracle.com>
+	s=arc-20240116; t=1731511920; c=relaxed/simple;
+	bh=xqgXxTxBWAWFFuhzT7ZUPnsnzXEdn+x+B/SzUaMtKJo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fC8i8Vi434NpNQ9gFDy+0hSHLiz98OSpP/H/pC45kMVSOZTeyxc5TU94Kw/fbclUNMniB1ULkb4PdYWfYTAOO6Zec50mDfstUqVKtZN6Dl+u5PZs0mW2s32kRFBrAnw92oCbuiUznxrBNMdPEWiB5vPgd6VaCQpum+ahdAE9zlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K7fTlxtC; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4608dddaa35so314411cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:31:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731511918; x=1732116718; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J9GgnVY5FRHI3/LENNtRtKpX8Cbd4vLaiASbNO/6g4o=;
+        b=K7fTlxtCfU7JUaNVNlFB1RK9KehX7nYk3Uujk1TcP01uhXmzMRRPkGtc320qSCyjRy
+         c71wf4j9gXE+DP4BiB6vUJdUwZlbJBhPJDvNjTxT/EoX2SG26HKWXIy86n9w4z0t93Ti
+         eS67SgDV56vNS/HxoYxHv2/W5DpBMxFaJM62/V45AgrzZqEFOZoaFP9PrikZ67hWAQeH
+         Pl/7V7po9UkafY2PK8/D2DZzh07b3wi7n+41OoFhZijszCxN43mQpY6FMCx6A5oO1xve
+         aGY9RV+vpuysW5fKgKZhNkuMbkDUw+KtekNpZCG5c4h5NPdS9JL4Dr2rNaufSWcsw2jZ
+         u0dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731511918; x=1732116718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J9GgnVY5FRHI3/LENNtRtKpX8Cbd4vLaiASbNO/6g4o=;
+        b=dKH81TpdJ6gQ7dkdItAxwq+x6U8VGb7mfJAfMhhqTcWSiBZuiB9Hgb8Ctm/UQIvaDV
+         p3XO4xaKGyq/u0+0RwClo+oETEjKCHeYxDGXt1LH7vI1u/2KOvAMn1vHOFhan0F3iVxc
+         mLnWbfPDuSRNKWc/+fS6ELgpa4JvkJQY7GtEcptlEnqHZE6CrwNO7NhJzppEusQGPtRP
+         3d5jmM59NUqXXr8Hg2YM/D+kxyMCgHJQZv2lWoXWasmg1z0mp92YKOB5ccS5xhd1/Rnr
+         C//wwtfp9VIz7UAEZpxPGl4wBm4CnEFbQOsheGAjnUsKwYjdeXbyFwWenn76eH/bgJ5D
+         RFEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTAm004SNF2m+Japm1JX3Jl6ucfnHTwprEoAu+k2MfEYeeI5ngnIO0zW4C5I0HWX6/omoUPdkfq2/YU6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxCZ9m4q21COw0fwok1L/zuJA7d5axEnvnavlmfbzAH72XAn0D
+	HkiChyawB6q8U+7JUEBakdP0cY5YX0s2TrmPP9E8GrBAQKegxQ4xGQ3eQQji1wmGEeavYK4tYED
+	8W6y52P1dgzNnM4FDvWBKjYBoLUTBKn2aGBQK
+X-Gm-Gg: ASbGncv4ZRhzbXgGuUIbAHQoFhQFDRp08TgJfC906NiXyMj2B+BSfPRakUmkEWs3zeD
+	6bwLs77PIqeJU119bxfrHqetF81N8kCXF+Rjr/K1n0HuoG1EnIWc1lU5MN9ixHQ54
+X-Google-Smtp-Source: AGHT+IGk9uxtnYHtkUgg0UPzg2N98kSBmf4LY/P7qNUHw/OFxW5T7HTd6jN4yeLp8NXR4qXMG3dc/DR2Pk6+l2taNME=
+X-Received: by 2002:a05:622a:1ba8:b0:461:3e03:738b with SMTP id
+ d75a77b69052e-4634cadb528mr3052931cf.19.1731511917940; Wed, 13 Nov 2024
+ 07:31:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106201758.428310-4-ankur.a.arora@oracle.com>
+References: <LV3PR12MB92658EA6CCF18F90DAAA168394532@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <f3ddabdc-39fa-45fa-97fd-d8508c2229c9@amazon.com> <CA+i-1C1zN_GcLagTRgfJqT6uFoZaMZj1NUfxkvP7eG=VGQ0GGQ@mail.gmail.com>
+ <LV3PR12MB926503BA63C616562E508D8C945A2@LV3PR12MB9265.namprd12.prod.outlook.com>
+In-Reply-To: <LV3PR12MB926503BA63C616562E508D8C945A2@LV3PR12MB9265.namprd12.prod.outlook.com>
+From: Brendan Jackman <jackmanb@google.com>
+Date: Wed, 13 Nov 2024 16:31:46 +0100
+Message-ID: <CA+i-1C2JXYUBnE7fn6df0=KR4KeD0VgwO5Cc2xRhO8rBqC_p+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 19/35] Documentation/x86: Document the new attack
+ vector controls
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: "Manwaring, Derek" <derekmn@amazon.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com" <hpa@zytor.com>, 
+	"jpoimboe@kernel.org" <jpoimboe@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"x86@kernel.org" <x86@kernel.org>, "mlipp@amazon.at" <mlipp@amazon.at>, 
+	"canellac@amazon.at" <canellac@amazon.at>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Wed, Nov 06, 2024 at 12:17:55PM -0800, Ankur Arora a écrit :
-> PREEMPT_LAZY can be enabled stand-alone or alongside PREEMPT_DYNAMIC
-> which allows for dynamic switching of preemption models.
-> 
-> The choice of PREEMPT_RCU or not, however, is fixed at compile time.
-> 
-> Given that PREEMPT_RCU makes some trade-offs to optimize for latency
-> as opposed to throughput, configurations with limited preemption
-> might prefer the stronger forward-progress guarantees of PREEMPT_RCU=n.
-> 
-> Accordingly, explicitly limit PREEMPT_RCU=y to the latency oriented
-> preemption models: PREEMPT, PREEMPT_RT, and the runtime configurable
-> model PREEMPT_DYNAMIC.
-> 
-> This means the throughput oriented models, PREEMPT_NONE,
-> PREEMPT_VOLUNTARY and PREEMPT_LAZY will run with PREEMPT_RCU=n.
-> 
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> ---
->  kernel/rcu/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
-> index 5a7ff5e1cdcb..9d52f87fac27 100644
-> --- a/kernel/rcu/Kconfig
-> +++ b/kernel/rcu/Kconfig
-> @@ -18,7 +18,7 @@ config TREE_RCU
->  
->  config PREEMPT_RCU
->  	bool
-> -	default y if PREEMPTION
-> +	default y if (PREEMPT || PREEMPT_RT || PREEMPT_DYNAMIC)
->  	select TREE_RCU
->  	help
->  	  This option selects the RCU implementation that is
+On Wed, 13 Nov 2024 at 16:05, Kaplan, David <David.Kaplan@amd.com> wrote:
+>
+> I don't see how ASI can ever be a user_user mitigation.  User_user attack=
+s are things like influencing the indirect predictions used by another proc=
+ess, causing that process to leak data from its address space.  User_user m=
+itigations are things like doing an IBPB when switching tasks.
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Well, in the RFC I'm currently (painfully slowly, sorry again) working
+on, that IBPB is provided by ASI. Each process has an ASI domain, ASI
+ensures there's an IBPB before we transition into any other domain
+that doesn't trust it (VMs trust their VMM, but all other transitions
+out of the userpace domain will flush).
 
-But looking at !CONFIG_PREEMPT_RCU code on tree_plugin.h, I see
-some issues now that the code can be preemptible. Well I think
-it has always been preemptible but PREEMPTION && !PREEMPT_RCU
-has seldom been exerciced (or was it even possible?).
+In practice, this is just provided by the fact that context switching
+currently incurs an asi_exit(), but that's an implementation detail,
+if we transitioned directly from one process' domain to another that
+would also create a flush.
 
-For example rcu_read_unlock_strict() can be called with preemption
-enabled so we need the following otherwise the rdp is unstable, the
-norm value becomes racy (though automagically fixed in rcu_report_qs_rdp())
-and rcu_report_qs_rdp() might warn.
+(But yes, maybe that being "part of ASI" is just my very ASI-centric
+perspective).
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 58d84c59f3dd..368f00267d4e 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -95,9 +95,9 @@ static inline void __rcu_read_lock(void)
- 
- static inline void __rcu_read_unlock(void)
- {
--	preempt_enable();
- 	if (IS_ENABLED(CONFIG_RCU_STRICT_GRACE_PERIOD))
- 		rcu_read_unlock_strict();
-+	preempt_enable();
- }
- 
- static inline int rcu_preempt_depth(void)
+> Also guest_user mitigation is not a thing, did you mean guest_guest?  If =
+so, the same argument applies.
 
-
-Let me audit further if we missed something else...
-
-Thanks.
-
-> -- 
-> 2.43.5
-> 
+Oh yep, sorry, and yep same response.
 
