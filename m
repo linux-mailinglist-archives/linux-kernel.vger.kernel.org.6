@@ -1,226 +1,121 @@
-Return-Path: <linux-kernel+bounces-407350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4CB9C6C3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:00:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 820AD9C6C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:01:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E191F21BFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:00:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32B3BB2CE64
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02F21F943D;
-	Wed, 13 Nov 2024 09:59:42 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA861F8907;
+	Wed, 13 Nov 2024 10:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TVkW0qGF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E082B189BBD
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C341F80BA
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731491982; cv=none; b=R2o7QJtWKFrFNV8HaGT9K2nQ8an0Y1QdEfiQZ5wtPeqbVNy0xaiCF4/8ls55cQaoNZm8SPVMOt6Zeaehnd5Q8e4GEmXsUz1GuMrM/5fcx6CEC4VKKf1TzV8T+rZI0FyHXS+HbAk4a6qTnditwaLLjhTRoQXVu3j00Z0T9MQsmjA=
+	t=1731492017; cv=none; b=Prw0dnFjhPC1MPSKyntGuLvEpJJrT5/zjiO8B2ft45O4DsJW1qpwZO7HW5PIDX/oIgXgK4Q/mdJGRRaPgZYXOr9jRsf5DK1BR9mA7qjABQFTVIhSEphakNw8V7vqtfAcx4ce1vNL8hch+h0sPuJHJ09CF0CH8EyRtwMGapi/654=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731491982; c=relaxed/simple;
-	bh=EGUmauyGC1XlLu+n48t6Xj6d7eQWa61VksgIlpJ/cXk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fIA6HOMofkmtVYqJc5awlIJ+SU0gQQynaj3EUJTIwD9x+oDatRbq3JvHDnVDDo5tHAgYLe6HkNTMmpK6g28KwOStwc4RaQgYXcm4QKJUuzZkKsvLwQDQty9dFs+t+ou0fm91w3wUP9xGrTguRfCtI8m2EjL8Ze06wSBwXtF1yB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [210.73.53.31])
-	by APP-05 (Coremail) with SMTP id zQCowADHr7p4eDRnlmI4Ag--.57753S5;
-	Wed, 13 Nov 2024 17:59:22 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V5 3/3] riscv: mm: Add uffd write-protect support
-Date: Wed, 13 Nov 2024 17:58:33 +0800
-Message-Id: <20241113095833.1805746-4-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241113095833.1805746-1-zhangchunyan@iscas.ac.cn>
-References: <20241113095833.1805746-1-zhangchunyan@iscas.ac.cn>
+	s=arc-20240116; t=1731492017; c=relaxed/simple;
+	bh=XTg1A6VERW2vZuQ8bcofRgH6ca1goDGT1y1rIAqX34s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=inQGpeAO1hJRrj6YKLBgeTp1EXL+qFLeYfNO5VYayoWTBe2cCKS1B1O66IgK9tV+lXKESiTM33pAw8QLGMfY9UbnAsMi4SVZoWY8kvi/AVH9DAmvY0RpxcWOdl2ke7gwyerUWeCp1pWnrjja1L4UnBiNLueQo4IeNYaYxlew9BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TVkW0qGF; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731492011; x=1763028011;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=XTg1A6VERW2vZuQ8bcofRgH6ca1goDGT1y1rIAqX34s=;
+  b=TVkW0qGFL9mzfltADpmsKv8Xl5KsrAD9VdpMgshTir/ASd2dzIDAH2Sc
+   ADAVpRwvOmoGhEXA+F0n4tjoG6FvJyKx0LYV4b5tAlSnHkxi2zfBmx8l6
+   elR2X55Uqyd1wS2K4TFIpAcRsStGkLRtKEfiPwhnx9BYBxsZv2RQmt8ty
+   Lv7Garaid5O98UkJTDGGDn/OmQ5XCuLwMaG1MZDhhPyJ5KSTpHzB7/4dE
+   kXxP4UiXgaYZNdLbhLdamrP/I8AN7gfavKKJ7r5plFjN4GkLff0oaMF3o
+   jKyGkWIkuk5cofwkG6Grm5oUEhKCbZmalBu8IzegmDxRCF9ZUHyuGxcvp
+   g==;
+X-CSE-ConnectionGUID: Kirir34NQbWuWFDv/kxTzQ==
+X-CSE-MsgGUID: WRh+THjrSfiEUeXq7uoIUw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31258416"
+X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
+   d="scan'208";a="31258416"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 02:00:09 -0800
+X-CSE-ConnectionGUID: teOArXzgSayK1TaaOOx2VQ==
+X-CSE-MsgGUID: VSWqnHkRQZuZGE60Q0mmYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
+   d="scan'208";a="91867725"
+Received: from mylly.fi.intel.com (HELO [10.237.72.58]) ([10.237.72.58])
+  by fmviesa003.fm.intel.com with ESMTP; 13 Nov 2024 02:00:07 -0800
+Message-ID: <9a78959a-391b-4a77-a33e-e230fbf2e0c0@linux.intel.com>
+Date: Wed, 13 Nov 2024 12:00:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADHr7p4eDRnlmI4Ag--.57753S5
-X-Coremail-Antispam: 1UD129KBjvJXoWxGw1UAFW7AF1kZF13WryDWrg_yoWrZr43pr
-	s5Ga1ru3yDJFn7KayftrWxKrWrZw43Wa4DXr9xua1kJFyUKrWDXFyrK34aqryrXFWvv34x
-	JrWrKryrCw47JF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPFb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-	8067AKxVWUWwA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF
-	64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcV
-	CY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIE
-	c7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I
-	8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCF
-	s4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4
-	vE14v_GFWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
-	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
-	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
-	14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
-	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUI8nY
-	UUUUU
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiBwkAB2c0ciEVcgABsv
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/5] i3c: master: Add support for SETAASA CCC
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Sanket.Goswami@amd.com, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
+ <20241108073323.523805-5-Shyam-sundar.S-k@amd.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20241108073323.523805-5-Shyam-sundar.S-k@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Reuse PTE bit(9) to do uffd-wp tracking and make it mutually exclusive
-with soft-dirty and devmap which all use this PTE bit.
+Hi
 
-Additionally for tracking the uffd-wp state as a PTE swap bit,
-we use swap entry pte bit(4) which is also used by swap
-soft-dirty tracking.
+On 11/8/24 9:33 AM, Shyam Sundar S K wrote:
+> @@ -1907,7 +1926,14 @@ static int i3c_master_bus_init(struct i3c_master_controller *master)
+>   		goto err_bus_cleanup;
+>   	}
+>   
+> -	i3c_master_add_spd_dev(master, i3cboardinfo);
+> +	/*
+> +	 * If the I3C slave on the bus is SPD device, then do not follow the regular
+> +	 * DAA process. Also, as per SPD spec SETAASA is required for the bus discovery
+> +	 * and sending RSTDAA and DISEC is considered as illegal. So skip the entire process
+> +	 * if the jdec_spd flag has been identified from the BIOS.
+> +	 */
+> +	if (master->jdec_spd)
+> +		return i3c_master_add_spd_dev(master, i3cboardinfo);
+>   
+This looks wrong the previous patch adds unconditional call to 
+i3c_master_add_spd_dev() and this patch makes it conditional. Can 
+previous patch then cause a regression if applied without this one?
 
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
----
- arch/riscv/Kconfig                    |  7 +++
- arch/riscv/include/asm/pgtable-bits.h | 13 ++++++
- arch/riscv/include/asm/pgtable.h      | 66 ++++++++++++++++++++++++++-
- 3 files changed, 85 insertions(+), 1 deletion(-)
+>   	if (master->ops->set_speed) {
+>   		ret = master->ops->set_speed(master, I3C_OPEN_DRAIN_SLOW_SPEED);
+> @@ -2311,6 +2337,10 @@ static int i3c_acpi_configure_master(struct i3c_master_controller *master)
+>   		return -ENODEV;
+>   	}
+>   
+> +	status = acpi_evaluate_object(master->ahandle, "_STR", NULL, NULL);
+> +	if (ACPI_SUCCESS(status))
+> +		master->jdec_spd = true;
+> +
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 3bccdcae9445..920071a05512 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -989,6 +989,13 @@ config RISCV_HAS_SOFT_DIRTY
- 	help
- 	  The PTE bit(9) is used for soft-dirty tracking.
- 
-+config RISCV_HAS_USERFAULTFD_WP
-+	bool "userfaultfd write protection"
-+	select HAVE_ARCH_USERFAULTFD_WP
-+	depends on USERFAULTFD
-+	help
-+	  The PTE bit(9) is used for userfaultfd write-protected
-+	  tracking.
- endchoice
- 
- endmenu # "Kernel features"
-diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-index c6d51fe9fc6f..7de16141c049 100644
---- a/arch/riscv/include/asm/pgtable-bits.h
-+++ b/arch/riscv/include/asm/pgtable-bits.h
-@@ -38,6 +38,19 @@
- #define _PAGE_SWP_SOFT_DIRTY	0
- #endif /* CONFIG_MEM_SOFT_DIRTY */
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+/*
-+ * CONFIG_HAVE_ARCH_USERFAULTFD_WP is mutually exclusive with
-+ * HAVE_ARCH_SOFT_DIRTY so we can use the same bit for uffd-wp
-+ * and soft-dirty tracking.
-+ */
-+#define _PAGE_UFFD_WP		(1 << 9) /* RSW: 0x2 for uffd-wp tracking */
-+#define _PAGE_SWP_UFFD_WP	_PAGE_USER
-+#else
-+#define _PAGE_UFFD_WP		0
-+#define _PAGE_SWP_UFFD_WP	0
-+#endif
-+
- #define _PAGE_TABLE     _PAGE_PRESENT
- 
- /*
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 1779eae5cb49..f241c444cebd 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -413,6 +413,38 @@ static inline pte_t pte_wrprotect(pte_t pte)
- 	return __pte(pte_val(pte) & ~(_PAGE_WRITE));
- }
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+static inline int pte_uffd_wp(pte_t pte)
-+{
-+	return pte_val(pte) & _PAGE_UFFD_WP;
-+}
-+
-+static inline pte_t pte_mkuffd_wp(pte_t pte)
-+{
-+	return pte_wrprotect(__pte(pte_val(pte) | _PAGE_UFFD_WP));
-+}
-+
-+static inline pte_t pte_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_UFFD_WP));
-+}
-+
-+static inline int pte_swp_uffd_wp(pte_t pte)
-+{
-+	return pte_val(pte) & _PAGE_SWP_UFFD_WP;
-+}
-+
-+static inline pte_t pte_swp_mkuffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_SWP_UFFD_WP));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- /* static inline pte_t pte_mkread(pte_t pte) */
- 
- static inline pte_t pte_mkwrite_novma(pte_t pte)
-@@ -789,6 +821,38 @@ static inline pmd_t pmd_mkdevmap(pmd_t pmd)
- 	return pte_pmd(pte_mkdevmap(pmd_pte(pmd)));
- }
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+static inline int pmd_uffd_wp(pmd_t pmd)
-+{
-+	return pte_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline int pmd_swp_uffd_wp(pmd_t pmd)
-+{
-+	return pte_swp_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline int pmd_soft_dirty(pmd_t pmd)
- {
-@@ -913,7 +977,7 @@ extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
-  * Format of swap PTE:
-  *	bit            0:	_PAGE_PRESENT (zero)
-  *	bit       1 to 3:       _PAGE_LEAF (zero)
-- *	bit	       4:	_PAGE_SWP_SOFT_DIRTY
-+ *	bit	       4:	_PAGE_SWP_SOFT_DIRTY or _PAGE_SWP_UFFD_WP
-  *	bit            5:	_PAGE_PROT_NONE (zero)
-  *	bit            6:	exclusive marker
-  *	bits      7 to 11:	swap type
--- 
-2.34.1
+I'm still suspicious about this one when existence of _STR for the host 
+controller causes normal bus initialization to be skipped. I.e. like below.
 
+Device (I3C0)
+{
+	_STR ("My I3C Host Controller")
+...
 
