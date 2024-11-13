@@ -1,116 +1,139 @@
-Return-Path: <linux-kernel+bounces-407014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5D59C676E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:44:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A529C6749
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:28:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8D28B2616C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:43:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79CAC28468F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A557148FE1;
-	Wed, 13 Nov 2024 02:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D3A13CA81;
+	Wed, 13 Nov 2024 02:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="IzIguMs+"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F238E1442F6
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hN2lgidy"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4E313AA47;
+	Wed, 13 Nov 2024 02:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731465786; cv=none; b=faarf6uBUli2klHH3nlAUOHaWpNr/cwrsaEyvoBzlJ060It4CuTlFPNBv9z+neSj8TdZG0NWxeZCfKWrmQUqCz8E64E1bjnz7d0+guQFIHzCB04psjcXBixpsgMdsBlJpjcNgRbS/K/z+gYCSdYkPFbtkYi/tmZAxBS+A4VtzuI=
+	t=1731464914; cv=none; b=JzMratUbwP3s4LTmnAeXqkiSLx3HECdJo7HFwTr8AGT0tSdOFWKpI+EX4saxibH7gVhyrgOC462E1uRKR5srkQS1GiSREvUM5J3JhvaaowE+MCTb+n6GpuXSlQjbalIAnFOj7Lj8b56bmTwASAGdMzYMpq5OE9MWjuV9HM/mxSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731465786; c=relaxed/simple;
-	bh=uvKW4kIptltJp4U3xd9CGKD1ESbFT5ezIz0HemAtG2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fSZYDz8Lmfni+dxABDAzrwwCu6UszQNo2p4yTcAyMiBbYqmM6VSpY7GL1lZXBoSusUYkjDtfYKz6EY3vSrCP0Owl2Es0MoW+WGBrq6cFCaDEofwkTwI5AiECJqw3dnuTvHCDxNVAA6qUZOaNnCWcUU9kIlGIoc6hKuhfXp03DTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=IzIguMs+; arc=none smtp.client-ip=220.197.31.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=jq6uH
-	QbE9AGGKyeI1cLFEGZadC02GR2k/GYhmY8uqAc=; b=IzIguMs+l8shhEp3H3p93
-	17G8mLBnAuW2aUYTYxzMIDEqdz5OKkNwpsQpq8SXWHh62qH/78NySNv93dHHj6/M
-	KIk46CEXorUMHkVTLllF3YapMjfYyBWlHoDVYfc+FNAZNdRGjReDzL8xey4FFacc
-	0EwEwl9hP6D7KFpySZwswY=
-Received: from localhost.localdomain (unknown [123.53.36.205])
-	by gzsmtp5 (Coremail) with SMTP id qSkvCgD3Vy+ADjRnLaknBQ--.10188S2;
-	Wed, 13 Nov 2024 10:27:12 +0800 (CST)
-From: Zhao Mengmeng <zhaomzhao@126.com>
-To: tj@kernel.org,
-	void@manifault.com
-Cc: zhaomengmeng@kylinos.cn,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] sched_ext: Replace hardcoding with macro and minor typo fix
-Date: Wed, 13 Nov 2024 10:26:37 +0800
-Message-ID: <20241113022637.297792-1-zhaomzhao@126.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1731464914; c=relaxed/simple;
+	bh=wa2vKLc8/54Rdf4o1x2MySDUsH/51w+TYLkh+/ysP28=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R8lvmpzi+2MzCvXcYuYmtwcjFGDzbmfcC3UMbZRolAddGmeIfnJnvClj6eU8It2LI/BmK+HEixjyThAjc7JmjNfNEdX/Fz27yA2IB9ejy4N2TV1T9ytpTpzWMD0OBr0UIyLDDBPH8ScgsIUxTgtbvyH1tXKzQTSHvuterLLB900=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hN2lgidy; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACNePGF008839;
+	Wed, 13 Nov 2024 02:28:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ZW+lut
+	UDGZ1CNRlnvVZZW3gfm5VnoL6QBYI6HJevgIk=; b=hN2lgidys7IPBfwYmrj/ca
+	2PYx5EQNXget+kLNjbHzadjlPRf6iwuMwAiGhETpz36X0qJ09R6j/an7dHXSo76q
+	reh6bDR7wx8fFxanITDfeuY8aa0bZnECDViowc/s+QUiZizhXVGEG/TafB+18l9k
+	rnlPsjI3ZKsn0DAGLOgT1ZP/hb0fqs1UnVuh39sKDcam05yQkTm5vdN+98B/OR5K
+	32eF+1eJwQo/4h85lGULMR49WGcDnzCci2BbdQbYZFwLMxBRpNLn5YHC616/oXpl
+	aW4rgEZ7L4c/Y54/WKYbxlrutjZ8TZy25NX0iPaZYfgqc6mrM5Uo0zjhBMW51Ywg
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42vgw0rf7y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 02:28:20 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACH7awZ017527;
+	Wed, 13 Nov 2024 02:28:20 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tk2mwcke-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 02:28:20 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AD2SJZb23069196
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 13 Nov 2024 02:28:19 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 60CC758052;
+	Wed, 13 Nov 2024 02:28:19 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F2EA758056;
+	Wed, 13 Nov 2024 02:28:18 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 13 Nov 2024 02:28:18 +0000 (GMT)
+Message-ID: <e72ec14c-1593-410f-a4ed-a5583b36fc7c@linux.ibm.com>
+Date: Tue, 12 Nov 2024 21:28:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qSkvCgD3Vy+ADjRnLaknBQ--.10188S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7CF4kGw15Zr1rZrWkuF47XFb_yoW8Zw4xpF
-	Z8XF4UG3WkXF47X34xAF4kC3429wna93W7Kr1rAwsakr95Kr1jqwnFqF4aqFW0y39avFy3
-	ZF4jg3y7Xwn7W3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UQmRUUUUUU=
-X-CM-SenderInfo: 52kd0zp2kd0qqrswhudrp/1tbimguWd2c0BquoRQAAsj
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ima: Suspend PCR extends and log appends when
+ rebooting
+To: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>
+References: <20241112165206.756351-1-stefanb@linux.ibm.com>
+ <a616939fa13b9e01b9cb6be68246152772944a76.camel@linux.ibm.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <a616939fa13b9e01b9cb6be68246152772944a76.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 0BUGPbaJKm_mlzuTJyXW63wYqX68YttS
+X-Proofpoint-ORIG-GUID: 0BUGPbaJKm_mlzuTJyXW63wYqX68YttS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ mlxlogscore=999 priorityscore=1501 lowpriorityscore=0 malwarescore=0
+ bulkscore=0 clxscore=1015 mlxscore=0 adultscore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411130017
 
-From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
 
-1. replace hardcoding with SCX_KF_UNLOCKED.
-2. scx_next_task_picked() has been replaced with siwtch_class().
-2. minor typo fixes.
 
-Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
----
- kernel/sched/ext.c             | 6 +++---
- tools/sched_ext/scx_qmap.bpf.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+On 11/12/24 6:42 PM, Mimi Zohar wrote:
+> On Tue, 2024-11-12 at 11:52 -0500, Stefan Berger wrote:
+>> To avoid the following types of error messages due to a failure by the TPM
+>> driver to use the TPM, suspend TPM PCR extensions and the appending of
+>> entries to the IMA log once IMA's reboot notifier has been called. This
+>> avoids trying to use the TPM after the TPM subsystem has been shut down.
+>>
+>> [111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
+>> [111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
+>>
+>> This error could be observed on a ppc64 machine running SuSE Linux where
+>> processes are still accessing files after devices have been shut down.
+>>
+>> Suspending the IMA log and PCR extensions shortly before reboot does not
+>> seem to open a significant measurement gap since neither TPM quoting would
+>> work for attestation nor that new log entries could be written to anywhere
+>> after devices have been shut down. However, there's a time window between
+>> the invocation of the reboot notifier and the shutdown of devices in
+>> kernel_restart_prepare() where __usermodehelper_disable() waits for all
+>> running_helpers to exit. During this time window IMA could now miss log
+>> entries even though attestation would still work. The reboot of the system
+>> shortly after may make this small gap insignificant.
+>>
+>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> 
+> Thanks, Stefan.  The patch looks good.  Based on the updated patch description,
+> I'm wondering if we should be testing the "system_state" instead of registering
+> a reboot notifier?
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 1b1c33f12dd7..832f77d1d318 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2759,10 +2759,10 @@ static int balance_one(struct rq *rq, struct task_struct *prev)
- 		 * If the previous sched_class for the current CPU was not SCX,
- 		 * notify the BPF scheduler that it again has control of the
- 		 * core. This callback complements ->cpu_release(), which is
--		 * emitted in scx_next_task_picked().
-+		 * emitted in switch_class().
- 		 */
- 		if (SCX_HAS_OP(cpu_acquire))
--			SCX_CALL_OP(0, cpu_acquire, cpu_of(rq), NULL);
-+			SCX_CALL_OP(SCX_KF_UNLOCKED, cpu_acquire, cpu_of(rq), NULL);
- 		rq->scx.cpu_released = false;
- 	}
- 
-@@ -6096,7 +6096,7 @@ static void kick_cpus_irq_workfn(struct irq_work *irq_work)
- 		if (cpu != cpu_of(this_rq)) {
- 			/*
- 			 * Pairs with smp_store_release() issued by this CPU in
--			 * scx_next_task_picked() on the resched path.
-+			 * switch_class() on the resched path.
- 			 *
- 			 * We busy-wait here to guarantee that no other task can
- 			 * be scheduled on our core before the target CPU has
-diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bpf.c
-index ee264947e0c3..f230641929ec 100644
---- a/tools/sched_ext/scx_qmap.bpf.c
-+++ b/tools/sched_ext/scx_qmap.bpf.c
-@@ -5,7 +5,7 @@
-  * There are five FIFOs implemented using BPF_MAP_TYPE_QUEUE. A task gets
-  * assigned to one depending on its compound weight. Each CPU round robins
-  * through the FIFOs and dispatches more from FIFOs with higher indices - 1 from
-- * queue0, 2 from queue1, 4 from queue2 and so on.
-+ * queue0, 2 from queue1, 3 from queue2 and so on.
-  *
-  * This scheduler demonstrates:
-  *
--- 
-2.43.0
+That's a possibility and would definitely be less code. I don't see why 
+not...
 
 
