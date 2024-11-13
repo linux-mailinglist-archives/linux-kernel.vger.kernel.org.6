@@ -1,198 +1,204 @@
-Return-Path: <linux-kernel+bounces-408388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98A39C7E2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:18:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C7E9C7E2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:21:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D20FB23603
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:18:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084A2284475
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1989C18A6B5;
-	Wed, 13 Nov 2024 22:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="P9Xps/M4"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F09318BC34;
+	Wed, 13 Nov 2024 22:21:02 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C0B7081D
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 22:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA4F7081D;
+	Wed, 13 Nov 2024 22:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731536288; cv=none; b=T0y0RepBAWDZ3YtuFgyvjkgITh0yGI50v7HxhfF6C0VA3arDFlGcW4lXiidzKM4rTqhoEHxyXqawSR6TBLRgew8ba1pcv3OhbnBVJ94Q3U+P8JQ6HtRsWTi+gJQrtdn8ZDKgC975uF+CebCzsScHT8kXpruGsHi7FArC5lJ9GFU=
+	t=1731536461; cv=none; b=KuDKEx7rMiEMTLZxswdGhvVziw46KjzGfADkizFBgyKt2QY6TyGws674Y4LmCSNMpmLCl43VJCYeePZrqbFqNQAAjN1/OiXDdN6vU0LvF0hNMHoqzhT3LRyVxdGecUOYIOroj0mIGUMTFy8LpVE40ft0vtVaJVEqVnmgiysGa68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731536288; c=relaxed/simple;
-	bh=L0+uBKrUQ/0gco5VuTBXfLXf5tlrpOWQHfNNVS1Q2dU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mcgMlVyrKXcrUX6NIIt6Xy3JWxPDHQVapSnluOCAazobU4NIiUTelOJFe4X4UcS9/6SQJ14HyuKYswdqnI+qv7WAjkxjwfFlWYwwsb4W1WBEpaFK2AwzQ9m/lcdS4zXqIQsX8bTYpk3VtCbDsU+0icEzm7aiPRomwSn7IdvLFCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=P9Xps/M4; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a70315d38dso13269145ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:18:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google; t=1731536286; x=1732141086; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VUUp9hnlhuLcMZfQIzjNbXpjrKL+vQSBQg+jzje+Uys=;
-        b=P9Xps/M4ouQh2VJqXYVKBUjlp1BeN9/AjpVOlyiMfKj0U4+xh4OU8BucngJfIPlgdP
-         8IoGd2MC0aXLASrcXm2GCM1+csQArmW5a62MluhcExsFwW8e0qh1cIfrIZaw7KCzRg3o
-         /t97PPck2wUcKtDOfexS8RgI7FJqqGMtsAmvg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731536286; x=1732141086;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VUUp9hnlhuLcMZfQIzjNbXpjrKL+vQSBQg+jzje+Uys=;
-        b=BpEiM6rDvzWCK4Zt2VIbFMbN1WCFfjuor6Kl76R2pdR9dHA1rl9VtXGJnwlJo1pL1I
-         Y93M1hJG0Ag/ur7fU+fgZ18vXNOZzfVmusEf8JMVfbwJQuV6DQUY5lGyN2jm4D1dx7lI
-         DKoz8jTkKVduf6HHMuYHPh0QPV1jNpy4nEIou9alfoszCEoBRRi9AUMgzMi9wdBm24y1
-         ro64lmHs+AaYP+/CPXwhk6Eyi3dYKa83/VvXsMFwjAumM2/1tNhzg3IfPDReRdC5GMIn
-         89cxaDU1qcwTnLo/+V0xswv+LeOabiWsynWHFxesIR8qyaKRcOzkAUC1zgUIeIMV+TAZ
-         AQbQ==
-X-Gm-Message-State: AOJu0YwLk4CbpFDoxq5voMmAPXNbhhlqKlYdLTKdMU2YZ+b6vZRPwNoj
-	NbulL4J2T7wmN1j38jFyqH+qr++4Wa/XpfWu2I81LcPHAfg83w5CU5HZDPImykw=
-X-Google-Smtp-Source: AGHT+IHLrACiP2l2OLVO5VJ/rG9PEXEkh0S61CI9FGPadNm3T46Vs8+391cRikf2ZoBDq0w2dlpJ/A==
-X-Received: by 2002:a05:6e02:1b07:b0:3a0:9cd5:92f7 with SMTP id e9e14a558f8ab-3a6f1a6eca3mr258548905ab.17.1731536285730;
-        Wed, 13 Nov 2024 14:18:05 -0800 (PST)
-Received: from localhost (222.121.121.34.bc.googleusercontent.com. [34.121.121.222])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de7883c03esm3023282173.157.2024.11.13.14.18.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 14:18:04 -0800 (PST)
-Date: Wed, 13 Nov 2024 22:18:04 +0000
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [RFC 3/3] tick-sched: Replace jiffie readout with idle_entrytime
-Message-ID: <20241113221804.GC2331600@google.com>
-References: <20241108174839.1016424-1-joel@joelfernandes.org>
- <20241108174839.1016424-4-joel@joelfernandes.org>
- <871pzgo77j.ffs@tglx>
+	s=arc-20240116; t=1731536461; c=relaxed/simple;
+	bh=jaCgkVrjqdFRoXcmyT5u0vZq+LcNAv9DOc0Nl7LGbn4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lg7CH3AkiFLqJo3tFon7jZaneULeoJhl/phjOc4nN/R/oZSmf4QI0MDkiAi2hDEuwgLkZIo6DfEvWxvSzIFUsK67ODFKTShgLJO4wxEW8W8gYdrxidv7gqiZ0Qj+NskuSh35MG69bwC63tknGpBL5BPIRkN8TEPm0DramOqlMfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C89EC4CEC3;
+	Wed, 13 Nov 2024 22:20:58 +0000 (UTC)
+Date: Wed, 13 Nov 2024 17:21:18 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Jens Remus <jremus@linux.ibm.com>, x86@kernel.org, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de
+ Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, Indu Bhagat
+ <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers
+ <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+ linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>, Sam
+ James <sam@gentoo.org>, linux-trace-kernel@vger.kernel.org, Andrii Nakryiko
+ <andrii.nakryiko@gmail.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Florian Weimer <fweimer@redhat.com>, Andy
+ Lutomirski <luto@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+Message-ID: <20241113172118.6db57c42@gandalf.local.home>
+In-Reply-To: <20241113171326.6d1ddc83@gandalf.local.home>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+	<42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+	<1f83be89-b816-48a3-a7ee-9b72f07b558e@linux.ibm.com>
+	<20241113155040.6a9a1bed@gandalf.local.home>
+	<20241113211535.ghnw52wkgudkjvgv@jpoimboe>
+	<20241113171326.6d1ddc83@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871pzgo77j.ffs@tglx>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 12, 2024 at 03:30:24PM +0100, Thomas Gleixner wrote:
-> On Fri, Nov 08 2024 at 17:48, Joel Fernandes wrote:
-> > This solves the issue where jiffies can be stale and inaccurate.
+
+[ This reply fixes the linux-trace-kernel email :-p ]
+
+On Wed, 13 Nov 2024 17:13:26 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> BTW, the following changes were needed to make it work for me:
 > 
-> Which issue?
-
-I will describe below.
-
-> > Putting some prints, I see that basemono can be quite stale:
-> > tick_nohz_next_event: basemono=18692000000 basemono_from_idle_entrytime=18695000000
+> -- Steve
 > 
-> What is your definition of stale? 3ms on a system with HZ < 1000 is
-> completely correct and within the margin of the next tick, no?
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 434c548f0837..64cc3c1188ca 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -842,7 +842,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	int first_pt_load = 1;
+>  	unsigned long error;
+>  	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
+> -	struct elf_phdr *elf_property_phdata = NULL, *sframe_phdr = NULL;
+> +	struct elf_phdr *elf_property_phdata = NULL;
+> +	unsigned long sframe_vaddr = 0;
 
-I am on HZ=1000. So 3ms is not within margin of the next tick for me.
+Could not just save the pointer to the sframe phd, as it gets freed before we need it.
 
-> > Since we have 'now' in ts->idle_entrytime, we can just use that. It is
-> > more accurate, cleaner, reduces lines of code and reduces any lock
-> > contention with the seq locks.
-> 
-> What's more accurate and what is the actual problem you are trying to
-> solve. This handwaving about cleaner, less lines of code and contention
-> on a non existing lock is just not helpful.
+>  	unsigned long elf_brk;
+>  	int retval, i;
+>  	unsigned long elf_entry;
+> @@ -951,7 +952,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  			break;
+>  
+>  		case PT_GNU_SFRAME:
+> -			sframe_phdr = elf_ppnt;
+> +			sframe_vaddr = elf_ppnt->p_vaddr;
+>  			break;
+>  
+>  		case PT_LOPROC ... PT_HIPROC:
+> @@ -1344,8 +1345,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  					    task_pid_nr(current), retval);
+>  	}
+>  
+> -	if (sframe_phdr)
+> -		sframe_add_section(load_bias + sframe_phdr->p_vaddr,
+> +	if (sframe_vaddr)
+> +		sframe_add_section(load_bias + sframe_vaddr,
+>  				   start_code, end_code);
+>  
+>  	regs = current_pt_regs();
+> diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
+> index 933e47696e29..ca4ef0b72772 100644
+> --- a/kernel/unwind/sframe.c
+> +++ b/kernel/unwind/sframe.c
+> @@ -73,15 +73,15 @@ static int find_fde(struct sframe_section *sec, unsigned long ip,
+>  		    struct sframe_fde *fde)
+>  {
+>  	struct sframe_fde __user *first, *last, *found = NULL;
+> -	u32 ip_off, func_off_low = 0, func_off_high = -1;
+> +	s32 ip_off, func_off_low = INT_MIN, func_off_high = INT_MAX;
 
-Oh sure. the concern I have is that jiffies might be quite out of date for
-whatever reason as I shared above with comparing the jiffies with
-idle_entrytrime. I am not sure exactly why this happens, maybe because
-interrupts were disabled on the do-timer CPU? But in any case I was concerned
-about this code in tick_nohz_next_event():
+The ip_off is a signed it. I wrote a program to dump out the sframe section
+of files, and I had:
 
+	ffffed88: (1020) size:      16 off:     146 num:       2 info: 1 rep:16
+	ffffed98: (1030) size:     336 off:     154 num:       2 info:17 rep:16
+	ffffefe1: (1279) size:     113 off:       0 num:       4 info: 0 rep: 0
+	fffff052: (12ea) size:      54 off:      15 num:       3 info: 0 rep: 0
+	fffff088: (1320) size:     167 off:      26 num:       3 info: 0 rep: 0
+	fffff12f: (13c7) size:     167 off:      37 num:       4 info: 0 rep: 0
+	fffff1d6: (146e) size:     167 off:      52 num:       4 info: 0 rep: 0
+	fffff27d: (1515) size:      22 off:      67 num:       4 info: 0 rep: 0
+	fffff293: (152b) size:     141 off:      82 num:       4 info: 0 rep: 0
+	fffff320: (15b8) size:      81 off:      97 num:       4 info: 0 rep: 0
+	fffff371: (1609) size:     671 off:     112 num:       4 info: 1 rep: 0
+	fffff610: (18a8) size:     171 off:     131 num:       4 info: 0 rep: 0
 
-	if (rcu_needs_cpu() || arch_needs_cpu() ||
-	    irq_work_needs_cpu() || local_timer_softirq_pending()) {
-		next_tick = basemono + TICK_NSEC;
+The above turns was created by a loop of:
+
+	fde = (void *)sframes + sizeof(*sframes) + sframes->sfh_fdeoff;
+	for (s = 0; s < sframes->sfh_num_fdes; s++, fde++) {
+		printf("\t%x: (%lx) size:%8u off:%8u num:%8u info:%2u rep:%2u\n",
+		       fde->sfde_func_start_address,
+		       fde->sfde_func_start_address + shdr->sh_offset,
+		       fde->sfde_func_size,
+		       fde->sfde_func_start_fre_off,
+		       fde->sfde_func_num_fres,
+		       fde->sfde_func_info,
+		       fde->sfde_func_rep_size);
 	}
 
-If we are using a stale basemono, that just seems wrong to me. If basemono
-is stale, then next_tick could even be in the past?
+As you can see, all the ip_off are negative.
 
-> > I was also concerned about issue where jiffies is not updated for a long
-> > time, and then we receive a non-tick interrupt in the future. Relying on
-> > stale jiffies value and using that as base can be inaccurate to determine
-> > whether next event occurs within next tick. Fix that.
-> 
-> I'm failing to decode this word salad.
+>  
+>  	ip_off = ip - sec->sframe_addr;
+>  
+>  	first = (void __user *)sec->fdes_addr;
+> -	last = first + sec->fdes_nr;
+> +	last = first + sec->fdes_nr - 1;
 
-I think I came up with an incorrect explanation of why basemono is lagging -
-I have to look deeper into when basemono can be out-of-date - I certainly saw
-it being lagging sometimes as I showed in the traces.
+The above was mentioned before.
 
-Anyway my broken word salad was something like: Say jiffies update did not
-happen for a long time (can the tick be turned off on a do-timer CPU?). Then
-say if a non-tick interrupt, like a device interrupt bring the CPU out of
-idle, and then on the way back to idle, it tries to stop the tick. 'basemono'
-would be quite out of date.
+>  	while (first <= last) {
+>  		struct sframe_fde __user *mid;
+> -		u32 func_off;
+> +		s32 func_off;
+>  
+>  		mid = first + ((last - first) / 2);
+>  
+> diff --git a/kernel/unwind/user.c b/kernel/unwind/user.c
+> index 11aadfade005..d9cd820150c5 100644
+> --- a/kernel/unwind/user.c
+> +++ b/kernel/unwind/user.c
+> @@ -97,7 +97,7 @@ int unwind_user_start(struct unwind_user_state *state)
+>  
+>  	if (current_has_sframe())
+>  		state->type = UNWIND_USER_TYPE_SFRAME;
+> -	else if (IS_ENABLED(CONFIG_UNWIND_USER_FP))
+> +	else if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP))
 
-I am just speculating, I don't know exactly why I see basemono lagging. I
-thought maybe we can fix that and avoid issues in the future that might show
-up because of such inaccuracy.
+This was mentioned too.
 
-Other theories?
+>  		state->type = UNWIND_USER_TYPE_FP;
+>  	else
+>  		state->type = UNWIND_USER_TYPE_NONE;
+> @@ -138,7 +138,7 @@ int unwind_user(struct unwind_stacktrace *trace, unsigned int max_entries)
+>  static u64 ctx_to_cookie(u64 cpu, u64 ctx)
+>  {
+>  	BUILD_BUG_ON(NR_CPUS > 65535);
+> -	return (ctx & ((1UL << 48) - 1)) | cpu;
+> +	return (ctx & ((1UL << 48) - 1)) | (cpu << 48);
 
-I wonder if you're going to mention that this code works even if basemono is
-out-of-date. But I am concerned that in 'low resolution mode', if we have an
-hrtimer that is about to expire within the next tick, and if basemono is
-lagging by several ticks, then could this code accidentally not keep the tick
-alive thinking that the hrtimer is several ticks away?
+And so was this.
 
-> > XXX: Need to fix issue in idle accounting which does 'jiffies -
-> > idle_entrytime'. If idle_entrytime is more current than jiffies, it
-> > could cause negative values. I could replace jiffies with idle_exittime
-> > in this computation potentially to fix that.
-> 
-> So you "fix" some yet to be correctly described issue by breaking stuff?
+-- Steve
 
-Its a side-effect of this patch, more adjustments are needed. This is just an
-RFC, Thomas :-)
-
-> >  static ktime_t tick_nohz_next_event(struct tick_sched *ts, int cpu)
-> >  {
-> > -	u64 basemono, next_tick, delta, expires, delta_hr, next_hr_wo;
-> > +	u64 basemono, next_tick, delta, expires, delta_hr, next_hr_wo, boot_ticks;
-> >  	unsigned long basejiff;
-> >  	int tick_cpu;
-> >  
-> > -	basemono = get_jiffies_update(&basejiff);
-> > +	boot_ticks = DIV_ROUND_DOWN_ULL(ts->idle_entrytime, TICK_NSEC);
-> 
-> Again this div/mult is more expensive than the sequence count on 32bit.
-
-Got it, I was hoping that there was a better way to calculate the number of
-ticks without expensive div/mult, let me know if you had any ideas on that?
-But it seems to me there isn't an alternative. So we may have to table this
-idea. Also I think it suffers from the same tick-skew issue you mentioned I
-think.
-
-> > -/*
-> > - * Read jiffies and the time when jiffies were updated last
-> > - */
-> > -u64 get_jiffies_update(unsigned long *basej)
-> 
-> How does this even compile? This function is global for a reason.
-
-Yeah, sorry I had fixed the issue in my next revision when I adjusted the
-timer migration code:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/jfern/linux.git/commit/?h=timers/tick-sched&id=1cf33bddf50341cf9802ed19374dc42d8466868b
-
-thanks,
-
- - Joel
+>  }
+>  
+>  /*
 
 
