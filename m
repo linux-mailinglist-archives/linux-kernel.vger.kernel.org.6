@@ -1,169 +1,144 @@
-Return-Path: <linux-kernel+bounces-407280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A969C6B43
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:14:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB609C6B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:15:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466FF283947
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:14:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E697E1F25336
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF371C8FBA;
-	Wed, 13 Nov 2024 09:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F4A1C8FCE;
+	Wed, 13 Nov 2024 09:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="jYoOeafH"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YrYVoPT6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2013A1C7B99
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B749F1C8776
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731489259; cv=none; b=A4+I382W+8fYbjslB4NmLF9SgkFEyZMyJEaU4FhaK1MIi8khQJBZ3Qqcmw+qRmFTnTl/z92v5N2NBk0C2l7uEQ3MdTg/QtGOmx1c232QBFpzcs777JAHz2SqTYQErfxek35+U+bPYrf1DAg2MVfGPV7aZizZKtcWLLALaTFIWm0=
+	t=1731489292; cv=none; b=gYYYsiGCKdEgmjpLbDqq75TjKg4dqShOTguAq4inWapCNCM/Q65he1GW/WmOrOcqgiC9KOdF8QjYaYQBBVirwIh2ElGA1ReiVb8tpU7TiVd1Iub6A6gqpXHKtZzIdeIrgTPdzMmGkoVK2+6mI42aZMqrlnsYXY+OyyZCjwememc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731489259; c=relaxed/simple;
-	bh=k3u1i+EkOUGyydWDxegjN8Z+dsO/4h73UeTsckZJ1pI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z0heSCJesXbovUvlu9mysQ0vQhHFH1Lr/ZJKRy9c7Mr7hMAk6jHEFekl/KP8THNoK46gzzpBvJRhgB0QMmquumu8p5nksMaz9bcykQApBQj8ItMy/q6g0mfLG+sLxS8GRdzYqseds0P+rKnARyZV8SWU3XambnpejlWgC7U+Zx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=jYoOeafH; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4AD9DDIp3717348
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 13 Nov 2024 01:13:19 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4AD9DDIp3717348
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1731489200;
-	bh=8nDYQSOmddAD+wN5L5Wxofedcz2xjD/+8HfS2spkzPw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jYoOeafH3Bo+uH+2ougSWoOkM05a+3FBNnueuT/lt4fp/m4oyEpC9zUs5hdf4n5Nl
-	 hpD/qg7Dxknq9S6xWNR4i+nYK93/aIHkygpiqIxG4fn/5cnj5wNDUUpRx9wRKN8uwh
-	 yrSuTMmmZhZ0AgpEJoIePb2UKe7Ozriq6HPF6lCfBxAH3MPHk7Dda8V6HCKDI5acxu
-	 UM3ta3KkL0pz2l0i4Y+LvNTU5xPzauFWkEAqw/vyu+Mro5rDTluv4PX0355ugQSXHy
-	 whgWd33jc7vp4GlZCXJWKd7/QQRZr6sItKTBDTsDxPRXxWOgD1hqVw0XrYwvoyb2uB
-	 KzuQNmclohBUA==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        peterz@infradead.org, andrew.cooper3@citrix.com
-Subject: [PATCH v3 1/1] x86/fred: Clear WFE in missing-ENDBRANCH #CPs
-Date: Wed, 13 Nov 2024 01:13:12 -0800
-Message-ID: <20241113091313.3717338-1-xin@zytor.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731489292; c=relaxed/simple;
+	bh=0R+6XRenndLMIJM9nY3chba05E+5sqc+/i8cxpXHfIk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kw+5cf+mJT2dDXSk3NhPsyqfotcSfP1ttIDkWb9JEv02viDbVWKgA5j+raqd4G9Kp5SzkLM/S/Sat66rrTn2d88sPyVQ5I2c7RJjgkOKjxrQ8D1ptG4y4J+kDzJR3mRr1LEwdhcp6VuSYbXBdDBrUozAQOedm5IGpWpuOn7tMcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YrYVoPT6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731489289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bo+a2oJM/DzF7/2w/lozMNF13YjGxFBwuRsrvmeNqLs=;
+	b=YrYVoPT6TQqpojTbn6vEbqtB2yERhIZBAhIv0a/75bezwKstf5e0TMq8TZPFTvOWLM9/TF
+	c1lQW+Zgnku/wU0DneMoI8qoa4htaKkeinLU3JXHF3NC75HFlwvd4uamc3xRl0WqtaczFE
+	nlNsqXJ+wbW61qNLR1zyKuWyjw3u+Mo=
+Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com
+ [209.85.222.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-662-jD876l14OXG39oR5VkOZvA-1; Wed, 13 Nov 2024 04:14:46 -0500
+X-MC-Unique: jD876l14OXG39oR5VkOZvA-1
+X-Mimecast-MFC-AGG-ID: jD876l14OXG39oR5VkOZvA
+Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-856a0a4f3f7so786803241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 01:14:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731489286; x=1732094086;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bo+a2oJM/DzF7/2w/lozMNF13YjGxFBwuRsrvmeNqLs=;
+        b=T+HGB8rIER96PF2EmApVlMC4TvG+RemFQWm7E13lpOUj/dyLDMvFt4jI/NonDa8cRj
+         9yAzukhvEvf711llHVLvJ9w8yK8XydxPBZVLLsUPbE8YB3RSvdmq9VxAGLvm5vo13HX+
+         vdt55vaYQqmV6Zzm28XrCLrjberfBLyeYCbhlXy1wg0ppsT1J3Zk1kUcfRaPc8ZGF6Tq
+         cfOtfbZZD90dYbqZBHIS/+qmBksyxxRGjpci6UG7EP3Kb4+MRbrqNpBDxeElKXcYt8nG
+         MIy2iXYuLoX1e5DhIIQaXyEjHR3iKdGeyMeZGTLWx0yKcXgqTflr1EQcMbw1vpL6/t5P
+         yrCw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7ivNRw+D8qT9+F5E3CFCflFh7IfRFvUvb1I+r7RXmOhrYLPpMxAv1xLBR1Wn9G4j9AM7k6BilCYroxYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4VT0Vo7dCpIG7h5AW+v5Dra+QqdqDBQkZ8YfcLW5hwz27gKZ5
+	LMChWUEPHgX98/8pnMECVFYur1sQeZvDki9ypxIec+FP83+Lvb+4YJxpPSgKPdjAISPgw5JgABj
+	0O3q5wWHvz5KF4712hUpxG0dcUE/+Mb+T6MwOv9PFujCsOlumTsa+xdYakWLWX+UuqMdD1pFvky
+	CyuwSr86h1Dytu+PxySRL3IQmmZ8aKoWJziJJA
+X-Received: by 2002:a05:6102:3f50:b0:4a4:92f7:3611 with SMTP id ada2fe7eead31-4aae22bf83amr16647601137.12.1731489285754;
+        Wed, 13 Nov 2024 01:14:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGOl+1geTz+2YuwUXdn5bVXsVX5Z+UuowifTsSD86yBEMAnagBRJMr3rM3zLY10n9GT2KGtLlMIc44W6KxLIHg=
+X-Received: by 2002:a05:6102:3f50:b0:4a4:92f7:3611 with SMTP id
+ ada2fe7eead31-4aae22bf83amr16647598137.12.1731489285487; Wed, 13 Nov 2024
+ 01:14:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <67336557.050a0220.a0661.041e.GAE@google.com>
+In-Reply-To: <67336557.050a0220.a0661.041e.GAE@google.com>
+From: Ming Lei <ming.lei@redhat.com>
+Date: Wed, 13 Nov 2024 17:14:34 +0800
+Message-ID: <CAFj5m9+j=KNhaRruRZ7p0Nnt6PiqOVQN00vhgcwEgfKji=rJEg@mail.gmail.com>
+Subject: Re: [syzbot] [block?] possible deadlock in loop_reconfigure_limits
+To: syzbot <syzbot+867b0179d31db9955876@syzkaller.appspotmail.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-An indirect branch instruction sets the CPU indirect branch tracker
-(IBT) into WAIT_FOR_ENDBRANCH (WFE) state, and WFE stays asserted
-across the instruction boundary.  When decoder finds an instruction
-and WFE is set, and the instruction is not the appropriate ENDBR, it
-raises a #CP fault.
+On Tue, Nov 12, 2024 at 10:30=E2=80=AFPM syzbot
+<syzbot+867b0179d31db9955876@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    929beafbe7ac Add linux-next specific files for 20241108
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16b520c058000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D75175323f2078=
+363
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D867b0179d31db99=
+55876
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D11b520c0580=
+000
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/9705ecb6a595/dis=
+k-929beafb.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/dbdd1f64b9b8/vmlinu=
+x-929beafb.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/3f70d07a929b/b=
+zImage-929beafb.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/7589a4f702=
+0b/mount_2.gz
 
-For the kernel IBT no ENDBR selftest where #CPs are deliberately
-triggerred, the WFE state of the interrupted context needs to be
-cleared to let execution continue.  Otherwise when the CPU resumes
-from the instruction that just caused the previous #CP, another
-missing-ENDBRANCH #CP is raised and the CPU enters a dead loop.
+...
 
-This is not a problem with IDT because it doesn't preserve WFE and
-IRET doesn't set WFE.  But FRED provides space on the entry stack
-(in an expanded CS area) to save and restore the WFE state, thus the
-WFE state is no longer clobbered, so software must clear it.
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
 
-Clear WFE to avoid dead looping in ibt_clear_fred_wfe() and the
-!ibt_fatal code path when execution is allowed to continue.
-
-Clobbering WFE in any other circumstance is a security-relevant bug.
-
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
----
-
-Changes since v2:
-* Explain why the FRED-specific code in ibt_clear_fred_wfe() doesn't
-  do any FRED checks (Dave Hansen).
-* ibt_clear_fred_wfe() needs to be inside the ibt_selftest_noendbr
-  path (Andrew Cooper & Dave Hansen).
-* Simplify the changelog and comment, create an IBT WFE document
-  in Documentation/ later (Dave Hansen).
-* Rewrite changelog based on feedbacks from Dave and Andrew.
-
-Changes since v1:
-* Rewrite the comment of ibt_clear_fred_wfe() using Andrew Cooper's
-  write-up (Andrew Cooper).
-* Unconditionally clear WFE in missing-ENDBRANCH #CPs (Peter Zijlstra).
-* Don't check X86_FEATURE_FRED in ibt_clear_fred_wfe() (Dave Hansen &
-  Andrew Cooper).
----
- arch/x86/kernel/cet.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-index d2c732a34e5d..f14156b45c90 100644
---- a/arch/x86/kernel/cet.c
-+++ b/arch/x86/kernel/cet.c
-@@ -81,6 +81,34 @@ static void do_user_cp_fault(struct pt_regs *regs, unsigned long error_code)
- 
- static __ro_after_init bool ibt_fatal = true;
- 
-+/*
-+ * By definition, all missing-ENDBRANCH #CPs are a result of WFE && !ENDBR.
-+ *
-+ * For the kernel IBT no ENDBR selftest where #CPs are deliberately triggerred,
-+ * the WFE state of the interrupted context needs to be cleared to let execution
-+ * continue.  Otherwise when the CPU resumes from the instruction that just
-+ * caused the previous #CP, another missing-ENDBRANCH #CP is raised and the CPU
-+ * enters a dead loop.
-+ *
-+ * This is not a problem with IDT because it doesn't preserve WFE and IRET doesn't
-+ * set WFE.  But FRED provides space on the entry stack (in an expanded CS area)
-+ * to save and restore the WFE state, thus the WFE state is no longer clobbered,
-+ * so software must clear it.
-+ */
-+static void ibt_clear_fred_wfe(struct pt_regs *regs)
-+{
-+	/*
-+	 * No need to do any FRED checks.
-+	 *
-+	 * For IDT event delivery, the high-order 48 bits of CS are pushed
-+	 * as 0s into stack, and later IRET ignores these bits.
-+	 *
-+	 * For FRED, a test to check if fred_cs.wfe is set would be dropped
-+	 * by compilers.
-+	 */
-+	regs->fred_cs.wfe = 0;
-+}
-+
- static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
- {
- 	if ((error_code & CP_EC) != CP_ENDBR) {
-@@ -90,6 +118,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
- 
- 	if (unlikely(regs->ip == (unsigned long)&ibt_selftest_noendbr)) {
- 		regs->ax = 0;
-+		ibt_clear_fred_wfe(regs);
- 		return;
- 	}
- 
-@@ -97,6 +126,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
- 	if (!ibt_fatal) {
- 		printk(KERN_DEFAULT CUT_HERE);
- 		__warn(__FILE__, __LINE__, (void *)regs->ip, TAINT_WARN, regs, NULL);
-+		ibt_clear_fred_wfe(regs);
- 		return;
- 	}
- 	BUG();
-
-base-commit: be42adbe196a218ef345e2ffa0f8b70492df7dd1
--- 
-2.47.0
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.=
+git
+ master
 
 
