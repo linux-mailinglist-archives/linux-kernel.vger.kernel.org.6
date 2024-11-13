@@ -1,123 +1,201 @@
-Return-Path: <linux-kernel+bounces-407959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC369C77F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:57:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42FCE9C77FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:58:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ECDA28ABFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:57:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A442C28B065
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA6C14AD2D;
-	Wed, 13 Nov 2024 15:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF13137C35;
+	Wed, 13 Nov 2024 15:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N/96CZy8"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0cdk/8xd"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B52413D8B1
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B169156F36
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731513412; cv=none; b=AfnN02mN94hJpIrLhKSSlih1gUWJix04rudpFl03AYcFSRNn1pXFii08aT0LFmkPXmCJmB1eWAS5xMFZy23Ysv6+vYGoUJ3QlzniG5Q5uJYp8tGfzDMnDrNg0qWZTWk40a124W12D4SuD0xkxC8pHBpU/5+wFC8DubFDndKwPQg=
+	t=1731513497; cv=none; b=IpoEhVhAZAA7grn+wpcNnSKZxNknxheGQuqtNRkc/oolNt6RVqUOgpBVCC47N6YOnLu6MJkAJXen3RNPO1fmOlreSYK4n6zFxKr9u3av9jvN66Sm4E9q4YntFKBlc3cGKcsfXJJC+B6o55EN7YdcLvhl+gFT60Bw3hC38w1JN2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731513412; c=relaxed/simple;
-	bh=512PZ1dnQnEYJzYlH8f7M+VkBeSt4HIVjfj8UfzH2kw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u43+zDv1xlpDT2gJq8wn6toBhg8PcW8IKjTFb0wX1KPdHzbx2UypoFfEDW7u0Zgmaqv+0w4W5+3HVrAZnCbDTNjwVNZIugQk3GW7U1FP3Q7PiDJNWfWDChBSXcR9Vj5Dk0cv29bSzp6O6xoIw22aaM6uhEq3G7rfApOp9XxVQlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N/96CZy8; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4314fa33a35so57849105e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:56:50 -0800 (PST)
+	s=arc-20240116; t=1731513497; c=relaxed/simple;
+	bh=IZNKL5dKTunqOnlhlqbELW9B4+RdNR6QwIYEmChpV5c=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gVemwTFPEhV2BVrtYPcYwTzPjH4nqfeiGRlV+IpKp6rs1LiLubHI2Y1G0pongqAHJ7m4fdpaxaLLlt8aO16pHxXdt8T9MOQUPxSMdbnNLrdKCj5ok0m1aNkELvPQBUoZJ1/rsJvK3bArta8dndAEyDfed+FlhKyr5Vt8msCDOPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0cdk/8xd; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea86f1df79so128411747b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:58:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731513409; x=1732118209; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j7XoIUNDgbIVKqvmpsghumU2FCCPcdZHNjSKRfDqBaQ=;
-        b=N/96CZy8r5NQWz78LFcWMnD/NqRWrqZYXn8emeRe+oYHh0Cgo9LKGYyVKHHK9vIGJk
-         BXVgF1LIaVYoL32GhFqa5EEEAR+tHdbtgfz2DUzCDmEx5DJjwB5ACnkja63PO6YDLtQG
-         0pAfYK49abAm/vU9CTjYBcy/j2c3mmOE6BNBmAmVgZ8SPz8wpXJTStjRem1l/f9dttbR
-         o3opD+wrtJ90/2OxN9Hx509Nx8C6zoZrxueKlZn5UL5q3oC+oCW8tR+1Hvhzg/ZsWYk0
-         hgSA5kHd6ijj5U1gTTvSIfYDfIaQ3lne7KzcLUVA57ezDoKorZXNMaMRJGu3wLWXT7yg
-         b1vw==
+        d=google.com; s=20230601; t=1731513494; x=1732118294; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kF/MfTQ5/fcEXQi4LYfLZfwZ71SBi7osE385WhqsuTc=;
+        b=0cdk/8xdpEhg/zSuncy9dvr/2/cM2LvCeCkjsVa4x7a+DCyk7NSn3NUdlQjFgT1AC1
+         IRtOyUexm3N2p41o2K2jNqhcCkvqDs+ZH9SCoMECnFjJoe5821cL+T4+HJQHx2rlDigM
+         aRkcGK4UbcHzPqKLUJsgaGB6pAocUpHXlHyyVsEc09H705OCI111mpXsACkgi6n7vayC
+         wHZ/Zt6XtN56bgXZxgm3OiiybsZYipRNHlvpdEIMSOqEIMvvLYbL7j5GpW4Wh4+AGmCF
+         BZEFTzHuJHitAVdUOWFSgQ98sXkpRg3IzwimakaIBB5FgA8SLkrkO5nZhJdcTsobWSLl
+         ebJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731513409; x=1732118209;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j7XoIUNDgbIVKqvmpsghumU2FCCPcdZHNjSKRfDqBaQ=;
-        b=pdms3mwPcU4lcYa19FTlM9PwzUMtpn06us3bgpRVhKVo/qeg35i7xyinYHfSLe0vv2
-         hpsPsWxLitsmzlZiHe9G3rjuJA7SyJR/9LAKWk0owF4qOwS3ctNbM0JVFymbK6CdQmBS
-         tZ9RS07YceZvcqWy32xKHdwuCIiLc33IgRK50pt0Gnb8LgG6PAzBZhP4jTfnkOBBRVn1
-         0sPFKD2JVLpwOPBZ9l8AQ+0tdXZyoqEUIu+Wf+hQ8PGdgRKc/xmg+0xP3nPAO6cohVmF
-         8xObdabMawOP2V85Cq5+kSQgMj2kMCImd4RuYFuSDq2coK/me8Xbn2q/KnCbhVBO8Kd3
-         FcaA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkj5olbo2nz8dGmaeK89VnbuLMnQsF537CsjTWZU4Z5aZbMz3Ki7kH1X71KbKbG1h4HPlAHV1TZ7nRG1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzviRrKckEsXOsQpLhoqEETG1t7ozAp4+/AUah+AsuiWqHsOvUG
-	Wo7pmoGDOdr4Nhed4IMIubV4A2FPfwNCgpEWLzbY66+XZVxraboXIOsNpbFSOOs=
-X-Google-Smtp-Source: AGHT+IGRiPY+evblCDCxVkg3CDOQ9hyE0qVJ4e+kMXiZjDE1ryJt8LXVAIOLtdfZSGuqwuFU9EWIWA==
-X-Received: by 2002:a05:600c:4e8d:b0:431:52b7:a485 with SMTP id 5b1f17b1804b1-432cce78a1fmr61686205e9.19.1731513408826;
-        Wed, 13 Nov 2024 07:56:48 -0800 (PST)
-Received: from [192.168.0.48] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97ec9fsm18902490f8f.42.2024.11.13.07.56.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 07:56:48 -0800 (PST)
-Message-ID: <be7b67ce-f601-4c93-a8b6-b5660f0e753e@linaro.org>
-Date: Wed, 13 Nov 2024 15:56:46 +0000
+        d=1e100.net; s=20230601; t=1731513494; x=1732118294;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kF/MfTQ5/fcEXQi4LYfLZfwZ71SBi7osE385WhqsuTc=;
+        b=wHGuXQYd6hrrprUbUpUceqfVqWsHtd/+LUC5ZrfVp/PgJKDnOHFDEqwLnvc7nMxyO/
+         PrPq5imZYncNZFtoSvOrIeKTFmgUeXJspSYEzfr9vF85ZN+34o3z03L9EBQ+Df34sUJd
+         PyAgliFczkumlm+IQSJ1GrpziNMUDjh1m3t8JgJlzk0lMaziGS7/VYPyd8+xXFaUFYTB
+         hyMUgz0KzywzqdqCFu6JmvtZM+rS2PmOyhHA0Z67Ahoi0yqYtmbTZrtqKci3SN35wHWx
+         tEPqyvWRMm8PxXefYmsnlZl2Ni5qEFlJiV8I5mLVfJDZtuJnIWoHb3zI/I6tqinACNyh
+         1xIQ==
+X-Gm-Message-State: AOJu0YzpuvAeuWIkUoHylfxTeosU7mg4DO+HOi4qFffuvLc+pM6jYNWy
+	vK8JyyvcDFkWARkB85SHg3jUj27/IrgGMIRE11MYLGbXP178twc3DFEfQNvcnpxREPp5IUtFoEj
+	6dg==
+X-Google-Smtp-Source: AGHT+IHuQ95n+Y8jejyNGBOGXye70VLPfyNGzX3R/E/mHwLTbyQVpbG8tfrNstJjL7AVlymwbNM8htd7/LM=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a81:b510:0:b0:6e2:ad08:4924 with SMTP id
+ 00721157ae682-6eaddf71dcfmr1920297b3.4.1731513494525; Wed, 13 Nov 2024
+ 07:58:14 -0800 (PST)
+Date: Wed, 13 Nov 2024 07:58:13 -0800
+In-Reply-To: <20241112232253.3379178-6-dionnaglaze@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 05/28] media: iris: implement video firmware
- load/unload
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Nicolas Dufresne <nicolas@ndufresne.ca>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Jianhua Lu <lujianhua000@gmail.com>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241105-qcom-video-iris-v5-0-a88e7c220f78@quicinc.com>
- <20241105-qcom-video-iris-v5-5-a88e7c220f78@quicinc.com>
- <537ee97b-97d9-4ed8-9e11-eb3489eeff26@linaro.org>
- <f16dac0e-aa0f-5984-2cee-3e4e684e93db@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <f16dac0e-aa0f-5984-2cee-3e4e684e93db@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20241112232253.3379178-1-dionnaglaze@google.com> <20241112232253.3379178-6-dionnaglaze@google.com>
+Message-ID: <ZzTMlcoU4uOijVxt@google.com>
+Subject: Re: [PATCH v6 5/8] crypto: ccp: Add GCTX API to track ASID assignment
+From: Sean Christopherson <seanjc@google.com>
+To: Dionna Glaze <dionnaglaze@google.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ashish Kalra <ashish.kalra@amd.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	John Allen <john.allen@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, linux-coco@lists.linux.dev, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Michael Roth <michael.roth@amd.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Tianfei zhang <tianfei.zhang@intel.com>, Alexey Kardashevskiy <aik@amd.com>, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 13/11/2024 05:20, Dikshita Agarwal wrote:
->>> +err_put_node:
->>> +    of_node_put(node);
->> remove
-> Sure, Will make the change.
-> but are we just trying to avoid using "goto" here?
-> 
-> Thanks,
-> Dikshita
+On Tue, Nov 12, 2024, Dionna Glaze wrote:
+> @@ -109,6 +110,10 @@ static void *sev_init_ex_buffer;
+>   */
+>  static struct sev_data_range_list *snp_range_list;
+>  
+> +/* SEV ASID data tracks resources associated with an ASID to safely manage operations. */
+> +struct sev_asid_data *sev_asid_data;
+> +u32 nr_asids, sev_min_asid, sev_es_max_asid;
+> +
+>  static inline bool sev_version_greater_or_equal(u8 maj, u8 min)
+>  {
+>  	struct sev_device *sev = psp_master->sev_data;
+> @@ -1093,6 +1098,109 @@ static int snp_filter_reserved_mem_regions(struct resource *rs, void *arg)
+>  	return 0;
+>  }
+>  
+> +static bool sev_check_external_user(int fd);
+> +void *sev_snp_create_context(int fd, int asid, int *psp_ret)
+> +{
+> +	struct sev_data_snp_addr data = {};
+> +	void *context;
+> +	int rc, error;
+> +
+> +	if (!sev_check_external_user(fd))
+> +		return ERR_PTR(-EBADF);
+> +
+> +	if (!sev_asid_data)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	if (asid < 0 || asid >= nr_asids)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	/* Can't create a context for a used ASID. */
+> +	if (WARN_ON_ONCE(sev_asid_data[asid].snp_context))
+> +		return ERR_PTR(-EBUSY);
 
-Currently you'd be leaking because you only do the put on the error path.
+Tracking contexts in an array that's indexed per ASID is unsafe and unnecessarily
+splits ASID management across KVM and the PSP driver.  There is zero reason the
+PSP driver needs to care about ASIDs.  Attempting to police KVM is futile, and
+leads to bloated, convoluted code.
 
- > +    rmem = of_reserved_mem_lookup(node);
+AFAICT, there is nothing to guard against a use-after-free in 
+snp_update_guest_contexts().  The need to handle SEV_RET_INVALID_GUEST is a pretty
+big clue that there are races between KVM and firmware updates.
 
-of_node_put(node);
+		if (!sev_asid_data[i].snp_context)
+			continue;
 
----
-bod
+		status_data.gctx_paddr = __psp_pa(sev_asid_data[i].snp_context);
+		status_data.address = __psp_pa(snp_guest_status);
+		rc = sev_do_cmd(SEV_CMD_SNP_GUEST_STATUS, &status_data, &error);
+		if (!rc)
+			continue;
+
+		/*
+		 * Handle race with SNP VM being destroyed/decommissoned,
+		 * if guest context page invalid error is returned,
+		 * assume guest has been destroyed.
+		 */
+		if (error == SEV_RET_INVALID_GUEST)
+			continue;
+
+Using an array is also inefficient, as it requires iterating over all possible
+ASIDs, many of which may be unused.
+
+Furthermore, handling this in the PSP driver (correctly) leads to unnecessary
+locking.  KVM already protects SNP ASID allocations with sev_deactivate_lock, I
+see zero reason to complicate things with another lock.
+
+The "rollback" mechanism is also broken.  If SEV_CMD_SNP_GUEST_STATUS fails,
+synthetic_restore_required is set and never cleared, and impacts *all* SEV PSP
+commands.  I.e. failure to update one guest context comletely cripples the entire
+system.  Not to mention synthetic_restore_required also lacks any form of SMP
+synchronication.
+
+I also don't see how a rollback is possible if an error occurs after one or more
+guest contexts have been updated.  Presumably trying to rollback in that state
+will leave the updated guests in a bad state.  Of course, I don't see any rollback
+code as nothing ever clears synthetic_restore_required, so what's intented to
+happen is entirely unclear.
+
+I also don't see anything in this series that explains why a SEV_CMD_SNP_GUEST_STATUS
+failure shouldn't be treated as a fatal error.  Of the error codes listed in the
+SNP ABI, everything except UPDATE_FAILED is clearly a software bug.  And I can't
+find anything that explains when UPDATE_FAILED will be returned.
+
+  Table 80. Status Codes for SNP_GUEST_STATUS
+  Status                          Condition
+  SUCCESS                         Successful completion.
+  INVALID_PLATFORM_STATE          The platform is not in the INIT state.
+  INVALID_ADDRESS                 The address is invalid for use by the firmware.
+  INVALID_PARAM                   MBZ fields are not zero.
+  INVALID_GUEST                   The guest context page was invalid.
+  INVALID_PAGE_STATE              The guest status page was not in the correct state.
+  INVALID_PAGE_SIZE               The guest status page was not the correct size.
+  UPDATE_FAILED                   Update of the firmware internal state or a guest context page has failed.
+
+Somewhat off the cuff, I think the only sane way to approach this is to call into
+KVM when doing a firmware update, and let KVM react accordingly.   E.g. let KVM
+walk its list of VMs in order to update SNP VMs, taking kvm_lock and the somewhat
+misnamed sev_deactivate_lock() as needed.  Then if updating a guest context fails,
+terminate _that_ VM, and move on to the next VM.
+
+Side topic, I don't see any code that ensures no SEV or SEV-ES VMs are running.
+Is the idea to let userspace throw noodles at the PSP and see what sticks?
+
++        Provide support for AMD Platform Security Processor firmware.
++        The PSP firmware can be updated while no SEV or SEV-ES VMs are active.
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++        Users of this feature should be aware of the error modes that indicate
++        required manual rollback or reset due to instablity.
 
