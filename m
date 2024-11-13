@@ -1,58 +1,68 @@
-Return-Path: <linux-kernel+bounces-408422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6963B9C7EAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:04:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD169C7EAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:05:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 933F2B22021
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:04:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C362B23060
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8EC18C019;
-	Wed, 13 Nov 2024 23:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A492E18C330;
+	Wed, 13 Nov 2024 23:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="eG9Qqb6b"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5N1dky3i"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501532AF12;
-	Wed, 13 Nov 2024 23:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5B317BB1A;
+	Wed, 13 Nov 2024 23:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731539071; cv=none; b=bZPkX8apgEw5ceBnpZZVYY2BfHp/Km7x7wB3OWdmXiaI94cmf0CBvKxuijDadsimeAEWVwbj14ZnXbsssrYkVFwevfCo8gZ3Y4OGzQTTkN0lCXLvgrnshH+GnMwAvICFHzVU5oIgCSajjl9393eyZB3PSCC+s8ajoBM2ZSg4eRk=
+	t=1731539140; cv=none; b=m0/81Wndda/ZZkQoaodw52FSMyR6jrAQOjAYBCCk6SJICNIcYM13E+jHNAuZmaRyZR/Gu6EstdQqqR/zDc7gkqEc7CGgpnfaNgQ+yLIbRqDcw3XgfPivmmqUJA59CGINhXEg7x2u4mucp6uFWIHYCWKetRpQ6snQFj1l9lToSbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731539071; c=relaxed/simple;
-	bh=uR9NATavVdqBFxZjrZU/rolzN5aVtKkj87DhUnu+qvo=;
+	s=arc-20240116; t=1731539140; c=relaxed/simple;
+	bh=wvX3KD/4FtwWB0+PDeJ9zycRSMJFsGWWobWsCXn7bII=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pYmYi2GH7rpyECxwI9edykFqhHaEwOWxKA64Fw5ByF9yPbjxu1cuFKq/nhSGtwP3YgLkQm0dFYNj3sY6BxRDtZtaWrRjEdF7p6ZzipC7isVyaigRJe1rFbKb7nSU+Nm3NQF2Sl2mgv/KM5O8hjMmEx8m9oOQ0SvarBtNF8bt6ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=eG9Qqb6b; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ze0AbtK166ELiFcHD2qD6VO3tkL8ltMTzPW7ESfMS2I=; b=eG9Qqb6b4qVRwKx52HYWlCGQKu
-	EKNAe1TNUzisKBHDy1aiDZ/rhiH45kTi4ANYu8UHm7NWUxw4bIez0/AWCrJYhLAnHuXqBOckLFNxy
-	JVTOalp3dA0usILZ2AbpvZ8HzS66mMB51z1Sg6zQ9BHebEa7t0bQsYqzJFmE5jo03Aq1wSj7xhDC/
-	LM/K0U5kYR6eiGuQ8om9rgMSEDZ5S4DJIWou57URgZQW8iqyJQTDyfcn/H8iA0IqdVxvJWb3GHANS
-	yKdqLCnCbmLgikI85penRw5urAVNhGhuKzRLiTb0EU4zXbSssYRASXFxZLmBxSGE4tQtGAJWLuC7s
-	vUfPz2Bg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBMPR-0000000EgPX-3yG9;
-	Wed, 13 Nov 2024 23:04:26 +0000
-Date: Wed, 13 Nov 2024 23:04:25 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Ricardo Robaina <rrobaina@redhat.com>, audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org, eparis@redhat.com, rgb@redhat.com
-Subject: Re: [PATCH v1] audit: fix suffixed '/' filename matching in
-  __audit_inode_child()
-Message-ID: <20241113230425.GJ3387508@ZenIV>
-References: <20241105123807.1257948-1-rrobaina@redhat.com>
- <2d9292c28df34c50c1c0d1cbf6ce3b52@paul-moore.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BtaVgiQMM1BMV8vfeTBZrJI4DheKvRZGy4VDIZ6QpMUtp13qhSBGv6dB8jBVSmFPDRBI0BhAeyTUP2/wP5EGXdZtGfaq/xNmxiFjogx+kFazibIDjclcXP5k0IOwS/AATBBifiTJwz4+AAsAz+E7sY5y9NR1UmfIiIwmVYgsf8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5N1dky3i; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=GB4QZ+mM5xOGHoULP0fYX3jiIBGiTo1R3yaoqBjOj5Y=; b=5N1dky3izdPIxJ3m4NqFAWVQJ4
+	mRJmi3jX4gbqJ78GHW1iDJAJht9Hd+iAm0FYWf2J1ibs2X03qyTBFFKLFMNITN6IavGcZ/PfwMivz
+	yNS3bSdKVz2MCcAB+BRrWnvU71onxne2Qp+ZAHWRYJMPc2z1zUM8BO1gz4nBFNlz4BPg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tBMQJ-00DDd7-1P; Thu, 14 Nov 2024 00:05:19 +0100
+Date: Thu, 14 Nov 2024 00:05:19 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net v1 1/2] net: phy: Introduce phy_update_eee() to
+ update eee_cfg values
+Message-ID: <b61a9c36-dfd5-4b90-88a6-90e43cfae000@lunn.ch>
+References: <20241112072447.3238892-1-yong.liang.choong@linux.intel.com>
+ <20241112072447.3238892-2-yong.liang.choong@linux.intel.com>
+ <f8ec2c77-33fa-45a8-9b6b-4be15e5f3658@gmail.com>
+ <71b6be0e-426f-4fb4-9d28-27c55d5afa51@lunn.ch>
+ <eb937669-d4ce-4b72-bcae-0660e1345b76@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,54 +71,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2d9292c28df34c50c1c0d1cbf6ce3b52@paul-moore.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <eb937669-d4ce-4b72-bcae-0660e1345b76@linux.intel.com>
 
-On Mon, Nov 11, 2024 at 05:06:43PM -0500, Paul Moore wrote:
-
-> This is completely untested, I didn't even compile it, but what about
-> something like the following?  We do add an extra strlen(), but that is
-> going to be faster than the alloc/copy.
+On Wed, Nov 13, 2024 at 06:10:55PM +0800, Choong Yong Liang wrote:
 > 
-> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> index 470041c49a44..c30c2ee9fb77 100644
-> --- a/kernel/auditfilter.c
-> +++ b/kernel/auditfilter.c
-> @@ -1320,10 +1320,13 @@ int audit_compare_dname_path(const struct qstr *dname, const char *path, int par
->                 return 1;
->  
->         parentlen = parentlen == AUDIT_NAME_FULL ? parent_len(path) : parentlen;
-> -       if (pathlen - parentlen != dlen)
-> -               return 1;
-> -
->         p = path + parentlen;
-> +       pathlen = strlen(p);
+> 
+> On 12/11/2024 9:04 pm, Andrew Lunn wrote:
+> > On Tue, Nov 12, 2024 at 12:03:15PM +0100, Heiner Kallweit wrote:
+> > > In stmmac_ethtool_op_get_eee() you have the following:
+> > > 
+> > > edata->tx_lpi_timer = priv->tx_lpi_timer;
+> > > edata->tx_lpi_enabled = priv->tx_lpi_enabled;
+> > > return phylink_ethtool_get_eee(priv->phylink, edata);
+> > > 
+> > > You have to call phylink_ethtool_get_eee() first, otherwise the manually
+> > > set values will be overridden. However setting tx_lpi_enabled shouldn't
+> > > be needed if you respect phydev->enable_tx_lpi.
+> > 
+> > I agree with Heiner here, this sounds like a bug somewhere, not
+> > something which needs new code in phylib. Lets understand why it gives
+> > the wrong results.
+> > 
+> > 	Andrew
+> Hi Russell, Andrew, and Heiner, thanks a lot for your valuable feedback.
+> 
+> The current implementation of the 'ethtool --show-eee' command heavily
+> relies on the phy_ethtool_get_eee() in phy.c. The eeecfg values are set by
+> the 'ethtool --set-eee' command and the phy_support_eee() during the initial
+> state. The phy_ethtool_get_eee() calls eeecfg_to_eee(), which returns the
+> eeecfg containing tx_lpi_timer, tx_lpi_enabled, and eee_enable for the
+> 'ethtool --show-eee' command.
+> 
+> The tx_lpi_timer and tx_lpi_enabled values stored in the MAC or PHY driver
+> are not retrieved by the 'ethtool --show-eee' command.
 
-Huh?  We have
-        pathlen = strlen(path);
-several lines prior to this.  So unless parentlen + path manages to exceed
-strlen(path) (in which case your strlen() is really asking for trouble),
-this is simply
-	pathlen -= parentlen;
+tx_lpi_timer is a MAC property, but phylib does track it across
+--set-eee calls and will fill it in for get-eee. What however is
+missing it setting its default value. There is currently no API the
+MAC driver can call to let phylib know what default value it is using.
+Either such an API could be added, e.g. as part of phy_support_eee(),
+or we could hard code a value, probably again in phy_support_eee().
 
-What am I missing here?  And while we are at it,
-	parentlen = parentlen == AUDIT_NAME_FULL ? parent_len(path) : parentlen;
-is a bloody awful way to spell
-	if (parentlen == AUDIT_NAME_FULL)
-		parentlen = parent_len(path);
-What's more, parent_len(path) starts with *yet* *another* strlen(path),
-followed by really awful crap - we trim the trailing slashes (if any),
-then search for the last slash before that...  is that really worth
-the chance to skip that strncmp()?
+tx_lpi_enabled is filled in by phy_ethtool_get_eee(), and its default
+value is set by phy_support_eee(). So i don't see what is wrong here.
 
+> Currently, we are facing 3 issues:
+> 1. When we boot up our system and do not issue the 'ethtool --set-eee'
+> command, and then directly issue the 'ethtool --show-eee' command, it always
+> shows that EEE is disabled due to the eeecfg values not being set. However,
+> in the Maxliner GPY PHY, the driver EEE is enabled. If we try to disable
+> EEE, nothing happens because the eeecfg matches the setting required to
+> disable EEE in ethnl_set_eee(). The phy_support_eee() was introduced to set
+> the initial values to enable eee_enabled and tx_lpi_enabled. This would
+> allow 'ethtool --show-eee' to show that EEE is enabled during the initial
+> state. However, the Marvell PHY is designed to have hardware disabled EEE
+> during the initial state. Users are required to use Ethtool to enable the
+> EEE. phy_support_eee() does not show the correct for Marvell PHY.
 
-> +       if (p[pathlen - 1] == '/')
-> +               pathlen--;
-> +
-> +       if (pathlen != dlen)
-> +               return 1;
->  
->         return strncmp(p, dname->name, dlen);
+We discussed what to set the initial state to when we reworked the EEE
+support. It is a hard problem, because changing anything could cause
+regressions. Some users don't want EEE enabled, because it can add
+latency and jitter, e.g. to PTP packets. Some users want it enabled
+for the power savings.
 
-... which really should've been memcmp(), at that.
+We decided to leave the PHY untouched, and will read out its
+configuration. If this is going wrong, that is a bug which should be
+found and fixed.
+
+We want the core to be fixed, not workaround added to MAC
+drivers. Please think about this when proposing future patches.
+
+	Andrew
 
