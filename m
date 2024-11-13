@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-408192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81019C7BA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:54:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E959C7BB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:56:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D8C1F21E31
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:54:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F5411F2153D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC22204015;
-	Wed, 13 Nov 2024 18:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF796205150;
+	Wed, 13 Nov 2024 18:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U3hLobcf"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dd1EPkdh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB75201113;
-	Wed, 13 Nov 2024 18:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5442038DD;
+	Wed, 13 Nov 2024 18:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731524037; cv=none; b=ZWZGT5BVelLVHMykRpWex99wA0Svsjgi/plTI8c3sh4fqkyR0OeeH3SyLdHW3FXt39mfvzWriY1P20ZQ/EhOoK4DfpUbAPqfGdDoYBJk5S3LrhOzT2tNhVHKKfD2S/yr/zKZ5BJXegJ5kle1UJaKumdeKdvVPtCoteWt0UpsIQU=
+	t=1731524122; cv=none; b=puT5evPHDntrCPjwgB5DvXhQDnSOu7yX7VVtXs97KseAK7H1U4F+eWITU369MZCLObGpP9h+91DKzrF3M9kcyDSVhdjITApiSApPusQwZRmaBneS5hIjdyyRjAYrFNp7hVvMohZ3i+Yib9iytFKn65J/tMz1ikor3DHI2AcGOMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731524037; c=relaxed/simple;
-	bh=26UKyLpMSJwFi9jKCccnJfhkmLQhgRY3nCK7eF2M/88=;
+	s=arc-20240116; t=1731524122; c=relaxed/simple;
+	bh=ilWFGCUUNIXRjZzE+xZydZS7gAs9vG0Nt5a/KjvBm9A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dzrzrKBWp4cVB3Phyk2Pag98D+3DBDaNyzhQEz9X+1Y9rI2XWmI1jBYQsmhdACy7bx6MFrj5p6Z7H+ioGGVIsCRtiTqXFVzxHc7dGGzVpw85j92farbWaFDLJ1yGLP1YULdsnAKnxwgBEUPPXQAXBSweQq8UtgtPJz/H6F3DhTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U3hLobcf; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cb47387ceso76940825ad.1;
-        Wed, 13 Nov 2024 10:53:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731524036; x=1732128836; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ml9JVjX+XuumbZnVZGc+spDnLYBbQ3KFdnBqv3IZEEk=;
-        b=U3hLobcfkE+spbfmk5tz0/c7Bm+8HIQLcUj11vkX8tz1cQXN0yws211KQ8oESauIKA
-         a8ZqFSE1Z7pF8qisz7TM/KoUI7OeWv0MKMGdgfkhvj5/wkqY78IkuB6bBKTxFodmlXp5
-         giAxQYnGSZxrBA8bAP1Jsi1Pu5hSQXE9J6MqrE026gmMhVaFVfyphLNGe0FfvapQzLx/
-         faVSEsUPntUCVwxWVBYgR36isLej4jOn5hj01d3khBhhxs8hL4RgcUhasQhkmb1cGcJd
-         khMZCIxz4PCeKWudL8YdKqPjCVqzDh8w5ip1Tcamsl0dsuZEB9LL3mVZmmoddkBQN8xN
-         7UgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731524036; x=1732128836;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ml9JVjX+XuumbZnVZGc+spDnLYBbQ3KFdnBqv3IZEEk=;
-        b=EstcrhJtbkaZum4aOwukiGQjb4d+r0fvQYVa5kMj8V2/lTl+b6hzTHIFWVMzbKjX+Y
-         xq01RTogddQW0KTraYsrbJrakpjP9oz501fjhFgxoJkH4xtdxepBNiXcyjVEQxfWGvss
-         rTBGvKXWyhhzZ4aTNtcuBJ2jgLOxBael8RNaJ0RElUgKd/HYGOJ1Q+DwC+OGZ5vM+OEp
-         1MoYFlsvRXFvJUVSj5PZCr9ccTXlpPH2js8iSSk2HqSHjnb9HOs12KXUBJ6JKNGLNrAl
-         zyymoMnVs16nALw+XoS6I0xrU2A7KY2QPZH01pvCFipwEOaH1uEqUk4tF7+XKMag2yJD
-         n3GA==
-X-Forwarded-Encrypted: i=1; AJvYcCU10RQ8fCN3KPpLxmLsVTHzZkW/uXMEIHrVyoCDoPT0Ijn1n5eaWCcdWAmqS0PMvmWouuXaDhFFO0cCZZM=@vger.kernel.org, AJvYcCUBumDas9PqyMi9dnwcrX/HBFNxpDQdPaD/tdZ8NQyMcQn7X6MkW4ydLtIMGyy3PQMPDDEksmXzjBbivwRC@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmdBK6Th2eqioKOeamzhr+Z3BNR3ukzxQ48cMqD8ZGAQVqzHs8
-	/yxiMncaNcbwm5v6Ngs0OlRAcH2CP08VDPjl7zVUk/VFPlXowgfh
-X-Google-Smtp-Source: AGHT+IEva+q3R3ovNCH2uvIpyDjxeTC00//9DQJGGOvGaAXAm/L8veN3g9iVF6DVECrPHCoOatBsDw==
-X-Received: by 2002:a17:902:e750:b0:20e:57c8:6ab3 with SMTP id d9443c01a7336-211834e6e10mr259538815ad.4.1731524035570;
-        Wed, 13 Nov 2024 10:53:55 -0800 (PST)
-Received: from localhost ([216.228.127.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e44586sm113668825ad.165.2024.11.13.10.53.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 10:53:55 -0800 (PST)
-Date: Wed, 13 Nov 2024 10:53:53 -0800
-From: Yury Norov <yury.norov@gmail.com>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org,
-	Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Subject: Re: [PATCH v4 1/2] compiler.h: add const_true()
-Message-ID: <ZzT1wZ-WQi8zuwqG@yury-ThinkPad>
-References: <20241113172939.747686-4-mailhol.vincent@wanadoo.fr>
- <20241113172939.747686-5-mailhol.vincent@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p3v/EuPyTycWBsvIEWxd8Ay8XtwcSLWN99JCq0g/siv+INQ9qMTiwoPyQPrAd08/crckT6ugIAHwNzvOfBrhVeVyk6clgt+gdp0IftSQBZEdr2Ui+duNzZhUR+bEiR9rFBf7vtheQA6kzDn1FbXbrNqL5rcHeeDExxnXh4lnrOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dd1EPkdh; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731524121; x=1763060121;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ilWFGCUUNIXRjZzE+xZydZS7gAs9vG0Nt5a/KjvBm9A=;
+  b=dd1EPkdhJWYigNbA2rjPA27BT+np8sEBfTwUZ5sDY/sqijRo2SP2GakQ
+   GoyRzdfdyEht3gquUHtslBIMZnP+y/I1P8L4u8yXm3clNUm73cB1mFI2s
+   iuKyeTVV+0KukOBgFdT9MBiEJU1jrOC6PnywPedwwY8vQyyp2DGLqdkIX
+   OFtvfS1ms69XzFU8OmavrS5HAqkjXIzFtDBr6RXcw3CTsVDbn+kK4FQ6k
+   fwGQ6PRhyz4jFBP2jNehpiWO0bsSP0STyuslDTUfxcR6ce6MJi+okPcWu
+   TFskC13k9Abqk8F/xj75KDY6uPNrihLUuzFD+goaIME8sCmAzE6uXdm3S
+   Q==;
+X-CSE-ConnectionGUID: TH0taclzT6KeculwakwaZw==
+X-CSE-MsgGUID: NiD2AT3DTIyD7RUpaPzQ5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31530028"
+X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
+   d="scan'208";a="31530028"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 10:55:20 -0800
+X-CSE-ConnectionGUID: gtjGOpe9SvabGGxSDfwBKw==
+X-CSE-MsgGUID: y8CrQhEGSeOE1lH1PJhGdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="92885745"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 10:55:16 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tBIWG-0000000ERnJ-1GiJ;
+	Wed, 13 Nov 2024 20:55:12 +0200
+Date: Wed, 13 Nov 2024 20:55:12 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Baojun Xu <baojun.xu@ti.com>, robh+dt@kernel.org, lgirdwood@gmail.com,
+	perex@perex.cz, pierre-louis.bossart@linux.intel.com,
+	shenghao-ding@ti.com, navada@ti.com, 13916275206@139.com,
+	v-hampiholi@ti.com, v-po@ti.com, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, liam.r.girdwood@intel.com,
+	yung-chuan.liao@linux.intel.com, broonie@kernel.org,
+	antheas.dk@gmail.com, philm@manjaro.org
+Subject: Re: [PATCH v4] ALSA: hda/tas2781: Add speaker id check for ASUS
+ projects
+Message-ID: <ZzT2EE3-PxLj3bDo@smile.fi.intel.com>
+References: <20241104093138.4819-1-baojun.xu@ti.com>
+ <87ldxnuw1s.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,132 +84,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241113172939.747686-5-mailhol.vincent@wanadoo.fr>
+In-Reply-To: <87ldxnuw1s.wl-tiwai@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Nov 14, 2024 at 02:18:32AM +0900, Vincent Mailhol wrote:
-> __builtin_constant_p() is known for not always being able to produce
-> constant expression [1] which led to the introduction of
-> __is_constexpr() [2]. Because of its dependency on
-> __builtin_constant_p(), statically_true() suffers from the same
-> issues.
+On Wed, Nov 13, 2024 at 02:01:51PM +0100, Takashi Iwai wrote:
+> On Mon, 04 Nov 2024 10:31:38 +0100,
+> Baojun Xu wrote:
+> > +	// Speaker id was needed for ASUS projects.
+> > +	if (!strncmp(sub, TAS2781_ASUS_ID, sizeof(TAS2781_ASUS_ID))) {
 > 
-> For example:
-> 
->   void foo(int a)
->   {
->   	 /* fail on GCC */
->   	BUILD_BUG_ON_ZERO(statically_true(a));
-> 
->   	 /* fail on both clang and GCC */
->   	static char arr[statically_true(a) ? 1 : 2];
->   }
-> 
-> For the same reasons why __is_constexpr() was created to cover
-> __builtin_constant_p() edge cases, __is_constexpr() can be used to
-> resolve statically_true() limitations.
-> 
-> Note that, somehow, GCC is not always able to fold this:
-> 
->   __is_constexpr(x) && (x)
-> 
-> It is OK in BUILD_BUG_ON_ZERO() but not in array declarations nor in
-> static_assert():
-> 
->   void bar(int a)
->   {
->   	/* success */
->   	BUILD_BUG_ON_ZERO(__is_constexpr(a) && (a));
-> 
->   	/* fail on GCC */
->   	static char arr[__is_constexpr(a) && (a) ? 1 : 2];
-> 
->   	/* fail on GCC */
->   	static_assert(__is_constexpr(a) && (a));
->   }
-> 
-> Encapsulating the expression in a __builtin_choose_expr() switch
-> resolves all these failed tests.
-> 
-> Define a new const_true() macro which, by making use of the
-> __builtin_choose_expr() and __is_constexpr(x) combo, always produces a
-> constant expression.
-> 
-> It should be noted that statically_true() is the only one able to fold
-> tautologic expressions in which at least one on the operands is not a
-> constant expression. For example:
-> 
->   statically_true(true || var)
->   statically_true(var == var)
->   statically_true(var * 0 + 1)
->   statically_true(!(var * 8 % 4))
-> 
-> always evaluates to true, whereas all of these would be false under
-> const_true() if var is not a constant expression [3].
-> 
-> For this reason, usage of const_true() be should the exception.
-> Reflect in the documentation that const_true() is less powerful and
-> that statically_true() is the overall preferred solution.
-> 
-> [1] __builtin_constant_p cannot resolve to const when optimizing
-> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=19449
-> 
-> [2] commit 3c8ba0d61d04 ("kernel.h: Retain constant expression output for max()/min()")
-> Link: https://git.kernel.org/torvalds/c/3c8ba0d61d04
-> 
-> [3] https://godbolt.org/z/c61PMxqbK
-> 
-> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> Is this really correct?  The sizeof(TAS2781_ASUS_ID) is 5, including
+> the terminating NUL.  So this becomes equivalent with strcmp(), and
+> it doesn't check the sub-string.
 
-For the series:
+It all depends to what that method returns. If it returns the exact string
+then strcmp() is fine, if not, we should understand what it returns then.
 
-Reviewed-by: Yury Norov <yury.norov@gmail.com>
+-- 
+With Best Regards,
+Andy Shevchenko
 
-If no objections, I'll move it with my tree.
 
-Thanks,
-Yury
-
-> ---
-> Above examples, and a bit more:
-> 
->       https://godbolt.org/z/11xnxfx3P
-> ---
->  include/linux/compiler.h | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index 4d4e23b6e3e7..f9d660b63765 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -308,6 +308,28 @@ static inline void *offset_to_ptr(const int *off)
->   */
->  #define statically_true(x) (__builtin_constant_p(x) && (x))
->  
-> +/*
-> + * Similar to statically_true() but produces a constant expression
-> + *
-> + * To be used in conjunction with macros, such as BUILD_BUG_ON_ZERO(),
-> + * which require their input to be a constant expression and for which
-> + * statically_true() would otherwise fail.
-> + *
-> + * This is a trade-off: const_true() requires all its operands to be
-> + * compile time constants. Else, it would always returns false even on
-> + * the most trivial cases like:
-> + *
-> + *   true || non_const_var
-> + *
-> + * On the opposite, statically_true() is able to fold more complex
-> + * tautologies and will return true on expressions such as:
-> + *
-> + *   !(non_const_var * 8 % 4)
-> + *
-> + * For the general case, statically_true() is better.
-> + */
-> +#define const_true(x) __builtin_choose_expr(__is_constexpr(x), x, false)
-> +
->  /*
->   * This is needed in functions which generate the stack canary, see
->   * arch/x86/kernel/smpboot.c::start_secondary() for an example.
-> -- 
-> 2.45.2
 
