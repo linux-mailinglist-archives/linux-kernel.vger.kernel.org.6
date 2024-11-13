@@ -1,227 +1,192 @@
-Return-Path: <linux-kernel+bounces-407765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA3A9C7367
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:22:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6989C7484
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:38:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 006D41F235B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:22:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59D92B2B9B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72751DF74E;
-	Wed, 13 Nov 2024 14:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4941E0492;
+	Wed, 13 Nov 2024 14:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gu2hrPpy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XWdTXwub"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E507080F;
-	Wed, 13 Nov 2024 14:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B14452F76
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731507712; cv=none; b=AcxQKicnFG7w2rw3rGUXkvFSfw0SsHfYqTzraNayCjAho71kmTUZGdMf3h+t9mT0mmgb9ysKFkLqEN29kcPQqxO3Q43SNZIY9y1xt9GgwK0XKDn8OZma9gb3+vY+XAau25P16Z6SOybMuZJi/OKdxFqUtngrU6J/JS3ZOmCpEr0=
+	t=1731507786; cv=none; b=gioQXAUD7+i6BXoPxn454tEn0ob6NN7fzEvKqhKBRSts8nkUYzOBh1a2t/A3t+bTJQffCJRZxEMtQlh+RmqcoRnWCP0g40Tr3WI1L/OEkvRTIXc1EdBe2v2vJB7c6PkcwyAgtBlZ8A/D87r+KKIw2yOMxUqpM260b6vO2ilBiso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731507712; c=relaxed/simple;
-	bh=3DG3pVyaEIXykT94bHXydQtHV5qXoL01zSxkhQQgd14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f5zHBdZ9PSYXwOHVI9K+yPhsFEbfrl+PtuuGsMWqmfEZa2C5rI7ddIbBX0jWUlTzDVTfQ5ZGLBgu+mr7fUycPC0Fn52ZPxi4Eq9jd4Kb3HKwbWy0rFCHXCDa2L5lqo0atk3hco6xQTM7M1TvZAPQeOvsz3Vq48PTcNLvWFP7uMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gu2hrPpy; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731507711; x=1763043711;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3DG3pVyaEIXykT94bHXydQtHV5qXoL01zSxkhQQgd14=;
-  b=gu2hrPpyk1kKxXRp/0GV3u7puBfY7Hx6jUf1Y7ZLIQ/j/LTwRnytJHfw
-   WjscwRShnedG3XoSda2N1GLa0+YR2g+52dAog0wuy8EOlcQuPUi7I3ozV
-   Z1+oZuVulMRyGmrR+arzWzrgitV76yNNXdXbKrLAGjN1VQ4yUX16hm0l4
-   gpKx/Soi20C+rVyLRClj5QXN3SLHOXqoZrQuiDxKh8EefdnSeXeMs3Fx8
-   yqKE4uBZ7F1aQOXlKsLE3so4WXd3nWXTy+LnV/XRHSf0j/i35g4KpevtB
-   gDRcIo6jOnb92gbn1shMxWgCFrfogNstRb8oZtzFocXyb6XbMH26JispH
-   A==;
-X-CSE-ConnectionGUID: RXb/XS0KTuCEKO3yrlOCfw==
-X-CSE-MsgGUID: oF5P/h2WR3Gi4Iqh5tHBqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31168886"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31168886"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 06:21:51 -0800
-X-CSE-ConnectionGUID: zG5i5Y+xS82ELxp6o8cMUQ==
-X-CSE-MsgGUID: Vth3UAT9QeiHxEQOl1OTXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
-   d="scan'208";a="88282446"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa007.jf.intel.com with SMTP; 13 Nov 2024 06:21:48 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 13 Nov 2024 16:21:46 +0200
-Date: Wed, 13 Nov 2024 16:21:46 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Sanket.Goswami@amd.com, linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] i3c: master: Add ACPI support to i3c subsystem
-Message-ID: <ZzS1-nJMPiCp5jDi@kuha.fi.intel.com>
-References: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
- <20241108073323.523805-3-Shyam-sundar.S-k@amd.com>
+	s=arc-20240116; t=1731507786; c=relaxed/simple;
+	bh=WrZwjhdVnww+hI36AZAbV67r/b27tTYjnWnWXIeigps=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R6Dtbhveev3j43oLdlXgxJC7xvggi0/LhmkRZM8p8HUY1RTYz4EEzFbwU72UiwvalkpTUhTTXDdDQrU220nftyI6ZYJv8Fs1Sm45eQFK1ALlxzNsC3ieLg4m9ocIMi19gEhyp0hiPV0uegD3DWCYrmXPOfuztPt+PzpqWmXmC68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XWdTXwub; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a273e421fso35301966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:23:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731507782; x=1732112582; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Egn5fEpckGR7euiSFSUPlqzHLdxGGw1Hgc2j7hHRnkA=;
+        b=XWdTXwubzkzkKeTUwOjm+WWUAFxGj7xknVzBYpjy4jgr+P6fbopyzcI5sNDdISL3EW
+         t5fN6z80ZIeHHJpFZCBtyDhuiJ8aozQBf6WFKC7qfJH3IKY2xBse2sgLl0dVG8dVZkyR
+         whfd+XrPwM6qd00Jf8J1AbFdr6G/8/GU/xkLeeQFuwOl14yr8ZKqcd5w4pqp7UGHTAUB
+         qrzf9JkIDjcNund03ICGw3i60Bm7qhO+g2OKKx70WjfLCDHYBZhElIMBSqyTWkas4AGh
+         jvzdkK9UZn09PaKNQHpA8MfgR1mSzL+3PEwMY/MS1W+gUB/Sf0p99/yMrKFx/lL+WfBN
+         5/6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731507782; x=1732112582;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Egn5fEpckGR7euiSFSUPlqzHLdxGGw1Hgc2j7hHRnkA=;
+        b=DidlkS4VKC4ysFv5Z7Uov79KI5TkoHDQwu+7fcHCRlgzY5NjaDqhmC9u+Bl5fne1Ai
+         JODrW5pghPMp237zOEqZ6PSR+GsgdiGY7l+q4uBs3Pkf3BkdnKzp5XfiKV8tAW8WI07b
+         OFf6JEq9PPUF4zIQk6qPQotKihKJ3qR19gKdWff80hsCRD7wl06oHkWGE/ztK8RhKkwH
+         J9IvGFNWE7paiHqX3QL/GkY4DRbjjc/lMzAXZfRz+M/nGHSpKdlIi7PmwyITricQcieU
+         WXYT6ZEAa69usWZa3HHkbZy1+T7NYbCP0m2FP+oqcKONR+xlyVSw6SHLub6qbYMXuxV6
+         QmFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2m3fJD6Xy4mN9uq1zc1TmRmIok//WqMgrEj7Dv7iWmmwIwiCCY2DVZAXlU+BwpBspcWLcvv3UFwSA8ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlbxvYsJn/L6lQk7ujeU9+Rov7vXBl/t3eaD24jgSdn40BEQRW
+	CgxIyG2Sf7dbmix9EsGSsEF2ksyTKZePdvP3Ya+Ngq31Cj5I8TQD6o9utU1ds0U=
+X-Google-Smtp-Source: AGHT+IE7qbFVHpgXUGHmdtQQ68GGSvuT61CnUcYwM27PSmisc3v4hDGM+TCD1/jQDY5GkVFC7sCumA==
+X-Received: by 2002:a17:906:794d:b0:a9a:a55:1e6 with SMTP id a640c23a62f3a-a9eefe9bae8mr803687466b.3.1731507782300;
+        Wed, 13 Nov 2024 06:23:02 -0800 (PST)
+Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa1dda672easm240519366b.40.2024.11.13.06.23.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 06:23:02 -0800 (PST)
+Date: Wed, 13 Nov 2024 15:22:59 +0100
+From: Petr Tesarik <ptesarik@suse.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Anshuman Khandual
+ <anshuman.khandual@arm.com>, Ard Biesheuvel <ardb@kernel.org>, Catalin
+ Marinas <catalin.marinas@arm.com>, David Hildenbrand <david@redhat.com>,
+ Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
+Message-ID: <20241113152259.57983855@mordecai.tesarici.cz>
+In-Reply-To: <ed43da27-30bf-4f9d-a952-3d1fe80c5302@arm.com>
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+	<20241017142752.17f2c816@mordecai.tesarici.cz>
+	<aa9a7118-3067-448e-aa34-bbc148c921a2@arm.com>
+	<20241111131442.51738a30@mordecai.tesarici.cz>
+	<046ce0ae-b4d5-4dbd-ad9d-eb8de1bba1b8@arm.com>
+	<20241112104544.574dd733@mordecai.tesarici.cz>
+	<5a041e51-a43b-4878-ab68-4757d3141889@arm.com>
+	<20241112115039.41993e4b@mordecai.tesarici.cz>
+	<20241113134038.5843ab73@mordecai.tesarici.cz>
+	<ed43da27-30bf-4f9d-a952-3d1fe80c5302@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108073323.523805-3-Shyam-sundar.S-k@amd.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Wed, 13 Nov 2024 12:56:24 +0000
+Ryan Roberts <ryan.roberts@arm.com> wrote:
 
-On Fri, Nov 08, 2024 at 01:03:20PM +0530, Shyam Sundar S K wrote:
-> As of now, the I3C subsystem only has ARM-specific initialization, and
-> there is no corresponding ACPI plumbing present. To address this, ACPI
-> support needs to be added to both the I3C core and DW driver.
+> On 13/11/2024 12:40, Petr Tesarik wrote:
+> > On Tue, 12 Nov 2024 11:50:39 +0100
+> > Petr Tesarik <ptesarik@suse.com> wrote:
+> >   
+> >> On Tue, 12 Nov 2024 10:19:34 +0000
+> >> Ryan Roberts <ryan.roberts@arm.com> wrote:
+> >>  
+> >>> On 12/11/2024 09:45, Petr Tesarik wrote:    
+> >>>> On Mon, 11 Nov 2024 12:25:35 +0000
+> >>>> Ryan Roberts <ryan.roberts@arm.com> wrote:
+> >>>>       
+> >>>>> Hi Petr,
+> >>>>>
+> >>>>> On 11/11/2024 12:14, Petr Tesarik wrote:      
+> >>>>>> Hi Ryan,
+> >>>>>>
+> >>>>>> On Thu, 17 Oct 2024 13:32:43 +0100
+> >>>>>> Ryan Roberts <ryan.roberts@arm.com> wrote:      
+> >>>>> [...]      
+> >>>>>> Third, a few micro-benchmarks saw a significant regression.
+> >>>>>>
+> >>>>>> Most notably, getenv and getenvT2 tests from libMicro were 18% and 20%
+> >>>>>> slower with variable page size. I don't know why, but I'm looking into
+> >>>>>> it. The system() library call was also about 18% slower, but that might
+> >>>>>> be related.        
+> >>>>>
+> >>>>> OK, ouch. I think there are some things we can try to optimize the
+> >>>>> implementation further. But I'll wait for your analysis before digging myself.      
+> >>>>
+> >>>> This turned out to be a false positive. The way this microbenchmark was
+> >>>> invoked did not get enough samples, so it was mostly dependent on
+> >>>> whether caches were hot or cold, and the timing on this specific system
+> >>>> with the specific sequence of bencnmarks in the suite happens to favour
+> >>>> my baseline kernel.
+> >>>>
+> >>>> After increasing the batch count, I'm getting pretty much the same
+> >>>> performance for 6.11 vanilla and patched kernels:
+> >>>>
+> >>>>                         prc thr   usecs/call      samples   errors cnt/samp 
+> >>>> getenv (baseline)         1   1      0.14975           99        0   100000 
+> >>>> getenv (patched)          1   1      0.14981           92        0   100000       
+> >>>
+> >>> Oh that's good news! Does this account for all 3 of the above tests (getenv,
+> >>> getenvT2 and system())?    
+> >>
+> >> It does for getenvT2 (a variant of the test with 2 threads), but not
+> >> for system. Thanks for asking, I forgot about that one.
+> >>
+> >> I'm getting substantial difference there (+29% on average over 100 runs):
+> >>
+> >>                         prc thr   usecs/call      samples   errors cnt/samp  command
+> >> system (baseline)         1   1   6937.18016          102        0      100     A=$$
+> >> system (patched)          1   1   8959.48032          102        0      100     A=$$
+> >>
+> >> So, yeah, this should in fact be my priority #1.  
+> > 
+> > Further testing reveals the workload is bimodal, that is to say the
+> > distribution of results has two peaks. The first peak around 3.2 ms
+> > covers 30% runs, the second peak around 15.7 ms covers 11%. Two per
+> > cent are faster than the fast peak, 5% are slower than slow peak, the
+> > rest is distributed almost evenly between them.  
 > 
-> Add support to get the ACPI handle from the _HID probed and parse the apci
-> object to retrieve the slave information from BIOS.
-> 
-> Based on the acpi object information propogated via BIOS, build the i3c
-> board information so that the same information can be used across the
-> driver to handle the slave requests.
-> 
-> Co-developed-by: Sanket Goswami <Sanket.Goswami@amd.com>
-> Signed-off-by: Sanket Goswami <Sanket.Goswami@amd.com>
-> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> ---
-> Cc: linux-acpi@vger.kernel.org
-> 
->  drivers/i3c/internals.h            |  3 ++
->  drivers/i3c/master.c               | 84 ++++++++++++++++++++++++++++++
->  drivers/i3c/master/dw-i3c-master.c |  7 +++
->  include/linux/i3c/master.h         |  1 +
->  4 files changed, 95 insertions(+)
-> 
-> diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
-> index 433f6088b7ce..178bc0ebe6b6 100644
-> --- a/drivers/i3c/internals.h
-> +++ b/drivers/i3c/internals.h
-> @@ -10,6 +10,9 @@
->  
->  #include <linux/i3c/master.h>
->  
-> +#define I3C_GET_PID		0x08
-> +#define I3C_GET_ADDR		0x7F
-> +
->  void i3c_bus_normaluse_lock(struct i3c_bus *bus);
->  void i3c_bus_normaluse_unlock(struct i3c_bus *bus);
->  
-> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> index 6f3eb710a75d..0ceef2aa9161 100644
-> --- a/drivers/i3c/master.c
-> +++ b/drivers/i3c/master.c
-> @@ -2251,6 +2251,84 @@ static int of_i3c_master_add_dev(struct i3c_master_controller *master,
->  	return ret;
->  }
->  
-> +#if IS_ENABLED(CONFIG_ACPI)
-> +static int i3c_acpi_configure_master(struct i3c_master_controller *master)
-> +{
-> +	struct acpi_buffer buf = {ACPI_ALLOCATE_BUFFER, NULL};
-> +	enum i3c_addr_slot_status addrstatus;
-> +	struct i3c_dev_boardinfo *boardinfo;
-> +	struct device *dev = &master->dev;
-> +	struct fwnode_handle *fwnode;
-> +	struct acpi_device *adev;
-> +	u32 slv_addr, num_dev;
-> +	acpi_status status;
-> +	u64 val;
-> +
-> +	status = acpi_evaluate_object_typed(master->ahandle, "_DSD", NULL, &buf, ACPI_TYPE_PACKAGE);
-> +	if (ACPI_FAILURE(status)) {
-> +		dev_err(&master->dev, "Error reading _DSD:%s\n", acpi_format_exception(status));
-> +		return -ENODEV;
-> +	}
+> FWIW, One source of bimodality I've seen on Ampere systems with 2 NUMA nodes is
+> placement of the kernel image vs placement of the running thread. If they are
+> remote from eachother, you'll see a slowdown. I've hacked this source away in
+> the past by effectively using only a single NUMA node (with the help of
+> 'maxcpus' and 'mem' kernel cmdline options).
 
-Why do you need to do that?
+This system has only one NUMA node. But your comment leads in the right
+direction. CPU placement does play a role here.
 
-> +	num_dev = device_get_child_node_count(dev);
-> +	if (!num_dev) {
-> +		dev_err(&master->dev, "Error: no child node present\n");
-> +		return -EINVAL;
-> +	}
+I can consistently get the fast results if I pin the benchmark process
+to a single CPU core, or more generally to a CPU set which shares the
+L2 cache (as found on eMAG). But the scheduler only considers LLC,
+which (with CONFIG_SCHED_CLUSTER=y) follows the complex affinity of the
+SLC.
 
-I think Jarkko already pointed out the problem with that. The whole
-check should be dropped.
+Long story short, without explicit affinity, the scheduler may place a
+forked child onto a CPU with a cold L2 cache, which harms short-lived
+processes (like the ones created by this benchmark).
 
-> +	device_for_each_child_node(dev, fwnode) {
-> +		adev = to_acpi_device_node(fwnode);
-> +		if (!adev)
-> +			return -ENODEV;
-> +
-> +		status = acpi_evaluate_integer(adev->handle, "_ADR", NULL, &val);
-> +		if (ACPI_FAILURE(status)) {
-> +			dev_err(&master->dev, "Error: eval _ADR failed\n");
-> +			return -EINVAL;
-> +		}
+Now it all makes sense and it is totally unrelated to dynamic page size
+selection. :-)
 
-val = acpi_device_adr(adev);
-
-> +		slv_addr = val & I3C_GET_ADDR;
-> +
-> +		boardinfo = devm_kzalloc(dev, sizeof(*boardinfo), GFP_KERNEL);
-> +		if (!boardinfo)
-> +			return -ENOMEM;
-> +
-> +		if (slv_addr) {
-> +			if (slv_addr > I3C_MAX_ADDR)
-> +				return -EINVAL;
-> +
-> +			addrstatus = i3c_bus_get_addr_slot_status(&master->bus, slv_addr);
-> +			if (addrstatus != I3C_ADDR_SLOT_FREE)
-> +				return -EINVAL;
-> +		}
-> +
-> +		boardinfo->static_addr = slv_addr;
-> +		if (boardinfo->static_addr > I3C_MAX_ADDR)
-> +			return -EINVAL;
-> +
-> +		addrstatus = i3c_bus_get_addr_slot_status(&master->bus,	boardinfo->static_addr);
-> +		if (addrstatus != I3C_ADDR_SLOT_FREE)
-> +			return -EINVAL;
-> +
-> +		boardinfo->pid = val >> I3C_GET_PID;
-> +		if ((boardinfo->pid & GENMASK_ULL(63, 48)) ||
-> +		    I3C_PID_RND_LOWER_32BITS(boardinfo->pid))
-> +			return -EINVAL;
-> +
-> +		/*
-> +		 * According to the specification, SETDASA is not supported for DIMM slaves
-> +		 * during device discovery. Therefore, BIOS will populate same initial
-> +		 * dynamic address as the static address.
-> +		 */
-> +		boardinfo->init_dyn_addr = boardinfo->static_addr;
-> +		list_add_tail(&boardinfo->node, &master->boardinfo.i3c);
-> +	}
-> +
-> +	return 0;
-> +}
-> +#else
-> +static int i3c_acpi_configure_master(struct i3c_master_controller *master) { return 0; }
-> +#endif
-
-I think this code should be placed into a separate file.
-
-If the goal is to add ACPI support for code that is written for DT
-only, then I think the first thing to do before that really should be
-to convert the existing code to use the unified device property
-interface, and move all the DT-only parts to a separate file(s).
-
-thanks,
-
--- 
-heikki
+Petr T
 
