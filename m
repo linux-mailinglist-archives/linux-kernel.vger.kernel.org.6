@@ -1,200 +1,259 @@
-Return-Path: <linux-kernel+bounces-407865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E4219C75FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:19:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A479C7600
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:19:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5EB1F2552A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:19:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 734C228BB1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FF2201035;
-	Wed, 13 Nov 2024 15:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43D314B06C;
+	Wed, 13 Nov 2024 15:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w3A/86IC"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RugPbtW/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FB713B298
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4281E13B29B
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731510787; cv=none; b=RnAEfT+t//T2PxUem8tJKJLqWi/aIF5uP1xBSQ6yrgcKVjCnJKKZuzkYBrHdzrSdW22+7DBMzuwZKQC3HSJclhinzSVOsLo8wl/WXAN11QadDXhqpM7pIcuyu37xnRXDMDD331jw19IdrFlhOi4U01LNrAtzVurwnSR7lirPtFQ=
+	t=1731510825; cv=none; b=D40tvrXNMoavQq5qapKkABNyOk/PUd3ukz5Y0PVZjuetBrfJW5OA6/UnbLJPTloA2Ma6ujwxd//weysO0KV7/qwZ1yGEbhbUJv0xaVVvdli4C0ALQ0A3+uXtRbPJt1lZjKp2NNKf8sz+x2LlH118WlbgnFcwhCZ2vBrTtwfqGCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731510787; c=relaxed/simple;
-	bh=V4YACJS2Dc3zD0sWQXDW9+3sWcjZk+qx+4OePzj/Cvo=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=JV3JnBBSxUa42eXnD8C47Iy1mfMciAqWjwv12SPqX3wot5IumyHLa+zvbiY0ldmOmAVTRRkXPVBMjJOaS/xpuSyigljB6mTGeC02uq/uNmzDAdYRnRm2Jo6KqbYF/FQp6nSee2y3OMF+s+QRp/tE8UZQVzDUAStKFfNg68gJU8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w3A/86IC; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53da3b911b9so312573e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:13:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731510784; x=1732115584; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:cc:to:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wgWlEHsRqvYKdWEUO9aMtqCzC5tc6Uc42eoyLnzyk5k=;
-        b=w3A/86ICBMalrzXwuZDc0h1HQaemKCjL3QtyH0OYLHKTBPGP62rdQwUPLYArv1L+x2
-         7L7lgyAmdTT2xRF9TmtNkNlJbqFsW6lh6CbhA/B8pFCfZgQhzO/jJIXlqGi76SJQBIi2
-         tz1Y/0rZOAsKltDhVepZY6XxFbRNfmVBwukEWHKb3U0JdwrFsyMAsjhvfgNAi0r9rg2N
-         Niwdpy7ZYZIE6vgrRS4rRj0qs39vK/fmbuO9/8O2bXyUIqf40vh8CgLxnKvFkHpGTbWW
-         sGLnbgSTkevxYcqTvBI8WqM1x6VWyiMIJQ06fdDxPqxBV65edAvSsKuNP9c+eBuEwYd2
-         zMrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731510784; x=1732115584;
-        h=content-transfer-encoding:subject:cc:to:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wgWlEHsRqvYKdWEUO9aMtqCzC5tc6Uc42eoyLnzyk5k=;
-        b=nRDqwufGXKGaOMNqRBMFNpsHsxbcLN04DjhhEErEWZ+tr/tJqiVaNYv//P+1+mrU1F
-         Rw3NY8xUIXzIwNF2/c1qAc4m1tgRfq1TBSTZXk7WgbyiqsKp7P3UpjC0LhBhudVV7For
-         slQPOsHO0mZwnR35WDn/7IIKgztvXrGvevHORxukM8wZv6FyblJfzgsyWBzIeWmjWM+o
-         X56D4AwKK1bGg51HMQX+y7myAUD56LMHLIRwsE9JCQ18n/B7r8j9WwS8jcoFKtyPm5I1
-         H3SbP1uFrzmGwU+ULD6mLVy4EBHB1FtUoa9bD1Ja7tSsUFbVEnBvgpNchAXoB43K/lDt
-         6WCQ==
-X-Gm-Message-State: AOJu0Yz+ey4W+PVA5zXhehM6h+00KZK+GayXTVi5P9rHSenhFSqQMzcN
-	iTleBJ0LybnE0GAMbO5Q8BEBsty0Y5aAdOB8BxD4NGAQvbq2UrpvQT+WzTg+Y6g=
-X-Google-Smtp-Source: AGHT+IH2hh7GM0nVAPIboFfI4uTPxsW7W9NsoV0QtlseUER5FQjeGWtM/rwZytxw1MAo30XlCvUS5w==
-X-Received: by 2002:a05:6512:1193:b0:535:6a4d:ed74 with SMTP id 2adb3069b0e04-53d9fee21afmr1840642e87.51.1731510783603;
-        Wed, 13 Nov 2024 07:13:03 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-381ed9ea647sm18348450f8f.68.2024.11.13.07.13.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 07:13:02 -0800 (PST)
-Message-ID: <8d402321-96f1-47f7-9347-a850350d60de@linaro.org>
-Date: Wed, 13 Nov 2024 16:13:01 +0100
+	s=arc-20240116; t=1731510825; c=relaxed/simple;
+	bh=RcPq4OPLrw8WjWEWkJqIlu0JtQWOxIH72lmj1/A5lnE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fH0RUcs+zm0Uyai22uIZ78wimaeDREp8gZ9XvVKRKZVjj/tbNwFWYja1/kQegcBDYwURHjmLBGSAVd+vL6978UisI2oqf8EOZLKMBcj6m+KklpOGH90tOeAFg8bOSzTtHeAgI5d7ZjhrRQsogzYAx+Z5xeOqFG4HdnADs05Ate0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RugPbtW/; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731510823; x=1763046823;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=RcPq4OPLrw8WjWEWkJqIlu0JtQWOxIH72lmj1/A5lnE=;
+  b=RugPbtW/Vhjk+/V3ZNJfWluNXTJ/pjL15sY9obNj71ujzj8CTR2QAnIy
+   tDM6scYxh0RYdQUHcA01aR+y5mLWQFYLgOniWBgHhySIRSnL58ooEgAUy
+   s+BAuHP8VQv+TMebxa/ERTAf9kWOlwYx/KEWCxTreap4NTok926sCg/K3
+   7U83xjR3xTlLNHC3q7STw8+yHBJzv9ZwVGZSHUp4+ezx35XqFrFMYnCqB
+   KN0umQi2RmxVCEY61pA5RIfNFY2gu7NyEmEZzYo1Sd7UI+LtktXXRcaPp
+   jAYLyT38wPKI5tfh58xZ957CdkTwtqts5qLrdR8gGCtZweEBIDMpHxTbU
+   w==;
+X-CSE-ConnectionGUID: vnuj5SEMSGGlBPvOQsfYzg==
+X-CSE-MsgGUID: 3viZPKbIQAixHVRh6GxOZg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="42797835"
+X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
+   d="scan'208";a="42797835"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 07:13:42 -0800
+X-CSE-ConnectionGUID: UrWXF7gpSaepiQoG9oPzNw==
+X-CSE-MsgGUID: 7jnTXe9/RcKHwjO8XN2Q6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
+   d="scan'208";a="118724880"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa002.jf.intel.com with ESMTP; 13 Nov 2024 07:13:42 -0800
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	linux-kernel@vger.kernel.org
+Cc: acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	eranian@google.com,
+	ak@linux.intel.com,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 1/2] perf/x86/intel/ds: Clarify adaptive PEBS processing
+Date: Wed, 13 Nov 2024 07:14:26 -0800
+Message-Id: <20241113151427.677169-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux@treblig.org, Judith Mendez <jm@ti.com>, Mark Brown
- <broonie@kernel.org>, Paul Burton <paulburton@kernel.org>,
- Sergio Paracuellos <sergio.paracuellos@gmail.com>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Rob Herring <robh+dt@kernel.org>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Tang Bin <tangbin@cmss.chinamobile.com>
-Subject: [GIt PULL] timer drivers for v6.13-rc1
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Hi Thomas,
+Modify the pebs_basic and pebs_meminfo structs to make the bitfields
+more explicit to ease readability of the code.
 
-please consider the following changes for the timer drivers v6.13-rc1
+Co-developed-by: Stephane Eranian <eranian@google.com>
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/ds.c        | 43 ++++++++++++++-----------------
+ arch/x86/include/asm/perf_event.h | 16 ++++++++++--
+ 2 files changed, 34 insertions(+), 25 deletions(-)
 
-The following changes since commit 3c2fb0152175f9f596b40763cdc1378297da60af:
-
-   hrtimers: Delete hrtimer_init_on_stack() (2024-11-07 02:47:07 +0100)
-
-are available in the Git repository at:
-
-   https://git.linaro.org/people/daniel.lezcano/linux.git 
-tags/timers-v6.13-rc1
-
-for you to fetch changes up to 08b97fbd13de79744b31d2b3c8a0ab1a409b94fa:
-
-   clocksource/drivers/arm_arch_timer: Use of_property_present() for 
-non-boolean properties (2024-11-13 13:49:33 +0100)
-
-----------------------------------------------------------------
-- Remove unused dw_apb_clockevent_[pause|resume|stop] functions as
-   they are unused since 2021 (David Alan Gilbert)
-
-- Make the sp804 driver user selectable as they may be unused on some
-   platforms (Mark Brown)
-
-- Don't fail if the ti-dm does not describe an interrupt in the DT as
-   this could be a normal situation if the PWM is used (Judith Mendez)
-
-- Always use cluster 0 counter as a clocksource on a multi-cluster
-   system to prevent problems related to the time shifting between
-   clusters if multiple per cluster clocksource is used (Paul Burton)
-
-- Move the RaLink system tick counter from the arch directory to the
-   clocksource directory (Sergio Paracuellos)
-
-- Convert the owl-timer bindings into yaml schema (Ivaylo Ivanov)
-
-- Fix child node refcount handling on the TI DM by relying on the
-   __free annotation to automatically release the refcount on the node
-   (Javier Carrasco)
-
-- Remove pointless cast in the GPX driver as PTR_ERR already does that
-   (Tang Bin)
-
-- Use of_property_present() for non-boolean properties where it is
-   possible in the different drivers (Rob Herring)
-
-----------------------------------------------------------------
-Dr. David Alan Gilbert (1):
-       clocksource/drivers/dw_apb: Remove unused dw_apb_clockevent functions
-
-Ivaylo Ivanov (1):
-       dt-bindings: timer: actions,owl-timer: convert to YAML
-
-Javier Carrasco (1):
-       clocksource/drivers/timer-ti-dm: Fix child node refcount handling
-
-Judith Mendez (1):
-       clocksource/drivers/timer-ti-dm: Don't fail probe if int not found
-
-Mark Brown (1):
-       clocksource/drivers:sp804: Make user selectable
-
-Paul Burton (1):
-       clocksource/drivers/mips-gic-timer: Always use cluster 0 counter 
-as clocksource
-
-Rob Herring (Arm) (1):
-       clocksource/drivers/arm_arch_timer: Use of_property_present() for 
-non-boolean properties
-
-Sergio Paracuellos (1):
-       clocksource/drivers/ralink: Add Ralink System Tick Counter driver
-
-Tang Bin (1):
-       clocksource/drivers/gpx: Remove redundant casts
-
-  .../bindings/timer/actions,owl-timer.txt           |  21 ----
-  .../bindings/timer/actions,owl-timer.yaml          | 107 
-+++++++++++++++++++++
-  MAINTAINERS                                        |   2 +-
-  arch/mips/ralink/Kconfig                           |   7 --
-  arch/mips/ralink/Makefile                          |   2 -
-  drivers/clocksource/Kconfig                        |  12 ++-
-  drivers/clocksource/Makefile                       |   1 +
-  drivers/clocksource/arm_arch_timer.c               |   2 +-
-  drivers/clocksource/dw_apb_timer.c                 |  39 --------
-  drivers/clocksource/mips-gic-timer.c               |  39 +++++++-
-  drivers/clocksource/timer-gxp.c                    |   2 +-
-  .../clocksource/timer-ralink.c                     |  11 +--
-  drivers/clocksource/timer-ti-dm-systimer.c         |   8 +-
-  drivers/clocksource/timer-ti-dm.c                  |   8 +-
-  include/linux/dw_apb_timer.h                       |   3 -
-  15 files changed, 174 insertions(+), 90 deletions(-)
-  delete mode 100644 
-Documentation/devicetree/bindings/timer/actions,owl-timer.txt
-  create mode 100644 
-Documentation/devicetree/bindings/timer/actions,owl-timer.yaml
-  rename arch/mips/ralink/cevt-rt3352.c => 
-drivers/clocksource/timer-ralink.c (91%)
-
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index 8afc4ad3cd16..4d0f7c49295a 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1917,8 +1917,6 @@ static void adaptive_pebs_save_regs(struct pt_regs *regs,
+ }
+ 
+ #define PEBS_LATENCY_MASK			0xffff
+-#define PEBS_CACHE_LATENCY_OFFSET		32
+-#define PEBS_RETIRE_LATENCY_OFFSET		32
+ 
+ /*
+  * With adaptive PEBS the layout depends on what fields are configured.
+@@ -1932,8 +1930,7 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+ 	struct pebs_basic *basic = __pebs;
+ 	void *next_record = basic + 1;
+-	u64 sample_type;
+-	u64 format_size;
++	u64 sample_type, format_group;
+ 	struct pebs_meminfo *meminfo = NULL;
+ 	struct pebs_gprs *gprs = NULL;
+ 	struct x86_perf_regs *perf_regs;
+@@ -1945,7 +1942,7 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
+ 	perf_regs->xmm_regs = NULL;
+ 
+ 	sample_type = event->attr.sample_type;
+-	format_size = basic->format_size;
++	format_group = basic->format_group;
+ 	perf_sample_data_init(data, 0, event->hw.last_period);
+ 	data->period = event->hw.last_period;
+ 
+@@ -1967,7 +1964,7 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
+ 
+ 	if (sample_type & PERF_SAMPLE_WEIGHT_STRUCT) {
+ 		if (x86_pmu.flags & PMU_FL_RETIRE_LATENCY)
+-			data->weight.var3_w = format_size >> PEBS_RETIRE_LATENCY_OFFSET & PEBS_LATENCY_MASK;
++			data->weight.var3_w = basic->retire_latency;
+ 		else
+ 			data->weight.var3_w = 0;
+ 	}
+@@ -1977,12 +1974,12 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
+ 	 * But PERF_SAMPLE_TRANSACTION needs gprs->ax.
+ 	 * Save the pointer here but process later.
+ 	 */
+-	if (format_size & PEBS_DATACFG_MEMINFO) {
++	if (format_group & PEBS_DATACFG_MEMINFO) {
+ 		meminfo = next_record;
+ 		next_record = meminfo + 1;
+ 	}
+ 
+-	if (format_size & PEBS_DATACFG_GP) {
++	if (format_group & PEBS_DATACFG_GP) {
+ 		gprs = next_record;
+ 		next_record = gprs + 1;
+ 
+@@ -1995,14 +1992,13 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
+ 			adaptive_pebs_save_regs(regs, gprs);
+ 	}
+ 
+-	if (format_size & PEBS_DATACFG_MEMINFO) {
++	if (format_group & PEBS_DATACFG_MEMINFO) {
+ 		if (sample_type & PERF_SAMPLE_WEIGHT_TYPE) {
+-			u64 weight = meminfo->latency;
++			u64 latency = x86_pmu.flags & PMU_FL_INSTR_LATENCY ?
++					meminfo->cache_latency : meminfo->mem_latency;
+ 
+-			if (x86_pmu.flags & PMU_FL_INSTR_LATENCY) {
+-				data->weight.var2_w = weight & PEBS_LATENCY_MASK;
+-				weight >>= PEBS_CACHE_LATENCY_OFFSET;
+-			}
++			if (x86_pmu.flags & PMU_FL_INSTR_LATENCY)
++				data->weight.var2_w = meminfo->instr_latency;
+ 
+ 			/*
+ 			 * Although meminfo::latency is defined as a u64,
+@@ -2010,12 +2006,13 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
+ 			 * in practice on Ice Lake and earlier platforms.
+ 			 */
+ 			if (sample_type & PERF_SAMPLE_WEIGHT) {
+-				data->weight.full = weight ?:
++				data->weight.full = latency ?:
+ 					intel_get_tsx_weight(meminfo->tsx_tuning);
+ 			} else {
+-				data->weight.var1_dw = (u32)(weight & PEBS_LATENCY_MASK) ?:
++				data->weight.var1_dw = (u32)latency ?:
+ 					intel_get_tsx_weight(meminfo->tsx_tuning);
+ 			}
++
+ 			data->sample_flags |= PERF_SAMPLE_WEIGHT_TYPE;
+ 		}
+ 
+@@ -2036,16 +2033,16 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
+ 		}
+ 	}
+ 
+-	if (format_size & PEBS_DATACFG_XMMS) {
++	if (format_group & PEBS_DATACFG_XMMS) {
+ 		struct pebs_xmm *xmm = next_record;
+ 
+ 		next_record = xmm + 1;
+ 		perf_regs->xmm_regs = xmm->xmm;
+ 	}
+ 
+-	if (format_size & PEBS_DATACFG_LBRS) {
++	if (format_group & PEBS_DATACFG_LBRS) {
+ 		struct lbr_entry *lbr = next_record;
+-		int num_lbr = ((format_size >> PEBS_DATACFG_LBR_SHIFT)
++		int num_lbr = ((format_group >> PEBS_DATACFG_LBR_SHIFT)
+ 					& 0xff) + 1;
+ 		next_record = next_record + num_lbr * sizeof(struct lbr_entry);
+ 
+@@ -2055,11 +2052,11 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
+ 		}
+ 	}
+ 
+-	WARN_ONCE(next_record != __pebs + (format_size >> 48),
+-			"PEBS record size %llu, expected %llu, config %llx\n",
+-			format_size >> 48,
++	WARN_ONCE(next_record != __pebs + basic->format_size,
++			"PEBS record size %u, expected %llu, config %llx\n",
++			basic->format_size,
+ 			(u64)(next_record - __pebs),
+-			basic->format_size);
++			format_group);
+ }
+ 
+ static inline void *
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index 91b73571412f..cd8023d5ea46 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -422,7 +422,9 @@ static inline bool is_topdown_idx(int idx)
+  */
+ 
+ struct pebs_basic {
+-	u64 format_size;
++	u64 format_group:32,
++	    retire_latency:16,
++	    format_size:16;
+ 	u64 ip;
+ 	u64 applicable_counters;
+ 	u64 tsc;
+@@ -431,7 +433,17 @@ struct pebs_basic {
+ struct pebs_meminfo {
+ 	u64 address;
+ 	u64 aux;
+-	u64 latency;
++	union {
++		/* pre Alder Lake */
++		u64 mem_latency;
++		/* Alder Lake and later */
++		struct {
++			u64 instr_latency:16;
++			u64 pad2:16;
++			u64 cache_latency:16;
++			u64 pad3:16;
++		};
++	};
+ 	u64 tsx_tuning;
+ };
+ 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.38.1
 
 
