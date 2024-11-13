@@ -1,196 +1,277 @@
-Return-Path: <linux-kernel+bounces-408314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B07519C7D4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:04:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 541D19C7D50
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:08:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF1DEB21B49
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:04:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7299B24640
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCB4207204;
-	Wed, 13 Nov 2024 21:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89842071FA;
+	Wed, 13 Nov 2024 21:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IOnRZAiP"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1atKIqZk"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2069.outbound.protection.outlook.com [40.107.223.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB51C205AD0
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 21:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731531835; cv=none; b=GK4f2+w1dRXSaX5FwOZekOBFjs3D9Mv5zdY3piS0zNhOj+HlYbCeViBjPjaAlHe18rKnLOCeuJHBzUmr0q8qZQmtvH3GuCFC3FVm/L1tcJU93r0bpB4grxEFtNO0IOzeGkcu8WCf77iv8aqY62jm2ODjIuZUg/MU67NtOotZRPg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731531835; c=relaxed/simple;
-	bh=Heiust2lk2TQ7+75yP27aiVUP7Gcr7UNHszJsH/pVxA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WeqYu1cbe/GD1dBpeKTbyah57rj1A1e0awv80vgUe3bMWa3/sioBz0itdm/jWEmRULPPyht4Fp4lajsaaMpg7feOAeZMTKQkyQ74QZXdnIqsf9VDv2yOLQ7VTpqzxf0wg6EkK69L9axhDV/hCUP/R5Ygk9wL4zJ1XdxqeplZp6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IOnRZAiP; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c932b47552so3567a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:03:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731531830; x=1732136630; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lOCUc/yJUoL2hpg7TdUrHhUe2R4Jfk9THcrUWgwfKEw=;
-        b=IOnRZAiP+ZmlIW/StkVi40qmGdfeEla6GcYRxPsKbXYqDhKAifWrlFrm6+imMF5TDq
-         zPWte9bykvoipdA0EYVjSNfZFN2FkIOhrgmZfClLf07WikPlXwS821tLv8U9sjFcFXKw
-         C+TdUTlG49bX/Mv184zM+JAZbjihSD1n97n++l4ZBIvOf6yDWxxcuyXwI8/I9RnlwEEM
-         gP3a6tDN6rT3t2LioU+w3Iehloy1+41ulasSoDF9r9UHQvROsU9N0tC3hZEcdMJe7Pgv
-         1KPRrIEZR0/5Pzniv4nK5Q67KkP2XpXAqe592BSVFL0rmeV2ID9PJb2qeXQWJr4GXKBe
-         eYqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731531830; x=1732136630;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lOCUc/yJUoL2hpg7TdUrHhUe2R4Jfk9THcrUWgwfKEw=;
-        b=dpms1W77/hpYNWDrzx9sihBoxYhSLyTNdbSCVHsXPokwktQRp6wnxbelPC+NVzn4g/
-         m8ETfouug0uLuqDjTtypfiN0jTlLu0E6lfqKhaBAjv6Uldt9EynXY0XgNaSu0kV+2XoY
-         qs3GCtaD6UnqU3sv7Txy3HhlYXbNAuvCTo9R7w6jZO+7+PvKwyl/Mro92TXQnsOa18Lx
-         qP0xUdGl2Rj6Jgd3WRgY8L3NDmpczRycihRFUA++62rDNzx5elO9l4ikfLLwy1pJkX1T
-         0/cEHU5r1MFdBngh9+LuGKKUH0CiCtY9Jc488sA3+hJatYsDBW2nZ3Ewin2pZfsDu2fe
-         bMKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsPjbU+sn3tCvUCW/20pRrRrgDGwoEeLkP44N+iskRjBW4obkAVJYhMEeAwUjEEKULGzrddJRf3RW3wL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5KzY3F5WBkRh1sJHccgcHvqyD6SVdfnyw7mrdhotsaVtx/NiG
-	R8OiqnSsVyCDrWTrE6uE01Oi6UB6GAzxrG72qhXWZ6+lGwzg/pvXzqUOM9niow==
-X-Gm-Gg: ASbGncvVz//+JAZuqrEmIi+9A9Znm9cYMKBreag+kH+H2GR3HeZYLaQYL8u/2gmuEyr
-	+/JHCa97Mnp3yBTucLwsZUzPhSxBojMTd7Ox1sfcAqR7LhcUql/ygS1G7j/Lst/NF5cJm1BNCTq
-	+dTy3t/5V7e3YLaGJG51A1Uqk0Gncmyh0OoGyo9gVpwF6aZ51acbaDW2KL8DjTUFfAdvix1R6gD
-	11AhTwXAdlppBgKMEF+yNk/4hu8CAuIYcxwIQ==
-X-Google-Smtp-Source: AGHT+IG1zVNACjIiwuT159tiQbcacfdUCCAM6NVeqCGU2Yzh1607/zU+bDBumeceKweprv/UyAwMdA==
-X-Received: by 2002:a05:6402:1a52:b0:5ca:18ba:4a79 with SMTP id 4fb4d7f45d1cf-5cf762fa6b0mr66520a12.7.1731531829738;
-        Wed, 13 Nov 2024 13:03:49 -0800 (PST)
-Received: from localhost ([2a00:79e0:9d:4:69d0:c862:d7b:9232])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ea3cbsm19603805f8f.74.2024.11.13.13.03.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 13:03:49 -0800 (PST)
-From: Jann Horn <jannh@google.com>
-Date: Wed, 13 Nov 2024 22:03:39 +0100
-Subject: [PATCH] drm/panthor: Fix memory leak in
- panthor_ioctl_group_create()
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925F418B481;
+	Wed, 13 Nov 2024 21:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731532085; cv=fail; b=sPoUIyL2/0BEyajoYHC4kZs+xBdklugG7k6SrdFbBcTuAT5WCyAl3ZUbTE8PVYH/TWNuzwIsnSbSSyCc7m9Pw1bduP1/hPVg8BWI8mejTfvQjH0OQuaIdbJFdK7r1OVsl9NE3uJlk0PaoS33sHO4oCJkRVPGeDZ4seZkzJ4uTXA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731532085; c=relaxed/simple;
+	bh=i8uipLTUO+6Uw1l/qB6TuxhvaLip13vjOGSkg4jNWRY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DcR3yv3pvy7uQ4rKLmmrmMmKeUsskVabUECW3HD5jjTxLY8DUChdsylhFgL8D5v1GTkIBY32knljPLZ2v/3ZZepLa2rQ6ALbCpGsSK/IEmWCj8ML3Jl7Fx4g5D73BBrTWcAmBbDT9PxKUYCB0zCXA/Pj/fXrnBG+8an5Ii8Saq8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1atKIqZk; arc=fail smtp.client-ip=40.107.223.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tACJRF/qbr0DAy+WyeakNZ9CAwyk4ep+UWzppdS8D5jU8IL6vAvQa8D8oE8mWkQ2HmfqrMByGLvFkilSL94MWiJeT26nLjGOAPZhvlJk3TskqpDIra7EbXgjR4NmYzLL4jP3tbFC7KaYr4Qdz4Agl4O61uy3Zip8vgLvF1Ge4p8JTH/Zg6ALoaLw/pPBqGXWfUmF/6zE/hzv+wKg9zcKzf6I6g/kMx4UqDiWunyaToMYRV1TClnn1qJNfklZ7r5Yh5NpASg1RqPk8GBRtxz+U8fonWOXTBNu868wIHkZ+/iVuzI6NDTNYo3bYpxW4A5GlHrlYdyXqwmjdFrjywBO5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gI2qV2jw7tc95DB7js6kLSnTrwGmk6buc0QNAz4SGAM=;
+ b=LQuUnX/rzqoFvmC30XOUK62Hanu15G9dxsbUSIY+6exM+HnrnfpR9JvybK1qy2xd9+CxXFSGzfZdZocr9NJk+DjobvoZBcYDQiocjS6z1mV1d089S37KWNOItmjnhnO8Ss78nAVjE7YOcQWwAdF37Kp3cY/7lomvzS/mNkv/yceT+RmXcg2sAa7QEB1p2aRlf7N55/L+V5HnVPn/PtKouDcjzF4OQW6Pc45qZJcuNx+Hne/3+gqHuL5QG6nTnzHvILwl8fNRWbCLa9Q26rpgMih5sJHirAJLUboht24aYfFZlGw37nGyz+4IYqi7++F2pFTFgecwtJ1LwhYhztpD/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gI2qV2jw7tc95DB7js6kLSnTrwGmk6buc0QNAz4SGAM=;
+ b=1atKIqZkSCT+ZTpksAA5Xckh8ni5ylnEfQcdoA46beVR2YphbyvqIZRlM+gwL+TgsvLRUZaRwgM+2HfrgrX29/PN4mRszU0Rvcpi/T+OMl1qrv/qzpJ4jWztl50alDh9I2UF4GLpQS8d3CqWpeu/slAcVmkx1raKqe8SKg/kbdM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SA0PR12MB4447.namprd12.prod.outlook.com (2603:10b6:806:9b::23)
+ by DM4PR12MB6111.namprd12.prod.outlook.com (2603:10b6:8:ac::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Wed, 13 Nov
+ 2024 21:07:58 +0000
+Received: from SA0PR12MB4447.namprd12.prod.outlook.com
+ ([fe80::b4ba:6991:ab76:86d2]) by SA0PR12MB4447.namprd12.prod.outlook.com
+ ([fe80::b4ba:6991:ab76:86d2%5]) with mapi id 15.20.8158.013; Wed, 13 Nov 2024
+ 21:07:58 +0000
+Message-ID: <49ada2d4-c876-1310-6bdf-3b0acf8c8dd1@amd.com>
+Date: Wed, 13 Nov 2024 15:07:57 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] KVM: SVM: Convert plain error code numbers to defines
+To: Melody Wang <huibo.wang@amd.com>, linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Tom Lendacky <thomas.lendacky@amd.com>,
+ kvm@vger.kernel.org
+References: <20241113204425.889854-1-huibo.wang@amd.com>
+Content-Language: en-US
+From: "Paluri, PavanKumar" <papaluri@amd.com>
+In-Reply-To: <20241113204425.889854-1-huibo.wang@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR13CA0042.namprd13.prod.outlook.com
+ (2603:10b6:806:22::17) To SA0PR12MB4447.namprd12.prod.outlook.com
+ (2603:10b6:806:9b::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241113-panthor-fix-gcq-bailout-v1-1-654307254d68@google.com>
-X-B4-Tracking: v=1; b=H4sIACoUNWcC/x2MWwqAIBAArxL73ULaA+oq0YfppguhpRVBdPekz
- 4GZeSBRZEowFA9Eujhx8BlEWYB2yltCNplBVrIRQtS4KX+4EHHhG63ecVa8hvNAaXql667tKzK
- Q6y1SVv7zOL3vByy90QVpAAAA
-X-Change-ID: 20241113-panthor-fix-gcq-bailout-2d9ac36590ed
-To: Boris Brezillon <boris.brezillon@collabora.com>, 
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Mary Guillemard <mary.guillemard@collabora.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731531825; l=2836;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=Heiust2lk2TQ7+75yP27aiVUP7Gcr7UNHszJsH/pVxA=;
- b=lzcwlYsBE4dnEtS4J1h0Wf/4iptqrd0IEJ14sGcSTgw5cyU8TenlSxFixHMkQZuQfYbk44Svk
- UYn5uJdkAWYB0zXWRUPHrMruK1IPz0rykyF1bF7/DSCL/HkIw9Syr6Y
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA0PR12MB4447:EE_|DM4PR12MB6111:EE_
+X-MS-Office365-Filtering-Correlation-Id: adecefc0-fd9d-4e1c-675f-08dd04274069
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VTBwWFBPN0w0U2tpSkhJTFpxa0pSVnpOT1AxQUZQWVVYOXZkVFI3YmZ0bTFG?=
+ =?utf-8?B?ekpwSkt4V0xSWmF2K3o1TW92YUR1WVVpSUhDeVpoYlhQVjdoeVZmWXRoaDFq?=
+ =?utf-8?B?R2Z0b1B5K0taN1F6OUtXMWhGWXRINm5DK2szSVVUa2FvR0VNWFJjYWVyR3Nh?=
+ =?utf-8?B?YTIwN0ZCWEZxeWVvVWhjbkE0dnZOWGxHNWFmVHVLN1Q4cjB2YVpaNGNHSkpt?=
+ =?utf-8?B?SE9rN1NuSHpkVVY4V3hiMElLVEM5OVlROE5kVXgrWFRRTnlmNU5acjdrWFNu?=
+ =?utf-8?B?TVJqQmdKMmV3dkIyOXByODVnSGxKclVycVphdjVHeW1pNG13NlhMY294QWxh?=
+ =?utf-8?B?NlJUcUM4RGFNVVBlQncreXhGV0NORm4vQkJZN09aWTZQeFhjZ3FydE44bmtQ?=
+ =?utf-8?B?cHMvcEIzU2p1TWk2YjljS2JnN2lzK1hsVWNXYTVubnFLKy9URDVJd0VaK0lq?=
+ =?utf-8?B?L01aNWZUUUlTUTd0M0lIc0FXczhRUzdyTGViSGxUYVNjWVAyWVlMcnhvK0hL?=
+ =?utf-8?B?YmVPTDdUMWhYVkh2ZWtKTXl3Z0Q4LzlpMGVpcFFmQXV5Nk1KNkhxRVBlamJi?=
+ =?utf-8?B?TncrMWsraUJxTm56NW9kdkJQeFQ2UnYxelM2WXc0eURGUzFSdmN0a05CdlB6?=
+ =?utf-8?B?NHFuK25kalQ5Z1Nob1NGSWYyVHFUdXdyVW9VUXJtRzlWK21kdnZtSmhqYWda?=
+ =?utf-8?B?VlJtRTFmTVlmTUtibGNJc3o2MjRjWkU5ei84VDB1UWtSZEV2Snc0cnNwZ2dI?=
+ =?utf-8?B?ekh5QVdhNFBML0ppYVBJNVhyU3p6akFDengrZFNDSDJlaEVvWTQ2YmdDWCtv?=
+ =?utf-8?B?R24yRkswNUtlUDBhQmhsblVlOXpnNjlTL3N5L2g0OWRoTktFK3BVMU5RMXUy?=
+ =?utf-8?B?Zjhnc0ttenUxL3grWlNnaFIwYmpNVkJQdVVrejVRWFk0RmpZQ2EzR0pVU0Ry?=
+ =?utf-8?B?K2JwV1BnVDQ3VUVCTWt6ak1rSHNkZWRhQVJkMmxWK2ZlU0c1MEdJQUFmWU53?=
+ =?utf-8?B?bytySU1KaDdGK0diT3dRQzJyd1JMTnRBSmFwTmxVY3YrOFhLUXRJejZoL2ZU?=
+ =?utf-8?B?UW5yZklPL3FEQnRQbm52OEZhczJaY1RZVFpvUEp4WjkvY0hyQXIwVFB2K2oz?=
+ =?utf-8?B?MUFONXFPZDNRRDF4U0drVDRZTXRSekkzRUtpSk0xMVBtYWtLRGdkUzRFTVEx?=
+ =?utf-8?B?QU1qZ3B0VWdkaXlYMnVPdlB3N0tybS9lbUg2RG1CeU1lSVFycnZXcDFsZ1RO?=
+ =?utf-8?B?U3RlYVFab1JxZGlVR0YvbGVMcS9kUTNzbHJHUzdOM1gzWFprQ2NES05XZ05V?=
+ =?utf-8?B?VW5MTVJraklhNUFra1ZxZElNSU9uS3Z1UFllbFZSQWdTTVltSFNYNG5CUXcy?=
+ =?utf-8?B?WjVSM1ZQU0g1T2x6TDMzd0E5VEJ1Y1hTYnJSWXRuZXBFU0s2blNXd2xMeS9W?=
+ =?utf-8?B?VFgvZklwak1OU0RrUG95UHpqbDFaYzBPc2ZyNEpkd2l6TERHdVNWOU5WODhI?=
+ =?utf-8?B?VnZZRTJGa29DeStBUFI0Mk5BWTcvN2JyamJzUWpZUm1mcXg0b2x6WXprcEVj?=
+ =?utf-8?B?MEdiTHU1eGs4djBUTW9iWStzckF5WGhRNnhpb2t3bjZmN1NzMGExaXUzZE9t?=
+ =?utf-8?B?K0FsdndOUVZBR25wWjRuS3VmNmR3OU93VDgvbnVPdU45TllGZkFHa2NzRndR?=
+ =?utf-8?B?WUhsR0J2Ujg4NnIyczJ2VWtveFRGYXAyQWZ0OVNFejNKZXljUytYb1Y4VEtj?=
+ =?utf-8?Q?P961VsKlX4Ynl8loXMXBlH2y+GnajD3kyYA9Fe8?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4447.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SVZ1NjUxSWxBNTlTNkM0TWtxMFAzOXVsUEhkMGlYbjVxMlpLTHIrZWJ4WGVj?=
+ =?utf-8?B?VHBoWlhEMDlhYWpNdytkYUpmTkF4Q1VVaE1kVStNWnc1UUdKTlNuKzJCTVJG?=
+ =?utf-8?B?NDU3WUh4NXFtY3ZTQmlOQTNSenBSS0UvcWhaRmJ5cUZVTjFQWTUwVGpOallT?=
+ =?utf-8?B?cFA3RVJib1RtRDZ1MWR5M0VMM1M1bHRZTm8wVDQwUGhWdHBwSTF4SG9XVFZ6?=
+ =?utf-8?B?cGxwQ1BYY1JIM2hHUVFNT3FNbXNab2FJeEtsWm9ndHdlVFFWZDNmWEtFT2tR?=
+ =?utf-8?B?M0U5aTNkNXhtZkRoR2RsR0tvT1dwcWxRTGwxTGt5cEdJZ09sU0I3VTdGY3dJ?=
+ =?utf-8?B?QXJZeWxPZzlmWStvQWE0V3hnSlV2aU8rZlFjcGlFOHJ3SmxyUzcra0wyUEZv?=
+ =?utf-8?B?djJaR2xCdWhkbDBuSFJxZU4zd2JsL2RVWjR6R2ZxWUNnbnVaL0ZVbnJwemtE?=
+ =?utf-8?B?WWJXZTMvd0xsNlo3MGFyTWp5aVA5WEhmUFd1S093Nnh0d291ZkJKVi96MlhJ?=
+ =?utf-8?B?Vm9WcGZveHpuTSs0KzlNNU41bWE5WWFMdjdmcFdOQ2NYVzQ4d1NIdWxMMmpT?=
+ =?utf-8?B?NFJUR2NMZnVQVGJpOW5LSXBDRUllZmZwQXg5WXdUZGNvcTA1bmdNL3V4N3FX?=
+ =?utf-8?B?dVZzUHlyczBkcVdkSWJvZldqTVprdDFvUjRFQkZlUXEyNlg5dmNHTDhFOTJ0?=
+ =?utf-8?B?Y2RHUVU5ZzZxM2lzNGxMb3hYaW1ha095ckxkcExDSnRmbDdzQk9Ld0h5RHZw?=
+ =?utf-8?B?aU1ydGI1ek1SUVN2cm9JU25UaXFWTEo0QmVIMGw3RThzZnM5R1dvR0Z1OHps?=
+ =?utf-8?B?NGFKekxhcTYrRTVCVk9FbUY3UzR1TnFPSFVZVTg4NXo0ODNBTDhQOUlIOWdp?=
+ =?utf-8?B?OHUvMUxNN3RROVNOMW8waVI5eHZkdElYdWlOZXJsUUJVSlJwMllORnZZY01L?=
+ =?utf-8?B?RmxEUGJiTDNGcUkrSVNGeVVaaTRyd05iVlhKR3puWXpQRVAvbkJkS09ZeGd5?=
+ =?utf-8?B?eStsV2JEb2VHWUVQQ3VwRkhyUk1zTTVnbUtCNnBCWEtMNTBzMFZJV20yNjZm?=
+ =?utf-8?B?WlRPVDdzR29OSFp0dFUxOTFqS25DT2dvQURNVnl1RDYyQitCUUJtSkpCZDY5?=
+ =?utf-8?B?bnBxTjJCYzV4NnFvbFBUU24wQ2pRaVR5aVIyMTczM2xCRFNzOERSMGYvcFg1?=
+ =?utf-8?B?STR0cDM1clprUmE2WmcydWtCTHd5cXZhKzJDTW90Y210K3ZWTHA3SWdiWkhj?=
+ =?utf-8?B?YkFNN09KTmdWRFdkaTMxQXhMQ0xmRDJjNHFjUXpaclBnK3p4MnQwRCtnd3Rw?=
+ =?utf-8?B?VjFCQU53bWhkQ1RDd3RxcHhaVXlSdGVHTGRQOENkMW0wM1A5QkVlUzZ5RUpt?=
+ =?utf-8?B?cTQ5OE9YTkJ5WWhHZitzRXBSUXNPZVppMzVlSmdTc1hvZFZaaFJ5KzRwRTI4?=
+ =?utf-8?B?U1Jzbmd2S3dLNkRvZGZPTFBibVFuUjFPUlZFYU8zZG5kdFNPK3hhMmVRUWZY?=
+ =?utf-8?B?aWtRampGUW93a3hJbU1OUWxNa1pOZWdpN0xvNFg3aHBwaXo5SlFyakhEMHdO?=
+ =?utf-8?B?eWd0Um54Vlp3OHFPb1F3eGh4T3ZyQlZRejhTR1diQkttQm9NdGcwbXhqaXZw?=
+ =?utf-8?B?THBJaGNrWit0a2xEa1lVSmdMRVdVRHpVN3JwRDF0Wm4zMmNzc0syYlJQay9m?=
+ =?utf-8?B?TGZlRk8zcndINHpwcGVjMEhLRlJFVFg0UCsxWlFqYjc4Z3Z1SnhnZG5FZHIy?=
+ =?utf-8?B?MHZCVTIrOHVhS3hubXAxL2EycG4rbFhyOFdGMW9wVWlmTEMzWDhERk0zMlhH?=
+ =?utf-8?B?RU9ad25BZ2U1dmJHZ2V6TGgxcW5TWUFGUVFYOEoyWEhvQkFab0RlZktWTURs?=
+ =?utf-8?B?ZWpkYldKMkNtSE81RWZsMEY1c25HSW1iV1NOY01ZQlAzS1gzNGN4OTlnZTZX?=
+ =?utf-8?B?Y01jS3ZvQm1mSERIck1INTJvZ1hOaURaU1plWE05SzBTS2FKV05jTEpmaStm?=
+ =?utf-8?B?RjU4Q0tSZVFXdUZyUWpHa3lxMi9vL1k3NDljQ29tNjlMNzY1QzNTaEtNS3Z2?=
+ =?utf-8?B?b1ZKQVVnbmZuK3pJZkVweVVJOHJWYzNBQWhCVHcxbURSYlRjcTkrb1I2Vjlj?=
+ =?utf-8?Q?tmgZrirUsYFPUDmQZvfAKzHWS?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: adecefc0-fd9d-4e1c-675f-08dd04274069
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR12MB4447.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2024 21:07:58.8747
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3WkkgRYnEagwGkx1s4tAR8SJIReO1EQmfcqQ8burbbiUkfLB2+1yswZ+RrN2jAVTjy5Y+UJnUGvVG7K4EtuRbg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6111
 
-When bailing out due to group_priority_permit() failure, the queue_args
-need to be freed. Fix it by rearranging the function to use the
-goto-on-error pattern, such that the success case flows straight without
-indentation while error cases jump forward to cleanup.
 
-Cc: stable@vger.kernel.org
-Fixes: 5f7762042f8a ("drm/panthor: Restrict high priorities on group_create")
-Signed-off-by: Jann Horn <jannh@google.com>
----
-testcase:
-```
-#include <err.h>
-#include <fcntl.h>
-#include <stddef.h>
-#include <sys/ioctl.h>
-#include <drm/panthor_drm.h>
 
-#define SYSCHK(x) ({          \
-  typeof(x) __res = (x);      \
-  if (__res == (typeof(x))-1) \
-    err(1, "SYSCHK(" #x ")"); \
-  __res;                      \
-})
+On 11/13/2024 2:44 PM, Melody Wang wrote:
+> Convert VMGEXIT SW_EXITINFO1 codes from plain numbers to proper defines.
+> 
+> No functionality changed.
+> 
+> Signed-off-by: Melody Wang <huibo.wang@amd.com>
 
-#define GPU_PATH "/dev/dri/by-path/platform-fb000000.gpu-card"
-
-int main(void) {
-  int fd = SYSCHK(open(GPU_PATH, O_RDWR));
-
-  while (1) {
-    struct drm_panthor_queue_create qc[16] = {};
-    struct drm_panthor_group_create gc = {
-      .queues = {
-        .stride = sizeof(struct drm_panthor_queue_create),
-        .count = 16,
-        .array = (unsigned long)qc
-      },
-      .priority = PANTHOR_GROUP_PRIORITY_HIGH+1/*invalid*/
-    };
-    ioctl(fd, DRM_IOCTL_PANTHOR_GROUP_CREATE, &gc);
-  }
-}
-```
-
-I have tested that without this patch, after running the testcase for a
-few seconds and then manually killing it, 2G of RAM in kmalloc-128 have
-been leaked. With the patch applied, the memory leak is gone.
-
-(By the way, get_maintainer.pl suggests that I also send this patch to
-the general DRM maintainers and the DRM-misc maintainers; looking at
-MAINTAINERS, it looks like it is normal that the general DRM maintainers
-are listed for everything under drivers/gpu/, but DRM-misc has exclusion
-rules for a bunch of drivers but not panthor. I don't know if that is
-intentional.)
----
- drivers/gpu/drm/panthor/panthor_drv.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index c520f156e2d73f7e735f8bf2d6d8e8efacec9362..815c23cff25f305d884e8e3e263fa22888f7d5ce 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -1032,14 +1032,15 @@ static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
- 
- 	ret = group_priority_permit(file, args->priority);
- 	if (ret)
--		return ret;
-+		goto out;
- 
- 	ret = panthor_group_create(pfile, args, queue_args);
--	if (ret >= 0) {
--		args->group_handle = ret;
--		ret = 0;
--	}
-+	if (ret < 0)
-+		goto out;
-+	args->group_handle = ret;
-+	ret = 0;
- 
-+out:
- 	kvfree(queue_args);
- 	return ret;
- }
-
----
-base-commit: 9f8e716d46c68112484a23d1742d9ec725e082fc
-change-id: 20241113-panthor-fix-gcq-bailout-2d9ac36590ed
-
--- 
-Jann Horn <jannh@google.com>
-
+Reviewed-by: Pavan Kumar Paluri <papaluri@amd.com>
+> ---
+>  arch/x86/include/asm/sev-common.h |  8 ++++++++
+>  arch/x86/kvm/svm/sev.c            | 12 ++++++------
+>  arch/x86/kvm/svm/svm.c            |  2 +-
+>  3 files changed, 15 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
+> index 98726c2b04f8..01d4744e880a 100644
+> --- a/arch/x86/include/asm/sev-common.h
+> +++ b/arch/x86/include/asm/sev-common.h
+> @@ -209,6 +209,14 @@ struct snp_psc_desc {
+>  
+>  #define GHCB_RESP_CODE(v)		((v) & GHCB_MSR_INFO_MASK)
+>  
+> +/*
+> + * Error codes of the GHCB SW_EXITINFO1 related to GHCB input that can be
+> + * communicated back to the guest
+> + */
+> +#define GHCB_HV_RESP_SUCCESS		0
+> +#define GHCB_HV_RESP_ISSUE_EXCEPTION	1
+> +#define GHCB_HV_RESP_MALFORMED_INPUT	2
+> +
+>  /*
+>   * Error codes related to GHCB input that can be communicated back to the guest
+>   * by setting the lower 32-bits of the GHCB SW_EXITINFO1 field to 2.
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index c6c852485900..c78d18ba179c 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -3430,7 +3430,7 @@ static int sev_es_validate_vmgexit(struct vcpu_svm *svm)
+>  		dump_ghcb(svm);
+>  	}
+>  
+> -	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 2);
+> +	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_MALFORMED_INPUT);
+>  	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, reason);
+>  
+>  	/* Resume the guest to "return" the error code. */
+> @@ -3574,7 +3574,7 @@ static int setup_vmgexit_scratch(struct vcpu_svm *svm, bool sync, u64 len)
+>  	return 0;
+>  
+>  e_scratch:
+> -	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 2);
+> +	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_MALFORMED_INPUT);
+>  	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, GHCB_ERR_INVALID_SCRATCH_AREA);
+>  
+>  	return 1;
+> @@ -4121,7 +4121,7 @@ static int snp_handle_ext_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t r
+>  	return snp_handle_guest_req(svm, req_gpa, resp_gpa);
+>  
+>  request_invalid:
+> -	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 2);
+> +	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_MALFORMED_INPUT);
+>  	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, GHCB_ERR_INVALID_INPUT);
+>  	return 1; /* resume guest */
+>  }
+> @@ -4314,7 +4314,7 @@ int sev_handle_vmgexit(struct kvm_vcpu *vcpu)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 0);
+> +	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_SUCCESS);
+>  	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, 0);
+>  
+>  	exit_code = kvm_ghcb_get_sw_exit_code(control);
+> @@ -4364,7 +4364,7 @@ int sev_handle_vmgexit(struct kvm_vcpu *vcpu)
+>  		default:
+>  			pr_err("svm: vmgexit: unsupported AP jump table request - exit_info_1=%#llx\n",
+>  			       control->exit_info_1);
+> -			ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 2);
+> +			ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_MALFORMED_INPUT);
+>  			ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, GHCB_ERR_INVALID_INPUT);
+>  		}
+>  
+> @@ -4394,7 +4394,7 @@ int sev_handle_vmgexit(struct kvm_vcpu *vcpu)
+>  	case SVM_VMGEXIT_AP_CREATION:
+>  		ret = sev_snp_ap_creation(svm);
+>  		if (ret) {
+> -			ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 2);
+> +			ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_MALFORMED_INPUT);
+>  			ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, GHCB_ERR_INVALID_INPUT);
+>  		}
+>  
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index c1e29307826b..5ebe8177d2c6 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -2975,7 +2975,7 @@ static int svm_complete_emulated_msr(struct kvm_vcpu *vcpu, int err)
+>  	if (!err || !sev_es_guest(vcpu->kvm) || WARN_ON_ONCE(!svm->sev_es.ghcb))
+>  		return kvm_complete_insn_gp(vcpu, err);
+>  
+> -	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 1);
+> +	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_ISSUE_EXCEPTION);
+>  	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
+>  				X86_TRAP_GP |
+>  				SVM_EVTINJ_TYPE_EXEPT |
 
