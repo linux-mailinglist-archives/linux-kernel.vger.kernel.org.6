@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-407863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7E49C75FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:18:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A1A9C75FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:18:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26BA81F24239
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:18:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B40228B277
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE0B1FE0F8;
-	Wed, 13 Nov 2024 15:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70DB20F5DD;
+	Wed, 13 Nov 2024 15:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBBBy31W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ggfx9paO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC532003A2;
-	Wed, 13 Nov 2024 15:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44ED620EA37
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731510767; cv=none; b=Dlvx+OvMM1905n9uJjBm7tp+RNaiWPPgUk2K+XzXwKO83uAKrE+Ig32SScRz1XBijtBYUhGA93t7uEWRu5c83K7HSXVlGSYHTYFfcKyd1YqZMwgVeNk0Y62UzZ4TSP/Wi6JWdN0/qStUOLNmNUb2E0db98zjPNxpEdlhvcmSYLk=
+	t=1731510768; cv=none; b=WMG5rcE5+1LhhAeHKGsndBzGtGlUSAq9JkpCg2zOrHTOojKl8bsfg54y5lWOSQqSVYANjC758KGbbqMw1EvQya4JoK1SjLxWWIV//nudom1N9IK89pyr4zveZuasNimtwJNZ6bvq/baGfdUtSgp7azhdEkUnNj56Ub1/B3/T2Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731510767; c=relaxed/simple;
-	bh=+mOm1jVBlMQl06mqGb93rPEPLa+Adk6NChbI8ONl/FY=;
+	s=arc-20240116; t=1731510768; c=relaxed/simple;
+	bh=4547KjisiSzSsjrc9K9ehuBqFLkQAd8IxQnZbpsV0Gk=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=WSr5LupYNK+rNa25wO0oIhmyXoxOQqMPLlXPA+cKkkAeygHRw1hRq/H+Aqfyrjpavm6l5t1DFu2he+f81AEMOeoAqrrDnbR8pYcyTCBOKmD1w7S8OU1cz/gZSXs6LYxYVuPg6vpF7WI9J0gNUOaX2P0UMEGmFGVivEkdFNvB+vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBBBy31W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C4EBC4CEC3;
-	Wed, 13 Nov 2024 15:12:46 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=AAltDPIRzmlm2hAB8nxVug8NIEXEZGCwTegzArkHGV810/AM4Zna5dDvM3aN+VE6hPeGRYnGNfblDyIqVF5aYwhNW/q42I9VPpe+dr4wLOs/eHs9P2+LBFN1k6gfzHP0Me4muZfom9G4t2iXUVFT2HBF7Vu5YU2tKZgkVi7YGjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ggfx9paO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBEEDC4CEC3;
+	Wed, 13 Nov 2024 15:12:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731510766;
-	bh=+mOm1jVBlMQl06mqGb93rPEPLa+Adk6NChbI8ONl/FY=;
+	s=k20201202; t=1731510767;
+	bh=4547KjisiSzSsjrc9K9ehuBqFLkQAd8IxQnZbpsV0Gk=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FBBBy31WBOhcPfZ8wMelhHag7Oju1fWFqLKGEU+k86hfHQCglpNh1yTu06JbNRbpT
-	 u+lZGKDPg7Qfiml5/l8B20o2qTixnuiQ/BNS9uLetQ5XaW5CPMsHT/R0FDPjQIgzUx
-	 Le+OEq2yOXCgA3SFI4lsVJ/8SSgHpG9D+yklx4RRQre6bCXfhh8E9y0Tlhf9KUCFYF
-	 Op6pBP5CPMT+cOnU5zHBIuH6xtap6Rxr7qinY+eNebTQZTSj8Nx75D5OjGPQvquGUM
-	 pshCm0Z0C4CZ4CImeyc7/4moQWS5JrWFHB1QsTAcEdAgAgwzmS5/L5H+U2ePjjxvfE
-	 2MY3waRGyTB3Q==
+	b=Ggfx9paO+4bEx7zmSlVE0vDRqio1zCqzgORBfpOkCAqrrMiuCQgnVu8ycPjZccgHk
+	 NPXx7GgqQTSyvky00FVlfvHsWk4uxy2N5YaSythvwGEPT8J2AUe8Nh+vyX72tC3JCl
+	 npCVzxG6OByH8+/X44+oO72MsXf2HQheSQ60QbwPXlp7jv8QvTNM1dVs32D/BH6VQG
+	 za73EsK30mye+UXVZpnwZbAQ2mqCjX6W7SOo/FZqdGA/cHZLT7RAAbYCtpsDC7BT9a
+	 RswdJoppNMpbF4SzVr9Vo9JDbKak3MCPGR1V9bBqyAclw3/YHj4L0xMP6F3rRAqmNL
+	 7sn+JqPHGxtkw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 342473809A80;
-	Wed, 13 Nov 2024 15:12:58 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7118C3809A80;
+	Wed, 13 Nov 2024 15:12:59 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,64 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v5 00/13] Zacas/Zabha support and qspinlocks
+Subject: Re: [PATCH for-next v2] riscv: Fix default misaligned access trap
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <173151077674.1250875.11061543352254749516.git-patchwork-notify@kernel.org>
-Date: Wed, 13 Nov 2024 15:12:56 +0000
-References: <20240818063538.6651-1-alexghiti@rivosinc.com>
-In-Reply-To: <20240818063538.6651-1-alexghiti@rivosinc.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, corbet@lwn.net, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, conor@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, parri.andrea@gmail.com, nathan@kernel.org,
- peterz@infradead.org, mingo@redhat.com, will@kernel.org, longman@redhat.com,
- boqun.feng@gmail.com, arnd@arndb.de, leobras@redhat.com, guoren@kernel.org,
- linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+ <173151077824.1250875.1331896085573525028.git-patchwork-notify@kernel.org>
+Date: Wed, 13 Nov 2024 15:12:58 +0000
+References: <20241108-fix_handle_misaligned_load-v2-1-91d547ce64db@rivosinc.com>
+In-Reply-To: <20241108-fix_handle_misaligned_load-v2-1-91d547ce64db@rivosinc.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, Mr.Bossman075@gmail.com,
+ palmer@rivosinc.com, linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to riscv/linux.git (for-next)
+This patch was applied to riscv/linux.git (for-next)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Sun, 18 Aug 2024 08:35:25 +0200 you wrote:
-> This implements [cmp]xchgXX() macros using Zacas and Zabha extensions
-> and finally uses those newly introduced macros to add support for
-> qspinlocks: note that this implementation of qspinlocks satisfies the
-> forward progress guarantee.
+On Fri, 08 Nov 2024 15:47:36 -0800 you wrote:
+> Commit d1703dc7bc8e ("RISC-V: Detect unaligned vector accesses
+> supported") removed the default handlers for handle_misaligned_load()
+> and handle_misaligned_store(). When the kernel is compiled without
+> RISCV_SCALAR_MISALIGNED, these handlers are never defined, causing
+> compilation errors.
 > 
-> It also uses Ziccrse to provide the qspinlock implementation.
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> Fixes: d1703dc7bc8e ("RISC-V: Detect unaligned vector accesses supported")
 > 
 > [...]
 
 Here is the summary with links:
-  - [v5,01/13] riscv: Move cpufeature.h macros into their own header
-    https://git.kernel.org/riscv/c/010e12aa4925
-  - [v5,02/13] riscv: Do not fail to build on byte/halfword operations with Zawrs
-    https://git.kernel.org/riscv/c/af042c457db0
-  - [v5,03/13] riscv: Implement cmpxchg32/64() using Zacas
-    https://git.kernel.org/riscv/c/38acdee32d23
-  - [v5,04/13] dt-bindings: riscv: Add Zabha ISA extension description
-    (no matching commit)
-  - [v5,05/13] riscv: Implement cmpxchg8/16() using Zabha
-    (no matching commit)
-  - [v5,06/13] riscv: Improve zacas fully-ordered cmpxchg()
-    (no matching commit)
-  - [v5,07/13] riscv: Implement arch_cmpxchg128() using Zacas
-    https://git.kernel.org/riscv/c/f7bd2be7663c
-  - [v5,08/13] riscv: Implement xchg8/16() using Zabha
-    https://git.kernel.org/riscv/c/97ddab7fbea8
-  - [v5,09/13] asm-generic: ticket-lock: Reuse arch_spinlock_t of qspinlock
-    https://git.kernel.org/riscv/c/cbe82e140bb7
-  - [v5,10/13] asm-generic: ticket-lock: Add separate ticket-lock.h
-    https://git.kernel.org/riscv/c/22c33321e260
-  - [v5,11/13] riscv: Add ISA extension parsing for Ziccrse
-    (no matching commit)
-  - [v5,12/13] dt-bindings: riscv: Add Ziccrse ISA extension description
-    https://git.kernel.org/riscv/c/447b2afbcde1
-  - [v5,13/13] riscv: Add qspinlock support
-    (no matching commit)
+  - [for-next,v2] riscv: Fix default misaligned access trap
+    https://git.kernel.org/riscv/c/0eb512779d64
 
 You are awesome, thank you!
 -- 
