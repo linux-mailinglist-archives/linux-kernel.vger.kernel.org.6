@@ -1,67 +1,68 @@
-Return-Path: <linux-kernel+bounces-407725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860FC9C7193
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E4299C71AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:58:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35F8D1F220EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:58:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA46E1F210B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F204B20650B;
-	Wed, 13 Nov 2024 13:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE3E200CA7;
+	Wed, 13 Nov 2024 13:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GTnOZNgK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oEMFFIeJ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D221FF610;
-	Wed, 13 Nov 2024 13:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37641DF272
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731506068; cv=none; b=AIkRlxnhgsHeG7b122wXzHZvmVjmKtYan4J+VwRTY7ivVCUUamU2TqlWTogGbqNzCCDDhgOxVjRI/y9mNr0diXYfZGWmgs+RYk54ysF+tvl6pwYntNm6edLXwBqEbkPoUr5PH1OcKt6aaESF0w4CkUpN2f0VDpaERAaupYy4CGw=
+	t=1731506254; cv=none; b=IW0m0yTvjB/UiRj0N7xBXtCBu9YYicwSrccGEdGpTCf1ZzvkxPD0UbwX9zJc479cdz/dtRyIYSCaBGVtmM05QcjBw9pirSpUieWPmRDvLNH8OQk/0o/CC0nxk3Jm3wu0TYXIo26L2alwUb8Vgx0Zp8s1UR4/sGnLfANFe5pX4z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731506068; c=relaxed/simple;
-	bh=3B/JCdh4iX3172gc1ZApZTKHI0NdrBjDEoJdyOuJKVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PGLn0AXO4JoHZL5f/WSTWYpmMHplXfI3BX/VG6MAqWblHDM4R98ulxuMhGUyaFWOS0xAsDL1qvpewoP6wo4w14zWoh8g0tqdxgYyJZGIacnMCUVXypxdtuD1XclJd2l81qmksgDIE9/NMkAS+gX9enhqr7efXX7aKviR0L9bHS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GTnOZNgK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D5DDC4CEC3;
-	Wed, 13 Nov 2024 13:54:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731506066;
-	bh=3B/JCdh4iX3172gc1ZApZTKHI0NdrBjDEoJdyOuJKVg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GTnOZNgKse/6G382NfGAX65+kCSYHKUzAxz0956dUBqo8v40DlGKgyR586nlN3IJw
-	 ofuXXUrwDQCp6V46XTbPsSv3ex0dB+Jo9L1ITVX0d2b4pwAhhbQ3/s/gAyosdw64y+
-	 sgZN9gs5iFNYdC0rf0Gt40QH65rx3mjQHbcDeOu0=
-Date: Wed, 13 Nov 2024 14:54:23 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Daniel Wagner <dwagner@suse.de>, Daniel Wagner <wagi@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org,
-	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
-	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 1/8] driver core: bus: add irq_get_affinity callback
- to bus_type
-Message-ID: <2024111323-darkening-sappy-23fa@gregkh>
-References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
- <20241112-refactor-blk-affinity-helpers-v3-1-573bfca0cbd8@kernel.org>
- <76da6c05-4f28-41cc-a48e-da2ae16c64c4@oracle.com>
- <2d85aa5e-037a-45c3-9f2d-e46b2159b697@flourine.local>
- <bed15207-c3d8-4e0b-b356-4880f5a4fdff@oracle.com>
+	s=arc-20240116; t=1731506254; c=relaxed/simple;
+	bh=WqFQ6Y/VVVjuY5/sPjq6XfNnpFe3lVsNKk8kU7pNkq0=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jFEmhHxfrqjLCMmFBTzqeBxgQuHWgx7EDWWGdQAtkWWVf31maLxZ4RmY3QAVvjRpgG9xVH7JXIspgmYs6vRRNhRrFKwTMhzZeTqIrwtdPWYjnUaJWe508NdIT+u9dbBE6WCRlcZf8LFJcci/Lr9GysnUX6qaW3Z62Rl2+TWeZ00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oEMFFIeJ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LhLy5/26EMLDoklyW8LXQa4CH05PL24LL7bv1JpxLxU=; b=oEMFFIeJ2IxPSv3AUaG6msqMy8
+	ywuSi3ewa0d7eB8HwonQP2rvY+AFDCn5TU2n9amC8DS05wAnNZ7nER6OmxOPMgWXPer6lxb297ELJ
+	R+y3y5v7sYsaJnkx0HHdAoOjD+JHCA/GiNuwaOtJ3qj+KD1lrASlq+lWrtErAaf/EF7AJoFF1aJUw
+	qeAqX8grqTlCPPQ27MTt9jkHcbTdms7J3zDtRYe/QjODX8jQuVgOJulIzKlWS6JT59xa78+U2soru
+	qEmN2QQUfesiWVAMrHmqlMaybLz6xtUQGCNtsbEvTNEfwTCNdO5DGKWsr/M4jtJvquFhf4uFOn2Hk
+	RN88gokQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBDro-0000000GQdN-0TVH;
+	Wed, 13 Nov 2024 13:57:08 +0000
+Date: Wed, 13 Nov 2024 13:57:07 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, hannes@cmpxchg.org,
+	mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
+	hughd@google.com, minchan@google.com, jannh@google.com,
+	shakeel.butt@linux.dev, souravpanda@google.com,
+	pasha.tatashin@soleen.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v2 4/5] mm: make vma cache SLAB_TYPESAFE_BY_RCU
+Message-ID: <ZzSwM5qwStadOZvv@casper.infradead.org>
+References: <20241112194635.444146-1-surenb@google.com>
+ <20241112194635.444146-5-surenb@google.com>
+ <54b8d0b9-a1c7-4c1b-a588-2e5308a977fb@suse.cz>
+ <sdfh56itaffzhpk4rft2tsjm7r44auhjomfthzgxzrmj5632eq@noi2uhgp3a3h>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,71 +71,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bed15207-c3d8-4e0b-b356-4880f5a4fdff@oracle.com>
+In-Reply-To: <sdfh56itaffzhpk4rft2tsjm7r44auhjomfthzgxzrmj5632eq@noi2uhgp3a3h>
 
-On Wed, Nov 13, 2024 at 01:44:02PM +0000, John Garry wrote:
-> On 13/11/2024 12:36, Daniel Wagner wrote:
-> > > > @@ -48,6 +48,7 @@ struct fwnode_handle;
-> > > >     *		will never get called until they do.
-> > > >     * @remove:	Called when a device removed from this bus.
-> > > My impression is that this would be better suited to "struct device_driver",
-> > > but I assume that there is a good reason to add to "struct bus_type".
-> > I think the main reason to put it here is that most of the drivers are
-> > happy with the getter on bus level and don't need special treatment. We
-> > don't have to touch all the drivers to hookup a common getter, nor do we
-> > have to install a default handler when the driver doesn't specify one.
-> > Having the callback in struct bus_driver avoids this. Though Christoph
-> > suggested it, so I can only guess.
-> > 
-> > But you bring up a good point, if we had also an irq_get_affinity
-> > callback in struct device_driver it would be possible for the
-> > hisi_sas v2 driver to provide a getter and blk_mq_hctx_map_queues could
-> > do:
-> > 
-> > 	for (queue = 0; queue < qmap->nr_queues; queue++) {
-> > 		if (dev->driver->irq_get_affinity)
-> > 			mask = dev->driver->irq_get_affinity;
-> > 		else if (dev->bus->irq_get_affinity)
-> > 			mask = dev->bus->irq_get_affinity(dev, queue + offset);
-> > 		if (!mask)
-> > 			goto fallback;
-> > 
-> > 		for_each_cpu(cpu, mask)
-> > 			qmap->mq_map[cpu] = qmap->queue_offset + queue;
-> > 	}
-> > 
-> > and with this in place the open coded version in hisi_sas v2 can also be
-> > replaced.
+On Wed, Nov 13, 2024 at 07:38:02AM -0500, Liam R. Howlett wrote:
+> > Hi, I was wondering if we actually need the detached flag. Couldn't
+> > "detached" simply mean vma->vm_mm == NULL and we save 4 bytes? Do we ever
+> > need a vma that's detached but still has a mm pointer? I'd hope the places
+> > that set detached to false have the mm pointer around so it's not inconvenient.
 > 
-> Yeah, I think that it could be plugged in like:
-> 
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> index 342d75f12051..5172af77a3f0 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> @@ -3636,6 +3636,7 @@ static struct platform_driver hisi_sas_v2_driver = {
->                .name = DRV_NAME,
->                .of_match_table = sas_v2_of_match,
->                .acpi_match_table = ACPI_PTR(sas_v2_acpi_match),
-> +               .irq_get_affinity_mask = hisi_sas_v2_get_affinity_mask,
->        },
-> };
-> 
-> 
-> > If no one objects, I go ahead and add the callback to struct
-> > device_driver.
-> 
-> I'd wait for Christoph and Greg to both agree. I was just wondering why we
-> use bus_type.
+> I think the gate vmas ruin this plan.
 
-bus types are good to set it at a bus level so you don't have to
-explicitly set it at each-and-every-driver.  Depends on what you want
-this to be, if it is a "all drivers of this bus type will have the same
-callback" then put it on the bus.  otherwise if you are going to
-mix/match on a same bus, then put it in the driver structure.
+But the gate VMAs aren't to be found in the VMA tree.  Used to be that
+was because the VMA tree was the injective RB tree and so VMAs could
+only be in one tree at a time.  We could change that now!
 
-hope this helps,
-
-greg k-h
+Anyway, we could use (void *)1 instead of NULL to indicate a "detached"
+VMA if we need to distinguish between a detached VMA and a gate VMA.
 
