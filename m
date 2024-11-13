@@ -1,158 +1,100 @@
-Return-Path: <linux-kernel+bounces-407709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1302A9C7164
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:51:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5068B9C7168
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:52:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6DF1286267
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:51:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2A61F26AA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF27200CAE;
-	Wed, 13 Nov 2024 13:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9A9201107;
+	Wed, 13 Nov 2024 13:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kFeaJ2nL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RARLImvf"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B221FF7C2
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07B2200BAB
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731505807; cv=none; b=tsrncKCIEe39G4Nv74+G4N1UTcOAluuHCForPhuthp6fYoJUdfZagSpLyClABWkJVCIxArcXDN5en7J2AcEcEmJ89q6jQMQdAsbPCB7/agbLJtFqwKAQiq+zCaFW0V4vEBr02Y06940c4utDhuzk19BIHFdQXKBTUsk+FmW3Scw=
+	t=1731505840; cv=none; b=UmqIBXycIPDZqB1ddvvzkp8G3Vh3gT+bk4kL1ldAZKjWzXVSAL4hsx4AR2Od7j1RAJMeZkzh7ITq/1wc2YWFlX3HsZlh12YnX7V3ZQdSRFBvkfvIDPqz7J2VAYeonC1kIvZZuD6lI+DqxoDxFKQiFQ4jd/ug2JLJXCR8Vnc/odk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731505807; c=relaxed/simple;
-	bh=Znl7Dk+1vnR/ytY4vzGG5873bkylts3zXUWRbDVC44g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2g4sU1qej99V3Hnj7XtBSO30Zw/Pgvk30u/T7chzzWMr+GBGdDCIpcR4Rf0HH97y0UCd/k69spI7IsAkDga/BOWBQ+uekkqa7swG0OVAxCAM7Mv2jVsu6rW8pIOCJmUDuSIg1idtbYceiAb/iNGx2ECWSHZBPOwwb9VYFUgojY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kFeaJ2nL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF4C4C4CEC3;
-	Wed, 13 Nov 2024 13:50:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731505806;
-	bh=Znl7Dk+1vnR/ytY4vzGG5873bkylts3zXUWRbDVC44g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kFeaJ2nL2Bd1oDCIOqWEhw60wmQcbnktW2csPCyPV1WnAy/WDxvEsF8n/PKgCIXNc
-	 8EV1Wti0JizL53j0ZdMnpTQDEpqHTqWTZO38+aX3mAtrRTuHyVlZ/K9qTmmqEpuT1n
-	 H3kzxwpy6IrwkUhWfmcudJVHPH81vCt2XBd388A0=
-Date: Wed, 13 Nov 2024 14:50:03 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Li Huafei <lihuafei1@huawei.com>
-Cc: tiantao6@hisilicon.com, rafael@kernel.org, Jonathan.Cameron@huawei.com,
-	baohua@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] topology: Keep the cpumask unchanged when printing cpumap
-Message-ID: <2024111347-buggy-cranium-61c3@gregkh>
-References: <20241113165900.78095-1-lihuafei1@huawei.com>
+	s=arc-20240116; t=1731505840; c=relaxed/simple;
+	bh=DovP543G0WP5P09ssxwzdHhOQSUkbPAXjwWBKmViImk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tD9NIXqRviSV7+QYE7U4CXI3rSoeVjv8o27CZ3ld+KXCRNrTG+ycX8TUKL6TtI/YfPwQSN2dDauJi8HCLDePXyWlHHNZFHI2EmVngrT6yiiI75qJn3MR8beePZoHJYE0Dnaiwhl9BFJZNMjuStMdzjqg1T59MNoH9PytJrj+DUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RARLImvf; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb4fa17044so72485181fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:50:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731505836; x=1732110636; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mB6kK0HnbxT/cDVUJ6DGWuXSiGrOTmeBP1vjLqTd4dg=;
+        b=RARLImvfHH/UMUc4CX1gFOGXC7EQITWnu3Tm7C91pmHqALInM4z7tX/C2heGtJWhXz
+         Qjl4To1czkiCecglLYJk6DAVyIAXPdmKjL1A2HYkUQNAaPeAMD8Fo6wic9/tMG8r/Z7Y
+         Vlabxt5C9f/JN7EwwD9BDG9EmVWbEzYEtWAij6nsKmqxygIUOr62BkbRdcoh4iwryFB8
+         VnCioiXpLkrG1XaxfJi0vIFux9nvIDAxHcwYkQLDPIY/tUy8Q20gfxiI9ZmS/+ZW8UF6
+         LHbJkHstrwh2zZThmKrwLWq060Ox5xWbVvplF3LwRkq/gEALaabv/UIiEJkSc1IDyXz1
+         CfsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731505836; x=1732110636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mB6kK0HnbxT/cDVUJ6DGWuXSiGrOTmeBP1vjLqTd4dg=;
+        b=BPNj6E3ONYJCoMQTXvXHWx/MflztXXebNz4yjug7JDanw/ORHS5vjTyis6wvfbKkYb
+         0Htng3gAq/dOLSP2+RKR5Ywx4H2Uj3nGBDLnai4i4W5ZWIj5AoBOLBsinK0VoRBg3K9l
+         9UQFlZ/VjhZgsYM2JRT0Ksk9mGK22VOpc9AVZKbuprwitLjCmlA2cJoIqwb7/momE5iB
+         jhWTyI7ozB1zYM+lyHrzdNDlPGqGoITtow1y6T7oDXyNPY5WEDSj5KFd8XKEnyuL5LLX
+         /KqzeDvOdmXDC4XJ3wCQC5S9FZDJZwygG7BZ0O+Ge+GdKbbSfVsth60hqBpHJYTdw+Fn
+         rSkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5i0okfQKD0eMpP55YzPFqAkUZbQwkQNf8DizQzg2RzNK2vz+C5FBdFiNt3QFrTVORLVCh5ATL8opSDr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw12HrHpxbivLSAsSsvcMVmmGXK6r58aVfYHRm7UbFahjQB1j5
+	raoln/cl5ZBFB/O31TXjC9DYGej8c72b7km7RweC4tDJv3SgNj6avCDI02MXyj1nUHt3TkC4Mx6
+	CX4ZAQlYfZAXV39Tuq3xo9gsCEs9KVufBkx2hzQ==
+X-Google-Smtp-Source: AGHT+IF3fxMriqZkL2dwZ6bUCBGFi70IhICagwvE8GVuSQnG1S9aIJ9vmfvGgGgFwEmNEtuXcE5NkXX2LiQYWaZU56Y=
+X-Received: by 2002:a05:651c:1551:b0:2f7:5f6e:d894 with SMTP id
+ 38308e7fff4ca-2ff2028a857mr111098371fa.25.1731505835850; Wed, 13 Nov 2024
+ 05:50:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113165900.78095-1-lihuafei1@huawei.com>
+References: <20241022092302.123253-1-luoyifan@cmss.chinamobile.com> <20241112100817.287702-1-luoyifan@cmss.chinamobile.com>
+In-Reply-To: <20241112100817.287702-1-luoyifan@cmss.chinamobile.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 13 Nov 2024 14:50:24 +0100
+Message-ID: <CACRpkdb6T5dqgmcVi5m_52uQ4F_wESv4K95Fk1hsZcSaUsY8xA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: vfp: Fix the cacography in vfpmodule.c
+To: Luo Yifan <luoyifan@cmss.chinamobile.com>
+Cc: ardb@kernel.org, arnd@arndb.de, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 12:59:00AM +0800, Li Huafei wrote:
-> During fuzz testing, the following warning was discovered:
-> 
->  different return values (15 and 11) from vsnprintf("%*pbl
->  ", ...)
-> 
->  test:keyward is WARNING in kvasprintf
->  WARNING: CPU: 55 PID: 1168477 at lib/kasprintf.c:30 kvasprintf+0x121/0x130
->  Call Trace:
->   kvasprintf+0x121/0x130
->   kasprintf+0xa6/0xe0
->   bitmap_print_to_buf+0x89/0x100
->   core_siblings_list_read+0x7e/0xb0
->   kernfs_file_read_iter+0x15b/0x270
->   new_sync_read+0x153/0x260
->   vfs_read+0x215/0x290
->   ksys_read+0xb9/0x160
->   do_syscall_64+0x56/0x100
->   entry_SYSCALL_64_after_hwframe+0x78/0xe2
+On Tue, Nov 12, 2024 at 11:08=E2=80=AFAM Luo Yifan
+<luoyifan@cmss.chinamobile.com> wrote:
 
-What is happening when this fuzzing is going on?  Removing/adding cpus?
+> The word 'swtich' is wrong, so fix it.
 
-> The call trace shows that kvasprintf() reported this warning during the
-> printing of core_siblings_list. kvasprintf() has several steps:
-> 
->  (1) First, calculate the length of the resulting formatted string.
-> 
->  (2) Allocate a buffer based on the returned length.
-> 
->  (3) Then, perform the actual string formatting.
-> 
->  (4) Check whether the lengths of the formatted strings returned in
->      steps (1) and (2) are consistent.
-> 
-> If the core_cpumask is modified between steps (1) and (3), the lengths
-> obtained in these two steps may not match. Indeed our test includes cpu
-> hotplugging, which should modify core_cpumask while printing.
+That's not all that is wrong with this string...
 
-Ah, yes.  Good catch.
+> Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+(...)
+> - *  THREAD_NOFTIFY_SWTICH:
+> + *  THREAD_NOFTIFY_SWITCH:
 
-> To fix this issue, cache the cpumask into a temporary variable before
-> calling cpumap_print_{list, cpumask}_to_buf(), to keep it unchanged
-> during the printing process.
+THREAD_NOTIFY_SWITCH
 
-Nice, but:
-
-> 
-> Fixes: bb9ec13d156e ("topology: use bin_attribute to break the size limitation of cpumap ABI")
-
-No cc: stable?
-
-> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
-> ---
->  drivers/base/topology.c | 24 ++++++++++++++++++++----
->  1 file changed, 20 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/base/topology.c b/drivers/base/topology.c
-> index 89f98be5c5b9..70dbd7ef038d 100644
-> --- a/drivers/base/topology.c
-> +++ b/drivers/base/topology.c
-> @@ -27,9 +27,17 @@ static ssize_t name##_read(struct file *file, struct kobject *kobj,		\
->  			   loff_t off, size_t count)				\
->  {										\
->  	struct device *dev = kobj_to_dev(kobj);                                 \
-> +	cpumask_var_t mask;							\
-> +	ssize_t n;								\
->  										\
-> -	return cpumap_print_bitmask_to_buf(buf, topology_##mask(dev->id),	\
-> -					   off, count);                         \
-> +	if (!alloc_cpumask_var(&mask, GFP_KERNEL))				\
-> +		return 0;							\
-
-If this fails, return the error please.  Don't return a size of 0, which
-will just confuse userspace as to why the read succeeded yet did not
-return any data?
-
-> +										\
-> +	cpumask_copy(mask, topology_##mask(dev->id));				\
-> +	n = cpumap_print_bitmask_to_buf(buf, mask, off, count);			\
-> +	free_cpumask_var(mask);							\
-> +										\
-> +	return n;								\
->  }										\
->  										\
->  static ssize_t name##_list_read(struct file *file, struct kobject *kobj,	\
-> @@ -37,9 +45,17 @@ static ssize_t name##_list_read(struct file *file, struct kobject *kobj,	\
->  				loff_t off, size_t count)			\
->  {										\
->  	struct device *dev = kobj_to_dev(kobj);					\
-> +	cpumask_var_t mask;							\
-> +	ssize_t n;								\
-> +										\
-> +	if (!alloc_cpumask_var(&mask, GFP_KERNEL))				\
-> +		return 0;							\
-
-Same here, please return the error.
-
-thanks,
-
-greg k-h
+Yours,
+Linus Walleij
 
