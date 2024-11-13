@@ -1,107 +1,98 @@
-Return-Path: <linux-kernel+bounces-407110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE48B9C6900
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:59:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB8A9C6906
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:03:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F35D2841C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FB13284F5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B2E17A922;
-	Wed, 13 Nov 2024 05:59:41 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E2C1779BD;
+	Wed, 13 Nov 2024 06:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="de/wS9hw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2412D1714CB;
-	Wed, 13 Nov 2024 05:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711A310F1;
+	Wed, 13 Nov 2024 06:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731477580; cv=none; b=owwaGzLoBbgGJBM4oV+qBYrcj6vwSHDhmxXlH7W2Kcjanw+X1MP8RFGzLzYEAlHfpj/27kai+5hu7Tz57LXgZl2Lq3YJccIT5AOp1ofccMZsGS3dNcq+jjIbKySfUCeicy+kPQWUZs3fkEgST9tWnjPozLR3l3RzV/u3aHGbNiU=
+	t=1731477822; cv=none; b=gv/mLyB/Z8RbDapFF1kjTRALnujqzmpbllLLydfd0dsiZu/68+A+JtR1coha81bt+wDYCXaeX4VbIIMFXlm15S/ibSbV0OwV+wablEz61A28Z+7m7An4xQtv9Ty6K7g6CWn9oDJtDyS5H5K4yzLqijncNf25+x/K7Mez+7OYSiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731477580; c=relaxed/simple;
-	bh=BvH+rf27snhmMbNmo02DnMcPVzFrRKFNI8pLL6jfPCI=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CF/NJEdJtinKP46bKPvHhqb3FUQhE/CQvCyOyIXQ/sLz3E0RAfrgoVVBsDoEb6yBK0BqeuttcoZLJ5OZblbvccE+bKk5D+bDhffYdGjxXxC94GNlPY1nDFC49pvqFv/bQrCqaAImHVTxe4FqyIUDqAm6lGb8XWkmIfx/AeSdJQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XpCHR4mj9z10V8n;
-	Wed, 13 Nov 2024 13:57:39 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id B627E1800F2;
-	Wed, 13 Nov 2024 13:59:33 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 13 Nov 2024 13:59:32 +0800
-Message-ID: <e4396ecc-7874-4caf-b25d-870a9d897eb1@huawei.com>
-Date: Wed, 13 Nov 2024 13:59:32 +0800
+	s=arc-20240116; t=1731477822; c=relaxed/simple;
+	bh=AYmuM2b9645Yoo9Z1mFsCvVpUkr+Fpm2ignibA9XP0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rh85Qsrg2RGQgSDDbQMeIsdT7DGWJGUx89aA+ol5bWZnKMAYduKIA9GCzkyl6pyBMZeotlP/1R0srUmLdczT/s7g8NeRCw672exbxz5l8KBIod1ZFhGxJKVXvQRUaEYS2XrDkyae8+NjSew5YgsLGG535Up5Hf5TKLnzBM/glxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=de/wS9hw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BE5C4CECD;
+	Wed, 13 Nov 2024 06:03:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731477822;
+	bh=AYmuM2b9645Yoo9Z1mFsCvVpUkr+Fpm2ignibA9XP0U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=de/wS9hwI7o3bOyH6Mf8Nx60ot7cbBoEjUBYFWMWmpUNOl2kY9N0c12otcT4uZexx
+	 DXcsBeo8YIm2p3hkYys+84Zs2DEAOTEajzA76pgifSjccdfrgB4n3hKF2URZS4bI82
+	 5gPQhOhyXfbtk1x8apWV7VnZZ1fVKLpFxv1gl1j4=
+Date: Wed, 13 Nov 2024 07:03:38 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Johan Hovold <johan@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 4/6] arm64: dts: qcom: x1e80100-crd: Enable external
+ DisplayPort support
+Message-ID: <2024111341-platter-disk-8238@gregkh>
+References: <20241112-x1e80100-ps8830-v5-0-4ad83af4d162@linaro.org>
+ <20241112-x1e80100-ps8830-v5-4-4ad83af4d162@linaro.org>
+ <ZzOK2Xz1QQvugGnG@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
-	<shenjian15@huawei.com>, <salil.mehta@huawei.com>, <liuyonglong@huawei.com>,
-	<wangpeiyang1@huawei.com>, <chenhao418@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND net 3/7] net: hns3: Resolved the issue that the
- debugfs query result is inconsistent.
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20241107133023.3813095-1-shaojijie@huawei.com>
- <20241107133023.3813095-4-shaojijie@huawei.com>
- <20241111172511.773c71df@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20241111172511.773c71df@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzOK2Xz1QQvugGnG@linaro.org>
 
+On Tue, Nov 12, 2024 at 07:05:29PM +0200, Abel Vesa wrote:
+> On 24-11-12 19:01:13, Abel Vesa wrote:
+> > The X Elite CRD provides external DisplayPort on all 3 USB Type-C ports.
+> > Each one of this ports is connected to a dedicated DisplayPort
+> > controller.
+> > 
+> > Due to support missing in the USB/DisplayPort combo PHY driver,
+> > the external DisplayPort is limited to 2 lanes.
+> > 
+> > So enable all 3 remaining DisplayPort controllers and limit their data
+> > lanes number to 2.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> 
+> Please do not merge this specific patch.
 
-on 2024/11/12 9:25, Jakub Kicinski wrote:
-> On Thu, 7 Nov 2024 21:30:19 +0800 Jijie Shao wrote:
->> Subject: [PATCH RESEND net 3/7] net: hns3: Resolved the issue that the debugfs query result is inconsistent.
->> Date: Thu, 7 Nov 2024 21:30:19 +0800
->> X-Mailer: git-send-email 2.30.0
->>
->> From: Hao Lan <lanhao@huawei.com>
->>
->> This patch modifies the implementation of debugfs:
->> When the user process stops unexpectedly, not all data of the file system
->> is read. In this case, the save_buf pointer is not released. When the user
->> process is called next time, save_buf is used to copy the cached data
->> to the user space. As a result, the queried data is inconsistent. To solve
->> this problem, determine whether the function is invoked for the first time
->> based on the value of *ppos. If *ppos is 0, obtain the actual data.
-> What do you mean by "inconsistent" ?
-> What if two processes read the file at once?
+Please do not mix patches that should, and should not, be applied in the
+same series as that plays havoc with our tools that want to take a whole
+series at once.  Stuff like this just makes me delete the whole series
+from my review queue, and if you got sent something like this, I imagine
+you would do the same :(
 
-inconsistent：
-Before this modification,
-if the previous read operation is stopped before complete, the buffer is not released.
-In the next read operation (perhaps after a long time), the driver does not read again.
-Instead, the driver returns the bufffer content, which causes outdated data to be obtained.
-As a result, the obtained data is inconsistent with the actual data.
+thanks,
 
-In this patch, ppos is used to determine whether a new read operation is performed.
-If yes, the driver updates the data in the buffer to ensure that the queried data is fresh.
-But, if two processes read the same file at once, The read operation that ends first releases the buffer.
-As a result, the other read operation re-alloc buffer memory. However, because the value of ppos is not 0,
-the data is not updated again. As a result, the queried data is truncated.
-
-This is a bug and I will fix it in the next version.
-
-Thanks
-Jijie Shao
-
-
-
+greg k-h
 
