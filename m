@@ -1,66 +1,76 @@
-Return-Path: <linux-kernel+bounces-406943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F9A9C6677
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:09:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2612D9C66B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:30:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DF75B2449B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:08:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25AC1F2549C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5C114A84;
-	Wed, 13 Nov 2024 01:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3242C282FA;
+	Wed, 13 Nov 2024 01:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="f/TOpQhj"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="VGUyDhC9"
+Received: from sonic308-16.consmr.mail.ne1.yahoo.com (sonic308-16.consmr.mail.ne1.yahoo.com [66.163.187.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8939B2F5A
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 01:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E6617580
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 01:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731460127; cv=none; b=OAyjEGhzBNZ5Vj/owI0mD6JyoBLENluXQQCI50WoDITZXZ70/vVFj07tdsjXkHGWlfnS+cWTNoIzBxCyPQTjiVsVZbovHiKlsGOS+1fa0kGiSCgeYQ2A1OocJHHfY3uJuDx3bjrRWAsa3QmaWI4/5Yy7smMWZVcucQsCiJ9++H8=
+	t=1731461423; cv=none; b=QVYasgkqpbrf8apUdBSkIwd4u6NDr7gRPextnFkK5dILQdnF+PwhkEOh03kASW+MMbLLKKnkd3MWkMvtxnXbIdVVVFALbjrgb1RLn+3xfwXXRyL7C6y7mfXP4DHNbmfR7iZPl2H36StIPuvThqJXzNiN+llXNp4yL653Fsd7FlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731460127; c=relaxed/simple;
-	bh=e2q7MxvGZdJLXiB+3IUNQaYHOzFNtf7lsxszy3S4Ws8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=T7LhskpnnV+foH3L03reK4gK6d/FeHQO7yoqW1ZsgzjqlzChDbVMXENLv+fj/fZxSDdlYCuoOOEDHgm6LVNaOzkcXNaumGeWeze0ZYtYYQZ+6PgVcjySqPEaxBZXAVcK87T6AVIozrIIAiD12Nl4Mq2g7CHbmYaujhkAktZSt/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=f/TOpQhj; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
-	by cmsmtp with ESMTPS
-	id Ax3Xtdd6HumtXB1sDtz8Iv; Wed, 13 Nov 2024 01:08:45 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id B1sCtESlAjlmnB1sCtLvtx; Wed, 13 Nov 2024 01:08:44 +0000
-X-Authority-Analysis: v=2.4 cv=WpctM8fv c=1 sm=1 tr=0 ts=6733fc1c
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=GtNDhlRIH4u8wNL3EA3KcA==:17
- a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7T7KSl7uo7wA:10 a=PeOOapuUAAAA:8
- a=kARa8BiYBvYMqBh4rAwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=0BaqRfgCL6CLbWgV2pdm:22 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=xXm4z4ddRPqAvfWilgUzgfk96JDKPImd8ktkXzI6+Vc=; b=f/TOpQhjLuaU3hSN5yDIeaKMpl
-	cDuIe/wGcz12a504x2D6ZOzfEhLAy3X1pLfj9r6OeY+hSCifmjjS27v0Ikm6FE9l9AmYa4B7EY2qx
-	zP6frS8aKVbUVWaBHe4j7qGjtVrOMQ7RAdvKVLi2quaBaiX9vT9Me50idZxQC+AVAkHAmP4As5Eh3
-	kSdAYEWUTxcfopBtv+cRF47j+lXIu7XCDJcJHDVJpg4ULx69CEvnfP933k2NMeLUJxXrhkmNS1AF7
-	7ufkegwwVBqtzHpn+NvpD4Tr2/CQlviU+YLvqzhO9PD6BWP258d1JEaju1eTwNtb+ozWtMBME5NXU
-	25uBJi3w==;
-Received: from [177.238.21.80] (port=51906 helo=[192.168.0.21])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1tB1sA-002vYr-0q;
-	Tue, 12 Nov 2024 19:08:42 -0600
-Message-ID: <55d62419-3a0c-4f26-a260-06cf2dc44ec1@embeddedor.com>
-Date: Tue, 12 Nov 2024 19:08:32 -0600
+	s=arc-20240116; t=1731461423; c=relaxed/simple;
+	bh=SlroORLPVCsS8/MtfzHMV8o/2y8GFOAdZJOG9/IDfPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DGrU9RkzYBnJXFeyhx7G3/3sZGeL+frpK4rC7pKndDkhasyo74FUbX67tZ0RXvJUpn/SGNW2iAAZA1XxKhombghGZPoGYMaPQgiTbm3N+DphzYbwsMLRmrMFapQ4Io3/mc34S6qttKGE0QgvyyZ7cisR9j83uA9HfYv9YALFZHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=VGUyDhC9; arc=none smtp.client-ip=66.163.187.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731461421; bh=shmrktBCQXaesTtkMCJkfhQ0TWorayqU+05d82/clTw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=VGUyDhC9n5YWawQDBlicfCUtPBpL0fBrv0eksiCzlDZ/lNJ3sVhZKcAXkXzI50p1Cq3pVI5fPj5G8LGNpgF6jlo0+qfXbFKEhi7unARqXJ+9Uq/LwoL6JKXN/HTGomSICgvONM+iJysVO1IkoyyG3m6D+qAx8sG5p++8D2itET4oKqMUrHCRlJH4MZ8Z/eikw4v8DAA5/LPzukI2CcqJTfvT+fvKyyRmnTjuFL9bPOOMfKkUC0Ngjo5a1cFAs9t6OZ9kiRZ8aO8e0qmLY8tCthy+uXTyvmnVgS0fE2Sgc7n1C8g2QmHZ0bMYqXPz+8xkyvVWR66ldmNc+EYfanwEKQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731461421; bh=bAE/9WSMFO6fgb4tGAnKbuST0d2MPJmN/Yq3M3c/t5I=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Zzr+BD0xhaVUuEuiIBA8m4n9Pff6o+y/Tu4f8SknIi7cail/z8wcb8zEoUZmfFac6tKxRcTPd9b1jBSgEYGP1I6XC/cLVQSU8Z5UKZaqAAo+BOaUVIimcOb2AZCgjcGFpXCWrtkIdp8HVHb6ydbowDx8h/Wgz5W8CRe/CKKX4Y9KXK8IvhbwycfgfVPLf2sCK+C7rRoLowjrw7z14825gwF8soS0o+Je4DD13NRLEQug+GDTHG+RP/Kufyuty6oHIoaNn9qwCAbHGABTPEC4Tcamxlz+0Z9ya/o3HrfytCwrGipIUqCGFKybe0rpOklRJW9a/qZ5UKd09HoGSKCWIQ==
+X-YMail-OSG: 9qQwb9YVM1n3hctZOjGDZ1e9CJP4M7eHtuXaKtNMlwyKEl8vKzQkOliSWAiWAK2
+ vM2FcfmtKXGQu0dwI2oXMJmxHbTYFRHQTBcJzdpJmRTttDHMtznIFDMo55sjBAMrzLf6Vn1J.P3V
+ 2wytM98bamqKz.Bms8GrSahWG85Q7G2vuldSuXgaVWxfKsqpD1bPM9_J_LHlgLXqZzsab5OtjFnc
+ btunQFBzU_jzRXs2XiLqTnsTYERLN57WdAedu4kcie_xjlcLr.ITCJI3jqop7ALRQwZTa0Er2Jsv
+ lmjuw.VY6qFRcMFkKpWis1YJnWyoZvjfaJD.Bx5w9PNsx4qAverbkWsZc2beSGU4g1pp9kk2TF7m
+ 2ZxifXqfeOddpY4DqdZAIO3RmhQde0VFGWo__zIM0wPCi1faHBxiXhQ77brbXqoH0.9i8gI.8VgS
+ L13JAB.epqnKd9oi.toI7ejndOtqet_xyzJMNslvqq4ITPeO4i5DkGoZRwRJNAkDHXXkYpZ.WO45
+ 6UQgttt_celNg.72uEWUJnIqL6AY493s7j2B99iwzqBdO1YkKMwVmewia0NhFdvHuTewTknuM_Z0
+ 36fBkXjBm6qWGMb6415jnmowq48VwdIl4iTSaN81az9tHIDU_QsKmAHUMc5xxZGUfnqnfFNqxL_m
+ nbr78WvU.rzlJmiqN8uqsCeVWvbHBFb_Ib5NdH3MS09_YfRGn0Dbhzcv8YaY6wuJQ1SPE3Eum7Rp
+ 9FYiXr0GM._bWfJXQaLfDe2a2lQJdEJ80n_lJDUh60TLS5dcI1v31OUN693NBgVLxiqNxk9wjJBl
+ CssVRiocHA7knCVtNpdXNTqm5u45pnuDLjkriMYnkDnio5NsX0Gv014brX5G2koSy7D5mmxh9gUZ
+ kc.tiA27whPDJ9TTomTfITPEKRw7RDW4orc2Esm4SqIqRS5sNtvStaSiUnfwMPqqIoc7Tnm7debJ
+ vib14lLjxlWPE061_.BB6FQjQ5sNv4QOU20_OXs5mgNxjOeu5eBrN6VSUnH1QvVjIGWB3F4oEgwJ
+ TO0noVeTTKHe21jt1Zw88.K7VnHxoF6jWXyCxQ3Jdy0u2WVBCNhJaLNSPuN3.QVpqNUg4tGaav9s
+ IXfSIitCSVQtTjiNDeOEYNWPTTEF4ifKSrP.LZJ5LLF0NZ3QhBT_Zxm.TUju_qQorzyHT8.5Bwbw
+ Tsrp6kQljJZtlGbdXpZTbCmR.CTxN99d7WQ6owtvB3S.zmApAl1sh98zVeU3PEIS6iBVs4u.qmbq
+ Y3Xu9Y6v9DGLdYOEcwFdxPCan_WADSL6IVHJSyU.qbW4x24NWFUe3JenN8ibWO0lmozQPigys6NI
+ SI9tn8rkKZoZdd5DzMlIMvfIHR8qnoSEn4gnMhjl2BiFlVH_P2Yt3NmDpnPB.tGAe.ZoeMzoF84O
+ hDN5tYwjGpeeGHRc8ejS_Chf29zuySjRkR8QEYub00I7ulHwcsrSoSCO.KmQ2YTOBoqhzcMaEeAE
+ Yp4855y8Jz.XLRdgb8.p5QiAkWwwL1gC2NbOwPXPz4lkJLXeJ2xVdSOPorMLgYRKvvqhTHUip1hn
+ i3rZBiCaeA_CGQSmFS16BpAlA7W5f9GyaJpfmjhMJfaMf2nFYeQAz5y1Lucvpxmk8xsg76bSbr4c
+ D3wg8hy9HX8AqCHmsr0PAwBnNi8vdhfsB6Bmsg6tsf17MoGVB4tXL1EQKPrgLSsgZGWX6G6Yp56T
+ Eh62gzvg_ujBtn4pUd.TVdSV9EylsBYBM_ROKN7YE3ejvI7aHXXWQi_yRHtQzDmTL6jn5WLnjulb
+ dNQXsI6survJsrB5jAi8EEzVisj1NnYfEVAPIVsxN4jqofjWp_ycnRQCpZaSSnqipo.2TX_vqGF8
+ 3O9lyC5w8D_WmG1dBpWV_9.zDx3j0yugfHk0z7vWH7cXdRhqgZk4noRcjBq9cRsHVGQGPCST7VsG
+ skgrEWZhetI.kw3xoAozAT478JMbDmRPiS06iqK_GEgNFLQegGEbkd05aCvgUu2Utbmz9q0.RMar
+ yRybM4u1fZseCzMLWlHSNP1XtLRpiHsZQCNHWFvYcE3E7rvLtSJ03c49nQGHki4oWgnqgUs3cE28
+ wUm0NlWgTa1p1Wdk7x.mkJ0n8OJgH1U9tqggrF1m5PTHi4.6tAvnoia1DNhGOOe1PgXOQYV8JlXW
+ zOqutjx5bh9LVhX833FctZTIoT5XdGnH.tpa6Vh1QpDz7Yvwx6wGYzIuaCyIhul7HBp4EIRJ77lN
+ bWJgEsCkD3QeXKXLe42FK9FQag20jFflf1v9Jou3_GFBhyzwqAVyfa9TGi2l9Ciowrztdo10.Gw-
+ -
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 516c5a87-90ca-4dce-9f38-6a1b53fd3cec
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Nov 2024 01:30:21 +0000
+Received: by hermes--production-gq1-5dd4b47f46-sx6k2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e9528446bd432b6a011384ccbc674449;
+          Wed, 13 Nov 2024 01:10:06 +0000 (UTC)
+Message-ID: <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
+Date: Tue, 12 Nov 2024 17:10:03 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,110 +78,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2][next] UAPI: ethtool: Use __struct_group() in
- struct ethtool_link_settings
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Jakub Kicinski <kuba@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Michael Chan <michael.chan@broadcom.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Potnuri Bharat Teja <bharat@chelsio.com>,
- Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
- Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- Kees Cook <kees@kernel.org>
-References: <cover.1730238285.git.gustavoars@kernel.org>
- <9e9fb0bd72e5ba1e916acbb4995b1e358b86a689.1730238285.git.gustavoars@kernel.org>
- <20241109100213.262a2fa0@kernel.org>
- <d4f0830f-d384-487a-8442-ca0c603d502b@embeddedor.com>
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ "amir73il@gmail.com" <amir73il@gmail.com>,
+ "repnop@google.com" <repnop@google.com>,
+ "jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik
+ <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>,
+ "gnoack@google.com" <gnoack@google.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20241112082600.298035-1-song@kernel.org>
+ <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
+ <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com>
 Content-Language: en-US
-In-Reply-To: <d4f0830f-d384-487a-8442-ca0c603d502b@embeddedor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 177.238.21.80
-X-Source-L: No
-X-Exim-ID: 1tB1sA-002vYr-0q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.21]) [177.238.21.80]:51906
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfHq8wX/tc+IuakEosrQUE/P30Ldqu2T+Th1+aqHU2IoXzYU7joZ6AflgWtASYCUaaaP0GGc2Vry3AQqlYnAgoYGGeRpd9erqsy48Lxn6LE+6T9eHPL0M
- fy9gSKe9csYGEG8bYcOiE5fQ+IjEJe/8V/TA8aC2/YV7EW/C0eFqWIH9uceneouOtVQ/N28MGRtXPDJXiBEqSfekKvyG/qyvUb4zfavs/6732Qg2eADiVcK5
+X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+
+On 11/12/2024 10:44 AM, Song Liu wrote:
+> Hi Casey, 
+>
+> Thanks for your input. 
+>
+>> On Nov 12, 2024, at 10:09 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>
+>> On 11/12/2024 12:25 AM, Song Liu wrote:
+>>> bpf inode local storage can be useful beyond LSM programs. For example,
+>>> bcc/libbpf-tools file* can use inode local storage to simplify the logic.
+>>> This set makes inode local storage available to tracing program.
+>> Mixing the storage and scope of LSM data and tracing data leaves all sorts
+>> of opportunities for abuse. Add inode data for tracing if you can get the
+>> patch accepted, but do not move the LSM data out of i_security. Moving
+>> the LSM data would break the integrity (such that there is) of the LSM
+>> model.
+> I honestly don't see how this would cause any issues. Each bpf inode 
+> storage maps are independent of each other, and the bpf local storage is 
+> designed to handle multiple inode storage maps properly. Therefore, if
+> the user decide to stick with only LSM hooks, there isn't any behavior 
+> change. OTOH, if the user decides some tracing hooks (on tracepoints, 
+> etc.) are needed, making a inode storage map available for both tracing 
+> programs and LSM programs would help simplify the logic. (Alternatively,
+> the tracing programs need to store per inode data in a hash map, and 
+> the LSM program would read that instead of the inode storage map.)
+>
+> Does this answer the question and address the concerns?
+
+First off, I had no question. No, this does not address my concern.
+LSM data should be kept in and managed by the LSMs. We're making an
+effort to make the LSM infrastructure more consistent. Moving some of
+the LSM data into an LSM specific field in the inode structure goes
+against this. What you're proposing is a one-off clever optimization
+hack. We have too many of those already.
 
 
 
-On 11/11/24 16:22, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 09/11/24 12:02, Jakub Kicinski wrote:
->> On Tue, 29 Oct 2024 15:55:35 -0600 Gustavo A. R. Silva wrote:
->>> Use the `__struct_group()` helper to create a new tagged
->>> `struct ethtool_link_settings_hdr`. This structure groups together
->>> all the members of the flexible `struct ethtool_link_settings`
->>> except the flexible array. As a result, the array is effectively
->>> separated from the rest of the members without modifying the memory
->>> layout of the flexible structure.
+>
+> Thanks,
+> Song
+>
+>>> 1/4 is missing change for bpf task local storage. 2/4 move inode local
+>>> storage from security blob to inode.
 >>>
->>> This new tagged struct will be used to fix problematic declarations
->>> of middle-flex-arrays in composite structs[1].
->>
->> Possibly a very noob question, but I'm updating a C++ library with
->> new headers and I think this makes it no longer compile.
->>
->> $ cat > /tmp/t.cpp<<EOF
->> extern "C" {
->> #include "include/uapi/linux/ethtool.h"
->> }
->> int func() { return 0; }
->> EOF
->>
->> $ g++ /tmp/t.cpp -I../linux -o /dev/null -c -W -Wall -O2
->> In file included from /usr/include/linux/posix_types.h:5,
->>                   from /usr/include/linux/types.h:9,
->>                   from ../linux/include/uapi/linux/ethtool.h:18,
->>                   from /tmp/t.cpp:2:
->> ../linux/include/uapi/linux/ethtool.h:2515:24: error: ‘struct ethtool_link_settings::<unnamed union>::ethtool_link_settings_hdr’ invalid; an anonymous union 
->> may only have public non-static data members [-fpermissive]
->>   2515 |         __struct_group(ethtool_link_settings_hdr, hdr, /* no attrs */,
->>        |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
->>
->>
-
-This seems to work with Clang:
-
-$ clang++-18 -fms-extensions /tmp/t.cpp -I../linux -o /dev/null -c -W -Wall -O2
-
-However, `-fms-extensions` doesn't seem to work for this case with GCC:
-
-https://godbolt.org/z/1shsPhz3s
-
-
--Gustavo
-
-
->> I don't know much about C++, tho, so quite possibly missing something
->> obvious.
-> 
-> We are in the same situation here.
-> 
-> It seems C++ considers it ambiguous to define a struct with a tag such
-> as `struct TAG { MEMBERS } ATTRS NAME;` within an anonymous union.
-> 
-> Let me look into this further...
-> -- 
-> Gustavo
-> 
-
+>>> Similar to task local storage in tracing program, it is necessary to add
+>>> recursion prevention logic for inode local storage. Patch 3/4 adds such
+>>> logic, and 4/4 add a test for the recursion prevention logic.
+>>>
+>>> Song Liu (4):
+>>>  bpf: lsm: Remove hook to bpf_task_storage_free
+>>>  bpf: Make bpf inode storage available to tracing program
+>>>  bpf: Add recursion prevention logic for inode storage
+>>>  selftest/bpf: Test inode local storage recursion prevention
+> [...]
+>
 
