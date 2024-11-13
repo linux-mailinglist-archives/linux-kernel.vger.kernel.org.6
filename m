@@ -1,146 +1,158 @@
-Return-Path: <linux-kernel+bounces-407273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A3F99C6B25
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:05:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A16A89C6B2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:06:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE5661F251A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:05:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 294CB1F252DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C361BE86A;
-	Wed, 13 Nov 2024 09:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2ACC1BDA95;
+	Wed, 13 Nov 2024 09:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HVYdKZtu"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l87Ws+sD"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A791AA792
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A591BD4E5;
+	Wed, 13 Nov 2024 09:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731488722; cv=none; b=tCy4GC0UxcI7ENkAtYiNV+5E7wx/WxhWRFBEX7j/Fk/HU6629fjP5vtFUKJ2nHGl0enABv8LcGknFMnyjv9hJD29XnhQ0vNoVnVJq4KzqeiVo1OvOBo8IZNEOd8Zz9oSJdn2KBvEKRKZO4XucnI+Voc/FAvQlOz2m/0OV0KcdZc=
+	t=1731488779; cv=none; b=FIFNYn36JxAL//uO9bv1YaUOS2WamHSoPSx6bVhnPSUvs1RRFszuLuf2UfajUFs5hWyH/2IjRXR1yCAW4Wc2++0bI3qHsCVj3mqUQqpTP1cj4JeXoGxHYj5e27xp25t8uMKDjjX8ViCvRNlbjrWGLRJL+mrYfQPt9qce/LFOsvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731488722; c=relaxed/simple;
-	bh=4pzdwduV3E3sigQDNHbRFtsN90uitBQ9OIl63oA0zQQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BSJPUKQ4YHE2J0/Kxte7/8oCdhOSQkQu+jv+hm/x2mTjEXdTeAM0W3oRSM3yGg9Z1/6C8UqurtoSFS+JJGKIBmPItnug4oSYJS6xiXeg+dlZfv79IcAOYKOTz3CMxZxlRK2ST+65V91pX/ThanYehYGFR0kesRkxgQiVpKHelWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HVYdKZtu; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DAD4E1BF207;
-	Wed, 13 Nov 2024 09:05:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731488718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4pzdwduV3E3sigQDNHbRFtsN90uitBQ9OIl63oA0zQQ=;
-	b=HVYdKZtuLWrNKSapXa9VCXfCH6r+MAmzEwmShfrOhvPLsAbvhXcD0muMG5UtO3f4/ANMsN
-	6g6GOogMHuyn9IGA5d0GY7YrifedGpnMOSEOpul/5wSVdwW2gbGWrVTpiw+J3QY++9j167
-	sWRLuCtOxpWGwS/0NlY8QAdVOMZuaLEWDsb5HuaDXDw9T1n8I3thbqX+Vi5WCsusI88keS
-	0MfahMs9YyK6CANycALk1uhUQJmIQWb5IEnsotzxJuBe+oZtjKuNLEEwQ2ip9inuI6bx6Q
-	g0BbE47tZFc5u7FS/kP5Kz720bZNqAsSJme5VKHTZ6liT4sIn1MWLt2Lx6tT4w==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: SkyLake Huang (=?utf-8?B?6buD5ZWf5r6k?=) <SkyLake.Huang@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-  "mmkurbanov@salutedevices.com" <mmkurbanov@salutedevices.com>,
-  "kernel@sberdevices.ru" <kernel@sberdevices.ru>,  "d-gole@ti.com"
- <d-gole@ti.com>,  "dev@kicherer.org" <dev@kicherer.org>,
-  "gch981213@gmail.com" <gch981213@gmail.com>,  "vigneshr@ti.com"
- <vigneshr@ti.com>,  "richard@nod.at" <richard@nod.at>
-Subject: Re: [PATCH v2] mtd: spinand: add support for FORESEE F35SQA002G
-In-Reply-To: <12f4d28f3efb7fe319ec919df92145c4ad24da01.camel@mediatek.com>
-	("SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCkiJ3M=?= message of "Tue, 12 Nov
- 2024 11:25:25
-	+0000")
-References: <20241108163455.885-1-SkyLake.Huang@mediatek.com>
-	<20241108163455.885-4-SkyLake.Huang@mediatek.com>
-	<dbdb45ed1135e73b4eebd76e6f61b96d48aaedc6.camel@mediatek.com>
-	<87ikssu3qq.fsf@bootlin.com>
-	<12f4d28f3efb7fe319ec919df92145c4ad24da01.camel@mediatek.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Wed, 13 Nov 2024 10:05:17 +0100
-Message-ID: <87h68bsdv6.fsf@bootlin.com>
+	s=arc-20240116; t=1731488779; c=relaxed/simple;
+	bh=8mmggMnuem4ngZVnWODeAvZk/jEMDw94O9PO4QS1Qx8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ier8GTNLkzYFOjmyZGF3vKW3GIR+Kwx9DKNFrd2ljx08Gi13Kxddh1lZ2TXvBeUKPb2ROtWklf3lT/77xA2z/Bzc0y1+nWO6V81BBEIXNraiGzXBbXfuJdhcwygMBvu2ZoewvVzTmx4R06JalTj755L14NrDzrMFzGUxiB9AjGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l87Ws+sD; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e4e481692so6521950b3a.1;
+        Wed, 13 Nov 2024 01:06:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731488776; x=1732093576; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+I+VueqE1fhRquKRS0Z9am0cKm07A/xqHYx9ptqJ2Ak=;
+        b=l87Ws+sDSwLbD71na/ym8j4aExIrk7tbP28nk0Y9pW7Q3w8z4ppS8VkOIpXHIPjLfY
+         iAyzwxB5AVE5M/7pb9oGyx7572szswFrUf3rZHI2HGYA6JzYtw+t7yC/EW2J9+5kd96L
+         eYPvzCiRAtqBTnRJPdiK/U5M9oZ/Bc0i7Bf/nQu2XWtx9GyjXr/QOqilvaNmiGzSZxSv
+         VQpzS1eFjrHEzh0jYmku/DRmmGSew934W4zIlCHvVlh02LXXbpiOHGsVFf8EWlgEY1xO
+         1qgceedmQ+xslvr2W9g366hvXMYhzzAPpJaDurx3wojs2NHGp5W1f6XgLkY083jCmzID
+         mfOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731488776; x=1732093576;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+I+VueqE1fhRquKRS0Z9am0cKm07A/xqHYx9ptqJ2Ak=;
+        b=oYvBxCODhGYkW8m2P0kV1/SUJrUrD5bYAgoT+VNt7Enz87bopDPxPx4DghNGbXB2/A
+         yPe6QQjnVX5/4r695n2EKiOP4mhX2C4YlYRTRPG3DcWiajIDNzOdKt3Jm4b5zjZcVbUw
+         6dzgh7QbpFiHaNDn8b2gXQL4N/NFqm4ZlEN19LVT9XS1OstKoxUI9fuh7tJ+cG6cBAoy
+         TedHoUoQikb0CKpxrf0uWnfMQ2fT81gskKAGp9blzNGQ1ay8Uxaofl8kiMPKp1o9Ks+Z
+         NpGTjf2eFxOD6CJ7qXWGqxgt0fCSiKF1nIHsWcd+HSo74P4qA5EALtFMM1wq8toQYC8I
+         3mog==
+X-Forwarded-Encrypted: i=1; AJvYcCUu9/LLwh8KYwOF7H4yOW+pwUgZuJf28JI8eWkMVEBdMUbZIM8Y9Qa6U2Vk3b46pvD8MiBAClw4pmkJwTjc@vger.kernel.org, AJvYcCWvlXbDuq+i0om+pfPAKBfZvqnKxizT5SeYaPtFcBQZ6JpOdVFCLsdwEMklgTPVFgy/XRckeMKGt3r+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz04YMTKdREnKMf2e59SehZwB7ek0/b9SqRXUWLiRdfIebbfODl
+	urmXR0wSIi48nxH1IaYxMVkV995EDWqWeDltKbYylC6hsb6yse5m8a2M+g==
+X-Google-Smtp-Source: AGHT+IFufLTuaitJ9nQtmqz7t8i7uh0sbUQmWkdKOKws642qgOc+M31tKFhD6xSC8RMnZwHG/iKq0g==
+X-Received: by 2002:a05:6a20:43a8:b0:1db:f099:13b9 with SMTP id adf61e73a8af0-1dc22b9275cmr29765775637.43.1731488776109;
+        Wed, 13 Nov 2024 01:06:16 -0800 (PST)
+Received: from ?IPV6:2405:204:20ac:21b:f7dd:e473:be3f:2c8f? ([2405:204:20ac:21b:f7dd:e473:be3f:2c8f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a1fd2bsm12678697b3a.167.2024.11.13.01.06.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 01:06:15 -0800 (PST)
+Message-ID: <d777ec88-f8a8-499c-b9de-9efefa638eb6@gmail.com>
+Date: Wed, 13 Nov 2024 14:36:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] acpi: nfit: vmalloc-out-of-bounds Read in
+ acpi_nfit_ctl
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com, dave.jiang@intel.com,
+ ira.weiny@intel.com, rafael@kernel.org, lenb@kernel.org,
+ nvdimm@lists.linux.dev, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+References: <20241112052035.14122-1-surajsonawane0215@gmail.com>
+ <ZzQwXXSwioLsG8vv@aschofie-mobl2.lan>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <ZzQwXXSwioLsG8vv@aschofie-mobl2.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 12/11/2024 at 11:25:25 GMT, SkyLake Huang (=E9=BB=83=E5=95=9F=E6=BE=A4) =
-<SkyLake.Huang@mediatek.com> wrote:
+On 13/11/24 10:21, Alison Schofield wrote:
+> On Tue, Nov 12, 2024 at 10:50:35AM +0530, Suraj Sonawane wrote:
+>> Fix an issue detected by syzbot with KASAN:
+>>
+>> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/
+>> core.c:416 [inline]
+>> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
+>> drivers/acpi/nfit/core.c:459
+>>
+>> The issue occurs in `cmd_to_func` when the `call_pkg->nd_reserved2`
+>> array is accessed without verifying that `call_pkg` points to a
+>> buffer that is sized appropriately as a `struct nd_cmd_pkg`. This
+>> could lead to out-of-bounds access and undefined behavior if the
+>> buffer does not have sufficient space.
+>>
+>> To address this issue, a check was added in `acpi_nfit_ctl()` to
+>> ensure that `buf` is not `NULL` and `buf_len` is greater than or
+>> equal to `sizeof(struct nd_cmd_pkg)` before casting `buf` to
+>> `struct nd_cmd_pkg *`. This ensures safe access to the members of
+>> `call_pkg`, including the `nd_reserved2` array.
+>>
+>> This change preventing out-of-bounds reads.
+>>
+>> Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
+>> Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+>> Fixes: 2d5404caa8c7 ("Linux 6.12-rc7")
+>> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+> 
+> Suraj,
+> 
+> The fixes tag needs to be where the issue originated, not
+> where you discovered it (which I'm guessing was using 6.12-rc7).
+> 
+Thank you for your feedback.
 
-> On Tue, 2024-11-12 at 11:48 +0100, Miquel Raynal wrote:
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>=20
->>=20
->> Hi Sky,
->>=20
->> On 12/11/2024 at 10:08:31 GMT, SkyLake Huang (=E9=BB=83=E5=95=9F=E6=BE=
-=A4) <
->> SkyLake.Huang@mediatek.com> wrote:
->>=20
->> > Hi Miquel/Martin,
->> > About this driver, including F35SQA001G/F35SQA002G parts, I'm
->> > concerned
->> > that the driver will always use 32H for update_cache operations,
->> > which
->> > means it's not compitable with those SPI controller who can't
->> > transmit
->> > 2048 bytes (most small-density SPI-NAND's page size nowadays) at
->> > one
->> > time.
->> >=20
->> > The following controller's driver seems that they can't transmit
->> > 2048
->> > bytes in one transmission:
->> > - spi-amd.c: 64 bytes (AMD_SPI_MAX_DATA)
->> > - spi-amlogic-spifc-a1.c: 512 bytes (SPIFC_A1_BUFFER_SIZE)
->> > - spi-fsl-qspi.c: 1KB
->> > - spi-hisi-sfc-v3xx.c: 64*6 bytes
->> > - spi-intel.c: 64 bytes (INTEL_SPI_FIFO_SZ)
->> > - spi-microchip-core-qspi.c: 256 bytesc (MAX_DATA_CMD_LEN)
->> > - spi-nxp-fspi.c: TX:1KB, RX: 512B in FIFO mode
->> > - spi-wpcm-fiu.c: 4B
->>=20
->> I believe most of these drivers are still able to send one page of
->> data
->> without toggling the CS (which is what actually matters, I believe).
->> If
->> they were broken, they would be broken with all spi memory devices,
->> not
->> only Foresee's.
->>=20
-> Hi Miquel,
-> I think it's not about toggling the CS?
->
-> If a SPI controller tries to execute write page and it's capable to
-> send only 1KB in one transmission, it should transmit data in two
-> steps: 1st 34H (random program load x4) and 2nd 34H. However, when
-> F35SQA002G executes 2nd 34H command, it needs to execute 32H first, and
-> it will clear data transmitted by 1st 34H in NAND flash's cache. This
-> will cause data corruption. Other SPI-NANDs doesn't need to execute 32H
-> before 34H.
+> Here's how I find the tag:
+> 
+> $ git blame drivers/acpi/nfit/core.c | grep call_pkg | grep buf
+> ebe9f6f19d80d drivers/acpi/nfit/core.c (Dan Williams       2019-02-07 14:56:50 -0800  458) 		call_pkg = buf;
+> 
+> $ git log -1 --pretty=fixes ebe9f6f19d80d
 
-Is it really what happens? I'd instead expect the spi controller to
-send:
-- 34h
-- 1k data
-- 1k data
-...
+Thank you for this detailed explaination.
+> Fixes: ebe9f6f19d80 ("acpi/nfit: Fix bus command validation")
+> 
+> I think ^ should be your Fixes tag.
 
-Why should we repeat the command while we are in the I/O phase?
+Yes, I ran the provided steps to verify the commit ID ebe9f6f19d80d and 
+verified it.
+> 
+> 
+> snip
+> 
+>>
 
-Thanks,
-Miqu=C3=A8l
+I'll update the Fixes tag in the next version of the patch. 
+Additionally, I will re-test with syzbot and submit the revised patch 
+shortly.
+
+Thank you for your time and feedback!
+
+Best,
+Suraj Sonawane
 
