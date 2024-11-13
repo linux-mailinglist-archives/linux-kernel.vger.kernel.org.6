@@ -1,112 +1,163 @@
-Return-Path: <linux-kernel+bounces-407313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703B89C6BAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:44:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A0659C6BB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:46:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2A4EB22C49
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:44:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3780285A4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6001F80C5;
-	Wed, 13 Nov 2024 09:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8568B1F80CB;
+	Wed, 13 Nov 2024 09:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4Jm4hXL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZKEyeK+6"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B28178CC8;
-	Wed, 13 Nov 2024 09:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84220165EE3;
+	Wed, 13 Nov 2024 09:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731491079; cv=none; b=ggViguZsW8LpK+MazAJ5rSfW/EzsrnYcvDMhOmoWe0Rbmk1dIvtjyP/hiaJqqM6FHhQ1EMk+achHji0wow0wTFdprklkyb2uJZzm4eT4y7q88s4zXxr2THcdnLsbJ08z4VPYe13jwI8hTqAevNnPpWAnHYc0SJXKJR1XOkraDxo=
+	t=1731491176; cv=none; b=lIn6DprxnZJuJtYaT48eeegKB3DqPLvno6IUgaMizRuTdUYkrw98h2iSkLwYLiP649XxItOLm+rXq6TIs6fTaPJoZHzhfmuI3qnIFamqrkbmqyEbPswAc2AlKPqBcs7g6nbDlUfcTBnhvdm9ImwomxSzpDHfP7UGRGjemmtxRG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731491079; c=relaxed/simple;
-	bh=G60SOJCRCee6VpKMWDHKShG2kyMomKULAjFj4Z0HY5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sVAvXK+rnydlOkSH/eaBsdc2+K2J/u2VfhmfjT8GNpEBGKZP5FZ3k+4HHQAEa+uvJk6cuZFIeuiPBQJQ+cJgE7sMZYPxoqs+8yKltKk7eISsP2D+nlx7zhTgUfhUq3E7S9jmL2zPpjEzIN9ADdAuSfZ595d1HrDqlZ8jvxDhhLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4Jm4hXL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 692CDC4CECD;
-	Wed, 13 Nov 2024 09:44:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731491078;
-	bh=G60SOJCRCee6VpKMWDHKShG2kyMomKULAjFj4Z0HY5E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=M4Jm4hXLo+c4whd2dCrDaM4pZncZ9lPC18qo/U30v0jCa1owQ9JRzhd5SW+TkpR46
-	 tgSYr4tnk6QKnK5zn5kTqvrcYaWQL8WbZDy1Zi2+F+D4RtSzPmH8tqzFBpdwx0uS38
-	 t/yTolTMWzkQ1XDjeaj7bX6JnyQFzEq+/z0ZNS4ZyphTqPGk9AvOxUjezL4N8K9XYf
-	 Gbe2egurnLrshqUS40KKOsjhZYBpB7RgloJoWn1MPrigH8BeOYS5OhT5pSl7rUYcyp
-	 l5+9Ud7n1NwT5cV5FkZuc/NCFD6KZBMibDx2eYR2Xcepl+X9BIdmIFmfKrEe67dEVf
-	 OqzY8/nIyJ5vw==
-Message-ID: <0cde0236-c539-487d-a212-b660331d3683@kernel.org>
-Date: Wed, 13 Nov 2024 10:44:33 +0100
+	s=arc-20240116; t=1731491176; c=relaxed/simple;
+	bh=apE8jTV/ZkMww8QZb6cSv/1Or8/nWuo6+FYangEzxtA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V4FclAF9Ptj6lczMMbssUy2ga5ikANBvSUDyoEPYLYgX6IBaO80DSmnz5lCYPK7hokF17N9mVtKHewC62Kug7h/VqOHqDiZRcZSg4uk9KLGh7xJqYa4j69+Zg6zgSG/nTAtm5KjOm3Bm07zWtx1PtI5I8MxO6JUdFDVJFPIM5QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZKEyeK+6; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B325FFF806;
+	Wed, 13 Nov 2024 09:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731491171;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pHq+vYIrolU1nZUuSeLnYvUIGG1CZQC1c8NU0N+rIFc=;
+	b=ZKEyeK+6V5aRy331CcLZv4lE78JJh8eOCitutwiN/gjfA2MyLxRPJxyzjrZUvfD+58OFwd
+	u2wDu+EBSc+OBJN3w/29epRgCBPrlb/h6H/e/moCnbZEGnmtuRGeay2fiUVgWqRp9U2WX4
+	PU6m5qhVvh93cDuuTmQYtuFRhN/PNqXH1KFjcPutLbB3b9TLFEa3WkmMLjR4bSwz9C5At9
+	SLPa268aBsgfm4Odfu6S46V7BTEH6LmoCP0iqMxPdXwzgCgEtBf3Taja1KXAXp+Prug4v2
+	2+VWQXeqU4+/esBoCSJ6oU6satKkWtK4s6koW3E+p761tvCcEwQJ02PGSeYdWg==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Kory Maincent <kory.maincent@bootlin.com>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-media@vger.kernel.org
+Subject:
+ Re: [PATCH 1/9] dt-bindings: misc: Describe TI FPC202 dual port controller
+Date: Wed, 13 Nov 2024 10:46:10 +0100
+Message-ID: <4965494.31r3eYUQgx@fw-rgant>
+In-Reply-To: <20241108-reimburse-saucy-2682e370469a@spud>
+References:
+ <20241108-fpc202-v1-0-fe42c698bc92@bootlin.com>
+ <20241108-fpc202-v1-1-fe42c698bc92@bootlin.com>
+ <20241108-reimburse-saucy-2682e370469a@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] samples: pktgen: correct dev to DEV
-To: Wei Fang <wei.fang@nxp.com>, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, lorenzo@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
-References: <20241112030347.1849335-1-wei.fang@nxp.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <20241112030347.1849335-1-wei.fang@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-GND-Sasl: romain.gantois@bootlin.com
+
+Hello Conor,
+
+On vendredi 8 novembre 2024 19:23:37 heure normale d=E2=80=99Europe central=
+e Conor Dooley wrote:
+> On Fri, Nov 08, 2024 at 04:36:53PM +0100, Romain Gantois wrote:
+=2E..
+> > index
+> > 0000000000000000000000000000000000000000..ad11abe11e68aa266acdd6b43a5b4=
+25
+> > 340bbbba8 --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/misc/ti,fpc202.yaml
+> > @@ -0,0 +1,75 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/misc/ti,fpc202.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: TI FPC202 dual port controller with expanded IOs
+> > +
+> > +maintainers:
+> > +  - Romain Gantois <romain.gantois@bootlin.com>
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/i2c/i2c-atr.yaml#
+>=20
+> Gotta say, this looks absolutely nothing like the other i2c-atr user!
+
+Indeed, the critical difference between the two is that the existing
+user has a global alias pool whereas this component doesn't. So
+the "i2c-alias-pool" property isn't relevant here, and it's currently
+the only property defined by the i2c-atr binding.
+
+We did consider defining a per-channel alias pool in the i2c-atr binding
+but the results were quite awkward and it didn't seem like this property
+belonged in the device tree at all, since the alias values were hardwired
+into the FPC202 and were known in advance.
+
+>=20
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: ti,fpc202
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  gpio-controller: true
+> > +
+> > +  "#gpio-cells":
+> > +    const: 2
+> > +
+> > +  enable-gpios:
+> > +    description:
+> > +      Specifier for the GPIO connected to the EN pin.
+> > +    maxItems: 1
+> > +
+>=20
+> > +  port0:
+> ports usually go in a ports node, and are port@0 not port0. That said,
+> these are i2c buses, so the node name would usually be i2c@ for those.
+> In fact, given you have i2c-mux as your node name, the binding for that
+> expects you to format your child nodes like '^i2c@[0-9a-f]+$'. Is there
+> a reason you can't just drop this ports business and go with a pattern
+> property here that restricts the pattern to '^i2c@[0-1]$'?
+
+I didn't think of restricting the pattern in this way, that is indeed more
+appropriate than using static port names.
+
+Moreover, I don't think that the "i2c-mux" naming is appropriate here,
+as the FPC202 isn't a mux at all. I'll look for a better name for the next
+iteration.
+
+Thanks,
+
+=2D-=20
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
 
-On 12/11/2024 04.03, Wei Fang wrote:
-> In the pktgen_sample01_simple.sh script, the device variable is uppercase
-> 'DEV' instead of lowercase 'dev'. Because of this typo, the script cannot
-> enable UDP tx checksum.
-> 
-> Fixes: 460a9aa23de6 ("samples: pktgen: add UDP tx checksum support")
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
->   samples/pktgen/pktgen_sample01_simple.sh | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/samples/pktgen/pktgen_sample01_simple.sh b/samples/pktgen/pktgen_sample01_simple.sh
-> index cdb9f497f87d..66cb707479e6 100755
-> --- a/samples/pktgen/pktgen_sample01_simple.sh
-> +++ b/samples/pktgen/pktgen_sample01_simple.sh
-
-Why are you only fixing one script?
-
-The fixes commit 460a9aa23de6 changes many files, introducing this bug.
-
-> @@ -76,7 +76,7 @@ if [ -n "$DST_PORT" ]; then
->       pg_set $DEV "udp_dst_max $UDP_DST_MAX"
->   fi
->   
-> -[ ! -z "$UDP_CSUM" ] && pg_set $dev "flag UDPCSUM"
-> +[ ! -z "$UDP_CSUM" ] && pg_set $DEV "flag UDPCSUM"
->   
-
-This fix looks correct, but we also need to fix other scripts
-
->   # Setup random UDP port src range
->   pg_set $DEV "flag UDPSRC_RND"
-
-
-$ git whatchanged -1 460a9aa23de6 | grep 'M     samples'| awk -FM 
-'{print $2}'
-	samples/pktgen/parameters.sh
-	samples/pktgen/pktgen_sample01_simple.sh
-	samples/pktgen/pktgen_sample02_multiqueue.sh
-	samples/pktgen/pktgen_sample03_burst_single_flow.sh
-	samples/pktgen/pktgen_sample04_many_flows.sh
-	samples/pktgen/pktgen_sample05_flow_per_thread.sh
-	samples/pktgen/pktgen_sample06_numa_awared_queue_irq_affinity.sh
-
-Thanks for spotting this, but please also fix the other scripts :-)
-
---Jesper
 
