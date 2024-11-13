@@ -1,137 +1,98 @@
-Return-Path: <linux-kernel+bounces-407627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28D79C7035
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:05:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F049C7037
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9E741F27718
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7391F27B00
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70D82022FC;
-	Wed, 13 Nov 2024 13:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7ED1FF035;
+	Wed, 13 Nov 2024 13:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGkyaGIv"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CoIzCjGb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DD1200B82;
-	Wed, 13 Nov 2024 13:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42597200BA8;
+	Wed, 13 Nov 2024 13:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731502944; cv=none; b=Oip9FlSNH5nViRZPF8bg5JsmFXB55GrBVodApeCYywV2YntJjtlPFuRBL7UgKr58S03uudIpqWoOoXNZ6dfQ64RwqdvQ9J9qmliYyER/Thtg5/J7sXf+8BSbUUgGFhrwgZckIlmgAEPvgY90QMBTj7pwywHGwkZGuCaIS4TcEzA=
+	t=1731503003; cv=none; b=TOcpmxIccFPU1nVob/VMgh9drjNGz+3X5i/IWxi2nCM9PiOfZiPiix6OBLZ21Zr+aySUqQOISldML41a8mPiMzBTEIZTc1jpnB5w5dki6Yw3dSe0vHiYGMXGvwKNn0GGGy1LGXMK/gH7T+IyTkvIMxgh66XiB9mWRQbsyZ5UWuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731502944; c=relaxed/simple;
-	bh=HE2f+Wis+LO+3GqCujUAT+1t51bvMsaOleQBQosi4fw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I/W06TrkCS4OHQwq57DzbkVU8d5n3l4RURrKmkMR/dPEfJkS1kHi3swDxMuqbwdhxYwau9VRKuUErMF+NWRhVidWGsXhKzPbv8ALr8dPmXhMblWvPxT60JSvhhob8fSQg58MAwTBl30DwLYsOP79XYRKyYyBJ+SNwGKVg3qPdok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gGkyaGIv; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cb7139d9dso64963105ad.1;
-        Wed, 13 Nov 2024 05:02:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731502942; x=1732107742; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AbzJ+kU15cqJAnxZBlXR2yEKRSm3bncn2jZQ5PrWfNM=;
-        b=gGkyaGIv+vG7t2uHZXInGMSs4cs19hDkhC85BNk1+RCsuZSbuwfqGYyE1jiiqa49Vd
-         //U0J/nGEY0yzfW/sj4Tnm+Gd1xZRKgaXCYKYmZU6U62I01jD9PVcrj7Nmxoy5MCtfZf
-         ijH8ZhdZuiVIeKpghovCbFMTjpoMZ+mBDv48Sob63UloVniUe28XJmb4vFVVdnwkleSP
-         4KkT9Y+PSvXahJbOb+yvSs30IOgoZnQh26AUDXnRIQINcbz/XFOK4OXH5FLpz/ePuXK/
-         nIWd2BTE3DbTzGq+hr8QNhEtYl7W851uYxYF+X43um5PWZCWqmgHcs2Jhx+eVVWI4g9p
-         9fmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731502942; x=1732107742;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AbzJ+kU15cqJAnxZBlXR2yEKRSm3bncn2jZQ5PrWfNM=;
-        b=KxbHwoTrQPl9gZIG039tUl6X3zQZsv5mJXeQia8iUwjqdvTwBJQlsXrexkypFvuz7B
-         IUTiGktGywk2xH0/l8FsxpCyeNXz48VD6LOw18vVfheEZ65TxM1kGxhPFLI0ZcMcSIhx
-         w8mSfRTUczik9Lzhev8IfuAWVxrgSKhDnQ7PmfrJttKHjhtCu39b/JfepVHRFTSVY07E
-         gxW2K634K3axLRjGE1zoE2ioRui+/vzrBGQ/INwpwXFrCerQpweQGeAqSnLQwGWU/AAy
-         r3k3syH6ejGMcvrTEV+JL2u83l7bDSfn4lhYNxjmV1PUsm0dK2g7Fa2xWLnvuTKnS3XK
-         uNmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQVjhF5JAjNNGR5IwTNEyM1TSZk+XZyIeHTgNjIeDv79OizOSpERzjtUfQ8fjJa5uQ8rRTpIiV@vger.kernel.org, AJvYcCVitUYeZM54Lp9vl0Iul2D4nOqtCXsBvmMLOufttlAy8rWnqYhtMcUJymT+XV82hkud+wsATnY+@vger.kernel.org, AJvYcCVn1gNyAQzU82GA/lvhlVS0FJWkdBhSiGujEfFq3EpC2sqg0gEynw5zqZ+D22xKF5G2KwuphudufTkBlrtwEOW5@vger.kernel.org, AJvYcCXLeDQ8lbiBqt0Mh9ytYdzy4K+IiaQ4SIeCaohdYqR0mFgNMFW75BwWAnoEt4mMqcrecYU60glArxcITRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe5sXwdgEbkSGUdsY+bFlp0YeekeCYBuzIUw1VMlFq2IB2wTtI
-	dF4GR2keSy0WJMYRo66i90GrutWxqW8cHD/NBRc17c5H+PZJG0eQ
-X-Google-Smtp-Source: AGHT+IGdFzP/aFDRjwd4saC/SLz9J8R5Gbj+ehtBZMSOW2SF3ig7tLXDoRjI5T94fEhIBVNHUlScgg==
-X-Received: by 2002:a17:902:e747:b0:20c:769b:f042 with SMTP id d9443c01a7336-21183d6717dmr282119785ad.31.1731502942041;
-        Wed, 13 Nov 2024 05:02:22 -0800 (PST)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc8c29sm109692955ad.25.2024.11.13.05.02.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 05:02:21 -0800 (PST)
-From: Jeongjun Park <aha310510@gmail.com>
-To: pablo@netfilter.org,
-	kadlec@netfilter.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	kaber@trash.net,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH net v2] netfilter: ipset: add missing range check in bitmap_ip_uadt
-Date: Wed, 13 Nov 2024 22:02:09 +0900
-Message-Id: <20241113130209.22376-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731503003; c=relaxed/simple;
+	bh=B2gIiMDTDDtPxAL49WyLVmRwYDtXU+qaJiqgsk+iadI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=UFkw89yBLy0SE/zW71J8KLD3ena7DHPdEelmxlGcoLWgTbThuShEatSfTFfFUilPS2ZKYE0lexEH6VKHLnFCM3DV0GkFtmb80MY4Ei69KbEqGpxc+ZZdUCOwtvHRpAgzZdWHOaFdEYrvo57F9DcwCEBdX9nlOhP6fPbA8pSj+1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CoIzCjGb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F5BC4CECF;
+	Wed, 13 Nov 2024 13:03:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731503002;
+	bh=B2gIiMDTDDtPxAL49WyLVmRwYDtXU+qaJiqgsk+iadI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=CoIzCjGbvW7Txsx3ipinssU26QIR7QVdxIfLZtpEyczj4JUkqbAEIdrLDBsMoqClL
+	 bP/4ffiIDvuX97buP3YL021rpOevy3+bLjuC+IiV/5+EG7OAne4vNSznOuUjgn6knt
+	 08maFYMa7hHFffs0Vxgib59IQzao+1HztQKaStUMyuE330QfuC/lq3jOzDe5uDMyB6
+	 0J36PFQz4QyxNw8RnpkZT8jMjDG/GHOHaHXStR5SP41YNd7ymYHuArUq/LQD6/CV2Z
+	 uWTtDB2k3fX2ij8u/rezJH8XQlpUE++KXljRs7qw1JRBXfbmXNb1ozIemx8EH5R9yV
+	 Yea6x6p68kVOA==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, John Watts <contact@jookia.org>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241112-alsa_test_rates-v1-1-95cf529db871@jookia.org>
+References: <20241112-alsa_test_rates-v1-1-95cf529db871@jookia.org>
+Subject: Re: [PATCH] ASoC: test-component: Support continuous rates for
+ test component
+Message-Id: <173150300027.429793.6079129175956247934.b4-ty@kernel.org>
+Date: Wed, 13 Nov 2024 13:03:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-355e8
 
-When tb[IPSET_ATTR_IP_TO] is not present but tb[IPSET_ATTR_CIDR] exists,
-the values of ip and ip_to are slightly swapped. Therefore, the range check
-for ip should be done later, but this part is missing and it seems that the
-vulnerability occurs.
+On Tue, 12 Nov 2024 21:34:00 +1100, John Watts wrote:
+> There's no reason to limit the supported rates of the test component
+> to specific ones as if it's a real piece of hardware. Set the rates to
+> continuous to aid in testing different rates.
+> 
+> 
 
-So we should add missing range checks and remove unnecessary range checks.
+Applied to
 
-Cc: <stable@vger.kernel.org>
-Reported-by: syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
-Fixes: 72205fc68bd1 ("netfilter: ipset: bitmap:ip set type support")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- net/netfilter/ipset/ip_set_bitmap_ip.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-diff --git a/net/netfilter/ipset/ip_set_bitmap_ip.c b/net/netfilter/ipset/ip_set_bitmap_ip.c
-index e4fa00abde6a..5988b9bb9029 100644
---- a/net/netfilter/ipset/ip_set_bitmap_ip.c
-+++ b/net/netfilter/ipset/ip_set_bitmap_ip.c
-@@ -163,11 +163,8 @@ bitmap_ip_uadt(struct ip_set *set, struct nlattr *tb[],
- 		ret = ip_set_get_hostipaddr4(tb[IPSET_ATTR_IP_TO], &ip_to);
- 		if (ret)
- 			return ret;
--		if (ip > ip_to) {
-+		if (ip > ip_to)
- 			swap(ip, ip_to);
--			if (ip < map->first_ip)
--				return -IPSET_ERR_BITMAP_RANGE;
--		}
- 	} else if (tb[IPSET_ATTR_CIDR]) {
- 		u8 cidr = nla_get_u8(tb[IPSET_ATTR_CIDR]);
- 
-@@ -178,7 +175,7 @@ bitmap_ip_uadt(struct ip_set *set, struct nlattr *tb[],
- 		ip_to = ip;
- 	}
- 
--	if (ip_to > map->last_ip)
-+	if (ip < map->first_ip || ip_to > map->last_ip)
- 		return -IPSET_ERR_BITMAP_RANGE;
- 
- 	for (; !before(ip_to, ip); ip += map->hosts) {
---
+Thanks!
+
+[1/1] ASoC: test-component: Support continuous rates for test component
+      commit: c853e96308c58f9a06fcf393bcfe0eabdb72ca9c
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
