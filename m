@@ -1,55 +1,62 @@
-Return-Path: <linux-kernel+bounces-407628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F049C7037
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:06:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D137C9C7038
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:06:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7391F27B00
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:06:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 889031F27C66
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7ED1FF035;
-	Wed, 13 Nov 2024 13:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D5A200BA8;
+	Wed, 13 Nov 2024 13:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CoIzCjGb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oyn6Qk3c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42597200BA8;
-	Wed, 13 Nov 2024 13:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478AF203705;
+	Wed, 13 Nov 2024 13:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731503003; cv=none; b=TOcpmxIccFPU1nVob/VMgh9drjNGz+3X5i/IWxi2nCM9PiOfZiPiix6OBLZ21Zr+aySUqQOISldML41a8mPiMzBTEIZTc1jpnB5w5dki6Yw3dSe0vHiYGMXGvwKNn0GGGy1LGXMK/gH7T+IyTkvIMxgh66XiB9mWRQbsyZ5UWuM=
+	t=1731503010; cv=none; b=E8YSXT3Nc9bIcay7BQqQclRNlSSuAZRhlcvEgK5jRa02ZZLDP2G4XSkZX3eCmeCzphIaDRKqdcEvlGzVZkiEaSP+wqyZym7LgPpo23mw7fPTfp/8AJK/zepTiidZGbfp8vEiLS2xiC4qjfumj4TMIxg5iiiJtIDV2iqFvM42P0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731503003; c=relaxed/simple;
-	bh=B2gIiMDTDDtPxAL49WyLVmRwYDtXU+qaJiqgsk+iadI=;
+	s=arc-20240116; t=1731503010; c=relaxed/simple;
+	bh=3hSrEerVz63flbUMSNM5kNo4q1EzHTQJwl/k9YXWWXY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UFkw89yBLy0SE/zW71J8KLD3ena7DHPdEelmxlGcoLWgTbThuShEatSfTFfFUilPS2ZKYE0lexEH6VKHLnFCM3DV0GkFtmb80MY4Ei69KbEqGpxc+ZZdUCOwtvHRpAgzZdWHOaFdEYrvo57F9DcwCEBdX9nlOhP6fPbA8pSj+1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CoIzCjGb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F5BC4CECF;
-	Wed, 13 Nov 2024 13:03:21 +0000 (UTC)
+	 MIME-Version:Content-Type; b=KYoeyGBVADjeDzW4ss3LslGS5WN6pFmsIS7UlmRDcLgoWEKQWFwSL1PAAYhw+TFaCGrqmXZpC9efBj34Iut5FWXI882zO3Glxy01UUHW/F7X06DS83Z9gJmc0UxjU+oKCoA5ouyunyDRaSa8o0qT24Jl7jNU3u3BQSurnqCnVHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oyn6Qk3c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CEDBC4CECF;
+	Wed, 13 Nov 2024 13:03:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731503002;
-	bh=B2gIiMDTDDtPxAL49WyLVmRwYDtXU+qaJiqgsk+iadI=;
+	s=k20201202; t=1731503009;
+	bh=3hSrEerVz63flbUMSNM5kNo4q1EzHTQJwl/k9YXWWXY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=CoIzCjGbvW7Txsx3ipinssU26QIR7QVdxIfLZtpEyczj4JUkqbAEIdrLDBsMoqClL
-	 bP/4ffiIDvuX97buP3YL021rpOevy3+bLjuC+IiV/5+EG7OAne4vNSznOuUjgn6knt
-	 08maFYMa7hHFffs0Vxgib59IQzao+1HztQKaStUMyuE330QfuC/lq3jOzDe5uDMyB6
-	 0J36PFQz4QyxNw8RnpkZT8jMjDG/GHOHaHXStR5SP41YNd7ymYHuArUq/LQD6/CV2Z
-	 uWTtDB2k3fX2ij8u/rezJH8XQlpUE++KXljRs7qw1JRBXfbmXNb1ozIemx8EH5R9yV
-	 Yea6x6p68kVOA==
+	b=Oyn6Qk3cbXGXHOTIyYwF0JjkjWmA2gO5vSv5pD6Zb6sCBbFTXdht9wS6vqmEJy0kc
+	 jovqjilanwp3ERL6LQn94WKNRoEGHOKcOTnI4cvj74SMlN7DYgYX7NfjTmsm36WCEA
+	 Z0IWayIQ9JoIqhp1vuA+7YCM4JisPjeZfIF0B0iWLo+S1kxz2cW6m5gdz7ewSMVOVm
+	 Dblbsl0nOklNcmy9hM9q81niWsP8RM6ghv9qAsIZDhE0sbwBJqhQFUv3c78XVmegtq
+	 eOHvcnscCdq8gDnsjiF2gAhUQM7gqChgzemaBJEIErs742H0KCAXiS+xD5R+anCy/J
+	 6vSileRfaUrmA==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, John Watts <contact@jookia.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241112-alsa_test_rates-v1-1-95cf529db871@jookia.org>
-References: <20241112-alsa_test_rates-v1-1-95cf529db871@jookia.org>
-Subject: Re: [PATCH] ASoC: test-component: Support continuous rates for
- test component
-Message-Id: <173150300027.429793.6079129175956247934.b4-ty@kernel.org>
-Date: Wed, 13 Nov 2024 13:03:20 +0000
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, patches@opensource.cirrus.com, 
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org
+In-Reply-To: <ab85510f83fa901e44d5d563fe6e768054229bfe.1731398433.git.u.kleine-koenig@baylibre.com>
+References: <ab85510f83fa901e44d5d563fe6e768054229bfe.1731398433.git.u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH] regulator: Switch back to struct
+ platform_driver::remove()
+Message-Id: <173150300581.429927.11116814842133511799.b4-ty@kernel.org>
+Date: Wed, 13 Nov 2024 13:03:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,24 +64,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.15-dev-355e8
 
-On Tue, 12 Nov 2024 21:34:00 +1100, John Watts wrote:
-> There's no reason to limit the supported rates of the test component
-> to specific ones as if it's a real piece of hardware. Set the rates to
-> continuous to aid in testing different rates.
+On Tue, 12 Nov 2024 09:35:21 +0100, Uwe Kleine-König wrote:
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers.
 > 
+> Convert all platform drivers below drivers/regulator to use .remove(),
+> with the eventual goal to drop struct platform_driver::remove_new(). As
+> .remove() and .remove_new() have the same prototypes, conversion is done
+> by just changing the structure member name in the driver initializer.
 > 
+> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
 
-[1/1] ASoC: test-component: Support continuous rates for test component
-      commit: c853e96308c58f9a06fcf393bcfe0eabdb72ca9c
+[1/1] regulator: Switch back to struct platform_driver::remove()
+      commit: 1b55354745e276db38268f23865eb2c4eba5f59b
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
