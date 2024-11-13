@@ -1,128 +1,151 @@
-Return-Path: <linux-kernel+bounces-408016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60DBE9C78E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:28:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018699C78E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27704284BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:28:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7D0E282969
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8711DF98D;
-	Wed, 13 Nov 2024 16:27:56 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F1E1632F3;
+	Wed, 13 Nov 2024 16:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfkQdLjS"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E7F7C0BE;
-	Wed, 13 Nov 2024 16:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D1070829;
+	Wed, 13 Nov 2024 16:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731515276; cv=none; b=SJoaDnEjuSnvC3fGl3kDfAxqud2Ddj0Bi0wJXUBmThmCzBpdfoEQP6nFw9lZv8WkBPAwyf1GJh+zxW4x/A0w9NjWs3m8ks0czpgmv4VcXABFiUnRIOYCq3x1hhv4N9vNvfz4vKLYYetFjI78cEWEOa9SiyXYUJpfGAAJn18Ys2c=
+	t=1731515362; cv=none; b=atbNc8DGrx7N7fUYrXlI7+nhTkY7/9Dfmh/7YSQKLreBH1FCI813SvmhCdZ/lLXGZKkOocJP4GmQKfczLgKJlUX5fr6sXj3sP8Jw89FLPhQgyPhV/CYL58NcezKABUKtGIpIH/05oiryA4x2tg1bYiXKLqVQtkWwDNboCB9ex1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731515276; c=relaxed/simple;
-	bh=sYwbMKY5opAsCzogcj5xjEOlKi9M9iZtDQwq3bcGCcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=a+JOq4hW1gWCtdI2GM3XK6GfqbPdIixT0Ig3l9mbMBWYYlQAuboMgCN6FpOw6zMuQ+Sy79q9w2PbAl9tisy58olxuRjub1GgN2hponYNELYAnvwB8lvAngYp6NPPwc/l3XfIQOcn6LMnslrpVI1KJa2FRnanjtd2j22+cKQDpBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 5DDE22800B4BD;
-	Wed, 13 Nov 2024 17:27:44 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 476EA3A0809; Wed, 13 Nov 2024 17:27:44 +0100 (CET)
-Date: Wed, 13 Nov 2024 17:27:44 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org, bhelgaas@google.com,
-	tony.luck@intel.com, bp@alien8.de
-Subject: Re: [PATCH v2 1/2] PCI: hotplug: Add a generic RAS tracepoint for
- hotplug event
-Message-ID: <ZzTTgOoCSqfC4cVR@wunner.de>
+	s=arc-20240116; t=1731515362; c=relaxed/simple;
+	bh=tFnn4MPom+IWjU1ADzhqF/rS3qqhgmFfg9sGwrHi7Cg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cBCJsXrfotVQZDWSSE8g9M/Cs0ZX7HhP4HLBkepZGqaUAvE43ZlxoT7nSbf8JcRClp+3VhQIDGqSMBjlBa1vBRKOmq6Y5LcVr7TXQ/Y1g8ls6TgdurmnfpLcKn5T98HS3UZzCUHqZLUpWcZVhvUiYpa81wbuVY+pXeO2NShUL7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfkQdLjS; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb3debdc09so56276831fa.3;
+        Wed, 13 Nov 2024 08:29:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731515359; x=1732120159; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=usRz3dPuBpi/LeN2CZYAlsEcDzPJkjSfZ89kAYdHUug=;
+        b=HfkQdLjSM1S6eTXeV7tkcZRVQD5QYnbkAwVug1gOYAurlfPoNGJP0JLviKf94TUsd5
+         QVs4StTVfJ/Ev/3U8HvK0ReaVjkvJw/GxQh08LtvTRth/oa+0MhYe8Y+L4AlBkB1LQ/s
+         islJHad80vHCtIeKsNGvzidKqyqZy/jp38Q+uGO+y3lzQ8yWiwmP0iRrnSVZrkC1uMua
+         QYvmex+xrEX5wJYTL51zXAdpswGXldY2SeofExcjL7mJoLcrBqqE1i1vvqcpoHR/gRFx
+         52iHILRSYeJgnRckpfatEtyAbHIUq5uE1cOc7b6F5/JViQF2BsKpwOKf+TIV9Cx1u6d5
+         qQvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731515359; x=1732120159;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=usRz3dPuBpi/LeN2CZYAlsEcDzPJkjSfZ89kAYdHUug=;
+        b=wj+UzFfbLGgjypaqIz68Z0c/c3fSztgMPba41Dvf+kOvQ1bFAu/GJfQJAhoBoyc/wk
+         bpLQTt+6KkNndcuQtq+jlJ+IveKqOa9ys2t5qqBu3LoiH2ZLNU0MV3uZxdiioLKR7ktQ
+         0ulvIvEuWSWa7uv9TMrWfDuwNbdslynvFCxidlSOkNTq9zDOGzKHdsJY/f+CIHJ+5kIS
+         mL1g7owAWax/zqzKCAUSjCIx/lY3268BWP6meBzToLHsyfg7aKCug3ep5y0tt3O6e30+
+         s6YiSGEKgsnHQ1JD08OMcnqlkRRaL5f5f8B5Sf6RNPbKMTehcbwESUSXSTCwD4SDGDQB
+         hM6w==
+X-Forwarded-Encrypted: i=1; AJvYcCV+fUW9JN5GfV9BCuhKi4I2MGmkX2Ta4xKUHngshQ69ULxQP3I8qlbHyD+TWWZyv23cCPhrsnWIsw9lmfAj@vger.kernel.org, AJvYcCX1jYmWTdOJo36WcmVdM6VbCWBvdlQWQjo2oAJ/ofrvqMYcUmeZ3qwMCWWB3gWOm3O2LiJpt68S0IA3iw0K@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw/a2niuagmQiLH5If8vJaDBlsALhd839mFp/p11Lo4O1qVsog
+	jbS2vkVUjLCPU7zOKJ0MEPBqkjxsDJGa0KExcFqSi/fzJkRx9BhCEiA7Qdjgm6Ny7ka5L4jnLal
+	wVv3HxZPJAJs0KWilAhIVFoHVaK4UI7Xv
+X-Google-Smtp-Source: AGHT+IFERpYqnlnnH93mQU8lIdV4FBPphbvJOJFd7lo1GHrsp/C9vkMePi0BmLAPJE8CeRUOZmzjxMIciuVxG8YTGvA=
+X-Received: by 2002:a05:651c:2228:b0:2fb:6394:d6bd with SMTP id
+ 38308e7fff4ca-2ff4c5bf80dmr17808541fa.12.1731515358986; Wed, 13 Nov 2024
+ 08:29:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112115852.52980-3-xueshuai@linux.alibaba.com>
- <20241112115852.52980-2-xueshuai@linux.alibaba.com>
+References: <20241113155103.4194099-1-mjguzik@gmail.com> <20241113161753.2rtsxuwzgvenwvu4@quack3>
+In-Reply-To: <20241113161753.2rtsxuwzgvenwvu4@quack3>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 13 Nov 2024 17:29:07 +0100
+Message-ID: <CAGudoHFrg_HexzEvT9M88nFG_ZXn6DuRDC-rSCdZQQUZ-Dgr-A@mail.gmail.com>
+Subject: Re: [PATCH] vfs: make evict() use smp_mb__after_spinlock instead of smp_mb
+To: Jan Kara <jack@suse.cz>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jlayton@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 07:58:51PM +0800, Shuai Xue wrote:
-> Hotplug events are critical indicators for analyzing hardware health,
-> particularly in AI supercomputers where surprise link downs can
-> significantly impact system performance and reliability. The failure
-> characterization analysis illustrates the significance of failures
-> caused by the Infiniband link errors. Meta observes that 2% in a machine
-> learning cluster and 6% in a vision application cluster of Infiniband
-> failures co-occur with GPU failures, such as falling off the bus, which
-> may indicate a correlation with PCIe.[1]
-> 
-> Add a generic RAS tracepoint for hotplug event to help healthy check.
+On Wed, Nov 13, 2024 at 5:17=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 13-11-24 16:51:03, Mateusz Guzik wrote:
+> > It literally directly follows a spin_lock() call.
+> >
+> > This whacks an explicit barrier on x86-64.
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+>
+> Looks good. Feel free to add:
+>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+>
 
-It would be good if you could mention in the commit message that
-you intend to use rasdaemon for monitoring these tracepoints
-and that you're hence adding the enum to a uapi header.
-So that if someone wonders later on why you chose a uapi header,
-they will find breadcrumbs in the commit message.
+thanks
 
-I think both patches can be squashed into one.
+> > This plausibly can go away altogether, but I could not be arsed to
+> > convince myself that's correct. Individuals willing to put in time are
+> > welcome :)
+>
+> AFAICS there's nothing else really guaranteeing the last store to
+> inode->i_state cannot be reordered up to after the wake up so I think the
+> barrier should be there.
+>
 
-I'm not an expert on tracepoints, so when respinning, perhaps you
-could cc linux-trace-kernel@vger.kernel.org and maybe also tracing
-maintainers so that subject matter experts can look the patch over
-and ack it.
+There is a bunch of lock round trips in this routine alone, including
+on i_lock itself, but that aside:
+
+I *suspect* something like spin_wait_unlocked(&inode->i_state)
+shipping with a full fence at the beginning of the routine would
+correctly allow to check all the possible waiter et al flags without
+acquiring the lock anymore, shaving off at least 2 lock trips in the
+common case.
+
+However, I don't see such a routine as is and I'm definitely not going
+to flame about adding it for the time being.
+
+>                                                                 Honza
+> >
+> >  fs/inode.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index e5a60084a7a9..b3db1234737f 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -817,7 +817,7 @@ static void evict(struct inode *inode)
+> >        * ___wait_var_event() either sees the bit cleared or
+> >        * waitqueue_active() check in wake_up_var() sees the waiter.
+> >        */
+> > -     smp_mb();
+> > +     smp_mb__after_spinlock();
+> >       inode_wake_up_bit(inode, __I_NEW);
+> >       BUG_ON(inode->i_state !=3D (I_FREEING | I_CLEAR));
+> >       spin_unlock(&inode->i_lock);
+> > --
+> > 2.43.0
+> >
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
 
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM hotplug
 
-Maybe "pci_hotplug" to differentiate this from, say, cpu hotplug?
-
-
-> +#define PCI_HP_TRANS_STATE					\
-> +	EM(PCI_HOTPLUG_LINK_UP,			"Link Up")	\
-> +	EM(PCI_HOTPLUG_LINK_DOWN,		"Link Down")	\
-> +	EM(PCI_HOTPLUG_CARD_PRESENT,		"Card present")	\
-> +	EMe(PCI_HOTPLUG_CARD_NO_PRESENT,	"Card not present")
-
-PCI_HOTPLUG_CARD_NOT_PRESENT would be neater I think.
-                   ^
-
-> +PCI_HP_TRANS_STATE
-
-Not sure what "trans state" stands for, maybe "state transition"?
-What if we add tracepoints going forward which aren't for state
-transitions but other types of events, such as "Power Failure"?
-Perhaps something more generic such as "PCI_HOTPLUG_EVENT" would
-be more apt?
-
-
-> +enum pci_hotplug_trans_type {
-> +	PCI_HOTPLUG_LINK_UP,
-> +	PCI_HOTPLUG_LINK_DOWN,
-> +	PCI_HOTPLUG_CARD_PRESENT,
-> +	PCI_HOTPLUG_CARD_NO_PRESENT,
-> +};
-
-I note that this is called "pci_hotplug_trans_type", perhaps for
-consistency use "pci_hotplug_trans_state" as everywhere else
-(or whatever you choose to substitute the name for, see above).
-
-Other than these cosmetic things, the patches LGTM.
-Again, my knowledge on tracepoints is superficial, but broadly
-it looks reasonable.
-
-Thanks,
-
-Lukas
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
