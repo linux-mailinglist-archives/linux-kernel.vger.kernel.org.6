@@ -1,88 +1,128 @@
-Return-Path: <linux-kernel+bounces-407290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663DA9C6B69
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:25:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C999C6B6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:26:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1878A1F23F40
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:25:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1291C282363
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A951F77BE;
-	Wed, 13 Nov 2024 09:25:07 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBCA1F77B9;
+	Wed, 13 Nov 2024 09:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZqmZO5Rs"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCC81F77B5
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E328B17CA1F;
+	Wed, 13 Nov 2024 09:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731489906; cv=none; b=LJZZA+i3KH6J677YZTFDZt700at68UJSOBcGxVKQSsDOA69pqBi+kSWbh1kBLdXaaKRJUZp3zrCYVDi8Dd7ZrOnvSHs40oNafo+FbA9ZTfiZW2UhzSrSCU2w5TQQkQjJFgoVkK/ipwCh/xDRcprpnCoaykDkgvTFVksZu63VxgQ=
+	t=1731489952; cv=none; b=L0gtsgQhe6cywtbtFvfPvbOK5yH3hu/Cq8IO/dNFvPYJm8xObeGYtmydHGzC6MdOIrJ5q8XJO9Uox29/+ZkE1TyywmxZyfJHbgq/L7CqaGtmcN/hnF+WB3AsTFXP/HQHPa8327750U0bniIZH7NuM7NPLh37FiY/axpBkoezFSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731489906; c=relaxed/simple;
-	bh=e3UrNK+8NPWtavtHg92BvMz6xoPfhy5/J5qU32bVb60=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gaeSWcjVLfZY5rDlKIyO9E265y/lDq1rPw8vl6UQP5gZzr8S80yh2IHzA8Xq40T2Bqf9Kql92oV15W6MsAlDAyKgciRYTFjZsD8IvS6GFdgvFSmXpIFFZWLB6jBFSPzmyxGiGuwrjqdbS06B4CV3tPsJ9qev+7PjMIAk1iWQ7CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6b963ca02so69881925ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 01:25:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731489904; x=1732094704;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ayS9w16ckU16tbXa/VPShI2venzkxWB0dzj3Wvipfb0=;
-        b=njGiDp+tTqHVYk05NvVWCYAMphE1mu0+AL8q04MIxeGYE5WS+hacy/qjFHwzqoC1Do
-         Tozza8eECagq5ILvKmLd7AkBlvyfXQ3WXmTv8jixTXCyaWzSLA6nLILpgXc1wePfPrv4
-         4NkvKj4+YeNjLJ8LMu/gEBrlHI1v2q59hImz0N5J51uCLDCKcdEkl6Gf6H/bcxAGBQhV
-         eQXn0nzQ9ZJ734zPIgQJhzhKwFtaYgTWr+YHnxQWvJUlRwtMGgnpitCtBcKLM6Asul+z
-         xGbEPSTF0WBA+qLzkTJPYyypu4qpF12t6u8tXgqMzne1gxAbt6dF9GNc5N0bqF7d2HBQ
-         25tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9TiwnSHYGWOsAp1Xze5SDLll83uaCZ2Q3a13L2AVDQamfthQKzrw+3Qt1jxctKIFemtHPz8gA2TJEenQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1/cYOgYP0QohQapqpY1VtXFNYD6d/l4knQ74Q3AjSm/BObWSm
-	L80ZOlh2/HCKmdh/hbabclaxHWeaVDfIddi9MeUIbwmJ6LexwrRs1sQOm2969tweT9RLsbt6yzR
-	95axjGpjLmF7qcEXcR2SdJq9uugvnG9QDqtyhZ6Ua2n0g5h2RQx03a3o=
-X-Google-Smtp-Source: AGHT+IGuJj1OS2MF+6vk+YiGvRYN6Tf067M2YWDsI74/oewrrtGSF4Ccm7971A7xBXi/M6rdvPHJtthKe8IAJxKXq6PatAIRxB8M
+	s=arc-20240116; t=1731489952; c=relaxed/simple;
+	bh=KvrqYJJC3Sns7wN5xfHc67yfa6zJilW1pZURwkPXoKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=imaLxxMf8Jo/fWcZbLEvsVTNlwJmUUNMe4oZyoHlYcMiTBbXJK+8j4ceL2yFvGvsIinl/ooEVPCfOXEdyxHluudRZlPYcYBzvucGPLIWYyc8IwA0MTzj9NOMWIkkGnNISKn/XeOGG4C/j/JIwtubyjjL3NqI5YsbwkMoJjViJqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZqmZO5Rs; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4AD9PSx2002157;
+	Wed, 13 Nov 2024 03:25:28 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731489928;
+	bh=Hp24S5i2Pk28DZAbH97tK+N9cfrs3EfX5xRbl8zmPhU=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ZqmZO5RsBxvo+4qr2dXzEc+EqGPlLi22GFzvqmn6osDgrAY0crlfj48wX9czk0sDv
+	 G0JbqHiSD0copaGVEVzWk8/X/rk2p97KvTf1Mfcx+Jkr+41G8I+v1s3jfHr+Xg5M8q
+	 wMRXkuRHlTOihLVH0q9iOKxcuQ192Th5hFWIjbs8=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AD9PS9c125462
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 13 Nov 2024 03:25:28 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 13
+ Nov 2024 03:25:27 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 13 Nov 2024 03:25:27 -0600
+Received: from [172.24.227.220] (chintan-thinkstation-p360-tower.dhcp.ti.com [172.24.227.220])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AD9POIa087478;
+	Wed, 13 Nov 2024 03:25:24 -0600
+Message-ID: <32200597-9c02-4d43-bf91-3fe0b8ce83bc@ti.com>
+Date: Wed, 13 Nov 2024 14:55:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c03:b0:3a6:bb36:ac3c with SMTP id
- e9e14a558f8ab-3a71577274dmr23393925ab.15.1731489904585; Wed, 13 Nov 2024
- 01:25:04 -0800 (PST)
-Date: Wed, 13 Nov 2024 01:25:04 -0800
-In-Reply-To: <CAFj5m9+j=KNhaRruRZ7p0Nnt6PiqOVQN00vhgcwEgfKji=rJEg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67347070.050a0220.1324f8.0009.GAE@google.com>
-Subject: Re: [syzbot] [block?] possible deadlock in loop_reconfigure_limits
-From: syzbot <syzbot+867b0179d31db9955876@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ming.lei@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-security/apparmor/domain.c:695:3: error: expected expression
-security/apparmor/domain.c:697:3: error: use of undeclared identifier 'new_profile'
-security/apparmor/domain.c:699:8: error: use of undeclared identifier 'new_profile'
-security/apparmor/domain.c:704:11: error: use of undeclared identifier 'new_profile'
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-am62x-sk-common: Add bootph-all
+ property in cpsw_mac_syscon node
+To: Vignesh Raghavendra <vigneshr@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Tero
+ Kristo <kristo@kernel.org>,
+        Nishanth Menon <nm@ti.com>
+CC: <s-vadapalli@ti.com>, <srk@ti.com>, <danishanwar@ti.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20241011110207.600678-1-c-vankar@ti.com>
+ <b2dadb0a-fd85-42fc-b340-6c77fe5ded0a@ti.com>
+Content-Language: en-US
+From: Chintan Vankar <c-vankar@ti.com>
+In-Reply-To: <b2dadb0a-fd85-42fc-b340-6c77fe5ded0a@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
-Tested on:
 
-commit:         bd05b9a7 Add linux-next specific files for 20241113
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-kernel config:  https://syzkaller.appspot.com/x/.config?x=75175323f2078363
-dashboard link: https://syzkaller.appspot.com/bug?extid=867b0179d31db9955876
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+On 28/10/24 22:06, Vignesh Raghavendra wrote:
+> 
+> 
+> On 11/10/24 16:32, Chintan Vankar wrote:
+>> Add bootph-all property in CPSW MAC's eFuse node cpsw_mac_syscon.
+>>
+> 
+> Why?
+> 
+> Please make sure commit message is verbose enough to say why the change
+> is needed vs what that change is (latter is obvious lookng at the diff)
+> 
 
-Note: no patches were applied.
+Sure Vignesh. I will update the commit message accordingly in next
+version.
+
+>> Signed-off-by: Chintan Vankar <c-vankar@ti.com>
+>> ---
+>>
+>> This patch is based on linux-next tagged next-20241011.
+>>
+>>   arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+>> index 44ff67b6bf1e..82d34dfb91ed 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+>> @@ -303,6 +303,10 @@ AM62X_MCU_IOPAD(0x028, PIN_OUTPUT, 0) /* (C5/C6) WKUP_UART0_TXD */
+>>   	};
+>>   };
+>>   
+>> +&cpsw_mac_syscon {
+>> +	bootph-all;
+>> +};
+>> +
+>>   &wkup_uart0 {
+>>   	/* WKUP UART0 is used by DM firmware */
+>>   	bootph-pre-ram;
+> 
 
