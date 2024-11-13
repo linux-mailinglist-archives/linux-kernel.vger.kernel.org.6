@@ -1,178 +1,91 @@
-Return-Path: <linux-kernel+bounces-408132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9B69C7AC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:13:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BA89C7B0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:27:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB7BB28B01F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:13:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4072B33A76
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48685204014;
-	Wed, 13 Nov 2024 18:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26677205AC6;
+	Wed, 13 Nov 2024 18:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OMYkdEoV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvEgU1c4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28E2202630
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6822C13CFBD;
+	Wed, 13 Nov 2024 18:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731521481; cv=none; b=OJJKVLTINCued8zY9YKoqI58uc2W4DWq7Iwf8LfUNTy8dwVtRF6y7iVRqbwLKKeDJAPDRTRyAp/KvPVGV7XhNKpC7itK1oM1iDwSL8rtjNQBNLkerp1yeVMjZQXrSHWy0Rf0SMs/1P3lXKDUWWriQBfVrkccC8y/UVRXdlffPbs=
+	t=1731521502; cv=none; b=kbg2ORf0/A8q4jmC/xR2dI7qM5+rJZtg4OMnA2VJPX2QVlMB5tA+Mf54oTMoX6C+D4MPwFfivCpGQL0h4xH1VLvERtiLYGy/v3UdGvDid2EE6SSNoMcPWx3qI6g4fOfFUiFSAMTFLxCjB9T326agaeEvqkFF2jTbTPnvWH5fw18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731521481; c=relaxed/simple;
-	bh=GfyaBzsQaxbrDn9GkteBDYEIG6fY5LTY2BMi1OO6/hI=;
+	s=arc-20240116; t=1731521502; c=relaxed/simple;
+	bh=fujGutBZp/9h60ZjqyqAyU+r1u3fFTWP8gNIzYxYXF8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HvWcJH7uTAo8ylHem5HEXRTjTdhFNSmRtHcsW4LnvsA6F9qp7DtSagn02Paob8vjfkUeQjc2NG8aX69epVAGKn1legKO1xAtOleJlISDv4ecqGx3c+btbXwQJ2pz/uV3gX8yys7WfbJ8s4zQtIAIAWXwc3UNpjvNZceiVrZd0Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OMYkdEoV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731521478;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VewxfuCQAz2e8hyqcp+K3zDr+wxn5nG+1x8oL8KmYr8=;
-	b=OMYkdEoVkFgB4Wub+d0Mz3aO7f07/SAIR6zgu+o6C/Q0AgagnNOnTul939ylYrrLXE9V/u
-	aIQPQ+IyIImU95tKw9AcWy01S+gTXALfov+VLj8uUMmKChDll9QwzEFyKGZFhXzIgOgCdI
-	c1HCtbDmgwPNrvz2apUWWtFOKMz/rVE=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-345-0xfLa54jO1KXcXKhdpRy5Q-1; Wed, 13 Nov 2024 13:11:17 -0500
-X-MC-Unique: 0xfLa54jO1KXcXKhdpRy5Q-1
-X-Mimecast-MFC-AGG-ID: 0xfLa54jO1KXcXKhdpRy5Q
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d49887a2cso565540f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:11:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731521476; x=1732126276;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VewxfuCQAz2e8hyqcp+K3zDr+wxn5nG+1x8oL8KmYr8=;
-        b=kTwf7TKQ7IFlT321fY+uOVc3eSDCo82E9F1ZGGwxYpDSQiVO5rZPgG0mZnsl8oIRp3
-         CLSd7dFNehMZQQwoT4ajBvgupgHWnVZ0k/W+frG3mRThKEtw0RqojdM3fb7BTRrZa7Fg
-         XuPqpCeht5ThcZhcu2TTalHV+tkbTueg4IsPnegQOIeiIAccr9zkcUTwcWQchzWt2H3W
-         YzMFnlznydsLxcxX43igWAFoRJJTCaL4necTk4QlsBgvlEeb14RCs2aSxWV8jcXmu3vN
-         Tez/aHOsIfz8VNMIxl1FeVUWQS5FmKrhJTwfMXRzRJINhowgTjvmB6Ngiv1GqN56USFr
-         lESg==
-X-Forwarded-Encrypted: i=1; AJvYcCVb19aCRyuhTbfO2W8lk41kXVoi2mFvkzbjOcI2eWhlDTiNLgYaa+OVgSIxze/tPa1edQGA5gNbW2nhp8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya1cJYRB07ljT9wCYvUPkTVLgmJQ5xGrgUZhtdJf3sjUbL1p9A
-	w1hdE94s5DwHRAFOqD++FTNrtZVOx5YnO+T0aWembWicaPL1QR+qjhA7NuQZ5xY1C0F30ZJISAJ
-	DMeiDIO57GY1Vzh1EgjK5NP761qf8mJexaiFzacBGh6rozCFjCBjQMgNz/L8jiA==
-X-Received: by 2002:a5d:6482:0:b0:381:f596:767a with SMTP id ffacd0b85a97d-38213fffc48mr308243f8f.12.1731521476255;
-        Wed, 13 Nov 2024 10:11:16 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGF8uZppBytmLF63T+fKBgKHNNYYjeLf5PwMN7OvReEObKbV3FfIPXk02/SLRoUJgOqSKX8ug==
-X-Received: by 2002:a5d:6482:0:b0:381:f596:767a with SMTP id ffacd0b85a97d-38213fffc48mr308206f8f.12.1731521475819;
-        Wed, 13 Nov 2024 10:11:15 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-4-194.as13285.net. [80.47.4.194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97e46bsm18730859f8f.30.2024.11.13.10.11.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 10:11:14 -0800 (PST)
-Date: Wed, 13 Nov 2024 18:11:12 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <llong@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH 2/2] sched/deadline: Correctly account for allocated
- bandwidth during hotplug
-Message-ID: <ZzTrwJoTetlt2Anj@jlelli-thinkpadt14gen4.remote.csb>
-References: <20241113125724.450249-1-juri.lelli@redhat.com>
- <20241113125724.450249-3-juri.lelli@redhat.com>
- <8e55c640-c931-4b9c-a501-c5b0a654a420@redhat.com>
- <ZzTWkZJktDMlwQEW@jlelli-thinkpadt14gen4.remote.csb>
- <b7c75f06-1ab5-48c4-b2fb-521508f20f9b@redhat.com>
- <c30adf62-3012-46fe-ae52-2f6de1e20718@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u+fsr03Ce08v2yQrrXVE2LX0SEvIXGOAbqLeJ8KpEJQsKRn4Exas8EQmWUdHFGVR7Cb5RWjXEovSNtGXPrSrnHMBR/8Vv1+av0oiqyTCvPqOJoMFpScwhP/6Q1mzc9ZNsKGVWQ5boRnnInnM+Xxd85T617ev4Y0rkzXVmRKWGuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvEgU1c4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2694C4CEC3;
+	Wed, 13 Nov 2024 18:11:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731521500;
+	bh=fujGutBZp/9h60ZjqyqAyU+r1u3fFTWP8gNIzYxYXF8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EvEgU1c4XeLEl4tM1nBnAJKfew+cCYyosddh3FVACqg1LvKag0LOQNC6wrJWurQdN
+	 OtqRufZ0Ii3nSM7M/7CTJXf+O3LPP1CUc2ciI2QQ2ELw2TkgUEw530Zbc2ZOWDmeQd
+	 nuFgV2I2jxOVN1yad45n2NwOhKG1EmCZvP+oM90uhbqz5dYfVFF5VwdXuqtbA/6/rK
+	 mvQsxzwCX3oduGiMERauuj47XlLN4iRjQExcPUCSS3VehlrBRKVjJPjD5xxRzy7IeT
+	 X+wPkphC0cymvvG4UNhUJijEnKly14hRP3TXoJh61De8RlmIwOLleWapkVYRE9aq5s
+	 BN+YYj3Mi2CoQ==
+Date: Wed, 13 Nov 2024 12:11:38 -0600
+From: Rob Herring <robh@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, vkoul@kernel.org,
+	kishon@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	gregkh@linuxfoundation.org, andersson@kernel.org,
+	konradybcio@kernel.org, dmitry.baryshkov@linaro.org,
+	mantas@8devices.com, quic_rohiagar@quicinc.com,
+	quic_kriskura@quicinc.com, manivannan.sadhasivam@linaro.org,
+	abel.vesa@linaro.org, quic_kbajaj@quicinc.com,
+	quic_wcheng@quicinc.com, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] arm64: dts: qcom: Add USB controller and phy
+ nodes for IPQ5424
+Message-ID: <20241113181138.GA1011553-robh@kernel.org>
+References: <20241113072316.2829050-1-quic_varada@quicinc.com>
+ <20241113072316.2829050-7-quic_varada@quicinc.com>
+ <ZzSYU61pmFTcPf5_@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c30adf62-3012-46fe-ae52-2f6de1e20718@redhat.com>
+In-Reply-To: <ZzSYU61pmFTcPf5_@hovoldconsulting.com>
 
-On 13/11/24 11:50, Waiman Long wrote:
+On Wed, Nov 13, 2024 at 01:15:15PM +0100, Johan Hovold wrote:
+> On Wed, Nov 13, 2024 at 12:53:16PM +0530, Varadarajan Narayanan wrote:
 > 
-> On 11/13/24 11:42 AM, Waiman Long wrote:
-> > 
-> > On 11/13/24 11:40 AM, Juri Lelli wrote:
-> > > On 13/11/24 11:06, Waiman Long wrote:
-> > > 
-> > > ...
-> > > 
-> > > > This part can still cause a failure in one of test cases in my cpuset
-> > > > partition test script. In this particular case, the CPU to be
-> > > > offlined is an
-> > > > isolated CPU with scheduling disabled. As a result, total_bw is
-> > > > 0 and the
-> > > > __dl_overflow() test failed. Is there a way to skip the
-> > > > __dl_overflow() test
-> > > > for isolated CPUs? Can we use a null total_bw as a proxy for that?
-> > > Can you please share the repro script? Would like to check locally what
-> > > is going on.
-> > 
-> > Just run tools/testing/selftests/cgroup/test_cpuset_prs.sh.
+> > --- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> > +++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> > @@ -16,12 +16,71 @@ / {
+> >  	aliases {
+> >  		serial0 = &uart1;
+> >  	};
+> > +
+> > +	regulator_fixed_3p3: s3300 {
 > 
-> The failing test is
-> 
->         # Remote partition offline tests
->         " C0-3:S+ C1-3:S+ C2-3     .    X2-3   X2-3 X2-3:P2:O2=0 .   0
-> A1:0-1,A2:1,A3:3 A1:P0,A3:P2 2-3"
-> 
-> You can remove all the previous lines in the TEST_MATRIX to get to failed
-> test case immediately eliminating unnecessary noise in your testing.
+> Fixed regulator nodes should have a "regulator-" prefix in their name.
 
-So, IIUC this test is doing the following
+Specifically, regulator-<voltage> is preferred. So "regulator-3300000"
 
-# echo +cpuset >cgroup/cgroup.subtree_control
-# mkdir cgroup/A1
-# echo 0-3 >cgroup/A1/cpuset.cpus
-# echo +cpuset >cgroup/A1/cgroup.subtree_control
-# mkdir cgroup/A1/A2
-# echo 1-3 >cgroup/A1/A2/cpuset.cpus
-# echo +cpuset >cgroup/A1/A2/cgroup.subtree_control
-# mkdir cgroup/A1/A2/A3
-# echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus
-# echo 2-3 >cgroup/A1/cpuset.cpus.exclusive
-# echo 2-3 >cgroup/A1/A2/cpuset.cpus.exclusive
-# echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus.exclusive
-# echo isolated >cgroup/A1/A2/A3/cpuset.cpus.partition
+Not enforced because there are some exceptions.
 
-With the last command, we get to one root domain with span: 0-1,4-7 (in
-my setup with 8 CPUs) and no root domain for 2,3, since they are
-isolated.
-
-The test then tries to hotplug CPU 2, but fails to do so and so the
-reported error.
-
-total_bw for CPU 2 and CPU 3 is indeed 0, and I guess we could special
-case this as you suggest (nothing to really worry about if we don't have
-DEADLINE tasks affined to these CPUs). But I would have expected the
-fair server contribution to still show up in total_bw, so this is
-something a need to check.
-
-Thanks,
-Juri
-
+Rob
 
