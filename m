@@ -1,90 +1,113 @@
-Return-Path: <linux-kernel+bounces-407105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA5AE9C68F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:56:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A61B9C68F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:57:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90128284071
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:56:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E21A1F2416A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C712917625F;
-	Wed, 13 Nov 2024 05:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378B4171671;
+	Wed, 13 Nov 2024 05:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YG2vKlER"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZWR+o+L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4ED1527A7;
-	Wed, 13 Nov 2024 05:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902532309AE;
+	Wed, 13 Nov 2024 05:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731477394; cv=none; b=cE7wlO8aKPIVm0ywRdEt/G7ds4HW3TOCQiDoj0CCfqfEfX2qC/aw6aB7F8vSv9iFMkKgDcjUbnnq/z4yxaCPtvRKfvRTSJAzndx9QPC2aRb2cP54GLE/npHowG6fR9spxAr3Ttz7QPj4TDF6qz2prZ/mcItnPkU8kRCoJTm9smY=
+	t=1731477437; cv=none; b=oBuymZQ7xFhHToKK3AFFj1mtKlFxt9hxWoBf3jm4+KHMCp8KwT4uV8tpAHP6Z/+TTs16tYo9bBvcpX1+HkAdjVN1w2GZAiTwuV0IWHX9yanXhXBNkvxZfHYaCRpuPdlyGrmr2Cyn13qrZLHKOZmjo3usnixyAENu+9wNMxsLlc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731477394; c=relaxed/simple;
-	bh=MN5GOjIImDbDM2pOrDVGASQO5/OZe6x9pHt7qMO222g=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=HR7EpTVsaX4j/U8gzMI2jilHkAE4yOZxKeNA6O1X6vpI2VVTVUKd4t5f/mWp+U7MpaVvW77PWFbsc1EU0ABQelGjS4mKhZ/Qth+stdeFv3zxvIZ/tEd35czRMS8DKm5zAirqdfGKPFdbKd+CZQHD8Z1rOdcKYpF396KaVvFyAXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YG2vKlER; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2A1AC4CECD;
-	Wed, 13 Nov 2024 05:56:32 +0000 (UTC)
+	s=arc-20240116; t=1731477437; c=relaxed/simple;
+	bh=O7gqBIX0ZmWwreqBCyMvR1yaKp3Xm8Cc4L0dr2JTvLQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JgVGsZUL5832Ga8FrSrg+7+9AsmkUM4G9XOWLASvq0scW8HONKN/g1Aql4uiCcTCxgfbxK64nge5LQr0XccmQ1eIXhJ5B2dFNVu1kmmjvD1OFqw7NYeBheDkfQ4anCPlXd+1+u5rL7sUahpNLcuWKmp7Cs/CSXDZda+jxVVAci4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZWR+o+L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3E5F5C4CECD;
+	Wed, 13 Nov 2024 05:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731477393;
-	bh=MN5GOjIImDbDM2pOrDVGASQO5/OZe6x9pHt7qMO222g=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=YG2vKlERddDbtjfH4zBA57xZpwGNhlZTBy8ifh/QN2AjvmlO7sWXw3kMnlIw8qG6X
-	 JiJMUMIk4BvV+qU/WG1mVApoY2SocaF/2ESELOQVQ6mHWXu2Q+R3icb1GpLlilvNMn
-	 4CXkfLE54awLDw4Lh0Eahr9OXazNmQm2R23zKMoRk5RpPylwMMoDULQy/HSuk3qw55
-	 2HKmX1IBMfNUllwSU/Z0EU+hessQ0IGnU311Zag4lNH+EbL5/Swnah2QDcqwEp4kym
-	 vN+XhH2WhLi85H1bSHpYvNWWDUPukEjIcA5mFB0toI2Wssymse8mKns179o0pFnP+q
-	 1XD9jGrtvX/sA==
+	s=k20201202; t=1731477437;
+	bh=O7gqBIX0ZmWwreqBCyMvR1yaKp3Xm8Cc4L0dr2JTvLQ=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=CZWR+o+Lu+5Aw9uon1pwiA75/0Joz2ADugOcTdxCbJ881H6/Z4zOl5HmrvE/mX5tb
+	 roBqvg1KZ2AIvOzADyi+8HUQWdQ8KzLVydHfhCKv05bcNAie1b5zji58k1DsCA0d5r
+	 G9ytt6fquRWvh7Djxsjn6McmKpfViu1jHf5KVqfCDYsTOMk+aysvX7SutV8/dY6Ads
+	 V2WXoJIxmv+ZzrlhFw/w1aohb3oLZLAeE71mNCqggdcVhhoQLqFyLC7X3KQgyhXT/s
+	 Hm26ncTMnEX7RheVsj3bECTRYw5tOejhnU2CvQJLAqObOtQuVre4P6TpthuRTrVDk7
+	 z8sMEphAhJquA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBCCD41C03;
+	Wed, 13 Nov 2024 05:57:17 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Date: Wed, 13 Nov 2024 13:57:15 +0800
+Subject: [PATCH] rtc: amlogic-a4: fix compile error
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 13 Nov 2024 07:56:29 +0200
-Message-Id: <D5KTIBJRLLZO.393Y9M060YHWG@kernel.org>
-Cc: "Roberto Sassu" <roberto.sassu@huawei.com>, "David Howells"
- <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James Morris"
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Thomas Huth"
- <thuth@redhat.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Paul E.
- McKenney" <paulmck@kernel.org>, "Steven Rostedt" <rostedt@goodmis.org>,
- "Xiongwei Song" <xiongwei.song@windriver.com>, "Stefan Berger"
- <stefanb@linux.ibm.com>, "Ard Biesheuvel" <ardb@kernel.org>, "Al Viro"
- <viro@zeniv.linux.org.uk>, "open list:DOCUMENTATION"
- <linux-doc@vger.kernel.org>, "open list" <linux-kernel@vger.kernel.org>,
- "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>, "open list:SECURITY
- SUBSYSTEM" <linux-security-module@vger.kernel.org>, "Josh Poimboeuf"
- <jpoimboe@kernel.org>
-Subject: Re: [PATCH v3] tpm: Opt-in in disable PCR integrity protection
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Mimi Zohar" <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>,
- "Jonathan Corbet" <corbet@lwn.net>, "Peter Huewe" <peterhuewe@gmx.de>,
- "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>
-X-Mailer: aerc 0.18.2
-References: <20241113002414.609168-1-jarkko@kernel.org>
- <9649cec7710241dc359c7c1a715b2cef36ebce15.camel@linux.ibm.com>
-In-Reply-To: <9649cec7710241dc359c7c1a715b2cef36ebce15.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241113-fix_a4_rtc-v1-1-307af26449a8@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIALo/NGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQ0Nj3bTMivhEk/iikmTdNCNTgzQzs+SkJENDJaCGgqJUoCzYsOjY2lo
+ ApYvmJ1wAAAA=
+To: Yiting Deng <yiting.deng@amlogic.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
+ linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731477435; l=945;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=km3rlhnqX3L3e5tGM9lHtBkDGz74vs84O5QvGvcNq3Q=;
+ b=b1Q7RSfPcsZpytS289JQq6mN7s74d5X8tq1pCZ55i6rFYYxvpDpxHymaqLU8+EA/IhvpLyWxm
+ Qr1XBoOtnpCC4zGgIjJDji//eLP/BK1T0C3bsB3haTr5hHZsMHo/RQN
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-On Wed Nov 13, 2024 at 6:34 AM EET, Mimi Zohar wrote:
-> The module_param variable documentation needs to be updated to reflect th=
-e
-> actual module_param variable 'disable_pcr_integrity'.
->
-> Otherwise,
-> Tested-by: Mimi Zohar <zohar@linux.ibm.com>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-Thanks for catching that glitch. Here's updated version:
+When compile rtc-a4, build error as following:
+ERROR: modpost: drivers/rtc/rtc-amlogic-a4: struct of_device_id is
+not terminated with a NULL entry!
+This commit is to fix it.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/comm=
-it/?id=3D8f22b3ed4d200ae0c575791e069316c633ed5c39
+Fixes: c89ac9182ee2 ("rtc: support for the Amlogic on-chip RTC")
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+ drivers/rtc/rtc-amlogic-a4.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-BR, Jarkko
+diff --git a/drivers/rtc/rtc-amlogic-a4.c b/drivers/rtc/rtc-amlogic-a4.c
+index 4960790c4b24..2278b4c98a71 100644
+--- a/drivers/rtc/rtc-amlogic-a4.c
++++ b/drivers/rtc/rtc-amlogic-a4.c
+@@ -445,6 +445,7 @@ static const struct of_device_id aml_rtc_device_id[] = {
+ 		.compatible = "amlogic,a5-rtc",
+ 		.data = &a5_rtc_config,
+ 	},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, aml_rtc_device_id);
+ 
+
+---
+base-commit: eb4ffa40010472dffdc276da307161545aab45a3
+change-id: 20241113-fix_a4_rtc-f250f66cbb11
+
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
+
 
