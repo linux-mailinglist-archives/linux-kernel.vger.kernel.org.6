@@ -1,78 +1,113 @@
-Return-Path: <linux-kernel+bounces-406938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26789C665E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:59:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3139C666E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:03:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9742D281D9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:59:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DB32B2A6DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1972B1C695;
-	Wed, 13 Nov 2024 00:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454EF3FC7;
+	Wed, 13 Nov 2024 01:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cAYGEAns"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Wpj9VHHR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D87CB665;
-	Wed, 13 Nov 2024 00:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5686AA1;
+	Wed, 13 Nov 2024 01:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731459563; cv=none; b=ZGNomDUfRUZMAcaEbLTeSiSaVsOwD37l38PNTpdQoljSR/93P1UyIallsONyA+9MQtBE44IxUIDTby7TabodLxts7oYmzYIRpkBdlaqDBCMUx/6lwjU1GqjcUIR5oG9xgxZDa2k9Krj3XU65SL+5CFWygJecRbOKjqhU6eEL/M4=
+	t=1731459709; cv=none; b=sI3Iy8MpBXzlKcQ7d1ROQLdwH1JhG2GRiBXHtKzMn6eidACefrhbFvOvcplPMAlAkwbTZcZJqi7WY38ZCVQrWbJalsCtRgWwsDoIaTcTBTF2idQh6JK5BmqG09sDcOA9u7rezOKmbWbCzDzBnZaSKCc/j1psjNua+2GK/OThIuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731459563; c=relaxed/simple;
-	bh=90uZg7sPcZs6xapZO7Sny+SwArLF0kzm8+56+pmdOao=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=X2bIcTBeKh7jfoHN9Vh+N8Lk+hZrYwdS/iznGWyxIPTcVx3/DH16nPCRcy4YUjhPXCi38XAa/J9P44jN5bOqmzl6A8IDgYmfdzx+WNqnU65L6fEKVyKplcD4kT++lMZerI1zq9AUMWKXeAwtDczpjDqQbMo/6EmuJYnvPEEV87o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cAYGEAns; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F394DC4CED4;
-	Wed, 13 Nov 2024 00:59:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731459563;
-	bh=90uZg7sPcZs6xapZO7Sny+SwArLF0kzm8+56+pmdOao=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=cAYGEAns0u2GqpWJ1/A4PL1lxYFknXTHAsztjiJKI78i4FdfiaCT/YQO9aBvYCJRH
-	 la+s8EWlR28uh33LFPUKeQgFQiAhhuMkTcZevV/VXeBwuotbK4NuNlpTB4hexnXhRF
-	 utceMCzgz1XgX2cc2uRW44o3qNZDqULlcG52Vji5UbwIJW57X1uC4xJ7XP6uHi70N/
-	 yUD/zglFdH5fZJr1l+uoJKZeG2k74RpP8p2qqdgLIeE1LDW8t9tTzS6lODDHiVpzuP
-	 so46tsMUYfCSy7a8Akw01oQLZlZNSr3DmWfTlbPZhP+uRyh8oBUZhEGxfddXk7wmAL
-	 WzgJ/+lrkgSmw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710AF3809A80;
-	Wed, 13 Nov 2024 00:59:34 +0000 (UTC)
-Subject: Re: [GIT PULL] virtio: bugfix
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241112183037-mutt-send-email-mst@kernel.org>
-References: <20241112183037-mutt-send-email-mst@kernel.org>
-X-PR-Tracked-List-Id: <netdev.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241112183037-mutt-send-email-mst@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
-X-PR-Tracked-Commit-Id: 29ce8b8a4fa74e841342c8b8f8941848a3c6f29f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f1b785f4c7870c42330b35522c2514e39a1e28e7
-Message-Id: <173145957292.735839.6511436323242434838.pr-tracker-bot@kernel.org>
-Date: Wed, 13 Nov 2024 00:59:32 +0000
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, dtatulea@nvidia.com, jasowang@redhat.com, mst@redhat.com, si-wei.liu@oracle.com
+	s=arc-20240116; t=1731459709; c=relaxed/simple;
+	bh=4Ns3J2KUts+NSeSN4f0eYlqsvA0iuLCvUIbKWSlgB0A=;
+	h=From:To:CC:In-Reply-To:References:Subject:Message-ID:Date:
+	 MIME-Version:Content-Type; b=qovCTZPV0vHlTDr7dD/wurFmCAiEoUn8Rhvk6wVBBS7GHDbMgyubQUvKmOxBz0obzVRQRQtqmRCYO/aTepILGRLITqH5lrQ2gJjEIRFeJOrF4gpY0rV1pZFK9DpY8Ea88OG7ly16R+5gcgRirw/qXIG6FB2TCODDEWIUxB+C2og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Wpj9VHHR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACMRUNr019976;
+	Wed, 13 Nov 2024 01:01:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Bbd3U3/kb+UHiB2b7mf/WFn3/vSnGPGUueA8NvYkIUw=; b=Wpj9VHHRhk9gyeSL
+	I6vFWRMQCL8AphYNgG/egAuTTpDj5rGhXaKWUyJXZu3AfRySwZ0BvjgyzpP/OQDw
+	6qxRPkCN2ASmu6GeZBWMdVVlLqXQk43qzMLRwQ5ZOFqxOY7kIFEmprSdxjV0/3pa
+	7VFnoyPrepA3YJj6y5VEshMKg/E8XPAv32yEUclWUesc4hkTi897EWnOe2AJd4X9
+	K+r/Xxre0d8LGh3bT8WMlhm+86Aa3F7gHtkwjzn4GTVrDlgYi4GGQ8x/UgknJtK5
+	oNGBdGNMsZkxKxUOkz0nDwjezZyMIuGYg/aKcAxzgN3M/0zwcE/hOZbUVDf+oF09
+	8tBUaw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uc60dr5g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 01:01:40 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AD11dOT023708
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 01:01:39 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
+ 2024 17:01:39 -0800
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+To: <kvalo@kernel.org>, <jjohnson@kernel.org>,
+        Karol Przybylski
+	<karprzy7@gmail.com>
+CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <skhan@linuxfoundation.org>
+In-Reply-To: <20241105101132.374372-1-karprzy7@gmail.com>
+References: <20241105101132.374372-1-karprzy7@gmail.com>
+Subject: Re: [PATCH v3] wifi: ath12k: Fix for out-of bound access error
+Message-ID: <173145969935.2685813.8639859936545662512.b4-ty@quicinc.com>
+Date: Tue, 12 Nov 2024 17:01:39 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NNq5O9uB3nIrmpp69lxQwJqNMcdp1wxM
+X-Proofpoint-ORIG-GUID: NNq5O9uB3nIrmpp69lxQwJqNMcdp1wxM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ phishscore=0 suspectscore=0 impostorscore=0 mlxlogscore=647 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411130007
 
-The pull request you sent on Tue, 12 Nov 2024 18:30:37 -0500:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+On Tue, 05 Nov 2024 11:11:31 +0100, Karol Przybylski wrote:
+> Selfgen stats are placed in a buffer using print_array_to_buf_index() function.
+> Array length parameter passed to the function is too big, resulting in possible
+> out-of bound memory error.
+> Decreasing buffer size by one fixes faulty upper bound of passed array.
+> 
+> Discovered in coverity scan, CID 1600742 and CID 1600758
+> 
+> [...]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f1b785f4c7870c42330b35522c2514e39a1e28e7
+Applied, thanks!
 
-Thank you!
+[1/1] wifi: ath12k: Fix for out-of bound access error
+      commit: eb8c0534713865d190856f10bfc97cf0b88475b1
 
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jeff Johnson <quic_jjohnson@quicinc.com>
+
 
