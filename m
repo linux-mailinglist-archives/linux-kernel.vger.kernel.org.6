@@ -1,66 +1,73 @@
-Return-Path: <linux-kernel+bounces-406918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C8C9C660F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:31:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E22089C6613
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:34:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E027B2819C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:31:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82C5228200B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC15B665;
-	Wed, 13 Nov 2024 00:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12ADD1C69D;
+	Wed, 13 Nov 2024 00:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="uvKzD8hg"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nz5GAF3p"
+Received: from mail-lj1-f196.google.com (mail-lj1-f196.google.com [209.85.208.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE796FD5
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 00:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090BDC2FB
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 00:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731457902; cv=none; b=B91Dr6xJpW9v5V9xEUWf10SIHXQ15Y+Kl5ciJPKA2uAWc4EzvowSVbS39XCo9v1qrYRBuYJUFKY+j/KbzeQO/n5M8rKV8Pd8A6QtPm1Ul5sFJAHryK39IxYvUwTIAZ4ct00SH4M1nskRqw7ALS4iqGQFPJ58sYZpHub/TUy5VSI=
+	t=1731458051; cv=none; b=pGq5LOrUICquJW/Q/sRnL9PlenGBiKxEPD5ZHK1fHifRz4p4cUPLbsAAmCkgFx1wKqCPlYAGSAujqDkG9mSzKsqEfDYEPSzfzr6GPEg25/XCIwmpXS8XTAaEjSZFrFqFU5euPhrQfC9fuD+puwemWw2Piiyr6+qquACxgOORqrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731457902; c=relaxed/simple;
-	bh=BXYnbyD5Pa9/PcgnAk2NFGYl1EcVhZ+i4oG4geqloM4=;
+	s=arc-20240116; t=1731458051; c=relaxed/simple;
+	bh=MtV3z9l4ppGnoR95stXyLitFUn/bWfoBPXbl4J9IVlM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nnhMjRn6pc5LnAfKDpAfUutiwuE+DzZYOorOQB04ybwt29+cjw1+sS/DtKBLlRmk+8uI0KyM8DbvH/ISMVVsElWOoMCCpDVcY36ct/O2Rf03sqySQ4Ts1Z1e2xiU4cGsyGtifmZn9JvoaRO8g/aaGFdOyqi/lKCVwu7C1cPlAYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=uvKzD8hg; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
-	by cmsmtp with ESMTPS
-	id Ald3txnlCqvuoB1IEtwywz; Wed, 13 Nov 2024 00:31:34 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id B1IDtdTKyNc5lB1IEtKeXg; Wed, 13 Nov 2024 00:31:34 +0000
-X-Authority-Analysis: v=2.4 cv=aPb2q69m c=1 sm=1 tr=0 ts=6733f366
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=Xg3r5l62jPq6txtoRjwA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=2v3PU0kAByrpk1fKvhdLL2XQ7WWMq+VQ2i357XT9vTg=; b=uvKzD8hgKyNoVCX5EJPtobNmCp
-	I4Ocqz6KbzC4GAyoWCIH6uycAYGvNXJQGmfYQdi4lCOPpI4BRY4q9ULHYaYlkpVKz24vQ6gRI81nM
-	8MkZnYLfhZ2WiPA5oZpSu7ByzTDUOpdnPUkf7zx1ST1foeW1r+tfuWXHWFhScw97ge0COCIONJPlS
-	b3Bggh2BK+LWvWPCPg/MX1wqhVuUjlLFU/NA+2y4hfX/ATSUNz/MWc03I/SaxSDj/mIKQb6Gn7jvm
-	P/uJHtwl1f1iV1drcm5XTVy2t+mcp5ouLDooRQ+nz87/sZte9K4M7YedRO83silfF+/EYD4RgI/ox
-	hS01UaFQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:38924 helo=[10.0.1.115])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1tB1IC-0042OK-1g;
-	Tue, 12 Nov 2024 17:31:32 -0700
-Message-ID: <12c23f81-df78-48f7-b923-a31a5b3d75a0@w6rz.net>
-Date: Tue, 12 Nov 2024 16:31:30 -0800
+	 In-Reply-To:Content-Type; b=XBl8a5SNgz0fbRBakOjminemXOmDbk5P16e942HOzu7F60koJ8BMcfAvkk8LZYUIjVFjUZSY4tSa94ESZpe839Mc2TzyYE4ZOqpTEYp0mCGQMn8QbQGGOR+cTyVloX+Mec/bZXVtapDks/ImC3mm9jSKA2KHflZC76q1nrRpU3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nz5GAF3p; arc=none smtp.client-ip=209.85.208.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f196.google.com with SMTP id 38308e7fff4ca-2fb5fa910cdso1588891fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:34:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731458047; x=1732062847; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ueGWEGboEzRXmBuOHI83hWbIZN6FiPD7JtU9cIKuuNo=;
+        b=nz5GAF3pSxHr70ZaAUeDZ2vxMhSXnasW8zC5LOSDo6Xf+ZBTSmPqxHGm/dPWn773sr
+         lTbWHBvHPozuX6lmyiWq+D/HU9fO/YJRzk+b8sS1OevbiNn5oIm1Lxm1GzG99686+ayL
+         6eppdQhtyB7D5G4r4NKtuI+GuoX6UXoXft2pJOo0Xc8eigeDhBInJhdKGabLp+mk4ChT
+         cX3V4IIUBlwCIgnal9BacQLd/hNYoG5Su5d8vvXrBf/qqsBDNs1Avv3zETFhQ/Ajgurt
+         5sck8dHtpzRDoNLHeRH6+xnfClzjXPGEY3lpgexpabT6NtsLAWxzL++80ps0m96xeuZy
+         2Hgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731458047; x=1732062847;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ueGWEGboEzRXmBuOHI83hWbIZN6FiPD7JtU9cIKuuNo=;
+        b=rjLtSXEA/5rjlICXNsk0eOirkz829XwQxO9zotsrAksZEN7xJwYUN5sgSSfy01QrbA
+         vOPfgLuZ/NekGwahbfXtDAmRSanRdOjwmrMlBF3ilCVIm8hOx07Fjk7rAPa3lGPD560j
+         PV+wnxAPPkpdCyLx2A7s2AwWh+nxMBQ+7Lq46d1WhX5chIMlsCx4YAsJmiUnr68GwHfV
+         ufJyu4DF7UT2IgOqXrUj+LxjqAJ64qj+kkbC93lSebp/vLZN9/OnAKwgwRRG/gLSgRwV
+         SS+PNYak1zxdpki6tF/xYDr8gLRvZwSN+bBZwh0Os5UyDWW4oygFlaXu1P8aSAAJPlIU
+         jluQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOBQLiXqRXzDMzrObMSuavQfDDeq/RWoi05qP2lQu63Hlr1/Kn8xKu+O6mUFtDnPvPYMg1lAIhcceyEGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5BXGofdEZ+2WMY/dG9MhyQ6b0P2gAN13AE5DpB9sIg2B4nccB
+	CxYmD0W0rdkzdjEeVAh+nkxAr4bExuVjvv/PUw48asjO0k2OcZDXkL1SfScfFpY=
+X-Google-Smtp-Source: AGHT+IHThF7lX2QKxL9oJNzu2pZCjkWPz9dwQIUwkuBkBOR5ce+IfNWLCy2w8bOMAj/lFSHp7N9H1g==
+X-Received: by 2002:a05:6512:1151:b0:53d:a12b:c5e2 with SMTP id 2adb3069b0e04-53da12bc791mr11919e87.3.1731458046950;
+        Tue, 12 Nov 2024 16:34:06 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826aeb12sm2035465e87.228.2024.11.12.16.34.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 16:34:05 -0800 (PST)
+Message-ID: <d6459b89-1bb2-4906-bba7-d0ac549ccfff@linaro.org>
+Date: Wed, 13 Nov 2024 02:33:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,62 +75,338 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/119] 6.6.61-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241112101848.708153352@linuxfoundation.org>
+Subject: Re: [PATCH v2 1/1] media: qcom: camss: Restructure
+ camss_link_entities
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, krzk+dt@kernel.org
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241112133846.2397017-1-quic_vikramsa@quicinc.com>
+ <20241112133846.2397017-2-quic_vikramsa@quicinc.com>
 Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20241112101848.708153352@linuxfoundation.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20241112133846.2397017-2-quic_vikramsa@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1tB1IC-0042OK-1g
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:38924
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 35
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfMmc+y5TxbJ4JtWLYH0KXrYk+smwfUp8qalTxBd/9BiI5U9oYQnDLMoKGVFMsADbaMhLTtJwTQa7gl37F4eD3Z0YJxxzykNCol/TovSTBArt3TQp2wfw
- tcKvgxccS2mxJxwlMr6+2OwUyI6IUFVJn8q8RquEu/rJyQUtbKqmXJg6Bj5XSmhLIwhGeED1j8Po8CwFB4KQku70bhb6oKxSm0w=
 
-On 11/12/24 02:20, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.61 release.
-> There are 119 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 14 Nov 2024 10:18:19 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.61-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hello Vikram.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+On 11/12/24 15:38, Vikram Sharma wrote:
+> Refactor the camss_link_entities function by breaking it down into
+> three distinct functions. Each function will handle the linking of
+> a specific entity separately, enhancing readability.
+> 
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   drivers/media/platform/qcom/camss/camss-vfe.c |   6 +-
+>   drivers/media/platform/qcom/camss/camss.c     | 196 ++++++++++++------
+>   drivers/media/platform/qcom/camss/camss.h     |   4 +
+>   3 files changed, 138 insertions(+), 68 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+> index 83c5a36d071f..446604cc7ef6 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+> @@ -1794,9 +1794,9 @@ int msm_vfe_register_entities(struct vfe_device *vfe,
+>   				&video_out->vdev.entity, 0,
+>   				MEDIA_LNK_FL_IMMUTABLE | MEDIA_LNK_FL_ENABLED);
+>   		if (ret < 0) {
+> -			dev_err(dev, "Failed to link %s->%s entities: %d\n",
+> -				sd->entity.name, video_out->vdev.entity.name,
+> -				ret);
+> +			camss_link_err(vfe->camss, sd->entity.name,
+> +				       video_out->vdev.entity.name,
+> +				       ret);
 
-Tested-by: Ron Economos <re@w6rz.net>
+As Bryan said, the change above is unrelated to the restructuring.
 
+See also my next comment.
+
+>   			goto error_link;
+>   		}
+>   	}
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index fabe034081ed..980cb1e337be 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -1840,14 +1840,83 @@ static int camss_init_subdevices(struct camss *camss)
+>   }
+>   
+>   /*
+> - * camss_link_entities - Register subdev nodes and create links
+> + * camss_link_err - print error in case link creation fails
+> + * @src_name: name for source of the link
+> + * @sink_name: name for sink of the link
+> + */
+> +inline void camss_link_err(struct camss *camss,
+> +			   const char *src_name,
+> +			   const char *sink_name,
+> +			   int ret)
+> +{
+> +	if (!camss || !src_name || !sink_name)
+> +		return;
+> +	dev_err(camss->dev,
+> +		"Failed to link %s->%s entities: %d\n",
+> +		src_name,
+> +		sink_name,
+> +		ret);
+> +}
+
+I believe this new function is simply not needed. It is not helpful.
+
+> +/*
+> + * camss_link_entities_csid - Register subdev nodes and create links
+>    * @camss: CAMSS device
+>    *
+>    * Return 0 on success or a negative error code on failure
+>    */
+> -static int camss_link_entities(struct camss *camss)
+> +static int camss_link_entities_csid(struct camss *camss)
+>   {
+> -	int i, j, k;
+> +	struct media_entity *src_entity;
+> +	struct media_entity *sink_entity;
+> +	int ret, line_num;
+> +	u16 sink_pad;
+> +	u16 src_pad;
+> +	int i, j;
+> +
+> +	for (i = 0; i < camss->res->csid_num; i++) {
+> +		if (camss->ispif)
+> +			line_num = camss->ispif->line_num;
+> +		else
+> +			line_num = camss->vfe[i].res->line_num;
+> +
+> +		src_entity = &camss->csid[i].subdev.entity;
+> +		for (j = 0; j < line_num; j++) {
+> +			if (camss->ispif) {
+> +				sink_entity = &camss->ispif->line[j].subdev.entity;
+> +				src_pad = MSM_CSID_PAD_SRC;
+> +				sink_pad = MSM_ISPIF_PAD_SINK;
+> +			} else {
+> +				sink_entity = &camss->vfe[i].line[j].subdev.entity;
+> +				src_pad = MSM_CSID_PAD_FIRST_SRC + j;
+> +				sink_pad = MSM_VFE_PAD_SINK;
+> +			}
+
+So, you split one solid function, which covers csid->ispif and ispif->vfe
+into two separate functions, the logic of "if (camss->ispif)" is applied
+twice in two different functions, while before the change it was done just
+once, then why does it enhance readability? I think it's just the opposite...
+
+> +
+> +			ret = media_create_pad_link(src_entity,
+> +						    src_pad,
+> +						    sink_entity,
+> +						    sink_pad,
+> +						    0);
+> +			if (ret < 0) {
+> +				camss_link_err(camss, src_entity->name,
+> +					       sink_entity->name,
+> +					       ret);
+> +				return ret;
+> +			}
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * camss_link_entities_csiphy - Register subdev nodes and create links
+> + * @camss: CAMSS device
+> + *
+> + * Return 0 on success or a negative error code on failure
+> + */
+> +static int camss_link_entities_csiphy(struct camss *camss)
+> +{
+> +	int i, j;
+>   	int ret;
+>   
+>   	for (i = 0; i < camss->res->csiphy_num; i++) {
+> @@ -1858,81 +1927,77 @@ static int camss_link_entities(struct camss *camss)
+>   						    MSM_CSID_PAD_SINK,
+>   						    0);
+>   			if (ret < 0) {
+> -				dev_err(camss->dev,
+> -					"Failed to link %s->%s entities: %d\n",
+> -					camss->csiphy[i].subdev.entity.name,
+> -					camss->csid[j].subdev.entity.name,
+> -					ret);
+> +				camss_link_err(camss,
+> +					       camss->csiphy[i].subdev.entity.name,
+> +					       camss->csid[j].subdev.entity.name,
+> +					       ret);
+>   				return ret;
+>   			}
+>   		}
+>   	}
+>   
+> -	if (camss->ispif) {
+> -		for (i = 0; i < camss->res->csid_num; i++) {
+> -			for (j = 0; j < camss->ispif->line_num; j++) {
+> -				ret = media_create_pad_link(&camss->csid[i].subdev.entity,
+> -							    MSM_CSID_PAD_SRC,
+> -							    &camss->ispif->line[j].subdev.entity,
+> -							    MSM_ISPIF_PAD_SINK,
+> +	return 0;
+> +}
+> +
+> +/*
+> + * camss_link_entities_ispif - Register subdev nodes and create links
+> + * @camss: CAMSS device
+> + *
+> + * Return 0 on success or a negative error code on failure
+> + */
+> +static int camss_link_entities_ispif(struct camss *camss)
+> +{
+> +	int i, j, k;
+> +	int ret;
+> +
+> +	for (i = 0; i < camss->ispif->line_num; i++) {
+> +		for (k = 0; k < camss->res->vfe_num; k++) {
+> +			for (j = 0; j < camss->vfe[k].res->line_num; j++) {
+> +				struct v4l2_subdev *ispif = &camss->ispif->line[i].subdev;
+> +				struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
+> +
+> +				ret = media_create_pad_link(&ispif->entity,
+> +							    MSM_ISPIF_PAD_SRC,
+> +							    &vfe->entity,
+> +							    MSM_VFE_PAD_SINK,
+>   							    0);
+>   				if (ret < 0) {
+> -					dev_err(camss->dev,
+> -						"Failed to link %s->%s entities: %d\n",
+> -						camss->csid[i].subdev.entity.name,
+> -						camss->ispif->line[j].subdev.entity.name,
+> -						ret);
+> +					camss_link_err(camss, ispif->entity.name,
+> +						       vfe->entity.name,
+> +						       ret);
+>   					return ret;
+>   				}
+>   			}
+>   		}
+> -
+> -		for (i = 0; i < camss->ispif->line_num; i++)
+> -			for (k = 0; k < camss->res->vfe_num; k++)
+> -				for (j = 0; j < camss->vfe[k].res->line_num; j++) {
+> -					struct v4l2_subdev *ispif = &camss->ispif->line[i].subdev;
+> -					struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
+> -
+> -					ret = media_create_pad_link(&ispif->entity,
+> -								    MSM_ISPIF_PAD_SRC,
+> -								    &vfe->entity,
+> -								    MSM_VFE_PAD_SINK,
+> -								    0);
+> -					if (ret < 0) {
+> -						dev_err(camss->dev,
+> -							"Failed to link %s->%s entities: %d\n",
+> -							ispif->entity.name,
+> -							vfe->entity.name,
+> -							ret);
+> -						return ret;
+> -					}
+> -				}
+> -	} else {
+> -		for (i = 0; i < camss->res->csid_num; i++)
+> -			for (k = 0; k < camss->res->vfe_num; k++)
+> -				for (j = 0; j < camss->vfe[k].res->line_num; j++) {
+> -					struct v4l2_subdev *csid = &camss->csid[i].subdev;
+> -					struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
+> -
+> -					ret = media_create_pad_link(&csid->entity,
+> -								    MSM_CSID_PAD_FIRST_SRC + j,
+> -								    &vfe->entity,
+> -								    MSM_VFE_PAD_SINK,
+> -								    0);
+> -					if (ret < 0) {
+> -						dev_err(camss->dev,
+> -							"Failed to link %s->%s entities: %d\n",
+> -							csid->entity.name,
+> -							vfe->entity.name,
+> -							ret);
+> -						return ret;
+> -					}
+> -				}
+>   	}
+>   
+>   	return 0;
+>   }
+>   
+> +/*
+> + * camss_link_entities - Register subdev nodes and create links
+> + * @camss: CAMSS device
+> + *
+> + * Return 0 on success or a negative error code on failure
+> + */
+> +static int camss_link_entities(struct camss *camss)
+> +{
+> +	int ret;
+> +
+> +	ret = camss_link_entities_csiphy(camss);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = camss_link_entities_csid(camss);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (camss->ispif)
+> +		ret = camss_link_entities_ispif(camss);
+
+Since there is an expectation that the change is non-functional, please
+keep the logic unmodified.
+
+	if (camss->ispif) {
+		ret = camss_link_entities_ispif(camss);
+	} else {
+		
+	}
+
+> +	return ret;
+> +}
+> +
+>   /*
+>    * camss_register_entities - Register subdev nodes and create links
+>    * @camss: CAMSS device
+> @@ -2073,9 +2138,10 @@ static int camss_subdev_notifier_complete(struct v4l2_async_notifier *async)
+>   				input, MSM_CSIPHY_PAD_SINK,
+>   				MEDIA_LNK_FL_IMMUTABLE | MEDIA_LNK_FL_ENABLED);
+>   			if (ret < 0) {
+> -				dev_err(camss->dev,
+> -					"Failed to link %s->%s entities: %d\n",
+> -					sensor->name, input->name, ret);
+> +				camss_link_err(camss,
+> +					       sensor->name,
+> +					       input->name,
+> +					       ret);
+>   				return ret;
+>   			}
+>   		}
+> diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
+> index 0ce84fcbbd25..2086000ad5c1 100644
+> --- a/drivers/media/platform/qcom/camss/camss.h
+> +++ b/drivers/media/platform/qcom/camss/camss.h
+> @@ -160,5 +160,9 @@ void camss_pm_domain_off(struct camss *camss, int id);
+>   int camss_vfe_get(struct camss *camss, int id);
+>   void camss_vfe_put(struct camss *camss, int id);
+>   void camss_delete(struct camss *camss);
+> +void camss_link_err(struct camss *camss,
+> +		    const char *src_name,
+> +		    const char *sink_name,
+> +		    int ret);
+
+Please don't add this into the header file. Drop it.
+
+>   #endif /* QC_MSM_CAMSS_H */
+
+In fact I didn't find the change as a simplification, because now there are
+more if-branches apparently. Is there a reason why the change is needed?
+
+--
+Best wishes,
+Vladimir
 
