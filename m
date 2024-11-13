@@ -1,88 +1,151 @@
-Return-Path: <linux-kernel+bounces-407339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814499C6C22
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:56:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B38E9C6B0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:58:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93DD828A494
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:56:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90EA0B25B4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C421FA25F;
-	Wed, 13 Nov 2024 09:55:08 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF2518BBA2;
+	Wed, 13 Nov 2024 08:58:06 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D121FA278
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392A8185936
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731491707; cv=none; b=UbcHfj7OLofJDjIRJuR7D6B7LjPApijzkfWkFAOfn8wYLDDXkLm/HiDPaoSeuXPRlhJ2+EwpGBL8IVMNeYohu3S6UIj8V/da3lOaPSa3dO8NdPzC5VlxN/RIRazMi5CYLIXg+Nn2flxIkvNaq+G/pWetY3IfefnJ6JX+JEeqq9Y=
+	t=1731488286; cv=none; b=RPoH6CNwcILGg7X3wDzi5oResRJwO4+Uzy2kjG/0+C5uL/zPWyu153rY1JQ0kIC89p3YADoZy8r7iSU5uGntR45AOBDgBO7VnvHa0QX6PrVN0HK41oB2WvV+8SLCfkUttbe/wC5YXjIS+wIAJKhYASrbCuvw0rq5R1PUknyXHWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731491707; c=relaxed/simple;
-	bh=p/U33DStNbGxmGap1B1YFe1j3MFsLDaLtWL3WRosyzY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XhnTrygtT/t9LwWTsbJzQoc9YV8c8r1Zihapb8Qby5qt7iD3u3o/W/LHGc9idWqo6kpDFNwwSqNH+lxgyeA9DAJUS84wLJbXS1M0dzci0J1VNRwOtc75NWzPPnIiNn2z3HKOcbQwZZMtWvgJ1GspNkpsTmJPbBhCOd7Qc6zWP+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83ab434c629so673558039f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 01:55:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731491704; x=1732096504;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=La6p7LDFTDd20P9Ap5B5ZW0+Q1G46jQaAsRpKQVub5U=;
-        b=jDKfphVS67LY5OmjOPDEliFVzOG8g6KbFRltkCUTm4W7O83kzb6d+J43DAvE9vZW1P
-         W1Gzp7IBGSKtXqWTHIn+f+R+nnmYjy90sQCuOCKMj/gZ7zmwaUxmo8OeunUpCiDmmirj
-         RdHP3h3imHaQgaD/6yoE18saU0GVVZ/xBJhczYWL9ySV3bRFk/eQYb/0PJVoPFoWNS14
-         3kaShjKfKuHnfSQqWhxHhU+anHESDyJk5k4aB7+nowIH89hIuJu9sDox1W9s7oebg2NH
-         QAIJYluwHNPW3m5x0IvHJP+V3xcnJbqo9dVmKChUDnOevRmb9jsuOoBuq5339NzqeAe1
-         N8iw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtsSmQh6HkXqf0OuGZCQRpGSM0THqIKYGnWHAc+hNWppm6rsIas7jqGgMh0zBjv2d/4IFYwmibV/qR0dY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+igkSlEZbQWAffvxDufIAKenTsESARHTC+PGCKis5Qtyj/iOA
-	o8aIG+2r5uryZ0LpP7JZT/J4gXO64VftUhL13k6qt4uSAO2FkoN5rz88U86efeTd5+zIlshlVZp
-	4JidVVf29Nrw0UTSl0eWauJA/DTlvw9sdkP8Z9bxx8CIEpoUYm5whPiM=
-X-Google-Smtp-Source: AGHT+IFsfEUMQL1mZoWQN39J627bxb6mJ5re6byZtSmb+hK9QxIgcOD6z5h6xMDBkfPWZ3Gh1tpqOPLKWi/vH24BMdNnJ1sNMRxd
+	s=arc-20240116; t=1731488286; c=relaxed/simple;
+	bh=nXIoM2Ginl3Q2I224VFn1HMh0EjvzcaH4pfKg4jngko=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q0RyR+cCK+yyjg9rIkfiPtl94Bt41hrANojfPnNn04qwGkidwyHyWGAkR+5wDD8+UphdRySvrMshy4sv+o1YqAlPG/nr5bAFl2DdHf+zUrBM84UOiYLlauL8Qf1RfMJNMu+UEw/dFZS9tTjZr5bG8Rj87/0gc/+HZJDpC5q/vA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XpHFQ51B7z1jy0d;
+	Wed, 13 Nov 2024 16:56:10 +0800 (CST)
+Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6B135180042;
+	Wed, 13 Nov 2024 16:58:00 +0800 (CST)
+Received: from lihuafei.huawei.com (10.90.53.74) by
+ kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 13 Nov 2024 16:57:59 +0800
+From: Li Huafei <lihuafei1@huawei.com>
+To: <gregkh@linuxfoundation.org>, <tiantao6@hisilicon.com>
+CC: <rafael@kernel.org>, <Jonathan.Cameron@huawei.com>, <baohua@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lihuafei1@huawei.com>
+Subject: [PATCH] topology: Keep the cpumask unchanged when printing cpumap
+Date: Thu, 14 Nov 2024 00:59:00 +0800
+Message-ID: <20241113165900.78095-1-lihuafei1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c87:b0:3a6:ac17:13e5 with SMTP id
- e9e14a558f8ab-3a6f1a1ed84mr204243095ab.11.1731491704296; Wed, 13 Nov 2024
- 01:55:04 -0800 (PST)
-Date: Wed, 13 Nov 2024 01:55:04 -0800
-In-Reply-To: <CAFj5m9+GAv4JPX=ABgwUo7RSSZ4zNsBKpiJOfuxmmwg+GDP3wA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67347778.050a0220.2a2fcc.0006.GAE@google.com>
-Subject: Re: [syzbot] [block?] possible deadlock in loop_reconfigure_limits
-From: syzbot <syzbot+867b0179d31db9955876@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ming.lei@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemf500004.china.huawei.com (7.202.181.242)
 
-Hello,
+During fuzz testing, the following warning was discovered:
 
-syzbot tried to test the proposed patch but the build/boot failed:
+ different return values (15 and 11) from vsnprintf("%*pbl
+ ", ...)
 
-security/apparmor/domain.c:695:3: error: expected expression
-security/apparmor/domain.c:697:3: error: use of undeclared identifier 'new_profile'
-security/apparmor/domain.c:699:8: error: use of undeclared identifier 'new_profile'
-security/apparmor/domain.c:704:11: error: use of undeclared identifier 'new_profile'
+ test:keyward is WARNING in kvasprintf
+ WARNING: CPU: 55 PID: 1168477 at lib/kasprintf.c:30 kvasprintf+0x121/0x130
+ Call Trace:
+  kvasprintf+0x121/0x130
+  kasprintf+0xa6/0xe0
+  bitmap_print_to_buf+0x89/0x100
+  core_siblings_list_read+0x7e/0xb0
+  kernfs_file_read_iter+0x15b/0x270
+  new_sync_read+0x153/0x260
+  vfs_read+0x215/0x290
+  ksys_read+0xb9/0x160
+  do_syscall_64+0x56/0x100
+  entry_SYSCALL_64_after_hwframe+0x78/0xe2
 
+The call trace shows that kvasprintf() reported this warning during the
+printing of core_siblings_list. kvasprintf() has several steps:
 
-Tested on:
+ (1) First, calculate the length of the resulting formatted string.
 
-commit:         6d59cab0 Add linux-next specific files for 20241111
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git next-20241111
-kernel config:  https://syzkaller.appspot.com/x/.config?x=75175323f2078363
-dashboard link: https://syzkaller.appspot.com/bug?extid=867b0179d31db9955876
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+ (2) Allocate a buffer based on the returned length.
 
-Note: no patches were applied.
+ (3) Then, perform the actual string formatting.
+
+ (4) Check whether the lengths of the formatted strings returned in
+     steps (1) and (2) are consistent.
+
+If the core_cpumask is modified between steps (1) and (3), the lengths
+obtained in these two steps may not match. Indeed our test includes cpu
+hotplugging, which should modify core_cpumask while printing.
+
+To fix this issue, cache the cpumask into a temporary variable before
+calling cpumap_print_{list, cpumask}_to_buf(), to keep it unchanged
+during the printing process.
+
+Fixes: bb9ec13d156e ("topology: use bin_attribute to break the size limitation of cpumap ABI")
+Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+---
+ drivers/base/topology.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/base/topology.c b/drivers/base/topology.c
+index 89f98be5c5b9..70dbd7ef038d 100644
+--- a/drivers/base/topology.c
++++ b/drivers/base/topology.c
+@@ -27,9 +27,17 @@ static ssize_t name##_read(struct file *file, struct kobject *kobj,		\
+ 			   loff_t off, size_t count)				\
+ {										\
+ 	struct device *dev = kobj_to_dev(kobj);                                 \
++	cpumask_var_t mask;							\
++	ssize_t n;								\
+ 										\
+-	return cpumap_print_bitmask_to_buf(buf, topology_##mask(dev->id),	\
+-					   off, count);                         \
++	if (!alloc_cpumask_var(&mask, GFP_KERNEL))				\
++		return 0;							\
++										\
++	cpumask_copy(mask, topology_##mask(dev->id));				\
++	n = cpumap_print_bitmask_to_buf(buf, mask, off, count);			\
++	free_cpumask_var(mask);							\
++										\
++	return n;								\
+ }										\
+ 										\
+ static ssize_t name##_list_read(struct file *file, struct kobject *kobj,	\
+@@ -37,9 +45,17 @@ static ssize_t name##_list_read(struct file *file, struct kobject *kobj,	\
+ 				loff_t off, size_t count)			\
+ {										\
+ 	struct device *dev = kobj_to_dev(kobj);					\
++	cpumask_var_t mask;							\
++	ssize_t n;								\
++										\
++	if (!alloc_cpumask_var(&mask, GFP_KERNEL))				\
++		return 0;							\
++										\
++	cpumask_copy(mask, topology_##mask(dev->id));				\
++	n = cpumap_print_list_to_buf(buf, mask, off, count);			\
++	free_cpumask_var(mask);							\
+ 										\
+-	return cpumap_print_list_to_buf(buf, topology_##mask(dev->id),		\
+-					off, count);				\
++	return n;								\
+ }
+ 
+ define_id_show_func(physical_package_id, "%d");
+-- 
+2.25.1
+
 
