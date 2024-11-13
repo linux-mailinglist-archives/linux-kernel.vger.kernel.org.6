@@ -1,213 +1,108 @@
-Return-Path: <linux-kernel+bounces-407382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 197DF9C6CDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:29:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED499C6CB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:20:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E01EB2929A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:19:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D864E28BF92
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F4B1FB8BA;
-	Wed, 13 Nov 2024 10:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/yZkrUW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF291FBC91;
+	Wed, 13 Nov 2024 10:20:44 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09C12AE90;
-	Wed, 13 Nov 2024 10:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDE41FBC82
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731493170; cv=none; b=ZPWVtRUdXaBjJxODlhUbEagQiTzg09tKhdZF7FeG6n8UaMcTiBeUUzL0Z61go4XjFEy9l0YIKrAaKqwa9OfzyILnSo0YnXeGHVguGRIDfbviiXk5nQxSZ3ka28tAV1YmJUra9rdU0rzjBpJZze7FN5AAoh4YkiZeqUvHA2ofSCc=
+	t=1731493244; cv=none; b=gmHwin1gucFlfGg28+jqlqmQ30km1rOryV8BTG0MYDPzO0DGd+2CsInNdf53FQwzdbq0MGoliXeh2mb9+4wJ7L5HtsJ45wNvO0jiIlkF5P3I8b2qOaNDLqya0mu3GG5V0LP+EnZt2dSnGQHmkY5HvUZqw0ZnRTsRnvE5wRrXOH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731493170; c=relaxed/simple;
-	bh=pU6pB26ySh8saykSDK55Zekt0Hffao3oKz0ODlb9rwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PV4sQbXiQ0PUi+h6Ekng87MHXqWhUg5XVmxFpxVR0XbG8hNN308bA4W/mkI1IziCJlK/1A/2KmC7/775z0PBkqqDJNXrs1XUX/wkEjKdcIp3tv5AY3Qzt7G3qP44BJ1SKYpPE6rU5/SWKl/isws+0y/S+GeERC5H83jb0CzQQd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/yZkrUW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C35D8C4CECD;
-	Wed, 13 Nov 2024 10:19:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731493169;
-	bh=pU6pB26ySh8saykSDK55Zekt0Hffao3oKz0ODlb9rwI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R/yZkrUWUvToi2+LtTxf2a/fPltRPGO+/ty4021M9ZAtKNdlaNa9Vp7vJJ9geLzZB
-	 9m0/squq+pWy8pCIqOr9Uo06uoFUNAoAQbkCElGhB15bgTIDioSNMpx6+PSYYu3jbr
-	 RDMJRZkHJRdBusYp6s8a7RNzU/Gb4gg/FjMEjzAonbSxNdSo+smBBtBN734t6tWvAD
-	 hSEt0Po4oAQGGQJcMRWdOkvF+ab8rfz8yamb2matfsD78hV0tKPAKmJXQRQ8+Tu5ga
-	 WCMLJiJa3zOlXtuzkcU48roxDhuSEEzp0cEBIAOHeeXNe57s0PritQVqFEw2S8g2ok
-	 8/xZIBD5dysRg==
-Date: Wed, 13 Nov 2024 11:19:20 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, 
-	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
-Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
- tracing program
-Message-ID: <20241113-sensation-morgen-852f49484fd8@brauner>
-References: <20241112082600.298035-1-song@kernel.org>
- <20241112082600.298035-3-song@kernel.org>
+	s=arc-20240116; t=1731493244; c=relaxed/simple;
+	bh=+guABV/ldCPRDgJyD2HO2GPHVEx0sgy1hR3Gi8cv7mg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ev/lMvlga9fjl02/g9Mpktg1ppZ9P140l1KIhal3VZLCsNXuK9oLxSZnbp+BC1bu+nYlLkYUnm6G86t7krG8gFb4uEqQb8TO/d+H5TzTHFip6nlVH/NywLhFtoGGqfVOxKOit7Mh6dLlOUAeHxDPCaPWjVWTieDo99GweFqIbAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XpK6w47Zvz9sSX;
+	Wed, 13 Nov 2024 11:20:40 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id YNBYsjjOOxZq; Wed, 13 Nov 2024 11:20:40 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XpK6w3MQmz9sSV;
+	Wed, 13 Nov 2024 11:20:40 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 618348B79F;
+	Wed, 13 Nov 2024 11:20:40 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 4OzcVFT7nyHT; Wed, 13 Nov 2024 11:20:40 +0100 (CET)
+Received: from [172.25.230.108] (unknown [172.25.230.108])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3A15F8B763;
+	Wed, 13 Nov 2024 11:20:40 +0100 (CET)
+Message-ID: <b4d3084c-aa26-4d35-a330-8ba55589b89e@csgroup.eu>
+Date: Wed, 13 Nov 2024 11:20:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241112082600.298035-3-song@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] powerpc/vdso: Remove unused clockmode asm offsets
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20241113-vdso-powerpc-asm-offsets-v1-1-3f7e589f090d@linutronix.de>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20241113-vdso-powerpc-asm-offsets-v1-1-3f7e589f090d@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 12, 2024 at 12:25:56AM -0800, Song Liu wrote:
-> inode storage can be useful for non-LSM program. For example, file* tools
-> from bcc/libbpf-tools can use inode storage instead of hash map; fanotify
-> fastpath [1] can also use inode storage to store useful data.
+
+
+Le 13/11/2024 à 09:06, Thomas Weißschuh a écrit :
+> These offsets are not used anymore, delete them.
 > 
-> Make inode storage available for tracing program. Move bpf inode storage
-> from a security blob to inode->i_bpf_storage, and adjust related code
-> accordingly.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20241029231244.2834368-1-song@kernel.org/
-> Signed-off-by: Song Liu <song@kernel.org>
+> Fixes: c39b1dcf055d ("powerpc/vdso: Add a page for non-time data")
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
 > ---
->  fs/inode.c                     |  1 +
->  include/linux/bpf.h            |  9 +++++++++
->  include/linux/bpf_lsm.h        | 29 -----------------------------
->  include/linux/fs.h             |  4 ++++
->  kernel/bpf/Makefile            |  3 +--
->  kernel/bpf/bpf_inode_storage.c | 32 +++++---------------------------
->  kernel/bpf/bpf_lsm.c           |  4 ----
->  kernel/trace/bpf_trace.c       |  4 ++++
->  security/bpf/hooks.c           |  6 ------
->  9 files changed, 24 insertions(+), 68 deletions(-)
+> This is based on powerpc/topic/vdso.
+> Feel free to fold this change into the original commit.
+> ---
+>   arch/powerpc/kernel/asm-offsets.c | 2 --
+>   1 file changed, 2 deletions(-)
 > 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 8dabb224f941..3c679578169f 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -286,6 +286,7 @@ static struct inode *alloc_inode(struct super_block *sb)
->  void __destroy_inode(struct inode *inode)
->  {
->  	BUG_ON(inode_has_buffers(inode));
-> +	bpf_inode_storage_free(inode);
->  	inode_detach_wb(inode);
->  	security_inode_free(inode);
->  	fsnotify_inode_delete(inode);
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index 1b84613b10ac..0b31d2e74df6 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -2672,6 +2672,7 @@ struct bpf_link *bpf_link_by_id(u32 id);
->  const struct bpf_func_proto *bpf_base_func_proto(enum bpf_func_id func_id,
->  						 const struct bpf_prog *prog);
->  void bpf_task_storage_free(struct task_struct *task);
-> +void bpf_inode_storage_free(struct inode *inode);
->  void bpf_cgrp_storage_free(struct cgroup *cgroup);
->  bool bpf_prog_has_kfunc_call(const struct bpf_prog *prog);
->  const struct btf_func_model *
-> @@ -2942,6 +2943,10 @@ static inline void bpf_task_storage_free(struct task_struct *task)
->  {
->  }
->  
-> +static inline void bpf_inode_storage_free(struct inode *inode)
-> +{
-> +}
-> +
->  static inline bool bpf_prog_has_kfunc_call(const struct bpf_prog *prog)
->  {
->  	return false;
-> @@ -3305,6 +3310,10 @@ extern const struct bpf_func_proto bpf_task_storage_get_recur_proto;
->  extern const struct bpf_func_proto bpf_task_storage_get_proto;
->  extern const struct bpf_func_proto bpf_task_storage_delete_recur_proto;
->  extern const struct bpf_func_proto bpf_task_storage_delete_proto;
-> +extern const struct bpf_func_proto bpf_inode_storage_get_proto;
-> +extern const struct bpf_func_proto bpf_inode_storage_get_recur_proto;
-> +extern const struct bpf_func_proto bpf_inode_storage_delete_proto;
-> +extern const struct bpf_func_proto bpf_inode_storage_delete_recur_proto;
->  extern const struct bpf_func_proto bpf_for_each_map_elem_proto;
->  extern const struct bpf_func_proto bpf_btf_find_by_name_kind_proto;
->  extern const struct bpf_func_proto bpf_sk_setsockopt_proto;
-> diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-> index aefcd6564251..a819c2f0a062 100644
-> --- a/include/linux/bpf_lsm.h
-> +++ b/include/linux/bpf_lsm.h
-> @@ -19,31 +19,12 @@
->  #include <linux/lsm_hook_defs.h>
->  #undef LSM_HOOK
->  
-> -struct bpf_storage_blob {
-> -	struct bpf_local_storage __rcu *storage;
-> -};
-> -
-> -extern struct lsm_blob_sizes bpf_lsm_blob_sizes;
-> -
->  int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
->  			const struct bpf_prog *prog);
->  
->  bool bpf_lsm_is_sleepable_hook(u32 btf_id);
->  bool bpf_lsm_is_trusted(const struct bpf_prog *prog);
->  
-> -static inline struct bpf_storage_blob *bpf_inode(
-> -	const struct inode *inode)
-> -{
-> -	if (unlikely(!inode->i_security))
-> -		return NULL;
-> -
-> -	return inode->i_security + bpf_lsm_blob_sizes.lbs_inode;
-> -}
-> -
-> -extern const struct bpf_func_proto bpf_inode_storage_get_proto;
-> -extern const struct bpf_func_proto bpf_inode_storage_delete_proto;
-> -void bpf_inode_storage_free(struct inode *inode);
-> -
->  void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog, bpf_func_t *bpf_func);
->  
->  int bpf_lsm_get_retval_range(const struct bpf_prog *prog,
-> @@ -66,16 +47,6 @@ static inline int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
->  	return -EOPNOTSUPP;
->  }
->  
-> -static inline struct bpf_storage_blob *bpf_inode(
-> -	const struct inode *inode)
-> -{
-> -	return NULL;
-> -}
-> -
-> -static inline void bpf_inode_storage_free(struct inode *inode)
-> -{
-> -}
-> -
->  static inline void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog,
->  					   bpf_func_t *bpf_func)
->  {
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 3559446279c1..479097e4dd5b 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -79,6 +79,7 @@ struct fs_context;
->  struct fs_parameter_spec;
->  struct fileattr;
->  struct iomap_ops;
-> +struct bpf_local_storage;
->  
->  extern void __init inode_init(void);
->  extern void __init inode_init_early(void);
-> @@ -648,6 +649,9 @@ struct inode {
->  #ifdef CONFIG_SECURITY
->  	void			*i_security;
->  #endif
-> +#ifdef CONFIG_BPF_SYSCALL
-> +	struct bpf_local_storage __rcu *i_bpf_storage;
-> +#endif
-
-Sorry, we're not growing struct inode for this. It just keeps getting
-bigger. Last cycle we freed up 8 bytes to shrink it and we're not going
-to waste them on special-purpose stuff. We already NAKed someone else's
-pet field here.
+> diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
+> index 7b3feb6bc2103bc89ea14fbaac6937f1c97d4ff8..23733282de4d9f975aa9450b26c1049688e6663e 100644
+> --- a/arch/powerpc/kernel/asm-offsets.c
+> +++ b/arch/powerpc/kernel/asm-offsets.c
+> @@ -346,8 +346,6 @@ int main(void)
+>   #else
+>   	OFFSET(CFG_SYSCALL_MAP32, vdso_arch_data, syscall_map);
+>   #endif
+> -	OFFSET(VDSO_CLOCKMODE_OFFSET, vdso_arch_data, data[0].clock_mode);
+> -	DEFINE(VDSO_CLOCKMODE_TIMENS, VDSO_CLOCKMODE_TIMENS);
+>   
+>   #ifdef CONFIG_BUG
+>   	DEFINE(BUG_ENTRY_SIZE, sizeof(struct bug_entry));
+> 
+> ---
+> base-commit: 0161bd38c24312853ed5ae9a425a1c41c4ac674a
+> change-id: 20241113-vdso-powerpc-asm-offsets-056016f80174
+> 
+> Best regards,
 
