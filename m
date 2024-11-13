@@ -1,134 +1,149 @@
-Return-Path: <linux-kernel+bounces-407091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B139C68A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:24:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015A09C68AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:25:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6F5F282264
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:24:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B631F240F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57001714D7;
-	Wed, 13 Nov 2024 05:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF3E175D54;
+	Wed, 13 Nov 2024 05:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n9HW6KHc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g5V9JwD8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1837081F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054B0433CE;
+	Wed, 13 Nov 2024 05:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731475456; cv=none; b=IzonIZs8byKvMtmdFBpdYExYJkJUcIb8ukQVt/3CvGf1HMn0TdvJdUNG6WX19p7gyaMTkYZgVuVs70MUrriCWMVPuiiKI54TFlt0zNehG1yqtKcXxMH/G7chCqDpbnHzWdQK41fravi/IHB3dDMBfp2K3t4EqMGAfSdPbwXhj2A=
+	t=1731475490; cv=none; b=ipTs7qMxOAENCWjDM9qHJ5sjhkPxRDKI3xTDYTtT8elGGR4TSfwRYtc1C/XNXNJDM7wVTFNpVZZgIK4R81vwlaM8ufAJ2UNFSMO1NaWC2vSMTHX+Sm0E+I2LA7XaoctT979YoZeSyMmr1eWiogYzQoK+1Gx1u1h3lS8cs1OYfsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731475456; c=relaxed/simple;
-	bh=HmJm6AvXmIawUg1nmasfuVL0GJH2LxZ0AqcVw8E27Xk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MuPvKac7WY7uGjyV+Dqf4tsjjSN3oAgOTPJK1pSGlzGJTfnO/ut+DZoLB6+ubSCNhlAPXYycBA0floRjNdsS967u2zFJ2bxNPYgOn5McTNfLCYvLfnWH0ZVrNclXYErbNzYe/UltHtPLxep9i0u4dV+GmgVYiNcpfWLYC3AT7QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n9HW6KHc; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731475454; x=1763011454;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=HmJm6AvXmIawUg1nmasfuVL0GJH2LxZ0AqcVw8E27Xk=;
-  b=n9HW6KHc+VE4ZVSiP+XBraR2Dc9R6Vh/eqPOwZU8ny5pv9qWSSg6zV14
-   kT4a+quZloUdYf3h1/CMW1o6fByZtTujaRRCDwTL8pxCZBdxskw3U85kR
-   hPXyc65Jar2ti1nv+uO36J347UXT+g9IImsjILERuNI4gHcrckox8ahyz
-   uJ1J2bvxl2zV7551YqVaFCMj8ZYOwsqHCVwuFZU0cQwcsusZZqyjXKFGp
-   8OM8N4b/+mm6sOSdWaWdTkFzZkps73AUB46Dr9eXRRgGIVtmHUBFSyOg4
-   g7I3tj+F1UqrZo8EBFYC4DlsPT0K3eewGQ8Uv+5N304FxIsxOL/Yecn2Y
-   w==;
-X-CSE-ConnectionGUID: LiLEE3JFSBmq8Ek4qZ+vpw==
-X-CSE-MsgGUID: mWLJ5VvuQeGZfQlHZ6dd0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31436614"
-X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
-   d="scan'208";a="31436614"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 21:24:13 -0800
-X-CSE-ConnectionGUID: NJv4XNh/RC67hkv2ZqFUfQ==
-X-CSE-MsgGUID: Iwx2b4HYTRW0xNEwAz26Xw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
-   d="scan'208";a="88149831"
-Received: from unknown (HELO JF5300-B11A338T.jf.intel.com) ([10.242.51.115])
-  by orviesa007.jf.intel.com with ESMTP; 12 Nov 2024 21:24:14 -0800
-From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev,
-	usamaarif642@gmail.com,
-	ryan.roberts@arm.com,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	akpm@linux-foundation.org
-Cc: wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com,
-	kanchana.p.sridhar@intel.com
-Subject: [PATCH v1] mm: zswap: Fix a potential memory leak in zswap_decompress().
-Date: Tue, 12 Nov 2024 21:24:13 -0800
-Message-Id: <20241113052413.157039-1-kanchana.p.sridhar@intel.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1731475490; c=relaxed/simple;
+	bh=++ZK1eWng+G0uvdmReXJNucOazbByuLdx468VaDOnLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DyMlAxjp8f4O8XCuFzsAU70KnoztEsI31iCERzdPrNGDD/qDGBJwHlUZhRJT3Ds4NnF7ZcI9jtzolq87rK2iudkzRDmZ8dOunag96dwrcefDz7QKglMy3OIWaDveevtMmgoxMq1CkvYfCFlqvbzKTOFrSUvxhaeQLIF4mF2E804=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g5V9JwD8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACMRURk020707;
+	Wed, 13 Nov 2024 05:24:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1mCmIuShdr4V8oXy7/eDo7kQN6piT7CsL1EVsN5eeuA=; b=g5V9JwD8aRu5Clvl
+	rSpIReO7pnL9hqmHNuVM458XmJfnIpBA3JtvuOHTRrCKBAMGNhWevAvWQzd7fEot
+	oUWRWfyR9ymrIk/cqsiu25wuea1GOkPkTAPy2qFIWgKpqigxv3nkn/QJhO4EYoPP
+	Y8ihqrA3byUvsutb5oJeRPVaNkjCaVXmQvfNBGCVuiiFKTCZ4Wcs0pY1C4ze2doy
+	Swpg0wunjxFG1dFhfymEeLln5ZIzBbQCqRGw5iZeuTT1TIPUA04caU8dq42tHhHd
+	QoNenNCig8Zaju03fWBfl8ufGuKkpMLupLsQRFWG1+mb3HwUr9sGG3HBO4bcYDFy
+	aHLyDg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42va079w4c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 05:24:34 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AD5OXZC023102
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 05:24:33 GMT
+Received: from [10.216.46.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
+ 2024 21:24:29 -0800
+Message-ID: <e84026cf-7b5b-a49b-6f82-f3af7c67f3ef@quicinc.com>
+Date: Wed, 13 Nov 2024 10:54:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v7 2/2] PCI: Enable runtime pm of the host bridge
+Content-Language: en-US
+To: Markus Elfring <Markus.Elfring@web.de>, <linux-pci@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Kevin Xie
+	<kevin.xie@starfivetech.com>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+	<kw@linux.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        "Manivannan
+ Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh@kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski
+	<m.szyprowski@samsung.com>,
+        Mayank Rana <quic_mrana@quicinc.com>,
+        "Rafael J.
+ Wysocki" <rafael@kernel.org>
+References: <20241111-runtime_pm-v7-0-9c164eefcd87@quicinc.com>
+ <20241111-runtime_pm-v7-2-9c164eefcd87@quicinc.com>
+ <4de3c1d4-2488-40bf-8089-9e2246dbf28c@web.de>
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <4de3c1d4-2488-40bf-8089-9e2246dbf28c@web.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: lKkPckjgLSZvVyQGp6N6L6nm0V2BT8HM
+X-Proofpoint-ORIG-GUID: lKkPckjgLSZvVyQGp6N6L6nm0V2BT8HM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ mlxlogscore=936 clxscore=1015 adultscore=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 mlxscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411130046
 
-This is a hotfix for a potential zpool memory leak that could result in
-the existing zswap_decompress():
 
-        mutex_unlock(&acomp_ctx->mutex);
 
-        if (src != acomp_ctx->buffer)
-                zpool_unmap_handle(zpool, entry->handle);
+On 11/11/2024 10:16 PM, Markus Elfring wrote:
+> …
+>> PM framework expectes parent runtime pm enabled before enabling runtime
+> 
+>                 expects?                PM?
+> 
+> 
+>> pm of the child. …
+> 
+>    PM?
+> 
+> 
+>> drivers, before calling pci_host_probe() as pm frameworks expects if the
+> 
+>                                                PM framework?
+> 
+> 
+>> parent device supports runtime pm then it needs to enabled before child
+> 
+>                                   PM?
+> 
+> 
+>> runtime pm.
+> 
+>            PM?
+> 
+> 
+> Can any tags (like “Fixes” and “Cc”) become helpful for the proposed change?
+Bjorn,  This problem was present from starting on wards not sure what is 
+the fix tag we need to use here, is it fine if we use fix tag as below.
+as at this function only we are trying add the fix.
 
-Releasing the lock before the conditional does not protect the integrity of
-"src", which is set earlier under the acomp_ctx mutex lock. This poses a
-risk for the conditional behaving as intended, and consequently not
-unmapping the zpool handle, which could cause a zswap zpool memory leak.
+Fixes: 49b8e3f3ed1d4 ("PCI: Add generic function to probe PCI host 
+controllers")
 
-This patch moves the mutex_unlock() to occur after the conditional and
-subsequent zpool_unmap_handle(). This ensures that the value of "src"
-obtained earlier, with the mutex locked, does not change.
-
-Even though an actual memory leak was not observed, this fix seems like a
-cleaner implementation.
-
-Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Fixes: 9c500835f279 ("mm: zswap: fix kernel BUG in sg_init_one")
----
- mm/zswap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/mm/zswap.c b/mm/zswap.c
-index f6316b66fb23..58810fa8ff23 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -986,10 +986,11 @@ static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
- 	acomp_request_set_params(acomp_ctx->req, &input, &output, entry->length, PAGE_SIZE);
- 	BUG_ON(crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait));
- 	BUG_ON(acomp_ctx->req->dlen != PAGE_SIZE);
--	mutex_unlock(&acomp_ctx->mutex);
- 
- 	if (src != acomp_ctx->buffer)
- 		zpool_unmap_handle(zpool, entry->handle);
-+
-+	mutex_unlock(&acomp_ctx->mutex);
- }
- 
- /*********************************
-
-base-commit: 0e5bdedb39ded767bff4c6184225578595cee98c
--- 
-2.27.0
-
+- Krishna Chaitanya.
+> 
+> Regards,
+> Markus
 
