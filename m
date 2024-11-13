@@ -1,114 +1,150 @@
-Return-Path: <linux-kernel+bounces-407504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0DB9C6E9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:07:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25C49C6E59
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:56:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEA09B296B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:58:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FB38B28182
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86C120604B;
-	Wed, 13 Nov 2024 11:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0466220264A;
+	Wed, 13 Nov 2024 11:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="FR0i9kl9"
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AM62Nil+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBDE200C98;
-	Wed, 13 Nov 2024 11:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CCA202658;
+	Wed, 13 Nov 2024 11:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731498817; cv=none; b=OqmC+blGDyVWSIGtnM/Uxh7hL2x24UESaNlyBJdMo92nCrCFohKCg9GXUhMCO+nGa6R4AIGwaMClRrXYSqSChiB5c7MBceFKhXE6hxp33FDZ+1VPlsRgdn4/NxUlqT2gT3A2WyPsZNcruO59zNjtP+1mlB9NhQkDqCL9Kja68jo=
+	t=1731498793; cv=none; b=sBA6un2J8B7gYr7093KtRyDgRjHbhrk7wxjyJWXg+oit6/lRgouJwHz2f20U5b8IdvCsyhcpcGkk6+PYDB291WNPkeoaT47DDrZA1gaF7FCQNsgL2ykLErwWN7AMTwFFVpE3T1DCFJAViA9P70FqK50PVVkJG0D03M7cKBYLr6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731498817; c=relaxed/simple;
-	bh=JcMC9E1ouK0FLdpvw6gtX/41VcRf/kXd7ufXNrhoIq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VRwIpn/OcPIsbmGqKtGZegwfZ+0lTzQLoRLqPjcO37y8G49vh2BjYZukd2dEtHz4KzWTSb15RsOHwT4ykmNDuFnOh/Bk2kJRDLa0r7r+Ek6iJdMRymjE0ae1ge+YBYpkKHdsCLINSjNrEoofT0M5aKZii+NcPIyKlciqU9uvRcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=FR0i9kl9; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1731498743;
-	bh=ggRdDU7iCZJOkTsKF0zJgrkrHsItDChMLE7lMfNv2kw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=FR0i9kl9KViUsYRWJUgOAgKE15G1SZFWhKEEgGK9gyuKrRhxjlv928lZRX2wOJY48
-	 rlKRpVqXboePkE8QdBACRrszgKLlhOCl5PGvW7S2QfTGXq12RcdhFCTDzVIorDztoT
-	 RU6FKca1nUBegQrtpvJn1SlCkNqo44Z3c3+Gti6o=
-X-QQ-mid: bizesmtpip3t1731498712t9idxh8
-X-QQ-Originating-IP: zNDgcafP9tOrJI6aPGG7N94+rCjp5gId1t4KvU6tGFA=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 13 Nov 2024 19:51:49 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 18098386907033749766
-From: WangYuli <wangyuli@uniontech.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	benjamin.tissoires@enac.fr,
-	chatty@enac.fr,
-	jkosina@suse.cz,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com
-Cc: WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] HID: multitouch: Remove useless comment
-Date: Wed, 13 Nov 2024 19:51:29 +0800
-Message-ID: <021947F5C0C056AD+20241113115129.31921-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731498793; c=relaxed/simple;
+	bh=f43ftMVxL/B8PkC156aXtg3/6/upLMEzfobjpfiI2pc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=RewKUXsCIMEuG/q4zItNXwABNCxzj9AHmftLs9giCX0x75h0qPRtV3oVjTqVtAIdKsC37aZc3cQLf7G1hUdiAI5yXsU+dWFW8oASnCwzwvCMpoESkKimwGdRH0IdRxYRTTdmFUohvGlat9+LS62KteFNwdhHyMwcSCJY1WKdZ6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AM62Nil+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AD9OWGU000890;
+	Wed, 13 Nov 2024 11:52:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8a/d8ds5z4P8ANDBSqGszJkjx8PVFTpCO1DFckhROUE=; b=AM62Nil+JZxbVain
+	WvoyqR881jR6BAhbuM55INUK82vv9JgJPYfY5R9e6LE6yhlqwuTPCb8g33q0Spcb
+	fOF1xsBqvUhFmFK3V2JqKnEFQ/fEchdX5bXzxryJjWhUPFP2jC2UgKbI8dO+Aw0x
+	mzWnzSIpoOdAE/mthmW40n4bzLGJq/WpJbvolB4S3XUT1SoiJdoy5pKFgVvLYhMX
+	0BqHn4yMEhdmVSJ1ecLzomJXMM8A/0YgdUMOBeLfRMt98sWF8qpZaLi5C2PKme5G
+	F/FFX8oizFX5ejH9RlW+HHjUemTLN9lVonkcxyHsKlRo0Ttmhk4dsVzsadF9/y3G
+	fcZq7g==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vsf30c1g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 11:52:54 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ADBqrnL023343
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 11:52:53 GMT
+Received: from robotics-lnxbld017.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 13 Nov 2024 03:52:46 -0800
+From: Fange Zhang <quic_fangez@quicinc.com>
+Date: Wed, 13 Nov 2024 19:51:43 +0800
+Subject: [PATCH v2 1/9] dt-bindings: display/msm: Add QCS615 DSI phy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N8Jy6PtD39R8iMPyTic5VACbYVOsx9FyzjLTSgCZB6FCgqoOVDabdits
-	OGu3cWrBwZ0xNBHYTA1d1GYx5Fl4sQgQcBJ+8NmbhzyEQoZvNyvN5hL8Unl58rrzQ4sMnrB
-	Za+d5Rib2kGvJ7mCTJkY+7FQbBEHzbctJzJov0RB3pNCdOeUrgEK3Xq0GfGVdEE52zMJWDR
-	tFTnUwHfjuHjQxTsily75ykUE2sas0Um/F7v0NWNlc+G6572HuqTdJbUm2OKnKuzfsRvBXi
-	CUB7IxbnaWszFfgNfmkLa1rBdnqRvCaP1YM+6XFiKgcIrKOK38zl4nog9JBtu91tdwUVl8W
-	DhFJ4q1RVzBALOSkYgvTWiiHx/9/+cT4PmdclFQDCQde9Xy2SSm4Zv8eChC6c/9iI0Z1sru
-	HnLf2O7RbRXjeXK5XqOK8xT5jhPEdb09gayT1VT7qML7bVIeMH2HIAke24iG1rTfreJcRFe
-	y3jPphrafWUQgfuP3Pso7cQLu3dSq0JOi4VwIxFkSYEwLmNq6K0Fc5VcBmopHy05ipE2mf7
-	+FsQG61LfGAIVSnZWgSUZJPLJqeiFuqR5gi5/IZggT2RmPh0U0R7z776n4er3sKah/xo/ZW
-	mXI0y0JGwjbfTF3e9NR5wIrzCSNiKfdRCjoNyZ9PGIuquOhXyUX6n9N5SPqfaiHVJRoBb9Y
-	dLzQhGLBBUY0hxxoCx+yEpB9dEQuBoRuwUo3MokRbgloaGZpUvdJ+7pR8dVF9pdqBnxRwe0
-	KYqx2gutt54d+/zcga678dCVDTWhCfS1I0BWMvI8OY8gPWJqWylgialOSDK0JmdGRoyezVY
-	aImWqEI4YyVlt4NLl9CnXDOb277xR1XCnr1Tl58WIVhbDiAJ7NgZko5j27E8Kh5CjE3Qwlv
-	C5uHOUBxkNRmVpL4QF/OYkbXGBAXKcLxtx9XJAmCB/tjbLrjt03iVAew4pchbwWGpCiIqx6
-	OJxCrDm4NmVDtYeB6NfHwLBaB6M/c8kJd6ys7XGtN+Kj6TNY+0c0IlGkstFnmfZausBQ=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241113-add-display-support-for-qcs615-platform-v2-1-2873eb6fb869@quicinc.com>
+References: <20241113-add-display-support-for-qcs615-platform-v2-0-2873eb6fb869@quicinc.com>
+In-Reply-To: <20241113-add-display-support-for-qcs615-platform-v2-0-2873eb6fb869@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, "Li
+ Liu" <quic_lliu6@quicinc.com>,
+        Fange Zhang <quic_fangez@quicinc.com>,
+        "Xiangxu Yin" <quic_xiangxuy@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731498758; l=897;
+ i=quic_fangez@quicinc.com; s=20241014; h=from:subject:message-id;
+ bh=QIgs04AReDKUau9bedSbW7izlp7vIJVLK8zY0zqxJuQ=;
+ b=lxKhL3N6OzKHI1BG0Y9+iziF4RVboFrnQkneHbhHlhByNR7OQJSIq3dHVXnUGxjIrHDvQgInu
+ DiNbyMO1ybqCN+PeJTNp5UVMRWAwIYjcoohuStW+yy/bm6ni47Y5SOU
+X-Developer-Key: i=quic_fangez@quicinc.com; a=ed25519;
+ pk=tJv8Cz0npA34ynt53o5GaQfBC0ySFhyb2FGj+V2Use4=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: FBGqbOtK3sbeX-7oeYsXf-vroUAYXrJr
+X-Proofpoint-GUID: FBGqbOtK3sbeX-7oeYsXf-vroUAYXrJr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ bulkscore=0 phishscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
+ clxscore=1015 mlxscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411130102
 
-There's an empty comment at the beginning of hid-multitoch.c.
-Just discard it.
+From: Li Liu <quic_lliu6@quicinc.com>
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
+QCS615 platform uses the 14nm DSI PHY driver.
+
+Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
+Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
 ---
- drivers/hid/hid-multitouch.c | 3 ---
- 1 file changed, 3 deletions(-)
+ Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index e936019d21fe..d6633eb003a4 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -20,9 +20,6 @@
-  *  Copyright (c) 2010      Canonical, Ltd.
-  */
- 
--/*
-- */
--
- /*
-  * This driver is regularly tested thanks to the test suite in hid-tools[1].
-  * Please run these regression tests before patching this module so that
+diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
+index 52bbe132e6dae57246200757767edcd1c8ec2d77..babd73cdc44f6d12fdc59c6bef27c544d91f1afa 100644
+--- a/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
++++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
+@@ -17,6 +17,7 @@ properties:
+     enum:
+       - qcom,dsi-phy-14nm
+       - qcom,dsi-phy-14nm-2290
++      - qcom,dsi-phy-14nm-615
+       - qcom,dsi-phy-14nm-660
+       - qcom,dsi-phy-14nm-8953
+       - qcom,sm6125-dsi-phy-14nm
+
 -- 
-2.47.0
+2.34.1
 
 
