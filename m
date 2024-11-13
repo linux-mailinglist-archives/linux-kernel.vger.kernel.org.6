@@ -1,92 +1,136 @@
-Return-Path: <linux-kernel+bounces-408268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98849C7CC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:20:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D29F9C7CD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC38FB260BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:20:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42667B2C9BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80228204F7D;
-	Wed, 13 Nov 2024 20:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E17204F7D;
+	Wed, 13 Nov 2024 20:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cjH3iMpZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HktOIzxC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8r9fRHEm"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FAA1632D0;
-	Wed, 13 Nov 2024 20:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C751662E4;
+	Wed, 13 Nov 2024 20:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731529220; cv=none; b=gWQxqCzaQMicjycvrkTrQFdmbe55jahval2xmZBi0lwhrOiu2Oh1kZYuKc3j3flDIYVuSbKUuD6UvGR485cJmxUmZ0JnWX27qMsvLT9EZGQNhfCGDdciQSGzLRUeYctfa2vpmuiyfYXx5joi6AjTNIdth3JgQ8sOm5nsVyIrh7c=
+	t=1731529251; cv=none; b=W/dpnd8azetTT5q+XErG2wQH0B9wyCTx2NZlyVGUsXd4cMtR+wXKJ3yZA/kFuo+W3lgcfIdr8kueUUALpZC4bjv68JIVWJ9iEEn3b7d4LU0dveAqaVlBOE705xJp58XrZVKieXH6qoTuzLSf5bqY+AOlcqCRQGw0ntChqgQYBj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731529220; c=relaxed/simple;
-	bh=QurR8l08tSHwfxD5LJ7CxJnPPrZhPaLnp/XY7YSX17g=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=LKwrUwrP3/VCfn5fQYsznPCyIC67pUetjh0dW6HuM5gTqrqh/dO55+Aalhl8+Ry7Zi5bR53jf+tRjnBFantDErFxp+j71rogV3EfsZ9F/i5z37XifU+JISOePI8w10oq0S+lmwFe/Lh9pb0D8OqEkngKaodXHE5rhtzkYqo+txE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cjH3iMpZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E71CC4CEC3;
-	Wed, 13 Nov 2024 20:20:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731529220;
-	bh=QurR8l08tSHwfxD5LJ7CxJnPPrZhPaLnp/XY7YSX17g=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=cjH3iMpZ8Q3VMe/PBPuzmsoKsgNvDy7WwBfEzQ6HG+Lv2AqHzyiFksV3D1NVrJENH
-	 4Z4zktiPBQCNh76Penb/UOsZiK3JqJ0oLCkxrnZ15l+Nsb4qvaGU10rneMqYhnlrxQ
-	 mMsD9+zIgBbSzkLF47ODw2uRqB6QBlz8AxGoUyhf1YWtsbqCMe9MfAU4CfzoawfUmo
-	 HVkat6yqsdXYzi8fwxklv9tupdOfzUFJeqW7kz1zQKd8aUOffVSxnUfzIr2HCb91Pn
-	 eBlaFjS3Mp59Zj8li0TBvGlFv95d45eFbD03pWwl4m3ILzcxYwkC0fQrh0pel2rjrT
-	 wNf2mCill3J3g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF9E3809A80;
-	Wed, 13 Nov 2024 20:20:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1731529251; c=relaxed/simple;
+	bh=N/cGFWtSP8U98/MudMoZAWHAcKM22Rc0zCD6BRLirnA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=eR+uTZ1Enw11uBxME6e3kPjhoP1t6SZLoLmhFTHk5kotgMOr2s264xBRYyymRDhO5/bOwhl/BBW5J4KkG91QRsPLT3619jUimCp/9EHtjHPCKH7M2Uzn3M/kU8BL3eqBJ4EhUUhhTB1oKBOasJgQ3MrOu0YVe0YX676pcMbptNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HktOIzxC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8r9fRHEm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 13 Nov 2024 20:20:46 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731529247;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JIWixiUsHMo5Nfplx7oL6i+vigAfDbbfVzhq+GeEQYY=;
+	b=HktOIzxCK2G+ym7vhpZQj61KfUdpmIUL/+bVePjprgHZCLvU7+1c+K4YUFNa9+sWyBn1qT
+	jl/UFPXyoBdW+BUukvq/k1rQNLJhjT198oyvCmezJPdNY+/FVKKwQig6n5AL1w81mfXtNA
+	Ar86YpgRTgCb3/ZdzoD3DtpYJTZbCx60JMfH7a7isKUhi1x8QfygKVZMHT5u3FjFUksz9g
+	eZLQPVxC4DOV9MlBQBlhaF5vmWEuwrhoPXqzsbCbpEuBV+tZsispHjjlVBmz7eraqbsRWm
+	ndGKdSGGKNUj+iMWp9UF4VtrZUwnJsNre8oWL7SNxVfa12dGroVFO8+uFDnNsw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731529247;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JIWixiUsHMo5Nfplx7oL6i+vigAfDbbfVzhq+GeEQYY=;
+	b=8r9fRHEmrfG79f3EVvbswZ0kRutUGh30C61UoPrzXUW+Rl6CPNzQ1wPehIDcoflQHgwe73
+	mmdENiGa9dluFpCg==
+From: "tip-bot2 for Rob Herring (Arm)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] clocksource/drivers/arm_arch_timer: Use
+ of_property_present() for non-boolean properties
+Cc: "Rob Herring (Arm)" <robh@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241104190505.272805-2-robh@kernel.org>
+References: <20241104190505.272805-2-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] bpftool: Cast variable `var` to long long
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173152923076.1373293.10104139027043308071.git-patchwork-notify@kernel.org>
-Date: Wed, 13 Nov 2024 20:20:30 +0000
-References: <20241112073701.283362-1-luoyifan@cmss.chinamobile.com>
-In-Reply-To: <20241112073701.283362-1-luoyifan@cmss.chinamobile.com>
-To: Luo Yifan <luoyifan@cmss.chinamobile.com>
-Cc: andrii.nakryiko@gmail.com, qmo@kernel.org, andrii@kernel.org,
- ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net, eddyz87@gmail.com,
- haoluo@google.com, john.fastabend@gmail.com, jolsa@kernel.org,
- kpsingh@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev,
- sdf@fomichev.me, song@kernel.org, yonghong.song@linux.dev
+Message-ID: <173152924640.32228.12020231350175694142.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello:
+The following commit has been merged into the timers/core branch of tip:
 
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+Commit-ID:     08b97fbd13de79744b31d2b3c8a0ab1a409b94fa
+Gitweb:        https://git.kernel.org/tip/08b97fbd13de79744b31d2b3c8a0ab1a409b94fa
+Author:        Rob Herring (Arm) <robh@kernel.org>
+AuthorDate:    Mon, 04 Nov 2024 13:05:06 -06:00
+Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
+CommitterDate: Wed, 13 Nov 2024 13:49:33 +01:00
 
-On Tue, 12 Nov 2024 15:37:01 +0800 you wrote:
-> When the SIGNED condition is met, the variable `var` should be cast to
-> `long long` instead of `unsigned long long`.
-> 
-> Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
-> ---
->  tools/bpf/bpftool/btf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+clocksource/drivers/arm_arch_timer: Use of_property_present() for non-boolean properties
 
-Here is the summary with links:
-  - bpftool: Cast variable `var` to long long
-    https://git.kernel.org/bpf/bpf-next/c/b7b31f184f88
+The use of of_property_read_bool() for non-boolean properties is
+deprecated in favor of of_property_present() when testing for property
+presence.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Link: https://lore.kernel.org/r/20241104190505.272805-2-robh@kernel.org
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/clocksource/arm_arch_timer.c       | 2 +-
+ drivers/clocksource/timer-ti-dm-systimer.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-
+diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+index 2bba81e..808f259 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -1428,7 +1428,7 @@ static int __init arch_timer_of_init(struct device_node *np)
+ 
+ 	arch_timers_present |= ARCH_TIMER_TYPE_CP15;
+ 
+-	has_names = of_property_read_bool(np, "interrupt-names");
++	has_names = of_property_present(np, "interrupt-names");
+ 
+ 	for (i = ARCH_TIMER_PHYS_SECURE_PPI; i < ARCH_TIMER_MAX_TIMER_PPI; i++) {
+ 		if (has_names)
+diff --git a/drivers/clocksource/timer-ti-dm-systimer.c b/drivers/clocksource/timer-ti-dm-systimer.c
+index d1c144d..985a6d0 100644
+--- a/drivers/clocksource/timer-ti-dm-systimer.c
++++ b/drivers/clocksource/timer-ti-dm-systimer.c
+@@ -202,10 +202,10 @@ static bool __init dmtimer_is_preferred(struct device_node *np)
+ 
+ 	/* Secure gptimer12 is always clocked with a fixed source */
+ 	if (!of_property_read_bool(np, "ti,timer-secure")) {
+-		if (!of_property_read_bool(np, "assigned-clocks"))
++		if (!of_property_present(np, "assigned-clocks"))
+ 			return false;
+ 
+-		if (!of_property_read_bool(np, "assigned-clock-parents"))
++		if (!of_property_present(np, "assigned-clock-parents"))
+ 			return false;
+ 	}
+ 
 
