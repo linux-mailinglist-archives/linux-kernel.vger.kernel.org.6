@@ -1,138 +1,173 @@
-Return-Path: <linux-kernel+bounces-408264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22D59C7CB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:16:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8949C7CB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:16:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80C68283E37
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7DA41F21A59
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36C4189BAE;
-	Wed, 13 Nov 2024 20:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4FC189F45;
+	Wed, 13 Nov 2024 20:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="T5K9yH5Q"
-Received: from sonic312-20.consmr.mail.sg3.yahoo.com (sonic312-20.consmr.mail.sg3.yahoo.com [106.10.244.210])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UArbWzPT"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240F01662E4
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 20:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A625F1442F3
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 20:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731528954; cv=none; b=iQc3k1ciCVDRZmdycp8mW/yOluxHc0DumBQMiMyo8EbgJB3QEt/7YRPFBCFIVVmX2H6eEic5Li11Ed7B9XmAzX1jHwetzfvZp42Xy9N/MKz7/OB+UkeRA+S0FzMC22m3Y8XY4HCDqGt8dqCuMsTTmwDWk8sP0j9qKbnFpvVLW+A=
+	t=1731529004; cv=none; b=aYHNx2xZIgAo9xXnXyYqNblnv8pRaCgqoZD7Awo/7cu8xqIwqKt2epbFsw/uAYBiS0Y/dqYNk+9xckPfmZnGUi8mToXsH4RzOqyumQfhpr8JlXHWXl2ahzEYyFF+vyTgtP9NTaJB67zD9HOOCYK2H5BKRYiRPODrUoLsT7bVd/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731528954; c=relaxed/simple;
-	bh=Yv3ptKdLEwQGel+r075biMutE2FNylghIJrzYRKibkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RskPJUTfGD8WUAvtYChtSU1Lfa2rfF9N0foUAGAvX0Ki+h5qoylwZMceo4b1B1MP8RGKYwiub3VK8gvojhTh5izKueYWi1qLHW1VP8H1MhfYYJIfS0dR161R7kXMgxAj1McVv/b3dfDePPuym9HKMe0L4Z9xEKg79mcSFmAoXLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=T5K9yH5Q; arc=none smtp.client-ip=106.10.244.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1731528943; bh=beyMROixDhnL0DdVaybfjGhLGJmyzSqp34H2SyKrlBE=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject:Reply-To; b=T5K9yH5Qa2Vpy/6885+JikB9pl3XzUMvpelkJKYwXMwab0XNL84AlxZjfvZIMES1eesNPMS6LI2IWBK5VEtT/H5zli5yfxtyQ2lMtMj+1RP9cdJpTaz+3EnVAdcZH2s8zMOdJrBk9sGTq6ec0x89EUEhsWHsVnf+B/tEYicfidcbClGD8kXzbpMl+KpYXsrs2MClGRnLRue7coRZmURrsX59aXpOMvHCWZRi9U6s9Nwx5pnj8K/b+TnhtXukM3ZdtsyZZU26zclAj6bQIcQaOG+fcsefjOHzJMmwXlOSW2O8wf4pS0N5mebgR4I4hBHYdMryQ9OjPdIxKDL/QoIpww==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731528943; bh=7BkUlhNlWdROeg/t4VTpA8NV7QZPKujHIJEgIZgO5fK=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=CVAsU+HAVgf8j+25cxzy3BQFsiJk9RkbPQKI0KB2anJeAlowqecwdstpyOKItyaaJMIVTehqTQL85Osw/LxBLTqSAifn1yHLEQFaxK10XcwOHreC3yN4c8vcPEErq/dqA1h2mt1P18kBdgpVK4s8RXXS1g+B95ZLaPrfk4FpS6ZH2lope8MEDpKG3NZyYPE205tXZUqtew45VIxjv7TsJ4TbG0NpY4JUWZTzI6XcRDAGfDX9E8nqXfOrUXQ9xsNQKl6iqnrv2M1Y/Mtbg/Z1SwAKl9fVSmtw4uZIY//v5l7+/N1jB2zncVF5RUnEjq+WsAoXa8hdWh0+t4lNoYnbdw==
-X-YMail-OSG: j4YlkUYVM1lPxTS82WrUwVGeJ5E.xjG..XSKQyNUS.Fn8ov9kxCk50AT5kZ4Wo3
- u8bYRPJcIaGL..aiOimu1BKsAhBdCSXEDXdDKsVhX0aJuJxy1C8ffKxb0mUWrNg0jzeNsnfy.r.n
- bxhCB3QHsFRuaPkcnGd.02ZrpfsibxIlCURhKxaQDkU2xXdyxZF0x3cmJYWVVyVse2S0Murm1PIL
- qDXAlpFC3xTc1eIQmXUEs4bFfPzAS6mJDRs3wJSdximX0UtM_JWWMp3J33GBx7iLwPh.qDo9Q9pR
- zNBTHlphy_lRTyBx0yad1n4aK5vx1sf1257RBrwu9hV4dshMEeodZ6oTl_PavAwm5mZxvgFmMTZ.
- ka1_MdfKMm26YyTtPf_WW5wY5z49nXdisyJ2IOr5V0aoAjybPtzNeq.Gtu3iZlfMAj3f41VrUjVg
- R9X3ChGX_3pnrdVDyEfIr8zzlUTvufg_EWmbbiMXx9npgoBz1YCJEE5WtLyNhl31l3v4uN9hZpuI
- UMRTuh_DXotm6wUermt6RhcTs1NHT75YJuGWOnrYkf8J04gE4NoUPS3DkZVmmLv3RAngiNr8vwsy
- aVrEXQ7_PSRJwkCoRsOLahgJ0N.p60NVi2Gt6QBlzVNfJeeVUtSxy5h5qVVJGF2EnnADh1IRLvo4
- PW4B3xZH_GsHgGJu_UZioRP8o7zoELi08PE8q8QlYvbaoWMBQEqEuZwSC2SJ5szeVwnlrSmSc3gF
- 7aGrTr02Je5WqGugmPofgGBRSaehbjgJFdqynyuQ1YRDcpcmLUqXyzbk3sIZn_moDyjH_ph4veDz
- fe.3pEhnmJdxFFvfnSsAIOcVLmuxKRCLR2XzvEKTU1gDNIWmDISqnPDZUtVId1oeF9sug_YRJL23
- 3QZ2a4cV5rMcZjWE5zgLcylh7n3oAMGT2uSnQTpOg7WmOUXk34sCSdzCl22QmMqZH.r54IG1qtot
- Zh3PljRaTYhXKQKiFemM0DYvQBZTSOhPiWL6S.3YjcWPQUNQZyZE5pEL6Wwi.mH1TUMv1K4FP7Wn
- FG6ZzOJjuR1hx3gPhQkyCKZ5mMmB7_o9wXP0Q5fTydDKuxyxlCgggw_hWzureKg7qxLBfdSK.XFZ
- oqgLFR1D9LzzeO3mWhCGWNRsOZy2kpwnbufUtngo4s2VRpElNNB09PRs4NWIneA2iDTyLfF1fdmh
- QMP5rdo9wtdD8mnmagB0EN4fdWLICU2LoI51hflBrACfgEbqDnl_vSLcpHv_0BF_IqMG3M4.FV9Y
- R3pxy8NVZedgbMDJiyGgXny.o3hqsBtMN8.C2PgqhIIFHhpzX06f6oHlCYJ7ggf3jpGl71i6N_EP
- JxY8ZjNg8CjodivaH1P2MewI_7e7ogZWIhUHco27kbxCYDaHDh8Rh3Rct65_RKC3Z3gztqBSEVhK
- NylAng.KkoedJEGg3CqJ9ucDEybhD5GdD.gg5MByg0YvNCPrOhNAWkEOFlUNwcqjOh1URDdN67ED
- qf5iy6fnFWaPQL.pihw2FEi3TVZPmP1_PfGsgPLLIiE3B3mOPyo4AT1LerPl_jNnDpteLJ8bWt6P
- 6D.7PCzTqukIbH1Sjdi.nG0CO.qPJYj6TckS._D1oz3kzeW4UCJuWrTYpeIIKla0IXPNajGlA3PL
- 3hCjIEl75EJmG5w3sbtqzRljrPDLZ307NQhL4txZ1jFVtsMGUdCG9WjURTZOtO_4s9dyYmBxilyy
- zJIblZodf70kJt2iZv5ZHvVPNphDpbmpRXD1KLsQkzoU3hshbBEB2xYvsNI1O3J8NR5r57pvDegk
- c5ob1NHGVD6yF7WOgpLB20E6.lH7bcKQ4REgXepfHgosOzKF2oWf7dgy6MWVYuCDe2szqI9Fl4Q8
- pOtfSY5ZwG9HAP3fiWnS2Gj3pgZ3vAS5qQZqzgsarIjJ112FKhit7ddBy5CyG8qvtNl3qv4k0vO5
- 7AThxJybRyWV3SbrSGhPADshglj4eQ3maAjFSfB56WvA_.7X.Jd8LirNVDkgWw0qrkSB.TQ_5dQe
- m3VzyF5tJfZo2HGGRwIzkMyE5r2rg6q74zY1fWRhLdWtHXXSBaUD_v2dhfyhDbsNCZHa8ocoGylX
- VQpEMlZsUw0T.7AuA.JBYBUst.AcJ2L_bf6YJvYIqHDouwtlF1KPL8t4iR8QgkL86ylN6XHzrWYI
- avyexg9GYafPqk7dREQp7hmSGj.V8LLCUxShbu6rLTbmWlgae__RyW5jauAhndQcQtxRyBOGOS3B
- QpBAjqb6rMR8fwLEd3UkDlQr5G4MSFsI-
-X-Sonic-MF: <abdul.rahim@myyahoo.com>
-X-Sonic-ID: 6c3f9df7-3f61-4b16-aa46-bb221d09a195
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.sg3.yahoo.com with HTTP; Wed, 13 Nov 2024 20:15:43 +0000
-Received: by hermes--production-sg3-5b7954b588-7n7t7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6e35b61bd0fa8f5014433ff06e4d5859;
-          Wed, 13 Nov 2024 20:15:38 +0000 (UTC)
-Date: Thu, 14 Nov 2024 01:45:35 +0530
-From: Abdul Rahim <abdul.rahim@myyahoo.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Use strscpy() instead of strcpy()
-Message-ID: <o6dz6grwkknan6er5lig6i37ocfekn6i3fljltptn7aol45sfl@n5amdhwr7wmt>
-References: <20241111221037.92853-1-abdul.rahim.ref@myyahoo.com>
- <20241111221037.92853-1-abdul.rahim@myyahoo.com>
- <8fef8eab-cd82-4e05-ad9b-1bb8b5fe974b@wanadoo.fr>
+	s=arc-20240116; t=1731529004; c=relaxed/simple;
+	bh=1rs2jXSXklM+spTKBG/1IxvOayaqTQ95zuiw48lfUKg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mRD36lcChwI7pxcqQMbnw9DTlu4yk8cL9lHHZ5GlGuZtBd78TAvdn7KzFhbfMsqSQrxpIS0mdvtAIQEw5I+9azkY5aFom/SCtCyIElEfhv5mKXMvtobKN8bxHleeBA6NZ+S3ynstKf6aZk5MXWdHzKIgrBN5CKJh83BrmFwa7Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UArbWzPT; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-72061bfec2dso6671802b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 12:16:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731529000; x=1732133800; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=aZw4KOjjuhRwfOVANcWWEKD83Ql22o6lr+/eqMH3dIQ=;
+        b=UArbWzPTC2DAnmWRH0LIPjFLf1bWTnBwI9xXzxJ/405UVcd5U6luU6mcwoO/3dwzib
+         x6DCDpGwEe8/CwNoEnLt66kgOu/qzzXrdjQks1lHLm/Bfk/3cqs0/XaPnsUCBIqXzx/k
+         oXp4RK4dDK8dJqsRNsK9wXDpmE0MUEmkus4gmYDxo0+xOLHHAEs+JlaRnrrE5Lab/+Sz
+         5jLCzhXTQvTbb010Vv4Dv2RKkccjaidWpj64oyqdwenABZpqtjrdEQooQjL0FwppApZO
+         b3meD5aTgBSnVwaG85ktooY4nv59OSJL4IKVWH7XkKXeEyAGYhHAst3HpOpAIZ0LBeqp
+         NfAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731529000; x=1732133800;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aZw4KOjjuhRwfOVANcWWEKD83Ql22o6lr+/eqMH3dIQ=;
+        b=aQ+oAQFXl//2+Wda8rqtUlBG+yxpt9nUduiCT1ceik4kC5lUsoIKY/dDvsHmzD/pJQ
+         NEtzTcqqmUGiAU++jnFkETYUpWbonQsReucHm/hKsRUuL1m3Tn3PIps+SEKZjPkPFmG3
+         az4RK5pfShl+sekbVWUbmmURgaY9w3+0UNr/uSgNsQ3USCT57KY6ke5T8Xr3dHsgCs3Y
+         1biCth+HvpzvedLDlekv5+pjEx8gtW+WWF2ingyS/bkevpesU968xePeyr0CWlPQMndv
+         rt1qOY454wSpBe3dYBx1uC620hugPq9MWNjrucvOQzu/hjguyM37fSfYj7CaiQd8Unfz
+         LUCA==
+X-Gm-Message-State: AOJu0Ywm9UPk87sMY3aIjQtrkcObcgyKDYs4C/IXqf6e81Q11z3eeU/J
+	cnHy/tVTWSGL5AdQWVnZieWx8BvDqFFebo4Y/lU33x2F0UT6hmeAn1P0BA==
+X-Google-Smtp-Source: AGHT+IFxVOGC1sptUWbWChWoET/43gRbHzw12oy6JOzufPs92oaAp70WrgjuzznMFTX/GTe0FEWAMw==
+X-Received: by 2002:a17:90b:17cb:b0:2e3:191e:7ef7 with SMTP id 98e67ed59e1d1-2e9b170a89fmr27217531a91.12.1731528999812;
+        Wed, 13 Nov 2024 12:16:39 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9f3dc9a17sm1892620a91.0.2024.11.13.12.16.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 12:16:38 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <88f34137-b215-4bee-b117-3ff00402ba6c@roeck-us.net>
+Date: Wed, 13 Nov 2024 12:16:37 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8fef8eab-cd82-4e05-ad9b-1bb8b5fe974b@wanadoo.fr>
-X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: regmap I3C support
+To: Mark Brown <broonie@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Frank Li <Frank.Li@nxp.com>
+References: <67d549d0-64c6-4d62-add6-0958ef24910f@roeck-us.net>
+ <ZzSxKctLlLZexdF5@finisterre.sirena.org.uk>
+ <feda265f-f7ba-4017-a08d-b35916aafe96@roeck-us.net>
+ <ZzS6ph8KulEITt5C@finisterre.sirena.org.uk>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <ZzS6ph8KulEITt5C@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 12, 2024 at 07:21:54AM +0100, Christophe JAILLET wrote:
-> Le 11/11/2024 � 23:10, Abdul Rahim a �crit�:
-> > strcpy() is generally considered unsafe and use of strscpy() is
-> > recommended [1]
-> > 
-> > this fixes checkpatch warning:
-> >      WARNING: Prefer strscpy over strcpy
-> > 
-> > Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
-> > Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
-> > ---
-> >   fs/ceph/export.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> > index 44451749c544..0e5b3c7b3756 100644
-> > --- a/fs/ceph/export.c
-> > +++ b/fs/ceph/export.c
-> > @@ -452,7 +452,7 @@ static int __get_snap_name(struct dentry *parent, char *name,
-> >   		goto out;
-> >   	if (ceph_snap(inode) == CEPH_SNAPDIR) {
-> >   		if (ceph_snap(dir) == CEPH_NOSNAP) {
-> > -			strcpy(name, fsc->mount_options->snapdir_name);
-> > +			strscpy(name, fsc->mount_options->snapdir_name);
+On 11/13/24 06:41, Mark Brown wrote:
+> On Wed, Nov 13, 2024 at 06:15:38AM -0800, Guenter Roeck wrote:
+>> On 11/13/24 06:01, Mark Brown wrote:
 > 
-> This does not compile because when the size of 'name' is not known at
-> compilation time, you need to use the 3-argument version of strscpy().
+>>> Don't these drivers end up with the same miserable problems with
+>>> dependencies on variations of things being configured built in and
+>>> modules anyway that mean we build separate SPI and I2C bus wrappers for
+>>> the same case with devices that do both I2C and SPI?
 > 
-> Please always compile test your patches before sending them. Even, when the
-> change looks trivial.
+>> Not really. There is no equivalent to module_i3c_i2c_driver() to handle both
+>> I2C and SPI variants of a chip. Also, SPI and I2C/I3C are not interdependent,
 > 
+> Sure, but lots of drivers were open coding an equivalent of that
+> (possibly some still do).
+> 
+>> while I3C automatically selects I2C. That means it does make sense to handle
+>> I2C and I3C in the same driver, but not I2C and SPI.
+> 
+> In terms of the devices they're very much the same and interdependent -
+> it's generally one IP block and one set of pins that's doing both I2C
+> and SPI, with nothing software visible different.  If I3C selects I2C
+> then that does eliminate some of the problem space, I can't remember the
+> speciifcs of how people (I think mainly randconfig people?) were
+> breaking things.  You at least have I2C=y I3C=m which means that
+> dependencies have to force the users modular.
+> 
+>> Sure, separate wrappers can be used, but that makes module_i3c_i2c_driver()
+>> pointless.
+> 
+> That's kind of my question.  If we are going to have this sort of stuff
+> we should also have it for I2C and SPI since it's such a common pattern.
 
-Sure.
+I'll take that as "we are not going to provide a dummy regmap i3c registration
+function". Thanks, that is all I needed to know.
 
-> CJ
-> 
-> >   			err = 0;
-> >   		}
-> >   		goto out;
-> 
-> 
+Guenter
 
-Should it be: NAME_MAX+1 ? 
-
-See: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/exportfs.h?h=v6.12-rc7#n203
 
