@@ -1,148 +1,101 @@
-Return-Path: <linux-kernel+bounces-408048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86D19C7994
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:06:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7059C7996
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:06:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BAE9283C64
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:06:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F4A21F222C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5C92003DF;
-	Wed, 13 Nov 2024 17:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0535E200123;
+	Wed, 13 Nov 2024 17:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FaRJneDI"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aVXR1PMv"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E2A13D2B2;
-	Wed, 13 Nov 2024 17:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14C2167D83
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731517559; cv=none; b=oHrtmk5MlRbc07pAI5HUgrldA/EcVnTaEbBXGC+y81vPv9C2z1MLVlt+3wjCIweWEtMO8KulMct2xqnZwiw6yCKn3PttOlJIh7qBAzycl7Cz1+zMebl7xhX70dbczd7oMWOgeK0t0t5kssKmmbWCxW8bVDvvdy/W7S4zRll7yc8=
+	t=1731517579; cv=none; b=uYaqmpE1uYHVbK15r+YqLPL7pk77z85NwkvcojN0WpXZvpwxKsow8NH7irWC5cEYLP0asjQkojcrbAMWxm+VqvCMQAKP5XH3noAZBvxurvGzNGZnTs1GmnYIz4vO9O4SJr33O1lg2qAMygFGDXIM13l4elBzMviCkuYJFWVPILw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731517559; c=relaxed/simple;
-	bh=vBDKgjR6V/zTWckWegrqEoc7IBGfIW4eBSJb7A4Bosw=;
+	s=arc-20240116; t=1731517579; c=relaxed/simple;
+	bh=U9mSmdvebpc7SIfdO7D2vMyeVPrF3HfFMdaTvCTXFnA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QYTk8jYZFPI0Vqoclv3sfpcNYXiFm4s9pedxNMy4ZnFwPhycFIushH3rvgduiqJCWphHYz16jvp8A3P5ij/GS5P26+IBIHT0e6OV9jm2AIlYEYXx8gYUuU02poF7M8TsC5uRAxuKZvkaTsvdwOcwR4WeBDxMoeHHqVl3NfG+9y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FaRJneDI; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53d8c08cfc4so4565916e87.3;
-        Wed, 13 Nov 2024 09:05:57 -0800 (PST)
+	 To:Cc:Content-Type; b=btaE740edLZUlKwuhK+PeYU/xGmZMFgex2lkjoSlFE9CU7o9AEoHWy9wMPtvqLcgvQPI5msuSBUnH+DvH+kK42NoW9+JfUH93c74d/WrrBtyWQCM6Io3cK+TGK4cA9swK/KFXb383AAyx8hjw9WTGhMCCIpl4wxIkD1z6jbDZhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=aVXR1PMv; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e28fa2807eeso6888142276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:06:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731517556; x=1732122356; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1731517577; x=1732122377; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zEep/OMfJyldzNvkNFDVhhiUsnQA3+XUm5BPLdUV5Uo=;
-        b=FaRJneDI11zoQZcjBCvrAIMww6gUFRe6SDbEjs1y8Q21P/Jq0hy8dZcpOLpBTJeNGF
-         XW/sgJ6YwitYOCQxFMrioCOIu2lcKrfHTWjV5cronRAOed9zn47HKPvMxnRx2ien54JS
-         ZLYcnW6JByw2UalcYRWgHRSyDLGFyIzg+aEtGfWD+Fy2oyrcFFKEq2pjIc7L85FWmyE9
-         HF6U8O9P8eimPAlTKFsSnb/w85iM2g5hPxJFHfxGt3LynSkCNUuMAOLoknNrLEuKzIhi
-         3W7e6NtFbGrPeHBFuI/VWTA6Iscpaoh5hZBqMubq/Rqbc5ud7jtGRLcK86r1lUOa7q9r
-         KKOw==
+        bh=O7HNwvxjs7/kFqm+0Upt4VZLTejUABVboco4/4FyZBQ=;
+        b=aVXR1PMvD8u0N/v5WwmtBrctnrDp5NkJvJ8B/kv7Lh+adIUE/fZ6FfGUjyqbgNw9KO
+         36zZzwzrVG+hzunJiycvbqw0/F7YH0ivss9xJ21PUq8Hxk19ZNDYSZNNSb03nBOYzLNJ
+         wP6xuGv1YlIPmkGqCTU/2Lk6oAt2g8kY4HsCM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731517556; x=1732122356;
+        d=1e100.net; s=20230601; t=1731517577; x=1732122377;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zEep/OMfJyldzNvkNFDVhhiUsnQA3+XUm5BPLdUV5Uo=;
-        b=VJ8yrVUf3eyu9gl2Wdv/9A0NLwM0D7o9dSqoEU1Rj8gYuWdG8PIdbOxjdcGc3wVO7N
-         8VUkAAIGynPuFNflSOnBQgyzvB1fEs61mF8Zb607pz8WfxNq+YQZGX3epq/7h+L8SQ7+
-         6852Oq29rgpBMqwn56m7TFgIqXrEGQ4U4rTUOAdq7pOBOxAodzJmou1QLhlEEiFx7qnM
-         MpQL/7jk4FCK3R9EFR1X5aYc2g6HowDmxCC2QykJy6LfQXiX7HTsYnozc9HIDLz10r1I
-         Ym99dAc2VVvEAzMxtcVWteqiJ+/DeFu+G1joTu6z8Swq//Io3aMMR1kb/jgFktP4zsry
-         m6Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEbxcw8Awg5Kg+SwkzbNKj947k5OX8O1EqExHSIYFP3iLa3GURnmsohmQ+H7Gx9J8L37RAZnuGRR88@vger.kernel.org, AJvYcCVADrGg0ISDhidEcr6sFQmNCzO3dW780h17Rja3vp4r7/5WJbu4kRlmQxCXUVLG8o4c1bl4NozFr5RE4DLT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9suTTKMgsVSzvHgmlWuQ6WFecBnNdWeIewRpK5EHwPsDPb0zu
-	cJkGmyz4MWrKA9ToIDciBtfz5VHwEsuMRiPY1t4RkdUgOvmRVRa+/UpHKLSZNhknzWOeQlsdz+m
-	jBmkIEzf1PEg0/izz+iMZz9gmITA=
-X-Google-Smtp-Source: AGHT+IHklTE9+daZ5V6N7lYW+6/IbHQcQEhMqhqVGJ7scdARVw98D3T0fBcxFBULN/mfvPbKatFu8XWI1hgeC9KqiEw=
-X-Received: by 2002:ac2:4e13:0:b0:535:82eb:21d1 with SMTP id
- 2adb3069b0e04-53d8630341bmr9311605e87.57.1731517555466; Wed, 13 Nov 2024
- 09:05:55 -0800 (PST)
+        bh=O7HNwvxjs7/kFqm+0Upt4VZLTejUABVboco4/4FyZBQ=;
+        b=JRJd7uFqgwHRhz51DNXwiLEj6V184xokwVMluz1Vjvo1iyK7/jChH278k2rYmK8X+2
+         Qp568Dz2bikdJknT8qqK4/MY7okMN23NO1xAT1dI2M5JkaEuEYdKymueIxThJzc4aHYM
+         k+Nt0fAfyHx1pkt4JOJ6TythH9HiRjVTpvXTnP5tV+EQI9/795ha4JB5vp9iQp+6xZj0
+         rgio53V+9OCbgBRA0AAXC06wyzRvPIqBVb24WzCtolTfQ6rr0YO8OhcYoRnneNpKRpHr
+         w6eW7G/gGgfRwN492fVskDXNWPSFKcak7KHMHq3bv1HV1aqJ7gXKFnQXi1FVSafDCz4X
+         g2Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLR77un/7F0ULpK3RzgFG9vdajZK78fbjqdsyo4xs+fJjFov7VByRh9cN115SMxJynD+MX5ZNYhtWG+Iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1wHpCFGsUuBj/k8M3sPSOmr02RdWf+juXoGLlLlaIfN+Gjxfl
+	jU9j8ScDGsCfb0qVMU22alYx89L0059+7Z8NRh2+WpA0rZlgZw5XMXeeO4jySEAH5I18iFLrtwh
+	qKMBvHoLNpsePD/EwS7qT+zrVFF8SVZ9PjvtjiA==
+X-Google-Smtp-Source: AGHT+IG3duG8a1UDQht/mWeuhARKmr++5c3TJaN8LKjjGCuT1HlbkFbDsA3tyK+oqirwuGtWZGK1XLeNQvJ3rvg3ziw=
+X-Received: by 2002:a05:690c:6d0a:b0:6ea:8bd9:6b2f with SMTP id
+ 00721157ae682-6ecb32af35fmr39075867b3.4.1731517576775; Wed, 13 Nov 2024
+ 09:06:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112105837.166575-2-thorsten.blum@linux.dev>
-In-Reply-To: <20241112105837.166575-2-thorsten.blum@linux.dev>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 13 Nov 2024 11:05:44 -0600
-Message-ID: <CAH2r5mvUNiXVAVVmvt=W_RAVMCm5Fgs_=Etcme3uBZ8gKFK30w@mail.gmail.com>
-Subject: Re: [PATCH] smb: client: Use str_yes_no() helper function
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+References: <20241113124857.1959435-1-chenhuacai@loongson.cn>
+In-Reply-To: <20241113124857.1959435-1-chenhuacai@loongson.cn>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 13 Nov 2024 09:06:06 -0800
+Message-ID: <CAADWXX9-LY7aaMax6KdtDV+vOkm_WKE76Qmy4n3UHN61O=-2Lg@mail.gmail.com>
+Subject: Re: [GIT PULL] LoongArch fixes for v6.12-final
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev, 
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-tentatively merged into cifs-2.6.git for-next pending testing and
-additional review
+On Wed, Nov 13, 2024 at 4:49=E2=80=AFAM Huacai Chen <chenhuacai@loongson.cn=
+> wrote:
+>
+> LoongArch fixes for v6.12-final
 
-On Tue, Nov 12, 2024 at 5:33=E2=80=AFAM Thorsten Blum <thorsten.blum@linux.=
-dev> wrote:
->
-> Remove hard-coded strings by using the str_yes_no() helper function.
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  fs/smb/client/dfs_cache.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/smb/client/dfs_cache.c b/fs/smb/client/dfs_cache.c
-> index 110f03df012a..00820f57b434 100644
-> --- a/fs/smb/client/dfs_cache.c
-> +++ b/fs/smb/client/dfs_cache.c
-> @@ -173,8 +173,8 @@ static int dfscache_proc_show(struct seq_file *m, voi=
-d *v)
->                                    "cache entry: path=3D%s,type=3D%s,ttl=
-=3D%d,etime=3D%ld,hdr_flags=3D0x%x,ref_flags=3D0x%x,interlink=3D%s,path_con=
-sumed=3D%d,expired=3D%s\n",
->                                    ce->path, ce->srvtype =3D=3D DFS_TYPE_=
-ROOT ? "root" : "link",
->                                    ce->ttl, ce->etime.tv_nsec, ce->hdr_fl=
-ags, ce->ref_flags,
-> -                                  DFS_INTERLINK(ce->hdr_flags) ? "yes" :=
- "no",
-> -                                  ce->path_consumed, cache_entry_expired=
-(ce) ? "yes" : "no");
-> +                                  str_yes_no(DFS_INTERLINK(ce->hdr_flags=
-)),
-> +                                  ce->path_consumed, str_yes_no(cache_en=
-try_expired(ce)));
->
->                         list_for_each_entry(t, &ce->tlist, list) {
->                                 seq_printf(m, "  %s%s\n",
-> @@ -242,9 +242,9 @@ static inline void dump_ce(const struct cache_entry *=
-ce)
->                  ce->srvtype =3D=3D DFS_TYPE_ROOT ? "root" : "link", ce->=
-ttl,
->                  ce->etime.tv_nsec,
->                  ce->hdr_flags, ce->ref_flags,
-> -                DFS_INTERLINK(ce->hdr_flags) ? "yes" : "no",
-> +                str_yes_no(DFS_INTERLINK(ce->hdr_flags)),
->                  ce->path_consumed,
-> -                cache_entry_expired(ce) ? "yes" : "no");
-> +                str_yes_no(cache_entry_expired(ce)));
->         dump_tgts(ce);
->  }
->
-> --
-> 2.47.0
->
->
+Hmm. This email was in my spam folder. I'm not seeing anything
+horribly wrong with it, but I do note that loongson.cn does not seem
+to enable DKIM, and that does tend to make gmail (understandably) more
+nervous. Yes, you do have proper SPF, but in this day and age SPF+DKIM
+(and a proper DMARC policy to enable strict enforcement) really is a
+good idea.
 
+Maybe you can talk to your MIS people about setting up DKIM and DMARC too?
 
---=20
-Thanks,
+Yes, it's a bother. But spam is a scourge.
 
-Steve
+                      Linus
 
