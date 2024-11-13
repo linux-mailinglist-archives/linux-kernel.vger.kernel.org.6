@@ -1,235 +1,145 @@
-Return-Path: <linux-kernel+bounces-407131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83E89C6938
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:22:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB239C693B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A4A01F2367A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:22:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DAC6B24726
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27781178384;
-	Wed, 13 Nov 2024 06:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB5B17B4E9;
+	Wed, 13 Nov 2024 06:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jcUgdZG5"
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsy5Rg8z"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5510BBA34
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA51BA34;
+	Wed, 13 Nov 2024 06:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731478953; cv=none; b=ed2jJObnHOXGSYVMc8bvc2kTnIev017OwWrnn1gZSMR5M34czbIlpp9bmbpLHW9aibOen8Y0PoolV5Kv7X4bd2Foz7xN5fAbCsBTHOb6u3QFPEyNkiShzdE0tM80epVTgRLLQfokeNwWZXelhNuqd0RYbZA2GnBacJhr2sWbURk=
+	t=1731479153; cv=none; b=PJlN28QqWJJWpcqddDhSfo5TLmO2pNvmnV6LMKxvqjUFMgeH6gM0GWCS9R4z9HQE7qK+96V98OOtV2BQ1DpWOQciy+HE8fnFbuKmHF5yqFGPTjKPcsFTZjgxkVIQQY+ZNUclmSsv71WiIsugYLwalsSf6r4FaGGRB/JruZtPuE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731478953; c=relaxed/simple;
-	bh=UWzYBbxLt/5+vds8mSiAIVMuGofjk5LzMxFmEKfmJ6Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jqr+dO9/Ej8U9f6IIW/gHteM3aAWZsWwFsxkCqUx9wPCO3rfuC8/oG8Yd4g6EEvAviURlNYi3mU1Uttk3DPWU1O5abbpu3AFUIO9693leiL0Run2b/ne6MSAEmeRYVkUx0Y8sDnMc7ckEqIid3DzD6OL2DUQwbhsNLCRvAIfG/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jcUgdZG5; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-50d2e71de18so2851547e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 22:22:31 -0800 (PST)
+	s=arc-20240116; t=1731479153; c=relaxed/simple;
+	bh=wvNnTtJd+T9Y3rRJ7wLih/lVADKpH5O1HPwxEPFpXmM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=crhzkxL7a3m65Por1BurstYbXRAAi0tzMAz8Wnqjdx7jlIeUh380rlPP5TarxAt3gxZ14pmRpolZJ2U3pfEMfQiLI79aMI/Hsq3330wozgtqqVVX4dqaSEJhTpz2dwrkWcfcGFYMjxmGXTTczeEeYcs/JXgd7e0jXHzSg8PIL3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsy5Rg8z; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b14443a71eso496803285a.1;
+        Tue, 12 Nov 2024 22:25:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731478950; x=1732083750; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1OS1dBSTD/d7MdmWEB3ioT+o20JOJetm7ko1itzjkB8=;
-        b=jcUgdZG5t9Kc9JKVxy68BtjrmpvsmaYa+3DckhqZyCat41NNyKKpVn44sacnenoYpI
-         ixa6dMy4k/phZnNe83idNQSd4k4bfU1EXRIoGReWXDWm1Aw2/oRXbqR4HCy5fY/38sCb
-         qs810Yypxk/ILjWiiZ7RhCEQO7rC9fskGsS4gTkMoqqcGSd8XBjZyqmwSkRZ3DL+D5B9
-         BrZFPyUmSH0djvI39HubO+alYcO1iTTdKaqr+uwkKZFZJ9TNBh4g6sJwLTj9L0dEvvA1
-         97Al0OyU5l7fbXYXmEdKry5uvJyKrKyfba8v+GSW3vDkUQBiWz0rzMuX2zTGjDSt7eJ/
-         bRwg==
+        d=gmail.com; s=20230601; t=1731479151; x=1732083951; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=udmJLU+VUrTJ8lMtQy3DVP6BCAyAnqzBp8QUEwZB7M8=;
+        b=dsy5Rg8zHAAu+ThNU8B6L0K9+kuaiGhcGlNHrxhmcHXShFiu9uyQFiSdgqAzW9H8ss
+         e2Fd2dKelpg0rErEICuJJVLT7zwvxJkASOcZhvRNvzy5Kr+JFeeILYrNtEY8KWRvDHHn
+         nlFZlrFjEQYMtudmd1w06yzeARv1fsAbNQ+2RtHt02KY6+td4OnJk7QxVJ8oj1nSr4Ve
+         qQ1ZcraagDpnaN5nk4NrFqlOHOjnDpCVLcw5pa8cI0483nypugmfYyeCUdtae/h6SOnx
+         rDEfrJ0jOGR07rTZH/fhvJU4JtDPHMWXR64I3mk4SVODpu+cuIKuRcSOryV/T9PxXvgx
+         3m0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731478950; x=1732083750;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1OS1dBSTD/d7MdmWEB3ioT+o20JOJetm7ko1itzjkB8=;
-        b=BC/wFDFfCiCRdcNa4acpqqKHPz8+QkO79DWYD/6mXg3AHuGhdHuMB3yuENMaP7M62P
-         5zZjKmkutokS0a1yp+lNfs4O/INYmgKgK9X7H3kkP2Bppu6TqGEhW99rS8AnbJ2AcAmf
-         nB4R37cdEyXjAIlPPhsJGZA2X3KgBusxqj6N7EiOuzi3nhfFSwNT9DVLpZM2eEsOtb8I
-         mjytohB44SsjlKU3a6sjRJoqr6GvPJtxiUg6viyOEMsxgpRAGA++ihOIZEpY0xBEyE96
-         saqWIZIkskqQHkhb5rARV3BAlQ7SBqic+QfFFYfnY2DpQcvVVF4n7A/jGcuTIfAG8lDf
-         FsUA==
-X-Gm-Message-State: AOJu0Yx1R4/Fj2ENEhyg0lBnXl7D9k7CojyA7TYTEsoa7w/GUpY977c5
-	MCbT9x7kznT8kEa+QpzYESJ3l/uiE4+YNu8VTrks4b4GQyWSAgFdraZd5e0x/ZIWFF8/BHHLsOE
-	9h8Vu+ZPtM8rvnyf+BWGQGBGK/XFN9GgLe6YC
-X-Google-Smtp-Source: AGHT+IG2yb5waITtZc4S+F4tVrhABeWZlltTyROL5h4zXO140BIbtCHIs7QWzk9+EN4YfOvSgLFIrqgr25IcNP17XHk=
-X-Received: by 2002:a05:6122:1821:b0:50d:57df:1522 with SMTP id
- 71dfb90a1353d-51401b94c0emr18733458e0c.6.1731478949905; Tue, 12 Nov 2024
- 22:22:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731479151; x=1732083951;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=udmJLU+VUrTJ8lMtQy3DVP6BCAyAnqzBp8QUEwZB7M8=;
+        b=YdwEQlpLD/ByxCeByaP2CP88FobJ4LNn6HluJ+60jVbEVj17OxUSdmkFtdQzLkPSKH
+         lrcnt6ME/3Y9LkNSi8McLztWdcierIteF91ieg12u88pBJfIdXxYtdK2cGsZwWhOp+jp
+         snncv5jHvyGxR338k2k95soNztMSq6fOmNjDYvhZGycJjOR8UaU/yf2+/hN7KVrsOXIp
+         qpF85x1laD0UQ82RQU+h7apQv1EJ38zgaMZB47B/acBfjI3La5kT5GN3rZ3X9isXiodW
+         +Q1qT0Tcmdc6lRsDzvIWzoiNJV/Xilav0n6rxOBLde0KeBFZJrqEMKX5leNCyUJeU8F3
+         Vr/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVgi9vpQXD+txdc3PHlRMyYWfgiEIBSej4vKvP9wdLSg2jFV9ZTUApr646jgRBjFnWC7L7lHxNyIdoaiGo=@vger.kernel.org, AJvYcCWMrPHBGRL8d7gNDQjSir9CvW8GarLex9yySpTISU7lZWPgUVNX17GKlol3yYxI4/FLKdo3byfA4715xIoV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuYvdC8V1p0mZgjWq57ct9FUJu5PTDu6lrWgos78mykKkFXTWz
+	/kEaIePnYpmYW7M4csxnf4WpztlrRkjzh6X1HAyYk1xjC5afun/NNEDngny1n8+qnBIqq3rcwo9
+	J+20Frz5AFhPMdnftvj3eE5LDdePklhN5WW4=
+X-Google-Smtp-Source: AGHT+IFivH+ROQfDfZ309x/SixFBN810qCeMwjBx+u0/Gsx0ULHyvCb65UHoH+Y4Ne7pPOhZLKClbUVeg0GA2cF0S84=
+X-Received: by 2002:a05:6214:3bc3:b0:6d3:80a9:fcad with SMTP id
+ 6a1803df08f44-6d39e114e77mr262036646d6.19.1731479150809; Tue, 12 Nov 2024
+ 22:25:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113052413.157039-1-kanchana.p.sridhar@intel.com>
- <CAJD7tkZWDhOXyyZnEYFiS7F4tSV+z6TYXUYiEcrZrRuy_3R=ZA@mail.gmail.com> <DM8PR11MB567179534CEE154369CCA174C95A2@DM8PR11MB5671.namprd11.prod.outlook.com>
-In-Reply-To: <DM8PR11MB567179534CEE154369CCA174C95A2@DM8PR11MB5671.namprd11.prod.outlook.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 12 Nov 2024 22:21:53 -0800
-Message-ID: <CAJD7tkbLtjQqR-uf8EBoFCWbkYOLHsVh6vJoMZUj+z4eN0GKAQ@mail.gmail.com>
-Subject: Re: [PATCH v1] mm: zswap: Fix a potential memory leak in zswap_decompress().
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>, 
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, 
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+From: liequan che <liequanche@gmail.com>
+Date: Wed, 13 Nov 2024 14:25:38 +0800
+Message-ID: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
+Subject: bcache: fix oops bug in cache_set_flush
+To: Coly Li <colyli@suse.de>, Kent Overstreet <kent.overstreet@gmail.com>, 
+	linux-bcache <linux-bcache@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 9:59=E2=80=AFPM Sridhar, Kanchana P
-<kanchana.p.sridhar@intel.com> wrote:
->
->
-> > -----Original Message-----
-> > From: Yosry Ahmed <yosryahmed@google.com>
-> > Sent: Tuesday, November 12, 2024 9:35 PM
-> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > hannes@cmpxchg.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
-> > usamaarif642@gmail.com; ryan.roberts@arm.com; Huang, Ying
-> > <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-foundation.org;
-> > Feghali, Wajdi K <wajdi.k.feghali@intel.com>; Gopal, Vinodh
-> > <vinodh.gopal@intel.com>
-> > Subject: Re: [PATCH v1] mm: zswap: Fix a potential memory leak in
-> > zswap_decompress().
-> >
-> > On Tue, Nov 12, 2024 at 9:24=E2=80=AFPM Kanchana P Sridhar
-> > <kanchana.p.sridhar@intel.com> wrote:
-> > >
-> > > This is a hotfix for a potential zpool memory leak that could result =
-in
-> > > the existing zswap_decompress():
-> > >
-> > >         mutex_unlock(&acomp_ctx->mutex);
-> > >
-> > >         if (src !=3D acomp_ctx->buffer)
-> > >                 zpool_unmap_handle(zpool, entry->handle);
-> > >
-> > > Releasing the lock before the conditional does not protect the integr=
-ity of
-> > > "src", which is set earlier under the acomp_ctx mutex lock. This pose=
-s a
-> > > risk for the conditional behaving as intended, and consequently not
-> > > unmapping the zpool handle, which could cause a zswap zpool memory
-> > leak.
-> > >
-> > > This patch moves the mutex_unlock() to occur after the conditional an=
-d
-> > > subsequent zpool_unmap_handle(). This ensures that the value of "src"
-> > > obtained earlier, with the mutex locked, does not change.
-> >
-> > The commit log is too complicated and incorrect. It is talking about
-> > the stability of 'src', but that's a local variable on the stack
-> > anyway. It doesn't need protection.
-> >
-> > The problem is 'acomp_ctx->buffer' being reused and changed after the
-> > mutex is released. Leading to the check not being reliable. Please
-> > simplify this.
->
-> Thanks Yosry. That's exactly what I meant, but I think the wording got
-> confusing. The problem I was trying to fix is the acomp_ctx->buffer
-> value changing after the lock is released. This could happen as a result =
-of any
-> other compress or decompress that acquires the lock. I will simplify and
-> clarify accordingly.
->
-> >
-> > >
-> > > Even though an actual memory leak was not observed, this fix seems li=
-ke a
-> > > cleaner implementation.
-> > >
-> > > Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-> > > Fixes: 9c500835f279 ("mm: zswap: fix kernel BUG in sg_init_one")
-> > > ---
-> > >  mm/zswap.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/mm/zswap.c b/mm/zswap.c
-> > > index f6316b66fb23..58810fa8ff23 100644
-> > > --- a/mm/zswap.c
-> > > +++ b/mm/zswap.c
-> > > @@ -986,10 +986,11 @@ static void zswap_decompress(struct
-> > zswap_entry *entry, struct folio *folio)
-> > >         acomp_request_set_params(acomp_ctx->req, &input, &output, ent=
-ry-
-> > >length, PAGE_SIZE);
-> > >         BUG_ON(crypto_wait_req(crypto_acomp_decompress(acomp_ctx-
-> > >req), &acomp_ctx->wait));
-> > >         BUG_ON(acomp_ctx->req->dlen !=3D PAGE_SIZE);
-> > > -       mutex_unlock(&acomp_ctx->mutex);
-> > >
-> > >         if (src !=3D acomp_ctx->buffer)
-> > >                 zpool_unmap_handle(zpool, entry->handle);
-> >
-> > Actually now that I think more about it, I think this check isn't
-> > entirely safe, even under the lock. Is it possible that
-> > 'acomp_ctx->buffer' just happens to be equal to 'src' from a previous
-> > decompression at the same handle? In this case, we will also
-> > mistakenly skip the unmap.
->
-> If we move the mutex_unlock to happen after the conditional and unmap,
-> shouldn't that be sufficient under all conditions? With the fix, "src" ca=
-n
-> take on only 2 values in this procedure: the mapped handle or
-> acomp_ctx->buffer. The only ambiguity would be in the (unlikely?) case
-> if the mapped zpool handle happens to be equal to acomp_ctx->buffer.
+Signed-off-by: cheliequan <cheliequan@inspur.com>
 
-Yes, that's the scenario I mean.
+   If the bcache cache disk contains damaged btree data,
+when the bcache cache disk partition is directly operated,
+the system-udevd service is triggered to call the bcache-register
+program to register the bcache device,resulting in kernel oops.
 
-Specifically, in zswap_decompress(), we do not use 'acomp_ctx->buffer'
-so 'src' is equal to the mapped handle. But, 'acomp_ctx->buffer'
-happens to be equal to the same handle from a previous operation as we
-don't clear it.
+crash> bt
+PID: 7773     TASK: ffff49cc44d69340  CPU: 57   COMMAND: "kworker/57:2"
+ #0 [ffff800046373800] machine_kexec at ffffbe5039eb54a8
+ #1 [ffff8000463739b0] __crash_kexec at ffffbe503a052824
+ #2 [ffff8000463739e0] crash_kexec at ffffbe503a0529cc
+ #3 [ffff800046373a60] die at ffffbe5039e9445c
+ #4 [ffff800046373ac0] die_kernel_fault at ffffbe5039ec698c
+ #5 [ffff800046373af0] __do_kernel_fault at ffffbe5039ec6a38
+ #6 [ffff800046373b20] do_page_fault at ffffbe503ac76ba4
+ #7 [ffff800046373b70] do_translation_fault at ffffbe503ac76ebc
+ #8 [ffff800046373b90] do_mem_abort at ffffbe5039ec68ac
+ #9 [ffff800046373bc0] el1_abort at ffffbe503ac669bc
+#10 [ffff800046373bf0] el1_sync_handler at ffffbe503ac671d4
+#11 [ffff800046373d30] el1_sync at ffffbe5039e82230
+#12 [ffff800046373d50] cache_set_flush at ffffbe50121fa4c4 [bcache]
+#13 [ffff800046373da0] process_one_work at ffffbe5039f5af68
+#14 [ffff800046373e00] worker_thread at ffffbe5039f5b3c4
+#15 [ffff800046373e50] kthread at ffffbe5039f634b8
+crash> dis cache_set_flush+0x94
+0xffffbe50121fa4c8 <cache_set_flush+148>:       str     x23, [x20, #512]
 
-In this case, the 'src !=3D acomp_ctx->buffer' check will be false, even
-though it should be true. This will result in an extra
-zpool_unmap_handle() call. I didn't look closely, but this seems like
-it can have a worse effect than leaking memory (e.g. there will be an
-extra __kunmap_atomic() call in zsmalloc, and we may end up corrupting
-a random handle).
+---
+drivers/md/bcache/super.c | 16 ++++++++++------
+1 file changed, 10 insertions(+), 6 deletions(-)
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index fd97730479d8..8a41dfcf9fb6 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1741,8 +1741,10 @@ static void cache_set_flush(struct closure *cl)
+       if (!IS_ERR_OR_NULL(c->gc_thread))
+               kthread_stop(c->gc_thread);
 
->
-> Please let me know if I am missing anything.
->
-> >
-> > It would be more reliable to set a boolean variable if we copy to
-> > acomp_ctx->buffer and do the unmap, and check that flag here to check
-> > if the unmap was done or not.
->
-> Sure, this could be done, but not sure if it is required. Please let me k=
-now
-> if we still need the boolean variable in addition to moving the mutex_unl=
-ock().
+-       if (!IS_ERR(c->root))
+-               list_add(&c->root->list, &c->btree_cache);
++       if (!IS_ERR_OR_NULL(c->root)) {
++               if (!list_empty(&c->root->list))
++                       list_add(&c->root->list, &c->btree_cache);
++       }
 
-If we use a boolean, there is no need to move mutex_unlock(). The
-boolean will be a local variable on the stack that doesn't need
-protection.
+       /*
+        * Avoid flushing cached nodes if cache set is retiring
+@@ -1750,10 +1752,12 @@ static void cache_set_flush(struct closure *cl)
+        */
+       if (!test_bit(CACHE_SET_IO_DISABLE, &c->flags))
+               list_for_each_entry(b, &c->btree_cache, list) {
+-                       mutex_lock(&b->write_lock);
+-                       if (btree_node_dirty(b))
+-                               __bch_btree_node_write(b, NULL);
+-                       mutex_unlock(&b->write_lock);
++                       if (!IS_ERR_OR_NULL(b)) {
++                               mutex_lock(&b->write_lock);
++                               if (btree_node_dirty(b))
++                                       __bch_btree_node_write(b, NULL);
++                               mutex_unlock(&b->write_lock);
++                       }
+               }
 
->
-> Thanks,
-> Kanchana
->
-> >
-> > > +
-> > > +       mutex_unlock(&acomp_ctx->mutex);
-> > >  }
-> > >
-> > >  /*********************************
-> > >
-> > > base-commit: 0e5bdedb39ded767bff4c6184225578595cee98c
-> > > --
-> > > 2.27.0
-> > >
+       if (ca->alloc_thread)
+--
+2.33.0
 
