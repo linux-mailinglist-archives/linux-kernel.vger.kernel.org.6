@@ -1,104 +1,125 @@
-Return-Path: <linux-kernel+bounces-407213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C369C6A42
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:03:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BE59C6A49
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:05:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E91C281766
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:03:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72A6BB23F73
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0945189BA9;
-	Wed, 13 Nov 2024 08:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CFA189F25;
+	Wed, 13 Nov 2024 08:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vahedi.org header.i=@vahedi.org header.b="ramRqTKG"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dkesitUQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385B5188592
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CF212C484;
+	Wed, 13 Nov 2024 08:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731485026; cv=none; b=tFeaT09MIGUHV3X+W+h5wfqDF4ex69ZwQ6S44MR9TPOE49HlzNHZ2jQkciM+jzprBOStU7pCbScBji39xdkSilT3/YuM62XMz0VlLKLlAj/ZI4UlCUf60Aea9zPNR1pvHcWiucVrKvD7M+BjWGjj3gwBYa8FSVtC+l9WUKStgT0=
+	t=1731485121; cv=none; b=hLTyMRXIflJmjPiYIFvt5XCRAdz05hPQJLZ9ZlgibVQsCu+mU7sQR2tv6hEDm6klZpYVJUHQd+ZHTSAqwC4Tl1bpyVtmyHrfDiP1CZC/p7h8N3CUyXishVPEG1vEus144o4C0a6yfmtYCX6+2p3FeH+GiJKsj6vle0fJgkeNgSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731485026; c=relaxed/simple;
-	bh=9bkdI7aPmf2NlA1l+V03H+kg5MblsdE4hSkBMw4jzLM=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=NsT3BrOnJcMsoWmUb9WV3YkhKoLZcXeOAXK+p3ik9n4dDObbvSiijF86qIAJfl/gfHH29U69hda4HrEv/NXdHex1SD5H+YtOHi1R7E6vByEpIPg9Ru1KayT+YzV1GDYOO7SMlKrUbIemQ+ibr2jBQpEPhN169fw8sgeGH+AERLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vahedi.org; spf=pass smtp.mailfrom=vahedi.org; dkim=pass (2048-bit key) header.d=vahedi.org header.i=@vahedi.org header.b=ramRqTKG; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vahedi.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vahedi.org
+	s=arc-20240116; t=1731485121; c=relaxed/simple;
+	bh=BbYlp+HJymN34nOHTwQ5tcq4uE81eUVPohJV/y5A3EA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j65hc7ATXZpmwY2HOs0yO5D2zZl6drjXVSc4eo8jGiyBRKAHsM9Q6RZnyOegpysem62dBEqKK5feotdJitDHcgF5Y0ezsKrkcV7zr4/LlqQC0jbO2F+iw5yjTTAk+oRZ6d/i8P4cuhhQwDeCiWB1vbeTn3/NxKdU5Jag7PIF4Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dkesitUQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AD7ut4H030544;
+	Wed, 13 Nov 2024 08:05:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=lQxanDluSxqvmWm5O14ZZnAStn6c0dPWysX
+	MECpRP7E=; b=dkesitUQYhlreY1+gaw5DMMl/m6pJhBUeQD2OOz5OG285MpBhgs
+	pfAcoJZTH5RqLKMbZMWUqdjy/EZEgBAMcJmonX1kHofEZ+BCW3UqG97r4kRL8Kk8
+	YYk1qVK/fghRn39eI2jSRO0m+ehwR18F1TEG7Ecat26ancM4aAsuYI4Gjocer/BL
+	8km9m39dIS/ZKhenY/rKeecdtk0Do0w+tvJ9WdnZN2qIwuQGBRBQ82WlZUV34pIP
+	RDSTsQWcMVKtWhZEf5W2OR8yy1tVs+ifi7YNhSLCRuUgRJPhHshN16rVa4Tuh7HU
+	se6bdjjh2MMjcKww7JX0sgrIpMvkzf5FVOA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vr5y00s8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 08:05:17 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA05.qualcomm.com [127.0.0.1])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AD7gOwE022588;
+	Wed, 13 Nov 2024 08:05:16 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 42v63mr33h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 08:05:16 +0000
+Received: from NALASPPMTA05.qualcomm.com (NALASPPMTA05.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AD80sK2018232;
+	Wed, 13 Nov 2024 08:05:16 GMT
+Received: from hu-devc-lv-u22-c.qualcomm.com (hu-qianyu-lv.qualcomm.com [10.81.25.114])
+	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 4AD85Gvl024923
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 08:05:16 +0000
+Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4098150)
+	id D44DA4CE; Wed, 13 Nov 2024 00:05:15 -0800 (PST)
+From: Qiang Yu <quic_qianyu@quicinc.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: johan@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_cang@quicinc.com, quic_mrana@quicinc.com, quic_qianyu@quicinc.com,
+        stable@vger.kernel.org
+Subject: [PATCH 1/1] arm64: dts: qcom: x1e80100: Fix up BAR space size for PCIe6a
+Date: Wed, 13 Nov 2024 00:05:08 -0800
+Message-Id: <20241113080508.3458849-1-quic_qianyu@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vahedi.org; s=key1;
-	t=1731485020;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EU1k9AMEn/tc26JK+CGYVsgo3nAeKg3I3puW7ATTdAM=;
-	b=ramRqTKGMlEWUG6s8JlLeeewYyPHOO1FlckkgQKa2+duIcS10fkhQf97a9r6F5EZAlIdkQ
-	yfLymEAegdz+pjls2QXVoMI5y7CzSsX7HF0B4VFAoXPIWKYKkdSx4CkzQuF3W6UtPzwhoO
-	asb0qODJMEpQorv7vtWDdgqp4helBnPPOMXi8ESmHSYFN/GkWDvNZaBe6OvBZS5F7X7axY
-	j8HMdXSxJW/+ksbo0R4fH+FkPfRobdsHovUAhehl9cxHYBtvWt7mcoLe2du6dkchg13YhZ
-	cQmF4DfdamuhYdwf2dXuDcETwsmfWVgS9IySjtXJE0JzCBbStAukA3VaL3OXPA==
-Date: Wed, 13 Nov 2024 08:03:38 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Shahab Vahedi" <list+bpf@vahedi.org>
-Message-ID: <c617471892505a16188397d4120b21ebd553a457@vahedi.org>
-TLS-Required: No
-Subject: Re: [PATCH] ARC: bpf_jit_arcv2: Remove redundant condition check
-To: "Hardevsinh Palaniya" <hardevsinh.palaniya@siliconsignals.io>, "Vadim 
- Fedorenko" <vadim.fedorenko@linux.dev>, ast@kernel.org, andrii@kernel.org
-Cc: "Daniel Borkmann" <daniel@iogearbox.net>, "Martin KaFai Lau"
- <martin.lau@linux.dev>, "Eduard Zingerman" <eddyz87@gmail.com>, "Song 
- Liu" <song@kernel.org>, "Yonghong Song" <yonghong.song@linux.dev>, "John 
- Fastabend" <john.fastabend@gmail.com>, "KP Singh" <kpsingh@kernel.org>,
- "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>,
- "Jiri Olsa" <jolsa@kernel.org>, "Vineet Gupta" <vgupta@kernel.org>,
- bpf@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <PN0P287MB28435A985BADB4B4D857223AFF5A2@PN0P287MB2843.INDP287.PROD.OUTLOOK.COM>
-References: <20241111142028.67708-1-hardevsinh.palaniya@siliconsignals.io>
- <e6d27adb-151c-46c1-9668-1cd2b492321b@linux.dev>
- <6454497ff35d2a534cd34b7635fb044e4033fe6b@vahedi.org>
- <PN0P287MB28435A985BADB4B4D857223AFF5A2@PN0P287MB2843.INDP287.PROD.OUTLOOK.COM>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 0wgi4zb_2IACUWpJ_d6C8sRH3twDIntb
+X-Proofpoint-GUID: 0wgi4zb_2IACUWpJ_d6C8sRH3twDIntb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0 bulkscore=0
+ mlxlogscore=665 malwarescore=0 spamscore=0 impostorscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411130070
 
-Hardev wrote:
+As per memory map table, the region for PCIe6a is 64MByte. Hence, set the
+size of 32 bit non-prefetchable memory region beginning on address
+0x70300000 as 0x3d00000 so that BAR space assigned to BAR registers can be
+allocated from 0x70300000 to 0x74000000.
 
-> Shahab wrote:=C2=A0
-> >=20=20
->=20> Vadim wrote:
-> > >=20
->=20> >=20
->=20> > The original code is obviously optimized out, but the intention, =
-I
-> > > believe, was to check if the jump is conditional or not.
-> > > So the proper fix should change the code to check cond:
-> > >
-> > >   - if (ARC_CC_AL)
-> > >   + if (cond =3D=3D ARC_CC_AL)
-> >
-> >=20
->=20> That is absolutely correct. If a new patch is not submitted soon
-> > I'll try to fix it myself.
->
-> if you are okay with that then I can proceed by submitting version 2
-> of the patch with the proposed changes included
+Fixes: 7af141850012 ("arm64: dts: qcom: x1e80100: Fix up BAR spaces")
+Cc: stable@vger.kernel.org
+Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Of course. Please go ahead. To be clear, What I meant by "soon" was
-something around a week time.
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index f044921457d0..90ddac606719 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -3126,7 +3126,7 @@ pcie6a: pci@1bf8000 {
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+ 			ranges = <0x01000000 0x0 0x00000000 0x0 0x70200000 0x0 0x100000>,
+-				 <0x02000000 0x0 0x70300000 0x0 0x70300000 0x0 0x1d00000>;
++				 <0x02000000 0x0 0x70300000 0x0 0x70300000 0x0 0x3d00000>;
+ 			bus-range = <0x00 0xff>;
+ 
+ 			dma-coherent;
+-- 
+2.34.1
 
-
-Cheers,
-Shahab
 
