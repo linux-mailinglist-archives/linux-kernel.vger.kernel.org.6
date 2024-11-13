@@ -1,276 +1,194 @@
-Return-Path: <linux-kernel+bounces-408228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50C19C7C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:47:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF079C7C5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5D89B25F88
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:47:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C72B9B23B76
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6957D204923;
-	Wed, 13 Nov 2024 19:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A682120512C;
+	Wed, 13 Nov 2024 19:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wmsk67xa"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SeoDCe4J"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE4A1C9DCB
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 19:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D551885AF;
+	Wed, 13 Nov 2024 19:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731527240; cv=none; b=YYaoCEKsWSnDyYhtVDxZImaihk5Rj/eyZEbqU2SBfxGbtjo6dhTYcvcqN6fly4rt6ifgkefGkrBxhpUA9CdYau/cPlZ8jS3kaQaDMr+qhKqKO4Iu3Hi7xv+v8xYDy6juZKdQ5OG+BpH41OopP9GW8CXbULLZQvfImQ57wU8I578=
+	t=1731527424; cv=none; b=MolT09+3N7nBOOH0Ha9m9jWDEuu5+7OejYtJpPophA80pkDv0qwMyVek7lyscWh/s0Fi4CUIDL+3zjJygYGSAw8MGMb2OBQl3gVdO3z8El2EYjK3HGU7RM6H/Lchx0jrcQxtiNcO2rwiqSsjM1DV8ZTep96i9UEDbfyB9Hx4NQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731527240; c=relaxed/simple;
-	bh=D13vdmCI3PcgmX5HqYWjeJV0/SwB4g2qZNjfWujodGI=;
+	s=arc-20240116; t=1731527424; c=relaxed/simple;
+	bh=Oc+LuTOdlevPxcwmiIdW93NWBNLrwRRkqST9yV7jHzk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z0Z0dUo0TGcBAYWFsU7JJdzxp8jY3fECJPbr3RmbFmD48b8qjRbAlmLsjAQ4GZhx2CtH0EXIAuof7G9pPRDDGLBu869PojFdFuKU3JgH+nk8rv2XEWiopGXqIZ/iEH52ullKNj0uoySFPL3iU6B5CAJzPcyd5tH+weH44ZHlDE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wmsk67xa; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e66ba398so1928e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 11:47:18 -0800 (PST)
+	 To:Cc:Content-Type; b=H/RU4vibuWPNaASW3fWdMz3tPTWReJTV3tLoGAdZ3Y344Xa5VQk39esrvViOXcZlRev26nZCPhjb3e/xOZUNChpv2AOqNsLGR6rMIjKLQc8RDfiiHMVsiGQ2IKF9ZpVFwcX/IaNyBC08ihHMvRQl8GniyB+aT425wrrBzyLCbU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SeoDCe4J; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb51f39394so65282901fa.2;
+        Wed, 13 Nov 2024 11:50:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731527237; x=1732132037; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731527420; x=1732132220; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pSJWU8y6bHQxtW/mJOGtqf8Fg9KxuncXsLFp1xbzR6g=;
-        b=wmsk67xaLzJQGn1pC20NFsdKRCrtcNkg9SNIT80HoZNXEhQoTi834VY/qXbufEp3I7
-         QgivKdi6cYfGaQziDGbSrUFixd1h6NDQbnuYX7/WnTNwLFpy8O6VeKnaGplzKtnB9+bE
-         HBALfcXCTfHRzrQw8OELoGCX+ZUP/KomvPsQDQgMVXTk6q992SrZr1GNpZR/Wx/4MWGO
-         CnoCVTcWPWcymFxCRDhV9txszB5EcJC0b19uqfLOnDOYYDuIr04hVe7IIXy77rYS8YL/
-         jWLmeVykI6+1ws3xE71n5W3P12XW8cPah0SKFWZkOXJvBHa4pwtODHKapmenbo0IhPEA
-         2C+Q==
+        bh=6OuUklqc2/spqh6bD65znVHh3ypQAuDk9FVQdh8lmiQ=;
+        b=SeoDCe4JNdrsrzKKrbFHczcOZPIAfKvgYp9U0qEiC6sYpd9Kxyykf6aiaiHgAUjzko
+         94oH+YG/OjfvYyUjYAdqqS2VptPRCP/dkfYfVSaWs/yQZSvNZB+evFHmFupm25YYwqX5
+         CmbXJKtCgrCZFAJqvmPsCDG0SWUwgxr/dtCD186V5EiHoaEK30LsQRRg21N1kV40BSFJ
+         ojaMqWxsBwhaiheIhQBe99ZVEyIx/A7hlEiw7VEE8l61L/Q6jAGsbjm6Nr5nUl2GnjxH
+         gze8ytposv9E8McKLEnapvtB9/8DboS7SDvB7NyafT/gtAswf+K//WpptMr3pwe4+A/Y
+         kKNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731527237; x=1732132037;
+        d=1e100.net; s=20230601; t=1731527420; x=1732132220;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pSJWU8y6bHQxtW/mJOGtqf8Fg9KxuncXsLFp1xbzR6g=;
-        b=OEuZSMnpDGqd+V6TVDE6ODFAIYgjj2tQDZSV3PfyEkKWJ/VvoLy+yQXyHDJEyQZYZB
-         /hnFmyHHyC4UYM/e+Jb1hUu+O0mXONcgnNtd61v+x/43IYxp0DCBNh6XfzSuhVfoohh/
-         9iN3PpwSlxkIaygUVQKTTPryGTys9vWtnYuY/c51FTjH8WwagIHsleeozXsB/3E25zxM
-         fbD8ixEStGYIlnX9zyy0OO67p211HGxmyY85yDYqOFezCaSbMRiBkSJlxWiMQeWHiW3Q
-         jZvJoLE8JiaEbA+gCfDZuPF6mdVZvIxcL6prUm1yEH5QuQBmotGcJPzCN7AVcfbtf0O3
-         oXeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYdjJL1agObTYrLfLqYGEEziSt6wf144+GHRQVuQTIEJC4JNActzWxak+P070uaTdtVRel3naO4lPjAGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZuAP2RwneVBeqGeSmExgJFUsNUO1y0um9PNKnV9KzyTfwZ3b0
-	80zW6DQ8mTcPK64kSIsD2u38TmXGv0G5ZJckBjz0s14DVQn/AEtFQMURYt1sBHWa7FOtD7mqUy/
-	JuPglD39VBHcCUzYZVoXxFwGfuZM1nBTDR8Xo
-X-Gm-Gg: ASbGncthOcfTCs4Tu2G4i/yCfQ37JfCMPEixrwJi0YRNFBoaqnZFIXWmZcg3gE6JXMu
-	LFCmTTkyizjQJ4enOwmzLngz4uXeH3R2gQuOZOolcXOn/fVVAfeZlyZPfHfIw
-X-Google-Smtp-Source: AGHT+IE3ppARTnzlYrCDB5JZuDPBOlh5drJ+grQRZjPODoYVls/AM2IZL036eqnlrknFAL86fkQryAkCrlIkacqzw7I=
-X-Received: by 2002:ac2:5213:0:b0:530:ae18:810e with SMTP id
- 2adb3069b0e04-53da4f492dfmr33731e87.5.1731527236243; Wed, 13 Nov 2024
- 11:47:16 -0800 (PST)
+        bh=6OuUklqc2/spqh6bD65znVHh3ypQAuDk9FVQdh8lmiQ=;
+        b=b5DvNQFjUnjp7CHi0WgvDEVhAar31yFsF/2f6jZ3+xTdWCYIBx7/CRTg6snpYAzNvG
+         /JW9MjF7mlUXckEIKeZZYBCgxR22tt+WIeR2emZMoFN7SHvV0f9S7VpTcn7oEhPt2xoW
+         0DlruqmAR9hekbaBYy4oYRBE36xJ2QSQCPGrRRcwec+M3LUi1pCieal733zHyWwF98OG
+         TEJC3PlXWdXynH3ycoYO88Lq+Mkd+aEi/+ldjL9bIH3gR23u1RF7uOo+eh8gpz+prj0b
+         0zeDDdvSYD8SqrJ6xSjW0xPI9Xc/whfzpQRqHssBCfZFGVSVyc70dV0bN3hlwrWOAFNv
+         llew==
+X-Forwarded-Encrypted: i=1; AJvYcCW5LsWKDbBol2b58N2GkITvaRS1TLFbeJ8bbQbZt2PpwZ7d4IjrjIsOClC/yPWrXSJwObFpQY1ZvqKAYHpa@vger.kernel.org, AJvYcCW9xSHhx4bnAPXdz1YxNVBp4Ro3KUHonBZlr5EA1wXAUAyAj4frL8wM/7IRfo6VFRfvn8OS1q8Q2eOV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqGbxQienzmeqBkvb/5Q5JpKhshuFjrx9/MDszzXi0xbKkqnCr
+	FFhyeAJvhYs8OG41VGjGeJin1wAy5CCsdHPU0Ja8u1Ai10ARIgoO5rdBJI4BMzEbnutZQoNfOy3
+	ZMNsIrKDgQMM5lzyY7TUqc0oph9w=
+X-Google-Smtp-Source: AGHT+IEPKNz9D20Li+iExsg6R/ZQRB0io0za1Ty3bQ/hNr2mZDJKgUIzpNphRGleTsbog/5umI3YsX7yUAXjOJLvzjA=
+X-Received: by 2002:a05:651c:e0b:b0:2ff:559e:c94b with SMTP id
+ 38308e7fff4ca-2ff559ed4e7mr4466281fa.17.1731527420081; Wed, 13 Nov 2024
+ 11:50:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108135708.48567-1-lorenzo.stoakes@oracle.com>
-In-Reply-To: <20241108135708.48567-1-lorenzo.stoakes@oracle.com>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 13 Nov 2024 20:46:39 +0100
-Message-ID: <CAG48ez2=oP15_X_MqtDG22P6TZYpTr07-TZBk3Z_DvuwB6nJFQ@mail.gmail.com>
-Subject: Re: [PATCH v2] docs/mm: add VMA locks documentation
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>, Hillf Danton <hdanton@sina.com>, 
-	Qi Zheng <zhengqi.arch@bytedance.com>, SeongJae Park <sj@kernel.org>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>
+References: <20241113120327.5239-1-suravee.suthikulpanit@amd.com>
+ <20241113120327.5239-6-suravee.suthikulpanit@amd.com> <cac1ccd3-4b81-4374-a49d-9afad755b19c@app.fastmail.com>
+ <20241113132031.GF35230@nvidia.com> <CAFULd4a1PHREX6ws9Gyu=TaaZvdgLfh6peoE5Tt010uGyY9Hgw@mail.gmail.com>
+ <20241113140914.GI35230@nvidia.com> <CAFULd4aGDM5ySO-PeOH0+_U89mnqYqQ7v+U0ZsMode3bxs_X7w@mail.gmail.com>
+ <20241113142807.GJ35230@nvidia.com> <CAFULd4aFvGj=kz5Si9WpAr33KFtJDO5+sdNO=NBB+boS=E-E_Q@mail.gmail.com>
+ <20241113163451.GK35230@nvidia.com>
+In-Reply-To: <20241113163451.GK35230@nvidia.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Wed, 13 Nov 2024 20:50:08 +0100
+Message-ID: <CAFULd4bvDhfSprPEyirvX9VmKK_fpxaVNRO02oqT_KQAdLFhfg@mail.gmail.com>
+Subject: Re: [PATCH v10 05/10] iommu/amd: Introduce helper function to update
+ 256-bit DTE
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	Joerg Roedel <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>, vasant.hegde@amd.com, 
+	Linux-Arch <linux-arch@vger.kernel.org>, Kevin Tian <kevin.tian@intel.com>, jon.grimm@amd.com, 
+	santosh.shukla@amd.com, pandoh@google.com, kumaranand@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 8, 2024 at 2:57=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> Locking around VMAs is complicated and confusing. While we have a number =
-of
-> disparate comments scattered around the place, we seem to be reaching a
-> level of complexity that justifies a serious effort at clearly documentin=
-g
-> how locks are expected to be used when it comes to interacting with
-> mm_struct and vm_area_struct objects.
+On Wed, Nov 13, 2024 at 5:34=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
 >
-> This is especially pertinent as regards the efforts to find sensible
-> abstractions for these fundamental objects in kernel rust code whose
-> compiler strictly requires some means of expressing these rules (and
-> through this expression, self-document these requirements as well as
-> enforce them).
+> On Wed, Nov 13, 2024 at 03:36:14PM +0100, Uros Bizjak wrote:
+> > On Wed, Nov 13, 2024 at 3:28=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com=
+> wrote:
+> > >
+> > > On Wed, Nov 13, 2024 at 03:14:09PM +0100, Uros Bizjak wrote:
+> > > > > > Even without atomicity guarantee, __READ_ONCE() still prevents =
+the
+> > > > > > compiler from performing unwanted optimizations (please see the=
+ first
+> > > > > > comment in include/asm-generic/rwonce.h) and unwanted reorderin=
+g of
+> > > > > > reads and writes when this function is inlined. This macro does=
+ cast
+> > > > > > the read to volatile, but IMO it is much more readable to use
+> > > > > > __READ_ONCE() than volatile qualifier.
+> > > > >
+> > > > > Yes it does, but please explain to me what "unwanted reordering" =
+is
+> > > > > allowed here?
+> > > >
+> > > > It is a static function that will be inlined by the compiler
+> > > > somewhere, so "unwanted reordering" depends on where it will be
+> > > > inlined. *IF* it will be called from safe code, then this limitatio=
+n
+> > > > for the compiler can be lifted.
+> > >
+> > > As long as the values are read within the spinlock the order does not
+> > > matter. READ_ONCE() is not required to contain reads within spinlocks=
+.
+> >
+> > Indeed. But then why complicate things with cmpxchg, when we have
+> > exclusive access to the shared memory? No other thread can access the
+> > data, protected by spinlock; it won't change between invocations of
+> > cmpxchg in the loop, and atomic access via cmpxchg is not needed.
 >
-> The document limits scope to mmap and VMA locks and those that are
-> immediately adjacent and relevant to them - so additionally covers page
-> table locking as this is so very closely tied to VMA operations (and reli=
-es
-> upon us handling these correctly).
+> This is writing to memory shared by HW and HW is doing a 256 bit
+> atomic load.
 >
-> The document tries to cover some of the nastier and more confusing edge
-> cases and concerns especially around lock ordering and page table teardow=
-n.
+> It is important that the CPU do a 128 bit atomic write.
 >
-> The document is split between generally useful information for users of m=
-m
-> interfaces, and separately a section intended for mm kernel developers
-> providing a discussion around internal implementation details.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> cmpxchg is not required, but a 128 bit store is. cmpxchg128 is the
+> only primitive Linux offers.
 
-Reviewed-by: Jann Horn <jannh@google.com>
+If we want to exercise only the atomic property of cmpxchg16b, then we
+can look at arch/x86/lib/atomic64_set_cx8.S how cmpxchg8b is used to
+implement the core of arch_atomic64_set() for x86_32:
 
-except some typos and one inaccuracy:
+SYM_FUNC_START(atomic64_set_cx8)
+1:
+/* we don't need LOCK_PREFIX since aligned 64-bit writes
+ * are atomic on 586 and newer */
+    cmpxchg8b (%esi)
+    jne 1b
 
-> +* **mmap locks** - Each MM has a read/write semaphore :c:member:`!mmap_l=
-ock`
-> +  which locks at a process address space granularity which can be acquir=
-ed via
-> +  :c:func:`!mmap_read_lock`, :c:func:`!mmap_write_lock` and variants.
-> +* **VMA locks** - The VMA lock is at VMA granularity (of course) which b=
-ehaves
-> +  as a read/write semaphore in practice. A VMA read lock is obtained via
-> +  :c:func:`!lock_vma_under_rcu` (and unlocked via :c:func:`!vma_end_read=
-`) and a
-> +  write lock via :c:func:`!vma_start_write` (all VMA write locks are unl=
-ocked
-> +  automatically when the mmap write lock is released). To take a VMA wri=
-te lock
-> +  you **must** have already acquired an :c:func:`!mmap_write_lock`.
-> +* **rmap locks** - When trying to access VMAs through the reverse mappin=
-g via a
-> +  :c:struct:`!struct address_space` or :c:struct:`!struct anon_vma` obje=
-ct
-> +  (reachable from a folio via :c:member:`!folio->mapping`) VMAs must be =
-stabilised via
+    RET
+SYM_FUNC_END(atomic64_set_cx8)
 
-missing dot between sentences?
+we *do* have arch_try_cmpxchg128_local() that declares cmpxchg16b
+without lock prefix, and perhaps we can use it to create 128bit store,
+something like:
 
-> +These fields describes the size, start and end of the VMA, and as such c=
-annot be
-> +modified without first being hidden from the reverse mapping since these=
- fields
-> +are used to locate VMAs within the reverse mapping interval trees.
+static __always_inline void iommu_atomic128_set(__int128 *ptr, __int128 val=
+)
+{
+    __int128 old =3D *ptr;
 
-still a typo here, "these fields describes"
+    do {
+    } while (!arch_try_cmpxchg128_local(ptr, &old, val));
+}
 
-> +.. note:: In instances where the architecture supports fewer page tables=
- than
-> +         five the kernel cleverly 'folds' page table levels, that is stu=
-bbing
-> +         out functions related to the skipped levels. This allows us to
-> +         conceptually act is if there were always five levels, even if t=
-he
+Then write_dte_upper128() would look like:
 
-typo: s/is if/as if/
+static void write_dte_upper128(struct dev_table_entry *ptr, struct
+dev_table_entry *new)
+{
+    struct dev_table_entry old =3D {}; <--- do we need to initialize struct=
+ here?
 
-> +1. **Traversing** page tables - Simply reading page tables in order to t=
-raverse
-> +   them. This only requires that the VMA is kept stable, so a lock which
-> +   establishes this suffices for traversal (there are also lockless vari=
-ants
-> +   which eliminate even this requirement, such as :c:func:`!gup_fast`).
-> +2. **Installing** page table mappings - Whether creating a new mapping o=
-r
-> +   modifying an existing one. This requires that the VMA is kept stable =
-via an
-> +   mmap or VMA lock (explicitly not rmap locks).
+    old.data128[1] =3D ptr->data128[1];
 
-Arguably clearing A/D bits through the rmap, and switching PTEs
-between present entries and migration entries, counts as "modifying an
-existing one", but the locking for that is like for zapping/unmapping
-(both page_idle_clear_pte_refs and try_to_migrate go through the
-rmap). So "modifying an existing one" either needs more caveats or
-more likely should just be moved to point three.
+    /*
+     * Preserve DTE_DATA2_INTR_MASK. This needs to be
+     * done here since it requires to be inside
+     * spin_lock(&dev_data->dte_lock) context.
+     */
+    new->data[2] &=3D ~DTE_DATA2_INTR_MASK;
+    new->data[2] |=3D old.data[2] & DTE_DATA2_INTR_MASK;
 
-> +3. **Zapping/unmapping** page table entries - This is what the kernel ca=
-lls
-> +   clearing page table mappings at the leaf level only, whilst leaving a=
-ll page
-> +   tables in place. This is a very common operation in the kernel perfor=
-med on
-> +   file truncation, the :c:macro:`!MADV_DONTNEED` operation via
-> +   :c:func:`!madvise`, and others. This is performed by a number of func=
-tions
-> +   including :c:func:`!unmap_mapping_range` and :c:func:`!unmap_mapping_=
-pages`
-> +   among others. The VMA need only be kept stable for this operation.
-> +4. **Freeing** page tables - When finally the kernel removes page tables=
- from a
-> +   userland process (typically via :c:func:`!free_pgtables`) extreme car=
-e must
-> +   be taken to ensure this is done safely, as this logic finally frees a=
-ll page
-> +   tables in the specified range, ignoring existing leaf entries (it ass=
-umes the
-> +   caller has both zapped the range and prevented any further faults or
-> +   modifications within it).
-> +
-> +**Traversing** and **zapping** ranges can be performed holding any one o=
-f the
-> +locks described in the terminology section above - that is the mmap lock=
-, the
-> +VMA lock or either of the reverse mapping locks.
-> +
-> +That is - as long as you keep the relevant VMA **stable** - you are good=
- to go
-> +ahead and perform these operations on page tables (though internally, ke=
-rnel
-> +operations that perform writes also acquire internal page table locks to
-> +serialise - see the page table implementation detail section for more de=
-tails).
-> +
-> +When **installing** page table entries, the mmap or VMA lock mut be held=
- to keep
+    iommu_atomic128_set(&ptr->data128[1], new->data128[1]);
+}
 
-typo: "must be held"
+and in a similar way implement write_dte_lower128().
 
-> +When performing a page table traversal and keeping the VMA stable, wheth=
-er a
-> +read must be performed once and only once or not depends on the architec=
-ture
-> +(for instance x86-64 does not require any special precautions).
+(I am away from the keyboard ATM, so the above is not tested, but you
+got the idea...)
 
-Nitpick: In theory that'd still be a data race with other threads
-concurrently installing page tables, though in practice compilers
-don't seem to do anything bad with stuff like that.
-
-> +A typical pattern taken when traversing page table entries to install a =
-new
-> +mapping is to optimistically determine whether the page table entry in t=
-he table
-> +above is empty, if so, only then acquiring the page table lock and check=
-ing
-> +again to see if it was allocated underneath is.
-
-s/ is// ?
-
-> +This is why :c:func:`!__pte_offset_map_lock` locklessly retrieves the PM=
-D entry
-> +for the PTE, carefully checking it is as expected, before acquiring the
-> +PTE-specific lock, and then *again* checking that the PMD lock is as exp=
-ected.
-
-s/PMD lock is/PMD entry is/ ?
-
-> +In these instances, it is required that **all** locks are taken, that is
-> +the mmap lock, the VMA lock and the relevant rmap lock.
-
-s/rmap lock/rmap locks/
-
-> +VMA read locking is entirely optimistic - if the lock is contended or a =
-competing
-> +write has started, then we do not obtain a read lock.
-> +
-> +A VMA **read** lock is obtained by :c:func:`!lock_vma_under_rcu` functio=
-n, which
-
-"is obtained by lock_vma_under_rcu function" sounds weird, maybe
-either "is obtained by lock_vma_under_rcu" or "is obtained by the
-lock_vma_under_rcu function"?
+Uros.
 
