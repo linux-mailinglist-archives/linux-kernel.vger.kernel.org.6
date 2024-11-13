@@ -1,115 +1,119 @@
-Return-Path: <linux-kernel+bounces-408223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A602A9C7C3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:35:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 269DC9C7C3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D2331F23949
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:35:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFEE6281B5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6479B205E17;
-	Wed, 13 Nov 2024 19:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E89205AD7;
+	Wed, 13 Nov 2024 19:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObhHGyIm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yfo1rOeG"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08E4180021;
-	Wed, 13 Nov 2024 19:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77952038DD;
+	Wed, 13 Nov 2024 19:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731526503; cv=none; b=UVoRgUEEnhcEscjVQr3/SA0gsE7S1ZZadomq3H4SdLr0TfSJdRcgmoDBPVUvXP2JZHonNjBhQKsW/6GBMUkkD5T8KrpU+7G22WzapXtS1JvV64wIzoNnk+24JelO9EJ9O98r6uygrMZDdu/Cu0hyjyuxC1w9uhVHjiAu4ftOmR0=
+	t=1731526598; cv=none; b=ZP66hFBEkX/gkF8+Hx832k6L98JRcMRJsTCDfpUiIq9/42JTPVwQtaMc/s9ne4ES55jVsMdRdXzYI43VBFLvj4SKmgfJoo+BlqKDSnNcM9nkhwdBij/0QdMbW2kBjf3TnRpTvAw5L1pa0J/k4IMzQhjGEauUxZwS6R85PlPUKhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731526503; c=relaxed/simple;
-	bh=epQP6XybWtX4jTsJLw088WfnWQi4u/Mzc+weU06kQXE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UQvc72D1QlsHXwd7txrvQ1eSlwpRnmUnqwEmEV49ikG2mMcK5r1UtUbF3PYqm5hfQGVChTpyOX8+nS86aKuiVL98ToKco51m6TiqmWhaoGqDm8fqsVOa1Pc3TDoZGUj2biCZ+DNzwu5x7og54wfBwrxOMOWTOGFREVPYvXM27F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObhHGyIm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A792EC4CEC3;
-	Wed, 13 Nov 2024 19:35:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731526503;
-	bh=epQP6XybWtX4jTsJLw088WfnWQi4u/Mzc+weU06kQXE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ObhHGyImvyJa/FgZvmT+FwIJd+lfZvBi+KO929K26AFepwIv4Rf58KxEO5lciOZzO
-	 +YrPic29KzYc+Ns8K5McMXTUWfqIoxt7yG5CDcog9x1L1OvLu1GA2NLssaN6gZtdZ5
-	 hqoBgAI3/k9YVn3LT2FFQ8sD5C4ghkFRcz2C+DYz5JwKDkblsmWMGJZ5zKorb3Jmyb
-	 J1WyYvfcz22oiLhDRDtNrsTGDg6Z5C8dzAKGzXDrLuAqX9ix6rE01U8yv6Zt628tFC
-	 P2FohHZau5atecs24wCdoWS7zPj7IW14tpb3ut6eBvOyTbzhC7FOMbW2/CDsYam4sr
-	 4ucXdOHSLorfw==
-Date: Wed, 13 Nov 2024 11:35:01 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Neal Gompa <neal@gompa.dev>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
-	Miroslav Benes <mbenes@suse.cz>,
-	Asahi Linux <asahi@lists.linux.dev>,
-	Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 01/19] scripts: move genksyms crc32 implementation to
- a common include
-Message-ID: <ZzT_ZSNAmeloDjLT@bombadil.infradead.org>
-References: <20241030170106.1501763-21-samitolvanen@google.com>
- <20241030170106.1501763-22-samitolvanen@google.com>
- <CAK7LNAShVzrE6uhXxZ7HepKhmOJYsZeigq6w19jRN3OH-T_Jyg@mail.gmail.com>
- <CAEg-Je_o-e3Sc0vNJpF+3eG3sZvV-f2zrCdubRAvPSLzVdyd5Q@mail.gmail.com>
+	s=arc-20240116; t=1731526598; c=relaxed/simple;
+	bh=tul411GCQKE41kaGVUPN76Dd9JbE0cKcs195gRd+9xw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cz7h0j85skBTs5H4SGhE+4ONB3fESkUKVyL6UvRGrJoP9xJtwMvPokzs+jWYp/zbpz8FKK/kK9lKhBVQaiyVcn98oul6yIPdxWPdj7uqSils/Smtg7g0wbAh1P/BbF1OYnE82VsGZIwMtKEmNSzI5+OeeAXzZXYg3A0qD5fxWPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yfo1rOeG; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d3e9e56fdfso302766d6.0;
+        Wed, 13 Nov 2024 11:36:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731526596; x=1732131396; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yPUIbOva92yuy+QEnGdpUmLYR+csAbyNvcDkxMU7mB8=;
+        b=Yfo1rOeG0r+NX0AytXS24qijRz5tCuX86fx2WU3qQBYe0FzQGOP5p9gBUwo2XMm6ML
+         lUWgfigAL9B5zsQ8hOM8Va3OzRfnNR66HIiP3dqL7mCtb5Z43jd9pJbmgPMtifVYnP1/
+         m/JXUkxktRZ0v4mwSkU/QQNxxRo/a2kQznc/PPYGkpdVHSi+NpWJwtZLnPLnvLLixHXD
+         fND53GCu83UAgyB1U0IZ0xmJZkl5RtlHnqRD0Yj0ZKsl4fSIKN9pXC9de3fq0z0kPBSp
+         4JK161z0cA00mEKY5MHDy0zV5rKvNwwUDCScrgIPWusIPQC/Jpwl9JXAf0JpbIvnkCUQ
+         A72Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731526596; x=1732131396;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yPUIbOva92yuy+QEnGdpUmLYR+csAbyNvcDkxMU7mB8=;
+        b=ZQHx2OSV1bmfYC8d5qy8vsPJkp0W+buToR7Mnhp7J3rnhG4uV3GfdCzi5ZmzZLA4lE
+         3JWXqFiKQJN6ePNQLnxUbHBsS35bH2N4B+JOLMQYeQPUxzJijQjsv6EtjG4n0WsHH+f3
+         gpv8CXOc5IrG5xgt3vUrZquaE+lY4/rrvwimkSAV5MfXWMdMYA7CORk9pKcRdkumxkQE
+         3BfCy2KcQBM/JBhoGuAz5CxyEffHZjD5/g4oNoEtUBn7m6HFUmUDOIW3nBcRs63N6wDn
+         PUefPZJVz9IyCIVAh5egCUahVqXwhrqfCVN57AsyErbjXSnq732LLo0IR9FtkCLfF0S9
+         OVZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXeyv63SUVBt+qDHJPYRbc4UxzCntIDUpg0oYSs5YXqzQ8qSQ2vwsefRr8t+r7IBLdnq6GagxrEfFUQ+uQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE9HQzwZaPmi3baYvjQfMM4TocWJQImeIcxpJWsgI9FJPx4gsA
+	6HHvt2uZkPUUZL16mIlk6DkqpGP6keeRVLzO+9Q+YhrXeM4SWhMWYIgnxKNY
+X-Google-Smtp-Source: AGHT+IEXIbvpmlTDbC2bSNCbht+Om4jIXJBqxIODGdhf7X9uH4GIqKJbkG4rhCTNXSRhGJ+I2f+eGQ==
+X-Received: by 2002:a05:6214:3f84:b0:6d3:4453:6a48 with SMTP id 6a1803df08f44-6d3e90c5620mr10408276d6.13.1731526595643;
+        Wed, 13 Nov 2024 11:36:35 -0800 (PST)
+Received: from jesse-desktop.. (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3961defdasm88421796d6.24.2024.11.13.11.36.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 11:36:35 -0800 (PST)
+From: Jesse Taube <mr.bossman075@gmail.com>
+X-Google-Original-From: Jesse Taube <jesse@rivosinc.com>
+To: devicetree@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jesse Taube <Mr.Bossman075@gmail.com>
+Subject: [PATCH] ARM: dts: imxrt1050: Fix clocks for mmc
+Date: Wed, 13 Nov 2024 14:36:34 -0500
+Message-ID: <20241113193634.3487554-1-jesse@rivosinc.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEg-Je_o-e3Sc0vNJpF+3eG3sZvV-f2zrCdubRAvPSLzVdyd5Q@mail.gmail.com>
 
-On Wed, Nov 13, 2024 at 09:04:51AM -0500, Neal Gompa wrote:
-> On Mon, Nov 11, 2024 at 11:06 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> >
-> > On Thu, Oct 31, 2024 at 2:01 AM Sami Tolvanen <samitolvanen@google.com> wrote:
-> > >
-> > > Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
-> > > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> > > Acked-by: Neal Gompa <neal@gompa.dev>
-> >
-> > Does this Ack add any value?
-> >
-> > Acked-by is meaningful only when it is given by someone who
-> > maintains the relevant area or has established a reputation.
-> >
-> > $ git grep "Neal Gompa"
-> > $ git shortlog -n -s | grep "Neal Gompa"
-> >      2 Neal Gompa
-> >
-> > His Ack feels more like "I like it" rather than a qualified endorsement.
-> >
-> 
-> I have tested and looked over the patches from that lens.
+From: Jesse Taube <Mr.Bossman075@gmail.com>
 
-The tests you did, what exaclty was tested?
+One of the usdhc1 controller's clocks should be
+IMXRT1050_CLK_AHB_PODF not IMXRT1050_CLK_OSC.
 
-If it was to just ensure no regressions, then that information is
-useful too, and with that you can just provide: Tested-by.
+Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+---
+ arch/arm/boot/dts/nxp/imx/imxrt1050.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But actual details of what you test are useful. We now also have
-automation of tests for modules, and expanding test coverage on that is
-always welcomed too [0] [1] [2], so far we have 0 Rust coverage.
+diff --git a/arch/arm/boot/dts/nxp/imx/imxrt1050.dtsi b/arch/arm/boot/dts/nxp/imx/imxrt1050.dtsi
+index dd714d235d5f..b0bad0d1ba36 100644
+--- a/arch/arm/boot/dts/nxp/imx/imxrt1050.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imxrt1050.dtsi
+@@ -87,7 +87,7 @@ usdhc1: mmc@402c0000 {
+ 			reg = <0x402c0000 0x4000>;
+ 			interrupts = <110>;
+ 			clocks = <&clks IMXRT1050_CLK_IPG_PDOF>,
+-				<&clks IMXRT1050_CLK_OSC>,
++				<&clks IMXRT1050_CLK_AHB_PODF>,
+ 				<&clks IMXRT1050_CLK_USDHC1>;
+ 			clock-names = "ipg", "ahb", "per";
+ 			bus-width = <4>;
+-- 
+2.45.2
 
-[0] https://github.com/linux-kdevops/kdevops
-[1] https://github.com/linux-kdevops/kdevops-ci
-[2] https://github.com/linux-kdevops/linux-modules-kpd/actions
-
-  Luis
 
