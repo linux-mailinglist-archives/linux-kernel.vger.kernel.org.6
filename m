@@ -1,341 +1,237 @@
-Return-Path: <linux-kernel+bounces-407963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 166A39C7801
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:58:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D869C780A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:00:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D4061F24EC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:58:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6991F1F25108
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB1C13D24D;
-	Wed, 13 Nov 2024 15:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E988216132E;
+	Wed, 13 Nov 2024 16:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Nt0y/ika"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mZcmNK/3"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2052.outbound.protection.outlook.com [40.107.92.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986CD84D13
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731513524; cv=none; b=tIDbkkRhbIeV9ct2PyZL1X7XOflKJY1EsN3ZD8zH2220VyahQjqOTQmdOpiTpl7135Z4OdvS2sYI0dxrm4Suo3WpUkIgNZg5DmMv3XdLzKAWAQVsMGjjdTE538Bb4HF6uBL/NE/07X4Sx5cWFVhvuSn2VSTeeA70SXTX5sqfKOo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731513524; c=relaxed/simple;
-	bh=qo/L4Rj/ujZnYsYMQkwYgfGTPkJq75vK+uiSD4BntRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VFuaHNI4I5mCZMVsOlv8r3FucB96XZA2C4XIeqKyegK8wqZ3Hu5zRUEDqdXEOsO3Kb+YFW8EfxRfW2JdYisltIzNbU1WsOHYaBXD81j0ceCgZJ3ZoSYNQgWk1PoyOulU1KCI2Zyo5qBkbdV9OtmHpkfh/MJsdmOY8ELozHTuSeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Nt0y/ika; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso61577845e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:58:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731513520; x=1732118320; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uf5TjSvPe5rCvBCA6D7ZCh0Cbq12/qb9SeeBw1+x2uc=;
-        b=Nt0y/ikaNMRzT2A+CknTKE91mhhv6mMRidkgttd3ojnJhhZ1i394qxdYVdUqnKQurZ
-         1EK1CLL4DzuUD6Bj+03CTiYutdqzxPDyPhKEYaZn4Q97SfFCVwt02deZK/iZMlIbqcP3
-         L3W6OctF1uINm85ZLfR5q2urGMBaDItEubVhUTm5Nf48wmZj+Eu25s1Q+Ndr2CGgSnM6
-         F1E9eRyg8u53Pnzz7rkmLx0SdXTWbi8AK2xHHVDluHOmSKC5ASOq8pmIEWJjNkfipl73
-         2ndjRDPt0C3QxV/VMZTUIrw+KPVU5R9t5ZhEnZ4lHr0oF533B1firBLkGvOSjfOZznIp
-         Kt7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731513520; x=1732118320;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uf5TjSvPe5rCvBCA6D7ZCh0Cbq12/qb9SeeBw1+x2uc=;
-        b=GucpSFZ6xrAyDP3fnEbGe+HgK/8Y1u1hK2isDlaw3R4vUp1NVgh7hE1/tcKU9xoMSV
-         kvAx5aWjEztXl7hpCLoNwF3pB0F5JcUvWmT6oj7qEr1HVdnaSKXinBihimPe+qNNrL3G
-         puGngAoXbPxrkwR0BzhT0shkinghLJxMVoLQDSY/sVfdvQpedJ7RKgyoKd2i7hoJvNck
-         mrRdkd3Qiqa8CXCN6preOs1wjc69N4aZgL6IzriBoVWJpLCTeqKN/yBzx5URyYQFXjfp
-         q+7C702ab5Z7ZW2IHCnscbBaX4y5aYizB1H19Q4qEcWynZTa0BtCrpHsTq46dCq8IqDc
-         jIEw==
-X-Gm-Message-State: AOJu0Yx1Q792kfGVKSHpFFwZ6WVU9a1MRV6xeuHEdWD7ViNt6BsSzUz/
-	mpyf+FdKdxrXzM4AsifaZF0FnIzXFZIYwq/5lQXASIX8Q+8G9w294sa37VDxK1c=
-X-Google-Smtp-Source: AGHT+IFqfeHUlD7MVcdhG5Bl24qLF19H70J3IuBOaTcomQbeFOlL7Pl7gAfMQiG1drYAzsfulA7Hlg==
-X-Received: by 2002:a05:6000:210e:b0:382:424:94fe with SMTP id ffacd0b85a97d-382042495edmr8354938f8f.36.1731513519825;
-        Wed, 13 Nov 2024 07:58:39 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed99790csm18883403f8f.46.2024.11.13.07.58.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 07:58:39 -0800 (PST)
-Date: Wed, 13 Nov 2024 16:58:36 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Chris Down <chris@chrisdown.name>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
-Subject: Re: [PATCH v6 06/11] printk: console: Introduce sysfs interface for
- per-console loglevels
-Message-ID: <ZzTMrFEcYZf58aqj@pathway.suse.cz>
-References: <cover.1730133890.git.chris@chrisdown.name>
- <0312cd1e80e68a1450a194ebce27728cdf497575.1730133890.git.chris@chrisdown.name>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DC613AA4E
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731513609; cv=fail; b=NzV/fLz9RueEEwATjM2d6iDdVXblySHv4M45Ul3hm2LF90fLP1XU2YFyDIX1DRb+p2Rz5QZoj7GyTxHx6WCO7KOZIttuAVI+O0br7PbFzPvAU9t7ks4VAW6m840RGZEZqlWcunIU2kUk//ZvN4QZKaHLzoHyRbdvSHDNNbI87KI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731513609; c=relaxed/simple;
+	bh=Xkmgw9fYDPJCzr/qkQsJ1ZeQmS0WHizA8mBPJ056NrQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FoWWCJjNp54/LBCsKPFJQyWJeXGgggQ6dRtQUFA5vXW7jEN7+aYkAKqleIj3iUrFOoOl889utHAF+sctBuallE1+nIddy0/Fgy+p58JokkP7HfPeDJmdDwGUbxhWoIQ6XmFKFNy1UfyrG+NgX13YBGR8+KMzh6ocxIeIkYT1G4E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mZcmNK/3; arc=fail smtp.client-ip=40.107.92.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WJVzTY9c4OM/uoupR3cHznbNkhTCp24k5+//Lz4Xwq/R4H+xcsOYn+zotvxAKL5HKIt07hT35BaVw+IF0GeyEFV23ePbErk3zKRba4+hAfH4l4t8h6aglxaCG5ujMO47JRU0/xWfGZeC8ai/uN1rANdQ86cBOlQsyUcXVJE/3pkgdsWgBEUAo0X3nXhLzzJ+3jg0Cds8MSweTx8VpZPeMvAX/Z954B5r1UOJkJIySqTEUk2fAX2lYS/j4gcdT8Of4DgVRlRb8T771G3m5IlLFNu2Vc5Uq6/FHVspujuCZfhDhjSJlkEcBjaBdJMQ5kb2U+cQCe/OIV8LrZVfqU93lQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Xkmgw9fYDPJCzr/qkQsJ1ZeQmS0WHizA8mBPJ056NrQ=;
+ b=cG6TXGcplcrw805O3KTQIhnQxAy3KrWzqb2PtPfU/N7H0CB6qgDe1qrNqFffDovekLpkr9/c8W4SyK+zDL0lO77U1AxhOUlSytp8AfAs5/pNx7E7zdxnV333+Hejx1f7pEU6WmEzjjsuyQcHd2yIJmg2557Ybq4tGjYMEnHh4y3rmrjVlnMRTaLqOER9UuvsM3P18JnvCL1ju/VKIsOOObmmUHgxf5UI+2t1qqbiXRG+lciGPuJmhmsB81ddaz/aLi/CFLOexVVVemlcKabbwBFVVDCNYmQw6pwK088ygCDxGmUiLZF5Gl3mmo5kDE+Tpk2JhRG9xPGz9AyK2/9G8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xkmgw9fYDPJCzr/qkQsJ1ZeQmS0WHizA8mBPJ056NrQ=;
+ b=mZcmNK/3722i6dizfNkWqLSaGBLoHdrGfHHG+fJ7UcKASIdGqPmP3bhMLgn4EMWTc3HPKvZHy5pJuxWTzg0/E6KCgKwolG7cuwi75yhGAGHqG/ynMTwUeaImsHvu/MqFnsuk9j9XPaJCGfyJuCylE/FJeGyBl4a5eCY8pH+rNfw=
+Received: from LV3PR12MB9265.namprd12.prod.outlook.com (2603:10b6:408:215::14)
+ by PH8PR12MB6914.namprd12.prod.outlook.com (2603:10b6:510:1cb::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Wed, 13 Nov
+ 2024 16:00:02 +0000
+Received: from LV3PR12MB9265.namprd12.prod.outlook.com
+ ([fe80::cf78:fbc:4475:b427]) by LV3PR12MB9265.namprd12.prod.outlook.com
+ ([fe80::cf78:fbc:4475:b427%6]) with mapi id 15.20.8137.027; Wed, 13 Nov 2024
+ 16:00:02 +0000
+From: "Kaplan, David" <David.Kaplan@amd.com>
+To: Brendan Jackman <jackmanb@google.com>
+CC: "Manwaring, Derek" <derekmn@amazon.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com"
+	<hpa@zytor.com>, "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mingo@redhat.com" <mingo@redhat.com>, "pawan.kumar.gupta@linux.intel.com"
+	<pawan.kumar.gupta@linux.intel.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"x86@kernel.org" <x86@kernel.org>, "mlipp@amazon.at" <mlipp@amazon.at>,
+	"canellac@amazon.at" <canellac@amazon.at>
+Subject: RE: [PATCH v2 19/35] Documentation/x86: Document the new attack
+ vector controls
+Thread-Topic: [PATCH v2 19/35] Documentation/x86: Document the new attack
+ vector controls
+Thread-Index:
+ AQHbMDg1JLBBlMsMQUStBRLaO7h7dbKqT+jQgApQQICAAKyDAIAACV4ggAAL0gCAAAL+UA==
+Date: Wed, 13 Nov 2024 16:00:02 +0000
+Message-ID:
+ <LV3PR12MB92653337C2377D640BF81F84945A2@LV3PR12MB9265.namprd12.prod.outlook.com>
+References:
+ <LV3PR12MB92658EA6CCF18F90DAAA168394532@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <f3ddabdc-39fa-45fa-97fd-d8508c2229c9@amazon.com>
+ <CA+i-1C1zN_GcLagTRgfJqT6uFoZaMZj1NUfxkvP7eG=VGQ0GGQ@mail.gmail.com>
+ <LV3PR12MB926503BA63C616562E508D8C945A2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <CA+i-1C2JXYUBnE7fn6df0=KR4KeD0VgwO5Cc2xRhO8rBqC_p+Q@mail.gmail.com>
+In-Reply-To:
+ <CA+i-1C2JXYUBnE7fn6df0=KR4KeD0VgwO5Cc2xRhO8rBqC_p+Q@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=d56291da-733e-45fa-a737-18bdeb93cbfa;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-11-13T15:42:28Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3PR12MB9265:EE_|PH8PR12MB6914:EE_
+x-ms-office365-filtering-correlation-id: 20adad8b-78ad-432e-44cb-08dd03fc3bb7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?cStLMmF6REdjbmRQWmlIQk5pNjRSUXV3Sy9PREdyQjdxOGsvdHBLeEtaN0RC?=
+ =?utf-8?B?RnJ6V3Z2bWRwUmpTTi9pTS9zZFNVR0N3OE5tWlBiMlcvSkIzNnhXK3RKYzdu?=
+ =?utf-8?B?TStLakZMKzNoUEZWMEtLaHhyV29hOGpzMi9nZjkxV1RoZXJnWjcvVFlWU1RH?=
+ =?utf-8?B?UVVTUk5EV0RxdGZCK0NYZmo0M1NrS3FwNDV1YVlkS1BUbFpOMWdLbzVyY3ZF?=
+ =?utf-8?B?S3dzdk80SnJ5YW9lbXBvR2dUQlR2d21uU1l6VG90R01GNU40WnFvVzNuUm10?=
+ =?utf-8?B?VFlRdWlvVGpYR3hOV2JvMk9UamNVRVlHOWczWjlsbXk2MHJWWnBIbVN6Q1Zi?=
+ =?utf-8?B?SjdkR09vYU15SjJ0ekNsRjR3RDJPVWUxVkU0eFNjWjdtZFMzb1JySmdNV2tB?=
+ =?utf-8?B?MGpLSlM1WjZqNlFaRWNuSlU1QXAvd1dDNnprNjhCNzkvRG5zbkRLb2s5N0Qv?=
+ =?utf-8?B?WngxUTZaOSthVnBzVUVYakNYY0t0Z2EwY09nblk0VHNnb1M1TDl0VFBwejUv?=
+ =?utf-8?B?c2FNaVNWQTFVMU13R3owcDViY3dDak9xcUlxMFB5bG1jMEpDMWxLWndQSzdh?=
+ =?utf-8?B?STl5Z2xVekEwQ3BBN2dHL3FpZ2lYVnpaTXVrMmREWVFRZ1U3T1pXUVJadThY?=
+ =?utf-8?B?cDFZaHZrenhlTEgycGRlWXlqcGdQeWRpbmdCN0tpall4MFFER1g2NHV1Vm9R?=
+ =?utf-8?B?RTc2OHIzVkEyb3FKczNVaFlNK25GSnhkaGhqR0NNUGVQNENTWHBnVU5oeGNJ?=
+ =?utf-8?B?UXJ3MHAxSWFVRWpHeWM2WGUwL2FRWTJWVVRPU2NVbnZuUlRoNFFBanpIV3Q2?=
+ =?utf-8?B?eCtzcy9kdnoxc2JValJ0cjRnNzZJSGhXanBMVE5RbEp6bE5QT1E5SXgrdW9I?=
+ =?utf-8?B?OGc2NW5UaGVuUnI1OUFJdG1Jb2NGbDc0L2VuOUlFak9iNXFTMWFrbmpIL0Vm?=
+ =?utf-8?B?bkxEdjA1YTcxS2tYeUltRUJwOUNYaXZISE4rM2pWNTRKd09oYW44OTVRWFRH?=
+ =?utf-8?B?RmZidHhBNUtUa0R5N3orVlEzaWJIZkkzWUJXSXpYWnQ4NHM1cG1aWm1BQWFm?=
+ =?utf-8?B?OGlBT090QnE2WFl5UkZITHBMdmt3dEtLM2RGT1BCL3BnL0VtcVZGeGRVM1pn?=
+ =?utf-8?B?SERncHVTL25xY0Qwd1VHN1VqUlNpK3ZWQWRDOXJsekRaZWVROCtienFMTmZ2?=
+ =?utf-8?B?dlk4Wk9PbmUxWER2eXp6Q3J4TExlSDljeFBZTjFkbDBCYUFnNmM4YmtoQmxk?=
+ =?utf-8?B?dnNJMlJwYVFWcFRBeWpLeVhpUlhVN1Z3VVBMU3dkQjc2SEhOVGRMYW1Delcz?=
+ =?utf-8?B?VFN0d0xOSFRkazBSOFJCb2ZVUjVXMFc1Q0JFTWFweVBHeSs0bmZZVzlIZnlS?=
+ =?utf-8?B?blgwUmwraVBHYVZZOWdqSURMMHA5R0RsS1pMc2s3bUtXUDhMS0Q3aU9KT0kr?=
+ =?utf-8?B?SXJ6Ums3Z3lHSjlCems3Y1QvV0ovVDg0b2l3NmFZVnFSQnkxZE4rZFZzUEZl?=
+ =?utf-8?B?akpuNzRGL3VhNW0zdCtrN2FhRmlMUnl5UjV1U3U1aXlJRlVEY3NwSzAwem1Q?=
+ =?utf-8?B?NlhRamNjZStmSkk5bkVPY0t1Yk1iME5YTTBoc3JPNllIazNaZVFsNmppOFhx?=
+ =?utf-8?B?Qm5mZzZjcGVPNEdIaW1BVHBGbmNvMFZkMGVvZzlpUW1CQkFaM2dFUXRwcThU?=
+ =?utf-8?B?NXA4N0dnSHF3MDNWU1JvdGlEZ0NVT2lud2srMVZEZ1M0R01JVjFxdzFpY0I3?=
+ =?utf-8?B?cGxZM0hqMUgxdFhYMGpVWVNtaHEvTVE0bHcyZmlLVHM1OThiK0JJVkY1V05F?=
+ =?utf-8?Q?Mof/Arj/PRGHsfc16IrlIZhkD8zV13lNH4nq8=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9265.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?M1pWZENFN0hkWnlLcTJSbk1UakRTTFRZY21DRllqS3BXV0NnVkVuMTFGK2ht?=
+ =?utf-8?B?QkZ5TUJWUXdrcEFZZERKRHpNc1MrNDAvL2tVRVkwMGZDN01JZzRwR1lxbVA3?=
+ =?utf-8?B?WEcxUzhVRlg4SUQvN0F2bUlIZmZERGxXMitMQ3JySTM1elplbVJwUy8wbHJK?=
+ =?utf-8?B?eTdlZTV0UDNLOUhMNmdqdTQvRHNIYXBXR0RLaTNhTTE2Z3RibG8yR2FQbVlT?=
+ =?utf-8?B?bkZDQ0dBMHBVWTlrU0IrRDlxb0tZaUtCditVQnJLYkF1R3NGcDZScUR0UXFC?=
+ =?utf-8?B?bmc3N0lVZ2pOcDVDRWFSYkhCZ2Y1ODRublVab1J1NVljT0NLSysyeS8rZWti?=
+ =?utf-8?B?Z2liTWJsY2VPbksydTI5OHVTK3ZCQ052NW1wOGRpQUlZNlA1b0xXeWpxMHEr?=
+ =?utf-8?B?U2xXOTNCdzIwRFZYZkEzdS9wK0NXOG1pY2dyaXFVaVRHT0dHUW5MTXEzSkhU?=
+ =?utf-8?B?U1pTM1pWNmRUVzQ2SzFQSW9sRlAybEdtTFhMelM4RzkxYlh1Y2d3U1RJYU5M?=
+ =?utf-8?B?VGd4UGdCSzdGRXVsYUJlR2lnQVRUM2RmbGRaVDJvM28xTzBLMngvdFRMTUlQ?=
+ =?utf-8?B?K2x3OXJPUktlZ3c2bVhWb2szblI5Rm4xTWs2Rnh5NHo2b21jd0ZydGk2bzIy?=
+ =?utf-8?B?MG5uV05MTlVzc3RuWDZ1d2twVHJRV2hEY2t6UFpqOGdZMlBiVnBQbWJmT0Nn?=
+ =?utf-8?B?T3ZVUkhuL1RQRzNFcitMTmJtK2MvT2ZUOWpLWGxXUzlTSGFTQ1ZpVGFvQXhq?=
+ =?utf-8?B?cWlaM1MrQ0I3WlBuREk0eDVGcEVEc0RuMVJnUUFhL3JoS0wxSHUvZnBwWlIz?=
+ =?utf-8?B?eTJkK1J5VVdjSHVBTXVxMVBxRktUblJqeWtYTzNFZHpyWUFpMGFJMHYyOHp2?=
+ =?utf-8?B?dzB5MmVoaHdDb3gwdyt5S2lISnUzcXZmWDhKRFVpUEk3OC9LWERGTlQ0dmlj?=
+ =?utf-8?B?ellNMGs4T1d2SXhqNmlVRUVqeEJCaFg3SjVLZTlvMERrMWw2LzE1SSt0b0Q1?=
+ =?utf-8?B?QTdqV3FFcVgwNXV0QUo1ZWxoMnBudGUwQlRyUklvRi83dzV6WHU3VGlGV05y?=
+ =?utf-8?B?OTlSUVBWbis5SFFKOUFaekZTRjJqYkFiNVRsK29wRy80bHQxNDBoKzczaXh5?=
+ =?utf-8?B?K3J4b2NUZ1JNWU9jNW5jY3FIU29HbWgxZzVxWmN1a2EzTUE1ZGJQSzAyY1dF?=
+ =?utf-8?B?b0tBVGpFUWFjTklrUzRqbzd1cU5PcWNZMzJWYjkrY3oxd3ZoVSs2NExpMVlo?=
+ =?utf-8?B?ay9wUUc3aTJTOE4wak5zbDR4Y05CR0xjdEdGWDcvSXhTcFVYSC9KaFN3SW5i?=
+ =?utf-8?B?elkzYlY5RGlQR2pFQzZEc1lNenBXWWhtNUswZDFmTG9xcmN2TjdvSUw0ME9t?=
+ =?utf-8?B?L3VhTWdJbTVwcnRiYkxDVThkRlcyZU5JdzdyemgwUVVNUlhQb3lJZDl1MU9M?=
+ =?utf-8?B?eHdkOTZyRGRMWXJtb1hHWDNhcW1jQldNVTlUMWdiKzFaY0dUYnE5Wk55V1Vp?=
+ =?utf-8?B?cDAzRXJkeS83b25Nem9FbDQ3R3Faa1A3cHE3aTM2Y3FvVktEc0M4R0VCNFl4?=
+ =?utf-8?B?SWJFbWt2Uy9HckZRdGxHTlF4Z3Z6MzhTMk9xbkpWN1FheEcyQ0ZtTjJ4elBq?=
+ =?utf-8?B?WEQzNXM1OFdjWEhJMDY3YllPODBMN0xOV1ZqRFZUb0YwYXlzY3hPYTE0dERF?=
+ =?utf-8?B?ZUpFRWxLNlM2M00yVUI5ZmJEZlp0NEx6VmNGNDFkbVY2MWFtWVhxamJib0ds?=
+ =?utf-8?B?NWdkSVhqZ1R3U3c2NW9MaFMyL3BEQjlrRFdjSjhDQjBKU1h2MFZmcnlHQWc1?=
+ =?utf-8?B?Z0xFeUltcGdnTzk5SFZhZnR2NjVaSmk3UW5nd3g5SzBQa1Y1MWZ2WjJmMUNX?=
+ =?utf-8?B?YVczOElJbGs0VWYrYUFxL1lVcHBhaENIK3BSZnFQT0N1Y3NEVmQ2THBpZ200?=
+ =?utf-8?B?YmV1ZHFRTkZZMHZLTDdCeHY2UGFYcnlINVRETHdSQjhVYVB4WGNxaHdxa0Jz?=
+ =?utf-8?B?Nm5FcG51L1RFNnRQdU9MMjVFWmI4ODhYa3JuYkZrRjlSSDlvTVE2WjlmVkQ4?=
+ =?utf-8?B?Y1N2WHpnekhMclBKUlNBd2xzU0VZR01tVzFZdHo0aDhGNGI5VzBHY3RiQzRG?=
+ =?utf-8?Q?/SwI=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0312cd1e80e68a1450a194ebce27728cdf497575.1730133890.git.chris@chrisdown.name>
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9265.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 20adad8b-78ad-432e-44cb-08dd03fc3bb7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2024 16:00:02.4925
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Ir3aGOYDYeeGWTnVMK8EwJZTFy9Aa/lDh8ncXTfguPFRYr7LQ4p8unLOiw4vxhHR
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6914
 
-On Mon 2024-10-28 16:45:46, Chris Down wrote:
-> A sysfs interface under /sys/class/console/ is created that permits
-> viewing and configuring per-console attributes. This is the main
-> interface with which we expect users to interact with and configure
-> per-console loglevels.
-> 
-> Each console device now has its own directory (for example,
-> /sys/class/console/ttyS0/) containing the following attributes:
-> 
-> - effective_loglevel (ro): The effective loglevel for the console after
->   considering all loglevel authorities (e.g., global loglevel,
->   per-console loglevel).
-> - effective_loglevel_source (ro): The source of the effective loglevel
->   (e.g., local, global, ignore_loglevel).
-> - enabled (ro): Indicates whether the console is enabled (1) or disabled
->   (0).
-> - loglevel (rw): The per-console loglevel. Writing a value between 0
->   (KERN_EMERG) and 8 (KERN_DEBUG + 1) sets the per-console loglevel.
->   Writing -1 disables the per-console loglevel.
-
-The function clamp_loglevel() uses "minimum_console_loglevel"
-as the minimal boundary. This variable is initialized to
-CONSOLE_LOGLEVEL_MIN which is defined as 1.
-
-And indeed, the value 0 is not accepted:
-
-  # echo 0 >/sys/class/console/ttyS0/loglevel 
-  -bash: echo: write error: Numerical result out of range
-
-CONSOLE_LOGLEVEL_MIN has been used since ages. I am not completely
-sure about the motivation. I guess that KERN_EMERG messages
-should never get disabled.
-
-I would keep "1" as the minimal allowed value and update
-the documentation.
-
-
-> In terms of technical implementation, we embed a device pointer in the
-> console struct, and register each console using it so we can expose
-> attributes in sysfs. We currently expose the following attributes:
-> 
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-class-console
-[...]
-> +What:		/sys/class/console/<C>/loglevel
-> +Date:		October 2024
-> +Contact:	Chris Down <chris@chrisdown.name>
-> +Description:	Read write. The current per-console loglevel, which will take
-> +		effect if not overridden by other non-sysfs controls (see
-> +		Documentation/admin-guide/per-console-loglevel.rst). Bounds are
-> +		0 (LOGLEVEL_EMERG) to 8 (LOGLEVEL_DEBUG + 1) inclusive. Also
-
-The real minimal boundary is 1.
-
-> +		takes the special value "-1" to indicate that no per-console
-> +		loglevel is set, and we should defer to the global controls.
-> diff --git a/Documentation/admin-guide/per-console-loglevel.rst b/Documentation/admin-guide/per-console-loglevel.rst
-> index 1ec7608f94b0..41bf3befb2f3 100644
-> --- a/Documentation/admin-guide/per-console-loglevel.rst
-> +++ b/Documentation/admin-guide/per-console-loglevel.rst
-> @@ -68,3 +68,44 @@ further:
->  The default value for ``kernel.console_loglevel`` comes from
->  ``CONFIG_CONSOLE_LOGLEVEL_DEFAULT``, or ``CONFIG_CONSOLE_LOGLEVEL_QUIET`` if
->  ``quiet`` is passed on the kernel command line.
-> +
-> +Console attributes
-> +~~~~~~~~~~~~~~~~~~
-> +
-> +Registered consoles are exposed at ``/sys/class/console``. For example, if you
-> +are using ``ttyS0``, the console backing it can be viewed at
-> +``/sys/class/console/ttyS0/``. The following files are available:
-> +
-> +* ``effective_loglevel`` (r): The effective loglevel after considering all
-> +  loglevel authorities. For example, it shows the value of the console-specific
-> +  loglevel when a console-specific loglevel is defined, and shows the global
-> +  console loglevel value when the console-specific one is not defined.
-> +
-> +* ``effective_loglevel_source`` (r): The loglevel authority which resulted in
-> +  the effective loglevel being set. The following values can be present:
-> +
-> +    * ``local``: The console-specific loglevel is in effect.
-> +
-> +    * ``global``: The global loglevel (``kernel.console_loglevel``) is in
-> +      effect. Set a console-specific loglevel to override it.
-> +
-> +    * ``ignore_loglevel``: ``ignore_loglevel`` was specified on the kernel
-> +      command line or at ``/sys/module/printk/parameters/ignore_loglevel``.
-> +      Disable it to use level controls.
-> +
-> +* ``enabled`` (r): Whether the console is enabled.
-
-Please, remove the 'enabled' flag for now. All registered consoles are
-enabled. It seems that only some serial consoles temporary disable
-consoles during the suspend but the sysfs interface is not accessible
-at this time anyway.
-
-It has been discussed recently, see
-https://lore.kernel.org/r/ZyoNZfLT6tlVAWjO@pathway.suse.cz
-
-> +* ``loglevel`` (rw): The local, console-specific loglevel for this console.
-> +  This will be in effect if no other global control overrides it. Look at
-> +  ``effective_loglevel`` and ``effective_loglevel_source`` to verify that.
-> +
-> +Deprecated
-> +~~~~~~~~~~
-> +
-> +* ``kernel.printk`` sysctl: this takes four values, setting
-> +  ``kernel.console_loglevel``, ``kernel.default_message_loglevel``, the minimum
-> +  console loglevel, and a fourth unused value. The interface is generally
-> +  considered to quite confusing, doesn't perform checks on the values given,
-> +  and is unaware of per-console loglevel semantics.
-> +
-> --- a/include/linux/printk.h
-> +++ b/include/linux/printk.h
-> @@ -77,6 +77,8 @@ extern bool ignore_per_console_loglevel;
->  
->  extern void console_verbose(void);
->  
-> +int clamp_loglevel(int level);
-> +
-
-It is declared also in kernel/printk/internal.h. And it seems
-that the internal header is enough.
-
->  /* strlen("ratelimit") + 1 */
->  #define DEVKMSG_STR_MAX_SIZE 10
->  extern char devkmsg_log_str[DEVKMSG_STR_MAX_SIZE];
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -199,6 +199,12 @@ static int __init control_devkmsg(char *str)
->  }
->  __setup("printk.devkmsg=", control_devkmsg);
->  
-> +int clamp_loglevel(int level)
-> +{
-> +	return clamp(level, minimum_console_loglevel,
-> +		     CONSOLE_LOGLEVEL_MOTORMOUTH);
-
-Documentation/ABI/testing/sysfs-class-console says:
-
-   "Bounds are 1 (LOGLEVEL_ALERT) to 8 (LOGLEVEL_DEBUG + 1) inclusive."
-
-I do not have strong opinion. But I would follow the documentation
-because the limit is well defined there. On the contrary,
-CONSOLE_LOGLEVEL_MOTORMOUTH is a randomly chosen value
-and we should not leak it to the userspace ;-)
-
-> +}
-> +
->  char devkmsg_log_str[DEVKMSG_STR_MAX_SIZE] = "ratelimit";
->  #if defined(CONFIG_PRINTK) && defined(CONFIG_SYSCTL)
->  int devkmsg_sysctl_set_loglvl(const struct ctl_table *table, int write,
-> @@ -3894,6 +3900,8 @@ static int try_enable_preferred_console(struct console *newcon,
->  			// TODO: Will be configurable in a later patch
->  			newcon->level = -1;
->  
-> +			newcon->classdev = NULL;
-> +
-
-The console can be enabled also by try_enable_default_console().
-We need to initialize newcon->classdev there as well.
-
-The same is true for newcon->level. I have missed this when
-reviewing the 3rd patch.
-
->  			if (_braille_register_console(newcon, c))
->  				return 0;
->  
-> --- /dev/null
-> +++ b/kernel/printk/sysfs.c
-> +void console_register_device(struct console *con)
-> +{
-> +	/*
-> +	 * We might be called from register_console() before the class is
-> +	 * registered. If that happens, we'll take care of it in
-> +	 * printk_late_init.
-> +	 */
-> +	if (IS_ERR_OR_NULL(console_class))
-> +		return;
-
-This check is not enough to avoid race with printk_late_init():
-
-CPU0					CPU1
-
-register_console()			printk_late_init()
-  [...]					[...]
-  console_register_device()		console_register_device()
-    if (IS_ERR_OR_NULL(console_class))    if (IS_ERR_OR_NULL(console_class))
-
-BANG: Both CPUs see "console == NULL" and both CPUs try to
-      register the device.
-
-I suggest to avoid this race by taking console_list_lock() in
-printk_late_init(), see below.
-
-> +
-> +	if (WARN_ON(con->classdev))
-> +		return;
-> +
-> +	con->classdev = kzalloc(sizeof(struct device), GFP_KERNEL);
-> +	if (!con->classdev)
-> +		return;
-> +
-> +	device_initialize(con->classdev);
-> +	dev_set_name(con->classdev, "%s%d", con->name, con->index);
-> +	dev_set_drvdata(con->classdev, con);
-> +	con->classdev->release = console_classdev_release;
-> +	con->classdev->class = console_class;
-> +	if (device_add(con->classdev))
-> +		put_device(con->classdev);
-> +}
-> +
-> +void console_setup_class(void)
-> +{
-> +	struct console *con;
-> +	int cookie;
-> +
-> +	/*
-> +	 * printk exists for the lifetime of the kernel, it cannot be unloaded,
-> +	 * so we should never end up back in here.
-> +	 */
-> +	if (WARN_ON(console_class))
-> +		return;
-> +
-> +	console_class = class_create("console");
-> +	if (!IS_ERR(console_class))
-> +		console_class->dev_groups = console_sysfs_groups;
-> +
-> +	cookie = console_srcu_read_lock();
-
-We should take console_list_lock() here to avoid races with
-register_console() and unregister_console(). Otherwise.
-console_register_device(con) might be called twice.
-
-> +	for_each_console_srcu(con)
-> +		console_register_device(con);
-> +	console_srcu_read_unlock(cookie);
-> +}
-> +#else /* CONFIG_PRINTK */
-> +void console_register_device(struct console *new)
-> +{
-> +}
-> +void console_setup_class(void)
-> +{
-> +}
-> +#endif
-
-Best Regards,
-Petr
+W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
+Cg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCcmVuZGFuIEphY2ttYW4g
+PGphY2ttYW5iQGdvb2dsZS5jb20+DQo+IFNlbnQ6IFdlZG5lc2RheSwgTm92ZW1iZXIgMTMsIDIw
+MjQgOTozMiBBTQ0KPiBUbzogS2FwbGFuLCBEYXZpZCA8RGF2aWQuS2FwbGFuQGFtZC5jb20+DQo+
+IENjOiBNYW53YXJpbmcsIERlcmVrIDxkZXJla21uQGFtYXpvbi5jb20+OyBicEBhbGllbjguZGU7
+DQo+IGRhdmUuaGFuc2VuQGxpbnV4LmludGVsLmNvbTsgaHBhQHp5dG9yLmNvbTsganBvaW1ib2VA
+a2VybmVsLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IG1pbmdvQHJlZGhh
+dC5jb207IHBhd2FuLmt1bWFyLmd1cHRhQGxpbnV4LmludGVsLmNvbTsNCj4gcGV0ZXJ6QGluZnJh
+ZGVhZC5vcmc7IHRnbHhAbGludXRyb25peC5kZTsgeDg2QGtlcm5lbC5vcmc7IG1saXBwQGFtYXpv
+bi5hdDsNCj4gY2FuZWxsYWNAYW1hem9uLmF0DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjIgMTkv
+MzVdIERvY3VtZW50YXRpb24veDg2OiBEb2N1bWVudCB0aGUgbmV3IGF0dGFjaw0KPiB2ZWN0b3Ig
+Y29udHJvbHMNCj4NCj4gQ2F1dGlvbjogVGhpcyBtZXNzYWdlIG9yaWdpbmF0ZWQgZnJvbSBhbiBF
+eHRlcm5hbCBTb3VyY2UuIFVzZSBwcm9wZXIgY2F1dGlvbg0KPiB3aGVuIG9wZW5pbmcgYXR0YWNo
+bWVudHMsIGNsaWNraW5nIGxpbmtzLCBvciByZXNwb25kaW5nLg0KPg0KPg0KPiBPbiBXZWQsIDEz
+IE5vdiAyMDI0IGF0IDE2OjA1LCBLYXBsYW4sIERhdmlkIDxEYXZpZC5LYXBsYW5AYW1kLmNvbT4g
+d3JvdGU6DQo+ID4NCj4gPiBJIGRvbid0IHNlZSBob3cgQVNJIGNhbiBldmVyIGJlIGEgdXNlcl91
+c2VyIG1pdGlnYXRpb24uICBVc2VyX3VzZXIgYXR0YWNrcyBhcmUNCj4gdGhpbmdzIGxpa2UgaW5m
+bHVlbmNpbmcgdGhlIGluZGlyZWN0IHByZWRpY3Rpb25zIHVzZWQgYnkgYW5vdGhlciBwcm9jZXNz
+LCBjYXVzaW5nIHRoYXQNCj4gcHJvY2VzcyB0byBsZWFrIGRhdGEgZnJvbSBpdHMgYWRkcmVzcyBz
+cGFjZS4gIFVzZXJfdXNlciBtaXRpZ2F0aW9ucyBhcmUgdGhpbmdzIGxpa2UNCj4gZG9pbmcgYW4g
+SUJQQiB3aGVuIHN3aXRjaGluZyB0YXNrcy4NCj4NCj4gV2VsbCwgaW4gdGhlIFJGQyBJJ20gY3Vy
+cmVudGx5IChwYWluZnVsbHkgc2xvd2x5LCBzb3JyeSBhZ2Fpbikgd29ya2luZyBvbiwgdGhhdCBJ
+QlBCIGlzDQo+IHByb3ZpZGVkIGJ5IEFTSS4gRWFjaCBwcm9jZXNzIGhhcyBhbiBBU0kgZG9tYWlu
+LCBBU0kgZW5zdXJlcyB0aGVyZSdzIGFuIElCUEINCj4gYmVmb3JlIHdlIHRyYW5zaXRpb24gaW50
+byBhbnkgb3RoZXIgZG9tYWluIHRoYXQgZG9lc24ndCB0cnVzdCBpdCAoVk1zIHRydXN0IHRoZWly
+IFZNTSwNCj4gYnV0IGFsbCBvdGhlciB0cmFuc2l0aW9ucyBvdXQgb2YgdGhlIHVzZXJwYWNlIGRv
+bWFpbiB3aWxsIGZsdXNoKS4NCj4NCj4gSW4gcHJhY3RpY2UsIHRoaXMgaXMganVzdCBwcm92aWRl
+ZCBieSB0aGUgZmFjdCB0aGF0IGNvbnRleHQgc3dpdGNoaW5nIGN1cnJlbnRseSBpbmN1cnMgYW4N
+Cj4gYXNpX2V4aXQoKSwgYnV0IHRoYXQncyBhbiBpbXBsZW1lbnRhdGlvbiBkZXRhaWwsIGlmIHdl
+IHRyYW5zaXRpb25lZCBkaXJlY3RseSBmcm9tIG9uZQ0KPiBwcm9jZXNzJyBkb21haW4gdG8gYW5v
+dGhlciB0aGF0IHdvdWxkIGFsc28gY3JlYXRlIGEgZmx1c2guDQo+DQo+IChCdXQgeWVzLCBtYXli
+ZSB0aGF0IGJlaW5nICJwYXJ0IG9mIEFTSSIgaXMganVzdCBteSB2ZXJ5IEFTSS1jZW50cmljIHBl
+cnNwZWN0aXZlKS4NCg0KQWggeWVzLCB0aGlzIG1ha2VzIHNlbnNlLiAgQXMgeW91IHNhaWQgdGhv
+dWdoLCB0aGlzIGlzIGR1ZSB0byB0aGUgZmFjdCB0aGF0IGNvbnRleHQgc3dpdGNoIGluY3VycyBh
+biBhc2lfZXhpdC4gIEFzIGEgdGhvdWdodCBleGVyY2lzZSwgSSB3b25kZXIgd2hhdCB3b3VsZCBo
+YXBwZW4gaWYgdGhlcmUgd2FzIGEgbWl0aWdhdGlvbiB0aGF0IHdhcyByZXF1aXJlZCB3aGVuIHN3
+aXRjaGluZyB0byBhbm90aGVyIGd1ZXN0LCBidXQgbm90IHRvIHRoZSBicm9hZGVyIGhvc3QgYWRk
+cmVzcyBzcGFjZS4gIEkgdGhpbmsgdGhhdCB3b3VsZCBtZWFuIHRoZXJlIHdvdWxkIHN0aWxsIGJl
+IGEgbmVlZCBmb3IgZXh0cmEgZmx1c2hlcyB3aGVuIHN3aXRjaGluZyBndWVzdC0+Z3Vlc3QgdGhh
+dCBtYXkgbm90IGJlIGNvdmVyZWQgYnkgYXNpX2V4aXQuICAoVGhhdCdzIHRoZW9yZXRpY2FsIHRo
+b3VnaCBidXQgY291bGQgYmUgYSByZWFzb24gbm90IHRvIHRpZSB0aGVzZSB0b2dldGhlciBmb3Jl
+dmVyKQ0KDQpBbmQgeWVzLCBwbGVhc2UgZG8ga2VlcCB1cCB0aGUgQVNJIHdvcmssIEknbSB2ZXJ5
+IG11Y2ggbG9va2luZyBmb3J3YXJkIHRvIGl0LCBpdCBzaG91bGQgYmUgYSBiaWcgaW1wcm92ZW1l
+bnQuDQoNCi0tRGF2aWQgS2FwbGFuDQo=
 
