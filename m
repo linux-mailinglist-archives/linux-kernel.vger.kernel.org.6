@@ -1,174 +1,173 @@
-Return-Path: <linux-kernel+bounces-407332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCB29C6C0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:53:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32439C6C16
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:55:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EFE21F2421C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:53:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36BB1F24FE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D76C1F8191;
-	Wed, 13 Nov 2024 09:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="N3OSex4u";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PlRTtVCy";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="N3OSex4u";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PlRTtVCy"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C611F943A;
+	Wed, 13 Nov 2024 09:52:01 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BA818B460;
-	Wed, 13 Nov 2024 09:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E301F8190;
+	Wed, 13 Nov 2024 09:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731491477; cv=none; b=Q0j9BWzsqpPkef8gQVRMNk3f9iV5UYcAK2w+t9bRon9w1Prdg+4yvCfrlVyyslRqp0zQSFtQDuARZdYaCRgxKzMkDgV18RWGtOsoo4AyY1aneYmrTfu7dhsQS35QoyLn+fNGSKubDfn6+I4xPoL8//JlfEi2P5cSbReLZYCowOM=
+	t=1731491521; cv=none; b=JhGL2Rm4G1bi1zOl7anSOa5zpyggZDWUVQ8HvfzKE6Gvds+p5eNgUSqjLsZj3tYcFbLwmR3fBEfe45pbIlCp5YJzAW1NyJgmEUJzGQkjbTqpPSk+LeKjb0FHvsBnb2pAx44eUX66E8N0tp6+ZoRvxjtUMRmAkZvbz/DZMYRgJVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731491477; c=relaxed/simple;
-	bh=P39PjyIiaovTps1vX5kTC2tJVvVHoSfk67Ehp2TsEWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p/FXrCZzCIYvWPFtcO2tDC8bGJyKIQwWF7LmAbDWwxrIWjt+8l3HG/e5rciAWnziAjrgXqn45MF9ilUTCh6SfGDFnrcchw4WAj7/I6yOr98ZndaVg3/Fo5cW6c6DBMvH+wb7gdfPGz3wblPEwDDa7Rh8KHhPWqyQZHchvXSdW0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=N3OSex4u; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PlRTtVCy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=N3OSex4u; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PlRTtVCy; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 66B8D211D6;
-	Wed, 13 Nov 2024 09:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731491474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ElIsBM/8y9WJvsjd8VnyWPvVkquaQSaEO0rKfXW157Y=;
-	b=N3OSex4ukMwPySSMIaZpjAi4UXTEa1L6666sipx85E4IJvHBNfoFo1QYy3213BBz7tfUo4
-	AW3LD8TOzt0Mpt+ujL8Nc0BEf8rW5iZVjN/pj+BgiKf14vxw5+T1AbnBYZso7CT1bcXCzV
-	/hFZrF584Tabgv4RedrT7CKGnLSdB+o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731491474;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ElIsBM/8y9WJvsjd8VnyWPvVkquaQSaEO0rKfXW157Y=;
-	b=PlRTtVCyhXsKAEZdRDsZq3h8itQ1nkOZ9lTvhsrWLPUvNWd5dYKUAeqhfpU93SAKSYH2yQ
-	QZjuZroTsaHD+WBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=N3OSex4u;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=PlRTtVCy
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731491474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ElIsBM/8y9WJvsjd8VnyWPvVkquaQSaEO0rKfXW157Y=;
-	b=N3OSex4ukMwPySSMIaZpjAi4UXTEa1L6666sipx85E4IJvHBNfoFo1QYy3213BBz7tfUo4
-	AW3LD8TOzt0Mpt+ujL8Nc0BEf8rW5iZVjN/pj+BgiKf14vxw5+T1AbnBYZso7CT1bcXCzV
-	/hFZrF584Tabgv4RedrT7CKGnLSdB+o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731491474;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ElIsBM/8y9WJvsjd8VnyWPvVkquaQSaEO0rKfXW157Y=;
-	b=PlRTtVCyhXsKAEZdRDsZq3h8itQ1nkOZ9lTvhsrWLPUvNWd5dYKUAeqhfpU93SAKSYH2yQ
-	QZjuZroTsaHD+WBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 29DCE13A6E;
-	Wed, 13 Nov 2024 09:51:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id If6bCZJ2NGcGFgAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 13 Nov 2024 09:51:14 +0000
-Message-ID: <0aab195d-e342-459c-89ad-3809f1c3891f@suse.de>
-Date: Wed, 13 Nov 2024 10:51:13 +0100
+	s=arc-20240116; t=1731491521; c=relaxed/simple;
+	bh=D8GFblYwuD1IbjittRzD0iz8VM57aln/zQ8SunXo8CQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EKS9/mN6BBb8NfxFzlp1dHK+kIO69bsgEIVcKkOX4FPAG5GFXwguyeP7MmW1/qpnoZ2Cjhr+XMeOB6q7jrXf19tTY69hPCHXf4IunzCtR7YsmDpCPwcQgIqTRtf/Nc0StE9/GzFt7ND3Qkv2ckTBwIVnnXtR4Jk7s1tRk/fDIyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AD9Jv2u019485;
+	Wed, 13 Nov 2024 09:51:36 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42uwv49u4w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 13 Nov 2024 09:51:35 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Wed, 13 Nov 2024 01:51:34 -0800
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Wed, 13 Nov 2024 01:51:30 -0800
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <miquel.raynal@bootlin.com>
+CC: <alex.aring@gmail.com>, <davem@davemloft.net>, <dmantipov@yandex.ru>,
+        <edumazet@google.com>, <horms@kernel.org>, <kuba@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-wpan@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+        <stefan@datenfreihafen.org>,
+        <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH V2] mac802154: check local interfaces before deleting sdata list
+Date: Wed, 13 Nov 2024 17:51:29 +0800
+Message-ID: <20241113095129.1457225-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <87plmzsfog.fsf@bootlin.com>
+References: <87plmzsfog.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/8] virtio: blk/scsi: replace blk_mq_virtio_map_queues
- with blk_mq_hctx_map_queues
-To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Bjorn Helgaas <bhelgaas@google.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, virtualization@lists.linux.dev,
- linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com,
- mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
- storagedev@microchip.com, linux-nvme@lists.infradead.org
-References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
- <20241112-refactor-blk-affinity-helpers-v3-7-573bfca0cbd8@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20241112-refactor-blk-affinity-helpers-v3-7-573bfca0cbd8@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 66B8D211D6
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: text/plain
+X-Proofpoint-GUID: lFNnjX-toqGJjg-QE3CWoGjK2nXcCq2D
+X-Authority-Analysis: v=2.4 cv=Ke6AshYD c=1 sm=1 tr=0 ts=673476a7 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=VlfZXiiP6vEA:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=P-IC7800AAAA:8 a=wX8mhN7qUvqu7bC2lWAA:9
+ a=cQPPKAXgyycSBL8etih5:22 a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22 a=d3PnA9EDa4IxuAV0gXij:22
+X-Proofpoint-ORIG-GUID: lFNnjX-toqGJjg-QE3CWoGjK2nXcCq2D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-12_09,2024-11-12_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ spamscore=0 mlxlogscore=693 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 mlxscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ phishscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2409260000 definitions=main-2411130086
 
-On 11/12/24 14:26, Daniel Wagner wrote:
-> Replace all users of blk_mq_virtio_map_queues with the more generic
-> blk_mq_hctx_map_queues. This in preparation to retire
-> blk_mq_virtio_map_queues.
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->   drivers/block/virtio_blk.c | 4 ++--
->   drivers/scsi/virtio_scsi.c | 3 +--
->   2 files changed, 3 insertions(+), 4 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+syzkaller reported a corrupted list in ieee802154_if_remove. [1]
 
-Cheers,
+Remove an IEEE 802.15.4 network interface after unregister an IEEE 802.15.4
+hardware device from the system.
 
-Hannes
+CPU0					CPU1
+====					====
+genl_family_rcv_msg_doit		ieee802154_unregister_hw
+ieee802154_del_iface			ieee802154_remove_interfaces
+rdev_del_virtual_intf_deprecated	list_del(&sdata->list)
+ieee802154_if_remove
+list_del_rcu
+
+The net device has been unregistered, since the rcu grace period,
+unregistration must be run before ieee802154_if_remove.
+
+To avoid this issue, add a check for local->interfaces before deleting
+sdata list.
+
+[1]
+kernel BUG at lib/list_debug.c:58!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 6277 Comm: syz-executor157 Not tainted 6.12.0-rc6-syzkaller-00005-g557329bcecc2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__list_del_entry_valid_or_report+0xf4/0x140 lib/list_debug.c:56
+Code: e8 a1 7e 00 07 90 0f 0b 48 c7 c7 e0 37 60 8c 4c 89 fe e8 8f 7e 00 07 90 0f 0b 48 c7 c7 40 38 60 8c 4c 89 fe e8 7d 7e 00 07 90 <0f> 0b 48 c7 c7 a0 38 60 8c 4c 89 fe e8 6b 7e 00 07 90 0f 0b 48 c7
+RSP: 0018:ffffc9000490f3d0 EFLAGS: 00010246
+RAX: 000000000000004e RBX: dead000000000122 RCX: d211eee56bb28d00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffff88805b278dd8 R08: ffffffff8174a12c R09: 1ffffffff2852f0d
+R10: dffffc0000000000 R11: fffffbfff2852f0e R12: dffffc0000000000
+R13: dffffc0000000000 R14: dead000000000100 R15: ffff88805b278cc0
+FS:  0000555572f94380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056262e4a3000 CR3: 0000000078496000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __list_del_entry_valid include/linux/list.h:124 [inline]
+ __list_del_entry include/linux/list.h:215 [inline]
+ list_del_rcu include/linux/rculist.h:157 [inline]
+ ieee802154_if_remove+0x86/0x1e0 net/mac802154/iface.c:687
+ rdev_del_virtual_intf_deprecated net/ieee802154/rdev-ops.h:24 [inline]
+ ieee802154_del_iface+0x2c0/0x5c0 net/ieee802154/nl-phy.c:323
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
+ ___sys_sendmsg net/socket.c:2661 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2690
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Reported-and-tested-by: syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=985f827280dc3a6e7e92
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+V1 -> V2: remove state bit and add a check for local interfaces before
+          deleting sdata list
+
+ net/mac802154/iface.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/net/mac802154/iface.c b/net/mac802154/iface.c
+index c0e2da5072be..9e4631fade90 100644
+--- a/net/mac802154/iface.c
++++ b/net/mac802154/iface.c
+@@ -684,6 +684,10 @@ void ieee802154_if_remove(struct ieee802154_sub_if_data *sdata)
+ 	ASSERT_RTNL();
+ 
+ 	mutex_lock(&sdata->local->iflist_mtx);
++	if (list_empty(&sdata->local->interfaces)) {
++		mutex_unlock(&sdata->local->iflist_mtx);
++		return;
++	}
+ 	list_del_rcu(&sdata->list);
+ 	mutex_unlock(&sdata->local->iflist_mtx);
+ 
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.43.0
+
 
