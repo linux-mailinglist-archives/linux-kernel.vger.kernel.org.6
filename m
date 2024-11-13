@@ -1,119 +1,95 @@
-Return-Path: <linux-kernel+bounces-407632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390169C709F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:29:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6B49C7045
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:08:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37870B27964
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:08:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82B461F2847B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41DF1EE010;
-	Wed, 13 Nov 2024 13:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053011EF955;
+	Wed, 13 Nov 2024 13:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoRYYZfg"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="NKEIsJGa"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802B1433CE;
-	Wed, 13 Nov 2024 13:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478B21DF974
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731503291; cv=none; b=aARZLBAFqP3mFYvQoN6GOFdVUmflx5fdmwl49ATlgZzzdfZ6lpoVwkILYtaSiqAZoRs+HlFFCbzgCjChkr2PytycBmiltNINFzJ8SQEudH3IDN6a8RSrN945pY2400W97EZZbAZGd8X7Bem07cUOZ83bHe3H7vPb4PnMEzfBPhI=
+	t=1731503305; cv=none; b=fVjXZ9W30JAikxqr2T/waGpvo9JZGe0DI46dQ+E+1GidT9vkvHdaFv6z7cgXqbAgsXwP3PxMMFe/diD8ugFply0t87/2cZRI9nAszRIuvxKU5K5s8tDxVaKrCswT8/8sUE4rl71/rgwH9NE+9FzHdUE0slxb8/9AacVzqIa/g7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731503291; c=relaxed/simple;
-	bh=2WWRK703YmFJmLzZ2S+UG/8X4WmXCsvMcbUca5/g/z4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iD3TWM0kpjZ1glB7JhPqnUvQi/sKxM5E++15x/guA1Kx3OpcffO7tR3bE9yBYQ2WMSsRKwHa6QXgVsNMSwGzGUW6PChFvlzrH1ufdu3jLeHOhmJZDmkHuZlsSqZYln8VHmZxbC0V/Ed9MP6bypN1IrAq17N2K/f9N6g1XoG2dpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WoRYYZfg; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4316cce103dso85518555e9.3;
-        Wed, 13 Nov 2024 05:08:09 -0800 (PST)
+	s=arc-20240116; t=1731503305; c=relaxed/simple;
+	bh=LdVXmAUs2lzzBBui6LjWMsR9FRw+OK78+eYWZkrUVr8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bgeYXSHG7BmuVQHS/ZeG0yrnH0KlA2qAqWoj0jMhXj3qm6GGgOTQkKbiliBYz68Crk4wJcNd56KxBBy2pq7vE6AkfPiFCKgSYxt6ZxeVtB+UtDcDDIsjJR5eTb4M+Vd4OYH2Q1/1fh+QqmfvCIOxUQXGqgKk4AvagAhBAcBePwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=NKEIsJGa; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-460dce6fff9so48397971cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:08:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731503288; x=1732108088; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2a0NVxNB/W5Csc9TxzF7W/iYXO3VvsRJea43sdbNNNY=;
-        b=WoRYYZfgI8uTPueNx8rzbEz9s5CpFjORR/NCD4p6s8x2uniGRioWBA9fSPbJdurOfQ
-         muKKJBkbrnlr7k8i9+Gy4dZsXw/8zFK6Db1ov2f1mTgfZQ57hEJlL3/brwrHZSJSlbLW
-         k9TCKWy5nuDYPcibQoVLm8O7qOiDVl7U1HTi5jzyTjtNRJnshCKwaJ3VECtQO1pmvrwC
-         o2O5F6mg9CscgS8s8iB5MLUPe4i2b8Wo3cyjiyiH7S+iFZylYJ4xfPcKI2XyQ4lNX5SV
-         KYK0OWK8dl95+O/OE6mu7lDUwqtdQo198zi1kkJdZv3qWefmJfZUntFf1QipFirgf05Z
-         r3/Q==
+        d=szeredi.hu; s=google; t=1731503302; x=1732108102; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dxAolXJw8q+c5E6fHqK6JawKOgYA0bI9+BSxyIdr10o=;
+        b=NKEIsJGafoLQSNz1qX/H5C/H43ryLkEYQQTJ+1PwwQfy/Ucvf19+hTn/IrwCv95gev
+         7CXpUSjGZn3c/crHpLqW9nnYxVMxekX3XWLDNla6OqRcSO3r2+8/BdXQozHYVEt3gkdy
+         ymdDXSMBNPom19kvFupgAtKFMfk2muvnvklug=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731503288; x=1732108088;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1731503302; x=1732108102;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2a0NVxNB/W5Csc9TxzF7W/iYXO3VvsRJea43sdbNNNY=;
-        b=tqlvqDMXxI7HpVsTR9KyNprElycEx1FMuvvPJ2aOb1B75rJMC7C3tWo39dnSZ6Glap
-         hbvYUfi4LFUyGGg9SqOBboRsJ8bP7ep5g2BsEsjy2KMmbifxu2jnjTLvxseTZpoOOW37
-         Cw9skasA25IZXKizxeqDaWC0hiQ7ZLx8hI1VEHzFFv54IB/VfbbpHjk3YNMX/stxelAj
-         vKdQARAQwRw3yZestyqn2W0UMUdp7Ji4HCALtVsNzPFuBew7aWj0hS4VPmgl1x4FU+SZ
-         BnpABEXSRW+h480Q2L6ajAXPgYFaRz2E7OOGZzmRhXhdqllx/08Q7Fc0VDN1PPmmDMg6
-         Xf+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUMC9NwRZTUN2rmL+5pjwylhjerUVEBYaZolr8qbdbnoLdocmRhng0CpfzZ/DIelNKG8POyI6uUiaSOluY=@vger.kernel.org, AJvYcCWqTomBGMwHzn80X58I0Zx6jQoaHrotviiTKusbhuc/YWJEDpfRA6HDrWg1exkCccZGpLOOAky5p9MD2ls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU5oKWF54HN+fWBUvsQ6fDopAXKop3p9097YYxm3AD9BvvzZIZ
-	obISGxxcwtjefaQwFCNrOhaYkrIlJLbjttm3xahK/m3InZCkZACh
-X-Google-Smtp-Source: AGHT+IFCS0AhpP2qyy3IR0ypDlDOr0f3Bs+wNSNJoR+LC9CYkW34Um/O+lusmxIzJqY8AAMjqsNosA==
-X-Received: by 2002:a05:6000:18a5:b0:381:d890:b5b7 with SMTP id ffacd0b85a97d-381f1889de6mr24360788f8f.52.1731503287618;
-        Wed, 13 Nov 2024 05:08:07 -0800 (PST)
-Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381edc1104asm18664751f8f.88.2024.11.13.05.08.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 05:08:07 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	sound-open-firmware@alsa-project.org,
-	linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: SOF: ipc4-topology: remove redundant assignment to variable ret
-Date: Wed, 13 Nov 2024 13:08:07 +0000
-Message-Id: <20241113130807.1386754-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        bh=dxAolXJw8q+c5E6fHqK6JawKOgYA0bI9+BSxyIdr10o=;
+        b=vWl7yTICl/xDVC80sG38JP+k9lpUBMFm6UT8lR0eMsLfqVXvOrvWbiYIaTtKWzrB/G
+         0Xo6v24WQ6r5HKy7rccpqg5+19p045HZQnqi+niJsBCD0fqWh47SFgL8tJdCRnJr0cGF
+         RQ8OmtJElqk5PSGeXIziI82/GzHp+Bi92i2lyb68800aZqzozDAfRNU4TAEJbkNbTD1C
+         RTFAlvaTswQ/u8NJdvvMUebRRrxJJcSDIT0X9Ad0/v98mfOvY336by6Njon8ZsaxQwbo
+         OYWgvdv82D19VQobphtjNixb5DVr1PKj25wiYoxyb9sgeCJjTRna/kCQ2Sefy+lDxTvB
+         o2xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfXGYGk6q4tGPSupg4arSJ61JxMH8mD5TojEy4iyx8JqQ2yI8CBLNO8enFyTr/cJ0rxghn/6qSzVMRamA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaDu1LsblL87DOb3j/CdEYdOqNspcSD2fokqT46SczPhkE4m7U
+	xdzVVCmglBNQnbxRMGAmHF1T61Ua8vnTOeTbtL23mjBrkzs7dH9pKJdy5S57a/Bh0ui2yFzzQlE
+	bkGmd2xYH0i/RBCjGtOC64JyLdP/chYqFthuQCg==
+X-Google-Smtp-Source: AGHT+IGxGwBdEhJMi0woe1ZeBiKfmzs+SyJfOiLoo8+xW2OznMbCBZfVwU+OpoikYOP0mugFQcXxs4AZ9ELzRFibQj4=
+X-Received: by 2002:a05:622a:5199:b0:460:acda:1bb7 with SMTP id
+ d75a77b69052e-463093ef9fcmr313523891cf.36.1731503302272; Wed, 13 Nov 2024
+ 05:08:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+ <20241112-antiseptisch-kinowelt-6634948a413e@brauner> <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
+In-Reply-To: <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 13 Nov 2024 14:08:11 +0100
+Message-ID: <CAJfpegvTEGABRfk0fAu4tv0qD9a2sAmFrmuDqzvdkR-JXGcdXg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and sb_source
+To: Karel Zak <kzak@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, Ian Kent <raven@themaw.net>, 
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The variable ret is being assigned a zero value however the value is
-never read because ret is being re-assigned later after the end of
-the switch statement. The assignment is redundant and can be removed.
+On Wed, 13 Nov 2024 at 12:28, Karel Zak <kzak@redhat.com> wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/soc/sof/ipc4-topology.c | 1 -
- 1 file changed, 1 deletion(-)
+> Next on the wish list is a notification (a file descriptor that can be
+> used in epoll) that returns a 64-bit ID when there is a change in the
+> mount node. This will enable us to enhance systemd so that it does not
+> have to read the entire mount table after every change.
 
-diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
-index 1fcf4692a21f..b55eb977e443 100644
---- a/sound/soc/sof/ipc4-topology.c
-+++ b/sound/soc/sof/ipc4-topology.c
-@@ -755,7 +755,6 @@ static int sof_ipc4_widget_setup_comp_dai(struct snd_sof_widget *swidget)
- 			 * It is fine to call kfree(ipc4_copier->copier_config) since
- 			 * ipc4_copier->copier_config is null.
- 			 */
--			ret = 0;
- 			break;
- 		}
- 
--- 
-2.39.5
+IIRC Amir said he'd take this up (this was at LSFMM 2023).  I'm also
+happy to take part in the design and implementation.
 
+Thanks,
+Miklos
 
