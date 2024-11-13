@@ -1,217 +1,176 @@
-Return-Path: <linux-kernel+bounces-407330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53EA09C6C01
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:52:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD149C6BF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:51:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98EC1F21E5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:52:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86863B284C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8300C1FA275;
-	Wed, 13 Nov 2024 09:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PWh73TkX"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414691F9416
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731491390; cv=none; b=R1CLgpG4mQGv3n2w4sg7NbxIW22ZsywFRKw2Cv+2rI9e96z/pqk9/fPhaiZCwW9/Q/UAgUgIqOYDJi7Ja7FKx2i0qcBJ8QSN3yHh7f4gKwHywVUC4NLb0b1Czabtpn2wvEpQG0ql3/sXYPXJZKskhjWQLiuDHNDFq0HUWG0se+E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731491390; c=relaxed/simple;
-	bh=pAsRe15o8KtYw/7E0XKTJksMgDoXXLxLoIwfb4FVUuc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O9JAdhkVZvO1W1At+3tHHxbGKtFnP/RTYhk0JVvHwVxMs67K+HbF/J3iWYQ3Tvhp78n/Yq7khyLTFhfkLeHUR2qlI2Qbju584CEqVbQJ6+0MzIxZlnkZFJNZBG/2CxKM6q21pouKhlB9kLKRa/yUZupPJmmTVCy0hi4ksSUXG64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PWh73TkX; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 0841DC0014;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329881F8EFA;
 	Wed, 13 Nov 2024 09:49:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731491386;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T1tNyApX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="q4bCy2+z";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T1tNyApX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="q4bCy2+z"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5AA1F81A5;
+	Wed, 13 Nov 2024 09:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731491384; cv=none; b=cBd8oCHQwV9e1h+a9KVXwTECdqiQV0r0frZF64i8aIUabmrGFUzzkP4FY04tP8HEvO3cBsvXtt8povqoypwlBmqNy2hURhrSfesB6JzJso2VHWvuQ6BTLntxeTrnBEvk0oqzcvc7SVIMm6FiDUBHwjfIEleg6bxd/2MlnE6aolw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731491384; c=relaxed/simple;
+	bh=9i3UsklB6+OV7m6CPmxDWtrSLPjZEsvdtffR0tvdrzI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IaLAQfk9VArfNc/qSNLiDBZ5Mk1TQ8k99Q+qMDCl+fZXxobMsUwi82rM+hgOLFstJSGYCTKnxpc7BjZOhH2RNrM5KqGRNjXK820eEV3H1sGinasP5l5aSAVoHsSsh5uwHCYcJW6gXrmx/WOZU833G1W5KRB/zEn+JmeNtk8SkY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T1tNyApX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=q4bCy2+z; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T1tNyApX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=q4bCy2+z; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1AEA61F443;
+	Wed, 13 Nov 2024 09:49:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731491381; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iaf75RKxvR9hDjbOf8OF/9PhJbQC3X5yKc/JDdimNdQ=;
-	b=PWh73TkXzIlF6hnNs1QIev1z5a0k70PCKg8O5rG3fqtH9+kpiqlOIAB3iwJfYrsJSDpAPj
-	atjVKpSu9FnR8sIdMYIvgPjDm9/FW5as+VVBp2t66Jz4O4sIiwS958u6qnHhOpSLl5VvJO
-	JKRdsNA3p4fQGqiNFt5Hwi8gvJbQZyy/8vyMQwEGIOqzkNtjVB9DuD64DKgw0E0RYqRRiu
-	7kU3eBeS7JY88rgxYRdGyCwuZCn7I80hOYwvRfLgiygP5A6QCMvB+Utq+5wQ/sj4tnXLKN
-	POX6BnLboUm77Ivequb+dVqdkDZyv07509n0CCrB7FDn5yvpBa2TCf9I+XuzUw==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Santosh Shilimkar <ssantosh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH v3 7/7] mtd: rawnand: davinci: Implement setup_interface() operation
-Date: Wed, 13 Nov 2024 10:49:38 +0100
-Message-ID: <20241113094938.44817-8-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241113094938.44817-1-bastien.curutchet@bootlin.com>
-References: <20241113094938.44817-1-bastien.curutchet@bootlin.com>
+	bh=zPXzZydT6qO4UokPRFwEZNudeu1M8HPAtnVVbwn0LLU=;
+	b=T1tNyApXhsadqKPRBvkhvdE8do15PWzdoweDb8GvAFmf9B1uLU9OAv8vdap6A2hQ8ovFXu
+	rSxhO8LwoGOMxCSxIf8lZF52Ib0q6s5lWkhnrNh/9MycebbAw5W/6JwprrdrVCJY0zVGKq
+	05nqTU6gi+HiXoL1OwhujElZlAk5/qE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731491381;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zPXzZydT6qO4UokPRFwEZNudeu1M8HPAtnVVbwn0LLU=;
+	b=q4bCy2+zJivHKa4X75WD4y0ZoZ8jKUIeO6gj7fHPeEkQePXM6bjVnGaph/rKq7Cdy2BMla
+	g/rALeTsKGsHrpAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731491381; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zPXzZydT6qO4UokPRFwEZNudeu1M8HPAtnVVbwn0LLU=;
+	b=T1tNyApXhsadqKPRBvkhvdE8do15PWzdoweDb8GvAFmf9B1uLU9OAv8vdap6A2hQ8ovFXu
+	rSxhO8LwoGOMxCSxIf8lZF52Ib0q6s5lWkhnrNh/9MycebbAw5W/6JwprrdrVCJY0zVGKq
+	05nqTU6gi+HiXoL1OwhujElZlAk5/qE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731491381;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zPXzZydT6qO4UokPRFwEZNudeu1M8HPAtnVVbwn0LLU=;
+	b=q4bCy2+zJivHKa4X75WD4y0ZoZ8jKUIeO6gj7fHPeEkQePXM6bjVnGaph/rKq7Cdy2BMla
+	g/rALeTsKGsHrpAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D733D13A6E;
+	Wed, 13 Nov 2024 09:49:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id W9MbNDR2NGd2FQAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 13 Nov 2024 09:49:40 +0000
+Message-ID: <4c4415c0-8ad9-4783-86d9-383676116e65@suse.de>
+Date: Wed, 13 Nov 2024 10:49:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/8] scsi: replace blk_mq_pci_map_queues with
+ blk_mq_hctx_map_queues
+To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Bjorn Helgaas <bhelgaas@google.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com,
+ mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
+ storagedev@microchip.com, linux-nvme@lists.infradead.org
+References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
+ <20241112-refactor-blk-affinity-helpers-v3-5-573bfca0cbd8@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20241112-refactor-blk-affinity-helpers-v3-5-573bfca0cbd8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-The setup_interface() operation isn't implemented. It forces the driver
-to use the ONFI mode 0, though it could use more optimal modes.
+On 11/12/24 14:26, Daniel Wagner wrote:
+> Replace all users of blk_mq_pci_map_queues with the more generic
+> blk_mq_hctx_map_queues. This in preparation to retire
+> blk_mq_pci_map_queues.
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>   drivers/scsi/fnic/fnic_main.c             | 3 +--
+>   drivers/scsi/hisi_sas/hisi_sas.h          | 1 -
+>   drivers/scsi/hisi_sas/hisi_sas_v3_hw.c    | 4 ++--
+>   drivers/scsi/megaraid/megaraid_sas_base.c | 3 +--
+>   drivers/scsi/mpi3mr/mpi3mr.h              | 1 -
+>   drivers/scsi/mpi3mr/mpi3mr_os.c           | 2 +-
+>   drivers/scsi/mpt3sas/mpt3sas_scsih.c      | 3 +--
+>   drivers/scsi/pm8001/pm8001_init.c         | 2 +-
+>   drivers/scsi/pm8001/pm8001_sas.h          | 1 -
+>   drivers/scsi/qla2xxx/qla_nvme.c           | 3 +--
+>   drivers/scsi/qla2xxx/qla_os.c             | 4 ++--
+>   drivers/scsi/smartpqi/smartpqi_init.c     | 7 +++----
+>   12 files changed, 13 insertions(+), 21 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Implement the setup_interface() operation. It uses the
-aemif_set_cs_timings() function from the AEMIF driver to update the
-chip select timings. The calculation of the register's contents is
-directly extracted from §20.3.2.3 of the DaVinci TRM [1]
+Cheers,
 
-MAX_TH_PS and MAX_TSU_PS are the worst case timings based on the
-Keystone2 and DaVinci datasheets.
-
-[1] : https://www.ti.com/lit/ug/spruh77c/spruh77c.pdf
-
-Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
----
- drivers/mtd/nand/raw/davinci_nand.c | 79 +++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
-
-diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
-index 563045c7ce08..00627c2783f8 100644
---- a/drivers/mtd/nand/raw/davinci_nand.c
-+++ b/drivers/mtd/nand/raw/davinci_nand.c
-@@ -14,6 +14,7 @@
- #include <linux/err.h>
- #include <linux/iopoll.h>
- #include <linux/kernel.h>
-+#include <linux/memory/ti-aemif.h>
- #include <linux/module.h>
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
-@@ -44,6 +45,9 @@
- #define	MASK_ALE		0x08
- #define	MASK_CLE		0x10
- 
-+#define MAX_TSU_PS		3000	/* Input setup time in ps */
-+#define MAX_TH_PS		1600	/* Input hold time in ps */
-+
- struct davinci_nand_pdata {
- 	uint32_t		mask_ale;
- 	uint32_t		mask_cle;
-@@ -120,6 +124,7 @@ struct davinci_nand_info {
- 	uint32_t		core_chipsel;
- 
- 	struct clk		*clk;
-+	struct aemif_device	*aemif;
- };
- 
- static DEFINE_SPINLOCK(davinci_nand_lock);
-@@ -767,9 +772,82 @@ static int davinci_nand_exec_op(struct nand_chip *chip,
- 	return 0;
- }
- 
-+#define TO_CYCLES(ps, period_ns) (DIV_ROUND_UP((ps) / 1000, (period_ns)))
-+
-+static int davinci_nand_setup_interface(struct nand_chip *chip, int chipnr,
-+					const struct nand_interface_config *conf)
-+{
-+	struct davinci_nand_info *info = to_davinci_nand(nand_to_mtd(chip));
-+	const struct nand_sdr_timings *sdr;
-+	struct aemif_cs_timings timings;
-+	s32 cfg, min, cyc_ns;
-+	int ret;
-+
-+	cyc_ns = 1000000000 / clk_get_rate(info->clk);
-+
-+	sdr = nand_get_sdr_timings(conf);
-+	if (IS_ERR(sdr))
-+		return PTR_ERR(sdr);
-+
-+	cfg = TO_CYCLES(sdr->tCLR_min, cyc_ns) - 1;
-+	timings.rsetup = cfg > 0 ? cfg : 0;
-+
-+	cfg = max_t(s32, TO_CYCLES(sdr->tREA_max + MAX_TSU_PS, cyc_ns),
-+		    TO_CYCLES(sdr->tRP_min, cyc_ns)) - 1;
-+	timings.rstrobe = cfg > 0 ? cfg : 0;
-+
-+	min = TO_CYCLES(sdr->tCEA_max + MAX_TSU_PS, cyc_ns) - 2;
-+	while ((s32)(timings.rsetup + timings.rstrobe) < min)
-+		timings.rstrobe++;
-+
-+	cfg = TO_CYCLES((s32)(MAX_TH_PS - sdr->tCHZ_max), cyc_ns) - 1;
-+	timings.rhold = cfg > 0 ? cfg : 0;
-+
-+	min = TO_CYCLES(sdr->tRC_min, cyc_ns) - 3;
-+	while ((s32)(timings.rsetup + timings.rstrobe + timings.rhold) < min)
-+		timings.rhold++;
-+
-+	cfg = TO_CYCLES((s32)(sdr->tRHZ_max - (timings.rhold + 1) * cyc_ns * 1000), cyc_ns);
-+	cfg = max_t(s32, cfg, TO_CYCLES(sdr->tCHZ_max, cyc_ns)) - 1;
-+	timings.ta = cfg > 0 ? cfg : 0;
-+
-+	cfg = TO_CYCLES(sdr->tWP_min, cyc_ns) - 1;
-+	timings.wstrobe = cfg > 0 ? cfg : 0;
-+
-+	cfg = max_t(s32, TO_CYCLES(sdr->tCLS_min, cyc_ns), TO_CYCLES(sdr->tALS_min, cyc_ns));
-+	cfg = max_t(s32, cfg, TO_CYCLES(sdr->tCS_min, cyc_ns)) - 1;
-+	timings.wsetup = cfg > 0 ? cfg : 0;
-+
-+	min = TO_CYCLES(sdr->tDS_min, cyc_ns) - 2;
-+	while ((s32)(timings.wsetup + timings.wstrobe) < min)
-+		timings.wstrobe++;
-+
-+	cfg = max_t(s32, TO_CYCLES(sdr->tCLH_min, cyc_ns), TO_CYCLES(sdr->tALH_min, cyc_ns));
-+	cfg = max_t(s32, cfg, TO_CYCLES(sdr->tCH_min, cyc_ns));
-+	cfg = max_t(s32, cfg, TO_CYCLES(sdr->tDH_min, cyc_ns)) - 1;
-+	timings.whold = cfg > 0 ? cfg : 0;
-+
-+	min = TO_CYCLES(sdr->tWC_min, cyc_ns) - 2;
-+	while ((s32)(timings.wsetup + timings.wstrobe + timings.whold) < min)
-+		timings.whold++;
-+
-+	dev_dbg(&info->pdev->dev, "RSETUP %x RSTROBE %x RHOLD %x\n",
-+		timings.rsetup, timings.rstrobe, timings.rhold);
-+	dev_dbg(&info->pdev->dev, "TA %x\n", timings.ta);
-+	dev_dbg(&info->pdev->dev, "WSETUP %x WSTROBE %x WHOLD %x\n",
-+		timings.wsetup, timings.wstrobe, timings.whold);
-+
-+	ret = aemif_check_cs_timings(&timings);
-+	if (ret || chipnr == NAND_DATA_IFACE_CHECK_ONLY)
-+		return ret;
-+
-+	return aemif_set_cs_timings(info->aemif, info->core_chipsel, &timings);
-+}
-+
- static const struct nand_controller_ops davinci_nand_controller_ops = {
- 	.attach_chip = davinci_nand_attach_chip,
- 	.exec_op = davinci_nand_exec_op,
-+	.setup_interface = davinci_nand_setup_interface,
- };
- 
- static int nand_davinci_probe(struct platform_device *pdev)
-@@ -832,6 +910,7 @@ static int nand_davinci_probe(struct platform_device *pdev)
- 	info->pdev		= pdev;
- 	info->base		= base;
- 	info->vaddr		= vaddr;
-+	info->aemif		= dev_get_drvdata(pdev->dev.parent);
- 
- 	mtd			= nand_to_mtd(&info->chip);
- 	mtd->dev.parent		= &pdev->dev;
+Hannes
 -- 
-2.47.0
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
