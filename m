@@ -1,135 +1,226 @@
-Return-Path: <linux-kernel+bounces-406906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF189C662F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:44:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 495D69C661C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:38:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95D35B299FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:26:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 712A5B28014
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E095CB8;
-	Wed, 13 Nov 2024 00:26:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C14A936;
+	Wed, 13 Nov 2024 00:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lN7eiZlv"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8841523A6
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 00:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7933C0C;
+	Wed, 13 Nov 2024 00:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731457567; cv=none; b=kOIAudCVfMqJu9YAV/+kyiBMVqxydHB/6bAOMc59Q0r55I3h9U6cnieG04AGk844eJRPD02bUmURpenjkyEUt3JjAPmlo5m3Y2KlpR4NgoQ5uR4qm5Z4UhH/O0akQ4mDMt7Ngg3Vu58x4Gt5w4pRfdPde4P5m3hDJXk5h7AZ/NM=
+	t=1731457703; cv=none; b=te4rjglw8UZ+AhSMTYGSGzQeESCxb8U+hiSIcFIzFQSBuo83nySVbW5BfCTgQsJ5s1wuQVLF3Pff8JN1kUWqv6xHCTv/BXyhP7LvKO/M6s6akbEHW6ZiJs4ytpYxf7r0UpA4xM8iZK1CeLcWcGPIa5YsxI7fgDLIjxanY1tm8Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731457567; c=relaxed/simple;
-	bh=aS2Is9ZQ/xzhIZQkkp5NJZKCy09LJu/qMCCqpUVWOqE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=O0JQHNt1/YgaMZz6vBBrUz331q3jC7njd2u1Hasw/+MHx2bm4sn3/udohEMj0xjmjxo4zD6I1g07ANrLyyhlvVZTx0quPv+OqM8s53q4BPiKwNvq/qm81cIcUlO7aubQ9WB78HQsSKyt6w1woQVpoijQrFWnjV5V0RokkFjfDnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3e1ef9102so75541675ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:26:05 -0800 (PST)
+	s=arc-20240116; t=1731457703; c=relaxed/simple;
+	bh=TIyCo5T9LHP74xPER7cR4Zj3zBwHNP6/+8kfAsjCvtY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uGidPq14frgf3iupL+xndjAv6qPBAfxPITOLCCB+dZ2ALRO0+Xy1EkNL9cMIAI3KS5SIfsIHKdMovACCsWHdgTUKNt/ubz/90KIjhO+clv4x/mnMxEXtRBVHPmqy5ltN8g8lfJSgXalNvJzKghuv36VMxxRPfMb80F7bHnhTLRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lN7eiZlv; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20ce5e3b116so56180885ad.1;
+        Tue, 12 Nov 2024 16:28:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731457702; x=1732062502; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HeJx4f/doTM5rrgRndUVTXYY1qNuiNyXI+q37KwJf4A=;
+        b=lN7eiZlvxuzm/aFu5JI5aykuU36ZGxiWAIT7SQcOMDWf7ehrpESUFCUYBzmwgXzeXY
+         Dn1hI/qsXRvhcDnlaSmdc2h2CzY0mIAdAMveq4FUyikPg9goWksk9Sfs+rRXPMDoE7YO
+         0hEbroSutsRtH7p1ll2KQJ/n1CrGZXR/TOhyOBJjxnBqJJQU+THXw+WkMg0cuLekEVuA
+         u7FGR78Q193QveDjR9CVrwspH+yOObFCRFGHgvuXVJmeuvrdZGZeGsF7L6YfVyXHjXpP
+         IFBO91TJLBBVaDfuqhaJoTLN6Dya89JMwxMM0aZ0FxnnZcPzYXcuh7PP8TlawjovpjSv
+         VGGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731457564; x=1732062364;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wx6UwOIjgebHPG/IW8Frem6w/1sk6fZbDWO2MWfeuQ8=;
-        b=Y97ch7hLrDkNAMjArv155zWtISl13Lhv1LMFxTQ3fF8i6++mJAoqLh/EmpQNRoU7MD
-         oFH8bcYYN0a3wxlWtcmpo2fozpJMluPAX/1EWJPVB7aCgmYvoHQQ5LA+627VunZxwGhU
-         TBNqQWf4e0ui6KLRC999HFxgeAVevvyULhMs6r7J6tSe49jiOLj1Gpzh6AJToGFw6oLI
-         TUvoOD7EVirUgcPabnkIrXan/Iub3EB3p92J10moocOEhMRgh1EvxHWvqRJBhDAdrP6i
-         DN8IjwgFaIvmRR+Z33AcLKyiGR0HETvmKVHxHjdxsCEODeNYqM7TowctA5t9WmFwr3d0
-         lg6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVbAQn207EyJQ+lAHoHxSfuTLvjTCacSnJa5NHP2DhvBY9qVkmMUcjfIiV2Yz9+L93u/1n2qJ73e4HacqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGUmrk+UFxQj8rhllYWZ9MGzCDvCuxIzikqfp631RBsbOek5cT
-	jSInteHvwajGZNs4EB7laLcELy9nTI5sB9PkyqyeSqulG+xCSZEngLBOS023jnFm8T6uFJ5bL+V
-	FyheLEAxHKJpfFgmVQoKJvJIqLoyUmuBAUNmTrBa3Y39+xGxNiP/E7uY=
-X-Google-Smtp-Source: AGHT+IGuXdpZUeMwiOCcCmnYgMyAs3RKYJguHeZGUNZi47/Jp1CAlclzq559kggDf5Ad4y/ngWDlEnWRkwu1gCfmLJHrIHEP96rI
+        d=1e100.net; s=20230601; t=1731457702; x=1732062502;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HeJx4f/doTM5rrgRndUVTXYY1qNuiNyXI+q37KwJf4A=;
+        b=t6zP0K2XV6ntjR0COEUPFUNx1P7dgK7m1dRB0pZbEixLakCZqpdY9nZ+6Iero1s0nX
+         Kq8H90xgD/hSVZ3x3zhYQsregeLB9ufZxSgHWj3d1tUyU1zKPnGSqjNBvWbDzv6v+aPH
+         7m9Ab4s/5pnToZ+7Fq4NSNCakkfc/g2SXu+GYyZQDQwfonL3yS5OSQJIpCI9+U+h6up8
+         zf8+QpklgcY8G/3ynLYCnSTQZKF+ftT17igYTTpAtdQ+lTQO3NkEQCfJQ1eswBw3ACk3
+         zeRP4cS5N7uf+wQT+G6R/Q4JlFVrMySlF3KL9u22GnqV44tnkNed0vGpKsvMHKzD8ZxO
+         VUZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUif9So/axG5lkBayF6D3R4EIZn8xuUMZ4pqaQbUOOw0R1/jM2p3PavTeQei/Rv3qKMfBgcGrZnizs5kNc=@vger.kernel.org, AJvYcCV4lT/Bf+Q+2+K47SgKD7mTx5N/TiLRFWdRLzykAvMxYH1b9zblMH9ehZq8b9USn9VdZaCBF4Jwq8Da6HzW5DQ3yw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/M3HmAayzw9A63j7idUgwZLG5+i8WPRidkbAsO86K99isv85d
+	YlPrlLZFwxmEro0XzzyhCu1vcVLHH8n0uoMF/BVKr8EASBIEvFKCCtNwZtettb8=
+X-Google-Smtp-Source: AGHT+IHy2dNX/we2wD0LCjSiLT2/abXJ7kxLWUjXZay3GkMDebHYcE/IpaNN9L39z0qbCA5NulKSPQ==
+X-Received: by 2002:a17:902:cf02:b0:211:6b68:ae89 with SMTP id d9443c01a7336-21183e6e6f8mr208682075ad.54.1731457701564;
+        Tue, 12 Nov 2024 16:28:21 -0800 (PST)
+Received: from mbp.lan (c-67-174-206-244.hsd1.ca.comcast.net. [67.174.206.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e458bdsm100158425ad.133.2024.11.12.16.28.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 16:28:21 -0800 (PST)
+From: Howard Chu <howardchu95@gmail.com>
+To: acme@kernel.org,
+	peterz@infradead.org
+Cc: namhyung@kernel.org,
+	irogers@google.com,
+	mingo@redhat.com,
+	jolsa@kernel.org,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: [PATCH v8 00/10] perf record --off-cpu: Dump off-cpu samples directly
+Date: Tue, 12 Nov 2024 16:28:08 -0800
+Message-ID: <20241113002818.3578645-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218a:b0:3a6:c98d:86bc with SMTP id
- e9e14a558f8ab-3a7156db5b5mr11333955ab.1.1731457564650; Tue, 12 Nov 2024
- 16:26:04 -0800 (PST)
-Date: Tue, 12 Nov 2024 16:26:04 -0800
-In-Reply-To: <d703694c-a0a7-480b-bafa-c8703306d2f5@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6733f21c.050a0220.2a2fcc.0001.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent (2)
-From: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
-To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Changes in v8:
+ - Make this series bisectable
+ - Rename off_cpu_thresh to off_cpu_thresh_us and offcpu_thresh (in BPF)
+   to offcpu_thresh_ns for clarity.
+ - Add commit messages to 'perf evsel: Expose evsel__is_offcpu_event()
+   for future use' commit
+ - Correct spelling mistakes in the commit message (s/is should be/should be/)
+ - Add kernel-doc comments to off_cpu_dump(), and comments to the empty
+   if block
+ - Add some comments to off-cpu test
+ - Delete an unused variable 'timestamp' in off_cpu_dump()
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in hfs_write_inode
+Changes in v7:
+ - Make off-cpu event system-wide
+ - Use strtoull instead of strtoul
+ - Delete unused variable such as sample_id, and sample_type
+ - Use i as index to update BPF perf_event map
+ - MAX_OFFCPU_LEN 128 is too big, make it smaller.
+ - Delete some bound check as it's always guaranteed
+ - Do not set ip_pos in BPF
+ - Add a new field for storing stack traces in the tstamp map
+ - Dump the off-cpu sample directly or save it in the off_cpu map, not both
+ - Delete the sample_type_off_cpu check
+ - Use __set_off_cpu_sample() to parse samples instead of a two-pass parsing
 
-------------[ cut here ]------------
-kernel BUG at fs/hfs/inode.c:444!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP PTI
-CPU: 1 UID: 0 PID: 34 Comm: kworker/u8:2 Not tainted 6.12.0-rc7-syzkaller-00040-g14b6320953a3-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: writeback wb_workfn (flush-7:0)
-RIP: 0010:hfs_write_inode+0xe81/0xe90 fs/hfs/inode.c:444
-Code: e9 f4 fd ff ff 8b 3a e8 7d 43 31 ff e9 02 fe ff ff 49 89 d6 8b 7d c8 e8 2d 3f 31 ff 41 89 06 e9 26 fe ff ff e8 b0 2d 98 fe 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90
-RSP: 0018:ffff8881003d75c0 EFLAGS: 00010293
-RAX: ffffffff831cc480 RBX: 0000000000000000 RCX: ffff8881003dc180
-RDX: 0000000000000000 RSI: ffffffff91870dd0 RDI: 0000000000000000
-RBP: ffff8881003d76a8 R08: 0000000000000007 R09: ffffffff831cb73c
-R10: 0000000000000003 R11: ffff8881003dc180 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff888040cb0a70 R15: ffff8881003dccb8
-FS:  0000000000000000(0000) GS:ffff88813fd00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffdea70dd18 CR3: 00000001151bc000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- write_inode fs/fs-writeback.c:1503 [inline]
- __writeback_single_inode+0x8da/0x1290 fs/fs-writeback.c:1723
- writeback_sb_inodes+0xa34/0x1c20 fs/fs-writeback.c:1954
- wb_writeback+0x4df/0xcb0 fs/fs-writeback.c:2134
- wb_do_writeback fs/fs-writeback.c:2281 [inline]
- wb_workfn+0x40b/0x1940 fs/fs-writeback.c:2321
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:hfs_write_inode+0xe81/0xe90 fs/hfs/inode.c:444
-Code: e9 f4 fd ff ff 8b 3a e8 7d 43 31 ff e9 02 fe ff ff 49 89 d6 8b 7d c8 e8 2d 3f 31 ff 41 89 06 e9 26 fe ff ff e8 b0 2d 98 fe 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90
-RSP: 0018:ffff8881003d75c0 EFLAGS: 00010293
-RAX: ffffffff831cc480 RBX: 0000000000000000 RCX: ffff8881003dc180
-RDX: 0000000000000000 RSI: ffffffff91870dd0 RDI: 0000000000000000
-RBP: ffff8881003d76a8 R08: 0000000000000007 R09: ffffffff831cb73c
-R10: 0000000000000003 R11: ffff8881003dc180 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff888040cb0a70 R15: ffff8881003dccb8
-FS:  0000000000000000(0000) GS:ffff88813fd00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffdea70dd18 CR3: 00000001151bc000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Changes in v6:
+ - Make patches bisectable
+
+Changes in v5:
+ - Delete unnecessary copy in BPF program
+ - Remove sample_embed from perf header, hard code off-cpu stuff instead
+ - Move evsel__is_offcpu_event() to evsel.h
+ - Minor changes to the test
+ - Edit some comments
+
+Changes in v4:
+ - Minimize the size of data output by perf_event_output()
+ - Keep only one off-cpu event
+ - Change off-cpu threshold's unit to microseconds
+ - Set a default off-cpu threshold
+ - Print the correct error message for the field 'embed' in perf data header
+
+Changes in v3:
+ - Add off-cpu-thresh argument
+ - Process direct off-cpu samples in post
+
+Changes in v2:
+ - Remove unnecessary comments.
+ - Rename function off_cpu_change_type to off_cpu_prepare_parse
+
+v1:
+
+As mentioned in: https://bugzilla.kernel.org/show_bug.cgi?id=207323
+
+Currently, off-cpu samples are dumped when perf record is exiting. This
+results in off-cpu samples being after the regular samples. This patch
+series makes possible dumping off-cpu samples on-the-fly, directly into
+perf ring buffer. And it dispatches those samples to the correct format
+for perf.data consumers.
+
+Before:
+```
+     migration/0      21 [000] 27981.041319: 2944637851    cycles:P:  ffffffff90d2e8aa record_times+0xa ([kernel.kallsyms])
+            perf  770116 [001] 27981.041375:          1    cycles:P:  ffffffff90ee4960 event_function+0xf0 ([kernel.kallsyms])
+            perf  770116 [001] 27981.041377:          1    cycles:P:  ffffffff90c184b1 intel_bts_enable_local+0x31 ([kernel.kallsyms])
+            perf  770116 [001] 27981.041379:      51611    cycles:P:  ffffffff91a160b0 native_sched_clock+0x30 ([kernel.kallsyms])
+     migration/1      26 [001] 27981.041400: 4227682775    cycles:P:  ffffffff90d06a74 wakeup_preempt+0x44 ([kernel.kallsyms])
+     migration/2      32 [002] 27981.041477: 4159401534    cycles:P:  ffffffff90d11993 update_load_avg+0x63 ([kernel.kallsyms])
+
+sshd  708098 [000] 18446744069.414584:     286392 offcpu-time: 
+	    79a864f1c8bb ppoll+0x4b (/usr/lib/libc.so.6)
+	    585690935cca [unknown] (/usr/bin/sshd)
+```
+
+After:
+```
+            perf  774767 [003] 28178.033444:        497           cycles:P:  ffffffff91a160c3 native_sched_clock+0x43 ([kernel.kallsyms])
+            perf  774767 [003] 28178.033445:     399440           cycles:P:  ffffffff91c01f8d nmi_restore+0x25 ([kernel.kallsyms])
+         swapper       0 [001] 28178.036639:  376650973           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+         swapper       0 [003] 28178.182921:  348779378           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+    blueman-tray    1355 [000] 28178.627906:  100184571 offcpu-time: 
+	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+	    7fff24e862d8 [unknown] ([unknown])
 
 
-Tested on:
+    blueman-tray    1355 [000] 28178.728137:  100187539 offcpu-time: 
+	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+	    7fff24e862d8 [unknown] ([unknown])
 
-commit:         14b63209 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14ad81a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9d2d076474187685
-dashboard link: https://syzkaller.appspot.com/bug?extid=d395b0c369e492a17530
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=127101a7980000
+
+         swapper       0 [000] 28178.463253:  195945410           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+     dbus-broker     412 [002] 28178.464855:  376737008           cycles:P:  ffffffff91c000a0 entry_SYSCALL_64+0x20 ([kernel.kallsyms])
+```
+
+Howard Chu (10):
+  perf record --off-cpu: Add --off-cpu-thresh option
+  perf evsel: Expose evsel__is_offcpu_event() for future use
+  perf record --off-cpu: Parse off-cpu event
+  perf record --off-cpu: Preparation of off-cpu BPF program
+  perf record --off-cpu: Dump off-cpu samples in BPF
+  perf evsel: Assemble offcpu samples
+  perf record --off-cpu: Disable perf_event's callchain collection
+  perf script: Display off-cpu samples correctly
+  perf record --off-cpu: Dump the remaining samples in BPF's stack trace
+    map
+  perf test: Add direct off-cpu test
+
+ tools/perf/builtin-record.c             |  26 ++++++
+ tools/perf/builtin-script.c             |   4 +-
+ tools/perf/tests/builtin-test.c         |   1 +
+ tools/perf/tests/shell/record_offcpu.sh |  35 ++++++-
+ tools/perf/tests/tests.h                |   1 +
+ tools/perf/tests/workloads/Build        |   1 +
+ tools/perf/tests/workloads/offcpu.c     |  16 ++++
+ tools/perf/util/bpf_off_cpu.c           | 117 ++++++++++++++----------
+ tools/perf/util/bpf_skel/off_cpu.bpf.c  |  97 +++++++++++++++++++-
+ tools/perf/util/evsel.c                 |  34 ++++++-
+ tools/perf/util/evsel.h                 |   2 +
+ tools/perf/util/off_cpu.h               |   3 +-
+ tools/perf/util/record.h                |   1 +
+ 13 files changed, 282 insertions(+), 56 deletions(-)
+ create mode 100644 tools/perf/tests/workloads/offcpu.c
+
+-- 
+2.43.0
 
 
