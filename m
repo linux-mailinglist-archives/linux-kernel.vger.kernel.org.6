@@ -1,205 +1,111 @@
-Return-Path: <linux-kernel+bounces-407358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A619C6C58
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:05:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF839C6C5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B123C1F2244F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:05:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F280C28B305
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867D91FB89A;
-	Wed, 13 Nov 2024 10:05:46 +0000 (UTC)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA791FB898;
+	Wed, 13 Nov 2024 10:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m2c7RvkJ"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB411F9A8E;
-	Wed, 13 Nov 2024 10:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DA51FAC48
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731492346; cv=none; b=ByuJsB6HDrzwPSRdpMN0EaBciD7hccDKFN1W6qxwlO2x7SWlkx4ti5GWsWUgApF+BmFZlxXPpovb12yM7rr/7ShhRswZUQVhgUme0WMzG+w8gwm5Rx3+3r6eoCqThzyhqsDUXZnhUHUvKcuU82Bzw2jAfI6Ke+fFprRmG9ttFDQ=
+	t=1731492390; cv=none; b=ClPCBV8hfQLl2fOye9jgw4lfl3No+EToahdbffwmjb3a16sEOGH7yUSU9WSDnASlGLUBDy5iHhEX1X55LqQaogDZ36umBiR8g3h07o3lHy67+QeG8hjwY8dyWdWuJXf1fMdb0uI1ikISRCncYkDGjaBKTwg7l+hj6e7NrY/5vC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731492346; c=relaxed/simple;
-	bh=hfBrQJvC8AN+nHLouReIxHBNH9WwzWBzRRgrwIvPnik=;
+	s=arc-20240116; t=1731492390; c=relaxed/simple;
+	bh=xgef7oBfeDTGTKeZLWgpvN3wmKB5KjDdGGTI4IyvG00=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u5WWYU0I/ZB1PBioUmoiqTYvNWRpHVkpuVgqOx7U+irqx0K/iEAt+dW4PHwXnMydpwJ83PxTiTnClLH2QYCgyBn7ngqs/MI/wB56QINmRRvB+BBU4AuWnbF7xP3OZVoqGEkSYrBJv9Jp6QDshF4ijj987AK8lU83DsxzmiONWYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e9ba45d67fso62898787b3.1;
-        Wed, 13 Nov 2024 02:05:43 -0800 (PST)
+	 To:Cc:Content-Type; b=kHWG2+j2GbjfuDXK0ODuHmtblqrrwlHHME2/sD1EKu1kWdGrJqNSvDi9DUd3sE/O9vVFHIfavWtxPrdEX7QVG3iPFBuDzBGc228riwvK8oGBUdyrVfPC89X3dpleLmZEnJVDoq22Ocgc2hG4e7z5diC5eVc5JaRlZghowKW5WUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m2c7RvkJ; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ff51b6389bso1542421fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:06:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731492386; x=1732097186; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xgef7oBfeDTGTKeZLWgpvN3wmKB5KjDdGGTI4IyvG00=;
+        b=m2c7RvkJuVY3gAXHSg9Zi7Fe/BQGhCfNogGPZv+wByen6/lEj8eHyGoWHRfuMGLEu/
+         xGgbSxcOM7i/e/MAatKXPzg7Ilo9ZIpON2hoCZ1ewGBUj+6Q1s3SNiHVcsVB92RC04A+
+         gUXdvf8i8CiiGg25tE370W9fHwaa1TLCyYpGH0gzKT4Om0mC+HSLmjtwqyi4tCZatwmv
+         4gkyi5Ob8LZ87BpJRdFmwRce5ggqJerszX0m1IBlFzvfdtqjKySxC/Tt9QLuRIN7ogDN
+         yB1pM4ztA97TfKrAcBoRUok8s+iFLcP8XA4zowKJmB9WRl6mBrgnG7yk413q7XtBXyXn
+         LARw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731492342; x=1732097142;
+        d=1e100.net; s=20230601; t=1731492386; x=1732097186;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+9Zu5f9a7YdmZdcq/cBwsvzywMKEtYbFdDVk0n7J6R0=;
-        b=sqw0pQePt1c1EvB1tI5lfHauQcVjpp/fA+yF589+PfLTarWwjhF7wdHwcMV0dQ3TNo
-         BFvgJi9etdQSCFU6yopzSPxp3AvEhLz5YWTwYb+TS9PPQ7wWdFh+TSMbPhymEL5VmGUE
-         v6AM0EEBx6KXcauXC2IbeX4ybUIiaLg/jAsMJQTMYI+KpbRPuh3K0/T8vXbc/pd9GOdF
-         eW+Np+ybyN6Hy7tyz+xzMVjCEsgze2ONrInZaJcD6bu6AqW2nHwzMf9DMh1X5xvOXNVE
-         fhuJSqfAXYIic6vNqmFvpo56O4ElY0J5AxuTQ96j/Sn1Bg1AeT4RBtykZV4DSPLJ1B8o
-         RM8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUx0pAjYL6hzGwRTRZWo6Ui1GADCEUTCcSjFxCHnaV2ZylxwKlQZlau4/B9v1mmWS6q4Umc8D9PdHzg6w==@vger.kernel.org, AJvYcCVu+/CRxdIMwqbLrnC+no1jdTovUKc8MYawfhyft1Ngz9mdZDZpaR2OKHmjFJnmduc7a0pnNA/johtV@vger.kernel.org, AJvYcCXkJ9vEsyMPNlyfzFXwfBsYImxQlK9EiVdRl3SxJfuk7kBJwobk9+6rYj6k1TpYJK47BFpkxRk7dawddoSs@vger.kernel.org, AJvYcCXmevQIpoNicSZV3C89UOUE70MM28pWE+pmmHNpkExM5elAXPHWaGe492N1v6tGyNQ6YaXmfaz0lOw+CQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTMiE9mpa4jG/7fewoS5vMQ0DxP6HdubxbTf1PM4d4rF663yXN
-	qTxT4A4MqIF6nkccikU2iCq2lYeOfSANPvxD0csmVyyu+Pf01zFBTphvUIay
-X-Google-Smtp-Source: AGHT+IEPYu69YGquKTx5EWTomsi+CORpAQ0x0W2MqSTPmmoPsANt62hyEupadhcsRaGMcGb3GtwauQ==
-X-Received: by 2002:a05:690c:243:b0:6ec:b194:efe7 with SMTP id 00721157ae682-6ecb194f106mr26014977b3.30.1731492342039;
-        Wed, 13 Nov 2024 02:05:42 -0800 (PST)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eaceb7a6fdsm30793577b3.103.2024.11.13.02.05.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 02:05:41 -0800 (PST)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e9ba45d67fso62898637b3.1;
-        Wed, 13 Nov 2024 02:05:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU+SiQvLzl4NW3tn2L0+1h8UVoj+vDwiF8sNvOIiVkJdI8R0Y9ZUFZn9u0aM8sVvwaen2z/uwREpjmEbjCQ@vger.kernel.org, AJvYcCUhfkF1zIZiXNd+sd4SMJJEW7BXCHqr/Ezi2PB2wAO11hSaHNZkFYXOybI510Q+1hy7CnDWqrMdw109/Q==@vger.kernel.org, AJvYcCUj824H4teq1n4uj+vTWA4c47KpawBnaSG3zL1BFn6ioWEAAqQ0GZGHtElNZywKYVs/mlNDxRUHI0of@vger.kernel.org, AJvYcCVcCqZSZoOUyiezOVZye1Yqf016YgkiEGxSBWd+GcWL+vdj3id8xlSzVIAGY1ldUzo8zbr3eqTT8jQKZQ==@vger.kernel.org
-X-Received: by 2002:a05:690c:6ac3:b0:6e2:12e5:35a2 with SMTP id
- 00721157ae682-6eca4643368mr59764137b3.4.1731492341087; Wed, 13 Nov 2024
- 02:05:41 -0800 (PST)
+        bh=xgef7oBfeDTGTKeZLWgpvN3wmKB5KjDdGGTI4IyvG00=;
+        b=VxhkfkK3nPrQgnM7FhTzJitwibO3S3CiWMliOtCKOkHBJhVHn/hXD0SMz9iIdZtXRe
+         5XMKbi/jD/wWVu9xX94lFljpYZku74RN1eiqz1TdpAzGAFjCsJM5yKbPvEpf1C372lWM
+         jkDmrQWOE2yL7+809zWElof5hmAcVSGDk3S2KehY5Y+GH3Vb4SmfRrXMBZXqPJHRpmjz
+         iE34r6FiT2DdrtzaejnFr3lSYtcMomoRpEKy9z4j12ayMDVFkXVmp1fdh+1Ai0+1VaMq
+         g2PvCggk/RlpPx1ZlZpOl1k6cuZmWetVbS6sJkXjZTqHck+hJ+JkMLd5g8g+QWnhmRX1
+         zdZg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3cdWvHGg3oHnXnr50v+q7kDnvkO66rYUYvNfoxk3meT2t9x4oYEvGpPHVy/He3r+9pKwx6ihZM6Yfync=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQEJeirzm9Umm6Ya/AZnatW2m0F3A0a3ltz+FJ8jxM6/nkZf9l
+	z1n2OL0IQRMPTCO7vA/TsU11sPGPySoOUd9HQtbcmwjnytzHLnRJA+v2pfeKA83wM1USuEuNdP3
+	HoGA+hcwo4JJdrsyfu7qE4wA2+8io3lB6A83KgA==
+X-Google-Smtp-Source: AGHT+IGoJc8OMYBqsZ+GfZM/vW3RDRxKJPA/vHAMUaHglZtpD3Q52srAbi+H15LRDy9o9ztoSf0lCixShpHMFgjJCsE=
+X-Received: by 2002:a05:651c:b2a:b0:2f3:b71a:1e91 with SMTP id
+ 38308e7fff4ca-2ff426ba42bmr28366151fa.17.1731492385903; Wed, 13 Nov 2024
+ 02:06:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <alpine.DEB.2.21.2411121327130.9262@angie.orcam.me.uk> <alpine.DEB.2.21.2411121342220.9262@angie.orcam.me.uk>
-In-Reply-To: <alpine.DEB.2.21.2411121342220.9262@angie.orcam.me.uk>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 13 Nov 2024 11:05:28 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdViAoHPnWUK3tvwP8VdPwHxfHjZY63zaVhCSWqk=SMkWw@mail.gmail.com>
-Message-ID: <CAMuHMdViAoHPnWUK3tvwP8VdPwHxfHjZY63zaVhCSWqk=SMkWw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] MAINTAINERS: Retire Ralf Baechle
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-edac@vger.kernel.org, 
-	linux-hams@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ralf Baechle <ralf.baechle@gmail.com>, ralf@gnu.org
+References: <20241113092629.60226-1-kkartik@nvidia.com>
+In-Reply-To: <20241113092629.60226-1-kkartik@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 13 Nov 2024 11:06:14 +0100
+Message-ID: <CACRpkdbhy7onqWwW90qU3UE_+nMrqvmX_Kjvdw+jqn=TjX2FkA@mail.gmail.com>
+Subject: Re: [PATCH v2] serial: amba-pl011: Fix RX stall when DMA is used
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: linux@armlinux.org.uk, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	theo.lebrun@bootlin.com, ilpo.jarvinen@linux.intel.com, 
+	l.sanfilippo@kunbus.com, konradybcio@kernel.org, 
+	christophe.jaillet@wanadoo.fr, bigeasy@linutronix.de, arnd@arndb.de, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Maciej,
+On Wed, Nov 13, 2024 at 10:26=E2=80=AFAM Kartik Rajput <kkartik@nvidia.com>=
+ wrote:
 
-CC Ralf
-
-On Tue, Nov 12, 2024 at 2:47=E2=80=AFPM Maciej W. Rozycki <macro@orcam.me.u=
-k> wrote:
-> Ralf Baechle has been inactive for years now and the linux-mips.org site
-> has gone down.  No replacement contact information is available.  Thomas
-> has been kind enough to step up as a maintainer for EDAC-CAVIUM OCTEON
-> and IOC3 ETHERNET DRIVER.
+> Function pl011_throttle_rx() calls pl011_stop_rx() to disable RX, which
+> also disables the RX DMA by clearing the RXDMAE bit of the DMACR
+> register. However, to properly unthrottle RX when DMA is used, the
+> function pl011_unthrottle_rx() is expected to set the RXDMAE bit of
+> the DMACR register, which it currently lacks. This causes RX to stall
+> after the throttle API is called.
 >
-> Update MAINTAINERS, CREDITS, and .get_maintainer.ignore accordingly.
+> Set RXDMAE bit in the DMACR register while unthrottling RX if RX DMA is
+> used.
 >
-> Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
-> Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Fixes: 211565b10099 ("serial: pl011: UPSTAT_AUTORTS requires .throttle/un=
+throttle")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
 
-Thanks for your patch, which is now commit 495cc28f8e6b5396
-("MAINTAINERS: Retire Ralf Baechle") in next-20241113.
+Looks right to me, thanks Kartik!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> Index: linux-macro/.get_maintainer.ignore
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- linux-macro.orig/.get_maintainer.ignore
-> +++ linux-macro/.get_maintainer.ignore
-> @@ -3,3 +3,4 @@ Alan Cox <root@hraefn.swansea.linux.org.
->  Christoph Hellwig <hch@lst.de>
->  Jeff Kirsher <jeffrey.t.kirsher@intel.com>
->  Marc Gonzalez <marc.w.gonzalez@free.fr>
-> +Ralf Baechle <ralf@linux-mips.org>
-> Index: linux-macro/CREDITS
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- linux-macro.orig/CREDITS
-> +++ linux-macro/CREDITS
-> @@ -185,6 +185,11 @@ P: 1024/AF7B30C1 CF 97 C2 CC 6D AE A7 FE
-
-Actually there is another contact address above, out of context...
-
->  D: Linux/MIPS port
->  D: Linux/68k hacker
->  D: AX25 maintainer
-> +D: EDAC-CAVIUM OCTEON maintainer
-> +D: IOC3 ETHERNET DRIVER maintainer
-> +D: NETROM NETWORK LAYER maintainer
-> +D: ROSE NETWORK LAYER maintainer
-> +D: TURBOCHANNEL SUBSYSTEM maintainer
->  S: Hauptstrasse 19
->  S: 79837 St. Blasien
->  S: Germany
-> Index: linux-macro/MAINTAINERS
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- linux-macro.orig/MAINTAINERS
-> +++ linux-macro/MAINTAINERS
-> @@ -8061,10 +8061,10 @@ S:      Maintained
->  F:     drivers/edac/highbank*
->
->  EDAC-CAVIUM OCTEON
-> -M:     Ralf Baechle <ralf@linux-mips.org>
-> +M:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
->  L:     linux-edac@vger.kernel.org
->  L:     linux-mips@vger.kernel.org
-> -S:     Supported
-> +S:     Maintained
->  F:     drivers/edac/octeon_edac*
->
->  EDAC-CAVIUM THUNDERX
-> @@ -11885,7 +11885,7 @@ F:      Documentation/devicetree/bindings/iio
->  F:     drivers/iio/gyro/mpu3050*
->
->  IOC3 ETHERNET DRIVER
-> -M:     Ralf Baechle <ralf@linux-mips.org>
-> +M:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
->  L:     linux-mips@vger.kernel.org
->  S:     Maintained
->  F:     drivers/net/ethernet/sgi/ioc3-eth.c
-> @@ -15993,9 +15993,8 @@ F:      net/netfilter/
->  F:     tools/testing/selftests/net/netfilter/
->
->  NETROM NETWORK LAYER
-> -M:     Ralf Baechle <ralf@linux-mips.org>
->  L:     linux-hams@vger.kernel.org
-> -S:     Maintained
-> +S:     Orphan
->  W:     https://linux-ax25.in-berlin.de
->  F:     include/net/netrom.h
->  F:     include/uapi/linux/netrom.h
-> @@ -20035,9 +20034,8 @@ F:      include/linux/mfd/rohm-generic.h
->  F:     include/linux/mfd/rohm-shared.h
->
->  ROSE NETWORK LAYER
-> -M:     Ralf Baechle <ralf@linux-mips.org>
->  L:     linux-hams@vger.kernel.org
-> -S:     Maintained
-> +S:     Orphan
->  W:     https://linux-ax25.in-berlin.de
->  F:     include/net/rose.h
->  F:     include/uapi/linux/rose.h
-> @@ -23555,7 +23553,6 @@ F:      drivers/net/tun.c
->
->  TURBOCHANNEL SUBSYSTEM
->  M:     "Maciej W. Rozycki" <macro@orcam.me.uk>
-> -M:     Ralf Baechle <ralf@linux-mips.org>
->  L:     linux-mips@vger.kernel.org
->  S:     Maintained
->  Q:     http://patchwork.linux-mips.org/project/linux-mips/list/
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
 
