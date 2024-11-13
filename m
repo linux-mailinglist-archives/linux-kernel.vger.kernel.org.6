@@ -1,190 +1,111 @@
-Return-Path: <linux-kernel+bounces-408173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D9F9C7B60
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:40:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926049C7BC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:59:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9370281A52
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:39:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 897D6B2F815
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF832040AE;
-	Wed, 13 Nov 2024 18:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9499D2038D5;
+	Wed, 13 Nov 2024 18:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YSFsUbko"
-Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RRse9eip"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5AB204012
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B4B167D83
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731523186; cv=none; b=oPzNVgwAW3sP4m1IAaBvICJ+16HjLvGmddh9HsSMDp0kBPD/jPV96jgVEXcHj3F5Gq6BAy1nBtK4+ldXEGVD0jTpliiS2XxWXIoASowLUF+ynlT6XlRtSxxHbgY/hcjiDT7auzSMlcTMyrF3wTMVhbjY1+bT7bB9dkVNUQwSX5Q=
+	t=1731523236; cv=none; b=E0H1ChVKBh8u5f4ACzsCDuxFnf1hJGqeYmCgSkkcUZmx32Cai+X7mgERLQFcv06kRbc5NNsDtWPAi+qqyUJhjC7rbqWfwDCNMSCzS7HzWvMpByzD16ZTSNKdiAuGr+X/b0eJzhCn3EyqNRni1xYB5yzw33X/H2WLW8LDy5O1GLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731523186; c=relaxed/simple;
-	bh=ds+Byb6f/J+Uut9zVkz68U3HJ2rc8F2Zd4pX+KfWOxU=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=gZ5IcgysyOWlRDpOHc4UJyHVAabLvyifSXfV9M1Dq4SO8UNLCT8wNniNN1xk0rBQ1CQA7LyH2RUY97vglKB2euneLOpgdiN0WIvZ+MV40nRCAn80aonP0NyF8KBQSJ9+ZjgChPPP/nJ4TI/pDufr0g72JsE2xj1V+2bmdgayGkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YSFsUbko; arc=none smtp.client-ip=209.85.166.74
+	s=arc-20240116; t=1731523236; c=relaxed/simple;
+	bh=0IhfgvbUE1b0rqbeuty/d2sa4owmpif+IBjtytGdNa8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CCWosgAkjkWRtXnic6aDwchNNN5mL1TJq/Z7aJq6HjiAh8qUGKiUCfkF75ovXmiP7sFQwBrTAr5I/ycyGEKX8WvdwpY5fk3HkTOijsPjAJ/99fJglZ0Iimq7V6KLYHvTL58HdXv72FKGERf0TSs6jcvKymuDJWqEPoMTounIyJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RRse9eip; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-83aaedba7b5so787870439f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:39:44 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9aa8895facso1329308466b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:40:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731523184; x=1732127984; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/fUPXvWv9v0Mh/WyGQgAC8FHYBBV253S8a6S2mHs2j8=;
-        b=YSFsUbkodRxrkGWV91RmEh+jGbwHWMjNJDhcC6PYiOqj1E8XrNUjibmt3MWG5Hdf6l
-         7Y+tHWf3V+x1qAPpgiTyRIp+1C7ZqpthuYVg2ZnGW5LG/w+StfUSMDVLSvTRJEbgpmlg
-         A3oIsZRc/St+v16zUNhlI2pFDW6Dc3X4rQOKAW/r0Cl3xssN4KMB/m6+cjuynzhijCEL
-         PX1+VK/l60FLWDJJS9cP2NMNamO8aar/gGejRpqGrE72Rmnves7nEqgUv0YkYHfArL/D
-         42j2vu7UyoKULa4Y5emZdhpv/zWVC4c8FlkWI/vxdpc26C8Ohn8aLvvvUF8YDvfRXjER
-         xhzQ==
+        d=google.com; s=20230601; t=1731523233; x=1732128033; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0IhfgvbUE1b0rqbeuty/d2sa4owmpif+IBjtytGdNa8=;
+        b=RRse9eipGnGZhWbqzUXIvAVOp7wIlPkG8tw8cP7kJCQFqjmv0FyoSisiptq15cNfQD
+         M85SuUOKQY5ZdMOfSnvWxh5Oav6juwA//DM+x25jWg+muv0QtNiQIXfPYP6CnFm0rx4w
+         Ccqfs9+jMRhxAS4hVBmrH9vhpGhhS+9ol1XV8+42604A+ud4YsA2LOFpSNGUvnoMMSoh
+         x/EB3wBfNirA9/Aoonjyx30551WJZ3NDrRF3xaudYQ/ncxFYOiGZES8wsmqUtWVpzKgN
+         nd4pRQStB3bMQ9oOd/O4h98cURHdSHK0yKDyTyGxfXofAC+X4i0uTHt/8TROItJnRmf4
+         Kdyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731523184; x=1732127984;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/fUPXvWv9v0Mh/WyGQgAC8FHYBBV253S8a6S2mHs2j8=;
-        b=NSyeP9HYxjgW6Y1NG1MLzkUD44fYbhz/MoCuFN5BHNvbrS+1Qj3nbMTXQ014AjsOOV
-         tGyE+hd2sJAC+6lQY/v3/qoyQjODyoPsNYprJoG9LfnMDOh6pIq2pCn9xc4xycemKNAf
-         uZ+WjAarSso4ozBfj1cojQBNPx4bVCoTMKwJ0cFgAvSO8P+W38jwOXOmlhsrJXT+lylm
-         03KqvINGOr0har9LVXfFZZl6wlVbznd6egxeNZgC08ZRx1siUx7Ekorf0NwVwVZrIsci
-         SrBtFB+tmUfh1/MYjXvR6YcSRmokPI0+XmPr1471ShRXg53fwuCYEtYD2TdSfuxk/SKd
-         bjVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/FSX3xk5B3+7Q9iqzhWGkZ4YhAwFdsjjI+q8r3jb7JOZ5aPgjrFmsIwzuACcB1F9+dGdt75zetlnNku8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0ON4JGRcWnoTaRHo5n4/O+ZWtYlnbpowwzM2bvtG3O25xxO14
-	/Lb/vkI1A4pDw+iNzUk+G+ZL+Tlws/y4dOsIX2XFgR6lAeqLAZ+jyHZGeKuXTol95GH6bm3UEMs
-	cKuz2za804DZg2fAqRdAS4g==
-X-Google-Smtp-Source: AGHT+IFqNa2jrXVUDfm9IE+oYt5yFt1zslo8K13JW/BJldIHrq7v5sp1QoU1+LNMj81fKDzjJdmH4l1lpTYb1/+IBg==
-X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fa18])
- (user=coltonlewis job=sendgmr) by 2002:a05:6602:583:b0:83a:ac70:becf with
- SMTP id ca18e2360f4ac-83e03357885mr4245839f.3.1731523183650; Wed, 13 Nov 2024
- 10:39:43 -0800 (PST)
-Date: Wed, 13 Nov 2024 18:39:42 +0000
-In-Reply-To: <gsnt34jv9el6.fsf@coltonlewis-kvm.c.googlers.com> (message from
- Colton Lewis on Wed, 13 Nov 2024 18:24:37 +0000)
+        d=1e100.net; s=20230601; t=1731523233; x=1732128033;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0IhfgvbUE1b0rqbeuty/d2sa4owmpif+IBjtytGdNa8=;
+        b=eW2VVX+LWTf9F090E2gAU9joFBrxJGIOg8ANEgNiTpCmWwhoJccIVGnr6R1XCMhI7F
+         iRklq3adFsmve8suVJAc4AYhkfonRj9+qABYcTN4LyXqxGH2d6qp69jYr6xe/csaf6Bq
+         DGK8tgX6J6VxJtvkhN7zRn8W1EVXjCBcoDzy21TffFirb5QqRnhGkxPCTvG9ampjCsrc
+         G1aY9+zzzdTIEGrnblWDpXssJSFHPiujEz5LVUd/VCSAP3n2137OxS3nXZfwFxdVAyWt
+         otYe4uA65D0Q9kglt8+4aRDFHMo0BMrBQgTxzOC/rkeBZ6Ui8m5fsEriVkMbeCI812GW
+         yrDw==
+X-Gm-Message-State: AOJu0YxyvI4ynWTPg/kBrOzXABTkDz/rs8c3mbaAwGJsgRal7Qs1hmBJ
+	5l0EuDqcMoap8KFx0mAVLSqTm3vt+A+lJUSdrklebVoLnF2fT6B9U8Y9/7xMVe2gYrjfbshJQmE
+	IYrrJUBof7+wL5EEpSxn9QJFzxk7nxH7rI4L3
+X-Google-Smtp-Source: AGHT+IF5wjOJaBPEZ4nz56CrqKN7iUic7DwNHhdRnoDYCM9sCmx+P0GttaB1YJaUrHtYzGBCXPKk9iwPx36odrX1SxA=
+X-Received: by 2002:a17:907:7b88:b0:a9e:441c:f74d with SMTP id
+ a640c23a62f3a-a9eefee456bmr1941100066b.16.1731523232630; Wed, 13 Nov 2024
+ 10:40:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <gsntzfm37zbl.fsf@coltonlewis-kvm.c.googlers.com>
-Subject: Re: [PATCH v7 4/5] x86: perf: Refactor misc flag assignments
-From: Colton Lewis <coltonlewis@google.com>
-To: Colton Lewis <coltonlewis@google.com>
-Cc: peterz@infradead.org, kvm@vger.kernel.org, oliver.upton@linux.dev, 
-	seanjc@google.com, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	will@kernel.org, linux@armlinux.org.uk, catalin.marinas@arm.com, 
-	mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, 
-	naveen@kernel.org, hca@linux.ibm.com, gor@linux.ibm.com, 
-	agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com, 
-	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+References: <20241112232253.3379178-1-dionnaglaze@google.com>
+ <20241112232253.3379178-4-dionnaglaze@google.com> <6734119c1c9a7_10bb729471@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <6734119c1c9a7_10bb729471@dwillia2-xfh.jf.intel.com.notmuch>
+From: Dionna Amalie Glaze <dionnaglaze@google.com>
+Date: Wed, 13 Nov 2024 10:40:20 -0800
+Message-ID: <CAAH4kHYJ5769aMNqu23KhEqatV2Ks58zmkP1ynhDh_uvEb8mtQ@mail.gmail.com>
+Subject: Re: [PATCH v6 3/8] firmware_loader: Move module refcounts to allow unloading
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Danilo Krummrich <dakr@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Tianfei zhang <tianfei.zhang@intel.com>, linux-coco@lists.linux.dev, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ashish Kalra <ashish.kalra@amd.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, John Allen <john.allen@amd.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Michael Roth <michael.roth@amd.com>, Alexey Kardashevskiy <aik@amd.com>, 
+	Russ Weight <russell.h.weight@intel.com>, Kees Cook <keescook@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Colton Lewis <coltonlewis@google.com> writes:
+On Tue, Nov 12, 2024 at 6:40=E2=80=AFPM Dan Williams <dan.j.williams@intel.=
+com> wrote:
+>...
+> However, I think the fix is simply to remove all module reference taking
+> by the firmware_loader core. It is the consumer's responsibility to call
+> firmware_upload_unregister() in its module removal path and that should
+> flush any and all future usage of the passed in ops structure.
 
-> Peter Zijlstra <peterz@infradead.org> writes:
+That would suggest the addition of the refcounting in v1 to fix a test
+means the test_firmware is wrong?
+https://lore.kernel.org/all/20220421212204.36052-5-russell.h.weight@intel.c=
+om/
 
->> On Fri, Nov 08, 2024 at 08:20:44PM +0100, Peter Zijlstra wrote:
+Adding Kees in case he knows better.
 
->>> Isn't the below more or less what you want?
-
->>> static unsigned long misc_flags(struct pt_regs *regs)
->>> {
->>> 	unsigned long flags = 0;
-
->>> 	if (regs->flags & PERF_EFLAGS_EXACT)
->>> 		flags |= PERF_RECORD_MISC_EXACT_IP;
-
->>> 	return flags;
->>> }
-
->>> static unsigned long native_flags(struct pt_regs *regs)
->>> {
->>> 	unsigned long flags = 0;
-
->>> 	if (user_mode(regs))
->>> 		flags |= PERF_RECORD_MISC_USER;
->>> 	else
->>> 		flags |= PERF_RECORD_MISC_KERNEL;
-
->>> 	return flags;
->>> }
-
->>> static unsigned long guest_flags(struct pt_regs *regs)
->>> {
->>> 	unsigned long guest_state = perf_guest_state();
->>> 	unsigned long flags = 0;
-
->>> 	if (guest_state & PERF_GUEST_ACTIVE) {
->>> 		if (guest_state & PERF_GUEST_USER)
->>> 			flags |= PERF_RECORD_MISC_GUEST_USER;
->>> 		else
->>> 			flags |= PERF_RECORD_MISC_GUEST_KERNEL;
->>> 	}
-
->>> 	return flags;
->>> }
-
->>> unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
->>> {
->>> 	unsigned long flags;
-
->>> 	flags = misc_flags(regs);
->>> 	flags |= guest_flags(regs);
-
->>> 	return flags;
->>> }
-
->>> unsigned long perf_arch_misc_flags(struct pt_regs *regs)
->>> {
->>> 	unsigned long flags;
->>> 	unsigned long guest;
-
->>> 	flags = misc_flags(regs);
->>> 	guest = guest_flags(regs);
->>> 	if (guest)
->>> 		flags |= guest;
->>> 	else
->>> 		flags |= native_flags(regs);
-
->>> 	return flags;
->>> }
-
->> This last can be written more concise:
-
->> unsigned long perf_arch_misc_flags(struct pt_regs *regs)
->> {
->> 	unsigned long flags;
-
->> 	flags = guest_flags(regs);
->> 	if (!flags)
->> 		flags |= native_flags(regs);
-
->> 	flgs |= misc_flags(regs);
-
->> 	return flags;
->> }
-
-> This isn't right because it is choosing to return guest or native
-> flags depending on the presence of guest flags, but that's not what we
-> want.
-
-> See perf_misc_flags in kernel/events/core.c which chooses to return
-> perf_arch_guest_misc_flags or perf_arch_misc_flags depending on
-> should_sample_guest which depends on more than current guest state.
-
-This is in the next patch. Excuse me for not clarifying.
-
-> But I will take some of your suggestions to split the functions out
-> more.
+--=20
+-Dionna Glaze, PhD, CISSP, CCSP (she/her)
 
