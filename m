@@ -1,124 +1,220 @@
-Return-Path: <linux-kernel+bounces-407114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F5E9C690B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:04:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E60ED9C690D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:05:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52BF2B23DDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71CF61F21D51
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9135D17DE15;
-	Wed, 13 Nov 2024 06:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7BC174EFA;
+	Wed, 13 Nov 2024 06:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yRoyaR0M"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="UZDHGFXk"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C2F17C7D4
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CABBA34;
+	Wed, 13 Nov 2024 06:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731477853; cv=none; b=U0p5OjSsw4L4r9KnpNPZQvamde4D3XSd/2OyjUODpACYeR1LbC0K0E37QSPPI9+iYfB5rooomz0k3YfNu90vVbo+syxIY+lYrZi0+M5bgcOXs6FX3tPsl4Ywf4ZbahhuoTg2iX/UnVNx1z6Fd/6bKyxRzdWQ8QDSYLhWHTruxL0=
+	t=1731477911; cv=none; b=WSHghx9GHSI9V1GzemNnv/ESihEuBulzZz3tgTtk9huAnAcnhIWsbCh23BE0xiiCiM/L63/QbNKvntJdJXO7vrt1v4MnuZJubV4CgxaMsG1h57VsWkcbPkKY8Dt3miKs9gzTQZecHDMEgjHcUpd3VW7dhHB4TX8Zygloo1XrGPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731477853; c=relaxed/simple;
-	bh=tkTrcrgQGR2r3+1USAH6qNDDRRqy2ByWWf6VKThfFFY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z0KvMsWb0NdJ4Q5rh1zm/UyfQ5m5t556BzlzJWAClSDGj+bph65YCdppqr9HdLt7hjTbkYlULeD7xmdmkfGQOEfZ4ObScVcGZGfhQCc+ajigq7/CFfueGIEAZuKkLrqUcIUlYtFVMjDZ5iGnvPbYzLPU3shT8afgOowj13IB9tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yRoyaR0M; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460a8d1a9b7so118321cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 22:04:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731477850; x=1732082650; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tkTrcrgQGR2r3+1USAH6qNDDRRqy2ByWWf6VKThfFFY=;
-        b=yRoyaR0MhhtLEnGJS37DtP7mKmNMnKKwezC8JUhdbm0hATFdKSgNAF0XobvrCNSfci
-         DF7syZjevrOfdtXPP4Rxu41XSa6vWjrpEg2Q4jXpXkOzDvQWzETktC5PoxMDzKc2F3EY
-         fy7rjsvljDCcC6IWhIY0+iQUWchOFEYeiTRvCVHBzvUW8u2Ad8iIA+LHwA29ZHJxgIDj
-         zVyfaAj2DOA4MnkC8F+UhUfhl8xv1wCJ8nTpkx2dmemZOue0yYDfjHx3r+ZFLKhrd7IW
-         K2JoJUzTkJYZ1AAR9smAl/ma9Edr7hK3GF291eHfULwwSgaERpvgGZVXgJs5Y2zJjT/0
-         OERA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731477850; x=1732082650;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tkTrcrgQGR2r3+1USAH6qNDDRRqy2ByWWf6VKThfFFY=;
-        b=dz/8rXKFX8GaZtdPRkt3SNUYw/ExNX7TEnbBk2I6pUO5copHuIcVcLlDHSjizBchHh
-         DWGiEj4XStcNBwVNFl4sP3sc+xhZCml1fMR4jKXJkIHNDL8QIRTJBmIwgbjY1bT3pkSW
-         lJYDEgKPOBwCQXU8bNS+wqkp/8Gcm2JYpGYcgTnqWkC8yLCXOvBv6nw78ruaudUKbCTT
-         cD3Y8gI/63BD7n4PuPg5MwciUnU8vhlaFQhcIiUukCY9cgTjLGujvuRqgtJ0zTurrKzJ
-         Ux3fjtb7W7QEXu+yA1/vyW6PBjSXTK4zjR5fl8qCAlZ5za5mNR7T5HX2ZhiUPBKgbyQo
-         vtYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXd1Yimije95L/XmyAJOqfXyDG+hKMsHQ+eRWhVfwsRb1GC4RYnL4kTOdWX5xcHgca9/IPqRpQUD6z9fwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/6G82rHkI3oayqrjbhrBrHmZXscwyQqwiTXCbahc/yVRA6A6S
-	G4rOBEAHpJse/wmEKAuxruQfigVrI8sbyn2pGmjfeZw5dF650svwu7EF7EB6oJhLd4pbWrfvw9F
-	Cvm16INhxxjW3vtKjiP+d8db/rTFedvyF90Od
-X-Gm-Gg: ASbGncuNgMrSWf3j6nVLX1BGg1Ln4o9oVXGRXGLhEINXe2m0AYd7Y3Ed/6rIQuh1jTC
-	jm7YpUVuss7G8bSMWUp4ZaVqUiOgJ/2Q=
-X-Google-Smtp-Source: AGHT+IHKadlPmr+WXI5vY40br0m0Jt+QE2K6y2TCMnr8S1pAbzEcnz6vIgPjIxOgjAUHu8gesnDyQ/X4px+cah5Jxeg=
-X-Received: by 2002:a05:622a:144b:b0:462:b6c6:8246 with SMTP id
- d75a77b69052e-4634bc104c6mr2313241cf.14.1731477850037; Tue, 12 Nov 2024
- 22:04:10 -0800 (PST)
+	s=arc-20240116; t=1731477911; c=relaxed/simple;
+	bh=7mtgD3s0tW82nIHegBBOzw/xdRJucEFDdtfIp/VUw2E=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hkgJEOmQhW8wtgcvHDzJw+SbJIGwrEQNC2RM8q9K/B5Q4dkWqVHIuUMOZWFMJ7hjV5eYO3IPaWNSlqpSv+Y/Ys+n0dBLQnN8PsxspjdcCJAmGzpGcG0kK3KP+hqA2JTrySFiy23ZXnqPUVZqgvccdWWQHlAibgKEJJCg9ihe6hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=UZDHGFXk; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1731477901; x=1731737101;
+	bh=7mtgD3s0tW82nIHegBBOzw/xdRJucEFDdtfIp/VUw2E=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=UZDHGFXkDiFjjt9DIkTZLvptxE8k7aduHVfvUu63ThssQc6cXmrccJztvZkX3TOBI
+	 wvpUWDbBnAsGmu4bqvQb4tdYe3QgcgD9fGCZhwvTpP5159/vlNAL2o1bu3ds6SEtFM
+	 sLyc/S/NLg6WCSuwvFJUhAN8GBgPZnVub1WqP+kEz0n9KVmBgODf35n/h7HpweqWC9
+	 Cl3tLcBXIPlC/cpCrXvnz3BDjINPZtI44fW1h+cWWMsAO3GT7XBeUTFTPtns86stVs
+	 iRlXiORtJ+CHK1gLz3zN54T3Rsr+AuproRYYZGmE/ElRQMKd8frc22QCnJTYhiQ/C7
+	 iMFImL08nRnfw==
+Date: Wed, 13 Nov 2024 06:04:59 +0000
+To: Steven Rostedt <rostedt@goodmis.org>
+From: Michael Pratt <mcpratt@pm.me>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH RESEND 2 1/1] sched/syscalls: Allow setting niceness using sched_param struct
+Message-ID: <82xsONg6yQRk_uyZ0-JkTqF2OjxuM4J8IgoNm45Xc6IXAvtX2lPKYxffzZ9GrhIA1TPhpvFoHx9wqWaH3nQyKWRcBggGIsc_61rMDyfMrOE=@pm.me>
+In-Reply-To: <20241112193617.169fefbc@gandalf.local.home>
+References: <20241111070152.9781-1-mcpratt@pm.me> <20241111070152.9781-2-mcpratt@pm.me> <20241112103438.57ab1727@gandalf.local.home> <e3Nl9UdWoWuPJauA6X3vNj71jDUwHZYS5b5WSmKCHrU7AyivFG5oLkrL-ewb3IjoQyUouDgZO2T-3WEzBIJ9Uru1AcEDTaVsRzHrukUfto8=@pm.me> <20241112193617.169fefbc@gandalf.local.home>
+Feedback-ID: 27397442:user:proton
+X-Pm-Message-ID: d077ebd46d303e7b250a212c42ee69ffd723dd5d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112194635.444146-1-surenb@google.com> <20241112194635.444146-5-surenb@google.com>
- <CAJuCfpFd2_7q6pi1=G9B0VW5ynCWhkkDDA3PU293FPtT_CcBQA@mail.gmail.com> <6d0c5c2d-2963-489a-2376-8edaeb064de3@google.com>
-In-Reply-To: <6d0c5c2d-2963-489a-2376-8edaeb064de3@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 12 Nov 2024 22:03:58 -0800
-Message-ID: <CAJuCfpEG7hhh+mHbZe_9duk2kbFvv_NeGfBqw0JBxiHK-9yWxQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] mm: make vma cache SLAB_TYPESAFE_BY_RCU
-To: Hugh Dickins <hughd@google.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
-	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
-	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
-	dhowells@redhat.com, hdanton@sina.com, minchan@google.com, jannh@google.com, 
-	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 9:08=E2=80=AFPM Hugh Dickins <hughd@google.com> wro=
-te:
->
-> On Tue, 12 Nov 2024, Suren Baghdasaryan wrote:
-> >
-> > Thinking about this some more, I don't think this works. I'm relying
-> > on vma_start_read() to stabilize the vma, however the lock I'm taking
-> > is part of the vma which can be reused from under us. So, the lock I'm
-> > taking might be reinitialized after I take the lock...
-> > I need to figure out a way to stabilize the vma in some other manner
-> > before taking this lock.
->
-> (I'm not paying attention and following the patches, I just happened
-> to notice this remark: forgive me if I'm out of context and have
-> misunderstood, but hope this might help:)
->
-> But this is exactly the problem SLAB_TYPESAFE_BY_RCU was invented for.
-> You just have to be careful that the locks are initialized only when the
-> slab is first created (allocated from buddy), not reinitialized whenever
-> a new object is allocated from that slab.
 
-Hi Hugh!
-I'm looking into SLAB_TYPESAFE_BY_RCU implementation and trying to
-figure out if initializing the lock in the ctor() of the cache as
-mentioned in the comment here:
-https://elixir.bootlin.com/linux/v6.12-rc7/source/include/linux/slab.h#L127
-would help my case. I assume that's what you are hinting here?
 
->
-> Hugh
+Hi again Steven,
+
+
+On Tuesday, November 12th, 2024 at 19:36, Steven Rostedt <rostedt@goodmis.o=
+rg> wrote:
+
+>=20
+>=20
+> On Wed, 13 Nov 2024 00:13:13 +0000
+> Michael Pratt mcpratt@pm.me wrote:
+>=20
+> > > Why is stable Cc'd?
+> >=20
+> > I believe this should be backported, if accepted,
+> > so that the behavior between kernel versions is matching.
+>=20
+>=20
+> That's not the purpose of stable. In fact, I would argue that it's the
+> opposite of what stable is for. A stable kernel should not change
+> behavior as that can cause regressions. If you want the newest behavior,
+> then you should use the newest kernels.
+
+
+Ok that's fair. I assumed that the backport policy would be similar in this=
+ case
+as it would be for downstream distributions. Maybe that's a bad assumption =
+from me.
+
+
+> > I can do:
+> >=20
+> > $ cat /proc/$$/sched
+> >=20
+> > and see the 120 without needing interpretation
+> > due to it being represented in a different way.
+>=20
+>=20
+> True it is exposed via files, but wouldn't this be the first change to ma=
+ke
+> it visible via a system call?
+
+If the "it" means "the accepted range" then no, but if "it" means "the (pri=
+ority + niceness) range"
+then yes. I still don't see the impact of whatever number happens to get re=
+turned.
+You would have to explain to me whatever magical security implication you h=
+ave in mind.
+
+> > > That said, you are worried about the race of spawning a new task and
+> > > setting its nice value because the new task may have exited. What abo=
+ut
+> > > using pidfd? Create a task returning the pidfd and use that to set it=
+s nice
+> > > value.
+> >=20
+> > I read a little about pidfd, but I'm not seeing the exact connection he=
+re,
+> > perhaps it will reduce the race condition but it cannot eliminate it as=
+ far as I see.
+> > For example, I am not finding a function that uses it to adjust nicenes=
+s.
+>=20
+>=20
+> We can always add a system call do to that ;-) In fact, there's a lot of
+> system calls that need to be converted to use pidfd over pid.
+
+We can also convert system calls to be fully functional instead of mostly f=
+unctional.
+I consider this a functionality gap, not just something annoying.
+
+> > It's not that the "exit before modify" race condition is the only conce=
+rn,
+> > it's just one of the less obvious factors making up my rationale for th=
+is change.
+> > I'm also concerned with efficiency. Why do we need to call another sysc=
+all
+> > if the syscall we are already in can handle it?
+> >=20
+> > Personally, I find it strange that in sched_setscheduler()
+> > the policy can be changed but not the priority,
+> > when there is a standardized function dedicated to just that.
+>=20
+>=20
+> My concern is the man page that has (in Debian):
+>=20
+> $ man sched_setscheduler
+> [..]
+> SCHED_OTHER the standard round-robin time-sharing policy;
+>=20
+> SCHED_BATCH for "batch" style execution of processes; and
+>=20
+> SCHED_IDLE for running very low priority background jobs.
+>=20
+> For each of the above policies, param->sched_priority must be 0.
+>=20
+>=20
+> Where we already document that the sched_priority "must be 0".
+
+I think we should all agree that documentation is a summary of development,
+not the other way around. Not only that, but this is poor documentation.
+The kernel is subject to change, imagine using the word "always"
+for design decisions that are not standardized.
+A more appropriate description would be
+"for each policy, sched_priority must be within the range
+provided by the return of [the query system calls]"
+just as POSIX describes the relationship.
+
+As far as I can see, the "must be 0" requirement is completely arbitrary,
+or, if there is a reason, it must be a fairly poor one.
+However, I do recognize that the actual static priority cannot change,
+hence the adjustment to niceness instead is the obvious intention
+to any attempt to adjust the priority on the kernel-side from userspace.
+
+I consider this patch to be a fix for a design decision
+that makes no sense when reading about the intended purpose
+of these values, not that it's the only way to achieve the priority adjustm=
+ent.
+If anyone considers that something this simple should have been done alread=
+y,
+the fact that documentation would have to be adjusted should not block it.
+Besides, a well-written program would already have been using
+the functions that return the accepted range before executing
+the sched_setscheduler() system call with a value that would be rejected.
+
+Am I really the only one to read that you can't set the priority
+with this system call when I can do it on the command line with the "nice" =
+program
+which uses a different system call, and ask "what's the point of this restr=
+iction?"
+
+> > The difference between RT and normal processes
+> > is simply that for normal processes, we use "niceness" instead,
+> > so this patch simply translates the priority to "niceness",
+> > which cannot be expressed separately with the relevant POSIX functions.
+>=20
+>=20
+> I agree that POSIX has never been that great, but instead of modifying an
+> existing documented system call to do something that is documented not to
+> do, I believe we should either use other existing system calls or make a
+> new one.
+
+Is a POSIX function going to allow me a way to decide which set of system c=
+alls
+will get used to process it? Again, a functionality gap exists
+in functions that already exist and that gap would continue to exist...
+
+This system call is not exactly allowing the user to do what POSIX says
+its purpose is for when it's clearly capable of doing so.
+I got it to work in about 8 LOC. Which set of documentations matters more?
+To me, anything else is a workaround that leaves this system call
+in an inconsistent state, instead, this is a solution.
+
+--
+MCP
 
