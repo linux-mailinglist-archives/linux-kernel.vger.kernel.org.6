@@ -1,163 +1,173 @@
-Return-Path: <linux-kernel+bounces-407320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33319C6BED
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:50:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6CC9C6BE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:49:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72A9F284CE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:50:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FA74B279A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7BA1F943C;
-	Wed, 13 Nov 2024 09:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF74F1F8916;
+	Wed, 13 Nov 2024 09:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GxhMy+G2"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pzjrA//g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NVPl8zER";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pzjrA//g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NVPl8zER"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE691F8EE0;
-	Wed, 13 Nov 2024 09:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827B01F80BA;
+	Wed, 13 Nov 2024 09:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731491319; cv=none; b=f8B9T4QeIBewFF3A1dLqmnEgLeSdJP+fkv8YqO/8txgkeF1QYLoTwk9AOWnCCPcGu/xKbhy1eYczhFUo2+xBq45eG+c9arClo0Krb1l+vfoxeDEbZaaDXqxtyExI08w/9W7tHBdSlcQnl4GhV0M/Gw5u0ZNujes13nj2mT2CIoY=
+	t=1731491308; cv=none; b=AUODv1ogG+z2ff8OV95GQmJIpkKrUUt2x9QRRxuqDs+iKNPreChtMmUyMaSIf5TkeUFyLwItgRce1GEklWK967RthmEiDJGE1hY0GTg+9Xt5wGTEGfRRA5lpLkwpvDfAM9sycQvrAaqRRlouprwUAmBV/cEoisM7PoIduF51ET8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731491319; c=relaxed/simple;
-	bh=ks90hqffQrT0BE2v4o9sOT2myXod5HsJJ8zUteV+gKw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K1xlrCZdPbyJU8tAWWlIb/ZhZZF2Lrf4MT+c5MRGczffU2H0nolIG3t9nEW1pYN2OWmVqcruwXKaR6m1lEOsEdI+yL7vn+j0nbD7DE7nryJeY6CXdl/e8gtAXa2DZFitbOeANieJk8pUchC3+q486W/lict05J0lGjVWAy/QytA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GxhMy+G2; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cbcc2bd800so4951406d6.0;
-        Wed, 13 Nov 2024 01:48:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731491317; x=1732096117; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XaSnfzm/t5DivDcI8TYnD0ZfKr8uwA2J8rw6CZWmB2k=;
-        b=GxhMy+G2e7m9E9ytfeJJ2FRRKn+k4bJAGKLETXozgLmocakpkFT5uyuDtnI9Cae28w
-         lxZarTXvw/JeT9JP0M5fqpeVyv2dyL8yEBN8OKjhZjHkObsMdTMzbi8kQyxCBelYHJ8u
-         Z7+SvCoez3MuBHDd/Z7LpIOHmHuvn0LXVVea9JQk7L6MKeqM5ziHDJtpTUV9ycGifhiN
-         0palZwvpiTGnMMZDZ+449vKiB2hmFDKUYs4huMMT4C2m0ED9WBVYbaLtiMkFpYnjfdDc
-         lV56rInoCSoa4kG1AAWSSHYdrD/wx3wf8LCcf6y71O8t+jAMidGhF5gVVE8Q0F+Q6SFE
-         UzyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731491317; x=1732096117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XaSnfzm/t5DivDcI8TYnD0ZfKr8uwA2J8rw6CZWmB2k=;
-        b=Ae6HJRla1DsHSvj0RxQBzBONZ4NyPWv+J1K5+7e5u7OELlCw02fgRBWQrA+isu2nzv
-         obz32OadNftrJqGDwSp6h+5JVw0OmsbL5dR6awBF/0LJccxAI0EQ8Am/w0jkHfpzZGz3
-         UtRCxY3u4Wv6poitir/ZpQUUBxXhVnNyK+vKbOQr8Tqt83fkACGglVYFB+8QWOjiD2pd
-         sAb7SJ7ZQMWQc6ZoWWT2SvnHl+eVddpqMeQsoj34iB8fWzz7l/uP4ZQMNIMxgbON396j
-         tS+2oRow72YPbrRoo9eaqEfAUGTN610Nc6VLC0TERDRA56EE7zx+qyUyMGbgLTDVnaf/
-         dhfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMYpJqTV1XmAfLCswE6kxtRRwUuiPWrhXnrB78QSbAUNRbVnxo1ja7k49dSuEjDIX080uawWEVg3I=@vger.kernel.org, AJvYcCWeUu/96Pd+X4nzduKCWJu721eujbaFlArZiEjXB8UKWt0mrL0w9yrAjbmo2sWHHStKAfTOUWRftP3b3sui@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG+7NqEzELHHz+fHi7RhQQxDwGWda7ZBXTnfCq304R9SFAs+ra
-	UVKUH1ARhi69QZUONQaBuyNEm3EUSo/XSyvybNDKyd4Dzu1aFSGiqOoMe5vc5WPlnznPug4ylkS
-	W4pY+ao3ImnAAjAf7c3oxtzbcJnE=
-X-Google-Smtp-Source: AGHT+IHcLy8AEacbQGHGgfaEwyTub+t1gLTfFsAT9DwCgvxu+gX32+4tA6aRof7gwejihIaPx+ov6qt1kZkNWsKHlks=
-X-Received: by 2002:ad4:5d49:0:b0:6d3:5be3:e711 with SMTP id
- 6a1803df08f44-6d39d57c179mr302997596d6.9.1731491316900; Wed, 13 Nov 2024
- 01:48:36 -0800 (PST)
+	s=arc-20240116; t=1731491308; c=relaxed/simple;
+	bh=dI2wtQ1ohi7xgBvgcEzNuF/EqiBUXtyzCJPc05Ff95o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E7DlORyAhXOUdvmDmPx3Mnaa/ibaTAJW7n4m35CW6vFdnFmMRI8AYEBOeFkXDcZXrQkKswV4gzl3U/CHiIkO25zWumewYjk/aiU4RYZEp73Sdu4pv1t1yDBGTA6a//ZG+jQyyH/8CI8ICZkZNXmx+hGKDodzBdoQUJBcg9QX0LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pzjrA//g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NVPl8zER; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pzjrA//g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NVPl8zER; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C4E9F211D4;
+	Wed, 13 Nov 2024 09:48:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731491304; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x03lHb2NlF8giJPDjnZ8KNjG5BnlxnM3noEvtBrKxp8=;
+	b=pzjrA//g7r/d+yol1CiRRBBPM4kFT4sDFUYFyauckN3qRAYvop9/FBzBIkfFhCzLCN6eIL
+	afKEF48KVqsKiW6UnT0BiLrVibgK82gkmuAbzlfZ5tIQ0gQZIc+Q2xiId0I+z6VwrE3E0l
+	E67QWk74P9odF0CLdL5AoIRilHqN2jw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731491304;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x03lHb2NlF8giJPDjnZ8KNjG5BnlxnM3noEvtBrKxp8=;
+	b=NVPl8zERbrVO6jmFvsbLxY0I89mb3aFlAoLun2DOjk0lFEapaB+OZ8gWGUxwtN2usqgj4c
+	Yi/uEpt2BOVl1uBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731491304; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x03lHb2NlF8giJPDjnZ8KNjG5BnlxnM3noEvtBrKxp8=;
+	b=pzjrA//g7r/d+yol1CiRRBBPM4kFT4sDFUYFyauckN3qRAYvop9/FBzBIkfFhCzLCN6eIL
+	afKEF48KVqsKiW6UnT0BiLrVibgK82gkmuAbzlfZ5tIQ0gQZIc+Q2xiId0I+z6VwrE3E0l
+	E67QWk74P9odF0CLdL5AoIRilHqN2jw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731491304;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x03lHb2NlF8giJPDjnZ8KNjG5BnlxnM3noEvtBrKxp8=;
+	b=NVPl8zERbrVO6jmFvsbLxY0I89mb3aFlAoLun2DOjk0lFEapaB+OZ8gWGUxwtN2usqgj4c
+	Yi/uEpt2BOVl1uBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 911F713A6E;
+	Wed, 13 Nov 2024 09:48:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JFL8Iuh1NGfHFAAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 13 Nov 2024 09:48:24 +0000
+Message-ID: <1c78d7ff-78d0-48e9-8da8-abd54018cbb4@suse.de>
+Date: Wed, 13 Nov 2024 10:48:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112211442.7205-1-rosenp@gmail.com>
-In-Reply-To: <20241112211442.7205-1-rosenp@gmail.com>
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Wed, 13 Nov 2024 20:48:24 +1100
-Message-ID: <CAGRGNgXhtPy_G9O0n7dEhcAX3sWN=08tF9tgFpLs8V---uELYg@mail.gmail.com>
-Subject: Re: [PATCHv3 net-next] net: modernize IRQ resource acquisition
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Vladimir Oltean <olteanv@gmail.com>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Pantelis Antoniou <pantelis.antoniou@gmail.com>, 
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>, Byungho An <bh74.an@samsung.com>, 
-	Kevin Brace <kevinbrace@bracecomputerlab.com>, Francois Romieu <romieu@fr.zoreil.com>, 
-	Michal Simek <michal.simek@amd.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Zhao Qiang <qiang.zhao@nxp.com>, 
-	"open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, 
-	"open list:FREESCALE SOC FS_ENET DRIVER" <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/8] blk-mp: introduce blk_mq_hctx_map_queues
+To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Bjorn Helgaas <bhelgaas@google.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com,
+ mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
+ storagedev@microchip.com, linux-nvme@lists.infradead.org
+References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
+ <20241112-refactor-blk-affinity-helpers-v3-4-573bfca0cbd8@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20241112-refactor-blk-affinity-helpers-v3-4-573bfca0cbd8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLst1wom1x1pd8ajtcs5pyzfej)];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Rosen,
+On 11/12/24 14:26, Daniel Wagner wrote:
+> blk_mq_pci_map_queues and blk_mq_virtio_map_queues will create a CPU to
+> hardware queue mapping based on affinity information. These two function
+> share common code and only differ on how the affinity information is
+> retrieved. Also, those functions are located in the block subsystem
+> where it doesn't really fit in. They are virtio and pci subsystem
+> specific.
+> 
+> Thus introduce provide a generic mapping function which uses the
+> irq_get_affinity callback from bus_type.
+> 
+> Originally idea from Ming Lei <ming.lei@redhat.com>
+> 
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>   block/blk-mq-cpumap.c  | 37 +++++++++++++++++++++++++++++++++++++
+>   include/linux/blk-mq.h |  2 ++
+>   2 files changed, 39 insertions(+)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-On Wed, Nov 13, 2024 at 8:14=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wrot=
-e:
->
-> In probe, np =3D=3D pdev->dev.of_node. It's easier to pass pdev directly.
->
-> Replace irq_of_parse_and_map() by platform_get_irq() to do so. Requires
-> removing the error message as well as fixing the return type.
->
-> Replace of_address_to_resource() with platform_get_resource() for the
-> same reason.
+Cheers,
 
-Sorry for the drive-by review, but I have to question the utility of
-this conversion.
-
-> diff --git a/drivers/net/can/grcan.c b/drivers/net/can/grcan.c
-> index cdf0ec9fa7f3..48e93c3445e7 100644
-> --- a/drivers/net/can/grcan.c
-> +++ b/drivers/net/can/grcan.c
-> @@ -1673,9 +1673,8 @@ static int grcan_probe(struct platform_device *ofde=
-v)
->                 goto exit_error;
->         }
->
-> -       irq =3D irq_of_parse_and_map(np, GRCAN_IRQIX_IRQ);
-> -       if (!irq) {
-> -               dev_err(&ofdev->dev, "no irq found\n");
-> +       irq =3D platform_get_irq(ofdev, GRCAN_IRQIX_IRQ);
-> +       if (irq < 0) {
-
-In this change and a lot of the others, you're not removing the "np"
-variable, so you're basically replacing one wrapper with another.
-
->                 err =3D -ENODEV;
->                 goto exit_error;
->         }
-> diff --git a/drivers/net/ethernet/freescale/fs_enet/mac-fcc.c b/drivers/n=
-et/ethernet/freescale/fs_enet/mac-fcc.c
-> index be63293511d9..9006137e3a55 100644
-> --- a/drivers/net/ethernet/freescale/fs_enet/mac-fcc.c
-> +++ b/drivers/net/ethernet/freescale/fs_enet/mac-fcc.c
-> @@ -83,8 +83,8 @@ static int do_pd_setup(struct fs_enet_private *fep)
->         struct fs_platform_info *fpi =3D fep->fpi;
->         int ret =3D -EINVAL;
->
-> -       fep->interrupt =3D irq_of_parse_and_map(ofdev->dev.of_node, 0);
-> -       if (!fep->interrupt)
-> +       fep->interrupt =3D platform_get_irq(ofdev, 0);
-> +       if (fep->interrupt < 0)
-
-This one and others like it are fine: it's much cleaner to use the
-"platform_irq()" function instead of reaching deep into the structure
-to grab the "of_node" property.
-
-That said, in this case and probably a few others this is a driver for
-an OF device so I'm still not sure this actually makes sense.
-
-Thanks,
-
---=20
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
