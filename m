@@ -1,126 +1,139 @@
-Return-Path: <linux-kernel+bounces-406985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716A89C6715
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:07:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3714F9C6719
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:09:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2595B1F241A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:07:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 950B3B24CE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0931D7083F;
-	Wed, 13 Nov 2024 02:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1D276036;
+	Wed, 13 Nov 2024 02:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHS637jb"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D7hthHVq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2641C2FB;
-	Wed, 13 Nov 2024 02:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF0BC2FB;
+	Wed, 13 Nov 2024 02:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731463654; cv=none; b=Nj0ABbiAaKt7/gBVCZJVdQT/BAZ077lLAHEsmwWozDZXzgg7CkvHVDBTJFFsOBGs0+FvD0bGDwHeUKELzJWGwHX8/+swuTzzNsz3ZF1s5/t3NzxobRORf+sliV+di7r6MNmfogJ57S4SNcmZa9nbzSS+LY1JRLz3yIdPRcwJm/A=
+	t=1731463729; cv=none; b=OXPQdtMDjzkPavn8JEVKRc+pH6NmAhYjA3fyXqvOfIlDnmzgYhw5vBO7kWN4rvhLsITviP51DN2VSwYkQsWJml/BIBvjqnpOFcDxSg5D1C8g5cNUvlYo+qwGLWxlS1NXZ99OaOV80POsRh7oHr43zg4PZI7bfF+nMyiYRsG8xP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731463654; c=relaxed/simple;
-	bh=fBIDU+D9Nxyj4+oC2LH8Lvc0U3Wc+c5p99wk9ExNJ7E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a4EN0y4bdMr7vV6Qf9MxJTA0mtRKNZs3VeqoRyL2TG3M04gI3UxJTa/8OXbysc9s54ST3UASH7UhparmSrRzTj+KrDTvOc1/GaGV9tw65uc0nHoAABlO/bLbHhoB0ZfAD3g+Ta283V5SJ8dpQ7ChkckqaNh2yzr2TThoU+nH6MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHS637jb; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6cbe68f787dso41181946d6.2;
-        Tue, 12 Nov 2024 18:07:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731463652; x=1732068452; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=WYP6Z7D+0l/1IgcWk70OwbLKb3OwbsoyZjfuToeA0wI=;
-        b=DHS637jb9mkFEpImsh3JDuRTnmgcsSA/Ks30CAXXz8TUKVuaLuSxkYK/z8BncT+nkX
-         rm/LLHP1QoMY8yLgasq6DOmxZOC9UBWlWOeUttK+OrpVJTH3jE5e/+yd/YbZo4BZcdfH
-         jEUhMZyqB9LEyGZh/dhQ8QhUScpj97inOVOjDZEsGrp5/2mpZeeoRfJuOZnR0ziDMUsO
-         tHOlK07zmpWVOaVnWwlQp3UkhK0pn8P2y1wpzqap1asyQSWt37P8+kJqKdo3KIIyCGyA
-         Zn0Y/QcIcM1HIoItjJ15+jr1iqfQv/P96x7X46xvGy8akW3fVt/p8tsqOzxsGAKKAF2Y
-         LYFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731463652; x=1732068452;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WYP6Z7D+0l/1IgcWk70OwbLKb3OwbsoyZjfuToeA0wI=;
-        b=n6vd0CbioTYelKKWOpTw9nYSDgyQffHxkSRk2DKS9FtVqfy2/vezJhYE+30EtrM6yS
-         xi/AEBUooVWp6xsb8Psc2fjkYQtJ2NHf7gIVS3JDx94Ju4tnQRdd2xzJnBBJ3ouiKDAm
-         cZl2TN7mreIkYxYTspKqr/g5P21ZthJUIcBR1i4cQ0NMkFX6zSQKsdjHL6MsigNZMgVM
-         h2eXPT7Ji/WVc641FjjDCdbxSI3nyvZen4oGWJSxdf4ULsQl1NHhlKQNPyDXKbAlDYLc
-         SXNUMJ8tFaVu7Pvhp5wfJbCddVW/RhvJuAsVJ0sdmayNhHLF3bDWWHn8kfNo+rMbRUon
-         Ujpg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2bFqqYaJh/VBaPd7IQhr4YkRmnlFcD8POKBqPqPqROEMw9wVuZrJYtfqsBBWfcOSz2c6zUfYBndVjxcs=@vger.kernel.org, AJvYcCVR1orHEMtigur0CN3Lv4OcePwDMiCuC7tg43WbB0vyj4we43CF2151QMzgIi4bYx6eRq6/NP3U@vger.kernel.org, AJvYcCWc/eoAOB3fc+zBZK4FKAurgVFDfh7IXU5rOM7uce2OY29xme5WkKNwsMRYoLAEULMIXEGViAEs9o4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMjZi05HXv4zNjUwqOLbbcNMNG8gaiLdcOTeet1M9wwMjVn8SQ
-	F7N7azRk6Dql3yk4l/DM4jvdu6RkDh9+8T4Blx+Knm1p7LZ1kyxN
-X-Google-Smtp-Source: AGHT+IEpA4+yIXpM0Wyn3hUH9jkbdaPc1sjc6OvA/euzql3H6Je2Ifa7mqh0EOe7fu+kXMtkUehaQw==
-X-Received: by 2002:a05:6214:5706:b0:6ce:2357:8a2e with SMTP id 6a1803df08f44-6d3dd06beeamr19108226d6.37.1731463651904;
-        Tue, 12 Nov 2024 18:07:31 -0800 (PST)
-Received: from lenb-Thinkpad-T16-Gen-3.mynetworksettings.com ([2600:1006:a022:33ba:88a7:81d8:bd03:622c])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3a6b3250bsm58594056d6.96.2024.11.12.18.07.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 18:07:31 -0800 (PST)
-Sender: Len Brown <lenb417@gmail.com>
-From: Len Brown <lenb@kernel.org>
-To: peterz@infradead.org,
-	tglx@linutronix.de,
-	x86@kernel.org
-Cc: rafael@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Len Brown <len.brown@intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] x86/cpu: Add INTEL_LUNARLAKE_M to X86_BUG_MONITOR
-Date: Tue, 12 Nov 2024 21:07:00 -0500
-Message-ID: <a4aa8842a3c3bfdb7fe9807710eef159cbf0e705.1731463305.git.len.brown@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1731463729; c=relaxed/simple;
+	bh=+hrdXFbO7N2VDw8DvmEgshdFI+lLDLFlb8jv1xnAsJw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=UMNcNsmxnQYKjoEm9G3KU3tBatwgWpcKbJFUe4Aru+EHf8nRfK8gNIUH9qRKGw/Z67MGmBM+JF1/NxmPHaHoThsvD6U3l5dpB6ZFkkIOySM3ZdLX3Yaol0ZUsH+BjyaEG3iZIO+NzZ3QYotcLeKX8WSkVaSfE4Ztxp21aKvRtVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D7hthHVq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACMRc74006727;
+	Wed, 13 Nov 2024 02:08:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=wrS5V6QqQdjAm1CJE52Yfz
+	EYxOapXl5moYDQhB+kuK8=; b=D7hthHVqsWDnTv6qlOeJcLceiYytUOgvmfQQkz
+	8tyrVoqr35Y9z4mbzXLzZlhq18ugKPPFEExo4rb8mbm2wMgw9K+lSebo+YVmtuBn
+	Z/KZrTHyTWNvpKsOD6rrzZey5hLaH9wxEeZV9shGLYUjmJmVxw1VaMdfGaic/3bt
+	UxLldz3LYGxfACFHcVKge8v3KjjGYniqMYTya+RgjbCx+gXbtJvXA6gpaOpVmyxH
+	rXKBB+NesYgXQBXaif+0MKG5eEgkGErOgvSdBEf7sPKqdRt5QGjibgeiLsv2K+G7
+	4e7CoziDRwiYqqRXeIAXChvzSqAFnqFddFBYgR8cXZqHtAMw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42sxpqham1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 02:08:22 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AD28MKT031728
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 02:08:22 GMT
+Received: from hu-scheluve-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 12 Nov 2024 18:08:18 -0800
+From: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+Date: Tue, 12 Nov 2024 18:08:10 -0800
+Subject: [PATCH] net: stmmac: dwmac-qcom-ethqos: Enable support for XGMAC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241112-fix_qcom_ethqos_to_support_xgmac-v1-1-f0c93b27f9b2@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAAkKNGcC/x2NMQrDMAwAvxI011CZDm2/UopwFSXRkMixnBII+
+ XtNxxvu7gCXouLw7A4o8lVXWxrgpQOe0jJK0L4xxGu8IWIMg+60ss0kdVrNqRr5lrOVSvs4Jw4
+ 9pjtKevBnYGiZXKQ5/8XrfZ4/4ZsP8nIAAAA=
+To: Vinod Koul <vkoul@kernel.org>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "Andrew
+ Lunn" <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric
+ Dumazet" <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC: <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: JmDc_Ndj2oTaDky6KH4Ep2BtCJEGIwsk
+X-Proofpoint-ORIG-GUID: JmDc_Ndj2oTaDky6KH4Ep2BtCJEGIwsk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 phishscore=0
+ suspectscore=0 impostorscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411130017
 
-From: Len Brown <len.brown@intel.com>
+All Qualcomm platforms have only supported EMAC version 4 until
+now whereas in future we will also be supporting XGMAC version
+which has higher capabilities than its peer. As both has_gmac4
+and has_xgmac fields cannot co-exist, make sure to disable the
+former flag when has_xgmac  is enabled.
 
-Under some conditions, MONITOR wakeups on Lunar Lake processors
-can be lost, resulting in significant user-visible delays.
+We want to keep the default capabilities as EMAC4 and enable
+XGMAC support from the dtsi based on the platform needs.
 
-Add LunarLake to X86_BUG_MONITOR so that wake_up_idle_cpu()
-always sends an IPI, avoiding this potential delay.
-
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219364
-
-Cc: stable@vger.kernel.org # 6.11
-Signed-off-by: Len Brown <len.brown@intel.com>
+Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
 ---
-v3 syntax tweak
-v2 leave smp_kick_mwait_play_dead() alone
+ drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- arch/x86/kernel/cpu/intel.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+index 901a3c1959fa..2f813f7ab196 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+@@ -872,6 +872,8 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
+ 	plat_dat->dump_debug_regs = rgmii_dump;
+ 	plat_dat->ptp_clk_freq_config = ethqos_ptp_clk_freq_config;
+ 	plat_dat->has_gmac4 = 1;
++	if (plat_dat->has_xgmac)
++		plat_dat->has_gmac4 = 0;
+ 	if (ethqos->has_emac_ge_3)
+ 		plat_dat->dwmac4_addrs = &data->dwmac4_addrs;
+ 	plat_dat->pmt = 1;
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index e7656cbef68d..4b5f3d052151 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -586,7 +586,9 @@ static void init_intel(struct cpuinfo_x86 *c)
- 	     c->x86_vfm == INTEL_WESTMERE_EX))
- 		set_cpu_bug(c, X86_BUG_CLFLUSH_MONITOR);
- 
--	if (boot_cpu_has(X86_FEATURE_MWAIT) && c->x86_vfm == INTEL_ATOM_GOLDMONT)
-+	if (boot_cpu_has(X86_FEATURE_MWAIT) &&
-+	    (c->x86_vfm == INTEL_ATOM_GOLDMONT ||
-+	     c->x86_vfm == INTEL_LUNARLAKE_M))
- 		set_cpu_bug(c, X86_BUG_MONITOR);
- 
- #ifdef CONFIG_X86_64
+---
+base-commit: 28955f4fa2823e39f1ecfb3a37a364563527afbc
+change-id: 20241112-fix_qcom_ethqos_to_support_xgmac-d1a81ea9cbfc
+
+Best regards,
 -- 
-2.43.0
+Sagar Cheluvegowda <quic_scheluve@quicinc.com>
 
 
