@@ -1,115 +1,153 @@
-Return-Path: <linux-kernel+bounces-408438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15FA09C7EE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:40:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D139C7EE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEB7A283054
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:40:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8E1E1F21C4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF5118E056;
-	Wed, 13 Nov 2024 23:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13FA18C926;
+	Wed, 13 Nov 2024 23:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhmKYvUC"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j5IOoWj5"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B65D18DF72;
-	Wed, 13 Nov 2024 23:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C556018C91E
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 23:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731541203; cv=none; b=os2qSXZELvRgc3FtFtFqKU2i6aTXIriWFbwnCS6TODwr4iApQWX45XZmXQrwV27cDfomCnDZExE57mcwijNUjVE/ZnEve8u6Z1IQWNITDjjuZFVixSpbDi9uGZITbaOtfT31vwGGjIM5hXpQp6jsmwUUi05xmTIB6pGv3hrqHVs=
+	t=1731541254; cv=none; b=SsZ4f/onFJK5RxfAleDcaT9MlYos7aEDbNsNfcT/MThPc+ycnJ3LAnMOYiBuj7HAKLtV5ZN/PftviKUXMZ4jKZMJ9tNmnquwm1aIMgi6Ou0kkbwM6W5n/7NeZs4FZbQPwjBMfGBS6cR6oLwcAnR3oslSmKF3iJ8KuxBHmX+gHvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731541203; c=relaxed/simple;
-	bh=FFJTfE5V4bx71ebziI2pbysq0/XCtc6MklWCpANK65o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jqPG9P1ETiEysDNEf+KqiBb6LlVbH3Mr0i8zaDbZmq+48exHfCYuf0FBOtviklMXG+6GPD7D9z0RNMWzUc8FHB40mTgpLQzqhcg54YCRgFG85jNxRehKLFcj/Og4uBPRfxrBrol9IxdfJjbun+mciF5aL/FcgisAgMlaHU3iZic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhmKYvUC; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-720be27db27so73772b3a.2;
-        Wed, 13 Nov 2024 15:40:01 -0800 (PST)
+	s=arc-20240116; t=1731541254; c=relaxed/simple;
+	bh=n8nBYFsvDBCotCg58+sOi96R9rXZN7f73l2S1Mi5FS0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O/0HYG6E5cQgNTMrTmnb28s3fgkilRqXwzTpqQdvtDheyHEdynTOnCVeJgnm28Imja3n22cLognFK2An0LbIdugdqmIzZZIdgDEDjIIOkp5sY174u/EnQofHEPTjwEWeCCmOb1Qu8js21Sfld6G+VB1lh++bF+iPX45QS0rH9Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j5IOoWj5; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a4e4776f79so26245ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:40:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731541201; x=1732146001; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HI0xxj+KXLswVa6N/SGGXWKpC/g/BZ3ToSfiUhSnzZ4=;
-        b=DhmKYvUCkxPCi1aTxf/m7IPER4sEFREaNL/jciiSXHHnaac4WNghLrPQ0JUHMKMdtP
-         qLWYj/a3hlA9GQhQ51lUQhWjr1fnhbAos3svim7j9j9P8b1E1UppISmm+JYAu8OT3yU/
-         qq0q/4qV9IxWEsdyhjwICUwXQosDHys3d/9xkaNVMG8Cz9usLb5s4gSxPBbo4LQpeisX
-         qVTunG5p9BSUyTQfU/zqrKUO/FtJJbf4vQOlA4pLJEDrhz4/wRetBw8VqdMFzXFHQi/5
-         AO889eOcbPPDJVREHrxWuVsZYYIWdrHcxVJ6ACTkVyG0HX3Jd+vlMxmF9epDIfwnJOAb
-         TxBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731541201; x=1732146001;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1731541251; x=1732146051; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HI0xxj+KXLswVa6N/SGGXWKpC/g/BZ3ToSfiUhSnzZ4=;
-        b=MO8qAyXBocmM1/eFDIuPfE+C1aVXmbRbPxIqh26xwGmXeQAQE42Wj3N8DYOTAusE8b
-         x6JKBVwY9lSAsh6ISStR9wiRmP0JvYuSy8ZM9sVuRUmG4Dd4hqj9ERIWfHxGYWQL9lPN
-         liVcimJhJlIMk+CI9lj2DpWSa8kkyuF1eTw5yZwX7p3hE9yQbsZeibVBXIQwTOlLYmPW
-         ZQnQrjzteB0GKrzTty85DkfA8HzFt5JiPByyqG9BQoeu+GWHCTl428Ysr27ppkTsZr9+
-         xnXo+c0c+Tv8QnQcW9U/OFwoKERz+I2GmVnXy2jlM0PPF50NisuFS/zt5qwH0wUkvFJT
-         dbtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSZ/AFa1qduHBOTY8E3HKM+yTMItQirZWu6I+4dOVPpwAGDqSmCODX7+cB7J1Z3dk5J4ygQqJReW/+MvI=@vger.kernel.org, AJvYcCVe9jy74I1Efeq8STJWlfpxvsfHxavXdPOVBih9Uw+tuadlSW9+4sfL0gFDzw5mhicQICKbsbq4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzNAZO1iq+oDcNJmij4u8ZAWH6U9/cuB2pNNfoA9ZQTQKaR9gd
-	sTt905SIgMv1BwCSQ5v5SAs6uaKlzwqC9EaL7dtlglBq1xcgfBo=
-X-Google-Smtp-Source: AGHT+IE4UgAQEfqRwoJOKPcXTNZvtPXsUgC6Gg5kFMdPr4gitS6EuLyb1P3zvUb2hKwNIBTjuRI+VA==
-X-Received: by 2002:a05:6a00:22c7:b0:71e:7674:4cf6 with SMTP id d2e1a72fcca58-7244a516159mr12028632b3a.8.1731541201225;
-        Wed, 13 Nov 2024 15:40:01 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f643cddsm11090829a12.54.2024.11.13.15.40.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 15:40:00 -0800 (PST)
-Date: Wed, 13 Nov 2024 15:40:00 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	linux-kernel@vger.kernel.org, horms@kernel.org,
-	donald.hunter@gmail.com, andrew+netdev@lunn.ch,
-	kory.maincent@bootlin.com, nicolas.dichtel@6wind.com
-Subject: Re: [PATCH net-next 2/7] ynl: support render attribute in legacy
- definitions
-Message-ID: <ZzU40AtcsZzj7YuG@mini-arch>
-References: <20241113181023.2030098-1-sdf@fomichev.me>
- <20241113181023.2030098-3-sdf@fomichev.me>
- <20241113121114.66dbb867@kernel.org>
+        bh=n8nBYFsvDBCotCg58+sOi96R9rXZN7f73l2S1Mi5FS0=;
+        b=j5IOoWj577d0DjPAmKaqOE8qVMYcOi+KfY2JqooE6UTS6ZXeCXxAG9X4//BcyRAOor
+         DzxG0p7CU1jUxvXP1CIyuvwGmmLKPbregpqhB7doECuCBt9mgbtZxGhQtfU/7ZRUIs9W
+         f3a++xFe2uDQusom/FbaeLQPUUen6pdBwVk4HjqKIT2Zsi5jMjg9P5jgo3ufGH5A9A1/
+         ZHHM+A2/WwZA4oElIuuFbzD02F77bAGoo7CGsVcejab1Up7Yp0knnanSuNfZNriri/R/
+         PjDNHzobtdrFmOYhosIdgF1JhBs9G6qTitDU0FRUEgBZ1sVTYTf94Te4FjIhXTyQEWSd
+         +giw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731541251; x=1732146051;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n8nBYFsvDBCotCg58+sOi96R9rXZN7f73l2S1Mi5FS0=;
+        b=uV+3ENfCx0TUHSlWLmo+eJI64LV8fAvpRU8dvO52R3rwWtMryiQeWIaO9bxghfZYV1
+         Q6DQRWTG2+3avE50rQgxSXmQoDc044BvjIIf5i/MOvCLD/cuSHFeXewfYMzfbSF/QoLW
+         TC9HXcb1sRVljA1Q+R9OYq08DaJuFucUeJyA48sBlOG1/P8hU/9iXT9ale/TAPzgJj99
+         b5VvbBSLw2uk+BV+WCA2yDFDTVWVrS2KL8cT29qzZaRsGvvhNWJXZYyypT4HeE6TkOwA
+         YrKw2WUCPMqlDfxaApq30igv9Qz02nTDQa2A0zdQWdlxd7a0KstTaOzpeZ80cfQ6CKn0
+         JY7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUVuX9lDzXILiPeLMI513GstzXcnkWh8nPuSg2m5eT7agz4NmTc9pIxAWbPe4pDJGIAZtE9PxMocrQl9mA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX/rab4o280mRYV0qRQuyCMipN84jupuBPtGf166srICq2Lqv3
+	UCCoDp4CwLGFxRceMdW2f+LgI0sS4X63gBcPXOFvmI8hFnISyez2BAWdi+BkXLiVK1d29rTjF6m
+	6r7gQoUa6qDOYij4WHmFsHZROfsoSioqSclqb
+X-Gm-Gg: ASbGncveLDfUMUII1/pWI9NjnZ7s0vw1iRhom4jq9RfFQD4/lMrF5ddUMHr0BnaYZqR
+	VtnsrOhFDMipmwDt07Cl+htl9tWFwUX4H3ends6D8DW09T85nEONNWoyQlYYK8rQ=
+X-Google-Smtp-Source: AGHT+IEv/AxbLCrxL3qYhb4sdLAHJGoF9BYLR+kiCSSJ6XRxxnDn753DPoPlPrCyzeYVNz2q75bxxZw6sJpXgwiONm0=
+X-Received: by 2002:a05:6e02:1d82:b0:3a1:a90f:74c6 with SMTP id
+ e9e14a558f8ab-3a71f743df0mr386015ab.21.1731541250616; Wed, 13 Nov 2024
+ 15:40:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241113121114.66dbb867@kernel.org>
+References: <20240926175035.408668-1-irogers@google.com> <bbbd024c-d2df-47ea-9587-f68e5bc45962@linux.intel.com>
+ <CAP-5=fVX5wypmAAhR8LsE4nSWp5BmN_qhGf9+WCh2bebNcGYTg@mail.gmail.com> <07ee39aa-309f-4414-aee0-cc5b86a66af7@linux.intel.com>
+In-Reply-To: <07ee39aa-309f-4414-aee0-cc5b86a66af7@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 13 Nov 2024 15:40:39 -0800
+Message-ID: <CAP-5=fWP7-CjuJXRfdxD1mfAXtdwiq3e=j5i=ia7_UAKQAE+Gw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/22] Python generated Intel metrics
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Perry Taylor <perry.taylor@intel.com>, 
+	Samantha Alt <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/13, Jakub Kicinski wrote:
-> On Wed, 13 Nov 2024 10:10:18 -0800 Stanislav Fomichev wrote:
-> > To allow omitting some of the attributes in the final generated file.
-> > Some of the definitions that seemingly belong to the spec
-> > are defined in the ethtool.h. To minimize the amount of churn,
-> > skip rendering a similar (and conflicting) definition from the spec.
-> 
-> Hm, is this mostly for enums and definitions? We have header: for this.
-> "header" should tell the codegen that the define is "foreign" and
-> should be skipped in uAPI, and in -user codegen we need an include.
-> 
-> Coincidentally
-> 
-> make -C tools/net/ynl/ -j
-> 
-> In file included from ethtool-user.c:9:
-> ethtool-user.h:13:10: fatal error: linux/ethetool_netlink_generated.h: No such file or directory
->    13 | #include <linux/ethetool_netlink_generated.h>
->       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On Wed, Nov 6, 2024 at 8:47=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.co=
+m> wrote:
+>
+>
+>
+> On 2024-10-09 12:02 p.m., Ian Rogers wrote:
+> > On Fri, Sep 27, 2024 at 11:34=E2=80=AFAM Liang, Kan <kan.liang@linux.in=
+tel.com> wrote:
+> >>
+> >>
+> >>
+> >> On 2024-09-26 1:50 p.m., Ian Rogers wrote:
+> >>> Generate twenty sets of additional metrics for Intel. Rapl and Idle
+> >>> metrics aren't specific to Intel but are placed here for ease and
+> >>> convenience. Smi and tsx metrics are added so they can be dropped fro=
+m
+> >>> the per model json files.
+> >>
+> >> Are Smi and tsx metrics the only two metrics who's duplicate metrics i=
+n
+> >> the json files will be dropped?
+> >
+> > Yes. These metrics with their runtime detection and use of sysfs event
+> > names I feel more naturally fit here rather than in the Intel perfmon
+> > github converter script.
+> >
+> >> It sounds like there will be many duplicate metrics in perf list, righ=
+t?
+> >
+> > That's not the goal. There may be memory bandwidth computed in
+> > different ways, like TMA and using uncore, but that seems okay as the
+> > metrics are using different counters so may say different things. I
+> > think there is an action to always watch the metrics and ensure
+> > duplicates don't occur, but some duplication can be beneficial.
+>
+>
+> Can we give a common prefix for all the automatically generated metrics,
+> e.g., general_ or std_?
+> As you said, there may be different metrics to calculate the same thing.
+>
+> With a common prefix, we can clearly understand where the metrics is
+> from. In case, there are any issues found later for some metrics. I can
+> tell the end user to use either the TMA metrics or the automatically
+> generated metrics.
+> If they count the same thing, the main body of the metric name should be
+> the same.
 
-I don't see any existing usage (or maybe I'm looking at the wrong
-place), but will spend some time reading the c-gen part. Worst case I
-might refresh this thread with more questions.
+I'm reminded of the default events where some of the set fail on AMD,
+and of AMD calling their topdown like metrics things like PipelineL1
+and PipelineL2 rather than the Intel names of TopdownL1 and TopdownL2.
+Like you I have a desire for consistent naming, it just seems we
+always get pulled away from it.
+
+I'm going to post a v5 of these changes, we carry them in:
+https://github.com/googleprodkernel/linux-perf
+but I'll not vary the naming for now.
+
+Thanks,
+Ian
 
