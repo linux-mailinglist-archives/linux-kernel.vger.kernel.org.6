@@ -1,126 +1,104 @@
-Return-Path: <linux-kernel+bounces-407954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D839C77E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:55:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3CE79C77EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:56:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59636289010
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770981F235D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C20F16088F;
-	Wed, 13 Nov 2024 15:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8601115C128;
+	Wed, 13 Nov 2024 15:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ryBxYC+6";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="McfWnMBH"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvedUzCt"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6950815C14F;
-	Wed, 13 Nov 2024 15:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48ADB13CA93;
+	Wed, 13 Nov 2024 15:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731513302; cv=none; b=NkGMQK6eRV2HShtm/MjRqjvBYfb9XmoltNjwrlnLUnmdiG01mjMsoFXxc0w5I7zrZAN21PIhElbAT0k3ziVMkAVYRCPV84SLiwRuQEdIU1VThBY26Ny1THidECmsjgCyJmO1IgZA5eFO8A5nRuFk4jGoLU1BPdDp7ZETaQ6vFrg=
+	t=1731513330; cv=none; b=beUvuoFubZGtTIwdKnEn2zRFJjv5oH58RMG9kdEIr2P2oVbov2SbNnCq8LWbI5ChfB3EqbEEOK4sFJklS/WLO+GvWXsOteXD1ExG8OjDBZoxw6EZESil60O30VJSQxo5PTs2E+wlUi9SM9GGeMhPRvMrzhz9tTAel9RAtw0QDn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731513302; c=relaxed/simple;
-	bh=b6raCtJWp3Lrtmt82BKBBCDTyBvC2ZcakCXrj2CG5fY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=LOx7VKoV/t87OSBKx7eAdMKy7if4eYNfpQN0LeafaZZjk4TAdSTmG2MGtJgagJI8I319lZ2d9f99N3pfUI1qMH9vM2vP9H1tXIMYgc1KexeKTiNHqE/Oz94rman/YPctqFg5faAXCDPHxD+9neZqap74mFnUTCX+qaW6/pBdqkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ryBxYC+6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=McfWnMBH; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id D7907114019C;
-	Wed, 13 Nov 2024 10:54:57 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 13 Nov 2024 10:54:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1731513297;
-	 x=1731599697; bh=czwPBljBW6AVGfYo7dHlvTWz3D+Y4F6MZEMNWo3u4TI=; b=
-	ryBxYC+6nLUrw6xhwDLaU9w4v58WDdofhK0Q1hydOpn/UU+jeMa0cm/a5pqde2AS
-	8krGEzq10Q1nx6ARR5z/4UfqV4hAhpKci/vHZ5sbTC7+F5D4oGtz3fejw2D0U0i6
-	qKcY+rrXrlDe/E2AniU+XGQyzOFxAInJm5NYJDyWjtsIo00iyAexHZZ2l2r+2AOH
-	uzqTAZSgq8aZWK/NK+Aol1jn5f6iqhOUQyCWKvAbuNMtwC7cq4U6fKgJP84edIED
-	afIfgoTDBdikFV/ewjF9fkSOHxslXmA7WWCiGRWkYPaXaN021ujxIRYCPJ/zhz09
-	O6e2ht9TGcWPLhcbm/vrmQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731513297; x=
-	1731599697; bh=czwPBljBW6AVGfYo7dHlvTWz3D+Y4F6MZEMNWo3u4TI=; b=M
-	cfWnMBH/I553+pJNrNatFiHT5PLU2xs/0V/yQXEbizkzfeWcci3458py1hJfbNwG
-	YCk4PSd2cHnaZNMUwrW7xsilVWyO/TYLLXnfoKJJ9dIRgSUrevUmszVB3Abpwoty
-	i89qN/p6oE7mlYPHzDdJN6rGFGo8AO2TI4DM6HJ3XlOHLnM91SYzcWYpk9/IAzny
-	3xS/Ui4xcxe1rdSbRlrjvCgpEVNx+2zf5ag6u1OBM22wl/FV4ngyQ7Vz+oXggcH1
-	85yTBgz/+JUn0pqOwnlCx+6s4k8enKsPsP81AShqp0Bq1YMHtl4UsE02br+CGGiA
-	dx0A10RwXCN12KTUwQmbw==
-X-ME-Sender: <xms:0cs0Z96tl1lYLdQExseoqt9ZU66qY96Smb3Lozhm-8DDtoDH5YYGTA>
-    <xme:0cs0Z66XaIA2WecykFuc2M5RgQXmu-zNLqnhfyQxOMCJy5WL3bj9WpT4CbSabvntC
-    uIje4aBSs-jnxmuPGE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddtgdekudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtg
-    hpthhtohepmhhitghhrggvlhdrrhhothhhsegrmhgurdgtohhmpdhrtghpthhtohepshgv
-    rghnjhgtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehishgrkhhurdihrghmrghhrg
-    htrgesihhnthgvlhdrtghomhdprhgtphhtthhopehlkhhpsehinhhtvghlrdgtohhmpdhr
-    tghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdp
-    rhgtphhtthhopegurghvvgdrhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:0cs0Z0dBl1SSgKmWmej0sHzJAWYvJkfUVR6r1QhYP6yeYkVKEuz30g>
-    <xmx:0cs0Z2IBZO32QBkgqA8A2YqPKDOeHg8Wg5boUwvcXLOIICRC7IHGZA>
-    <xmx:0cs0ZxJnbmu_VxgSl4Vrlk4juVnZbjcH-nPeU_taq8jfEASaRARg_A>
-    <xmx:0cs0Z_yqGhD1yEo0G1si8vc07SkmDhWARr3wYRCpcfo_tMdj2Jo2Jg>
-    <xmx:0cs0ZzjDN-t1aHOYQWS4BHWbu63_XkQV6nPR13C5lJxCp6Q-AF7bOzzC>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 425D02220071; Wed, 13 Nov 2024 10:54:57 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1731513330; c=relaxed/simple;
+	bh=NgoH+LrTAG89fScvk7ZEm4GCED4UiLCSJgp+OjHFJCE=;
+	h=Message-ID:Date:From:To:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z12pr7bJb+zpAFIxEWoFi8V1C4PYB8qZt+MHMFUhDEzswPcIDkCNy1D0zE4T1kGx/zPYx5sfz7q4SuraHqC2jsgvRiUR75+p2nZkdUjPQOsX04pCMLvU4Jb17bViUyTF+qWfoahO8sF/wOLe2xvbdOi2mTdsuXHRUNi/SrBrnBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvedUzCt; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53d9ff92b14so1135880e87.1;
+        Wed, 13 Nov 2024 07:55:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731513327; x=1732118127; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:to
+         :from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ssj8FultLibLw4mYJotkGqmjsM2TqGU2Jd6awXWPkCY=;
+        b=PvedUzCtx8t6bmHn7+aT0yXo+11r6vcCHvFDzQZ50ipKa2aG3bStNAy8D6J1HjeX3x
+         ZX03zJZhfYq6J/XT0esGlfakD3NNbwbfJGGbkjxFxu+nae/U5s+FiIUGLA8evXhehvl/
+         25r8uFiCjikTbIkbRDiGMaCkp9Wcz0/BrpzaoKLJRbrgkPclhVcN1xg4z9rWH4NeJinZ
+         rPpKygTtRyDJDDTE0t2KfKHCMfLCCn0TxQ/fjF3TSLKp32Xde8RFbrASAorBULqvIKYT
+         AoFyXB+aKrlKr1cFIVLNe/LYDiKeFKfwTORkEEuVuK7rL/g64IsjWtUdxuGaccbfieQp
+         zXYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731513327; x=1732118127;
+        h=in-reply-to:content-disposition:mime-version:references:subject:to
+         :from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ssj8FultLibLw4mYJotkGqmjsM2TqGU2Jd6awXWPkCY=;
+        b=sxSGNsp6j5DqKW8jfSQc/QpSbY24js2QmTqToio/sGdEMbNeKezS1js7lzuoVCvJl6
+         9Y05JvfR24mLoyQTtnDJpqWiHURcDgwAvmyJzPRzyTQMfT6WuVEvnRMFN9cN7sk0VasP
+         L+6LqUZO08/LGq1PMOdLQB/MQ6hVJZjzyqYDlLN8+mGZ2s365uH+kYLus6z1nM061JLc
+         4dll2UJfmZwurl6dJ9JIXHIhEqvLagsTwcnFhVJ3ujZefPzpXTwhUrHY0qDxA3gZJ1Xp
+         A+/C55KAVSICGkfHw5oxrb90M0DQNr4KPOSmiFgB2wiYebdyCupI8WKJ7cqxkncpmCvY
+         JVog==
+X-Forwarded-Encrypted: i=1; AJvYcCUUtDa4//DlWAo487P43bzLPJB7V3kKovaTo9CyGn5avn3Z1Ex4RdFQHxTZulGIvqckbAAFkbt1zfI=@vger.kernel.org, AJvYcCWWledWoBJZgcHE35XQTBsJXH6WU1mrCcCU5/uMfgKt2JbAXdolpuW8pvKswdPxjxOs6CGjaJv40DyqDTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQe/AH59FlK5WFbkYjeoEz8/QlUpgtSlZoXIuf+JlhICsnWz6x
+	fdWuk4NLa1zwYPhE2ZiRkzV8lNKbDNLZGtDMD0wlAqO0cSOpLepttr5fXA==
+X-Google-Smtp-Source: AGHT+IFAJCUb00pL0wJxdOI6F+JvN1qpKc7TIrQnC8l/tyw4JX2h1IkyZOaG0fObWYQGSsI0hh84qA==
+X-Received: by 2002:a05:6512:1049:b0:53d:a28a:8e99 with SMTP id 2adb3069b0e04-53da28a8eafmr1065156e87.19.1731513327232;
+        Wed, 13 Nov 2024 07:55:27 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d4788a31sm18551935e9.0.2024.11.13.07.55.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 07:55:26 -0800 (PST)
+Message-ID: <6734cbee.7b0a0220.d8678.60ff@mx.google.com>
+X-Google-Original-Message-ID: <ZzTL6YSNbge-IQ7Q@Ansuel-XPS.>
+Date: Wed, 13 Nov 2024 16:55:21 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	Lorenzo Bianconi <lorenzo@kernel.org>, upstream@airoha.com
+Subject: Re: [PATCH v2] cpufreq: airoha: Add EN7581 Cpufreq SMC driver
+References: <20241017190809.16942-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 13 Nov 2024 16:54:36 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Sean Christopherson" <seanjc@google.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Paolo Bonzini" <pbonzini@redhat.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "kernel test robot" <lkp@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- "Michael Roth" <michael.roth@amd.com>,
- "Isaku Yamahata" <isaku.yamahata@intel.com>,
- "Vitaly Kuznetsov" <vkuznets@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <e1c9a950-ffd9-4b84-b416-8d7b3054ed5a@app.fastmail.com>
-In-Reply-To: <ZzS62W60NS_sM31K@google.com>
-References: <20241112065415.3974321-1-arnd@kernel.org>
- <ZzS62W60NS_sM31K@google.com>
-Subject: Re: [PATCH] x86: kvm: add back X86_LOCAL_APIC dependency
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017190809.16942-1-ansuelsmth@gmail.com>
 
-On Wed, Nov 13, 2024, at 15:42, Sean Christopherson wrote:
->
-> The dependency can and should go on "config KVM", not on the vendor 
-> modules.  The net effect on the build is the same, but preventing
-> the user from  selecting KVM will provide a slightly better experience.
+On Thu, Oct 17, 2024 at 09:07:49PM +0200, Christian Marangi wrote:
+> Add simple Cpufreq driver for Airoha EN7581 SoC that control CPU
+> frequency scaling with SMC APIs.
+> 
+> All CPU share the same frequency and can't be controlled independently.
+> Current shared CPU frequency is returned by the related SMC command.
+> 
+> Add SoC compatible to cpufreq-dt-plat block list as a dedicated cpufreq
+> driver is needed with OPP v2 nodes declared in DTS.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
-Makes sense, sending v2 now.
+Sorry to ask but any news with this?
 
-       Arnd
+-- 
+	Ansuel
 
