@@ -1,131 +1,159 @@
-Return-Path: <linux-kernel+bounces-407871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7339C762B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:21:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 264B99C7639
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:21:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38A1287548
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:21:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD29284500
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F188033FE;
-	Wed, 13 Nov 2024 15:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424781FEFA0;
+	Wed, 13 Nov 2024 15:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="w8+E0Fwv"
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e2ZTpVen";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q8O77oRt";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e2ZTpVen";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q8O77oRt"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39B01DE4FC
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FAC1EF956;
+	Wed, 13 Nov 2024 15:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731511134; cv=none; b=HAVJA+265+vG/2D3yh9rheIBso2EDojqvmdNxBkIUTcUVTW5OXiLL3gAzUtGnVnp/qK45qO8IL2sFo7hBPeVXSRzl8cwPXCfORWBqGnN4cvu4WgNjReBlUTK8qGaRUhOxuHUeL2tywdOVGH11uAvsV4IL2IL6anQnwoOUcClVQU=
+	t=1731511141; cv=none; b=Q1ZpVd3c7HhvlRTaPOYAuKYXIbsnMfUXjiNm9dgyolFcim3zunj+NAIdFTCBIlMraMS1M354cjjKDxuxVWScuVZeakdCt88emOY6swx0nwzXHLG9O3F57pyqrpPWUCswREGh1NL7S/R6mrr7z3sNGdLFORcmaDzqTL5FaIhnqDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731511134; c=relaxed/simple;
-	bh=xeu7KCgEYJ8XXi6Gz4AFPepJZaQ6qzZE0POmdVGrdrg=;
+	s=arc-20240116; t=1731511141; c=relaxed/simple;
+	bh=VDGfeosPxmsUF8s+PaZ7y1gFygCo8rbKz8EfjbeDpLY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=isk75ztknchHN4vGXOUei56KdAUpLKxghWuwte6QXd7wSkJ8MnDu0xIXWe9tfHs07dzq5hb9Geeb5MbMeT1iAa7C7U1D0Pa5rVajWmgOEqVe3diS/wU7UJt4O/zo6wmYASKSkbU2ExMbkjkB8wt6ZrmoQx0c8QUJlQObwynrwkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=w8+E0Fwv; arc=none smtp.client-ip=185.125.25.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XpRkx007fzxv6;
-	Wed, 13 Nov 2024 16:18:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1731511128;
-	bh=UgS4yOSHpEojR85PAvnZsXzTbMFsrzYqEYNGNDWWtKM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=w8+E0Fwv70BvCtcnLF+fvDdp/B7rn+qXywV8zqZpmp9jwWMbAWEyv9ZZm72XvPtJj
-	 CW9F2NFNEXWe0rkh5B5ilqtbzPMq33qd64/a8zLI84mQtUksRtL/8sPBv6LZg+unzL
-	 0B+dh/8/jEmsIN5ws7yvlKIVbrXw/UBGZAgStqaM=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XpRkw1Ds8zJgT;
-	Wed, 13 Nov 2024 16:18:48 +0100 (CET)
-Date: Wed, 13 Nov 2024 16:18:47 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Francis Laniel <flaniel@linux.microsoft.com>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Charles Zaffery <czaffery@roblox.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, 
-	Kees Cook <kees@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v2 05/14] landlock: Move access types
-Message-ID: <20241113.he5shei2aiHo@digikod.net>
-References: <20241022161009.982584-1-mic@digikod.net>
- <20241022161009.982584-6-mic@digikod.net>
- <3020507.e9J7NaK4W3@pwmachine>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cT/0wXaA7qxW2WQUSD4MMvDcGf+PHyDwgrVUD+8Wphns51a52KE+3o+pIuK7HhbQTZs3zlE7mXkoBrtDHfxZbUV1bsCGsg00trzHArq6tWTdiKDqasLRkmsR5Jv0c0wqR/kpDuX2HQGZbF4r6MpuRD2CJE3fEqCTSCVBpN735oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e2ZTpVen; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q8O77oRt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e2ZTpVen; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q8O77oRt; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 156E31F38C;
+	Wed, 13 Nov 2024 15:18:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731511137; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NCmHLcLimgfzlkucZcMUBHztySLUDXwYRdBb6AD+bD0=;
+	b=e2ZTpVenkv05u0B6NbrJEaoiEbMOwjIfQVB65Xw8ul4Hxc0QilnTclfrKXuO/T0M5gzwvt
+	+G6D7rtCvcrTxXgR6ktptOPNO9YGPOtETHZ2WLixewQ3dSoLSEUTi8Rl0QPjriPG3CwboR
+	DlFOJtVQs/fz/SKppltWVMLqp0C1AxY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731511137;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NCmHLcLimgfzlkucZcMUBHztySLUDXwYRdBb6AD+bD0=;
+	b=q8O77oRt8cc9LmRqVPriJF6DnpXKivfGeBB84bPNpP7914d84i5vNe6aP75M9wWddswJsG
+	G6dOrndkx44HANAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731511137; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NCmHLcLimgfzlkucZcMUBHztySLUDXwYRdBb6AD+bD0=;
+	b=e2ZTpVenkv05u0B6NbrJEaoiEbMOwjIfQVB65Xw8ul4Hxc0QilnTclfrKXuO/T0M5gzwvt
+	+G6D7rtCvcrTxXgR6ktptOPNO9YGPOtETHZ2WLixewQ3dSoLSEUTi8Rl0QPjriPG3CwboR
+	DlFOJtVQs/fz/SKppltWVMLqp0C1AxY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731511137;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NCmHLcLimgfzlkucZcMUBHztySLUDXwYRdBb6AD+bD0=;
+	b=q8O77oRt8cc9LmRqVPriJF6DnpXKivfGeBB84bPNpP7914d84i5vNe6aP75M9wWddswJsG
+	G6dOrndkx44HANAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 07BA913301;
+	Wed, 13 Nov 2024 15:18:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fzjhAWHDNGeTDgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 13 Nov 2024 15:18:57 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B4354A08D0; Wed, 13 Nov 2024 16:18:48 +0100 (CET)
+Date: Wed, 13 Nov 2024 16:18:48 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Karel Zak <kzak@redhat.com>, Christian Brauner <brauner@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
+ sb_source
+Message-ID: <20241113151848.hta3zax57z7lprxg@quack3>
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+ <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
+ <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
+ <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3020507.e9J7NaK4W3@pwmachine>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Oct 25, 2024 at 05:20:39PM +0200, Francis Laniel wrote:
-> Le mardi 22 octobre 2024, 18:10:00 CEST Mickaël Salaün a écrit :
-> > Move ACCESS_FS_OPTIONAL, access_mask_t, struct access_mask, and struct
-> > access_masks_all to a dedicated access.h file.
+On Wed 13-11-24 08:45:06, Jeff Layton wrote:
+> On Wed, 2024-11-13 at 12:27 +0100, Karel Zak wrote:
+> > On Tue, Nov 12, 2024 at 02:39:21PM GMT, Christian Brauner wrote:
+> > Next on the wish list is a notification (a file descriptor that can be
+> > used in epoll) that returns a 64-bit ID when there is a change in the
+> > mount node. This will enable us to enhance systemd so that it does not
+> > have to read the entire mount table after every change.
 > > 
-> > This file will be extended with a following commit, and it will help to
-> > avoid dependency loops.
-> > 
-> > Cc: Günther Noack <gnoack@google.com>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > Link: https://lore.kernel.org/r/20241022161009.982584-6-mic@digikod.net
-> > ---
-> > 
-> > Changes since v1:
-> > * New patch
-> > ---
-> >  security/landlock/access.h  | 53 +++++++++++++++++++++++++++++++++++++
-> >  security/landlock/fs.c      |  1 +
-> >  security/landlock/fs.h      |  1 +
-> >  security/landlock/ruleset.h | 31 +---------------------
-> >  4 files changed, 56 insertions(+), 30 deletions(-)
-> >  create mode 100644 security/landlock/access.h
-> > 
-> > diff --git a/security/landlock/access.h b/security/landlock/access.h
-> > new file mode 100644
-> > index 000000000000..2659fd9b4aaf
-> > --- /dev/null
-> > +++ b/security/landlock/access.h
-> > @@ -0,0 +1,53 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +/*
-> > + * Landlock LSM - Access types and helpers
-> > + *
-> > + * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-> > + * Copyright © 2018-2020 ANSSI
-> > + * Copyright © 2024 Microsoft Corporation
-> > + */
-> > +
-> > +#ifndef _SECURITY_LANDLOCK_ACCESS_H
-> > +#define _SECURITY_LANDLOCK_ACCESS_H
-> > +
-> > +#include <uapi/linux/landlock.h>
-> > +
-> > +#include "limits.h"
-> > +
-> > +/* clang-format off */
-> > +#define ACCESS_FS_OPTIONAL ( \
-> > +	LANDLOCK_ACCESS_FS_TRUNCATE | \
-> > +	LANDLOCK_ACCESS_FS_IOCTL_DEV)
 > 
-> Nit: The patch message indicates this is moved from somewhere but I cannot find 
-> deletion for it.
+> New fanotify events for mount table changes, perhaps?
 
-Correct, I'll move this define to the following patch introducing
-deny_masks_t.
+Now that I'm looking at it I'm not sure fanotify is a great fit for this
+usecase. A lot of fanotify functionality does not really work for virtual
+filesystems such as proc and hence we generally try to discourage use of
+fanotify for them. So just supporting one type of event (like FAN_MODIFY)
+on one file inside proc looks as rather inconsistent interface. But I
+vaguely remember we were discussing some kind of mount event, weren't we?
+Or was that for something else?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
