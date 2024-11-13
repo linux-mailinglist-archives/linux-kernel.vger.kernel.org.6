@@ -1,143 +1,129 @@
-Return-Path: <linux-kernel+bounces-407734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 757549C7239
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:04:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30CFB9C7260
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:06:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D83B1F21FAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:04:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97DBFB2C032
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C785A44C7C;
-	Wed, 13 Nov 2024 14:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZnxD/2RM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CE122339;
+	Wed, 13 Nov 2024 14:05:33 +0000 (UTC)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC02259C;
-	Wed, 13 Nov 2024 14:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AB8111AD;
+	Wed, 13 Nov 2024 14:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731506687; cv=none; b=kSiO12f7Rt1KGXRfRIHOZTmrNGe44LlmCT+r+ureGYeG1cVO67XEaW3w248yn0UGpGl870uLFAgBrwEsxxmBjdAjzB2obZomgjvW2H35UIXhs3MXh6CsHtkzej9xliuFQ882ZOeW/4zxQafbpXNxiTJM6gqk1DiHmq5imAda1ZE=
+	t=1731506733; cv=none; b=e5z5WzQX/bMom7LflIQ7AWF7ZRz0t91Wiun5+jY/4hvWBfHNL7qL8edc7WuTF0RQwDVpI/VDtkTaZEIWqfHfM/LEF3pmTx9oY3w6sE0mSyjT41SofFAQ7+eyc/p1jPAVMONrCM8LJuQHJxcZBmpzjHO4j8CJ/Vmpx0aFSDu7Xus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731506687; c=relaxed/simple;
-	bh=Kuwa1HPUSpT4CGmTqdocbMhT6tHj/MeXv9HrB20dCqg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PJRdvLrkj9NLIUyG79v/WaZzu6Kx5uT12G/RjjOfFSyP5nRqQGVHcj0M4L+7e1qjbeVo05dBl1vgT6w8dNkMLJA0uZEoCKxqixauBJBjSgm5NsnjSHRD4pypd4+jWg1HPjJihe2x1jGtTn00tnoee5ikH9SUiZe2FgiQB+yrMYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZnxD/2RM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E830AC4CEC3;
-	Wed, 13 Nov 2024 14:04:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731506686;
-	bh=Kuwa1HPUSpT4CGmTqdocbMhT6tHj/MeXv9HrB20dCqg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZnxD/2RMVZS5ae0umyTA0TheVwk0nRHZecueoWKMIeSwmpmVNDyz4UZ0F8N10tOqt
-	 +AsQnrY3C4XYy40AJ4w3YuVfu+S5pW0JTAkygX4oUaNOnu0RJ9Gt1KB4RnhCsKBgLv
-	 LQpP3/+2tihLLkkUZKcTy+kim7+fHYsAlBIHWMWs=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-usb@vger.kernel.org
-Cc: stern@rowland.harvard.edu,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>,
-	Grant Grundler <grundler@chromium.org>,
-	Yajun Deng <yajun.deng@linux.dev>,
-	Oliver Neukum <oneukum@suse.com>,
-	Douglas Anderson <dianders@chromium.org>
-Subject: [PATCH v2 2/2] USB: make to_usb_device_driver() use container_of_const()
-Date: Wed, 13 Nov 2024 15:04:41 +0100
-Message-ID: <2024111342-lagoon-reapprove-5e49@gregkh>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <2024111339-shaky-goldsmith-b233@gregkh>
-References: <2024111339-shaky-goldsmith-b233@gregkh>
+	s=arc-20240116; t=1731506733; c=relaxed/simple;
+	bh=Dwk+Mvw8oy2pzMvGconGALpUIJPJ0NRNk9ltXBNzyBA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=alysnGX1TJ9CdC3QbiAQSMB9qemij7lPxPccAT+5xaCbdd2rtDKk0LJuwGCAfJP5WZf8HKOqCP3FTWlZAu1GglX2ySzeGJu9PwZUZYye8Vslc2ie80ooxdGC9w0cCFkDMpWfJZ4XMc6SavGcvI0AV5bEK8RvxlTIldapCfsJwNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5ceca0ec4e7so8797287a12.0;
+        Wed, 13 Nov 2024 06:05:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731506729; x=1732111529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2UoOpmCzIkTmid4vVTvx8gmwHFbkz8avA1Uo6ylZh+s=;
+        b=IhoI+fOn1QPBddlvqUdYC4o6k+j+ClV02WbkLd6dc9cs8MSdoAEQWC1XSFGLZynZp8
+         luPx0/25IPjngYomheGGBoFLH6pIAnOerjVCZnb3YvZed4mBHBYCdWXt4EuWjmeIpRci
+         2P73s4m5KsvC9CuLaEjnqGCjWbhkfz0TOF7/ATT0psQ46HhyJwDMva7HENBZgHmPE6at
+         ggXI9ExGXK3rbP4OD0as24zLVjjNNk73lE2vE0BuUDqTc78WW2XZFPl964mLG66vJVzy
+         cqYqjoAB2jQPsd3B/I5TLkxByRGz+wQxUGVi/K6wxM9wRA1ZzM2oBdPHDBrJlIADQ69d
+         Y59A==
+X-Forwarded-Encrypted: i=1; AJvYcCVeMFX8sAAaOWSew7IuWz2RnF9WWcIdKprpljT7lyWDemyUvdnfpjZi6MgJhsTfPK2YAkpC9SjZZIngbYJarFA=@vger.kernel.org, AJvYcCWzCpVujRpFgPQM+IEjiYs9VMTVcx94QFeTedI5BnwrirPRbqmP55QeZADnk1gu4tnZPwhmYCXDTIsN4m0qaQ==@vger.kernel.org, AJvYcCXIv68aKFu1KAq+fDyjsivWRgOLgbx/VzOKIO9RLGEmh6jy+wnSBn+om4fNTGl7m247Cvh19//8KSZNiWs=@vger.kernel.org, AJvYcCXRSbpe/zFi0uAqbnb4xpvl3IkQtNbV3qULULRTkJ8TtD7b8Bjo1MrKZISaGpoo+Y88Nrsx2MFLoBfiFzbd@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIU0j3ghEdTNwhIz2QsKJ9e060R/AO8RGhaCJL1tnmW9ngsI7X
+	D3BGczpGtRRDUczupiHXSnRzvaLQz7txyMMXp/CXWn2YYE5TuBGaEPTqLShc1Vs=
+X-Google-Smtp-Source: AGHT+IEdJ3/FggsGznhvLtDR0CZYGaWLecHY86x3Alz75Z7AIrEvKCvY15pNcP5MPZW3WAEYNjaidA==
+X-Received: by 2002:a05:6402:13c8:b0:5cf:4183:6127 with SMTP id 4fb4d7f45d1cf-5cf41838077mr7822050a12.2.1731506728887;
+        Wed, 13 Nov 2024 06:05:28 -0800 (PST)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03b5d763sm7201711a12.7.2024.11.13.06.05.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 06:05:27 -0800 (PST)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9ec86a67feso1206764966b.1;
+        Wed, 13 Nov 2024 06:05:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUAYLRjkiRinVIuFhMTn6pTz28XFOLTy1yIrtFeCyFNAcIMK/1m+c5HaIWF3crj7G93L92ZdiXtTYy6qOV3Xmw=@vger.kernel.org, AJvYcCUBxQh9uro9oAH36HO64SRt9Wqt15wXAWH3Dt0EQ4AODUhIwqlXkax2ma8iMmOtq0hypOdS8DpIbJ5wjb2C@vger.kernel.org, AJvYcCWDof/NuyRjbgmgF/b6waoKDftY4n2DnuV4mrskeCuhkNMdwAKhaDJbIqLlXOkIQhwthybilLAvPIiJwGp9VA==@vger.kernel.org, AJvYcCXmIsIO6s9tNJPoNAGWu/UGa9LY/S/Q9lHzmdP4P1FODNauWZmUQ3f7ny0+pQ932pym/Vy59WPAgmcDr0w=@vger.kernel.org
+X-Received: by 2002:a17:906:c14d:b0:a99:f67c:2314 with SMTP id
+ a640c23a62f3a-a9eeff44998mr1843487666b.35.1731506727364; Wed, 13 Nov 2024
+ 06:05:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Lines: 75
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3207; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=Kuwa1HPUSpT4CGmTqdocbMhT6tHj/MeXv9HrB20dCqg=; b=owGbwMvMwCRo6H6F97bub03G02pJDOkmG39tml/umaMoMW39rWmih2S4ulOuB713sHwruKuqP NRRe+K9jlgWBkEmBlkxRZYv23iO7q84pOhlaHsaZg4rE8gQBi5OAZiIVxnDfJ8lsff3Xfwz98K7 3ssW3qdmmRxOY2VYcEL4VJSE8JeZe+SOqSzY95HrvPycUgA=
-X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
-Content-Transfer-Encoding: 8bit
+References: <20241030170106.1501763-21-samitolvanen@google.com>
+ <20241030170106.1501763-22-samitolvanen@google.com> <CAK7LNAShVzrE6uhXxZ7HepKhmOJYsZeigq6w19jRN3OH-T_Jyg@mail.gmail.com>
+In-Reply-To: <CAK7LNAShVzrE6uhXxZ7HepKhmOJYsZeigq6w19jRN3OH-T_Jyg@mail.gmail.com>
+From: Neal Gompa <neal@gompa.dev>
+Date: Wed, 13 Nov 2024 09:04:51 -0500
+X-Gmail-Original-Message-ID: <CAEg-Je_o-e3Sc0vNJpF+3eG3sZvV-f2zrCdubRAvPSLzVdyd5Q@mail.gmail.com>
+Message-ID: <CAEg-Je_o-e3Sc0vNJpF+3eG3sZvV-f2zrCdubRAvPSLzVdyd5Q@mail.gmail.com>
+Subject: Re: [PATCH v5 01/19] scripts: move genksyms crc32 implementation to a
+ common include
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Sami Tolvanen <samitolvanen@google.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
+	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Turns out that we have some const pointers being passed to
-to_usb_device_driver() but were not catching this.  Change the macro to
-properly propagate the const-ness of the pointer so that we will notice
-when we try to write to memory that we shouldn't be writing to.
+On Mon, Nov 11, 2024 at 11:06=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
+org> wrote:
+>
+> On Thu, Oct 31, 2024 at 2:01=E2=80=AFAM Sami Tolvanen <samitolvanen@googl=
+e.com> wrote:
+> >
+> > Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
+> > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> > Acked-by: Neal Gompa <neal@gompa.dev>
+>
+> Does this Ack add any value?
+>
+> Acked-by is meaningful only when it is given by someone who
+> maintains the relevant area or has established a reputation.
+>
+> $ git grep "Neal Gompa"
+> $ git shortlog -n -s | grep "Neal Gompa"
+>      2 Neal Gompa
+>
+> His Ack feels more like "I like it" rather than a qualified endorsement.
+>
 
-This requires fixing up the usb_driver_applicable() function as well,
-because it can handle a const * to struct usb_driver.
+I am going to be one of the primary consumers of this code as the
+Fedora Asahi kernel maintainer and have been driving Rust enablement
+in the Fedora Linux kernel (and eventually the RHEL kernel). I have
+tested and looked over the patches from that lens.
 
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Grant Grundler <grundler@chromium.org>
-Cc: Yajun Deng <yajun.deng@linux.dev>
-Cc: Oliver Neukum <oneukum@suse.com>
-Cc: Douglas Anderson <dianders@chromium.org>
-Cc: linux-usb@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
-v2: reordered patches, goes on top of series submitted at https://lore.kernel.org/r/2024111322-kindly-finalist-d247@gregkh
+While I might not be well-known here, I am known by the Rust for
+Linux folks, as well as the filesystem folks (since those are the main
+places I tend to frequent). I am also a member of the Asahi Linux team.
 
- drivers/usb/core/driver.c | 4 ++--
- drivers/usb/core/usb.h    | 2 +-
- include/linux/usb.h       | 3 +--
- 3 files changed, 4 insertions(+), 5 deletions(-)
+I've been engaging with the Linux kernel community directly in some
+fashion for nearly a decade. Unfortunately, most of that isn't in the
+form of commits directly to the Linux kernel, though.
 
-diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-index bc5c561bdbd5..f203fdbfb6f6 100644
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -850,7 +850,7 @@ const struct usb_device_id *usb_device_match_id(struct usb_device *udev,
- EXPORT_SYMBOL_GPL(usb_device_match_id);
- 
- bool usb_driver_applicable(struct usb_device *udev,
--			   struct usb_device_driver *udrv)
-+			   const struct usb_device_driver *udrv)
- {
- 	if (udrv->id_table && udrv->match)
- 		return usb_device_match_id(udev, udrv->id_table) != NULL &&
-@@ -870,7 +870,7 @@ static int usb_device_match(struct device *dev, const struct device_driver *drv)
- 	/* devices and interfaces are handled separately */
- 	if (is_usb_device(dev)) {
- 		struct usb_device *udev;
--		struct usb_device_driver *udrv;
-+		const struct usb_device_driver *udrv;
- 
- 		/* interface drivers never match devices */
- 		if (!is_usb_device_driver(drv))
-diff --git a/drivers/usb/core/usb.h b/drivers/usb/core/usb.h
-index b8324ea05b20..a9b37aeb515b 100644
---- a/drivers/usb/core/usb.h
-+++ b/drivers/usb/core/usb.h
-@@ -75,7 +75,7 @@ extern int usb_match_device(struct usb_device *dev,
- extern const struct usb_device_id *usb_device_match_id(struct usb_device *udev,
- 				const struct usb_device_id *id);
- extern bool usb_driver_applicable(struct usb_device *udev,
--				  struct usb_device_driver *udrv);
-+				  const struct usb_device_driver *udrv);
- extern void usb_forced_unbind_intf(struct usb_interface *intf);
- extern void usb_unbind_and_rebind_marked_interfaces(struct usb_device *udev);
- 
-diff --git a/include/linux/usb.h b/include/linux/usb.h
-index 7a9e96f9d886..cfa8005e24f9 100644
---- a/include/linux/usb.h
-+++ b/include/linux/usb.h
-@@ -1294,8 +1294,7 @@ struct usb_device_driver {
- 	unsigned int supports_autosuspend:1;
- 	unsigned int generic_subclass:1;
- };
--#define	to_usb_device_driver(d) container_of(d, struct usb_device_driver, \
--		driver)
-+#define	to_usb_device_driver(d) container_of_const(d, struct usb_device_driver, driver)
- 
- /**
-  * struct usb_class_driver - identifies a USB driver that wants to use the USB major number
--- 
-2.47.0
 
+
+
+--
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
