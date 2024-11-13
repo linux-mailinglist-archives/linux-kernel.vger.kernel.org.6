@@ -1,164 +1,95 @@
-Return-Path: <linux-kernel+bounces-406989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3367E9C6721
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:14:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC7B9C6722
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:15:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76B1EB24A77
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:14:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8031F22958
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF267CF16;
-	Wed, 13 Nov 2024 02:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XOVz1Fxj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E73E7081F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E34136672;
+	Wed, 13 Nov 2024 02:15:10 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947087EEFD;
+	Wed, 13 Nov 2024 02:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731464064; cv=none; b=RlV8P4eurdLYVgGAuCSjXiHatMi3bXpXycPiadrSjdzJVBXHyCe4YBKZCo/ievt5xX9MpD6rKx6FCJTGuiewOuLkVt0PboCZrXBjOX8rVqnQbAAzasYQ/sYeevo0d6U5gKcHEPVNiMGRExvzYIK6u+9hWIXPgV9ZQtRL+IW5taU=
+	t=1731464110; cv=none; b=G1UhOemiye7zcl5CIoW6tVQv2Udlp9xQqk9ukVAkh7PJO3F+t14adrXLOMPySDZF6hUifxSLG1sNXVXQZcg8mvcLbPvEBTUvm6v6gCye5Yk9qTJMOL0RVrZ2ptrlFYsykKw4lXRPR4QQ/jJRSdAJb4gy71PcTGmlCMa6B0Nahl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731464064; c=relaxed/simple;
-	bh=brMz3vclGXOX04Vw7l1uFYgeKr0mHFMryBqsgDPGv7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XVCdRb6EjtFYRoMvj0JZHBWYW0bN3L3nk6Jn7thGLxB8Ca6JrtZIMVO4plbGZInobyyoEcXr6v5b3qYDOKFCv8tQIqxsadSUxZwXsu+jqc3rLn5B6pIfFDz7Y6mseWvXMcmzF071KquG1svQc0KwHCLQAlKeC4MSCfuhTNutgNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XOVz1Fxj; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731464063; x=1763000063;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=brMz3vclGXOX04Vw7l1uFYgeKr0mHFMryBqsgDPGv7I=;
-  b=XOVz1Fxj/x0f8fnf1z8uUpmaa4SA+6WrYRQWq8fggRFCk2XRtsAu8TlF
-   o45BEOMif4wzkiH2XepqMKzAWA99C6QMEgbkvAx0tUcbYsl+6yaYz1Dn5
-   tkGlWjWOKzPcJ5uRPvKGQWYeJ7tfLGDp7OcOfijqr3s3eafRL0Zaa+pLt
-   ZN1rZFo0xYbZ9ht0K0E6EZ3nx+vy0xgKuJ6G+Y7Lh1G1bWXHYQGocxMRi
-   ZmMfZwEJbGxDdvZxIzo0yw5CEetVDzPL9+oxxR+5QKRtslT+47ROFsp14
-   hRo1PmacLp1h6lLc6VnHjcDXNJiY/vd3qODTTIhD36kbWusbWKaeVy1mv
-   Q==;
-X-CSE-ConnectionGUID: mr40qGyfTECSBIYoYbzDfg==
-X-CSE-MsgGUID: fu+31sYERNaSDrJVSTLSGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31299025"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31299025"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 18:14:23 -0800
-X-CSE-ConnectionGUID: Y9DWZJ3sS3KCkGHCxnrFMg==
-X-CSE-MsgGUID: 8MCuthcDSt2y9IKegLFivQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="88129871"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 18:14:19 -0800
-Message-ID: <16b3fdb5-6f7b-4728-873c-4047ea69aef5@linux.intel.com>
-Date: Wed, 13 Nov 2024 10:13:19 +0800
+	s=arc-20240116; t=1731464110; c=relaxed/simple;
+	bh=Uw0xzwicmh9cDaZnhDJzslV/a+6MZhi1LSWdbaTIbME=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gZ6KROeGjuygKqpPrLOHJlgTmjOZwObl4tIZkgUAvzKHyW2ceUxl/bbV2PZ+Nm3O2iepQw61ik5liiSU8FxtVidZxrK97FTz1YxCumXfPpr64t9DQOJ7ShFzmtlRHyXxiWZYg9nkvYe6t2Fe93OaOgp7Wq2EOshbxf5RS3AiD/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee567340ba64d1-134e6;
+	Wed, 13 Nov 2024 10:15:03 +0800 (CST)
+X-RM-TRANSID:2ee567340ba64d1-134e6
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee667340ba735f-7cdfe;
+	Wed, 13 Nov 2024 10:15:03 +0800 (CST)
+X-RM-TRANSID:2ee667340ba735f-7cdfe
+From: Luo Yifan <luoyifan@cmss.chinamobile.com>
+To: brgl@bgdev.pl,
+	warthog618@gmail.com
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luo Yifan <luoyifan@cmss.chinamobile.com>
+Subject: [PATCH] tools: gpio: Fix several incorrect format specifiers
+Date: Wed, 13 Nov 2024 10:14:58 +0800
+Message-Id: <20241113021458.291252-1-luoyifan@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATH v5 2/3] iommu/vt-d: debugfs: Create/remove debugfs file per
- {device, pasid}
-To: Kees Bakker <kees@ijzerbout.nl>, Jingqi Liu <Jingqi.liu@intel.com>,
- iommu@lists.linux.dev, Tian Kevin <kevin.tian@intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>
-Cc: linux-kernel@vger.kernel.org
-References: <20231013135811.73953-1-Jingqi.liu@intel.com>
- <20231013135811.73953-3-Jingqi.liu@intel.com>
- <2590cecf-e1f9-4af9-8fbb-9b49f5e335c0@ijzerbout.nl>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <2590cecf-e1f9-4af9-8fbb-9b49f5e335c0@ijzerbout.nl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 11/13/24 05:22, Kees Bakker wrote:
-> Op 13-10-2023 om 15:58 schreef Jingqi Liu:
->> Add a debugfs directory per pair of {device, pasid} if the mappings of
->> its page table are created and destroyed by the iommu_map/unmap()
->> interfaces. i.e. /sys/kernel/debug/iommu/intel/<device source id>/ 
->> <pasid>.
->> Create a debugfs file in the directory for users to dump the page
->> table corresponding to {device, pasid}. e.g.
->> /sys/kernel/debug/iommu/intel/0000:00:02.0/1/domain_translation_struct.
->> For the default domain without pasid, it creates a debugfs file in the
->> debugfs device directory for users to dump its page table. e.g.
->> /sys/kernel/debug/iommu/intel/0000:00:02.0/domain_translation_struct.
->>
->> When setting a domain to a PASID of device, create a debugfs file in
->> the pasid debugfs directory for users to dump the page table of the
->> specified pasid. Remove the debugfs device directory of the device
->> when releasing a device. e.g.
->> /sys/kernel/debug/iommu/intel/0000:00:01.0
->>
->> Signed-off-by: Jingqi Liu <Jingqi.liu@intel.com>
->> ---
->>   drivers/iommu/intel/debugfs.c | 53 +++++++++++++++++++++++++++++++----
->>   drivers/iommu/intel/iommu.c   |  7 +++++
->>   drivers/iommu/intel/iommu.h   | 14 +++++++++
->>   3 files changed, 69 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/iommu/intel/debugfs.c b/drivers/iommu/intel/ 
->> debugfs.c
->> [...]
->> +/* Remove the device pasid debugfs directory. */
->> +void intel_iommu_debugfs_remove_dev_pasid(struct dev_pasid_info 
->> *dev_pasid)
->> +{
->> +    debugfs_remove_recursive(dev_pasid->debugfs_dentry);
->> +}
->> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
->> [...]
->> @@ -4710,6 +4713,7 @@ static void intel_iommu_remove_dev_pasid(struct 
->> device *dev, ioasid_t pasid)
->>       spin_unlock_irqrestore(&dmar_domain->lock, flags);
->>       domain_detach_iommu(dmar_domain, iommu);
->> +    intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
->>       kfree(dev_pasid);
->>   out_tear_down:
->>       intel_pasid_tear_down_entry(iommu, dev, pasid, false);
->>
-> 
-> So, a call to intel_iommu_debugfs_remove_dev_pasid() was added.
-> There is a potential problem that dev_pasid can be NULL.
-> The diff doesn't show the whole context so let me give that here.
-> Today that piece of the code looks like this
-> 
->          list_for_each_entry(curr, &dmar_domain->dev_pasids, link_domain) {
->                  if (curr->dev == dev && curr->pasid == pasid) {
->                          list_del(&curr->link_domain);
->                          dev_pasid = curr;
->                          break;
->                  }
->          }
->          WARN_ON_ONCE(!dev_pasid);
->          spin_unlock_irqrestore(&dmar_domain->lock, flags);
-> 
->          cache_tag_unassign_domain(dmar_domain, dev, pasid);
->          domain_detach_iommu(dmar_domain, iommu);
->          intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
->          kfree(dev_pasid);
-> 
-> The for_each loop can exit without finding an entry.
-> The WARN_ON_ONCE also suggests that there can be a NULL.
-> After that the new function is called (see above) and it will
-> dereference the NULL pointer.
-> 
-> Can you have a closer look?
+Make a minor change to eliminate static checker warnings. The variable
+lines[] is unsigned, so the correct format specifier should be %u
+instead of %d.
 
-It's already a kernel bug if dev_pasid is NULL when it reaches here. If
-that happens, we should fix the bug, not avoid using the NULL pointer.
+Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+---
+ tools/gpio/gpio-event-mon.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---
-baolu
+diff --git a/tools/gpio/gpio-event-mon.c b/tools/gpio/gpio-event-mon.c
+index 5dee2b98a..b70813b0b 100644
+--- a/tools/gpio/gpio-event-mon.c
++++ b/tools/gpio/gpio-event-mon.c
+@@ -69,14 +69,14 @@ int monitor_device(const char *device_name,
+ 	}
+ 
+ 	if (num_lines == 1) {
+-		fprintf(stdout, "Monitoring line %d on %s\n", lines[0], device_name);
++		fprintf(stdout, "Monitoring line %u on %s\n", lines[0], device_name);
+ 		fprintf(stdout, "Initial line value: %d\n",
+ 			gpiotools_test_bit(values.bits, 0));
+ 	} else {
+-		fprintf(stdout, "Monitoring lines %d", lines[0]);
++		fprintf(stdout, "Monitoring lines %u", lines[0]);
+ 		for (i = 1; i < num_lines - 1; i++)
+-			fprintf(stdout, ", %d", lines[i]);
+-		fprintf(stdout, " and %d on %s\n", lines[i], device_name);
++			fprintf(stdout, ", %u", lines[i]);
++		fprintf(stdout, " and %u on %s\n", lines[i], device_name);
+ 		fprintf(stdout, "Initial line values: %d",
+ 			gpiotools_test_bit(values.bits, 0));
+ 		for (i = 1; i < num_lines - 1; i++)
+-- 
+2.27.0
+
+
+
 
