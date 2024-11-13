@@ -1,81 +1,54 @@
-Return-Path: <linux-kernel+bounces-408409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DDA9C7E6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:51:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726899C7E67
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:50:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF542B24170
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37E8D28489B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C1C18C33C;
-	Wed, 13 Nov 2024 22:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A090B189BBD;
+	Wed, 13 Nov 2024 22:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j5mRqkTn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ku4HoTR7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24616189F50;
-	Wed, 13 Nov 2024 22:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A15183CBE;
+	Wed, 13 Nov 2024 22:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731538251; cv=none; b=cqWzhw3Hmb7UmuZJ+3wKVn5ArrPSvc2J1hU0UyOvwjMcDjZ1idroMdAfIV05K9Zd13+R+3cfjwEkzy7goTQSgPjRruxquDNSZ1+6PrVjR7oK6mCQSj78lwKbbhEiOEyZ0lSBBtmT12T5SEq6cThQcKkZYHQMhyxSZdQ71vCWuzE=
+	t=1731538237; cv=none; b=Km1AqDc7A2MwxKqJ3l3FkEAglnY4AAL39+cBK9cYQnBgz/9OVJMZdKHQuY39znEaGhN+clCzmjrlNg0E9MGoy/Srzl10QDv77sxfE7PnNHTWBK1Dpw5Hgd8bEl6mCGwuJeDQ0CrDXCCyfaSjnWX+KEqK2HSnpNVvZ5hc0wS7SbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731538251; c=relaxed/simple;
-	bh=CYdGGDWei4FClN5/v5jTSMS1CfPN4qDt7+CJVB8J8vQ=;
+	s=arc-20240116; t=1731538237; c=relaxed/simple;
+	bh=wIrR8u385rjO/zo9VWJxjJbm+ALx5uhuXneUr3HoASM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+PIFwzmW8+RHXH+FkFsOmXK7veZSP5nF8RxdIVoMPL1D1Cr+DEPD85oTfOT+uwP/XZOC3t+kj1HgRGsg3Nwf9WaTS4F1DDLn5k3fGBeTECmA0y9hzTplStN+hG0iZT46AAZESatMoUeQqn3Id1JVjcZoPrCR2r6gvr2oYSb2s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j5mRqkTn; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731538249; x=1763074249;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CYdGGDWei4FClN5/v5jTSMS1CfPN4qDt7+CJVB8J8vQ=;
-  b=j5mRqkTnuluF+5brLKAoV5ggTMeVTNM+B0rl3k1FEsMuJcRIIQF/bLdG
-   mW84cysYJTRuKk24Vfu7LvTGui+FvHg5nfMrwCh1wik0r6xVrEPIwXuGD
-   JpJUHjMR29pVyQ4heTNGbSgtC3cBhTHVj3LHBVCl/CpKJ1/JCygnBpLL+
-   YubWAUApR9erWo5bnRDyuuGY9V+EWEsJbykXQeKlPT9AVIGzuDG6TJ502
-   kwUDkHeZdeCe1qeEir8H8BDHX4s9uKpzPi7cbuHBEtg+NBE03dxf9unEZ
-   y2H4iYudGK4icUL2D+i59XiCDk8ztBzcrkcEXH6UnG0/CyGzpXZSBr74u
-   Q==;
-X-CSE-ConnectionGUID: E8LpMdDNSO6haXz1jS5nSg==
-X-CSE-MsgGUID: puxRHosTSFqsXUod6Hwi1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="30862603"
-X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="30862603"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 14:50:48 -0800
-X-CSE-ConnectionGUID: GFIBXakPTKK+vdZihgFWfw==
-X-CSE-MsgGUID: fQSc/1U1QhCMkC7OS8ilzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="88806293"
-Received: from lkp-server01.sh.intel.com (HELO 80bd855f15b3) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 13 Nov 2024 14:50:45 -0800
-Received: from kbuild by 80bd855f15b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tBMCB-0000nz-0T;
-	Wed, 13 Nov 2024 22:50:43 +0000
-Date: Thu, 14 Nov 2024 06:50:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Erin Shepherd <erin.shepherd@e43.eu>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>, linux-nfs@vger.kernel.org,
-	Erin Shepherd <erin.shepherd@e43.eu>
-Subject: Re: [PATCH v2 2/3] exportfs: allow fs to disable CAP_DAC_READ_SEARCH
- check
-Message-ID: <202411140603.E03vXsdz-lkp@intel.com>
-References: <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nkCQ7QVmApM8dwoH0cZzHEAD67+cjNR9+yFi37VEcwcBMCe3oU/y//763O3MEBv/dYpi6wXzvJnxw+fFKERa4M6+3i5e/lV0cVYtrOQ0QTkbaYP2YjjPC8QPiBZvNMsk6xa5mrlyK03XmFiw1L47wmwL88Tjh83fVSLby2DhLbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ku4HoTR7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF640C4CED2;
+	Wed, 13 Nov 2024 22:50:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731538236;
+	bh=wIrR8u385rjO/zo9VWJxjJbm+ALx5uhuXneUr3HoASM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ku4HoTR792kFFB4wO1qzRWHY8PrIdSdtWliA2vQgzGt5AJNsWWqqTeKd6Kug5BDW1
+	 i17LMtX88Xqicxa1KewBpUqq7lX3fk7yaek5m246QJlgi4r+sLzFX6ESTR8aa4lI3G
+	 /n7Mb/raDqP6SIYvbxO/afv2Cgaq5XBKvAdq2x1Ei+poPfqj9NomOE4KmIlajfq8q6
+	 U/pwUH2JbNahb8+CHn7x+1DwQI1XmPjLYFrSuG+2JpyUZ2d9wu0rctkyvhJYMOVr+h
+	 vfLDPEmh3MQ5E6lE7ZBUEL0QovCD9EEo7T4nNoBLMwtBao65OlYuY6mRTdC2Tl+zfT
+	 zGjTnu9Ui6I4w==
+Date: Wed, 13 Nov 2024 23:50:32 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Konstantin Aladyshev <aladyshev22@gmail.com>
+Cc: andriy.shevchenko@linux.intel.com, Jean Delvare <jdelvare@suse.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] docs: i2c: piix4: Add ACPI section
+Message-ID: <fnjhtnnwuktkqj7ck7psc3e7potptogz2ioxw2lghkncd2ct7k@pmrk7angjkwd>
+References: <ZzH-KeSavsPkldLU@smile.fi.intel.com>
+ <20241111140231.15198-1-aladyshev22@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,101 +57,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
+In-Reply-To: <20241111140231.15198-1-aladyshev22@gmail.com>
 
-Hi Erin,
+Hi Konstantin,
 
-kernel test robot noticed the following build errors:
+On Mon, Nov 11, 2024 at 05:02:31PM +0300, Konstantin Aladyshev wrote:
+> Provide information how to reference I2C busses created by the PIIX4
+> chip driver from the ACPI code.
+> 
+> Signed-off-by: Konstantin Aladyshev <aladyshev22@gmail.com>
 
-[auto build test ERROR on 14b6320953a3f856a3f93bf9a0e423395baa593d]
+I merged the patch into i2c/i2c-host with the changes I
+suggested and I also wrapped the lines to 80 characters to keep a
+uniform style throughout the doc file.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Erin-Shepherd/pseudofs-add-support-for-export_ops/20241114-020539
-base:   14b6320953a3f856a3f93bf9a0e423395baa593d
-patch link:    https://lore.kernel.org/r/20241113-pidfs_fh-v2-2-9a4d28155a37%40e43.eu
-patch subject: [PATCH v2 2/3] exportfs: allow fs to disable CAP_DAC_READ_SEARCH check
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20241114/202411140603.E03vXsdz-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241114/202411140603.E03vXsdz-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411140603.E03vXsdz-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from fs/fhandle.c:2:
-   In file included from include/linux/syscalls.h:93:
-   In file included from include/trace/syscall.h:7:
-   In file included from include/linux/trace_events.h:6:
-   In file included from include/linux/ring_buffer.h:5:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> fs/fhandle.c:242:28: error: initializing 'struct export_operations *' with an expression of type 'const struct export_operations *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-     242 |         struct export_operations *nop = root->mnt->mnt_sb->s_export_op;
-         |                                   ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 warning and 1 error generated.
-
-
-vim +242 fs/fhandle.c
-
-   237	
-   238	static inline bool may_decode_fh(struct handle_to_path_ctx *ctx,
-   239					 unsigned int o_flags)
-   240	{
-   241		struct path *root = &ctx->root;
- > 242		struct export_operations *nop = root->mnt->mnt_sb->s_export_op;
-   243	
-   244		if (nop && nop->flags & EXPORT_OP_UNRESTRICTED_OPEN)
-   245			return true;
-   246	
-   247		if (capable(CAP_DAC_READ_SEARCH))
-   248			return true;
-   249	
-   250		/*
-   251		 * Allow relaxed permissions of file handles if the caller has the
-   252		 * ability to mount the filesystem or create a bind-mount of the
-   253		 * provided @mountdirfd.
-   254		 *
-   255		 * In both cases the caller may be able to get an unobstructed way to
-   256		 * the encoded file handle. If the caller is only able to create a
-   257		 * bind-mount we need to verify that there are no locked mounts on top
-   258		 * of it that could prevent us from getting to the encoded file.
-   259		 *
-   260		 * In principle, locked mounts can prevent the caller from mounting the
-   261		 * filesystem but that only applies to procfs and sysfs neither of which
-   262		 * support decoding file handles.
-   263		 *
-   264		 * Restrict to O_DIRECTORY to provide a deterministic API that avoids a
-   265		 * confusing api in the face of disconnected non-dir dentries.
-   266		 *
-   267		 * There's only one dentry for each directory inode (VFS rule)...
-   268		 */
-   269		if (!(o_flags & O_DIRECTORY))
-   270			return false;
-   271	
-   272		if (ns_capable(root->mnt->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
-   273			ctx->flags = HANDLE_CHECK_PERMS;
-   274		else if (is_mounted(root->mnt) &&
-   275			 ns_capable(real_mount(root->mnt)->mnt_ns->user_ns,
-   276				    CAP_SYS_ADMIN) &&
-   277			 !has_locked_children(real_mount(root->mnt), root->dentry))
-   278			ctx->flags = HANDLE_CHECK_PERMS | HANDLE_CHECK_SUBTREE;
-   279		else
-   280			return false;
-   281	
-   282		/* Are we able to override DAC permissions? */
-   283		if (!ns_capable(current_user_ns(), CAP_DAC_READ_SEARCH))
-   284			return false;
-   285	
-   286		ctx->fh_flags = EXPORT_FH_DIR_ONLY;
-   287		return true;
-   288	}
-   289	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Andi
 
