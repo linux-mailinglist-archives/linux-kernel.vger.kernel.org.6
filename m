@@ -1,204 +1,155 @@
-Return-Path: <linux-kernel+bounces-408389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C7E9C7E2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:21:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F2669C7E32
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:24:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084A2284475
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:21:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E1D72844FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F09318BC34;
-	Wed, 13 Nov 2024 22:21:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15F218C012;
+	Wed, 13 Nov 2024 22:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="QBjvm2BV"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA4F7081D;
-	Wed, 13 Nov 2024 22:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351BD7081D
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 22:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731536461; cv=none; b=KuDKEx7rMiEMTLZxswdGhvVziw46KjzGfADkizFBgyKt2QY6TyGws674Y4LmCSNMpmLCl43VJCYeePZrqbFqNQAAjN1/OiXDdN6vU0LvF0hNMHoqzhT3LRyVxdGecUOYIOroj0mIGUMTFy8LpVE40ft0vtVaJVEqVnmgiysGa68=
+	t=1731536640; cv=none; b=nM2L7XrP/n5A5BuKXjOFXft3FeQm7enmPiIQGuXSwFvBWPaaFIKfzYc7Kb6CxYCl70HElECmk2BqYgNgy7NTT5TsEh5w8YCRg5uQOhDoUwiKe/r213mvkNTgmi+q7IxsAESSfWPGXH9O3e/DW/P1HgrwaePZtlJ3tfL6GUT+o4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731536461; c=relaxed/simple;
-	bh=jaCgkVrjqdFRoXcmyT5u0vZq+LcNAv9DOc0Nl7LGbn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lg7CH3AkiFLqJo3tFon7jZaneULeoJhl/phjOc4nN/R/oZSmf4QI0MDkiAi2hDEuwgLkZIo6DfEvWxvSzIFUsK67ODFKTShgLJO4wxEW8W8gYdrxidv7gqiZ0Qj+NskuSh35MG69bwC63tknGpBL5BPIRkN8TEPm0DramOqlMfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C89EC4CEC3;
-	Wed, 13 Nov 2024 22:20:58 +0000 (UTC)
-Date: Wed, 13 Nov 2024 17:21:18 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Jens Remus <jremus@linux.ibm.com>, x86@kernel.org, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de
- Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, Indu Bhagat
- <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers
- <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>, Sam
- James <sam@gentoo.org>, linux-trace-kernel@vger.kernel.org, Andrii Nakryiko
- <andrii.nakryiko@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Florian Weimer <fweimer@redhat.com>, Andy
- Lutomirski <luto@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily
- Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
-Message-ID: <20241113172118.6db57c42@gandalf.local.home>
-In-Reply-To: <20241113171326.6d1ddc83@gandalf.local.home>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
-	<42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
-	<1f83be89-b816-48a3-a7ee-9b72f07b558e@linux.ibm.com>
-	<20241113155040.6a9a1bed@gandalf.local.home>
-	<20241113211535.ghnw52wkgudkjvgv@jpoimboe>
-	<20241113171326.6d1ddc83@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731536640; c=relaxed/simple;
+	bh=TgLSM3kw/IESz6YfA/6CcM0kRm8NHR70/vlEMxjDpdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JcMpGSZyk64UauDlC3WVqsohIrx5NySceCmVmGSSzC7oQ5au2Eqs5QQjhFGMgGPeTaCsKwJNl3Yakc6OAq5ZasLpx/wGNv8RHBED9IQqJWAk1DKZKRkXOAwSw139NMNaIKdXeLZE4FHsA/ArABfyX2Q5k8ZOfPsiwgeqCR1t23s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=QBjvm2BV; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so5654942a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:23:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731536637; x=1732141437; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XhU1DTFWsUZULhpNS1f0hFA10SN7OegQFOrkLjd72jU=;
+        b=QBjvm2BVQ3a+mq5FYbcfSBvesRgnlh5smymbDA4YWvSZXW2869GBssZrpDlEzJFv/Q
+         5FY6Ii7+kqEvJp5IMTEOadDoHWwDjmGijvU7XbGmuULfIL1HBY6UrBzEZQlHtspAoVZX
+         E8impMf1ikl6/VN4e09SEA91gSn4xG/DMbadkA2zhvz5f7dKzFMNZcWbBJRzO1QmgTwB
+         wWAhkF0uWT7IGjWbIMyyQY19WVfH+EgOvE62UjQcOA1d8HxkMU55ladkeHcXqxrGzw2p
+         LJ5IhVC8jtWfZHejGuIyuqXtlbg3QaWRJzHZ10QGegwT8ylV+VP8FDSswszIloVmqrMp
+         quMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731536637; x=1732141437;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XhU1DTFWsUZULhpNS1f0hFA10SN7OegQFOrkLjd72jU=;
+        b=PmcP2sSOFWGPGRmP4lo25MLUwW/7z8iYIA38njkjbJm+ssyRYLkht2fLtRajyUPW5q
+         Be+RWGE8nNXfJQqDuF1UjhHINS4QSqzSxp9cRzZnawmekc9wR1f9pOxeYVxOzz2D3Pgk
+         CLL6S5B1XzA6rGobiUF+TILaEiB4RZhc5jLmC7N8MuKiYQca3Y/NiZDcSGq+8aGmUuOs
+         xRKHKVxvlVc/u5jcWzNBPXPy9/pm+16gOKv1HyC783qp7G2/7z3WRdx5JimBwCydCKep
+         gEIuIQvA1Q/xZhS6QR43H1Wkb0GDECXJIBCMmhgS0Jox5EvYXeA6+ugq6dY7Pdadkod5
+         ERKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVS4ppq2sI10C/L5lNah+rzZANSNNerGgqOgmI1Lclt7jw7Js1wDMh23t/OZk61Tcght/a7W36HuN70qmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8i13ijWiTb+RZ69XD9PNOO6bda9FtQx8oDvyYVdOq5EeemA7Q
+	ye2j92hxTKmujIo9zjCFHU1C0lZldnNBmk3AnXlU/6SNm3yws04o7Q02tQ7Krns=
+X-Google-Smtp-Source: AGHT+IFp+u01htZ7+R4q0w8zY+0n6pwR7q3KOwbId/6FUz/GheGxoVBPUTfGzcZ0P6rKeXYjD5vOXg==
+X-Received: by 2002:a05:6a20:748b:b0:1d9:c78f:4207 with SMTP id adf61e73a8af0-1dc2292c2a4mr30095003637.11.1731536630122;
+        Wed, 13 Nov 2024 14:23:50 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f7127f3b01sm2017218a12.84.2024.11.13.14.23.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 14:23:49 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1tBLm6-00EGof-0x;
+	Thu, 14 Nov 2024 09:23:46 +1100
+Date: Thu, 14 Nov 2024 09:23:46 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Alex Shi <seakeel@gmail.com>, linux-xfs@vger.kernel.org,
+	Linux-MM <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: xfs deadlock on mm-unstable kernel?
+Message-ID: <ZzUm8jiGmyDVyEwX@dread.disaster.area>
+References: <e5814465-b39a-44d8-aa3d-427773c9ae16@gmail.com>
+ <Zou8FCgPKqqWXKyS@dread.disaster.area>
+ <20241112171428.UqPpObPV@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112171428.UqPpObPV@linutronix.de>
 
-
-[ This reply fixes the linux-trace-kernel email :-p ]
-
-On Wed, 13 Nov 2024 17:13:26 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> BTW, the following changes were needed to make it work for me:
+On Tue, Nov 12, 2024 at 06:14:28PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2024-07-08 20:14:44 [+1000], Dave Chinner wrote:
+> > On Mon, Jul 08, 2024 at 04:36:08PM +0800, Alex Shi wrote:
+> > >   372.297234][ T3001] ============================================
+> > > [  372.297530][ T3001] WARNING: possible recursive locking detected
+> > > [  372.297827][ T3001] 6.10.0-rc6-00453-g2be3de2b70e6 #64 Not tainted
+> > > [  372.298137][ T3001] --------------------------------------------
+> > > [  372.298436][ T3001] cc1/3001 is trying to acquire lock:
+> > > [  372.298701][ T3001] ffff88802cb910d8 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_reclaim_inode+0x59e/0x710
+> > > [  372.299242][ T3001] 
+> > > [  372.299242][ T3001] but task is already holding lock:
+> > > [  372.299679][ T3001] ffff88800e145e58 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_ilock_data_map_shared+0x4d/0x60
+> > > [  372.300258][ T3001] 
+> > > [  372.300258][ T3001] other info that might help us debug this:
+> > > [  372.300650][ T3001]  Possible unsafe locking scenario:
+> > > [  372.300650][ T3001] 
+> > > [  372.301031][ T3001]        CPU0
+> > > [  372.301231][ T3001]        ----
+> > > [  372.301386][ T3001]   lock(&xfs_dir_ilock_class);
+> > > [  372.301623][ T3001]   lock(&xfs_dir_ilock_class);
+> > > [  372.301860][ T3001] 
+> > > [  372.301860][ T3001]  *** DEADLOCK ***
+> > > [  372.301860][ T3001] 
+> > > [  372.302325][ T3001]  May be due to missing lock nesting notation
+> > > [  372.302325][ T3001] 
+> > > [  372.302723][ T3001] 3 locks held by cc1/3001:
+> > > [  372.302944][ T3001]  #0: ffff88800e146078 (&inode->i_sb->s_type->i_mutex_dir_key){++++}-{3:3}, at: walk_component+0x2a5/0x500
+> > > [  372.303554][ T3001]  #1: ffff88800e145e58 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_ilock_data_map_shared+0x4d/0x60
+> > > [  372.304183][ T3001]  #2: ffff8880040190e0 (&type->s_umount_key#48){++++}-{3:3}, at: super_cache_scan+0x82/0x4e0
+> > 
+> > False positive. Inodes above allocation must be actively referenced,
+> > and inodes accees by xfs_reclaim_inode() must have no references and
+> > been evicted and destroyed by the VFS. So there is no way that an
+> > unreferenced inode being locked for reclaim in xfs_reclaim_inode()
+> > can deadlock against the refrenced inode locked by the inode lookup
+> > code.
+> > 
+> > Unfortunately, we don't have enough lockdep subclasses available to
+> > annotate this correctly - we're already using all
+> > MAX_LOCKDEP_SUBCLASSES to tell lockdep about all the ways we can
+> > nest inode locks. That leaves us no space to add a "reclaim"
+> > annotation for locking done from super_cache_scan() paths that would
+> > avoid these false positives....
 > 
-> -- Steve
-> 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 434c548f0837..64cc3c1188ca 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -842,7 +842,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  	int first_pt_load = 1;
->  	unsigned long error;
->  	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
-> -	struct elf_phdr *elf_property_phdata = NULL, *sframe_phdr = NULL;
-> +	struct elf_phdr *elf_property_phdata = NULL;
-> +	unsigned long sframe_vaddr = 0;
+> So the former inode (the one triggering the reclaim) is created and can
+> not be the same as the one in reclaim list. Couldn't we assign it a
+> different lock-class?
 
-Could not just save the pointer to the sframe phd, as it gets freed before we need it.
+We've done that in the past. The problem with that is we lose lock
+ordering verification across reclaim. i.e. inode lock ordering must
+be the same both above and below reclaim, and changing the lock
+class loses the ability to verify this.
 
->  	unsigned long elf_brk;
->  	int retval, i;
->  	unsigned long elf_entry;
-> @@ -951,7 +952,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  			break;
->  
->  		case PT_GNU_SFRAME:
-> -			sframe_phdr = elf_ppnt;
-> +			sframe_vaddr = elf_ppnt->p_vaddr;
->  			break;
->  
->  		case PT_LOPROC ... PT_HIPROC:
-> @@ -1344,8 +1345,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  					    task_pid_nr(current), retval);
->  	}
->  
-> -	if (sframe_phdr)
-> -		sframe_add_section(load_bias + sframe_phdr->p_vaddr,
-> +	if (sframe_vaddr)
-> +		sframe_add_section(load_bias + sframe_vaddr,
->  				   start_code, end_code);
->  
->  	regs = current_pt_regs();
-> diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
-> index 933e47696e29..ca4ef0b72772 100644
-> --- a/kernel/unwind/sframe.c
-> +++ b/kernel/unwind/sframe.c
-> @@ -73,15 +73,15 @@ static int find_fde(struct sframe_section *sec, unsigned long ip,
->  		    struct sframe_fde *fde)
->  {
->  	struct sframe_fde __user *first, *last, *found = NULL;
-> -	u32 ip_off, func_off_low = 0, func_off_high = -1;
-> +	s32 ip_off, func_off_low = INT_MIN, func_off_high = INT_MAX;
+This is important to us as some code (e.g. extent removal) can be
+called from both above and below reclaim, and they require the same
+transaction and inode lock contexts to be held regardless of where
+they are called from...
 
-The ip_off is a signed it. I wrote a program to dump out the sframe section
-of files, and I had:
-
-	ffffed88: (1020) size:      16 off:     146 num:       2 info: 1 rep:16
-	ffffed98: (1030) size:     336 off:     154 num:       2 info:17 rep:16
-	ffffefe1: (1279) size:     113 off:       0 num:       4 info: 0 rep: 0
-	fffff052: (12ea) size:      54 off:      15 num:       3 info: 0 rep: 0
-	fffff088: (1320) size:     167 off:      26 num:       3 info: 0 rep: 0
-	fffff12f: (13c7) size:     167 off:      37 num:       4 info: 0 rep: 0
-	fffff1d6: (146e) size:     167 off:      52 num:       4 info: 0 rep: 0
-	fffff27d: (1515) size:      22 off:      67 num:       4 info: 0 rep: 0
-	fffff293: (152b) size:     141 off:      82 num:       4 info: 0 rep: 0
-	fffff320: (15b8) size:      81 off:      97 num:       4 info: 0 rep: 0
-	fffff371: (1609) size:     671 off:     112 num:       4 info: 1 rep: 0
-	fffff610: (18a8) size:     171 off:     131 num:       4 info: 0 rep: 0
-
-The above turns was created by a loop of:
-
-	fde = (void *)sframes + sizeof(*sframes) + sframes->sfh_fdeoff;
-	for (s = 0; s < sframes->sfh_num_fdes; s++, fde++) {
-		printf("\t%x: (%lx) size:%8u off:%8u num:%8u info:%2u rep:%2u\n",
-		       fde->sfde_func_start_address,
-		       fde->sfde_func_start_address + shdr->sh_offset,
-		       fde->sfde_func_size,
-		       fde->sfde_func_start_fre_off,
-		       fde->sfde_func_num_fres,
-		       fde->sfde_func_info,
-		       fde->sfde_func_rep_size);
-	}
-
-As you can see, all the ip_off are negative.
-
->  
->  	ip_off = ip - sec->sframe_addr;
->  
->  	first = (void __user *)sec->fdes_addr;
-> -	last = first + sec->fdes_nr;
-> +	last = first + sec->fdes_nr - 1;
-
-The above was mentioned before.
-
->  	while (first <= last) {
->  		struct sframe_fde __user *mid;
-> -		u32 func_off;
-> +		s32 func_off;
->  
->  		mid = first + ((last - first) / 2);
->  
-> diff --git a/kernel/unwind/user.c b/kernel/unwind/user.c
-> index 11aadfade005..d9cd820150c5 100644
-> --- a/kernel/unwind/user.c
-> +++ b/kernel/unwind/user.c
-> @@ -97,7 +97,7 @@ int unwind_user_start(struct unwind_user_state *state)
->  
->  	if (current_has_sframe())
->  		state->type = UNWIND_USER_TYPE_SFRAME;
-> -	else if (IS_ENABLED(CONFIG_UNWIND_USER_FP))
-> +	else if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP))
-
-This was mentioned too.
-
->  		state->type = UNWIND_USER_TYPE_FP;
->  	else
->  		state->type = UNWIND_USER_TYPE_NONE;
-> @@ -138,7 +138,7 @@ int unwind_user(struct unwind_stacktrace *trace, unsigned int max_entries)
->  static u64 ctx_to_cookie(u64 cpu, u64 ctx)
->  {
->  	BUILD_BUG_ON(NR_CPUS > 65535);
-> -	return (ctx & ((1UL << 48) - 1)) | cpu;
-> +	return (ctx & ((1UL << 48) - 1)) | (cpu << 48);
-
-And so was this.
-
--- Steve
-
->  }
->  
->  /*
-
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
