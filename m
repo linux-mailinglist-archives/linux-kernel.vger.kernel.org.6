@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-407671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1599C70D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:37:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2C19C70DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:37:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8223E28A09F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:37:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B381F22161
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F731F4FD4;
-	Wed, 13 Nov 2024 13:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE5F2036EE;
+	Wed, 13 Nov 2024 13:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YcYu1xGk"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="rPzztnyQ"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADAB20127F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685C7202634
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731504960; cv=none; b=cV9EhJpsXPVTMKnZUE6F2CzyK55mNE6aMlISx9G9XETFqJnwYvsJcTMHOprR/JuAvJKZX10idAvhZLml9oSkQngMGT4gtqiEX7YBVeRwtw81AplOCFNnPyGH1Zc5fcOdWu9NLoEG9ZZ/ys6kuKVtoTSe8WdeBSG5ZTqCdbhn60M=
+	t=1731504961; cv=none; b=SXLGcZhiqgk2VahRXJ8w3PEeDSAufRC2BbvTFEHLgsm/M/Fz44LBsuy6N2lQdilEdECZD9IOEMJA0rQEFMFHqqYBzDv0cE+Oj2Hn/hqK9pAsWumEEnXyppz5GNSiSZ5ltbr/azO+/Lc4oF32lGgxRuE/Hrq64pskTuwmJk4WLoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731504960; c=relaxed/simple;
-	bh=hsInE9S4S/vwenjeM66DD4/pCHktkvyL4wYR/f21JYc=;
+	s=arc-20240116; t=1731504961; c=relaxed/simple;
+	bh=MN67nAF+CszefP3gr8RMGEznclhS5zNcjbkW5w4l35Y=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uRqqnjdRYKBNKMfPrE6twA62S+sRujcVadEIN6cCv7jQsfLX+GvJ8JJQwJTUMqbzAWwi1RwYkNnLt+F9A5UWFE+MIsX8uNAre4VMs1gu1B64g/hnfNP0425HbIGM90/goAe1SC+hyFpYyi5r85eYLKa43/rcNBHQxZllgGkF68U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YcYu1xGk; arc=none smtp.client-ip=209.85.167.53
+	 MIME-Version; b=YPEOpubfZ4kxCCq6qdtqNQEgf3YdV9vuV4YrGY9BjOwzkWn1MZYNDQqV2Mkvw1ixcNNVuCaerx7YUopsQkpOXJhilOhyiz6/8v74DjPNOcTeiuHiJS5Yrc4I/yU7bKXXUr56e+qwcyj8BB1sLwMSnh+S8DDN0DuGyoUNM9tkDGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=rPzztnyQ; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53da209492cso635627e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:35:57 -0800 (PST)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315eac969aso4691925e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:35:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731504955; x=1732109755; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1731504958; x=1732109758; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zMlZeixiliINj2sB8B/Hsjodp45t1qy+/EotEbzHeIE=;
-        b=YcYu1xGkwpljYym8LpPMHKuiZvIvXup09ZYCunlEKTd8XO+zpH5qEgnw/ApWezX6Bo
-         JgTEz2elBcZXHxf0hRuZmEamkdek1ymaRorKkyZvN/dDhRasl9C+c3lRDjLhFt/jMgvG
-         4g72FdMdxMT3ba9Oa/i7XqUqd7M93JxQOJih9MaUGVqDPZm68G95cOcABY2J0wNt0BE5
-         DgXrLqdamji13Dzrn8joilMR6Xs8gsyqcEwvsK+d5D1qU/8okfAuscHf1UAibMTloRX7
-         OhB8XT397jgrLdQhOjwcm/PblL/GnbtoUU0+sBSVdz2QABuGFI+5YGS238xZgyAJY96t
-         bBmg==
+        bh=1OvTZSeNAGKIV1seMePes99WD5Hn6Ptwq+/QcTfM4OA=;
+        b=rPzztnyQnWc53nQPqtQRzK30csntTKsCs8KwjXCgnVLwhrO+qHUdSv3F26A+Fbxu+P
+         pmHX0jNSaRXVxCtUq/z83LmReidtEGaAW0hLNcl36DXY6CZwuOAml+ctZnYN3F6K+1/N
+         nwPl4HiqDotbA6mcaz29gp1Ue4RD/OzySFWM/qDDx6L285B3hsEqY7pmjN32E+VGl42s
+         +FxLteK8tfuja9au5F9VRH35Gs7MN8Csg3gDksHz6y1BqImDZPBswbcIgrBc2+9UGzES
+         zPKtQQjmcJ3NRX4xI3pNtxNw559M5gIVXS1cABqNN7kmWWGu9OtWBBj99DwsbAN3Xg5e
+         PqNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731504955; x=1732109755;
+        d=1e100.net; s=20230601; t=1731504958; x=1732109758;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zMlZeixiliINj2sB8B/Hsjodp45t1qy+/EotEbzHeIE=;
-        b=fz8h3z27GZrmRIR0F1Eiuq0xqWjUR/i9UuqebQv8m6NR1nppZ7zcJqmDO27c05/sS+
-         pkC+RphawKGYnxeBeLqATdOR8pJjF27upzFufiTD0HWbeFvSDQoGMHVqXL93j/ZvLIGk
-         0CkgQLGFwKK9aDya+voz0sXcaL3xeabz20P+v8bc/EFzA8wf0DxAYmsrt3cTITLbWLVo
-         QPjZqRHpoOwsL2o5q7jymLP0PdZFBVBhBvSzLhJE1L8TPZ2Cv9hC4uum+2h/xchIhC52
-         Zy2d9zcm+P3cmi+2FsIEg2ld9dlYFI4QT2DMEKMy9gCWIz0W5iFsL1TotIAwLlULviW8
-         F3ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUC2ehZmTul3EbmwAWI4fxzmnc5T9S2CgQzPp/bvYRak5MSb80x5BfWJ8kLyOv13Lrcc92tgAQpZp22K+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpd5yREZQNngMhPx4ddYO684moOYFdfQe0gRi3vXz4/qgCU97j
-	Oe3ku6LMj4mdC6JcDwIIhN1L4+L3eUUzJv8C2T6zVRdLbRIRy5RncctwRvrFeAg=
-X-Google-Smtp-Source: AGHT+IFDoqWlc+LYE1IHHSkdT7sRQOeKuofe1Yq22n5/D6CUznab7ngU7zpCUFlNPYH6frvj2r8HUw==
-X-Received: by 2002:a05:6512:3da0:b0:539:8fcd:524 with SMTP id 2adb3069b0e04-53d9fe8ad7cmr1333681e87.30.1731504955530;
-        Wed, 13 Nov 2024 05:35:55 -0800 (PST)
+        bh=1OvTZSeNAGKIV1seMePes99WD5Hn6Ptwq+/QcTfM4OA=;
+        b=oPM/zXSvS+ASblXTY+yCxripotiBJTmL9ZcHLXeXchUwSHxipss6XGtR+216zMEB26
+         rMkY+jseM7lnlO1wCLhwsJfqgUtqKzmsPa3ADa22RlTdxhsmO2IVBQSB1Qh/9UQeC0JQ
+         fnRFnMbJU6CjYsOnJM7lVdtBQG5fexPr8N099RdfAA5NQ5vcqN8fa+b0t5gq9K1gPkmT
+         zAgjChLxeenqGiG/Bgm9ZeQOTowktYMfXIGcRpdfWF/UoDLHpRRB2zmMqPHOa7ujoZnH
+         /qE6XvI/OaGWacwHPk6UweCjzXRXFwD4ivusZlGUnX0ZVJgpVQsxy9zbBbQT4FxxaQwv
+         Vn9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXQai1/M3OAI4Flo6TV2OI3rRyIlFitcX191BD11hwzl+/yKauJGhvzMe6Y47wvKv+HtKbimezkx3loBrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6lwEAg8td8+YrixcEPefGgalUN5IVdshFkofoMPdAjrD+bdJL
+	5aLopTN4RyfQYyVO8gBkfLtgaeTreWk1hFiyGcZT/FlZlyd0/ecJvHo79Rc8b2g=
+X-Google-Smtp-Source: AGHT+IH0MgOpNYoww+cJhT91aFWRPXzfgZYVlvmgv7xhY7iMIMEQpgepNOVaV+LNO6p7EhOHTMdqGw==
+X-Received: by 2002:a05:600c:3c9d:b0:431:4fbd:f571 with SMTP id 5b1f17b1804b1-432b74ce199mr179115085e9.13.1731504957851;
+        Wed, 13 Nov 2024 05:35:57 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d54e2f2esm25664165e9.1.2024.11.13.05.35.53
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d54e2f2esm25664165e9.1.2024.11.13.05.35.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 05:35:55 -0800 (PST)
+        Wed, 13 Nov 2024 05:35:57 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -90,10 +90,11 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 05/25] pinctrl: renesas: rzg2l: Add audio clock pins
-Date: Wed, 13 Nov 2024 15:35:20 +0200
-Message-Id: <20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com>
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v3 06/25] ASoC: renesas: rz-ssi: Terminate all the DMA transactions
+Date: Wed, 13 Nov 2024 15:35:21 +0200
+Message-Id: <20241113133540.2005850-7-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
@@ -107,35 +108,46 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add audio clock pins. These are used by audio IPs as input pins to feed
-them with audio clocks.
+In case of full duplex the 1st closed stream doesn't benefit from the
+dmaengine_terminate_async(). Call it after the companion stream is
+closed.
 
+Fixes: 4f8cd05a4305 ("ASoC: sh: rz-ssi: Add full duplex support")
+Cc: stable@vger.kernel.org
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v3:
 - collected tags
+- use proper fixes commit SHA1 and description
+- s/sh/renesas in patch title
 
 Changes in v2:
 - none
 
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/renesas/rz-ssi.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 8ffb9430a134..1190ca4b1808 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -2086,6 +2086,8 @@ static const struct rzg2l_dedicated_configs rzg3s_dedicated_pins[] = {
- 						      PIN_CFG_SOFT_PS)) },
- 	{ "TDO", RZG2L_SINGLE_PIN_PACK(0x1, 1, (PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS)) },
- 	{ "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS) },
-+	{ "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
-+	{ "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
- 	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN_CFG_IEN |
- 						     PIN_CFG_IO_VMC_SD0)) },
+diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
+index 6efd017aaa7f..2d8721156099 100644
+--- a/sound/soc/renesas/rz-ssi.c
++++ b/sound/soc/renesas/rz-ssi.c
+@@ -415,8 +415,12 @@ static int rz_ssi_stop(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
+ 	rz_ssi_reg_mask_setl(ssi, SSICR, SSICR_TEN | SSICR_REN, 0);
+ 
+ 	/* Cancel all remaining DMA transactions */
+-	if (rz_ssi_is_dma_enabled(ssi))
+-		dmaengine_terminate_async(strm->dma_ch);
++	if (rz_ssi_is_dma_enabled(ssi)) {
++		if (ssi->playback.dma_ch)
++			dmaengine_terminate_async(ssi->playback.dma_ch);
++		if (ssi->capture.dma_ch)
++			dmaengine_terminate_async(ssi->capture.dma_ch);
++	}
+ 
+ 	rz_ssi_set_idle(ssi);
+ 
 -- 
 2.39.2
 
