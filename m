@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-407038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82529C67BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:19:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 678A39C67C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 789CD286EC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:19:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E30DB297A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACA916A382;
-	Wed, 13 Nov 2024 03:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B62D166F17;
+	Wed, 13 Nov 2024 03:20:10 +0000 (UTC)
 Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A7E166F17
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 03:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF9A165F08;
+	Wed, 13 Nov 2024 03:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731467867; cv=none; b=LwN7Ixoo3SI6W5kHweHF5McEKBA0mm9GLXgTVuQxZN3C6kg1lFp6f0VSlI4LB9GqzIkibspsSKtKlXFRimzHyHmzWSv9vEvIsRqZpFlbm52q42g977YH2t8ZXKFoud9S0MPg/PZrjX/xQEYxnOKOXVsWyZdnLbCQjrsIhz0M32o=
+	t=1731468009; cv=none; b=lSX4GbTXMff7HlzWLDxugvPqe852v7kF0TbbEN1de20eYL9m7CL6zxtxJmYuivUgb3KGgMALto4DWTZJf5YChNhhJnUFCkc6LRjRtktpRc49KRsCe8llFRuQP1ysOb0fFnhJe4R04tTBBicITtVuLxTUQWRUD4u0dVKikEPjcHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731467867; c=relaxed/simple;
-	bh=kp24zlxX6ufq0dZH6W00cqsxD0CElVyOARJdlTn0o3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eDPK1hCNstz4LCDRS9X39LDNuAkf3rjEW1DKVV8ZibvsUEbdjr9F3PW6B+EIrbadYiyEagMagbnkzolP5WE63Ex6/tN9nS+q7Md5d0vRWaeR5iH6+6vKImLZBeVigVweoOSRISdExTLka8gjgrnG362MmTF32kefmZe536uZcnQ=
+	s=arc-20240116; t=1731468009; c=relaxed/simple;
+	bh=L91+IDuQiJPtW7BBMUNadu7eH7UMMLEm1kX1qbeYT3o=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=kNrcmgZJLqutSrQxLEiNeU4EzgjkbmvHNe+srePHfKYVP8vg0WtZ2wOKpoz1+hAyBu9fkSENdog0uetZGzcAIqPCHanLPxGuDzO3/2SvnA8aVd71kgzOTownVhl78pYHKQxhCIBKQAKytcDCqUGF0UNOeB1A8vyjVS3BxV0d86A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Xp7hl3JfMz1jy7T;
-	Wed, 13 Nov 2024 11:15:51 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id D9D0614037C;
-	Wed, 13 Nov 2024 11:17:40 +0800 (CST)
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Xp7lW1hd4z1jy7S;
+	Wed, 13 Nov 2024 11:18:15 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id A3E2D1401F2;
+	Wed, 13 Nov 2024 11:20:04 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 13 Nov 2024 11:17:39 +0800
-Message-ID: <6f690403-2d56-41fe-a223-c5e8014cfe9c@huawei.com>
-Date: Wed, 13 Nov 2024 11:17:38 +0800
+ 15.2.1544.11; Wed, 13 Nov 2024 11:20:03 +0800
+Message-ID: <2d8e467d-b8e0-4728-ac2c-fba70a53bd9f@huawei.com>
+Date: Wed, 13 Nov 2024 11:20:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,444 +47,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 drm-dp 1/4] drm/hisilicon/hibmc: add dp aux in hibmc
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<shiyongbang@huawei.com>
-References: <20241101105028.2177274-1-shiyongbang@huawei.com>
- <20241101105028.2177274-2-shiyongbang@huawei.com>
- <ainzxaeea5bnxogaudypijz2wv6z4ev2wnlmcxniw2a27ab3yt@54cexnmypxab>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <ainzxaeea5bnxogaudypijz2wv6z4ev2wnlmcxniw2a27ab3yt@54cexnmypxab>
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+	<horms@kernel.org>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
+	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V3 net-next 5/7] net: hibmcge: Add pauseparam supported in
+ this module
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20241111145558.1965325-1-shaojijie@huawei.com>
+ <20241111145558.1965325-6-shaojijie@huawei.com>
+ <efd481a8-d020-452b-b29b-dfa373017f1f@lunn.ch>
+ <98187fe7-23f1-4c52-a62f-c96e720cb491@huawei.com>
+ <d22285c6-8286-4db0-86ca-90fff08e3a42@lunn.ch>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <d22285c6-8286-4db0-86ca-90fff08e3a42@lunn.ch>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd500013.china.huawei.com (7.221.188.12)
-
-> On Fri, Nov 01, 2024 at 06:50:25PM +0800, Yongbang Shi wrote:
->> From: baihan li <libaihan@huawei.com>
->>
->> Add dp aux read/write functions. They are basic functions
->> and will be used later.
->>
->> Signed-off-by: baihan li <libaihan@huawei.com>
->> Signed-off-by: yongbang shi <shiyongbang@huawei.com>
-> Is this a proper capitalization of your names? Usually the first letter
-> of each of them is capital.
->
->> ---
->> ChangeLog:
->> v2 -> v3:
->>    - put the macro definations in latter patch where they are actually used, suggested by Dmitry Baryshkov.
->>    - rename some macro definations to make them sensible, suggested by Dmitry Baryshkov.
->>    - using FIELD_PREP and FIELD_GET, suggested by Dmitry Baryshkov.
->>    - using DP_DPCD_REV_foo, suggested by Dmitry Baryshkov.
->>    - fix build errors reported by kernel test robot <lkp@intel.com>
->>      Closes: https://lore.kernel.org/oe-kbuild-all/202410250305.UHKDhtxy-lkp@intel.com/
->> v1 -> v2:
->>    - using drm_dp_aux frame implement dp aux read and write functions, suggested by Jani Nikula.
->>    - using drm dp header files' dp macros instead, suggested by Andy Yan.
->>    v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
->> ---
->>   drivers/gpu/drm/hisilicon/hibmc/Makefile      |   3 +-
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c   | 162 ++++++++++++++++++
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h   |  23 +++
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  58 +++++++
->>   .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  19 ++
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  27 +++
->>   6 files changed, 291 insertions(+), 1 deletion(-)
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
->>
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> index d25c75e60d3d..8770ec6dfffd 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> @@ -1,4 +1,5 @@
->>   # SPDX-License-Identifier: GPL-2.0-only
->> -hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o
->> +hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
->> +	       dp/dp_aux.o
->>   
->>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->> new file mode 100644
->> index 000000000000..49ecda672109
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->> @@ -0,0 +1,162 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +// Copyright (c) 2024 Hisilicon Limited.
->> +
->> +#include <linux/io.h>
->> +#include <linux/iopoll.h>
->> +#include <linux/minmax.h>
->> +#include <drm/drm_device.h>
->> +#include <drm/drm_print.h>
->> +#include "dp_comm.h"
->> +#include "dp_reg.h"
->> +#include "dp_aux.h"
->> +
->> +#define DP_MIN_PULSE_NUM 0x9
->> +
->> +static void hibmc_dp_aux_reset(const struct dp_dev *dp)
->> +{
->> +	dp_reg_write_field(dp->base + DP_DPTX_RST_CTRL, DP_CFG_AUX_RST_N, 0x0);
->> +	usleep_range(10, 15);
->> +	dp_reg_write_field(dp->base + DP_DPTX_RST_CTRL, DP_CFG_AUX_RST_N, 0x1);
->> +}
->> +
->> +static void hibmc_dp_aux_read_data(struct dp_dev *dp, u8 *buf, u8 size)
->> +{
->> +	u32 reg_num;
->> +	u32 value;
->> +	u32 num;
->> +	u8 i, j;
->> +
->> +	reg_num = DIV_ROUND_UP(size, BYTES_IN_U32);
->> +	for (i = 0; i < reg_num; i++) {
->> +		/* number of bytes read from a single register */
->> +		num = min(size - i * BYTES_IN_U32, BYTES_IN_U32);
->> +		value = readl(dp->base + DP_AUX_RD_DATA0 + i * BYTES_IN_U32);
->> +		/* convert the 32-bit value of the register to the buffer. */
->> +		for (j = 0; j < num; j++)
->> +			buf[i * BYTES_IN_U32 + j] = value >> (j * BITS_IN_U8);
-> put_unaligned_le32()
->
->> +	}
->> +}
->> +
->> +static void hibmc_dp_aux_write_data(struct dp_dev *dp, u8 *buf, u8 size)
->> +{
->> +	u32 reg_num;
->> +	u32 value;
->> +	u8 i, j;
->> +	u32 num;
->> +
->> +	reg_num = DIV_ROUND_UP(size, BYTES_IN_U32);
->> +	for (i = 0; i < reg_num; i++) {
->> +		/* number of bytes written to a single register */
->> +		num = min_t(u8, size - i * BYTES_IN_U32, BYTES_IN_U32);
->> +		value = 0;
->> +		/* obtain the 32-bit value written to a single register. */
->> +		for (j = 0; j < num; j++)
->> +			value |= buf[i * BYTES_IN_U32 + j] << (j * BITS_IN_U8);
-> get_unaligned_le32()
-
-Hi Dimitry,
-Thanks for your advice. I try to use these foo_unaligned_le32(), however, here's the situation.
-The buffer I put in aux write or read functions are not always 4bytes or 4-byte alignment,
-so when I need to process 1 byte or 2 bytes data, I need to use put_unaligned_le16 or
-put_unaligned_le8  with if-statement, it's kind of complicated. So I think it's fine
-to keep these implementation here.
-Thanks,
-Baihan
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
 
->> +		/* writing data to a single register */
->> +		writel(value, dp->base + DP_AUX_WR_DATA0 + i * BYTES_IN_U32);
->> +	}
->> +}
->> +
->> +static u32 hibmc_dp_aux_build_cmd(const struct drm_dp_aux_msg *msg)
->> +{
->> +	u32 aux_cmd = msg->request;
->> +
->> +	if (msg->size)
->> +		aux_cmd |= FIELD_PREP(AUX_CMD_REQ_LEN, (msg->size - 1));
->> +	else
->> +		aux_cmd |= FIELD_PREP(AUX_CMD_I2C_ADDR_ONLY, 1);
->> +
->> +	aux_cmd |= FIELD_PREP(AUX_CMD_ADDR, msg->address);
->> +
->> +	return aux_cmd;
->> +}
->> +
->> +/* ret >= 0 ,ret is size; ret < 0, ret is err code */
->> +static int hibmc_dp_aux_parse_xfer(struct dp_dev *dp, struct drm_dp_aux_msg *msg)
->> +{
->> +	u32 buf_data_cnt;
->> +	u32 aux_status;
->> +	int ret = 0;
->> +
->> +	aux_status = readl(dp->base + DP_AUX_STATUS);
->> +	msg->reply = FIELD_GET(DP_CFG_AUX_STATUS, aux_status);
->> +
->> +	if (aux_status & DP_CFG_AUX_TIMEOUT)
->> +		return -ETIMEDOUT;
->> +
->> +	/* only address */
->> +	if (!msg->size)
->> +		return 0;
->> +
->> +	if (msg->reply != DP_AUX_NATIVE_REPLY_ACK)
->> +		return 0;
-> Should this be an error instead?
->
->> +
->> +	buf_data_cnt = FIELD_GET(DP_CFG_AUX_READY_DATA_BYTE, aux_status);
->> +
->> +	switch (msg->request) {
->> +	case DP_AUX_NATIVE_WRITE:
->> +		ret = msg->size;
->> +		break;
->> +	case DP_AUX_I2C_WRITE | DP_AUX_I2C_MOT:
->> +		if (buf_data_cnt == AUX_I2C_WRITE_SUCCESS)
->> +			ret = msg->size;
->> +		else if (buf_data_cnt == AUX_I2C_WRITE_PARTIAL_SUCCESS)
->> +			ret = FIELD_GET(DP_CFG_AUX, aux_status);
-> Replace all ret= with returns. Nothing happens after the switch-case, so
-> return right away.
->
->> +		break;
->> +	case DP_AUX_NATIVE_READ:
->> +	case DP_AUX_I2C_READ | DP_AUX_I2C_MOT:
->> +		buf_data_cnt--;
->> +		/* only the successful part of data is read */
-> Nit: only a part of data wass read successfully.
-> move the comment into the underlying `
->
->> +		if (buf_data_cnt != msg->size) {
->> +			ret = -EBUSY;
->> +		} else { /* all data is successfully read */
->> +			hibmc_dp_aux_read_data(dp, msg->buffer, msg->size);
->> +			ret = msg->size;
->> +		}
->> +		break;
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->> +/* ret >= 0 ,ret is size; ret < 0, ret is err code */
->> +static ssize_t hibmc_dp_aux_xfer(struct drm_dp_aux *aux, struct drm_dp_aux_msg *msg)
->> +{
->> +	struct dp_dev *dp = container_of(aux, struct dp_dev, aux);
->> +	u32 aux_cmd;
->> +	int ret;
->> +	u32 val; /* val will be assigned at the beginning of readl_poll_timeout function */
->> +
->> +	writel(0, dp->base + DP_AUX_WR_DATA0);
->> +	writel(0, dp->base + DP_AUX_WR_DATA1);
->> +	writel(0, dp->base + DP_AUX_WR_DATA2);
->> +	writel(0, dp->base + DP_AUX_WR_DATA3);
->> +
->> +	hibmc_dp_aux_write_data(dp, msg->buffer, msg->size);
->> +
->> +	aux_cmd = hibmc_dp_aux_build_cmd(msg);
->> +	writel(aux_cmd, dp->base + DP_AUX_CMD_ADDR);
->> +
->> +	/* enable aux transfer */
->> +	dp_reg_write_field(dp->base + DP_AUX_REQ, DP_CFG_AUX_REQ, 0x1);
->> +	ret = readl_poll_timeout(dp->base + DP_AUX_REQ, val, !(val & DP_CFG_AUX_REQ), 50, 5000);
->> +	if (ret) {
->> +		hibmc_dp_aux_reset(dp);
->> +		return ret;
->> +	}
->> +
->> +	return hibmc_dp_aux_parse_xfer(dp, msg);
->> +}
->> +
->> +void hibmc_dp_aux_init(struct dp_dev *dp)
->> +{
->> +	dp_reg_write_field(dp->base + DP_AUX_REQ, DP_CFG_AUX_SYNC_LEN_SEL, 0x0);
->> +	dp_reg_write_field(dp->base + DP_AUX_REQ, DP_CFG_AUX_TIMER_TIMEOUT, 0x1);
->> +	dp_reg_write_field(dp->base + DP_AUX_REQ, DP_CFG_AUX_MIN_PULSE_NUM, DP_MIN_PULSE_NUM);
->> +
->> +	dp->aux.transfer = hibmc_dp_aux_xfer;
->> +	dp->aux.is_remote = 0;
->> +	drm_dp_aux_init(&dp->aux);
->> +}
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
->> new file mode 100644
->> index 000000000000..794bb0482ea7
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
->> @@ -0,0 +1,23 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/* Copyright (c) 2024 Hisilicon Limited. */
->> +
->> +#ifndef DP_AUX_H
->> +#define DP_AUX_H
->> +
->> +#include <linux/bitops.h>
->> +#include "dp_comm.h"
->> +
->> +#define AUX_I2C_WRITE_SUCCESS		0x1
-> Move to the source file
->
->> +#define AUX_I2C_WRITE_PARTIAL_SUCCESS	0x2
-> Ditto
->
->> +#define EQ_MAX_RETRY			5
-> Unused
->
->> +#define BYTES_IN_U32			4
->
->> +#define BITS_IN_U8			8
-> This one will go away after using foo_unaligned_le32
->
->> +
->> +/* aux_cmd_addr register shift */
->> +#define AUX_CMD_REQ_LEN			GENMASK(7, 4)
->> +#define AUX_CMD_ADDR			GENMASK(27, 8)
->> +#define AUX_CMD_I2C_ADDR_ONLY		BIT(28)
-> These can go to the source file too. Or to dp_reg.h. Don't spawn that
-> all over the place.
->
->> +
->> +void hibmc_dp_aux_init(struct dp_dev *dp);
-> As the header becomes nearly empty, merge the remnants to a generic
-> header.
->
->> +
->> +#endif
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->> new file mode 100644
->> index 000000000000..61a59fd59962
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->> @@ -0,0 +1,58 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/* Copyright (c) 2024 Hisilicon Limited. */
->> +
->> +#ifndef DP_COMM_H
->> +#define DP_COMM_H
->> +
->> +#include <linux/types.h>
->> +#include <linux/bitops.h>
->> +#include <linux/errno.h>
->> +#include <linux/mutex.h>
->> +#include <linux/kernel.h>
->> +#include <linux/bitfield.h>
->> +#include <linux/io.h>
->> +
->> +#include <drm/display/drm_dp_helper.h>
->> +
->> +#define dp_reg_read_field(addr, mask)				\
-> These are still using dp_ prefix. Also using static inline functions
-> might be easier to handle.
->
->> +		FIELD_GET(mask, readl(addr))
->> +
->> +#define dp_field_modify(reg_value, mask, value) ({		\
->> +		(reg_value) &= ~(mask);				\
->> +		(reg_value) |= FIELD_PREP(mask, value); })
->> +
->> +#define dp_reg_write_field(addr, mask, val) ({			\
->> +		typeof(addr) _addr = (addr);			\
->> +		u32 _value = readl(_addr);			\
->> +		dp_field_modify(_value, mask, val);		\
->> +		writel(_value, _addr); })
-> I'm still very unsatisfied here. You have an RMW code with no locking.
-> If anything writes to the same location at the same time, the driver is
-> busted.
->
->> +
->> +struct link_status {
-> It is hibmc-specific, so please prefix accordingly.
->
->> +	bool clock_recovered;
->> +	bool channel_equalized;
->> +	u8 cr_done_lanes;
->> +};
->> +
->> +struct link_cap {
->> +	int rx_dpcd_revision;
->> +	u8 link_rate;
->> +	u8 lanes;
->> +	bool is_tps3;
->> +	bool is_tps4;
->> +};
->> +
->> +struct hibmc_dp_link {
->> +	struct link_status status;
->> +	u8 *train_set;
->> +	struct link_cap cap;
->> +};
-> Please don't define the structures/fields that are not used by the
-> patch. Introduce them when required.
->
->> +
->> +struct dp_dev {
->> +	struct hibmc_dp_link link;
->> +	struct drm_dp_aux aux;
->> +	struct drm_device *dev;
->> +	void __iomem *base;
->> +	u8 dpcd[DP_RECEIVER_CAP_SIZE];
->> +};
->> +
->> +#endif
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
->> new file mode 100644
->> index 000000000000..0b965e6ba7b3
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
->> @@ -0,0 +1,19 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/* Copyright (c) 2024 Hisilicon Limited. */
->> +
->> +#ifndef DP_CONFIG_H
->> +#define DP_CONFIG_H
->> +
->> +#define DP_BPP			24
->> +#define DP_SYMBOL_PER_FCLK	4
->> +#define DP_MSA1			0x20
->> +#define DP_MSA2			0x845c00
->> +#define DP_OFFSET		0x1e0000
->> +#define DP_HDCP			0x2
->> +#define DP_INT_RST		0xffff
->> +#define DP_DPTX_RST		0x3ff
->> +#define DP_CLK_EN		0x7
->> +#define DP_SYNC_EN_MASK		0x3
->> +#define DP_LINK_RATE_CAL	27
->> +
->> +#endif
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
->> new file mode 100644
->> index 000000000000..83cf0cc06ae2
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
->> @@ -0,0 +1,27 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/* Copyright (c) 2024 Hisilicon Limited. */
->> +
->> +#ifndef DP_REG_H
->> +#define DP_REG_H
->> +
->> +#define DP_AUX_CMD_ADDR			0x50
->> +#define DP_AUX_WR_DATA0			0x54
->> +#define DP_AUX_WR_DATA1			0x58
->> +#define DP_AUX_WR_DATA2			0x5c
->> +#define DP_AUX_WR_DATA3			0x60
->> +#define DP_AUX_RD_DATA0			0x64
->> +#define DP_AUX_REQ			0x74
->> +#define DP_AUX_STATUS			0x78
->> +#define DP_DPTX_RST_CTRL		0x700
->> +
->> +#define DP_CFG_AUX_SYNC_LEN_SEL			BIT(1)
->> +#define DP_CFG_AUX_TIMER_TIMEOUT		BIT(2)
->> +#define DP_CFG_AUX_MIN_PULSE_NUM		GENMASK(13, 9)
->> +#define DP_CFG_AUX_REQ				BIT(0)
->> +#define DP_CFG_AUX_RST_N			BIT(4)
->> +#define DP_CFG_AUX_TIMEOUT			BIT(0)
->> +#define DP_CFG_AUX_READY_DATA_BYTE		GENMASK(16, 12)
->> +#define DP_CFG_AUX				GENMASK(24, 17)
->> +#define DP_CFG_AUX_STATUS			GENMASK(11, 4)
->> +
->> +#endif
->> -- 
->> 2.33.0
+on 2024/11/13 0:32, Andrew Lunn wrote:
+> On Tue, Nov 12, 2024 at 10:37:27PM +0800, Jijie Shao wrote:
+>> on 2024/11/12 1:58, Andrew Lunn wrote:
+>>> On Mon, Nov 11, 2024 at 10:55:56PM +0800, Jijie Shao wrote:
+>>>> The MAC can automatically send or respond to pause frames.
+>>>> This patch supports the function of enabling pause frames
+>>>> by using ethtool.
+>>>>
+>>>> Pause auto-negotiation is not supported currently.
+>>> What is actually missing to support auto-neg pause? You are using
+>>> phylib, so it will do most of the work. You just need your adjust_link
+>>> callback to configure the hardware to the result of the negotiation.
+>>> And call phy_support_asym_pause() to let phylib know what the MAC
+>>> supports.
+>>>
+>>> 	Andrew
+>> Thanks for your guidance,
 >>
+>> I haven't really figured out the difference between phy_support_sym_pause()
+>> and phy_support_asym_paus().
+> sym_pause means that when the MAC pauses, it does it in both
+> directions, receive and transmit. Asymmetric pause means it can pause
+> just receive, or just transmit.
+>
+> Since you have both tx_pause and rx_pause, you can do both.
+>
+>> +static void hbg_ethtool_get_pauseparam(struct net_device *net_dev,
+>> +				       struct ethtool_pauseparam *param)
+>> +{
+>> +	struct hbg_priv *priv = netdev_priv(net_dev);
+>> +
+>> +	param->autoneg = priv->mac.pause_autoneg;
+>> +	hbg_hw_get_pause_enable(priv, &param->tx_pause, &param->rx_pause);
+>> +}
+>> +
+>> +static int hbg_ethtool_set_pauseparam(struct net_device *net_dev,
+>> +				      struct ethtool_pauseparam *param)
+>> +{
+>> +	struct hbg_priv *priv = netdev_priv(net_dev);
+>> +	struct phy_device *phydev = priv->mac.phydev;
+>> +
+>> +	phy_set_asym_pause(phydev, param->rx_pause, param->tx_pause);
+> Not needed. This just tells phylib what the MAC is capable of. The
+> capabilities does not change, so telling it once in hbg_phy_connect()
+> is sufficient.
+>
+> 	Andrew
+
+
+Maybe there is an error in this code.
+If I want to disable auto-neg pause, do I need to set phy_set_asym_pause(phydev, 0, 0)?
+
+Thanks
+Jijie Shao
+
+
 
