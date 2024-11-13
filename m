@@ -1,97 +1,112 @@
-Return-Path: <linux-kernel+bounces-407423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E4C9C6D3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:59:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478A19C6D39
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:58:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA208B22F50
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:59:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F20C51F24643
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69BC1FF057;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4D61FF03B;
 	Wed, 13 Nov 2024 10:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EGKIz3Lk"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="B2a0E3KN"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4275616DEB4;
-	Wed, 13 Nov 2024 10:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCD818308A;
+	Wed, 13 Nov 2024 10:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731495518; cv=none; b=oHKbpNZhgfi+pYkNRj0oSUl5vPvIzj35juQmJOOxVoKiAzWPAv9MNM0BtqEe+zSefyS1bRG9Mo+jDZYKKZVg3qKSU1dzUcEBNzyWIefijeA7Kg7QR3S6xO+VVfJvZzdKo05k4eEMxlTkZqZRG4HDSEgRDYJSI+zpJ+8PSCwBIeQ=
+	t=1731495517; cv=none; b=b98TasY2TzhSM37sWKHUwiJuRXwDiOC8DG9jomowHSDRgrH0asbLM7h1dhx0ERTQ20Q8JE8AqqYKkduI8ggIFlvnquItue0EWKgUKNC2qQRjkV9pVqeC2RNWz0qhTsq7BtcRwO1DMqRnHe9YJTaydxTzvZAfzS8fJnwMXWl3MzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731495518; c=relaxed/simple;
-	bh=6Hy5CkeqkSRyDOyHXRUsGDei8gwVLDkAXj3QloX6GUY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LqFBlAoFNsAdklTh4beplPcjTFPqt7LhzxGcL/Y2fH513wxekcjdTmMKRTJLLCuBb17lbyYlSSu0r8njMYCE+LNWBQerYYZyLXSgyd+ziKJEVmvzivjjDA0TQI+6ZviNxXwdjo6CN47UQNAfkDvPAiazSzltb3xbDkcqQg0ySBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EGKIz3Lk; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6D7D5240007;
+	s=arc-20240116; t=1731495517; c=relaxed/simple;
+	bh=hsJEgrTJHMEK3hICTwBLQOlExKHnDynPacohRZwezKM=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=nMRcjWkv2dyyd1harGQ7PvmlBbBT9smO/OIlRpVfGslR/xcTpldfdZsgfFblUTwvtDZni02PVLkfWfZmnoVT+oQZP+VGaUy/SKDJgt6MZry0tV5LyavicMP1zn8q5Lj32uvdikdayl9RNG2eh6+2c1wIEDSaVF2DebNof4WyInA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=B2a0E3KN; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
+	by mail.mainlining.org (Postfix) with ESMTPSA id DEC3AE44EA;
 	Wed, 13 Nov 2024 10:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731495513;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1731495512;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xg8EcxP9c4X3W4Nj4W3qa+pEmtPxAc2YrxDIBvx5Rnc=;
-	b=EGKIz3LkZogapQJ1Wjd1cqMx1yenl4an+h7+CVWcfrOmP4o6aD8RuCHlBgdBjjP+ensgjP
-	TS4Gp+owsFeMAqbfKnX/Dlvg0es+hdg4RiXkpX+dEDY1Y2UT6SCde5eZh2sABeUknzFE4w
-	s7SMpCfcQlXmZeW4LVNQVZpVCIpsY3r59hAy0ORLspnRkHiWCOPXkCMG1bNroIM6iU5ujB
-	RAXkUg1S1a2nWKKPNhpP0l5Q7rN4J0P/sImXnxPgqxxbxZ2VCBayLJ6Na2NSufpdN1RzFA
-	4WlPj2lLsb6GjR7ruTZfejajnIthfhj3ldQSF/6qijo1hiZcr5HymoyCaCxX1A==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Dmitry Antipov <dmantipov@yandex.ru>
-Cc: Lizhi Xu <lizhi.xu@windriver.com>,  alex.aring@gmail.com,
-  davem@davemloft.net,  edumazet@google.com,  horms@kernel.org,
-  kuba@kernel.org,  linux-kernel@vger.kernel.org,
-  linux-usb@vger.kernel.org,  linux-wpan@vger.kernel.org,
-  netdev@vger.kernel.org,  pabeni@redhat.com,  stefan@datenfreihafen.org,
-  syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com,
-  syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] mac802154: add a check for slave data list before delete
-In-Reply-To: <6ff1052f-76d5-42a4-bf0c-ec587ca4faa4@yandex.ru> (Dmitry
-	Antipov's message of "Wed, 13 Nov 2024 13:29:55 +0300")
-References: <87a5e4u35q.fsf@bootlin.com>
-	<20241112134145.959501-1-lizhi.xu@windriver.com>
-	<6ff1052f-76d5-42a4-bf0c-ec587ca4faa4@yandex.ru>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Wed, 13 Nov 2024 11:58:32 +0100
-Message-ID: <87y11npfhj.fsf@bootlin.com>
+	bh=CeAs66+zxivqZ/vkvA1r4hoxKVIMtPgmr/Q5nHxUYUk=;
+	b=B2a0E3KNDZuFvK1rq5OVWe1Bhyvw7ZWQ3Z2C1eXjvCxtGknkpcx3Ap7jJTOEgSguB1d+2s
+	6fhPteAu5JAEITZdHL6pTVc6GcusZnUjqE61oUvbPeMmaQEZWRtmEstSAHHahwaplw01pN
+	J9WTupkhm8pMI6FDHbBCRgZQSbMThHjScoH2U3aFyqHUoFpF3Ot6VijhGn+6bAnw56bGb0
+	CQzS2fuyFBtf5V6HZZ7NmiLf6FvDcKVmkkUpOd/ZUX8O688TZKrolC0DkQDTWEUYGcpYan
+	5EtvVHejCbI0Gr6+fUplw0UdtdcD98qHTHqS5YB0xVAz90Sqm7bsIVnWr+qZaQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Date: Wed, 13 Nov 2024 11:58:32 +0100
+From: barnabas.czeman@mainlining.org
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Vladimir Lypak
+ <vladimir.lypak@gmail.com>
+Subject: Re: [PATCH v4 3/3] media: qcom: camss: Add MSM8953 resources
+In-Reply-To: <7f8172ee-8285-4e7c-8ba3-826a5516fa9b@linaro.org>
+References: <20241103-camss-msm8953-v4-0-48d0ec75958d@mainlining.org>
+ <20241103-camss-msm8953-v4-3-48d0ec75958d@mainlining.org>
+ <6833ebc6-9210-471a-8ca6-5f3605155f33@linaro.org>
+ <412b3252f1ca795fbcfaf5e466e94642@mainlining.org>
+ <7f8172ee-8285-4e7c-8ba3-826a5516fa9b@linaro.org>
+Message-ID: <c09f206bee80d2c3d632ef07a5d17e4c@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 13/11/2024 at 13:29:55 +03, Dmitry Antipov <dmantipov@yandex.ru> wrote:
-
-> On 11/12/24 4:41 PM, Lizhi Xu wrote:
->
->>   	mutex_lock(&sdata->local->iflist_mtx);
->> +	if (list_empty(&sdata->local->interfaces)) {
->> +		mutex_unlock(&sdata->local->iflist_mtx);
->> +		return;
->> +	}
->>   	list_del_rcu(&sdata->list);
->>   	mutex_unlock(&sdata->local->iflist_mtx);
->
-> Note https://syzkaller.appspot.com/text?tag=3DReproC&x=3D12a9f740580000 m=
-akes an
-> attempt to connect the only device. How this is expected to work if there=
- are
-> more than one device?
-
-Isn't sdata already specific enough? What do you mean by "device"?
-
-Thanks,
-Miqu=C3=A8l
+On 2024-11-13 10:53, Bryan O'Donoghue wrote:
+> On 13/11/2024 08:01, barnabas.czeman@mainlining.org wrote:
+>>> I see that you do reuse csiphy_res_8x16 for this platform support, in
+>>> this case let me ask you to double check/test that the "vdda" 
+>>> regulator
+>>> is actually a CSIPHY regulator, and if so, please move the 
+>>> registration
+>>> of the regulators to csiphy_res_8x16 as a preceding change.
+>> It is placed in CSID at downstream and this is the documentation of
+>> the downstream property:
+>> - qcom,mipi-csi-vdd-supply : should contain regulator to be used for
+>>      this csid core
+>> so it should be a csid regulator as i understand.
+>> It is also placed at CSIDs in msm8953-camera.dtsi
+> 
+> No, the regulator(s) supply voltage to the PHY.
+On sm8250 it is for csiphy but on older soc like on msm8953, msm8917, 
+msm8916
+this regulator is placed in csid nodes.
+https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LA.UM.10.6.2.c26-01500-89xx.0/arch/arm64/boot/dts/qcom/msm8953-camera.dtsi#L96
+There is no regulator in csiphy nodes only PM domains.
+I will check later move the regulator to the csiphy.
+> 
+> Make sure you have:
+> 
+> commit 44fdbb9d1a3892db92b2c9cf5f46e32ca4095d92
+> Author: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> Date:   Fri Sep 27 00:19:56 2024 +0300
+> 
+>     media: qcom: camss: add management of supply regulators to CSIPHY
+> 
+> and give the change a try.
+> 
+> ---
+> bod
 
