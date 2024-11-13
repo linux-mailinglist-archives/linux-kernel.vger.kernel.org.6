@@ -1,60 +1,53 @@
-Return-Path: <linux-kernel+bounces-408080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A109C7A34
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:47:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 592CA9C7A37
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECAE11F2354C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:47:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C92B1F243F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2602038DD;
-	Wed, 13 Nov 2024 17:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698CC2040AF;
+	Wed, 13 Nov 2024 17:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hy2Ag0n3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcvMZvdY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B590F70835;
-	Wed, 13 Nov 2024 17:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB7E2022E8;
+	Wed, 13 Nov 2024 17:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731520023; cv=none; b=Sjb2GrsNUNIQ0RAmCPEcNSPSbJd4oS/EH307oqKThiQse29cD8kpa7AP2S8XiHcUKCYu+0ku3OUw1mPs5mSRyUZGV6sibV2QvBqIUTPjmBKPIoaEAboGnZ+VDyGVfGne6/TwZJCYgqZb7IiydQtLFNjOrDSVqPtIx5UdBlYsbgA=
+	t=1731520027; cv=none; b=E1VvnidmBGcMqS0+bbSNCcHPZliaIxu3T7qyGuuppy+aA0vH/wz4vIK+FvPQfZEdvqjbN6q1Q556r9lYPU4UF5ot9sHg+XV923Ed/U2t7/ifCcg5ozr68MvcmpuTG1WedlzuceJLNyBUjw9e9hndfggiKY12ytfClM2P4mF6IhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731520023; c=relaxed/simple;
-	bh=sp2Hn25t7hN6k+aTKbbqhD9q90LPBrBZkVKJf8hXhQA=;
+	s=arc-20240116; t=1731520027; c=relaxed/simple;
+	bh=8NjEmZoG6cs/6tWDpxDdwGePjepq2tBR7948gl6tPak=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QVfGmL0Xdt1XE+k+bNfrBDNXCgTOwLi+RmTVvwsKsXwjlHg0pVNdnSOagM5aBlscqlB8BiEDq4M3ybqRu2M3RMbw7TkauDuHWADcrvJMT/cIHfoh4obTe2GM7L+IaRLZLYdhgpJNndY0B7L6EI8/4VJpnjmp+z+97igTDRJAbrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hy2Ag0n3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13643C4CECF;
-	Wed, 13 Nov 2024 17:47:00 +0000 (UTC)
+	 MIME-Version:Content-Type; b=IVCjViM3jBOJzX1nSpSG3uEKPfRkuPFDQS2ECaMjHhIGC2UXKf7qhOozaLsi8rPrHqSpBAzXQL/Fx6PHUf8rH3OM5bnTF0cldJcbbIQ6pn/ovu9eVGzPQTlbTeXsbg9b9SNbuXJTFUINzJhjMNJaNOqI9eSaOFBf/OLzXFurljI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcvMZvdY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5009C4CECD;
+	Wed, 13 Nov 2024 17:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731520023;
-	bh=sp2Hn25t7hN6k+aTKbbqhD9q90LPBrBZkVKJf8hXhQA=;
+	s=k20201202; t=1731520026;
+	bh=8NjEmZoG6cs/6tWDpxDdwGePjepq2tBR7948gl6tPak=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hy2Ag0n3qR+jRMLfPsbJAOiC+wKBfeEZxk+PQg5skVRyHQ944oATib6Szx4ZZiS1q
-	 NxQLAwe8FHb4Bax6YLE2r3vDRE8i4hvnftF/tKTCiOCNC0fqK/JRVy13kRT37Q5F9Y
-	 jfdxdMY5RJVEbJOiliY9AaEfK6C+dD5L5Pj/fZDT0SFaGmwxp77YbUxvt0OsNz4oYa
-	 XueEQwuKAMSYUpi5lDltUa24qJepreGWAueDuAV1lMq2pEz8d7a6euiVTyFfa1LUed
-	 FLUeSp/M/q8DqK9ENTr5oxLyLvlZwWVD8jmHbqSmkuiSsPEXaZ5QExtpXZsEs8F3fg
-	 Z1kUU62fZRXyw==
+	b=RcvMZvdYhNoxb31xfDE2bX8Uqe7DwUIqJA+bzlmMsBbuUbrCdvsg0h5b+eGLKmzwt
+	 diFRLqyhSUUDdQTze7wTvTmP0C/kXp6VgGihsrPgymetEwBnEtf7zPmPLXSk3yLloy
+	 0jH86TOfA2VdEzR8kK8SSA8hZSqgyFC0NeZTGeVEbZf1dFohoaDnA1YGlFqHSqxeAD
+	 8dnH+bxt6e3a76z3XFQ79Q8J9wFCh4q4syfryn5XezFxd4n62XWtG2rrcWZqpTJ3Ul
+	 WtffrPHKCy9klROUpSTSFoFC22tnhHsgL4C5Ti6ziMT6/SWRaIYfhEXlCkevnBA4wI
+	 okPhUfI44fAsA==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Abel Vesa <abel.vesa@linaro.org>, Trilok Soni <quic_tsoni@quicinc.com>, 
- Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, 
- Melody Olvera <quic_molvera@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org
-In-Reply-To: <20241112003544.2807368-1-quic_molvera@quicinc.com>
-References: <20241112003544.2807368-1-quic_molvera@quicinc.com>
-Subject: Re: [PATCH] regulator: dt-bindings: qcom,rpmh: Correct PM8550VE
- supplies
-Message-Id: <173152002055.471967.17159431728276837850.b4-ty@kernel.org>
-Date: Wed, 13 Nov 2024 17:47:00 +0000
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241112081637.40962-1-zhangjiao2@cmss.chinamobile.com>
+References: <20241112081637.40962-1-zhangjiao2@cmss.chinamobile.com>
+Subject: Re: [PATCH] spi: Delete useless checks
+Message-Id: <173152002535.472003.992214417304041252.b4-ty@kernel.org>
+Date: Wed, 13 Nov 2024 17:47:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,20 +58,19 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-355e8
 
-On Mon, 11 Nov 2024 16:35:44 -0800, Melody Olvera wrote:
-> The PM8550VE has two more supplies (s1-8) than the PM8550VS (s1-6),
-> so move to a correct if:then: clause to accurately reflect that.
+On Tue, 12 Nov 2024 16:16:37 +0800, zhangjiao2 wrote:
+> Since "res" will never be null, just delete this check.
 > 
 > 
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] regulator: dt-bindings: qcom,rpmh: Correct PM8550VE supplies
-      commit: 21ccadc64dae18bd092f1255bdbaf595f53381d5
+[1/1] spi: Delete useless checks
+      commit: b1e7828cf9343e1da6c575f3ebaa0f511d8b8cbd
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
