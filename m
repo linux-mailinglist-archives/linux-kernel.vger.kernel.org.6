@@ -1,198 +1,123 @@
-Return-Path: <linux-kernel+bounces-408115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D9F9C7AB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:08:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1E19C7AA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:05:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2B5EB35B21
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:05:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 628D31F23ACD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7CE204010;
-	Wed, 13 Nov 2024 18:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF583204001;
+	Wed, 13 Nov 2024 18:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aLL26I2b"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KR6hJsPO"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A77204005
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245E71FAC4F
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731521002; cv=none; b=uRF/OucmrvKi3GCgTDXIm9LfXsk0SEZ5XkbHYS0ayziIt1Qv9P1+P2v7QRHSD6s0OFYnXSIc/tNdc+NazA3vHOnQqwXbV5yBM3EgoDcCXVwC9i7ajHbgyRb6k/ZtevVhblDLZSZIu2tcEzrRXFiY88FoEPEL3H1mExQulnbTPaI=
+	t=1731520993; cv=none; b=mPLCNIgGuxENLATkvZmlXvMsL5pcVgfJB2ax/6Ei5b2sLO0+E3/qpVRVtCg27/IaKdW5+ZLn9ykn9SW80amsNWm4lv1nh9dSV1VWOWkELCM8fp9/paE+hsUS0lI08wd8RV5rpQIiOdrDsTYd/Vhlreq20ZJDtqp59CXjoyLoXHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731521002; c=relaxed/simple;
-	bh=0dYtlNaE02KMPwPbNkOEG7D0Ej3fMxzfA77E8dWng18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nqXohfr9BlSJ7tvxVYT4gESOXzwy9E2kRaXLFwIVJ2Uj1Z8+3t4Sebvl39jS5/eXrJ3nWgAxZWJdKAtcQV+KTCjGOa6IzCJo1zU5DG8tkz4Ls2G7WGKpMvuUbl3P4NIAZVZprKAbVQ5LcjSHSsQlQhHUEQzdrPo1yB1YPSMiNZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aLL26I2b; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADH1ZEi025412;
-	Wed, 13 Nov 2024 18:03:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bYtOOA3mW6Ph2dWGJf/8a1jSF1QmnYitbVPB+AORG4w=; b=aLL26I2bikDogtDH
-	fT2fQU1ZA8fAFhtHvZPGG6AeVPFCzKj9hL5xUnzqo0Bj0gqJHGYaHOUdHKmASg+4
-	DjHSV6tbbp7v8dyqqMvVtRqFtztapVjIBjC9PoHLB7B4HHhkF7zNX9x7U24Gdf0+
-	DvO6YZXxZ0DnFHx8FVOmp+78fmurjaOR4QDfPGhvahPmQnJo03MCQy2VBUOsuNQi
-	Sj2QYrZB6vMelIH8iq5X8jZet++FEYrDczdM6RLL0CyXPImAfJfQhM5vgupdjhq7
-	r7WJDUsCDp26+j3qm7ZcYJ3/zWcfMnMlIXyTEa+yfmf5PGc9dj466iE5hF2bB4aZ
-	ps7G7A==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vgqqtqwr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 18:03:00 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ADI2wk7004079
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 18:02:58 GMT
-Received: from [10.71.109.85] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 13 Nov
- 2024 10:02:58 -0800
-Message-ID: <6a8ba993-9413-40ad-8c91-0cf268798585@quicinc.com>
-Date: Wed, 13 Nov 2024 10:02:49 -0800
+	s=arc-20240116; t=1731520993; c=relaxed/simple;
+	bh=2KYJSFZa2rkc4gUH/rB7zZ4YQG91sa9Zmc5etZOr//o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=smb1Wkpa8NWcBpnOJZuvKFscdABmEBnV4Gy/iXZioJJWHNnVJEgDkM3KCWcM1rp0+Sa3f2vdwLlXVeNKoBYfYmSPsGO0qPS8rZSXP1q8LriWj3NK9sP0TyMkbo09+WxOFXitgM9V2dkWXweP/fxN1mu57RQYUQl3wPpWMNT7f24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KR6hJsPO; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <fec1ffc1-fae0-42b4-bbfc-0f034f020a52@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731520988;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0PeLvqN3htdekg2b59KDDI4eZUFyY4TFDpxUYC3B1m4=;
+	b=KR6hJsPOkitNngE0RFwLfnLlBpS6jgwAiDhOURav89u5hqTfJkqxZ2cqRTmFV/A9xfJygp
+	3qX8gjERAW2wvZANpv09o9rRs5x4pyTcosjO8NuIG/A8eqCyZXmW8y5QdarwVA4Uhd3vYF
+	12cLGoldtbnfAW9ti3pV4ihRXzqTq8w=
+Date: Wed, 13 Nov 2024 18:02:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma-mapping: Save base/size instead of pointer to shared
- DMA pool
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring
-	<robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski
-	<m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>
-CC: <iommu@lists.linux.dev>, <linux-renesas-soc@lists.infradead.org>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <f8cef6845a6141f0277e31a71fe153612daae776.1731436631.git.geert+renesas@glider.be>
+Subject: Re: [PATCH net v4 6/7] octeon_ep_vf: add protective null checks in
+ napi callbacks for cn9k cards
+To: Shinas Rasheed <srasheed@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: hgani@marvell.com, sedara@marvell.com, vimleshk@marvell.com,
+ thaller@redhat.com, wizhao@redhat.com, kheib@redhat.com, egallen@redhat.com,
+ konguyen@redhat.com, horms@kernel.org,
+ Veerasenareddy Burru <vburru@marvell.com>,
+ Satananda Burla <sburla@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+References: <20241113111319.1156507-1-srasheed@marvell.com>
+ <20241113111319.1156507-7-srasheed@marvell.com>
 Content-Language: en-US
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-In-Reply-To: <f8cef6845a6141f0277e31a71fe153612daae776.1731436631.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20241113111319.1156507-7-srasheed@marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eu28F4D7NQKeyjXetHBQsxyFMsnBtuw5
-X-Proofpoint-GUID: eu28F4D7NQKeyjXetHBQsxyFMsnBtuw5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1011
- impostorscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 mlxlogscore=999
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411130149
+X-Migadu-Flow: FLOW_OUT
 
-
-On 11/12/2024 10:39 AM, Geert Uytterhoeven wrote:
-> On RZ/Five, which is non-coherent, and uses CONFIG_DMA_GLOBAL_POOL=y:
->
->     Oops - store (or AMO) access fault [#1]
->     CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-rc1-00015-g8a6e02d0c00e #201
->     Hardware name: Renesas SMARC EVK based on r9a07g043f01 (DT)
->     epc : __memset+0x60/0x100
->      ra : __dma_alloc_from_coherent+0x150/0x17a
->     epc : ffffffff8062d2bc ra : ffffffff80053a94 sp : ffffffc60000ba20
->      gp : ffffffff812e9938 tp : ffffffd601920000 t0 : ffffffc6000d0000
->      t1 : 0000000000000000 t2 : ffffffffe9600000 s0 : ffffffc60000baa0
->      s1 : ffffffc6000d0000 a0 : ffffffc6000d0000 a1 : 0000000000000000
->      a2 : 0000000000001000 a3 : ffffffc6000d1000 a4 : 0000000000000000
->      a5 : 0000000000000000 a6 : ffffffd601adacc0 a7 : ffffffd601a841a8
->      s2 : ffffffd6018573c0 s3 : 0000000000001000 s4 : ffffffd6019541e0
->      s5 : 0000000200000022 s6 : ffffffd6018f8410 s7 : ffffffd6018573e8
->      s8 : 0000000000000001 s9 : 0000000000000001 s10: 0000000000000010
->      s11: 0000000000000000 t3 : 0000000000000000 t4 : ffffffffdefe62d1
->      t5 : 000000001cd6a3a9 t6 : ffffffd601b2aad6
->     status: 0000000200000120 badaddr: ffffffc6000d0000 cause: 0000000000000007
->     [<ffffffff8062d2bc>] __memset+0x60/0x100
->     [<ffffffff80053e1a>] dma_alloc_from_global_coherent+0x1c/0x28
->     [<ffffffff80053056>] dma_direct_alloc+0x98/0x112
->     [<ffffffff8005238c>] dma_alloc_attrs+0x78/0x86
->     [<ffffffff8035fdb4>] rz_dmac_probe+0x3f6/0x50a
->     [<ffffffff803a0694>] platform_probe+0x4c/0x8a
->
-> If CONFIG_DMA_GLOBAL_POOL=y, the reserved_mem structure passed to
-> rmem_dma_setup() is saved for later use, by saving the passed pointer.
-> However, when dma_init_reserved_memory() is called later, the pointer
-> has become stale, causing a crash.
->
-> E.g. in the RZ/Five case, the referenced memory now contains the
-> reserved_mem structure for the "mmode_resv0@30000" node (with base
-> 0x30000 and size 0x10000), instead of the correct "pma_resv0@58000000"
-> node (with base 0x58000000 and size 0x8000000).
->
-> Fix this by saving the needed reserved_mem structure's contents instead.
->
-> Fixes: 8a6e02d0c00e7b62 ("of: reserved_mem: Restructure how the reserved memory regions are processed")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+On 13/11/2024 11:13, Shinas Rasheed wrote:
+> During unload, at times the OQ parsed in the napi callbacks
+> have been observed to be null, causing system crash.
+> Add protective checks to avoid the same, for cn9k cards.
+> 
+> Fixes: cb7dd712189f ("octeon_ep_vf: Add driver framework and device initialization")
+> Signed-off-by: Shinas Rasheed <srasheed@marvell.com>
 > ---
->  kernel/dma/coherent.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
->
-> diff --git a/kernel/dma/coherent.c b/kernel/dma/coherent.c
-> index ff5683a57f77126d..3b2bdca9f1d4b027 100644
-> --- a/kernel/dma/coherent.c
-> +++ b/kernel/dma/coherent.c
-> @@ -330,7 +330,8 @@ int dma_init_global_coherent(phys_addr_t phys_addr, size_t size)
->  #include <linux/of_reserved_mem.h>
->  
->  #ifdef CONFIG_DMA_GLOBAL_POOL
-> -static struct reserved_mem *dma_reserved_default_memory __initdata;
-> +static phys_addr_t dma_reserved_default_memory_base __initdata;
-> +static phys_addr_t dma_reserved_default_memory_size __initdata;
->  #endif
->  
->  static int rmem_dma_device_init(struct reserved_mem *rmem, struct device *dev)
-> @@ -376,9 +377,10 @@ static int __init rmem_dma_setup(struct reserved_mem *rmem)
->  
->  #ifdef CONFIG_DMA_GLOBAL_POOL
->  	if (of_get_flat_dt_prop(node, "linux,dma-default", NULL)) {
-> -		WARN(dma_reserved_default_memory,
-> +		WARN(dma_reserved_default_memory_size,
->  		     "Reserved memory: region for default DMA coherent area is redefined\n");
-> -		dma_reserved_default_memory = rmem;
-> +		dma_reserved_default_memory_base = rmem->base;
-> +		dma_reserved_default_memory_size = rmem->size;
->  	}
->  #endif
->  
-> @@ -391,10 +393,10 @@ static int __init rmem_dma_setup(struct reserved_mem *rmem)
->  #ifdef CONFIG_DMA_GLOBAL_POOL
->  static int __init dma_init_reserved_memory(void)
->  {
-> -	if (!dma_reserved_default_memory)
-> +	if (!dma_reserved_default_memory_size)
->  		return -ENOMEM;
-> -	return dma_init_global_coherent(dma_reserved_default_memory->base,
-> -					dma_reserved_default_memory->size);
-> +	return dma_init_global_coherent(dma_reserved_default_memory_base,
-> +					dma_reserved_default_memory_size);
->  }
->  core_initcall(dma_init_reserved_memory);
->  #endif /* CONFIG_DMA_GLOBAL_POOL */
-Hi Geert,
+> V4:
+>    - No changes
+> 
+> V3: https://lore.kernel.org/all/20241108074543.1123036-7-srasheed@marvell.com/
+>    - Added back "Fixes" to the changelist
+> 
+> V2: https://lore.kernel.org/all/20241107132846.1118835-7-srasheed@marvell.com/
+>    - Split into a separate patch
+>    - Added more context
+> 
+> V1: https://lore.kernel.org/all/20241101103416.1064930-4-srasheed@marvell.com/
+> 
+>   drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_cn9k.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_cn9k.c b/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_cn9k.c
+> index 88937fce75f1..f1b7eda3fa42 100644
+> --- a/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_cn9k.c
+> +++ b/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_cn9k.c
+> @@ -273,8 +273,14 @@ static irqreturn_t octep_vf_ioq_intr_handler_cn93(void *data)
+>   	struct octep_vf_oq *oq;
+>   	u64 reg_val;
+>   
+> -	oct = vector->octep_vf_dev;
+> +	if (!vector)
+> +		return IRQ_HANDLED;
 
-Thanks for providing a fix!
+And again, this function is irq handler, which is
+called from octep_vf_ioq_intr_handler() only if ioq_vector was properly
+resolved. This check makes no sense here.
 
-I also looked around more to see if there are more places that
-could store a stale reference to rmem but I didn't see any others,
-so I think we are good!
+The same goes to the next patch.
 
-I have given my "reviewed-by" tag as well.
+> +
+>   	oq = vector->oq;
+> +	if (!oq)
+> +		return IRQ_HANDLED;
+> +
+> +	oct = vector->octep_vf_dev;
+>   	/* Mailbox interrupt arrives along with interrupt of tx/rx ring pair 0 */
+>   	if (oq->q_no == 0) {
+>   		reg_val = octep_vf_read_csr64(oct, CN93_VF_SDP_R_MBOX_PF_VF_INT(0));
 
-Thank you!
-Oreoluwa
 
