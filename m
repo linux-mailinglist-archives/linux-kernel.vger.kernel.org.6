@@ -1,141 +1,221 @@
-Return-Path: <linux-kernel+bounces-407160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8ED9C6982
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:52:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F6A9C6985
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:52:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184CF1F23D59
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:52:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46131F21CA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBB017C992;
-	Wed, 13 Nov 2024 06:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3EA183CAE;
+	Wed, 13 Nov 2024 06:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4KcFNJ+b"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTi80KXP"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8F417624F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C6D14F9FD;
+	Wed, 13 Nov 2024 06:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731480760; cv=none; b=uB+4r2EqaREnqgvLsG0LUqDEw556do08HxNNkJDkhb0JubaZ4eVH6pcFC7CD+D4RKpeij+gPCpJ8uBUMo8IzNhRmvi5Wxub1+5QaetrYp0cIgtW6nJjgQyxAArqC/wkbz1M7NexGzvEEIPEFdxHdMUkLtKklgWpzelDAXy8qq8w=
+	t=1731480761; cv=none; b=k2sEgqJBig7qK9JOa2w9lq8PmCyHcgUwrW9rQMn5UucZBUbAAaSBgL55nvLAMtcDxkv90CsThTJbCwvqWoAfJYiRu7AyjTSz5+pUIQT2BHK0BrJIvjL3ogTx86HGsS8gdZ1gO2uWyMCzWUjRGFaKvX2bQQyFlNckeWBy9x/MXbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731480760; c=relaxed/simple;
-	bh=LwqiW9qJSlLHyTtWmYjgORsQC1OX5FX1F9yNKdjBNjc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=EyryH8yCwerrlThXkq4xPG25xJDfyYRuxhpIFWJgMC3GlnUeB4zYWxeMGJHRVN1BZhi3SEDBDlUuOwWpdIPoRGBEHUn3vdI1CwiJTd32Tz5fOkqwVfrW/tSgiKM+M2gOVj6ipnXQAS2jiN0NoU8/6KwAKQFEWoYz7khD3tYojek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4KcFNJ+b; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e5f533e1c2so4099855b6e.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 22:52:38 -0800 (PST)
+	s=arc-20240116; t=1731480761; c=relaxed/simple;
+	bh=jkjJaIQ+EA1/05vbyJoh98TijdBsx+l6/gXwUUtu1X0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h5lv1FYtwZ+OQ7AfN1ZNmTy2HRNgYCjB9zO07FAfrcC0sJOCoUV1lywipoe3WUVDSl1kHTlw8gQRQB6bXV1YOUzN4gw424ZVS9tU7ZBfewEnVKwbN7T/AngUs2AyqjYayxtIngwyet6NwnTnjubl9qCMGrrfIBEP3qSIHnDEsX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NTi80KXP; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e4244fdc6so5526498b3a.0;
+        Tue, 12 Nov 2024 22:52:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731480757; x=1732085557; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fGhFZqKZR/ZhRGabJrEH+0qwfjhlpjiKCYeavpG2VVE=;
-        b=4KcFNJ+bMp1LQHyiYmC9du5WrzEi+MRTAOV8zzWiVTxMTKlky6zBOAEJpK8+nvK4XG
-         T6Ht5sF4cyvdQFnp+qWzrJbgsiTAuPJCPXr1j/m+tFbeVPA06lAx+Yjz4FHkGXougqG1
-         JFQIEFGl3hbvoxIPnLwv/cLOT0+mVXJhBgBBph9CQqvWWmg4fiNLtGgdLhe16WXO1ISY
-         yJek/DG3MdSO1ctx1RCmhuDoCq2qckGzMD416ZSo97sJbb3TyTPQ1JTKfTClwyEjO6Ti
-         fqbPVJJeFijxlNvMeVa1SWcuwo4u621WSB+FawxMf5dECt2sa+kofQTURNQ1IeUgR0Ch
-         LhYQ==
+        d=gmail.com; s=20230601; t=1731480759; x=1732085559; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=wf+S+tZe/wHlKzZn00p8+4d24TMmVCLHBULrBqGl/FY=;
+        b=NTi80KXPWjQjqqlBUlj5ZbIfaOevMi++UYlolQ+rXpKl9iImiHT5aLo1BBZpRYXtVd
+         viUo4efAKrsR2qsO+CvhU03y4Atraw7oGrfZsUnFo+cy3TO/T0+GN7naj31yDSFbOiig
+         jF1FR54WRjmjSQ3uSEIBnAurbWQtoPfxt9rD5bavMfq/dDzmaCQJVC2jTKBK8OLRpFce
+         dmdXRqaOKdIy3nvveWipslHQ9hIAMRZPf25QiqH8u9nZsReLljlYnnUH2gFV88fdyDn1
+         ICuNobHBcYBwyMNKOsLimRbjDXT4KEgF+3rPcPVSBdIgxMqGQcE4vh82BOaHMPuSdMRA
+         yEDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731480757; x=1732085557;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fGhFZqKZR/ZhRGabJrEH+0qwfjhlpjiKCYeavpG2VVE=;
-        b=g3WPrSdOsO4hRGxgWw2uSDFc6p22jdpaCa5YmLUJ2q0b2yvVxcHio/+IkMpCSbpqfK
-         c1XYZm7yRisZt0R9VQhCuRebWjrBxdhV5bt1O9eLON7Pt5kgmcCdmN022JrwuLyFFmwq
-         x0StyeRX/nH7FjxiBoC7l7zmZ3T6wMamLB1hy+nKaOvFp10pQD2cHKuo2UOTRA5tDK7R
-         9QB0tOJd9h11xCjwk1OOnQW/Gk+mHV6yN6evTqa3AgU+gX1vq5EmvYaz+WdgXtZ4o0pD
-         tUTvK/+GxciUYQ9PPEYbdmCM9TBtqSijYapP2manLNMso6PK4yA/0PMYw5fZYQQb/ymf
-         JODQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfcXUcOfl9CwBThzjSA3PmVtC/nG+JAb1Ljt3Iep+pJeyE/Gnqv2rvMpy66SDJhFj/5uGWslCLb6nMLhg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYPkJaqPKMW1GvkWLmCUnYkRPZnvpYiA/CTIjw2PtA0pKWQYk8
-	vn6sFTMwoK5v1c4pGvBi+D7uYAKESu84lH2YtVhGwS/hmLeDfgqlSfkaprnvrQ==
-X-Google-Smtp-Source: AGHT+IHdFbj5No4qa+yCdLxViIJNf9IDXVZV0S8fnMlAUmokHxO5o/bcmslNN/vBlSeSBSYRaX38aQ==
-X-Received: by 2002:a05:6870:e99f:b0:277:f301:40d5 with SMTP id 586e51a60fabf-295602f1396mr16219291fac.31.1731480757477;
+        d=1e100.net; s=20230601; t=1731480759; x=1732085559;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wf+S+tZe/wHlKzZn00p8+4d24TMmVCLHBULrBqGl/FY=;
+        b=SM1WbgWpzo3I6b1AeWWR7qyoQjzuqvkvoFazwuthYwi1eAuTT6z4ePRIkqE5ebnmvC
+         y4XEO62Vjj/S24abw3ATpNj+qughnK4PHvNCRcTHamqHOH/womC9UUNhkhjjKb8e7fuU
+         yFkt8SL9riSLGrS9XSl3IP3AZD7CkP6tY0T6hkYbHakfab6PiRq5xbVNs6991xQtojaV
+         opGk+rdA9la8b+Mg3BVpmX2Ej2yhZFSuKPV2zP2aXkzF6SaD7vHj2DBWrr6awtXGEpRF
+         jSRtSCbwsqXHjun1A0HNPeVOBKYQhtxgi5a6eFdW0Zr8WXivtzwl9B2DI+QnN/TYtzkI
+         W2bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUTQIcL2lmZ+UUxp4cU1XG+RRZurWBD+0Lq5F5N4AtZxTTp+oMYTw4YPahm3ZY0tM+mcn/AusxpxXDZMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx94MUS9CkSJRU4IjCEf9PhYE0580MORKdmrRw+oWrINC82bQ1a
+	u9Xy5iobZs7N5mcgCjv9AQNArV/UvOcyYNzRctuU+aFhJvAS4R9A
+X-Google-Smtp-Source: AGHT+IEmLGzhABx9V8ofy+d0VaMdV8xwLzzgrYgCIUFhy23r2L0fHi/N/a439u4EIlNsw9ScyY75ng==
+X-Received: by 2002:aa7:8883:0:b0:71e:69e:596b with SMTP id d2e1a72fcca58-72413362881mr26838156b3a.17.1731480758536;
+        Tue, 12 Nov 2024 22:52:38 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078aaa21sm12406029b3a.51.2024.11.12.22.52.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
         Tue, 12 Nov 2024 22:52:37 -0800 (PST)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a60079dc4sm344747a34.56.2024.11.12.22.52.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 22:52:36 -0800 (PST)
-Date: Tue, 12 Nov 2024 22:52:24 -0800 (PST)
-From: Hugh Dickins <hughd@google.com>
-To: Suren Baghdasaryan <surenb@google.com>
-cc: Hugh Dickins <hughd@google.com>, akpm@linux-foundation.org, 
-    willy@infradead.org, liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, 
-    mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, 
-    oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com, 
-    peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, 
-    brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, 
-    minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
-    souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v2 4/5] mm: make vma cache SLAB_TYPESAFE_BY_RCU
-In-Reply-To: <CAJuCfpEG7hhh+mHbZe_9duk2kbFvv_NeGfBqw0JBxiHK-9yWxQ@mail.gmail.com>
-Message-ID: <54394536-da24-d01d-e4a7-2ece22b1ddab@google.com>
-References: <20241112194635.444146-1-surenb@google.com> <20241112194635.444146-5-surenb@google.com> <CAJuCfpFd2_7q6pi1=G9B0VW5ynCWhkkDDA3PU293FPtT_CcBQA@mail.gmail.com> <6d0c5c2d-2963-489a-2376-8edaeb064de3@google.com>
- <CAJuCfpEG7hhh+mHbZe_9duk2kbFvv_NeGfBqw0JBxiHK-9yWxQ@mail.gmail.com>
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <041a52c7-ac0b-4a78-8b39-4fc4ac4d2fd2@roeck-us.net>
+Date: Tue, 12 Nov 2024 22:52:36 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463770367-550729047-1731480756=:2748"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hwmon: (core) Avoid ifdef in C source file
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Jean Delvare <jdelvare@suse.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241113-hwmon-thermal-v1-1-71270be7f7a2@weissschuh.net>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241113-hwmon-thermal-v1-1-71270be7f7a2@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 11/12/24 20:39, Thomas Weißschuh wrote:
+> Using an #ifdef in a C source files to have different definitions
+> of the same symbol makes the code harder to read and understand.
+> Furthermore it makes it harder to test compilation of the different
+> branches.
+> 
+> Replace the ifdeffery with IS_ENABLED() which is just a normal
+> conditional.
+> The resulting binary is still the same as before as the compiler
+> optimizes away all the unused code and definitions.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+> This confused me a bit while looking at the implementation of
+> HWMON_C_REGISTER_TZ.
+> ---
+>   drivers/hwmon/hwmon.c | 21 ++++++---------------
+>   1 file changed, 6 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+> index 9c35c4d0369d7aad7ea61ccd25f4f63fc98b9e02..86fb674c85d3f54d475be014c3fd3dd74c815c57 100644
+> --- a/drivers/hwmon/hwmon.c
+> +++ b/drivers/hwmon/hwmon.c
+> @@ -147,11 +147,6 @@ static DEFINE_IDA(hwmon_ida);
+>   
+>   /* Thermal zone handling */
+>   
+> -/*
+> - * The complex conditional is necessary to avoid a cyclic dependency
+> - * between hwmon and thermal_sys modules.
+> - */
+> -#ifdef CONFIG_THERMAL_OF
+>   static int hwmon_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
+>   {
+>   	struct hwmon_thermal_data *tdata = thermal_zone_device_priv(tz);
+> @@ -257,6 +252,9 @@ static int hwmon_thermal_register_sensors(struct device *dev)
+>   	void *drvdata = dev_get_drvdata(dev);
+>   	int i;
+>   
+> +	if (!IS_ENABLED(CONFIG_THERMAL_OF))
+> +		return 0;
+> +
+>   	for (i = 1; info[i]; i++) {
+>   		int j;
+>   
+> @@ -285,6 +283,9 @@ static void hwmon_thermal_notify(struct device *dev, int index)
+>   	struct hwmon_device *hwdev = to_hwmon_device(dev);
+>   	struct hwmon_thermal_data *tzdata;
+>   
+> +	if (!IS_ENABLED(CONFIG_THERMAL_OF))
+> +		return;
+> +
+>   	list_for_each_entry(tzdata, &hwdev->tzdata, node) {
+>   		if (tzdata->index == index) {
+>   			thermal_zone_device_update(tzdata->tzd,
 
----1463770367-550729047-1731480756=:2748
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+There is no dummy function for thermal_zone_device_update().
+I really don't want to trust the compiler/linker to remove that code
+unless someone points me to a document explaining that it is guaranteed
+to not cause any problems.
 
-On Tue, 12 Nov 2024, Suren Baghdasaryan wrote:
-> On Tue, Nov 12, 2024 at 9:08=E2=80=AFPM Hugh Dickins <hughd@google.com> w=
-rote:
-> > On Tue, 12 Nov 2024, Suren Baghdasaryan wrote:
-> > >
-> > > Thinking about this some more, I don't think this works. I'm relying
-> > > on vma_start_read() to stabilize the vma, however the lock I'm taking
-> > > is part of the vma which can be reused from under us. So, the lock I'=
-m
-> > > taking might be reinitialized after I take the lock...
-> > > I need to figure out a way to stabilize the vma in some other manner
-> > > before taking this lock.
-> >
-> > (I'm not paying attention and following the patches, I just happened
-> > to notice this remark: forgive me if I'm out of context and have
-> > misunderstood, but hope this might help:)
-> >
-> > But this is exactly the problem SLAB_TYPESAFE_BY_RCU was invented for.
-> > You just have to be careful that the locks are initialized only when th=
-e
-> > slab is first created (allocated from buddy), not reinitialized wheneve=
-r
-> > a new object is allocated from that slab.
->=20
-> Hi Hugh!
-> I'm looking into SLAB_TYPESAFE_BY_RCU implementation and trying to
-> figure out if initializing the lock in the ctor() of the cache as
-> mentioned in the comment here:
-> https://elixir.bootlin.com/linux/v6.12-rc7/source/include/linux/slab.h#L1=
-27
-> would help my case. I assume that's what you are hinting here?
+Guenter
 
-Yes, if I'm "hinting", it's because offhand I forget the right names:
-"ctor", yes, that sounds right.
+> @@ -293,16 +294,6 @@ static void hwmon_thermal_notify(struct device *dev, int index)
+>   	}
+>   }
+>   
+> -#else
+> -static int hwmon_thermal_register_sensors(struct device *dev)
+> -{
+> -	return 0;
+> -}
+> -
+> -static void hwmon_thermal_notify(struct device *dev, int index) { }
+> -
+> -#endif /* IS_REACHABLE(CONFIG_THERMAL) && ... */
+> -
+>   static int hwmon_attr_base(enum hwmon_sensor_types type)
+>   {
+>   	if (type == hwmon_in || type == hwmon_intrusion)
+> 
+> ---
+> base-commit: 3022e9d00ebec31ed435ae0844e3f235dba998a9
+> change-id: 20241113-hwmon-thermal-2d2da581c276
+> 
+> Best regards,
 
-Just grep around for examples of how it is used: there must be plenty
-now. but anon_vma is what it was first used for.
-
-But given the title of this patch, I'm surprised it's new to you.
-
-Hugh
----1463770367-550729047-1731480756=:2748--
 
