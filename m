@@ -1,176 +1,156 @@
-Return-Path: <linux-kernel+bounces-407246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2169C6ABD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:41:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C47F9C6AC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:42:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2149D281C4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:41:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A081A1F245D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9416418B478;
-	Wed, 13 Nov 2024 08:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2605518BBBD;
+	Wed, 13 Nov 2024 08:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MYamTXmc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lhNQCkKs"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E046189F33;
-	Wed, 13 Nov 2024 08:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1983718B484;
+	Wed, 13 Nov 2024 08:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731487296; cv=none; b=EF0caYKcMtgshcz8v/Ij77irA5zbMPTut4UXiJ41Zjpji9J91FSFwuYUfURGy6B1Qd6wN4RnvkO55CcqkhPdSRxU9+QYH5jTw3INaUyouUHP1t61L3BY2hOJlGtSIIsq/dinP3uOhrLvpI83ZgCWfo5YcptOADNracOn2S8RLKc=
+	t=1731487299; cv=none; b=tgkLhLtait3haFROy+VccgkDGU0Q9u/ZwxE1S5EAvEmXGMw9YPbOlcVKSIQWFwTMRD1gQaQXkidoX3Y7W9SwHPWL8Ka8shaV0juDrO9hKMUtztO1rVg0UYdolKKSY38YDQhfH2QrbUWFZ1c3et6Ph1eTasPQa4u1icWgKJ3a8eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731487296; c=relaxed/simple;
-	bh=3Xy7RmvnJhjsInhzwzGEhO79cRYr2kKRCLd3jTQyV4c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iMAVeB3CDJjpMMSU9M8fFTDre8LEO8e+RN5sgYSNUKj8TyInTg75jvMJjU1mAkC5PEQsGRBfLX9BIr30ktaZQTM0GIU+uCZIXj3qZSXsQ6oa6+6ZWGrVUI4SKZvUywXokotZdocWOSe4tjdljsc8CIWMUqoxPx1HpmAOsuXuaP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MYamTXmc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACMUEOP011057;
-	Wed, 13 Nov 2024 08:41:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JIiSOxCsrV9+my02m4jm+bEu5NWrTHZZqCu+q0C1YYQ=; b=MYamTXmcO2HxjNEm
-	Kf3v4EXSr/w4gsxRKaOXnwcftRLAGI7ldXKy91u+BC9QEvZ+kgxxCM19/5bI67yx
-	ZVUlxb1YhKI29bTuqb/cdkHdsmT5cTI7l+aO007jn5Hbiy+cadUkMZmd0gnFvllZ
-	8LMoFa2w2V/wnCF8fTBXoZFthF9YIHwlTRy6PeWMlpJXhzY293lMwzzG6vahxDz4
-	MvX/yLF6EJ5/FiVfjijRpWOZgpZY+g3a5nkCjQuKxBY4GiMfVvU/nirhJuWYdqNp
-	q25Ito7xfsw+Y/LverX7vI8Hedg2zBesew5+ONsPxNEYoAC11lZrB2aULhrYNyGe
-	wufXSg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42sxpqj7xt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 08:41:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AD8fOx1012940
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 08:41:24 GMT
-Received: from [10.216.46.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 13 Nov
- 2024 00:41:19 -0800
-Message-ID: <02ddd6d3-283c-6e3d-ed00-37f18925c5f5@quicinc.com>
-Date: Wed, 13 Nov 2024 14:11:16 +0530
+	s=arc-20240116; t=1731487299; c=relaxed/simple;
+	bh=coGrNgoWkLMHBfiIuhn/xIYu0/a/0dOqEzIaEbp6e4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EjRp8C5SLeLp1+iikWA+CLosojC9sJue750d30haFlaRYEbNhbvgea7SIdLcqwfnCMslcxuMlj4cOime86o8xNA0h0UKUsedY1348vQLlZRbqyBJvQOKfUyvNC0B4D8/pM29zoBnEozWiZDqpS5Z1YUFJH3JMhWEteJDGA4cWnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lhNQCkKs; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c7edf2872so3830915ad.1;
+        Wed, 13 Nov 2024 00:41:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731487297; x=1732092097; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9QcuWZIztgNxUKNlP2X7zVrrT6cEWzHq8P6f0ogdK94=;
+        b=lhNQCkKslCK4PeKhqo2Nw56TrOFduSPyGvLO7npfwlQujdOYU0WkNGbLK+qngldJ4Q
+         K/zv95Bv9VebIqlI8DXsEpqlfuLSUxrNX79rHBg/yk2YA4aJQnbedMxMAqg5s1d1HcId
+         BoxvCHPiUfARSDvj/7+2xrEHZKAwBM+KlapAZcfnbfR4KO0zTLgDXHdBohzjMriBcH32
+         gwhxPuzom1fvljD6TPd9WiZO/bLfw0fANx5M/OAGwUuPg1MKWmgGu4CQBi6rYZPBEqYy
+         WwGUFgmRMrdvAYvuUW9/WofRTvwaBRa29KcCEGGiftqQsFbazv0stsTxpYeSzZlRgvq4
+         ElKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731487297; x=1732092097;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9QcuWZIztgNxUKNlP2X7zVrrT6cEWzHq8P6f0ogdK94=;
+        b=i7aRcgu1FkXgkfOgnOdjtRjdYv7WbYMooqW/uHgV21lmhiTHw8rTSh+t0V8rs0VLqr
+         kF5du8khyAitgZPi4En4kXz+lTxcIe4OiMa/Oyt3OyQqkE81AOuCNC8iWMPNFuTkKF0M
+         UA4Lmm7WU2LxkfVOzfSFfEADlGvdaohUYrMYuJ4gwMdkWv5OTOL4NAYpPlXkOXJM9+8y
+         vjMknhZhLeUsRXm4QzTytxPSm0MX5XuNmPOeF0bpRTYMxLkHIbUIG09eVlATMAcrrJQ2
+         q32n9U9pInAPB3kqNCYXqlE/CSlysJqzJTYdLXIgxJLBv9Lr/O4Rb9SGdCdH1iYxnPqB
+         JqMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUge8PtIvCgaZugXGPTE4s9LeJuHJa6stLwZAl1aVJBPW53NVEzniSOsw1t43cJ8evyXCbGS46KMWAQ@vger.kernel.org, AJvYcCXkxJqVIBg6ASc/o8+4XILBvvhk18YEPRwU6449mTBDxZffMj5SN5vdIlDlLo+GNjtXaTSsmM9znb3Sdjte@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzdnl8wEGYxIxPQeezvNvi/8kprPb8X2HVxuayLk3NCmrLJKXZH
+	jSzLu6ZcJkKaKpZ3SaHk79G3XHC3MsABdz11Yvz9brE7vTZxQeh3
+X-Google-Smtp-Source: AGHT+IEe6UKfn6nbhSkb2kTrGGS/P7JCBRmHw/QfWnQj8ti6LcqoX99L5qmJubLi9ojMHupngMwDUA==
+X-Received: by 2002:a17:903:2349:b0:20c:b6cf:f465 with SMTP id d9443c01a7336-2118369d629mr290047115ad.6.1731487297121;
+        Wed, 13 Nov 2024 00:41:37 -0800 (PST)
+Received: from ?IPV6:2405:204:20ac:21b:f7dd:e473:be3f:2c8f? ([2405:204:20ac:21b:f7dd:e473:be3f:2c8f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc7e0fsm106349585ad.21.2024.11.13.00.41.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 00:41:36 -0800 (PST)
+Message-ID: <4e932421-132a-4a47-b97b-415bd232836a@gmail.com>
+Date: Wed, 13 Nov 2024 14:11:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 3/6] PCI: Add new start_link() & stop_link function ops
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] acpi: nfit: vmalloc-out-of-bounds Read in
+ acpi_nfit_ctl
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com, dave.jiang@intel.com,
+ ira.weiny@intel.com, rafael@kernel.org, lenb@kernel.org,
+ nvdimm@lists.linux.dev, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+References: <20241112052035.14122-1-surajsonawane0215@gmail.com>
+ <ZzQtOFiW1G4jAIzf@aschofie-mobl2.lan>
 Content-Language: en-US
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <andersson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        "Lorenzo
- Pieralisi" <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
-	<kw@linux.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "Rob Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor Dooley" <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        <quic_vbadigan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241112234149.GA1868239@bhelgaas>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20241112234149.GA1868239@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <ZzQtOFiW1G4jAIzf@aschofie-mobl2.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Z2rNPFeWvzQUYEJU5qxjA7hy-0nxWiCC
-X-Proofpoint-ORIG-GUID: Z2rNPFeWvzQUYEJU5qxjA7hy-0nxWiCC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- lowpriorityscore=0 malwarescore=0 spamscore=0 mlxlogscore=654 phishscore=0
- suspectscore=0 impostorscore=0 mlxscore=0 priorityscore=1501 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411130076
 
-
-
-On 11/13/2024 5:11 AM, Bjorn Helgaas wrote:
-> On Tue, Nov 12, 2024 at 08:31:35PM +0530, Krishna chaitanya chundru wrote:
->> Certain devices like QPS615 which uses PCI pwrctl framework
->> needs to configure the device before PCI link is up.
+On 13/11/24 10:08, Alison Schofield wrote:
+> On Tue, Nov 12, 2024 at 10:50:35AM +0530, Suraj Sonawane wrote:
+>> Fix an issue detected by syzbot with KASAN:
 >>
->> If the controller driver already enables link training as part of
->> its probe, after the device is powered on, controller and device
->> participates in the link training and link can come up immediately
->> and maynot have time to configure the device.
+>> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/
+>> core.c:416 [inline]
+>> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
+>> drivers/acpi/nfit/core.c:459
 >>
->> So we need to stop the link training by using stop_link() and enable
->> them back after device is configured by using start_link().
-> 
-> s/maynot/may not/
-> 
-> I think I'm missing the point here.  My assumption is this:
-> 
->    - device starts as powered off
->    - pwrctl turns on the power
->    - link trains automatically
->    - qcom driver claims device
->    - qcom needs to configure things that need to happen before link
->      train
-> The flow is this way
-      - device starts as powered off
-      - qcom controller driver probes
-      - qcom controller driver enables resources and starts link training
-      - As device is powered off link will not be up
-      - qcom/dwc driver starts enumeration even if the link is not up
-      - pci detects root complex device and creates pci_dev for it
-      - As part of pci_dev creation pwrctl frameworks comes into picture
-      - pwrctl turns on the power.
-
-The pwrctl driver is coming up only after qcom driver enables link
-training. Due to this flow we are trying add these stop_link() &
-start_link() so that before powering on the device stop the link
-training so that hw will not participate in the link training.
-Then power on the device do the required configurations and again start
-the link training.
-
-- Krishna Chaitanya.
-> but that can't be quite right because you wouldn't be able to fix it
-> by changing the qcom driver because it's not in the picture until the
-> link is already trained.
-> 
-> So maybe you can add a little more context here?
->  >> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->> ---
->>   include/linux/pci.h | 2 ++
->>   1 file changed, 2 insertions(+)
+>> The issue occurs in `cmd_to_func` when the `call_pkg->nd_reserved2`
+>> array is accessed without verifying that `call_pkg` points to a
+>> buffer that is sized appropriately as a `struct nd_cmd_pkg`. This
+>> could lead to out-of-bounds access and undefined behavior if the
+>> buffer does not have sufficient space.
 >>
->> diff --git a/include/linux/pci.h b/include/linux/pci.h
->> index 573b4c4c2be6..fe6a9b4b22ee 100644
->> --- a/include/linux/pci.h
->> +++ b/include/linux/pci.h
->> @@ -806,6 +806,8 @@ struct pci_ops {
->>   	void __iomem *(*map_bus)(struct pci_bus *bus, unsigned int devfn, int where);
->>   	int (*read)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 *val);
->>   	int (*write)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 val);
->> +	int (*start_link)(struct pci_bus *bus);
->> +	void (*stop_link)(struct pci_bus *bus);
->>   };
+>> To address this issue, a check was added in `acpi_nfit_ctl()` to
+>> ensure that `buf` is not `NULL` and `buf_len` is greater than or
+>> equal to `sizeof(struct nd_cmd_pkg)` before casting `buf` to
+>> `struct nd_cmd_pkg *`. This ensures safe access to the members of
+>> `call_pkg`, including the `nd_reserved2` array.
+> 
+> That all sounds good! A couple of coding conventions fixups suggested
+> below -
+> 
+> snip
+> 
+>> @@ -439,7 +439,7 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>>   {
+>>   	struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
+>>   	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>> -	union acpi_object in_obj, in_buf, *out_obj;
+>> +	union acpi_object in_obj, in_buf, *out_obj = NULL;
+>>   	const struct nd_cmd_desc *desc = NULL;
+>>   	struct device *dev = acpi_desc->dev;
+>>   	struct nd_cmd_pkg *call_pkg = NULL;
+>> @@ -454,8 +454,14 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>>   	if (cmd_rc)
+>>   		*cmd_rc = -EINVAL;
 >>   
->>   /*
+>> -	if (cmd == ND_CMD_CALL)
+>> -		call_pkg = buf;
+>> +	if (cmd == ND_CMD_CALL) {
+>> +		if (buf == NULL || buf_len < sizeof(struct nd_cmd_pkg)) {
+> 
+> Comparison to NULL and sizeof() usage preferred like this:
+> 	if (!buf || buf_len < sizeof(*call_pkg))
+> 
+> 
+> -snip
 >>
->> -- 
->> 2.34.1
 >>
+Thank you for the feedback and your time.
+
+I appreciate your review and coding convention insights. I have studied 
+the suggested change and updated the patch.
+
+I will test the updated patch with syzbot and submit a new version very 
+shortly.
+
+Best regards,
+Suraj Sonawane
+
 
