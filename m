@@ -1,163 +1,141 @@
-Return-Path: <linux-kernel+bounces-407403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469009C6D02
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:38:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5529C6D09
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:40:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB51C1F23AC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:38:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D3CCB29937
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7964C1FE104;
-	Wed, 13 Nov 2024 10:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385B81FE104;
+	Wed, 13 Nov 2024 10:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="D4ZHu/6S"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="TP7jCWIz"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44E91FE0E7;
-	Wed, 13 Nov 2024 10:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA111FB89A;
+	Wed, 13 Nov 2024 10:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731494296; cv=none; b=QvWNfUo8G8G74qKowAQv42LlrzxBTzhqWZDQGvDpxrhmz8EnH9/wQDbBaXrKFL9N5O6jYYYE+uWQ6Xp+Mv08/hRtK2xRd1cvjfetOCdQ8Jh1JKMMQdpnfxN46LPqnorBUCB/3UL5LNZFnqxkyXpjQTxruBdMxs1kS/INXVwl7U8=
+	t=1731494329; cv=none; b=g3jwqACMea0gympLPBP/mvMcTpPCxVfGOghT0br00FszEutI85giBfMuY2r3SLCc0iyQj1P8f3yaGzdReUoLbPlOEBdWafxuA03OYKPxjmvN4UWOt/OcHbn62cr9Tcilbe/ju1ebL2xb27N5sTTKuAtR7kA254iBUPaQkoLNQuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731494296; c=relaxed/simple;
-	bh=GgRgVOMEvS/S1I8Js/v8S2ZAzUUwA0y/X9w1hFwpWzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mJKqOWj0GwlUlO2VJE6s3XL8YbPWSa8U3eq8fF21CecKYN5ciH5dc1WYNMoGoJFOI82deUkdyHbWS6O3VgHzffH9sNoJT0NTpmPX7YhLJykNvFoBh3EKvf7G15IbEplpKt0jRhxiSOgrhx2W0ggYOntjpw58TMaHOndB3kVVnE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=D4ZHu/6S; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 55DBEE0009;
-	Wed, 13 Nov 2024 10:38:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731494292;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PnMiCNy2+Hy5BXlvmadwE+/GEldkxKYZcnFTEDBSHpA=;
-	b=D4ZHu/6S7DPFEzLUIg3ULjis4u2iaoRZcHNbwfGs0VTCInpPe/PP6cP9wWsRD18iflvAVu
-	6l3cZTrYIz++rNaV1bAiw+gMuaqmMnhSe28yGNadX9wka83/IbO+LoIJFtX1AIxfQkssKZ
-	AMtRHlUaAzD/av+a8TFSY/SxEle5WCFWBux7RP406jc0BO9HRVbPomK3IWNdUMxC+YoCAR
-	0gfmXkG16LZiIFgTqQqHHxdkLRV3ZeJeLx4Fx7KtXA5dJHakKTPhTZ+9q/xBG+GteEYjuG
-	tdAjLyr7O3r9Io/cxWrC3qjkA/muJrm9NoNa+6QEbcp/9gCFNGMMYKGrrgS9lQ==
-Date: Wed, 13 Nov 2024 11:38:08 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
- Cochran <richardcochran@gmail.com>, Radu Pirea
- <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
- Gospodarek <andy@greyhouse.net>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
- Oltean <vladimir.oltean@nxp.com>, donald.hunter@gmail.com,
- danieller@nvidia.com, ecree.xilinx@gmail.com, Andrew Lunn
- <andrew+netdev@lunn.ch>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
- Willem de Bruijn <willemb@google.com>, Shannon Nelson
- <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>, Jacob
- Keller <jacob.e.keller@intel.com>
-Subject: Re: [PATCH net-next v19 03/10] ptp: Add phc source and helpers to
- register specific PTP clock or get information
-Message-ID: <20241113113808.4f8c5a0b@kmaincent-XPS-13-7390>
-In-Reply-To: <20241112182226.2a6c8bab@kernel.org>
-References: <20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com>
-	<20241030-feature_ptp_netnext-v19-3-94f8aadc9d5c@bootlin.com>
-	<20241111150609.2b0425f6@kernel.org>
-	<20241112111232.1637f814@kmaincent-XPS-13-7390>
-	<20241112182226.2a6c8bab@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731494329; c=relaxed/simple;
+	bh=XnyK2cUNddDaNwEG52WGnzjL8TynPLpzNBm8cJx3Jmw=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=HDoZ8ejKW16buSmz+P0vZwpbxsy5zf7kDJvjmce12w2GGgkDs6MpDSP8YA78UNppGGBxktWsVBXsDEdHdCTKx3ev13NFSAC3VTrZNwU1xKiKiM7Pi/+R73kD2fcLQgDhDlrtXArm5fjG9DTrwycSBKbP1vnlwWr63bzQRGBEBPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=TP7jCWIz; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1731494319;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IF/vepkYLlzPa+ADSxysQyPEUO3lIiqkFDR8yTHUMM4=;
+	b=TP7jCWIzDHOvG6IaVPJw1zfuuw2FKJ1Bh0h2H/+0gswy1ADCLGYi2WQoTvzZ9ssMgdIryY
+	vIu232el3rCYgagbcyYlswLfXcQ2pWLLb7rBWrC6C8tlENyR7M8FHIYXDZvRiG/di/llH4
+	WMgmzq9Wwuq3+IorsKn6hlakinn3tNSpUOaxEAgo8Ow6HqCCo+i7KD/W4XpP2CdfDSQESe
+	qJto4tSlZESB1jp7tTw7La4pvWBCmrwsuagTnmmlYJ7esUk8/7JMfhqJ0HfZvTZXs6r7Wu
+	VKuw19CI5tcn5LNyZfxXC5ty+YjPXelReeTEARGVXGYe/ryfajlFwbt6MnqFNA==
+Date: Wed, 13 Nov 2024 11:38:37 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: =?UTF-8?Q?Tam=C3=A1s_Sz=C5=B1cs?= <tszucs@linux.com>
+Cc: Jonas Karlman <jonas@kwiboo.se>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, FUKAUMI Naoki
+ <naoki@radxa.com>, Chukun Pan <amadeus@jmu.edu.cn>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Enable UART8 on rock-3b
+In-Reply-To: <CA+Gksr+E-tZe4sKVNa8zpATwdTW_DiOQxOf_Jujf5SURzhSPSg@mail.gmail.com>
+References: <20241111181807.13211-1-tszucs@linux.com>
+ <20241111181807.13211-4-tszucs@linux.com>
+ <4ba81dfa-f276-4e05-b46b-92f50dbcfcc4@kwiboo.se>
+ <CA+GksrJLpeU8x-kjR1Ng3ySf+giiufCsJuBssng9qoX1PjAunA@mail.gmail.com>
+ <9330ebb370780c001fd2aaee49aec9e8@manjaro.org>
+ <CA+GksrJjDPve29Vh7ZFhM+JFp058xmXZAPeuLuFth7v=JeiH2w@mail.gmail.com>
+ <0eb19e4daf2cdf3d4a04935876c3d3b0@manjaro.org>
+ <CA+Gksr+E-tZe4sKVNa8zpATwdTW_DiOQxOf_Jujf5SURzhSPSg@mail.gmail.com>
+Message-ID: <dc628e6e50239aac65a4424738000612@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Tue, 12 Nov 2024 18:22:26 -0800
-Jakub Kicinski <kuba@kernel.org> wrote:
+Hello Tamas,
 
-> On Tue, 12 Nov 2024 11:12:32 +0100 Kory Maincent wrote:
-> > > Storing the info about the "user" (netdev, phydev) in the "provider"
-> > > (PHC) feels too much like a layering violation. Why do you need this?=
-   =20
-> >=20
-> > The things is that, the way to manage the phc depends on the "user".
-> > ndo_hwtstamp_set for netdev and phy_hwtstamp_set for phydev.
-> > https://elixir.bootlin.com/linux/v6.11.6/source/net/core/dev_ioctl.c#L3=
-23
-> >=20
-> > Before PHC was managed by the driver "user" so there was no need for th=
-is
-> > information as the core only gives the task to the single "user". This
-> > didn't really works when there is more than one user possible on the net
-> > topology. =20
->=20
-> I don't understand. I'm complaining storing netdev state in=20
-> struct ptp_clock. It's perfectly fine to add the extra info to netdev
-> and PHY topology maintained by the core.
+On 2024-11-13 11:24, Tamás Szűcs wrote:
+> On Wed, Nov 13, 2024 at 12:25 AM Dragan Simic <dsimic@manjaro.org> 
+> wrote:
+>> On 2024-11-12 22:04, Tamás Szűcs wrote:
+>> > On Tue, Nov 12, 2024 at 4:07 PM Dragan Simic <dsimic@manjaro.org>
+>> > wrote:
+>> >> Please correct me if I'm wrong, but isn't this UART supposed to be
+>> >> used for the Bluetooth part of an SDIO WiFi + Bluetooth module, in
+>> >> form of a non-standard M.2 module that Radxa sells?
+>> >
+>> > UART8 is supposed to be used for any radio module connected to the M2E
+>> > connector.
+>> > It will typically be responsible for Bluetooth or BLE but it could be
+>> > 802.15.4 or whatever. In any case, all wanting to use it will need the
+>> > uart8 node enabled.
+>> 
+>> I see, but I'm still guessing what's the actual use of enabling the
+>> UART8 when it will remain pretty much useless without the additional
+>> DT configuration, such as in the WiFi+Bluetooth DT overlay that Jonas
+>> sent a bit earlier?
+> 
+> The actual use is device enablement.
 
-Oh okay. Didn't get it the first time. I could move the PHC source with the
-phydev pointer in netdev core to avoid this.
+Hmm, I'll need to think more about how it fits together.
 
-> > > In general I can't shake the feeling that we're trying to configure=20
-> > > the "default" PHC for a narrow use case, while the goal should be=20
-> > > to let the user pick the PHC per socket.   =20
-> >=20
-> > Indeed PHC per socket would be neat but it would need a lot more work a=
-nd I
-> > am even not sure how it should be done. Maybe with a new cmsg structure
-> > containing the information of the PHC provider?
-> > In any case the new ETHTOOL UAPI is ready to support multiple PHC at the
-> > same time when it will be supported.
-> > This patch series is something in the middle, being able to enable all =
-the
-> > PHC on a net topology but only one at a time. =20
->=20
-> I understand, I don't want to push you towards implementing all that.
-> But if we keep that in mind as the north star we should try to align
-> this default / temporary solution. If the socket API takes a PHC ID
-> as an input, the configuration we take in should also be maintained
-> as "int default_phc", not pointers to things.
+>> I think that the UART8 should be enabled together with something that
+>> actually makes use of it, which in this case unfortunately cannot be
+>> automatically detected and configured, so it belongs to a DT overlay.
+>> I'll get back to this in my next response.
+> 
+> I agree, bluetooth blocks dedicated to specific modules should belong
+> to DT overlays.
+> 
+>> >> With that in mind, I see very little sense in just enabling the UART,
+>> >> without defining the entire Bluetooth interface, which AFAIK produces
+>> >
+>> > Defining a bluetooth node would hardwire idiosyncrasies of a given
+>> > radio module's Bluetooth core. Sure you could add a sleep clock, all
+>> > kind of sideband signals for wakeups, reset, power down, etc. But hey,
+>> > some will use them, some won't. I think it's undesirable and
+>> > unnecessary. You can hciattach from here and most will work just like
+>> > that. Tighter integration or anything special, module specific on top
+>> > should be handled individially, on a case-by-case basis. This is a dev
+>> > board after all. I say trick of all trades.
+>> >
+>> >> nasty looking error messages in the kernel log when there's actually
+>> >> nothing connected to the UART.
+>> >
+>> > My dmesg is clean as a whistle
+>> > root@rock-3b:~# dmesg | grep -E 'fe6c0000|ttyS0'
+>> > [    0.344818] fe6c0000.serial: ttyS0 at MMIO 0xfe6c0000 (irq = 26,
+>> > base_baud = 1500000) is a 16550A
+>> > What kind of nasty errors do you recall?
+>> 
+>> Those would be the kernel error messages produced with the Bluetooth
+>> DT configuration in place, but with no SDIO module installed.
+> 
+> These are the kernel messages related to UART8 with the uart8 DT node
+> enabled and an SDIO module installed.
 
-In fact I could remove the hwtstamp pointer from netdevice and add only the
-hwtstamp source with the phydev rcu pointer.
-We will need the phydev pointer as we don't know to which phy device belong=
- the
-PTP. Or we could also use the phyindex instead of the phydev pointer and use
-phy_link_topo_get_phy() in the hot path.
-
-> IOW I'm struggling to connect the dots how the code you're adding now
-> will be built _upon_ rather than _on the side_ of when socket PHC
-> selection is in place.
-
-I see what you mean! It is not something easy to think of as I don't really
-know how it would be implemented.
-Do you think adding simply the PHC source and the phydev pointer or index w=
-ould
-fit?=20
-
-This could be removed from netdev core when we move to socket PHC as it
-won't be necessary to save the current PHC.
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Out of curiosity, what M.2 module are you testing it with?
 
