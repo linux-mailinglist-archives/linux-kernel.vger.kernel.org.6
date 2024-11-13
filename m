@@ -1,199 +1,119 @@
-Return-Path: <linux-kernel+bounces-407631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12ED9C7059
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:13:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390169C709F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04A2BB34D72
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:07:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37870B27964
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6A81E04A2;
-	Wed, 13 Nov 2024 13:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41DF1EE010;
+	Wed, 13 Nov 2024 13:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="lM9TGnpy";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Rgb4JjIc"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoRYYZfg"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48721433CE;
-	Wed, 13 Nov 2024 13:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802B1433CE;
+	Wed, 13 Nov 2024 13:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731503224; cv=none; b=NM27Z+kZDzmA7eAfOJMRnmQ1vtEKnSNjaDwROhvJpG/84vI546ieeh5VL08YOaPmEBFiXIVCI05zCLi28f1KXP322GzeGRLjaX64P8hJvIYme6KVjUa/HbHLK4/MuQCyNsznUZ+n8zXpQrzT0YkFaown9UqEwMq0jrk39QCiy/U=
+	t=1731503291; cv=none; b=aARZLBAFqP3mFYvQoN6GOFdVUmflx5fdmwl49ATlgZzzdfZ6lpoVwkILYtaSiqAZoRs+HlFFCbzgCjChkr2PytycBmiltNINFzJ8SQEudH3IDN6a8RSrN945pY2400W97EZZbAZGd8X7Bem07cUOZ83bHe3H7vPb4PnMEzfBPhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731503224; c=relaxed/simple;
-	bh=MZJMFdLbfj2d9uYoHT71yz+7ZbhL4j2Wakq234FiW5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YuUAwBtEAUoxm+4+NuSGlxaFby85ZcXzPond5bpW0iU0YG14pZYnMK7vW54B+IKEyNH9uptNfgXs8ARYXrKHVUQm3m55uDl7zXvjduVUcDL8/FPqRjkZj+X6+kBskfv3G7OsaYGgguCHuwicrm1fHwItqFw5Cd4vEml4a2gEWTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=lM9TGnpy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Rgb4JjIc; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id 4C40F11400D8;
-	Wed, 13 Nov 2024 08:07:01 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Wed, 13 Nov 2024 08:07:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731503221;
-	 x=1731589621; bh=XTxnHJW8mR+NsXXS5qyTVOPc9MPa7KtgtkWNh0WnRtc=; b=
-	lM9TGnpyNm7sMXTgM9CVAQFM+XE1uY5vz7faZi1V5efEY1aod9aXvCwmDGHLi8n1
-	q1ejWvPT8EkSGvP0Nfhr73sz1Xh2EMgOlzIp4m6fCkfxNtK2d9l3Gs/IGuLAq/Ad
-	0My5tCx0pLDAxwUi/PAbVWn6JLvUvvVcYjLeuCDn99wGZRkj2Wy+HDe5eGAPA3VE
-	xJW6H6AcqK6dgk4d22DvYNnLB68So3t5HhKQttZVUz8jlcAD7Js7fhhc3YuksaKH
-	XxhYoAGcLyAKKhRzB/B07JDnse0zko8ZJs6zmAzHrFA2fdpT2tpXByQskMK5pJY1
-	HRTVqhpqXdBJObo1q4Zyqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731503221; x=
-	1731589621; bh=XTxnHJW8mR+NsXXS5qyTVOPc9MPa7KtgtkWNh0WnRtc=; b=R
-	gb4JjIcQy343TlZ817w8VPh+qr4hg3Y66xgQSsA5g+PuYOMISfzpDjYyVWHd1vaK
-	w3GCvvWZLYpXZLg88iJGomm3ZFSctX3RSDO70Z5ATqLkxPxD8HkjfvGrH6kSLp3z
-	vcQk2KcAPvzw7322mtx9RXlNgPiU3eZw8osuyNcqkARJVNyM2ldlE3xMVAIfVkIy
-	qQ7AM3y8Z2Ggs9Kg04GK8RPS34Pf+sKeUfXyT3w1Wv9QJfn1vjPq4qv5k0Ih0Cxb
-	RJ1kD+n8wiO/lXPSZ0i5emv2MtIc1IqojH7R9uKe9jUeWeRyB+Boix3qZ13E4m3p
-	igvSvs6UfXNq5FZZJ6EQQ==
-X-ME-Sender: <xms:dKQ0Z6fGh5Ga2DJn6YH2LkunWIgb1rSmjDQzWfMdURS8mv7R-YJZbg>
-    <xme:dKQ0Z0O7My-pyApU1gSu2YhMs3xb4AKg6yWNUbY5zQrcQmW11HDGISBTlUqt6RPln
-    XR9V58ENtEsJ0Tt44c>
-X-ME-Received: <xmr:dKQ0Z7hFaUY8QX7ASBaW3llcG6B5wP-JgzP8Xxbh-UEz1XDtcFEPI78kqSi6rkEsTuxPAU4mowxH9CDYK-6I96FCnKqY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddtgdegkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
-    ucfhrhhomhepgfhrihhnucfuhhgvphhhvghrugcuoegvrhhinhdrshhhvghphhgvrhguse
-    gvgeefrdgvuheqnecuggftrfgrthhtvghrnhepjeeftdelheduueetjeehvdefhfefvddv
-    ieekleejfeevffdtheduheejledvfedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepvghrihhnrdhshhgvphhhvghrugesvgegfedrvghupdhn
-    sggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhgruh
-    hnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvg
-    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghhrhhishhtihgrnhes
-    sghrrghunhgvrhdrihhopdhrtghpthhtohepphgruhhlsehprghulhdqmhhoohhrvgdrtg
-    homhdprhgtphhtthhopegslhhutggrseguvggsihgrnhdrohhrgh
-X-ME-Proxy: <xmx:dKQ0Z39r-alYs1-aidJV8ErGLUkBmeC8w1k_NIGSbxLEsN5tSSFnig>
-    <xmx:dKQ0Z2ujHu1NhvtpsuFW4flXuMvjYC-12TesJtZVOhMERlSMq3KYuA>
-    <xmx:dKQ0Z-FSaG4fx4XyAI2u7ir1_m0PVXxH0yt5Vw5C4BRAnQHeXQ6s5A>
-    <xmx:dKQ0Z1MB67QUx7kym0bv6GiuQViM2eyEaxVwYGcG1LyMIoJdUUhYIw>
-    <xmx:daQ0Z6gjIFJs81tfIs3E0Ide1xnShWbH4gSmMSySyhuDQHdR_WfQAHXS>
-Feedback-ID: i313944f9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 13 Nov 2024 08:06:59 -0500 (EST)
-Message-ID: <65e22368-d4f8-45f5-adcb-4d8c297ae293@e43.eu>
-Date: Wed, 13 Nov 2024 14:06:56 +0100
+	s=arc-20240116; t=1731503291; c=relaxed/simple;
+	bh=2WWRK703YmFJmLzZ2S+UG/8X4WmXCsvMcbUca5/g/z4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iD3TWM0kpjZ1glB7JhPqnUvQi/sKxM5E++15x/guA1Kx3OpcffO7tR3bE9yBYQ2WMSsRKwHa6QXgVsNMSwGzGUW6PChFvlzrH1ufdu3jLeHOhmJZDmkHuZlsSqZYln8VHmZxbC0V/Ed9MP6bypN1IrAq17N2K/f9N6g1XoG2dpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WoRYYZfg; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4316cce103dso85518555e9.3;
+        Wed, 13 Nov 2024 05:08:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731503288; x=1732108088; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2a0NVxNB/W5Csc9TxzF7W/iYXO3VvsRJea43sdbNNNY=;
+        b=WoRYYZfgI8uTPueNx8rzbEz9s5CpFjORR/NCD4p6s8x2uniGRioWBA9fSPbJdurOfQ
+         muKKJBkbrnlr7k8i9+Gy4dZsXw/8zFK6Db1ov2f1mTgfZQ57hEJlL3/brwrHZSJSlbLW
+         k9TCKWy5nuDYPcibQoVLm8O7qOiDVl7U1HTi5jzyTjtNRJnshCKwaJ3VECtQO1pmvrwC
+         o2O5F6mg9CscgS8s8iB5MLUPe4i2b8Wo3cyjiyiH7S+iFZylYJ4xfPcKI2XyQ4lNX5SV
+         KYK0OWK8dl95+O/OE6mu7lDUwqtdQo198zi1kkJdZv3qWefmJfZUntFf1QipFirgf05Z
+         r3/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731503288; x=1732108088;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2a0NVxNB/W5Csc9TxzF7W/iYXO3VvsRJea43sdbNNNY=;
+        b=tqlvqDMXxI7HpVsTR9KyNprElycEx1FMuvvPJ2aOb1B75rJMC7C3tWo39dnSZ6Glap
+         hbvYUfi4LFUyGGg9SqOBboRsJ8bP7ep5g2BsEsjy2KMmbifxu2jnjTLvxseTZpoOOW37
+         Cw9skasA25IZXKizxeqDaWC0hiQ7ZLx8hI1VEHzFFv54IB/VfbbpHjk3YNMX/stxelAj
+         vKdQARAQwRw3yZestyqn2W0UMUdp7Ji4HCALtVsNzPFuBew7aWj0hS4VPmgl1x4FU+SZ
+         BnpABEXSRW+h480Q2L6ajAXPgYFaRz2E7OOGZzmRhXhdqllx/08Q7Fc0VDN1PPmmDMg6
+         Xf+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUMC9NwRZTUN2rmL+5pjwylhjerUVEBYaZolr8qbdbnoLdocmRhng0CpfzZ/DIelNKG8POyI6uUiaSOluY=@vger.kernel.org, AJvYcCWqTomBGMwHzn80X58I0Zx6jQoaHrotviiTKusbhuc/YWJEDpfRA6HDrWg1exkCccZGpLOOAky5p9MD2ls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU5oKWF54HN+fWBUvsQ6fDopAXKop3p9097YYxm3AD9BvvzZIZ
+	obISGxxcwtjefaQwFCNrOhaYkrIlJLbjttm3xahK/m3InZCkZACh
+X-Google-Smtp-Source: AGHT+IFCS0AhpP2qyy3IR0ypDlDOr0f3Bs+wNSNJoR+LC9CYkW34Um/O+lusmxIzJqY8AAMjqsNosA==
+X-Received: by 2002:a05:6000:18a5:b0:381:d890:b5b7 with SMTP id ffacd0b85a97d-381f1889de6mr24360788f8f.52.1731503287618;
+        Wed, 13 Nov 2024 05:08:07 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381edc1104asm18664751f8f.88.2024.11.13.05.08.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 05:08:07 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	sound-open-firmware@alsa-project.org,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: SOF: ipc4-topology: remove redundant assignment to variable ret
+Date: Wed, 13 Nov 2024 13:08:07 +0000
+Message-Id: <20241113130807.1386754-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] pidfs: implement fh_to_dentry
-Content-Language: en-GB
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- christian@brauner.io, paul@paul-moore.com, bluca@debian.org
-References: <20241101135452.19359-1-erin.shepherd@e43.eu>
- <20241101135452.19359-5-erin.shepherd@e43.eu>
- <20241113-erlogen-aussehen-b75a9f8cb441@brauner>
-From: Erin Shepherd <erin.shepherd@e43.eu>
-In-Reply-To: <20241113-erlogen-aussehen-b75a9f8cb441@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 13/11/2024 13:09, Christian Brauner wrote:
+The variable ret is being assigned a zero value however the value is
+never read because ret is being re-assigned later after the end of
+the switch statement. The assignment is redundant and can be removed.
 
-> Hm, a pidfd comes in two flavours:
->
-> (1) thread-group leader pidfd: pidfd_open(<pid>, 0)
-> (2) thread pidfd:              pidfd_open(<pid>, PIDFD_THREAD)
->
-> In your current scheme fid->pid = pid_nr(pid) means that you always
-> encode a pidfs file handle for a thread pidfd no matter if the provided
-> pidfd was a thread-group leader pidfd or a thread pidfd. This is very
-> likely wrong as it means users that use a thread-group pidfd get a
-> thread-specific pid back.
->
-> I think we need to encode (1) and (2) in the pidfs file handle so users
-> always get back the correct type of pidfd.
->
-> That very likely means name_to_handle_at() needs to encode this into the
-> pidfs file handle.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/sof/ipc4-topology.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I guess a question here is whether a pidfd handle encodes a handle to a pid
-in a specific mode, or just to a pid in general? The thought had occurred
-to me while I was working on this initially, but I felt like perhaps treating
-it as a property of the file descriptor in general was better.
-
-Currently open_by_handle_at always returns a thread-group pidfd (since
-PIDFD_THREAD) isn't set, regardless of what type of pidfd you passed to
-name_to_handle_at. I had thought that PIDFD_THREAD/O_EXCL would have been
-passed through to f->f_flags on the restored pidfd, but upon checking I see that
-it gets filtered out in do_dentry_open.
-
-I feel like leaving it up to the caller of open_by_handle_at might be better
-(because they are probably better informed about whether they want poll() to
-inform them of thread or process exit) but I could lean either way.
-
->> +static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
->> +					 struct fid *gen_fid,
->> +					 int fh_len, int fh_type)
->> +{
->> +	int ret;
->> +	struct path path;
->> +	struct pidfd_fid *fid = (struct pidfd_fid *)gen_fid;
->> +	struct pid *pid;
->> +
->> +	if (fh_type != FILEID_INO64_GEN || fh_len < PIDFD_FID_LEN)
->> +		return NULL;
->> +
->> +	pid = find_get_pid_ns(fid->pid, &init_pid_ns);
->> +	if (!pid || pid->ino != fid->ino || pid_vnr(pid) == 0) {
->> +		put_pid(pid);
->> +		return NULL;
->> +	}
-> I think we can avoid the premature reference bump and do:
->
-> scoped_guard(rcu) {
->         struct pid *pid;
->
-> 	pid = find_pid_ns(fid->pid, &init_pid_ns);
-> 	if (!pid)
-> 		return NULL;
->
-> 	/* Did the pid get recycled? */
-> 	if (pid->ino != fid->ino)
-> 		return NULL;
->
-> 	/* Must be resolvable in the caller's pid namespace. */
-> 	if (pid_vnr(pid) == 0)
-> 		return NULL;
->
-> 	/* Ok, this is the pid we want. */
-> 	get_pid(pid);
-> }
-
-I can go with that if preferred. I was worried a bit about making the RCU
-critical section too large, but of course I'm sure there are much larger
-sections inside the kernel.
-
->> +
->> +	ret = path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
->> +	if (ret < 0)
->> +		return ERR_PTR(ret);
->> +
->> +	mntput(path.mnt);
->> +	return path.dentry;
->>  }
-
-Similarly here i should probably refactor this into dentry_from_stashed in
-order to avoid a needless bump-then-drop of path.mnt's reference count
+diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
+index 1fcf4692a21f..b55eb977e443 100644
+--- a/sound/soc/sof/ipc4-topology.c
++++ b/sound/soc/sof/ipc4-topology.c
+@@ -755,7 +755,6 @@ static int sof_ipc4_widget_setup_comp_dai(struct snd_sof_widget *swidget)
+ 			 * It is fine to call kfree(ipc4_copier->copier_config) since
+ 			 * ipc4_copier->copier_config is null.
+ 			 */
+-			ret = 0;
+ 			break;
+ 		}
+ 
+-- 
+2.39.5
 
 
