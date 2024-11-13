@@ -1,233 +1,206 @@
-Return-Path: <linux-kernel+bounces-407648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C44D9C7090
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:27:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923739C70B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:32:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3631F21498
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:27:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8F62B27246
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342811E377C;
-	Wed, 13 Nov 2024 13:27:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BEB1DF992;
-	Wed, 13 Nov 2024 13:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F8B1EBA0A;
+	Wed, 13 Nov 2024 13:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zqv6mmGq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Uop5wDUD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6391DF726;
+	Wed, 13 Nov 2024 13:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731504432; cv=none; b=YIDXCbTQmJZkDwHnf7vgC8FXOhoYxpvizlmPwxLzh/aJKkFKlkDPovsW8rqgO7umuOEp2Wwlcs6gQlvXe4NGZPY2TCiOoycZuIue7Fv5vtqwkB9FLN8d+9fh2VGnjJxQmutnztKspOdICrXDtJ1L8JVIHm78BZDJKx8r4zLe8cE=
+	t=1731504471; cv=none; b=FbOje6nuBzxqLh1D//OSrpHFaazHqaBBNAcHaZqfXVo5alqBU6QEkITENdM4VoOQPEhyODY8crunZ36riniALWk5yvA/Zx1xFfhaeQvMhaH4rGwVmSHkZ8gJBZt6SZpFSrluWTG2zRp5Myp1K6aDxIuEyxVNOxN/Prennlwjjsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731504432; c=relaxed/simple;
-	bh=9d+e3lBIDxZImn7IN5EFIXhLnDccxYDpONKaPnp7V9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aZkcYJRO1R5uR4o/n1/kpgiPZPuaKAZQTStIyap2j3wllJnJ1sCQ2U2JxrVTWT8dWyFkQ9Y93tTKT9rm5DOWZLC10JAG1ne3swWCedljSFgFAZ1HeZZ0A7GgLQqJ2jcl6pfRJwJHFuWv9nVy61f5/hUg75bsz6Q5daOhQrmgXaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E1BC1655;
-	Wed, 13 Nov 2024 05:27:38 -0800 (PST)
-Received: from [10.1.29.78] (Suzukis-MBP.cambridge.arm.com [10.1.29.78])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AAF6B3F66E;
-	Wed, 13 Nov 2024 05:27:06 -0800 (PST)
-Message-ID: <6424c536-2f2c-4a59-8b6d-f610201dc7a7@arm.com>
-Date: Wed, 13 Nov 2024 13:27:05 +0000
+	s=arc-20240116; t=1731504471; c=relaxed/simple;
+	bh=J9yxasEbYowNRW4nZJbnWfVL09gPm+1ief1daBCuv/k=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=hBk+VcIv3mye5krtwlhdhOJTdm1oW1WwXEC+BObroSqoESoEkf4r2wphX/IFojFIbuigVxO6hhpAHl4SMtPXqDbYlSw7gyPzfomROs+ruQKWLsSzpGgomPGlMCEj0PISCgf1s6vFLbXanXuk3l7smxRFBp6IwFWIamf6lvgdtl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zqv6mmGq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Uop5wDUD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 13 Nov 2024 13:27:46 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731504467;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wnB/L9/F1cKPIDEoxPYFJ8A8etC5YOv19oQZSUDH6do=;
+	b=Zqv6mmGqAgZvCLfnmW5jpsOhCiv5jPhno9J8PkVJfNT44zHmI+GhrxA+x1QXCnM3pzIeeF
+	v3HtOzvAgfHFbwYYT3g4L6ds/ioBEPAdkqTcyMl4uOB4iI87Cy/EEPTSCz7KjDDLdc/ULr
+	pYBMHNIIro35GToglutzsb/hHKh/1Iu5jyqEetmFitKDpd4w8od4/HNzWf5yFhssEy+BXv
+	mlD8iI23mIA1l+4Hb03uoE+17RjvVzJnxOCjW3noHXTK49RyIOg3HFc9UFcQNZVzro86Ws
+	ySurvEEB2g0Ju1x9htZB4MGEr5/mXMw5vES5lcK25W9eHI8qz+xU2omJtZ+RAQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731504467;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wnB/L9/F1cKPIDEoxPYFJ8A8etC5YOv19oQZSUDH6do=;
+	b=Uop5wDUDI5s3I5uHJWGqyaDZTuLU/EUwf9TAqbmgB4moxS5w0aQVLGQ9Hxpxd0H71Xqj4g
+	6QJFSUUBhcaNIDDg==
+From: "tip-bot2 for Baoquan He" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/mm: Fix a kdump kernel failure on SME system
+ when CONFIG_IMA_KEXEC=y
+Cc: Baoquan He <bhe@redhat.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Tom Lendacky <thomas.lendacky@amd.com>,  <stable@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240911081615.262202-3-bhe@redhat.com>
+References: <20240911081615.262202-3-bhe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] coresight: Add support to get static id for system
- trace sources
-Content-Language: en-GB
-To: Mao Jinlong <quic_jinlmao@quicinc.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20241104115604.14522-1-quic_jinlmao@quicinc.com>
- <20241104115604.14522-3-quic_jinlmao@quicinc.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241104115604.14522-3-quic_jinlmao@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <173150446683.32228.2872819048173531578.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/11/2024 11:56, Mao Jinlong wrote:
-> Dynamic trace id was introduced in coresight subsystem, so trace id is
-> allocated dynamically. However, some hardware ATB source has static trace
-> id and it cannot be changed via software programming. For such source,
-> it can call coresight_get_static_trace_id to get the fixed trace id from
-> device node and pass id to coresight_trace_id_get_static_system_id to
-> reserve the id.
-> 
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
-> Reviewed-by: Mike Leach <mike.leach@linaro.org>
-> ---
->   .../hwtracing/coresight/coresight-platform.c  |  6 +++
->   .../hwtracing/coresight/coresight-trace-id.c  | 39 +++++++++++++------
->   .../hwtracing/coresight/coresight-trace-id.h  |  9 +++++
->   include/linux/coresight.h                     |  1 +
->   4 files changed, 44 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
-> index 64e171eaad82..633d96b9577a 100644
-> --- a/drivers/hwtracing/coresight/coresight-platform.c
-> +++ b/drivers/hwtracing/coresight/coresight-platform.c
-> @@ -796,6 +796,12 @@ int coresight_get_cpu(struct device *dev)
->   }
->   EXPORT_SYMBOL_GPL(coresight_get_cpu);
->   
-> +int coresight_get_static_trace_id(struct device *dev, u32 *id)
-> +{
-> +	return fwnode_property_read_u32(dev_fwnode(dev), "arm,static-trace-id", id);
-> +}
-> +EXPORT_SYMBOL_GPL(coresight_get_static_trace_id);
-> +
->   struct coresight_platform_data *
->   coresight_get_platform_data(struct device *dev)
->   {
-> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
-> index d98e12cb30ec..df8fe50b413f 100644
-> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
-> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
-> @@ -12,6 +12,12 @@
->   
->   #include "coresight-trace-id.h"
->   
-> +enum trace_id_flags {
-> +	TRACE_ID_ANY = 0x0,
-> +	TRACE_ID_PREFER_ODD = 0x1,
-> +	TRACE_ID_REQ_STATIC = 0x2,
-> +};
-> +
->   /* Default trace ID map. Used in sysfs mode and for system sources */
->   static DEFINE_PER_CPU(atomic_t, id_map_default_cpu_ids) = ATOMIC_INIT(0);
->   static struct coresight_trace_id_map id_map_default = {
-> @@ -74,16 +80,18 @@ static int coresight_trace_id_find_odd_id(struct coresight_trace_id_map *id_map)
->    * Otherwise allocate next available ID.
->    */
->   static int coresight_trace_id_alloc_new_id(struct coresight_trace_id_map *id_map,
-> -					   int preferred_id, bool prefer_odd_id)
-> +					   int preferred_id, unsigned int flags)
->   {
->   	int id = 0;
->   
->   	/* for backwards compatibility, cpu IDs may use preferred value */
-> -	if (IS_VALID_CS_TRACE_ID(preferred_id) &&
-> -	    !test_bit(preferred_id, id_map->used_ids)) {
-> -		id = preferred_id;
-> -		goto trace_id_allocated;
-> -	} else if (prefer_odd_id) {
-> +	if (IS_VALID_CS_TRACE_ID(preferred_id)) {
-> +		if (!test_bit(preferred_id, id_map->used_ids)) {
-> +			id = preferred_id;
-> +			goto trace_id_allocated;
-> +		} else if (flags & TRACE_ID_REQ_STATIC)
-> +			return -EINVAL;
+The following commit has been merged into the x86/urgent branch of tip:
 
-nit: EBUSY sounds like a better choice here ? Requested ID is not
-available.
+Commit-ID:     8d9ffb2fe65a6c4ef114e8d4f947958a12751bbe
+Gitweb:        https://git.kernel.org/tip/8d9ffb2fe65a6c4ef114e8d4f947958a127=
+51bbe
+Author:        Baoquan He <bhe@redhat.com>
+AuthorDate:    Wed, 11 Sep 2024 16:16:15 +08:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 13 Nov 2024 14:11:33 +01:00
 
-Additionally, do we need to handle a case where the preferred_id is
-not valid ? I think we silently allocate a new trace id in such case ?
+x86/mm: Fix a kdump kernel failure on SME system when CONFIG_IMA_KEXEC=3Dy
 
-Rest looks good to me.
+The kdump kernel is broken on SME systems with CONFIG_IMA_KEXEC=3Dy enabled.
+Debugging traced the issue back to
 
-Suzuki
+  b69a2afd5afc ("x86/kexec: Carry forward IMA measurement log on kexec").
 
+Testing was previously not conducted on SME systems with CONFIG_IMA_KEXEC
+enabled, which led to the oversight, with the following incarnation:
 
+...
+  ima: No TPM chip found, activating TPM-bypass!
+  Loading compiled-in module X.509 certificates
+  Loaded X.509 cert 'Build time autogenerated kernel key: 18ae0bc7e79b6470012=
+2bb1d6a904b070fef2656'
+  ima: Allocated hash algorithm: sha256
+  Oops: general protection fault, probably for non-canonical address 0xcfacfd=
+fe6660003e: 0000 [#1] PREEMPT SMP NOPTI
+  CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc2+ #14
+  Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.20.0 05/03/2023
+  RIP: 0010:ima_restore_measurement_list
+  Call Trace:
+   <TASK>
+   ? show_trace_log_lvl
+   ? show_trace_log_lvl
+   ? ima_load_kexec_buffer
+   ? __die_body.cold
+   ? die_addr
+   ? exc_general_protection
+   ? asm_exc_general_protection
+   ? ima_restore_measurement_list
+   ? vprintk_emit
+   ? ima_load_kexec_buffer
+   ima_load_kexec_buffer
+   ima_init
+   ? __pfx_init_ima
+   init_ima
+   ? __pfx_init_ima
+   do_one_initcall
+   do_initcalls
+   ? __pfx_kernel_init
+   kernel_init_freeable
+   kernel_init
+   ret_from_fork
+   ? __pfx_kernel_init
+   ret_from_fork_asm
+   </TASK>
+  Modules linked in:
+  ---[ end trace 0000000000000000 ]---
+  ...
+  Kernel panic - not syncing: Fatal exception
+  Kernel Offset: disabled
+  Rebooting in 10 seconds..
 
+Adding debug printks showed that the stored addr and size of ima_kexec buffer
+are not decrypted correctly like:
 
-> +	} else if (flags & TRACE_ID_PREFER_ODD) {
->   	/* may use odd ids to avoid preferred legacy cpu IDs */
->   		id = coresight_trace_id_find_odd_id(id_map);
->   		if (id)
-> @@ -153,7 +161,7 @@ static int _coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map
->   	 */
->   	id = coresight_trace_id_alloc_new_id(id_map,
->   					     CORESIGHT_LEGACY_CPU_TRACE_ID(cpu),
-> -					     false);
-> +					     TRACE_ID_ANY);
->   	if (!IS_VALID_CS_TRACE_ID(id))
->   		goto get_cpu_id_out_unlock;
->   
-> @@ -188,14 +196,14 @@ static void _coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_ma
->   	DUMP_ID_MAP(id_map);
->   }
->   
-> -static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map)
-> +static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map,
-> +					int preferred_id, unsigned int traceid_flags)
->   {
->   	unsigned long flags;
->   	int id;
->   
->   	spin_lock_irqsave(&id_map->lock, flags);
-> -	/* prefer odd IDs for system components to avoid legacy CPU IDS */
-> -	id = coresight_trace_id_alloc_new_id(id_map, 0, true);
-> +	id = coresight_trace_id_alloc_new_id(id_map, preferred_id, traceid_flags);
->   	spin_unlock_irqrestore(&id_map->lock, flags);
->   
->   	DUMP_ID(id);
-> @@ -255,10 +263,19 @@ EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id_map);
->   
->   int coresight_trace_id_get_system_id(void)
->   {
-> -	return coresight_trace_id_map_get_system_id(&id_map_default);
-> +	/* prefer odd IDs for system components to avoid legacy CPU IDS */
-> +	return coresight_trace_id_map_get_system_id(&id_map_default, 0,
-> +			TRACE_ID_PREFER_ODD);
->   }
->   EXPORT_SYMBOL_GPL(coresight_trace_id_get_system_id);
->   
-> +int coresight_trace_id_get_static_system_id(int trace_id)
-> +{
-> +	return coresight_trace_id_map_get_system_id(&id_map_default,
-> +			trace_id, TRACE_ID_REQ_STATIC);
-> +}
-> +EXPORT_SYMBOL_GPL(coresight_trace_id_get_static_system_id);
-> +
->   void coresight_trace_id_put_system_id(int id)
->   {
->   	coresight_trace_id_map_put_system_id(&id_map_default, id);
-> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/drivers/hwtracing/coresight/coresight-trace-id.h
-> index 9aae50a553ca..db68e1ec56b6 100644
-> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
-> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
-> @@ -116,6 +116,15 @@ int coresight_trace_id_read_cpu_id_map(int cpu, struct coresight_trace_id_map *i
->    */
->   int coresight_trace_id_get_system_id(void);
->   
-> +/**
-> + * Allocate a CoreSight static trace ID for a system component.
-> + *
-> + * Used to allocate static IDs for system trace sources such as dummy source.
-> + *
-> + * return: Trace ID or -EINVAL if allocation is impossible.
-> + */
-> +int coresight_trace_id_get_static_system_id(int id);
-> +
->   /**
->    * Release an allocated system trace ID.
->    *
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index c13342594278..129795873072 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -662,6 +662,7 @@ void coresight_relaxed_write64(struct coresight_device *csdev,
->   void coresight_write64(struct coresight_device *csdev, u64 val, u32 offset);
->   
->   extern int coresight_get_cpu(struct device *dev);
-> +extern int coresight_get_static_trace_id(struct device *dev, u32 *id);
->   
->   struct coresight_platform_data *coresight_get_platform_data(struct device *dev);
->   struct coresight_connection *
+  ima: ima_load_kexec_buffer, buffer:0xcfacfdfe6660003e, size:0xe48066052d5df=
+359
 
+Three types of setup_data info
+
+  =E2=80=94 SETUP_EFI,
+  - SETUP_IMA, and
+  - SETUP_RNG_SEED
+
+are passed to the kexec/kdump kernel. Only the ima_kexec buffer
+experienced incorrect decryption. Debugging identified a bug in
+early_memremap_is_setup_data(), where an incorrect range calculation
+occurred due to the len variable in struct setup_data ended up only
+representing the length of the data field, excluding the struct's size,
+and thus leading to miscalculation.
+
+Address a similar issue in memremap_is_setup_data() while at it.
+
+  [ bp: Heavily massage. ]
+
+Fixes: b3c72fc9a78e ("x86/boot: Introduce setup_indirect")
+Signed-off-by: Baoquan He <bhe@redhat.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Acked-by: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: <stable@kernel.org>
+Link: https://lore.kernel.org/r/20240911081615.262202-3-bhe@redhat.com
+---
+ arch/x86/mm/ioremap.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index 70b02fc..8d29163 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -656,7 +656,8 @@ static bool memremap_is_setup_data(resource_size_t phys_a=
+ddr,
+ 		paddr_next =3D data->next;
+ 		len =3D data->len;
+=20
+-		if ((phys_addr > paddr) && (phys_addr < (paddr + len))) {
++		if ((phys_addr > paddr) &&
++		    (phys_addr < (paddr + sizeof(struct setup_data) + len))) {
+ 			memunmap(data);
+ 			return true;
+ 		}
+@@ -718,7 +719,8 @@ static bool __init early_memremap_is_setup_data(resource_=
+size_t phys_addr,
+ 		paddr_next =3D data->next;
+ 		len =3D data->len;
+=20
+-		if ((phys_addr > paddr) && (phys_addr < (paddr + len))) {
++		if ((phys_addr > paddr) &&
++		    (phys_addr < (paddr + sizeof(struct setup_data) + len))) {
+ 			early_memunmap(data, sizeof(*data));
+ 			return true;
+ 		}
 
