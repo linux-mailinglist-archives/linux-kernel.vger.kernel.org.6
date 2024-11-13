@@ -1,105 +1,79 @@
-Return-Path: <linux-kernel+bounces-406885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746ED9C65C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:11:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342669C659D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:00:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DDDDB2C529
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:00:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD1F81F2415F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0328721CFB0;
-	Wed, 13 Nov 2024 00:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A5B21CFA9;
+	Wed, 13 Nov 2024 00:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SZZuRF5I"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fKtNa5cu"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A069621CF9A;
-	Wed, 13 Nov 2024 00:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EDC21CF8A
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 00:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731456006; cv=none; b=rQB+kqGjiXsch2SLjeiDFdtTD3KdLiz03UcVfl7PpyvDmoHpxhK1aMvK0PNRerLp3yjn7+SVrfviZ2HO4gOv615TdDdxSfSv0Dv/UuiNWonWj/o9quTyQpMCIIc5ZpXv94ukv78kD0gC9orjXCJU9NtzcXzQ0FBM7FqcQ+nZzy0=
+	t=1731456010; cv=none; b=HzT32Z8cPLrDHQHtgksZ3kEbiZyEHSRaSncAzfhMZbrPRQD2ePYzmqs56mgKMql25xTexq1biMWqIKi/wcbAoPnlhRVRPp/S+2Zo3LvdBtofc/tFyyhovRUoqPd/ee8BBrlzGUX/z3+qyR2CUNBJHSYz4EfYE+l6ONfTxkcupJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731456006; c=relaxed/simple;
-	bh=AFbGSoCPJWHADJAVEA2b1Fwl3qKWb0vv5uWZgsOuN28=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NZ671t9R6TqHAnrtWPAW0uDgq2oi26yvadB9iZJ9vI/utoqBNRgNT5lMamjxabwLLiJO2ZmN94kRtBV+dCCw8PBM2b5+sQallGJmV5ePJYjtEoS8llSzhDalGa7ia6HP4f2IETKpe5ihEVT4R7m9nBpNYuXOopMVMOZ8Q7B9zOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SZZuRF5I; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731456005; x=1762992005;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=AFbGSoCPJWHADJAVEA2b1Fwl3qKWb0vv5uWZgsOuN28=;
-  b=SZZuRF5IxD8B37lXvyLIcqmvoRpIIN4hxNjx7L/qfO3JfapUflYlSlbX
-   hkRF3XDiFtlXVsinnk6S1Au72i66qjD8DcNc4iAqkkWp0x1EA0YuS15BE
-   KuQcQaedITUnEaEIavyD8nIiyn4yyS6F96p12ACna5c4FDIOSPejXBMZl
-   yx1MDIeIvbAT72ADoTW9c1nNi/Q/PfDWgoXip9c0QPGOO8nudXl2QJd4d
-   sRI/t05JcEVXWNkIjCOmsX/KK5EsteRCaQ75GRJpgs5Z9BhNnv+6geYC6
-   dxqgoqfCtaCSzrjEJSgpFltDSzNbSEXQ6CiWHTTtdwc2LhqCGzn+m6Fat
-   w==;
-X-CSE-ConnectionGUID: gZDAz5RmS0SrliGxSRLJjg==
-X-CSE-MsgGUID: 2dCCmcq1Q8q7R/m8ISOsQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="18935423"
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="18935423"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 16:00:04 -0800
-X-CSE-ConnectionGUID: sMdS8ppXQ86/CVoXwzGAfw==
-X-CSE-MsgGUID: mQqHx4tDS1uKxQ+HK9FKsw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="92465814"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.21])
-  by fmviesa004.fm.intel.com with ESMTP; 12 Nov 2024 16:00:04 -0800
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] cpufreq: intel_pstate: Update Balance performance EPP for Granite Rapids
-Date: Tue, 12 Nov 2024 15:59:46 -0800
-Message-ID: <20241112235946.368082-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1731456010; c=relaxed/simple;
+	bh=T9l4BhKEzVRKbKPCslHurC3VcOM7HxkzI+55rdfE1Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YTsnhZCHcKPiWdEHlumOZ4ABUZlQmjiv5mQdy1PXk8WddophkahhxbU+YGkEo/KumUOJGcRLTOpB3VRkI/b/mX6txLk0Q7tlpAfkDEjABQnj9Gfw5AsfrCNJbAjOVMwtm4aLC1f7YcwoPAjFaWNJIbCeRKDH9kMvTMLvrPt2HY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fKtNa5cu; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Y3/xiYa/xohR6fnb9i1BK9eaSk5Lo94vVozm1B5+coI=; b=fKtNa5cukPZ9IrOb52Fc/BAu7o
+	eQSkezc4UHMELJtj9RSSVAjGbB2Jzn/EEQWetDJcPjJ6MbhxVST7G+qTPNFjfgRbI3AL6rDY9PgJv
+	ywWRds+oOUeOIwEadp3+rZ92pUMnHxZyfKPteFeRsAyoX1DFrlLjkfPyRj4WanXsSSS9oiWAI73vC
+	H/quKeSLSc2m9aLHyL/N9RkJAUfnyOlr7Kp6XAl0yzwr90lU7amLS86QDyeFGkBgty2CO7KEArKaW
+	IcfaK+adJr4X+jyNx77uhS2p51hDga9RYW8fu6N4fS3mLTRL5PsTOwDPm6jRzAzYCOfOgOoYhdBo5
+	YiLPfqBw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tB0nk-0000000EIN5-3gpW;
+	Wed, 13 Nov 2024 00:00:04 +0000
+Date: Wed, 13 Nov 2024 00:00:04 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Agathe Porte <agathe.porte@canonical.com>
+Cc: linux-kernel@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3 1/1] ufs: ufs_sb_private_info: remove unused
+ s_{2,3}apb fields
+Message-ID: <20241113000004.GE3387508@ZenIV>
+References: <20241112122000.35610-1-agathe.porte@canonical.com>
+ <20241112122000.35610-2-agathe.porte@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112122000.35610-2-agathe.porte@canonical.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Update EPP default for balance_performance to 32. This will give better
-performance out of box using Intel P-State powersave governor while still
-offering power savings compared to performance governor.
+On Tue, Nov 12, 2024 at 01:18:25PM +0100, Agathe Porte wrote:
+> These two fields are populated and stored as a "frequently used value"
+> in ufs_fill_super, but are not used afterwards in the driver.
+> 
+> Moreover, one of the shifts triggers UBSAN: shift-out-of-bounds when
+> apbshift is 12 because 12 * 3 = 36 and 1 << 36 does not fit in the 32
+> bit integer used to store the value.
+> 
+> Closes: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2087853
+> Signed-off-by: Agathe Porte <agathe.porte@canonical.com>
 
-This is in line with what has already been done for Emerald Rapids and
-Sapphire Rapids.
-
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- drivers/cpufreq/intel_pstate.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index cd2ac1ba53d2..f1db73a52bae 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -3658,6 +3658,8 @@ static const struct x86_cpu_id intel_epp_default[] = {
- 	X86_MATCH_VFM(INTEL_ALDERLAKE_L, HWP_SET_DEF_BALANCE_PERF_EPP(102)),
- 	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X, HWP_SET_DEF_BALANCE_PERF_EPP(32)),
- 	X86_MATCH_VFM(INTEL_EMERALDRAPIDS_X, HWP_SET_DEF_BALANCE_PERF_EPP(32)),
-+	X86_MATCH_VFM(INTEL_GRANITERAPIDS_X, HWP_SET_DEF_BALANCE_PERF_EPP(32)),
-+	X86_MATCH_VFM(INTEL_GRANITERAPIDS_D, HWP_SET_DEF_BALANCE_PERF_EPP(32)),
- 	X86_MATCH_VFM(INTEL_METEORLAKE_L, HWP_SET_EPP_VALUES(HWP_EPP_POWERSAVE,
- 		      179, 64, 16)),
- 	X86_MATCH_VFM(INTEL_ARROWLAKE, HWP_SET_EPP_VALUES(HWP_EPP_POWERSAVE,
--- 
-2.47.0
-
+Applied to viro/vfs.git#work.ufs
 
