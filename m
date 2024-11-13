@@ -1,86 +1,93 @@
-Return-Path: <linux-kernel+bounces-406955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A36E9C669E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:23:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095659C66A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95FB8B2A302
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:22:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3B16283A4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD65C2AD2A;
-	Wed, 13 Nov 2024 01:20:37 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BD13FC7;
-	Wed, 13 Nov 2024 01:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F04419BBA;
+	Wed, 13 Nov 2024 01:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEkPE6u2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61ED1382;
+	Wed, 13 Nov 2024 01:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731460837; cv=none; b=I6VMFduDxPPkk3KhDDQ1WZeuhOo0owqVDBC8GcUxhDcFGPASmfP/I36O+BqMV8RkfFZ3+ruyuijRjUNJOqdtBgkgRhWJJhPr6267v0exnd+EFs5UQNcd1U6AM4u/xFDXCQFcMOF734TTFvWNYhLp/Daon+SKrEPMhKE7vscZPUg=
+	t=1731460985; cv=none; b=EkaugF3CJUXh97hldDxjKNvd0zhNH/2Iu+B6Hpq61pAsQWzQgx4pWz1qsBAwt+2ZBP2rZGztFy/UJ3oAh4kgB/dlmy7Ngdq9NmgQHzFAVBCJrg+EUKoUuLSG1TOzlrPiHuOOy8Pt/ExydQmtfpSkJ2ibA5DzNJZ1OYS6TSeh1Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731460837; c=relaxed/simple;
-	bh=pry0G0uBjTa5BmnhwsGKHl5GBfoyMBtVfdPlEKw2WYk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HytdzWdMxx+Xdu9vSUoHnN6DV8gFkhuz3+quaxrgqqVU4+NDWvW5wBze6GFoQqCvlctzKl4CH+aRZMsQF5519HQ7+mV2dlQtS/911ULWZ4euarrLsIOgu7wLwMCuXdSS9uYWay6B/PliIDHm24oUa6c/6pAykS3F9f4k+UmxJcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee56733fede72a-1273f;
-	Wed, 13 Nov 2024 09:20:31 +0800 (CST)
-X-RM-TRANSID:2ee56733fede72a-1273f
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.101])
-	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea6733fede07e-70045;
-	Wed, 13 Nov 2024 09:20:31 +0800 (CST)
-X-RM-TRANSID:2eea6733fede07e-70045
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: dlemoal@kernel.org
-Cc: linus.walleij@linaro.org,
-	linux-riscv@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] pinctrl: k210: Modify the wrong "#undef"
-Date: Wed, 13 Nov 2024 09:20:29 +0800
-Message-Id: <20241113012029.3204-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1731460985; c=relaxed/simple;
+	bh=KzYtezsHHZd5EyINMqqHGG51cXOLpemJwiEUUpvOkA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jR1+MKoKB/OF9oY+HOxc90/mccJI2DBFgn/j5vfZCvT4drTgw8YdUMofnv5+z2cA+DbQAl+m2H8xmw64RgGy6L7ePmE685VeFAEzE3XWeqQXhkx/pB4rX5HcI3VLrfoakjUheSGNil4b5hBncUvZvMrO21mBwbKznXGwvosZa04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEkPE6u2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7378C4CED4;
+	Wed, 13 Nov 2024 01:23:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731460985;
+	bh=KzYtezsHHZd5EyINMqqHGG51cXOLpemJwiEUUpvOkA4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OEkPE6u2U1WuKnADIOhylmi3CfE92O+1fH0PMk2OcC97uHIF+rD8uPt98OdIcOFX9
+	 mBHnkR5vQiCHCFBZWV4FS+jfrBZtscCc5p17M9osJzRLrVx8uMnlviKNu52llsksUI
+	 nfbdlsdAAR5V8jJOI4kK4pxjs+qrOaioOp+7aR58hBHoabKdA1qGfXOgO0zMLHqxFR
+	 aJSkCG41lRt2Of0Iavy3zRQiuErE3Q23RHcNwXXI7fWGrChlM1ZuKGJBFhtbxsuJQv
+	 zfQVeL5tRPZVRYJ03Vn34rjURJ6jgx/w9/GNCbhOYjCi2u9NZ3I6577l4olYOkP7L9
+	 mM9NSMb5hQveQ==
+Date: Tue, 12 Nov 2024 17:23:02 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, Vincent
+ Mailhol <mailhol.vincent@wanadoo.fr>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Vladimir Oltean <olteanv@gmail.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Pantelis Antoniou
+ <pantelis.antoniou@gmail.com>, Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+ Byungho An <bh74.an@samsung.com>, Kevin Brace
+ <kevinbrace@bracecomputerlab.com>, Francois Romieu <romieu@fr.zoreil.com>,
+ Michal Simek <michal.simek@amd.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Zhao Qiang
+ <qiang.zhao@nxp.com>, linux-can@vger.kernel.org (open list:CAN NETWORK
+ DRIVERS), linux-kernel@vger.kernel.org (open list),
+ linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner sunXi
+ SoC support), linux-sunxi@lists.linux.dev (open list:ARM/Allwinner sunXi
+ SoC support), linuxppc-dev@lists.ozlabs.org (open list:FREESCALE SOC
+ FS_ENET DRIVER)
+Subject: Re: [PATCHv3 net-next] net: modernize IRQ resource acquisition
+Message-ID: <20241112172302.582285d3@kernel.org>
+In-Reply-To: <20241112211442.7205-1-rosenp@gmail.com>
+References: <20241112211442.7205-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On Tue, 12 Nov 2024 13:14:42 -0800 Rosen Penev wrote:
+>  drivers/net/ethernet/moxa/moxart_ether.c      |  6 ++---
+>  .../ethernet/samsung/sxgbe/sxgbe_platform.c   | 24 +++++++------------
 
-Here shuld be undef "K210_PC_DEFAULT", not "DEFAULT".
+coccicheck says:
 
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
- drivers/pinctrl/pinctrl-k210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c:130:6-26: WARNING: Unsigned expression compared with zero: priv -> rxq [ i ] -> irq_no < 0
+drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c:124:6-26: WARNING: Unsigned expression compared with zero: priv -> txq [ i ] -> irq_no < 0
+drivers/net/ethernet/moxa/moxart_ether.c:468:5-8: WARNING: Unsigned expression compared with zero: irq < 0
 
-diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
-index caf20215aaba..eddb01796a83 100644
---- a/drivers/pinctrl/pinctrl-k210.c
-+++ b/drivers/pinctrl/pinctrl-k210.c
-@@ -181,7 +181,7 @@ static const u32 k210_pinconf_mode_id_to_mode[] = {
- 	[K210_PC_DEFAULT_INT13] = K210_PC_MODE_IN | K210_PC_PU,
- };
- 
--#undef DEFAULT
-+#undef K210_PC_DEFAULT
- 
- /*
-  * Pin functions configuration information.
+Is this really worth the review effort? :|
+
+Please do not send any more conversions unless the old API is clearly
+deprecated. 
 -- 
-2.33.0
-
-
-
+pw-bot: cr
 
