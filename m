@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-407693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C332D9C72BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:09:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8689C72A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 182B4B33282
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:45:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C903FB26A48
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB09420100C;
-	Wed, 13 Nov 2024 13:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BEA200C84;
+	Wed, 13 Nov 2024 13:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OtFUw7RA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sr3hiz4L"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182841EF928
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5AF2003D8
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731505166; cv=none; b=rrGkmzomLXXkdopb7Cbkrf+/L79lo8y4v1I02EG1q8xFYOdK4jwvMJ3Zig8gb8HdXPINalsN/kh1M20y8ksGuOyxBfErDeyJXbfGMYYlY+0tqhO8hBd/CmjQ5jWAyYB6yjvpkjmqSAqe5cQXImCk65sZrzJwZIm59Y3V9bBZVlU=
+	t=1731505496; cv=none; b=U21XxaGrRblHh9uXXpzQjVObVgozmsq403HIflbqJjZx9mouxHW+fHCzGRB1ks2EUBDhCD/iJFOR1vHv873FcepBWcoKGKF8vys1GZePEtpTphqjRjSLS9CyU5HmLsQqSGNaQciUmXLljgfgfrfQLOkXgCv+wwLxNui727Lj18U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731505166; c=relaxed/simple;
-	bh=PUyWdRAPor1HzPSdiot0ngp/W3MbSaespHAsyVU7718=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XovMNdtSBcg9Izk2lBFwzskMVUME3kbjP2jiEXhVJPi+tyUXu3F4pf0kOGTdHPU3ycMabrrJ+tMnO5xOfMEhiigap3pv9YYu/b22n16ejGxYBqbF5nZR9fKrmrZZHXX9XDswYvyCN22Rm01k6tx4roIIT2WDFGihD0tF42fpawI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OtFUw7RA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A240C4CECD;
-	Wed, 13 Nov 2024 13:39:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731505165;
-	bh=PUyWdRAPor1HzPSdiot0ngp/W3MbSaespHAsyVU7718=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OtFUw7RAXuI0Ss8WniSQQV7EGUxzQ7nhdrikjhDDVJ6cwGec5TZniWU4I7AKRDxFy
-	 o+CsrdZkJeEFpi/m0PCqeww84iFuN+89ytAAFByeP9+PVArtjfaRfJ0ZOVPM1ee4V5
-	 jKyIQpFy71Wdwj0tqovCFicX7PxtoxceB5hDm8GvK3ayLAXazocu/qfV1x2CdbO8gQ
-	 nO3mfGFbgzw4r2YAANCnllOtmTqJGypOK4oiiok5jBN8HrNmT2Q/n4esHqZ3pWsUoN
-	 bswIfp2QvWbgEi6wZqpnJyG1xNfgFPIp2z8YaFz+wTPWvvXOmXwoDjqKoGfFGjzGzo
-	 oyoyBXTeL968g==
-Date: Wed, 13 Nov 2024 13:39:22 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Suraj Sonawane <surajsonawane0215@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: aat2870-regulator: replace division condition
- with direct comparison
-Message-ID: <ZzSsCoYy-Cs7d_Q7@finisterre.sirena.org.uk>
-References: <20241112202041.16980-1-surajsonawane0215@gmail.com>
+	s=arc-20240116; t=1731505496; c=relaxed/simple;
+	bh=ps1gyRF4sV/jPf5mXq5CfuoualCziyGjdNljGcpAjsM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DpV7ec65ZxSfx63ucTxc4EXZbN0dBBsaAN2yjKI92dp1dSow3SZAWvKXqdbGeOaM58L3Sl3xC4DM+MCPB7FqW9+dXpxAaHY38YQ5JI78KTRq2KraCT9arLmzR7MoxmvQPAku09hCGvKYlzPNinrU+artYeSBg0dQiGHlJpjghs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sr3hiz4L; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb584a8f81so62589111fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:44:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731505492; x=1732110292; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n8EhfYVRnnDaaDgm96KhczVA/W2i6QYF4ETYO5Uyxvg=;
+        b=Sr3hiz4LSNME5W8AzoJ1HlE/P19gGYTPw+FXLvBWKHEJ+nz9/hytjT/ABctmUGdp0h
+         5g6edP71Yc6vDKSwFP6J3JpAAPWnLTMEATu9Z+qYj3QUBgr/DReHyYQ4aYOHozjgy9tG
+         HJW91gm2wDGvjzCsk6BW+7z4m9Fdwp9/GSkK2xp1JtFYqWBujRbcDH9XL2arv192ZLJU
+         rKKAg6nF/qm19f+imMtmGdMS4y5lPg8BRUfOClCoewhjc6zjjTwjWA+CuZFa6kDY3kuP
+         8YXDI/xZLlC1Q9TP0x9WmglCzwGs8KLAbNmYk7WD3PrLFb2n+Az7ppOorwzku568UV/x
+         wi8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731505492; x=1732110292;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n8EhfYVRnnDaaDgm96KhczVA/W2i6QYF4ETYO5Uyxvg=;
+        b=IA21A2S/6rzlT4qbRbW27MTxTVKNbdHdKyzsidWnULkK/zYhJZwaXl5yhhNsx07/LV
+         /5J90GXUcm12hEElMuHjuzBwkFdC6Rr8tZ2UW5s/Pk/q2Opkf+mlTzjHIkKxPoLo7jeF
+         y6JWj1nRxxvNNkRa2N5UfBWw0GEJYhmmhD0si56zIoOXioQUW1Oq0ZGmADFZcI54bQCS
+         xplEuXcbYG9vNFz3Yv29MT8d8Fg2LfjHYwAAb0mhr9B1fZv87nmuiCYAAGlZGVQXkT/T
+         0zBIx3vtsuo/5nHf6f/o+rQG5wkpbTaj1qUvJ0A7Hassaq7TURcusLkPd5WMEtQ+8nZv
+         hksw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKTGb5v8BqzKof6gJc8oqdODF8sLa/guuBVNKb2Acl1ZX3trgw4jsk4fgRqnfmJEes2bqmV5wcGhFarkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypTJIwTO59f3egfkDSldK4WTroYrMbchB8L41QDlTh5eabWIdI
+	/VZHL3dICpcLuqj8PA1qKdZ1zreov5DlKyiP8tq8MEQSJLsL58IxErO/vtKOI4SDCIhsGo0bHCi
+	Rs5Z+JrsftP/7aX+TbDR3FdfhrQFoYUirFeZGlQ==
+X-Google-Smtp-Source: AGHT+IG+b5aWSuZA3i2xX9eloxv3604GVUnlQQDb4BSsgZiEIKgWWJy1Jg5YtPgwVqZ9JZiAd6sMw7fi49j+Y5nheN4=
+X-Received: by 2002:a05:651c:1542:b0:2fb:5038:3eb4 with SMTP id
+ 38308e7fff4ca-2ff202686a4mr114192251fa.29.1731505492020; Wed, 13 Nov 2024
+ 05:44:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nLVQnhLQ/VajP+vb"
-Content-Disposition: inline
-In-Reply-To: <20241112202041.16980-1-surajsonawane0215@gmail.com>
-X-Cookie: Editing is a rewording activity.
-
-
---nLVQnhLQ/VajP+vb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241106100741.173825-1-y.oudjana@protonmail.com> <20241106100741.173825-8-y.oudjana@protonmail.com>
+In-Reply-To: <20241106100741.173825-8-y.oudjana@protonmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 13 Nov 2024 14:44:40 +0100
+Message-ID: <CACRpkdZBwSBD2ueM=5zZX3wBxxd-ZJoEKS-zTq5fuqiKOSu3mg@mail.gmail.com>
+Subject: Re: [PATCH v7 7/7] pinctrl: mediatek: Add MT6735 pinctrl driver
+To: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: Sean Wang <sean.wang@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Andy Teng <andy.teng@mediatek.com>, Yassine Oudjana <yassine.oudjana@gmail.com>, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 13, 2024 at 01:50:41AM +0530, Suraj Sonawane wrote:
-> Fix an issue detected by the Smatch tool:
->=20
-> drivers/regulator/aat2870-regulator.c:142 aat2870_get_regulator() warn:
-> replace divide condition '(id - 1) / 2' with '(id - 1) >=3D 2'
->=20
-> The division '(id - 1) / 2' was used to check if the regulator ID
-> is greater than or equal to 2, which can be confusing and less
-> readable. Replacing it with '(id - 1) >=3D 2' makes the code clearer
+On Wed, Nov 6, 2024 at 11:09=E2=80=AFAM Yassine Oudjana
+<y.oudjana@protonmail.com> wrote:
 
-This is absolute nonsense, the tool should be fixed instead.  Writing a=20
-division as a shift when the intent is a division is a microoptimisation
-which modern compilers really should figure out where it's relevant.
 
-> -	ri->voltage_addr =3D (id - AAT2870_ID_LDOA) / 2 ?
-> +	ri->voltage_addr =3D (id - AAT2870_ID_LDOA) >=3D 2 ?
->  			   AAT2870_LDO_CD : AAT2870_LDO_AB;
+> Add a driver for the MediaTek MT6735 SoC pin controller. This driver
+> also supports the pin controller on MT6735M, which lacks 6 physical
+> pins (198-203) used for MSDC2 on MT6735.
+>
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+(...)
+> +static struct platform_driver mt6735_pinctrl_driver =3D {
+> +       .probe =3D mtk_paris_pinctrl_probe,
+> +       .driver =3D {
+> +               .name =3D "mt6735-pinctrl",
+> +               .of_match_table =3D mt6735_pinctrl_match,
+> +               .pm =3D &mtk_paris_pinctrl_pm_ops,
 
-Neither version of this is particularly readable, but the new form here
-seems fairly clearly worse rather than better.
+.pm =3D pm_sleep_ptr(&mtk_paris_pinctrl_pm_ops),
 
---nLVQnhLQ/VajP+vb
-Content-Type: application/pgp-signature; name="signature.asc"
+this is why you get build errors.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc0rAkACgkQJNaLcl1U
-h9ClDgf9F4AxWYIVBbx058j1yhrt2sJBOo5GQxOaNO1IpCmhAIYS8yFXLylbbGYs
-Mx96eQMGubs7yJwMJtj4dD7MKe4UsFg/WyAv9XoQbhgVuJli9WdfxNsD9WOxi0Pf
-pcmoQWDwlgzBfkSCLHdsWRIoedBzaggjlA8qL4oy37G01eUmEOiSIKLszPWxau61
-sT3Vflpgo1Am2AhvZRIHqv9K5Q4027+alpxPhEqXZNL4dBxIjsbmE7JYRF8eI0Mo
-76VcyEr/mh90nj5yysfWH/vMbz53b1jaem3Bn15jUj+Dx9QYx6PmcjHT16QPp0Fj
-M3aVnSDg1j+8C6y0pUCRztUNuDoc5A==
-=0SWd
------END PGP SIGNATURE-----
-
---nLVQnhLQ/VajP+vb--
+Yours,
+Linus Walleij
 
