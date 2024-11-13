@@ -1,201 +1,341 @@
-Return-Path: <linux-kernel+bounces-407962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FCE9C77FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:58:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 166A39C7801
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:58:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A442C28B065
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:58:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D4061F24EC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF13137C35;
-	Wed, 13 Nov 2024 15:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB1C13D24D;
+	Wed, 13 Nov 2024 15:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0cdk/8xd"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Nt0y/ika"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B169156F36
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986CD84D13
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731513497; cv=none; b=IpoEhVhAZAA7grn+wpcNnSKZxNknxheGQuqtNRkc/oolNt6RVqUOgpBVCC47N6YOnLu6MJkAJXen3RNPO1fmOlreSYK4n6zFxKr9u3av9jvN66Sm4E9q4YntFKBlc3cGKcsfXJJC+B6o55EN7YdcLvhl+gFT60Bw3hC38w1JN2I=
+	t=1731513524; cv=none; b=tIDbkkRhbIeV9ct2PyZL1X7XOflKJY1EsN3ZD8zH2220VyahQjqOTQmdOpiTpl7135Z4OdvS2sYI0dxrm4Suo3WpUkIgNZg5DmMv3XdLzKAWAQVsMGjjdTE538Bb4HF6uBL/NE/07X4Sx5cWFVhvuSn2VSTeeA70SXTX5sqfKOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731513497; c=relaxed/simple;
-	bh=IZNKL5dKTunqOnlhlqbELW9B4+RdNR6QwIYEmChpV5c=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gVemwTFPEhV2BVrtYPcYwTzPjH4nqfeiGRlV+IpKp6rs1LiLubHI2Y1G0pongqAHJ7m4fdpaxaLLlt8aO16pHxXdt8T9MOQUPxSMdbnNLrdKCj5ok0m1aNkELvPQBUoZJ1/rsJvK3bArta8dndAEyDfed+FlhKyr5Vt8msCDOPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0cdk/8xd; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea86f1df79so128411747b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:58:15 -0800 (PST)
+	s=arc-20240116; t=1731513524; c=relaxed/simple;
+	bh=qo/L4Rj/ujZnYsYMQkwYgfGTPkJq75vK+uiSD4BntRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VFuaHNI4I5mCZMVsOlv8r3FucB96XZA2C4XIeqKyegK8wqZ3Hu5zRUEDqdXEOsO3Kb+YFW8EfxRfW2JdYisltIzNbU1WsOHYaBXD81j0ceCgZJ3ZoSYNQgWk1PoyOulU1KCI2Zyo5qBkbdV9OtmHpkfh/MJsdmOY8ELozHTuSeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Nt0y/ika; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso61577845e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:58:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731513494; x=1732118294; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kF/MfTQ5/fcEXQi4LYfLZfwZ71SBi7osE385WhqsuTc=;
-        b=0cdk/8xdpEhg/zSuncy9dvr/2/cM2LvCeCkjsVa4x7a+DCyk7NSn3NUdlQjFgT1AC1
-         IRtOyUexm3N2p41o2K2jNqhcCkvqDs+ZH9SCoMECnFjJoe5821cL+T4+HJQHx2rlDigM
-         aRkcGK4UbcHzPqKLUJsgaGB6pAocUpHXlHyyVsEc09H705OCI111mpXsACkgi6n7vayC
-         wHZ/Zt6XtN56bgXZxgm3OiiybsZYipRNHlvpdEIMSOqEIMvvLYbL7j5GpW4Wh4+AGmCF
-         BZEFTzHuJHitAVdUOWFSgQ98sXkpRg3IzwimakaIBB5FgA8SLkrkO5nZhJdcTsobWSLl
-         ebJg==
+        d=suse.com; s=google; t=1731513520; x=1732118320; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uf5TjSvPe5rCvBCA6D7ZCh0Cbq12/qb9SeeBw1+x2uc=;
+        b=Nt0y/ikaNMRzT2A+CknTKE91mhhv6mMRidkgttd3ojnJhhZ1i394qxdYVdUqnKQurZ
+         1EK1CLL4DzuUD6Bj+03CTiYutdqzxPDyPhKEYaZn4Q97SfFCVwt02deZK/iZMlIbqcP3
+         L3W6OctF1uINm85ZLfR5q2urGMBaDItEubVhUTm5Nf48wmZj+Eu25s1Q+Ndr2CGgSnM6
+         F1E9eRyg8u53Pnzz7rkmLx0SdXTWbi8AK2xHHVDluHOmSKC5ASOq8pmIEWJjNkfipl73
+         2ndjRDPt0C3QxV/VMZTUIrw+KPVU5R9t5ZhEnZ4lHr0oF533B1firBLkGvOSjfOZznIp
+         Kt7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731513494; x=1732118294;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kF/MfTQ5/fcEXQi4LYfLZfwZ71SBi7osE385WhqsuTc=;
-        b=wHGuXQYd6hrrprUbUpUceqfVqWsHtd/+LUC5ZrfVp/PgJKDnOHFDEqwLnvc7nMxyO/
-         PrPq5imZYncNZFtoSvOrIeKTFmgUeXJspSYEzfr9vF85ZN+34o3z03L9EBQ+Df34sUJd
-         PyAgliFczkumlm+IQSJ1GrpziNMUDjh1m3t8JgJlzk0lMaziGS7/VYPyd8+xXFaUFYTB
-         hyMUgz0KzywzqdqCFu6JmvtZM+rS2PmOyhHA0Z67Ahoi0yqYtmbTZrtqKci3SN35wHWx
-         tEPqyvWRMm8PxXefYmsnlZl2Ni5qEFlJiV8I5mLVfJDZtuJnIWoHb3zI/I6tqinACNyh
-         1xIQ==
-X-Gm-Message-State: AOJu0YzpuvAeuWIkUoHylfxTeosU7mg4DO+HOi4qFffuvLc+pM6jYNWy
-	vK8JyyvcDFkWARkB85SHg3jUj27/IrgGMIRE11MYLGbXP178twc3DFEfQNvcnpxREPp5IUtFoEj
-	6dg==
-X-Google-Smtp-Source: AGHT+IHuQ95n+Y8jejyNGBOGXye70VLPfyNGzX3R/E/mHwLTbyQVpbG8tfrNstJjL7AVlymwbNM8htd7/LM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a81:b510:0:b0:6e2:ad08:4924 with SMTP id
- 00721157ae682-6eaddf71dcfmr1920297b3.4.1731513494525; Wed, 13 Nov 2024
- 07:58:14 -0800 (PST)
-Date: Wed, 13 Nov 2024 07:58:13 -0800
-In-Reply-To: <20241112232253.3379178-6-dionnaglaze@google.com>
+        d=1e100.net; s=20230601; t=1731513520; x=1732118320;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uf5TjSvPe5rCvBCA6D7ZCh0Cbq12/qb9SeeBw1+x2uc=;
+        b=GucpSFZ6xrAyDP3fnEbGe+HgK/8Y1u1hK2isDlaw3R4vUp1NVgh7hE1/tcKU9xoMSV
+         kvAx5aWjEztXl7hpCLoNwF3pB0F5JcUvWmT6oj7qEr1HVdnaSKXinBihimPe+qNNrL3G
+         puGngAoXbPxrkwR0BzhT0shkinghLJxMVoLQDSY/sVfdvQpedJ7RKgyoKd2i7hoJvNck
+         mrRdkd3Qiqa8CXCN6preOs1wjc69N4aZgL6IzriBoVWJpLCTeqKN/yBzx5URyYQFXjfp
+         q+7C702ab5Z7ZW2IHCnscbBaX4y5aYizB1H19Q4qEcWynZTa0BtCrpHsTq46dCq8IqDc
+         jIEw==
+X-Gm-Message-State: AOJu0Yx1Q792kfGVKSHpFFwZ6WVU9a1MRV6xeuHEdWD7ViNt6BsSzUz/
+	mpyf+FdKdxrXzM4AsifaZF0FnIzXFZIYwq/5lQXASIX8Q+8G9w294sa37VDxK1c=
+X-Google-Smtp-Source: AGHT+IFqfeHUlD7MVcdhG5Bl24qLF19H70J3IuBOaTcomQbeFOlL7Pl7gAfMQiG1drYAzsfulA7Hlg==
+X-Received: by 2002:a05:6000:210e:b0:382:424:94fe with SMTP id ffacd0b85a97d-382042495edmr8354938f8f.36.1731513519825;
+        Wed, 13 Nov 2024 07:58:39 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed99790csm18883403f8f.46.2024.11.13.07.58.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 07:58:39 -0800 (PST)
+Date: Wed, 13 Nov 2024 16:58:36 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Chris Down <chris@chrisdown.name>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
+Subject: Re: [PATCH v6 06/11] printk: console: Introduce sysfs interface for
+ per-console loglevels
+Message-ID: <ZzTMrFEcYZf58aqj@pathway.suse.cz>
+References: <cover.1730133890.git.chris@chrisdown.name>
+ <0312cd1e80e68a1450a194ebce27728cdf497575.1730133890.git.chris@chrisdown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241112232253.3379178-1-dionnaglaze@google.com> <20241112232253.3379178-6-dionnaglaze@google.com>
-Message-ID: <ZzTMlcoU4uOijVxt@google.com>
-Subject: Re: [PATCH v6 5/8] crypto: ccp: Add GCTX API to track ASID assignment
-From: Sean Christopherson <seanjc@google.com>
-To: Dionna Glaze <dionnaglaze@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ashish Kalra <ashish.kalra@amd.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	John Allen <john.allen@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, linux-coco@lists.linux.dev, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Michael Roth <michael.roth@amd.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Tianfei zhang <tianfei.zhang@intel.com>, Alexey Kardashevskiy <aik@amd.com>, linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0312cd1e80e68a1450a194ebce27728cdf497575.1730133890.git.chris@chrisdown.name>
 
-On Tue, Nov 12, 2024, Dionna Glaze wrote:
-> @@ -109,6 +110,10 @@ static void *sev_init_ex_buffer;
->   */
->  static struct sev_data_range_list *snp_range_list;
->  
-> +/* SEV ASID data tracks resources associated with an ASID to safely manage operations. */
-> +struct sev_asid_data *sev_asid_data;
-> +u32 nr_asids, sev_min_asid, sev_es_max_asid;
+On Mon 2024-10-28 16:45:46, Chris Down wrote:
+> A sysfs interface under /sys/class/console/ is created that permits
+> viewing and configuring per-console attributes. This is the main
+> interface with which we expect users to interact with and configure
+> per-console loglevels.
+> 
+> Each console device now has its own directory (for example,
+> /sys/class/console/ttyS0/) containing the following attributes:
+> 
+> - effective_loglevel (ro): The effective loglevel for the console after
+>   considering all loglevel authorities (e.g., global loglevel,
+>   per-console loglevel).
+> - effective_loglevel_source (ro): The source of the effective loglevel
+>   (e.g., local, global, ignore_loglevel).
+> - enabled (ro): Indicates whether the console is enabled (1) or disabled
+>   (0).
+> - loglevel (rw): The per-console loglevel. Writing a value between 0
+>   (KERN_EMERG) and 8 (KERN_DEBUG + 1) sets the per-console loglevel.
+>   Writing -1 disables the per-console loglevel.
+
+The function clamp_loglevel() uses "minimum_console_loglevel"
+as the minimal boundary. This variable is initialized to
+CONSOLE_LOGLEVEL_MIN which is defined as 1.
+
+And indeed, the value 0 is not accepted:
+
+  # echo 0 >/sys/class/console/ttyS0/loglevel 
+  -bash: echo: write error: Numerical result out of range
+
+CONSOLE_LOGLEVEL_MIN has been used since ages. I am not completely
+sure about the motivation. I guess that KERN_EMERG messages
+should never get disabled.
+
+I would keep "1" as the minimal allowed value and update
+the documentation.
+
+
+> In terms of technical implementation, we embed a device pointer in the
+> console struct, and register each console using it so we can expose
+> attributes in sysfs. We currently expose the following attributes:
+> 
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-class-console
+[...]
+> +What:		/sys/class/console/<C>/loglevel
+> +Date:		October 2024
+> +Contact:	Chris Down <chris@chrisdown.name>
+> +Description:	Read write. The current per-console loglevel, which will take
+> +		effect if not overridden by other non-sysfs controls (see
+> +		Documentation/admin-guide/per-console-loglevel.rst). Bounds are
+> +		0 (LOGLEVEL_EMERG) to 8 (LOGLEVEL_DEBUG + 1) inclusive. Also
+
+The real minimal boundary is 1.
+
+> +		takes the special value "-1" to indicate that no per-console
+> +		loglevel is set, and we should defer to the global controls.
+> diff --git a/Documentation/admin-guide/per-console-loglevel.rst b/Documentation/admin-guide/per-console-loglevel.rst
+> index 1ec7608f94b0..41bf3befb2f3 100644
+> --- a/Documentation/admin-guide/per-console-loglevel.rst
+> +++ b/Documentation/admin-guide/per-console-loglevel.rst
+> @@ -68,3 +68,44 @@ further:
+>  The default value for ``kernel.console_loglevel`` comes from
+>  ``CONFIG_CONSOLE_LOGLEVEL_DEFAULT``, or ``CONFIG_CONSOLE_LOGLEVEL_QUIET`` if
+>  ``quiet`` is passed on the kernel command line.
 > +
->  static inline bool sev_version_greater_or_equal(u8 maj, u8 min)
->  {
->  	struct sev_device *sev = psp_master->sev_data;
-> @@ -1093,6 +1098,109 @@ static int snp_filter_reserved_mem_regions(struct resource *rs, void *arg)
->  	return 0;
+> +Console attributes
+> +~~~~~~~~~~~~~~~~~~
+> +
+> +Registered consoles are exposed at ``/sys/class/console``. For example, if you
+> +are using ``ttyS0``, the console backing it can be viewed at
+> +``/sys/class/console/ttyS0/``. The following files are available:
+> +
+> +* ``effective_loglevel`` (r): The effective loglevel after considering all
+> +  loglevel authorities. For example, it shows the value of the console-specific
+> +  loglevel when a console-specific loglevel is defined, and shows the global
+> +  console loglevel value when the console-specific one is not defined.
+> +
+> +* ``effective_loglevel_source`` (r): The loglevel authority which resulted in
+> +  the effective loglevel being set. The following values can be present:
+> +
+> +    * ``local``: The console-specific loglevel is in effect.
+> +
+> +    * ``global``: The global loglevel (``kernel.console_loglevel``) is in
+> +      effect. Set a console-specific loglevel to override it.
+> +
+> +    * ``ignore_loglevel``: ``ignore_loglevel`` was specified on the kernel
+> +      command line or at ``/sys/module/printk/parameters/ignore_loglevel``.
+> +      Disable it to use level controls.
+> +
+> +* ``enabled`` (r): Whether the console is enabled.
+
+Please, remove the 'enabled' flag for now. All registered consoles are
+enabled. It seems that only some serial consoles temporary disable
+consoles during the suspend but the sysfs interface is not accessible
+at this time anyway.
+
+It has been discussed recently, see
+https://lore.kernel.org/r/ZyoNZfLT6tlVAWjO@pathway.suse.cz
+
+> +* ``loglevel`` (rw): The local, console-specific loglevel for this console.
+> +  This will be in effect if no other global control overrides it. Look at
+> +  ``effective_loglevel`` and ``effective_loglevel_source`` to verify that.
+> +
+> +Deprecated
+> +~~~~~~~~~~
+> +
+> +* ``kernel.printk`` sysctl: this takes four values, setting
+> +  ``kernel.console_loglevel``, ``kernel.default_message_loglevel``, the minimum
+> +  console loglevel, and a fourth unused value. The interface is generally
+> +  considered to quite confusing, doesn't perform checks on the values given,
+> +  and is unaware of per-console loglevel semantics.
+> +
+> --- a/include/linux/printk.h
+> +++ b/include/linux/printk.h
+> @@ -77,6 +77,8 @@ extern bool ignore_per_console_loglevel;
+>  
+>  extern void console_verbose(void);
+>  
+> +int clamp_loglevel(int level);
+> +
+
+It is declared also in kernel/printk/internal.h. And it seems
+that the internal header is enough.
+
+>  /* strlen("ratelimit") + 1 */
+>  #define DEVKMSG_STR_MAX_SIZE 10
+>  extern char devkmsg_log_str[DEVKMSG_STR_MAX_SIZE];
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -199,6 +199,12 @@ static int __init control_devkmsg(char *str)
 >  }
+>  __setup("printk.devkmsg=", control_devkmsg);
 >  
-> +static bool sev_check_external_user(int fd);
-> +void *sev_snp_create_context(int fd, int asid, int *psp_ret)
+> +int clamp_loglevel(int level)
 > +{
-> +	struct sev_data_snp_addr data = {};
-> +	void *context;
-> +	int rc, error;
+> +	return clamp(level, minimum_console_loglevel,
+> +		     CONSOLE_LOGLEVEL_MOTORMOUTH);
+
+Documentation/ABI/testing/sysfs-class-console says:
+
+   "Bounds are 1 (LOGLEVEL_ALERT) to 8 (LOGLEVEL_DEBUG + 1) inclusive."
+
+I do not have strong opinion. But I would follow the documentation
+because the limit is well defined there. On the contrary,
+CONSOLE_LOGLEVEL_MOTORMOUTH is a randomly chosen value
+and we should not leak it to the userspace ;-)
+
+> +}
 > +
-> +	if (!sev_check_external_user(fd))
-> +		return ERR_PTR(-EBADF);
+>  char devkmsg_log_str[DEVKMSG_STR_MAX_SIZE] = "ratelimit";
+>  #if defined(CONFIG_PRINTK) && defined(CONFIG_SYSCTL)
+>  int devkmsg_sysctl_set_loglvl(const struct ctl_table *table, int write,
+> @@ -3894,6 +3900,8 @@ static int try_enable_preferred_console(struct console *newcon,
+>  			// TODO: Will be configurable in a later patch
+>  			newcon->level = -1;
+>  
+> +			newcon->classdev = NULL;
 > +
-> +	if (!sev_asid_data)
-> +		return ERR_PTR(-ENODEV);
+
+The console can be enabled also by try_enable_default_console().
+We need to initialize newcon->classdev there as well.
+
+The same is true for newcon->level. I have missed this when
+reviewing the 3rd patch.
+
+>  			if (_braille_register_console(newcon, c))
+>  				return 0;
+>  
+> --- /dev/null
+> +++ b/kernel/printk/sysfs.c
+> +void console_register_device(struct console *con)
+> +{
+> +	/*
+> +	 * We might be called from register_console() before the class is
+> +	 * registered. If that happens, we'll take care of it in
+> +	 * printk_late_init.
+> +	 */
+> +	if (IS_ERR_OR_NULL(console_class))
+> +		return;
+
+This check is not enough to avoid race with printk_late_init():
+
+CPU0					CPU1
+
+register_console()			printk_late_init()
+  [...]					[...]
+  console_register_device()		console_register_device()
+    if (IS_ERR_OR_NULL(console_class))    if (IS_ERR_OR_NULL(console_class))
+
+BANG: Both CPUs see "console == NULL" and both CPUs try to
+      register the device.
+
+I suggest to avoid this race by taking console_list_lock() in
+printk_late_init(), see below.
+
 > +
-> +	if (asid < 0 || asid >= nr_asids)
-> +		return ERR_PTR(-EINVAL);
+> +	if (WARN_ON(con->classdev))
+> +		return;
 > +
-> +	/* Can't create a context for a used ASID. */
-> +	if (WARN_ON_ONCE(sev_asid_data[asid].snp_context))
-> +		return ERR_PTR(-EBUSY);
+> +	con->classdev = kzalloc(sizeof(struct device), GFP_KERNEL);
+> +	if (!con->classdev)
+> +		return;
+> +
+> +	device_initialize(con->classdev);
+> +	dev_set_name(con->classdev, "%s%d", con->name, con->index);
+> +	dev_set_drvdata(con->classdev, con);
+> +	con->classdev->release = console_classdev_release;
+> +	con->classdev->class = console_class;
+> +	if (device_add(con->classdev))
+> +		put_device(con->classdev);
+> +}
+> +
+> +void console_setup_class(void)
+> +{
+> +	struct console *con;
+> +	int cookie;
+> +
+> +	/*
+> +	 * printk exists for the lifetime of the kernel, it cannot be unloaded,
+> +	 * so we should never end up back in here.
+> +	 */
+> +	if (WARN_ON(console_class))
+> +		return;
+> +
+> +	console_class = class_create("console");
+> +	if (!IS_ERR(console_class))
+> +		console_class->dev_groups = console_sysfs_groups;
+> +
+> +	cookie = console_srcu_read_lock();
 
-Tracking contexts in an array that's indexed per ASID is unsafe and unnecessarily
-splits ASID management across KVM and the PSP driver.  There is zero reason the
-PSP driver needs to care about ASIDs.  Attempting to police KVM is futile, and
-leads to bloated, convoluted code.
+We should take console_list_lock() here to avoid races with
+register_console() and unregister_console(). Otherwise.
+console_register_device(con) might be called twice.
 
-AFAICT, there is nothing to guard against a use-after-free in 
-snp_update_guest_contexts().  The need to handle SEV_RET_INVALID_GUEST is a pretty
-big clue that there are races between KVM and firmware updates.
+> +	for_each_console_srcu(con)
+> +		console_register_device(con);
+> +	console_srcu_read_unlock(cookie);
+> +}
+> +#else /* CONFIG_PRINTK */
+> +void console_register_device(struct console *new)
+> +{
+> +}
+> +void console_setup_class(void)
+> +{
+> +}
+> +#endif
 
-		if (!sev_asid_data[i].snp_context)
-			continue;
-
-		status_data.gctx_paddr = __psp_pa(sev_asid_data[i].snp_context);
-		status_data.address = __psp_pa(snp_guest_status);
-		rc = sev_do_cmd(SEV_CMD_SNP_GUEST_STATUS, &status_data, &error);
-		if (!rc)
-			continue;
-
-		/*
-		 * Handle race with SNP VM being destroyed/decommissoned,
-		 * if guest context page invalid error is returned,
-		 * assume guest has been destroyed.
-		 */
-		if (error == SEV_RET_INVALID_GUEST)
-			continue;
-
-Using an array is also inefficient, as it requires iterating over all possible
-ASIDs, many of which may be unused.
-
-Furthermore, handling this in the PSP driver (correctly) leads to unnecessary
-locking.  KVM already protects SNP ASID allocations with sev_deactivate_lock, I
-see zero reason to complicate things with another lock.
-
-The "rollback" mechanism is also broken.  If SEV_CMD_SNP_GUEST_STATUS fails,
-synthetic_restore_required is set and never cleared, and impacts *all* SEV PSP
-commands.  I.e. failure to update one guest context comletely cripples the entire
-system.  Not to mention synthetic_restore_required also lacks any form of SMP
-synchronication.
-
-I also don't see how a rollback is possible if an error occurs after one or more
-guest contexts have been updated.  Presumably trying to rollback in that state
-will leave the updated guests in a bad state.  Of course, I don't see any rollback
-code as nothing ever clears synthetic_restore_required, so what's intented to
-happen is entirely unclear.
-
-I also don't see anything in this series that explains why a SEV_CMD_SNP_GUEST_STATUS
-failure shouldn't be treated as a fatal error.  Of the error codes listed in the
-SNP ABI, everything except UPDATE_FAILED is clearly a software bug.  And I can't
-find anything that explains when UPDATE_FAILED will be returned.
-
-  Table 80. Status Codes for SNP_GUEST_STATUS
-  Status                          Condition
-  SUCCESS                         Successful completion.
-  INVALID_PLATFORM_STATE          The platform is not in the INIT state.
-  INVALID_ADDRESS                 The address is invalid for use by the firmware.
-  INVALID_PARAM                   MBZ fields are not zero.
-  INVALID_GUEST                   The guest context page was invalid.
-  INVALID_PAGE_STATE              The guest status page was not in the correct state.
-  INVALID_PAGE_SIZE               The guest status page was not the correct size.
-  UPDATE_FAILED                   Update of the firmware internal state or a guest context page has failed.
-
-Somewhat off the cuff, I think the only sane way to approach this is to call into
-KVM when doing a firmware update, and let KVM react accordingly.   E.g. let KVM
-walk its list of VMs in order to update SNP VMs, taking kvm_lock and the somewhat
-misnamed sev_deactivate_lock() as needed.  Then if updating a guest context fails,
-terminate _that_ VM, and move on to the next VM.
-
-Side topic, I don't see any code that ensures no SEV or SEV-ES VMs are running.
-Is the idea to let userspace throw noodles at the PSP and see what sticks?
-
-+        Provide support for AMD Platform Security Processor firmware.
-+        The PSP firmware can be updated while no SEV or SEV-ES VMs are active.
-                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+        Users of this feature should be aware of the error modes that indicate
-+        required manual rollback or reset due to instablity.
+Best Regards,
+Petr
 
