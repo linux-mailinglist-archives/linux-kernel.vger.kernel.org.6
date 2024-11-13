@@ -1,220 +1,182 @@
-Return-Path: <linux-kernel+bounces-407968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E949C7811
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:01:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CF19C780F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:01:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5FEF286936
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B7ED28515E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4854158DC0;
-	Wed, 13 Nov 2024 16:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548CE16088F;
+	Wed, 13 Nov 2024 16:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TiIRvvPK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bqlGpkKM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jEAzLdhK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bqlGpkKM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jEAzLdhK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B79813CA81
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177F77E0E8;
+	Wed, 13 Nov 2024 16:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731513660; cv=none; b=koJf+sfuev3X2n5w3fatWTsLpu3OmfRU7tyJV662s4aUxSesJYfn/cQIBiw/1z6fIc9nMd0iDUXMG0WLRUxX7OxdRHIJPohHWAhpcY6Nn8sBoq+iuzNKMAdALf926CSor0ZCxo8TH6N9LQb9J8meUkueNlm3mNWOeDw5dStu+8I=
+	t=1731513645; cv=none; b=P2FV/z0kc4I1Gglqe80mCltv7fdij0DvP9of7JvdoW/AuIN9mKS/8of56Jx7YHJL6PHDyyk+9Eqeyk5p+6/ZSoT4QJ/boTguukTlECQBWoWtfzIcRGTwxViqRCbLm1qp1DvXhOr3DciLVbNFXLpVhi8wjLIZRBFyWvsHDwHjZok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731513660; c=relaxed/simple;
-	bh=+Slv5CC/4TAzKjLZg0OGlTnIZZ5EzRic/m8KO2N0W5I=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DxUT9bkSnYAeSaQgHTdwIAa9ictvla2HQMu5DtCqgE0k7/qBVo/O2Rw92mzUXHKNjpH3SWjrkkrSc7z7wMPJpYK9R2eH3kCz+vQpDQBSyfBhYOMIWHfWi5bYZ9tTndlQyQ+a+TEPZyiLLD/QjeFlNWrj09gpTn9EVrh0gJClYu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TiIRvvPK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731513658;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1731513645; c=relaxed/simple;
+	bh=i4zs6poiel0JnpktSFmEeDplyM1nMi88s9UHq0AK+MM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RAGe3u8jrQ+o7VV1rOyFBGYmEubRC8H/XVpcgIcU1OYpVPnsR5EApyn6JOy0wDUOtdOQAR7cFyyh0ABa/B/MtwIujRPPttD63MGKHZbTfzqFaq3BfNC7LWWe8Q/i+pttJAXgjAmYWsK0KkwfbicyEeKSettSxnnr8or8WUs3oGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bqlGpkKM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jEAzLdhK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bqlGpkKM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jEAzLdhK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1A8941F391;
+	Wed, 13 Nov 2024 16:00:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731513642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cWQPA9RVyE5frZ47nu2bneN1jwH5ernfdKrCSBJzB7o=;
-	b=TiIRvvPKFt7j15AH3nG7J2fpKci/p+zKYWOhis63PY3ixIgBtuzJthZJEFekXugHNCf0/T
-	jWGJ7it7srReNNOBLi3milQTmen8Ac9V+io7dA9VEq1lWXTBWJJvnp+1FN5sBmqrsxWujG
-	QLGhweEOhp6P7QXRROJ/BERshYpVnv4=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-437-VmcSG_kGOZSuG_u874Mf9A-1; Wed, 13 Nov 2024 11:00:57 -0500
-X-MC-Unique: VmcSG_kGOZSuG_u874Mf9A-1
-X-Mimecast-MFC-AGG-ID: VmcSG_kGOZSuG_u874Mf9A
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-6ea8901dff1so135320717b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:00:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731513651; x=1732118451;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWQPA9RVyE5frZ47nu2bneN1jwH5ernfdKrCSBJzB7o=;
-        b=L96w2eqeiYRGZetaWBDkqmVCvNlUfrxvuGwrFpj6Uma1z5hw4Z3y3QrUHkYFF4GugQ
-         zIydgWNqc3twrHS5xwjtd9dPzzyE+D0x0cFTFk/InTsOIXfO+qJmWX7MM8sBkoQxQ5P/
-         jTNr1AaSkp2j5jECgaRgHiygcJYEswk8d5y2ueOTV1i0xEy+kYjinnACWGokbGLr7mq/
-         A9Jc2I7x2GHuRAp6bWX/4CDVtQ54p5EES2E5s9mZvcRsoL8aY10mJE+G+8kOlb41XrL4
-         8nGfwj5HE9Oyd+WUStX+3T9wtafHgGXm9yoRIzQQtujm+x01anC/oV7c8N+WFCpzJi9M
-         0MNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdIsB7H8n+1gobErZhvrFz09hBP9n4hGyA4IzLepv5tEQM0bLxag9v2fkWOHIArleQ2ag3AuvdkNUor68=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcngrd/7Xyo+NkPBtUhHAOSeMx+S7cTACL2eJb7Kd9lKpJmd58
-	BwRQXlN9+o/qwbn9FZTS7fbwwvG5cax6vOHM8qGWFVIiEIHm9pCObbY0ysKZs1s0jAwuF0fVP8r
-	MDmU9PWUWOJUICqiKJ4s2rHUUXgp3AOFhTyEf8RS+9nQD5LiVGYxapPQVn+5wJiVKNSATYA==
-X-Received: by 2002:a05:690c:4b8d:b0:6c3:7d68:b400 with SMTP id 00721157ae682-6eaddd98d0fmr210846747b3.10.1731513651295;
-        Wed, 13 Nov 2024 08:00:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFxWWUuPKP0t2ZZvJuTp9gzfR0PFWGV7zxdTg/WhdiX/MmEftHmL8gY4oQmepjvJnQv3ILkxA==
-X-Received: by 2002:a05:6e02:160b:b0:3a3:4164:eec9 with SMTP id e9e14a558f8ab-3a6f1a15cb8mr236895055ab.14.1731513639554;
-        Wed, 13 Nov 2024 08:00:39 -0800 (PST)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de787f9cd1sm2841953173.140.2024.11.13.08.00.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 08:00:39 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <4a388ba7-8533-4c86-9135-883451f65065@redhat.com>
-Date: Wed, 13 Nov 2024 11:00:35 -0500
+	bh=mHAQ26Nn5tcyaowagOdm7FS32VGBuE9uK32EZ1ieVuo=;
+	b=bqlGpkKM4gCPo2pnaaUYI7IusD/IeQkjcBxY2Hfv9VIs16KyltuHpE59AtZq7HR2pBhfCM
+	Vhk+qxtnohvEldX6ZhgYLR2FZCUWf4Jsip0LJiw5lH+F5dtPUqj4L3UyU9WqphxUGqlEsI
+	jz40hJZVI6bLiAOJ/81PDcm+u/dYw+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731513642;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mHAQ26Nn5tcyaowagOdm7FS32VGBuE9uK32EZ1ieVuo=;
+	b=jEAzLdhKj625CSkoN93JQVtrv8TJ6c8/Efc7JHCF9GLk+XedmTmuKN3FyMS9OvaQ2YG7GN
+	ARJI6OGSkHcX+aBQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=bqlGpkKM;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=jEAzLdhK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731513642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mHAQ26Nn5tcyaowagOdm7FS32VGBuE9uK32EZ1ieVuo=;
+	b=bqlGpkKM4gCPo2pnaaUYI7IusD/IeQkjcBxY2Hfv9VIs16KyltuHpE59AtZq7HR2pBhfCM
+	Vhk+qxtnohvEldX6ZhgYLR2FZCUWf4Jsip0LJiw5lH+F5dtPUqj4L3UyU9WqphxUGqlEsI
+	jz40hJZVI6bLiAOJ/81PDcm+u/dYw+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731513642;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mHAQ26Nn5tcyaowagOdm7FS32VGBuE9uK32EZ1ieVuo=;
+	b=jEAzLdhKj625CSkoN93JQVtrv8TJ6c8/Efc7JHCF9GLk+XedmTmuKN3FyMS9OvaQ2YG7GN
+	ARJI6OGSkHcX+aBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 10DDE13A6E;
+	Wed, 13 Nov 2024 16:00:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tM8cBCrNNGdvKQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 13 Nov 2024 16:00:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BFC28A08D0; Wed, 13 Nov 2024 17:00:37 +0100 (CET)
+Date: Wed, 13 Nov 2024 17:00:37 +0100
+From: Jan Kara <jack@suse.cz>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
+	Karel Zak <kzak@redhat.com>, Christian Brauner <brauner@kernel.org>,
+	Ian Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Lennart Poettering <lennart@poettering.net>
+Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
+ sb_source
+Message-ID: <20241113160037.74vu5yqzsfbvk3ad@quack3>
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+ <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
+ <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
+ <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
+ <20241113151848.hta3zax57z7lprxg@quack3>
+ <CAJfpegt5_5z1qSefL-Y7HGo0_j6OZGTQfM74wG6N2Q__vB0DsQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] sched/deadline: Restore dl_server bandwidth on
- non-destructive root domain changes
-To: Juri Lelli <juri.lelli@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-Cc: Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-References: <20241113125724.450249-1-juri.lelli@redhat.com>
- <20241113125724.450249-2-juri.lelli@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20241113125724.450249-2-juri.lelli@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegt5_5z1qSefL-Y7HGo0_j6OZGTQfM74wG6N2Q__vB0DsQ@mail.gmail.com>
+X-Rspamd-Queue-Id: 1A8941F391
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 11/13/24 7:57 AM, Juri Lelli wrote:
-> When root domain non-destructive changes (e.g., only modifying one of
-> the existing root domains while the rest is not touched) happen we still
-> need to clear DEADLINE bandwidth accounting so that it's then properly
-> restore taking into account DEADLINE tasks associated to each cpuset
-> (associated to each root domain). After the introduction of dl_servers,
-> we fail to restore such servers contribution after non-destructive
-> changes (as they are only considered on destructive changes when
-> runqueues are attached to the new domains).
->
-> Fix this by making sure we iterate over the dl_server attached to
-> domains that have not been destroyed and add them bandwidth contribution
-> back correctly.
->
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-> ---
->   include/linux/sched/deadline.h |  2 +-
->   kernel/cgroup/cpuset.c         |  2 +-
->   kernel/sched/deadline.c        | 18 +++++++++++++-----
->   kernel/sched/topology.c        | 10 ++++++----
->   4 files changed, 21 insertions(+), 11 deletions(-)
->
-> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-> index 3a912ab42bb5..82c966a55856 100644
-> --- a/include/linux/sched/deadline.h
-> +++ b/include/linux/sched/deadline.h
-> @@ -33,7 +33,7 @@ static inline bool dl_time_before(u64 a, u64 b)
->   
->   struct root_domain;
->   extern void dl_add_task_root_domain(struct task_struct *p);
-> -extern void dl_clear_root_domain(struct root_domain *rd);
-> +extern void dl_clear_root_domain(struct root_domain *rd, bool restore);
->   
->   #endif /* CONFIG_SMP */
->   
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 142303abb055..4d3603a99db3 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -954,7 +954,7 @@ static void dl_rebuild_rd_accounting(void)
->   	 * Clear default root domain DL accounting, it will be computed again
->   	 * if a task belongs to it.
->   	 */
-> -	dl_clear_root_domain(&def_root_domain);
-> +	dl_clear_root_domain(&def_root_domain, false);
->   
->   	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
->   
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 9ce93d0bf452..e53208a50279 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -2968,13 +2968,21 @@ void dl_add_task_root_domain(struct task_struct *p)
->   	task_rq_unlock(rq, p, &rf);
->   }
->   
-> -void dl_clear_root_domain(struct root_domain *rd)
-> +void dl_clear_root_domain(struct root_domain *rd, bool restore)
->   {
-> -	unsigned long flags;
-> -
-> -	raw_spin_lock_irqsave(&rd->dl_bw.lock, flags);
-> +	guard(raw_spinlock_irqsave)(&rd->dl_bw.lock);
->   	rd->dl_bw.total_bw = 0;
-> -	raw_spin_unlock_irqrestore(&rd->dl_bw.lock, flags);
-> +
-> +	if (restore) {
-> +		int i;
-> +
-> +		for_each_cpu(i, rd->span) {
-> +			struct sched_dl_entity *dl_se = &cpu_rq(i)->fair_server;
-> +
-> +			if (dl_server(dl_se))
-> +				rd->dl_bw.total_bw += dl_se->dl_bw;
-> +		}
-> +	}
->   }
->   
->   #endif /* CONFIG_SMP */
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 9748a4c8d668..e9e7a7c43dd6 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -2721,12 +2721,14 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
->   
->   				/*
->   				 * This domain won't be destroyed and as such
-> -				 * its dl_bw->total_bw needs to be cleared.  It
-> -				 * will be recomputed in function
-> -				 * update_tasks_root_domain().
-> +				 * its dl_bw->total_bw needs to be cleared.
-> +				 * Tasks contribution will be then recomputed
-> +				 * in function dl_update_tasks_root_domain(),
-> +				 * dl_servers contribution in function
-> +				 * dl_restore_server_root_domain().
->   				 */
->   				rd = cpu_rq(cpumask_any(doms_cur[i]))->rd;
-> -				dl_clear_root_domain(rd);
-> +				dl_clear_root_domain(rd, true);
->   				goto match1;
->   			}
->   		}
+On Wed 13-11-24 16:49:52, Miklos Szeredi wrote:
+> On Wed, 13 Nov 2024 at 16:18, Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 13-11-24 08:45:06, Jeff Layton wrote:
+> > > On Wed, 2024-11-13 at 12:27 +0100, Karel Zak wrote:
+> > > > On Tue, Nov 12, 2024 at 02:39:21PM GMT, Christian Brauner wrote:
+> > > > Next on the wish list is a notification (a file descriptor that can be
+> > > > used in epoll) that returns a 64-bit ID when there is a change in the
+> > > > mount node. This will enable us to enhance systemd so that it does not
+> > > > have to read the entire mount table after every change.
+> > > >
+> > >
+> > > New fanotify events for mount table changes, perhaps?
+> >
+> > Now that I'm looking at it I'm not sure fanotify is a great fit for this
+> > usecase. A lot of fanotify functionality does not really work for virtual
+> > filesystems such as proc and hence we generally try to discourage use of
+> > fanotify for them. So just supporting one type of event (like FAN_MODIFY)
+> > on one file inside proc looks as rather inconsistent interface. But I
+> > vaguely remember we were discussing some kind of mount event, weren't we?
+> > Or was that for something else?
+> 
+> Yeah, if memory serves right what we agreed on was that placing a
+> watch on a mount would result in events being generated for
+> mount/umount/move_mount directly under that mount.  So this would not
+> be monitoring the entire namespace as poll on /proc/$$/mountinfo does.
+> IIRC Lennart said that this is okay and even desirable for systemd,
+> since it's only interested in a particular set of mounts.
 
-With my limited understanding of the deadline code, this change looks 
-reasonable to me. dl_rebuild_rd_accounting() is a part of the cpuset 
-code that is seldom touched. So I don't think this particular hunk will 
-cause any merge conflict. So it can be carried in the tip tree.
+Oh, right. Thanks for reminding me. And yes, this would fit within what
+fanotify supports quite nicely.
 
-Acked-by: Waiman Long <longman@redhat.com>
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
