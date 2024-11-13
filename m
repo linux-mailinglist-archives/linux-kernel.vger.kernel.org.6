@@ -1,99 +1,83 @@
-Return-Path: <linux-kernel+bounces-408119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8610F9C7AB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:08:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 593AA9C7AA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:06:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B99EB34B94
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:06:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08D291F26C1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B7C200CBE;
-	Wed, 13 Nov 2024 18:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9A81632CC;
+	Wed, 13 Nov 2024 18:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NEdMKSrZ"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmU33Ybq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A031531EA;
-	Wed, 13 Nov 2024 18:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BAE1531EA
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731521165; cv=none; b=K2KqMMiI/Bj6nyf4K6Rjz8kCWAcpLdyYU3omPMi9yXmrOouwyItulRg2/W8GMmB9/C73KhnaeabBbVngLrOtfLQO+68tcDzh8B7s5ofl0v/SjqBk9ria46jX2iUS62IXBsABRihyzUQoakMlnFfl6i6uT9L3JFPn4H8vZNJLWII=
+	t=1731521156; cv=none; b=YfN7ZWEyMDejWc03PojaTFygpU6skh80BXBgy17lhPhGVPizG+2IfrYFIWbB3EcOzPiRJHirRYHkSTRcf8jftvyRW7wvpkQmL/Pp8XaklBdpKaRFhhlCkhnBOokoAzC7PmFvkGC0YhwqT6qOVDGQjCMKtoahYFpTTVBSTeVBCDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731521165; c=relaxed/simple;
-	bh=JaqV1dr57LyYbXyZU6ILQL5E6HKv/dyFHKLDnZ3tWJQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qwe6flrQ4F7VJjQEoNF82KroWk9tylsikTgI6Q8q8QPUadeqy/JrAmL7ib1NgwUpsps37nZwQIFTA5uI1tqkbz6OKQQoKHqcGuxIQSQ1bqAlrl5l8jh4Ury0M9zASz8zHz5OowXuKDxMVriv4yxnMXg0Fq4rqDd/D9Bqlpt4xTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NEdMKSrZ; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2d83f15f3so261003a91.0;
-        Wed, 13 Nov 2024 10:06:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731521164; x=1732125964; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JaqV1dr57LyYbXyZU6ILQL5E6HKv/dyFHKLDnZ3tWJQ=;
-        b=NEdMKSrZBcSRdC2F6fJMgF5Gw/LdnuCdP1zItH15djwPMXFhPPtXbe+b1idIh9UBmM
-         qeuchQzhwxMlNS5ejK8FQYHoaXYwzQiM/2eWYzH/fH8FjTGzdyD/5eDUCx++yPAnkWwb
-         OmJIuw3VBCpIupup2TYM7MiLO04YRZu6lbYHFpedZA7lnBSnsh8PU6XJo4OU0JRusslx
-         YHddMXhDa7QHEgynSwbp9Ehw4nKRo0Ek4+3ykns4YXj5CaS+40tIqiDcdFMQefZwsykL
-         b8UiIxOJGK+yzwC9dow7VTNbRBmo+lSTKyc2LGPzoxsA8O7r+24I6hpiQJ0u7TJqOP7T
-         cfgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731521164; x=1732125964;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JaqV1dr57LyYbXyZU6ILQL5E6HKv/dyFHKLDnZ3tWJQ=;
-        b=cMAJeQrvjnaw0GDdwBoh4RjyXS5rYO80yBqVyzVtC+ACPo0GY5LV6gxyWDZc2LSRrP
-         eSG/PL0VQ2bPdAHxaeHPneIeFXiHUnUVYb+anjTuoAOLHh4bnn4VZkr3Vq9XTVSGHeEs
-         qYj8ZEGzA6OVLOzAsc8OlkfMB9vvpm3/e54Yl0fHrbkbNeUZGMui0TpyNyIz/5F5xehd
-         SwGs62wCgXmUXWnQEi6VvaNzPAhWlpUA50OB6Fr42UnVdT1bcqtUCn8knlB4r+l3PIjW
-         aXXesqlMKWB3xk+2fUEe3YZoxE++PYpf/j26PT6TLYf1iZRn7i5OAg4smrkFo+rDlGIW
-         sgpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxbzbiQ8guzVELCCDxc6k28G4sHnvNrWI0TFJGvP9i7k+EIl/T5uGTrEDaa+A+YyfJb4ANry2HbILtmjE=@vger.kernel.org, AJvYcCWyBX4iZ0ynXPDOFNFQj6Gx4wh6UyQhZEwU8ifFXuJoAO6pFhwVvROs39mqjm/CanD5uq4BHRNKtG3nDg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNeEwLx0X1YY1h3Xo2DKAmgILTnGlGSdDriAg4yPGzB0bhUMon
-	0+LNJw42od59VQCHKmGdC7cyclW7Vz7gfTYdLh13AlgeuMEn8TCpDATBiLFSzKonkX21N1OOQvN
-	W2dQPGucVNdj9SAcLrj3SPsjR1tw=
-X-Google-Smtp-Source: AGHT+IF2d0vxhvyyFYqiuZsgcfsFWHCBBrLnPWw9IgtkkbYk2Q7Z1Qe0qRNnceq1xzCbFbirWwKf/JpYFZtQNBE33zc=
-X-Received: by 2002:a17:90b:1a8a:b0:2e2:a60f:289e with SMTP id
- 98e67ed59e1d1-2e9b14884dcmr11774955a91.0.1731521163613; Wed, 13 Nov 2024
- 10:06:03 -0800 (PST)
+	s=arc-20240116; t=1731521156; c=relaxed/simple;
+	bh=M4wyj6LnteCS8V5uLYewkH2xB3uFMsAbftOFpnkE21o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jcQ6vqEBu6H49AkL4LOEBMHPFochk2LBvFPWlecoymyEJ7HscfLtjwShtR9YWuJgz/QZGuX/5l5kImHzQ+m5nLmQDYUlmZO0vrSwWkbbl32aKtrU91c6MVgFUu2OcuzO5Uy+J1nvFJtnBgmqOCjfx1snbAuQOdamNrLGSCJSI/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmU33Ybq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B17C4CEC3;
+	Wed, 13 Nov 2024 18:05:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731521155;
+	bh=M4wyj6LnteCS8V5uLYewkH2xB3uFMsAbftOFpnkE21o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qmU33Ybq9mi6SS/EE9oMZnsYv/MW590U1NZ6DxaVzwGisRddMa9zzuYeFryV5QtDS
+	 QB1Jv6vnxMOSX5rBYRXUqOS6FowHhQT1bMVks5xuW99pozRML8wnXm4cFG85NjdzGN
+	 sSR7950AR4zd0WyLKTM/ulQ6dCiEyE19aEd+Fqdv8YjBgrrSbxG4SmYYkHVKZ+jLPL
+	 QrGdHEHKhxHtF1dkNEOcyR/ReyBh3o55WrDgYoW81e58yM1/+deuQylQTwfAfAIBql
+	 TRMEGUxOOiXKAwXkIx2XewWgBGCMPTERne0Kawf5CReHfULXbSqWrCv7oHRXgESeIY
+	 4w6lf8eusXQeA==
+Date: Wed, 13 Nov 2024 11:05:53 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Bob Beckett <bob.beckett@collabora.com>, Jens Axboe <axboe@kernel.dk>,
+	Sagi Grimberg <sagi@grimberg.me>, kernel@collabora.com,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
+Message-ID: <ZzTqgXqjN4UrT392@kbusch-mbp>
+References: <20241112195053.3939762-1-bob.beckett@collabora.com>
+ <20241113043151.GA20077@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113171334.7ac7a6a6@canb.auug.org.au>
-In-Reply-To: <20241113171334.7ac7a6a6@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 13 Nov 2024 19:05:51 +0100
-Message-ID: <CANiq72n8+VF7MMmf8LJ2obsNjWFidhvw=+_2X2Nnio-VKs=ZQw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the rust tree with the ftrace tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113043151.GA20077@lst.de>
 
-On Wed, Nov 13, 2024 at 7:13=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> ++rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint=
-_reasons
+On Wed, Nov 13, 2024 at 05:31:51AM +0100, Christoph Hellwig wrote:
+> On Tue, Nov 12, 2024 at 07:50:00PM +0000, Bob Beckett wrote:
+> > From: Robert Beckett <bob.beckett@collabora.com>
+> > 
+> > We initially put in a quick fix of limiting the queue depth to 1
+> > as experimentation showed that it fixed data corruption on 64GB
+> > steamdecks.
+> > 
+> > After further experimentation, it appears that the corruption
+> > is fixed by aligning the small dma pool segments to 512 bytes.
+> > Testing via desync image verification shows that it now passes
+> > thousands of verification loops, where previously
+> > it never managed above 7.
+> 
+> As suggested before, instead of changing the pool size please just
+> always use the large pool for this device.
 
-Looks good to me (ideally they would be sorted, but it does not
-matter) -- thanks!
-
-Cheers,
-Miguel
+Well, he's doing what I suggested. I thought this was better because it
+puts the decision making in the initialization path instead of the IO
+path.
 
