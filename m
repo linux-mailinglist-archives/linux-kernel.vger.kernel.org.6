@@ -1,271 +1,365 @@
-Return-Path: <linux-kernel+bounces-407052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1DE19C67E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:55:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8005A9C6801
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E45BBB23AA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:55:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E47A2B24A58
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6402142659;
-	Wed, 13 Nov 2024 03:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7813116EB55;
+	Wed, 13 Nov 2024 04:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="afbjvbbm"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010039.outbound.protection.outlook.com [52.101.128.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iFNw3vRe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ACE70819
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 03:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731470144; cv=fail; b=qaF0PHkzn+6X/ob/G8pPSe4bAyrUgI+Ri3uUCNvSb9gxMODKHF/w1kTPpJOivAztINrqZ5OwDf6iVFweUbTnoqIZ4TjRC7nsBZEmv8CAr018PAj/qQ4nzLcwFFs13+i0ae16Bvc4nTS9MrYY5LGOdEoaSP7FfHlRBr98ovClw2A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731470144; c=relaxed/simple;
-	bh=+5FAkRGblN30ncL4xXrETGLzAOlJ7m8laKgdp97URs8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Ok05RXYPNUGBN2epGGn80mEVZcSJDk7FmXyMgqpGmvvK3CGd8hB1LRInKuheWLeiKwlwlwkkId8MVd64GtkFMeWv4b1VGh+wF2/POPpoLqGK+9eVCQtoNBfmROa1DQ63891sbmRQD05RkStlZUdXNKpAHblG4E9dnm3EQtEJugk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=afbjvbbm; arc=fail smtp.client-ip=52.101.128.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WdZV189kjEbcTo5EYIui/iIVxNCE6PieX/Z9ife26LTDkoNLC1SE66MtdqxHAOcnibOfAvOxEIGEwhr8Dvj7QHoSV7pmueEfybWwl3hm9TUORBW8hcdM7g6oviUN3wUHtIm+5GpS4VjryTpMLDyksUCo/sXrwtRdRW8bXmYwXos5S+SAEWhHeOPICT6LbwrhJbJZgKOlDRkU0Il9UNlrk2kX47XpvGpred5DeuWJBuvsC7JDO4wyIVbHq8cB1YHHFTHHnrJJSSnZjt/+seYsy0ybhcDS/okVv2eslcgvaAsSAbC537akSSsqYuoRVLtlrODll/5wOLCDJ+jwZJHtJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uDjBDGM9sl7HR7f182CjRzeEADxB6c8tQaOxxCyTI8I=;
- b=g36juR4Iju9fS/9u0ENBdpsN0vgd5K1ZVpg29keLSrJ3TDmngbQ/mXMBaPIDeLpaoITF2Bg4XNzHNGPipOD4xLbxqqedWaU968Ahvb/KedAeRgIvqi77Ib7v9O5XAV8POU6Tu57E/Pw/S7NJ2zFw0fFgqMLJO7DCBK5SAU1Lg00I9Q+O3SxWShlB7rSDXTdhkKgTYMWuHbO9e0ABs8TW0+mH6tKFPmP18UA5v1PiGLdZj4oSFAepeRAgqsfyIsyOEHz4FbOfUz8KIH4Gi0qDU+DDaNR6I+3D/k8W9aHnyAF4tBNH3JNzIPpRfjz4rJIXbGxsifoHNkjA7P9w34HFgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uDjBDGM9sl7HR7f182CjRzeEADxB6c8tQaOxxCyTI8I=;
- b=afbjvbbmRBBfI7xGRwOEsZi2Wp4fc9lMb+MOoDN3Q1kYbwrQW1i3VlB1Uc9mD+vbzyqdM9QKVDkUzf4Y4ScQVGnox6LGuG/jiB6GllWi7gmIlYNBEVwn5EFae20htT2bM6EiJh8qNrqumRqu8WNW1ew/u2ThmKFyby9Nxt6/45RYzo1GIJw7Q/pURhotQZhmjtewgFnHea9V8+mlRo1P9Ivk842f+XSI4UP0IQuTAnE8V6HIZmEHZkeVFHsWR/gqnKXgzR2PjnRkJzAinmpgSKNP7MfDjJUmxHDIDCK3QJvHUje0fFZWQW+t4tlaRgxnlqI1d/QeDOmXIbT6SeYTzg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB7096.apcprd06.prod.outlook.com (2603:1096:405:b5::13)
- by KL1PR06MB6735.apcprd06.prod.outlook.com (2603:1096:820:fb::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.15; Wed, 13 Nov
- 2024 03:55:37 +0000
-Received: from TYZPR06MB7096.apcprd06.prod.outlook.com
- ([fe80::6c3a:9f76:c4a5:c2b]) by TYZPR06MB7096.apcprd06.prod.outlook.com
- ([fe80::6c3a:9f76:c4a5:c2b%6]) with mapi id 15.20.8158.011; Wed, 13 Nov 2024
- 03:55:37 +0000
-From: Chunhai Guo <guochunhai@vivo.com>
-To: xiang@kernel.org
-Cc: chao@kernel.org,
-	huyue2@coolpad.com,
-	jefflexu@linux.alibaba.com,
-	dhavale@google.com,
-	linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Chunhai Guo <guochunhai@vivo.com>
-Subject: [PATCH v3] erofs: add sysfs node to drop internal caches
-Date: Tue, 12 Nov 2024 21:11:48 -0700
-Message-Id: <20241113041148.749129-1-guochunhai@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR03CA0088.apcprd03.prod.outlook.com
- (2603:1096:4:7c::16) To TYZPR06MB7096.apcprd06.prod.outlook.com
- (2603:1096:405:b5::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931FC482EB;
+	Wed, 13 Nov 2024 04:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731471280; cv=none; b=K6+23Bm67PDEBCiQsqbaIELl6DB+ZGetcfYwj1ORDoRDZ2jLpS766TwGpjA6DWxI13mgPubDgbnV91hWzBXI7zKZK+Al21Mo+7fVqJb34EqIcgXr2fK4tfIHJnCMsqb4sAPdXZvy8xp2rrrvr13BO+64efDJiTMJBLTh8UVBQ6M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731471280; c=relaxed/simple;
+	bh=MoKGjoXqvKMyvJrJHaKRFBOHX9eeZpCGN2QFOA07StA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fw69iBbiiZqdB2JmJGySzYQhdVQw+V+YOKVcabYXTf2BSYa/19ZohATjndmqD7K6JgMh/vTBK0jev3McfOJaQjz/7+4W/DnCXbol3q/hVctbQXcmy9qXQwdylGKbrq/3JOncjdk53n+KxBYRNVmghS75QdtOfTQdPh+SHXIqMhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iFNw3vRe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CFCBC4CEDB;
+	Wed, 13 Nov 2024 04:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731471280;
+	bh=MoKGjoXqvKMyvJrJHaKRFBOHX9eeZpCGN2QFOA07StA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iFNw3vReU/ezlff4oo5WMqcQr9kTZ+QsXjIALpVGwfT/XaY4WQVkwMjwTyUM+dywD
+	 pjg/bEVVstFTOWNDAYo7Br2yUWjPr/v7gVE7rWpT/5P4LEIUvI10YoKpWvyxRpn0UT
+	 lxzCli6VBHHlIYHS+NKaAOfgbk7XOVwBfzRN/W6P1QkF4zKYtgq0mcUFh25ExwPfix
+	 GTyNUZZjrp026vGI9AXXxfLgGt74V1ZsthpykjNDqhUX81TYlUI0cdxL3BWiB2Qule
+	 hYizahKHL0MwLoWLUi5Nf7C1s6+T4o4KrdHkDGmG6XOmZNp3z3g/YwswA2Fiy0Paek
+	 2l95CWBPlvnXw==
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so5904007f8f.3;
+        Tue, 12 Nov 2024 20:14:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUfwLF3ZHnRqmRtOvicGGrhgJa9UwTYpHv3w/i7oSuIe1/pmf37t4rM58LdeFArWK26DL8wRTeBM/roVYmr@vger.kernel.org, AJvYcCVd2I6HomLRF1Zqvx4uQlRBpHPlqCg+9Wo+kqKx1S3Vg5pXrnyIqzvqQSaZy8Ii2aa6VmvcWm5GjLTy@vger.kernel.org
+X-Gm-Message-State: AOJu0YybqO8UEj8EJkWqz4i7HTBoa+Xkc5U6/yBpMON1azjIlvwgjxZO
+	5VPTtvLb9w4cRCJeGn8GSDwj8OZJ5CzjeNJ6jF5QmhRpRLpP4evJfW7ghaFNjYtNCWcOkIheW6n
+	3ecaYNHtWcraw8o0qxaapMcEceKA=
+X-Google-Smtp-Source: AGHT+IFnkJp2epERaeNuWbViBVAxUEY19hCrOMD8ca90KiFC56mvt8vHOGRN+r5pGyUeU8Ei4m6oBvyVBU84ASSVbAE=
+X-Received: by 2002:a05:6000:1fad:b0:37c:cc4b:d1d6 with SMTP id
+ ffacd0b85a97d-381f1872041mr21794112f8f.27.1731471278456; Tue, 12 Nov 2024
+ 20:14:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB7096:EE_|KL1PR06MB6735:EE_
-X-MS-Office365-Filtering-Correlation-Id: 332b4ef8-e957-4c7d-bd42-08dd03970859
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+JCNc0hYYmJ3fmSZRx1GtF+1hHa+rtnP1Tdx0uUCAHyRw/rFxcO9xuU6i7oC?=
- =?us-ascii?Q?+ZpFWWn1f1z2SqFwoWvjWUuMoVjs4vlFI8xcbXxIGtDQbzoLIp3qjzVJ4r5P?=
- =?us-ascii?Q?YNY2b2pK8hRJlLsOapNfVg1ymA1cuPhb6A/RTqTrr1ct8rgy9YaLrhtSPn9q?=
- =?us-ascii?Q?x9v6iK4GmvhEdABBJD3TQDWD2zaM7zzt4Yi41WAwG3FX30vnJlP3/H1bjDyr?=
- =?us-ascii?Q?z7S+Au9uHQ919UfG6++a+HYa9k7PDSSGPNYN/Wytt4r2CRt7MPRtuuCOpReu?=
- =?us-ascii?Q?MRGA2tbNjAEs3DK97jPxs5oGsNajOj9h0SNdu/p83wil8pXwK8yJbJfguiFH?=
- =?us-ascii?Q?PVbLWg2LlYpXWlWwUYL/L3x/OckUpcUWvO0yLRS+6b6B2R7/4hBJcVNgJBe4?=
- =?us-ascii?Q?Z3f00GWTyqsizegpFsmZGaHqEgfH8cPnBaV3/kgfvjC+3QvwFNpMAJXBRmQ8?=
- =?us-ascii?Q?zsrCO1hOq5r7laZS5g905uB9KBpTWl2W40N/DM2DC+mM9Dj6sgHDr532ZBn7?=
- =?us-ascii?Q?8lop44u/UhkHumjuGzirk7h3J5yDWF+mmR0TFm24ZlXarCsElKW91tfkscdC?=
- =?us-ascii?Q?i/F8owUgq+Ie/z74k02yhH39I8jy0VmenDGNYs2pIbPbyQv294u5pfFb/mBZ?=
- =?us-ascii?Q?nWHh/spQawS/IQSHJiL5x9FOJy5Z4gvW6VmJStIru91ThB3wvt5hzg4t3Mxs?=
- =?us-ascii?Q?a/7cwdGTluG1sfGyxEO8bx46zJkzMoTgayNhbYmiTjs5HgXN+qyWABjx7DkB?=
- =?us-ascii?Q?xXUmX6CuzEJ8io8/dHGJTf1W393y6TESXDm8c6sa7z5B9Ihds7LqPEOlVYAm?=
- =?us-ascii?Q?gpOkojjg+dtUAr0w2jTpSQhixKkgqpbEBGhwH/mOQItBcCYyhx9Sp4oEyoHw?=
- =?us-ascii?Q?aMMb80TH1NtFj4jwYt0bKmmECAhIhfURXnlPTEjsp1mxyB9Csp2D2ucDFUVq?=
- =?us-ascii?Q?yaVP64gnScFhO8K4pOPCBa8ExG+FXgfJpz42vc9xL81HjEsDdc1b/Q2NrxMM?=
- =?us-ascii?Q?jCltF/isnZr7IHAeiEAplB/I1UbtlK/wSsW+I377/BHcYIeooyRqU2mIVtTY?=
- =?us-ascii?Q?OLYhNgb/IoUb/dpDoOU2tMnuthGGRkhVGm87WJ8qqbfyVbZHB/zkMeuoHd07?=
- =?us-ascii?Q?Hku5u6gEznAuYS0g4bwtd2MJp+lx3h54cEHGTva6h40q4p+2ObwTcXiV5PrU?=
- =?us-ascii?Q?s81p6gyZ0EWgKV3aiNSeWWjPspeUSpuEWZG5U9lHVLm1t9vk10+/Ku3Tlaky?=
- =?us-ascii?Q?5GfBMNgOmE6hgP3DR+PwhAFVfjw2jl2Sy7YF8b9x4PzougU+2/vx7jbnzdyH?=
- =?us-ascii?Q?KsvHzF8I0s1S2MdiG0EoiAtyGLewCypuWu3TDOAyGrrLar7paOqkNEgu2ppx?=
- =?us-ascii?Q?w/Ts8xw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB7096.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?zLoiU7faCOhcvms3M9FhPIXZzoN6QpytegjpTcMY5tJKL3Jiht/G76W2xOdN?=
- =?us-ascii?Q?HjyoepYoIDjcsbMD5zjRzeFBloOKrTGelA0kvypvUyOA/HAMdU9iKkcdXc5q?=
- =?us-ascii?Q?W4wYZtcJOeRKiXDtjf6EPKslQ0gt3Bw+EwASHsj7RiOtJWezcnMpgMj8rTff?=
- =?us-ascii?Q?jTBtsQXlfqRDbcEUU7YkCtYdzIZxAYF5t9AzEMkteqJaWzuYOnL2hRyCYDho?=
- =?us-ascii?Q?biTbN2SrXplYMaOd4UZFANWOL6ajQ6Ucqx4l5J61orCdJzX/ANmvS5aF1bMN?=
- =?us-ascii?Q?prsy9SQBQSFLiOvh9Lc6qbZnTCPS26mYgPlaj0XO83NNBxdQmNKZCfkgA0rx?=
- =?us-ascii?Q?u0Caq28srkmwNZzM0GwJdLvfXieTHL2hF3yHp9Xvc1QsBv1eQ2PywislVzBG?=
- =?us-ascii?Q?SECry5aIOnvGjgZa94s5I+Cl4TsTtsGqDx3YnfAerentpVaNY1V2kximqww2?=
- =?us-ascii?Q?7HXeHPuROmhQodEdYCRH4/EdOtBz7YCThi7ju+hMP/PDwFP2Dfd/wpqgH+8r?=
- =?us-ascii?Q?UfV+FrGEuhzF/lSgkMMH5TG6bDgEIQsYIdEqMuFbQ62wQk6WZAksIcO30iMM?=
- =?us-ascii?Q?QAQQ53r6k7D0BcXxeWXokV/Nbcqlm0JwEUS7bQzRugo4dFkLXXZFWHhoLjrY?=
- =?us-ascii?Q?ms7703P/y5eTGpCPHakC54VQcy3tjLtfD3NuSvp3kR+Sfd7TuegW5bsNMqT0?=
- =?us-ascii?Q?fCO0ZTLQaneNXIT8Cdn5EDJLurN2NCaodO/r1x/qzlZ/iD6zvcqLkT1sxgtj?=
- =?us-ascii?Q?MsF/UkWpsEIATA2d4dc3cTJGs7MoL7c0E2+qs2ODSo9iyvDyz14L9fe6wOFJ?=
- =?us-ascii?Q?ol/CsAlTgJuxW9hhnhdDGiWimFXFkB3bqjMDvq+GMCKgEpleueVdWDvLtFPy?=
- =?us-ascii?Q?MyHLJMm0+sy8AziHLxPCcEvoAvMymcnudfHJP7E3BiXV0tlZstwowVHaYspn?=
- =?us-ascii?Q?LWzfaQZJBOwSDJGbbnYq+tqwmIaUR0rR3uCx6zwl9lWnguOU+7FS3So1IWGe?=
- =?us-ascii?Q?Tq3LcLCfdZOLn8d+H7IWtBLgw4TtkIxbnXY3Ovoaln9YayTvVM4jbzF/z34y?=
- =?us-ascii?Q?7a2Cs8x2NRZNz3Q3w7wonJOYwZQMIJN/v8NFmbZPimI5NKc3mdOqkp0dltxz?=
- =?us-ascii?Q?YyQJnKx3F8N3+P28uzkG+c+OmFDxt7ea5YpQIoGTO7o8RFibtAnShq6WP4sb?=
- =?us-ascii?Q?GKi+BCnMHAaKHRvh2muVknLUofRoYzlo1u/8tsdt54olPdZxjlflZDEWu0fq?=
- =?us-ascii?Q?FxXP7YFSk8H6E+IxMqv7V4qlg5xBuSWhBXsa30u3xV3j+XBsMGihivXZX0Hk?=
- =?us-ascii?Q?wuyOyA+nDG6UwTY0Gm+6fv7whSQVI3uj4HMRtbyQ1p/o5hBlqUDCuYcViZN0?=
- =?us-ascii?Q?MDIKzkmCSdJiBVM1DdAjesyRprzJGcBHjmE0G67MKfgioBp+JBkSJbeqw/fh?=
- =?us-ascii?Q?QrcHfkhtGdruDqqr9upKLNeIxvzjRdOuve0Lx4L3kjt/EdWA6Qi/+WPl2DGu?=
- =?us-ascii?Q?UZ32HZuzqVdBPjNhu5YlFqGaHWcrRfMpFpU79dQqsv1vNiTDJ6PHpn1tFOKh?=
- =?us-ascii?Q?YozAaUvVTS6R6dmolhH8G63AkcJQ+L+6U+rJItQJ?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 332b4ef8-e957-4c7d-bd42-08dd03970859
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB7096.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2024 03:55:37.3146
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Yv9jQd5LckDT1Um3Y6lKR9zFDo/nguw/u2pHId1ApJzwXUdwDHyZ3ZdThXXW6RfEMpfAzBs5lHQdsqn2hYDweQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6735
+References: <20241113032326.14267-1-zhaoqunqin@loongson.cn>
+In-Reply-To: <20241113032326.14267-1-zhaoqunqin@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Wed, 13 Nov 2024 12:14:27 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6+c8sJySdz0QuXWQ_XzXjLZ1WTnN7CimBf-c7U-5JzUQ@mail.gmail.com>
+Message-ID: <CAAhV-H6+c8sJySdz0QuXWQ_XzXjLZ1WTnN7CimBf-c7U-5JzUQ@mail.gmail.com>
+Subject: Re: [PATCH V8] EDAC: Add EDAC driver for loongson memory controller
+To: Zhao Qunqin <zhaoqunqin@loongson.cn>
+Cc: kernel@xen0n.name, bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, 
+	mchehab@kernel.org, rric@kernel.org, linux-edac@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, xry111@xry111.site, 
+	Markus.Elfring@web.de, krzk@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a sysfs node to drop compression-related caches, currently used to
-drop in-memory pclusters and cached compressed folios.
+Hi, Qunqin
 
-Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
----
-v2->v3:
- - All cached folios should be disconnected before invalidating.
- - Only add sysfs node when CONFIG_EROFS_FS_ZIP is enabled.
+On Wed, Nov 13, 2024 at 11:23=E2=80=AFAM Zhao Qunqin <zhaoqunqin@loongson.c=
+n> wrote:
+>
+> Add ECC support for Loongson SoC DDR controller. This
+> driver reports single bit errors (CE) only.
+>
+> Only ACPI firmware is supported.
+Fair enough, if there is only ACPI firmware support EDAC, we don't
+need to bother FDT.
 
-v1: https://lore.kernel.org/linux-erofs/fabdfe9f-9293-45c2-8cf2-3d86c248ab4c@linux.alibaba.com
-v1->v2:
- - Change subject as suggested by Gao Xiang.
- - Use different bits to indicate different meanings in the sysfs node.
----
- Documentation/ABI/testing/sysfs-fs-erofs | 11 +++++++++++
- fs/erofs/internal.h                      |  2 ++
- fs/erofs/sysfs.c                         | 18 ++++++++++++++++++
- fs/erofs/zdata.c                         |  1 -
- 4 files changed, 31 insertions(+), 1 deletion(-)
+>
+> Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
+> ---
+> Changes in v8:
+>         - Used readl() instead of readq()
+>         - Used acpi_device_id instead of of_device_id, then removed
+>           dt-bindings
+>
+> Changes in v7:
+>         - Fixed sparse's "incorrect type in assignment"
+>         - Cleaned up coding style
+>
+> Changes in v6:
+>         - Changed the Kconfig name to CONFIG_EDAC_LOONGSON
+>
+> Changes in v5:
+>         - Dropepd the loongson_ prefix from all static functions.
+>         - Aligned function arguments on the opening brace.
+>         - Dropepd useless comments and useless wrapper. Dropped side
+>           comments.
+>         - Reordered variable declarations.
+>
+> Changes in v4:
+>         - None
+>
+> Changes in v3:
+>         - Addressed review comments raised by Krzysztof and Huacai
+>
+> Changes in v2:
+>         - Addressed review comments raised by Krzysztof
+>
+>  MAINTAINERS                  |   6 ++
+>  arch/loongarch/Kconfig       |   1 +
+>  drivers/edac/Kconfig         |   8 ++
+>  drivers/edac/Makefile        |   1 +
+>  drivers/edac/loongson_edac.c | 155 +++++++++++++++++++++++++++++++++++
+>  5 files changed, 171 insertions(+)
+>  create mode 100644 drivers/edac/loongson_edac.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e9659a5a7..b36a45051 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13397,6 +13397,12 @@ S:     Maintained
+>  F:     Documentation/devicetree/bindings/thermal/loongson,ls2k-thermal.y=
+aml
+>  F:     drivers/thermal/loongson2_thermal.c
+>
+> +LOONGSON EDAC DRIVER
+> +M:     Zhao Qunqin <zhaoqunqin@loongson.cn>
+> +L:     linux-edac@vger.kernel.org
+> +S:     Maintained
+> +F:     drivers/edac/loongson_edac.c
+> +
+>  LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+>  M:     Sathya Prakash <sathya.prakash@broadcom.com>
+>  M:     Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index bb35c34f8..10b9ba587 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -185,6 +185,7 @@ config LOONGARCH
+>         select PCI_MSI_ARCH_FALLBACKS
+>         select PCI_QUIRKS
+>         select PERF_USE_VMALLOC
+> +       select EDAC_SUPPORT
+Please use alpha-betical order, which means "select EDAC_SUPPORT"
+should be before "select EFI".
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-erofs b/Documentation/ABI/testing/sysfs-fs-erofs
-index 284224d1b56f..b134146d735b 100644
---- a/Documentation/ABI/testing/sysfs-fs-erofs
-+++ b/Documentation/ABI/testing/sysfs-fs-erofs
-@@ -16,3 +16,14 @@ Description:	Control strategy of sync decompression:
- 		  readahead on atomic contexts only.
- 		- 1 (force on): enable for readpage and readahead.
- 		- 2 (force off): disable for all situations.
-+
-+What:		/sys/fs/erofs/<disk>/drop_caches
-+Date:		November 2024
-+Contact:	"Guo Chunhai" <guochunhai@vivo.com>
-+Description:	Writing to this will drop compression-related caches,
-+		currently used to drop in-memory pclusters and cached
-+		compressed folios:
-+
-+		- 1 : invalidate cached compressed folios
-+		- 2 : drop in-memory pclusters
-+		- 3 : drop in-memory pclusters and cached compressed folios
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 3905d991c49b..0328e6b98c1b 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -450,6 +450,8 @@ static inline void erofs_pagepool_add(struct page **pagepool, struct page *page)
- void erofs_release_pages(struct page **pagepool);
- 
- #ifdef CONFIG_EROFS_FS_ZIP
-+#define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
-+
- extern atomic_long_t erofs_global_shrink_cnt;
- void erofs_shrinker_register(struct super_block *sb);
- void erofs_shrinker_unregister(struct super_block *sb);
-diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
-index 63cffd0fd261..4145b732d30f 100644
---- a/fs/erofs/sysfs.c
-+++ b/fs/erofs/sysfs.c
-@@ -10,6 +10,7 @@
- 
- enum {
- 	attr_feature,
-+	attr_drop_caches,
- 	attr_pointer_ui,
- 	attr_pointer_bool,
- };
-@@ -57,11 +58,13 @@ static struct erofs_attr erofs_attr_##_name = {			\
- 
- #ifdef CONFIG_EROFS_FS_ZIP
- EROFS_ATTR_RW_UI(sync_decompress, erofs_mount_opts);
-+EROFS_ATTR_FUNC(drop_caches, 0200);
- #endif
- 
- static struct attribute *erofs_attrs[] = {
- #ifdef CONFIG_EROFS_FS_ZIP
- 	ATTR_LIST(sync_decompress),
-+	ATTR_LIST(drop_caches),
- #endif
- 	NULL,
- };
-@@ -163,6 +166,21 @@ static ssize_t erofs_attr_store(struct kobject *kobj, struct attribute *attr,
- 			return -EINVAL;
- 		*(bool *)ptr = !!t;
- 		return len;
-+#ifdef CONFIG_EROFS_FS_ZIP
-+	case attr_drop_caches:
-+		ret = kstrtoul(skip_spaces(buf), 0, &t);
-+		if (ret)
-+			return ret;
-+		if (t < 1 || t > 3)
-+			return -EINVAL;
-+
-+		if (t & 2)
-+			z_erofs_shrink_scan(sbi, ~0UL);
-+
-+		if (t & 1)
-+			invalidate_mapping_pages(MNGD_MAPPING(sbi), 0, -1);
-+		return len;
-+#endif
- 	}
- 	return 0;
- }
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 877bce7709d5..01f147505487 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -119,7 +119,6 @@ static inline unsigned int z_erofs_pclusterpages(struct z_erofs_pcluster *pcl)
- 	return PAGE_ALIGN(pcl->pclustersize) >> PAGE_SHIFT;
- }
- 
--#define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
- static bool erofs_folio_is_managed(struct erofs_sb_info *sbi, struct folio *fo)
- {
- 	return fo->mapping == MNGD_MAPPING(sbi);
--- 
-2.34.1
+>         select RTC_LIB
+>         select SPARSE_IRQ
+>         select SYSCTL_ARCH_UNALIGN_ALLOW
+> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+> index 81af6c344..4dce2b92a 100644
+> --- a/drivers/edac/Kconfig
+> +++ b/drivers/edac/Kconfig
+> @@ -564,5 +564,13 @@ config EDAC_VERSAL
+>           Support injecting both correctable and uncorrectable errors
+>           for debugging purposes.
+>
+> +config EDAC_LOONGSON
+> +       tristate "Loongson Memory Controller"
+> +       depends on (LOONGARCH && ACPI) || COMPILE_TEST
+> +       help
+> +         Support for error detection and correction on the Loongson
+> +         family memory controller. This driver reports single bit
+> +         errors (CE) only. Loongson-3A5000/3C5000/3D5000/3A6000/3C6000
+> +         are compatible.
+>
+>  endif # EDAC
+> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+> index faf310eec..f8bdbc895 100644
+> --- a/drivers/edac/Makefile
+> +++ b/drivers/edac/Makefile
+> @@ -88,3 +88,4 @@ obj-$(CONFIG_EDAC_DMC520)             +=3D dmc520_edac.=
+o
+>  obj-$(CONFIG_EDAC_NPCM)                        +=3D npcm_edac.o
+>  obj-$(CONFIG_EDAC_ZYNQMP)              +=3D zynqmp_edac.o
+>  obj-$(CONFIG_EDAC_VERSAL)              +=3D versal_edac.o
+> +obj-$(CONFIG_EDAC_LOONGSON)            +=3D loongson_edac.o
+> diff --git a/drivers/edac/loongson_edac.c b/drivers/edac/loongson_edac.c
+> new file mode 100644
+> index 000000000..340722db1
+> --- /dev/null
+> +++ b/drivers/edac/loongson_edac.c
+> @@ -0,0 +1,155 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Loongson Technology Corporation Limited.
+> + */
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/edac.h>
+> +#include <linux/module.h>
+> +#include <linux/init.h>
+Use alpha-betical order too, which means exchange module.h and init.h.
 
+> +#include <linux/platform_device.h>
+> +#include "edac_module.h"
+> +
+> +#define ECC_CS_COUNT_REG       0x18
+> +
+> +struct loongson_edac_pvt {
+> +       void __iomem *ecc_base;
+> +       int last_ce_count;
+> +};
+> +
+> +static int read_ecc(struct mem_ctl_info *mci)
+> +{
+> +       struct loongson_edac_pvt *pvt =3D mci->pvt_info;
+> +       u32 ecc;
+> +       int cs;
+> +
+> +       if (!pvt->ecc_base)
+> +               return pvt->last_ce_count;
+> +
+> +       ecc =3D readl(pvt->ecc_base + ECC_CS_COUNT_REG);
+If the register is actually 64bit, it is better to use readq, and add
+"depends on 64BIT" after config EDAC_LOONGSON.
+
+> +       /* cs0 -- cs3 */
+> +       cs =3D ecc & 0xff;
+> +       cs +=3D (ecc >> 8) & 0xff;
+> +       cs +=3D (ecc >> 16) & 0xff;
+> +       cs +=3D (ecc >> 24) & 0xff;
+> +
+> +       return cs;
+> +}
+> +
+> +static void edac_check(struct mem_ctl_info *mci)
+> +{
+> +       struct loongson_edac_pvt *pvt =3D mci->pvt_info;
+> +       int new, add;
+> +
+> +       new =3D read_ecc(mci);
+> +       add =3D new - pvt->last_ce_count;
+> +       pvt->last_ce_count =3D new;
+> +       if (add <=3D 0)
+> +               return;
+> +
+> +       edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, add,
+> +                            0, 0, 0, 0, 0, -1, "error", "");
+> +       edac_mc_printk(mci, KERN_INFO, "add: %d", add);
+> +}
+> +
+> +static void dimm_config_init(struct mem_ctl_info *mci)
+> +{
+> +       struct dimm_info *dimm;
+> +       u32 size, npages;
+> +
+> +       /* size not used */
+> +       size =3D -1;
+> +       npages =3D MiB_TO_PAGES(size);
+> +
+> +       dimm =3D edac_get_dimm(mci, 0, 0, 0);
+> +       dimm->nr_pages =3D npages;
+> +       snprintf(dimm->label, sizeof(dimm->label),
+> +                "MC#%uChannel#%u_DIMM#%u", mci->mc_idx, 0, 0);
+> +       dimm->grain =3D 8;
+> +}
+> +
+> +static void pvt_init(struct mem_ctl_info *mci, void __iomem *vbase)
+> +{
+> +       struct loongson_edac_pvt *pvt =3D mci->pvt_info;
+> +
+> +       pvt->ecc_base =3D vbase;
+> +       pvt->last_ce_count =3D read_ecc(mci);
+> +}
+> +
+> +static int edac_probe(struct platform_device *pdev)
+> +{
+> +       struct edac_mc_layer layers[2];
+> +       struct mem_ctl_info *mci;
+> +       void __iomem *vbase;
+> +       int ret;
+> +
+> +       vbase =3D devm_platform_ioremap_resource(pdev, 0);
+> +       if (IS_ERR(vbase))
+> +               return PTR_ERR(vbase);
+> +
+> +       /* allocate a new MC control structure */
+> +       layers[0].type =3D EDAC_MC_LAYER_CHANNEL;
+> +       layers[0].size =3D 1;
+> +       layers[0].is_virt_csrow =3D false;
+> +       layers[1].type =3D EDAC_MC_LAYER_SLOT;
+> +       layers[1].size =3D 1;
+> +       layers[1].is_virt_csrow =3D true;
+> +       mci =3D edac_mc_alloc(0, ARRAY_SIZE(layers), layers,
+> +                           sizeof(struct loongson_edac_pvt));
+> +       if (mci =3D=3D NULL)
+> +               return -ENOMEM;
+> +
+> +       mci->mc_idx =3D edac_device_alloc_index();
+> +       mci->mtype_cap =3D MEM_FLAG_RDDR4;
+> +       mci->edac_ctl_cap =3D EDAC_FLAG_NONE;
+> +       mci->edac_cap =3D EDAC_FLAG_NONE;
+> +       mci->mod_name =3D "loongson_edac.c";
+> +       mci->ctl_name =3D "loongson_edac_ctl";
+> +       mci->dev_name =3D "loongson_edac_dev";
+> +       mci->ctl_page_to_phys =3D NULL;
+> +       mci->pdev =3D &pdev->dev;
+> +       mci->error_desc.grain =3D 8;
+> +       /* Set the function pointer to an actual operation function */
+> +       mci->edac_check =3D edac_check;
+> +
+> +       pvt_init(mci, vbase);
+> +       dimm_config_init(mci);
+> +
+> +       ret =3D edac_mc_add_mc(mci);
+> +       if (ret) {
+> +               edac_dbg(0, "MC: failed edac_mc_add_mc()\n");
+> +               edac_mc_free(mci);
+> +               return ret;
+> +       }
+> +       edac_op_state =3D EDAC_OPSTATE_POLL;
+> +
+> +       return 0;
+> +}
+> +
+> +static void edac_remove(struct platform_device *pdev)
+> +{
+> +       struct mem_ctl_info *mci =3D edac_mc_del_mc(&pdev->dev);
+> +
+> +       if (mci)
+> +               edac_mc_free(mci);
+> +}
+> +
+> +static const struct acpi_device_id loongson_edac_acpi_match[] =3D {
+> +       {"LOON000G", 0},
+> +       {}
+> +};
+> +MODULE_DEVICE_TABLE(acpi, loongson_edac_acpi_match);
+> +
+> +static struct platform_driver loongson_edac_driver =3D {
+> +       .probe          =3D edac_probe,
+> +       .remove         =3D edac_remove,
+> +       .driver         =3D {
+> +               .name   =3D "loongson-mc-edac",
+> +               .acpi_match_table =3D loongson_edac_acpi_match,
+> +       },
+> +};
+> +module_platform_driver(loongson_edac_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Zhao Qunqin <zhaoqunqin@loongson.cn>");
+Family name is usually at last, but still depends on yourself. If you
+change the order, please keep consistency in the whole patch.
+
+Others look good to me, and you can add "Reviewed-by: Huacai Chen
+<chenhuacai@loongson.cn>" in the next version.
+
+Huacai
+
+> +MODULE_DESCRIPTION("EDAC driver for loongson memory controller");
+>
+> base-commit: e14232afa94445e03fc3a0291b07a68f3408c120
+> --
+> 2.43.0
+>
 
