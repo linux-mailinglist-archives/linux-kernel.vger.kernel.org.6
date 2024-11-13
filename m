@@ -1,132 +1,120 @@
-Return-Path: <linux-kernel+bounces-407859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF74A9C75ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:17:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 700C69C75CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:14:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E655289CB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:17:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344C12863C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB822076D2;
-	Wed, 13 Nov 2024 15:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3A620401A;
+	Wed, 13 Nov 2024 15:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="MXsXfuf3"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="Z7tHTncR"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFC92071E6;
-	Wed, 13 Nov 2024 15:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B96D202F70
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731510724; cv=none; b=EdfhMbeFJUGQDNEQn1NMwQ8ztYWFORC8M0/gd29BqvEp2HW8EMP/U4kAgNMM0OmQ+LMxBmm5Rt+vtEeM8EuEKa0NBE0KVlQVmBdnWSW7Do/D12JJDWauslTmJCi0VGSGQ67aOB71U4z2pE/YnWQKIrNREy+ZARXgPRGXD+BnsFE=
+	t=1731510715; cv=none; b=EecYjFOeoqpeBCVFFs6aPsLQRJEYmOnNdwcMKhssEKMObRlR/xWbMiN/hmsiehod6i6p1VcirYOatKasMwsrcF24pzh47EhNKkPWUvAkkHAOZnBqd7qETb0HlbXr/edHp127FIB4X6SZKs9Dm0u6PfPbH5CYTUKyB3VX79hBjJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731510724; c=relaxed/simple;
-	bh=xiFBtHsOaU6w5QYdlsV5ffTJLBo8Uh6SeJeMP9eWLsQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HCN/DIkR7Ji5hYy/FkpYEeD20u3TWnDbTJ/4i3QoApPE62HZ3emBN5fjnBpyPa2dDGMcHSyCUiNXbrNQ26+Adq15vTgnqASq1Sd/B2pfQp/JzWR5C6LEaVacAoI0+uDt/ahwzsSuxRNFWgOdvrXHvhPJrXXOi7BO4n1VnfO5xtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=MXsXfuf3; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.93.162] (254C230F.nat.pool.telekom.hu [37.76.35.15])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 52409E44EA;
-	Wed, 13 Nov 2024 15:12:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1731510721;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lpHmUFBIqJF78XKlVouHZG9P31kndu81nFICPCCAgP0=;
-	b=MXsXfuf3cFIdWFt4C2YGbnyzTSbjXV/T5LIiI96AQ5dcj07CIOWq8B1yXv7SVoBVMMesg2
-	WdFWzfFBPiIKfUtspn7RvvYd2iLFtrbOe6+y7HcvpFcOK1molVzJf7KeSJnsZaGyt3kRew
-	AWS9kBiuyUKIyBonyYh3fgu+zOl5/KZ7mtj4x2GGhKq4dLQfYy1+kEyKajmZtz9oUt+bpL
-	px8wcfO+8Xoc+WW8E1T6nEa60/eRYORU6+JhomWHxkB+JQ0ODpv6p+4lSL6zRTj6txL9Pw
-	MV4TbZVNygWWeGwpvY0Npz+HN0b9txUqDwql6bCySMlFQXGWHVkCm3HKF3Re4g==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Wed, 13 Nov 2024 16:11:50 +0100
-Subject: [PATCH v6 09/10] dt-bindings: arm: qcom: Add Xiaomi Redmi 5A
+	s=arc-20240116; t=1731510715; c=relaxed/simple;
+	bh=lST0PC6zFH04QzDR5n00PEFVv1bzoE62EvVlFXG3HEw=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=lwiPVwIqNGifdu6oMnPJVhMz0UA3+DCoKMugm5mbve5hRFOYCLzSfBAwWP/ysjKtGIHSU60sY8pL7Ibw22OM0nfCO1xO84nEQlLZLLUaNEmQEHSaTtYDsILdUQQHECRwBsfMExr+VUlDSELvpwhp/lCAbhzPt2+1dI0eoFydV7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=Z7tHTncR; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-720be27db27so5925935b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:11:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1731510712; x=1732115512; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FEevrCGgnCHKu+tn27c1hkwB55o+zkSlf6ER/b6dXcA=;
+        b=Z7tHTncR2OOqoAPFeg+UVSCoqQ8gq0BR4mJpw7092OAE16XAMqDY+t5uVRzNLpnUne
+         WBYsb9Sp9y8NdHTU2Wz0Z3G5QPgYxtPDu5DzRmjsFoJX6cZyBDl60m+nuQwHexni7/As
+         qbmpSPCW6PnP2XG598/QIaGftBTpJPyUN4mBsojgKt4N/fHyPa71ls9uYn5HX1Uv9VhP
+         YAY2VUN80DQH6m9sRsMFS4e1QlC2TLS4mvafko+R1nA+hIFbl8mSblBb8SYdM2X5gsHA
+         ruMkJ5gCMHGPpAk7uJmTv28fsJ2PV8KiD0AjnwlIfYGVuU+48gZP2FF6dYe8x2SrlBOI
+         jNjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731510712; x=1732115512;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FEevrCGgnCHKu+tn27c1hkwB55o+zkSlf6ER/b6dXcA=;
+        b=GDBoYshj7gqT4uhrUGhTISoxAmqMyogX0YTh0otDCld+qaOHCmbp8rgsulwqGbVYLx
+         yLVRfLw8fepvEK8Z9FqGGvq4DRX3nVHIdTCEPzwTCgudXFlxBdpujbt2oLDHrvh4cyg+
+         NTycXfA+ycF68GBloNlmPuuGVwH7tTGSYu/EdAqesKRtSc+rE0OZ+/D0YnESzL2gq00z
+         IHxaSzOCx1yVSl/r6KoCV1Yzl6BIPAXddCGwTEceb0P/RxaxASdM7tAB3xli4Mrl+kby
+         T9qAAkBGz1DPQCUuGo1QLKJWMed9CHtdkSpGu9m02+o2q5eFBGg1t8qP9FrGU53Vaytq
+         GJEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWWg3y30jH4Y5bPq4z6EUpmUV0gHvQElU+btMO64aFlC9zQRicqqG3Gytn5hL/wywug5LxWbZgNXOThcds=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+z5gmDBTqfgi5W0ERQYdX3ciKt6/uBJ/mT8y7SLqCHBVCV+ak
+	K4IN+zecHjMhFusXVswYKkbGLIiGFfVU9nX4SOoqqk1V6jnNo7lvoFvbqQlZU50=
+X-Google-Smtp-Source: AGHT+IF6dAQuXHH8zuadNr4w3nttjCNk1A405ajbo0+ieSOKAPOHNFkbBktOyltiO9TJiFCXE2hQKg==
+X-Received: by 2002:a05:6a00:3c96:b0:71e:5b4a:66d4 with SMTP id d2e1a72fcca58-7244a516913mr9121240b3a.9.1731510712360;
+        Wed, 13 Nov 2024 07:11:52 -0800 (PST)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a1a87bsm13098811b3a.158.2024.11.13.07.11.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 07:11:51 -0800 (PST)
+Date: Wed, 13 Nov 2024 07:11:51 -0800 (PST)
+X-Google-Original-Date: Wed, 13 Nov 2024 07:11:50 PST (-0800)
+Subject:     Re: [PATCH] RISC-V: Enable Zicbom in usermode
+In-Reply-To: <20241025-puritan-sank-b8a828ef5872@spud>
+CC: cuiyunhui@bytedance.com, punit.agrawal@bytedance.com,
+  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, cleger@rivosinc.com,
+  Charlie Jenkins <charlie@rivosinc.com>, Evan Green <evan@rivosinc.com>, samuel.holland@sifive.com, andybnac@gmail.com,
+  linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: Conor Dooley <conor@kernel.org>
+Message-ID: <mhng-cee266c4-3485-423a-b769-aae7ae034a1a@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241113-msm8917-v6-9-c348fb599fef@mainlining.org>
-References: <20241113-msm8917-v6-0-c348fb599fef@mainlining.org>
-In-Reply-To: <20241113-msm8917-v6-0-c348fb599fef@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731510705; l=1345;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=xiFBtHsOaU6w5QYdlsV5ffTJLBo8Uh6SeJeMP9eWLsQ=;
- b=rmreHIykKJ4X3J38GDviEt18osNnaovYpGS65drMLRV5EcfO+qS7cL3Zfy1GnEDmh5RD9+UXm
- UimRlK3yiu4A98X9CoSCAXdSCZpBp6/4jfX9sOvfl/r1vidw8QDRwuI
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Document Xiaomi Remi 5A (riva).
-Add qcom,msm8917 for msm-id, board-id allow-list.
+On Fri, 25 Oct 2024 03:16:44 PDT (-0700), Conor Dooley wrote:
+> On Fri, Oct 25, 2024 at 05:15:27PM +0800, Yunhui Cui wrote:
+>> Like Zicboz, by enabling the corresponding bits of senvcfg,
+>> the instructions cbo.clean, cbo.flush, and cbo.inval can be
+>> executed normally in user mode.
+>> 
+>> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+>> ---
+>>  arch/riscv/kernel/cpufeature.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+>> index 1992ea64786e..bc850518ab41 100644
+>> --- a/arch/riscv/kernel/cpufeature.c
+>> +++ b/arch/riscv/kernel/cpufeature.c
+>> @@ -924,7 +924,7 @@ unsigned long riscv_get_elf_hwcap(void)
+>>  void __init riscv_user_isa_enable(void)
+>>  {
+>>  	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICBOZ))
+>> -		current->thread.envcfg |= ENVCFG_CBZE;
+>> +		current->thread.envcfg |= ENVCFG_CBIE | ENVCFG_CBCFE | ENVCFG_CBZE;
+>
+> I believe we previously decided that userspace should not be allowed to
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- Documentation/devicetree/bindings/arm/qcom.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+Ya, we didn't want to expose this because it opens up a can of worms.  
+Is there a use case for this?  It's not like this is entirely impossible 
+to do, it just requires a bit of thought (and should probably be gated 
+behind some per-process disabling).
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-index 7c8c3a97506aa13a843d5e3408b247eae928a55c..0b4a8c8cdbf7d0b4191b1acdd10b9b83f2b09542 100644
---- a/Documentation/devicetree/bindings/arm/qcom.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-@@ -32,6 +32,7 @@ description: |
-         mdm9615
-         msm8226
-         msm8916
-+        msm8917
-         msm8939
-         msm8953
-         msm8956
-@@ -252,6 +253,11 @@ properties:
-               - yiming,uz801-v3
-           - const: qcom,msm8916
- 
-+      - items:
-+          - enum:
-+              - xiaomi,riva
-+          - const: qcom,msm8917
-+
-       - items:
-           - enum:
-               - motorola,potter
-@@ -1177,6 +1183,7 @@ allOf:
-               - qcom,apq8026
-               - qcom,apq8094
-               - qcom,apq8096
-+              - qcom,msm8917
-               - qcom,msm8939
-               - qcom,msm8953
-               - qcom,msm8956
-
--- 
-2.47.0
-
+> use zicbom, but that not withstanding - this is wrong. It should be
+> checking for Zicbom, not Zicboz.
 
