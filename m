@@ -1,141 +1,201 @@
-Return-Path: <linux-kernel+bounces-407929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 207829C778E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:43:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A2E9C759B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:07:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8791F25FEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:43:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FF501F22FA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA9F70835;
-	Wed, 13 Nov 2024 15:41:32 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844A014A4DE;
+	Wed, 13 Nov 2024 15:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="e3NTgin0"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB7841C92;
-	Wed, 13 Nov 2024 15:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A666C171C9;
+	Wed, 13 Nov 2024 15:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731512491; cv=none; b=S9j+tsya5ywvzXxgJH90mpi9hld6Et+eBxtCJn/u13cW3ghqo+8fdscaPSBfL6pFt3cgbMdFG45wX/yNqivr/loXiZfAF3eqwcRtqmDmABDZ1Gmo2ezPei8fltI2sxRnBfJTsoDauQJCA1uGkCiREbcdD6s4RYT7B5xU6T+x648=
+	t=1731510467; cv=none; b=bi0GWxrSX1zQr/fWEuCN9xP2J714O7lJPWfF0ZgwjBloy9Pa1lsC/0081KruV2NFhBCBieGhUNkGl0NN527K7nnZS3LlqY6VHwTKJ4GqtADS3FNKoJrxu9nb9aDLny7lD3E+C8T7GxfsEWYormbqEQWD4O0leuvkEnv2gLplmm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731512491; c=relaxed/simple;
-	bh=SrZ4Sljd9url0qeaurkyD0bI6USgZYsbUiA4Kym2zlA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ruQ7b7HBaqatZdHk8sK7vrRdu4UjGrysZ+9mGLvX21V5eL+4tIc5eNHEuV6Na5boPXNc8k21hWm/iWrKcqRUq8og/nfm+kjkGaUexY9dmZkZkSbjIF8xqsnuhBp+T4MHrgZQRAoLBn7zX4yOZWzbvj0n0vVwPnuSXH5/yXcIhn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
-	by Atcsqr.andestech.com with ESMTP id 4ADF86dD090419;
-	Wed, 13 Nov 2024 23:08:06 +0800 (+08)
-	(envelope-from cl634@andestech.com)
-Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
-	by Atcsqr.andestech.com with ESMTPS id 4ADF7eo2090279
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
-	Wed, 13 Nov 2024 23:07:40 +0800 (+08)
-	(envelope-from cl634@andestech.com)
-Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
- (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 13 Nov
- 2024 23:07:41 +0800
-From: CL Wang <cl634@andestech.com>
-To: <cl634@andestech.com>, <alexandre.belloni@bootlin.com>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-rtc@vger.kernel.org>, <tim609@andestech.com>
-Subject: [PATCH V4 2/3] dt-bindings: rtc: Add support for ATCRTC100 RTC
-Date: Wed, 13 Nov 2024 23:06:52 +0800
-Message-ID: <20241113150653.1793123-3-cl634@andestech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241113150653.1793123-1-cl634@andestech.com>
-References: <20241113150653.1793123-1-cl634@andestech.com>
+	s=arc-20240116; t=1731510467; c=relaxed/simple;
+	bh=H0yGji2iT1spJG+9g1OpFuNEiQisUHAdfC779LlT0VA=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=mHbkvvqUzat0aII8AnvmT8AcB9yqtK/cjqiUVcZN+zFM546sBEoDf3+1YnrVifE/fz1TzUX77Wk4Cc/EnZSzm9feHy3TD+eVctTxrzJOupJa7vEQTACKfRO5ZmnV79m5W0TPJ/zHJqJRrj1T1FHXNOivG6DXYOhW0vGhc2LX3js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=e3NTgin0; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 3D162E44EA;
+	Wed, 13 Nov 2024 15:07:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1731510463;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D8i3R/fzkAitpNlgR9VCp3wgJnOJj83cQ/N61OxxoCI=;
+	b=e3NTgin0MdZk+2iF9LFvZSTdFD+Cj6xa7NXhKQiHgDCUG+gFClvXqf6tNgWoA6bWegiIZz
+	bl0bMhUmLqKx0vKGd8nWviW2yWsJ366M8UL12hhzJ+AJICKmtWuCagVeclX1sAMU27+3L1
+	gSVmvLvyD2hHJW0vvZSfWzISHuAVmldIeoHG5Rd7H56+SdWmhUgBV7Kuw465eVNk+ERzTj
+	tDmBOseoinxGdVcpVHj8snBzfha4fZtVtWf90QsnShJxQflzla5xTCLotgmkM0T05iezcC
+	XNEZvQDV0YC3BAHSIbO0JxGO6gKiLhSwjVoGjVBKX1iV2e1ioARXqt69ZR0KYw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Wed, 13 Nov 2024 16:07:43 +0100
+From: barnabas.czeman@mainlining.org
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Bjorn Andersson
+ <andersson@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Amit Kucheria <amitk@kernel.org>, Thara Gopinath
+ <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz
+ Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
+ <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Srinivas Kandagatla
+ <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+ =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
+Subject: Re: [PATCH v5 08/10] arm64: dts: qcom: Add initial support for
+ MSM8917
+In-Reply-To: <ZzRtEHsC4MROxN3v@linaro.org>
+References: <20241112-msm8917-v5-0-3ca34d33191b@mainlining.org>
+ <20241112-msm8917-v5-8-3ca34d33191b@mainlining.org>
+ <ZzOQEgLLhkH-IymV@linaro.org>
+ <0dae1cea420bd335be591e4b1be3d07c@mainlining.org>
+ <ZzRtEHsC4MROxN3v@linaro.org>
+Message-ID: <4415406af1e9bc066a048b9729a0c592@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
- ATCPCS34.andestech.com (10.0.1.134)
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 4ADF86dD090419
 
-Document Device Tree bindings for the Andes ATCRTC100 Real-Time Clock.
-
-Signed-off-by: CL Wang <cl634@andestech.com>
----
-Changes for v2:
- - First version of devicetree bindings for the Andes ATCRTC100 Real-Time Clock.
-
-Changes for v3:
- - Used compatible as the filename.
- - Placed allOf after maintainers.
- - Replaced additionalProperties: false with unevaluatedProperties: false.
- - Added descriptions for interrupts.
-
-Changes for v4:
- - Removed wakeup-source attribute.
----
- .../bindings/rtc/andestech,atcrtc100.yaml     | 43 +++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml
-
-diff --git a/Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml b/Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml
-new file mode 100644
-index 000000000000..ec0a736793c7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml
-@@ -0,0 +1,43 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/rtc/andestech,atcrtc100.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Andes ATCRTC100 Real-Time Clock
-+
-+maintainers:
-+  - CL Wang <cl634@andestech.com>
-+
-+allOf:
-+  - $ref: rtc.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - andestech,atcrtc100
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    items:
-+      - description: Periodic timekeeping interrupt
-+      - description: RTC alarm interrupt
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    rtc@f0300000 {
-+        compatible = "andestech,atcrtc100";
-+        reg = <0xf0300000 0x100>;
-+        interrupts = <1 IRQ_TYPE_LEVEL_HIGH>, <2 IRQ_TYPE_LEVEL_HIGH>;
-+    };
--- 
-2.34.1
-
+On 2024-11-13 10:10, Stephan Gerhold wrote:
+> On Tue, Nov 12, 2024 at 07:49:18PM +0100, 
+> barnabas.czeman@mainlining.org wrote:
+>> On 2024-11-12 18:27, Stephan Gerhold wrote:
+>> > On Tue, Nov 12, 2024 at 04:49:38PM +0100, Barnabás Czémán wrote:
+>> > > From: Otto Pflüger <otto.pflueger@abscue.de>
+>> > >
+>> > > Add initial support for MSM8917 SoC.
+>> > >
+>> > > Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
+>> > > [reword commit, rebase, fix schema errors]
+>> > > Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> > > ---
+>> > >  arch/arm64/boot/dts/qcom/msm8917.dtsi | 1974
+>> > > +++++++++++++++++++++++++++++++++
+>> > >  1 file changed, 1974 insertions(+)
+>> > >
+>> > > diff --git a/arch/arm64/boot/dts/qcom/msm8917.dtsi
+>> > > b/arch/arm64/boot/dts/qcom/msm8917.dtsi
+>> > > new file mode 100644
+>> > > index 0000000000000000000000000000000000000000..cf0a0eec1141e11faca0ee9705d6348ab32a0f50
+>> > > --- /dev/null
+>> > > +++ b/arch/arm64/boot/dts/qcom/msm8917.dtsi
+>> > > @@ -0,0 +1,1974 @@
+>> > > [...]
+>> > > +		domain-idle-states {
+>> > > +			cluster_sleep_0: cluster-sleep-0 {
+>> > > +				compatible = "domain-idle-state";
+>> > > +				arm,psci-suspend-param = <0x41000023>;
+>> > > +				entry-latency-us = <700>;
+>> > > +				exit-latency-us = <650>;
+>> > > +				min-residency-us = <1972>;
+>> > > +			};
+>> > > +
+>> > > +			cluster_sleep_1: cluster-sleep-1 {
+>> > > +				compatible = "domain-idle-state";
+>> > > +				arm,psci-suspend-param = <0x41000043>;
+>> > > +				entry-latency-us = <240>;
+>> > > +				exit-latency-us = <280>;
+>> > > +				min-residency-us = <806>;
+>> > > +			};
+>> >
+>> > I think my comment here is still open:
+>> >
+>> > This is strange, the deeper sleep state has lower timings than the
+>> > previous one?
+>> I was reordering based on Konrad comments when i have renamed the 
+>> nodes
+>> maybe it is not correct then.
+>> I am searching for how to validate these levels, i have find these
+>> https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LA.UM.10.6.2.c26-01500-89xx.0/arch/arm64/boot/dts/qcom/msm8917-pm.dtsi#L45-91
+> 
+> I think you translated them correctly. It feels like downstream is 
+> weird
+> or even wrong here. Usually a higher psci-mode (retention = 2, gdhs = 
+> 4)
+> also implies a deeper idle state. But at some point the
+> perf-l2-retention and perf-l2-gdhs state were swapped downstream:
+> 
+> https://git.codelinaro.org/clo/la/kernel/msm-3.18/-/commit/dea262a17a9e80dacb86b7c2f269bcc7b4df3a13
+> 
+> I don't know if this is intended or just an oversight. If no one can
+> clarify why this change was done I guess we can just choose between the
+> following two options:
+> 
+>  1. Describe it exactly like it was done downstream. In that case I
+>     would suggest swapping the node order back to what you had in v1.
+>     Even if that means that a lower idle state has the higher psci-mode
+>     (arm,psci-suspend-param). That should match what downstream did.
+> 
+> OR
+> 
+>  2. Omit cluster-sleep-0 and cluster-sleep-1. I doubt anyone will 
+> notice
+>     the minor difference in power consumption. The most important idle
+>     state is the deepest "power collapse" (PC) state.
+> 
+> @Konrad: Do you have any opinion here?
+> 
+>> Do you know where can i find psci-suspend-param-s?
+> 
+> You need to translate it like in this code here:
+> https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LA.UM.10.6.2.c26-01500-89xx.0/drivers/cpuidle/lpm-levels.c#L1337-1340
+> 
+> Roughly described:
+>  - Set BIT(30) if the CPU state has qcom,is-reset
+>  - Affinity level is the hierarchy level that goes idle.
+>    In your case: CPU = 0, L2 cache/cluster = 1.
+>    Shift that to bit 24 (1 << 24 for cache/cluster)
+>  - For the state itself you need to combine the qcom,psci-cpu-mode and
+>    qcom,psci-mode according to the qcom,psci-mode-shift.
+> 
+> E.g. for the "perf-l2-pc" state, combined with the deepest CPU state
+> ("pc"):
+> 
+>  - BIT(30) is set because of qcom,is-reset
+>  - (1 << 24) because it's a L2 cache/cluster idle state
+>  - (qcom,psci-cpu-mode = <3>) << (qcom,psci-mode-shift = <0>) = (3 << 
+> 0)
+>  - (qcom,psci-mode = <5>) << (qcom,psci-mode-shift = <4>) = (5 << 4)
+> 
+> All that combined: BIT(30) | (1 << 24) | (3 << 0) | (5 << 4)
+>   = 0x41000053
+> 
+Thanks a lot this is a very useful description.
+> Which is what you have for cluster-sleep-2. The ones you have look
+> correct to me. :-)
+> 
+>> Should I also add wfi level?
+> 
+> I think we usually omit those for the CPU at least. Not sure about the
+> cache/cluster one. As I mentioned, at the end the most important idle
+> state to have is the deepest ones. Those will get used during suspend
+> and when you don't use the device. The others are more minor
+> optimization for light usage, which will be less noticeable.
+> 
+> Thanks,
+> Stephan
 
