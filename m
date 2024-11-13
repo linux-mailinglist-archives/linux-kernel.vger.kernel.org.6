@@ -1,365 +1,205 @@
-Return-Path: <linux-kernel+bounces-408218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FFC69C7C2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:32:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA239C7C34
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:33:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57D11F23198
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:32:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F296B1F23388
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CEA205AAC;
-	Wed, 13 Nov 2024 19:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903F2205E10;
+	Wed, 13 Nov 2024 19:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="AOkkifRg"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HUDQgI3J"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F8D180021;
-	Wed, 13 Nov 2024 19:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731526331; cv=pass; b=LKriEMnJin5poAa/U1OGfHwi30HGu3tMHvYzF2XaWKf3r1rYIdnD8ZBzFNuAEtmIGTFpH/6Vz+SeQirx2bh59/tQ+P1kR2zil5jbaBwdZ+MWBracT2qpbFjvmPhnv9kJZj3gWoRDZefb3EYUCmdbna1Q0vL7XmQ1jCLvXtd/mJc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731526331; c=relaxed/simple;
-	bh=l8nA+m6xIMYsTJT81nGtcHv7jj7AbNN7ag1S+g8Phq0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A4hKFnnbUG/5vQR1O0pKqfsGNJH2ub4J3nWIG50Jhakia5I2hv99iC5nEKQpZHSL00T5hzHPyYu4QFj38DU649ai4G2t4Bcyu2nCvLeHkSQn9Gb8WEzyrNgc/6riWaovLsP603YxRuR7sGjYpi+D/RK5cWO4jvl3WtZrGn710wg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=AOkkifRg; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1731526310; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ixP/wm+BVtxrTdxBjgyiGaUKaac42svixnfrt61gTllbAsO4Jzg0TotSYb6tsDPoOKQZIdtrt1Zz3uPy6oCVpIrrd7BSZqlnxfxyNM/O6v9eokxyW8i+YBXauD3OagF9la+omEdZqrE2p89+WdX1tbg6TtdfO8gsNBh5l2M8IMg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1731526310; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=4eQyGLu4WE//oZaW24rPhPdiPpWXO7ENikiZw8lDlQA=; 
-	b=jV04bKLZtCG76wtzGcUUblfytRu5j//XPgeI4dM9da1A087edInDKZ8rxYFwwdwCHrZhIMTSZwgQQ7729bqksa5mVoEPmvF+4boxBNZ+H/k4WynNnurLC6DgHaSNYePV9DKhh57GiEqgx4vxMLY5kBBaEyxlYr47lPngp/5TQZE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731526310;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
-	bh=4eQyGLu4WE//oZaW24rPhPdiPpWXO7ENikiZw8lDlQA=;
-	b=AOkkifRgX51iRVTCmtiiTII/zKg9BoF+rnoPypw3b+txxUaPMiuzfO7UoAIAbtQy
-	hhpz1OGN7vrl2VdZ+YrOhMsEXbQ2w3LY8ZepUKSNL0FoEnW2xIyPDO17n+tnz7fhJZw
-	HOz4TpEErj6d/qrSx70TSs+EUt6FcrlEGhAvXVdk=
-Received: by mx.zohomail.com with SMTPS id 173152630836597.63303501095197;
-	Wed, 13 Nov 2024 11:31:48 -0800 (PST)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Wed, 13 Nov 2024 16:30:54 -0300
-Subject: [PATCH v2] rust: platform: add Io support
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE4F180021
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 19:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731526369; cv=none; b=oXNs0lGn9+NqX0Dn0basZ/mBNpRtARc/mayGNDNcNlc7nDX6+QLBSsZUQ6z1uyefnbXbNnowwl9AlhmJXx8SPJYYvGXVuGnLKOiz3bKSpKWh1rZStIgxPFX+SaW1UuIOFuok9ecfNN4VfDbd4OPG30NWfWNAfEa35rGxhw9gsF0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731526369; c=relaxed/simple;
+	bh=Pk2z8EvkCIjNI4X29FMwpG2/sl7k7tzx6sXUrnUChXc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DXoQTaUhGLhi04QsdCJW7uybR28olXOzlfnqUds9S6cwbYs/ygkBrarGSCFLvLH4HgfONndDkUwpHl/tdmhy6qMsLaQoWM6iJvj2THxbdFkq35DmfjGXfFFnrG7DregZqRAkQZSKYsKkco05DhMcCS42cwufa8Ie9iXTvb5Boyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HUDQgI3J; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-72467c35ddeso21033b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 11:32:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1731526368; x=1732131168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TlbuMhMpbQZuWcS8taAW5rJrc34QPHtVjPTbOGsu6u0=;
+        b=HUDQgI3JWn3Jfi6LLtwqC7nfWODalECz0jGASmWZ2ES6jpnpMwGAT3PXly6LmtQZuf
+         EthAG+GKL8baoa8DS2Jp081uxw+Ys2I16fcBmDms0LEsc2kUQ92goAqJncJHwS4OGAB9
+         sNgCDBu62fzKbt81W1rVj1R3grA7T0tnSGU7Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731526368; x=1732131168;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TlbuMhMpbQZuWcS8taAW5rJrc34QPHtVjPTbOGsu6u0=;
+        b=OaeGNuCMruYq4lOIWzr7lZCX5XmVUu1HZZbNnjlHC0H1gxp7eJnR8Hco3dL+EdCk7U
+         dT1nSUFPswEGlXsrjnlsTxh/DBsxB58+xgXallYN0nsAffG9vIfecY8DoOMiFvCqU5xk
+         Nn+Pr4C3hnIfUE1XwPkS1SfHtRPLAOcP7Pr0j3Z6dVYuAZedisN6eUeJF+wqCVNeYty1
+         qs7FHyw0xx/DuqlgnGtp+LGJrnVz1SznkZpKkT4VmojN6HvN3iLtwVwkMcfDZuP1qgbO
+         IxlvygjsW0OS2CsStAdWyqFfFSQ4ndNEk6dnLxKHV8emqMJWsSheU5ykypxfXAeNCCE9
+         R6zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuh8GgXTpNoILKNhYpv8K5WJlgZtz0JvXwONrAlTVIzWLFmMBdwcQTHXohXJijadD/envtwCYPFLiwLbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzIA8ryDzX5Ue4cI5drmJZPifyy2ViPa7BG2asQy8U/cb+tDwR
+	zlNkMKfzAvH2DIR2QTHKOhnv5qGn3w68zIQ3PwKSJevMpMqgk61MydNxwahS+xCvXDRHqAbaIxg
+	=
+X-Google-Smtp-Source: AGHT+IGBIzNEEvDaSKFHyP9PUw5cpI4u/07UJ7DgR2EYmMzH58hiQoqiGp4uo+5tX8uOf4kl/WH7Rw==
+X-Received: by 2002:a05:6a00:23c4:b0:724:6757:7d95 with SMTP id d2e1a72fcca58-72467577f3bmr227272b3a.5.1731526367596;
+        Wed, 13 Nov 2024 11:32:47 -0800 (PST)
+Received: from li-cloudtop.c.googlers.com.com (51.193.125.34.bc.googleusercontent.com. [34.125.193.51])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72463e72282sm630883b3a.119.2024.11.13.11.32.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 11:32:47 -0800 (PST)
+From: Li Li <dualli@chromium.org>
+To: dualli@google.com,
+	corbet@lwn.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	donald.hunter@gmail.com,
+	gregkh@linuxfoundation.org,
+	arve@android.com,
+	tkjos@android.com,
+	maco@android.com,
+	joel@joelfernandes.org,
+	brauner@kernel.org,
+	cmllamas@google.com,
+	surenb@google.com,
+	arnd@arndb.de,
+	masahiroy@kernel.org,
+	bagasdotme@gmail.com,
+	horms@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	hridya@google.com,
+	smoreland@google.com
+Cc: kernel-team@android.com
+Subject: [PATCH net-next v8 0/2] binder: report txn errors via generic netlink
+Date: Wed, 13 Nov 2024 11:32:37 -0800
+Message-ID: <20241113193239.2113577-1-dualli@chromium.org>
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241113-topic-panthor-rs-platform_io_support-v2-1-0dea1edc3a49@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAG3+NGcC/43NQQ6CMBCF4auQrq2hhQi48h6GkKEtMgkwzbQSD
- eHuVhL3Lv+3eN8mgmN0QVyzTbBbMSAtKfQpE2aE5eEk2tRC57pUuS5kJI9GeljiSCw5SD9BHIj
- nDqkLT++JoxyaClyvHdR1JdKVZzfg62DubeoRQyR+H+qqvusPKP8DViWVLKwCa21zcUV+MzRN0
- BPD2dAs2n3fPxbZB+LcAAAA
-X-Change-ID: 20241023-topic-panthor-rs-platform_io_support-f97aeb2ea887
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Boris Brezillon <boris.brezillon@collabora.com>, 
- Rob Herring <robh@kernel.org>, Daniel Stone <daniels@collabora.com>, 
- Daniel Almeida <daniel.almeida@collabora.com>
-X-Mailer: b4 0.14.2
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Add support for iomem regions by providing a struct IoMem abstraction
-for the platform bus. This will request a memory region and remap it
-into a kernel virtual address using ioremap(). The underlying reads and
-writes are performed by struct Io, which is itself embedded in Iomem.
-This is the equivalent of pci::Bar for the platform bus.
+From: Li Li <dualli@google.com>
 
-Memory-mapped I/O devices are common, and this patch offers a way to
-program them in Rust, usually by reading and writing to their
-memory-mapped register set.
+It's a known issue that neither the frozen processes nor the system
+administration process of the OS can correctly deal with failed binder
+transactions. The reason is that there's no reliable way for the user
+space administration process to fetch the binder errors from the kernel
+binder driver.
 
-Both sized and unsized versions are exposed. Sized allocations use
-`ioremap_resource_sized` and specify their size at compile time. Reading
-and writing to IoMem is infallible in this case and no extra runtime
-checks are performed. Unsized allocations have to check the offset
-against the regions's max length at runtime and so return Result.
+Android is such an OS suffering from this issue. Since cgroup freezer
+was used to freeze user applications to save battery, innocent frozen
+apps have to be killed when they receive sync binder transactions or
+when their async binder buffer is running out.
 
-Lastly, like pci::Bar, platform::IoMem uses the Devres abstraction to
-revoke access to the region if the device is unbound or the underlying
-resource goes out of scope.
+This patch introduces the Linux generic netlink messages into the binder
+driver so that the Linux/Android system administration process can
+listen to important events and take corresponding actions, like stopping
+a broken app from attacking the OS by sending huge amount of spamming
+binder transactiions.
 
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
----
-This series depend on the v3 of PCI/Platform abstractions
+The 1st version uses a global generic netlink for all binder contexts,
+raising potential security concerns. There were a few other feedbacks
+like request to kernel docs and test code. The thread can be found at
+https://lore.kernel.org/lkml/20240812211844.4107494-1-dualli@chromium.org/
 
-The PCI/Platform abstractions are in-flight and can be found at:
+The 2nd version fixes those issues and has been tested on the latest
+version of AOSP. See https://r.android.com/3305462 for how userspace is
+going to use this feature and the test code. It can be found at
+https://lore.kernel.org/lkml/20241011064427.1565287-1-dualli@chromium.org/
 
-https://lore.kernel.org/rust-for-linux/Zxili5yze1l5p5GN@pollux/T/#t
----
-Changes in v2:
-- reworked the commit message
-- added missing request_mem_region call (Thanks Alice, Danilo)
-- IoMem::new() now takes the platform::Device, the resource number and
-  the name, instead of an address and a size (thanks, Danilo)
-- Added a new example for both sized and unsized versions of IoMem.
-- Compiled the examples using kunit.py (thanks for the tip, Alice!)
-- Removed instances of `foo as _`. All `as` casts now spell out the actual
-  type.
-- Now compiling with CLIPPY=1 (I realized I had forgotten, sorry)
-- Rebased on top of rust-next to check for any warnings given the new
-  unsafe lints.
-- Link to v1: https://lore.kernel.org/r/20241024-topic-panthor-rs-platform_io_support-v1-1-3d1addd96e30@collabora.com
----
- rust/bindings/bindings_helper.h |   1 +
- rust/helpers/io.c               |  22 ++++++
- rust/kernel/platform.rs         | 149 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 172 insertions(+)
+The 3rd version replaces the handcrafted netlink source code with the
+netlink protocal specs in YAML. It also fixes the documentation issues.
+https://lore.kernel.org/lkml/20241021182821.1259487-1-dualli@chromium.org/
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 217c776615b9593a2fa921dee130c357dbd96761..90b2d29e7b99f33ceb313b4cc7f8232fef5eed17 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -13,6 +13,7 @@
- #include <linux/errname.h>
- #include <linux/ethtool.h>
- #include <linux/firmware.h>
-+#include <linux/ioport.h>
- #include <linux/jiffies.h>
- #include <linux/mdio.h>
- #include <linux/of_device.h>
-diff --git a/rust/helpers/io.c b/rust/helpers/io.c
-index f9bb1bbf1fd5daedc970fc342eeacd8777a8d8ed..0d31552d5f90e69b8132725a958813d4ab8bd9fa 100644
---- a/rust/helpers/io.c
-+++ b/rust/helpers/io.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include <linux/io.h>
-+#include <linux/ioport.h>
- 
- u8 rust_helper_readb(const volatile void __iomem *addr)
- {
-@@ -89,3 +90,24 @@ void rust_helper_writeq_relaxed(u64 value, volatile void __iomem *addr)
- 	writeq_relaxed(value, addr);
- }
- #endif
-+
-+resource_size_t rust_helper_resource_size(struct resource *res)
-+{
-+	return resource_size(res);
-+}
-+
-+void __iomem *rust_helper_ioremap(resource_size_t addr, unsigned long size)
-+{
-+	return ioremap(addr, size);
-+}
-+
-+struct resource *rust_helper_request_mem_region(resource_size_t start, resource_size_t n,
-+				    const char *name)
-+{
-+	return request_mem_region(start, n, name);
-+}
-+
-+void rust_helper_release_mem_region(resource_size_t start, resource_size_t n)
-+{
-+	release_mem_region(start, n);
-+}
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index addf5356f44f3cf233503aed97f1aa0d32f4f062..a6e676e0b983fea2dc2090563a138b1cc365a97d 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -4,11 +4,15 @@
- //!
- //! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
- 
-+use core::ops::Deref;
-+
- use crate::{
-     bindings, container_of, device,
-     device_id::RawDeviceId,
-+    devres::Devres,
-     driver,
-     error::{to_result, Result},
-+    io::Io,
-     of,
-     prelude::*,
-     str::CStr,
-@@ -208,6 +212,47 @@ fn as_raw(&self) -> *mut bindings::platform_device {
-         // embedded in `struct platform_device`.
-         unsafe { container_of!(self.0.as_raw(), bindings::platform_device, dev) }.cast_mut()
-     }
-+
-+    /// Maps a platform resource through ioremap() where the size is known at
-+    /// compile time.
-+    pub fn ioremap_resource_sized<const SIZE: usize>(
-+        &self,
-+        num: u32,
-+        name: &CStr,
-+    ) -> Result<Devres<IoMem<SIZE>>> {
-+        // SAFETY: `res` is guaranteed to be a valid MMIO address and the size
-+        // is given by the kernel as per `self.resource_len()`.
-+        let io = unsafe { IoMem::new(self, num, name) }?;
-+        let devres = Devres::new(self.as_ref(), io, GFP_KERNEL)?;
-+
-+        Ok(devres)
-+    }
-+
-+    /// Maps a platform resource through ioremap().
-+    pub fn ioremap_resource(&self, resource: u32, name: &CStr) -> Result<Devres<IoMem>> {
-+        self.ioremap_resource_sized::<0>(resource, name)
-+    }
-+
-+    /// Returns the resource len for `resource`, if it exists.
-+    pub fn resource_len(&self, resource: u32) -> Result<bindings::resource_size_t> {
-+        match self.resource(resource) {
-+            // SAFETY: if a struct resource* is returned by the kernel, it is valid.
-+            Ok(resource) => Ok(unsafe { bindings::resource_size(resource) }),
-+            Err(e) => Err(e),
-+        }
-+    }
-+
-+    pub(crate) fn resource(&self, resource: u32) -> Result<*mut bindings::resource> {
-+        // SAFETY: By the type invariants, we know that `self.ptr` is non-null and valid.
-+        let resource = unsafe {
-+            bindings::platform_get_resource(self.as_raw(), bindings::IORESOURCE_MEM, resource)
-+        };
-+        if !resource.is_null() {
-+            Ok(resource)
-+        } else {
-+            Err(EINVAL)
-+        }
-+    }
- }
- 
- impl AsRef<device::Device> for Device {
-@@ -215,3 +260,107 @@ fn as_ref(&self) -> &device::Device {
-         &self.0
-     }
- }
-+
-+/// A I/O-mapped memory region for platform devices.
-+///
-+/// See also [`kernel::pci::Bar`].
-+///
-+/// # Examples
-+///
-+/// ```
-+/// # use kernel::{bindings, c_str, platform};
-+///
-+/// fn probe(pdev: &mut platform::Device, /* ... */) -> Result<()> {
-+///     let offset = 42; // Some offset.
-+///
-+///     // If the size is known at compile time, use `ioremap_resource_sized`.
-+///     // No runtime checks will apply when reading and writing.
-+///     let iomem = pdev.ioremap_resource_sized::<42>(0, c_str!("my-device"))?;
-+///
-+///     // Read and write a 32-bit value at `offset`. Calling `try_access()` on
-+///     // the `Devres` makes sure that the resource is still valid.
-+///     let data = iomem.try_access().ok_or(ENODEV)?.readl(offset);
-+///
-+///     iomem.try_access().ok_or(ENODEV)?.writel(data, offset);
-+///
-+///     // Unlike `ioremap_resource_sized`, here the size of the memory region
-+///     // is not known at compile time, so only the `try_read*` and `try_write*`
-+///     // family of functions are exposed, leading to runtime checks on every
-+///     // access.
-+///     let iomem = pdev.ioremap_resource(0, c_str!("my-device"))?;
-+///
-+///     let data = iomem.try_access().ok_or(ENODEV)?.try_readl(offset)?;
-+///
-+///     iomem.try_access().ok_or(ENODEV)?.try_writel(data, offset)?;
-+///
-+///     # Ok::<(), Error>(())
-+/// }
-+/// ```
-+///
-+pub struct IoMem<const SIZE: usize = 0>(Io<SIZE>);
-+
-+impl<const SIZE: usize> IoMem<SIZE> {
-+    /// Creates a new `IoMem` instance.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must make sure that `paddr` is a valid MMIO address.
-+    unsafe fn new(pdev: &Device, num: u32, name: &CStr) -> Result<Self> {
-+        let size = pdev.resource_len(num)?;
-+        if size == 0 {
-+            return Err(ENOMEM);
-+        }
-+
-+        let res = pdev.resource(num)?;
-+
-+        // SAFETY: `res` is guaranteed to be a valid pointer to a `struct
-+        // resource` as per the semantics of `bindings::platform_get_resource()`
-+        let res_start = unsafe { *res }.start;
-+
-+        // SAFETY:
-+        // - `res_start` is guaranteed to be a valid MMIO address.
-+        // - `size` is known not to be zero at this point.
-+        // - `name` is a valid C string.
-+        let mem_region =
-+            unsafe { bindings::request_mem_region(res_start, size, name.as_char_ptr()) };
-+        if mem_region.is_null() {
-+            return Err(EBUSY);
-+        }
-+
-+        // SAFETY:
-+        // - `res_start` is guaranteed to be a valid MMIO address.
-+        // - `size` is known not to be zero at this point.
-+        let addr = unsafe { bindings::ioremap(res_start, size) };
-+        if addr.is_null() {
-+            // SAFETY:
-+            // - `res_start` is guaranteed to be a valid MMIO address.
-+            // - `size` is the same as the one passed to `request_mem_region`.
-+            unsafe { bindings::release_mem_region(res_start, size) };
-+            return Err(ENOMEM);
-+        }
-+
-+        // SAFETY: `addr` is guaranteed to be the start of a valid I/O mapped memory region of
-+        // size `size`.
-+        let io = unsafe { Io::new(addr as usize, size.try_into()?)? };
-+
-+        Ok(IoMem(io))
-+    }
-+}
-+
-+impl<const SIZE: usize> Drop for IoMem<SIZE> {
-+    fn drop(&mut self) {
-+        // SAFETY: Safe as by the invariant of `Io`.
-+        unsafe { bindings::release_mem_region(self.0.base_addr() as u64, self.0.maxsize() as u64) }
-+
-+        // SAFETY: Safe as by the invariant of `Io`.
-+        unsafe { bindings::iounmap(self.0.base_addr() as *mut core::ffi::c_void) }
-+    }
-+}
-+
-+impl<const SIZE: usize> Deref for IoMem<SIZE> {
-+    type Target = Io<SIZE>;
-+
-+    fn deref(&self) -> &Self::Target {
-+        &self.0
-+    }
-+}
+The 4th version just containsi trivial fixes, making the subject of the
+patch aligned with the subject of the cover letter.
+https://lore.kernel.org/lkml/20241021191233.1334897-1-dualli@chromium.org/
 
----
-base-commit: 2a5c159f49a5801603af03510c7cef89ff4c9850
-change-id: 20241023-topic-panthor-rs-platform_io_support-f97aeb2ea887
+The 5th version incorporates the suggested fixes to the kernel doc and
+the init function. It also removes the unsupported uapi-header in YAML
+that contains "/" for subdirectory.
+https://lore.kernel.org/lkml/20241025075102.1785960-1-dualli@chromium.org/
 
-Best regards,
+The 6th version has some trivial kernel doc fixes, without modifying
+any other source code.
+https://lore.kernel.org/lkml/20241028101952.775731-1-dualli@chromium.org/
+
+The 7th version breaks the binary struct netlink message into individual
+attributes to better support automatic error checking. Thanks Jakub for
+improving ynl-gen.
+https://lore.kernel.org/all/20241031092504.840708-1-dualli@chromium.org/
+
+The 8th version solves the multi-genl-family issue by demuxing the
+messages based on a new context attribute. It also improves the YAML
+spec to be consistent with netlink tradition. A Huge 'Thank You' to
+Jakub who taught me a lot about the netlink protocol!
+
+v1: add a global binder genl socket for all contexts
+v2: change to per-context binder genl for security reason
+    replace the new ioctl with a netlink command
+    add corresponding doc Documentation/admin-guide/binder_genl.rst
+    add user space test code in AOSP
+v3: use YNL spec (./tools/net/ynl/ynl-regen.sh)
+    fix documentation index
+v4: change the subject of the patch and remove unsed #if 0
+v5: improve the kernel doc and the init function
+    remove unsupported uapi-header in YAML
+v6: fix some trivial kernel doc issues
+v7: break the binary struct binder_report into individual attributes
+v8: use multiplex netlink message in a unified netlink family
+    improve the YAML spec to be consistent with netlink tradition
+
+Jakub Kicinski (1):
+  tools: ynl-gen: allow uapi headers in sub-dirs
+
+Li Li (1):
+  binder: report txn errors via generic netlink
+
+ Documentation/admin-guide/binder_genl.rst    |  96 +++++++
+ Documentation/admin-guide/index.rst          |   1 +
+ Documentation/netlink/specs/binder_genl.yaml | 108 +++++++
+ drivers/android/Kconfig                      |   1 +
+ drivers/android/Makefile                     |   2 +-
+ drivers/android/binder.c                     | 287 ++++++++++++++++++-
+ drivers/android/binder_genl.c                |  39 +++
+ drivers/android/binder_genl.h                |  18 ++
+ drivers/android/binder_internal.h            |  27 +-
+ drivers/android/binder_trace.h               |  35 +++
+ drivers/android/binderfs.c                   |   2 +
+ include/uapi/linux/android/binder_genl.h     |  55 ++++
+ tools/net/ynl/ynl-gen-c.py                   |   1 +
+ 13 files changed, 666 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/admin-guide/binder_genl.rst
+ create mode 100644 Documentation/netlink/specs/binder_genl.yaml
+ create mode 100644 drivers/android/binder_genl.c
+ create mode 100644 drivers/android/binder_genl.h
+ create mode 100644 include/uapi/linux/android/binder_genl.h
+
+
+base-commit: 31a1f8752f7df7e3d8122054fbef02a9a8bff38f
 -- 
-Daniel Almeida <daniel.almeida@collabora.com>
+2.47.0.277.g8800431eea-goog
 
 
