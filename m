@@ -1,177 +1,189 @@
-Return-Path: <linux-kernel+bounces-407986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE3E9C7866
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:12:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 669FC9C796D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B46DB337D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:11:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D082AB275E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3943166308;
-	Wed, 13 Nov 2024 16:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E567F1667DA;
+	Wed, 13 Nov 2024 16:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SVtweeOL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ha4c389w"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E004158DC4;
-	Wed, 13 Nov 2024 16:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BECF1632C7
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731514255; cv=none; b=sH2WnEczhvrCHslfP3e9ujQbRe9QfVhI57cHrjbMeJAu1a+Y+XTk0ug3o/x+4l0oKLySBdfvWKEqPrLyjZyr3/NoZJVvoI5RBlxXR+mqnluHt3/7xNZFx5VXd+AGkLwor2bdIDnf5eY3PRX/zexTyccBF0FVdkbs3D8K3dOLuDk=
+	t=1731514305; cv=none; b=JGi+NYgn+sSO619tBq5INI1ITLNWyqMUbdPrpcByh85zMKSvL5iSHSh9HAGYDfy4LCtm5zwITMFO3SMJFD5/aWDRoYfTnV2TABRELN3jtOx4igtY89hFqCO0+Gffvuxp0WCFdVP8z51fQGwci3w/o9IXf9avRD2VQOBtU71kfZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731514255; c=relaxed/simple;
-	bh=07vn2WYaIiTIdjb7DdSnO6mqXwHZ9cnmNt3olG+c/yY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kn+0wufhVY/ZirJHqhjsv8SitsKl6UNlr5BGWliEAih8SIaaF3coEQcvTXso06UEe5BailTY4b2w4dDdI/mopI5Grr+TyW3Ky7gsZCprViMZu1z2On4ZdU8Kl9aZnjMDobQXP6QbBZDgU5soD6PABJatgMqxAuMI+wHwkqfTLjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SVtweeOL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADCljxn030398;
-	Wed, 13 Nov 2024 16:10:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/VqO27XBldIsWpo7ihs4mogTaikB4ZvhXdqC5i/FfOI=; b=SVtweeOL6AfLdfzW
-	Gn84B8+aDeR63kLwslkrUOIQVgMvXZ61Q8LF9ZU3pXTjQ7Kp1xvlAJXNg7Tu8kMR
-	QVhfXFRxSiUeAav+THG3ZtuVRtRBAL+BvpqeN17wuyuM4cV+q54f3h2/oV2SKZEH
-	FOaT4wgtg74oEGhwUrcZydEs70DXMUiGSztXmg9CnxFxKPsEEuRl6oLF5sTMdyWo
-	n2gB/K+A0R6x024SQGls8R9KG8/l5Ha34VDtkhAfpls01s+9gaplTsBEbZc4jQBm
-	aR49+pQYcHR9Oo0vDnjUs2+LO0Ye4SPYKNMeQm+vaX6lg7dvZidAxus6Tbk5MLnw
-	sFm6Gw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vkvr9wv7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 16:10:46 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ADGAj9q005418
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 16:10:45 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 13 Nov
- 2024 08:10:40 -0800
-Message-ID: <71b5a108-a38b-4260-b683-d1a70178afc8@quicinc.com>
-Date: Wed, 13 Nov 2024 21:40:37 +0530
+	s=arc-20240116; t=1731514305; c=relaxed/simple;
+	bh=8JShsxBODe/ZYse/45GbByklsWCzNPukdA1ZXffLLLQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ir6CxA6IKgC/PvrMvN5ZFQ2sTxi7vGZZgDB2KYCiE2pa5m05XY8L5lbOtxxtvMGX72wB+Pw0lm/OAgCtmoMpFXuPrN0K3d4Efzmfj2thAKxRbl1TpLfsoyJwPUm43xQ3WZsNmsV3KFNWtkrNTkrh4D9pYp5zymmizmXHh+59LmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ha4c389w; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731514302;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8JShsxBODe/ZYse/45GbByklsWCzNPukdA1ZXffLLLQ=;
+	b=Ha4c389wJisbKWLdI0cfSAwezPF67AWSmaGWnVhMD0f5X/eiqjFEFbA6RyIDJ18neI+z71
+	gpBUA2c2O8uhKvc0AyIGDwMMjNKWXCrhOKqvD83pTQ8I/e2me0OxlfvFwJTVppm7M8oJ0R
+	AHQsGuRbRLStD/2Pt/+LiRZSFI1G9ms=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-344-xL0YAnTcNoOPF1M5oGg7PQ-1; Wed, 13 Nov 2024 11:11:41 -0500
+X-MC-Unique: xL0YAnTcNoOPF1M5oGg7PQ-1
+X-Mimecast-MFC-AGG-ID: xL0YAnTcNoOPF1M5oGg7PQ
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6d38310949cso117695396d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:11:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731514301; x=1732119101;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8JShsxBODe/ZYse/45GbByklsWCzNPukdA1ZXffLLLQ=;
+        b=m+acVTNp/Un4b+bnyAidFBB8TtXQ2b/EKfKEGmK21RBnJlffgyV7zxeAMVs7JReGk3
+         bzcWA31F094TYQlxWQOYG30IRpIJFOTKksL2rk0nvC+Era/BqLiWDs10RqQBk7kAb8kD
+         pycu6vgcem0Pq/O8G7eIyjhhc7kkgJNqpo3ovccFx3vU8IQBd8jJfvn3XEE8XutF9QEs
+         FHiEpuy64IKhYH4XLMTYzohHpl3WSrWkGpVi2/EcPhUG2ZS7NjGjiRxBa/NRaeChoiiI
+         KxF9zUQAu0/QGinXuRDQC7f22ScMTu4S0QRwifRjw7hWQLn7u0fwuKNQwNa6TkeAZ/F7
+         WbFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUucl8sgG7n4WSbuVhwIA/YE51qjeBbCSLs9ZUQsSgs3xcW2iKpX1DNCEWiTR+4QrKFiEW/AVg9/GkTzc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP0NtydjLpdagezBiHpik8o5cfyYheKR5LXwLXZfEluN2Uju0e
+	6dNbad24OfpO0i7QfZBUOQREXVOB/qxkZMD2EJJhPE9SnBYtxz4xX7CwBRB+F69v44CRq5qDRko
+	nrmN/WIS/RNoMUc4CbDbSIF9ivA3jIV/CQD5bxdSlbwUT4r3gTfghJsjAwDCqPw==
+X-Received: by 2002:a05:6214:5987:b0:6d3:68df:f62d with SMTP id 6a1803df08f44-6d39e10946emr297208106d6.2.1731514300884;
+        Wed, 13 Nov 2024 08:11:40 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHnbeg7ogUgcEGRAzWAPJHQLp75DRK8IjefSxWG9p6JZ9o7VJOC4JF6vdJYqufewnJd395bRA==
+X-Received: by 2002:a05:6214:5987:b0:6d3:68df:f62d with SMTP id 6a1803df08f44-6d39e10946emr297207096d6.2.1731514300322;
+        Wed, 13 Nov 2024 08:11:40 -0800 (PST)
+Received: from [10.200.68.91] (nat-pool-muc-u.redhat.com. [149.14.88.27])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3966303e6sm86017386d6.99.2024.11.13.08.11.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 08:11:39 -0800 (PST)
+Message-ID: <2f94dd0f0bfef8d51f1ced78a9b5db8e2ce48429.camel@redhat.com>
+Subject: Re: [PATCH v2 01/11] PCI: Prepare removing devres from pci_intx()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Damien Le Moal
+ <dlemoal@kernel.org>,  Niklas Cassel <cassel@kernel.org>, Basavaraj Natikar
+ <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>,  Benjamin
+ Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov <oakad@yahoo.com>,
+ Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
+ <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rasesh Mody
+ <rmody@marvell.com>,  GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko
+ <imitsyanko@quantenna.com>,  Sergey Matyukevich <geomatsi@gmail.com>, Kalle
+ Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar
+ S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+ <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>, Oleksandr Tyshchenko
+ <oleksandr_tyshchenko@epam.com>, Mario Limonciello
+ <mario.limonciello@amd.com>, Chen Ni <nichen@iscas.ac.cn>, Ricky Wu
+ <ricky_wu@realtek.com>,  Al Viro <viro@zeniv.linux.org.uk>, Breno Leitao
+ <leitao@debian.org>, Kevin Tian <kevin.tian@intel.com>, Mostafa Saleh
+ <smostafa@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, Kunwu Chan
+ <chentao@kylinos.cn>, Ankit Agrawal <ankita@nvidia.com>, Christian Brauner
+ <brauner@kernel.org>, Reinette Chatre <reinette.chatre@intel.com>, Eric
+ Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-input@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
+ linux-pci@vger.kernel.org,  kvm@vger.kernel.org,
+ xen-devel@lists.xenproject.org
+Date: Wed, 13 Nov 2024 17:11:29 +0100
+In-Reply-To: <87plmzktn3.ffs@tglx>
+References: <20241113124158.22863-2-pstanner@redhat.com>
+	 <20241113124158.22863-3-pstanner@redhat.com> <87plmzktn3.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
- between two subsystems
-To: Bjorn Andersson <andersson@kernel.org>,
-        Dan Carpenter
-	<dan.carpenter@linaro.org>
-CC: <konrad.dybcio@linaro.org>, <andi.shyti@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <conor+dt@kernel.org>, <agross@kernel.org>,
-        <devicetree@vger.kernel.org>, <vkoul@kernel.org>, <linux@treblig.org>,
-        <Frank.Li@nxp.com>, <konradybcio@kernel.org>,
-        <bryan.odonoghue@linaro.org>, <krzk+dt@kernel.org>, <robh@kernel.org>
-References: <20240927063108.2773304-1-quic_msavaliy@quicinc.com>
- <20240927063108.2773304-5-quic_msavaliy@quicinc.com>
- <lmo4jylfwt3wingdqb6zc6ew2537kqksuckfyd7vwuu4ufg5cr@ic2j7bv2r6e4>
- <42e0622d-0bb6-4850-bf5a-629996c702db@stanley.mountain>
- <7eg2g2ykqccc74l6chkwlq54wcobzevqlzngkr3lnegv36pcsb@t3asip2mbmew>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <7eg2g2ykqccc74l6chkwlq54wcobzevqlzngkr3lnegv36pcsb@t3asip2mbmew>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: sY6gqdoXglrVMzvtIK5Y-M1K3Mocbw0n
-X-Proofpoint-GUID: sY6gqdoXglrVMzvtIK5Y-M1K3Mocbw0n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501
- bulkscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411130134
 
-Hi Bjorn,
+On Wed, 2024-11-13 at 17:04 +0100, Thomas Gleixner wrote:
+> On Wed, Nov 13 2024 at 13:41, Philipp Stanner wrote:
+> > +/**
+> > + * pci_intx_unmanaged - enables/disables PCI INTx for device dev,
+> > + * unmanaged version
+> > + * @pdev: the PCI device to operate on
+> > + * @enable: boolean: whether to enable or disable PCI INTx
+>=20
+> Except that the argument is of type int, which really should be type
+> bool.
 
-On 10/1/2024 8:09 AM, Bjorn Andersson wrote:
-> On Mon, Sep 30, 2024 at 11:21:23AM GMT, Dan Carpenter wrote:
->> On Sun, Sep 29, 2024 at 10:46:37PM -0500, Bjorn Andersson wrote:
->>>> @@ -602,6 +603,7 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->>>>   	peripheral.clk_div = itr->clk_div;
->>>>   	peripheral.set_config = 1;
->>>>   	peripheral.multi_msg = false;
->>>> +	peripheral.shared_se = gi2c->se.shared_geni_se;
->>>>   
->>>>   	for (i = 0; i < num; i++) {
->>>>   		gi2c->cur = &msgs[i];
->>>> @@ -612,6 +614,8 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->>>>   		if (i < num - 1)
->>>>   			peripheral.stretch = 1;
->>>>   
->>>> +		peripheral.first_msg = (i == 0);
->>>> +		peripheral.last_msg = (i == num - 1);
->>>
->>> There are multiple error paths in this loop, which would result in us
->>> never issuing the unlock TRE - effectively blocking other subsystems
->>> from accessing the serial engine until we perform our next access
->>> (assuming that APSS issuing a lock TRE when APSS already has the channel
->>> locked isn't a problem?)
->>>
->>
->> Hi Bjorn,
->>
->> I saw the words "error paths" and "unlock" and I thought there was maybe
->> something we could do here with static analysis.
-> 
-> Appreciate you picking up on those topics :)
-> 
->> But I don't know what TRE or APSS mean.
->>
-> 
-> The "APSS" is "the application processor sub system", which is where
-> we typically find Linux running. TRE is, if I understand correctly, a
-> request on the DMA engine queue.
-Yes, Thats right. Transfer ring element, it's like a command to the 
-engine. Can be configuration TRE, DMA xfer request TRE etc.
-> 
->> The one thing I do see is that this uses "one err" style error handling where
->> there is one err label and it calls dmaengine_terminate_sync(gi2c->rx_c)
->> regardless of whether or not geni_i2c_gpi() was called or failed/succeeded.
->>
-> 
-> The scheme presented in this series injects a "LOCK" request before the
-> DMA request marked first_msg, and an "UNLOCK" after the ones marked
-> last_msg. This is needed because the controller is also concurrently by
-> some DSP (or similar), so the LOCK/UNLOCK scheme forms mutual exclusion
-> of the operations between the Linux and DSP systems.
-> 
-> I'm not sure if it's possible to tie the unlock operation to
-> dmaengine_terminate_sync() in some way.
-> 
-I think terminate_sync() should clean up all xfers and will continue for 
-the next request as a fresh start.
-> Giving this some more thought, it feels like the current scheme serves
-> the purpose of providing mutual exclusion both for the controller and
-> to some degree for the device. But I'd like to understand why we can't
-> inject the lock/unlock implicitly for each transfer...
-> 
-Explicitly adding lock/unlock per transfer adds execution load. Lock is 
-meant for taking an ownership of the bus which is better to manage per 
-session.
-> Regards,
-> Bjorn
-> 
->> regards,
->> dan carpenter
->>
+True, but this is a *temporary* copy of pci_intx(), a ~16 year old
+function. Older C programmers had the habit of for some reason using
+32-bit integers for a true/false boolean all the time.
+
+We _could_ think of changing pci_intx()'s parameter to a boolean, but I
+think it wouldn't really improve things very much
+
+see also below
+
+>=20
+> > + * Enables/disables PCI INTx for device @pdev
+> > + *
+> > + * This function behavios identically to pci_intx(), but is never
+> > managed with
+> > + * devres.
+>=20
+> behavios?
+
+-> behaves. Will fix.
+
+>=20
+> > + */
+> > +void pci_intx_unmanaged(struct pci_dev *pdev, int enable)
+>=20
+> I find this function name mildy confusing. This _unmanaged suffix is
+> not
+> really telling me anything. And the reference that this behaves
+> identically to pci_intx() makes it even worse.
+>=20
+> This function is about controlling the PCI INTX_DISABLE bit in the
+> PCI_COMMAND config word, right?
+>=20
+> So naming it pci_intx_control() would make it entirely clear what
+> this
+> is about, no?
+
+We had this conversation last week. I answered on that already, maybe
+you have overlooked it:
+
+https://lore.kernel.org/all/a8d9f32f60f55c58d79943c4409b8b94535ff853.camel@=
+redhat.com/
+
+
+Please also take a look at patch 11, then you'll see the full picture
+
+Danke,
+Philipp
+
+>=20
+> Thanks,
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tglx
+>=20
+
 
