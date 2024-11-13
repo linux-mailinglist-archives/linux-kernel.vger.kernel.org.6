@@ -1,151 +1,126 @@
-Return-Path: <linux-kernel+bounces-408085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C88E9C7A53
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:54:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97999C7A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:50:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30D95B32AB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:49:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2681F2358F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941D22022ED;
-	Wed, 13 Nov 2024 17:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB22A202630;
+	Wed, 13 Nov 2024 17:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HcjZcwWZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UduD5eqB"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEE62022EA
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC4C1494DD;
+	Wed, 13 Nov 2024 17:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731520144; cv=none; b=JSDsf1MtCmahQct8kIlK9RoqBcUh6ZwtwxvasOpLsteu+UFeN7C3WcwGOcWUtDMYF/Gh0kzJPuO3rVUHqddEVwfbEBdyEM1SFhRzxEc5WGpU6mbbotDDpJbNEjmr59Pr/SnaibMSP+uMaKffpexVXqngvhLZA0RNHVu8A8v9re8=
+	t=1731520244; cv=none; b=bw8BMOXP50JbkbKUmvOMuTHEq58MznlspaZwyETybnYzaBAkhVM8vCUviyHYWxbxyxbT9k08phlvqGNZPPsM6bTw5KQhaL3aH//QKBei31nmeffAzAam1VHeZY+JNDPhYXM4g93M7bpUH6VpuTWN7+k/supLSiPXpVBKv5QgbpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731520144; c=relaxed/simple;
-	bh=qNU++KYyGFoUkFW3124oGzI6Ysqe4XBKiFx/i/890AY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jHt4aER85cnVQQ1/s6yKfBBHZg30uTBZeLIhmgy8aO68tpjwTwmF0hPH855DJBomQ1xjc192XaGjpgHN73qR0lkeyJqjMxwiaF9cPHDACXHILm9mQ3nvGvYeC6eaEDhKaYpZYJ6VNTZFu3FoDkYQEU9lX+LJNwlAO7FfOfK3IMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HcjZcwWZ; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731520142; x=1763056142;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qNU++KYyGFoUkFW3124oGzI6Ysqe4XBKiFx/i/890AY=;
-  b=HcjZcwWZ+mT7awERXh2mot6QV0JptfQOZt2pbnd08oPx83mXgOgFAJb0
-   6RBvzZ4v4/+jGHcFO9l3LqFPD0rRSheL3tnXIpx9ywGl1Wqt+X/PU5/+c
-   WuOXXdP7IHlp7qDz4wb90CJuYsNrJwj1Hsej5eoqz3q/1KU9SzC/kXsTi
-   tiwKhpOnZ+g9/5hmcqVdAeFXGb3XIvtMiPfO2oDI4WeVS1hxc+XTrRBl8
-   2F7JbmHIiX8FTylRJtWItAxnCYtZqZ27YyRjP3b5ABo5Zj1jfQ+83Gn+n
-   TZgtmW5MAiFSDce/Zf0UO2stindfJCnizC91Cj15LMG/XJAa6CO5vF+gm
-   w==;
-X-CSE-ConnectionGUID: zMHEF3PdSCql9XT51gcwxA==
-X-CSE-MsgGUID: nFNGA4DvT0umg5MJY2RHAQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53971398"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="53971398"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 09:49:01 -0800
-X-CSE-ConnectionGUID: 0QFIAp/FRUaORCiagoFLOA==
-X-CSE-MsgGUID: 9v9RNzvxRnW8iv/lPwjPsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
-   d="scan'208";a="118755062"
-Received: from kkkuntal-desk3 (HELO [10.124.220.196]) ([10.124.220.196])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 09:49:01 -0800
-Message-ID: <8211a3d2-66e0-4563-b804-8aa4bd0f0de9@intel.com>
-Date: Wed, 13 Nov 2024 09:49:00 -0800
+	s=arc-20240116; t=1731520244; c=relaxed/simple;
+	bh=uiKubqfzMx2s2ufqjwwokbGZLNA7OAammJ1+n+A7QOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S4wEheLwopjldi5SVqvweDTOA9fRoG9l/m/i6kjyt7MiA9cGUy0MAgm1lJDi4o0PBd+lkJ6iC1WkWuUu6/ogqg0UywRVySWQKGujKH6F3IXZMv2brEYiFCuiCIziWLlC1J3jeNvrpQbupr1enwM/96xDgv+epsqlEyFf+Up2Kng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UduD5eqB; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-27b7a1480bdso3045797fac.2;
+        Wed, 13 Nov 2024 09:50:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731520242; x=1732125042; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YASkwPLR6DW5p2wms4wC0dIzAVnPt7gYAm9iZK3s/7I=;
+        b=UduD5eqBeJ+6baCuhkC8BRTmJNiyyE+qomPUYNFGxR4zeKQXFVedoumV58k+Lijex5
+         qJeRdlkO/MEbxZ3EfXcVjIX4c83jSVGZ0rwbc3cfzSEOTgZIeYFHBpby5UDNh4zbIee+
+         rmH5Esn87gYOVmD9OYWNORakKCr7/1xk8KR9FTnAvAWayOCmbY0lSBp9gX9Jp3HVhnBn
+         XNKgiE6zuzxHcMh0j5Wl6rUt4QXbY0s5JHUlKkTuB2ssmSo5OWNZo5fNLmca0n0KexR3
+         i+Tk5JOOwkuHME0DzRv8y9xKqzdtXnYqP0g4e67hnETrGLxw7XGxiBKIv+D9BI5PL4Ty
+         THVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731520242; x=1732125042;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YASkwPLR6DW5p2wms4wC0dIzAVnPt7gYAm9iZK3s/7I=;
+        b=q3CSWkRvNxtRh88sZkWkh4Uf1wquFpPTTkPqT0Y+M/gXN9KXiKm1hk4hbY8PEcQkVe
+         UtGXrmdCbKUgFfEx5Gg+A6574klHQF6/S8fdNLOYqLulQfypAowwflaAU9cuFbGGBpWt
+         juZOoTySA+iieviFI53opu2b+uESVUqBcysl+xNMo1+juea2K8PDkte1tf6KBoA0SeM3
+         tgr0gLH94dMsE+VBi0TiMH3oztF6js79jr7jGvv+HlWG3L15JYc5r7q2i0F6n84PwJ0i
+         64JNtrH+2ZtICuF85+uk7U+MHDMY5uk6F7sw2Prh/FZBE93RfBWTd8bYzpL3yWf/Vwzu
+         w8LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNiYowKewwyL+vX2tZGE/xHRFpO+DxHOfhArtuZWj0LsQmU7lNQFsKQwP0loj9A261vm4=@vger.kernel.org, AJvYcCUhqj53Yc8m2dOoW7+j+r5XwGMN4Y/NHP2J5NsUDLbJWUmYgp4pjtCwBmQo3xaAyG5NRCD4D90ztVHszXxnPtZk@vger.kernel.org, AJvYcCWQ5JikswZMc/a8//Q/E/AjEszvkhEv5BXGsnlUT0qC81rUmged1znq+AyMoINxhZZocf3p86UYFGFlfcf6@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsj/wBJpw0dX58ZLPUtHtmMYvU/dqNTzxHM0gq9OdtF7fqORnm
+	iuepqe5OKFWiqfazx+3Fg375OVI/T4wMxNpZ0pyJlHQOKvkWE5g=
+X-Google-Smtp-Source: AGHT+IEF01O6Epfp5F3V8NpoD+BiSaq7bs1bUg4f5F/1e1isXwK/aJccWC+w6jieFf72m8LLen0VTA==
+X-Received: by 2002:a05:6870:3310:b0:287:32f7:ef42 with SMTP id 586e51a60fabf-295e8d51845mr3982170fac.16.1731520240475;
+        Wed, 13 Nov 2024 09:50:40 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f643e9asm12674863a12.59.2024.11.13.09.50.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 09:50:40 -0800 (PST)
+Date: Wed, 13 Nov 2024 09:50:39 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Alexis =?utf-8?Q?Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, ebpf@linuxfoundation.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>,
+	Petar Penkov <ppenkov@google.com>, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 07/10] selftests/bpf: migrate flow_dissector
+ namespace exclusivity test
+Message-ID: <ZzTm7wKsOLuI5w20@mini-arch>
+References: <20241113-flow_dissector-v1-0-27c4df0592dc@bootlin.com>
+ <20241113-flow_dissector-v1-7-27c4df0592dc@bootlin.com>
+ <4f68d104-b96d-4726-a94d-1123765393c6@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] x86/fred: Clear WFE in missing-ENDBRANCH #CPs
-To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- peterz@infradead.org, andrew.cooper3@citrix.com
-References: <20241113091313.3717338-1-xin@zytor.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241113091313.3717338-1-xin@zytor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4f68d104-b96d-4726-a94d-1123765393c6@bootlin.com>
 
-On 11/13/24 01:13, Xin Li (Intel) wrote:
-> An indirect branch instruction sets the CPU indirect branch tracker
-> (IBT) into WAIT_FOR_ENDBRANCH (WFE) state, and WFE stays asserted
-> across the instruction boundary.  When decoder finds an instruction
-> and WFE is set, and the instruction is not the appropriate ENDBR, it
-> raises a #CP fault.
+On 11/13, Alexis Lothoré wrote:
+> On 11/13/24 14:53, Alexis Lothoré (eBPF Foundation) wrote:
 > 
-> For the kernel IBT no ENDBR selftest where #CPs are deliberately
-> triggerred, the WFE state of the interrupted context needs to be
-> cleared to let execution continue.  Otherwise when the CPU resumes
-> from the instruction that just caused the previous #CP, another
-> missing-ENDBRANCH #CP is raised and the CPU enters a dead loop.
+> [...]
 > 
-> This is not a problem with IDT because it doesn't preserve WFE and
-> IRET doesn't set WFE.  But FRED provides space on the entry stack
-> (in an expanded CS area) to save and restore the WFE state, thus the
-> WFE state is no longer clobbered, so software must clear it.
+> > +	ns = open_netns(TEST_NS);
+> > +	bpf_prog_detach2(prog_fd, 0, BPF_FLOW_DISSECTOR);
+> > +	close_netns(ns);
 > 
-> Clear WFE to avoid dead looping in ibt_clear_fred_wfe() and the
-> !ibt_fatal code path when execution is allowed to continue.
-> 
-> Clobbering WFE in any other circumstance is a security-relevant bug.
+> I would like to mention that I initially planned to directly delete the
+> namespace to perform the test cleanup, assuming it would be enough to consider
+> any non-root namespace flow_dissector to be removed. However I observed that it
+> made other tests dealing with flow_dissector starting to fail with -EEXIST,
+> despite all those tests being marked as "serial". I started examining this,
+> suspecting a real issue (a race between namespace deletion and flow dissector
+> attachment check, or a ns refcount issue) but before going further: is my
+> assumption right ? Should a mere namespace deletion be indeed enough to remove
+> the corresponding bpf flow dissector ? Or am I missing something ? If so I'll
+> keep examining this.
 
-With the minor fixes Ingo mentioned:
-
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-
+Don't think that's expected. Removing a namespace with an attached
+dissector program should (in theory) clearly detach it.
 
