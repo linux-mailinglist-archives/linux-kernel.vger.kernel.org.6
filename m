@@ -1,152 +1,125 @@
-Return-Path: <linux-kernel+bounces-406927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608509C663E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:52:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885F89C6629
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:41:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70651B306E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:41:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5E3281CD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350E819BBA;
-	Wed, 13 Nov 2024 00:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD216BA20;
+	Wed, 13 Nov 2024 00:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GT8C88Te"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="06MG/l7W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30866F9E4;
-	Wed, 13 Nov 2024 00:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6E779FE;
+	Wed, 13 Nov 2024 00:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731458492; cv=none; b=I3L1KmVeppwknNRbDDMZ8Ny5njyfR6pJpnoJU+tQJyPeqVt/QFA3gKApD5m1R+cRi0mjVjhLVLd7DuZr1VyhPDKbpm+Zqg9rQglc8nmwe9/X4BOv27KBUEHKLJngp8XbJmZiN/DpzQ2zZpwPlFSPh3i9VkbxCPQ3yJh/nz2yE+A=
+	t=1731458490; cv=none; b=IbBBUFusfR3UGCzey8kXSU7P5BzuOwgGGOKS0Il/CrLFKo0A48U0ebqvrxcQkr3xdZaTl2RD1aALrPccokztCKlqCpDu6c6E6rhzqCJVkItAWVvhSA1ir3fukU5f/JRH9nrLGCMOXsqOsXocIDiDVoBTdNUz6fHTK5+lIMmuBhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731458492; c=relaxed/simple;
-	bh=UIKh7JcV9UrLFx8bZvjC4wlSt2ve7jOqnzDXaEh/dvE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PMqd2EwXtlW8PQ/8IJsrd7EZNlP4MpBVZP2cY+7a9iEfzmh2UglpO1HBChNV1XbXay/xTeGqc88wDlVEo87/jZ+rodUimGhPSFve/mVYNUMFZN+N/1jHAg1RW0OoSww3qvpocqBo5K4MC9vWA7qCJOFbSEulf500NMofNiufo2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GT8C88Te; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e953f4e7cso4871131b3a.3;
-        Tue, 12 Nov 2024 16:41:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731458490; x=1732063290; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=utvKsx60b1Gw3uofxXWtZDiv2co1xe1HZbn29a03gls=;
-        b=GT8C88TeZh2qSq0043tcJNa4PoJ74RCBrIpc+maht/Kb5m2l5/MOOr2l0hyrs/gUXT
-         mMrZSXdeF0j2yH0QZgkbxGTtlr6Pk1kjEKtizItCHUQ3rEM+IjmjWHmD5d3YxOv7mrN9
-         1KhWDVo/6DV/YbmAdqui0hkN8TEgJdCZHrCHJRef266rfhnRUj2IVJ/yCg9EGN53aHjT
-         DgITlrYXqbXGLP3vFS9XNN+zLsKQN0kk27+PTpZ9t/hI3O6vsTMkLJceaI7FhwhnOZxM
-         qbUS8yUXZdiyP8/xUeJq2CuKPi6guad+Bqlw28JBl/lhrlSaLn7ySy69DEddGExO0kDd
-         Vk9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731458490; x=1732063290;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=utvKsx60b1Gw3uofxXWtZDiv2co1xe1HZbn29a03gls=;
-        b=LKFGcoNAQR7eSCN13pvoqLB/lwoPXkB6DbohZBfx52RavS3CGUnYsKmNKbXLlQUtJe
-         7UIUNIbryVkq0uq3jzpZqKPLJER6y3OdmRfUQEqfNcXL/lNJF15QgkLYhYimsqiTo8NM
-         onPAuJ+VWs5tTBpURkj75pYI3IqCC1/SStnGNf6/h4q1raAUtLltaXNkg0TSUQGhismz
-         jKZHE2za2law9fHgh2YI+IaVf3ciMI4/+fEOnNghULJtk9c+266S3amS1S1Ws2jXCSNa
-         i0Wp4jei6E0UEJ92klwpY4h8JahHIvTCYhhMVx8Fa2rgyIjAlm9kw9JapclDq6FBe39E
-         Am/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUSw8/oycsHpO811ZR7t0knDCE4D2ARu2L+O9ZUOaJTb35JI2j4ZwNdyRDxAKWwKRBXYjd/1oFIoQfZiEw=@vger.kernel.org, AJvYcCUlMPeqzXOCBHliW1EMheh/aaHCn10txpQ+gCy/5XRfUifStXOedlLXnppfyFcQ1Ivje6caQihm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVXZ3XzicVJO3poTcbSg7GJRHqm1KMk7Ui52eZdrznTX2txb40
-	6mG2xBwLFj5Wp4NRqXEFCpRGp1q6duMI8hlX3ySO63KxtFvLRaSr
-X-Google-Smtp-Source: AGHT+IHBJjeRpFc+T8pEfIRd1Xn0Qch6Su4T8fMn26IpneSt5Hi/t6bvME+4JIhMRCXjhgzSMMbh8g==
-X-Received: by 2002:a05:6a00:3a03:b0:71e:4a51:2007 with SMTP id d2e1a72fcca58-724132648b8mr24627688b3a.4.1731458490362;
-        Tue, 12 Nov 2024 16:41:30 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a57140sm11826350b3a.193.2024.11.12.16.41.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 16:41:29 -0800 (PST)
-Message-ID: <5d1fed79-4854-4027-8fd2-b1cc40b2d3f2@gmail.com>
+	s=arc-20240116; t=1731458490; c=relaxed/simple;
+	bh=Is3ssievspKEHE3q3tDDHCIV5v6o3lZOjLw3GEhHSiM=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=UDs1NGwji1LNtyJDdNgNxwKW6BsFqXNlCM9bNTr0xCi7QTI+d2S826CG0JzRDg0uEKYwoMeediaugaNrCOVuR4aBlbnBSxVd+X7EmqqotM1yPpyLQBFMgfryDVYlxSxY9JGJbSJmmsB01afV3WTBtcrbUlPoPxYwR8qWAX56Y/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=06MG/l7W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F27EC4CED4;
+	Wed, 13 Nov 2024 00:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1731458489;
+	bh=Is3ssievspKEHE3q3tDDHCIV5v6o3lZOjLw3GEhHSiM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=06MG/l7WQ2prnXU5sEZyCxX3NGC+U4dfIm7K/X7Lv+Q3oDbRMlnwtPWr7Z7o5+MUg
+	 bztOuCl9VnzwnLUmPriV4zPvlyZkRB5zi9Ltf0A9yM6e/c5LZ2DBaJKOF6ZXqJb9Qv
+	 Oqhmd7wv3Rn9UFah6iXeXIdcMNizQxmqtRfrmNOg=
 Date: Tue, 12 Nov 2024 16:41:28 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.12
+Message-Id: <20241112164128.20f96b224ec3e2be9403fee2@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/119] 6.6.61-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241112101848.708153352@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
-In-Reply-To: <20241112101848.708153352@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 11/12/24 02:20, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.61 release.
-> There are 119 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 14 Nov 2024 10:18:19 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.61-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Linus, please pull this batch of hotfixes, thanks.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+The following changes since commit c289f4de8e479251b64988839fd0e87f246e03a2:
+
+  mailmap: add entry for Thorsten Blum (2024-11-07 14:14:59 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-11-12-16-39
+
+for you to fetch changes up to dcf32ea7ecede94796fb30231b3969d7c838374c:
+
+  mm: swapfile: fix cluster reclaim work crash on rotational devices (2024-11-12 16:01:36 -0800)
+
+----------------------------------------------------------------
+10 hotfixes, 7 of which are cc:stable.  7 are MM, 3 are not.  All
+singletons.
+
+----------------------------------------------------------------
+Barry Song (1):
+      mm: count zeromap read and set for swapout and swapin
+
+Dmitry Antipov (1):
+      ocfs2: fix UBSAN warning in ocfs2_verify_volume()
+
+Donet Tom (1):
+      selftests: hugetlb_dio: fixup check for initial conditions to skip in the start
+
+Hajime Tazaki (1):
+      nommu: pass NULL argument to vma_iter_prealloc()
+
+Hugh Dickins (1):
+      mm/thp: fix deferred split queue not partially_mapped: fix
+
+Johannes Weiner (1):
+      mm: swapfile: fix cluster reclaim work crash on rotational devices
+
+John Hubbard (1):
+      mm/gup: avoid an unnecessary allocation call for FOLL_LONGTERM cases
+
+Roman Gushchin (1):
+      mm: page_alloc: move mlocked flag clearance into free_pages_prepare()
+
+Ryusuke Konishi (2):
+      nilfs2: fix null-ptr-deref in block_touch_buffer tracepoint
+      nilfs2: fix null-ptr-deref in block_dirty_buffer tracepoint
+
+ Documentation/admin-guide/cgroup-v2.rst  |   9 +++
+ fs/nilfs2/btnode.c                       |   2 -
+ fs/nilfs2/gcinode.c                      |   4 +-
+ fs/nilfs2/mdt.c                          |   1 -
+ fs/nilfs2/page.c                         |   2 +-
+ fs/ocfs2/super.c                         |  13 ++--
+ include/linux/memcontrol.h               |  12 ++--
+ include/linux/vm_event_item.h            |   2 +
+ mm/gup.c                                 | 116 ++++++++++++++++++++-----------
+ mm/huge_memory.c                         |   4 +-
+ mm/memcontrol.c                          |   4 ++
+ mm/nommu.c                               |   2 +-
+ mm/page_alloc.c                          |  15 ++++
+ mm/page_io.c                             |  16 +++++
+ mm/swap.c                                |  14 ----
+ mm/swapfile.c                            |   2 +-
+ mm/vmstat.c                              |   2 +
+ mm/zswap.c                               |   6 +-
+ tools/testing/selftests/mm/hugetlb_dio.c |   7 ++
+ 19 files changed, 158 insertions(+), 75 deletions(-)
+
 
