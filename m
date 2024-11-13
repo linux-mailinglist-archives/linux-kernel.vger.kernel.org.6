@@ -1,216 +1,129 @@
-Return-Path: <linux-kernel+bounces-407698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEDFD9C713A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:47:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398309C713C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:47:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E07F2893F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E596A1F222DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2353C2038B3;
-	Wed, 13 Nov 2024 13:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A7B204012;
+	Wed, 13 Nov 2024 13:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b9qUd4aD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Pny72/1J"
+Received: from pv50p00im-ztdg10021101.me.com (pv50p00im-ztdg10021101.me.com [17.58.6.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BA0200BB3
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECC82003D8
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731505429; cv=none; b=EGgeW4tqeZFoAFsiMBGFazKwBi+LunXtu1eo/znsJtarhWb35xu0GoJXwAiUcKgz4mGhUbjaB/IT4spxp7t9ELWYTKkVoVBXrEu0yUg6K0hkFcnZ1FH6xKdzF0MCIMyqtm4hfnWm4jlCxSKTpqlHVXKPMbJafapKfqrhYSzTXYY=
+	t=1731505444; cv=none; b=apEL8Kzfc+OQCzIiEBqt24DlMCjA0hfTH3L7nJDxP1j0BVb99sL9hnTDxKZ7nXsjeU+5crmAui/c6CdCoUGNOKbGUEzli64Uqs1+IUmz+l9pBACddEmO09X2SFZSAsE3qcDybBg4Jj3QCtescqdT2J0EqmzxX36ybc1U3PVsYX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731505429; c=relaxed/simple;
-	bh=+zMnvloxaCSpMvgyYqLs2QHpUg7QBnvW/fUxPVrsfkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJ1WulJ/eCR95wGLcWwyTjKDJfQ8A49aE20D1sxAUIj/E+ozh2OBD3++yQliwYyFGNOTUtmAzlpAM5U9hPnhO4TRoBjCggxlrFS3X6hyFXoyVK9Ovz5/aQMJaHBtMK2YdkclcBRA44uD0uHjxlnRMsj3D8ZahQpRz7fUE30JZRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b9qUd4aD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731505425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HmOevJufZu4mgzJjDlfEl6PeJBrFET9QpgN5rfl3zyI=;
-	b=b9qUd4aDNeJsHB41SZ9JGVWgaRggwOFYkyC+zouyTNAnyA+Taucg7Frct1pmo7FkQSEeHQ
-	7bPOyBRwnn+cdRhoxyInLiTIuz3X13bGpQJyl2KBvOxCw+trxaSzaaVkZzf8zUkkmvwB2O
-	j3K5X9EO3eZgqfJ8hdrh9NiIhDhnYp8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-62-h_azobdlPSW14nOoMzrrTg-1; Wed,
- 13 Nov 2024 08:43:39 -0500
-X-MC-Unique: h_azobdlPSW14nOoMzrrTg-1
-X-Mimecast-MFC-AGG-ID: h_azobdlPSW14nOoMzrrTg
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0C7841955F3A;
-	Wed, 13 Nov 2024 13:43:36 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.80.158])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5F6FC19560A3;
-	Wed, 13 Nov 2024 13:43:31 +0000 (UTC)
-Date: Wed, 13 Nov 2024 08:43:28 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH 1/2] sched/deadline: Restore dl_server bandwidth on
- non-destructive root domain changes
-Message-ID: <20241113134328.GA402105@pauld.westford.csb>
-References: <20241113125724.450249-1-juri.lelli@redhat.com>
- <20241113125724.450249-2-juri.lelli@redhat.com>
+	s=arc-20240116; t=1731505444; c=relaxed/simple;
+	bh=E6SufiaT/IjBWLmUK8oM6ceTReFX/bP6WwRsNM1if6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MchoD0I7VApsrVQo5vWsOGy8OpBtxnrS8ESSNahQ2pD6bJ3ZyVkDR/jwEyWM/wzRLnGwPt68lzaOhFXoTGVguMjH2293E+A9TgYcngKRxLY7Y5rUSGXiDTpec6avOPzJqQVfDEY810r4dvcucMBt5oj1IxueM+OWR3wmKr5R9Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Pny72/1J; arc=none smtp.client-ip=17.58.6.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1731505441;
+	bh=Ayxk7fKf8jvcZbZqlJ51YdAFB0LJAT0d6aO7ywet5ZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=Pny72/1Jbe+lyShhzG67QpiF5zgwijcWST6NwtBI02rffGRpPyRKjfexbYP6FHVVD
+	 M1Wsr+9bUr/J+4SXNrNxw5AplHh4j21l6NSuGuFQt5vknGT63iutuyxXfajFumtIkw
+	 PgkkOGB7Qj/gch6IyHXPG9wLiqIA8oYAHsoYZde6Al/PORpGeOY5Oi914+irRNrTAt
+	 yYhc0SxYC4+Z4AC5lErA+JYD4pgBGVv95U6+fDUdyDQKF6zNS4bXDp2Y4WCLPkQA35
+	 BeqB1NPEktjrobU1SmUoPeTESBkz+sBIK0gNt1XCSuB0ZZbAo6mi0opY6J949QVSes
+	 +rv8VTBd8oe3g==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10021101.me.com (Postfix) with ESMTPSA id A2068D00081;
+	Wed, 13 Nov 2024 13:43:57 +0000 (UTC)
+Message-ID: <beebf034-f2a6-4451-b68c-2f23f8dc92ec@icloud.com>
+Date: Wed, 13 Nov 2024 21:43:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113125724.450249-2-juri.lelli@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v2 0/2] driver core: bus: Fix issues related to
+ bus_rescan_devices_helper()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241022-bus_match_unlikely-v2-0-1a6f8e6839a0@quicinc.com>
+ <2024111228-snowcap-counting-b833@gregkh>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <2024111228-snowcap-counting-b833@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: O065zpPQ_UrAq4P1rcOFMJ6QerOfguop
+X-Proofpoint-ORIG-GUID: O065zpPQ_UrAq4P1rcOFMJ6QerOfguop
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-12_09,2024-11-13_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 clxscore=1015
+ phishscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2411130117
 
-Hi Juri,
-
-On Wed, Nov 13, 2024 at 12:57:22PM +0000 Juri Lelli wrote:
-> When root domain non-destructive changes (e.g., only modifying one of
-> the existing root domains while the rest is not touched) happen we still
-> need to clear DEADLINE bandwidth accounting so that it's then properly
-> restore taking into account DEADLINE tasks associated to each cpuset
-
-"restored, taking ..."  ?
-
-> (associated to each root domain). After the introduction of dl_servers,
-> we fail to restore such servers contribution after non-destructive
-> changes (as they are only considered on destructive changes when
-> runqueues are attached to the new domains).
+On 2024/11/12 19:48, Greg Kroah-Hartman wrote:
+> On Tue, Oct 22, 2024 at 07:18:00PM +0800, Zijun Hu wrote:
+>> This patch series is to fix issues related to bus_rescan_devices_helper().
+>>
+>> The function is improperly used for 2 incompatible scenarios as
+>> explained below:
+>>
+>> Scenario A: scan drivers for a single device user specify
+>>  - user may care about precise synchronous scanning result, so the
+>>    function can not collapse error codes.
 > 
-> Fix this by making sure we iterate over the dl_server attached to
-> domains that have not been destroyed and add them bandwidth contribution
-> back correctly.
-> 
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-
-
-Looks good to me. 
-
-
-Reviewed-by: Phil Auld <pauld@redhat.com>
-
-
-> ---
->  include/linux/sched/deadline.h |  2 +-
->  kernel/cgroup/cpuset.c         |  2 +-
->  kernel/sched/deadline.c        | 18 +++++++++++++-----
->  kernel/sched/topology.c        | 10 ++++++----
->  4 files changed, 21 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-> index 3a912ab42bb5..82c966a55856 100644
-> --- a/include/linux/sched/deadline.h
-> +++ b/include/linux/sched/deadline.h
-> @@ -33,7 +33,7 @@ static inline bool dl_time_before(u64 a, u64 b)
->  
->  struct root_domain;
->  extern void dl_add_task_root_domain(struct task_struct *p);
-> -extern void dl_clear_root_domain(struct root_domain *rd);
-> +extern void dl_clear_root_domain(struct root_domain *rd, bool restore);
->  
->  #endif /* CONFIG_SMP */
->  
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 142303abb055..4d3603a99db3 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -954,7 +954,7 @@ static void dl_rebuild_rd_accounting(void)
->  	 * Clear default root domain DL accounting, it will be computed again
->  	 * if a task belongs to it.
->  	 */
-> -	dl_clear_root_domain(&def_root_domain);
-> +	dl_clear_root_domain(&def_root_domain, false);
->  
->  	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
->  
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 9ce93d0bf452..e53208a50279 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -2968,13 +2968,21 @@ void dl_add_task_root_domain(struct task_struct *p)
->  	task_rq_unlock(rq, p, &rf);
->  }
->  
-> -void dl_clear_root_domain(struct root_domain *rd)
-> +void dl_clear_root_domain(struct root_domain *rd, bool restore)
->  {
-> -	unsigned long flags;
-> -
-> -	raw_spin_lock_irqsave(&rd->dl_bw.lock, flags);
-> +	guard(raw_spinlock_irqsave)(&rd->dl_bw.lock);
->  	rd->dl_bw.total_bw = 0;
-> -	raw_spin_unlock_irqrestore(&rd->dl_bw.lock, flags);
-> +
-> +	if (restore) {
-> +		int i;
-> +
-> +		for_each_cpu(i, rd->span) {
-> +			struct sched_dl_entity *dl_se = &cpu_rq(i)->fair_server;
-> +
-> +			if (dl_server(dl_se))
-> +				rd->dl_bw.total_bw += dl_se->dl_bw;
-> +		}
-> +	}
->  }
->  
->  #endif /* CONFIG_SMP */
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 9748a4c8d668..e9e7a7c43dd6 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -2721,12 +2721,14 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
->  
->  				/*
->  				 * This domain won't be destroyed and as such
-> -				 * its dl_bw->total_bw needs to be cleared.  It
-> -				 * will be recomputed in function
-> -				 * update_tasks_root_domain().
-> +				 * its dl_bw->total_bw needs to be cleared.
-> +				 * Tasks contribution will be then recomputed
-> +				 * in function dl_update_tasks_root_domain(),
-> +				 * dl_servers contribution in function
-> +				 * dl_restore_server_root_domain().
->  				 */
->  				rd = cpu_rq(cpumask_any(doms_cur[i]))->rd;
-> -				dl_clear_root_domain(rd);
-> +				dl_clear_root_domain(rd, true);
->  				goto match1;
->  			}
->  		}
-> -- 
-> 2.47.0
-> 
+> I do not understand this, what is wrong that this is fixing?
 > 
 
--- 
+for scanning drivers for single device, it gives user wrong scanning
+result(success or failure).
+
+patch 1/2 is a concrete example.
+
+>> Scenario B: scan drivers for all devices of a bus
+>>  - user may need to scan drivers for a bus's devices as many as
+>>    possible, so the function needs to ignore inconsequential error
+>>    codes for a device in order to continue to scan for next device.
+> 
+> How often is that needed?  And why can't that still work with the
+> existing code?
+>
+
+1) API bus_rescan_devices() invokes it and can't achieve its design
+purpose due to error described above.
+
+2) as shown by recent mainlined commit, usage of API
+bus_rescan_devices() have been dropped due to some bugs.
+Commit: 3d6ebf16438d ("cxl/port: Fix cxl_bus_rescan() vs
+bus_rescan_devices()")
+
+3) there are only 2 usages for the API now.
+// does not do what the comments say
+https://elixir.bootlin.com/linux/v6.11/source/drivers/pcmcia/ds.c#L725
+// do multi repeated iterating, can be simplified if fix the API bugs
+https://elixir.bootlin.com/linux/v6.11/source/drivers/hid/hid-core.c#L2967
+
+4) i have more reply in below link about the API's bugs.
+https://lore.kernel.org/all/20240913-bus_match_unlikely-v2-2-5c0c3bfda2f6@quicinc.com/
+
+we may go to patch 2/2 to continue discussion.
+
+> thanks,
+> 
+> greg k-h
 
 
