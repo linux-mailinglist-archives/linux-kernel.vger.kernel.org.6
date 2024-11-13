@@ -1,121 +1,123 @@
-Return-Path: <linux-kernel+bounces-407660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E72529C70BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:34:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADA99C70B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17350B24D21
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40C7B1F27AA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DE71EF081;
-	Wed, 13 Nov 2024 13:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9CD1EBFF1;
+	Wed, 13 Nov 2024 13:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJqt32Th"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H6AnEJ3H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F157617C68;
-	Wed, 13 Nov 2024 13:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D861E04B3;
+	Wed, 13 Nov 2024 13:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731504751; cv=none; b=MFDEJA5Kn2pL6m2Ll8NGJ7wpURWBndFvjvHJeyMm8jWshA4tGMdWgB+k0Vd0UYKtBx2sQIksKiPCtduP0T2yqStennslvhdgWTzTpu0hNi7OoHWnAUq/FOtVXykPi1eFxCnPOOhEnFAp4HiVspngz3OxHgszJexq6cUMQhB0nIw=
+	t=1731504789; cv=none; b=eALVNi5uWtQfbzWH4NslCmBndhTXLUDpO7MybqbHFH7X9a45ekPg2Qzc2ZjsI3Np40+U0W+HO2EaMoPC8EJ2MMitNy/ARhw8C2Hqol5pqi2cbuXwg34ByLrT+AfSeqcjkQT59xmvBvogVK4VPLqX8BME1+0Er+Q2fJSZbJ3aanI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731504751; c=relaxed/simple;
-	bh=gfCmgl3jagwHGldFjUB4K2gH4J6eJxXe8/I/qAemYJk=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=lgr8EQQ0A/D6S9sWiQ7VeATMs2W2T+mf5J3jwD+n2jgTXhRFUYy1VmwwIvQhFTYKoQEI3/m694PCua7THFFMn/o6JWNDlwWCJ7Y93BEQ0DjLFjQOOsfoVC3RF37gD79AvZFENhO4GDkl8lPuN3MsVEVmWDnFzkZLtQ429Yv+LPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJqt32Th; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FCE1C4CECD;
-	Wed, 13 Nov 2024 13:32:30 +0000 (UTC)
+	s=arc-20240116; t=1731504789; c=relaxed/simple;
+	bh=Lw+7jUWZ437Jrqf60KJhCkbD9qpzU8DyvAxFOcixE60=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=irhaXkeg1BTjVDN/uq0NlN1KBRxfKrzZgvNj9oJ/XCw1qQbsMDgv87u3W0xo8dJhkc/nBLlHW4YQMjnwgbcQRb3JyLhz/zZzydM52n6KhNnMBP0gJnZdIsJbwsK/ltpHKBQtgFOhyRkhl9tGPRHhgfu8tX6DgfCRXIug2ZY137Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H6AnEJ3H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFFF2C4CECD;
+	Wed, 13 Nov 2024 13:33:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731504750;
-	bh=gfCmgl3jagwHGldFjUB4K2gH4J6eJxXe8/I/qAemYJk=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ZJqt32ThN/8+imW4Kgw6RaW3o7K6lP9reDKy572Iu31gEfEj6vKcOiUy7grZrUrLV
-	 4oBs8fS3SxU1SQ+2fzOLAygB+gwDSMU5s+kNXqO+5Dyi4GE0ZH+7Dd65HlNCwkHUMS
-	 UJUml5PZhst1zmCxBZigJFzCJVlLCXEnqukzdPvRpR0hcrrIU78SWJIPeIFwsSt8hu
-	 XyGPX7fYzyWSIL3eJ4brqSOtqTpPtGMC7+PZPxV3vdCK+WDTgwRigx0RartzZVT9fZ
-	 t2XT8pFt1mMkHRHxP6fqE28qR4UvBY82U4ZazE/zOIT4jWBOP/GDRE00uSRJ80/ZxB
-	 5MV5X6EP7fI3w==
-Date: Wed, 13 Nov 2024 07:32:28 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1731504787;
+	bh=Lw+7jUWZ437Jrqf60KJhCkbD9qpzU8DyvAxFOcixE60=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H6AnEJ3H2xfABS2BOnlRR89lVBYcfgldJ5uIJ7LAIEKP3TCthwEjyUg+0IerE5xFR
+	 aVr7OC3IsRrp/uqeBqOarXoiQC8QDNrvkdxs0tUHRrjzB9NicVrk0fiknpmysaoeWj
+	 6kllLm4sRAolRLM8d+b4bAqI67lrI/9akLq4tSTM3IrkwnDT9P/JqOeyy7V+XEk0Uk
+	 +XBG0ZqeUVPXqT3x2BM9+WGUhdWJl947LnugQ0lGrh/08wSIQH6a25IWGyMRCK8fp1
+	 anTmL89a0vLdiBtiVYPauUtIXR7pL0WlcKwYfh/Abg/qskgi/7G+ZAqGvYnSmvtVHr
+	 9uJ+wH6kpQtbQ==
+Date: Wed, 13 Nov 2024 13:33:01 +0000
+From: Simon Horman <horms@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, shenjian15@huawei.com,
+	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
+	chenhao418@huawei.com, sudongming1@huawei.com,
+	xujunsheng@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 net-next 3/7] net: hibmcge: Add unicast frame filter
+ supported in this module
+Message-ID: <20241113133301.GZ4507@kernel.org>
+References: <20241111145558.1965325-1-shaojijie@huawei.com>
+ <20241111145558.1965325-4-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- Xiangxu Yin <quic_xiangxuy@quicinc.com>, linux-kernel@vger.kernel.org, 
- Simona Vetter <simona@ffwll.ch>, Sean Paul <sean@poorly.run>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- freedreno@lists.freedesktop.org, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- dri-devel@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, 
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, Li Liu <quic_lliu6@quicinc.com>, 
- Krishna Manikandan <quic_mkrishn@quicinc.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, Will Deacon <will@kernel.org>, 
- devicetree@vger.kernel.org, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-To: Fange Zhang <quic_fangez@quicinc.com>
-In-Reply-To: <20241113-add-display-support-for-qcs615-platform-v2-3-2873eb6fb869@quicinc.com>
-References: <20241113-add-display-support-for-qcs615-platform-v2-0-2873eb6fb869@quicinc.com>
- <20241113-add-display-support-for-qcs615-platform-v2-3-2873eb6fb869@quicinc.com>
-Message-Id: <173150474841.4106927.5975815443901282337.robh@kernel.org>
-Subject: Re: [PATCH v2 3/9] dt-bindings: display/msm: Add QCS615 MDSS & DPU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111145558.1965325-4-shaojijie@huawei.com>
 
-
-On Wed, 13 Nov 2024 19:51:45 +0800, Fange Zhang wrote:
-> From: Li Liu <quic_lliu6@quicinc.com>
+On Mon, Nov 11, 2024 at 10:55:54PM +0800, Jijie Shao wrote:
+> MAC supports filtering unmatched unicast packets according to
+> the MAC address table. This patch adds the support for
+> unicast frame filtering.
 > 
-> Document the MDSS and DPU hardware found on the Qualcomm QCS615 platform.
+> To support automatic restoration of MAC entries
+> after reset, the driver saves a copy of MAC entries in the driver.
 > 
-> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
-> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
-> ---
->  .../bindings/display/msm/qcom,qcs615-dpu.yaml      | 118 ++++++++++
->  .../bindings/display/msm/qcom,qcs615-mdss.yaml     | 252 +++++++++++++++++++++
->  2 files changed, 370 insertions(+)
-> 
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-My bot found errors running 'make dt_binding_check' on your patch:
+...
 
-yamllint warnings/errors:
+> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/display/msm/qcom,qcs615-mdss.example.dts:24:18: fatal error: dt-bindings/clock/qcom,qcs615-dispcc.h: No such file or directory
-   24 |         #include <dt-bindings/clock/qcom,qcs615-dispcc.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/display/msm/qcom,qcs615-mdss.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
+...
 
-doc reference errors (make refcheckdocs):
+>  static int hbg_net_set_mac_address(struct net_device *netdev, void *addr)
+>  {
+>  	struct hbg_priv *priv = netdev_priv(netdev);
+>  	u8 *mac_addr;
+> +	bool is_exists;
+> +	u32 index;
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241113-add-display-support-for-qcs615-platform-v2-3-2873eb6fb869@quicinc.com
+nit: If you have to respin for some other reason,
+     please arrange these local variables in reverse
+     xmas tree order - longest line to shortest.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+     Also, from an English language PoV, is_exists is a bit tautological.
+     Not that it really matters, but maybe addr_exists would work?
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+>  
+>  	mac_addr = ((struct sockaddr *)addr)->sa_data;
+>  
+>  	if (!is_valid_ether_addr(mac_addr))
+>  		return -EADDRNOTAVAIL;
+>  
+> -	hbg_hw_set_uc_addr(priv, ether_addr_to_u64(mac_addr));
+> -	dev_addr_set(netdev, mac_addr);
+> +	/* The index of host mac is always 0.
+> +	 * If new mac address already exists,
+> +	 * delete the existing mac address and
+> +	 * add it to the position with index 0.
+> +	 */
+> +	is_exists = !hbg_get_index_from_mac_table(priv, mac_addr, &index);
+> +	hbg_set_mac_to_mac_table(priv, 0, mac_addr);
+> +	if (is_exists)
+> +		hbg_set_mac_to_mac_table(priv, index, NULL);
+>  
+> +	dev_addr_set(netdev, mac_addr);
+>  	return 0;
+>  }
+>  
 
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+...
 
