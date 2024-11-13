@@ -1,143 +1,127 @@
-Return-Path: <linux-kernel+bounces-406974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50A59C66EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:52:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34249C66EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:56:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 828F21F25B2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:52:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A2121F2583C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA04D60B8A;
-	Wed, 13 Nov 2024 01:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B3A64A8F;
+	Wed, 13 Nov 2024 01:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="kGDRbR/5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MWxDIHKY"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MWn0XDky"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E7722081;
-	Wed, 13 Nov 2024 01:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F4218654
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 01:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731462734; cv=none; b=JAvX0DlKfMPbq9d8Ae69jAKgmgyxTKW5iVoqqiytbN1/a80CtKgyYzc/5m3WueprOBHu3wLYF3BSHZaYdeDa/mXmZFJMepA4bPrjEU6OJcNyjupshubU8S45t2C1J3Z8EoVHw6wEaOVABww6ZAkeuxf3ZHFqmVqdwx2V/udK6Q8=
+	t=1731462955; cv=none; b=C76vHxde0oHsbRLUoRW0wHPfmxWdSgxmFlfyw5Ci9oct/Iwn0EErQ6U3RXR7WaO18oQmEvyDhUov8JdE8oCpdh1tmKZ2qq2cO0dcfH6l2MxRBvc4bm27qNNGH+bIWd64wVYfo7vNm3GaAY6n5Woh/+/zzReD29LA9pAq1ixZzGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731462734; c=relaxed/simple;
-	bh=3o1IAk0Pu1DMM+4JmjvQ/Lh83+id96fpgNVzAmCd5iI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=bjPWlR7BbFPHoTrNRGEij5Y5k1mG9+5X/VHZ3ZEgyp9L/8Ri8+QjL5VfdopgWxI5+5ibyn0jzfHjgzMWjNYWdAkkekLNhPf+L7b/cFAv6KIuAn6ckbnhjofhfxYA4H+u8MwHvfkT5PufLc9yxU04ffeSI08P5ol5WfPbj/e3bj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=kGDRbR/5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MWxDIHKY; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 3D74F11400EE;
-	Tue, 12 Nov 2024 20:52:11 -0500 (EST)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-03.internal (MEProxy); Tue, 12 Nov 2024 20:52:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731462731;
-	 x=1731549131; bh=8/kcwCsb6nVPjwURuXhrNrDPbY+2hNixujv0dk2XUuk=; b=
-	kGDRbR/5ubQKcSZKDz/HQMIjG5HkCHlrzuddY1pjTenNipq6A/8y1wcDpHbQTulj
-	R/evifz0zmqrztKExrJPabMiEe10oZCkXlObFV17iLC0vWxuMFlOMigbk0TZfT6m
-	1RSA1HoDHjR/P3XLpbWPBM/V78LFbdmBDQB2YuBVy1qCtRChsVtbhcBZD5be8U9w
-	CQbyYXoA5h4mqcNFx6kootse3whLx/pbRwsLCv2x7x4ucw+upLGsLrx9mQDO/sOZ
-	UwTwdjoFK3xgbT7u/6TAyt89SefysXcHrtNGmVBsrjwlkvIBNRW+yKywRzmmoSWI
-	AuGBtigrDN0owfiiQwkx2A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731462731; x=
-	1731549131; bh=8/kcwCsb6nVPjwURuXhrNrDPbY+2hNixujv0dk2XUuk=; b=M
-	WxDIHKYOS1P2LW4aarOkEYToYOHdomKqY4npqtSaNZuLtzn2lZwHPcR1j4D1mo6B
-	beTcz3vdfWUCdselYDU79HmJBIs/zFSc1D83uiKn8qLj0/E1GFeULJ+RlaztkKsz
-	NYMGJ/JOLo9pkM5QvbgKjVFChlHGr4T7kHgMCn2EcIi3YJ3jiuRpW2rdGmOAmqxr
-	phn/SeHPNq7Q9EPTjJSKHkpodLFyMS68ZBKfbJDFMw1dKl22PsxwmQvOpAnwlipZ
-	0Gi+I1xxjhW6CHZLeMVYGcLThrB+BobsO/Op9GlKPw1soJn88n9cQMSbyJmGnxoe
-	ZDtw1P4jsBA9Oi9LMdEEg==
-X-ME-Sender: <xms:SgY0Zxll0Cse2x-mQtHnDdCaS91651rxYCcuLKg6XXfVOLJ8fUPfmA>
-    <xme:SgY0Z82dkQtOrGpnLGPcaWdY7aHB3bLEr7RNo5gvBq_ZHSNJcGePhBKhNudhB4IkD
-    gffy3PTT-j__vURcQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudeigddtlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenfghrlhcuvffnffculdefhedmnecujfgurhepofggfffhvfevkfgj
-    fhfutgfgsehtjeertdertddtnecuhfhrohhmpedfffgrnhhivghlucgiuhdfuceougiguh
-    esugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepgeelieffhfduudeukefhieef
-    gfffgeduleevjeefffeukefgtdelvddvfeefiedunecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugiguhhuuhdrgiihiidpnhgspghr
-    tghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihgthhgrvg
-    hlrdgthhgrnhessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepphgrvhgrnhdrtghh
-    vggssghisegsrhhorggutghomhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvg
-    hmlhhofhhtrdhnvghtpdhrtghpthhtohepvggtrhgvvgdrgihilhhinhigsehgmhgrihhl
-    rdgtohhmpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtph
-    htthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvg
-    hvpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
-X-ME-Proxy: <xmx:SwY0Z3q2IvcM6mwyf2mM_tTQImDSUDZY9uhctecPeiaVXv5hMwkubQ>
-    <xmx:SwY0Zxm6FLNx7DhLs8KYlF3oqPU3ZKkSRV_ueZhiA9H4y1zlXuuE8w>
-    <xmx:SwY0Z_12VVhoWKVgJlHu6ti9h65rFcMEqB_7TKlreRx3WaWoNRLxnA>
-    <xmx:SwY0ZwuUbf3rrn3mSyu_KwrkW6ghpNoFEr_786bsJyeRKzzB1J-LWQ>
-    <xmx:SwY0Z23eZtYs0DgoZ1wOs0X_GFCq9fXd0--EvlharEoRXeMxQ1xnMYMC>
-Feedback-ID: i6a694271:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id DDFBE18A0068; Tue, 12 Nov 2024 20:52:10 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1731462955; c=relaxed/simple;
+	bh=umYQD1NTC+uOYbwAJrPfesP8Hfu/vo+Zg5Im/v1Msjs=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=oKkmUoxQwnDazsXu7ftNSUcV3/4MLWGysr4GchVlg8j65OBIfNEMzYFYPCOkVP0UQx6XG6iPmTnM/Gbf6oo93qr3M3hUmFUfr+Y6hv7UrsHESdCwTlpRzYjDaCxTCv2SJClMMK6igbYz0+9Hc/PSddGFOvAYzd3auyogobp01YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MWn0XDky; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3e5f968230bso2822470b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:55:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731462953; x=1732067753; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=11EhO1dZz6gEnF3YkMG0XqMweNwg8PY4ZG+oYYjEKOc=;
+        b=MWn0XDky+GHWuJ1JVyzNZQuNiISoCSX4FWvJX1NP8wRnvmKQmlZgFpjg490pR4yM2x
+         1yE43rOY//NVbtHl7O8U3uMmYmd9qvforBlIB2de+t1MQj58ozVXBj+TapvwiJJo1+DI
+         Lmm88K5KJarwOBEvevhdZg1lCSWsua0S4/6IK67Z/eTIMdj9ULn9F/r6QjLSpEGWBIqN
+         yYjlAbCYBP0/k1/7mG++JSgTjzJ5Dy+epv24L/LgVfXMOubzVgvaL2YSLI6jspdkIn6B
+         AgMZ3VhbrN9VYyp9bZBYiqFgNZHmgSL9mvH7hdeRNBhEQPtSmvQ7eBB0O6Ps2f9TLolj
+         VPcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731462953; x=1732067753;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=11EhO1dZz6gEnF3YkMG0XqMweNwg8PY4ZG+oYYjEKOc=;
+        b=AyL9NUPsXf1d3Vozz8YIeav1Vg0JOSW1gzExTzmlJS9T3kj4R+jZKwFEyZ1wP+Yml6
+         x007HAcb6BIfRMai6nvdtNfFuoLNW4Bpi4bmjWczRtkRcwDqa/x0GtWh3JquGxC0E9c7
+         BfZL7XLVK0nqmPz01ojn/7mo7Wa86C2gaTpSHAtaSbqtk/p8n+brid55fT8yzs/5DALs
+         nZaXBp4qiJ2oEgQMGy89X8nFubx5PZe/HTPYgvuJsKfEyAyaCN1CN0yxp4+BNmcyIqjc
+         9sPC8tiTe3QTn5PqX7GB/lgtRigQz1F6vIc7ZL8CTjQVeZFD4khiaOE+TnzD1fh4Vl+F
+         QtLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBdMuuHML5lDCeUXDVZJpu9zvmBCSGSOqZBNT7w+bIdpyU/O67hvqVD/Z4wAmWpWrjuUT4QE8LoZxG9+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtFTfI250fsLjIR1psRAZPys/vDtg7c2tmHtrjDI+oN/UF1Wkf
+	xd/5SXqCBttUhEpZHbIfMENATHrwrUiC2kh9BYuUD839ZNlb0dVH
+X-Google-Smtp-Source: AGHT+IEw04kTyzxcDHeFkrUT0IqyioyF+6yN2dm4ArNEx6RbxWzlwtPmy+r8/kX0HzwsE7aRsIYj0w==
+X-Received: by 2002:a05:6808:e8a:b0:3e4:863a:91b3 with SMTP id 5614622812f47-3e79469311dmr18550625b6e.8.1731462952993;
+        Tue, 12 Nov 2024 17:55:52 -0800 (PST)
+Received: from dw-tp ([171.76.87.84])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f644db5sm11310584a12.55.2024.11.12.17.55.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 17:55:52 -0800 (PST)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: linux-mm@kvack.org
+Cc: linuxppc-dev@lists.ozlabs.org, Sourabh Jain <sourabhjain@linux.ibm.com>, Hari Bathini <hbathini@linux.ibm.com>, Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Madhavan Srinivasan <maddy@linux.ibm.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>, Donet Tom <donettom@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, Sachin P Bappalige <sachinpb@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC v3 -next] cma: Enforce non-zero pageblock_order during cma_init_reserved_mem()
+In-Reply-To: <054b416302486c2d3fdd5924b624477929100bf6.1728656994.git.ritesh.list@gmail.com>
+Date: Wed, 13 Nov 2024 07:23:43 +0530
+Message-ID: <87h68bnbko.fsf@gmail.com>
+References: <054b416302486c2d3fdd5924b624477929100bf6.1728656994.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Date: Tue, 12 Nov 2024 17:51:50 -0800
-From: "Daniel Xu" <dxu@dxuuu.xyz>
-To: "Edward Cree" <ecree.xilinx@gmail.com>, "Paolo Abeni" <pabeni@redhat.com>,
- "Eric Dumazet" <edumazet@google.com>, "David Miller" <davem@davemloft.net>,
- "Shuah Khan" <shuah@kernel.org>, andrew+netdev@lunn.ch,
- "Jakub Kicinski" <kuba@kernel.org>,
- "Michael Chan" <michael.chan@broadcom.com>,
- "Martin KaFai Lau" <martin.lau@linux.dev>,
- "Pavan Chebbi" <pavan.chebbi@broadcom.com>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Kernel Team" <kernel-team@meta.com>
-Message-Id: <d5b21f01-0f19-4580-bb7a-829d46ee7dcb@app.fastmail.com>
-In-Reply-To: <93831343-03c3-d540-369d-fe82eb480c58@gmail.com>
-References: <cover.1731377399.git.dxu@dxuuu.xyz>
- <dc4398dfe9a8e959245d2a8ffe5c2fcefbdd67f7.1731377399.git.dxu@dxuuu.xyz>
- <93831343-03c3-d540-369d-fe82eb480c58@gmail.com>
-Subject: Re: [PATCH net v2 2/2] selftests: drv-net: rss_ctx: Add test for ntuple rule
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
 
-Hi Ed,
+"Ritesh Harjani (IBM)" <ritesh.list@gmail.com> writes:
 
-On Tue, Nov 12, 2024, at 3:10 AM, Edward Cree wrote:
-> On 12/11/2024 02:23, Daniel Xu wrote:
->> Extend the rss_ctx test suite to test that an ntuple action that
->> redirects to an RSS context contains that information in `ethtool -n`.
->> Otherwise the output from ethtool is highly deceiving. This test helps
->> ensure drivers are compliant with the API.
->> 
->> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> ...
->> +def _ntuple_rule_check(cfg, rule_id, ctx_id):
->> +    """Check that ntuple rule references RSS context ID"""
->> +    text = ethtool(f"-n {cfg.ifname} rule {rule_id}").stdout
->> +    pattern = f"RSS Context ID: {ctx_id}"
->> +    ksft_true(re.search(pattern, text, re.IGNORECASE),
+> cma_init_reserved_mem() checks base and size alignment with
+> CMA_MIN_ALIGNMENT_BYTES. However, some users might call this during
+> early boot when pageblock_order is 0. That means if base and size does
+> not have pageblock_order alignment, it can cause functional failures
+> during cma activate area.
 >
-> This won't match the output from your ethtool patch, because that
->  removes the colon.  Probably want to wait until the patch is
->  finalised and then write a regex that matches both versions.
+> So let's enforce pageblock_order to be non-zero during
+> cma_init_reserved_mem().
+>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> ---
+> v2 -> v3: Separated the series into 2 as discussed in v2.
+> [v2]: https://lore.kernel.org/linuxppc-dev/cover.1728585512.git.ritesh.list@gmail.com/
+>
+>  mm/cma.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-Argh, I meant to have wildcards here. But yeah, makes sense, will wait
-until the other patch is finalized.
+Gentle ping. Is this going into -next?
 
-Thanks,
-Daniel 
+-ritesh
+
+>
+> diff --git a/mm/cma.c b/mm/cma.c
+> index 3e9724716bad..36d753e7a0bf 100644
+> --- a/mm/cma.c
+> +++ b/mm/cma.c
+> @@ -182,6 +182,15 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
+>  	if (!size || !memblock_is_region_reserved(base, size))
+>  		return -EINVAL;
+>
+> +	/*
+> +	 * CMA uses CMA_MIN_ALIGNMENT_BYTES as alignment requirement which
+> +	 * needs pageblock_order to be initialized. Let's enforce it.
+> +	 */
+> +	if (!pageblock_order) {
+> +		pr_err("pageblock_order not yet initialized. Called during early boot?\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	/* ensure minimal alignment required by mm core */
+>  	if (!IS_ALIGNED(base | size, CMA_MIN_ALIGNMENT_BYTES))
+>  		return -EINVAL;
+> --
+> 2.46.0
 
