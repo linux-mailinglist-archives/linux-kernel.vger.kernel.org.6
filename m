@@ -1,87 +1,77 @@
-Return-Path: <linux-kernel+bounces-406993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AACB9C672D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:18:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 937EE9C6733
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:20:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C59901F2195B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:18:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D6C5B2ABB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84ACC146588;
-	Wed, 13 Nov 2024 02:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBE213AA47;
+	Wed, 13 Nov 2024 02:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Z0VQbA8O"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A21gXlkm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF3E13C90A
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7E4135A4B;
+	Wed, 13 Nov 2024 02:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731464294; cv=none; b=BqIT6e3xJnD86RzwCMShMC7x3YBbfrXtk1H31/4jzrovQw4ApSCDp9tJPc10Kbcxy226Wz7T4R71YxXyHrbTXm2ako+oKa/cGyDzwlZ/G0SmHgdQ8OOMlOwPdRPLrD6IGwJUgs4Jke9zookgHiB6EkcI8a9mS5m/NfS+eYzsEFg=
+	t=1731464332; cv=none; b=aUVZY/w2Yd8Mdbx4Hs4wdpGqZGPqyOB5xOx47LnGTFef/FwVWCEA/ZdMRBnleDbmoyR1Cj+SF/Cwk3EGmX4nsVbSGcDdkYU1aiZL2M0TpA89D+TM2Z5uet6p5oczlGftktciiEHeDXJ34m3bA5U5JQPpunHknpukjpMfD622HYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731464294; c=relaxed/simple;
-	bh=nrCk1dGkV8Sk4CWrmNxr+NTAfkg/eL3xFyL1TKB1XTc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JYi6mZzvNt2xSpXR7lpM4tUBlbjaTbbsPloPCNvp77ge3vEccGrFa5X87jFopllncoWIo2ArIyYR1MFeL8DxT81KYZjPjlJY1N1129v0g8OXavydz+AWWLzteFEgKqSZuB38OGNrg0Y0pbQcQpTnW9+8yyTvcxVK0slfnvlFgL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Z0VQbA8O; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-210e5369b7dso66116575ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:18:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1731464292; x=1732069092; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y1aEFQWTe78u6F+IZ6BU8S97709C2TVDqgfHG0ZtS8A=;
-        b=Z0VQbA8O4AJol381I51hQJho+TTjOoAW3ruNPPXibqHSuxbYmRMsE9W8Crz0uNTaPV
-         kkTTK4pqFOxf9HW0QozkiCZ38gu1N+fx4cn9k44WTOhWZZYMUZ0P9NWNukUwFmF6MVTT
-         RzeeLEd46hFsyx9AYVUZRmAkRwuaiSeRz/3Co=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731464292; x=1732069092;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y1aEFQWTe78u6F+IZ6BU8S97709C2TVDqgfHG0ZtS8A=;
-        b=TfupNJuN7EfJjRaPcXXAOX7iuoSI+7FWVRIyo/60ASx8zlleWcI048wVlgvmtTIUwX
-         5sfKmnAOEYuPuDRT1bColWkcuMTYwNb+anP3TUnMRU/hnIxJgIVWH1YJ9TIjJXtvwGeX
-         UDwTPQzAqjJFTJKoGhR32RGni3Z2AjKJYnAnyO0iJcxmS+m9qilj2i9UjemqKFC8raPi
-         oaf0hikEenocDxjV+t7DvIABafCUCy6nfkUE2ppQPCgDnl3aoUH45mwWpNPHP0lWcdNE
-         Tm9XwNBGUxxEiY1hfuyTO/4uL2RgtWj8wD4EPhuNz2RBtJSkuNEvcmp3JMNz6/G4rTg+
-         pjEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUx5JXaSmiA6U4BrgC+X29PxNJnsgx77M76zPV9H3F0gHvQlwzrws15/MjViMa/hp5u6LdwV01T2h874sY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbmXU7NhasEp00yjhmWJpEdXcYVoG37OOki8BKECyXf6Tk1AT4
-	ptg0Es3nbdtJmxHWxZ9j0k1vvMNld69A3bO0aMMISwMnjy8Jrr3vloeVOj6aYsg=
-X-Google-Smtp-Source: AGHT+IH+cykyQhf5ILYAg+A7Oqq7FgSl5NS8ZGdD/OwOXspf8aJbdID8nejTn8/tmddQsmmSIfN1Ow==
-X-Received: by 2002:a17:903:18b:b0:20c:763e:d9cc with SMTP id d9443c01a7336-21183c7e021mr262269115ad.7.1731464291905;
-        Tue, 12 Nov 2024 18:18:11 -0800 (PST)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dcb1dfsm100209505ad.14.2024.11.12.18.18.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 18:18:11 -0800 (PST)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: pabeni@redhat.com,
-	edumazet@google.com,
-	amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	kuba@kernel.org,
-	mkarsten@uwaterloo.ca,
-	Joe Damato <jdamato@fastly.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [net v2 2/2] netdev-genl: Hold rcu_read_lock in napi_set
-Date: Wed, 13 Nov 2024 02:17:52 +0000
-Message-Id: <20241113021755.11125-3-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241113021755.11125-1-jdamato@fastly.com>
-References: <20241113021755.11125-1-jdamato@fastly.com>
+	s=arc-20240116; t=1731464332; c=relaxed/simple;
+	bh=R+T49BRN37UUA5w4UFkPqOWDNVqfE+JbaKZSCTrnzx0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eLjf3UCTMkcQiSvUYmNcLJts8IyNX/oFBio/Y1a11iKc9pcFdWmuTaREC3Wy43FcPTOurw/PAb8QkozGbeLKk07NquHIEhdIKp7XwBmeGuV0inygPJtOY18J5BRe1yAWGGK6Vq1IwysvBhAyGkaZzp1tm1EuSmhzePzzRp2XxTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A21gXlkm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACMRTIM029670;
+	Wed, 13 Nov 2024 02:18:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=cscGNRmqzHVHhytO3tYOq3
+	UoktN7JezYFawqRhjsW70=; b=A21gXlkmYKQJWHak2kuEU8M8DH2vcuhTwjAZUs
+	zOZ7i1JkHUAt16hf+XOANkcQgget5Apd0ZgFpMYyr0lLD4ld5P1iQxwbxfvqNPa9
+	KRdIJ4yrpBKA0mgeAaBaOB/cb8RXA5T/IQd5nNH+n4RTxEIgpI/BMK107pYd/XTO
+	/7b++M5ENkYYdKVCG07+xDgVjo1nS9ovFuVcQUgGXb6+p5GFJFQVFH4o00rb6jz/
+	6iBu/MA5HZCjDQSgSh5eiAs82fvphe80SFkPbWjVc4A9z7b6QlD/6PcPsIiRzNGB
+	z0faNp/IP8wpUtNPfxM4xiqOZfQXqjwbrqo5EYKvjfNWmKiA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0469954-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 02:18:40 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AD2Idsp026944
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 02:18:39 GMT
+Received: from hu-yrangana-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 12 Nov 2024 18:18:35 -0800
+From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul
+	<vkoul@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_yrangana@quicinc.com>
+Subject: [PATCH V3 0/2] Enable TRNG for QCS8300
+Date: Wed, 13 Nov 2024 07:48:17 +0530
+Message-ID: <20241113021819.2616961-1-quic_yrangana@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,42 +79,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bsmnPPvQMWzXKpAyX35NASZABM0jqcGk
+X-Proofpoint-ORIG-GUID: bsmnPPvQMWzXKpAyX35NASZABM0jqcGk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 priorityscore=1501 spamscore=0 suspectscore=0
+ mlxlogscore=568 impostorscore=0 adultscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411130018
 
-Hold rcu_read_lock during netdev_nl_napi_set_doit, which calls
-napi_by_id and requires rcu_read_lock to be held.
+Add device-tree nodes to enable TRNG for QCS8300
 
-Closes: https://lore.kernel.org/netdev/719083c2-e277-447b-b6ea-ca3acb293a03@redhat.com/
-Fixes: 1287c1ae0fc2 ("netdev-genl: Support setting per-NAPI config values")
-Signed-off-by: Joe Damato <jdamato@fastly.com>
+This series depends on below patch series:
+https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/ - Reviewed
+
+Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
 ---
- v2:
-   - Simplified by adding rcu_read_lock/unlock instead of using the
-     helper proposed in the RFC.
+Changes in v3:
+ - Drop DT label as per review comments
+ - Link to v2: https://lore.kernel.org/all/20241107121513.641281-1-quic_yrangana@quicinc.com/
 
- net/core/netdev-genl.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v2:
+ - Mistakenly uploaded the base dtsi change instead of marking dependency
+ - Link to v1: https://lore.kernel.org/all/20241106110002.3054839-1-quic_yrangana@quicinc.com/
 
-diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-index 0b684410b52d..9527dd46e4dc 100644
---- a/net/core/netdev-genl.c
-+++ b/net/core/netdev-genl.c
-@@ -348,6 +348,7 @@ int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *info)
- 	napi_id = nla_get_u32(info->attrs[NETDEV_A_NAPI_ID]);
- 
- 	rtnl_lock();
-+	rcu_read_lock();
- 
- 	napi = napi_by_id(napi_id);
- 	if (napi) {
-@@ -357,6 +358,7 @@ int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *info)
- 		err = -ENOENT;
- 	}
- 
-+	rcu_read_unlock();
- 	rtnl_unlock();
- 
- 	return err;
+---
+Yuvaraj Ranganathan (2):
+  dt-bindings: crypto: qcom,prng: document QCS8300
+  arm64: dts: qcom: qcs8300: add TRNG node
+
+ Documentation/devicetree/bindings/crypto/qcom,prng.yaml | 1 +
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi                   | 5 +++++
+ 2 files changed, 6 insertions(+)
+
 -- 
-2.25.1
+2.34.1
 
 
