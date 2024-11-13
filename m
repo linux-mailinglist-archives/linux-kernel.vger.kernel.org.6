@@ -1,196 +1,178 @@
-Return-Path: <linux-kernel+bounces-407772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB7BA9C737F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:26:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512CE9C7494
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:40:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEE64283228
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:26:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D117FB24431
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C0C1E0492;
-	Wed, 13 Nov 2024 14:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D5E2003CA;
+	Wed, 13 Nov 2024 14:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KCDyIsX2"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2067.outbound.protection.outlook.com [40.107.220.67])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBcNMhmF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441C715A848;
-	Wed, 13 Nov 2024 14:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731507975; cv=fail; b=ov1Nv/NBT6/R8+3vGr8v+SIHmzTffrUvdCEGzjedUQGR5aPVbtKPozfYGd0d8yLkpqEIu/t5p5spobz5Pv+Pvs7pqWZHSEKE/5312xe7GUZ85bNUN8v8GsdYX9dEGfQiooJVVmfJHazdEQ9ZNj8ug8fc/c3KnBWYAcybHSeTrPw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731507975; c=relaxed/simple;
-	bh=ekBzmP/K177baWQFawg0cKaOFRTvEhVGG5dvfHdMCos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=s+4jNVKeLpfZKw9+apafYB7Xqu3Eq7FwdH62O2aNRfAbYLERNQGktQfp28c3qKzHmeaMRmlK4gAyq/YBcVG2i7HpdgvKWHd6Hjzmp9jUTZNgp9fyogGD+PNku+Ifp1raiNtMWBFtSTDgyEiAbbwZRGbrHSl1Oew7wM3X9CZgKJE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KCDyIsX2; arc=fail smtp.client-ip=40.107.220.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NjE1hdMJ14xln+mkYoA8AYOY9fIxu4V4IDJIgNZwNjPIfDIOfX0upNiN1FP7SHYnSkvYyjqJYbvFjytEeCWg3SbAPKa3JdhS9Cr/RyDoXP770+LqRWcpvaBCZCDS8tA2Hy0Jt5VagyeBtO1/SB7ZMf0FOXxINl7AlzgIbjkJt/92VS3yTFnW8FzU6xCx9dMzs31R9/VRH+QFjg5oAW2sZuwDpJyqQczAa0aq5++Hjqjvwjx3IVEfc8yvOnyc4j1sMFfENZauG+sAuDw21eqHLwm9ZtxTipGvvBWx9N2heVt2QsE164DmIlWZqs8+cN5gumAMYV0vMp7pNmX/rO3XeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R7+hFXYbo3fnV3B7V4QrBlQv3sO18cgfOhRHLwJklNY=;
- b=ANVnHuxrRFxwvyPCjVEoNdm1e8ZMCn40zlLrxFryKGPNvSLhOqoO2Ds6QCMB9MknOIgUAJraeUjmDoCQNVYuOF2/43C0nkO5qXkiTtd/hL2zchL06QHVJSjqWcJphodInPkYmPj8SFPA3XjuEWpUnHB50gtjoLgACFFUaFKeqqEURVo9tCpF9j0A129n4jvyFHWtpQnryRUQZFhi878lHTFMPcj7M798Y34k9U/c5Vif8LVEWr9QIOmaLeS95LFt3VENNO1kRuv5a5JhtHuHcoBrrDkgOzCr+uHgEmvtpWptFJ9ina+VhatioYSwN3/XJzw5DwN4tVA3nE4hILdFfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R7+hFXYbo3fnV3B7V4QrBlQv3sO18cgfOhRHLwJklNY=;
- b=KCDyIsX2fV53x7a6lMfZhUIQIy19U9qfvDXNocXTONyNYlmAAqN1Ssx1fNEHWFzJRt0LxpzCeFMC4xiEzeLgWMFgVQEkounWdBfXXZv0Q6WeQ58UuLulLQXcdO3E8IGSwixdM7IY2X+EWU7McySgCL6/+XBH9sAMWqhAQfafuB4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- BN5PR12MB9487.namprd12.prod.outlook.com (2603:10b6:408:2aa::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8158.17; Wed, 13 Nov 2024 14:26:12 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8137.027; Wed, 13 Nov 2024
- 14:26:12 +0000
-Date: Wed, 13 Nov 2024 09:26:08 -0500
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-Cc: "bp@alien8.de" <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"Mehta, Sohil" <sohil.mehta@intel.com>,
-	"nik.borisov@suse.com" <nik.borisov@suse.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 6/8] x86/mce: Remove the unnecessary {}
-Message-ID: <20241113142608.GB3181969@yaz-khff2.amd.com>
-References: <20241025024602.24318-1-qiuxu.zhuo@intel.com>
- <20241111060428.44258-1-qiuxu.zhuo@intel.com>
- <20241111060428.44258-7-qiuxu.zhuo@intel.com>
- <20241112154335.GD3017802@yaz-khff2.amd.com>
- <CY8PR11MB7134D5578EB260FEB1216353895A2@CY8PR11MB7134.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY8PR11MB7134D5578EB260FEB1216353895A2@CY8PR11MB7134.namprd11.prod.outlook.com>
-X-ClientProxiedBy: BN8PR04CA0059.namprd04.prod.outlook.com
- (2603:10b6:408:d4::33) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BE91DF73C;
+	Wed, 13 Nov 2024 14:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731507989; cv=none; b=PYwySfXawoaIFVU+ORjxg9E5tmehWM9YVpI/TwogWfLvroIvSTthWFFwcQ7O7eVMkHFmkCInwk6jM7yCgzZWDxkLUYgSPOTLoVKW1j36ZMkflvGDFycu8fWduON7y0EbPGtNOKqCo4OaIJQq2oe4k7oyzz6z1jXWwZjSdYUsb8M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731507989; c=relaxed/simple;
+	bh=RFhf0AIU0UyV1N0p1944L0iQyMfKegxpNmUNuOgkCKM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CteVqSodSmwFcs7lmn3rBrldvqH6Yc5thN/C1GaE2xXqbOBmD4Bk2LpVOxW0dRfT9fu4cLBjfC+3KbHxwKEFfwTCCDCYP+2enkuvAd9qf18ayn8rVKDy2FSjNKX7w1PrKmX0POI5cO4tgWdYZpY3kQ9N6pfupTB/Yrpcgg3E7Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBcNMhmF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D79C4CEC3;
+	Wed, 13 Nov 2024 14:26:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731507988;
+	bh=RFhf0AIU0UyV1N0p1944L0iQyMfKegxpNmUNuOgkCKM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=kBcNMhmF7ksOEXsMmUn7bkRMEd9j4n6SCxjSiOdWYkMKMrKglx3FILQ5MdLgAA74z
+	 J2ia7trKJ2gRipRy4CT1he+z3EyIYdCpq4/6K3NWcqycfNAiGJ+td7L3MvF26beN9L
+	 jq+P1GTq7idkarlTHF8v9w/Dk4f3UZ3mullsDqvigObweUBmn/pqwrQCgw1mhz0kpB
+	 0jhO/oCY/IVLhKq4BNYHD19Rqs5lWvSDvfY+HRit1fB7RnnT4moMY7k1iYSaJ6bO/P
+	 GFjYWaKgrdOW6cjN5EaPFDHQCGjkzSHbc5vBXfvuIT86120oODTeSa+gXiE+n9WWqJ
+	 BF1fXQZH/lgnQ==
+From: Daniel Wagner <wagi@kernel.org>
+Subject: [PATCH v4 00/10] blk: refactor queue affinity helpers
+Date: Wed, 13 Nov 2024 15:26:14 +0100
+Message-Id: <20241113-refactor-blk-affinity-helpers-v4-0-dd3baa1e267f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|BN5PR12MB9487:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6bd6018b-5d73-4a94-60ff-08dd03ef1fcc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tK0r1RTZcaTaqWlZ4FDk/LgWlBKYBpPFoH6ThYZkc0mscyxJbrDJ1beK1XXq?=
- =?us-ascii?Q?IUkWlCsk296YcPcTIweWYceJbIcHZTVMKlf1AmlxDHFcIu96RMNg/GBVVI/T?=
- =?us-ascii?Q?40bUqnKv0ak2XXhEoh9aQ1+37QWbVhc6v99Wfo//Gnd+rSk8GEAewY1wdvSf?=
- =?us-ascii?Q?07c0ADxXqy7ujl45ALT6vD7778Qqow8KubcHc+tX0WYLg+k5Pngze4SW4w9p?=
- =?us-ascii?Q?r1+vqo5kjRAQkj++Mj9S0aimwQdUj+DysY9IHrGF0WYRspaga9yvDHy4CW4o?=
- =?us-ascii?Q?secHvdKdmUbvctSAV+UCm07Pvn6TGUFvddQ2gjG1ypb+uM/gOWdIzJSe5UJ7?=
- =?us-ascii?Q?SMAzlJs6BRKmcqqAXqASD21E7CuWwlZFqbmgSF+vSCBNODOuDNrQi73YApz2?=
- =?us-ascii?Q?PE8X5f1E2AbVP14G35rrrL7UFKJZ3NLZpaAbbDBAtzkEkiLxPEuztQcvTZ7F?=
- =?us-ascii?Q?Sx/cjaHd6QwEwGHXW6YbnxcQzSh3xqUw4NjMFTRvrmQizpHd0DJfbp/6Gktm?=
- =?us-ascii?Q?fX8Dqxuk2FVXeLiqxHpV6ZcwrDf/BNT/zmLky1q5+3Bu/wWlfBu5Y2S+YmiC?=
- =?us-ascii?Q?rHMMeWouBADuCzpjietMej46AYd8SElHsm+cjD9m+L//+sGasVdgpx7I0Vsd?=
- =?us-ascii?Q?MWV5/1jIgtqdo1ew0ZfkTavZqk9HwWwxq79zrCs2UkLsa16H64HJdwS72+jC?=
- =?us-ascii?Q?EtNpu0RBIXL128XU8OFZhMFwT6GDchPghR8JEf+Gs17SbNzDEuothW2noc6d?=
- =?us-ascii?Q?/+S/MnAM0iU2HjOXxg15nh9qWDJgmTSDOfp2Mn1J2FmEEJzVSVNXpaCHFlQI?=
- =?us-ascii?Q?pgCVoTEydI8Dqnk/0j8w7QCmCfRrjSYeCTuFO+g6hGkUYU06S6EeESiBbC2N?=
- =?us-ascii?Q?PM5kJH5EsHedp2EJmChKkHXibsm6cvULJnCeuPuJTJxoA5wuwm+MXq9ok6ZN?=
- =?us-ascii?Q?ck2xj18jtaoRtYPsz24qN61yzl9F8CjEblMRhtPKejWKchDUjIeYaG5R2/3L?=
- =?us-ascii?Q?XRRmAuhOpCbVHO8KSSWsKP3ps75sW/oeE4gMJZIhOgq/d7Z7Mk1P3ZWR/Rb+?=
- =?us-ascii?Q?YGSfv7iCt1oqPil8dTOQzUUb1sxHkRxXS21Z9PkLRfED/+bvfDQ17Ovq9K0t?=
- =?us-ascii?Q?IwDcuO2VO/KrOqqkPXRBNHtX2Fuc/3EFf8IkmsLg16ynBZ+4xcDdAhimtH6R?=
- =?us-ascii?Q?d2TFHZRLNppF8+ou/aZaKvRTtsfmlTufGO1zluw8HDVLDndp58sd3IvNrII6?=
- =?us-ascii?Q?Ya+mfWlKIlPnXJmZ+61sNXDIsoTEA6j/X1me17PC2vSU6/zD1fT6IiE3wWjD?=
- =?us-ascii?Q?nF0X1lqfpJXACQkqk38Sds6k?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?PFcHKEsL2Q3SD2hegCx+owWG5JC5v8N2I5canybU2sQJlrjVFZfpIVP47oT2?=
- =?us-ascii?Q?YZklewMNrE64zvmlqmM4ObIihWoQtKI4X+Du9DnBXf3CEDk+lf0A9LPlIq+I?=
- =?us-ascii?Q?9WyniDm2mEerpP3AUq1r0SEi+ewvFTCol/T9PP2+Ap9aFTTbcE9WKxXSPzY9?=
- =?us-ascii?Q?QMVSMT3bseBc3gS6obKgpUGAgKufEMlDblzxjrhn+tv2mS4RueH6FQBfpdyq?=
- =?us-ascii?Q?w/jhirkaak1sHrF1Dn/jlztRf3X0YisVMPWH2OAS5IVhxA/t7kOvjmxObK5O?=
- =?us-ascii?Q?0pbGjOAGhEWRgu0IrcfYYt0P+HpJKUpuQ9sWOqSuMtkYNj9AVEosw7I3EBlk?=
- =?us-ascii?Q?sUcE6fyNq9eYQJeNc/u+ZT2itT5BQsDENzq0+HGR/p8XSI8PNNQANVrwJEep?=
- =?us-ascii?Q?LGttOMcjW4FCtzJwLaPcLD2Tfe4nxg308ToTpt+6QxL40vgTyp8teNMBQRuJ?=
- =?us-ascii?Q?MzV3o39LmOlM0F6TjYTMJpaOm59DWmVMF4CS2Mxic17B9Swr3BvU+2FRDfBH?=
- =?us-ascii?Q?WWUBAavCwD2jm9EtyFsuy6+9gGepbwrPTcqM1QWn5rqDQvFFHugWGhrktIlD?=
- =?us-ascii?Q?i2CZmitOfL6vUFhvNn/EfqCBxBFiJxpg9OBQm7HkftDB9RAhLnqt8GAw+gBP?=
- =?us-ascii?Q?XUrbg1gHNnCCqC4k2qAzp4e0Dr0N/xAHtx23iknV0MJXJI/ibusfpnBY9aX0?=
- =?us-ascii?Q?LjwIVR/NMyqE/NAu5zLivcIvTvGufuBT3qj/1SQE18aUV+864eZZWYbc4Jon?=
- =?us-ascii?Q?5o1vycK5mjXYmRycw6IB/+l2o9UKyk7IyD5Zho7e45PdhUz3T5aN9TzQuQ1z?=
- =?us-ascii?Q?VZGaybLE1DLjm4knsS54yseKzO8Sf+YNdrMvqDaS835s7YlrjyxhdrNqJ9OR?=
- =?us-ascii?Q?jdlR7fZvrQopeyF3dWwGs9ZJaoFSQEFnCPYeNtWJeJ1tlqe/F9NlZBLH6AO2?=
- =?us-ascii?Q?eMlx+WraVIFgGd+heHyRWfvL/v7shC7nANcRxwVNGSmko1mIV0ZNXsQWm5q0?=
- =?us-ascii?Q?Zi8K6kJCRyJExGSyA8Doz5olmhexYQ2BvGpyJIzkV4CRHTePk7TfCKAklkAo?=
- =?us-ascii?Q?WCoXd8l6/pO/juCqKOKghW4X/BWEkCq2kkd9R4LFgUE0rXMDF7uOzxoMsAuG?=
- =?us-ascii?Q?ZxgfFrWhlAY6sEbqlKuhsWDmkw2moikNiAkaJld+Ohn59rsqKYRdeKw1CEq6?=
- =?us-ascii?Q?DhqzuMSj2CDI8xS+JAi94ScCi2GPclO0wRrS+U4kRE00kpznZ9u58GMRczqe?=
- =?us-ascii?Q?lDWcFCGiEUwIYorI674Fl98fOAN99tSJaPgpvGTIp62jO+R6CnzCwnFQzbAX?=
- =?us-ascii?Q?gNpY8p9oPDTJ+6m7lRtFrdYz1kIePCKSoeY3tMMkocaaPS26GFftU1Km54IP?=
- =?us-ascii?Q?xxFeeuqOQCaI6GT1v1ZwAqRYNUlLHsTHujzo9Mw6AMAu5oKHOkRNPXHKoGBy?=
- =?us-ascii?Q?um4pcCe32+vy6sdS7h95090j8COWok0abxJtX5V2/arRekC+DwlA6aGHfRoG?=
- =?us-ascii?Q?SxhxPaoIShi4Ft/bhdu8iHKgcOWKhSahT/ZON7x2oBS4USucBbrl5VtJxBsU?=
- =?us-ascii?Q?B/8F1PoiWlznuj8nad12121k31sw5kcCZCwa7vUo?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6bd6018b-5d73-4a94-60ff-08dd03ef1fcc
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2024 14:26:12.3187
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BICEhceCXhiUj09nXf5qpc0TCFpP1IyOf978t3KmSQaqE+EXv43pF6svvgTjgsW+Q8ONoUPA/0Vbz/cbOcolRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9487
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAa3NGcC/4XQyw6CMBAF0F8hXVvTBwi44j+Mi5ZOoZEAttBoD
+ P/uqPG1YnZ30pw76Y0E8A4C2Sc34iG64IYeQ7pJSN2qvgHqDGYimEhZyQX1YFU9DZ7q7kSVta5
+ 305W20I3gA81ZUeoy06nmjKAx4nN3efqH4yt7OM9YM32XrQsIXp83RP7YvuvkSl3klNECWFbYP
+ FeWiyrMAbYGyMON4mNxnDVLoGXljhmjjJBcVSfwPXTbwTcvTv5yaz8RJXJZLrWtFau1Kf64ZVn
+ uTovUp3sBAAA=
+X-Change-ID: 20240912-refactor-blk-affinity-helpers-7089b95b4b10
+To: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, John Garry <john.g.garry@oracle.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Hannes Reinecke <hare@suse.de>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, virtualization@lists.linux.dev, 
+ linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, 
+ mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, 
+ storagedev@microchip.com, linux-nvme@lists.infradead.org, 
+ Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
-On Wed, Nov 13, 2024 at 01:32:08PM +0000, Zhuo, Qiuxu wrote:
-> Hi Yazen,
-> 
-> > From: Yazen Ghannam <yazen.ghannam@amd.com>
-> > [...]
-> > 
-> > Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> 
-> Thanks!
-> 
-> > But please see note below.
-> > [...]
-> > > -	case X86_VENDOR_AMD: {
-> > > +	case X86_VENDOR_AMD:
-> > >  		mce_amd_feature_init(c);
-> > >  		break;
-> > > -		}
-> > >
-> > >  	case X86_VENDOR_HYGON:
-> > >  		mce_hygon_feature_init(c);
-> > > --
-> > 
-> > I think this could be a bit more substantive if you also combine the AMD and
-> > HYGON cases. And remove mce_hygon_feature_init() which just calls
-> > mce_amd_feature_init() anyway.
-> 
-> How about a separate patch for this? 
-> If It's OK for you, I'll follow up on it after the current patch series has settled.
->
+Baes on Johns' idea, I added another irq_get_affinity callback to struct
+device_driver and made blk_mq_hctx_map_queues to try that one first. With
+this I could also replace the open coded queue mapping in hisi_sas v2.
 
-Sure thing. No problem.
+Besides this change I fixed couple of typos and also addressed John
+feedback in hisi_sas v3.
 
-Thanks,
-Yazen
+Original cover letter:
+
+These patches were part of 'honor isolcpus configuration' [1] series. To
+simplify the review process I decided to send this as separate series
+because I think it's a nice cleanup independent of the isolcpus feature.
+
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
+---
+Changes in v4:
+- added irq_get_affinity callback to struct device_driver
+- hisi_sas use dev pointer directly from hisi_hba.
+- blk_mq_hctx_map_queues: ty irq_get_affinity callback
+  from device_driver first then from bus_type
+- collected tags
+- fixed typos
+- Link to v3: https://lore.kernel.org/r/20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org
+
+Changes in v3:
+- dropped the additinal argument in blk_mq_hctx_map_queues.
+  leave open coded version in hisi_sas_v2.
+- splitted "blk-mp: introduce blk_mq_hctx_map_queues" patch into
+  three patches.
+- dropped local variable in pci_device_irq_get_affinity
+- Link to v2: https://lore.kernel.org/r/20241111-refactor-blk-affinity-helpers-v2-0-f360ddad231a@kernel.org
+
+Changes in v2:
+- added new callback to struct bus_type and call directly the affinity
+  helpers from there.
+- Link to v1: https://lore.kernel.org/r/20240913-refactor-blk-affinity-helpers-v1-0-8e058f77af12@suse.de
+
+Changes in v1:
+- renamed blk_mq_dev_map_queues to blk_mq_hctx_map_queues
+- squased 'virito: add APIs for retrieving vq affinity' into
+  'blk-mq: introduce blk_mq_hctx_map_queues'
+- moved hisi_sas changed into a new patch
+- hisi_sas use define instead of hard coded value
+- moved helpers into their matching subsystem, removed
+  blk-mq-pci and blk-mq-virtio files
+- fix spelling/typos
+- fixed long lines in docu (yep new lines in brief descriptions are
+  supported, tested ti)
+- based on the first part of
+  [1] https://lore.kernel.org/all/20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de
+
+---
+Daniel Wagner (10):
+      driver core: bus: add irq_get_affinity callback to bus_type
+      driver core: add irq_get_affinity callback device_driver
+      PCI: hookup irq_get_affinity callback
+      virtio: hookup irq_get_affinity callback
+      blk-mq: introduce blk_mq_hctx_map_queues
+      scsi: replace blk_mq_pci_map_queues with blk_mq_hctx_map_queues
+      scsi: hisi_sas: use blk_mq_hctx_map_queues to map queues
+      nvme: replace blk_mq_pci_map_queues with blk_mq_hctx_map_queues
+      virtio: blk/scsi: replace blk_mq_virtio_map_queues with blk_mq_hctx_map_queues
+      blk-mq: remove unused queue mapping helpers
+
+ block/Makefile                            |  2 --
+ block/blk-mq-cpumap.c                     | 43 +++++++++++++++++++++++++++++
+ block/blk-mq-pci.c                        | 46 -------------------------------
+ block/blk-mq-virtio.c                     | 46 -------------------------------
+ drivers/block/virtio_blk.c                |  4 +--
+ drivers/nvme/host/fc.c                    |  1 -
+ drivers/nvme/host/pci.c                   |  3 +-
+ drivers/pci/pci-driver.c                  | 14 ++++++++++
+ drivers/scsi/fnic/fnic_main.c             |  3 +-
+ drivers/scsi/hisi_sas/hisi_sas.h          |  1 -
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c    | 22 +++++++--------
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c    |  4 +--
+ drivers/scsi/megaraid/megaraid_sas_base.c |  3 +-
+ drivers/scsi/mpi3mr/mpi3mr.h              |  1 -
+ drivers/scsi/mpi3mr/mpi3mr_os.c           |  2 +-
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c      |  3 +-
+ drivers/scsi/pm8001/pm8001_init.c         |  2 +-
+ drivers/scsi/pm8001/pm8001_sas.h          |  1 -
+ drivers/scsi/qla2xxx/qla_nvme.c           |  3 +-
+ drivers/scsi/qla2xxx/qla_os.c             |  4 +--
+ drivers/scsi/smartpqi/smartpqi_init.c     |  7 ++---
+ drivers/scsi/virtio_scsi.c                |  3 +-
+ drivers/virtio/virtio.c                   | 19 +++++++++++++
+ include/linux/blk-mq-pci.h                | 11 --------
+ include/linux/blk-mq-virtio.h             | 11 --------
+ include/linux/blk-mq.h                    |  2 ++
+ include/linux/device/bus.h                |  3 ++
+ include/linux/device/driver.h             |  3 ++
+ 28 files changed, 112 insertions(+), 155 deletions(-)
+---
+base-commit: c9af98a7e8af266bae73e9d662b8341da1ec5824
+change-id: 20240912-refactor-blk-affinity-helpers-7089b95b4b10
+
+Best regards,
+-- 
+Daniel Wagner <wagi@kernel.org>
+
 
