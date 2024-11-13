@@ -1,215 +1,79 @@
-Return-Path: <linux-kernel+bounces-407006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A3D9C675A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:33:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7529C674B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C81FF2845C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:33:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E5BD1F2429C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8814E13B5A1;
-	Wed, 13 Nov 2024 02:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D95C136E37;
+	Wed, 13 Nov 2024 02:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rqi09lYK"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmMo5/Ly"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF0241C64;
-	Wed, 13 Nov 2024 02:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8784213D298;
+	Wed, 13 Nov 2024 02:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731465223; cv=none; b=nqCGVve4hZot12aRO4W/nZGodQuvsgvwqT27RmaC+gs71Ll090S2Mn5EUJzAqi1OkKlXhwnVjym1cIJ0OJt3d9tEDHCsUyjlAfal0Rk2VeQ/a65gKSgEKd4nEAmjmblQwWeqMP+iRtD4KilyErJ7n2hxswqqHmLztrj0ZRAWfuM=
+	t=1731465005; cv=none; b=t98zSbXmeEqjtJ1GiWTEWiW0EPaFbTApLY7omtABVBhmqT8IRrB1bLSuQzrA4i85g5kwuryN4C4wkZJcHd3Fbv1MgUA3Igtkid7aw2JNsG/DNNBtVWCBJaHvIH5kJcLjVlGRZF/4KNxqQYu6s5MqV7hKAURcbil3Crbq4vpmuvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731465223; c=relaxed/simple;
-	bh=T4XiY+bK42Ehq/aZIWhwBuyAaO3UQFFaefnl3typawE=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pj6YwcxP/5Gmcy6a9iVvgoEmF9H1GnBK1BFDiuFqhHrwhG5PoZIhTSXog+Y8bhYMbmlBAev9qAUBzTbW23hxCG9hwg6TlZmYCnsNniOL87tsHga7cRU6fZiQUtHn17HhAS0w2hW8uHH92Kl8C8pSxymfW85A3N3wsxvg4Yz+kbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rqi09lYK; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1731464910; bh=H/LbfWgCXVb/MUnrh8iWjUzx8J6cNgdw3TOHUf3BUkM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=rqi09lYKL8yT7xwF54KUMQThpmmC3Vp+2t7e1yKSpahj8N3XDZ7KMiVwH0KdTx23F
-	 JtaQ5q9FSfUNFSpNeLcls2kdMcsFZj9nEZ9Wmz+2Ulm/v9M1BJpE4M4Q9bT+SAKE+V
-	 xCxGsLN+WhTFhJQMRCDzCCqw7eANyBHsffw8zXYU=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 71CA005B; Wed, 13 Nov 2024 10:28:28 +0800
-X-QQ-mid: xmsmtpt1731464908tuscwode7
-Message-ID: <tencent_5ED37D036BA97D43A6A4549765F77C86CE05@qq.com>
-X-QQ-XMAILINFO: Mm/8i8/T4yneFFz4uTKgblfj1af0W58+hR271CMjv5TNyODLOsMxWD7fmBw4pg
-	 FBnv1a4mXl8UVU6fO9qO04FbDW4DHMms6y9yCrzZt5QYImlgvUoQQInDqssac8c6gNItH394pNWc
-	 +gi0p3juFx9QAXAI1R6akk3HzhVy5VpadmnfzFxzqHxNYlYWN9gFcWefeXKb1P6OubMwcQdE+TmH
-	 fdJmqy1j3tk5FVTDl9L5/e+IF7/V8h1boFx8S2r5E5roVRXaKJK7exvAoXPYig31DYndGBNxaQtv
-	 JWcR9WcK9ICCxdQG38d3dWPIojj+2uhlCJqKv9u97vClQB41ptXxv382Ktp49yVhX0lu2uHnhuXY
-	 lYtZUA5yGXMK3iaoAjokNX6ZM4Fzu20XbH7GdrJu0vKQ8ut0Vt4fA2/HWnvKMlaNOQg0ZkIjWrvo
-	 lHhJgMl+D8pqfSaRLFEmudgaZUCQekmvRh8EFxS0w+qYxcIBRF5NZ1zrr1tBTNTG2ucfIHY6ogP4
-	 6Ms1IRYruVB1t0dNpLYmqEmvMKm0IB/i/0RKMxBAnCf6cL372wobMjFitABPQtLIEiKoziut0fKD
-	 I6yu0donYBbSrgpfjVvk26u2Y6FXgUNby56nzcaHufJZ7coSXscznd10mILJghmZG12i8NvnCq0I
-	 RONSpidPdkVr1JKDzZmjWmD/MLymkhbS06aIGhkABALOBX3DUNb8+2nhepShgQqr98nozbXhLlOs
-	 CnzEWZ3AgWe/qpa1Bd7eU/AfqpVJqR8k13lQkHBobcsKnb3qp7mnlwUAM7Fs5zCvXaIuwenYBhNl
-	 B4cWOzSPhDYgHLaIne9iOzUR7q66NU9ewdslCLEdlrTd5ZhC4sbjMQzfjLRipYXVmpo3BA1dFvda
-	 tR0jejzgHId61HNLMv6v1x0hiWYaFseB14t0t5lNlGEpRyx8p8okmLhkosYUHGm/PDdjcFZpovha
-	 qs7kLdL64=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: konishi.ryusuke@gmail.com
-Cc: eadavis@qq.com,
-	linux-kernel@vger.kernel.org,
-	linux-nilfs@vger.kernel.org,
-	syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] nilfs2: fix a uaf in nilfs_find_entry
-Date: Wed, 13 Nov 2024 10:28:28 +0800
-X-OQ-MSGID: <20241113022828.1824415-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <CAKFNMomm9UjJxdxADBDTL4ksvY7Bycs3WV=cqYmJu_TuUi7crA@mail.gmail.com>
-References: <CAKFNMomm9UjJxdxADBDTL4ksvY7Bycs3WV=cqYmJu_TuUi7crA@mail.gmail.com>
+	s=arc-20240116; t=1731465005; c=relaxed/simple;
+	bh=QrH1vsXxPmKUIgFhBG22at+Mfz/KG7y9qZwPZ422Yz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dSKZkdpD9aYljMHd5RmS2LkWjy28ScMzdMFpUPvnilXHlVPBuv6Ii8LT4xvYKMy6oxVeZMharDWPYXCGngG736uPVJfFIJEzNfJ383ErYbjp4FJdntNNPsrA4EimGfzhQCkoM62X9QIUCbJpIPuUCuw07TmmJ7aaRHc8UWxCjIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmMo5/Ly; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D50BC4CECD;
+	Wed, 13 Nov 2024 02:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731465005;
+	bh=QrH1vsXxPmKUIgFhBG22at+Mfz/KG7y9qZwPZ422Yz4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cmMo5/Lyd9SZ1+UkxUMAiPO1gwiG/NOh5+/ecdySorlwg6UHEFIJhv+kLYn4JgLAt
+	 vqbYrgswKUC3xEbkeJ3l26b8SjunMtsfECSpDFNGBCAx9r+gqxiM8zNTJocIk283vU
+	 wnk/JjsO1lm8azV7b7sVwAVBTM55s8vethK118eWJMEHBKcRhsGsgJgHWb6eKnTyK8
+	 L5f/+uT4/+LAZzLwhZ85NstOsegsXUSZ2+3saBdsmO+9JkK99VJXrVe0OlxKTaKBDW
+	 4+AIeDY8+8cDoChqKbtgNCH/tW8pFZWq3rWJFOSpfaZoHZGhf2GxhHnUDO+/uaH2n0
+	 V43Zl3Oc92RjA==
+Date: Tue, 12 Nov 2024 18:30:03 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Nelson Escobar <neescoba@cisco.com>
+Cc: John Daley <johndale@cisco.com>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Christian Benvenuti <benve@cisco.com>,
+ Satish Kharat <satishkh@cisco.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH net-next v3 0/7] enic: Use all the resources configured
+ on VIC
+Message-ID: <20241112183003.534e5275@kernel.org>
+In-Reply-To: <20241108-remove_vic_resource_limits-v3-0-3ba8123bcffc@cisco.com>
+References: <20241108-remove_vic_resource_limits-v3-0-3ba8123bcffc@cisco.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 12 Nov 2024 23:38:11 +0900, Ryusuke Konishi wrote:
-> On Tue, Nov 12, 2024 at 7:56 PM Edward Adam Davis wrote:
-> >
-> > The i_size value of the directory "cgroup.controllers" opened by openat is 0,
-> > which causes 0 to be returned when calculating the last valid byte in
-> > nilfs_last_byte(), which ultimately causes kaddr to move forward by reclen
-> > (its value is 32 in this case), which ultimately triggers the uaf when
-> > accessing de->rec_len in nilfs_find_entry().
-> >
-> > To avoid this issue, add a check for i_size in nilfs_lookup().
-> >
-> > Reported-by: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=96d5d14c47d97015c624
-> > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> > ---
-> >  fs/nilfs2/namei.c | 3 +++
-> >  1 file changed, 3 insertions(+)
+On Fri, 08 Nov 2024 21:47:46 +0000 Nelson Escobar wrote:
+> Allow users to configure and use more than 8 rx queues and 8 tx queues
+> on the Cisco VIC.
 > 
-> Hi Edward, thanks for the debugging help and patch suggestion.
-> 
-> But this fix is incorrect.
-> 
-> Reproducers are not creating the situation where i_size == 0.
-> In my debug message output inserted in the while loop of
-> nilfs_find_entry(), i_size was a corrupted large value like this:
-> 
-> NILFS (loop0): nilfs_find_entry: isize=422212465065984,
-> npages=103079215104, n=0, last_byte=0, reclen=32
-> 
-> This is different from your debug result, because the type of i_size
-> in the debug patch you sent to syzbot is "%u".
-> The type of inode->i_size is "loff_t", which is "long long".
-> Therefore, the output format specification for i_size in the debug
-> output should be "%lld".
-Yes, you are right, I ignore the type of i_size.
-> 
-> If you look at the beginning of nilfs_find_entry(), you can see that
-> your check is double-checked:
-> 
-> struct nilfs_dir_entry *nilfs_find_entry(struct inode *dir,
->                 const struct qstr *qstr, struct folio **foliop)
-> {
->         ...
->         unsigned long npages = dir_pages(dir);
-Yes, now I noticed dir_pages().
->         ..
-> 
->         if (npages == 0)
->                 goto out;
->         ...
-> 
-> Here, dir_pages() returns 0 if i_size is 0, so it jumps to "out" and
-> returns ERR_PTR(-ENOENT).
-> 
-> I'm still debugging, but one problem is that the implementation of
-> nilfs_last_byte() is incorrect.
-> In the following part, the local variable "last_byte" is not of type
-> "loff_t", so depending on the value, it may be truncated and return a
-> wrong value (0 in this case):
-> 
-> static unsigned int nilfs_last_byte(struct inode *inode, unsigned long page_nr)
-> {
->         unsigned int last_byte = inode->i_size;
->         ...
-> }
-> 
-> If this is the only problem, the following fix will be effective. (To
-> complete this fix, I think we need to think more carefully about
-> whether it's okay for i_size to have any value, especially since
-> loff_t is a signed type):
-> 
-> diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-> index a8602729586a..6bc8f474a3e5 100644
-> --- a/fs/nilfs2/dir.c
-> +++ b/fs/nilfs2/dir.c
-> @@ -70,7 +70,7 @@ static inline unsigned int nilfs_chunk_size(struct
-> inode *inode)
->   */
->  static unsigned int nilfs_last_byte(struct inode *inode, unsigned long page_nr)
->  {
-> -       unsigned int last_byte = inode->i_size;
-> +       loff_t last_byte = inode->i_size;
-> 
->         last_byte -= page_nr << PAGE_SHIFT;
->         if (last_byte > PAGE_SIZE)
-> 
-I have noticed nilfs_last_byte(), I have other concerns about it, such
-as the chance of last_byte overflowing when i_size is too small and page_nr
-is too large, or that it will be negative after being type-adjusted to loff_t.
-So, maybe following fix is more rigorous.
+> This series changes the maximum number of tx and rx queues supported
+> from 8 to the hardware limit of 256, and allocates memory based on the
+> number of resources configured on the VIC.
 
-diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-index a8602729586a..0dbcf91538fd 100644
---- a/fs/nilfs2/dir.c
-+++ b/fs/nilfs2/dir.c
-@@ -70,9 +70,10 @@ static inline unsigned int nilfs_chunk_size(struct inode *inode)
-  */
- static unsigned int nilfs_last_byte(struct inode *inode, unsigned long page_nr)
- {
--       unsigned int last_byte = inode->i_size;
-+       loff_t last_byte = inode->i_size;
-
--       last_byte -= page_nr << PAGE_SHIFT;
-+       if (last_byte > page_nr << PAGE_SHIFT)
-+               last_byte -= page_nr << PAGE_SHIFT;
-        if (last_byte > PAGE_SIZE)
-                last_byte = PAGE_SIZE;
-        return last_byte;
-BR,
-Edward
-> 
-> Regards,
-> Ryusuke Konishi
-> 
-> 
-> >
-> > diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
-> > index 9b108052d9f7..0b57bcd9c2c5 100644
-> > --- a/fs/nilfs2/namei.c
-> > +++ b/fs/nilfs2/namei.c
-> > @@ -60,6 +60,9 @@ nilfs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
-> >         if (dentry->d_name.len > NILFS_NAME_LEN)
-> >                 return ERR_PTR(-ENAMETOOLONG);
-> >
-> > +       if (!dir->i_size)
-> > +               return ERR_PTR(-EINVAL);
-> > +
-> >         res = nilfs_inode_by_name(dir, &dentry->d_name, &ino);
-> >         if (res) {
-> >                 if (res != -ENOENT)
-> > --
-> > 2.43.0
-> >
-
+You don't seem to be responding to feedback. You don't have to agree
+with all the feedback you get (unless its from the maintainers ;))
+but if you don't I'll just assume that you take it at face value
+and will address..
+-- 
+pw-bot: cr
 
