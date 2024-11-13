@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-407312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FDCD9C6BA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:42:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 703B89C6BAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:44:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 001B2B25EF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:42:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2A4EB22C49
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E041F80BF;
-	Wed, 13 Nov 2024 09:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6001F80C5;
+	Wed, 13 Nov 2024 09:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WnYBbn3J"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4Jm4hXL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800A3178CC8;
-	Wed, 13 Nov 2024 09:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B28178CC8;
+	Wed, 13 Nov 2024 09:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731490966; cv=none; b=I2ziBbk0mNF7uALQRyQNCa0azdFxLqr9mP+l76ghaatfB09ZI2b3oK7fnatk9oaX06hidVa+Ey2WU0XEGr6amaUvOGkg6IoqIrEk6Ij5risLHURQj2I9TtyIe7/7wZaR3fO1h5+dtHEZ8GGHzMsbGqalFwg6X56qLJouGvTt7TI=
+	t=1731491079; cv=none; b=ggViguZsW8LpK+MazAJ5rSfW/EzsrnYcvDMhOmoWe0Rbmk1dIvtjyP/hiaJqqM6FHhQ1EMk+achHji0wow0wTFdprklkyb2uJZzm4eT4y7q88s4zXxr2THcdnLsbJ08z4VPYe13jwI8hTqAevNnPpWAnHYc0SJXKJR1XOkraDxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731490966; c=relaxed/simple;
-	bh=CnTg97obo1Lsr06BXYdZdsStwzIsiBw+tlILjkvdR+U=;
+	s=arc-20240116; t=1731491079; c=relaxed/simple;
+	bh=G60SOJCRCee6VpKMWDHKShG2kyMomKULAjFj4Z0HY5E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PCfe1aW8tcrQ2/HK7kLVn/yISFHg5X7/dOlfuHJS5xagEMtVeUFh75E/P/3GvKYwYzpuurfb1Bxv4+6H/5l4Yp6pL+hmsoYyof/29q4pN3O7MH2kySo1iVMhrTOSOtMtinwVE3Y3fUmAWID8DMwsaEWxDPXowep5mQgz9fZRNt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WnYBbn3J; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731490965; x=1763026965;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=CnTg97obo1Lsr06BXYdZdsStwzIsiBw+tlILjkvdR+U=;
-  b=WnYBbn3JREPgm3n7im0EyTp2LuAY4jg3/VlhrYEhxPxvjYuJbUC+86jW
-   gFFuAqv4TLbYRAKsi0e9+y0fTsdKBiLhu5Ig9ipQqDSH4mKgCGGm35skI
-   c5ehiGNdyuFamQsTH15GdgmEY8l8SwTe0rdkWahN52a1N6d1mRkwSYOyi
-   IhT/Dqt+L/Y2o8bc4BQ65BRsmUZpG04o0Hw/bhedrvANlqoSfyXDjqWfo
-   krWBi9R5jSztjHUPL7X3O9/3KM87urRKvyg3wN2V8yL4s35exUqbY50SP
-   tM3svzlcgctdUu3ruxIucNvHawY/TCk0bjdy3AclOWgliLe/3Qxvi2pCU
-   g==;
-X-CSE-ConnectionGUID: 18q78WdBRiqcY8VqVRGgrg==
-X-CSE-MsgGUID: ThCdVxE3RTe1ekI3H8n71Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31229446"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31229446"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 01:42:36 -0800
-X-CSE-ConnectionGUID: ZJXmawWEQXSXDgxWFRqoHg==
-X-CSE-MsgGUID: 7sstyEgHRHO20zrSlRz5BA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="92751496"
-Received: from mylly.fi.intel.com (HELO [10.237.72.58]) ([10.237.72.58])
-  by orviesa003.jf.intel.com with ESMTP; 13 Nov 2024 01:42:35 -0800
-Message-ID: <1ad5f698-725a-4779-ad5d-936ae8cbab14@linux.intel.com>
-Date: Wed, 13 Nov 2024 11:42:33 +0200
+	 In-Reply-To:Content-Type; b=sVAvXK+rnydlOkSH/eaBsdc2+K2J/u2VfhmfjT8GNpEBGKZP5FZ3k+4HHQAEa+uvJk6cuZFIeuiPBQJQ+cJgE7sMZYPxoqs+8yKltKk7eISsP2D+nlx7zhTgUfhUq3E7S9jmL2zPpjEzIN9ADdAuSfZ595d1HrDqlZ8jvxDhhLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4Jm4hXL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 692CDC4CECD;
+	Wed, 13 Nov 2024 09:44:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731491078;
+	bh=G60SOJCRCee6VpKMWDHKShG2kyMomKULAjFj4Z0HY5E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=M4Jm4hXLo+c4whd2dCrDaM4pZncZ9lPC18qo/U30v0jCa1owQ9JRzhd5SW+TkpR46
+	 tgSYr4tnk6QKnK5zn5kTqvrcYaWQL8WbZDy1Zi2+F+D4RtSzPmH8tqzFBpdwx0uS38
+	 t/yTolTMWzkQ1XDjeaj7bX6JnyQFzEq+/z0ZNS4ZyphTqPGk9AvOxUjezL4N8K9XYf
+	 Gbe2egurnLrshqUS40KKOsjhZYBpB7RgloJoWn1MPrigH8BeOYS5OhT5pSl7rUYcyp
+	 l5+9Ud7n1NwT5cV5FkZuc/NCFD6KZBMibDx2eYR2Xcepl+X9BIdmIFmfKrEe67dEVf
+	 OqzY8/nIyJ5vw==
+Message-ID: <0cde0236-c539-487d-a212-b660331d3683@kernel.org>
+Date: Wed, 13 Nov 2024 10:44:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,93 +49,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] i3c: master: Add ACPI support to i3c subsystem
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Sanket.Goswami@amd.com, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-References: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
- <20241108073323.523805-3-Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH net] samples: pktgen: correct dev to DEV
+To: Wei Fang <wei.fang@nxp.com>, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, lorenzo@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
+References: <20241112030347.1849335-1-wei.fang@nxp.com>
 Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20241108073323.523805-3-Shyam-sundar.S-k@amd.com>
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20241112030347.1849335-1-wei.fang@nxp.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi
 
-On 11/8/24 9:33 AM, Shyam Sundar S K wrote:
-> As of now, the I3C subsystem only has ARM-specific initialization, and
-> there is no corresponding ACPI plumbing present. To address this, ACPI
-> support needs to be added to both the I3C core and DW driver.
+
+On 12/11/2024 04.03, Wei Fang wrote:
+> In the pktgen_sample01_simple.sh script, the device variable is uppercase
+> 'DEV' instead of lowercase 'dev'. Because of this typo, the script cannot
+> enable UDP tx checksum.
 > 
-> Add support to get the ACPI handle from the _HID probed and parse the apci
-> object to retrieve the slave information from BIOS.
-> 
-> Based on the acpi object information propogated via BIOS, build the i3c
-> board information so that the same information can be used across the
-> driver to handle the slave requests.
-> 
-> Co-developed-by: Sanket Goswami <Sanket.Goswami@amd.com>
-> Signed-off-by: Sanket Goswami <Sanket.Goswami@amd.com>
-> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> Fixes: 460a9aa23de6 ("samples: pktgen: add UDP tx checksum support")
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
 > ---
-> Cc: linux-acpi@vger.kernel.org
+>   samples/pktgen/pktgen_sample01_simple.sh | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->   drivers/i3c/internals.h            |  3 ++
->   drivers/i3c/master.c               | 84 ++++++++++++++++++++++++++++++
->   drivers/i3c/master/dw-i3c-master.c |  7 +++
->   include/linux/i3c/master.h         |  1 +
->   4 files changed, 95 insertions(+)
-> 
-> diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
-> index 433f6088b7ce..178bc0ebe6b6 100644
-> --- a/drivers/i3c/internals.h
-> +++ b/drivers/i3c/internals.h
-> @@ -10,6 +10,9 @@
+> diff --git a/samples/pktgen/pktgen_sample01_simple.sh b/samples/pktgen/pktgen_sample01_simple.sh
+> index cdb9f497f87d..66cb707479e6 100755
+> --- a/samples/pktgen/pktgen_sample01_simple.sh
+> +++ b/samples/pktgen/pktgen_sample01_simple.sh
+
+Why are you only fixing one script?
+
+The fixes commit 460a9aa23de6 changes many files, introducing this bug.
+
+> @@ -76,7 +76,7 @@ if [ -n "$DST_PORT" ]; then
+>       pg_set $DEV "udp_dst_max $UDP_DST_MAX"
+>   fi
 >   
->   #include <linux/i3c/master.h>
+> -[ ! -z "$UDP_CSUM" ] && pg_set $dev "flag UDPCSUM"
+> +[ ! -z "$UDP_CSUM" ] && pg_set $DEV "flag UDPCSUM"
 >   
-> +#define I3C_GET_PID		0x08
-> +#define I3C_GET_ADDR		0x7F
-> +
->   void i3c_bus_normaluse_lock(struct i3c_bus *bus);
->   void i3c_bus_normaluse_unlock(struct i3c_bus *bus);
->   
-> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> index 6f3eb710a75d..0ceef2aa9161 100644
-> --- a/drivers/i3c/master.c
-> +++ b/drivers/i3c/master.c
-> @@ -2251,6 +2251,84 @@ static int of_i3c_master_add_dev(struct i3c_master_controller *master,
->   	return ret;
->   }
->   
-> +#if IS_ENABLED(CONFIG_ACPI)
-> +static int i3c_acpi_configure_master(struct i3c_master_controller *master)
-> +{
-> +	struct acpi_buffer buf = {ACPI_ALLOCATE_BUFFER, NULL};
-> +	enum i3c_addr_slot_status addrstatus;
-> +	struct i3c_dev_boardinfo *boardinfo;
-> +	struct device *dev = &master->dev;
-> +	struct fwnode_handle *fwnode;
-> +	struct acpi_device *adev;
-> +	u32 slv_addr, num_dev;
-> +	acpi_status status;
-> +	u64 val;
-> +
-> +	status = acpi_evaluate_object_typed(master->ahandle, "_DSD", NULL, &buf, ACPI_TYPE_PACKAGE);
-> +	if (ACPI_FAILURE(status)) {
-> +		dev_err(&master->dev, "Error reading _DSD:%s\n", acpi_format_exception(status));
-> +		return -ENODEV;
-> +	}
-> +
-> +	num_dev = device_get_child_node_count(dev);
-> +	if (!num_dev) {
-> +		dev_err(&master->dev, "Error: no child node present\n");
-> +		return -EINVAL;
-> +	}
-> +
-I didn't notice earlier these cause host controller registration to fail 
-and thus regression on platforms where DSDT doesn't have these optional 
-information for the host controller.
+
+This fix looks correct, but we also need to fix other scripts
+
+>   # Setup random UDP port src range
+>   pg_set $DEV "flag UDPSRC_RND"
+
+
+$ git whatchanged -1 460a9aa23de6 | grep 'M     samples'| awk -FM 
+'{print $2}'
+	samples/pktgen/parameters.sh
+	samples/pktgen/pktgen_sample01_simple.sh
+	samples/pktgen/pktgen_sample02_multiqueue.sh
+	samples/pktgen/pktgen_sample03_burst_single_flow.sh
+	samples/pktgen/pktgen_sample04_many_flows.sh
+	samples/pktgen/pktgen_sample05_flow_per_thread.sh
+	samples/pktgen/pktgen_sample06_numa_awared_queue_irq_affinity.sh
+
+Thanks for spotting this, but please also fix the other scripts :-)
+
+--Jesper
 
