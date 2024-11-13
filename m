@@ -1,133 +1,193 @@
-Return-Path: <linux-kernel+bounces-407575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4FE79C6F22
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:35:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D37A9C6F27
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:37:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9061F21BBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:35:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB4562842F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15571DF25D;
-	Wed, 13 Nov 2024 12:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BFD1FF7A8;
+	Wed, 13 Nov 2024 12:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GUSuTEqD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="io+D/WvT"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="x6Hpvg+b";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="H+jakr0R";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="x6Hpvg+b";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="H+jakr0R"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211354C81;
-	Wed, 13 Nov 2024 12:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D174C81;
+	Wed, 13 Nov 2024 12:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731501336; cv=none; b=KCZZKLxuEj++gd1C6hfW94NkvjJVmvt/wrhFX+eYzcUgSlhCAtpGneZwvCYYiVA682yUCOrOlYTU6SRY3MojErahTNk1ZSWnAw3gTFNQ6l3/Hnv7RzgcJAXPX6ZkkSOhd51WT2ADS+ZuiApyZgFx+n4aE/gpQoJndld4VWh6JpQ=
+	t=1731501421; cv=none; b=D4oo6O7h8Us3OgiFAspbSiRgs88zYfmTNNCGjKOAHPPNI38sLGq6SW55kAoC31BQ7Jor4wKYBCWjBK20vPcIVAcaVxOROrCvwLj3VThpXcQX7IBIOtSWKsFaV5hwK1eQMSJHQD2g4ksJyUUeyb0QqX0jD3nNWaAMXs2xIvF6BCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731501336; c=relaxed/simple;
-	bh=8mOXWjNAQeHQEuspChDGux1yTH5M5sBCW9lyH1jWrrE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=R+JnCg9XEPVTw+5LCWbUPwNcLxhE27fEvh4A7AiB18kzL0ANw5zriA7hnb6dcomUmjUNy9/PpW9sKfeZ2oyfrntzcJxQkyMup2a0GMcI4xP3NN2jdHLNnsAM3GuHt/RUgFrmwdu5wN9gXjHgntwKsznMlHvOXWwSu8bqjgKkwnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GUSuTEqD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=io+D/WvT; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 01B4C114016F;
-	Wed, 13 Nov 2024 07:35:31 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 13 Nov 2024 07:35:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1731501331;
-	 x=1731587731; bh=7yQcPD6JKWI/AejdrgqAP/w+PsVFxDeTyBvHlplIogQ=; b=
-	GUSuTEqDi+mYAIPY+kGshJR7f7xQK54SEbz9tFeD/9UdAge5heTetCpzzmEAV4o9
-	ZzJg+jJt+nFU5c3lKVAOoIICjh+mS5ZdqjEVfNxkRyroZehLMrtAKR5uKXm07lYA
-	jzdvt47epDi7hEz4Tp5sK4fl01k53mkNrDgPBTnrZcswsX/r5kpIas+0yBvWWldj
-	mgWjU26E1ekEeJK7TpXv9BzrOit5P6sKJQe4n+f8xsYeAQfZYVjfsfYJQwgdwdct
-	8P0BX9y/6B0rQTyMQI2tVODc7suV3eD++uQeUyeiFS2LpRnrBr0NiBQGPRz4WpfX
-	O2JSIskkIZKV9CUO2LYosg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731501331; x=
-	1731587731; bh=7yQcPD6JKWI/AejdrgqAP/w+PsVFxDeTyBvHlplIogQ=; b=i
-	o+D/WvTHpAkM/VHWYwkuGKd7CqpAvpJ28TRsgj1qFFwQvflADdEUXkZzKbJDcSpZ
-	f3EZ3CFCEAym2y+Q2PEGqyK2FLGK/nmVkKTySENWJ2esu3fI9TyBeJTn1pPVke4h
-	odaBqNGCDPRHiQ0uu/RQoiaAsX3daEQ54cwtJsw+Via1AK56TmTSW6MH3QwB1rej
-	TmnxhmPBIg9zgFNI1J14Mnh31eND3VtWjaVIERh9cN+YY5p5/lv7jghpgqFVkXFB
-	KW2/QezENoq1XXpnK6tqIuUmFUgql9W12mzI7qn61erGR0GsmtoWieXazGIaStYC
-	a/HhHY00jSu92EeZyX+og==
-X-ME-Sender: <xms:E500Z4n1UrBCWK1iX-Sk_5o2ZkkTi_n0WtOdkgYnkxCjrBQJmLeJ3A>
-    <xme:E500Z329LQzPQkqIm-naFOkRXDY0gjnyuOLJd8Plxx2WVY3jmPuynqEMxmx1TYhfW
-    qommCDdU-mTxcm1LVM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddtgdegudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedugedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhorhhoseeksgihthgvshdrohhrgh
-    dprhgtphhtthhopehjohhnrdhgrhhimhhmsegrmhgurdgtohhmpdhrtghpthhtohepshgr
-    nhhtohhshhdrshhhuhhklhgrsegrmhgurdgtohhmpdhrtghpthhtohepshhurhgrvhgvvg
-    drshhuthhhihhkuhhlphgrnhhithesrghmugdrtghomhdprhgtphhtthhopehvrghsrghn
-    thdrhhgvghguvgesrghmugdrtghomhdprhgtphhtthhopehrohgsihhnrdhmuhhrphhhhi
-    esrghrmhdrtghomhdprhgtphhtthhopehusghiiihjrghksehgmhgrihhlrdgtohhmpdhr
-    tghpthhtohepkhhumhgrrhgrnhgrnhgusehgohhoghhlvgdrtghomhdprhgtphhtthhope
-    hprghnughohhesghhoohhglhgvrdgtohhm
-X-ME-Proxy: <xmx:E500Z2pUVFQeoBEq1DbiNr21iH6tAyhWwMFPWNeGyAftzeViTM2meg>
-    <xmx:E500Z0mZWq7QFt_LFv4UWt_Otf5N9NKj_DiDx0WLMr68yu26hk8IIg>
-    <xmx:E500Z22e2nv9JopT-9FA8pbJYQlp-v_acmDkTl_usY6nQTl6hw6QAQ>
-    <xmx:E500Z7v-zTnF4uGjBOjzrQ5ZdhDeKH9WKnYsoFXN8Uxe3QUg3lHlqA>
-    <xmx:E500Z51synjgB7CPleMo3dzeaHEk3gSPGsAzAsXmPrK2YK1B4UzftYEp>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 5C11B2220071; Wed, 13 Nov 2024 07:35:31 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1731501421; c=relaxed/simple;
+	bh=18H6NJme3tzBH2IZVv/wJF8kQRj5I/k5ony15utzEWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rz5J0oN+jxeaOBnlYj60WqM7tp4P40kaCqbtONFNYoHJ6gc2qcfOUeRFrKmJUvePQ2mWq7HfHqA3kg8FZ2l9aF5eIncaoFmybKBiz8d6EkP4BZYfK3TLIgbDQ1y6LiLMqJNiZ0wVago8f5+JWPWuVEIiPXOOIQWM97d33xIl1os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=x6Hpvg+b; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=H+jakr0R; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=x6Hpvg+b; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=H+jakr0R; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C596E21133;
+	Wed, 13 Nov 2024 12:36:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731501416; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OwZyjST0MC2BE1Uhwog1+2weLgBQ8NK4rlxEdf5P7lU=;
+	b=x6Hpvg+bnpaEDcXzXshd05wx1g65KA0JAHTzWCKmfGtymmFhqrO8IbVOfmr8mtsZa7qs9R
+	FOHi2SSLS6XIfEgvSJr4L71aE2k13Ry6bqSbdTgR8X6XMsVeIumRyqy9GEhrlWjW46ul2a
+	cjVGBeyhOsJ+SBPxuBt6ydqkeqE1ynQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731501416;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OwZyjST0MC2BE1Uhwog1+2weLgBQ8NK4rlxEdf5P7lU=;
+	b=H+jakr0RcjllL8izGR9jTCON1XXq+u5x2wPmJHAmjtMb+r7Gyff6WddEB0fMF92Wh3NKTc
+	9OXiBDSeD2rJx/Dw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=x6Hpvg+b;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=H+jakr0R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731501416; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OwZyjST0MC2BE1Uhwog1+2weLgBQ8NK4rlxEdf5P7lU=;
+	b=x6Hpvg+bnpaEDcXzXshd05wx1g65KA0JAHTzWCKmfGtymmFhqrO8IbVOfmr8mtsZa7qs9R
+	FOHi2SSLS6XIfEgvSJr4L71aE2k13Ry6bqSbdTgR8X6XMsVeIumRyqy9GEhrlWjW46ul2a
+	cjVGBeyhOsJ+SBPxuBt6ydqkeqE1ynQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731501416;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OwZyjST0MC2BE1Uhwog1+2weLgBQ8NK4rlxEdf5P7lU=;
+	b=H+jakr0RcjllL8izGR9jTCON1XXq+u5x2wPmJHAmjtMb+r7Gyff6WddEB0fMF92Wh3NKTc
+	9OXiBDSeD2rJx/Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A225813A6E;
+	Wed, 13 Nov 2024 12:36:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cagvJWidNGdbLgAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Wed, 13 Nov 2024 12:36:56 +0000
+Date: Wed, 13 Nov 2024 13:36:55 +0100
+From: Daniel Wagner <dwagner@suse.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Bjorn Helgaas <bhelgaas@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, virtualization@lists.linux.dev, linux-scsi@vger.kernel.org, 
+	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com, 
+	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v3 1/8] driver core: bus: add irq_get_affinity callback
+ to bus_type
+Message-ID: <2d85aa5e-037a-45c3-9f2d-e46b2159b697@flourine.local>
+References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
+ <20241112-refactor-blk-affinity-helpers-v3-1-573bfca0cbd8@kernel.org>
+ <76da6c05-4f28-41cc-a48e-da2ae16c64c4@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 13 Nov 2024 13:35:10 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Suravee Suthikulpanit" <suravee.suthikulpanit@amd.com>,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Cc: "Joerg Roedel" <joro@8bytes.org>, "Robin Murphy" <robin.murphy@arm.com>,
- vasant.hegde@amd.com, "Uros Bizjak" <ubizjak@gmail.com>,
- Linux-Arch <linux-arch@vger.kernel.org>, "Jason Gunthorpe" <jgg@nvidia.com>,
- "Kevin Tian" <kevin.tian@intel.com>, jon.grimm@amd.com,
- santosh.shukla@amd.com, pandoh@google.com, kumaranand@google.com
-Message-Id: <558bf28e-6cf8-436d-b2ef-382ff421bb00@app.fastmail.com>
-In-Reply-To: <20241113120327.5239-3-suravee.suthikulpanit@amd.com>
-References: <20241113120327.5239-1-suravee.suthikulpanit@amd.com>
- <20241113120327.5239-3-suravee.suthikulpanit@amd.com>
-Subject: Re: [PATCH v10 02/10] iommu/amd: Disable AMD IOMMU if CMPXCHG16B feature is
- not supported
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <76da6c05-4f28-41cc-a48e-da2ae16c64c4@oracle.com>
+X-Rspamd-Queue-Id: C596E21133
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Wed, Nov 13, 2024, at 13:03, Suravee Suthikulpanit wrote:
-> According to the AMD IOMMU spec, IOMMU hardware reads the entire DTE
-> in a single 256-bit transaction. It is recommended to update DTE using
-> 128-bit operation followed by an INVALIDATE_DEVTAB_ENTYRY command when
-> the IV=1b or V=1b before the change.
->
-> According to the AMD BIOS and Kernel Developer's Guide (BDKG) dated back
-> to family 10h Processor [1], which is the first introduction of AMD IOMMU,
-> AMD processor always has CPUID Fn0000_0001_ECX[CMPXCHG16B]=1.
-> Therefore, it is safe to assume cmpxchg128 is available with all AMD
-> processor w/ IOMMU.
+On Wed, Nov 13, 2024 at 10:16:32AM +0000, John Garry wrote:
+> On 12/11/2024 13:26, Daniel Wagner wrote:
+> > Introducing a callback in struct bus_type so that a subsystem
+> > can hook up the getters directly. This approach avoids exposing
+> > random getters in any subsystems APIs.
+> > 
+> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> > Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> > ---
+> >   include/linux/device/bus.h | 3 +++
+> >   1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/include/linux/device/bus.h b/include/linux/device/bus.h
+> > index cdc4757217f9bb4b36b5c3b8a48bab45737e44c5..b18658bce2c3819fc1cbeb38fb98391d56ec3317 100644
+> > --- a/include/linux/device/bus.h
+> > +++ b/include/linux/device/bus.h
+> > @@ -48,6 +48,7 @@ struct fwnode_handle;
+> >    *		will never get called until they do.
+> >    * @remove:	Called when a device removed from this bus.
+> 
+> My impression is that this would be better suited to "struct device_driver",
+> but I assume that there is a good reason to add to "struct bus_type".
 
-Makes sense. More specifically, I'm fairly sure the only x86-64
-CPUs without cmpxchg16b are very early NetBurst Xeons, while AMD
-had the instruction from the start, and dropping the runtime check
-entirely would work just as well.
+I think the main reason to put it here is that most of the drivers are
+happy with the getter on bus level and don't need special treatment. We
+don't have to touch all the drivers to hookup a common getter, nor do we
+have to install a default handler when the driver doesn't specify one.
+Having the callback in struct bus_driver avoids this. Though Christoph
+suggested it, so I can only guess.
 
-      Arnd
+But you bring up a good point, if we had also an irq_get_affinity
+callback in struct device_driver it would be possible for the
+hisi_sas v2 driver to provide a getter and blk_mq_hctx_map_queues could
+do:
+
+	for (queue = 0; queue < qmap->nr_queues; queue++) {
+		if (dev->driver->irq_get_affinity)
+			mask = dev->driver->irq_get_affinity;
+		else if (dev->bus->irq_get_affinity)
+			mask = dev->bus->irq_get_affinity(dev, queue + offset);
+		if (!mask)
+			goto fallback;
+
+		for_each_cpu(cpu, mask)
+			qmap->mq_map[cpu] = qmap->queue_offset + queue;
+	}
+
+and with this in place the open coded version in hisi_sas v2 can also be
+replaced. If no one objects, I go ahead and add the callback to struct
+device_driver.
 
