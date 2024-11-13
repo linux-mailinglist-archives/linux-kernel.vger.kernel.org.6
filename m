@@ -1,182 +1,274 @@
-Return-Path: <linux-kernel+bounces-408006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC6859C799F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:09:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A7A49C78CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:25:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71334B2B1AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:24:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DF3F1F2468A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B729158D93;
-	Wed, 13 Nov 2024 16:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F661DE8A2;
+	Wed, 13 Nov 2024 16:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L3wEHLXZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hP0YXEQQ"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDECF4D8A3
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3DB166F29
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731515070; cv=none; b=Ysrm6n1tEX5+iPbZHoOGOQe91O3WB5tm96n3QJEA0b1cjFrYubMePbP5/hPAyksBwL69kJ0PlLRGli8C5PpRgqsQ3vlXgqPbgiVn0vi3VuHJ/gP4fbowVU1/HXIWrql1owFXQq/jxCXlFtdJ3hXbgmuEqPHazDwCHk34M0XK9KI=
+	t=1731515111; cv=none; b=hKs3Ss6JxseDbAgwfrEKuchZh751bLZakY0Em6w4Ue34/yEs9/7lUyUzQarT9XAVo8Nnf/ll+kxrsUQKb+A83jRJw70sEgOXzqpK+T9oKeZrlomzBOwK5pSCAvOl2m5NQBdHQ+Kfk0U0B++PUM5VReY+PGjATew2oTit+zaIv0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731515070; c=relaxed/simple;
-	bh=x4iKKTSVBJKmS65ID9sHs+BAIo7AqGlSroQDMtTug7k=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=FXiv5ZFolFsW21IbmW8FixBKnrMXuiwnulNoAidltcKl4YHpjQEJ1jU/RjsLts+XGBHcKgRcY8TCDw3x79D8VSWbt9t18nlZNF54ZEK93bHfN/5X2vzQcxfvI6vOXIxTLWyJgOrcIgthhDyACRAlhtltrc77De+7l8TA3SO4nhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L3wEHLXZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731515067;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vyEY1RG3O3QCXq6vNyfXcf5eZ7HPCu/wStHR+zSrI2o=;
-	b=L3wEHLXZg9zhJGPKeJ1O378Kph0C98vGHacWGPi9xyDcr2favUh26XnLCxpzv2U57iFjia
-	my98YwU7JQvfgbXEi4GoHaYRbnBkNtEfWbvjXlu0naPK2oCejktnjJZzafz5U+vV+sofbO
-	lVsZQWcC0wKdBhaQ/VOjCkHdRp2JBMY=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-668-o9GtQD_9MsiO0_4hQygKCA-1; Wed, 13 Nov 2024 11:24:26 -0500
-X-MC-Unique: o9GtQD_9MsiO0_4hQygKCA-1
-X-Mimecast-MFC-AGG-ID: o9GtQD_9MsiO0_4hQygKCA
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a9a1b872d8bso575386466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:24:25 -0800 (PST)
+	s=arc-20240116; t=1731515111; c=relaxed/simple;
+	bh=y6i/0qTRyMh9lETN4Ye9twvdg8Wxz7dPA6jY3yicqOY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=afyrGDHF6J+C1n9mOydSWeiu2/ogcYm/Xqxh+9ZnSR/8dERcO/YhPjjmVkM1kJH+hc56aidyMx0H63k2bsMf3TRve5yHdDIG0Qzo/g5P7BWN83lsfeVRvwPZNYZOkYDj29w8LM9No96TTA+DoQCS/tN7B8dVDBJnQTUe3t9daJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=hP0YXEQQ; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a850270e2so1297706366b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:25:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1731515108; x=1732119908; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/M858qlW5NS4hrCv+aGxwOeEcSMA57ZDM8mnHjjY7bM=;
+        b=hP0YXEQQC2alHZPIHxUwUMPypr1vE8AimujO96rOxvPDnhPEcQiMyaEiKq63yfpT7n
+         zpbSzB/J7mPIAVLeQWMwXciCRwufXQm9HdX5qqtRT8n2YmyMHwZuapsV3LnZGKtj3xE/
+         vDJTySZ35AuUqsLOiuy7bFT2zsDnEpm0OU1sk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731515064; x=1732119864;
-        h=in-reply-to:from:content-language:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vyEY1RG3O3QCXq6vNyfXcf5eZ7HPCu/wStHR+zSrI2o=;
-        b=Q+nidqwfL3CHoxSjxGFxH78W+FCm8LQeuFzN0CmFPT0WMg6JjF+Cg6wFy6c1FH0TPh
-         jpCMCS6h/PYuULbx62gZYScRhdGShJb3Pz2H25B0if+EiGqd9jphBrFCsJ6/JDxrURHb
-         fr+7g2SK7lR0eqARFWLhBt4CKr/q3e7Py3uZXugX6c697Pt+hdouGevc3ZM/uQ7EiiL8
-         Kc5joh+VlD0zyfVEV64VNqRs11D8xK+/oaFl02aWo0RAVaSfSA9iGOZTYBOpvRiEZqbS
-         x2Hmy45X6fT6eM3oehcTJ2f7vYYr1k9rjNFdhcppWykOpXz5ecTiXkGjIJJg3GrRqqty
-         Sr1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUDVWN3/WmpOUdYWHKCfSFHMogTKVUyTcQFtUS1c2SBzlVrGUc7tAhSLOEOB1n8ThJq6QLETGF3AcvPB5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh4U0YzdFYhvFNH445UJOVvuMZfRDv6py2BB4sGeA0q0yP96bv
-	qUQjqn+YxaRsICPQOcqYDIyW7JgS16sH3QIfhDIPTcep15s4NVIvF9CkQeiX18iI3D5iHg4xJrs
-	b3X5zzHSJTvVtbYdHWzmiQu/39G8Lgx9LhVqsRfTTtoR8BVSYisTm3rGXTL9LuhglWi1rIQ==
-X-Received: by 2002:a17:907:9413:b0:a99:f77f:b489 with SMTP id a640c23a62f3a-aa1f80fd790mr373954966b.43.1731515063173;
-        Wed, 13 Nov 2024 08:24:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE+09bDE3Oqp0ZcUejHqIUTWt/elqyj1S9mSR9QynyyS5TMAvpcpKO7cjMmnCxN8k3spOa5Gg==
-X-Received: by 2002:a17:907:9413:b0:a99:f77f:b489 with SMTP id a640c23a62f3a-aa1f80fd790mr373952266b.43.1731515062712;
-        Wed, 13 Nov 2024 08:24:22 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0def54asm886648166b.157.2024.11.13.08.24.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 08:24:22 -0800 (PST)
-Content-Type: multipart/mixed; boundary="------------ubLp492OSUr7WOoQYf06NmHV"
-Message-ID: <cd1cedcc-c9b8-4f3c-ac83-4b0c0ba52a82@redhat.com>
-Date: Wed, 13 Nov 2024 17:24:20 +0100
+        d=1e100.net; s=20230601; t=1731515108; x=1732119908;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/M858qlW5NS4hrCv+aGxwOeEcSMA57ZDM8mnHjjY7bM=;
+        b=j4o4KNSDdMfijrqAT+/A6aXuW8TMSzUhvoRR72NgeBWtdP+TOteF8jJ5q3xaZmq/It
+         D5Pl6B49sowSZXmlOEb3ehv1MYmAv1CBehr6ULxR8OZ1CXQhEHia8QnC8x+uRmAZcaPf
+         z+bZ1xU1k4EQxe/QHx5JTXiQXgImBXhpxoMsb8UBX9jOiFXX8oxCQBlad8wJQC+SiAOH
+         kfqr8uDFVT9J8sDa9oarpbd0Fbxxfv3fA4EExKNK9RoeNQC/Z5vsKA0HqwLs8IY20ya6
+         YrvIh0EvsHbJErkXvB8PZvU2jw0KbBncRrLf6D09K169xiLVuocOo87xfks47ja41NQE
+         aFjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUw/RV1hHVHcsMLBePKM+rLCWxNPshQxA206Ccb355K9IC6qicX9QU2v8fE2qpX27OEbGfHkIfsgbK3AHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza7UPI4ZiPY0++/L5zSvgz/b+1U76qEdeNKMtFoSdBGiH/+xZq
+	3oYgl0rQG5eXiICtOs02k93dA6CylVP9Xwxf178u9jh+Ur3zDizAiSrzSQtdS83BQ6Lz4G9D4Og
+	cnUPcj1kEdAvkukRcwT8epIJ+gBUH7X+WMFS0oLgVJJVg30wBFKCv0wnYMKMPR77uLKp/y7r6o8
+	Ef09t745B/x1q7BsFPo5gnFGl9Hw==
+X-Google-Smtp-Source: AGHT+IHaAsaeYf+CcicKi8+yeSIi5vRKMwifnXXjechN4O8b9oL83Zb7pR8yiHDzcnNh1KI8zX6aMZietLLLD0DRe3E=
+X-Received: by 2002:a17:907:94cc:b0:a99:e619:260e with SMTP id
+ a640c23a62f3a-a9eeff3775cmr2185139166b.28.1731515107870; Wed, 13 Nov 2024
+ 08:25:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: platform/x86: p2sb: Allow p2sb_bar() calls during PCI device
- probe
-To: "Daniel Walker (danielwa)" <danielwa@cisco.com>,
- Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- =?UTF-8?B?SWxwbyBK77+9cnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
- Klara Modin <klarasmodin@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danil Rybakov <danilrybakov249@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "xe-linux-external(mailer list)" <xe-linux-external@cisco.com>
-References: <ZzTI+biIUTvFT6NC@goliath>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <ZzTI+biIUTvFT6NC@goliath>
+References: <20241030033514.1728937-1-zack.rusin@broadcom.com>
+ <20241030033514.1728937-3-zack.rusin@broadcom.com> <CABgObfaRP6zKNhrO8_atGDLcHs=uvE0aT8cPKnt_vNHHM+8Nxg@mail.gmail.com>
+ <CABQX2QMR=Nsn23zojFdhemR7tvGUz6_UM8Rgf6WLsxwDqoFtxg@mail.gmail.com>
+ <Zy0__5YB9F5d0eZn@google.com> <CABQX2QNxFDhH1frsGpSQjSs3AWSdTibkxPrjq1QC7FGZC8Go-Q@mail.gmail.com>
+ <e3f943a7-a40a-45cb-b0d9-e3ed58344d8b@redhat.com> <CADH9ctD1uf_yBA3NXNQu7TJa_TPhLRN=0YZ3j2gGhgmaFRdCFg@mail.gmail.com>
+ <c3026876-8061-4ab2-9321-97cc05bad510@redhat.com> <CADH9ctBivnvP1tNcatLKzd8EDz8Oo6X65660j8ccxYzk3aFzCA@mail.gmail.com>
+ <CABgObfZEyCQMiq6CKBOE7pAVzUDkWjqT2cgfbwjW-RseH8VkLw@mail.gmail.com>
+ <CADH9ctA_C1dAOus1K+wOH_SOKTb=-X1sVawt5R=dkH1iGt8QUg@mail.gmail.com> <CABgObfZrTyft-3vqMz5w0ZiAhp-v6c32brgftynZGJO8OafrdA@mail.gmail.com>
+In-Reply-To: <CABgObfZrTyft-3vqMz5w0ZiAhp-v6c32brgftynZGJO8OafrdA@mail.gmail.com>
+From: Doug Covelli <doug.covelli@broadcom.com>
+Date: Wed, 13 Nov 2024 11:24:56 -0500
+Message-ID: <CADH9ctBYp-LMbW4hm3+QwNoXvAc5ryVeB0L1jLY0uDWSe3vbag@mail.gmail.com>
+Subject: Re: [PATCH 2/3] KVM: x86: Add support for VMware guest specific hypercalls
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Zack Rusin <zack.rusin@broadcom.com>, Sean Christopherson <seanjc@google.com>, 
+	kvm <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "the arch/x86 maintainers" <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Joel Stanley <joel@jms.id.au>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, 
+	"Kernel Mailing List, Linux" <linux-kernel@vger.kernel.org>, 
+	linux-kselftest <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a multi-part message in MIME format.
---------------ubLp492OSUr7WOoQYf06NmHV
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+On Wed, Nov 13, 2024 at 2:31=E2=80=AFAM Paolo Bonzini <pbonzini@redhat.com>=
+ wrote:
+>
+>
+>
+> Il mar 12 nov 2024, 21:44 Doug Covelli <doug.covelli@broadcom.com> ha scr=
+itto:
+>>
+>> > Split irqchip should be the best tradeoff. Without it, moves from cr8
+>> > stay in the kernel, but moves to cr8 always go to userspace with a
+>> > KVM_EXIT_SET_TPR exit. You also won't be able to use Intel
+>> > flexpriority (in-processor accelerated TPR) because KVM does not know
+>> > which bits are set in IRR. So it will be *really* every move to cr8
+>> > that goes to userspace.
+>>
+>> Sorry to hijack this thread but is there a technical reason not to allow=
+ CR8
+>> based accesses to the TPR (not MMIO accesses) when the in-kernel local A=
+PIC is
+>> not in use?
+>
+>
+> No worries, you're not hijacking :) The only reason is that it would be m=
+ore code for a seldom used feature and anyway with worse performance. (To b=
+e clear, CR8 based accesses are allowed, but stores cause an exit in order =
+to check the new TPR against IRR. That's because KVM's API does not have an=
+ equivalent of the TPR threshold as you point out below).
 
-Hi,
+I have not really looked at the code but it seems like it could also
+simplify things as CR8 would be handled more uniformly regardless of
+who is virtualizing the local APIC.
 
-On 13-Nov-24 4:42 PM, Daniel Walker (danielwa) wrote:
-> 
-> Hi,
-> 
-> I bisected an issue of a missing pci device to commit 2841631 the commit title
-> in the subject line which was included in v6.1 stable branch.
-> 
-> There was a later fix for a similar missing pci device commit 36c676e2 which
-> appears to be for Goldmont/Apollo Lake. The hardware I'm using is
-> Goldmont/Denverton. This fix did not appear to change the behavior I'm seeing.
-> 
-> The pci device which is disappearing is a custom gpio device.
-> 
-> I tested v6.12-rc5-next to see if any other changes had fixed the issue, but there was
-> no change in behavior since commit 2841631 .
-> 
-> When booting up the device is shown in the pci boot messages but the device
-> doesn't end up making it to lspci once you get to a prompt.
+>> Also I could not find these documented anywhere but with MSFT's APIC our=
+ monitor
+>> relies on extensions for trapping certain events such as INIT/SIPI plus =
+LINT0
+>> and SVR writes:
+>>
+>> UINT64 X64ApicInitSipiExitTrap    : 1; // WHvRunVpExitReasonX64ApicInitS=
+ipiTrap
+>> UINT64 X64ApicWriteLint0ExitTrap  : 1; // WHvRunVpExitReasonX64ApicWrite=
+Trap
+>> UINT64 X64ApicWriteLint1ExitTrap  : 1; // WHvRunVpExitReasonX64ApicWrite=
+Trap
+>> UINT64 X64ApicWriteSvrExitTrap    : 1; // WHvRunVpExitReasonX64ApicWrite=
+Trap
+>
+>
+> There's no need for this in KVM's in-kernel APIC model. INIT and SIPI are=
+ handled in the hypervisor and you can get the current state of APs via KVM=
+_GET_MPSTATE. LINT0 and LINT1 are injected with KVM_INTERRUPT and KVM_NMI r=
+espectively, and they obey IF/PPR and NMI blocking respectively, plus the i=
+nterrupt shadow; so there's no need for userspace to know when LINT0/LINT1 =
+themselves change. The spurious interrupt vector register is also handled c=
+ompletely in kernel.
 
-Please give the attached patch a try, this will hopefully fix things.
+I realize that KVM can handle LINT0/SVR updates themselves but our
+interrupt subsystem relies on knowing the current values of these
+registers even when not virtualizing the local APIC.  I suppose we
+could use KVM_GET_LAPIC to sync things up on demand but that seems
+like it might nor be great from a performance point of view.
 
-Once I have confirmation that this fixes things I'll post it to the list.
+>> I did not see any similar functionality for KVM.  Does anything like tha=
+t exist?
+>> In any case we would be happy to add support for handling CR8 accesses w=
+/o
+>> exiting w/o the in-kernel APIC along with some sort of a way to configur=
+e the
+>> TPR threshold if folks are not opposed to that.
+>
+>
+> As far I know everybody who's using KVM (whether proprietary or open sour=
+ce) has had no need for that, so I don't think it's a good idea to make the=
+ API more complex. Performance of Windows guests is going to be bad anyway =
+with userspace APIC.
 
-Note this will not backport to the 6.1 stable branch cleanly due to
-changes in the x86_cpu_id macros in mainline. Backporting it should
-be trivial. Please send a backport to stable@vger.kernel.org yourself
-once this has been merged upstream.
+From what I have seen the exit cost with KVM is significantly lower
+than with WHP/Hyper-V.  I don't think performance of Windows guests
+with userspace APIC emulation would be bad if CR8 exits could be
+avoided (Linux guests perf isn't bad from what I have observed and the
+main difference is the astronomical number of CR8 exits).  It seems
+like it would be pretty decent although I agree if you want the
+absolute best performance then you would want to use the in kernel
+APIC to speed up handling of ICR/EOI writes but those are relatively
+infrequent compared to CR8 accesses .
 
-If you backport this, please also backport 36c676e2 first.
+Anyway I just saw Sean's response while writing this and it seems he
+is not in favor of avoiding CR8 exits w/o the in kernel APIC either so
+I suppose we will have to look into making use of the in kernel APIC.
 
-Regards,
+Doug
 
-Hans
+> Paolo
+>
+>> Doug
+>>
+>> > > For now I think it makes sense to handle BDOOR_CMD_GET_VCPU_INFO at =
+userlevel
+>> > > like we do on Windows and macOS.
+>> > >
+>> > > BDOOR_CMD_GETTIME/BDOOR_CMD_GETTIMEFULL are similar with the former =
+being
+>> > > deprecated in favor of the latter.  Both do essentially the same thi=
+ng which is
+>> > > to return the host OS's time - on Linux this is obtained via gettime=
+ofday.  I
+>> > > believe this is mainly used by tools to fix up the VM's time when re=
+suming from
+>> > > suspend.  I think it is fine to continue handling these at userlevel=
+.
+>> >
+>> > As long as the TSC is not involved it should be okay.
+>> >
+>> > Paolo
+>> >
+>> > > > >> Anyway, one question apart from this: is the API the same for t=
+he I/O
+>> > > > >> port and hypercall backdoors?
+>> > > > >
+>> > > > > Yeah the calls and arguments are the same.  The hypercall based
+>> > > > > interface is an attempt to modernize the backdoor since as you p=
+ointed
+>> > > > > out the I/O based interface is kind of hacky as it bypasses the =
+normal
+>> > > > > checks for an I/O port access at CPL3.  It would be nice to get =
+rid of
+>> > > > > it but unfortunately I don't think that will happen in the fores=
+eeable
+>> > > > > future as there are a lot of existing VMs out there with older S=
+W that
+>> > > > > still uses this interface.
+>> > > >
+>> > > > Yeah, but I think it still justifies that the KVM_ENABLE_CAP API c=
+an
+>> > > > enable the hypercall but not the I/O port.
+>> > > >
+>> > > > Paolo
+>> >
+>>
+>> --
+>> This electronic communication and the information and any files transmit=
+ted
+>> with it, or attached to it, are confidential and are intended solely for
+>> the use of the individual or entity to whom it is addressed and may cont=
+ain
+>> information that is confidential, legally privileged, protected by priva=
+cy
+>> laws, or otherwise restricted from disclosure to anyone else. If you are
+>> not the intended recipient or the person responsible for delivering the
+>> e-mail to the intended recipient, you are hereby notified that any use,
+>> copying, distributing, dissemination, forwarding, printing, or copying o=
+f
+>> this e-mail is strictly prohibited. If you received this e-mail in error=
+,
+>> please return the e-mail to the sender, delete it from your computer, an=
+d
+>> destroy any printed copy of it.
+>>
 
-
---------------ubLp492OSUr7WOoQYf06NmHV
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-platform-x86-p2sb-Cache-correct-PCI-bar-for-P2SB-on-.patch"
-Content-Disposition: attachment;
- filename*0="0001-platform-x86-p2sb-Cache-correct-PCI-bar-for-P2SB-on-.pa";
- filename*1="tch"
-Content-Transfer-Encoding: base64
-
-RnJvbSBmYTM1MWM3NjE0ZGQ5NzcxM2IyNjM0MmM5NmM2MWZjMjg2OTlkOGQ0IE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBIYW5zIGRlIEdvZWRlIDxoZGVnb2VkZUByZWRoYXQu
-Y29tPgpEYXRlOiBXZWQsIDEzIE5vdiAyMDI0IDE3OjE0OjEwICswMTAwClN1YmplY3Q6IFtQ
-QVRDSF0gcGxhdGZvcm0veDg2OiBwMnNiOiBDYWNoZSBjb3JyZWN0IFBDSSBiYXIgZm9yIFAy
-U0Igb24KIERlbnZlcnRvbiBhbmQgR2VtaW5pIExha2UKCkRlbnZlcnRvbiBhbmQgR2VtaW5p
-IExhayBhcmUgR29sZG1vbnQgZGVyaXZlZCBkZXNpZ25zIGFuZCBhcyBzdWNoIGhhdmUKdGhl
-IFAyU0IgYXQgZGV2aWNlLmZ1bmN0aW9uIDEzLjAsIHJhdGhlciB0aGVuIGF0IHRoZSBkZWZh
-dWx0IDMxLjEuCgpBdCBhIG1hcHBpbmcgdG8gUDJTQl9ERVZGTl9HT0xETU9OVCB0byBwMnNi
-X2NwdV9pZHNbXSBmb3IgdGhlc2UgMiBHb2xkbW9udAp2YXJpYW50cyBzbyB0aGF0IHRoZSBj
-b3JyZWN0IFBDSSBiYXIgZ2V0cyBjYWNoZWQuCgpUaGlzIGZpeGVzIFAyU0IgdW5oaWRpbmcg
-bm90IHdvcmtpbmcgb24gdGhlc2UgZGV2aWNlcyB3aGljaCBmaXhlcwpHUElPIGFuZCBTUEkg
-KEdlbWluaSBMYWtlIG9ubHkpIHN1cHBvcnQgbm90IHdvcmtpbmcgb24gZGV2aWNlcyB3aGVy
-ZQp0aGVzZSB3ZXJlIGhpZGRlbiBieSB0aGUgQklPUy4KCkZpeGVzOiAyODQxNjMxYTAzNjUg
-KCJwbGF0Zm9ybS94ODY6IHAyc2I6IEFsbG93IHAyc2JfYmFyKCkgY2FsbHMgZHVyaW5nIFBD
-SSBkZXZpY2UgcHJvYmUiKQpSZXBvcnRlZC1ieTogRGFuaWVsIFdhbGtlciAoZGFuaWVsd2Ep
-IDxkYW5pZWx3YUBjaXNjby5jb20+CkNsb3NlczogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcv
-bGttbC9aelRJK2JpSVVUdkZUNk5DQGdvbGlhdGgvClNpZ25lZC1vZmYtYnk6IEhhbnMgZGUg
-R29lZGUgPGhkZWdvZWRlQHJlZGhhdC5jb20+Ci0tLQogZHJpdmVycy9wbGF0Zm9ybS94ODYv
-cDJzYi5jIHwgMiArKwogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQoKZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvcGxhdGZvcm0veDg2L3Ayc2IuYyBiL2RyaXZlcnMvcGxhdGZvcm0v
-eDg2L3Ayc2IuYwppbmRleCAzMWYzODMwOWIzODkuLmJlYjk0YzQ5MmVlYyAxMDA2NDQKLS0t
-IGEvZHJpdmVycy9wbGF0Zm9ybS94ODYvcDJzYi5jCisrKyBiL2RyaXZlcnMvcGxhdGZvcm0v
-eDg2L3Ayc2IuYwpAQCAtMjUsNiArMjUsOCBAQAogCiBzdGF0aWMgY29uc3Qgc3RydWN0IHg4
-Nl9jcHVfaWQgcDJzYl9jcHVfaWRzW10gPSB7CiAJWDg2X01BVENIX1ZGTShJTlRFTF9BVE9N
-X0dPTERNT05ULCBQMlNCX0RFVkZOX0dPTERNT05UKSwKKwlYODZfTUFUQ0hfVkZNKElOVEVM
-X0FUT01fR09MRE1PTlRfRCwgUDJTQl9ERVZGTl9HT0xETU9OVCksCisJWDg2X01BVENIX1ZG
-TShJTlRFTF9BVE9NX0dPTERNT05UX1BMVVMsIFAyU0JfREVWRk5fR09MRE1PTlQpLAogCXt9
-CiB9OwogCi0tIAoyLjQ3LjAKCg==
-
---------------ubLp492OSUr7WOoQYf06NmHV--
-
+--=20
+This electronic communication and the information and any files transmitted=
+=20
+with it, or attached to it, are confidential and are intended solely for=20
+the use of the individual or entity to whom it is addressed and may contain=
+=20
+information that is confidential, legally privileged, protected by privacy=
+=20
+laws, or otherwise restricted from disclosure to anyone else. If you are=20
+not the intended recipient or the person responsible for delivering the=20
+e-mail to the intended recipient, you are hereby notified that any use,=20
+copying, distributing, dissemination, forwarding, printing, or copying of=
+=20
+this e-mail is strictly prohibited. If you received this e-mail in error,=
+=20
+please return the e-mail to the sender, delete it from your computer, and=
+=20
+destroy any printed copy of it.
 
