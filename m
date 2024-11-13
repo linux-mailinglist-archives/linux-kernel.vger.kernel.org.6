@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-407884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C53859C7865
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:12:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 565D99C78BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:23:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C03D5B3EEF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:26:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 121A9B37572
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D991FBF63;
-	Wed, 13 Nov 2024 15:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A52E20515A;
+	Wed, 13 Nov 2024 15:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uyc45The"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hrQRAaPf"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9762159583;
-	Wed, 13 Nov 2024 15:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCE7204010;
+	Wed, 13 Nov 2024 15:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731511506; cv=none; b=SG8DHC9BhioxTxFNoEOwYZyvnpt/6PzCom7N5stgxZ4xnCu4F76EDKKt1BCpHnYmTVXzVaS9r8/EZcz5j3P81jBEvTp0u7Di//HItIqBwD40tUylD8Btwi/afDi2jZt+bh+xC3mLUGRJtkZpFUwIWzR6qOW8avC2E1CEjPzMvhk=
+	t=1731511534; cv=none; b=iGcSPaOAPK4eArHxkGB9kSsbz4dXtoQm8jZxwXKWU1Df4sUCkH91uSBWkzh8+cm9530XfoVvBk7An90borriEssFruyRmHYJ5y4Ewkj5WKVOnYUG4uMFMeepirLtEl/hObWIJnXvpUoJ4Z0NMHbZvTBmrIMXAE2V5oM9qx64Y+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731511506; c=relaxed/simple;
-	bh=4IC24vmZl6WDvgMu457OvjBdl317Y6deaK2gkmSPzBk=;
+	s=arc-20240116; t=1731511534; c=relaxed/simple;
+	bh=GzdaUQNQXC5qpa9+den8MiBXV9SF+151fxr4rWPgzJE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lxWUfRWdpqtDPILmrfGgglSN638gGZQTYWgmx3T17Yx3dRl2P3RVCUAMFwc6rMguoLdxtnk12e0YUtL5C20gLEHt704X24J2f9z61CXMdey1J2C//twTMNVoPnEbhwIf01zwENkPuxyOg8J5CA6kvSxZKJIfPFcaQQFzKhvosIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uyc45The; arc=none smtp.client-ip=192.198.163.10
+	 MIME-Version:Content-Type; b=bSNSeLFr1LTha32g3kDmgHwRmUWsa6iGrafRKLRL5V2OYT3gP1xYdWTE93Scjbqu+ewNXYTQOCs23TZadixdQ3EOLCFZzGNX9vHh3JJLTE89+LKnY5fPA8BzFULLcZP7eRMzLYfvqARQ+4xacDQc/e2GchyVJxEgBacjImBkUcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hrQRAaPf; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731511505; x=1763047505;
+  t=1731511532; x=1763047532;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=4IC24vmZl6WDvgMu457OvjBdl317Y6deaK2gkmSPzBk=;
-  b=Uyc45Theof+x41Y5Y1MoVxUnSndbivaQ1/jovdN+Gu3WeDTfKgXle3dn
-   cM4C50gwVcmybYZyB+VumPS2ecJWuhOYj0JZLtowk0SrOzZIdrS4z/FN2
-   WYS3AovgOYga0jWL5BRR+7msFlCICz0r0MpSWP+hbFRh5TLk7tfKIhJKf
-   ecLKbayLha2g2vsaY1vIjzXcIqIQlMHOkTJ9jf+2gxh6JLwZmrCqOcRxY
-   J0AuvRuECQUTWl9kJgBex7vZrP5/HWNDlKWTMmGuRpqLYgBYUJMaF0Bdo
-   7P0i0ikBKR+QVHHsBNsABC8+Bp4+8WBf3qsoBAKeOGn1pujdMwAhyZrur
+  bh=GzdaUQNQXC5qpa9+den8MiBXV9SF+151fxr4rWPgzJE=;
+  b=hrQRAaPfuBDKgI8wwGkYXmktLlWvOeL/JeUqzpx8EA9irl0VJd+CObwo
+   jhxAPIUQ0nOlHbwGDzpHq9LDQQKcMv1NVrCHVvJXLQM79cJZ+oHKd/woo
+   sWSDtvuxGroEJZFuTRYrImnTlyxmYY0ylSSjFltSyNOMr6TfGK7rE5AVn
+   vgGgeQSKtDpfgMc15Ce7lg7qjdY+7IGVQZ+CMChKqBYxWn3EcNq+ZwTCx
+   +b8oyIU0cVbEJ04rdYm8UWTv8fvFWd9E2SIdfw1aUE/fdu0R2a+O5tJhY
+   3yHEIACzscLWSteup6qAqdl7VnqLm3HgPz+5U4VckmHtybi92oZB043nd
    A==;
-X-CSE-ConnectionGUID: 3z4KuQhZRrCNOThV9wX8Kg==
-X-CSE-MsgGUID: 7RF4IRcSTKC5JYJnP/uY+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="42799232"
+X-CSE-ConnectionGUID: cKvUMIdfQyy//B4NrWSWhA==
+X-CSE-MsgGUID: VI9getdyRpOQUQ/Srr9WWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="42799314"
 X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
-   d="scan'208";a="42799232"
+   d="scan'208";a="42799314"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 07:25:04 -0800
-X-CSE-ConnectionGUID: zwNAkJ6QQ46M3oyxm5WcLA==
-X-CSE-MsgGUID: DRwNa1nHTsuGjxmqrXvlMQ==
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 07:25:29 -0800
+X-CSE-ConnectionGUID: 6qAqH9K5S6GzYcipcNO4dw==
+X-CSE-MsgGUID: c7rT8FCYTHK+VnGbaMVBUQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
-   d="scan'208";a="118726824"
+   d="scan'208";a="118726920"
 Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by orviesa002.jf.intel.com with ESMTP; 13 Nov 2024 07:25:01 -0800
+  by orviesa002.jf.intel.com with ESMTP; 13 Nov 2024 07:25:25 -0800
 From: Alexander Lobakin <aleksander.lobakin@intel.com>
 To: "David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
@@ -75,9 +75,9 @@ Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
 	bpf@vger.kernel.org,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v5 01/19] jump_label: export static_key_slow_{inc,dec}_cpuslocked()
-Date: Wed, 13 Nov 2024 16:24:24 +0100
-Message-ID: <20241113152442.4000468-2-aleksander.lobakin@intel.com>
+Subject: [PATCH net-next v5 07/19] xdp: register system page pool as an XDP memory model
+Date: Wed, 13 Nov 2024 16:24:30 +0100
+Message-ID: <20241113152442.4000468-8-aleksander.lobakin@intel.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241113152442.4000468-1-aleksander.lobakin@intel.com>
 References: <20241113152442.4000468-1-aleksander.lobakin@intel.com>
@@ -87,40 +87,77 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Sometimes, there's a need to modify a lot of static keys or modify the
-same key multiple times in a loop. In that case, it seems more optimal
-to lock cpu_read_lock once and then call _cpuslocked() variants.
-The enable/disable functions are already exported, the refcounted
-counterparts however are not. Fix that to allow modules to save some
-cycles.
+From: Toke Høiland-Jørgensen <toke@redhat.com>
 
+To make the system page pool usable as a source for allocating XDP
+frames, we need to register it with xdp_reg_mem_model(), so that page
+return works correctly. This is done in preparation for using the system
+page_pool to convert XDP_PASS XSk frames to skbs; for the same reason,
+make the per-cpu variable non-static so we can access it from other
+source files as well (but w/o exporting).
+
+Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>
 Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 ---
- kernel/jump_label.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/netdevice.h |  1 +
+ net/core/dev.c            | 10 +++++++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index 93a822d3c468..1034c0348995 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -182,6 +182,7 @@ bool static_key_slow_inc_cpuslocked(struct static_key *key)
- 	}
- 	return true;
- }
-+EXPORT_SYMBOL_GPL(static_key_slow_inc_cpuslocked);
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 42715e1b9220..87fa2b6b565b 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -3314,6 +3314,7 @@ struct softnet_data {
+ };
  
- bool static_key_slow_inc(struct static_key *key)
- {
-@@ -342,6 +343,7 @@ void static_key_slow_dec_cpuslocked(struct static_key *key)
- 	STATIC_KEY_CHECK_USE(key);
- 	__static_key_slow_dec_cpuslocked(key);
- }
-+EXPORT_SYMBOL_GPL(static_key_slow_dec_cpuslocked);
+ DECLARE_PER_CPU_ALIGNED(struct softnet_data, softnet_data);
++DECLARE_PER_CPU(struct page_pool *, system_page_pool);
  
- void __static_key_slow_dec_deferred(struct static_key *key,
- 				    struct delayed_work *work,
+ #ifndef CONFIG_PREEMPT_RT
+ static inline int dev_recursion_level(void)
+diff --git a/net/core/dev.c b/net/core/dev.c
+index bbb456b86e8b..b93dba1e98ee 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -460,7 +460,7 @@ EXPORT_PER_CPU_SYMBOL(softnet_data);
+  * PP consumers must pay attention to run APIs in the appropriate context
+  * (e.g. NAPI context).
+  */
+-static DEFINE_PER_CPU(struct page_pool *, system_page_pool);
++DEFINE_PER_CPU(struct page_pool *, system_page_pool);
+ 
+ #ifdef CONFIG_LOCKDEP
+ /*
+@@ -12146,11 +12146,18 @@ static int net_page_pool_create(int cpuid)
+ 		.nid = cpu_to_mem(cpuid),
+ 	};
+ 	struct page_pool *pp_ptr;
++	int err;
+ 
+ 	pp_ptr = page_pool_create_percpu(&page_pool_params, cpuid);
+ 	if (IS_ERR(pp_ptr))
+ 		return -ENOMEM;
+ 
++	err = xdp_reg_page_pool(pp_ptr);
++	if (err) {
++		page_pool_destroy(pp_ptr);
++		return err;
++	}
++
+ 	per_cpu(system_page_pool, cpuid) = pp_ptr;
+ #endif
+ 	return 0;
+@@ -12284,6 +12291,7 @@ static int __init net_dev_init(void)
+ 			if (!pp_ptr)
+ 				continue;
+ 
++			xdp_unreg_page_pool(pp_ptr);
+ 			page_pool_destroy(pp_ptr);
+ 			per_cpu(system_page_pool, i) = NULL;
+ 		}
 -- 
 2.47.0
 
