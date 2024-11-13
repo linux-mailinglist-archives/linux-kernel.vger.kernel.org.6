@@ -1,98 +1,161 @@
-Return-Path: <linux-kernel+bounces-408216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974659C7C23
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:29:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9639C7C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:30:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50BF52851B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:29:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8103F281100
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C57205AA7;
-	Wed, 13 Nov 2024 19:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D92205AD4;
+	Wed, 13 Nov 2024 19:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+qj/xc0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NNREe3i1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13939204095;
-	Wed, 13 Nov 2024 19:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590C71FF605;
+	Wed, 13 Nov 2024 19:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731526161; cv=none; b=Z8XOeoc+4QU5LL/coE+b/ublJcHaOCL3EeXzdJSRGEJ0XjmQVlm6gWtJRKR4TWxRkbcmaGdfNlzjmCjoWqCU3gxToqrv6KcP3Ky6udGe++P6/WaiCUoOoj3MUTHj5J3mIE26XmtdmQOJw5E2FWOtn+KPLmdzeessxZmEIPbLEWE=
+	t=1731526209; cv=none; b=BWR1P5l2N+Q44/4tmp9+b2AWXoQ/5AuirFvaZnDr1VnkDLcBlSqvlyK1wCpaZ5VkQ2CNc7yXrB2ThOI+6Z/6EeJZFSNaxBB1H4iJxN/IVNxoGUujrs621dImCB8ZB+aqABssDOF9Z88Pza7mKyJPe/ovEtxj7LJfnvPI5koldO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731526161; c=relaxed/simple;
-	bh=9I/sPxC4ETBYsax4tZn4x1+AhNAjIBeUlAR5o9CMu3I=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From; b=SKq8LjptWcK79TWHuU+qHtXE1rwu6m3+35qQLXHwcbywUyqYAhwQPi7JcU3730v+nNepVsN6eCULaGstimFSvSDduI3HD3jgkD6LDt/MzCGgu6LRcTGLLpINAPdvcM26Jm1AtP6sZm54hv+RqhclT+Doopaat5mpTLNfGQCDSh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+qj/xc0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21F8AC4CEC3;
-	Wed, 13 Nov 2024 19:29:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731526160;
-	bh=9I/sPxC4ETBYsax4tZn4x1+AhNAjIBeUlAR5o9CMu3I=;
-	h=Date:To:Cc:Subject:From:From;
-	b=N+qj/xc0sDj/7GxhVnVglZ23Cn3lIyNHMEx9CYswgL8EKsADdftx+MmnsXD27YR5x
-	 E+jQCyOpcUkXmory+QNz3ek8zWnNpAW4WRwFtIVL/JE31ukpw2o/COLcqMEI5f73fI
-	 qbgWBU+0G5gTL5TEKw+uNdOch2gcw3Fv9gny3SykEip77EMFuvDOKKNfBBRahI/loD
-	 MCwNZbKb/3Xnj/nTGkhuu40YE+bzt7oOilqNnMg9UpADUdzkykykap4uSeMWa3ZADv
-	 0yQEZZ5BaJWR2xuB29y7d9brRPjMLCaFb3H3DujxWDcRGYGpGqCji7GImU1eVOkr6y
-	 gD/pzMgmWRRTA==
+	s=arc-20240116; t=1731526209; c=relaxed/simple;
+	bh=REzJ/8eBcWZbPXa8/oIiWueasRT0yrE++fHYGSWs8iU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=su+yCfBFqvSDi/bOBbi1EgDluQncXQ/WbqQzLSBH1Dnad3iPENX/FOrZqTcXDtvafsX90KNI4S1kqNthbEm90aTWusqmAipjH+rH+W5xg5HdPHqDtOteKmXpoYJ8krTgg8ImPZ5kAju3lC7T5Z4xQSkuF8/4aw05+KF1rmHd4W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NNREe3i1; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731526207; x=1763062207;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=REzJ/8eBcWZbPXa8/oIiWueasRT0yrE++fHYGSWs8iU=;
+  b=NNREe3i1qW5+xX1kgpjzQWizwmHccxzRq+ImAQSKT+CJHJzdhcGLzAMw
+   89KjiMZaxCTnHV3/o6t4mXO5nlsyGUjNBvMXAfZWfo3zgpKdSfj0pMUqA
+   21gjZDaqLhvcRfD1lSropFo29jCLO71VEtbz42c1EdwslOn1fmna9abBC
+   wJheFb5cjw3dpk7yHoRgPp/ENpya93VkHsGjnOiHyLAASgNYwWfJk98oc
+   /C589ZAL0Xmm2/5CdYEdgFi3hxSFO+4UR9QYlNeNmP9Fu0vN+jWThbwq0
+   ZI1+Qub0Com6ay0HSZjR88YpffIbnEUhBJ8pFccRppuiNeUbOvyI8vQfK
+   Q==;
+X-CSE-ConnectionGUID: gzBPEwL3TkyFNQHdIiQ+0Q==
+X-CSE-MsgGUID: v3X/EGlVSlGHKF6FcddQdA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="35366612"
+X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
+   d="scan'208";a="35366612"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 11:30:04 -0800
+X-CSE-ConnectionGUID: yywvZqwJRGeoFVwR09mL3A==
+X-CSE-MsgGUID: HVkGbFr7QtCm89g/fHVLwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
+   d="scan'208";a="92442738"
+Received: from gargmani-mobl1.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.220.223])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 11:30:04 -0800
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Amir Goldstein <amir73il@gmail.com>, brauner@kernel.org, miklos@szeredi.hu
+Cc: hu1.chen@intel.com, malini.bhandaru@intel.com, tim.c.chen@intel.com,
+ mikko.ylinen@intel.com, linux-unionfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] ovl: Optimize override/revert creds
+In-Reply-To: <CAOQ4uxgHwmAa4K3ca7i1G2gFQ1WBge855R19hgEk7BNy+EBqfg@mail.gmail.com>
+References: <20241107005720.901335-1-vinicius.gomes@intel.com>
+ <20241107005720.901335-5-vinicius.gomes@intel.com>
+ <CAOQ4uxgHwmAa4K3ca7i1G2gFQ1WBge855R19hgEk7BNy+EBqfg@mail.gmail.com>
+Date: Wed, 13 Nov 2024 11:30:03 -0800
+Message-ID: <87ldxnrkxw.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 13 Nov 2024 21:29:16 +0200
-Message-Id: <D5LASMVLQDYH.2EDC5DH6YIDTG@kernel.org>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- "David Howells" <dhowells@redhat.com>, <keyrings@vger.kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- "Christoph Anton Mitterer" <calestyo@scientia.org>
-Subject: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-6.12-rc8
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.18.2
 
+Amir Goldstein <amir73il@gmail.com> writes:
 
-The following changes since commit 14b6320953a3f856a3f93bf9a0e423395baa593d=
-:
+> On Thu, Nov 7, 2024 at 1:57=E2=80=AFAM Vinicius Costa Gomes
+> <vinicius.gomes@intel.com> wrote:
 
-  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm (2024-=
-11-12 13:35:13 -0800)
+[...]
 
-are available in the Git repository at:
+>
+> Vinicius,
+>
+> While testing fanotify with LTP tests (some are using overlayfs),
+> kmemleak consistently reports the problems below.
+>
+> Can you see the bug, because I don't see it.
+> Maybe it is a false positive...
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags=
-/tpmdd-next-6.12-rc8
+Hm, if the leak wasn't there before and we didn't touch anything related to
+prepare_creds(), I think that points to the leak being real.
 
-for you to fetch changes up to 423893fcbe7e9adc875bce4e55b9b25fc1424977:
+But I see your point, still not seeing it.
 
-  tpm: Disable TPM on tpm2_create_primary() failure (2024-11-13 21:10:45 +0=
-200)
+This code should be equivalent to the code we have now (just boot
+tested):
 
-----------------------------------------------------------------
-Hi,
-
-Two bug fixes for TPM bus encryption (the remaining reported issues in
-the feature).
-
-BR, Jarkko
-
-----------------------------------------------------------------
-Jarkko Sakkinen (2):
-      tpm: Opt-in in disable PCR integrity protection
-      tpm: Disable TPM on tpm2_create_primary() failure
-
- Documentation/admin-guide/kernel-parameters.txt |  9 ++++
- drivers/char/tpm/tpm-buf.c                      | 20 +++++++++
- drivers/char/tpm/tpm2-cmd.c                     | 30 +++++++++----
- drivers/char/tpm/tpm2-sessions.c                | 58 ++++++++++++++-------=
 ----
- include/linux/tpm.h                             |  3 ++
- 5 files changed, 87 insertions(+), 33 deletions(-)
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 136a2c7fb9e5..7ebc2fd3097a 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -576,8 +576,7 @@ static int ovl_setup_cred_for_create(struct dentry *den=
+try, struct inode *inode,
+         * We must be called with creator creds already, otherwise we risk
+         * leaking creds.
+         */
+-       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dentry->d=
+_sb));
+-       put_cred(override_cred);
++       WARN_ON_ONCE(override_creds_light(override_cred) !=3D ovl_creds(den=
+try->d_sb));
+
+        return 0;
+ }
+----
+
+Does it change anything? (I wouldn't think so, just to try something)
+
+>
+> Christian, Miklos,
+>
+> Can you see a problem?
+>
+> Thanks,
+> Amir.
+>
+>
+> unreferenced object 0xffff888008ad8240 (size 192):
+>   comm "fanotify06", pid 1803, jiffies 4294890084
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace (crc ee6a93ea):
+>     [<00000000ab4340a4>] __create_object+0x22/0x83
+>     [<0000000053dcaf3b>] kmem_cache_alloc_noprof+0x156/0x1e6
+>     [<00000000b4a08c1d>] prepare_creds+0x1d/0xf9
+>     [<00000000c55dfb6c>] ovl_setup_cred_for_create+0x27/0x93
+>     [<00000000f82af4ee>] ovl_create_or_link+0x73/0x1bd
+>     [<0000000040a439db>] ovl_create_object+0xda/0x11d
+>     [<00000000fbbadf17>] lookup_open.isra.0+0x3a0/0x3ff
+>     [<0000000007a2faf0>] open_last_lookups+0x160/0x223
+>     [<00000000e7d8243a>] path_openat+0x136/0x1b5
+>     [<0000000004e51585>] do_filp_open+0x57/0xb8
+>     [<0000000053871b92>] do_sys_openat2+0x6f/0xc0
+>     [<000000004d76b8b7>] do_sys_open+0x3f/0x60
+>     [<000000009b0be238>] do_syscall_64+0x96/0xf8
+>     [<000000006ff466ad>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+
+Cheers,
+--=20
+Vinicius
 
