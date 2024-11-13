@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-408074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9649C7A1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:43:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 167D59C7A25
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:44:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844F3284C19
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:43:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2F0B1F255C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE0E201253;
-	Wed, 13 Nov 2024 17:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF8F201262;
+	Wed, 13 Nov 2024 17:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="JbcVNMaz"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2NzEQ1SL"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961D21F80C8
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6751FF7BD
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731519802; cv=none; b=PoLHSp8xYdTyHZHQ9UqePiwp07T/oY62nnjzodEx4TqPWGwrxRVhgthmqKQFXe++rlj/6rw5BQ+fMBA2hC95dj4iw0xqLpN3P8YhJ656+gnTPFhu1d0nLnJDokuN9ND5GwYurM29ZBZwnNnYAv43tzV6Cv9xYrl5HIxxl0DaPm8=
+	t=1731519878; cv=none; b=qJI8Mb8GyR0fdMvCAgRksCc1PqAIbazk7HOwlgLo0Piw6h2gEse2PMRwfoqOalLvV1tWJ7LcaNu/rvcX1qGVYkrsftg0qVMPhaNB4MK532lGmXL33GRGOG+RQAaN+kcSQL9//CkwE8MVWBReBuazW9l+Xs9ns36qmRd3JmvCsMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731519802; c=relaxed/simple;
-	bh=OALoazKclIO9ccHWj0TEyY7sNsR9XGlZoklxT9m5mjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GCMCFZnapqq7jsMBjjO04ziOpcuGKzdN2glyz/s44F51O7Cs7MZEzOYKsbqNl1md1aaIGO/ksgn/goX8M6E5PiXoEEYXUQh+NTIJKBK4Epe2dRhxsgbIkxEmmA2vvcpZywUVJ1GRVcO/snEtn421Z7OfnALrkV676mNO2okhhj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=JbcVNMaz; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4ADHghJK3892350
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 13 Nov 2024 09:42:43 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4ADHghJK3892350
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1731519764;
-	bh=rLCPBjoAte4lqvVkpLpAfnyJwAxmj2XjMD8qBOAnwbk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JbcVNMaz1eC8sjDUA582oArdVWGwob4mEbhSHIbuTXLbfKtnY3lPK/hw6gw/+9Uy4
-	 ZjWnR/J/SdqURyYIv9YeBVSL76avppEGmtHQ/fGMNLo/V4+VudxxM+JhDK7Axfa3g4
-	 Q18aydmMJAtC2D0Yk5+hjjy3gqHv2H9Nvh2T9PFwXDOsB41xN0OPjkcizdhIYdYykp
-	 xnGX++dIktTMjx35AeskjZLkbnTssN2vZpQA0jVHbvUhhDNnEi9rc1WW3+6+HusPWn
-	 Pv+f3uVTJycgtCfdzBxdiDIIeFeDqLqbh++AcYemL2VLCpVy0jkJ3b7isJESnTTHpT
-	 wi4LvTMUUCknA==
-Message-ID: <8e96372e-9fe8-4684-9873-9e7cafcae6a2@zytor.com>
-Date: Wed, 13 Nov 2024 09:42:42 -0800
+	s=arc-20240116; t=1731519878; c=relaxed/simple;
+	bh=TcvEUkeKFVgGLTt37+MUAGAHziBUQjifnkJdXdV9wRI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cYHvljiTExMIbNktP+uzC8RpERs4KluVr2fa1jutu/VEihtsW83C83NKXTYierQV9zeHcQKFck+6S9SaGVd41NdmuOhSGi9jWLCNADw8TDxYm5q64UaqLYg8pc8la5I+4Ce3Y9ifVgYMs+I+uA14NnXxWv9pkn1cGVxmjmIYcP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2NzEQ1SL; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539e66ba398so10627e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:44:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731519875; x=1732124675; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Di+iKJ5akzTFP1IjKCqjyy6r9Jqh1xsxmJVtI0c5XMw=;
+        b=2NzEQ1SLUDr16WIa7I5O1+BRSVbZidtehWFMcTahBxQf/FeuOKzO4HoWE4ylhzdqvW
+         YxpHiS89GXeVubNcWbBHRibxjf5rlSxG5cR1hl6PuBJw9rdtRbfCV7T8mIBBBfV3b11T
+         iFjGBudQh1vMf59kI70/LzO3PFGvjSNYYnpdGiHeqXYK58S0FctI2ElBHDAgDdUUw/8l
+         8AL0Ow27S4pS1Kw/tFsNYMokBD8rkJf0e/rwf8tb2hDYTYpXdk3FWakeiwkeHDibi0bb
+         mQDorCtGBjMdOf4DbeSOa624IIK6VO7BlQzkVvAvootbhEvEULlkWvASE6lQDdSkXpOm
+         jYUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731519875; x=1732124675;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Di+iKJ5akzTFP1IjKCqjyy6r9Jqh1xsxmJVtI0c5XMw=;
+        b=vOuxIYmNmPcwFgZDFpAyVQLsPmKhE7nP/zLvvcg1wfKPRSJ2z9FlTVod+MhdOCTdNj
+         V9XI1quYVAIRMdKSyM4LVMbzJ0lBz2NGyGZfpffnfREPazocL2F9WnQsAHaDsMbGaGgj
+         0yENz+CespUoEQX3EdjbzmB2fO5xZGcDfpcmOvDPV9Xd1wcXbpkXV7s+rSH1tIQYlWvQ
+         VdRqXMbqu8UyVe38ULqsyJ9jSyXGwJ5DqogRchtEVSR+7F3NQ8uL1HN4mQvySiREvpZr
+         3hMwXzdfJXgXfQqS3pftYGKCp5q03Mrekd8tGGSZeDIYTRaoaYgGbi6V31UY84ztlQIs
+         J0xw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIKAoOkyTpKFQbMlS7gN7SZY+7cTkuywjOKFm3ot9Ghmfpk2L7JXO5QiAS701oa8O6HWIDRvd6ebiS/lg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0LPIe8puEGEXgTjCeCPZUV4IoAEU+Y9pYmXbIbWnxcId2470+
+	rzN2tVQS8P/De6M7qr0cKvMURGx9xEb3zdLBGKo3q0J1sJU+YFmnO0vHGiXqc3KP7T+IGtgPktW
+	no02Z6gkIZ7S7gsJNMfe7M0SBw86g8PO1J10j
+X-Gm-Gg: ASbGnctOSsqlj8E75pNoHNoT4s89m2+ZcX+uNhQn+WS2QLcaSblijZx4WmA+CA93kY3
+	Zljb60jaDMtkiYDx2fysESvYqgrSdQLdtVPjFQbvwscAZZbT5U5CY7fpfEam2
+X-Google-Smtp-Source: AGHT+IEBiRX+iakj03mwhRodl8EB4ddlvW0A0JNFLYItqjRlt/va0erAr2MtetPxwlyJPF24ToOICU0mFNtQbJtF85E=
+X-Received: by 2002:ac2:4438:0:b0:539:d0c4:5b53 with SMTP id
+ 2adb3069b0e04-53da0736535mr143602e87.4.1731519874758; Wed, 13 Nov 2024
+ 09:44:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] x86/fred: Clear WFE in missing-ENDBRANCH #CPs
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-        hpa@zytor.com, peterz@infradead.org, andrew.cooper3@citrix.com
-References: <20241113091313.3717338-1-xin@zytor.com>
- <ZzR3s78NZDIi1Rxh@gmail.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <ZzR3s78NZDIi1Rxh@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241108135708.48567-1-lorenzo.stoakes@oracle.com>
+ <le3ykvrau2lbncrjsqll7z6ck43bf3shon4g5ohchxcvcs4fuy@h3pq646xgoz6> <3593f7ab-c37d-4c1d-bf2f-e47c30bb5d2b@lucifer.local>
+In-Reply-To: <3593f7ab-c37d-4c1d-bf2f-e47c30bb5d2b@lucifer.local>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 13 Nov 2024 18:43:57 +0100
+Message-ID: <CAG48ez3Ap0XWr+3UmQeW6O82PU_Fh85pCuwOpC9n6J+kxtPVRA@mail.gmail.com>
+Subject: Re: [PATCH v2] docs/mm: add VMA locks documentation
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>, Alice Ryhl <aliceryhl@google.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
+	Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>, 
+	Hillf Danton <hdanton@sina.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	SeongJae Park <sj@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/13/2024 1:56 AM, Ingo Molnar wrote:
-> 
-> * Xin Li (Intel) <xin@zytor.com> wrote:
-> 
->> +/*
->> + * By definition, all missing-ENDBRANCH #CPs are a result of WFE && !ENDBR.
->> + *
->> + * For the kernel IBT no ENDBR selftest where #CPs are deliberately triggerred,
-> 
-> s/triggerred
->   /triggered
-> 
->> +static void ibt_clear_fred_wfe(struct pt_regs *regs)
->> +{
->> +	/*
->> +	 * No need to do any FRED checks.
->> +	 *
->> +	 * For IDT event delivery, the high-order 48 bits of CS are pushed
->> +	 * as 0s into stack, and later IRET ignores these bits.
-> 
-> s/into stack
->   /into the stack
-> 
+On Wed, Nov 13, 2024 at 4:44=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> On Tue, Nov 12, 2024 at 10:15:44AM -0500, Liam R. Howlett wrote:
+> > * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [241108 08:57]:
+> [snip]
+> > > +Each mm object contains a maple tree data structure which describes =
+all VMAs
+> > > +within the virtual address space.
+> > > +
+> > > +.. note:: An exception to this is the 'gate' VMA which is provided b=
+y
+> > > +          architectures which use :c:struct:`!vsyscall` and is a glo=
+bal static
+> > > +          object which does not belong to any specific mm.
+> >
+> > vvars too?
+>
+> I'm not sure if that's the case? For instance for x86-64 we have:
+>
+> /*
+>  * A pseudo VMA to allow ptrace access for the vsyscall page.  This only
+>  * covers the 64bit vsyscall page now. 32bit has a real VMA now and does
+>  * not need special handling anymore:
+>  */
+> static const char *gate_vma_name(struct vm_area_struct *vma)
+> {
+>         return "[vsyscall]";
+> }
+>
+> With no reference to vvar. Also vsyscall exists in a kernel range, and vv=
+ar
+> in a userland mapping (along with the vdso).
 
-Thanks, fixing and sending v4 now.
-     Xin
+Yeah, there are different gate VMA types depending on architecture
+(arm has "vectors page", x86 has "vsyscall", ...), but vvar and vdso
+are just normal VMAs set up at some point in execve().
 
