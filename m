@@ -1,356 +1,192 @@
-Return-Path: <linux-kernel+bounces-407487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85E09C6E22
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:48:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C669C6E2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:50:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE725B227A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:48:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CB5EB23B26
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C6A2003B8;
-	Wed, 13 Nov 2024 11:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC832003D1;
+	Wed, 13 Nov 2024 11:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="uQeH2Jtf"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="Q3RRxsTm"
+Received: from AUS01-ME3-obe.outbound.protection.outlook.com (mail-me3aus01olkn2099.outbound.protection.outlook.com [40.92.63.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2EC1BD9DC;
-	Wed, 13 Nov 2024 11:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731498491; cv=none; b=MlzH/ACLeXAvxQwwH5cye8SeP1wqgwOyZRi+HlX1TswBuWtGijaP6M9aE+ogwS4Mj0jq2L02wFPOvepG8bUKFP+Y9hf1frxukd+eIdwB9+PaGVnJhWL3GukwBvxe5SNncNdVCIK1S/rFObGPe5JFn38F/gqHZDUk2BbcGWaYcXk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731498491; c=relaxed/simple;
-	bh=HwTTOHz7M85R9mOalncMuJmcCSUiKla4TedfGjyXmTc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=esyZBbh+u4GEDBCMmiKXHVp/UEinu5wAJ6P+Pj9qp+NdaDCm7nZRP1bu5vHo/IdIcuGxRaEMd4pW3+Wjjc8zNHk4hfEkQdF6CgFx9X6LOdd+ZnSAZ+HZVl4TfogPXtGYnwny2XryHbCRkIp22RULoVuNLikzXl3Musdhez25CHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=uQeH2Jtf; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731498489; x=1763034489;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=HwTTOHz7M85R9mOalncMuJmcCSUiKla4TedfGjyXmTc=;
-  b=uQeH2JtfYylZzsxwxOuf9iFgV2mJEdwA+HoBxTA7BRSb24wISTISilEs
-   He+SoUrDHxUJ+r/Uhu8a8cuONIF4d3hN6NPsJlWwsdias/1cKoSHvcvhM
-   uoM8iFZPAKkX9Vgb4LNIiKKodIh13gHlutlwAlmfhwOC0zjFbF/zuXEeK
-   +tIfRmRm7tuUdGk7sNwaQrfuvXkhRxcFoPXsFBjkWXtuX1KPjC1zq/e3N
-   vHQn4Kt/KH12hcd/jnfSjNht9DSl5f/g2qvplAah97zxfsto9hmmeohzQ
-   UbgMB+qUOA8F2y3EnjpKcSs0wac4bZ6yi9P9X1uLHhNfI5121xSHftIx+
-   Q==;
-X-CSE-ConnectionGUID: kDI7VG2pSVmA6ajq3tzW6Q==
-X-CSE-MsgGUID: zyRlWXZcRrun9xN7TwuYew==
-X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
-   d="scan'208";a="34762677"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Nov 2024 04:48:01 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 13 Nov 2024 04:47:31 -0700
-Received: from vduicu-Virtual-Machine.mshome.net (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 13 Nov 2024 04:47:29 -0700
-From: <victor.duicu@microchip.com>
-To: <matteomartelli3@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>,
-	<andy.shevchenko@gmail.com>
-CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<marius.cristea@microchip.com>, <victor.duicu@microchip.com>
-Subject: [PATCH v10] iio: adc: pac1921: Add ACPI support to Microchip pac1921
-Date: Wed, 13 Nov 2024 13:46:54 +0200
-Message-ID: <20241113114654.8203-1-victor.duicu@microchip.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFBF1BD9DC
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 11:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.63.99
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731498630; cv=fail; b=X4nHNggQPiTx4IIK5txjvxj8WW4H87QTaGrdaM9Sjb+YPc9W2qePHL/egsesYi9dlJ97qd4K8W2eyPoDWlBPRIYTl4RDGNy3enERkwzwDn7nHvBCluM888w7GRygWrhxw+2Mr28xnfpBvcG1Cxd3B588WzN9/9AU7UIH5FTUxWA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731498630; c=relaxed/simple;
+	bh=aZkI9WsJcGr42tDfOkAOw+2nBlQTLZHqNL0Osjbh6zA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pB0bSeTLW8EY4EVgzuPeXXNcHF38tIj0UhrXir5I2UEYZVusnAxS4nRvMO/SzCc1hm9vfMiKTSvahTMyxWT+AtXaRiOIV+CYziKJC98EycG1O5un1kVeJwcl7hIYFvSlAEJ1EgdasURV10XdnGwMuljQQzLKlPGyKbGy9DDvzs4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=Q3RRxsTm; arc=fail smtp.client-ip=40.92.63.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gWfuyeABV4UCKkMPpeDc4bKQJ8wCfz73DoU2xUlmy3zBCplG04RARlKpLimv4O2lxJn7e9TllNBJW6mdqsjdRn6vM/sMKnzLkbkzC8C8weHZ88u2JVfMOr6BdmFcruJlHbfBdRWACR+AZfd9HPnlsjVwXeSNe/P/p4J/9uSiDayf/6BIjobtQOh+AUjKCvtzqGRVFLtvoSn76qxh8FOu1DAqDsbAtkNMFA+9dQhXnMei/iI6bXoBhhWU74Psmx+xx/w2OWH6LaDw0a0zPQkDA0aZvyizMz6lVNNKAPNK3j2Hx+Djki4a74pXTkvqLy3gZW5L22kacNpU9RRzDV1CCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aZkI9WsJcGr42tDfOkAOw+2nBlQTLZHqNL0Osjbh6zA=;
+ b=A5pDEOmrvNPrif6TGu3ICqxA7zbdSXWb3uhWE7K75vNWAdW8NuI51qGxEc9hqfNHsoLor80v9p/uvN/rHXBKOGkUExFDbYIgJKScmCOcP1MqMAsnqFwoClPNwYDY5VR30eFkTC23rXWgz4Hbo4UV4y3kSwcSiWyDYkmadlhhM8r8CJz/Crn3OIz2o2ugNuRYdBWYczhxZyL8tLrkaRYLUaroR5xVE0tBCnR4PluYLbH9IOMewy0R3JLJze7HOZUxxLMAr0xeVERRgGX9G8KdEH/oZcDeFHyr9PBmmY462+0Lt1kIfVvdvoQkZzxLZ/M8XEeAl10EdluPt6XZmN7otQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aZkI9WsJcGr42tDfOkAOw+2nBlQTLZHqNL0Osjbh6zA=;
+ b=Q3RRxsTmSDy2FMSTPTPan+TRrC/cH2ViWdbLOdu3+XXfl5SIrU0ADiM5oCgubdWsjsskrcxYtMOA9z28pgr59L7XJQsthh3BSQGk2Y18Z3T7vrttV80HzTbxTuOIGizTHvUZlMnNQmBFgvs0xcK91HOyti8jvcDxIxVHf3Z1Cn/eDHI/ctW9pp2P/K7UrpSJ4Ef8a4STOE9s1+r8opxNZwZkFgzTNr2UwE1gUSAe+JqYW6oi19w5x9ryfjS5UNWtp8NHJOOPjonHfBf9Pe+1Ho8eO+mZ9R132iFKujvSNhhqQ+Aze4t+N0II9QXJmz2YnhWVgnE2repntROpstI/MQ==
+Received: from ME0P300MB0414.AUSP300.PROD.OUTLOOK.COM (2603:10c6:220:22c::5)
+ by SY7P300MB0377.AUSP300.PROD.OUTLOOK.COM (2603:10c6:10:28e::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Wed, 13 Nov
+ 2024 11:50:21 +0000
+Received: from ME0P300MB0414.AUSP300.PROD.OUTLOOK.COM
+ ([fe80::b8f3:cb85:3e65:5cde]) by ME0P300MB0414.AUSP300.PROD.OUTLOOK.COM
+ ([fe80::b8f3:cb85:3e65:5cde%4]) with mapi id 15.20.8158.013; Wed, 13 Nov 2024
+ 11:50:21 +0000
+From: =?utf-8?B?6KejIOWSj+aihQ==?= <xieym_ict@hotmail.com>
+To: Tianchen Ding <dtcccc@linux.alibaba.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+Subject:
+ =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjJdIHNjaGVkL2VldmRmOiBGb3JjZSBwcm9wYWdh?=
+ =?utf-8?B?dGluZyBtaW5fc2xpY2Ugb2YgY2ZzX3JxIHdoZW4gYSB0YXNrIGNoYW5naW5n?=
+ =?utf-8?Q?_slice?=
+Thread-Topic: [PATCH v2] sched/eevdf: Force propagating min_slice of cfs_rq
+ when a task changing slice
+Thread-Index: AQHbK3ollxrR3gaeJkqsh/oWYQlEi7KzDfQAgAIchaE=
+Date: Wed, 13 Nov 2024 11:50:21 +0000
+Message-ID:
+ <ME0P300MB04148C8F736D90AC822CE3678E5A2@ME0P300MB0414.AUSP300.PROD.OUTLOOK.COM>
+References: <20241028063313.8039-2-dtcccc@linux.alibaba.com>
+ <20241031094822.30531-1-dtcccc@linux.alibaba.com>
+ <2c4654d1-f212-43ac-abf9-de6d08c85387@linux.alibaba.com>
+In-Reply-To: <2c4654d1-f212-43ac-abf9-de6d08c85387@linux.alibaba.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ME0P300MB0414:EE_|SY7P300MB0377:EE_
+x-ms-office365-filtering-correlation-id: b48aa7cd-48a8-4117-1177-08dd03d95a4d
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15030799003|461199028|19110799003|8060799006|15080799006|8062599003|7092599003|3412199025|102099032|440099028;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?S3UwakV1QTZOQzVJUittazFUSGk2dTRwL1ZxNDhYZ1dNRUNYdnZQeWpCWGdh?=
+ =?utf-8?B?UXUzcUt2VjgyN09Oa09XRFBjWG5DbXJDem1NUW5ocEpXZWU5WStkakZ0aG1M?=
+ =?utf-8?B?MlBLSVp0Tk9LZllWYXQrWlE0dXVvTzRoQW42QzJrdlhoRmtCQms1R282dVlO?=
+ =?utf-8?B?T2ltemNINUhIQVk0YjFuZU5xaWhwOXhGcEl4aVhEVzdQUHd1ZjhxMDJFbE5H?=
+ =?utf-8?B?ejVUUmhNYWxaVkRBWnpHV2pHRlVEcnFKRldKdzhMd1o4dklCaU5MQk03MFdL?=
+ =?utf-8?B?V3V6NXBnWFRJSFlYamxOcndKY0xZeGRqTndjSTJ0Q1drMEk1TTFSWHV6UHli?=
+ =?utf-8?B?WGFWTEJjbk9nVHlEbXBlT01hYlIrR2NSU1A1djBqaFc1SzFSUTlSTTBYbktE?=
+ =?utf-8?B?cnJFTWV4ZzRkUUE1bHhBYVd3bHpDZElWU2h5SGhJN1dxNXg2RExmN1dNNmNW?=
+ =?utf-8?B?My9jWTlGUGppYTczVFcvOWpNcTNaRTg1RzRvMUhFNWV3KzlzcDJzSmFGdll4?=
+ =?utf-8?B?UElKeEJWTC9zbURKYUFlWlcxWW5Ccm5WdGYyM01kK3BFOEdKUTFKckVtZHQv?=
+ =?utf-8?B?bURVWkRXUkJPVHlwZFEvV3czdlBUVlcyMFhGa1VBMXBSUldkUXE5QWFyN2tw?=
+ =?utf-8?B?MzlNRUJ0RGh5RzJxL1p4MEZlTHBOZmxsT2dxOG8yUTdzeDFjaW1tbnZRTzd5?=
+ =?utf-8?B?bUpPSmVDeXZIS2JIVjdtdXRDMHVQNnd1MHV0STl6d1VnRzhjK2ltc01EbkhO?=
+ =?utf-8?B?VURRejF2SkFmeWVyOEMvMCtLK1RjRXdqYWZ5cE81ZTc1RU5BWDltR3JkR2sw?=
+ =?utf-8?B?S3JFWW0vSlpwSDhQVTV6eUdncEhxbVd6akI3dXU5ODVXVFFhb25mOHZuZTcx?=
+ =?utf-8?B?S1JtejRRSVFtbUhXQlg1L0tiM0Y1YWprckthazFydXVLd3hpMjJKWGZNSXpn?=
+ =?utf-8?B?Y29ZSUFrKzZMc2J6Sm9RMFlZblhGblE3VVF3elNKSkpMT1owKzdkQUJ5Y0tQ?=
+ =?utf-8?B?OVpITU9NalRXUXB3K045TitpclZpKzE3NXJTSWdGdDFpK3cyZTh6djFNamYv?=
+ =?utf-8?B?TUFxY1dnMkRUUlZSUm5kVG9NK1pUVHlZZTBYQ1FGN2RDRVpNSEJTdENURTRr?=
+ =?utf-8?B?bjFRY013a1g3NUJ5Zk1uSkRDTFh3Zk5EQWY5MUprNjNGTVl0TDBJK2FNN1cr?=
+ =?utf-8?B?Ymd5Y1BEbG1FYmRLLzZmcnlOMkJROVNFUnp2anh5T1JGY0pITGhKR1MrSUhC?=
+ =?utf-8?B?V2VzT0U3UWNJOHo5K2J6QlRzM0ZRTitaQmhFSXdqTXQvZnIzVVovaFlldVJq?=
+ =?utf-8?B?Tmp3dFI5RExYWXRSN3VYYU9qUzNXbUhSNWNlT1M3RVRkRHluSUFzZ21vVXlE?=
+ =?utf-8?B?WDNxdWdnNnB0UGk4KzRSQ0Z2dkM2Snh3TWp3bW9najU0amkwVzgyNDRkSG05?=
+ =?utf-8?Q?AC4GFocN?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?aC83YWhnVjhYOWRSekZPUG1nZlFTWlR2QTYwTE1yb25ETURCN3YrTm9HSU82?=
+ =?utf-8?B?RTNYekExajlKcFpycHdGTVdPVWxWSk1WOTlZZlFuQVJGSmJDMFU1RW5WWTJz?=
+ =?utf-8?B?dUdaUjhaNnFJZ2FiQXRUbEZnV1o0dVp3MWRONmRIZTlqY0pqR0pyek5oLytP?=
+ =?utf-8?B?dTIyREhDNHJwaWRKdEttY1pBVnkwNm9KRy8rQk01b1hKZ3RveW56bmQxWk5o?=
+ =?utf-8?B?b2FpSjJKckk5NDdYdWlTWitxQTV4TjV3dEhPYm43am5zbUQxSUtGckhIb0tu?=
+ =?utf-8?B?WkJyQlo1YnlkRmt1TWluMTFpSUxuVkMrMjdJeFpCeXJVd2o1Qi9nbEg4eG1T?=
+ =?utf-8?B?WmhnS3JuYTFRN0hvOGtkVlkrTGdFVC9vYVZER0NjZU05Nk9ieEE0MzVUMTd1?=
+ =?utf-8?B?MFJvektJaXE0MjcvNXRyd2g3aHBUL1JIdTdtaWl2a2JjNmVPUjlmRm1rV1lM?=
+ =?utf-8?B?dE9xOXJTbis4dlAxMlB6ZTdzYTU3UXp3Tjc0RWd6MytDZGkxcTFZSEVRU1Js?=
+ =?utf-8?B?TnZWR093VWV2b1lIcWlTWXFwTGNieno3Z3pPeXBHQUxGTExIV1A0a0R3M1gv?=
+ =?utf-8?B?ajBXKy81S3FOaHp4TDJTU05sZlhodkUxM2JSbjRhbEQ1Tkl1aml0aE9ZaW1h?=
+ =?utf-8?B?dEtSZVNXbVQ2b0FvZzBOUFRmTm1SM0lTYm1nVWVwUVRrS2JBNkV6bFdJenVZ?=
+ =?utf-8?B?a01yL1cyYnduM1dJcDFPM09QYzlHRWs5ZGQxN0dGTEczS0VjTU5kWFZzUSs5?=
+ =?utf-8?B?THUrNXlBN0dsVldCTzd1QVVLYjNyZStMVEtyc0dUTUpZODljREVQMjc3cjRq?=
+ =?utf-8?B?NDREU1FTMyt6ZDJoZ0hINWpsOE82RjNQTUpXQnVvY1ZyWkd6cDMrVGttSFU0?=
+ =?utf-8?B?cWI4ZVE4dHNpUnlHOXdFQnp0M0VDRHYxc2tUblM2aUJQb0I2S1lqSjRFSHhl?=
+ =?utf-8?B?Mzl6SmNTSEMrSTlzVlpIdGlDRjUxUzFVWENtbzgxUnlkT0h4cmtjaHNZb0xm?=
+ =?utf-8?B?SERwRjZRajUwOHRmNzVDMllSWUV5akdxcnA0NWJkYnNjWERXTlRnd1dYMHIz?=
+ =?utf-8?B?RVpLMUl4WDBiMzNoNjhzK3dkeW81TWtLNG43Y3ljb1JkbWJ5YWlwRXZ2RGtQ?=
+ =?utf-8?B?Wks5NTRRVEI5b0xvMFlySXAvNGZuVFlLejBubzYzNVlZSWNVYW5EdnFtcUox?=
+ =?utf-8?B?REtvNzIrMWVkUjEzSnpXaFFlQUdHU25pVjdmR0lxZ0FVYmpOTnpUbE1mTFpn?=
+ =?utf-8?B?TWJjRTZZU2FjSU1TcHdVTXE1V1lEaWZMelVUbTBGTCtrd0J4WmlFUmgzRThH?=
+ =?utf-8?B?MHFXL0ZsZG5rWVJHNTc1eXlWWkdtWjlpdkNFOU5mdko4RmhlZkRoQUx2Y2Rw?=
+ =?utf-8?B?RGwvdVl5L1E1ZFRGY1drV1F5aVh1VmZwaFJ0VXVNV1RoRnB0RlBsWUptcVRj?=
+ =?utf-8?B?Wml0bHNMZDhVR2dTZzZRV2Q3Q2tGMC9RL1NOUG45dThsMWhjSFBubGVEY2VC?=
+ =?utf-8?B?RlQ1TW1qMFJiVU01V0QrQ1c4V1ZUK0xOZFRrWEdIekRXUHBJbnhhVmZKcXQv?=
+ =?utf-8?B?VDhVSnJvdkhUUmtQQXN6UVFqNlJwaVpBdnpIV1Z5aWp5TmIxU3RUQ21ncEx3?=
+ =?utf-8?Q?DO7/RlHfOMq7fqqhCsTjyjw4C923wiVSY2yf741TccN0=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-448bf.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ME0P300MB0414.AUSP300.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: b48aa7cd-48a8-4117-1177-08dd03d95a4d
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2024 11:50:21.4224
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY7P300MB0377
 
-From: Victor Duicu <victor.duicu@microchip.com>
-
-This patch implements ACPI support to Microchip pac1921.
-The driver can read the shunt resistor value and label from the ACPI table.
-
-Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
----
-
-The patch was tested on minnowboard and sama5.
-
-Differences related to previous versions:
-v10:
-- fix coding style mistakes.
-- add UL to PAC1921_MAX_SHUNT_VALUE_uOHMS.
-- edit comment in pac1921_write_shunt_resistor.
-- in pac1921_probe use is_acpi_device_node instead of
-  ACPI_HANDLE.
-
-v9:
-- put limits.h in sorted order.
-- remove guid_parse and implement GUID_INIT.
-- remove pac1921_shunt_is_valid.
-- change maximum acceptable value of shunt resistor to 2146.999999.
-  This change was made so the readings for dt and ACPI share
-  the same range.
-  With this value the maximum current that can be read is
-  0.1V / 2146.999999 = 46.576 uA
-  If we use INT_MAX the maximum current is
-  0.1V / 2147.483647 = 46.566 uA
-  The relative error between the two is 0.0214, so it is
-  small enough to allow for code simplicity.
-  A shunt value over a few hundred Ohms is quite unusual.
-
-v8:
-- fix multiple coding style errors.
-- in pac1921_match_acpi_device change error type to ENOMEM
-  at label is NULL branch.
-- in pac1921_match_acpi_device when reading label,
-  change accesing method of string.
-- change name of PAC1921_ACPI_GET_UOHMS_VALS to
-  PAC1921_ACPI_GET_uOHMS_VALS.
-- add limits.h in include list.
-- change integer constant in PAC1921_MAX_SHUNT_VALUE_OHMS
-  to INT_MAX / MICRO.
-- change pac1921_shunt_is_invalid to pac1921_shunt_is_valid.
-- in pac1921_match_acpi_device change name of variable rez to status.
-
-v7:
-- in pac1921_shunt_is_invalid remove brackets in return.
-- in pac1921_match_acpi_device and pac1921_parse_of_fw move checking of
-  shunt value and scale calculation to pac1921_probe.
-- in pac1921_match_acpi_device change devm_kmemdup to devm_kstrdup
-  and add label check for NULL.
-- in pac1921_match_acpi_device and pac1921_parse_of_fw remove unnecessary
-  entry arguments. Now indio_dev is the only entry argument.
-- in pac1921_probe, pac1921_match_acpi_device and pac1921_parse_of_fw
-  standardised structure accesing.
-
-v6:
-- set maximum acceptable value of shunt resistor to INT_MAX UOHMS
-  in devicetree, ACPI table and user input.
-- in pac1921_match_acpi_device remove temp variable.
-
-v5:
-- set maximum acceptable value of shunt resistor to 2KOHM in devicetree,
-  ACPI table and user input. The chosen value is lesser than INT_MAX,
-  which is about 2.1KOHM.
-- in pac1921_match_acpi_device and pac1921_parse_of_fw change to only
-  read 32b values for resistor shunt.
-
-v4:
-- change name of pac1921_shunt_is_valid to pac1921_shunt_is_invalid.
-- fix coding style.
-- in pac1921_parse_of_fw change back to device_property_read_u32.
-
-v3:
-- simplify and make inline function pac1921_shunt_is_valid. Make argument u64.
-- fix link to DSM documentation.
-- in pac1921_match_acpi_device and pac1921_parse_of_fw, the shunt value is
-  read as u64.
-- in pac1921_parse_of_fw remove code for reading label value from
-  devicetree.
-- in pac1921_write_shunt_resistor cast the multiply result to u64 in order
-  to fix overflow.
-
-v2:
-- remove name variable from priv. Driver reads label attribute with
-  sysfs.
-- define pac1921_shunt_is_valid function.
-- move default assignments in pac1921_probe to original position.
-- roll back coding style changes.
-- add documentation for DSM(the linked document was used as reference).
-- remove acpi_match_device in pac1921_match_acpi_device.
-- remove unnecessary null assignment and comment.
-- change name of function pac1921_match_of_device to
-  pac1921_parse_of_fw.
-
-v1:
-- initial version for review.
-
- drivers/iio/adc/pac1921.c | 110 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 100 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
-index b0f6727cfe38..9da94d14132a 100644
---- a/drivers/iio/adc/pac1921.c
-+++ b/drivers/iio/adc/pac1921.c
-@@ -12,6 +12,7 @@
- #include <linux/iio/iio.h>
- #include <linux/iio/trigger_consumer.h>
- #include <linux/iio/triggered_buffer.h>
-+#include <linux/limits.h>
- #include <linux/regmap.h>
- #include <linux/units.h>
- 
-@@ -67,6 +68,27 @@ enum pac1921_mxsl {
- #define PAC1921_DEFAULT_DI_GAIN		0 /* 2^(value): 1x gain (HW default) */
- #define PAC1921_DEFAULT_NUM_SAMPLES	0 /* 2^(value): 1 sample (HW default) */
- 
-+#define PAC1921_ACPI_GET_uOHMS_VALS             0
-+#define PAC1921_ACPI_GET_LABEL			1
-+/*
-+ * The maximum acceptable shunt value is 2146.999999 OHM.
-+ * This value, which is below INT_MAX, was chosen in order to
-+ * allow the readings from dt and ACPI to share the same range
-+ * and to simplify the checks.
-+ * With this value the maximum current that can be read is
-+ * 0.1V / 2146.999999OHM = 46.576 uA
-+ * If we use INT_MAX the maximum current that can be read is
-+ * 0.1V / 2147.483647OHM = 46.566 uA
-+ * The relative error between the two values is
-+ * |(46.566 - 46.576) / 46.566| * 100 = 0.0214
-+ */
-+#define PAC1921_MAX_SHUNT_VALUE_uOHMS		2146999999UL
-+
-+/* f7bb9932-86ee-4516-a236-7a7a742e55cb */
-+static const guid_t pac1921_guid =
-+			GUID_INIT(0xf7bb9932, 0x86ee, 0x4516, 0xa2,
-+				  0x36, 0x7a, 0x7a, 0x74, 0x2e, 0x55, 0xcb);
-+
- /*
-  * Pre-computed scale factors for BUS voltage
-  * format: IIO_VAL_INT_PLUS_NANO
-@@ -782,7 +804,7 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
- 					    const char *buf, size_t len)
- {
- 	struct pac1921_priv *priv = iio_priv(indio_dev);
--	u64 rshunt_uohm;
-+	u32 rshunt_uohm;
- 	int val, val_fract;
- 	int ret;
- 
-@@ -793,10 +815,17 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
- 	if (ret)
- 		return ret;
- 
--	rshunt_uohm = val * MICRO + val_fract;
--	if (rshunt_uohm == 0 || rshunt_uohm > INT_MAX)
-+	/*
-+	 * This check validates the shunt is not zero and does not surpass the
-+	 * maximum value. The check is done before calculating in order to avoid
-+	 * val * MICRO overflowing.
-+	 */
-+	if ((!val && !val_fract) ||
-+	    ((u32)val > PAC1921_MAX_SHUNT_VALUE_uOHMS / MICRO))
- 		return -EINVAL;
- 
-+	rshunt_uohm = val * MICRO + val_fract;
-+
- 	guard(mutex)(&priv->lock);
- 
- 	priv->rshunt_uohm = rshunt_uohm;
-@@ -1151,6 +1180,58 @@ static void pac1921_regulator_disable(void *data)
- 	regulator_disable(regulator);
- }
- 
-+/*
-+ * Documentation related to the ACPI device definition
-+ * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC193X-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
-+ */
-+static int pac1921_match_acpi_device(struct iio_dev *indio_dev)
-+{
-+	acpi_handle handle;
-+	union acpi_object *status;
-+	char *label;
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+	struct device *dev = &priv->client->dev;
-+
-+	handle = ACPI_HANDLE(dev);
-+
-+	status = acpi_evaluate_dsm(handle, &pac1921_guid, 1, PAC1921_ACPI_GET_uOHMS_VALS, NULL);
-+	if (!status)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "Could not read shunt from ACPI table\n");
-+
-+	priv->rshunt_uohm = status->package.elements[0].integer.value;
-+	ACPI_FREE(status);
-+
-+	status = acpi_evaluate_dsm(handle, &pac1921_guid, 1, PAC1921_ACPI_GET_LABEL, NULL);
-+	if (!status)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "Could not read label from ACPI table\n");
-+
-+	label = devm_kstrdup(dev, status->package.elements[0].string.pointer, GFP_KERNEL);
-+	if (!label)
-+		return -ENOMEM;
-+
-+	indio_dev->label = label;
-+	ACPI_FREE(status);
-+
-+	return 0;
-+}
-+
-+static int pac1921_parse_of_fw(struct iio_dev *indio_dev)
-+{
-+	int ret;
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+	struct device *dev = &priv->client->dev;
-+
-+	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
-+				       &priv->rshunt_uohm);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Cannot read shunt resistor property\n");
-+
-+	return 0;
-+}
-+
- static int pac1921_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
-@@ -1179,14 +1260,16 @@ static int pac1921_probe(struct i2c_client *client)
- 	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
- 	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
- 
--	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
--				       &priv->rshunt_uohm);
--	if (ret)
-+	if (is_acpi_device_node(dev->fwnode))
-+		ret = pac1921_match_acpi_device(indio_dev);
-+	else
-+		ret = pac1921_parse_of_fw(indio_dev);
-+	if (ret < 0)
- 		return dev_err_probe(dev, ret,
--				     "Cannot read shunt resistor property\n");
--	if (priv->rshunt_uohm == 0 || priv->rshunt_uohm > INT_MAX)
--		return dev_err_probe(dev, -EINVAL,
--				     "Invalid shunt resistor: %u\n",
-+				     "Parameter parsing error\n");
-+
-+	if (!priv->rshunt_uohm || priv->rshunt_uohm > PAC1921_MAX_SHUNT_VALUE_uOHMS)
-+		return dev_err_probe(dev, -EINVAL, "Invalid shunt resistor: %u\n",
- 				     priv->rshunt_uohm);
- 
- 	pac1921_calc_current_scales(priv);
-@@ -1246,11 +1329,18 @@ static const struct of_device_id pac1921_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, pac1921_of_match);
- 
-+static const struct acpi_device_id pac1921_acpi_match[] = {
-+	{ "MCHP1921" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, pac1921_acpi_match);
-+
- static struct i2c_driver pac1921_driver = {
- 	.driver	 = {
- 		.name = "pac1921",
- 		.pm = pm_sleep_ptr(&pac1921_pm_ops),
- 		.of_match_table = pac1921_of_match,
-+		.acpi_match_table = pac1921_acpi_match,
- 	},
- 	.probe = pac1921_probe,
- 	.id_table = pac1921_id,
-
-base-commit: 20fd1383cd616d61b2a79967da1221dc6cfb8430
--- 
-2.43.0
-
+U2ltaWxhciBwcm9ibGVtIGFzIGNvbW1pdCBkMjkyOTc2MiAmIDhkYWZhOWQwLCBidXQgdGhpcyB0
+aW1lIGhlYXAgaW50ZWdyaXR5IGlzIGNvcnJ1cHRlZCBieSBtaW5fc2xpY2UgYXR0ci4KY29tbWl0
+IGVhYjAzYzIzYyBmaXhlZCBpdCBieSBleHBsaWNpdGx5IGNhbGxpbmcgX19kZXF1ZXVlX2VudGl0
+eSBhbmQgX19lbnF1ZXVlX2VudGl0eSBpbiByZXdlaWdodF9lbnRpdHkuCgpCdXQsIGl0J3MgcmFy
+ZSBjYXNlLCBpdCBvbmx5IGhhcHBlbnMgd2hlbiBhZGp1c3QgdGFzaydzIHNlbGVjdCBieSBzZXR0
+aW5nIHVwIHNjaGVkdWxlciBhdHRyaWJ1dGUuCgoKUmVnYXJkcywKWW9uZ21laS4KCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCuWPkeS7tuS6ujrCoFRpYW5jaGVuIERp
+bmcgPGR0Y2NjY0BsaW51eC5hbGliYWJhLmNvbT4K5Y+R6YCB5pe26Ze0OsKgMjAyNOW5tDEx5pyI
+MTLml6UgMTE6MjUK5pS25Lu25Lq6OsKgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZyA8bGlu
+dXgta2VybmVsQHZnZXIua2VybmVsLm9yZz4K5oqE6YCBOsKgSW5nbyBNb2xuYXIgPG1pbmdvQHJl
+ZGhhdC5jb20+OyBQZXRlciBaaWpsc3RyYSA8cGV0ZXJ6QGluZnJhZGVhZC5vcmc+OyBKdXJpIExl
+bGxpIDxqdXJpLmxlbGxpQHJlZGhhdC5jb20+OyBWaW5jZW50IEd1aXR0b3QgPHZpbmNlbnQuZ3Vp
+dHRvdEBsaW5hcm8ub3JnPjsgRGlldG1hciBFZ2dlbWFubiA8ZGlldG1hci5lZ2dlbWFubkBhcm0u
+Y29tPjsgU3RldmVuIFJvc3RlZHQgPHJvc3RlZHRAZ29vZG1pcy5vcmc+OyBCZW4gU2VnYWxsIDxi
+c2VnYWxsQGdvb2dsZS5jb20+OyBNZWwgR29ybWFuIDxtZ29ybWFuQHN1c2UuZGU+OyBWYWxlbnRp
+biBTY2huZWlkZXIgPHZzY2huZWlkQHJlZGhhdC5jb20+CuS4u+mimDrCoFJlOiBbUEFUQ0ggdjJd
+IHNjaGVkL2VldmRmOiBGb3JjZSBwcm9wYWdhdGluZyBtaW5fc2xpY2Ugb2YgY2ZzX3JxIHdoZW4g
+YSB0YXNrIGNoYW5naW5nIHNsaWNlCsKgCk9uIDIwMjQvMTAvMzEgMTc6NDgsIFRpYW5jaGVuIERp
+bmcgd3JvdGU6Cj4gV2hlbiBhIHRhc2sgY2hhbmdlcyBzbGljZSBhbmQgaXRzIGNncm91cCBzZSBp
+cyBhbHJlYWR5IG9uX3JxLCB0aGUgY2dyb3VwCj4gc2Ugd2lsbCBub3QgYmUgZW5xdWV1ZWQgYWdh
+aW4sIGFuZCBoZW5jZSB0aGUgcm9vdC0+bWluX3NsaWNlIGxlYXZlcwo+IHVuY2hhbmdlZC4KPgo+
+IEZvcmNlIHByb3BhZ2F0aW5nIGl0IHdoZW4gc2UgZG9lc24ndCBuZWVkIHRvIGJlIGVucXVldWVk
+IChvciBkZXF1ZXVlZCkuCj4gRW5zdXJlIHRoZSBzZSBoaWVyYXJjaHkgYWx3YXlzIGdldCB0aGUg
+bGF0ZXN0IG1pbl9zbGljZS4KPgo+IEZpeGVzOiBhZWY2OTg3ZDg5NTQgKCJzY2hlZC9lZXZkZjog
+UHJvcGFnYXRlIG1pbl9zbGljZSB1cCB0aGUgY2dyb3VwIGhpZXJhcmNoeSIpCj4gU2lnbmVkLW9m
+Zi1ieTogVGlhbmNoZW4gRGluZyA8ZHRjY2NjQGxpbnV4LmFsaWJhYmEuY29tPgoKcGluZyBmb3Ig
+dGhpcyBmaXguCg==
 
