@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-408233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0619C7C6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:54:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333AF9C7C6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:54:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C51F02873AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:53:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4209AB28447
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A1D2071E9;
-	Wed, 13 Nov 2024 19:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216D9208230;
+	Wed, 13 Nov 2024 19:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d27nZaZt"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HSOMzs8y"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148B12064EF;
-	Wed, 13 Nov 2024 19:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE70C2076AE;
+	Wed, 13 Nov 2024 19:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731527605; cv=none; b=sJfNKgs44Kziup0iWXW9w/xrXXP2Cuu7POJ8ERSI/vIrb+Lmn9eszRHa/D/R7hq1g9BPJi9K8RtzGw6bBNgC/zNo87O6uKuzdpj7zT9vqa+oj1epcBV/NzKIoEsFWze1NRLLkNwo/4F+nR/EoQ0OELfbe+nvvm3psx6uBqMMbZs=
+	t=1731527609; cv=none; b=i2WhPGFhbnygM8TeZs5pVFHxXbGO0qdxWPhfJ+rZd3/8Zi3Or9W8cvsmOzIWwE3dzEeiLGiet4sHkwvEClHCNsO01CfXghvxG7UXY18OigSn1OvKscapU8MqC2GO7omvV6m41FlV9iOVA0udRPAEe37TrHOfLk+VgIffrh0Lxjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731527605; c=relaxed/simple;
-	bh=Sv6D/+y3scZijLS9PVRlVeMuXulXudQKBAtm4AEdBT4=;
+	s=arc-20240116; t=1731527609; c=relaxed/simple;
+	bh=cWi8DmSi7C7RoYGebBs9V11KbEf0JwdrdWWSFkvT2/A=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aCxwBR1jQwzSnqLlc4IP/POVZZ2ZmnWnzC/whArW/7I27iKa21Nf6brgn4RF+a/NHBwhPUt74Yywsq6JeygP8ai5gHjvxxQYQfQa6jwBBlhnwKxntAKPzD435dc4+8yy4GGj31pSHNaLCC4ucB15I7hDtaDHld0mUqYR07L4SyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d27nZaZt; arc=none smtp.client-ip=209.85.128.53
+	 MIME-Version; b=ZNVS5Gb2KXZQV7YF/03eROhuXjLwgEivKYM6N5541cNQ7mFC/0mNQXTqnzTf2GS5k2yavfHwMUue0g9HMVSWmGyZDseUeLny+y/Tm03YadcRfxj4Ve3oKRJLzvJSHAxEQPhMqF1nbleYbqSe4cgMw+WLo0srmZXV1Sjy87JfIlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HSOMzs8y; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so69279445e9.1;
-        Wed, 13 Nov 2024 11:53:23 -0800 (PST)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d63a79bb6so4759063f8f.0;
+        Wed, 13 Nov 2024 11:53:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731527602; x=1732132402; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731527604; x=1732132404; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0lQpVT555kI9HxWkbuw1QfCobvJUnpBBYDf2BdIAaRY=;
-        b=d27nZaZtM57nxV5jaR1K0TCXBS41Yji/C63xtsWFMjO8zfkJ2+x3gKvaHfwvMDVl/D
-         xA4e5jAYwH62sKHA2fGo7c/4G+fjasF3nLwPgubFIEzfjoDftAAkhDcaNpADas9n2bce
-         HZOGqMZajWHDY510YFedOZxHi5QsQy27us2qUhXj5LuTjtKyiB0yVfcVWL3/IDVvvkqA
-         LaiRgmr9/cduOhqXe8olI2wFAz3Gho4ndKjE/K7erN5g6NISjWmXMH6hjBspzO+z/rDF
-         mgxcE9LFUflqzwfm/e6xzQ41Xf1oUUABqkTVW4DbX24KP3qBx3kyNe0uiUSR4zBgMPTk
-         iZXA==
+        bh=3O9xjwYbMuKJBMh8JPk0dRAP4OjyngOz+BP2VQZxpdg=;
+        b=HSOMzs8ygp89H5/+VPf6u0MBUiGfeVc1vw0tY2Zybz5ntUp0mImRwQIRtMoS0DdOur
+         k+xtXPyQD/pQncQrkkh1yQ7cksAwfwKqPvmDzRrt1ZdbeFUNa95Ru48WuC7ImAoOSp12
+         EAZD7UQZcORFxd6hAxFuHUpdzqyJnneF/W5Yw7rBUa5EYCWQ8JcHgYv+HcfjyChTtV11
+         TpH2v1/3Cj/kaS1cBbpRQp6c6lYLlLr955UbhG4odTNvC8+3F0AD7rG79c2ZQlgMmxq3
+         SnvtSpmULwSshnlA4qsU3k17qcMLr+08+l4Pb95iMA3g4X5PdpR0SVdMMTOEdZbiaxKN
+         dAFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731527602; x=1732132402;
+        d=1e100.net; s=20230601; t=1731527604; x=1732132404;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0lQpVT555kI9HxWkbuw1QfCobvJUnpBBYDf2BdIAaRY=;
-        b=olhHXhihu5Azez1FhTmtTaeiIazNmCG3FTaC80MzU2bYPDCWbOA5YSwLhxqzkC9qXt
-         JzsCKZax9FV1+IwZadLdMAK0qHdmihSLxIiRrfDVzhKEJs71Cvik7cUd7FWtwaNsQryf
-         ijZc6jJ+iqg5043/Z7JqOoInun1R6JddYRlaf1ceLdblaC63U2xC7g5k3bgCvjLomwTS
-         JcKUthUXNzkS5FKwiwHp5ajP53/krG2r5lSgddHh7eO8guE89g8udijRl7T+gHCJZwrv
-         NPGB5Wh/Hl2lO2On0W/uuhOHlmEG4bCYd4tDlbz4xgfwnskNsv/KMIOWWqf8bkzcJ9Gf
-         480A==
-X-Forwarded-Encrypted: i=1; AJvYcCVVoHeXFYgm0K9J6x8GdegVQM0eudWrBTvVWHJ2dgeMlz5N2bARS1w4+pDS75iOt0kz06wydNsXPnJbd/Q=@vger.kernel.org, AJvYcCWR5KqWO7dIh4EPje7Tca1MUjGXPSN3WVe4J6tSeaXxxYRp7mXRFFt2QM6jspJNUq2nswqglANiqT/J@vger.kernel.org, AJvYcCXkxhT1ZMzQyrfO/rcenhhieS0W3vg/97sukoGa7DIR3Xnaci6MMAEKQeLumH4YvDiDiNlBlKk5wEkD3jNw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbbXwATO5QKpv4RRETt1Ulpj0ft+zscQqA0dIxwm2wXZWIXdQf
-	hjHAlPo5nZ0F303ZuT6fZsuFfka89LyYnghNLCKXKWGhUPdjQvyk
-X-Google-Smtp-Source: AGHT+IH2Z2a0/rS9v7IeDir+dpM0VmMRaelsOvWV9gMqaYXP9EFNgflc7dj7yYlfrWcH5bgnnm7i0Q==
-X-Received: by 2002:a05:600c:3b9e:b0:431:3927:d1bc with SMTP id 5b1f17b1804b1-432b74fcb02mr189488175e9.2.1731527602016;
-        Wed, 13 Nov 2024 11:53:22 -0800 (PST)
+        bh=3O9xjwYbMuKJBMh8JPk0dRAP4OjyngOz+BP2VQZxpdg=;
+        b=gLqqGtioqEzC+g7emJg4906RDV71a1spiaN4/uo5TlAiN419dPrax3J/ukRIgwp7fr
+         +1sgxDUdCfpFXE3JJ9CNtLT1ntmde4zkdvippwVshl1M9nzsbxBXBalbjvwoKfPTiQY7
+         YjcYkCM5HE8FswRByqr+KPRg3Rh76odUqj3mE6ZsbWxM7Ysded8j6H5+9Zta642v8n9B
+         qth7eO7byi/SHaLAkPKb+QtbgsYrt1hoNAETvNxaQKWIZFfcAhQCH+Wl5jQR794KpI5v
+         awwR8836AoT3SfGPMbCPqNCUEZVZR5teOZUEP2kWNBOSD2oNMuiLZMD/mu4iuXi6Z51u
+         s3KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0pMunCGOFnL1o5QqN+iUbvuWMnJwHceKf01jS24jBVP/NmN/D9GFCLKvXV9cmLryckOtsDn2l5tkjS4wd@vger.kernel.org, AJvYcCVitaZ7ZCKiqFiMc6/SSsZ0x/ZwFgvXLFXk6jjCg1X+BxuR0RXt/8uGFm1CsawVkyTJ/Qqfni7cumfaT6M=@vger.kernel.org, AJvYcCXX/6achx43Sl2980SLbEFsdXR7FN886XDifJ66x+b7iv6619/w8ZaeklK5Ik82n69yMHPFiv6JN/Jg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsMmBCem5GQn7Jkk8aVQDX9br9FaHdnkHlujmxMXnNhqSoYjLx
+	xWDyNa8IU/5wNvQck0z2PeTYYX63VRaXdtlxzvqrxpeIgFJgavOT
+X-Google-Smtp-Source: AGHT+IEANOLGqOrMck5zuaV/awm4uDnLiNsDYeECS1iqXbhkM7NIIObAN6edW4LT/VwwrIADcKG8Jg==
+X-Received: by 2002:a5d:5849:0:b0:381:f596:392a with SMTP id ffacd0b85a97d-3820df8884cmr3387252f8f.43.1731527604134;
+        Wed, 13 Nov 2024 11:53:24 -0800 (PST)
 Received: from playground.localdomain ([86.127.146.72])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d5503c58sm34633065e9.22.2024.11.13.11.53.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d5503c58sm34633065e9.22.2024.11.13.11.53.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 11:53:21 -0800 (PST)
+        Wed, 13 Nov 2024 11:53:23 -0800 (PST)
 From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -83,9 +83,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	linux-sound@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/5] ASoC: dt-bindings: add binding for imx95's CM7 core
-Date: Wed, 13 Nov 2024 14:52:37 -0500
-Message-Id: <20241113195240.3699-3-laurentiumihalcea111@gmail.com>
+Subject: [PATCH v2 3/5] ASoC: dt-bindings: audio-graph-card2: add widgets and hp-det-gpios support
+Date: Wed, 13 Nov 2024 14:52:38 -0500
+Message-Id: <20241113195240.3699-4-laurentiumihalcea111@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241113195240.3699-1-laurentiumihalcea111@gmail.com>
 References: <20241113195240.3699-1-laurentiumihalcea111@gmail.com>
@@ -99,64 +99,31 @@ Content-Transfer-Encoding: 8bit
 
 From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-Add binding for imx95's CM7 core.
+Introduce the 'widgets' property, allowing the creation of widgets from
+4 template widgets: Microphone, Line, Headphone, and Speaker. Also
+introduce the 'hp-det-gpios' property, which allows using headphone
+detection using the specified GPIO.
 
 Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 ---
- .../bindings/sound/fsl,imx95-cm7-sof.yaml     | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/fsl,imx95-cm7-sof.yaml
+ .../devicetree/bindings/sound/audio-graph-card2.yaml          | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/fsl,imx95-cm7-sof.yaml b/Documentation/devicetree/bindings/sound/fsl,imx95-cm7-sof.yaml
-new file mode 100644
-index 000000000000..f11e03bbcaba
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/fsl,imx95-cm7-sof.yaml
-@@ -0,0 +1,44 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/fsl,imx95-cm7-sof.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP imx95 CM7 core
-+
-+maintainers:
-+  - Daniel Baluta <daniel.baluta@nxp.com>
-+
-+description: NXP imx95 CM7 core used for audio processing
-+
-+allOf:
-+  - $ref: fsl,sof-cpu.yaml#
-+
-+properties:
-+  compatible:
-+    const: fsl,imx95-cm7-sof
-+
-+  port:
-+    description: SAI3 port
-+    $ref: audio-graph-port.yaml#
-+    unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - port
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    cm7-cpu@80000000 {
-+      compatible = "fsl,imx95-cm7-sof";
-+      reg = <0x80000000 0x6100000>;
-+      mboxes = <&mu7 2 0>, <&mu7 2 1>, <&mu7 3 0>, <&mu7 3 1>;
-+      mbox-names = "txdb0", "txdb1", "rxdb0", "rxdb1";
-+      memory-region = <&adma_res>;
-+      cpu: port {
-+        /* SAI3-WM8962 link */
-+        cpu_ep: endpoint { remote-endpoint = <&wm8962_ep>; };
-+      };
-+    };
+diff --git a/Documentation/devicetree/bindings/sound/audio-graph-card2.yaml b/Documentation/devicetree/bindings/sound/audio-graph-card2.yaml
+index f943f90d8b15..94588353f852 100644
+--- a/Documentation/devicetree/bindings/sound/audio-graph-card2.yaml
++++ b/Documentation/devicetree/bindings/sound/audio-graph-card2.yaml
+@@ -37,6 +37,10 @@ properties:
+   codec2codec:
+     type: object
+     description: Codec to Codec node
++  hp-det-gpios:
++    $ref: audio-graph.yaml#/properties/hp-det-gpios
++  widgets:
++    $ref: audio-graph.yaml#/properties/widgets
+ 
+ required:
+   - compatible
 -- 
 2.34.1
 
