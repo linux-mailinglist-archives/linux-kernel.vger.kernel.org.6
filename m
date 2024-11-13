@@ -1,62 +1,57 @@
-Return-Path: <linux-kernel+bounces-408413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E929C7E78
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:56:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596029C7E7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:56:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB73282573
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:56:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C221F21B61
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A0318C033;
-	Wed, 13 Nov 2024 22:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805DE18C33C;
+	Wed, 13 Nov 2024 22:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nyNmEpTj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZ2MD6ZO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A00189BBD;
-	Wed, 13 Nov 2024 22:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D294418C01B;
+	Wed, 13 Nov 2024 22:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731538588; cv=none; b=MsO4ZzynT9NQ1jRzAWbpUkwNijnsCZqC+qv8zASh+ThFRgwKiYl1iCjapwDNIZFh4DcyobjZa54kfYAxAZjg5xZnMeShpRY8hGoZmjLrOKJaqz14fYsEHACA6DGG7rILT7mid7wc1xnhWGt5dkoksw/Y/iGuDxLrO6poVcBb1Jg=
+	t=1731538599; cv=none; b=K0oAyBzn9mZ3pu1eK32qno1txxeUF7rMzC5s837DyRAcMQb+Wz9NnM9IHHZdJcR8wjpUyQqb+Y6Bod+onZFJHuNqzFpKFUpOPFWOcFLDq/krsN2OomoFQ418ANZtV0h0tyE6HtvSvzJEdOVS0zcGlG/kkwrppV7T3LUiRxOrsCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731538588; c=relaxed/simple;
-	bh=ppARoxV/BKuqM26l7GbAb1n0J5UopQIlgnjP2VYDPIc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W74hEm/SWOUfefp+dBX+z3bFaqK7GKRFSTL8ucbUk7TkoLznqto5YcVzNzR1dJYFMoAb3TpBdeC0fyzOg9mztKOUlfb8LuiI2PJizQzFhFWf/mStVMRs6ajk9HJ13Wyk41MSnEitUdqf8lVr7BxBt7uiDYQVaY+TejNpCNfHm5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nyNmEpTj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD47C4CEC3;
-	Wed, 13 Nov 2024 22:56:27 +0000 (UTC)
+	s=arc-20240116; t=1731538599; c=relaxed/simple;
+	bh=04iCwCCCRuAs3errPNW10EDAYykPH5V9SmAAGv4dzm0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rf56KpCy0Y5WLXBwcU3LsHbz3OKCbLtC4pI549BApfHr7cF519XDA5YUIYmkXarhlAXLnCNjEnYrnDs1ijJXbwLARb7VszI78SUQe+/2hlpwdILePiYnFDDigUDOMIv4DUnpJTF2VO3IfH4G7zAaI04TrgPNXm7x8U76Q7yU0Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZ2MD6ZO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35280C4CEC3;
+	Wed, 13 Nov 2024 22:56:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731538588;
-	bh=ppARoxV/BKuqM26l7GbAb1n0J5UopQIlgnjP2VYDPIc=;
+	s=k20201202; t=1731538599;
+	bh=04iCwCCCRuAs3errPNW10EDAYykPH5V9SmAAGv4dzm0=;
 	h=From:To:Cc:Subject:Date:From;
-	b=nyNmEpTj99rigb0YjXknMOHR8svcWnsRjs1FchKtnDLUt6QDByAdr85hMX6/0npKq
-	 HdVtlOxC211m6YH3DbKs888Vqt2bd39uSqkG8Kai1NdMMYbDXGSHzcrPOEKM3bs3eE
-	 3n7UPexzl3tFD6lJBH2EK9Z7UyqSt0Qc7504Jd3aUWsCJsSILSOVHEeChrUp7WV4pv
-	 +jO45a0vJ2q2pDXynL0BaJhaHrMoiDcAvmRhZt7NefwnZi+hqDBBWt+n8en4Yxi2eu
-	 TyoCmNo3EdFVy7g7mz1nmZU762ku2DsIF69s3uHm6dJyRYkmYptg4U+NFSRpHoJDKL
-	 +3cKBbPlJc2mw==
+	b=jZ2MD6ZO/vmL+VFDrhvd4vyST4HgnoTGRiiy1tOioOemCoegTA40wYQ1Wgz4dLcLu
+	 YcibPkKH/lu4iLG2UpeIzpVIFS81pT8q+z/50Gun/FRuZIBr8a5DpCX4KAiRUqCqKy
+	 NzC8oh+ShLgkdwsr2/ByoqzTaEaQ4XkrboWJj40PVifgCDPwsjM6oY5ZMwsMDSK+4E
+	 Y80HJoE2UabumFf4/E6jqqvfu9ENCYvA6BPO2ThWTHvDUf4LM4oOdEXASzfoMewSPj
+	 HfoAL9HyBYpxcSJbh+S2iLSUizxOYfpBcC22gjfbeMSYRpBe71rO6vGkf5i2USar1z
+	 ros8Y0eb+3SLw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Gaurav Jain <gaurav.jain@nxp.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Frank Li <Frank.Li@nxp.com>
-Cc: linux-crypto@vger.kernel.org,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
+Cc: linux-mtd@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] dt-bindings: Unify "fsl,liodn" type definitions
-Date: Wed, 13 Nov 2024 16:56:13 -0600
-Message-ID: <20241113225614.1782862-1-robh@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: mtd: fixed-partitions: Fix "compression" typo
+Date: Wed, 13 Nov 2024 16:56:31 -0600
+Message-ID: <20241113225632.1783241-1-robh@kernel.org>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -66,65 +61,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The type definition of "fsl,liodn" is defined as uint32 in
-crypto/fsl,sec-v4.0.yaml and uint32-array in soc/fsl/fsl,bman.yaml,
-soc/fsl/fsl,qman-portal.yaml, and soc/fsl/fsl,qman.yaml. Unify the type to
-be uint32-array and constraint the single entry cases.
+The example erroneously has "compress" property rather than the
+documented "compression" property.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../devicetree/bindings/crypto/fsl,sec-v4.0.yaml       | 10 ++++++----
- .../devicetree/bindings/soc/fsl/fsl,qman-portal.yaml   |  2 ++
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/mtd/partitions/fixed-partitions.yaml    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml b/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
-index 9c8c9991f29a..f0c4a7c83568 100644
---- a/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
-+++ b/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
-@@ -114,8 +114,9 @@ patternProperties:
-           table that specifies the PPID to LIODN mapping. Needed if the PAMU is
-           used.  Value is a 12 bit value where value is a LIODN ID for this JR.
-           This property is normally set by boot firmware.
--        $ref: /schemas/types.yaml#/definitions/uint32
--        maximum: 0xfff
-+        $ref: /schemas/types.yaml#/definitions/uint32-array
-+        items:
-+          - maximum: 0xfff
+diff --git a/Documentation/devicetree/bindings/mtd/partitions/fixed-partitions.yaml b/Documentation/devicetree/bindings/mtd/partitions/fixed-partitions.yaml
+index 058253d6d889..62086366837c 100644
+--- a/Documentation/devicetree/bindings/mtd/partitions/fixed-partitions.yaml
++++ b/Documentation/devicetree/bindings/mtd/partitions/fixed-partitions.yaml
+@@ -82,7 +82,7 @@ examples:
  
-   '^rtic@[0-9a-f]+$':
-     type: object
-@@ -186,8 +187,9 @@ patternProperties:
-               Needed if the PAMU is used.  Value is a 12 bit value where value
-               is a LIODN ID for this JR. This property is normally set by boot
-               firmware.
--            $ref: /schemas/types.yaml#/definitions/uint32
--            maximum: 0xfff
-+            $ref: /schemas/types.yaml#/definitions/uint32-array
-+            items:
-+              - maximum: 0xfff
+         uimage@100000 {
+             reg = <0x0100000 0x200000>;
+-            compress = "lzma";
++            compression = "lzma";
+         };
+     };
  
-           fsl,rtic-region:
-             description:
-diff --git a/Documentation/devicetree/bindings/soc/fsl/fsl,qman-portal.yaml b/Documentation/devicetree/bindings/soc/fsl/fsl,qman-portal.yaml
-index 17016184143f..e459fec02ba8 100644
---- a/Documentation/devicetree/bindings/soc/fsl/fsl,qman-portal.yaml
-+++ b/Documentation/devicetree/bindings/soc/fsl/fsl,qman-portal.yaml
-@@ -35,6 +35,7 @@ properties:
- 
-   fsl,liodn:
-     $ref: /schemas/types.yaml#/definitions/uint32-array
-+    maxItems: 2
-     description: See pamu.txt. Two LIODN(s). DQRR LIODN (DLIODN) and Frame LIODN
-       (FLIODN)
- 
-@@ -69,6 +70,7 @@ patternProperties:
-     type: object
-     properties:
-       fsl,liodn:
-+        $ref: /schemas/types.yaml#/definitions/uint32-array
-         description: See pamu.txt, PAMU property used for static LIODN assignment
- 
-       fsl,iommu-parent:
 -- 
 2.45.2
 
