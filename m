@@ -1,115 +1,124 @@
-Return-Path: <linux-kernel+bounces-407769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA679C7592
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:05:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76E59C7377
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:25:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4392B34054
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:24:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C9682856BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EC11F9EB3;
-	Wed, 13 Nov 2024 14:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883B71F9ABD;
+	Wed, 13 Nov 2024 14:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Z6/yPpxA"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lHgPtiMb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EFD1E1322;
-	Wed, 13 Nov 2024 14:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C668743172;
+	Wed, 13 Nov 2024 14:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731507832; cv=none; b=AV3s7jxXpTPwifGEnEcLZRmf1t06sG/9IMN0/x1uXemBkGixcSOfQurnYTeLl+ar1LFnE79MBbrKCvbIkLiFOXPRAKWSZpy/ROA/YX5qIZYqfpe3Reydba7i1od42vDEjtaXl/3k4WhbxOL8BOPOtBLj9OiheUmpRFR8z5NZs2g=
+	t=1731507894; cv=none; b=op0TcBilk+UIfuykxx8bzJAjl6jnWzF4UnTgZe0dh8784x3KMQWI/wn+WCjfWnAG3sFBZGu0yhcP6efJm8ePlGUdP4PZpUjMIDS7oGUsFIqCI057TOIYFtqLvfMdQ2pahrO0pog/Eixkew/HIF+93ZdtWKAzKUDRlLuf6x7+xwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731507832; c=relaxed/simple;
-	bh=d8POk7xbKhNdWGzyRLJZnpVRICiROte3+YRg3a6qLQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AaSv+JmbLEPe9VUDCkNNG0dWwqW8Hw0PKhpYiEzJi1PgbkkR0mtCDu7nX+czMSTGDdHy1ac6ZzhpU5jDUn9CDH7GQ9IaZs9PCM0ui+yAoG//srqyZ+t0KpJ1JgxhFgkReulw0dRtPHwKzc3xS3KdclL9uaMtnHlk1YXJtoLWvq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Z6/yPpxA; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 73DF560004;
-	Wed, 13 Nov 2024 14:23:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731507823;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7sxNK0rhgT+2VzUsyuFVQ0BrXwd9XqZVPxbwj0Rf4ds=;
-	b=Z6/yPpxA6DySdbsDv7eDZQvgJjelRmSnM8IE8qxigJY1imiRjCgIMdTtaGhARTs5CY7TTM
-	3JvIWFVyfHWdBVYN6feWo01fnxfo1vS/cr026S8tDJzLYRRl8cTuef8VdMWCoOFl0FF0ek
-	60If+k6wZzSSFOxpNP4bPbr2sSoObwRPc+UXqjIeDQqVYRAUxPtFJuHdUBuUIqHV4Xwtlr
-	MeuIWJ4o7R8b2dOBfQbODP7cp3KkL5tJj2/HeR4Oj+t7YAWWJ0pPYFprV4awxUx3ZE3Fm3
-	h449Nd9/y9j3INuWRIkYoC4x+9p7KXidbX2C3Ksu+RbvcdpXop3Ke3WjBxJYYA==
-Message-ID: <4f68d104-b96d-4726-a94d-1123765393c6@bootlin.com>
-Date: Wed, 13 Nov 2024 15:23:42 +0100
+	s=arc-20240116; t=1731507894; c=relaxed/simple;
+	bh=w3KA42vZqZnTiGziMk7b/yRyjsLnkFIFQiy2JpfoeKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C3+G6sLKg8Vw2qqobFp6yBwRZLdeae1JxyLF3KmfuAdlkTmzWydMz6ovp9ngutJOp0RM5FGCEpKwU22hYPP9goXZ2AfMiVEY9XEgFLS/5N8DVLfGyVrsBQpGb3UZbthPwvOKLLoxqqRnApdD2H01gfTd+CDAVMC0GqnTJ/iMP0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lHgPtiMb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8C09C4CEC3;
+	Wed, 13 Nov 2024 14:24:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731507893;
+	bh=w3KA42vZqZnTiGziMk7b/yRyjsLnkFIFQiy2JpfoeKM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lHgPtiMbHRVWSqvsp+o6JF3Ks1lyQBMcJu61L4muW6tpaAJaU8Dp4/rg4eIqhipxG
+	 Oxh21Zt/B86ukCYl8bekJIFaBOhNOUr0fYaOiTV71YJkpN43f+YzTruUGRG3olbDY1
+	 vI4+ydqP9Bd2MJ0r4bnFPrEwEPFdrGAR1dE6gDCg=
+Date: Wed, 13 Nov 2024 15:24:50 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Daniel Wagner <dwagner@suse.de>, Daniel Wagner <wagi@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org,
+	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
+	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
+	linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v3 1/8] driver core: bus: add irq_get_affinity callback
+ to bus_type
+Message-ID: <2024111328-cheer-mutate-3ee2@gregkh>
+References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
+ <20241112-refactor-blk-affinity-helpers-v3-1-573bfca0cbd8@kernel.org>
+ <76da6c05-4f28-41cc-a48e-da2ae16c64c4@oracle.com>
+ <2d85aa5e-037a-45c3-9f2d-e46b2159b697@flourine.local>
+ <bed15207-c3d8-4e0b-b356-4880f5a4fdff@oracle.com>
+ <2024111323-darkening-sappy-23fa@gregkh>
+ <5ed6e072-5ff1-4327-aee1-e6cdf673fa67@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 07/10] selftests/bpf: migrate flow_dissector
- namespace exclusivity test
-To: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: ebpf@linuxfoundation.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>,
- Bastien Curutchet <bastien.curutchet@bootlin.com>,
- Petar Penkov <ppenkov@google.com>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241113-flow_dissector-v1-0-27c4df0592dc@bootlin.com>
- <20241113-flow_dissector-v1-7-27c4df0592dc@bootlin.com>
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20241113-flow_dissector-v1-7-27c4df0592dc@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ed6e072-5ff1-4327-aee1-e6cdf673fa67@oracle.com>
 
-On 11/13/24 14:53, Alexis Lothoré (eBPF Foundation) wrote:
-
-[...]
-
-> +	ns = open_netns(TEST_NS);
-> +	bpf_prog_detach2(prog_fd, 0, BPF_FLOW_DISSECTOR);
-> +	close_netns(ns);
-
-I would like to mention that I initially planned to directly delete the
-namespace to perform the test cleanup, assuming it would be enough to consider
-any non-root namespace flow_dissector to be removed. However I observed that it
-made other tests dealing with flow_dissector starting to fail with -EEXIST,
-despite all those tests being marked as "serial". I started examining this,
-suspecting a real issue (a race between namespace deletion and flow dissector
-attachment check, or a ns refcount issue) but before going further: is my
-assumption right ? Should a mere namespace deletion be indeed enough to remove
-the corresponding bpf flow dissector ? Or am I missing something ? If so I'll
-keep examining this.
-
-> +out_clean_ns:
-> +	remove_netns(TEST_NS);
-> +out_destroy_skel:
-> +	bpf_flow__destroy(skel);
-> +}
-> +
->  static int create_tap(const char *ifname)
->  {
->  	struct ifreq ifr = {
+On Wed, Nov 13, 2024 at 02:12:30PM +0000, John Garry wrote:
+> On 13/11/2024 13:54, Greg Kroah-Hartman wrote:
+> > > diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+> > > b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+> > > index 342d75f12051..5172af77a3f0 100644
+> > > --- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+> > > +++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+> > > @@ -3636,6 +3636,7 @@ static struct platform_driver hisi_sas_v2_driver = {
+> > >                 .name = DRV_NAME,
+> > >                 .of_match_table = sas_v2_of_match,
+> > >                 .acpi_match_table = ACPI_PTR(sas_v2_acpi_match),
+> > > +               .irq_get_affinity_mask = hisi_sas_v2_get_affinity_mask,
+> > >         },
+> > > };
+> > > 
+> > > 
+> > > > If no one objects, I go ahead and add the callback to struct
+> > > > device_driver.
+> > > I'd wait for Christoph and Greg to both agree. I was just wondering why we
+> > > use bus_type.
+> > bus types are good to set it at a bus level so you don't have to
+> > explicitly set it at each-and-every-driver.  Depends on what you want
+> > this to be, if it is a "all drivers of this bus type will have the same
+> > callback" then put it on the bus.  otherwise if you are going to
+> > mix/match on a same bus, then put it in the driver structure.
 > 
+> Understood, I think all drivers on same bus will use the same callback.
+> 
+> FWIW, most drivers of interest are pci drivers, so I thought that it would
+> simply be a change like this (for those drivers if we use struct
+> device_driver):
+> 
+> @@ -1442,6 +1455,7 @@ int __pci_register_driver(struct pci_driver
+> *drv, struct module *owner,
+>        drv->driver.mod_name = mod_name;
+>        drv->driver.groups = drv->groups;
+>        drv->driver.dev_groups = drv->dev_groups;
+> +       drv->driver.irq_get_affinity = pci_device_irq_get_affinity;
 
+Yes, you can do that too.  But now you have a pointer-per-driver instead
+of just one-per-bus.  It's not a big deal, but again if this is always
+going to be the same for everything on a bus, make it a bus pointer
+please.
 
--- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+thanks,
+
+greg k-h
 
