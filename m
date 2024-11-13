@@ -1,158 +1,227 @@
-Return-Path: <linux-kernel+bounces-408045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D8789C79A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:10:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E113A9C7A12
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:39:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4DFEB2F80C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:03:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5167BB2D664
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E4A200B88;
-	Wed, 13 Nov 2024 17:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE26200B88;
+	Wed, 13 Nov 2024 17:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="khOkovQ/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kTxSIWbY"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D46C7083F;
-	Wed, 13 Nov 2024 17:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF641F77A2
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731517372; cv=none; b=ajAuh0Y0kh8slog4xWx4KiecyBiIdqqVkEc6W2QwID5vLJS88H6jlXfK0g41vf+PcJfFJTPB2oDDwDLrO1hSge1jtoxUyygiFH2i4xhiUqHDVooCEXsj1Ii7JilJGN5up3XMQarndtE+g7ZoClnvMsxLYwP6xpwMQxRUSq2sFok=
+	t=1731517420; cv=none; b=OeHC+33rzWD7645GC/W2Yq64FoWzVkjrGF0EuuNCAeS2daGTS54tqrQhECMDElMC849tNm37dGZ9TbKYUw/zy7+jQ+Wx8SYbXxGox+76shRVqnXfAxALAOwm9iNVDF76rhmZLsdDcyE6/c+nHoXDiVV1OG9TxvsBA/V3fgCRycI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731517372; c=relaxed/simple;
-	bh=bKvQveUmnw0s3bbjiNCbqGR+1sQAqrRWjJOqqLCKXDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WMgLIPMaD1ckIW9JcoWL7F2MgG5jcaEqxbHwYIu67k7DFms5q0s93i5aJ0uHjiwzRD4xos2UpYk5WkRVcvD1TLKhpRyHQ1ddxhnJVGCMZhCTnN5sySmyA1vg9nRxlbPsf9t0CEuWA78GVyw2LMpyrlBiZABHKPPz2QKxeX95MbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=khOkovQ/; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731517370; x=1763053370;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bKvQveUmnw0s3bbjiNCbqGR+1sQAqrRWjJOqqLCKXDM=;
-  b=khOkovQ/sK/nSlEmLX2q2zVrn3l0z6sWUkqUdcfxSU9dWvXJAyaRWiN1
-   qHm8Y7/paKaLz0VI1o5A5OPD2uPmEayTa/nGcga0EcsXVjW2xEAhZa/0s
-   8wBa85vTAg4JfhEUiDqK8pYGYDlyIWppBAdPm69hzEumyU5c72KU3e64B
-   hbjM6ZYGS6HanYToxTJ5lxaTuSsFAiVc7WRxUxrBakP1k2f6efBgui3iH
-   8XNroeRLwPGWwpj4FzufGdEMCOhNiH9t9MOtoP30L8aCAecva5YzhY0JL
-   OvfC1VH0/VLYvVQ2gy6nq4FwZclonfB1FqFxqp6GwYqXZJnmpADa24Eih
-   A==;
-X-CSE-ConnectionGUID: dVroWS0JTcGoasNtogKBeg==
-X-CSE-MsgGUID: Gjhdl4OuQ5KHNZw3agMAcg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="56812274"
-X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
-   d="scan'208";a="56812274"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 09:02:49 -0800
-X-CSE-ConnectionGUID: TmNWX73cRzWpQFfza1GHbA==
-X-CSE-MsgGUID: LqEBD+yFSge8vce6kk0yfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
-   d="scan'208";a="92996490"
-Received: from spandruv-desk1.amr.corp.intel.com (HELO [10.125.111.237]) ([10.125.111.237])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 09:02:48 -0800
-Message-ID: <c69d74f7-4484-4fc6-9b95-d2ae86ead794@intel.com>
-Date: Wed, 13 Nov 2024 10:02:47 -0700
+	s=arc-20240116; t=1731517420; c=relaxed/simple;
+	bh=OlzrsPB5XUVoPdY5ssfM2l467Cry902eTgjhS9HpyC0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PoVDAa9WfQqE6lxBnGP4HQ4JN8h5FSC/c6CnaNcgYsh11lRsREYvjM0Dd+YCuhg0Z5T7xKZm0bjT5dTgsjwuWKMFylq2vvOQAt03NJ4Zu6/2DoY3TblSe2YU881k9PbNgnG0lh5tB2ydKdDlEtg41+lEj4x4bUHrQv3tv77Bhf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kTxSIWbY; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20ca03687fdso212135ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:03:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731517419; x=1732122219; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b3wYcPiFXtftpRGxF/6Zf/umDLx3ClZ8Ekl/dsjeYmQ=;
+        b=kTxSIWbY5ozNhZ8YLwoG7jV0TF5Fak1IPI5T8ROcfLcqf4F5jGjlUAw41R+a+25sUu
+         hcoxOq+BV1o4+i2alpgLjBeY9E+UrCfmfEvuQFQlxFDlcAV5iAxdDDtk3AfiJgsnUkAJ
+         1viiYzN0g80nhIKtlHcAO4SHoOzJ+jeT626eCaqNVPWAQ3ZUZmxSW+z2dlfGH/hpMCt1
+         vCz8p2yFv/XLrrTW9rm/i+piIOH0DkNktkT1j1BjPsfsYKvPY+FM8aOAz3v1D0Uo/MLn
+         VL5cOOQUwyDNvs2xEMCc/H4lxh4+Kedp9JH/ataVFWdPjVJmJPQDKTNqZhhsqw5xpFaz
+         0eRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731517419; x=1732122219;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b3wYcPiFXtftpRGxF/6Zf/umDLx3ClZ8Ekl/dsjeYmQ=;
+        b=iHFoFFNirGr6aKFWsTbu26VX7mCPJ5vg+dLzKYCnaCVT0J9e5NjUdajrDAiUGSf82k
+         gOq6+clYQLInHI1JTjXF6NAToefydpEEgHfPPRwGTx6rzisrE9MbvsBtcgiXeu/ht09l
+         MEB5odJ8+RfzuadfyTFzzzqZ5rx4wObv8AME3XMzuf+gJM0Brok8Uq4QP+YEUdIlvXGG
+         eGQ0SHatrgexJ0HCre1USF8e1fcBL9DSS4qhA3cqbSJKrBSUT85IrEFiPdcJH8mNWz1v
+         aTWGMwQ4kB/T0mO1BweLTkYxymCTeIsAGzxhmg3zPvZ0v6cXsTK23AAm7NbgI/LQLYzk
+         PsRA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4rKBH+x8L6YbVxWQ+/V1zjasiVY+2xRrEfZlYASXvcwxz7FsGIk+JWmN8+JWS5CQv5toV7TuRoXrrsR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd3sHuiozIzI9gzv9VfGicN2OQEz8nsancjvP6/OhuhEBhgO5z
+	O/VxdsYMRRJZLWhFnwMNKy7Bk7XRtKPm4o74003CELQJytqfw3M+d2hlEMli2PJkXvE9M69t7ES
+	iQAhPV7b0BXfgH181vhNG7Q4+wJm0MYRNoagohIWtinkeHATsx3Id
+X-Gm-Gg: ASbGncs4lOnVspuZikhi3hsV91g919SfCiKLqxBbtYSGI8HbT6TOe0NYnrMIa8yyGet
+	GFGyIfFvLrw2Jd5EWSt+RJne65xC2BjBm3LgnoURfsLu/MhUo2he23dD5+IfEmg==
+X-Google-Smtp-Source: AGHT+IHZ1dDlMsr6QQHILrv6ztAYxxRD5ko2gvdn7UqEsuvtnR6ku5j9xZxhm6G/igNtDYCuWusICqVWF7QhmfutHNQ=
+X-Received: by 2002:a17:903:2449:b0:20b:81bb:4a81 with SMTP id
+ d9443c01a7336-211b70725d1mr2524865ad.7.1731517417070; Wed, 13 Nov 2024
+ 09:03:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] acpi: nfit: vmalloc-out-of-bounds Read in
- acpi_nfit_ctl
-To: Suraj Sonawane <surajsonawane0215@gmail.com>, dan.j.williams@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com
-Cc: rafael@kernel.org, lenb@kernel.org, nvdimm@lists.linux.dev,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
-References: <20241113125157.14390-1-surajsonawane0215@gmail.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20241113125157.14390-1-surajsonawane0215@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241113002818.3578645-1-howardchu95@gmail.com> <20241113002818.3578645-5-howardchu95@gmail.com>
+In-Reply-To: <20241113002818.3578645-5-howardchu95@gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 13 Nov 2024 09:03:25 -0800
+Message-ID: <CAP-5=fXPCgXyp3w478M9UrqVmneg1mvsabSJb55R+-xPYaUFuw@mail.gmail.com>
+Subject: Re: [PATCH v8 04/10] perf record --off-cpu: Preparation of off-cpu
+ BPF program
+To: Howard Chu <howardchu95@gmail.com>
+Cc: acme@kernel.org, peterz@infradead.org, namhyung@kernel.org, 
+	mingo@redhat.com, jolsa@kernel.org, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 11/13/24 5:51 AM, Suraj Sonawane wrote:
-> Fix an issue detected by syzbot with KASAN:
-> 
-> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/
-> core.c:416 [inline]
-> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
-> drivers/acpi/nfit/core.c:459
-> 
-> The issue occurs in cmd_to_func when the call_pkg->nd_reserved2
-> array is accessed without verifying that call_pkg points to a buffer
-> that is appropriately sized as a struct nd_cmd_pkg. This can lead
-> to out-of-bounds access and undefined behavior if the buffer does not
-> have sufficient space.
-> 
-> To address this, a check was added in acpi_nfit_ctl() to ensure that
-> buf is not NULL and that buf_len is greater than sizeof(*call_pkg)
-> before casting buf to struct nd_cmd_pkg *. This ensures safe access
-> to the members of call_pkg, including the nd_reserved2 array.
-> 
-> Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
-> Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
-> Fixes: ebe9f6f19d80 ("acpi/nfit: Fix bus command validation")
-> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+On Tue, Nov 12, 2024 at 4:28=E2=80=AFPM Howard Chu <howardchu95@gmail.com> =
+wrote:
+>
+> Set the perf_event map in BPF for dumping off-cpu samples.
+>
+> Set the offcpu_thresh to specify the threshold.
+>
+> Reviewed-by: Ian Rogers <irogers@google.com>
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: James Clark <james.clark@linaro.org>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Link: https://lore.kernel.org/r/20241108204137.2444151-5-howardchu95@gmai=
+l.com
+> [ Added some missing iteration variables to off_cpu_config() and fixed up
+>   a manually edited patch hunk line boundary line ]
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 > ---
-> V1: https://lore.kernel.org/lkml/20241111080429.9861-1-surajsonawane0215@gmail.com/
-> V2: Initialized `out_obj` to `NULL` in `acpi_nfit_ctl()` to prevent
-> potential uninitialized variable usage if condition is true.
-> V3: Changed the condition to if (!buf || buf_len < sizeof(*call_pkg))
-> and updated the Fixes tag to reference the correct commit.
-> 
->  drivers/acpi/nfit/core.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-> index 5429ec9ef..eb5349606 100644
-> --- a/drivers/acpi/nfit/core.c
-> +++ b/drivers/acpi/nfit/core.c
-> @@ -439,7 +439,7 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>  tools/perf/util/bpf_off_cpu.c          | 25 +++++++++++++++++++++++++
+>  tools/perf/util/bpf_skel/off_cpu.bpf.c | 11 +++++++++++
+>  2 files changed, 36 insertions(+)
+>
+> diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cpu.=
+c
+> index 558c5e5c2dc3..61729a65b529 100644
+> --- a/tools/perf/util/bpf_off_cpu.c
+> +++ b/tools/perf/util/bpf_off_cpu.c
+> @@ -13,6 +13,7 @@
+>  #include "util/cgroup.h"
+>  #include "util/strlist.h"
+>  #include <bpf/bpf.h>
+> +#include <internal/xyarray.h>
+>
+>  #include "bpf_skel/off_cpu.skel.h"
+>
+> @@ -60,6 +61,9 @@ static int off_cpu_config(struct evlist *evlist)
+>  static void off_cpu_start(void *arg)
 >  {
->  	struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
->  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
-> -	union acpi_object in_obj, in_buf, *out_obj;
-> +	union acpi_object in_obj, in_buf, *out_obj = NULL;
-
-Looking at the code later, out_obj is always assigned before access. I'm not seeing a path where out_obj would be accessed unitialized...
-
-https://elixir.bootlin.com/linux/v6.12-rc7/source/drivers/acpi/nfit/core.c#L538
- 
->  	const struct nd_cmd_desc *desc = NULL;
->  	struct device *dev = acpi_desc->dev;
->  	struct nd_cmd_pkg *call_pkg = NULL;
-> @@ -454,8 +454,14 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
->  	if (cmd_rc)
->  		*cmd_rc = -EINVAL;
->  
-> -	if (cmd == ND_CMD_CALL)
-> -		call_pkg = buf;
-> +	if (cmd == ND_CMD_CALL) {
-> +		if (!buf || buf_len < sizeof(*call_pkg)) {
-> +			rc = -EINVAL;
-> +			goto out;
-> +		}
-> +		call_pkg = (struct nd_cmd_pkg *)buf;
-
-Is the casting needed? It wasn't in the old code.
-
-> +	}
+>         struct evlist *evlist =3D arg;
+> +       struct evsel *evsel;
+> +       struct perf_cpu pcpu;
+> +       int i;
+>
+>         /* update task filter for the given workload */
+>         if (skel->rodata->has_task && skel->rodata->uses_tgid &&
+> @@ -73,6 +77,25 @@ static void off_cpu_start(void *arg)
+>                 bpf_map_update_elem(fd, &pid, &val, BPF_ANY);
+>         }
+>
+> +       /* update BPF perf_event map */
+> +       evsel =3D evlist__find_evsel_by_str(evlist, OFFCPU_EVENT);
+> +       if (evsel =3D=3D NULL) {
+> +               pr_err("%s evsel not found\n", OFFCPU_EVENT);
+> +               return;
+> +       }
 > +
->  	func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
->  	if (func < 0)
->  		return func;
+> +       perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
+> +               int err;
+> +
+> +               err =3D bpf_map__update_elem(skel->maps.offcpu_output, &p=
+cpu.cpu, sizeof(__u32),
+> +                                          xyarray__entry(evsel->core.fd,=
+ i, 0),
+> +                                          sizeof(__u32), BPF_ANY);
+> +               if (err) {
+> +                       pr_err("Failed to update perf event map for direc=
+t off-cpu dumping\n");
+> +                       return;
+> +               }
+> +       }
+> +
+>         skel->bss->enabled =3D 1;
+>  }
+>
+> @@ -261,6 +284,8 @@ int off_cpu_prepare(struct evlist *evlist, struct tar=
+get *target,
+>                 }
+>         }
+>
+> +       skel->bss->offcpu_thresh_ns =3D opts->off_cpu_thresh_us * 1000;
 
+Thanks for the suffixes, readability++.
+
+Ian
+
+> +
+>         err =3D off_cpu_bpf__attach(skel);
+>         if (err) {
+>                 pr_err("Failed to attach off-cpu BPF skeleton\n");
+> diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/bpf=
+_skel/off_cpu.bpf.c
+> index c152116df72f..c87132e01eb3 100644
+> --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> @@ -18,6 +18,8 @@
+>  #define MAX_STACKS   32
+>  #define MAX_ENTRIES  102400
+>
+> +#define MAX_CPUS  4096
+> +
+>  struct tstamp_data {
+>         __u32 stack_id;
+>         __u32 state;
+> @@ -39,6 +41,13 @@ struct {
+>         __uint(max_entries, MAX_ENTRIES);
+>  } stacks SEC(".maps");
+>
+> +struct {
+> +       __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
+> +       __uint(key_size, sizeof(__u32));
+> +       __uint(value_size, sizeof(__u32));
+> +       __uint(max_entries, MAX_CPUS);
+> +} offcpu_output SEC(".maps");
+> +
+>  struct {
+>         __uint(type, BPF_MAP_TYPE_TASK_STORAGE);
+>         __uint(map_flags, BPF_F_NO_PREALLOC);
+> @@ -97,6 +106,8 @@ const volatile bool uses_cgroup_v1 =3D false;
+>
+>  int perf_subsys_id =3D -1;
+>
+> +__u64 offcpu_thresh_ns;
+> +
+>  /*
+>   * Old kernel used to call it task_struct->state and now it's '__state'.
+>   * Use BPF CO-RE "ignored suffix rule" to deal with it like below:
+> --
+> 2.43.0
+>
 
