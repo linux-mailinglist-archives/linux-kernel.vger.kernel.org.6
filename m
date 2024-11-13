@@ -1,94 +1,101 @@
-Return-Path: <linux-kernel+bounces-408081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592CA9C7A37
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:48:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 670BE9C7A3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:48:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C92B1F243F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:47:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192841F2362B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698CC2040AF;
-	Wed, 13 Nov 2024 17:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF032022E3;
+	Wed, 13 Nov 2024 17:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcvMZvdY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="KOcSLkVP"
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB7E2022E8;
-	Wed, 13 Nov 2024 17:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7942022E2;
+	Wed, 13 Nov 2024 17:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731520027; cv=none; b=E1VvnidmBGcMqS0+bbSNCcHPZliaIxu3T7qyGuuppy+aA0vH/wz4vIK+FvPQfZEdvqjbN6q1Q556r9lYPU4UF5ot9sHg+XV923Ed/U2t7/ifCcg5ozr68MvcmpuTG1WedlzuceJLNyBUjw9e9hndfggiKY12ytfClM2P4mF6IhQ=
+	t=1731520074; cv=none; b=CN7pc54rCkY70qn0e4TM0iN5BjwvJ9oiwbpD2St4t8P/JXpvTq7Y0wvXUJYpDxS7TJoVEgs+JrV64oeHh3/Yij2X1ex7Cnr4mnhbkQjrFgH2FnYyXUgzIy7hDDugvHiGvl9cSJ0qTDfM/fE002efMFfDCMtZx6+7V32rjDwe0f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731520027; c=relaxed/simple;
-	bh=8NjEmZoG6cs/6tWDpxDdwGePjepq2tBR7948gl6tPak=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=IVCjViM3jBOJzX1nSpSG3uEKPfRkuPFDQS2ECaMjHhIGC2UXKf7qhOozaLsi8rPrHqSpBAzXQL/Fx6PHUf8rH3OM5bnTF0cldJcbbIQ6pn/ovu9eVGzPQTlbTeXsbg9b9SNbuXJTFUINzJhjMNJaNOqI9eSaOFBf/OLzXFurljI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcvMZvdY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5009C4CECD;
-	Wed, 13 Nov 2024 17:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731520026;
-	bh=8NjEmZoG6cs/6tWDpxDdwGePjepq2tBR7948gl6tPak=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=RcvMZvdYhNoxb31xfDE2bX8Uqe7DwUIqJA+bzlmMsBbuUbrCdvsg0h5b+eGLKmzwt
-	 diFRLqyhSUUDdQTze7wTvTmP0C/kXp6VgGihsrPgymetEwBnEtf7zPmPLXSk3yLloy
-	 0jH86TOfA2VdEzR8kK8SSA8hZSqgyFC0NeZTGeVEbZf1dFohoaDnA1YGlFqHSqxeAD
-	 8dnH+bxt6e3a76z3XFQ79Q8J9wFCh4q4syfryn5XezFxd4n62XWtG2rrcWZqpTJ3Ul
-	 WtffrPHKCy9klROUpSTSFoFC22tnhHsgL4C5Ti6ziMT6/SWRaIYfhEXlCkevnBA4wI
-	 okPhUfI44fAsA==
-From: Mark Brown <broonie@kernel.org>
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241112081637.40962-1-zhangjiao2@cmss.chinamobile.com>
-References: <20241112081637.40962-1-zhangjiao2@cmss.chinamobile.com>
-Subject: Re: [PATCH] spi: Delete useless checks
-Message-Id: <173152002535.472003.992214417304041252.b4-ty@kernel.org>
-Date: Wed, 13 Nov 2024 17:47:05 +0000
+	s=arc-20240116; t=1731520074; c=relaxed/simple;
+	bh=BENcIZAB2L/VXtw1cTjcAUJVB1fmyn2KqGDpT5/UDFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EyEupBm+hxP8zh0gwu+MZ+aTtVY8IF8rvvVMJfMiK5EhB5drOjVMpRobB575aCCaGCTxfO3NM8ZhJ3KTLhR9I3CFhUDsxT9X4tpj4hm7CpRzWBUE/yQHh3WKBFSSWWDYO1Di/mawpjUJekWnQ0FY4S+b8m3KwszyDKZx5bTlftY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=KOcSLkVP; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id BHSttiiouzWgFBHSvtiswK; Wed, 13 Nov 2024 18:47:44 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731520064;
+	bh=E2mvNshzIFwcAQdVHJFlh5tqfY/CGH5s1fMXjHb6vQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=KOcSLkVPmPD4m/1HGnJFM8Iu98QrEqHXkT6hh55/I2yHqYKYVCLYh8khRbsJkCdqt
+	 JQ7qwDwv30hMtOFIrJQzK6B63lPSIFS9C8HVEY5DlEalC4vzSPzB0tcRHExbBu9Mct
+	 3l8hixxVzUtwtc8Rvlh9aql+XCRqg4DJ6Kzhe8xGSDNUzh0zJOPQcK7KECjfcgaeMP
+	 L7umdJR9cORdmy7oMppcXzKluySP6CqYzMNdngOd0XcYGMcGp3AUlwuedIqrF5eFsO
+	 CAXV+lyZ0+2yfwkyDMf2h6Aal10OR+nEggcwHJ9q5WPAeAySNqirB4QASDwtKqdX1E
+	 MzUfIeqvw7kqQ==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 13 Nov 2024 18:47:44 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <46e494ba-a1c5-4576-adbb-b63c77a73365@wanadoo.fr>
+Date: Thu, 14 Nov 2024 02:47:38 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v3 1/2] compiler.h: add _static_assert()
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Yury Norov <yury.norov@gmail.com>,
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org,
+ Rikard Falkeborn <rikard.falkeborn@gmail.com>
+References: <20241112190840.601378-4-mailhol.vincent@wanadoo.fr>
+ <20241112190840.601378-5-mailhol.vincent@wanadoo.fr>
+ <8734jwnrrz.fsf@prevas.dk>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+In-Reply-To: <8734jwnrrz.fsf@prevas.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-355e8
 
-On Tue, 12 Nov 2024 16:16:37 +0800, zhangjiao2 wrote:
-> Since "res" will never be null, just delete this check.
-> 
-> 
+On 13/11/2024 at 05:03, Rasmus Villemoes wrote:
+> On Wed, Nov 13 2024, Vincent Mailhol <mailhol.vincent@wanadoo.fr> wrote:
+>
+>> Declare a new _statically_true() macro which, by making use of the
+>> __builtin_choose_expr() and __is_constexpr(x) combo, always produces a
+>> constant expression.
+> Looks sane, but $subject needs s/_static_assert/_statically_true/. And
+> to be completely pedantic, macros are defined, not declared.
+Sorry for the silly mistake in the subject. And agreed that "define" is 
+more appropriate than "declare" when speaking of macros.
+>>    - above examples, and a bit more:
+>>
+>>        https://godbolt.org/z/zzqM1ajPj
+>>
+>>    - a proof that statically_true() does better constant folding than _statically_true()
+>>
+>>        https://godbolt.org/z/vK6KK4hMG
+> At least the second of these might be good to refer to in the commit
+> message itself.
 
-Applied to
+Ack. I rewrote the set of examples in the v4 and added a few samples to 
+the macro comment.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: Delete useless checks
-      commit: b1e7828cf9343e1da6c575f3ebaa0f511d8b8cbd
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Yours sincerely,
+Vincent Mailhol
 
 
