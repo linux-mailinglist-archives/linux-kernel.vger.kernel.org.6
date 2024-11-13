@@ -1,168 +1,345 @@
-Return-Path: <linux-kernel+bounces-407043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF849C67C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:23:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CB29C67CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:24:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91C231F25F70
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:23:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E66F8B29CF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F5216DEB4;
-	Wed, 13 Nov 2024 03:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TCWKlwmx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B682231C;
-	Wed, 13 Nov 2024 03:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDED616FF4E;
+	Wed, 13 Nov 2024 03:23:33 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224072231C;
+	Wed, 13 Nov 2024 03:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731468204; cv=none; b=IqvGZlPwvPh6RES9GKJc08+f0Ct8xqnjRYCiywb5tgQxpYU21FciKNTWszSaxsPR5S93cQtKFARFML3C4c0zsb6TZCSvgDOwRJS3zNstVa5d81/jHYY9XzvNXrPy3NErr/DjBZCXT5A+tez4p8W+3RGphjgzu4GPUWeoLACrZpA=
+	t=1731468213; cv=none; b=rs/NSBQySs4XU13Fwf32nVmyj2NFlVuVwFj7HEhcAIlcUocbAq3U257bG4bWAbK0TBfPeAyYQzPEPBNz9MSUyLimvsd5TMvNL7rNuoAWvUc3afzAo0gfHmzVYhHF18KWqwGYWzf3fIt8XEDaF2jxrZIcw4T8GAPQh2EP/BuveFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731468204; c=relaxed/simple;
-	bh=1tneCB0lrtWRviJiovN1a0CfYo4kk8aE3R6ZF9tg/Ww=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Wmkrk/584Y+Cc1MmsdxEtXgbmXZAnEchlXEHRBlWzIpr8MvNy30OgV8JWEFkJl+hk0ugnh9uNYqzTKpK7g2qpkylOTiUie31Bawaep+1DoUBXnJt5kWtnvvbeOd31MafZMu8F3JBCugtYRlLs5tQKDsBMYC6qAD1mR3mFJnsmyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TCWKlwmx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACMSPYP016376;
-	Wed, 13 Nov 2024 03:23:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1tneCB0lrtWRviJiovN1a0CfYo4kk8aE3R6ZF9tg/Ww=; b=TCWKlwmxVY1W0vCj
-	USkYbUNm3ny/PYVhJAm68Ex+1tr+LKiYbz4+xpYH4d+jkGrs80lEQv/UIWNJM/P3
-	OwUL+C03sHeP5/E3MNKlqg2bIhcmZnGZzc/VNGxKqmQgR0Ye8uwMEAZwUi4AKfXv
-	7+7cs8jlkcicAYdbxIU7iaNMfhLA9b7kRbMLLQmJoL93wCOWWbzsKBXwOVCSEn9P
-	9R9j+zPnCm7ZZ/QEblZjZe8v1XO9d2Ot/WhqN2UkLi2kxwSM5bEvGX7mGu8xa69d
-	izyCAwIde4h7HmPYEsap8d2C1uSxzlTvcBfsKS8f3rPZatQYj457tyVNyoqb0FZp
-	CBicdQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v1vfu3gk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 03:23:17 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AD3NGKU015622
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 03:23:16 GMT
-Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 12 Nov 2024 19:23:16 -0800
-Received: from nalasex01c.na.qualcomm.com ([fe80::dac3:ec8:4ce:6a85]) by
- nalasex01c.na.qualcomm.com ([fe80::dac3:ec8:4ce:6a85%11]) with mapi id
- 15.02.1544.009; Tue, 12 Nov 2024 19:23:16 -0800
-From: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "bryan.odonoghue@linaro.org"
-	<bryan.odonoghue@linaro.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "Vikash
- Garodia (QUIC)" <quic_vgarodia@quicinc.com>,
-        "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Subject: RE: [PATCH v2 1/4] dt-bindings: qcom,qcs615-venus: document QCS615
- venus
-Thread-Topic: [PATCH v2 1/4] dt-bindings: qcom,qcs615-venus: document QCS615
- venus
-Thread-Index: AQHbNPjc6u9OdCowaE+nFUoyTjgZx7K0KVQAgABgmhA=
-Date: Wed, 13 Nov 2024 03:23:15 +0000
-Message-ID: <1abcb44b418d42b6b5e86fc4b75aad14@quicinc.com>
-References: <20241112-add-venus-for-qcs615-v2-0-e67947f957af@quicinc.com>
- <20241112-add-venus-for-qcs615-v2-1-e67947f957af@quicinc.com>
- <173141803295.771794.12897067124135705292.robh@kernel.org>
-In-Reply-To: <173141803295.771794.12897067124135705292.robh@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-Mentions: robh@kernel.org
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1731468213; c=relaxed/simple;
+	bh=jiElLTSf5+3HdH1u3b03iPhKJrCNq1z1FGndFDLmQmg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X2i8IIPh0c8+dc1w2wesB/XdGDEc9VBk5Vs9qe+pIBuW9/ZA/lVKDWwDZHF/K/sEXU4dE8IS0QfuL+msnc/IT6E5olhawrt+A/t59NXnimAxlUDz3o9RrYk7f1CAtb/2IKS2GVia0psKJNW4Vb47XnORPsGjHB7qIvPnFaooddQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.40.54.90])
+	by gateway (Coremail) with SMTP id _____8Cx766wGzRnJ348AA--.15422S3;
+	Wed, 13 Nov 2024 11:23:28 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.40.54.90])
+	by front1 (Coremail) with SMTP id qMiowMBx30euGzRnvYZTAA--.14877S2;
+	Wed, 13 Nov 2024 11:23:26 +0800 (CST)
+From: Zhao Qunqin <zhaoqunqin@loongson.cn>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	bp@alien8.de,
+	tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	xry111@xry111.site,
+	Markus.Elfring@web.de,
+	krzk@kernel.org,
+	Zhao Qunqin <zhaoqunqin@loongson.cn>
+Subject: [PATCH V8] EDAC: Add EDAC driver for loongson memory controller
+Date: Wed, 13 Nov 2024 11:23:26 +0800
+Message-Id: <20241113032326.14267-1-zhaoqunqin@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: LONNOqK6XVFI42cdYLy0dpZL0pgkqIxw
-X-Proofpoint-ORIG-GUID: LONNOqK6XVFI42cdYLy0dpZL0pgkqIxw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- suspectscore=0 spamscore=0 clxscore=1015 phishscore=0 bulkscore=0
- mlxlogscore=999 malwarescore=0 priorityscore=1501 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411130028
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBx30euGzRnvYZTAA--.14877S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxtr1kGFyDGr1kWFyxGrW3Arc_yoW3JFyfpF
+	45Aw13Gr4xKr43uws3ArWUuF15uws7Ka42v3y7A3yY93srAryDXryktFW2yFnrCrWkJrW3
+	Xa4rKw4DCF4UGwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r12
+	6r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
+	vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j5o7tUUUUU=
 
-SGkgQFJvYiBIZXJyaW5nIChBcm0pDQoNClRoYW5rcyBmb3IgeW91ciByZXBseS4NCiJkdC1iaW5k
-aW5ncy9jbG9jay9xY29tLHFjczYxNS12aWRlb2NjLmgiIGlzIGFkZGVkIGluIGh0dHBzOi8vbG9y
-ZS5rZXJuZWwub3JnL2FsbC8yMDI0MTEwOC1xY3M2MTUtbW0tY2xvY2tjb250cm9sbGVyLXYzLTAt
-N2QzYjJkMjM1ZmRmQHF1aWNpbmMuY29tLy4gSSB0aGluayB0aGlzIHBhdGNoIG1heSBub3QgYmUg
-aW5jbHVkZWQuDQoNCg0KQmVzdCBSZWdhcmRzLA0KUmVuamlhbmcNCg0KLS0tLS1PcmlnaW5hbCBN
-ZXNzYWdlLS0tLS0NCkZyb206IFJvYiBIZXJyaW5nIChBcm0pIDxyb2JoQGtlcm5lbC5vcmc+IA0K
-U2VudDogVHVlc2RheSwgTm92ZW1iZXIgMTIsIDIwMjQgOToyNyBQTQ0KVG86IFJlbmppYW5nIEhh
-biAoUVVJQykgPHF1aWNfcmVuamlhbmdAcXVpY2luYy5jb20+DQpDYzogTWF1cm8gQ2FydmFsaG8g
-Q2hlaGFiIDxtY2hlaGFiQGtlcm5lbC5vcmc+OyBicnlhbi5vZG9ub2dodWVAbGluYXJvLm9yZzsg
-S3J6eXN6dG9mIEtvemxvd3NraSA8a3J6aytkdEBrZXJuZWwub3JnPjsgZGV2aWNldHJlZUB2Z2Vy
-Lmtlcm5lbC5vcmc7IEJqb3JuIEFuZGVyc3NvbiA8YW5kZXJzc29uQGtlcm5lbC5vcmc+OyBDb25v
-ciBEb29sZXkgPGNvbm9yK2R0QGtlcm5lbC5vcmc+OyBsaW51eC1hcm0tbXNtQHZnZXIua2VybmVs
-Lm9yZzsgVmlrYXNoIEdhcm9kaWEgKFFVSUMpIDxxdWljX3ZnYXJvZGlhQHF1aWNpbmMuY29tPjsg
-bGludXgtbWVkaWFAdmdlci5rZXJuZWwub3JnOyBTdGFuaW1pciBWYXJiYW5vdiA8c3RhbmltaXIu
-ay52YXJiYW5vdkBnbWFpbC5jb20+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBLb25y
-YWQgRHliY2lvIDxrb25yYWR5YmNpb0BrZXJuZWwub3JnPg0KU3ViamVjdDogUmU6IFtQQVRDSCB2
-MiAxLzRdIGR0LWJpbmRpbmdzOiBxY29tLHFjczYxNS12ZW51czogZG9jdW1lbnQgUUNTNjE1IHZl
-bnVzDQoNCg0KT24gVHVlLCAxMiBOb3YgMjAyNCAxNzoxNzo1NyArMDUzMCwgUmVuamlhbmcgSGFu
-IHdyb3RlOg0KPiBBZGQgc3VwcG9ydCBmb3IgUXVhbGNvbW0gdmlkZW8gYWNjZWxlcmF0aW9uIGhh
-cmR3YXJlIHVzZWQgZm9yIHZpZGVvIA0KPiBzdHJlYW0gZGVjb2RpbmcgYW5kIGVuY29kaW5nIG9u
-IFFDT00gUUNTNjE1Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogUmVuamlhbmcgSGFuIDxxdWljX3Jl
-bmppYW5nQHF1aWNpbmMuY29tPg0KPiAtLS0NCj4gIC4uLi9iaW5kaW5ncy9tZWRpYS9xY29tLHFj
-czYxNS12ZW51cy55YW1sICAgICAgICAgIHwgMTgxICsrKysrKysrKysrKysrKysrKysrKw0KPiAg
-MSBmaWxlIGNoYW5nZWQsIDE4MSBpbnNlcnRpb25zKCspDQo+IA0KDQpNeSBib3QgZm91bmQgZXJy
-b3JzIHJ1bm5pbmcgJ21ha2UgZHRfYmluZGluZ19jaGVjaycgb24geW91ciBwYXRjaDoNCg0KeWFt
-bGxpbnQgd2FybmluZ3MvZXJyb3JzOg0KDQpkdHNjaGVtYS9kdGMgd2FybmluZ3MvZXJyb3JzOg0K
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3Fjb20scWNzNjE1LXZlbnVz
-LmV4YW1wbGUuZHRzOjI1OjE4OiBmYXRhbCBlcnJvcjogZHQtYmluZGluZ3MvY2xvY2svcWNvbSxx
-Y3M2MTUtdmlkZW9jYy5oOiBObyBzdWNoIGZpbGUgb3IgZGlyZWN0b3J5DQogICAyNSB8ICAgICAg
-ICAgI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2Nsb2NrL3Fjb20scWNzNjE1LXZpZGVvY2MuaD4NCiAg
-ICAgIHwgICAgICAgICAgICAgICAgICBefn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
-fn5+fn5+fg0KY29tcGlsYXRpb24gdGVybWluYXRlZC4NCm1ha2VbMl06ICoqKiBbc2NyaXB0cy9N
-YWtlZmlsZS5kdGJzOjEyOTogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlh
-L3Fjb20scWNzNjE1LXZlbnVzLmV4YW1wbGUuZHRiXSBFcnJvciAxDQptYWtlWzJdOiAqKiogV2Fp
-dGluZyBmb3IgdW5maW5pc2hlZCBqb2JzLi4uLg0KbWFrZVsxXTogKioqIFsvYnVpbGRzL3JvYmhl
-cnJpbmcvZHQtcmV2aWV3LWNpL2xpbnV4L01ha2VmaWxlOjE0NDI6IGR0X2JpbmRpbmdfY2hlY2td
-IEVycm9yIDINCm1ha2U6ICoqKiBbTWFrZWZpbGU6MjI0OiBfX3N1Yi1tYWtlXSBFcnJvciAyDQoN
-CmRvYyByZWZlcmVuY2UgZXJyb3JzIChtYWtlIHJlZmNoZWNrZG9jcyk6DQoNClNlZSBodHRwczov
-L3BhdGNod29yay5vemxhYnMub3JnL3Byb2plY3QvZGV2aWNldHJlZS1iaW5kaW5ncy9wYXRjaC8y
-MDI0MTExMi1hZGQtdmVudXMtZm9yLXFjczYxNS12Mi0xLWU2Nzk0N2Y5NTdhZkBxdWljaW5jLmNv
-bQ0KDQpUaGUgYmFzZSBmb3IgdGhlIHNlcmllcyBpcyBnZW5lcmFsbHkgdGhlIGxhdGVzdCByYzEu
-IEEgZGlmZmVyZW50IGRlcGVuZGVuY3kgc2hvdWxkIGJlIG5vdGVkIGluICp0aGlzKiBwYXRjaC4N
-Cg0KSWYgeW91IGFscmVhZHkgcmFuICdtYWtlIGR0X2JpbmRpbmdfY2hlY2snIGFuZCBkaWRuJ3Qg
-c2VlIHRoZSBhYm92ZSBlcnJvcihzKSwgdGhlbiBtYWtlIHN1cmUgJ3lhbWxsaW50JyBpcyBpbnN0
-YWxsZWQgYW5kIGR0LXNjaGVtYSBpcyB1cCB0bw0KZGF0ZToNCg0KcGlwMyBpbnN0YWxsIGR0c2No
-ZW1hIC0tdXBncmFkZQ0KDQpQbGVhc2UgY2hlY2sgYW5kIHJlLXN1Ym1pdCBhZnRlciBydW5uaW5n
-IHRoZSBhYm92ZSBjb21tYW5kIHlvdXJzZWxmLiBOb3RlIHRoYXQgRFRfU0NIRU1BX0ZJTEVTIGNh
-biBiZSBzZXQgdG8geW91ciBzY2hlbWEgZmlsZSB0byBzcGVlZCB1cCBjaGVja2luZyB5b3VyIHNj
-aGVtYS4gSG93ZXZlciwgaXQgbXVzdCBiZSB1bnNldCB0byB0ZXN0IGFsbCBleGFtcGxlcyB3aXRo
-IHlvdXIgc2NoZW1hLg0KDQo=
+Add ECC support for Loongson SoC DDR controller. This
+driver reports single bit errors (CE) only.
+
+Only ACPI firmware is supported.
+
+Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
+---
+Changes in v8:
+	- Used readl() instead of readq()
+	- Used acpi_device_id instead of of_device_id, then removed
+	  dt-bindings
+
+Changes in v7:
+       	- Fixed sparse's "incorrect type in assignment"
+	- Cleaned up coding style
+
+Changes in v6:
+	- Changed the Kconfig name to CONFIG_EDAC_LOONGSON
+
+Changes in v5:
+	- Dropepd the loongson_ prefix from all static functions.
+	- Aligned function arguments on the opening brace.
+	- Dropepd useless comments and useless wrapper. Dropped side
+	  comments.
+	- Reordered variable declarations.
+
+Changes in v4:
+	- None
+
+Changes in v3:
+	- Addressed review comments raised by Krzysztof and Huacai
+
+Changes in v2:
+	- Addressed review comments raised by Krzysztof
+
+ MAINTAINERS                  |   6 ++
+ arch/loongarch/Kconfig       |   1 +
+ drivers/edac/Kconfig         |   8 ++
+ drivers/edac/Makefile        |   1 +
+ drivers/edac/loongson_edac.c | 155 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 171 insertions(+)
+ create mode 100644 drivers/edac/loongson_edac.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e9659a5a7..b36a45051 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13397,6 +13397,12 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/thermal/loongson,ls2k-thermal.yaml
+ F:	drivers/thermal/loongson2_thermal.c
+ 
++LOONGSON EDAC DRIVER
++M:	Zhao Qunqin <zhaoqunqin@loongson.cn>
++L:	linux-edac@vger.kernel.org
++S:	Maintained
++F:	drivers/edac/loongson_edac.c
++
+ LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+ M:	Sathya Prakash <sathya.prakash@broadcom.com>
+ M:	Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index bb35c34f8..10b9ba587 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -185,6 +185,7 @@ config LOONGARCH
+ 	select PCI_MSI_ARCH_FALLBACKS
+ 	select PCI_QUIRKS
+ 	select PERF_USE_VMALLOC
++	select EDAC_SUPPORT
+ 	select RTC_LIB
+ 	select SPARSE_IRQ
+ 	select SYSCTL_ARCH_UNALIGN_ALLOW
+diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+index 81af6c344..4dce2b92a 100644
+--- a/drivers/edac/Kconfig
++++ b/drivers/edac/Kconfig
+@@ -564,5 +564,13 @@ config EDAC_VERSAL
+ 	  Support injecting both correctable and uncorrectable errors
+ 	  for debugging purposes.
+ 
++config EDAC_LOONGSON
++	tristate "Loongson Memory Controller"
++	depends on (LOONGARCH && ACPI) || COMPILE_TEST
++	help
++	  Support for error detection and correction on the Loongson
++	  family memory controller. This driver reports single bit
++	  errors (CE) only. Loongson-3A5000/3C5000/3D5000/3A6000/3C6000
++	  are compatible.
+ 
+ endif # EDAC
+diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+index faf310eec..f8bdbc895 100644
+--- a/drivers/edac/Makefile
++++ b/drivers/edac/Makefile
+@@ -88,3 +88,4 @@ obj-$(CONFIG_EDAC_DMC520)		+= dmc520_edac.o
+ obj-$(CONFIG_EDAC_NPCM)			+= npcm_edac.o
+ obj-$(CONFIG_EDAC_ZYNQMP)		+= zynqmp_edac.o
+ obj-$(CONFIG_EDAC_VERSAL)		+= versal_edac.o
++obj-$(CONFIG_EDAC_LOONGSON)		+= loongson_edac.o
+diff --git a/drivers/edac/loongson_edac.c b/drivers/edac/loongson_edac.c
+new file mode 100644
+index 000000000..340722db1
+--- /dev/null
++++ b/drivers/edac/loongson_edac.c
+@@ -0,0 +1,155 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2024 Loongson Technology Corporation Limited.
++ */
++
++#include <linux/acpi.h>
++#include <linux/edac.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include "edac_module.h"
++
++#define ECC_CS_COUNT_REG	0x18
++
++struct loongson_edac_pvt {
++	void __iomem *ecc_base;
++	int last_ce_count;
++};
++
++static int read_ecc(struct mem_ctl_info *mci)
++{
++	struct loongson_edac_pvt *pvt = mci->pvt_info;
++	u32 ecc;
++	int cs;
++
++	if (!pvt->ecc_base)
++		return pvt->last_ce_count;
++
++	ecc = readl(pvt->ecc_base + ECC_CS_COUNT_REG);
++	/* cs0 -- cs3 */
++	cs = ecc & 0xff;
++	cs += (ecc >> 8) & 0xff;
++	cs += (ecc >> 16) & 0xff;
++	cs += (ecc >> 24) & 0xff;
++
++	return cs;
++}
++
++static void edac_check(struct mem_ctl_info *mci)
++{
++	struct loongson_edac_pvt *pvt = mci->pvt_info;
++	int new, add;
++
++	new = read_ecc(mci);
++	add = new - pvt->last_ce_count;
++	pvt->last_ce_count = new;
++	if (add <= 0)
++		return;
++
++	edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, add,
++			     0, 0, 0, 0, 0, -1, "error", "");
++	edac_mc_printk(mci, KERN_INFO, "add: %d", add);
++}
++
++static void dimm_config_init(struct mem_ctl_info *mci)
++{
++	struct dimm_info *dimm;
++	u32 size, npages;
++
++	/* size not used */
++	size = -1;
++	npages = MiB_TO_PAGES(size);
++
++	dimm = edac_get_dimm(mci, 0, 0, 0);
++	dimm->nr_pages = npages;
++	snprintf(dimm->label, sizeof(dimm->label),
++		 "MC#%uChannel#%u_DIMM#%u", mci->mc_idx, 0, 0);
++	dimm->grain = 8;
++}
++
++static void pvt_init(struct mem_ctl_info *mci, void __iomem *vbase)
++{
++	struct loongson_edac_pvt *pvt = mci->pvt_info;
++
++	pvt->ecc_base = vbase;
++	pvt->last_ce_count = read_ecc(mci);
++}
++
++static int edac_probe(struct platform_device *pdev)
++{
++	struct edac_mc_layer layers[2];
++	struct mem_ctl_info *mci;
++	void __iomem *vbase;
++	int ret;
++
++	vbase = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(vbase))
++		return PTR_ERR(vbase);
++
++	/* allocate a new MC control structure */
++	layers[0].type = EDAC_MC_LAYER_CHANNEL;
++	layers[0].size = 1;
++	layers[0].is_virt_csrow = false;
++	layers[1].type = EDAC_MC_LAYER_SLOT;
++	layers[1].size = 1;
++	layers[1].is_virt_csrow = true;
++	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers,
++			    sizeof(struct loongson_edac_pvt));
++	if (mci == NULL)
++		return -ENOMEM;
++
++	mci->mc_idx = edac_device_alloc_index();
++	mci->mtype_cap = MEM_FLAG_RDDR4;
++	mci->edac_ctl_cap = EDAC_FLAG_NONE;
++	mci->edac_cap = EDAC_FLAG_NONE;
++	mci->mod_name = "loongson_edac.c";
++	mci->ctl_name = "loongson_edac_ctl";
++	mci->dev_name = "loongson_edac_dev";
++	mci->ctl_page_to_phys = NULL;
++	mci->pdev = &pdev->dev;
++	mci->error_desc.grain = 8;
++	/* Set the function pointer to an actual operation function */
++	mci->edac_check = edac_check;
++
++	pvt_init(mci, vbase);
++	dimm_config_init(mci);
++
++	ret = edac_mc_add_mc(mci);
++	if (ret) {
++		edac_dbg(0, "MC: failed edac_mc_add_mc()\n");
++		edac_mc_free(mci);
++		return ret;
++	}
++	edac_op_state = EDAC_OPSTATE_POLL;
++
++	return 0;
++}
++
++static void edac_remove(struct platform_device *pdev)
++{
++	struct mem_ctl_info *mci = edac_mc_del_mc(&pdev->dev);
++
++	if (mci)
++		edac_mc_free(mci);
++}
++
++static const struct acpi_device_id loongson_edac_acpi_match[] = {
++	{"LOON000G", 0},
++	{}
++};
++MODULE_DEVICE_TABLE(acpi, loongson_edac_acpi_match);
++
++static struct platform_driver loongson_edac_driver = {
++	.probe		= edac_probe,
++	.remove		= edac_remove,
++	.driver		= {
++		.name	= "loongson-mc-edac",
++		.acpi_match_table = loongson_edac_acpi_match,
++	},
++};
++module_platform_driver(loongson_edac_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Zhao Qunqin <zhaoqunqin@loongson.cn>");
++MODULE_DESCRIPTION("EDAC driver for loongson memory controller");
+
+base-commit: e14232afa94445e03fc3a0291b07a68f3408c120
+-- 
+2.43.0
+
 
