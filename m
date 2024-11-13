@@ -1,372 +1,435 @@
-Return-Path: <linux-kernel+bounces-407931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1713C9C7792
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:44:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662219C7794
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:44:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A8281F24A64
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:44:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25333280A57
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2490A1586CB;
-	Wed, 13 Nov 2024 15:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593BC1632DC;
+	Wed, 13 Nov 2024 15:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dMCzzez+"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2087.outbound.protection.outlook.com [40.107.237.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dkYefeP3"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBED12BEBB
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731512543; cv=fail; b=m5AD6G6CxZpktOo2mJNEKnDP7rA+iFeQ8hGtkMG8RbBrHCx1xBMbFpiSQRL+XHGV4fH42EPkSYEEvKdhgGJj72SfNFoUed+99U/fAORMKVSLXy/iNq5IGfoFxEJFCTinVUP2tgumzs5IXpTyhns69Dxanih5HkDpBCcErN4nwm4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731512543; c=relaxed/simple;
-	bh=2asc1IWXnPX12S8f9d7ATXMrcVJCfg5nQ2jqqC1KHd0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nkvcYu2pzV60OY5jiAVbQrQFxdxPhebF2Sy1VZkR8jVf60raTOHTW5PFkB5Oq756ErhAd1Xai/oH9ELrRlGbcTnjazD/QLTl6HaRoGu8JnUOxTrUAkchfKKmIujpx1DjZqIpRSe5a7ljxCYRlIUdorPrOapa0iL5gSFqJVsafC8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dMCzzez+; arc=fail smtp.client-ip=40.107.237.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P4AZp+4LrTtbZyJ0rmkgFcb005UOUJcfjAp9Ulgc1jfWFSPXBxkFyYaQDoA+I7un/Yih04hwwWtGnEXPg7b3WWoxt+fiDLhj8g5z2Rh+1OvvuNiOJas1HE3siUqI+5aBjtlqolxtSzmigqBBzxj/PfTxaxCXx6RhqEQqs9oYuJR3a68EixGV6Cawoy8q47T1zfmJsBEAfEt+XmMQix5v1B69EAd3InUPneKMsc5VeRai02DPeVANXl626D6KnMrLMFVOULcWPeqZfyxgdhicgYw0QxWceIl+R0UAsmwyYxpa3SEKr7a8qhVir08uZPwBqzJPMLTyo0yftsImASJTLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2asc1IWXnPX12S8f9d7ATXMrcVJCfg5nQ2jqqC1KHd0=;
- b=HFsxDyhYdwyWO+rTQQc2PiDF04XqS+buXWt43OMyEoQvGQ/mj35HB/Tgl2aTAz+hYmshX//WUZ9ecacdve0DOYXb60M+vmOE4L0OiLGPkpBa4fdMwXt1DNrDM4s7BiS1Io2bkSYBIlbdV/0/DkAehESR3f2pC/Zkvsx+exqzKEHGNRa8ar7BXe3Hi0HdRA85gDZe2BWnk3USJw6lZLmbUuwAgtmr3PtMr+eACe8lUAyzL3lcdyu8dHxPO6FC9ao7ZAe6N8yo/44G3M3yrMGTPNTGIkJXUCWltps5ByAgLbzt5CHH/lx8cLT/Nt9JdCtsgzs1EaC2ckMaE6c5jafjcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2asc1IWXnPX12S8f9d7ATXMrcVJCfg5nQ2jqqC1KHd0=;
- b=dMCzzez++b1C4VunQQlnNTvPhMEWyp+xmoRJZHmQTNMKPMzNYY1mRwrzM0Bbo0YKb4kJFt8YHi8z53cQHv2PLMIWXdbQfxbiTgMb8vwbUO9taDKTZ7ZP0s/+9HoMNJwYuX3++8khL+AMUdF4fRvBkaXwcWXVF4GB0/6nCZNElF4=
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com (2603:10b6:408:215::14)
- by MN2PR12MB4221.namprd12.prod.outlook.com (2603:10b6:208:1d2::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.18; Wed, 13 Nov
- 2024 15:42:18 +0000
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::cf78:fbc:4475:b427]) by LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::cf78:fbc:4475:b427%6]) with mapi id 15.20.8137.027; Wed, 13 Nov 2024
- 15:42:17 +0000
-From: "Kaplan, David" <David.Kaplan@amd.com>
-To: Brendan Jackman <jackmanb@google.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar
-	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 19/35] Documentation/x86: Document the new attack
- vector controls
-Thread-Topic: [PATCH v2 19/35] Documentation/x86: Document the new attack
- vector controls
-Thread-Index: AQHbNdaGJLBBlMsMQUStBRLaO7h7dbK1Ty1Q
-Date: Wed, 13 Nov 2024 15:42:17 +0000
-Message-ID:
- <LV3PR12MB9265E8701CC9A8AF911163B2945A2@LV3PR12MB9265.namprd12.prod.outlook.com>
-References: <20241105215455.359471-1-david.kaplan@amd.com>
- <20241105215455.359471-20-david.kaplan@amd.com>
- <CA+i-1C38hxnCGC=Zr=hNFzJBceYoOHfixhpL3xiXEg3hcdgWUg@mail.gmail.com>
-In-Reply-To:
- <CA+i-1C38hxnCGC=Zr=hNFzJBceYoOHfixhpL3xiXEg3hcdgWUg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=5be0dae3-91ec-43db-9db6-538bc24c41bd;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-11-13T15:05:07Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9265:EE_|MN2PR12MB4221:EE_
-x-ms-office365-filtering-correlation-id: a647faa7-d8ae-4016-d5db-08dd03f9c12d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bkZWVmdHblpxZ3NFWStKbjR3RnBFRlR1L25yMEJSYzlRVnZCRkFWYzZzZzV2?=
- =?utf-8?B?eitVVmxvU0hCMDV5enR3NVdNZU5wazN0VURVazBsZXpLR2tXRGpicy8ydHBG?=
- =?utf-8?B?OGlEaWVIR2h5Rjd6SnhXdFJWdlhQandIMFhYU2RDSVRHQ0FZSnhEcDBXM1ZU?=
- =?utf-8?B?QzA4OVgzUklvYjN1TjU0aWR4Tml3Y0FQZ25iZ05MUCtaSHh0d1REazZYZXJh?=
- =?utf-8?B?cWN5bTFsUGRraWdoS0Z4VVhkS0hvRWE5YlBETDdSV0VTaldPNVRmS1JJOUhY?=
- =?utf-8?B?My9IbG5hS202ODhxSTFLdXZ3L09YRHZZN2MxRE5wU1RMMHZWbjVIYk9MSnJ1?=
- =?utf-8?B?dUQ4QTRaYlU1M0tkVFR3WjArMTJVQi9hek9ra0l0TDZuek8xMzlQakY5cXBj?=
- =?utf-8?B?Nk42OTI4d3FFTkRqNWVwUEJPdXJVUTl4K0h0ZVFYZVM1eGl0cnFVdm5VZFFr?=
- =?utf-8?B?QnQ1amFnMlVpalFSY05KMFpSU1RjdkYyTGtrMkRIeS82WmZ0QlB5QzVvWVZu?=
- =?utf-8?B?RU5PNVlLaDV0alo5aDJsc1JLVk41SXo0dHZyNWZQaW0xWTJBTFRvOWhNanYx?=
- =?utf-8?B?UXpiekVkMnY4Wk51em8wUEhydk1wMXdDbzFSa2VPeG1QTXU4V0hrdHduQVd3?=
- =?utf-8?B?V0ExdUpoalRjYm9MZWtJemE5WDdncDdrbi8vbXZWOUUzRlhEaFJ4OFJXakR4?=
- =?utf-8?B?RnRGZlJBRUFTbkIxVWVXQ05tbUtrK29zNlJVeU9jZmR4N1RteXhOUFNWbEdr?=
- =?utf-8?B?elA4QUJXNEdCOHozV1RXKzBRWTlndmxoSFhNd0JwMlJTT01kU2tpQ1RHSXhZ?=
- =?utf-8?B?anlIRXFNRlBoOHBtSGNXelVoZk9IYlBucVhGRXpiQ2diZ2toYXdaVG1wNXls?=
- =?utf-8?B?RGNwSHQwZzNYaVpkbGxpRUR5SmloOC94S2pLSVBpL29hbDFPMzJNejJWd1Jn?=
- =?utf-8?B?M21mU1BHVzM0SGtkeEJUUi9UNnZweTdxSHd2dlhzdzBwUWxvL3NiRHJRVzVT?=
- =?utf-8?B?S1djM2FNdEJhQTJJd0xPVEUxSnd0LzN2ZGhDc0k1cVhMeWIrQVltWk1JSHBm?=
- =?utf-8?B?bmo1aWoyQ3R4Sm4xMndXREVpc0hBc00xL2lib2VZWno5bUhDMWhLcTUxeHFl?=
- =?utf-8?B?WWtzT0dad2pmbmNxZXJXUVRYRWpaS2tYYmtUQU1mUkUwSDF5Sk5OalpYNjBr?=
- =?utf-8?B?RlkzVmZoYVB6ci9FaHBwSWZHMWJJL0F1M0hhcTdvZVhSV1RoR2thNHhvV2Iz?=
- =?utf-8?B?Y0FoQnlxVVNpOE5CTVZ6SE9Gd3N0K21oNDhYakswQVBRYnhpR1ZHd1d2V1VK?=
- =?utf-8?B?OWN6d3hTRVNjWW1PaTNMWFlxTHhIMzFQTHpnRXhOaTVvdWlieE53V1JmYXNW?=
- =?utf-8?B?RTBjdHhtMVlMR0JPNnZ0bVRNMVcycHBPNkFVYW5mOUVMVWxIMU50SUZETXVL?=
- =?utf-8?B?U1drYW1uVkd3c1BzMWMzVHlHaUVFNklhNzRrZSsxRVFUb2ZlRTFkWThYdFl1?=
- =?utf-8?B?eXJrOXFBek5XbEd1TUNLaXhNSEdJOGFTNjFvdXg4T2FFWlY4RlhQV2xyMTVS?=
- =?utf-8?B?WDFVMzRTb081NVBUMWpwQ1B3RlY3VGo2cHNjRmhNSzlNQlBlaGFXa2p3aEM2?=
- =?utf-8?B?NlAyQW0rdS9ybW56TWc0QW5GQnM1OVM4eUZFblMvVTV1bkxxTjZDZXI3alF6?=
- =?utf-8?B?eUJBWGZZaE1aTjRuMU1CSmE0K1prc1hTN2tUWDV6a0UyZ1dlcjFQN09MMEdI?=
- =?utf-8?B?VmZVWUxRRXNWMlg0SmV5dzZFelNiN2pFdWlES0lEdHFTUi92dXljYzZjS2Z2?=
- =?utf-8?Q?Wo4TSkUw7+PmD0KPS/z5wv8ILKdUa8TB21LUk=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9265.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?ZDc4bkg4Y0dwQUVuc2FwbVBNdXBIWlNmenA5bjFHYjNkQ0VWeWFoMDVybGRi?=
- =?utf-8?B?UTVxcTVtNy9qL1V0bUJDRUUzYVBNSDU5ZktyNkhWaU5lSXBGUEVqVnZwV1V2?=
- =?utf-8?B?TlBrSkxrc2x1cmtTYjk5YTVEUHduNmRyT2pqalBWcWRPR1JZNThWY3JLMkNH?=
- =?utf-8?B?MUNQRHpHdFNwRGcrZEdRVnBHL0lPUzZkOGR2djkvVDZZdlVHS0Z2VlZIWW9u?=
- =?utf-8?B?SHVjdGJyZ0p0RkpRV1AvakdBcThmSWk4ZWhzTzhVeUl1dUZieDNlMGRmb2hV?=
- =?utf-8?B?aXViUnRtdWhaUmRad0hCenFNNVNoY2diNC9ZdFFhUkpIb0lMYnFCTFVTVFR3?=
- =?utf-8?B?NlQ3UURxR29sWm9CeWsxOUxqR3VadEdiVzE0VTF2b0w3VlVDb09QUEF1a3JU?=
- =?utf-8?B?V2FoNWtqSDR3YjlIUmQyYnl5d1I2N0xOZEw3emlzYWtWcUtNbzM4bEptM3lE?=
- =?utf-8?B?NmhxK2JkSU9QcUxBc0RjcHZvSTk5dmhhM1ZIUXowOVdLWUFnL1JaL2VGaEFE?=
- =?utf-8?B?a0c4cTVkZUY1Qk1hbGgzSFpEa0ZKenZvT0NxbGRhdk8zRyt5NE9mTVdLTE9T?=
- =?utf-8?B?am5peVhvbGc5MHFpQ3QwaWpKRzBGZHBrdXA0RVNnZ2hzRG9KQzNNNlo3bGIw?=
- =?utf-8?B?aktDcWdDd24xZFJ2dFRDcnJkTVBKUEkxZExhelF2eDg5b0QrRmRJc2V1RTkz?=
- =?utf-8?B?QytSUFVmOGt5ZEU5Y2ZtR09OZVlMSGF5L3RQRE5wZkptRkNqNDdBREtTUXVC?=
- =?utf-8?B?SXlNMFhSNEtVN0pocFltaGRaMTJCbUJ0cFBRQlJCSkZoRlRzM01mYzF1ZTJV?=
- =?utf-8?B?c1RiTzBwV3NXV05YR041WFpHTDRYd0lFVUNZUXh6azU2SlpFazZSSFpGYUNk?=
- =?utf-8?B?bVowTnVDdzB4bVIzS1o5SEpCQTRGN1F5eE9yQjFXRnRHQ1p6QmtLYUhkZmtx?=
- =?utf-8?B?b2FpWVBJcUUxMXBlRTl4Z2FHdlhHaXZwams3cnlsZXNFR0kyenhwUnh5bTE2?=
- =?utf-8?B?YUYvN1JkQXVHRTl3enN4dk1hbCs4cFBFR3dmNzlVU1FhcWU2cUcvNVQ0cjF0?=
- =?utf-8?B?b013VU9wcmxoOXFWYlE2NStDVnlMaU9ybStHRFlSYjI0VXUwcEZsNHFzRlV2?=
- =?utf-8?B?ejl3ZDBrZWxqbWkzb0VYblJTZVJsTEhrSkhnTjJvemZ3czUvTmxGekd0VmJI?=
- =?utf-8?B?cllMRStBVHZmODhtMzZ5RTdqaEVzMXlUVGNSWHRhTFI5dUpxVEFxalhoNVdF?=
- =?utf-8?B?a2JKQkRkYVMzSHdYREN3U0NPcnlPWUZMMVdIOTc5UHhNcXhPalBCcWluaE4z?=
- =?utf-8?B?VWJxV2VVdjhPK1hsYzFPNFk3bGVXdHJlRGEwNDRFclRYU1FaZ3NER3RpT3NX?=
- =?utf-8?B?VVNYaW1OSlJEdXJKbzVlTDZnSHNNSzM4Qi9kcmxaVkhSV25pMWhMck56Z3Ru?=
- =?utf-8?B?SFl0ak1aRzFSVmxnMnFBcDBEZ0pLaW5GQWhXd3F6cS9iWkx1a2lnMjh1YUZN?=
- =?utf-8?B?MTZ3UlhVVjVrbmZRcFVPdVNJQ2VQZ05YdXdkNTdvd3l4U1hycm5oWlJXdEsr?=
- =?utf-8?B?WlM0aWZIVFFiWHF3cTJDN3doR0xOSmhvN2ZzaFNmcG4yWTgweWp4V1pYQjVi?=
- =?utf-8?B?MHZnNW52bGIxWG9GUkZSSFUvMTJOeTdYYW5NQ1JpK2dJd2pyUWJnMW1iVFVr?=
- =?utf-8?B?SDJ1Q3RjNzU2L242NU84NVg0MStEV013eENBc3ZjSmdNb2JOdkFWd1FVWHpo?=
- =?utf-8?B?YkNSZUZIMmZneXdFZENMbkFza2hzZmpVdjhQWVkvZ0E3di9uRjFsc3ErSzZ5?=
- =?utf-8?B?NDhlMk5KOTBzbThyZDI5K1M3NXlhL3c2VXpDejBXSWtqelBGZHB4c3RMZEI1?=
- =?utf-8?B?aG5xaFdGV1JqWjNxMnp4SlkvekxxMklxUDNDQm01VFd3c2RVMmlmK3JBVUR6?=
- =?utf-8?B?aHZZZC96eVpGUTFHanlSVGo4U2JLUnZpVWJwc0VhYk1YUm1TRG9NdE9DcWJl?=
- =?utf-8?B?WDVvTkxFaHgxY0I3cEFtT0pva1JlbU5idVRJQm9VbS9LU2JER0VSMExHRFhK?=
- =?utf-8?B?dGFuek43dEJyQ2p6T1ZUNmlZSlV0SlFHeEFySVFidnM4TlJYcjhISzJvOUhy?=
- =?utf-8?Q?Mfr8=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D619158861
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731512584; cv=none; b=iLX7o+UWmhBP31ZwLloOvTWvPV9v5aje5qk1NVnANOSiy70tVHpH2woMB4cdbYj6BHlEK7PGXU28DnE8GjycHFHe+ep3bk3AzyYBHqs2ywPSK1VjVhjzO0s4R1tEW3bOHMBQMFP4d9RyKWso6i1eHbbb22Ag8GD/37X5qdwwUp8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731512584; c=relaxed/simple;
+	bh=zFKsTMccqrK0GWEV87cV5u8OkzOzxmruhhFhmcK23I8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DEaLlHmh2qfPjEbqNKVbDm0OZqYraZsoUeVOyxapL58ZxiQ7PdZcJ5jQLqnZgDsG80r/lX1wcy2Uq+ZbMqlqGvMjUrR52MjyQWtP36+vVOGRhFUl+Cf9C4gq79MEHEXxmyrrqaz9U8pNQ+jnw3yT1KyOV16i7q/y6DVrssS/He8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dkYefeP3; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460969c49f2so301001cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:43:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731512581; x=1732117381; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gvam9WV1Qmn4wOJy3DU8hiIppiH9WSEamCw5jH8Jzro=;
+        b=dkYefeP3zY3xZ5ZHfOx1rPPqYl7+bj4CqskRusQyAWn6Mk5EHsbhvuzD8azhAPLarK
+         PUA9emp62XLAqrtPDabT8788yULEyzRIUSf8yOEDzpqS7SRKYAIeOkwIFBVbJjm3C5eP
+         23ZgVziqGcIsEI/bciXWGcElhgueIOB0k5ireEUN+llc5Y2ym0k6Nqd17jaihea02y20
+         YlxHFQ0k7psUe+DRYYQyovmjEG0xyqVyokzGdR7scWFJb5QIHhDDaXF+EN2/UPJPhHYQ
+         7TfAk2DGJFZGftKzVOUv2MQpSJRbCepHqAM+eFzG/H63pLrIOVQqQKMLHEdmBAEqLmZF
+         UCLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731512581; x=1732117381;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gvam9WV1Qmn4wOJy3DU8hiIppiH9WSEamCw5jH8Jzro=;
+        b=eOIvJPv5Ho2x7N5R9A0RpxO9/kohxdFMOwJqVDCXy2S5Vvu5heZoXCKAhv5PRdeAl7
+         xarzU84y+5atG3f8ZV19Je215cMBd4hq536U3iWeQ98uoGevpqvRO2DFiGNdQGjZfyXc
+         TCXHtk7geHvfq6Lz9BBuRleQcOeH2yr8GkXHpMz/S3V8zCg3L/1cwwuQtFiCMx9VU/YA
+         pA4M8fYc5+7XmAabqP/WGrVXKG8lEbmxKrZH8SAzCLNyTDFihyhA7ny6DkOe7eTg5nC5
+         tS/QSQHO12vSW3RjbJ4fysDK8bgjnSYIiPmEZhbQf8bSGqKTj9IjSlvs9rOkZOhEc8ET
+         qEtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3LEnC+k0MCGOPu1AQbbWOakkWwIglpwpPiTetlVtzK7daH9AQUrrhnylVxFSLHJV1tSYnd3Rbbm1vYwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaBynBato9kokPrlipu2rBLb3zKKYxOVjZqKiaqiZL5kDJ4GHo
+	vwLsn4soSfvBeOPE7Lmrom5hmkLR9zMTqOG5+27qoDGBcZOg+3HoEjlCUmtPSc5s4LM5r5OYtyF
+	1LJVW/kjL83u0ZvHr86lGe2Wilr2VsMnqRCJ9
+X-Gm-Gg: ASbGnct5Ll8PlJo+yhuK369h9SIyWzy8kALNmmUtbSgQaDE8LhHlPG/qOSzj6Lw+FIS
+	KGrFvi+sGDuXEtTP+A+Dx8Mb5nTRx23Q=
+X-Google-Smtp-Source: AGHT+IGoSJC7NEVZDp5NW6fuqArmuQfmnz8hDVQ+6Ciw+IGZ+zOWqIauKKI4LWWqo2ZgFZSMtZZdIqMYrtQukXe69Zs=
+X-Received: by 2002:a05:622a:13cc:b0:462:c158:9f5b with SMTP id
+ d75a77b69052e-4634cad5b89mr3497791cf.19.1731512580871; Wed, 13 Nov 2024
+ 07:43:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9265.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a647faa7-d8ae-4016-d5db-08dd03f9c12d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2024 15:42:17.8808
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4sDiB/Kv50nI9w0KWS8UMnYEfjh/DYfanU7+bce0tMi1+AzViujSnYhsyBMwAlTM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4221
+References: <20241112194635.444146-1-surenb@google.com> <20241112194635.444146-3-surenb@google.com>
+ <637370b8-3e3e-4457-81d6-5913a3ff1d4e@lucifer.local>
+In-Reply-To: <637370b8-3e3e-4457-81d6-5913a3ff1d4e@lucifer.local>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 13 Nov 2024 07:42:49 -0800
+Message-ID: <CAJuCfpHz-u9w1A8d9LEZ6=mmxXN=JLQr9N00dKpALWUT6GVsfA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] mm: move per-vma lock into vm_area_struct
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, 
+	oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com, 
+	peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, 
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
+	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
+	souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
-Cg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCcmVuZGFuIEphY2ttYW4g
-PGphY2ttYW5iQGdvb2dsZS5jb20+DQo+IFNlbnQ6IFdlZG5lc2RheSwgTm92ZW1iZXIgMTMsIDIw
-MjQgODoxNiBBTQ0KPiBUbzogS2FwbGFuLCBEYXZpZCA8RGF2aWQuS2FwbGFuQGFtZC5jb20+DQo+
-IENjOiBUaG9tYXMgR2xlaXhuZXIgPHRnbHhAbGludXRyb25peC5kZT47IEJvcmlzbGF2IFBldGtv
-diA8YnBAYWxpZW44LmRlPjsgUGV0ZXINCj4gWmlqbHN0cmEgPHBldGVyekBpbmZyYWRlYWQub3Jn
-PjsgSm9zaCBQb2ltYm9ldWYgPGpwb2ltYm9lQGtlcm5lbC5vcmc+OyBQYXdhbg0KPiBHdXB0YSA8
-cGF3YW4ua3VtYXIuZ3VwdGFAbGludXguaW50ZWwuY29tPjsgSW5nbyBNb2xuYXIgPG1pbmdvQHJl
-ZGhhdC5jb20+Ow0KPiBEYXZlIEhhbnNlbiA8ZGF2ZS5oYW5zZW5AbGludXguaW50ZWwuY29tPjsg
-eDg2QGtlcm5lbC5vcmc7IEggLiBQZXRlciBBbnZpbg0KPiA8aHBhQHp5dG9yLmNvbT47IGxpbnV4
-LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAxOS8zNV0g
-RG9jdW1lbnRhdGlvbi94ODY6IERvY3VtZW50IHRoZSBuZXcgYXR0YWNrDQo+IHZlY3RvciBjb250
-cm9scw0KPg0KPiBDYXV0aW9uOiBUaGlzIG1lc3NhZ2Ugb3JpZ2luYXRlZCBmcm9tIGFuIEV4dGVy
-bmFsIFNvdXJjZS4gVXNlIHByb3BlciBjYXV0aW9uDQo+IHdoZW4gb3BlbmluZyBhdHRhY2htZW50
-cywgY2xpY2tpbmcgbGlua3MsIG9yIHJlc3BvbmRpbmcuDQo+DQo+DQo+IEhpIERhdmlkLA0KPg0K
-PiBJJ2xsIHJlc3BvbmQgc2VwYXJhdGVseSB0byB0aGUgbW9yZSBpbnRlcmVzdGluZyB0aHJlYWQg
-b2YgZGlzY3Vzc2lvbiB3LyBCb3JpcyAmIERlcmVrDQo+IGJ1dCBoZXJlIGFyZSBzb21lIG1vcmUg
-c3BlY2lmaWMgY29tbWVudHM6DQo+DQo+IE9uIFR1ZSwgNSBOb3YgMjAyNCBhdCAyMzowMCwgRGF2
-aWQgS2FwbGFuIDxkYXZpZC5rYXBsYW5AYW1kLmNvbT4gd3JvdGU6DQo+ID4gK1VzZXItdG8tVXNl
-cg0KPiBTb3JyeSBmb3IgdGhlIGFubm95aW5nIGJpa2VzaGVkZGluZywgYnV0IHRoaXMgbmFtaW5n
-IGNvdWxkIGJlIG1pc2NvbnN0cnVlZCBieSBhDQo+IGhhc3R5IHJlYWRlciBhcyBiZWluZyBjb25j
-ZXJuZWQgd2l0aCB0aGUgYm91bmRhcnkgYmV0d2VlbiBVbml4IHVzZXJzLiBJIHdvbmRlciBpZg0K
-PiB3ZSBzaG91bGQgc2F5ICJ1c2Vyc3BhY2UtdG8tdXNlcnNwYWNlIg0KPiBvciAicHJvY2Vzcy10
-by1wcm9jZXNzIiBvciBzb21ldGhpbmc/IFRoZSBsYXR0ZXIgd291bGQgYmUgY29uZnVzaW5nIGJl
-Y2F1c2UgaXQNCj4gZG9lc24ndCBpbXBseSBhbnkgZXhjbHVzaW9uIG9mIEtWTSBndWVzdHMgdGhv
-dWdoLg0KDQpUaGlzIHdhcyBhIGNvbmNlcm4gdGhhdCBjcm9zc2VkIG15IG1pbmQuICBtaXRpZ2F0
-ZV9wcm9jZXNzX2tlcm5lbCBvciBtaXRpZ2F0ZV9wcm9jZXNzX3Byb2Nlc3MgbWlnaHQgYmUgYWx0
-ZXJuYXRpdmVzLCB3aGlsZSBzdGlsbCBrZWVwaW5nIGd1ZXN0X2hvc3QgYW5kIGd1ZXN0X2hvc3Qg
-KEkgdGhpbmsgdGhvc2UgbmFtZXMgYXJlIGxlc3MgbGlrZWx5IHRvIGJlIG1pc3VuZGVyc3Rvb2Qp
-LiAgQ3VyaW91cyBpZiBvdGhlciBwZW9wbGUgaGF2ZSBvcGluaW9ucyBoZXJlLg0KDQo+DQo+IEF0
-IGZpcnN0IEkgdGhvdWdodCAiZG9uJ3QgYmUgc28gcGVkYW50aWMsIHVzZXJzIHJlYWxseSBuZWVk
-IHRvIFJURk0gaGVyZSByZWdhcmRsZXNzLA0KPiBhdCBtb3N0IHdlIGp1c3QgbmVlZCBhICdub3Rl
-IHRoaXMgaGFzIG5vdGhpbmcgdG8gZG8gd2l0aCBVbml4IHVzZXJzJyINCj4NCj4gQnV0Li4uIGFj
-dHVhbGx5IGlzbid0IGl0IGNvbmNlaXZhYmxlIHRoYXQgb25lIGRheSB3ZSBjb3VsZCB3YW50ICJt
-aXRpZ2F0ZSBhdHRhY2tzDQo+IGJldHdlZW4gdXNlcnNwYWNlIHByb2Nlc3NlcywgdW5sZXNzIHRo
-ZXkgaGF2ZSB0aGUgc2FtZSBlZmZlY3RpdmUgVUlEIiBvcg0KPiBzb21ldGhpbmc/IFNvIHRoZW4g
-dGhlIG5hbWluZyB3b3VsZCBiZSByZWFsbHkgY29uZnVzaW5nLg0KPg0KPiBPbiB0aGUgb3RoZXIg
-aGFuZCwgeW91ciByZXNwb25zZSB0byBteSAiYnV0IG15IHRydXN0IGRvbWFpbnMgYXJlIHdheSBt
-b3JlDQo+IGNvbXBsZXggdGhhbiB0aGF0IiBjb21tZW50IGF0IExQQyB3YXMgIkdvb2dsZSBhcmVu
-J3QgdGhlIHRhcmdldCBhdWRpZW5jZSBmb3IgdGhpcw0KPiBtZWNoYW5pc20iLiBNYXliZSBhbnlv
-bmUgd2hvIGtub3dzIHRoYXQgdGhlaXIgdW5peCB1c2VycyBhcmUgbWVhbmluZ2Z1bCB0cnVzdA0K
-PiBkb21haW5zIChwcm9iYWJseTogc29tZW9uZSBidWlsZGluZyBhIHNwZWNpYWxpc2VkIGRpc3Ry
-byAoQW5kcm9pZD8pKSBpcyBzaW1pbGFybHkNCj4gb3V0c2lkZSB0aGUgdGFyZ2V0IGF1ZGllbmNl
-IGhlcmUuDQo+DQo+ID4gK1RoZSB1c2VyLXRvLXVzZXIgYXR0YWNrIHZlY3RvciBpbnZvbHZlcyBh
-IG1hbGljaW91cyB1c2Vyc3BhY2UgcHJvZ3JhbQ0KPiA+ICthdHRlbXB0aW5nIHRvIGluZmx1ZW5j
-ZSB0aGUgYmVoYXZpb3Igb2YgYW5vdGhlciB1bnN1c3BlY3RpbmcNCj4gPiArdXNlcnNwYWNlIHBy
-b2dyYW0gaW4gb3JkZXIgdG8gZXhmaWx0cmF0ZSBkYXRhLiAgVGhlIHZ1bG5lcmFiaWxpdHkgb2YN
-Cj4gPiArYSB1c2Vyc3BhY2UgcHJvZ3JhbSBpcyBiYXNlZCBvbiB0aGUgcHJvZ3JhbSBpdHNlbGYg
-YW5kIHRoZSBpbnRlcmZhY2VzIGl0DQo+IHByb3ZpZGVzLg0KPg0KPiBJIGZpbmQgdGhpcyBjb25m
-dXNpbmcuICJJbmZsdWVuY2UgdGhlIGJlaGF2aW91ciIgc291bmRzIGxpa2UgaXQncyB0YWxraW5n
-IHNwZWNpZmljYWxseQ0KPiBhYm91dCBhdHRhY2tzIHRoYXQgZHJpdmUgbWlzLXNwZWN1bGF0aW9u
-IChTcGVjdHJlLXR5cGUpLCBidXQgc2hvdWxkbid0IHRoaXMgYWxzbw0KPiBpbmNsdWRlIHN0dWZm
-IG1vcmUgaW4gdGhlIHZlaW4gb2YgTDFURiBhbmQgTURTPyBJIGFsc28gZG9uJ3QgcmVhbGx5IHVu
-ZGVyc3RhbmQgInRoZQ0KPiBpbnRlcmZhY2UgaXQgcHJvdmlkZXMiLg0KDQpZb3UncmUgcmlnaHQs
-IHRoaXMgaXMgdGFsa2luZyBtb3JlIGFib3V0IG1pcy1zcGVjdWxhdGlvbiB0eXBlIGF0dGFja3Mu
-ICBUaGUgaW50ZXJmYWNlIHBvaW50IGlzIHRoYXQgZ2VuZXJhbGx5IHRoZSBhdHRhY2tlciBuZWVk
-cyBzb21lIHdheSB0byBpbnZva2UgdGhlIHZpY3RpbSBhbmQgcHJvdmlkZSBpdCBzb21lIGlucHV0
-cyB0byBjYXVzZSBpdCB0byBkbyBzb21ldGhpbmcgd2hpY2ggcmVzdWx0cyBpbiBsZWFrYWdlLg0K
-DQpFdmVuIGZvciBzb21ldGhpbmcgbGlrZSBNRFMsIEkgdGhpbmsgaW4gb3JkZXIgdG8gaGF2ZSBh
-bnkgY29udHJvbCBvdmVyIHdoYXQgZGF0YSBpcyBiZWluZyBsZWFrZWQsIHRoZSBhdHRhY2tlciBh
-cmd1YWJseSBuZWVkcyBzb21lIHdheSB0byBpbmZsdWVuY2UgdmljdGltIGJlaGF2aW9yLiAgT2Yg
-Y291cnNlIHRoYXQgaXMgbm90IGFsd2F5cyByZXF1aXJlZCBpZiB0aGUgdmljdGltIGp1c3QgcmVh
-ZHMgdGhlIHNlY3JldCBhbGwgdGhlIHRpbWUgb24gaXRzIG93biAobGlrZSB5b3VyIGZvbGxvd2lu
-ZyBleGFtcGxlKS4NCg0KPg0KPiBUbyBiZSBjb25jcmV0ZSwgaW1hZ2luZSB0aGVyZSdzIGEgc3lz
-dGVtIHdoZXJlIHByb2Nlc3MgQSBqdXN0IHNpdHMgaW4gYSBsb29wDQo+IHJlYWRpbmcgYSBzZWNy
-ZXQsIGFuZCBvbiBhIHN5c3RlbSB3aXRoIG1pdGlnYXRpb25zPW9mZiB0aGVyZSdzIGEgdnVsbiBp
-ZiBhIHVzZXJzcGFjZQ0KPiBhdHRhY2tlciBjYW4gcHJlZW1wdCBwcm9jZXNzIEEsIGl0IGNhbiBs
-ZWFrIHRoZSBzZWNyZXQgZnJvbSBzb21lIHVhcmNoIGJ1ZmZlciBpdA0KPiBoYWQgbmF0dXJhbGx5
-IGdvdCBpbnRvLiBJIGV4cGVjdCBtaXRpZ2F0ZV91c2VyX3VzZXI9b24gdG8gcHJldmVudCB0aGF0
-LCBidXQgdGhpcw0KPiB3b3JkaW5nIGRvZXNuJ3QgcmVhbGx5IHNvdW5kIGxpa2UgaXQgZG9lcy4g
-SSBndWVzcyB0aGUgdnVsbmVyYWJpbGl0eSBpcyAiYmFzZWQgb24gdGhlDQo+IHByb2dyYW0gaXRz
-ZWxmIiBpbiB0aGF0IGl0IHRvb2sgYWR2YW50YWdlIG9mIHRoZSBmYWN0IGl0IHJlYWQgdGhlIGRh
-dGEgaW50byB0aGUgYnVmZmVyLCBidXQNCj4gdGhlcmUncyBubyAiaW50ZXJmYWNlIiBhbmQgbm8g
-ImluZmx1ZW5jZWQgdGhlIGJlaGF2aW91ciIuDQoNCkluIHRoZSBjdXJyZW50IHBhdGNoIHNlcmll
-cywgaXQgd291bGQgYmUgcHJldmVudGVkIGJlY2F1c2UgbWl0aWdhdGVfdXNlcl91c2VyIG1pdGln
-YXRlcyB0aGluZ3MgbGlrZSBNRFMuICBJIHRoaW5rIEkgY2FuIHVwZGF0ZSB0aGUgZG9jdW1lbnRh
-dGlvbiB0byBiZSBjbGVhcmVyIG9uIHRoaXMgcG9pbnQuDQoNCj4NCj4gSSB0aGluayB0aGUgYmVz
-dCBJIGNhbiBjb21lIHVwIHdpdGggdG8gZGVzY3JpYmUgd2hhdCBJIGV4cGVjdCB0aGlzIGZsYWcg
-dG8gbWl0aWdhdGUgaXM6DQo+ICJhIG1hbGljaW91cyB1c2Vyc3BhY2UgcHJvZ3JhbSBhdHRlbXB0
-aW5nIHRvIGxlYWsgZGF0YSBkaXJlY3RseSBmcm9tIHRoZSBhZGRyZXNzDQo+IHNwYWNlIG9mIHRo
-ZSB2aWN0aW0gcHJvZ3JhbSIuIEl0J3MgYSBiaXQgdW5mb3J0dW5hdGUgdGhhdCAiZGlyZWN0bHkg
-ZnJvbSB0aGUgYWRkcmVzcw0KPiBzcGFjZSIgaW1wbGllcyB0aGVyZSdzIHNvbWUgb3RoZXIgYXZl
-bnVlIHRvIGxlYWsgdGhhdCBkYXRhLCB3aGljaCBtaWdodCBub3QgYWx3YXlzDQo+IGJlIHRoZSBj
-YXNlIGFuZCBraW5kYSBnZXRzIGJhY2sgdG8gdGhlIG90aGVyIHRocmVhZCBhYm91dCB0aGUgdXNl
-ci10by11c2VyL3VzZXItdG8tDQo+IGtlcm5lbCBzcGxpdC4gTWF5YmUgdGhpcyBpcyBhIHBvaW50
-IGFnYWluc3QgdGhhdCBzcGxpdC4NCg0KV2hhdCB5b3UgYXJlIHBvaW50aW5nIG91dCBpcyB0aGF0
-IGEgdXNlci0+dXNlciBhdHRhY2sgY2FuIGVpdGhlciBiZSBkdWUgdG8gaW5mbHVlbmNpbmcgdGhl
-IHNwZWN1bGF0aXZlIGJlaGF2aW9yIG9mIGFub3RoZXIgcHJvY2Vzcywgb3IgdGhyb3VnaCBtaWNy
-b2FyY2hpdGVjdHVyYWwgYnVmZmVyIGxlYWthZ2UgdGhhdCBtYXkgb2NjdXIgd2hpbGUgdGhhdCB1
-c2VyIHByb2Nlc3MgaXMgcnVubmluZy4gIFRoYXQncyBhIHZhbGlkIHBvaW50Lg0KDQo+DQo+ID4g
-K1RoZSBndWVzdC10by1ndWVzdCBhdHRhY2sgdmVjdG9yIGludm9sdmVzIGEgbWFsaWNpb3VzIFZN
-IFsuLi5dDQo+IChEaXR0byBvZiBjb3Vyc2UpDQo+DQo+ID4gK1N1bW1hcnkgb2YgYXR0YWNrLXZl
-Y3RvciBtaXRpZ2F0aW9ucw0KPiA+ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0NCj4gPiArDQo+ID4gK1doZW4gYSB2dWxuZXJhYmlsaXR5IGlzIG1pdGlnYXRlZCBkdWUgdG8g
-YW4gYXR0YWNrLXZlY3RvciBjb250cm9sLA0KPiA+ICt0aGUgZGVmYXVsdCBtaXRpZ2F0aW9uIG9w
-dGlvbiBmb3IgdGhhdCBwYXJ0aWN1bGFyIHZ1bG5lcmFiaWxpdHkgaXMNCj4gPiArdXNlZC4gIFRv
-IHVzZSBhIGRpZmZlcmVudCBtaXRpZ2F0aW9uLCBwbGVhc2UgdXNlIHRoZSB2dWxuZXJhYmlsaXR5
-LXNwZWNpZmljDQo+IGNvbW1hbmQgbGluZSBvcHRpb24uDQo+ID4gKw0KPiA+ICtUaGUgdGFibGUg
-YmVsb3cgc3VtbWFyaXplcyB3aGljaCB2dWxuZXJhYmlsaXRpZXMgYXJlIG1pdGlnYXRlZCB3aGVu
-DQo+ID4gK2RpZmZlcmVudCBhdHRhY2sgdmVjdG9ycyBhcmUgZW5hYmxlZCBhbmQgYXNzdW1pbmcg
-dGhlIENQVSBpcyB2dWxuZXJhYmxlLg0KPiA+ICsNCj4gPiArPT09PT09PT09PT09PT09ID09PT09
-PT09PT09PT09ID09PT09PT09PT09PSA9PT09PT09PT09PT09DQo+ID09PT09PT09PT09PT09ID09
-PT09PT09PT09PQ0KPiA+ICtWdWxuZXJhYmlsaXR5ICAgVXNlci10by1LZXJuZWwgVXNlci10by1V
-c2VyIEd1ZXN0LXRvLUhvc3QgR3Vlc3QtdG8tR3Vlc3QNCj4gQ3Jvc3MtVGhyZWFkDQo+ID4gKz09
-PT09PT09PT09PT09PSA9PT09PT09PT09PT09PSA9PT09PT09PT09PT0gPT09PT09PT09PT09PQ0K
-PiA9PT09PT09PT09PT09PSA9PT09PT09PT09PT0NCj4gPiArQkhJICAgICAgICAgICAgICAgICAg
-IFggICAgICAgICAgICAgICAgICAgICAgICAgICBYDQo+ID4gK0dEUyAgICAgICAgICAgICAgICAg
-ICBYICAgICAgICAgICAgICBYICAgICAgICAgICAgWCAgICAgICAgICAgICAgWCAgICAgICAgICAg
-IFgNCj4gPiArTDFURiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBYICAgICAgICAgICAgICAgICAgICAgICAoTm90ZSAxKQ0KPiA+ICtNRFMgICAgICAgICAgICAg
-ICAgICAgWCAgICAgICAgICAgICAgWCAgICAgICAgICAgIFggICAgICAgICAgICAgIFggICAgICAg
-IChOb3RlIDEpDQo+ID4gK01NSU8gICAgICAgICAgICAgICAgICBYICAgICAgICAgICAgICBYICAg
-ICAgICAgICAgWCAgICAgICAgICAgICAgWCAgICAgICAgKE5vdGUgMSkNCj4gPiArTWVsdGRvd24g
-ICAgICAgICAgICAgIFgNCj4gPiArUmV0YmxlZWQgICAgICAgICAgICAgIFggICAgICAgICAgICAg
-ICAgICAgICAgICAgICBYICAgICAgICAgICAgICAgICAgICAgICAoTm90ZSAyKQ0KPiA+ICtSRkRT
-ICAgICAgICAgICAgICAgICAgWCAgICAgICAgICAgICAgWCAgICAgICAgICAgIFggICAgICAgICAg
-ICAgIFgNCj4gPiArU3BlY3RyZV92MSAgICAgICAgICAgIFgNCj4gPiArU3BlY3RyZV92MiAgICAg
-ICAgICAgIFggICAgICAgICAgICAgICAgICAgICAgICAgICBYDQo+ID4gK1NwZWN0cmVfdjJfdXNl
-ciAgICAgICAgICAgICAgICAgICAgICBYICAgICAgICAgICAgICAgICAgICAgICAgICAgWA0KPiA+
-ICtTUkJEUyAgICAgICAgICAgICAgICAgWCAgICAgICAgICAgICAgWCAgICAgICAgICAgIFggICAg
-ICAgICAgICAgIFgNCj4gPiArU1JTTyAgICAgICAgICAgICAgICAgIFggICAgICAgICAgICAgICAg
-ICAgICAgICAgICBYDQo+ID4gK1NTQiAoTm90ZSAzKQ0KPiA+ICtUQUEgICAgICAgICAgICAgICAg
-ICAgWCAgICAgICAgICAgICAgWCAgICAgICAgICAgIFggICAgICAgICAgICAgIFggICAgICAgIChO
-b3RlIDEpDQo+ID4gKz09PT09PT09PT09PT09PSA9PT09PT09PT09PT09PSA9PT09PT09PT09PT0g
-PT09PT09PT09PT09PQ0KPiA+ICs9PT09PT09PT09PT09PSA9PT09PT09PT09PT0NCj4NCj4gSG1t
-LCBJJ20gYWxzbyBjb25mdXNlZCBieSB0aGlzLiBUaGlzIG1lY2hhbmlzbSBpcyBzdXBwb3NlZCB0
-byBiZSBhYm91dCBtaXRpZ2F0aW5nDQo+IGF0dGFjayB2ZWN0b3JzLCBidXQgbm93IHN1ZGRlbmx5
-IHdlJ3ZlIGdvbmUgYmFjayB0byB0YWxraW5nIGFib3V0IHZ1bG5lcmFiaWxpdGllcy4NCj4gVnVs
-bnMgYW5kIHZlY3RvcnMgYXJlIG9idmlvdXNseSBub3QgdG90YWxseSBvcnRob2dvbmFsIGJ1dCB0
-aGVyZSBpc24ndCBhIDE6MSBtYXBwaW5nLg0KDQpJIGRpZCBzaW1wbGlmeSB0aGluZ3MgYSBiaXQg
-Zm9yIHRoaXMgdGFibGUsIGJ1dCBJIHRoaW5rIGl04oCZcyB0aGUgbWl0aWdhdGlvbnMgd2hlcmUg
-dGhlcmUgaXNuJ3QgYSAxOjEgbWFwcGluZy4gIEluIHJlYWxpdHksIGEgc2luZ2xlIHZ1bG5lcmFi
-aWxpdHkgbWF5IGhhdmUgZGlmZmVyZW50IG1pdGlnYXRpb25zIGZvciBkaWZmZXJlbnQgdmVjdG9y
-cy4gIEJISSBpcyBhIGdyZWF0IGV4YW1wbGUgb2YgdGhpcyB3aGVyZSB0aGVyZSBpcyBvbmUgb3B0
-aW9uIHRvIGNsZWFyIHRoZSBCSEIgb24gc3lzY2FsbCBhbmQgYW5vdGhlciB0byBkbyBpdCBvbiBW
-TUVYSVQuICBBbmQgaW4gdGhlIHBhdGNoZXMgaW4gdGhpcyBzZXJpZXMsIHRoZXNlIGFyZSBhcHBs
-aWVkIGRpZmZlcmVudGx5IGRlcGVuZGluZyBvbiB0aGUgc2VsZWN0ZWQgYXR0YWNrIHZlY3RvcnMu
-ICBTbyB0aGlzIHRhYmxlIHJlYWxseSB3YXMgbWVhbnQgdG8gaW5kaWNhdGUgd2hpY2ggYnVncyBh
-cmUgcmVsZXZhbnQgZm9yIGVhY2ggYXR0YWNrIHZlY3RvciwgYW5kIHdoaWNoIHJlcXVpcmUgc29t
-ZSBmb3JtIG9mIG1pdGlnYXRpb24uDQoNCj4NCj4gVG8gYmUgY29uY3JldGUgYWdhaW46IHRoaXMg
-c2VlbXMgdG8gc2F5IGlmIG1pdGlnYXRlX2d1ZXN0X2hvc3Q9b2ZmIHRoZXJlJ3Mgbm8gTDFURg0K
-PiBtaXRpZ2F0aW9uPyAoSSB0aGluayBpbiBmYWN0IGl0J3MgbWl0aWdhdGVkIGJ5IFBURSBpbnZl
-cnNpb24pLg0KDQpDb3JyZWN0DQoNCj4NCj4gQW5kIEkgZG9uJ3QgdW5kZXJzdGFuZCB3aHkgUmV0
-YmxlZWQgZG9lc24ndCByZXF1aXJlIHVzZXJfdXNlciBvciBndWVzdF9ndWVzdA0KPiBtaXRpZ2F0
-aW9uLiBJIGFzc3VtZSBJIGNhbiBmaWd1cmUgdGhpcyBvdXQgYnkgcmVhZGluZyBhYm91dCB0aGUg
-ZGV0YWlscyBvZiBSZXRibGVlZA0KPiBleHBsb2l0YXRpb24gb3IgbG9va2luZyBpbiBidWdzLmMu
-IEJ1dCBnaXZlbiB0aGlzIGlzIGFib3V0IG1ha2luZyB0aGluZ3MgZWFzaWVyIEkgdGhpbmsNCj4g
-d2Ugc2hvdWxkIHByb2JhYmx5IGFzc3VtZSB0aGUgcmVhZGVyIGlzIGFzIGlnbm9yYW50IGFib3V0
-IHRoYXQgYXMgSSBhbS4NCg0KUmV0YmxlZWQgaXMgYSBjb21wbGV4IGV4YW1wbGUgYmVjYXVzZSBp
-dCBpcyBkaWZmZXJlbnQgb24gQU1EIHZzIEludGVsLCBidXQgbGV0IG1lIHRha2UgU1JTTyBpbnN0
-ZWFkIHdoaWNoIGlzIGEgYml0IHNpbXBsZXIgdG8gdGFsayBhYm91dC4NCg0KU1JTTyBpbnZvbHZl
-cyB0aGUgYXR0YWNrZXIgcG9pc29uaW5nIHRoZSBCVEIgc28gaXQgY2FuIGluZmx1ZW5jZSByZXR1
-cm4gaW5zdHJ1Y3Rpb25zIGV4ZWN1dGVkIGJ5IHRoZSB2aWN0aW0gKEFNRCByZXRibGVlZCBpcyBz
-aW1pbGFyKS4gIFRoaXMgcmVxdWlyZXMgbWl0aWdhdGlvbiBpbiB0aGUga2VybmVsIHRvIHByZXZl
-bnQgdGhpcy4NCg0KVXNlci0+dXNlciBvciBndWVzdC0+Z3Vlc3QgYXJlIHBvc3NpYmxlIGF0dGFj
-ayB2ZWN0b3JzIGZvciBTUlNPIHRvbywgaG93ZXZlciB0aGV5IGFyZSBtaXRpZ2F0ZWQgYnkgdGhl
-IGZhY3QgdGhhdCBJQlBCIGlzIGRvbmUgb24gY29udGV4dCBzd2l0Y2hlcyAodGhyb3VnaCBzcGVj
-dHJlX3YyX3VzZXIpLg0KDQooVGhhdCBzYWlkLCBJIHRoaW5rIHRoaXMgcG9pbnRzIG91dCBzb21l
-dGhpbmcgaW4gdGhlIHVwc3RyZWFtIGNvZGUuLi5pZiBzcGVjdHJlX3YyX3VzZXIgaXMgZGlzYWJs
-ZWQgYnV0IFNSU08vcmV0YmxlZWQgYXJlIGVuYWJsZWQgdGhlbiBJIHRoaW5rIHdlIGRvbid0IGRv
-IHRoZSBJQlBCIG9uIGNvbnRleHQgc3dpdGNoLiAgTm90IHN1cmUgaWYgdGhhdCdzIGEgYnVnKQ0K
-DQo+DQo+IEkgZHVubm8gZXhhY3RseSB3aGF0IHRvIHN1Z2dlc3QgaGVyZSwgYnV0IG1heWJlIGlu
-c3RlYWQgb2YgIndlIGRvL2Rvbid0IG1pdGlnYXRlDQo+IHRoZXNlIHZ1bG5zIiB0aGlzIHdvdWxk
-IGJlIG1vcmUgaGVscGZ1bCBhcyAid2UgZG8vZG9uJ3QgZW5hYmxlIHRoaXMgc3BlY2lmaWMNCj4g
-bWl0aWdhdGlvbiBhY3Rpb24iLiBTbyBpbnN0ZWFkIG9mIGEgcm93IGZvciBMMVRGLCB0aGVyZSB3
-b3VsZCBiZSBhIHJvdyBmb3IgdGhlIGZsdXNoDQo+IHRoYXQgbDF0Zj1mbHVzaCBnaXZlcyB5b3Ug
-KGJhc2ljYWxseSwgbGlrZSB0aGlzIGtpbmRhIGFscmVhZHkgaGFzIGZvciBzcGVjdHJlX3YyX3Vz
-ZXIpLg0KPiBNYXliZSBhZ2FpbiBJJ20ganVzdCBiZWluZyBwZWRhbnRpYyBhbmQgbWFraW5nIGxp
-ZmUgZGlmZmljdWx0IGhlcmUgdGhvdWdoLg0KDQpJIHNlZSB5b3VyIHBvaW50Li4uYW5kIGluIGZh
-Y3QgdGhlIGV4YW1wbGUgSSBqdXN0IG91dGxpbmVkIGFib3ZlIGlzIGEgZ29vZCBhcmd1bWVudCBp
-biB5b3VyIGZhdm9yLiAgSXQgcmVhbGx5IHNob3VsZCBiZSBhdHRhY2sgdmVjdG9ycyBtYXBwaW5n
-IHRvIG1pdGlnYXRpb25zLCBub3QgbmVjZXNzYXJpbHkgdG8gdnVsbmVyYWJpbGl0aWVzLiAgTWFu
-eSBvZiB0aGUgdnVsbmVyYWJpbGl0aWVzIHRob3VnaCAob3RoZXIgdGhhbiBCSEkpIGRvbid0IGRv
-IGEgZ29vZCBqb2Igb2YgZGlmZmVyZW50aWF0aW5nIHRoaXMgdGhvdWdoLi4uc28gaXQgc2ltcGx5
-IGJlY29tZXMgInR1cm4gb24gdGhlIG1pdGlnYXRpb24gaWYgYSByZWxldmFudCBhdHRhY2sgdmVj
-dG9yIGlzIGVuYWJsZWQiLiAgVGhhdCBjb3VsZCBiZSBpbXByb3ZlZCBpbiB0aGUgZnV0dXJlIChh
-bmQgdGhhdCBtaWdodCBiZSBnb29kIHRvIHNlZSksIGJ1dCBhcyB5b3UnbGwgc2VlIGluIHRoZSBs
-YXRlciBwYXRjaGVzIGluIHRoZSBzZXJpZXMsIGluIG1vc3QgY2FzZXMgdGhlIGF0dGFjayB2ZWN0
-b3JzIGFyZSBtYXBwaW5nIGRpcmVjdGx5IHRvIHZ1bG5lcmFiaWxpdGllcyBjdXJyZW50bHkuDQoN
-Ck9uZSBjb25jZXJuIEkgaGFkIGlzIHRoYXQgdGhlIHNwZWNpZmljIG1pdGlnYXRpb25zIGFyZSB2
-ZXJ5IGJ1Zy1zcGVjaWZpYywgYW5kIHNvbWUgYnVncyBoYXZlIHRoZWlyIG93biBkb2N1bWVudGF0
-aW9uIGZpbGVzIGFib3V0IHRoZW0uICBJIGRvbid0IGtub3cgaWYgdGhlIGF0dGFjayB2ZWN0b3Ig
-ZG9jdW1lbnRhdGlvbiBpcyB0aGUgcGxhY2UgdG8gZ28gaW50byB0aGUgZXhhY3QgbWl0aWdhdGlv
-biBjaG9pY2UgYmVpbmcgdXNlZCBmb3IgZWFjaCBidWcsIG9yIGlmIHRoYXQgaXMgc29tZXRoaW5n
-IHRoYXQgdGhlIGJ1Zy1zcGVjaWZpYyBkb2N1bWVudGF0aW9uIHNob3VsZCBiZSB1cGRhdGVkIHRv
-IGRpc2N1c3MuDQoNCi0tRGF2aWQgS2FwbGFuDQo=
+On Wed, Nov 13, 2024 at 6:28=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Tue, Nov 12, 2024 at 11:46:32AM -0800, Suren Baghdasaryan wrote:
+> > Back when per-vma locks were introduces, vm_lock was moved out of
+> > vm_area_struct in [1] because of the performance regression caused by
+> > false cacheline sharing. Recent investigation [2] revealed that the
+> > regressions is limited to a rather old Broadwell microarchitecture and
+> > even there it can be mitigated by disabling adjacent cacheline
+> > prefetching, see [3].
+>
+> I don't see a motivating reason as to why we want to do this? We increase
+> memory usage here which is not good, but later lock optimisation mitigate=
+s
+> it, but why wouldn't we just do the lock optimisations and use less memor=
+y
+> overall?
+>
+> > This patchset moves vm_lock back into vm_area_struct, aligning it at th=
+e
+> > cacheline boundary and changing the cache to be cache-aligned as well.
+> > This causes VMA memory consumption to grow from 160 (vm_area_struct) + =
+40
+> > (vm_lock) bytes to 256 bytes:
+> >
+> >     slabinfo before:
+> >      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+> >      vma_lock         ...     40  102    1 : ...
+> >      vm_area_struct   ...    160   51    2 : ...
+>
+> Pedantry, but it might be worth mentioning how much this can vary by conf=
+ig.
+>
+> For instance, on my machine:
+>
+> vm_area_struct    125238 138820    184   44
+
+Ack.
+
+>
+> >
+> >     slabinfo after moving vm_lock:
+> >      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+> >      vm_area_struct   ...    256   32    2 : ...
+> >
+> > Aggregate VMA memory consumption per 1000 VMAs grows from 50 to 64 page=
+s,
+> > which is 5.5MB per 100000 VMAs. This memory consumption growth can be
+> > addressed later by optimizing the vm_lock.
+>
+> Yes grabbing this back is of critical importance I'd say! :)
+>
+> Functionally it looks ok to me but would like to see a stronger
+> justification in the commit msg! :)
+>
+> >
+> > [1] https://lore.kernel.org/all/20230227173632.3292573-34-surenb@google=
+.com/
+> > [2] https://lore.kernel.org/all/ZsQyI%2F087V34JoIt@xsang-OptiPlex-9020/
+> > [3] https://lore.kernel.org/all/CAJuCfpEisU8Lfe96AYJDZ+OM4NoPmnw9bP53cT=
+_kbfP_pR+-2g@mail.gmail.com/
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> >  include/linux/mm.h       | 28 +++++++++++++----------
+> >  include/linux/mm_types.h |  6 +++--
+> >  kernel/fork.c            | 49 ++++------------------------------------
+> >  3 files changed, 25 insertions(+), 58 deletions(-)
+> >
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 01ce619f3d17..a5eb0be3e351 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -684,6 +684,12 @@ static inline void vma_numab_state_free(struct vm_=
+area_struct *vma) {}
+> >  #endif /* CONFIG_NUMA_BALANCING */
+> >
+> >  #ifdef CONFIG_PER_VMA_LOCK
+> > +static inline void vma_lock_init(struct vm_area_struct *vma)
+> > +{
+> > +     init_rwsem(&vma->vm_lock.lock);
+> > +     vma->vm_lock_seq =3D UINT_MAX;
+> > +}
+> > +
+> >  /*
+> >   * Try to read-lock a vma. The function is allowed to occasionally yie=
+ld false
+> >   * locked result to avoid performance overhead, in which case we fall =
+back to
+> > @@ -701,7 +707,7 @@ static inline bool vma_start_read(struct vm_area_st=
+ruct *vma)
+> >       if (READ_ONCE(vma->vm_lock_seq) =3D=3D READ_ONCE(vma->vm_mm->mm_l=
+ock_seq.sequence))
+> >               return false;
+> >
+> > -     if (unlikely(down_read_trylock(&vma->vm_lock->lock) =3D=3D 0))
+> > +     if (unlikely(down_read_trylock(&vma->vm_lock.lock) =3D=3D 0))
+> >               return false;
+> >
+> >       /*
+> > @@ -716,7 +722,7 @@ static inline bool vma_start_read(struct vm_area_st=
+ruct *vma)
+> >        * This pairs with RELEASE semantics in vma_end_write_all().
+> >        */
+> >       if (unlikely(vma->vm_lock_seq =3D=3D raw_read_seqcount(&vma->vm_m=
+m->mm_lock_seq))) {
+> > -             up_read(&vma->vm_lock->lock);
+> > +             up_read(&vma->vm_lock.lock);
+> >               return false;
+> >       }
+> >       return true;
+> > @@ -729,7 +735,7 @@ static inline bool vma_start_read(struct vm_area_st=
+ruct *vma)
+> >  static inline void vma_start_read_locked_nested(struct vm_area_struct =
+*vma, int subclass)
+> >  {
+> >       mmap_assert_locked(vma->vm_mm);
+> > -     down_read_nested(&vma->vm_lock->lock, subclass);
+> > +     down_read_nested(&vma->vm_lock.lock, subclass);
+> >  }
+> >
+> >  /*
+> > @@ -739,13 +745,13 @@ static inline void vma_start_read_locked_nested(s=
+truct vm_area_struct *vma, int
+> >  static inline void vma_start_read_locked(struct vm_area_struct *vma)
+> >  {
+> >       mmap_assert_locked(vma->vm_mm);
+> > -     down_read(&vma->vm_lock->lock);
+> > +     down_read(&vma->vm_lock.lock);
+> >  }
+> >
+> >  static inline void vma_end_read(struct vm_area_struct *vma)
+> >  {
+> >       rcu_read_lock(); /* keeps vma alive till the end of up_read */
+> > -     up_read(&vma->vm_lock->lock);
+> > +     up_read(&vma->vm_lock.lock);
+> >       rcu_read_unlock();
+> >  }
+> >
+> > @@ -774,7 +780,7 @@ static inline void vma_start_write(struct vm_area_s=
+truct *vma)
+> >       if (__is_vma_write_locked(vma, &mm_lock_seq))
+> >               return;
+> >
+> > -     down_write(&vma->vm_lock->lock);
+> > +     down_write(&vma->vm_lock.lock);
+> >       /*
+> >        * We should use WRITE_ONCE() here because we can have concurrent=
+ reads
+> >        * from the early lockless pessimistic check in vma_start_read().
+> > @@ -782,7 +788,7 @@ static inline void vma_start_write(struct vm_area_s=
+truct *vma)
+> >        * we should use WRITE_ONCE() for cleanliness and to keep KCSAN h=
+appy.
+> >        */
+> >       WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
+> > -     up_write(&vma->vm_lock->lock);
+> > +     up_write(&vma->vm_lock.lock);
+> >  }
+> >
+> >  static inline void vma_assert_write_locked(struct vm_area_struct *vma)
+> > @@ -794,7 +800,7 @@ static inline void vma_assert_write_locked(struct v=
+m_area_struct *vma)
+> >
+> >  static inline void vma_assert_locked(struct vm_area_struct *vma)
+> >  {
+> > -     if (!rwsem_is_locked(&vma->vm_lock->lock))
+> > +     if (!rwsem_is_locked(&vma->vm_lock.lock))
+> >               vma_assert_write_locked(vma);
+> >  }
+> >
+> > @@ -827,6 +833,7 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm=
+_struct *mm,
+> >
+> >  #else /* CONFIG_PER_VMA_LOCK */
+> >
+> > +static inline void vma_lock_init(struct vm_area_struct *vma) {}
+> >  static inline bool vma_start_read(struct vm_area_struct *vma)
+> >               { return false; }
+> >  static inline void vma_end_read(struct vm_area_struct *vma) {}
+> > @@ -861,10 +868,6 @@ static inline void assert_fault_locked(struct vm_f=
+ault *vmf)
+> >
+> >  extern const struct vm_operations_struct vma_dummy_vm_ops;
+> >
+> > -/*
+> > - * WARNING: vma_init does not initialize vma->vm_lock.
+> > - * Use vm_area_alloc()/vm_area_free() if vma needs locking.
+> > - */
+> >  static inline void vma_init(struct vm_area_struct *vma, struct mm_stru=
+ct *mm)
+> >  {
+> >       memset(vma, 0, sizeof(*vma));
+> > @@ -873,6 +876,7 @@ static inline void vma_init(struct vm_area_struct *=
+vma, struct mm_struct *mm)
+> >       INIT_LIST_HEAD(&vma->anon_vma_chain);
+> >       vma_mark_detached(vma, false);
+> >       vma_numab_state_init(vma);
+> > +     vma_lock_init(vma);
+> >  }
+> >
+> >  /* Use when VMA is not part of the VMA tree and needs no locking */
+> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > index 80fef38d9d64..5c4bfdcfac72 100644
+> > --- a/include/linux/mm_types.h
+> > +++ b/include/linux/mm_types.h
+> > @@ -716,8 +716,6 @@ struct vm_area_struct {
+> >        * slowpath.
+> >        */
+> >       unsigned int vm_lock_seq;
+> > -     /* Unstable RCU readers are allowed to read this. */
+> > -     struct vma_lock *vm_lock;
+> >  #endif
+> >
+> >       /*
+> > @@ -770,6 +768,10 @@ struct vm_area_struct {
+> >       struct vma_numab_state *numab_state;    /* NUMA Balancing state *=
+/
+> >  #endif
+> >       struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
+> > +#ifdef CONFIG_PER_VMA_LOCK
+> > +     /* Unstable RCU readers are allowed to read this. */
+> > +     struct vma_lock vm_lock ____cacheline_aligned_in_smp;
+> > +#endif
+> >  } __randomize_layout;
+> >
+> >  #ifdef CONFIG_NUMA
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index 0061cf2450ef..7823797e31d2 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -436,35 +436,6 @@ static struct kmem_cache *vm_area_cachep;
+> >  /* SLAB cache for mm_struct structures (tsk->mm) */
+> >  static struct kmem_cache *mm_cachep;
+> >
+> > -#ifdef CONFIG_PER_VMA_LOCK
+> > -
+> > -/* SLAB cache for vm_area_struct.lock */
+> > -static struct kmem_cache *vma_lock_cachep;
+> > -
+> > -static bool vma_lock_alloc(struct vm_area_struct *vma)
+> > -{
+> > -     vma->vm_lock =3D kmem_cache_alloc(vma_lock_cachep, GFP_KERNEL);
+> > -     if (!vma->vm_lock)
+> > -             return false;
+> > -
+> > -     init_rwsem(&vma->vm_lock->lock);
+> > -     vma->vm_lock_seq =3D UINT_MAX;
+> > -
+> > -     return true;
+> > -}
+> > -
+> > -static inline void vma_lock_free(struct vm_area_struct *vma)
+> > -{
+> > -     kmem_cache_free(vma_lock_cachep, vma->vm_lock);
+> > -}
+> > -
+> > -#else /* CONFIG_PER_VMA_LOCK */
+> > -
+> > -static inline bool vma_lock_alloc(struct vm_area_struct *vma) { return=
+ true; }
+> > -static inline void vma_lock_free(struct vm_area_struct *vma) {}
+> > -
+> > -#endif /* CONFIG_PER_VMA_LOCK */
+> > -
+> >  struct vm_area_struct *vm_area_alloc(struct mm_struct *mm)
+> >  {
+> >       struct vm_area_struct *vma;
+> > @@ -474,10 +445,6 @@ struct vm_area_struct *vm_area_alloc(struct mm_str=
+uct *mm)
+> >               return NULL;
+> >
+> >       vma_init(vma, mm);
+> > -     if (!vma_lock_alloc(vma)) {
+> > -             kmem_cache_free(vm_area_cachep, vma);
+> > -             return NULL;
+> > -     }
+> >
+> >       return vma;
+> >  }
+> > @@ -496,10 +463,7 @@ struct vm_area_struct *vm_area_dup(struct vm_area_=
+struct *orig)
+> >        * will be reinitialized.
+> >        */
+> >       data_race(memcpy(new, orig, sizeof(*new)));
+> > -     if (!vma_lock_alloc(new)) {
+> > -             kmem_cache_free(vm_area_cachep, new);
+> > -             return NULL;
+> > -     }
+> > +     vma_lock_init(new);
+> >       INIT_LIST_HEAD(&new->anon_vma_chain);
+> >       vma_numab_state_init(new);
+> >       dup_anon_vma_name(orig, new);
+> > @@ -511,7 +475,6 @@ void __vm_area_free(struct vm_area_struct *vma)
+> >  {
+> >       vma_numab_state_free(vma);
+> >       free_anon_vma_name(vma);
+> > -     vma_lock_free(vma);
+> >       kmem_cache_free(vm_area_cachep, vma);
+> >  }
+> >
+> > @@ -522,7 +485,7 @@ static void vm_area_free_rcu_cb(struct rcu_head *he=
+ad)
+> >                                                 vm_rcu);
+> >
+> >       /* The vma should not be locked while being destroyed. */
+> > -     VM_BUG_ON_VMA(rwsem_is_locked(&vma->vm_lock->lock), vma);
+> > +     VM_BUG_ON_VMA(rwsem_is_locked(&vma->vm_lock.lock), vma);
+> >       __vm_area_free(vma);
+> >  }
+> >  #endif
+> > @@ -3168,11 +3131,9 @@ void __init proc_caches_init(void)
+> >                       sizeof(struct fs_struct), 0,
+> >                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
+> >                       NULL);
+> > -
+> > -     vm_area_cachep =3D KMEM_CACHE(vm_area_struct, SLAB_PANIC|SLAB_ACC=
+OUNT);
+> > -#ifdef CONFIG_PER_VMA_LOCK
+> > -     vma_lock_cachep =3D KMEM_CACHE(vma_lock, SLAB_PANIC|SLAB_ACCOUNT)=
+;
+> > -#endif
+> > +     vm_area_cachep =3D KMEM_CACHE(vm_area_struct,
+> > +                     SLAB_HWCACHE_ALIGN|SLAB_NO_MERGE|SLAB_PANIC|
+> > +                     SLAB_ACCOUNT);
+>
+> Why the SLAB_NO_MERGE?
+
+Ah, I had it there for convenience to be able to see them separately
+in /proc/slabinfo. With SLAB_HWCACHE_ALIGN I don't think it matters
+for cacheline sharing...
+Once we add SLAB_TYPESAFE_BY_RCU this flag won't matter anyway because
+it will prevent slab merging.
+
+>
+> >       mmap_init();
+> >       nsproxy_cache_init();
+> >  }
+> > --
+> > 2.47.0.277.g8800431eea-goog
+> >
 
