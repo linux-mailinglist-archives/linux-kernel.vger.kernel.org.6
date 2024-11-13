@@ -1,60 +1,84 @@
-Return-Path: <linux-kernel+bounces-407816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88AC9C763D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:21:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 482D89C74AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:45:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BE76B2BBE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC1A1F22E3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE922200CB6;
-	Wed, 13 Nov 2024 14:44:41 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C42D1FF610;
+	Wed, 13 Nov 2024 14:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kbWijaMq"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C09D1FF035
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EEF1DFD8C
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731509081; cv=none; b=XIJOq3FAZ9UWCzAQBMSG5hWKyk2ztRUTecGkZhhmsMs/mA6oxTlPo5wYZEJhPdHIO8rLRskfzE3f7yglX+lSs95c2UBhA2Lm8d9uanujc9JtoGU9PH0qLt9Pruh8CmzkdVvhpehDcGFCTLZ3Y01NPJx89fSzk/ZZ9YkbOz6ZsbE=
+	t=1731509075; cv=none; b=YFC8REv8OMi0ZdHD0Tlga7HutCF6Tnfg4Jx/FV+3yMDlk6kA2+XJmE+/pD+PYZPOUngqj56rPASL9XgSDmMo09t1ghwvWq+kfPZrLQk7cllGp3zMtVuTnrK2kTtFA2W9nKTdbhvlcF4GdyLBGL0C8hOGxyKSalOnPF2XFBR6jW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731509081; c=relaxed/simple;
-	bh=ckSeqNZkTzZoc8tNAlJMv3QaS0XCMd5+YScgBG0e10Y=;
+	s=arc-20240116; t=1731509075; c=relaxed/simple;
+	bh=HeZeCSsJu84FolYvJGFPv741kcE6UC0oMqQJcpwtCIQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bijCtmMwENRLi6oKZXV92ndudrJ04KaPhdN16NQ5g9BAK48sKh31YM7OE9H2iXqaEcTeLltOcf9XWEkGzpB9NtA/1bo5tC1tT8qQUHrbQx91hZscaVlkSRFKwTWz5+ChJG5y2PGrR0E667ukuvYtKm0p7lokx6TsXBKw2HkbO2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1tBEbd-0007tl-30; Wed, 13 Nov 2024 15:44:29 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1tBEbc-000air-1W;
-	Wed, 13 Nov 2024 15:44:28 +0100
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1tBEbc-009iom-1D;
-	Wed, 13 Nov 2024 15:44:28 +0100
-Date: Wed, 13 Nov 2024 15:44:28 +0100
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Lin <yu-hao.lin@nxp.com>, kernel@pengutronix.de,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 02/12] wifi: mwifiex: fix MAC address handling
-Message-ID: <ZzS7TKwPC1uxqzbg@pengutronix.de>
-References: <20240918-mwifiex-cleanup-1-v2-0-2d0597187d3c@pengutronix.de>
- <20240918-mwifiex-cleanup-1-v2-2-2d0597187d3c@pengutronix.de>
- <ZwB3FCdpL85yA2Si@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M/xoa34dKy/8vI54bPSMDgxeFveBoGWGwT9iLbsB3LqOqu/8EXn04+N/qmjE+CZGBsPzvLk1hoiUu8bRwqIbvUvXuzSCJdsSB2xp/pQDFFEfrI4y9FoelB9fPaW/v61+9NbXTkF62hrzkHaXUeeZ78isyljCqO6PHogVmhO3S7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kbWijaMq; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f84907caso7923892e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:44:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731509072; x=1732113872; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HQPpB0phrSoegtCutG0hX/vUb4mF3xNnw+0tCeNiRNA=;
+        b=kbWijaMqRvF0FLAsiyzDHAJHnHyM53T+CoAxKl2gQJ9VoCJqrAP26ArAEtpAHmbWGo
+         FSHwzIwFMKwLv/ipvlvPRNjTp3CuQNATdwRdvHoJkO7f8p23e2TfBUYS1OgQeKh8Pwl3
+         44CbROgyogDntTLw8c05wXfi/2Qssb4NQ1XQxl8lb12xHRBlFnaA0VjOTZc/1U6pXRXq
+         sYaD1XfX8di+KVnFDmvprJ8TXudfuE7qfpm+PbTwC7KAZdNtv4z7ReG1pGHUbs8bb+YC
+         geb438Pwjgt1OVFUUy8vd1O0aUCAgIGlC1p/H55E2su8FW4tHR9GOclQEmclMtNYlJO7
+         lPUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731509072; x=1732113872;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HQPpB0phrSoegtCutG0hX/vUb4mF3xNnw+0tCeNiRNA=;
+        b=NsLFtBfjgw6D4Au3fpwoSYCW2+Np/al/QmLNedrwUpOS7k24omkALb0ipW/Y6COqJv
+         Jvdq376UwyG/UALkixh2UTo2Mh/zjOmASo4VjZ8D3YvRdEOtFiKPvrD0EbqLSc6qsLtt
+         1PksuXZDL0d3u8RWrhRSWshbqSosNoE3/t8OsLVDH6woWJBmW65ToPP3EU7zO6i2Iy/v
+         xaJudMVvvlVakcghZuhKaEb8rzbeC20AoGGU4KLcZolfC1t3tfxbqdcL15hKF1AST9Tv
+         xPHlPCeHqni6+lRoXAi8LPQ3Aq9TTW2k49/jLNAJqCZLbPFR9TXVsdt5mPxWSHSW0ppe
+         6CRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWAySFtKiduPQwbJu3dKki4YYCvsRuLq9bcqIEl9nF/XOvwM6WlhX7U6ghR4uwt1A39hWyUxTvLvAprwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx8uHovN4kevi8WMZdqzYAO2Z7spD8fzTgXAthNJUTluwozr+n
+	PQnHqfBuNUkXgEHwaXiCRdwuyu6J+aVfJ7RauyAK6/R3gFnAsue2nxuLlJZjwVc=
+X-Google-Smtp-Source: AGHT+IEI48XdiEjcdWrwwdwFWY3xjuTvfVBcKE/hPSJ/8GcfhyVPGSydhhwXBFZEyJFFyvXiYAdR6g==
+X-Received: by 2002:a05:6512:687:b0:539:f696:777c with SMTP id 2adb3069b0e04-53d862cb2e1mr10285422e87.29.1731509071994;
+        Wed, 13 Nov 2024 06:44:31 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826787ddsm2224961e87.18.2024.11.13.06.44.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 06:44:30 -0800 (PST)
+Date: Wed, 13 Nov 2024 16:44:29 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org, 
+	andersson@kernel.org, konradybcio@kernel.org, mantas@8devices.com, 
+	quic_rohiagar@quicinc.com, quic_kriskura@quicinc.com, manivannan.sadhasivam@linaro.org, 
+	abel.vesa@linaro.org, quic_kbajaj@quicinc.com, quic_wcheng@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] phy: qcom-qusb2: add QUSB2 support for IPQ5424
+Message-ID: <3wacyipnmxdjdgp6rrpfwreh53zjlimjkpadpxqrclu2tdtjj4@enwogkt6wq2e>
+References: <20241113072316.2829050-1-quic_varada@quicinc.com>
+ <20241113072316.2829050-3-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,115 +87,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZwB3FCdpL85yA2Si@google.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20241113072316.2829050-3-quic_varada@quicinc.com>
 
-Hi Brian,
-
-It's been a while, but I'd like to get this forward now.
-
-On Fri, Oct 04, 2024 at 04:15:32PM -0700, Brian Norris wrote:
-> I think I'm generally supportive of the direction this changes things,
-> but I'm a bit hesitant about two things:
-> 1. the potential user-visible changes and
-> 2. the linux-stable backport (Cc stable below)
+On Wed, Nov 13, 2024 at 12:53:12PM +0530, Varadarajan Narayanan wrote:
+> Add the phy init sequence for the Super Speed ports found
+> on IPQ5424.
 > 
-> For 1: MAC addresses are important in some contexts, and this might
-> significantly change the addresses that devices get in practice. Such
-> users might not really care about the weird details of when the address
-> incremented; but they *probably* care that a certain sequence of "boot
-> device; run hostapd with <foo> config file" produces the same address.
-> 
-> Also, I'm not sure I know enough of the implications of potential
-> over-use of the locally administered bit. Are there significant
-> downsides to it (aside from the simple fact that it's a different
-> address)?
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v2: Change uppercase hexdigits to lowercase
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qusb2.c | 28 +++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 
-Not that I know of, but that doesn't mean much.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-> 
-> And I see that you rightly don't know how many addresses are actually
-> reserved, but I have an educated guess that it's not just 1.
 
-Even if there are more addresses reserved, we don't know which these
-are, see below.
-
-> For one,
-> this driver used to default-create 3 interfaces:
-> 1211c961170c mwifiex: do not create AP and P2P interfaces upon driver loading
-> 
-> and when we stopped doing that, we still kept support for a module
-> parameter for the old way:
-> 0013c7cebed6 mwifiex: module load parameter for interface creation
-> 
-> Perhaps these "initial" interfaces should at least be allowed permanent
-> addresses?
-
-I started up a board with the downstream driver. It comes up with these
-MAC addresses:
-
-wlp1s0    Link encap:Ethernet  HWaddr 34:6F:24:4E:E0:3D
-uap0      Link encap:Ethernet  HWaddr 36:6F:24:4E:E1:3D
-wfd0      Link encap:Ethernet  HWaddr 36:6F:24:4E:E0:3D
-
-The permanent address from EEPROM is 34:6F:24:4E:E0:3D which is
-used for wlp1s0. For the other addresses the locally admistered bit is
-set (34 -> 36). Here's the corresponding code:
-
-	if (priv->bss_type == MLAN_BSS_TYPE_WIFIDIRECT) {
-		if (priv->bss_virtual) {
-			...
-		} else {
-			priv->current_addr[0] |= 0x02;
-		}
-	}
-
-	if (priv->bss_type != MLAN_BSS_TYPE_WIFIDIRECT) {
-		if (priv->bss_index) {
-			priv->current_addr[0] |= 0x02;
-			priv->current_addr[4] += priv->bss_index;
-		}
-	}
-
-See https://github.com/nxp-imx/mwifiex/blob/lf-6.6.3_1.0.0/mxm_wifiex/wlan_src/mlinux/moal_main.c#L8383
-
-Note this behaviour was changed in the driver in a0835444f1
-("mxm_wifiex: update to mxm5x17344.p1 release"). Before that the driver
-has just done a priv->current_addr[4] += priv->bss_index without
-setting the locally admistered bit. Of course the commit message
-says nothing about the reasons for this change.
-
-The downstream driver puts the bss_num (or bss_index) into different
-bits than the upstream driver does. It uses current_addr[4] whereas the
-upstream driver uses current_addr[5]. So even when there's more than
-one MAC address reserved for one chip, both drivers disagree on which
-addresses these are.
-
-Given that, I think our safest bet is to always set the locally
-admistered bit for derived MAC addresses.
-
-> 
-> So anyway, I don't really know for sure the right answer, but I want to
-> log my concerns, in case you had more thoughts on backward
-> compatibility.
-> 
-> And given all the uncertainty above, I'm extra hesitant about
-> backporting likely-user-visible changes to stable (#2).
-
-I can remove the stable tag if makes you feel more comfortable.
-
-Sascha
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+With best wishes
+Dmitry
 
