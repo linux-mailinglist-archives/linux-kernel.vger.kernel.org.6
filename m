@@ -1,147 +1,108 @@
-Return-Path: <linux-kernel+bounces-407069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B4D9C682B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:39:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 940AA9C682C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:41:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72660B26D5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:39:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 562CE284747
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022A116FF26;
-	Wed, 13 Nov 2024 04:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3929170A1C;
+	Wed, 13 Nov 2024 04:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="kflLzSQG"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VyCNq/94"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D221714A8;
-	Wed, 13 Nov 2024 04:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183793214;
+	Wed, 13 Nov 2024 04:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731472767; cv=none; b=bLo2fh5GcFvQaTYkkrJZFZCtlQ0z+MHk2H/fjp5ewiK4Kd5QecB++8NSp7d+sVtBTjL7u5SCzZnjRqfjmCriUk6qvJNUCKG1bNrUJwv4PnQlZdMEYsWbySmhtGjRpIufilARFRtt5oAdhnvvHsZDzyrX1OUeuv9Aj4bORxcUaag=
+	t=1731472900; cv=none; b=bVTYoyWaE+bBh5z40MDCvDk2ryj2jLHmboXpVMxPVQuWOkXolBk189LUwxNsDSV3f+5fnHa9XYP5oaMIfHLL0PhZwu/oU8n6FSrzz/9l9gtYOsgPlxLE/kbh6qC4KtShoUyoEn0rHlp+t3W5u3DtyXDK3fUdd7/+4J6l5ER7VPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731472767; c=relaxed/simple;
-	bh=VXlyg1iYL20U+q7NRI+j44FKT/JI+59MkXqT/xSpk+k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Qy7/0RcYsbIcu90Ee3j9Bjfp37z8AkF2V1Cy9QfU4jVnFc8eay0TET3QLLMtoEGlF27u04KYwu9NYZ/dJl6gmwbXDPNkfU/ywUGPJJMbgxOLp2bYovb1DSF/7ufmuHq1x7GaXY7N8NcCm41b4IhByyB+YL17j8dHzepSUfdm5Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=kflLzSQG; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1731472757;
-	bh=VXlyg1iYL20U+q7NRI+j44FKT/JI+59MkXqT/xSpk+k=;
-	h=From:Date:Subject:To:Cc:From;
-	b=kflLzSQGNyMec9neRrM4yOqM01ruKG8ueDxr4hLywPKDkp0yS3GUOA/B+EsMbqGZb
-	 a6xucRiwOa8n/Omvl4rfd+eoHOWVD7tVbQtDWoRdDsqgu4YSRHF9OgZ/iZYn4IO7fS
-	 ZbPTGkUiZTFktSRkYK+oL6AbfblO06d3ScCQL698=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Wed, 13 Nov 2024 05:39:16 +0100
-Subject: [PATCH] hwmon: (core) Avoid ifdef in C source file
+	s=arc-20240116; t=1731472900; c=relaxed/simple;
+	bh=sc/GOepQc1YjbT4dga3mn7jmrORm8t0iU6gu9oRBFQg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UGOxdRuHYco3rFvs6lqHcOj/uzZRuyhvrnEuoHb85k0idbRZzSE43bhc2cuvtFxeiRqzo+sJ416WOVXf0sQSheSJmrdcXYKRvIXHzv6FV/g/BwDia1351iIaoz4d/g+FQ1OyHpX0DYhG1ahd63F0m/znkV9BUdy9Sq/JtBJhRwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VyCNq/94; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00BEC4CECF;
+	Wed, 13 Nov 2024 04:41:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731472899;
+	bh=sc/GOepQc1YjbT4dga3mn7jmrORm8t0iU6gu9oRBFQg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VyCNq/94Rn6vu01B7YQZJPtzgLdkBZBqeAROr//Nq4UZlWq3Yl+8ytw5S9Y0hse1J
+	 DN1LZJnerkefOoCkFPUi65bdXi8Xxi1rfH0jS0/4blDZMZwX1xtzx7QmPeD57vJ358
+	 JjE3Ydu322h796N4buNEGkkpyQ89xbsy8EebYr4PPkYRXjeyibaNiEGdE03Q06vfIt
+	 GqtlJZuQ9gY6PlEAMlQzTxI3VWt6GmI0hd4yXos9cbTg3+OfQsw7RDu5OuI3CLqmj6
+	 WQU1/UWT3gN1Cl1JC6jwYxt8tPWzcoQC1wGmLD84rctpHGAtwVWm+MOejuicf4C65Y
+	 xjjHSeJxe5gFQ==
+Message-ID: <deafaca0-63e0-4c5a-8d34-21567f78a5cb@kernel.org>
+Date: Wed, 13 Nov 2024 13:41:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241113-hwmon-thermal-v1-1-71270be7f7a2@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAHMtNGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQ0Nj3Yzy3Pw83ZKM1KLcxBxdoxSjlERTC8NkI3MzJaCegqLUtMwKsHn
- RsbW1APYe+WJfAAAA
-X-Change-ID: 20241113-hwmon-thermal-2d2da581c276
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731472756; l=2493;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=VXlyg1iYL20U+q7NRI+j44FKT/JI+59MkXqT/xSpk+k=;
- b=iHIF9EfKy8TcHgkHF6w9lPq+xRCi44NVauAzryZceoGYgMCQLEllQQ6ufZsHrQGLbpTnHK1us
- 4xCSr25Mf1cDyZO+2mSQStx9YscSvt5uRaop7Tl7vCfyzlARWtpCVly
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: k210: Modify the wrong "#undef"
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+Cc: linus.walleij@linaro.org, linux-riscv@lists.infradead.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241113012029.3204-1-zhangjiao2@cmss.chinamobile.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20241113012029.3204-1-zhangjiao2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Using an #ifdef in a C source files to have different definitions
-of the same symbol makes the code harder to read and understand.
-Furthermore it makes it harder to test compilation of the different
-branches.
+On 11/13/24 10:20, zhangjiao2 wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> 
+> Here shuld be undef "K210_PC_DEFAULT", not "DEFAULT".
 
-Replace the ifdeffery with IS_ENABLED() which is just a normal
-conditional.
-The resulting binary is still the same as before as the compiler
-optimizes away all the unused code and definitions.
+Here ? Please be specific.
+Also:
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-This confused me a bit while looking at the implementation of
-HWMON_C_REGISTER_TZ.
----
- drivers/hwmon/hwmon.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+s/shuld/must
 
-diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-index 9c35c4d0369d7aad7ea61ccd25f4f63fc98b9e02..86fb674c85d3f54d475be014c3fd3dd74c815c57 100644
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -147,11 +147,6 @@ static DEFINE_IDA(hwmon_ida);
- 
- /* Thermal zone handling */
- 
--/*
-- * The complex conditional is necessary to avoid a cyclic dependency
-- * between hwmon and thermal_sys modules.
-- */
--#ifdef CONFIG_THERMAL_OF
- static int hwmon_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
- {
- 	struct hwmon_thermal_data *tdata = thermal_zone_device_priv(tz);
-@@ -257,6 +252,9 @@ static int hwmon_thermal_register_sensors(struct device *dev)
- 	void *drvdata = dev_get_drvdata(dev);
- 	int i;
- 
-+	if (!IS_ENABLED(CONFIG_THERMAL_OF))
-+		return 0;
-+
- 	for (i = 1; info[i]; i++) {
- 		int j;
- 
-@@ -285,6 +283,9 @@ static void hwmon_thermal_notify(struct device *dev, int index)
- 	struct hwmon_device *hwdev = to_hwmon_device(dev);
- 	struct hwmon_thermal_data *tzdata;
- 
-+	if (!IS_ENABLED(CONFIG_THERMAL_OF))
-+		return;
-+
- 	list_for_each_entry(tzdata, &hwdev->tzdata, node) {
- 		if (tzdata->index == index) {
- 			thermal_zone_device_update(tzdata->tzd,
-@@ -293,16 +294,6 @@ static void hwmon_thermal_notify(struct device *dev, int index)
- 	}
- }
- 
--#else
--static int hwmon_thermal_register_sensors(struct device *dev)
--{
--	return 0;
--}
--
--static void hwmon_thermal_notify(struct device *dev, int index) { }
--
--#endif /* IS_REACHABLE(CONFIG_THERMAL) && ... */
--
- static int hwmon_attr_base(enum hwmon_sensor_types type)
- {
- 	if (type == hwmon_in || type == hwmon_intrusion)
+So something like:
 
----
-base-commit: 3022e9d00ebec31ed435ae0844e3f235dba998a9
-change-id: 20241113-hwmon-thermal-2d2da581c276
+The definition of the array k210_pinconf_mode_id_to_mode is done using the
+temporary macro K210_PC_DEFAULT. When this macro is not needed anymore and its
+definition removed, make sure to use its name in the #undef statement instead of
+the incorrect "DEFAULT" name.
 
-Best regards,
+> 
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+
+This needs a Fixes tag as well.
+
+> ---
+>  drivers/pinctrl/pinctrl-k210.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
+> index caf20215aaba..eddb01796a83 100644
+> --- a/drivers/pinctrl/pinctrl-k210.c
+> +++ b/drivers/pinctrl/pinctrl-k210.c
+> @@ -181,7 +181,7 @@ static const u32 k210_pinconf_mode_id_to_mode[] = {
+>  	[K210_PC_DEFAULT_INT13] = K210_PC_MODE_IN | K210_PC_PU,
+>  };
+>  
+> -#undef DEFAULT
+> +#undef K210_PC_DEFAULT
+>  
+>  /*
+>   * Pin functions configuration information.
+
+
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+Damien Le Moal
+Western Digital Research
 
