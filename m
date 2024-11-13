@@ -1,108 +1,114 @@
-Return-Path: <linux-kernel+bounces-407070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940AA9C682C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:41:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1DAA9C682F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:42:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 562CE284747
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:41:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 767B8B274CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3929170A1C;
-	Wed, 13 Nov 2024 04:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF591170A31;
+	Wed, 13 Nov 2024 04:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VyCNq/94"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MF9/ef1T"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183793214;
-	Wed, 13 Nov 2024 04:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B906516F0EB;
+	Wed, 13 Nov 2024 04:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731472900; cv=none; b=bVTYoyWaE+bBh5z40MDCvDk2ryj2jLHmboXpVMxPVQuWOkXolBk189LUwxNsDSV3f+5fnHa9XYP5oaMIfHLL0PhZwu/oU8n6FSrzz/9l9gtYOsgPlxLE/kbh6qC4KtShoUyoEn0rHlp+t3W5u3DtyXDK3fUdd7/+4J6l5ER7VPs=
+	t=1731472927; cv=none; b=tVW+mtVSuh9nhQBib8Zmvt4+wCULaZ9/1Wpva/UGjluiqqp6A/W4sD1/FagCc71kCdTUo8HnYPvXHaHNhqV0bQdDLjXn/3bgl8viZffDEvRARVY8vt/MZM1NTng2+Tv/zruATapAx4dtzhrm8wBiE9gpwxbRipBmGtQXzZvIKsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731472900; c=relaxed/simple;
-	bh=sc/GOepQc1YjbT4dga3mn7jmrORm8t0iU6gu9oRBFQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UGOxdRuHYco3rFvs6lqHcOj/uzZRuyhvrnEuoHb85k0idbRZzSE43bhc2cuvtFxeiRqzo+sJ416WOVXf0sQSheSJmrdcXYKRvIXHzv6FV/g/BwDia1351iIaoz4d/g+FQ1OyHpX0DYhG1ahd63F0m/znkV9BUdy9Sq/JtBJhRwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VyCNq/94; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00BEC4CECF;
-	Wed, 13 Nov 2024 04:41:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731472899;
-	bh=sc/GOepQc1YjbT4dga3mn7jmrORm8t0iU6gu9oRBFQg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VyCNq/94Rn6vu01B7YQZJPtzgLdkBZBqeAROr//Nq4UZlWq3Yl+8ytw5S9Y0hse1J
-	 DN1LZJnerkefOoCkFPUi65bdXi8Xxi1rfH0jS0/4blDZMZwX1xtzx7QmPeD57vJ358
-	 JjE3Ydu322h796N4buNEGkkpyQ89xbsy8EebYr4PPkYRXjeyibaNiEGdE03Q06vfIt
-	 GqtlJZuQ9gY6PlEAMlQzTxI3VWt6GmI0hd4yXos9cbTg3+OfQsw7RDu5OuI3CLqmj6
-	 WQU1/UWT3gN1Cl1JC6jwYxt8tPWzcoQC1wGmLD84rctpHGAtwVWm+MOejuicf4C65Y
-	 xjjHSeJxe5gFQ==
-Message-ID: <deafaca0-63e0-4c5a-8d34-21567f78a5cb@kernel.org>
-Date: Wed, 13 Nov 2024 13:41:36 +0900
+	s=arc-20240116; t=1731472927; c=relaxed/simple;
+	bh=4yhZ5b3CfOWzP4/u7LFTntBB+aHs/50fGPCzOxzMCUU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FD7t8HJgktxZyqXlehXGKG8X2t/2AkLVPc62cTFVVxvXG/HSmEgtLY/wIS2oFtRT5J02BWy1LFVflmcVnXvRVl3Ag0ESYs46NH5l/iIX4rNt0ePT+cR9i3mRhFxJXOyT48c1eaJ57BV/Jpzsuhp86t/o8F9kQUPc8XvkHdhadmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MF9/ef1T; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7180bd5b79dso2360089a34.2;
+        Tue, 12 Nov 2024 20:42:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731472925; x=1732077725; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nIlUbeFchI2HNrkasT58vJGrzRZVQqFIj/GKrcFj8LM=;
+        b=MF9/ef1T5aF3AU1zRFTN8VDubNYhb7LarU10yOEDR1/iulh/H6L5PbnJ8xOPXou6ns
+         A0dCtfWt9ZGDi9bZ3mvwIbtiR6tfmNjtyw/RfDdtFA5fIPZGBgPkNMs6eW0UY4fvkTGp
+         GwWjcNEjPUDAD+3hMAK+vszGT/Q7TxZr2ViaDQVV9C7yiJNJz0Oxu+B40UX9zEjZ1n62
+         KPAxbusailATNpKWwTmFBe3N/lYO67dDTLdcEH92uA5YzFy7kzEuAh4Zo84KGG4ncq93
+         WxttsDa9qR7dL0+6hRpkTJjhXvE4xxzXWfRwJDTcK/O3nToMjVM2gEmz5kXntH/hh5QJ
+         3OUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731472925; x=1732077725;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nIlUbeFchI2HNrkasT58vJGrzRZVQqFIj/GKrcFj8LM=;
+        b=YoUZfsRQS7NwG/1pjnBnT0VZn/XbX9OpYIpMy4cUpmoqHRXmTdfyKAEqNxXNA9N4zV
+         j3NytEQnzL3qeeCTV/IM06IdWT+tBIOwhx899mhxAzdbW0RRFz6h5FFnUf66IsVZY2qW
+         RUkN6koBZ0DY7twn87/2wPs9Tq79BIa65pUx76Lr0ZKzay334RFUbatUiI/eTrHDa9g+
+         vXQ9rJFX82sWX6Bab9YootJT+qT80Y4hgWuQYIiXfWhu6hVJXMrzK41zs7AK0hotKXMV
+         Wq4DSQzGO1VUErEYhPwR8TuS4ngdNMCgOyPKlcjuIgSQaTG4lwP34yVaakfZJM+WlLhK
+         yYkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUssurOGv5Se8oIllL4Wf/0A2Mcqe+0JU6FXQCK7crGS2XXAIjNWCNg1uo0edKdvQ4aXyqju+XIabpQ@vger.kernel.org, AJvYcCWnFCLR1Bi+pu+ycWtuBXJt8if2kZ2AxvlsWcd7L+X3JwalxfELcwGxBSTrUji2Jjq/cxjFUPHLN2DmdUuK@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGTFtzP91p/Blm5yExbFpuc95bFp9PbUUyDOgA69EKxDJzxAD2
+	PCYmRGU30ac4EiZh/g8yK5DmiDag3iX20pvlKaFViTT6PqueQDigSVNGdw==
+X-Google-Smtp-Source: AGHT+IHPnxnVCo0BZqCpKPk+xL8mEoTrxotapUqiq/NUagewQcm6I3a4C3LKs/bslBViiayHeM/FvA==
+X-Received: by 2002:a05:6830:3685:b0:717:f66b:da20 with SMTP id 46e09a7af769-71a1c22280amr19865288a34.16.1731472924699;
+        Tue, 12 Nov 2024 20:42:04 -0800 (PST)
+Received: from localhost.localdomain ([119.28.17.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078a41cfsm12336557b3a.41.2024.11.12.20.42.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 20:42:04 -0800 (PST)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: tytso@mit.edu
+Cc: adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH] ext4: remove duplicate check for EXT4_FC_REPLAY
+Date: Wed, 13 Nov 2024 12:41:58 +0800
+Message-ID: <20241113044158.1609384-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.41.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: k210: Modify the wrong "#undef"
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: linus.walleij@linaro.org, linux-riscv@lists.infradead.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241113012029.3204-1-zhangjiao2@cmss.chinamobile.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20241113012029.3204-1-zhangjiao2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/13/24 10:20, zhangjiao2 wrote:
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> 
-> Here shuld be undef "K210_PC_DEFAULT", not "DEFAULT".
+EXT4_FC_REPLAY will be checked in ext4_es_lookup_extent(). If it is
+set, ext4_es_lookup_extent() will return 0.
 
-Here ? Please be specific.
-Also:
+Remove the repeated check for EXT4_FC_REPLAY in ext4_map_blocks()
+to simplify the code.
 
-s/shuld/must
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+---
+ fs/ext4/inode.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-So something like:
-
-The definition of the array k210_pinconf_mode_id_to_mode is done using the
-temporary macro K210_PC_DEFAULT. When this macro is not needed anymore and its
-definition removed, make sure to use its name in the #undef statement instead of
-the incorrect "DEFAULT" name.
-
-> 
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-
-This needs a Fixes tag as well.
-
-> ---
->  drivers/pinctrl/pinctrl-k210.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
-> index caf20215aaba..eddb01796a83 100644
-> --- a/drivers/pinctrl/pinctrl-k210.c
-> +++ b/drivers/pinctrl/pinctrl-k210.c
-> @@ -181,7 +181,7 @@ static const u32 k210_pinconf_mode_id_to_mode[] = {
->  	[K210_PC_DEFAULT_INT13] = K210_PC_MODE_IN | K210_PC_PU,
->  };
->  
-> -#undef DEFAULT
-> +#undef K210_PC_DEFAULT
->  
->  /*
->   * Pin functions configuration information.
-
-
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 89aade6f45f6..999f947c13d2 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -619,8 +619,7 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
+ 		return -EFSCORRUPTED;
+ 
+ 	/* Lookup extent status tree firstly */
+-	if (!(EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY) &&
+-	    ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
++	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
+ 		if (ext4_es_is_written(&es) || ext4_es_is_unwritten(&es)) {
+ 			map->m_pblk = ext4_es_pblock(&es) +
+ 					map->m_lblk - es.es_lblk;
 -- 
-Damien Le Moal
-Western Digital Research
+2.41.1
+
 
