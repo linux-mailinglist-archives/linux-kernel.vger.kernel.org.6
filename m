@@ -1,312 +1,356 @@
-Return-Path: <linux-kernel+bounces-407486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 142819C6E1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:45:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C85E09C6E22
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8960281B11
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:45:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE725B227A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F058D1FF035;
-	Wed, 13 Nov 2024 11:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C6A2003B8;
+	Wed, 13 Nov 2024 11:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KLrNWP/k"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="uQeH2Jtf"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5776B200B8B
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 11:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2EC1BD9DC;
+	Wed, 13 Nov 2024 11:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731498336; cv=none; b=W2aDwwPO5kUC/DamrdLeze5nGolUU1dpj/4VI7ivvW1FNY4yy9mGDfbJ3qvXqCtCV3KwPLYqkiPcgVd8PwUCiVskml2nYKj28T9D/iEgEMTbT0/ZJJ9umHBdo/yOBKW8SpFftW/aK0Kf8PRaWxpbtMvXVfr6x9ZvQ1cYu+hGv8o=
+	t=1731498491; cv=none; b=MlzH/ACLeXAvxQwwH5cye8SeP1wqgwOyZRi+HlX1TswBuWtGijaP6M9aE+ogwS4Mj0jq2L02wFPOvepG8bUKFP+Y9hf1frxukd+eIdwB9+PaGVnJhWL3GukwBvxe5SNncNdVCIK1S/rFObGPe5JFn38F/gqHZDUk2BbcGWaYcXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731498336; c=relaxed/simple;
-	bh=6E0udyNgSP1qecSTiKlO0UyWkcCXWCsh7X3SGZ6DfX4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=SzjYqbnUuh+khDEzpItkLFIuD7ZhA6DIk9lRtZ7JxzbbKi7GMukauvmAWWjDV0vYnR/B02SyQ2KovPuBua4nTm06hQYNP+d/4eTCqqkmiIpxJnuNtCDVAekKr2p5N5POp0QQpv5t13CjLuwRUc2K57y4S2DSU0l1RSi9/lnMjEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KLrNWP/k; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3e5f6e44727so4288093b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 03:45:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731498332; x=1732103132; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=a+GQG+dngfYLQ58gUq++xO1sdDZ8ABc6gLSKTdWCc3o=;
-        b=KLrNWP/kG4LPPF8US/0E3oDnUYKZtZSa1cJ/epjcx8pyHbZ3vsqV3P9nbgWPak6lKG
-         1cBaGgl1yNpYxPcaK6rvqJOhe6sSPWWSKUweyL82YfkfTwii3c4A+8jSyRUcGCQ0VKbW
-         BvAsV3AFy8J/EDQm1uHx4n5cvYnpGBNSoKT5+mblhTKKe16n5sFwhb9h260TMrCPsre/
-         A6NqZPkitA+KmAU+StF5A9GfxAhtkh4Du861B/ZQaSXogYLwDjgFdqtdK5dtYFiPg1BV
-         1/JsEI25A4EF82ItDz8r9KX5W6khPcv2EAtErrlj6isdHqLCto8heY+nF4qomDEw5XiM
-         JtaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731498332; x=1732103132;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a+GQG+dngfYLQ58gUq++xO1sdDZ8ABc6gLSKTdWCc3o=;
-        b=JT04QunXqv8iFnBN2A1lGYwsbXIWDN30LlNWgdK8r/O91a63rG2dNQHshliNSfNWEn
-         kyE0MIhgbbfI3lCXLy8M6/KIzMjDcrPXEyRQnTUg4yZEjtLHpmcmGDVY90M7M93ZTZgL
-         WF9QnWpCN+PohDCB618WaK9L2ZcrQhLtuNu8vthxnbjpjbXvJKoX9Q4hCgosSPE+ZF5k
-         A6kVtRfL+3Z8S8Q7+JkxoZaokDSUiFb/VAq8JaY1EMn9WpdP6x1+QMd8QQYAKnYKdtrY
-         zzf1TWkKG328OvWjqHLth13nVPPlovxKu4zD0FvQ8kMs5jQCFwZHq+SHtXA8FswYRmH1
-         8mYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRuw0giDrBjy/3HLY0RXznshzjK/XHqoD6dMIo9Etj8VjlAaPxlFXfoYqZy9Cdn2lZfqOPMA7Q0Pj5BWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTERiMEahMzJ7Oks/6tzTINgogDRDGnr1u/HFCoizCSkv4G00r
-	Em7lGT2B68iPM7dMsdOWosZqLEoBBqafk7SBtWPyLe3cscau16C5BA51TgJKEQ==
-X-Google-Smtp-Source: AGHT+IF82xGVoUw13YD89/y95vpdTTo1xRVEmme5e5EI6drxCrtw9sKHaMsB4+/Wq2qT7vp2wM3k+A==
-X-Received: by 2002:a05:6808:23c9:b0:3e7:135d:5de5 with SMTP id 5614622812f47-3e7946fc3b6mr20412496b6e.32.1731498332398;
-        Wed, 13 Nov 2024 03:45:32 -0800 (PST)
-Received: from ?IPv6:::1? ([2409:40f4:304d:f0dc:8000::])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f65bf93sm12219366a12.79.2024.11.13.03.45.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 03:45:31 -0800 (PST)
-Date: Wed, 13 Nov 2024 17:15:25 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>,
- Jenishkumar Maheshbhai Patel <jpatel2@marvell.com>
-CC: lpieralisi@kernel.org, thomas.petazzoni@bootlin.com, kw@linux.com,
- robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- salee@marvell.com, dingwei@marvell.com
-Subject: Re: [PATCH 1/1] PCI: armada8k: Add link-down handle
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20241112213255.GA1861331@bhelgaas>
-References: <20241112213255.GA1861331@bhelgaas>
-Message-ID: <AD287CCE-9FFE-49BC-B9CA-B5CED4F05AF1@linaro.org>
+	s=arc-20240116; t=1731498491; c=relaxed/simple;
+	bh=HwTTOHz7M85R9mOalncMuJmcCSUiKla4TedfGjyXmTc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=esyZBbh+u4GEDBCMmiKXHVp/UEinu5wAJ6P+Pj9qp+NdaDCm7nZRP1bu5vHo/IdIcuGxRaEMd4pW3+Wjjc8zNHk4hfEkQdF6CgFx9X6LOdd+ZnSAZ+HZVl4TfogPXtGYnwny2XryHbCRkIp22RULoVuNLikzXl3Musdhez25CHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=uQeH2Jtf; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1731498489; x=1763034489;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=HwTTOHz7M85R9mOalncMuJmcCSUiKla4TedfGjyXmTc=;
+  b=uQeH2JtfYylZzsxwxOuf9iFgV2mJEdwA+HoBxTA7BRSb24wISTISilEs
+   He+SoUrDHxUJ+r/Uhu8a8cuONIF4d3hN6NPsJlWwsdias/1cKoSHvcvhM
+   uoM8iFZPAKkX9Vgb4LNIiKKodIh13gHlutlwAlmfhwOC0zjFbF/zuXEeK
+   +tIfRmRm7tuUdGk7sNwaQrfuvXkhRxcFoPXsFBjkWXtuX1KPjC1zq/e3N
+   vHQn4Kt/KH12hcd/jnfSjNht9DSl5f/g2qvplAah97zxfsto9hmmeohzQ
+   UbgMB+qUOA8F2y3EnjpKcSs0wac4bZ6yi9P9X1uLHhNfI5121xSHftIx+
+   Q==;
+X-CSE-ConnectionGUID: kDI7VG2pSVmA6ajq3tzW6Q==
+X-CSE-MsgGUID: zyRlWXZcRrun9xN7TwuYew==
+X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
+   d="scan'208";a="34762677"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Nov 2024 04:48:01 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 13 Nov 2024 04:47:31 -0700
+Received: from vduicu-Virtual-Machine.mshome.net (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 13 Nov 2024 04:47:29 -0700
+From: <victor.duicu@microchip.com>
+To: <matteomartelli3@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>,
+	<andy.shevchenko@gmail.com>
+CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<marius.cristea@microchip.com>, <victor.duicu@microchip.com>
+Subject: [PATCH v10] iio: adc: pac1921: Add ACPI support to Microchip pac1921
+Date: Wed, 13 Nov 2024 13:46:54 +0200
+Message-ID: <20241113114654.8203-1-victor.duicu@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+From: Victor Duicu <victor.duicu@microchip.com>
 
+This patch implements ACPI support to Microchip pac1921.
+The driver can read the shunt resistor value and label from the ACPI table.
 
-On November 13, 2024 3:02:55 AM GMT+05:30, Bjorn Helgaas <helgaas@kernel=
-=2Eorg> wrote:
->In subject:
->
->  PCI: armada8k: Add link-down handling
->
->On Mon, Nov 11, 2024 at 10:48:13PM -0800, Jenishkumar Maheshbhai Patel wr=
-ote:
->> In PCIE ISR routine caused by RST_LINK_DOWN
->> we schedule work to handle the link-down procedure=2E
->> Link-down procedure will:
->> 1=2E Remove PCIe bus
->> 2=2E Reset the MAC
->> 3=2E Reconfigure link back up
->> 4=2E Rescan PCIe bus
->
->s/PCIE/PCIe/
->
->Rewrap to fill 75 columns=2E
->
->I assume this basically removes a Root Port (and the hierarchy below
->it) if the link goes down, and then resets the MAC and tries to bring
->up the link and enumerate the hierarchy again=2E
->
->No other drivers do this, so why does armada8k need it?  Is this to
->work around some unreliable link?
+Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
+---
 
-Certainly Qcom IPs have this same feature and I was also looking to implem=
-ent it=2E But the link down should not be handled by this in the controller=
- driver=2E
+The patch was tested on minnowboard and sama5.
 
-Instead, it should be tied to bus reset in the core and the reset should b=
-e done through a callback implemented in the controller drivers=2E This way=
-, the reset cannot happen in the back of PCI core and client drivers=2E
+Differences related to previous versions:
+v10:
+- fix coding style mistakes.
+- add UL to PAC1921_MAX_SHUNT_VALUE_uOHMS.
+- edit comment in pac1921_write_shunt_resistor.
+- in pac1921_probe use is_acpi_device_node instead of
+  ACPI_HANDLE.
 
-That said, the Link down IRQ received by this driver should also be propag=
-ated back to the PCI core and the core should then call the callback to res=
-et the bus that I mentioned above=2E
+v9:
+- put limits.h in sorted order.
+- remove guid_parse and implement GUID_INIT.
+- remove pac1921_shunt_is_valid.
+- change maximum acceptable value of shunt resistor to 2146.999999.
+  This change was made so the readings for dt and ACPI share
+  the same range.
+  With this value the maximum current that can be read is
+  0.1V / 2146.999999 = 46.576 uA
+  If we use INT_MAX the maximum current is
+  0.1V / 2147.483647 = 46.566 uA
+  The relative error between the two is 0.0214, so it is
+  small enough to allow for code simplicity.
+  A shunt value over a few hundred Ohms is quite unusual.
 
->
->I would think this would be reported via AER and possibly handled
->there already, but apparently not?
+v8:
+- fix multiple coding style errors.
+- in pac1921_match_acpi_device change error type to ENOMEM
+  at label is NULL branch.
+- in pac1921_match_acpi_device when reading label,
+  change accesing method of string.
+- change name of PAC1921_ACPI_GET_UOHMS_VALS to
+  PAC1921_ACPI_GET_uOHMS_VALS.
+- add limits.h in include list.
+- change integer constant in PAC1921_MAX_SHUNT_VALUE_OHMS
+  to INT_MAX / MICRO.
+- change pac1921_shunt_is_invalid to pac1921_shunt_is_valid.
+- in pac1921_match_acpi_device change name of variable rez to status.
 
-No, these are not reported via AER (atleast on Qcom platforms)=2E We have =
-a global_irq that fires when Link down happens=2E
+v7:
+- in pac1921_shunt_is_invalid remove brackets in return.
+- in pac1921_match_acpi_device and pac1921_parse_of_fw move checking of
+  shunt value and scale calculation to pac1921_probe.
+- in pac1921_match_acpi_device change devm_kmemdup to devm_kstrdup
+  and add label check for NULL.
+- in pac1921_match_acpi_device and pac1921_parse_of_fw remove unnecessary
+  entry arguments. Now indio_dev is the only entry argument.
+- in pac1921_probe, pac1921_match_acpi_device and pac1921_parse_of_fw
+  standardised structure accesing.
 
-- Mani
+v6:
+- set maximum acceptable value of shunt resistor to INT_MAX UOHMS
+  in devicetree, ACPI table and user input.
+- in pac1921_match_acpi_device remove temp variable.
 
->
->> Signed-off-by: Jenishkumar Maheshbhai Patel <jpatel2@marvell=2Ecom>
->> ---
->>  drivers/pci/controller/dwc/pcie-armada8k=2Ec | 84 ++++++++++++++++++++=
-++
->>  1 file changed, 84 insertions(+)
->>=20
->> diff --git a/drivers/pci/controller/dwc/pcie-armada8k=2Ec b/drivers/pci=
-/controller/dwc/pcie-armada8k=2Ec
->> index 07775539b321=2E=2Eb1b48c2016f7 100644
->> --- a/drivers/pci/controller/dwc/pcie-armada8k=2Ec
->> +++ b/drivers/pci/controller/dwc/pcie-armada8k=2Ec
->> @@ -21,6 +21,8 @@
->>  #include <linux/platform_device=2Eh>
->>  #include <linux/resource=2Eh>
->>  #include <linux/of_pci=2Eh>
->> +#include <linux/mfd/syscon=2Eh>
->> +#include <linux/regmap=2Eh>
->> =20
->>  #include "pcie-designware=2Eh"
->> =20
->> @@ -32,6 +34,9 @@ struct armada8k_pcie {
->>  	struct clk *clk_reg;
->>  	struct phy *phy[ARMADA8K_PCIE_MAX_LANES];
->>  	unsigned int phy_count;
->> +	struct regmap *sysctrl_base;
->> +	u32 mac_rest_bitmask;
->> +	struct work_struct recover_link_work;
->>  };
->> =20
->>  #define PCIE_VENDOR_REGS_OFFSET		0x8000
->> @@ -72,6 +77,8 @@ struct armada8k_pcie {
->>  #define AX_USER_DOMAIN_MASK		0x3
->>  #define AX_USER_DOMAIN_SHIFT		4
->> =20
->> +#define UNIT_SOFT_RESET_CONFIG_REG	0x268
->> +
->>  #define to_armada8k_pcie(x)	dev_get_drvdata((x)->dev)
->> =20
->>  static void armada8k_pcie_disable_phys(struct armada8k_pcie *pcie)
->> @@ -216,6 +223,65 @@ static int armada8k_pcie_host_init(struct dw_pcie_=
-rp *pp)
->>  	return 0;
->>  }
->> =20
->> +static void armada8k_pcie_recover_link(struct work_struct *ws)
->> +{
->> +	struct armada8k_pcie *pcie =3D container_of(ws, struct armada8k_pcie,=
- recover_link_work);
->> +	struct dw_pcie_rp *pp =3D &pcie->pci->pp;
->> +	struct pci_bus *bus =3D pp->bridge->bus;
->> +	struct pci_dev *root_port;
->> +	int ret;
->> +
->> +	root_port =3D pci_get_slot(bus, 0);
->> +	if (!root_port) {
->> +		dev_err(pcie->pci->dev, "failed to get root port\n");
->> +		return;
->> +	}
->> +	pci_lock_rescan_remove();
->> +	pci_stop_and_remove_bus_device(root_port);
->
->Add blank line=2E
->
->> +	/*
->> +	 * Sleep needed to make sure all pcie transactions and access
->> +	 * are flushed before resetting the mac
->> +	 */
->> +	msleep(100);
->
->s/pcie/PCIe/
->s/mac/MAC/ (also below)
->
->What PCIe spec parameter is the 100ms?  If we don't already have a
->#define for it, add one in drivers/pci/pci=2Eh with spec citation=2E
->
->> +	/* Reset mac */
->> +	regmap_update_bits_base(pcie->sysctrl_base, UNIT_SOFT_RESET_CONFIG_RE=
-G,
->> +				pcie->mac_rest_bitmask, 0, NULL, false, true);
->> +	udelay(1);
->> +	regmap_update_bits_base(pcie->sysctrl_base, UNIT_SOFT_RESET_CONFIG_RE=
-G,
->> +				pcie->mac_rest_bitmask, pcie->mac_rest_bitmask,
->> +				NULL, false, true);
->> +	udelay(1);
->> +
->> +	ret =3D dw_pcie_setup_rc(pp);
->> +	if (ret)
->> +		goto fail;
->> +
->> +	ret =3D armada8k_pcie_host_init(pp);
->> +	if (ret) {
->> +		dev_err(pcie->pci->dev, "failed to initialize host: %d\n", ret);
->> +		goto fail;
->> +	}
->> +
->> +	if (!dw_pcie_link_up(pcie->pci)) {
->> +		ret =3D dw_pcie_start_link(pcie->pci);
->> +		if (ret)
->> +			goto fail;
->> +	}
->> +
->> +	/* Wait until the link becomes active again */
->> +	if (dw_pcie_wait_for_link(pcie->pci))
->> +		dev_err(pcie->pci->dev, "Link not up after reconfiguration\n");
->> +
->> +	bus =3D NULL;
->> +	while ((bus =3D pci_find_next_bus(bus)) !=3D NULL)
->> +		pci_rescan_bus(bus);
->> +
->> +fail:
->> +	pci_unlock_rescan_remove();
->> +	pci_dev_put(root_port);
->> +}
->> +
->>  static irqreturn_t armada8k_pcie_irq_handler(int irq, void *arg)
->>  {
->>  	struct armada8k_pcie *pcie =3D arg;
->> @@ -253,6 +319,9 @@ static irqreturn_t armada8k_pcie_irq_handler(int ir=
-q, void *arg)
->>  		 * initiate a link retrain=2E If link retrains were
->>  		 * possible, that is=2E
->>  		 */
->> +		if (pcie->sysctrl_base && pcie->mac_rest_bitmask)
->> +			schedule_work(&pcie->recover_link_work);
->> +
->>  		dev_dbg(pci->dev, "%s: link went down\n", __func__);
->>  	}
->> =20
->> @@ -322,6 +391,8 @@ static int armada8k_pcie_probe(struct platform_devi=
-ce *pdev)
->> =20
->>  	pcie->pci =3D pci;
->> =20
->> +	INIT_WORK(&pcie->recover_link_work, armada8k_pcie_recover_link);
->> +
->>  	pcie->clk =3D devm_clk_get(dev, NULL);
->>  	if (IS_ERR(pcie->clk))
->>  		return PTR_ERR(pcie->clk);
->> @@ -349,6 +420,19 @@ static int armada8k_pcie_probe(struct platform_dev=
-ice *pdev)
->>  		goto fail_clkreg;
->>  	}
->> =20
->> +	pcie->sysctrl_base =3D syscon_regmap_lookup_by_phandle(pdev->dev=2Eof=
-_node,
->> +						       "marvell,system-controller");
->> +	if (IS_ERR(pcie->sysctrl_base)) {
->> +		dev_warn(dev, "failed to find marvell,system-controller\n");
->> +		pcie->sysctrl_base =3D 0x0;
->> +	}
->> +
->> +	ret =3D of_property_read_u32(pdev->dev=2Eof_node, "marvell,mac-reset-=
-bit-mask",
->> +				   &pcie->mac_rest_bitmask);
->> +	if (ret < 0) {
->> +		dev_warn(dev, "couldn't find mac reset bit mask: %d\n", ret);
->> +		pcie->mac_rest_bitmask =3D 0x0;
->> +	}
->>  	ret =3D armada8k_pcie_setup_phys(pcie);
->>  	if (ret)
->>  		goto fail_clkreg;
->> --=20
->> 2=2E25=2E1
->>=20
+v5:
+- set maximum acceptable value of shunt resistor to 2KOHM in devicetree,
+  ACPI table and user input. The chosen value is lesser than INT_MAX,
+  which is about 2.1KOHM.
+- in pac1921_match_acpi_device and pac1921_parse_of_fw change to only
+  read 32b values for resistor shunt.
 
-=E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
+v4:
+- change name of pac1921_shunt_is_valid to pac1921_shunt_is_invalid.
+- fix coding style.
+- in pac1921_parse_of_fw change back to device_property_read_u32.
+
+v3:
+- simplify and make inline function pac1921_shunt_is_valid. Make argument u64.
+- fix link to DSM documentation.
+- in pac1921_match_acpi_device and pac1921_parse_of_fw, the shunt value is
+  read as u64.
+- in pac1921_parse_of_fw remove code for reading label value from
+  devicetree.
+- in pac1921_write_shunt_resistor cast the multiply result to u64 in order
+  to fix overflow.
+
+v2:
+- remove name variable from priv. Driver reads label attribute with
+  sysfs.
+- define pac1921_shunt_is_valid function.
+- move default assignments in pac1921_probe to original position.
+- roll back coding style changes.
+- add documentation for DSM(the linked document was used as reference).
+- remove acpi_match_device in pac1921_match_acpi_device.
+- remove unnecessary null assignment and comment.
+- change name of function pac1921_match_of_device to
+  pac1921_parse_of_fw.
+
+v1:
+- initial version for review.
+
+ drivers/iio/adc/pac1921.c | 110 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 100 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+index b0f6727cfe38..9da94d14132a 100644
+--- a/drivers/iio/adc/pac1921.c
++++ b/drivers/iio/adc/pac1921.c
+@@ -12,6 +12,7 @@
+ #include <linux/iio/iio.h>
+ #include <linux/iio/trigger_consumer.h>
+ #include <linux/iio/triggered_buffer.h>
++#include <linux/limits.h>
+ #include <linux/regmap.h>
+ #include <linux/units.h>
+ 
+@@ -67,6 +68,27 @@ enum pac1921_mxsl {
+ #define PAC1921_DEFAULT_DI_GAIN		0 /* 2^(value): 1x gain (HW default) */
+ #define PAC1921_DEFAULT_NUM_SAMPLES	0 /* 2^(value): 1 sample (HW default) */
+ 
++#define PAC1921_ACPI_GET_uOHMS_VALS             0
++#define PAC1921_ACPI_GET_LABEL			1
++/*
++ * The maximum acceptable shunt value is 2146.999999 OHM.
++ * This value, which is below INT_MAX, was chosen in order to
++ * allow the readings from dt and ACPI to share the same range
++ * and to simplify the checks.
++ * With this value the maximum current that can be read is
++ * 0.1V / 2146.999999OHM = 46.576 uA
++ * If we use INT_MAX the maximum current that can be read is
++ * 0.1V / 2147.483647OHM = 46.566 uA
++ * The relative error between the two values is
++ * |(46.566 - 46.576) / 46.566| * 100 = 0.0214
++ */
++#define PAC1921_MAX_SHUNT_VALUE_uOHMS		2146999999UL
++
++/* f7bb9932-86ee-4516-a236-7a7a742e55cb */
++static const guid_t pac1921_guid =
++			GUID_INIT(0xf7bb9932, 0x86ee, 0x4516, 0xa2,
++				  0x36, 0x7a, 0x7a, 0x74, 0x2e, 0x55, 0xcb);
++
+ /*
+  * Pre-computed scale factors for BUS voltage
+  * format: IIO_VAL_INT_PLUS_NANO
+@@ -782,7 +804,7 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
+ 					    const char *buf, size_t len)
+ {
+ 	struct pac1921_priv *priv = iio_priv(indio_dev);
+-	u64 rshunt_uohm;
++	u32 rshunt_uohm;
+ 	int val, val_fract;
+ 	int ret;
+ 
+@@ -793,10 +815,17 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	rshunt_uohm = val * MICRO + val_fract;
+-	if (rshunt_uohm == 0 || rshunt_uohm > INT_MAX)
++	/*
++	 * This check validates the shunt is not zero and does not surpass the
++	 * maximum value. The check is done before calculating in order to avoid
++	 * val * MICRO overflowing.
++	 */
++	if ((!val && !val_fract) ||
++	    ((u32)val > PAC1921_MAX_SHUNT_VALUE_uOHMS / MICRO))
+ 		return -EINVAL;
+ 
++	rshunt_uohm = val * MICRO + val_fract;
++
+ 	guard(mutex)(&priv->lock);
+ 
+ 	priv->rshunt_uohm = rshunt_uohm;
+@@ -1151,6 +1180,58 @@ static void pac1921_regulator_disable(void *data)
+ 	regulator_disable(regulator);
+ }
+ 
++/*
++ * Documentation related to the ACPI device definition
++ * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC193X-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
++ */
++static int pac1921_match_acpi_device(struct iio_dev *indio_dev)
++{
++	acpi_handle handle;
++	union acpi_object *status;
++	char *label;
++	struct pac1921_priv *priv = iio_priv(indio_dev);
++	struct device *dev = &priv->client->dev;
++
++	handle = ACPI_HANDLE(dev);
++
++	status = acpi_evaluate_dsm(handle, &pac1921_guid, 1, PAC1921_ACPI_GET_uOHMS_VALS, NULL);
++	if (!status)
++		return dev_err_probe(dev, -EINVAL,
++				     "Could not read shunt from ACPI table\n");
++
++	priv->rshunt_uohm = status->package.elements[0].integer.value;
++	ACPI_FREE(status);
++
++	status = acpi_evaluate_dsm(handle, &pac1921_guid, 1, PAC1921_ACPI_GET_LABEL, NULL);
++	if (!status)
++		return dev_err_probe(dev, -EINVAL,
++				     "Could not read label from ACPI table\n");
++
++	label = devm_kstrdup(dev, status->package.elements[0].string.pointer, GFP_KERNEL);
++	if (!label)
++		return -ENOMEM;
++
++	indio_dev->label = label;
++	ACPI_FREE(status);
++
++	return 0;
++}
++
++static int pac1921_parse_of_fw(struct iio_dev *indio_dev)
++{
++	int ret;
++	struct pac1921_priv *priv = iio_priv(indio_dev);
++	struct device *dev = &priv->client->dev;
++
++	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
++				       &priv->rshunt_uohm);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "Cannot read shunt resistor property\n");
++
++	return 0;
++}
++
+ static int pac1921_probe(struct i2c_client *client)
+ {
+ 	struct device *dev = &client->dev;
+@@ -1179,14 +1260,16 @@ static int pac1921_probe(struct i2c_client *client)
+ 	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
+ 	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
+ 
+-	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
+-				       &priv->rshunt_uohm);
+-	if (ret)
++	if (is_acpi_device_node(dev->fwnode))
++		ret = pac1921_match_acpi_device(indio_dev);
++	else
++		ret = pac1921_parse_of_fw(indio_dev);
++	if (ret < 0)
+ 		return dev_err_probe(dev, ret,
+-				     "Cannot read shunt resistor property\n");
+-	if (priv->rshunt_uohm == 0 || priv->rshunt_uohm > INT_MAX)
+-		return dev_err_probe(dev, -EINVAL,
+-				     "Invalid shunt resistor: %u\n",
++				     "Parameter parsing error\n");
++
++	if (!priv->rshunt_uohm || priv->rshunt_uohm > PAC1921_MAX_SHUNT_VALUE_uOHMS)
++		return dev_err_probe(dev, -EINVAL, "Invalid shunt resistor: %u\n",
+ 				     priv->rshunt_uohm);
+ 
+ 	pac1921_calc_current_scales(priv);
+@@ -1246,11 +1329,18 @@ static const struct of_device_id pac1921_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, pac1921_of_match);
+ 
++static const struct acpi_device_id pac1921_acpi_match[] = {
++	{ "MCHP1921" },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, pac1921_acpi_match);
++
+ static struct i2c_driver pac1921_driver = {
+ 	.driver	 = {
+ 		.name = "pac1921",
+ 		.pm = pm_sleep_ptr(&pac1921_pm_ops),
+ 		.of_match_table = pac1921_of_match,
++		.acpi_match_table = pac1921_acpi_match,
+ 	},
+ 	.probe = pac1921_probe,
+ 	.id_table = pac1921_id,
+
+base-commit: 20fd1383cd616d61b2a79967da1221dc6cfb8430
+-- 
+2.43.0
+
 
