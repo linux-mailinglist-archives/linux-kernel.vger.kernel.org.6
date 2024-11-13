@@ -1,183 +1,118 @@
-Return-Path: <linux-kernel+bounces-408313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826ED9C7D48
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:03:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7DBC9C7D43
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:03:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5840B2811F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D1F5283F5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC4D208975;
-	Wed, 13 Nov 2024 21:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6B1206E63;
+	Wed, 13 Nov 2024 21:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eyf4tI4R"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bls6nG9q"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22502076AC;
-	Wed, 13 Nov 2024 21:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972A518CBF6
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 21:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731531810; cv=none; b=LbOYXMnTew1ZLVJDRl5+10SB2HNlMjbqeP850xW9j2o48lpV/PePNynSYRg5dhFVyiCaqTSPn1uBHPcbxMAiA+PcUwkLdd7RtZcykHz8EmsKckErP7ESnOfOU7QoalhsEHXCku+d0iwV/5N5uxqBtV8uru/znYOQEcg5F6IhFoE=
+	t=1731531806; cv=none; b=jGYS9CX8zGW7wwQGzyMTVau7SGCI+H4I/HC9km5z0IpaYmz5SUPvD48mGOZO8zNa3CPFttiB1QBXrGHGcYEUsgdr+c9huv2iSjlR8XcA2OaEHEpJiEAVBHgzE7Av0DdX2RLH2zRZS5+Ip2969zSnWLBUK+h/Ujb0Nul8li17kzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731531810; c=relaxed/simple;
-	bh=df8Jhjfgxmzoll9zuAh3oBx1+IrN1SraeFBEZKjpJSo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TroeqlVzzm7PYYkuqGClQxlQk3wNny3W0TZvjWIjCba9kuBL/3oDHQO7+FzD7mVnxSWaI8/SF6pPM+DPqVNho3KLNxbMqWiz62fZtJS6I6Kw7xY5OE/R0JMVjhIt0rMpds7pYSsznqnveZODB9TlJ388zmIv1hzf+s1yrCa81hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eyf4tI4R; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so8556504a12.0;
-        Wed, 13 Nov 2024 13:03:27 -0800 (PST)
+	s=arc-20240116; t=1731531806; c=relaxed/simple;
+	bh=2Z7Mft9XLc5ptgMCtjuTy2E6f4ImDEYbhaf8ozWCLuk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mPSaeELk/YRVCYuEF7Kny2L56LRJ/Fw0Qqm8iiKMMsV2x2WO5OGczDlhsfVm4GJI8hhctUh/jae0eNUBavXYUS6XI7dVqR4qrGbdDFEGn0d/YmtjOPMS/PvtswTYEx0cZWh/6153wQdIgV/uReG/dgoUFUZB4DoDo7WcLY80Cdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bls6nG9q; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-288d70788d6so3216049fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:03:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731531806; x=1732136606; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731531803; x=1732136603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mPZDRjkZp2UQ4v5l/V7kEPUCZovvc46WaZ2EY4B4s3o=;
-        b=Eyf4tI4RV2wokt6MXNBycnTPMOBt1l+AuSxUK+b/dQu9695lhOS39+4sDXI0LWt2Ft
-         PV1o6RrwNHFyD7LG4CV+OhsIZbVCVLi5pW6b6w47TFZhALxLtfntIzu7nLUdrDbHhnwJ
-         K2J6917aWsTp7Gb7IMHBRWaYZDyazX2J1iBJo88FyhHZ5/+4OdbnebXIO9ly86pla0dJ
-         rYGI5IU/HgxkgfY4mPI009bEi7iRLLCctS4AnsyLQHaTGjaWxBK3kGlc1qNfkEZHGIo1
-         T0fhYmS8K/RXgzI1WsfnWUFmbowKImwRO0WKEyPcxQNK7kklk7xnOK94n6b3nsCLo72i
-         AmIA==
+        bh=impCPrA60gwXN9wwJaTYPmPlZjsc4EwtPX6toSuydpo=;
+        b=bls6nG9qC6eNybW7SI1AsnS0pxjWxPm/ot7nLkv+eNeVYRA/1FsfR34i/1XysxM/RA
+         rOh/2+OL1h+2FisTLqd4L8biVigwVK4ZjzetUO2eQJWTy0CNrG8d7tQFrnUhyAbSKDLV
+         vf84OwDn3uBSfCEtdGs4nAutysi25k/LKDLUoxFDu6FR/Y1Pl9AMGZ5/anQ4gdZhKo2k
+         TqA1nZBUJ2Ld9ceAtAA1RKxsrCFgwCx7vyfenynujKqFNYJaXQ5PsJw5gzLi/T2U+CcU
+         M5Ub21udc3bunb7nua2jzl6sD67mhDafAm/QiJ7Jej4AvqnWjZKB+GX93VpTKwIlrVh/
+         bl/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731531806; x=1732136606;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731531803; x=1732136603;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mPZDRjkZp2UQ4v5l/V7kEPUCZovvc46WaZ2EY4B4s3o=;
-        b=iyXnUK/nfmODDaauW0kHUQVz5f7xTagEL8JEdyyDhPsZFHDZEJdR9DdvY4tU4D9Pnl
-         0CuhdcSs1tM9txdNmqAU7xgAcOYiLoue1+dcn/LHr3X9VUMp5J+50+hxGlUAdIBSWFP9
-         r0OO+OROmy8anvNAfPFVx2qRzh4PjcrA+KlTHagAh9ZhHOjvCp8As22rvhwGr/nOxotb
-         xcyXVbaYIAs+IUwwi7xaqcFCDI3V+Oa+lNUGNQVQ8FbiWg1Cb0orUk/IdInrue1UOdTg
-         vBeI0iYpkidlRND3Bv+kgRe0/xb6ngneOKQ2EnFZ3Y3tkBCkl4iEKmOQN2nSaFeTAPO2
-         z/Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcBm/MVSlUyt5Ku8rloplmNKI0dSETFU38NHgeARkfe987h8NHRHMzg97M5rUqEyJwlz6oySJAFVO3srflKuvy@vger.kernel.org, AJvYcCWkjtjrXjUEieyK1RpTDUSF4awwbxow28NbGvU0D9Vu7NUBtT3qwJ8izCdsPi6aAhDIOCunk5eRseXsWv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyButxUYH0vmsknfKa8fRJAA2nuqdaUbzN3UWtWBI9r9rdvPAtx
-	tNFfxHuJ8UnZ1QvDPqA3JETo3VS/xidSTJJKJbZBVd6gS0ocDRFxTymZKQM6PRcFnK/J1JZuDn/
-	z3ZeoOHFwJWGCWbDdvf2hzByvC5A=
-X-Google-Smtp-Source: AGHT+IGMYQHc+QtLVmvA7os9F85G0u4mwOkY2J9B5HgYV06yTtzgLD6rVVFLheL/l73DP6ksZ1kk9yBrQqMrLKFZEvU=
-X-Received: by 2002:a17:907:c2a:b0:a9e:c4df:e3c5 with SMTP id
- a640c23a62f3a-aa1f813b2fdmr406313866b.54.1731531805782; Wed, 13 Nov 2024
- 13:03:25 -0800 (PST)
+        bh=impCPrA60gwXN9wwJaTYPmPlZjsc4EwtPX6toSuydpo=;
+        b=sxIBY3VYLAPQo45pwUKCLbfbWfl/eu8rF62qYEqrbI0SmaeTVfahLaMYDVR7oO6DHo
+         SgkyEKx1aX95ZDJxFI24edZFRRXYxTS8T+QdkbTnNOyk1JrEqwUt6hRia99piMPQqejl
+         5QAT9DDByNqzRMGNnz1bhxU4PJA7CEp0k6qTn8I4I2j5Z26w+faUJnh8CG78uQzhQKFq
+         5Zz1QBcP86p9x1QaOl0ayGOaMGx70wVoSpZtRY4YP96yQ3V3o0INwWGEcX4OgPkufm48
+         yyeC9oQ9mFpV2VL4xkrobcx4P4RrPExz/cGXwTFdPWxMTHJohSKM1a+tKzsBuKlxDtEo
+         mHTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbpxlsmjpN7S9Gz+mR/3SRcSTQRs0OYFzIP717JvG0owR49hpThbk1sPGsKNu433VU6UyWTyFdWWsjGhQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx+/6XlEbBLBlErQ2wE4hVO/gQDHZXNv5a9/SiFTraq0jwiACu
+	qaptO3JTVqoWu6nLqh/DIigVERGavKDsVdyG+IsVmF5eChptzxf7kaUjj8ZXias=
+X-Google-Smtp-Source: AGHT+IF2A3iDfVgDkFq8meEOTgPbHBMDmoqMax5gN+U8pKpFh+bpOYngYUEro6r9zol1GLKxXJxutA==
+X-Received: by 2002:a05:6870:3907:b0:288:8aaa:ed0e with SMTP id 586e51a60fabf-29560001898mr19505748fac.8.1731531803553;
+        Wed, 13 Nov 2024 13:03:23 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a5fe67903sm962900a34.1.2024.11.13.13.03.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 13:03:23 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: David Wang <00107082@163.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241108054500.4251-1-00107082@163.com>
+References: <20241108054500.4251-1-00107082@163.com>
+Subject: Re: [PATCH] block:genhd:/proc/diskstats: use seq_put_decimal_ull
+ for decimal values
+Message-Id: <173153180276.2249291.10428535421528000816.b4-ty@kernel.dk>
+Date: Wed, 13 Nov 2024 14:03:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113125152.752778-1-liuhangbin@gmail.com> <20241113125152.752778-2-liuhangbin@gmail.com>
-In-Reply-To: <20241113125152.752778-2-liuhangbin@gmail.com>
-From: Sam Edwards <cfsworks@gmail.com>
-Date: Wed, 13 Nov 2024 13:03:13 -0800
-Message-ID: <CAH5Ym4jjVFofG5J7QW=EsD00siDXtNWKt4ZDNbbUmP+Y4Jb-DQ@mail.gmail.com>
-Subject: Re: [PATCH net 1/2] net/ipv6: delete temporary address if mngtmpaddr
- is removed or un-mngtmpaddr
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Wed, Nov 13, 2024 at 4:52=E2=80=AFAM Hangbin Liu <liuhangbin@gmail.com> =
-wrote:
->
-> RFC8981 section 3.4 says that existing temporary addresses must have thei=
-r
-> lifetimes adjusted so that no temporary addresses should ever remain "val=
-id"
-> or "preferred" longer than the incoming SLAAC Prefix Information. This wo=
-uld
-> strongly imply in Linux's case that if the "mngtmpaddr" address is delete=
-d or
-> un-flagged as such, its corresponding temporary addresses must be cleared=
- out
-> right away.
->
-> But now the temporary address is renewed even after =E2=80=98mngtmpaddr=
-=E2=80=99 is removed
-> or becomes unmanaged. Fix this by deleting the temporary address with thi=
-s
-> situation.
 
-Hi Hangbin,
+On Fri, 08 Nov 2024 13:45:00 +0800, David Wang wrote:
+> seq_printf is costy, for each block device, 19 decimal values are
+> yielded in /proc/diskstats via seq_printf; On a system with 16
+> logical block devices, profiling for open/read/close sequences
+> shows seq_printf took ~75% samples of diskstats_show:
+> 
+> 	diskstats_show(92.626% 2269372/2450040)
+> 	    seq_printf(76.026% 1725313/2269372)
+> 		vsnprintf(99.163% 1710866/1725313)
+> 		    format_decode(26.597% 455040/1710866)
+> 		    number(19.554% 334542/1710866)
+> 		    memcpy_orig(4.183% 71570/1710866)
+> 			...
+> 		srso_return_thunk(0.009% 148/1725313)
+> 	    part_stat_read_all(8.030% 182236/2269372)
+> 
+> [...]
 
-Is it actually a new temporary, or is it just failing to purge the old
-temporaries? While trying to understand this bug on my own, I learned
-about a commit [1] that tried to address the former problem, and it's
-possible that the approach in that commit needs to be tightened up
-instead.
+Applied, thanks!
 
-[1]: 69172f0bcb6a09 ("ipv6 addrconf: fix bug where deleting a
-mngtmpaddr can create a new temporary address")
+[1/1] block:genhd:/proc/diskstats: use seq_put_decimal_ull for decimal values
+      commit: bda9c7d92f24b693eaf0262c090de4c8c108a28e
 
->
-> Fixes: 778964f2fdf0 ("ipv6/addrconf: fix timing bug in tempaddr regen")
-> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-> ---
->  net/ipv6/addrconf.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
-> index 94dceac52884..6852dbce5a7d 100644
-> --- a/net/ipv6/addrconf.c
-> +++ b/net/ipv6/addrconf.c
-> @@ -4644,6 +4644,10 @@ static void addrconf_verify_rtnl(struct net *net)
->                             !ifp->regen_count && ifp->ifpub) {
->                                 /* This is a non-regenerated temporary ad=
-dr. */
->
-> +                               if ((!ifp->valid_lft && !ifp->prefered_lf=
-t) ||
-> +                                   ifp->ifpub->state =3D=3D INET6_IFADDR=
-_STATE_DEAD)
-> +                                       goto delete_ifp;
-> +
+Best regards,
+-- 
+Jens Axboe
 
-My understanding is that the kernel already calls
-`manage_tempaddrs(dev, ifp, 0, 0, false, now);` when some `ifp` needs
-its temporaries flushed out. That zeroes out the lifetimes of every
-temporary, which allows the "destructive" if/elseif/elseif/... block
-below to delete it. I believe fixing this bug properly will involve
-first understanding why *that* mechanism isn't working as designed.
 
-In any case, this 'if' block is for temporary addresses /which haven't
-yet begun their regeneration process/, so this won't work to purge out
-addresses that have already started trying to create their
-replacement. That'll be a rare and frustrating race for someone in the
-future to debug indeed. As well, I broke this 'if' out from the below
-if/elseif/elseif/... to establish a clear separation between the
-"constructive" parts of an address's lifecycle (currently, only
-temporary addresses needing to regenerate) and the "destructive" parts
-(the address gradually becoming less prominent as its lifetime runs
-out), so destructive/delete logic doesn't belong up here anyway.
 
-What are your thoughts?
-
-Happy Wednesday,
-Sam
-
->                                 unsigned long regen_advance =3D ipv6_get_=
-regen_advance(ifp->idev);
->
->                                 if (age + regen_advance >=3D ifp->prefere=
-d_lft) {
-> @@ -4671,6 +4675,7 @@ static void addrconf_verify_rtnl(struct net *net)
->
->                         if (ifp->valid_lft !=3D INFINITY_LIFE_TIME &&
->                             age >=3D ifp->valid_lft) {
-> +delete_ifp:
->                                 spin_unlock(&ifp->lock);
->                                 in6_ifa_hold(ifp);
->                                 rcu_read_unlock_bh();
-> --
-> 2.46.0
->
 
