@@ -1,147 +1,141 @@
-Return-Path: <linux-kernel+bounces-407842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923D39C7596
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:06:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 207829C778E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:43:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57721287410
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:06:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8791F25FEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6476C143736;
-	Wed, 13 Nov 2024 15:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P4ukQDWx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA9F70835;
+	Wed, 13 Nov 2024 15:41:32 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BF2757EB
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB7841C92;
+	Wed, 13 Nov 2024 15:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731510397; cv=none; b=bUd2muBcfHSLsGuNeB6a4eEJLJIcS0ksXa2UhOgUjL4Yg1+OQFwE4DFnr8VRHuFcCJdkbaezDlbr81NgrmCVvkBF21z8ohJfSTNzLFVLr/jjqYKomzj9TjwSGTis4vKWzZ4uHDWza1RcpYo1BEmeX/6tnKht2wpovQt27bD4Mpo=
+	t=1731512491; cv=none; b=S9j+tsya5ywvzXxgJH90mpi9hld6Et+eBxtCJn/u13cW3ghqo+8fdscaPSBfL6pFt3cgbMdFG45wX/yNqivr/loXiZfAF3eqwcRtqmDmABDZ1Gmo2ezPei8fltI2sxRnBfJTsoDauQJCA1uGkCiREbcdD6s4RYT7B5xU6T+x648=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731510397; c=relaxed/simple;
-	bh=mpJgoK+KWuNIIegnc/x2H4Utp5hqy3HIkW65cX40Zx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L5MD+2JUr2sAMXevxR0frLNdVXb/IKgoacBlhHrZejX21BPay68XlOLxZf3o0L6TREjzj5HuLn0uj/gnQZEYCNh5ArReSVlxibUcx30Bqa41Cn6jFd1zzZ3SpT8F5nGS9sOlzcTHRtvOBtblne5FVPmQNSJBRsfGzdSf/Yvkq4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P4ukQDWx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731510393;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GWLdOv3kD3hyDaciZE7jYJRmtPh0CooncSDI6Dayl5M=;
-	b=P4ukQDWxkK/AJPitoTJP0Mk/Pcv3XlvmYPlOrsRuJ17dx0/+vycpeRDrOzxOqnoXrgink6
-	hevJZvQVqZUUlwD/wMY1aLfq6qKVFOpxTXVV2zIaum5fyiF7ERHtUvvL8XYHoax132Vnfq
-	Uq0Kl194PBxLKwXJVuAbn6BxJhsUg0A=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-164-R2lZMt4CP0aLma7NnCS74A-1; Wed, 13 Nov 2024 10:06:32 -0500
-X-MC-Unique: R2lZMt4CP0aLma7NnCS74A-1
-X-Mimecast-MFC-AGG-ID: R2lZMt4CP0aLma7NnCS74A
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d52ccc50eso3809693f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:06:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731510390; x=1732115190;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GWLdOv3kD3hyDaciZE7jYJRmtPh0CooncSDI6Dayl5M=;
-        b=bGKlk3Ei4KD3iGW5exVc+wgGG6elgLDFVHRd7oqOqg36WRHj7la0bD64rVXfT1B0XR
-         pFqwoqoxIbdhG6fnknWvELv9LA6rZR4BRiJuZr4IdaYpOrq59Vu2j2M2UimiU503FKV1
-         m2uZr/n5+5BA+CHiAzAUEWGmmaclErUcYjRWd8UiizcITW0FwH4O051qF4fRmFOqqCX8
-         JfUSbPbsItbUJpXNzvmLQ77wf07URn3SKe1FIY0WlsTp6WLxO/1FgPyHvny3r8W4sjV9
-         xrNRcECvFQ85rBETnoS+ldKu/kL9EdFzzIdEmp1RiTGAFSn8FGo19AQEj5SPxvIdvizW
-         ABoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVskvRMASRR5111+R7wFHGarZJyJgOGb8Jjx4l2CZAilIQPHr+bHMxp1juTgoCBp4WNmuKcoymti6N9R2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfjKvhs57BUcxmfPTQBi3+DParPbe7Hk1RVd6ptR6pBUI+KMLi
-	HrZhnDoGWsTYkbAcJLQE2BjAtuAmW+x1kFgVzU0zzsXhmIc75pwi9vuavmW7MbBZekKtY30xHD+
-	qcAg2a+DbYkzqi6qSQpAIRv+sU8y+kDwLet8hCRGkLrh6F73gJGxswAYa7Zu8Pg==
-X-Received: by 2002:a5d:588d:0:b0:37d:3bad:a50b with SMTP id ffacd0b85a97d-381f18855aamr18437798f8f.45.1731510389840;
-        Wed, 13 Nov 2024 07:06:29 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFR7SGrB4Fhm/j6pwU0uLR/0ukNIUrLvC+LHfK+NVU9lonHgPfDgfk60S9MS3/zsxXaiAHN+g==
-X-Received: by 2002:a5d:588d:0:b0:37d:3bad:a50b with SMTP id ffacd0b85a97d-381f18855aamr18437760f8f.45.1731510389417;
-        Wed, 13 Nov 2024 07:06:29 -0800 (PST)
-Received: from redhat.com ([2.55.171.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed99681csm19022148f8f.49.2024.11.13.07.06.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 07:06:28 -0800 (PST)
-Date: Wed, 13 Nov 2024 10:06:24 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: virtualization@lists.linux.dev, Si-Wei Liu <si-wei.liu@oracle.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Eugenio Perez Martin <eperezma@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH vhost 2/2] vdpa/mlx5: Fix suboptimal range on iotlb
- iteration
-Message-ID: <20241113100618-mutt-send-email-mst@kernel.org>
-References: <20241021134040.975221-1-dtatulea@nvidia.com>
- <20241021134040.975221-3-dtatulea@nvidia.com>
- <20241113013149-mutt-send-email-mst@kernel.org>
- <195f8d81-36d8-4730-9911-5797f41c58ad@nvidia.com>
- <20241113094920-mutt-send-email-mst@kernel.org>
- <83e533ff-e7cc-41e3-8632-7c4e3f6af8b7@nvidia.com>
+	s=arc-20240116; t=1731512491; c=relaxed/simple;
+	bh=SrZ4Sljd9url0qeaurkyD0bI6USgZYsbUiA4Kym2zlA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ruQ7b7HBaqatZdHk8sK7vrRdu4UjGrysZ+9mGLvX21V5eL+4tIc5eNHEuV6Na5boPXNc8k21hWm/iWrKcqRUq8og/nfm+kjkGaUexY9dmZkZkSbjIF8xqsnuhBp+T4MHrgZQRAoLBn7zX4yOZWzbvj0n0vVwPnuSXH5/yXcIhn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
+	by Atcsqr.andestech.com with ESMTP id 4ADF86dD090419;
+	Wed, 13 Nov 2024 23:08:06 +0800 (+08)
+	(envelope-from cl634@andestech.com)
+Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
+	by Atcsqr.andestech.com with ESMTPS id 4ADF7eo2090279
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
+	Wed, 13 Nov 2024 23:07:40 +0800 (+08)
+	(envelope-from cl634@andestech.com)
+Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 13 Nov
+ 2024 23:07:41 +0800
+From: CL Wang <cl634@andestech.com>
+To: <cl634@andestech.com>, <alexandre.belloni@bootlin.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-rtc@vger.kernel.org>, <tim609@andestech.com>
+Subject: [PATCH V4 2/3] dt-bindings: rtc: Add support for ATCRTC100 RTC
+Date: Wed, 13 Nov 2024 23:06:52 +0800
+Message-ID: <20241113150653.1793123-3-cl634@andestech.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241113150653.1793123-1-cl634@andestech.com>
+References: <20241113150653.1793123-1-cl634@andestech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <83e533ff-e7cc-41e3-8632-7c4e3f6af8b7@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 4ADF86dD090419
 
-On Wed, Nov 13, 2024 at 04:01:05PM +0100, Dragos Tatulea wrote:
-> 
-> 
-> On 13.11.24 15:49, Michael S. Tsirkin wrote:
-> > On Wed, Nov 13, 2024 at 03:33:35PM +0100, Dragos Tatulea wrote:
-> >>
-> >>
-> >> On 13.11.24 07:32, Michael S. Tsirkin wrote:
-> >>> On Mon, Oct 21, 2024 at 04:40:40PM +0300, Dragos Tatulea wrote:
-> >>>> From: Si-Wei Liu <si-wei.liu@oracle.com>
-> >>>>
-> >>>> The starting iova address to iterate iotlb map entry within a range
-> >>>> was set to an irrelevant value when passing to the itree_next()
-> >>>> iterator, although luckily it doesn't affect the outcome of finding
-> >>>> out the granule of the smallest iotlb map size. Fix the code to make
-> >>>> it consistent with the following for-loop.
-> >>>>
-> >>>> Fixes: 94abbccdf291 ("vdpa/mlx5: Add shared memory registration code")
-> >>>
-> >>>
-> >>> But the cover letter says "that's why it does not have a fixes tag".
-> >>> Confused.
-> >> Sorry about that. Patch is fine with fixes tag, I forgot to drop that
-> >> part of the sentence from the cover letter.
-> >>
-> >> Let me know if I need to resend something.
-> >>
-> >> Thanks,
-> >> Dragos
-> > 
-> > But why does it need the fixes tag? That one means "if you have
-> > that hash, you need this patch". Pls do not abuse it for
-> > optimizations.
-> > 
-> Well, it is a fix but it happens that the code around still works without
-> this fix. I figured that it would be better to take it into older stable kernels
-> just like the other one. But if you consider it an improvement I will send a v2
-> without the Fixes tag.
-> 
-> Thanks,
-> Dragos
+Document Device Tree bindings for the Andes ATCRTC100 Real-Time Clock.
 
-No need.
+Signed-off-by: CL Wang <cl634@andestech.com>
+---
+Changes for v2:
+ - First version of devicetree bindings for the Andes ATCRTC100 Real-Time Clock.
+
+Changes for v3:
+ - Used compatible as the filename.
+ - Placed allOf after maintainers.
+ - Replaced additionalProperties: false with unevaluatedProperties: false.
+ - Added descriptions for interrupts.
+
+Changes for v4:
+ - Removed wakeup-source attribute.
+---
+ .../bindings/rtc/andestech,atcrtc100.yaml     | 43 +++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml
+
+diff --git a/Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml b/Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml
+new file mode 100644
+index 000000000000..ec0a736793c7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml
+@@ -0,0 +1,43 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rtc/andestech,atcrtc100.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Andes ATCRTC100 Real-Time Clock
++
++maintainers:
++  - CL Wang <cl634@andestech.com>
++
++allOf:
++  - $ref: rtc.yaml#
++
++properties:
++  compatible:
++    enum:
++      - andestech,atcrtc100
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: Periodic timekeeping interrupt
++      - description: RTC alarm interrupt
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    rtc@f0300000 {
++        compatible = "andestech,atcrtc100";
++        reg = <0xf0300000 0x100>;
++        interrupts = <1 IRQ_TYPE_LEVEL_HIGH>, <2 IRQ_TYPE_LEVEL_HIGH>;
++    };
+-- 
+2.34.1
 
 
