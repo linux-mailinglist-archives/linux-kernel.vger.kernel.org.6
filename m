@@ -1,115 +1,98 @@
-Return-Path: <linux-kernel+bounces-408075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679E19C7A91
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:03:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A295D9C7A2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA450B2E100
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:43:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 589231F2364C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08885202655;
-	Wed, 13 Nov 2024 17:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566A52022E4;
+	Wed, 13 Nov 2024 17:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kIdry9fU"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bk1gxFPx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4702022E4;
-	Wed, 13 Nov 2024 17:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1EF41F80BB;
+	Wed, 13 Nov 2024 17:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731519806; cv=none; b=tAz84ZbfrLa9XHNXyXIpsm+B15RFkZo43NG4iBV/ZJG7hIHFjy3m49t9yY4BzEtrUyf/riSDafG6ZnAlSrOYQwfz0X+VPPo4aHKasHyiev/+H5Cm19g45qIIxpjEAwqLF84n93fv4bYDn6dZvekv6tGjWrNvg8BYPs60hSnheYQ=
+	t=1731520018; cv=none; b=hL2exVHq18jmBvQWUMVpOsAF4ZE5BnmqYzezvFUyDbDjULEwSWyPCnnmlPQOrROAF8F/0yg4Av0VgdNEY6QGBrP2fTHvvtw+HSoc1X0bkNbVlEZZUmGrKw1d3WmEPHdYSdzJ/7rWhRxQTYnZxFeVjY/koJrSKm41FpfFQiSBO2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731519806; c=relaxed/simple;
-	bh=ppk0DUXZE7SCkPcT+d0mwFpKJ2BW3fnSWS8UBzFdzy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m1R2TSoTLLhoCvq59t9lUIvoRZVRblzAYo7B2R4Ef2QjEr0ms2iTMk4BQQzJ8+RnOXJTvxUFoV2rITsmNlx+r68xVYBMyCxaVl9H9W2crFQ2qh0tnU6MSmWaIXjmezAljPlVpS9zI8+OP5gUpI4bUI6bHJVO8nmnoCv9aPjrbgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kIdry9fU; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20ca388d242so76400155ad.2;
-        Wed, 13 Nov 2024 09:43:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731519804; x=1732124604; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BV72+3ZpwcNw1vtM04R974G4OSzv6JXyNQR3jeSSWck=;
-        b=kIdry9fUkyWLFsCJ8ave5y8tSwIg7i8t78J+TznDx+S/2BXNvw1mKMHfSx7+0kIrWM
-         IRcbZ5Debd77ivEDPKDNJf9qXlQBzvniXmj1KHz1IGys9MeIezs9dHKnDvpgbaeEDm6R
-         4CnZgmqswksrvGQMGkDHQJGctL18lb5z0ajNrz8pCWs5Blr9uD30omtaOqG0s2J7nDyr
-         gOwlXSHztUvt0W97wQpEgA/HFiaKy18bfjrnTebBMkTdUvbC8qooMfbzHkyMBcqjwekM
-         4bBKtiA1cFYUntBeplhrzTrXyd7N5iYXwn82XNaijJmzqbui6KPnQKGgaFGI6fZ9/Llw
-         dVDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731519804; x=1732124604;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BV72+3ZpwcNw1vtM04R974G4OSzv6JXyNQR3jeSSWck=;
-        b=ReJmhoIbAqU0Ma8J4Djg7tYZSh3SltdZFKK9u0H0gMO5DZVX+bijwlswpl98uko0MN
-         32RiZdUpnXm97TBfBlngHb6KxM2Inbdf+aqpSUQ/DD7aPOXNlQCqc7UCa0LU4Y6mPcsy
-         iWX3fpbBFe5Qr0O3hM4TWLG9Am3FpaaNcTov+iX33HjTzpiAKlS8P1cJ1Hxyk3IZJK1g
-         lezqtVByWh9sgdLkBplHCvniiuwFdj7cZaZQ/s3gBFppmBkMKUIo4T2Kpa295vwttUnL
-         hzd0vQcBSJVG+jRyWDNJw2cudkMaCOXjCI7LTwHjX3RUwTstALBgfEBVkvSTIHMaSlST
-         eaPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGz+IqJejnYBYsumDhUKQqCitaZhWzSB6wZWvb6llLtKVnJLIBUxuK/emURInY44bwKGhfiica5ovau01d@vger.kernel.org, AJvYcCWKSOzChZ/GVRykBGhYRsZ8T7btUxAZen/4+7Rl215tj9+TrCCohbCJT6lEHPXQy27zmCiTpDAXG0m33iK/HlFQ@vger.kernel.org, AJvYcCWNqyyT8cPvFKLF56lE1n+rHynhOkFecrWaUdi9LBoLwbDqaUslc+emNdjmh0R8HbcSpSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0vAES++02K/y8auSYOq+Rg/blDuX9GV0IVUD5JNyziM2y2ED2
-	gltI4R0BKZTXW/H6kRCLWp8P1s0d8HNpE/zCpzqLbjABrXFaHnk=
-X-Google-Smtp-Source: AGHT+IHPEWWm6okD4vlePvfsSz/17eemiZD1ccUkGYCho+wfOQkSzsumZEda2hVkg35rk38M6YSOWg==
-X-Received: by 2002:a17:902:e84e:b0:20c:774b:5aeb with SMTP id d9443c01a7336-21183d1024cmr280164975ad.3.1731519804314;
-        Wed, 13 Nov 2024 09:43:24 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e70408sm112206805ad.260.2024.11.13.09.43.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 09:43:23 -0800 (PST)
-Date: Wed, 13 Nov 2024 09:43:23 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, ebpf@linuxfoundation.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>,
-	Petar Penkov <ppenkov@google.com>, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 05/10] selftests/bpf: expose all subtests from
- flow_dissector
-Message-ID: <ZzTlO04y8jyZxIm-@mini-arch>
-References: <20241113-flow_dissector-v1-0-27c4df0592dc@bootlin.com>
- <20241113-flow_dissector-v1-5-27c4df0592dc@bootlin.com>
+	s=arc-20240116; t=1731520018; c=relaxed/simple;
+	bh=GN6ez5LH3n8oJxYDA0R33vrMUcLN60aHuBywIGOnQZs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=QIavnH4VN5sKntI+hLdmWh8QyRkvRr5qm9+XcVaWjkG5b57etLPtykZLM5Ajbzx4uamWZiNpog4z7+PmWBSZJ6lcxwIngTvwn5cfC6kBtLY2TZZH/YXMnHGZJG7u1yvZrj6xiRqVsICQJF+AykD0ppDSnbpgkgL1uFUiV4J+9C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bk1gxFPx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 257ABC4CEC3;
+	Wed, 13 Nov 2024 17:46:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731520018;
+	bh=GN6ez5LH3n8oJxYDA0R33vrMUcLN60aHuBywIGOnQZs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=bk1gxFPxFmBMQ5Rf8WDeA0dNAYFb4scwvILCLhhe/VxblxI1xlLAV85KZGyCRA56e
+	 sUpiUDdYOuYZKfoK0T+OqOKPY0r0UlXvF+AEpOLWegMq8tMdLcYifhUwJOeFdVwAwH
+	 mMQaZuT3fH3UacWmXVlRLCeTs8y3v5t+eXxio0YC1g46MRDldBm6JAVUE9sTc0V0m4
+	 1wFkWOVG7rD85w032FqQidDj4Vny0UGVHG2b0dwB3aaSQGFztfRFjgP7I9T6pn7NZ3
+	 FcjUqcZ4IE6Mlta9bxXI5Msp8jXONQPI2M3jRUm8N36M8bRXMDnKWokXljDBoMsxyB
+	 YFCTHTDtpHezQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241112-asoc-max9768-event-v1-1-ba5d50599787@kernel.org>
+References: <20241112-asoc-max9768-event-v1-1-ba5d50599787@kernel.org>
+Subject: Re: [PATCH] ASoC: max9768: Fix event generation for playback mute
+Message-Id: <173152001663.471845.5810139737220775643.b4-ty@kernel.org>
+Date: Wed, 13 Nov 2024 17:46:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241113-flow_dissector-v1-5-27c4df0592dc@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-355e8
 
-On 11/13, Alexis Lothoré (eBPF Foundation) wrote:
-> The flow_dissector test integrated in test_progs actually runs a wide
-> matrix of tests over different packets types and bpf programs modes, but
-> exposes only 3 main tests, preventing tests users from running specific
-> subtests with a specific input only.
+On Tue, 12 Nov 2024 13:09:50 +0000, Mark Brown wrote:
+> The max9768 has a custom control for playback mute which unconditionally
+> returns 0 from the put() operation, rather than returning 1 on change to
+> ensure notifications are generated to userspace. Check to see if the value
+> has changed and return appropriately.
 > 
-> Expose all subtests executed by flow_dissector by using
-> test__start_subtest().
 > 
-> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: max9768: Fix event generation for playback mute
+      commit: 2ae6da569e34e1d26c5275442d17ffd75fd343b3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
