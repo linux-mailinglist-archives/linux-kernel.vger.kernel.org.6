@@ -1,135 +1,158 @@
-Return-Path: <linux-kernel+bounces-407311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD039C6BA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:41:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FDCD9C6BA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:42:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F225EB2593C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:41:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 001B2B25EF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9781F80C5;
-	Wed, 13 Nov 2024 09:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E041F80BF;
+	Wed, 13 Nov 2024 09:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MKceI0rb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WnYBbn3J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847921F80B2
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800A3178CC8;
+	Wed, 13 Nov 2024 09:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731490900; cv=none; b=iEGR9hY6NsMnjypzDnH/kIwBdzXHeN43FU1Vh0Yu/bo9XWnaMaDuYU/XFWP+0QqZFr9TucMtZe6lylAFQTuZi0SjwYXNnnkFtAYedM8FQSV5s1n8mEFN9J7qZhnRhLribKfZSFgKiSM2wwuYpeG55zMa5inQwujMT4NmKj1nV5w=
+	t=1731490966; cv=none; b=I2ziBbk0mNF7uALQRyQNCa0azdFxLqr9mP+l76ghaatfB09ZI2b3oK7fnatk9oaX06hidVa+Ey2WU0XEGr6amaUvOGkg6IoqIrEk6Ij5risLHURQj2I9TtyIe7/7wZaR3fO1h5+dtHEZ8GGHzMsbGqalFwg6X56qLJouGvTt7TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731490900; c=relaxed/simple;
-	bh=mWORNrvMu+2nkHTeDt9zqX1bQavHll1/ZqxiMzfxAEQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=avNSBHP9bo1VF3eHWhB1JRKy6n1uq2rp4Uq30fnMHG0uW59jTvhWJKl8W/uJAbk2w0jFHTTa4XkbbTWkU8r9QxHP4CfCz7WtMtXRO2gUU1c8jt4eG5MpQSvC8+aUybJQ0VvBS0GPb+73wpoUjcyTjT4wGzfYKekeicASgW0RfIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MKceI0rb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731490897;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YL5g8uaJLXVNVsk28lhyUE5R+bbRfdqWI4k5okbTmts=;
-	b=MKceI0rb9UWL8yEWS3ezHgRV0HBAQTVfMaSmIv4vXYBK+yiOk7BTZrtRXHrvMYhacFFYWG
-	iAOtRfcPoc2W9QLk59+DnUPpQdmSNtpEh3zTcs/kRp0PEzMAvHDcvoCLEvjTQ7ova5z8no
-	6k2oi08FAfuZGDxpEtAHkn+ij9OFAtQ=
-Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
- [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-93-utjiYG_HO2GQLgJGHuoBhg-1; Wed, 13 Nov 2024 04:41:35 -0500
-X-MC-Unique: utjiYG_HO2GQLgJGHuoBhg-1
-X-Mimecast-MFC-AGG-ID: utjiYG_HO2GQLgJGHuoBhg
-Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-8564f707b27so2120311241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 01:41:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731490895; x=1732095695;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YL5g8uaJLXVNVsk28lhyUE5R+bbRfdqWI4k5okbTmts=;
-        b=ZiHNcI5ebVynIgwommPkPljSCOIKZ3cRyPiBxypCwMZ+g2lk7HrfgakroIK1n65NfM
-         c73BCwwrV5KTvoX8PoFEnNU5hWoBk3kS6UWBbaUU2aH7sgOUcukNDySM70CKTNKiyD0+
-         OP8uoGUUdzhZCg0u9DowRyDBuI301eCXFQv8bQkKChUdeVEc+gIOzDWgcjl1p6y/YlLl
-         sByJqtyb8ju6swbyOLV0qyqwfttwT2o+se7TRTegZGRYCyqbnysP5+vK0Cz/c+daWihs
-         ou4ck8rvWOue4Kuk3WddptRhUldkI2pyi0KdV4VciuBl+G6p5R+jp4AwwIDiBLINL1Or
-         cpRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ9A77lZ6ytXjbWNqaqo6PustxXCOKsV7DxssE/xtmZkELMoXRclUvjPJOvNTFFBHpQIPyiD9nUxOOw6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD0kphj/WESIUR2HTcOt5qoLdDy6kU7E9FboDDJb0mxFiuxXtl
-	VBT9qc3IfZpctd7bOnNpIbNaU+SoNH6vzF62Pmc/5xPFkqRS4gcvUqwH1QKLo6I6yqXhoHKTNNm
-	K4DOi+XCiMcAvbj+wntTlLgGZZlaOnapNfkCo/WJNMN0VAkmYE6eal7npbhjrmCESNcjzZTNAEc
-	6AEE7QoOp/t8cq42IVl5BAzgNccCUK4ngI1QA6
-X-Received: by 2002:a05:6102:4a9:b0:4ad:4895:ce1f with SMTP id ada2fe7eead31-4ad4895d3f0mr1376604137.17.1731490895270;
-        Wed, 13 Nov 2024 01:41:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGmtPg8F+hYG3+YJL00GFGvfj0vnU1ejxbK+vnoIcAzfsluoAugZllq4BSeDyoNJ5JixsLlnN2VAhxGwOo/DzM=
-X-Received: by 2002:a05:6102:4a9:b0:4ad:4895:ce1f with SMTP id
- ada2fe7eead31-4ad4895d3f0mr1376591137.17.1731490894919; Wed, 13 Nov 2024
- 01:41:34 -0800 (PST)
+	s=arc-20240116; t=1731490966; c=relaxed/simple;
+	bh=CnTg97obo1Lsr06BXYdZdsStwzIsiBw+tlILjkvdR+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PCfe1aW8tcrQ2/HK7kLVn/yISFHg5X7/dOlfuHJS5xagEMtVeUFh75E/P/3GvKYwYzpuurfb1Bxv4+6H/5l4Yp6pL+hmsoYyof/29q4pN3O7MH2kySo1iVMhrTOSOtMtinwVE3Y3fUmAWID8DMwsaEWxDPXowep5mQgz9fZRNt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WnYBbn3J; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731490965; x=1763026965;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=CnTg97obo1Lsr06BXYdZdsStwzIsiBw+tlILjkvdR+U=;
+  b=WnYBbn3JREPgm3n7im0EyTp2LuAY4jg3/VlhrYEhxPxvjYuJbUC+86jW
+   gFFuAqv4TLbYRAKsi0e9+y0fTsdKBiLhu5Ig9ipQqDSH4mKgCGGm35skI
+   c5ehiGNdyuFamQsTH15GdgmEY8l8SwTe0rdkWahN52a1N6d1mRkwSYOyi
+   IhT/Dqt+L/Y2o8bc4BQ65BRsmUZpG04o0Hw/bhedrvANlqoSfyXDjqWfo
+   krWBi9R5jSztjHUPL7X3O9/3KM87urRKvyg3wN2V8yL4s35exUqbY50SP
+   tM3svzlcgctdUu3ruxIucNvHawY/TCk0bjdy3AclOWgliLe/3Qxvi2pCU
+   g==;
+X-CSE-ConnectionGUID: 18q78WdBRiqcY8VqVRGgrg==
+X-CSE-MsgGUID: ThCdVxE3RTe1ekI3H8n71Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31229446"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31229446"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 01:42:36 -0800
+X-CSE-ConnectionGUID: ZJXmawWEQXSXDgxWFRqoHg==
+X-CSE-MsgGUID: 7sstyEgHRHO20zrSlRz5BA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="92751496"
+Received: from mylly.fi.intel.com (HELO [10.237.72.58]) ([10.237.72.58])
+  by orviesa003.jf.intel.com with ESMTP; 13 Nov 2024 01:42:35 -0800
+Message-ID: <1ad5f698-725a-4779-ad5d-936ae8cbab14@linux.intel.com>
+Date: Wed, 13 Nov 2024 11:42:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67336557.050a0220.a0661.041e.GAE@google.com>
-In-Reply-To: <67336557.050a0220.a0661.041e.GAE@google.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Wed, 13 Nov 2024 17:41:24 +0800
-Message-ID: <CAFj5m9+GAv4JPX=ABgwUo7RSSZ4zNsBKpiJOfuxmmwg+GDP3wA@mail.gmail.com>
-Subject: Re: [syzbot] [block?] possible deadlock in loop_reconfigure_limits
-To: syzbot <syzbot+867b0179d31db9955876@syzkaller.appspotmail.com>
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] i3c: master: Add ACPI support to i3c subsystem
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Sanket.Goswami@amd.com, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+References: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
+ <20241108073323.523805-3-Shyam-sundar.S-k@amd.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20241108073323.523805-3-Shyam-sundar.S-k@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 12, 2024 at 10:30=E2=80=AFPM syzbot
-<syzbot+867b0179d31db9955876@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    929beafbe7ac Add linux-next specific files for 20241108
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16b520c058000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D75175323f2078=
-363
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D867b0179d31db99=
-55876
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D11b520c0580=
-000
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/9705ecb6a595/dis=
-k-929beafb.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/dbdd1f64b9b8/vmlinu=
-x-929beafb.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/3f70d07a929b/b=
-zImage-929beafb.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/7589a4f702=
-0b/mount_2.gz
+Hi
 
-...
-
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.=
-git
-next-20241111
-
+On 11/8/24 9:33 AM, Shyam Sundar S K wrote:
+> As of now, the I3C subsystem only has ARM-specific initialization, and
+> there is no corresponding ACPI plumbing present. To address this, ACPI
+> support needs to be added to both the I3C core and DW driver.
+> 
+> Add support to get the ACPI handle from the _HID probed and parse the apci
+> object to retrieve the slave information from BIOS.
+> 
+> Based on the acpi object information propogated via BIOS, build the i3c
+> board information so that the same information can be used across the
+> driver to handle the slave requests.
+> 
+> Co-developed-by: Sanket Goswami <Sanket.Goswami@amd.com>
+> Signed-off-by: Sanket Goswami <Sanket.Goswami@amd.com>
+> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> ---
+> Cc: linux-acpi@vger.kernel.org
+> 
+>   drivers/i3c/internals.h            |  3 ++
+>   drivers/i3c/master.c               | 84 ++++++++++++++++++++++++++++++
+>   drivers/i3c/master/dw-i3c-master.c |  7 +++
+>   include/linux/i3c/master.h         |  1 +
+>   4 files changed, 95 insertions(+)
+> 
+> diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
+> index 433f6088b7ce..178bc0ebe6b6 100644
+> --- a/drivers/i3c/internals.h
+> +++ b/drivers/i3c/internals.h
+> @@ -10,6 +10,9 @@
+>   
+>   #include <linux/i3c/master.h>
+>   
+> +#define I3C_GET_PID		0x08
+> +#define I3C_GET_ADDR		0x7F
+> +
+>   void i3c_bus_normaluse_lock(struct i3c_bus *bus);
+>   void i3c_bus_normaluse_unlock(struct i3c_bus *bus);
+>   
+> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+> index 6f3eb710a75d..0ceef2aa9161 100644
+> --- a/drivers/i3c/master.c
+> +++ b/drivers/i3c/master.c
+> @@ -2251,6 +2251,84 @@ static int of_i3c_master_add_dev(struct i3c_master_controller *master,
+>   	return ret;
+>   }
+>   
+> +#if IS_ENABLED(CONFIG_ACPI)
+> +static int i3c_acpi_configure_master(struct i3c_master_controller *master)
+> +{
+> +	struct acpi_buffer buf = {ACPI_ALLOCATE_BUFFER, NULL};
+> +	enum i3c_addr_slot_status addrstatus;
+> +	struct i3c_dev_boardinfo *boardinfo;
+> +	struct device *dev = &master->dev;
+> +	struct fwnode_handle *fwnode;
+> +	struct acpi_device *adev;
+> +	u32 slv_addr, num_dev;
+> +	acpi_status status;
+> +	u64 val;
+> +
+> +	status = acpi_evaluate_object_typed(master->ahandle, "_DSD", NULL, &buf, ACPI_TYPE_PACKAGE);
+> +	if (ACPI_FAILURE(status)) {
+> +		dev_err(&master->dev, "Error reading _DSD:%s\n", acpi_format_exception(status));
+> +		return -ENODEV;
+> +	}
+> +
+> +	num_dev = device_get_child_node_count(dev);
+> +	if (!num_dev) {
+> +		dev_err(&master->dev, "Error: no child node present\n");
+> +		return -EINVAL;
+> +	}
+> +
+I didn't notice earlier these cause host controller registration to fail 
+and thus regression on platforms where DSDT doesn't have these optional 
+information for the host controller.
 
