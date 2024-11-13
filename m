@@ -1,108 +1,141 @@
-Return-Path: <linux-kernel+bounces-406949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785DE9C668A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:19:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA75D9C6690
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:20:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF250B26DC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:19:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08E4AB279ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C4C17BD9;
-	Wed, 13 Nov 2024 01:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DFB22612;
+	Wed, 13 Nov 2024 01:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iPy7vTdW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oNI+wqa5"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ICOc/ztT"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B733FC7;
-	Wed, 13 Nov 2024 01:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A30208A7
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 01:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731460750; cv=none; b=JFQol7GtlMQxYWsEh3D2w/zqDepiApyCT4aCDtvKFYQu8IeiQuKVLM8G30kUIAPhCtSBPnciuw2MSj3r3fWXjbjTP+qiUhTWJn373/TkCimEKXEGvu2Kvhduv5EQszhuMn8YY5KA/vI5Vjha0lMd3dzL3gb2lhCK0vkrTCNQ3Xo=
+	t=1731460806; cv=none; b=I2dRnIFYrAash1lflDsKiJvhfOgRlyKmOLPLFQRsfq7xARSpxVVrQzv3gYfb6SB9gwtKlMLbnDkQkENjEEPzhgNnGrqMYXbc7Zpg6kBSisxqGOH6HjPxG5N5vmhkFgCPNkIt9WWTeIli/SmBsR0WQXJKyFvLxcudiT43yACe5IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731460750; c=relaxed/simple;
-	bh=5jgvmFj4+WU0LqMXqVA51d5UFzRMhS4VeoeO5IqLpRg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nQTDzFw0TTi2g6kHxLASRHl9wrgwK2bEtrSSeR221blcWFZFF2nZG7GE9d+hW0a9/+XU2EooaHCwl0tT1/tmkWK+v2hla4TLyeoWTtgqnFtP7fR+FOoWA93/1GK8ljEwDVWvWO/9Y6EL5xHzz5BGI7/2fYg5uWlrfPQ74kfpe+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iPy7vTdW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oNI+wqa5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731460747;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=btianQLvN8jNgt2DHG+WnJggCcxBvEOk7Ma+4QGLo08=;
-	b=iPy7vTdWGf8CTp8qtb4qqu9f+GKbtdCP3N88Qu8MctPZyabYsKec8odqXdkl6a7MwCR61u
-	4k4ZigBwIKlKig3V0AYbzuq274OgtwGwJpFU8dDbZ/39Y+lv3dRFpRUhmlAf2nw3e0h3mA
-	H1c3tczrn+oCNXuJhCZJmkl8hUri0cwPFUEvDm2VSOCOQFWbwxdT4IGPwiCfTL1+ca9LVB
-	qAffCJfyf+FDujaaXar9GWnY3FckxxvHZumZIPeSaVXdF3EwDW/Wj6sP/j1C63E/sooMm5
-	CyVqssRIjxwkbUasfsDkXAYz3QVQoDVThYj1h6Nq0OwFLJBLlO6uVYw3eHUf0g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731460747;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=btianQLvN8jNgt2DHG+WnJggCcxBvEOk7Ma+4QGLo08=;
-	b=oNI+wqa5C9LOjCVQInMLxF4EDPWXinX4LnsF5UikJcb/iPd1oZdRaaCdnct615oSr9widT
-	9VXE1wOQiWzpGPCg==
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- rafael.j.wysocki@intel.com, len.brown@intel.com,
- artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
-Subject: Re: [PATCH v3 0/3] SRF: Fix offline CPU preventing pc6 entry
-In-Reply-To: <1ee47890-7f19-4c21-9d0d-94834d716159@linux.intel.com>
-References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
- <20241112114543.GP22801@noisy.programming.kicks-ass.net>
- <1ee47890-7f19-4c21-9d0d-94834d716159@linux.intel.com>
-Date: Wed, 13 Nov 2024 02:19:20 +0100
-Message-ID: <87o72klylj.ffs@tglx>
+	s=arc-20240116; t=1731460806; c=relaxed/simple;
+	bh=27n8L5sWSPJhAE2JEG3O/r5G40z8Xit8zaf4tomXVDQ=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=V3ePPXJjU729HzgACcb6vEIpz93Vg1iqKOtTSHgvWPnf6a0ED3eKEmPdudSMeIbm1KTQWey8uqAlwwQclwWg16pgV77xQJBV7vv8u+6PYEwjEFA5mb2jGHJ59JJEcqhB6YwhAl/BqMxnl4c6+kFoacWjszffiOwnNM9pyTJQ27E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ICOc/ztT; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ea82a5480fso114529307b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:20:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731460804; x=1732065604; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NiQczml56JgVVMWTkxc0gHOxNZYXXQnLIMolkM8qQ3I=;
+        b=ICOc/ztTNpIrODtKBrAVLrJhfnlZPJTOnmB4d45BOCzasHlmAQCFgl0ZB0/V5JETW7
+         xnaA7HFw7lNiRpH65/Yzs8ea5WxuSud5v4Fe7/vJgoTWPLv+wpn2rkLpf9SBQGBQnMuC
+         NteHPDbygICN6a9V7raXXmumWso5vlStSsqUd/VHkCqxq66ZAUWIzuo9yRe5zP1M/PLX
+         97ORNmZDn9w1uKYL4Go7UUOPXBXyaNChVwhvopGU4Z8adLO0kwS4pBDmc46Rn6yl93jd
+         9AVx7O7snLKFTa9L6o6FuR5nkQdKa8Xb/aLtwYwM6qFuLhMs0bG8h8wg6Zr2dECXg4AM
+         ASiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731460804; x=1732065604;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NiQczml56JgVVMWTkxc0gHOxNZYXXQnLIMolkM8qQ3I=;
+        b=xNHkcBAnkfgAFbatY5dVa/zYbsMzaivGMGkPAv7hISSl+ZqY531+WNv7teflVi1c2L
+         cDb7UAEZhx9cTvSyPBsez1P1STZfaGYeT6vCDF4JNbRtWmpxWwhGCfzP7JRDEp6uFiE3
+         zYg5OIw+nKnegCtVYiCi2m+ZJRTwq1ZtVqnUKNGvWK7NgeDEwQpgjRUlJyIh1fMr/cFf
+         b+UZ1zXBNEAj7MO88mEj6O0CILTSBKdRhUI5KoBPa2vVP6sUJux3nxsjqqR5gqSENlYr
+         /7AqeRK/BGnus9Ch5V+sgUdE/mMQrck3B0v48TBhVo8S5qm3H27DPypbPamZQGXRQQgI
+         7VyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYIgcH4/go4WwrGGk87iXhsB6EgsI/Ud+mTQOJwBtTiI1/9O+ijI8+nplcYE+ddIFmBbF04mAAXrjan/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHWoE3eoMp29kO7hi0g5i6ifnNnV2JGwZJfvQFY6wJCeB2rt1h
+	rubaB1Fns9m4DQ5O09UVlInNasfdLbwNASvQ0Vf5AZaWygpoqAWleiSEn/9/XCoZ1SstAltMzMN
+	z+tS8Ig==
+X-Google-Smtp-Source: AGHT+IEGILWef6FrLG2dff4ry+9/9vbZOuphjIijHW0mVc/gaalZy4aAfkn001gZ2CIKsGYePE+4YgGAkh/G
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:ba3:1d9a:12e0:c4af])
+ (user=irogers job=sendgmr) by 2002:a05:690c:3688:b0:6ea:fa4:a365 with SMTP id
+ 00721157ae682-6eaddfec9efmr1467337b3.8.1731460803953; Tue, 12 Nov 2024
+ 17:20:03 -0800 (PST)
+Date: Tue, 12 Nov 2024 17:19:52 -0800
+Message-Id: <20241113011956.402096-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+Subject: [PATCH v2 0/4] Prefer sysfs/JSON events also when no PMU is provided
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Junhao He <hejunhao3@huawei.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 12 2024 at 16:43, Patryk Wlazlyn wrote:
->> There's a comment there that explains why this is done. If you don't
->> understand this, then please don't touch this code.
->
-> /*
-> =C2=A0* Kexec is about to happen. Don't go back into mwait() as
-> =C2=A0* the kexec kernel might overwrite text and data including
-> =C2=A0* page tables and stack. So mwait() would resume when the
-> =C2=A0* monitor cache line is written to and then the CPU goes
-> =C2=A0* south due to overwritten text, page tables and stack.
-> =C2=A0*
-> =C2=A0* Note: This does _NOT_ protect against a stray MCE, NMI,
-> =C2=A0* SMI. They will resume execution at the instruction
-> =C2=A0* following the HLT instruction and run into the problem
-> =C2=A0* which this is trying to prevent.
-> =C2=A0*/
->
-> If you are referring to this comment above, I do understand the need to
-> enter hlt loop before the kexec happens. I thought that I could bring
-> all of the offlined CPUs back online, effectively getting them out of
-> the mwait loop.
+At the RISC-V summit the topic of avoiding event data being in the
+RISC-V PMU kernel driver came up. There is a preference for sysfs/JSON
+events being the priority when no PMU is provided so that legacy
+events maybe supported via json. Originally Mark Rutland also
+expressed at LPC 2023 that doing this would resolve bugs on ARM Apple
+M? processors, but James Clark more recently tested this and believes
+the driver issues there may not have existed or have been resolved. In
+any case, it is inconsistent that with a PMU event names avoid legacy
+encodings, but when wildcarding PMUs (ie without a PMU with the event
+name) the legacy encodings have priority.
 
-That's not really working:
+The patch doing this work was reverted in a v6.10 release candidate
+as, even though the patch was posted for weeks and had been on
+linux-next for weeks without issue, Linus was in the habit of using
+explicit legacy events with unsupported precision options on his
+Neoverse-N1. This machine has SLC PMU events for bus and CPU cycles
+where ARM decided to call the events bus_cycles and cycles, the latter
+being also a legacy event name. ARM haven't renamed the cycles event
+to a more consistent cpu_cycles and avoided the problem. With these
+changes the problematic event will now be skipped, a large warning
+produced, and perf record will continue for the other PMU events. This
+solution was proposed by Arnaldo.
 
-  1) Regular kexec offlines them again.
+Two minor changes have been added to help with the error message and
+to work around issues occurring with "perf stat metrics (shadow stat)
+test".
 
-  2) Kexec in panic can't do any of that.
+The patches have only been tested on my x86 non-hybrid laptop.
 
-Thanks
+v2: Rebase and add tested-by tags from James Clark, Leo Yan and Atish
+    Patra who have tested on RISC-V and ARM CPUs, including the
+    problem case from before.
 
-        tglx
+Ian Rogers (4):
+  perf evsel: Add pmu_name helper
+  perf stat: Fix find_stat for mixed legacy/non-legacy events
+  perf record: Skip don't fail for events that don't open
+  perf parse-events: Reapply "Prefer sysfs/JSON hardware events over
+    legacy"
+
+ tools/perf/builtin-record.c    | 22 +++++++---
+ tools/perf/util/evsel.c        | 10 +++++
+ tools/perf/util/evsel.h        |  1 +
+ tools/perf/util/parse-events.c | 26 +++++++++---
+ tools/perf/util/parse-events.l | 76 +++++++++++++++++-----------------
+ tools/perf/util/parse-events.y | 60 ++++++++++++++++++---------
+ tools/perf/util/pmus.c         | 20 +++++++--
+ tools/perf/util/stat-shadow.c  |  3 +-
+ 8 files changed, 145 insertions(+), 73 deletions(-)
+
+-- 
+2.47.0.277.g8800431eea-goog
+
 
