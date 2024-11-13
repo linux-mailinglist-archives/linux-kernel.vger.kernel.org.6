@@ -1,87 +1,120 @@
-Return-Path: <linux-kernel+bounces-407135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 039439C6946
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:30:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED459C6948
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:31:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A9C28415B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:30:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 480C9B2183E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E6617837A;
-	Wed, 13 Nov 2024 06:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0031779B8;
+	Wed, 13 Nov 2024 06:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i5KMiboH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="k/5Kbzh6"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407EC2594;
-	Wed, 13 Nov 2024 06:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BE42594;
+	Wed, 13 Nov 2024 06:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731479439; cv=none; b=f0lpd6ku4D+HweMjwTcjMI6WvHJLDD+BWjx5/CZQKvKOaN1NkpIFOShkduf12gHImHpx9Xm56d6XZAGxbEMv9ON3MtQUO2ug4kov2tPSXvOz9jYd/CPX9DwpBJpq5iEypzGlSk2CrXM/S4cVGDCc2N3aqbpobeDfK8dqs/QTVCM=
+	t=1731479478; cv=none; b=ghEfCuiIwwCKYw95LE3AxZte0LbQL31BxTa1u84VpArTqJLKgwckBdSON8zQN3uzN1pLg7gOToRHFO5GFx7LCe9iuBfZZ+KjGSqKsMm9zUJ5BcEvHlHepJi+zCpxisBguxI3rE20f4tc+p94qFpPfjg09MOGa+ftAP8gu0B9as0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731479439; c=relaxed/simple;
-	bh=hjBKF175D52aKk9ytGRzqV2rOfPcAzfyNpexBN7GjPk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QtrTdrGnso5kB0NJIaxY4N6cHHQxdAFkQ1JnyPe5H/7701dOHB3fZPjTNfgVCHpxiv5NmQdu3FQ/fvTv6Z33R8a5hKuYTpDV0dgX7YVE7n59X9FGg80Re5QC4TrltSt8NOZTYc45irsX/VvR0yTwVYqvcrc3XL7sfBGGnQk2rWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i5KMiboH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06826C4CECD;
-	Wed, 13 Nov 2024 06:30:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731479438;
-	bh=hjBKF175D52aKk9ytGRzqV2rOfPcAzfyNpexBN7GjPk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i5KMiboHxysWri9LAaFlP3XArThrmaoI/MwHm3NtdsduOllcQ1IAZUGnxMKYXOOKC
-	 OqYW4r5aVURO+TOrzfpW4wJwGVAQ9jZlTezTuzNEVcIuZcIhY3UZ4qIuOrYyVoxZWc
-	 veNnPP7Tu0lQk+H/z94BsAmX73cwW7CLOWcxZQYQSsy6jQ7Wk5ND1i8rQ79O3ygKfF
-	 tCC+jjkAv/nR4EnSvW+CeY++wpjrMfzW9m2wcm15Nqb59bE455V51igT8f7mShwPuP
-	 Qny+sL46xA2aHZ2qgcirJtvtU4nWGCgtBdnmWg6GN2yOCJ0odVtga5M9HYaRxh+2oX
-	 CywbdIQTn063g==
-Message-ID: <cad32ff9-fcb0-477e-8a8b-a7d4bb80fdfe@kernel.org>
-Date: Wed, 13 Nov 2024 15:30:36 +0900
+	s=arc-20240116; t=1731479478; c=relaxed/simple;
+	bh=PU2sbjOl5EWH7J0KJO3O3RUdaG/bWTTiizf59Pv0SJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XTt4/QI8DQpobE52LvQlA4/vhlIpIAFkjpf21HS0/XoppESbw8Zae88xIRNoqAgnXxfD1q2NvMY0TRK6oyK1CMkp6XPLVnwvano1Ht8OrTVxeXC8gHV3TgqB33SNS+XQNvTeY+9I1/bE+DJPXA1RFT2goMF0YpoE1PAQB/oTnqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=k/5Kbzh6; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731479470;
+	bh=OoS69MU3DMTdaQgGvV5TGVcPeN/j2LCXXmlxxuoANbY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=k/5Kbzh68uEE6LITeyE1QhQghMG5oSqgNN0dO9zS4DcyW7eTSELCndSBj6UnVDggX
+	 3565CPz3q1lf3+GhTN2ch79OnsPla194Q2YMeNjqug7vdFFofuI8Gp4ve42RjF1w2P
+	 pgOIJ9l0o329gT5b4ti0b4GASdP0m7vvYgGRW6m17A8FVrKYGDUOllow3AX5KK2Hrx
+	 uqEcm8111CQjOMQ2rqgdvnz72WhAbrOfBNuwtx0PWdLauKNkBWIUqSTLrz0u+FlGY/
+	 7hdCXKoM/mo0HfgnFt5wLluoAM8+Q0I51rMqq4UdfOh3C3SeNUgtxjDKBwp2CSCpvJ
+	 NgiGxzZl3CJnA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XpD255505z4x3q;
+	Wed, 13 Nov 2024 17:31:09 +1100 (AEDT)
+Date: Wed, 13 Nov 2024 17:31:11 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warnings after merge of the sound tree
+Message-ID: <20241113173111.16c0aecc@canb.auug.org.au>
+In-Reply-To: <20241028193731.4b0c3788@canb.auug.org.au>
+References: <20241028193731.4b0c3788@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] pinctrl: k210: Undef K210_PC_DEFAULT
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: linus.walleij@linaro.org, linux-riscv@lists.infradead.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241113060950.5247-1-zhangjiao2@cmss.chinamobile.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20241113060950.5247-1-zhangjiao2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/hdFZXAEtH+Vx2tlXuYmGSq6";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 11/13/24 15:09, zhangjiao2 wrote:
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> 
-> When the temporary macro K210_PC_DEFAULT is no need anymore,
+--Sig_/hdFZXAEtH+Vx2tlXuYmGSq6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-s/no need/not needed
+Hi all,
 
-> better use its name in the #undef statement instead of
+On Mon, 28 Oct 2024 19:37:31 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>=20
+> After merging the sound tree, today's linux-next build (htmldocs)
+> produced these warnings:
+>=20
+> include/sound/compress_driver.h:176: warning: Function parameter or struc=
+t member 'task_create' not described in 'snd_compr_ops'
+> include/sound/compress_driver.h:176: warning: Function parameter or struc=
+t member 'task_start' not described in 'snd_compr_ops'
+> include/sound/compress_driver.h:176: warning: Function parameter or struc=
+t member 'task_stop' not described in 'snd_compr_ops'
+> include/sound/compress_driver.h:176: warning: Function parameter or struc=
+t member 'task_free' not described in 'snd_compr_ops'
+> include/uapi/sound/compress_offload.h:151: warning: Function parameter or=
+ struct member 'reserved' not described in 'snd_compr_task'
+> include/uapi/sound/compress_offload.h:180: warning: Function parameter or=
+ struct member 'reserved' not described in 'snd_compr_task_status'
+>=20
+> Introduced by commit
+>=20
+>   04177158cf98 ("ALSA: compress_offload: introduce accel operation mode")
 
-s/better use/use
+I am still seeing these warnings.
 
-> the incorrect "DEFAULT" name.
-> 
-> Fixes: d4c34d09ab03 ("pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver")
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+--=20
+Cheers,
+Stephen Rothwell
 
-With the typos fixed,
+--Sig_/hdFZXAEtH+Vx2tlXuYmGSq6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Damien Le Moal
-Western Digital Research
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc0R68ACgkQAVBC80lX
+0GyckAf7BQ5epruuhp2my1MiwVdw0I2OQKAyxm2vG27I/Zu9I7Q8MT99t+qHHXn4
+JxslW4a9IxOUZRoa+P0sbWSjHaD47KKT9xy0TWX6hYC5vtxsEo4adr5z54u9Ijoe
+5/5iysDnUhNmYs+n6IqjJI9Hd2NTHrjZGH0WTBqVrOzqxcshJh8Gp0rSQaSeYPCv
+2/qDmSCxHhBPS4a6w5bK7ktRRaRmV8ODxNF9g4Hc6vBr0z+i53Aj3WKHmj3FCOWc
+8bCDc4HCVffaHcYVy5vXFWdUBN2eYYfz5Sq7x9xojZhQLvc2KuVN593OmpAn/dv1
+LzL6jW3xWMI84e3uHWIv0+dKe7HvtQ==
+=SFiR
+-----END PGP SIGNATURE-----
+
+--Sig_/hdFZXAEtH+Vx2tlXuYmGSq6--
 
