@@ -1,211 +1,181 @@
-Return-Path: <linux-kernel+bounces-407801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 507499C7488
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:38:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A6C9C759C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10B4A282042
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:38:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B1E2B23E23
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20143200CBE;
-	Wed, 13 Nov 2024 14:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KUCIX847";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lwFFRyOU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KUCIX847";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lwFFRyOU"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8333015A848;
+	Wed, 13 Nov 2024 14:39:10 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD00C1FF7A4;
-	Wed, 13 Nov 2024 14:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CB7208A7
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731508613; cv=none; b=Am1ii7w8BEjpOZ9kGvhe+XFojvTHoSpH1uQFlXOZ+5eO7hFysLThDi49RBf6t7QccN4ToJuqHuNklE1mannaI9aWBYD6b5/Nl83yR/rFSCBRZyuhlLkEaObcgSmWmfxuQJU5fAl8SrZjTuVi1zrGfQKbi920qT2G6Gx/Fi/RNKw=
+	t=1731508750; cv=none; b=sCSVGFTlGXcrJR4i7uXiqy4kPxb8rql0dWD+4vlBtIvIlx6KwHvenX6KeQzqNFqVyh4WNlK8cl004u8S8lSqxhattzhTyFbJsI42b97ksJwUjnpxPYA7v3/pT0eehdObG2H8b6Rm2shWkxeQlPVRw+JIxE18PXo8ly3a9S9XZjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731508613; c=relaxed/simple;
-	bh=Ws6Qc4ADw/3aDOrzbSyVVczBRIe+7o/PF5lH4I7hlNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Owzfw8nDr1kBsVeagMiY31nCLuPDv66LF3h5qbIr4jsTdL8jThXc5DHnof8RrX0/TGU3DZrSxZHIwdkBuX2xKA8DqNGpC6KWHEc7E0Rf/izlNLjpwly0vCRl23OdItu8lCjbuIL1b+i7TeZsoqGvry7jZh3s49LbInMixltq2Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KUCIX847; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lwFFRyOU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KUCIX847; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lwFFRyOU; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D8EC61F7B8;
-	Wed, 13 Nov 2024 14:36:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731508609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MHRfzyO7OCkN7ImdtoMw8oxijZxAWv3a9uKIm7J/ERI=;
-	b=KUCIX847MVA8UNvP7sVf+dfsehKOz8cK7o+xgM/USQSpICBlOBEP4UIqDoDmFY/R9tkynq
-	mrBKve7VIrPLlNCjSxeaEgeRfOr1ID/gqAGaJEz+1+lbGhcPaHUVGtzdkkxT+Jon3jrtAy
-	7y84OK9nYyS7yznmyMH6fU7Pht3vbGQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731508609;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MHRfzyO7OCkN7ImdtoMw8oxijZxAWv3a9uKIm7J/ERI=;
-	b=lwFFRyOUTLBtLHTqGQ4hVwZMAnd8J0/bwzZf9rkUVAOiKM6x+Ldlp5dCja4JcBSStR7oQx
-	Ae2t/kAEswrYB5BA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731508609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MHRfzyO7OCkN7ImdtoMw8oxijZxAWv3a9uKIm7J/ERI=;
-	b=KUCIX847MVA8UNvP7sVf+dfsehKOz8cK7o+xgM/USQSpICBlOBEP4UIqDoDmFY/R9tkynq
-	mrBKve7VIrPLlNCjSxeaEgeRfOr1ID/gqAGaJEz+1+lbGhcPaHUVGtzdkkxT+Jon3jrtAy
-	7y84OK9nYyS7yznmyMH6fU7Pht3vbGQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731508609;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MHRfzyO7OCkN7ImdtoMw8oxijZxAWv3a9uKIm7J/ERI=;
-	b=lwFFRyOUTLBtLHTqGQ4hVwZMAnd8J0/bwzZf9rkUVAOiKM6x+Ldlp5dCja4JcBSStR7oQx
-	Ae2t/kAEswrYB5BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C430813A6E;
-	Wed, 13 Nov 2024 14:36:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WFmWL4G5NGepeAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 13 Nov 2024 14:36:49 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6F03BA08D0; Wed, 13 Nov 2024 15:36:45 +0100 (CET)
-Date: Wed, 13 Nov 2024 15:36:45 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Josef Bacik <josef@toxicpanda.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] fs: reduce pointer chasing in is_mgtime() test
-Message-ID: <20241113143645.45652s6afeg3kdmt@quack3>
-References: <20241113-mgtime-v1-1-84e256980e11@kernel.org>
+	s=arc-20240116; t=1731508750; c=relaxed/simple;
+	bh=CL6bAueQXedVclLmLJ4tmQmg6rJTXuZVJb8gz1HGzQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i/Z7E6K5rasUFlyXIIT4ZzhHpWZX1vXjKxjEajKQrhZuEX0JpaIcU6tcFWkvYw4Ad6lS5mlEOT/zmXv5kTHptz+ovNjcMccear5XU2fBt7yendgsjpYX2/HV9Jqu144QA7/43wgbgoKHSjJwYqn2HbL/bIfHmDkr8V7aAE7QIJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tBEVm-000000008WS-2Xem;
+	Wed, 13 Nov 2024 09:38:26 -0500
+Date: Wed, 13 Nov 2024 09:38:26 -0500
+From: Rik van Riel <riel@surriel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+ luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+ mingo@redhat.com, x86@kernel.org, kernel-team@meta.com, hpa@zytor.com,
+ bigeasy@linutronix.de
+Subject: Re: [PATCh 0/3] x86,tlb: context switch optimizations
+Message-ID: <20241113093826.667c4918@imladris.surriel.com>
+In-Reply-To: <20241113095550.GBZzR3pg-RhJKPDazS@fat_crate.local>
+References: <20241109003727.3958374-1-riel@surriel.com>
+	<20241113095550.GBZzR3pg-RhJKPDazS@fat_crate.local>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113-mgtime-v1-1-84e256980e11@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+Sender: riel@surriel.com
 
-On Wed 13-11-24 09:17:51, Jeff Layton wrote:
-> The is_mgtime test checks whether the FS_MGTIME flag is set in the
-> fstype. To get there from the inode though, we have to dereference 3
-> pointers.
-> 
-> Add a new IOP_MGTIME flag, and have inode_init_always() set that flag
-> when the fstype flag is set. Then, make is_mgtime test for IOP_MGTIME
-> instead.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Wed, 13 Nov 2024 10:55:50 +0100
+Borislav Petkov <bp@alien8.de> wrote:
+On Fri, Nov 08, 2024 at 07:27:47PM -0500, Rik van Riel wrote:
+> > While profiling switch_mm_irqs_off with several workloads,
+> > it appears there are two hot spots that probably don't need
+> > to be there.
+>=20
+> One of those three is causing the below here, zapping them from tip.
+>=20
 
-I guess this makes sense. I'd say inode->i_sb is likely in cache anyway by
-the time we get to updating inode timestamps but the sb->s_type->fs_flags
-dereferences are likely cache cold. Feel free to add:
+This is interesting, and unexpected.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> [    3.186469] ------------[ cut here ]------------
+> [    3.186469] WARNING: CPU: 16 PID: 97 at kernel/smp.c:807
+> smp_call_function_many_cond+0x188/0x720
 
-								Honza
+This is the lockdep_assert_irqs_enabled() from this branch:
 
-> ---
-> I had always had a little concern around the amount of pointer chasing
-> in this helper. Given the discussion around Josef's fsnotify patches, I
-> figured I'd draft up a patch to cut that down.
-> 
-> Sending this as an RFC since we're getting close to the end of the merge
-> window and I haven't done any performance testing with this.  I think
-> it's a reasonable thing to consider doing though, given how hot the
-> write() codepaths can be.
-> ---
->  fs/inode.c         | 2 ++
->  include/linux/fs.h | 3 ++-
->  2 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 838be0b49a63bd8d5700db0e6103c47e251793c3..70a2f8c717e063752a0b87c6eb27cde7a18d6879 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -243,6 +243,8 @@ int inode_init_always_gfp(struct super_block *sb, struct inode *inode, gfp_t gfp
->  	inode->i_opflags = 0;
->  	if (sb->s_xattr)
->  		inode->i_opflags |= IOP_XATTR;
-> +	if (sb->s_type->fs_flags & FS_MGTIME)
-> +		inode->i_opflags |= IOP_MGTIME;
->  	i_uid_write(inode, 0);
->  	i_gid_write(inode, 0);
->  	atomic_set(&inode->i_writecount, 0);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index aa37083436096df9969d2f63f6ec4d1dc8b260d2..d32c6f6298b17c44ff22d922516028da31cec14d 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -623,6 +623,7 @@ is_uncached_acl(struct posix_acl *acl)
->  #define IOP_NOFOLLOW	0x0004
->  #define IOP_XATTR	0x0008
->  #define IOP_DEFAULT_READLINK	0x0010
-> +#define IOP_MGTIME	0x0020
->  
->  /*
->   * Keep mostly read-only and often accessed (especially for
-> @@ -2581,7 +2582,7 @@ struct file_system_type {
->   */
->  static inline bool is_mgtime(const struct inode *inode)
->  {
-> -	return inode->i_sb->s_type->fs_flags & FS_MGTIME;
-> +	return inode->i_opflags & IOP_MGTIME;
->  }
->  
->  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
-> 
-> ---
-> base-commit: 80ce1b3dc72ceab16a967e2aa222c5cc06ad6042
-> change-id: 20241113-mgtime-9aad7b90c64a
-> 
-> Best regards,
-> -- 
-> Jeff Layton <jlayton@kernel.org>
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+        if (cpu_online(this_cpu) && !oops_in_progress &&
+            !early_boot_irqs_disabled)
+                lockdep_assert_irqs_enabled();
+
+> [    3.186469] Call Trace:
+> [    3.186469]  <TASK>
+> [    3.186469]  on_each_cpu_cond_mask+0x50/0x90
+> [    3.186469]  flush_tlb_mm_range+0x1a8/0x1f0
+> [    3.186469]  __text_poke+0x366/0x5d0
+
+... and sure enough, it looks like __text_poke() calls
+flush_tlb_mm_range() with IRQs disabled!
+
+> [    3.186469]  text_poke_bp_batch+0xa1/0x3d0
+> [    3.186469]  text_poke_finish+0x1b/0x30
+> [    3.186469]  arch_jump_label_transform_apply+0x18/0x30
+> [    3.186469]  static_key_slow_inc_cpuslocked+0x55/0xa0
+...
+
+I have no good explanation for why that lockdep_assert_irqs_enabled()
+would not be firing without my patches applied.
+
+We obviously should not be sending out any IPIs with IRQs disabled.
+
+However, __text_poke has been sending IPIs with interrupts disabled
+for 4 years now! No wonder we see deadlocks involving __text_poke
+on a semi-regular basis.
+
+Should we move the local_irq_restore() in __text_poke() up a few lines,
+like in the patch below?
+
+Alternatively, should we explicitly clear the mm_cpumask in unuse_temporary=
+_mm,
+to make sure that mm never has any bits set in mm_cpumask?
+
+Or, since we do not flush the TLB for the poking_mm until AFTER we have swi=
+tched
+back to the prev mm, should we simply always switch to the poking_mm in a w=
+ay
+that involves flushing the TLB? That way we won't even have to flush the en=
+try
+after unuse...
+
+What is the best approach here?
+---8<---
+=46rom a2e7c517bbd2cf108fc14c51449bf8e53e314b53 Mon Sep 17 00:00:00 2001
+From: Rik van Riel <riel@surriel.com>
+Date: Wed, 13 Nov 2024 09:19:39 -0500
+Subject: [PATCH] x86,alternatives: re-enable interrupts before sending TLB =
+ flush IPI
+
+__text_poke() calls flush_tlb_mm_range() to flush the mapping of
+the text poke address. However, it does so with interrupts disabled,
+which can cause a deadlock.
+
+We do occasionally observe deadlocks involving __text_poke(), but
+not frequently enough to spend much time debugging them.
+
+Borislav triggered this bug while testing a different patch, which
+lazily clears bits from the mm_cpumask, resulting in more bits being
+set when __text_poke() calls flush_tlb_mm_range(), which in turn
+triggered the lockdep_assert_irqs_enabled() in smp_call_function_many_cond(=
+).
+
+Avoid sending IPIs with IRQs disabled by re-enabling IRQs earlier.
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Reported-by: Borislav Petkov <bp@alien8.de>
+Cc: stable@kernel.org
+Fixes: 7cf494270424 ("x86: expand irq-off region in text_poke()")
+---
+ arch/x86/kernel/alternative.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index d17518ca19b8..f71d84249f6e 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -1940,6 +1940,9 @@ static void *__text_poke(text_poke_f func, void *addr=
+, const void *src, size_t l
+ 	 */
+ 	unuse_temporary_mm(prev);
+=20
++	/* Re-enable interrupts before sending an IPI. */
++	local_irq_restore(flags);
++
+ 	/*
+ 	 * Flushing the TLB might involve IPIs, which would require enabled
+ 	 * IRQs, but not if the mm is not used, as it is in this point.
+@@ -1956,7 +1959,6 @@ static void *__text_poke(text_poke_f func, void *addr=
+, const void *src, size_t l
+ 		BUG_ON(memcmp(addr, src, len));
+ 	}
+=20
+-	local_irq_restore(flags);
+ 	pte_unmap_unlock(ptep, ptl);
+ 	return addr;
+ }
+--=20
+2.45.2
+
+
+
 
