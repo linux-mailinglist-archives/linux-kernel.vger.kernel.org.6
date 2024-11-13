@@ -1,156 +1,170 @@
-Return-Path: <linux-kernel+bounces-407060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB609C680B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:26:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ABB29C6812
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:31:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF9EAB22BAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:26:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1074B282CBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7311632D8;
-	Wed, 13 Nov 2024 04:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1D51632CB;
+	Wed, 13 Nov 2024 04:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="nnsFO2Vx"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UrocXZy9"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43354230984
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 04:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C2D1388
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 04:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731471989; cv=none; b=Gixs+nJogW7ezHIyrqPIsIbICiEM4GWlTQelxrl5+3NQj4zasz0pyA+AqVuZaWlCdUWs40VIkbLlZl6QRMIXRxwCvAk19pk+YMpujRdD4umOUGHIYr8iBYQZyiZwl/+1B/vdyaQG9tURKGaCLaIxU37IirHAVsBvb6G9DHrYN0M=
+	t=1731472261; cv=none; b=W81Geic1+ymZ6I7yZ4/NSBCV2uG+ilJXa70nr4P4ogKfnFk/6y63tm/R34+ipZuqvjstHBKqRNFE0ZGZTK64YXBYzVcMP13L8eRoOpQBsz2MXSGTZhjKUxBdz34eH80wVZO77jNfkgcBqPNYOq5qEHIDvfPwNg6b+X4NR8+kGaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731471989; c=relaxed/simple;
-	bh=jfo2etkY5ODynHhNNklohLcAfWWfA1mFnl8bitm5ppI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sFw7WLTSFqm33Tl3mALA1v+4nTBaz1CdiZ7wHhTDW+/9z477BeEL/zGNpGAdp0qiuA6ur96iUb5Rw48HF4Lyw9NBjzDhkmNGZPgonUDZkK8gfhFg5/mjkkXSV8Sc1QRYVNRdUsFqRF9fmNBjPJy/YcQrytFXmlXcoHWhWfUAaT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=nnsFO2Vx; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 6a7950e4a17711ef99858b75a2457dd9-20241113
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=Emxr/ZModhTk+YBu/LrGLB2BvoOFjQnlSY8/C8ehCuo=;
-	b=nnsFO2VxDQY2TcUfkhPhCszMgDlTY0INZqJUEI4ncWjBTPnF95Qa9kMmfQS2l7WsFbIHF+YD9fGa1rg3DHXjpJngJ2b59OUVL2aBYVvZi+R/P3vmrSWP9f1dkaFOY1XCgnhEnshxJmne6WNn0ve1IQilHNjMhiMD9DLP4DQZNZg=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:7ef0fb64-62d3-4b71-811d-044433a20e55,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:4ea8101c-4f51-4e1d-bb6a-1fd98b6b19d2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 6a7950e4a17711ef99858b75a2457dd9-20241113
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
-	(envelope-from <qun-wei.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 120897227; Wed, 13 Nov 2024 12:26:13 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 12 Nov 2024 20:26:11 -0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 13 Nov 2024 12:26:11 +0800
-From: Qun-Wei Lin <qun-wei.lin@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Shakeel Butt
-	<shakeel.butt@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, Kent
- Overstreet <kent.overstreet@linux.dev>, Pasha Tatashin
-	<pasha.tatashin@soleen.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <catalin.marinas@arm.com>, Casper Li
-	<casper.li@mediatek.com>, Chinwen Chang <chinwen.chang@mediatek.com>, Andrew
- Yang <andrew.yang@mediatek.com>, Elena Yu <elena.yu@mediatek.com>,
-	<wsd_upstream@mediatek.com>, Qun-Wei Lin <qun-wei.lin@mediatek.com>
-Subject: [PATCH] sched/task_stack: Fix object_is_on_stack() for KASAN tagged pointers
-Date: Wed, 13 Nov 2024 12:25:43 +0800
-Message-ID: <20241113042544.19095-1-qun-wei.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1731472261; c=relaxed/simple;
+	bh=oZDQTJLtJcHCejpZA3+0nESJjE3xAAyfxfgTevbidls=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l6dB65nbC0dQwUTXn4HxH1BN1oDU4G6N9qyCR41qLdXIjX+9pd1LcL4tTT/ketjZfttzybM27La09LWf0bT3rMUS7+XmHBEAs6VUXvCWAqNdhBAfy6Qp1iPkaB3CkB2TNgqVTWsrOfyzXTimX/zYVl9ZKiByw+mY73fBIuaaSo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UrocXZy9; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20ce5e3b116so57349425ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 20:31:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1731472260; x=1732077060; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ln6qGplbSMy3aFazEp2e6kKmp/jRFWyhr19Z464DDf4=;
+        b=UrocXZy96BxDp32jQ5GuXR8mjxhagqCD7wuN7NmbNgaDPksb64/oJyML0Tucx339r9
+         TGglarUzWll3mDkqj21/ypKiEM7ok9419DNy8BomCN9pHEX85DiO0J44xXk8q16SlfWV
+         CUqO9uelgSe/hpQ4KqVemZSisY/KhyJiifS8Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731472260; x=1732077060;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ln6qGplbSMy3aFazEp2e6kKmp/jRFWyhr19Z464DDf4=;
+        b=sxU/GQ+/D52mBLikIJn5r9Lco+rihSndTvBxDgEYj5YhU+XYOE9QhpMZ0FwhaNCWlC
+         dGX9HxKMz3G8fCPmolXpB6hENl4wZSAiXc/ALYjvEa8u2x1oovlGJ8Ml12uLlssieGUn
+         uHXWbT8FYV75lTKyMlKFNncDJinXD7fjnw56VRNRFq0ImBtQ/Lss7RbyKItTLIcGXurb
+         XRj2a25PeoyxXn7Ni+vf1CoNaii3vPDzTC26IIqHTGQO4R/WvI7olz9MDrtjPm0kbecm
+         XWNphk9XBWImnW2j9mpgCDtA2dCmQCBhVfz03UwogdljzvRggGgdCEuyCVVp/lU05n3X
+         YwIQ==
+X-Gm-Message-State: AOJu0YxtNXIZlq+eDKmhxrfpbi2mw0ggfoeD7724kDt61V+V0bkxPX7C
+	Q2eKmYRPutuj+j9Xtf61joguG6ERLkxVa3d93QffLOi374HkoiwMJ/eputMPrg==
+X-Google-Smtp-Source: AGHT+IFrcUJFMmWGjyE88CyyZaRPZkAHL55ZRqVbykkukt+u8VXds3Fk/ZCP+ccIo+F2IAmytEWvMw==
+X-Received: by 2002:a17:90b:4b88:b0:2e5:5e55:7f1b with SMTP id 98e67ed59e1d1-2e9b16e1e82mr25737759a91.4.1731472259625;
+        Tue, 12 Nov 2024 20:30:59 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:50c:65db:bb29:3cca])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2e9f3ea5742sm455439a91.4.2024.11.12.20.30.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 20:30:59 -0800 (PST)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jan Kara <jack@suse.cz>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH 5.15] udf: Allocate name buffer in directory iterator on heap
+Date: Wed, 13 Nov 2024 13:30:35 +0900
+Message-ID: <20241113043050.1975303-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Transfer-Encoding: 8bit
 
-When CONFIG_KASAN_SW_TAGS and CONFIG_KASAN_STACK are enabled, the
-object_is_on_stack() function may produce incorrect results due to the
-presence of tags in the obj pointer, while the stack pointer does not
-have tags. This discrepancy can lead to incorrect stack object detection
-and subsequently trigger warnings if CONFIG_DEBUG_OBJECTS is also
-enabled.
+From: Jan Kara <jack@suse.cz>
 
-Example of the warning:
+[ Upstream commit 0aba4860b0d0216a1a300484ff536171894d49d8 ]
 
-ODEBUG: object 3eff800082ea7bb0 is NOT on stack ffff800082ea0000, but annotated.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at lib/debugobjects.c:557 __debug_object_init+0x330/0x364
-Modules linked in:
-CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc5 #4
-Hardware name: linux,dummy-virt (DT)
-pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __debug_object_init+0x330/0x364
-lr : __debug_object_init+0x330/0x364
-sp : ffff800082ea7b40
-x29: ffff800082ea7b40 x28: 98ff0000c0164518 x27: 98ff0000c0164534
-x26: ffff800082d93ec8 x25: 0000000000000001 x24: 1cff0000c00172a0
-x23: 0000000000000000 x22: ffff800082d93ed0 x21: ffff800081a24418
-x20: 3eff800082ea7bb0 x19: efff800000000000 x18: 0000000000000000
-x17: 00000000000000ff x16: 0000000000000047 x15: 206b63617473206e
-x14: 0000000000000018 x13: ffff800082ea7780 x12: 0ffff800082ea78e
-x11: 0ffff800082ea790 x10: 0ffff800082ea79d x9 : 34d77febe173e800
-x8 : 34d77febe173e800 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : feff800082ea74b8 x4 : ffff800082870a90 x3 : ffff80008018d3c4
-x2 : 0000000000000001 x1 : ffff800082858810 x0 : 0000000000000050
-Call trace:
- __debug_object_init+0x330/0x364
- debug_object_init_on_stack+0x30/0x3c
- schedule_hrtimeout_range_clock+0xac/0x26c
- schedule_hrtimeout+0x1c/0x30
- wait_task_inactive+0x1d4/0x25c
- kthread_bind_mask+0x28/0x98
- init_rescuer+0x1e8/0x280
- workqueue_init+0x1a0/0x3cc
- kernel_init_freeable+0x118/0x200
- kernel_init+0x28/0x1f0
- ret_from_fork+0x10/0x20
----[ end trace 0000000000000000 ]---
-ODEBUG: object 3eff800082ea7bb0 is NOT on stack ffff800082ea0000, but annotated.
-------------[ cut here ]------------
+Currently we allocate name buffer in directory iterators (struct
+udf_fileident_iter) on stack. These structures are relatively large
+(some 360 bytes on 64-bit architectures). For udf_rename() which needs
+to keep three of these structures in parallel the stack usage becomes
+rather heavy - 1536 bytes in total. Allocate the name buffer in the
+iterator from heap to avoid excessive stack usage.
 
-Signed-off-by: Qun-Wei Lin <qun-wei.lin@mediatek.com>
+Link: https://lore.kernel.org/all/202212200558.lK9x1KW0-lkp@intel.com
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- include/linux/sched/task_stack.h | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/udf/directory.c | 23 +++++++++++++++--------
+ fs/udf/udfdecl.h   |  2 +-
+ 2 files changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
-index bf10bdb487dd..6c2fef89a4fd 100644
---- a/include/linux/sched/task_stack.h
-+++ b/include/linux/sched/task_stack.h
-@@ -9,6 +9,7 @@
- #include <linux/sched.h>
- #include <linux/magic.h>
- #include <linux/refcount.h>
-+#include <linux/kasan.h>
+diff --git a/fs/udf/directory.c b/fs/udf/directory.c
+index e7e8b30876d9..a4c91905b033 100644
+--- a/fs/udf/directory.c
++++ b/fs/udf/directory.c
+@@ -248,9 +248,14 @@ int udf_fiiter_init(struct udf_fileident_iter *iter, struct inode *dir,
+ 	iter->elen = 0;
+ 	iter->epos.bh = NULL;
+ 	iter->name = NULL;
++	iter->namebuf = kmalloc(UDF_NAME_LEN_CS0, GFP_KERNEL);
++	if (!iter->namebuf)
++		return -ENOMEM;
  
- #ifdef CONFIG_THREAD_INFO_IN_TASK
+-	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB)
+-		return udf_copy_fi(iter);
++	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB) {
++		err = udf_copy_fi(iter);
++		goto out;
++	}
  
-@@ -89,6 +90,7 @@ static inline int object_is_on_stack(const void *obj)
- {
- 	void *stack = task_stack_page(current);
- 
-+	obj = kasan_reset_tag(obj);
- 	return (obj >= stack) && (obj < (stack + THREAD_SIZE));
+ 	if (inode_bmap(dir, iter->pos >> dir->i_blkbits, &iter->epos,
+ 		       &iter->eloc, &iter->elen, &iter->loffset) !=
+@@ -260,17 +265,17 @@ int udf_fiiter_init(struct udf_fileident_iter *iter, struct inode *dir,
+ 		udf_err(dir->i_sb,
+ 			"position %llu not allocated in directory (ino %lu)\n",
+ 			(unsigned long long)pos, dir->i_ino);
+-		return -EFSCORRUPTED;
++		err = -EFSCORRUPTED;
++		goto out;
+ 	}
+ 	err = udf_fiiter_load_bhs(iter);
+ 	if (err < 0)
+-		return err;
++		goto out;
+ 	err = udf_copy_fi(iter);
+-	if (err < 0) {
++out:
++	if (err < 0)
+ 		udf_fiiter_release(iter);
+-		return err;
+-	}
+-	return 0;
++	return err;
  }
  
+ int udf_fiiter_advance(struct udf_fileident_iter *iter)
+@@ -307,6 +312,8 @@ void udf_fiiter_release(struct udf_fileident_iter *iter)
+ 	brelse(iter->bh[0]);
+ 	brelse(iter->bh[1]);
+ 	iter->bh[0] = iter->bh[1] = NULL;
++	kfree(iter->namebuf);
++	iter->namebuf = NULL;
+ }
+ 
+ static void udf_copy_to_bufs(void *buf1, int len1, void *buf2, int len2,
+diff --git a/fs/udf/udfdecl.h b/fs/udf/udfdecl.h
+index f764b4d15094..d35aa42bb577 100644
+--- a/fs/udf/udfdecl.h
++++ b/fs/udf/udfdecl.h
+@@ -99,7 +99,7 @@ struct udf_fileident_iter {
+ 	struct extent_position epos;	/* Position after the above extent */
+ 	struct fileIdentDesc fi;	/* Copied directory entry */
+ 	uint8_t *name;			/* Pointer to entry name */
+-	uint8_t namebuf[UDF_NAME_LEN_CS0]; /* Storage for entry name in case
++	uint8_t *namebuf;		/* Storage for entry name in case
+ 					 * the name is split between two blocks
+ 					 */
+ };
 -- 
-2.45.2
+2.47.0.277.g8800431eea-goog
 
 
