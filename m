@@ -1,128 +1,157 @@
-Return-Path: <linux-kernel+bounces-407291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C999C6B6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:26:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A779C6B6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:26:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1291C282363
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:25:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47173281D37
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBCA1F77B9;
-	Wed, 13 Nov 2024 09:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3F41F77BA;
+	Wed, 13 Nov 2024 09:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZqmZO5Rs"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cFQDw9qZ"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E328B17CA1F;
-	Wed, 13 Nov 2024 09:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C4B17CA1F;
+	Wed, 13 Nov 2024 09:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731489952; cv=none; b=L0gtsgQhe6cywtbtFvfPvbOK5yH3hu/Cq8IO/dNFvPYJm8xObeGYtmydHGzC6MdOIrJ5q8XJO9Uox29/+ZkE1TyywmxZyfJHbgq/L7CqaGtmcN/hnF+WB3AsTFXP/HQHPa8327750U0bniIZH7NuM7NPLh37FiY/axpBkoezFSM=
+	t=1731489996; cv=none; b=Jr8MTZrUQAw4/Vc9bqcoNv6KRnmBmBe3IyZ2Qt2KTpuKpf7/PFpoDN8xe0+G86ccpDa8jXMHf+QjCzdrZVUQrkvpWG25HrmyV6ZKzmLIQwOvR0N4z/3MTMSkJm1AEHKty2zXCTDYJ76qOXGyc8703HLlYe2i9EnAUFVxyXvxB8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731489952; c=relaxed/simple;
-	bh=KvrqYJJC3Sns7wN5xfHc67yfa6zJilW1pZURwkPXoKo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=imaLxxMf8Jo/fWcZbLEvsVTNlwJmUUNMe4oZyoHlYcMiTBbXJK+8j4ceL2yFvGvsIinl/ooEVPCfOXEdyxHluudRZlPYcYBzvucGPLIWYyc8IwA0MTzj9NOMWIkkGnNISKn/XeOGG4C/j/JIwtubyjjL3NqI5YsbwkMoJjViJqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZqmZO5Rs; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4AD9PSx2002157;
-	Wed, 13 Nov 2024 03:25:28 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1731489928;
-	bh=Hp24S5i2Pk28DZAbH97tK+N9cfrs3EfX5xRbl8zmPhU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ZqmZO5RsBxvo+4qr2dXzEc+EqGPlLi22GFzvqmn6osDgrAY0crlfj48wX9czk0sDv
-	 G0JbqHiSD0copaGVEVzWk8/X/rk2p97KvTf1Mfcx+Jkr+41G8I+v1s3jfHr+Xg5M8q
-	 wMRXkuRHlTOihLVH0q9iOKxcuQ192Th5hFWIjbs8=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AD9PS9c125462
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 13 Nov 2024 03:25:28 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 13
- Nov 2024 03:25:27 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 13 Nov 2024 03:25:27 -0600
-Received: from [172.24.227.220] (chintan-thinkstation-p360-tower.dhcp.ti.com [172.24.227.220])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AD9POIa087478;
-	Wed, 13 Nov 2024 03:25:24 -0600
-Message-ID: <32200597-9c02-4d43-bf91-3fe0b8ce83bc@ti.com>
-Date: Wed, 13 Nov 2024 14:55:23 +0530
+	s=arc-20240116; t=1731489996; c=relaxed/simple;
+	bh=vVClFqqRLgFQB0Fa367MozCa4hMoCb2+z8bMDD6xwjs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rnYWgdYNl4KsTd6WdU7xJkzLAc5fRBsWy1QbVcV3DJQ9njNvCe9OOWe0PaJ4+U33A55DrxkUBmZKw281WZ2H6FlaGixc+9U3F1CH4l10f/brLuD5pkjjBb0EpSfhHpJOoWJOJpFKu65DiEcZixgyzT3TdfRItJqx43bs0IjbLYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cFQDw9qZ; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f2b95775so8436762e87.1;
+        Wed, 13 Nov 2024 01:26:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731489993; x=1732094793; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zcnMsHr2Rd3GgD9bQAjLgi+Zo7asxBiT+Hk7fbTZndQ=;
+        b=cFQDw9qZgvVj0gFgzB4MA2GhZXrI1ekJrI89tsP0SoQkpHj2EzdNKgkVD10Pm2vFhS
+         khowfLUGMNwmPIfe1oAP9yEjKEIeiRifNzu7Ws1GtM12xLIcExnw7Ic0s3hZb68543vZ
+         ntaGFiNHM8voV46HcAxu/YAq1cEcxC8IBt8EN6AlPg232igo7LG5Q5rjK5pZFAPIg8xe
+         6GK6zY2C1l5Rie9guJmm0Z41E57nEEAlco4l7PZswXg/6avmz2AW5RI2yTiVUsMX1hMB
+         BgU7ZMJ2gQ6gKLkKqo7tuGHzlPDrmULN8kbUm9yuN5RZc4CJJXX6Lm3Es7jSiqqadBRX
+         vDag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731489993; x=1732094793;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zcnMsHr2Rd3GgD9bQAjLgi+Zo7asxBiT+Hk7fbTZndQ=;
+        b=IPsH0zN3C4Y65DY+t1m2AVFJ1s7ISITCGVgRzO7IuvyD3WwfiixGleyAzju1l3/QgN
+         9uNobPIRWxsWlaGIk1OucMC2lJaVnRsSPuvImD4pyOM72oWcBZa+uMvXb2SAhcmJaLRm
+         kSBh2b994gUwv5LA0CS3ZDC80WGKSVyEIRtITKyMhB+ZduBbGh5SiEYbWpYLJsSFcp5L
+         Q8bb7qMM4K+uQEgE08AUbaVvctxqMJQS3k7oEM1U48HhSuQp4Zm/yEj21K5JzCGpk9M2
+         1hj73hcAF/TgPCzlVBXmLcxqiHTok01ju7wbMrIS/T6iiw/KDmF2uSj0+lHwraOGdCqs
+         puZg==
+X-Forwarded-Encrypted: i=1; AJvYcCViesXq7K/wfnZHfBfYn6l3EmOWnLo46ZDvxaIHmiqNM98jhtwNW6xEDc43YeEhvta+3ZOR39gLdZA=@vger.kernel.org, AJvYcCWY5KWc74cRPSXuvwlWiEe8m0LzIcl8c1t9stkJ0mlFwBLy8rkVZSo+xtCaFzcUx9NDmWKbjOWIGiMMOxkC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi4oPtTOd5UzQ13HizS8rv1dRL8bXAY7pGEksjXCNcYIbVqJd5
+	T5sYJNlSnSFZjFg6DoUKcoxr0zHs8qZDurt5gzcmmJwrtXzwcjHojp4V5icZ+8Mztuzt2W8BGm6
+	P8+TXM7LiKeR3CxvW+W0LAp/yTzw=
+X-Google-Smtp-Source: AGHT+IHteRyKxZP1u25osdpoLoKarZeBWhAAwa7jAcBbbFNi4c6zDgmKqU9CRtwV4QDfJYaulmQakg2LMh2GRq6MKNw=
+X-Received: by 2002:a05:6512:3b13:b0:53d:a16e:3684 with SMTP id
+ 2adb3069b0e04-53da16e3d22mr1052249e87.41.1731489992427; Wed, 13 Nov 2024
+ 01:26:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-am62x-sk-common: Add bootph-all
- property in cpsw_mac_syscon node
-To: Vignesh Raghavendra <vigneshr@ti.com>, Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Tero
- Kristo <kristo@kernel.org>,
-        Nishanth Menon <nm@ti.com>
-CC: <s-vadapalli@ti.com>, <srk@ti.com>, <danishanwar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20241011110207.600678-1-c-vankar@ti.com>
- <b2dadb0a-fd85-42fc-b340-6c77fe5ded0a@ti.com>
-Content-Language: en-US
-From: Chintan Vankar <c-vankar@ti.com>
-In-Reply-To: <b2dadb0a-fd85-42fc-b340-6c77fe5ded0a@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241113064935.4449-1-victor.duicu@microchip.com>
+In-Reply-To: <20241113064935.4449-1-victor.duicu@microchip.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 13 Nov 2024 11:25:55 +0200
+Message-ID: <CAHp75Vd4a0P3yLMsarcKH=rZ_sBTmJ4Hr545LJCfchCJMyzLUQ@mail.gmail.com>
+Subject: Re: [PATCH v9] iio: adc: pac1921: Add ACPI support to Microchip pac1921
+To: victor.duicu@microchip.com
+Cc: matteomartelli3@gmail.com, jic23@kernel.org, lars@metafoo.de, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	marius.cristea@microchip.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Nov 13, 2024 at 8:51=E2=80=AFAM <victor.duicu@microchip.com> wrote:
+>
+> From: Victor Duicu <victor.duicu@microchip.com>
+>
+> This patch implements ACPI support to Microchip pac1921.
+> The driver can read the shunt resistor value and label from the ACPI tabl=
+e.
+
+...
+
+> +/*
+> + * The maximum acceptable shunt value is 2146.999999 OHM.
+> + * This value, which is below INT_MAX, was chosen in order to
+> + * allow the readings from dt and ACPI to share the same range
+> + * and to simplify the checks.
+> + * With this value the maximum current that can be read is
+> + * 0.1V / 2146.999999OHM =3D 46.576 uA
+> + * If we use INT_MAX the maximum current that can be read is
+> + * 0.1V / 2147.483647OHM =3D 46.566 uA
+> + * The relative error between the two values is
+> + * |(46.566 - 46.576) / 46.566| * 100 =3D 0.0214
+> + */
+> +#define PAC1921_MAX_SHUNT_VALUE_uOHMS          2146999999
+
+You most likely want to have UL/ULL at the end.
+
++ blank line.
+
+> +/* f7bb9932-86ee-4516-a236-7a7a742e55cb */
+> +static const guid_t pac1921_guid =3D
+> +                       GUID_INIT(0xf7bb9932, 0x86ee, 0x4516, 0xa2,
+> +                                 0x36, 0x7a, 0x7a, 0x74, 0x2e, 0x55, 0xc=
+b);
+> +
+
+...
+
+> +       /*
+> +        * This check validates shunt is not zero
+
+the shunt
+
+> +        * and does not surpass maximum value.
+> +        * The check is done before calculating in order
+> +        * to avoid val * MICRO overflowing.
+
+Btw, does this use a full room of 80 characters per line?
+
+> +        */
+
+...
+
+> +       if (ACPI_HANDLE(dev))
+
+Probably we want here to have the same check as other drivers use,
+i.e. is_acpi_node() / is_acpi_device_node() (choose one that suits
+better for you).
+
+> +               ret =3D pac1921_match_acpi_device(indio_dev);
+> +       else
+> +               ret =3D pac1921_parse_of_fw(indio_dev);
+
+...
 
 
+With above being addressed,
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-On 28/10/24 22:06, Vignesh Raghavendra wrote:
-> 
-> 
-> On 11/10/24 16:32, Chintan Vankar wrote:
->> Add bootph-all property in CPSW MAC's eFuse node cpsw_mac_syscon.
->>
-> 
-> Why?
-> 
-> Please make sure commit message is verbose enough to say why the change
-> is needed vs what that change is (latter is obvious lookng at the diff)
-> 
-
-Sure Vignesh. I will update the commit message accordingly in next
-version.
-
->> Signed-off-by: Chintan Vankar <c-vankar@ti.com>
->> ---
->>
->> This patch is based on linux-next tagged next-20241011.
->>
->>   arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
->> index 44ff67b6bf1e..82d34dfb91ed 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
->> @@ -303,6 +303,10 @@ AM62X_MCU_IOPAD(0x028, PIN_OUTPUT, 0) /* (C5/C6) WKUP_UART0_TXD */
->>   	};
->>   };
->>   
->> +&cpsw_mac_syscon {
->> +	bootph-all;
->> +};
->> +
->>   &wkup_uart0 {
->>   	/* WKUP UART0 is used by DM firmware */
->>   	bootph-pre-ram;
-> 
+--=20
+With Best Regards,
+Andy Shevchenko
 
