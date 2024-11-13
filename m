@@ -1,96 +1,111 @@
-Return-Path: <linux-kernel+bounces-407921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DD29C7772
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:41:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD099C7777
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EEF51F2812C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:41:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEA371F21E72
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9F71FCF78;
-	Wed, 13 Nov 2024 15:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4C415E5CA;
+	Wed, 13 Nov 2024 15:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jQ0WWj7C"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Rzsn1zz8"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E9F143744
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE9541C64
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731512187; cv=none; b=pDP40K2ZZ3usMsbNBi0QSdEqTUQtnyLxNSZnBO5pQ2k5Hn3Rcbrvzo/e0zdXPf7nSjUnFCUH6+Jg1e80/OW6p2q8oRvEWBNbFA+iBF4TI47DovKepaxTgFbJ5oz2gOYOLi2CuwjCog5z9uFSn8qXNRnv0ZIsyzY4kNO2JFbhcv4=
+	t=1731512368; cv=none; b=YP+lQPe07K19jQ8d1lIqMRaEJBdZzWswlbFb2VDDLitilSjdBSvj7kYcsb2EyzST9gxRmKv55o10TKMdCFeCClI5+CLqQGVE6pI7oz9AlV336TPGK0YaGCA812buvIBhdezgBZaLYZwNWGqkNXQ4VcUPzeIXOYbCdG6ca+8bX30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731512187; c=relaxed/simple;
-	bh=dCYEEDDPkiMtBUMfjnloUQgcqeC8wQLctWDtAq8oLvQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YgspnAluTgZ61Wn+VnxIw7uVUB7syt4JWS0IsA9pI6YrrDIz0FSAXpw+4PjvHUWVaMLx6WmepBV+Hprci0yhw8cnTZIFXB/dRNan0jflpcA80X7sj/rAceh9iP61VxgePC/KWcH3TRbkv7Hf/CzRT5s41J2KZooNtbrGUx+l5Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jQ0WWj7C; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B911C1C0006;
-	Wed, 13 Nov 2024 15:36:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731512177;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=z1sXmiDDA8YvWTtcm6MHGXPy4k0xRKH62f2iV/I/T0E=;
-	b=jQ0WWj7CMnbIghylRqSzEupF9ObM6na4+KjNdVuMyQsvHSvAhwbSERS64Uw6BK7vqyKhum
-	SZYdg4jsKwzvpWhNJhjzIuoQUqfUkAKXW+WIFppnbzoL+VWwDyup3HxPN6slIMles4okZm
-	USW1OZxd17mYb2g0XRiQTbuGp73BVeWvSScW0Z2rwvXOHRqfGwxwMaAxyPWLuQd3NdE6/7
-	8xVFUqdyMRfYfEz/F7YwG5rbjNFxZlVYN/qu45kISatxwsQMl5n7WpioTvHUIdjR8Xwfk6
-	IsLnXuiaPsW5DFOZVA46rNPi5MZ1v5XfEgHoNfvjx0dUbMTIcrAnE7QqxPZ8RQ==
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
+	s=arc-20240116; t=1731512368; c=relaxed/simple;
+	bh=xAWJcl+eo8fDG63BX3szgOn6IaJOIPMK6Bb4yZDvNEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pmbZo4MYIZB0y1mYlc4ChxSnMflAbjsR+2mq2kkprpw8kYiNK3f7FMM1SwVQu8pVJs0s0PLiGxbofFk8NZ9JBRTp7iGLBpuAYFHgNLwNmAu40cXodmlKYa/2UO3oTIVXe3z/o9hxSK3A6HUrDDh0tFG4iENb/4F7LyFhidfMFnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Rzsn1zz8; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a850270e2so1286995966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:39:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731512366; x=1732117166; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SJEl/Mmjz/g2W7QrHkYPcZb6PPJpxdKufP7Duu2dNVc=;
+        b=Rzsn1zz8D7TT7QX9e9vkHZJOYM3ed/7eoQJjnRVfdvtagzRbeo4Bl8kZIkCcL/kK56
+         uegoCuAFJegeYki9wUYf/Nl+m04rSqQGdXzCSudTarkvkdyLRSyPk2SjkpRx1YE3C7mk
+         1z/1syFsZfV5iz3bLjvTISZmR1KhWK7XFU2bh/hRgDwXPcrs5mFZRFRExrLXsA1YIxaZ
+         PuNmrINyVXifaPhYkfouoswKyJsVSaRz6wImhuAS3ReaqnpJQZ6A5yUl4pRIdC/0+od1
+         waIaa05RA03H6haw29zChn9RF/eF17Ci3A5pyrbLHDNM6z6VzZ7ebcpJaR7d+6DFJpE9
+         fwhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731512366; x=1732117166;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SJEl/Mmjz/g2W7QrHkYPcZb6PPJpxdKufP7Duu2dNVc=;
+        b=PouC6uL67tuspXWgcFDVaiK2f963PUyNcolNkRhKAcPQR3+152d9WRuH/5nDcboBhE
+         fkf+qxd11KsuOVLm0VO7FOlyNEmi2cQgeDEqLph8I/86t791SFa9tJzxZPRk19JbeU3M
+         FibJeZt26rT5vRp3F5C3HqNfzkD0evkMgyFjD9RilpQKpc5M1ErP5k0cJvyYzexKlPFd
+         APsEgWwYAogyrPP6S9YO1OekMc8gPk9PzNTvCdxCpXbitdetak5QZsXg/rdnnDxOSpjO
+         WTZafvTk0Ih7rsN8raH7TQXgi2lHupHt3ifXXe/knSRoWcwl+gYSTOvS6a9+Ux/AKMP4
+         hasA==
+X-Forwarded-Encrypted: i=1; AJvYcCWI09a/OtK9rD7/WN81yuzqUgU7SwS56p7G0lomxu8mC/JMVgEEfKj15EqsYnmMdzodg9L2J9OfIOPTvbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfqjyiavdMiPOy4LCv5GRs44tiFkDHXZh56xJci5qnUuMrGx9I
+	SlSwYWFmbEwHw3DDSHk9rB/uR+49PHW2KqI8f76mGTFdyPUgiY8L4yLV4SM1vWUz5tUbvJH6o4S
+	r
+X-Google-Smtp-Source: AGHT+IEH31trENazh65pWh+DuCi9K649WDgplI3ecb3+way3WoWqkg3GJ5Qx7vBZEHweQ+aIMZ3bWg==
+X-Received: by 2002:a17:907:7e8f:b0:a99:f887:ec09 with SMTP id a640c23a62f3a-a9eeff39e7amr2164151766b.35.1731512365541;
+        Wed, 13 Nov 2024 07:39:25 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:1b75:191:f7eb:da75])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0def8ecsm876882866b.152.2024.11.13.07.39.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 07:39:25 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Andi Shyti <andi.shyti@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Kory Maincent <kory.maincent@bootlin.com>,
-	thomas.petazzoni@bootlin.com,
-	Liam Girdwood <lgirdwood@gmail.com>
-Subject: [PATCH] regulator: core: Fix resolve supply
-Date: Wed, 13 Nov 2024 16:36:14 +0100
-Message-Id: <20241113153614.1755825-1-kory.maincent@bootlin.com>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH] i2c: qup: use generic device property accessors
+Date: Wed, 13 Nov 2024 16:39:23 +0100
+Message-ID: <173151232541.92239.8233789832026323394.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241008160947.81045-1-brgl@bgdev.pl>
+References: <20241008160947.81045-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: kory.maincent@bootlin.com
 
-The regulator should not use the device parent to resolve the regulator
-supply. It fails to resolve the correct supply when the of_node
-variable in the regulator_config structure is not within the parent
-node.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Fixes: 6261b06de565 ("regulator: Defer lookup of supply to regulator_get")
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
 
-It is weird that it wasn't seen before, maybe there was not any case
-were it can't find the supply_name from the parent device.
----
- drivers/regulator/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, 08 Oct 2024 18:09:47 +0200, Bartosz Golaszewski wrote:
+> There's no reason for this driver to use OF-specific property helpers.
+> Drop the last one in favor of the generic variant and no longer include
+> of.h.
+> 
+> 
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 76d3cd5ae6ea..ee5bc070b5bb 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2023,7 +2023,7 @@ static struct regulator_dev *regulator_dev_lookup(struct device *dev,
- static int regulator_resolve_supply(struct regulator_dev *rdev)
- {
- 	struct regulator_dev *r;
--	struct device *dev = rdev->dev.parent;
-+	struct device *dev = &rdev->dev;
- 	struct ww_acquire_ctx ww_ctx;
- 	int ret = 0;
- 
+Applied, to the GPIO tree as the maintainer has been unresposive for two
+months and the change is trivial.
+
+[1/1] i2c: qup: use generic device property accessors
+      commit: 400913bd4edd76ef1775bfd95543846bd6f5ed71
+
+Best regards,
 -- 
-2.34.1
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
