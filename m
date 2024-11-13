@@ -1,178 +1,222 @@
-Return-Path: <linux-kernel+bounces-407582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92FB89C6F39
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:41:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597A09C6F6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:46:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53BFD287B87
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:41:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69EDFB2713E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1403B200B8B;
-	Wed, 13 Nov 2024 12:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DE52003AA;
+	Wed, 13 Nov 2024 12:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KUS02FOu"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LAgrYLFa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DED1DF743
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 12:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386311DF97D
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 12:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731501645; cv=none; b=bjzAiKwGf8I0VtBb476/u68BFZNfAlqLNBOj/917AD3hb8kSz2icsh+///AFZQdY/L5zVmYZ+9aqxBhDcVQWC0uVL98uM5LvNlTUbVS4j+g6C25+/piHsK2mewknU6SPJvseA73a7W2xebHEx1X8ozAnIA2zxFW8sxUu9gOJSf8=
+	t=1731501755; cv=none; b=Q5f3033wY4TbhCFb7xzqecHDatu2YDdoUN8t65/Xl609U/ioVpULECan07Bb/jSZNGGkQrTm0/lDLgdqkxEgSuvetbnEKUubYibA/eV+FGX8jhJ0C8iZzFMj0376v9cAus9U/HG8svf/WtvDaYYtvl8SA04vEJAYi+QA3ovabNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731501645; c=relaxed/simple;
-	bh=C7/U0kgkVdRmfltbICoTH1jF1nneaarbUzuSDywn3gs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fUxowiD2kjXieaXZ2Wqr0xPpz7E0lfqQS9srzozj0C0wtI53QGAneBIn2fMPaepKOULOo1KbsSlZvTqSALyr5VGXFpAEYpAplR4rtMTdhND8uUTsBNf3XGpWvP50mUZiazicBhxOeGpNJhIkclrFuZtJt6OnrA6h1/jQil/dZeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KUS02FOu; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a039511a7so24854566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 04:40:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731501641; x=1732106441; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Q4yAy2wMFv3QmNaNBh+HpCNSzH/IZuAzT2Ere1d8IE=;
-        b=KUS02FOuf052QGi6kO4uhAg+iQUVBRvDtJsiz6v7SZdahMEkA2hqly7/T3EXHKyPtH
-         27oodi/+TCYi+nI+rBzDJ6aCRTkWUITeXFX6wsBoCDhP9JWtTbO0wOk9ayyvH5CEu0hw
-         MwVTpQknS71r/1WRbCwQkM/xF8bgrST+tpmhrNOUdv5BM117kg7xj7/k8Fv7LE1Wn5/9
-         0oqYMZocqh6uwEhxwI9aeg1g09Eze33EPnt8s8Ids+QJZ4qARW7Z3fv377TgFX1ft+j8
-         NYCDnpsM+ZSupJpn5JPTIhaxpghuE9Pj3j029eskGX0v3SqBRy9JDE3fhAyfSADNx9Hd
-         wSZQ==
+	s=arc-20240116; t=1731501755; c=relaxed/simple;
+	bh=5Ui9MCE1qEQAOh4WSjvlu7OY8Q34KrD5J6SmFsm5KGM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=spCsPAFeQgyNMcqqaccuP1FF5Zyjcw+uOAtURtB7Y32JZfgVOztjcGS12AFm1NRWG3MKyFGNJRlA2RLBbTIQNz/fEekrDw+v5BuaZrI2S6XNPyT1SJW1D9DBakjgZO5hvLm2qUf7n2xBzRfCNcCqAWzB/NJ3X1qTlhK/I+xgJUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LAgrYLFa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731501753;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gi/nDuPOQh+kW8YCVePTGgMsqduTQsEMI/h4REBTyU8=;
+	b=LAgrYLFa9w/He11GBOuRyIe9gRLR6HGgEYmiNCnGGck6hdMbjAjkCq3SWfWELAbubFTiB2
+	ZzvzDUL/3EfVfn2kf9k7YhofZNQ3zvW8sKn11cLpqHo3aunoExnrAdOmBI7d/Le6ksEycG
+	RADyIibJ6v4jolntIggwqXxHCWbhn6o=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-215-7iB_CYciO2agHAJoLCec0A-1; Wed, 13 Nov 2024 07:42:31 -0500
+X-MC-Unique: 7iB_CYciO2agHAJoLCec0A-1
+X-Mimecast-MFC-AGG-ID: 7iB_CYciO2agHAJoLCec0A
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d52ca258eso3512396f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 04:42:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731501641; x=1732106441;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Q4yAy2wMFv3QmNaNBh+HpCNSzH/IZuAzT2Ere1d8IE=;
-        b=BTlRaT7HBqP8Em53sLch/Jh2TC4BlSooLlJ/5Cd0d+4FXTSpjZ81tZrg79HDJBgoOk
-         Hvdkx5fUvhr2u2nSy1btsTAz0ycbYGM644IJNm1IokMxvjj81ggnmrBs9TgxF4uOUgnl
-         DtknCc1il2M/8vykn5XVIS0ByhS/ff/JTyfpxu4fVevpt+/gv6rid4e3va7pVih3QMPN
-         apKFRfGxiESQD7cdpS3lFBgxFiWoa4YK5xvkopWmMi7PL/ZQhR6EGncHx0iWq0Me6NwO
-         953vVowazOuwgODB24SGvxiMb6pnvbhCsgGYHeYacVrHmGNJmeLrY9sErUeVvlYDwE7C
-         zwMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcTUF1F7fT99YmXOeAcbQPBdbVO/ciJLF05gESn1Wp3qNzQW0S/CzCjeYQArOMxppBmN83nZLFeOnSS4E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZlIuj5gW9z1y5M33b5yqxq3+zo/IfWOEW2QotukCsVF/OM3H3
-	+4rczq+Vy2LxfMi34HoJrvGnCtI7IrK0IKGkZ9ZJALaeaxn0ttQcLf8H6GRYJBM=
-X-Google-Smtp-Source: AGHT+IEwds+FuFoQ3DTtkRiLVPQwZ1Gfef0GGqF7IdAomHWebbd6rX+YVFq4FDwO4+GGcieYxQRANg==
-X-Received: by 2002:a17:907:7da8:b0:a9a:3dc0:efec with SMTP id a640c23a62f3a-a9eeff38625mr783864266b.7.1731501641518;
-        Wed, 13 Nov 2024 04:40:41 -0800 (PST)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a17678sm857771766b.10.2024.11.13.04.40.40
+        d=1e100.net; s=20230601; t=1731501751; x=1732106551;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gi/nDuPOQh+kW8YCVePTGgMsqduTQsEMI/h4REBTyU8=;
+        b=BS90RredRzxxSqlQCtT472+GhU/CcapuutPKNDT2iX7tMhpm9pkDx7WSViQ6rhE6fT
+         46C240kGwe8dA4yioF6lBiV3/jg1X2SnbhaiO03Jq33x3gEOYN+xTrUFTCc9jrNXUNJY
+         vQonSIHTsQIBMJfxAlaVndI+FSnclJIKj/IXtLvdDb6T4pSJzeC1pI43+E41bQObJjaL
+         st0UDfeXbt0FEuje080xPkYmSbojDUCEE011CA7tkNKAE8puvARuknW+zbzV2l3HU/Ll
+         HrEkDO5LarOkPnYZjIJ1LJJ3dnUT4Ft/+5AnyxXtzf7S4xv40s+w1Aoz2A8Bt3QHZXHj
+         V/Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqQBMGo1ARqLbfntq+hUQ8hlyMU33mgmbD1ms9PCrNRsg5AJQBGmW/KOwV7z8l63f7FNvhhF31ceUL/FQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy69MfyiGRXmR2mQCNKPNjsdc4pt6SNtW5QM2jBPXzvstOWlo+x
+	/GyIwh5SGYWK5VG2uQ3PvD+arpW8FyiZZyTufaVUGqYBRqyGPNnHUiWMDRpdz07oU0DHGdzERUU
+	51QcNC0oRPPDq2agJE8yhT6bmy8IMdfabrrbQ8T89XQTPCjQI7SXOTC4eybeMCQ==
+X-Received: by 2002:a5d:5f53:0:b0:381:f595:fd0a with SMTP id ffacd0b85a97d-3820810ffc0mr4675176f8f.16.1731501750641;
+        Wed, 13 Nov 2024 04:42:30 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEkW+KWr+FGBC4soAeZ9AbHODqoGfzXwj1GlUIlZwp3/7RfEbVzZfIvsQ3hNUEE9XJJckqbgQ==
+X-Received: by 2002:a5d:5f53:0:b0:381:f595:fd0a with SMTP id ffacd0b85a97d-3820810ffc0mr4675138f8f.16.1731501750223;
+        Wed, 13 Nov 2024 04:42:30 -0800 (PST)
+Received: from eisenberg.redhat.com (nat-pool-muc-u.redhat.com. [149.14.88.27])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed99aa18sm18023528f8f.61.2024.11.13.04.42.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 04:40:41 -0800 (PST)
-Date: Wed, 13 Nov 2024 13:40:38 +0100
-From: Petr Tesarik <ptesarik@suse.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Anshuman Khandual
- <anshuman.khandual@arm.com>, Ard Biesheuvel <ardb@kernel.org>, Catalin
- Marinas <catalin.marinas@arm.com>, David Hildenbrand <david@redhat.com>,
- Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
-Message-ID: <20241113134038.5843ab73@mordecai.tesarici.cz>
-In-Reply-To: <20241112115039.41993e4b@mordecai.tesarici.cz>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
-	<20241017142752.17f2c816@mordecai.tesarici.cz>
-	<aa9a7118-3067-448e-aa34-bbc148c921a2@arm.com>
-	<20241111131442.51738a30@mordecai.tesarici.cz>
-	<046ce0ae-b4d5-4dbd-ad9d-eb8de1bba1b8@arm.com>
-	<20241112104544.574dd733@mordecai.tesarici.cz>
-	<5a041e51-a43b-4878-ab68-4757d3141889@arm.com>
-	<20241112115039.41993e4b@mordecai.tesarici.cz>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+        Wed, 13 Nov 2024 04:42:29 -0800 (PST)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Basavaraj Natikar <basavaraj.natikar@amd.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Dubov <oakad@yahoo.com>,
+	Sudarsana Kalluru <skalluru@marvell.com>,
+	Manish Chopra <manishc@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rasesh Mody <rmody@marvell.com>,
+	GR-Linux-NIC-Dev@marvell.com,
+	Igor Mitsyanko <imitsyanko@quantenna.com>,
+	Sergey Matyukevich <geomatsi@gmail.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Sanjay R Mehta <sanju.mehta@amd.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Jon Mason <jdmason@kudzu.us>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Chen Ni <nichen@iscas.ac.cn>,
+	Ricky Wu <ricky_wu@realtek.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Breno Leitao <leitao@debian.org>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mostafa Saleh <smostafa@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Yi Liu <yi.l.liu@intel.com>,
+	Kunwu Chan <chentao@kylinos.cn>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Eric Auger <eric.auger@redhat.com>,
+	Ye Bin <yebin10@huawei.com>
+Cc: linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	ntb@lists.linux.dev,
+	linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH v2 00/11] Remove implicit devres from pci_intx()
+Date: Wed, 13 Nov 2024 13:41:48 +0100
+Message-ID: <20241113124158.22863-2-pstanner@redhat.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 12 Nov 2024 11:50:39 +0100
-Petr Tesarik <ptesarik@suse.com> wrote:
+@Driver-Maintainers: Your driver might be touched by patch "Remove
+devres from pci_intx()". You might want to take a look.
 
-> On Tue, 12 Nov 2024 10:19:34 +0000
-> Ryan Roberts <ryan.roberts@arm.com> wrote:
-> 
-> > On 12/11/2024 09:45, Petr Tesarik wrote:  
-> > > On Mon, 11 Nov 2024 12:25:35 +0000
-> > > Ryan Roberts <ryan.roberts@arm.com> wrote:
-> > >     
-> > >> Hi Petr,
-> > >>
-> > >> On 11/11/2024 12:14, Petr Tesarik wrote:    
-> > >>> Hi Ryan,
-> > >>>
-> > >>> On Thu, 17 Oct 2024 13:32:43 +0100
-> > >>> Ryan Roberts <ryan.roberts@arm.com> wrote:    
-> > >> [...]    
-> > >>> Third, a few micro-benchmarks saw a significant regression.
-> > >>>
-> > >>> Most notably, getenv and getenvT2 tests from libMicro were 18% and 20%
-> > >>> slower with variable page size. I don't know why, but I'm looking into
-> > >>> it. The system() library call was also about 18% slower, but that might
-> > >>> be related.      
-> > >>
-> > >> OK, ouch. I think there are some things we can try to optimize the
-> > >> implementation further. But I'll wait for your analysis before digging myself.    
-> > > 
-> > > This turned out to be a false positive. The way this microbenchmark was
-> > > invoked did not get enough samples, so it was mostly dependent on
-> > > whether caches were hot or cold, and the timing on this specific system
-> > > with the specific sequence of bencnmarks in the suite happens to favour
-> > > my baseline kernel.
-> > > 
-> > > After increasing the batch count, I'm getting pretty much the same
-> > > performance for 6.11 vanilla and patched kernels:
-> > > 
-> > >                         prc thr   usecs/call      samples   errors cnt/samp 
-> > > getenv (baseline)         1   1      0.14975           99        0   100000 
-> > > getenv (patched)          1   1      0.14981           92        0   100000     
-> > 
-> > Oh that's good news! Does this account for all 3 of the above tests (getenv,
-> > getenvT2 and system())?  
-> 
-> It does for getenvT2 (a variant of the test with 2 threads), but not
-> for system. Thanks for asking, I forgot about that one.
-> 
-> I'm getting substantial difference there (+29% on average over 100 runs):
-> 
->                         prc thr   usecs/call      samples   errors cnt/samp  command
-> system (baseline)         1   1   6937.18016          102        0      100     A=$$
-> system (patched)          1   1   8959.48032          102        0      100     A=$$
-> 
-> So, yeah, this should in fact be my priority #1.
+Changes in v2:
+  - Drop pci_intx() deprecation patch.
+  - ata: Add RB from Sergey and Niklas.
+  - wifi: Add AB by Kalle.
+  - Drop INTx deprecation patch
+  - Drop ALSA / hda_intel patch because pci_intx() was removed from
+    there in the meantime.
 
-Further testing reveals the workload is bimodal, that is to say the
-distribution of results has two peaks. The first peak around 3.2 ms
-covers 30% runs, the second peak around 15.7 ms covers 11%. Two per
-cent are faster than the fast peak, 5% are slower than slow peak, the
-rest is distributed almost evenly between them.
+Changes since the RFC [1]:
+  - Add a patch deprecating pci{m}_intx(). (Heiner, Andy, Me)
+  - Add Acked-by's already given.
+  - Export pcim_intx() as a GPL function. (Alex)
+  - Drop patch for rts5280, since this driver will be removed quite
+    soon. (Philipp Hortmann, Greg)
+  - Use early-return in pci_intx_unmanaged() and pci_intx(). (Andy)
 
-100 samples were not sufficient to see this distribution, and it was
-mere bad luck that only the patched kernel originally reported bad
-results. I can now see bad results even with the unpatched kernel.
+Hi all,
 
-In short, I don't think there is a difference in system() performance.
+this series removes a problematic feature from pci_intx(). That function
+sometimes implicitly uses devres for automatic cleanup. We should get
+rid of this implicit behavior.
 
-I will still have a look at dup() and VMA performance, but so far it
-all looks good to me. Good job! ;-)
+To do so, a pci_intx() version that is always-managed, and one that is
+never-managed are provided. Then, all pci_intx() users are ported to the
+version they need. Afterwards, pci_intx() can be cleaned up and the
+users of the never-managed version be ported back to pci_intx().
 
-I will also try running a more complete set of benchmarks during next
-week. That's SUSE Hack Week, and I want to make a PoC for the MM
-changes I proposed at LPC24, so I won't need this Ampere system for
-interactive use.
+This way we'd get this PCI API consistent again.
 
-Petr T
+Patch "Remove devres from pci_intx()" obviously reverts the previous
+patches that made drivers use pci_intx_unmanaged(). But this way it's
+easier to review and approve. It also makes sure that each checked out
+commit should provide correct behavior, not just the entire series as a
+whole.
+
+Merge plan for this is to enter through the PCI tree.
+
+[1] https://lore.kernel.org/all/20241009083519.10088-1-pstanner@redhat.com/
+
+
+Regards,
+P.
+
+
+Philipp Stanner (11):
+  PCI: Prepare removing devres from pci_intx()
+  drivers/xen: Use never-managed version of pci_intx()
+  net/ethernet: Use never-managed version of pci_intx()
+  net/ntb: Use never-managed version of pci_intx()
+  misc: Use never-managed version of pci_intx()
+  vfio/pci: Use never-managed version of pci_intx()
+  PCI: MSI: Use never-managed version of pci_intx()
+  ata: Use always-managed version of pci_intx()
+  wifi: qtnfmac: use always-managed version of pcim_intx()
+  HID: amd_sfh: Use always-managed version of pcim_intx()
+  Remove devres from pci_intx()
+
+ drivers/ata/ahci.c                            |  2 +-
+ drivers/ata/ata_piix.c                        |  2 +-
+ drivers/ata/pata_rdc.c                        |  2 +-
+ drivers/ata/sata_sil24.c                      |  2 +-
+ drivers/ata/sata_sis.c                        |  2 +-
+ drivers/ata/sata_uli.c                        |  2 +-
+ drivers/ata/sata_vsc.c                        |  2 +-
+ drivers/hid/amd-sfh-hid/amd_sfh_pcie.c        |  4 ++--
+ drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c |  2 +-
+ .../wireless/quantenna/qtnfmac/pcie/pcie.c    |  2 +-
+ drivers/pci/devres.c                          | 24 +++----------------
+ drivers/pci/pci.c                             | 16 +++----------
+ include/linux/pci.h                           |  1 +
+ 13 files changed, 18 insertions(+), 45 deletions(-)
+
+-- 
+2.47.0
+
 
