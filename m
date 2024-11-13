@@ -1,102 +1,178 @@
-Return-Path: <linux-kernel+bounces-407643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4623C9C707B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:24:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E4D9C70BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:34:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73842282228
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:24:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1965B23B04
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C211F583A;
-	Wed, 13 Nov 2024 13:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE24D1E1310;
+	Wed, 13 Nov 2024 13:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TvNNgqQA"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G9NWScQ+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4RoD3RD3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39D51EF081
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E417DA7F;
+	Wed, 13 Nov 2024 13:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731504223; cv=none; b=NJ6JL7lrSF/MOrgBPzbVqKMEqQh/RiVv1gCssm5duejc7PB60+1uii9cjDV4Acuk2CKEgLq6qN9SqkSZmXOCgavRbxIODfMV7sevNFln8BBBcXupYK5+JQRriYKpMTBhS3dU8/vuDbKvhLpPwcGFvQ9NwqAjnwRu9SVwJGs/D64=
+	t=1731504220; cv=none; b=C/DPhToQ+jK49bncusT3MbPnmXHn0VBUDcuyczuYxWaSFJYBhfokqaQDM67uHIc/f9NP6qhJNZOgCitGqGcxqp4zS8/HrNRYZk83Hh5wdA9xp3OrOCjT/8Y95hCH4gnVky7IZ9ma2SAsBTl8nUWITamMs7ky5pfxHrqxnXNCJMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731504223; c=relaxed/simple;
-	bh=WuUoL/3Od4PAfLx0IEVL7oxlLvlZraYaALoxt1cPU/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YES9mJDYAxcyVLCs84sY1xMjYvdW69lEsQXPYpB++R0By7eMBu1mGndL4wFJ/RpUyD9NvBOs8l066BN4BWZIRTIC92F1vXHUtY9en8e6mK3Hq3z9+1uFNAUh0PvqQCmq14SaKoDkuqHjk474lrwUAMJidrJfr9YsdT5Gw2Mzijc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TvNNgqQA; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so59774641fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:23:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731504220; x=1732109020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WuUoL/3Od4PAfLx0IEVL7oxlLvlZraYaALoxt1cPU/4=;
-        b=TvNNgqQAom4J+vPDsca//Bm+fkLGbkZ3xHJjdOE/KlnpCRdO1GTpMnzfqCzIBEuQRK
-         JrdzHjlTbPNBg2IeIZYjt7+Unz0hlAkmWavW3pjVOYup5mnM+YH0OLKBckorMM9HGBMZ
-         S18uhbAes37NS+GAX2CkKRqMvXCAYlzVIIr6gfPfcvJKbkCOZfShVJLucHHD5s0RrYz4
-         nQutorefTqs4TqaVkfZ4+Mcv1eqEMhKkOuAB3PzmwZDHH1YLyapZVoc16NVZqSXdINkU
-         Y4jZ1ohmmNAk66wRwz4sx71ZBXFdYb4YazMD6tSjF1+HeVHTiC9esLIDhn1abBMn26AW
-         jHcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731504220; x=1732109020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WuUoL/3Od4PAfLx0IEVL7oxlLvlZraYaALoxt1cPU/4=;
-        b=UsyQK+1GEuWEWq1VQ8ti6pKkefNg+BFgBLunJxj7E5LJiDX84kN+7Yh2o00V16nBAZ
-         JNVnh0YGy4uUy76AcSNVt8ysIBY4I4TV7PJ1ntSdrSbJP3m/kN9ioWj2/xGDwc9edOp0
-         VxhnNwrihkBtoe9rr6vmtrBmiHqdHJ9QE8bdlvN/OaRHQGfsZJG5Zedb47w9VYiWWUAm
-         ntw+2J2g/9vc64JwJjfyLaabmpti+XaaTRAGgCwgcyak4WvwdzRRJZHW7YplpQn0Q8Qw
-         cK02uPBVVssevGiDzDxY4xBOriKzB42GCsh07rsCjjDu3BootPwMvnFzBxPLtdtuENgi
-         H+lw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1P3/SpsZm1foIPx1V4ZQbWKisRgEyyc1pQ9YAH+OzGD+NTzsUtWF8cIvehwENGzynY+oGuTtqCgtMnpI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypOQ3wyDGRT3dSWTmR12TBfLyCza88gj0OtwJir598ELVS0Vqg
-	xX5HPfCcp/jdyPqY/8K1IxyVUpCG6gP3GdhDsABgBquEfzIK1zezYtpq2oW2FP5E5m8gU+BRDR2
-	em/aVek9RZoWIlA4J4ysVPTGsLJYTHxW5L8jV0w==
-X-Google-Smtp-Source: AGHT+IHPQaK5Q2KrP40p6fsjtBW+uQBglC9BCYxI3zoro/0CrtBDXagUb0BV8QyEJHptozHMaCqcNJb9txvKEMn8wa4=
-X-Received: by 2002:a2e:a552:0:b0:2fb:3bc0:9c7c with SMTP id
- 38308e7fff4ca-2ff202e135amr113365511fa.25.1731504220103; Wed, 13 Nov 2024
- 05:23:40 -0800 (PST)
+	s=arc-20240116; t=1731504220; c=relaxed/simple;
+	bh=oJ+wYZpfQraGBqNcl6Q7s6PJOt/vw7COqPrbFQl5D74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JZe0x9gy5HJ8Vi6SPhssaxPm44zaXqgBoUDGRCSB5q4Fx565+22zCPN0mtS0ROkDC2aDv5NMWgdNE2sgIdlqFma3ps0YCVRajwuAb7I1aUseigMZB/LvvWHyGUohR9nrO2P7glUvu4Xp9HjWlURzX4jxFlZaKVYTsRmAx2UBs0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G9NWScQ+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4RoD3RD3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 13 Nov 2024 14:23:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731504215;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vq82xxGccfTUf0BQBNGrBV96lp9tQcpfVRLDXa8nGOY=;
+	b=G9NWScQ+2uzuncOkgdUm8GAMFMTqObnPB24j2drzxUq/1IqhpYK6PyP+xl7HRo/XPEtNNo
+	RpbnXV1LBtblAuQYx5tbzElJR18d7U1KwR6JMQHQO1ZYSLHA4Yh7UEHvSx8px5kqDnpVNb
+	4DxfHC21XbPY/nW7jIRfjk0I8M+eJ57C2CLNPY5vEfwjrnbanqIBEtjrkUpMB61kV93unM
+	Aec/dF9mNW7T9obn6BAuOInmvh2IFwHhFN/nxQyKrXWmfoHV8AIoTCPy4A+7FYO0zoLAdN
+	W3ZaJlKZbxGiXUr80d/3VP9j0BwS69cvAUN9fXmVTgxdDXnNhF+dqulEdCL8hA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731504215;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vq82xxGccfTUf0BQBNGrBV96lp9tQcpfVRLDXa8nGOY=;
+	b=4RoD3RD3M45L+l1WkcikHcDj4wgVDsOKu9HyYHKh9ddcO+hpKMig47m9/95xfwjYwJW3/u
+	dhWmZ4qSUF3rc1BA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Tejun Heo <tj@kernel.org>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hillf Danton <hdanton@sina.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Marco Elver <elver@google.com>, tglx@linutronix.de,
+	syzbot+6ea37e2e6ffccf41a7e6@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2 2/2] cgroup, kernfs: Move cgroup to the RCU interface
+ for name lookups
+Message-ID: <20241113132333.ayhH2ZH-@linutronix.de>
+References: <20241112155713.269214-1-bigeasy@linutronix.de>
+ <20241112155713.269214-3-bigeasy@linutronix.de>
+ <ZzOlhANLYxFaIix2@slm.duckdns.org>
+ <20241113074331.B48iqBgp@linutronix.de>
+ <20241113120706.rotCvUqt@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111023412.3466161-1-ye.zhang@rock-chips.com> <20241111023412.3466161-2-ye.zhang@rock-chips.com>
-In-Reply-To: <20241111023412.3466161-2-ye.zhang@rock-chips.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 13 Nov 2024 14:23:29 +0100
-Message-ID: <CACRpkdaswgKiFXQMHgAW=eXCw=BG3+2oQTwq4PaAf7--vUiKiw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] gpio: rockchip: explan the format of the GPIO
- version ID
-To: Ye Zhang <ye.zhang@rock-chips.com>
-Cc: brgl@bgdev.pl, heiko@sntech.de, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com, 
-	andriy.shevchenko@linux.intel.com, tao.huang@rock-chips.com, 
-	finley.xiao@rock-chips.com, tim.chen@rock-chips.com, 
-	elaine.zhang@rock-chips.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241113120706.rotCvUqt@linutronix.de>
 
-On Mon, Nov 11, 2024 at 3:34=E2=80=AFAM Ye Zhang <ye.zhang@rock-chips.com> =
-wrote:
+- Zefan Li
 
-> Remove redundant comments and provide a detailed explanation of the
-> GPIO version ID.
->
-> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+On 2024-11-13 13:07:08 [+0100], To Tejun Heo wrote:
+> On 2024-11-13 08:43:32 [+0100], To Tejun Heo wrote:
+> > On 2024-11-12 08:59:16 [-1000], Tejun Heo wrote:
+> > > Hello,
+> > 
+> > Hi,
+> > 
+> > > On Tue, Nov 12, 2024 at 04:52:39PM +0100, Sebastian Andrzej Siewior wrote:
+> > > ...
+> > > >  /**
+> > > > - * pr_cont_kernfs_name - pr_cont name of a kernfs_node
+> > > > + * pr_cont_kernfs_name_rcu - pr_cont name of a kernfs_node
+> > > >   * @kn: kernfs_node of interest
+> > > >   *
+> > > > - * This function can be called from any context.
+> > > > + * This function can be called from any context. The root node must be with
+> > > > + * KERNFS_ROOT_SAME_PARENT.
+> > > >   */
+> > > > -void pr_cont_kernfs_name(struct kernfs_node *kn)
+> > > > +void pr_cont_kernfs_name_rcu(struct kernfs_node *kn)
+> > > 
+> > > Having to split the interface all the way up isn't great. While there are
+> > > also downsides, I wonder whether a better approach here is just making the
+> > > backend function (kernfs_path_from_node()) automatically use RCU locking if
+> > > the flag is set rather than propagating the difference by splitting the
+> > > interface. The distinction doesn't mean anything to most users after all.
+> > 
+> > Indeed.
+> 
+> Now I see what the problems are. If we merge both into one, then I get
+> this:
+> | int kernfs_name(struct kernfs_node *kn, char *buf, size_t buflen)
+> | {
+> |         struct kernfs_root *root;
+> |         bool rcu_lookup;
+> |
+> |         if (!kn)
+> |                 return strscpy(buf, "(null)", buflen);
+> |
+> |         root = kernfs_root(kn);
+> 
+> This is the tricky part. For KERNFS_ROOT_INVARIANT_PARENT I don't worry
+> that the parent goes away and I need it to get a reference to the
+> kernfs_root node. For the !KERNFS_ROOT_INVARIANT_PARENT I need the lock
+> for kernfs_root() so I put the guard/ lock at the top.
+> 
+> I think that is why you suggested the two functions (or this is what I
+> understood). Looking at the remaining bits:
+> 
+> |         rcu_lookup = root->flags & KERNFS_ROOT_INVARIANT_PARENT;
+> |         if (rcu_lookup) {
+> |                 guard(rcu)();
+> |                 return strscpy(buf, kn->parent ? rcu_dereference(kn->name) : "/", buflen);
+> |         }
+> |         guard(read_lock_irqsave)(&kernfs_rename_lock);
+> |         return strscpy(buf, kn->parent ? rcu_dereference(kn->name) : "/", buflen);
+> | }
+> 
+> This could collapse into the RCU version because read_lock_irqsave()
+> implies RCU protection. And since ->name is always RCU assigned/
+> deallocated I don't really need the lock here, RCU would be enough.
+> Except for the parent. The kn->parent does not matter here (it should be
+> always be != NULL if assigned), the problematic part is kernfs_root()
+> which checks the parent for the root node.
+> 
+> To make this simple I could avoid kernfs_root lookup and just have:
+> | int kernfs_name(struct kernfs_node *kn, char *buf, size_t buflen)
+> | {       
+> |         if (!kn)
+> |                 return strscpy(buf, "(null)", buflen);
+> |         
+> |         guard(rcu)();
+> |         return strscpy(buf, kn->parent ? rcu_dereference(kn->name) : "/", buflen);
+> | }                             
+> 
+> That is the easy part. kernfs_path_from_node() is different as it
+> requires the parent pointer. In order to distinguish the RCU from the
+> non-RCU version I need kernfs_root for the flag and depending on it, the
+> lock so the parent does not go away.
+> 
+> Would it work to add the pointer to kernfs_root into kernfs_node? This
+> would shrink kernfs_elem_dir by a pointer but the union would remain the
+> same size due to kernfs_elem_attr so the struct would grow.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+The kernfs_node is released via RCU. That means if the RCU read section
+starts before kernfs_root() then we should always get a stable pointer,
+pointing to the same kernfs_root node since it is always the same one.
+Even if the `parent' pointer is replaced. Wouldn't we need __rcu
+annotation then for the `parent' pointer then?
 
-Yours,
-Linus Walleij
+> > > Thanks.
+> 
+Sebastian
 
