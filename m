@@ -1,129 +1,183 @@
-Return-Path: <linux-kernel+bounces-407012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C209C6769
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:41:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5459C6766
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:40:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174031F21E19
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D542282F66
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F040B1494DD;
-	Wed, 13 Nov 2024 02:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D2C1514EE;
+	Wed, 13 Nov 2024 02:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gE7I88bB"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="R1/eV+Yo"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06393154C0B
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CA81531C8
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731465638; cv=none; b=q1y759fq2EKbm5GFmc8VP0xS9/pM47klq68uDue95/qPMdR4ZU5fp7kQe4rdHcVHC6W1jHhuDCc0jCinyiWDsasNdtn9Sp+3jY6s4b3/pSB4Q1smC+zTUeLK0OOOAyu85PTVEiAPJHpmB+3nNWZwhygPvET7WHkDd/vrNDaozHk=
+	t=1731465635; cv=none; b=ZsDBo+iyxlrJdb0uZbhR/WxqY1EHVnbD6Hf4EwQxu9hj73IB50v+NvEbdL3S4o8tmkhmEAQ/Wx5fWJFYsBfVLLi0tLo8reYjcvfvuThihtkKUCCaSrjSxzuLMrwAgDD+QrftJQ+Fbm0cTN/XHHRE7Q7XfCkrtFchr+ETRmfkXUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731465638; c=relaxed/simple;
-	bh=8lt7eykDFZw7fIigqij0E5lpK1ubBDThz9WowdmROho=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jsuMSgMv4BwLV3X9GKKFt4RpdPGE2P2goEIWSTp2mPzi2aUadzfM2TkfUvBduGTUX01D15z1VC0XVaJkgs34ohR0UWMursDxsPN7ewWhXlefhiKez1LEcYnEBXmkwrVHR/r+WsfqsdHnfnQMWK1QSGcbTqIt5C01p/aOvxjPIT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gE7I88bB; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cb47387ceso66371315ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:40:35 -0800 (PST)
+	s=arc-20240116; t=1731465635; c=relaxed/simple;
+	bh=8FHvPGnvQCGXz1+Wdzwa04HkEiMdwfECMWnLiHIfqeo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YOdVl5WYtc65fbgbVnNANb099JPPHtY643bPfoLGhujuYKhYUG9axNtYUrwXB4lZI1fAXRjCYunFvF+AN+P6qH2jEY6t1+/G24WIlwKWiFeMjVJT2Bg3SEwr7bKWnp4QGimv3TCIQx7lfqPPmJYnLrUHaFm7AVXmNbWK3qJfbes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=R1/eV+Yo; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cdb889222so63628935ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:40:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731465635; x=1732070435; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vjvrd2avQzhgqp6lHzhNNlW4+aoD1gw3mVGy/cwxKNk=;
-        b=gE7I88bBD0HdWSXQlYMBNj/ZD7ByCp6yeH/JxP8Ln1zfoJL/eypAhjCrZFiO54328r
-         4vH1nXWQ4THu7TS0L4dRRWqukzyIbyQU0ec1sO3NwOWjZ3tN0/DjB+qTFcd5zfMZLr2p
-         L8jenlp0k50FBeqqfWRzsxGWAn3Da5F5yU6Mg=
+        d=bytedance.com; s=google; t=1731465632; x=1732070432; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jHNeKpFyR0+MmuArDeQLqD+4LUq6iWaLcm/HCxIALi0=;
+        b=R1/eV+Yo/m5tf4Q/XyVs2IHv3eqBv+BkU7pHsgOYCs6SGwaSa27C48WoqSvzqnQfDv
+         a04B58GgQ3Qb6LtqD8czxQ/dcWAtbtbg0UJtWcGMySpQvF7GmHlGg1Z7mkxRrKH0AC0b
+         t55rcgy8neW8EIsuAlx4diThMMRSpPrftP7e79WfotWBtKUbMAtaMfMg5AOXA1mU3oyU
+         jaONs5/fjMFot3SGgAyKU/0fHnFTbnj74bGYPX49bdBh6stC0EEC6iU4a7jmn6eKscjO
+         RALXXYS8Y4itgyXGyFjwEuBkh0uKVQrAUk8xolyr74RCec170h35gC7jR/VZFyvMk5jz
+         vL3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731465635; x=1732070435;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vjvrd2avQzhgqp6lHzhNNlW4+aoD1gw3mVGy/cwxKNk=;
-        b=SxQhkEOfQ/bd2Rr8qjYP8iO1kzFZn9lP+6504FG5zuafhjpRxp/7DG72qpae6rRcFF
-         6o5Mcjtj1QM3vWN8fuLyHm+IrS/XJGDDsUrGyBAp0Yo6HuDOkXf9c37MnJRucS/MNSfF
-         Z0owkVnRMfjqrx7qYzjM+KgNvdvlZIe/UDFstyFBOtRYJUzIkfPYyfMY7KKL6fSrabhW
-         XuYHjwvlOSC/d9QrZe9fnxdozlX1M72FsHNOCLFaZ59eF03ugpszVdS4qn1ZxRmdlYp9
-         tJ/zYamTYMCW5eypHBKF0wA8ViAqG9OTY861ip5P9yMj+DtmK9g9Eo2EpNk7Nq7CJVW4
-         Horw==
-X-Forwarded-Encrypted: i=1; AJvYcCUor412pEwHZ079ituWrsYnXa82Bozwkxlqhh6gZ96Vuf6j8j+tr2KgCuNg8AetMY/ZdeZmd4c/ftWuBug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcTe6cZW3U/IAOoz+8/Csp+ANF3YmCSN1gzqe+Hv0T6SPno+DT
-	vOW7ypu5AIzSHmoWX2wtq8yLBLtHyuFz4Ln8idH2jJ75dagmVB1YdfSt+MV4Tg==
-X-Google-Smtp-Source: AGHT+IHe721yXQHCRZeRjkW+n+uLrfYbkZjFfwy3XKSXli/Bjhg1eEXBQdFZlkHS9zXTLG7hxYMmCQ==
-X-Received: by 2002:a17:903:1cb:b0:20c:bffe:e1e5 with SMTP id d9443c01a7336-21183521d84mr274072955ad.19.1731465635278;
-        Tue, 12 Nov 2024 18:40:35 -0800 (PST)
-Received: from lschyi-p920.tpe.corp.google.com ([2401:fa00:1:10:3dd4:86fa:9696:4236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e418d6sm101831325ad.142.2024.11.12.18.40.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 18:40:34 -0800 (PST)
-From: "Sung-Chi, Li" <lschyi@chromium.org>
-To: 
-Cc: "Sung-Chi, Li" <lschyi@chromium.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@weissschuh.net>,
-	Jean Delvare <jdelvare@suse.com>,
-	devicetree@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Subject: [PATCH v3 2/2] dt-bindings: mfd: Add properties for thermal sensor cells
-Date: Wed, 13 Nov 2024 10:39:52 +0800
-Message-ID: <20241113024000.3327161-2-lschyi@chromium.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-In-Reply-To: <20241113024000.3327161-1-lschyi@chromium.org>
-References: <20241111074904.1059268-1-lschyi@chromium.org>
- <20241113024000.3327161-1-lschyi@chromium.org>
+        d=1e100.net; s=20230601; t=1731465632; x=1732070432;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jHNeKpFyR0+MmuArDeQLqD+4LUq6iWaLcm/HCxIALi0=;
+        b=UBhoc6KEdLvIoynfg7/RMvvXz87Nt7pfos99RImaFJtsFIr8Gt4LNk4tjiHrtYSLX+
+         OZHxM9r6revUWggx6nWcaNesIT/qy2aDiuHx/4mqnminV5WyXMr0qHtLiFG7aDq1gUrP
+         ZClekKszA+OUoHevFPt6VtAgbivICjBgUv5m3ZNOZyBz3GYcKFyViR1FGOyRKx3Sqxii
+         kc/aTOySTtZgkxflEKdcNG4PUv9XIXML12iJ76Lf1Ki/r0w5bae6PRyqMwp9DYZR8W/4
+         GxvaFb3fCVPNn993snvHE5L5tYooIOpM4KBMiHYO0cTVbGOCA1wZLMjZIB++B5XoyUUe
+         x6dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcfAGkJUQiZ88a7EbUjoYCtmCcpOO4+IT1dZkVISaYF1mTq5fS5rz8T3bl0L6ftGj37avYMrKRsH2/0mU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3qhOrxQN6q71vy98tZPc9IitI5d3SmyDws92wwX5yb0zyM5Wz
+	biOJ96hIfqT5r3UOMziG1Fbb7BloTRQk+NLE8gvlYx6jprbLG8/vcI8wJyVKNxQ=
+X-Google-Smtp-Source: AGHT+IEK3xvoBXSD70It46TNFzV++Z8Gp+mEI8YBiYgxVl6WCjiryIZ3WdBsvqFEtqV5s8CFHDHs/A==
+X-Received: by 2002:a17:90b:268b:b0:2d3:c638:ec67 with SMTP id 98e67ed59e1d1-2e9f2b3e437mr1834275a91.0.1731465632343;
+        Tue, 12 Nov 2024 18:40:32 -0800 (PST)
+Received: from [10.84.149.95] ([203.208.167.148])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9f3ef1da1sm306289a91.26.2024.11.12.18.40.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 18:40:31 -0800 (PST)
+Message-ID: <2fd11f54-8c0c-401d-8635-e54ebf7facc2@bytedance.com>
+Date: Wed, 13 Nov 2024 10:40:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] mm: introduce do_zap_pte_range()
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>
+Cc: jannh@google.com, hughd@google.com, willy@infradead.org, mgorman@suse.de,
+ muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
+ zokeefe@google.com, rientjes@google.com, peterx@redhat.com,
+ catalin.marinas@arm.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org
+References: <cover.1730360798.git.zhengqi.arch@bytedance.com>
+ <1639ac32194f2b2590852f410fd3ce3595eb730b.1730360798.git.zhengqi.arch@bytedance.com>
+ <db3cd6c1-03d6-48fd-9591-ab3e90d7e10f@redhat.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <db3cd6c1-03d6-48fd-9591-ab3e90d7e10f@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The cros_ec supports reading thermal values from thermal sensors
-connect to it. Add the property '#thermal-sensor-cells' bindings, such
-that thermal framework can recognize cros_ec as a valid thermal device.
 
-Signed-off-by: Sung-Chi, Li <lschyi@chromium.org>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
----
- Changes in v2:
-   - Add changes for DTS binding.
- Changes in v3:
-   - Remove unneeded Change-Id tag in commit message.
----
- Documentation/devicetree/bindings/mfd/google,cros-ec.yaml | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-index aac8819bd00b..c7d63e3aacd2 100644
---- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-+++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-@@ -96,6 +96,9 @@ properties:
-   '#gpio-cells':
-     const: 2
- 
-+  '#thermal-sensor-cells':
-+    const: 1
-+
-   gpio-controller: true
- 
-   typec:
--- 
-2.47.0.338.g60cca15819-goog
+On 2024/11/13 01:00, David Hildenbrand wrote:
+> On 31.10.24 09:13, Qi Zheng wrote:
+>> This commit introduces do_zap_pte_range() to actually zap the PTEs, which
+>> will help improve code readability and facilitate secondary checking of
+>> the processed PTEs in the future.
+>>
+>> No functional change.
+>>
+>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>> ---
+>>   mm/memory.c | 45 ++++++++++++++++++++++++++-------------------
+>>   1 file changed, 26 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index bd9ebe0f4471f..c1150e62dd073 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -1657,6 +1657,27 @@ static inline int zap_nonpresent_ptes(struct 
+>> mmu_gather *tlb,
+>>       return nr;
+>>   }
+>> +static inline int do_zap_pte_range(struct mmu_gather *tlb,
+>> +                   struct vm_area_struct *vma, pte_t *pte,
+>> +                   unsigned long addr, unsigned long end,
+>> +                   struct zap_details *details, int *rss,
+>> +                   bool *force_flush, bool *force_break)
+>> +{
+>> +    pte_t ptent = ptep_get(pte);
+>> +    int max_nr = (end - addr) / PAGE_SIZE;
+>> +
+>> +    if (pte_none(ptent))
+>> +        return 1;
+> 
+> Maybe we should just skip all applicable pte_none() here directly.
 
+Do you mean we should keep pte_none() case in zap_pte_range()? Like
+below:
+
+diff --git a/mm/memory.c b/mm/memory.c
+index 002aa4f454fa0..2ccdcf37b7a46 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1666,9 +1666,6 @@ static inline int do_zap_pte_range(struct 
+mmu_gather *tlb,
+         pte_t ptent = ptep_get(pte);
+         int max_nr = (end - addr) / PAGE_SIZE;
+
+-       if (pte_none(ptent))
+-               return 1;
+-
+         if (pte_present(ptent))
+                 return zap_present_ptes(tlb, vma, pte, ptent, max_nr,
+                                         addr, details, rss, force_flush,
+@@ -1704,11 +1701,15 @@ static unsigned long zap_pte_range(struct 
+mmu_gather *tlb,
+                 if (need_resched())
+                         break;
+
+-               nr = do_zap_pte_range(tlb, vma, pte, addr, end, details, 
+rss,
+-                                     &force_flush, &force_break);
+-               if (unlikely(force_break)) {
+-                       addr += nr * PAGE_SIZE;
+-                       break;
++               if (pte_none(ptep_get(pte))) {
++                       nr = 1;
++               } else {
++                       nr = do_zap_pte_range(tlb, vma, pte, addr, end, 
+details,
++                                             rss, &force_flush, 
+&force_break);
++                       if (unlikely(force_break)) {
++                               addr += nr * PAGE_SIZE;
++                               break;
++                       }
+                 }
+         } while (pte += nr, addr += PAGE_SIZE * nr, addr != end);
+
+This avoids repeated checks for pte_none() later. Both are fine for
+me, will change to this in the next version.
+
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+
+Thanks!
+
+> 
 
