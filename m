@@ -1,50 +1,73 @@
-Return-Path: <linux-kernel+bounces-408309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BD89C7D3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:59:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8EE9C7D38
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:59:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7012F1F22EE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71993283DC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6262076D2;
-	Wed, 13 Nov 2024 20:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A792071E9;
+	Wed, 13 Nov 2024 20:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="h2JHZc3p"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="u/iQyRSi"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B212064E9
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 20:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D32515AAC1
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 20:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731531549; cv=none; b=aMa0M4/0S9NF+92JPZVfWC4lGHp51JmLMzYagx3djuWBQBLbEz8UEcyE7MC84YLG2FXzGbY08QVdrYMYvWWdfdT9a55EMXBYBL70w7/smlG9MOBbZLCNosLilGHEoJgFPfoH40XboaIOxjTFuJGmbxKg3jnj8YeufnG6fXNgSWs=
+	t=1731531540; cv=none; b=MWbxDurIK5uOy2O+A0+QGHMQSHuKiYO+RuE49WQTP1Z6+MHXesTj1dgFdCyM3c9lkiGXd+4nGlNECtQJ/3q3S/MbscHpgNMwL4I7FHglDB4CyOrCCf4bMjhKkhGsQzHVOneIBZRohBBFaon/4ZgUPZrxUetsCtKa58KriY4f274=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731531549; c=relaxed/simple;
-	bh=nXz4+smFNWIZ8AnQq1LA9CBs1j2n+MIDJQ9ss1mVUdA=;
+	s=arc-20240116; t=1731531540; c=relaxed/simple;
+	bh=H3iT72KAJqpp+BDqqpjohjw+E1OXEnw4DduGcnR8JhY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NR2kNQ4pKsD4+rv3+aO3NHZV5tEdr31L7L3Boruy1DZOQMHZvHp2G3lmZhZmtXNiF1Ku97AKV6TlnxsjNurgWkokUIVTh8gBW1pp7xl68qfZlAYBY6aQJyF8VrO5AXUQlX25+GquGwS1npWm0+x1HdhYZHd385RIXn5f996PFO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=h2JHZc3p; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1731531544;
-	bh=nXz4+smFNWIZ8AnQq1LA9CBs1j2n+MIDJQ9ss1mVUdA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h2JHZc3pVKNkCWMquPVmnyDLMg/F4R4IaGQMbmGRuG/z2pnRwDHizFaWiP3fDo7RK
-	 zfvh2SVSLH3RN0CcuBkgzLdLN+TbVdOJIsAS8oKShLF+6I0KHPhFgWBr4/RAbzqqlS
-	 8q2kgTw6eR2RWK2figKkV9TmqvKoy2ikyaKakjctoOKmTSb7OX/p12PXmD3Ia4D2YA
-	 ji6r6TVtjWAyE5Wq2uqeiPaFY468K0UNak8P2eCTeGONlrrGkY7pnlTPqEmTfkcfk2
-	 UR9Jn/dVzGx6pmYxBVg4R/mTMDTIZD7LWuF3JFYu/zqobAwXH6bYYZpd1rlggNB5mS
-	 4y0/cZc59SSGw==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XpbHX4vF0zS2M;
-	Wed, 13 Nov 2024 15:59:04 -0500 (EST)
-Message-ID: <6397d90f-1236-40e8-af8f-d89174ea1d11@efficios.com>
-Date: Wed, 13 Nov 2024 15:57:40 -0500
+	 In-Reply-To:Content-Type; b=pglm9DQMZNkYmXJixGcmi1Rx7UgHkt8DownJ1Kvms9aY4d0dGHIoDSytJVJUIjwtFaGYtNiBfZ1E4CbQZ6pPKZfQ2NjqHmIjoIk2f3YrFkSUrhujIuoDXsYc5ZsiMe78KgRKaNHTx5aPfD8GEeL4UaKetSqli+wi/2PyXAB7yb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=u/iQyRSi; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-288661760d3so3363478fac.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 12:58:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731531537; x=1732136337; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=83v/a7/p9Dx4wQKNzWHghWcROrTy7x/lk4BkJYfzHno=;
+        b=u/iQyRSiHpk9QMnd1IKpTAyFFv6GkHSVyirmoS/AgdfGHXBKlLm1CTWAVOS8e5Eslz
+         jMAzRMlEVk66duU0ThGwb2AjJY7/ogL9mowcSN+7gJgiUF0iwXvWpd+S7wWWEcPFm4Yu
+         o+J0viJRZHDeSorAASZBNUxTFaOEYvGX7vXmedwjjwIh/H6VgMRDyDmugiui/AOL7PC4
+         Yje+ifuBHIR7bhx7iTNQXo09rW6S3KkctMjJ/8ZQ6bnhS0umO2rJiu/nPQ46m5RaiDvH
+         q5rhQtAbnhG9k6uD9dMnvMAD59c7ZlSUMoL/I887CHuL/ItN+VhZS9GouMGcTnuX1f0Q
+         RWeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731531537; x=1732136337;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=83v/a7/p9Dx4wQKNzWHghWcROrTy7x/lk4BkJYfzHno=;
+        b=v5vyRHy2eBKgADxtjWZtlpbPBiG8aOPPjUALTij7FiyrMsSC0Z+Tn6clvo2G1JA9Nf
+         Ywx75MGmbtAj3W7cs/+9LSM1DqyaYVAgP9L9mEcepRjThwzbRNIA10fZFoRWVU/7V78T
+         sbqo3jpfI09BJJ8WIZwN1b8gz+DYIwtSWd6C2GNtQHS2n07EJA2PL6rWONaX+ST7EWOp
+         bNqdVTF/43NqQ0JGdMAKumUs+IPCRXz9Wfew6dg7ScBg2Wzcu6oKXWKCO+NC15/V6hey
+         PlQYeBy7St1nHkb6kKP3GEHbZsmpANIOEIy0cQ9uBmwZGnLDsIoxwr/YaOQm86jiJuCD
+         2+mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVghXoBddO0AXxnemEsC8acauA9sH6yhVdq3wURqPvy9OPp55RCbNJPZbkpWkxA0bLW4v99h3y+Q8kPX2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV9tMAmU1B5x3fEJXGlqiw1LeBkoxub3U0z21lnhj7eXlPoaR5
+	g6hoB2UB17Wxs5g6Bzm4gs+J+uzqSm8SUoQUOFyfUMT6zG6aGDJlXfl3b8sE3yk=
+X-Google-Smtp-Source: AGHT+IH8Iu1gM3sGqu0PCCaBVFuc0424eQizn9/MUPjj53FJxCRIz3UZvZM/I4j/Wh380SZXsy1dTQ==
+X-Received: by 2002:a05:6870:808c:b0:260:e713:ae8b with SMTP id 586e51a60fabf-29560129840mr15819915fac.20.1731531537135;
+        Wed, 13 Nov 2024 12:58:57 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a600a2af3sm935949a34.67.2024.11.13.12.58.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 12:58:56 -0800 (PST)
+Message-ID: <1390b66e-a9dc-42ee-a692-34a98146213f@baylibre.com>
+Date: Wed, 13 Nov 2024 14:58:55 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,161 +75,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/4] Scheduler time slice extension
-To: Prakash Sangappa <prakash.sangappa@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "rostedt@goodmis.org" <rostedt@goodmis.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- Daniel Jordan <daniel.m.jordan@oracle.com>
-References: <20241113000126.967713-1-prakash.sangappa@oracle.com>
- <20241113185013.GA22571@noisy.programming.kicks-ass.net>
- <f0f681a0-22b4-45f4-85a1-18f140286cbe@efficios.com>
- <896BA407-E19C-4CEB-BF5E-9707543BA365@oracle.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v2 0/3] iio: adc: ad4695: add new regmap callbacks, timing
+ improvements
+To: Trevor Gamblin <tgamblin@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241113-tgamblin-ad4695_improvements-v2-0-b6bb7c758fc4@baylibre.com>
 Content-Language: en-US
-In-Reply-To: <896BA407-E19C-4CEB-BF5E-9707543BA365@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241113-tgamblin-ad4695_improvements-v2-0-b6bb7c758fc4@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-11-13 15:10, Prakash Sangappa wrote:
+On 11/13/24 2:52 PM, Trevor Gamblin wrote:
+> The AD4695 driver currently operates all SPI reads/writes at the speed
+> appropriate for register access, rather than the max rate for the bus.
+> Data reads should ideally operate at the latter speed, but making this
+> change universally makes it possible for data to be corrupted during use
+> and for unexpected behavior to occur on driver subsequent driver
+> binds/unbinds. To solve this, introduce custom regmap bus callbacks for
+> the driver that explicitly set a lower speed only for these operations.
 > 
+> The first patch in this series is a fix introduced after discovering the
+> corresponding issue during testing of the callbacks. This is a timing
+> fix that ensures the AD4695 datasheet's timing specs are met, as before
+> the busy signal would sometimes fail to toggle again following the end
+> of the conversion sequence. Adding an extra delay in the form of a blank
+> transfer before every CS deassert in ad4695_buffer_preenable() allows
+> this requirement to be met. The patch also makes similar changes in
+> ad4695_read_one_sample() (while also tidying that function somewhat) to
+> make sure that single reads are still functional with the regmap change.
 > 
->> On Nov 13, 2024, at 11:36 AM, Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
->>
->> On 2024-11-13 13:50, Peter Zijlstra wrote:
->>> On Wed, Nov 13, 2024 at 12:01:22AM +0000, Prakash Sangappa wrote:
->>>> This patch set implements the above mentioned 50us extension time as posted
->>>> by Peter. But instead of using restartable sequences as API to set the flag
->>>> to request the extension, this patch proposes a new API with use of a per
->>>> thread shared structure implementation described below. This shared structure
->>>> is accessible in both users pace and kernel. The user thread will set the
->>>> flag in this shared structure to request execution time extension.
->>> But why -- we already have rseq, glibc uses it by default. Why add yet
->>> another thing?
->>
->> Indeed, what I'm not seeing in this RFC patch series cover letter is an
->> explanation that justifies adding yet another per-thread memory area
->> shared between kernel and userspace when we have extensible rseq
->> already.
+> The second patch is an improvement that increases the robustness of the
+> exit message in ad4695_exit_conversion_mode(), this time by adding a
+> delay before the actual exit command. This helps avoid the possibility
+> that the exit message will be read as data, causing corruption on some
+> buffered reads.
 > 
-> It mainly provides pinned memory, can be useful for  future use cases where updating user memory in kernel context can be fast or needs to avoid pagefaults.
-
-Does the targeted use-case (scheduler time slice extension) require
-pinned memory, or just future use-cases ?
-
-Does having a missing time slice extension hint for a short while in
-case of high memory pressure (rseq page swapped out) have any measurable
-impact compared to the overhead of the page faults which will be
-happening in case of the high memory pressure required to trigger this
-scenario ?
-
+> For additional context, see:
+> https://lore.kernel.org/linux-iio/20241028163907.00007e12@Huawei.com/
 > 
->>
->> Peter, was there anything fundamentally wrong with your approach based
->> on rseq ? https://lore.kernel.org/lkml/20231030132949.GA38123@noisy.programming.kicks-ass.net
->>
->> The main thing I wonder is whether loading the rseq delay resched flag
->> on return to userspace is too late in your patch. Also, I'm not sure it is
->> realistic to require that no system calls should be done within time extension
->> slice. If we have this scenario:
-> 
-> I am also not sure if we need to prevent system calls in this scenario.
-
-I suspect that if we prohibit system calls from being issued from a
-delay-resched userspace critical section, then loading the delay-resched
-rseq flag on return to userspace is always fine, because the kernel only
-reschedules on return from interrupt or trap.
-
-But I see this no-syscall restriction as being very cumbersome for
-userspace.
-
-> Was that restriction mainly because of restartable sequence API implements it?
-
-I suspect that this restriction is just to avoid loading the
-delay-resched flag from the scheduler when reschedule is called
-from an interrupt handler nested over a system call for preemptible
-kernels, but Peter could tell us more.
-
-One open question here is whether we want to pin memory for
-each thread in the system to hold this shared data between
-userspace and the scheduler. AFAIU, this is a trade-off between
-slice extension accuracy in high memory usage scenarios and
-pinned memory footprint impact. If the tradeoff goes towards
-making this memory pinned, then we may want to consider pinning
-the per-thread rseq area on rseq registration.
-
-Another option to consider is to use rseq to index a userspace
-per-cpu data structure, which will be used as shared memory
-between kernel and userspace. Userspace could store this
-delay-resched flag into the current CPU's shared data, and
-the scheduler could load it from there. If pinning per-cpu
-data is more acceptable than pinning per-thread data, then
-it could be an improvement.
-
-This could be a new ABI between kernel and userspace, e.g.:
-
-struct rseq_percpu_area {
-     __u32 sched_state;	/* includes time slice extension flag. */
-     char end[];
-};
-
-Registered to the kernel with the following parameters:
-
-- Address of rseq_percpu_area for CPU 0,
-- The stride of the per-cpu indexing (see librseq mempool per-cpu
-   allocator [1]),
-- offsetof(struct rseq_percpu_area, end) to have the feature size
-   for extensibility.
-
-Thanks,
-
-Mathieu
-
-[1] https://lpc.events/event/18/contributions/1720/attachments/1572/3268/presentation-lpc2024-rseq-mempool.pdf
-
-> 
-> -Prakash
-> 
->>
->> A) userspace grabs lock
->>    - set rseq delay resched flag
->> B) syscall
->>    - reschedule
->>     [...]
->>    - return to userspace, load rseq delay-resched flag from userspace (too late)
->>
->> I would have thought loading the delay resched flag should be attempted much
->> earlier in the scheduler code. Perhaps we could do this from a page fault
->> disable critical section, and accept that this hint may be a no-op if the
->> rseq page happens to be swapped out (which is really unlikely). This is
->> similar to the "on_cpu" sched state rseq extension RFC I posted a while back,
->> which needed to be accessed from the scheduler:
->>
->>   https://lore.kernel.org/lkml/20230517152654.7193-1-mathieu.desnoyers@efficios.com/
->>   https://lore.kernel.org/lkml/20230529191416.53955-1-mathieu.desnoyers@efficios.com/
->>
->> And we'd leave the delay-resched load in place on return to userspace, so
->> in the unlikely scenario where it is swapped out, at least it gets paged
->> back at that point.
->>
->> Feel free to let me know if I'm missing an important point and/or saying
->> nonsense here.
->>
->> Thanks,
->>
->> Mathieu
->>
->> -- 
->> Mathieu Desnoyers
->> EfficiOS Inc.
->> https://www.efficios.com
->>
-> 
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+> Suggested-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+> ---
+Reviewed-by: David Lechner <dlechner@baylibre.com>
+Tested-by: David Lechner <dlechner@baylibre.com>
 
 
