@@ -1,129 +1,197 @@
-Return-Path: <linux-kernel+bounces-408077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 167D59C7A25
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:44:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C0C9C7A21
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:44:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2F0B1F255C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:44:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F36F284D1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF8F201262;
-	Wed, 13 Nov 2024 17:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850CC201276;
+	Wed, 13 Nov 2024 17:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2NzEQ1SL"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IAVtciNj"
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6751FF7BD
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C11B1632E2;
+	Wed, 13 Nov 2024 17:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731519878; cv=none; b=qJI8Mb8GyR0fdMvCAgRksCc1PqAIbazk7HOwlgLo0Piw6h2gEse2PMRwfoqOalLvV1tWJ7LcaNu/rvcX1qGVYkrsftg0qVMPhaNB4MK532lGmXL33GRGOG+RQAaN+kcSQL9//CkwE8MVWBReBuazW9l+Xs9ns36qmRd3JmvCsMk=
+	t=1731519864; cv=none; b=FpQApop31A1v/7IA5/dfiPZ+6rvABeL6Pcy/tZepxjXZwb9MW0e5v2KNa1xRJKKGUaouMwgxQETBaqhY6XdgXkcVSHGo5TJOKIVxix6TR5gAk5SYSJf5MUSajgeb06REq5lH1NgfuijuZjAVPFuCEqN//+UXtgC3Aw20B3MwHJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731519878; c=relaxed/simple;
-	bh=TcvEUkeKFVgGLTt37+MUAGAHziBUQjifnkJdXdV9wRI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cYHvljiTExMIbNktP+uzC8RpERs4KluVr2fa1jutu/VEihtsW83C83NKXTYierQV9zeHcQKFck+6S9SaGVd41NdmuOhSGi9jWLCNADw8TDxYm5q64UaqLYg8pc8la5I+4Ce3Y9ifVgYMs+I+uA14NnXxWv9pkn1cGVxmjmIYcP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2NzEQ1SL; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539e66ba398so10627e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:44:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731519875; x=1732124675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Di+iKJ5akzTFP1IjKCqjyy6r9Jqh1xsxmJVtI0c5XMw=;
-        b=2NzEQ1SLUDr16WIa7I5O1+BRSVbZidtehWFMcTahBxQf/FeuOKzO4HoWE4ylhzdqvW
-         YxpHiS89GXeVubNcWbBHRibxjf5rlSxG5cR1hl6PuBJw9rdtRbfCV7T8mIBBBfV3b11T
-         iFjGBudQh1vMf59kI70/LzO3PFGvjSNYYnpdGiHeqXYK58S0FctI2ElBHDAgDdUUw/8l
-         8AL0Ow27S4pS1Kw/tFsNYMokBD8rkJf0e/rwf8tb2hDYTYpXdk3FWakeiwkeHDibi0bb
-         mQDorCtGBjMdOf4DbeSOa624IIK6VO7BlQzkVvAvootbhEvEULlkWvASE6lQDdSkXpOm
-         jYUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731519875; x=1732124675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Di+iKJ5akzTFP1IjKCqjyy6r9Jqh1xsxmJVtI0c5XMw=;
-        b=vOuxIYmNmPcwFgZDFpAyVQLsPmKhE7nP/zLvvcg1wfKPRSJ2z9FlTVod+MhdOCTdNj
-         V9XI1quYVAIRMdKSyM4LVMbzJ0lBz2NGyGZfpffnfREPazocL2F9WnQsAHaDsMbGaGgj
-         0yENz+CespUoEQX3EdjbzmB2fO5xZGcDfpcmOvDPV9Xd1wcXbpkXV7s+rSH1tIQYlWvQ
-         VdRqXMbqu8UyVe38ULqsyJ9jSyXGwJ5DqogRchtEVSR+7F3NQ8uL1HN4mQvySiREvpZr
-         3hMwXzdfJXgXfQqS3pftYGKCp5q03Mrekd8tGGSZeDIYTRaoaYgGbi6V31UY84ztlQIs
-         J0xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIKAoOkyTpKFQbMlS7gN7SZY+7cTkuywjOKFm3ot9Ghmfpk2L7JXO5QiAS701oa8O6HWIDRvd6ebiS/lg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0LPIe8puEGEXgTjCeCPZUV4IoAEU+Y9pYmXbIbWnxcId2470+
-	rzN2tVQS8P/De6M7qr0cKvMURGx9xEb3zdLBGKo3q0J1sJU+YFmnO0vHGiXqc3KP7T+IGtgPktW
-	no02Z6gkIZ7S7gsJNMfe7M0SBw86g8PO1J10j
-X-Gm-Gg: ASbGnctOSsqlj8E75pNoHNoT4s89m2+ZcX+uNhQn+WS2QLcaSblijZx4WmA+CA93kY3
-	Zljb60jaDMtkiYDx2fysESvYqgrSdQLdtVPjFQbvwscAZZbT5U5CY7fpfEam2
-X-Google-Smtp-Source: AGHT+IEBiRX+iakj03mwhRodl8EB4ddlvW0A0JNFLYItqjRlt/va0erAr2MtetPxwlyJPF24ToOICU0mFNtQbJtF85E=
-X-Received: by 2002:ac2:4438:0:b0:539:d0c4:5b53 with SMTP id
- 2adb3069b0e04-53da0736535mr143602e87.4.1731519874758; Wed, 13 Nov 2024
- 09:44:34 -0800 (PST)
+	s=arc-20240116; t=1731519864; c=relaxed/simple;
+	bh=3e7ddZ56JgtwOGpWytDdsV5++LuwyeLu5bKVRLfduUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PxIbaxuRwk0jkGybZqUitX9t2OE3Zpjc9FNRpVSBdjkcp7tnUVsBZh1lOBNszm92ekVxh1cStiCyr1912YXL/mBW7V6iLmu6MVzHPR04siYFEY/3CTpsR6D596+CE6bzmiC9MHNb4c5yFBA3w3PKNKmyXExfVyRmh80bZmMeCDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IAVtciNj; arc=none smtp.client-ip=80.12.242.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id BHPXt6HUsl38xBHPYtfY0a; Wed, 13 Nov 2024 18:44:15 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731519855;
+	bh=8yt31LK7mwsmtd242ieGzXI5Eg3ZJTkLmfaoG3DU2MM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=IAVtciNjTIcSi0OMYtShFFvANL1WTWHXKXw62leUr0fHYHXwtkykikT+4aXIED02i
+	 8dFMZBrHQVpE7fYVJR/pJAc1bWkYhDRKDCgfO44y/xCZzf8Vyljwo1GB2lABaaQyTH
+	 ah9ygaO9lldWu+6Mtx8zyXycRnQ7DLeTKO/xOxZeRknrxWeiRu3TI0UP+O2pZ49VCf
+	 iE3lRQwqINKnyMeIkHdQ3socUS9I8lrAavu0yo2dOxv3dEbDieYb+eS20/qOCcDpSy
+	 lVmBAldoml+3kluEzKe/VZCEha0CoIOmjGvja5kOXnG4C+ln8bDRwxZk218SiK8RSU
+	 WY152Xqb7bi9Q==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 13 Nov 2024 18:44:15 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <2fd6212c-6406-4435-8cde-8a07aa16d933@wanadoo.fr>
+Date: Thu, 14 Nov 2024 02:44:10 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108135708.48567-1-lorenzo.stoakes@oracle.com>
- <le3ykvrau2lbncrjsqll7z6ck43bf3shon4g5ohchxcvcs4fuy@h3pq646xgoz6> <3593f7ab-c37d-4c1d-bf2f-e47c30bb5d2b@lucifer.local>
-In-Reply-To: <3593f7ab-c37d-4c1d-bf2f-e47c30bb5d2b@lucifer.local>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 13 Nov 2024 18:43:57 +0100
-Message-ID: <CAG48ez3Ap0XWr+3UmQeW6O82PU_Fh85pCuwOpC9n6J+kxtPVRA@mail.gmail.com>
-Subject: Re: [PATCH v2] docs/mm: add VMA locks documentation
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>, Alice Ryhl <aliceryhl@google.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
-	Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>, 
-	Hillf Danton <hdanton@sina.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
-	SeongJae Park <sj@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v3 1/2] compiler.h: add _static_assert()
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org,
+ Rikard Falkeborn <rikard.falkeborn@gmail.com>
+References: <20241112190840.601378-4-mailhol.vincent@wanadoo.fr>
+ <20241112190840.601378-5-mailhol.vincent@wanadoo.fr>
+ <ZzO5390yVTqNbgJl@yury-ThinkPad>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+In-Reply-To: <ZzO5390yVTqNbgJl@yury-ThinkPad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 13, 2024 at 4:44=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> On Tue, Nov 12, 2024 at 10:15:44AM -0500, Liam R. Howlett wrote:
-> > * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [241108 08:57]:
-> [snip]
-> > > +Each mm object contains a maple tree data structure which describes =
-all VMAs
-> > > +within the virtual address space.
-> > > +
-> > > +.. note:: An exception to this is the 'gate' VMA which is provided b=
-y
-> > > +          architectures which use :c:struct:`!vsyscall` and is a glo=
-bal static
-> > > +          object which does not belong to any specific mm.
-> >
-> > vvars too?
->
-> I'm not sure if that's the case? For instance for x86-64 we have:
->
-> /*
->  * A pseudo VMA to allow ptrace access for the vsyscall page.  This only
->  * covers the 64bit vsyscall page now. 32bit has a real VMA now and does
->  * not need special handling anymore:
->  */
-> static const char *gate_vma_name(struct vm_area_struct *vma)
-> {
->         return "[vsyscall]";
-> }
->
-> With no reference to vvar. Also vsyscall exists in a kernel range, and vv=
-ar
-> in a userland mapping (along with the vdso).
+On 13/11/2024 at 05:26, Yury Norov wrote:
+> On Wed, Nov 13, 2024 at 04:08:39AM +0900, Vincent Mailhol wrote:
+>> __builtin_constant_p() is known for not always being able to produce
+>> constant expression [1] which lead to the introduction of
+>> __is_constexpr() [2]. Because of its dependency on
+>> __builtin_constant_p(), statically_true() suffers from the same
+>> issues.
+>>
+>> For example:
+>>
+>>    void foo(int a)
+>>    {
+>>    	 /* fail on GCC */
+>>    	BUILD_BUG_ON_ZERO(statically_true(a));
+>>
+>>    	 /* fail both clang and GCC */
+>>    	static char arr[statically_true(a) ? 1 : 2];
+>>    }
+>>
+>> For the same reasons why __is_constexpr() was created to cover
+>> __builtin_constant_p() edge cases, __is_constexpr() can be used to
+>> resolve statically_true() limitations.
+>>
+>> Note that, somehow, GCC is not always able to fold this:
+>>
+>>    __is_constexpr(x) && (x)
+>>
+>> It is OK in BUILD_BUG_ON_ZERO() but not in array declarations or in
+>> static_assert():
+>>
+>>    void bar(int a)
+>>    {
+>>    	/* success */
+>>    	BUILD_BUG_ON_ZERO(__is_constexpr(a) && (a));
+>>
+>>    	/* fail on GCC */
+>>    	static char arr[__is_constexpr(a) && (a) ? 1 : 2];
+>>
+>>    	/* fail on GCC */
+>>    	static_assert(__is_constexpr(a) && (a));
+>>    }
+>>
+>> Encapsulating the expression in a __builtin_choose_expr() switch
+>> resolves all these failed test.
+>>
+>> Declare a new _statically_true() macro which, by making use of the
+>> __builtin_choose_expr() and __is_constexpr(x) combo, always produces a
+>> constant expression.
+> So, maybe name it const_true() then?
 
-Yeah, there are different gate VMA types depending on architecture
-(arm has "vectors page", x86 has "vsyscall", ...), but vvar and vdso
-are just normal VMAs set up at some point in execve().
+
+OK. I pretty like the _statically_true() because the link with 
+statically_true() was obvious and the _ underscore prefix hinted that 
+this variant was "special". But I have to admit that the const_true() is 
+also really nice, and I finally adopted it in the v4.
+
+>> It should be noted that statically_true() still produces better
+>> folding:
+>>
+>>    statically_true(!(var * 8 % 8))
+>>
+>> always evaluates to true even if var is unknown, whereas
+>>
+>>    _statically_true(!(var * 8 % 8))
+>>
+>> fails to fold the expression and return false.
+>>
+>> For this reason, usage of _statically_true() be should the exception.
+>> Reflect in the documentation that _statically_true() is less powerful
+>> and that statically_true() is the overall preferred solution.
+>>
+>> [1] __builtin_constant_p cannot resolve to const when optimizing
+>> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=19449
+>>
+>> [2] commit 3c8ba0d61d04 ("kernel.h: Retain constant expression output for max()/min()")
+>>
+>> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+>> ---
+>> Bonuses:
+>>
+>>    - above examples, and a bit more:
+>>
+>>        https://godbolt.org/z/zzqM1ajPj
+>>
+>>    - a proof that statically_true() does better constant folding than _statically_true()
+>>
+>>        https://godbolt.org/z/vK6KK4hMG
+>> ---
+>>   include/linux/compiler.h | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
+>>
+>> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+>> index 4d4e23b6e3e7..c76db8b50202 100644
+>> --- a/include/linux/compiler.h
+>> +++ b/include/linux/compiler.h
+>> @@ -308,6 +308,20 @@ static inline void *offset_to_ptr(const int *off)
+>>    */
+>>   #define statically_true(x) (__builtin_constant_p(x) && (x))
+>>   
+>> +/*
+>> + * Similar to statically_true() but produces a constant expression
+>> + *
+>> + * To be used in conjunction with macros, such as BUILD_BUG_ON_ZERO(),
+>> + * which require their input to be a constant expression and for which
+>> + * statically_true() would otherwise fail.
+>> + *
+>> + * This is a tradeoff: _statically_true() is less efficient at
+>> + * constant folding and will fail to optimize any expressions in which
+>> + * at least one of the subcomponent is not constant. For the general
+>> + * case, statically_true() is better.
+> I agree with Rasmus. Would be nice to have examples where should I use
+> one vs another right here in the comment.
+
+
+I rewrote the full set of examples in v4. I added the godbolt link in 
+the patch description and I cherry picked what seems to me the two most 
+meaningful examples and put them in the macro comment. Let me know what 
+you think.
+
+Yours sincerely,
+Vincent Mailhol
+
 
