@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-408066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49CEE9C7A50
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:54:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D929C7A82
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:01:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95F9EB2A37A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:31:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47266B27C36
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8B4201261;
-	Wed, 13 Nov 2024 17:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510CD2022CD;
+	Wed, 13 Nov 2024 17:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j1ULK3OI"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KbdNZDdp"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D6E1F80C8;
-	Wed, 13 Nov 2024 17:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F26C1FCF78;
+	Wed, 13 Nov 2024 17:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731519067; cv=none; b=bUkYhxA94VgXKS5ajPPNPXvciObCy8r16OxlJs7hnzxk+I4b0Mm01ob6Gbx+ySxSfuF8LKmwsknnDonctYw5Ync49X4fb8L0PNf7aN3n9NGZrx4+UlwyrZou9PZyy4KR0P7Y+rLFm1EwWZu9XT8CjW2hmXe0VZVlUkEQ1muHBTY=
+	t=1731519286; cv=none; b=OtqnKG77Vhzt1WpwI+jyl0nnBWcpA9JQ/3WZqYmPMSNmK3HRyETYoH8l1KUXVC/wG70cDLCBgVGPw56hlSx48bMoRJ/0ifJZKYP0BY1XPzCsOU+7Qc0KqOOlYh7NtJIBY17qy5357NY6gILnpd1PLkuJQsiKTnjjTzFtKWZh5HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731519067; c=relaxed/simple;
-	bh=wM2LIeZuwho5MTyajMgsnq+6TqtS6xgt18ptAgYsbK4=;
+	s=arc-20240116; t=1731519286; c=relaxed/simple;
+	bh=TCNaFIfv7lEY+0noNZ//2HmAPvDmOrK6PjaZP/LM0wE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oDpbV4EzaAdZP5jWvrvMAMlwnCPd/6zIO/Z70nHQOJX4hlMvIV9mOBckbcgdfI49cEUQfTVHfaaINujeFPQU6cCUvPqL1ruXNOK+8jnWsmNCnjC59f08K31cfcRzhoZ3wojydjqy9VCizQ2QZCiQEela0s7MQbnQhkT4xkjl4UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j1ULK3OI; arc=none smtp.client-ip=209.85.215.177
+	 Content-Type:Content-Disposition:In-Reply-To; b=dTEA9ecxlhUBadagGWhHJ0j+ODqJmvZW9CLNrrdxXVG3004Aqr4HSQnICSB4H5KjyBMHqjSNnbVUFoIPGIgosUL8SBX3lU1UiTgPwvtDX6Ebmdo9YNGaR0IWEEK+/5o00RPCYdlV6Zx6jaZsju6ejqnkkvBXPspnf9LDOUNrjUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KbdNZDdp; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7eae96e6624so4995675a12.2;
-        Wed, 13 Nov 2024 09:31:05 -0800 (PST)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20e6981ca77so84346245ad.2;
+        Wed, 13 Nov 2024 09:34:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731519065; x=1732123865; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731519285; x=1732124085; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=2SnJeBCneJsNVP3wKudY4HbBDGuh/E7PxPQpfhhhdww=;
-        b=j1ULK3OIEIztYmlek6g1rr9STWSI+Wm1dZnWpmo1aNinNK9kvQ5S3TymP5MUVaMEeY
-         n4DkR24sJ2s5vmbUWefGB3XzGM32vDdgwtMyuxv0iY4JVsf323m+YcXJZ1+ePX8vWYKp
-         kryKX62rQXULCZu2bH2JeshSa8PpponEdZsii1AbRmddPEYEcnQQCsUaLfOl2PJQFNF2
-         rGaYk6zIGZprLn3X/wGFgPpTDjVPabsXF2z3XfpYJbwKUj9yXV0JyJP1nNdZvHcKtJqN
-         iNi2fHrZluIhj9xKd6XSvY0c3oiAvzNht2Ib0WBgFBADnQSMkgoCy+nn1Qvg7Kp0ejcw
-         A9XQ==
+        bh=NeR3WHmqojr6rm3S6Th9Ht6BHf7RWJi8eTYxBh8PgJg=;
+        b=KbdNZDdpQFYGzEcuYTo8Q+UwzkLz1/uAd47fglrIJ+m2YabKRWB23BeekPSf7yI1Sd
+         /uMS9xD7btoQljqcrIXCtdzeqhPiZLU7dKqWHYxjtAuea9ozwwEgP+TS4OHgQC7ty6nG
+         jK4pphd5iI4Jdhmj8sem8StOYlnkC7zz5hYxVRR+BIVRHwJVa6AkrsQGGVdWkSaSYa9X
+         Czgb3xZWBMoDm6Yh/Okecbm0NuCxlDRcZXvc3xPlMsZyt/mfrfDFYY7IDOpi3rYhbWd+
+         83UZruPfToxcaoXtstfKTj7QEJfFzoBAjMF3x7EjNiR9UNyg8TsgWEv+ZP0U54v+mxVm
+         OXdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731519065; x=1732123865;
+        d=1e100.net; s=20230601; t=1731519285; x=1732124085;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2SnJeBCneJsNVP3wKudY4HbBDGuh/E7PxPQpfhhhdww=;
-        b=Czs4Gkx3XYnM5SS8KnfEEet+o2Wv1O2fc/Tt1Xc29SGDc36X5g8ko6AVP1yMBwfCBZ
-         ph/ou5hwNtYWvo2l6UTFxfnov4jRTowva4HvSTMt6nvi2baVQkwr0f56cycqiCYJMKDl
-         DRFeJEnrFeorGoMrGQW8dDREyjMMLHNzUck42XW4rZEAVb3gBS9WUmzQ3SJaLBpAEDIp
-         Pxm62L+peM3XdZXY1xGipYT4U6xyZsFF7vmNvEaU3s3MZ4zxQDbu0naGywW7dGMzt3XU
-         KWBjEexA0xR1c6hgFjrFP4VLaFr77IJg1AqujzyNRofHmrWk3shdwXU+vn7acc/twLMX
-         YvJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzvK8uJKMM8YsLttSgtBt4qGvjmp6ImfKm4W5frvjpifv0iDvAGsRMzgMG1KmLbl5SBJM=@vger.kernel.org, AJvYcCXTI9NMjicnJXJUSmA74n8TWfg/KLS5nxzqUe0+0s37rYMjZYMmyvsZhcN3VbPX8HuvCDiwOVUbauTLkO52Juje@vger.kernel.org, AJvYcCXx3Tc3mapMg7h5L3gb5zBEtuJDgOek+bbnRWtYV/75T4uc2xzo8+B38rZCZlGcKIfLxJkAXttfwYEXe56I@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD1oOBXZ8oopGfi7g5lpTZS27qe/GEDBbdIV82H0nmpiQz0y5m
-	okw/QqrbL0xODa2zo5F8F9rYWALYipE9fNe9sAxu4qGhuROlSNU=
-X-Google-Smtp-Source: AGHT+IG9PteFS9WiKoGXgKwgDAw8HaSTb1BxroQtjfOr0tK6g0cn2Yzke9177Wjn0cpTZ7sCdN3xng==
-X-Received: by 2002:a05:6a21:7886:b0:1dc:5e5:ea65 with SMTP id adf61e73a8af0-1dc22b60950mr30420141637.34.1731519065222;
-        Wed, 13 Nov 2024 09:31:05 -0800 (PST)
+        bh=NeR3WHmqojr6rm3S6Th9Ht6BHf7RWJi8eTYxBh8PgJg=;
+        b=TAaY+BVthYR3JMbHmgZlEk49Pj1GwVID6TX/pIBbOiHxBmVXsLJbDeRSCud4fZtwqW
+         mb0JNY0tUYg18LkQ1HVaD/cOodTawOe6m1XgY7rZYORDmWWJlq14QkwUj0fpe+GU/OpX
+         ebqcOZzUENoeNcuBo+muY6+yHDkT+XClDwDz7CDj6mrUFCz1ljcMfjLMWczelEdCazQX
+         XpFy89ccuym5VMy/sUz68WKUu+GGy+c/sp1YA9mIVpMVoxobsqJjo+ynLi36E99YzEap
+         Sp/l9XmDYgU3xy6FNgT5vLxiBCSuyrTRaRbpQZHbGdua6fqTbWtrUU9ggRVSk/QWpC5z
+         P1vw==
+X-Forwarded-Encrypted: i=1; AJvYcCU10Ozy3KS5/O8BEace0cyeWKSRlZCFQFcJzoONVG4NZuWf99sLW9u1LyR+aWpjIDi4gR80sXNoGk28S1aG@vger.kernel.org, AJvYcCUtFKJg74UCkei9DyypeNxdsp+lnsDyAUIyDQoCkxlRpULmzH6FtG+nNtSzPFi67urKG74=@vger.kernel.org, AJvYcCV3VYvjRdzKwHQNas44pS+iTLORb7E9nQTRpC/TuwfVpl5o/ITzwGyjB5NRbUtS4M3UcWPTAoD6PiM82lnDNazC@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp+jPAAyMf+f+OhilvD4ka75fG0bPQpAM0rlTbC1bzNkg7z11F
+	8+iIuszdsz358Oec3aQQMb3dJ5EHg72cTs9ZPeZYp5ZVrcZ6d9Y1mqDU84Y=
+X-Google-Smtp-Source: AGHT+IHrDlNFx8RsW3SQdNK9PGUQe2v6475Teh8RVEq77X3TX9l5KmFqyp+uZSAUj2mpcPlE1atWPw==
+X-Received: by 2002:a17:902:e5cb:b0:20b:b26e:c149 with SMTP id d9443c01a7336-211b5ca46c4mr46005445ad.29.1731519284668;
+        Wed, 13 Nov 2024 09:34:44 -0800 (PST)
 Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5df334sm12738452a12.34.2024.11.13.09.31.04
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc829dsm113054755ad.40.2024.11.13.09.34.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 09:31:04 -0800 (PST)
-Date: Wed, 13 Nov 2024 09:31:04 -0800
+        Wed, 13 Nov 2024 09:34:44 -0800 (PST)
+Date: Wed, 13 Nov 2024 09:34:43 -0800
 From: Stanislav Fomichev <stfomichev@gmail.com>
 To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
 Cc: Andrii Nakryiko <andrii@kernel.org>,
@@ -84,11 +84,11 @@ Cc: Andrii Nakryiko <andrii@kernel.org>,
 	Bastien Curutchet <bastien.curutchet@bootlin.com>,
 	Petar Penkov <ppenkov@google.com>, bpf@vger.kernel.org,
 	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 01/10] selftests/bpf: add a macro to compare raw
- memory
-Message-ID: <ZzTiWBLaUDex4ieA@mini-arch>
+Subject: Re: [PATCH bpf-next 03/10] selftests/bpf: replace CHECK calls with
+ ASSERT macros in flow_dissector test
+Message-ID: <ZzTjM1l972hLO7e_@mini-arch>
 References: <20241113-flow_dissector-v1-0-27c4df0592dc@bootlin.com>
- <20241113-flow_dissector-v1-1-27c4df0592dc@bootlin.com>
+ <20241113-flow_dissector-v1-3-27c4df0592dc@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,49 +98,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241113-flow_dissector-v1-1-27c4df0592dc@bootlin.com>
+In-Reply-To: <20241113-flow_dissector-v1-3-27c4df0592dc@bootlin.com>
 
 On 11/13, Alexis Lothoré (eBPF Foundation) wrote:
-> We sometimes need to compare whole structures in an assert. It is
-> possible to use the existing macros on each field, but when the whole
-> structure has to be checked, it is more convenient to simply compare the
-> whole structure memory
+> The flow dissector test currently relies on generic CHECK macros to
+> perform tests. Update those to newer, more-specific ASSERT macros.
 > 
-> Add a dedicated assert macro, ASSERT_MEMEQ, to allow bare memory
-> comparision
+> This update allows to get rid of the global duration variable, which was
+> needed by the CHECK macros
 > 
 > Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
-> ---
->  tools/testing/selftests/bpf/test_progs.h | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/bpf/test_progs.h b/tools/testing/selftests/bpf/test_progs.h
-> index 74de33ae37e56c90646cd1e0bb58ed7e3f345ec0..bdde741543836991398daacfe5423e6af8ef9151 100644
-> --- a/tools/testing/selftests/bpf/test_progs.h
-> +++ b/tools/testing/selftests/bpf/test_progs.h
-> @@ -186,6 +186,19 @@ void test__skip(void);
->  void test__fail(void);
->  int test__join_cgroup(const char *path);
 
-[..]
- 
-> +#define DUMP_BUFFER(name, buf, len)						\
-> +	({									\
-> +		fprintf(stdout, "%s:\n", name);					\
-> +		for (int i = 0; i < len; i++) {					\
-> +			if (i && !(i % 16))					\
-> +				fprintf(stdout, "\n");				\
-> +			if (i && !(i % 8) && (i % 16))				\
-> +				fprintf(stdout, "\t");				\
-> +			fprintf(stdout, "%02X ", ((uint8_t *)(buf))[i]);	\
-> +		}								\
-> +		fprintf(stdout, "\n");						\
-> +	})
-
-nit: should we rewrite this as a real function?
-
-void hexdump(const char *prefix, void *buf, size_t len)
-{
-..
-}
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 
