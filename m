@@ -1,121 +1,170 @@
-Return-Path: <linux-kernel+bounces-407351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 820AD9C6C3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:01:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2FAA9C6C42
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:01:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32B3BB2CE64
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:00:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A260E2878C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA861F8907;
-	Wed, 13 Nov 2024 10:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAF11FA857;
+	Wed, 13 Nov 2024 10:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TVkW0qGF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PerTfzZS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C341F80BA
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E591F80A6;
+	Wed, 13 Nov 2024 10:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731492017; cv=none; b=Prw0dnFjhPC1MPSKyntGuLvEpJJrT5/zjiO8B2ft45O4DsJW1qpwZO7HW5PIDX/oIgXgK4Q/mdJGRRaPgZYXOr9jRsf5DK1BR9mA7qjABQFTVIhSEphakNw8V7vqtfAcx4ce1vNL8hch+h0sPuJHJ09CF0CH8EyRtwMGapi/654=
+	t=1731492056; cv=none; b=bh/MDXNfKqVSqKzsOeSxETqnA1mrerWwvMyP6MdOAFtbWOo87wgfXKpZVK+WoFvRR/ugOMHCj4si9g3mG/oIQrONxI24aPubJokUVkOraoAn3aKiWA1ezJAbnSoNi1pj8h5NTr8+GK7aT+3PLUo93E0Damk+c2KEvthjnEZPXww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731492017; c=relaxed/simple;
-	bh=XTg1A6VERW2vZuQ8bcofRgH6ca1goDGT1y1rIAqX34s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=inQGpeAO1hJRrj6YKLBgeTp1EXL+qFLeYfNO5VYayoWTBe2cCKS1B1O66IgK9tV+lXKESiTM33pAw8QLGMfY9UbnAsMi4SVZoWY8kvi/AVH9DAmvY0RpxcWOdl2ke7gwyerUWeCp1pWnrjja1L4UnBiNLueQo4IeNYaYxlew9BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TVkW0qGF; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1731492056; c=relaxed/simple;
+	bh=ZkMq79c4JGzoIJVfdWDk1J1kcO/pPfiYg79E2+IsnHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nmrp3e/qbI3wQ01b/9tSzTCwVTPwDP/yd+xChMrkA7Xmbn7RA6HpfI7xx2OrUSj3grACLs0qosJTqrc3GibRmfxWA+B6moPQsWMubtzRHGeMHAMebJICtYLEgjoLVS6Wug/vJ6pR8s4kZU4Px3O1RM/sXNxy3vzGnn94rD5p9c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PerTfzZS; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731492011; x=1763028011;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=XTg1A6VERW2vZuQ8bcofRgH6ca1goDGT1y1rIAqX34s=;
-  b=TVkW0qGFL9mzfltADpmsKv8Xl5KsrAD9VdpMgshTir/ASd2dzIDAH2Sc
-   ADAVpRwvOmoGhEXA+F0n4tjoG6FvJyKx0LYV4b5tAlSnHkxi2zfBmx8l6
-   elR2X55Uqyd1wS2K4TFIpAcRsStGkLRtKEfiPwhnx9BYBxsZv2RQmt8ty
-   Lv7Garaid5O98UkJTDGGDn/OmQ5XCuLwMaG1MZDhhPyJ5KSTpHzB7/4dE
-   kXxP4UiXgaYZNdLbhLdamrP/I8AN7gfavKKJ7r5plFjN4GkLff0oaMF3o
-   jKyGkWIkuk5cofwkG6Grm5oUEhKCbZmalBu8IzegmDxRCF9ZUHyuGxcvp
-   g==;
-X-CSE-ConnectionGUID: Kirir34NQbWuWFDv/kxTzQ==
-X-CSE-MsgGUID: WRh+THjrSfiEUeXq7uoIUw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31258416"
-X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
-   d="scan'208";a="31258416"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 02:00:09 -0800
-X-CSE-ConnectionGUID: teOArXzgSayK1TaaOOx2VQ==
-X-CSE-MsgGUID: VSWqnHkRQZuZGE60Q0mmYw==
+  t=1731492054; x=1763028054;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZkMq79c4JGzoIJVfdWDk1J1kcO/pPfiYg79E2+IsnHk=;
+  b=PerTfzZSExiLH4O+M7QIlzpt56PQDqTMxoPCHgtNEvO9b6+w6pUrd+ZQ
+   CU4dDN57Ca0s3UUCi8EIDkydf+4WtdhsxtDgTC4TWRK9KmwnhngK/Qt+m
+   IrCnOb8uJJloPvWxkc7QSeVZm0OQO2DOzf3WsrxO+jZRSttZ6pM6NNSFG
+   /2OmY7tmP9GwKWjW2NBlguYuUTbBZls0oxcR7YqVz3o8eQtnby+iGYEaF
+   UweXWSs0Ryqw78Gu/czXAU3j+PBp/iAtSMadMmjGzBRMWgZpxFhDfQpy3
+   o3ICxfkS0ek5ZCnRIGP2EhiAIRViH0Iv0tgRKb7WlZMYSVG5GxbSL2mN4
+   w==;
+X-CSE-ConnectionGUID: XRxtXpcmSzWAQqeu+E1oeg==
+X-CSE-MsgGUID: ZW7iKvrbRWqR1ZZdIMGQYw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="35085694"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="35085694"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 02:00:53 -0800
+X-CSE-ConnectionGUID: xHi9XD1fRge89TMU/HzhZQ==
+X-CSE-MsgGUID: lE+YIcgmQxCsnQn5M+kxkA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
-   d="scan'208";a="91867725"
-Received: from mylly.fi.intel.com (HELO [10.237.72.58]) ([10.237.72.58])
-  by fmviesa003.fm.intel.com with ESMTP; 13 Nov 2024 02:00:07 -0800
-Message-ID: <9a78959a-391b-4a77-a33e-e230fbf2e0c0@linux.intel.com>
-Date: Wed, 13 Nov 2024 12:00:06 +0200
+   d="scan'208";a="92292266"
+Received: from lkp-server01.sh.intel.com (HELO 80bd855f15b3) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 13 Nov 2024 02:00:51 -0800
+Received: from kbuild by 80bd855f15b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tBAB7-0000D7-0W;
+	Wed, 13 Nov 2024 10:00:49 +0000
+Date: Wed, 13 Nov 2024 18:00:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ragavendra <ragavendra.bn@gmail.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, unicorn_wang@outlook.com, inochiama@outlook.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ragavendra <ragavendra.bn@gmail.com>
+Subject: Re: [PATCH] clk:sophgo:clk-cv18xx-pll: Remove uninitialized u32
+ parameter and variable
+Message-ID: <202411131750.bsCkQYb6-lkp@intel.com>
+References: <20241113025318.3667350-1-ragavendra.bn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] i3c: master: Add support for SETAASA CCC
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Sanket.Goswami@amd.com, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
- <20241108073323.523805-5-Shyam-sundar.S-k@amd.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20241108073323.523805-5-Shyam-sundar.S-k@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113025318.3667350-1-ragavendra.bn@gmail.com>
 
-Hi
+Hi Ragavendra,
 
-On 11/8/24 9:33 AM, Shyam Sundar S K wrote:
-> @@ -1907,7 +1926,14 @@ static int i3c_master_bus_init(struct i3c_master_controller *master)
->   		goto err_bus_cleanup;
->   	}
->   
-> -	i3c_master_add_spd_dev(master, i3cboardinfo);
-> +	/*
-> +	 * If the I3C slave on the bus is SPD device, then do not follow the regular
-> +	 * DAA process. Also, as per SPD spec SETAASA is required for the bus discovery
-> +	 * and sending RSTDAA and DISEC is considered as illegal. So skip the entire process
-> +	 * if the jdec_spd flag has been identified from the BIOS.
-> +	 */
-> +	if (master->jdec_spd)
-> +		return i3c_master_add_spd_dev(master, i3cboardinfo);
->   
-This looks wrong the previous patch adds unconditional call to 
-i3c_master_add_spd_dev() and this patch makes it conditional. Can 
-previous patch then cause a regression if applied without this one?
+kernel test robot noticed the following build errors:
 
->   	if (master->ops->set_speed) {
->   		ret = master->ops->set_speed(master, I3C_OPEN_DRAIN_SLOW_SPEED);
-> @@ -2311,6 +2337,10 @@ static int i3c_acpi_configure_master(struct i3c_master_controller *master)
->   		return -ENODEV;
->   	}
->   
-> +	status = acpi_evaluate_object(master->ahandle, "_STR", NULL, NULL);
-> +	if (ACPI_SUCCESS(status))
-> +		master->jdec_spd = true;
-> +
+[auto build test ERROR on sophgo/for-next]
+[also build test ERROR on sophgo/fixes linus/master v6.12-rc7 next-20241112]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I'm still suspicious about this one when existence of _STR for the host 
-controller causes normal bus initialization to be skipped. I.e. like below.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ragavendra/clk-sophgo-clk-cv18xx-pll-Remove-uninitialized-u32-parameter-and-variable/20241113-105536
+base:   https://github.com/sophgo/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241113025318.3667350-1-ragavendra.bn%40gmail.com
+patch subject: [PATCH] clk:sophgo:clk-cv18xx-pll: Remove uninitialized u32 parameter and variable
+config: arm-randconfig-001-20241113 (https://download.01.org/0day-ci/archive/20241113/202411131750.bsCkQYb6-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241113/202411131750.bsCkQYb6-lkp@intel.com/reproduce)
 
-Device (I3C0)
-{
-	_STR ("My I3C Host Controller")
-...
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411131750.bsCkQYb6-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/clk/sophgo/clk-cv18xx-pll.c:80:4: error: use of undeclared identifier 'value'
+      80 |                 *value = detected;
+         |                  ^
+   1 error generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+
+
+vim +/value +80 drivers/clk/sophgo/clk-cv18xx-pll.c
+
+80fd61ec46124e Inochi Amaoto 2024-03-09  46  
+d666c0d9d14eb5 Ragavendra    2024-11-12  47  
+80fd61ec46124e Inochi Amaoto 2024-03-09  48  static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+d666c0d9d14eb5 Ragavendra    2024-11-12  49  			  unsigned long prate, unsigned long *rate)
+80fd61ec46124e Inochi Amaoto 2024-03-09  50  {
+80fd61ec46124e Inochi Amaoto 2024-03-09  51  	unsigned long best_rate = 0;
+80fd61ec46124e Inochi Amaoto 2024-03-09  52  	unsigned long trate = *rate;
+80fd61ec46124e Inochi Amaoto 2024-03-09  53  	unsigned long pre_div_sel = 0, div_sel = 0, post_div_sel = 0;
+80fd61ec46124e Inochi Amaoto 2024-03-09  54  	unsigned long pre, div, post;
+d666c0d9d14eb5 Ragavendra    2024-11-12  55  	u32 detected = 0;
+80fd61ec46124e Inochi Amaoto 2024-03-09  56  	unsigned long tmp;
+80fd61ec46124e Inochi Amaoto 2024-03-09  57  
+80fd61ec46124e Inochi Amaoto 2024-03-09  58  	for_each_pll_limit_range(pre, &limit->pre_div) {
+80fd61ec46124e Inochi Amaoto 2024-03-09  59  		for_each_pll_limit_range(div, &limit->div) {
+80fd61ec46124e Inochi Amaoto 2024-03-09  60  			for_each_pll_limit_range(post, &limit->post_div) {
+80fd61ec46124e Inochi Amaoto 2024-03-09  61  				tmp = ipll_calc_rate(prate, pre, div, post);
+80fd61ec46124e Inochi Amaoto 2024-03-09  62  
+80fd61ec46124e Inochi Amaoto 2024-03-09  63  				if (tmp > trate)
+80fd61ec46124e Inochi Amaoto 2024-03-09  64  					continue;
+80fd61ec46124e Inochi Amaoto 2024-03-09  65  
+80fd61ec46124e Inochi Amaoto 2024-03-09  66  				if ((trate - tmp) < (trate - best_rate)) {
+80fd61ec46124e Inochi Amaoto 2024-03-09  67  					best_rate = tmp;
+80fd61ec46124e Inochi Amaoto 2024-03-09  68  					pre_div_sel = pre;
+80fd61ec46124e Inochi Amaoto 2024-03-09  69  					div_sel = div;
+80fd61ec46124e Inochi Amaoto 2024-03-09  70  					post_div_sel = post;
+80fd61ec46124e Inochi Amaoto 2024-03-09  71  				}
+80fd61ec46124e Inochi Amaoto 2024-03-09  72  			}
+80fd61ec46124e Inochi Amaoto 2024-03-09  73  		}
+80fd61ec46124e Inochi Amaoto 2024-03-09  74  	}
+80fd61ec46124e Inochi Amaoto 2024-03-09  75  
+80fd61ec46124e Inochi Amaoto 2024-03-09  76  	if (best_rate) {
+80fd61ec46124e Inochi Amaoto 2024-03-09  77  		detected = PLL_SET_PRE_DIV_SEL(detected, pre_div_sel);
+80fd61ec46124e Inochi Amaoto 2024-03-09  78  		detected = PLL_SET_POST_DIV_SEL(detected, post_div_sel);
+80fd61ec46124e Inochi Amaoto 2024-03-09  79  		detected = PLL_SET_DIV_SEL(detected, div_sel);
+80fd61ec46124e Inochi Amaoto 2024-03-09 @80  		*value = detected;
+80fd61ec46124e Inochi Amaoto 2024-03-09  81  		*rate = best_rate;
+80fd61ec46124e Inochi Amaoto 2024-03-09  82  		return 0;
+80fd61ec46124e Inochi Amaoto 2024-03-09  83  	}
+80fd61ec46124e Inochi Amaoto 2024-03-09  84  
+80fd61ec46124e Inochi Amaoto 2024-03-09  85  	return -EINVAL;
+80fd61ec46124e Inochi Amaoto 2024-03-09  86  }
+80fd61ec46124e Inochi Amaoto 2024-03-09  87  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
