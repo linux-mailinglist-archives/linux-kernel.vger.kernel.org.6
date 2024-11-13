@@ -1,132 +1,130 @@
-Return-Path: <linux-kernel+bounces-408028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF0B9C7918
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:42:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FDB9C7925
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:45:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D10A6285875
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C47EA1F239D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0B71FBF63;
-	Wed, 13 Nov 2024 16:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916311FDF92;
+	Wed, 13 Nov 2024 16:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D4UlMaER"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BzMqWY6p"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC152309AF
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07301DEFC1
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731516150; cv=none; b=snBpq3qQuXS536LklFbcmt1TgWUk0MWysSjmZUYkGpLhqjBQ3E0LfV1tEt8o8rDiNo07CvP2lBKRb7KVs1M4WS4/US3SodOB8jKvfy8cylNuXsxulaB2BJYh7ooN0sp3hLB20XVT3GOnZosHZ7kmb8lVnCdubfbxq45MPZNDTXM=
+	t=1731516281; cv=none; b=l2rPaKIWrOQ+F02Iwm3JX27g5CqZVmqzmzcv84L1wVleAFESSN8vZQ12t8I0Ni6aJL6tq7FgciPG9uKHOkc0DNebMG2DEwESTULnztmhmdl/+k6YEmRJcO3SbR7Afuzo14OXILbbJqHyGlcbmUpYg45UnCIaEOy4UAdwr9IuuII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731516150; c=relaxed/simple;
-	bh=06AuL1t5SxzpsWna3tKpXpi4dmGvZ4g957HKiDaKnAs=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PX0lyxte4umVjRicuWA5i06ZGcg/kO25/KEN8R8CIite/q7ZPqkfajRmJcFgZUSAqP7Z5aRNaM7L0FKAW7x0hXYSbWQm/yIqa/iTA65Rglk/32DDGYCivgXOLk/6i7dB5zPmGdsYvOCRNKAClZh1DkyIO80yEUBob8FyqHRkn3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D4UlMaER; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731516148;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=06AuL1t5SxzpsWna3tKpXpi4dmGvZ4g957HKiDaKnAs=;
-	b=D4UlMaERcAKkLYy5jTDIcSVyEKCGbs7vSp2tHH1sNU53r+WC/lQ8fGw+35+ytPslAHQkhA
-	jun/FlSMMWhkQIUELayelf0/pdSW7c+QhefZ84sV+2DlVRGa/Y2FwpA9SyH5daCtqJLvp9
-	c7Tn2ZwhZk3Jx5IJqsqapZvSBrUm4JU=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-619-FRocP6COPjK_9VzmvES_JQ-1; Wed, 13 Nov 2024 11:42:27 -0500
-X-MC-Unique: FRocP6COPjK_9VzmvES_JQ-1
-X-Mimecast-MFC-AGG-ID: FRocP6COPjK_9VzmvES_JQ
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6b7974696so84720325ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:42:26 -0800 (PST)
+	s=arc-20240116; t=1731516281; c=relaxed/simple;
+	bh=e5nJkTR7J5hdCp6LwUJ/ZxsG80P30xGos64u7r8MAMg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=K0nj8H3b/1nkPLhwFozDovdwFVzEkNIq2Qym5qgBLDC7Zht7QkbPIKFbexbQccKuX/pa1gt16iFZfbA/zqmPr3CYM6KYVv3WphNbHM1rULT8EYnwdDSLyvjRlHtgpddoedSU4712MsWEJigXx8MfCVkr+HMIGPjkjsTnms+XHQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BzMqWY6p; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c932b47552so6835a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:44:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731516277; x=1732121077; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K41601Aj1DwCT3LWzGLI16qz80eqGD+NEopptWi0zDE=;
+        b=BzMqWY6p90wF3dE0/fhp+bbt1M45+rPcR1TaY32SGeKrTm3fTl6ATb2pQNRkhzxDj3
+         3pAHxSGBvQEVACbQ1a+PkRhcuk27aMfdSfA9w+yFtdvTCTivUuld/qb/7puaM11of3L5
+         wjVGg1idD4vT1MbWPbQir9OUdk09TJvvF/3kbNnxxl8UuzUSJfRMfHJi5/HXugwqGZfK
+         ywOUmVGIrtnyS9KDV/Shiosllx5fhx2YeVzQh9G9UGgJRq5QCmYowCFHBTGQeJlWl29X
+         JqkPCO93B63aipZvhkDAavIVTP9JZld1PwjFNdi2PmWuy/tKnxvIpHQTFfAk+/cmOvmH
+         S14Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731516146; x=1732120946;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=06AuL1t5SxzpsWna3tKpXpi4dmGvZ4g957HKiDaKnAs=;
-        b=RYryWjREm8qgszoFIugLBcrwN4EBQwaMJMqwO490PaiaGTCqQR+fesq7tYpioN2CRw
-         49caidX0hG3TFIEbwcy3nvfFcZtN6XvTKKBR/Z7loTcFEU3bYG7XOyiyoBvKepyeEVpv
-         7PNocnfPhaW8I7iowEinu/OQZWiCr9sEIy6+PEDxLGz9rhJq0zikBaxUREUgdRfO9GLQ
-         wHNdlCsDzO6P3Cvpd/28mEKTIl0wEqVUHLzQ+WWJm6rsRbQvzG4LC8uOBOsB8YPRHSAE
-         jsL5zbEmJeUOViB1TMwsf9X/D+wg0tGjNMv2MUD1oBb0EfTnUPbODC/Y3Uk1AMlo3lDt
-         9tFA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Rq9ywECOwal6ZsFeddy5/wLGUTo7zuwuBd3AVzaBUZKzkXVElHmgdsTu3w/8YElQ/mIiDdPfCWiCIac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzObQgdNQd6dERUJ/nF1avt3lpDE4CnOV3FKrtNr55UobARMlAe
-	YnBhLM3HbDBKoIH92yZVj2Ppmyrxc4/SwDSNeLywf7xetx2dwezDx+/ESGyjYBf3HFR3qkNj3jP
-	gSGSOgYpmahEkT8nXLirn/Y7nDg/AS3SOcYcVw6xv4iPR7fnQztNBC6Nzi9/JLg==
-X-Received: by 2002:a05:6e02:1886:b0:3a4:e75c:c9d5 with SMTP id e9e14a558f8ab-3a6f18d894cmr192853765ab.0.1731516146238;
-        Wed, 13 Nov 2024 08:42:26 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEUbIKFahDMQG8rFZFHphfEkZG3wiNYQDEx1w6j+e2DRXkWnNHOwvRmePXoBiCQQRiblgvtUw==
-X-Received: by 2002:a05:6e02:1886:b0:3a4:e75c:c9d5 with SMTP id e9e14a558f8ab-3a6f18d894cmr192853505ab.0.1731516145943;
-        Wed, 13 Nov 2024 08:42:25 -0800 (PST)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de787d7051sm2902209173.85.2024.11.13.08.42.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 08:42:25 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <b7c75f06-1ab5-48c4-b2fb-521508f20f9b@redhat.com>
-Date: Wed, 13 Nov 2024 11:42:23 -0500
+        d=1e100.net; s=20230601; t=1731516277; x=1732121077;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K41601Aj1DwCT3LWzGLI16qz80eqGD+NEopptWi0zDE=;
+        b=EGwWzQRf8/9ioPg5N32JnpwcHpyGVvR3pqy+V1Iguos4bkw3eeMuV7SCk1kv3h/uRn
+         SrF0G+xkWXKTSNr6aE1WtlQpDc8dBwc66+tOfwwQfYj/+irtjw2PiOv5Shxb/5QrPaIv
+         0eRWY/EilJy1UqLECcRqQREq4IvEcYRRHVoeHkVUsVsnbdFBVox6tCe8/CJz2W+YM5Gg
+         xrQRftIDjMZ7oMEzYRU56T7Ee6oS0Vq0y1aWPASmoqTsL9EP5MxMs8Hpf2yWbbMg6W58
+         2DuJib+3lGU7f3tvFvdAo3W329zq1U19dc3/lU8+AKA/GOzuhOXgeEbS9SCJ7G0YlprV
+         HnVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVunSdjx1U9EqKdkuJzUUhQhzIMbpit2qnDl+EuARlV5H8eC6uSVTlEc8XAyhTu9rD90ARfdyMforWVyN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx532U1J4TsxbMhL1KCh+blfXUbz4+SNYABVsEEe8WBkF9TlIfb
+	NAy8i7rcesnMrPmLkwa47AlECUIM4lWHq5WAHysRNmLn1dJ8IHvjpSgQkgFhdw/DdWdTPlP2o85
+	PepEOtRN7kSLAg3OAPHbW+LMnM0XNHqAyCDB6
+X-Gm-Gg: ASbGncu/FscA3/MQ9TSPG8uAgUZLBEdbP4m160WihK5mxBaPeQ8KFM9UPaA7ojNxwP8
+	aLwlcG1VR04bp0WjHZYdEE2BAOqfCHmMnxydSpTVPBzklOTUgNE6bEAnh9s9A
+X-Google-Smtp-Source: AGHT+IFmW5EY8yv++uV6rWC8b84oqe+r4WcblS74tlvDXju2LG8ZJr1TrcaWUFb2AMJlbTIPMvZYMZs+C5PWC/0DTn8=
+X-Received: by 2002:aa7:cb8c:0:b0:5cb:6849:b30e with SMTP id
+ 4fb4d7f45d1cf-5cf656c49efmr93291a12.3.1731516276879; Wed, 13 Nov 2024
+ 08:44:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] sched/deadline: Correctly account for allocated
- bandwidth during hotplug
-To: Juri Lelli <juri.lelli@redhat.com>, Waiman Long <llong@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-References: <20241113125724.450249-1-juri.lelli@redhat.com>
- <20241113125724.450249-3-juri.lelli@redhat.com>
- <8e55c640-c931-4b9c-a501-c5b0a654a420@redhat.com>
- <ZzTWkZJktDMlwQEW@jlelli-thinkpadt14gen4.remote.csb>
-Content-Language: en-US
-In-Reply-To: <ZzTWkZJktDMlwQEW@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241112194635.444146-1-surenb@google.com> <20241112194635.444146-5-surenb@google.com>
+ <54b8d0b9-a1c7-4c1b-a588-2e5308a977fb@suse.cz> <sdfh56itaffzhpk4rft2tsjm7r44auhjomfthzgxzrmj5632eq@noi2uhgp3a3h>
+ <ZzSwM5qwStadOZvv@casper.infradead.org> <k26pa6fhn2j6bgfwtcdp6u5vk25mkclitzvqqeqvji77k4lqop@yowwrqusmdyp>
+In-Reply-To: <k26pa6fhn2j6bgfwtcdp6u5vk25mkclitzvqqeqvji77k4lqop@yowwrqusmdyp>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 13 Nov 2024 17:44:00 +0100
+Message-ID: <CAG48ez29OcD=NL0EqW3hO+3VNzkZce5REcYev5-M09-_HOqsDA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] mm: make vma cache SLAB_TYPESAFE_BY_RCU
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, hannes@cmpxchg.org, 
+	mjguzik@gmail.com, oliver.sang@intel.com, mgorman@techsingularity.net, 
+	david@redhat.com, peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, 
+	paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, 
+	hughd@google.com, minchan@google.com, jannh@google.com, 
+	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 11/13/24 11:40 AM, Juri Lelli wrote:
-> On 13/11/24 11:06, Waiman Long wrote:
+On Wed, Nov 13, 2024 at 4:23=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+> * Matthew Wilcox <willy@infradead.org> [241113 08:57]:
+> > On Wed, Nov 13, 2024 at 07:38:02AM -0500, Liam R. Howlett wrote:
+> > > > Hi, I was wondering if we actually need the detached flag. Couldn't
+> > > > "detached" simply mean vma->vm_mm =3D=3D NULL and we save 4 bytes? =
+Do we ever
+> > > > need a vma that's detached but still has a mm pointer? I'd hope the=
+ places
+> > > > that set detached to false have the mm pointer around so it's not i=
+nconvenient.
+> > >
+> > > I think the gate vmas ruin this plan.
+> >
+> > But the gate VMAs aren't to be found in the VMA tree.  Used to be that
+> > was because the VMA tree was the injective RB tree and so VMAs could
+> > only be in one tree at a time.  We could change that now!
 >
-> ...
+> \o/
 >
->> This part can still cause a failure in one of test cases in my cpuset
->> partition test script. In this particular case, the CPU to be offlined is an
->> isolated CPU with scheduling disabled. As a result, total_bw is 0 and the
->> __dl_overflow() test failed. Is there a way to skip the __dl_overflow() test
->> for isolated CPUs? Can we use a null total_bw as a proxy for that?
-> Can you please share the repro script? Would like to check locally what
-> is going on.
+> >
+> > Anyway, we could use (void *)1 instead of NULL to indicate a "detached"
+> > VMA if we need to distinguish between a detached VMA and a gate VMA.
+>
+> I was thinking a pointer to itself vma->vm_mm =3D vma, then a check for
+> this, instead of null like we do today.
 
-Just run tools/testing/selftests/cgroup/test_cpuset_prs.sh.
-
-Cheers,
-Longman
-
+Sidenote:
+Something like NULL or (void*)1 is fine with me but please don't do
+pointer-to-itself - we shouldn't unnecessarily store a pointer to an
+object of one type in a pointer field of an incompatible type, that
+increases the risk of creating type confusion issues (both in the
+memory corruption sense and in the Spectre sense). I know MM already
+has several places where similar stuff can happen (in particular
+page->mapping), but here it seems like unnecessary risk to me.
 
