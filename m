@@ -1,95 +1,140 @@
-Return-Path: <linux-kernel+bounces-406990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC7B9C6722
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 815119C6743
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:26:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8031F22958
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:15:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3313B1F23E90
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E34136672;
-	Wed, 13 Nov 2024 02:15:10 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947087EEFD;
-	Wed, 13 Nov 2024 02:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6894A13B7AE;
+	Wed, 13 Nov 2024 02:26:18 +0000 (UTC)
+Received: from 189.cn (ptr.189.cn [183.61.185.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783F3171D2;
+	Wed, 13 Nov 2024 02:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731464110; cv=none; b=G1UhOemiye7zcl5CIoW6tVQv2Udlp9xQqk9ukVAkh7PJO3F+t14adrXLOMPySDZF6hUifxSLG1sNXVXQZcg8mvcLbPvEBTUvm6v6gCye5Yk9qTJMOL0RVrZ2ptrlFYsykKw4lXRPR4QQ/jJRSdAJb4gy71PcTGmlCMa6B0Nahl0=
+	t=1731464778; cv=none; b=UsMNuukZaP5i0Tkr9KGAphvJq6BGLT9wURk4k7k2/p0gjE6FUsE7ejTS5P23NhIRO0IM9m0cFZMte7CdOouDCmpRZ06uO/+sQlR2x85rIdjfg2GfXUmX37T5+d2xnNX7qirI4AbwwSg987Uw40dzBx78D+GFRKEBuAZwR48f380=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731464110; c=relaxed/simple;
-	bh=Uw0xzwicmh9cDaZnhDJzslV/a+6MZhi1LSWdbaTIbME=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gZ6KROeGjuygKqpPrLOHJlgTmjOZwObl4tIZkgUAvzKHyW2ceUxl/bbV2PZ+Nm3O2iepQw61ik5liiSU8FxtVidZxrK97FTz1YxCumXfPpr64t9DQOJ7ShFzmtlRHyXxiWZYg9nkvYe6t2Fe93OaOgp7Wq2EOshbxf5RS3AiD/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee567340ba64d1-134e6;
-	Wed, 13 Nov 2024 10:15:03 +0800 (CST)
-X-RM-TRANSID:2ee567340ba64d1-134e6
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.103])
-	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee667340ba735f-7cdfe;
-	Wed, 13 Nov 2024 10:15:03 +0800 (CST)
-X-RM-TRANSID:2ee667340ba735f-7cdfe
-From: Luo Yifan <luoyifan@cmss.chinamobile.com>
-To: brgl@bgdev.pl,
-	warthog618@gmail.com
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luo Yifan <luoyifan@cmss.chinamobile.com>
-Subject: [PATCH] tools: gpio: Fix several incorrect format specifiers
-Date: Wed, 13 Nov 2024 10:14:58 +0800
-Message-Id: <20241113021458.291252-1-luoyifan@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1731464778; c=relaxed/simple;
+	bh=drOEuEoKWWdBpwkAqGYKGfNbQpjOKskcieottOIMqLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fKHCQ1C3jYsQlSiDti4FK/tj+jh5YjK+ygoS5oHp0n26VkNS7s9/6pSFm+YGvqwwABFM58whq6Lkuh/bug8dxAtElVlKEhRwFMGhe2PJR8ZblbrsGnhUl/OD2Y/9up8WvhdjcNG+ZzTC8R4A663dY0WSxh189oAWGL1rkG4NgfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.242.145:22611.736088664
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-123.150.8.42 (unknown [10.158.242.145])
+	by 189.cn (HERMES) with SMTP id B70831002A1;
+	Wed, 13 Nov 2024 10:15:20 +0800 (CST)
+Received: from  ([123.150.8.42])
+	by gateway-153622-dep-5c5f88b874-qw5z2 with ESMTP id df1b45bd4cab4b7283a98e55a5d760b2 for petr.pavlu@suse.com;
+	Wed, 13 Nov 2024 10:15:20 CST
+X-Transaction-ID: df1b45bd4cab4b7283a98e55a5d760b2
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 123.150.8.42
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+Message-ID: <524b444f-4b81-4005-b93a-39b7d3fd3db1@189.cn>
+Date: Wed, 13 Nov 2024 10:15:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kmod: verify module name before invoking modprobe
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: mcgrof@kernel.org, samitolvanen@google.com, da.gomez@samsung.com,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org
+References: <20241110114233.97169-1-chensong_2000@189.cn>
+ <21423aea-65c3-430e-932d-2ba70b6b9ac3@suse.com>
+Content-Language: en-US
+From: Song Chen <chensong_2000@189.cn>
+In-Reply-To: <21423aea-65c3-430e-932d-2ba70b6b9ac3@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Make a minor change to eliminate static checker warnings. The variable
-lines[] is unsigned, so the correct format specifier should be %u
-instead of %d.
+Hi Petr,
 
-Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
----
- tools/gpio/gpio-event-mon.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Please see my inline comments, many thanks.
 
-diff --git a/tools/gpio/gpio-event-mon.c b/tools/gpio/gpio-event-mon.c
-index 5dee2b98a..b70813b0b 100644
---- a/tools/gpio/gpio-event-mon.c
-+++ b/tools/gpio/gpio-event-mon.c
-@@ -69,14 +69,14 @@ int monitor_device(const char *device_name,
- 	}
- 
- 	if (num_lines == 1) {
--		fprintf(stdout, "Monitoring line %d on %s\n", lines[0], device_name);
-+		fprintf(stdout, "Monitoring line %u on %s\n", lines[0], device_name);
- 		fprintf(stdout, "Initial line value: %d\n",
- 			gpiotools_test_bit(values.bits, 0));
- 	} else {
--		fprintf(stdout, "Monitoring lines %d", lines[0]);
-+		fprintf(stdout, "Monitoring lines %u", lines[0]);
- 		for (i = 1; i < num_lines - 1; i++)
--			fprintf(stdout, ", %d", lines[i]);
--		fprintf(stdout, " and %d on %s\n", lines[i], device_name);
-+			fprintf(stdout, ", %u", lines[i]);
-+		fprintf(stdout, " and %u on %s\n", lines[i], device_name);
- 		fprintf(stdout, "Initial line values: %d",
- 			gpiotools_test_bit(values.bits, 0));
- 		for (i = 1; i < num_lines - 1; i++)
--- 
-2.27.0
+BR
 
+Song
 
+在 2024/11/12 20:56, Petr Pavlu 写道:
+> On 11/10/24 12:42, Song Chen wrote:
+>> Sometimes when kernel calls request_module to load a module
+>> into kernel space, it doesn't pass the module name appropriately,
+>> and request_module doesn't verify it as well.
+>>
+>> As a result, modprobe is invoked anyway and spend a lot of time
+>> searching a nonsense name.
+>>
+>> For example reported from a customer, he runs a user space process
+>> to call ioctl(fd, SIOCGIFINDEX, &ifr), the callstack in kernel is
+>> like that:
+>> dev_ioctl(net/core/dev_iovtl.c)
+>>    dev_load
+>>       request_module("netdev-%s", name);
+>>       or request_module("%s", name);
+>>
+>> However if name of NIC is empty, neither dev_load nor request_module
+>> checks it at the first place, modprobe will search module "netdev-"
+>> in its default path, env path and path configured in etc for nothing,
+>> increase a lot system overhead.
+>>
+>> To address this problem, this patch copies va_list and introduces
+>> a helper is_module_name_valid to verify the parameters validity
+>> one by one, either null or empty. if it fails, no modprobe invoked.
+> 
+> I'm not sure if I fully follow why this should be addressed at the
+> request_module() level. If the user repeatedly invokes SIOCGIFINDEX with
+> an empty name and this increases their system load, wouldn't it be
+> better to update the userspace to prevent this non-sense request in the
+> first place? 
+
+If the user process knew, it wouldn't make the mistake. moreover, what 
+happened in dev_load was quite confusing, please see the code below:
+
+     no_module = !dev;
+     if (no_module && capable(CAP_NET_ADMIN))
+         no_module = request_module("netdev-%s", name);
+     if (no_module && capable(CAP_SYS_MODULE))
+         request_module("%s", name);
+
+Running the same process, sys admin or root user spends more time than 
+normal user, it took a while for us to find the cause, that's why i 
+tried to fix it in kernel.
+
+Similarly, if something should be done in the kernel,
+> wouldn't it be more straightforward for dev_ioctl()/dev_load() to check
+> this case?
+
+I thought about it at the beginning, not only dev_ioctl/dev_load but 
+also other request_module callers should check this case as well, that 
+would be too much effort, then I switched to check it at the beginning 
+of request_module which every caller goes through.
+
+> 
+> I think the same should in principle apply to other places that might
+> invoke request_module() with "%s" and a bogus value. The callers can
+> appropriately decide if their request makes sense and should be
+> fixed/improved.
+> 
+
+Callees are obliged to do fault tolerance for callers, or at least let 
+them know what is going on inside, what kinds of mistake they are 
+making, there are a lot of such cases in kernel, such as call_modprobe 
+in kernel/module/kmod.c, it checks if orig_module_name is NULL.
+
+Song
 
 
