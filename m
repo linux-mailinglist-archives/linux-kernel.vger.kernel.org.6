@@ -1,339 +1,281 @@
-Return-Path: <linux-kernel+bounces-407551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1B069C6ECF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:13:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4DC9C6ED3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:14:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B176428391A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:13:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B83D283904
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FF92003C7;
-	Wed, 13 Nov 2024 12:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2xPynM92"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2047.outbound.protection.outlook.com [40.107.244.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115FD200B9B;
+	Wed, 13 Nov 2024 12:14:44 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C27188708;
-	Wed, 13 Nov 2024 12:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731500022; cv=fail; b=TrjmSn+w0+F3SyETdVZQlMkeEDd/wHczFBwu+KE60v/ZA35LTjExrXQm3khEvOt4uyjP5ak6uqbBh33nOE/6k84c/Y4RqT9r/Kf9Vmb9ACChq/GvdA2+0T95AwUXIUmJUYVu2D78Xeiq8QFAkdxW5jHg1j0cGyXa92PTMIUOlQw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731500022; c=relaxed/simple;
-	bh=A/yhvOeSeJCIejvHfmN3F//FIGNL4+yhKIUTElf3Q/s=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aqMhsxh4DtloK8JEWbmr8u8X/ohr0Hsh1esM9Qb/9Q95ccYzFtZTUD5dokBEF6H9pLV5HzrOz7prA0PjSE4G3vIEen1Ty+UwDx/9CGMjzvuxIj6Jw/By9uElnMglW84Eyfdrn3DkisvitiCDlXaQyhBVW2FjRFJBlVKUyBgkPA0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2xPynM92; arc=fail smtp.client-ip=40.107.244.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J4jOTekuw2+dBfJVE897rz0pr/6gjAKdBSlFejyGEHiQwqdNglYFiHO5T+dPh96BrFQVfM3bxcfLc5P02vPLH8RXqA+rBRUHHgTUmQCNLjmZeMOLR2Vlow7A5SN0CT/ik2uq3fY7266BbecXR1u861I5xiHw6NKPMFW8Jo18rFj4d1a1FEXyTrZhWRRp0fU4ztJHUEnm09EKqQw4jZyyoVmcIf+rEcF4g0sIZjCGrSCM1SneJqZGYxpcX0U3OUvVwX/+DxjNY3aOul7chKDYD2vbu+eo+ZGZ3Wy4DFZpJ0h2Tn/QzcMZkKOc5LjpRx4OlSIZeRNQf9q7h92lL7FcYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xtVosDZ5arpUAqZw1lSIq+Q38cbDsXTVoOQ2WeRWc+U=;
- b=vDtxzB2+WsgBe77d9u/WrQ8IsLT7fk+DXrB9A9rdrUx62lQ4ygctDVQ2KyISW2MQS3pe7meYP3TWhev88focqiV0mWHuvZco9PSh6ZDZ+9vVXeOTsiUlguURtQfO7Si3D9S/Cir+Oq6uZc6Ou9A/XNe6egaPW8A6s8fEMc+on8Y9WXHnxhMsxxE8PDQuOdszcX6Gre5bb65dsJfX6j6bd0Wy4/3E+JO0d/05ulIP2ApseWlfBva4QzToAGh319A9XtgaTgoPoDpu4L6KANRPOiU+vNqbbpCtZuh3787lbC2Sot1pqLbDnu4eXc9zjIbqlb4DLRDWWRqnWIjJPVKLPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xtVosDZ5arpUAqZw1lSIq+Q38cbDsXTVoOQ2WeRWc+U=;
- b=2xPynM92jFkgYrAmpdYL3IQAqycTEg5kYgDrXR2q7K4GjyP98cy66xPlljyy1U1UHhrwrywLz8UohAca0KWYIE6UoLdZs6P3M6oYiLJvjGUUhdNhKl1SWGIGIr45mBc9dJ7QxlEVivMYadwNTd6t5w0+Tcf86/4hWyS7L9H17+s=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SA3PR12MB7951.namprd12.prod.outlook.com (2603:10b6:806:318::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Wed, 13 Nov
- 2024 12:13:37 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.8137.027; Wed, 13 Nov 2024
- 12:13:37 +0000
-Message-ID: <7615f2ae-2563-4939-934d-0b02e3f2d10e@amd.com>
-Date: Wed, 13 Nov 2024 13:13:27 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6.1] drm/amdkfd: amdkfd_free_gtt_mem clear the correct
- pointer
-To: Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>,
- stable@vger.kernel.org, gregkh@linuxfoundation.org
-Cc: Philip.Yang@amd.com, Felix.Kuehling@amd.com, alexander.deucher@amd.com,
- Xinhui.Pan@amd.com, airlied@gmail.com, daniel@ffwll.ch,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, ajay.kaher@broadcom.com,
- alexey.makhalov@broadcom.com, vasavi.sirnapalli@broadcom.com,
- Sasha Levin <sashal@kernel.org>
-References: <20241113121030.2405520-1-vamsi-krishna.brahmajosyula@broadcom.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20241113121030.2405520-1-vamsi-krishna.brahmajosyula@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR3P281CA0157.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a2::13) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7986D188708;
+	Wed, 13 Nov 2024 12:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731500083; cv=none; b=FMHvkDqZcdcjsKbJ6IYVs3NE8wzYdaizaU9e3W8LrlJCvQhhn6tp5+F6Ahqh6q773Sgxwy7upk1SaVGybiO/EgUxpwnl+OLWpQjtzE+PB1Q57FFCkwHqrYvIcmuo7mdhGQnAnzYoXnA5pgQWTyT575AFPEApkUOl16+T/8M9C9o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731500083; c=relaxed/simple;
+	bh=C5YK6VNNhchSYw8CUZgzFloDdV8E7klkMjewAUqrKGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JatoQnATrJae0owNhBI6hT0yd7hUn0jTygjkS7852g5c6fOMbz612fmwZ9JtCA5YBAv2Z5D+AtK5Z9Reug+Nbxlk1TWpaZopDwR3K+t97EDzThm9520SCae1u2mAg94QJUsA9STJ1v+VXj15Q3zHVOc7Pt51hpGPG54M87fL104=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC6DC4CECF;
+	Wed, 13 Nov 2024 12:14:39 +0000 (UTC)
+Message-ID: <567c33a2-9c35-4941-9356-b280c8138009@xs4all.nl>
+Date: Wed, 13 Nov 2024 13:14:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SA3PR12MB7951:EE_
-X-MS-Office365-Filtering-Correlation-Id: c27749c7-2d1a-496e-aba0-08dd03dc9a0b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SEQ5Um5SWjA5UkpZUG9GN3pXd3ZwMUNydnlvVkljRDhaWG1CelVDSHdhdzJu?=
- =?utf-8?B?SXFuazNiSWV2WWc1cEg1SmpNUDJnTzkrMDV2KzY3OHpRRlFTeGt5a24wWGRy?=
- =?utf-8?B?czJXMHFPYXZPOVZYWHVycDNsaVRlektpUUNkQUt5UDBSS3ZDMHE0a0ovYVJv?=
- =?utf-8?B?SEtaMVBSMVUwOEJJU1ZsZGYxaHk1SmE4OVpGcktwdGtxNG9yNCtiMk85S1ZQ?=
- =?utf-8?B?SXk2V1hYbkRsNDM2OTFYOVN1YlhFOG4rK2ZBTWtsL1VHZEJGYjhyQmhuRm9j?=
- =?utf-8?B?SktuYzhzeEZFTmo2TXF3SUdlKzN5cXlQeGJFcVdWOXFINGFUNjRrYXNIZnZa?=
- =?utf-8?B?MFdaNHZpZ3hQdmgyWmdJNmYzZGpTWDVtQjBiVXZ3bk0xa2VlaHFZenVXaVVK?=
- =?utf-8?B?VEhqdjNieEdpN2dJVHZsWi9MQlRQbHdEZnlSL1BkSjJpWk91QXE3S09PWWVS?=
- =?utf-8?B?Q2cxUTk1Wk10UlozYjRzb25QUXJXbTFQYzNnN1RpVmwwWmhTb1RtWUt5WFZw?=
- =?utf-8?B?Tkp1V08rV3ZvUWxYbWVJZTFlQnFCTXNWMWhoMHAxQTU1Y09VSnArbS9RdnZp?=
- =?utf-8?B?WXFvT3oreG5mUGVma1Vma2NrdE5qaHJkM3Vvc3hob0hKMGpLOE9ZWEE4QlJx?=
- =?utf-8?B?RzQ2RXluNmJESW5NMjBUejdObFR3WUh0VDY0NFJ1dHhYaFVJZUVkVkFQNFEw?=
- =?utf-8?B?cHNiVXlMRHhobHVMVElxT09zTW9XWTVkSmVGL0N1ZXBHdTdxNmpUQTNnRFEz?=
- =?utf-8?B?a3UyeGpTcmN2VGpMN2NNblJOR0ZUK0FBR1FnZklheHpQUmhaRVFVQTk5K1di?=
- =?utf-8?B?L1A2dThmdDExeUlJQVJ1N0J6c094b3lzQjByYlh0MzFxTHl6dnBXejdSa016?=
- =?utf-8?B?bmxsK0ttTWxrL3NES3MyRndJcUhkL05lVnNSQlFLTFdBS0pyZDBhRkp1RXo1?=
- =?utf-8?B?MVlmWE5VTFo2RFF6R1MyaE4vcmhMeUVKbzJoVng1ZURIQW5YYVpldVNzSTJh?=
- =?utf-8?B?WHkxUlRKNExrY2FIUjFTNStCclJycGtDTW0wdkl4YW9MZGxWR2l4ZlZFWVpZ?=
- =?utf-8?B?QklnaW91c1dValFlVXM0VU94NEY5eE9RdDVjcVZjaTExQnZCQzloY0RHZlBv?=
- =?utf-8?B?MEFCRDg5eWZJbWdiMEhFMVBTT09IeHZqVmRTUDRRWThFdzg2MWhid1lUQ3Nt?=
- =?utf-8?B?U2xUNmQydzZ4S2EzZW9MRXFXVXBIelJHUFpHVE00V3cxcjFvTlZwWEdvMmJj?=
- =?utf-8?B?cDIrYnN3S3dGcjVWS05RRlpjV0p2Z0t6bWNnN0NVcWMwV2NaOEI4WURSRVFD?=
- =?utf-8?B?dEI3UHdxQWxpUW94dDA1eEd0MHA0YkZUc2JMVUtDQ0RjMUg1LzRkYXVycytR?=
- =?utf-8?B?eGY3M082ZUhyRjlRcFJIOVp1THl4eWtCQ200YmNUNnRQNUdaaE5EWkNVS3VV?=
- =?utf-8?B?cjdMbzBtMW1OYWtnZmNCOVVZMjgvZ25SS3NpS2VlMDltUjJYbzFtVURnZlFB?=
- =?utf-8?B?dS9PamJrRkFTR3ArMkpWL1BUdnl1Q3RvQk4vNEduWDFFeHJxMHlCSFRQdTdv?=
- =?utf-8?B?SmRtb0l3UlpMbFl2UE1venlPRGxtVmxrUUp2VW9CU3dhU0ZkeHZwTXJUQis0?=
- =?utf-8?B?bG1hWkd4U3RQa200V044SmtiMEJkWXJkRnZxZzZaVks3YWtwM1NFaDRva3Q0?=
- =?utf-8?B?NENiTnRDTmxuZmZWZU1pVnEyL2llOXpRRE0zUEZTTUZvTHMxa05aMnNESklp?=
- =?utf-8?Q?pEVhA1IRiDLmfOW0Rc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?emxRZzAxNy9neHZFZ2JmN2x0d25La1JOTitveDVuZklwTDRyQUxuR1JmL3ZI?=
- =?utf-8?B?Qld1YjJmRTFFdDM0V1dVV3hkUlozQUl4aVBlTm1yQUZFMzBaaUl5M21LZ1Fh?=
- =?utf-8?B?SEVJbWNPZ2VweGd3N0huUDkxRXV6SXRPN2x4WmJXNnE1ZFFnSFVmZjlqRVg1?=
- =?utf-8?B?T2VTRWYxTVVwLzZVWFc1QW94TTZiekdkNk00d2NBM1cvZmRaZWh4ZUtPNkFx?=
- =?utf-8?B?UUhEL0VnMnd4N2Jrc1VVb2VFVnhxWUZoUnpwZWNQSDlMZC9yem5GNmxUY0JE?=
- =?utf-8?B?MTJGbFd4NVIrcldnY3pFdzdvUjArZGtXN2s3QU8vRnd1ZzVYcElxd1FCRzlQ?=
- =?utf-8?B?QmxsUXVoZXkvRHlkWUNKaERQaU9oZDJtYktubmw5OTFZMDZMSHpPcEE3M2k5?=
- =?utf-8?B?bWJCcUNDR2hjTmFsdU84WmR3ZW4rK1kwYWNOaGVqZVVGaDZ3SjIwM04zc0pi?=
- =?utf-8?B?aDdCSlNXWCtrb0N0b2VyRHdySG1IMEZJaXZIMXZiV1B1T2h2S2hrUFVFOHc5?=
- =?utf-8?B?VGl1aC9TQjRFUDdXcllDK25ZN01NRmVxTTRDQlFYRVlndGJidjNQZVhsNnkv?=
- =?utf-8?B?aGNVaXN1QUlxekxscmRrU0pnVDVsVzZ5K2ptNE96VHBQNytUc2t6b21sNER0?=
- =?utf-8?B?Y2FyMlhUcTU2SVlHSHZ5NFkzK2U3TGt2UUVFNGZFVzlUQVNoZGs5TytnOThn?=
- =?utf-8?B?UFY1dWZ6YVFXVHFtcVNCZTQ0WG1jTUh1N3JPYS8zQitaK0pkcmlnbzlFODZQ?=
- =?utf-8?B?WENhNStYcFhkWVJuOWh6ZEhLcC84L0FnQldYN3hCN3VBTTFsb2xncC9ScklD?=
- =?utf-8?B?UzFJVWkvN0NxQWE0WGZTNklnRytqMnNmZFdQWkU5QWwzQUczZWlKd0YvU3p1?=
- =?utf-8?B?SUpkNzQvSUo4cE1ML0g3WDQ0TmNyZmUwcnVyMnZDWngxR1ZVeVFlK2RFVDEx?=
- =?utf-8?B?MnJvMWpLL0NzUE03ZHVsTXZScXJTS1ZhdkMrUkxSSFpkWVlmZjFIaUdocGNS?=
- =?utf-8?B?VmxyV1d3eld5SlErSDQ0V3ZsUk5pS1loNUV0OGdKZDlPVmlnQzdiT1pIdkNU?=
- =?utf-8?B?bDh4V1luV0pNUzY1SGtsOGdOdG4yTEFWSUxLdkxJb2c3R1BYQVM2eE1tcTlk?=
- =?utf-8?B?R0Z6S00yUStLc0tWM04zUVEvNFkvejRnRVgxK2t2YmMzdlY1aW5McElwUkd5?=
- =?utf-8?B?ZndwdDRiTjZxc1pBZHE0MU1SekNJTUlEUWphTjRCQ3dkeU9oR3d3RGdUU3JD?=
- =?utf-8?B?Q05ZSnpCTHdMVnV4RUtGTW1JWWtaN1hzK1pwN3JzTzF1V0RxZU1tb2lPbE5V?=
- =?utf-8?B?STAyMGY2aktGNXMya2VocGFSTytuWFFtWFBWL2k3Nk13Rzc0aHBjeDRna0dr?=
- =?utf-8?B?ZGhoaGJScjEzc1lzYmZvSXVmTk1TbU0xUXJSeFdMRE03VDBpT1JCV0dSbnll?=
- =?utf-8?B?czlFOFk5UU8wMWZ6dEdqVDQvcmFXYWFySlRsalp4RUxDa012S3M0L1NKSjZi?=
- =?utf-8?B?VkkyR0lVMHpyTkMzNFo0Zjk4ZHdseTBudldSUFkxbmF5RHdRVFludCtwS3dH?=
- =?utf-8?B?VHErdk5lWDZmVXFIKy9sdXRyRXFHZHZ4ZHAvUkdKRmd5MkFoeC9Wd2drMjRa?=
- =?utf-8?B?SjJLK1JxcElUR01UTGVQYjZmb3h2MGNXdm5KYVIyQ3BhV2xuUzdtN0p0S2RT?=
- =?utf-8?B?a20xYUFmbmgwNWtMelovYkR6cTIrVTdKRzJXWktQbHp0VEpjdFp5RkQ3dE9T?=
- =?utf-8?B?bncwN1VJUVQ2NDliaWhJNysyMGZtM1hXamdKYVBXZElYL0FBa0NwVkE4dStO?=
- =?utf-8?B?TFJ1R2hpY05Ed2kxLzR5Y2UvdWhBY2p6Tmx5ZFFCZmxLWmJPZ0VqOFNSR2pn?=
- =?utf-8?B?bUlZcmNLemdqSjlFUTVReXpHdlZWbk41VXRVekpObnZXWlFqNXFmeWpvRE9n?=
- =?utf-8?B?N0JGeTJtbjBjKys2eGJkazZBWTQ0TFZSNHVsdWRRUFlqR3Ria2I4cXc0bWdY?=
- =?utf-8?B?QlhxdEJQcDAzYitHRjlyMWdOc1RKOG01ZUYrQVA3cXJpQ2ZWbUExWlhESXlS?=
- =?utf-8?B?WWhKMzVMODloYys5MFdJay8zODRMTWRSSU9qcHlPM3BBM3FSNGdwTkpzaExK?=
- =?utf-8?Q?YaHpph8sWsgfAn83Iu/tYLMCf?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c27749c7-2d1a-496e-aba0-08dd03dc9a0b
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2024 12:13:37.1281
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pA06uvUUMysXGBZuJicMEkaaWNB1hk/VSxTOqPePb//Q+QM8GdjNB6qgJgN/ViSF
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7951
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 09/28] media: iris: implement reqbuf ioctl with
+ vb2_queue_setup
+Content-Language: en-US
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Nicolas Dufresne <nicolas@ndufresne.ca>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Jianhua Lu <lujianhua000@gmail.com>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241105-qcom-video-iris-v5-0-a88e7c220f78@quicinc.com>
+ <20241105-qcom-video-iris-v5-9-a88e7c220f78@quicinc.com>
+ <96966b66-a93a-4675-8d28-6fe9152644b8@xs4all.nl>
+ <0fb27983-e253-3375-1c01-bfad7d05485c@quicinc.com>
+ <d4fb8e3e-d19e-4af5-8a16-8b8b53c3530e@xs4all.nl>
+ <1360d885-52f1-9dbc-7beb-23ac58ec8ff0@quicinc.com>
+ <0afd368a-36ed-4415-977b-abf6d245b754@xs4all.nl>
+ <98696180-a40f-deca-13f3-e3636a0d9d16@quicinc.com>
+ <ac01378f-1375-45bd-9369-187645657db9@xs4all.nl>
+ <fa91d95a-2bcd-5768-02d7-4f80e4e006d9@quicinc.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <fa91d95a-2bcd-5768-02d7-4f80e4e006d9@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am 13.11.24 um 13:10 schrieb Vamsi Krishna Brahmajosyula:
-> From: Philip Yang <Philip.Yang@amd.com>
->
-> [ Upstream commit c86ad39140bbcb9dc75a10046c2221f657e8083b ]
->
-> Pass pointer reference to amdgpu_bo_unref to clear the correct pointer,
-> otherwise amdgpu_bo_unref clear the local variable, the original pointer
-> not set to NULL, this could cause use-after-free bug.
->
-> Signed-off-by: Philip Yang <Philip.Yang@amd.com>
-> Reviewed-by: Felix Kuehling <felix.kuehling@amd.com>
-> Acked-by: Christian König <christian.koenig@amd.com>
-> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> Signed-off-by: Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c         | 14 +++++++-------
->   drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h         |  2 +-
->   drivers/gpu/drm/amd/amdkfd/kfd_chardev.c           |  2 +-
->   drivers/gpu/drm/amd/amdkfd/kfd_device.c            |  4 ++--
->   .../gpu/drm/amd/amdkfd/kfd_device_queue_manager.c  |  2 +-
->   drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c       |  2 +-
->   drivers/gpu/drm/amd/amdkfd/kfd_process.c           |  2 +-
->   .../gpu/drm/amd/amdkfd/kfd_process_queue_manager.c |  4 ++--
->   8 files changed, 16 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
-> index 5d9a34601a1a..c31e5f9d63da 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
-> @@ -344,15 +344,15 @@ int amdgpu_amdkfd_alloc_gtt_mem(struct amdgpu_device *adev, size_t size,
->   	return r;
->   }
->   
-> -void amdgpu_amdkfd_free_gtt_mem(struct amdgpu_device *adev, void *mem_obj)
-> +void amdgpu_amdkfd_free_gtt_mem(struct amdgpu_device *adev, void **mem_obj)
->   {
-> -	struct amdgpu_bo *bo = (struct amdgpu_bo *) mem_obj;
-> +	struct amdgpu_bo **bo = (struct amdgpu_bo **) mem_obj;
->   
-> -	amdgpu_bo_reserve(bo, true);
-> -	amdgpu_bo_kunmap(bo);
-> -	amdgpu_bo_unpin(bo);
-> -	amdgpu_bo_unreserve(bo);
-> -	amdgpu_bo_unref(&(bo));
-> +	amdgpu_bo_reserve(*bo, true);
-> +	amdgpu_bo_kunmap(*bo);
-> +	amdgpu_bo_unpin(*bo);
-> +	amdgpu_bo_unreserve(*bo);
-> +	amdgpu_bo_unref(bo);
->   }
->   
->   int amdgpu_amdkfd_alloc_gws(struct amdgpu_device *adev, size_t size,
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h
-> index 4b694886715c..c7672a1d1560 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h
-> @@ -210,7 +210,7 @@ int amdgpu_amdkfd_evict_userptr(struct kgd_mem *mem, struct mm_struct *mm)
->   int amdgpu_amdkfd_alloc_gtt_mem(struct amdgpu_device *adev, size_t size,
->   				void **mem_obj, uint64_t *gpu_addr,
->   				void **cpu_ptr, bool mqd_gfx9);
-> -void amdgpu_amdkfd_free_gtt_mem(struct amdgpu_device *adev, void *mem_obj);
-> +void amdgpu_amdkfd_free_gtt_mem(struct amdgpu_device *adev, void **mem_obj);
+On 11/13/24 12:20, Dikshita Agarwal wrote:
+> 
+> 
+> On 11/13/2024 4:45 PM, Hans Verkuil wrote:
+>> On 11/13/24 11:32, Dikshita Agarwal wrote:
+>>>
+>>>
+>>> On 11/13/2024 2:52 PM, Hans Verkuil wrote:
+>>>> On 13/11/2024 10:00, Dikshita Agarwal wrote:
+>>>>>
+>>>>>
+>>>>> On 11/13/2024 1:18 PM, Hans Verkuil wrote:
+>>>>>> On 13/11/2024 07:19, Dikshita Agarwal wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 11/12/2024 3:20 PM, Hans Verkuil wrote:
+>>>>>>>> On 05/11/2024 07:55, Dikshita Agarwal wrote:
+>>>>>>>>> Implement reqbuf IOCTL op and vb2_queue_setup vb2 op in the driver with
+>>>>>>>>> necessary hooks.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>>>>>>>>> ---
+>>>>>>
+>>>>>> <snip>
+>>>>>>
+>>>>>>>>> diff --git a/drivers/media/platform/qcom/iris/iris_vb2.c b/drivers/media/platform/qcom/iris/iris_vb2.c
+>>>>>>>>> new file mode 100644
+>>>>>>>>> index 000000000000..61033f95cdba
+>>>>>>>>> --- /dev/null
+>>>>>>>>> +++ b/drivers/media/platform/qcom/iris/iris_vb2.c
+>>>>>>>>> @@ -0,0 +1,74 @@
+>>>>>>>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>>>>>>>> +/*
+>>>>>>>>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>>>>>>>>> + */
+>>>>>>>>> +
+>>>>>>>>> +#include "iris_buffer.h"
+>>>>>>>>> +#include "iris_instance.h"
+>>>>>>>>> +#include "iris_vb2.h"
+>>>>>>>>> +#include "iris_vpu_buffer.h"
+>>>>>>>>> +
+>>>>>>>>> +int iris_vb2_queue_setup(struct vb2_queue *q,
+>>>>>>>>> +			 unsigned int *num_buffers, unsigned int *num_planes,
+>>>>>>>>> +			 unsigned int sizes[], struct device *alloc_devs[])
+>>>>>>>>> +{
+>>>>>>>>> +	enum iris_buffer_type buffer_type = 0;
+>>>>>>>>> +	struct iris_buffers *buffers;
+>>>>>>>>> +	struct iris_inst *inst;
+>>>>>>>>> +	struct iris_core *core;
+>>>>>>>>> +	struct v4l2_format *f;
+>>>>>>>>> +	int ret = 0;
+>>>>>>>>> +
+>>>>>>>>> +	inst = vb2_get_drv_priv(q);
+>>>>>>>>> +
+>>>>>>>>> +	mutex_lock(&inst->lock);
+>>>>>>>>> +
+>>>>>>>>> +	core = inst->core;
+>>>>>>>>> +	f = V4L2_TYPE_IS_OUTPUT(q->type) ? inst->fmt_src : inst->fmt_dst;
+>>>>>>>>> +
+>>>>>>>>> +	if (*num_planes) {
+>>>>>>>>> +		if (*num_planes != f->fmt.pix_mp.num_planes ||
+>>>>>>>>> +			sizes[0] < f->fmt.pix_mp.plane_fmt[0].sizeimage)
+>>>>>>>>> +			ret = -EINVAL;
+>>>>>>>>> +		goto unlock;
+>>>>>>>>> +	}
+>>>>>>>>> +
+>>>>>>>>> +	buffer_type = iris_v4l2_type_to_driver(q->type);
+>>>>>>>>> +	if (buffer_type == -EINVAL) {
+>>>>>>>>
+>>>>>>>> Can this ever fail?
+>>>>>>>>
+>>>>>>> If the q->type passed is not supported by driver then it can fail.
+>>>>>>
+>>>>>> But it is the driver that sets q->type when the vb2_queue is initialized.
+>>>>>> So it makes no sense to test it here, it would be a driver bug if this fails.
+>>>>>>
+>>>>> Ok, Will remove this check.
+>>>>>>>>> +		ret = -EINVAL;
+>>>>>>>>> +		goto unlock;
+>>>>>>>>> +	}
+>>>>>>>>> +
+>>>>>>>>> +	if (!inst->once_per_session_set) {
+>>>>>>>>> +		inst->once_per_session_set = true;
+>>>>>>>>> +
+>>>>>>>>> +		ret = core->hfi_ops->session_open(inst);
+>>>>>>>>> +		if (ret) {
+>>>>>>>>> +			ret = -EINVAL;
+>>>>>>>>> +			dev_err(core->dev, "session open failed\n");
+>>>>>>>>> +			goto unlock;
+>>>>>>>>> +		}
+>>>>>>>>> +	}
+>>>>>>>>> +
+>>>>>>>>> +	buffers = &inst->buffers[buffer_type];
+>>>>>>>>> +	if (!buffers) {
+>>>>>>>>
+>>>>>>>> This definitely can never fail.
+>>>>>>>>
+>>>>>>> Right, will remove the check.
+>>>>>>>>> +		ret = -EINVAL;
+>>>>>>>>> +		goto unlock;
+>>>>>>>>> +	}
+>>>>>>>>> +
+>>>>>>>>> +	buffers->min_count = iris_vpu_buf_count(inst, buffer_type);
+>>>>>>>>> +	buffers->actual_count = *num_buffers;
+>>>>>>>>
+>>>>>>>> Don't mirror the number of buffers in actual_count, instead just always
+>>>>>>>> ask for the number of buffers using vb2_get_num_buffers().
+>>>>>>>>
+>>>>>>>> This code is wrong anyway, since actual_count isn't updated if more
+>>>>>>>> buffers are added using VIDIOC_CREATEBUFS.
+>>>>>>>>
+>>>>>>> Ok, so below would fix the VIDIOC_CREATEBUFS as well, right?
+>>>>>>> - buffers->actual_count = *num_buffers;
+>>>>>>> + buffers->actual_count = vb2_get_num_buffers();
+>>>>> Does this look good?
+>>>>
+>>>> No. You shouldn't have the actual_count field at all, especially since I see that
+>>>> you set it in several places. vb2_get_num_buffers() reports the current number of
+>>>> buffers, which can change if userspace calls VIDIOC_CREATE_BUFS or REMOVE_BUFS.
+>>>>
+>>>> You shouldn't try to mirror that value yourself. If you need that information,
+>>>> then call vb2_get_num_buffers().
+>>>>
+>>>> There are weird things going on in your driver w.r.t. actual_count and also min_count
+>>>> (and I saw a count_actual as well, very confusing).
+>>>>
+>>>> I'm not sure what you are trying to achieve, but it doesn't look right.
+>>>>
+>>> We need to set the value of actual buffers being queued to firmware via a
+>>> property, for that we are caching the value in actual_count so that we can
+>>> set it to fw when needed.
+>>
+>> So do you need to know the number of allocated buffers, or the number of
+>> buffers queued to the device instance?
+>>
+>> The first is reported by vb2_get_num_buffers(), the second is something
+>> you can keep track of yourself: a buffer is queued in the buf_queue op and
+>> dequeued when vb2_buffer_done is called. But this has nothing to do with
+>> what happens in queue_setup.
+>>
+> We need to know the number of allocated buffers, hence using
+> vb2_get_num_buffers() is fine as you said.
 
-Why is that a pointer to a void* in the first place? It looks like all 
-callers should work with an amdgpu_bo object as well.
+Why do you need this? Are the buffer addresses also passed to the fw?
+
+Remember that buffer memory is only allocated when using V4L2_MEMORY_MMAP.
+In the DMABUF case it just allocates vb2_buffer structs, not the actual
+buffer memory. So a buffer can be dequeued and the corresponding dmabuf
+closed (so the memory is freed) by the application.
+
+In other words, vb2_get_num_buffers() reports the number of allocated
+vb2_buffer structs, but not the actual number of buffers in memory, that
+might be different in the DMABUF case.
+
+What exactly is the firmware using this number for? What does it expect
+it contains?
 
 Regards,
-Christian.
 
->   int amdgpu_amdkfd_alloc_gws(struct amdgpu_device *adev, size_t size,
->   				void **mem_obj);
->   void amdgpu_amdkfd_free_gws(struct amdgpu_device *adev, void *mem_obj);
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> index e3cd66c4d95d..f83574107eb8 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> @@ -408,7 +408,7 @@ static int kfd_ioctl_create_queue(struct file *filep, struct kfd_process *p,
->   
->   err_create_queue:
->   	if (wptr_bo)
-> -		amdgpu_amdkfd_free_gtt_mem(dev->adev, wptr_bo);
-> +		amdgpu_amdkfd_free_gtt_mem(dev->adev, (void **)&wptr_bo);
->   err_wptr_map_gart:
->   err_alloc_doorbells:
->   err_bind_process:
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device.c b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-> index 27820f0a282d..e2c055abfea9 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-> @@ -673,7 +673,7 @@ bool kgd2kfd_device_init(struct kfd_dev *kfd,
->   kfd_doorbell_error:
->   	kfd_gtt_sa_fini(kfd);
->   kfd_gtt_sa_init_error:
-> -	amdgpu_amdkfd_free_gtt_mem(kfd->adev, kfd->gtt_mem);
-> +	amdgpu_amdkfd_free_gtt_mem(kfd->adev, &kfd->gtt_mem);
->   alloc_gtt_mem_failure:
->   	if (kfd->gws)
->   		amdgpu_amdkfd_free_gws(kfd->adev, kfd->gws);
-> @@ -693,7 +693,7 @@ void kgd2kfd_device_exit(struct kfd_dev *kfd)
->   		kfd_doorbell_fini(kfd);
->   		ida_destroy(&kfd->doorbell_ida);
->   		kfd_gtt_sa_fini(kfd);
-> -		amdgpu_amdkfd_free_gtt_mem(kfd->adev, kfd->gtt_mem);
-> +		amdgpu_amdkfd_free_gtt_mem(kfd->adev, &kfd->gtt_mem);
->   		if (kfd->gws)
->   			amdgpu_amdkfd_free_gws(kfd->adev, kfd->gws);
->   	}
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-> index 1b7b29426480..3ab0a796af06 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-> @@ -2392,7 +2392,7 @@ static void deallocate_hiq_sdma_mqd(struct kfd_dev *dev,
->   {
->   	WARN(!mqd, "No hiq sdma mqd trunk to free");
->   
-> -	amdgpu_amdkfd_free_gtt_mem(dev->adev, mqd->gtt_mem);
-> +	amdgpu_amdkfd_free_gtt_mem(dev->adev, &mqd->gtt_mem);
->   }
->   
->   void device_queue_manager_uninit(struct device_queue_manager *dqm)
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
-> index 623ccd227b7d..c733d6888c30 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
-> @@ -204,7 +204,7 @@ void kfd_free_mqd_cp(struct mqd_manager *mm, void *mqd,
->   	      struct kfd_mem_obj *mqd_mem_obj)
->   {
->   	if (mqd_mem_obj->gtt_mem) {
-> -		amdgpu_amdkfd_free_gtt_mem(mm->dev->adev, mqd_mem_obj->gtt_mem);
-> +		amdgpu_amdkfd_free_gtt_mem(mm->dev->adev, &mqd_mem_obj->gtt_mem);
->   		kfree(mqd_mem_obj);
->   	} else {
->   		kfd_gtt_sa_free(mm->dev, mqd_mem_obj);
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-> index 5bca6abd55ae..9582c9449fff 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-> @@ -1052,7 +1052,7 @@ static void kfd_process_destroy_pdds(struct kfd_process *p)
->   
->   		if (pdd->dev->shared_resources.enable_mes)
->   			amdgpu_amdkfd_free_gtt_mem(pdd->dev->adev,
-> -						   pdd->proc_ctx_bo);
-> +						   &pdd->proc_ctx_bo);
->   		/*
->   		 * before destroying pdd, make sure to report availability
->   		 * for auto suspend
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-> index 99aa8a8399d6..1918a3c06ac8 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-> @@ -441,9 +441,9 @@ int pqm_destroy_queue(struct process_queue_manager *pqm, unsigned int qid)
->   
->   		if (dev->shared_resources.enable_mes) {
->   			amdgpu_amdkfd_free_gtt_mem(dev->adev,
-> -						   pqn->q->gang_ctx_bo);
-> +						   &pqn->q->gang_ctx_bo);
->   			if (pqn->q->wptr_bo)
-> -				amdgpu_amdkfd_free_gtt_mem(dev->adev, pqn->q->wptr_bo);
-> +				amdgpu_amdkfd_free_gtt_mem(dev->adev, (void **)&pqn->q->wptr_bo);
->   
->   		}
->   		uninit_queue(pqn->q);
+	Hans
+
+> 
+> But would want to cache this in internal buffer strcuture in queue_setup,
+> to be able to use later while setting to firmware.
+> 
+> Thanks,
+> Dikshita
+>> Regards,
+>>
+>> 	Hans
+>>
+>>>
+>>> count_actual is the variable of the hfi struture being filled to set the
+>>> property to fw,
+>>> ---
+>>> u32 ptype = HFI_PROPERTY_PARAM_BUFFER_COUNT_ACTUAL;
+>>> struct hfi_buffer_count_actual buf_count;
+>>> int ret;
+>>>
+>>> buf_count.type = HFI_BUFFER_INPUT;
+>>> buf_count.count_actual = inst->buffers[BUF_INPUT].actual_count;
+>>> ---
+>>>
+>>> Calling vb2_get_num_buffers from HFI layer will violate the current design
+>>> of driver so will need to cache this info in upper layer, best place to do
+>>> that seems to be queue_setup which is called from both VIDIOC_REQBUFS and
+>>> VIDIOC_CREATE_BUFS.
+>>> Any other suggestions for the same?
+>>>
+>>> To avoid the confusion, I can rename the actual_count to count_actual to
+>>> match with hfi structure.
+>>> Also, I can cleanup some part of driver where this variable is being
+>>> updated un-necessarily.
+>>> This is only needed to set the property to firmware as explained above.
+>>>
+>>> min_count holds the min numbers of buffer needed by firmware for the
+>>> particluar session, it can be changed by firmware if source changes.
+>>>
+>>> Thanks,
+>>> Dikshita
+>>>> Regards,
+>>>>
+>>>> 	Hans
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>> Dikshita
 
 
