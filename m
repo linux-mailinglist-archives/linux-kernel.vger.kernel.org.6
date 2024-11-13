@@ -1,242 +1,211 @@
-Return-Path: <linux-kernel+bounces-407651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2548F9C7099
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:28:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49DC59C70A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA0661F251F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05A96283C31
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26741F4FD4;
-	Wed, 13 Nov 2024 13:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF8A2003D8;
+	Wed, 13 Nov 2024 13:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q7TZpykM"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aeCZdQZ9"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB831E0E13
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CE61E0E13
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731504510; cv=none; b=ooOkY1R9p6U9CUXe27/igAj8IL+Sryugb3CpRl0C5EZMA10x8g0vhPZ68t+e8tHdUySswKErQCBsppmPZ+E3isUwhpELB4VMyHVZvLUUKht5CHTnynhRsE/uPZLzSBhOnRDXzeHUBZIl63VfS5u5Qaai9mKFapaTtaN8BShYo5U=
+	t=1731504533; cv=none; b=hrPbitLfOXwt/nJBop1zTE3WncToRFE42ISIozoXNOUl8cQNuEpeKpriXy/yxxTa6sPFySZ9LQC2JPX7ha+40qr4oASZt9umzWpb6WtGhWeGosq16wg4nRwYsRHb3dvCGU3Ev8IDrX/9il4kdSr1iGHtJ3zbGSkGndUGaO1ocY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731504510; c=relaxed/simple;
-	bh=uGPj9aEicdVXT8tu/M8vFamyjquMApQvA4vaA/reoy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GPtgJEYOu48pafkNCrUtGbqU66Hc6zddEQQxmfsw8b1RiYlqaB7iLjBOSHfgP6ejtbB6LmGPzHS1OkKd9in8brJpMHTNWIi2dTy7hOqIY6EFNyhay3s+dcMw25AwovuaWjb/wIJ2ssuD0ePd5EwMC9eNZ6v/WeaY79rEjRf6iDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q7TZpykM; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ff51dcde86so122961fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:28:27 -0800 (PST)
+	s=arc-20240116; t=1731504533; c=relaxed/simple;
+	bh=8H/EBTWQ6GIQhNnk8qqpttV0fZ6ci9gtHHzdigT6ygk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tYc6dnzFrN1xtrYzvD2gke+meGDIM/8MyfG3nC5vTPi130y3hzE0kVMFmeEPEIcLybjj+nwOgj5lQyC5qPVw1vzOHhFMyIknhXaxEX0V2iQ6YhWDLCK0b3Mu29anXnD23P/y+S3gXzxWO0zgDUZclyf9TJ2HxhpL5qbLgbRJDCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aeCZdQZ9; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cf04f75e1aso8198117a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:28:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731504506; x=1732109306; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gujxsBm0hPvgo0zAbEy6LJkn5rKu5X7iUH7Ce5yiRMc=;
-        b=Q7TZpykM55oPi1IeQ7rrU63FPd9zIfs2ZiqS+Z+v9NPI+mGZeXnTtzg/1nM+IBwZGx
-         kiHMdre0uLV8EaHKYB5eYJkcqC+KHaADSn3Njzgyl+qzlJCdQVgsN8gC15WZmWmVQ1Gp
-         VyO4tAlPPjou4b1PbGuXk7m1SbmoiPa1Wylr60cnyRs9ekGzcY0e2vKPEuCM9Y7S3qVa
-         aR787OBrBnyfoNjfFqaVx72JhCkZ15lvfITcV94c92dahf8Pg4oExqAgvGb0kBo7NvV3
-         SrSM34CvLhf+dky1/MWJrsACVybd9rtb6GlhHvLYPvqCEy+J75+0dVW5/OqmNeVYs5W8
-         YSwg==
+        d=google.com; s=20230601; t=1731504529; x=1732109329; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6pxUWTGHp3LlGlPEHcF4gnsn2X1MJ/L5Ga7wnn5OsJo=;
+        b=aeCZdQZ99vEuOK6FZWjNkZao63xHK0nHBy5GF101s+OIaWc7YKltnnCbC3TjMH9f4S
+         2y7tSUDrYAYg9zQFCeH497cwl4GG3T7H1KuUWInTZELOmVBeacXpTpaXJu1NQt1pshO/
+         oH/YR0c1c2lKY61ibIRSL53+5CZwZTx6kJ/QAcrrPV4iEBe2NqQFuvdnFyvegXFhG3x4
+         wwMv2uJ2KhHz3B2VfvxkoITpLABb8pnK5J34HjFlqTDPlTZA1nfBmHt9KLpyz/X/GyEe
+         qWE5HA/ZG2fLt6ZNdRMnp3Msr5bq+EyzkwhXxKtk85kjni80Ul+UVUIHP3D8ihr+Va9f
+         0R7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731504506; x=1732109306;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gujxsBm0hPvgo0zAbEy6LJkn5rKu5X7iUH7Ce5yiRMc=;
-        b=LwgbiHAnlRmnRMVWRviy6A51bD7S/g6n+1pQ4hF+O7ufjWtrdvp/KN228TiEgIFy4v
-         lHZpHQ77m+1m0pDd0L/3hWT16PE+khCCUPVsAqPvEKUxVrZ9zVF9Qiq4+b6tZ7hYknei
-         RH7eAGSr4LSbXR4Jb23Mv6VtaHctCVPRvr8jVvdWvhHi4rz8EkRdddi0rU8qtU55A11y
-         wTAltjPpXBELlLoa+a7pZ71Zhh819mgadUD4i6+4NPa7IXEbRROvgJ0I8uTyF5aOQo4a
-         QkMFSZuOaMndwZh/KBI89hyjjDrnLCatVIDaNQOJ/cB5bvYyw1HwDI1kI1Ge5LAwFm/V
-         jgNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVW2YIFwbSapTlJWogSXazGim8WvXAjgaaWC0d71EqVKfyabzX++zpBh3cyaZL3zIFuCjqG0qWPBcXIHNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymhbRjeWG4EksLkVH+h6sPMcHfhSjHxbrV1+IlStqpdnDQga28
-	5rpVBlteAlFDK8/kc70468gSWq2dXIDQbntfXs3e13WwBOJrMkD9Lzpfuw543taG+wY7ixTQY7X
-	QK4A=
-X-Google-Smtp-Source: AGHT+IHJUkMS22GQz5fD9HC0PYZqDTgtZvt06iRBwB0LUhMrX3CY9BWl6mEkd1eWHizwfI0HcxtGgQ==
-X-Received: by 2002:a2e:a592:0:b0:2fa:d1f9:9fb9 with SMTP id 38308e7fff4ca-2ff201af203mr26234791fa.2.1731504505923;
-        Wed, 13 Nov 2024 05:28:25 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff17991abdsm24036101fa.76.2024.11.13.05.28.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 05:28:25 -0800 (PST)
-Message-ID: <67d014f1-9424-4b88-b031-096a5596c5c8@linaro.org>
-Date: Wed, 13 Nov 2024 15:28:24 +0200
+        d=1e100.net; s=20230601; t=1731504529; x=1732109329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6pxUWTGHp3LlGlPEHcF4gnsn2X1MJ/L5Ga7wnn5OsJo=;
+        b=krV1/spuCNJb7wyINWRvI8Trz57gULSsDrhY7OSeXa33/GcNorJ/9nWq+58FJCqZZq
+         ZOHv6Gct4dnSZnywfZPHUZnJNyVMEtWNHjgwjhmXirycN7Ptx0ZTs7rss4SWrvQSGQIC
+         3VRCh+NEV3UefhkUYeC/Lg5/yD7pdnkXnE6kIefxN+6ozlqvQ5xxi9oCYD6RnRlWElWs
+         +3uJlaFKHUBDzo/Egm46Q4bepjN+TJI6+33rJYVQUFlzUVIKvDv9FyC+n3tVn8hzM1gb
+         eJ8jaHjU0gUBhdh3rR58wEWn+GIXBoNciL+I+s4Tc9owH5yawLBejFhtfmGR6x13pDqo
+         2tGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJRR8uOLem/bTjdnY3c6Yb7ng63VgPdd7B46S2q2dVlYpph0GjRDkrlSMFoh3hV4BNZ/1Ens+Vh3KeB8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDwOVC3IphtUn5s+kZ0gJl3IPPujojvERN9GGrycC1oy7Dh6V9
+	FdcgDhoywp1CmK/syvhw7q7MfrlXYrjuoBmoELDDJdT298Zna7MifnrYfsCNa/LwLBqr2SCir72
+	jPM7xDtjFpzPLNuBHJGS94J4HaiccYcbmlpXt
+X-Google-Smtp-Source: AGHT+IHeJ7dJeqnM+QjUkv5FQBx1dyY5bLaRqX2EOaowvb87uRAvt5s+XYj9ChGLZDv9wqQDwHC80AceKmSnPn0YZTU=
+X-Received: by 2002:a17:907:8693:b0:a9e:211f:7dc6 with SMTP id
+ a640c23a62f3a-a9eefe9baf3mr1761486766b.8.1731504529338; Wed, 13 Nov 2024
+ 05:28:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] media: qcom: camss: Add MSM8953 resources
-Content-Language: en-US
-To: barnabas.czeman@mainlining.org,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Vladimir Lypak <vladimir.lypak@gmail.com>
-References: <20241103-camss-msm8953-v4-0-48d0ec75958d@mainlining.org>
- <20241103-camss-msm8953-v4-3-48d0ec75958d@mainlining.org>
- <6833ebc6-9210-471a-8ca6-5f3605155f33@linaro.org>
- <412b3252f1ca795fbcfaf5e466e94642@mainlining.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <412b3252f1ca795fbcfaf5e466e94642@mainlining.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241106154306.2721688-1-peternewman@google.com>
+ <20241106154306.2721688-2-peternewman@google.com> <f6b7dd9c-5ace-4816-842f-ac1265c0f9ee@intel.com>
+ <CALPaoCioRrjwZPYDdkAApHAecqZVA_Z4rLctjmcpEaV04eq9Ag@mail.gmail.com>
+ <CALPaoCgwCwUJHF7fCQrf98kFVdCjPyUTUiCOfYOi3XHJzvqiMw@mail.gmail.com> <34fd8713-3430-4e27-a2c2-fd8839f90f5a@intel.com>
+In-Reply-To: <34fd8713-3430-4e27-a2c2-fd8839f90f5a@intel.com>
+From: Peter Newman <peternewman@google.com>
+Date: Wed, 13 Nov 2024 14:28:38 +0100
+Message-ID: <CALPaoCjCWZ4ZYfwooFEzMn15jJM7s9Rfq83YhorOGUD=1GdSyw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] x86/resctrl: Don't workqueue local event counter reads
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: fenghua.yu@intel.com, babu.moger@amd.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, eranian@google.com, hpa@zytor.com, 
+	james.morse@arm.com, linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	nert.pinx@gmail.com, tan.shaopeng@fujitsu.com, tglx@linutronix.de, 
+	tony.luck@intel.com, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Barnabás, Bryan.
+Hi Reinette,
 
-On 11/13/24 10:01, barnabas.czeman@mainlining.org wrote:
-> On 2024-11-13 05:58, Vladimir Zapolskiy wrote:
->> On 11/3/24 11:45, Barnabás Czémán wrote:
->>> From: Vladimir Lypak <vladimir.lypak@gmail.com>
->>>
->>> This commit describes the hardware layout for the MSM8953
->>> for the following hardware blocks:
->>>
->>> - 2 x VFE, 3 RDI per VFE
->>> - 3 x CSID
->>> - 3 x CSI PHY
->>>
->>> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
->>> Acked-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->>> ---
->>>    drivers/media/platform/qcom/camss/camss-csiphy.c |   1 +
->>>    drivers/media/platform/qcom/camss/camss-ispif.c  |   5 +
->>>    drivers/media/platform/qcom/camss/camss-vfe.c    |   1 +
->>>    drivers/media/platform/qcom/camss/camss.c        | 170
->>> +++++++++++++++++++++++
->>>    drivers/media/platform/qcom/camss/camss.h        |   1 +
->>>    5 files changed, 178 insertions(+)
->>>
->>> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c
->>> b/drivers/media/platform/qcom/camss/camss-csiphy.c
->>> index
->>> 68a3ea1ba2a5299cf28289dfdb958cfdff3c91e0..5af2b382a843c2b8857339ba28930fe1682c9412
->>> 100644
->>> --- a/drivers/media/platform/qcom/camss/camss-csiphy.c
->>> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
->>> @@ -596,6 +596,7 @@ int msm_csiphy_subdev_init(struct camss *camss,
->>>    		return PTR_ERR(csiphy->base);
->>>      	if (camss->res->version == CAMSS_8x16 ||
->>> +	    camss->res->version == CAMSS_8x53 ||
->>>    	    camss->res->version == CAMSS_8x96) {
->>>    		csiphy->base_clk_mux =
->>>    			devm_platform_ioremap_resource_byname(pdev, res->reg[1]);
->>> diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c
->>> b/drivers/media/platform/qcom/camss/camss-ispif.c
->>> index
->>> a12dcc7ff438c55167bc2981fd399dbf178181df..2dc585c6123dd248a5bacd9c7a88cb5375644311
->>> 100644
->>> --- a/drivers/media/platform/qcom/camss/camss-ispif.c
->>> +++ b/drivers/media/platform/qcom/camss/camss-ispif.c
->>> @@ -830,6 +830,7 @@ static int ispif_set_stream(struct v4l2_subdev
->>> *sd, int enable)
->>>    		ispif_select_cid(ispif, intf, cid, vfe, 1);
->>>    		ispif_config_irq(ispif, intf, vfe, 1);
->>>    		if (camss->res->version == CAMSS_8x96 ||
->>> +		    camss->res->version == CAMSS_8x53 ||
->>>    		    camss->res->version == CAMSS_660)
->>>    			ispif_config_pack(ispif,
->>>    					  line->fmt[MSM_ISPIF_PAD_SINK].code,
->>> @@ -848,6 +849,7 @@ static int ispif_set_stream(struct v4l2_subdev
->>> *sd, int enable)
->>>      		mutex_lock(&ispif->config_lock);
->>>    		if (camss->res->version == CAMSS_8x96 ||
->>> +		    camss->res->version == CAMSS_8x53 ||
->>>    		    camss->res->version == CAMSS_660)
->>>    			ispif_config_pack(ispif,
->>>    					  line->fmt[MSM_ISPIF_PAD_SINK].code,
->>> @@ -1111,6 +1113,7 @@ int msm_ispif_subdev_init(struct camss *camss,
->>>    	if (camss->res->version == CAMSS_8x16)
->>>    		ispif->line_num = 2;
->>>    	else if (camss->res->version == CAMSS_8x96 ||
->>> +		 camss->res->version == CAMSS_8x53 ||
->>>    		 camss->res->version == CAMSS_660)
->>>    		ispif->line_num = 4;
->>>    	else
->>> @@ -1130,6 +1133,7 @@ int msm_ispif_subdev_init(struct camss *camss,
->>>    			ispif->line[i].nformats =
->>>    					ARRAY_SIZE(ispif_formats_8x16);
->>>    		} else if (camss->res->version == CAMSS_8x96 ||
->>> +			   camss->res->version == CAMSS_8x53 ||
->>>    			   camss->res->version == CAMSS_660) {
->>>    			ispif->line[i].formats = ispif_formats_8x96;
->>>    			ispif->line[i].nformats =
->>> @@ -1162,6 +1166,7 @@ int msm_ispif_subdev_init(struct camss *camss,
->>>    		ret = devm_request_irq(dev, ispif->irq, ispif_isr_8x16,
->>>    			       IRQF_TRIGGER_RISING, ispif->irq_name, ispif);
->>>    	else if (camss->res->version == CAMSS_8x96 ||
->>> +		 camss->res->version == CAMSS_8x53 ||
->>>    		 camss->res->version == CAMSS_660)
->>>    		ret = devm_request_irq(dev, ispif->irq, ispif_isr_8x96,
->>>    			       IRQF_TRIGGER_RISING, ispif->irq_name, ispif);
->>> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c
->>> b/drivers/media/platform/qcom/camss/camss-vfe.c
->>> index
->>> 83c5a36d071fcc32c4b8a89e4e429dc1820df139..80a62ba11295042802cbaec617fb87c492ea6a55
->>> 100644
->>> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
->>> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
->>> @@ -285,6 +285,7 @@ static u32 vfe_src_pad_code(struct vfe_line *line,
->>> u32 sink_code,
->>>      	switch (vfe->camss->res->version) {
->>>    	case CAMSS_8x16:
->>> +	case CAMSS_8x53:
->>>    		switch (sink_code) {
->>>    		case MEDIA_BUS_FMT_YUYV8_1X16:
->>>    		{
->>> diff --git a/drivers/media/platform/qcom/camss/camss.c
->>> b/drivers/media/platform/qcom/camss/camss.c
->>> index
->>> fabe034081ed0a7c0e0fcd8bc76c4eb396cb0067..9fb31f4c18adee886cd0bcf84438a8f27635e07f
->>> 100644
->>> --- a/drivers/media/platform/qcom/camss/camss.c
->>> +++ b/drivers/media/platform/qcom/camss/camss.c
->>> @@ -152,6 +152,160 @@ static const struct camss_subdev_resources
->>> vfe_res_8x16[] = {
->>>    	}
->>>    };
->>>    +static const struct camss_subdev_resources csid_res_8x53[] = {
->>> +	/* CSID0 */
->>> +	{
->>> +		.regulators = { "vdda" },
->>
->> I see that you do reuse csiphy_res_8x16 for this platform support, in
->> this case let me ask you to double check/test that the "vdda" regulator
->> is actually a CSIPHY regulator, and if so, please move the registration
->> of the regulators to csiphy_res_8x16 as a preceding change.
-> It is placed in CSID at downstream and this is the documentation of
-> the downstream property:
-> - qcom,mipi-csi-vdd-supply : should contain regulator to be used for
->       this csid core
-> so it should be a csid regulator as i understand.
-> It is also placed at CSIDs in msm8953-camera.dtsi
+On Thu, Nov 7, 2024 at 8:15=E2=80=AFPM Reinette Chatre
+<reinette.chatre@intel.com> wrote:
+> On 11/7/24 6:26 AM, Peter Newman wrote:
+> > On Thu, Nov 7, 2024 at 12:01=E2=80=AFPM Peter Newman <peternewman@googl=
+e.com> wrote:
+> >>
 
-I've opened DB410C board schematics, and CAMSS IP is supplied over
-VREG_L2_1P2 power lane entering VDDA_MIPI_CSI pad on the APQ8016 SoC.
+> >> Tony had prototyped an MBM rate event[1], which cached a MBps value
+> >> per group/domain produced by the overflow workers. If the workers
+> >> produce the mbps samples immediately after directly reading the
+> >> counters, then this should be the best case in terms of precision and
+> >> introduce very little additional system overhead. Also, userspace
+> >> reading a rate sample that's 1 second old would be a lot less harmful
+> >> than performing an MBps calculation from a count sample that's 1
+> >> second old.
+>
+> I looked at that implementation. Please do note that the implementation
+> appears to be a PoC that does not handle the corner cases where issues ma=
+y
+> arise. For example, when it reads the event values in the overflow handle=
+r
+> the rate is updated even if there was an error during the counter read.
+> The moment a counter read encounters an error it impacts the measured
+> rate so this will need more thought.
+>
+> >> Perhaps combining the per-second bandwidth rate cache with a
+> >> per-domain file for each MBM event to aggregate the data for all
+> >> groups will be the optimally-performing solution?
+>
+> I do not see a problem with exposing a per-domain file for each MBM event
+> that aggregates the data of all groups. For best accuracy I expect that
+> this file will be created on demand, querying hardware counters at the ti=
+me
+> user space makes the request. This may indeed result in output like below
+> (naming used is just a sample for this discussion):
+>
+>          # cat /sys/fs/resctrl/info/L3_MON/mbm_current/mbm_total_bytes_01
+>            <rdtgroup nameA> <MBM total count>
+>            <rdtgroup nameB> <MBM total count>
+>            <rdtgroup nameC> Error
+>            <rdtgroup nameD> Unavailable
+>            <rdtgroup nameE> Unassigned
+>            ...
+>
+> As I understand from your earlier description this essentially moves the
+> counter reading work from a user space thread to the kernel. There are
+> options to do this work, most disruptive can be done with a
+> smp_call_function_any() to read all the domain's counters from a CPU
+> in the domain without any preemption, less disruptive can be done
+> with smp_call_on_cpu(). Some cond_resched() could be included if
+> the number of events needing to be read starts impacting other parts of
+> the kernel. You already indicated that reading the counters from user spa=
+ce
+> takes 488usec, which is very far from what will trigger the softlockup
+> detector though.
+>
+> > Factoring ABMC into this, we'd have to decide the interval at which
+> > we're comfortable with cycling the available event counters through
+> > the group list in order to get valid MBps samples for every group
+> > often enough.
+> >
+> > A counter will have to stay assigned long enough to get two valid
+> > counts before an MBps value can be reported. If the regular MBps
+> > samples is what we want, maybe we just want a mode where the overflow
+> > workers would also drive the counter assignments too in order to
+> > produce regular samples from all groups.
+>
+> The assignable counter implementation currently depends on user space
+> assigning counters. In this design the events that do not have counters
+> assigned return "Unassigned". The "rate" value can also return
+> "Unassigned" in this existing design. "Unassigned" is one scenario that
+> needs to be handled, there is also hardware errors and MSR returning
+> "Unavailable".
+>
+> We can surely consider a new mode that does not allow user space to assig=
+n
+> counters but instead lets resctrl manage counter assignments to support
+> rate events when assignable counters are supported.
+>
+> I see a couple of features being discussed in parallel:
+> - A new per-domain file for each MBM event that aggregates the data of al=
+l groups.
+> - A new "rate" event built on top of user assigned counters.
+> - A new "rate" event built on top of resctrl assigned counters.
+>
+> Which best support the use case you have in mind?
 
-The same voltage regulator also supplies display and SDRAM memory, most
-probably the latter implies that CAMSS IP and driver cannot be tested
-at least on this reference board, when the regulator is disabled.
+After discussing with my users, it sounds like "all of the above".
 
-So, we have to rely on the documentation here. Bryan, can you please
-check, if VDDA_MIPI_CSI pad on MSM8916 and/or MSM8953 is related to
-CSIPHY or CSID power supply? Thank you in advance.
+They like the idea of resctrl automatically dealing with counter
+assignments for them, but they would also like to retain enough
+control to provide higher resolution data for groups that concern them
+more. The auto-assignment is nice in that they would get reliable
+bandwidth numbers on AMD with very little development effort and the
+assigning work will be done very efficiently, but eventually they will
+want more control.
 
---
-Best wishes,
-Vladimir
+They also asked whether they would be able to switch between
+resctrl-assigned and user-assigned at runtime. I think the importance
+of this would depend on how efficient the mbm_assign_control interface
+ends up being. If it will necessarily result in floods of IPIs when
+cycling counters on a large system, they will be eager to not use it
+whenever they can avoid it.
+
+The rate assignment events are easier to deal with because they can
+simply be retrieved from memory without the caller needing to worry
+about what domain they're reading from, so I don't believe we will
+ever want to deal with cached count values paired with timestamps. On
+systems with assignable counters, I don't know how much of a problem
+the varying update rate will be. The aggregation files reading from
+memory are cheap to poll every second, so I don't know how big of an
+issue it is for most of the groups to report some sort of N/A-value
+for bandwidth most of the time. They won't have any difficulty
+remembering how long ago they last saw a valid mbps value because
+they're already histogramming all the metrics they watch.
+
+Thanks,
+-Peter
 
