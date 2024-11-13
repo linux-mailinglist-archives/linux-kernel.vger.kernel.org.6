@@ -1,307 +1,354 @@
-Return-Path: <linux-kernel+bounces-407256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D827D9C6AF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:54:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70EE9C6B0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:56:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97BA328324C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:54:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A631B258C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EFC18A6D8;
-	Wed, 13 Nov 2024 08:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iQhqx4TB"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28039230999;
-	Wed, 13 Nov 2024 08:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB23118B483;
+	Wed, 13 Nov 2024 08:55:51 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12CC18A95E;
+	Wed, 13 Nov 2024 08:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731488057; cv=none; b=j8llrY3/KchbAXfc2kH7ZiA+3/yGTir01GiH1iDK0235Q8SQbYKSa9KVhMY7dN6iq8gzcHy+YfbNHZ+8zLsC3DCAjYLxA+r0FL9aFCgVgohe3qx/eewFKx/QZNyqnM3kcBhyQ6hBxMb5TDzBDXtBqIyxznwR6FS0ENJjc89aXg8=
+	t=1731488151; cv=none; b=lfJhPPOS+8CJguA2bz19v+5PiOEBCYSMd/twqlNgUKqcbtUGmnlydraNv5Edar4Hm9kFJkz+sJKoMPrJZZfdD3ITxih80QCxssBcrI+T5vMtR/o9YFe3WNwW+Hn0KcEZQh9WiWB6+WFzTeoKL/W9n3ThviAk69X6+1yewsH0upg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731488057; c=relaxed/simple;
-	bh=H7Y1+xgTkIPEtStm71lFE6l4dByLaWE7iB5+9vnDGGI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k4ZzD4wzJvHtBqCWGcLabWossmysvcucDkpufyzQVm6yf1aPKt0/h86kvz7QlKJLGIv23iGkq5jfuFSWJrYntv0KA5rNwFbm0Cix626uZbTCl1PSzLsQK0zCD2Ru6LIeZP1Hxi5Uxubou2jxnsIODkYtZynTvKZwjv48yF6yDjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iQhqx4TB; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1731488053;
-	bh=H7Y1+xgTkIPEtStm71lFE6l4dByLaWE7iB5+9vnDGGI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iQhqx4TBleDVuF99NZ8lyPaVvrWj/UzjnPj9HXGubDsaH/yb2EBFBDZmsuCAerrkE
-	 UZATpUZPFy/XJzSlnqI/Zw0O8t/UKQMCqCpEdXrVZ8JmjrC/+OYVBLVVrXKn7RY6Q1
-	 Z7BOKOntTQsJBEFpY+7tKRQHEd5PDEw/WSUpCal4dO3WCV5DYdXtkjZo3BkkkkzCd+
-	 diKkNAGTz52wbN3T+hKLmTdm0Zc/CE2Kej0CfgODqBWENTnY1A/lOTNPdcTacgWJxE
-	 uglHlcgvaj/X8zcvREF3Dd+lUakW/K97aMq47V7XmxwKb1Bs8eodv2ZsvZIpnDbljh
-	 lfMEU5K3d+YKQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0CE0017E139E;
-	Wed, 13 Nov 2024 09:54:13 +0100 (CET)
-Message-ID: <c2d1f933-0bb8-4aee-acd3-af4246f66913@collabora.com>
-Date: Wed, 13 Nov 2024 09:54:12 +0100
+	s=arc-20240116; t=1731488151; c=relaxed/simple;
+	bh=TfFg2zxonwSQoXsp4bBGtZsCPsnMeiGdmmsYUaISPLM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BVQMz35onvqO8NKwRlaFfFRHAzFtKuv+NYK/TxSpv0J/QeAw+uNp7InuolnhZZebmkasSGHc+nzOQn9lzGehb9SYvYEdpUUSY+5UaLnrfhh/YG7Vv2EI+8OLfl/YZW15J2VXDZYsbAuUV0tS+64rF8YlSQUO+Eo5JtlQIrTHJC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.40.54.90])
+	by gateway (Coremail) with SMTP id _____8AxquCRaTRnqqQ8AA--.54548S3;
+	Wed, 13 Nov 2024 16:55:45 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.40.54.90])
+	by front1 (Coremail) with SMTP id qMiowMDxhcCQaTRnQc1TAA--.14079S2;
+	Wed, 13 Nov 2024 16:55:44 +0800 (CST)
+From: Zhao Qunqin <zhaoqunqin@loongson.cn>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	bp@alien8.de,
+	tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	xry111@xry111.site,
+	Markus.Elfring@web.de,
+	Jonathan.Cameron@Huawei.com,
+	Zhao Qunqin <zhaoqunqin@loongson.cn>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [PATCH V9] EDAC: Add EDAC driver for loongson memory controller
+Date: Wed, 13 Nov 2024 16:55:47 +0800
+Message-Id: <20241113085547.15680-1-zhaoqunqin@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2,1/1] i2c: mediatek: add runtime PM operations and bus
- regulator control
-To: =?UTF-8?B?Wm9pZSBMaW4gKOael+emueWmoSk=?= <Zoie.Lin@mediatek.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?UWlpIFdhbmcgKOeOi+eQqik=?= <Qii.Wang@mediatek.com>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- =?UTF-8?B?VGVkZHkgQ2hlbiAo6Zmz5Lm+5YWDKQ==?= <Teddy.Chen@mediatek.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>
-References: <20241106125212.27362-1-zoie.lin@mediatek.com>
- <20241106125212.27362-2-zoie.lin@mediatek.com>
- <c7c5e802-3df8-4218-865f-81a207c517cd@collabora.com>
- <d1744ec6c7dbd63b128fa0cada2622dead9cb95b.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <d1744ec6c7dbd63b128fa0cada2622dead9cb95b.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMDxhcCQaTRnQc1TAA--.14079S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxtr1kGFyDGr1kGFWkKFW3urX_yoW3Wr15pF
+	45Cw1fGr4xtr43Cws3ArWUuF15uwsa9a42vay7A3yY93srA34DXryktFW2yF9rCrWDJrW3
+	Xa4rKa1DCF4DCwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	AVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
+	AKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
+	6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8uc_3UUUUU==
 
-Il 07/11/24 16:19, Zoie Lin (林禹妡) ha scritto:
-> Hi Angelo,
-> 
-> On Thu, 2024-11-07 at 11:13 +0100, AngeloGioacchino Del Regno wrote:
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>
->>
->> Il 06/11/24 13:52, Zoie Lin ha scritto:
->>> This commit introduces support for runtime PM operations in
->>> the I2C driver, enabling runtime suspend and resume functionality.
->>>
->>> Although in the most platforms, the bus power of i2c are always
->>> on, some platforms disable the i2c bus power in order to meet
->>> low power request.
->>>
->>> This implementation includes bus regulator control to facilitate
->>> proper handling of the bus power based on platform requirements.
->>>
->>> Signed-off-by: Zoie Lin <zoie.lin@mediatek.com>
->>> ---
->>>    drivers/i2c/busses/i2c-mt65xx.c | 77
->>> ++++++++++++++++++++++++++++-----
->>>    1 file changed, 65 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/drivers/i2c/busses/i2c-mt65xx.c
->>> b/drivers/i2c/busses/i2c-mt65xx.c
->>> index 5bd342047d59..4209daec1efa 100644
->>> --- a/drivers/i2c/busses/i2c-mt65xx.c
->>> +++ b/drivers/i2c/busses/i2c-mt65xx.c
->>
->> ..snip..
->>
->>> @@ -1370,6 +1373,40 @@ static int mtk_i2c_parse_dt(struct
->>> device_node *np, struct mtk_i2c *i2c)
->>>        return 0;
->>>    }
->>>
->>> +static int mtk_i2c_runtime_suspend(struct device *dev)
->>> +{
->>> +     struct mtk_i2c *i2c = dev_get_drvdata(dev);
->>> +
->>> +     clk_bulk_disable(I2C_MT65XX_CLK_MAX, i2c->clocks);
->>> +     if (i2c->adap.bus_regulator)
->>> +             regulator_disable(i2c->adap.bus_regulator);
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +static int mtk_i2c_runtime_resume(struct device *dev)
->>> +{
->>> +     int ret = 0;
->>> +     struct mtk_i2c *i2c = dev_get_drvdata(dev);
->>
->>          struct mtk_i2c *i2c = dev_get_drvdata(dev);
->>          int ret;
->>
->>> +
->>> +     if (i2c->adap.bus_regulator) {
->>> +             ret = regulator_enable(i2c->adap.bus_regulator);
->>> +             if (ret) {
->>> +                     dev_err(dev, "enable regulator failed!\n");
->>> +                     return ret;
->>> +             }
->>> +     }
->>> +
->>> +     ret = clk_bulk_enable(I2C_MT65XX_CLK_MAX, i2c->clocks);
->>> +     if (ret) {
->>> +             if (i2c->adap.bus_regulator)
->>> +                     regulator_disable(i2c->adap.bus_regulator);
->>> +             return ret;
->>> +     }
->>> +
->>> +     return 0;
->>> +}
->>> +
->>>    static int mtk_i2c_probe(struct platform_device *pdev)
->>>    {
->>>        int ret = 0;
->>> @@ -1472,13 +1509,18 @@ static int mtk_i2c_probe(struct
->>> platform_device *pdev)
->>>                }
->>>        }
->>>
->>> -     ret = clk_bulk_prepare_enable(I2C_MT65XX_CLK_MAX, i2c-
->>>> clocks);
->>> +     ret = clk_bulk_prepare(I2C_MT65XX_CLK_MAX, i2c->clocks);
->>>        if (ret) {
->>> -             dev_err(&pdev->dev, "clock enable failed!\n");
->>>                return ret;
->>>        }
->>> +
->>> +     platform_set_drvdata(pdev, i2c);
->>> +
->>> +     ret = mtk_i2c_runtime_resume(i2c->dev);
->>> +     if (ret < 0)
->>> +             goto err_clk_bulk_unprepare;
->>>        mtk_i2c_init_hw(i2c);
->>> -     clk_bulk_disable(I2C_MT65XX_CLK_MAX, i2c->clocks);
->>> +     mtk_i2c_runtime_suspend(i2c->dev);
->>>
->>>        ret = devm_request_irq(&pdev->dev, irq, mtk_i2c_irq,
->>>                               IRQF_NO_SUSPEND | IRQF_TRIGGER_NONE,
->>> @@ -1486,19 +1528,22 @@ static int mtk_i2c_probe(struct
->>> platform_device *pdev)
->>>        if (ret < 0) {
->>>                dev_err(&pdev->dev,
->>>                        "Request I2C IRQ %d fail\n", irq);
->>> -             goto err_bulk_unprepare;
->>> +             goto err_clk_bulk_unprepare;
->>>        }
->>> +     pm_runtime_set_autosuspend_delay(&pdev->dev, 1000);
->>
->> You had comments from me and from Andi on this delay, and you
->> completely ignored
->> both of us.
->>
->> We're still waiting for an answer to our question.
-> 
-> I am sorry for any confusion caused by my previous response.
-> The response to your question was included in the cover letter, which
-> might not have been very noticeable.
->   
-> The delay before runtime_put_autosuspend() actually executes
-> mtk_i2c_runtime_suspend() depends on the frequency of I2C usage by the
-> devices attached to this bus. A 1000ms delay is a balanced value for
-> latency and power metrics based on the MTK platform.
->   
+Add ECC support for Loongson SoC DDR controller. This
+driver reports single bit errors (CE) only.
 
-Can you please write down "the numbers" into the commit description?
+Only ACPI firmware is supported.
 
-As in, to justify why 1000ms is a balanced value for latency and power, so,
-write down a small table containing both values for various delays, like:
+Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
+Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+Changes in v9:
+	- Still using readq() and included "linux/io-64-nonatomic-lo-hi.h"
+	  to avoid the compiler's waring.
+	- Used alpha-betical order when selecting symbol and including
+	  header file.
 
-Delay(ms)    Latency(us)   Power(uW)
-200          999           9999
-500          9999          99999
-1000         99999         999999
+Changes in v8:
+	- Used readl() instead of readq()
+	- Used acpi_device_id instead of of_device_id, then removed
+	  dt-bindings
 
-Please also say what is the minimum acceptable latency.
+Changes in v7:
+	- Fixed sparse's "incorrect type in assignment"
+	- Cleaned up coding style
 
-Thanks,
-Angelo
+Changes in v6:
+	- Changed the Kconfig name to CONFIG_EDAC_LOONGSON
 
->   
-> Thank you.
->   
-> Best regards,
-> Zoie
->>
->>
->>> +     pm_runtime_use_autosuspend(&pdev->dev);
->>> +     pm_runtime_enable(&pdev->dev);
->>
->> devm_pm_runtime_enable() please.
->>
->>>
->>>        i2c_set_adapdata(&i2c->adap, i2c);
->>>        ret = i2c_add_adapter(&i2c->adap);
->>>        if (ret)
->>> -             goto err_bulk_unprepare;
->>> -
->>> -     platform_set_drvdata(pdev, i2c);
->>> +             goto err_pm_runtime_disable;
->>>
->>>        return 0;
->>>
->>> -err_bulk_unprepare:
->>> +err_pm_runtime_disable:
->>> +     pm_runtime_disable(&pdev->dev);
->>> +err_clk_bulk_unprepare:
->>>        clk_bulk_unprepare(I2C_MT65XX_CLK_MAX, i2c->clocks);
->>>
->>>        return ret;
->>> @@ -1510,6 +1555,7 @@ static void mtk_i2c_remove(struct
->>> platform_device *pdev)
->>>
->>>        i2c_del_adapter(&i2c->adap);
->>>
->>> +     pm_runtime_disable(&pdev->dev);
->>>        clk_bulk_unprepare(I2C_MT65XX_CLK_MAX, i2c->clocks);
->>>    }
->>>
->>> @@ -1518,6 +1564,10 @@ static int mtk_i2c_suspend_noirq(struct
->>> device *dev)
->>>        struct mtk_i2c *i2c = dev_get_drvdata(dev);
->>>
->>>        i2c_mark_adapter_suspended(&i2c->adap);
->>> +
->>> +     if (!pm_runtime_status_suspended(dev))
->>> +             mtk_i2c_runtime_suspend(dev);
->>> +
->>>        clk_bulk_unprepare(I2C_MT65XX_CLK_MAX, i2c->clocks);
->>>
->>>        return 0;
->>> @@ -1536,7 +1586,8 @@ static int mtk_i2c_resume_noirq(struct device
->>> *dev)
->>>
->>>        mtk_i2c_init_hw(i2c);
->>>
->>> -     clk_bulk_disable(I2C_MT65XX_CLK_MAX, i2c->clocks);
->>> +     if (pm_runtime_status_suspended(dev))
->>> +             mtk_i2c_runtime_suspend(dev);
->>
->> You want to resume, not to suspend, in a resume handler.
->>
->>>
->>>        i2c_mark_adapter_resumed(&i2c->adap);
->>>
->>> @@ -1546,6 +1597,8 @@ static int mtk_i2c_resume_noirq(struct device
->>> *dev)
->>>    static const struct dev_pm_ops mtk_i2c_pm = {
->>>        NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_i2c_suspend_noirq,
->>>                                  mtk_i2c_resume_noirq)
->>> +     SET_RUNTIME_PM_OPS(mtk_i2c_runtime_suspend,
->>> mtk_i2c_runtime_resume,
->>> +                        NULL)
->>>    };
->>>
->>>    static struct platform_driver mtk_i2c_driver = {
->>
->>
->>
+Changes in v5:
+	- Dropepd the loongson_ prefix from all static functions.
+	- Aligned function arguments on the opening brace.
+	- Dropepd useless comments and useless wrapper. Dropped side
+	  comments.
+	- Reordered variable declarations.
+
+Changes in v4:
+	- None
+
+Changes in v3:
+	- Addressed review comments raised by Krzysztof and Huacai
+
+Changes in v2:
+	- Addressed review comments raised by Krzysztof
+
+ MAINTAINERS                  |   6 ++
+ arch/loongarch/Kconfig       |   1 +
+ drivers/edac/Kconfig         |   8 ++
+ drivers/edac/Makefile        |   1 +
+ drivers/edac/loongson_edac.c | 156 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 172 insertions(+)
+ create mode 100644 drivers/edac/loongson_edac.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e9659a5a7..b36a45051 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13397,6 +13397,12 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/thermal/loongson,ls2k-thermal.yaml
+ F:	drivers/thermal/loongson2_thermal.c
+ 
++LOONGSON EDAC DRIVER
++M:	Zhao Qunqin <zhaoqunqin@loongson.cn>
++L:	linux-edac@vger.kernel.org
++S:	Maintained
++F:	drivers/edac/loongson_edac.c
++
+ LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+ M:	Sathya Prakash <sathya.prakash@broadcom.com>
+ M:	Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index bb35c34f8..33052526b 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -79,6 +79,7 @@ config LOONGARCH
+ 	select BUILDTIME_TABLE_SORT
+ 	select COMMON_CLK
+ 	select CPU_PM
++	select EDAC_SUPPORT
+ 	select EFI
+ 	select GENERIC_CLOCKEVENTS
+ 	select GENERIC_CMOS_UPDATE
+diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+index 81af6c344..433c33785 100644
+--- a/drivers/edac/Kconfig
++++ b/drivers/edac/Kconfig
+@@ -564,5 +564,13 @@ config EDAC_VERSAL
+ 	  Support injecting both correctable and uncorrectable errors
+ 	  for debugging purposes.
+ 
++config EDAC_LOONGSON
++	tristate "Loongson Memory Controller"
++	depends on (LOONGARCH && ACPI) || COMPILE_TEST
++	help
++	  Support for error detection and correction on the Loongson
++	  family memory controller. This driver reports single bit
++	  errors (CE) only. Loongson-3A5000/3C5000/3D5000/3A6000/3C6000
++	  are compatible.
+ 
+ endif # EDAC
+diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+index faf310eec..f8bdbc895 100644
+--- a/drivers/edac/Makefile
++++ b/drivers/edac/Makefile
+@@ -88,3 +88,4 @@ obj-$(CONFIG_EDAC_DMC520)		+= dmc520_edac.o
+ obj-$(CONFIG_EDAC_NPCM)			+= npcm_edac.o
+ obj-$(CONFIG_EDAC_ZYNQMP)		+= zynqmp_edac.o
+ obj-$(CONFIG_EDAC_VERSAL)		+= versal_edac.o
++obj-$(CONFIG_EDAC_LOONGSON)		+= loongson_edac.o
+diff --git a/drivers/edac/loongson_edac.c b/drivers/edac/loongson_edac.c
+new file mode 100644
+index 000000000..29607972f
+--- /dev/null
++++ b/drivers/edac/loongson_edac.c
+@@ -0,0 +1,156 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2024 Loongson Technology Corporation Limited.
++ */
++
++#include <linux/acpi.h>
++#include <linux/edac.h>
++#include <linux/init.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include "edac_module.h"
++
++#define ECC_CS_COUNT_REG	0x18
++
++struct loongson_edac_pvt {
++	void __iomem *ecc_base;
++	int last_ce_count;
++};
++
++static int read_ecc(struct mem_ctl_info *mci)
++{
++	struct loongson_edac_pvt *pvt = mci->pvt_info;
++	u64 ecc;
++	int cs;
++
++	if (!pvt->ecc_base)
++		return pvt->last_ce_count;
++
++	ecc = readq(pvt->ecc_base + ECC_CS_COUNT_REG);
++	/* cs0 -- cs3 */
++	cs = ecc & 0xff;
++	cs += (ecc >> 8) & 0xff;
++	cs += (ecc >> 16) & 0xff;
++	cs += (ecc >> 24) & 0xff;
++
++	return cs;
++}
++
++static void edac_check(struct mem_ctl_info *mci)
++{
++	struct loongson_edac_pvt *pvt = mci->pvt_info;
++	int new, add;
++
++	new = read_ecc(mci);
++	add = new - pvt->last_ce_count;
++	pvt->last_ce_count = new;
++	if (add <= 0)
++		return;
++
++	edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, add,
++			     0, 0, 0, 0, 0, -1, "error", "");
++	edac_mc_printk(mci, KERN_INFO, "add: %d", add);
++}
++
++static void dimm_config_init(struct mem_ctl_info *mci)
++{
++	struct dimm_info *dimm;
++	u32 size, npages;
++
++	/* size not used */
++	size = -1;
++	npages = MiB_TO_PAGES(size);
++
++	dimm = edac_get_dimm(mci, 0, 0, 0);
++	dimm->nr_pages = npages;
++	snprintf(dimm->label, sizeof(dimm->label),
++		 "MC#%uChannel#%u_DIMM#%u", mci->mc_idx, 0, 0);
++	dimm->grain = 8;
++}
++
++static void pvt_init(struct mem_ctl_info *mci, void __iomem *vbase)
++{
++	struct loongson_edac_pvt *pvt = mci->pvt_info;
++
++	pvt->ecc_base = vbase;
++	pvt->last_ce_count = read_ecc(mci);
++}
++
++static int edac_probe(struct platform_device *pdev)
++{
++	struct edac_mc_layer layers[2];
++	struct mem_ctl_info *mci;
++	void __iomem *vbase;
++	int ret;
++
++	vbase = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(vbase))
++		return PTR_ERR(vbase);
++
++	/* allocate a new MC control structure */
++	layers[0].type = EDAC_MC_LAYER_CHANNEL;
++	layers[0].size = 1;
++	layers[0].is_virt_csrow = false;
++	layers[1].type = EDAC_MC_LAYER_SLOT;
++	layers[1].size = 1;
++	layers[1].is_virt_csrow = true;
++	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers,
++			    sizeof(struct loongson_edac_pvt));
++	if (mci == NULL)
++		return -ENOMEM;
++
++	mci->mc_idx = edac_device_alloc_index();
++	mci->mtype_cap = MEM_FLAG_RDDR4;
++	mci->edac_ctl_cap = EDAC_FLAG_NONE;
++	mci->edac_cap = EDAC_FLAG_NONE;
++	mci->mod_name = "loongson_edac.c";
++	mci->ctl_name = "loongson_edac_ctl";
++	mci->dev_name = "loongson_edac_dev";
++	mci->ctl_page_to_phys = NULL;
++	mci->pdev = &pdev->dev;
++	mci->error_desc.grain = 8;
++	/* Set the function pointer to an actual operation function */
++	mci->edac_check = edac_check;
++
++	pvt_init(mci, vbase);
++	dimm_config_init(mci);
++
++	ret = edac_mc_add_mc(mci);
++	if (ret) {
++		edac_dbg(0, "MC: failed edac_mc_add_mc()\n");
++		edac_mc_free(mci);
++		return ret;
++	}
++	edac_op_state = EDAC_OPSTATE_POLL;
++
++	return 0;
++}
++
++static void edac_remove(struct platform_device *pdev)
++{
++	struct mem_ctl_info *mci = edac_mc_del_mc(&pdev->dev);
++
++	if (mci)
++		edac_mc_free(mci);
++}
++
++static const struct acpi_device_id loongson_edac_acpi_match[] = {
++	{"LOON000G", 0},
++	{}
++};
++MODULE_DEVICE_TABLE(acpi, loongson_edac_acpi_match);
++
++static struct platform_driver loongson_edac_driver = {
++	.probe		= edac_probe,
++	.remove		= edac_remove,
++	.driver		= {
++		.name	= "loongson-mc-edac",
++		.acpi_match_table = loongson_edac_acpi_match,
++	},
++};
++module_platform_driver(loongson_edac_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Zhao Qunqin <zhaoqunqin@loongson.cn>");
++MODULE_DESCRIPTION("EDAC driver for loongson memory controller");
+
+base-commit: e14232afa94445e03fc3a0291b07a68f3408c120
+-- 
+2.43.0
 
 
