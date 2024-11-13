@@ -1,61 +1,52 @@
-Return-Path: <linux-kernel+bounces-407849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCC69C75BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:13:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9BC9C75C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:13:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FA721F225E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:13:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 599E41F245FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155012022CA;
-	Wed, 13 Nov 2024 15:11:26 +0000 (UTC)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927A5155A24;
+	Wed, 13 Nov 2024 15:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="ITqZFWFH"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CFF201036;
-	Wed, 13 Nov 2024 15:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C4F143744;
+	Wed, 13 Nov 2024 15:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731510685; cv=none; b=YHy8NbPOkPGMn2ixNivEZHrVHqO+ucM368DesHX62OoqT1uQP/NyFXMwOiAqBmvPYoxyB3ibyY9250S4jUtymjpJu0a8ccD/30AH0TTdDuYK7SZufJyQ+aoeQGDUufxQ9tsDDboPK3leg4aOFL8nx3sF/9yJvIfHmtWAq9lzvW0=
+	t=1731510710; cv=none; b=LYz/AY9Ztz0Tuba3mL46qYQVO8ZDGqvyQz80VK/31HQ9mspKmkxvMPlJ0BVZNUHOaaAg8zCn/0Xg/0JOS95sBrwpHVs+1U5XbKzgO+9/3sXq8nGF5eizjQOd6JIfL77qzVKS55vCscXp9eOKZc9uDPNeRX7xmRhw8l/7Ojn/JFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731510685; c=relaxed/simple;
-	bh=7wSSxIUiXUM5F3CnS/GS0ih6ZK6ssmZ3fx3f8y0jNi0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZzaqvfRx/jb+XDM15ZkPQDWC7maU9jqMnfDLNFuVnxw99MWJCBrnuJRZOa768nenrH7jLmda5fwXN0YuxYvyVhYP2Rkd0Y4o59cECHgKSsJtcPVLHLHY+v2tWQO9ph2pFdmHwuTf+lk3kJK4Mz7IoSqY00B2P3dampf2oMTikHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa1f1f2d508so185377566b.2;
-        Wed, 13 Nov 2024 07:11:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731510682; x=1732115482;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zxJL6/w7ib7tor6B/awKjwacI8QkLWn7spqQywUygr4=;
-        b=T7hIDV4+icgtau/zZ/DMVhNWSUcjXpD6yNKrrTyCQh1JuIifz/GgBVwh4Ohmi/7Uaz
-         15E5Ni34rDzseG9DxuRLxlFUBJFuqpwO+j5DwpUVx+GiJdT80q2EAT33+5SnTTXwPW6q
-         EdKWsfF20FTZaQ11V2PoplhxL9a7W2+AkAN7jlRYLKG++e6lyVB2MPJH1PaTPr4jlUEC
-         45/ZRpZmZaQc2F3V+TEyhYU68/BbXC4CmjiFpNUnv29kHMjVDpcHdHozG/7MBjt71zjw
-         iJQGJnQ56zVT50NMfWxOit1T4TogWn/vFwQV81gjWtDnP/v6yLENpvdjtUBmF+Bv2G57
-         bPwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYEoqF8+0qwDEI4DL8KKPobYd2DOebmCbE2wxd/mHsVGr6KmR0uN+ir3hN7LbX0kOx8nOEM2yTwlAckGdRuMbs@vger.kernel.org, AJvYcCVkFUgNHgMu0zF0uEXKbQzR0C647JqglOBtl+5Cb/Hh7NoqXVZSmnf8twdM9gJUOwZIbNl4LrHnUmX3s+CH@vger.kernel.org, AJvYcCWdolYDYnLssxrwbHPFhCIhKCcC0Nx4e3NegcjJguwGLTQNsRLD3kImSIHI7SvkOCh+mXdeGhOi0f0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCxHhrpWiqxZaBoQCC7U8NWBM2JoWy4BUyu1jPT/z8ooPzhszL
-	fjZWGlB3E9f0rMnxf3eb8FrE6WIHYaQs54u+zCj2S30Xhrlm6Qvb
-X-Google-Smtp-Source: AGHT+IEoLyfigi2UbiHSBtCcn9AV7B2W8zEBzkfRzr2dXQX1hG/gGL44SEj+d1F3HrwKO/03w2g9Ag==
-X-Received: by 2002:a17:907:944c:b0:a9a:8a4:e079 with SMTP id a640c23a62f3a-a9eeff44660mr2145146866b.31.1731510681944;
-        Wed, 13 Nov 2024 07:11:21 -0800 (PST)
-Received: from localhost (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03c7cabbsm7293671a12.79.2024.11.13.07.11.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 07:11:21 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 13 Nov 2024 07:10:55 -0800
-Subject: [PATCH net-next 4/4] netconsole: selftest: Validate CPU number
- auto-population in userdata
+	s=arc-20240116; t=1731510710; c=relaxed/simple;
+	bh=SxPeim2Wg91I0hqTjDSKvwB21t0C5xwCY7RnDmywC0k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=msK0v9oUSb2NEpqNhFIwVVwNxqxIak54SSQ6nCChoaNcCsuGvTYYDsW+mQxv3aIP7+Hi4d/zBN/PLg6+OIL3ulybF8x3N5j1TcK26j4NECQZ3/DIn/X8Yzz41qSoOymmAjbugIoXHEPUG2nmXxOmBNRfeQduJuB6/9Jt/M1kvqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=ITqZFWFH; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [192.168.93.162] (254C230F.nat.pool.telekom.hu [37.76.35.15])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 472E4E44EA;
+	Wed, 13 Nov 2024 15:11:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1731510706;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=d7uPVLGK6p97SLzdxgBRA3CM2p919mN7k2z2OJuofo0=;
+	b=ITqZFWFHGmwWtdqrODcX9xYU4wvfkZyTog62NSL2IZ5rItZwnRO6UTDVKc9ainPUegJHSe
+	KoKIvmpCUPKobU/TAP37SgaUXaGd8oqR/UtP6JOyoKqjt8Ll2Bhedc89obzuuSTVWmV89j
+	+OJybl01ZXgUYRrtauRHnQqyg56vOMAsy2zrGG0ugRv97piwC9DtB4t1gdIr+NZdncroZT
+	nvHpU8i5FHKxVa2sEJ9Yg13OlISEBTc1v5AcynpiDw5y3q0RdNV915JxYVJ0X07w1XoDf3
+	iFUJUl/fM15CPb1YbagEi74jU3EvV3rLp9WsBb2ShAJSW2OFj9MUlIQboZniGA==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH v6 00/10] Add MSM8917/PM8937/Redmi 5A
+Date: Wed, 13 Nov 2024 16:11:41 +0100
+Message-Id: <20241113-msm8917-v6-0-c348fb599fef@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,101 +54,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241113-netcon_cpu-v1-4-d187bf7c0321@debian.org>
-References: <20241113-netcon_cpu-v1-0-d187bf7c0321@debian.org>
-In-Reply-To: <20241113-netcon_cpu-v1-0-d187bf7c0321@debian.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- Breno Leitao <leitao@debian.org>, max@kutsevol.com, thepacketgeek@gmail.com, 
- vlad.wing@gmail.com, davej@codemonkey.org.uk
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAK3BNGcC/23Py27EIAwF0F8ZsS4V5jFAV/2PqguHR8ZSQyqoo
+ laj/HvJbBJpsrwW5xrfWUuVUmNvlzuraaFGc+nh+nJh4YZlTJxiz0wKqUGA51ObnAfLwQYVRc4
+ ajWT99XdNmX4fTR+fPd+o/cz171G8wDZ97liAC54hq4AQnUvmfUIqX1SojK9zHdlWtMgDVrBj2
+ bFDYU1GdH6AU6x2DMLuWHV8jTEYDNFbN5xifcSHb+tt85C8F9p6iefYHDDIHZuO+8FKR6XAwzN
+ e1/UfKZZnk5cBAAA=
+X-Change-ID: 20241019-msm8917-17c3d0ff4a52
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Dang Huynh <danct12@riseup.net>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2328; i=leitao@debian.org;
- h=from:subject:message-id; bh=7wSSxIUiXUM5F3CnS/GS0ih6ZK6ssmZ3fx3f8y0jNi0=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnNMGOZOdLZzudSzkfczgpbLOO/6uj8tFPcG7Of
- HLb1ouaDDGJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZzTBjgAKCRA1o5Of/Hh3
- belgD/9MXc6rZacHAL5a6Pw8kYf5u9hon846XtxERP1sNGQjSjmWiMP2V0KfSMLk5ZvHoFKKcQR
- bpP9ExABuvB3TKLEPd5Foldv7UOybHnj+255l5mHYh8zBBsDDlj2r0KSkegI0+dRyJnom7L87+e
- B7QJGapMQOZiXWoVeuFPb4dlp/ls0f/ZMyIynfJC4VV/G/mnAIPjdQYE9XiQK9b5ISbxGL1EYds
- zLZA9vmS9sw75WXjIGrXBX86UFxtK1pZ1vDqDYxA61YFjucv8fYw/gQrGZQ7DJMFLljNuur1Qcs
- KhEqfNOMCSLJ1/zQbFlCDrB3dvJJREFS02hY+q7bWnygKouaOsZVTY2l9qiZsiSg+FIKuJ3ilWI
- 3EXX3o163FxKuWTJOqRXv5/N9Pe5jEKYfhoQ6O12eYuDJoUKLj2pmx1GpxeG2zUdrJB+0GqFDWk
- U4m+hcSpOwcCXP3CLGfAC7DgmsIhYA5jmtXBQc8wpNt6UC/mZCQg/z1pqTF4sw/W71I4du91WO2
- cZCFn76yqO+5ZgSSqnWM/JelQE0IYWjCGFVPDL+vBZi+jceioXYMZLl4S1tBGo+/FIwFNA1Z+9I
- x+5FnBSn27Hb8LXecNdZiaMt+bXo+8LpZFsxZmfYte/n3jIbvbww6kFfhbEJdSRE3fRyOdWzgVR
- 0gtaa+bvWxbtz2w==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731510705; l=3660;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=SxPeim2Wg91I0hqTjDSKvwB21t0C5xwCY7RnDmywC0k=;
+ b=R6SP5fDM9Iq8w0TzGSCCXC0A59sc1Hj5Bz9dYklvds64AQNDYoOGdXVK9uvTbANLUtMbuhLQv
+ F8XNXn6PRiPC0ZelfOEklcbPtVyWDx2S5gkH5pH6yn0Pcz1nggTZWvM
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Expand the existing netconsole selftest to verify the functionality of
-the recently added CPU number auto-population feature in the netconsole
-userdata.
+This patch series add support for MSM8917 soc with PM8937 and
+Xiaomi Redmi 5A (riva).
 
-The changes include enabling the "populate_cpu_nr" option on the
-netconsole target before sending the test data, and validating that the
-received data on the listener side contains a "cpu=" entry in the
-userdata, indicating that the CPU number was successfully
-auto-populated.
-
-This addition to the netconsole selftest ensures that the new CPU number
-auto-population feature works as expected and helps catch any
-regressions in this functionality.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- tools/testing/selftests/drivers/net/netcons_basic.sh | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Changes in v6:
+- msm8917:
+  - Consolidate SDC pins, remove sdc2-cd-on/off pins.
+  - Remove cluster-sleep-0 and cluster-sleep-1
+  and rename cluster-sleep-2 to cluster-sleep-0.
+  - Fix spi, i2c and related pinctrl namings.
+- msm8917-xiaomi-riva: follow i2c name changes.
+- Link to v5: https://lore.kernel.org/r/20241112-msm8917-v5-0-3ca34d33191b@mainlining.org
 
-diff --git a/tools/testing/selftests/drivers/net/netcons_basic.sh b/tools/testing/selftests/drivers/net/netcons_basic.sh
-index b175f4d966e5056ddb62e335f212c03e55f50fb0..92538a188f0696b3e54071d1d32c7b2e523db839 100755
---- a/tools/testing/selftests/drivers/net/netcons_basic.sh
-+++ b/tools/testing/selftests/drivers/net/netcons_basic.sh
-@@ -153,6 +153,16 @@ function set_user_data() {
- 	echo "${USERDATA_VALUE}" > "${VALUE_PATH}"
- }
- 
-+function set_cpu_nr() {
-+	if [[ ! -f "${NETCONS_PATH}""/userdata/populate_cpu_nr" ]]
-+	then
-+		echo "Populate CPU configfs path not available in ${NETCONS_PATH}/userdata/populate_cpu_nr" >&2
-+		exit "${ksft_skip}"
-+	fi
-+
-+	echo 1 > "${NETCONS_PATH}""/userdata/populate_cpu_nr"
-+}
-+
- function listen_port_and_save_to() {
- 	local OUTPUT=${1}
- 	# Just wait for 2 seconds
-@@ -185,6 +195,12 @@ function validate_result() {
- 		exit "${ksft_fail}"
- 	fi
- 
-+	if ! grep -q "cpu=[0-9]\+" "${TMPFILENAME}"; then
-+		echo "FAIL: 'cpu=' not found in ${TMPFILENAME}" >&2
-+		cat "${TMPFILENAME}" >&2
-+		exit "${ksft_fail}"
-+	fi
-+
- 	# Delete the file once it is validated, otherwise keep it
- 	# for debugging purposes
- 	rm "${TMPFILENAME}"
-@@ -254,6 +270,8 @@ set_network
- create_dynamic_target
- # Set userdata "key" with the "value" value
- set_user_data
-+# Auto populate CPU number
-+set_cpu_nr
- # Listed for netconsole port inside the namespace and destination interface
- listen_port_and_save_to "${OUTPUT_FILE}" &
- # Wait for socat to start and listen to the port.
+Changes in v5:
+- msm8917:
+  - Remove aliases.
+  - Rename spi, i2c labels and pins.
+  - Remove clock-frequency from timers
+  - Remove unused mpss_mem region.
+  - Use mboxes where it can be used, only smd-edge uses qcom,ipc.
+- msm8917-xiaomi-riva: Follow i2c label changes.
+- Link to v4: https://lore.kernel.org/r/20241109-msm8917-v4-0-8be9904792ab@mainlining.org
 
+Changes in v4:
+- msm8917 pinctrl: Fix gpio regexp in the schema.
+- msm8937 tsens: Rename ops_msm8976 to ops_common and use it for msm8937.
+- msm8917: fix address padding, naming and ordering, remove polling-delays.
+- Remove applied patches from the series.
+- Link to v3: https://lore.kernel.org/r/20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org
+
+Changes in v3:
+- msm8917-xiaomi-riva: Fix issues addressed by Konrad.
+- msm8917: Fix node addresses, orders of some properties.
+- pm8937: simplify vadc channels.
+- msm8917 pinctrl: Fix schema issues addressed by Krzysztof. 
+- Remove applied tcsr patch from this series.
+- Reword some commit title.
+- Link to v2: https://lore.kernel.org/r/20241031-msm8917-v2-0-8a075faa89b1@mainlining.org
+
+Changes in v2:
+- Add msm8937 tsens support.
+- Fix issues addressed by reviews.
+- Link to v1: https://lore.kernel.org/r/20241019-msm8917-v1-0-f1f3ca1d88e5@mainlining.org
+
+---
+Barnabás Czémán (7):
+      dt-bindings: pinctrl: qcom: Add MSM8917 pinctrl
+      dt-bindings: thermal: tsens: Add MSM8937
+      thermal/drivers/qcom/tsens-v1: Add support for MSM8937 tsens
+      dt-bindings: iommu: qcom,iommu: Add MSM8917 IOMMU to SMMUv1 compatibles
+      dt-bindings: nvmem: Add compatible for MS8917
+      dt-bindings: arm: qcom: Add Xiaomi Redmi 5A
+      arm64: dts: qcom: Add Xiaomi Redmi 5A
+
+Dang Huynh (1):
+      arm64: dts: qcom: Add PM8937 PMIC
+
+Otto Pflüger (2):
+      pinctrl: qcom: Add MSM8917 tlmm pinctrl driver
+      arm64: dts: qcom: Add initial support for MSM8917
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
+ .../devicetree/bindings/iommu/qcom,iommu.yaml      |    1 +
+ .../devicetree/bindings/nvmem/qcom,qfprom.yaml     |    1 +
+ .../bindings/pinctrl/qcom,msm8917-pinctrl.yaml     |  160 ++
+ .../devicetree/bindings/thermal/qcom-tsens.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts   |  297 +++
+ arch/arm64/boot/dts/qcom/msm8917.dtsi              | 1946 ++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/pm8937.dtsi               |  152 ++
+ drivers/pinctrl/qcom/Kconfig.msm                   |    6 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-msm8917.c             | 1620 ++++++++++++++++
+ drivers/thermal/qcom/tsens-v1.c                    |   21 +-
+ drivers/thermal/qcom/tsens.c                       |    3 +
+ drivers/thermal/qcom/tsens.h                       |    2 +-
+ 15 files changed, 4211 insertions(+), 8 deletions(-)
+---
+base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+change-id: 20241019-msm8917-17c3d0ff4a52
+
+Best regards,
 -- 
-2.43.5
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
 
