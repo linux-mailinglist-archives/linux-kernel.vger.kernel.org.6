@@ -1,197 +1,154 @@
-Return-Path: <linux-kernel+bounces-408076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C0C9C7A21
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:44:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE17D9C7A2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:46:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F36F284D1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:44:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C45CB2CF5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850CC201276;
-	Wed, 13 Nov 2024 17:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FDF200CBE;
+	Wed, 13 Nov 2024 16:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IAVtciNj"
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ACviE16K"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C11B1632E2;
-	Wed, 13 Nov 2024 17:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64ABC1F9ABD
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731519864; cv=none; b=FpQApop31A1v/7IA5/dfiPZ+6rvABeL6Pcy/tZepxjXZwb9MW0e5v2KNa1xRJKKGUaouMwgxQETBaqhY6XdgXkcVSHGo5TJOKIVxix6TR5gAk5SYSJf5MUSajgeb06REq5lH1NgfuijuZjAVPFuCEqN//+UXtgC3Aw20B3MwHJ0=
+	t=1731516930; cv=none; b=kwZTRf9TWzwhApH2DSxh94KfMHsIqwZWWa91ZXgdBXO7qdut0ZguaJmchvx+OeajJko8I51LUtYMPE45dEQ6nxa0RYYETlV5dtTihzPFIvDO8S55ZBNgPrnZ51bSppSEizdPoQI1+X3Df9f2DTpR6OD0vCit+o/7NUs2mAto2aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731519864; c=relaxed/simple;
-	bh=3e7ddZ56JgtwOGpWytDdsV5++LuwyeLu5bKVRLfduUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PxIbaxuRwk0jkGybZqUitX9t2OE3Zpjc9FNRpVSBdjkcp7tnUVsBZh1lOBNszm92ekVxh1cStiCyr1912YXL/mBW7V6iLmu6MVzHPR04siYFEY/3CTpsR6D596+CE6bzmiC9MHNb4c5yFBA3w3PKNKmyXExfVyRmh80bZmMeCDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IAVtciNj; arc=none smtp.client-ip=80.12.242.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id BHPXt6HUsl38xBHPYtfY0a; Wed, 13 Nov 2024 18:44:15 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731519855;
-	bh=8yt31LK7mwsmtd242ieGzXI5Eg3ZJTkLmfaoG3DU2MM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=IAVtciNjTIcSi0OMYtShFFvANL1WTWHXKXw62leUr0fHYHXwtkykikT+4aXIED02i
-	 8dFMZBrHQVpE7fYVJR/pJAc1bWkYhDRKDCgfO44y/xCZzf8Vyljwo1GB2lABaaQyTH
-	 ah9ygaO9lldWu+6Mtx8zyXycRnQ7DLeTKO/xOxZeRknrxWeiRu3TI0UP+O2pZ49VCf
-	 iE3lRQwqINKnyMeIkHdQ3socUS9I8lrAavu0yo2dOxv3dEbDieYb+eS20/qOCcDpSy
-	 lVmBAldoml+3kluEzKe/VZCEha0CoIOmjGvja5kOXnG4C+ln8bDRwxZk218SiK8RSU
-	 WY152Xqb7bi9Q==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 13 Nov 2024 18:44:15 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <2fd6212c-6406-4435-8cde-8a07aa16d933@wanadoo.fr>
-Date: Thu, 14 Nov 2024 02:44:10 +0900
+	s=arc-20240116; t=1731516930; c=relaxed/simple;
+	bh=FcOHKxBF8nl/v4SIQ/tCUbE1JuAOflWFIy3yGdifeC8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=YyqXehjYm9Hc7dI8GWK3z/Yx/wnkbvuobSRnt7lNm0u4jya4qXVxGg/adr4gauNAUeY1NrVPIYYP+aX2zKp8OCFzqtsrADnijG39OY76Khd98fEDQvYXO0OVKB3DtSMw0O9awdJxSIHo91tIaGHE5lpap2RJucsnymUl48VaipA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ACviE16K; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-28cdd9d8d01so3666512fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:55:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731516927; x=1732121727; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TSikvYecjE5L7Fz7wq5gaGm5AXMewltD4jATzudM75s=;
+        b=ACviE16KCe48ui6sPB9i/aKwNKj4q6sNYx4AMD3mL1kPjU7SEBvkAee/GmI4fkg6/Z
+         h6b0oP++hm4lTeUzO0P/0fdGPhMJogi2zr4SXPJfG4ajPRsbq+/MG0nxArtZ/CjBThk9
+         a4WJYaXcMQPsYG8t24OP+brte6kju7LTJO4yLsFKSwMJi15THpqEFn8iAFr9mR+PCvZX
+         hQSclRmJW9IsxaDdtOJZj2q6J4O9JZT6Ykq/cPqWaJ15aJUT2OYWoiGZP01gng5GPzhA
+         T0VRxfV//QAeyVSBw8XJISsEVhsqv+YyvTc5ZZ2f+Ke/+ALnteQHeH4e50Dt05pwKMar
+         UjRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731516927; x=1732121727;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TSikvYecjE5L7Fz7wq5gaGm5AXMewltD4jATzudM75s=;
+        b=U2PObiD6/CO2uEoSj+bAHBXv3BXoZ2VU/lvvnTVZniyGoSE1bWTOB1XlBwOpTgP05c
+         92f5kP5sjGTSr+M6pEtM66hWM+9Df3FuVc7gIh0E12wckJlMcywkrFOh9p4yHGDm+tYx
+         hrFOGGQg4h2lH8MwzvtYddAnS2iu97OZzwAUXBofY4UI68V0vICCV463IbB6i6BK7Mx1
+         9a/20emMvlO7SJ9LRjsX3shqRkvbAmsrrO97ZhmGYj3IzhWbLmWHm5I5nfAZo87UlYzF
+         u5jrF5sU9luuvqHy3LQ0/7qlZRrfGWeEZLEEnt6+ep2MaiVxJGGiKAvbWJMrETouGKQ1
+         aChA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3QhFW9xNTXi1aYO4oKCyq8eONYvqZsGZw8vJIGNi7Hzflm9WwaPh+6yPdN7Fo21lZL+JoA31KonF7aeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQNcMJJLWcjFCiTvu2YeOyh1MfUdG+krrIlnvcOH44I/jbsWAf
+	mXJ3VDEd9SPExX+8Mn+m2wqvR2ht7U+/vYG8BEERAyO87fXzMyzqSHFBTx/MIXZZ5iAFVQlKAOv
+	C
+X-Google-Smtp-Source: AGHT+IFJpZjge+IOMpaNgashhcck+YSg0qirNU1tLokH+1+ASRcY+i1i7QixDL8eiYp4UVv+7gSOuw==
+X-Received: by 2002:a05:6870:899d:b0:284:ff51:58ad with SMTP id 586e51a60fabf-295cd216d11mr7802349fac.27.1731516927381;
+        Wed, 13 Nov 2024 08:55:27 -0800 (PST)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-295e8fe5c61sm873432fac.23.2024.11.13.08.55.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 08:55:26 -0800 (PST)
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 13 Nov 2024 10:55:19 -0600
+Subject: [PATCH 1/2] iio: adc: ad4695: move dt-bindings header
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v3 1/2] compiler.h: add _static_assert()
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
- linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org,
- Rikard Falkeborn <rikard.falkeborn@gmail.com>
-References: <20241112190840.601378-4-mailhol.vincent@wanadoo.fr>
- <20241112190840.601378-5-mailhol.vincent@wanadoo.fr>
- <ZzO5390yVTqNbgJl@yury-ThinkPad>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-In-Reply-To: <ZzO5390yVTqNbgJl@yury-ThinkPad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241113-iio-adc-ad4695-move-dt-bindings-header-v1-1-aba1f0f9b628@baylibre.com>
+References: <20241113-iio-adc-ad4695-move-dt-bindings-header-v1-0-aba1f0f9b628@baylibre.com>
+In-Reply-To: <20241113-iio-adc-ad4695-move-dt-bindings-header-v1-0-aba1f0f9b628@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.1
 
-On 13/11/2024 at 05:26, Yury Norov wrote:
-> On Wed, Nov 13, 2024 at 04:08:39AM +0900, Vincent Mailhol wrote:
->> __builtin_constant_p() is known for not always being able to produce
->> constant expression [1] which lead to the introduction of
->> __is_constexpr() [2]. Because of its dependency on
->> __builtin_constant_p(), statically_true() suffers from the same
->> issues.
->>
->> For example:
->>
->>    void foo(int a)
->>    {
->>    	 /* fail on GCC */
->>    	BUILD_BUG_ON_ZERO(statically_true(a));
->>
->>    	 /* fail both clang and GCC */
->>    	static char arr[statically_true(a) ? 1 : 2];
->>    }
->>
->> For the same reasons why __is_constexpr() was created to cover
->> __builtin_constant_p() edge cases, __is_constexpr() can be used to
->> resolve statically_true() limitations.
->>
->> Note that, somehow, GCC is not always able to fold this:
->>
->>    __is_constexpr(x) && (x)
->>
->> It is OK in BUILD_BUG_ON_ZERO() but not in array declarations or in
->> static_assert():
->>
->>    void bar(int a)
->>    {
->>    	/* success */
->>    	BUILD_BUG_ON_ZERO(__is_constexpr(a) && (a));
->>
->>    	/* fail on GCC */
->>    	static char arr[__is_constexpr(a) && (a) ? 1 : 2];
->>
->>    	/* fail on GCC */
->>    	static_assert(__is_constexpr(a) && (a));
->>    }
->>
->> Encapsulating the expression in a __builtin_choose_expr() switch
->> resolves all these failed test.
->>
->> Declare a new _statically_true() macro which, by making use of the
->> __builtin_choose_expr() and __is_constexpr(x) combo, always produces a
->> constant expression.
-> So, maybe name it const_true() then?
+Move the dt-bindings header file to the include/dt-bindings/iio/adc/
+directory. ad4695 is an ADC driver, so it should be in the adc/
+subdirectory for better organization. Previously, it was in the iio/
+subdirectory.
 
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ Documentation/iio/ad4695.rst                   | 2 +-
+ MAINTAINERS                                    | 2 +-
+ drivers/iio/adc/ad4695.c                       | 2 +-
+ include/dt-bindings/iio/{ => adc}/adi,ad4695.h | 0
+ 4 files changed, 3 insertions(+), 3 deletions(-)
 
-OK. I pretty like the _statically_true() because the link with 
-statically_true() was obvious and the _ underscore prefix hinted that 
-this variant was "special". But I have to admit that the const_true() is 
-also really nice, and I finally adopted it in the v4.
+diff --git a/Documentation/iio/ad4695.rst b/Documentation/iio/ad4695.rst
+index 33ed29b7c98a..9ec8bf466c15 100644
+--- a/Documentation/iio/ad4695.rst
++++ b/Documentation/iio/ad4695.rst
+@@ -101,7 +101,7 @@ The macro comes from:
+ 
+ .. code-block::
+ 
+-    #include <dt-bindings/iio/adi,ad4695.h>
++    #include <dt-bindings/iio/adc/adi,ad4695.h>
+ 
+ Pairing two INx pins
+ ^^^^^^^^^^^^^^^^^^^^
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e69d1632c382..3fd398d6e64f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1268,7 +1268,7 @@ W:	https://ez.analog.com/linux-software-drivers
+ F:	Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
+ F:	Documentation/iio/ad4695.rst
+ F:	drivers/iio/adc/ad4695.c
+-F:	include/dt-bindings/iio/adi,ad4695.h
++F:	include/dt-bindings/iio/adc/adi,ad4695.h
+ 
+ ANALOG DEVICES INC AD7091R DRIVER
+ M:	Marcelo Schmitt <marcelo.schmitt@analog.com>
+diff --git a/drivers/iio/adc/ad4695.c b/drivers/iio/adc/ad4695.c
+index 595ec4158e73..3c2c01289fda 100644
+--- a/drivers/iio/adc/ad4695.c
++++ b/drivers/iio/adc/ad4695.c
+@@ -30,7 +30,7 @@
+ #include <linux/spi/spi.h>
+ #include <linux/units.h>
+ 
+-#include <dt-bindings/iio/adi,ad4695.h>
++#include <dt-bindings/iio/adc/adi,ad4695.h>
+ 
+ /* AD4695 registers */
+ #define AD4695_REG_SPI_CONFIG_A				0x0000
+diff --git a/include/dt-bindings/iio/adi,ad4695.h b/include/dt-bindings/iio/adc/adi,ad4695.h
+similarity index 100%
+rename from include/dt-bindings/iio/adi,ad4695.h
+rename to include/dt-bindings/iio/adc/adi,ad4695.h
 
->> It should be noted that statically_true() still produces better
->> folding:
->>
->>    statically_true(!(var * 8 % 8))
->>
->> always evaluates to true even if var is unknown, whereas
->>
->>    _statically_true(!(var * 8 % 8))
->>
->> fails to fold the expression and return false.
->>
->> For this reason, usage of _statically_true() be should the exception.
->> Reflect in the documentation that _statically_true() is less powerful
->> and that statically_true() is the overall preferred solution.
->>
->> [1] __builtin_constant_p cannot resolve to const when optimizing
->> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=19449
->>
->> [2] commit 3c8ba0d61d04 ("kernel.h: Retain constant expression output for max()/min()")
->>
->> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
->> ---
->> Bonuses:
->>
->>    - above examples, and a bit more:
->>
->>        https://godbolt.org/z/zzqM1ajPj
->>
->>    - a proof that statically_true() does better constant folding than _statically_true()
->>
->>        https://godbolt.org/z/vK6KK4hMG
->> ---
->>   include/linux/compiler.h | 14 ++++++++++++++
->>   1 file changed, 14 insertions(+)
->>
->> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
->> index 4d4e23b6e3e7..c76db8b50202 100644
->> --- a/include/linux/compiler.h
->> +++ b/include/linux/compiler.h
->> @@ -308,6 +308,20 @@ static inline void *offset_to_ptr(const int *off)
->>    */
->>   #define statically_true(x) (__builtin_constant_p(x) && (x))
->>   
->> +/*
->> + * Similar to statically_true() but produces a constant expression
->> + *
->> + * To be used in conjunction with macros, such as BUILD_BUG_ON_ZERO(),
->> + * which require their input to be a constant expression and for which
->> + * statically_true() would otherwise fail.
->> + *
->> + * This is a tradeoff: _statically_true() is less efficient at
->> + * constant folding and will fail to optimize any expressions in which
->> + * at least one of the subcomponent is not constant. For the general
->> + * case, statically_true() is better.
-> I agree with Rasmus. Would be nice to have examples where should I use
-> one vs another right here in the comment.
-
-
-I rewrote the full set of examples in v4. I added the godbolt link in 
-the patch description and I cherry picked what seems to me the two most 
-meaningful examples and put them in the macro comment. Let me know what 
-you think.
-
-Yours sincerely,
-Vincent Mailhol
+-- 
+2.43.0
 
 
