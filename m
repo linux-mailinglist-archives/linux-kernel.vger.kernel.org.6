@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-407142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A198F9C695A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:34:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 480C09C695C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:35:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321D51F238CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:34:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 074FD2837EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD15018133F;
-	Wed, 13 Nov 2024 06:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8FB186287;
+	Wed, 13 Nov 2024 06:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8XT0P+k"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxHkiJxJ"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D551176AB6;
-	Wed, 13 Nov 2024 06:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D52D17DFFC;
+	Wed, 13 Nov 2024 06:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731479673; cv=none; b=jQF9EkXaOU8EKWVJSnCtug37MvMsgSBqlGXcKegnlQQbeKJRHYlu4D+eWogfW7S/okRafiCMPYaijuYDavqDBMkgo9HNOiN7JCSJ0iz2krhx2otKIGu/mtXbUGKjyXVtPAqr9xaPgThuNSNCgFc4RcPBaTlNEjRpKiQiME5A/hw=
+	t=1731479674; cv=none; b=lRXSBZBkaUX0r3smDdo2sxkYj54pIvTNvFwPiG3Ko/npuHpPgDkay9La5iZAnJYPCJG+D9nc6aIMhhuShB3Y2+px42J+BZkOblT75OaL90wwqdW2LaLgcQ4/1CPb1+orPRxiatnb1e9GpV6CEnYnF1e+CxnUZ7oKkMPLwl4sVHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731479673; c=relaxed/simple;
-	bh=DI/iIvB4rwyLB2a5O39A/ozr7x++k2RqeWLIVVwWYds=;
+	s=arc-20240116; t=1731479674; c=relaxed/simple;
+	bh=u6USrT5QHkktxnpZO9F2eXwOMPdhcCXOiK3Kq3oRn1k=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G836Dbjpz1i+weucUMDSayAIwita1GgrIzBf7GGQmzU8Uu42akVmdYEBMTXD6beXSnFXvB41c+1O/ouA/FeL4/A2ggDNru45GVf9hFuZcZ6oGq+1dIqpaQWGlrRLv6wAgFzXMtn67N+6NkbZaUoU+N5vFwAw7IZ3UvGtsfEimJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b8XT0P+k; arc=none smtp.client-ip=209.85.210.181
+	 MIME-Version; b=q15SDB5ESIo4VXFVswi/vUpwgbPs4Hcwg8PdXKESx29eo95H1vzT9+X0QraStc/a2ahaQ65kC7IFgUQto4+QhqTqEATII09k6zboh7tviN3BFbxqWeWVxpdEBmXOHOYY46E5UsKWjLav+KPPNGVO9Rp2zLm/lipZc9CJbaFLKN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZxHkiJxJ; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so5339153b3a.1;
-        Tue, 12 Nov 2024 22:34:31 -0800 (PST)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-720d5ada03cso6583648b3a.1;
+        Tue, 12 Nov 2024 22:34:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731479671; x=1732084471; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731479673; x=1732084473; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3mOVTHykOcvikJTDU2tzo0bBXcz8e9l/HyWBKYXvXrc=;
-        b=b8XT0P+kJvHzOseuGjzsSwPRpl8HQJEjBO9Hs6mcEJyQf5hwvisdVPyRSXT/g1yCPS
-         urjFt0AIxPKJzjo4C+tPxcAE8EDTWxWITqFZxYEPYttJBGPpEEbW6K6vyzUexd+hZnnK
-         szEDWnT/kwjp62FUgJ78Z04eRiuN9v9pyNwkU3d7ouHqjMVfYWbQI1pGn+EPecvGhuly
-         4Khump3sqdgCCy1YHOvaDCnf45D2FyY6Y5Geo6cGsmGgTZ7sWP8zwHYK00GD/cuFrTkC
-         tKDpz8kfFSgLC4xma/vdin3YOd34eZ2e5YkKtqa+nkTOvY+PkTMQLNtQtp+Tj7KgLy/a
-         3C0A==
+        bh=mhwi6lR5jSeMorI1q9+9/fyDjvgvyzKkd/GXuwiJiG4=;
+        b=ZxHkiJxJINmd5x4+JEd07BigFFIrOE9jPKM3GVgUtSFvNE/2kAf3+xRvAx/RLBwUUe
+         M2Hp8XZ8au7KHzI57j5Mp+vwmUjETgjfgIEv1+P+D+fnDnd5nQEKq1w7+68femPYRwZV
+         Xyqc+RW2rR7Ces2PUGAu85gd3q4JFHNYxz2M7biLVknOkAwUipTyyyvhdkpskEm7HDnL
+         PmNXDoJl8yKz+ZnOQWay660PqYFaaGw5sgQdAxEdD06Eb1PDXXRVUJKw9IjLO2swe7ja
+         OHKT2mMXFdR3aZBD6G5FJwYBm3tl1gLW9ar5lb4c9y03IhndzX1uuDshbKLD+8JUFrxv
+         KPkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731479671; x=1732084471;
+        d=1e100.net; s=20230601; t=1731479673; x=1732084473;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3mOVTHykOcvikJTDU2tzo0bBXcz8e9l/HyWBKYXvXrc=;
-        b=rSedhJTjI1/MgYnvjm3DbFMdCQyDaB4ZrMxuB2uXvLg3tqbXVHuu4ErhyZLAcvAJ6b
-         Zs/JWpmhJlhAmzup1vEq/C10llk8QwWPpG5sbDKiYdPoqdRre/1j8Xo8ywPZG3Dk/v0X
-         lzEZnIv+HHJGYuaSqrmwOJFryx/AQxslnATFR6P48oS9BNnJB89idYKTX1lsfrEmsLvC
-         UqZNtZRvo/Hb9AG3MEwT/2aSZdzCDZPMUNqQMKnDoOp/PLm1/2L3USv4Cq6D6ftvEAmN
-         hs06gF7G7Q8tw+EPptRkYXBCUzn9MqCSOGn37Ej7+r0gDnkcdRGkxfr6G8SNu8UXQEGk
-         tQvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCQx8/rAMBYztTMHR+gmey0TniIviktHbXR+xU/86PAhjD7EpW6SvDSVSjbyFX/XO7GoatLP7b/6s=@vger.kernel.org, AJvYcCXuuBOoHMLlL/+lhgLwM9gHm3Ev4OSbsfwHVpLEBZUvnhQIIJBF/bo9DhKJhVpSbipDPrCq/yK5ZO25OaCA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz95CGiWD0BJX8h4ltV7a0rYh6IZP0S3dQKHyaL/ENoapX7Yeh0
-	AKuhWBNhf4ec6kpXfDwJOQi+pO0+UIJzhkeK7uXDRirOog2eqf3qh/K9yqLKa50=
-X-Google-Smtp-Source: AGHT+IGo6AnEUeeQERM8eGIbcsc4sk0h9fnmY1pHTDcq32vu2oL2fudCT+Ti39A9/93PNahND16a+A==
-X-Received: by 2002:a05:6a00:3a14:b0:70d:2a88:a483 with SMTP id d2e1a72fcca58-7241313d95emr27792105b3a.0.1731479670861;
-        Tue, 12 Nov 2024 22:34:30 -0800 (PST)
+        bh=mhwi6lR5jSeMorI1q9+9/fyDjvgvyzKkd/GXuwiJiG4=;
+        b=j5knhKg5OV4XPHUGrugpTrhjBU6gbPQxveghNqPSLh3bVaAjn6GrnkAUx5v7mf2Ut7
+         NMo2t2ZjUOW9EV4fdofcGqXzrqs6exr8gx3TFgqmroVW7+Cdn3QXQq2iNQxK8LRbYke+
+         AHy7E0koCZ59KLJcclj22w5THwiVVG6Gh3mzIdazkp6yJiDMvIuynCAe95b2OHtvub78
+         clEv+Rku64Kq6yE3QcjvU37Mp2ghuobHYAh7chpbFxbIwLIf2X08De2AXrFa5BgVysz3
+         ZSrmokikjZ4b1C5Xc33iqCbtHiPjPAE9aA76Nf2zLPq+96MMLJwAPZCxLf737hXHmoML
+         pT/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWRjPzcj8M2W1A7F769GX5xaJAzHVadd0ul3DZvvJTGW+ATAhfadyUCTBV/Anp0TEcobKEkBapz9JvK853s@vger.kernel.org, AJvYcCWTiZmR4GxtRpaKWi5EcyKMbElOW8dUv0+d9/UxKkVDUyUTinetQhn8hkowNX2i/kwttHwVUTgieFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyucYKJHL5+9sZSxqDbdqUrpzG6w4ZcAr+iRkLtvDZIGpySBCQ
+	xlgzEBrQAVnGqLoXxxFr9YQ1mI+2VAEIYrtx5GV8a6bnu0dIquGY
+X-Google-Smtp-Source: AGHT+IFL6fOAF6QgANLZskZQw5gNajXV1ayjOAmlkn6RqV6YD9hZshkwFtAhkaV8MsatlC6dChbvcQ==
+X-Received: by 2002:a05:6a00:b86:b0:71e:60fc:ad11 with SMTP id d2e1a72fcca58-72457a2a33fmr2225412b3a.16.1731479672734;
+        Tue, 12 Nov 2024 22:34:32 -0800 (PST)
 Received: from localhost.localdomain ([2600:1700:3bdc:8c10:a:e04f:e712:3f95])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72458bab30asm747572b3a.190.2024.11.12.22.34.29
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72458bab30asm747572b3a.190.2024.11.12.22.34.31
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 12 Nov 2024 22:34:30 -0800 (PST)
+        Tue, 12 Nov 2024 22:34:31 -0800 (PST)
 From: anish kumar <yesanishhere@gmail.com>
 To: corbet@lwn.net,
 	tj@kernel.org,
@@ -78,9 +78,9 @@ Cc: linux-mm@kvack.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	anish kumar <yesanishhere@gmail.com>
-Subject: [RFC PATCH 1/2] dmapool: Improve dma api kernel-doc comments
-Date: Tue, 12 Nov 2024 22:34:24 -0800
-Message-Id: <20241113063425.21042-2-yesanishhere@gmail.com>
+Subject: [RFC PATCH 2/2] dmapool: Documentation: use the kernel-doc comment
+Date: Tue, 12 Nov 2024 22:34:25 -0800
+Message-Id: <20241113063425.21042-3-yesanishhere@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20241113063425.21042-1-yesanishhere@gmail.com>
 References: <20241113063425.21042-1-yesanishhere@gmail.com>
@@ -92,84 +92,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move explanatory content from the documentation
-to source code comment written in kernel-doc format.
-This allows kernel-doc to generate more comprehensive
-and accurate documentation. Additionally, improving
-the kernel-doc comment describes the api behaviour
-and usage better.
+In an effort to modernize the documentation for
+dma api, move the api explanation to kernel-doc comment
+in the source code and use the kernel-doc here in
+the documentation.
 
 Signed-off-by: anish kumar <yesanishhere@gmail.com>
 ---
- mm/dmapool.c | 40 ++++++++++++++++++++++++++++------------
- 1 file changed, 28 insertions(+), 12 deletions(-)
+ Documentation/core-api/dma-api.rst | 66 ++++++------------------------
+ 1 file changed, 12 insertions(+), 54 deletions(-)
 
-diff --git a/mm/dmapool.c b/mm/dmapool.c
-index f0bfc6c490f4..8b32a52becd6 100644
---- a/mm/dmapool.c
-+++ b/mm/dmapool.c
-@@ -207,11 +207,16 @@ static void pool_block_push(struct dma_pool *pool, struct dma_block *block,
-  * @boundary: returned blocks won't cross this power of two boundary
-  * Context: not in_interrupt()
-  *
-- * Given one of these pools, dma_pool_alloc()
-- * may be used to allocate memory.  Such memory will all have "consistent"
-- * DMA mappings, accessible by the device and its driver without using
-- * cache flushing primitives.  The actual size of blocks allocated may be
-- * larger than requested because of alignment.
-+ * This api initializes a pool of DMA-coherent buffers for use with a given
-+ * device. It must be called in a context which can sleep. The device's
-+ * hardware alignment requirement for this type of data is "align". If your
-+ * device has no boundary crossing restrictions, pass 0 for alloc; passing
-+ * 4096 says memory allocated from this pool must not cross 4KByte boundaries.
-+ *
-+ * Given one of these pools, dma_pool_alloc() may be used to allocate memory.
-+ * Such memory will all have "consistent" DMA mappings, accessible by the
-+ * device and its driver without using cache flushing primitives.  The actual
-+ * size of blocks allocated may be larger than requested because of alignment.
-  *
-  * If @boundary is nonzero, objects returned from dma_pool_alloc() won't
-  * cross that size boundary.  This is useful for devices which have
-@@ -356,6 +361,7 @@ static struct dma_page *pool_alloc_page(struct dma_pool *pool, gfp_t mem_flags)
-  *
-  * Caller guarantees that no more memory from the pool is in use,
-  * and that nothing will try to use the pool after this call.
-+ * It must be called in a context which can sleep.
-  */
- void dma_pool_destroy(struct dma_pool *pool)
- {
-@@ -392,14 +398,24 @@ void dma_pool_destroy(struct dma_pool *pool)
- EXPORT_SYMBOL(dma_pool_destroy);
+diff --git a/Documentation/core-api/dma-api.rst b/Documentation/core-api/dma-api.rst
+index 8e3cce3d0a23..8e89f328ba54 100644
+--- a/Documentation/core-api/dma-api.rst
++++ b/Documentation/core-api/dma-api.rst
+@@ -86,65 +86,23 @@ not __get_free_pages().  Also, they understand common hardware constraints
+ for alignment, like queue heads needing to be aligned on N-byte boundaries.
  
- /**
-- * dma_pool_alloc - get a block of consistent memory
-- * @pool: dma pool that will produce the block
-- * @mem_flags: GFP_* bitmask
-- * @handle: pointer to dma address of block
-+ * dma_pool_alloc - Get a block of consistent memory from a DMA pool
-+ * @pool:       DMA pool that will produce the block
-+ * @mem_flags:  GFP_* bitmask specifying memory allocation flags
-+ * @handle:     Pointer to a DMA address that will hold the address of the block
-+ *
-+ * Return: The kernel virtual address of a currently unused block of memory,
-+ *         and reports its DMA address through the handle. If such a memory
-+ *         block can't be allocated, %NULL is returned.
-+ *
-+ * This function allocates memory from the specified DMA pool. The returned
-+ * memory will meet the size and alignment requirements specified when the
-+ * pool was created. Pass GFP_ATOMIC to prevent blocking, or if permitted
-+ * (not in interrupt context, and not holding SMP locks), pass GFP_KERNEL
-+ * to allow blocking.
-  *
-- * Return: the kernel virtual address of a currently unused block,
-- * and reports its dma address through the handle.
-- * If such a memory block can't be allocated, %NULL is returned.
-+ * Similar to dma_alloc_coherent(), this function returns two addresses:
-+ *  - A CPU-accessible virtual address
-+ *  - A DMA address usable by the pool's associated device.
-  */
- void *dma_pool_alloc(struct dma_pool *pool, gfp_t mem_flags,
- 		     dma_addr_t *handle)
+ 
+-::
+-
+-	struct dma_pool *
+-	dma_pool_create(const char *name, struct device *dev,
+-			size_t size, size_t align, size_t alloc);
+-
+-dma_pool_create() initializes a pool of DMA-coherent buffers
+-for use with a given device.  It must be called in a context which
+-can sleep.
+-
+-The "name" is for diagnostics (like a struct kmem_cache name); dev and size
+-are like what you'd pass to dma_alloc_coherent().  The device's hardware
+-alignment requirement for this type of data is "align" (which is expressed
+-in bytes, and must be a power of two).  If your device has no boundary
+-crossing restrictions, pass 0 for alloc; passing 4096 says memory allocated
+-from this pool must not cross 4KByte boundaries.
+-
+-::
+-
+-	void *
+-	dma_pool_zalloc(struct dma_pool *pool, gfp_t mem_flags,
+-		        dma_addr_t *handle)
+-
+-Wraps dma_pool_alloc() and also zeroes the returned memory if the
+-allocation attempt succeeded.
+-
++.. kernel-doc:: mm/dmapool.c
++    :identifiers: dma_pool_create
+ 
+-::
+-
+-	void *
+-	dma_pool_alloc(struct dma_pool *pool, gfp_t gfp_flags,
+-		       dma_addr_t *dma_handle);
+-
+-This allocates memory from the pool; the returned memory will meet the
+-size and alignment requirements specified at creation time.  Pass
+-GFP_ATOMIC to prevent blocking, or if it's permitted (not
+-in_interrupt, not holding SMP locks), pass GFP_KERNEL to allow
+-blocking.  Like dma_alloc_coherent(), this returns two values:  an
+-address usable by the CPU, and the DMA address usable by the pool's
+-device.
+-
+-::
++.. kernel-doc:: mm/dmapool.c
++    :identifiers: dma_pool_alloc
+ 
+-	void
+-	dma_pool_free(struct dma_pool *pool, void *vaddr,
+-		      dma_addr_t addr);
++dma_pool_zalloc wraps dma_pool_alloc() and also zeroes the returned memory
++if the allocation attempt succeeded.
+ 
+-This puts memory back into the pool.  The pool is what was passed to
+-dma_pool_alloc(); the CPU (vaddr) and DMA addresses are what
+-were returned when that routine allocated the memory being freed.
++.. kernel-doc:: mm/dmapool.c
++    :identifiers: dma_pool_create
+ 
+-::
+-
+-	void
+-	dma_pool_destroy(struct dma_pool *pool);
++.. kernel-doc:: mm/dmapool.c
++    :identifiers: dma_pool_free
+ 
+-dma_pool_destroy() frees the resources of the pool.  It must be
+-called in a context which can sleep.  Make sure you've freed all allocated
+-memory back to the pool before you destroy it.
++.. kernel-doc:: mm/dmapool.c
++    :identifiers: dma_pool_destroy
+ 
+ 
+ Part Ic - DMA addressing limitations
 -- 
 2.39.5 (Apple Git-154)
 
