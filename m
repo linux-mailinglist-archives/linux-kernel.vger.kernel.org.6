@@ -1,114 +1,125 @@
-Return-Path: <linux-kernel+bounces-407346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2D69C6C47
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:02:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8E1C9C6C4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:03:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D758B25999
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:58:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AD60B2C4B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426921F8F17;
-	Wed, 13 Nov 2024 09:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="Dc4/wbHJ"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8615F1F892C;
+	Wed, 13 Nov 2024 09:59:42 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8BE189BBD;
-	Wed, 13 Nov 2024 09:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09101F80A6
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731491873; cv=none; b=E9nd1DD5rkAJhtf7APa3m7hCANIlaiZ3Gx1jzCLMFis8+yEbetFzo5OcgQ+SVK1shJKX5Wo3bsy5P46rAPKscNHQSlw0lkojx0Hv3u60V9rOMnYgeJ6W2wzPbwXPacqA0+vNKZPWJ3oRno4Wb02n6g9pjF7JOp8hFA5Y+xsGq6w=
+	t=1731491982; cv=none; b=u3LD84Oy+M+wwwl75y2wA8YRA4fOrrmCULgpDMBfTQ4O8GZDQaN8MlUuLg0P8Qlv6docZzrwNycQTRwXNAf40VltsTqRXtbm5oePWEv8BGsM8H98nLLROq6SFUYdUPwn1E3MCrhFnH+wNepisimRC9IyZ/+6rJoki0toTn/j5Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731491873; c=relaxed/simple;
-	bh=w6Alk8VVEQgRUP+tvubPnlYaH+7oRXgCpRc94/ufxjM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eRDX3ACyNzLBjxDDI0Z5xw0kkECr/CCTYfz1hG3Xp8a2HFA64o+4KLFxBr6OyL3WH0fKlrtAn02RP1ASfUs436L94+5ebRiYkbJ6FXer64LDbacnW6UjYJtfvDDtETAyeE9OddIXZaCSX3FwKvg7MQTYjwckFcmMBBpu7HvOTI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=Dc4/wbHJ; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=xCT+3mbbEsg7xBrW0ZIDJcwqb3FMvOEHonafQfmkguI=; t=1731491871;
-	x=1731923871; b=Dc4/wbHJP1ySiAh2YfUGnCq1AmZaAhbFpGBjyyvmzbwDKgeM9nAOCa1+PWrPQ
-	FZvv4qfll5V5tfGiY+ZDSdJFb23xMvdRvQW9sy40L+qYY2/Wc+liMEzm2NmZJPAhnXKtQppJ5nz+Y
-	OVYROXm53AZDsX617CO+VDwqxV/RhV+EFGWKbHqmQTRbxMoMuuv5kb1A79O3lq5mExAKknlm8TMsQ
-	MjLB+sEC6ElmOOTGd8L5EauvWwKIdDhOKO5UgGTgWhfV44eOtT9/4BDIoYCdeDtiP3jAbWTMl6943
-	4if5fnPS8blnA0xE0UPq0C4ZT27j3nHTGdTKvrpsGLhx33y+Sw==;
-Received: from [2a02:8108:8980:2478:87e9:6c79:5f84:367d]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1tBA8C-0001tk-46; Wed, 13 Nov 2024 10:57:48 +0100
-Message-ID: <1287d1f4-893f-4ace-947a-f85c4e0ee69d@leemhuis.info>
-Date: Wed, 13 Nov 2024 10:57:47 +0100
+	s=arc-20240116; t=1731491982; c=relaxed/simple;
+	bh=Dbca+qTtnE/QA1lb4gzic01lV4bRBZrUctAfrdeLSyM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pUMmO4OVzWIHOqIt/VWcZPwK/tUlo1kQMNu6kOrwyOkQRvayYJrrXgllEN7g4RFvwT84Pa9VjJav5/2gAqQ4OxNYDYdlAhaP/ZZkcSkji1m2C22IPI6RG2JcnhPurjMHEE6n7Pu3bp30MPN/LzThG+0szFXXi1eHDVtD+w6RJP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from ubt.. (unknown [210.73.53.31])
+	by APP-05 (Coremail) with SMTP id zQCowADHr7p4eDRnlmI4Ag--.57753S2;
+	Wed, 13 Nov 2024 17:59:20 +0800 (CST)
+From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+To: Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V5 0/3] riscv: mm: Add soft-dirty and uffd-wp support
+Date: Wed, 13 Nov 2024 17:58:30 +0800
+Message-Id: <20241113095833.1805746-1-zhangchunyan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] alg: ahash: Several tests fail during boot on Turris
- Omnia
-To: Klaus Kudielka <klaus.kudielka@gmail.com>,
- Herbert Xu <herbert@gondor.apana.org.au>
-Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
- Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
- Boris Brezillon <bbrezillon@kernel.org>, Arnaud Ebalard <arno@natisbad.org>,
- Romain Perier <romain.perier@free-electrons.com>
-References: <38a275a4e0224266ceb9ce822e3860fe9209d50c.camel@gmail.com>
- <ZwZAExmK52txvHE8@gondor.apana.org.au>
- <7e38e34adddb14d0a23a13cf738b6b7cccbfce6f.camel@gmail.com>
- <ZwduxHxQtHdzz-kl@gondor.apana.org.au> <ZwePSPG8aWm6mwKK@gondor.apana.org.au>
- <15fadc356b73a1e8e24183f284b5c0a44a53e679.camel@gmail.com>
- <Zw31JIEyh28vK9q7@gondor.apana.org.au>
- <5db212655dc98945fa3f529925821879a03ff554.camel@gmail.com>
- <Zw9AsgqKHJfySScx@gondor.apana.org.au>
- <2ae8006f3cfc40ae66b34659365596ac8507d1da.camel@gmail.com>
- <Zw-NJwLXXQ0DwR8b@gondor.apana.org.au>
- <3f14a6d189b65182ed502d534a49ae289e12dcb8.camel@gmail.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-MW
-In-Reply-To: <3f14a6d189b65182ed502d534a49ae289e12dcb8.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1731491871;cd0426ed;
-X-HE-SMSGID: 1tBA8C-0001tk-46
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowADHr7p4eDRnlmI4Ag--.57753S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw17trWrtr4xKryUZF4UXFb_yoW8Aw4xpa
+	93Kwn8trW5Ar1xtrs3CrnF9r15W3Z3J3s8GrWft34ktws8JF4jvr9YkF1fJry8X3WY9r90
+	9F45Cry5u3yvyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
+	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l
+	c2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvj
+	xUyZmRDUUUU
+X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAYAB2c0cpIT4wAAsO
 
-On 12.11.24 20:33, Klaus Kudielka wrote:
-> On Wed, 2024-10-16 at 17:53 +0800, Herbert Xu wrote:
->> Alright, so next I'm going to try to make TDMA entirely single-
->> threaded and see if that fixes it.
-> 
-> Hi, since this was marked as "not worth tracking*,
+This patchset adds soft dirty and userfaultfd write protect tracking 
+support for RISC-V.
 
-FWIW, I was taken back and forth and then decided with going down that
-route -- but I might be wrong with the assessment.
+As described in the patches, we are trying to utilize only one free PTE
+bit(9) to support three kernel features (devmap, soft-dirty, uffd-wp).
+Users cannot have them supported at the same time (have to select
+one when building the kernel).
 
-> here a summary of my understanding
-> 
-> - hardware: Turris Omnia, Marvell Armada 385 (same behaviour on 2 devices)
-> - the crypto self-tests on the hash algorithms provided by the  Marvell CESA
->   driver fail randomly (1-5 failures in 90% of the boots, rarely without failure)
-> - this is likely a bug in the driver, which had been hidden for a long time
-> - it is now exposed by parallel invocation of self-tests, introduced in v6.12-rc1,
->   commit 37da5d0ffa ("crypto: api - Do not wait for tests during registration")
-> - to be safe, the algorithms in question (6 in total) have been set to priority 0 in
->   commit e845d2399a ("crypto: marvell/cesa - Disable hash algorithms")
-> - so, there should be no immediate harm by wrong hashes (at least in 6.12)
+This patchset has been tested with:
+1) The kselftest mm suite in which soft-dirty, madv_populate,
+test_unmerge_uffd_wp, and uffd-unit-tests run and pass, and no regressions
+are observed in any of the other tests.
 
-Yeah, that round about was my understanding as well, which is why I
-decided it's for now not worth spending time keeping an eye on. Would be
-something different if it would turn out that some practical use case
-(and not just self-tests) that worked earlier now is suddenly affected.
-Or if that "set to priority 0" would lead to a significant performance
-regression (but given the brokenness of the driver it thus could be seen
-as a good thing).
+2) CRIU:
+- 'criu check --feature mem_dirty_track' returns supported;
+- incremental_dumps[1] and simple_loop [2] dump and restores work fine;
+- zdtm test suite can run under host mode.
 
-Ciao, Thorsten
+This patchset applies on top of v6.12-rc7.
+
+V5:
+- Fixed typos and corrected some words in Kconfig and commit message;
+- Removed pte_wrprotect() from pte_swp_mkuffd_wp(), this is a copy-paste error;
+- Added Alex's Reviewed-by tag in patch 2.
+
+V4:
+- Added bit(4) descriptions into "Format of swap PTE".
+
+V3:
+- Fixed the issue reported by kernel test irobot <lkp@intel.com>.
+
+V1 -> V2:
+- Add uffd-wp supported;
+- Make soft-dirty uffd-wp and devmap mutually exclusive which all use the same PTE bit;
+- Add test results of CRIU in the cover-letter.
+
+[1] https://www.criu.org/Incremental_dumps
+[2] https://asciinema.org/a/232445
+
+Chunyan Zhang (3):
+  riscv: mm: Prepare for reusing PTE RSW bit(9)
+  riscv: mm: Add soft-dirty page tracking support
+  riscv: mm: Add uffd write-protect support
+
+ arch/riscv/Kconfig                    |  34 ++++++-
+ arch/riscv/include/asm/pgtable-64.h   |   2 +-
+ arch/riscv/include/asm/pgtable-bits.h |  31 ++++++
+ arch/riscv/include/asm/pgtable.h      | 133 +++++++++++++++++++++++++-
+ 4 files changed, 197 insertions(+), 3 deletions(-)
+
+-- 
+2.34.1
+
 
