@@ -1,147 +1,118 @@
-Return-Path: <linux-kernel+bounces-407761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE9D9C7355
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:18:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614609C7358
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D32A2283695
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26683283410
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1E984A35;
-	Wed, 13 Nov 2024 14:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21417080F;
+	Wed, 13 Nov 2024 14:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGlIaTQv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qg4YBcGY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MfIeSrsS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01596487B0;
-	Wed, 13 Nov 2024 14:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656704206B;
+	Wed, 13 Nov 2024 14:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731507475; cv=none; b=XhZA3hvts80OfSly2UB9tX6BcLBWeKSWtSlEmLi5dYuRVo2QBoIP3UpiWJAqKTMibhWxzgx76kSsYcG7ZgkEFmk7URPpkK8xcgM4uOxkIYlzeu/FDJYB/eFBvNH/f6gf0ATgnfX5bR0GnaDeRKMLB0e1/4LIZFDgQiuN8lVP67Y=
+	t=1731507503; cv=none; b=hlZXcNpphUqzSgB/umz7XJ2/7G20pNdM5ex2XOdW1na9xnhXVBx+G68dkM4J5WlZRtXR2DWZjTcqd9P2HVeZq49En2RJ+LHlDWUmYg4RE+pBCUpNC+t6H6pn4asdly7nT6VIk3NcEHfXgRScp981anc7SdachBmRugmh+GWhSto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731507475; c=relaxed/simple;
-	bh=MjNKBxoaSsUUHCGD7dGsak+NKtkylFsf5hAYv3N+K4g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=R3nfdcj+dnHLbvnm+FTxaRE+sAH2olLI6E6lVYnOH4r6qnH2fAgN9eoj9pPlWhOcJaeW3MnEXqej93JspbBvyb2G642ZZzYG3QNokE+1+qHwkiBSh+8/7lp4JmXhwSAU6ToMYu9LHbrmykL1itcEwuKp8siOKfgVfDk+VK0LMF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGlIaTQv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B598C4CEC3;
-	Wed, 13 Nov 2024 14:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731507474;
-	bh=MjNKBxoaSsUUHCGD7dGsak+NKtkylFsf5hAYv3N+K4g=;
-	h=From:Date:Subject:To:Cc:From;
-	b=SGlIaTQvBtx/sXF8rirQQzavj+a1j39or/S3RaoqAPgFByJrQIHddN+rLr6ZL8WiD
-	 FJMNDmaYMnD1gRn9PS/QKXtRGazlTX52fjGOFuxBOTCbH9bw2brpg0PbSBr9ue9cRS
-	 B8fFbpa/oUIchI8MXLhGAbQbYjhz326TIkkCZUgiQKpjBsbPy3Mw0xjTSR47MQt7Es
-	 fVthHlV8AbMi4DH+yHpeapmleM9NIvHthoOnrQWjrxg9wUyhVsFQ58vCK+nRflD/YB
-	 ua3oZHvqDlyc82fiyHK4WgihEEqZQ43omYfamOsxVpnVshqI/vYSRvO0e+MQtdGQeD
-	 eBxdxC+mbrjkg==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 13 Nov 2024 09:17:51 -0500
-Subject: [PATCH RFC] fs: reduce pointer chasing in is_mgtime() test
+	s=arc-20240116; t=1731507503; c=relaxed/simple;
+	bh=VTLzchnhjgjlI226ZCHfEBm2YUpKULDHnBuBWCqYXN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cyxEm5tgV5P41dTog1hRMYNvsJqwIPFVEXsxzmnTPVoGqOhKeOA8ooDAL2ssxiyUNHeZuEBrnrVtVX9dosJHEo4P2OJbwtDp2OX4eQUzO/KlgpbcTXpbjxg84Vq+gNNOvq6UD6l4IeVByJUwqBGdlrFHul/82aCcX+v3aZcNMEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qg4YBcGY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MfIeSrsS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 13 Nov 2024 15:18:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731507500;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k1NnsfkLq2HnmImLt4DvLhPon1Pe+zCIYBq+XyGR0FY=;
+	b=Qg4YBcGYpL9DGABYZpbXY74B3Ojg19jAzxfo+nYOpfEcllXDgfHhjvMPQQQyygAeSGKIu3
+	Mc2eDoGMvfIqGxqbthlEgQGPvXFA6DHZaprm/PPwd4kxf8h/dttI5MffqpuyvtgXXyOHVQ
+	fdtDfFudxB73WbSu8ZVc2TTW5givvfAUb9I+cNkfuPdt2UZcxwpU6PUlZMtoNcJTOnKgBB
+	fB9PbQajEOdX+TuVZ+UN73CXfKEAwfIe/VVeX50I0M8sn14vzppOwd1krDz5ztWj/PE/fS
+	V3dmGK92WWQ5Upm7e12g2EGmWCVWi7kBKXLPP7F3NbwY07yTi0fQclW8dCmQqA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731507500;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k1NnsfkLq2HnmImLt4DvLhPon1Pe+zCIYBq+XyGR0FY=;
+	b=MfIeSrsSxZAO22WT5Pi7FoVbFQRk5lMcLq+XH/Do9UQLMx1SqmDib6eQ37wa9YZ/1Eodre
+	feF9z7vLPk5wHPCg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	syzbot <syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com>,
+	Liam.Howlett@oracle.com, akpm@linux-foundation.org,
+	jannh@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com, syzkaller-bugs@googlegroups.com,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	kasan-dev <kasan-dev@googlegroups.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Waiman Long <longman@redhat.com>, dvyukov@google.com,
+	vincenzo.frascino@arm.com, paulmck@kernel.org, frederic@kernel.org,
+	neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
+	josh@joshtriplett.org, boqun.feng@gmail.com, urezki@gmail.com,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, tj@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, rcu@vger.kernel.org
+Subject: Re: [syzbot] [mm?] WARNING: locking bug in __rmqueue_pcplist
+Message-ID: <20241113141818.eQfGt53n@linutronix.de>
+References: <67275485.050a0220.3c8d68.0a37.GAE@google.com>
+ <ee48b6e9-3f7a-49aa-ae5b-058b5ada2172@suse.cz>
+ <b9a674c1-860c-4448-aeb2-bf07a78c6fbf@suse.cz>
+ <20241104114506.GC24862@noisy.programming.kicks-ass.net>
+ <20241104114726.GD24862@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241113-mgtime-v1-1-84e256980e11@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAA61NGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQ0Nj3dz0kszcVF3LxMQU8yRLg2Qzk0QloOKCotS0zAqwQdFKQW7OSrG
- 1tQB5RMU+XQAAAA==
-X-Change-ID: 20241113-mgtime-9aad7b90c64a
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>, 
- "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2333; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=MjNKBxoaSsUUHCGD7dGsak+NKtkylFsf5hAYv3N+K4g=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnNLURd1z1nUZvlsJfsz43G6htbQO90/KX3Pj7y
- yCMjzN7YpiJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZzS1EQAKCRAADmhBGVaC
- FcD+D/kByHQBdD8iSL30VR00S+ZLJTEWmE6nb/TA5jNm56V23ww8umdiE4kpaRUYHirCdgGndw2
- svYU6Axl3hU3Ty49VDk+518XMeIgyjvMy9L+I6AZJLiDYDmJSAnQfp+SaK2iLi0ZSYuB1nXXUz+
- jRTkQAvUvDF/FjTKs9oTz5DPhazcFhI2dLX4xOYs+su4X/NFqmsS+Esg1Z0280HttNiMB05vPOj
- 0b88xotYYCBVEd8JdulkmodSpJadiXOZ1LSwyT2Wmnk4WhAujy9TP6Yk1T+CDEv35p+YiiRcjC9
- DrX7AiuBB0H6Z8278APThbCuzMsgX5RA2G20+fwFkr2MmF1IYeE/GGMBzKMTTjjUY4NUB0BMXxo
- N/+ohOWTIuc3Xoo+1KUQrRebeh9CJIwIOi0UjtKQSzZrsQCFnHTDxk+XCE8V7KrExoAxLabWni4
- YuzDkhOEGGXKpz485mwQzNX0fAMssjKGVUZ8cdKmjNCD1C9NQC5dTIkVlQ12nvMybuovY582BtD
- /6LBxbKRwf5TnbPne8vkZW93dmIEu8cOX0wQPWLJ6jM9DurbOHzItfdTzbnq/3xIcaCszsUvxN8
- LJSwIzPPicPxzowJ5yzyHn9FzaaFtcrmZTiOm2TiQp0qLUhh7n/h1Kp44XF/i2FzZw2Hh2xEiIs
- yu/dmx1zzORGEUA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241104114726.GD24862@noisy.programming.kicks-ass.net>
 
-The is_mgtime test checks whether the FS_MGTIME flag is set in the
-fstype. To get there from the inode though, we have to dereference 3
-pointers.
+On 2024-11-04 12:47:26 [+0100], Peter Zijlstra wrote:
+> On Mon, Nov 04, 2024 at 12:45:06PM +0100, Peter Zijlstra wrote:
+> > diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+> > index 6310a180278b..ac9f6682bb2f 100644
+> > --- a/mm/kasan/generic.c
+> > +++ b/mm/kasan/generic.c
+> > @@ -521,12 +521,12 @@ size_t kasan_metadata_size(struct kmem_cache *cache, bool in_object)
+> >  			sizeof(struct kasan_free_meta) : 0);
+> >  }
+> >  
+> > -static void __kasan_record_aux_stack(void *addr, depot_flags_t depot_flags)
+> > +void kasan_record_aux_stack(void *addr)
+> >  {
+> >  	struct slab *slab = kasan_addr_to_slab(addr);
+> >  	struct kmem_cache *cache;
+> >  	struct kasan_alloc_meta *alloc_meta;
+> > -	void *object;
+> > +	void *object
+> 
+> Clearly I'm still struggling to type ... *sigh*
 
-Add a new IOP_MGTIME flag, and have inode_init_always() set that flag
-when the fstype flag is set. Then, make is_mgtime test for IOP_MGTIME
-instead.
+Should I put all this in a patch or is already been done?
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-I had always had a little concern around the amount of pointer chasing
-in this helper. Given the discussion around Josef's fsnotify patches, I
-figured I'd draft up a patch to cut that down.
-
-Sending this as an RFC since we're getting close to the end of the merge
-window and I haven't done any performance testing with this.  I think
-it's a reasonable thing to consider doing though, given how hot the
-write() codepaths can be.
----
- fs/inode.c         | 2 ++
- include/linux/fs.h | 3 ++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 838be0b49a63bd8d5700db0e6103c47e251793c3..70a2f8c717e063752a0b87c6eb27cde7a18d6879 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -243,6 +243,8 @@ int inode_init_always_gfp(struct super_block *sb, struct inode *inode, gfp_t gfp
- 	inode->i_opflags = 0;
- 	if (sb->s_xattr)
- 		inode->i_opflags |= IOP_XATTR;
-+	if (sb->s_type->fs_flags & FS_MGTIME)
-+		inode->i_opflags |= IOP_MGTIME;
- 	i_uid_write(inode, 0);
- 	i_gid_write(inode, 0);
- 	atomic_set(&inode->i_writecount, 0);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index aa37083436096df9969d2f63f6ec4d1dc8b260d2..d32c6f6298b17c44ff22d922516028da31cec14d 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -623,6 +623,7 @@ is_uncached_acl(struct posix_acl *acl)
- #define IOP_NOFOLLOW	0x0004
- #define IOP_XATTR	0x0008
- #define IOP_DEFAULT_READLINK	0x0010
-+#define IOP_MGTIME	0x0020
- 
- /*
-  * Keep mostly read-only and often accessed (especially for
-@@ -2581,7 +2582,7 @@ struct file_system_type {
-  */
- static inline bool is_mgtime(const struct inode *inode)
- {
--	return inode->i_sb->s_type->fs_flags & FS_MGTIME;
-+	return inode->i_opflags & IOP_MGTIME;
- }
- 
- extern struct dentry *mount_bdev(struct file_system_type *fs_type,
-
----
-base-commit: 80ce1b3dc72ceab16a967e2aa222c5cc06ad6042
-change-id: 20241113-mgtime-9aad7b90c64a
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Sebastian
 
