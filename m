@@ -1,130 +1,102 @@
-Return-Path: <linux-kernel+bounces-408029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C899C7922
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:44:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2BC9C7929
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:45:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A60A285A27
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22A11F2637B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CBD1DF74E;
-	Wed, 13 Nov 2024 16:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CF8201011;
+	Wed, 13 Nov 2024 16:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yfSRU36U";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="53O8wKGR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iHRx9Sa4"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B48513B298;
-	Wed, 13 Nov 2024 16:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14701E1037
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731516278; cv=none; b=m1n+EcqfF8aK0+yM5w+TBomDUGocx52TNje1djPXa6C70m/SoMkDtU7SH8yNvzgyNCv/73Q0vap7Juj1T2Qb0vZHzy9RdXpGIOsvGwDX5403DFPx7YeoyB9ikKnwA1k0SJ0J6JLlVmBjrAZtKoryP9fH4Shbpmkd6x21ZhogqjU=
+	t=1731516295; cv=none; b=VU2bfs8YQQlTMkm9rA2jCO54VuAwAY1XytmkZNzaltmOZ8xi3dBtSBHZxIOArvnmKEpZrH/vq4fAcOpsjSZbsDFxMNhZT4By+PxCkOqxujg1OYVR2lo9R9WJspwghjdOwlq2trculW7CQe7L754ioC3sRJOGakDBJnpNgvioNoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731516278; c=relaxed/simple;
-	bh=nGatbUgIMB8d8zwTcC5BOgt89BZ0fgXw+qqR6tDEBUQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=p/RjtJD3qqHbczOOlygxykEvJ8N+Z0BCURyumwcD3dnDJNO6GisP1nZPMpEKEywpTJy8UuqUxw5Gnl4udmM/veMJLPWeCSWLxoXFdKo8EKdYJdqcawzFCe2vxvUWk9oF4Zijdj9THQspGVQIJHLW7NkeclyJcOr9jpGbfINOSsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yfSRU36U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=53O8wKGR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 13 Nov 2024 16:44:34 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731516275;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HzdBUqAndhId5aYN5fAT+azeBxxqzlfXyiH2SyfjIoQ=;
-	b=yfSRU36Unv2Zvsd8M6dEHThJe3tNpxJUeBebyCt/UgzI/3J4wD5pXyKDyJ2YnMcX/jvpYE
-	ayk0pdtGeoXPooSAVQ0HwVo7omwZF1OWf20jK7LmmM/sW2Pp69z+gdh9nWO9nDr7xxfhGB
-	9DvWW/bvD8E0XeE9zdRFH3I0VzYlTenPF3vadt9006I0W/NwOh6picp0DQ1YU+/+6xtXsC
-	dQtnO9NSBCFOymS+Ee9bfPJ4PzrF2QOxlAeRLWxG9Beg16DWFJOIE05jSNkxMsjrX3al+X
-	EuLw/aDxFb+N7TarZbGz1jbOGq0wqL7WmtgXf8uxVivPjrK8fHKrDyAPU61rRg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731516275;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HzdBUqAndhId5aYN5fAT+azeBxxqzlfXyiH2SyfjIoQ=;
-	b=53O8wKGRGAWVOHLHE3ZGNFYUrPetJr8v8Cv8czBcCB0xifyFkOUs3qYWoMeIZnXKycYfx9
-	rYPKOenTpwZGQhDA==
-From: "tip-bot2 for David Wang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq/proc: Use seq_put_decimal_ull_width() for
- decimal values
-Cc: David Wang <00107082@163.com>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20241108160717.9547-1-00107082@163.com>
-References: <20241108160717.9547-1-00107082@163.com>
+	s=arc-20240116; t=1731516295; c=relaxed/simple;
+	bh=UvwFjfT3wQMT9BCmlcPNb5S9Zfy6pXcyTNoqT8oUtuY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bk8R2RKiDbIjmg+6IEsWYiWQ6Y0RMbyeuxEX/JBpM0GHSbYs31dwwcBGVKyWkN9qU5luQy/phBZgZNVE6Q/Zqn5UUHZrm50LMO9UlOwZkgut1eIqDIbwKQeeXwYOdaprn5y+2P+iJ/dWsFbiwEVG5en8OrHLVWBx6oaRJt2Emds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iHRx9Sa4; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so63356405e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:44:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731516291; x=1732121091; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yhsnzqZOh4R3FRkvGfICJ35wcM+QS/kWjouazfYLcDY=;
+        b=iHRx9Sa42bPdRt8a1JE/ddTxQR1LAqhjhp6JyNiLSzjl0r9nwjMf7oBEneU7Inz8A3
+         vrZ6T/cmPqfSdsvAjpxlf7F0Y86TqIEz32k5P33rhIZgkbeU+RhXhj6/aILd2Qa1qL7j
+         24ia1vTgKO+3w3V0NRaZbiUoqWzCrx0yE+Mp8q2ds0QmQ4JYG1hUuhLQlmc6ei2kmKIx
+         4cPcqyKsW083c+0uzvdnRtx/mX/WG3HVkGnuuHQM2EFGTj9+rvJ07nA93W7GOHzuvo86
+         MmTTF53BY9r+4sJqGiucv/s4Mxvqc9817d5C8ONewu1vD2+Eyt+qXUrloNdsjWtK+cqP
+         fWrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731516291; x=1732121091;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yhsnzqZOh4R3FRkvGfICJ35wcM+QS/kWjouazfYLcDY=;
+        b=Yc+eXAd+FoYH/iuSxWESRZ7apQtnQ4wU4iOXbpHJs9mr7f0StzOH7VEt7IuiPQzeLq
+         mJFe7w7nHekf9g3zE8mXUm/Gv06HNiexOZKxMs2lR7UU1AQgLSrk1G/vR5zGIOmZ2Ayn
+         SlQcWku2t/xDf1r+lu5C042xbmrdtFfG1i7QA1gDB6gGnPb9mN8xJI3uNjCTxchsq/mn
+         eC4THhvxikFzIxyPI9y2T0FQ3Y8WdVMeu+eQoWaNSYWGzL67KadoFrDvkNgSYnlxyed+
+         A/8AMi2gd6qIOfd4vaYXV4B313S07w2+/EHRNwq/O5lwBKdQi47gyq9GY8i1gsLhi/mF
+         nZcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbP/GNAx5TPTzHaPdHSiyiL1N9h9O4JyuA4e9cQTiZjGn9atrPAyFNqhBrrsPRv+fBuCjbjphpM1db/pQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5yNeUSOMrRnKSrHiWEltmeewNMgUTMmfS1FCK04NZesUbskEE
+	syu/630SwRMLgQE/fcMOYwGaERDUANpS5pGSf1fw4Bw4GnFFvW2hrFOUJ+FpP0U=
+X-Google-Smtp-Source: AGHT+IHYQMbMGHB9Ebm5O/a/ONHbsXpJvb/DnR63WL1sEun0Ham/hbt1RhODuXY+11bavUk2I6AAtA==
+X-Received: by 2002:a05:600c:1e89:b0:431:54f3:11af with SMTP id 5b1f17b1804b1-432b751d984mr185015515e9.31.1731516291209;
+        Wed, 13 Nov 2024 08:44:51 -0800 (PST)
+Received: from [192.168.0.48] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d552e6f0sm31103175e9.43.2024.11.13.08.44.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 08:44:50 -0800 (PST)
+Message-ID: <1fd1bcc2-9d64-4676-8f41-73f7dfef2d39@linaro.org>
+Date: Wed, 13 Nov 2024 16:44:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173151627402.32228.16251188627102840898.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] media: venus: core: add qcs615 platform data
+To: Renjiang Han <quic_renjiang@quicinc.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241112-add-venus-for-qcs615-v2-0-e67947f957af@quicinc.com>
+ <20241112-add-venus-for-qcs615-v2-2-e67947f957af@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241112-add-venus-for-qcs615-v2-2-e67947f957af@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/core branch of tip:
-
-Commit-ID:     f9ed1f7c2e26fcd19781774e310a6236d7525c11
-Gitweb:        https://git.kernel.org/tip/f9ed1f7c2e26fcd19781774e310a6236d7525c11
-Author:        David Wang <00107082@163.com>
-AuthorDate:    Sat, 09 Nov 2024 00:07:17 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 13 Nov 2024 17:36:35 +01:00
-
-genirq/proc: Use seq_put_decimal_ull_width() for decimal values
-
-seq_printf() is more expensive than seq_put_decimal_ull_width() due to the
-format string parsing costs.
-
-Profiling on a x86 8-core system indicates seq_printf() takes ~47% samples
-of show_interrupts(). Replacing it with seq_put_decimal_ull_width() yields
-almost 30% performance gain.
-
-[ tglx: Massaged changelog and fixed up coding style ]
-
-Signed-off-by: David Wang <00107082@163.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241108160717.9547-1-00107082@163.com
-
----
- kernel/irq/proc.c |  9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index d226282..f36c33b 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -495,9 +495,12 @@ int show_interrupts(struct seq_file *p, void *v)
- 	if (!desc->action || irq_desc_is_chained(desc) || !desc->kstat_irqs)
- 		goto outsparse;
- 
--	seq_printf(p, "%*d: ", prec, i);
--	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", desc->kstat_irqs ? per_cpu(desc->kstat_irqs->cnt, j) : 0);
-+	seq_printf(p, "%*d:", prec, i);
-+	for_each_online_cpu(j) {
-+		unsigned int cnt = desc->kstat_irqs ? per_cpu(desc->kstat_irqs->cnt, j) : 0;
-+
-+		seq_put_decimal_ull_width(p, " ", cnt, 10);
-+	}
- 
- 	raw_spin_lock_irqsave(&desc->lock, flags);
- 	if (desc->irq_data.chip) {
+On 12/11/2024 11:47, Renjiang Han wrote:
+> Initialize the platform data and enable venus driver probe of QCS615
+> SoC.
+> 
+> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
