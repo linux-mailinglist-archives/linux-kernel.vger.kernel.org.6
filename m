@@ -1,117 +1,191 @@
-Return-Path: <linux-kernel+bounces-407807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE9B9C749C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:42:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76ABC9C74A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:43:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B28611F25CE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:42:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B265A1F25D8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4681F1301;
-	Wed, 13 Nov 2024 14:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F711F1301;
+	Wed, 13 Nov 2024 14:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VOTWGqJe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DCR1StYq"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8812D7E575
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B391C695;
+	Wed, 13 Nov 2024 14:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731508905; cv=none; b=gdMe1I6cAlK4L7oJOxMVvn1lhyBZIvsAPlg71SJhuomnvedT3J0bSDvzJYhsln54Hee2QEFSZFqK/7wB+f9eTsClH+/Vwqze8jgX5KSddUvRETaVN3cB9uJ6dW7Ef0CF5SAF3u9CgxtARrnL89VNX+6JahwBinfvI4F1YcC04rg=
+	t=1731508957; cv=none; b=dAbGiJKD4Wtjg98ItiaHpVfVf/daGhQQIIOrINN+7oVTwprHeXH/2BBamvQ0oOB0pyzygMk3hltgTlWwRYYFbzRNEkqIMaxOVjh1TfsS2c7sQT53oTVJQSnThrZm1zVIdrhf+D/6wCjUDW08qXEzwF2a4AyTQsAbjMLYc7SRHPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731508905; c=relaxed/simple;
-	bh=VyGYCCeFx450Hpu/biRn3Uj2PxNvAeYkXMdqdRIDXhw=;
+	s=arc-20240116; t=1731508957; c=relaxed/simple;
+	bh=4nJldl2tsb7DjNSPWlDcL1G4bRaAiP6fFFAhEZUMDz4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T2acjeqkwTiejCc4gGlHhHehBBBydC+NyX4bHtILKSryyGYkXUHH0ooEznbSiYvu9iPVjsqGbsWRmSPLRBmDzCs6SBj9cdJ6+6BGXnGLAcwKhexTGBPNirUPLVXjt3fUwQJIaZ9c+e9+JyOSJrGuJybIt1OwcUo2kYPm9oplhPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VOTWGqJe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7072C4CEC3;
-	Wed, 13 Nov 2024 14:41:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731508905;
-	bh=VyGYCCeFx450Hpu/biRn3Uj2PxNvAeYkXMdqdRIDXhw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VOTWGqJeAKj2mUWhmK81HXKaNoNUb/YQ/HyPVdC1rt4ZDScOrzuTFDrMBNdovXlro
-	 i7OurOmsO1/BOoFxLSQqIbBUkeu5LrwKHWPuTp639Fue7DK9b0PFUz4DKQeXQZ6p/3
-	 gx0zYe53qNyo/043o2AsjBI+Ho5M9IUHv/1MHez76bldkPLsrw0vqVRE75sCzQsb4f
-	 6BAKuilKMsvldJMpepq1dWpnyZtXwESetV0iKKngqxeZxuisKdg1qg4/gW+YPC5i/T
-	 IDYOOhgQlOspEWuugL27A2tR3VEV2K1mCBgIrb9m/yz3lbcwJluYjpIMn/lvm77IUe
-	 7eMlqz++09Hxw==
-Date: Wed, 13 Nov 2024 14:41:42 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: regmap I3C support
-Message-ID: <ZzS6ph8KulEITt5C@finisterre.sirena.org.uk>
-References: <67d549d0-64c6-4d62-add6-0958ef24910f@roeck-us.net>
- <ZzSxKctLlLZexdF5@finisterre.sirena.org.uk>
- <feda265f-f7ba-4017-a08d-b35916aafe96@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nxaal2ge+8yOy2dWM+3yGKrvAJhi1SfEr1hbPSq4kUA14eJ2EC9TzyGTIz/366YorywKzr1swsQxXMwcuS27CTYwBy+Hfcxc/C1rXELLt2j06gw4ps5mdLtu8w9YB4U1NjLnRVjuASy2Xmi8q0sYLMP33DypTyC6TVGVyR21jkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DCR1StYq; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d4eac48d8so119034f8f.0;
+        Wed, 13 Nov 2024 06:42:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731508953; x=1732113753; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5EXRuvdJJsDZqVJbSr1eZa+g0bNBPJGLJZmT9i05/bg=;
+        b=DCR1StYqT9tSQaTg3av0Ywe6IJsS/E+7HOm4ys6A5uAspc6i90YqaT+lUppRAKE7i8
+         asDpaISNdpad/mGgh/QvNiOwd27jO4XndI/M1GBlMqn9aWy2B1sUwXrKJC4bBqkIF//9
+         3Ck6hZtRQsmVKzAj0sl3QgQodosnWb352s/05FRiZpDkytICvj4gDwyi3t5kBZY2ZD6Q
+         Oka0BKFSa7CcpQdwgteXE9ZluFZ0vRcGhMphhgQea/470239Co3gkJ4D90LgAqK93V8Z
+         0Ksnu2wjg52rBlKcI4o7xlombb7N6fCXalSlWErSd79ykQo204o36hUJ/n1WceMpocc6
+         WKaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731508953; x=1732113753;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5EXRuvdJJsDZqVJbSr1eZa+g0bNBPJGLJZmT9i05/bg=;
+        b=gM6/zSB+O8H/mRZ7jfEpss4nVN2163QiB/Lq0Shb0Nkw846efhTCV4F01ICyRrDpUg
+         k2WVcroBSBE/u8GUecAJk0xt+4P16D6yKVTUYOgIN53yLEs6jJGOOyGl+Dbc0HwcOinH
+         dZLS8LZO6bYJE/KF1JBLeG9M0jxG6hOcykATQVcbF90bYNYCsj06vZfp23WGzuAH0S2W
+         FXrFuaTyaxOpixzezIveX2yyIHMKxy9AG2ItSxlrsLbad2WY3XQ40mQysNoz3OlnIUNE
+         rbuLBX+WUU/hZozG8OEUzPYtk8djBt57WPZXm3XF4M5oSu83xNSUAq5qpSy4jLQlJcuS
+         ox8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUPtDTuvOKaA9Xi2/NRfaYcTLF6b6VIH8KgBpque2sdCXxmxetgTOjhCXUzLTyDTZgSGh9bh0TxVTBU@vger.kernel.org, AJvYcCUd/iBWRI48SAIrhdtYQHc7oyxliq+KXdCghliMaApUlgE2PoyFfloNx6ogyypQRd/Fvf1kOts4@vger.kernel.org, AJvYcCVGA3GFTV2t4einFsIMjXGt+KShrD+cgwWV+LZ1KCaxpFpI3xE56k0gaip8DfQNh6DwpifFz95vkuJxvgWl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqifhpb3q0jutrvWN8sIS449z2DngnmPZD1LWmOq77aNMCmC9S
+	MQ15ctRWx89Td+FYsVdBZXsBQ2Eyuur6sLuRxKOu/Of9kDB91iZT
+X-Google-Smtp-Source: AGHT+IF+IlngJBPGAB2mC/yn8u49IUvMkQZXPfKAehjzVLI/VB8YSaJsCxHx1adTzRqz9wjT6Wnx2A==
+X-Received: by 2002:a05:6000:1445:b0:37d:4864:397f with SMTP id ffacd0b85a97d-381f1714445mr7188030f8f.3.1731508953202;
+        Wed, 13 Nov 2024 06:42:33 -0800 (PST)
+Received: from skbuf ([188.25.135.117])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97fe9bsm18392883f8f.35.2024.11.13.06.42.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 06:42:31 -0800 (PST)
+Date: Wed, 13 Nov 2024 16:42:29 +0200
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Tristram.Ha@microchip.com
+Cc: andrew@lunn.ch, Woojung.Huh@microchip.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	marex@denx.de, UNGLinuxDriver@microchip.com,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: Add SGMII port support
+ to KSZ9477 switch
+Message-ID: <20241113144229.3ff4bgsalvj7spb7@skbuf>
+References: <20241109015633.82638-1-Tristram.Ha@microchip.com>
+ <20241109015633.82638-3-Tristram.Ha@microchip.com>
+ <784a33e2-c877-4d0e-b3a5-7fe1a04c9217@lunn.ch>
+ <DM3PR11MB87360F9E39097E535416838EEC592@DM3PR11MB8736.namprd11.prod.outlook.com>
+ <700c326c-d154-4d21-b9d4-d8abf8f2bf33@lunn.ch>
+ <DM3PR11MB873696176581059CF682F253EC5A2@DM3PR11MB8736.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/MBr3yRXViFpTc6E"
-Content-Disposition: inline
-In-Reply-To: <feda265f-f7ba-4017-a08d-b35916aafe96@roeck-us.net>
-X-Cookie: Editing is a rewording activity.
-
-
---/MBr3yRXViFpTc6E
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <DM3PR11MB873696176581059CF682F253EC5A2@DM3PR11MB8736.namprd11.prod.outlook.com>
 
-On Wed, Nov 13, 2024 at 06:15:38AM -0800, Guenter Roeck wrote:
-> On 11/13/24 06:01, Mark Brown wrote:
+On Wed, Nov 13, 2024 at 02:12:36AM +0000, Tristram.Ha@microchip.com wrote:
+> When the SFP says it supports 1000Base-T sfp_add_phy() is called by the
+> SFP state machine and phylink_sfp_connect_phy() and
+> phylink_sfp_config_phy() are run.  It is in the last function that the
+> validation fails as the just created phy device does not initialize its
+> supported and advertising fields yet.  The phy device has the
+> opportunity later to fill them up if the phylink creation goes through,
+> but that never happens.
+> 
+> A fix is to fill those fields with sfp_support like this:
+> 
+> @@ -3228,6 +3228,11 @@ static int phylink_sfp_config_phy(struct
+>     struct phylink_link_state config;
+>     int ret;
+> 
+> +    /* The newly created PHY device has empty settings. */
+> +    if (linkmode_empty(phy->supported)) {
+> +        linkmode_copy(phy->supported, pl->sfp_support);
+> +        linkmode_copy(phy->advertising, pl->sfp_support);
+> +    }
+>     linkmode_copy(support, phy->supported);
+> 
+>     memset(&config, 0, sizeof(config));
+> 
+> The provided PCS driver from the DSA driver has an opportunity to change
+> support with its validation check, but that does not look right as
+> generally those checks remove certain bits from the link mode, but this
+> requires completely copying new ones.  And this still does not work as
+> the advertising field passed to the PCS driver has a const modifier.
 
-> > Don't these drivers end up with the same miserable problems with
-> > dependencies on variations of things being configured built in and
-> > modules anyway that mean we build separate SPI and I2C bus wrappers for
-> > the same case with devices that do both I2C and SPI?
+I think I know what's happening, it's unfortunate it pushed you towards
+wrong conclusions.
 
-> Not really. There is no equivalent to module_i3c_i2c_driver() to handle both
-> I2C and SPI variants of a chip. Also, SPI and I2C/I3C are not interdependent,
+The "fix" you posted is wrong, and no, the PCS driver should not expand
+the supported mask, just restrict it as you said. The phydev->supported
+mask normally comes from the phy_probe() logic:
 
-Sure, but lots of drivers were open coding an equivalent of that
-(possibly some still do).
+	/* Start out supporting everything. Eventually,
+	 * a controller will attach, and may modify one
+	 * or both of these values
+	 */
+	if (phydrv->features) {
+		linkmode_copy(phydev->supported, phydrv->features);
+		genphy_c45_read_eee_abilities(phydev);
+	}
+	else if (phydrv->get_features)
+		err = phydrv->get_features(phydev);
+	else if (phydev->is_c45)
+		err = genphy_c45_pma_read_abilities(phydev);
+	else
+		err = genphy_read_abilities(phydev);
 
-> while I3C automatically selects I2C. That means it does make sense to handle
-> I2C and I3C in the same driver, but not I2C and SPI.
+The SFP bus code depends strictly on sfp_sm_probe_phy() -> phy_device_register()
+actually loading a precise device driver for the PHY synchronously via
+phy_bus_match(). There is another lazy loading mechanism later in
+phy_attach_direct(), for the Generic PHY driver:
 
-In terms of the devices they're very much the same and interdependent -
-it's generally one IP block and one set of pins that's doing both I2C
-and SPI, with nothing software visible different.  If I3C selects I2C
-then that does eliminate some of the problem space, I can't remember the
-speciifcs of how people (I think mainly randconfig people?) were
-breaking things.  You at least have I2C=y I3C=m which means that
-dependencies have to force the users modular.
+	/* Assume that if there is no driver, that it doesn't
+	 * exist, and we should use the genphy driver.
+	 */
 
-> Sure, separate wrappers can be used, but that makes module_i3c_i2c_driver()
-> pointless.
+but that is too late for this code path, because as you say,
+phylink_sfp_config_phy() is coded up to only call phylink_attach_phy()
+if phylink_validate() succeeds. But phylink_validate() will only see a
+valid phydev->supported mask with the Generic PHY driver if we let that
+driver attach in phylink_attach_phy() in the first place.
 
-That's kind of my question.  If we are going to have this sort of stuff
-we should also have it for I2C and SPI since it's such a common pattern.
+Personally, I think SFP modules with embedded PHYs strictly require the
+matching driver to be available to the kernel, due to that odd way in
+which the Generic PHY driver is loaded, but I will let the PHY library
+experts share their opinion as well.
 
---/MBr3yRXViFpTc6E
-Content-Type: application/pgp-signature; name="signature.asc"
+You would be better off improving the error message, see what PHY ID you
+get, then find and load the driver for it:
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
+index 7dbcbf0a4ee2..8be473a7d262 100644
+--- a/drivers/net/phy/sfp.c
++++ b/drivers/net/phy/sfp.c
+@@ -1817,9 +1817,12 @@ static int sfp_sm_probe_phy(struct sfp *sfp, int addr, bool is_c45)
+ 
+ 	err = sfp_add_phy(sfp->sfp_bus, phy);
+ 	if (err) {
++		dev_err(sfp->dev,
++			"sfp_add_phy() for PHY %s (ID 0x%.8lx) failed: %pe, maybe PHY driver not loaded?\n",
++			phydev_name(phy), (unsigned long)phy->phy_id,
++			ERR_PTR(err));
+ 		phy_device_remove(phy);
+ 		phy_device_free(phy);
+-		dev_err(sfp->dev, "sfp_add_phy failed: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc0uqMACgkQJNaLcl1U
-h9DXlAf/Zd0jdT/eiQzUTKiwxvCPIpyyKykAFjSroVAdXl69TBjHVz10dvyw58Bb
-iIbXuUAkNXFSyvntByV2iYosVofWEdYqyQ0ZRvuOH2kaxmcQwCo2Xajxe2XzyFle
-Rf2H6k6+CCDyaUX8pKLXiDnhAGWFs1fs1b0y/RQ0LxiqeSFDAOE3e7xaQHIBY2uU
-XB89yuJAd6oM/Tts93D3Dlb3y5NjROJOhd5S8xSLScBCCo0VMzAnJxxLUmyI+DIt
-6WpozjuPer3/Mg7drs0Rk9uMAEmZHOoAZa94dkAreBn1s8GQTvTmaWwE062TKVUQ
-q06hikV4FmKVe8y3R0uJ+zY3Zvy79A==
-=WQbN
------END PGP SIGNATURE-----
-
---/MBr3yRXViFpTc6E--
+Chances are it's one of CONFIG_MARVELL_PHY or CONFIG_AQUANTIA_PHY.
 
