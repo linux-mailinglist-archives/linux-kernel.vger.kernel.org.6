@@ -1,103 +1,129 @@
-Return-Path: <linux-kernel+bounces-408393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B7859C7E38
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:25:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 622249C7E39
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:25:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCBA4B25A98
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:24:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CCED1F2249F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5176018CBFF;
-	Wed, 13 Nov 2024 22:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gw7hWGFt"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A589918C03C;
+	Wed, 13 Nov 2024 22:25:19 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB83818BC34;
-	Wed, 13 Nov 2024 22:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0E418A6CC;
+	Wed, 13 Nov 2024 22:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731536666; cv=none; b=i3NZfLmXPga21Ij4vYxwKm/SesxDG0BHVmY1iUXh0hVc95Vq9/Hi8a2JMYWxE34p5iRZBcjklip8MwQiCfq+i/bIjAzWRJyO+Ia0o540zx1pUe4N4TxuJkCAgLesi9rVHv7XqJMunaQK4Mm/i+4wtu6gq9YfhDBrHlB50TC6No4=
+	t=1731536719; cv=none; b=Mu5dY53AlZBtjLGSv57+X8I3n2MLJMfT3xN8BMv3kSmZdkSsByFewD90BMArhMXE0rwQWX3ytN2MunAPOJQO3+QssvMvawN+aZ9Xdyrnby51J8uxLoYekN2RsR/qScT2KPCPtjOC8JRjBfpG49iTbrd0aw+HuI4sAA2AxLZ5g88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731536666; c=relaxed/simple;
-	bh=4c3JsyMgE4ipwm0tWTQ4ryrY2cLMm2Jke0JitnwChlc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ODjAqTRoKTZj36E3Wn2KAO+dAeL0XYLcezRvK/OxA0uI8lLpMlZF/lECISh9Teeru7d/+nUk2yoFs59aeIHVMbGzlo+4xLxS0CbhDyWDqoEpdaIIuAiNBOz0NWa3bamjgtocuOolCw66/522LhbWduhgf5NkHOOqorA3O/cFI1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gw7hWGFt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13819C4CEC3;
-	Wed, 13 Nov 2024 22:24:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731536666;
-	bh=4c3JsyMgE4ipwm0tWTQ4ryrY2cLMm2Jke0JitnwChlc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gw7hWGFtNcNPvDPPYAKVNRQO8c6IuR/deLvbCnzf975LnqSsBaJgBF7i65Q036CMH
-	 oZ2Tdz91mcp6yTMYpuw13NNiG/rKcOPA2erZNek99eIUp0DdlTvCuiHBg7MiwFjYTd
-	 83/PyQGQ1mCPxqvv4y1JLZrR8anHxfsjibxb919/s76mWeZbs0Ko+2k0qveEyMkmAd
-	 xLJfXscazyiglCmJTfSeWlMPfKqE6kyiw9rzA5NjiaioPcPoaIVG6dSHfD9G9dpZT/
-	 AfW9jUtSixI0jVPCLQ7wJ9AYu4owmI5RWS1dFaquAJD+PSXh3A5hm/0u/pfRXl4Dby
-	 AQJEVQpukwO6w==
-Date: Wed, 13 Nov 2024 23:24:21 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Cc: dianders@chromium.org, rmk@dyn-67.arm.linux.org.uk, 
-	max.schwarz@online.de, david.wu@rock-chips.com, heiko@sntech.de, vz@mleia.com, 
-	wsa@kernel.org, manabian@gmail.com, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] i2c: rk3x: Add check for clk_enable()
-Message-ID: <zd5673eo7kqwg67lsy6h3m4zdpmgp5xzhr355ialwx6zhdopfb@7x3v5b747sqn>
-References: <20241107211428.32273-1-jiashengjiangcool@gmail.com>
- <20241107211428.32273-3-jiashengjiangcool@gmail.com>
+	s=arc-20240116; t=1731536719; c=relaxed/simple;
+	bh=1dafTU3Arp/csBfvx15CA6zVMhj2igN4Giir7HUNKdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wz+iorY1/loQ1jmCqlLRFH/J/6Sv9oQL8lyqX96b1K4tb7/HytE9y2L7bfPi5yJQ+L2Ww1q5nIrPNJmqWCA51QB9zl8lOCqA8u0ZVhCRUXg5Izayp92al5NKVqSKVTWi50uQ7ZOdA09XGBYQEt/kcCx3nVKoDO9nfq6adQjAghs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7F4DC4CEC3;
+	Wed, 13 Nov 2024 22:25:15 +0000 (UTC)
+Date: Wed, 13 Nov 2024 17:25:35 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Jens Remus <jremus@linux.ibm.com>, x86@kernel.org, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de
+ Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, Indu Bhagat
+ <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers
+ <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+ linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>, Sam
+ James <sam@gentoo.org>, linux-trace-kernel@vger.kernel.org, Andrii Nakryiko
+ <andrii.nakryiko@gmail.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Florian Weimer <fweimer@redhat.com>, Andy
+ Lutomirski <luto@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+Message-ID: <20241113172535.7af07f61@gandalf.local.home>
+In-Reply-To: <20241113172118.6db57c42@gandalf.local.home>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+	<42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+	<1f83be89-b816-48a3-a7ee-9b72f07b558e@linux.ibm.com>
+	<20241113155040.6a9a1bed@gandalf.local.home>
+	<20241113211535.ghnw52wkgudkjvgv@jpoimboe>
+	<20241113171326.6d1ddc83@gandalf.local.home>
+	<20241113172118.6db57c42@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107211428.32273-3-jiashengjiangcool@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Jiasheng,
+On Wed, 13 Nov 2024 17:21:18 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On Thu, Nov 07, 2024 at 09:14:28PM +0000, Jiasheng Jiang wrote:
-> Add check for the return value of clk_enable() in order to catch the
-> potential exception. Moreover, convert the return type of
-
-It's more an "unlikely exception" rather than a "potential
-exeption".
-
-> rk3x_i2c_adapt_div() into int and add the check.
-
-...
-
->  static u32 rk3x_i2c_func(struct i2c_adapter *adap)
-> @@ -1365,9 +1389,12 @@ static int rk3x_i2c_probe(struct platform_device *pdev)
->  	}
->  
->  	clk_rate = clk_get_rate(i2c->clk);
-> -	rk3x_i2c_adapt_div(i2c, clk_rate);
-> +	ret = rk3x_i2c_adapt_div(i2c, clk_rate);
->  	clk_disable(i2c->clk);
-
-you can't disable a clock that has failed to enable, right?
-
-BTW, although I like this patch (or at least I don't dislike), I
-still want to check whether it's wanted or not.
-
-Andi
-
->  
-> +	if (ret)
-> +		goto err_clk_notifier;
-> +
->  	ret = i2c_add_adapter(&i2c->adap);
->  	if (ret < 0)
->  		goto err_clk_notifier;
-> -- 
-> 2.25.1
+> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > index 434c548f0837..64cc3c1188ca 100644
+> > --- a/fs/binfmt_elf.c
+> > +++ b/fs/binfmt_elf.c
+> > @@ -842,7 +842,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
+> >  	int first_pt_load = 1;
+> >  	unsigned long error;
+> >  	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
+> > -	struct elf_phdr *elf_property_phdata = NULL, *sframe_phdr = NULL;
+> > +	struct elf_phdr *elf_property_phdata = NULL;
+> > +	unsigned long sframe_vaddr = 0;  
 > 
+> Could not just save the pointer to the sframe phd, as it gets freed before we need it.
+                                                ^^^
+                                                phdr
+
+
+> > diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
+> > index 933e47696e29..ca4ef0b72772 100644
+> > --- a/kernel/unwind/sframe.c
+> > +++ b/kernel/unwind/sframe.c
+> > @@ -73,15 +73,15 @@ static int find_fde(struct sframe_section *sec, unsigned long ip,
+> >  		    struct sframe_fde *fde)
+> >  {
+> >  	struct sframe_fde __user *first, *last, *found = NULL;
+> > -	u32 ip_off, func_off_low = 0, func_off_high = -1;
+> > +	s32 ip_off, func_off_low = INT_MIN, func_off_high = INT_MAX;  
+> 
+> The ip_off is a signed it. I wrote a program to dump out the sframe section
+                         ^^
+                         int
+
+
+> of files, and I had:
+> 
+> 	ffffed88: (1020) size:      16 off:     146 num:       2 info: 1 rep:16
+> 	ffffed98: (1030) size:     336 off:     154 num:       2 info:17 rep:16
+> 	ffffefe1: (1279) size:     113 off:       0 num:       4 info: 0 rep: 0
+> 	fffff052: (12ea) size:      54 off:      15 num:       3 info: 0 rep: 0
+> 	fffff088: (1320) size:     167 off:      26 num:       3 info: 0 rep: 0
+> 	fffff12f: (13c7) size:     167 off:      37 num:       4 info: 0 rep: 0
+> 	fffff1d6: (146e) size:     167 off:      52 num:       4 info: 0 rep: 0
+> 	fffff27d: (1515) size:      22 off:      67 num:       4 info: 0 rep: 0
+> 	fffff293: (152b) size:     141 off:      82 num:       4 info: 0 rep: 0
+> 	fffff320: (15b8) size:      81 off:      97 num:       4 info: 0 rep: 0
+> 	fffff371: (1609) size:     671 off:     112 num:       4 info: 1 rep: 0
+> 	fffff610: (18a8) size:     171 off:     131 num:       4 info: 0 rep: 0
+> 
+> The above turns was created by a loop of:
+            ^^^^^^^^^
+            items were
+
+No idea why I typed that :-p
+
+
+I can't blame jetlag anymore.
+
+-- Steve
 
