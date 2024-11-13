@@ -1,164 +1,118 @@
-Return-Path: <linux-kernel+bounces-407055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259FA9C67F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:58:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5ECF9C67F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 05:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F405B24D21
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:58:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB77285159
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF3716EC0E;
-	Wed, 13 Nov 2024 03:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E3E16F910;
+	Wed, 13 Nov 2024 04:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="RfelrYEg"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aH8CGpx1"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A860E13635C
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 03:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F211B42AA9
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 04:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731470314; cv=none; b=rtGlqxP91Ibup0QscNPvU8HFMudBLs1ogn9II5iXTXZWXMsdVSomArL5YuxVF4KvRjGgfGIKRCvuVkXUgvfRkQCg7aR+ZOaMnOvX59eA16RC6UtwvktcNV89RgUoN0L79gdA9yR9bOYY0RBygTBK6FalZuykc/Jl4URqqOZyYyc=
+	t=1731470662; cv=none; b=nGa68lALBxJNzQ496xdRs1OQeArEon4Iy3TMXiZpZfaVzECKXPpG9QcaMP4jFT2kaSfjZWG2ht8Zj98mIhH1C4QthlhBL5BWluxe4GUe0C7pRoDRRnhPxN1O4C21qpwGUiqIeDbvvRUZdNsVB1pWGlkvhSKBsmakyhkxgyMK0QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731470314; c=relaxed/simple;
-	bh=qZSDRAstD6+LsD8bKwWMmd9nPmhGvEemaim3gzfrhik=;
-	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
-	 In-Reply-To:Content-Type; b=nkTtSMhI2lbePtgXqhTkftFXNr8E1AeERrkB+lC0PTDyYncZT6217vrp04NS7+jXxgEW4anGbpHSomR9ZE2pwcKnZIFsMwXbWHwFKrv3wjSC4Qia/WctIK9AdJyUDxMW03ZF9GSnQ6MuX7f0kM/nezMtcblhrkKGUGB0rVqY+Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=RfelrYEg; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1731470662; c=relaxed/simple;
+	bh=vPFOHp2CC6TEPHTGA6cKL8S6kkkxXN/ztLmi6PWlB+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WBcPdYz0bAbm7mqKRmgIt/o+QPqJ5s25hzVqjYtJd2eUxVZwz/RsJAOZoSHyJ7xQMK9GH5A43gM35go1l1ZpLGx+bmWjnEjMZU8/UU6XafPKjlJBSzmqX4FcMtw5jY7cBDDUfKN/DrXYOrl85ZLBVk0mva6GZODfch7/cvx6kHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aH8CGpx1; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so5453927b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 20:04:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1731470312; x=1763006312;
-  h=message-id:date:mime-version:to:cc:references:subject:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qZSDRAstD6+LsD8bKwWMmd9nPmhGvEemaim3gzfrhik=;
-  b=RfelrYEgUUrn+HFbavT6ZjjMhGoATkIpAWaTlK5PVuxpzLdXwtCER7dz
-   de/TL2i3XBtL3XiqTroTzzcGqX0yzodPPFk8IAVJomdP2CVnZXihGM+yJ
-   nQSfufbKM+oYxEjzt8EygdgNVD5HEPmrx40H7zBWEP+X0ToWa8dM7aqr+
-   c=;
-X-IronPort-AV: E=Sophos;i="6.12,150,1728950400"; 
-   d="scan'208";a="146900756"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 03:58:32 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.7.35:64871]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.22.163:2525] with esmtp (Farcaster)
- id 41a465a8-86dd-49a9-9826-05806a4949e4; Wed, 13 Nov 2024 03:58:32 +0000 (UTC)
-X-Farcaster-Flow-ID: 41a465a8-86dd-49a9-9826-05806a4949e4
-Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 13 Nov 2024 03:58:31 +0000
-Received: from [192.168.205.1] (10.106.101.35) by
- EX19D003UWC002.ant.amazon.com (10.13.138.169) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Wed, 13 Nov 2024 03:58:30 +0000
-Message-ID: <f3ddabdc-39fa-45fa-97fd-d8508c2229c9@amazon.com>
-Date: Tue, 12 Nov 2024 20:58:29 -0700
+        d=chromium.org; s=google; t=1731470660; x=1732075460; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mw8a3ViX6RzOGhfbloDj6IPahlwyKfVtIHPZfv2Tt0E=;
+        b=aH8CGpx1r86nbSjQO2QS3j8B/5C0/qDd9Nku4C0fDailDZvulDc2oJyz9qF0bONEIJ
+         UM+mk4Z9+m2nqj8GIVBWY07gvg3PKoFX0jldCHXfiuyp1w1N5Uz6/XbN0BKQkRx7mR6g
+         lEA5GLbSHTebjbSe464r1iJ6Nxs1e99nl1Auw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731470660; x=1732075460;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mw8a3ViX6RzOGhfbloDj6IPahlwyKfVtIHPZfv2Tt0E=;
+        b=HQc4qSA+5MOiCkdMbc2VRADr+7ageUmXrXSiqkh9USiEvsDhvKv7TdRnIzNmtS6Lz2
+         QvZQ0Q7U9RJLRquk5gd6AKlmxYu7dI1jiTADL3mbXCeAqGnKR3dgzrdST+zT49sm9OGz
+         M7At/USG9r7j4Q9hIaywc+dZKIMq6QhLG6bg8MGnBnsExBFoKgT0wKnWsGuBYjOOJSj7
+         BrYi3yeGGjzwCx54+hRXVgouAEayJLPvaRPVpJpLUlVXo5nxY0NttF2wNCjqRgkVvp+7
+         wOC/v888AS3VHsmLS1r+Yd7cGtCeumUsKrwkMkF8kODXH7aFZv7kvdUopm9uvfvRYAeV
+         QvBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUETrjZ3bJzLf9TKzeYzI1nOgenkmd/uVqJvwL9hVIZcsOP2tH2+hmxL+yO3P/c8QP8muOK2RfDcU8MQkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyogjheRX/ZcTCorTRmRXNYHYomRkTfz5NqMb/a6HRzzdCNmwuo
+	YmZaa4cecqBm6uqID7capzuU7c4CLwPuNlec8LCGeiqiHuj2a/mGhxft0VBUvw==
+X-Google-Smtp-Source: AGHT+IG8CWAumD+73fyZuH+m6h5Xv3epqXIbma2P3c0T8RCJudcTZUOyJksgkbPEM64Ab+qVl165uQ==
+X-Received: by 2002:a05:6a00:b85:b0:71e:db72:3c87 with SMTP id d2e1a72fcca58-72457a2a4e6mr2353946b3a.20.1731470660039;
+        Tue, 12 Nov 2024 20:04:20 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:9e09:d4e8:509d:405b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079aa994sm12541029b3a.129.2024.11.12.20.04.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 20:04:19 -0800 (PST)
+Date: Wed, 13 Nov 2024 13:04:15 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ext4: possible circular locking dependency at
+ ext4_xattr_inode_create
+Message-ID: <20241113040415.GF1458936@google.com>
+References: <20241112073421.GD1458936@google.com>
+ <20241112152957.GA317364@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: <david.kaplan@amd.com>, <jackmanb@google.com>
-CC: <bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
-	<jpoimboe@kernel.org>, <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
-	<pawan.kumar.gupta@linux.intel.com>, <peterz@infradead.org>,
-	<tglx@linutronix.de>, <x86@kernel.org>, <mlipp@amazon.at>,
-	<canellac@amazon.at>
-References: <LV3PR12MB92658EA6CCF18F90DAAA168394532@LV3PR12MB9265.namprd12.prod.outlook.com>
-Subject: RE: [PATCH v2 19/35] Documentation/x86: Document the new attack
- vector controls
-Content-Language: en-US
-From: "Manwaring, Derek" <derekmn@amazon.com>
-In-Reply-To: <LV3PR12MB92658EA6CCF18F90DAAA168394532@LV3PR12MB9265.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D046UWA001.ant.amazon.com (10.13.139.112) To
- EX19D003UWC002.ant.amazon.com (10.13.138.169)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112152957.GA317364@mit.edu>
 
-+Brendan
+Hi Ted,
 
-On 2024-11-06 at 14:49+0000, David Kaplan wrote:
-> On 2024-11-06 at 10:39+0000, Borislav Petkov wrote:
-> > One of the arguments against those getting merged is, those are not going to be
-> > *vector* controls anymore but something else:
-> >
-> > mitigate_user - that will mitigate everything that has to do with executing user
-> > processes
-> >
-> > mitigate_guest - same but when running guests
-> >
-> > The third one will be the SMT off: mitigate_cross_thread.
->
-> Right, so the way I think of this is that there is a cognitive process
-> that administrators must go through:
->
-> 1. Determine how the system will be used (e.g., am I running untrusted
->    VMs?)
-> 2. Determine the attack vectors relevant for that configuration (e.g., I
->    need guest->host and guest->guest protection)
-> 3. Determine which mitigations are required to enable the desired level
->    of security (e.g., enable vulnerability X mitigation but not Y)
->
-> Today, the administrator must do all 3 of these, which requires in-depth
-> knowledge of all these bugs, and isn't forward compatible.  The proposed
-> patch series has the kernel take care of step 3, but still requires the
-> administrator to do steps 1 and 2.  The provided documentation helps
-> with step 2, but ultimately the admin must decide which attack vectors
-> they want to turn on/off.  But the attack vectors are also forward
-> compatible in case new bugs show up in the future.
->
-> What you've proposed is up-leveling things a bit further and trying to
-> have the kernel do both steps 2 and 3 in the above flow.  That is, the
-> admin decides for example they have untrusted userspace, and the kernel
-> then determines they need user->kernel and user->user protection, and
-> then which bug fixes to enable.
->
-> I'm not necessarily opposed to that, and welcome feedback on this.  But
-> as you said, that is not an attack-vector control anymore, it is more of
-> an end-use control.  It is possible to do both...we could also create
-> end-use options like the ones you mention, and just map those in a
-> pretty trivial way to the attack vector controls.
+On (24/11/12 10:29), Theodore Ts'o wrote:
+> > I've a following syzkaller report (no reproducer); the report is
+> > against 5.15, but the same call-chain seems possible in current
+> > upstream as well.  So I suspect that maybe ext4_xattr_inode_create()
+> > should take nested inode_lock (I_MUTEX_XATTR) instead.  Does the
+> > patch below make any sense?
+> 
+> These syzkaller reports result from mounting a corrupted (fuzzed) file
+> system typically when an inode is used in multiple contexts (e.g., as
+> a directory and an EA inode, etc.) at the same time.
 
-I think the further simplification makes sense (merge to mitigate_user
-or mitigate_guest). I would say definitely don't do both (ending up with
-end-use, vector controls, *and* existing parameters). Both just seems
-like more confusion rather than simplification overall.
+I certainly see your point, and I don't argue.
 
-For me the major dissonance in all of this remains cross_thread. Based
-on either approach (end-use or vector), SMT should be disabled unless
-the admin explicitly asks to keep it (presumably because they are
-running with core scheduling correctly configured).
+> I'd have to take a closer look to see if it makes sense, but in
+> general, very often whenever we try to fix one of these it ends up
+> triggering some other syzkaller failure.
 
-What if mitigate_user_user defaulted to 'defaults' instead of 'on'? I'm
-thinking 'defaults' meaning "do the things the kernel normally did
-before thinking in these attack-vector terms." That way we could
-differentiate between "admin didn't specify anything" and "admin said
-they cared about mitigating this vector (or case)." That should make it
-reasonable to disable SMT when mitigate_user_user=on is supplied, yeah?
+I see, the one-liner that I posted sort of looks like an addition to
+d1bc560e9a9c7 which landed in ext4 recently.
 
-> I'm nervous about only doing the end-use controls and not the attack
-> vector controls because of the reasons outlined above.  For example, I'm
-> thinking about some proposed technologies such as KVM Address Space
-> Isolation which may go a long way to reducing the risk of guest->host
-> attacks but may not be fully secure yet (where the kernel would feel
-> comfortable disabling a bunch of guest->host protections automatically).
-> With attack vector-level controls, it would be easier to turn off
-> guest->host protection if the admin is comfortable with this technology,
-> but still leaving the (almost certainly needed) guest->guest protections
-> in place.
+> And, these sorts of things don't actually result in actual security
+> problems (at worst, a hang / denial of service attack), and the right
+> thing to do is to just run fsck on the !@#?!? file system before
+> mounting the thing.
 
-Personally I wouldn't put too much weight on the possibility of
-disabling kernel mitigations with these future approaches. For what
-we're looking at with direct map removal, I would still keep kernel
-mitigations on unless we really needed one off. Brendan, I know you were
-looking at this differently though for ASI. What are your thoughts?
-
-Derek
+So in our particular case reboot is a bad scenario.  Looking at reports
+from the fleet I see a bunch of hung-task reboots with ext4 frames,
+e.g. ext4_update_i_disksize()->down_write()->schedule() /* forever */,
+but I can't claim that this is the deadlock that syzkaller has reported,
+it very well might not be.
 
