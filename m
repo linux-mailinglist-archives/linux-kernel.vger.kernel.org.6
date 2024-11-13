@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-408012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111B89C7924
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:45:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F9B9C78D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:27:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47056B3F3C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:27:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C88C284B24
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279DA1E1322;
-	Wed, 13 Nov 2024 16:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C5B1DFE06;
+	Wed, 13 Nov 2024 16:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1/agY4m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nN9kf5OF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813631DED49;
-	Wed, 13 Nov 2024 16:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47654178CC8;
+	Wed, 13 Nov 2024 16:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731515192; cv=none; b=rGPgd96uLQkXt9fQfFP4NMsxqXao2+8371UTUEvHQ1Pcu/76VC5rz4x3mo9Cu3CZfM7RL1XRfVJv7hvXpgR4ckRji9sMM2pAU6x2cskzNiBUM2JyejkxhZqbbaI+NZyVAkzdplMelm5U1c9wwXuDPkb9IUWXFq2XfSCHahFz0tQ=
+	t=1731515192; cv=none; b=jXeecypSs7dBXWmdfb+pheug+aNx63Ct0i2DtPbZFydbLtPwHVwUU42W6ZUvJyMgAZhmZjepzN6V+lMKJQvU8VrAlPo929StEZ5dnhujz2PR0xKwbwZLXApTEoHTuZXCTS71vXiF76VQhBHo2KY9iFuX/ezScCxBnV6TdIdtmVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731515192; c=relaxed/simple;
-	bh=6Kv8j6GXmb5OgoQ5xsiPf6fy1wOOGSi9iB0lHZRsXOs=;
+	bh=WP1gX/xo4x64pFwAnpa4+qlhjEolC1jxzqSRjjY1A0I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q+svLScKa8qJHKpizUKbF+SMh3e0kKgQK/541qg4dShmpJdOsLssIUYqQ9TcvOtePj3ej77ISdUgYBiWaGk/uImXEX07gdvo7mEGi5k0uoNkL+KqlnuEqVmYWQbIJGTjz8Frqvt1TPLoNT+avBwX7hRMJ9PviowSQ+wq0SE+m48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1/agY4m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D835AC4CECF;
-	Wed, 13 Nov 2024 16:26:30 +0000 (UTC)
+	 MIME-Version; b=EDPhEdB5fyuz/d4l8cMCEBSEElmdOfiwwI5iVMe1TLkQNv0Aq9FKdO6BmwRtUjejoWIaqe1BJMwH6aMMTvAITr0CA8CHbo1o1HRLz7xz7Znd6pRwpqJNSQ3jMQaTNnDO+vS/CmK4YL7p/gP93fCADEvPagnUBxx7lSqlB7I0Kiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nN9kf5OF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECA66C4CECD;
+	Wed, 13 Nov 2024 16:26:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731515191;
-	bh=6Kv8j6GXmb5OgoQ5xsiPf6fy1wOOGSi9iB0lHZRsXOs=;
+	s=k20201202; t=1731515192;
+	bh=WP1gX/xo4x64pFwAnpa4+qlhjEolC1jxzqSRjjY1A0I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=o1/agY4mtPOWPXWZBhVsqgjbwv8NMsbuCUP2I9qvZ5wF/90hlRy8DhVmtSg7OSDku
-	 pyz5low1w7vWU5yo3CU8zLSdJN1o8MSsS3I2p2hjntM+ji1MCf6jxv/FGD3c9WR45R
-	 nlkG1pMI5X2xqnwEOgSI4x4QVzEztAoLpK7iZ/PDyGTg4wx1D3TikN6WqGsS5c4IJm
-	 Hn9QIr+XYSv+fITSvjfkqh4pNORtFhSDmsXJ2zNlfaYhYlWX8EDv7UVUUKnCTkB6tK
-	 ghKzb432jDLcwBmImZJ48ywfO1qpdiQ6Q/rkxubKlBHBadv0EAxiruqVgFSCQzleZE
-	 Jrm7ClSIAvi4g==
+	b=nN9kf5OFlgu4dQr8kCgt11CeEmO3VjWDz9PPNEL9PiWAWkorJg3cQDh8o7rskgdSs
+	 cn+ZKCIsnVwh+8dDZO4Zbyur1MW45QSGn8txRaDsySqSV7KIMmfUKA5PWQ1Dv3NHmv
+	 +N+s+m3m/WrVUHwd5kcgs7cL+OxACk/rGNf0EmWGQOVxp0vp7tt78QGYKr46jUlIvE
+	 NOTMsBSNsx0g5Ie9rDombMvKqIbh7Nyju6A3ZegmdGTOr9s5LdvlzbdX0wltREHHny
+	 3qbGbMDgb7mTKOD9Et9doc+jpde1E3Wt42dbzEXoOmxjsTZX2KM5B2RTwzhiT1mwTz
+	 nVlaC5Lb/NTtg==
 From: SeongJae Park <sj@kernel.org>
 To: 
 Cc: SeongJae Park <sj@kernel.org>,
@@ -47,9 +47,9 @@ Cc: SeongJae Park <sj@kernel.org>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	kernel-team@meta.com
-Subject: [RFC PATCH 2/5] samples/damon/wsse: implement DAMON starting and stopping
-Date: Wed, 13 Nov 2024 08:26:21 -0800
-Message-Id: <20241113162624.48973-3-sj@kernel.org>
+Subject: [RFC PATCH 3/5] samples/damon/wsse: implement working set size estimation and logging
+Date: Wed, 13 Nov 2024 08:26:22 -0800
+Message-Id: <20241113162624.48973-4-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241113162624.48973-1-sj@kernel.org>
 References: <20241113162624.48973-1-sj@kernel.org>
@@ -61,71 +61,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Start running DAMON for the process that user requested to estimate the
-process via 'pid' parameter, when 'y' is passed to 'enable' parameter.
-If 'n' is passed, stop running DAMON.  Iterating the DAMON monitoring
-results and estimating the working set side is not yet implemented.  It
-will be implemented by the following commit.
+Implement the DAMON-based working set size estimation logic.  The logic
+simply iterates memory regions in DAMON-generated access pattern
+snapshot for every aggregation, and get the total sum of the size of any
+region having one or higher 'nr_accesses' count.  That is, it assumes
+any region having one or higher 'nr_accesses' to be a part of the
+working set.  The estimated value is printed to the kernel log.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- samples/damon/wsse.c | 35 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 34 insertions(+), 1 deletion(-)
+ samples/damon/wsse.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/samples/damon/wsse.c b/samples/damon/wsse.c
-index 5912f15181c8..119ac8a2c901 100644
+index 119ac8a2c901..a2a94c505938 100644
 --- a/samples/damon/wsse.c
 +++ b/samples/damon/wsse.c
-@@ -27,15 +27,48 @@ static bool enable __read_mostly;
- module_param_cb(enable, &enable_param_ops, &enable, 0600);
- MODULE_PARM_DESC(enable, "Enable or disable DAMON_SAMPLE_WSSE");
+@@ -30,6 +30,23 @@ MODULE_PARM_DESC(enable, "Enable or disable DAMON_SAMPLE_WSSE");
+ static struct damon_ctx *ctx;
+ static struct pid *target_pidp;
  
-+static struct damon_ctx *ctx;
-+static struct pid *target_pidp;
++static int damon_sample_wsse_after_aggregate(struct damon_ctx *c)
++{
++	struct damon_target *t;
++
++	damon_for_each_target(t, c) {
++		struct damon_region *r;
++		unsigned long wss = 0;
++
++		damon_for_each_region(r, t) {
++			if (r->nr_accesses > 0)
++				wss += r->ar.end - r->ar.start;
++		}
++		pr_info("wss: %lu\n", wss);
++	}
++	return 0;
++}
 +
  static int damon_sample_wsse_start(void)
  {
-+	struct damon_target *target;
-+
- 	pr_info("start\n");
--	return 0;
-+
-+	ctx = damon_new_ctx();
-+	if (!ctx)
-+		return -ENOMEM;
-+	if (damon_select_ops(ctx, DAMON_OPS_VADDR)) {
-+		damon_destroy_ctx(ctx);
-+		return -EINVAL;
-+	}
-+
-+	target = damon_new_target();
-+	if (!target) {
-+		damon_destroy_ctx(ctx);
-+		return -ENOMEM;
-+	}
-+	damon_add_target(ctx, target);
-+	target_pidp = find_get_pid(target_pid);
-+	if (!target_pidp) {
-+		damon_destroy_ctx(ctx);
-+		return -EINVAL;
-+	}
-+	target->pid = target_pidp;
-+
-+	return damon_start(&ctx, 1, true);
+ 	struct damon_target *target;
+@@ -57,6 +74,7 @@ static int damon_sample_wsse_start(void)
+ 	}
+ 	target->pid = target_pidp;
+ 
++	ctx->callback.after_aggregation = damon_sample_wsse_after_aggregate;
+ 	return damon_start(&ctx, 1, true);
  }
  
- static void damon_sample_wsse_stop(void)
- {
- 	pr_info("stop\n");
-+	if (ctx) {
-+		damon_stop(&ctx, 1);
-+		damon_destroy_ctx(ctx);
-+	}
-+	if (target_pidp)
-+		put_pid(target_pidp);
- }
- 
- static int damon_sample_wsse_enable_store(
 -- 
 2.39.5
 
