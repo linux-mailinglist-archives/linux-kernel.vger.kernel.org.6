@@ -1,112 +1,146 @@
-Return-Path: <linux-kernel+bounces-407140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF009C6956
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:33:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB839C6958
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:34:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94745B267FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:33:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B37FEB26A90
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F823169AC5;
-	Wed, 13 Nov 2024 06:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6A417A92F;
+	Wed, 13 Nov 2024 06:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LBjR4DNQ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="juskjPfW"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8827D2594;
-	Wed, 13 Nov 2024 06:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0226F1714BC;
+	Wed, 13 Nov 2024 06:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731479626; cv=none; b=IAdbBDDyvYXN/TRWs3pY5ELIFcKyWa3b/5LcpRaOIND8pCsYiNL9l64Qm80N4iNfkOxTllXcnmyYuinDSoif2SHSWoiUJ08T9vmKF6171YIY9hmFWZaLvStMzSJTiwWWKYklcdibRPg33wCpMQfF0n/Le4THXZVoWABkz6zpCIQ=
+	t=1731479671; cv=none; b=Fp/jdAE6VGeHG44D8vo36nESqAXVyKi1FaF+iFt07+y3anB17l824JEsv6K5oGLonoy0D0F5Oy8Ckpd8zm9d8FiZ0lh1Sn9Y2ysCYcivHirGw2tbgd2G9DRF7zLzXYWEWu3YHVypJ5bwCh1k5PjciVjmxEPzoV6bpH+YWaDpTMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731479626; c=relaxed/simple;
-	bh=9MpwJWZVMUAOmqlA+VSW/+G6o0J8Auez/wUZnbya2KQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CTD1/oOo9d+3cgna6YHh/GKgNXqScvqVjI/QtqBmART1h9693mo5ELx6gNjeFHrerqxW1kRGeL9i0gCYFYHdgEY7lB+W2YO7cildbkVfuyrXDzRtYUsb1lJKZpiNc5nI+svV44SZd/xeaeixzDZ0UM7h+C1B2E84nsvsy9E4nLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LBjR4DNQ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731479619;
-	bh=ygUXM9cyet0rOB7Ae8SPe/FAe67XouoFd1A9KN8VhFY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LBjR4DNQ26MEoHy9VbkBURZir4obe0otR8txLnT/CaIaxhqKzg2fExa4OByRaQAIo
-	 Txgk5kBo/docNDW2qjePZ9TNdIZAqEwaRh+WGMGHabok7qlY1bsxpb6nHtL2Hmaojm
-	 aFhaF9s0p1RtDGc9rDxWuMr6pwgIiqVwItYhTMRGFuH7Pr2t/67mbHLHV5jbnn6sVC
-	 vQn+U7puqSlfqP68sSfNUCF+TFb0256uDV7o5Q/h7jXeYYGF/beMHPrdpjENhn9avy
-	 xIgi6kY7Gs34ATVtPYN5yiJzhdGnP/3Qup20PEXmfvqA/dUGd/AgcwgJMRFWHb5wIV
-	 D1pBUo0Yyqn+g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XpD4y4f7bz4wc3;
-	Wed, 13 Nov 2024 17:33:38 +1100 (AEDT)
-Date: Wed, 13 Nov 2024 17:33:40 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dave Airlie <airlied@redhat.com>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>, Philipp Stanner
- <pstanner@redhat.com>, Intel Graphics <intel-gfx@lists.freedesktop.org>,
- DRI <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the drm-misc tree
-Message-ID: <20241113173340.345a196e@canb.auug.org.au>
-In-Reply-To: <20241108175655.6d3fcfb7@canb.auug.org.au>
-References: <20241108175655.6d3fcfb7@canb.auug.org.au>
+	s=arc-20240116; t=1731479671; c=relaxed/simple;
+	bh=iZGahcGw/ip8xIrXTDzim9l5DJiCEWJ7MHrj5I+Yseg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j97gbjo7uM3FtehazVyFdE1yxjwgMyHsBXrbLd0eQ1WDNVp2cXqVlJazPdcLw2RbRLVYGf+y2AyGlLhU7CofQ3moClEgap1FrpO64Fc9oL/8c8qLZBAZR5OpDw3y41wnm0ZntWh9izKun6j8S6l8HhwWWvMXzpJ/wJ3TC8RD7AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=juskjPfW; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-723f37dd76cso6758051b3a.0;
+        Tue, 12 Nov 2024 22:34:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731479669; x=1732084469; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dvjRZrGcOUQW5mqy7FIUkoTS+9pLckU9+BVxZZoa7DQ=;
+        b=juskjPfWcOVzjOslTwpfSKqwDi3PxCSU+VDt24v7LnIaAyN4jo4yK+KVhVqtHAe8Lg
+         o1NyAAZlbfwNhqtcnAad2bJOntwNx067XiUsaWd07vseAkr2HpUwpTvDmXHZlUCwZbXC
+         EOblpt6G0hmWe9+9JMVo4sK+Vn8Y/LIHqmybJAAavsnDNCNLtC19I3N72Mlo9wSftz0Q
+         aoiGLHUZQQQ1mSkMJtCE1jaN9MernRpq76EuQF0m+Xyqz5n+Mf64MCtHsQ+YphB3qDDq
+         KQ/3DSrKSOUlPDavzudkDEPccecnRR2KyudiIcQs9ZmmclnJFdvdnImXXRDoFXpcBUDD
+         RaiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731479669; x=1732084469;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dvjRZrGcOUQW5mqy7FIUkoTS+9pLckU9+BVxZZoa7DQ=;
+        b=imSQfm/xqVOCIFUOYZfeJksGU4nGsn+oR504Hj75JkSkdIgAhMDbuylOlZ4Id/oJew
+         I6lB7sC82nuhqwt+98jAsXSXqhKkOUoc1asywmxLWbvLM3pl7KpJXtikxAwMV6N/szrd
+         dDhTfPpDyHGRPHYl+6EKU64MhHPeB9eWRgfs6p1/vBPgwGqPsUl3qN6lZIlVVHP7jMbD
+         U/I8E+Zd1DK2Fw0tJLDEg9rzD7h4BNfbjRqj/6uDS4hD7qz4MroqSHfNW01d5dYxozym
+         MmIt4N5JKzCaXdo5z7FQ5W5l9omIOgOmIQHodNRjjpfJe4gNepOJQUEiYZdvCgHn/NFQ
+         x+Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLsdBMih/Szq/AkcgmtpupSbaSghHMzwhHZsRTRBIgBg0KABv9pUkq8+UNfQulGwkhgIqpzjqF0lJbpLMs@vger.kernel.org, AJvYcCXPaP6hq9QD9+kz9PsyMJb48o7+CxM6zMpkXUkKFOswsH6CP/FbKXUFxBRZBmKcEmmP9L6VSn5o3vc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyEMtX5EX1RuU5K+UMBY1BrWQheVEFov+lACM74EQxHW9GFVml
+	IuAqpKSMzT1VY67865DdMmeJVgwKWT6g5zKPsddoTklMHlwpirwU
+X-Google-Smtp-Source: AGHT+IFPbQXqIv2ar+QII0hQpgBjXdJgL30cR+0I35z0Qeg/jgs8gSfyzyoSkqCRaIGNFonNZHvndA==
+X-Received: by 2002:a05:6a00:10d2:b0:71e:6f32:df07 with SMTP id d2e1a72fcca58-7245796a213mr2177372b3a.1.1731479669057;
+        Tue, 12 Nov 2024 22:34:29 -0800 (PST)
+Received: from localhost.localdomain ([2600:1700:3bdc:8c10:a:e04f:e712:3f95])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72458bab30asm747572b3a.190.2024.11.12.22.34.27
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 12 Nov 2024 22:34:28 -0800 (PST)
+From: anish kumar <yesanishhere@gmail.com>
+To: corbet@lwn.net,
+	tj@kernel.org,
+	akpm@linux-foundation.org,
+	ptesarik@suse.com,
+	xavier_qy@163.com,
+	vbabka@suse.cz,
+	tintinm2017@gmail.com
+Cc: linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	anish kumar <yesanishhere@gmail.com>
+Subject: [RFC PATCH 0/2] modernize DMA api documentation
+Date: Tue, 12 Nov 2024 22:34:23 -0800
+Message-Id: <20241113063425.21042-1-yesanishhere@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/q7TG3z8kTKztApVEjDuHvF=";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/q7TG3z8kTKztApVEjDuHvF=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Dear maintainers,
 
-Hi all,
+This patch series is inspired by the ongoing discussion in the following thread:
+https://lore.kernel.org/lkml/20241111063847.GB23992@lst.de/
 
-On Fri, 8 Nov 2024 17:56:55 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the drm-misc tree, today's linux-next build (htmldocs)
-> produced this warning:
->=20
-> Documentation/gpu/drm-mm:571: drivers/gpu/drm/scheduler/sched_main.c:1359=
-: ERROR: Unexpected indentation.
->=20
-> Introduced by commit
->=20
->   baf4afc58314 ("drm/sched: Improve teardown documentation")
+As part of an effort to modernize the documentation, the first patch in
+this series converts the relevant document to use kernel-doc comments directly
+within the source code, replacing the previous method of manually adding
+documentation. This change will help streamline the documentation workflow and
+ensure it remains synchronized with the code.
 
-I am still seeing this warning (now in the drm tree)
+I am still getting below errors and wondering if there is a better
+way to write this patch.
 
---=20
-Cheers,
-Stephen Rothwell
+/home/ANT.AMAZON.COM/anishkmr/Downloads/linux/Documentation/core-api/dma-api:89:  
+    ./mm/dmapool.c:229: WARNING: Duplicate C declaration, also defined at  
+    core-api/mm-api:224. Declaration is:  
+    '.. c:function:: struct dma_pool *dma_pool_create (const char *name,  
+    struct device *dev, size_t size, size_t align, size_t boundary)'.
 
---Sig_/q7TG3z8kTKztApVEjDuHvF=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+/home/ANT.AMAZON.COM/anishkmr/Downloads/linux/Documentation/core-api/dma-api:92:  
+    ./mm/dmapool.c:420: WARNING: Duplicate C declaration, also defined at  
+    core-api/mm-api:404. Declaration is:  
+    '.. c:function:: void *dma_pool_alloc (struct dma_pool *pool, gfp_t mem_flags,  
+    dma_addr_t *handle)'.
 
------BEGIN PGP SIGNATURE-----
+/home/ANT.AMAZON.COM/anishkmr/Downloads/linux/Documentation/core-api/dma-api:98:  
+    ./mm/dmapool.c:229: WARNING: Duplicate C declaration, also defined at  
+    core-api/mm-api:224. Declaration is:  
+    '.. c:function:: struct dma_pool *dma_pool_create (const char *name,  
+    struct device *dev, size_t size, size_t align, size_t boundary)'.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc0SEQACgkQAVBC80lX
-0GxDNgf/THbv3cMa7n0KQ39opRw5GvltAffCB8zEM4unatKuWQcaYn+BgvVPUM4F
-I32JGSduDqXPlUVlSGJmYPClmCzIHOub7vwbnE85d1UvcwfBO22FY5+TenCPjbZD
-QtEEpOGYDQlgzcM9m9JqaQPjso0hpXswCfmmyf95UGyFRn/CXT0R4kXoWxVEKeUF
-EWJci4iiWveDwvIWeIIYOnYM/FnoIWxDobuX1KGjDsO/7wfbpU9VzdnGb0jrw0eu
-i05/QLAoOlpwpuPnsZT7Zlil4uwIh5jZLKCEoTwF8cNPeKHviNNigT3YInJqi4n/
-NUhK/E0PAQ1pBkyraaSjDcBHo/5XGg==
-=INO/
------END PGP SIGNATURE-----
+/home/ANT.AMAZON.COM/anishkmr/Downloads/linux/Documentation/core-api/dma-api:101:  
+    ./mm/dmapool.c:466: WARNING: Duplicate C declaration, also defined at  
+    core-api/mm-api:450. Declaration is:  
+    '.. c:function:: void dma_pool_free (struct dma_pool *pool, void *vaddr,  
+    dma_addr_t dma)'.
 
---Sig_/q7TG3z8kTKztApVEjDuHvF=--
+/home/ANT.AMAZON.COM/anishkmr/Downloads/linux/Documentation/core-api/dma-api:104:  
+    ./mm/dmapool.c:366: WARNING: Duplicate C declaration, also defined at  
+    core-api/mm-api:360.
+
+Thank you for considering this patch. I look forward to your feedback.
+
+anish kumar (2):
+  dmapool: Improve dma api kernel-doc comments
+  dmapool: Documentation: use the kernel-doc comment
+
+ Documentation/core-api/dma-api.rst | 66 ++++++------------------------
+ mm/dmapool.c                       | 40 ++++++++++++------
+ 2 files changed, 40 insertions(+), 66 deletions(-)
+
+-- 
+2.39.5 (Apple Git-154)
+
 
