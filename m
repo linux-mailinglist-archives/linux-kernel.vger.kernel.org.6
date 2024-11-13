@@ -1,110 +1,220 @@
-Return-Path: <linux-kernel+bounces-407196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962ED9C6A12
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:33:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B699C6A15
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:38:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23612B22E29
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:33:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5069C1F22FD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBD018859E;
-	Wed, 13 Nov 2024 07:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECB2185B4C;
+	Wed, 13 Nov 2024 07:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VETkn3Rp"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="WBovD0uO"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2065.outbound.protection.outlook.com [40.107.247.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF7335885;
-	Wed, 13 Nov 2024 07:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731483170; cv=none; b=DAYCZJMEJk3HmhobzAfiU3efsZ0ayyDCmUgqlPKAbUqy9VmlQIpxy3oQTevlz/5subfkl4wlZ+nHl4Pvtl353/Iw/QcPvlLQmUDisS65b5rf7CHN08KCvYggF/ik/Em1916V6LZbDi2dPLCy8X91UmXrX4TgoERha2QQmE2ZY14=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731483170; c=relaxed/simple;
-	bh=sVsJxS9e8Feoju3z9kLVoX7oyF2LbuRtLNrwKHqDJ3E=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=WWR/0yVO2K/VfHVrnxesUkC0ghH3StyAayVQpF71r9B9cqspjjfArYfYUI5Cub2OklFoaNtUmo8ANFilzNWTMw00/tqqVkRu0iViTF7Pq1RZzsOusM/W8JFeoJSrHC/c64KWKDuaBCfVtD/dYua9FYmFgnj4aBsQJCfYARohHnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VETkn3Rp; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7240d93fffdso5598327b3a.2;
-        Tue, 12 Nov 2024 23:32:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731483168; x=1732087968; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ydt3a/CwJ8B9afYgE/yrVykOza81dEen6k3D9kqyuHM=;
-        b=VETkn3RptQCfWGeWzz6TzgiJ0xmafCgDuqqYofNODFIW3KSw4SMRqCYyQ+c1BN65/I
-         64F8Fruc91+4QaDqbdHGVkmcco0ZJT0yJTYEQjX9Q/jTyvyMGFBy3akP0R0/RudjnRLO
-         JnZPU1lMA+p2h+10AsPFoJ3jShHWQGMkwMwcESUtqM3sPL6b/7rfwJn6ZXBo1fGqySbS
-         rRk7hzu7EtPfkFNCOnnuheoK646I8AHzSLu0kTCzN5rFXiw6g25JKJS9KkVv4lg76w/R
-         Xbf5kDSPXAuK2FUfmwR/PPogx3kl97RyxxdNCl84C+FccVdbu1HqSsew1XWKe8Qyv6I+
-         SMJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731483168; x=1732087968;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ydt3a/CwJ8B9afYgE/yrVykOza81dEen6k3D9kqyuHM=;
-        b=d3ylRecQOVrRtikX2fIuSG84vmraLijdfX6tuge5oP2SAs7J63vK31CD8DpK5A8SHm
-         qmrqNENFsBLvTOOVHllC6a0/FddwMpsnDKRotrbAai9EEGzyovJl/P0nZOedmbUph8rQ
-         x9lVEUbf5CkTgWRQ8dhRaPj7190LqbpU5JPg0qomKcw4GhumJdagLSsNvYNT4jJndmBN
-         mzbWgN9xOc7IXrVLpDm5VLVQjUkZ9Li7zBfErbvVfBeXp0AXxt1RmjL2jw85+vmo5ecL
-         W6IXi0pDqfqb3q1KIA1/MA8hpQDdoMpdzCdKB7JPsekX8Aa1jW1pBUNucjaH0NL27qZ0
-         cWzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlePrd/EFLQEBCPsUTRqnuFgoGBw4pwqU2bBgL7kKBBDAl56kD6YMVz5GgXqj8NML1y2U7K/nolaL10r8=@vger.kernel.org, AJvYcCW5qHFkrpVGdUdpn3wZPiubZHlZlLLX7fK2GEsbO5jDtGyPvQcMI62fTGdeGI/0H3hK6JAl9IluElKP7CryAA==@vger.kernel.org, AJvYcCXvFHcXcUdcAuH/TqZF/rzkaabczShcKDMp0r0U/7jQJidrfVSaD5wcOLqrOJIm97vGoGcGADzoYPmYL7JL5BKO+Qtj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3f23SPs1VqPHGRr48iOrzbDEE10/S86IS7A2LnQM3H87dwvfF
-	AUbk3XYfKwiB/W6oqWUEvQ4plDoUxtVlFcv3Vf34J8jZo1FMp6Dt
-X-Google-Smtp-Source: AGHT+IGo17+0CiznxgzXvqz3+t8QWlsqph7jxFNRIn4nmCDEyVatBOR0uDeUb8AhZ6CKTeHN6RZgNQ==
-X-Received: by 2002:a05:6a20:9191:b0:1d9:25d4:e8b1 with SMTP id adf61e73a8af0-1dc703de37dmr2643692637.25.1731483168541;
-        Tue, 12 Nov 2024 23:32:48 -0800 (PST)
-Received: from [192.168.68.56] ([122.161.49.182])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407862826sm12543777b3a.15.2024.11.12.23.32.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 23:32:47 -0800 (PST)
-Message-ID: <8acdd32a-1702-4434-8d79-2e73ded36d2a@gmail.com>
-Date: Wed, 13 Nov 2024 13:02:43 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7952B35885
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731483520; cv=fail; b=s20TVax8eHLxutrjOSb4V3GSjwxFm32qOmmfLyTRcqc2iWcmQVwt91CyD1onRCalX1cCtBZfjkxa7U/N6g1XqI5yIadJYryU3nF+l/U06Qh6r+8i14bmNgbaS19Va8ArV/am1MM/Inujszri5FQB8k/NKbvh/5sh8lSq1JSU0CQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731483520; c=relaxed/simple;
+	bh=WgsZlhw+WOpTug29lIPjYSSyX4T7I3zxkFokdQSDq5Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=YWf26jdzSjL5Mqa4xZkxzEIFp9elVjCTmc9GMTttr4WuT+QrtTOi+AAJBaXLKp8obJAPjyLqFtxdwcJ8ECEjPrYSNlNZfemMb+A5f+HpMS+QPMau3sYGd0d6WZ+cmpPeMulJPm1zKQXYrGrLxUHynq4THA/pbQ3Uhhbiup4wo+M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=WBovD0uO; arc=fail smtp.client-ip=40.107.247.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EMSHCGImYgYi8Em71i31mJzTkxAZ9v/bG6+Mdkn69pziSHTpa3euFZhBhq6yYTcryvxwDa1lTmk4KyCauf0oMzkziGmGu15rFJjGA2buH3GAXUdqDAiThQSJ4YVeFe9OBQn1jiEIMBmo5uMgsm9spK3Qlizegv+UroGWPeWZEP8/SII8MtX3MpBVqasOA+kqF3Pd+tPP3DUSr4HhgE+RE6RrhAe2ytAfZUxhagXT0RhCq4ih0rNCwXokGHJsgK2HFaReOOWZ6lx3dfE6bQW7c09eUbL8QTIEAEHZ5NzrGwiKgWTvGFHsoao9+ExyhzWPz5Yh16jtCV5oh/TBNX5Xww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GqnLus/qCcBXphp+nkVPNT53ikrfEt3bjZjghqE2x7c=;
+ b=D0KfwFsOKwtfSUC7mKn+Ru9tNP7XItEgypMfGVYubXY1NfAngfXyVmE0yuVb6+Ny7ifbok1zfxM6COscwF2xYy3FJlUDcbgbTCaFBIIx2Ea5qC1FGPUFKkMc0ph4zrK480iDtbejgM/Fqhtot7o9ddjMyoghrXwhkKGouuJotRQozjjMTW8XzwA1+iKuMIuo0wXpD2J2FPLRVq91wQoEl3kPCZkPvNPoxETbzCCLkKl3DSiL56QRrYMC/EuabA9/yG+hy8RmkwwLjLEg4dwNlOQQF3PjY3FkvgPGdIm7ggaX+MWMkNdXTGQvafRRLyQKSt34BqgSltpNaEqmdqBxfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=ffwll.ch smtp.mailfrom=axis.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=axis.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GqnLus/qCcBXphp+nkVPNT53ikrfEt3bjZjghqE2x7c=;
+ b=WBovD0uO4OquBnx/duEX+br4EiSYfvipGu4KuexqpnIofjOVFOGKpL8vstFA8KwYO4TkAod/09dJHouh+Byfz9GunC3YxL5frb8PWeqjtVLffrGNb3717BkjjBuadI2i6pLOmq5+wYJAKVKewWa3B/oeSlGyN1eFWfWdBcyntCk=
+Received: from DUZPR01CA0188.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b6::27) by DB9PR02MB7132.eurprd02.prod.outlook.com
+ (2603:10a6:10:228::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.20; Wed, 13 Nov
+ 2024 07:38:34 +0000
+Received: from DU6PEPF0000B61B.eurprd02.prod.outlook.com
+ (2603:10a6:10:4b6:cafe::49) by DUZPR01CA0188.outlook.office365.com
+ (2603:10a6:10:4b6::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28 via Frontend
+ Transport; Wed, 13 Nov 2024 07:38:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ DU6PEPF0000B61B.mail.protection.outlook.com (10.167.8.132) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Wed, 13 Nov 2024 07:38:34 +0000
+Received: from se-mail02w.axis.com (10.20.40.8) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 13 Nov
+ 2024 08:38:32 +0100
+Received: from se-intmail02x.se.axis.com (10.4.0.28) by se-mail02w.axis.com
+ (10.20.40.8) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 13 Nov 2024 08:38:32 +0100
+Received: from pc39391-2017.se.axis.com (pc39391-2017.se.axis.com [10.92.82.2])
+	by se-intmail02x.se.axis.com (Postfix) with ESMTP id AC8535D3;
+	Wed, 13 Nov 2024 08:38:32 +0100 (CET)
+Received: by pc39391-2017.se.axis.com (Postfix, from userid 10612)
+	id A77B74462505; Wed, 13 Nov 2024 08:38:32 +0100 (CET)
+From: Stefan Ekenberg <stefan.ekenberg@axis.com>
+Date: Wed, 13 Nov 2024 08:38:11 +0100
+Subject: [PATCH] drm/bridge: adv7511_audio: Update Audio InfoFrame properly
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: zhengyejian1@huawei.com
-Cc: bpf@vger.kernel.org, jpoimboe@kernel.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- mark.rutland@arm.com, mathieu.desnoyers@efficios.com, mcgrof@kernel.org,
- mhiramat@kernel.org, peterz@infradead.org, rostedt@goodmis.org
-References: <20240607115211.734845-1-zhengyejian1@huawei.com>
-Subject: Re: [RFC PATCH] ftrace: Skip __fentry__ location of overridden weak
- functions
-Content-Language: en-US
-From: Dropify <d.dropify@gmail.com>
-In-Reply-To: <20240607115211.734845-1-zhengyejian1@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20241113-adv7511-audio-info-frame-v1-1-49b368b995a5@axis.com>
+X-B4-Tracking: v=1; b=H4sIAGJXNGcC/x3MQQqEMAxA0atI1hMw0qrMVWQW1aSahe3QYhHEu
+ 1tcvsX/F2RJKhm+zQVJimaNoYI+DSybC6ugcjV0bWeI2hEdl8ESoTtYI2rwEX1yu6A1PRlmM3s
+ 7QM3/Sbye73r63fcDxU7vzWoAAAA=
+X-Change-ID: 20241108-adv7511-audio-info-frame-54614dd4bf57
+To: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<kernel@axis.com>, Stefan Ekenberg <stefan.ekenberg@axis.com>
+X-Mailer: b4 0.14.2
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU6PEPF0000B61B:EE_|DB9PR02MB7132:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8d6ac4ce-1261-47e9-6f85-08dd03b62e13
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZlRRUHgzcWZHWGZrVWYxMS9nT2QzWjlJd2FpV3dXeUxsdVpLWDdheVZRNVBy?=
+ =?utf-8?B?a2FpcFVWbGpyZmNaaEtJbkFRUmd5VFRaNWVEZWs2dlRRUUZIUGJUREFFZ1My?=
+ =?utf-8?B?eG5kdnAyL0I3YVVob29QVE1nNCs1NVJKaytDZmUxb3h1eWptSjlwNEUwaWFX?=
+ =?utf-8?B?WDdRR3JoQnlNR1p0ejN2VkxJWHlHVmkyOGdEbmg5WHN0Mjh6WVhvL3gvVGdE?=
+ =?utf-8?B?Y2ZkTWk0RWdVaUhhOGdNNjFhbmFzWjlxbjc2UjQwYlFqTVYwTzgyS2p4ZXY0?=
+ =?utf-8?B?ajhnMUZ2S2Y0MzJScE9GbGpRL0FXa2lZb1VjYll5UTZmMHE1bWpzeWlya3ox?=
+ =?utf-8?B?bUI1NHYzSjIwT3hRbXNSMjNIc0lERXdVckd2Y25BQXhMeTRHVHV5VDl5TXhG?=
+ =?utf-8?B?OGhhUUduYTNVU000VksrSTZVcGtQWnBRNG9zWlVEWjVYQjZrR2lhbkhlRncy?=
+ =?utf-8?B?MzZTRkNTR3pTRFlINVVLZEFBQW1mUjJnV0FzTVhjWFUwU3RqNmtsUEFQbEtG?=
+ =?utf-8?B?Y1E4ZlkwMHNxQmdhUzJsV3B2c3NMdWlaRWhQU2ZuZkREVkY3Z0piaktHa1A2?=
+ =?utf-8?B?K1FCTHpIMFRSdnhaL3NaTDFlZk5QZVFheWpybW9IUVBOZk9UOFAzaVdYMFpi?=
+ =?utf-8?B?ZjBFNm5JU1RKSFdOMUphczg3aVBqMW5QUjVrT01xcEJyM2dQcUlaYm9YY2ZZ?=
+ =?utf-8?B?Z3JEUTU3WjR3R3FQRXY5cUFBVklRSUN1b3Q5SUl4MzFnc1Q4bXRWS2hGMlNB?=
+ =?utf-8?B?eTVBb3ZqbEdPbnNrMGRYM24zVWxROWZWdnFXazcxWFMvM2tYU1BTc1pHbmxz?=
+ =?utf-8?B?Y3ZENnM5czdWanFsNHF1NlVQRnE1SUR3V1hYWG1oYXRGbXgxWFF5R1JpTUgz?=
+ =?utf-8?B?M2lKR0FJWjhtNUlpdGxYazVEQ2R1SFl6T2F3L3V4d2tyZXZ3enpXVFIzVHp4?=
+ =?utf-8?B?MW1qNk9Yc0tlaXB0YzEzeGxEenQrcXU0blpvT0FYTlUyUlhTalJWaXFJaG9B?=
+ =?utf-8?B?SFYvMEwvaTBkeUV3TU9tTXpCS3lpYmZBNVdNSmN5Q0I2OWdZM0h0bEF5V0ha?=
+ =?utf-8?B?REN2RkRBZGtJYVZrU1BmSUtUUU1UeFRnWURxM2FEbFMxMzdmNG9qSDA0bTdX?=
+ =?utf-8?B?eFRUdWpBcnBuUE1LcWdRcno5ZUc4bW45ODEyMnJRV1JKZmROd1k2djRjUHFq?=
+ =?utf-8?B?aUdDZ3Y4b1Z2SW5GZGZwU1FMWFlSQlJYbFUxMnMybzZYQWFsQ0toMFNOTmpQ?=
+ =?utf-8?B?MHRLTmRJUnY0cDhqUVFTbGFnRGJiRVNyS1NVRm85OWFtcnB5TE5zYlFUUi9L?=
+ =?utf-8?B?T09MQklTMjV4NktOZEFYcmh6dHhzSEtqMDFXWlQ3RlJuVng2MFNRaWN1eE1z?=
+ =?utf-8?B?V09MMllKb1I4c1FKQmlRTzRrZitVM1JtaGlvbFJBZElEU3kwUnRsZkhOcFN6?=
+ =?utf-8?B?SzZkd3JsNmVPZWpYdEkvY1BhYjdreHpaejYrTE9jUlA2Vm9iVUJ0Qi85Zk9I?=
+ =?utf-8?B?Z2ZPNWF5bXRKK0xySGFiMk9JL3drUi9oaWM0cGlTYWxKdGhhZDNVK0hYVHJU?=
+ =?utf-8?B?KzBJREJGSXgyWUdDTEt1bEhnQzFkblVPWXJqbzZnNTlRNGlKNW9SQUpzbDND?=
+ =?utf-8?B?Y1AzMGo4bUtDenpKcmtaM3Z0d0xIVVJVQmJnbUVJQ09sZ2lreWRuTmlOTGJ5?=
+ =?utf-8?B?eHYvUUk4SkM5eFJoZU5GVnNFOUNCUzh5Y1RlazR3M1B0UnQwbkNReXM2VmdE?=
+ =?utf-8?B?cm5jYlFQUXpMa0hxN0ZnWjg1NExrWnhsNUYwWEE2NFZUaGM1QTAvQzNnekJN?=
+ =?utf-8?B?YS9pQS80aHVmeFBqbFd1bXFaSERHUHNsVy8vQzM4T2xJTU4xRC82NDYvWXpl?=
+ =?utf-8?B?VHo5YjJtVVdXWUdrWE5jazhBVW5jU2x4elZJRDNCSldqRTVzZ3JQTkIyVTJP?=
+ =?utf-8?Q?Bj6rYu/eV3Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2024 07:38:34.7810
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d6ac4ce-1261-47e9-6f85-08dd03b62e13
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU6PEPF0000B61B.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR02MB7132
 
-Wondering where are we with this issue?
+AUDIO_UPDATE bit (Bit 5 of MAIN register 0x4A) needs to be set to 1
+while updating Audio InfoFrame information and then set to 0 when done.
+Otherwise partially updated Audio InfoFrames could be sent out. Two
+cases where this rule were not followed are fixed:
+ - In adv7511_hdmi_hw_params() make sure AUDIO_UPDATE bit is updated
+   before/after setting ADV7511_REG_AUDIO_INFOFRAME.
+ - In audio_startup() use the correct register for clearing
+   AUDIO_UPDATE bit.
 
-I am experiencing an issue where in a fentry/kfunc bpf probe attached to 
-a function doesn't fire. I have only experienced this behavior on Debian 
-kernels with `CONFIG_X86_KERNEL_IBT` enabled.
+The problem with corrupted audio infoframes were discovered by letting
+a HDMI logic analyser check the output of ADV7535.
 
-Because of weak symbols being removed from kallsyms, 
-kallsyms_lookup_size_offset() returns the symbol offset for the function 
-"acct_process()" more than the actual size. And the function body now 
-contains two __fentry__ locations.
+Signed-off-by: Stefan Ekenberg <stefan.ekenberg@axis.com>
+---
+ drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-Depending on where binary search lands up first, correct (acct_process + 
-4) or incorrect (acct_process + 260) location is returned.
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
+index 61f4a38e7d2bf6905683cbc9e762b28ecc999d05..8f786592143b6c81e5a434768b51508d5e5f3c73 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
+@@ -153,7 +153,16 @@ static int adv7511_hdmi_hw_params(struct device *dev, void *data,
+ 			   ADV7511_AUDIO_CFG3_LEN_MASK, len);
+ 	regmap_update_bits(adv7511->regmap, ADV7511_REG_I2C_FREQ_ID_CFG,
+ 			   ADV7511_I2C_FREQ_ID_CFG_RATE_MASK, rate << 4);
+-	regmap_write(adv7511->regmap, 0x73, 0x1);
++
++	/* send current Audio infoframe values while updating */
++	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
++			   BIT(5), BIT(5));
++
++	regmap_write(adv7511->regmap, ADV7511_REG_AUDIO_INFOFRAME(0), 0x1);
++
++	/* use Audio infoframe updated info */
++	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
++			   BIT(5), 0);
+ 
+ 	return 0;
+ }
+@@ -184,8 +193,9 @@ static int audio_startup(struct device *dev, void *data)
+ 	regmap_update_bits(adv7511->regmap, ADV7511_REG_GC(0),
+ 				BIT(7) | BIT(6), BIT(7));
+ 	/* use Audio infoframe updated info */
+-	regmap_update_bits(adv7511->regmap, ADV7511_REG_GC(1),
++	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
+ 				BIT(5), 0);
++
+ 	/* enable SPDIF receiver */
+ 	if (adv7511->audio_source == ADV7511_AUDIO_SOURCE_SPDIF)
+ 		regmap_update_bits(adv7511->regmap, ADV7511_REG_AUDIO_CONFIG,
 
-Thanks,
+---
+base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+change-id: 20241108-adv7511-audio-info-frame-54614dd4bf57
 
-Dropify
+Best regards,
+-- 
+Stefan Ekenberg <stefan.ekenberg@axis.com>
 
 
