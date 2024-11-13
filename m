@@ -1,178 +1,128 @@
-Return-Path: <linux-kernel+bounces-408343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F1D9C7DAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:28:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E199A9C7DAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:28:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D33BF1F222CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:28:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E1B71F21E7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F13206959;
-	Wed, 13 Nov 2024 21:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF1F206067;
+	Wed, 13 Nov 2024 21:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="gwdBbD+g"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mnrPNH4W"
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B2818C02F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 21:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764381DEFC7;
+	Wed, 13 Nov 2024 21:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731533300; cv=none; b=rNRFmozY27nVAPBjCJ6REX3I7O4y5Vqin7klpC1Y4Mg9LsCisj4ptcRHBAStUeNRqOqJfTCRpJ7G5dAwBwgEXjgvD3OjG/6NwguMBB3YgzjTlqIoHG2L2Ia1Rs8ajkImM4KrqLt8PBzhdp0PbLQvLvfg92FXj/qjeFzmtUPnXJ4=
+	t=1731533327; cv=none; b=ENhBgOzmB8MxTZOw3pO0f6jyErxm77sZEWAhJuT+pLMC4eT8mJqxaEbMnCL535fyq4LfawronxXrPIvZZw+icDIvBg+ZjqSsANXoEJn/eYU5DC6qG0ulpAsUK1nAnAxaMgS3OtLaIPWNIjCAg4L9wL5h0hD9M4l9qmo3qfGBljE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731533300; c=relaxed/simple;
-	bh=rKhHAG+LvAXKqEHhSlBUI3rw27sV72XPt1hCRbQISuo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y3n1GFo0jm2EPg3VxD3pfr7WzfMWcyyP7gcTvPTXJf5ywdQ2bKG4SvRM1D/HIUbEIy88VnDzlvp21Ab8MfzLbhQEb6yEpUqtJZMYaR1YNrwj686OESpdbgDIeTGvwns5l2D1sXlnlSaCQYWeuCDhwHcAGYQcfPo1cpwXW3Um+60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=gwdBbD+g; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43152b79d25so62015545e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:28:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1731533294; x=1732138094; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QQ6xAbIC8Al8OcOI95+3pwvP6j9wIJ23QXfOfXWSupE=;
-        b=gwdBbD+gMOJlgKY4stYurbeaVqgSW9rmuoGPSWiXjDn3oz/rIOpGtrACiY82gWXTjo
-         Pd/YotrMvXQx2xueYlulDGe6v/00u8vffQJj4xvSw0/JlMXxRcg2dngCdpiaQWeNNyuJ
-         G3m0hP2HDFZpL0IL4JG+ypHPODSEofGffv4MejhEjGnOcLhH/bbmn8kRbbdSb7QsGIDb
-         ksj/TwDceE7hjKTwxi1XMXMfEpdpyuDsHVbDoOcY6ZmKNVxZlXiDEQ6gtpNQdtODhhio
-         HunON0sXyr1mIioyT489OrmOjIgiLWL/fnsPaZuDeIxRqpQT0+N/mD0Wqu+oxASUUjz5
-         znCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731533294; x=1732138094;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QQ6xAbIC8Al8OcOI95+3pwvP6j9wIJ23QXfOfXWSupE=;
-        b=N524ca3ZsQtv/v0Z5zyVuEDFfG0JI44XFz09YV3QSg17Xs+Em3IvoF1Gr56HXgKYk9
-         CVRj4r5mZDgpR9eTEtaqAg/nQQPyruOz0mwe3WErOMEziA9XSFL7LTToh4hNMEZ/zCrh
-         3YKh9ocIM2rB9ZqpFE7av1MYjBmhhCE6taTh+8VTTP5rAughGELDIHNr/OCxQSQAngDS
-         KzDSdvBlx7db9PYoFx7rcwDJjjo6oPI2WY+8f1+G7GiXhYTP19IKCu65fMz47EVZCSJ7
-         mS9MLB/QFFznSsiZ9Bv1RXfc29b8AtrUTaQR7PBn4ZZZXOJaYGPtccRruN56W5h7j/il
-         xuXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqEr+QmFgKUO+WiByXyq1bDPBkMAP7ueuCpyrg8p9jA/W1PjMupTL672J33+xfUdtH9x9TXo/etXQWcfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzpn08L47qG01GDHvimnatRBSx6ReDn2HQn8is8hYIw9rbKL9xj
-	zfH0Rgtrd22MKcxvWe5oJETNO6zgkjRtu6YkNKWbvOxhNOuh6+s7dzbrB6ssfdU=
-X-Google-Smtp-Source: AGHT+IEG3+0loCICljuOQmwpXB+TVjExLPGwnEULJ4Fhnr8A6GRVCEaGZc+hzlpvGDhdAwfNGhjx+w==
-X-Received: by 2002:a05:600c:b95:b0:431:57d2:d7b4 with SMTP id 5b1f17b1804b1-432d4ad3329mr37270825e9.26.1731533294505;
-        Wed, 13 Nov 2024 13:28:14 -0800 (PST)
-Received: from localhost (17-14-180.cgnat.fonira.net. [185.17.14.180])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-432da265c45sm229285e9.11.2024.11.13.13.28.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 13:28:14 -0800 (PST)
-From: David Gstir <david@sigma-star.at>
-To: sigma star Kernel Team <upstream+dcp@sigma-star.at>,
-	James Bottomley <jejb@linux.ibm.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Gstir <david@sigma-star.at>,
-	stable@vger.kernel.org
-Subject: [PATCH] KEYS: trusted: dcp: fix improper sg use with CONFIG_VMAP_STACK=y
-Date: Wed, 13 Nov 2024 22:27:54 +0100
-Message-ID: <20241113212754.12758-1-david@sigma-star.at>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731533327; c=relaxed/simple;
+	bh=BNQyOZQOksUpmRz/+V07mmCaSzrktkHzTwgshUAhM3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=POoMQcA23fpmGvTt1uOdebovoIqNJ3pqLoeAonct4qmI4hB8Xw40Qj1Y0wamGqLB82opSjOiF++OETh9qF7Zy9Mc4nGLiQ03IQdOMYjPkNJ80cEG68G+4OuFAdvl7Iejv7IvWYAitwIxADTMTTNYqKHvrxqv4d8ZMdUSn48wf1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mnrPNH4W; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id BKuit0vNCTH7uBKujtRbcA; Wed, 13 Nov 2024 22:28:37 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731533317;
+	bh=ZcbUci+HdxjrO34+GhEq4ILFRsteVKa8rZeg4w9exyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=mnrPNH4Wc4NKmN71SPL0f1hTbzE1LS2rQxdd5JGvpx8p2TnsAjBjfZ+1o+1h2aIUw
+	 rl/WLGCaErK1VQJI8Vqm5GblibefXunrRKSqhKXBxEniER3PdeGfd9Ac6sSNacBVCr
+	 20J/ijqXvmRwf2QbKFxnZAeEHFCzGfoJ/xzmLH6YGHB5o0+HHnqSSPQ90hN4/fHBN5
+	 JO8WdhGqZQ7c1kfHLuq/sJttg99TYy3Y5DvNmS1IQhlD8rNsPH3HWCU8PlEMWbiMDS
+	 eDFOGJ8U20HC7Sx5AQWznj6ZO/NMAq8vFxwtJExUrpekJhkVUYCh7WwausDVgyTPsl
+	 dGyyAcroEa09g==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 13 Nov 2024 22:28:37 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <e7cfb6b2-51a4-4c8e-9c43-20653bd1443f@wanadoo.fr>
+Date: Wed, 13 Nov 2024 22:28:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Use strscpy() instead of strcpy()
+To: Abdul Rahim <abdul.rahim@myyahoo.com>
+Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241111221037.92853-1-abdul.rahim.ref@myyahoo.com>
+ <20241111221037.92853-1-abdul.rahim@myyahoo.com>
+ <8fef8eab-cd82-4e05-ad9b-1bb8b5fe974b@wanadoo.fr>
+ <o6dz6grwkknan6er5lig6i37ocfekn6i3fljltptn7aol45sfl@n5amdhwr7wmt>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <o6dz6grwkknan6er5lig6i37ocfekn6i3fljltptn7aol45sfl@n5amdhwr7wmt>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-With vmalloc stack addresses enabled (CONFIG_VMAP_STACK=y) DCP trusted
-keys can crash during en- and decryption of the blob encryption key via
-the DCP crypto driver. This is caused by improperly using sg_init_one()
-with vmalloc'd stack buffers (plain_key_blob).
+Le 13/11/2024 à 21:15, Abdul Rahim a écrit :
+> On Tue, Nov 12, 2024 at 07:21:54AM +0100, Christophe JAILLET wrote:
+>> Le 11/11/2024 ï¿½ 23:10, Abdul Rahim a ï¿½critï¿½:
+>>> strcpy() is generally considered unsafe and use of strscpy() is
+>>> recommended [1]
+>>>
+>>> this fixes checkpatch warning:
+>>>       WARNING: Prefer strscpy over strcpy
+>>>
+>>> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
+>>> Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
+>>> ---
+>>>    fs/ceph/export.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+>>> index 44451749c544..0e5b3c7b3756 100644
+>>> --- a/fs/ceph/export.c
+>>> +++ b/fs/ceph/export.c
+>>> @@ -452,7 +452,7 @@ static int __get_snap_name(struct dentry *parent, char *name,
+>>>    		goto out;
+>>>    	if (ceph_snap(inode) == CEPH_SNAPDIR) {
+>>>    		if (ceph_snap(dir) == CEPH_NOSNAP) {
+>>> -			strcpy(name, fsc->mount_options->snapdir_name);
+>>> +			strscpy(name, fsc->mount_options->snapdir_name);
+>>
+>> This does not compile because when the size of 'name' is not known at
+>> compilation time, you need to use the 3-argument version of strscpy().
+>>
+>> Please always compile test your patches before sending them. Even, when the
+>> change looks trivial.
+>>
+> 
+> Sure.
+> 
+>> CJ
+>>
+>>>    			err = 0;
+>>>    		}
+>>>    		goto out;
+>>
+>>
+> 
+> Should it be: NAME_MAX+1 ?
+> 
+> See: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/exportfs.h?h=v6.12-rc7#n203
+> 
+> 
 
-Fix this by always using kmalloc() for buffers we give to the DCP crypto
-driver.
+Looks like a good idea, maybe with a comment related to get_name() in 
+the export_operations structure, so that we remind where this limit 
+comes from?
 
-Cc: stable@vger.kernel.org # v6.10+
-Fixes: 0e28bf61a5f9 ("KEYS: trusted: dcp: fix leak of blob encryption key")
-Signed-off-by: David Gstir <david@sigma-star.at>
----
- security/keys/trusted-keys/trusted_dcp.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/trusted-keys/trusted_dcp.c
-index e908c53a803c..7b6eb655df0c 100644
---- a/security/keys/trusted-keys/trusted_dcp.c
-+++ b/security/keys/trusted-keys/trusted_dcp.c
-@@ -201,12 +201,16 @@ static int trusted_dcp_seal(struct trusted_key_payload *p, char *datablob)
- {
- 	struct dcp_blob_fmt *b = (struct dcp_blob_fmt *)p->blob;
- 	int blen, ret;
--	u8 plain_blob_key[AES_KEYSIZE_128];
-+	u8 *plain_blob_key;
- 
- 	blen = calc_blob_len(p->key_len);
- 	if (blen > MAX_BLOB_SIZE)
- 		return -E2BIG;
- 
-+	plain_blob_key = kmalloc(AES_KEYSIZE_128, GFP_KERNEL);
-+	if (!plain_blob_key)
-+		return -ENOMEM;
-+
- 	b->fmt_version = DCP_BLOB_VERSION;
- 	get_random_bytes(b->nonce, AES_KEYSIZE_128);
- 	get_random_bytes(plain_blob_key, AES_KEYSIZE_128);
-@@ -229,7 +233,8 @@ static int trusted_dcp_seal(struct trusted_key_payload *p, char *datablob)
- 	ret = 0;
- 
- out:
--	memzero_explicit(plain_blob_key, sizeof(plain_blob_key));
-+	memzero_explicit(plain_blob_key, AES_KEYSIZE_128);
-+	kfree(plain_blob_key);
- 
- 	return ret;
- }
-@@ -238,7 +243,7 @@ static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
- {
- 	struct dcp_blob_fmt *b = (struct dcp_blob_fmt *)p->blob;
- 	int blen, ret;
--	u8 plain_blob_key[AES_KEYSIZE_128];
-+	u8 *plain_blob_key = NULL;
- 
- 	if (b->fmt_version != DCP_BLOB_VERSION) {
- 		pr_err("DCP blob has bad version: %i, expected %i\n",
-@@ -256,6 +261,12 @@ static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
- 		goto out;
- 	}
- 
-+	plain_blob_key = kmalloc(AES_KEYSIZE_128, GFP_KERNEL);
-+	if (!plain_blob_key) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
- 	ret = decrypt_blob_key(b->blob_key, plain_blob_key);
- 	if (ret) {
- 		pr_err("Unable to decrypt blob key: %i\n", ret);
-@@ -271,7 +282,10 @@ static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
- 
- 	ret = 0;
- out:
--	memzero_explicit(plain_blob_key, sizeof(plain_blob_key));
-+	if (plain_blob_key) {
-+		memzero_explicit(plain_blob_key, AES_KEYSIZE_128);
-+		kfree(plain_blob_key);
-+	}
- 
- 	return ret;
- }
--- 
-2.47.0
+CJ
 
 
