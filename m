@@ -1,237 +1,167 @@
-Return-Path: <linux-kernel+bounces-407295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B74D9C6B76
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:27:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C830C9C6B78
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:28:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 860D2B27A0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:27:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80E951F21E1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546421F80B2;
-	Wed, 13 Nov 2024 09:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE41C1F80D9;
+	Wed, 13 Nov 2024 09:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n2PxZcdY"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZPz836D"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEFD1F77B6
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07911F80AF;
+	Wed, 13 Nov 2024 09:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731490051; cv=none; b=KQBHMnaAb7d40wsa6wZB1qg5JNLATuf/JMCyg86ng80Q0Xj0xZQahbnA18SZILEbkampJJJ4jR48eE8XD2DZqbT3y+4vcrdYdSZ/avG2o6H48OTDLrwQ8GJ1VTBUi/U7dvfBe1qTuyRc54D7EEIaCrNRAMlzM5PXxO8YjR7FQ+Y=
+	t=1731490054; cv=none; b=spYNKtPKOJubf7dZmuWaEgFIYJFaJhXSVbABSRdSYbR6/CEDd2Ti73Pc8gvc3vZrETC1jvnvTCZh1rg7MIdp2s01V+CGJpUARSocxGRG51iVWBqFGbf2arGitZtu+XDEnNknfNjoDIR7MmvuKxb/r1OK5uqm+nitT3jZFQKIW7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731490051; c=relaxed/simple;
-	bh=Woik8mGxHb8sDKp6LYHmg0VUPoY8l0PGA3nFglGEYPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z+RgsVRD1fYTbwNH0yPQDJHg/vDbVI/xLShZ4uDvpdQ6FN/MdEDsG9kqjaGEDSiB8wnJ4H2DVWweiFZUVXVIER90o5uNjzq7kONYpcaNq/yTMoCT+1mcfFvXDyJojLqgEyuI/XbA5nUAbvVQmzvW74uMX23mLpFZaCuwniSWGag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n2PxZcdY; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e60966297fso3089635b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 01:27:26 -0800 (PST)
+	s=arc-20240116; t=1731490054; c=relaxed/simple;
+	bh=PIggIEP8ndQCTBEUZ/UpeRjo8okhWfx5znZJV0Q+38M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UYw6f1bft3x5Yx6c4qhRpdluL7Mhjsxag7r1BcfDfG9H5TMfQQHrjaPcM35AvzIWWwpg6l2zcWs5I/hubROU9MY6TkhDsLYqiL9r77TmDg1Raelqp+N68hixTDADnnEcOO9+LA+YrRdFcHhZwPpRLLtEcQbHoxRxvUFUeknSlSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZPz836D; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53da22c5863so270575e87.0;
+        Wed, 13 Nov 2024 01:27:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731490046; x=1732094846; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BvbMB4wNwdVnYSjLQzzIJ1JPopQ50W3YrXVI3V03iEQ=;
-        b=n2PxZcdYdMtfa+53JuLZp9xdnaPwj9dFWNbULDI2XMbrLsH20fw+93HgWKPaY14s4Q
-         HaX3U8sQkNMIbm+PoA9I5xQNb3O/QqhEBXyzin/B9MOGkuz47+Q89cURMsG6fIDWSpP5
-         DWqGvm3fEfF87CkhVIy+SQnLjm5RH2xNBqe/obCjodsQphKqx1T8WOGQH3m6qWXuP9Zk
-         cYeqVTcitVCKVQaKiacyi1kkPcqzU4shUtIDbXu4X4A3TmF7Y3cGBGe9dIazL7uvPLto
-         6hcbuOos9cOUThzhUC/qG5nrLaRG8H5yQ6ixW51nXWDsTynhO3w1aqk2MgDdMoifJLGq
-         RwSw==
+        d=gmail.com; s=20230601; t=1731490050; x=1732094850; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=w8zv/+EtvPDl4iLKTrR8mENbJ+nooaSf7+TWV4HSKjU=;
+        b=KZPz836D2hW2C3Wid+U11d3y4xqkcFgHJ9jqNMDExU5Y9dr76Lrk2rsoJSgZg8OL7/
+         ZjxAazvvHyMfnP6M1wEf/ZOwKxo9bamQSCGEk3p+pxV6SghcFWLqjCbWNeKi/PWUN2uM
+         i4Yl2p6eE0EEcDNePKdfwjKw8X0mfvc8SaaijwaCMcN6aheY1oydpNBhmKka1x5mrl0A
+         /tJ9qRc+F7QBSKiL1l8rKZfHTMStxU7ARgieeunn5YvVXkfTua+XRY1wzwbv10EZSdfa
+         3LwSKFrEccXO4hvIjUYWPKirDTGS5dRFS9lLOJwI1HNAEeVszXBcZUqqskEfTMoLR48i
+         N46g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731490046; x=1732094846;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BvbMB4wNwdVnYSjLQzzIJ1JPopQ50W3YrXVI3V03iEQ=;
-        b=sTNc8Lfmox9qEqpJbUw0BPNZPqWY2JJF0bsoQvEbplX7kz/PVCk3ihp+cjWkEkk3NA
-         PN3uBFLQvOmM71foHD0UULoej99Up70LvLT3Lqo9mBm609sY9KPziC/csedpnOJynBum
-         4pY2T4GHomAdsPbPFb0/2JtvKdXXiPvGLx4T//PgywaljqNppur7TFumbLr5fxVKTCsu
-         scSj6YAW2NWIZTBNm7IWjgkiC5dwHIYJgfb22oOxKR4FS+7rB8xYrwQgcK2On3zJurDD
-         luftc1OlBic2Xqqq5FTfhjRZfO4M/HxlXwOr12tncpjxnkCx83+xS8ee4dfol75QVy5h
-         hCiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWyDkaYPaJ387lQs3lV+kESKX1cW62lfyKYFRiaVPOXQ5ww1mEqzSvWoHdWXI9/nYN9YScqu+Marg4BkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz7XyRdzi4eJI3oh19O+9rrA/rG4mT/wXb8shUBRY8Z7Y1MZjn
-	FoJbyu8uzAUgh1Z6gf53JpvNyEFffjtCwHuxBTE2CqHOz/Mbh5xi+QR8Ofm52A==
-X-Google-Smtp-Source: AGHT+IEx4uAAxtCoiiBH+++NqpeCtgOYTj3kESrEXYNyqknD9YqnWM0YpRT+Ci+UYLhuuKE7MSjOzg==
-X-Received: by 2002:a05:6808:219f:b0:3e6:366f:8e3b with SMTP id 5614622812f47-3e79475a747mr16256490b6e.39.1731490045743;
-        Wed, 13 Nov 2024 01:27:25 -0800 (PST)
-Received: from thinkpad ([117.213.103.244])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f643e9asm11986600a12.59.2024.11.13.01.27.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 01:27:25 -0800 (PST)
-Date: Wed, 13 Nov 2024 14:57:16 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Xin Liu <quic_liuxin@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-	quic_jiegan@quicinc.com, quic_aiquny@quicinc.com,
-	quic_tingweiz@quicinc.com, quic_sayalil@quicinc.com
-Subject: Re: [PATCH v1 3/4] arm64: dts: qcom: qcs615: add UFS node
-Message-ID: <20241113092716.h3mabw4bzgc5gcha@thinkpad>
-References: <20241017042300.872963-1-quic_liuxin@quicinc.com>
- <20241017042300.872963-4-quic_liuxin@quicinc.com>
- <5fe37609-ed58-4617-bd5f-90edc90f5d8b@oss.qualcomm.com>
- <28069114-9893-486b-a8d8-4c8b9ada1b0c@quicinc.com>
+        d=1e100.net; s=20230601; t=1731490050; x=1732094850;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w8zv/+EtvPDl4iLKTrR8mENbJ+nooaSf7+TWV4HSKjU=;
+        b=tbTK0mcHo9UkNXtqPsrgkB+KLxdxMKuvOGEA10i8CDnHXe24rwlVx60lb5CEpGRKi8
+         hgjgdhafQKXyAZCi0N+w5wC75MLAuUd8zkE9+5dLaz0uaJf3T0dzylanhgpz2sTZMPds
+         wawFltc4rORxQLkbdAzhM5b94vW6JqqA1uucerXWjWg8S7NYOne8nN4+JGW740oFcifC
+         13OGwjGTqWfQ8W5t08BNPiezwGDkZqTmggOxrvUfOpx+gjzvlvGj8bkuv+CYM7WrBU2X
+         AaG6NFl37zLzIYnpTG/+sZEhFVXIczV7ciKKtgbXepMGh6PiqGeM8z3QOG/PrRRz7zl8
+         T+QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaTVprQkNIC0iVQ9pxsKmEM2xkgb7zsTbhclVFASqF0YhNTgFQf7W4mnxgRanGnHFPpcjdsZvbjuxp45k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz9BYihIUJXuGolNKhn3dAtDpXAuBuhQL131oZElnEpUveH95D
+	+H1Pw/CnScYgQt8hf2dMC5k03ZYhf07C51DOL5mM4d5x7oz1Jqji
+X-Google-Smtp-Source: AGHT+IH4kaf5AxpGoCViV0kDdMWdOuK9r53gscvJr87yYf1RYZoMo9AThmQkuPHpTA8VhgJ/CpG7gg==
+X-Received: by 2002:a05:6512:3d90:b0:539:e6bf:ca97 with SMTP id 2adb3069b0e04-53d9a411b22mr3111468e87.32.1731490049525;
+        Wed, 13 Nov 2024 01:27:29 -0800 (PST)
+Received: from [192.168.2.177] ([207.188.162.240])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826a9d65sm2162105e87.216.2024.11.13.01.27.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 01:27:27 -0800 (PST)
+Message-ID: <e086b522-1406-4bd0-9f47-5a5c16905495@gmail.com>
+Date: Wed, 13 Nov 2024 10:27:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <28069114-9893-486b-a8d8-4c8b9ada1b0c@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] PCI: mediatek-gen3: Remove unneeded semicolon
+To: Yang Li <yang.lee@linux.alibaba.com>,
+ angelogioacchino.delregno@collabora.com, kw@linux.com
+Cc: linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Abaci Robot <abaci@linux.alibaba.com>
+References: <20241111010935.20208-1-yang.lee@linux.alibaba.com>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; keydata=
+ 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
+In-Reply-To: <20241111010935.20208-1-yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 13, 2024 at 05:19:49PM +0800, Xin Liu wrote:
+
+
+On 11/11/2024 02:09, Yang Li wrote:
+> This patch removes an redundant semicolon.
 > 
+> ./drivers/pci/controller/pcie-mediatek-gen3.c:414:2-3: Unneeded
+> semicolon
 > 
-> 在 2024/10/26 3:24, Konrad Dybcio 写道:
-> > On 17.10.2024 6:22 AM, Xin Liu wrote:
-> > > From: Sayali Lokhande <quic_sayalil@quicinc.com>	
-> > > 	
-> > > Add the UFS Host Controller node and its PHY for QCS615 SoC.
-> > > 
-> > > Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
-> > > Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
-> > > Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
-> > > ---
-> > 
-> > + Taniya (see below)
-> > 
-> > >   arch/arm64/boot/dts/qcom/qcs615.dtsi | 74 ++++++++++++++++++++++++++++
-> > >   1 file changed, 74 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> > > index fcba83fca7cf..689418466dc2 100644
-> > > --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> > > @@ -458,6 +458,80 @@ mmss_noc: interconnect@1740000 {
-> > >   			qcom,bcm-voters = <&apps_bcm_voter>;
-> > >   		};
-> > > +		ufs_mem_hc: ufs@1d84000 {
-> > 
-> > ufshc@ would be consistent with other files in dts/qcom
-> > 
-> I referred to qcom files such as sa8775p/sm8550/sm8650 etc.All use ufs@
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11789
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
 
-That's an oddity. But 'ufshc' is documented in the devicetree spec. So you
-should use it for UFSHC nodes.
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-- Mani
-
-> > 
-> > > +			compatible = "qcom,qcs615-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
-> > > +			reg = <0x0 0x01d84000 0x0 0x3000>, <0x0 0x01d90000 0x0 0x8000>;
-> > > +			reg-names = "std", "ice";
-> > 
-> > One per line, please
-> Thank you, I will fix it next version.
-> > 
-> > > +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-> > > +			phys = <&ufs_mem_phy>;
-> > > +			phy-names = "ufsphy";
-> > > +			lanes-per-direction = <1>;
-> > > +			#reset-cells = <1>;
-> > > +			resets = <&gcc GCC_UFS_PHY_BCR>;
-> > > +			reset-names = "rst";
-> > > +
-> > > +			power-domains = <&gcc UFS_PHY_GDSC>;
-> > > +			required-opps = <&rpmhpd_opp_nom>;
-> > > +
-> > > +			iommus = <&apps_smmu 0x300 0x0>;
-> > > +			dma-coherent;
-> > > +
-> > > +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
-> > > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> > > +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> > > +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
-> > > +			interconnect-names = "ufs-ddr",
-> > > +					     "cpu-ufs";
-> > > +
-> > > +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
-> > > +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
-> > > +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
-> > > +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
-> > > +				 <&rpmhcc RPMH_CXO_CLK>,
-> > > +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
-> > > +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>,
-> > > +				 <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
-> > > +			clock-names = "core_clk",
-> > > +				      "bus_aggr_clk",
-> > > +				      "iface_clk",
-> > > +				      "core_clk_unipro",
-> > > +				      "ref_clk",
-> > > +				      "tx_lane0_sync_clk",
-> > > +				      "rx_lane0_sync_clk",
-> > > +				      "ice_core_clk";
-> > > +			freq-table-hz = <50000000 200000000>,
-> > > +					<0 0>,
-> > > +					<0 0>,
-> > > +					<37500000 150000000>,
-> > > +					<0 0>,
-> > > +					<0 0>,
-> > > +					<0 0>,
-> > > +					<75000000 300000000>;
-> > 
-> > Please try to match the order of properties present in sm8650.dtsi
-> Thank you, I will fix it next version.
-> > 
-> > And please use an OPP table instead of freq-table-hz (see sm8*5*50.dtsi)
-> Thank you, I will fix it next version.
-> > 
-> > > +
-> > > +			status = "disabled";
-> > > +		};
-> > > +
-> > > +		ufs_mem_phy: phy@1d87000 {
-> > > +			compatible = "qcom,qcs615-qmp-ufs-phy", "qcom,sm6115-qmp-ufs-phy";
-> > > +			reg = <0x0 0x01d87000 0x0 0xe00>;
-> > 
-> > This register region is a bit longer
-> I just confirmed again, there's no problem here.
-> > 
-> > > +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> > > +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
-> > > +				 <&gcc GCC_UFS_MEM_CLKREF_CLK>;
-> > > +			clock-names = "ref",
-> > > +				      "ref_aux",
-> > > +				      "qref";
-> > > +
-> > > +			power-domains = <&gcc UFS_PHY_GDSC>;
-> > > +
-> > > +			resets = <&ufs_mem_hc 0>;
-> > > +			reset-names = "ufsphy";
-> > > +
-> > > +			#clock-cells = <1>;
-> > 
-> > The PHY is a clock provider. Normally, it's a parent of
-> > gcc_ufs_phy_[rt]x_symbol_n clocks.
-> > 
-> > Taniya, could you please wire that up in your patchset?
-> > 
-> > Konrad
+> ---
+>   drivers/pci/controller/pcie-mediatek-gen3.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
+> index f333afb92a21..be52e3a123ab 100644
+> --- a/drivers/pci/controller/pcie-mediatek-gen3.c
+> +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
+> @@ -411,7 +411,7 @@ static int mtk_pcie_startup_port(struct mtk_gen3_pcie *pcie)
+>   		if (pcie->num_lanes > 1)
+>   			val |= FIELD_PREP(PCIE_SETTING_LINK_WIDTH,
+>   					  GENMASK(fls(pcie->num_lanes >> 2), 0));
+> -	};
+> +	}
+>   	writel_relaxed(val, pcie->base + PCIE_SETTING_REG);
+>   
+>   	/* Set Link Control 2 (LNKCTL2) speed restriction, if any */
 
--- 
-மணிவண்ணன் சதாசிவம்
 
