@@ -1,141 +1,93 @@
-Return-Path: <linux-kernel+bounces-408206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA799C7BF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:10:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63BDC9C7C2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:31:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DE561F24006
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:10:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74782B264B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF9F205E22;
-	Wed, 13 Nov 2024 19:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463ED204001;
+	Wed, 13 Nov 2024 19:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RqsYtbL0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PioDHrV3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QJpMZa2B"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28AD205E15
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 19:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DE115ADA4
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 19:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731525005; cv=none; b=MUX2M9CckLsXSSrL8OBfW+igUPuSm3sDDat17/umeebVzI9gCB7Gd2B08RNrichlNaXr98XIekWkpmNv1/82CZvygDA2JjtjyH/nZoUpxKPsMosi/ndFq5LgdZpuMXDkSEjaWZzEx0zUJZPMJF+lN+Gx9rvybnaNcZ/nWZ9XAjM=
+	t=1731524998; cv=none; b=SPUn1Mx13enh/2kw34bqNnYTKGpn4tqE0BSBIKfQDkEn5FkkYwVAJkwq9mB/ljxvU8MWus0Bfmiq/n6AzY/qH59gqMwFgRbjHN4w/xQ+YWbi+Bq9045BsH+3X30eudHhyO/7Jj9WcJk8YQlanXDl5VcJvexLjfx3lAmC6gDacZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731525005; c=relaxed/simple;
-	bh=YTenWURPNG80tAie5gN10CA/nw1UVLhT5fUcx+ziBCs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GV1KqccOTyRIIa1wbiY1SEx4W9z1Nb/MOJpzh3Qm168wyARr5iJwFDINzGlVv3Mv8YwWWtZKaby2n2UQHDS9sjLWzFU0TqM+KKgtKCujQGGNtFbKW3lrU+oQ4JBJfg82E2BDCtd6C86X86iSBLK0+1eM7ugufIDyYTu2NxQMhqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RqsYtbL0; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731525004; x=1763061004;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=YTenWURPNG80tAie5gN10CA/nw1UVLhT5fUcx+ziBCs=;
-  b=RqsYtbL0vjVKq45y+9bU/ysbChPsndRm1XuP+KnGdjxCC4vNCDIALvKA
-   AHfTP3XmqxJ0LCULthU2tA4H7agw0wH53UtWwwxI7hhlLkDqfH78mCR74
-   9D1h59tyBeXuZg91PyC6Q8nU5DrbnXzkfTvEdeWaJIvUOy4fNhlS5mKlL
-   eByhwOs/qJoZsOJlPPkytJ4EzHz8t7mNI27Y+onKC6AYKN1vLQCul5H/M
-   tIm0KOUDPXcTVed630FhcnHmk/mDv3hGgN6UBEqjEoePbesGmwzF34Fxo
-   yTsO0Xs7+CZa5fumwDPFsvj0HGIZMdzhjuPWL+4oCDeIC6gc+hBvyHPjc
-   Q==;
-X-CSE-ConnectionGUID: ueK0/kbYSgWr6ZorxScC+Q==
-X-CSE-MsgGUID: iICwep/FQG6pOuGZPEG5Pw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="56827490"
-X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
-   d="scan'208";a="56827490"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 11:10:03 -0800
-X-CSE-ConnectionGUID: CjUqLfJGTMm1s3nNACwQsA==
-X-CSE-MsgGUID: tgeSVRbjTo664YdWIVJbwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
-   d="scan'208";a="92911653"
-Received: from kkkuntal-desk3 (HELO [10.124.220.196]) ([10.124.220.196])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 11:10:03 -0800
-Message-ID: <5a98b9bf-8004-47e0-82e6-77da49419e0b@intel.com>
-Date: Wed, 13 Nov 2024 11:10:01 -0800
+	s=arc-20240116; t=1731524998; c=relaxed/simple;
+	bh=nuMJdn0vO4BlSljFOA9TRpDiV4tyCUGTs57BO2pxi7c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=aT00++T6HQg1oqceuP933Tmv+tyoBFDCfKJpaDVYER76g59IbWbFT6NfbCHQeZVvQ/xZnqDCGOp5akvN+38vflL9jkvaSGaJUc60zhdLT6rs4xLqctcu8YVkEZlFzdbxDuyFCpRVFBfNoszJ/0RX1ckll+t+WFXEuCEPiHf9Hk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PioDHrV3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QJpMZa2B; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731524994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xA/h1AmdIDv6i2BzDTtnig43OB2tag+5jBBHNqpA5Ks=;
+	b=PioDHrV3e1XLWVTsFrcpLDSo+qVuHPO+He22liD5tntPZF9wZyv6J8yXOZysaVS9Sg+ogN
+	Mjzgy6j1E+WCa1+mSvI2Cdq4S2dQ3ojfwJ3QWmC4ZjKRpZAc0pOfmj/7nXi7n4/0VlhIHw
+	+7bPayeteNOLtnV7v/aIyiLbYu7M5Z/rppqar1lIkMs89QypCr4qIemj+J3wu4dISnzkmU
+	JOwfurm3lOQXDMWmPeglAb1e7UQhVWraDZKAQPN3oZKz8TfAxB4z73BuIbV0lEzzDWPzp6
+	+HvuG22doX3rULJREpPht6ie5J0kXNMqyNZo70k4ovf/Oe3yE/zWAvqhEp/Avw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731524994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xA/h1AmdIDv6i2BzDTtnig43OB2tag+5jBBHNqpA5Ks=;
+	b=QJpMZa2B8Vpj6XK5/sY/j2ydNJHWKQyGAGnKl7GtVm9f8Yri9u7EVCuUFB+kKseIdenZQI
+	LnOnJ9AR4hVY+LCg==
+To: David Wang <00107082@163.com>
+Cc: linux-kernel@vger.kernel.org, David Wang <00107082@163.com>
+Subject: Re: [PATCH 01/13] kernel/irq/proc: use seq_put_decimal_ull_width()
+ for decimal values
+In-Reply-To: <20241108160717.9547-1-00107082@163.com>
+References: <20241108160717.9547-1-00107082@163.com>
+Date: Wed, 13 Nov 2024 20:10:08 +0100
+Message-ID: <87jzd7kl0v.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] x86/pkeys: Set XINUSE[PKRU] to 1 so that PKRU is
- XRSTOR'd correctly
-To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
- linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de,
- mingo@kernel.org, rudi.horn@oracle.com, joe.jin@oracle.com
-References: <20241113181436.3518359-1-aruna.ramakrishna@oracle.com>
- <20241113181436.3518359-2-aruna.ramakrishna@oracle.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241113181436.3518359-2-aruna.ramakrishna@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 11/13/24 10:14, Aruna Ramakrishna wrote:
-> PKRU value is not XRSTOR'd from the XSAVE area if the corresponding
-> XINUSE[i] bit is 0. When PKRU value is set to 0, it sets XINUSE[PKRU]
-> to 0 on AMD systems, which means the value updated on the sigframe
-> later (after a wrpkru(0)) is ignored.
+On Sat, Nov 09 2024 at 00:07, David Wang wrote:
+> The improvement has pratical significance, considering many monitoring
+> tools would read /proc/interrupts periodically.
 
-I think this is confusing XINUSE and XSTATE_BV.
+I've applied this, but ...
 
-XINUSE is really internal to the CPU and is partially exposed in
-xgetbv(1).  But XINUSE is monolithic; it includes user and supervisor state.
+looking at a 256 CPU machine. /proc/interrupts provides data for 560
+interrupts, which amounts to ~1.6MB data size.
 
-XSTATE_BV is the actual memory location in the XSAVE buffer.
+There are 560 * 256 = 143360 interrupt count fields. 140615 of these
+fields are zero, which means 140615 * 11 bytes. That's 96% of the
+overall data size. The actually useful information is less than
+50KB if properly condensed.
+ 
+I'm really amused that people spend a lot of time to improve the
+performance of /proc/interrupts instead of actually sitting down and
+implementing a proper new interface for this purpose, which would make
+both the kernel and the tools faster by probably several orders of
+magnitude.
 
-So I think it's incorrect to say that XRSTOR behavior depends on XINUSE.
- XRSTOR behavior depends on XSTATE_BV.
+Thanks,
+
+        tglx
 
