@@ -1,125 +1,137 @@
-Return-Path: <linux-kernel+bounces-407623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FDE59C705E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:17:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6759C702B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:04:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 344CFB2FBC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:04:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D85011F26CB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3721DF726;
-	Wed, 13 Nov 2024 12:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832201FAC58;
+	Wed, 13 Nov 2024 13:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="lLcz8paR"
-Received: from pv50p00im-ztdg10021101.me.com (pv50p00im-ztdg10021101.me.com [17.58.6.44])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKPmHZ0m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA101F7065
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 12:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DF1189F43;
+	Wed, 13 Nov 2024 13:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731502759; cv=none; b=WworPJAF4pgOXAStM20o45FfZBurLv3eYCTZCe5z8JbSt99m+4nl5qH6ba0Pc3uaslGkiAXl6Gkbi3hIZwJw9hAGVjq2iFyef/Eknn2RHV+MnOY+1E3q8YKvnyowEqiNsTdp8DfdI/vGiupm4dUWwB4yLCQqYpYhCoWyHtGcYT0=
+	t=1731502813; cv=none; b=orQRHwgOpz3pb0g75OxRfkUvSANHbV3J0knAJUTzVyKwsIBToivdBttQJit5TqlgQHkBAmrNjDdFmfvyxJlZpeXm7xe37uXO99Po50FinwNy2Eo9PWLI9Zk2jQgjHFIMjMS0put6lDee78F1tcX7ah8u9lHhM7mxf3fVzJmdHWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731502759; c=relaxed/simple;
-	bh=u5tGDNtr71dYjkM5XT6nRh18NvdgCTJKoO70dbwxF2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JRdWUr6BvHPmYN3bCb3QhGofHZTH0RDWd0c27MxW8DYF27WOMVmXOWcQaEAnbgOs+QmOY0IyFyhlOJweqohWp1ppmbj6DiXevl4hD9evb/u/Nlod2YORplQu9wKzHi/cZQt2GgDxptmg6qtDnEH27mGv5u4NiWzaq2kcTY9O4n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=lLcz8paR; arc=none smtp.client-ip=17.58.6.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1731502757;
-	bh=HeW/stKMIpHwA/oQL/utsqZrC65ZV39vRcrfssf+zDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=lLcz8paRxYMbzuSOS9mHNHIGKHPE+ezKlgxibRk7T8LY7Z7bZorMlNFPpjOXWqwS1
-	 6Hpz5XvOgozCuWFMgya2789RsMD7blCbnCPxEVVrByuvwmnk+opGPkkqUIWaZ+dP4U
-	 an85f9NOMBBC3vfMM1QgnAOXCOBY0nZAqeVy85MrnAjLqlJnvoNVkPvdeEcbjNG0Ms
-	 6jeGqARI2ZzFwZpS4ogP6P4plheOuoC0TrtE+gJBmq+gEDZbqZ+pcRD0zqcsxE2gek
-	 1yjEY+0iA4TNFZfdz8FbaG4tH0pMNFSf08EfLM3bGDkWYuE46FJzLV9ebSlKYsagSo
-	 Yfy5rFae/MLHQ==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10021101.me.com (Postfix) with ESMTPSA id B98F3D00302;
-	Wed, 13 Nov 2024 12:59:11 +0000 (UTC)
-Message-ID: <0c9a06af-78e2-477d-99a4-b5626a1f791b@icloud.com>
-Date: Wed, 13 Nov 2024 20:59:08 +0800
+	s=arc-20240116; t=1731502813; c=relaxed/simple;
+	bh=bERcuiTrodbMVz9bZMzqI9+zT+hui4kXno/B68edjJk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qXPZa9vuCUjWWDxGHbx7F2188Yvae4GGV6q0XuNUm0QSms0CkEm82URfAutPhICnKoSFQuygluMVYDXzdiv8Hpw9LyZqsdDpneOwdS5MHdmji2qgSkwlNNzSbML0GdST/6P//B04Wl66HoWGZWXYyVeFgkDQO4LtYDOMTqUUblg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKPmHZ0m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 751FFC4CECF;
+	Wed, 13 Nov 2024 13:00:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731502813;
+	bh=bERcuiTrodbMVz9bZMzqI9+zT+hui4kXno/B68edjJk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kKPmHZ0mRL/79giaPZBz13U7OYjW/x5l5Ai2oY8fU/kqLgHlU8xHMyaw7f/RxmRSq
+	 4jl0uLt5ZV9yDz67FaXggb6aT/0LOvbi5Cv1PAXgR8YjSYv+s4Jd8kJxPp0GsQtesi
+	 LqiO6pf0UqKWKQPMsa0Ww9gUksGzj9lfh9RWpoYbifspJH5SNQqymF9aPCWzeQ1W4b
+	 8oUE9g3RhAt34v1Ut+7QMoJB9QezZae94FdwYHcVmGYrTUpmlL99uJuFWvigOP7aWV
+	 guKyXnv6Uq2Mg0mI37RugA9pBqT1wwQzUjnUMQMLvOvlIn6WVKJ0U15PjHZsaohXL+
+	 CDRcjNXWIZpSA==
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Leon Romanovsky <leonro@nvidia.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org,
+	Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>,
+	Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2] PCI/sysfs: Change read permissions for VPD attributes
+Date: Wed, 13 Nov 2024 14:59:58 +0200
+Message-ID: <61a0fa74461c15edfae76222522fa445c28bec34.1731502431.git.leon@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] PM: domains: Fix return value of API
- dev_pm_get_subsys_data()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
- stable@vger.kernel.org
-References: <20241028-fix_dev_pm_get_subsys_data-v1-1-20385f4b1e17@quicinc.com>
- <2024111257-collide-finalist-7a0c@gregkh>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <2024111257-collide-finalist-7a0c@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: KrzcmBmhurldNPMqFZ7RBSEX594Mi4a0
-X-Proofpoint-ORIG-GUID: KrzcmBmhurldNPMqFZ7RBSEX594Mi4a0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-12_09,2024-11-12_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
- suspectscore=0 adultscore=0 malwarescore=0 mlxscore=0 clxscore=1015
- bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2411130111
+Content-Transfer-Encoding: 8bit
 
-On 2024/11/12 19:46, Greg Kroah-Hartman wrote:
-> On Mon, Oct 28, 2024 at 08:31:11PM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> dev_pm_get_subsys_data() has below 2 issues under condition
->> (@dev->power.subsys_data != NULL):
->>
->> - it will do unnecessary kzalloc() and kfree().
-> 
-> But that's ok, everything still works, right?
-> 
+From: Leon Romanovsky <leonro@nvidia.com>
 
-i don't think so, as explained below:
+The Vital Product Data (VPD) attribute is not readable by regular
+user without root permissions. Such restriction is not needed at
+all for Mellanox devices, as data presented in that VPD is not
+sensitive and access to the HW is safe and well tested.
 
-under condition (@dev->power.subsys_data != NULL), the API does
-not need to do kzalloc() and should always return 0 (success).
+This change changes the permissions of the VPD attribute to be accessible
+for read by all users for Mellanox devices, while write continue to be
+restricted to root only.
 
-but it actually does *unnecessary* kzalloc() and have below impact
-shown:
+The main use case is to remove need to have root/setuid permissions
+while using monitoring library [1].
 
-if (kzalloc() is successfully)
-	it will degrade the API's performance
-else
-        it changed the API's return value to -ENOMEM from 0, that
-        will impact caller's logic.
+[leonro@vm ~]$ lspci |grep nox
+00:09.0 Ethernet controller: Mellanox Technologies MT2910 Family [ConnectX-7]
 
->> - it will return -ENOMEM if the kzalloc() fails, that is wrong
->>   since the kzalloc() is not needed.
-> 
-> But it's ok to return the proper error if the system is that broken.
-> >>
->> Fixed by not doing kzalloc() and returning 0 for the condition.
->>
->> Fixes: ef27bed1870d ("PM: Reference counting of power.subsys_data")
->> Cc: stable@vger.kernel.org
-> 
-> Why is this relevant for stable kernels?
-> 
+Before:
+[leonro@vm ~]$ ls -al /sys/bus/pci/devices/0000:00:09.0/vpd
+-rw------- 1 root root 0 Nov 13 12:30 /sys/bus/pci/devices/0000:00:09.0/vpd
+After:
+[leonro@vm ~]$ ls -al /sys/bus/pci/devices/0000:00:09.0/vpd
+-rw-r--r-- 1 root root 0 Nov 13 12:30 /sys/bus/pci/devices/0000:00:09.0/vpd
 
-it has impact related to performance and logic as explained above.
+[1] https://developer.nvidia.com/management-library-nvml
+Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+---
+Changelog:
+v2:
+ * Another implementation to make sure that user is presented with
+   correct permissions without need for driver intervention.
+v1: https://lore.kernel.org/all/cover.1731005223.git.leonro@nvidia.com
+ * Changed implementation from open-read-to-everyone to be opt-in
+ * Removed stable and Fixes tags, as it seems like feature now.
+v0:
+https://lore.kernel.org/all/65791906154e3e5ea12ea49127cf7c707325ca56.1730102428.git.leonro@nvidia.com/
+---
+ drivers/pci/vpd.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> thanks,
-> 
-> greg k-h
+diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
+index e4300f5f304f..9d5a35737abf 100644
+--- a/drivers/pci/vpd.c
++++ b/drivers/pci/vpd.c
+@@ -332,6 +332,14 @@ static umode_t vpd_attr_is_visible(struct kobject *kobj,
+ 	if (!pdev->vpd.cap)
+ 		return 0;
+ 
++	/*
++	 * Mellanox devices have implementation that allows VPD read by
++	 * unprivileged users, so just add needed bits to allow read.
++	 */
++	WARN_ON_ONCE(a->attr.mode != 0600);
++	if (unlikely(pdev->vendor == PCI_VENDOR_ID_MELLANOX))
++		return a->attr.mode + 0044;
++
+ 	return a->attr.mode;
+ }
+ 
+-- 
+2.47.0
 
 
