@@ -1,156 +1,154 @@
-Return-Path: <linux-kernel+bounces-408411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544689C7E70
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:54:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37689C7E74
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:56:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 972B6B21B77
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:54:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9945D28245C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C9E18BB84;
-	Wed, 13 Nov 2024 22:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFC918C32E;
+	Wed, 13 Nov 2024 22:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cE4LE+yW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hIC8EOFz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECC02AE84
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 22:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904D12AE84;
+	Wed, 13 Nov 2024 22:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731538488; cv=none; b=VhKb/qWcnWRJwDnqbgz7l3aRFElnv8oXDw/tXacmWjMllId5FisBAgegHgBdxQTfve3BOU61evMS+Mj5aCIx/380UDCmobOeqxbU0nI1Jzty5yea/GUbpubVys5KWHruFmt+aRHj2RoPCgfYpLv8xyQXtJyDLTdbhxUhA8bm/LY=
+	t=1731538570; cv=none; b=HOBJW3+j/wKaYFoS+rgG2LXW9LP/lb5lfSpKwIkVgXDuxmvIV2pP1M7IZpklGJzNFLFAeqwB5z2q9HlxSD3KtA47Mw68Lqd0DDF+vvMoi0FC1dCPHbsuuuRo9F4bJ/s32o+7IdBn34h0qOa2F6L1dqFu2o8mXQvInd3wu0ZsO4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731538488; c=relaxed/simple;
-	bh=1y/gn5kjsgX1oFj7j52d+i6b3aeNT/ZUKOYSEKL9dm8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=OZ+ijxo0C/d8liouL/+W9UsyK+3JYJPLrkKanBPjU7+2qyv9dgFdO42PkpBrhI5f608x0yXlmIM0Iuh6yDb0yhvf4ROfxkU15gxH70azTl8CJdMtk3uNwuRnQQg2DkIdbQIPpN81qKI8xgrk79mrl+1h3O2qn+/a74Qb0jbJ04I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cE4LE+yW; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731538487; x=1763074487;
-  h=date:from:to:cc:subject:message-id;
-  bh=1y/gn5kjsgX1oFj7j52d+i6b3aeNT/ZUKOYSEKL9dm8=;
-  b=cE4LE+yWjk9VimuIGW8QVzSFu0dP9uRJ2uXXEnEu2ZNo2P5Q+hLSkIlV
-   MbK8jIKPg1RVuM5w7rF+c/YZTOuV7TXBnSIxzs9owz3N6ygvY87UgQtcH
-   5p1q1/1AjjdmAJ5yQZPGvF32X7UPRGRv7NVjjj2KHdOLsa/LkgT0pUrnR
-   BjrYukpy5VqT5H7O2XaxvoO/C09GiLOmjRU9PwyprFV7Oj3gshbiMEY+0
-   wbnzezq0csqJHnztenPweHtFIOXBq2IwBnaIm7asWrg7lhKHx2rX1W8U2
-   1JxAjL7B149/JHxTLuOBFfcnxG7YHrBw3nf8Ao1u/s2rmAk7rDXGoOxAp
-   A==;
-X-CSE-ConnectionGUID: 0gzO2fx3R5ubean5ETJ8sw==
-X-CSE-MsgGUID: prTAldPcS+SG/L4XPkU0cw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31430253"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31430253"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 14:54:47 -0800
-X-CSE-ConnectionGUID: uv+hOKBOTbiZMT2Pt+gmjA==
-X-CSE-MsgGUID: cFF3LUTITia1C3xklNgfTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="92949970"
-Received: from lkp-server01.sh.intel.com (HELO 80bd855f15b3) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 13 Nov 2024 14:54:46 -0800
-Received: from kbuild by 80bd855f15b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tBMG3-0000oR-2A;
-	Wed, 13 Nov 2024 22:54:43 +0000
-Date: Thu, 14 Nov 2024 06:54:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:tip/urgent] BUILD SUCCESS
- c02d480cf0ffd2c1d32d0fea4399a9fabfc0b895
-Message-ID: <202411140610.dEDhnh3A-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1731538570; c=relaxed/simple;
+	bh=zSA3eE89l1UDfOvFbyzQrw4Ez4fRb4Xk/Y3akNPoOdU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FSSnFILsV5s/vaYJVaiPLjUYZVrN3PvKcHmXjh5XftkmXcLG55uRcMSSyJlSshq/CMDI91Laroki8b4kbNW0qpP5ncGuUbBHf3y9xkx6re6a/1CM3dJfJvDSQhcvoPI/sTRbO6mvJ5HhFBRjog1bqIiuf0e7lDh1XOyw4yVVWxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hIC8EOFz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D03FC4CEC3;
+	Wed, 13 Nov 2024 22:56:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731538570;
+	bh=zSA3eE89l1UDfOvFbyzQrw4Ez4fRb4Xk/Y3akNPoOdU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hIC8EOFzRvdiuwcpt02lbeyGLdcU+M/3ckOVKJ7PkHww00QpyCXV2bi0iOPEj8SF1
+	 gu3dwwPjN3Ma1x9eIT9j0C33/hIUIMGkZFIU4YfZcEfVC7jfGDk8prDqkg2MxojTSl
+	 btVGiPi1xw+NYdJ6GchvfqS59a6ZIAb1E23WKd1F6bTfaTiXbPxJDqLrKvAVRL8W82
+	 0K2A76YXgV/oLbv3Ym6Zo5s5q6wez6FslsBqVOCssWRYLs97dvDhF+xtckZoWG+4Nh
+	 23oV6zX4Aqyr6SSULs495VniS8SYux1xB4qHoIeuW1Qmw6BHYvzlDeMtMsLxA4jVqQ
+	 Ybxfgj1f9/brA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Hu Ziji <huziji@marvell.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: mmc: marvell,xenon-sdhci: Simplify Armada 3700 if/then schema
+Date: Wed, 13 Nov 2024 16:56:01 -0600
+Message-ID: <20241113225602.1782573-1-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tip/urgent
-branch HEAD: c02d480cf0ffd2c1d32d0fea4399a9fabfc0b895  Merge branch into tip/master: 'x86/urgent'
+Properties are supposed to be defined in the top-level schema and then
+disallowed in an if/then schema if necessary. Move the "marvell,pad-type"
+property to follow this.
 
-elapsed time: 729m
+"reg" can also be similarly described at the top-level with only the
+number of entries restricted in the if/then schema.
 
-configs tested: 64
-configs skipped: 129
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/mmc/marvell,xenon-sdhci.yaml     | 48 +++++++++----------
+ 1 file changed, 22 insertions(+), 26 deletions(-)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+diff --git a/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml b/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml
+index cfe6237716f4..3f48d8292d5b 100644
+--- a/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml
++++ b/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml
+@@ -38,15 +38,9 @@ properties:
+ 
+   reg:
+     minItems: 1
+-    maxItems: 2
+-    description: |
+-      For "marvell,armada-3700-sdhci", two register areas.  The first one
+-      for Xenon IP register. The second one for the Armada 3700 SoC PHY PAD
+-      Voltage Control register.  Please follow the examples with compatible
+-      "marvell,armada-3700-sdhci" in below.
+-      Please also check property marvell,pad-type in below.
+-
+-      For other compatible strings, one register area for Xenon IP.
++    items:
++      - description: Xenon IP registers
++      - description: Armada 3700 SoC PHY PAD Voltage Control register
+ 
+   clocks:
+     minItems: 1
+@@ -61,6 +55,17 @@ properties:
+   interrupts:
+     maxItems: 1
+ 
++  marvell,pad-type:
++    $ref: /schemas/types.yaml#/definitions/string
++    enum:
++      - sd
++      - fixed-1-8v
++    description:
++      Type of Armada 3700 SoC PHY PAD Voltage Controller register. If "sd" is
++      selected, SoC PHY PAD is set as 3.3V at the beginning and is switched to
++      1.8V when later in higher speed mode. If "fixed-1-8v" is selected, SoC PHY
++      PAD is fixed 1.8V, such as for eMMC.
++
+   marvell,xenon-sdhc-id:
+     $ref: /schemas/types.yaml#/definitions/uint32
+     minimum: 0
+@@ -147,27 +152,18 @@ allOf:
+     then:
+       properties:
+         reg:
+-          items:
+-            - description: Xenon IP registers
+-            - description: Armada 3700 SoC PHY PAD Voltage Control register
+-
+-        marvell,pad-type:
+-          $ref: /schemas/types.yaml#/definitions/string
+-          enum:
+-            - sd
+-            - fixed-1-8v
+-          description: |
+-            Type of Armada 3700 SoC PHY PAD Voltage Controller register.
+-            If "sd" is selected, SoC PHY PAD is set as 3.3V at the beginning
+-            and is switched to 1.8V when later in higher speed mode.
+-            If "fixed-1-8v" is selected, SoC PHY PAD is fixed 1.8V, such as for
+-            eMMC.
+-            Please follow the examples with compatible
+-            "marvell,armada-3700-sdhci" in below.
++          minItems: 2
+ 
+       required:
+         - marvell,pad-type
+ 
++    else:
++      properties:
++        reg:
++          maxItems: 1
++
++        marvell,pad-type: false
++
+   - if:
+       properties:
+         compatible:
+-- 
+2.45.2
 
-tested configs:
-alpha                   allnoconfig    gcc-14.2.0
-arc                     allnoconfig    gcc-14.2.0
-arc            axs103_smp_defconfig    gcc-13.2.0
-arc                  hsdk_defconfig    gcc-13.2.0
-arm                    alldefconfig    gcc-13.2.0
-arm                     allnoconfig    gcc-14.2.0
-arm                gemini_defconfig    gcc-13.2.0
-arm                 sama5_defconfig    gcc-13.2.0
-arm              spear6xx_defconfig    gcc-13.2.0
-arm                 sunxi_defconfig    gcc-13.2.0
-arm64                   allnoconfig    gcc-14.2.0
-csky                    allnoconfig    gcc-14.2.0
-hexagon                 allnoconfig    gcc-14.2.0
-i386                   allmodconfig    clang-19
-i386                   allmodconfig    gcc-12
-i386                    allnoconfig    clang-19
-i386                    allnoconfig    gcc-12
-i386                   allyesconfig    clang-19
-i386                   allyesconfig    gcc-12
-i386                      defconfig    clang-19
-loongarch               allnoconfig    gcc-14.2.0
-m68k                    allnoconfig    gcc-14.2.0
-m68k                 virt_defconfig    gcc-13.2.0
-microblaze              allnoconfig    gcc-14.2.0
-mips                    allnoconfig    gcc-14.2.0
-mips                 ip27_defconfig    gcc-13.2.0
-nios2                   allnoconfig    gcc-14.2.0
-openrisc                allnoconfig    clang-20
-openrisc                  defconfig    gcc-12
-parisc                  allnoconfig    clang-20
-parisc                    defconfig    gcc-12
-powerpc                 allnoconfig    clang-20
-powerpc            bamboo_defconfig    gcc-13.2.0
-powerpc       linkstation_defconfig    gcc-13.2.0
-powerpc         lite5200b_defconfig    gcc-13.2.0
-powerpc       mpc832x_rdb_defconfig    gcc-13.2.0
-powerpc     mpc834x_itxgp_defconfig    gcc-13.2.0
-riscv                   allnoconfig    clang-20
-riscv                     defconfig    gcc-12
-s390                   allmodconfig    gcc-14.2.0
-s390                    allnoconfig    clang-20
-s390                   allyesconfig    gcc-14.2.0
-s390                      defconfig    gcc-12
-sh                     allmodconfig    gcc-14.2.0
-sh                      allnoconfig    gcc-14.2.0
-sh                     allyesconfig    gcc-14.2.0
-sh                        defconfig    gcc-12
-sh                 se7343_defconfig    gcc-13.2.0
-sh           sh7710voipgw_defconfig    gcc-13.2.0
-sparc                  allmodconfig    gcc-14.2.0
-sparc64                   defconfig    gcc-12
-um                      allnoconfig    clang-20
-um                        defconfig    gcc-12
-um                   i386_defconfig    gcc-12
-um                 x86_64_defconfig    gcc-12
-x86_64                  allnoconfig    clang-19
-x86_64                 allyesconfig    clang-19
-x86_64                    defconfig    clang-19
-x86_64                    defconfig    gcc-11
-x86_64                        kexec    clang-19
-x86_64                        kexec    gcc-12
-x86_64                     rhel-8.3    gcc-12
-xtensa                  allnoconfig    gcc-14.2.0
-xtensa      generic_kc705_defconfig    gcc-13.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
