@@ -1,128 +1,117 @@
-Return-Path: <linux-kernel+bounces-407023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 230B29C6786
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:00:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F3A29C678B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:04:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0B0D1F22942
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:00:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6BDCB244B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332711632FB;
-	Wed, 13 Nov 2024 02:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CC6158848;
+	Wed, 13 Nov 2024 03:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fKuJO2td";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QpPWAx5g"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHJV04pc"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C1715B96E;
-	Wed, 13 Nov 2024 02:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2352D057;
+	Wed, 13 Nov 2024 03:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731466798; cv=none; b=Jj2Aa3qiuYwERymTI9MP003tctShhIHiy/0TrynEDJn0P4nv7ExLVjWI7DTEoDbvZqTNau5Uscif9ASCIAvpFAPZ54C+BqXJYikQsRcYCTB802Z6KeYXqCwZl2lOeqposvOQCygW++u1XTmpb8jqKmEQOz55wEASZw9dvFGrxPw=
+	t=1731467069; cv=none; b=FHFinSeEAz3wcVEzm4/hqUvtsaY6VsojZGJp9CF0D+lbQuv5BvEijWvsaKHP/4FoXuvJ4eIJlG+SZ+kDKczFdKlnz4olexu3W0mwiGe1Rm+R4mcEQSmWilUottR0h1NaM+u4nAoiToMo9A//gYMQD6/ssyNC+H+E+HpSLol+O3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731466798; c=relaxed/simple;
-	bh=RNmGvv9qtJftQkt/MWW4KQAf0jQJyolE+UMtWsMXSuQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=AG6pTX4rkSeK+0gP3n6LazAehNbehqQH9dmL9MzZwINHkSFSwuIJ/mBn6DfeLuudxuB6U9Abm9yGFWsgvtSDZC0QfL+qJ24TlnS7k/cw6hEExZHCpcIsQ7zTzkFTJbVT/MQEbP+3MXdyKOWmS0b+AmwPoTIpevcuDPVKMedDvug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fKuJO2td; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QpPWAx5g; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 13 Nov 2024 02:59:52 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731466793;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KYC+Kan572GR82qnRgBfISaqYfYJOjJmu529Q7Uf5Dg=;
-	b=fKuJO2tdmH+YdcaXrT34beIuXTEG1eV0LwEroboNCTCq2PGCu7DzoXHWfPopXEZDUI+ZDD
-	5AoCdU9kPP6k3bjE7migj3F6RCh5h0as/3zkiq+6JA2TRvZOoLCz+bFGPEgHM6pWkd3bhJ
-	gL8X4dGfp35V5Zw2IGOnHPy+BtyMx6SAseHfksYGJ8w6LiXsrMGfoUGwUGyeyGxn29iMUJ
-	u5PhCrJBwS0eZmngOp01H+rNcw8rBvSIqQIxsuIExJ+KWvgZZpfpFtCiSI/pZkLkQzSQ6w
-	E0LtZTrfq5R1ofPUMYwFEudniCSqEy8KkXVy10ER38ynImaoSgmPLqxV2GafsQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731466793;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KYC+Kan572GR82qnRgBfISaqYfYJOjJmu529Q7Uf5Dg=;
-	b=QpPWAx5gjwywpKSBdYvJ+Zwu7nVhhJ4k1lkE87Xe05O5hJyt09bT5ICAVddkpIDXUUcPQU
-	TLfAk1OKrf/wUzBg==
-From: "tip-bot2 for Rik van Riel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/mm/tlb: Put cpumask_test_cpu() check in
- switch_mm_irqs_off() under CONFIG_DEBUG_VM
-Cc: Rik van Riel <riel@surriel.com>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241109003727.3958374-4-riel@surriel.com>
-References: <20241109003727.3958374-4-riel@surriel.com>
+	s=arc-20240116; t=1731467069; c=relaxed/simple;
+	bh=ClsvbLAOjDY+lv/Bfvl1TlwV71ZawlYgp11ERu/u5X8=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=iFSUHXwArnE0Z5UOaa8h60l93imUHEfGEoFlucAC66gZDOfV92gKpxPPafLoxHJdvg5zFRYJV5KujmfH9Vt0aws+5YFwv7S0Mq2wFz9H9SRjeaKQipLCLy4NeiqhDvMQtucDOdfB8QNRsOC9fKn6E3FDnV4WYtp3fRA6SA3fcnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHJV04pc; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e91403950dso4939990a91.3;
+        Tue, 12 Nov 2024 19:04:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731467065; x=1732071865; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MfGvSnNXVufWcoCNAr8wCyAcyLmYxKQmmVQCV3zOeP0=;
+        b=kHJV04pcniMiD56vFloWPBMpaTLOFfACoKnrMPyBSZEpNhklmwMg4EkcM7yKNMp8GB
+         FXTS0V73A1sOJMfvMQbpDOJtJniZPC0Wir1ioEFuwtqMggxKqS1NOQd/B8cy0Oqb73se
+         yExhFI9xXrnNztcrK7rqwymj1guFpFuScuNeaHLGHi5ltFJJDWCCWo+vkXnG8/dnMk5e
+         NHtkKbg7T+RSzVvhTx2vCEMQ+mvZyejI1GbnKxhjWLQ7k5/Rwitj3JfKAnaThZxbxIOA
+         Hemsr4QiQqDKcnxPSOPtxrHZTy1KuUwSqJyCD1eEHqqPSVV7Q0P/OP8g4hbf4VF+XE6r
+         N8yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731467065; x=1732071865;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MfGvSnNXVufWcoCNAr8wCyAcyLmYxKQmmVQCV3zOeP0=;
+        b=XKX8Lb/HyrqKY04mxL/2lJZAqR82MQSMoKVqMwoUmEqx8iBLGMp5uBYx7odQR0MrRL
+         mfi/CrsPhBZhMu+6oJ4P8TzIZ21vt0l1n0UezSZgpWQHPvZ9mb9RDSXGUKImhhE7u1CV
+         zYBYZ5JS4TWTxc+PkSJCOZ2zOBiGmGaKn5IS1gPEQ18BS63a6jvJTFZGLdAYEjENj1KE
+         tymF9e17MeyItMXd8LO6d6Vdt7+IjnugvsRZnvQGY1nekTIWRXTI12IWmDG7Gq9Z8f8n
+         W7zA91R4YWrOQFZikZSepQtj6/2M0L5U3gLxSaJ7axE8o6oDvp9q9GDMWLe1PGL+rxi3
+         RWtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwJBXPM8gBbkL4RW0ta0ryKdlvLr3JY/jfNcmlLCNm0IlMxyBMa4kCAzSjVeYTZdTbftK9JHHoP/VCTA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtYsD8FP4KyYmthTiapMAzzRcCU5F1dxZ3DUrjv5BPSLDh6dZx
+	Vf/JS5jQ0INABM4tOScAmM1CJFtRjZ9nZVcgBh5wzjllxxYrIyXN
+X-Google-Smtp-Source: AGHT+IEZY44YC28C51jHuKuS5xHGf/G5hVS890OSmtNPdpN+4ckgirmiILSOITq1BZbvgZtd5T7VBA==
+X-Received: by 2002:a17:90b:1f8e:b0:2e0:d957:1b9d with SMTP id 98e67ed59e1d1-2e9b17163cbmr25396408a91.13.1731467065422;
+        Tue, 12 Nov 2024 19:04:25 -0800 (PST)
+Received: from localhost (i223-218-156-103.s42.a014.ap.plala.or.jp. [223.218.156.103])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9f3ec86d2sm334580a91.21.2024.11.12.19.04.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 19:04:24 -0800 (PST)
+Date: Wed, 13 Nov 2024 12:04:20 +0900 (JST)
+Message-Id: <20241113.120420.319092919822964048.konishi.ryusuke@gmail.com>
+To: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [nilfs?] KASAN: use-after-free Read in
+ nilfs_find_entry
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+In-Reply-To: <6732e1d8.050a0220.138bd5.00d3.GAE@google.com>
+References: <6732e1d8.050a0220.138bd5.00d3.GAE@google.com>
+X-Mailer: Mew version 6.8 on Emacs 29.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <173146679261.32228.5720589109198727642.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/mm branch of tip:
+Test a variation of the nilfs_last_byte() fix in which the type of
+the local variable last_byte was changed from "loff_t" to "u64".
 
-Commit-ID:     7e33001b8b9a78062679e0fdf5b0842a49063135
-Gitweb:        https://git.kernel.org/tip/7e33001b8b9a78062679e0fdf5b0842a49063135
-Author:        Rik van Riel <riel@surriel.com>
-AuthorDate:    Fri, 08 Nov 2024 19:27:50 -05:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 13 Nov 2024 03:42:41 +01:00
+Since both PAGE_SIZE and the argument page_nr are unsigned, in
+arithmetic and comparison, both are calculated as unsigned by implicit
+type conversion, and the behavior is the same.
 
-x86/mm/tlb: Put cpumask_test_cpu() check in switch_mm_irqs_off() under CONFIG_DEBUG_VM
+However, changing the type of last_byte from unsigned to signed
+results in a new comparision between an unsigned integer and a signed
+integer, which may introduce a new warning from the grammer checker
+when using "make W=2", etc., so use the unsigned type in the
+declaration.
 
-On a web server workload, the cpumask_test_cpu() inside the
-WARN_ON_ONCE() in the 'prev == next branch' takes about 17% of
-all the CPU time of switch_mm_irqs_off().
+#syz test
 
-On a large fleet, this WARN_ON_ONCE() has not fired in at least
-a month, possibly never.
-
-Move this test under CONFIG_DEBUG_VM so it does not get compiled
-in production kernels.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20241109003727.3958374-4-riel@surriel.com
----
- arch/x86/mm/tlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 86593d1..b0d5a64 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -568,7 +568,7 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
- 		 * mm_cpumask. The TLB shootdown code can figure out from
- 		 * cpu_tlbstate_shared.is_lazy whether or not to send an IPI.
- 		 */
--		if (WARN_ON_ONCE(prev != &init_mm &&
-+		if (IS_ENABLED(CONFIG_DEBUG_VM) && WARN_ON_ONCE(prev != &init_mm &&
- 				 !cpumask_test_cpu(cpu, mm_cpumask(next))))
- 			cpumask_set_cpu(cpu, mm_cpumask(next));
+diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
+index a8602729586a..f61c58fbf117 100644
+--- a/fs/nilfs2/dir.c
++++ b/fs/nilfs2/dir.c
+@@ -70,7 +70,7 @@ static inline unsigned int nilfs_chunk_size(struct inode *inode)
+  */
+ static unsigned int nilfs_last_byte(struct inode *inode, unsigned long page_nr)
+ {
+-	unsigned int last_byte = inode->i_size;
++	u64 last_byte = inode->i_size;
  
+ 	last_byte -= page_nr << PAGE_SHIFT;
+ 	if (last_byte > PAGE_SIZE)
 
