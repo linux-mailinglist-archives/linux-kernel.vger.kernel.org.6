@@ -1,158 +1,215 @@
-Return-Path: <linux-kernel+bounces-407226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1E79C6A7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:19:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C97DA9C6A83
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:24:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86E43B2276D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:19:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 538CEB22810
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B43189F4B;
-	Wed, 13 Nov 2024 08:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462CF189F47;
+	Wed, 13 Nov 2024 08:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w6EB50Jn"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bpPE2xMc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC722170A03
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5269017837A
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731485977; cv=none; b=mMj/XeRDRIF4WG6lNv+atlQIYmbKSEjjdtksz7fUx28P+t2umrmlX3O4rfG86GW1LaD1NNPAGM38xsyScAzlnKGBof0+zMKsMOgW/Jeh16kKGW+lswVn9Mn7phv8fhuMpyESQBr/6EcppA16xEn2ascGr5kG3+pD5w7gxYJ8QUQ=
+	t=1731486264; cv=none; b=D9gYPMH4Lx09LWBVM4XDo1sM/aJwVzgh5GU3gyjTpVdC+CGOAxbFcB1NRmnblxv2szEc+gaZx4TZPPk8kwfPVoG56MrOjUEt2L6+4UhhqHW0arvM3VKG2rjhBXUR2QI7bygoAB9r+Ba+Xv2kfuwpa/jnMZSA/PWZlm65WKSRFTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731485977; c=relaxed/simple;
-	bh=Cnx5/u7WVVRjL/g2O6lnbYtDQ1Q9FLDekhDrsRiOiw0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pnDWZjFOTiXC5gCIeCeRGQkTCF2IkMZwqV0JCuQBcPUpRiI1L5rJaOwz7AQQ6KhrU2IegG0pcFcJdCBVxB9AnlhyEjBSSur2TxDTmZziM/PbJ95IcOjHACDGMFrEkDg9sQEU2FIMpAvjm6cRyVU9U3elY6KJ5QOfjnAHr7XfJ9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w6EB50Jn; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-460969c49f2so197721cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 00:19:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731485974; x=1732090774; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cnx5/u7WVVRjL/g2O6lnbYtDQ1Q9FLDekhDrsRiOiw0=;
-        b=w6EB50JnfBV1kvY3WD+YZD3acIrQVc9RVwkvhrmLof6Vw+NQ1eWahywX9yix4iJkbZ
-         r5wtf0EQjDIdkvz/15Pxwq1D98i3O7U9SMJWlY22PYmjmZ70LAK9mo7sSpJ1VB1K9Rxl
-         EXcIeEY1RsSPesiBkKoPlnZWOSjkzDliD6/TjGG2vgr/BGlaMi3g7vlt6hr5dEk7zzlI
-         mSooNN7a/ZtKzPWmLs8WnG+2MpSgOojkaPO9OyxkbsVLtNktshvdgl6M4jqO4HQ0TrtH
-         R/fevSyvQTN9/hSwhY/0e8voE0ACrKgW9DXKfnIRMM0wGS8CTTUrM5HhivDycqKG7Z8O
-         EtEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731485974; x=1732090774;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cnx5/u7WVVRjL/g2O6lnbYtDQ1Q9FLDekhDrsRiOiw0=;
-        b=Oqol4vUIEEG65AGxByURudJAMRVNG+iRL+HPZX8lHiIKpdXcmDjlfn6ijdx8UOvGly
-         pPC73s7RvaD/URPmROaQjNVjMYNT+Zw0M31c1R3QVBTC6zZA1Q+3TWJTfvoccZpKenST
-         CNfAz2MC0tp3A3pQsJrJyb2M6yk8tu7vr2VLWzHSxAEWyJIVZoBkP4pAgykzG/KNDdlm
-         6iqix874A4xRLWyraRacCRpjebverY+qDMqDGIBbNy0aV7F97fsO2l1Tp+YMmFiyNY3M
-         Ckv3NHvSBdfMt2CReIPIBZHNE3E118XbQkGsfqsRXxgIVC5Gy3Wsk7nT0yq/5UY7XZRA
-         QJLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVtmPMt7zRvkJdmiVkbA3llPSaITaOKdllAsxdMpaRKFUE0aW9srIBcUYBP4+8o9d+1YyBTaNiwg5AVAwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEygRITgUuT4DpgHonhHYz9zZ8Z2poaA0r3fc81Oso6a7PyFS9
-	wlkg978l5fexU1TMMuNArvO6u5r8tYoaY/rgrOmy0NUmk1XXWv2opOXM7Bmk6VQvoJdcw1GDLlO
-	x0i0Qb8SAKZPG6kahK2fQ4I3IrjtQrb2OBF5T
-X-Gm-Gg: ASbGncsiF5Z5QcjXxkuyMthaF0Bs3dBvdOoA+/QQJC4LRO3oPvt7LrROu8HUgcfSs2o
-	VW0cWZsHmcgRNPP4VsaVgPYdnjyIREKg=
-X-Google-Smtp-Source: AGHT+IGE+nQpUYoL6FDT1s86sWs+I0FvuajgY1+GilAavFJvfleccnErI/dSJ4HZqOpFIpDau9jUOQ/tmyOe1suyIyE=
-X-Received: by 2002:a05:622a:114:b0:461:70cc:3799 with SMTP id
- d75a77b69052e-4634cad9282mr1849331cf.21.1731485974244; Wed, 13 Nov 2024
- 00:19:34 -0800 (PST)
+	s=arc-20240116; t=1731486264; c=relaxed/simple;
+	bh=E6NmNe5r0OVhK9kcBFpuSvzgak15G7aCepFbbnbQmD4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=T89AniwAvxQVycWtV7q9Ees4l1LeoVmHW8AFuVUxIfBrTUUe7FV6pGaPADqlOJepnojSruAT5BsDwr2gb0PFaqKovQFuAk13s9XXlWDV0vCaTqn3o+6PMLfq5kC3yEIWqMD454XiA7J+VlZdBBNBIfUghsEC7SrQyxqjusyN5FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bpPE2xMc; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731486263; x=1763022263;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=E6NmNe5r0OVhK9kcBFpuSvzgak15G7aCepFbbnbQmD4=;
+  b=bpPE2xMcFnVSlcVwTA4nuTLsYk4ToHJBD8iEzaH7MbC8HNiIeOH3SFn4
+   JSCOkEPyr32s3wk33i96zw+x9w7OiKSOY4C3YcntTOspPMivjWE1tyKnn
+   lhetcn71oeVQ5PfurU8aQA3Hq7ulR3vyUjn+6CuxUWiKWXZaQSf2JP+26
+   hJwTLLBA8LxKW5Cucms2o/MzRiYJQWDCl3TzOBd1O8NoS6v61KoT3y3r1
+   QYu8nScaaUn6Dabsu1fZmOL2U9f9YzD6AtD9vORUP5bhcr7ksLc3A4B2S
+   lIOXtlHOw3gZo1wCNF833bj4XWJUQoT+Ji9l/hr4Z5H0Tc7NmXmxiHJ8D
+   A==;
+X-CSE-ConnectionGUID: cSxMP18yTOqudlsgUxmcZQ==
+X-CSE-MsgGUID: NTvhyapWR3Ok+mn4Pp8ZBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="18975281"
+X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
+   d="scan'208";a="18975281"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 00:23:26 -0800
+X-CSE-ConnectionGUID: czodun8uQgyH/FGZDqMEdg==
+X-CSE-MsgGUID: 8UOD8/y0RIGVLrXeGQ4vCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
+   d="scan'208";a="92757051"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 00:23:24 -0800
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org,  Kairui Song <kasong@tencent.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Chris Li <chrisl@kernel.org>,  Barry Song
+ <v-songbaohua@oppo.com>,  Ryan Roberts <ryan.roberts@arm.com>,  Hugh
+ Dickins <hughd@google.com>,  Kalesh Singh <kaleshsingh@google.com>,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm, swap: fix allocation and scanning race with swapoff
+In-Reply-To: <20241112083414.78174-1-ryncsn@gmail.com> (Kairui Song's message
+	of "Tue, 12 Nov 2024 16:34:14 +0800")
+References: <20241112083414.78174-1-ryncsn@gmail.com>
+Date: Wed, 13 Nov 2024 16:19:50 +0800
+Message-ID: <87cyizzgt5.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112194635.444146-1-surenb@google.com> <20241112194635.444146-5-surenb@google.com>
- <CAJuCfpFd2_7q6pi1=G9B0VW5ynCWhkkDDA3PU293FPtT_CcBQA@mail.gmail.com>
- <6d0c5c2d-2963-489a-2376-8edaeb064de3@google.com> <CAJuCfpEG7hhh+mHbZe_9duk2kbFvv_NeGfBqw0JBxiHK-9yWxQ@mail.gmail.com>
- <54394536-da24-d01d-e4a7-2ece22b1ddab@google.com>
-In-Reply-To: <54394536-da24-d01d-e4a7-2ece22b1ddab@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 13 Nov 2024 00:19:23 -0800
-Message-ID: <CAJuCfpEEH2SMv050+41dLp5j820iP5u-0XyCmDh+mzdAfs266w@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] mm: make vma cache SLAB_TYPESAFE_BY_RCU
-To: Hugh Dickins <hughd@google.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
-	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
-	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
-	dhowells@redhat.com, hdanton@sina.com, minchan@google.com, jannh@google.com, 
-	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=ascii
 
-On Tue, Nov 12, 2024 at 10:52=E2=80=AFPM Hugh Dickins <hughd@google.com> wr=
-ote:
+Kairui Song <ryncsn@gmail.com> writes:
+
+> From: Kairui Song <kasong@tencent.com>
 >
-> On Tue, 12 Nov 2024, Suren Baghdasaryan wrote:
-> > On Tue, Nov 12, 2024 at 9:08=E2=80=AFPM Hugh Dickins <hughd@google.com>=
- wrote:
-> > > On Tue, 12 Nov 2024, Suren Baghdasaryan wrote:
-> > > >
-> > > > Thinking about this some more, I don't think this works. I'm relyin=
-g
-> > > > on vma_start_read() to stabilize the vma, however the lock I'm taki=
-ng
-> > > > is part of the vma which can be reused from under us. So, the lock =
-I'm
-> > > > taking might be reinitialized after I take the lock...
-> > > > I need to figure out a way to stabilize the vma in some other manne=
-r
-> > > > before taking this lock.
-> > >
-> > > (I'm not paying attention and following the patches, I just happened
-> > > to notice this remark: forgive me if I'm out of context and have
-> > > misunderstood, but hope this might help:)
-> > >
-> > > But this is exactly the problem SLAB_TYPESAFE_BY_RCU was invented for=
-.
-> > > You just have to be careful that the locks are initialized only when =
-the
-> > > slab is first created (allocated from buddy), not reinitialized whene=
-ver
-> > > a new object is allocated from that slab.
-> >
-> > Hi Hugh!
-> > I'm looking into SLAB_TYPESAFE_BY_RCU implementation and trying to
-> > figure out if initializing the lock in the ctor() of the cache as
-> > mentioned in the comment here:
-> > https://elixir.bootlin.com/linux/v6.12-rc7/source/include/linux/slab.h#=
-L127
-> > would help my case. I assume that's what you are hinting here?
+> There are two flags used to synchronize allocation and scanning with
+> swapoff: SWP_WRITEOK and SWP_SCANNING.
 >
-> Yes, if I'm "hinting", it's because offhand I forget the right names:
-> "ctor", yes, that sounds right.
-
-Just wanted to make sure I understood you correctly. Thanks for confirmatio=
-n.
-
+> SWP_WRITEOK: Swapoff will first unset this flag, at this point any
+> further swap allocation or scanning on this device should just abort
+> so no more new entries will be referencing this device. Swapoff
+> will then unuse all existing swap entries.
 >
-> Just grep around for examples of how it is used: there must be plenty
-> now. but anon_vma is what it was first used for.
-
-Yeah, there are plenty of examples now.
-
+> SWP_SCANNING: This flag is set when device is being scanned. Swapoff
+> will wait for all scanner to stop before the final release of the swap
+> device structures to avoid UAF. Note this flag is the highest used bit
+> of si->flags so it could be added up arithmetically, if there are
+> multiple scanner.
 >
-> But given the title of this patch, I'm surprised it's new to you.
-
-Thinking about issues arising from possible object reuse is indeed new
-to me, that's why I missed the lock reinitialization issue. I think I
-know how to fix that now.
-Thanks,
-Suren.
-
+> commit 5f843a9a3a1e ("mm: swap: separate SSD allocation from
+> scan_swap_map_slots()") ignored SWP_SCANNING and SWP_WRITEOK flags while
+> separating cluster allocation path from the old allocation path. Add
+> the flags back to fix swapoff race. The race is hard to trigger as
+> si->lock prevents most parallel operations, but si->lock could be
+> dropped for reclaim or discard. This issue is found during code review.
 >
-> Hugh
+> This commit fixes this problem. For SWP_SCANNING, Just like before,
+> set the flag before scan and remove it afterwards.
+>
+> For SWP_WRITEOK, there are several places where si->lock could
+> be dropped, it will be error-prone and make the code hard to follow
+> if we try to cover these places one by one. So just do one check before
+> the real allocation, which is also very similar like before.
+> With new cluster allocator it may waste a bit of time iterating
+> the clusters but won't take long, and swapoff is not performance
+> sensitive.
+>
+> Reported-by: "Huang, Ying" <ying.huang@intel.com>
+> Closes: https://lore.kernel.org/linux-mm/87a5es3f1f.fsf@yhuang6-desk2.ccr.corp.intel.com/
+> Fixes: 5f843a9a3a1e ("mm: swap: separate SSD allocation from scan_swap_map_slots()")
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+>  mm/swapfile.c | 22 +++++++++++++++++++---
+>  1 file changed, 19 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 9c85bd46ab7f..b0a9071cfe1d 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -664,12 +664,15 @@ static bool cluster_scan_range(struct swap_info_struct *si,
+>  	return true;
+>  }
+>  
+> -static void cluster_alloc_range(struct swap_info_struct *si, struct swap_cluster_info *ci,
+> +static bool cluster_alloc_range(struct swap_info_struct *si, struct swap_cluster_info *ci,
+>  				unsigned int start, unsigned char usage,
+>  				unsigned int order)
+>  {
+>  	unsigned int nr_pages = 1 << order;
+>  
+> +	if (!(si->flags & SWP_WRITEOK))
+> +		return false;
+> +
+>  	if (cluster_is_free(ci)) {
+>  		if (nr_pages < SWAPFILE_CLUSTER) {
+>  			list_move_tail(&ci->list, &si->nonfull_clusters[order]);
+> @@ -690,6 +693,8 @@ static void cluster_alloc_range(struct swap_info_struct *si, struct swap_cluster
+>  		list_move_tail(&ci->list, &si->full_clusters);
+>  		ci->flags = CLUSTER_FLAG_FULL;
+>  	}
+> +
+> +	return true;
+>  }
+>  
+>  static unsigned int alloc_swap_scan_cluster(struct swap_info_struct *si, unsigned long offset,
+> @@ -713,7 +718,10 @@ static unsigned int alloc_swap_scan_cluster(struct swap_info_struct *si, unsigne
+>  
+>  	while (offset <= end) {
+>  		if (cluster_scan_range(si, ci, offset, nr_pages)) {
+> -			cluster_alloc_range(si, ci, offset, usage, order);
+> +			if (!cluster_alloc_range(si, ci, offset, usage, order)) {
+> +				offset = SWAP_NEXT_INVALID;
+
+We set offset to SWAP_NEXT_INVALID for 3 times in this function.  Can we
+use a local variable to remove the duplication?  For example,
+
+        unsigned long ret = SWAP_NEXT_INVALID;
+
+And set ret if we allocate swap entry successfully.  We can do this in a
+separate patch.
+
+Otherwise, LGTM, Thanks!  Feel free to add,
+
+Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+
+> +				goto done;
+> +			}
+>  			*foundp = offset;
+>  			if (ci->count == SWAPFILE_CLUSTER) {
+>  				offset = SWAP_NEXT_INVALID;
+> @@ -805,7 +813,11 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
+>  	if (!list_empty(&si->free_clusters)) {
+>  		ci = list_first_entry(&si->free_clusters, struct swap_cluster_info, list);
+>  		offset = alloc_swap_scan_cluster(si, cluster_offset(si, ci), &found, order, usage);
+> -		VM_BUG_ON(!found);
+> +		/*
+> +		 * Either we didn't touch the cluster due to swapoff,
+> +		 * or the allocation must success.
+> +		 */
+> +		VM_BUG_ON((si->flags & SWP_WRITEOK) && !found);
+>  		goto done;
+>  	}
+>  
+> @@ -1041,6 +1053,8 @@ static int cluster_alloc_swap(struct swap_info_struct *si,
+>  
+>  	VM_BUG_ON(!si->cluster_info);
+>  
+> +	si->flags += SWP_SCANNING;
+> +
+>  	while (n_ret < nr) {
+>  		unsigned long offset = cluster_alloc_swap_entry(si, order, usage);
+>  
+> @@ -1049,6 +1063,8 @@ static int cluster_alloc_swap(struct swap_info_struct *si,
+>  		slots[n_ret++] = swp_entry(si->type, offset);
+>  	}
+>  
+> +	si->flags -= SWP_SCANNING;
+> +
+>  	return n_ret;
+>  }
+
+--
+Best Regards,
+Huang, Ying
 
