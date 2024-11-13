@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-408335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253289C7D84
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:17:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D7E9C7D90
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65E11F23A08
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:17:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5175FB2CBC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E15A2076AE;
-	Wed, 13 Nov 2024 21:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D36205ABD;
+	Wed, 13 Nov 2024 21:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PNBNOuj/"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qobWQf6w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FC0374C4;
-	Wed, 13 Nov 2024 21:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECE118B48F;
+	Wed, 13 Nov 2024 21:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731532580; cv=none; b=fxa/N6MkW5ZnsGmppLKBwY0M4pt5XbLvpneJbyj2QV8OYEhqBF+TugYfkDdItUTS2EM99rZQTNeStTs0Z+qyMs9f8Ko9f5iB2rUpe4z/SNcv5vMnIlYjAYhD1yean1TnzHUVYBUQDhvPRsAQYsn6QvzQ7oxXqQqnqL/PzBf19ko=
+	t=1731532671; cv=none; b=DqRvIzXey98zKkWFzzgRAlbnvsQ9sSjJXC0mw6x+KIN0YfCAz0mfVx3RlvJuLmXRzrnFCR9+j82oGg+GSQc5cH93rsAP49tKo/rZQ00NEL7NbBB6bvfmsHU6sykcJV4EF6rSDDiQos3RRYSvYs3XVwcnkr05MxYk2AgYZthrK3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731532580; c=relaxed/simple;
-	bh=gf8J2pA2eYT2YjDKQIEt+Cv++CziWT6clDVZXZmj0GU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ltjwDxZwj6EmItGZtn4Azrym5Fx0henFDtcUA6En2QZejhbWJ+RGB4QQfeLgfI/vC5lG70W/8rTnvffpZvBxfqlFnYdPO50WV0IZk4HRZk9l8G1JbHL3XtsO8/Hy8rhDKl+S0PSRQG6nCQMhmpASFRu+xXIf7qdjKrdO9eILKjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PNBNOuj/; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aaddeso8819320a12.2;
-        Wed, 13 Nov 2024 13:16:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731532577; x=1732137377; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B3xdS0O9sMiz99WKMU3vVWEf0PF+apGQVim/eQPE9Qc=;
-        b=PNBNOuj/0xxop7c8MyQwKYWoBweZbD0Y1B1IS4+YqSxV6/WBcRB5WpiGU9cGwSA893
-         jeg7So3nxQT6meazHnJqgVIQAN5iKHNhNWW0iOefUQJNGRxxopUa5RmTAGRKmBS3cL+a
-         10fmxlbBMwwDit7yMxBpzZFr3H1D3SV+q5h0pnGGggwt7WLHElA3/HbJZPQG9yxQVpHV
-         XDP5gegA9FuG5NaEfpARrX+90vtknnBxWwUu4ceIpImjtod5gEdL/u8hdwS4W715hr+H
-         KYcXjNWahD/6fg6H/5VDH44hOmbrP7eli0Ox+xKub+d7UQYNllar/kMSbmt0A5c2npK1
-         w2RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731532577; x=1732137377;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B3xdS0O9sMiz99WKMU3vVWEf0PF+apGQVim/eQPE9Qc=;
-        b=AmmpBg8htrN1SRdfDaF2pbm1KDzKOVETkCXs4eoqwnfhLEem7HZL6m6CmpIsCDaTsb
-         qhobfXY/rItEvdVCIHqddy0pHZWIxkjAzatVrQMf0nI+p2OOVZVGT1vcWAWVJmCvVREZ
-         HXRqkOUqb+e8lMl0IJymJwJup4Xft0L/Ei2uModXYVy72E4+G63rn/Bw9GRJgMehiyfh
-         J/T8nF6BXcBqvojR4KDtMVVyZ+i+N3f3lbydI8HhXLE05v44bWjMe0DGeb3HX4kwHJJ2
-         LUNgScArHuuI6yTmIaA6Q3xb+ypJP3xAEfS6HKKgCTtgkxewLo6SXJ7wGNC+dXFrOTIS
-         RG4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXL1Uy5iSmYZxXjp3cznIT18GCPLKaZ8Bb9jJLwk/ySW5Kk1DNsKJLzAV36S6puun+RX6uifzJjc8wLuGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPILl+eiEClqepvXXqPS+KoQo6tAx29sq3gDkjBNE58NdtPaBa
-	5vfHwsXOvKhsNRWhXyouzcnwSG9+F6hXD7cFKB+LNJbvz7qUwKie/4CInw2X
-X-Google-Smtp-Source: AGHT+IFFpNfDLeJuShCYAumWcZsy/6ClCwzDPCKCTx6qNdLBT3ddJoimUy2p3cd7P/b0YbGAXaRbfA==
-X-Received: by 2002:a05:6402:1d56:b0:5cf:60f8:4cf7 with SMTP id 4fb4d7f45d1cf-5cf60f84d30mr4407682a12.27.1731532577074;
-        Wed, 13 Nov 2024 13:16:17 -0800 (PST)
-Received: from C-KP-LP15v.consult.red ([83.168.79.145])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03bb6a2fsm7900221a12.40.2024.11.13.13.16.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 13:16:16 -0800 (PST)
-From: Karol Przybylski <karprzy7@gmail.com>
-To: aaro.koskinen@iki.fi,
-	andreas@kemnade.info,
-	khilman@baylibre.com,
-	rogerq@kernel.org,
-	tony@atomide.com,
-	lee@kernel.org,
-	karprzy7@gmail.com
-Cc: linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH] mfd: omap-usb-tll: check clk_prepare return code
-Date: Wed, 13 Nov 2024 22:16:14 +0100
-Message-Id: <20241113211614.518439-1-karprzy7@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731532671; c=relaxed/simple;
+	bh=m1eLhEj4EKzxqNTtsCphMOGJfA8yOPNQo6qRDOfw4dQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DlIZQbB75N9lfFMeaclZg87UoVcrM7rZd4IcFUbpK7Jd3yFRnhlNCkEhyL56vjMXd8OgQky3+vSPH0pQzS+Ypaf32bRHOvrZ+rzwqumN4g5SLskpIFXQ3YT9aMr650+ce30xqVXGL8VYEcViKJ6+KvRoM18Fox3jSYGI/VaVmJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qobWQf6w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63BEAC4AF09;
+	Wed, 13 Nov 2024 21:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731532671;
+	bh=m1eLhEj4EKzxqNTtsCphMOGJfA8yOPNQo6qRDOfw4dQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qobWQf6wk19/9x8DrE8JtMqTY/74uteQfRCZSDnhsQz2UGLriIMGMjUH8tt8GS8DE
+	 u0FzV/cu7ZKCXHSd2qB0pwv7ibilcSNictzfX06fEyvxuQJ7WZI5bcPEFSop9YAGAN
+	 jlZxwcgUlCi64e6eGbFONDsk6k2M8gEHnz9pTNMj5bvPErhWhlvKuqUsxWPkKj52GQ
+	 AbFlhzXMXOjwy+Ell+iUL8TXPh9buhAu9V6BZsVVzKy3qPtk/q/retDXnzdUNV/zMf
+	 kc8M6WOcvnhahw+LrMgqxO/sQ92v0VqdGcYDvsSqYW8N7XVJowHr/II40kEt2xtY4l
+	 TIgT8fs/cHgXg==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so65016261fa.3;
+        Wed, 13 Nov 2024 13:17:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVFCqjOlrPWLsvnNhM1zvlbE+qRTjH3ddx5GiIOq/Y+UFb1scIfFLTwOI/BbDi+2ayXg8+S3ySpMaPSLzc=@vger.kernel.org, AJvYcCWhhiktbMOOfgd2HgV59GUfZDT1PFLc0fPAl61S2Mj+EvwC4Y4dZc6EaLLzcdAxVIHywUSeku8tZpOGDw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzju52gX5kuHJGw1/l61hU3z/nkaCDUpX7Bqj6fpSM8A3Sp+RjJ
+	UE2HbyugFxG46dqve5oBVisNMcP8b2VUl6KLQyqINeJXyjLrJ5jCmdqF5Mdc1NINUoNWMLtXaX5
+	we8jonD23BIEvKjLVsFTC25ZfGyY=
+X-Google-Smtp-Source: AGHT+IE+CGmouIjNUZ7U/WrQAz4IWJaQw88hUesHTej6pbTyvQZwYQJxZDIukau2enMU0Pl8IScsPpwmrVWXpurSEVg=
+X-Received: by 2002:a05:651c:881:b0:2f6:649e:bf5c with SMTP id
+ 38308e7fff4ca-2ff4c59d9d1mr28438041fa.17.1731532670075; Wed, 13 Nov 2024
+ 13:17:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241113064028.2795128-1-xur@google.com> <alpine.DEB.2.21.2411131542500.9262@angie.orcam.me.uk>
+ <CAF1bQ=TUYoc3kUnBOtO4BWfuDLb5_YdxduVGsMfsyP7jLWmH5w@mail.gmail.com>
+In-Reply-To: <CAF1bQ=TUYoc3kUnBOtO4BWfuDLb5_YdxduVGsMfsyP7jLWmH5w@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 14 Nov 2024 06:17:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS6rG2Pez+r1UWpWccokKBRVgjoYrxf+_+s2H98BFukhA@mail.gmail.com>
+Message-ID: <CAK7LNAS6rG2Pez+r1UWpWccokKBRVgjoYrxf+_+s2H98BFukhA@mail.gmail.com>
+Subject: Re: [PATCH v2] MIPS: move _stext definition to vmlinux.lds.S
+To: Rong Xu <xur@google.com>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Klara Modin <klarasmodin@gmail.com>, 
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-clk_prepare() is called in usbtll_omap_probe to fill clk array.
-Return code is not checked, leaving possible error condition unhandled.
+On Thu, Nov 14, 2024 at 3:13=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+>
+> "
+>
+> On Wed, Nov 13, 2024 at 7:55=E2=80=AFAM Maciej W. Rozycki <macro@orcam.me=
+.uk> wrote:
+> >
+> > On Tue, 12 Nov 2024, Rong Xu wrote:
+> >
+> > > The _stext symbol is intended to reference the start of the text sect=
+ion.
+> > > However, it currently relies on a fragile link order because the exis=
+ting
+> > > EXPORT(_stext) resides within the .text section, which is not guarant=
+eed
+> > > to be placed first.
+> >
+> >  Umm, arch/mips/kernel/head.S does mean to be linked first.  We rely on=
+ it
+> > for environments where there's no entry point is available and executio=
+n
+> > starts from the beginning of the image.  See the comment right below yo=
+ur
+> > change.
+> >
+> When you said "arch/mips/kernel/head.S does mean to be linked first", is =
+it
+> a hard requirement in mips? This patch only moves _stext but leaves other
+> symbols from heads.S for TEXT_TEXT macro to order. For example,
+> __kernel_entry is placed in the middle of the text segment.
+>
+> If we want head.S to be linked first, I can change the patch to place
+> all symbols from head.S before TEXT_TEXT.
 
-Added variable to hold return value from clk_prepare() and dev_dbg statement
-when it's not successful.
+No change is needed for this.
 
-Found in coverity scan, CID 1594680
+arch/mips/kernel/head.o is always passed to the linker first.
 
-Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
----
- drivers/mfd/omap-usb-tll.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+This is guaranteed by scripts/head-object-list.txt
 
-diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
-index 0f7fdb99c809..2e9319ee1b74 100644
---- a/drivers/mfd/omap-usb-tll.c
-+++ b/drivers/mfd/omap-usb-tll.c
-@@ -202,7 +202,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
- 	struct device				*dev =  &pdev->dev;
- 	struct usbtll_omap			*tll;
- 	void __iomem				*base;
--	int					i, nch, ver;
-+	int					i, nch, ver, err;
- 
- 	dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
- 
-@@ -248,10 +248,13 @@ static int usbtll_omap_probe(struct platform_device *pdev)
- 					"usb_tll_hs_usb_ch%d_clk", i);
- 		tll->ch_clk[i] = clk_get(dev, clkname);
- 
--		if (IS_ERR(tll->ch_clk[i]))
-+		if (IS_ERR(tll->ch_clk[i])) {
- 			dev_dbg(dev, "can't get clock : %s\n", clkname);
--		else
--			clk_prepare(tll->ch_clk[i]);
-+		} else {
-+			err = clk_prepare(tll->ch_clk[i]);
-+			if (err)
-+				dev_dbg(dev, "clock prepare error for: %s\n", clkname);
-+		}
- 	}
- 
- 	pm_runtime_put_sync(dev);
--- 
-2.34.1
 
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
