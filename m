@@ -1,348 +1,184 @@
-Return-Path: <linux-kernel+bounces-408407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C7B9C7E61
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:50:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6DDA9C7E6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:51:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9940D1F216D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:50:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF542B24170
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E46D18C323;
-	Wed, 13 Nov 2024 22:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C1C18C33C;
+	Wed, 13 Nov 2024 22:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVdgvrWR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j5mRqkTn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B072518BB84;
-	Wed, 13 Nov 2024 22:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24616189F50;
+	Wed, 13 Nov 2024 22:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731538219; cv=none; b=eyGf0XuLoHkqDbD/nn3hAFR2/YbGTG2tnqmHvhfDwYKxE2EKtb1RPIBDYmwChTRMifbjgkLMoiYnBRKM+vUiwhp1mws6qRovDEBX8cFd8UrVLmLTwRKaMUcKlcZRSxd9jIL7bHUq6OUqGfIgySCSBly23z/unhaUBXBAUmzAXQM=
+	t=1731538251; cv=none; b=cqWzhw3Hmb7UmuZJ+3wKVn5ArrPSvc2J1hU0UyOvwjMcDjZ1idroMdAfIV05K9Zd13+R+3cfjwEkzy7goTQSgPjRruxquDNSZ1+6PrVjR7oK6mCQSj78lwKbbhEiOEyZ0lSBBtmT12T5SEq6cThQcKkZYHQMhyxSZdQ71vCWuzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731538219; c=relaxed/simple;
-	bh=cxpxSXBuCEx/21qxfPKUlSPRl62W4RleSGj9yzpAbUI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nig7BRlIWGV9TNJSV/kmZ8rlYr8MaT1Ts5lQueKJxDp7u772UUjqEfWlA21hOcsKif2ItkQhdeyHBV08fshiW3WCyxQw9dScBzpSeY/9VfD9rUEn3dHZyplS8ZfIRjquyBQ/HPA/jYF/H7Xwn8ga8A2DF02bdunqK+pbyfXpSnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVdgvrWR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86104C4CEC3;
-	Wed, 13 Nov 2024 22:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731538219;
-	bh=cxpxSXBuCEx/21qxfPKUlSPRl62W4RleSGj9yzpAbUI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OVdgvrWRlZCKgPquKxPpwNO7taKPpghTVf60FaueYm4PPfTIBKQO1Z5rXmBOjNbI/
-	 ryz1kuJSL909VAd6OGgqgV9VXeazXW1KcJlRr5nJp+7fDBZ9SDQitYTfMPyfwHCE9n
-	 brOPVQW01oxb2SnRgtWKzOD3RrAvz5I+Ephqjuts/M2g+EEH8tDgCWFUJlFRY7WbjR
-	 PeqJMHaKdWLvCVkNhELLW5xojMyIJqsMf3lHJ0kUbjHTmTSspStR0OnLzBMODGRnRm
-	 PP33lv6MKFNAdn+pfit5yiyT9a66h/EH9Xwxv4/FbbHzaD8sls7IgPw2IlwunHZ0IQ
-	 g+2Kk4IcFql9A==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Li Huafei <lihuafei1@huawei.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Yury Norov <yury.norov@gmail.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] perf-probe: Fix --line option to show correct offset line number from function
-Date: Thu, 14 Nov 2024 07:50:14 +0900
-Message-ID:  <173153821454.2776880.582308516721515492.stgit@mhiramat.roam.corp.google.com>
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1731538251; c=relaxed/simple;
+	bh=CYdGGDWei4FClN5/v5jTSMS1CfPN4qDt7+CJVB8J8vQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D+PIFwzmW8+RHXH+FkFsOmXK7veZSP5nF8RxdIVoMPL1D1Cr+DEPD85oTfOT+uwP/XZOC3t+kj1HgRGsg3Nwf9WaTS4F1DDLn5k3fGBeTECmA0y9hzTplStN+hG0iZT46AAZESatMoUeQqn3Id1JVjcZoPrCR2r6gvr2oYSb2s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j5mRqkTn; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731538249; x=1763074249;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CYdGGDWei4FClN5/v5jTSMS1CfPN4qDt7+CJVB8J8vQ=;
+  b=j5mRqkTnuluF+5brLKAoV5ggTMeVTNM+B0rl3k1FEsMuJcRIIQF/bLdG
+   mW84cysYJTRuKk24Vfu7LvTGui+FvHg5nfMrwCh1wik0r6xVrEPIwXuGD
+   JpJUHjMR29pVyQ4heTNGbSgtC3cBhTHVj3LHBVCl/CpKJ1/JCygnBpLL+
+   YubWAUApR9erWo5bnRDyuuGY9V+EWEsJbykXQeKlPT9AVIGzuDG6TJ502
+   kwUDkHeZdeCe1qeEir8H8BDHX4s9uKpzPi7cbuHBEtg+NBE03dxf9unEZ
+   y2H4iYudGK4icUL2D+i59XiCDk8ztBzcrkcEXH6UnG0/CyGzpXZSBr74u
+   Q==;
+X-CSE-ConnectionGUID: E8LpMdDNSO6haXz1jS5nSg==
+X-CSE-MsgGUID: puxRHosTSFqsXUod6Hwi1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="30862603"
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="30862603"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 14:50:48 -0800
+X-CSE-ConnectionGUID: GFIBXakPTKK+vdZihgFWfw==
+X-CSE-MsgGUID: fQSc/1U1QhCMkC7OS8ilzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="88806293"
+Received: from lkp-server01.sh.intel.com (HELO 80bd855f15b3) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 13 Nov 2024 14:50:45 -0800
+Received: from kbuild by 80bd855f15b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tBMCB-0000nz-0T;
+	Wed, 13 Nov 2024 22:50:43 +0000
+Date: Thu, 14 Nov 2024 06:50:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Erin Shepherd <erin.shepherd@e43.eu>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>, linux-nfs@vger.kernel.org,
+	Erin Shepherd <erin.shepherd@e43.eu>
+Subject: Re: [PATCH v2 2/3] exportfs: allow fs to disable CAP_DAC_READ_SEARCH
+ check
+Message-ID: <202411140603.E03vXsdz-lkp@intel.com>
+References: <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Hi Erin,
 
-Fix --line option to show correct offset if the DWARF line info of the
-probe address has the statement lines in differnt functions.
-Currently debuginfo__find_probe_point() does
+kernel test robot noticed the following build errors:
 
- (1) Get the line and file from CU's lineinfo
- (2) Get the real function(function instance) of the address
-     (use this function's decl_line/decl_file as basement)
- (2-1) Search the inlined function scope in the real function
-     for the given address.
- (2-2) if there is inlined function, update basement line/file.
- (2-3) verify the filename is same as basement filename.
- (3) calculate the relative line number from basement.
+[auto build test ERROR on 14b6320953a3f856a3f93bf9a0e423395baa593d]
 
-The problem is in (1). Since we have no basement file/line info,
-we can not verify that the file/line info from CU's lineinfo.
-Li Huafei reported[1], the lineinfo may have several different lines
-for one address. We need to find most appropriate one based on
-the basement file/line.
+url:    https://github.com/intel-lab-lkp/linux/commits/Erin-Shepherd/pseudofs-add-support-for-export_ops/20241114-020539
+base:   14b6320953a3f856a3f93bf9a0e423395baa593d
+patch link:    https://lore.kernel.org/r/20241113-pidfs_fh-v2-2-9a4d28155a37%40e43.eu
+patch subject: [PATCH v2 2/3] exportfs: allow fs to disable CAP_DAC_READ_SEARCH check
+config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20241114/202411140603.E03vXsdz-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241114/202411140603.E03vXsdz-lkp@intel.com/reproduce)
 
-[1] https://lore.kernel.org/all/20241108181909.3515716-2-lihuafei1@huawei.com/
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411140603.E03vXsdz-lkp@intel.com/
 
-This basically does
+All errors (new ones prefixed by >>):
 
- - Introduce cu_find_lineinfo_after() which find the line after the
-   basement file/line information so that it can choose correct one.
- - Swap the order of (1) and (2) so that we can pass the basement
-   file/line when searching lineinfo.
+   In file included from fs/fhandle.c:2:
+   In file included from include/linux/syscalls.h:93:
+   In file included from include/trace/syscall.h:7:
+   In file included from include/linux/trace_events.h:6:
+   In file included from include/linux/ring_buffer.h:5:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> fs/fhandle.c:242:28: error: initializing 'struct export_operations *' with an expression of type 'const struct export_operations *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+     242 |         struct export_operations *nop = root->mnt->mnt_sb->s_export_op;
+         |                                   ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning and 1 error generated.
 
-Reported-by: Li Huafei <lihuafei1@huawei.com>
-Closes: https://lore.kernel.org/all/20241108181909.3515716-2-lihuafei1@huawei.com/
-Fixes: 57f95bf5f882 ("perf probe: Show correct statement line number by perf probe -l")
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- tools/perf/util/dwarf-aux.c    |   78 ++++++++++++++++++++++++++++++++++------
- tools/perf/util/dwarf-aux.h    |    7 ++++
- tools/perf/util/probe-finder.c |   44 ++++++++++++++++-------
- 3 files changed, 105 insertions(+), 24 deletions(-)
 
-diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-index 92eb9c8dc3e5..4e3bf41746c1 100644
---- a/tools/perf/util/dwarf-aux.c
-+++ b/tools/perf/util/dwarf-aux.c
-@@ -60,14 +60,33 @@ const char *cu_get_comp_dir(Dwarf_Die *cu_die)
- 	return dwarf_formstring(&attr);
- }
- 
-+static Dwarf_Line *get_next_statement_line(Dwarf_Lines *lines, size_t *idx, Dwarf_Addr addr)
-+{
-+	bool is_statement = false;
-+	Dwarf_Line *line;
-+	Dwarf_Addr laddr;
-+	size_t l = *idx;
-+
-+	while (!is_statement) {
-+		line = dwarf_onesrcline(lines, ++l);
-+		if (!line || dwarf_lineaddr(line, &laddr) != 0 ||
-+		    dwarf_linebeginstatement(line, &is_statement) != 0)
-+			return NULL;
-+		if (laddr > addr)
-+			return NULL;
-+	}
-+	*idx = l;
-+	return line;
-+}
-+
- /* Unlike dwarf_getsrc_die(), cu_getsrc_die() only returns statement line */
--static Dwarf_Line *cu_getsrc_die(Dwarf_Die *cu_die, Dwarf_Addr addr)
-+static Dwarf_Line *cu_getsrc_die(Dwarf_Die *cu_die, Dwarf_Addr addr,
-+								 Dwarf_Lines **lines_p, size_t *idx)
- {
- 	Dwarf_Addr laddr;
- 	Dwarf_Lines *lines;
- 	Dwarf_Line *line;
- 	size_t nlines, l, u, n;
--	bool flag;
- 
- 	if (dwarf_getsrclines(cu_die, &lines, &nlines) != 0 ||
- 	    nlines == 0)
-@@ -91,16 +110,14 @@ static Dwarf_Line *cu_getsrc_die(Dwarf_Die *cu_die, Dwarf_Addr addr)
- 		if (!line || dwarf_lineaddr(line, &laddr) != 0)
- 			return NULL;
- 	} while (laddr == addr);
--	l++;
- 	/* Going forward to find the statement line */
--	do {
--		line = dwarf_onesrcline(lines, l++);
--		if (!line || dwarf_lineaddr(line, &laddr) != 0 ||
--		    dwarf_linebeginstatement(line, &flag) != 0)
--			return NULL;
--		if (laddr > addr)
--			return NULL;
--	} while (!flag);
-+	line = get_next_statement_line(lines, &l, addr);
-+	if (!line)
-+		return NULL;
-+	if (lines_p)
-+		*lines_p = lines;
-+	if (idx)
-+		*idx = l;
- 
- 	return line;
- }
-@@ -129,7 +146,7 @@ int cu_find_lineinfo(Dwarf_Die *cu_die, Dwarf_Addr addr,
- 		goto out;
- 	}
- 
--	line = cu_getsrc_die(cu_die, addr);
-+	line = cu_getsrc_die(cu_die, addr, NULL, NULL);
- 	if (line && dwarf_lineno(line, lineno) == 0) {
- 		*fname = dwarf_linesrc(line, NULL, NULL);
- 		if (!*fname)
-@@ -141,6 +158,43 @@ int cu_find_lineinfo(Dwarf_Die *cu_die, Dwarf_Addr addr,
- 	return (*lineno && *fname) ? *lineno : -ENOENT;
- }
- 
-+/**
-+ * cu_find_lineinfo_after - Get a line number after file:line for given address
-+ * @cu_die: a CU DIE
-+ * @addr: An address
-+ * @lineno: a pointer which returns the line number
-+ * @fname: the filename where searching the line
-+ * @baseline: the basement line number
-+ *
-+ * Find a line number after @baseline in @fname for @addr in @cu_die.
-+ * Return the found line number, or -ENOENT if not found.
-+ */
-+int cu_find_lineinfo_after(Dwarf_Die *cu_die, Dwarf_Addr addr,
-+					int *lineno, const char *fname, int baseline)
-+{
-+	const char *line_fname;
-+	Dwarf_Lines *lines;
-+	Dwarf_Line *line;
-+	size_t idx = 0;
-+
-+	if (cu_find_lineinfo(cu_die, addr, &line_fname, lineno) < 0)
-+		return -ENOENT;
-+
-+	if (!strcmp(line_fname, fname) && baseline <= *lineno)
-+		return *lineno;
-+
-+	line = cu_getsrc_die(cu_die, addr, &lines, &idx);
-+
-+	while (line && dwarf_lineno(line, lineno) == 0) {
-+		line_fname = dwarf_linesrc(line, NULL, NULL);
-+		if (line_fname && !strcmp(line_fname, fname) && baseline <= *lineno)
-+			return *lineno;
-+		line = get_next_statement_line(lines, &idx, addr);
-+	}
-+
-+	return -ENOENT;
-+}
-+
- static int __die_find_inline_cb(Dwarf_Die *die_mem, void *data);
- 
- /**
-diff --git a/tools/perf/util/dwarf-aux.h b/tools/perf/util/dwarf-aux.h
-index bd7505812569..19edf21e2f78 100644
---- a/tools/perf/util/dwarf-aux.h
-+++ b/tools/perf/util/dwarf-aux.h
-@@ -23,6 +23,13 @@ const char *cu_get_comp_dir(Dwarf_Die *cu_die);
- int cu_find_lineinfo(Dwarf_Die *cudie, Dwarf_Addr addr,
- 		     const char **fname, int *lineno);
- 
-+/*
-+ * Get the most likely line number for given address in given filename
-+ * and basement line number.
-+ */
-+int cu_find_lineinfo_after(Dwarf_Die *cudie, Dwarf_Addr addr,
-+					int *lineno, const char *fname, int baseline);
-+
- /* Walk on functions at given address */
- int cu_walk_functions_at(Dwarf_Die *cu_die, Dwarf_Addr addr,
- 			 int (*callback)(Dwarf_Die *, void *), void *data);
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index 13ff45d3d6a4..efcacb5568e5 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -1578,7 +1578,8 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
- {
- 	Dwarf_Die cudie, spdie, indie;
- 	Dwarf_Addr _addr = 0, baseaddr = 0;
--	const char *fname = NULL, *func = NULL, *basefunc = NULL, *tmp;
-+	const char *fname = NULL, *func = NULL, *basefunc = NULL;
-+	const char *basefname = NULL, *tmp;
- 	int baseline = 0, lineno = 0, ret = 0;
- 
- 	/* We always need to relocate the address for aranges */
-@@ -1592,11 +1593,7 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
- 		goto end;
- 	}
- 
--	/* Find a corresponding line (filename and lineno) */
--	cu_find_lineinfo(&cudie, (Dwarf_Addr)addr, &fname, &lineno);
--	/* Don't care whether it failed or not */
--
--	/* Find a corresponding function (name, baseline and baseaddr) */
-+	/* Find the basement function (name, baseline and baseaddr) */
- 	if (die_find_realfunc(&cudie, (Dwarf_Addr)addr, &spdie)) {
- 		/* Get function entry information */
- 		func = basefunc = dwarf_diename(&spdie);
-@@ -1607,10 +1604,16 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
- 			goto post;
- 		}
- 
--		fname = die_get_decl_file(&spdie);
-+		basefname = die_get_decl_file(&spdie);
-+		if (!basefname) {
-+			lineno = 0;
-+			goto post;
-+		}
-+
- 		if (addr == baseaddr) {
- 			/* Function entry - Relative line number is 0 */
- 			lineno = baseline;
-+			fname = basefname;
- 			goto post;
- 		}
- 
-@@ -1627,7 +1630,9 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
- 				 */
- 				lineno = die_get_call_lineno(&indie);
- 				fname = die_get_call_file(&indie);
--				break;
-+				if (!fname || strcmp(fname, basefname))
-+					lineno = 0;
-+				goto post;
- 			} else {
- 				/*
- 				 * addr is in an inline function body.
-@@ -1636,20 +1641,35 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
- 				 * be the entry line of the inline function.
- 				 */
- 				tmp = dwarf_diename(&indie);
--				if (!tmp ||
--				    dwarf_decl_line(&indie, &baseline) != 0)
--					break;
-+				basefname = die_get_decl_file(&indie);
-+				if (!tmp || !basefname ||
-+				    dwarf_decl_line(&indie, &baseline) != 0) {
-+					lineno = 0;
-+					goto post;
-+				}
- 				func = tmp;
- 				spdie = indie;
- 			}
- 		}
-+	}
-+
-+	if (!lineno) {
-+		/* Find a corresponding line (filename and lineno) */
-+		if (cu_find_lineinfo_after(&cudie, (Dwarf_Addr)addr, &lineno,
-+								   basefname, baseline) < 0)
-+			lineno = 0;
-+		else
-+			fname = basefname;
-+	}
-+
-+post:
-+	if (lineno) {
- 		/* Verify the lineno and baseline are in a same file */
- 		tmp = die_get_decl_file(&spdie);
- 		if (!tmp || (fname && strcmp(tmp, fname) != 0))
- 			lineno = 0;
- 	}
- 
--post:
- 	/* Make a relative line number or an offset */
- 	if (lineno)
- 		ppt->line = lineno - baseline;
+vim +242 fs/fhandle.c
 
+   237	
+   238	static inline bool may_decode_fh(struct handle_to_path_ctx *ctx,
+   239					 unsigned int o_flags)
+   240	{
+   241		struct path *root = &ctx->root;
+ > 242		struct export_operations *nop = root->mnt->mnt_sb->s_export_op;
+   243	
+   244		if (nop && nop->flags & EXPORT_OP_UNRESTRICTED_OPEN)
+   245			return true;
+   246	
+   247		if (capable(CAP_DAC_READ_SEARCH))
+   248			return true;
+   249	
+   250		/*
+   251		 * Allow relaxed permissions of file handles if the caller has the
+   252		 * ability to mount the filesystem or create a bind-mount of the
+   253		 * provided @mountdirfd.
+   254		 *
+   255		 * In both cases the caller may be able to get an unobstructed way to
+   256		 * the encoded file handle. If the caller is only able to create a
+   257		 * bind-mount we need to verify that there are no locked mounts on top
+   258		 * of it that could prevent us from getting to the encoded file.
+   259		 *
+   260		 * In principle, locked mounts can prevent the caller from mounting the
+   261		 * filesystem but that only applies to procfs and sysfs neither of which
+   262		 * support decoding file handles.
+   263		 *
+   264		 * Restrict to O_DIRECTORY to provide a deterministic API that avoids a
+   265		 * confusing api in the face of disconnected non-dir dentries.
+   266		 *
+   267		 * There's only one dentry for each directory inode (VFS rule)...
+   268		 */
+   269		if (!(o_flags & O_DIRECTORY))
+   270			return false;
+   271	
+   272		if (ns_capable(root->mnt->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
+   273			ctx->flags = HANDLE_CHECK_PERMS;
+   274		else if (is_mounted(root->mnt) &&
+   275			 ns_capable(real_mount(root->mnt)->mnt_ns->user_ns,
+   276				    CAP_SYS_ADMIN) &&
+   277			 !has_locked_children(real_mount(root->mnt), root->dentry))
+   278			ctx->flags = HANDLE_CHECK_PERMS | HANDLE_CHECK_SUBTREE;
+   279		else
+   280			return false;
+   281	
+   282		/* Are we able to override DAC permissions? */
+   283		if (!ns_capable(current_user_ns(), CAP_DAC_READ_SEARCH))
+   284			return false;
+   285	
+   286		ctx->fh_flags = EXPORT_FH_DIR_ONLY;
+   287		return true;
+   288	}
+   289	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
