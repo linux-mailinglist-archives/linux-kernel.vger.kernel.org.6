@@ -1,152 +1,234 @@
-Return-Path: <linux-kernel+bounces-407412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405049C6D1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:46:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1EF9C6D24
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0D22B27E57
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:46:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1705B1F22C19
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112921FCF7C;
-	Wed, 13 Nov 2024 10:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A723C1FEFDE;
+	Wed, 13 Nov 2024 10:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SAI7NdRF"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XUmKy7Yr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8CF1F818A
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE1A1FB894
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731494775; cv=none; b=Wa/TpPGHQbYLfjKJAdOB2XIWlK6cFdrG51jwgGcLC1eFta9r3IOb3YLuQozZhg8xqlSpY87b5oiJ//wOueyuTswqTH6hLZFZSrlpiefZvq2VlHQM8QH24wPJW5BRTVeFo/uvHRI7/1oStgxmsKzEnfPreH7D7hqOVvRH+6CqAvQ=
+	t=1731494927; cv=none; b=W4ispUzYdxxWavaQULqixw5sq3/9x3eQ8MBlg1AY+PXaEODxURDTr25eIqZFSwslQF2MqokGOUG0EWj6Wlzk+VLjdrmCYJcQUuJBpjLIxlfDvTBCOPxbKnB33z4cklMGpmZ0HWAHVG8golMOYYF2FALl9D+6yKnur0aWQ/1e+GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731494775; c=relaxed/simple;
-	bh=Kp+BLfVyWf8Zi8+NKD+dUweFO180UCzKgD06LzuxrHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hWvbDhlnH431jA9DPbLxfB0XNP7Wmqb0WqHtKn337MiQhRVAQXeRStuVWq+3UsGGnJJBHvcGyhM+mnvqc4oCVmVtu8CisZ0HCAyKGxIEsHeOxI/GDoZfGjRtVqcVv5lE49rUUDkbvqlXfgFFaFbJXNBXLR8mp1tceW2j3S0zkoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SAI7NdRF; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2e8c8915eso5370008a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:46:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731494773; x=1732099573; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JkdjSCY4IBY8cdoM/p6vlIUOl96lMNAE6LT/b/G4P44=;
-        b=SAI7NdRFKpW0hbPapeM4kf19Nn+X20x2DP9+x8CbRwCPkHkGYPX4CchxZZfw6mGzuS
-         FOoWA0d81rGm3MrXC+EZL2oXhCeBjBN4I5WpCIDYaoGEChQX3mjRbf1qW8Ch2Yd6RRES
-         2GNHX8l/VM09uGhADWKlFrGH8QFlFPIhceRmdi2mc0+a81/Q7djeo6k9udc0avXY6OEP
-         lBuWRhoUucU/4i4avqm69IN5zdq8vQPZBH5acFZfnCTrXKNTu72ZQuhg5Ss3Sk14YsEU
-         fbnwbp09AMor3h4hViut5s8cCiuwKjtqtS1LVjG0xKSzu7Q184zNIqXC/yiCIXSZBpCH
-         olzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731494773; x=1732099573;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JkdjSCY4IBY8cdoM/p6vlIUOl96lMNAE6LT/b/G4P44=;
-        b=gJdoe3ryQYldhhttbGt1etkd9QhIT8Pk0teWzLsivtq5A9e7EkmSdUZaIGndCXU2Uv
-         2pG0pULPSf/1tQ6jHo3TQraad/XVQXSvyVMV+XcE5+0apHd8kYxCuK9Vy3W8qSWdSk4x
-         iTQCxqLrr0PmYqZll0Lu4oWRmku6BN1AAJUFQ1TNR/M4Px/Ygx6IJhBzChjHi754Ijl+
-         oFUuTGoML8iO1YUSbzvPvbiiJU8l4AMB4QVpMzzJEYGhdGUeJ93f6AJ+N9WBztRCj5m6
-         wJSTtE0GUEnAvzH3mYW0IE5li3yL3RNHTLi4tpRrMx1ZoYBlP8T349FDELXkB6EvjmEs
-         Ep5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUCJfvAZ936TCGloddAo5MQhYzmW7pQwIlUdbShfDNh5lku/dTPRI3OKhsNfbtU/hf6jUJO4s5tqXDB3xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgdMeoSebQymHs7tbDFmQfC7PlhFMpE0uknPLBTIK3O98AUhJs
-	W4emzf7kVX3mceqRCIAuB77NZQ/pl0zTi9gJIFfK7qPz5Mad5Q9B93yWa0zIORgrJIHfy1vHtFt
-	55epKgX8+dCrkCCOSRvk5ZlKbyneByir6oWdU/LQcBbqyOPkPhLCY
-X-Google-Smtp-Source: AGHT+IFn3w+1CivlSJtOoLQy9jPd2fijjv21m8eKpPGd9dfHQ1S1RTRG7WMozIirUVRQXxkc9zCZ/vV69nMRKooOd1I=
-X-Received: by 2002:a17:90b:1f8b:b0:2e2:ef25:ed35 with SMTP id
- 98e67ed59e1d1-2e9b14d565fmr24768577a91.0.1731494772711; Wed, 13 Nov 2024
- 02:46:12 -0800 (PST)
+	s=arc-20240116; t=1731494927; c=relaxed/simple;
+	bh=JaXHthW69OWq7pu8xfdevV28GEyzUS07vO+cjBXBusk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dbCfu4LI4qrdVxIFyVOrDAuCVNhdGR7q5/E9glj2P6RgubLHdtSOJWUUxSXyz0MGOEzjyue+/QZv4opdDYSo39ODnn6HgoE/kF58S0xqrEGVjui5rmu2oTgovH/fl7SKZGXrtSlH6ftasfW5w6XZNe5/Phzw0QPlTlbGKmVpxzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XUmKy7Yr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731494924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gyiix1MwkCQpAPlotMs0JJeKLRpwAc92205dD5TfNd0=;
+	b=XUmKy7YrgFmANVNLwOw1CF/2XP47IZq2Q5j3/ORBBHIL0hmlOR49MsTYjlpt8//K7Ok6uk
+	W5Q885CA1dZmY5tVHsCGaJVwzXaK4PrbFNikQ6wNwwpT3QHxtT2V7pPOXUpvpfloaPOfnf
+	4+GVs8a9pJrmVUSExwDq5Mhzl3nwDgw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-115-yyxlQhQeO5yGg-boZJj-NA-1; Wed,
+ 13 Nov 2024 05:48:39 -0500
+X-MC-Unique: yyxlQhQeO5yGg-boZJj-NA-1
+X-Mimecast-MFC-AGG-ID: yyxlQhQeO5yGg-boZJj-NA
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4AF121954B1E;
+	Wed, 13 Nov 2024 10:48:37 +0000 (UTC)
+Received: from ws.net.home (unknown [10.45.225.223])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CCE0D19560A3;
+	Wed, 13 Nov 2024 10:48:34 +0000 (UTC)
+Date: Wed, 13 Nov 2024 11:48:31 +0100
+From: Karel Zak <kzak@redhat.com>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
+	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] overlayfs: port all superblock creation logging to
+ fsopen logs
+Message-ID: <j7ngxuxqdwrq5o6zi2hmt3zfmh6s5mzrlvwjw6snqbv5oc5ggo@nqpr6wjec7go>
+References: <20241106-overlayfs-fsopen-log-v1-1-9d883be7e56e@cyphar.com>
+ <20241106-mehrzahl-bezaubern-109237c971e3@brauner>
+ <CAOQ4uxirsNEK24=u3K-X5A-EX80ofEx5ycjoqU4gocBoPVxbYw@mail.gmail.com>
+ <CAOQ4uxj+gAtM6cY_aEmM7TAqLor7498f0FO3eTek_NpUXUKNaw@mail.gmail.com>
+ <20241106.141100-patchy.noises.kissable.cannons-37UAyhH88iH@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6731d32b.050a0220.1fb99c.014d.GAE@google.com> <1af819ae-cd88-4db0-af6e-02064489ebb2@rowland.harvard.edu>
-In-Reply-To: <1af819ae-cd88-4db0-af6e-02064489ebb2@rowland.harvard.edu>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Wed, 13 Nov 2024 11:46:00 +0100
-Message-ID: <CANp29Y7RA00bKOinkjSDBchbkx3RDvWXGs4hr0PrPKyqSEC-_g@mail.gmail.com>
-Subject: Re: [syzbot] [usb?] KASAN: slab-use-after-free Read in ld_usb_release
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: syzbot <syzbot+e8e879922808870c3437@syzkaller.appspotmail.com>, 
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106.141100-patchy.noises.kissable.cannons-37UAyhH88iH@cyphar.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Alan,
+On Thu, Nov 07, 2024 at 02:09:19AM GMT, Aleksa Sarai wrote:
+> On 2024-11-06, Amir Goldstein <amir73il@gmail.com> wrote:
+> > On Wed, Nov 6, 2024 at 12:00 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > >
+> > > On Wed, Nov 6, 2024 at 10:59 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > >
+> > > > On Wed, Nov 06, 2024 at 02:09:58PM +1100, Aleksa Sarai wrote:
+> > > > > overlayfs helpfully provides a lot of of information when setting up a
+> > > > > mount, but unfortunately when using the fsopen(2) API, a lot of this
+> > > > > information is mixed in with the general kernel log.
+> > > > >
+> > > > > In addition, some of the logs can become a source of spam if programs
+> > > > > are creating many internal overlayfs mounts (in runc we use an internal
+> > > > > overlayfs mount to protect the runc binary against container breakout
+> > > > > attacks like CVE-2019-5736, and xino_auto=on caused a lot of spam in
+> > > > > dmesg because we didn't explicitly disable xino[1]).
+> > > > >
+> > > > > By logging to the fs_context, userspace can get more accurate
+> > > > > information when using fsopen(2) and there is less dmesg spam for
+> > > > > systems where a lot of programs are using fsopen("overlay"). Legacy
+> > > > > mount(2) users will still see the same errors in dmesg as they did
+> > > > > before (though the prefix of the log messages will now be "overlay"
+> > > > > rather than "overlayfs").
+> > >
+> > > I am not sure about the level of risk in this format change.
+> > > Miklos, WDYT?
+> > >
+> > > > >
+> > > > > [1]: https://bbs.archlinux.org/viewtopic.php?pid=2206551
+> > > > >
+> > > > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > > > > ---
+> > > >
+> > > > To me this sounds inherently useful! So I'm all for it.
+> > > >
+> > >
+> > > [CC: Karel]
+> > >
+> > > I am quite concerned about this.
+> > > I have a memory that Christian suggested to make this change back in
+> > > the original conversion to new mount API, but back then mount tool
+> > > did not print out the errors to users properly and even if it does
+> > > print out errors, some script could very well be ignoring them.
+> 
+> I think Christian mentioned this at LSF/MM (or maybe LPC), but it seems
+> that util-linux does provide the log information now in the case of
+> fsconfig(2) errors:
+> 
+> 	% strace -e fsopen,fsconfig mount -t overlay -o userxattr=str x /tmp/a
+> 	fsopen("overlay", FSOPEN_CLOEXEC)       = 3
+> 	fsconfig(3, FSCONFIG_SET_STRING, "source", "foo", 0) = 0
+> 	fsconfig(3, FSCONFIG_SET_STRING, "userxattr", "str", 0) = -1 EINVAL (Invalid argument)
+> 	mount: /tmp/a: fsconfig system call failed: overlay: Unexpected value for 'userxattr'.
+> 		   dmesg(1) may have more information after failed mount system call.
+> 
+> (Using the current HEAD of util-linux -- openSUSE's util-linux isn't
+> compiled with support for fsopen apparently.)
 
-On Mon, Nov 11, 2024 at 4:45=E2=80=AFPM Alan Stern <stern@rowland.harvard.e=
-du> wrote:
->
-> On Mon, Nov 11, 2024 at 01:49:31AM -0800, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.=
-ker..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1650d6a7980=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db77c8a55ccf=
-1d9e2
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3De8e8799228088=
-70c3437
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for=
- Debian) 2.40
-> > userspace arch: i386
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
->
-> Question for the syzbot people:
->
-> If I have a patch which I think will cause the issue to become
-> reproducible, is there any way to ask syzbot to apply the same test that
-> failed here to a kernel including my patch?
+After failed mount-related syscalls, libmount reads messages prefixed
+with "e " from the file descriptor created by fdopen(). These messages
+are later printed by mount(8).
 
-No, that's unfortunately not supported.
+mount(8) or libmount does not read anything from kmesg.
 
-In this particular case, it's at least evident from `Comm: ` which
-exact program was being executed when the kernel crashed:
+> However, it doesn't output any of the info-level ancillary
+> information if there were no errors.
 
-[  178.539707][ T8305] BUG: KASAN: slab-use-after-free in
-do_raw_spin_lock+0x271/0x2c0
-[  178.542477][ T8305] Read of size 4 at addr ffff888022387c0c by task
-syz.3.600/8305
-[  178.546823][ T8305]
-[  178.548202][ T8305] CPU: 3 UID: 0 PID: 8305 Comm: syz.3.600 Not
-tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
+This is the expected default behavior. mount(8) does not print any
+additional information.
 
-syz.3.600 means procid=3D3 and id=3D600, so it's the program that comes
-after the following line in
-https://syzkaller.appspot.com/x/log.txt?x=3D1650d6a7980000:
+We can enhance libmount to read and print other messages on stdout if
+requested by the user. For example, the mount(8) command has a
+--verbose option that is currently only used by some /sbin/mount.<type>
+helpers, but not by mount(8) itself. We can improve this and use it in
+libmount to read and print info-level messages.
 
-551.627007ms ago: executing program 3 (id=3D600):
-<...>
+I can prepare a libmount/mount(8) patch for this.
 
-You may try to treat that program as a normal syz reproducer and run
-it against your patched kernel locally, that should be quite
-straightforward to do (just several commands). See e.g. the
-instructions here:
-https://github.com/google/syzkaller/blob/master/docs/syzbot_assets.md#run-a=
--syz-reproducer-directly
+> So there will definitely be some loss of
+> information for pr_* logs that don't cause an actual error (which is a
+> little unfortunate, since that is the exact dmesg spam that caused me to
+> write this patch).
+> 
+> I could take a look at sending a patch to get libmount to output that
+> information, but that won't help with the immediate issue, and this
+> doesn't help with the possible concern with some script that scrapes
+> dmesg. (Though I think it goes without saying that such scripts are kind
+> of broken by design -- since unprivileged users can create overlayfs
+> mounts and thus spam the kernel log with any message, there is no
+> practical way for a script to correctly get the right log information
+> without using the new mount API's logging facilities.)
 
---=20
-Aleksandr
+> I can adjust this patch to only include the log+return-an-error cases,
+> but that doesn't really address your primary concern, I guess.
+> 
+> > > My strong feeling is that suppressing legacy errors to kmsg should be opt-in
+> > > via the new mount API and that it should not be the default for libmount.
+> > > IMO, it is certainly NOT enough that new mount API is used by userspace
+> > > as an indication for the kernel to suppress errors to kmsg.
+ 
+For me, it seems like we are mixing two things together.
 
->
-> Alan Stern
->
-> --
+kmesg is a *log*, and tools like systemd read and save it. It is used
+for later issue debugging or by log analyzers. This means that all
+relevant information should be included.
+
+The stderr/stdout output from tools such as mount(8) is simply
+feedback for users or scripts, and informational messages are just
+hints. They should not be considered a replacement for system logging
+facilities. The same applies to messages read from the new mount API;
+they should not be a replacement for system logs.
+
+In my opinion, it is acceptable to suppress optional and unimportant
+messages and not save them into kmesg. However, all other relevant
+messages should be included regardless of the tool or API being used.
+
+Additionally, it should be noted that mount(8)/libmount is only a
+userspace tool and is not necessary for mounting filesystems. The
+kernel should not rely on libmount behavior; there are other tools
+available such as busybox.
+
+> I can see an argument for some kind of MS_SILENT analogue for
+> fsconfig(), though it will make the spam problem worse until programs
+> migrate to setting this new flag.
+ 
+Yes, the ideal solution would be to have mount options that can
+control this behavior. This would allow users to have control over it
+and save their settings to fstab, as well as keep it specific to the
+mount node.
+
+> Also, as this is already an issue ever since libmount added support for
+> the new API (so since 2.39 I believe?), I think it would make just as
+> much sense for this flag to be opt-in -- so libmount could set the
+> "verbose" or "kmsglog" flag by default but most normal programs would
+> not get the spammy behaviour by default.
+
+I prefer if the default behavior is defined by the kernel, rather than
+by userspace tools like libmount. If we were to automatically add any
+mount options through libmount, it would make it difficult to coexist
+with settings in fstab, etc. It's always better to have transparency
+and avoid any hidden factors in the process.
+
+    Karel
+
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
 
