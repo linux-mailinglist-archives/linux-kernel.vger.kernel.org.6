@@ -1,118 +1,137 @@
-Return-Path: <linux-kernel+bounces-407275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D0E9C6B30
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:07:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941AA9C6B37
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:08:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70EB2B25982
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:07:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58292281B53
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844861BDA9B;
-	Wed, 13 Nov 2024 09:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F80C1BDAAE;
+	Wed, 13 Nov 2024 09:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="G2qmxmKc"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="naUquatE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5261A1BD028;
-	Wed, 13 Nov 2024 09:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582A81BD519;
+	Wed, 13 Nov 2024 09:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731488834; cv=none; b=Xmq1dIpkh3vwLNveZtwPxP5YT7RRhbHWaAIZXIhMXMMjCOPk1Xysu01egUmniDfkrHS2ic0wuNMqNbOxHyhdAJHYTzdmr1RC+UCcC8UYh9MIvwBTZBYnIBltgtF319yOPYo4ft3cVsXzcp0VWNtLw8D5e45EXZcVzz0QIokvYt8=
+	t=1731488929; cv=none; b=DwYmmKUA3xh/X2Zs1pzbEQUh+Y9lrfhUW3blCCrDTiJyiHp2iVD/SmAvrQJBHRTzv8hFes5WREQYGAPwmF2SXGv+6IX3QlG48LhvK2+u/uUYybGw5hjdFoHvORDh4E9qit8bjybCgNAmROHeKCDilxgWZiB3EfDpKHwgkhG99mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731488834; c=relaxed/simple;
-	bh=gItS4ct+EOxG20yTUb1Sp9O+9wuwU7KGiBD97mPueXU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lTQEIeqsjmxEgngOEEofOT8PHykc5CRnwmc2lp+Cjvt0C1yq4qUh/r+xBTlxQN9kgfrZ7I5yB9rZl0EtbVR639ampY2DBMJj8ZEcnxMtmI0xa/vXNygVPCSzr418CBW4JisTWIpf8rDmH1e0mPOkMc8PKoc4DMAhfKdYUhgpZgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=G2qmxmKc; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 25131E0003;
-	Wed, 13 Nov 2024 09:07:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731488829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gItS4ct+EOxG20yTUb1Sp9O+9wuwU7KGiBD97mPueXU=;
-	b=G2qmxmKcMURoRlGS4cfajPcrtQ5kTfsrSA9Tm4QY2j0/8O3lfNfFlnAMvavJdzc/RgV5WJ
-	ARZAP1h19/6Bno5A1TJ9YMJ3lSZFd3m4vDXS40nLndb88SyaKRqfWN7Pt0f6UUpXpwTXcA
-	fzB/qbR6vNiBtgZSz54VVWhc9yq+o+PQPTGpP1LcCGboKqPThjB307C3cNoK9Tz5YZqEkl
-	25Ym2aJ5A0mpMIg6I3YAbgtaIS3MgL+7suC8spzmARmiy719+lN7aQnyLQXIX7Cqj1SAl9
-	stL+IE1slGPQxlrDBQeTDTOztDw1rPDAczn33twZvcqOzT2Brq0KlEbNJvNyZg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: <broonie@kernel.org>,  <robh@kernel.org>,  <krzk+dt@kernel.org>,
-  <conor+dt@kernel.org>,  <andersson@kernel.org>,
-  <konradybcio@kernel.org>,  <richard@nod.at>,  <vigneshr@ti.com>,
-  <manivannan.sadhasivam@linaro.org>,  <linux-arm-msm@vger.kernel.org>,
-  <linux-spi@vger.kernel.org>,  <devicetree@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-mtd@lists.infradead.org>,
-  <quic_srichara@quicinc.com>,  <quic_varada@quicinc.com>
-Subject: Re: [PATCH v13 2/8] mtd: rawnand: qcom: cleanup qcom_nandc driver
-In-Reply-To: <374ea155-0970-38bd-470f-cc440ca0bab5@quicinc.com> (Md Sadre
-	Alam's message of "Tue, 12 Nov 2024 17:45:07 +0530")
-References: <20241030121919.865716-1-quic_mdalam@quicinc.com>
-	<20241030121919.865716-3-quic_mdalam@quicinc.com>
-	<871pzh397j.fsf@bootlin.com>
-	<374ea155-0970-38bd-470f-cc440ca0bab5@quicinc.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Wed, 13 Nov 2024 10:07:08 +0100
-Message-ID: <87bjyjsds3.fsf@bootlin.com>
+	s=arc-20240116; t=1731488929; c=relaxed/simple;
+	bh=hAlOVw3Y2srLBF3nP8gky9MN8oK474twFFhXp8hKWA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ktwhRpLl8zoqr3SeJcqc1sKAc4GVEHx90b34RoaYh/PqvnSYHlVDqzDpg3VLaaUtv3sCF3Vw/69dp55PDpIkSiFl1MPnW6WCh9f4OCNtVkegMuG90IJMsxi7fwV8o7L5EjZGyQOxamy6Urww9gYSV8Mwajivjbu7e9KgDyXN68E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=naUquatE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2D26C4CECD;
+	Wed, 13 Nov 2024 09:08:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731488928;
+	bh=hAlOVw3Y2srLBF3nP8gky9MN8oK474twFFhXp8hKWA8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=naUquatEiLc7gqhY9P/5jypq4jPHX2oKtX/SFk8+QwDnW5A0aqOMw+GIw+Nk8MbYH
+	 GKko+rPhfmRyz/eKrg6TAS1JJU9FYH8GgRk7oHhtou+4lMFsgVQdTnOP8ZjoJ8kxkx
+	 TFkne9dvsBQyBaXx8X+GHInupOVZSt2UYQ6CO/KNdEOMCAdiKqDIex1lxksryPaX1v
+	 +Ty4To6WMzjT2QkzboDoWAxL/1MEfEs7W2cwBBEXbv8l3wwtu8610baP+wHn+lrRhn
+	 2SMhML2uQRfNSaqE5VCr8IET2pIjGLPtu76Reocw/M+ngAZcIomlXVgs8f1cuuYn5z
+	 GwbNBG0mVe64w==
+Message-ID: <9bb4de26-9053-4abd-a319-3e4361784ecb@kernel.org>
+Date: Wed, 13 Nov 2024 10:08:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] tty: ldsic: fix tty_ldisc_autoload sysctl's
+ proc_handler
+To: nicolas.bouchinet@clip-os.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+ Joel Granados <j.granados@samsung.com>, Neil Horman <nhorman@tuxdriver.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Lin Feng <linf@wangsu.com>,
+ Theodore Ts'o <tytso@mit.edu>
+References: <20241112131357.49582-1-nicolas.bouchinet@clip-os.org>
+ <20241112131357.49582-4-nicolas.bouchinet@clip-os.org>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20241112131357.49582-4-nicolas.bouchinet@clip-os.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 12. 11. 24, 14:13, nicolas.bouchinet@clip-os.org wrote:
+> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> 
+> Commit 7c0cca7c847e ("tty: ldisc: add sysctl to prevent autoloading of
+> ldiscs") introduces the tty_ldisc_autoload sysctl with the wrong
+> proc_handler. .extra1 and .extra2 parameters are set to avoid other values
+> thant SYSCTL_ZERO or SYSCTL_ONE to be set but proc_dointvec do not uses
+> them.
+> 
+> This commit fixes this by using proc_dointvec_minmax instead of
+> proc_dointvec.
+> 
+> Fixes: 7c0cca7c847e ("tty: ldisc: add sysctl to prevent autoloading of ldiscs")
+> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
-On 12/11/2024 at 17:45:07 +0530, Md Sadre Alam <quic_mdalam@quicinc.com> wr=
-ote:
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-> On 11/12/2024 12:00 AM, Miquel Raynal wrote:
->> On 30/10/2024 at 17:49:13 +0530, Md Sadre Alam <quic_mdalam@quicinc.com>=
- wrote:
->>=20
->>> cleanup qcom_nandc driver as below
->> Perform a global cleanup of the Qualcomm NAND controller driver with
->> the
->> following improvements:
-> Ok
->>>
->>> - Remove register value indirection api
->> API
-> Ok
->>=20
->>>
->>> - Remove set_reg() api
->> API
-> Ok
->>=20
->>>
->>> - Convert read_loc_first & read_loc_last macro to function
->> functions
-> Ok
->>=20
->>>
->>> - Renamed multiple variables
->> Rename
-> Ok
+I hope noone managed to store 2+ to that sysctl yet...
 
-In general when the main answer is "okay", you can probably just say a
-sentence like "thanks for the comments I'll take them into account",
-without answering to each and every comment. This way, it will be easier
-for me to catch if you have further remarks.
-
-
-Thanks,
-Miqu=C3=A8l
+thanks,
+-- 
+js
+suse labs
 
