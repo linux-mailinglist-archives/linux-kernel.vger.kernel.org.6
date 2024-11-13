@@ -1,131 +1,147 @@
-Return-Path: <linux-kernel+bounces-407137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E739C694B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:32:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B48E09C694D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:32:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20472B2246C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:31:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BF651F238AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848E5176AB6;
-	Wed, 13 Nov 2024 06:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140E51779B8;
+	Wed, 13 Nov 2024 06:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lf5+YECR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wxF+elyi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DAxu25BC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80553176233
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83251714BC
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731479510; cv=none; b=bjk0GeM4n+GzaoBSq85IUCNeJCvbOhQxcRYNZK0GIFWt73P9hfucRCIs3n31MPef8K1xYMZETrhuyoqaUPyDvQEbxlYzBOI60ltuIT2jJjwh/NL3L/kBBYtQpSB5MCOSPAA2XmKKGydQJbGwbzgwzpNbg9OGCTySWUVV9YzI/6A=
+	t=1731479542; cv=none; b=FLhzeqMjI41hZSCZ6iynKMuAtx2mgOrAiTKke0V8noiPHaWD3tI26Cqrw/pzOmwDrtC6lrPKxllYBQRxNEEb031/2H17GtPnja9lcLzM9P84blY/Wi0jDx/jwztQKVCFnV+Kjim0W3ozaGHYDby6v56KKVGAf8D2D5o1fwyOck4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731479510; c=relaxed/simple;
-	bh=v0XF+lYS+9ubCtSKTZBWWPEP+fc3CIroquOLJiZDNIM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ncTYJIZPKLUILY2vo782UTsqwDOqH6Dgb+2nzSJf98NCXVwEpIYc8wsi+lrVQEfXtsiTtowS2LZNCBcrfV4gAO9zKhssD2gwL8NyVdjQMeNBJIwLGM/efRT6AUEs9jfxBZ6VbVZ4JWcuk5ipk5V+W5IJl7c7h64JhbJuFcqMahA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lf5+YECR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wxF+elyi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731479507;
+	s=arc-20240116; t=1731479542; c=relaxed/simple;
+	bh=dfPlndrRvx5LRPZ+CoWGofFBd31blE9k7qzq28w1Fn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SlDeUBNX4KlkfFCVZwpZTM7JpF18KMwN2/JfozUHfuKGXg6wm8rdJYqYVMaZiwDronUk3WztSRUb/nY8fs14DmwnEgqL72S1XDDL8/UVALS7ycqksJT2dJ1JWY0snw547jx2rCF3KXpTjGsWaF9QYzlyEu0X8ilfrfAWwcX26p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DAxu25BC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731479539;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LqZhmAG1L077yh5N5u/H+QRagaLDjkn8sqSvH2ojehk=;
-	b=lf5+YECRGgtEoM+xnRNgzLn0YzhbuOn5DArNAEuXuWuhciWKTtcYvIVnQLWneKUbkHnaKQ
-	Ab/WHZ+TVXbgBIBgsq3UhPWJ+BjlvfHC+t0vpwVHdzAJlc3+Sn0ohVU8zcLx7B/V0rTG+n
-	sq4FjAfggzDp0oKxOZx1bY3icXyK0C4yx0spdepdpOq85klzlqJrxlt3cw3sm6BRRhOy3Y
-	xhsflm90GJSAMt1U+RJ3ijvrI71zJxUWg+TOU9DDtwlT4O8aGKU3lanSM3ed4bMA9XE2s5
-	iWVlt6w4TgNVch0iHDIecSdWjZ3099dl1g2KF1OOE6JxqKKg+n83NZ0O+0VVDw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731479507;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LqZhmAG1L077yh5N5u/H+QRagaLDjkn8sqSvH2ojehk=;
-	b=wxF+elyirMFbITdWGSKVOXYlQlv+QcvHIvUYgpeAnldZjg6/z3+i03gb0sBYjhhuQWmNbv
-	223s2y2YLXU4ueCA==
-To: Luming Yu <luming.yu@shingroup.cn>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
- christophe.leroy@csgroup.eu, luming.yu@gmail.com
-Cc: Luming Yu <luming.yu@shingroup.cn>
-Subject: Re: [PATCH v2 6/8] powerpc/entry: factout irqentry-state
-In-Reply-To: <972B4AF8B9EDF3C0+20241111031934.1579-12-luming.yu@shingroup.cn>
-References: <20241111031934.1579-2-luming.yu@shingroup.cn>
- <972B4AF8B9EDF3C0+20241111031934.1579-12-luming.yu@shingroup.cn>
-Date: Wed, 13 Nov 2024 07:32:02 +0100
-Message-ID: <87a5e3myot.ffs@tglx>
+	bh=0tpZJUhLYkQvz4/1c+WZKWxrz55qwMuTFTv1urMtlfE=;
+	b=DAxu25BC2smBJ0bBnLUMMny9hhJ4K6di8LW5FefnEYjLigrOFQ0yyTcM4wc4/JIcdPe3M1
+	pHwFD09BDO/fKRzZgbVeHBaLmLGelgDk7dx0CHRfRB7kCPK7l3qwXS2RJ2mayB3u03dVB4
+	WWe/ZaGh31+YGHDoGqsC9Q1zipZB/9U=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-316-rWZ1YfhgPeOsz7Y9-aZOow-1; Wed, 13 Nov 2024 01:32:18 -0500
+X-MC-Unique: rWZ1YfhgPeOsz7Y9-aZOow-1
+X-Mimecast-MFC-AGG-ID: rWZ1YfhgPeOsz7Y9-aZOow
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d59ad50f3so3588921f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 22:32:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731479536; x=1732084336;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0tpZJUhLYkQvz4/1c+WZKWxrz55qwMuTFTv1urMtlfE=;
+        b=PdK0LJrYRzi+3j76yyCnB91yliL1jgvclpABGiII8bE8L5IhLvV+SOzeVig1twy0HK
+         oRocN55q4mlwqlNuK1TKoljCCARXcnaycj1rDQ1lyGeIHXTR1WTjwsO1ToESacf9ZqHi
+         B6kihknWQqr4Ek+G61r7qtvOANYCcUDDNmBPBNZfgG4UC5Llofahx9E30Fs6P4BEXpYt
+         Ok5Zv86kcV9Nipcxl4h4tdwo+1AUhR/RsSMq3AC7HE07Z+kEmz01BP+4G51pzutFbndl
+         IEdhTiupznfqp1T62y7f4EfNkXPa54apdiAD6K+O6i00xoF0x6BNH2X0sbQA4bMlVAZf
+         DVMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVmO0Vlr8aKogciQ89KFtqRkoQdik4v9kMuQMvM7aAIcST73wo3697If6c3QrSJU1xjFJNfehdcXKgo30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWTXA3nWuS5xk0O6g0F81UO8O960JemNFQJIwYR6pskNMzgd/q
+	7iJPbXT0d9EkxpvfrTpsBx2cYXQfm6zuYrt49OxKhU3QGXjoPduVdAqigeEwU8JaK9XHt0wVs0h
+	ODmbQxU7S+vDOsD4n3Cwrifr4f35Yb4szbT+FiA6Wy2K5ceKFxG75GcUysKpygxEc/FDxLQ==
+X-Received: by 2002:a05:6000:70d:b0:37d:3e6d:3c2f with SMTP id ffacd0b85a97d-381f1883bc1mr15818764f8f.47.1731479536587;
+        Tue, 12 Nov 2024 22:32:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFm7j62RQtg2vMQRf7xE09cRkKXHfFgJ32M3aHTjmYlfby7/gQk3bMsScUdd8LU3HRpv1DW5w==
+X-Received: by 2002:a05:6000:70d:b0:37d:3e6d:3c2f with SMTP id ffacd0b85a97d-381f1883bc1mr15818736f8f.47.1731479536229;
+        Tue, 12 Nov 2024 22:32:16 -0800 (PST)
+Received: from redhat.com ([2a02:14f:17b:c70e:bfc8:d369:451b:c405])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9f8984sm17650303f8f.71.2024.11.12.22.32.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 22:32:15 -0800 (PST)
+Date: Wed, 13 Nov 2024 01:32:10 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: virtualization@lists.linux.dev, Si-Wei Liu <si-wei.liu@oracle.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Eugenio Perez Martin <eperezma@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
+	Parav Pandit <parav@nvidia.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH vhost 2/2] vdpa/mlx5: Fix suboptimal range on iotlb
+ iteration
+Message-ID: <20241113013149-mutt-send-email-mst@kernel.org>
+References: <20241021134040.975221-1-dtatulea@nvidia.com>
+ <20241021134040.975221-3-dtatulea@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021134040.975221-3-dtatulea@nvidia.com>
 
-On Mon, Nov 11 2024 at 11:19, Luming Yu wrote:
+On Mon, Oct 21, 2024 at 04:40:40PM +0300, Dragos Tatulea wrote:
+> From: Si-Wei Liu <si-wei.liu@oracle.com>
+> 
+> The starting iova address to iterate iotlb map entry within a range
+> was set to an irrelevant value when passing to the itree_next()
+> iterator, although luckily it doesn't affect the outcome of finding
+> out the granule of the smallest iotlb map size. Fix the code to make
+> it consistent with the following for-loop.
+> 
+> Fixes: 94abbccdf291 ("vdpa/mlx5: Add shared memory registration code")
 
-factout?
 
-> To have lowlevel paca.h include high level entry-common.h cause
-> include file dependency mess.
+But the cover letter says "that's why it does not have a fixes tag".
+Confused.
 
-That's not a technical explanation which explains which problem this
-patch is trying to solve.
-
-> Split irqentry-state.h to have the irqentry_state.h can be included in
-> low level paca.h
-
-That's not what the patch actually does. It does two things:
-
-    1) Split the generic header file
-
-    2) Change the PowerPC code.
-
-That's not how it works. See Documentation/process ...
-
-> diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
-> index d95ab85f96ba..6521171469f2 100644
-> --- a/include/linux/entry-common.h
-> +++ b/include/linux/entry-common.h
-> @@ -352,30 +352,6 @@ void irqentry_enter_from_user_mode(struct pt_regs *regs);
->   */
->  void irqentry_exit_to_user_mode(struct pt_regs *regs);
+> Signed-off-by: Si-Wei Liu <si-wei.liu@oracle.com>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> ---
+>  drivers/vdpa/mlx5/core/mr.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/vdpa/mlx5/core/mr.c b/drivers/vdpa/mlx5/core/mr.c
+> index 7d0c83b5b071..8455f08f5d40 100644
+> --- a/drivers/vdpa/mlx5/core/mr.c
+> +++ b/drivers/vdpa/mlx5/core/mr.c
+> @@ -368,7 +368,6 @@ static int map_direct_mr(struct mlx5_vdpa_dev *mvdev, struct mlx5_vdpa_direct_mr
+>  	unsigned long lgcd = 0;
+>  	int log_entity_size;
+>  	unsigned long size;
+> -	u64 start = 0;
+>  	int err;
+>  	struct page *pg;
+>  	unsigned int nsg;
+> @@ -379,10 +378,9 @@ static int map_direct_mr(struct mlx5_vdpa_dev *mvdev, struct mlx5_vdpa_direct_mr
+>  	struct device *dma = mvdev->vdev.dma_dev;
 >  
-> -#ifndef irqentry_state
-> -/**
-> - * struct irqentry_state - Opaque object for exception state storage
-> - * @exit_rcu: Used exclusively in the irqentry_*() calls; signals whether the
-> - *            exit path has to invoke ct_irq_exit().
-> - * @lockdep: Used exclusively in the irqentry_nmi_*() calls; ensures that
-> - *           lockdep state is restored correctly on exit from nmi.
-> - *
-> - * This opaque object is filled in by the irqentry_*_enter() functions and
-> - * must be passed back into the corresponding irqentry_*_exit() functions
-> - * when the exception is complete.
-> - *
-> - * Callers of irqentry_*_[enter|exit]() must consider this structure opaque
-> - * and all members private.  Descriptions of the members are provided to aid in
-> - * the maintenance of the irqentry_*() functions.
-> - */
-> -typedef struct irqentry_state {
-> -	union {
-> -		bool	exit_rcu;
-> -		bool	lockdep;
-> -	};
-> -} irqentry_state_t;
-> -#endif
+>  	for (map = vhost_iotlb_itree_first(iotlb, mr->start, mr->end - 1);
+> -	     map; map = vhost_iotlb_itree_next(map, start, mr->end - 1)) {
+> +	     map; map = vhost_iotlb_itree_next(map, mr->start, mr->end - 1)) {
+>  		size = maplen(map, mr);
+>  		lgcd = gcd(lgcd, size);
+> -		start += size;
+>  	}
+>  	log_entity_size = ilog2(lgcd);
+>  
+> -- 
+> 2.46.1
 
-How is this supposed to compile on any architecture which uses the
-generic entry code?
-
-Thanks,
-
-        tglx
 
