@@ -1,220 +1,288 @@
-Return-Path: <linux-kernel+bounces-407236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0609C6AA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:36:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8D3D9C6AA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:38:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E97351F244CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:36:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C2BAB22C94
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DBD189F52;
-	Wed, 13 Nov 2024 08:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F82F18BB82;
+	Wed, 13 Nov 2024 08:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1y1cD02n"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BNaPcyyM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEFC185955
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8612518A6D7
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731486983; cv=none; b=O++ihspSrEOAosnb86B2K8jyGNxEZw1oPKGA/MEoYYiMFfI9Wx44Rl7ijsBvHQEbadyEuXcoQXwfDDRWLBLfkNMbFDuqWYrmtKifw0ZSNLHprNUJgBsIAs94UAotcMenOW++36gKt+M65UyDp6rv1D/GVD5I7vR0SqXzLrZKkio=
+	t=1731487058; cv=none; b=JmWuhmmHWYpLH+xaZ48BBmAqmvSwVxpBd8uYaHJjsPvMjuFDBzQB/UMHR9YOw3TynGf8ukItMEXZ1mfHIRbMmY90ZB3fXqxBjApvPBeAp9QZGm0w1tPXslTBI5q66VJUyjD4sVd7wV8Zo7+Y7cE6g44prQ89BgEO2eclvjNiQjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731486983; c=relaxed/simple;
-	bh=OYPA6nWxJUsYUlpjbB6I1lZwViDm6ZxacBmzJ+ckWi0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aB4f/38rjbWTaWEabsDlQ0/CFl1MMN7MdcNoKOc6rRhiuhDDfzvLBawv481I8b0HFnu3gafOTHklLiUp1KEEeCVb+uEOVy0rTmMj6VZlWX8dZxe3pQeypnzk2yeelLbGsMeiWVx7uAmdC5pyXl6kXllUqu6dStnqnhLmEMNpQhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1y1cD02n; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53d9ff8f1e4so703716e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 00:36:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731486978; x=1732091778; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OYPA6nWxJUsYUlpjbB6I1lZwViDm6ZxacBmzJ+ckWi0=;
-        b=1y1cD02nh+BBOjfGcis+7W6L6Dq3ijHRBxnJXvXyd74EvojDI2vWDzLbirhd7W63tX
-         2QLntU7T/d4j/3qWZD/wwwjxiz7/s85M93cB8J/9SYdq0BFbgGni8CbrxbNlvVBGF98A
-         bmkRPKeJFMgSGWbK5/ld5HknG1ryiLOHSWBxDz5tWz0XNfHXMMnmeecJRm9u3rtpR416
-         wCe3r+7jASY9dd2aFhlj+gBCP9MOQT7HHESzgP8p06WABvMMNRmjWjuAVnHGizz+UaQG
-         Ma5L7hsj4EZb4xLpdDP//jmhsvKb5GUVTMjkJ7x5tqMH0SWM+zVBk3B8STty/YP+K01k
-         hfbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731486978; x=1732091778;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OYPA6nWxJUsYUlpjbB6I1lZwViDm6ZxacBmzJ+ckWi0=;
-        b=kno/D3PT2TMSeqs0QhwZMLtmKCkhIXHBqAp7ssPFBpBv+pXlENOfO6y9xA2UnPJ9Dd
-         EmP/OSKzid+6tjHKqBOxHfSEIZbbPozbZqBQvBSMxWdKmJ3dz2Mhp4I0V2Lh9xmL+bYn
-         iy0dD26YDJhks93WGyMsEdoujfjL8Fvr3CoZigyrGwClUMZL7fqnR48i7ZThkhMGdmkH
-         fDoLHDsdy/P3buEyHh/Tx2h1srUP0rQIHSvRZoUBv97UOxQF+eAMy8bYE/KhQHt97HMp
-         vzrbIkUO52DbacRTs2mUMsU1TrkFSkTy7vpfUdhK/fd7Bji/LYuJKV5L1SNEqtePwGvB
-         bYdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMpfwwnqwqIhgscLOFWdIWDF/N7Upk5tq5xIkKIkKiKTlSlFTiL9wquzcwdaWp9h2RTkwOXYCkg8RJ82Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6FIrELVvk8AxdYES0YCUZIeOElK8WYTzYRbvj04ZKGI20/JPY
-	eHMqyfsm2sKpCCjT/0VkI+XH46wo5obn3kjJQjJMtGl/DtAd7Iiw6RDjLdjwcKU=
-X-Google-Smtp-Source: AGHT+IGWfeeUXb1J7tNUbkIyXcKwhdZi8cijjSk5i0m1HIdGPU3q+vOzGiu/Ie/Rwn7qF3wDur68cQ==
-X-Received: by 2002:a05:6512:3b12:b0:53d:a321:db74 with SMTP id 2adb3069b0e04-53da321dc7cmr28537e87.50.1731486977586;
-        Wed, 13 Nov 2024 00:36:17 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:1230:8bee:11e5:5035])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d478511dsm18535635e9.0.2024.11.13.00.36.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 00:36:17 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: neil.armstrong@linaro.org,  Michael Turquette <mturquette@baylibre.com>,
-  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman <khilman@baylibre.com>,
-  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  Jian Hu
- <jian.hu@amlogic.com>,  Dmitry Rokosov <ddrokosov@sberdevices.ru>,  Yu Tu
- <yu.tu@amlogic.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: meson: Fix the determine rate error in
- clk_regmap_divider_ro_ops
-In-Reply-To: <da391fec-738a-4044-a598-fee1137dfa5c@amlogic.com> (Chuan Liu's
-	message of "Wed, 13 Nov 2024 14:55:50 +0800")
-References: <20241112-fix_childclk_of_roclk_has_been_tampered_with-v2-1-64f8009cdf2a@amlogic.com>
-	<35307d7a-a110-430d-9ba5-808a05450adb@linaro.org>
-	<da391fec-738a-4044-a598-fee1137dfa5c@amlogic.com>
-Date: Wed, 13 Nov 2024 09:36:16 +0100
-Message-ID: <1j7c97v8cf.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1731487058; c=relaxed/simple;
+	bh=iYqmM8v4SY8PhF7Q4dFS3Q5bFkEFL90wD/jM7X2IIRs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ci4l2RH0MT3xwZdMl78WFV+4iEpq2RKrwcLGOk0gwUiiaBomfHJy8U3iPXIHV9ivpUb4ZaTus/diwNuyeG5aDIO/MgtPdNx4X9VoKkBEoMyMVJegBgL//FhiLEzMBhgP51wfU+ZUiXBWAv1aJ2Y0UIy4FBz5EkCOGDWSRGKoJcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BNaPcyyM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09722C4CED0;
+	Wed, 13 Nov 2024 08:37:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731487058;
+	bh=iYqmM8v4SY8PhF7Q4dFS3Q5bFkEFL90wD/jM7X2IIRs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=BNaPcyyMWzqq9L5Yfo3QOgu+BnqZCPwoIX5TCblY1FjMlpUJaUGXFCeo0cjQVrFCa
+	 VA1dKcFFBk9oR2/LnjD6v6YoSXmYkXi+utOdBqblXp3P4hw6BrfzvkpoqqTOUtMy8z
+	 pgOTcVtmbIijafm54jYgjzOM+67z5gjwL3wTuyZFqqfK8eKxXNvn/g8hq+aVnUbK88
+	 +oTKYXpMGn9G3yTCjsqIRFjhL49pIC29rYs57CFgMpyNNtiKaXcxDl/1Wzwtvg/EmB
+	 tZZJZiGswoildLMVT4Gr8I0tHfFPu9hRxdp/3gnF1WgbuShSNwHW8qgqoTGGI5BuPU
+	 bd4/2wgzhBLFw==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1tB8sZ-00000001Kw1-3GwP;
+	Wed, 13 Nov 2024 09:37:35 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org
+Subject: [PATCH 1/6] acpi/ghes: Prepare to support multiple sources on ghes
+Date: Wed, 13 Nov 2024 09:36:58 +0100
+Message-ID: <3f6b7e8499bf5911de9b1533e4b2a4addc207536.1731486604.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <cover.1731486604.git.mchehab+huawei@kernel.org>
+References: <cover.1731486604.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Wed 13 Nov 2024 at 14:55, Chuan Liu <chuan.liu@amlogic.com> wrote:
+The current code is actually dependent on having just one
+error structure with a single source.
 
- file changed, 20 insertions(+), 16 deletions(-)
->>>
->>> diff --git a/drivers/clk/meson/clk-regmap.c
->>> b/drivers/clk/meson/clk-regmap.c
->>> index 07f7e441b916..edf65ca92c7a 100644
->>> --- a/drivers/clk/meson/clk-regmap.c
->>> +++ b/drivers/clk/meson/clk-regmap.c
->>> @@ -80,21 +80,6 @@ static int clk_regmap_div_determine_rate(struct
->>> clk_hw *hw,
->>> =C2=A0 {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct clk_regmap *clk =3D to_clk_regmap=
-(hw);
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct clk_regmap_div_data *div =3D clk_=
-get_regmap_div_data(clk);
->>> -=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int val;
->>> -=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
->>> -
->>> -=C2=A0=C2=A0=C2=A0=C2=A0 /* if read only, just return current value */
->>> -=C2=A0=C2=A0=C2=A0=C2=A0 if (div->flags & CLK_DIVIDER_READ_ONLY) {
->>
->> You're breaking current code by no more checking this flag,
->> the new clk_regmap_div_ro_determine_rate() is fine, but you should call
->> it from here if CLK_DIVIDER_READ_ONLY is set.
->
-> My idea is that the newly added clk_regmap_div_ro_determine_rate()
+As the number of sources should be arch-dependent, as it
+will depend on what kind of synchronous/assynchronous
+notifications will exist, change the logic to dynamically
+build the table.
 
-Whatever your idea is, what has been submitted is broken, as Neil
-pointed out
+Yet, for a proper support, we need to get the number of
+sources by reading the number from the HEST table. However,
+bios currently doesn't store a pointer to it.
 
-> implements the functionality of handling CLK_DIVIDER_READ_ONLY in
-> clk_regmap_div_determine_rate(). If we still keep the logic for
-> handling CLK_DIVIDER_READ_ONLY here, it will make
-> clk_regmap_div_determine_rate() ambiguous and easily confused.
+For now just change the logic at table build time, while
+enforcing that it will behave like before with a single
+source ID.
 
-That would just shift the problem from one function to other.
-Please apply Neil's suggestion.
+A future patch will add a HEST table bios pointer and
+change the logic at acpi_ghes_record_errors() to
+dynamically use the new size.
 
->
->>
->> Neil
->>
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 ret =3D regmap_read(clk->map, div->offset, &val);
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 if (ret)
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->>> -
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 val >>=3D div->shift;
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 val &=3D clk_div_mask(div->width);
->>> -
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 return divider_ro_determine_rate(hw, req, div->table,
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 div->width, div->flags,
->>> val);
->>> -=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return divider_determine_rate(hw, req, d=
-iv->table, div->width,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 div->fla=
-gs);
->>> @@ -127,9 +112,28 @@ const struct clk_ops clk_regmap_divider_ops =3D {
->>> =C2=A0 };
->>> =C2=A0 EXPORT_SYMBOL_NS_GPL(clk_regmap_divider_ops, CLK_MESON);
->>>
->>> +static int clk_regmap_div_ro_determine_rate(struct clk_hw *hw,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 struct clk_rate_request *req)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 struct clk_regmap *clk =3D to_clk_regmap(hw);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 struct clk_regmap_div_data *div =3D clk_get_r=
-egmap_div_data(clk);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int val;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D regmap_read(clk->map, div->offset, &v=
-al);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 return ret;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 val >>=3D div->shift;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 val &=3D clk_div_mask(div->width);
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 return divider_ro_determine_rate(hw, req, div=
-->table, div->width,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 div->flags, val);
->>> +}
->>> +
->>> =C2=A0 const struct clk_ops clk_regmap_divider_ro_ops =3D {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .recalc_rate =3D clk_regmap_div_recalc_r=
-ate,
->>> -=C2=A0=C2=A0=C2=A0=C2=A0 .determine_rate =3D clk_regmap_div_determine_=
-rate,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 .determine_rate =3D clk_regmap_div_ro_determi=
-ne_rate,
->>> =C2=A0 };
->>> =C2=A0 EXPORT_SYMBOL_NS_GPL(clk_regmap_divider_ro_ops, CLK_MESON);
->>>
->>>
->>> ---
->>> base-commit: 664988eb47dd2d6ae1d9e4188ec91832562f8f26
->>> change-id:
->>> 20241111-fix_childclk_of_roclk_has_been_tampered_with-61dbcc623746
->>>
->>> Best regards,
->>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+---
+ hw/acpi/ghes.c           | 43 ++++++++++++++++++++++++++--------------
+ hw/arm/virt-acpi-build.c |  5 +++++
+ include/hw/acpi/ghes.h   | 21 +++++++++++++-------
+ 3 files changed, 47 insertions(+), 22 deletions(-)
 
---=20
-Jerome
+diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+index e7de3b302602..a590b0f6f85f 100644
+--- a/hw/acpi/ghes.c
++++ b/hw/acpi/ghes.c
+@@ -212,17 +212,26 @@ ghes_gen_err_data_uncorrectable_recoverable(GArray *block,
+  * Initialize "etc/hardware_errors" and "etc/hardware_errors_addr" fw_cfg blobs.
+  * See docs/specs/acpi_hest_ghes.rst for blobs format.
+  */
+-static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
++static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker,
++                                   int num_sources)
+ {
+     int i, error_status_block_offset;
+ 
++    /*
++     * TODO: Current version supports only one source.
++     * A further patch will drop this check, after adding a proper migration
++     * code, as, for the code to work, we need to store a bios pointer to the
++     * HEST table.
++     */
++    assert(num_sources == 1);
++
+     /* Build error_block_address */
+-    for (i = 0; i < ACPI_GHES_ERROR_SOURCE_COUNT; i++) {
++    for (i = 0; i < num_sources; i++) {
+         build_append_int_noprefix(hardware_errors, 0, sizeof(uint64_t));
+     }
+ 
+     /* Build read_ack_register */
+-    for (i = 0; i < ACPI_GHES_ERROR_SOURCE_COUNT; i++) {
++    for (i = 0; i < num_sources; i++) {
+         /*
+          * Initialize the value of read_ack_register to 1, so GHES can be
+          * writable after (re)boot.
+@@ -237,13 +246,13 @@ static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
+ 
+     /* Reserve space for Error Status Data Block */
+     acpi_data_push(hardware_errors,
+-        ACPI_GHES_MAX_RAW_DATA_LENGTH * ACPI_GHES_ERROR_SOURCE_COUNT);
++        ACPI_GHES_MAX_RAW_DATA_LENGTH * num_sources);
+ 
+     /* Tell guest firmware to place hardware_errors blob into RAM */
+     bios_linker_loader_alloc(linker, ACPI_HW_ERROR_FW_CFG_FILE,
+                              hardware_errors, sizeof(uint64_t), false);
+ 
+-    for (i = 0; i < ACPI_GHES_ERROR_SOURCE_COUNT; i++) {
++    for (i = 0; i < num_sources; i++) {
+         /*
+          * Tell firmware to patch error_block_address entries to point to
+          * corresponding "Generic Error Status Block"
+@@ -269,10 +278,12 @@ static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
+ /* Build Generic Hardware Error Source version 2 (GHESv2) */
+ static void build_ghes_v2(GArray *table_data,
+                           BIOSLinker *linker,
+-                          enum AcpiGhesNotifyType notify,
+-                          uint16_t source_id)
++                          const AcpiNotificationSourceId *notif_src,
++                          uint16_t index, int num_sources)
+ {
+     uint64_t address_offset;
++    const uint16_t notify = notif_src->notify;
++    const uint16_t source_id = notif_src->source_id;
+ 
+     /*
+      * Type:
+@@ -303,7 +314,7 @@ static void build_ghes_v2(GArray *table_data,
+                                    address_offset + GAS_ADDR_OFFSET,
+                                    sizeof(uint64_t),
+                                    ACPI_HW_ERROR_FW_CFG_FILE,
+-                                   source_id * sizeof(uint64_t));
++                                   index * sizeof(uint64_t));
+ 
+     /* Notification Structure */
+     build_ghes_hw_error_notification(table_data, notify);
+@@ -323,8 +334,7 @@ static void build_ghes_v2(GArray *table_data,
+                                    address_offset + GAS_ADDR_OFFSET,
+                                    sizeof(uint64_t),
+                                    ACPI_HW_ERROR_FW_CFG_FILE,
+-                                   (ACPI_GHES_ERROR_SOURCE_COUNT + source_id)
+-                                   * sizeof(uint64_t));
++                                   (num_sources + index) * sizeof(uint64_t));
+ 
+     /*
+      * Read Ack Preserve field
+@@ -339,19 +349,23 @@ static void build_ghes_v2(GArray *table_data,
+ /* Build Hardware Error Source Table */
+ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+                      BIOSLinker *linker,
++                     const AcpiNotificationSourceId * const notif_source,
++                     int num_sources,
+                      const char *oem_id, const char *oem_table_id)
+ {
+     AcpiTable table = { .sig = "HEST", .rev = 1,
+                         .oem_id = oem_id, .oem_table_id = oem_table_id };
++    int i;
+ 
+-    build_ghes_error_table(hardware_errors, linker);
++    build_ghes_error_table(hardware_errors, linker, num_sources);
+ 
+     acpi_table_begin(&table, table_data);
+ 
+     /* Error Source Count */
+-    build_append_int_noprefix(table_data, ACPI_GHES_ERROR_SOURCE_COUNT, 4);
+-    build_ghes_v2(table_data, linker,
+-                  ACPI_GHES_NOTIFY_SEA, ACPI_HEST_SRC_ID_SEA);
++    build_append_int_noprefix(table_data, num_sources, 4);
++    for (i = 0; i < num_sources; i++) {
++        build_ghes_v2(table_data, linker, &notif_source[i], i, num_sources);
++    }
+ 
+     acpi_table_end(linker, &table);
+ }
+@@ -416,7 +430,6 @@ void ghes_record_cper_errors(const void *cper, size_t len,
+     }
+     ags = &acpi_ged_state->ghes_state;
+ 
+-    assert(ACPI_GHES_ERROR_SOURCE_COUNT == 1);
+     get_ghes_offsets(le64_to_cpu(ags->hw_error_le), &cper_addr, &read_ack_register_addr);
+ 
+     cper_addr = le64_to_cpu(cper_addr);
+diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+index e059317b002e..40f66792570c 100644
+--- a/hw/arm/virt-acpi-build.c
++++ b/hw/arm/virt-acpi-build.c
+@@ -889,6 +889,10 @@ static void acpi_align_size(GArray *blob, unsigned align)
+     g_array_set_size(blob, ROUND_UP(acpi_data_len(blob), align));
+ }
+ 
++static const AcpiNotificationSourceId hest_ghes_notify[] = {
++    {ACPI_HEST_SRC_ID_SYNC, ACPI_GHES_NOTIFY_SEA},
++};
++
+ static
+ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
+ {
+@@ -944,6 +948,7 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
+     if (vms->ras) {
+         acpi_add_table(table_offsets, tables_blob);
+         acpi_build_hest(tables_blob, tables->hardware_errors, tables->linker,
++                        hest_ghes_notify, ARRAY_SIZE(hest_ghes_notify),
+                         vms->oem_id, vms->oem_table_id);
+     }
+ 
+diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+index 9a765edb27ef..e47ffacbb5c9 100644
+--- a/include/hw/acpi/ghes.h
++++ b/include/hw/acpi/ghes.h
+@@ -57,20 +57,27 @@ enum AcpiGhesNotifyType {
+     ACPI_GHES_NOTIFY_RESERVED = 12
+ };
+ 
+-enum {
+-    ACPI_HEST_SRC_ID_SEA = 0,
+-    /* future ids go here */
+-
+-    ACPI_GHES_ERROR_SOURCE_COUNT
+-};
+-
+ typedef struct AcpiGhesState {
+     uint64_t hw_error_le;
+     bool present; /* True if GHES is present at all on this board */
+ } AcpiGhesState;
+ 
++/*
++ * ID numbers used to fill HEST source ID field
++ */
++enum AcpiGhesSourceID {
++    ACPI_HEST_SRC_ID_SYNC,
++};
++
++typedef struct AcpiNotificationSourceId {
++    enum AcpiGhesSourceID source_id;
++    enum AcpiGhesNotifyType notify;
++} AcpiNotificationSourceId;
++
+ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+                      BIOSLinker *linker,
++                     const AcpiNotificationSourceId * const notif_source,
++                     int num_sources,
+                      const char *oem_id, const char *oem_table_id);
+ void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
+                           GArray *hardware_errors);
+-- 
+2.47.0
+
 
