@@ -1,213 +1,316 @@
-Return-Path: <linux-kernel+bounces-407360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A539C6C5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:06:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 200689C6C95
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:15:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 420621F22CCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:06:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1BDFB22CDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367A11FB8BB;
-	Wed, 13 Nov 2024 10:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9132E1FB89F;
+	Wed, 13 Nov 2024 10:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Dhdagg5W"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2056.outbound.protection.outlook.com [40.107.21.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="U3iCofho";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J4piauRe";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="U3iCofho";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J4piauRe"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8A41FB8A1;
-	Wed, 13 Nov 2024 10:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731492394; cv=fail; b=e/0sXlxLJvapDzmrDyMey+YLPJohfcCkGYPIPc0HqAQoWIJf4djogTQkuNoPUqVY748p2CYpgqCRDRSUL5Dx6utppBF2O11bx4mICXA+GYqXRy1CsHMumWf1LgfmNgnrT5gkQFO6h72/cFEKKCSeFTF27YHafn29+o00HKxS6k0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731492394; c=relaxed/simple;
-	bh=K30CEBcsKRJyQSP+/UIEY65VmDEeiD/X8mMVu4cS1SU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=G1Zi0fl3q56TAvcjVOtJrR/5KROyI4msB9ySQj26URoNRoNu6O6qA9cMZd/Crl1NQN5cY0WmKTqYFAg/djgNvziuTwVWjQ4Lvz+ElMHIDdyYSWhKnst8FiV2qRpqC34IV4V2b6Aqlopm3nra46kinpyH8lrVKVoBs07pOWibn3w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Dhdagg5W; arc=fail smtp.client-ip=40.107.21.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oFZX0wjYDursFseatXZb0ton5xiJV6V5nDOOYN143+3rgcCKtMAFEy0sj+tnPY9Rlwjwj/gH/Zs+JRAlTOnVNX4gKsPjLjb6A52ryIL7+iEg2SI6U9ubQvklPVjQJCsrvIiaGaRjFiquq+MvuJzjWGwgOtSSgLXuxt5bNrJBIv1ao5qWq6Ao0Gq90MT1J9bc4f3nxIef2XxiQ9moVuo2xn84O+5p/FKJ9jd1zNIL6lt82WrfuR0lsUFWrO8KE5pL5WJ7ZleYclJ4AZmai0Xk+D88/KC1TVVwutvfMFQ4JoWqcvI9AuOMfiPskG7Oujc1lxTWKxn3iXC2TrFeF42kAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K30CEBcsKRJyQSP+/UIEY65VmDEeiD/X8mMVu4cS1SU=;
- b=Kd+pu/+2G2yxLGrxMHtBuPxQ5dbC8No6zrR0ycLYtlkmGL4fvLx/kX3puDfQjMk0aZg1Ow7brJB3dDWv5yN+feVCOc5dcR6ZvB68MXVlkaQDRjadp2Cq4cgNYe27fFgWaq5IgfzHhNQVEOxczqIspmMB8IWHdeTktqI80iAn+RQUJIu1zoxQSjD81qRfcr2suiu3RuJy95JRTj79NYw7RddNgEDd395CcqMTsr+mFlKOKQncjnByDTPFOyY7jVorOIRHurINbpmhRtHJXesHNjdBdbM9dlMo3pxED+b8rldoPF/ybtO8bz/WYZYkv8d+a4/7BPjFgJLNnBhBFOrrqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K30CEBcsKRJyQSP+/UIEY65VmDEeiD/X8mMVu4cS1SU=;
- b=Dhdagg5WHoxh3uRshih1uC663i5oTP5Vqk1GK2X27C/DqfzUyIxeU3eejYeOKjVjRKrAvfzq6InMYrWXvUVZfFWy9G66gRScjtUCWwrYOay3WE+qoeZAbbB0dWAErWE+V/ArC1oBwhPApD9Ht7jrsVRGMOGQUEQd4PXH9xk2g8tiNRGRfOxOL29opZLc6wVEcssoBrbk8fafnpdAwvuMKXJSR45TlHMAhTDKoilvKnKtSWGQAwmsoA+CQqzbhwIODqK/XHyEcqsbPOm8lb1xQUT9ph3TRgYKYBl9LMkUUM8Tt1Cmt51ENHI1BZ+Got2bfF0je8FA3vNPKsCp727T6g==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by PA1PR04MB10226.eurprd04.prod.outlook.com (2603:10a6:102:464::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Wed, 13 Nov
- 2024 10:06:29 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%7]) with mapi id 15.20.8158.013; Wed, 13 Nov 2024
- 10:06:29 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "davem@davemloft.net"
-	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"horms@kernel.org" <horms@kernel.org>, "lorenzo@kernel.org"
-	<lorenzo@kernel.org>
-Subject: RE: [PATCH net] samples: pktgen: correct dev to DEV
-Thread-Topic: [PATCH net] samples: pktgen: correct dev to DEV
-Thread-Index: AQHbNLGo+6nx23Xq0UK0KJD/aNwAGbK09+WAgAAEDlA=
-Date: Wed, 13 Nov 2024 10:06:28 +0000
-Message-ID:
- <PAXPR04MB8510E9AF9E925D93C851E8A8885A2@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20241112030347.1849335-1-wei.fang@nxp.com>
- <0cde0236-c539-487d-a212-b660331d3683@kernel.org>
-In-Reply-To: <0cde0236-c539-487d-a212-b660331d3683@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PA1PR04MB10226:EE_
-x-ms-office365-filtering-correlation-id: d83a9052-8036-4f82-89f1-08dd03cad7af
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?RGFxOTJGL0Rsa29kdXlUeWVJaWJuSWRrRTVWcE1rL3c2eUtNb0YwRkFzZHFM?=
- =?utf-8?B?aTNKU0NFUElVcTdTRUlTeVB4RDlYOW4zSUlPeTMyc29pdktpb2NjNmVnSnFa?=
- =?utf-8?B?b2NpS1pUQ3hpakpoNS9UWWZvbERMbUUxMFkxeFA0KzgvWlJ6N1JhL0wvU2xN?=
- =?utf-8?B?Z25teXhTNk4vWEtZVW50U011ZkRNYkhYdDlLZ2tibGJQUmpkV21ZaGRoL1NR?=
- =?utf-8?B?YkhmaEJJVWZYcFZkVzhxN25vSG1VMUZIdlFLUnNCSzhSSnY1blRNTE1kZml0?=
- =?utf-8?B?TVZsT2doY1NVb3NFWDB5QTBzVzhxTzkvVWVKblYwcklnUlBxSWcyTHZjcWZa?=
- =?utf-8?B?UVlOMDBpRUQ0Wll2NWRLUTlYdHdsQm5MZlNLMXpxU0VRM054SkxZcnBLOXM1?=
- =?utf-8?B?M3paWHFXVHJJVmJxajlHbjFxS3hwOWRkNWtqRlhOL0U2NkUzMFB4dTBXZ0Nk?=
- =?utf-8?B?YS9Kb3ZxUkFnK2VNZXh2WmFrc2NOdkFDWjJQT2hwS0ZSYU5OM1dlODljaU43?=
- =?utf-8?B?T0NVODFXaFkyZDRheDExS25PLzk1N3EyMkVHeUw0cU9HV2lHTjR4QVQrOVQ2?=
- =?utf-8?B?QXBod3NHc0xYaGxEUlFMSG5qSVVjenBMdnFWOFV5U1N6YmxORGZuNElyM3dV?=
- =?utf-8?B?NkEwdVNOZUZYTFBTY2xuVVEyV2lqaUpyd2tlQTV1bXJtUUtTbHpFYWtXQms3?=
- =?utf-8?B?K3E4ZlZLaWhoRVRCbHVZcS9TY0Y5T29aMDdXdTVJUGtZbmZGZTB3bzlrdFR5?=
- =?utf-8?B?cU83MnM5VFVJcE1HYWJDenNyS0ZNb1BYeU0zWjNNdXovME5oTktPdW5MVEl5?=
- =?utf-8?B?Z1FsaFZRYytGOHRkRnM5WWdMa2tob0MzeDVqc041bHg2cjlYRHhycW5lY2lC?=
- =?utf-8?B?ZXg0dk9veXM0M3JudWh5L3pOTHEycStmYWdwQkY5Qjl6SjR0OUFlSTh3M2tm?=
- =?utf-8?B?ZTY0d1U3UUFaTVNZYkludlVOM1dTbUpBRlBvSFdjS2RJY3RZV3BiamRaUHBa?=
- =?utf-8?B?dUV3M2w3N2wzNlVPK0lSTUtqZ2FVN0g5U3dIMTQzV3QrTjd3cnZiUGYwOXR6?=
- =?utf-8?B?dm1SL3pucnk3ODJ1OXdUaTlWbVVTL3FyNU00N3RYOUtFSzVVczhMYlRva1lR?=
- =?utf-8?B?QkJ0amMvL2tjTXRUdXpCU1Nud2s1SnNLNk9GNVZrRFZpa2Nxbm03Z2dKUHcz?=
- =?utf-8?B?bnM3bjRWZnRGRGFxUG5yakQ2RGloLzJieWs1dEk2MU1sVjVGYUV1a29KUGJq?=
- =?utf-8?B?KzFtYmttN1JkS1c5MkFUcmh3UFRPTUFjck8vZ2NxeTU5RExFOFJweEsxV1Y2?=
- =?utf-8?B?VnZ1MSt1d1h1QWd3ZFZ2dEE2VzlyeDlzUVNudzIvRDNjb2Q5MVN3ckZwWmxI?=
- =?utf-8?B?TW1menl4NTQ1TDJLQk1Vb3NEZzdIV1hwYSttZlZpQWt4c2hORnIrYWNNd0hx?=
- =?utf-8?B?R0J6VEdxZzBoM1QyalhFMk1xZTZ3REFrNWdPanNva3kyblBHVWNETFEvY1RV?=
- =?utf-8?B?MG1ldEF1MFFtcjBQRFZvT3ZaK1MrQVovbGI5Q3lVeFI4MFNBUjk3VEVrWU5x?=
- =?utf-8?B?bFc5WDJ4NDhsRm9uUDM4ZTNIRDIvZ3ZLQXhSdjBKZ1F6UU5YdzdlMUE4WXNN?=
- =?utf-8?B?M2tDNDhVNC8xek1tbmhuUEdmYXlZbVZBbG53SU1FTDJrSXlMSGE1dWMyeUFl?=
- =?utf-8?B?MzZRYmlodGpBUFM1VzhoalpHYW1RTDNuVDBHcVdURjlUbDA0b2hzRjF1a3o4?=
- =?utf-8?B?cDh6a1NUL2w0WjJIV1p6bmE4WXBhdTRyVTI0RUpIWEE3TVVZRVFBL1ZWaTYv?=
- =?utf-8?Q?EHOAGDzyYKvNUDMOOxzH1Jn8QZcIX9uK+1WTA=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?OEdVRXFwVjFOTWZCQTFKRWFUQTdWc0FrcTVUUlpESmErSlppN25QUE9hWVhY?=
- =?utf-8?B?Q215TUlXeWtSRWpiYXVDSytZR3dzbE93dTk4L0YrYUNhM0hIVTV5azZjWWtm?=
- =?utf-8?B?em9oTnhnQVJEU0FGT0x0SklaK3BjYnIvOURXRm95VVhtKzNlWnhyaEEvcjcx?=
- =?utf-8?B?Q3NTUUhMc2FQSXhzME50N2U5VTRWbHJKaVlaYjhCc1BUTGI1WUF1L2tnQ0Rk?=
- =?utf-8?B?SEsxa3puUW02SzRjYmZzSWhMRzFla0lVdyswc2IrWlUrSXBwblNIektZMnZx?=
- =?utf-8?B?NlByQkp1YXQyY2Yydi9kbjNBQllaKzBzcFNzSFJiOTBYWjIrUmFyc1dTait3?=
- =?utf-8?B?STVTSG4zaW45VTVLYzh6NlNtQUhEeXRURGFxR2hhb3VleHNVMXdZT2pBU3d5?=
- =?utf-8?B?bmhSSWV6TzErWDNINUVablpaelp5RGNxYzE5dHk3SEZhQVU0ZWNUZlhlQjJ3?=
- =?utf-8?B?cFg1UzFHdnRFa3RVSXdvV2d4VFNET2p5TUNiNWRMajd5cVRSdURabWh5cjc3?=
- =?utf-8?B?VElHTmMwYnlMMFY5N1ppbXVMdWFpaUFMQlRiWit1MXdpNU4yR0dZczd3MGw3?=
- =?utf-8?B?TXV1dHRQamZDTzJRSGRxSmIzTHl0OGdtK2xEeS9KclJuSFVSdEVnNWN4RTlO?=
- =?utf-8?B?LzFMdTB5RFFWcG5nYTF6UmZMWEVaRWFKVHI3d1lWV1UwM1JZTFNRU1lXeWFV?=
- =?utf-8?B?N2gySTZ6ZzErL0VwQzZuSGVrMDNJL2xFbVNNK2VrUC8xelJrL1F3SEpGeGpT?=
- =?utf-8?B?OHZRbm1mK014MUtJZHRxM0xPSk9hUTF3VXhJRC9WM1hUQ1NYY3NDdEgycWFq?=
- =?utf-8?B?ZUV5dXZpV3NMWlhXSjBBRis4T2VmL21QU1B5bkpBSjB1K0MwU1RNY3hONzl1?=
- =?utf-8?B?UGpNMDg0Uyt0VjJTZmczNXNudzlKdFVGZlRMNmlXSkU0VnhwNkNpRWtWWFdE?=
- =?utf-8?B?ZEJYNWFBZ29lb3VjK1ZJbUNRMFRvZlpEeTczMC92Uzl2TDNSY1FqN0l0K0FX?=
- =?utf-8?B?Uk9XVWhSMUVEbGpNU0dHem5tcWQ5eFJOV2RodTlLYjQ1cEJVT1pNdnZkbGVj?=
- =?utf-8?B?TzJWN2hXRHJWOFM4U1E4eUdCbWtBLzVWRndWYjZoN0hhYVhHb0hxS2JIVHBL?=
- =?utf-8?B?Wm9tRVg0N1oxWUpYVkg1Tm9qNkMyZTJXWEF5dXNSUjdGdHBsZUQwM01NQThU?=
- =?utf-8?B?MXJpSENzb0taRW9SNHFhM0JrM0RYRUlpN1ZFblpsUzAxTWEwN3R5eTdlczAy?=
- =?utf-8?B?Qm9FeXcrNFJQdC9JeWx1blZqdlRacFRLYndiNkoxa05RYm80NzNkT1dHTWl1?=
- =?utf-8?B?TzhxZUFJUHBpRlNzNXhJdlp1N2dDMUpoeDNIS3NoTXptWHlwcW9ZM2pmOExU?=
- =?utf-8?B?S1JuM2lhRjlpdStZeDNvNEZqTFVKL2tOOFR6V21uZE91Rnd5d1pwUWMzZ2tD?=
- =?utf-8?B?alozSWEwY0JvSzFlUmZSdDdBUEk1Ni84VDF3U1Y2eXVaUlV0RWN4TTZDTkpr?=
- =?utf-8?B?ZVlOejVRMWFsOUMyNERFZG1sd1ByYytkcUlqdkVLTEVDVUJiWUtOSklXSFJt?=
- =?utf-8?B?dVVra2VleTNseGFiQmdRVVd5UGtiaHp6b3BRazhLaTUvU3BMUjhqc3gvQUMr?=
- =?utf-8?B?bmdiaEdlRldISjR0eExCeGpoOW1QbHpaRmkzNVVGNVhpN3BnWDJCdVptYndi?=
- =?utf-8?B?L1ZUOHZDZnNmUS85MnhEM3IxdVd5NTJCaHRZQ0NmMW03TmxJNVBkNklCeW11?=
- =?utf-8?B?eWt4eVMxZWZMbFRDZ2dieWtLVk9rU0wzMlc1TmcyM2hYMHdTL2hVZnNJVlFv?=
- =?utf-8?B?V1J1NkJlNll4azRZNUJWVGY5TmFFWGllM0VjeENSLysyK0NtNE1iNGJVYWth?=
- =?utf-8?B?czJzWUE5azBnc3NDN013dFp4azMrbGplZWRlRk0zR1Vkb0JoYXRzK0dnMzBn?=
- =?utf-8?B?eU9yWW9KSC85d21QYVdmVFQ5U1lkNFlQOE9Za1hwSmZHOHpEdFFrcGk3MmIw?=
- =?utf-8?B?N20zRWp0VW5Iemo2Mzlubld0WWNLMjFCdTQ0bHlJQ3ZDTkRXNVNjZm96bk0w?=
- =?utf-8?B?ZlFnbzNZL0UxQ1h3bXc3MnhHbHpLMVAzNGpJTTQwUkRnc3pWVDZKb1JzTVJH?=
- =?utf-8?Q?ObaI=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA041FB88C;
+	Wed, 13 Nov 2024 10:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731492459; cv=none; b=Lonoy3GVgjS9uR5mE04aMJVrc8QlZZvk6a+MdOuuLM1WjYuZqNnM0+/UP4m4wgPVRQ5U0bTqHOieD10+wxRNKfXx9TgPxWhWel5QQGSAQI8REOum2V/mXh0rkU8PfSAvRYO4lO8zpoo36BpcP/OU6oFPEXCAoJrNX/e0FxZ8Gug=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731492459; c=relaxed/simple;
+	bh=TfEfL5QB3qr3TV5ukBVLmN6qxudBNUSoe7KPQY889jc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CwSYpdgvzZ2G42MpmRbkenp2OsUwQ7v4BQwSuLCPNRTWpAeIsjh0UXcyE/YdG2xkh3UkenEEvwhjNdkxRGyO7hqSpXck+rvAsSnM73YX8/pculQuQYUFpUhynmIB7BXj2uyYNlAd6fCju7uIbXpKTBqEVxZgb/SRd44KoVVCgQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=U3iCofho; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J4piauRe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=U3iCofho; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J4piauRe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C9B101F37C;
+	Wed, 13 Nov 2024 10:07:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731492455; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BUaDYKCeAAV6mV6tt0Zz0KpJFThajAvpLku1YYcIo5o=;
+	b=U3iCofhoVSj+GPDiplkLeswb4fN7oOcaTkJSMC4qybsG9dgqT1dMvZcv5RyGnV8HEadv7/
+	zOUcRTO9scTbiiD6AOJ3azHYpwY8HJsNKeiQLuEHhU/ZRM/eH5qMXxOYGe/ZmYmdcdt/rp
+	4Dmq4wEXqa06QgoQMCYYefCSKtHefLk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731492455;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BUaDYKCeAAV6mV6tt0Zz0KpJFThajAvpLku1YYcIo5o=;
+	b=J4piauReyh6Q1qZEqD4sgEnO3B0RSOEKf7J555hQpclGrbCjNbeE2Dvzk+n1e/MKpNR7Vt
+	1NFCK1KD98g4OLAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731492455; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BUaDYKCeAAV6mV6tt0Zz0KpJFThajAvpLku1YYcIo5o=;
+	b=U3iCofhoVSj+GPDiplkLeswb4fN7oOcaTkJSMC4qybsG9dgqT1dMvZcv5RyGnV8HEadv7/
+	zOUcRTO9scTbiiD6AOJ3azHYpwY8HJsNKeiQLuEHhU/ZRM/eH5qMXxOYGe/ZmYmdcdt/rp
+	4Dmq4wEXqa06QgoQMCYYefCSKtHefLk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731492455;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BUaDYKCeAAV6mV6tt0Zz0KpJFThajAvpLku1YYcIo5o=;
+	b=J4piauReyh6Q1qZEqD4sgEnO3B0RSOEKf7J555hQpclGrbCjNbeE2Dvzk+n1e/MKpNR7Vt
+	1NFCK1KD98g4OLAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B322013A6E;
+	Wed, 13 Nov 2024 10:07:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lja8K2d6NGeeHgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 13 Nov 2024 10:07:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 643DBA08D0; Wed, 13 Nov 2024 11:07:35 +0100 (CET)
+Date: Wed, 13 Nov 2024 11:07:35 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jim Zhao <jimzhao.ai@gmail.com>
+Cc: jack@suse.cz, akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	willy@infradead.org
+Subject: Re: [PATCH] mm/page-writeback: Raise wb_thresh to prevent write
+ blocking with strictlimit
+Message-ID: <20241113100735.4jafa56p4td66z7a@quack3>
+References: <20241108220215.s27rziym6mn5nzv4@quack3>
+ <20241112084539.702485-1-jimzhao.ai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d83a9052-8036-4f82-89f1-08dd03cad7af
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2024 10:06:29.0441
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +hvGLBaT6BOtS2WR5kPobCD1hx0cUJlNyve+rS+s8BKetwMv+ZR9u2nBFXw3LAIjVXRMWeNdXOXzXBCa2iuymA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10226
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241112084539.702485-1-jimzhao.ai@gmail.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-PiBPbiAxMi8xMS8yMDI0IDA0LjAzLCBXZWkgRmFuZyB3cm90ZToNCj4gPiBJbiB0aGUgcGt0Z2Vu
-X3NhbXBsZTAxX3NpbXBsZS5zaCBzY3JpcHQsIHRoZSBkZXZpY2UgdmFyaWFibGUgaXMNCj4gPiB1
-cHBlcmNhc2UgJ0RFVicgaW5zdGVhZCBvZiBsb3dlcmNhc2UgJ2RldicuIEJlY2F1c2Ugb2YgdGhp
-cyB0eXBvLCB0aGUNCj4gPiBzY3JpcHQgY2Fubm90IGVuYWJsZSBVRFAgdHggY2hlY2tzdW0uDQo+
-ID4NCj4gPiBGaXhlczogNDYwYTlhYTIzZGU2ICgic2FtcGxlczogcGt0Z2VuOiBhZGQgVURQIHR4
-IGNoZWNrc3VtIHN1cHBvcnQiKQ0KPiA+IFNpZ25lZC1vZmYtYnk6IFdlaSBGYW5nIDx3ZWkuZmFu
-Z0BueHAuY29tPg0KPiA+IC0tLQ0KPiA+ICAgc2FtcGxlcy9wa3RnZW4vcGt0Z2VuX3NhbXBsZTAx
-X3NpbXBsZS5zaCB8IDIgKy0NCj4gPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwg
-MSBkZWxldGlvbigtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL3NhbXBsZXMvcGt0Z2VuL3BrdGdl
-bl9zYW1wbGUwMV9zaW1wbGUuc2gNCj4gPiBiL3NhbXBsZXMvcGt0Z2VuL3BrdGdlbl9zYW1wbGUw
-MV9zaW1wbGUuc2gNCj4gPiBpbmRleCBjZGI5ZjQ5N2Y4N2QuLjY2Y2I3MDc0NzllNiAxMDA3NTUN
-Cj4gPiAtLS0gYS9zYW1wbGVzL3BrdGdlbi9wa3RnZW5fc2FtcGxlMDFfc2ltcGxlLnNoDQo+ID4g
-KysrIGIvc2FtcGxlcy9wa3RnZW4vcGt0Z2VuX3NhbXBsZTAxX3NpbXBsZS5zaA0KPiANCj4gV2h5
-IGFyZSB5b3Ugb25seSBmaXhpbmcgb25lIHNjcmlwdD8NCj4gDQoNCk90aGVyIHNjcmlwdHMgYXJl
-IGNvcnJlY3QsIGJlY2F1c2UgdGhleSBhcmUgYWxsIG11bHRpLXRocmVhZGVkLCAiZGV2IiBpcw0K
-ZGVmaW5lZCBmb3IgZWFjaCB0aHJlYWQgbGlrZSBiZWxvdy4NCg0KZGV2PSR7REVWfUAke3RocmVh
-ZH0NCg0KDQo+IFRoZSBmaXhlcyBjb21taXQgNDYwYTlhYTIzZGU2IGNoYW5nZXMgbWFueSBmaWxl
-cywgaW50cm9kdWNpbmcgdGhpcyBidWcuDQo+IA0KPiA+IEBAIC03Niw3ICs3Niw3IEBAIGlmIFsg
-LW4gIiREU1RfUE9SVCIgXTsgdGhlbg0KPiA+ICAgICAgIHBnX3NldCAkREVWICJ1ZHBfZHN0X21h
-eCAkVURQX0RTVF9NQVgiDQo+ID4gICBmaQ0KPiA+DQo+ID4gLVsgISAteiAiJFVEUF9DU1VNIiBd
-ICYmIHBnX3NldCAkZGV2ICJmbGFnIFVEUENTVU0iDQo+ID4gK1sgISAteiAiJFVEUF9DU1VNIiBd
-ICYmIHBnX3NldCAkREVWICJmbGFnIFVEUENTVU0iDQo+ID4NCj4gDQo+IFRoaXMgZml4IGxvb2tz
-IGNvcnJlY3QsIGJ1dCB3ZSBhbHNvIG5lZWQgdG8gZml4IG90aGVyIHNjcmlwdHMNCj4gDQo+ID4g
-ICAjIFNldHVwIHJhbmRvbSBVRFAgcG9ydCBzcmMgcmFuZ2UNCj4gPiAgIHBnX3NldCAkREVWICJm
-bGFnIFVEUFNSQ19STkQiDQo+IA0KPiANCj4gJCBnaXQgd2hhdGNoYW5nZWQgLTEgNDYwYTlhYTIz
-ZGU2IHwgZ3JlcCAnTSAgICAgc2FtcGxlcyd8IGF3ayAtRk0NCj4gJ3twcmludCAkMn0nDQo+IAlz
-YW1wbGVzL3BrdGdlbi9wYXJhbWV0ZXJzLnNoDQo+IAlzYW1wbGVzL3BrdGdlbi9wa3RnZW5fc2Ft
-cGxlMDFfc2ltcGxlLnNoDQo+IAlzYW1wbGVzL3BrdGdlbi9wa3RnZW5fc2FtcGxlMDJfbXVsdGlx
-dWV1ZS5zaA0KPiAJc2FtcGxlcy9wa3RnZW4vcGt0Z2VuX3NhbXBsZTAzX2J1cnN0X3NpbmdsZV9m
-bG93LnNoDQo+IAlzYW1wbGVzL3BrdGdlbi9wa3RnZW5fc2FtcGxlMDRfbWFueV9mbG93cy5zaA0K
-PiAJc2FtcGxlcy9wa3RnZW4vcGt0Z2VuX3NhbXBsZTA1X2Zsb3dfcGVyX3RocmVhZC5zaA0KPiAJ
-c2FtcGxlcy9wa3RnZW4vcGt0Z2VuX3NhbXBsZTA2X251bWFfYXdhcmVkX3F1ZXVlX2lycV9hZmZp
-bml0eS5zaA0KPiANCj4gVGhhbmtzIGZvciBzcG90dGluZyB0aGlzLCBidXQgcGxlYXNlIGFsc28g
-Zml4IHRoZSBvdGhlciBzY3JpcHRzIDotKQ0KPiANCj4gLS1KZXNwZXINCg==
+On Tue 12-11-24 16:45:39, Jim Zhao wrote:
+> > On Fri 08-11-24 11:19:49, Jim Zhao wrote:
+> > > > On Wed 23-10-24 18:00:32, Jim Zhao wrote:
+> > > > > With the strictlimit flag, wb_thresh acts as a hard limit in
+> > > > > balance_dirty_pages() and wb_position_ratio(). When device write
+> > > > > operations are inactive, wb_thresh can drop to 0, causing writes to
+> > > > > be blocked. The issue occasionally occurs in fuse fs, particularly
+> > > > > with network backends, the write thread is blocked frequently during
+> > > > > a period. To address it, this patch raises the minimum wb_thresh to a
+> > > > > controllable level, similar to the non-strictlimit case.
+> > > > >
+> > > > > Signed-off-by: Jim Zhao <jimzhao.ai@gmail.com>
+> > > >
+> > > > ...
+> > > >
+> > > > > +       /*
+> > > > > +        * With strictlimit flag, the wb_thresh is treated as
+> > > > > +        * a hard limit in balance_dirty_pages() and wb_position_ratio().
+> > > > > +        * It's possible that wb_thresh is close to zero, not because
+> > > > > +        * the device is slow, but because it has been inactive.
+> > > > > +        * To prevent occasional writes from being blocked, we raise wb_thresh.
+> > > > > +        */
+> > > > > +       if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
+> > > > > +               unsigned long limit = hard_dirty_limit(dom, dtc->thresh);
+> > > > > +               u64 wb_scale_thresh = 0;
+> > > > > +
+> > > > > +               if (limit > dtc->dirty)
+> > > > > +                       wb_scale_thresh = (limit - dtc->dirty) / 100;
+> > > > > +               wb_thresh = max(wb_thresh, min(wb_scale_thresh, wb_max_thresh / 4));
+> > > > > +       }
+> > > >
+> > > > What you propose makes sense in principle although I'd say this is mostly a
+> > > > userspace setup issue - with strictlimit enabled, you're kind of expected
+> > > > to set min_ratio exactly if you want to avoid these startup issues. But I
+> > > > tend to agree that we can provide a bit of a slack for a bdi without
+> > > > min_ratio configured to ramp up.
+> > > >
+> > > > But I'd rather pick the logic like:
+> > > >
+> > > >   /*
+> > > >    * If bdi does not have min_ratio configured and it was inactive,
+> > > >    * bump its min_ratio to 0.1% to provide it some room to ramp up.
+> > > >    */
+> > > >   if (!wb_min_ratio && !numerator)
+> > > >           wb_min_ratio = min(BDI_RATIO_SCALE / 10, wb_max_ratio / 2);
+> > > >
+> > > > That would seem like a bit more systematic way than the formula you propose
+> > > > above...
+> > >
+> > > Thanks for the advice.
+> > > Here's the explanation of the formula:
+> > > 1. when writes are small and intermittent，wb_thresh can approach 0, not
+> > > just 0, making the numerator value difficult to verify.
+> >
+> > I see, ok.
+> >
+> > > 2. The ramp-up margin, whether 0.1% or another value, needs
+> > > consideration.
+> > > I based this on the logic of wb_position_ratio in the non-strictlimit
+> > > scenario: wb_thresh = max(wb_thresh, (limit - dtc->dirty) / 8); It seems
+> > > provides more room and ensures ramping up within a controllable range.
+> >
+> > I see, thanks for explanation. So I was thinking how to make the code more
+> > consistent instead of adding another special constant and workaround. What
+> > I'd suggest is:
+> >
+> > 1) There's already code that's supposed to handle ramping up with
+> > strictlimit in wb_update_dirty_ratelimit():
+> >
+> >         /*
+> >          * For strictlimit case, calculations above were based on wb counters
+> >          * and limits (starting from pos_ratio = wb_position_ratio() and up to
+> >          * balanced_dirty_ratelimit = task_ratelimit * write_bw / dirty_rate).
+> >          * Hence, to calculate "step" properly, we have to use wb_dirty as
+> >          * "dirty" and wb_setpoint as "setpoint".
+> >          *
+> >          * We rampup dirty_ratelimit forcibly if wb_dirty is low because
+> >          * it's possible that wb_thresh is close to zero due to inactivity
+> >          * of backing device.
+> >          */
+> >         if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
+> >                 dirty = dtc->wb_dirty;
+> >                 if (dtc->wb_dirty < 8)
+> >                         setpoint = dtc->wb_dirty + 1;
+> >                 else
+> >                         setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
+> >         }
+> >
+> > Now I agree that increasing wb_thresh directly is more understandable and
+> > transparent so I'd just drop this special case.
+> 
+> yes, I agree.
+> 
+> > 2) I'd just handle all the bumping of wb_thresh in a single place instead
+> > of having is spread over multiple places. So __wb_calc_thresh() could have
+> > a code like:
+> >
+> >         wb_thresh = (thresh * (100 * BDI_RATIO_SCALE - bdi_min_ratio)) / (100 * BDI_RATIO_SCALE)
+> >         wb_thresh *= numerator;
+> >         wb_thresh = div64_ul(wb_thresh, denominator);
+> >
+> >         wb_min_max_ratio(dtc->wb, &wb_min_ratio, &wb_max_ratio);
+> >
+> >         wb_thresh += (thresh * wb_min_ratio) / (100 * BDI_RATIO_SCALE);
+> >       limit = hard_dirty_limit(dtc_dom(dtc), dtc->thresh);
+> >         /*
+> >          * It's very possible that wb_thresh is close to 0 not because the
+> >          * device is slow, but that it has remained inactive for long time.
+> >          * Honour such devices a reasonable good (hopefully IO efficient)
+> >          * threshold, so that the occasional writes won't be blocked and active
+> >          * writes can rampup the threshold quickly.
+> >          */
+> >       if (limit > dtc->dirty)
+> >               wb_thresh = max(wb_thresh, (limit - dtc->dirty) / 8);
+> >       if (wb_thresh > (thresh * wb_max_ratio) / (100 * BDI_RATIO_SCALE))
+> >               wb_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
+> >
+> > and we can drop the bumping from wb_position)_ratio(). This way have the
+> > wb_thresh bumping in a single logical place. Since we still limit wb_tresh
+> > with max_ratio, untrusted bdis for which max_ratio should be configured
+> > (otherwise they can grow amount of dirty pages upto global treshold anyway)
+> > are still under control.
+> >
+> > If we really wanted, we could introduce a different bumping in case of
+> > strictlimit, but at this point I don't think it is warranted so I'd leave
+> > that as an option if someone comes with a situation where this bumping
+> > proves to be too aggressive.
+> 
+> Thank you, this is very helpful. And I have 2 concerns:
+> 
+> 1.
+> In the current non-strictlimit logic, wb_thresh is only bumped within
+> wb_position_ratio() for calculating pos_ratio, and this bump isn’t
+> restricted by max_ratio.  I’m unsure if moving this adjustment to
+> __wb_calc_thresh() would effect existing behavior.  Would it be possible
+> to keep the current logic for non-strictlimit case?
+
+You are correct that current bumping is not affected by max_ratio and that
+is actually a bug. wb_thresh should never exceed what is corresponding to
+the configured max_ratio. Furthermore in practical configurations I don't
+think the max_ratio limiting will actually make a big difference because
+bumping should happen when wb_thresh is really low. So for consistency I
+would apply it also to the non-strictlimit case.
+
+> 2. Regarding the formula:
+> wb_thresh = max(wb_thresh, (limit - dtc->dirty) / 8);
+> 
+> Consider a case: 
+> With 100 fuse devices(with high max_ratio) experiencing high writeback
+> delays, the pages being written back are accounted in NR_WRITEBACK_TEMP,
+> not dtc->dirty.  As a result, the bumped wb_thresh may remain high. While
+> individual devices are under control, the total could exceed
+> expectations.
+
+I agree but this is a potential problem with any kind of bumping based on
+'limit - dtc->dirty'. It is just a matter of how many fuse devices you have
+and how exactly you have max_ratio configured.
+
+> Although lowering the max_ratio can avoid this issue, how about reducing
+> the bumped wb_thresh?
+> 
+> The formula in my patch:
+> wb_scale_thresh = (limit - dtc->dirty) / 100;
+> The intention is to use the default fuse max_ratio(1%) as the multiplier.
+
+So basically you propose to use the "/ 8" factor for the normal case and "/
+100" factor for the strictlimit case. My position is that I would not
+complicate the logic unless somebody comes with a real world setup where
+the simpler logic is causing real problems. But if you feel strongly about
+this, I'm fine with that option.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
