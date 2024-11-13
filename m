@@ -1,145 +1,150 @@
-Return-Path: <linux-kernel+bounces-407132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB239C693B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:26:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 186D99C693D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:27:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DAC6B24726
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:26:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C35491F23B28
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB5B17B4E9;
-	Wed, 13 Nov 2024 06:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCFC17BEA4;
+	Wed, 13 Nov 2024 06:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsy5Rg8z"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pyhw1Bsj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA51BA34;
-	Wed, 13 Nov 2024 06:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CD11714BC;
+	Wed, 13 Nov 2024 06:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731479153; cv=none; b=PJlN28QqWJJWpcqddDhSfo5TLmO2pNvmnV6LMKxvqjUFMgeH6gM0GWCS9R4z9HQE7qK+96V98OOtV2BQ1DpWOQciy+HE8fnFbuKmHF5yqFGPTjKPcsFTZjgxkVIQQY+ZNUclmSsv71WiIsugYLwalsSf6r4FaGGRB/JruZtPuE0=
+	t=1731479266; cv=none; b=HCpqmrYIwVSZzziT+Z9NtTM4AkVvzoByR+aEH/OV8nTdhsZTPfpvVJyODhRQLBrgeFQ5xjaXMWUmWJyfr4zanFdDL8u68qj3RFIFPXMdxkyBxAmb9mO9dW8mS1+riZtTh2imy2wVB4amCUJymq+7l2ogvV/78KmbPyC2867cXWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731479153; c=relaxed/simple;
-	bh=wvNnTtJd+T9Y3rRJ7wLih/lVADKpH5O1HPwxEPFpXmM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=crhzkxL7a3m65Por1BurstYbXRAAi0tzMAz8Wnqjdx7jlIeUh380rlPP5TarxAt3gxZ14pmRpolZJ2U3pfEMfQiLI79aMI/Hsq3330wozgtqqVVX4dqaSEJhTpz2dwrkWcfcGFYMjxmGXTTczeEeYcs/JXgd7e0jXHzSg8PIL3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsy5Rg8z; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b14443a71eso496803285a.1;
-        Tue, 12 Nov 2024 22:25:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731479151; x=1732083951; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=udmJLU+VUrTJ8lMtQy3DVP6BCAyAnqzBp8QUEwZB7M8=;
-        b=dsy5Rg8zHAAu+ThNU8B6L0K9+kuaiGhcGlNHrxhmcHXShFiu9uyQFiSdgqAzW9H8ss
-         e2Fd2dKelpg0rErEICuJJVLT7zwvxJkASOcZhvRNvzy5Kr+JFeeILYrNtEY8KWRvDHHn
-         nlFZlrFjEQYMtudmd1w06yzeARv1fsAbNQ+2RtHt02KY6+td4OnJk7QxVJ8oj1nSr4Ve
-         qQ1ZcraagDpnaN5nk4NrFqlOHOjnDpCVLcw5pa8cI0483nypugmfYyeCUdtae/h6SOnx
-         rDEfrJ0jOGR07rTZH/fhvJU4JtDPHMWXR64I3mk4SVODpu+cuIKuRcSOryV/T9PxXvgx
-         3m0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731479151; x=1732083951;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=udmJLU+VUrTJ8lMtQy3DVP6BCAyAnqzBp8QUEwZB7M8=;
-        b=YdwEQlpLD/ByxCeByaP2CP88FobJ4LNn6HluJ+60jVbEVj17OxUSdmkFtdQzLkPSKH
-         lrcnt6ME/3Y9LkNSi8McLztWdcierIteF91ieg12u88pBJfIdXxYtdK2cGsZwWhOp+jp
-         snncv5jHvyGxR338k2k95soNztMSq6fOmNjDYvhZGycJjOR8UaU/yf2+/hN7KVrsOXIp
-         qpF85x1laD0UQ82RQU+h7apQv1EJ38zgaMZB47B/acBfjI3La5kT5GN3rZ3X9isXiodW
-         +Q1qT0Tcmdc6lRsDzvIWzoiNJV/Xilav0n6rxOBLde0KeBFZJrqEMKX5leNCyUJeU8F3
-         Vr/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVgi9vpQXD+txdc3PHlRMyYWfgiEIBSej4vKvP9wdLSg2jFV9ZTUApr646jgRBjFnWC7L7lHxNyIdoaiGo=@vger.kernel.org, AJvYcCWMrPHBGRL8d7gNDQjSir9CvW8GarLex9yySpTISU7lZWPgUVNX17GKlol3yYxI4/FLKdo3byfA4715xIoV@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuYvdC8V1p0mZgjWq57ct9FUJu5PTDu6lrWgos78mykKkFXTWz
-	/kEaIePnYpmYW7M4csxnf4WpztlrRkjzh6X1HAyYk1xjC5afun/NNEDngny1n8+qnBIqq3rcwo9
-	J+20Frz5AFhPMdnftvj3eE5LDdePklhN5WW4=
-X-Google-Smtp-Source: AGHT+IFivH+ROQfDfZ309x/SixFBN810qCeMwjBx+u0/Gsx0ULHyvCb65UHoH+Y4Ne7pPOhZLKClbUVeg0GA2cF0S84=
-X-Received: by 2002:a05:6214:3bc3:b0:6d3:80a9:fcad with SMTP id
- 6a1803df08f44-6d39e114e77mr262036646d6.19.1731479150809; Tue, 12 Nov 2024
- 22:25:50 -0800 (PST)
+	s=arc-20240116; t=1731479266; c=relaxed/simple;
+	bh=L1G2yn4gF1pJOpNTKrs1pgT9a32+gaBncCA/Gwkj/fk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=a8bENEYhsGWP9mHE9FK1Hnckr8lo2Vj1dtyUL52JO6fv96d+3l0OL0+C8uGoOKI9UtvMGAufkl2R0TyvXGM2VQ2fN7pw7aKrqqvrWLSiWWZrjAF4JGeIsseQHYKsrOkNIyRuKXEV9YnFUh4yXuzbymC+fszbuypSgen1XFZG4Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pyhw1Bsj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACMRqWm015276;
+	Wed, 13 Nov 2024 06:27:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=FxMiUHPzzHhWXE1RsEIt3Z
+	YZOlYRuj/Tq+0Roj8Wh7s=; b=Pyhw1BsjTj3d1SwFnDzah1f8uSIR8rPgT5XZ9N
+	6M/cdGdJh/N/BdBOZBKz2jcrjYlnXlfIm+6aV2PldmmsiJC1Mu/OrKIsRTZFJVOy
+	ohEx6pE1Y0Xge8ZgWSG3hj8c3o92J9H4rqMgPqCo/4e1D6qPPE46/GW7lQJ3sk+O
+	+5g7i+bYUIRmgX/GjlWxZktnRDB2imcfPNNMeRKOXqSpsQT01JRQkQ6LTfs21hG3
+	DFm9mt6iH5jV0CL5pG1YmscBdNTbC9KVhjihYzTj4iTlbnKW+0cPjfQd8Ow2JzRP
+	5GL01+tNaSlWlczFamxaFhKwC3oYL8p8cZmv/Zqh3CZucR2A==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v1vfufy5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 06:27:39 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AD6Rc1Y015609
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 06:27:38 GMT
+Received: from hu-adisi-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 12 Nov 2024 22:27:37 -0800
+From: Aditya Kumar Singh <quic_adisi@quicinc.com>
+Date: Wed, 13 Nov 2024 11:57:13 +0530
+Subject: [PATCH] wifi: cfg80211: fix WARN_ON during CAC cancelling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: liequan che <liequanche@gmail.com>
-Date: Wed, 13 Nov 2024 14:25:38 +0800
-Message-ID: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
-Subject: bcache: fix oops bug in cache_set_flush
-To: Coly Li <colyli@suse.de>, Kent Overstreet <kent.overstreet@gmail.com>, 
-	linux-bcache <linux-bcache@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20241113-mlo_dfs_fix-v1-1-e4326736347b@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMBGNGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQ0Nj3dyc/PiUtOL4tMwKXUNDI2MDMwNDA8ukZCWgjoKiVKAw2LTo2Np
+ aAA8AnuZdAAAA
+X-Change-ID: 20241113-mlo_dfs_fix-1123060109bc
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: Aditya Kumar Singh <quic_adisi@quicinc.com>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: MxyW7xzQCVQpw0AD5vul0LaZB2rWdiw1
+X-Proofpoint-ORIG-GUID: MxyW7xzQCVQpw0AD5vul0LaZB2rWdiw1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ suspectscore=0 spamscore=0 clxscore=1011 phishscore=0 bulkscore=0
+ mlxlogscore=513 malwarescore=0 priorityscore=1501 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411130056
 
-Signed-off-by: cheliequan <cheliequan@inspur.com>
+In cfg80211_cac_event(), there’s a check to ensure that for MLO, the
+link_id argument passed must be a valid link_id in the wdev. The various
+callers of this function (during MLO) are -
+ * ieee80211_stop_ap()
+ * ieee80211_link_stop()
+ * ieee80211_dfs_cac_timer_work()
+ * ieee80211_dfs_cac_cancel()
 
-   If the bcache cache disk contains damaged btree data,
-when the bcache cache disk partition is directly operated,
-the system-udevd service is triggered to call the bcache-register
-program to register the bcache device,resulting in kernel oops.
+Now, in ieee80211_stop_ap() the wdev->valid_links is still having the link
+ID which is being stopped. ieee80211_dfs_cac_timer_work() is triggered
+after CAC time and the link ID is still valid in wdev->valid_links.
+Similarly in ieee80211_dfs_cac_cancel() as well, the link ID is valid in
+wdev->valid_links.
 
-crash> bt
-PID: 7773     TASK: ffff49cc44d69340  CPU: 57   COMMAND: "kworker/57:2"
- #0 [ffff800046373800] machine_kexec at ffffbe5039eb54a8
- #1 [ffff8000463739b0] __crash_kexec at ffffbe503a052824
- #2 [ffff8000463739e0] crash_kexec at ffffbe503a0529cc
- #3 [ffff800046373a60] die at ffffbe5039e9445c
- #4 [ffff800046373ac0] die_kernel_fault at ffffbe5039ec698c
- #5 [ffff800046373af0] __do_kernel_fault at ffffbe5039ec6a38
- #6 [ffff800046373b20] do_page_fault at ffffbe503ac76ba4
- #7 [ffff800046373b70] do_translation_fault at ffffbe503ac76ebc
- #8 [ffff800046373b90] do_mem_abort at ffffbe5039ec68ac
- #9 [ffff800046373bc0] el1_abort at ffffbe503ac669bc
-#10 [ffff800046373bf0] el1_sync_handler at ffffbe503ac671d4
-#11 [ffff800046373d30] el1_sync at ffffbe5039e82230
-#12 [ffff800046373d50] cache_set_flush at ffffbe50121fa4c4 [bcache]
-#13 [ffff800046373da0] process_one_work at ffffbe5039f5af68
-#14 [ffff800046373e00] worker_thread at ffffbe5039f5b3c4
-#15 [ffff800046373e50] kthread at ffffbe5039f634b8
-crash> dis cache_set_flush+0x94
-0xffffbe50121fa4c8 <cache_set_flush+148>:       str     x23, [x20, #512]
+However, during the link stop via ieee80211_link_stop() flow, when this
+function is called, the link_id is removed from the bitmap, triggering the
+WARN_ON. The flow during the stop link is -
+
+nl80211_remove_link
+  > cfg80211_remove_link
+    > ieee80211_del_intf_link
+      > ieee80211_vif_set_links
+        > ieee80211_vif_update_links
+          > ieee80211_link_stop
+            > cfg80211_cac_event
+
+In cfg80211_remove_link(), the link_id is removed from the valid_links
+bitmap before ieee80211_del_intf_link() is called. Consequently, in
+cfg80211_cac_event(), the WARN_ON is triggered.
+
+Since having link_id set in valid_links is not a necessary condition now,
+remove the check.
+
+Fixes: 81f67d60ebf2 ("wifi: cfg80211: handle DFS per link")
+Signed-off-by: Aditya Kumar Singh <quic_adisi@quicinc.com>
+---
+ net/wireless/mlme.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/net/wireless/mlme.c b/net/wireless/mlme.c
+index a5eb92d93074e6ce1e08fcc2790b80cf04ff08f8..2a932a036225a3e0587cf5c18a4e80e91552313b 100644
+--- a/net/wireless/mlme.c
++++ b/net/wireless/mlme.c
+@@ -1112,10 +1112,6 @@ void cfg80211_cac_event(struct net_device *netdev,
+ 	struct cfg80211_registered_device *rdev = wiphy_to_rdev(wiphy);
+ 	unsigned long timeout;
+ 
+-	if (WARN_ON(wdev->valid_links &&
+-		    !(wdev->valid_links & BIT(link_id))))
+-		return;
+-
+ 	trace_cfg80211_cac_event(netdev, event, link_id);
+ 
+ 	if (WARN_ON(!wdev->links[link_id].cac_started &&
 
 ---
-drivers/md/bcache/super.c | 16 ++++++++++------
-1 file changed, 10 insertions(+), 6 deletions(-)
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index fd97730479d8..8a41dfcf9fb6 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1741,8 +1741,10 @@ static void cache_set_flush(struct closure *cl)
-       if (!IS_ERR_OR_NULL(c->gc_thread))
-               kthread_stop(c->gc_thread);
+base-commit: 11597043d74809daf5d14256b96d6781749b3f82
+change-id: 20241113-mlo_dfs_fix-1123060109bc
 
--       if (!IS_ERR(c->root))
--               list_add(&c->root->list, &c->btree_cache);
-+       if (!IS_ERR_OR_NULL(c->root)) {
-+               if (!list_empty(&c->root->list))
-+                       list_add(&c->root->list, &c->btree_cache);
-+       }
-
-       /*
-        * Avoid flushing cached nodes if cache set is retiring
-@@ -1750,10 +1752,12 @@ static void cache_set_flush(struct closure *cl)
-        */
-       if (!test_bit(CACHE_SET_IO_DISABLE, &c->flags))
-               list_for_each_entry(b, &c->btree_cache, list) {
--                       mutex_lock(&b->write_lock);
--                       if (btree_node_dirty(b))
--                               __bch_btree_node_write(b, NULL);
--                       mutex_unlock(&b->write_lock);
-+                       if (!IS_ERR_OR_NULL(b)) {
-+                               mutex_lock(&b->write_lock);
-+                               if (btree_node_dirty(b))
-+                                       __bch_btree_node_write(b, NULL);
-+                               mutex_unlock(&b->write_lock);
-+                       }
-               }
-
-       if (ca->alloc_thread)
---
-2.33.0
 
