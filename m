@@ -1,93 +1,135 @@
-Return-Path: <linux-kernel+bounces-407175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E079C69AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:12:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD3A9C69BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:16:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3873A1F2578C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:12:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 000212843FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76560183CD4;
-	Wed, 13 Nov 2024 07:12:12 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACC67081F;
-	Wed, 13 Nov 2024 07:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA9D175D5D;
+	Wed, 13 Nov 2024 07:15:55 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF1C175D38
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731481932; cv=none; b=gCCzmiHgH5qgk1zNDjTIpMvXLcb0o6YFYB9AYufGLbblUVHSw1fSKO7WTP+dTe8oY/qcIRZnFoS9EViimAA8kD1d6DdC6vF5bM9kjBz554Qz9lJe/AaYoPkyY5pBqUednQO42nxF0SV7PAHSZ6nN1HCv6s6jR/PPz1ATVTlWMqg=
+	t=1731482155; cv=none; b=Ng7WepfVM10AUSYHaVlQuGmG6ZkcojiBrTqANTkKh66j5ezowp8l4WExIiK/gpkxP16PRj/eN61DxYnfITdzZ9ISRdrxQHSz3aRqDnlm1FI9CrLsfv0cG0WpIoqZzwvfCe/8UFRtsA+9PVRZaHGKPnLsYWOB6LYdDTTFu/JfG9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731481932; c=relaxed/simple;
-	bh=VW0RcWE6ESzxZakFAxwmSvtgoIN3Y/ZhwPy7PdJOFcY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dnZvrCPNXi3Ma5SWmMV041NJ+SzbWC+HdMHEVMPmJbg1xTbjwMYZM9SE9tfyK4tnZUxbs/vWBOAobiTMjVtnl3OelV7QEcf3HPsW9aUeXlJbpa4U9CgQbQ26DWatbYLImHkgUI/nTJLBS1HBbiWA86gU/xd8WmyzkuAxwFYVR8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5673451443eb-16400;
-	Wed, 13 Nov 2024 15:12:04 +0800 (CST)
-X-RM-TRANSID:2ee5673451443eb-16400
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.101])
-	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee567345143e77-7f007;
-	Wed, 13 Nov 2024 15:12:04 +0800 (CST)
-X-RM-TRANSID:2ee567345143e77-7f007
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: dlemoal@kernel.org
-Cc: linus.walleij@linaro.org,
-	linux-riscv@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH v4] pinctrl: k210: Undef K210_PC_DEFAULT
-Date: Wed, 13 Nov 2024 15:12:01 +0800
-Message-Id: <20241113071201.5440-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1731482155; c=relaxed/simple;
+	bh=SBaq0tNsdJyjxFyTdktXxwIt5E9hSiPSZMXHIrQlJVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fCCQdpPIEmyqjLYnLjWaxfgAeyGqnSBUaYmU1aCCnaV/VabMWV6htuZvecUQ76rElyymHww2XeA3Sr3oR9zG8glMDvmtXRPableaO+ocuf2QvJUvmQXmE+A2GBC5wYpGYdCO9QwYw5MqMdb3sBdU/P22Uf07Ybx7v0qsLPB7qj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tB7aT-0007QT-1e; Wed, 13 Nov 2024 08:14:49 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tB7aN-000XUv-0p;
+	Wed, 13 Nov 2024 08:14:43 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id C3AE03721A3;
+	Wed, 13 Nov 2024 07:14:42 +0000 (UTC)
+Date: Wed, 13 Nov 2024 08:14:41 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Vladimir Oltean <olteanv@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Pantelis Antoniou <pantelis.antoniou@gmail.com>, Marcin Wojtas <marcin.s.wojtas@gmail.com>, 
+	Byungho An <bh74.an@samsung.com>, Kevin Brace <kevinbrace@bracecomputerlab.com>, 
+	Francois Romieu <romieu@fr.zoreil.com>, Michal Simek <michal.simek@amd.com>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Zhao Qiang <qiang.zhao@nxp.com>, "open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, 
+	"open list:FREESCALE SOC FS_ENET DRIVER" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCHv3 net-next] net: modernize IRQ resource acquisition
+Message-ID: <20241113-nonchalant-spaniel-of-contentment-83978a-mkl@pengutronix.de>
+References: <20241112211442.7205-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-
-When the temporary macro K210_PC_DEFAULT is not needed anymore,
-use its name in the #undef statement instead of
-the incorrect "DEFAULT" name.
-
-Fixes: d4c34d09ab03 ("pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver")
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
----
-v3->v4:
-	Modify commit info and add review tag.
-
- drivers/pinctrl/pinctrl-k210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
-index caf20215aaba..eddb01796a83 100644
---- a/drivers/pinctrl/pinctrl-k210.c
-+++ b/drivers/pinctrl/pinctrl-k210.c
-@@ -181,7 +181,7 @@ static const u32 k210_pinconf_mode_id_to_mode[] = {
- 	[K210_PC_DEFAULT_INT13] = K210_PC_MODE_IN | K210_PC_PU,
- };
- 
--#undef DEFAULT
-+#undef K210_PC_DEFAULT
- 
- /*
-  * Pin functions configuration information.
--- 
-2.33.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yqpx5eyx2zhvpvlt"
+Content-Disposition: inline
+In-Reply-To: <20241112211442.7205-1-rosenp@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--yqpx5eyx2zhvpvlt
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCHv3 net-next] net: modernize IRQ resource acquisition
+MIME-Version: 1.0
 
+On 12.11.2024 13:14:42, Rosen Penev wrote:
+> In probe, np =3D=3D pdev->dev.of_node. It's easier to pass pdev directly.
+>=20
+> Replace irq_of_parse_and_map() by platform_get_irq() to do so. Requires
+> removing the error message as well as fixing the return type.
+>=20
+> Replace of_address_to_resource() with platform_get_resource() for the
+> same reason.
+>=20
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> (for CAN)
+> Reviewed-by: Marc Kleine-Budde <mkl@pengutronix.de>
+
+Please write this as:
+
+Reviewed-by: Marc Kleine-Budde <mkl@pengutronix.de> # for CAN
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--yqpx5eyx2zhvpvlt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmc0Ud0ACgkQKDiiPnot
+vG9ixwf+MRErFbP8EBNYW4KiknVHSCJqliQuxtMgRc5LE54Iz/W8AKqAbKIjgzTv
+XVCnuSSPn5hWw85VK1YrC2romqZQMmkjFDeaDAf27emw1tYQC5DkAg7DfdasiaFw
+ZUNWdDjmY3lm3YwXCupckUARjWB9VEXNsLca8eti0+gmBWR16gwNbd7lBeXHm+Qf
+mDzxiz9SQG5P/1V6GYCnHUgqw4yC6yxgNim60jfDfbD7t52x/C1EQylcG0Wzx3Uz
+H1irShtJQNqXv0j63qMX0K3NQOkUKy0/yfNUS5gqHefjAT5YnEqUHKReldiPq0JB
+IvRUsw91n6EDC2kPZwOR1gOkgMzKZA==
+=7118
+-----END PGP SIGNATURE-----
+
+--yqpx5eyx2zhvpvlt--
 
