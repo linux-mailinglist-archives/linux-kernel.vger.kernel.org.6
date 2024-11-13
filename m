@@ -1,189 +1,111 @@
-Return-Path: <linux-kernel+bounces-407988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 669FC9C796D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:58:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC3E9C7992
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:05:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D082AB275E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:12:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48614B34290
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E567F1667DA;
-	Wed, 13 Nov 2024 16:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D1715CD60;
+	Wed, 13 Nov 2024 16:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ha4c389w"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dqx1aO+n"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BECF1632C7
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515DF249EB
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731514305; cv=none; b=JGi+NYgn+sSO619tBq5INI1ITLNWyqMUbdPrpcByh85zMKSvL5iSHSh9HAGYDfy4LCtm5zwITMFO3SMJFD5/aWDRoYfTnV2TABRELN3jtOx4igtY89hFqCO0+Gffvuxp0WCFdVP8z51fQGwci3w/o9IXf9avRD2VQOBtU71kfZE=
+	t=1731514302; cv=none; b=aprw3a58DKNUWHtP/YOKU8Dldcv1O2MAs2k5b6sFCxjZOLftHRtvOJf/h47b+PwN5tmaHXEVKr68oDr9SqivO/D0QjRhmyc5EYVlvpU0ckJKZ053NmxBAYJkCssHjVvJhVtWXzRcQYATBk+bHndsjkTwMFhkXSOIvP5+NMSkv6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731514305; c=relaxed/simple;
-	bh=8JShsxBODe/ZYse/45GbByklsWCzNPukdA1ZXffLLLQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ir6CxA6IKgC/PvrMvN5ZFQ2sTxi7vGZZgDB2KYCiE2pa5m05XY8L5lbOtxxtvMGX72wB+Pw0lm/OAgCtmoMpFXuPrN0K3d4Efzmfj2thAKxRbl1TpLfsoyJwPUm43xQ3WZsNmsV3KFNWtkrNTkrh4D9pYp5zymmizmXHh+59LmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ha4c389w; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731514302;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8JShsxBODe/ZYse/45GbByklsWCzNPukdA1ZXffLLLQ=;
-	b=Ha4c389wJisbKWLdI0cfSAwezPF67AWSmaGWnVhMD0f5X/eiqjFEFbA6RyIDJ18neI+z71
-	gpBUA2c2O8uhKvc0AyIGDwMMjNKWXCrhOKqvD83pTQ8I/e2me0OxlfvFwJTVppm7M8oJ0R
-	AHQsGuRbRLStD/2Pt/+LiRZSFI1G9ms=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-344-xL0YAnTcNoOPF1M5oGg7PQ-1; Wed, 13 Nov 2024 11:11:41 -0500
-X-MC-Unique: xL0YAnTcNoOPF1M5oGg7PQ-1
-X-Mimecast-MFC-AGG-ID: xL0YAnTcNoOPF1M5oGg7PQ
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6d38310949cso117695396d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:11:41 -0800 (PST)
+	s=arc-20240116; t=1731514302; c=relaxed/simple;
+	bh=h1jftPJHQSBu/+lukUOa4OZCsHjT2nb6TTeZwFv3ohc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=msNMbUCEJWfRyWw3Ho/XDB4fJ2ArCXlADJ/Bi1cNqcqI2FVjp0p5meUDkNvpbq9raZRruH88ztlCCzfx1hGR4+1uaCq1bg0e0LEyhoYsNJfCdWp5WCj3IzEG7tXHTtKjpOOP5k+BAUQu5+NrGy5G+1fieEbaSNDoMVvrRB1LDtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dqx1aO+n; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d3e8d923fso5039211f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:11:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731514298; x=1732119098; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ocP0DQ4ei3XXA6qNw//0ZH6NKzMbKW+5mc510jIzRcc=;
+        b=dqx1aO+n2xtkVS2jLWwNjkmkajofWFNy+FerRh4zXFrDvoKBWCWIo1/0pK11L1Fyf+
+         R5u8W7mgdXHGnyL36vB9n+Q45xq5mg+9bZS30XtNq57duROj60u8SJN0AZVPh+HuAkYc
+         N5OqVlfDs3bKH66FFgF1mtzBe9A5g4wKug3+ma137y/PYg1afOZtdRJqdUHU9ipPri5+
+         pRdbGHCX2kmVFlH9LyqXUtMG46DljRA62s/nFvb/aWHny24Q8QfVEMK0w9EimwoLoy71
+         OLAxHMMyw0QagRIrRtvMBJX9YnZaWiSStFfjjAeHCkWq/D50M6IDrXX/HnN9ObhTPUaJ
+         iWLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731514301; x=1732119101;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8JShsxBODe/ZYse/45GbByklsWCzNPukdA1ZXffLLLQ=;
-        b=m+acVTNp/Un4b+bnyAidFBB8TtXQ2b/EKfKEGmK21RBnJlffgyV7zxeAMVs7JReGk3
-         bzcWA31F094TYQlxWQOYG30IRpIJFOTKksL2rk0nvC+Era/BqLiWDs10RqQBk7kAb8kD
-         pycu6vgcem0Pq/O8G7eIyjhhc7kkgJNqpo3ovccFx3vU8IQBd8jJfvn3XEE8XutF9QEs
-         FHiEpuy64IKhYH4XLMTYzohHpl3WSrWkGpVi2/EcPhUG2ZS7NjGjiRxBa/NRaeChoiiI
-         KxF9zUQAu0/QGinXuRDQC7f22ScMTu4S0QRwifRjw7hWQLn7u0fwuKNQwNa6TkeAZ/F7
-         WbFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUucl8sgG7n4WSbuVhwIA/YE51qjeBbCSLs9ZUQsSgs3xcW2iKpX1DNCEWiTR+4QrKFiEW/AVg9/GkTzc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP0NtydjLpdagezBiHpik8o5cfyYheKR5LXwLXZfEluN2Uju0e
-	6dNbad24OfpO0i7QfZBUOQREXVOB/qxkZMD2EJJhPE9SnBYtxz4xX7CwBRB+F69v44CRq5qDRko
-	nrmN/WIS/RNoMUc4CbDbSIF9ivA3jIV/CQD5bxdSlbwUT4r3gTfghJsjAwDCqPw==
-X-Received: by 2002:a05:6214:5987:b0:6d3:68df:f62d with SMTP id 6a1803df08f44-6d39e10946emr297208106d6.2.1731514300884;
-        Wed, 13 Nov 2024 08:11:40 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHnbeg7ogUgcEGRAzWAPJHQLp75DRK8IjefSxWG9p6JZ9o7VJOC4JF6vdJYqufewnJd395bRA==
-X-Received: by 2002:a05:6214:5987:b0:6d3:68df:f62d with SMTP id 6a1803df08f44-6d39e10946emr297207096d6.2.1731514300322;
-        Wed, 13 Nov 2024 08:11:40 -0800 (PST)
-Received: from [10.200.68.91] (nat-pool-muc-u.redhat.com. [149.14.88.27])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3966303e6sm86017386d6.99.2024.11.13.08.11.30
+        d=1e100.net; s=20230601; t=1731514298; x=1732119098;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ocP0DQ4ei3XXA6qNw//0ZH6NKzMbKW+5mc510jIzRcc=;
+        b=vmAX1eKC5ena+Sjw/0F99h8ADk9L6oQfnUGyy0V59gpGqqqCrXD7V1fBdJMOiodWuL
+         rDkPQMiyhRykZnhMOAlrKPerIUDQiRV1sD03dNX/7dMCiLJqxGlaBogSxb1Di+yIDhqF
+         ijpqmZS5Pn7vCoecdkFSWfX1P3rXdX06gKLI+vfj7/xySB0z5wVgFVzzqVbMKVhLWYFa
+         26f5vMlM8gfAbb/NZBcN5o1U5xt/7ibSEUBjwxmOErTlMEAxGdnSKfe5PKHiyG3hIzIp
+         Qe8iuiaWAhHMdiYEkcrbd1LARYumfoUpSoycCpP/W+y+JqQIfpSL3qdZaPK/XmyFai4S
+         5QMw==
+X-Gm-Message-State: AOJu0YyjwIFeqnTTbepocPuUo7hFjy1rChR6sc46jKrdZ9o4DkyzFDuO
+	9umH/iLqfmI+QQFFfsDrDs78+MAtplpZSSTTBK4zun/p3YSr3VYB5XgdewCFh74=
+X-Google-Smtp-Source: AGHT+IGKjPvMCwwBGdLFU8KuAMwgGxq0Gf7k1MVuXstd0u3APOvvuvUGarCuk+3TPiNJzl5CVs7Jzg==
+X-Received: by 2002:a05:6000:1569:b0:37c:d162:8297 with SMTP id ffacd0b85a97d-381f188589cmr17258067f8f.47.1731514298607;
+        Wed, 13 Nov 2024 08:11:38 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed970e23sm18662618f8f.18.2024.11.13.08.11.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 08:11:39 -0800 (PST)
-Message-ID: <2f94dd0f0bfef8d51f1ced78a9b5db8e2ce48429.camel@redhat.com>
-Subject: Re: [PATCH v2 01/11] PCI: Prepare removing devres from pci_intx()
-From: Philipp Stanner <pstanner@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Damien Le Moal
- <dlemoal@kernel.org>,  Niklas Cassel <cassel@kernel.org>, Basavaraj Natikar
- <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>,  Benjamin
- Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov <oakad@yahoo.com>,
- Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
- <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rasesh Mody
- <rmody@marvell.com>,  GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko
- <imitsyanko@quantenna.com>,  Sergey Matyukevich <geomatsi@gmail.com>, Kalle
- Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar
- S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
- <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>, Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>, Mario Limonciello
- <mario.limonciello@amd.com>, Chen Ni <nichen@iscas.ac.cn>, Ricky Wu
- <ricky_wu@realtek.com>,  Al Viro <viro@zeniv.linux.org.uk>, Breno Leitao
- <leitao@debian.org>, Kevin Tian <kevin.tian@intel.com>, Mostafa Saleh
- <smostafa@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, Kunwu Chan
- <chentao@kylinos.cn>, Ankit Agrawal <ankita@nvidia.com>, Christian Brauner
- <brauner@kernel.org>, Reinette Chatre <reinette.chatre@intel.com>, Eric
- Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-input@vger.kernel.org, netdev@vger.kernel.org, 
- linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
- linux-pci@vger.kernel.org,  kvm@vger.kernel.org,
- xen-devel@lists.xenproject.org
-Date: Wed, 13 Nov 2024 17:11:29 +0100
-In-Reply-To: <87plmzktn3.ffs@tglx>
-References: <20241113124158.22863-2-pstanner@redhat.com>
-	 <20241113124158.22863-3-pstanner@redhat.com> <87plmzktn3.ffs@tglx>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+        Wed, 13 Nov 2024 08:11:38 -0800 (PST)
+Date: Wed, 13 Nov 2024 17:11:35 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Chris Down <chris@chrisdown.name>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
+Subject: Re: [PATCH v6 07/11] printk: Constrain hardware-addressed console
+ checks to name position
+Message-ID: <ZzTPt6mEhiBNncH-@pathway.suse.cz>
+References: <cover.1730133890.git.chris@chrisdown.name>
+ <507dee05e622cc37418b23e5de96b6b449410414.1730133890.git.chris@chrisdown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <507dee05e622cc37418b23e5de96b6b449410414.1730133890.git.chris@chrisdown.name>
 
-On Wed, 2024-11-13 at 17:04 +0100, Thomas Gleixner wrote:
-> On Wed, Nov 13 2024 at 13:41, Philipp Stanner wrote:
-> > +/**
-> > + * pci_intx_unmanaged - enables/disables PCI INTx for device dev,
-> > + * unmanaged version
-> > + * @pdev: the PCI device to operate on
-> > + * @enable: boolean: whether to enable or disable PCI INTx
->=20
-> Except that the argument is of type int, which really should be type
-> bool.
+On Mon 2024-10-28 16:45:48, Chris Down wrote:
+> Commit 7640f1a44eba ("printk: Add
+> match_devname_and_update_preferred_console()") adds support for
+> DEVNAME:n:n style console= registration. It determines whether or not
+> this is a hardware-addressed console by looking at whether the console=
+> string has a colon in it. However, this interferes with loglevel:n and
+> potentially other future named options, which also make use of the
+> character.
+> 
+> In order to avoid this, only search positions before options.
+> 
+> Signed-off-by: Chris Down <chris@chrisdown.name>
 
-True, but this is a *temporary* copy of pci_intx(), a ~16 year old
-function. Older C programmers had the habit of for some reason using
-32-bit integers for a true/false boolean all the time.
+Nice trick!
 
-We _could_ think of changing pci_intx()'s parameter to a boolean, but I
-think it wouldn't really improve things very much
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-see also below
-
->=20
-> > + * Enables/disables PCI INTx for device @pdev
-> > + *
-> > + * This function behavios identically to pci_intx(), but is never
-> > managed with
-> > + * devres.
->=20
-> behavios?
-
--> behaves. Will fix.
-
->=20
-> > + */
-> > +void pci_intx_unmanaged(struct pci_dev *pdev, int enable)
->=20
-> I find this function name mildy confusing. This _unmanaged suffix is
-> not
-> really telling me anything. And the reference that this behaves
-> identically to pci_intx() makes it even worse.
->=20
-> This function is about controlling the PCI INTX_DISABLE bit in the
-> PCI_COMMAND config word, right?
->=20
-> So naming it pci_intx_control() would make it entirely clear what
-> this
-> is about, no?
-
-We had this conversation last week. I answered on that already, maybe
-you have overlooked it:
-
-https://lore.kernel.org/all/a8d9f32f60f55c58d79943c4409b8b94535ff853.camel@=
-redhat.com/
-
-
-Please also take a look at patch 11, then you'll see the full picture
-
-Danke,
-Philipp
-
->=20
-> Thanks,
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tglx
->=20
-
+Best Regards,
+Petr
 
