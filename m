@@ -1,159 +1,247 @@
-Return-Path: <linux-kernel+bounces-407872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264B99C7639
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:21:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA80D9C764D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:22:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD29284500
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A0382851D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424781FEFA0;
-	Wed, 13 Nov 2024 15:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8C2201039;
+	Wed, 13 Nov 2024 15:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e2ZTpVen";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q8O77oRt";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e2ZTpVen";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q8O77oRt"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OUCFYZ5D"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FAC1EF956;
-	Wed, 13 Nov 2024 15:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB72200CBE
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731511141; cv=none; b=Q1ZpVd3c7HhvlRTaPOYAuKYXIbsnMfUXjiNm9dgyolFcim3zunj+NAIdFTCBIlMraMS1M354cjjKDxuxVWScuVZeakdCt88emOY6swx0nwzXHLG9O3F57pyqrpPWUCswREGh1NL7S/R6mrr7z3sNGdLFORcmaDzqTL5FaIhnqDc=
+	t=1731511197; cv=none; b=FEJGl5uiYN/7c66yAvXm+vPdmxX4mJbPPiuzFeKK+FW8/SO1frOnFbVGOk/hSzj0WwACBzQmVEsRfIspn/xES5NVpi+Q/yxbMkM0qv9uy2pdRQuqby83JkMZAxolMm0u7HuwAdu55nQOziTDtvtf0Fog4IHUXL2umw7L7Im240k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731511141; c=relaxed/simple;
-	bh=VDGfeosPxmsUF8s+PaZ7y1gFygCo8rbKz8EfjbeDpLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cT/0wXaA7qxW2WQUSD4MMvDcGf+PHyDwgrVUD+8Wphns51a52KE+3o+pIuK7HhbQTZs3zlE7mXkoBrtDHfxZbUV1bsCGsg00trzHArq6tWTdiKDqasLRkmsR5Jv0c0wqR/kpDuX2HQGZbF4r6MpuRD2CJE3fEqCTSCVBpN735oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e2ZTpVen; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q8O77oRt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e2ZTpVen; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q8O77oRt; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 156E31F38C;
-	Wed, 13 Nov 2024 15:18:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731511137; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1731511197; c=relaxed/simple;
+	bh=nOwVnwYrpicjCfmdQGy2Cdsyn9B6v7ynS9HUG9qeUQg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HAWGXEEAP8Y36SJV8SdSgixCzJRz76aKCqzBu3W8d0DfV/COyL43ZgRuLgtC5Y5jzVyQaHe77a3gLXw+A2tj5BHExfZhj2trAmd0cODd1d6Ev+psrx8Qi+cc8A1Lg0+YlLS/x0UzLnARjFrwhfafZVvpMg4+lo1Mt1P72ZeVPzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OUCFYZ5D; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731511194;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NCmHLcLimgfzlkucZcMUBHztySLUDXwYRdBb6AD+bD0=;
-	b=e2ZTpVenkv05u0B6NbrJEaoiEbMOwjIfQVB65Xw8ul4Hxc0QilnTclfrKXuO/T0M5gzwvt
-	+G6D7rtCvcrTxXgR6ktptOPNO9YGPOtETHZ2WLixewQ3dSoLSEUTi8Rl0QPjriPG3CwboR
-	DlFOJtVQs/fz/SKppltWVMLqp0C1AxY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731511137;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NCmHLcLimgfzlkucZcMUBHztySLUDXwYRdBb6AD+bD0=;
-	b=q8O77oRt8cc9LmRqVPriJF6DnpXKivfGeBB84bPNpP7914d84i5vNe6aP75M9wWddswJsG
-	G6dOrndkx44HANAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731511137; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NCmHLcLimgfzlkucZcMUBHztySLUDXwYRdBb6AD+bD0=;
-	b=e2ZTpVenkv05u0B6NbrJEaoiEbMOwjIfQVB65Xw8ul4Hxc0QilnTclfrKXuO/T0M5gzwvt
-	+G6D7rtCvcrTxXgR6ktptOPNO9YGPOtETHZ2WLixewQ3dSoLSEUTi8Rl0QPjriPG3CwboR
-	DlFOJtVQs/fz/SKppltWVMLqp0C1AxY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731511137;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NCmHLcLimgfzlkucZcMUBHztySLUDXwYRdBb6AD+bD0=;
-	b=q8O77oRt8cc9LmRqVPriJF6DnpXKivfGeBB84bPNpP7914d84i5vNe6aP75M9wWddswJsG
-	G6dOrndkx44HANAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 07BA913301;
-	Wed, 13 Nov 2024 15:18:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fzjhAWHDNGeTDgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 13 Nov 2024 15:18:57 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B4354A08D0; Wed, 13 Nov 2024 16:18:48 +0100 (CET)
-Date: Wed, 13 Nov 2024 16:18:48 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Karel Zak <kzak@redhat.com>, Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
- sb_source
-Message-ID: <20241113151848.hta3zax57z7lprxg@quack3>
-References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
- <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
- <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
- <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
+	bh=QCLG25hVok1lovn87TXiObw7KoI+wXBF1rK5GdDYyhY=;
+	b=OUCFYZ5DlA0DngKach1WUhUT9rcNnO/qLmXosoa6AKRKR/AIqJ5RisVc1eD9rbwqePsbfC
+	VomNYBye0qpq4LjzDzFO2eG5mR8Nczwo8ENy0ofHbCEogpyt43Uadtk/k6lmmnM+W8/Nn+
+	kXaf1aOgtBweh468dgD8eHUZaHhdKgo=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-31-8JiMvj51O5-fsZVSo1aTKQ-1; Wed, 13 Nov 2024 10:19:52 -0500
+X-MC-Unique: 8JiMvj51O5-fsZVSo1aTKQ-1
+X-Mimecast-MFC-AGG-ID: 8JiMvj51O5-fsZVSo1aTKQ
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a9a23eada74so567851466b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:19:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731511191; x=1732115991;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QCLG25hVok1lovn87TXiObw7KoI+wXBF1rK5GdDYyhY=;
+        b=D0fG+OJ6yo0s6VU4BKkhRK/1b/bvG4P+7tDukCKiYKZt33HwQHl+PQbmgXw01v3PCC
+         uRyJ7MmvgOqRQ7phi6fe77ELuhfd+cmnkNkUHHtcj+6mfUowmK5xX9/W8ecruGvIN+vZ
+         HxWDuIAWhe1A+7D2Hh3b39GQyTt8XoRAZyvOTy6BeCZf6p1TmJ6yTYxSdDkGCa+CpoxE
+         PvfyG7sSrcOkDImUAcMhsBg1FJucYjzVwPxwbkbFx0etJXDAFpl9GnoFU19pPDSR1SWJ
+         pyxdzuFw1f1t6KW1SN2mxKLWyTrCE5+UPMLg9vMql8EB2UqnGyZimtgOJp1c2dnjXe/K
+         szVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHkYe+jAsEddvL2HpDi1aJIwZhm/ZuXRbdgNmoEcjWggXPgBUeEf/1Oo9cQfxqw2kI76r0QvptdNtVSD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2vOZgN6/MOGcgmcSg/ChsZvHqrgwAWXNInx5DDUa4Zv8C2i4N
+	HaxHw43XvPGgEChSDZJCdLOZNvrh12hmeb384uqxmMMnjOJx6W1uYON/rZPXW5DGDqBGc7NqsOV
+	EHDwiRq7p/wj3vat8MNQTTedZOoLoEx3tjR2uPf2EZGaFe89LQhASJSnlypTwQA==
+X-Received: by 2002:a17:907:3f05:b0:a9a:3ca0:d55a with SMTP id a640c23a62f3a-aa1f813b95emr302625566b.57.1731511190894;
+        Wed, 13 Nov 2024 07:19:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHCA8xGVsXqnwS+V6c7SWD1KQMyojgkD0HJzAgpjbB89nJ3EyiQD4J33kp9UV7YKU5DWZlJRg==
+X-Received: by 2002:a17:907:3f05:b0:a9a:3ca0:d55a with SMTP id a640c23a62f3a-aa1f813b95emr302623466b.57.1731511190506;
+        Wed, 13 Nov 2024 07:19:50 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0deebabsm869231066b.153.2024.11.13.07.19.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 07:19:49 -0800 (PST)
+Message-ID: <8c9cedd4-953b-4b5e-8c08-7aab3259d4f4@redhat.com>
+Date: Wed, 13 Nov 2024 16:19:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <a644fed4-aff5-4514-8e35-d6cab642d3dd@redhat.com>
+ <CANiDSCtecYwfzSGDOHAtkdSrDb5WjtxAQMikH=tLPqngGXbBkw@mail.gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <CANiDSCtecYwfzSGDOHAtkdSrDb5WjtxAQMikH=tLPqngGXbBkw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed 13-11-24 08:45:06, Jeff Layton wrote:
-> On Wed, 2024-11-13 at 12:27 +0100, Karel Zak wrote:
-> > On Tue, Nov 12, 2024 at 02:39:21PM GMT, Christian Brauner wrote:
-> > Next on the wish list is a notification (a file descriptor that can be
-> > used in epoll) that returns a 64-bit ID when there is a change in the
-> > mount node. This will enable us to enhance systemd so that it does not
-> > have to read the entire mount table after every change.
-> > 
+Hi Ricardo,
+
+On 12-Nov-24 6:31 PM, Ricardo Ribalda wrote:
+> Hi Hans
 > 
-> New fanotify events for mount table changes, perhaps?
+> On Mon, 11 Nov 2024 at 13:59, Hans de Goede <hdegoede@redhat.com> wrote:
+>>
+>> Hi Ricardo, Et al.,
+>>
+>> On 8-Nov-24 9:25 PM, Ricardo Ribalda wrote:
+>>> Some notebooks have a button to disable the camera (not to be mistaken
+>>> with the mechanical cover). This is a standard GPIO linked to the
+>>> camera via the ACPI table.
+>>>
+>>> 4 years ago we added support for this button in UVC via the Privacy control.
+>>> This has two issues:
+>>> - If the camera has its own privacy control, it will be masked
+>>> - We need to power-up the camera to read the privacy control gpio.
+>>
+>> Thinking more about this I think we need to start with looking at the userspace
+>> API for privacy controls, define how we want that to look and then go from
+>> there.
+>>
+>> The reason I'm writing this is because due to my work in drivers/platform/x86
+>> (pdx86) on EC / ACPI / WMI drivers for non chromebooks I am aware of at least
+>> 4 different methods camera on/off (aka privacy) toggles are being reported
+>> to userspace at the moment. Adding a v4l2-ctrl on a subdev instead of directly
+>> on /dev/video# would be adding a 5th method which seems highly undesirable.
+>>
+>> Instead I would like to first focus on fixing these userspace API
+>> inconsistencies agreeing on a single API we want to use everywhere
+>> going forward. We don't need to fix all drivers at once, but IMHO we
+>> should agree on what the API should look like and document that and
+>> any future drivers implementing camera privacy control related code
+>> then must use the new API.
+>>
+>> Lets start with the 3 APIs I'm currently aware of:
+>>
+>> 1. uvcvideo driver exporting V4L2_CID_PRIVACY on /dev/video#
+>> uvcvideo seems to be the only user of this CID (i)
+>>
+>> 2. pdx86 drivers exporting an input evdev with EV_SW,
+>> SW_CAMERA_LENS_COVER. This is somewhat of a special case
+>> for some Dell laptops with an electro-mechanical shutter
+>> operated by the EC. But this is not also used by
+>> hp-wmi.c where it does not necessarily indicate the
+>> status of a mechanical cover, but also possibly simply
+>> disconnecting the camera from the USB bus.
+>>
+>> 3. pdx86 drivers exporting an input evdev with EV_KEY,
+>> KEY_CAMERA_ACCESS_ENABLE, KEY_CAMERA_ACCESS_DISABLE
+>> These KEY codes are based on offical the HUTRR72 HID/HUT
+>> extension and as such may also be send by USB/I2C/BT HID
+>> devices.
+>>
+>> The only user outside of hid-input.c is the recently added
+>> drivers/platform/x86/lenovo-wmi-camera.c driver and I'm
+>> wondering if that should not use SW_CAMERA_LENS_COVER
+>> instead. I'll ask the driver author about how this
+>>
+>> 4. pdx86 drivers exporting an input evdev with EV_KEY,
+>> KEY_CAMERA. Note this 4th method lacks information on if
+>> the camera was enabled or disabled. In many cases this
+>> is send to indicate that the EC has either dropped
+>> a UVC camera of the bus, or added it to the bus.
+>> Ideally we would have some helper checking for internal
+>> UVC camera presence and turn this into 2 or 3.
+>>
+>> TL;DR: it a mess.
+>>
+>> Circling back to this patch-set, note how 3 of the 4
+>> currently in use variants today use in input evdev.
+>>
+>> I think that using an input evdev (shared with the
+>> snapshot button if present) will give us a nice out for
+>> the power-management issue with the V4L2_CID_PRIVACY,
+>> while at the same time giving a nice opportunity to
+>> standardize on a single userspace API.
+>>
+>> My proposal would be to standardize on SW_CAMERA_LENS_COVER
+>> I realize that the GPIO does not always indicate a lens
+>> cover, but the resulting black frames are the same result
+>> as if there were a lens cover and looking at:
+>>
+>> https://support.hp.com/ie-en/document/ish_3960099-3335046-16
+>>
+>> and then the second picture when expanding "Locate and use
+>> the webcam privacy switch" that does look like it may be
+>> an actual cover which reports back its state through a GPIO.
+>>
+>> The reason why I'm not in favor of using
+>> KEY_CAMERA_ACCESS_ENABLE + KEY_CAMERA_ACCESS_DISABLE is that
+>> looking at the HUTRR72 it talks about:
+>> "Enables programmatic access to camera device"
+>> which suggests that it is a request to the OS / desktop-
+>> environment to block camera access at the software level,
+>> rather then reporting back that a hw-level block is in place.
+>>
+>> And since these may be used by any HID device we are not of
+>> control in how these will be used.
+>>
+>> Ricardo, what do you think of instead of using a v4l-subdev,
+>> using an input evdev (shared with the existing one) reporting
+>> SW_CAMERA_LENS_COVER ?  The v4l-subdev approach will need
+>> userspace changes anyways and if we are going to make userspace
+>> changes we might as well use the best API available.
+> 
+> I just sent a patchset using SW_CAMERA_LENS_COVER
 
-Now that I'm looking at it I'm not sure fanotify is a great fit for this
-usecase. A lot of fanotify functionality does not really work for virtual
-filesystems such as proc and hence we generally try to discourage use of
-fanotify for them. So just supporting one type of event (like FAN_MODIFY)
-on one file inside proc looks as rather inconsistent interface. But I
-vaguely remember we were discussing some kind of mount event, weren't we?
-Or was that for something else?
+I'm glad that you like my proposal and thank you for immediately
+implementing it and sending out a v3.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I was expecting us to first have a bit more discussion about
+what the userspace API should look like and what we should do
+wrt keeping / deprecating V4L2_CID_PRIVACY.
+
+But I'm glad that you like the evdev SW_CAMERA_LENS_COVER idea,
+at least I assume you like it since you went for it for v3 :)
+
+I'll reply to your v3 cover-letter to discuss what we should do
+wrt keeping / deprecating V4L2_CID_PRIVACY.
+
+IMHO it would be good to hold of on sending out a v4 until we
+have hashed out how we want this all to look userspace API wise,
+otherwise you'll just spend a lot of time doing revisions
+pursuing a moving target.
+
+> I guess the internal uvc privacy (UVC_CT_PRIVACY_CONTROL) shall NOT be
+> converted to evdev:
+> - If we do so, we cannot differentiate external gpio and internal, for
+> devices that have both
+> - There is no warranty that we will get a uvc_event when the control
+> changes, so we would have to constantly poll the device
+
+These are good questions, lets also discuss this in a thread
+with the v3 cover-letter as start to keep all discussion in one place.
+
+Regards,
+
+Hans
+
+
+
+
 
