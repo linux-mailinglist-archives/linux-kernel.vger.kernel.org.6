@@ -1,142 +1,158 @@
-Return-Path: <linux-kernel+bounces-407225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE4D9C6A75
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:17:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E1E79C6A7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:19:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA182824D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:17:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86E43B2276D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F28C17837A;
-	Wed, 13 Nov 2024 08:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B43189F4B;
+	Wed, 13 Nov 2024 08:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gqBl6l7S"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w6EB50Jn"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49028170A03
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC722170A03
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731485818; cv=none; b=SOSOD2mJM7m+rKu8AqErpOfOlbY/Ri9B9WJgf/kJ+2+5jc4f2L4rhmLddxhyhBuPLfBzhIy2BEkDnqX9w9alh6dMr+iXhHB5hj/kC9u+EsDgz8CDMwZK1Dy2ahqoBbhbnLcrg5NJCPHDId9kI/9/WB79zSRDk/0Z91zV8A4eyls=
+	t=1731485977; cv=none; b=mMj/XeRDRIF4WG6lNv+atlQIYmbKSEjjdtksz7fUx28P+t2umrmlX3O4rfG86GW1LaD1NNPAGM38xsyScAzlnKGBof0+zMKsMOgW/Jeh16kKGW+lswVn9Mn7phv8fhuMpyESQBr/6EcppA16xEn2ascGr5kG3+pD5w7gxYJ8QUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731485818; c=relaxed/simple;
-	bh=D+a0/HfZ9qQqRQETejI0cSOgKGfAeKoNtsNvnoEUGRo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eMMBh7m5XB9MGlrARRfkrSfsGu3cnE+Jodxv+flvyD7IQ0wT5wpWMc0GrVFcRqcX/XeQ3QtPxoOHReWeN7tl58nsLdd0tTtcGgaIB4+UGUdTHdvnxUuRgNG+qYcoVcHAi759ToSUPP5uXDYUW64GTI2vjNs6CXXzeXUXxKFiqoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gqBl6l7S; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20e6981ca77so76380705ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 00:16:57 -0800 (PST)
+	s=arc-20240116; t=1731485977; c=relaxed/simple;
+	bh=Cnx5/u7WVVRjL/g2O6lnbYtDQ1Q9FLDekhDrsRiOiw0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pnDWZjFOTiXC5gCIeCeRGQkTCF2IkMZwqV0JCuQBcPUpRiI1L5rJaOwz7AQQ6KhrU2IegG0pcFcJdCBVxB9AnlhyEjBSSur2TxDTmZziM/PbJ95IcOjHACDGMFrEkDg9sQEU2FIMpAvjm6cRyVU9U3elY6KJ5QOfjnAHr7XfJ9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w6EB50Jn; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-460969c49f2so197721cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 00:19:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731485816; x=1732090616; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L/uGdh4k87UdLsVlqrkIfn4gIIwnutqsKO4ayJkibeU=;
-        b=gqBl6l7Sz6CO6KlqYlppFZ0GwkAjjR9ZvN1AzIKJTmEbJ4wSfxsV132mXYiquUa+Xp
-         msHa7xDyGerJbyZisMgQVPzRAHsPFgWju2b2E/Lrps77xu7zvWWxxklmouV7xrZFYa2j
-         YnO8tqblhShgOZnmlGSj4T4H4aUAy1Uc0r3t8=
+        d=google.com; s=20230601; t=1731485974; x=1732090774; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cnx5/u7WVVRjL/g2O6lnbYtDQ1Q9FLDekhDrsRiOiw0=;
+        b=w6EB50JnfBV1kvY3WD+YZD3acIrQVc9RVwkvhrmLof6Vw+NQ1eWahywX9yix4iJkbZ
+         r5wtf0EQjDIdkvz/15Pxwq1D98i3O7U9SMJWlY22PYmjmZ70LAK9mo7sSpJ1VB1K9Rxl
+         EXcIeEY1RsSPesiBkKoPlnZWOSjkzDliD6/TjGG2vgr/BGlaMi3g7vlt6hr5dEk7zzlI
+         mSooNN7a/ZtKzPWmLs8WnG+2MpSgOojkaPO9OyxkbsVLtNktshvdgl6M4jqO4HQ0TrtH
+         R/fevSyvQTN9/hSwhY/0e8voE0ACrKgW9DXKfnIRMM0wGS8CTTUrM5HhivDycqKG7Z8O
+         EtEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731485816; x=1732090616;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L/uGdh4k87UdLsVlqrkIfn4gIIwnutqsKO4ayJkibeU=;
-        b=F7UF+yZSVhfWiE8ox0zE+iVHWh8E84eFcwsR6w5Ppv6u8lyhmhJ7jLg54FYA42S5Ni
-         Mx9Gzi6AsrX/g42Yv1nmS5jq+CNBmZLpldI2uQfy/aLbAGjaT7NFAGKq8v+6/2k1w45Y
-         KJh3wGFFe9AcJ7HDboNoA21ivrNgsuZg/4G35Q3m/2oMRkr0NDVzSHIdG92KisSQcFI0
-         7EVOa0DW3mfAO+wE4yvyyq0JZ1mx5hBm5anf9m8xSTwwEqerDzO5pZBxWzEXOoOvCwwD
-         d+PfG/XH45CqCTzdqjY9V9UreerReB/BeAoZAyvcNutAQR6RwMtLmJUu/ekjPXvz1EFx
-         7xMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBCqUsUm4xVjQpZNsYMQq+sccqW8OZR0RBbj87LIxJ9fVh2DVoCeQwcVNP6caImvI1JG+x1pMaJALexRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/y79LSQ03Xu6fNTpt/q+swWvGry43wlA0KXSkF+fM8vp2MSjr
-	sTk5LcfBHIwnum9iiMDbvkYi2tHE1SBpOJJQFeniU5BzyJRie21uz+6WLvBxjSMO0pfVcSA2BBs
-	=
-X-Google-Smtp-Source: AGHT+IHPhYwkzPsxjo/RCUL5hnCpKp45auPZIIYVaYgX0w4KzvUg5iggyNngj3Fzi9Z6NWyiw/1UDw==
-X-Received: by 2002:a17:903:1ca:b0:20c:ce1f:13bd with SMTP id d9443c01a7336-211b5c3f07cmr20960895ad.18.1731485816613;
-        Wed, 13 Nov 2024 00:16:56 -0800 (PST)
-Received: from yuanhsinte-p620-1.tpe.corp.google.com ([2401:fa00:1:10:a280:b47c:f4f6:1c31])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e69029sm105462645ad.230.2024.11.13.00.16.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 00:16:56 -0800 (PST)
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Wed, 13 Nov 2024 16:16:53 +0800
-Subject: [PATCH RESEND v4] arm64: dts: mt8183: set DMIC one-wire mode on
- Damu
+        d=1e100.net; s=20230601; t=1731485974; x=1732090774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Cnx5/u7WVVRjL/g2O6lnbYtDQ1Q9FLDekhDrsRiOiw0=;
+        b=Oqol4vUIEEG65AGxByURudJAMRVNG+iRL+HPZX8lHiIKpdXcmDjlfn6ijdx8UOvGly
+         pPC73s7RvaD/URPmROaQjNVjMYNT+Zw0M31c1R3QVBTC6zZA1Q+3TWJTfvoccZpKenST
+         CNfAz2MC0tp3A3pQsJrJyb2M6yk8tu7vr2VLWzHSxAEWyJIVZoBkP4pAgykzG/KNDdlm
+         6iqix874A4xRLWyraRacCRpjebverY+qDMqDGIBbNy0aV7F97fsO2l1Tp+YMmFiyNY3M
+         Ckv3NHvSBdfMt2CReIPIBZHNE3E118XbQkGsfqsRXxgIVC5Gy3Wsk7nT0yq/5UY7XZRA
+         QJLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtmPMt7zRvkJdmiVkbA3llPSaITaOKdllAsxdMpaRKFUE0aW9srIBcUYBP4+8o9d+1YyBTaNiwg5AVAwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEygRITgUuT4DpgHonhHYz9zZ8Z2poaA0r3fc81Oso6a7PyFS9
+	wlkg978l5fexU1TMMuNArvO6u5r8tYoaY/rgrOmy0NUmk1XXWv2opOXM7Bmk6VQvoJdcw1GDLlO
+	x0i0Qb8SAKZPG6kahK2fQ4I3IrjtQrb2OBF5T
+X-Gm-Gg: ASbGncsiF5Z5QcjXxkuyMthaF0Bs3dBvdOoA+/QQJC4LRO3oPvt7LrROu8HUgcfSs2o
+	VW0cWZsHmcgRNPP4VsaVgPYdnjyIREKg=
+X-Google-Smtp-Source: AGHT+IGE+nQpUYoL6FDT1s86sWs+I0FvuajgY1+GilAavFJvfleccnErI/dSJ4HZqOpFIpDau9jUOQ/tmyOe1suyIyE=
+X-Received: by 2002:a05:622a:114:b0:461:70cc:3799 with SMTP id
+ d75a77b69052e-4634cad9282mr1849331cf.21.1731485974244; Wed, 13 Nov 2024
+ 00:19:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241113-damu-v4-1-6911b69610dd@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAHRgNGcC/7WOuw7CMBAEfwW55pBfSWwqCmgpoEQUTnImLhIjB
- wwI5d8xKZAQNBSUe7qdnTvpMTjsyXxyJwGj653vUpDTCaka0x0QXJ0y4ZRLRqmG2rRnMMJyK2S
- hJNUkvR4DWncdMTuyWW1X6yXZp7sNvoVTE9C8IFQzCr5DuLiAEDkw4GUpaZ0ZUVm1qJrUced25
- sPhiW5cf/LhNgpGMQ68u0SREIxrWSlkueL6HfHUiPJbT6ZeoXRZsLLOM55/TP/1f/TKfvfaD8P
- wAFpDMEK2AQAA
-X-Change-ID: 20241009-damu-a3f2f3478409
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Hsin-Yi Wang <hsinyi@chromium.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-X-Mailer: b4 0.15-dev-2a633
+References: <20241112194635.444146-1-surenb@google.com> <20241112194635.444146-5-surenb@google.com>
+ <CAJuCfpFd2_7q6pi1=G9B0VW5ynCWhkkDDA3PU293FPtT_CcBQA@mail.gmail.com>
+ <6d0c5c2d-2963-489a-2376-8edaeb064de3@google.com> <CAJuCfpEG7hhh+mHbZe_9duk2kbFvv_NeGfBqw0JBxiHK-9yWxQ@mail.gmail.com>
+ <54394536-da24-d01d-e4a7-2ece22b1ddab@google.com>
+In-Reply-To: <54394536-da24-d01d-e4a7-2ece22b1ddab@google.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 13 Nov 2024 00:19:23 -0800
+Message-ID: <CAJuCfpEEH2SMv050+41dLp5j820iP5u-0XyCmDh+mzdAfs266w@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] mm: make vma cache SLAB_TYPESAFE_BY_RCU
+To: Hugh Dickins <hughd@google.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
+	dhowells@redhat.com, hdanton@sina.com, minchan@google.com, jannh@google.com, 
+	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Hsin-Yi Wang <hsinyi@chromium.org>
+On Tue, Nov 12, 2024 at 10:52=E2=80=AFPM Hugh Dickins <hughd@google.com> wr=
+ote:
+>
+> On Tue, 12 Nov 2024, Suren Baghdasaryan wrote:
+> > On Tue, Nov 12, 2024 at 9:08=E2=80=AFPM Hugh Dickins <hughd@google.com>=
+ wrote:
+> > > On Tue, 12 Nov 2024, Suren Baghdasaryan wrote:
+> > > >
+> > > > Thinking about this some more, I don't think this works. I'm relyin=
+g
+> > > > on vma_start_read() to stabilize the vma, however the lock I'm taki=
+ng
+> > > > is part of the vma which can be reused from under us. So, the lock =
+I'm
+> > > > taking might be reinitialized after I take the lock...
+> > > > I need to figure out a way to stabilize the vma in some other manne=
+r
+> > > > before taking this lock.
+> > >
+> > > (I'm not paying attention and following the patches, I just happened
+> > > to notice this remark: forgive me if I'm out of context and have
+> > > misunderstood, but hope this might help:)
+> > >
+> > > But this is exactly the problem SLAB_TYPESAFE_BY_RCU was invented for=
+.
+> > > You just have to be careful that the locks are initialized only when =
+the
+> > > slab is first created (allocated from buddy), not reinitialized whene=
+ver
+> > > a new object is allocated from that slab.
+> >
+> > Hi Hugh!
+> > I'm looking into SLAB_TYPESAFE_BY_RCU implementation and trying to
+> > figure out if initializing the lock in the ctor() of the cache as
+> > mentioned in the comment here:
+> > https://elixir.bootlin.com/linux/v6.12-rc7/source/include/linux/slab.h#=
+L127
+> > would help my case. I assume that's what you are hinting here?
+>
+> Yes, if I'm "hinting", it's because offhand I forget the right names:
+> "ctor", yes, that sounds right.
 
-Sets DMIC one-wire mode on Damu.
+Just wanted to make sure I understood you correctly. Thanks for confirmatio=
+n.
 
-Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
----
-Changes in v4:
-- Add Reviewed-by tag back, which is dropped in v3
-- Link to v3: https://lore.kernel.org/r/20241009-damu-v3-1-1294c8e16829@chromium.org
+>
+> Just grep around for examples of how it is used: there must be plenty
+> now. but anon_vma is what it was first used for.
 
-Changes in v3:
-- Add missing Sign-off-by tag
-- Link to v2: https://lore.kernel.org/r/20240910-one-wire-v2-1-2bb40d5a3cf8@chromium.org
+Yeah, there are plenty of examples now.
 
-Changes in v2:
-- Add fixes tag 
-- Link to v1: https://lore.kernel.org/r/20240910-one-wire-v1-1-d25486a6ba6d@chromium.org
----
- arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+>
+> But given the title of this patch, I'm surprised it's new to you.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
-index 0b45aee2e29953b6117b462034a00dff2596b9ff..06a689feff52945d141d196d439cba034f25fdf6 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
-@@ -26,6 +26,10 @@ &touchscreen {
- 	hid-descr-addr = <0x0001>;
- };
- 
-+&mt6358codec {
-+	mediatek,dmic-mode = <1>; /* one-wire */
-+};
-+
- &qca_wifi {
- 	qcom,ath10k-calibration-variant = "GO_DAMU";
- };
+Thinking about issues arising from possible object reuse is indeed new
+to me, that's why I missed the lock reinitialization issue. I think I
+know how to fix that now.
+Thanks,
+Suren.
 
----
-base-commit: 75b607fab38d149f232f01eae5e6392b394dd659
-change-id: 20241009-damu-a3f2f3478409
-
-Best regards,
--- 
-Hsin-Te Yuan <yuanhsinte@chromium.org>
-
+>
+> Hugh
 
