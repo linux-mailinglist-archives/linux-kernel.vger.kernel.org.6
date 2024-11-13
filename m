@@ -1,146 +1,354 @@
-Return-Path: <linux-kernel+bounces-408083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011F89C7A9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:04:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0FC9C7A96
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:04:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41456B2B347
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:49:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E880B31E6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7385C202F80;
-	Wed, 13 Nov 2024 17:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136182036F0;
+	Wed, 13 Nov 2024 17:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q5agB2me"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jr+Vm1qq"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C211A2010F4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332FB2022E3
 	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731520134; cv=none; b=czbtCQU1VhVVhDKPuud04MI7n0iu0s97+RdYZ5f0bXTBL7D06LhjCDwzlUf77Fyk36F/b82RMUgY4w4wLcGkL2xBMCWnuxP8VrA0m0NHrNjzIMxQGryg/W/i9UblLqy012yu4uCdk21RUoV9pa4gqecm4t3weltQvEohb53k9/w=
+	t=1731520135; cv=none; b=T2Y1lePDXZvbYc77yaGnxvrVFtceeus/B5z1yR+hWbvpermjaCwFE1SR6b6fc7/qABIa/jgrv0oqOOHq/20WCIyMEn51c/T82HXz/iGDLQwK3LGT/tifX91j1/Qn271SEtjFSMc9iDkBBVv04q9FWr6UwEQnULleJ3Iq2zGeDvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731520134; c=relaxed/simple;
-	bh=2vvecHebovoeGzhdxA64vP0FIVcZsrzn6/S2UuTdzUQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YEMWnNsZV6gB76EgqqMzlwxS+IBsV/3YyP76q1qFgDVGkbHiI5tDQTAYHk0zw8Bk+Q49gRbleYzdBNxCxxO3xAiPTqwnWxs1DXvchXhaCXQyPrMHfVP2Mk9DyZm8v/byu1lw8ilzlJCvivRWbNR1PjjOneppqfndvG3E0DI4MFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q5agB2me; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c932b47552so9052a12.0
+	s=arc-20240116; t=1731520135; c=relaxed/simple;
+	bh=9qu0frD8NGZvMd+t0ojWG9jdk3Z4iUPQQmG4GYjaUSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dp1T0y47SiRYLJTTlZ8Qfmw4XTmyWXTT8+iqflA+8CKd75AssGLTK3ft8TTAleNbRKxSpDeCOwWGGrFVt5EZRvH57tW8E1UdH4jETBKlhgNIy3X5JCRTFznKTIoS+LX52OrcLdsJUV8rD0Dsq9rwfmJD7MqR5oIdk6MSlNGKffw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jr+Vm1qq; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cf6eea3c0so69473725ad.0
         for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:48:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731520131; x=1732124931; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ut09l0p4ejZD65rK22Do5DdJADgIGvLTdDvLpb35Lpg=;
-        b=q5agB2mexx2fJ5p1z3Xx8YR2q/Zt3BQwdxy3HYl87xBtWPT1NCrsUcJwV6KeCrgi82
-         WmYboHZe532UOtuz5eBh3dBn7+H62L9QIzWHI4ugSiHfSY/Cp4JfVBTEzpMdo6VBc0OJ
-         nokiwrPS/IYH2YvLIe2RLaINnfd9xlryIEZi4OEEEHZOmmHIvrGY+4gIlj9vS49nQHdO
-         7RrXs/TA3AeBBd9p0iNXut3YiDw6reUo5V41UaqgTPgnm0YPZoWox3Zm7N2USLs9B42M
-         fZgUNn0qA1J0AgtmWtf9UD/hhLfAqbq2jTNX6NFMzM2LgmE3au5sZc16sLkg6VXvJ9KW
-         uG4Q==
+        d=linaro.org; s=google; t=1731520132; x=1732124932; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Y9rKfjR1HZdkhSoVFUPTH5q4XPsaUToI4Fa76nl271U=;
+        b=Jr+Vm1qqwXnYfZ1d/z3vZc4WujrYZyjxDs+G0OkcsjA9WWg46Hr7e4B0RwfrbvHWKe
+         5oLDIETHz9l8gqHHzhceUF7yW/rNeUKPraaKKacCREevYCt1Ccj3wp76LRm0ufNFI7F+
+         AmmFWgW7WnYYKhM4v20FpypvX3Qg/Ta3yGg7qPvKWpfFGeA1pFV9k37RyEX0h6rQ+19S
+         9JlAhx2on5RwZuUb/NV4rn5OAr3kSTYh1gS4+zBq05PsFV94cRU3/46cQry7Pr7sBqO5
+         Mh9dnlm8eVttooLzRHz05BgzOfTSKuvtN9vRfCLh86J6dY5d6mphIxSCELu0HzBQgAbp
+         4c1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731520131; x=1732124931;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ut09l0p4ejZD65rK22Do5DdJADgIGvLTdDvLpb35Lpg=;
-        b=eJ5kVKU288zEFCycUyGaIAoHwInlFS44v8uZpY8GeBbZcQBwXqtrg8IJgXsahjrl/z
-         kwAhO9EZ0ha/pcqxdv6lBK+fwnuITCDyghs/G7qU444CDwH2voUJ+Cm8i0sKJifiLUU4
-         rcQxJpNV5o9dG+6KzZxOJ+wZSUNKTGiLVdzsNMF+74b7cHFHW1kHBUoJlD2H5vZ+Bf1m
-         sI39oUjTuUDvVl1RTTBX868V9hsRT1xBYy8cWhJz0JBGE9F97ivEgVJN6cenh0SCNiZD
-         0zW4jGdn3KtyfeljayO1HC1Ta3gUOTnhxhW82tvHY0Rly4FI2vZ3kJkO1jiFPLgFILT7
-         6sGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBImt8Uc+as6F/wnQyNic/r1Eg/chbgJmyYr1SB5Wx4Sy81Bf666unXwCHeEIyBsImQvU+/KyTrtmleqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBNHQjkHSQxJeXQ+EILMep90B2JSiU8BdPSnt9ADIujtUC30Wu
-	+Rul+fXplM0n6umid+tWwHrCY7Ytmwu3LncdyEdY77hgApHsSYiPXbXe/BUQTdFaE2n8s9pDgSX
-	TvRw9qW7EVoJQGSLfj8thqPfLBTBubBsuvoaz
-X-Gm-Gg: ASbGnctxSo3C3Eebigp1BHeg2ljoP6p3TR1Vk37gqOTsyw985Mu6i9GaYVccz4UAsvT
-	zEnKIUHFXtFEbAahZ8Mmy1foeq/3V
-X-Google-Smtp-Source: AGHT+IF+3cQN9o21cQiIysZAB4NJwFjVHmftEWZ1JWnUJZdbBdxTB+kUQux093XqXmTqkJPQ2rghtkSNf6aJlDPPoDk=
-X-Received: by 2002:a05:6402:886:b0:5cf:7145:be96 with SMTP id
- 4fb4d7f45d1cf-5cf7145bfa8mr145258a12.2.1731520130908; Wed, 13 Nov 2024
- 09:48:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731520132; x=1732124932;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y9rKfjR1HZdkhSoVFUPTH5q4XPsaUToI4Fa76nl271U=;
+        b=AjGaax0k6dIEc4p7mWWUA9MHB/9bh9F7gEia58SZDTzkXsC4OFCXoYxXmFdEAvoKtp
+         Ejj961OQ+wpuxzgO8NmW504ZufvafBZcQvKXzRR4z4AuZthCKGFN16uYhT1qF67rz0SH
+         Cigu/CdfRbzrludjVPApWxl/PCR6t18azFmaTq1vDav+MCYi+/OT/NnvD7T6PdjIqDcM
+         tJ7F3GUH7YPLwOdMGIt7RhKTIlrQXAcSwpWoLCaNsxl3HKGeohcBub+VTm3uepHVouZY
+         oLy8WMV4W0cEXQ5cB0vpeiXShVYrna6ZzLH+sF2Ry55OM6Jj7ygwlEj47gPnp+eM4Ohy
+         hajw==
+X-Forwarded-Encrypted: i=1; AJvYcCURlTVd/TbAFCgw43lq0uzIe1mNbILbGE46KYeephCA6eQuoSDIuygr8ejV3IlFjuQVpBxSZNQJr/Z/zNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz4+DsFhXgQ+XfsfAGHHrBTIB4bOyzzsh1BMWRKWyrdIu1eHPv
+	BynsOyaxQQj/yTBszZQedhzIFrolQmBUJnQSEf8l9flOTthDNKer9OpCaJ5iGg==
+X-Google-Smtp-Source: AGHT+IGUx5vMux/zJWfHt+c3yDFnfCUQDJa3eB9NypPr2jzRRcay61/UDEWpDrYoWje8hXMYDmT3ow==
+X-Received: by 2002:a17:903:230b:b0:20b:9062:7b16 with SMTP id d9443c01a7336-211834e6c2amr288743745ad.9.1731520132170;
+        Wed, 13 Nov 2024 09:48:52 -0800 (PST)
+Received: from thinkpad ([117.213.102.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e8752asm110135085ad.282.2024.11.13.09.48.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 09:48:51 -0800 (PST)
+Date: Wed, 13 Nov 2024 23:18:41 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, alyssa@rosenzweig.io, bpf@vger.kernel.org,
+	broonie@kernel.org, jgg@ziepe.ca, joro@8bytes.org,
+	lgirdwood@gmail.com, maz@kernel.org, p.zabel@pengutronix.de,
+	robin.murphy@arm.com, will@kernel.org
+Subject: Re: [PATCH v5 2/2] PCI: imx6: Add IOMMU and ITS MSI support for
+ i.MX95
+Message-ID: <20241113174841.olnyu5l6rbmr3tqh@thinkpad>
+References: <20241104-imx95_lut-v5-0-feb972f3f13b@nxp.com>
+ <20241104-imx95_lut-v5-2-feb972f3f13b@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030170106.1501763-21-samitolvanen@google.com>
- <20241030170106.1501763-39-samitolvanen@google.com> <CAK7LNAR9c+EEsOvPPn4qSq3gAFskYOXVd=dg8O+bKeeC-HMifw@mail.gmail.com>
-In-Reply-To: <CAK7LNAR9c+EEsOvPPn4qSq3gAFskYOXVd=dg8O+bKeeC-HMifw@mail.gmail.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Wed, 13 Nov 2024 09:48:13 -0800
-Message-ID: <CABCJKudWUBE2ZboktcBEykBReor4T1Cf8dfRCWJYEryoT81OEQ@mail.gmail.com>
-Subject: Re: [PATCH v5 18/19] kbuild: Add gendwarfksyms as an alternative to genksyms
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241104-imx95_lut-v5-2-feb972f3f13b@nxp.com>
 
-Hi Masahiro,
+On Mon, Nov 04, 2024 at 02:23:00PM -0500, Frank Li wrote:
+> For the i.MX95, configuration of a LUT is necessary to convert Bus Device
+> Function (BDF) to stream IDs, which are utilized by both IOMMU and ITS.
+> This involves examining the msi-map and smmu-map to ensure consistent
+> mapping of PCI BDF to the same stream IDs. Subsequently, LUT-related
+> registers are configured. In the absence of an msi-map, the built-in MSI
+> controller is utilized as a fallback.
+> 
+> Register a PCI bus callback function to handle enable_device() and
+> disable_device() operations, setting up the LUT whenever a new PCI device
+> is enabled.
+> 
+> Acked-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-On Mon, Nov 11, 2024 at 8:09=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Thu, Oct 31, 2024 at 2:01=E2=80=AFAM Sami Tolvanen <samitolvanen@googl=
-e.com> wrote:
-> >
-> >  # These mirror gensymtypes_c and co above, keep them in synch.
-> > -cmd_gensymtypes_S =3D                                                 =
-        \
-> > -   { echo "\#include <linux/kernel.h>" ;                              =
-      \
-> > -     echo "\#include <asm/asm-prototypes.h>" ;                        =
-      \
-> > -     $(NM) $@ | sed -n 's/.* __export_symbol_\(.*\)/EXPORT_SYMBOL(\1);=
-/p' ; } | \
-> > -    $(CPP) -D__GENKSYMS__ $(c_flags) -xc - | $(genksyms)
-> > +getasmexports =3D                                                     =
-           \
-> > +   { echo "\#include <linux/kernel.h>" ;                              =
- \
-> > +     echo "\#include <linux/string.h>" ;                              =
- \
-> > +     echo "\#include <asm/asm-prototypes.h>" ;                        =
- \
-> > +     $(call getexportsymbols,$(2:.symtypes=3D.o),EXPORT_SYMBOL(\1);) ;=
- }
-> > +
-> > +ifdef CONFIG_GENDWARFKSYMS
-> > +cmd_gensymtypes_S =3D                                                 =
-   \
-> > +       $(getasmexports) |                                             =
- \
-> > +       $(CC) $(c_flags) -c -o $(2:.symtypes=3D.gendwarfksyms.o) -xc -;=
-   \
-> > +       $(call getexportsymbols,$(2:.symtypes=3D.o),\1) |              =
-   \
-> > +       $(gendwarfksyms) $(2:.symtypes=3D.gendwarfksyms.o)
->
->
-> I do not want to see crazy suffix replacements like this.
+Some minor comments below. It'd be good to get Robin's Ack for this patch.
 
-Yeah, I agree. It does get a bit ugly.
+> ---
+> Change from v4 to v5
+> - rework commt message
+> - add comment for mutex
+> - s/reqid/rid/
+> - keep only one loop when enable lut
+> - add warning when try to add duplicate rid
+> - Replace hardcode 0xffff with IMX95_PE0_LUT_MASK
+> - Fix some error message
+> 
+> Change from v3 to v4
+> - Check target value at of_map_id().
+> - of_node_put() for target.
+> - add case for msi-map exist, but rid entry is not exist.
+> 
+> Change from v2 to v3
+> - Use the "target" argument of of_map_id()
+> - Check if rid already in lut table when enable device
+> 
+> change from v1 to v2
+> - set callback to pci_host_bridge instead pci->ops.
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 176 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 175 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 94f3411352bf0..e75dc361e284e 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -55,6 +55,22 @@
+>  #define IMX95_PE0_GEN_CTRL_3			0x1058
+>  #define IMX95_PCIE_LTSSM_EN			BIT(0)
+>  
+> +#define IMX95_PE0_LUT_ACSCTRL			0x1008
+> +#define IMX95_PEO_LUT_RWA			BIT(16)
+> +#define IMX95_PE0_LUT_ENLOC			GENMASK(4, 0)
+> +
+> +#define IMX95_PE0_LUT_DATA1			0x100c
+> +#define IMX95_PE0_LUT_VLD			BIT(31)
+> +#define IMX95_PE0_LUT_DAC_ID			GENMASK(10, 8)
+> +#define IMX95_PE0_LUT_STREAM_ID			GENMASK(5, 0)
+> +
+> +#define IMX95_PE0_LUT_DATA2			0x1010
+> +#define IMX95_PE0_LUT_REQID			GENMASK(31, 16)
+> +#define IMX95_PE0_LUT_MASK			GENMASK(15, 0)
+> +
+> +#define IMX95_SID_MASK				GENMASK(5, 0)
+> +#define IMX95_MAX_LUT				32
+> +
+>  #define to_imx_pcie(x)	dev_get_drvdata((x)->dev)
+>  
+>  enum imx_pcie_variants {
+> @@ -82,6 +98,7 @@ enum imx_pcie_variants {
+>  #define IMX_PCIE_FLAG_HAS_PHY_RESET		BIT(5)
+>  #define IMX_PCIE_FLAG_HAS_SERDES		BIT(6)
+>  #define IMX_PCIE_FLAG_SUPPORT_64BIT		BIT(7)
+> +#define IMX_PCIE_FLAG_HAS_LUT			BIT(8)
+>  
+>  #define imx_check_flag(pci, val)	(pci->drvdata->flags & val)
+>  
+> @@ -134,6 +151,9 @@ struct imx_pcie {
+>  	struct device		*pd_pcie_phy;
+>  	struct phy		*phy;
+>  	const struct imx_pcie_drvdata *drvdata;
+> +
+> +	/* Ensure that only one device's LUT is configured at any given time */
+> +	struct mutex		lock;
+>  };
+>  
+>  /* Parameters for the waiting for PCIe PHY PLL to lock on i.MX7 */
+> @@ -925,6 +945,152 @@ static void imx_pcie_stop_link(struct dw_pcie *pci)
+>  	imx_pcie_ltssm_disable(dev);
+>  }
+>  
+> +static int imx_pcie_add_lut(struct imx_pcie *imx_pcie, u16 rid, u8 sid)
+> +{
+> +	struct dw_pcie *pci = imx_pcie->pci;
+> +	struct device *dev = pci->dev;
+> +	u32 data1, data2;
+> +	int free = -1;
+> +	int i;
+> +
+> +	if (sid >= 64) {
+> +		dev_err(dev, "Invalid SID for index %d\n", sid);
+> +		return -EINVAL;
+> +	}
+> +
+> +	guard(mutex)(&imx_pcie->lock);
+> +
+> +	for (i = 0; i < IMX95_MAX_LUT; i++) {
+> +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_ACSCTRL, IMX95_PEO_LUT_RWA | i);
+> +		regmap_read(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA1, &data1);
+> +
+> +		if (!(data1 & IMX95_PE0_LUT_VLD)) {
+> +			if (free < 0)
+> +				free = i;
 
-> I decided to delete this.
-> https://lore.kernel.org/linux-kbuild/20241111171753.2917697-2-masahiroy@k=
-ernel.org/T/#u
+So you don't increment 'free' once it becomes >=0? Why can't you use the loop
+iterator 'i' itself instead of 'free'?
 
-Cool, thanks! I'll rebase v6 on top of your patch.
+> +			continue;
+> +		}
+> +
+> +		regmap_read(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA2, &data2);
+> +
+> +		/* Needn't add duplicated Request ID */
 
-Sami
+"Do not add duplicate RID"
+
+> +		if (rid == FIELD_GET(IMX95_PE0_LUT_REQID, data2)) {
+> +			dev_warn(dev, "Try to enable rid(%d) twice without disable it\n", rid);
+
+"Existing LUT entry available for RID (%d)\n"
+
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	if (free < 0) {
+> +		dev_err(dev, "LUT entry is not available\n");
+> +		return -EINVAL;
+
+ENOSPC?
+
+> +	}
+> +
+> +	data1 = FIELD_PREP(IMX95_PE0_LUT_DAC_ID, 0);
+> +	data1 |= FIELD_PREP(IMX95_PE0_LUT_STREAM_ID, sid);
+> +	data1 |= IMX95_PE0_LUT_VLD;
+> +	regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA1, data1);
+> +
+> +	data2 = IMX95_PE0_LUT_MASK; /* Match all bits of rid */
+
+Please use 'RID' in comments everywhere.
+
+> +	data2 |= FIELD_PREP(IMX95_PE0_LUT_REQID, rid);
+> +	regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA2, data2);
+> +
+> +	regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_ACSCTRL, free);
+> +
+> +	return 0;
+> +}
+> +
+> +static void imx_pcie_remove_lut(struct imx_pcie *imx_pcie, u16 rid)
+> +{
+> +	u32 data2;
+> +	int i;
+> +
+> +	guard(mutex)(&imx_pcie->lock);
+> +
+> +	for (i = 0; i < IMX95_MAX_LUT; i++) {
+> +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_ACSCTRL, IMX95_PEO_LUT_RWA | i);
+> +
+
+Remove newline.
+
+> +		regmap_read(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA2, &data2);
+> +		if (FIELD_GET(IMX95_PE0_LUT_REQID, data2) == rid) {
+> +			regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA1, 0);
+> +			regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA2, 0);
+> +			regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_ACSCTRL, i);
+> +
+> +			break;
+> +		}
+> +	}
+> +}
+> +
+> +static int imx_pcie_enable_device(struct pci_host_bridge *bridge, struct pci_dev *pdev)
+> +{
+> +	struct imx_pcie *imx_pcie = to_imx_pcie(to_dw_pcie_from_pp(bridge->sysdata));
+> +	u32 sid_i = 0, sid_m = 0, rid = pci_dev_id(pdev);
+
+No need to initialize sid_{i/m}.
+
+> +	struct device_node *target;
+> +	struct device *dev;
+> +	int err_i, err_m;
+> +
+> +	dev = imx_pcie->pci->dev;
+> +
+> +	target = NULL;
+> +	err_i = of_map_id(dev->of_node, rid, "iommu-map", "iommu-map-mask", &target, &sid_i);
+> +	if (target)
+> +		of_node_put(target);
+> +	else
+> +		err_i = -EINVAL;
+> +
+> +	target = NULL;
+> +	err_m = of_map_id(dev->of_node, rid, "msi-map", "msi-map-mask", &target, &sid_m);
+> +
+> +	/*
+> +	 * Return failure if msi-map exist and no entry for rid because dwc common
+> +	 * driver will skip setting up built-in MSI controller if msi-map existed.
+> +	 *
+> +	 *   err_m      target
+> +	 *	0	NULL		Return failure, function not work.
+> +	 *      !0      NULL		msi-map not exist, use built-in MSI.
+> +	 *	0	!NULL		Find one entry.
+> +	 *	!0	!NULL		Invalidate case.
+> +	 */
+> +	if (!err_m && !target)
+> +		return -EINVAL;
+> +	else if (target)
+> +		of_node_put(target); /* Find entry for rid in msi-map */
+> +
+> +	/*
+> +	 * msi-map        iommu-map
+> +	 *   Y                Y            ITS + SMMU, require the same sid
+> +	 *   Y                N            ITS
+> +	 *   N                Y            DWC MSI Ctrl + SMMU
+> +	 *   N                N            DWC MSI Ctrl
+> +	 */
+> +	if (!err_i && !err_m)
+> +		if ((sid_i & IMX95_SID_MASK) != (sid_m & IMX95_SID_MASK)) {
+> +			dev_err(dev, "iommu-map and msi-map entries mismatch!\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +	/*
+> +	 * Both iommu-map and msi-map not exist, use dwc built-in MSI
+> +	 * controller, do nothing here.
+> +	 */
+> +	if (err_i && err_m)
+> +		return 0;
+> +
+> +	if (!err_i)
+> +		return imx_pcie_add_lut(imx_pcie, rid, sid_i);
+> +	else if (!err_m)
+> +		/* Hardware auto add 2 bit controller id ahead of stream ID */
+
+What is this comment for? I don't find it relevant here.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
