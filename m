@@ -1,435 +1,468 @@
-Return-Path: <linux-kernel+bounces-407933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 662219C7794
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:44:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D03B9C7793
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:44:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25333280A57
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:44:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC763282DFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593BC1632DC;
-	Wed, 13 Nov 2024 15:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D76B1632D0;
+	Wed, 13 Nov 2024 15:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dkYefeP3"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="Y3h6rJg0"
+Received: from alln-iport-4.cisco.com (alln-iport-4.cisco.com [173.37.142.91])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D619158861
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731512584; cv=none; b=iLX7o+UWmhBP31ZwLloOvTWvPV9v5aje5qk1NVnANOSiy70tVHpH2woMB4cdbYj6BHlEK7PGXU28DnE8GjycHFHe+ep3bk3AzyYBHqs2ywPSK1VjVhjzO0s4R1tEW3bOHMBQMFP4d9RyKWso6i1eHbbb22Ag8GD/37X5qdwwUp8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731512584; c=relaxed/simple;
-	bh=zFKsTMccqrK0GWEV87cV5u8OkzOzxmruhhFhmcK23I8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DEaLlHmh2qfPjEbqNKVbDm0OZqYraZsoUeVOyxapL58ZxiQ7PdZcJ5jQLqnZgDsG80r/lX1wcy2Uq+ZbMqlqGvMjUrR52MjyQWtP36+vVOGRhFUl+Cf9C4gq79MEHEXxmyrrqaz9U8pNQ+jnw3yT1KyOV16i7q/y6DVrssS/He8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dkYefeP3; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460969c49f2so301001cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:43:02 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D452041C64
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=173.37.142.91
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731512583; cv=fail; b=NABLDcUshHwqbPqMnw54DRtzoxHU9JvG1ZvCR8vw2p/vHp9pb2QTX3DlfKvAo6yGKWyUG4VtFKvfUNfkfPOrYO7HJR9nztVKBndlwgTEsvbtXoRPs7TLizTCo3poJT1feRdjfGjEdT9ked9L58i1LMNV0LZzWFxiXlrnTi1xMMc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731512583; c=relaxed/simple;
+	bh=LvF1iQ+tn9JTBFj7hsGpv/U21Y6BEqA77lNIUSOItCE=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=G6PTZx1n1KCfGKNjpLwv/Sp6dAAbX66bOtG7/dBLJ1SFppZVSOlZj3F08enTHbXPPU5Wbx9fzsVrG3lw+44k8LFqtVKgMEHeHXBILBE3ysOz9/7bl9Tltize3Y/dvzWsRh6Cg3shVqINYZUVj/ajd01rNS4pdJlyfnFkTljHwcw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=Y3h6rJg0; arc=fail smtp.client-ip=173.37.142.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731512581; x=1732117381; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gvam9WV1Qmn4wOJy3DU8hiIppiH9WSEamCw5jH8Jzro=;
-        b=dkYefeP3zY3xZ5ZHfOx1rPPqYl7+bj4CqskRusQyAWn6Mk5EHsbhvuzD8azhAPLarK
-         PUA9emp62XLAqrtPDabT8788yULEyzRIUSf8yOEDzpqS7SRKYAIeOkwIFBVbJjm3C5eP
-         23ZgVziqGcIsEI/bciXWGcElhgueIOB0k5ireEUN+llc5Y2ym0k6Nqd17jaihea02y20
-         YlxHFQ0k7psUe+DRYYQyovmjEG0xyqVyokzGdR7scWFJb5QIHhDDaXF+EN2/UPJPhHYQ
-         7TfAk2DGJFZGftKzVOUv2MQpSJRbCepHqAM+eFzG/H63pLrIOVQqQKMLHEdmBAEqLmZF
-         UCLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731512581; x=1732117381;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gvam9WV1Qmn4wOJy3DU8hiIppiH9WSEamCw5jH8Jzro=;
-        b=eOIvJPv5Ho2x7N5R9A0RpxO9/kohxdFMOwJqVDCXy2S5Vvu5heZoXCKAhv5PRdeAl7
-         xarzU84y+5atG3f8ZV19Je215cMBd4hq536U3iWeQ98uoGevpqvRO2DFiGNdQGjZfyXc
-         TCXHtk7geHvfq6Lz9BBuRleQcOeH2yr8GkXHpMz/S3V8zCg3L/1cwwuQtFiCMx9VU/YA
-         pA4M8fYc5+7XmAabqP/WGrVXKG8lEbmxKrZH8SAzCLNyTDFihyhA7ny6DkOe7eTg5nC5
-         tS/QSQHO12vSW3RjbJ4fysDK8bgjnSYIiPmEZhbQf8bSGqKTj9IjSlvs9rOkZOhEc8ET
-         qEtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3LEnC+k0MCGOPu1AQbbWOakkWwIglpwpPiTetlVtzK7daH9AQUrrhnylVxFSLHJV1tSYnd3Rbbm1vYwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaBynBato9kokPrlipu2rBLb3zKKYxOVjZqKiaqiZL5kDJ4GHo
-	vwLsn4soSfvBeOPE7Lmrom5hmkLR9zMTqOG5+27qoDGBcZOg+3HoEjlCUmtPSc5s4LM5r5OYtyF
-	1LJVW/kjL83u0ZvHr86lGe2Wilr2VsMnqRCJ9
-X-Gm-Gg: ASbGnct5Ll8PlJo+yhuK369h9SIyWzy8kALNmmUtbSgQaDE8LhHlPG/qOSzj6Lw+FIS
-	KGrFvi+sGDuXEtTP+A+Dx8Mb5nTRx23Q=
-X-Google-Smtp-Source: AGHT+IGoSJC7NEVZDp5NW6fuqArmuQfmnz8hDVQ+6Ciw+IGZ+zOWqIauKKI4LWWqo2ZgFZSMtZZdIqMYrtQukXe69Zs=
-X-Received: by 2002:a05:622a:13cc:b0:462:c158:9f5b with SMTP id
- d75a77b69052e-4634cad5b89mr3497791cf.19.1731512580871; Wed, 13 Nov 2024
- 07:43:00 -0800 (PST)
+  d=cisco.com; i=@cisco.com; l=16522; q=dns/txt;
+  s=iport; t=1731512580; x=1732722180;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=kPqQatwlVPHxL/nRnoyy0mmxUTmk11hUHr6OoS4WdqM=;
+  b=Y3h6rJg0vx+wutXWfRmZVP2BQF/Vk7S+6HqB1L8x1rZ066xaIbOlm6oH
+   U7Q7Z6Jhw/mI/xAeVwPG/aThOoT8XMRLZVfH/J9zeN9PGZGdBiMB7YWpf
+   J6t1dfpcDalg7VL/YusfSKO9GuDuEpL60YxL4AikAUpzkz26BjUY2hqHV
+   U=;
+X-CSE-ConnectionGUID: tZ937bI0Qmu3eqIYN3UCdA==
+X-CSE-MsgGUID: azom582NSgSnPFizLIB2xw==
+X-Files: dmesg-cat9k-pci-denverton.txt.gz : 9019
+X-IPAS-Result: =?us-ascii?q?A0AHAAC0xzRnj4sQJK1aGgEBAQICAQEBAwEBARQBAQECA?=
+ =?us-ascii?q?gEBAWaBHQIBAQEMAYFxUnswboUdg0wDhS2GUYgejFMcjSoIBwEBAQoBAgJEB?=
+ =?us-ascii?q?AEBhQcYiigCJjcGDgECBAEBAQEDAgMBAQEBAQEBAQEBAQsBAQUBAQECAQcFF?=
+ =?us-ascii?q?AEBAQEBATkFDjuGCIZbAgEDEhFWEgEIQgIEDiEnBAENExSCXwGCUxEDAaRSA?=
+ =?us-ascii?q?YFAAooreoEygQHgEBAYgTABgVeBZYUPAYFaEoN9O4Q8JxuBSUSEPz6EJYN5g?=
+ =?us-ascii?q?mkEgkF6hCMliReBb4gKhAkdM4omUoEXA1khEQFLCjUMOHEhLAOBe1eCOIFSQ?=
+ =?us-ascii?q?oITgRSDPIFeBTcKdoITgTQ6Ag0CgkU5Oh+HaYELg2KDTYEZgXBiHTYKA3g9N?=
+ =?us-ascii?q?RQbBpstCEqBHIVpLUSBW5UoV4JkAUmLQUeBRKFcCoQahlubRao6LodbkG4io?=
+ =?us-ascii?q?yYZhRgCBAIEBQIPAQEGgX0kLYEucBUagwlRGQ+OLQ0JyTeBMwIHCwEBAwmQS?=
+ =?us-ascii?q?QEB?=
+IronPort-PHdr: A9a23:5TERWRegm1QhSgoEOeocUjjylGM/gIqcDmcuAtIPkblCdOGk55v9e
+ RCZ7vR2h1iPVoLeuLpIiOvT5rjpQndIoY2Av3YLbIFWWlcbhN8XkQ0tDI/NCUDyIPPwKS1vN
+ M9DT1RiuXq8NCBo
+IronPort-Data: A9a23:2FgdoKxWskEpGDFjMHJ6t+cQwSrEfRIJ4+MujC+fZmQN5Y8S5oE1v
+ jZCDCrRJ6zbJmuuZpklMZDioBRA7NSRkYh9DEoos35/J54hgcDICd+SdEr5by/IJMacQUw34
+ 5pHZtOeJZA/QCOFr0n0P7G/9HN1ja/QGrf3A7HIYip/H1BoRS591xk+kbU1joIAbbSRChuVv
+ dL5qtHeP1niy3t7IGMMg06mgEsHUKPa6WtB7zTSHMx2gWMy/pXT4Pg3KaS8NHS9SYBIT+3/X
+ +3Cib20+H3U5QsqDJW5gqqTniYiS+/ZbAWHhCQLUvau3EVI+iFtiftiPvdFYBYHhjnUxokuk
+ IxEvMG8F1ZyZvLGk79NC0cDSXwlYqYZpLSXeSbkv6R/o6G+n17Em52CW2ltZNZJp46beF1zy
+ MH0CAzhTzjT3bnukO/gFLkwis0uIsfgY4pOsCpqnWyFBPgvEMCfSYzHtIRStNsSam+iPhp/i
+ +4xM2cHgMHoOkUXUrsvIMtg2r/u3j+nLmUwRGu9/cIf+3LUwBF6zI/jOd/Ufs3ibchOly50n
+ Eqel4jCKk9cbYb3JQatqCr22raWxHijAur+KZXhnhJUqAzLroAsIEV+uWuT+ZGRlkO4UtRDH
+ E0YkgJGhbQy7kGiUu7mVBS+pnOe1jZEMzaHO7RngO0l4vO8DzexXgDofBYYADAVnJNeqQgR6
+ 7O8t4iB6QqDH1GiYSn1Gr+89VteMMWORIMITXdsoQAtu7EPrGyv5/7CZo4LLUK7sjH6MS3Ck
+ mvVpglmvrAO1sMS9pSdpm3sjxv58/AlTiZtjunWdmuh6gU8YMuuYJalrACBq/1BN42eCFKGu
+ RDomeDHs7tIVs/LzXLLGb5cdF2qz67t3Dn0jVdpHpQl6D2F8H+4docW6zZ7TKtsGp1UIWa5O
+ RKO6Wu94rdaLnyvMP8tRbm+MMIS46nyMfXPDODLO48mjp9ZL1Lfo3o0OiZ8xVvFlEkqjLF6O
+ pqBd8uoJWgVBL4hzzesQeoZl7gxyUgDKXj7TJT/yVGjlLGZfnPQEe1DO1qVZed/56SByOnIz
+ zpBH9e4mk4AWsymWyzKqoMKDGEsdkUQCbmj/qS7adW/CgZhHWggDdrYzrUgZ5FpksxpegHgo
+ CHVtqhwlgaXuJHXFThmfEyPf18GYHqekZ7ZFXB8VbpL8yF/CWpK0Ev5X8BqFVXA3Lc/pcOYt
+ 9FfJ6297g1nE1wrAQg1Y5jnt5BFfx+2nw+INCfNSGFgJMc8HFKTqoS+IFOHGMwy4syf65VWT
+ 1qIi1OzfHb/b10zZCorQKv1lgrq7CJ1dBxaBBaYeYI7lLrQHHhCcHGp0aRtfKng2D3IxyCR0
+ E6NEAwEqOzW644z+5+huEx3h9nBLgeKJWIDRzOzxe/vbUHypzP/qaceC7zgVW6GCwvJFFCKO
+ b49IwfUbKZfxA4iXksVO+oD8J/SEPO1++EHllw6RyiQB7lpY5s5SkS7MQB0nvQl7pdSuBC9X
+ QSE/dwyBFlDEJqN/II5TOb9Utm+6A==
+IronPort-HdrOrdr: A9a23:kT5/5Kxjzx5jlConwqaBKrPxf+gkLtp133Aq2lEZdPULSL36qy
+ n+ppQmPEHP6Qr5AEtQ5exoWJPtfZvdnaQFh7X5To3SIzUO2VHYYb2KgrGSuQEIdxeOktK1tp
+ 0QP5SWaueAcGSS5PySiGLXYrRQpeVvm5rY/Ns2uk0dNj2CHJsQlzuRZDzrdXGebTM2dKYRJd
+ 633OYCjTymfngcc8S8AVc4f8Wrnbf2vaOjSyQrQzo85iezrR7A0tPH+h6jsSs2Yndq+/MP4G
+ LFmwv26uGIqPeg0CLR0GfV8tB/hMbh4sErPr3DtuElbhHXziq4boVoXLOP+Bovpvu01VosmN
+ 7Q5z89IsVI7W/LdG3dm2qt5+Cg6kdv15bR8y7bvZLRm729eNv8MbsEuWttSGqb16PnhqA67E
+ sE5RPei3MdN2K/oM203am5a/gtrDv6nZLn+tRj10C2luAlGeZshJ1a80VPHJgaGiXmrIghDe
+ l1FcnZoO1baFWAchnizyFSKfGXLwIO9y29MwE/k93Q1yITkGFyzkMeysBalnAc9IglQ50B4+
+ jfKKxnmLxHU8dTNMtGda08aNryDnaITQPHMWqUL1iiHKYbO2jVo5qy5Lku/umldJEB0ZN3kp
+ XcV1FTs3I0ZivVeIaz9YwO9gqITHS2XDzrxM0b759luqfkTL6uKiGHQEBGqbrWnxzeOLyuZx
+ +eAuMiPxa4FxqcJW9g5XyNZ6Vv
+X-Talos-CUID: =?us-ascii?q?9a23=3ASmRkW2mZIjsK/2IRoT2Snqu5zJHXOWHvnSyPKW7?=
+ =?us-ascii?q?gMGN0E7CMaG62o55Pn+M7zg=3D=3D?=
+X-Talos-MUID: 9a23:ok893AUjGEne+1rq/Db+gzQ/ZJ1O2KuVDngjkIcimuPeJTMlbg==
+X-IronPort-Anti-Spam-Filtered: true
+Received: from alln-l-core-02.cisco.com ([173.36.16.139])
+  by alln-iport-4.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 13 Nov 2024 15:42:53 +0000
+Received: from rcdn-opgw-4.cisco.com (rcdn-opgw-4.cisco.com [72.163.7.165])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by alln-l-core-02.cisco.com (Postfix) with ESMTPS id 14FC318000150
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:42:54 +0000 (GMT)
+X-CSE-ConnectionGUID: EUzOEWVCRUqklW3OIQYcFA==
+X-CSE-MsgGUID: agvVA612Q02AN+naFQLGFw==
+Authentication-Results: rcdn-opgw-4.cisco.com; dkim=pass (signature verified) header.i=@cisco.com
+X-IronPort-AV: E=Sophos;i="6.12,151,1728950400"; 
+   d="txt'?gz'50?scan'50,208,50";a="44195395"
+Received: from mail-mw2nam12lp2041.outbound.protection.outlook.com (HELO NAM12-MW2-obe.outbound.protection.outlook.com) ([104.47.66.41])
+  by rcdn-opgw-4.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 13 Nov 2024 15:42:53 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TGtGGTYW9SW6cGKI6/4oKiyWP1GGBhPWdM0hYgGMw1dwThepMS9LK0qOhdfiH6febwb5hh3JPblflDtFeewJvvZlv+Rvz6DPkmO5MLIqplwF9GiRN3lskbr0HDfAlSvxMoOy1jHTIXF3WRBhwu8+7c+AirjvoihGEIZpxDwXykAa/9RtBtMxY4yECoT64srC+OChGlMrtvuKf0re2mMQzGE0JjdpioLwYjBME56lwrQ2xVCH60pAOY3wxUPJE3hprG7+neN/7+xgACV5FSf/KU+nq1M9g2LeJjt8HwJBzNlBxnhpomGb45dM6gG1YSWspj0IxeH04XwGT4JI50d/+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kPqQatwlVPHxL/nRnoyy0mmxUTmk11hUHr6OoS4WdqM=;
+ b=vaOit8Ex7iA3en026SHpJhZ8RFNs+hPLgIkfEYdZEnezYYuk3cxBbRm+o/No1HNHqIIsCsSZ/rJ3aXn/EvlqTEmEQSTN3FsYB7zZVpKZKIxVHohAJKB41sLDd2jcn3rkkYhOsFWCze7jb5CKr8sZ2QtvQGIgxTXse7Ohcy0Kr4F3KorXZRQN6ZGORKNDUOiY+aih+llPx54fFhGY4Tia6CUTAs/gmK8idC7Djl5NxBERikHcXb5B53C9R7cIwOLgZwdYWjyzL1XXdAAnJ2wIsmTltyFZeb5adtPv8hVWOf6d9EFIzjeNVkp6HwZUDwImuUGZH9JIafYGYNTIK5cOUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
+ dkim=pass header.d=cisco.com; arc=none
+Received: from LV8PR11MB8770.namprd11.prod.outlook.com (2603:10b6:408:202::19)
+ by SN7PR11MB6703.namprd11.prod.outlook.com (2603:10b6:806:268::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Wed, 13 Nov
+ 2024 15:42:50 +0000
+Received: from LV8PR11MB8770.namprd11.prod.outlook.com
+ ([fe80::3e74:9751:b164:4d46]) by LV8PR11MB8770.namprd11.prod.outlook.com
+ ([fe80::3e74:9751:b164:4d46%6]) with mapi id 15.20.8158.013; Wed, 13 Nov 2024
+ 15:42:49 +0000
+From: "Daniel Walker (danielwa)" <danielwa@cisco.com>
+To: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>, Hans de Goede
+	<hdegoede@redhat.com>
+CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	=?utf-8?B?SWxwbyBK77+9cnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Klara Modin
+	<klarasmodin@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danil Rybakov <danilrybakov249@gmail.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "xe-linux-external(mailer list)"
+	<xe-linux-external@cisco.com>
+Subject: Re: platform/x86: p2sb: Allow p2sb_bar() calls during PCI device
+ probe
+Thread-Topic: platform/x86: p2sb: Allow p2sb_bar() calls during PCI device
+ probe
+Thread-Index: AQHbNeKxizzLej0qw02u6pHMIY1jfA==
+Date: Wed, 13 Nov 2024 15:42:49 +0000
+Message-ID: <ZzTI+biIUTvFT6NC@goliath>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV8PR11MB8770:EE_|SN7PR11MB6703:EE_
+x-ms-office365-filtering-correlation-id: f2991c50-c874-4801-2f74-08dd03f9d42c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?WVZObXRLeWN6OU8rbjFKTWdWTjVwQUxWR3pPdFJOVUZucE8vVjFUM3hTZmY3?=
+ =?utf-8?B?aGplWDIzTytEdVZOSlFzYmZMa0tMZURJbTBKSzFsbmxUWUFQSCsrbUx5V3Jo?=
+ =?utf-8?B?Wm5ZbHFXTExoVnFZV3JoeFB2VzZPMFRwQmJ4RkJMMXJGYTh0UExYaGlBSHBI?=
+ =?utf-8?B?Nm1FcUJtMTRDY1E5bVJPSnpwemVXQmxoMHZzWTMvYTczWW9kZlQ5bVNCSERs?=
+ =?utf-8?B?YWtud2dzM01yTVdBRTFMU2czUGh2M25kY2hNd3RIN3RqL2NXRUdzdkpVSUlk?=
+ =?utf-8?B?MGR4OU1lbnNlTU5xOUUzUUU5endmWWFNbnhVakdFRG9XeWZtSjcvMUE4Y0s4?=
+ =?utf-8?B?Q0ticmJHRjdSNXVtbTBDMktsVDI1VVhHTUdDMEpheFMwSWJ5bDB3RDlrYzJz?=
+ =?utf-8?B?RSt2L3lEZFpoWTBidHZCUUpiZERyTHdIdkpIb2dxZWVKL3V4Z1NHdFhqTG9v?=
+ =?utf-8?B?eW1hbm9CYmhSQUpNTStaaXZWaHRMOUw0dTBTOFFkck1uNi83UFhJM1cwN3pi?=
+ =?utf-8?B?NnR6U1hNbW1RU0huMmpRazNXSWZURkJFSlBQaDZzTkJkdkY4YkxDMExEN2Y3?=
+ =?utf-8?B?MVpiLzZFMmJUeE9qdDNzSlZiTTBzZnFNcGhDd2V1L1VkQ0c5VDVwVm1FTE1m?=
+ =?utf-8?B?dys0WTBYOXN0c2J6a0VoYXRLL0Z6ZnRRTGEwVXpLYUhmTmpOQ3FGNWtPWUFo?=
+ =?utf-8?B?U2h5WW1YNVMyc1ZEU0RTK0c3V1YwbXlBRklYQnZJZTRwbXE0ZGxhL0NMRTl5?=
+ =?utf-8?B?eHFwcVZoRUdtVEhHQjNFNkV4WlhiK0Q0R3ZRaVY5WGR4emkvcm1oemZKVVhw?=
+ =?utf-8?B?QnI5YjJsVkxSQTQ1c1RUNkdBTVJHc2RTRU5kZEkwOXlKWGdieWxlMWt5ekhz?=
+ =?utf-8?B?UUVodTlwQUFzYkZTdUJIREpENjFJRldlaS9HbmFOd0htZEhybGV2ekkyYlpO?=
+ =?utf-8?B?SEU1MDBjbzVPbUhiV0pTTDFmVFVGNWQ4UE9LaTRUNXFyVmE5Mk9rdzRoMk01?=
+ =?utf-8?B?V3E0S3pHTlBuQTFNdEVEU0hzTEhYaUQzaURua3ovc2M3aHB1YVMzRTFNVFp3?=
+ =?utf-8?B?NkVKVWlGaDZCbDU3encwdEdNbW1udHAzUFBUcm9nQWFMNXhlQzQrS3ZtUXVL?=
+ =?utf-8?B?UFVDVHVmdjZJK29HMXB0NzUvaTduUjBETjRvUmVuTWJVVlBGNDIybWhzWEVY?=
+ =?utf-8?B?dHVUaFRWQTVKajdIaVpVSWJvcW93UnNnTUZTWFFyaTR0WnRWV3VTL1J2QU9K?=
+ =?utf-8?B?K05kemVqWlZacGhlUjJmaEtvd3JZM0xCQnhzUUQxUlVZVUdHRVc5UVZZRHVH?=
+ =?utf-8?B?Zm5tVW5yZitqakRuQXNPTGVRVTFlRnBNOVJTQjA5RVEvVkNsckVrRXpxUEFj?=
+ =?utf-8?B?RUZySGV3bGJSd0htWU5tTGhNemZ2M0dGR2lBN0JkQnlMUFROcVh5RWNVREt1?=
+ =?utf-8?B?Zy91OWw4R0ZTdTdSOW1QcTU2dTBYejQvS2U5QUc4ZkVMeWVYYjVKbzdOa3RJ?=
+ =?utf-8?B?aENma3hyZUFIVWNuTXhKemlveTVDNTBHYWpYRzV6eXZaY1RmZC9CZmJPbzVh?=
+ =?utf-8?B?U2QweHhGSkVHb2w1NkF1RVpJbFVjUVRUQzAzeFN0aW8wRi9lTm1oVDMwMmNB?=
+ =?utf-8?B?QjhWK0NGWnRGNDQzbi9WUCtNZkdORndKUkhTcmZwamlGd2cvRXFZOThmeW9W?=
+ =?utf-8?B?dnVYb3ZPc1AvbDNWRVNWSklweGxVMEVKc3ZsK2x6S2tKS3g1UjcyMnlXUXRD?=
+ =?utf-8?Q?BtQrouEhPNsq0ZI3HkV5JTtjpOmNL5oBcp7EBRs?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR11MB8770.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?Ly9zaHhhUkpsUjhZemVkZTR4VnhmWEkrQkljVSt0V2lodmxlY1dlOUhaYXU1?=
+ =?utf-8?B?MkpnVGZJTVN6UWZHYTgzTGF1MEJOU052Q1FoUmlXUE8zZERINzJBekgyRkp0?=
+ =?utf-8?B?TVNpNnFFaVoweTFxVW1IamRYZ2cvSzhaNEtrVjJXVk9kd1ZqT3p1eDAwcWdm?=
+ =?utf-8?B?dmlpanpZQ05WZkZjNlgxTXZ6bHBTTEtKQ2xSSjEzZGlHU1Y1a25UaVdjeEhh?=
+ =?utf-8?B?RGtkeE5OTWJVcENBUlVVaVZ4M3ZqeGRrS1lCVW1rL3RkZlJiQzBMcFRnYTVm?=
+ =?utf-8?B?azR2cmFmZmgrMDZUSGpxMUIzNTBsVFFDenlKMUozbGo3ZFZhT2t2UVJ4dUE0?=
+ =?utf-8?B?ZENrV2ZhdE1Sanc3bUI3ellyY1JITUc5M2RwbG5SOHJNVTNvSUxNMmhaWjBM?=
+ =?utf-8?B?QU1QeVk1eTExU2NCUVdBa01XSEF6QU5zYTZmbVZpczRiZmZZa0RaanpmRkpK?=
+ =?utf-8?B?YVp3U1ozNEFCdWlBMXh3VkN3V01wUWpvMkhoNU4rbnV4Yys4WEhNZXJ4TUFH?=
+ =?utf-8?B?VjlKb3kvT1Y4b2grRGROOTcwVUV5R0IwdTg3aTgySXNjTEVtNFRzVmhzSDg1?=
+ =?utf-8?B?bWlJNUxPajlIOTliL1JQdC9EbEhqU3FxVVJQSTcvOUxXNUw2NEdUTFphQmFn?=
+ =?utf-8?B?aXBUZzQ3NDZFYUdHZUxpSnJxWVN5ZW1ZYlFya0hoYmJXMWdMSFpYTGdSR09H?=
+ =?utf-8?B?RHhuSjF3ZDNsd3l5a3MwSGZQenFzb1JjcUhLVzhWcFNKMm8xZW44S1FJR0ZF?=
+ =?utf-8?B?c1RURWxpcXg1eXVMOWxiUEx6V0djUkVEWW14R2Q0RzFsbjU5eVV5N2EwZEFM?=
+ =?utf-8?B?U2ZDMXJ1ZHJyazFtWjFSTDdBWVUzT0VzMlZFM1dTRUV4MWtidW9kUlhtR1Bi?=
+ =?utf-8?B?cUxvUnlzcW8wWDlzTU5ZMlpja0lwVUY1S3lsN0xtakZwSVVVWjB5MklJenFm?=
+ =?utf-8?B?am8vRXdjMjJQZHNGanNqbjZYRGRsVHNEb3A2UzNMRHRySDN2dUZHbCtEUFpt?=
+ =?utf-8?B?dklkVXFxWkZURlh0ZngrMitTdVlsem5JTG9UVVZKdnl2aHJIVjNUSlVCNGdP?=
+ =?utf-8?B?d3lRM0FqWStmNTF0OENQN2NneittandnZGJJQi95b1lQNjR5ZTRBVnY0cytl?=
+ =?utf-8?B?ZytXcTMzcFZwaVJFYXQ0cGVId2tKZGd2cFAxbzdMS0hNdFJIcHJGTi95RFRL?=
+ =?utf-8?B?TWJ0T3o2eDQydHdUL0FHcDkrZFJaRnh6bXcxazFWMm9WR08zSVNlZHQxRlFj?=
+ =?utf-8?B?bzNvRWl0cEQrdFppUGhuOXd6WmUwdGFEc3FiZmlMRjY2Z2RtL1RMdHowOGRj?=
+ =?utf-8?B?QUlmL3RUZThNa1RJa3R1K1lUQXlJYm9nWjlTZ3lkYm0xb1pqeG10dkxCbkxG?=
+ =?utf-8?B?VTZsOUJFQkFsTGh3MDFuYmhZaXh4UjZKOGlYdDJrQUoyNmZCOXh0N3ZQcGxI?=
+ =?utf-8?B?YkJiQ0lMc3ZMcUc3NGFhZEVuSXN5dE8wZ1I0K1NxVVhTQlo4MldEK2ZUVndV?=
+ =?utf-8?B?YU5ZQjRqbUowMjhsTDVMRDJCWEtCSEpIc0t1SDhhWU41cEJPdGI2SUszTE0y?=
+ =?utf-8?B?OG9yUXhOZEhmQTduRmRsR0NPNFVDamorL1ZKcm5KNUltek0rNURWTVZuTmZ1?=
+ =?utf-8?B?WVE2MjJ1N003ZGgvRzJEelBONzdJUWszWGQ2YW5UY3NlOVBuUFg3T1Y5QlN4?=
+ =?utf-8?B?a2JBS29idFlydnNWNTRacVFqMExKSllFWGZZd1Q2MXJmV1FIQ0JZcmw2VC8w?=
+ =?utf-8?B?V0I2TWwydVlsbzluMTdINXdiN2V0T3ZDYldoQ0lDS3M5THc4elNHUUdCd1Bi?=
+ =?utf-8?B?NW9PUWcvelVYR2NnM3UyN0VCZm5MNm1yYlBIcGIyUFFHZ0xxUUczK3Q5cjAz?=
+ =?utf-8?B?MG9jaHBRL1RVaUNoalBTVXVSQXNPL2x5UDNkMUhtU3V3L0s0aXBrUm03eHN6?=
+ =?utf-8?B?RHZaeHU1U0JNdzZhc1owVDlseWNTSXhZb1N3Yjl6dUUrQUp2dkorNlRkY0pW?=
+ =?utf-8?B?NGw3VFZwL0M5WDJaQzBtcktrdi9JZzJLNWVqSGpvNXhQNTdvbG00bExCZWl4?=
+ =?utf-8?B?MkRlQ2tCcjY0Y2JNYmxFaUcvRExPZm1yVE5TMmhDaWl6djk3VHNYdW4yTG40?=
+ =?utf-8?Q?3G9SWgfaHD4V4TCYx1Uiwc5YN?=
+Content-Type: multipart/mixed; boundary="_002_ZzTIbiIUTvFT6NCgoliath_"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112194635.444146-1-surenb@google.com> <20241112194635.444146-3-surenb@google.com>
- <637370b8-3e3e-4457-81d6-5913a3ff1d4e@lucifer.local>
-In-Reply-To: <637370b8-3e3e-4457-81d6-5913a3ff1d4e@lucifer.local>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 13 Nov 2024 07:42:49 -0800
-Message-ID: <CAJuCfpHz-u9w1A8d9LEZ6=mmxXN=JLQr9N00dKpALWUT6GVsfA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] mm: move per-vma lock into vm_area_struct
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
-	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, 
-	oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com, 
-	peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, 
-	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
-	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
-	souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: cisco.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR11MB8770.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2991c50-c874-4801-2f74-08dd03f9d42c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2024 15:42:49.7301
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: EmkcbIPVeAUbrKnHRGto8dDHjsV3N6z689DY+F9Bm6uqez/CejW4TwxHdDV8Tr2bjkskezeZT6fM/8CNABjp4A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6703
+X-Outbound-SMTP-Client: 72.163.7.165, rcdn-opgw-4.cisco.com
+X-Outbound-Node: alln-l-core-02.cisco.com
 
-On Wed, Nov 13, 2024 at 6:28=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Tue, Nov 12, 2024 at 11:46:32AM -0800, Suren Baghdasaryan wrote:
-> > Back when per-vma locks were introduces, vm_lock was moved out of
-> > vm_area_struct in [1] because of the performance regression caused by
-> > false cacheline sharing. Recent investigation [2] revealed that the
-> > regressions is limited to a rather old Broadwell microarchitecture and
-> > even there it can be mitigated by disabling adjacent cacheline
-> > prefetching, see [3].
->
-> I don't see a motivating reason as to why we want to do this? We increase
-> memory usage here which is not good, but later lock optimisation mitigate=
-s
-> it, but why wouldn't we just do the lock optimisations and use less memor=
-y
-> overall?
->
-> > This patchset moves vm_lock back into vm_area_struct, aligning it at th=
-e
-> > cacheline boundary and changing the cache to be cache-aligned as well.
-> > This causes VMA memory consumption to grow from 160 (vm_area_struct) + =
-40
-> > (vm_lock) bytes to 256 bytes:
-> >
-> >     slabinfo before:
-> >      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
-> >      vma_lock         ...     40  102    1 : ...
-> >      vm_area_struct   ...    160   51    2 : ...
->
-> Pedantry, but it might be worth mentioning how much this can vary by conf=
-ig.
->
-> For instance, on my machine:
->
-> vm_area_struct    125238 138820    184   44
+--_002_ZzTIbiIUTvFT6NCgoliath_
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E00BA8B539876546AA76C0467BB19FED@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 
-Ack.
+DQpIaSwNCg0KSSBiaXNlY3RlZCBhbiBpc3N1ZSBvZiBhIG1pc3NpbmcgcGNpIGRldmljZSB0byBj
+b21taXQgMjg0MTYzMSB0aGUgY29tbWl0IHRpdGxlDQppbiB0aGUgc3ViamVjdCBsaW5lIHdoaWNo
+IHdhcyBpbmNsdWRlZCBpbiB2Ni4xIHN0YWJsZSBicmFuY2guDQoNClRoZXJlIHdhcyBhIGxhdGVy
+IGZpeCBmb3IgYSBzaW1pbGFyIG1pc3NpbmcgcGNpIGRldmljZSBjb21taXQgMzZjNjc2ZTIgd2hp
+Y2gNCmFwcGVhcnMgdG8gYmUgZm9yIEdvbGRtb250L0Fwb2xsbyBMYWtlLiBUaGUgaGFyZHdhcmUg
+SSdtIHVzaW5nIGlzDQpHb2xkbW9udC9EZW52ZXJ0b24uIFRoaXMgZml4IGRpZCBub3QgYXBwZWFy
+IHRvIGNoYW5nZSB0aGUgYmVoYXZpb3IgSSdtIHNlZWluZy4NCg0KVGhlIHBjaSBkZXZpY2Ugd2hp
+Y2ggaXMgZGlzYXBwZWFyaW5nIGlzIGEgY3VzdG9tIGdwaW8gZGV2aWNlLg0KDQpJIHRlc3RlZCB2
+Ni4xMi1yYzUtbmV4dCB0byBzZWUgaWYgYW55IG90aGVyIGNoYW5nZXMgaGFkIGZpeGVkIHRoZSBp
+c3N1ZSwgYnV0IHRoZXJlIHdhcw0Kbm8gY2hhbmdlIGluIGJlaGF2aW9yIHNpbmNlIGNvbW1pdCAy
+ODQxNjMxIC4NCg0KV2hlbiBib290aW5nIHVwIHRoZSBkZXZpY2UgaXMgc2hvd24gaW4gdGhlIHBj
+aSBib290IG1lc3NhZ2VzIGJ1dCB0aGUgZGV2aWNlDQpkb2Vzbid0IGVuZCB1cCBtYWtpbmcgaXQg
+dG8gbHNwY2kgb25jZSB5b3UgZ2V0IHRvIGEgcHJvbXB0Lg0KDQpIZXJlIGFyZSB0aGUgY3B1IGRl
+dGFpbHMsDQoNCi8gIyBjYXQgL3Byb2MvY3B1aW5mbw0KcHJvY2Vzc29yICAgICAgIDogMA0KdmVu
+ZG9yX2lkICAgICAgIDogR2VudWluZUludGVsDQpjcHUgZmFtaWx5ICAgICAgOiA2DQptb2RlbCAg
+ICAgICAgICAgOiA5NQ0KbW9kZWwgbmFtZSAgICAgIDogSW50ZWwoUikgQXRvbShUTSkgQ1BVIEMz
+NTU4IEAgMi4yMEdIeg0Kc3RlcHBpbmcgICAgICAgIDogMQ0KbWljcm9jb2RlICAgICAgIDogMHgz
+Mg0KY3B1IE1IeiAgICAgICAgIDogMjIwMC4wMDANCmNhY2hlIHNpemUgICAgICA6IDIwNDggS0IN
+CnBoeXNpY2FsIGlkICAgICA6IDANCnNpYmxpbmdzICAgICAgICA6IDQNCmNvcmUgaWQgICAgICAg
+ICA6IDINCmNwdSBjb3JlcyAgICAgICA6IDQNCmFwaWNpZCAgICAgICAgICA6IDQNCmluaXRpYWwg
+YXBpY2lkICA6IDQNCmZwdSAgICAgICAgICAgICA6IHllcw0KZnB1X2V4Y2VwdGlvbiAgIDogeWVz
+DQpjcHVpZCBsZXZlbCAgICAgOiAyMQ0Kd3AgICAgICAgICAgICAgIDogeWVzDQpmbGFncyAgICAg
+ICAgICAgOiBmcHUgdm1lIGRlIHBzZSB0c2MgbXNyIHBhZSBtY2UgY3g4IGFwaWMgc2VwIG10cnIg
+cGdlIG1jYSBjbW92IHBhdCBwc2UzNiBjbGZsdXNoIGR0cyBhY3BpIG1teCBmeHNyIHNzZSBzc2Uy
+IHNzIGh0IHRtIHBiZSBzeXNjYWxsIG54IHBkcGUxZ2IgcmR0c2NwIGxtIGNvbnN0YW50X3RzYyBh
+cnQgYXJjaF9wZXJmbW9uIHBlYnMgYnRzIHJlcF9nb29kIG5vcGwgeHRvcG9sb2d5IG5vbnN0b3Bf
+dHNjIGNwdWlkIGFwZXJmbXBlcmYgdHNjX2tub3duX2ZyZXEgcG5pIHBjbG11bHFkcSBkdGVzNjQg
+bW9uaXRvciBkc19jcGwgdm14IGVzdCB0bTIgc3NzZTMgc2RiZyBjeDE2IHh0cHIgcGRjbSBzc2U0
+XzEgc3NlNF8yIHgyYXBpYyBtb3ZiZSBwb3BjbnQgdHNjX2RlYWRsaW5lX3RpbWVyIGFlcyB4c2F2
+ZSByZHJhbmQgbGFoZl9sbSAzZG5vd3ByZWZldGNoIGNwdWlkX2ZhdWx0IGVwYiBjYXRfbDIgc3Ni
+ZCBpYnJzIGlicGIgc3RpYnAgdHByX3NoYWRvdyBmbGV4cHJpb3JpdHkgZXB0IHZwaWQgZXB0X2Fk
+IGZzZ3NiYXNlIHRzY19hZGp1c3Qgc21lcCBlcm1zIG1weCByZHRfYSByZHNlZWQgc21hcCBjbGZs
+dXNob3B0IGludGVsX3B0IHNoYV9uaSB4c2F2ZW9wdCB4c2F2ZWMgeGdldGJ2MSB4c2F2ZXMgZHRo
+ZXJtIGFyYXQgcGxuIHB0cyB2bm1pIG1kX2NsZWFyIGFyY2hfY2FwYWJpbGl0aWVzDQp2bXggZmxh
+Z3MgICAgICAgOiB2bm1pIHByZWVtcHRpb25fdGltZXIgcG9zdGVkX2ludHIgaW52dnBpZCBlcHRf
+eF9vbmx5IGVwdF9hZCBlcHRfMWdiIGZsZXhwcmlvcml0eSBhcGljdiB0c2Nfb2Zmc2V0IHZ0cHIg
+bXRmIHZhcGljIGVwdCB2cGlkIHVucmVzdHJpY3RlZF9ndWVzdCB2YXBpY19yZWcgdmlkIHBsZSBz
+aGFkb3dfdm1jcyBlcHRfdmlvbGF0aW9uX3ZlDQpidWdzICAgICAgICAgICAgOiBzcGVjdHJlX3Yx
+IHNwZWN0cmVfdjIgc3BlY19zdG9yZV9ieXBhc3MgcmZkcw0KYm9nb21pcHMgICAgICAgIDogNDQw
+MC4wMA0KY2xmbHVzaCBzaXplICAgIDogNjQNCmNhY2hlX2FsaWdubWVudCA6IDY0DQphZGRyZXNz
+IHNpemVzICAgOiAzOSBiaXRzIHBoeXNpY2FsLCA0OCBiaXRzIHZpcnR1YWwNCnBvd2VyIG1hbmFn
+ZW1lbnQ6DQoNCg0KVGhlIHZlbmRvciBhbmQgZGV2aWNlIGRldGFpbHMgZm9yIHRoZSBwY2kgZGV2
+aWNlIGFyZSA4MDg2OjE5ZGQgLiBJJ3ZlIGF0dGFjaGVkIGENCmJvb3QgbG9nIGZvciBhIGtlcm5l
+bCB3aGVyZSB0aGUgcGNpIGRldmljZSBpcyBtaXNzaW5nIHdpdGggY29tbWl0IDI4NDE2MzEgaW5j
+bHVkZWQNCg0KQW55IHRob3VnaHQgb24gdGhpcz8NCg0KRGFuaWVsDQo=
 
->
-> >
-> >     slabinfo after moving vm_lock:
-> >      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
-> >      vm_area_struct   ...    256   32    2 : ...
-> >
-> > Aggregate VMA memory consumption per 1000 VMAs grows from 50 to 64 page=
-s,
-> > which is 5.5MB per 100000 VMAs. This memory consumption growth can be
-> > addressed later by optimizing the vm_lock.
->
-> Yes grabbing this back is of critical importance I'd say! :)
->
-> Functionally it looks ok to me but would like to see a stronger
-> justification in the commit msg! :)
->
-> >
-> > [1] https://lore.kernel.org/all/20230227173632.3292573-34-surenb@google=
-.com/
-> > [2] https://lore.kernel.org/all/ZsQyI%2F087V34JoIt@xsang-OptiPlex-9020/
-> > [3] https://lore.kernel.org/all/CAJuCfpEisU8Lfe96AYJDZ+OM4NoPmnw9bP53cT=
-_kbfP_pR+-2g@mail.gmail.com/
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  include/linux/mm.h       | 28 +++++++++++++----------
-> >  include/linux/mm_types.h |  6 +++--
-> >  kernel/fork.c            | 49 ++++------------------------------------
-> >  3 files changed, 25 insertions(+), 58 deletions(-)
-> >
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index 01ce619f3d17..a5eb0be3e351 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -684,6 +684,12 @@ static inline void vma_numab_state_free(struct vm_=
-area_struct *vma) {}
-> >  #endif /* CONFIG_NUMA_BALANCING */
-> >
-> >  #ifdef CONFIG_PER_VMA_LOCK
-> > +static inline void vma_lock_init(struct vm_area_struct *vma)
-> > +{
-> > +     init_rwsem(&vma->vm_lock.lock);
-> > +     vma->vm_lock_seq =3D UINT_MAX;
-> > +}
-> > +
-> >  /*
-> >   * Try to read-lock a vma. The function is allowed to occasionally yie=
-ld false
-> >   * locked result to avoid performance overhead, in which case we fall =
-back to
-> > @@ -701,7 +707,7 @@ static inline bool vma_start_read(struct vm_area_st=
-ruct *vma)
-> >       if (READ_ONCE(vma->vm_lock_seq) =3D=3D READ_ONCE(vma->vm_mm->mm_l=
-ock_seq.sequence))
-> >               return false;
-> >
-> > -     if (unlikely(down_read_trylock(&vma->vm_lock->lock) =3D=3D 0))
-> > +     if (unlikely(down_read_trylock(&vma->vm_lock.lock) =3D=3D 0))
-> >               return false;
-> >
-> >       /*
-> > @@ -716,7 +722,7 @@ static inline bool vma_start_read(struct vm_area_st=
-ruct *vma)
-> >        * This pairs with RELEASE semantics in vma_end_write_all().
-> >        */
-> >       if (unlikely(vma->vm_lock_seq =3D=3D raw_read_seqcount(&vma->vm_m=
-m->mm_lock_seq))) {
-> > -             up_read(&vma->vm_lock->lock);
-> > +             up_read(&vma->vm_lock.lock);
-> >               return false;
-> >       }
-> >       return true;
-> > @@ -729,7 +735,7 @@ static inline bool vma_start_read(struct vm_area_st=
-ruct *vma)
-> >  static inline void vma_start_read_locked_nested(struct vm_area_struct =
-*vma, int subclass)
-> >  {
-> >       mmap_assert_locked(vma->vm_mm);
-> > -     down_read_nested(&vma->vm_lock->lock, subclass);
-> > +     down_read_nested(&vma->vm_lock.lock, subclass);
-> >  }
-> >
-> >  /*
-> > @@ -739,13 +745,13 @@ static inline void vma_start_read_locked_nested(s=
-truct vm_area_struct *vma, int
-> >  static inline void vma_start_read_locked(struct vm_area_struct *vma)
-> >  {
-> >       mmap_assert_locked(vma->vm_mm);
-> > -     down_read(&vma->vm_lock->lock);
-> > +     down_read(&vma->vm_lock.lock);
-> >  }
-> >
-> >  static inline void vma_end_read(struct vm_area_struct *vma)
-> >  {
-> >       rcu_read_lock(); /* keeps vma alive till the end of up_read */
-> > -     up_read(&vma->vm_lock->lock);
-> > +     up_read(&vma->vm_lock.lock);
-> >       rcu_read_unlock();
-> >  }
-> >
-> > @@ -774,7 +780,7 @@ static inline void vma_start_write(struct vm_area_s=
-truct *vma)
-> >       if (__is_vma_write_locked(vma, &mm_lock_seq))
-> >               return;
-> >
-> > -     down_write(&vma->vm_lock->lock);
-> > +     down_write(&vma->vm_lock.lock);
-> >       /*
-> >        * We should use WRITE_ONCE() here because we can have concurrent=
- reads
-> >        * from the early lockless pessimistic check in vma_start_read().
-> > @@ -782,7 +788,7 @@ static inline void vma_start_write(struct vm_area_s=
-truct *vma)
-> >        * we should use WRITE_ONCE() for cleanliness and to keep KCSAN h=
-appy.
-> >        */
-> >       WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
-> > -     up_write(&vma->vm_lock->lock);
-> > +     up_write(&vma->vm_lock.lock);
-> >  }
-> >
-> >  static inline void vma_assert_write_locked(struct vm_area_struct *vma)
-> > @@ -794,7 +800,7 @@ static inline void vma_assert_write_locked(struct v=
-m_area_struct *vma)
-> >
-> >  static inline void vma_assert_locked(struct vm_area_struct *vma)
-> >  {
-> > -     if (!rwsem_is_locked(&vma->vm_lock->lock))
-> > +     if (!rwsem_is_locked(&vma->vm_lock.lock))
-> >               vma_assert_write_locked(vma);
-> >  }
-> >
-> > @@ -827,6 +833,7 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm=
-_struct *mm,
-> >
-> >  #else /* CONFIG_PER_VMA_LOCK */
-> >
-> > +static inline void vma_lock_init(struct vm_area_struct *vma) {}
-> >  static inline bool vma_start_read(struct vm_area_struct *vma)
-> >               { return false; }
-> >  static inline void vma_end_read(struct vm_area_struct *vma) {}
-> > @@ -861,10 +868,6 @@ static inline void assert_fault_locked(struct vm_f=
-ault *vmf)
-> >
-> >  extern const struct vm_operations_struct vma_dummy_vm_ops;
-> >
-> > -/*
-> > - * WARNING: vma_init does not initialize vma->vm_lock.
-> > - * Use vm_area_alloc()/vm_area_free() if vma needs locking.
-> > - */
-> >  static inline void vma_init(struct vm_area_struct *vma, struct mm_stru=
-ct *mm)
-> >  {
-> >       memset(vma, 0, sizeof(*vma));
-> > @@ -873,6 +876,7 @@ static inline void vma_init(struct vm_area_struct *=
-vma, struct mm_struct *mm)
-> >       INIT_LIST_HEAD(&vma->anon_vma_chain);
-> >       vma_mark_detached(vma, false);
-> >       vma_numab_state_init(vma);
-> > +     vma_lock_init(vma);
-> >  }
-> >
-> >  /* Use when VMA is not part of the VMA tree and needs no locking */
-> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > index 80fef38d9d64..5c4bfdcfac72 100644
-> > --- a/include/linux/mm_types.h
-> > +++ b/include/linux/mm_types.h
-> > @@ -716,8 +716,6 @@ struct vm_area_struct {
-> >        * slowpath.
-> >        */
-> >       unsigned int vm_lock_seq;
-> > -     /* Unstable RCU readers are allowed to read this. */
-> > -     struct vma_lock *vm_lock;
-> >  #endif
-> >
-> >       /*
-> > @@ -770,6 +768,10 @@ struct vm_area_struct {
-> >       struct vma_numab_state *numab_state;    /* NUMA Balancing state *=
-/
-> >  #endif
-> >       struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-> > +#ifdef CONFIG_PER_VMA_LOCK
-> > +     /* Unstable RCU readers are allowed to read this. */
-> > +     struct vma_lock vm_lock ____cacheline_aligned_in_smp;
-> > +#endif
-> >  } __randomize_layout;
-> >
-> >  #ifdef CONFIG_NUMA
-> > diff --git a/kernel/fork.c b/kernel/fork.c
-> > index 0061cf2450ef..7823797e31d2 100644
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -436,35 +436,6 @@ static struct kmem_cache *vm_area_cachep;
-> >  /* SLAB cache for mm_struct structures (tsk->mm) */
-> >  static struct kmem_cache *mm_cachep;
-> >
-> > -#ifdef CONFIG_PER_VMA_LOCK
-> > -
-> > -/* SLAB cache for vm_area_struct.lock */
-> > -static struct kmem_cache *vma_lock_cachep;
-> > -
-> > -static bool vma_lock_alloc(struct vm_area_struct *vma)
-> > -{
-> > -     vma->vm_lock =3D kmem_cache_alloc(vma_lock_cachep, GFP_KERNEL);
-> > -     if (!vma->vm_lock)
-> > -             return false;
-> > -
-> > -     init_rwsem(&vma->vm_lock->lock);
-> > -     vma->vm_lock_seq =3D UINT_MAX;
-> > -
-> > -     return true;
-> > -}
-> > -
-> > -static inline void vma_lock_free(struct vm_area_struct *vma)
-> > -{
-> > -     kmem_cache_free(vma_lock_cachep, vma->vm_lock);
-> > -}
-> > -
-> > -#else /* CONFIG_PER_VMA_LOCK */
-> > -
-> > -static inline bool vma_lock_alloc(struct vm_area_struct *vma) { return=
- true; }
-> > -static inline void vma_lock_free(struct vm_area_struct *vma) {}
-> > -
-> > -#endif /* CONFIG_PER_VMA_LOCK */
-> > -
-> >  struct vm_area_struct *vm_area_alloc(struct mm_struct *mm)
-> >  {
-> >       struct vm_area_struct *vma;
-> > @@ -474,10 +445,6 @@ struct vm_area_struct *vm_area_alloc(struct mm_str=
-uct *mm)
-> >               return NULL;
-> >
-> >       vma_init(vma, mm);
-> > -     if (!vma_lock_alloc(vma)) {
-> > -             kmem_cache_free(vm_area_cachep, vma);
-> > -             return NULL;
-> > -     }
-> >
-> >       return vma;
-> >  }
-> > @@ -496,10 +463,7 @@ struct vm_area_struct *vm_area_dup(struct vm_area_=
-struct *orig)
-> >        * will be reinitialized.
-> >        */
-> >       data_race(memcpy(new, orig, sizeof(*new)));
-> > -     if (!vma_lock_alloc(new)) {
-> > -             kmem_cache_free(vm_area_cachep, new);
-> > -             return NULL;
-> > -     }
-> > +     vma_lock_init(new);
-> >       INIT_LIST_HEAD(&new->anon_vma_chain);
-> >       vma_numab_state_init(new);
-> >       dup_anon_vma_name(orig, new);
-> > @@ -511,7 +475,6 @@ void __vm_area_free(struct vm_area_struct *vma)
-> >  {
-> >       vma_numab_state_free(vma);
-> >       free_anon_vma_name(vma);
-> > -     vma_lock_free(vma);
-> >       kmem_cache_free(vm_area_cachep, vma);
-> >  }
-> >
-> > @@ -522,7 +485,7 @@ static void vm_area_free_rcu_cb(struct rcu_head *he=
-ad)
-> >                                                 vm_rcu);
-> >
-> >       /* The vma should not be locked while being destroyed. */
-> > -     VM_BUG_ON_VMA(rwsem_is_locked(&vma->vm_lock->lock), vma);
-> > +     VM_BUG_ON_VMA(rwsem_is_locked(&vma->vm_lock.lock), vma);
-> >       __vm_area_free(vma);
-> >  }
-> >  #endif
-> > @@ -3168,11 +3131,9 @@ void __init proc_caches_init(void)
-> >                       sizeof(struct fs_struct), 0,
-> >                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
-> >                       NULL);
-> > -
-> > -     vm_area_cachep =3D KMEM_CACHE(vm_area_struct, SLAB_PANIC|SLAB_ACC=
-OUNT);
-> > -#ifdef CONFIG_PER_VMA_LOCK
-> > -     vma_lock_cachep =3D KMEM_CACHE(vma_lock, SLAB_PANIC|SLAB_ACCOUNT)=
-;
-> > -#endif
-> > +     vm_area_cachep =3D KMEM_CACHE(vm_area_struct,
-> > +                     SLAB_HWCACHE_ALIGN|SLAB_NO_MERGE|SLAB_PANIC|
-> > +                     SLAB_ACCOUNT);
->
-> Why the SLAB_NO_MERGE?
+--_002_ZzTIbiIUTvFT6NCgoliath_
+Content-Type: application/gzip; name="dmesg-cat9k-pci-denverton.txt.gz"
+Content-Description: dmesg-cat9k-pci-denverton.txt.gz
+Content-Disposition: attachment; filename="dmesg-cat9k-pci-denverton.txt.gz";
+	size=9019; creation-date="Wed, 13 Nov 2024 15:42:49 GMT";
+	modification-date="Wed, 13 Nov 2024 15:42:49 GMT"
+Content-ID: <E64D68C17EF35D4B83313D4AC98FCEA2@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 
-Ah, I had it there for convenience to be able to see them separately
-in /proc/slabinfo. With SLAB_HWCACHE_ALIGN I don't think it matters
-for cacheline sharing...
-Once we add SLAB_TYPESAFE_BY_RCU this flag won't matter anyway because
-it will prevent slab merging.
+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
+PFqz8W8JePkno3oAAA==
 
->
-> >       mmap_init();
-> >       nsproxy_cache_init();
-> >  }
-> > --
-> > 2.47.0.277.g8800431eea-goog
-> >
+--_002_ZzTIbiIUTvFT6NCgoliath_--
 
