@@ -1,106 +1,117 @@
-Return-Path: <linux-kernel+bounces-407506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63649C6E95
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:05:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360D59C6E85
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:01:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75970B29B32
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:58:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15466B2ACA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D98E206940;
-	Wed, 13 Nov 2024 11:53:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C225B206067;
-	Wed, 13 Nov 2024 11:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8129200B98;
+	Wed, 13 Nov 2024 11:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKseVK6G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302461FF5E5;
+	Wed, 13 Nov 2024 11:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731498822; cv=none; b=jhw/JzEvQApIkZKRz8rLj0GAi0A9f2Lwdb2WWCu0hfUWBAWwk8cptHzC84dx0YgQN2zoW9Ajjssb00qI5Xf+9xv6z0+HbHh9RgoINq1iMios+IFrMQSSu0tKbXHP1wBKs3HdRDX5pwrWHBV/bXJvTff5+jDlypeO/jWbpz+6zRQ=
+	t=1731498942; cv=none; b=iVFfoT9Jt2Hh2QkvBHvg0k0+gn/SuTMQeJJanmdKLNzqYoFQ3crnLrouUmAOv0xcMVhz5s9O7iMk0X3iXARNG87VvQIMBOgjmUwnvsLHw0MvY/cpCWABFKytUr6ajDl8XobZGN0DkA2E71RjtvBVRWVSmzPimn9BYqHlVcfzkJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731498822; c=relaxed/simple;
-	bh=TaiTcrbdgFMDzzeszL/ot5ZPKDLmC7Snh1VpNpuzkrQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jlDYIJHU8GJ+uouuGJbJWojUC7Zkr2Im9Xdb17SC03tjdVhvWiAGXfQXy2u2esCbVUdJX8eKIU5noALyz02S8LOJQuhCEdv6MY28BW66W/xwOFx4L+TahLXWyxOHod0D9YYZH54XjjBoh+WqeuUqFgPMmcciNl0GZs1Nx7F2Xlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 626801655;
-	Wed, 13 Nov 2024 03:54:02 -0800 (PST)
-Received: from [10.34.129.21] (unknown [10.34.129.21])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 960273F66E;
-	Wed, 13 Nov 2024 03:53:29 -0800 (PST)
-Message-ID: <872c894d-1caa-4752-bb6a-08c29f1fb3ad@arm.com>
-Date: Wed, 13 Nov 2024 12:53:21 +0100
+	s=arc-20240116; t=1731498942; c=relaxed/simple;
+	bh=iovqs40/iE4xWRqK075NczG6y3maZGipRgITa/sx7jo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fYOLSMtbffFozryxKf1u4N445vS0AoG8M+BNNrdYr7AzGxz6HF6gSg+0hD4yucze1/JulV5VNxnOucsanQjj8VfE9ox1RmDpW9DPyVsp454uXaSnW7ufewbj2bdEPnAwhEjejwplFSGpku9oDO1KR4pX1BxOd30hZCiN2oV/ypA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKseVK6G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6815FC4CECD;
+	Wed, 13 Nov 2024 11:55:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731498941;
+	bh=iovqs40/iE4xWRqK075NczG6y3maZGipRgITa/sx7jo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kKseVK6GqYZSQxXYO7M3Kj6KL4/hHMkOadZJhAJ/KQYXYd6Tch/8w95y+bvrOriR+
+	 paL99S/geuZAP1SkdktXmcULash3X/TPn0N0OU1bm/WRKxMYiBvFKe1VewEffBaOiT
+	 eNPnm5P903eGiGCQqo2t/Vb0m+hrcGO3GWfkFaS3cPVwAeQWNmBcnxJFDK8Cvzs60I
+	 xy44X1Y+0R918u9jT00W26mJPb6jcRM3ryoM4j4fsJU1aQrx1uZ7mU2ED20t+/LGC4
+	 PDzXWHbr5495V9y+Tz5qv/4Ebeev/MTpBxkmtLZaIZrPcZ7gic4KkogQauzXPmVMQm
+	 txvQ62ttSmwlQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?q?Jens=20Emil=20Schulz=20=C3=98stergaard?= <jensemil.schulzostergaard@microchip.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: sparx5: add missing lan969x Kconfig dependency
+Date: Wed, 13 Nov 2024 12:55:08 +0100
+Message-Id: <20241113115513.4132548-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/cpufreq: Ensure sd is rebuilt for EAS check
-To: Christian Loehle <christian.loehle@arm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-pm <linux-pm@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Valentin Schneider <vschneid@redhat.com>
-References: <35e572d9-1152-406a-9e34-2525f7548af9@arm.com>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <35e572d9-1152-406a-9e34-2525f7548af9@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-I could reproduce the issue on an ACPI/CPPC based platform.
+From: Arnd Bergmann <arnd@arndb.de>
 
-It seems the reason it doesn't work is that for CPPC,
-CPUFREQ_HAVE_GOVERNOR_PER_POLICY is not set. So
-   kernel/sched/cpufreq_schedutil.c::global_tunables
-is set and we don't bail out in sugov_init().
+The sparx5 switchdev driver can be built either with or without support
+for the Lan969x switch. However, it cannot be built-in when the lan969x
+driver is a loadable module because of a link-time dependency:
 
-On a system with CPUFREQ_HAVE_GOVERNOR_PER_POLICY set,
-the issue is not triggered. sugov_eas_rebuild_sd() is always called.
+arm-linux-gnueabi-ld: drivers/net/ethernet/microchip/sparx5/sparx5_main.o:(.rodata+0xd44): undefined reference to `lan969x_desc'
 
-The patch effectively solved the issue for me.
+Add a Kconfig dependency to reflect this in Kconfig, allowing all
+the valid configurations but forcing sparx5 to be a loadable module
+as well if lan969x is.
 
-Regards,
-Pierre
+Fixes: 98a01119608d ("net: sparx5: add compatible string for lan969x")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Side note: given that lan969x is always built as part of sparx5,
+wouldn't it make more sense to move all of it into the sparx5
+subdirectory?
+---
+ drivers/net/ethernet/microchip/lan969x/Kconfig  | 2 +-
+ drivers/net/ethernet/microchip/lan969x/Makefile | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-On 11/9/24 01:24, Christian Loehle wrote:
-> Ensure sugov_eas_rebuild_sd() is always called when sugov_init()
-> succeeds. The out goto initialized sugov without forcing the rebuild.
-> 
-> Previously the missing call to sugov_eas_rebuild_sd() could lead to EAS
-> not being enabled on boot when it should have been, because it requires
-> all policies to be controlled by schedutil while they might not have
-> been initialized yet.
-> 
-> Fixes: e7a1b32e43b1 ("cpufreq: Rebuild sched-domains when removing cpufreq driver")
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> ---
->   kernel/sched/cpufreq_schedutil.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index c6ba15388ea7..28c77904ea74 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -783,9 +783,8 @@ static int sugov_init(struct cpufreq_policy *policy)
->   	if (ret)
->   		goto fail;
->   
-> -	sugov_eas_rebuild_sd();
-> -
->   out:
-> +	sugov_eas_rebuild_sd();
->   	mutex_unlock(&global_tunables_lock);
->   	return 0;
->   
+diff --git a/drivers/net/ethernet/microchip/lan969x/Kconfig b/drivers/net/ethernet/microchip/lan969x/Kconfig
+index 728180d3fa33..c5c6122ae2ec 100644
+--- a/drivers/net/ethernet/microchip/lan969x/Kconfig
++++ b/drivers/net/ethernet/microchip/lan969x/Kconfig
+@@ -1,5 +1,5 @@
+ config LAN969X_SWITCH
+-	tristate "Lan969x switch driver"
++	bool "Lan969x switch driver"
+ 	depends on SPARX5_SWITCH
+ 	help
+ 	  This driver supports the lan969x family of network switch devices.
+diff --git a/drivers/net/ethernet/microchip/lan969x/Makefile b/drivers/net/ethernet/microchip/lan969x/Makefile
+index 9a2351b4f111..316405cbbc71 100644
+--- a/drivers/net/ethernet/microchip/lan969x/Makefile
++++ b/drivers/net/ethernet/microchip/lan969x/Makefile
+@@ -3,7 +3,7 @@
+ # Makefile for the Microchip lan969x network device drivers.
+ #
+ 
+-obj-$(CONFIG_LAN969X_SWITCH) += lan969x-switch.o
++obj-$(CONFIG_SPARX5_SWITCH) += lan969x-switch.o
+ 
+ lan969x-switch-y := lan969x_regs.o lan969x.o lan969x_calendar.o \
+  lan969x_vcap_ag_api.o lan969x_vcap_impl.o
+-- 
+2.39.5
+
 
