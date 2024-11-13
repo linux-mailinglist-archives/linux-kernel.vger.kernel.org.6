@@ -1,107 +1,180 @@
-Return-Path: <linux-kernel+bounces-408384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0BF29C7E22
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:11:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CCD9C7E26
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:13:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B073B23AE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:11:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2B14B24A21
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833FE18CC11;
-	Wed, 13 Nov 2024 22:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Kl5ovlMK"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0947B18C023;
+	Wed, 13 Nov 2024 22:13:11 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E4B18BC0A;
-	Wed, 13 Nov 2024 22:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962D718B49F;
+	Wed, 13 Nov 2024 22:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731535832; cv=none; b=M72e5cMwYM9fG0QSCu5t+Z9uNBqKsOFuaJs6Z5dC4bjQWQ02lVZDTa0V0ZGq/SP2Ay/STYlTu6yfeq63Rf5cPfWzLgLhSdPGmqfxEcKx483SfnyPQsM9ifSsC8AsEhdcYHmtecVWzZIIgGbUmz36LIP5eiE8U3JVOu4P7BFCiPc=
+	t=1731535990; cv=none; b=dtITub/7tdhngvPVmEOHAQxAyl9nwmDp7X0JDsFGHMdXGW7isFQSy6iIorKtguMeAZXKM2GSzR5SGaKeB6X2QkLQpTtBpA6aLrT3k9Vb4j+nHt9Eb2buKlK9MILyXlcxXqkz+/zdA5t8duHP8Bo2IGO/xPAlnqIvhB9DtfcIWLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731535832; c=relaxed/simple;
-	bh=4nlKL/GAI/wNHLhxaFni2Yc23qUd5r5JRyPks+7KfXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hFzVgdn9oTpXe1OembDhuzjp97WpxKdP/88H+tMb1zCNassEcyoQquxLpbyRaBg8Am2dnwjovZkjxGUdAVsoHTpe3DisAXcss6UyiktrOT49AfLBtLYgjzuDyW4TsoV9SwhF3ABxIXd4xYD2zcoIZi9KrL05SPOjlJL+jvahc0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Kl5ovlMK; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731535824;
-	bh=ViyKi74fZbZqqauFcX8QRPGItIFrBUPGLG5QeGrfiaA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Kl5ovlMKoBCcdQRrsrJtRT9TYzJ5z9rX472UURoP5vGFyURzT/imRdSdNoYLd3mvg
-	 6YgehizkWl6TIefCUQ/toCziWR2ITekQpUz+4YpUq6d/MDB/G25lZ5ci0S8jO8FxvT
-	 +bx7TkzZ2xMq/eiZWBvvqqxUp3zzhgNLhTN8y5tNJiMIwlTRW5lOMB7qEJ0DGCJMl8
-	 A05ftQ5yYWzXrCFdmTlH3205OZ16PAFk1YmTZsklDp2tTiBYoMkdhoxXjTcopl3bjn
-	 V5u7HZQeI07MufOP2Wr9D8zS3lJRquGzidryKG7KFP51WZgBUSLD+Ft+TWcSOMV1H6
-	 q7Q5CS9jr6HwQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xpcsp6GLlz4w2L;
-	Thu, 14 Nov 2024 09:10:22 +1100 (AEDT)
-Date: Thu, 14 Nov 2024 09:10:23 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Olof Johansson <olof@lixom.net>, Arnd
- Bergmann <arnd@arndb.de>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, ARM
- <linux-arm-kernel@lists.infradead.org>, Networking
- <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the net tree
-Message-ID: <20241114091023.50a38dfe@canb.auug.org.au>
+	s=arc-20240116; t=1731535990; c=relaxed/simple;
+	bh=516AFOPQA7PQoYsjojY5UWArKvt0Qhot9XI1AFi0MLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JY9J/XAkolQorT+t8tOqGWrbv6We6C3TID6aqFl7K56PeA+1Juw7EmfQqTf5X7baiS6JSQjZtWaPhdh8khLrEzUB4RFCLcR+p5BcmXdqOaW+n6BO5g2klXELVuKCsYziaLyASl3EcEFm3XphKpqIAdfKdZS39ytGAIzhmLIxtc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FEFCC4CEC3;
+	Wed, 13 Nov 2024 22:13:07 +0000 (UTC)
+Date: Wed, 13 Nov 2024 17:13:26 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Jens Remus <jremus@linux.ibm.com>, x86@kernel.org, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de
+ Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, Indu Bhagat
+ <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers
+ <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+ linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>, Sam
+ James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org, Andrii Nakryiko
+ <andrii.nakryiko@gmail.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Florian Weimer <fweimer@redhat.com>, Andy
+ Lutomirski <luto@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+Message-ID: <20241113171326.6d1ddc83@gandalf.local.home>
+In-Reply-To: <20241113211535.ghnw52wkgudkjvgv@jpoimboe>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+	<42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+	<1f83be89-b816-48a3-a7ee-9b72f07b558e@linux.ibm.com>
+	<20241113155040.6a9a1bed@gandalf.local.home>
+	<20241113211535.ghnw52wkgudkjvgv@jpoimboe>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/CQy0aclGX8m_lk/oRNHiW9V";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/CQy0aclGX8m_lk/oRNHiW9V
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Wed, 13 Nov 2024 13:15:35 -0800
+Josh Poimboeuf <jpoimboe@kernel.org> wrote:
 
-The following commit is also in the arm-soc-fixes tree as a different
-commit (but the same patch):
+> On Wed, Nov 13, 2024 at 03:50:40PM -0500, Steven Rostedt wrote:
+> > On Thu, 7 Nov 2024 17:59:08 +0100
+> > Jens Remus <jremus@linux.ibm.com> wrote:
+> >   
+> > > On 28.10.2024 22:47, Josh Poimboeuf wrote:
+> > > ...  
+> > > > diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c    
+> > > ...  
+> > > > +static int find_fde(struct sframe_section *sec, unsigned long ip,
+> > > > +		    struct sframe_fde *fde)
+> > > > +{
+> > > > +	struct sframe_fde __user *first, *last, *found = NULL;
+> > > > +	u32 ip_off, func_off_low = 0, func_off_high = -1;
+> > > > +
+> > > > +	ip_off = ip - sec->sframe_addr;
+> > > > +
+> > > > +	first = (void __user *)sec->fdes_addr;
+> > > > +	last = first + sec->fdes_nr;    
+> > > 
+> > > Could it be that this needs to be:
+> > > 
+> > > 	last = first + sec->fdes_nr - 1;  
+> > 
+> > Yep, I discovered the same issue.  
+> 
+> Indeed, thanks.
+> 
 
-  2b99b2532593 ("MAINTAINERS: Re-add cancelled Renesas driver sections")
+BTW, the following changes were needed to make it work for me:
 
-This is commit
+-- Steve
 
-  124f4f1a1869 ("MAINTAINERS: Re-add cancelled Renesas driver sections")
-
-in the arm-soc-fixes tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/CQy0aclGX8m_lk/oRNHiW9V
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc1I88ACgkQAVBC80lX
-0Gy5uQf+Pi/A9DUv8c2l2hDBnMVogOGKG6l7eP7S0wn2Q2JL4CY7oNHknSKv6YAI
-CY7tODPcGLyoisPCgbKT3OMy0HWWxVFLK63V3pXEpuqa7P+8v6xfuQfXzHd3btgS
-9q5SJOLqEQke4PXv415E36+f7/cgJuNR7mb4p3Ev3quHluGR2iRAYBCIHVXB6p7y
-5aafOzipahGZ9ZxDwT5kdUcEbVaAaAioC9dVGB8Ng1KVjN8raB06kr1AXwJ/w5j6
-172IGXjz+EjGpkLSwoYFADQ7xkOZX7fIn2rFzddoKhmpUJJlAD5J5iiKJ7iFjI5C
-LuvZLn6APNhjafrYkUqz3O+J8dJB0w==
-=dUdn
------END PGP SIGNATURE-----
-
---Sig_/CQy0aclGX8m_lk/oRNHiW9V--
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 434c548f0837..64cc3c1188ca 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -842,7 +842,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	int first_pt_load = 1;
+ 	unsigned long error;
+ 	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
+-	struct elf_phdr *elf_property_phdata = NULL, *sframe_phdr = NULL;
++	struct elf_phdr *elf_property_phdata = NULL;
++	unsigned long sframe_vaddr = 0;
+ 	unsigned long elf_brk;
+ 	int retval, i;
+ 	unsigned long elf_entry;
+@@ -951,7 +952,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 			break;
+ 
+ 		case PT_GNU_SFRAME:
+-			sframe_phdr = elf_ppnt;
++			sframe_vaddr = elf_ppnt->p_vaddr;
+ 			break;
+ 
+ 		case PT_LOPROC ... PT_HIPROC:
+@@ -1344,8 +1345,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 					    task_pid_nr(current), retval);
+ 	}
+ 
+-	if (sframe_phdr)
+-		sframe_add_section(load_bias + sframe_phdr->p_vaddr,
++	if (sframe_vaddr)
++		sframe_add_section(load_bias + sframe_vaddr,
+ 				   start_code, end_code);
+ 
+ 	regs = current_pt_regs();
+diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
+index 933e47696e29..ca4ef0b72772 100644
+--- a/kernel/unwind/sframe.c
++++ b/kernel/unwind/sframe.c
+@@ -73,15 +73,15 @@ static int find_fde(struct sframe_section *sec, unsigned long ip,
+ 		    struct sframe_fde *fde)
+ {
+ 	struct sframe_fde __user *first, *last, *found = NULL;
+-	u32 ip_off, func_off_low = 0, func_off_high = -1;
++	s32 ip_off, func_off_low = INT_MIN, func_off_high = INT_MAX;
+ 
+ 	ip_off = ip - sec->sframe_addr;
+ 
+ 	first = (void __user *)sec->fdes_addr;
+-	last = first + sec->fdes_nr;
++	last = first + sec->fdes_nr - 1;
+ 	while (first <= last) {
+ 		struct sframe_fde __user *mid;
+-		u32 func_off;
++		s32 func_off;
+ 
+ 		mid = first + ((last - first) / 2);
+ 
+diff --git a/kernel/unwind/user.c b/kernel/unwind/user.c
+index 11aadfade005..d9cd820150c5 100644
+--- a/kernel/unwind/user.c
++++ b/kernel/unwind/user.c
+@@ -97,7 +97,7 @@ int unwind_user_start(struct unwind_user_state *state)
+ 
+ 	if (current_has_sframe())
+ 		state->type = UNWIND_USER_TYPE_SFRAME;
+-	else if (IS_ENABLED(CONFIG_UNWIND_USER_FP))
++	else if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP))
+ 		state->type = UNWIND_USER_TYPE_FP;
+ 	else
+ 		state->type = UNWIND_USER_TYPE_NONE;
+@@ -138,7 +138,7 @@ int unwind_user(struct unwind_stacktrace *trace, unsigned int max_entries)
+ static u64 ctx_to_cookie(u64 cpu, u64 ctx)
+ {
+ 	BUILD_BUG_ON(NR_CPUS > 65535);
+-	return (ctx & ((1UL << 48) - 1)) | cpu;
++	return (ctx & ((1UL << 48) - 1)) | (cpu << 48);
+ }
+ 
+ /*
 
