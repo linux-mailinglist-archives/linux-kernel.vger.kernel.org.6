@@ -1,234 +1,166 @@
-Return-Path: <linux-kernel+bounces-407440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 696A99C6D7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:13:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A539C6D74
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:10:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10395B27FCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:10:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6C128586E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B41326AEC;
-	Wed, 13 Nov 2024 11:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51B01FF618;
+	Wed, 13 Nov 2024 11:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ByvS2wbe"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Rt8mGv/s"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46B41C8776
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 11:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761CD1FF03F;
+	Wed, 13 Nov 2024 11:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731496209; cv=none; b=q0LzETjk6ziizPO6ZxgK4dFRRs4iDjhmVtEi6njehZNW+g5oVMd5+3sj6ljeZkFbpirPAtyNS5l4PhUPf/9UQuvGvyJ3wsF1NNBIxvhSsZJFihOhxPq8kgoJWocEEDm91MVVxg5KoziAK9viNWkxJLZHCw4iWx4zLb561eKXZVY=
+	t=1731496213; cv=none; b=CKbabpHSZoloTcy/6PGZE+1l0L1IyswrgtV/JowusvHLT7R4DDsdAO4E3owTerIPl9wND7NJQS3Zx9BTICmR6UDVwH54x0f5EpLGo7eorlilbMfynpdPm1jZLGXUUpdAmPVq4PEybXZPPLACIludTxrTu0TW4bF07W1CVi8EFUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731496209; c=relaxed/simple;
-	bh=o7ZakQlIa2lYgRR3nNgwkZEcN6aiF+WrAxBCWIkUVWM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WbhkxGnIVjxoYT2gEz1wugFRUw5WxSx87BDhx4TKPIwV2ui/Hmmd5sWu9YeWWWHtDKdGWwm5arwhvXEKSCv8gZhdlSwgh/LKoi4txnzVOn95aWJvmzYQ+nbGPesi36GRzUFp+QAGXSibTfqugQ5YU2iyyqmD34UHUnj8AejMJyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ByvS2wbe; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-513d1a9552cso2795314e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 03:10:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731496207; x=1732101007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aLRHbq0yedycOi7moHqeorbuEFrpPo0av/ZRKrfN6MQ=;
-        b=ByvS2wbenltC3anw9uvXRO9+tjHbHx/06f/xCdiRKNZfFREMqykYGwYvM3mw8ID67+
-         YV1MAUP21tmucxs8hcwiBVpIKdzlv5+ivjiRw1PyVhjunc+JXWwxV4xPd4qZEh84J2D3
-         VbHa5QN/X0vfGNv5RevmMMcXlxBj/fU6p6C7S0DmpBsMsekcUX2jUhwq8y3jczn5qMAR
-         w7BwJlacRvbd3rD/CstlCx8rPNsBY+G0gbl9UVCdlQIlDIe8JT5zJ8JCEALTUwRowHkp
-         DIryeRFOMBo3QR+UEoD4roALRxeYvRJkByUGwFLszpGeNKYErxTpV3jfKX70A2EHHl9M
-         LnmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731496207; x=1732101007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aLRHbq0yedycOi7moHqeorbuEFrpPo0av/ZRKrfN6MQ=;
-        b=ueG3IUpg051THNtFUBZzNrmY7tT8rU52ft2t2Dp5azNTR5WXT+UwPYGEEK8YavsJzZ
-         L5UtLwE4i3GfDVxCFc0fLN1XQOfnB3HKwif2vhZQLS+Qp3+8MqR1K0IObkoCAd3/Ok8H
-         2INBYCjQGQT65fAccual34AOfDJhyB3hR853ybKfaJ66OV6rvuR7fjaQXUbtoXiIoEkg
-         SX9ZAifL115vk8Jh/6i9xSupIPyZUNIy0aGAQLZXFmDNvPmnLEVWDDgdoHJESgkwS/ua
-         IHWTlJFuFRxxzR6meewOnxSMhWzDlaqXkQTSVcSC9Zdg6uRLDMk6nhocVRu3MSmlFUwp
-         C5Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWut9lMLI0BKO5gE8hXVfjJgPr9AfmbeM/7ohl4fcguKOnmdj5bd+KPx2G7upJEND7YZfCuUdx+3sf+yVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyPk0niExsim11k10RFdR0TKO8h4JvbR6cuoK8op5GfesXfy8R
-	4W6WL5LU4ssVGsdopUWfb2XR0fNL4rcavMTAKktyqTXuqh9xbM/UdJMVhZymU+v/GNLE4Wijt4J
-	aL/TN8NCEzrBsvquXUyKQTQNvDbcRUWLf0AkFiA==
-X-Google-Smtp-Source: AGHT+IFYtql4PZnERxqsx1iVt7t5SNiqWamwYFmQtWq0EQx64r3jMppMGLMQpLIRJQlVFtUDuYAk+p5YKLimNZuqqvg=
-X-Received: by 2002:a05:6122:181c:b0:4f6:b094:80aa with SMTP id
- 71dfb90a1353d-51401e8d209mr20290230e0c.9.1731496206871; Wed, 13 Nov 2024
- 03:10:06 -0800 (PST)
+	s=arc-20240116; t=1731496213; c=relaxed/simple;
+	bh=gqo+4Eow4bw+MA5Y118fPvWvX1BYT/VWc/q4jwn69m4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SRZT0wbJIJk/vLLrVHnbWXFX4Io+JKSRL10WLMFUzpT6Ag+IJ8lUNGSmB4kj/+w7Sur6iDkAr9I1ICDx94MGWwnfKKxFyGgBKbjAc/Ohibbu7QnS/WTYWg/Pr6j+CCQVveBw9p1Aw7BYz5CoYlM7jlaxKlh1kKiSC+uxdxqPv3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Rt8mGv/s; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4ADBA3YF032469;
+	Wed, 13 Nov 2024 05:10:03 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731496203;
+	bh=ezUZUBpfTn5lX0jVgbBCSPADKDHBLLkKbCQkyiQs3cI=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=Rt8mGv/sKN6UC2HLMqWZpyhJX3gVte+QQxbH1AllliS1vEDoAuLSNX0JP+PsT2FGw
+	 uht6k0Q+30NcRddWzN1jdrkfFfRQhJt9CiLtg04ppIQxScmc4y6OhDcEKAbqjhxqYX
+	 fh5JB7YXakLgYB4wYzHAyMcD6Ew38MA3hAdlh4dg=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4ADBA3wK031291
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 13 Nov 2024 05:10:03 -0600
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 13
+ Nov 2024 05:10:03 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 13 Nov 2024 05:10:03 -0600
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4ADBA2jZ077257;
+	Wed, 13 Nov 2024 05:10:02 -0600
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 4ADBA2Xk021307;
+	Wed, 13 Nov 2024 05:10:02 -0600
+From: MD Danish Anwar <danishanwar@ti.com>
+To: <conor+dt@kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
+        <ssantosh@kernel.org>, <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <s-anna@ti.com>, <kristo@kernel.org>,
+        <srk@ti.com>, Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH v3 2/2] arm64: dts: ti: k3-am64-main: Switch ICSSG clock to core clock
+Date: Wed, 13 Nov 2024 16:39:55 +0530
+Message-ID: <20241113110955.3876045-3-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241113110955.3876045-1-danishanwar@ti.com>
+References: <20241113110955.3876045-1-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112101848.708153352@linuxfoundation.org>
-In-Reply-To: <20241112101848.708153352@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 13 Nov 2024 16:39:55 +0530
-Message-ID: <CA+G9fYuvsU3hfJd_3tDsv1HpB_hBPTpzcyGqJ1bRhUcwmhKMjw@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/119] 6.6.61-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, 12 Nov 2024 at 16:03, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.61 release.
-> There are 119 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 14 Nov 2024 10:18:19 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.61-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+ICSSG has 7 available clocks per instance. Add all the cloks to ICSSG
+nodes. ICSSG currently uses ICSSG_ICLK (clk id 20) which operates at
+250MHz. Switch ICSSG clock to ICSSG_CORE clock (clk id 0) which operates at
+333MHz.
 
+ICSSG_CORE clock will help get the most out of ICSSG as more cycles are
+needed to fully support all ICSSG features.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+This commit also changes assigned-clock-parents of coreclk-mux to
+ICSSG_CORE clock from ICSSG_ICLK.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Performance update in dual mac mode
+  With ICSSG_CORE Clk @ 333MHz
+    Tx throughput - 934 Mbps
+    Rx throughput - 914 Mbps,
 
-## Build
-* kernel: 6.6.61-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: ba4164ffa865e6dc8d86c0605cdf762aae20e49b
-* git describe: v6.6.60-120-gba4164ffa865
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.6=
-0-120-gba4164ffa865
+  With ICSSG_ICLK clk @ 250MHz,
+    Tx throughput - 920 Mbps
+    Rx throughput - 706 Mbps
 
-## Test Regressions (compared to v6.6.57-484-g2daffc45f637)
+Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am64-main.dtsi | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-## Metric Regressions (compared to v6.6.57-484-g2daffc45f637)
+diff --git a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
+index c66289a4362b..324eb44c258d 100644
+--- a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
+@@ -1227,6 +1227,15 @@ icssg0: icssg@30000000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0x00 0x30000000 0x80000>;
++		clocks = <&k3_clks 81 0>,  /* icssg0_core_clk */
++			 <&k3_clks 81 3>,  /* icssg0_iep_clk */
++			 <&k3_clks 81 16>, /* icssg0_rgmii_mhz_250_clk */
++			 <&k3_clks 81 17>, /* icssg0_rgmii_mhz_50_clk */
++			 <&k3_clks 81 18>, /* icssg0_rgmii_mhz_5_clk */
++			 <&k3_clks 81 19>, /* icssg0_uart_clk */
++			 <&k3_clks 81 20>; /* icssg0_iclk */
++		assigned-clocks = <&k3_clks 81 0>;
++		assigned-clock-parents = <&k3_clks 81 2>;
+ 
+ 		icssg0_mem: memories@0 {
+ 			reg = <0x0 0x2000>,
+@@ -1252,7 +1261,7 @@ icssg0_coreclk_mux: coreclk-mux@3c {
+ 					clocks = <&k3_clks 81 0>,  /* icssg0_core_clk */
+ 						 <&k3_clks 81 20>; /* icssg0_iclk */
+ 					assigned-clocks = <&icssg0_coreclk_mux>;
+-					assigned-clock-parents = <&k3_clks 81 20>;
++					assigned-clock-parents = <&k3_clks 81 0>;
+ 				};
+ 
+ 				icssg0_iepclk_mux: iepclk-mux@30 {
+@@ -1397,6 +1406,15 @@ icssg1: icssg@30080000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0x00 0x30080000 0x80000>;
++		clocks = <&k3_clks 82 0>,  /* icssg1_core_clk */
++			 <&k3_clks 82 3>,  /* icssg1_iep_clk */
++			 <&k3_clks 82 16>, /* icssg1_rgmii_mhz_250_clk */
++			 <&k3_clks 82 17>, /* icssg1_rgmii_mhz_50_clk */
++			 <&k3_clks 82 18>, /* icssg1_rgmii_mhz_5_clk */
++			 <&k3_clks 82 19>, /* icssg1_uart_clk */
++			 <&k3_clks 82 20>; /* icssg1_iclk */
++		assigned-clocks = <&k3_clks 82 0>;
++		assigned-clock-parents = <&k3_clks 82 2>;
+ 
+ 		icssg1_mem: memories@0 {
+ 			reg = <0x0 0x2000>,
+@@ -1422,7 +1440,7 @@ icssg1_coreclk_mux: coreclk-mux@3c {
+ 					clocks = <&k3_clks 82 0>,   /* icssg1_core_clk */
+ 						 <&k3_clks 82 20>;  /* icssg1_iclk */
+ 					assigned-clocks = <&icssg1_coreclk_mux>;
+-					assigned-clock-parents = <&k3_clks 82 20>;
++					assigned-clock-parents = <&k3_clks 82 0>;
+ 				};
+ 
+ 				icssg1_iepclk_mux: iepclk-mux@30 {
+-- 
+2.34.1
 
-## Test Fixes (compared to v6.6.57-484-g2daffc45f637)
-
-## Metric Fixes (compared to v6.6.57-484-g2daffc45f637)
-
-## Test result summary
-total: 207451, pass: 172242, fail: 2343, skip: 32689, xfail: 177
-
-## Build Summary
-* arc: 10 total, 10 passed, 0 failed
-* arm: 257 total, 257 passed, 0 failed
-* arm64: 81 total, 81 passed, 0 failed
-* i386: 55 total, 51 passed, 4 failed
-* mips: 52 total, 50 passed, 2 failed
-* parisc: 8 total, 8 passed, 0 failed
-* powerpc: 64 total, 62 passed, 2 failed
-* riscv: 38 total, 38 passed, 0 failed
-* s390: 28 total, 26 passed, 2 failed
-* sh: 20 total, 20 passed, 0 failed
-* sparc: 14 total, 14 passed, 0 failed
-* x86_64: 65 total, 65 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
