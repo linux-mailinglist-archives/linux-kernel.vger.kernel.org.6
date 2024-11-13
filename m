@@ -1,113 +1,150 @@
-Return-Path: <linux-kernel+bounces-408358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE25D9C7DDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:49:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 635BD9C7DE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:51:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A368F28392B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:49:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C949FB23F59
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA4918C020;
-	Wed, 13 Nov 2024 21:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92D918BC39;
+	Wed, 13 Nov 2024 21:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+5Xe0KE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hNZ8hDSd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B258F18C019;
-	Wed, 13 Nov 2024 21:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1C41632FD;
+	Wed, 13 Nov 2024 21:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731534532; cv=none; b=rEv+Kzausue0upqVTOquJ8ge0wYo8SuRZn6lQP1NxV5Z37bbN0SmLT7WQ43OgZjujbQiU4N0KcRLtdHwkhNHIdqLFDNLYefLIpQNK8+OxP6m5gnQXlDDPjE3HmXKT7ULChbzo8n5OcBUl1aJTWnv2sNz16kxNliMtaqWT4XMXhc=
+	t=1731534684; cv=none; b=iAFsoa1ofwW1tGSpR5hHsnLoUj+HF7rjKu9yj5DyzmdWUqcOuzIu0OA/hJ+44rapXekG9eLwZjx/DPXjaOAiwBOTPlG+OF9+GUsQtlN4x4wUu//xiELTzv1CxFE5L9OXcrZh2c9tS7du0OfewpfUsIR7Vph+S0x3W415+hMan9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731534532; c=relaxed/simple;
-	bh=SzEvzERxpqaF4qURYLvjSUAk4bsgnytILLb9yuMYj78=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=KjOTnfPNGnnWC77Wm5gcxdOUdJtCx5GquA6f4u4qSI6CidtraxK1X1MZhetdOIgKAqWz820fs1nvHRztxfxCKVC+fY4Y7uNI6dpXHaWaf52CbXqc5w6M/POsrX60juENN9Svf15RomMpF+JNDrqYfD5afFlW1YvU2pGsR6Jx8GQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m+5Xe0KE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10A69C4CEC3;
-	Wed, 13 Nov 2024 21:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731534532;
-	bh=SzEvzERxpqaF4qURYLvjSUAk4bsgnytILLb9yuMYj78=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=m+5Xe0KEXDudiczDXkLy3se2djXe7GDdcd+ojwOdT4DwCQ0wBQHQJmh6dJqztCnh7
-	 5aTdm/bb/3kOJRPeSP3vdqAx5N9bCApM+0WJCjush/Zc3ulXlydDl4hOlBvKk6UQJc
-	 Fz778BsNoQthFkC0BRQzhxt9M29NEx8zRlbVBeAhqUsQY5utcQD86tKzzHedMntuHc
-	 7IYcdnDAMINbgOHSOaTydwrQh0le0I5d8Ox7fBHRVbLGzvFzOHrJYX+LxbuMrlIYmg
-	 gb2V5KA7C1smhxzI9Kx/AmIRT0RXaU7UeCblgcSWBQm2eDbV3YaDpYA19Jsz6DA/wA
-	 TdLavZAEmPgOg==
-Date: Wed, 13 Nov 2024 15:48:50 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
-	linux-kernel@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Amit Pundir <amit.pundir@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Caleb Connolly <caleb.connolly@linaro.org>
-Subject: Re: [PATCH v9 0/9] PCI: Add PCIe bandwidth controller
-Message-ID: <20241113214850.GA1912974@bhelgaas>
+	s=arc-20240116; t=1731534684; c=relaxed/simple;
+	bh=OkWrmpGWgUuF/PKf8L6a4SuvthZk6eJq1pZw4ezh1Dg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r3YTqCxuwBGeC7NWvG04XBW0oxLL2ABXfB0ffZi6L1qp61FT8kCkYZ1yYkztjHoY2crYjAeQBuDG1O6T2RyFlyihGl3wk4+pY10JIlOLxwrh1OR6wpmbJMpseV5/f8/d19CQnmV9xgpjpJ+kN+90eEkY3nJqIaZOCqNJEqO8IeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hNZ8hDSd; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731534683; x=1763070683;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OkWrmpGWgUuF/PKf8L6a4SuvthZk6eJq1pZw4ezh1Dg=;
+  b=hNZ8hDSdPQHumPGjMwZrqnLO1pC0vb7k7uBu2ZxPkNIfGem2NNC6+dnb
+   EcqgRhpwKY5kcr+dJ8bCbO/0GXq8Vpz0osJPFsricdQjStDqnq3b+tdL/
+   Nk4iK4IY+mPpx+f5Db/N8c+CK9KjRQrls7puVD/KY9QufZJk9ofbugFOu
+   PuD8odrw9deOVseAFmQkWxJqmgJ4objhOTnMKe8mDuq3iVVq/50fT+Ix3
+   oIHw3LvRFPfukgrxeVObWvQH87o2guWxVU9K8IK5Tx7wc9IaFRFzWUI7I
+   BuQpDoJdu4/tP2f1YhZxCon8God9aDwA6VS5z5ac7D0bfrTLsdmtybpBT
+   A==;
+X-CSE-ConnectionGUID: 7OT6YR35QCG2ZYfmTlbb0A==
+X-CSE-MsgGUID: 6ue3AvaEQ7a7uae7Bm4cqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="42076236"
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="42076236"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 13:50:55 -0800
+X-CSE-ConnectionGUID: l5eARJ4uQiSItJ8/6oYczw==
+X-CSE-MsgGUID: 6PLTPrU3Q92S6Fl33WXwPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="87885994"
+Received: from kkkuntal-desk3 (HELO [10.124.220.196]) ([10.124.220.196])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 13:50:49 -0800
+Message-ID: <e00c6169-802b-452b-939d-49ce5622c816@intel.com>
+Date: Wed, 13 Nov 2024 13:50:47 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241023221904.GA941054@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/25] x86/virt/tdx: Add SEAMCALL wrappers for TDX page
+ cache management
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "seanjc@google.com" <seanjc@google.com>
+Cc: "Yao, Yuan" <yuan.yao@intel.com>, "Huang, Kai" <kai.huang@intel.com>,
+ "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
+ "Li, Xiaoyao" <xiaoyao.li@intel.com>,
+ "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
+ "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "Zhao, Yan Y" <yan.y.zhao@intel.com>
+References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
+ <20241030190039.77971-9-rick.p.edgecombe@intel.com>
+ <aff59a1a-c8e7-4784-b950-595875bf6304@intel.com>
+ <309d1c35713dd901098ae1a3d9c3c7afa62b74d3.camel@intel.com>
+ <ff549c76-59a3-47f6-b68d-64ef957a7765@intel.com>
+ <2adb22bef3f5d2b7e606031f406528e982a6360a.camel@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <2adb22bef3f5d2b7e606031f406528e982a6360a.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[+cc Bart, Amit, Neil, Caleb]
+On 11/13/24 13:44, Edgecombe, Rick P wrote:
+> Moving them to arch/x86 means we need to translate some things between KVM's
+> parlance and the rest of the kernels. This is extra wrapping. Another example
+> that was used in the old SEAMCALL wrappers was gpa_t, which KVM uses to refers
+> to a guest physical address. void * to the host direct map doesn't fit, so we
+> are back to u64 or a new gpa struct (like in the other thread) to speak to the
+> arch/x86 layers.
 
-On Wed, Oct 23, 2024 at 05:19:04PM -0500, Bjorn Helgaas wrote:
-> On Fri, Oct 18, 2024 at 05:47:46PM +0300, Ilpo Järvinen wrote:
-> > This series adds PCIe bandwidth controller (bwctrl) and associated PCIe
-> > cooling driver to the thermal core side for limiting PCIe Link Speed
-> > due to thermal reasons. PCIe bandwidth controller is a PCI express bus
-> > port service driver. A cooling device is created for each port the
-> > service driver finds to support changing speeds.
-
-> >  drivers/pci/pcie/bwctrl.c                     | 366 ++++++++++++++++++
-> >  include/linux/pci-bwctrl.h                    |  28 ++
-> >  tools/testing/selftests/pcie_bwctrl/Makefile  |   2 +
-> >  .../pcie_bwctrl/set_pcie_cooling_state.sh     | 122 ++++++
-> >  .../selftests/pcie_bwctrl/set_pcie_speed.sh   |  67 ++++
-
-> Applied to pci/bwctrl for v6.13, thanks Ilpo (and Alexandru, for the
-> bandwidth notification interrupt support)!
-
-How attached are we to "bwctrl" and "pwrctl" as the names?
-
-I just noticed that we have "ctrl" for bandwidth control but "ctl" for
-power control, which is slightly annoying to keep straight.
-
-"ctrl" is more common in the tree:
-
-  $ find -name \*ctrl\*[ch] | wc -l
-  691
-  $ find -name \*ctl\*[ch] | wc -l
-  291
-
-so I would prefer that, although "pwrctl" is already in the tree (as
-of v6.11), so it would be more disruptive to change it than to rename
-"bwctrl".
+I have zero issues with non-core x86 code doing a #include
+<linux/kvm_types.h>.  Why not just use the KVM types?
 
