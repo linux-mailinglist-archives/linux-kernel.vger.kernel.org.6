@@ -1,181 +1,348 @@
-Return-Path: <linux-kernel+bounces-408406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4719C7E60
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:49:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C7B9C7E61
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:50:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AA4D1F22988
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:49:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9940D1F216D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E26118BB84;
-	Wed, 13 Nov 2024 22:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E46D18C323;
+	Wed, 13 Nov 2024 22:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J5x/ozgZ"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVdgvrWR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6EE15B0EF
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 22:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B072518BB84;
+	Wed, 13 Nov 2024 22:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731538187; cv=none; b=hrhowzb77/AW3YR+fcpnEEHHzs4S4PmM2kP3+L6mGAxV06uhdfotVhshn37Vg0oxLa916NmR5gwuXCCoqVM0OaYKF3UWY3kAxjF7EiL4Sxh6KKlTtY+h/8YCXd+GnemlCFYZ0HA32Qmlvhq6mEjR6RNVBir+kWvcILjB1Rwos1Y=
+	t=1731538219; cv=none; b=eyGf0XuLoHkqDbD/nn3hAFR2/YbGTG2tnqmHvhfDwYKxE2EKtb1RPIBDYmwChTRMifbjgkLMoiYnBRKM+vUiwhp1mws6qRovDEBX8cFd8UrVLmLTwRKaMUcKlcZRSxd9jIL7bHUq6OUqGfIgySCSBly23z/unhaUBXBAUmzAXQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731538187; c=relaxed/simple;
-	bh=ykcg8Fef1iKHGipEC0cGCA1oJ4uYT/CtTbCPaquxCb0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rw8yicJYAqTMwo7fxN6Sg+0yhG87UvEG2ff+qqHivrwiyIfm/R5lwka8+9Q4XvweAvXeolGVJ9RpdyqPgbqy6CxoW4yF4uyJ6BLM/zmCM2GkBVwsjPlbOcHsvmO+RUyZgl9EQWXDILU/QUM7O+2+buNncXXz18M7MBCBwhYWGc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J5x/ozgZ; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d3736a6204so3450506d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:49:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731538185; x=1732142985; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Y/y0P4OqeeWZF74x2AMQJ4Ih3vxd26UzW3OzjwMKNw=;
-        b=J5x/ozgZJW/lakDDfSPsHa6b7fHrYKiQ6uVLjY5UNV1ObhrQ9oBWg8pCTWgFHu9Vvy
-         0PXNh7eE041a3+O0+LMfCl93KLVnphTUH7LNOQG9X4NCetstSMlR1trKeZsZ5O24B5It
-         GsxnVaQmr/6H9bsrEbvzZtGsELkKXdk/PN+k75NUsst2eKzbHSHW8SoeI0RVMRgP0pL9
-         nqwRdIR3icz2SuVsrIo0GcPdKWt1lHLI8rgcgtgsualO67KgDOa6yGrWBzVmfpD7H4ke
-         R/cUdsEx27UCbIqJE25Sd+wutFy6TWO6qFLZ/slJ18iU3Oz2w4m4pJcUV70m28b345N5
-         hGEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731538185; x=1732142985;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9Y/y0P4OqeeWZF74x2AMQJ4Ih3vxd26UzW3OzjwMKNw=;
-        b=mrg8l1e8o3XDeibw3yB4/aTse5QVFRaA5nuwqPLUxVo8W5fNHzbM5qcuI+JHkJTRqA
-         icAnl4fb6jIi8uxPQPfSMZKo9vfz9OWTDbsjXQgj2Jshzc76tTiU8UYKm32F+YjpndEr
-         +/TAi7d06bvCIVLYX8iQla1SODlOK6OlyNmPFbJLcsWlsiVv1TJHP0UpR/tva0WW/FLV
-         mFyZ8G457xyPym9KW9iGURoH6EdZu4PT3rDoE0Q++rw1lIB44Mho8r6VUgEX9411FCpF
-         /B9t9OYoi2YYhSqKz8ND9NYaDOjboo0jC2kFvRvJPVF/efGy0usYxmnDD+xGUEo5D4YJ
-         /MJg==
-X-Gm-Message-State: AOJu0YzzdqFKxDb43xsh9IMsuy9W90/ECBmxIinjwJik8/0yLiZU31u0
-	NmMqwAxQtPYBiCGCEHwIC43cJX96dYljze4CpIcQ0CinpBMSjl2SRWXG8oiIhtxQ9bwnp30GVs3
-	wC2rBsf18IwCS6VYJE1Bo4GKwTRHld7Pxca4QzA==
-X-Google-Smtp-Source: AGHT+IEVBkG+Vt0df6B4aIQ1qk8n7CToRwVSEBBWWEQATjd00M09LrjqoT5DZj8Ova9jzgvmF/Hidi0/5UP8wRPD5T4=
-X-Received: by 2002:a05:6214:2aab:b0:6cb:4a88:8cf5 with SMTP id
- 6a1803df08f44-6d39e101afemr119742786d6.2.1731538184672; Wed, 13 Nov 2024
- 14:49:44 -0800 (PST)
+	s=arc-20240116; t=1731538219; c=relaxed/simple;
+	bh=cxpxSXBuCEx/21qxfPKUlSPRl62W4RleSGj9yzpAbUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nig7BRlIWGV9TNJSV/kmZ8rlYr8MaT1Ts5lQueKJxDp7u772UUjqEfWlA21hOcsKif2ItkQhdeyHBV08fshiW3WCyxQw9dScBzpSeY/9VfD9rUEn3dHZyplS8ZfIRjquyBQ/HPA/jYF/H7Xwn8ga8A2DF02bdunqK+pbyfXpSnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVdgvrWR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86104C4CEC3;
+	Wed, 13 Nov 2024 22:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731538219;
+	bh=cxpxSXBuCEx/21qxfPKUlSPRl62W4RleSGj9yzpAbUI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OVdgvrWRlZCKgPquKxPpwNO7taKPpghTVf60FaueYm4PPfTIBKQO1Z5rXmBOjNbI/
+	 ryz1kuJSL909VAd6OGgqgV9VXeazXW1KcJlRr5nJp+7fDBZ9SDQitYTfMPyfwHCE9n
+	 brOPVQW01oxb2SnRgtWKzOD3RrAvz5I+Ephqjuts/M2g+EEH8tDgCWFUJlFRY7WbjR
+	 PeqJMHaKdWLvCVkNhELLW5xojMyIJqsMf3lHJ0kUbjHTmTSspStR0OnLzBMODGRnRm
+	 PP33lv6MKFNAdn+pfit5yiyT9a66h/EH9Xwxv4/FbbHzaD8sls7IgPw2IlwunHZ0IQ
+	 g+2Kk4IcFql9A==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Li Huafei <lihuafei1@huawei.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Liang Kan <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Yury Norov <yury.norov@gmail.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] perf-probe: Fix --line option to show correct offset line number from function
+Date: Thu, 14 Nov 2024 07:50:14 +0900
+Message-ID:  <173153821454.2776880.582308516721515492.stgit@mhiramat.roam.corp.google.com>
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6afb936f-17c7-43fa-90e0-b9e780866097@app.fastmail.com> <20241113215252.3977066-1-jstultz@google.com>
-In-Reply-To: <20241113215252.3977066-1-jstultz@google.com>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Wed, 13 Nov 2024 23:49:33 +0100
-Message-ID: <CADYN=9+mRq1Z3nR42-CR8CkmS1Oq456_vfKey0QnOg9nrfZuHA@mail.gmail.com>
-Subject: Re: [RFC][PATCH] locking: rtmutex: Fix wake_q logic in task_blocks_on_rt_mutex
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Joel Fernandes <joelaf@google.com>, Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Benjamin Segall <bsegall@google.com>, 
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com, 
-	Davidlohr Bueso <dave@stgolabs.net>, regressions@lists.linux.dev, 
-	Thorsten Leemhuis <linux@leemhuis.info>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 13 Nov 2024 at 22:53, John Stultz <jstultz@google.com> wrote:
->
-> Anders had bisected a crash using PREEMPT_RT with linux-next and
-> isolated it down to commit 894d1b3db41c ("locking/mutex: Remove
-> wakeups from under mutex::wait_lock"), where it seemed the
-> wake_q structure was somehow getting corrupted causing a null
-> pointer traversal.
->
-> I was able to easily repoduce this with PREEMPT_RT and managed
-> to isolate down that through various call stacks we were
-> actually calling wake_up_q() twice on the same wake_q.
->
-> I found that in the problematic commit, I had added the
-> wake_up_q() call in task_blocks_on_rt_mutex() around
-> __ww_mutex_add_waiter(), following a similar pattern in
-> __mutex_lock_common().
->
-> However, its just wrong. We haven't dropped the lock->wait_lock,
-> so its contrary to the point of the original patch. And it
-> didn't match the __mutex_lock_common() logic of re-initializing
-> the wake_q after calling it midway in the stack.
->
-> Looking at it now, the wake_up_q() call is incorrect and should
-> just be removed. So drop the erronious logic I had added.
->
-> Anders: Can you double check this resolves the issue for you?
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Thank you John for looking into the issue
-It booted just fine on the rockpi4 now, ontop of tag next-2024111.
+Fix --line option to show correct offset if the DWARF line info of the
+probe address has the statement lines in differnt functions.
+Currently debuginfo__find_probe_point() does
 
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
+ (1) Get the line and file from CU's lineinfo
+ (2) Get the real function(function instance) of the address
+     (use this function's decl_line/decl_file as basement)
+ (2-1) Search the inlined function scope in the real function
+     for the given address.
+ (2-2) if there is inlined function, update basement line/file.
+ (2-3) verify the filename is same as basement filename.
+ (3) calculate the relative line number from basement.
 
-Cheers,
-Anders
+The problem is in (1). Since we have no basement file/line info,
+we can not verify that the file/line info from CU's lineinfo.
+Li Huafei reported[1], the lineinfo may have several different lines
+for one address. We need to find most appropriate one based on
+the basement file/line.
 
->
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Joel Fernandes <joelaf@google.com>
-> Cc: Qais Yousef <qyousef@layalina.io>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Valentin Schneider <vschneid@redhat.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Benjamin Segall <bsegall@google.com>
-> Cc: Zimuzo Ezeozue <zezeozue@google.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Metin Kaya <Metin.Kaya@arm.com>
-> Cc: Xuewen Yan <xuewen.yan94@gmail.com>
-> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: kernel-team@android.com
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: regressions@lists.linux.dev
-> Cc: Thorsten Leemhuis <linux@leemhuis.info>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Fixes: 894d1b3db41c ("locking/mutex: Remove wakeups from under mutex::wait_lock")
-> Reported-by: Anders Roxell <anders.roxell@linaro.org>
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Link: https://lore.kernel.org/lkml/6afb936f-17c7-43fa-90e0-b9e780866097@app.fastmail.com/
-> Signed-off-by: John Stultz <jstultz@google.com>
-> ---
->  kernel/locking/rtmutex.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-> index c7de80ee1f9d..a01e81179df0 100644
-> --- a/kernel/locking/rtmutex.c
-> +++ b/kernel/locking/rtmutex.c
-> @@ -1248,10 +1248,7 @@ static int __sched task_blocks_on_rt_mutex(struct rt_mutex_base *lock,
->
->                 /* Check whether the waiter should back out immediately */
->                 rtm = container_of(lock, struct rt_mutex, rtmutex);
-> -               preempt_disable();
->                 res = __ww_mutex_add_waiter(waiter, rtm, ww_ctx, wake_q);
-> -               wake_up_q(wake_q);
-> -               preempt_enable();
->                 if (res) {
->                         raw_spin_lock(&task->pi_lock);
->                         rt_mutex_dequeue(lock, waiter);
-> --
-> 2.47.0.277.g8800431eea-goog
->
+[1] https://lore.kernel.org/all/20241108181909.3515716-2-lihuafei1@huawei.com/
+
+This basically does
+
+ - Introduce cu_find_lineinfo_after() which find the line after the
+   basement file/line information so that it can choose correct one.
+ - Swap the order of (1) and (2) so that we can pass the basement
+   file/line when searching lineinfo.
+
+Reported-by: Li Huafei <lihuafei1@huawei.com>
+Closes: https://lore.kernel.org/all/20241108181909.3515716-2-lihuafei1@huawei.com/
+Fixes: 57f95bf5f882 ("perf probe: Show correct statement line number by perf probe -l")
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ tools/perf/util/dwarf-aux.c    |   78 ++++++++++++++++++++++++++++++++++------
+ tools/perf/util/dwarf-aux.h    |    7 ++++
+ tools/perf/util/probe-finder.c |   44 ++++++++++++++++-------
+ 3 files changed, 105 insertions(+), 24 deletions(-)
+
+diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
+index 92eb9c8dc3e5..4e3bf41746c1 100644
+--- a/tools/perf/util/dwarf-aux.c
++++ b/tools/perf/util/dwarf-aux.c
+@@ -60,14 +60,33 @@ const char *cu_get_comp_dir(Dwarf_Die *cu_die)
+ 	return dwarf_formstring(&attr);
+ }
+ 
++static Dwarf_Line *get_next_statement_line(Dwarf_Lines *lines, size_t *idx, Dwarf_Addr addr)
++{
++	bool is_statement = false;
++	Dwarf_Line *line;
++	Dwarf_Addr laddr;
++	size_t l = *idx;
++
++	while (!is_statement) {
++		line = dwarf_onesrcline(lines, ++l);
++		if (!line || dwarf_lineaddr(line, &laddr) != 0 ||
++		    dwarf_linebeginstatement(line, &is_statement) != 0)
++			return NULL;
++		if (laddr > addr)
++			return NULL;
++	}
++	*idx = l;
++	return line;
++}
++
+ /* Unlike dwarf_getsrc_die(), cu_getsrc_die() only returns statement line */
+-static Dwarf_Line *cu_getsrc_die(Dwarf_Die *cu_die, Dwarf_Addr addr)
++static Dwarf_Line *cu_getsrc_die(Dwarf_Die *cu_die, Dwarf_Addr addr,
++								 Dwarf_Lines **lines_p, size_t *idx)
+ {
+ 	Dwarf_Addr laddr;
+ 	Dwarf_Lines *lines;
+ 	Dwarf_Line *line;
+ 	size_t nlines, l, u, n;
+-	bool flag;
+ 
+ 	if (dwarf_getsrclines(cu_die, &lines, &nlines) != 0 ||
+ 	    nlines == 0)
+@@ -91,16 +110,14 @@ static Dwarf_Line *cu_getsrc_die(Dwarf_Die *cu_die, Dwarf_Addr addr)
+ 		if (!line || dwarf_lineaddr(line, &laddr) != 0)
+ 			return NULL;
+ 	} while (laddr == addr);
+-	l++;
+ 	/* Going forward to find the statement line */
+-	do {
+-		line = dwarf_onesrcline(lines, l++);
+-		if (!line || dwarf_lineaddr(line, &laddr) != 0 ||
+-		    dwarf_linebeginstatement(line, &flag) != 0)
+-			return NULL;
+-		if (laddr > addr)
+-			return NULL;
+-	} while (!flag);
++	line = get_next_statement_line(lines, &l, addr);
++	if (!line)
++		return NULL;
++	if (lines_p)
++		*lines_p = lines;
++	if (idx)
++		*idx = l;
+ 
+ 	return line;
+ }
+@@ -129,7 +146,7 @@ int cu_find_lineinfo(Dwarf_Die *cu_die, Dwarf_Addr addr,
+ 		goto out;
+ 	}
+ 
+-	line = cu_getsrc_die(cu_die, addr);
++	line = cu_getsrc_die(cu_die, addr, NULL, NULL);
+ 	if (line && dwarf_lineno(line, lineno) == 0) {
+ 		*fname = dwarf_linesrc(line, NULL, NULL);
+ 		if (!*fname)
+@@ -141,6 +158,43 @@ int cu_find_lineinfo(Dwarf_Die *cu_die, Dwarf_Addr addr,
+ 	return (*lineno && *fname) ? *lineno : -ENOENT;
+ }
+ 
++/**
++ * cu_find_lineinfo_after - Get a line number after file:line for given address
++ * @cu_die: a CU DIE
++ * @addr: An address
++ * @lineno: a pointer which returns the line number
++ * @fname: the filename where searching the line
++ * @baseline: the basement line number
++ *
++ * Find a line number after @baseline in @fname for @addr in @cu_die.
++ * Return the found line number, or -ENOENT if not found.
++ */
++int cu_find_lineinfo_after(Dwarf_Die *cu_die, Dwarf_Addr addr,
++					int *lineno, const char *fname, int baseline)
++{
++	const char *line_fname;
++	Dwarf_Lines *lines;
++	Dwarf_Line *line;
++	size_t idx = 0;
++
++	if (cu_find_lineinfo(cu_die, addr, &line_fname, lineno) < 0)
++		return -ENOENT;
++
++	if (!strcmp(line_fname, fname) && baseline <= *lineno)
++		return *lineno;
++
++	line = cu_getsrc_die(cu_die, addr, &lines, &idx);
++
++	while (line && dwarf_lineno(line, lineno) == 0) {
++		line_fname = dwarf_linesrc(line, NULL, NULL);
++		if (line_fname && !strcmp(line_fname, fname) && baseline <= *lineno)
++			return *lineno;
++		line = get_next_statement_line(lines, &idx, addr);
++	}
++
++	return -ENOENT;
++}
++
+ static int __die_find_inline_cb(Dwarf_Die *die_mem, void *data);
+ 
+ /**
+diff --git a/tools/perf/util/dwarf-aux.h b/tools/perf/util/dwarf-aux.h
+index bd7505812569..19edf21e2f78 100644
+--- a/tools/perf/util/dwarf-aux.h
++++ b/tools/perf/util/dwarf-aux.h
+@@ -23,6 +23,13 @@ const char *cu_get_comp_dir(Dwarf_Die *cu_die);
+ int cu_find_lineinfo(Dwarf_Die *cudie, Dwarf_Addr addr,
+ 		     const char **fname, int *lineno);
+ 
++/*
++ * Get the most likely line number for given address in given filename
++ * and basement line number.
++ */
++int cu_find_lineinfo_after(Dwarf_Die *cudie, Dwarf_Addr addr,
++					int *lineno, const char *fname, int baseline);
++
+ /* Walk on functions at given address */
+ int cu_walk_functions_at(Dwarf_Die *cu_die, Dwarf_Addr addr,
+ 			 int (*callback)(Dwarf_Die *, void *), void *data);
+diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+index 13ff45d3d6a4..efcacb5568e5 100644
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -1578,7 +1578,8 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+ {
+ 	Dwarf_Die cudie, spdie, indie;
+ 	Dwarf_Addr _addr = 0, baseaddr = 0;
+-	const char *fname = NULL, *func = NULL, *basefunc = NULL, *tmp;
++	const char *fname = NULL, *func = NULL, *basefunc = NULL;
++	const char *basefname = NULL, *tmp;
+ 	int baseline = 0, lineno = 0, ret = 0;
+ 
+ 	/* We always need to relocate the address for aranges */
+@@ -1592,11 +1593,7 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+ 		goto end;
+ 	}
+ 
+-	/* Find a corresponding line (filename and lineno) */
+-	cu_find_lineinfo(&cudie, (Dwarf_Addr)addr, &fname, &lineno);
+-	/* Don't care whether it failed or not */
+-
+-	/* Find a corresponding function (name, baseline and baseaddr) */
++	/* Find the basement function (name, baseline and baseaddr) */
+ 	if (die_find_realfunc(&cudie, (Dwarf_Addr)addr, &spdie)) {
+ 		/* Get function entry information */
+ 		func = basefunc = dwarf_diename(&spdie);
+@@ -1607,10 +1604,16 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+ 			goto post;
+ 		}
+ 
+-		fname = die_get_decl_file(&spdie);
++		basefname = die_get_decl_file(&spdie);
++		if (!basefname) {
++			lineno = 0;
++			goto post;
++		}
++
+ 		if (addr == baseaddr) {
+ 			/* Function entry - Relative line number is 0 */
+ 			lineno = baseline;
++			fname = basefname;
+ 			goto post;
+ 		}
+ 
+@@ -1627,7 +1630,9 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+ 				 */
+ 				lineno = die_get_call_lineno(&indie);
+ 				fname = die_get_call_file(&indie);
+-				break;
++				if (!fname || strcmp(fname, basefname))
++					lineno = 0;
++				goto post;
+ 			} else {
+ 				/*
+ 				 * addr is in an inline function body.
+@@ -1636,20 +1641,35 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+ 				 * be the entry line of the inline function.
+ 				 */
+ 				tmp = dwarf_diename(&indie);
+-				if (!tmp ||
+-				    dwarf_decl_line(&indie, &baseline) != 0)
+-					break;
++				basefname = die_get_decl_file(&indie);
++				if (!tmp || !basefname ||
++				    dwarf_decl_line(&indie, &baseline) != 0) {
++					lineno = 0;
++					goto post;
++				}
+ 				func = tmp;
+ 				spdie = indie;
+ 			}
+ 		}
++	}
++
++	if (!lineno) {
++		/* Find a corresponding line (filename and lineno) */
++		if (cu_find_lineinfo_after(&cudie, (Dwarf_Addr)addr, &lineno,
++								   basefname, baseline) < 0)
++			lineno = 0;
++		else
++			fname = basefname;
++	}
++
++post:
++	if (lineno) {
+ 		/* Verify the lineno and baseline are in a same file */
+ 		tmp = die_get_decl_file(&spdie);
+ 		if (!tmp || (fname && strcmp(tmp, fname) != 0))
+ 			lineno = 0;
+ 	}
+ 
+-post:
+ 	/* Make a relative line number or an offset */
+ 	if (lineno)
+ 		ppt->line = lineno - baseline;
+
 
