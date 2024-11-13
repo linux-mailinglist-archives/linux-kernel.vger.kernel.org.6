@@ -1,89 +1,95 @@
-Return-Path: <linux-kernel+bounces-408298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F299C7D1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:48:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A789C7D21
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:50:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 721ACB245E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:48:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D22471F22A10
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AE520721C;
-	Wed, 13 Nov 2024 20:48:10 +0000 (UTC)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9CC20695A;
+	Wed, 13 Nov 2024 20:50:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34552206E93;
-	Wed, 13 Nov 2024 20:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D2515AAC1;
+	Wed, 13 Nov 2024 20:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731530890; cv=none; b=Gp/lGGIFDBtohDxWzEFdISZZZSIZPKY8u0llxlpbAQeNI4uApY6ZVSEhAjRAhL8W1vz4ZFLl1zLwaLdnjaRGselyaGKVFIKnhA9W8SuNODXYzodgQ/ihH/dmO4HhfJbMQc+EZ277Xbqk4e6prD4bPwLrwYJ8UyWA7udyZlXOZU8=
+	t=1731531024; cv=none; b=UbG852vwxPiA2qx/N5OVFwyCBSpq0Kzg65h1c4MGMWJXcbOOfuObzV02paPEU++bvJRzNWbM10Nw6A+UiYIm38RtcSk2K28QRF9SaKFytiNcWEkrHenrgRw7xjiaXhkS4i1WUyuDSQ8b+AaBVOoGCIneObG0EiuBIrKuKY6Ydms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731530890; c=relaxed/simple;
-	bh=t9LFE6gGSsWCAXWlakpDOe/+qgFxvm1pqlkkHoevah4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jIQ95vXHbWwtq549i2AQMahpNLxtKX8wTdXuQO4Lj0HCvPIwWJ43X1UXL7MIS9fHt/Qq6P91e2U1CRH9ayEsgtlFt5uEo6Tq2DIjVKkIC8Em8LwqMTkkdPmLcV1FhyKomsWHtTQaC+xmSGEpjC0BC67PHxK6zXUXSvlAwMuEhjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso73291405ad.2;
-        Wed, 13 Nov 2024 12:48:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731530888; x=1732135688;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RFZ6aVrJwPr/r54Pxj5f9+WKsNsiZPlSqhmF8MVtdF8=;
-        b=vFGPdj2JCH3sF3lvU87dy6ScztFnxTh1G3QlMlUBOuIXZDQW4HRVNqbVi7rHvFvjpq
-         Om4UrO8oDCuFy4mtE44D1hN179uHTYCYayVYojWLqg3yWhFUocw3CW6uO5KLgHI6gZAq
-         e2xHnJx4Cj84PNAWFUNTQHctwu1MAughp5NLCM/wL4nCwnyEj6B8igZNMITRtkxcY9HY
-         fzcS0fZQTe3WSudu6DPhnUXawcdhtWwHePTdWGVLVJOtb8rT5oZKYap+8llQyqXgZX74
-         bGtP2tnot4r89G1pY+oBemdqY+8so4Xrd06m3/fsUAHNu4V199MJ9iPjNutC4EG2p2zF
-         dBDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWee4kldX09JM7rS8/4zwHXcl6vTFKpszLu+7YSHe+sHuu4BXD7ZkSi78M3ZB0I2BrgvmvRtAHvv7js@vger.kernel.org, AJvYcCX+uKfLLsA6zd+BcRlLN/omWIA7Eb0McqfH1bTywU2FqS9p7tZFvlBJD3atzMxS/WUb52niH3jh0Lm462I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrKcPbp2RU2wG7dC5r44FTLTbh3Ae7Q4DdFAIzbLlSBPitwyyc
-	BdWjoJhZDnYxTaLiO33o85njDT0kM3SjvoU+3dP37H+0VBJ6pYNd
-X-Google-Smtp-Source: AGHT+IE4SFFdqE7quzIP53a7Z4Xh58mjz9HcfQ2pKKg18djVUPRipg0e38rwM3+8OCOS+krPJ/cQ1Q==
-X-Received: by 2002:a17:902:d2c3:b0:20c:3d9e:5f2b with SMTP id d9443c01a7336-21183e709bfmr244382675ad.57.1731530888399;
-        Wed, 13 Nov 2024 12:48:08 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e458b2sm114028355ad.167.2024.11.13.12.48.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 12:48:07 -0800 (PST)
-Date: Thu, 14 Nov 2024 05:48:06 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Bartosz Wawrzyniak <bwawrzyn@cisco.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	xe-linux-external@cisco.com, Daniel Walker <danielwa@cisco.com>,
-	Bartosz Stania <sbartosz@cisco.com>
-Subject: Re: [PATCH] PCI: cadence: Lower severity of message when phy-names
- property is absent in DTS
-Message-ID: <20241113204806.GB1138879@rocinante>
-References: <20241018113045.2050295-1-bwawrzyn@cisco.com>
+	s=arc-20240116; t=1731531024; c=relaxed/simple;
+	bh=WmIbPAYl/ZC8V/Y4pNLGsWB1rlzwt7GQTHsbr9TpUa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N4WdMuEKXZH2ti0stGtf9UBNlpamhtlyd89GTBUaMWokinC84dIduTT6vSxVNEsFhgOzyAUP8Pta27If+df1m5CPVI+2IVigZ0x+9mnk8rscJFM9wsgP0BTX5ZEjTfM47//wJ+J6LTuy7QgMuIN3uSV4greU63CJiV64xy7iYnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4957CC4CEC3;
+	Wed, 13 Nov 2024 20:50:21 +0000 (UTC)
+Date: Wed, 13 Nov 2024 15:50:40 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de
+ Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, Indu Bhagat
+ <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers
+ <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+ linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>, Sam
+ James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org, Andrii Nakryiko
+ <andrii.nakryiko@gmail.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Florian Weimer <fweimer@redhat.com>, Andy
+ Lutomirski <luto@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+Message-ID: <20241113155040.6a9a1bed@gandalf.local.home>
+In-Reply-To: <1f83be89-b816-48a3-a7ee-9b72f07b558e@linux.ibm.com>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+	<42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+	<1f83be89-b816-48a3-a7ee-9b72f07b558e@linux.ibm.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018113045.2050295-1-bwawrzyn@cisco.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Thu, 7 Nov 2024 17:59:08 +0100
+Jens Remus <jremus@linux.ibm.com> wrote:
 
-> The phy-names property is optional, so the message indicating its absence
-> during the probe should be of 'info' severity rather than 'error' severity.
+> On 28.10.2024 22:47, Josh Poimboeuf wrote:
+> ...
+> > diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c  
+> ...
+> > +static int find_fde(struct sframe_section *sec, unsigned long ip,
+> > +		    struct sframe_fde *fde)
+> > +{
+> > +	struct sframe_fde __user *first, *last, *found = NULL;
+> > +	u32 ip_off, func_off_low = 0, func_off_high = -1;
+> > +
+> > +	ip_off = ip - sec->sframe_addr;
+> > +
+> > +	first = (void __user *)sec->fdes_addr;
+> > +	last = first + sec->fdes_nr;  
+> 
+> Could it be that this needs to be:
+> 
+> 	last = first + sec->fdes_nr - 1;
 
-Applied to controller/cadence, thank you!
+Yep, I discovered the same issue.
 
-[01/01] PCI: cadence: Lower severity of message when phy-names property is absent in DTS
-        https://git.kernel.org/pci/pci/c/e3e309b2bea8
+-- Steve
 
-	Krzysztof
+> 
+> > +	while (first <= last) {
+> > +		struct sframe_fde __user *mid;
+> > +		u32 func_off;
+> > +
 
