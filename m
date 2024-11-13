@@ -1,155 +1,143 @@
-Return-Path: <linux-kernel+bounces-407046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE5A9C67CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:29:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24DE39C67D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 04:33:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25BDC284209
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:29:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74CB0B2B9D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2FE16D4EF;
-	Wed, 13 Nov 2024 03:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994A0170A01;
+	Wed, 13 Nov 2024 03:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="rkvHghNZ"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="p2FyNdhI"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF021607B2
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 03:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD4D2231C;
+	Wed, 13 Nov 2024 03:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731468581; cv=none; b=bP6MNDhE0q5/s8gFzVTz3gAqeLs7LrgP7kPe1iw48ImCvjvRcf9C0jRwUixJ3+RqBlbEARe/gYwlAaEuaUC3xVAEJdaZaOCZPdM3b8a81zm32FSsyJmaQSaAEZhsXUPH8XwfzfPVadgk7wddse5RQo93OBAb9ptbF/xbznIdbcI=
+	t=1731468705; cv=none; b=DZ8f8KGaALAN3qmtkMDO1D7d9obK5CjUgfQ1XjIeqi4AEd9UxHK2vmYI91tZkInWYpTP0gNniq27snI+xL1378mc6HvZ6zESK7sID/BQDF5npU/gjIKnSjwK3vXvDXfFdqsiljJYKm/CukaGwI8ciLpuZbtnSacPCklDiLpo2MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731468581; c=relaxed/simple;
-	bh=DDLeTSuk7KTpRFvWkhHgXVM73PqWlPZsPuD3WHhP8mI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BIzIXLSD0ZL74ZvPe7aXCYMWSHNbYW/BfcfdvL232G5QRT13bwxLZcUO3+OCpjYcnTU/KZAMznVIHR74vsCeDBemnQP3XNCcAafIk+vUltEpS+6RZ1+0o18JhEASqsBzc1GV2Faq96+WFoaN49d5otbfk+pZAI9UbqZ+ZFGyCTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=rkvHghNZ; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from graphene.canonical.com (1.general.amurray.uk.vpn [10.172.193.220])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 8838D3F0C6;
-	Wed, 13 Nov 2024 03:29:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1731468576;
-	bh=beptcnJBOoSzirHuD+8H9ZMCZiHsT9eCpGA4OuptSLg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type;
-	b=rkvHghNZCVUf0vRoe6l0o0EDQlBQM3rJmSHPj84lgo8PHEZDXcq7FzPpLVW9ytp+N
-	 K/EuQlzWz830lku0DW6go7YI9mpbQi+4CtwEpR3NDKMeSnmW5uc8U+yGz6O4Uwh4v9
-	 zzlgjtZWl9xUzV2zH1KFkdpjBjnRe/bwkEO+lBgH6L0erbCmy6r81QsVtOAOnM8eu2
-	 zAvgxKPU9p14nTEaoFLT+9ZZuYyFFHy4Y2FHFLCijlmCsZapQv/GvUf1FAqeeCG4MT
-	 U4eonw2ljy+pa/MGNea6DYkzkd2f93lSiikUSP9V+eR6AHGUWFk7g23vgsC5EktQK/
-	 mojDfkcoTSqCg==
-From: Alex Murray <alex.murray@canonical.com>
-To: Dave Hansen <dave.hansen@intel.com>, dave.hansen@linux.intel.com
-Cc: bp@alien8.de, linux-kernel@vger.kernel.org, tglx@linutronix.de,
- x86@kernel.org
-Subject: Re: [RFC][PATCH] x86/cpu/bugs: Consider having old Intel microcode
- to be a vulnerability
-In-Reply-To: <1c1015f8-1a47-4e5b-b088-f83054d2f613@intel.com>
-References: <87v7wtvty0.fsf@canonical.com>
- <1c1015f8-1a47-4e5b-b088-f83054d2f613@intel.com>
-Date: Wed, 13 Nov 2024 13:59:31 +1030
-Message-ID: <87iksrhkv8.fsf@canonical.com>
+	s=arc-20240116; t=1731468705; c=relaxed/simple;
+	bh=/bYsay7vg1weqenJRpb4pqt79mASw+nrIHAtGk1mYk0=;
+	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
+	 In-Reply-To:Content-Type; b=mZbLYxWyIoDj+Txve+6wv7kbAkLR9pgH7cxHe110BpJ7aDSbSZm+wRnatiymdB1B4ya2hua1oYLEVsHUU6z9zEZ+TpZ5mWdKLNkNehlAARKXTRDGKCI3jz2YZ/Gzq/7/haeGSrG/74wJLAKsMVlLKstE48q5C6py2tiUET7Qyb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=p2FyNdhI; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1731468703; x=1763004703;
+  h=message-id:date:mime-version:to:cc:references:subject:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/bYsay7vg1weqenJRpb4pqt79mASw+nrIHAtGk1mYk0=;
+  b=p2FyNdhIAi+6xoWhb29VwwL4rYVU/pPGGnyai28akMRJ0vFNwFs/T6Vj
+   eiueWOUGu4dnJNH5Hny1h8CHvZzYocsG0h16E+FlLNBRa8F3JcaIdqmrJ
+   KCD5NNrIGc573cvqyJrNOyw+0LzZnLf/WD6iGQCHkldT9dIQ+7S1M071M
+   M=;
+X-IronPort-AV: E=Sophos;i="6.12,149,1728950400"; 
+   d="scan'208";a="442195777"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 03:31:38 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:35392]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.13.112:2525] with esmtp (Farcaster)
+ id 1975e212-552a-4756-aa4f-791440302fe9; Wed, 13 Nov 2024 03:31:37 +0000 (UTC)
+X-Farcaster-Flow-ID: 1975e212-552a-4756-aa4f-791440302fe9
+Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 13 Nov 2024 03:31:37 +0000
+Received: from [192.168.205.1] (10.106.101.35) by
+ EX19D003UWC002.ant.amazon.com (10.13.138.169) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Wed, 13 Nov 2024 03:31:34 +0000
+Message-ID: <96c24397-b081-4570-adb2-8d4443f3359c@amazon.com>
+Date: Tue, 12 Nov 2024 20:31:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: <elena.reshetova@intel.com>
+CC: <ackerleytng@google.com>, <agordeev@linux.ibm.com>,
+	<aou@eecs.berkeley.edu>, <borntraeger@linux.ibm.com>, <bp@alien8.de>,
+	<canellac@amazon.at>, <catalin.marinas@arm.com>, <chenhuacai@kernel.org>,
+	<corbet@lwn.net>, <dave.hansen@intel.com>, <dave.hansen@linux.intel.com>,
+	<david@redhat.com>, <derekmn@amazon.com>, <gerald.schaefer@linux.ibm.com>,
+	<gor@linux.ibm.com>, <graf@amazon.com>, <hca@linux.ibm.com>, <hpa@zytor.com>,
+	<jgowans@amazon.com>, <jthoughton@google.com>, <kalyazin@amazon.com>,
+	<kernel@xen0n.name>, <kvm@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+	<linux-s390@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<loongarch@lists.linux.dev>, <luto@kernel.org>,
+	<mathieu.desnoyers@efficios.com>, <mhiramat@kernel.org>, <mingo@redhat.com>,
+	<mlipp@amazon.at>, <palmer@dabbelt.com>, <paul.walmsley@sifive.com>,
+	<pbonzini@redhat.com>, <peterz@infradead.org>, <quic_eberman@quicinc.com>,
+	<rostedt@goodmis.org>, <roypat@amazon.co.uk>, <rppt@kernel.org>,
+	<seanjc@google.com>, <shuah@kernel.org>, <svens@linux.ibm.com>,
+	<tabba@google.com>, <tglx@linutronix.de>, <vannapurve@google.com>,
+	<will@kernel.org>, <x86@kernel.org>, <xmarcalx@amazon.com>
+References: <DM8PR11MB57505F62D149EF153F89B8BAE75D2@DM8PR11MB5750.namprd11.prod.outlook.com>
+Subject: RE: [RFC PATCH v3 0/6] Direct Map Removal for guest_memfd
+Content-Language: en-US
+From: "Manwaring, Derek" <derekmn@amazon.com>
+In-Reply-To: <DM8PR11MB57505F62D149EF153F89B8BAE75D2@DM8PR11MB5750.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D038UWB003.ant.amazon.com (10.13.139.157) To
+ EX19D003UWC002.ant.amazon.com (10.13.138.169)
 
-On Tue, 2024-11-12 at 07:51:38 -0800, Dave Hansen wrote:
-
-> On 11/11/24 22:37, Alex Murray wrote:
->>> =3D=3D Microcode Revision Discussion =3D=3D
->>>
->>> The microcode versions in the table were generated from the Intel
->>> microcode git repo:
->>>
->>>  	29f82f7429c ("microcode-20241029 Release")
->>=20
->> This upstream microcode release only contained an update for a
->> functional issue[1] - not any fixes for security issues. So it would not
->> really be correct to say a machine running the previous microcode
->> revision is vulnerable.=20
+On 2024-11-08 at 10:36, Elena Reshetova wrote:
+> On 2024-11-06 at 17:04, Derek Manwaring wrote:
+> > On 2024-11-04 at 08:33+0000, Elena Reshetova wrote:
+> > > This statement *is* for integrity section. We have a separate TDX guidance
+> > > on side-channels (including speculative) [3] and some speculative attacks
+> > > that affect confidentiality (for example spectre v1) are listed as not covered
+> > > by TDX but remaining SW responsibility (as they are now).
+> >
+> > Thanks for the additional info, Elena. Given that clarification, I
+> > definitely see direct map removal and TDX as complementary.
 >
-> There are literally two things this patch "says".  One is in userspace
-> and can be literally read as:
+> Jus to clarify to make sure my comment is not misunderstood.
+> What I meant is that we cannot generally assume that confidentiality
+> leaks from CoCo guests to host/VMM via speculative channels
+> are completely impossible. Spectre V1 is a prime example of such a
+> possible leak. Dave also elaborated on other potential vectors earlier.
 >
-> 	/sys/devices/system/cpu/vulnerabilities/old_microcode
->
-> "You are vulnerable to old CPU microcode".
->
-> The other is in the code: X86_BUG_OLD_MICROCODE.  Which can literally be
-> read to say "you have a CPU bug called 'old microcode'. (Oh, and I guess
-> this comes out in /proc/cpuinfo too).
->
-> If you think this is confusing, we can document our way out of it or
-> revise the changelog.  But we kinda get to define what the file and the
-> X86_BUG mean in the first place.
->
-> I don't really see how it's possible to argue that they're
-> "incorrect".
+> The usefulness of direct map removal for CoCo guests as a concrete
+> mitigation for certain types of memory attacks must be precisely
+> evaluated per each attack vector, attack vector direction (host -> guest,
+> guest ->host, etc) and per each countermeasure that CoCo vendors
+> provide for each such case. I don't know if there is any existing study
+> that examines this for major CoCo vendors. I think this is what must
+> be done for this work in order to have a strong reasoning for its usefulness.
 
-My point is that if a given microcode contains only functional updates,
-then if you are *not* using it you do not have a security
-vulnerability. If however the specified microcode revision fixes a known
-security issue then yes I agree, there is a vulnerability and if you are
-not using this microcode revision you are vulnerable to it. It is really
-the distinction between a microcode update that is purely for functional
-issues compared to one that is for security issues as well.
+Thanks, that makes sense. I'm a little hyperfocused on guest->host which
+is the opposite direction of what is generally used for the CoCo threat
+model. I think what both cases care about though is guest->guest. For
+me, guest->host matters because it's a route for guest->guest (at least
+in the non-CoCo world). There's some good discussion on this in David's
+series on attack vector controls [1].
 
->
->> As such, should the table of microcode revisions only be generated
->> from the upstream microcode releases that contain fixes for security
->> issues?
->
-> No, I don't think so. First, I honestly don't want to have this
-> discussion every three months where folks can argue about whether a
-> given microcode release is functional or security.  Or, even worse,
-> which individual microcode *image* is which.
+Like you mention, beyond direction it matters which CoCo countermeasures
+are at play and how far they go during transient execution. That part is
+not clear to me for the host->guest direction involving the direct map,
+but agree any countermeasures like direct map removal should be
+evaluated based on a better understanding of what those existing
+countermeasures already cover and what attack is intended to be
+mitigated.
 
-I don't think there is an argument here - releases at
-https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files
-clearly say if they contain Security updates or updates for functional
-issues - so if a release like the previous 20241029 one only contains an
-update for functional issues it should not be treated as a security
-issue if a system is not running it.
+Derek
 
->
-> Second, running kernels with functional issues is *BAD*.  As a kernel
-> policy, we don't want users running with old microcode. Security bugs
-> only hurt our users but functional bugs hurt the kernel too because
-> users blame the kernel when they hit them and kernel developers spend
-> time chasing those issues down.
->
 
-But just because something is bad that doesn't mean it is a security
-vulnerability. One option could be to taint the kernel in this case
-instead.
-
-> So I guess it boils down to: First, should we tell users when their
-> microcode is old?  If so, how should we do it?
-
-So I suggest instead if you really want to flag old microcode as an
-issue you could taint it as such since the description of tainted is
-
-> The kernel will mark itself as =E2=80=98tainted=E2=80=99 when something o=
-ccurs that
-> might be relevant later when investigating problems
-
-which feels like exactly the kind of semantics you describe above.
-
-Then if you also want to surface old microcode that also is missing
-security fixes you could then use your new proposed mechanism.
-
+[1] https://lore.kernel.org/lkml/LV3PR12MB92658EA6CCF18F90DAAA168394532@LV3PR12MB9265.namprd12.prod.outlook.com/
 
