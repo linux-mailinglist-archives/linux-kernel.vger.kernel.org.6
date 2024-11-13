@@ -1,167 +1,107 @@
-Return-Path: <linux-kernel+bounces-407784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3279C74E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:57:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35819C7452
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1D66B2405B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:31:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAD3B1F21F6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5818C200CB6;
-	Wed, 13 Nov 2024 14:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92D82010F9;
+	Wed, 13 Nov 2024 14:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f91oNBa/"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PwwG8BwX"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284461F9ABD;
-	Wed, 13 Nov 2024 14:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF47D1FCF6D
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 14:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731508033; cv=none; b=Tdwwi8DyVR9Exf00EHpfRsv9iChGoVGOBJECAcM5sDbhmsqpYvKQ7CRU3bTHDswC3pQ7nV6jMJ6G8QV3jYo6ggmuq562Zb4FKi61dZr/ggVYzlI+9XeobpOWL5/oQBDjIqa8jIf5xc6D9LrVU8iMUdUMBq5LhzkGeR2DTBZu4sA=
+	t=1731508079; cv=none; b=BetR8nEWcH3lLzSVMyFD/N25EtaAb8m/4z8XnbbwJKv1jCHacQkdgnxGiesQsylbnHpA5XuAqm1e7RwOmWHjfoTFzY3Ac7U/Q9To5wnijM9faeP9DM8qB4Ph1SxEIoE0MLVMpTVT321cSP/XG1aBbBRC84Xr8OgVW3ZjvgthP78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731508033; c=relaxed/simple;
-	bh=hsSf9bE+GoUc4+9xEzYYZ4OlJrBOA6K4INO2MbBwMaw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E3GcIMDIWo8jJ5N9YlvOnKqjPDnlzV2TlbuloMjwbTmArNZwGsUIh34oQO1mXYsp0e8RNRXNunICsT2rkDXT+aLSdFF6/SHOQSGq3264L9uIgkgqTEbpoqixPaeYTOt0wfo9xbo9UsB6FLRSIUz6qQ5bf63jDa/63V9ulYP7CBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f91oNBa/; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6cc2ea27a50so7230606d6.0;
-        Wed, 13 Nov 2024 06:27:11 -0800 (PST)
+	s=arc-20240116; t=1731508079; c=relaxed/simple;
+	bh=Y+2H4LdN8mN6PJGaLKpXtkX3V6r/tQyzwkTwSod6FNc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JvxvNus8FUtGlMPRB4BwKXSE1YH3wsDzY3DAp84K7BB4AwoZOp0AvV8xH6CImGONDHax1uEnjrN0DS4hiylCrrn05ygAYOqlaBVZjPIXM6xJkQYDtzxF96/AtyT2uRkaEfue7+WajPIEU9695w3n01Tna6am3RCICcvXpbfyT3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=PwwG8BwX; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6cbe9e8bbb1so45485966d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:27:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731508031; x=1732112831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=byaAHjXVMIKqWLBBJTf2K9IU7DPwWcEDa/fLiBJiK3k=;
-        b=f91oNBa/0wU5T2O2BalqIijEp4Q8r54kXtJ0xuPPWOj2GOpxI/RuN00Q1zr1LjbsRz
-         jvMtnyDbTgrsIhdpAICCKCMp7htzDiFA4bnbHlqv67yo74aaDBp1dTHd43usstIMl7Rr
-         r2cj0FcfpvIwQ64IgYbwY55NHuryv7ef+t5swil+Ze7nZYt5HeieaQ+4a0rP3JVFaBTq
-         rMi5JrOrBAzXAJN+x9V9ejiC4eG+27OzBIdGCx+JvBEQ2OZDPfNaIgrqwv2BliGWMZHE
-         ascHOzFhpaQP8G/XGT26VGD17sXJpk0AZwkQBYH5cJG6M11ivEnbA8m4EEnbo39JJDac
-         5NEQ==
+        d=broadcom.com; s=google; t=1731508076; x=1732112876; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PvYXEOtoobfsjK9RlNl1WSgITYS4vYodr4T5ypoCMpg=;
+        b=PwwG8BwX48E7l1wlbo6E2QcTFnMrvTuVrxgp4XINPytAvgCn40NKTTgmeR0fGLvfi4
+         LT/gJEXucqr4713/yh+NQbRYIL5SLuRTgc2z3ylGC3+CIawGFUgViVNwl+rH1imXU2i2
+         GIee5wJT/p1vPKOZVcQuTEsT0mTXMENe4xZpw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731508031; x=1732112831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=byaAHjXVMIKqWLBBJTf2K9IU7DPwWcEDa/fLiBJiK3k=;
-        b=JF4tepg+awgwff8f/9UVzWapSPGM6lKY0fow/VxE0WTAryhI+WbAzIHXei1HqoO9pv
-         UVJ9ITFcuLc2/l9BNr6WqkdooMv1Ke+/iGDkBjW4nof8OJJwzFe5OeyuvBViyJYUkkHU
-         OTdvEJRQECT+H4QTvXIa+3ftovl2s+2PwQ6OOE+fIuRWZGgZJkWFfqYeg7zEbfc+1LdV
-         b4uZvl4oRh/oima45pQml3iWoEfDeXrvnIzezLFv206EmblceTze4qfURT0BlbBQ/43h
-         ZFPcqUAl3BS4TPWgCef8OdB7G0aZTGG0wS7N+cHxt7uHl0RNnggSvIcDf7pt1rdSAyDG
-         M68A==
-X-Forwarded-Encrypted: i=1; AJvYcCVdge+UCkaFE2RLjnMBkX9ovCyZh4Yx0EnRwKqS8laWkjIA1zDkDTUPPefhLw9oYHkc4rEENn2ENeFfcg3FGQ==@vger.kernel.org, AJvYcCWG07zss7eE6zYk44CLtMKGXS96Cjjz5eTliFh/oXrXvd8Of7LAcEzkNBrwe+Qtwd2mz+SlPMwoIYb2yNgl@vger.kernel.org, AJvYcCWmZ+/KImRYnyy0Et21Q6YQVHmOrLp/p7JiYWivBKcUhX03bQ2hS/3SCzd2FIa2jzeBxCf9Nrf/MMZ3s3cB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFV4F+Cr8VbEanfWRaPgxlaNg19JecQ5dLRruo8JDkTmvc5BBb
-	vcF4uqvoskWcZhCqBujiG5laUJzLSkkXJZrjvZMBH+7mVhPe6fHgYXBLHC+JfC70ADLgFiQkZFu
-	PDSeehueW9BmQ80D9TYwln5NrLfY=
-X-Google-Smtp-Source: AGHT+IGnBfzQq2aRhyeSLvcYTvunpxmwCxusgSIeJnDVcERj9W+v0vZjYKbGY5+oetb5hhtyec4PZkPNIXG79pLP7xY=
-X-Received: by 2002:a05:6214:3d0d:b0:6cc:255:2038 with SMTP id
- 6a1803df08f44-6d39e4d24a3mr356911116d6.4.1731508031090; Wed, 13 Nov 2024
- 06:27:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731508076; x=1732112876;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PvYXEOtoobfsjK9RlNl1WSgITYS4vYodr4T5ypoCMpg=;
+        b=AuYCvExk6gr3lEN08eV5eREwKs7tiDu8KWfR5Zsz7lGzOSQo0NtlTBEjyzBE8vhfWV
+         X/tNY1UV8GWlyL2nNHs9kLtUzzGTxBvQoT0mGeI7ycWKael9hYwDRhVyasGyp2/tqA5j
+         P+mFmzOxt8xJVlYaNRcH9NR45ZN3Gv8uBjHfuLWOtu9fljDj5Iez2aa1obm+oUREqp4c
+         GHtTE9fNDjiwJtHaWIMzBQ4BgiJGDKk8UjfRO3qttxsMCbYn8ASF2TNyj7PQAU2u2Fn3
+         kdOzFSDMlvVTB0SJELsUu+cQaNDGj/tpxLIFFEyxbM4cq5/KBbVGNdL3eBGvQgA6dvsE
+         Ec0g==
+X-Forwarded-Encrypted: i=1; AJvYcCX/d8wLasoSidBAewwmJ6MO+ETtBZDESDwj5JADtm/3q/z2FqwgXB2uz2inRFE2F9kkK87OO7c3X8qO/Fs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmp+oWDiruPCWec/6QlZZjfMs11L5ieIX6F20J0ZDVFSn8+c22
+	U4ivx9LYxZyanakotk/x5ztFoZLlNGk3FxUXfBk83nOM7J5UvBjR8zzQQJ6Fsw==
+X-Google-Smtp-Source: AGHT+IHNU4BkuDoySGHigGN9ulN/IS07Uo7ecwBFdjEIsUxAiHxHdOdLhRm/oLLAi1XFBjrIj/1mmg==
+X-Received: by 2002:a0c:f64c:0:b0:6d3:e7f8:e486 with SMTP id 6a1803df08f44-6d3e7f8e4ddmr746996d6.15.1731508076325;
+        Wed, 13 Nov 2024 06:27:56 -0800 (PST)
+Received: from vb004028-vm1.. ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3961defe5sm85134976d6.10.2024.11.13.06.27.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 06:27:55 -0800 (PST)
+From: Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mqaio@linux.alibaba.com,
+	namhyung.kim@lge.com,
+	oleg@redhat.com,
+	andrii@kernel.org,
+	jolsa@kernel.org,
+	sashal@kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com,
+	vasavi.sirnapalli@broadcom.com,
+	Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
+Subject: [PATCH v6.1 0/2] uprobe: avoid out-of-bounds memory access of fetching args
+Date: Wed, 13 Nov 2024 14:27:32 +0000
+Message-Id: <20241113142734.2406886-1-vamsi-krishna.brahmajosyula@broadcom.com>
+X-Mailer: git-send-email 2.39.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107005720.901335-1-vinicius.gomes@intel.com> <20241107005720.901335-5-vinicius.gomes@intel.com>
-In-Reply-To: <20241107005720.901335-5-vinicius.gomes@intel.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 13 Nov 2024 15:26:59 +0100
-Message-ID: <CAOQ4uxgHwmAa4K3ca7i1G2gFQ1WBge855R19hgEk7BNy+EBqfg@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] ovl: Optimize override/revert creds
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, brauner@kernel.org, miklos@szeredi.hu
-Cc: hu1.chen@intel.com, malini.bhandaru@intel.com, tim.c.chen@intel.com, 
-	mikko.ylinen@intel.com, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 7, 2024 at 1:57=E2=80=AFAM Vinicius Costa Gomes
-<vinicius.gomes@intel.com> wrote:
->
-> Use override_creds_light() in ovl_override_creds() and
-> revert_creds_light() in ovl_revert_creds_light().
->
-> The _light() functions do not change the 'usage' of the credentials in
-> question, as they refer to the credentials associated with the
-> mounter, which have a longer lifetime.
->
-> In ovl_setup_cred_for_create(), do not need to modify the mounter
-> credentials (returned by override_creds()) 'usage' counter. Add a
-> warning to verify that we are indeed working with the mounter
-> credentials (stored in the superblock). Failure in this assumption
-> means that creds may leak.
->
-> Suggested-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-> ---
->  fs/overlayfs/dir.c  | 7 ++++++-
->  fs/overlayfs/util.c | 4 ++--
->  2 files changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 09db5eb19242..136a2c7fb9e5 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -571,7 +571,12 @@ static int ovl_setup_cred_for_create(struct dentry *=
-dentry, struct inode *inode,
->                 put_cred(override_cred);
->                 return err;
->         }
-> -       put_cred(override_creds(override_cred));
-> +
-> +       /*
-> +        * We must be called with creator creds already, otherwise we ris=
-k
-> +        * leaking creds.
-> +        */
-> +       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dentry-=
->d_sb));
->         put_cred(override_cred);
->
->         return 0;
+Include additional patch (Andrii Nakryiko) since its a dependency
 
-Vinicius,
+Andrii Nakryiko (1):
+  uprobes: encapsulate preparation of uprobe args buffer
 
-While testing fanotify with LTP tests (some are using overlayfs),
-kmemleak consistently reports the problems below.
+Qiao Ma (1):
+  uprobe: avoid out-of-bounds memory access of fetching args
 
-Can you see the bug, because I don't see it.
-Maybe it is a false positive...
+ kernel/trace/trace_uprobe.c | 86 ++++++++++++++++++++-----------------
+ 1 file changed, 46 insertions(+), 40 deletions(-)
 
-Christian, Miklos,
+-- 
+2.39.4
 
-Can you see a problem?
-
-Thanks,
-Amir.
-
-
-unreferenced object 0xffff888008ad8240 (size 192):
-  comm "fanotify06", pid 1803, jiffies 4294890084
-  hex dump (first 32 bytes):
-    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace (crc ee6a93ea):
-    [<00000000ab4340a4>] __create_object+0x22/0x83
-    [<0000000053dcaf3b>] kmem_cache_alloc_noprof+0x156/0x1e6
-    [<00000000b4a08c1d>] prepare_creds+0x1d/0xf9
-    [<00000000c55dfb6c>] ovl_setup_cred_for_create+0x27/0x93
-    [<00000000f82af4ee>] ovl_create_or_link+0x73/0x1bd
-    [<0000000040a439db>] ovl_create_object+0xda/0x11d
-    [<00000000fbbadf17>] lookup_open.isra.0+0x3a0/0x3ff
-    [<0000000007a2faf0>] open_last_lookups+0x160/0x223
-    [<00000000e7d8243a>] path_openat+0x136/0x1b5
-    [<0000000004e51585>] do_filp_open+0x57/0xb8
-    [<0000000053871b92>] do_sys_openat2+0x6f/0xc0
-    [<000000004d76b8b7>] do_sys_open+0x3f/0x60
-    [<000000009b0be238>] do_syscall_64+0x96/0xf8
-    [<000000006ff466ad>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
