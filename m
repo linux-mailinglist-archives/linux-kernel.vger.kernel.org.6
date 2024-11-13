@@ -1,116 +1,190 @@
-Return-Path: <linux-kernel+bounces-408171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5637B9C7BEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:06:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D9F9C7B60
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:40:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AD72B2BBB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:35:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9370281A52
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9722038AA;
-	Wed, 13 Nov 2024 18:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF832040AE;
+	Wed, 13 Nov 2024 18:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="eQ3qEljz"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YSFsUbko"
+Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A35315ADA4;
-	Wed, 13 Nov 2024 18:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5AB204012
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731522906; cv=none; b=gKruqqVjBdv2/meQKe+DsAu2uiVgHwRuUMIJUWOUF9XXh8VwqPlhahx5XZ0XOdAMLAuKBZgkxgxqivChXW91soasxXxDaMrMS3gpFke+XIbwuO/KHIq4AoG5YEXkr4IMwRoTJ2IekcjR7HBQpk3dR2EafrhBrTUpId3trdmeYr0=
+	t=1731523186; cv=none; b=oPzNVgwAW3sP4m1IAaBvICJ+16HjLvGmddh9HsSMDp0kBPD/jPV96jgVEXcHj3F5Gq6BAy1nBtK4+ldXEGVD0jTpliiS2XxWXIoASowLUF+ynlT6XlRtSxxHbgY/hcjiDT7auzSMlcTMyrF3wTMVhbjY1+bT7bB9dkVNUQwSX5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731522906; c=relaxed/simple;
-	bh=51y6F403UODXm3whUG/pdVxPEOiBvrwCx/j54xJhKgc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OdfjZe4tZenWpZgedjtvsgaAmZkMVE19f2OmFvV1Tsvcc9Ct/2VwOJv853dVEUZsBjyv1fXX3sdnEJY25KWDd3Q35etWEW5dQUTPyj4OibQbHb0yBWxWHNxdlA5sGMKqHn3vrpamTwSH1jFzc00V5s6WGKsg3AO51nyqgz2yVB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=eQ3qEljz; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-432d86a3085so5202415e9.2;
-        Wed, 13 Nov 2024 10:35:04 -0800 (PST)
+	s=arc-20240116; t=1731523186; c=relaxed/simple;
+	bh=ds+Byb6f/J+Uut9zVkz68U3HJ2rc8F2Zd4pX+KfWOxU=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=gZ5IcgysyOWlRDpOHc4UJyHVAabLvyifSXfV9M1Dq4SO8UNLCT8wNniNN1xk0rBQ1CQA7LyH2RUY97vglKB2euneLOpgdiN0WIvZ+MV40nRCAn80aonP0NyF8KBQSJ9+ZjgChPPP/nJ4TI/pDufr0g72JsE2xj1V+2bmdgayGkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YSFsUbko; arc=none smtp.client-ip=209.85.166.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-83aaedba7b5so787870439f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:39:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1731522903; x=1732127703; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dYIrf86hdksI77/Sc9tKNsGUwcT5OsY2/UWt/XQJeXc=;
-        b=eQ3qEljzbq9bOcZnIf0vGlEoIyWGndY8wrCmi2j4uhiEChFNWOWWU30fzt7PH0qhlT
-         XtMSvtKW61FobqxcNhf0IQmJAsir8bM7pc4W3yI+as1kjudjHCbzoqcKzsEsCeznS4vv
-         JNs0CexiJ1vffAhhhVowPfKB+yT6TJUeIoLVEjkQzVt6OE2bU0ljvm9mYmNLIn/22N/2
-         m/gt5MrzeaKjYE5sB8p9wXkiDU2wyLDFhUcAjuVpmyJwsxRT7eiqu9km6957m7MkMjmk
-         wWS9KO6RnzH3EzUfQMlWf3rrFepl1xeQJQgKwVV3GfuMMrBFbWu4Lk00sGUHfkCd1+qu
-         396w==
+        d=google.com; s=20230601; t=1731523184; x=1732127984; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/fUPXvWv9v0Mh/WyGQgAC8FHYBBV253S8a6S2mHs2j8=;
+        b=YSFsUbkodRxrkGWV91RmEh+jGbwHWMjNJDhcC6PYiOqj1E8XrNUjibmt3MWG5Hdf6l
+         7Y+tHWf3V+x1qAPpgiTyRIp+1C7ZqpthuYVg2ZnGW5LG/w+StfUSMDVLSvTRJEbgpmlg
+         A3oIsZRc/St+v16zUNhlI2pFDW6Dc3X4rQOKAW/r0Cl3xssN4KMB/m6+cjuynzhijCEL
+         PX1+VK/l60FLWDJJS9cP2NMNamO8aar/gGejRpqGrE72Rmnves7nEqgUv0YkYHfArL/D
+         42j2vu7UyoKULa4Y5emZdhpv/zWVC4c8FlkWI/vxdpc26C8Ohn8aLvvvUF8YDvfRXjER
+         xhzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731522903; x=1732127703;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1731523184; x=1732127984;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dYIrf86hdksI77/Sc9tKNsGUwcT5OsY2/UWt/XQJeXc=;
-        b=QpVuQbP9zH5e0aGp8GEkZZR4sw/QJD2O2t/eiq5ZqnmFNXV0IC+lsqrxAQALe1XlVm
-         XCLCbJbrs0T4xZwKIpT+6R59nrgZuE0QaB2lh5u53/+/nZcz6iJeLasIsHFXt2V23G+f
-         gC4MGOue7ifb2NrdhzMQR19dLM9YHuFYbj6UiBjrCKTARZ6qlMaezHhH61k3wNRiM/nL
-         G3fCM0fwDFoZEgFlIufxT3eT+oMGqZsvl/v5lpXVqAhSUmCDldC7gZJzzjVoGkhjg//v
-         iS+T7+t5yuGBP7867IYflEYM6XBd0Am1Fqh2q1YIzoeuEbi8aLgdrLxeX1OqWmXM+Kx0
-         ylVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCeAVCkZ5Xpzla9cHwXwpa/IlgEfUWzFwlH16U60o8CC8vohjuF/rYff+/69IQbJPAY7xHYqq7xTxEb9I=@vger.kernel.org, AJvYcCVXRl8sVdDUJQ0gtz6WA5fMLctg+9HbxqhbEB84ZuJbkSl1RseK21r8E+dzWHPmVL9zqUXLzacE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYApQNcDw4gz8BXwOs2O6eSMnt56Wz/nH3MlwCLaTZdIgxJH3H
-	i/YuZphSrN2rrMDHr7JUcYWbPAWU+0F/Kv5Ym/v/dfqtGvvUOLY=
-X-Google-Smtp-Source: AGHT+IEeO4H3EiQmliZJ4Ro7Hz8QAOIdCTKTPH4cJ66FtGc576wuHJP+9pnAHNheyygcVbO6WfXt8w==
-X-Received: by 2002:a5d:6483:0:b0:37d:5364:d738 with SMTP id ffacd0b85a97d-381f18813cdmr17524979f8f.45.1731522902692;
-        Wed, 13 Nov 2024 10:35:02 -0800 (PST)
-Received: from [192.168.1.3] (p5b2b4ca6.dip0.t-ipconnect.de. [91.43.76.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda05f89sm18952980f8f.98.2024.11.13.10.35.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 10:35:02 -0800 (PST)
-Message-ID: <e7260f30-ee8c-45ac-b0d9-55f2f260989f@googlemail.com>
-Date: Wed, 13 Nov 2024 19:35:00 +0100
+        bh=/fUPXvWv9v0Mh/WyGQgAC8FHYBBV253S8a6S2mHs2j8=;
+        b=NSyeP9HYxjgW6Y1NG1MLzkUD44fYbhz/MoCuFN5BHNvbrS+1Qj3nbMTXQ014AjsOOV
+         tGyE+hd2sJAC+6lQY/v3/qoyQjODyoPsNYprJoG9LfnMDOh6pIq2pCn9xc4xycemKNAf
+         uZ+WjAarSso4ozBfj1cojQBNPx4bVCoTMKwJ0cFgAvSO8P+W38jwOXOmlhsrJXT+lylm
+         03KqvINGOr0har9LVXfFZZl6wlVbznd6egxeNZgC08ZRx1siUx7Ekorf0NwVwVZrIsci
+         SrBtFB+tmUfh1/MYjXvR6YcSRmokPI0+XmPr1471ShRXg53fwuCYEtYD2TdSfuxk/SKd
+         bjVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/FSX3xk5B3+7Q9iqzhWGkZ4YhAwFdsjjI+q8r3jb7JOZ5aPgjrFmsIwzuACcB1F9+dGdt75zetlnNku8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0ON4JGRcWnoTaRHo5n4/O+ZWtYlnbpowwzM2bvtG3O25xxO14
+	/Lb/vkI1A4pDw+iNzUk+G+ZL+Tlws/y4dOsIX2XFgR6lAeqLAZ+jyHZGeKuXTol95GH6bm3UEMs
+	cKuz2za804DZg2fAqRdAS4g==
+X-Google-Smtp-Source: AGHT+IFqNa2jrXVUDfm9IE+oYt5yFt1zslo8K13JW/BJldIHrq7v5sp1QoU1+LNMj81fKDzjJdmH4l1lpTYb1/+IBg==
+X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fa18])
+ (user=coltonlewis job=sendgmr) by 2002:a05:6602:583:b0:83a:ac70:becf with
+ SMTP id ca18e2360f4ac-83e03357885mr4245839f.3.1731523183650; Wed, 13 Nov 2024
+ 10:39:43 -0800 (PST)
+Date: Wed, 13 Nov 2024 18:39:42 +0000
+In-Reply-To: <gsnt34jv9el6.fsf@coltonlewis-kvm.c.googlers.com> (message from
+ Colton Lewis on Wed, 13 Nov 2024 18:24:37 +0000)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.1 00/98] 6.1.117-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241112101844.263449965@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20241112101844.263449965@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Message-ID: <gsntzfm37zbl.fsf@coltonlewis-kvm.c.googlers.com>
+Subject: Re: [PATCH v7 4/5] x86: perf: Refactor misc flag assignments
+From: Colton Lewis <coltonlewis@google.com>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: peterz@infradead.org, kvm@vger.kernel.org, oliver.upton@linux.dev, 
+	seanjc@google.com, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	will@kernel.org, linux@armlinux.org.uk, catalin.marinas@arm.com, 
+	mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, 
+	naveen@kernel.org, hca@linux.ibm.com, gor@linux.ibm.com, 
+	agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com, 
+	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-s390@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-Am 12.11.2024 um 11:20 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.1.117 release.
-> There are 98 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Colton Lewis <coltonlewis@google.com> writes:
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+> Peter Zijlstra <peterz@infradead.org> writes:
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+>> On Fri, Nov 08, 2024 at 08:20:44PM +0100, Peter Zijlstra wrote:
 
-Beste Grüße,
-Peter Schneider
+>>> Isn't the below more or less what you want?
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+>>> static unsigned long misc_flags(struct pt_regs *regs)
+>>> {
+>>> 	unsigned long flags = 0;
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+>>> 	if (regs->flags & PERF_EFLAGS_EXACT)
+>>> 		flags |= PERF_RECORD_MISC_EXACT_IP;
+
+>>> 	return flags;
+>>> }
+
+>>> static unsigned long native_flags(struct pt_regs *regs)
+>>> {
+>>> 	unsigned long flags = 0;
+
+>>> 	if (user_mode(regs))
+>>> 		flags |= PERF_RECORD_MISC_USER;
+>>> 	else
+>>> 		flags |= PERF_RECORD_MISC_KERNEL;
+
+>>> 	return flags;
+>>> }
+
+>>> static unsigned long guest_flags(struct pt_regs *regs)
+>>> {
+>>> 	unsigned long guest_state = perf_guest_state();
+>>> 	unsigned long flags = 0;
+
+>>> 	if (guest_state & PERF_GUEST_ACTIVE) {
+>>> 		if (guest_state & PERF_GUEST_USER)
+>>> 			flags |= PERF_RECORD_MISC_GUEST_USER;
+>>> 		else
+>>> 			flags |= PERF_RECORD_MISC_GUEST_KERNEL;
+>>> 	}
+
+>>> 	return flags;
+>>> }
+
+>>> unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
+>>> {
+>>> 	unsigned long flags;
+
+>>> 	flags = misc_flags(regs);
+>>> 	flags |= guest_flags(regs);
+
+>>> 	return flags;
+>>> }
+
+>>> unsigned long perf_arch_misc_flags(struct pt_regs *regs)
+>>> {
+>>> 	unsigned long flags;
+>>> 	unsigned long guest;
+
+>>> 	flags = misc_flags(regs);
+>>> 	guest = guest_flags(regs);
+>>> 	if (guest)
+>>> 		flags |= guest;
+>>> 	else
+>>> 		flags |= native_flags(regs);
+
+>>> 	return flags;
+>>> }
+
+>> This last can be written more concise:
+
+>> unsigned long perf_arch_misc_flags(struct pt_regs *regs)
+>> {
+>> 	unsigned long flags;
+
+>> 	flags = guest_flags(regs);
+>> 	if (!flags)
+>> 		flags |= native_flags(regs);
+
+>> 	flgs |= misc_flags(regs);
+
+>> 	return flags;
+>> }
+
+> This isn't right because it is choosing to return guest or native
+> flags depending on the presence of guest flags, but that's not what we
+> want.
+
+> See perf_misc_flags in kernel/events/core.c which chooses to return
+> perf_arch_guest_misc_flags or perf_arch_misc_flags depending on
+> should_sample_guest which depends on more than current guest state.
+
+This is in the next patch. Excuse me for not clarifying.
+
+> But I will take some of your suggestions to split the functions out
+> more.
 
