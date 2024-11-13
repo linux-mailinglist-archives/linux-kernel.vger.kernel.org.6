@@ -1,94 +1,146 @@
-Return-Path: <linux-kernel+bounces-408062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AB99C7A4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:53:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49CEE9C7A50
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:54:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F364B29B87
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:22:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95F9EB2A37A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAAC20101B;
-	Wed, 13 Nov 2024 17:22:07 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8B4201261;
+	Wed, 13 Nov 2024 17:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j1ULK3OI"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652022309AC
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D6E1F80C8;
+	Wed, 13 Nov 2024 17:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731518526; cv=none; b=KNXWzcLXWzcOEHrxG/+Vs/OrLClT8kMfiAg/+peaOfCG7E+qyxrUzyuFfpF+J3RUv2g7HuyfvIb12y4DeAV9B0tu2FDyKWT4Eo8kA0NDmyRG6/LB6tpkDl6olAwX4qVtoNVg55CwlZtP8AF0CyhCBZBc1Lq7/ylKqQb4kdRV1yU=
+	t=1731519067; cv=none; b=bUkYhxA94VgXKS5ajPPNPXvciObCy8r16OxlJs7hnzxk+I4b0Mm01ob6Gbx+ySxSfuF8LKmwsknnDonctYw5Ync49X4fb8L0PNf7aN3n9NGZrx4+UlwyrZou9PZyy4KR0P7Y+rLFm1EwWZu9XT8CjW2hmXe0VZVlUkEQ1muHBTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731518526; c=relaxed/simple;
-	bh=Z2yvubv1C3jHp6QXvOC/+j9/4t0h3OAD2jGZoHdUtJo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lVJhBQdk/oA1FP0sOZig/7oPoV85sgkUCwKyT2+ugvZdhXu0+4k5CDAi3UdIvHmrURKwb6/lxzZfygwZ2gmo+73/rXhR0XTPEfXgjl1Np6OPF938WjVCXu7A7TqEYxIJV9wJ2IQJW78blSW4pfVJMi2jeYzwyN+QoWGjsBXkIVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83ac354a75fso863234939f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 09:22:05 -0800 (PST)
+	s=arc-20240116; t=1731519067; c=relaxed/simple;
+	bh=wM2LIeZuwho5MTyajMgsnq+6TqtS6xgt18ptAgYsbK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oDpbV4EzaAdZP5jWvrvMAMlwnCPd/6zIO/Z70nHQOJX4hlMvIV9mOBckbcgdfI49cEUQfTVHfaaINujeFPQU6cCUvPqL1ruXNOK+8jnWsmNCnjC59f08K31cfcRzhoZ3wojydjqy9VCizQ2QZCiQEela0s7MQbnQhkT4xkjl4UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j1ULK3OI; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7eae96e6624so4995675a12.2;
+        Wed, 13 Nov 2024 09:31:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731519065; x=1732123865; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2SnJeBCneJsNVP3wKudY4HbBDGuh/E7PxPQpfhhhdww=;
+        b=j1ULK3OIEIztYmlek6g1rr9STWSI+Wm1dZnWpmo1aNinNK9kvQ5S3TymP5MUVaMEeY
+         n4DkR24sJ2s5vmbUWefGB3XzGM32vDdgwtMyuxv0iY4JVsf323m+YcXJZ1+ePX8vWYKp
+         kryKX62rQXULCZu2bH2JeshSa8PpponEdZsii1AbRmddPEYEcnQQCsUaLfOl2PJQFNF2
+         rGaYk6zIGZprLn3X/wGFgPpTDjVPabsXF2z3XfpYJbwKUj9yXV0JyJP1nNdZvHcKtJqN
+         iNi2fHrZluIhj9xKd6XSvY0c3oiAvzNht2Ib0WBgFBADnQSMkgoCy+nn1Qvg7Kp0ejcw
+         A9XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731518524; x=1732123324;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1731519065; x=1732123865;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JnOf36aP94RKBx0LKLDwa8vZa06z4Rk+yvwFlv0FEFc=;
-        b=VpVH7FMXtAJQq45GgFvAWhJe+G9snBkUdn3H6PcNwhAFrma+E15nV7dZjnF+uV1OE4
-         +W5wuUWj+CJuoBPSdgYAlRucGbtsZPar7brSQ+asmRPBLqKH9QQ/BdGvtIhtVoqbTFGT
-         UyIiVU2ZPzxeU372bafwn8yMfiRn5wXnzTzqkwB50y+gVQcF6FIDOzgdtUa6oRpMlK7N
-         qxzIPUr9+vs1RE8gk1WrV21h+i8mWfsQswSVu/N1TPkLQLkdFeEX/YDTfHVV8yxGAmIk
-         R1LQ4d458nEsSylSXhwCDBapy9JInHDOPCT1jfpHOslk/SdHZqnGOAQZZKn4vXeQeDYu
-         AQfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXK4JA1JdLIuSRmEKDPvTY4d35o9JUZienWer8nxwK2jhV+WBn8soF6B10AhTk1qv6D8nqqVK15iXMG6LI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5epD8hFYqmNBEcqiLotNH3flBWuLIKwmInO5fLxoOvsBb+6u+
-	Ru9uQ1GSSM2Mc9OfnxX8YdICK4zhxfgjVdvQz/PS3auSbkKPzJZcmw63QjyO4v6uldfzJkL7f75
-	VUASxccqybYjP8NRtysPThQiOI24TOwShHhDrwpAl8EDILTYDligDgP4=
-X-Google-Smtp-Source: AGHT+IEgQtmLGOHg1sQ01VClhxTRs9K7Qj21K5aCs/Tm8TEIqRm/Hmmz09IzpN/8iP4SWCVdpKm4EOH9JWYpabOweVUk1mKlM+KS
+        bh=2SnJeBCneJsNVP3wKudY4HbBDGuh/E7PxPQpfhhhdww=;
+        b=Czs4Gkx3XYnM5SS8KnfEEet+o2Wv1O2fc/Tt1Xc29SGDc36X5g8ko6AVP1yMBwfCBZ
+         ph/ou5hwNtYWvo2l6UTFxfnov4jRTowva4HvSTMt6nvi2baVQkwr0f56cycqiCYJMKDl
+         DRFeJEnrFeorGoMrGQW8dDREyjMMLHNzUck42XW4rZEAVb3gBS9WUmzQ3SJaLBpAEDIp
+         Pxm62L+peM3XdZXY1xGipYT4U6xyZsFF7vmNvEaU3s3MZ4zxQDbu0naGywW7dGMzt3XU
+         KWBjEexA0xR1c6hgFjrFP4VLaFr77IJg1AqujzyNRofHmrWk3shdwXU+vn7acc/twLMX
+         YvJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzvK8uJKMM8YsLttSgtBt4qGvjmp6ImfKm4W5frvjpifv0iDvAGsRMzgMG1KmLbl5SBJM=@vger.kernel.org, AJvYcCXTI9NMjicnJXJUSmA74n8TWfg/KLS5nxzqUe0+0s37rYMjZYMmyvsZhcN3VbPX8HuvCDiwOVUbauTLkO52Juje@vger.kernel.org, AJvYcCXx3Tc3mapMg7h5L3gb5zBEtuJDgOek+bbnRWtYV/75T4uc2xzo8+B38rZCZlGcKIfLxJkAXttfwYEXe56I@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD1oOBXZ8oopGfi7g5lpTZS27qe/GEDBbdIV82H0nmpiQz0y5m
+	okw/QqrbL0xODa2zo5F8F9rYWALYipE9fNe9sAxu4qGhuROlSNU=
+X-Google-Smtp-Source: AGHT+IG9PteFS9WiKoGXgKwgDAw8HaSTb1BxroQtjfOr0tK6g0cn2Yzke9177Wjn0cpTZ7sCdN3xng==
+X-Received: by 2002:a05:6a21:7886:b0:1dc:5e5:ea65 with SMTP id adf61e73a8af0-1dc22b60950mr30420141637.34.1731519065222;
+        Wed, 13 Nov 2024 09:31:05 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5df334sm12738452a12.34.2024.11.13.09.31.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 09:31:04 -0800 (PST)
+Date: Wed, 13 Nov 2024 09:31:04 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, ebpf@linuxfoundation.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>,
+	Petar Penkov <ppenkov@google.com>, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 01/10] selftests/bpf: add a macro to compare raw
+ memory
+Message-ID: <ZzTiWBLaUDex4ieA@mini-arch>
+References: <20241113-flow_dissector-v1-0-27c4df0592dc@bootlin.com>
+ <20241113-flow_dissector-v1-1-27c4df0592dc@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3082:b0:3a7:1de2:1d9f with SMTP id
- e9e14a558f8ab-3a71de21df7mr2684235ab.13.1731518524539; Wed, 13 Nov 2024
- 09:22:04 -0800 (PST)
-Date: Wed, 13 Nov 2024 09:22:04 -0800
-In-Reply-To: <0000000000002b1fc7060fca3adf@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6734e03c.050a0220.2a2fcc.0045.GAE@google.com>
-Subject: Re: [syzbot] [block?] [trace?] INFO: task hung in blk_trace_remove (2)
-From: syzbot <syzbot+2373f6be3e6de4f92562@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, andreyknvl@gmail.com, axboe@kernel.dk, 
-	dvyukov@google.com, eadavis@qq.com, elver@google.com, glider@google.com, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
-	mhiramat@kernel.org, pengfei.xu@intel.com, peterz@infradead.org, 
-	rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241113-flow_dissector-v1-1-27c4df0592dc@bootlin.com>
 
-syzbot suspects this issue was fixed by commit:
+On 11/13, Alexis Lothoré (eBPF Foundation) wrote:
+> We sometimes need to compare whole structures in an assert. It is
+> possible to use the existing macros on each field, but when the whole
+> structure has to be checked, it is more convenient to simply compare the
+> whole structure memory
+> 
+> Add a dedicated assert macro, ASSERT_MEMEQ, to allow bare memory
+> comparision
+> 
+> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+> ---
+>  tools/testing/selftests/bpf/test_progs.h | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/bpf/test_progs.h b/tools/testing/selftests/bpf/test_progs.h
+> index 74de33ae37e56c90646cd1e0bb58ed7e3f345ec0..bdde741543836991398daacfe5423e6af8ef9151 100644
+> --- a/tools/testing/selftests/bpf/test_progs.h
+> +++ b/tools/testing/selftests/bpf/test_progs.h
+> @@ -186,6 +186,19 @@ void test__skip(void);
+>  void test__fail(void);
+>  int test__join_cgroup(const char *path);
 
-commit ae94b263f5f69c180347e795fbefa051b65aacc3
-Author: Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue Jun 11 07:50:33 2024 +0000
+[..]
+ 
+> +#define DUMP_BUFFER(name, buf, len)						\
+> +	({									\
+> +		fprintf(stdout, "%s:\n", name);					\
+> +		for (int i = 0; i < len; i++) {					\
+> +			if (i && !(i % 16))					\
+> +				fprintf(stdout, "\n");				\
+> +			if (i && !(i % 8) && (i % 16))				\
+> +				fprintf(stdout, "\t");				\
+> +			fprintf(stdout, "%02X ", ((uint8_t *)(buf))[i]);	\
+> +		}								\
+> +		fprintf(stdout, "\n");						\
+> +	})
 
-    x86: Ignore stack unwinding in KCOV
+nit: should we rewrite this as a real function?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=174bc1a7980000
-start commit:   7a396820222d Merge tag 'v6.8-rc-part2-smb-client' of git:/..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4059ab9bf06b6ceb
-dashboard link: https://syzkaller.appspot.com/bug?extid=2373f6be3e6de4f92562
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14669c6fe80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12d23ae3e80000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: x86: Ignore stack unwinding in KCOV
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+void hexdump(const char *prefix, void *buf, size_t len)
+{
+..
+}
 
