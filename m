@@ -1,109 +1,116 @@
-Return-Path: <linux-kernel+bounces-408194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB019C7BBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:56:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F27A59C7BBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:57:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB0EF1F22936
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:56:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8585281E7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BF4204F69;
-	Wed, 13 Nov 2024 18:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C64204F69;
+	Wed, 13 Nov 2024 18:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="khB17xxz"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTO6Xv3N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AB2200C90;
-	Wed, 13 Nov 2024 18:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8817202647;
+	Wed, 13 Nov 2024 18:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731524193; cv=none; b=dzArGpVG0qRRviL+GyWxur9K7ww+N3fDMzig5UHar4a6AnOdpZcopPW+17K/SvXz3uGMzXDFyRUkaB04UejDPjJ+GypYYYf3qynh11s29eqRlpSDkJAFbKny4zjE1cyY6EnJBG1nj0Pv5XyFaCHxm5kRGnTQCeHizwkhbuE6Nco=
+	t=1731524237; cv=none; b=FsgtpLtJaD7bc9agOcZuuhA8okeOZc3Lvlz+GZTLmMTbrEt8pD5UCyPTrljkS3gXrIGF3EmyRGfqPddeWma55eQ2Q9RiF01Q8tnAyp/k81JzLa7p89peVEVKlccmgZFaKRXEV9xQkFccuJs+rTSMF0RNxY+p3YjTFAiJsFRze3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731524193; c=relaxed/simple;
-	bh=un+NX46uMYK+KsNv68izGxWUaJuUbYOpxd89O9S1nmY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V5mjqAjH1nux4lQ/PHwemrMdLool6zBpbp1OYndGnGGho4eui9LMVvNliBDukzMZ3rkRIIrvca8z9wkGmvau8cfDZcHp5KFu5oMliPrte6FR9PmpNwfOlbJzjMNqC5DwBVrWKJbYg2Y+NU7MUb/NFo4VKmU4/05N0cBTsXu5EPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=khB17xxz; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1731524191; x=1763060191;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=un+NX46uMYK+KsNv68izGxWUaJuUbYOpxd89O9S1nmY=;
-  b=khB17xxzQ7fDDMlmR7i1xmQOSuTKF3vEOWWouIbefFA+jxfvt4b5T1bK
-   GzRTXOM6RIchKidgwRDLIKOsdMc7slDvVqvGVgEaMIA9a5VkmBaoXvqKw
-   gEEdta1YlJH/idV1+os01t+FM0pm1GwKsiYpv65QIAjmIVJdDNA8rxela
-   Y=;
-X-IronPort-AV: E=Sophos;i="6.12,151,1728950400"; 
-   d="scan'208";a="439549764"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 18:56:28 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:30814]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.55.96:2525] with esmtp (Farcaster)
- id 73d44386-eebc-4425-9e20-8bc91bca23f2; Wed, 13 Nov 2024 18:56:27 +0000 (UTC)
-X-Farcaster-Flow-ID: 73d44386-eebc-4425-9e20-8bc91bca23f2
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 13 Nov 2024 18:56:26 +0000
-Received: from 6c7e67c6786f.amazon.com (10.106.101.42) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Wed, 13 Nov 2024 18:56:23 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <mengkanglai2@huawei.com>
-CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<fengtao40@huawei.com>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <yanan@huawei.com>,
-	<kuniyu@amazon.com>
-Subject: Re: kernel tcp sockets stuck in FIN_WAIT1 after call tcp_close
-Date: Wed, 13 Nov 2024 10:56:19 -0800
-Message-ID: <20241113185619.54064-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <c08bd5378da647a2a4c16698125d180a@huawei.com>
-References: <c08bd5378da647a2a4c16698125d180a@huawei.com>
+	s=arc-20240116; t=1731524237; c=relaxed/simple;
+	bh=5wZKxu12qYihpmKa28+AtTnrGYmnzuouLS+qJVdqhyI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RUKsFo+YGC8zXomN5mUqFFkUbDlUirnSMpN/5uHA9YCVTUBXea5k8Wku5VYJwAk0DLkvp6b3Rh3kZcQSxJ6WZEJMivBwIyuCLLofLdtG1LGwmiPO9e+NE9vk8U70b8BJfkoF4YeZEkYApxrYgwu3jJwbmvtyO3iFubD+BNFnOBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QTO6Xv3N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57745C4CEDA;
+	Wed, 13 Nov 2024 18:57:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731524237;
+	bh=5wZKxu12qYihpmKa28+AtTnrGYmnzuouLS+qJVdqhyI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QTO6Xv3Nzt1Sl1cSrVwDdF3CxydDl38AarSD2qHMSu6MFkwSl9Zy2wTBo+UYceLYn
+	 z/ycXiHgR2YwuQ3MbS5VfNKbRIiT/L/4EKjpuRo0WqmiQUDgjnRemidHu1C+tiIVLE
+	 Q3nFJUJVYj5voKZ0E44SCdAtis1Yv6Rm2AfbVGpcw4EelbXHV1lGRgbylxlsrpoJ8Q
+	 MhiABYdfsewy7EhEZR+wLIJASxGVFWdWxRep/x3S8132CaGDFVC4Oa+sduyO9yGIFE
+	 ugdq7OTVaFfIdCJLyF14MEHKRqrUjelQ2U9v7Xhj65VFuVeRvzlFY2dAjB/QzOHNKe
+	 D1n2U9Mzw0zSg==
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a6bf539cabso25687115ab.3;
+        Wed, 13 Nov 2024 10:57:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUhh3x6ge0UJ9wcZaRC+pOtq3G5JImbxWfeL2IuCnJ/qUVm5SydBi1sXYTmeR40crndjA7M2DtgfEpKr3jYIGrMBu71Qxpu@vger.kernel.org, AJvYcCWOe4GO6rWXSjD0y4729j2tEJTDoWlSI6nbcDZr+dm2+tk2ptzqmx0TYRCpP2PclNBEodk=@vger.kernel.org, AJvYcCXH6Vi6d5j8uvxCVi5ySbFrru1pKWVzhwemkWlc3F2OcyewbdRiEuSBhdRuKBqw9EmykxPIgN0S8X5f+WzS@vger.kernel.org, AJvYcCXRJsUNklM4CWM7synqYYjuRa2SwR/DUH9kOKB6t6cKI+YjCY7j6dpB/wjapDBpB2j4V59E+CtkEH5dB/C0hg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL/CqG1yBAPZMXUMSOOqr2Fa4intdkc36Pc23PUDh20q3Sieve
+	vlZVANMz4dtDhJ8HsJxouwKwckHudUcKM+JRB3RC9pnzwpiCEXr22HCdOD2+nUto5wAunxY+Du6
+	+XbmgMuheIdMM0jENsVBXl2MxqBY=
+X-Google-Smtp-Source: AGHT+IFRUe2R/KYe/0g+BBuwonrcFhhroRTWjnMS2oIC1YXoUQZfpRdPFs2YH+Q3iuxsU6xarKf1JgvIqeEdqoMJdQs=
+X-Received: by 2002:a05:6e02:1b0e:b0:3a7:1d09:d90e with SMTP id
+ e9e14a558f8ab-3a71d09db79mr14105765ab.15.1731524236545; Wed, 13 Nov 2024
+ 10:57:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D042UWA002.ant.amazon.com (10.13.139.17) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+References: <20241112082600.298035-1-song@kernel.org> <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
+ <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com> <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
+ <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com> <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
+In-Reply-To: <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
+From: Song Liu <song@kernel.org>
+Date: Wed, 13 Nov 2024 10:57:05 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
+Message-ID: <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Song Liu <songliubraving@meta.com>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"mattbobrowski@google.com" <mattbobrowski@google.com>, "amir73il@gmail.com" <amir73il@gmail.com>, 
+	"repnop@google.com" <repnop@google.com>, "jlayton@kernel.org" <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"gnoack@google.com" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: mengkanglai <mengkanglai2@huawei.com>
-Date: Wed, 13 Nov 2024 12:40:34 +0000
-> Hello, Eric:
-> Commit 151c9c724d05 (tcp: properly terminate timers for kernel sockets)
-> introduce inet_csk_clear_xmit_timers_sync in tcp_close.
-> For kernel sockets it does not hold sk->sk_net_refcnt, if this is kernel
-> tcp socket it will call tcp_send_fin in __tcp_close to send FIN packet
-> to remotes server,
+On Wed, Nov 13, 2024 at 10:06=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+>
+> On 11/12/2024 5:37 PM, Song Liu wrote:
+[...]
+> > Could you provide more information on the definition of "more
+> > consistent" LSM infrastructure?
+>
+> We're doing several things. The management of security blobs
+> (e.g. inode->i_security) has been moved out of the individual
+> modules and into the infrastructure. The use of a u32 secid is
+> being replaced with a more general lsm_prop structure, except
+> where networking code won't allow it. A good deal of work has
+> gone into making the return values of LSM hooks consistent.
 
-Just curious which subsystem the kernel socket is created by.
+Thanks for the information. Unifying per-object memory usage of
+different LSMs makes sense. However, I don't think we are limiting
+any LSM to only use memory from the lsm_blobs. The LSMs still
+have the freedom to use other memory allocators. BPF inode
+local storage, just like other BPF maps, is a way to manage
+memory. BPF LSM programs have full access to BPF maps. So
+I don't think it makes sense to say this BPF map is used by tracing,
+so we should not allow LSM to use it.
 
-Recently, CIFS and sunrpc are (being) converted to hold net refcnt.
+Does this make sense?
+Song
 
-CIFS: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ef7134c7fc48e1441b398e55a862232868a6f0a7
-sunrpc: https://lore.kernel.org/netdev/20241112135434.803890-1-liujian56@huawei.com/
-
-I remember RDS's listener does not hold refcnt but other client sockets
-(SMC, RDS, MPTCP, CIFS, sunrpc) do.
-
-I think all TCP kernel sockets should hold netns refcnt except for one
-created at pernet_operations.init() hook like RDS.
-
-
-> if this fin packet lost due to network faults, tcp should retransmit this
-> fin packet, but tcp_timer stopped by inet_csk_clear_xmit_timers_sync.
-> tcp sockets state will stuck in FIN_WAIT1 and never go away. I think
-> it's not right.
+> Some of this was done as part of the direct call change, and some
+> in support of LSM stacking. There are also some hardening changes
+> that aren't ready for prime-time, but that are in the works.
+> There have been concerns about the potential expoitability of the
+> LSM infrastructure, and we're serious about addressing those.
 
