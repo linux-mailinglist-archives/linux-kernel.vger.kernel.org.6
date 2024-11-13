@@ -1,71 +1,72 @@
-Return-Path: <linux-kernel+bounces-407010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A2F9C676A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:42:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C209C6769
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 03:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 430D6B2630B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174031F21E19
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 02:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A8C1494DD;
-	Wed, 13 Nov 2024 02:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F040B1494DD;
+	Wed, 13 Nov 2024 02:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L1aCocgA"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gE7I88bB"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288001419A9
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06393154C0B
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731465630; cv=none; b=IKPGhTXgag5bRESqYif5WHBh5T/BVCk6ZziCeuwjGQUdejuJZbHQvnSWk+H/vkeXIerqNL/4s0WJSrORLGFHHld2+9t8NFP/xaSR+xPkla4mZDZWXxpyMkEwFuBefkDM03X8OG05k11oyhZxEJWGAAaFJg0C0pzvx20u11LdvWc=
+	t=1731465638; cv=none; b=q1y759fq2EKbm5GFmc8VP0xS9/pM47klq68uDue95/qPMdR4ZU5fp7kQe4rdHcVHC6W1jHhuDCc0jCinyiWDsasNdtn9Sp+3jY6s4b3/pSB4Q1smC+zTUeLK0OOOAyu85PTVEiAPJHpmB+3nNWZwhygPvET7WHkDd/vrNDaozHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731465630; c=relaxed/simple;
-	bh=T13dYZj5wf2Zd3XF41N7aemiKFJr6ayRHpqcY9xRpR0=;
+	s=arc-20240116; t=1731465638; c=relaxed/simple;
+	bh=8lt7eykDFZw7fIigqij0E5lpK1ubBDThz9WowdmROho=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DJx4Tjl7HslzmThX536/eZHfvJ2kPSUb/gibuhnR0a5+17nXsa+wHCL8XjvjYDNGj/ZPtzP1EEcxN+eAxjUlBgv5hO/MlbsQYJQU+ggj/qwFo7AAR/puyrb2PH19qUFG3e8WlcNoD1iUcwqheVT63aMw9FTGsK5WsCFdBFbcp8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=L1aCocgA; arc=none smtp.client-ip=209.85.214.170
+	 MIME-Version; b=jsuMSgMv4BwLV3X9GKKFt4RpdPGE2P2goEIWSTp2mPzi2aUadzfM2TkfUvBduGTUX01D15z1VC0XVaJkgs34ohR0UWMursDxsPN7ewWhXlefhiKez1LEcYnEBXmkwrVHR/r+WsfqsdHnfnQMWK1QSGcbTqIt5C01p/aOvxjPIT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gE7I88bB; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20ca1b6a80aso69487695ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:40:27 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cb47387ceso66371315ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:40:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731465627; x=1732070427; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1731465635; x=1732070435; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lUswgydF4ecDD8gA1hGl988rFxQMVbM/Q/QpWYHHIvg=;
-        b=L1aCocgABbOP+l5rs4E+n5MoRU/dkQ19pizpfIMviXxj6JeXoVoybwwbKXG2t5DAMe
-         mqByfrPGu3LZKftd/PmD+92SBWEyK6m8GoHwPN3u+T9jszMNQopopHfDoIQBH+MARRec
-         T91Ye0rXtFMS/AoNf2wPAyRGLRxGbTES49cpE=
+        bh=Vjvrd2avQzhgqp6lHzhNNlW4+aoD1gw3mVGy/cwxKNk=;
+        b=gE7I88bBD0HdWSXQlYMBNj/ZD7ByCp6yeH/JxP8Ln1zfoJL/eypAhjCrZFiO54328r
+         4vH1nXWQ4THu7TS0L4dRRWqukzyIbyQU0ec1sO3NwOWjZ3tN0/DjB+qTFcd5zfMZLr2p
+         L8jenlp0k50FBeqqfWRzsxGWAn3Da5F5yU6Mg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731465627; x=1732070427;
+        d=1e100.net; s=20230601; t=1731465635; x=1732070435;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lUswgydF4ecDD8gA1hGl988rFxQMVbM/Q/QpWYHHIvg=;
-        b=xKCuQuNoAsP/VtdcEFG5itUqgUEq/cLqgsfIw3/sF7eo1O0f1auNHCo3hgVkiER4it
-         ROgNIitVq0BnveyAXOWtszhGtHaYu29gvdP0sXQddlH/W0XViQoQp1HUcX6SCshnqEIn
-         3lvMhfEj54uBRS4I2yR8HNOT/nH9DetBN/aymZoABsfVJNzjQExWiA08+NMh9KoiJrMW
-         iVfv7fVAoCqf3GxOfXw9AB9fZTpvup+arVdj/PrcHTtuaipgjEvZBNeCe+m9lM9KKgv5
-         jKXvju42Awxje96RU+j4YnMWHhyV7WNsrlxn4gULJmrpcWDNzGwveSJoRUw4YiyJlexE
-         qiQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLIhZo5Y1hlDwjDjr1U4DsOwYlOEY8ZN/IsZp2kiTKUVNVxapi1FCQ2qT8zoTvHuHUnwqChIRAaYtWLYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEHJrdG5LbFDcrowkVcrPTRlfI2dRUorIpGyTQA+h8o9Mjfmj6
-	yfX7kWW5rOk3G9ovmRYT/jwH/YQD9ip4OB4ZmCXR5we2GDIn5gDWW7zzva1Vpw==
-X-Google-Smtp-Source: AGHT+IGby99YKs2n1DW3eqEgTozJAq71CGujBYHsrQ+I43rpaTsytkJKH0YHFTNW8GkOp0t5qemLMg==
-X-Received: by 2002:a17:902:d505:b0:20b:8e18:a396 with SMTP id d9443c01a7336-21183c7e137mr245463495ad.9.1731465627355;
-        Tue, 12 Nov 2024 18:40:27 -0800 (PST)
+        bh=Vjvrd2avQzhgqp6lHzhNNlW4+aoD1gw3mVGy/cwxKNk=;
+        b=SxQhkEOfQ/bd2Rr8qjYP8iO1kzFZn9lP+6504FG5zuafhjpRxp/7DG72qpae6rRcFF
+         6o5Mcjtj1QM3vWN8fuLyHm+IrS/XJGDDsUrGyBAp0Yo6HuDOkXf9c37MnJRucS/MNSfF
+         Z0owkVnRMfjqrx7qYzjM+KgNvdvlZIe/UDFstyFBOtRYJUzIkfPYyfMY7KKL6fSrabhW
+         XuYHjwvlOSC/d9QrZe9fnxdozlX1M72FsHNOCLFaZ59eF03ugpszVdS4qn1ZxRmdlYp9
+         tJ/zYamTYMCW5eypHBKF0wA8ViAqG9OTY861ip5P9yMj+DtmK9g9Eo2EpNk7Nq7CJVW4
+         Horw==
+X-Forwarded-Encrypted: i=1; AJvYcCUor412pEwHZ079ituWrsYnXa82Bozwkxlqhh6gZ96Vuf6j8j+tr2KgCuNg8AetMY/ZdeZmd4c/ftWuBug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcTe6cZW3U/IAOoz+8/Csp+ANF3YmCSN1gzqe+Hv0T6SPno+DT
+	vOW7ypu5AIzSHmoWX2wtq8yLBLtHyuFz4Ln8idH2jJ75dagmVB1YdfSt+MV4Tg==
+X-Google-Smtp-Source: AGHT+IHe721yXQHCRZeRjkW+n+uLrfYbkZjFfwy3XKSXli/Bjhg1eEXBQdFZlkHS9zXTLG7hxYMmCQ==
+X-Received: by 2002:a17:903:1cb:b0:20c:bffe:e1e5 with SMTP id d9443c01a7336-21183521d84mr274072955ad.19.1731465635278;
+        Tue, 12 Nov 2024 18:40:35 -0800 (PST)
 Received: from lschyi-p920.tpe.corp.google.com ([2401:fa00:1:10:3dd4:86fa:9696:4236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e418d6sm101831325ad.142.2024.11.12.18.40.24
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e418d6sm101831325ad.142.2024.11.12.18.40.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 18:40:26 -0800 (PST)
+        Tue, 12 Nov 2024 18:40:34 -0800 (PST)
 From: "Sung-Chi, Li" <lschyi@chromium.org>
 To: 
 Cc: "Sung-Chi, Li" <lschyi@chromium.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
 	Lee Jones <lee@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -78,12 +79,13 @@ Cc: "Sung-Chi, Li" <lschyi@chromium.org>,
 	chrome-platform@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	linux-hwmon@vger.kernel.org
-Subject: [PATCH v3 1/2] hwmon: (cros_ec) register thermal sensors to thermal framework
-Date: Wed, 13 Nov 2024 10:39:51 +0800
-Message-ID: <20241113024000.3327161-1-lschyi@chromium.org>
+Subject: [PATCH v3 2/2] dt-bindings: mfd: Add properties for thermal sensor cells
+Date: Wed, 13 Nov 2024 10:39:52 +0800
+Message-ID: <20241113024000.3327161-2-lschyi@chromium.org>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-In-Reply-To: <20241111074904.1059268-1-lschyi@chromium.org>
+In-Reply-To: <20241113024000.3327161-1-lschyi@chromium.org>
 References: <20241111074904.1059268-1-lschyi@chromium.org>
+ <20241113024000.3327161-1-lschyi@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,55 +94,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-cros_ec hwmon driver probes available thermal sensors when probing the
-driver.  Register these thermal sensors to the thermal framework as well
-via setting HWMON_C_REGISTER_TZ as a chip info, such that thermal
-framework can adopt these sensors as well.
-
-To make cros_ec registrable to thermal framework, the cros_ec dts need
-the corresponding changes:
-
-&cros_ec {
-	#thermal-sensor-cells = <1>;
-};
+The cros_ec supports reading thermal values from thermal sensors
+connect to it. Add the property '#thermal-sensor-cells' bindings, such
+that thermal framework can recognize cros_ec as a valid thermal device.
 
 Signed-off-by: Sung-Chi, Li <lschyi@chromium.org>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
  Changes in v2:
-   - Rename `cros_ec_sensor_data` to `cros_ec_hwmon_thermal_zone_data`.
-   - Rename `addr` in struct `cros_ec_hwmon_thermal_zone_data` to `idx`.
-   - Use `cros_ec_hwmon_temp_to_millicelsius` to do value conversion in
-     `cros_ec_thermal_get_temp` function.
-   - Rename `cros_ec_thermal_get_temp` to `cros_ec_hwmon_thermal_get_temp` to
-     make `cros_ec_hwmon` a prefix.
-   - Use `%pe` in `cros_ec_hwmon_probe_temp_sensors` when printing out
-     `data->tz_dev` if failed register thermal device.
-   - Remove `cros_ec_hwmon_remove`, and the `.remove` value in
-     `cros_ec_hwmon_driver` since there is no need to call
-     `devm_thermal_of_zone_unregister` for clean up.
-   - Revert function signature of `cros_ec_hwmon_probe_temp_sensors` since all
-     needed parameters are presented.
-   - Revert include of `linux/list.h` because no list data structure is used.
----
+   - Add changes for DTS binding.
  Changes in v3:
-   - Revert all changes and just as add HWMON_C_REGISTER_TZ as a chip info.
    - Remove unneeded Change-Id tag in commit message.
 ---
- drivers/hwmon/cros_ec_hwmon.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/mfd/google,cros-ec.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-index 5514cf780b8b..9991c3fa020a 100644
---- a/drivers/hwmon/cros_ec_hwmon.c
-+++ b/drivers/hwmon/cros_ec_hwmon.c
-@@ -141,6 +141,7 @@ static umode_t cros_ec_hwmon_is_visible(const void *data, enum hwmon_sensor_type
- }
+diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+index aac8819bd00b..c7d63e3aacd2 100644
+--- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
++++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+@@ -96,6 +96,9 @@ properties:
+   '#gpio-cells':
+     const: 2
  
- static const struct hwmon_channel_info * const cros_ec_hwmon_info[] = {
-+	HWMON_CHANNEL_INFO(chip, HWMON_C_REGISTER_TZ),
- 	HWMON_CHANNEL_INFO(fan,
- 			   HWMON_F_INPUT | HWMON_F_FAULT,
- 			   HWMON_F_INPUT | HWMON_F_FAULT,
++  '#thermal-sensor-cells':
++    const: 1
++
+   gpio-controller: true
+ 
+   typec:
 -- 
 2.47.0.338.g60cca15819-goog
 
