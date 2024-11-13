@@ -1,124 +1,118 @@
-Return-Path: <linux-kernel+bounces-408278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B131D9C7CD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:22:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF57C9C7CE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:28:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 755B1284526
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:22:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ACF9B282DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F142123C8;
-	Wed, 13 Nov 2024 20:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C230E2141A2;
+	Wed, 13 Nov 2024 20:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hyf4ZxZi";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PrOwGeo2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="huT2mo7x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F12A20B7F1;
-	Wed, 13 Nov 2024 20:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222AC206514;
+	Wed, 13 Nov 2024 20:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731529257; cv=none; b=RUzIDa170/csgA8OFkm11E1tT9oGK2ZSGdnxi33wtOXFhDie7Ah2HTEnos9p4ZGwP/xoK9ae2BQDyOyOwYN2QEaClLLCMhkhtb6IibG7coLBrUhAkNpn3gwbJh9sbMP2WldrbMI3dtaTmUnHFB5z36NPWFQ7QO64+x0uNvBe9TI=
+	t=1731529268; cv=none; b=DudytTrIAWetTKwrROwM6AbgmVwjzOiMuqFwRtZSNgoDIhf1/ezjdmMtqkEdmEjSdrJqG8Ov9+MCRfqMV7Gg5CEvaAJrIWGq3Ayy0nY2XWsYeKmWgtsz+tmzoIC7KHb7Mdeopcvgo27xdFg78xkkmo1tjgsWdf97ZundD6aaNVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731529257; c=relaxed/simple;
-	bh=GUOtGj4BVWrNihtFbLsuXnaGd8H/mdTz7pFySYtiUwo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=iZrDUN9NULkXJ1optICNxnbNdtHQLOSNWQ2bcw8hijGJ842UeeGDleyIsggl1OJzsQ/YksiArZkyganHwS695KJU4CCvh+f0IlM3zzU6kd4g/8+2kxQaVCXqezvrrX1UEYCrO/8Uci1ghRvstVGALnEfebLQ6lGuTuH2o57cNC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hyf4ZxZi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PrOwGeo2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 13 Nov 2024 20:20:54 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731529254;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/wB/6JMDNOzv36oKOzdH+D8CQIDHL+74ug7JPuqS+a8=;
-	b=hyf4ZxZizGqzLa/Gp8Zsy7HG9yEltd8D5o/5CHq0BDOqdbm6tfHCKDn9YLk4aEmaeLwXHJ
-	IWxnmZxumH7iw0kVqv84cMUORX65O6DyjTkm0kO9RfA6wv/bza1tLEeNY7lV6/pPKDC/rn
-	4qJBwPjrdQwL/0xd0gy71ZEvkTk1SIJYiZO+ES2tTgAixtjifFpAxFWova7G72xh70txRY
-	T9DDgs9ZbnSozu72qV5wMrqthcof8yFrxy9UA0fNfp32U1BoOfQ62AvYzYgiR0B339OtWQ
-	YDrLD0Xsew/uvweuGy0Sdsqx4e9LnCfe3thnImNCbXCYqJ86JHTkJsoKp0DMfw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731529254;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/wB/6JMDNOzv36oKOzdH+D8CQIDHL+74ug7JPuqS+a8=;
-	b=PrOwGeo2QnrrlTMlOuDDmjcmf9jf4r7TrmK9v6J1N0IQjxyymm6CSBmvGAN91LgTSLZKHy
-	YHd0k3VXQBYBV5Dg==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] Merge tag 'timers-v6.13-rc1' of
- https://git.linaro.org/people/daniel.lezcano/linux into timers/core
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <8d402321-96f1-47f7-9347-a850350d60de@linaro.org>
-References: <8d402321-96f1-47f7-9347-a850350d60de@linaro.org>
+	s=arc-20240116; t=1731529268; c=relaxed/simple;
+	bh=pZVSg10VOkAIcP4WSJXbuoBHHguSGDKtxN8ujJVyPL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPf0pFS+/OgrpKvYORjY5/UkL2yBRyHnrHgSOZt/oV/lGMxTbXWswDm78G+LPNRQL6HnsRT1XKAsLFvYFw0t+ZrxGTxXdTxrhGQgfYfoom3OecPOjCw8fH7od6drMJMhWjbjgLPvmSI3LUJHIo+0hNbRagBB/6TuwATB8UsqQsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=huT2mo7x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D08D1C4CEC3;
+	Wed, 13 Nov 2024 20:21:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731529267;
+	bh=pZVSg10VOkAIcP4WSJXbuoBHHguSGDKtxN8ujJVyPL0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=huT2mo7x4OmzlsvVK19hzvAn7IYqv/MA1eomnyxHSXqOTZ9MuDgMENsms/RLmGTjH
+	 Wtw8T78/ZVp3nTtWEhdM3KFQVJmiJVR7BwH2LlmLT6V3qwurJs3gZognIkwJsvZZ40
+	 LtxKLJFxIo0eiyWp1AAqOOmiYc3zNvBYZxvAH1Ja4I8OmqPyz5ATZ401mYWNCjpj5f
+	 XPMnuh6SOG/i4N4WXKubi4BzaXge+PMrZAnJY1rwt7KybQbdJtBaQweJjze+jykGhA
+	 bCW137YurCA3FgzWSaCNyvQYTltv2Q3vSgs1uEFIfJJTrSzK/hJPpGMFYMI5pgIQo0
+	 V6CA2D7kE2YNg==
+Date: Wed, 13 Nov 2024 12:21:05 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, Amit Shah <amit@kernel.org>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+	linux-doc@vger.kernel.org, amit.shah@amd.com,
+	thomas.lendacky@amd.com, bp@alien8.de, tglx@linutronix.de,
+	peterz@infradead.org, corbet@lwn.net, mingo@redhat.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
+	pbonzini@redhat.com, daniel.sneddon@linux.intel.com,
+	kai.huang@intel.com, sandipan.das@amd.com,
+	boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
+	david.kaplan@amd.com, dwmw@amazon.co.uk
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Message-ID: <20241113202105.py5imjdy7pctccqi@jpoimboe>
+References: <20241111163913.36139-1-amit@kernel.org>
+ <20241111163913.36139-2-amit@kernel.org>
+ <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+ <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+ <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
+ <20241112214241.fzqq6sqszqd454ei@desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173152925403.32228.8860008565950381348.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241112214241.fzqq6sqszqd454ei@desk>
 
-The following commit has been merged into the timers/core branch of tip:
+On Tue, Nov 12, 2024 at 01:43:48PM -0800, Pawan Gupta wrote:
+> On Mon, Nov 11, 2024 at 05:46:44PM -0800, Josh Poimboeuf wrote:
+> > +	 * 1) RSB underflow ("Intel Retbleed")
+> >  	 *
+> >  	 *    Some Intel parts have "bottomless RSB".  When the RSB is empty,
+> >  	 *    speculated return targets may come from the branch predictor,
+> >  	 *    which could have a user-poisoned BTB or BHB entry.
+> >  	 *
+> > -	 *    AMD has it even worse: *all* returns are speculated from the BTB,
+> > -	 *    regardless of the state of the RSB.
+> > +	 *    When IBRS or eIBRS is enabled, the "user -> kernel" attack is
+> > +	 *    mitigated by the IBRS branch prediction isolation properties, so
+> > +	 *    the RSB buffer filling wouldn't be necessary to protect against
+> > +	 *    this type of attack.
+> >  	 *
+> > -	 *    When IBRS or eIBRS is enabled, the "user -> kernel" attack
+> > -	 *    scenario is mitigated by the IBRS branch prediction isolation
+> > -	 *    properties, so the RSB buffer filling wouldn't be necessary to
+> > -	 *    protect against this type of attack.
+> > +	 *    The "user -> user" attack is mitigated by RSB filling on context
+> > +	 *    switch.
+> 
+> user->user SpectreRSB is also mitigated by IBPB, so RSB filling is
+> unnecessary when IBPB is issued. Also, when an appication does not opted-in
+> for IBPB at context switch, spectre-v2 for that app is not mitigated,
+> filling RSB is only a half measure in that case.
+> 
+> Is RSB filling really serving any purpose for userspace?
 
-Commit-ID:     228ad72e7660e99821fd430a04ac31d7f8fe9fc4
-Gitweb:        https://git.kernel.org/tip/228ad72e7660e99821fd430a04ac31d7f8fe9fc4
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 13 Nov 2024 21:09:35 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 13 Nov 2024 21:09:35 +01:00
+Indeed...
 
-Merge tag 'timers-v6.13-rc1' of https://git.linaro.org/people/daniel.lezcano/linux into timers/core
+If we don't need to flush RSB for user->user, we'd only need to worry
+about protecting the kernel.  Something like so?
 
-Pull clocksource/event updates from Daniel Lezcano:
+  - eIBRS+!PBRSB:	no flush
+  - eIBRS+PBRSB:	lite flush
+  - everything else:	full flush
 
-  - Remove unused dw_apb_clockevent_[pause|resume|stop] functions as
-    they are unused since 2021 (David Alan Gilbert)
+i.e., same logic as spectre_v2_determine_rsb_fill_type_at_vmexit(), but
+also for context switches.
 
-  - Make the sp804 driver user selectable as they may be unused on some
-    platforms (Mark Brown)
-
-  - Don't fail if the ti-dm does not describe an interrupt in the DT as
-    this could be a normal situation if the PWM is used (Judith Mendez)
-
-  - Always use cluster 0 counter as a clocksource on a multi-cluster
-    system to prevent problems related to the time shifting between
-    clusters if multiple per cluster clocksource is used (Paul Burton)
-
-  - Move the RaLink system tick counter from the arch directory to the
-    clocksource directory (Sergio Paracuellos)
-
-  - Convert the owl-timer bindings into yaml schema (Ivaylo Ivanov)
-
-  - Fix child node refcount handling on the TI DM by relying on the
-    __free annotation to automatically release the refcount on the node
-    (Javier Carrasco)
-
-  - Remove pointless cast in the GPX driver as PTR_ERR already does that
-    (Tang Bin)
-
-  - Use of_property_present() for non-boolean properties where it is
-    possible in the different drivers (Rob Herring)
-
-Link: https://lore.kernel.org/lkml/8d402321-96f1-47f7-9347-a850350d60de@linaro.org
----
+-- 
+Josh
 
