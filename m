@@ -1,90 +1,68 @@
-Return-Path: <linux-kernel+bounces-408247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB799C7C8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:03:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E81069C7C87
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:00:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96DD5B29E43
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC646286003
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC03B209681;
-	Wed, 13 Nov 2024 20:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195E4205E22;
+	Wed, 13 Nov 2024 20:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUHJD+Iq"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vahedi.org header.i=@vahedi.org header.b="Jq+HR0iP"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5721A2071EF;
-	Wed, 13 Nov 2024 20:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DE320694D
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 20:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731528030; cv=none; b=pZlG0d+u2720Z+SHnTVOXWiCGdLDBCaZeaL4jeiQetS2mS/qM3H5pWuTpT8swhZb3HYPqyh+g7LWn0EEluSw1iNS25PBbzq2hXJn1wlIgijqpiUguM7JlxS7d0mvjpPKlYkB7cpTEU/WCOUH321ckua4vel1J6BQkfnUP6Bc7SQ=
+	t=1731528026; cv=none; b=WdIFQ+UWao0Lu0qcZ6G5WdOxATOlrT4+N9mnawLg7vDehaB8RKM3EBChlsA4rVtyqikoH0jfKiEAoguI6WyMd7VRYtapE908M5kAY8NdRWj5HL4fsJTr4qmMXv7ivaBg0zLMGTvMyAeHEDlz2kBaI9g7wE0UnM4Pjek/Ivve3BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731528030; c=relaxed/simple;
-	bh=bxvXj0rYTEUIuTo+oE6Fsv17g+bx+ZviM+T2flCinDA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SF6lnOW9NluuB1VbtZSkoxgtjvwlwos1zz78lTSIyhOUBwPayXnxv8Jv1gc4rMWV3u/EN1b7/kom41r16fF3mtJ1DxSZz9cjeJnmNQd3wMP/0QXOiVnw/kAiDK0gr1/ggmYkHGnQabTJiTWmaWzVbMCiomC1wr099u1lyDNDMjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUHJD+Iq; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso101683161fa.2;
-        Wed, 13 Nov 2024 12:00:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731528026; x=1732132826; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yNoagPAPa8LF4vkYrXReGe3nCeerUu69H6SQLVJho/s=;
-        b=QUHJD+IqjSd2ReFj7y1VdgZujw1PvtGmB7bEn+M6Na75tTFDzyAj/uA+NZgqfkPlle
-         htF9QKfNoaWvD2tL7zNr+X7DNpSENQkeraDjo1x2PFPNvRdPtFFN3Sd7wnzQ41JPsBIw
-         iEhFzKVUfa0uDQmXM1O0c1kzQgbHrFTndP0DCC2WUhjd5a02aobuOX/F+UH5pfkGRmEg
-         BQaHOMeaFoC4voZlMR9U5jTrJkVaKP/T169fhI/6drjmnCxTo+rilLiwwTXILzgPJZM6
-         Hxj0IeSLPHx2F8JuuF/dBYwkZgsLwtqlqCbEAcRwgXTn1veYkQbSeWzOX1SSQMwM7zAP
-         tWUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731528026; x=1732132826;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yNoagPAPa8LF4vkYrXReGe3nCeerUu69H6SQLVJho/s=;
-        b=gVu2SPtEhraIn8vAb4ar1bG+bW6dOIEVN1SfSnM3JHBP82DuB/125GZN7LSv0aQYVo
-         yZ8HmjRku0Axz3LWSXO94odk9oE/kp6UBk8qTy/JkNus6KPHVTeIFyhn7AC4ZRIkasFI
-         cBedFJQncQI/38NIwt3tQ4GQ7iwya5UML+96Z1up5gRkFix36MmBixdufeQs0yboVLHJ
-         AA68a9cJS9mnhcvsA6BZJFYaHdj8ZVOQMqu+mLNF8BCnqHMZ1v5zU0+Sy7Aeqx6Yg5so
-         wjKivKL6GbmcrTYi1YIOXLOarhRPQbfy7pWBYXAs2EfwZ7cpujHaZBsT2tXJOdzuLsAx
-         SdWA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3YYl/VWkcZwXcJJ758FrACkLZfrw6kFeF6933aUkYeZZTlCNzU0TzLl4FbV4MH4yWg5M7Big5vk4oOsM=@vger.kernel.org, AJvYcCW5iYil2C1Txa485SrujCfs+OedfVJcTjmpz6H3YZLLZupgRa8d/cmHCtHZPYisdLr9plkFHGbJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy35qjuPt1/8LKVLLxC5/tD6XXLTrKKPeK1WNOaXm2dYxcJkp8O
-	u1vG6SzL7ItIYrxYvkTabhe/Ktx/McCIce7hX1AdCx4iOOQYBtUC
-X-Google-Smtp-Source: AGHT+IHZ2iTOwACBsmAVacJwB6oQq4aacfYJnaFDukytp6B0W/wrdrWtkSP4TAASrmzLdcFTHZgr4g==
-X-Received: by 2002:a2e:a9a4:0:b0:2fb:63b5:c0bc with SMTP id 38308e7fff4ca-2ff20162837mr146723531fa.3.1731528026079;
-        Wed, 13 Nov 2024 12:00:26 -0800 (PST)
-Received: from rex.hwlab.vusec.net (lab-4.lab.cs.vu.nl. [192.33.36.4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9efd2fe9fdsm675016066b.132.2024.11.13.12.00.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 12:00:25 -0800 (PST)
-From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-To: Ronak Doshi <ronak.doshi@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andy King <acking@vmware.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-	Raphael Isemann <teemperor@gmail.com>
-Subject: [PATCH 2/2] vmxnet3: Remove adapter from DMA region
-Date: Wed, 13 Nov 2024 21:00:01 +0100
-Message-Id: <20241113200001.3567479-3-bjohannesmeyer@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241113200001.3567479-1-bjohannesmeyer@gmail.com>
-References: <20241113200001.3567479-1-bjohannesmeyer@gmail.com>
+	s=arc-20240116; t=1731528026; c=relaxed/simple;
+	bh=ZrwRcle6eumpiJO2FfVOfK4rQIqM1H+WeqqUrRbeZOM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=RcPdbeUMY9DTBkji7a70xtrCj5hgcja02xQMiqKdtx6jWNmSjHXGvMPk4G8SnVXMfBOydxC9XPwlKTKqYHwHS4svip1dz+Pd5ubyPP5OWi9ERPFlRPiDNg241tW2OKC2AbWNqppSPuQkiBsHD/EWlg8PoKi8KmphRj/vtVW8+84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vahedi.org; spf=pass smtp.mailfrom=vahedi.org; dkim=pass (2048-bit key) header.d=vahedi.org header.i=@vahedi.org header.b=Jq+HR0iP; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vahedi.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vahedi.org
+Date: Wed, 13 Nov 2024 21:00:12 +0100 (GMT+01:00)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vahedi.org; s=key1;
+	t=1731528019;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZrwRcle6eumpiJO2FfVOfK4rQIqM1H+WeqqUrRbeZOM=;
+	b=Jq+HR0iPg9e70Lwtzzr5qDjKyPMIuWkoTZxbOZ5KZp0Z1xztXhoOsb0cMIb0lkDmkEEeHC
+	7xCnPuQnUn/2RNEpLgrCFS4qThmNYtsaFhl3SpJ3vGTxBYzSZSDlt+E78a98ZsMpxi6y5x
+	E7OG3+wKZg3x5qFO51Ys5hKYORTIsAC9P3qvxM4B3HWwaa015FSMlh8AeSedoPWe9PT92f
+	KnIjgTQGhsFMW0vfUxQdKhG5eGaQpfNL7sAWH7Ria9kSyl4tzcKkdtVYI40QG5RGjX2AAg
+	RXNC9Y5WcJGc4oE8izGiGBGAiQ6pKjPwNzCU7hHdoHrUMDdlpnqEWc5HoekR3g==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shahab Vahedi <list+bpf@vahedi.org>
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Cc: ast@kernel.org, vadim.fedorenko@linux.dev,
+	tarang.raval@siliconsignals.io,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Vineet Gupta <vgupta@kernel.org>, bpf@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-ID: <920e71ab-2375-4722-bcf3-d6aaf8e68b3a@vahedi.org>
+In-Reply-To: <20241113134142.14970-1-hardevsinh.palaniya@siliconsignals.io>
+References: <20241113134142.14970-1-hardevsinh.palaniya@siliconsignals.io>
+Subject: Re: [PATCH v2] ARC: bpf: Correct conditional check in
+ 'check_jmp_32'
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,115 +70,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <920e71ab-2375-4722-bcf3-d6aaf8e68b3a@vahedi.org>
+X-Migadu-Flow: FLOW_OUT
 
-Revert parts of [0] that map `adapter` into a streaming DMA region. Also
-revert any other DMA-related uses of `adapter`. Doing so mitigates all
-inconsistent accesses to it.
+> The original code checks 'if (ARC_CC_AL)', which is always true since
+> ARC_CC_AL is a constant. This makes the check redundant and likely
+> obscures the intention of verifying whether the jump is conditional.
+>
+> Updates the code to check cond =3D=3D ARC_CC_AL instead, reflecting the i=
+ntent
+> to differentiate conditional from unconditional jumps.
+>
+> Suggested-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io=
+>
+> ---
+>
+> Changelog in V2:
+>
+> - Changed subject line
+> - Updated condition check to 'if (cond =3D=3D ARC_CC_AL)' instead of remo=
+ving it
+>
+> Link for v1: https://lore.kernel.org/bpf/e6d27adb-151c-46c1-9668-1cd2b492=
+321b@linux.dev/T/#t
+> ---
+> arch/arc/net/bpf_jit_arcv2.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arc/net/bpf_jit_arcv2.c b/arch/arc/net/bpf_jit_arcv2.c
+> index 4458e409ca0a..6d989b6d88c6 100644
+> --- a/arch/arc/net/bpf_jit_arcv2.c
+> +++ b/arch/arc/net/bpf_jit_arcv2.c
+> @@ -2916,7 +2916,7 @@ bool check_jmp_32(u32 curr_off, u32 targ_off, u8 co=
+nd)
+> =C2=A0=C2=A0=C2=A0 addendum =3D (cond =3D=3D ARC_CC_AL) ? 0 : INSN_len_no=
+rmal;
+> =C2=A0=C2=A0=C2=A0 disp =3D get_displacement(curr_off + addendum, targ_of=
+f);
+>
+> -=C2=A0=C2=A0 if (ARC_CC_AL)
+> +=C2=A0=C2=A0 if (cond =3D=3D ARC_CC_AL)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return is_valid_far_disp(disp)=
+;
+> =C2=A0=C2=A0=C2=A0 else
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return is_valid_near_disp(disp=
+);
+> --
+> 2.43.0
 
-[0] commit b0eb57cb97e7837ebb746404c2c58c6f536f23fa ("VMXNET3: Add support
-for virtual IOMMU")
+Thank you for your contribution!
 
-Co-developed-by: Raphael Isemann <teemperor@gmail.com>
-Signed-off-by: Raphael Isemann <teemperor@gmail.com>
-Signed-off-by: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
----
- drivers/net/vmxnet3/vmxnet3_drv.c | 26 ++------------------------
- drivers/net/vmxnet3/vmxnet3_int.h |  1 -
- 2 files changed, 2 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
-index cc76134c7db4..5219992f6a63 100644
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -2605,7 +2605,7 @@ vmxnet3_setup_driver_shared(struct vmxnet3_adapter *adapter)
- 	devRead->misc.driverInfo.vmxnet3RevSpt = cpu_to_le32(1);
- 	devRead->misc.driverInfo.uptVerSpt = cpu_to_le32(1);
- 
--	devRead->misc.ddPA = cpu_to_le64(adapter->adapter_pa);
-+	devRead->misc.ddPA = cpu_to_le64(virt_to_phys(adapter));
- 	devRead->misc.ddLen = cpu_to_le32(sizeof(struct vmxnet3_adapter));
- 
- 	/* set up feature flags */
-@@ -3623,8 +3623,6 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	int num_rx_queues;
- 	int queues;
- 	unsigned long flags;
--	struct device *dev;
--	dma_addr_t adapter_pa;
- 
- 	if (!pci_msi_enabled())
- 		enable_mq = 0;
-@@ -3664,19 +3662,6 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	}
- 
- 	spin_lock_init(&adapter->cmd_lock);
--	dev = &adapter->pdev->dev;
--	adapter_pa = dma_map_single(dev, adapter,
--					     sizeof(struct vmxnet3_adapter),
--					     DMA_TO_DEVICE);
--	if (dma_mapping_error(dev, adapter_pa)) {
--		dev_err(&pdev->dev, "Failed to map dma\n");
--		err = -EFAULT;
--		goto err_set_mask;
--	}
--	dma_sync_single_for_cpu(dev, adapter_pa,
--				sizeof(struct vmxnet3_adapter), DMA_TO_DEVICE);
--	adapter->adapter_pa = adapter_pa;
--
- 	adapter->shared = dma_alloc_coherent(
- 				&adapter->pdev->dev,
- 				sizeof(struct Vmxnet3_DriverShared),
-@@ -3684,7 +3669,7 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	if (!adapter->shared) {
- 		dev_err(&pdev->dev, "Failed to allocate memory\n");
- 		err = -ENOMEM;
--		goto err_alloc_shared;
-+		goto err_set_mask;
- 	}
- 
- 	err = vmxnet3_alloc_pci_resources(adapter);
-@@ -3935,8 +3920,6 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	}
- 
- 	vmxnet3_check_link(adapter, false);
--	dma_sync_single_for_device(dev, adapter_pa,
--				sizeof(struct vmxnet3_adapter), DMA_TO_DEVICE);
- 	return 0;
- 
- err_register:
-@@ -3963,9 +3946,6 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	dma_free_coherent(&adapter->pdev->dev,
- 			  sizeof(struct Vmxnet3_DriverShared),
- 			  adapter->shared, adapter->shared_pa);
--err_alloc_shared:
--	dma_unmap_single(&adapter->pdev->dev, adapter->adapter_pa,
--			 sizeof(struct vmxnet3_adapter), DMA_TO_DEVICE);
- err_set_mask:
- 	free_netdev(netdev);
- 	return err;
-@@ -4032,8 +4012,6 @@ vmxnet3_remove_device(struct pci_dev *pdev)
- 	dma_free_coherent(&adapter->pdev->dev,
- 			  sizeof(struct Vmxnet3_DriverShared),
- 			  adapter->shared, adapter->shared_pa);
--	dma_unmap_single(&adapter->pdev->dev, adapter->adapter_pa,
--			 sizeof(struct vmxnet3_adapter), DMA_TO_DEVICE);
- 	free_netdev(netdev);
- }
- 
-diff --git a/drivers/net/vmxnet3/vmxnet3_int.h b/drivers/net/vmxnet3/vmxnet3_int.h
-index 3367db23aa13..b45ed1045ca3 100644
---- a/drivers/net/vmxnet3/vmxnet3_int.h
-+++ b/drivers/net/vmxnet3/vmxnet3_int.h
-@@ -404,7 +404,6 @@ struct vmxnet3_adapter {
- 	struct Vmxnet3_CoalesceScheme *coal_conf;
- 	bool   default_coal_mode;
- 
--	dma_addr_t adapter_pa;
- 	dma_addr_t pm_conf_pa;
- 	dma_addr_t rss_conf_pa;
- 	bool   queuesExtEnabled;
--- 
-2.34.1
-
+Acked-by: Shahab Vahedi <list+bpf@vahedi.org>
 
