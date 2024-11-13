@@ -1,180 +1,198 @@
-Return-Path: <linux-kernel+bounces-408113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82BB9C7A94
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:03:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D9F9C7AB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:08:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A2A2823EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:03:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2B5EB35B21
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3AA202F8E;
-	Wed, 13 Nov 2024 18:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7CE204010;
+	Wed, 13 Nov 2024 18:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qnK8PjYR"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aLL26I2b"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECAB20262B
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A77204005
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731520891; cv=none; b=tmqMnFBHKcbTo8mc9CmJmU8jVx99ARxBPTzR5peZZtF6O/OfzIZqud2oMZvejfY1FNpTVu1Fl16q/eoKE9pq/EPhKIt+yeCJ9feJHCrIP8vXQp/kTNEPBk+nLD6av/paMFI3oWwPMw1tnJCM76jdwVYRd8Er7lpG54wBYKR48Ww=
+	t=1731521002; cv=none; b=uRF/OucmrvKi3GCgTDXIm9LfXsk0SEZ5XkbHYS0ayziIt1Qv9P1+P2v7QRHSD6s0OFYnXSIc/tNdc+NazA3vHOnQqwXbV5yBM3EgoDcCXVwC9i7ajHbgyRb6k/ZtevVhblDLZSZIu2tcEzrRXFiY88FoEPEL3H1mExQulnbTPaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731520891; c=relaxed/simple;
-	bh=mW8xeBOdl7cG7NVmuWN6uOIPoVBCoSszDsYNlTMIS+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V98TQnUxZ30tfA8+y/cC2bdwU3yZecLkEqOeacGtW19KgdoPTGKq6JAMOXk/U90A/K7FMiC/CY4dGvIpbwX+oWzx3uZzn3tvbETq/edyv9bREaWLj3RWhXDW7Y1eV3s3IEy3oF6m0cQL3hyp2nsvxGfz/0pjMbFgJr0pmeMlVTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qnK8PjYR; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e59dadebso8481055e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:01:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731520887; x=1732125687; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MZvMlsN0jo6eym0o1YhsLbFld5ubrjJXwf34VetdniI=;
-        b=qnK8PjYRg7HVxdF4JW5RgT2ONXkfT3LYTZJlX1+wkgHgSD6C7/+ETEYQ9W9HS6gwOJ
-         VPlvYfSgTJJpkeOS6BRLwWH8lWCc8eehntAp1nx+mzUntjyzHWZ+XW12LBTj9izlbck9
-         3uAV9XjUaPnMssE6CC2WsSlWe1NQNWyUG+vSt59uSbRYeADNpjj1KKOrXJPpdnVmdJrt
-         a1Lsw9jHkxTI1gPUAD94A8mVES3qga3AOCxMOkel8w7CQt9/XeUvSAu+aH4RUxW6fLcM
-         yrflRelxdJdNvxHmXplgAqFtqqRC86Py7KzLfHkUivOSG6VIVYWcUNvDYTlGjDs+O1zK
-         Nf+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731520887; x=1732125687;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MZvMlsN0jo6eym0o1YhsLbFld5ubrjJXwf34VetdniI=;
-        b=d3wbmU7M7RfPa3Szpv1rkT7hbvmzWvuxF5W8TYc2BoNZ7AAYrtvm/i83J9H3CgRnK9
-         HHCf85KlgCcn/ZnLVqLCcJguYd5Skb9dBEjkuIrURIV0WY+hdQaxAmASaDz+j3FceMnw
-         RYAQoTFBf2lFU5b1AQFFWh82GJsnYZhujhy3NBxUT69lAgDOGqPLEe+ZwqeZrUlT1n8L
-         YTVVs61378PetknFFUe+iOHfkLD/hD7SNBeuJifKDhgOwmWAa1hqDw287tQnYz5Eey7k
-         6mrLTJ19J6n/P3hxgXM4OKuLFXhgl9UeRwb1DABvMCuGjbU9Ob1HDa+aR4hFPZqlIzMU
-         loLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTXvDvz6CwjcBj3MMXxk5k1PfVthJlqKgxoa+nniRV6qy6nHOJdEU96LnHt5BNDLOqE3Y95I9jX1lqK4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl8SNBedP/UBKgfFnaY6X03QsY+CFcemihP9P0C3O3Q0wUyspm
-	C9wvy7mt+JcoKOTLwhlrHfNwPQy7Aea2iWAJRLOtTg3WpxF7Y/A4bfW30LoVw9A=
-X-Google-Smtp-Source: AGHT+IETbRzY+I9uAERqiReGkk3idEQ+R5hg0H5mE4wjypNlx0pG/QizKr/RYs6BvY2mQyRC/uIflQ==
-X-Received: by 2002:a05:6512:b94:b0:52e:767a:ada3 with SMTP id 2adb3069b0e04-53d862f33cfmr11056499e87.47.1731520887019;
-        Wed, 13 Nov 2024 10:01:27 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826a9b50sm2256446e87.182.2024.11.13.10.01.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 10:01:25 -0800 (PST)
-Date: Wed, 13 Nov 2024 20:01:23 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Renjiang Han <quic_renjiang@quicinc.com>
-Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
-	Vikash Garodia <quic_vgarodia@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] media: venus: core: add qcs615 platform data
-Message-ID: <eldjwrookzs46mvxdp56uj2eytfeu5fuj4zs4yowcyilhra3pg@vc6v72klixem>
-References: <20241112-add-venus-for-qcs615-v2-0-e67947f957af@quicinc.com>
- <20241112-add-venus-for-qcs615-v2-2-e67947f957af@quicinc.com>
+	s=arc-20240116; t=1731521002; c=relaxed/simple;
+	bh=0dYtlNaE02KMPwPbNkOEG7D0Ej3fMxzfA77E8dWng18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nqXohfr9BlSJ7tvxVYT4gESOXzwy9E2kRaXLFwIVJ2Uj1Z8+3t4Sebvl39jS5/eXrJ3nWgAxZWJdKAtcQV+KTCjGOa6IzCJo1zU5DG8tkz4Ls2G7WGKpMvuUbl3P4NIAZVZprKAbVQ5LcjSHSsQlQhHUEQzdrPo1yB1YPSMiNZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aLL26I2b; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADH1ZEi025412;
+	Wed, 13 Nov 2024 18:03:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	bYtOOA3mW6Ph2dWGJf/8a1jSF1QmnYitbVPB+AORG4w=; b=aLL26I2bikDogtDH
+	fT2fQU1ZA8fAFhtHvZPGG6AeVPFCzKj9hL5xUnzqo0Bj0gqJHGYaHOUdHKmASg+4
+	DjHSV6tbbp7v8dyqqMvVtRqFtztapVjIBjC9PoHLB7B4HHhkF7zNX9x7U24Gdf0+
+	DvO6YZXxZ0DnFHx8FVOmp+78fmurjaOR4QDfPGhvahPmQnJo03MCQy2VBUOsuNQi
+	Sj2QYrZB6vMelIH8iq5X8jZet++FEYrDczdM6RLL0CyXPImAfJfQhM5vgupdjhq7
+	r7WJDUsCDp26+j3qm7ZcYJ3/zWcfMnMlIXyTEa+yfmf5PGc9dj466iE5hF2bB4aZ
+	ps7G7A==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vgqqtqwr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 18:03:00 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ADI2wk7004079
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 18:02:58 GMT
+Received: from [10.71.109.85] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 13 Nov
+ 2024 10:02:58 -0800
+Message-ID: <6a8ba993-9413-40ad-8c91-0cf268798585@quicinc.com>
+Date: Wed, 13 Nov 2024 10:02:49 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112-add-venus-for-qcs615-v2-2-e67947f957af@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dma-mapping: Save base/size instead of pointer to shared
+ DMA pool
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring
+	<robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski
+	<m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>
+CC: <iommu@lists.linux.dev>, <linux-renesas-soc@lists.infradead.org>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <f8cef6845a6141f0277e31a71fe153612daae776.1731436631.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+In-Reply-To: <f8cef6845a6141f0277e31a71fe153612daae776.1731436631.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: eu28F4D7NQKeyjXetHBQsxyFMsnBtuw5
+X-Proofpoint-GUID: eu28F4D7NQKeyjXetHBQsxyFMsnBtuw5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1011
+ impostorscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 mlxlogscore=999
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411130149
 
-On Tue, Nov 12, 2024 at 05:17:58PM +0530, Renjiang Han wrote:
-> Initialize the platform data and enable venus driver probe of QCS615
-> SoC.
-> 
-> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+
+On 11/12/2024 10:39 AM, Geert Uytterhoeven wrote:
+> On RZ/Five, which is non-coherent, and uses CONFIG_DMA_GLOBAL_POOL=y:
+>
+>     Oops - store (or AMO) access fault [#1]
+>     CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-rc1-00015-g8a6e02d0c00e #201
+>     Hardware name: Renesas SMARC EVK based on r9a07g043f01 (DT)
+>     epc : __memset+0x60/0x100
+>      ra : __dma_alloc_from_coherent+0x150/0x17a
+>     epc : ffffffff8062d2bc ra : ffffffff80053a94 sp : ffffffc60000ba20
+>      gp : ffffffff812e9938 tp : ffffffd601920000 t0 : ffffffc6000d0000
+>      t1 : 0000000000000000 t2 : ffffffffe9600000 s0 : ffffffc60000baa0
+>      s1 : ffffffc6000d0000 a0 : ffffffc6000d0000 a1 : 0000000000000000
+>      a2 : 0000000000001000 a3 : ffffffc6000d1000 a4 : 0000000000000000
+>      a5 : 0000000000000000 a6 : ffffffd601adacc0 a7 : ffffffd601a841a8
+>      s2 : ffffffd6018573c0 s3 : 0000000000001000 s4 : ffffffd6019541e0
+>      s5 : 0000000200000022 s6 : ffffffd6018f8410 s7 : ffffffd6018573e8
+>      s8 : 0000000000000001 s9 : 0000000000000001 s10: 0000000000000010
+>      s11: 0000000000000000 t3 : 0000000000000000 t4 : ffffffffdefe62d1
+>      t5 : 000000001cd6a3a9 t6 : ffffffd601b2aad6
+>     status: 0000000200000120 badaddr: ffffffc6000d0000 cause: 0000000000000007
+>     [<ffffffff8062d2bc>] __memset+0x60/0x100
+>     [<ffffffff80053e1a>] dma_alloc_from_global_coherent+0x1c/0x28
+>     [<ffffffff80053056>] dma_direct_alloc+0x98/0x112
+>     [<ffffffff8005238c>] dma_alloc_attrs+0x78/0x86
+>     [<ffffffff8035fdb4>] rz_dmac_probe+0x3f6/0x50a
+>     [<ffffffff803a0694>] platform_probe+0x4c/0x8a
+>
+> If CONFIG_DMA_GLOBAL_POOL=y, the reserved_mem structure passed to
+> rmem_dma_setup() is saved for later use, by saving the passed pointer.
+> However, when dma_init_reserved_memory() is called later, the pointer
+> has become stale, causing a crash.
+>
+> E.g. in the RZ/Five case, the referenced memory now contains the
+> reserved_mem structure for the "mmode_resv0@30000" node (with base
+> 0x30000 and size 0x10000), instead of the correct "pma_resv0@58000000"
+> node (with base 0x58000000 and size 0x8000000).
+>
+> Fix this by saving the needed reserved_mem structure's contents instead.
+>
+> Fixes: 8a6e02d0c00e7b62 ("of: reserved_mem: Restructure how the reserved memory regions are processed")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
 > ---
->  drivers/media/platform/qcom/venus/core.c | 50 ++++++++++++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> index 423deb5e94dcb193974da23f9bd2d905bfeab2d9..39d8bcf62fe4f72674746b75994cce6cbaee94eb 100644
-> --- a/drivers/media/platform/qcom/venus/core.c
-> +++ b/drivers/media/platform/qcom/venus/core.c
-> @@ -630,6 +630,55 @@ static const struct venus_resources msm8998_res = {
->  	.fwname = "qcom/venus-4.4/venus.mbn",
->  };
+>  kernel/dma/coherent.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+>
+> diff --git a/kernel/dma/coherent.c b/kernel/dma/coherent.c
+> index ff5683a57f77126d..3b2bdca9f1d4b027 100644
+> --- a/kernel/dma/coherent.c
+> +++ b/kernel/dma/coherent.c
+> @@ -330,7 +330,8 @@ int dma_init_global_coherent(phys_addr_t phys_addr, size_t size)
+>  #include <linux/of_reserved_mem.h>
 >  
-> +static const struct freq_tbl qcs615_freq_table[] = {
-> +	{ 0, 460000000 },
-> +	{ 0, 410000000 },
-> +	{ 0, 380000000 },
-> +	{ 0, 300000000 },
-> +	{ 0, 240000000 },
-> +	{ 0, 133333333 },
-> +};
-> +
-> +static const struct bw_tbl qcs615_bw_table_enc[] = {
-> +	{  972000,  951000, 0, 1434000, 0 },	/* 3840x2160@30 */
-> +	{  489600,  723000, 0,  973000, 0 },	/* 1920x1080@60 */
-> +	{  244800,  370000, 0,	495000, 0 },	/* 1920x1080@30 */
-> +};
-> +
-> +static const struct bw_tbl qcs615_bw_table_dec[] = {
-> +	{ 1036800, 1987000, 0, 2797000, 0 },	/* 4096x2160@30 */
-> +	{  489600, 1040000, 0, 1298000, 0 },	/* 1920x1080@60 */
-> +	{  244800,  530000, 0,  659000, 0 },	/* 1920x1080@30 */
-> +};
-> +
-> +static const struct venus_resources qcs615_res = {
-> +	.freq_tbl = qcs615_freq_table,
-> +	.freq_tbl_size = ARRAY_SIZE(qcs615_freq_table),
-> +	.bw_tbl_enc = qcs615_bw_table_enc,
-> +	.bw_tbl_enc_size = ARRAY_SIZE(qcs615_bw_table_enc),
-> +	.bw_tbl_dec = qcs615_bw_table_dec,
-> +	.bw_tbl_dec_size = ARRAY_SIZE(qcs615_bw_table_dec),
-> +	.clks = {"core", "iface", "bus" },
-> +	.clks_num = 3,
-> +	.vcodec0_clks = { "vcodec0_core", "vcodec0_bus" },
-> +	.vcodec_clks_num = 2,
-> +	.vcodec_pmdomains = (const char *[]) { "venus", "vcodec0" },
-> +	.vcodec_pmdomains_num = 2,
-> +	.opp_pmdomain = (const char *[]) { "cx" },
-> +	.vcodec_num = 1,
-> +	.hfi_version = HFI_VERSION_4XX,
-> +	.vpu_version = VPU_VERSION_AR50,
-> +	.vmem_id = VIDC_RESOURCE_NONE,
-> +	.vmem_size = 0,
-> +	.vmem_addr = 0,
-> +	.dma_mask = 0xe0000000 - 1,
-> +	.cp_start = 0,
-> +	.cp_size = 0x70800000,
-> +	.cp_nonpixel_start = 0x1000000,
-> +	.cp_nonpixel_size = 0x24800000,
-> +	.fwname = "qcom/venus-5.4/venus_s6.mbn",
+>  #ifdef CONFIG_DMA_GLOBAL_POOL
+> -static struct reserved_mem *dma_reserved_default_memory __initdata;
+> +static phys_addr_t dma_reserved_default_memory_base __initdata;
+> +static phys_addr_t dma_reserved_default_memory_size __initdata;
+>  #endif
+>  
+>  static int rmem_dma_device_init(struct reserved_mem *rmem, struct device *dev)
+> @@ -376,9 +377,10 @@ static int __init rmem_dma_setup(struct reserved_mem *rmem)
+>  
+>  #ifdef CONFIG_DMA_GLOBAL_POOL
+>  	if (of_get_flat_dt_prop(node, "linux,dma-default", NULL)) {
+> -		WARN(dma_reserved_default_memory,
+> +		WARN(dma_reserved_default_memory_size,
+>  		     "Reserved memory: region for default DMA coherent area is redefined\n");
+> -		dma_reserved_default_memory = rmem;
+> +		dma_reserved_default_memory_base = rmem->base;
+> +		dma_reserved_default_memory_size = rmem->size;
+>  	}
+>  #endif
+>  
+> @@ -391,10 +393,10 @@ static int __init rmem_dma_setup(struct reserved_mem *rmem)
+>  #ifdef CONFIG_DMA_GLOBAL_POOL
+>  static int __init dma_init_reserved_memory(void)
+>  {
+> -	if (!dma_reserved_default_memory)
+> +	if (!dma_reserved_default_memory_size)
+>  		return -ENOMEM;
+> -	return dma_init_global_coherent(dma_reserved_default_memory->base,
+> -					dma_reserved_default_memory->size);
+> +	return dma_init_global_coherent(dma_reserved_default_memory_base,
+> +					dma_reserved_default_memory_size);
+>  }
+>  core_initcall(dma_init_reserved_memory);
+>  #endif /* CONFIG_DMA_GLOBAL_POOL */
+Hi Geert,
 
-Why does it need a separate firmware file?
+Thanks for providing a fix!
 
-> +};
-> +
->  static const struct freq_tbl sdm660_freq_table[] = {
->  	{ 979200, 518400000 },
->  	{ 489600, 441600000 },
-> @@ -937,6 +986,7 @@ static const struct of_device_id venus_dt_match[] = {
->  	{ .compatible = "qcom,msm8916-venus", .data = &msm8916_res, },
->  	{ .compatible = "qcom,msm8996-venus", .data = &msm8996_res, },
->  	{ .compatible = "qcom,msm8998-venus", .data = &msm8998_res, },
-> +	{ .compatible = "qcom,qcs615-venus", .data = &qcs615_res, },
->  	{ .compatible = "qcom,sdm660-venus", .data = &sdm660_res, },
->  	{ .compatible = "qcom,sdm845-venus", .data = &sdm845_res, },
->  	{ .compatible = "qcom,sdm845-venus-v2", .data = &sdm845_res_v2, },
-> 
-> -- 
-> 2.34.1
-> 
+I also looked around more to see if there are more places that
+could store a stale reference to rmem but I didn't see any others,
+so I think we are good!
 
--- 
-With best wishes
-Dmitry
+I have given my "reviewed-by" tag as well.
+
+Thank you!
+Oreoluwa
 
