@@ -1,148 +1,129 @@
-Return-Path: <linux-kernel+bounces-407578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09329C6F2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:39:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A54A99C6FAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80580283D02
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:39:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B3B4B27F58
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7071FB743;
-	Wed, 13 Nov 2024 12:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16E81F77B4;
+	Wed, 13 Nov 2024 12:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="zXkAEAUJ"
-Received: from pv50p00im-hyfv10011601.me.com (pv50p00im-hyfv10011601.me.com [17.58.6.43])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="2SQyVf+h"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3CF1DF743
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 12:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEB34C6C;
+	Wed, 13 Nov 2024 12:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731501557; cv=none; b=JMfR8AL/H+tWonpvA15ru93J2fgsa17ZFLr4QZka3pXti7pRGL4b/PE8o9o/n8pJhNZfsBlb2txGITo+ginXF3leYCJ36QR50c8/pHZsGQlErL/xS01DTu6WncTYZVCf1M0Zfrdpn6e0svN1TkIDqNA8cHyKghX8r7jt7YehTBE=
+	t=1731501588; cv=none; b=tb0Ya6cV+ZAJ7sxS7gkfbDuoVNs47J1tR4zLOHfU5pg1cuP74dWDvYbRrMtJHW15ZQPEG1+Rk3lrkYoWZApm5ilxy2oJVX9fj8pQ2dHXQx9C3CqI/FSPyfuVJboWUp3k9h0A/18JpnhVUM4VFDtQtHsAyjPurW0PN8lOIc0ojhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731501557; c=relaxed/simple;
-	bh=JdG7AJrRfvz0V26xDRU+dLwacdDFzlGP61mxVhm9UqQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=toCZQx7xeioXJtoF2GZ7EjboQaqpv2UExQ1UzU1iC/lvGYEPcrj8CDFN9hAFVVzwSMhlKOEEIZ9Po/D6sUFwMjIe/IIMuvbpZgmtrVtq+ukLLYisOhNw9C/z9jHnL6fxEhr2ZQW/CJINxemu3X9bUf4HjVAbLgrnuKhRIY7+bNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=zXkAEAUJ; arc=none smtp.client-ip=17.58.6.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1731501556;
-	bh=ktqJk2cuJmF+bKTe8t4qNZZbKBCGpG3gZZtZiyrSnTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=zXkAEAUJoCmkw9Syhk+GO44hrNGCPDcgQif1DTi6GCdso+hV+d/N0wD6qhzUvww8A
-	 qG0KLpM8ItgHt3gFrmNCOGTDjTwzD32PJKk5GguTqyocEDvY/kXf/4KS1xSkdWgtEP
-	 GhaBsGYPOvowFmwqKrqUxhuiRU4SlkhlXr3OWSgBXLfyclvvTNqlDqysfWbkPg0qBw
-	 Npj+POiiCXoXt6XBxnPoy5SLQ2Z+XRmDhCl0cvGB61KAFQM6YL1Bq8y+7u/LWZCTzg
-	 UOe22h7KXTqxpWu+5OfbioVStT7Rlq+/Etq3VcfaKsPo6tzEIURCoidzCgo2by6T7l
-	 gSUjuHAqeTzzw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-hyfv10011601.me.com (Postfix) with ESMTPSA id 5E79BC80119;
-	Wed, 13 Nov 2024 12:39:13 +0000 (UTC)
-Message-ID: <7ecd5828-5e7a-4882-87ad-9c5fbf274524@icloud.com>
-Date: Wed, 13 Nov 2024 20:39:09 +0800
+	s=arc-20240116; t=1731501588; c=relaxed/simple;
+	bh=gKqFLRNsIwmH44eV0meSeljeLbEd+mAGQe2+yyq65/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V4kwvWP3yi5BgCldnwPqP7O/eYdKw/0OFNdRFkHpWnQQCT9NjTFNriiAqdBH3WIBs9CQUXjpcDT3IPxCUA64o/R4GNIU/+Ao05e6CJ/aRCYvw/FvgRvOZZYo1Y3ua/M6MN5Ry95e7hn/svQME0BQzUj29HIvrRQ3vFjTKFQhOWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=2SQyVf+h; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KmeKU28bQtzm8XNGcvF30DDJ+SoCDTx1YSZjcXEcLKI=; b=2SQyVf+hPTARrHZbuwXr/dxWZx
+	0CnmRSDkpJ36NC9AriqR4Sw7jSgBsKxRehtKc7D6tTG9eW6NuhlCfkVO8QSRGg2BBgCI5puI6plCW
+	iP5vv2vMXErkCefUx2KyVCSqU21B2pU0fheOT5n2UJdjzsNGf7mKHS2mgwu//nd7qnaQZzqpVo/fk
+	zmclxzYC56fex2+pLaC1uPQOeYWOrLVdlsyRAot+2h1yD5tvfrIVxpj/XEV79UT1JRTYrDQJSBe9a
+	+JCxMChIJBYz1efnoTr8MN1EfXh2pKJQIj5pcUx53Lz6PNYBEaoRBWJRST8R+MG+F0m7pnbFUUxyc
+	9HcAMXpg==;
+Received: from i53875a30.versanet.de ([83.135.90.48] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tBCeh-00033b-66; Wed, 13 Nov 2024 13:39:31 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, quentin.schulz@cherry.de, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject:
+ Re: [PATCH v2 2/2] phy: rockchip: Add Samsung CSI/DSI Combo DCPHY driver
+Date: Wed, 13 Nov 2024 13:39:30 +0100
+Message-ID: <2564703.Sgy9Pd6rRy@diego>
+In-Reply-To: <fynyo2amqillioxwfyydvztakba5ecwa2qrtdtuoaffyvwc62c@3vizyubfqvsf>
+References:
+ <20241104111121.99274-1-heiko@sntech.de>
+ <20241104111121.99274-3-heiko@sntech.de>
+ <fynyo2amqillioxwfyydvztakba5ecwa2qrtdtuoaffyvwc62c@3vizyubfqvsf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] driver core: class: Fix wild pointer dereference in
- API class_dev_iter_next()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
-References: <20241105-class_fix-v1-0-80866f9994a5@quicinc.com>
- <20241105-class_fix-v1-1-80866f9994a5@quicinc.com>
- <2024111205-countable-clamor-d0c7@gregkh>
- <2952f37a-7a11-42d9-9b90-4856ed200610@icloud.com>
- <2024111230-erratic-clay-7565@gregkh>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <2024111230-erratic-clay-7565@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: SYV05MqzjcMI26dwbWBJi8T5iJl7hZHM
-X-Proofpoint-ORIG-GUID: SYV05MqzjcMI26dwbWBJi8T5iJl7hZHM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-12_09,2024-11-12_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 clxscore=1015
- bulkscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2411130108
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 2024/11/12 22:57, Greg Kroah-Hartman wrote:
-> On Tue, Nov 12, 2024 at 10:46:27PM +0800, Zijun Hu wrote:
->> On 2024/11/12 19:43, Greg Kroah-Hartman wrote:
->>> On Tue, Nov 05, 2024 at 08:20:22AM +0800, Zijun Hu wrote:
->>>> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>>>
->>>> class_dev_iter_init(struct class_dev_iter *iter, struct class *class, ...)
->>>> has return type void, but it does not initialize its output parameter @iter
->>>> when suffers class_to_subsys(@class) error, so caller can not detect the
->>>> error and call API class_dev_iter_next(@iter) which will dereference wild
->>>> pointers of @iter's members as shown by below typical usage:
->>>>
->>>> // @iter's members are wild pointers
->>>> struct class_dev_iter iter;
->>>>
->>>> // No change in @iter when the error happens.
->>>> class_dev_iter_init(&iter, ...);
->>>>
->>>> // dereference these wild member pointers here.
->>>> while (dev = class_dev_iter_next(&iter)) { ... }.
->>>>
->>>> Actually, all callers of the API have such usage pattern in kernel tree.
->>>> Fix by memset() @iter in API *_init() and error checking @iter in *_next().
->>>>
->>>> Fixes: 7b884b7f24b4 ("driver core: class.c: convert to only use class_to_subsys")
->>>> Cc: stable@vger.kernel.org
->>>
->>> There is no in-kernel broken users of this from what I can tell, right?
->>> Otherwise things would have blown up by now, so why is this needed in
->>> stable kernels?
->>>
->>
->> For all callers of the API in current kernel tree, the class should have
->> been registered successfully when the API is invoking.
-> 
-> Great, so the existing code is just fine :)
-> 
->> so, could you remove both Fix and stable tag directly?
-> 
-> Nope, sorry.  Asking a maintainer that gets hundreds of patches to
-> hand-edit them does not scale.
-> 
-> But really, as all in-kernel users are just fine, why add additional
-> code if it's not needed?  THat's just going to increase our maintance
-> burden for the next 40+ years for no good reason.
-> 
+Hi,
 
-Hi Greg.
-
-This fix is very worthy and necessary since it fixes the APIs self issue
-and the issue is irrelevant with how various API users (in-tree or
-out-of-tree) use it as below inference shown:
-
-API class_dev_iter_init() has checks for class_to_subsys(class) error
--> the error may happen
--> once the error happens
--> wild pointers dereference must happen within API class_dev_iter_next()
--> how terrible for such issue, and the error handling also have no
-prompt messages.
-
-API users must not like silent wild pointer dereference once the error
-happen.
-
-> thanks,
+> > +static void samsung_mipi_dcphy_bias_block_enable(struct samsung_mipi_dcphy *samsung)
+> > +{
+> > +	u32 bias_con2 = 0x3223;
+> > +
+> > +	regmap_write(samsung->regmap, BIAS_CON0, 0x0010);
+> > +	regmap_write(samsung->regmap, BIAS_CON1, 0x0110);
+> > +	regmap_write(samsung->regmap, BIAS_CON2, bias_con2);
+> > +
+> > +	/* default output voltage select:
+> > +	 * dphy: 400mv
+> > +	 * cphy: 530mv
+> > +	 */
+> > +	regmap_update_bits(samsung->regmap, BIAS_CON4,
+> > +			   I_MUX_SEL_MASK, I_MUX_SEL_400MV);
+> > +}
+> > +
+> > +static void samsung_mipi_dcphy_bias_block_disable(struct samsung_mipi_dcphy *samsung)
+> > +{
+> > +}
 > 
-> greg k-h
+> uhm? :)
+
+When there was still the CSI stuff in here, that function still had
+content ;-) .
+
+But yeah, if and when that comes back, we can re-add things.
+
+
+> > +static int samsung_mipi_dcphy_set_mode(struct phy *phy, enum phy_mode mode,
+> > +				       int submode)
+> > +{
+> > +	return 0;
+> > +}
+> 
+> You can just remove this. phy_set_mode_ext() will return 0 byself if
+> the callback is NULL.
+
+But it will not set the mode then.
+
+See the part of
+	ret = phy->ops->set_mode(phy, mode, submode);
+	if (!ret)
+		phy->attrs.mode = mode;
+
+Without the set_mode callback phy->attrs.mode will not be set.
+And while we don't have anything to do for set_mode itself,
+we do need the mipi_dphy mode to be set.
+
+
+Heiko
+
 
 
