@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-407567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2FE39C6F58
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:44:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC3D9C6F5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:44:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85FDFB2C66B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:22:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9619AB2555E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29D220127D;
-	Wed, 13 Nov 2024 12:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C49200CA7;
+	Wed, 13 Nov 2024 12:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IFFeFxte"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="at2e3wS9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87827201032
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 12:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7B61DF250;
+	Wed, 13 Nov 2024 12:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731500492; cv=none; b=Whli/1MFAlwKaI6+RWICFydVb0VeD58TkTKqeXjKZGhapXx0y3d4Tz3eqtPjq8mG+wVbp0a+ShnutJMNrsjvdM97TeN0qSeAc0kjMi4uUGCNKNqVpY7lMNlwNtybJh9ZvogZB3oSgduGq990p6VVYTh2FxekEUOpfZPt7Ts3CLs=
+	t=1731500488; cv=none; b=mSwhfJhy1rAlF9ApjvJFvNTwXpjGT78xVyK2huvBvRT6DBW8ws+hD6OgZ8hwX8/pAzDw3hXb2ZgGf7PyYKabmzhxeNZMjH+rPtLPR8WRNuRshoRswj26ho0glFmUDZ8PE6Yzv/qrsrurKymYQ0d6Gs0qqTQtI5saft9ybqzL+CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731500492; c=relaxed/simple;
-	bh=Fjca1LWzFAdCd0y6iIxSu0s0Obt4f3zGnd1zEofN2SQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FLaOt2FzZ+znBpjI5KUFClFfjEMcxO4KdzdRKB+UdOXWJ+DiQisVUtFTVPUwOWGd8yaggdCxXyZzeE8KbVBJV2kJcQdaTuwvDrCAmjhqT66DHdtUEeIkZEkU+h2z5icL9ozApjDTTs4dgux/CyGZpoWGOq0VoehaGC+oIMHLzOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IFFeFxte; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e28fd8cdfb8so6533596276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 04:21:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731500489; x=1732105289; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JsE6HZ0BDIdFm8pHUV9wjAijdgzctcE9O8piDmD3bwk=;
-        b=IFFeFxte1uY32jKGhbDsyIdhtHi7tULp16Fe7422DFwk6FR4gOK6WbpC0mXh+jjcZB
-         Cj1nXPLNBAngJVnV5N8mXMpgREZQqI7L3Ey9haiiM7+Ey1xMIkgLyFA7W7PdaENhOEm1
-         EpODEMLFQiqW8JYty/Qti3C3a/YwlH7N9JpPjmk9KWGOOQuH0lx63OUX2oBLrKWXBEFE
-         kZYn0DyviLtnhaGLziA388+iLjpbn01hpubtmm8/c41prnHwPjFWPE3xuE6PdPVMhW1H
-         4zjaV7L7jyw81NQ05uqbhx95cQCiFjoR2HU9hE27EECHZesItmsctj1CL92OiV0wXwtA
-         K/4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731500489; x=1732105289;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JsE6HZ0BDIdFm8pHUV9wjAijdgzctcE9O8piDmD3bwk=;
-        b=W0sDHVc6/zEj6YpZw333SF4yyVweQXAfH4fU1Y2mUf/6qfvAr56I05u3kUkdVTxDnu
-         0onOIRDKxp60ooGTzFrYEcB+lKSa35VD6p3rg2nTibXHkdeRvLgOHTgEY+pkn2wiRJm9
-         0FwA0UCdLbHwrC6oJt1b/QR/TGDC2E82S68tKX2SIK+l7Ce45DEJvVzifBi/3IRPjHNz
-         BO7iBpOYdOv5BWc+/nWT5qD++mLoa7v3EqDvC1QE2jFZFEApIpWVocIGhyjrQTbbWMU7
-         ehBk85A11RZxDIA2qrsORIt8xm9vFVIs8uIuYOCwH/Y6yyip8Q3zfkym7KORRZLBcydj
-         ZVew==
-X-Forwarded-Encrypted: i=1; AJvYcCVjnRIHCDA6Dm9VgD47UMCuwgWCKr3nnE5HR7SEtTpnOQcBKo54LTd5kQoDXP5KGfakPibHqb20CD2HW54=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgk7Vap5JCJr7Cj2+fbJ+4VPxHjm4PlEq70guGiFP2x7lIoFzq
-	Pk1HQuaBhwPqTnGk4V6P+gbbZsa9woWeLnup5JERkekrO9Qc7u/uE2NO/GAYodSRh57yRA6bjsl
-	g2JRt8tGNRy0Bc7A79K6p4R/lzYvnH7x67db9+g==
-X-Google-Smtp-Source: AGHT+IHlEW9Y6a6VKxz7Rj8wBbFwf85y1XuiF8DPZGiTfkNkpU73TSXFVeGlAI184r1k/vIlZa0la+oK03iLvn2Otwg=
-X-Received: by 2002:a05:6902:1101:b0:e30:d443:8490 with SMTP id
- 3f1490d57ef6-e337f8c6c9bmr18265860276.40.1731500489516; Wed, 13 Nov 2024
- 04:21:29 -0800 (PST)
+	s=arc-20240116; t=1731500488; c=relaxed/simple;
+	bh=sRahG0jY7C92Pv2ieJzgaq5OEbOR4ygaH0OgwnC/pAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WKpe/c4oBw5y9O51IIOQfEa28JE7fbcpal2s5gZLFr5aErHiFdOYnHoDryS1Ub55RK3tF7yQjL97nbFCZASC/GKBSJ3ooOKcrcQj3hmEm/YAr9bgZRg9H/FOIgigquqHIn5sfleMIRz2rd/fnWo4gLwKYdsX+ZlpUZSEhJsjVXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=at2e3wS9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2861EC4CEE9;
+	Wed, 13 Nov 2024 12:21:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731500486;
+	bh=sRahG0jY7C92Pv2ieJzgaq5OEbOR4ygaH0OgwnC/pAs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=at2e3wS9jvEH67INqxjutyD9TMxPrEgQhKRiEDuOI1n1lLzMf/ZSWKDsO/HOLAzbh
+	 D8VyKIRQt2rJ7CGeMppcT+v0VzhtZbpkqrzsd1VonDq7DJdY+S9Rop34I19Uk/6Ngb
+	 W3ddbl9O6lCdL7kBzRocf32ZgAItPHox5Ah9jYgFuNpJf7T61zfCbUz2wbtEBe5edH
+	 YcZYfZ2gVYa5saupUfZaABAVKBmjHQo90vCrFwaKHsqBMJnBjTKQurSjW0fiE4mEY8
+	 Jos6gvhEDWdcIxjiuI26QViae/ixvg6jLtP8sxtp8ZGrrWS/MVq00q6uwWHu+Kxvvk
+	 OBV0xwCHWVm1Q==
+Date: Wed, 13 Nov 2024 13:21:21 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Erin Shepherd <erin.shepherd@e43.eu>
+Cc: Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, christian@brauner.io, 
+	paul@paul-moore.com, bluca@debian.org
+Subject: Re: [PATCH 4/4] pidfs: implement fh_to_dentry
+Message-ID: <20241113-glorreiche-abfallen-4ab73565bb60@brauner>
+References: <20241101135452.19359-1-erin.shepherd@e43.eu>
+ <20241101135452.19359-5-erin.shepherd@e43.eu>
+ <08d15335925b4fa70467546dd7c08c4e23918220.camel@kernel.org>
+ <CAOQ4uxg96V3FBpnn0JvPFvqjK8_R=4gHbJjTPVTxDPzyns52hw@mail.gmail.com>
+ <ed210bc9-f257-4cbd-afba-b4019baaf71f@e43.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113-add-display-support-for-qcs615-platform-v2-0-2873eb6fb869@quicinc.com>
- <20241113-add-display-support-for-qcs615-platform-v2-9-2873eb6fb869@quicinc.com>
-In-Reply-To: <20241113-add-display-support-for-qcs615-platform-v2-9-2873eb6fb869@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 13 Nov 2024 14:21:18 +0200
-Message-ID: <CAA8EJpok20-7HXJJbcJi8YZYCU68g_DGThR_ckjBEz0e+gGBSA@mail.gmail.com>
-Subject: Re: [PATCH v2 9/9] arm64: defconfig: Enable SX150X for QCS615 ride board
-To: Fange Zhang <quic_fangez@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Li Liu <quic_lliu6@quicinc.com>, 
-	Xiangxu Yin <quic_xiangxuy@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ed210bc9-f257-4cbd-afba-b4019baaf71f@e43.eu>
 
-On Wed, 13 Nov 2024 at 13:53, Fange Zhang <quic_fangez@quicinc.com> wrote:
->
-> From: Li Liu <quic_lliu6@quicinc.com>
->
-> For the QCS615 ride board, enable the SX150X to activate the ANX7625
-> allowing the DSI to output to the mDP through the external bridge.
-> The ANX7625 relies on the SX150X chip to perform reset and HPD.
->
-> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
-> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
-> ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index c0b8482ac6ad7498487718ba01d11b1c95e7543d..599a339a19435efbee7a5ef80c093b0e8c65f7ff 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -631,6 +631,7 @@ CONFIG_PINCTRL_SM8350=y
->  CONFIG_PINCTRL_SM8450=y
->  CONFIG_PINCTRL_SM8550=y
->  CONFIG_PINCTRL_SM8650=y
-> +CONFIG_PINCTRL_SX150X=y
+On Wed, Nov 13, 2024 at 11:11:47AM +0100, Erin Shepherd wrote:
+> On 13/11/2024 09:01, Amir Goldstein wrote:
+> 
+> > I don't like playing pseudo cryptographic games, we are not
+> > crypto experts so we are bound to lose in this game.
+> 
+> I agree. It would be one thing to obfusficate things in order to prevent
+> userspace from relying upon something that's not ABI; it would be another
+> to do so with the intent of hiding data. If we wanted to do that, we'd
+> need to actually encrypt the PID (with e.g. AES-CTR(key, iv=inode_nr))
+> 
+> > My thinking is the other way around -
+> > - encode FILEID_INO32_GEN with pid_nr + i_generation
+> > - pid_nr is obviously not unique across pidns and reusable
+> >   but that makes it just like i_ino across filesystems
+> > - the resulting file handle is thus usable only in the pidns where
+> >   it was encoded - is that a bad thing?
+> >
+> > Erin,
+> >
+> > You write that "To ensure file handles are invariant and can move
+> > between pid namespaces, we stash a pid from the initial namespace
+> > inside the file handle."
+> >
+> > Why is it a requirement for userspace that pidfs file handles are
+> > invariant to pidns?
+> 
+> I don't think it's a requirement, but I do think its useful - it is nice if
 
-Your commit message doesn't describe why it needs to be disabled as a
-built-in. You are trying to enable it for all defconfig users.
-Also the placement of the symbol is not correct. You've added it to
-the section with msm pinctrl drivers, while the chip has nothing to do
-with msm.
+It kind of is though, no? Because you need a reliable way to decode the
+pidfs file handle to a struct pid. If one encodes pid numbers as seen
+from the encoders pid namespace the decoder has no way of knowing what
+pid namespace to resolve it in as the same pid number can obviously be
+present in multiple pid namespace. So not encoding the global pid number
+would be inherently ambiguous.
 
->  CONFIG_PINCTRL_X1E80100=y
->  CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
->  CONFIG_PINCTRL_LPASS_LPI=m
->
-> --
-> 2.34.1
->
+> a service inside a pidns can pass you a file handle and you can restore it and
+> things are fine (consider also handles stored on the filesystem, as a better
+> analog for PID files)
+> 
+> But I too was uncertain about exposing root namespace PIDs to containers. I
+> have no objections to limiting restore of file handles to the same pid ns -
+> though I think we should defnitely document that such a limitation may be
+> lifted in the future.
 
+The point is really just the provided pid needs to be resolvable in the
+pid namespace of the caller. Encoding a global pid number means that
+internally we can always resolve it as we know that we always encode
+pids in the init pid namespace.
 
--- 
-With best wishes
-Dmitry
+In a second step we can then verify that the struct pid we found based
+on the pid number is a member of the pid namespace hierarchy of the
+caller. If that is the case then the caller is allowed to get a pidfd
+from open_by_handle_at() as they would also be able to get a pidfd via
+pidfd_open().
+
+So a container will never be able to a pidfd from a pid number that
+resolves to a struct pid that is outside its pid namespace hierarchy.
+
+Let me know if I misunderstood the concerns.
 
