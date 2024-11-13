@@ -1,83 +1,97 @@
-Return-Path: <linux-kernel+bounces-408118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 593AA9C7AA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:06:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C79DC9C7AA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08D291F26C1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F0CA1F26F4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9A81632CC;
-	Wed, 13 Nov 2024 18:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C242040B1;
+	Wed, 13 Nov 2024 18:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmU33Ybq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T1Szueys"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BAE1531EA
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05F970835;
+	Wed, 13 Nov 2024 18:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731521156; cv=none; b=YfN7ZWEyMDejWc03PojaTFygpU6skh80BXBgy17lhPhGVPizG+2IfrYFIWbB3EcOzPiRJHirRYHkSTRcf8jftvyRW7wvpkQmL/Pp8XaklBdpKaRFhhlCkhnBOokoAzC7PmFvkGC0YhwqT6qOVDGQjCMKtoahYFpTTVBSTeVBCDA=
+	t=1731521174; cv=none; b=VY0YcZGgxHYsFh14RZWJNZ1/cJYaSf2S2h7f+agtdtsqgdLhw8QmM0ae1dBpLAgxfAN//3QpNwLwy6F0smyTHJ+l4efLAYYMw/UEnbaI91IU5TN3Fvg2CwJZuLNrcmIkcA8wzGxLx8JYG3+XBn4QkWqN23CUJl9+0u7EMzEZ+ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731521156; c=relaxed/simple;
-	bh=M4wyj6LnteCS8V5uLYewkH2xB3uFMsAbftOFpnkE21o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jcQ6vqEBu6H49AkL4LOEBMHPFochk2LBvFPWlecoymyEJ7HscfLtjwShtR9YWuJgz/QZGuX/5l5kImHzQ+m5nLmQDYUlmZO0vrSwWkbbl32aKtrU91c6MVgFUu2OcuzO5Uy+J1nvFJtnBgmqOCjfx1snbAuQOdamNrLGSCJSI/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmU33Ybq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B17C4CEC3;
-	Wed, 13 Nov 2024 18:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731521155;
-	bh=M4wyj6LnteCS8V5uLYewkH2xB3uFMsAbftOFpnkE21o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qmU33Ybq9mi6SS/EE9oMZnsYv/MW590U1NZ6DxaVzwGisRddMa9zzuYeFryV5QtDS
-	 QB1Jv6vnxMOSX5rBYRXUqOS6FowHhQT1bMVks5xuW99pozRML8wnXm4cFG85NjdzGN
-	 sSR7950AR4zd0WyLKTM/ulQ6dCiEyE19aEd+Fqdv8YjBgrrSbxG4SmYYkHVKZ+jLPL
-	 QrGdHEHKhxHtF1dkNEOcyR/ReyBh3o55WrDgYoW81e58yM1/+deuQylQTwfAfAIBql
-	 TRMEGUxOOiXKAwXkIx2XewWgBGCMPTERne0Kawf5CReHfULXbSqWrCv7oHRXgESeIY
-	 4w6lf8eusXQeA==
-Date: Wed, 13 Nov 2024 11:05:53 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Bob Beckett <bob.beckett@collabora.com>, Jens Axboe <axboe@kernel.dk>,
-	Sagi Grimberg <sagi@grimberg.me>, kernel@collabora.com,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
-Message-ID: <ZzTqgXqjN4UrT392@kbusch-mbp>
-References: <20241112195053.3939762-1-bob.beckett@collabora.com>
- <20241113043151.GA20077@lst.de>
+	s=arc-20240116; t=1731521174; c=relaxed/simple;
+	bh=oHAIzWnC5ZkgphQ6o3DUo9V5Y+LL0DJsge4wegJ6wcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FMTQOq6o8CAIPkx7spXhZGdmjyJevXzLrWidXw4gHI3QiZz0DMnFCF+9RYrt43MiC2PAT9gomsw7CG7Hjntb+QHZf0m8FRaQagvjDgGIgLdWedXiscEpk7wgqvDiDXDvUwsdCDGyalgymr+EGKu6VMKpGb3NsLn5Vs6xl1bPbZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T1Szueys; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e4c2e36d5so437164b3a.2;
+        Wed, 13 Nov 2024 10:06:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731521172; x=1732125972; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oHAIzWnC5ZkgphQ6o3DUo9V5Y+LL0DJsge4wegJ6wcQ=;
+        b=T1SzueysGEXRy1aS+6TndsCSzMcii2D+VzGTS1Wgt41Y4AB7dIYD8dDpJGg9wAYvNo
+         yI4/tNdrE+SxdViKGq5i4rnYY0acxoEMPunw/8gsdn0NKTe42QHnxvZmDM49Y9XmB/ff
+         fXDu1J5Io3lHflLCqOEjLtSlbNqbu3RT0HSSPsInw5BQ3uN4xyIPcIs5RKzxQZ4kRCiP
+         ynUMMo1qsYHAWbLiNDlfGXgDW1KtTGHJKiBlbyhLUK/otcpHdICPCRIejAmG6Nhdp7py
+         I12HaGkDxd++uE6mXeiA+TOwwPo/uYIoq8E8D2126IjPYLjL0t2asNjcSUw5yB6Rp2Cm
+         zzaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731521172; x=1732125972;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oHAIzWnC5ZkgphQ6o3DUo9V5Y+LL0DJsge4wegJ6wcQ=;
+        b=ms0JvwfyVzIyC+tozGOiyhEMutiJl+OOIonxxNVS9DYooBp4GtLOk4jjuW2sOIEMIU
+         PRq+cjBlNz0rycKvzGEh9MfATRAc7q7Rq6PbC4Pps7vsGkRjBhCPBpkSn8UgMO9w5Hrf
+         OqOxzNB3+Np+aGrG8GQ12qwbUR8D2QUgpQpP7BCIOoQBhPy/nzitZz8vwTwk+ULwYuuS
+         o/n6skrp8XGH1fb0MVRrWt7kYzzVwU4M/m2mnuw/A5FANyXsSBeuLnA5VZ557a/qCwkB
+         BVfDRqRFPqUEenL+cHn2Xn54MPBo/5tDn9f9IvGDS0LrWIFyqmVTuH5Iuqz1jV8Glv9o
+         DfBg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3DLXqFch4zB57CKuZaFXxIpXtKckEW+Q3DBSIzYUqVYwhbLYxGoMXeiecAinWEPeuEkgFvSvaHk9wxVk=@vger.kernel.org, AJvYcCUZm1UM3iMGFAnFiju+eYCHj51V3vlBa38ebd4BQ5RouiRvoFTcfx43l5tJROIS4Q5NYN6b3AsCJYP6wA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ1MWmgjF0A6kcfc/gjtFp3sCRxE7P8AOcehQ612H6orRRvZuy
+	nujDM6MyjuUG6kn9aCk8JlK7dR3L3iEMffuigc/MK0hjq/zjRG2tzK6mIS7Uo/Aerp5EBofqQed
+	OCJBaUo5nCaZTl8q85GGlVzMXu2c=
+X-Google-Smtp-Source: AGHT+IH6iacih9T++ypPHl3skpfjjUR7G3j9x1a8LQUfmYkl/ivs4YWpbXot3YL9lc4ZaiHfclrhn0wRg3ySkgSWsa8=
+X-Received: by 2002:a17:90b:4a4e:b0:2e2:d562:6b42 with SMTP id
+ 98e67ed59e1d1-2e9b14d7d14mr11879257a91.3.1731521172040; Wed, 13 Nov 2024
+ 10:06:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113043151.GA20077@lst.de>
+References: <20241113171638.5d1343e5@canb.auug.org.au>
+In-Reply-To: <20241113171638.5d1343e5@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 13 Nov 2024 19:05:59 +0100
+Message-ID: <CANiq72=bcQuf+zHjw8n0Lh2dcvOm-K93GLvSaaq7UDVkWGT7YA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the rust tree with the ftrace tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Aliet Exposito Garcia <aliet.exposito@gmail.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 13, 2024 at 05:31:51AM +0100, Christoph Hellwig wrote:
-> On Tue, Nov 12, 2024 at 07:50:00PM +0000, Bob Beckett wrote:
-> > From: Robert Beckett <bob.beckett@collabora.com>
-> > 
-> > We initially put in a quick fix of limiting the queue depth to 1
-> > as experimentation showed that it fixed data corruption on 64GB
-> > steamdecks.
-> > 
-> > After further experimentation, it appears that the corruption
-> > is fixed by aligning the small dma pool segments to 512 bytes.
-> > Testing via desync image verification shows that it now passes
-> > thousands of verification loops, where previously
-> > it never managed above 7.
-> 
-> As suggested before, instead of changing the pool size please just
-> always use the large pool for this device.
+On Wed, Nov 13, 2024 at 7:16=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
 
-Well, he's doing what I suggested. I thought this was better because it
-puts the decision making in the initialization path instead of the IO
-path.
+Looks good to me -- thanks!
+
+Cheers,
+Miguel
 
