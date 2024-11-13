@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-406921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7DD9C663B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:48:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFFA89C6617
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:37:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E072B287A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E6E1F24F7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C4BB641;
-	Wed, 13 Nov 2024 00:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FEABA20;
+	Wed, 13 Nov 2024 00:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fc3rhb7/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949132594;
-	Wed, 13 Nov 2024 00:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFADF3C2F;
+	Wed, 13 Nov 2024 00:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731458161; cv=none; b=ng5cuovy/DjwBrZqfUHzE32DDkGBqkC9cZJ7RUBCHIkIRtIsHD8hUWZBTZjFaTO0VeajeQMXTy71pUfV576MrC5UgUJ+CpLyQJ8GGMB3TaR+rehIHYCKiOy+VANVD7dxH7mqry4jylZgpB0oHouH6D0GK/1SNSAQmKonPWwcd3c=
+	t=1731458251; cv=none; b=sE8FsYxTMlvMNZIaMeel76aIWtn6mBIHaCAGcv6Xzuj7RZtnm3QQfdQAzgZJp3UEv7UcSE4Y47Ox/dDVE/Ai693keu6egejpiOi6uMjd9diWaxa4imjT0XKshXTg/JyY8uOIYIN49ZUn3z64yXKzNYxWgMYLBBOKTsvzI3oKLw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731458161; c=relaxed/simple;
-	bh=mFjxgSAPg7df7lpMOSnVaqdB933f+6mi2DjPmU5QjfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fvEx9Ypw4iNp/T9O61fMcwqSV8t6GpUpJ9Td5nARnwBeZI98F3NKwBIhKFViWg48y3OicETJw5FJnAA/zV9QHVlCd5OAjJnxNf5VVKYDyf3oMzRqwyYCumzxUD2DWPZPCKxdBZ8wcSEsP1ySn2FDB55yNcoDAbLEO60lU1vkEl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C497C4CECD;
-	Wed, 13 Nov 2024 00:35:59 +0000 (UTC)
-Date: Tue, 12 Nov 2024 19:36:17 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Michael Pratt <mcpratt@pm.me>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Peter
- Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
- <vschneid@redhat.com>, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH RESEND 2 1/1] sched/syscalls: Allow setting niceness
- using sched_param struct
-Message-ID: <20241112193617.169fefbc@gandalf.local.home>
-In-Reply-To: <e3Nl9UdWoWuPJauA6X3vNj71jDUwHZYS5b5WSmKCHrU7AyivFG5oLkrL-ewb3IjoQyUouDgZO2T-3WEzBIJ9Uru1AcEDTaVsRzHrukUfto8=@pm.me>
-References: <20241111070152.9781-1-mcpratt@pm.me>
-	<20241111070152.9781-2-mcpratt@pm.me>
-	<20241112103438.57ab1727@gandalf.local.home>
-	<e3Nl9UdWoWuPJauA6X3vNj71jDUwHZYS5b5WSmKCHrU7AyivFG5oLkrL-ewb3IjoQyUouDgZO2T-3WEzBIJ9Uru1AcEDTaVsRzHrukUfto8=@pm.me>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731458251; c=relaxed/simple;
+	bh=u4Y2rROCN38fXmIjh1RCebYosHQ9wEz8A1Dqj4OqFbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iD0BbsXuBzliWBnSXd8vHeC+et4N8ZynJIudg/nDEZ3N2wfS+kQEi6Ne9gA1hDgZQQ2Ii9SixctvP83B5uovrUX08q9VjFg6Sk+wDgJ6xxYr1twS1dT/eYRNdbI809x1/GAUeHBz2OHBVCplovQnmUzg/dfMFg799dlM+MHEOqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fc3rhb7/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74489C4CECD;
+	Wed, 13 Nov 2024 00:37:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731458250;
+	bh=u4Y2rROCN38fXmIjh1RCebYosHQ9wEz8A1Dqj4OqFbM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fc3rhb7/d6chjb5VMDcKrhioVwhcqSdGYcqNn2j6u5X60TQmFZafpSrPZaD0zOfFE
+	 Wh+iQyd6FVbXnmViG78MTsXHRE0eOAjjJmhmT7CIwVqiBIZ6Wn3vyDis9RTaoRN/+r
+	 sDOg1VycXA64xFUQqzmy7zVe0aIWnttbIs7abtbzZGyUWegTW98k44u9c/OnqRXCYA
+	 25FQ/ZDvoncwyY3ZDQxdjCwmhSQZ4nzPYl5w/6g1sbPpfla6nz/IQLKah+eUEcr5g9
+	 26RtBo+So/aaifUigDNHvjhrri+ojLiF/u18W6qezlDKUlVdIRPzbtJswIOgbFR8Le
+	 i88PXoH9W3oag==
+Date: Tue, 12 Nov 2024 16:37:29 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Erin Shepherd <erin.shepherd@e43.eu>
+Cc: Jeff Layton <jlayton@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, christian@brauner.io,
+	paul@paul-moore.com, bluca@debian.org,
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [PATCH 0/4] pidfs: implement file handle support
+Message-ID: <20241113003729.GF9421@frogsfrogsfrogs>
+References: <20241101135452.19359-1-erin.shepherd@e43.eu>
+ <20241112-banknoten-ehebett-211d59cb101e@brauner>
+ <45e2da5392c07cfc139a014fbac512bfe14113a7.camel@kernel.org>
+ <2aa94713-c12a-4344-a45c-a01f26e16a0d@e43.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2aa94713-c12a-4344-a45c-a01f26e16a0d@e43.eu>
 
-On Wed, 13 Nov 2024 00:13:13 +0000
-Michael Pratt <mcpratt@pm.me> wrote:
-
-> >
-> > Why is stable Cc'd?
-> >  
+On Tue, Nov 12, 2024 at 11:43:13PM +0100, Erin Shepherd wrote:
+> On 12/11/2024 14:57, Jeff Layton wrote:
+> > On Tue, 2024-11-12 at 14:10 +0100, Christian Brauner wrote:
+> > We should really just move to storing 64-bit inode numbers internally
+> > on 32-bit machines. That would at least make statx() give you all 64
+> > bits on 32-bit host.
 > 
-> I believe this should be backported, if accepted,
-> so that the behavior between kernel versions is matching.
-
-That's not the purpose of stable. In fact, I would argue that it's the
-opposite of what stable is for. A stable kernel should *not* change
-behavior as that can cause regressions. If you want the newest behavior,
-then you should use the newest kernels.
-
-
-> I can do:
+> I think that would be ideal from the perspective of exposing it to
+> userspace.
+> It does leave the question of going back from inode to pidfd unsolved
+> though.I like the name_to_handle_at/open_by_handle_at approach because
+> it neatly solves both sides of the problem with APIs we already have and
+> understand
 > 
->   $ cat /proc/$$/sched
+> > Hmm... I guess pid namespaces don't have a convenient 64-bit ID like
+> > mount namespaces do? In that case, stashing the pid from init_ns is
+> > probably the next best thing.
 > 
-> and see the 120 without needing interpretation
-> due to it being represented in a different way.
+> Not that I could identify, no; so stashing the PID seemed like the most
+> pragmatic
+> approach.
+> 
+> I'm not 100% sure it should be a documented property of the file
+> handle format; I somewhat think that everything after the PID inode
+> should be opaque to userspace and subject to change in the future (to
+> the point I considered xoring it with a magic constant to make it less
+> obvious to userspace/make it more obvious that its not to be relied
+> upon; but that to my knowledge is not something that the kernel has
+> done elsewhere).
 
-True it is exposed via files, but wouldn't this be the first change to make
-it visible via a system call?
+It's a handle, the internal details of its layout of it is supposed to
+be opaque to userspace.  I wonder how well userspace deals with weirdly
+sized handles though...
 
+--D
+
+> - Erin
 > 
 > 
-> > That said, you are worried about the race of spawning a new task and
-> > setting its nice value because the new task may have exited. What about
-> > using pidfd? Create a task returning the pidfd and use that to set its nice
-> > value.  
-> 
-> I read a little about pidfd, but I'm not seeing the exact connection here,
-> perhaps it will reduce the race condition but it cannot eliminate it as far as I see.
-> For example, I am not finding a function that uses it to adjust niceness.
-
-We can always add a system call do to that ;-)  In fact, there's a lot of
-system calls that need to be converted to use pidfd over pid.
-
-> 
-> It's not that the "exit before modify" race condition is the only concern,
-> it's just one of the less obvious factors making up my rationale for this change.
-> I'm also concerned with efficiency. Why do we need to call another syscall
-> if the syscall we are already in can handle it?
-> 
-> Personally, I find it strange that in sched_setscheduler()
-> the policy can be changed but not the priority,
-> when there is a standardized function dedicated to just that.
-
-My concern is the man page that has (in Debian):
-
- $ man sched_setscheduler
-[..]
-       Currently, Linux supports the following "normal" (i.e., non-real-time) scheduling policies as values that may be specified in policy:
-
-       SCHED_OTHER   the standard round-robin time-sharing policy;
-
-       SCHED_BATCH   for "batch" style execution of processes; and
-
-       SCHED_IDLE    for running very low priority background jobs.
-
-       For each of the above policies, param->sched_priority must be 0.
-
-Where we already document that the sched_priority "must be 0".
-
-> 
-> The difference between RT and normal processes
-> is simply that for normal processes, we use "niceness" instead,
-> so this patch simply translates the priority to "niceness",
-> which cannot be expressed separately with the relevant POSIX functions.
-
-I agree that POSIX has never been that great, but instead of modifying an
-existing documented system call to do something that is documented not to
-do, I believe we should either use other existing system calls or make a
-new one.
-
--- Steve
 
