@@ -1,119 +1,231 @@
-Return-Path: <linux-kernel+bounces-407476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585F89C6E07
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:40:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7562E9C6DDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 12:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B57CB28F67
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:28:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 081E81F21C15
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFDA1FF7BA;
-	Wed, 13 Nov 2024 11:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E1D1FF5F2;
+	Wed, 13 Nov 2024 11:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T2i36Av9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hGFamc9z"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DFE1FF035
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 11:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05161FF60C
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 11:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731497284; cv=none; b=Yt9mG9TUxKLalGip7UjiYyOn74Lx9u4Pdl3IZE2QXvejKDFzyaHkfFeQwT8EjDG2KZ7LPD1d8A5RKyzyHPjFT0YcDlhVnTJ3pRcJ6am4J+Ib7WyakWuyMPt9h4BN+Vcm9IrHuEsm+3MJjOtLm2kh7P7BfISaK0oHAmKI8DIkd18=
+	t=1731497310; cv=none; b=JRFZZKWQUomGEoInfcU17XCHxFdxsfv7Dv7JSe9vjzTUucvj1xZtDUEHY1Sp1MTe3WpWMmK4/89DmS9dGFehCLxhEFvT3GolMuZnjFUbCCxNPMJU7aLWxzWneJhJuTRi0RWSbRR2LfjUqowI9InKrKbEpFtu2YtpW9CJdlmkkeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731497284; c=relaxed/simple;
-	bh=NT71yENrzEuRfmxcpvg4Og4HMFPJiRxXgC/X+n7Xig0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SZTljGVzKddlExtV1g/XU+zDVUYicLKKMWfHXsVohp8OOxWQBJKPmHhpXPPMH4AlxkCGuCAudBQuXudsv27ZzrXJYcspB4U7OI/gkzwmmojPKPmzzDqEbq2w+BZjjqJWomb1SY2hrdIMmay9Xuc9Emv20yCMpguIivSobyqnA10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T2i36Av9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731497282;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XDom7M3/nHbCqwKwcg/dd3iQWQaO7P/1qdywo6XrazQ=;
-	b=T2i36Av9wWWOgZH1Ci0MX/QRYgnX7TpkuEwNZXTWwKXcpX9W9AZNfatfPB7BNhVigTWrB/
-	IQ+9elUjBEkfM2nW/9f51Tw6pL5wNOqkJBJE+r+Ckk7jv/oPxzX2SoWsnJqmKcttJFq85e
-	c/AL6El6P8dzV4vwEvbY3GkUFp48ag0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-594-CB2ChinnOcSHhkFGYQ1Qgw-1; Wed,
- 13 Nov 2024 06:27:58 -0500
-X-MC-Unique: CB2ChinnOcSHhkFGYQ1Qgw-1
-X-Mimecast-MFC-AGG-ID: CB2ChinnOcSHhkFGYQ1Qgw
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E7C2419560B0;
-	Wed, 13 Nov 2024 11:27:56 +0000 (UTC)
-Received: from ws.net.home (unknown [10.45.225.223])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BE3C41956086;
-	Wed, 13 Nov 2024 11:27:53 +0000 (UTC)
-Date: Wed, 13 Nov 2024 12:27:50 +0100
-From: Karel Zak <kzak@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Ian Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
- sb_source
-Message-ID: <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
-References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
- <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
+	s=arc-20240116; t=1731497310; c=relaxed/simple;
+	bh=Vks9sp8KQO13fnVv1WgRw4i3Yp4B6y1XL2G/W8zMSNw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ahaPzYMJDXmwYbpuu4jwQ9rHV1vR4CpmPpR4Pd+uYRrwii+Mfrfbp2FGv2asHBOKUymzGIJigDYVeqtbhoXL3R+EBIFbVKkb8AV5c5f2pz+OReNZrQhbI/1iHgCL550Chg2fNim3iioxmz+AWmRTYf6X9GcPumOUS0/fR1sB0gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hGFamc9z; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5142468fa79so1563750e0c.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 03:28:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731497306; x=1732102106; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ibM4ruWPAege2vfzEi4k/k+Sw2PCbdPHy12ELWoxDXY=;
+        b=hGFamc9zH1ux28FwwpjAfUHridanBej3s5xODY2lOzgEJ4PB5/9WUdSgA8ZiMJdXAW
+         gWJUZ8yfX43Uk99kvvBvzkWQMQEZs5jPWF0PVscmkbZPeQaNc3XaIZRn871/e7yrnuqy
+         rCDl0IlwkpjM/PGV+4tWMSWpLaFWq8v2qbgJJAB6aTPrQXWbLWns7JlUb7eYmRk6eMH7
+         Rtg5sybAxKDcLV7Il1MHUL+mViHYHRMYlvwbQrSxRsqALTDiRMV/o3YI/ARpykcSL1QM
+         P5m8JEKpX6VXlIT4CAnMmCRKd3EWqKlGOAoZdHtohqWNNOXV90lUacfxLo9WDh7eBIzd
+         BVfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731497306; x=1732102106;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ibM4ruWPAege2vfzEi4k/k+Sw2PCbdPHy12ELWoxDXY=;
+        b=AhrAUrxUixyuRFrtKdVl3TRQniCWqgLnLiJqb3cKna6IwkFnrl1ldMZ03fkZIs6y2H
+         6PlfqERapw5bss2BaXk92FPIdwUSVjtbokG09cpYMkbgXY5Y5xJhLgfl7TUDXuq5TcVa
+         g36I8Jimfdsl21YXDdjDI7YPV/rB86wLvYy57f6NEK/UMP0/F/opcJOWLqQrMC0FKdos
+         1xgadO7XVjBk20HHBlgmHPey8FJxMyoUnGsbGtEaWAzohw8JqP6B6u4fZvyrwFOYmaqV
+         QyH17cB7H4Zpyq9cLtfKzPRlXw2tqqlDcBT0DHtRnf8AR3vfAZM1Tvsr3lSQY2LJaEVD
+         gfRA==
+X-Forwarded-Encrypted: i=1; AJvYcCW73yei1LX/L74jCkGjUHwYCcDya2yGV8PtNcHpNmWrr/ZJEH3gal/72Ow8rbPYGnKyzl94nqLwXZnSKRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpyCKhsv/HGjm0y0n3hneBZRf5fIW0WXVZcecvbSjImUecWPJk
+	0RGX9gwXVsz59VxgkRovV/a4T7Ot3vdXLMkqW8YqYrUlhTD1BGX+HeSXUV/cBlST7mHfUjWdAsC
+	ywOlwfmWVj3HvZzIQCjUC/39wOIj8Ix47VioikA==
+X-Google-Smtp-Source: AGHT+IE5XV1UJGSOQRX/qQMMlLJ/XPYR/3FEYamReEoaZPK8Bd0yQizWVt8DCQvzbDo/J6sVtG6e0r6gr6tGnujdFVQ=
+X-Received: by 2002:a05:6122:32cf:b0:50d:2317:5b61 with SMTP id
+ 71dfb90a1353d-51454270f84mr2974738e0c.6.1731497306370; Wed, 13 Nov 2024
+ 03:28:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20241112101839.777512218@linuxfoundation.org>
+In-Reply-To: <20241112101839.777512218@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 13 Nov 2024 16:58:15 +0530
+Message-ID: <CA+G9fYtM3KGHE8boa1nvhJn-JNTtMob93KGubiXA+f-ak0OSGQ@mail.gmail.com>
+Subject: Re: [PATCH 5.15 00/76] 5.15.172-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 02:39:21PM GMT, Christian Brauner wrote:
-> On Mon, 11 Nov 2024 10:09:54 -0500, Jeff Layton wrote:
-> > Meta has some internal logging that scrapes /proc/self/mountinfo today.
-> > I'd like to convert it to use listmount()/statmount(), so we can do a
-> > better job of monitoring with containers. We're missing some fields
-> > though. This patchset adds them.
-> > 
-> > 
-> 
-> Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs.misc branch should appear in linux-next soon.
+On Tue, 12 Nov 2024 at 15:54, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.15.172 release.
+> There are 76 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 14 Nov 2024 10:18:19 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.15.172-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Jeff, thank you for this!
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-I have already implemented support for statmount() and listmount() in
-libmount (PR: https://github.com/util-linux/util-linux/pull/3092). The
-only remaining issue was the mount source and incomplete file system
-type.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Currently, the library does not use these syscalls when mounting (it
-still uses /proc/#/mountinfo). However, there is already a library API
-to fetch mount information from the kernel using listmount+statmount,
-and it can be accessed from the command line using:
+## Build
+* kernel: 5.15.172-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 0ef052d947fe31190128abd44cbc8cebc7657c48
+* git describe: v5.15.171-77-g0ef052d947fe
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15=
+.171-77-g0ef052d947fe
 
-   findmnt --kernel=listmount
+## Test Regressions (compared to v5.15.168-239-g7a95f8fff07f)
 
-Next on the wish list is a notification (a file descriptor that can be
-used in epoll) that returns a 64-bit ID when there is a change in the
-mount node. This will enable us to enhance systemd so that it does not
-have to read the entire mount table after every change.
+## Metric Regressions (compared to v5.15.168-239-g7a95f8fff07f)
 
+## Test Fixes (compared to v5.15.168-239-g7a95f8fff07f)
 
-    Karel
+## Metric Fixes (compared to v5.15.168-239-g7a95f8fff07f)
 
--- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
+## Test result summary
+total: 100973, pass: 77106, fail: 2830, skip: 20889, xfail: 148
 
+## Build Summary
+* arc: 10 total, 10 passed, 0 failed
+* arm: 203 total, 203 passed, 0 failed
+* arm64: 57 total, 57 passed, 0 failed
+* i386: 45 total, 45 passed, 0 failed
+* mips: 44 total, 44 passed, 0 failed
+* parisc: 6 total, 6 passed, 0 failed
+* powerpc: 44 total, 44 passed, 0 failed
+* riscv: 16 total, 16 passed, 0 failed
+* s390: 18 total, 18 passed, 0 failed
+* sh: 20 total, 20 passed, 0 failed
+* sparc: 12 total, 12 passed, 0 failed
+* x86_64: 49 total, 49 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
