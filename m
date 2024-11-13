@@ -1,194 +1,327 @@
-Return-Path: <linux-kernel+bounces-407365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBEA89C6C7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:12:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFEEE9C6C83
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 11:12:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D3B5B2867F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:11:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 630B31F22B02
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE01E1FB8B3;
-	Wed, 13 Nov 2024 10:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1061F1FB894;
+	Wed, 13 Nov 2024 10:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKwGEJf1"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="qWXxsDrW"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2051.outbound.protection.outlook.com [40.107.105.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5581F9A8E
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 10:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731492660; cv=none; b=glwLRCl9kUCkavwMmiRpBaj5Xm05XLHCnpxU01OCpAykMaZPqloe+CBGTv1f0698MMTyGnjfysCeWgF1u7MRqRd2NhH0+e1IQfpmguEeyYMdJFVsEzaVEtjWqzgtGkF/IKyQ6NfEfGs+ESdQWOz6uUkhRVy89ZVgNPlmiRRfrK4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731492660; c=relaxed/simple;
-	bh=svp+5bW/5855obVVtWRajkCPG6F79wYW9r9nPNbVKBE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DshO4B2ZQal8D9D9I3+P4R/BEyxFqRT43A3e+R4JY7dPa+L0kYtLC6kLV164ZazkoalKAGL+4iATKj0nc6LOrhSLrkrt9GTwIz6Qlu1xYlwBu7YEMZmWOG/zhO9EQ4m6KOTov0BeIdXxX1+SzLoh6q5PcQzusfaBgfPaWVnO4Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jKwGEJf1; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e3cdbc25a0so67388157b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 02:10:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731492657; x=1732097457; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=svp+5bW/5855obVVtWRajkCPG6F79wYW9r9nPNbVKBE=;
-        b=jKwGEJf14KL1XJG/i82iP+LmwwhwcvwgHt+QFsF2cQq1HaFLbnjEAgDrYztUVwm5cD
-         FVC5k0qDxQOiMfy+HgA3F59m4DXk1MDkOvuvmRpCp7rtF7D7JOHR7bc+8ZELH/EBNPLG
-         vC1TnuWT7HdWTvQePJaviLkZhRL4amE7B4LOnCLA9mONVBkpx847eXGUx83h0ckmDwRG
-         0TQk6YWRUw6S/rgTxdEn6lxI9YRxnZm23x3O52wAjuXBRYfOjuc6KPEHUuoh8APewLOB
-         72baiGtjb5ZeRKr/BBv6EOQizQDWwDF142PhoGV2ZwIVNGMY/eKp/LIYsFGsqGIs6LHg
-         FYdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731492657; x=1732097457;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=svp+5bW/5855obVVtWRajkCPG6F79wYW9r9nPNbVKBE=;
-        b=ZdWQ0Z3nlVxHwTRlEXBtUaVWriyOHoBWJ3wbaWczHajAYCo4udbKsw/hTfdjw+/pxF
-         45mXi8UGbXFEbzo7ILSKrHODfV/YrLxAKvseKRZ84ifo0UZ4Gf2ZDfO4bL9+cnWUV5XL
-         Aor2rY0khc/DeAZwjo6zKvwXMeOkbD+Z2EONdSt+UCP5vor1Rj4hkT/Txaf3v/wBqAD7
-         gdQt3B1MpnPJH4A78HDojtVpNqX4ZJcGoxGtcAUdb8bnygZfCM4bhb/BvH5bwG9u0f16
-         2prLlhZAM+JoBV6GKU9D8gQ/6yDQ5lZtyGTor9oKPW11WK/LlO9baRI6vBPeZFO+m/1h
-         UiPw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0mAtJBt8XJ/g5tMDUJKrTuhB4Vs2QBhJLIHJjTOCxB+ixzE+Io79z5Glvh+UHGnAE60XDIUJPU/I6iFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0/piPe3UGVZQCmZMjychhCr7i+2yhH6CgWF94oWaO3M5C5+By
-	unMXZ7fHTpM8FDljUArqsJDGMsYHjNnwl+hvowh0kEE1VTmT1Bwfo3eI1xjyK64dF7xmJRaa/Xr
-	ebW4PgMzq4WQH8ZVivKrFxZJGWThk2TwbuBE=
-X-Google-Smtp-Source: AGHT+IEmwfBtDsJXCpjTjW9tEez5MUnlTdPs/uC/B2JiXS/bSuHkFLh1/9E0LypLApqn/DGMjXSr1bAHqNJOVnmB0dA=
-X-Received: by 2002:a05:690c:d81:b0:6ea:3e6d:2b01 with SMTP id
- 00721157ae682-6eadddb0f9cmr186414837b3.19.1731492657358; Wed, 13 Nov 2024
- 02:10:57 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A154E1FB8A7;
+	Wed, 13 Nov 2024 10:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731492758; cv=fail; b=JlTm3btiVNUilmhG0PyQvIuXeAgB+wnWq7HbNoVdEmZvYzM5peLyxomlFCU/g2BG6kFDis4TxqZQ6lMrnfFQuYW7oPeqdrV+AWGP+eOoBKzYRgf9wsrVyrKTBTVB8t3zKavhw3gJWZDm6Lx2Itf3Qkk2yxfLU5SZeiY4rgxsjLw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731492758; c=relaxed/simple;
+	bh=2CUnFxEi1gUO6FkSTmt5362Z+m6I5OPJaiapfckAFBY=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=NksL9sfWAR4Ow9IVBt/uEeamwyOJblh8mxVRCzl+ZhB6FpsQtvvFdmk+eMGnEk9UEWFblub1HAIis4XOdIBaMHrZUvo2EZr5fpnZXNlvUBx27ql2evwMIZ7WF75ZX9hIF5OYY7YtHxmgvL8iD6mQM4xCC70Fu6ugBjY1BV1Fxio=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=qWXxsDrW; arc=fail smtp.client-ip=40.107.105.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i1Nv2VU0DAUB/JEfhvipFhL3fPPpAp00gYkB2D937bGRMG8tbE5eBoWZoJq8QJ9kZDtXO8lS73FzKaSL8YZ6fFcLhyW21Iwd6wB1Bu/AsPoIouRju1eosRnY1dYK4tZ/bl3leB/y+BPPmbqmcoJXZrfpGujHrEvm2STgD1U9WoPJ4PFrFODLbYTn4eKyax1BAaj6qqvhB4tDY1jjzPFOdEe8E+wZ6ihRIpYajLVEF3IDeuYRqHBPfmiYV8TUFM+FbTtIhQocbFjSuJ809gsxBXos0mfdZmf2LbU49DilKs6IR5tDHOfOh/OAcOplku+sekhhyMzoJfg61HILDZaPhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3FRVjwa7ZDIndvL8FaZtE4RvqrXyzjfxHqmTWPGnubE=;
+ b=P0H9j6Y8ICm0ufY7sKICJmlDuS2cJq/mhjOX3Lvb0+Ihluc0foFwkw/yqVqmup8dJypE11WLu0VYrxR6ZoPZ97Nls0hADZhfbMraUGtOEnIdJWOjY+Fq7gn01N8ep2tze8JS9h7nN9kADZPeQqiIXLW1z5kjQNVU2WWOIcwgnZH1o/7dFgdA5bV83yyLp0AM/U66RspDvXs+NmCivXBA99bq6I6N5vbqR4Y1wwMLgi+D4tX/YhmgOcA3wFs8DksGnDhiyHcXGdPjYIE+yJCFBuxgNUJl7IwKxSpvVpBE9V9jnqEx9n+VFreMUsO7XCu7IKXSpa/ECs7Y/yEqR7t/hA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3FRVjwa7ZDIndvL8FaZtE4RvqrXyzjfxHqmTWPGnubE=;
+ b=qWXxsDrWp5Hb/04sf1YaBhmvD/4Hb7oFF+LQD/kuK507x/aCooyBaBLkh5xbcgDmMjoLXPJO58kwEM5sLSd/sCySZRlgam3vUig3OM7OIcfJ6PGytxuGkhTGDgAsWSycfbpkYCm7jwKQeJbDQoppWYseD9TbTlrcPZF9aZNJxUswdOOSnkcF/MxPuNcFVhf6F3LcDBpOdRdDK92m1Lj/TCcSj4ZRsvL7AoYM32AQhoBYM7T5+62FBjbTz31pbosYrzRuG4BjcF4Ef2RwlVQ2fEQt4aOtFtdW/CZpEmhWrFJFTDY8TvMTzsN6am5K/B9/DJ8c5525P44pyh2fiuasnw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
+ by PA2PR04MB10129.eurprd04.prod.outlook.com (2603:10a6:102:3ff::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Wed, 13 Nov
+ 2024 10:12:31 +0000
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455%4]) with mapi id 15.20.8158.013; Wed, 13 Nov 2024
+ 10:12:31 +0000
+From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
+	Larisa Grigore <larisa.grigore@nxp.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Jacky Bai <ping.bai@nxp.com>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev,
+	Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Subject: [PATCH v6 0/7] gpio: siul2-s32g2: add initial GPIO driver
+Date: Wed, 13 Nov 2024 12:10:52 +0200
+Message-ID: <20241113101124.1279648-1-andrei.stefanescu@oss.nxp.com>
+X-Mailer: git-send-email 2.45.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM8P251CA0005.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21b::10) To AM9PR04MB8487.eurprd04.prod.outlook.com
+ (2603:10a6:20b:41a::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108163455.885-1-SkyLake.Huang@mediatek.com>
- <20241108163455.885-4-SkyLake.Huang@mediatek.com> <dbdb45ed1135e73b4eebd76e6f61b96d48aaedc6.camel@mediatek.com>
- <87ikssu3qq.fsf@bootlin.com> <12f4d28f3efb7fe319ec919df92145c4ad24da01.camel@mediatek.com>
- <87h68bsdv6.fsf@bootlin.com>
-In-Reply-To: <87h68bsdv6.fsf@bootlin.com>
-From: Chuanhong Guo <gch981213@gmail.com>
-Date: Wed, 13 Nov 2024 18:10:20 +0800
-Message-ID: <CAJsYDVLYE1=sAj5Pvni17xQ=4akFCA+UqtuB5RKq77HxL4ux9w@mail.gmail.com>
-Subject: Re: [PATCH v2] mtd: spinand: add support for FORESEE F35SQA002G
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: SkyLake Huang <SkyLake.Huang@mediatek.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, 
-	"mmkurbanov@salutedevices.com" <mmkurbanov@salutedevices.com>, 
-	"kernel@sberdevices.ru" <kernel@sberdevices.ru>, "d-gole@ti.com" <d-gole@ti.com>, 
-	"dev@kicherer.org" <dev@kicherer.org>, "vigneshr@ti.com" <vigneshr@ti.com>, "richard@nod.at" <richard@nod.at>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|PA2PR04MB10129:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7c5668ee-a74e-4694-bc65-08dd03cbaea9
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|52116014|1800799024|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?K2xobkhmWWlSbTc3eEtEM0tYcnJPYlAyQTd5N3dGQXlCV2h6Z29MaDZ2ZUZS?=
+ =?utf-8?B?a2F4OTAxZTZIcFpFajNtSjRSTnBTalg1NXJ5dzE5YS9IcExscEJUMWtHcHV1?=
+ =?utf-8?B?VTVkVlpzRkxrQUROZzQrY1NUeFBDSzErUS9MMXBFYVJnOHFUcHFWQTVUb3JZ?=
+ =?utf-8?B?OEtGMHFxSHcyWm1Vc001KzhlL0hVb3hnbmlIWHN0NGhZdCtPQmZ2WWtpT29l?=
+ =?utf-8?B?UVh0dEptMnRKd1F2R1dualhudm1zejNkaGdtMy9wQUxmMFhJY2NOeHp1Z0dv?=
+ =?utf-8?B?Mnp0QlZZSzRCZEI4ZndMRTJXQ1BGcFZIbERwQzNhdmRyc3Fhbmo3T3JIVklP?=
+ =?utf-8?B?MlExSnpSTlZTcWJnUjRMN1NaRHNNRnR6bVF0V25RdEpOQUFjTm5wNDdlajZY?=
+ =?utf-8?B?RDdVOFlKMXk2Um9ycy9FWUZmRkRwSVVDYWxaR0xCSnZleHA3VHJBbG90dzNa?=
+ =?utf-8?B?U28yek5iS1BwQnUyRmtRd013ZnllRnRDRk5yVTJEVkZhQy9Zd0NaV2N4dklO?=
+ =?utf-8?B?SW5weHF5Q3Bna25RWWJ6cG11MDI2RzdiQ1I2d2dwWEYyRFdqNHNqN01sdml5?=
+ =?utf-8?B?R0tLU3dWbjZtWWFaYkxyTkRnNXMzTlpOclA0ak4rTGlpeFBJNEhuakIycms3?=
+ =?utf-8?B?aTZJSGVWZG5GRE8yY2tDajd0SU5DMk5OQWJsdjJCQVg2aVMwbVUxOUgwNGN4?=
+ =?utf-8?B?cDlzSlVrM2IvcXhXSWhmNjU4Q0E4NExxMXhhK05hNytYcm1ON2cyanJ5cGwz?=
+ =?utf-8?B?Mk9FeW1sTGJIOC9DUnZmSVNHbkFVSTFJbDVkRjhsVXFXb3c5ZFlabXZiNkxR?=
+ =?utf-8?B?RVZBcXBnSWxtcFlPeURpa3NnampjKzZSb2RRRkFUWEpYQnBOYnJOYU1YWUgr?=
+ =?utf-8?B?NzVrVmJpak81RHJxNDZYNGk3UktzaWo5Y1hKSU5TQURVMW1HV3d1dzJyV3pM?=
+ =?utf-8?B?b3J0dEFwQUduUWY1V0N6bTh0U0hWUGljNFo0a21PODEwT09lQ1BnaGdoeGVt?=
+ =?utf-8?B?Qk50ck8wdXIreWV0aVVzYWZFSVVZQUJKN3huNUR6ZHRVLzlNOWNxenh4QTlJ?=
+ =?utf-8?B?YWZKVi82RzlDL2svcDYrandZNE5sSXJZYy9peHlKWUdmUFBkZSt1ZFo3eGkx?=
+ =?utf-8?B?dW4vWjZEU0ZRTzZoandubVcyeDFWZStCWWx1SmRmbXNSdXpHV3N6NGhXY3RL?=
+ =?utf-8?B?WmllYUJIQ3ZhMldHdlJTVzlHK1NQT0JLVENOUWwrbUtUTUFhNUlVdzA3QVVN?=
+ =?utf-8?B?WXNheCt6RFRsMjc2TUlrTGF2SVlUOTgxbEh6UDRkVUgwbWkwdW92S2Z0V2lI?=
+ =?utf-8?B?OUdpazdsdmd4WFBTektBaXFtcm5pd3pFNFpZdUVGUnd4WDdZTmc5WlZBc3hC?=
+ =?utf-8?B?MG5kWitoR3hNWExVK2JObmF2cWpkdk9hMlZvUXVIZnVEZHluayt2eGJpUEJG?=
+ =?utf-8?B?WUpuancreHNwbDhXL01iMVZaSU1UN2xRRlA3ODVjWVlscWdrT0tuaWU3eldR?=
+ =?utf-8?B?VHRHK3J0aStpT1loRitoSTkxVHZROGlLWlJhcnZKREVpWGg1a3ZmUzV2b29a?=
+ =?utf-8?B?c1U5ZzFMdnJWRlpHZ0pNTDkwWlU2VFNLbVRDdzFlL0RRYnRvNC9IQjlTb2hn?=
+ =?utf-8?B?dWRBRjdUMzdQWlh6U1ErVytiaVBjNituQ1B2ZjdqRkEwWmpjcXFkOUZxbXFT?=
+ =?utf-8?B?Y0hyNlJjZTBwVXNTekdOVStEc0FsWG0zc2Z1OWZMZGJaNitiTGdadHc0dDBK?=
+ =?utf-8?B?aUdCZmtMdFFuWUFlTnFGOVJTc000czBFVGE0cEo4TUM2ekdnSWsvMkwwRVJZ?=
+ =?utf-8?B?UXk4a1V4clVlMGQvbDhLN2lxZlNrcHZOTUdxTXJWYTRweU5YMFZGdnQ5ZTJr?=
+ =?utf-8?Q?wQ/DfbRctNkpS?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(52116014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VWIraEpUakVuTWo3aU0zdVZYcnE1eVd5VTBOcWNpeHlZOFZLVFFWemltV3lZ?=
+ =?utf-8?B?ajZlZTgvdjREdUVPUkF6S1liR1dpVEoyOENuUjRKOVdhMmc5UWErbmN0TGw4?=
+ =?utf-8?B?Y1FpWmRoNlRTK21TTUVDdEQralZ1U0MzT05DS3BXY0JpdWFsTW9TVGNjcVlt?=
+ =?utf-8?B?ejhiOFpjdlE5SnF0Zm8xWW1wOWI3MlVvdFR2WVl3eFZFK0hLTTkxRTUzVWRa?=
+ =?utf-8?B?cXBrN3NwRGV1NVNvNUsvMEF1U0UzT1FtRWx2dnkwN2NKeVV0M2s0dG5ubSsw?=
+ =?utf-8?B?Sjl6K0tPTFdhTTBkRThzVUhCbDhFYlVDM2dwMlJqYks1K21vZEpMdjlDL2lJ?=
+ =?utf-8?B?UFhlbTBOY1kwTXRGUC9sOGZEZVNMYjI2d0tNV0srQlVSMm5sODdVSkJueHRO?=
+ =?utf-8?B?WHFJT0N4OVllZGRTY2NLWDFXUnZJQ3Vpb2lZVFoxdFd1N3R4Q1MraGJ3ZlBS?=
+ =?utf-8?B?SkJKenhqQ1NQbjdveG9ieUc3emRuVEJUY2VBNGxuZCtwLzVCZHQyR3Y3d2ZQ?=
+ =?utf-8?B?UEY1VHdQTHB6M2ZjUU00WFdKd1JjcG9ZdzhRcTRMbHhTL243ZG9tMkFjb2JD?=
+ =?utf-8?B?ZzhGOExlUm5ieDlsYnhSeWRYOUxIdkZVczgyOW9seVJyZkh2OU9CbHo1L3g5?=
+ =?utf-8?B?dklwdHFTZVlxZzcvWG84dHV4UGtyU2liOGNYc3gxa1ErVkFBOFpzUE1Nb3pR?=
+ =?utf-8?B?cUdUNlZtY1JoS1pObXRkQU9sUkxGdkNPT05HL1RkelVnMmdWdEtxcXNBSkNi?=
+ =?utf-8?B?SjgzUUQzSUVKYjMvSzNXMDJFWHlKMlk1KzFnZHNWSHJILzJMRGs5WmsvYTJR?=
+ =?utf-8?B?Y3ZidXVJZ2J4RmZjRUNUeFZpRytyTGhLMC9EUFZTRFRPSUJqTnNIblFaYXU1?=
+ =?utf-8?B?Rnp6NHdPYnplc1UrTzFJQmxtUjNuY1Y1VVU0d2RUMkxQV09YMWxSZjkvdVVC?=
+ =?utf-8?B?Kzd5RTFYaHVRc2phRWRoTStTSElTZ1ZlMVpOZERUemxWeGVwT0M1a2Zvd2FO?=
+ =?utf-8?B?VDRoR2ZyMzVEbVNNOFNaYTR6KzlnWW9ZODV4azhmbzNmdTZFTlNnOUU3T0tT?=
+ =?utf-8?B?VWdIK1JGcUExQnJiWWxyeVd6K05BSWxobUR6TkZqNExzU2FmQWVJZHh5QmQw?=
+ =?utf-8?B?SzByZVJUY2cxSWc4TmlRSXpuZGU2ekwrNzlUZG42azAvcWNYK2MxU3lhZlg0?=
+ =?utf-8?B?RXU4KzhydVRBRFh5bCtReDBOcEVZY1dscWJQV2s5WVI5N3RFOTF4ckk3cHdq?=
+ =?utf-8?B?ejFRUkZIT28yajFZdTJGR1FlSkVKVzJpZHBDNlIraXVBT0pQZDY1Y1BjdzhR?=
+ =?utf-8?B?R2w3ZjhRWVVIUE83VjRJNE5ZV21QN1c3ZzdRUXRibVEzcTBsYlpBL2lHOTk4?=
+ =?utf-8?B?WVRJSjZ4bThFRncxbzFucDF3dkpDUEh1VE1ZR0VtL1ZZZjZ3eFNRb0xUMFEy?=
+ =?utf-8?B?OUJ0d1hVamErRVRmMjNSY3luODUvTnBkVjRxSmQxRXlzcENFamdEK3BGVi9j?=
+ =?utf-8?B?a0NRbm9iUGViWllub0thRWFWN1p1WW9BK0ZwT0JxM3ArcmxjaEZHT2ZaTHZ4?=
+ =?utf-8?B?K3FRdStBeTNzRUNEY0FCVjBZREZRN3NYZUtTaVBBQ092V0Z3Qzk5MDdlNmlH?=
+ =?utf-8?B?d0YvaWxrZmVheUxaM3JNZG1Qc0dRTnlFd1N6Y0pQSjdaZTRvYmJvZ0RRdWY3?=
+ =?utf-8?B?T2lyQk96dHRQaE1tZExLdDgzVTVaZEZBaTFtM2sxTHZ0SzdsTUNRNlhRNERN?=
+ =?utf-8?B?VlJnMnZMazlweGM2eSt3NlJmQUxIMDFYdmpyWWFPZjBIdmxSc1o5cFVLc0Jo?=
+ =?utf-8?B?eThzems1VWlpMXRudW16dWpXT1k1dDdoKzUzV3lOQ3c0UFVNSGVmbzhVbmNV?=
+ =?utf-8?B?Zm9lVFBpWmxEUW9hM3FDcnpIZ1F3UDVRdERVdGE3cnBoWjRLaUhOWlZsQUQw?=
+ =?utf-8?B?a0hYaVFDd0M2Y0s1bUU4K0I5VEM0WERadzRpUFQrL0lsNFJLMGNuRGtLVVRS?=
+ =?utf-8?B?T0pQakdjbzJ5SllZSlR4a0pLK1BpdjM0aksvSjZvTHcycnZ6eDhRSE9aMXE1?=
+ =?utf-8?B?NkRrb2tKWStxU0Q0RzZ1bWZoZXRvYzNJcVFTWUFzdFk3ZW5lUXp6R3d0bHlG?=
+ =?utf-8?B?NDU0Z1Q5aEUzU0NqcGgybGl3U1p1VHQ1UTNENGIrRGxnUGFqY2xKaitscDg5?=
+ =?utf-8?B?Unc9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c5668ee-a74e-4694-bc65-08dd03cbaea9
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2024 10:12:31.3355
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ehOwJVI/Yg6O8TUOw1IIIV9iCHJXaisP3YcWOSPl2AlCPmUY1+TJYrnj9Z3c13K8xOVVextIihfxvZ2ZtNqze56mVTcZDdJw94+SAeHPb+Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10129
 
-Hello all!
+This patch series adds support for basic GPIO
+operations(set, get, direction_output/input, set_config).
 
-On Wed, Nov 13, 2024 at 5:05=E2=80=AFPM Miquel Raynal <miquel.raynal@bootli=
-n.com> wrote:
->
-> On 12/11/2024 at 11:25:25 GMT, SkyLake Huang (=E9=BB=83=E5=95=9F=E6=BE=A4=
-) <SkyLake.Huang@mediatek.com> wrote:
->
-> > On Tue, 2024-11-12 at 11:48 +0100, Miquel Raynal wrote:
-> >> External email : Please do not click links or open attachments until
-> >> you have verified the sender or the content.
-> >>
-> >>
-> >> Hi Sky,
-> >>
-> >> On 12/11/2024 at 10:08:31 GMT, SkyLake Huang (=E9=BB=83=E5=95=9F=E6=BE=
-=A4) <
-> >> SkyLake.Huang@mediatek.com> wrote:
-> >>
-> >> > Hi Miquel/Martin,
-> >> > About this driver, including F35SQA001G/F35SQA002G parts, I'm
-> >> > concerned
-> >> > that the driver will always use 32H for update_cache operations,
-> >> > which
-> >> > means it's not compitable with those SPI controller who can't
-> >> > transmit
-> >> > 2048 bytes (most small-density SPI-NAND's page size nowadays) at
-> >> > one
-> >> > time.
-> >> >
-> >> > The following controller's driver seems that they can't transmit
-> >> > 2048
-> >> > bytes in one transmission:
-> >> > - spi-amd.c: 64 bytes (AMD_SPI_MAX_DATA)
-> >> > - spi-amlogic-spifc-a1.c: 512 bytes (SPIFC_A1_BUFFER_SIZE)
-> >> > - spi-fsl-qspi.c: 1KB
-> >> > - spi-hisi-sfc-v3xx.c: 64*6 bytes
-> >> > - spi-intel.c: 64 bytes (INTEL_SPI_FIFO_SZ)
-> >> > - spi-microchip-core-qspi.c: 256 bytesc (MAX_DATA_CMD_LEN)
-> >> > - spi-nxp-fspi.c: TX:1KB, RX: 512B in FIFO mode
-> >> > - spi-wpcm-fiu.c: 4B
-> >>
-> >> I believe most of these drivers are still able to send one page of
-> >> data
-> >> without toggling the CS (which is what actually matters, I believe).
-> >> If
-> >> they were broken, they would be broken with all spi memory devices,
-> >> not
-> >> only Foresee's.
-> >>
-> > Hi Miquel,
-> > I think it's not about toggling the CS?
-> >
-> > If a SPI controller tries to execute write page and it's capable to
-> > send only 1KB in one transmission, it should transmit data in two
-> > steps: 1st 34H (random program load x4) and 2nd 34H. However, when
-> > F35SQA002G executes 2nd 34H command, it needs to execute 32H first, and
+There are two SIUL2 hardware modules: SIUL2_0 and SIUL2_1.
+However, this driver exports both as a single GPIO driver.
+This is because the interrupt registers are located only
+in SIUL2_1, even for GPIOs that are part of SIUL2_0.
 
-I don't think that's what the datasheet means. I think it needs
-02h/32h as the first
-command to write page cache, and the subsequent page cache writing can
-be done using 84h/34h before the final page program happens. Otherwise the
-84h/34h command is just completely broken and useless.
-If it actually is broken, we do need additional guards in spinand_write_cac=
-he_op
-to abort when spi_mem_dirmap_write doesn't return exactly nbytes as request=
-ed.
+There are two gaps in the GPIO ranges:
+- 102-111(inclusive) are invalid
+- 123-143(inclusive) are invalid
 
-> > it will clear data transmitted by 1st 34H in NAND flash's cache. This
-> > will cause data corruption. Other SPI-NANDs doesn't need to execute 32H
-> > before 34H.
->
-> Is it really what happens? I'd instead expect the spi controller to
-> send:
-> - 34h
-> - 1k data
-> - 1k data
-> ...
->
-> Why should we repeat the command while we are in the I/O phase?
+These will be excluded via the `gpio-reserved-ranges`
+property.
 
-Several SPI-MEM controller don't allow software controlled CS, or for some
-other reasons are unable to execute a longer spi-mem op.
-spi_mem_dirmap_write returns the actual request size it's able to make,
-and spinand_write_to_cache_op use a while loop to split one update_cache
-request into multiple ones.
+Writing and reading GPIO values is done via the PGPDO/PGPDI
+registers(Parallel GPIO Pad Data Output/Input) which are
+16 bit registers, each bit corresponding to a GPIO.
 
-This only works using the Random Program Load instruction (84h/34h)
-which preserves the previous written data in the flash data cache.
-All current supported flashes are exclusively using 84h/34h as the command
-to write the page cache.
+Note that the PGPDO order is similar to a big-endian grouping
+of two registers:
+PGPDO1, PGPDO0, PGPDO3, PGPDO2, PGPDO5, PGPDO4, gap, PGPDO6.
 
-Load Program Data(02h/32h) will clear the entire page cache. As a
-result, when a request is split as described above, the previous written
-data will be cleared, breaking the page cache writing procedure.
+I have other patches for this driver:
+- interrupt support
+- power management callbacks
 
-We can change write_to_cache_op to use Load Program Data on the
-first request. If that doesn't finish writing, use Random Program Load
-on subsequent data loading.
---=20
-Regards,
-Chuanhong Guo
+which I plan to upstream after this series gets merged
+in order to simplify the review process.
+
+v6 -> v5
+- removed description for reg in the dt-bindings and added
+  maxItems
+- dropped label for example in the dt-bindings
+- simplified the example in the dt-bindings
+- changed dt-bindings filename to nxp,s32g2-siul2.yaml
+- changed title in the dt-bindings
+- dropped minItmes from gpio-ranges/gpio-reserved-ranges
+  and added maxItems to gpio-reserved-ranges
+- added required block for -grp[0-9]$ nodes
+- switch to using "" as quotes
+- kernel test robot: fixed frame sizes, added description
+  for reg_name, fixed typo in gpio_configs_lock, removed
+  uninitialized ret variable usage
+- ordered includes in nxp-siul2.c, switched to dev-err-probe
+  added a mention that other commits will add nvmem functionality
+  to the mfd driver
+- switched spin_lock_irqsave to scoped_guard statement
+- switched dev_err to dev_err_probe in pinctrl-s32cc in places
+  reached during the probing part
+
+v5 -> v4
+- fixed di_div error
+- fixed dt-bindings error
+- added Co-developed-by tags
+- added new MFD driver nxp-siul2.c
+- made the old pinctrl driver an MFD cell
+- added the GPIO driver in the existing SIUL2 pinctrl one
+- Switch from "devm_pinctrl_register" to
+  "devm_pinctrl_register_and_init"
+
+v4 -> v3
+- removed useless parentheses
+- added S32G3 fallback compatible
+- fixed comment alignment
+- fixed dt-bindings license
+- fixed modpost: "__udivdi3"
+- moved MAINTAINERS entry to have the new GPIO driver
+  together with other files related to S32G
+
+v3 -> v2
+- fix dt-bindings schema id
+- add maxItems to gpio-ranges
+- removed gpio label from dt-bindings example
+- added changelog for the MAINTAINERS commit and
+  added separate entry for the SIUL2 GPIO driver
+- added guard(raw_spinlock_irqsave) in
+  'siul2_gpio_set_direction'
+- updated the description for
+  'devm_platform_get_and_ioremap_resource_byname'
+
+v2 -> v1
+dt-bindings:
+- changed filename to match compatible
+- fixed commit messages
+- removed dt-bindings unnecessary properties descriptions
+- added minItems for the interrupts property
+driver:
+- added depends on ARCH_S32 || COMPILE_TEST to Kconfig
+- added select REGMAP_MMIO to Kconfig
+- remove unnecessary include
+- add of_node_put after `siul2_get_gpio_pinspec`
+- removed inline from function definitions
+- removed match data and moved the previous platdata
+  definition to the top of the file to be visible
+- replace bitmap_set/clear with __clear_bit/set_bit
+  and devm_bitmap_zalloc with devm_kzalloc
+- switched to gpiochip_generic_request/free/config
+- fixed dev_err format for size_t reported by
+  kernel test robot
+- add platform_get_and_ioremap_resource_byname wrapper
+
+Andrei Stefanescu (7):
+  dt-bindings: mfd: add support for the NXP SIUL2 module
+  mfd: nxp-siul2: add support for NXP SIUL2
+  arm64: dts: s32g: make pinctrl part of mfd node
+  pinctrl: s32: convert the driver into an mfd cell
+  pinctrl: s32cc: change to "devm_pinctrl_register_and_init"
+  pinctrl: s32cc: implement GPIO functionality
+  MAINTAINERS: add MAINTAINER for NXP SIUL2 MFD driver
+
+ .../bindings/mfd/nxp,s32g2-siul2.yaml         | 165 +++++
+ MAINTAINERS                                   |   2 +
+ arch/arm64/boot/dts/freescale/s32g2.dtsi      |  26 +-
+ arch/arm64/boot/dts/freescale/s32g3.dtsi      |  26 +-
+ drivers/mfd/Kconfig                           |  12 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/nxp-siul2.c                       | 410 +++++++++++++
+ drivers/pinctrl/nxp/pinctrl-s32.h             |   3 +-
+ drivers/pinctrl/nxp/pinctrl-s32cc.c           | 564 +++++++++++++-----
+ drivers/pinctrl/nxp/pinctrl-s32g2.c           |  25 +-
+ include/linux/mfd/nxp-siul2.h                 |  55 ++
+ 11 files changed, 1089 insertions(+), 200 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/nxp,s32g2-siul2.yaml
+ create mode 100644 drivers/mfd/nxp-siul2.c
+ create mode 100644 include/linux/mfd/nxp-siul2.h
+
+-- 
+2.45.2
+
 
