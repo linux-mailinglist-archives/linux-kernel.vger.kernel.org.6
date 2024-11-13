@@ -1,183 +1,154 @@
-Return-Path: <linux-kernel+bounces-407991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C819C79A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:11:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4BD9C7873
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:14:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C2B1B36DBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:14:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47FB428DBAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131EC1632E3;
-	Wed, 13 Nov 2024 16:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9174416088F;
+	Wed, 13 Nov 2024 16:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="jCyVMMJR"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ho3oey9E"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A58F8F6C
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7767C249EB;
+	Wed, 13 Nov 2024 16:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731514433; cv=none; b=gpiahvQNnK04FoDM+xLu5ZwsNYGyBH+5Z4ivjUEdEErCR+mMEx/onp1gWoQu/L5sJX2sGZN0oPj4pTKmtVEcISVko4uqrbIQHaghEUnY66uMf07MLa3TgqlIAMNEBj/c4JjqKxLICx4ATbQ5sX1b4JIxnnVXG4vRQIE1ImRuX1o=
+	t=1731514452; cv=none; b=tc6plKjPj/QN5ULu9akxJ2y+GMzrmlkMVuQ1cmOt5rq0veoUEVRPUVXymYD/3e9iTrA2+XgjOqmW8h5464Pggz4xXPlSeHzVwDN3j+YvcunRKLF0iJgSL7LFVqn4+JX+yj7waqrk+IQl8ilsNEGRYwKj7gtaYTw7nm9Fts7xbgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731514433; c=relaxed/simple;
-	bh=7HWQ/VqZgyhSHZd91HoF8yCdwP+of9WeF4Yh1KQV7BE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rs5eCZyGJjSVY92oCAyGRD9jGvJ/Y6i3W3tEZjSLGEYiNeLGKduWX/KFFqUW2BAUu44wKRutRbvWV7n4B8IiLhvHavt8jQfzC6bXMEOfRNv/LqgVFSEf9Z6Stii/fVP+/myDIy8oplSIihoQiLztdUfvvZvf5dLlK22bt1fQdQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=jCyVMMJR; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5ee645cf763so2160651eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:13:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1731514429; x=1732119229; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b4CnOM9V0G25evq0IkfWx5gKqtwex3+JBvT1EkxAWJE=;
-        b=jCyVMMJRZOft92rmgjFsP3jK3JLbWqZcaGXyMz40qYrjgttc8yEJhY7jqrB/gqK/+y
-         D+SOZId9qjrrJnGW6X/8heTjD372K9LsGgC4UEfHPQxjal+LF2O538+U6Hv0vntjjMl3
-         80hXhVeRNixVT6HGJ1HWhZVBwNbQFtgcFFRtKo12KNHP0baM+vriLZDpTpaPCIU/Ftld
-         G0uD/fq4As/pD77wGfseFLWCBZGm7lAhe3sen+uAvRSVbGMOXUJMG5Am/9W1TFZ0cv+I
-         dOmfpvAumQU6rqEv6oKwookaF4hT5Mde01ublxW8YgpR+5DjCfj7CSff+k+Vh1fLL0Qu
-         0R+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731514429; x=1732119229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b4CnOM9V0G25evq0IkfWx5gKqtwex3+JBvT1EkxAWJE=;
-        b=ObkmI/zVjw15bCJrJ3knpi7KMQPnH0UrsS8meJyztZPcvXWmc1o4Go8qighPqw4KnP
-         q6Rz18qf1Vg3An3BkYtVhrMUt4KFlybP5ykq7WZ3LUQ9lvhkhny0L3ipBlJFfRwnLHwZ
-         tcIxg8hiMBgJnOghYv/feu1FQNssGyofqFvOCzYf7ZkpLhD9y4UDBvT+TQf9pC+TU/nT
-         CNHzFZhdR4+dYRv1ighk5jL/D3yntz7gANZOH5NBJX8KNLz6PBcb7dbpf6irth+rnCdH
-         G86OVe0OjGb4wVzU8gYScVApgGs7V3xdll+P97H2tsJnO94Q1pCkwkRwmM4hKKWmTelb
-         2MOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ7/Ikrsaqi/Tn+sepbVwl5IrtmTbXDYiLDI4Sv12MyPi8v2gec+I9jRcNLXhGv5nlIsEI5sJRXvMDiNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWSNZYXkAnKeEOB7SlQd57LZDLFkkDoLHsgGKmqQOaBLg5J6Tl
-	neSl3suzTiPXxiZbRIpPK5SfofgtsVnYJnB9n7o7gxFUODH3gZva860bREMtHfZMqSffwS9p0Uy
-	++pPpzsOhnP4eNCt6w7cKt5vKK7LxBnE2F6LWYQ==
-X-Google-Smtp-Source: AGHT+IGDFpRJff+OKPz21HLMWXvGQyDkqQzC8F4K0hofednOGXa7SW/5Crlgs/h6Bl5IR8Aw+zrRHhGFgVmxSg02ZdY=
-X-Received: by 2002:a05:6820:1805:b0:5eb:c72e:e29c with SMTP id
- 006d021491bc7-5ee86a500a2mr5293321eaf.8.1731514429462; Wed, 13 Nov 2024
- 08:13:49 -0800 (PST)
+	s=arc-20240116; t=1731514452; c=relaxed/simple;
+	bh=V8WJUCxv1lEcNfhvFdBewjITQA4uYNDKGIkiw2hYSeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rwhW8EE8K1d4f9r1Tc6Ubyk8Tknare5nvv+zCAHs/WFjmhRv0Onzba6W9LoMb8hT2YRd0nnNM+oSBxnMPqR0SkVTThZLCzgbLtet5WEvX+d0sWduCeAjH6OMy9nwc9zBJmTe+UdcrXE7GWui2aygrOETIJxfHJageXrIW/aem5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ho3oey9E; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731514451; x=1763050451;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=V8WJUCxv1lEcNfhvFdBewjITQA4uYNDKGIkiw2hYSeQ=;
+  b=ho3oey9Eg12OnfM7T2HgmAWtV+hczjqMPGUlD4b6Ekfn6TAL0f0Rwzbm
+   JoUiHWTe+9or13lnI5R/RxdLg/rYG60ZH2L/YuovfjWfW0E6v4j6xE5Jc
+   yUdSCF3m5i13wTkyxtOEF8YMyp2L4RbDjT79iUJfxv/2RKWgmSCiiK7QK
+   JFoiOm3kEBiGQ153AVIBtYv9Rn3Vsh+N/kUHjYVbexZ+QneNIv6IiRW5x
+   hE0TIUainLdygbfE+9DCz0Dvdk1qy65LJ8GAo0rvR7oOPGXboqeAZRMES
+   lqonPEY8qZs4i9rFxi4apef/glulgIc9h7BdYm2WZaU8oetMLXjUsHgPv
+   A==;
+X-CSE-ConnectionGUID: ZWMMFHSTRWScl4SvB+Wbkg==
+X-CSE-MsgGUID: YIcI0WXpSxSwzYggecY/tA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31182904"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31182904"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 08:14:11 -0800
+X-CSE-ConnectionGUID: K9WQy2oLQRW6DXwULlejZw==
+X-CSE-MsgGUID: EyOXOpgiSASgFpojknSxXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
+   d="scan'208";a="88341199"
+Received: from kkkuntal-desk3 (HELO [10.124.220.196]) ([10.124.220.196])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 08:14:09 -0800
+Message-ID: <d45e316a-aabd-4d09-9006-d89bbc8fbc3c@intel.com>
+Date: Wed, 13 Nov 2024 08:14:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com> <20241111-v5_user_cfi_series-v8-24-dce14aa30207@rivosinc.com>
-In-Reply-To: <20241111-v5_user_cfi_series-v8-24-dce14aa30207@rivosinc.com>
-From: Nick Hu <nick.hu@sifive.com>
-Date: Thu, 14 Nov 2024 00:13:38 +0800
-Message-ID: <CAKddAkCCVjNHUinPWtOiK8Ki_ZkdoUCawfv1-+0B69J_1aJv5Q@mail.gmail.com>
-Subject: Re: [PATCH v8 24/29] riscv: enable kernel access to shadow stack
- memory via FWFT sbi call
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ rafael.j.wysocki@intel.com, len.brown@intel.com,
+ artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com>
+ <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
+ <CAJZ5v0hJ8NoFgjtnYce99+qjCZc3_ihBojyK1gRrcyU5Fp6inw@mail.gmail.com>
+ <20241112145618.GR22801@noisy.programming.kicks-ass.net>
+ <ZzSQcq5JxGgKVh5Z@BLRRASHENOY1.amd.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <ZzSQcq5JxGgKVh5Z@BLRRASHENOY1.amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Deepak
+On 11/13/24 03:41, Gautham R. Shenoy wrote:
+> +       /*
+> +        * This is ugly. But AMD processors don't prefer MWAIT based
+> +        * C-states when processors are offlined.
+> +        */
+> +       if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+> +           boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
+> +               return -ENODEV;
 
-On Tue, Nov 12, 2024 at 5:08=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> w=
-rote:
->
-> Kernel will have to perform shadow stack operations on user shadow stack.
-> Like during signal delivery and sigreturn, shadow stack token must be
-> created and validated respectively. Thus shadow stack access for kernel
-> must be enabled.
->
-> In future when kernel shadow stacks are enabled for linux kernel, it must
-> be enabled as early as possible for better coverage and prevent imbalance
-> between regular stack and shadow stack. After `relocate_enable_mmu` has
-> been done, this is as early as possible it can enabled.
->
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  arch/riscv/kernel/asm-offsets.c |  4 ++++
->  arch/riscv/kernel/head.S        | 12 ++++++++++++
->  2 files changed, 16 insertions(+)
->
-> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offs=
-ets.c
-> index 766bd33f10cb..a22ab8a41672 100644
-> --- a/arch/riscv/kernel/asm-offsets.c
-> +++ b/arch/riscv/kernel/asm-offsets.c
-> @@ -517,4 +517,8 @@ void asm_offsets(void)
->         DEFINE(FREGS_A6,            offsetof(struct ftrace_regs, a6));
->         DEFINE(FREGS_A7,            offsetof(struct ftrace_regs, a7));
->  #endif
-> +       DEFINE(SBI_EXT_FWFT, SBI_EXT_FWFT);
-> +       DEFINE(SBI_EXT_FWFT_SET, SBI_EXT_FWFT_SET);
-> +       DEFINE(SBI_FWFT_SHADOW_STACK, SBI_FWFT_SHADOW_STACK);
-> +       DEFINE(SBI_FWFT_SET_FLAG_LOCK, SBI_FWFT_SET_FLAG_LOCK);
->  }
-> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-> index 356d5397b2a2..6244408ca917 100644
-> --- a/arch/riscv/kernel/head.S
-> +++ b/arch/riscv/kernel/head.S
-> @@ -164,6 +164,12 @@ secondary_start_sbi:
->         call relocate_enable_mmu
->  #endif
->         call .Lsetup_trap_vector
-> +       li a7, SBI_EXT_FWFT
-> +       li a6, SBI_EXT_FWFT_SET
-> +       li a0, SBI_FWFT_SHADOW_STACK
-> +       li a1, 1 /* enable supervisor to access shadow stack access */
-> +       li a2, SBI_FWFT_SET_FLAG_LOCK
-> +       ecall
->         scs_load_current
->         call smp_callin
->  #endif /* CONFIG_SMP */
-> @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
->         la tp, init_task
->         la sp, init_thread_union + THREAD_SIZE
->         addi sp, sp, -PT_SIZE_ON_STACK
-> +       li a7, SBI_EXT_FWFT
-> +       li a6, SBI_EXT_FWFT_SET
-> +       li a0, SBI_FWFT_SHADOW_STACK
-> +       li a1, 1 /* enable supervisor to access shadow stack access */
-> +       li a2, SBI_FWFT_SET_FLAG_LOCK
-> +       ecall
->         scs_load_current
->
->  #ifdef CONFIG_KASAN
->
-> --
-> 2.45.0
->
-Should we clear the SBI_FWFT_SET_FLAG_LOCK before the cpu hotplug
-otherwise the menvcfg.sse won't be set by the fwft set sbi call when
-the hotplug cpu back to kernel?
+Can we get an X86_FEATURE for this, please?  Either a positive one:
 
-Regards,
-Nick
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+	X86_FEATURE_MWAIT_OK_FOR_OFFLINE
+
+or a negative one:
+
+	X86_FEATURE_MWAIT_BUSTED_FOR_OFFLINE
+
+... with better names.
+
+Or even a helper.  Because if you add this AMD||HYGON check, it'll be at
+_least_ the second one of these for the same logical reason.
 
