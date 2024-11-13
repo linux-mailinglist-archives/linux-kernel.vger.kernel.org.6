@@ -1,173 +1,143 @@
-Return-Path: <linux-kernel+bounces-407806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E359C7499
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:41:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF5F9C72EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:11:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED881F25D06
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:41:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FEB0B31E02
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C67200B84;
-	Wed, 13 Nov 2024 14:41:23 +0000 (UTC)
-Received: from mail-m17242.xmail.ntesmail.com (mail-m17242.xmail.ntesmail.com [45.195.17.242])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87441213135;
+	Wed, 13 Nov 2024 13:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="KEjLizSz"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8DF4C6C;
-	Wed, 13 Nov 2024 14:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.17.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E893620EA5B
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 13:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731508883; cv=none; b=dvLUb+PNtCyy6thjXBzjiKToTsLRMztTfmz/XskQNQjq2aqRX2SGXvNEPb89hJi9I8F2jA9g8i7yhYvf75wX6bQGBFdnRxkipbSS13Lw6QDNp22m4zctTFeMNaPQ8uBBNv7jcBoEeIF3LIlT3SGRdI5rKoMal0nl5/QAx9zeugQ=
+	t=1731504990; cv=none; b=jEH9gaYwdzc6OJdxB0RvXLuz5rL5hK31yrKXXxQdmXvoeSBKRCWt9cfW+CKDNcoWbUBatb+lzPTNQ3qT6p5yKre7OeHSKfrb0zG0NNMnMi8stvwat9o5BsnPpQHhl2TuuHqrYudelGI5tyCfzDl2zwgd8js+VnVxFDJd3/1QMlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731508883; c=relaxed/simple;
-	bh=SrHvkz+EGJs97SlRZaqIXywhQmWPsnJHWlG29ZDkzNQ=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PbQTiC1YPMZ8j7dm2jGZBEZSo7MIQRfB4i4QhzXBCf/s+QJyNHJfVW7uX0WLgf4wxrCbz7FlNweHzGTOj+eHme1HOoaNI3Go9tgB+X0BzkCGsQR4HCOXMYKiY3/0Lg1cKb8+oBAwV7ru3FPQLLQ/C8vQOfGE5Pl0f8OFzbUH/tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=45.195.17.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
-Received: from TYZPR02MB7842.apcprd02.prod.outlook.com (unknown [40.99.94.69])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 15001c1e;
-	Wed, 13 Nov 2024 16:58:11 +0800 (GMT+08:00)
-From: "mingzhe.zou@easystack.cn" <mingzhe.zou@easystack.cn>
-To: liequan che <liequanche@gmail.com>, Coly Li <colyli@suse.de>, Kent
- Overstreet <kent.overstreet@gmail.com>, linux-bcache
-	<linux-bcache@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Subject:
-	=?utf-8?B?5Zue5aSNOiBiY2FjaGU6IGZpeCBvb3BzIGJ1ZyBpbiBjYWNoZV9zZXRfZmx1?=
- =?utf-8?Q?sh?=
-Thread-Topic: bcache: fix oops bug in cache_set_flush
-Thread-Index: AWcwRURi/W4GL1WZ8kuFmwGBwjYz1ugKxLs4
-X-MS-Exchange-MessageSentRepresentingType: 1
-Date: Wed, 13 Nov 2024 08:58:10 +0000
-Message-ID:
-	<TYZPR02MB78424F31FF023102693D2DB2A65A2@TYZPR02MB7842.apcprd02.prod.outlook.com>
-References:
-	<CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
-In-Reply-To:
-	<CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-Exchange-Organization-SCL: -1
-X-MS-TNEF-Correlator:
-X-MS-Exchange-Organization-RecordReviewCfmType: 0
-msip_labels:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1731504990; c=relaxed/simple;
+	bh=exW6eK3eaXk+DXlub2dHP9Tox8AThO8iFMIJzBh5YXo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=IOyThwXQjXUUa58P4tp0cz9FUXLwcUw1bwlq0IWAmdxEXVY+X0rOusYyntRQ9a1/EJcFeikwBMIGB0JZtxWi5p2Fj7UC5HSgX+psKTWN/ZMMdyY+E2M072WBM+lbRoGsF3fy1hGGnK5Hj0O7A2VAADL3YXo321MPjV65SQOHzQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=KEjLizSz; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso86137055e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 05:36:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1731504985; x=1732109785; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Um0kOcEA9In9ecd/yltR9Z4whYJVqjtgwtExr6i7tVQ=;
+        b=KEjLizSzR8b0rn3gF0ImGpD6YJG1n4Zzp1UgMC8aRtv0KYhFcbNudANr8VGYJ6J1vo
+         tAmD9zf32ZApQ+sZh6fe/AD6W5tbTVR8FAgCy1aIkIpLKdCXltxAOS7hUSYw5mxbfWNd
+         0v+BHH1hVdqkOz2JHWVeM+S2E5D9ZP7+eaBrBTfK3wWikJHa9tdamVsD3kmMyE3gKfkA
+         GD97EtoLMbd00GyBsOZmPhfKE0+Jl5PkAKmRuU0vf2KqZYaUGWYPTYBw84weDjAGErGl
+         EicNchyLAP7qaImFCAe7BxySG4opPscntuqHYiKbsKW+rWtTSqeWQaGFNcNm+X0ATm7C
+         puog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731504985; x=1732109785;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Um0kOcEA9In9ecd/yltR9Z4whYJVqjtgwtExr6i7tVQ=;
+        b=vywhMdFPS8NdMyJ2deBLg9AKr31Okx2HJL/UkcC8fzag72LNfSzdSNLHObRHMWpKsn
+         ynVFuVbOA4VarnxsuypI3XOHtqBexr9QZoNZ6H5jld7lXXeS92psW7BfA0QXm9XBE//j
+         VMP2bkAvcoozvRcrQwLBRp/StK8yRr7VWv+l1oTF6yKv6FSUKKgwg6f1IgL802HgOzgH
+         dZARZ650KKyYbXYBv8twqxZRCqyPVLh0c0m31wWAtmxtCD2Q2YJv2Ed2u6qv2VihI1WG
+         Wut52e88M6Z8xLR6jJ/2VIMyCU+E9zUEldVlKJsjJu+laOtm4e/WcgYPeyw2jYUjil1a
+         dBPw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7LNVfAFhdP6amk7ZQyXL7SFqLuWtVS356nR0GYG+Gyq3r1L7Ee54Ro9VlpvRftsLWN8PgYvKarIe458E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2/ZfdJcRdc1OFk0WFv8oulaLpaBZmf2sl7JnuQLqUh0rfyMKa
+	SIVTO7KyxIJLwPms7OaHQhUBr0VCh5dLcCngXRhG+rG4aHaZXcFFT0P/NwSgYsw=
+X-Google-Smtp-Source: AGHT+IHruw+WkNL7bCkO7isKLwDz9qR5vna8+fxDLeEPt204ctQzamk/M+Mn2zf6E0gzAvPUU1G0+A==
+X-Received: by 2002:a05:600c:4683:b0:42a:a6b8:f09f with SMTP id 5b1f17b1804b1-432b7518d0bmr204533015e9.23.1731504985256;
+        Wed, 13 Nov 2024 05:36:25 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d54e2f2esm25664165e9.1.2024.11.13.05.36.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 05:36:24 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	magnus.damm@gmail.com,
+	linus.walleij@linaro.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	p.zabel@pengutronix.de
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 20/25] ASoC: dt-bindings: renesas,rz-ssi: Document the Renesas RZ/G3S SoC
+Date: Wed, 13 Nov 2024 15:35:35 +0200
+Message-Id: <20241113133540.2005850-21-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGUwfVh5NQk9MH09DTR0eT1YVFAkWGhdVGRETFh
-	oSFyQUDg9ZV1kYEgtZQVlPS1VCQlVCT1VNQllXWRYaDxIVHRRZQVlPS0hVSktJQkNDTFVKS0tVS1
-	kG
-X-HM-Tid: 0a9324be9cdf022bkunm15001c1e
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MRQ6FCo4CTcfEQMRFDcKCigd
-	AUxPCx9VSlVKTEhKT0NDSUJISEtPVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-	C1lBWU9LVUJCVUJPVU1CWVdZCAFZQUxOSk83Bg++
+Content-Transfer-Encoding: 8bit
 
-SGksIGNoZWxpZXF1YW4gYW5kIENvbHk6CgpJIHNhdyBzb21lIGRtZXNnIHByaW50aW5nIGluZm9y
-bWF0aW9uIGZyb20gaHR0cHM6Ly9naXRlZS5jb20vb3BlbmV1bGVyL2tlcm5lbC9pc3N1ZXMvSUIz
-WVFaCgpgYGAKWyAgMzU5LjYxODA1Nl0gYmNhY2hlOiBwcmlvX3JlYWQoKSBiYWQgY3N1bSByZWFk
-aW5nIHByaW9yaXRpZXMKWyAgMzU5LjYyNDg3OF0gYmNhY2hlOiBiY2hfY2FjaGVfc2V0X2Vycm9y
-KCkgZXJyb3Igb24gZjc3NGMxMjItNmMwMi00NjliLWI3OTgtY2E1M2MxMGVmYTc2OiBJTyBlcnJv
-ciByZWFkaW5nIHByaW9yaXRpZXMsIGRpc2FibGluZyBjYWNoaW5nCmBgYAoKV2UgaGF2ZSBlbmNv
-dW50ZXJlZCB0aGUgYmFkIGNzdW0gZXJyb3IgYmVmb3JlLCBidXQgaXQgZGlkIG5vdCBjYXVzZSBh
-IGtlcm5lbCBwYW5pYy4KCkZyb20gdGhlIGNvZGUsIGJjaF9idHJlZV9ub2RlX2dldCBpcyBjYWxs
-ZWQgYWZ0ZXIgcHJpb19yZWFkLCBzbyBjLT5yb290IGlzIGVtcHR5LgoKYGBgCnN0YXRpYyBpbnQg
-cnVuX2NhY2hlX3NldChzdHJ1Y3QgY2FjaGVfc2V0ICpjKQp7CgkJLi4uLi4uCgkJZXJyID0gIklP
-IGVycm9yIHJlYWRpbmcgcHJpb3JpdGllcyI7CgkJaWYgKHByaW9fcmVhZChjYSwgai0+cHJpb19i
-dWNrZXRbY2EtPnNiLm5yX3RoaXNfZGV2XSkpCgkJCWdvdG8gZXJyOwoKCQkvKgoJCSAqIElmIHBy
-aW9fcmVhZCgpIGZhaWxzIGl0J2xsIGNhbGwgY2FjaGVfc2V0X2Vycm9yIGFuZCB3ZSdsbAoJCSAq
-IHRlYXIgZXZlcnl0aGluZyBkb3duIHJpZ2h0IGF3YXksIGJ1dCBpZiB3ZSBwZXJoYXBzIGNoZWNr
-ZWQKCQkgKiBzb29uZXIgd2UgY291bGQgYXZvaWQgam91cm5hbCByZXBsYXkuCgkJICovCgoJCWsg
-PSAmai0+YnRyZWVfcm9vdDsKCgkJZXJyID0gImJhZCBidHJlZSByb290IjsKCQlpZiAoX19iY2hf
-YnRyZWVfcHRyX2ludmFsaWQoYywgaykpCgkJCWdvdG8gZXJyOwoKCQllcnIgPSAiZXJyb3IgcmVh
-ZGluZyBidHJlZSByb290IjsKCQljLT5yb290ID0gYmNoX2J0cmVlX25vZGVfZ2V0KGMsIE5VTEws
-IGssCgkJCQkJICAgICBqLT5idHJlZV9sZXZlbCwKCQkJCQkgICAgIHRydWUsIE5VTEwpOwoJCS4u
-Li4uLgp9CmBgYAoKVGhpcyBpc3N1ZSBzaG91bGQgYmUgY2F1c2VkIGJ5IDAyOGRkY2EoYmNhY2hl
-OiBSZW1vdmUgdW5uZWNlc3NhcnkgTlVMTCBwb2ludCBjaGVjayBpbiBub2RlIGFsbG9jYXRpb25z
-KS4KVGhpcyBwYXRjaCBvbmx5IGZvY3VzZXMgb24gYnVnIGZpeGVzIGZvciBfX2JjaC1idHJlZV9u
-b2RlX2FsbG9jIHdpdGhvdXQgY29uc2lkZXJpbmcgb3RoZXIgY29kZSBicmFuY2hlcy4gCgpGb3Ig
-dGhpcyBrZXJuZWwgcGFuaWMsIHRoZSBmb2xsb3dpbmcgbW9kaWZpY2F0aW9ucyBtYXkgYmUgc3Vm
-ZmljaWVudCB0byBmaXggaXQuIEJ1dCBJJ20gbm90IHN1cmUgaWYgdGhlcmUgYXJlIGFueSBvdGhl
-ciBpc3N1ZXMsCm1heWJlIHdlIG5lZWQgdG8gcmV2ZW50IDAyOGRkY2EoYmNhY2hlOiBSZW1vdmUg
-dW5uZWNlc3NhcnkgTlVMTCBwb2ludCBjaGVjayBpbiBub2RlIGFsbG9jYXRpb25zKS4KCmBgYAot
-wqDCoMKgwqDCoMKgIGlmICghSVNfRVJSKGMtPnJvb3QpKQorwqDCoMKgwqDCoMKgIGlmICghSVNf
-RVJSX09SX05VTEwoYy0+cm9vdCkpIHsKYGBgCgpGcm9tOsKgbGludXgtYmNhY2hlK2JvdW5jZXMt
-NzgxLW1pbmd6aGUuem91PWVhc3lzdGFjay5jbkB2Z2VyLmtlcm5lbC5vcmcgPGxpbnV4LWJjYWNo
-ZStib3VuY2VzLTc4MS1taW5nemhlLnpvdT1lYXN5c3RhY2suY25Admdlci5rZXJuZWwub3JnPiBv
-biBiZWhhbGYgb2YgbGllcXVhbiBjaGUgPGxpZXF1YW5jaGVAZ21haWwuY29tPgpTZW50OsKgV2Vk
-bmVzZGF5LCBOb3ZlbWJlciAxMywgMjAyNCAyOjI1IFBNClRvOsKgQ29seSBMaSA8Y29seWxpQHN1
-c2UuZGU+OyBLZW50IE92ZXJzdHJlZXQgPGtlbnQub3ZlcnN0cmVldEBnbWFpbC5jb20+OyBsaW51
-eC1iY2FjaGUgPGxpbnV4LWJjYWNoZUB2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1rZXJuZWwgPGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+ClN1YmplY3Q6wqBiY2FjaGU6IGZpeCBvb3BzIGJ1
-ZyBpbiBjYWNoZV9zZXRfZmx1c2gKwqAKU2lnbmVkLW9mZi1ieTogY2hlbGllcXVhbiA8Y2hlbGll
-cXVhbkBpbnNwdXIuY29tPgoKwqDCoCBJZiB0aGUgYmNhY2hlIGNhY2hlIGRpc2sgY29udGFpbnMg
-ZGFtYWdlZCBidHJlZSBkYXRhLAp3aGVuIHRoZSBiY2FjaGUgY2FjaGUgZGlzayBwYXJ0aXRpb24g
-aXMgZGlyZWN0bHkgb3BlcmF0ZWQsCnRoZSBzeXN0ZW0tdWRldmQgc2VydmljZSBpcyB0cmlnZ2Vy
-ZWQgdG8gY2FsbCB0aGUgYmNhY2hlLXJlZ2lzdGVyCnByb2dyYW0gdG8gcmVnaXN0ZXIgdGhlIGJj
-YWNoZSBkZXZpY2UscmVzdWx0aW5nIGluIGtlcm5lbCBvb3BzLgoKY3Jhc2g+IGJ0ClBJRDogNzc3
-M8KgwqDCoMKgIFRBU0s6IGZmZmY0OWNjNDRkNjkzNDDCoCBDUFU6IDU3wqDCoCBDT01NQU5EOiAi
-a3dvcmtlci81NzoyIgrCoCMwIFtmZmZmODAwMDQ2MzczODAwXSBtYWNoaW5lX2tleGVjIGF0IGZm
-ZmZiZTUwMzllYjU0YTgKwqAjMSBbZmZmZjgwMDA0NjM3MzliMF0gX19jcmFzaF9rZXhlYyBhdCBm
-ZmZmYmU1MDNhMDUyODI0CsKgIzIgW2ZmZmY4MDAwNDYzNzM5ZTBdIGNyYXNoX2tleGVjIGF0IGZm
-ZmZiZTUwM2EwNTI5Y2MKwqAjMyBbZmZmZjgwMDA0NjM3M2E2MF0gZGllIGF0IGZmZmZiZTUwMzll
-OTQ0NWMKwqAjNCBbZmZmZjgwMDA0NjM3M2FjMF0gZGllX2tlcm5lbF9mYXVsdCBhdCBmZmZmYmU1
-MDM5ZWM2OThjCsKgIzUgW2ZmZmY4MDAwNDYzNzNhZjBdIF9fZG9fa2VybmVsX2ZhdWx0IGF0IGZm
-ZmZiZTUwMzllYzZhMzgKwqAjNiBbZmZmZjgwMDA0NjM3M2IyMF0gZG9fcGFnZV9mYXVsdCBhdCBm
-ZmZmYmU1MDNhYzc2YmE0CsKgIzcgW2ZmZmY4MDAwNDYzNzNiNzBdIGRvX3RyYW5zbGF0aW9uX2Zh
-dWx0IGF0IGZmZmZiZTUwM2FjNzZlYmMKwqAjOCBbZmZmZjgwMDA0NjM3M2I5MF0gZG9fbWVtX2Fi
-b3J0IGF0IGZmZmZiZTUwMzllYzY4YWMKwqAjOSBbZmZmZjgwMDA0NjM3M2JjMF0gZWwxX2Fib3J0
-IGF0IGZmZmZiZTUwM2FjNjY5YmMKIzEwIFtmZmZmODAwMDQ2MzczYmYwXSBlbDFfc3luY19oYW5k
-bGVyIGF0IGZmZmZiZTUwM2FjNjcxZDQKIzExIFtmZmZmODAwMDQ2MzczZDMwXSBlbDFfc3luYyBh
-dCBmZmZmYmU1MDM5ZTgyMjMwCiMxMiBbZmZmZjgwMDA0NjM3M2Q1MF0gY2FjaGVfc2V0X2ZsdXNo
-IGF0IGZmZmZiZTUwMTIxZmE0YzQgW2JjYWNoZV0KIzEzIFtmZmZmODAwMDQ2MzczZGEwXSBwcm9j
-ZXNzX29uZV93b3JrIGF0IGZmZmZiZTUwMzlmNWFmNjgKIzE0IFtmZmZmODAwMDQ2MzczZTAwXSB3
-b3JrZXJfdGhyZWFkIGF0IGZmZmZiZTUwMzlmNWIzYzQKIzE1IFtmZmZmODAwMDQ2MzczZTUwXSBr
-dGhyZWFkIGF0IGZmZmZiZTUwMzlmNjM0YjgKY3Jhc2g+IGRpcyBjYWNoZV9zZXRfZmx1c2grMHg5
-NAoweGZmZmZiZTUwMTIxZmE0YzggPGNhY2hlX3NldF9mbHVzaCsxNDg+OsKgwqDCoMKgwqDCoCBz
-dHLCoMKgwqDCoCB4MjMsIFt4MjAsICM1MTJdCgotLS0KZHJpdmVycy9tZC9iY2FjaGUvc3VwZXIu
-YyB8IDE2ICsrKysrKysrKystLS0tLS0KMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyks
-IDYgZGVsZXRpb25zKC0pCmRpZmYgLS1naXQgYS9kcml2ZXJzL21kL2JjYWNoZS9zdXBlci5jIGIv
-ZHJpdmVycy9tZC9iY2FjaGUvc3VwZXIuYwppbmRleCBmZDk3NzMwNDc5ZDguLjhhNDFkZmNmOWZi
-NiAxMDA2NDQKLS0tIGEvZHJpdmVycy9tZC9iY2FjaGUvc3VwZXIuYworKysgYi9kcml2ZXJzL21k
-L2JjYWNoZS9zdXBlci5jCkBAIC0xNzQxLDggKzE3NDEsMTAgQEAgc3RhdGljIHZvaWQgY2FjaGVf
-c2V0X2ZsdXNoKHN0cnVjdCBjbG9zdXJlICpjbCkKwqDCoMKgwqDCoMKgIGlmICghSVNfRVJSX09S
-X05VTEwoYy0+Z2NfdGhyZWFkKSkKwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBrdGhyZWFk
-X3N0b3AoYy0+Z2NfdGhyZWFkKTsKCi3CoMKgwqDCoMKgwqAgaWYgKCFJU19FUlIoYy0+cm9vdCkp
-Ci3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGxpc3RfYWRkKCZjLT5yb290LT5saXN0LCAm
-Yy0+YnRyZWVfY2FjaGUpOworwqDCoMKgwqDCoMKgIGlmICghSVNfRVJSX09SX05VTEwoYy0+cm9v
-dCkpIHsKK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKCFsaXN0X2VtcHR5KCZjLT5y
-b290LT5saXN0KSkKK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IGxpc3RfYWRkKCZjLT5yb290LT5saXN0LCAmYy0+YnRyZWVfY2FjaGUpOworwqDCoMKgwqDCoMKg
-IH0KCsKgwqDCoMKgwqDCoCAvKgrCoMKgwqDCoMKgwqDCoCAqIEF2b2lkIGZsdXNoaW5nIGNhY2hl
-ZCBub2RlcyBpZiBjYWNoZSBzZXQgaXMgcmV0aXJpbmcKQEAgLTE3NTAsMTAgKzE3NTIsMTIgQEAg
-c3RhdGljIHZvaWQgY2FjaGVfc2V0X2ZsdXNoKHN0cnVjdCBjbG9zdXJlICpjbCkKwqDCoMKgwqDC
-oMKgwqAgKi8KwqDCoMKgwqDCoMKgIGlmICghdGVzdF9iaXQoQ0FDSEVfU0VUX0lPX0RJU0FCTEUs
-ICZjLT5mbGFncykpCsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbGlzdF9mb3JfZWFjaF9l
-bnRyeShiLCAmYy0+YnRyZWVfY2FjaGUsIGxpc3QpIHsKLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIG11dGV4X2xvY2soJmItPndyaXRlX2xvY2spOwotwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKGJ0cmVlX25vZGVfZGly
-dHkoYikpCi3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgX19iY2hfYnRyZWVfbm9kZV93cml0ZShiLCBOVUxMKTsKLcKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG11dGV4X3VubG9jaygmYi0+d3JpdGVf
-bG9jayk7CivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAo
-IUlTX0VSUl9PUl9OVUxMKGIpKSB7CivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbXV0ZXhfbG9jaygmYi0+d3JpdGVfbG9jayk7CivC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgaWYgKGJ0cmVlX25vZGVfZGlydHkoYikpCivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIF9fYmNoX2J0
-cmVlX25vZGVfd3JpdGUoYiwgTlVMTCk7CivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbXV0ZXhfdW5sb2NrKCZiLT53cml0ZV9sb2Nr
-KTsKK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH0KwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9CgrCoMKgwqDCoMKgwqAgaWYgKGNhLT5hbGxvY190aHJl
-YWQpCi0tCjIuMzMuMAoKCg==
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+The SSI IP variant present on the Renesas RZ/G3S SoC is similar to the
+one found on the Renesas RZ/G2{UL, L, LC} SoCs. Add documentation for
+it.
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+
+Changes in v3:
+- none
+
+Changes in v2:
+- collected tags
+
+ Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
+index f4610eaed1e1..cab615f79ee4 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
++++ b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
+@@ -19,6 +19,7 @@ properties:
+           - renesas,r9a07g043-ssi  # RZ/G2UL and RZ/Five
+           - renesas,r9a07g044-ssi  # RZ/G2{L,LC}
+           - renesas,r9a07g054-ssi  # RZ/V2L
++          - renesas,r9a08g045-ssi  # RZ/G3S
+       - const: renesas,rz-ssi
+ 
+   reg:
+-- 
+2.39.2
+
 
