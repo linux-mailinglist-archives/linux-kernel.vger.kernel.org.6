@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-407195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 676AC9C6A0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:31:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962ED9C6A12
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:33:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECB39281988
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:31:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23612B22E29
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AA4189B86;
-	Wed, 13 Nov 2024 07:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBD018859E;
+	Wed, 13 Nov 2024 07:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TfdJDVka"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VETkn3Rp"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092311898E8
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 07:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF7335885;
+	Wed, 13 Nov 2024 07:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731483094; cv=none; b=DZNW1M+4iONTqRt0mK6ahQ4t4iLS2+J2tVCCIAGdwgugMtkcUTkvle88bOTmnUWbOZAzaPd1k0DH/WGBdhA2vYp4fMkV1dyH0S7OZkOeVpvZJNtFKShEu+zDSBbX/qrjn7wUqcEyJ2SuXdw3lPuT+W1fL5Rq4RFqLuAyfG2p8pQ=
+	t=1731483170; cv=none; b=DAYCZJMEJk3HmhobzAfiU3efsZ0ayyDCmUgqlPKAbUqy9VmlQIpxy3oQTevlz/5subfkl4wlZ+nHl4Pvtl353/Iw/QcPvlLQmUDisS65b5rf7CHN08KCvYggF/ik/Em1916V6LZbDi2dPLCy8X91UmXrX4TgoERha2QQmE2ZY14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731483094; c=relaxed/simple;
-	bh=tmuSu2iaBDMllSjqEsXXqjaCbaHp1pOOtGHzUZ12VGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=W3DKVLqGMQntP9LYQiaWEYDu99RQogj67N0PISt4zuqra3h8OnJOoNs7dyp5whOInhhAuK4fAni0rYJBqWUCO+s/Vdn3HI9MINm0qhDa2PLpTdYd30kW5isDD8dFqmRrzKOEHiMK0DBFpZB7IIANPsJGZ/A2kXWp5QpomR9rRwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TfdJDVka; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4316e9f4a40so57092675e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:31:30 -0800 (PST)
+	s=arc-20240116; t=1731483170; c=relaxed/simple;
+	bh=sVsJxS9e8Feoju3z9kLVoX7oyF2LbuRtLNrwKHqDJ3E=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=WWR/0yVO2K/VfHVrnxesUkC0ghH3StyAayVQpF71r9B9cqspjjfArYfYUI5Cub2OklFoaNtUmo8ANFilzNWTMw00/tqqVkRu0iViTF7Pq1RZzsOusM/W8JFeoJSrHC/c64KWKDuaBCfVtD/dYua9FYmFgnj4aBsQJCfYARohHnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VETkn3Rp; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7240d93fffdso5598327b3a.2;
+        Tue, 12 Nov 2024 23:32:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731483089; x=1732087889; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V4csWLl7Ej9wAFH627/RtOwQI0dYK7exWefQ0DxYMq0=;
-        b=TfdJDVkaOxLfhRptRKlUOMDVESNlELFaftJuuk5UCW5/H0i2au18apKckCipmXbvql
-         r3ZDtsKxL+s7Oz+8GkEFkCIBdAPBVPQHyGI14c/tr3LytgcGxVhTVObH8FspCR5ngFex
-         3dKF+ian+DEDqAjiicGlScqO3AL/nCBENkHAraxr/gmdZEWJqHOuSe3Taa2PKoJaGGah
-         cim3o89u+lxXlafzGjn71ECMcLxv7TCynXv+UXj9OkC7pbo6zqJ8QAu2qjXzYBxTyB3J
-         hDs/gZzWdqSRy0WEbi2zhm4WGplKpLNscjrnfVLynT1p1qzuphOkawLMGloWgHuDviZs
-         Zv6w==
+        d=gmail.com; s=20230601; t=1731483168; x=1732087968; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ydt3a/CwJ8B9afYgE/yrVykOza81dEen6k3D9kqyuHM=;
+        b=VETkn3RptQCfWGeWzz6TzgiJ0xmafCgDuqqYofNODFIW3KSw4SMRqCYyQ+c1BN65/I
+         64F8Fruc91+4QaDqbdHGVkmcco0ZJT0yJTYEQjX9Q/jTyvyMGFBy3akP0R0/RudjnRLO
+         JnZPU1lMA+p2h+10AsPFoJ3jShHWQGMkwMwcESUtqM3sPL6b/7rfwJn6ZXBo1fGqySbS
+         rRk7hzu7EtPfkFNCOnnuheoK646I8AHzSLu0kTCzN5rFXiw6g25JKJS9KkVv4lg76w/R
+         Xbf5kDSPXAuK2FUfmwR/PPogx3kl97RyxxdNCl84C+FccVdbu1HqSsew1XWKe8Qyv6I+
+         SMJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731483089; x=1732087889;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1731483168; x=1732087968;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V4csWLl7Ej9wAFH627/RtOwQI0dYK7exWefQ0DxYMq0=;
-        b=ME/7rwRtgBJHxbfumdUJpHY4h001VOqylgFJHSRrXZkoIk2dlvI6bVwfqyuYdSqUIM
-         Gf/uLMZZ6E4DBAj2DlyTbBGspuQ6a20NFTYBFgE6SjGEt1E982O7vRf2+/G9fcPYX6ec
-         e6Et0tRln+Xl3AZNpNzbuTSRVnneZVu9OcmFLbn3ycon+EszAlk4B5yn8cMWvzAfOaxU
-         OHSzzwfwVPFQ0+u2svbvE+3TwYL7N6ghkSUwI0k2jWtfn4AhROld4GQywdQiimpNj2zn
-         mpZ875XoMNOOAvOmPlMVGmIZ5ourO39XprLpEGAIHjs9Pl414Z9VezuQu0xqwYEwJZip
-         wp0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWlyYgwP8dQ5UxTGGYZ66hCAgD/gXy9AGzza2PH3onYNFRcYFarrVivmgEa2+lC+PfsbttoG+T/ND6B/Wo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0fFMPKRS6srZZP2TNNc25zmE1VWq9bbt8xKlvSsb43tXOwThw
-	TMJXJ5ZRg+BpaWcIvAN7UdbncSsboSEADzcd0wirtIdwOwKEW51DZEqNscnUh5o=
-X-Google-Smtp-Source: AGHT+IFXhHLRS1YpnITs+WT4llH7CTWUIO/WdLiyAZE4altKKyOTrJjPAyh4aJtRTdM5ubYGkxnsCw==
-X-Received: by 2002:a05:600c:a4c:b0:431:5df7:b310 with SMTP id 5b1f17b1804b1-432b74ff9b1mr168355735e9.8.1731483089349;
-        Tue, 12 Nov 2024 23:31:29 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97fe6csm17353305f8f.31.2024.11.12.23.31.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 23:31:28 -0800 (PST)
-Date: Wed, 13 Nov 2024 10:31:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Frank Li <Frank.Li@nxp.com>, imx@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: enetc: clean up before returning in probe()
-Message-ID: <93888efa-c838-4682-a7e5-e6bf318e844e@stanley.mountain>
+        bh=Ydt3a/CwJ8B9afYgE/yrVykOza81dEen6k3D9kqyuHM=;
+        b=d3ylRecQOVrRtikX2fIuSG84vmraLijdfX6tuge5oP2SAs7J63vK31CD8DpK5A8SHm
+         qmrqNENFsBLvTOOVHllC6a0/FddwMpsnDKRotrbAai9EEGzyovJl/P0nZOedmbUph8rQ
+         x9lVEUbf5CkTgWRQ8dhRaPj7190LqbpU5JPg0qomKcw4GhumJdagLSsNvYNT4jJndmBN
+         mzbWgN9xOc7IXrVLpDm5VLVQjUkZ9Li7zBfErbvVfBeXp0AXxt1RmjL2jw85+vmo5ecL
+         W6IXi0pDqfqb3q1KIA1/MA8hpQDdoMpdzCdKB7JPsekX8Aa1jW1pBUNucjaH0NL27qZ0
+         cWzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlePrd/EFLQEBCPsUTRqnuFgoGBw4pwqU2bBgL7kKBBDAl56kD6YMVz5GgXqj8NML1y2U7K/nolaL10r8=@vger.kernel.org, AJvYcCW5qHFkrpVGdUdpn3wZPiubZHlZlLLX7fK2GEsbO5jDtGyPvQcMI62fTGdeGI/0H3hK6JAl9IluElKP7CryAA==@vger.kernel.org, AJvYcCXvFHcXcUdcAuH/TqZF/rzkaabczShcKDMp0r0U/7jQJidrfVSaD5wcOLqrOJIm97vGoGcGADzoYPmYL7JL5BKO+Qtj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3f23SPs1VqPHGRr48iOrzbDEE10/S86IS7A2LnQM3H87dwvfF
+	AUbk3XYfKwiB/W6oqWUEvQ4plDoUxtVlFcv3Vf34J8jZo1FMp6Dt
+X-Google-Smtp-Source: AGHT+IGo17+0CiznxgzXvqz3+t8QWlsqph7jxFNRIn4nmCDEyVatBOR0uDeUb8AhZ6CKTeHN6RZgNQ==
+X-Received: by 2002:a05:6a20:9191:b0:1d9:25d4:e8b1 with SMTP id adf61e73a8af0-1dc703de37dmr2643692637.25.1731483168541;
+        Tue, 12 Nov 2024 23:32:48 -0800 (PST)
+Received: from [192.168.68.56] ([122.161.49.182])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407862826sm12543777b3a.15.2024.11.12.23.32.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 23:32:47 -0800 (PST)
+Message-ID: <8acdd32a-1702-4434-8d79-2e73ded36d2a@gmail.com>
+Date: Wed, 13 Nov 2024 13:02:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+To: zhengyejian1@huawei.com
+Cc: bpf@vger.kernel.org, jpoimboe@kernel.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ mark.rutland@arm.com, mathieu.desnoyers@efficios.com, mcgrof@kernel.org,
+ mhiramat@kernel.org, peterz@infradead.org, rostedt@goodmis.org
+References: <20240607115211.734845-1-zhengyejian1@huawei.com>
+Subject: Re: [RFC PATCH] ftrace: Skip __fentry__ location of overridden weak
+ functions
+Content-Language: en-US
+From: Dropify <d.dropify@gmail.com>
+In-Reply-To: <20240607115211.734845-1-zhengyejian1@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-We recently added this error  path.  We need to call enetc_pci_remove()
-before returning.  It cleans up the resources from enetc_pci_probe().
+Wondering where are we with this issue?
 
-Fixes: 99100d0d9922 ("net: enetc: add preliminary support for i.MX95 ENETC PF")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/ethernet/freescale/enetc/enetc_vf.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+I am experiencing an issue where in a fentry/kfunc bpf probe attached to 
+a function doesn't fire. I have only experienced this behavior on Debian 
+kernels with `CONFIG_X86_KERNEL_IBT` enabled.
 
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_vf.c b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-index d18c11e406fc..a5f8ce576b6e 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-@@ -174,9 +174,11 @@ static int enetc_vf_probe(struct pci_dev *pdev,
- 	si = pci_get_drvdata(pdev);
- 	si->revision = ENETC_REV_1_0;
- 	err = enetc_get_driver_data(si);
--	if (err)
--		return dev_err_probe(&pdev->dev, err,
--				     "Could not get VF driver data\n");
-+	if (err) {
-+		dev_err_probe(&pdev->dev, err,
-+			      "Could not get VF driver data\n");
-+		goto err_alloc_netdev;
-+	}
- 
- 	enetc_get_si_caps(si);
- 
--- 
-2.45.2
+Because of weak symbols being removed from kallsyms, 
+kallsyms_lookup_size_offset() returns the symbol offset for the function 
+"acct_process()" more than the actual size. And the function body now 
+contains two __fentry__ locations.
+
+Depending on where binary search lands up first, correct (acct_process + 
+4) or incorrect (acct_process + 260) location is returned.
+
+Thanks,
+
+Dropify
 
 
